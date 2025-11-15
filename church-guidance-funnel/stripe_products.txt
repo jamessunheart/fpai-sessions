@@ -1,0 +1,23 @@
+CHURCH GUIDANCE FUNNEL - STRIPE PRODUCTS
+======================================================================
+
+AI Assistant - Monthly - $97/month
+Product ID: prod_TQgIArw6eqrTUZ
+Price ID: price_1STovyARpIMdAlRWl7kOu1w5
+Payment Link: https://buy.stripe.com/fZu00i3O16ND5oV22x9R604
+
+AI Assistant - Lifetime - $297 one-time
+Product ID: prod_TQgI9RjNs4WFEs
+Price ID: price_1STovzARpIMdAlRWWPLFZJFI
+Payment Link: https://buy.stripe.com/9B63cuesF8VL4kR5eJ9R605
+
+Premium Package - $997 one-time
+Product ID: prod_TQgIAmL7w448CV
+Price ID: price_1STow0ARpIMdAlRW01BTlfDi
+Payment Link: https://buy.stripe.com/bJeaEW5W95Jz9Fb9uZ9R606
+
+VIP Package - $2,997 one-time
+Product ID: prod_TQgIy9k7i4Ferh
+Price ID: price_1STow1ARpIMdAlRWHY6vcEdz
+Payment Link: https://buy.stripe.com/14AfZg2JXgod9Fb4aF9R607
+
