@@ -12,7 +12,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-CHAT_SERVER = os.getenv("UNIFIED_CHAT_SERVER", "ws://localhost:8100")
+CHAT_SERVER = os.getenv("UNIFIED_CHAT_SERVER", "wss://chat.fullpotential.com")
 SESSION_API_KEY = "fpai-session-key-2024-secure"
 
 # Get session ID

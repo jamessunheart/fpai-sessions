@@ -36,3 +36,4 @@ package-lock.json
 # Coordination sensitive files
 COORDINATION/messages/*.json
 docs/coordination/messages/*.json
+SERVICES/api-hub/api_vault.json
