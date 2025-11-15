@@ -1,0 +1,29 @@
+# SSOT Location File
+# All sessions can source this to find SSOT
+
+export SSOT_DIR="/Users/jamessunheart/Development/docs/coordination"
+export SSOT_FILE="$SSOT_DIR/SSOT.json"
+export SSOT_UPDATE_SCRIPT="$SSOT_DIR/scripts/update-ssot.sh"
+export SSOT_WATCHER_SCRIPT="$SSOT_DIR/scripts/ssot-watcher.sh"
+export SSOT_ENABLED=true
+
+# Helper functions
+ssot_read() {
+    cat "$SSOT_FILE" 2>/dev/null || echo "{}"
+}
+
+ssot_get() {
+    local key="$1"
+    jq -r "$key" "$SSOT_FILE" 2>/dev/null
+}
+
+ssot_update() {
+    "$SSOT_UPDATE_SCRIPT" 2>/dev/null
+}
+
+ssot_watch() {
+    "$SSOT_WATCHER_SCRIPT"
+}
+
+# Export for use
+export -f ssot_read ssot_get ssot_update ssot_watch

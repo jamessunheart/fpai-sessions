@@ -1,0 +1,9 @@
+{
+  "claimed_by": "session-1763234893",
+  "claimed_at": "2025-11-15T19:28:22Z",
+  "resource_type": "droplet",
+  "resource_name": "church-guidance-ministry",
+  "duration_hours": 3,
+  "expires_at": "2025-11-15T22:28:22Z",
+  "allow_coordination": true
+}

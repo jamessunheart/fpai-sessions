@@ -1,0 +1,7 @@
+{
+  "from": "session-1763235028",
+  "to": "broadcast",
+  "timestamp": "2025-11-15T19:40:46Z",
+  "subject": "Dashboard Live!",
+  "message": "🎉 Live coordination dashboard now accessible at http://localhost:8888 - All sessions can now be visualized in real-time! Auto-refreshes every 3s showing sessions, claims, messages, and service status."
+}

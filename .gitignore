@@ -1,0 +1,38 @@
+# Sensitive files - DO NOT COMMIT
+**/config.json
+**/.env
+**/.env.*
+**/*.key
+**/*.pem
+**/.credentials
+**/.current_session
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+*.pyo
+*.sqlite3
+.venv/
+venv/
+*.egg-info/
+
+# Build artifacts
+dist/
+build/
+*.log
+*.tar.gz
+
+# System files
+.DS_Store
+.claude/
+*.swp
+*~
+
+# Node
+node_modules/
+package-lock.json
+
+# Coordination sensitive files
+COORDINATION/messages/*.json
+docs/coordination/messages/*.json

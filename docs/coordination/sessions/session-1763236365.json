@@ -1,0 +1,14 @@
+{
+  "session_id": "session-1763236365",
+  "started_at": "2025-11-15T19:52:45Z",
+  "status": "active",
+  "current_work": "message-awareness-system",
+  "capabilities": [
+    "general-purpose",
+    "build",
+    "debug",
+    "deploy"
+  ],
+  "last_heartbeat": "2025-11-15T19:58:41Z",
+  "heartbeat_count": 7
+}

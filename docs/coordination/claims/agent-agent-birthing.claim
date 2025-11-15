@@ -1,0 +1,9 @@
+{
+  "claimed_by": "session-1763236365",
+  "claimed_at": "2025-11-15T19:55:27Z",
+  "resource_type": "agent",
+  "resource_name": "agent-birthing",
+  "duration_hours": 4,
+  "expires_at": "2025-11-15T23:55:27Z",
+  "allow_coordination": true
+}

@@ -1,0 +1,38 @@
+{
+  "last_update": "2025-11-15T20:00:02Z",
+  "session_count": {
+    "total_processes": 13,
+    "registered": 9,
+    "unregistered": 4,
+    "active": 8,
+    "idle": 5
+  },
+  "terminals": ["s001", "s002", "s003", "s004", "s005", "s006", "s007", "s009", "s010", "s012", "s013", "s014", "s015"],
+  "server_status": {
+    "8000": "online",
+    "8001": "offline",
+    "8002": "online",
+    "8009": "online",
+    "8010": "online",
+    "8025": "online"
+  },
+  "dashboards": {
+    "simple": {
+      "port": 8030,
+      "status": "running",
+      "url": "http://localhost:8030"
+    },
+    "visual": {
+      "port": 8031,
+      "status": "running",
+      "url": "http://localhost:8031"
+    }
+  },
+  "git_changes": 26,
+  "metadata": {
+    "description": "Single Source of Truth for Claude Code Multi-Session Coordination",
+    "update_frequency": "Every 5 seconds",
+    "primary_source": true,
+    "verified": true
+  }
+}

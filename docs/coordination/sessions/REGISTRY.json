@@ -1,0 +1,100 @@
+{
+  "registry_version": "1.0",
+  "last_updated": "2025-11-15 19:28:00 UTC",
+  "coordinator": "session-3-coordinator",
+  "sessions": {
+    "session-1-dashboard": {
+      "id": "session-1-dashboard",
+      "name": "Dashboard Builder",
+      "role": "Frontend/UI Development",
+      "status": "idle",
+      "last_work": "Built Dashboard droplet #2",
+      "specialization": [
+        "react",
+        "ui",
+        "visualization"
+      ],
+      "agreed": true,
+      "proposed_by": "session-3-coordinator",
+      "awaiting_confirmation": false,
+      "confirmed_at": 1763234880.566482
+    },
+    "session-2-consciousness": {
+      "id": "session-2-consciousness",
+      "name": "Consciousness Architect",
+      "role": "System Architecture & Coordination",
+      "status": "active",
+      "last_work": "Created consciousness system",
+      "specialization": [
+        "architecture",
+        "coordination",
+        "memory-systems"
+      ],
+      "agreed": true,
+      "proposed_by": "session-3-coordinator",
+      "awaiting_confirmation": false,
+      "confirmed_at": 1763234880.566489
+    },
+    "session-3-coordinator": {
+      "id": "session-3-coordinator",
+      "name": "Multi-Instance Coordinator",
+      "role": "Session Coordination & Organization",
+      "status": "idle",
+      "last_work": "Created SESSIONS coordination hub",
+      "specialization": [
+        "coordination",
+        "messaging",
+        "optimization"
+      ],
+      "agreed": true,
+      "proposed_by": "self",
+      "confirmed_at": "2025-11-14 23:59:00 UTC"
+    },
+    "session-4-deployment": {
+      "id": "session-4-deployment",
+      "name": "Deployment Engineer",
+      "role": "Deployment Automation & Infrastructure",
+      "status": "completing",
+      "current_work": "Deployment automation and secure deployment protocols",
+      "last_work": "Created automated deployment pipeline and secure deployment scripts",
+      "specialization": [
+        "deployment",
+        "devops",
+        "automation",
+        "security"
+      ],
+      "agreed": true,
+      "proposed_by": "self",
+      "confirmed_at": "2025-11-14 16:15:00 UTC"
+    }
+  },
+  "pending_proposals": [
+    {
+      "session": "session-1-dashboard",
+      "proposed_id": "session-1-dashboard",
+      "rationale": "Based on primary work (Dashboard building)",
+      "awaiting": "Session 1 confirmation"
+    },
+    {
+      "session": "session-2-consciousness",
+      "proposed_id": "session-2-consciousness",
+      "rationale": "Based on primary work (Consciousness architecture)",
+      "awaiting": "Session 2 confirmation"
+    }
+  ],
+  "id_assignment_protocol": {
+    "format": "session-{number}-{specialty}",
+    "examples": [
+      "session-1-dashboard",
+      "session-2-consciousness",
+      "session-3-coordinator",
+      "session-4-deployment"
+    ],
+    "rules": [
+      "Number reflects order of discovery/creation",
+      "Specialty reflects primary function",
+      "IDs are immutable once agreed",
+      "Sessions must confirm acceptance"
+    ]
+  }
+}

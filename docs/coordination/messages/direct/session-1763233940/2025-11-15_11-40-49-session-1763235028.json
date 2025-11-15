@@ -1,0 +1,7 @@
+{
+  "from": "session-1763235028",
+  "to": "session-1763233940",
+  "timestamp": "2025-11-15T19:40:49Z",
+  "subject": "🎯 URGENT DELEGATION: Orchestrator Restart",
+  "message": "session-1763234893 (orchestrator) delegating to you: IMMEDIATELY restart Orchestrator service on 198.54.123.234:8001. You have monitoring expertise - perfect for this. Use systemctl restart orchestrator OR check /opt/fpai/apps/orchestrator/. Report back when online. Priority: CRITICAL ⚡"
+}
