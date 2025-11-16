@@ -10,6 +10,8 @@ from pathlib import Path
 
 from .models import SOLDeposit, POTSpending, LiquidationEvent
 from .treasury import treasury
+from .integrations import integrations
+from .solana_integration import solana_wallet
 
 app = FastAPI(
     title="SOL Treasury SSOT",
@@ -338,6 +340,41 @@ async def record_liquidation(liquidation: LiquidationEvent):
     """Record SOL liquidation event"""
     treasury.record_liquidation(liquidation)
     return {"status": "success", "liquidation_id": liquidation.id}
+
+
+@app.get("/api/treasury/integrated")
+async def get_integrated_treasury():
+    """Get integrated treasury data from Arena + Manager"""
+    return await integrations.get_combined_metrics()
+
+
+@app.get("/api/treasury/growth")
+async def get_growth_metrics():
+    """Get real growth rate from treasury services"""
+    return await integrations.calculate_growth_rate()
+
+
+@app.get("/api/solana/info")
+async def get_solana_info():
+    """Get Solana wallet and deposit information"""
+    return solana_wallet.get_treasury_info()
+
+
+@app.post("/api/solana/deposit")
+async def process_sol_deposit(
+    user_id: str,
+    sol_amount: float,
+    signature: str = None
+):
+    """Process SOL deposit and issue POT tokens"""
+    return await solana_wallet.process_deposit(user_id, sol_amount, signature)
+
+
+@app.get("/api/solana/price")
+async def get_sol_price():
+    """Get current SOL price from oracle"""
+    price = await solana_wallet.get_sol_price()
+    return {"sol_price_usd": price, "source": "jupiter_aggregator"}
 
 
 @app.get("/health")
