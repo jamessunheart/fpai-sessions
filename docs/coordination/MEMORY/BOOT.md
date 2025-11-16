@@ -3,7 +3,7 @@
 **READ THIS FIRST when starting a new Claude Code session**
 
 Last Updated: 2025-11-16
-Version: 2.1 - Credential Vault Protocol Added to Boot Sequence (CRITICAL)
+Version: 2.2 - Credential Vault Enhanced Security (5-Star Rating)
 Status: OPERATIONAL
 
 ---
@@ -223,21 +223,36 @@ cat ../SSOT.json | python3 -m json.tool | head -100
 
 **This tracks what you're building**
 
-### 3. Credential Vault Protocol ⭐ CRITICAL
+### 3. Credential Vault Protocol ⭐ CRITICAL (Enhanced v2.0)
 **Files:**
+- `docs/coordination/VAULT_SECURITY_ENHANCED.md` (Security Features Guide - NEW!)
 - `docs/coordination/VAULT_ACCESS_FOR_SESSIONS.md` (Complete Guide)
 - `docs/coordination/VAULT_QUICK_REFERENCE.md` (Quick Reference)
+
+**🔒 NEW: Enhanced Security Features**
+- ✅ Audit logging (track who accessed what when)
+- ✅ Automatic encrypted backups (last 10 kept)
+- ✅ Access monitoring (timestamps, session tracking)
+- ✅ File integrity monitoring (SHA-256 hashing)
+- ⭐ Security Rating: 5/5 for development environment
 
 **🔑 STEP 1: Get Master Key from User (ONCE per session)**
 ```bash
 # Ask user for this ONCE at session start:
 export FPAI_CREDENTIALS_KEY="0090050b4ac419b69bfd0b7763d861fd11619255f672b4122c34b97abe12d63f"
+export CLAUDE_SESSION_ID="session-X"  # For audit trail
 ```
 
 **📋 STEP 2: Check what's in vault (BEFORE asking user for anything)**
 ```bash
 cd /Users/jamessunheart/Development/docs/coordination/scripts
+
+# Using wrapper scripts (original - still works)
 ./session-list-credentials.sh
+
+# OR using enhanced vault (NEW - with stats)
+python3 credential_vault_enhanced.py stats
+python3 credential_vault_enhanced.py list
 ```
 
 **📥 STEP 3: Retrieve credentials from vault**
@@ -269,11 +284,21 @@ export STRIPE_PUBLISHABLE_KEY=$(./session-get-credential.sh STRIPE_PUBLISHABLE_K
 ./session-send-message.sh "broadcast" "Credential Added" "sendgrid_api_key now in vault" "normal"
 ```
 
+**📊 STEP 6 (NEW): Monitor vault security**
+```bash
+# View vault statistics (backups, last modified, etc.)
+python3 credential_vault_enhanced.py stats
+
+# View audit log (who accessed what when)
+python3 credential_vault_enhanced.py audit 50
+```
+
 **⚠️ CRITICAL RULES:**
 - ✅ **ALWAYS check vault FIRST** before asking user for credentials
 - ✅ **SAVE to vault** when user provides new credentials
 - ✅ **NEVER ask user twice** for same credential
 - ✅ **ALL sessions share same vault** (read/write access)
+- ✅ **SET CLAUDE_SESSION_ID** for audit trail
 - ✅ **10 credentials already available** (see list below)
 
 **Currently in Vault (as of 2025-11-16):**
@@ -302,7 +327,58 @@ export STRIPE_PUBLISHABLE_KEY=$(./session-get-credential.sh STRIPE_PUBLISHABLE_K
 ./scripts/session-check-messages.sh
 ```
 
-### 5. Service Automation Protocol ⭐ NEW
+### 5. Resource SSOT Update Protocol ⭐ CRITICAL
+**Files to update:** `CAPITAL_VISION_SSOT.md` + `BOOT.md Step 1`
+
+**WHEN to update:**
+- Capital changes (new positions, P&L updates, treasury deployment)
+- Revenue milestones reached (first match, $1K MRR, etc.)
+- Phase transitions (Phase 1 → Phase 2, etc.)
+- Major strategic decisions (treasury vote, new categories, etc.)
+- Operating costs change (new services, API usage spikes)
+
+**HOW to update (4-step protocol):**
+
+```bash
+# Step 1: Update the SSOT file
+cd /Users/jamessunheart/Development
+# Edit docs/coordination/CAPITAL_VISION_SSOT.md with new data
+
+# Step 2: Update BOOT.md Step 1 (if present resources changed)
+# Edit docs/coordination/MEMORY/BOOT.md lines 23-47 (PRESENT RESOURCES section)
+
+# Step 3: Sync everywhere (Local → GitHub → Server)
+git add docs/coordination/CAPITAL_VISION_SSOT.md docs/coordination/MEMORY/BOOT.md
+git commit -m "Update resource SSOT: [what changed]"
+git push
+
+# Upload to server
+scp docs/coordination/CAPITAL_VISION_SSOT.md root@198.54.123.234:/opt/fpai/docs/coordination/
+scp docs/coordination/MEMORY/BOOT.md root@198.54.123.234:/opt/fpai/docs/coordination/MEMORY/
+
+# Step 4: Notify all sessions
+cd docs/coordination/scripts
+./session-send-message.sh "broadcast" "Resource SSOT Updated" \
+  "Updated CAPITAL_VISION_SSOT.md: [what changed]. All sessions: reread BOOT.md Step 1 for latest resources." \
+  "high"
+```
+
+**What to update in CAPITAL_VISION_SSOT.md:**
+- Line 4: Last Updated timestamp
+- Lines 13-30: Current capital, positions, P&L
+- Lines 32-37: Operating costs, AI consumption
+- Lines 39-45: Revenue projections (update as we hit milestones)
+- Lines 109-130: Phase 1 milestones (check boxes as we progress)
+- Lines 257-279: Success Dashboard metrics
+
+**What to update in BOOT.md Step 1:**
+- Lines 25-34: Capital breakdown (if changed)
+- Lines 36-40: Operating costs (if changed)
+- Lines 42-45: Current revenue (if changed)
+
+**CRITICAL:** After updating, all sessions who run `cat docs/coordination/MEMORY/BOOT.md` will see the new data immediately!
+
+### 6. Service Automation Protocol ⭐ NEW
 **File:** `docs/coordination/scripts/SERVICE_AUTOMATION_README.md`
 
 **CRITICAL: All services MUST be uniform across Local → GitHub → Server**
@@ -461,6 +537,11 @@ export STRIPE_PUBLISHABLE_KEY=$(./session-get-credential.sh STRIPE_PUBLISHABLE_K
 
 ## ✅ CHECKLIST - Complete Before Starting Work
 
+- [ ] **Read BOOT.md Step 1 - Resource SSOT (MOST CRITICAL!)**
+  - [ ] Know current capital: $373K (spot + leveraged positions)
+  - [ ] Know future vision: $5.21T TAM, 10-year path
+  - [ ] Know the gap: Deploy → Build → Prove → Scale
+  - [ ] Know the dashboard: https://fullpotential.com/dashboard/money
 - [ ] Read this BOOT.md file completely
 - [ ] **🔐 Set up credential vault access (CRITICAL):**
   - [ ] Got master key from user: `export FPAI_CREDENTIALS_KEY="..."`

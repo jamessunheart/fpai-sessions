@@ -328,7 +328,99 @@ Every new paradigm started with people who saw what could be.
 
 ---
 
+---
+
+## 📝 HOW TO UPDATE THIS SSOT
+
+**This file MUST be kept current so all sessions see accurate resources.**
+
+### WHEN to update:
+- ✅ Capital changes (treasury deployment, new positions, P&L shifts)
+- ✅ Revenue milestones (first match, $1K MRR, new categories)
+- ✅ Operating costs change (new services, API consumption)
+- ✅ Phase transitions (Phase 1 → 2, milestones reached)
+- ✅ Strategic decisions (treasury votes, major pivots)
+
+### HOW to update (4 steps):
+
+**Step 1: Edit this file**
+```bash
+# Update the relevant sections:
+- Line 4: Last Updated timestamp (YYYY-MM-DD HH:MM UTC)
+- Lines 13-30: Current Resources (capital, positions, P&L)
+- Lines 32-37: Operating Costs (AI consumption, servers, etc.)
+- Lines 39-51: Revenue projections (update as we hit milestones)
+- Lines 109-130: Phase 1 Milestones (check boxes)
+- Lines 257-279: Success Dashboard (current metrics)
+```
+
+**Step 2: Update BOOT.md Step 1 (if PRESENT resources changed)**
+```bash
+# Edit docs/coordination/MEMORY/BOOT.md
+# Lines 25-47: PRESENT RESOURCES section
+# Keep in sync with this file's current snapshot
+```
+
+**Step 3: Sync everywhere**
+```bash
+cd /Users/jamessunheart/Development
+
+# Commit to git
+git add docs/coordination/CAPITAL_VISION_SSOT.md docs/coordination/MEMORY/BOOT.md
+git commit -m "Update resource SSOT: [describe what changed]
+
+Updated:
+- Capital: [new amount if changed]
+- Revenue: [new MRR if changed]
+- Milestones: [which ones completed]
+
+🌐⚡💎 Generated with Claude Code
+Co-Authored-By: Claude <noreply@anthropic.com>"
+git push
+
+# Upload to server
+scp docs/coordination/CAPITAL_VISION_SSOT.md root@198.54.123.234:/opt/fpai/docs/coordination/
+scp docs/coordination/MEMORY/BOOT.md root@198.54.123.234:/opt/fpai/docs/coordination/MEMORY/
+```
+
+**Step 4: Notify all sessions**
+```bash
+cd docs/coordination/scripts
+./session-send-message.sh "broadcast" "📊 Resource SSOT Updated" \
+  "CAPITAL_VISION_SSOT.md updated: [what changed]. All sessions should reread BOOT.md Step 1 to see latest resources." \
+  "high"
+```
+
+### UPDATE EXAMPLES:
+
+**Example 1: Treasury deployed**
+```
+Updated Lines:
+- 13: Capital: $373,261 → $373,261 (redeployed to strategy)
+- 22-24: Leveraged Positions: CLOSED (moved to DeFi)
+- 47-51: Treasury Yield: $0 → $2,500/month (DeFi earnings)
+- 119: Milestone checked: ✅ Deploy $342K to strategy
+```
+
+**Example 2: First 10 matches achieved**
+```
+Updated Lines:
+- 42: Revenue: $0 → $500 (10 matches * $50 avg)
+- 260-262: Matches: 0 → 10, This Month: 10/10 ✅
+- 111: Milestone checked: ✅ Month 1: 10 matches
+```
+
+**Example 3: AI consumption increased**
+```
+Updated Lines:
+- 36: Claude API: $0.18 → $1.50 (20+ new sessions)
+- 38: Monthly burn rate: $5-10 → $10-15
+```
+
+---
+
 **Auto-updated by:** All sessions after completing work
 **Next update:** When treasury deployed OR first 10 matches achieved
+**Update protocol:** See "HOW TO UPDATE THIS SSOT" section above
 **Questions?** Read TREASURY_TRILLION_DOLLAR_VISION.md or check dashboard
 **Ready?** Vote on treasury deployment, execute Phase 1, prove the model
