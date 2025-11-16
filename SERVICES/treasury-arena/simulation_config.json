@@ -1,0 +1,25 @@
+{
+  "simulation": {
+    "start_date": "2024-01-01",
+    "end_date": "2024-06-30",
+    "time_multiplier": 10.0
+  },
+  "agents": {
+    "initial_count": 20,
+    "initial_capital": 10000,
+    "spawn_per_cycle": 5,
+    "kill_bottom_percent": 0.3
+  },
+  "evolution": {
+    "frequency_days": 7,
+    "mutation_rate": 0.2
+  },
+  "data_sources": {
+    "assets": ["BTC", "SOL", "ETH", "USDC"],
+    "protocols": ["aave", "pendle", "curve", "compound"]
+  },
+  "performance": {
+    "cache_data": true,
+    "db_path": "simulation_data.db"
+  }
+}
