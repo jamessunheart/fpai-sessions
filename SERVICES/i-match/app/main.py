@@ -145,6 +145,14 @@ async def success_page():
         return FileResponse(success_file)
     raise HTTPException(status_code=404, detail="Success page not found")
 
+@app.get("/support")
+async def support_page():
+    """Serve fundraising campaign page"""
+    support_file = os.path.join(static_dir, "support.html")
+    if os.path.exists(support_file):
+        return FileResponse(support_file)
+    raise HTTPException(status_code=404, detail="Support page not found")
+
 
 # === UBIC COMPLIANCE ENDPOINTS ===
 
@@ -313,6 +321,75 @@ async def create_checkout_session():
         return {"id": checkout_session.id}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
+class SubscriptionRequest(BaseModel):
+    amount: int  # Monthly amount in dollars
+    interval: str = "month"
+
+
+@app.post("/api/create-subscription")
+async def create_subscription(request: SubscriptionRequest):
+    """Create Stripe checkout session for monthly subscription"""
+    try:
+        # Amount must be at least $5
+        if request.amount < 5:
+            raise HTTPException(status_code=400, detail="Minimum subscription is $5/month")
+
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[{
+                'price_data': {
+                    'currency': 'usd',
+                    'unit_amount': request.amount * 100,  # Convert to cents
+                    'product_data': {
+                        'name': f'Full Potential AI Support - ${request.amount}/month',
+                        'description': f'Monthly support + {request.amount} CORA tokens',
+                    },
+                    'recurring': {
+                        'interval': request.interval,
+                    },
+                },
+                'quantity': 1,
+            }],
+            mode='subscription',
+            success_url='http://198.54.123.234:8401/success?session_id={CHECKOUT_SESSION_ID}',
+            cancel_url='http://198.54.123.234:8401/support',
+        )
+        return {"id": checkout_session.id}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.get("/api/fundraising-progress")
+async def fundraising_progress():
+    """Get current fundraising campaign progress"""
+    # TODO: This should query actual subscription data from Stripe
+    # For now, returning mock data
+
+    total_raised = 0  # Sum of all active monthly subscriptions
+    supporter_count = 0  # Number of active subscribers
+    goal = 5000  # Week 1 goal
+
+    # Calculate days remaining (Week 1 = 7 days from launch)
+    # TODO: Track campaign start date
+    days_remaining = 7
+
+    return {
+        "total_raised": total_raised,
+        "supporter_count": supporter_count,
+        "goal": goal,
+        "percentage": (total_raised / goal * 100) if goal > 0 else 0,
+        "days_remaining": days_remaining,
+        "milestones": {
+            "1000": total_raised >= 1000,
+            "2500": total_raised >= 2500,
+            "4000": total_raised >= 4000,
+            "5000": total_raised >= 5000,
+        }
+    }
 
 
 # === CUSTOMER ENDPOINTS ===

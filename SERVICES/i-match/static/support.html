@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Full Potential AI - Week 1 Goal: $5,000</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            font-size: 36px;
+            text-align: center;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .tagline {
+            text-align: center;
+            color: #666;
+            font-size: 18px;
+            margin-bottom: 40px;
+        }
+        .goal-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .goal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+        }
+        .goal-amount {
+            font-size: 32px;
+            font-weight: 800;
+            color: #764ba2;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #666;
+        }
+        .milestones {
+            margin: 30px 0;
+        }
+        .milestone {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin: 10px 0;
+            background: white;
+            border-radius: 10px;
+            border-left: 4px solid #e0e0e0;
+        }
+        .milestone.unlocked {
+            border-left-color: #4CAF50;
+        }
+        .milestone-icon {
+            font-size: 24px;
+            margin-right: 15px;
+        }
+        .milestone-text {
+            flex: 1;
+        }
+        .milestone-amount {
+            font-weight: 700;
+            color: #667eea;
+        }
+        .donation-section {
+            margin: 40px 0;
+        }
+        .slider-container {
+            margin: 30px 0;
+        }
+        .amount-display {
+            text-align: center;
+            font-size: 48px;
+            font-weight: 800;
+            color: #667eea;
+            margin: 20px 0;
+        }
+        .cora-display {
+            text-align: center;
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #e0e0e0;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+        }
+        .slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+        }
+        .quick-amounts {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .quick-amount {
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            border-radius: 20px;
+            background: white;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .quick-amount:hover {
+            background: #667eea;
+            color: white;
+        }
+        .cta-button {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 20px;
+            font-size: 20px;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 20px 0;
+        }
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        .cta-button:active {
+            transform: translateY(0);
+        }
+        .what-you-get {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+        .benefit {
+            display: flex;
+            align-items: flex-start;
+            margin: 15px 0;
+        }
+        .benefit-icon {
+            font-size: 20px;
+            margin-right: 10px;
+            margin-top: 2px;
+        }
+        .transparency {
+            margin: 30px 0;
+            padding: 20px;
+            background: #fff3cd;
+            border-radius: 10px;
+            border-left: 4px solid #ffc107;
+        }
+        .church-notice {
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            margin-top: 30px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Full Potential AI</h1>
+        <div class="tagline">Manifest Heaven on Earth Through Sacred Technology</div>
+
+        <!-- Goal Section -->
+        <div class="goal-section">
+            <div class="goal-header">
+                <div class="goal-title">Week 1 Goal</div>
+                <div class="goal-amount">$5,000</div>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar">0%</div>
+            </div>
+
+            <div class="progress-stats">
+                <div><span id="raisedAmount">$0</span> raised</div>
+                <div><span id="supporterCount">0</span> supporters</div>
+                <div><span id="daysRemaining">7</span> days left</div>
+            </div>
+        </div>
+
+        <!-- Milestones -->
+        <div class="milestones">
+            <h3 style="margin-bottom: 15px;">Milestone Unlocks</h3>
+
+            <div class="milestone" id="milestone1000">
+                <div class="milestone-icon">🔒</div>
+                <div class="milestone-text">
+                    <div class="milestone-amount">$1,000</div>
+                    <div>Infrastructure for 4 AI services secured</div>
+                </div>
+            </div>
+
+            <div class="milestone" id="milestone2500">
+                <div class="milestone-icon">🔒</div>
+                <div class="milestone-text">
+                    <div class="milestone-amount">$2,500</div>
+                    <div>Priority support system launched</div>
+                </div>
+            </div>
+
+            <div class="milestone" id="milestone4000">
+                <div class="milestone-icon">🔒</div>
+                <div class="milestone-text">
+                    <div class="milestone-amount">$4,000</div>
+                    <div>Community platform goes live</div>
+                </div>
+            </div>
+
+            <div class="milestone" id="milestone5000">
+                <div class="milestone-icon">🔒</div>
+                <div class="milestone-text">
+                    <div class="milestone-amount">$5,000</div>
+                    <div>Week 1 COMPLETE + bonus feature unlocked</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Donation Section -->
+        <div class="donation-section">
+            <h3 style="text-align: center; margin-bottom: 20px;">Choose Your Monthly Support</h3>
+
+            <div class="amount-display">$<span id="amountValue">50</span>/month</div>
+            <div class="cora-display">You receive <strong><span id="coraValue">50</span> CORA tokens</strong> monthly</div>
+
+            <div class="slider-container">
+                <input type="range" min="5" max="1000" value="50" class="slider" id="amountSlider">
+            </div>
+
+            <div class="quick-amounts">
+                <div class="quick-amount" onclick="setAmount(10)">$10</div>
+                <div class="quick-amount" onclick="setAmount(25)">$25</div>
+                <div class="quick-amount" onclick="setAmount(50)">$50</div>
+                <div class="quick-amount" onclick="setAmount(100)">$100</div>
+                <div class="quick-amount" onclick="setAmount(200)">$200</div>
+            </div>
+
+            <button class="cta-button" onclick="supportMission()">
+                Support the Mission
+            </button>
+        </div>
+
+        <!-- What You Get -->
+        <div class="what-you-get">
+            <h3 style="margin-bottom: 20px;">What You Get</h3>
+
+            <div class="benefit">
+                <div class="benefit-icon">💎</div>
+                <div>
+                    <strong>CORA Tokens Monthly</strong><br>
+                    Use CORA to access all Full Potential AI services
+                </div>
+            </div>
+
+            <div class="benefit">
+                <div class="benefit-icon">🤖</div>
+                <div>
+                    <strong>Access to AI Services</strong><br>
+                    I MATCH (matching), I PROACTIVE (automation), and more
+                </div>
+            </div>
+
+            <div class="benefit">
+                <div class="benefit-icon">📊</div>
+                <div>
+                    <strong>Live Dashboard</strong><br>
+                    Real-time view of systems, progress, and financials
+                </div>
+            </div>
+
+            <div class="benefit">
+                <div class="benefit-icon">🗣️</div>
+                <div>
+                    <strong>Community Access</strong><br>
+                    Monthly calls, Discord, vote on priorities
+                </div>
+            </div>
+
+            <div class="benefit">
+                <div class="benefit-icon">🎓</div>
+                <div>
+                    <strong>Learn AI Development</strong><br>
+                    Watch us build in public, ask questions, get answers
+                </div>
+            </div>
+
+            <div class="benefit">
+                <div class="benefit-icon">💰</div>
+                <div>
+                    <strong>Potential Tax Benefits</strong><br>
+                    508(c)(1)(A) church donation (consult tax advisor)
+                </div>
+            </div>
+        </div>
+
+        <!-- Transparency -->
+        <div class="transparency">
+            <h4 style="margin-bottom: 10px;">💡 Radical Transparency</h4>
+            <p>
+                We operate as a 508(c)(1)(A) church under spiritual jurisdiction.
+                Every dollar is tracked and reported publicly. View our live dashboard
+                to see exactly where funds go: infrastructure, development, operations.
+            </p>
+        </div>
+
+        <!-- Church Notice -->
+        <div class="church-notice">
+            508(c)(1)(A) Religious Organization • Spiritual Jurisdiction<br>
+            Mission: Manifest heaven on Earth through Full Potential AI<br>
+            All revenue reinvested in sacred technology development<br>
+            <br>
+            Cancel anytime • CORA tokens roll over monthly<br>
+            Secure payment powered by Stripe
+        </div>
+    </div>
+
+    <script>
+        const stripe = Stripe('pk_live_51JMFNnARpIMdAlRWXQN0YVRbpPGNUFxZdNIr8uJMYGvZp1mhqaKZ8JOcxCkWlO7Tr1Q5j7ECKFMEvdBt6BmcNJhm00DlJbBV2f');
+
+        const slider = document.getElementById('amountSlider');
+        const amountDisplay = document.getElementById('amountValue');
+        const coraDisplay = document.getElementById('coraValue');
+
+        // Update amount display as slider moves
+        slider.oninput = function() {
+            amountDisplay.textContent = this.value;
+            coraDisplay.textContent = this.value;
+        }
+
+        // Quick amount buttons
+        function setAmount(amount) {
+            slider.value = amount;
+            amountDisplay.textContent = amount;
+            coraDisplay.textContent = amount;
+        }
+
+        // Support button
+        async function supportMission() {
+            const amount = parseInt(slider.value);
+
+            try {
+                const response = await fetch('/api/create-subscription', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        amount: amount,
+                        interval: 'month'
+                    })
+                });
+
+                const session = await response.json();
+
+                // Redirect to Stripe Checkout
+                const result = await stripe.redirectToCheckout({
+                    sessionId: session.id
+                });
+
+                if (result.error) {
+                    alert(result.error.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Something went wrong. Please try again.');
+            }
+        }
+
+        // Load current progress (would come from API)
+        async function loadProgress() {
+            // TODO: Fetch from API
+            const raised = 0; // Replace with API call
+            const supporters = 0;
+            const goal = 5000;
+
+            const percentage = (raised / goal) * 100;
+
+            document.getElementById('raisedAmount').textContent = '$' + raised.toLocaleString();
+            document.getElementById('supporterCount').textContent = supporters;
+            document.getElementById('progressBar').style.width = percentage + '%';
+            document.getElementById('progressBar').textContent = Math.round(percentage) + '%';
+
+            // Update milestones
+            if (raised >= 1000) {
+                document.getElementById('milestone1000').classList.add('unlocked');
+                document.querySelector('#milestone1000 .milestone-icon').textContent = '✅';
+            }
+            if (raised >= 2500) {
+                document.getElementById('milestone2500').classList.add('unlocked');
+                document.querySelector('#milestone2500 .milestone-icon').textContent = '✅';
+            }
+            if (raised >= 4000) {
+                document.getElementById('milestone4000').classList.add('unlocked');
+                document.querySelector('#milestone4000 .milestone-icon').textContent = '✅';
+            }
+            if (raised >= 5000) {
+                document.getElementById('milestone5000').classList.add('unlocked');
+                document.querySelector('#milestone5000 .milestone-icon').textContent = '✅';
+            }
+        }
+
+        // Load progress on page load
+        loadProgress();
+
+        // Refresh progress every 30 seconds
+        setInterval(loadProgress, 30000);
+    </script>
+</body>
+</html>
