@@ -7,15 +7,28 @@ The Arena Manager is the core evolutionary engine that:
 - Allocates capital dynamically
 - Kills underperformers
 - Mutates successful strategies
+- Event sourcing for complete audit trail
 """
 
 import random
 import logging
-from typing import List, Dict, Optional
+import sqlite3
+import json
+import threading
+from typing import List, Dict, Optional, Tuple
 from datetime import datetime
 import numpy as np
 
 from .agent import TreasuryAgent, DeFiYieldFarmer, TacticalTrader
+from .events import (
+    AgentSpawned, AgentKilled, CapitalAllocated, AgentGraduated,
+    AgentMutated, EvolutionCycleComplete, CapitalConservationCheck,
+    AllocationError as AllocationErrorEvent, deserialize_event
+)
+from .exceptions import (
+    AllocationError, CapitalConservationError, ValidationError,
+    AgentError, EvolutionError, EventSourcingError
+)
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +36,7 @@ logger = logging.getLogger(__name__)
 class ArenaManager:
     """Manages the treasury arena and all competing agents"""
 
-    def __init__(self, total_capital: float = 373261):
+    def __init__(self, total_capital: float = 373261, db_path: str = "treasury_arena.db"):
         self.total_capital = total_capital
         self.stable_reserve = total_capital * 0.437  # 43.7% stable reserve
         self.arena_capital = total_capital * 0.536  # 53.6% active management
@@ -45,7 +58,77 @@ class ArenaManager:
         # Performance tracking
         self.arena_history = []
 
+        # Event sourcing database
+        self.db_path = db_path
+        self.db_conn = sqlite3.connect(db_path, check_same_thread=False)
+        self.db_conn.row_factory = sqlite3.Row
+        self._init_event_database()
+
+        # Thread safety for capital allocation
+        self.allocation_lock = threading.Lock()
+
         logger.info(f"Arena initialized with ${total_capital:,.0f} total capital")
+
+    def _init_event_database(self):
+        """Initialize event sourcing database tables"""
+        cursor = self.db_conn.cursor()
+
+        # Create events table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS events (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                event_id TEXT UNIQUE NOT NULL,
+                event_type TEXT NOT NULL,
+                agent_id TEXT,
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                data JSON NOT NULL,
+                caused_by TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_events_type ON events(event_type)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_events_agent ON events(agent_id)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_events_timestamp ON events(timestamp)")
+
+        # Create arena_state table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS arena_state (
+                id INTEGER PRIMARY KEY,
+                total_capital REAL NOT NULL,
+                stable_reserve REAL NOT NULL,
+                arena_capital REAL NOT NULL,
+                allocated_capital REAL NOT NULL,
+                available_capital REAL NOT NULL,
+                agents_active INTEGER NOT NULL,
+                agents_proving INTEGER NOT NULL,
+                agents_simulating INTEGER NOT NULL,
+                agents_dead INTEGER NOT NULL,
+                last_evolution_cycle TIMESTAMP,
+                last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
+        # Create capital_ledger table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS capital_ledger (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                event_id TEXT NOT NULL,
+                agent_id TEXT,
+                old_capital REAL NOT NULL,
+                new_capital REAL NOT NULL,
+                delta REAL NOT NULL,
+                reason TEXT NOT NULL,
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (event_id) REFERENCES events(event_id)
+            )
+        """)
+
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_ledger_agent ON capital_ledger(agent_id)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_ledger_timestamp ON capital_ledger(timestamp)")
+
+        self.db_conn.commit()
+        logger.info("Event sourcing database initialized")
 
     def spawn_agent(
         self,
@@ -73,6 +156,15 @@ class ArenaManager:
 
         # Add to simulation layer
         self.simulation_agents.append(agent)
+
+        # Emit AgentSpawned event
+        event = AgentSpawned.create(
+            agent_id=agent.id,
+            strategy=strategy_type,
+            virtual_capital=virtual_capital,
+            params=params or {}
+        )
+        self.emit_event(event)
 
         logger.info(f"Agent {agent.id} spawned: {strategy_type} with ${virtual_capital:,.0f} virtual capital")
 
@@ -404,6 +496,168 @@ class ArenaManager:
         except Exception as e:
             logger.error(f"Evolution cycle failed: {str(e)}", exc_info=True)
             return False, e
+
+    def emit_event(self, event) -> str:
+        """
+        Emit event to event log.
+
+        Args:
+            event: Event object to emit
+
+        Returns:
+            event_id (UUID)
+        """
+        try:
+            cursor = self.db_conn.cursor()
+            event_dict = event.to_dict()
+
+            cursor.execute("""
+                INSERT INTO events (event_id, event_type, agent_id, timestamp, data, caused_by)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (
+                event_dict['event_id'],
+                event_dict['event_type'],
+                event_dict['agent_id'],
+                event_dict['timestamp'],
+                event_dict['data'],
+                event_dict.get('caused_by')
+            ))
+
+            self.db_conn.commit()
+
+            logger.info(
+                f"Event emitted: {event.event_type}",
+                extra={'event_id': event.event_id, 'agent_id': event.agent_id}
+            )
+
+            return event.event_id
+
+        except Exception as e:
+            logger.error(f"Failed to emit event: {str(e)}")
+            raise EventSourcingError(f"Event emission failed: {str(e)}")
+
+    def verify_capital_conservation(self) -> Tuple[bool, float]:
+        """
+        Verify that total capital is conserved.
+
+        Returns:
+            Tuple of (conserved, discrepancy)
+        """
+        # Calculate allocated capital
+        allocated = sum(a.real_capital for a in self.active_agents)
+        allocated += sum(a.real_capital for a in self.proving_agents)
+
+        # Total should equal arena + proving
+        expected = self.arena_capital + self.proving_capital
+        actual = allocated
+
+        discrepancy = abs(actual - expected)
+        conserved = discrepancy < 0.01  # Allow 1 cent tolerance
+
+        # Emit conservation check event
+        event = CapitalConservationCheck.create(
+            total_capital=self.total_capital,
+            allocated_capital=actual,
+            conserved=conserved,
+            discrepancy=discrepancy
+        )
+        self.emit_event(event)
+
+        if not conserved:
+            logger.warning(
+                f"Capital conservation violated: expected ${expected:,.2f}, actual ${actual:,.2f}, "
+                f"discrepancy ${discrepancy:,.2f}"
+            )
+
+        return conserved, discrepancy
+
+    def replay_events(
+        self,
+        start_time: Optional[datetime] = None,
+        end_time: Optional[datetime] = None,
+        event_type: Optional[str] = None
+    ) -> List[Dict]:
+        """
+        Replay events for audit.
+
+        Args:
+            start_time: Start of time range
+            end_time: End of time range
+            event_type: Filter by event type
+
+        Returns:
+            List of events
+        """
+        cursor = self.db_conn.cursor()
+
+        query = "SELECT * FROM events WHERE 1=1"
+        params = []
+
+        if start_time:
+            query += " AND timestamp >= ?"
+            params.append(start_time.isoformat())
+
+        if end_time:
+            query += " AND timestamp <= ?"
+            params.append(end_time.isoformat())
+
+        if event_type:
+            query += " AND event_type = ?"
+            params.append(event_type)
+
+        query += " ORDER BY timestamp ASC"
+
+        cursor.execute(query, params)
+        rows = cursor.fetchall()
+
+        events = []
+        for row in rows:
+            event_dict = dict(row)
+            events.append(event_dict)
+
+        logger.info(f"Replayed {len(events)} events")
+        return events
+
+    def get_capital_allocation_breakdown(self) -> Dict:
+        """
+        Get detailed breakdown of capital allocation.
+
+        Returns:
+            Dictionary with allocation details
+        """
+        # By tier
+        elite_capital = sum(
+            a.real_capital for a in self.active_agents if a.tier == 'elite'
+        )
+        active_capital = sum(
+            a.real_capital for a in self.active_agents if a.tier == 'active'
+        )
+        challenger_capital = sum(
+            a.real_capital for a in self.active_agents if a.tier == 'challenger'
+        )
+
+        # By agent
+        by_agent = {
+            agent.id: agent.real_capital
+            for agent in self.active_agents
+        }
+
+        # Total allocated
+        total_allocated = elite_capital + active_capital + challenger_capital
+
+        return {
+            'total': self.total_capital,
+            'stable_reserve': self.stable_reserve,
+            'arena_capital': self.arena_capital,
+            'allocated': total_allocated,
+            'available': self.arena_capital - total_allocated,
+            'by_tier': {
+                'elite': elite_capital,
+                'active': active_capital,
+                'challenger': challenger_capital
+            },
+            'by_agent': by_agent
+        }
 
     def get_arena_stats(self) -> Dict:
         """Get current arena statistics"""
