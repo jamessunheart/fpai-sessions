@@ -64,6 +64,55 @@ class TreasuryAgent:
         # This is a base implementation - subclasses override this
         raise NotImplementedError("Subclasses must implement execute_strategy")
 
+    def safe_execute(self, market_data: Dict) -> tuple[List[Dict], Optional[Exception]]:
+        """
+        Execute strategy with error isolation.
+
+        Wraps execute_strategy() in try/except to prevent one agent crash from killing the system.
+
+        Args:
+            market_data: Market conditions
+
+        Returns:
+            Tuple of (trades, error). If successful, error is None. If failed, trades is [].
+        """
+        try:
+            trades = self.execute_strategy(market_data)
+            return trades, None
+        except Exception as e:
+            # Log error but don't propagate
+            print(f"ERROR: Agent {self.id} ({self.strategy}) crashed: {str(e)}")
+            return [], e
+
+    def validate_capital_change(self, old_capital: float, new_capital: float) -> bool:
+        """
+        Validate that a capital change is legal.
+
+        Prevents:
+        - Negative capital
+        - Suspiciously large increases (>10x in one period)
+
+        Args:
+            old_capital: Previous capital amount
+            new_capital: Proposed new capital amount
+
+        Returns:
+            True if valid
+
+        Raises:
+            ValueError: If capital change is invalid
+        """
+        if new_capital < 0:
+            raise ValueError(f"Capital cannot be negative: ${new_capital:,.2f}")
+
+        if old_capital > 0 and new_capital > old_capital * 10:
+            raise ValueError(
+                f"Capital increase too large: ${old_capital:,.2f} → ${new_capital:,.2f} "
+                f"({new_capital / old_capital:.1f}x increase exceeds 10x limit)"
+            )
+
+        return True
+
     def calculate_fitness(self) -> float:
         """
         Calculate multi-factor fitness score.
@@ -225,12 +274,15 @@ class TreasuryAgent:
             pnl: Profit/loss for the period
             trades: List of trades executed
         """
+        # ✅ FIX: Calculate fitness FIRST, then record it (not before)
+        new_fitness = self.calculate_fitness()
+
         self.performance_history.append({
             'date': datetime.now(),
             'capital': capital,
             'pnl': pnl,
             'trades': trades,
-            'fitness': self.fitness_score
+            'fitness': new_fitness  # ✅ Use newly calculated fitness
         })
 
         # Update days negative counter

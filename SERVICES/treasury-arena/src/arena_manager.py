@@ -145,6 +145,9 @@ class ArenaManager:
 
         Returns:
             Dictionary mapping agent ID to allocated capital
+
+        Raises:
+            ValueError: If total allocation exceeds available capital
         """
         # Rank all active agents
         ranked = self.rank_agents(self.active_agents)
@@ -163,11 +166,26 @@ class ArenaManager:
         active = ranked[elite_count:elite_count + active_count]
         challengers = ranked[elite_count + active_count:]
 
-        # Allocate capital
+        # Calculate per-agent allocations
         elite_capital_per_agent = (self.arena_capital * 0.60) / len(elite) if elite else 0
         active_capital_per_agent = (self.arena_capital * 0.30) / len(active) if active else 0
         challenger_capital_per_agent = (self.arena_capital * 0.10) / len(challengers) if challengers else 0
 
+        # ✅ FIX: Validate total allocation BEFORE assigning to agents
+        total_allocated = (
+            (len(elite) * elite_capital_per_agent) +
+            (len(active) * active_capital_per_agent) +
+            (len(challengers) * challenger_capital_per_agent)
+        )
+
+        if total_allocated > self.arena_capital:
+            raise ValueError(
+                f"Capital allocation overflow: "
+                f"${total_allocated:,.2f} > ${self.arena_capital:,.2f} "
+                f"(attempting to allocate {total_allocated / self.arena_capital:.1%} of available capital)"
+            )
+
+        # Only allocate after validation passes
         allocations = {}
 
         for agent in elite:
@@ -188,7 +206,8 @@ class ArenaManager:
         logger.info(
             f"Capital allocated: {len(elite)} elite (${elite_capital_per_agent:,.0f} each), "
             f"{len(active)} active (${active_capital_per_agent:,.0f} each), "
-            f"{len(challengers)} challengers (${challenger_capital_per_agent:,.0f} each)"
+            f"{len(challengers)} challengers (${challenger_capital_per_agent:,.0f} each) "
+            f"| Total: ${total_allocated:,.2f} / ${self.arena_capital:,.2f} ({total_allocated / self.arena_capital:.1%})"
         )
 
         return allocations
@@ -369,6 +388,22 @@ class ArenaManager:
                    f"{len(self.active_agents)} active, "
                    f"{len(self.proving_agents)} proving, "
                    f"{len(self.simulation_agents)} simulating")
+
+    def safe_run_evolution(self) -> tuple[bool, Optional[Exception]]:
+        """
+        Run evolution cycle with error isolation.
+
+        Wraps run_evolution_cycle() in try/except to prevent system failure.
+
+        Returns:
+            Tuple of (success, error). If successful, error is None.
+        """
+        try:
+            self.run_evolution_cycle()
+            return True, None
+        except Exception as e:
+            logger.error(f"Evolution cycle failed: {str(e)}", exc_info=True)
+            return False, e
 
     def get_arena_stats(self) -> Dict:
         """Get current arena statistics"""
