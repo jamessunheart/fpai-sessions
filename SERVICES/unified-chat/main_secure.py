@@ -254,6 +254,133 @@ async def health_check():
         "timestamp": datetime.utcnow().isoformat()
     }
 
+# ========================================
+# UDC COMPLIANCE ENDPOINTS
+# ========================================
+
+@app.get("/health")
+async def udc_health():
+    """UDC-compliant health check"""
+    return {
+        "status": "healthy",
+        "service": "unified-chat",
+        "version": "1.0.0",
+        "port": config['server']['port'],
+        "timestamp": datetime.utcnow().isoformat()
+    }
+
+@app.get("/capabilities")
+async def udc_capabilities():
+    """UDC-compliant capabilities endpoint"""
+    return {
+        "service": "unified-chat",
+        "description": "Unified chat interface for 12-session coordination via WebSocket",
+        "capabilities": [
+            "websocket_chat",
+            "multi_session_aggregation",
+            "real_time_messaging",
+            "secure_authentication",
+            "session_coordination"
+        ],
+        "protocols": ["websocket", "http"],
+        "endpoints": [
+            "/ws/user/{user_id}",
+            "/ws/session/{session_id}",
+            "/api/status",
+            "/chat"
+        ],
+        "authentication": {
+            "user": "password + token (24h)",
+            "session": "api_key"
+        }
+    }
+
+@app.get("/state")
+async def udc_state():
+    """UDC-compliant state endpoint"""
+    return {
+        "service": "unified-chat",
+        "status": "running",
+        "connected_sessions": len(session_connections),
+        "active_users": len(authenticated_users),
+        "pending_responses": len(pending_responses),
+        "session_list": list(session_connections.keys()),
+        "uptime_status": "operational",
+        "timestamp": datetime.utcnow().isoformat()
+    }
+
+@app.get("/dependencies")
+async def udc_dependencies():
+    """UDC-compliant dependencies endpoint"""
+    return {
+        "service": "unified-chat",
+        "dependencies": {
+            "external": [],
+            "internal": [
+                "claude_sessions (12 sessions)",
+                "config.json (authentication)"
+            ],
+            "required_services": [],
+            "optional_services": []
+        },
+        "database": None,
+        "message_queue": None,
+        "external_apis": [],
+        "status": "all_satisfied"
+    }
+
+@app.get("/message")
+async def udc_message():
+    """UDC-compliant message endpoint for inter-service communication"""
+    return {
+        "service": "unified-chat",
+        "message_protocol": "websocket",
+        "endpoints": {
+            "user_connection": "/ws/user/{user_id}",
+            "session_connection": "/ws/session/{session_id}"
+        },
+        "message_format": "json",
+        "authentication_required": True,
+        "status": "ready"
+    }
+
+@app.get("/metrics")
+async def udc_metrics():
+    """UDC-compliant metrics endpoint"""
+    return {
+        "service": "unified-chat",
+        "metrics": {
+            "connected_sessions": len(session_connections),
+            "active_users": len(authenticated_users),
+            "pending_responses": len(pending_responses),
+            "total_authenticated_users": len(authenticated_users)
+        },
+        "performance": {
+            "uptime_status": "operational",
+            "websocket_connections": len(session_connections)
+        },
+        "timestamp": datetime.utcnow().isoformat()
+    }
+
+@app.get("/logs")
+async def udc_logs():
+    """UDC-compliant logs endpoint"""
+    return {
+        "service": "unified-chat",
+        "logs": {
+            "location": "/tmp/unified-chat.log",
+            "format": "text",
+            "retention": "7 days"
+        },
+        "recent_events": [
+            {
+                "event": "service_started",
+                "timestamp": datetime.utcnow().isoformat()
+            }
+        ],
+        "status": "logging_active"
+    }
+
 if __name__ == "__main__":
     import uvicorn
     print("🔐 Starting SECURE Unified Chat Interface...")
