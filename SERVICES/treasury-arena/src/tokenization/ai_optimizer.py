@@ -585,23 +585,30 @@ class AIWalletOptimizer:
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (wallet.id, token.id, quantity, token.current_nav, total_cost, 0.0, 0.0, datetime.now(), datetime.now()))
 
-        # Record transaction
-        tx = TokenTransaction(
-            wallet_id=wallet.id,
-            token_id=token.id,
-            transaction_type=TransactionType.BUY,
-            quantity=quantity,
-            price_per_token=token.current_nav,
-            total_value=total_cost,
-            platform_fee=platform_fee,
-            triggered_by=triggered_by
-        )
-        tx.save(self.db_path)
+        # Record transaction (using passed connection)
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO token_transactions (
+                wallet_id, token_id, transaction_type,
+                quantity, price_per_token, total_value,
+                platform_fee, performance_fee,
+                triggered_by, notes, executed_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            wallet.id, token.id, TransactionType.BUY.value,
+            quantity, token.current_nav, total_cost,
+            platform_fee, 0.0,
+            triggered_by, None, datetime.now()
+        ))
 
-        # Update token circulating supply
+        # Update token circulating supply (using passed connection)
         token.circulating_supply += quantity
         token.total_aum += total_cost
-        token.save(self.db_path)
+        cursor.execute("""
+            UPDATE strategy_tokens
+            SET circulating_supply = ?, total_aum = ?, updated_at = ?
+            WHERE id = ?
+        """, (token.circulating_supply, token.total_aum, datetime.now(), token.id))
 
     def _execute_sell(
         self,
@@ -644,23 +651,29 @@ class AIWalletOptimizer:
                     WHERE id = ?
                 """, (new_qty, datetime.now(), holding_id))
 
-        # Record transaction
-        tx = TokenTransaction(
-            wallet_id=wallet.id,
-            token_id=token.id,
-            transaction_type=TransactionType.SELL,
-            quantity=quantity,
-            price_per_token=token.current_nav,
-            total_value=total_proceeds,
-            platform_fee=platform_fee,
-            triggered_by=triggered_by
-        )
-        tx.save(self.db_path)
+        # Record transaction (using passed connection)
+        cursor.execute("""
+            INSERT INTO token_transactions (
+                wallet_id, token_id, transaction_type,
+                quantity, price_per_token, total_value,
+                platform_fee, performance_fee,
+                triggered_by, notes, executed_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            wallet.id, token.id, TransactionType.SELL.value,
+            quantity, token.current_nav, total_proceeds,
+            platform_fee, 0.0,
+            triggered_by, None, datetime.now()
+        ))
 
-        # Update token circulating supply
+        # Update token circulating supply (using passed connection)
         token.circulating_supply -= quantity
         token.total_aum -= total_proceeds
-        token.save(self.db_path)
+        cursor.execute("""
+            UPDATE strategy_tokens
+            SET circulating_supply = ?, total_aum = ?, updated_at = ?
+            WHERE id = ?
+        """, (token.circulating_supply, token.total_aum, datetime.now(), token.id))
 
     # ========================================================================
     # HELPERS

@@ -3,6 +3,16 @@
 -- Purpose: Enable tokenized AI agent strategies with AI wallet optimization
 
 -- ============================================================================
+-- MIGRATION TRACKING (Create first if doesn't exist)
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS migration_history (
+    version INTEGER PRIMARY KEY,
+    description TEXT NOT NULL,
+    executed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ============================================================================
 -- STRATEGY TOKENS
 -- ============================================================================
 
@@ -342,10 +352,3 @@ GROUP BY w.id;
 INSERT INTO migration_history (version, description, executed_at)
 VALUES (2, 'Tokenization system: strategy tokens, AI wallets, allocations', CURRENT_TIMESTAMP)
 ON CONFLICT(version) DO NOTHING;
-
--- Create migration_history table if it doesn't exist (should be from 001)
-CREATE TABLE IF NOT EXISTS migration_history (
-    version INTEGER PRIMARY KEY,
-    description TEXT NOT NULL,
-    executed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
