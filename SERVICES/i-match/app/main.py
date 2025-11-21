@@ -18,6 +18,8 @@ import stripe
 from .config import settings
 from .database import get_db, init_db, Customer, Provider, Match, Commission
 from .matching_engine import MatchingEngine
+from .email_service import EmailService
+from .routes import contribute
 
 # Initialize Stripe
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY") or settings.stripe_api_key
@@ -45,6 +47,12 @@ async def startup():
 
 # Initialize matching engine
 matching_engine = MatchingEngine()
+
+# Initialize email service
+email_service = EmailService()
+
+# Register contribution routes
+app.include_router(contribute.router)
 
 # Service state
 service_state = {
@@ -113,13 +121,43 @@ class CommissionCreate(BaseModel):
 
 # === FRONTEND ROUTES ===
 
+@app.get("/api")
+async def api_root():
+    """API root endpoint with service info"""
+    return {
+        "service": "I MATCH",
+        "droplet_id": settings.droplet_id,
+        "version": "1.0.0",
+        "description": "AI-Powered Matching Engine - 20% Commission Revenue Model",
+        "revenue_model": {
+            "commission_percent": settings.default_commission_percent,
+            "target_month_1": "$40-150K",
+            "target_month_3": "$100-400K"
+        },
+        "features": {
+            "ai_matching": "Claude API deep compatibility analysis",
+            "commission_automation": "Automated tracking and invoicing",
+            "multi_criteria_scoring": "Expertise, values, communication, location, pricing"
+        },
+        "ubic_endpoints": ["/health", "/capabilities", "/state", "/dependencies", "/message"],
+        "documentation": "/docs"
+    }
+
 @app.get("/")
 async def landing_page():
-    """Serve I MATCH landing page"""
+    """Serve customer landing page"""
     index_file = os.path.join(static_dir, "index.html")
     if os.path.exists(index_file):
         return FileResponse(index_file)
     raise HTTPException(status_code=404, detail="Landing page not found")
+
+@app.get("/providers")
+async def providers_page():
+    """Serve provider landing page"""
+    providers_file = os.path.join(static_dir, "providers.html")
+    if os.path.exists(providers_file):
+        return FileResponse(providers_file)
+    raise HTTPException(status_code=404, detail="Providers page not found")
 
 @app.get("/register")
 async def register_page():
@@ -152,6 +190,14 @@ async def support_page():
     if os.path.exists(support_file):
         return FileResponse(support_file)
     raise HTTPException(status_code=404, detail="Support page not found")
+
+@app.get("/infinite-doubling")
+async def infinite_doubling_page():
+    """Serve live infinite doubling tracker"""
+    doubling_file = os.path.join(static_dir, "infinite-doubling.html")
+    if os.path.exists(doubling_file):
+        return FileResponse(doubling_file)
+    raise HTTPException(status_code=404, detail="Infinite doubling page not found")
 
 
 # === UBIC COMPLIANCE ENDPOINTS ===
@@ -559,6 +605,50 @@ async def create_match(
 
     service_state["total_matches_created"] += 1
 
+    # Send email notifications (non-blocking)
+    try:
+        # Send notification to customer
+        customer_matches = [{
+            "provider_name": provider.name,
+            "provider_company": provider.company_name or "",
+            "provider_specialty": provider.specialty,
+            "match_score": match.match_score,
+            "match_quality": matching_engine.get_match_quality_label(match.match_score),
+            "match_reasoning": match.match_reasoning,
+            "email": provider.email,
+            "phone": provider.phone or "Not provided"
+        }]
+
+        email_sent_customer = email_service.send_customer_match_notification(
+            customer_email=customer.email,
+            customer_name=customer.name.split()[0],  # First name
+            matches=customer_matches
+        )
+
+        # Send notification to provider
+        email_sent_provider = email_service.send_provider_match_notification(
+            provider_email=provider.email,
+            provider_name=provider.name.split()[0],  # First name
+            customer={
+                "name": customer.name,
+                "needs": customer.financial_goals or "Financial guidance",
+                "location": customer.location,
+                "budget": customer.budget_range or "Not specified"
+            },
+            match_score=match.match_score,
+            match_reasoning=match.match_reasoning
+        )
+
+        if email_sent_customer and email_sent_provider:
+            print(f"✅ Emails sent for match {match.id}")
+        else:
+            print(f"⚠️  Email sending incomplete for match {match.id} (may need SMTP config)")
+
+    except Exception as e:
+        # Log error but don't fail the match creation
+        print(f"⚠️  Email service error for match {match.id}: {str(e)}")
+        print("   Match created successfully. Configure SMTP credentials to enable email notifications.")
+
     return MatchResponse(
         match_id=match.id,
         customer_name=customer.name,
@@ -689,29 +779,7 @@ async def commission_stats(db: Session = Depends(get_db)):
     }
 
 
-# === ROOT ENDPOINT ===
-
-@app.get("/")
-async def root():
-    """Root endpoint"""
-    return {
-        "service": "I MATCH",
-        "droplet_id": settings.droplet_id,
-        "version": "1.0.0",
-        "description": "AI-Powered Matching Engine - 20% Commission Revenue Model",
-        "revenue_model": {
-            "commission_percent": settings.default_commission_percent,
-            "target_month_1": "$40-150K",
-            "target_month_3": "$100-400K"
-        },
-        "features": {
-            "ai_matching": "Claude API deep compatibility analysis",
-            "commission_automation": "Automated tracking and invoicing",
-            "multi_criteria_scoring": "Expertise, values, communication, location, pricing"
-        },
-        "ubic_endpoints": ["/health", "/capabilities", "/state", "/dependencies", "/message"],
-        "documentation": "/docs"
-    }
+# Root endpoint moved to /api (see FRONTEND ROUTES section above)
 
 
 if __name__ == "__main__":

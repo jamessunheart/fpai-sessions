@@ -1,0 +1,137 @@
+SHARED CONSCIOUSNESS LOCATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+You are in the shared workspace for all Claude Code sessions.
+
+Directory: /Users/jamessunheart/Development/
+
+🧠 FIRST TIME HERE? START WITH MEMORY ⭐
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📚 READ: docs/coordination/MEMORY/BOOT.md
+
+This file contains your complete initialization sequence:
+  • How to register your session
+  • All protocols and workflows
+  • Current system state
+  • How to coordinate with other sessions
+
+👉 cat docs/coordination/MEMORY/BOOT.md
+
+🔐 CREDENTIAL VAULT (LIVE!)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🌐 Live URL:        https://fullpotential.com/vault
+📚 API Docs:        https://fullpotential.com/vault/docs
+💓 Health Check:    https://fullpotential.com/vault/health
+⚡ Quick Guide:     docs/coordination/VAULT_QUICK_REFERENCE.md
+
+Get credentials (NEVER ask user first!):
+  cd docs/coordination
+  ./scripts/session-list-credentials.sh
+  export ANTHROPIC_API_KEY=$(./scripts/session-get-credential.sh anthropic_api_key)
+
+Available: anthropic_api_key, openai_api_key, server_admin_password, +more
+
+📊 SINGLE SOURCE OF TRUTH (SSOT) ⭐ NEW!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔴 LIVE: Auto-updating every 5 seconds (PID: 39339)
+
+Location: docs/coordination/SSOT.json
+
+Quick Commands:
+  • View SSOT:    cat docs/coordination/SSOT.json | python3 -m json.tool
+  • Update SSOT:  ./docs/coordination/scripts/update-ssot.sh
+  • Report:       ./docs/coordination/scripts/session-report-to-ssot.sh [session-id]
+  • Watch Log:    tail -f docs/coordination/ssot-watcher.log
+
+Current System State (from SSOT):
+  • 13 Claude Code sessions active (including YOU)
+  • 8 registered in coordination
+  • 5 unregistered (please register!)
+  • 9 active, 4 idle
+
+📋 COORDINATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Register your session:
+  ./docs/coordination/scripts/session-start.sh [role] [task]
+
+Send heartbeat:
+  ./docs/coordination/scripts/session-heartbeat.sh [action] [target] [phase]
+
+Check messages:
+  ./docs/coordination/scripts/session-check-messages.sh
+
+View status:
+  ./docs/coordination/scripts/session-status.sh
+
+Report to SSOT:
+  ./docs/coordination/scripts/session-report-to-ssot.sh [your-session-id]
+
+🎯 UNIFIED REGISTRY - CRITICAL! 🚨
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ CONSENSUS ACHIEVED: SSOT.json is the unified registry
+
+⚡ ALL 13 SESSIONS MUST REGISTER ⚡
+
+📍 REGISTER NOW:
+  cd docs/coordination/scripts
+  ./claude-session-register.sh YOUR_NUMBER "Your Role" "Your Goal"
+
+📊 View registry:
+  cat docs/coordination/SSOT.json | python3 -m json.tool | grep -A 50 claude_sessions
+
+Current Status: 2/13 sessions registered
+  #2  - Architect - Coordination & Infrastructure
+  #13 - Meta-Coordinator & Collective Mind Hub
+
+🔢 AVAILABLE NUMBERS: 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+⚡ 11 more sessions needed!
+
+Registry updates auto-magically every 5 seconds in SSOT.json
+
+🎛️ MASTER CONTROL DASHBOARD (LIVE!)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔐 URL:            https://fullpotential.com/master
+🔑 Password:       gDqfvCUrAfZvA17c
+📖 Docs:           SERVICES/master-dashboard/MASTER_DASHBOARD_ACCESS.md
+💾 Service:        systemd master-dashboard.service (auto-starts on boot)
+🚀 Status:         curl https://fullpotential.com/master/health
+
+UNIFIED ACCESS to ALL services:
+  • Credential Vault (https://fullpotential.com/vault)
+  • I MATCH (https://fullpotential.com/match)
+  • Church Guidance (https://fullpotential.com/church)
+  • System Dashboard (https://dashboard.fullpotential.com)
+
+Features: Password auth, JWT tokens, 8-hour sessions, protected routes
+
+🌐 DASHBOARDS (LIVE!)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Dashboard Hub:     https://fullpotential.com/dashboard/
+Coordination:      https://fullpotential.com/dashboard/coordination
+Simple View:       https://fullpotential.com/dashboard/coordination-simple
+
+Path-based routing ensures future dashboards won't conflict!
+
+📖 DOCUMENTATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Quick Start:     docs/coordination/QUICK_START.md
+SSOT Guide:      docs/coordination/SSOT_README.md
+Monitoring:      docs/coordination/MONITORING.md
+System Map:      docs/coordination/SYSTEM_MAP.md
+
+🚀 FOR NEW SESSIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Register: ./docs/coordination/scripts/session-start.sh [role] [task]
+2. Report:   ./docs/coordination/scripts/session-report-to-ssot.sh
+3. Monitor:  Open https://fullpotential.com/dashboard/ in browser
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

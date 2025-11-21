@@ -1,0 +1,88 @@
+{
+  "mission_id": "build-002-social-auto-poster",
+  "title": "BUILD: Social Auto-Poster (Infinite Posts)",
+  "type": "build",
+  "priority": "high",
+  "status": "queued",
+  "created_at": "2025-11-15T22:00:00Z",
+  "claimed_by": null,
+  "claimed_at": null,
+  "completed_at": null,
+  "estimated_time_hours": 12,
+  "infinite_scale": true,
+  "depends_on": ["build-001-email-automation"],
+  "instructions": {
+    "task": "Build autonomous social media posting system - posts forever without human intervention",
+    "spec_file": "/Users/jamessunheart/Development/SERVICES/social-auto-poster/SPEC.md",
+    "architecture": "FastAPI + APScheduler + GPT-4 + Twitter/LinkedIn APIs",
+    "deployment_target": "198.54.123.234 at /opt/fpai/social-auto-poster",
+    "port": 8501,
+    "scope": "Daily posts to Twitter + LinkedIn, AI content generation, metrics tracking"
+  },
+  "what_to_build": {
+    "service_name": "social-auto-poster",
+    "components": [
+      "FastAPI app for API/health endpoints",
+      "APScheduler for cron-based posting",
+      "GPT-4 integration for content generation",
+      "Twitter API v2 integration",
+      "LinkedIn API integration",
+      "Content template system (5 types)",
+      "Analytics tracking database",
+      "Auto-optimization engine"
+    ]
+  },
+  "success_criteria": {
+    "functional": [
+      "Posts to Twitter at 8 AM daily automatically",
+      "Posts to LinkedIn at 8 AM daily automatically",
+      "AI generates unique content each day",
+      "Content includes I MATCH URL",
+      "Metrics tracked (impressions, engagements, clicks)",
+      "Posts continue forever without intervention"
+    ],
+    "performance": [
+      "5%+ average engagement rate",
+      "10+ link clicks per post",
+      "Content generation <30 seconds",
+      "Zero downtime (cron recovers from failures)"
+    ],
+    "business_impact": [
+      "600+ monthly visitors from social",
+      "Consistent brand presence",
+      "Saves 180 hours/year of manual posting"
+    ]
+  },
+  "deployment": {
+    "server": "198.54.123.234",
+    "path": "/opt/fpai/social-auto-poster",
+    "port": 8501,
+    "systemd_service": "social-auto-poster.service",
+    "env_vars_needed": [
+      "OPENAI_API_KEY",
+      "TWITTER_API_KEY",
+      "TWITTER_API_SECRET",
+      "TWITTER_ACCESS_TOKEN",
+      "TWITTER_ACCESS_SECRET",
+      "LINKEDIN_ACCESS_TOKEN",
+      "DATABASE_URL"
+    ]
+  },
+  "expected_outcomes": {
+    "week_1": "MVP deployed, posting to Twitter daily",
+    "week_2": "LinkedIn added, 14 posts made automatically",
+    "month_1": "60+ posts made, 5%+ engagement, 600+ clicks",
+    "month_3": "Auto-optimization working, best content winning"
+  },
+  "roi_calculation": {
+    "build_time_cost": "12 hours × $0 = $0",
+    "time_saved": "180 hours/year × $100/hr = $18K/year value",
+    "traffic_generated": "600 visits/month × $5/visit = $3K/month value",
+    "infinite_roi": "Runs forever, compounds over time"
+  },
+  "resources": {
+    "spec": "/Users/jamessunheart/Development/SERVICES/social-auto-poster/SPEC.md",
+    "content_templates": "/Users/jamessunheart/Development/SERVICES/READY_TO_POST_NOW.md",
+    "architecture_doc": "/Users/jamessunheart/Development/SERVICES/INFINITE_SCALE_ARCHITECTURE.md"
+  }
+}

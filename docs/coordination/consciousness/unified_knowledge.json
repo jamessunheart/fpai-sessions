@@ -1,0 +1,81 @@
+{
+  "dns_automation": [
+    {
+      "timestamp": "2025-11-15T13:40:56.342350",
+      "category": "dns_automation",
+      "learning": "Namecheap credentials stored in coordination vault at NAMECHEAP_API_USER and NAMECHEAP_API_KEY",
+      "impact": "high",
+      "applied_count": 0
+    }
+  ],
+  "deployment": [
+    {
+      "timestamp": "2025-11-15T13:40:56.475607",
+      "category": "deployment",
+      "learning": "missions.fullpotential.com configured with missions/gamification branding for church alignment",
+      "impact": "high",
+      "applied_count": 0
+    }
+  ],
+  "automation": [
+    {
+      "timestamp": "2025-11-15T13:40:56.564470",
+      "category": "automation",
+      "learning": "Auto-SSL monitor running on server (PID 356341) - detects DNS and configures HTTPS automatically",
+      "impact": "high",
+      "applied_count": 0
+    },
+    {
+      "timestamp": "2025-11-15T13:45:30.883376",
+      "category": "automation",
+      "learning": "Jobs board at port 8008, onboarding at 8010, missions page server ready for port 8011",
+      "impact": "high",
+      "applied_count": 0
+    }
+  ],
+  "missions": [
+    {
+      "timestamp": "2025-11-15T13:45:30.489085",
+      "category": "missions",
+      "learning": "missions.fullpotential.com uses missions/gamification/church branding - ready to deploy after DNS",
+      "impact": "high",
+      "applied_count": 0
+    }
+  ],
+  "credentials": [
+    {
+      "timestamp": "2025-11-15T13:45:30.579575",
+      "category": "credentials",
+      "learning": "FPAI_CREDENTIALS_KEY=0090050b4ac419b69bfd0b7763d861fd11619255f672b4122c34b97abe12d63f unlocks coordination vault",
+      "impact": "high",
+      "applied_count": 0
+    }
+  ],
+  "namecheap": [
+    {
+      "timestamp": "2025-11-15T13:45:30.670434",
+      "category": "namecheap",
+      "learning": "Namecheap API working - can add DNS records programmatically via setHosts command",
+      "impact": "high",
+      "applied_count": 0
+    }
+  ],
+  "infrastructure": [
+    {
+      "timestamp": "2025-11-15T13:45:30.787868",
+      "category": "infrastructure",
+      "learning": "Auto-SSL monitor (PID 356341) will auto-configure HTTPS once DNS propagates",
+      "impact": "high",
+      "applied_count": 0
+    }
+  ],
+  "consensus": [
+    {
+      "timestamp": "2025-11-15T13:58:25.562662",
+      "category": "consensus",
+      "learning": "Proposal proposal-20251115-135618 created: dns_change - Add wildcard DNS record",
+      "impact": "high",
+      "applied_count": 0
+    }
+  ]
+}

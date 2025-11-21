@@ -660,6 +660,51 @@ async def visual_dashboard():
             margin-right: 10px;
             animation: pulse-dot 1s ease-in-out infinite;
         }
+
+        .nav-panel {
+            background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px solid rgba(102,126,234,0.3);
+        }
+
+        .nav-title {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .nav-link {
+            background: rgba(0,0,0,0.3);
+            padding: 12px 15px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 2px solid rgba(102,126,234,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: linear-gradient(135deg, rgba(102,126,234,0.3) 0%, rgba(118,75,162,0.3) 100%);
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .nav-link.primary {
+            border-color: #667eea;
+            background: rgba(102,126,234,0.15);
+        }
     </style>
 </head>
 <body>
@@ -673,6 +718,30 @@ async def visual_dashboard():
             <h1>🌐 Visual Coordination Network</h1>
             <p class="hero-subtitle">Watch Claude Code sessions coordinate in real-time</p>
             <p id="timestamp" style="margin-top: 10px; font-size: 0.9em; color: #666;"></p>
+        </div>
+
+        <div class="nav-panel">
+            <div class="nav-title">📊 Quick Navigation - All Dashboards</div>
+            <div class="nav-links">
+                <a href="http://localhost:8101" class="nav-link primary" target="_blank">
+                    💰 Unified Financial Dashboard
+                </a>
+                <a href="http://localhost:8008" class="nav-link" target="_blank">
+                    📋 Jobs Dashboard
+                </a>
+                <a href="http://localhost:8010" class="nav-link" target="_blank">
+                    🌐 FPAI Hub
+                </a>
+                <a href="http://localhost:8005" class="nav-link" target="_blank">
+                    📊 Treasury (Legacy)
+                </a>
+                <a href="http://localhost:8052" class="nav-link" target="_blank">
+                    📈 2X Treasury (Legacy)
+                </a>
+                <a href="http://localhost:8035" class="nav-link" target="_blank">
+                    🎯 Arena (Legacy)
+                </a>
+            </div>
         </div>
 
         <div class="metrics-grid">

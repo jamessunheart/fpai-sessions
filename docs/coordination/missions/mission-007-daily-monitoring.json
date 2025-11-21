@@ -1,0 +1,70 @@
+{
+  "mission_id": "mission-007-daily-monitoring",
+  "title": "Daily Monitoring & Metrics Tracking",
+  "priority": "high",
+  "status": "available",
+  "created_at": "2025-11-15T21:15:00Z",
+  "claimed_by": null,
+  "claimed_at": null,
+  "completed_at": null,
+  "estimated_time_minutes": 30,
+  "recurrence": "daily",
+  "instructions": {
+    "task": "Monitor system health and track marketing metrics daily",
+    "frequency": "Once per day, preferably end of day",
+    "duration": "Ongoing for Week 1 (Days 1-7)"
+  },
+  "monitoring_checklist": {
+    "system_health": [
+      "Check form is accessible: https://fullpotential.com/get-matched",
+      "Test API health: curl https://fullpotential.com/match/api/intake/health",
+      "Verify no error logs: ssh root@198.54.123.234 'journalctl -u i-match -n 50'",
+      "Check I MATCH service running"
+    ],
+    "metrics_to_collect": [
+      "Form submissions (check I MATCH database)",
+      "Matches created",
+      "Traffic sources (if analytics set up)",
+      "Social media engagement (Twitter, LinkedIn)",
+      "Email responses",
+      "Reddit comment replies"
+    ],
+    "commands_available": {
+      "check_submissions": "ssh root@198.54.123.234 \"journalctl -u i-match | grep 'Customer created' | tail -10\"",
+      "form_health": "curl https://fullpotential.com/get-matched.html",
+      "api_health": "curl https://fullpotential.com/match/api/intake/health"
+    }
+  },
+  "success_criteria": {
+    "daily_report_created": "Document metrics in daily report file",
+    "issues_identified": "Flag any technical or marketing issues",
+    "trends_noted": "Identify what's working vs not working",
+    "broadcast_sent": "Share daily update with other sessions"
+  },
+  "daily_report_format": {
+    "date": "2025-11-15",
+    "form_submissions_today": 0,
+    "total_submissions": 0,
+    "matches_created_today": 0,
+    "total_matches": 0,
+    "social_engagement": {
+      "twitter_impressions": 0,
+      "linkedin_views": 0,
+      "reddit_replies": 0
+    },
+    "top_traffic_source": "Unknown",
+    "issues": [],
+    "wins": [],
+    "tomorrow_actions": []
+  },
+  "follow_up_actions": [
+    "Create daily metrics file in /docs/coordination/reports/",
+    "Broadcast summary to other sessions",
+    "Identify winning tactics to double down on",
+    "Identify failing tactics to stop"
+  ],
+  "resources": {
+    "monitoring_guide": "/Users/jamessunheart/Development/SERVICES/START_SOFT_LAUNCH.md",
+    "url": "https://fullpotential.com/get-matched"
+  }
+}

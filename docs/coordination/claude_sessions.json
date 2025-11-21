@@ -1,0 +1,150 @@
+{
+  "2": {
+    "session_id": "session-2",
+    "number": 2,
+    "role": "Architect - Coordination & Infrastructure",
+    "goal": "Deploy session registry in SSOT",
+    "status": "active",
+    "registered_at": "2025-11-15T22:15:00Z",
+    "terminal": "s002",
+    "marked_inactive_at": "2025-11-17T07:12:18.404913Z"
+  },
+  "13": {
+    "session_id": "session-collective-mind",
+    "number": 13,
+    "role": "Meta-Coordinator & Collective Mind Hub",
+    "goal": "Coordinate all sessions, maintain collective intelligence infrastructure, ensure consensus",
+    "status": "inactive",
+    "registered_at": "2025-11-15T22:04:28Z",
+    "terminal": "s001",
+    "marked_inactive_at": "2025-11-17T07:12:18.404936Z"
+  },
+  "1": {
+    "session_id": "session-1",
+    "number": 1,
+    "role": "Forge - Infrastructure Architect",
+    "goal": "Build and maintain the foundation: Core services, coordination systems, and infrastructure tools",
+    "status": "active",
+    "registered_at": "2025-11-17T07:29:31Z",
+    "terminal": "unknown"
+  },
+  "4": {
+    "session_id": "session-4",
+    "number": 4,
+    "role": "Session #4 - Multi-Session Coordinator",
+    "goal": "Coordinate active sessions and support system operations",
+    "status": "inactive",
+    "registered_at": "2025-11-17T07:26:48Z",
+    "terminal": "unknown",
+    "marked_inactive_at": "2025-11-17T07:29:32.090129Z"
+  },
+  "3": {
+    "session_id": "session-3",
+    "number": 3,
+    "role": "Value Architect",
+    "goal": "Design sustainable value creation models that fund AI research through trust + continuous delivery",
+    "status": "inactive",
+    "registered_at": "2025-11-17T07:50:59Z",
+    "terminal": "unknown",
+    "marked_inactive_at": "2025-11-17T07:54:25.884057Z"
+  },
+  "5": {
+    "session_id": "session-5",
+    "number": 5,
+    "role": "Nexus - Integration & Service Mesh Architect",
+    "goal": "Build service discovery layer, integrate all 64 services into unified mesh, enable real-time coordination via NEXUS event bus",
+    "status": "inactive",
+    "registered_at": "2025-11-17T08:08:13Z",
+    "terminal": "unknown",
+    "marked_inactive_at": "2025-11-17T08:28:00.052871Z"
+  },
+  "6": {
+    "session_id": "session-6",
+    "number": 6,
+    "role": "Catalyst - Revenue Acceleration",
+    "goal": "Transform K idle capital into active revenue: Deploy treasury yields + Launch I MATCH + Scale to K MRR",
+    "status": "inactive",
+    "registered_at": "2025-11-17T07:54:32Z",
+    "terminal": "unknown",
+    "marked_inactive_at": "2025-11-17T08:04:12.978861Z"
+  },
+  "7": {
+    "session_id": "session-7",
+    "number": 7,
+    "role": "Dashboard Hub & Unified Coordination",
+    "goal": "Provide real-time visibility and unified coordination interface for all sessions via dashboard hub at fullpotential.com/dashboard",
+    "status": "inactive",
+    "registered_at": "2025-11-15T22:43:51Z",
+    "terminal": "unknown",
+    "marked_inactive_at": "2025-11-17T07:12:18.404924Z"
+  },
+  "8": {
+    "session_id": "session-8",
+    "number": 8,
+    "role": "Unified Chat & Communication Infrastructure",
+    "goal": "Deploy and maintain chat.fullpotential.com - enable 12-session unified command interface",
+    "status": "inactive",
+    "registered_at": "2025-11-15T22:46:49Z",
+    "terminal": "unknown",
+    "marked_inactive_at": "2025-11-17T07:12:18.404926Z"
+  },
+  "9": {
+    "session_id": "session-9",
+    "number": 9,
+    "role": "Revenue Systems & Financial Dashboard Lead",
+    "goal": "Deploy and maintain money dashboard, client acquisition tracking, financial projections, and revenue coordination systems for ,500 M1 target",
+    "status": "inactive",
+    "registered_at": "2025-11-15T22:48:06Z",
+    "terminal": "unknown",
+    "marked_inactive_at": "2025-11-17T07:12:18.404928Z"
+  },
+  "10": {
+    "session_id": "session-10",
+    "number": 10,
+    "role": "FPAI Empire Platform & Treasury Deployment",
+    "goal": "Deploy FPAI Hub (port 8040), execute $1K treasury @ 28.5% APY, manage 7 autonomous agents, generate $10K+ monthly revenue",
+    "status": "inactive",
+    "registered_at": "2025-11-15T22:54:27Z",
+    "terminal": "unknown",
+    "marked_inactive_at": "2025-11-17T07:12:18.404930Z"
+  },
+  "11": {
+    "session_id": "session-1763247310",
+    "number": 11,
+    "role": "Execution & Implementation Engineer",
+    "goal": "Execute coordinated tasks, implement revenue systems, and support multi-session initiatives",
+    "status": "inactive",
+    "registered_at": "2025-11-15T22:55:10Z",
+    "terminal": "not a tty",
+    "marked_inactive_at": "2025-11-17T07:12:18.404932Z"
+  },
+  "12": {
+    "session_id": "session-12",
+    "number": 12,
+    "role": "Chief Architect - Infinite Scale Systems",
+    "goal": "Design autonomous machines that scale infinitely, create complete build specifications for the FPAI empire",
+    "status": "inactive",
+    "registered_at": "2025-11-16T02:43:38Z",
+    "terminal": "unknown",
+    "marked_inactive_at": "2025-11-17T07:12:18.404934Z"
+  },
+  "14": {
+    "session_id": "session-truth-test",
+    "number": 14,
+    "role": "Truth-Seeker & Reality Tester",
+    "goal": "Test what's actually possible vs assumed limitations",
+    "status": "inactive",
+    "registered_at": "2025-11-17T07:31:44Z",
+    "terminal": "s000",
+    "marked_inactive_at": "2025-11-17T07:47:18.364045Z"
+  },
+  "15": {
+    "session_id": "session-15",
+    "number": 15,
+    "role": "Activation Catalyst - First Revenue",
+    "goal": "Execute Session #3's automation to activate first revenue stream (I MATCH Reddit \u2192 Sign-ups \u2192 Matches)",
+    "status": "active",
+    "registered_at": "2025-11-17T08:27:59Z",
+    "terminal": "unknown"
+  }
+}

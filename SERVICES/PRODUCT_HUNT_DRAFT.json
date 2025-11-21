@@ -1,0 +1,13 @@
+{
+  "name": "I MATCH - AI Financial Advisor Matching",
+  "tagline": "Testing if AI can match you to financial advisors better than Google",
+  "description": "\nWe're running an honest experiment: Can AI understand compatibility well enough to match people with financial advisors?\n\n\ud83d\udd2c What we're testing:\n- AI-powered compatibility analysis\n- Specialization matching (RSUs, ISOs, tax optimization)\n- Communication style alignment\n\n\ud83d\udca1 Full transparency:\n- Just launched (zero customers)\n- Using Claude AI for matching\n- Don't know if this works yet\n- Free for customers to test\n\n\ud83c\udfaf Why this might matter:\nTraditional advisor search sucks. Google gives you generic results.\nWe're testing if AI can understand your specific needs and find genuine compatibility.\n\nTry it: http://198.54.123.234:8401\n\nWill report back in 30 days whether this worked or was a dead end.\n            ",
+  "url": "http://198.54.123.234:8401",
+  "topics": [
+    "AI",
+    "FinTech",
+    "Matching",
+    "Financial Planning"
+  ],
+  "submission_method": "https://www.producthunt.com/posts/new"
+}

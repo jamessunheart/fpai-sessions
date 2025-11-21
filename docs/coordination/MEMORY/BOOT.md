@@ -2,9 +2,49 @@
 
 **READ THIS FIRST when starting a new Claude Code session**
 
-Last Updated: 2025-11-16
-Version: 2.2 - Credential Vault Enhanced Security (5-Star Rating)
-Status: OPERATIONAL
+Last Updated: 2025-11-19 (DNS Safeguards Added)
+Version: 2.4 - Infrastructure Operational + DNS Protection
+Status: OPERATIONAL + READY FOR PHASE 1 EXECUTION
+
+---
+
+## 🛡️ STEP 0: READ DNS SAFEGUARDS (MANDATORY - DO THIS FIRST!)
+
+**⚠️ CRITICAL: DNS wipeout incident occurred 2025-11-19. Safeguards now in place.**
+
+**IF YOU WILL BE WORKING ON DNS, EMAIL, OR DOMAIN CONFIGURATION:**
+
+```bash
+cat /Users/jamessunheart/Development/docs/coordination/CLAUDE_SESSION_START.md
+cat /Users/jamessunheart/Development/docs/coordination/.claud_code_rules
+cat /Users/jamessunheart/Development/docs/coordination/DNS_SAFEGUARDS.md
+```
+
+**MUST READ BEFORE:**
+- Any DNS changes
+- Email configuration modifications
+- Domain management
+- Using Namecheap API
+- Modifying /etc/postfix or /etc/dovecot
+
+**PROTECTED DOMAINS (extra caution):**
+- fullpotential.com
+- coravida.com
+- globalsky.com
+- jamesrick.com
+
+**REQUIRED PROCESS:**
+1. Read safeguards documents above
+2. Use `./docs/coordination/scripts/safe-dns-update.sh` for DNS changes
+3. NEVER use Namecheap setHosts without fetching ALL existing records first
+4. Always backup before changes
+5. Get explicit user "yes" confirmation
+
+**If you don't follow these protocols, you could break email/websites!**
+
+---
+
+🚨 **CRITICAL:** Session #1 built infrastructure foundation. Read `/Users/jamessunheart/Development/SESSION_1_FINAL_HANDOFF.md` for immediate actions!
 
 ---
 
@@ -33,18 +73,18 @@ cat docs/coordination/CAPITAL_VISION_SSOT.md
   - Current P&L: -$31,041 (-8.32%)
   - Status: Holding through correction
 
-**Operating Costs: $5-10/month**
-- Server: $5/month
-- Domains: $1/month
-- Claude API: $0.18 total across 9 sessions ($0.02/session avg)
-- **Burn Rate:** Essentially zero
+**Operating Costs: $30,000/month**
+- **Ministry Operations:** $20,000/month (FPAI infrastructure, development, marketing)
+- **Ministry Leadership:** $10,000/month (housing, family support, operations)
+- **Burn Rate:** $30K/month = 12 months runway with current capital
+- **Legal Structure:** 508(c)(1)(A) Church → Trust → LLC ventures within PMA
 
 **Current Revenue: $0**
-- I MATCH: Not launched
+- I MATCH: Ready to launch
 - Platform services: In development
-- Treasury yields: Not deployed yet
+- Treasury yields: Not deployed yet (potential $2-7K/month)
 
-**💡 Bottom Line:** We have capital but it's idle. Need to deploy to strategy.
+**💡 Bottom Line:** We have $373K capital and 12 months runway. Treasury deployment ($2-7K/month yield) + Revenue generation (target $30K MRR) = Path to sustainability.
 
 ---
 
@@ -315,7 +355,40 @@ python3 credential_vault_enhanced.py audit 50
 
 **This ensures user NEVER has to repeat credentials across sessions**
 
-### 4. Communication Protocol
+### 4. Treasury & Resources SSOT ⭐ CRITICAL
+**File:** `docs/coordination/CAPITAL_VISION_SSOT.md`
+
+**🏛️ THE SINGLE SOURCE OF TRUTH FOR FINANCES, VISION & LEGAL STRUCTURE**
+
+**Read this FIRST every session to understand:**
+- **Current Capital:** $373,261 (BTC, SOL, leveraged positions)
+- **Monthly Burn:** $30,000/month (12 months runway)
+- **Legal Structure:** 508(c)(1)(A) Church → Trust → LLC ventures
+- **Vision:** $373K → $5 Trillion over 10 years
+- **Phase 1 Goal:** 100 matches + $30K MRR in 6 months
+
+**View the SSOT:**
+```bash
+cat docs/coordination/CAPITAL_VISION_SSOT.md | less
+```
+
+**Key Sections:**
+- Legal Structure & Compliance (508c1a framework)
+- Current Resources ($373K breakdown)
+- Operating Costs ($30K/month - ministry expenses)
+- Treasury Strategy (yield generation $2-7K/month)
+- Vision & Path ($5.21T TAM, 10-year phases)
+- Phase 1 Metrics (proof + profitability)
+
+**⚠️ CRITICAL COMPLIANCE:**
+- Internal tracking: This SSOT (detailed breakdown)
+- Public reporting: Ministry-aligned categories only
+- All revenue services = Ministry tools/platforms
+- Legal verification required before external reporting
+
+**This tells you WHERE WE ARE and WHERE WE'RE GOING. Read it every session.**
+
+### 5. Communication Protocol
 **Send messages:**
 ```bash
 ./scripts/session-send-message.sh "broadcast" "Subject" "Message" "priority"
@@ -411,6 +484,147 @@ cd docs/coordination/scripts
 - ✅ Registry tracking (SERVICE_REGISTRY.json is source of truth)
 
 **NEVER manually create services - ALWAYS use these scripts!**
+
+### 7. Task Automation Protocol ⭐ NEW - CRITICAL
+**Service:** `task-automation` (Port 8031)
+**Files:**
+- `SERVICES/task-automation/QUICK_START.md` - Quick reference
+- `SERVICES/task-automation/README.md` - Complete documentation
+- `SERVICES/task-automation/TASK_AUTOMATION_FRAMEWORK.md` - Architecture
+
+**🤖 AUTOMATE BEFORE ASKING USER TO DO MANUAL WORK**
+
+**⚠️ CRITICAL RULE: Before asking user to manually sign up for services, configure settings, or perform operational tasks - CHECK IF TASK AUTOMATION CAN HANDLE IT!**
+
+**What Can Be Automated:**
+- ✅ Service signups (SendGrid, Mailgun, GitHub, etc.)
+- ✅ Email verifications (monitor dashboard, flag for human click)
+- ✅ DNS configurations (via API or task tracking)
+- ✅ API integrations (automated setup + credential storage)
+- ✅ Account configurations (settings, webhooks, etc.)
+- ✅ Form submissions (with AI assistance)
+
+**DECISION FLOW:**
+
+```
+User needs something (e.g., "Set up SendGrid")
+    ↓
+1. Can it be automated? (Check task automation framework)
+    YES → Create task + let system handle it
+    NO  → Ask user OR flag for human-in-the-loop
+    ↓
+2. Create automation task:
+    ssh root@198.54.123.234 "cd /root/SERVICES/task-automation && \
+      python3 src/cli.py create [type] [service] 'description' \
+      --params '{...}' --analyze"
+    ↓
+3. AI analyzes task:
+    - Automation level: FULL | SEMI | MANUAL
+    - Blockers identified: CAPTCHA, EMAIL_VERIFICATION, etc.
+    - Steps recommended
+    - Time estimate
+    ↓
+4. Route accordingly:
+    FULL → Automated execution (Phase 2+)
+    SEMI → Automated with human checkpoints
+    MANUAL → Queue for human OR ask user
+```
+
+**CLI Usage (On Server):**
+```bash
+ssh root@198.54.123.234
+cd /root/SERVICES/task-automation
+
+# Create task with AI analysis
+python3 src/cli.py create service_signup sendgrid \
+  "Set up SendGrid email relay" \
+  --params '{"sender": "james@fullpotential.com"}' \
+  --analyze
+
+# List pending tasks
+python3 src/cli.py list --status pending
+
+# View task details
+python3 src/cli.py show [task-id]
+
+# Get service suggestion
+python3 src/cli.py suggest "Need email relay" --category email
+```
+
+**Web Dashboard:**
+```
+http://198.54.123.234:8031
+```
+
+**When to Use Task Automation:**
+
+**✅ YES - Use task automation for:**
+- Service signups and configurations
+- Email/phone verifications (semi-automated)
+- DNS record setup
+- API key generation and storage
+- Webhook configurations
+- Account settings
+- Any repetitive operational task
+
+**❌ NO - Don't use task automation for:**
+- Writing code or building features
+- Strategic decisions
+- Creative work
+- Real-time user interactions
+- Tasks requiring immediate human judgment
+
+**Human-in-the-Loop Integration:**
+
+**When task is BLOCKED:**
+```python
+# Task gets marked as BLOCKED with blocker type
+# E.g., CAPTCHA, EMAIL_VERIFICATION, PHONE_VERIFICATION
+
+# System can:
+1. Send message to user via session-send-message.sh
+2. Create notification in dashboard
+3. Wait for human action
+4. Resume automation after human completes blocker
+```
+
+**Example - SendGrid Setup (SEMI-automated):**
+```bash
+# Step 1: Create task
+python3 src/cli.py create service_signup sendgrid \
+  "Set up SendGrid for daily reports" --analyze
+
+# AI Response:
+# ✅ Can automate: YES
+# ✅ Automation Level: SEMI
+# ✅ Blockers: EMAIL_VERIFICATION
+# ✅ Steps:
+#    1. Navigate to SendGrid signup (automated)
+#    2. Fill registration form (automated)
+#    3. Submit form (automated)
+#    4. **Monitor email dashboard for verification** (automated)
+#    5. **Click verification link** (HUMAN REQUIRED)
+#    6. Extract API key (automated)
+#    7. Store in credential vault (automated)
+#    8. Configure Postfix relay (automated)
+# ✅ Time: 5 minutes (vs 15-30 manual)
+# ✅ Human actions: 1 (email click)
+
+# Step 2: System tracks progress, notifies when human action needed
+# Step 3: Human clicks email link
+# Step 4: System completes remaining steps automatically
+```
+
+**Benefits:**
+- ⏱️ **Time:** 5 minutes vs 15-30 manual
+- 🎯 **Consistency:** Same process every time
+- 📝 **Documentation:** Auto-generated logs
+- 🔄 **Reusability:** Same task type reusable
+- 🤝 **Human-in-the-loop:** Smart delegation to human when needed
+
+**CRITICAL: Before asking user to manually do ANY operational task, check if task automation can help!**
+
+**This makes sessions more autonomous and reduces friction for the user.**
 
 ---
 
@@ -564,6 +778,12 @@ cd docs/coordination/scripts
   - [ ] `sync-service.sh` - Deploy changes
   - [ ] `create-service-repos.sh` - GitHub repos
   - [ ] `enforce-udc-compliance.sh` - Validate endpoints
+- [ ] **🤖 Know task automation system (CRITICAL):**
+  - [ ] Understand decision flow: Automate before asking user
+  - [ ] Know when to use it: Service signups, configs, verifications
+  - [ ] Know how to create tasks: `python3 src/cli.py create ...`
+  - [ ] Know dashboard: http://198.54.123.234:8031
+  - [ ] **Remember: Check task automation BEFORE asking user to do manual work**
 - [ ] Ready to coordinate with other sessions
 
 ---
@@ -755,15 +975,18 @@ You are Session #_____ (register above to claim your number)
 
 ---
 
-**Last updated by:** Session (Treasury & Resource Coordination)
+**Last updated by:** Session (Task Automation Integration)
 **Date:** 2025-11-16
 **System status:** OPERATIONAL ✅
-**Major update:** ⭐ Enhanced Step 1 - Present/Future Resource SSOT
-  - PRESENT: $373K capital breakdown (spot + leveraged positions)
-  - FUTURE: $5.21T TAM, 10-year exponential path ($373K → $5T)
-  - THE GAP: Deploy → Build → Prove → Scale
-  - LIVE DASHBOARD: https://fullpotential.com/dashboard/money (real-time)
-  - All sessions now see resources clearly on every boot
-  - See: `docs/coordination/CAPITAL_VISION_SSOT.md` (complete SSOT)
-**Previous update:** Service Automation Suite (Protocol #5)
-**Next review:** When resource metrics change
+**Major update:** ⭐ Protocol #7 - Task Automation Framework (CRITICAL)
+  - 🤖 AUTOMATE BEFORE ASKING USER for operational tasks
+  - Service signups, configs, verifications now systematic
+  - AI-powered task analysis (automation level, blockers, steps)
+  - Human-in-the-loop for blockers (CAPTCHA, email verification)
+  - Web Dashboard: http://198.54.123.234:8031
+  - CLI: `python3 src/cli.py` on server
+  - **CRITICAL RULE:** Check task automation BEFORE asking user to do manual work
+  - Reduces friction, increases autonomy, systematic approach
+  - See: `SERVICES/task-automation/QUICK_START.md`
+**Previous update:** Enhanced Step 1 - Present/Future Resource SSOT
+**Next review:** After Phase 2 (browser automation) implementation

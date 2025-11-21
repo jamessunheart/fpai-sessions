@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Founding Multipliers - 2X Treasury</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 800px;
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2rem;
+            letter-spacing: 0.5rem;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #4ade80 0%, #667eea 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #a0a0a0;
+            margin-bottom: 3rem;
+        }
+
+        .perks {
+            background: #1a1a2e;
+            border: 2px solid #667eea;
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 3rem 0;
+        }
+
+        .perk {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            background: linear-gradient(135deg, #667eea10 0%, #764ba210 100%);
+            border-radius: 12px;
+            border-left: 4px solid #4ade80;
+        }
+
+        .perk-icon {
+            font-size: 2rem;
+            margin-right: 1.5rem;
+        }
+
+        .perk-text {
+            text-align: left;
+        }
+
+        .perk-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .perk-desc {
+            color: #a0a0a0;
+            font-size: 0.95rem;
+        }
+
+        .countdown {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .countdown-label {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .countdown-timer {
+            font-size: 3rem;
+            font-weight: 900;
+            font-family: 'Courier New', monospace;
+        }
+
+        .spots-remaining {
+            font-size: 1.2rem;
+            margin: 1rem 0;
+            color: #4ade80;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1.5rem 4rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: #4ade80;
+            color: #0a0a0a;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s;
+            margin: 2rem 0;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 40px rgba(74, 222, 128, 0.4);
+        }
+
+        .disclaimer {
+            background: #1a1a2e;
+            border: 1px solid #667eea;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            font-size: 0.85rem;
+            color: #a0a0a0;
+        }
+
+        .waitlist-form {
+            background: #1a1a2e;
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .waitlist-form input {
+            width: 100%;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            background: #0a0a0a;
+            border: 1px solid #667eea;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 1rem;
+        }
+
+        .waitlist-form button {
+            width: 100%;
+            padding: 1rem;
+            margin-top: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .waitlist-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">2X</div>
+
+        <h1>Founding Multipliers</h1>
+        <div class="subtitle">Limited to 100 Visionaries. Join Before the Reality Show.</div>
+
+        <!-- Countdown -->
+        <div class="countdown">
+            <div class="countdown-label">Pre-Launch Closes In:</div>
+            <div class="countdown-timer" id="countdown">72:00:00</div>
+            <div class="spots-remaining">
+                <strong id="spots">100</strong> Founding Spots Remaining
+            </div>
+        </div>
+
+        <!-- Perks -->
+        <div class="perks">
+            <div class="perk">
+                <div class="perk-icon">⚡</div>
+                <div class="perk-text">
+                    <div class="perk-title">2X Better Token Ratio</div>
+                    <div class="perk-desc">50 2X tokens per 1 SOL (vs. 100:1 for public launch)</div>
+                </div>
+            </div>
+
+            <div class="perk">
+                <div class="perk-icon">🏆</div>
+                <div class="perk-text">
+                    <div class="perk-title">Founding Member Badge</div>
+                    <div class="perk-desc">Permanent "Founding Multiplier" status + NFT proof</div>
+                </div>
+            </div>
+
+            <div class="perk">
+                <div class="perk-icon">🎯</div>
+                <div class="perk-text">
+                    <div class="perk-title">2X Governance Voting Power</div>
+                    <div class="perk-desc">Double voting rights on treasury allocation decisions</div>
+                </div>
+            </div>
+
+            <div class="perk">
+                <div class="perk-icon">📺</div>
+                <div class="perk-text">
+                    <div class="perk-title">Pre-Reality Show Access</div>
+                    <div class="perk-desc">Invest before it airs. Be in the "already working" cohort</div>
+                </div>
+            </div>
+
+            <div class="perk">
+                <div class="perk-icon">💎</div>
+                <div class="perk-text">
+                    <div class="perk-title">Loyalty Multiplier Bonus</div>
+                    <div class="perk-desc">Hold 6 months = +0.5X boost. Hold 12 months = +1.0X boost</div>
+                </div>
+            </div>
+
+            <div class="perk">
+                <div class="perk-icon">🔐</div>
+                <div class="perk-text">
+                    <div class="perk-title">Priority Withdrawals</div>
+                    <div class="perk-desc">Founding members get first access during high volume</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Waitlist Form -->
+        <div class="waitlist-form">
+            <h3 style="margin-bottom: 1rem;">Join the Founding 100</h3>
+            <input type="email" id="email" placeholder="Your Email" required>
+            <input type="text" id="wallet" placeholder="Solana Wallet Address (Optional)">
+            <input type="text" id="referral" placeholder="How did you hear about 2X?">
+            <button onclick="joinWaitlist()">Join Waitlist</button>
+            <div id="waitlist-status" style="margin-top: 1rem; color: #4ade80;"></div>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="disclaimer">
+            <strong>⚠️ FOUNDING MULTIPLIER TERMS:</strong><br>
+            This is a pre-launch opportunity for early believers. Limited to 100 spots. Once public launch happens,
+            these terms will never be available again. Founding members commit to the multiplier journey and agree
+            to hold for minimum 30 days. This is consciousness investment, not financial advice.
+        </div>
+
+        <div style="margin-top: 2rem; color: #667eea; font-style: italic;">
+            "While X is a letter, 2X is a movement.<br>
+            Be a founding multiplier. Shape the future."
+        </div>
+    </div>
+
+    <script>
+        // Countdown timer (72 hours)
+        let timeLeft = 72 * 60 * 60; // 72 hours in seconds
+
+        function updateCountdown() {
+            const hours = Math.floor(timeLeft / 3600);
+            const minutes = Math.floor((timeLeft % 3600) / 60);
+            const seconds = timeLeft % 60;
+
+            document.getElementById('countdown').textContent =
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            if (timeLeft > 0) {
+                timeLeft--;
+            } else {
+                document.getElementById('countdown').textContent = 'CLOSED';
+            }
+        }
+
+        // Update countdown every second
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        // Simulate decreasing spots (for demo)
+        let spotsLeft = 100;
+        setInterval(() => {
+            if (spotsLeft > 50 && Math.random() > 0.7) {
+                spotsLeft--;
+                document.getElementById('spots').textContent = spotsLeft;
+            }
+        }, 30000); // Decrease every 30 seconds randomly
+
+        // Waitlist signup
+        async function joinWaitlist() {
+            const email = document.getElementById('email').value;
+            const wallet = document.getElementById('wallet').value;
+            const referral = document.getElementById('referral').value;
+
+            if (!email) {
+                alert('Please enter your email');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/founding-waitlist', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        email: email,
+                        wallet: wallet,
+                        referral: referral,
+                        timestamp: new Date().toISOString()
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('waitlist-status').innerHTML =
+                        `✅ You're in! Position #${data.position} of 100.<br>Check your email for next steps.`;
+                    document.getElementById('email').value = '';
+                    document.getElementById('wallet').value = '';
+                    document.getElementById('referral').value = '';
+                } else {
+                    document.getElementById('waitlist-status').innerHTML =
+                        '❌ Error: ' + data.message;
+                }
+            } catch (error) {
+                console.error('Error joining waitlist:', error);
+                document.getElementById('waitlist-status').innerHTML =
+                    '❌ Error joining waitlist. Please try again.';
+            }
+        }
+    </script>
+
+    <!-- AI Chat Widget -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .chat-widget { position: fixed; bottom: 20px; right: 20px; width: 350px; max-width: 90vw; z-index: 9999; }
+        .chat-button { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; cursor: pointer; box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4); display: flex; align-items: center; justify-content: center; font-size: 24px; transition: all 0.3s; z-index: 9999; }
+        .chat-button:hover { transform: scale(1.1); box-shadow: 0 6px 30px rgba(102, 126, 234, 0.6); }
+        .chat-container { display: none; flex-direction: column; height: 500px; background: #1a1a2e; border-radius: 16px; box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5); border: 1px solid #667eea; overflow: hidden; }
+        .chat-container.open { display: flex; }
+        .chat-header { padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: flex; justify-content: space-between; align-items: center; }
+        .chat-header h3 { margin: 0; font-size: 16px; font-weight: 600; }
+        .chat-close { background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 0; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; opacity: 0.8; transition: opacity 0.2s; }
+        .chat-close:hover { opacity: 1; }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+        .message { max-width: 80%; padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.4; }
+        .message.bot { background: #667eea20; border: 1px solid #667eea40; align-self: flex-start; color: #e0e0e0; }
+        .message.user { background: #667eea; align-self: flex-end; color: white; }
+        .message.typing { background: #667eea20; border: 1px solid #667eea40; align-self: flex-start; color: #a0a0a0; font-style: italic; }
+        .quick-replies { padding: 12px 16px; border-top: 1px solid #667eea40; display: flex; flex-wrap: wrap; gap: 8px; }
+        .quick-reply { padding: 6px 12px; background: #667eea20; border: 1px solid #667eea; border-radius: 16px; font-size: 12px; color: #667eea; cursor: pointer; transition: all 0.2s; }
+        .quick-reply:hover { background: #667eea; color: white; }
+        .chat-input-container { padding: 16px; border-top: 1px solid #667eea40; display: flex; gap: 8px; }
+        .chat-input { flex: 1; padding: 10px 14px; background: #0a0a0a; border: 1px solid #667eea; border-radius: 20px; color: white; font-size: 14px; outline: none; }
+        .chat-input::placeholder { color: #666; }
+        .chat-send { padding: 10px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 20px; color: white; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .chat-send:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); }
+    </style>
+
+    <button class="chat-button" onclick="toggleChat2X()" id="chatButton2X">💬</button>
+
+    <div class="chat-widget">
+        <div class="chat-container" id="chatContainer2X">
+            <div class="chat-header">
+                <h3>🤖 2X AI Assistant</h3>
+                <button class="chat-close" onclick="toggleChat2X()">×</button>
+            </div>
+            <div class="chat-messages" id="chatMessages2X">
+                <div class="message bot">Hey! I'm your 2X AI assistant. I can answer any questions about the Founding Multipliers program. What would you like to know?</div>
+            </div>
+            <div class="quick-replies" id="quickReplies2X">
+                <div class="quick-reply" onclick="sendQuickReply2X('What is 2X?')">What is 2X?</div>
+                <div class="quick-reply" onclick="sendQuickReply2X('Is this safe?')">Is this safe?</div>
+                <div class="quick-reply" onclick="sendQuickReply2X('How does it work?')">How does it work?</div>
+            </div>
+            <div class="chat-input-container">
+                <input type="text" class="chat-input" id="chatInput2X" placeholder="Ask me anything..." onkeypress="if(event.key === 'Enter') sendMessage2X()">
+                <button class="chat-send" onclick="sendMessage2X()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let chatOpen2X = false;
+
+        function toggleChat2X() {
+            chatOpen2X = !chatOpen2X;
+            const container = document.getElementById('chatContainer2X');
+            const button = document.getElementById('chatButton2X');
+            if (chatOpen2X) {
+                container.classList.add('open');
+                button.style.display = 'none';
+                document.getElementById('chatInput2X').focus();
+            } else {
+                container.classList.remove('open');
+                button.style.display = 'flex';
+            }
+        }
+
+        function addMessage2X(text, sender = 'bot') {
+            const messagesDiv = document.getElementById('chatMessages2X');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            messageDiv.textContent = text;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function addTypingIndicator2X() {
+            const messagesDiv = document.getElementById('chatMessages2X');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message typing';
+            typingDiv.id = 'typing2X';
+            typingDiv.textContent = 'AI is thinking...';
+            messagesDiv.appendChild(typingDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function removeTypingIndicator2X() {
+            const typing = document.getElementById('typing2X');
+            if (typing) typing.remove();
+        }
+
+        async function sendMessage2X() {
+            const input = document.getElementById('chatInput2X');
+            const message = input.value.trim();
+            if (!message) return;
+
+            addMessage2X(message, 'user');
+            input.value = '';
+            addTypingIndicator2X();
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({message: message})
+                });
+                const data = await response.json();
+                removeTypingIndicator2X();
+                if (data.response) {
+                    addMessage2X(data.response, 'bot');
+                    if (data.suggested_replies) {
+                        updateQuickReplies2X(data.suggested_replies);
+                    }
+                } else {
+                    addMessage2X("Sorry, I couldn't process that. Can you try rephrasing?", 'bot');
+                }
+            } catch (error) {
+                removeTypingIndicator2X();
+                addMessage2X("Oops! Something went wrong. Please try again.", 'bot');
+            }
+        }
+
+        function sendQuickReply2X(text) {
+            document.getElementById('chatInput2X').value = text;
+            sendMessage2X();
+        }
+
+        function updateQuickReplies2X(replies) {
+            const container = document.getElementById('quickReplies2X');
+            container.innerHTML = '';
+            replies.forEach(reply => {
+                const div = document.createElement('div');
+                div.className = 'quick-reply';
+                div.textContent = reply;
+                div.onclick = () => sendQuickReply2X(reply);
+                container.appendChild(div);
+            });
+        }
+
+        // Auto-open chat after 8 seconds if not already opened
+        setTimeout(() => {
+            if (!chatOpen2X && !localStorage.getItem('2x_chat_seen')) {
+                toggleChat2X();
+                localStorage.setItem('2x_chat_seen', 'true');
+            }
+        }, 8000);
+    </script>
+</body>
+</html>

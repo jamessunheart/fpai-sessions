@@ -1,0 +1,168 @@
+{
+  "initialized": "2025-11-15T12:22:58.036788",
+  "treasury_balance": 0,
+  "costs": {
+    "claude_api": {
+      "total": 0.46,
+      "this_month": 0,
+      "per_session": 0.02,
+      "sessions_run": 23,
+      "session_breakdown": {
+        "session-1763236365": {
+          "work": "Created 8 marketing missions for I MATCH soft launch. System validated (working perfectly). Missions ready to claim: Twitter, LinkedIn, Reddit, Email, Product Hunt, Daily monitoring. All content prepared in READY_TO_POST_NOW.md.",
+          "estimated_cost": 0.02,
+          "status": "active"
+        },
+        "session-1763233940": {
+          "work": "multi-session monitoring",
+          "estimated_cost": 0.02,
+          "status": "active"
+        },
+        "REGISTRY": {
+          "work": "unknown",
+          "estimated_cost": 0.02,
+          "status": "active"
+        },
+        "session-1763243402": {
+          "work": "session initialization",
+          "estimated_cost": 0.02,
+          "status": "active"
+        },
+        "session-1763243194": {
+          "work": "session initialization",
+          "estimated_cost": 0.02,
+          "status": "active"
+        },
+        "session-1763234877": {
+          "work": "coordination-demo",
+          "estimated_cost": 0.02,
+          "status": "active"
+        },
+        "session-1763243065": {
+          "work": "session initialization",
+          "estimated_cost": 0.02,
+          "status": "active"
+        },
+        "session-1763243198": {
+          "work": "session initialization",
+          "estimated_cost": 0.02,
+          "status": "active"
+        },
+        "session-1763243097": {
+          "work": "session initialization",
+          "estimated_cost": 0.02,
+          "status": "active"
+        },
+        "session-1763234893": {
+          "work": "proactive reporting system",
+          "estimated_cost": 0.02,
+          "status": "active"
+        },
+        "session-1763234703": {
+          "work": "multi-session orchestration",
+          "estimated_cost": 0.02,
+          "status": "active"
+        },
+        "session-1763243080": {
+          "work": "session initialization",
+          "estimated_cost": 0.02,
+          "status": "active"
+        },
+        "session-1763234782": {
+          "work": "12-session orchestration",
+          "estimated_cost": 0.02,
+          "status": "active"
+        },
+        "session-1763243173": {
+          "work": "session initialization",
+          "estimated_cost": 0.02,
+          "status": "active"
+        },
+        "session-5-orchestration": {
+          "work": "I PROACTIVE + FPAI Analytics deployment, autonomous build loop",
+          "estimated_cost": 0.02,
+          "status": "active"
+        },
+        "session-1763243153": {
+          "work": "Unified swarm system fully designed. Orchestrator spec complete. Swarm client ready. All sessions can join once orchestrator deploys. 5x productivity transformation awaiting build-003.",
+          "estimated_cost": 0.02,
+          "status": "active"
+        },
+        "session-1763243115": {
+          "work": "workstream/STREAM_1_PHASE2_DEPLOYMENT",
+          "estimated_cost": 0.02,
+          "status": "active"
+        },
+        "session-1763243354": {
+          "work": "session initialization",
+          "estimated_cost": 0.02,
+          "status": "active"
+        },
+        "session-1763235028": {
+          "work": "consciousness-loop-build",
+          "estimated_cost": 0.02,
+          "status": "active"
+        },
+        "session-1763243285": {
+          "work": "Building unified session coordination and dashboard hub",
+          "estimated_cost": 0.02,
+          "status": "active"
+        },
+        "session-1763243456": {
+          "work": "Session #4: I MATCH Phase 1 launch package complete. All infrastructure verified ready. Service live at :8401. Created PHASE_1_LAUNCH_NOW.md with 7-day execution plan. Target: -25K first revenue. Critical path to K\u2192T vision. Ready for James to execute LinkedIn/Reddit outreach.",
+          "estimated_cost": 0.02,
+          "status": "active"
+        },
+        "session-1763243134": {
+          "work": "session initialization",
+          "estimated_cost": 0.02,
+          "status": "active"
+        },
+        "session-1763229251": {
+          "work": "church-guidance-ministry BUILD",
+          "estimated_cost": 0.02,
+          "status": "active"
+        }
+      }
+    },
+    "server": {
+      "total": 60,
+      "monthly": 5
+    },
+    "domains": {
+      "total": 12,
+      "annual": 12
+    }
+  },
+  "revenue": {
+    "church_guidance": {
+      "total": 0,
+      "potential_monthly": 500,
+      "clients": 0
+    },
+    "i_match": {
+      "total": 0,
+      "potential_monthly": 1000,
+      "transactions": 0
+    },
+    "white_rock": {
+      "total": 0,
+      "potential_monthly": 300,
+      "clients": 0
+    }
+  },
+  "investments": {
+    "ai_development": 0,
+    "infrastructure": 72,
+    "marketing": 0
+  },
+  "projections": {
+    "monthly_burn": 5,
+    "projected_revenue_m1": 2500,
+    "projected_revenue_m3": 7100,
+    "projected_revenue_m6": 16500,
+    "projected_revenue_m12": 40000,
+    "scenario": "aggressive",
+    "updated_at": "2025-11-15T13:17:24.192913"
+  }
+}

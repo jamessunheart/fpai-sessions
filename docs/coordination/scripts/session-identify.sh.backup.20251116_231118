@@ -1,0 +1,219 @@
+#!/bin/bash
+# Session Identity Detection & Registration
+# Auto-detects or prompts for session identity on startup
+# Usage: source this in .bashrc or run manually
+
+SESSION_DIR="/Users/jamessunheart/Development/docs/coordination"
+SESSIONS_FILE="$SESSION_DIR/claude_sessions.json"
+IDENTITY_FILE="$SESSION_DIR/.session_identity"
+
+# Color codes for output
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+function show_banner() {
+    echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${BLUE}   FPAI SESSION IDENTITY SYSTEM${NC}"
+    echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+}
+
+function load_identity() {
+    # Check if identity file exists and is recent (created today)
+    if [ -f "$IDENTITY_FILE" ]; then
+        # Check if file was modified today
+        if [ "$(date +%Y-%m-%d)" = "$(date -r "$IDENTITY_FILE" +%Y-%m-%d)" ]; then
+            cat "$IDENTITY_FILE"
+            return 0
+        fi
+    fi
+    return 1
+}
+
+function save_identity() {
+    local number=$1
+    echo "$number" > "$IDENTITY_FILE"
+}
+
+function show_registered_sessions() {
+    echo -e "${YELLOW}Currently Registered Sessions:${NC}"
+    echo ""
+
+    python3 << 'EOPYTHON'
+import json
+import sys
+
+try:
+    with open("/Users/jamessunheart/Development/docs/coordination/claude_sessions.json", 'r') as f:
+        sessions = json.load(f)
+
+    for num in sorted(sessions.keys(), key=int):
+        session = sessions[num]
+        role = session.get('role', 'Unknown')
+        status = session.get('status', 'unknown')
+        status_icon = '✅' if status == 'active' else '⏸️'
+        print(f"  {status_icon} #{num:2s} - {role}")
+
+    print()
+    taken_numbers = set(int(k) for k in sessions.keys())
+    available = [i for i in range(1, 14) if i not in taken_numbers]
+
+    if available:
+        print(f"Available numbers: {', '.join(map(str, available))}")
+    else:
+        print("All session slots (1-13) are taken!")
+
+except FileNotFoundError:
+    print("  No sessions registered yet.")
+    print("  Available numbers: 1-13")
+except Exception as e:
+    print(f"  Error reading sessions: {e}")
+EOPYTHON
+}
+
+function get_session_info() {
+    local number=$1
+
+    python3 << EOPYTHON
+import json
+import sys
+
+try:
+    with open("$SESSIONS_FILE", 'r') as f:
+        sessions = json.load(f)
+
+    if "$number" in sessions:
+        session = sessions["$number"]
+        print(f"Number: {session['number']}")
+        print(f"Role: {session['role']}")
+        print(f"Goal: {session['goal']}")
+        print(f"Session ID: {session['session_id']}")
+        print(f"Status: {session['status']}")
+    else:
+        sys.exit(1)
+except:
+    sys.exit(1)
+EOPYTHON
+}
+
+function prompt_for_identity() {
+    echo -e "${YELLOW}Session identity not found or expired.${NC}"
+    echo ""
+    show_registered_sessions
+    echo ""
+    echo -e "${GREEN}Which session number are you?${NC}"
+    echo -e "  ${BLUE}[1-13]${NC} Choose existing session number"
+    echo -e "  ${BLUE}[new]${NC}  Register as a new session"
+    echo -e "  ${BLUE}[skip]${NC} Skip identification (not recommended)"
+    echo ""
+    read -p "Enter choice: " choice
+
+    case "$choice" in
+        [1-9]|1[0-3])
+            # Verify this session exists
+            if get_session_info "$choice" > /dev/null 2>&1; then
+                echo ""
+                echo -e "${GREEN}✅ Identified as Session #$choice${NC}"
+                echo ""
+                get_session_info "$choice" | while IFS=: read -r key value; do
+                    echo -e "  ${BLUE}$key:${NC}$value"
+                done
+                save_identity "$choice"
+                export FPAI_SESSION_NUMBER="$choice"
+                echo ""
+                echo -e "${GREEN}Session identity saved for today.${NC}"
+                return 0
+            else
+                echo -e "${RED}❌ Session #$choice is not registered.${NC}"
+                echo ""
+                echo "Would you like to register it? (y/n)"
+                read -p "> " register
+                if [ "$register" = "y" ]; then
+                    register_new_session "$choice"
+                else
+                    return 1
+                fi
+            fi
+            ;;
+        new)
+            register_new_session
+            ;;
+        skip)
+            echo -e "${YELLOW}⚠️  Running without session identity.${NC}"
+            echo -e "   Some coordination features may not work."
+            return 1
+            ;;
+        *)
+            echo -e "${RED}Invalid choice.${NC}"
+            return 1
+            ;;
+    esac
+}
+
+function register_new_session() {
+    local suggested_number=$1
+
+    echo ""
+    echo -e "${GREEN}Register New Session${NC}"
+    echo ""
+
+    if [ -z "$suggested_number" ]; then
+        read -p "Session number (1-13): " suggested_number
+    fi
+
+    read -p "Role (e.g., 'Infrastructure Engineer'): " role
+    read -p "Goal (e.g., 'Deploy and maintain core services'): " goal
+
+    # Use registration script
+    bash "$SESSION_DIR/scripts/claude-session-register.sh" "$suggested_number" "$role" "$goal"
+
+    if [ $? -eq 0 ]; then
+        save_identity "$suggested_number"
+        export FPAI_SESSION_NUMBER="$suggested_number"
+        return 0
+    else
+        return 1
+    fi
+}
+
+# Main execution
+main() {
+    show_banner
+
+    # Try to load existing identity
+    if SESSION_NUM=$(load_identity); then
+        echo -e "${GREEN}✅ Session Identity Loaded${NC}"
+        echo ""
+        if get_session_info "$SESSION_NUM" 2>/dev/null; then
+            echo ""
+            export FPAI_SESSION_NUMBER="$SESSION_NUM"
+            echo -e "${BLUE}Environment variable set: FPAI_SESSION_NUMBER=$SESSION_NUM${NC}"
+        else
+            echo -e "${YELLOW}⚠️  Cached identity (#$SESSION_NUM) not found in registry.${NC}"
+            prompt_for_identity
+        fi
+    else
+        # No cached identity, prompt user
+        prompt_for_identity
+    fi
+
+    echo ""
+    echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+
+    # Export session number for use in other scripts
+    if [ -n "$FPAI_SESSION_NUMBER" ]; then
+        echo "export FPAI_SESSION_NUMBER=$FPAI_SESSION_NUMBER" > "$SESSION_DIR/.session_env"
+
+        # Update .current_session file for backward compatibility
+        echo "session-$FPAI_SESSION_NUMBER" > "$SESSION_DIR/.current_session"
+    fi
+}
+
+# Run if executed directly (not sourced)
+if [ "${BASH_SOURCE[0]}" -ef "$0" ]; then
+    main
+fi

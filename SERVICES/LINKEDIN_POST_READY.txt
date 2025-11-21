@@ -1,0 +1,34 @@
+Running an experiment that might fail.
+
+I built an AI system to test if Claude can match people with financial advisors better than Google.
+
+Why this matters to me:
+My dad's been a CFP for years. Generic lead services send him terrible matches - people who can't afford his services or don't align with his approach.
+
+Meanwhile, my friends struggle to find advisors who understand tech compensation (RSUs, ISOs, tax optimization).
+
+So I'm testing: Can AI understand compatibility?
+
+The experiment:
+✓ Customer describes their needs
+✓ AI analyzes advisor profiles
+✓ Matches based on specialization + values + style
+✓ Free for customers to try
+
+Current status:
+• Zero customers
+• Infrastructure works
+• Don't know if this is useful yet
+
+Testing at: http://198.54.123.234:8401
+
+(Yes it's an IP address - testing the matching before polishing the website)
+
+What I want to learn:
+1. Will people trust AI recommendations for something this important?
+2. Can AI judge human compatibility well enough?
+3. Is this actually better than Googling "financial advisor near me"?
+
+Honest feedback welcome. Will report back in 30 days whether this worked or was a dead end.
+
+#AI #FinTech #Experimentation #FinancialPlanning

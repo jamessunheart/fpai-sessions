@@ -1,0 +1,41 @@
+{
+  "church_guidance": {
+    "leads": [],
+    "active_clients": [],
+    "pricing": 50,
+    "target_m1": 10,
+    "conversion_rate": 0.2
+  },
+  "i_match": {
+    "matches_pending": [],
+    "matches_completed": [],
+    "fee_per_match": 10,
+    "target_m1_matches": 50,
+    "conversion_rate": 0.3
+  },
+  "white_rock": {
+    "leads": [],
+    "active_clients": [],
+    "pricing": 300,
+    "target_m1": 5,
+    "conversion_rate": 0.15
+  },
+  "acquisition_channels": {
+    "warm_network": {
+      "contacts": 0,
+      "reached_out": 0,
+      "responded": 0
+    },
+    "church_outreach": {
+      "churches_contacted": 0,
+      "interested": 0,
+      "signed_up": 0
+    },
+    "linkedin": {
+      "connections": 0,
+      "engaged": 0,
+      "converted": 0
+    }
+  },
+  "updated_at": "2025-11-15T13:33:22.036497"
+}

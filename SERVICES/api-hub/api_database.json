@@ -1,0 +1,100 @@
+{
+  "image_generation": [
+    {
+      "name": "DALL-E 3",
+      "provider": "OpenAI",
+      "free_tier": false,
+      "pricing": "$0.04-0.08 per image",
+      "signup_url": "https://platform.openai.com/signup",
+      "requires_credit_card": true,
+      "api_key_env": "OPENAI_API_KEY",
+      "ease_of_signup": "easy",
+      "quality": "excellent"
+    },
+    {
+      "name": "Stable Diffusion",
+      "provider": "Stability AI",
+      "free_tier": true,
+      "pricing": "Free tier available, $0.002/image after",
+      "signup_url": "https://platform.stability.ai/",
+      "requires_credit_card": false,
+      "api_key_env": "STABILITY_API_KEY",
+      "ease_of_signup": "easy",
+      "quality": "good"
+    }
+  ],
+  "video_generation": [
+    {
+      "name": "Pictory.ai",
+      "provider": "Pictory",
+      "free_tier": true,
+      "pricing": "Free trial, then $19/month",
+      "signup_url": "https://pictory.ai/",
+      "requires_credit_card": false,
+      "api_key_env": "PICTORY_API_KEY",
+      "ease_of_signup": "medium",
+      "quality": "good"
+    },
+    {
+      "name": "D-ID",
+      "provider": "D-ID",
+      "free_tier": true,
+      "pricing": "Free trial credits",
+      "signup_url": "https://www.d-id.com/",
+      "requires_credit_card": false,
+      "api_key_env": "DID_API_KEY",
+      "ease_of_signup": "easy",
+      "quality": "excellent"
+    }
+  ],
+  "voice_generation": [
+    {
+      "name": "ElevenLabs",
+      "provider": "ElevenLabs",
+      "free_tier": true,
+      "pricing": "10k characters free/month",
+      "signup_url": "https://elevenlabs.io/",
+      "requires_credit_card": false,
+      "api_key_env": "ELEVENLABS_API_KEY",
+      "ease_of_signup": "easy",
+      "quality": "excellent"
+    },
+    {
+      "name": "Play.ht",
+      "provider": "Play.ht",
+      "free_tier": true,
+      "pricing": "Free tier available",
+      "signup_url": "https://play.ht/",
+      "requires_credit_card": false,
+      "api_key_env": "PLAYHT_API_KEY",
+      "ease_of_signup": "easy",
+      "quality": "good"
+    }
+  ],
+  "music_generation": [
+    {
+      "name": "Soundraw",
+      "provider": "Soundraw",
+      "free_tier": true,
+      "pricing": "Free tier, $16.99/month pro",
+      "signup_url": "https://soundraw.io/",
+      "requires_credit_card": false,
+      "api_key_env": "SOUNDRAW_API_KEY",
+      "ease_of_signup": "easy",
+      "quality": "good"
+    }
+  ],
+  "design_tools": [
+    {
+      "name": "Canva API",
+      "provider": "Canva",
+      "free_tier": false,
+      "pricing": "$13/month Canva Pro",
+      "signup_url": "https://www.canva.com/",
+      "requires_credit_card": true,
+      "api_key_env": "CANVA_API_KEY",
+      "ease_of_signup": "medium",
+      "quality": "excellent"
+    }
+  ]
+}

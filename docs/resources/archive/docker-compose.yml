@@ -1,0 +1,114 @@
+version: '3.8'
+
+services:
+  registry:
+    build:
+      context: ./registry
+      dockerfile: Dockerfile
+    container_name: fpai-registry
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - ENVIRONMENT=development
+      - LOG_LEVEL=INFO
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - fpai-network
+
+  orchestrator:
+    build:
+      context: ./orchestrator
+      dockerfile: Dockerfile
+    container_name: fpai-orchestrator
+    ports:
+      - "8001:8001"
+    environment:
+      - PORT=8001
+      - ENVIRONMENT=development
+      - LOG_LEVEL=INFO
+      - REGISTRY_URL=http://registry:8000
+    depends_on:
+      registry:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/orchestrator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - fpai-network
+
+  dashboard:
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile
+    container_name: fpai-dashboard
+    ports:
+      - "8002:8002"
+    environment:
+      - PORT=8002
+      - ENVIRONMENT=development
+      - LOG_LEVEL=INFO
+      - REGISTRY_URL=http://registry:8000
+      - ORCHESTRATOR_URL=http://orchestrator:8001
+    depends_on:
+      registry:
+        condition: service_healthy
+      orchestrator:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - fpai-network
+
+  proxy-manager:
+    build:
+      context: ./proxy-manager
+      dockerfile: Dockerfile
+    container_name: fpai-proxy-manager
+    ports:
+      - "8003:8003"
+    environment:
+      - PORT=8003
+      - ENVIRONMENT=development
+      - LOG_LEVEL=INFO
+      - REGISTRY_URL=http://registry:8000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock  # For NGINX management
+    depends_on:
+      registry:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - fpai-network
+    profiles:
+      - phase2  # Optional service
+
+networks:
+  fpai-network:
+    driver: bridge
+    name: fpai-network
+
+volumes:
+  registry-data:
+  orchestrator-cache:

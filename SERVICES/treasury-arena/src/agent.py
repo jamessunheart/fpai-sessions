@@ -20,11 +20,23 @@ class TreasuryAgent:
         params: Dict[str, Any],
         virtual_capital: float = 10000,
         real_capital: float = 0,
-        agent_id: Optional[str] = None
+        agent_id: Optional[str] = None,
+        name: Optional[str] = None,
+        avatar: Optional[str] = None,
+        personality: Optional[Dict[str, Any]] = None
     ):
         self.id = agent_id or f"agent-{uuid.uuid4().hex[:8]}"
         self.strategy = strategy_type
         self.params = params
+
+        # Personality traits
+        self.name = name or f"Agent-{self.id[:8]}"
+        self.avatar = avatar or "🤖"
+        self.personality = personality or {
+            'risk_tolerance': 'moderate',
+            'aggression': 'balanced',
+            'description': 'A treasury agent'
+        }
 
         # Capital tracking
         self.virtual_capital = virtual_capital
@@ -303,6 +315,9 @@ class TreasuryAgent:
         """Convert agent to dictionary for API/storage"""
         return {
             'id': self.id,
+            'name': self.name,
+            'avatar': self.avatar,
+            'personality': self.personality,
             'strategy': self.strategy,
             'status': self.status,
             'tier': self.tier,

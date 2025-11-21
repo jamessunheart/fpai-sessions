@@ -1,0 +1,124 @@
+{
+  "ssot_version": "20251115-2134UTC",
+  "verified_by": "session-1763231940",
+  "verification_timestamp": "2025-11-15T21:34:00Z",
+  "system": "unified_chat_deployment",
+  "status": "OPERATIONAL",
+
+  "deployment": {
+    "unified_chat_interface": {
+      "status": "LIVE",
+      "domain": "chat.fullpotential.com",
+      "protocol": "https",
+      "ssl_status": "valid",
+      "ssl_expires": "2026-02-13",
+      "server_ip": "198.54.123.234",
+      "server_port": 8100,
+      "nginx_proxy": "configured",
+      "health_endpoint": "https://chat.fullpotential.com/api/health",
+      "health_status": "healthy",
+      "process_id": 338711,
+      "server_location": "/opt/fpai/services/unified-chat/",
+      "local_dev_location": "/Users/jamessunheart/Development/SERVICES/unified-chat/"
+    },
+
+    "authentication": {
+      "method": "password_and_api_key",
+      "user_password": "9MzqXYQwKHTmONFVY2aEZ9slJhNU5I4F",
+      "session_api_key": "fpai-session-key-2024-secure",
+      "token_expiry": "24_hours"
+    },
+
+    "dns_configuration": {
+      "domain": "chat.fullpotential.com",
+      "dns_provider": "namecheap",
+      "record_type": "A",
+      "record_value": "198.54.123.234",
+      "ttl": "1min",
+      "propagation_status": "complete",
+      "automation": "enabled_via_api"
+    },
+
+    "connection_system": {
+      "script_location": "/Users/jamessunheart/Development/SERVICES/unified-chat/connect_session.py",
+      "default_server": "wss://chat.fullpotential.com",
+      "websocket_protocol": "wss",
+      "session_registration": "automatic",
+      "coordination_integration": "enabled"
+    },
+
+    "credentials": {
+      "namecheap_api": {
+        "stored_in": "credential_vault",
+        "encryption": "FPAI_CREDENTIALS_KEY",
+        "username": "globalskypower",
+        "api_key_preview": "1970bffd68...",
+        "automation_enabled": true
+      }
+    }
+  },
+
+  "capabilities": {
+    "unified_command": true,
+    "multi_session_aggregation": true,
+    "real_time_websocket": true,
+    "consensus_detection": true,
+    "parallel_execution": true,
+    "accessible_worldwide": true,
+    "shareable": true,
+    "secure_authentication": true
+  },
+
+  "verified_facts": {
+    "https_working": true,
+    "ssl_certificate_valid": true,
+    "health_endpoint_responding": true,
+    "production_server_running": true,
+    "local_server_running": true,
+    "connection_script_exists": true,
+    "dns_resolving_correctly": true,
+    "nginx_proxy_configured": true,
+    "firewall_port_8100_open": true,
+    "auto_https_redirect": true
+  },
+
+  "next_steps": {
+    "1_connect_sessions": {
+      "command": "cd /Users/jamessunheart/Development/SERVICES/unified-chat && python3 connect_session.py",
+      "run_in": "each_of_12_claude_sessions",
+      "expected_result": "session_connected_to_wss://chat.fullpotential.com"
+    },
+    "2_access_interface": {
+      "url": "https://chat.fullpotential.com",
+      "password": "9MzqXYQwKHTmONFVY2aEZ9slJhNU5I4F",
+      "expected_result": "web_interface_shows_connected_sessions"
+    },
+    "3_unified_command": {
+      "method": "type_message_in_web_interface",
+      "broadcast": "all_connected_sessions_receive",
+      "response": "aggregated_from_all_sessions"
+    }
+  },
+
+  "verification_commands": {
+    "check_https": "curl -I https://chat.fullpotential.com",
+    "check_health": "curl -s https://chat.fullpotential.com/api/health",
+    "check_dns": "dig +short chat.fullpotential.com",
+    "check_production_process": "ssh root@198.54.123.234 'ps aux | grep main_secure'",
+    "check_local_process": "lsof -i :8100",
+    "check_connection_script": "ls -l /Users/jamessunheart/Development/SERVICES/unified-chat/connect_session.py"
+  },
+
+  "consensus_required": {
+    "question": "Is unified chat deployed and operational?",
+    "expected_consensus": "YES",
+    "verification_points": [
+      "Domain resolves to 198.54.123.234",
+      "HTTPS works with valid SSL",
+      "Health endpoint returns healthy",
+      "Production server process running (PID 338711)",
+      "Connection script exists and is executable",
+      "Web interface accessible"
+    ]
+  }
+}

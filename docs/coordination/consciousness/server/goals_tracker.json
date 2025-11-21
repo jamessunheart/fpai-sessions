@@ -1,0 +1,44 @@
+{
+  "primary_goals": [
+    {
+      "id": "treasury_deployment",
+      "name": "Deploy FPAI Token and Raise $400K",
+      "status": "in_progress",
+      "progress": 45,
+      "blockers": [],
+      "next_steps": [
+        "Enable Telegram notifications",
+        "Post job to free channels",
+        "Test auto-hire with real applicant",
+        "Deploy testnet via hired VA",
+        "Prepare mainnet deployment",
+        "Launch token sale"
+      ],
+      "last_updated": "2025-11-15T19:46:11.319871"
+    },
+    {
+      "id": "the_brain",
+      "name": "Build AI Consciousness Superior to Claude Code",
+      "status": "in_progress",
+      "progress": 20,
+      "blockers": [],
+      "next_steps": [
+        "Build Phase 2 (vector database)",
+        "Implement semantic search",
+        "Create autonomous agents",
+        "Fine-tune custom model",
+        "Deploy The Brain"
+      ],
+      "last_updated": "2025-11-15T19:46:11.319875"
+    }
+  ],
+  "completed_goals": [
+    {
+      "id": "consciousness_foundation",
+      "name": "Build Unified Consciousness Foundation",
+      "completed_at": "2025-11-15T19:46:11.319876",
+      "outcome": "Success - persistent memory working"
+    }
+  ],
+  "abandoned_goals": []
+}

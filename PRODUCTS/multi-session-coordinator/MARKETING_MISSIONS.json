@@ -1,0 +1,217 @@
+{
+  "mission_registry_version": "1.0",
+  "purpose": "MISSION ASSIGNMENT SYSTEM - What sessions DO (not who they ARE)",
+  "identity_registry": "See claude_sessions.json in SSOT.json for session identities",
+  "last_update": "2025-11-15T22:35:00Z",
+  "status": "missions_defined",
+  "mission": "Autonomous Revenue Generation → $120k MRR",
+  "note": "Sessions claim identities in claude_sessions.json, then optionally take missions here",
+  "sessions": {
+    "1": {
+      "number": 1,
+      "role": "Orchestrator - Master Coordinator",
+      "goal": "Coordinate 12 sessions to generate $120k MRR through autonomous execution",
+      "session_id": "marketing-orchestrator",
+      "status": "PENDING_REGISTRATION",
+      "terminal": null,
+      "registered_at": null,
+      "responsibilities": [
+        "Run daily workflow 6 AM - 6 PM",
+        "Monitor all session progress",
+        "Generate daily summary reports",
+        "Escalate blockers to human",
+        "Ensure workflow coordination"
+      ]
+    },
+    "2": {
+      "number": 2,
+      "role": "Research Team Leader - Prospect finding (Batch 1)",
+      "goal": "Find 25 high-quality prospects daily, avg score 70+/100",
+      "session_id": "marketing-research-1",
+      "status": "PENDING_REGISTRATION",
+      "terminal": null,
+      "registered_at": null,
+      "responsibilities": [
+        "Find 25 prospects matching ICP",
+        "Enrich with company/role data",
+        "Score each prospect 0-100",
+        "Queue prospects 1-25 for approval"
+      ]
+    },
+    "3": {
+      "number": 3,
+      "role": "Research Team Member - Prospect finding (Batch 2)",
+      "goal": "Find 25 high-quality prospects daily, avg score 70+/100",
+      "session_id": "marketing-research-2",
+      "status": "PENDING_REGISTRATION",
+      "terminal": null,
+      "registered_at": null,
+      "responsibilities": [
+        "Find 25 prospects matching ICP",
+        "Enrich with company/role data",
+        "Score each prospect 0-100",
+        "Queue prospects 26-50 for approval"
+      ]
+    },
+    "4": {
+      "number": 4,
+      "role": "Outreach Team Leader - Email personalization (Morning Batch 1)",
+      "goal": "Send 17 perfectly personalized emails daily, 95%+ delivery rate",
+      "session_id": "marketing-outreach-1",
+      "status": "PENDING_REGISTRATION",
+      "terminal": null,
+      "registered_at": null,
+      "responsibilities": [
+        "Personalize emails for prospects 1-17",
+        "Send morning batch 10-11 AM",
+        "Track delivery and opens",
+        "Report to Orchestrator"
+      ]
+    },
+    "5": {
+      "number": 5,
+      "role": "Outreach Team Member - Email personalization (Morning Batch 2)",
+      "goal": "Send 17 perfectly personalized emails daily, 95%+ delivery rate",
+      "session_id": "marketing-outreach-2",
+      "status": "PENDING_REGISTRATION",
+      "terminal": null,
+      "registered_at": null,
+      "responsibilities": [
+        "Personalize emails for prospects 18-33",
+        "Send morning batch 10-11 AM",
+        "Track delivery and opens",
+        "Report to Orchestrator"
+      ]
+    },
+    "6": {
+      "number": 6,
+      "role": "Outreach Team Member - Email personalization (Afternoon Batch)",
+      "goal": "Send 16 perfectly personalized emails daily, 95%+ delivery rate",
+      "session_id": "marketing-outreach-3",
+      "status": "PENDING_REGISTRATION",
+      "terminal": null,
+      "registered_at": null,
+      "responsibilities": [
+        "Personalize emails for prospects 34-50",
+        "Send afternoon batch 2-3 PM",
+        "Track delivery and opens",
+        "Report to Orchestrator"
+      ]
+    },
+    "7": {
+      "number": 7,
+      "role": "Conversation Team Leader - Handle replies (High Priority)",
+      "goal": "Process all high-value replies within 1 hour, 90%+ qualification accuracy",
+      "session_id": "marketing-conversation-1",
+      "status": "PENDING_REGISTRATION",
+      "terminal": null,
+      "registered_at": null,
+      "responsibilities": [
+        "Monitor inbox for VIP/high-score replies",
+        "Analyze sentiment and intent",
+        "Qualify using BANT framework",
+        "Escalate meeting requests to human immediately"
+      ]
+    },
+    "8": {
+      "number": 8,
+      "role": "Conversation Team Member - Handle replies (Standard)",
+      "goal": "Process all standard replies within 2 hours, auto-respond to simple queries",
+      "session_id": "marketing-conversation-2",
+      "status": "PENDING_REGISTRATION",
+      "terminal": null,
+      "registered_at": null,
+      "responsibilities": [
+        "Monitor inbox for standard replies",
+        "Analyze and qualify prospects",
+        "Auto-respond to info requests",
+        "Draft responses for complex queries"
+      ]
+    },
+    "9": {
+      "number": 9,
+      "role": "Conversation Team Member - Handle replies (Support)",
+      "goal": "Process all remaining replies within 4 hours, maintain quality standards",
+      "session_id": "marketing-conversation-3",
+      "status": "PENDING_REGISTRATION",
+      "terminal": null,
+      "registered_at": null,
+      "responsibilities": [
+        "Handle overflow replies",
+        "Provide backup to sessions 7-8",
+        "Process objections intelligently",
+        "Track reply patterns for optimization"
+      ]
+    },
+    "10": {
+      "number": 10,
+      "role": "Human Interface - Approval queue and coordination",
+      "goal": "Prepare perfect approval queue daily, facilitate 15-min human review",
+      "session_id": "marketing-human-approver",
+      "status": "PENDING_REGISTRATION",
+      "terminal": null,
+      "registered_at": null,
+      "responsibilities": [
+        "Prepare approval queue by 8 AM",
+        "Rank prospects by score",
+        "Present clear summaries for human",
+        "Collect approvals and distribute to outreach team",
+        "Track human feedback"
+      ]
+    },
+    "11": {
+      "number": 11,
+      "role": "Sales Closer Primary - Call prep and deal support",
+      "goal": "Support 10+ sales calls/week, 30%+ close rate",
+      "session_id": "marketing-sales-closer-1",
+      "status": "PENDING_REGISTRATION",
+      "terminal": null,
+      "registered_at": null,
+      "responsibilities": [
+        "Prepare call briefs for human",
+        "Track meeting schedules",
+        "Draft proposals",
+        "Follow up post-call",
+        "Update CRM"
+      ]
+    },
+    "12": {
+      "number": 12,
+      "role": "Sales Closer Backup - Overflow deal support",
+      "goal": "Handle overflow calls, support primary closer, 30%+ close rate",
+      "session_id": "marketing-sales-closer-2",
+      "status": "PENDING_REGISTRATION",
+      "terminal": null,
+      "registered_at": null,
+      "responsibilities": [
+        "Backup for session #11",
+        "Handle overflow calls",
+        "Support multiple concurrent deals",
+        "Maintain pipeline tracking",
+        "Generate close reports"
+      ]
+    }
+  },
+  "registration_protocol": {
+    "step_1": "Each Claude session reads this registry",
+    "step_2": "Claim your assigned number (1-13)",
+    "step_3": "Update your status to REGISTERED",
+    "step_4": "Add your terminal ID",
+    "step_5": "Set registered_at timestamp",
+    "step_6": "Commit changes to registry"
+  },
+  "consensus_requirements": {
+    "all_sessions_registered": false,
+    "no_duplicate_numbers": true,
+    "all_roles_accepted": false,
+    "all_goals_committed": false,
+    "human_approval": false
+  },
+  "next_actions": [
+    "All 12 operational sessions (1-12) must register",
+    "Session #13 (Builder) already registered",
+    "Once all registered, Orchestrator broadcasts activation",
+    "Human approves final registry",
+    "Week 1 workflow begins"
+  ]
+}

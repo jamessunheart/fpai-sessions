@@ -1,0 +1,187 @@
+Here is the cleaned, formatted, readable, architect-grade version.
+Same content — far easier for a human Coordinator to fill and fits the Blueprint perfectly.
+
+⸻
+
+🟦 SSOT SNAPSHOT TEMPLATE (Improved Display Version)
+
+Instructions: Copy this file for each snapshot.
+Name it: SSOT_SNAPSHOT_YYYY-MM-DD.md
+This file captures ONLY reality. No planning.
+
+⸻
+
+🔹 Snapshot Metadata
+	•	Snapshot Date: [YYYY-MM-DD HH:MM UTC]
+	•	Version: [YYYY-MM-DD-v1]
+	•	Captured By: [Name]
+	•	Previous Snapshot: [Link or date] or "First snapshot"
+	•	Major Changes Since Last: [Brief summary or N/A]
+
+⸻
+
+1️⃣ DROPLET INVENTORY
+
+Name	ID	Steward	Status	Health	Last Seen	Version	Server / URL	Repo	Notes
+									
+									
+									
+
+Status Legend:
+	•	🟢 Running — Healthy
+	•	🟡 Waiting — Built but not active
+	•	🔵 Building — In development
+	•	🔴 Down — Was active, now offline
+	•	⚫ Missing — Expected per Blueprint but absent
+
+Health: Uptime % over last 7 days (or "N/A")
+
+⸻
+
+2️⃣ INTEGRATION STATUS
+
+Integration	Status	Last Verified	Issue / Notes
+Registry ← Droplets			
+Orchestrator ← Heartbeats			
+Proxy → Droplets			
+Dashboard ← Registry			
+Other			
+
+Legend:
+✅ Working | ⚠️ Partial | ❌ Broken
+
+⸻
+
+3️⃣ FUNCTIONAL TRUTH (Reality of Each Droplet)
+
+Droplet: [Name] (#[ID])
+	•	Current Function:
+	•	Endpoints Found:
+	•	Dependencies:
+	•	Deviations from Blueprint:
+	•	Notes:
+
+Droplet: [Name] (#[ID])
+	•	Current Function:
+	•	Endpoints Found:
+	•	Dependencies:
+	•	Deviations from Blueprint:
+	•	Notes:
+
+(Add one section per droplet.)
+
+⸻
+
+4️⃣ ACTIVE WORK (Right Now)
+
+Item	Type	Assignee	Started	Est. Complete	Status
+					
+					
+
+Types: Build / Deploy / Fix / Optimize
+
+⸻
+
+5️⃣ WORK QUEUE (Blocked or Waiting)
+
+Item	Type	Blocked By	Priority	Assignee
+				
+				
+
+Priority: CRITICAL / HIGH / MEDIUM / LOW
+
+⸻
+
+6️⃣ CONFLICTS & MISMATCHES
+
+Droplet ID Conflicts
+	•	[List or “None”]
+
+Repo vs Server Mismatches
+	•	[List or “None”]
+
+Endpoint Mismatches
+	•	[List or “None”]
+
+Steward Mismatches
+	•	[List or “None”]
+
+Missing Repos
+	•	[List or “None”]
+
+Missing Documentation
+	•	[List or “None”]
+
+Unknown Servers
+	•	[List or “None”]
+
+⸻
+
+7️⃣ INFRASTRUCTURE STATE
+
+Servers
+	•	Production: [IP/URL]
+	•	Staging: [IP/URL]
+	•	Development: [Status]
+
+Domains
+	•	fullpotential.ai: [Status]
+	•	*.fullpotential.ai: [Status]
+
+Databases
+	•	Registry DB: [Status]
+	•	Orchestrator DB: [Status]
+
+Proxy / Routing
+	•	Current: Manual / Automated / None
+	•	Target: [Goal state]
+
+⸻
+
+8️⃣ FOUNDATION FILES STATUS
+
+File	Version	Last Updated	Status	Notes
+UDC_COMPLIANCE.md				
+TECH_STACK.md				
+SECURITY_REQUIREMENTS.md				
+CODE_STANDARDS.md				
+INTEGRATION_GUIDE.md				
+
+Status:
+✅ Current | ⚠️ Needs update | ❌ Outdated
+
+⸻
+
+9️⃣ METRICS SNAPSHOT
+
+System Health
+	•	Operational Droplets: [N]/[Total]
+	•	System Autonomy: [Percentage]%
+	•	Active Developers: [Count]
+
+Velocity
+	•	Sprints Completed This Week: [N]
+	•	Sprints In Progress: [N]
+	•	Avg Build Time: [N] hours
+	•	First-Pass Approval Rate: [N]%
+
+Blockers
+	•	Critical Blockers: [Count]
+	•	High Priority Blockers: [Count]
+	•	Total Items Blocked: [Count]
+
+⸻
+
+🔟 ARCHITECT CONFIRMATION
+	•	Snapshot complete? [Yes / No]
+	•	Architect Notes:
+[Any clarifications or corrections]
+	•	Approved for GAP ANALYSIS? [Yes / No]
+	•	Next Snapshot Date: [Date]
+
+⸻
+
+END OF SSOT SNAPSHOT TEMPLATE
+
+
+

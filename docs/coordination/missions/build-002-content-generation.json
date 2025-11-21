@@ -1,0 +1,102 @@
+{
+  "mission_id": "build-002-content-generation",
+  "title": "BUILD: Content Generation Engine (HIGH)",
+  "type": "build",
+  "priority": "high",
+  "status": "available",
+  "created_at": "2025-11-15T23:00:00Z",
+  "claimed_by": null,
+  "claimed_at": null,
+  "completed_at": null,
+  "estimated_time_hours": 12,
+  "infinite_scale": true,
+  "instructions": {
+    "task": "Build autonomous content generation engine that creates SEO-optimized blog posts forever",
+    "spec_file": "/Users/jamessunheart/Development/SERVICES/content-generation-engine/SPEC.md",
+    "architecture": "FastAPI + GPT-4 + WordPress API + APScheduler",
+    "deployment_target": "198.54.123.234 at /opt/fpai/content-generation-engine",
+    "port": 8700,
+    "scope": "Content strategist, AI writer, publishing system, performance tracker"
+  },
+  "what_to_build": {
+    "service_name": "content-generation-engine",
+    "components": [
+      "FastAPI app with content generation endpoints",
+      "GPT-4 integration for article writing",
+      "WordPress REST API client for publishing",
+      "Content calendar system (3 posts/week)",
+      "Topic research from customer data",
+      "SEO optimization engine",
+      "Google Analytics integration",
+      "Auto-optimization loop (rewrite underperformers)"
+    ]
+  },
+  "success_criteria": {
+    "functional": [
+      "Generate 500-2000 word SEO articles",
+      "Publish to WordPress 3x/week automatically",
+      "Content uniqueness >95%",
+      "Track article performance (views, time, conversions)",
+      "Auto-optimize low-performing articles",
+      "Support multiple topic sources (success stories, keywords, guides)"
+    ],
+    "performance": [
+      "Article generation <60 seconds",
+      "Quality check pass rate >90%",
+      "Publishing success rate >99%",
+      "SEO score >70/100"
+    ],
+    "business_impact": [
+      "200+ organic visitors/month by Month 1",
+      "1,500+ organic visitors/month by Month 3",
+      "10,000+ organic visitors/month by Month 12",
+      "$30K+ annual value from organic traffic"
+    ]
+  },
+  "deployment": {
+    "server": "198.54.123.234",
+    "path": "/opt/fpai/content-generation-engine",
+    "port": 8700,
+    "systemd_service": "content-generation-engine.service",
+    "docker_compose": true,
+    "env_vars_needed": [
+      "DATABASE_URL",
+      "OPENAI_API_KEY",
+      "WORDPRESS_URL",
+      "WORDPRESS_USERNAME",
+      "WORDPRESS_APP_PASSWORD",
+      "GOOGLE_ANALYTICS_PROPERTY_ID",
+      "SENTRY_DSN"
+    ]
+  },
+  "integration_points": {
+    "customer_data": "Mine I MATCH customer success stories for content",
+    "wordpress": "Auto-publish to fullpotential.com/blog",
+    "email_system": "Notify customers of relevant articles",
+    "analytics": "Track performance via Google Analytics"
+  },
+  "expected_outcomes": {
+    "week_1": "First 3 articles published, indexed by Google",
+    "month_1": "12 articles, 200+ visitors/month",
+    "month_3": "36 articles, 1,500+ visitors/month",
+    "month_12": "144 articles, 10,000+ visitors/month, SEO flywheel active"
+  },
+  "roi_calculation": {
+    "build_time_cost": "12 hours × $0 = $0",
+    "year_1_traffic_value": "10,000 visitors/month × 2% conversion × $150 LTV = $30K/year",
+    "infinite_value": "Articles work forever, compound exponentially",
+    "roi": "INFINITE"
+  },
+  "resources": {
+    "spec": "/Users/jamessunheart/Development/SERVICES/content-generation-engine/SPEC.md",
+    "architecture_doc": "/Users/jamessunheart/Development/SERVICES/INFINITE_SCALE_ARCHITECTURE.md"
+  },
+  "next_steps_after_build": [
+    "Deploy to server",
+    "Configure WordPress API credentials",
+    "Schedule first content generation run",
+    "Monitor first 10 articles",
+    "Tune GPT-4 prompts based on performance",
+    "Watch SEO flywheel activate"
+  ]
+}

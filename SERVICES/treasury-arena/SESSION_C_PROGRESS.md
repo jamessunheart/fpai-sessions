@@ -1,7 +1,7 @@
 # SESSION C PROGRESS REPORT
 **Component:** ARENA_MANAGER_v2 Event Sourcing
-**Status:** IN PROGRESS (60% Complete)
-**Time Elapsed:** ~30 minutes
+**Status:** IN PROGRESS (85% Complete)
+**Time Elapsed:** ~50 minutes
 
 ---
 
@@ -48,17 +48,20 @@
 - replay_events() - Audit trail replay
 - get_capital_allocation_breakdown() - Detailed allocation view
 
-### **5. Event Emission Integration** ✅ 20%
-**Started adding events to methods:**
+### **5. Event Emission Integration** ✅ 100%
+**All methods now emit events:**
 - ✅ spawn_agent() - Emits AgentSpawned
+- ✅ allocate_capital() - Emits CapitalAllocated (for each agent)
+- ✅ kill_underperformers() - Emits AgentKilled (for each killed agent)
+- ✅ graduate_to_arena() - Emits AgentGraduated
+- ✅ graduate_to_proving() - Emits AgentGraduated
+- ✅ mutate_agent() - Emits AgentMutated (with causality tracking)
+- ✅ run_evolution_cycle() - Emits EvolutionCycleComplete
 
-**Still TODO:**
-- ⏳ allocate_capital() - Emit CapitalAllocated
-- ⏳ kill_underperformers() - Emit AgentKilled
-- ⏳ graduate_to_arena() - Emit AgentGraduated
-- ⏳ graduate_to_proving() - Emit AgentGraduated
-- ⏳ mutate_agent() - Emit AgentMutated
-- ⏳ run_evolution_cycle() - Emit EvolutionCycleComplete
+### **6. Test Suite** ✅ 100%
+- ✅ Created tests/test_arena_v2.py (370 lines)
+- ✅ 9 test classes covering all event sourcing functionality
+- ✅ Tests for event emission, capital conservation, replay, causality
 
 ---
 

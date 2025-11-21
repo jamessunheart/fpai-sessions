@@ -181,7 +181,7 @@
 ./docs/coordination/scripts/session-status.sh
 
 # Open web dashboard
-open http://localhost:8030
+open https://fullpotential.com/dashboard/coordination
 ```
 
 ---

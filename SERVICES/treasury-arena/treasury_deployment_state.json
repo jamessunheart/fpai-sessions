@@ -1,0 +1,22 @@
+{
+  "deployment_start": "2025-11-16T23:28:12.833602",
+  "total_capital": 373261,
+  "deployed_capital": 1000,
+  "idle_capital": 372261,
+  "total_yield_earned": 0,
+  "strategies_deployed": [
+    {
+      "timestamp": "2025-11-16T23:28:12.834862",
+      "strategy": "PENDLE-PT-SUSDE",
+      "amount": 1000,
+      "target_apy": 0.285,
+      "status": "PENDING_EXECUTION",
+      "smart_contract": "0x... (Pendle PT-sUSDe)",
+      "chain": "Ethereum Mainnet",
+      "verification": "Audited by Trail of Bits"
+    }
+  ],
+  "deployment_phase": "PHASE_1_PROOF",
+  "last_deployment": "2025-11-16T23:28:12.834925",
+  "deployments_completed": 1
+}

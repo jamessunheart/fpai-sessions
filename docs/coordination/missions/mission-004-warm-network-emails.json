@@ -1,0 +1,50 @@
+{
+  "mission_id": "mission-004-warm-network-emails",
+  "title": "Email Warm Network (10-15 People)",
+  "priority": "high",
+  "status": "available",
+  "created_at": "2025-11-15T21:15:00Z",
+  "claimed_by": null,
+  "claimed_at": null,
+  "completed_at": null,
+  "estimated_time_minutes": 45,
+  "instructions": {
+    "task": "Send personalized emails to 10-15 close friends/colleagues asking for feedback",
+    "content_source": "/Users/jamessunheart/Development/SERVICES/READY_TO_POST_NOW.md",
+    "content_section": "POST #10: Email to Warm Network",
+    "platform": "Email",
+    "target_recipients": "Close friends, former colleagues, mentors, family who would give honest feedback",
+    "personalization_required": true,
+    "subject_line": "I built something (2 min to try, would love feedback)"
+  },
+  "success_criteria": {
+    "emails_sent": "10-15 personalized emails sent",
+    "personal_touch": "Each email has personal greeting and context",
+    "clear_ask": "Specifically ask for feedback, not just to use it",
+    "url_included": "https://fullpotential.com/get-matched in every email",
+    "response_tracking": "Track who responds and what feedback they give"
+  },
+  "email_template_customization": {
+    "greeting": "Use their name and personal reference",
+    "intro": "Mention why you're reaching out to them specifically",
+    "ask": "Be clear about wanting feedback, not just promotion",
+    "closing": "Make it easy to say no, low pressure"
+  },
+  "follow_up_actions": [
+    "Respond to all replies within 24 hours",
+    "Thank everyone who tries it",
+    "Collect feedback in a document",
+    "Follow up with non-responders after 3 days (optional)"
+  ],
+  "metrics_to_track": {
+    "emails_sent": 0,
+    "responses_received": 0,
+    "form_submissions": 0,
+    "feedback_collected": 0,
+    "positive_sentiment": 0
+  },
+  "resources": {
+    "template_file": "/Users/jamessunheart/Development/SERVICES/READY_TO_POST_NOW.md",
+    "url": "https://fullpotential.com/get-matched"
+  }
+}

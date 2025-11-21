@@ -1,0 +1,48 @@
+{
+  "timestamp": "2025-11-16T00:00:00Z",
+  "spot_positions": [
+    {
+      "asset": "BTC",
+      "amount": 1.0,
+      "entry_price": 45000,
+      "current_price": 50000,
+      "location": "Wallet 1"
+    },
+    {
+      "asset": "ETH",
+      "amount": 10.0,
+      "entry_price": 2500,
+      "current_price": 2800,
+      "location": "Wallet 1"
+    },
+    {
+      "asset": "SOL",
+      "amount": 100.0,
+      "entry_price": 100,
+      "current_price": 140,
+      "location": "Wallet 2"
+    }
+  ],
+  "leveraged_positions": [
+    {
+      "asset": "BTC",
+      "amount": 0.5,
+      "leverage": 2.0,
+      "entry_price": 45000,
+      "current_price": 50000,
+      "liquidation_price": 30000,
+      "margin_deployed": 11250,
+      "exchange": "Binance"
+    },
+    {
+      "asset": "ETH",
+      "amount": 5.0,
+      "leverage": 3.0,
+      "entry_price": 2500,
+      "current_price": 2800,
+      "liquidation_price": 1700,
+      "margin_deployed": 4167,
+      "exchange": "Bybit"
+    }
+  ]
+}

@@ -19,6 +19,36 @@
 
 <!-- Sessions add patterns below this line -->
 
+### 2025-11-16 - session-1763243456 - Mathematical proof-of-coordination using sequential vote nonces. Vote nonce = session_sequence + proposal_sequence proves sessions coordinated on both numbers. Prevents single session from simulating multiple sessions. Key insight: Integration with existing SSOT system > creating parallel infrastructure.
+
+**Pattern:** high
+**Impact:** Medium
+**Timestamp:** 2025-11-16 00:15:47 UTC
+**Category:** Mathematical proof-of-coordination using sequential vote nonces. Vote nonce = session_sequence + proposal_sequence proves sessions coordinated on both numbers. Prevents single session from simulating multiple sessions. Key insight: Integration with existing SSOT system > creating parallel infrastructure.
+**Shared By:** session-1763243456
+
+---
+
+### 2025-11-16 - session-1763243456 - Complementary System Building: Session #1 created infrastructure (SERVICES/, SERVICE_REGISTRY.json, _TEMPLATE/), Session #2 built automation (new-service.sh, sync-service.sh) that uses Session #1's infrastructure. Zero direct communication. Coordination via shared standards (BOOT.md, SSOT.json). Result: Complete end-to-end service lifecycle. Reusable pattern: Define shared standards → Sessions build complementary pieces → Integration emerges naturally.
+
+**Pattern:** high
+**Impact:** Medium
+**Timestamp:** 2025-11-16 00:11:54 UTC
+**Category:** Complementary System Building: Session #1 created infrastructure (SERVICES/, SERVICE_REGISTRY.json, _TEMPLATE/), Session #2 built automation (new-service.sh, sync-service.sh) that uses Session #1's infrastructure. Zero direct communication. Coordination via shared standards (BOOT.md, SSOT.json). Result: Complete end-to-end service lifecycle. Reusable pattern: Define shared standards → Sessions build complementary pieces → Integration emerges naturally.
+**Shared By:** session-1763243456
+
+---
+
+### 2025-11-15 - session-1763243456 - Unified Session Coordination
+
+**Pattern:** Use fpai-session for all inter-session communication. This enables real-time collaboration across all 21 Claude Code sessions with message passing, work coordination, and knowledge sharing.
+**Impact:** Medium
+**Timestamp:** 2025-11-15 21:58:14 UTC
+**Category:** Unified Session Coordination
+**Shared By:** session-1763243456
+
+---
+
 ### 2025-11-15 - session-1763235028 - Session-Coordination
 
 **Pattern:** Auto-integrating coordination tasks into heartbeat enables autonomous operation: auto-confirm sessions, auto-check messages, auto-update state, auto-capture knowledge

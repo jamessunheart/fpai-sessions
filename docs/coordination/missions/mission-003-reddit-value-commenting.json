@@ -1,0 +1,57 @@
+{
+  "mission_id": "mission-003-reddit-value-commenting",
+  "title": "Strategic Reddit Value Commenting (5 Posts)",
+  "priority": "high",
+  "status": "available",
+  "created_at": "2025-11-15T21:15:00Z",
+  "claimed_by": null,
+  "claimed_at": null,
+  "completed_at": null,
+  "estimated_time_minutes": 60,
+  "instructions": {
+    "task": "Find 5 Reddit posts where people are asking for service provider recommendations, provide valuable comments",
+    "content_source": "/Users/jamessunheart/Development/SERVICES/READY_TO_POST_NOW.md",
+    "content_section": "POST #6: Reddit Value Comment (Template)",
+    "platform": "Reddit",
+    "subreddits_to_monitor": [
+      "r/Entrepreneur",
+      "r/smallbusiness",
+      "r/startups",
+      "r/Christianity (for church formation)",
+      "r/Coaches"
+    ],
+    "approach": "VALUE FIRST - Only mention the tool if they ask or if highly relevant",
+    "comment_template_available": true
+  },
+  "success_criteria": {
+    "comments_posted": 5,
+    "value_provided": "Each comment provides genuine helpful advice",
+    "not_spammy": "Link only shared if contextually appropriate",
+    "engagement": "Follow up if people respond to comments"
+  },
+  "guidelines": {
+    "do": [
+      "Provide specific, actionable advice",
+      "Reference personal experience",
+      "Be genuinely helpful first",
+      "Only share link if it adds value"
+    ],
+    "dont": [
+      "Spam the link in every comment",
+      "Make it sound like an ad",
+      "Ignore follow-up questions",
+      "Post in irrelevant threads"
+    ]
+  },
+  "follow_up_actions": [
+    "Monitor comments for replies",
+    "Respond to questions",
+    "Track which subreddits drove traffic",
+    "Note which types of posts work best"
+  ],
+  "resources": {
+    "template_file": "/Users/jamessunheart/Development/SERVICES/READY_TO_POST_NOW.md",
+    "strategy_file": "/Users/jamessunheart/Development/SERVICES/CLEVER_ATTENTION_STRATEGIES.md",
+    "url": "https://fullpotential.com/get-matched"
+  }
+}

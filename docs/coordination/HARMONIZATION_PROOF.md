@@ -215,7 +215,7 @@ Phase: ✅ Monitoring Agent built - 250 lines, auto-healing
 **Live Monitoring:**
 ```bash
 # Real-time web dashboard
-open http://localhost:8030
+open https://fullpotential.com/dashboard/coordination
 
 # Terminal monitoring
 ./docs/coordination/scripts/live-monitor.sh

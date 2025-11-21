@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Support Full Potential AI - Week 1 Goal: $5,000</title>
-    <script src="https://js.stripe.com/v3/"></script>
+    <title>Support Sustainable AI Research - Full Potential AI</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -15,7 +14,7 @@
             color: #333;
         }
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             background: white;
             border-radius: 20px;
@@ -29,461 +28,409 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
         .tagline {
             text-align: center;
             color: #666;
             font-size: 18px;
             margin-bottom: 40px;
+            line-height: 1.6;
         }
-        .goal-section {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 30px;
+        .experiment-banner {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
             margin-bottom: 30px;
+            border-radius: 8px;
         }
-        .goal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .experiment-banner h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        .experiment-banner p {
+            color: #856404;
+            line-height: 1.6;
+        }
+        .how-it-works {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+        .how-it-works h3 {
             margin-bottom: 20px;
-        }
-        .goal-title {
-            font-size: 24px;
-            font-weight: 700;
             color: #667eea;
         }
-        .goal-amount {
-            font-size: 32px;
-            font-weight: 800;
-            color: #764ba2;
+        .step {
+            display: flex;
+            align-items: start;
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
         }
-        .progress-bar {
-            width: 100%;
-            height: 30px;
-            background: #e0e0e0;
-            border-radius: 15px;
-            overflow: hidden;
-            margin-bottom: 15px;
-        }
-        .progress-fill {
-            height: 100%;
+        .step-number {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            width: 0%;
-            transition: width 0.5s ease;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-weight: 700;
-        }
-        .progress-stats {
-            display: flex;
-            justify-content: space-between;
-            font-size: 14px;
-            color: #666;
-        }
-        .milestones {
-            margin: 30px 0;
-        }
-        .milestone {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            margin: 10px 0;
-            background: white;
-            border-radius: 10px;
-            border-left: 4px solid #e0e0e0;
-        }
-        .milestone.unlocked {
-            border-left-color: #4CAF50;
-        }
-        .milestone-icon {
-            font-size: 24px;
+            font-weight: 800;
+            flex-shrink: 0;
             margin-right: 15px;
         }
-        .milestone-text {
-            flex: 1;
+        .step-content h4 {
+            margin-bottom: 5px;
+            color: #333;
         }
-        .milestone-amount {
-            font-weight: 700;
-            color: #667eea;
+        .step-content p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
         }
-        .donation-section {
-            margin: 40px 0;
-        }
-        .slider-container {
+        .what-works-now {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            padding: 30px;
+            border-radius: 15px;
             margin: 30px 0;
         }
-        .amount-display {
-            text-align: center;
-            font-size: 48px;
-            font-weight: 800;
-            color: #667eea;
-            margin: 20px 0;
-        }
-        .cora-display {
-            text-align: center;
-            font-size: 18px;
-            color: #666;
+        .what-works-now h3 {
+            color: #2e7d32;
             margin-bottom: 20px;
         }
-        .slider {
-            width: 100%;
-            height: 8px;
-            border-radius: 5px;
-            background: #e0e0e0;
-            outline: none;
-            -webkit-appearance: none;
-        }
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            cursor: pointer;
-        }
-        .slider::-moz-range-thumb {
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            cursor: pointer;
-        }
-        .quick-amounts {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin: 20px 0;
-        }
-        .quick-amount {
-            padding: 10px 20px;
-            border: 2px solid #667eea;
-            border-radius: 20px;
+        .service-item {
             background: white;
-            color: #667eea;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border-left: 4px solid #4caf50;
         }
-        .quick-amount:hover {
-            background: #667eea;
-            color: white;
+        .service-item h4 {
+            color: #2e7d32;
+            margin-bottom: 5px;
         }
-        .cta-button {
-            width: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .service-item p {
+            color: #666;
+            font-size: 14px;
+        }
+        .whats-building {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+        .whats-building h3 {
+            color: #1565c0;
+            margin-bottom: 20px;
+        }
+        .building-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border-left: 4px solid #2196f3;
+        }
+        .building-item h4 {
+            color: #1565c0;
+            margin-bottom: 5px;
+        }
+        .building-item p {
+            color: #666;
+            font-size: 14px;
+        }
+        .solana-section {
+            background: linear-gradient(135deg, #14F195 0%, #9945FF 100%);
             color: white;
-            border: none;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        .solana-section h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        .wallet-display {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
             padding: 20px;
-            font-size: 20px;
-            font-weight: 700;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            border-radius: 10px;
             margin: 20px 0;
         }
-        .cta-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        .wallet-address {
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            font-weight: 700;
+            word-break: break-all;
+            margin: 10px 0;
         }
-        .cta-button:active {
-            transform: translateY(0);
+        .explorer-link {
+            color: white;
+            text-decoration: underline;
+            font-size: 14px;
         }
-        .what-you-get {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 30px;
-            margin: 30px 0;
-        }
-        .benefit {
-            display: flex;
-            align-items: flex-start;
-            margin: 15px 0;
-        }
-        .benefit-icon {
-            font-size: 20px;
-            margin-right: 10px;
-            margin-top: 2px;
-        }
-        .transparency {
-            margin: 30px 0;
-            padding: 20px;
+        .honest-disclosure {
             background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 20px;
+            margin: 30px 0;
             border-radius: 10px;
-            border-left: 4px solid #ffc107;
         }
-        .church-notice {
+        .honest-disclosure h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        .honest-disclosure ul {
+            margin-left: 20px;
+            color: #856404;
+            line-height: 1.8;
+        }
+        .flywheel {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+        .flywheel h3 {
+            color: #667eea;
+            margin-bottom: 20px;
             text-align: center;
-            font-size: 12px;
+        }
+        .flywheel-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .flywheel-step {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid #e0e0e0;
+        }
+        .flywheel-arrow {
+            text-align: center;
+            font-size: 24px;
+            color: #667eea;
+        }
+        .ai-disclosure {
+            text-align: center;
+            font-size: 13px;
             color: #999;
             margin-top: 30px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
             line-height: 1.6;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Full Potential AI</h1>
-        <div class="tagline">Manifest Heaven on Earth Through Sacred Technology</div>
-
-        <!-- Goal Section -->
-        <div class="goal-section">
-            <div class="goal-header">
-                <div class="goal-title">Week 1 Goal</div>
-                <div class="goal-amount">$5,000</div>
-            </div>
-
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressBar">0%</div>
-            </div>
-
-            <div class="progress-stats">
-                <div><span id="raisedAmount">$0</span> raised</div>
-                <div><span id="supporterCount">0</span> supporters</div>
-                <div><span id="daysRemaining">7</span> days left</div>
-            </div>
+        <h1>🌱 Sustainable AI Research Funding</h1>
+        <div class="tagline">
+            Testing if continuous value delivery + trust can fund AI research better than traditional models
         </div>
 
-        <!-- Milestones -->
-        <div class="milestones">
-            <h3 style="margin-bottom: 15px;">Milestone Unlocks</h3>
-
-            <div class="milestone" id="milestone1000">
-                <div class="milestone-icon">🔒</div>
-                <div class="milestone-text">
-                    <div class="milestone-amount">$1,000</div>
-                    <div>Infrastructure for 4 AI services secured</div>
-                </div>
-            </div>
-
-            <div class="milestone" id="milestone2500">
-                <div class="milestone-icon">🔒</div>
-                <div class="milestone-text">
-                    <div class="milestone-amount">$2,500</div>
-                    <div>Priority support system launched</div>
-                </div>
-            </div>
-
-            <div class="milestone" id="milestone4000">
-                <div class="milestone-icon">🔒</div>
-                <div class="milestone-text">
-                    <div class="milestone-amount">$4,000</div>
-                    <div>Community platform goes live</div>
-                </div>
-            </div>
-
-            <div class="milestone" id="milestone5000">
-                <div class="milestone-icon">🔒</div>
-                <div class="milestone-text">
-                    <div class="milestone-amount">$5,000</div>
-                    <div>Week 1 COMPLETE + bonus feature unlocked</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Donation Section -->
-        <!-- 2X Founding Bonus Callout -->
-        <div style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: #333; padding: 20px; border-radius: 15px; text-align: center; margin: 30px 0; border: 3px solid #FFD700;">
-            <div style="font-size: 28px; font-weight: 800; margin-bottom: 10px;">🎁 2X FOUNDING SUPPORTER BONUS</div>
-            <div style="font-size: 18px; line-height: 1.6;">
-                Support now while we're building → Get <strong>2X CORA</strong> for life<br>
-                Your $50/month = <strong>100 CORA value</strong> • Your $200/month = <strong>400 CORA value</strong><br>
-                <em style="font-size: 14px;">This 2X multiplier is only for founding supporters. Join now!</em>
-            </div>
-        </div>
-
-        <div class="donation-section">
-            <h3 style="text-align: center; margin-bottom: 20px;">Choose Your Monthly Support</h3>
-
-            <div class="amount-display">$<span id="amountValue">50</span>/month</div>
-            <div class="cora-display">You receive <strong><span id="coraValue">100</span> CORA tokens</strong> monthly (2X Founding Bonus!)</div>
-
-            <div class="slider-container">
-                <input type="range" min="5" max="1000" value="50" class="slider" id="amountSlider">
-            </div>
-
-            <div class="quick-amounts">
-                <div class="quick-amount" onclick="setAmount(10)">$10</div>
-                <div class="quick-amount" onclick="setAmount(25)">$25</div>
-                <div class="quick-amount" onclick="setAmount(50)">$50</div>
-                <div class="quick-amount" onclick="setAmount(100)">$100</div>
-                <div class="quick-amount" onclick="setAmount(200)">$200</div>
-            </div>
-
-            <button class="cta-button" onclick="supportMission()">
-                Support the Mission
-            </button>
-        </div>
-
-        <!-- What You Get -->
-        <div class="what-you-get">
-            <h3 style="margin-bottom: 20px;">What You Get</h3>
-
-            <div class="benefit">
-                <div class="benefit-icon">💎</div>
-                <div>
-                    <strong>CORA Tokens Monthly</strong><br>
-                    Use CORA to access all Full Potential AI services
-                </div>
-            </div>
-
-            <div class="benefit">
-                <div class="benefit-icon">🤖</div>
-                <div>
-                    <strong>Access to AI Services</strong><br>
-                    I MATCH (matching), I PROACTIVE (automation), and more
-                </div>
-            </div>
-
-            <div class="benefit">
-                <div class="benefit-icon">📊</div>
-                <div>
-                    <strong>Live Dashboard</strong><br>
-                    Real-time view of systems, progress, and financials
-                </div>
-            </div>
-
-            <div class="benefit">
-                <div class="benefit-icon">🗣️</div>
-                <div>
-                    <strong>Community Access</strong><br>
-                    Monthly calls, Discord, vote on priorities
-                </div>
-            </div>
-
-            <div class="benefit">
-                <div class="benefit-icon">🎓</div>
-                <div>
-                    <strong>Learn AI Development</strong><br>
-                    Watch us build in public, ask questions, get answers
-                </div>
-            </div>
-
-            <div class="benefit">
-                <div class="benefit-icon">💰</div>
-                <div>
-                    <strong>Potential Tax Benefits</strong><br>
-                    508(c)(1)(A) church donation (consult tax advisor)
-                </div>
-            </div>
-        </div>
-
-        <!-- Transparency -->
-        <div class="transparency">
-            <h4 style="margin-bottom: 10px;">💡 Radical Transparency</h4>
+        <!-- Experiment Banner -->
+        <div class="experiment-banner">
+            <h3>🔬 This is an Experiment</h3>
             <p>
-                We operate as a 508(c)(1)(A) church under spiritual jurisdiction.
-                Every dollar is tracked and reported publicly. View our live dashboard
-                to see exactly where funds go: infrastructure, development, operations.
+                Full transparency: We're testing if we can create sustainable funding for AI research through
+                continuous value delivery and trust-based relationships. Traditional funding (VC, grants, donations)
+                has limitations. We're exploring if there's a better way.
+            </p>
+            <p style="margin-top: 10px;">
+                <strong>Current status:</strong> Zero supporters yet. Genuinely early stage. Testing if this model works.
             </p>
         </div>
 
-        <!-- Church Notice -->
-        <div class="church-notice">
-            508(c)(1)(A) Religious Organization • Spiritual Jurisdiction<br>
-            Mission: Manifest heaven on Earth through Full Potential AI<br>
-            All revenue reinvested in sacred technology development<br>
+        <!-- How It Works -->
+        <div class="how-it-works">
+            <h3>How the Sustainable Model Works</h3>
+
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h4>Support the Treasury with SOL</h4>
+                    <p>Send SOL to our transparent on-chain treasury. Every transaction is publicly visible on Solana blockchain.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h4>Receive Ongoing Value</h4>
+                    <p>Get access to AI services we're building (I MATCH, strategy sessions, coordination tools). Value continues as we build more.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h4>We Keep Building</h4>
+                    <p>Deploy your SOL to DeFi yields (grow treasury sustainably). Build more AI services based on community needs.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h4>Recognition & Celebration</h4>
+                    <p>Early supporters get recognized publicly as we grow. You're part of the origin story of sustainable AI research funding.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <h4>Explore Together</h4>
+                    <p>We keep exploring what works to create sustainable AI research. Report back on successes AND failures. Learn together.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- The Flywheel -->
+        <div class="flywheel">
+            <h3>🔄 The Sustainable Flywheel</h3>
+            <div class="flywheel-steps">
+                <div class="flywheel-step">Support with SOL</div>
+                <div class="flywheel-arrow">↓</div>
+                <div class="flywheel-step">Deploy to DeFi yields (treasury grows)</div>
+                <div class="flywheel-arrow">↓</div>
+                <div class="flywheel-step">Build more AI services (value increases)</div>
+                <div class="flywheel-arrow">↓</div>
+                <div class="flywheel-step">Deliver value to supporters (trust builds)</div>
+                <div class="flywheel-arrow">↓</div>
+                <div class="flywheel-step">Recognize supporters (community strengthens)</div>
+                <div class="flywheel-arrow">↓</div>
+                <div class="flywheel-step">More people support (network effects)</div>
+                <div class="flywheel-arrow">↓</div>
+                <div class="flywheel-step" style="border-color: #667eea; border-width: 3px;">(Cycle repeats and compounds over time)</div>
+            </div>
+        </div>
+
+        <!-- What Works NOW -->
+        <div class="what-works-now">
+            <h3>✅ What We Can Do NOW (Already Working)</h3>
+
+            <div class="service-item">
+                <h4>I MATCH - AI Matching Service</h4>
+                <p>Connect financial advisors to ideal clients through deep compatibility analysis. Service is live at http://198.54.123.234:8401</p>
+            </div>
+
+            <div class="service-item">
+                <h4>AI Strategy Sessions</h4>
+                <p>Explore your full potential with Claude AI. Multi-session collaboration and strategic guidance.</p>
+            </div>
+
+            <div class="service-item">
+                <h4>Multi-Agent Coordination</h4>
+                <p>Multiple AI agents working together on complex tasks. Autonomous execution and coordination.</p>
+            </div>
+
+            <div class="service-item">
+                <h4>Transparent Treasury Management</h4>
+                <p>100% on-chain tracking on Solana. Every transaction publicly visible and verifiable.</p>
+            </div>
+        </div>
+
+        <!-- What We're Building -->
+        <div class="whats-building">
+            <h3>🚀 What We're Actively Building</h3>
+
+            <div class="building-item">
+                <h4>DeFi Yield Strategies</h4>
+                <p>Deploy treasury capital to sustainable yields (8-28% APY). Diversified across protocols. Ready to deploy with first SOL.</p>
+            </div>
+
+            <div class="building-item">
+                <h4>Expanded AI Services</h4>
+                <p>More matching categories (therapists, coaches, trainers). AI research tools. Content generation. Based on community needs.</p>
+            </div>
+
+            <div class="building-item">
+                <h4>CORA Value System</h4>
+                <p>Represents value delivered, not speculation. Tradable for AI services. Fair allocation based on contribution. Q1 2025.</p>
+            </div>
+
+            <div class="building-item">
+                <h4>Fair Resource Allocation</h4>
+                <p>AI + human collaboration on decisions. Transparent criteria. Community input. Ongoing experimentation.</p>
+            </div>
+        </div>
+
+        <!-- Solana Support -->
+        <div class="solana-section">
+            <h3>⚡ Support with SOL (Transparent On-Chain)</h3>
+            <div style="font-size: 16px; margin-bottom: 20px; opacity: 0.95;">
+                No banks. No middlemen. 100% transparent. Every transaction publicly visible.
+            </div>
+
+            <div class="wallet-display">
+                <div style="font-size: 14px; margin-bottom: 10px; opacity: 0.9;">Church Treasury Address</div>
+                <div class="wallet-address">
+                    FLfNDVLD2vDQdTjMFSt1xJivhr8pKASwEBzRYHZRU7db
+                </div>
+                <a href="https://explorer.solana.com/address/FLfNDVLD2vDQdTjMFSt1xJivhr8pKASwEBzRYHZRU7db" target="_blank" class="explorer-link">
+                    View on Solana Explorer →
+                </a>
+            </div>
+
+            <div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px; font-size: 13px; line-height: 1.6;">
+                <strong>How to support:</strong><br>
+                1. Open Phantom, Solflare, or any SOL wallet<br>
+                2. Send SOL to the address above (monthly or one-time)<br>
+                3. Email your wallet address to <a href="mailto:james@fullpotential.ai" style="color: white; text-decoration: underline;">james@fullpotential.ai</a><br>
+                4. Get access to AI services as we build
+            </div>
+
+            <div style="margin-top: 20px;">
+                <a href="/infinite-doubling" style="display: inline-block; background: white; color: #9945FF; padding: 12px 30px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 16px;">
+                    📈 Watch Live Treasury Tracker →
+                </a>
+            </div>
+        </div>
+
+        <!-- Honest Disclosure -->
+        <div class="honest-disclosure">
+            <h4>💡 Full Disclosure (Honesty Principles)</h4>
+            <ul>
+                <li><strong>AI Involvement:</strong> Claude AI helped build this system and write this page</li>
+                <li><strong>Experimental:</strong> Testing if this model works - might succeed, might fail</li>
+                <li><strong>Stage:</strong> Zero supporters yet, early stage, genuinely learning</li>
+                <li><strong>No Guarantees:</strong> Not promising specific outcomes or returns</li>
+                <li><strong>What You Get:</strong> Ongoing AI services (real value) + recognition as early supporter</li>
+                <li><strong>What You Don't Get:</strong> Guaranteed ROI, quick profits, tradable tokens yet (CORA in development)</li>
+                <li><strong>Tax:</strong> 508(c)(1)(A) church donation may be tax-deductible (consult your advisor)</li>
+            </ul>
+        </div>
+
+        <!-- The Question -->
+        <div style="background: #f8f9fa; padding: 30px; border-radius: 15px; margin: 30px 0; text-align: center;">
+            <h3 style="color: #667eea; margin-bottom: 15px;">The Question We're Exploring</h3>
+            <p style="font-size: 18px; line-height: 1.6; color: #666;">
+                Can we create sustainable funding for AI research through continuous value delivery and trust-based relationships?
+            </p>
+            <p style="margin-top: 15px; color: #999; font-size: 14px;">
+                We don't know yet. That's why it's an experiment. Want to explore together?
+            </p>
+        </div>
+
+        <!-- AI Disclosure Footer -->
+        <div class="ai-disclosure">
+            🤖 <strong>AI Transparency:</strong> This page was written collaboratively with Claude AI.<br>
+            We're exploring what "AI + human collaboration" actually looks like in practice.<br>
             <br>
-            Cancel anytime • CORA tokens roll over monthly<br>
-            Secure payment powered by Stripe
+            508(c)(1)(A) Religious Organization • Spiritual Jurisdiction<br>
+            All revenue reinvested in AI research and development<br>
+            <br>
+            <a href="http://198.54.123.234:8401" style="color: #667eea; text-decoration: none;">← Back to I MATCH</a> |
+            <a href="/infinite-doubling" style="color: #667eea; text-decoration: none;">Live Treasury Tracker</a>
         </div>
     </div>
-
-    <script>
-        const stripe = Stripe('pk_live_51JMFNnARpIMdAlRWXQN0YVRbpPGNUFxZdNIr8uJMYGvZp1mhqaKZ8JOcxCkWlO7Tr1Q5j7ECKFMEvdBt6BmcNJhm00DlJbBV2f');
-
-        const slider = document.getElementById('amountSlider');
-        const amountDisplay = document.getElementById('amountValue');
-        const coraDisplay = document.getElementById('coraValue');
-
-        // Update amount display as slider moves (2X multiplier for founding supporters)
-        slider.oninput = function() {
-            const amount = parseInt(this.value);
-            amountDisplay.textContent = amount;
-            coraDisplay.textContent = amount * 2;  // 2X Founding Bonus
-        }
-
-        // Quick amount buttons
-        function setAmount(amount) {
-            slider.value = amount;
-            amountDisplay.textContent = amount;
-            coraDisplay.textContent = amount * 2;  // 2X Founding Bonus
-        }
-
-        // Support button
-        async function supportMission() {
-            const amount = parseInt(slider.value);
-
-            try {
-                const response = await fetch('/api/create-subscription', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        amount: amount,
-                        interval: 'month'
-                    })
-                });
-
-                const session = await response.json();
-
-                // Redirect to Stripe Checkout
-                const result = await stripe.redirectToCheckout({
-                    sessionId: session.id
-                });
-
-                if (result.error) {
-                    alert(result.error.message);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Something went wrong. Please try again.');
-            }
-        }
-
-        // Load current progress (would come from API)
-        async function loadProgress() {
-            // TODO: Fetch from API
-            const raised = 0; // Replace with API call
-            const supporters = 0;
-            const goal = 5000;
-
-            const percentage = (raised / goal) * 100;
-
-            document.getElementById('raisedAmount').textContent = '$' + raised.toLocaleString();
-            document.getElementById('supporterCount').textContent = supporters;
-            document.getElementById('progressBar').style.width = percentage + '%';
-            document.getElementById('progressBar').textContent = Math.round(percentage) + '%';
-
-            // Update milestones
-            if (raised >= 1000) {
-                document.getElementById('milestone1000').classList.add('unlocked');
-                document.querySelector('#milestone1000 .milestone-icon').textContent = '✅';
-            }
-            if (raised >= 2500) {
-                document.getElementById('milestone2500').classList.add('unlocked');
-                document.querySelector('#milestone2500 .milestone-icon').textContent = '✅';
-            }
-            if (raised >= 4000) {
-                document.getElementById('milestone4000').classList.add('unlocked');
-                document.querySelector('#milestone4000 .milestone-icon').textContent = '✅';
-            }
-            if (raised >= 5000) {
-                document.getElementById('milestone5000').classList.add('unlocked');
-                document.querySelector('#milestone5000 .milestone-icon').textContent = '✅';
-            }
-        }
-
-        // Load progress on page load
-        loadProgress();
-
-        // Refresh progress every 30 seconds
-        setInterval(loadProgress, 30000);
-    </script>
 </body>
 </html>

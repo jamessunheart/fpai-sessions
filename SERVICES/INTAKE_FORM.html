@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Matched with the Perfect Service Provider | Full Potential AI</title>
+    <meta name="description" content="Find the perfect service provider for your needs. AI-powered matching for church formation, executive coaching, AI development, and more.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .required {
+            color: #e53e3e;
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .success-message {
+            display: none;
+            background: #48bb78;
+            color: white;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .success-message h2 {
+            margin-bottom: 10px;
+        }
+
+        .error-message {
+            display: none;
+            background: #f56565;
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .benefits {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 30px;
+        }
+
+        .benefits h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .benefits ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .benefits li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .benefits li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #48bb78;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Find Your Perfect Match</h1>
+        <p class="subtitle">AI-powered matching with top service providers in 24 hours</p>
+
+        <div class="benefits">
+            <h3>Why use our matching service?</h3>
+            <ul>
+                <li>AI-powered matching algorithm finds the best fit for your needs</li>
+                <li>Pre-vetted providers with proven track records</li>
+                <li>Free consultation with matched providers</li>
+                <li>Personalized recommendations within 24 hours</li>
+                <li>No obligation - you choose if you want to proceed</li>
+            </ul>
+        </div>
+
+        <div class="success-message" id="successMessage">
+            <h2>🎉 Success!</h2>
+            <p id="successText"></p>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        <form id="intakeForm">
+            <div class="form-group">
+                <label for="name">Full Name <span class="required">*</span></label>
+                <input type="text" id="name" name="name" required placeholder="John Doe">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address <span class="required">*</span></label>
+                <input type="email" id="email" name="email" required placeholder="john@example.com">
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number (Optional)</label>
+                <input type="tel" id="phone" name="phone" placeholder="+1 (555) 123-4567">
+            </div>
+
+            <div class="form-group">
+                <label for="serviceType">What service are you looking for? <span class="required">*</span></label>
+                <select id="serviceType" name="service_type" required>
+                    <option value="">-- Select a service --</option>
+                    <option value="church-formation">Church Formation (501c3/508c1a)</option>
+                    <option value="executive-coaching">Executive Coaching</option>
+                    <option value="ai-development">AI Development & Automation</option>
+                    <option value="business-consulting">Business Consulting</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="needs">Describe your needs <span class="required">*</span></label>
+                <textarea id="needs" name="needs_description" required placeholder="Tell us about your project, goals, challenges, and what you're hoping to achieve..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="timeline">Timeline</label>
+                <select id="timeline" name="timeline">
+                    <option value="">-- When do you want to start? --</option>
+                    <option value="asap">As soon as possible</option>
+                    <option value="1-2-weeks">Within 1-2 weeks</option>
+                    <option value="1-month">Within 1 month</option>
+                    <option value="2-3-months">2-3 months</option>
+                    <option value="flexible">Flexible</option>
+                </select>
+            </div>
+
+            <button type="submit" id="submitBtn">Find My Perfect Match</button>
+        </form>
+
+        <p style="text-align: center; margin-top: 20px; color: #666; font-size: 14px;">
+            By submitting, you agree to be matched with service providers. We respect your privacy and will never spam you.
+        </p>
+    </div>
+
+    <script>
+        document.getElementById('intakeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            const errorMsg = document.getElementById('errorMessage');
+            const successMsg = document.getElementById('successMessage');
+            const successText = document.getElementById('successText');
+
+            // Hide messages
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+
+            // Disable button
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Finding your matches...';
+
+            try {
+                const formData = {
+                    name: document.getElementById('name').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value || null,
+                    service_type: document.getElementById('serviceType').value,
+                    needs_description: document.getElementById('needs').value,
+                    timeline: document.getElementById('timeline').value || null
+                };
+
+                const response = await fetch('http://198.54.123.234:8401/api/intake/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // Success!
+                    successText.innerHTML = `
+                        <strong>${result.message}</strong><br><br>
+                        We found ${result.matches_found} potential matches for you!<br>
+                        ${result.next_steps}
+                    `;
+                    successMsg.style.display = 'block';
+                    document.getElementById('intakeForm').style.display = 'none';
+                } else {
+                    throw new Error(result.detail || 'Something went wrong');
+                }
+            } catch (error) {
+                errorMsg.textContent = 'Error: ' + error.message + '. Please try again or email us at hello@fullpotential.ai';
+                errorMsg.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Find My Perfect Match';
+            }
+        });
+    </script>
+</body>
+</html>

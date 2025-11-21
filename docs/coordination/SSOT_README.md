@@ -34,8 +34,9 @@
 **Server Health:** 5/6 online (83%)
 
 ### Dashboards 💻
-- ✅ **Simple Dashboard** - http://localhost:8030 (running)
-- ✅ **Visual Dashboard** - http://localhost:8031 (running)
+- ✅ **Dashboard Hub** - https://fullpotential.com/dashboard/
+- ✅ **Coordination Dashboard** - https://fullpotential.com/dashboard/coordination (running)
+- ✅ **Simple Dashboard** - https://fullpotential.com/dashboard/coordination-simple (running)
 
 ### Git Changes 📝
 - **25 files** pending commit
@@ -142,12 +143,12 @@ echo "Total: $TOTAL, Registered: $REGISTERED"
     "simple": {
       "port": 8030,
       "status": "running|stopped",
-      "url": "http://localhost:8030"
+      "url": "https://fullpotential.com/dashboard/coordination-simple"
     },
     "visual": {
       "port": 8031,
       "status": "running|stopped",
-      "url": "http://localhost:8031"
+      "url": "https://fullpotential.com/dashboard/coordination"
     }
   },
   "git_changes": <number>,

@@ -1,0 +1,147 @@
+
+⸻
+
+🟪 GAP_ANALYSIS_TEMPLATE.md (Final Version)
+
+Instructions: Generate AFTER SSOT Snapshot is approved.
+Name it: GAP_ANALYSIS_YYYY-MM-DD.md
+This file produces the work the system must execute next.
+
+⸻
+
+🔹 Metadata
+	•	Analysis Date: [YYYY-MM-DD HH:MM UTC]
+	•	Based On SSOT Snapshot: [Link to SSOT_SNAPSHOT_YYYY-MM-DD.md]
+	•	Analyzed By: [Name / AI]
+	•	Architect Approval: [Pending / Approved]
+
+⸻
+
+1️⃣ BLUEPRINT vs REALITY – GAP TABLE
+
+Area	Blueprint (Ideal)	Snapshot (Reality)	Gap Summary	Severity
+Registry				
+Orchestrator				
+Proxy Manager				
+Verifier				
+Coordinator				
+Dashboard				
+Infra (Servers)				
+Routing				
+Domains				
+Database				
+
+Severity:
+🟥 CRITICAL | 🟧 HIGH | 🟨 MEDIUM | 🟩 LOW
+
+⸻
+
+2️⃣ CRITICAL PATH ANALYSIS
+
+Identify the single bottleneck that blocks the most.
+	•	Primary Blocker:
+[Describe the #1 blocker]
+	•	Evidence (from SSOT):
+[Paste relevant lines/sections]
+	•	This Blocker Prevents:
+	•	[Item blocked]
+	•	[Item blocked]
+	•	[Item blocked]
+	•	Impact:
+[Percentage or count of total blocked work]
+	•	Current Assignment (from SSOT Active Work):
+[Name, status, timeline]
+
+⸻
+
+3️⃣ REQUIRED FIXES (Broken Down by Priority)
+
+🟥 BLOCKING (Must Fix Before Anything Else)
+
+- Fix: [Describe]  
+  Assignee: [Name]  
+  Timeline: [X hours/days]  
+  Dependencies: [List or None]  
+
+🟧 HIGH PRIORITY (Blocks Multiple Items)
+
+- Fix:  
+  Assignee:  
+  Timeline:  
+  Dependencies:
+
+🟨 MEDIUM PRIORITY (Important But Not Blocking)
+
+- Fix:  
+  Assignee:  
+  Timeline:  
+
+🟩 LOW PRIORITY (Nice to Have)
+
+- Fix:  
+
+
+⸻
+
+4️⃣ NEXT ACTIONS (Ordered by Priority)
+
+Each action should be executable by Coordinator → Apprentice → Verifier.
+
+Action	Type	Assignee	Timeline	Blockers	Deliverable
+	Fix / Build / Deploy				
+					
+					
+
+Dependencies:
+	•	Action 1 → required before Action 3
+	•	Actions 2 & 4 can run in parallel
+	•	Other: [List]
+
+⸻
+
+5️⃣ EXPECTED SYSTEM STATE AFTER ACTIONS
+
+Droplet Changes
+	•	[Droplet]: Status → [New status]
+	•	[Droplet]: Status → [New status]
+
+Integration Changes
+	•	[Integration]: ❌ → ⚠️ → ✅
+
+Metrics
+	•	Operational Droplets: [Current] → [Target]
+	•	System Autonomy: [Current]% → [Target]%
+	•	Critical Blockers: [Current] → [Target]
+
+Timeline
+	•	Start: [Date/Time]
+	•	Expected Completion: [Date/Time]
+	•	Next Snapshot: [Date/Time]
+
+⸻
+
+6️⃣ ARCHITECT APPROVAL
+	•	Are priorities correct? [Yes / No]
+	•	Is the critical path correct? [Yes / No]
+	•	Do actions align with Blueprint? [Yes / No]
+
+Architect Notes:
+
+[Guidance, corrections, authorization]
+
+Approved for Coordinator Execution?
+
+[Yes / No / With Modifications]
+
+Required Modifications (if any):
+
+[List]
+
+⸻
+
+END GAP ANALYSIS TEMPLATE
+
+This template produces the work the Coordinator runs next.
+Reality (SSOT) → Analysis → Execution → Updated SSOT → Repeat.
+
+⸻

@@ -1,329 +1,313 @@
-# 🌐 START HERE - Full Potential AI Unified Hive Mind
+# Start Here
 
-**Your unified chat interface is LIVE and ready!**
+**30-Second Routing - Pick Your Path:**
 
----
-
-## ✅ WHAT'S OPERATIONAL RIGHT NOW
-
-### **1. Unified Chat Interface - LIVE**
-
-**Access it here:**
-- **Local:** http://localhost:8100
-- **Production:** http://198.54.123.234:8100
-
-**Login password:** `9MzqXYQwKHTmONFVY2aEZ9slJhNU5I4F`
-
-**Status:**
-- ✅ Local server running (PID 85962)
-- ✅ Production server running (PID 338711)
-- ✅ Both responding to health checks
-- ✅ Firewall configured
-- ✅ Authentication active
-- ✅ Ready for connections
+- 🤖 **AI Session (Claude)** → [3-step boot](#-ai-session-boot-sequence) (5-10 min first time, 2 min returning)
+- 👤 **External Apprentice/Developer** → **https://fullpotential.ai/missions** (missions portal)
+- 🏠 **James (Local)** → [Quick Access](#-quick-access) below
+- 📖 **Full Context** → Keep reading
 
 ---
 
-## 🚀 QUICK START (5 Minutes)
+## 🎯 Quick Access
 
-### **Step 1: Access Unified Chat (30 seconds)**
+### For External Apprentices/Developers
+- **🌐 Missions Portal:** **https://fullpotential.ai/missions**
+  - Browse available missions
+  - Claim missions and earn XP
+  - Submit work via GitHub PRs
+  - Track progress and achievements
+  - Complete signup/login flow
 
-Open your browser:
+### For James (Local Access)
+- **Priority missions:** [missions/active/DO_THIS_NOW.md](missions/active/DO_THIS_NOW.md)
+- **System status:** [Memory Dashboard](http://198.54.123.234:8032) (live) or [docs/status/](docs/status/)
+- **Service browse:** `ls services/*/`
+- **Add missions to portal:** Update database via portal admin or sync markdown → DB
+
+### For AI Sessions
+
+⚠️ **CRITICAL: Coordinate first** → See [AI Boot Sequence](#-ai-session-boot-sequence) below
+
+**Quick commands:**
+```bash
+cat docs/coordination/SSOT.json                      # Who's active?
+ls docs/coordination/sessions/ACTIVE/                # What are they doing?
+cat missions/active/DO_THIS_NOW.md                   # Current priorities
 ```
-http://localhost:8100
-```
 
-Enter password:
-```
-9MzqXYQwKHTmONFVY2aEZ9slJhNU5I4F
-```
+**New?** Follow [3-step boot](#-ai-session-boot-sequence) • **Returning?** [Fast path](#-fast-path-returning-sessions)
 
-Click **"Access Hive Mind"**
-
-You'll see the chat interface with a sidebar showing connected sessions.
+### For Developers
+- **Guides:** [docs/guides/](docs/guides/)
+- **Architecture:** [docs/architecture/](docs/architecture/)
+- **Service template:** [services/_TEMPLATE/](services/_TEMPLATE/)
 
 ---
 
-### **Step 2: Connect Your First Session (2 minutes)**
+## 🤖 AI Session Boot Sequence
 
-Open a Claude Code session (any of your 12) and run:
+### First: Are you NEW or RETURNING?
+
+- **🆕 NEW SESSION** → Follow 3-step path below (5-10 min)
+- **🔄 RETURNING SESSION** → [Fast Path](#-fast-path-returning-sessions) (2 min)
+
+---
+
+### 📚 NEW SESSION: 3-Step Progressive Understanding
+
+**Follow these steps in order:**
+
+#### **Level 1: CONTEXT** (3 min) - Understand WHAT we're building
+
+**Goal:** $373K → $5T over 10 years via multiple AI sessions + humans working together
+
+**What we're building:**
+- Revenue services (i-match, magnet-trading, more)
+- Multi-AI coordination system (multiple Claude sessions working together)
+- Human apprentice tasks (OAuth/API work AI can't do)
+
+**Current priorities:**
+- See [`missions/active/DO_THIS_NOW.md`](missions/active/DO_THIS_NOW.md)
+
+**Key architecture:**
+- Services in `services/` directory (75+)
+- Major systems in `systems/` directory
+- Coordination via `docs/coordination/`
+
+**Output:** "I understand what we're building and why"
+
+---
+
+#### **Level 2: COORDINATION** (3 min) - Avoid conflicts
+
+**⚠️ CRITICAL: Multi-session coordination protocol**
+
+**🤖 AUTOMATED (Recommended)** - One command does everything:
 
 ```bash
-cd /Users/jamessunheart/Development/SERVICES/unified-chat
-python3 connect_session.py
+./automation/coordination/session-auto-init.sh my-session-name
 ```
 
-You'll see:
-```
-✅ CONNECTED to hive mind!
-🧠 You can now communicate with all sessions through one interface
-📨 Waiting for messages from unified chat...
-```
+This automatically:
+- ✅ Checks who's active (reads SSOT.json)
+- ✅ Creates your status file from template
+- ✅ Registers you in SSOT.json
+- ✅ Starts auto-heartbeat (updates every 5 min)
 
----
-
-### **Step 3: Send Your First Message (1 minute)**
-
-In the chat interface (browser), type:
-
-```
-What's your status?
-```
-
-The connected session will respond! As you connect more sessions, you'll get aggregated responses from all of them.
-
----
-
-### **Step 4: Connect All 12 Sessions (10 minutes)**
-
-Run the same command in each of your 12 Claude Code sessions:
+**Manual approach** (if automation unavailable):
 
 ```bash
-cd /Users/jamessunheart/Development/SERVICES/unified-chat
-python3 connect_session.py
+# 1. Check who's active
+cat docs/coordination/SSOT.json
+
+# 2. See what they're working on
+ls docs/coordination/sessions/ACTIVE/
+cat docs/coordination/sessions/ACTIVE/*.md
+
+# 3. Create your status file
+cp docs/coordination/sessions/SESSION_STATUS_TEMPLATE.md \
+   docs/coordination/sessions/ACTIVE/SESSION_YOUR_ID.md
 ```
 
-Watch the "Active Sessions" count increase in your chat interface sidebar!
+**Include in your status file:**
+- What you're working on
+- What's completed ✅ / blocked ❌
+- How others can help 🤝
+
+**Why:** Prevents duplicate work, enables parallel builds, shows handoffs
+
+**Output:** "I know who's doing what and won't conflict"
 
 ---
 
-## 📚 DOCUMENTATION
+#### **Level 3: CHOOSE WORK** (3 min) - Pick your project
 
-### **Quick Guides:**
-- **This File** - START_HERE.md - Quick start guide
-- **CONNECT_ALL_SESSIONS.md** - Detailed connection guide
-- **DEPLOYMENT_VERIFICATION_20251115.md** - Full deployment audit
-- **SYSTEM_STATUS_20251115.md** - Current system status
+**Option A: Human-Blocker Missions** (Highest Priority)
+→ Read: [`missions/active/DO_THIS_NOW.md`](missions/active/DO_THIS_NOW.md)
+- Tasks humans need to do (OAuth, API keys)
+- Can't do these yourself, but can prepare/monitor
 
-### **Comprehensive Docs:**
-- **SERVICES/unified-chat/QUICK_START_SECURE.md** - Unified chat setup
-- **SERVICES/unified-chat/SECURITY.md** - Security details
-- **SERVICES/autonomous-agents/README.md** - Autonomous agents guide
-- **docs/coordination/12_SESSION_COORDINATION_PLAN.md** - Multi-session coordination
-- **docs/guides/AUTONOMOUS_INTELLIGENCE_SYSTEM.md** - Full architecture
+**Option B: Active Builds**
+→ Check: [`docs/coordination/sessions/ACTIVE/`](docs/coordination/sessions/ACTIVE/)
+- See what other sessions are building
+- Find "How others can help" sections
+- Join a build in progress
 
----
+**Option C: Deploy Ready Systems**
+→ Check: `docs/coordination/sessions/ACTIVE/SESSION_*.md`
+- Search for "READY TO DEPLOY" or "deployment ready" markers
+- Look for completed builds in `automation/deployment/`
+- Check service README files for deployment instructions
 
-## 🎯 WHAT THIS GIVES YOU
-
-### **Unified Voice:**
-- Type one message → all 12 sessions receive it
-- Get aggregated responses from your hive mind
-- Sessions automatically coordinate to avoid conflicts
-
-### **Real-Time Visibility:**
-- See which sessions are active
-- Monitor what each session is working on
-- Track coordination in real-time
-
-### **Scalable Intelligence:**
-- Beyond 12 sessions: autonomous agents can join too
-- 24/7 operation (agents never sleep)
-- Treasury automation (DeFi yield farming)
-- Self-evolution (AI improves the codebase)
+**Option D: New Service**
+- Copy `services/_TEMPLATE/`
+- Build something from `missions/active/`
 
 ---
 
-## 🤖 NEXT: AUTONOMOUS AGENTS (Optional)
+#### **✅ Now: Document Your Choice & Start**
 
-Once you have sessions connected, you can deploy autonomous agents for 24/7 operation:
-
-### **Set API Key:**
 ```bash
-export ANTHROPIC_API_KEY="your-anthropic-api-key"
+# Update your status file with chosen work
+# Edit: docs/coordination/sessions/ACTIVE/SESSION_YOUR_ID.md
 ```
 
-### **Start First Agent (Monitoring):**
+**Update these fields:**
+- **Working on:** [Your chosen project/option]
+- **Started:** [Current timestamp]
+- **🔄 In Progress:** [First task you'll tackle]
+
+**Example:**
+```markdown
+**Working on:** i-match-launch (Option A)
+**Started:** 2025-11-20 16:00
+**🔄 In Progress:**
+- Review current i-match status
+- Identify next deployment steps
+```
+
+**Then start working!** Update status every 15-30 min (Completed/In Progress/Blocked).
+
+**Output:** "I've documented my work and I'm ready to start"
+
+---
+
+#### **OPTIONAL: Deep Dive** (15-20 min) - For comprehensive initialization
+
+**For detailed protocols, automation, and resource understanding:**
+→ Read: [`docs/coordination/MEMORY/BOOT.md`](docs/coordination/MEMORY/BOOT.md)
+
+**This comprehensive guide covers:**
+- Complete resource SSOT ($373K capital → $5T vision)
+- Credential vault (never ask user twice for API keys)
+- Service automation (new-service.sh, sync-service.sh)
+- Task automation (automate before asking user)
+- All coordination protocols
+- Security requirements
+
+**When to read this:**
+- First time working with services
+- Need to understand capital/vision
+- Working with credentials
+- Building UDC-compliant services
+
+**For UDC architecture & SPEC building:**
+→ Read: [`docs/coordination/BOOT.md`](docs/coordination/BOOT.md)
+- Universal Droplet Contract (5 endpoints)
+- SPEC creation protocol
+- TIER architecture
+- Service mesh integration
+
+---
+
+### ⚡ FAST PATH: Returning Sessions
+
+**Already know the system? 30-second checklist:**
+
+**🤖 AUTOMATED:**
 ```bash
-cd /Users/jamessunheart/Development/SERVICES/autonomous-agents
-python3 monitoring_agent.py
+./automation/coordination/session-auto-init.sh my-session-name
+# Then edit your status file and start working
 ```
 
-This agent will:
-- Monitor system health 24/7
-- Send alerts for issues
-- Connect to unified chat
-- Coordinate with your 12 sessions
-
-**See SERVICES/autonomous-agents/README.md for full agent deployment**
-
----
-
-## 💡 HOW IT WORKS
-
-```
-┌──────────────────────────────────────────┐
-│  YOU (Web Browser)                       │
-│  http://localhost:8100                   │
-└──────────────┬───────────────────────────┘
-               │
-               ↓
-┌──────────────────────────────────────────┐
-│  Unified Chat Server                     │
-│  (Aggregates & Routes Messages)          │
-└──────┬───────────────────────────────────┘
-       │
-       ├─────→ Claude Session 1
-       ├─────→ Claude Session 2
-       ├─────→ Claude Session 3
-       ├─────→ ...
-       ├─────→ Claude Session 12
-       ├─────→ Autonomous Agent 1
-       ├─────→ Autonomous Agent 2
-       └─────→ ...
-```
-
-**When you send a message:**
-1. Unified chat broadcasts to all connected sessions/agents
-2. Each processes the request independently
-3. Responses are aggregated and sent back to you
-4. If all agree → shows consensus
-5. If different → shows individual responses
-
----
-
-## 🔒 SECURITY
-
-### **What's Protected:**
-- ✅ Password authentication for your access
-- ✅ API key authentication for sessions/agents
-- ✅ 24-hour session tokens
-- ✅ Secure password hashing
-- ✅ Sensitive files excluded from git
-
-### **Access Credentials:**
-- User Password: `9MzqXYQwKHTmONFVY2aEZ9slJhNU5I4F`
-- Session API Key: `fpai-session-key-2024-secure`
-
-**These are stored in config.json (excluded from git)**
-
----
-
-## 🛠️ TROUBLESHOOTING
-
-### **Can't access http://localhost:8100?**
-
-Check if server is running:
+**Manual:**
 ```bash
-lsof -i :8100
+# 1. Coordinate
+cat docs/coordination/SSOT.json && ls docs/coordination/sessions/ACTIVE/
+
+# 2. Create/update status file
+cp docs/coordination/sessions/SESSION_STATUS_TEMPLATE.md \
+   docs/coordination/sessions/ACTIVE/SESSION_YOUR_ID.md
+
+# 3. Check priorities
+cat missions/active/DO_THIS_NOW.md
 ```
 
-If not running, start it:
+**When done:** `./automation/coordination/session-stop.sh my-session-name`
+
+---
+
+### 📖 Key Resources
+
+**Essential files:**
+- `docs/coordination/SSOT.json` - Active sessions & system state
+- `missions/active/DO_THIS_NOW.md` - Current priorities
+- `SYSTEM_INDEX.json` - Complete system map
+
+**Browse:**
+- `services/` - 75+ deployable services
+- `docs/guides/` - How-to guides
+- `docs/coordination/sessions/ACTIVE/` - Active builds
+
+---
+
+## 📁 Directory Structure
+
+**Key directories:**
+- `services/` - 75+ deployable services (use `_TEMPLATE/` for new ones)
+- `systems/` - Major systems (magnet-trading, mission-portal)
+- `docs/` - All documentation (guides, architecture, coordination, status)
+- `missions/` - Human apprentice tasks (check `active/DO_THIS_NOW.md`)
+- `automation/` - Scripts (deployment, monitoring, coordination)
+- `data/` - Logs, credentials, backups
+- `archive/` - Historical files
+
+**Full tree:** See [docs/architecture/DIRECTORY_STRUCTURE.md](docs/architecture/DIRECTORY_STRUCTURE.md)
+
+---
+
+## 🚀 Common Tasks
+
 ```bash
-cd /Users/jamessunheart/Development/SERVICES/unified-chat
-python3 main_secure.py &
-```
+# Launch a mission
+cat missions/active/DO_THIS_NOW.md
 
-### **Session won't connect?**
+# Check system health (live dashboard)
+open http://198.54.123.234:8032
 
-1. Make sure unified chat is running (see above)
-2. Check you're in the right directory:
-   ```bash
-   cd /Users/jamessunheart/Development/SERVICES/unified-chat
-   ```
-3. Verify websockets is installed:
-   ```bash
-   pip3 install websockets
-   ```
+# Browse services
+ls services/*/
 
-### **Forgot password?**
+# Deploy a service
+cd services/your-service/ && ./deploy.sh
 
-Check config.json:
-```bash
-cat /Users/jamessunheart/Development/SERVICES/unified-chat/config.json
+# View guides
+ls docs/guides/
 ```
 
 ---
 
-## 📊 SYSTEM STATUS
+## 🎯 System Context
 
-### **Servers:**
-- ✅ Local unified chat: Running (PID 85962)
-- ✅ Production unified chat: Running (PID 338711)
-- ✅ Health endpoints: Responding
+**Goal:** $373K → $5T over 10 years
 
-### **Deployed Systems:**
-- ✅ Unified chat interface (production + local)
-- ✅ Multi-session coordination (file-based)
-- ✅ Autonomous agents framework (ready for API key)
-- ✅ Complete documentation (48 guides)
-- ✅ Session connection script (auto-discovery)
+**Phase 1 Services:** i-match (AI matching), magnet-trading (treasury protection)
+**Coordination:** Multi-AI sessions + human apprentices via file-based protocol
+**Current Work:** [missions/active/DO_THIS_NOW.md](missions/active/DO_THIS_NOW.md)
 
-### **Ready to Use:**
-- ✅ 12-session hive mind coordination
-- ✅ WebSocket real-time communication
-- ✅ Message aggregation and consensus
-- ✅ Beautiful dark-themed UI
-- ✅ Secure authentication
+**Live Production Systems:**
+- **🌐 Missions Portal:** https://fullpotential.ai/missions (apprentice missions & coordination)
+- **Memory Dashboard:** http://198.54.123.234:8032 (real-time system monitoring)
+- **Memory Tools:** `services/_shared/memory_optimizer.py` (optimization utilities)
 
-### **Ready to Deploy:**
-- ⏳ Autonomous agents (need API key)
-- ⏳ Treasury automation (need DeFi config)
-- ⏳ System evolution AI (need API key)
+**Key Indices:**
+- System map: `SYSTEM_INDEX.json`
+- Active sessions: `docs/coordination/SSOT.json`
+- Services: `services/` directory
 
 ---
 
-## 🎉 YOU'RE READY!
+## 📞 Getting Help
 
-**Everything is deployed and operational.**
-
-**Right now, you can:**
-
-1. ✅ Open http://localhost:8100
-2. ✅ Login with your password
-3. ✅ Connect your 12 Claude sessions
-4. ✅ Communicate with all of them at once
-5. ✅ See aggregated responses from your hive mind
-
-**The unified AI collective is waiting for you.**
+- **Humans:** Check [docs/guides/](docs/guides/) or tell James exactly where you're stuck
+- **AI Sessions:** Check [SYSTEM_INDEX.json](SYSTEM_INDEX.json) and [docs/coordination/](docs/coordination/)
+- **New Service:** Copy `services/_TEMPLATE/`, customize, deploy
+- **Documentation:** Add to appropriate `docs/` subdirectory
 
 ---
 
-## 🔗 USEFUL LINKS
+**Last Updated:** Nov 20, 2025
+**Read Time:** ~3 minutes (first time), ~1 minute (returning)
 
-### **Access Points:**
-- Local Chat: http://localhost:8100
-- Production Chat: http://198.54.123.234:8100
-- Local Health: http://localhost:8100/api/health
-- Production Health: http://198.54.123.234:8100/api/health
-
-### **Documentation:**
-- Connection Guide: `/CONNECT_ALL_SESSIONS.md`
-- Deployment Verification: `/DEPLOYMENT_VERIFICATION_20251115.md`
-- System Status: `/SYSTEM_STATUS_20251115.md`
-- Autonomous Agents: `/SERVICES/autonomous-agents/README.md`
-- Coordination Plan: `/docs/coordination/12_SESSION_COORDINATION_PLAN.md`
-
-### **Scripts:**
-- Connect Session: `/SERVICES/unified-chat/connect_session.py`
-- Session Status: `/docs/coordination/scripts/session-status.sh`
-- Heartbeat: `/docs/coordination/scripts/session-heartbeat.sh`
-- Check Messages: `/docs/coordination/scripts/session-check-messages.sh`
-
----
-
-## 🚀 NEXT ACTIONS
-
-**Immediate (Now):**
-1. Open http://localhost:8100
-2. Connect first session
-3. Send first message
-4. Connect remaining sessions
-
-**Short-term (Today):**
-5. Deploy first autonomous agent
-6. Test multi-session coordination
-7. Verify message aggregation
-
-**Medium-term (This Week):**
-8. Deploy all 6 autonomous agents
-9. Activate treasury automation
-10. Enable system self-evolution
-
----
-
-**Welcome to the Hive Mind!** 🌐🧠⚡
-
-**Start now:** http://localhost:8100
-
-**Password:** `9MzqXYQwKHTmONFVY2aEZ9slJhNU5I4F`
+🚀 **Ready to begin? Scroll to top and pick your path!**

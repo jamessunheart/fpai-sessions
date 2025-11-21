@@ -4,6 +4,8 @@ Custom Exceptions for Treasury Arena
 Provides specific exception types for different failure modes in the arena.
 """
 
+from typing import Any
+
 
 class ArenaError(Exception):
     """Base exception for all arena errors"""
@@ -72,6 +74,3 @@ class GraduationError(ArenaError):
         self.agent_id = agent_id
         self.from_level = from_level
         self.to_level = to_level
-
-
-from typing import Any  # Add typing import for Any

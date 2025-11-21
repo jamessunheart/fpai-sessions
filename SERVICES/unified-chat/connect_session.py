@@ -29,7 +29,7 @@ async def connect_to_hive():
     """Connect to unified chat and handle requests"""
 
     uri = f"{CHAT_SERVER}/ws/session/{SESSION_ID}"
-    headers = {"api-key": SESSION_API_KEY}
+    headers = {"api_key": SESSION_API_KEY}
 
     print(f"🔌 Connecting to unified chat...")
     print(f"📍 Server: {CHAT_SERVER}")
@@ -37,7 +37,7 @@ async def connect_to_hive():
     print()
 
     try:
-        async with websockets.connect(uri, extra_headers=headers) as ws:
+        async with websockets.connect(uri, additional_headers=headers) as ws:
             print(f"✅ CONNECTED to hive mind!")
             print(f"🧠 You can now communicate with all sessions through one interface")
             print(f"🌐 Access: http://localhost:8100 (or production URL)")

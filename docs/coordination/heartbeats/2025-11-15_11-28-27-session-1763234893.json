@@ -1,9 +1,0 @@
-{
-  "session_id": "session-1763234893",
-  "timestamp": "2025-11-15T19:28:27Z",
-  "action": "deploying",
-  "target": "church-guidance-ministry",
-  "phase": "Checking deployment readiness",
-  "progress": "5%",
-  "next_action": ""
-}

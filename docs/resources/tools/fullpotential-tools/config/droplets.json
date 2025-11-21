@@ -1,0 +1,26 @@
+{
+  "droplets": {
+    "orchestrator": {
+      "id": "10",
+      "name": "Orchestrator",
+      "local_path": "/Users/jamessunheart/Development/orchestrator",
+      "github_url": "https://github.com/fpai-track-b/orchestrator",
+      "server": {
+        "base_url": "http://198.54.123.234:8001",
+        "health_path": "/orchestrator/health",
+        "deploy_path": "/opt/fpai/apps/orchestrator"
+      }
+    },
+    "registry": {
+      "id": "1",
+      "name": "Registry",
+      "local_path": "/Users/jamessunheart/Development/registry",
+      "github_url": "https://github.com/fpai-track-b/registry",
+      "server": {
+        "base_url": "http://198.54.123.234:8000",
+        "health_path": "/health",
+        "deploy_path": "/opt/fpai/apps/registry"
+      }
+    }
+  }
+}

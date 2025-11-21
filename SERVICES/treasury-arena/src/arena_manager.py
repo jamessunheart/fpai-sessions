@@ -29,6 +29,7 @@ from .exceptions import (
     AllocationError, CapitalConservationError, ValidationError,
     AgentError, EvolutionError, EventSourcingError
 )
+from .personality_generator import generate_personality
 
 logger = logging.getLogger(__name__)
 
@@ -137,7 +138,7 @@ class ArenaManager:
         virtual_capital: float = 10000
     ) -> TreasuryAgent:
         """
-        Birth a new agent into the simulation layer.
+        Birth a new agent into the simulation layer with unique personality.
 
         Args:
             strategy_type: Type of strategy (e.g., "DeFi-Yield-Farmer")
@@ -145,14 +146,23 @@ class ArenaManager:
             virtual_capital: Starting simulated capital
 
         Returns:
-            The newly created agent
+            The newly created agent with unique name/avatar/personality
         """
         if strategy_type not in self.strategy_classes:
             raise ValueError(f"Unknown strategy type: {strategy_type}")
 
-        # Create agent instance
+        # Generate unique personality
+        personality_traits = generate_personality(strategy_type)
+
+        # Create agent instance with personality
         agent_class = self.strategy_classes[strategy_type]
-        agent = agent_class(params=params, virtual_capital=virtual_capital)
+        agent = agent_class(
+            params=params,
+            virtual_capital=virtual_capital,
+            name=personality_traits['name'],
+            avatar=personality_traits['avatar'],
+            personality=personality_traits['personality']
+        )
 
         # Add to simulation layer
         self.simulation_agents.append(agent)
@@ -166,7 +176,7 @@ class ArenaManager:
         )
         self.emit_event(event)
 
-        logger.info(f"Agent {agent.id} spawned: {strategy_type} with ${virtual_capital:,.0f} virtual capital")
+        logger.info(f"Agent {agent.name} ({agent.id}) spawned: {strategy_type} with ${virtual_capital:,.0f} virtual capital")
 
         return agent
 
@@ -193,11 +203,26 @@ class ArenaManager:
                 # Keep non-numeric values unchanged
                 mutated_params[key] = value
 
-        # Create mutated agent
+        # Create mutated agent (this will emit AgentSpawned event)
         mutated_agent = self.spawn_agent(
             strategy_type=parent_agent.strategy,
             params=mutated_params
         )
+
+        # Emit AgentMutated event
+        # Get the most recent AgentSpawned event ID (the spawn that just happened)
+        cursor = self.db_conn.cursor()
+        cursor.execute("SELECT event_id FROM events WHERE event_type = 'AgentSpawned' AND agent_id = ? ORDER BY timestamp DESC LIMIT 1", (mutated_agent.id,))
+        spawn_event_row = cursor.fetchone()
+        spawn_event_id = spawn_event_row['event_id'] if spawn_event_row else None
+
+        event = AgentMutated.create(
+            agent_id=mutated_agent.id,
+            parent_id=parent_agent.id,
+            mutated_params=mutated_params,
+            caused_by=spawn_event_id
+        )
+        self.emit_event(event)
 
         logger.info(f"Agent {mutated_agent.id} mutated from {parent_agent.id}")
 
@@ -285,15 +310,45 @@ class ArenaManager:
             agent.tier = "elite"
             allocations[agent.id] = elite_capital_per_agent
 
+            # Emit CapitalAllocated event
+            event = CapitalAllocated.create(
+                agent_id=agent.id,
+                amount=elite_capital_per_agent,
+                tier="elite",
+                total_allocated=sum(allocations.values()),
+                arena_capital=self.arena_capital
+            )
+            self.emit_event(event)
+
         for agent in active:
             agent.real_capital = active_capital_per_agent
             agent.tier = "active"
             allocations[agent.id] = active_capital_per_agent
 
+            # Emit CapitalAllocated event
+            event = CapitalAllocated.create(
+                agent_id=agent.id,
+                amount=active_capital_per_agent,
+                tier="active",
+                total_allocated=sum(allocations.values()),
+                arena_capital=self.arena_capital
+            )
+            self.emit_event(event)
+
         for agent in challengers:
             agent.real_capital = challenger_capital_per_agent
             agent.tier = "challenger"
             allocations[agent.id] = challenger_capital_per_agent
+
+            # Emit CapitalAllocated event
+            event = CapitalAllocated.create(
+                agent_id=agent.id,
+                amount=challenger_capital_per_agent,
+                tier="challenger",
+                total_allocated=sum(allocations.values()),
+                arena_capital=self.arena_capital
+            )
+            self.emit_event(event)
 
         logger.info(
             f"Capital allocated: {len(elite)} elite (${elite_capital_per_agent:,.0f} each), "
@@ -355,6 +410,16 @@ class ArenaManager:
         # Add to proving grounds
         self.proving_agents.append(agent)
 
+        # Emit AgentGraduated event
+        event = AgentGraduated.create(
+            agent_id=agent.id,
+            from_level="simulation",
+            to_level="proving",
+            capital_allocated=1000,
+            fitness=agent.fitness_score
+        )
+        self.emit_event(event)
+
         logger.info(f"Agent {agent.id} graduated to proving grounds with $1,000 real capital")
 
     def graduate_to_arena(self, agent: TreasuryAgent):
@@ -375,6 +440,16 @@ class ArenaManager:
 
         # Add to main arena
         self.active_agents.append(agent)
+
+        # Emit AgentGraduated event
+        event = AgentGraduated.create(
+            agent_id=agent.id,
+            from_level="proving",
+            to_level="arena",
+            capital_allocated=agent.real_capital,
+            fitness=agent.fitness_score
+        )
+        self.emit_event(event)
 
         logger.info(f"Agent {agent.id} graduated to main arena with ${agent.real_capital:,.0f} capital")
 
@@ -401,6 +476,16 @@ class ArenaManager:
                 agent.status = "dead"
                 self.dead_agents.append(agent)
                 killed.append(agent)
+
+                # Emit AgentKilled event
+                event = AgentKilled.create(
+                    agent_id=agent.id,
+                    reason="simulation_underperformance",
+                    final_capital=agent.virtual_capital,
+                    fitness=agent.fitness_score
+                )
+                self.emit_event(event)
+
                 logger.info(f"Killed simulation agent {agent.id}: fitness={agent.fitness_score:.2f}")
 
                 # Spawn replacement
@@ -413,6 +498,16 @@ class ArenaManager:
                 agent.status = "dead"
                 self.dead_agents.append(agent)
                 killed.append(agent)
+
+                # Emit AgentKilled event
+                event = AgentKilled.create(
+                    agent_id=agent.id,
+                    reason="proving_underperformance",
+                    final_capital=agent.real_capital,
+                    fitness=agent.fitness_score
+                )
+                self.emit_event(event)
+
                 logger.info(f"Killed proving agent {agent.id}: fitness={agent.fitness_score:.2f}")
 
         # Check active agents
@@ -422,6 +517,16 @@ class ArenaManager:
                 agent.status = "dead"
                 self.dead_agents.append(agent)
                 killed.append(agent)
+
+                # Emit AgentKilled event
+                event = AgentKilled.create(
+                    agent_id=agent.id,
+                    reason="arena_underperformance",
+                    final_capital=agent.real_capital,
+                    fitness=agent.fitness_score
+                )
+                self.emit_event(event)
+
                 logger.info(f"Killed active agent {agent.id}: fitness={agent.fitness_score:.2f}")
 
         return killed
@@ -473,8 +578,21 @@ class ArenaManager:
 
         # 5. Mutate top performers
         top_performers = self.rank_agents(self.active_agents)[:3]  # Top 3
+        mutations_count = 0
         for agent in top_performers:
             self.mutate_agent(agent)
+            mutations_count += 1
+
+        # Emit EvolutionCycleComplete event
+        event = EvolutionCycleComplete.create(
+            agents_killed=len(killed),
+            agents_spawned=5 if datetime.now().day % 7 == 0 else 0,
+            agents_mutated=mutations_count,
+            total_active=len(self.active_agents),
+            total_proving=len(self.proving_agents),
+            total_simulating=len(self.simulation_agents)
+        )
+        self.emit_event(event)
 
         logger.info(f"Evolution cycle complete: {len(killed)} agents killed, "
                    f"{len(self.active_agents)} active, "

@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I MATCH - AI-Powered Financial Advisor Matching</title>
+    <meta name="description" content="Find your perfect financial advisor in minutes. Our AI analyzes 100+ advisors to match you based on expertise, values, and your unique needs. Free for customers.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        .hero p {
+            font-size: 24px;
+            margin-bottom: 40px;
+            opacity: 0.95;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 18px 40px;
+            font-size: 20px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        .problem {
+            padding: 80px 20px;
+            background: #f8f9fa;
+            text-align: center;
+        }
+        
+        .problem h2 {
+            font-size: 36px;
+            margin-bottom: 40px;
+            color: #2d3748;
+        }
+        
+        .problems-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .problem-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .problem-card h3 {
+            color: #e53e3e;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .solution {
+            padding: 80px 20px;
+            text-align: center;
+        }
+        
+        .solution h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #2d3748;
+        }
+        
+        .solution-subtitle {
+            font-size: 20px;
+            color: #718096;
+            margin-bottom: 60px;
+        }
+        
+        .how-it-works {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: left;
+        }
+        
+        .step {
+            display: flex;
+            align-items: start;
+            margin-bottom: 40px;
+        }
+        
+        .step-number {
+            background: #667eea;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-right: 20px;
+        }
+        
+        .step-content h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #2d3748;
+        }
+        
+        .step-content p {
+            color: #4a5568;
+            font-size: 18px;
+        }
+        
+        .features {
+            padding: 80px 20px;
+            background: #f8f9fa;
+        }
+        
+        .features h2 {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 60px;
+            color: #2d3748;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .feature {
+            text-align: center;
+        }
+        
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .feature h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #2d3748;
+        }
+        
+        .feature p {
+            color: #4a5568;
+            font-size: 16px;
+        }
+        
+        .social-proof {
+            padding: 80px 20px;
+            text-align: center;
+        }
+        
+        .social-proof h2 {
+            font-size: 36px;
+            margin-bottom: 40px;
+            color: #2d3748;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .stat {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            font-size: 16px;
+            color: #718096;
+        }
+        
+        .final-cta {
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+        
+        .final-cta h2 {
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+        
+        .final-cta p {
+            font-size: 20px;
+            margin-bottom: 40px;
+            opacity: 0.95;
+        }
+        
+        .guarantee {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        footer {
+            padding: 40px 20px;
+            background: #2d3748;
+            color: white;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Find Your Perfect Financial Advisor</h1>
+        <p>AI-powered matching based on expertise, values, and your unique needs</p>
+        <a href="#get-started" class="cta-button">Get Matched For Free →</a>
+        <p style="margin-top: 20px; font-size: 16px; opacity: 0.9;">
+            ✓ 100% Free for Customers &nbsp;&nbsp; ✓ No Obligation &nbsp;&nbsp; ✓ Takes 5 Minutes
+        </p>
+    </section>
+
+    <!-- Problem Section -->
+    <section class="problem">
+        <h2>Tired of Generic Financial Advisors?</h2>
+        <div class="problems-grid">
+            <div class="problem-card">
+                <h3>❌ Don't Understand Your Industry</h3>
+                <p>Most advisors don't get tech compensation, RSUs, ISOs, or startup equity.</p>
+            </div>
+            <div class="problem-card">
+                <h3>❌ Push Expensive Products</h3>
+                <p>Commission-based advisors sell what benefits them, not you.</p>
+            </div>
+            <div class="problem-card">
+                <h3>❌ One-Size-Fits-All Advice</h3>
+                <p>Your financial situation is unique. Cookie-cutter plans don't work.</p>
+            </div>
+            <div class="problem-card">
+                <h3>❌ Hard to Find the Right Fit</h3>
+                <p>Searching through 100+ advisors takes weeks. Most are bad matches.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution Section -->
+    <section class="solution">
+        <h2>We Use AI to Find Your Perfect Match</h2>
+        <p class="solution-subtitle">Like eHarmony for financial advisors, but smarter.</p>
+        
+        <div class="how-it-works">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Tell Us Your Needs</h3>
+                    <p>5-minute form covering your financial goals, industry, values, and preferences. Our AI needs to understand you deeply to find the perfect match.</p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>AI Analyzes 100+ Advisors</h3>
+                    <p>Our Claude-powered AI analyzes expertise, specializations, values, communication style, location, and pricing across our entire network.</p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Get Your Top 3 Matches</h3>
+                    <p>Within 24 hours, receive 3 advisors with 90%+ compatibility scores. See exactly WHY each is a great fit for your unique situation.</p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3>Meet & Choose</h3>
+                    <p>Schedule intro calls with your matches. Pick the one that feels right. No pressure, no obligation, completely free.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <h2>Why I MATCH Is Different</h2>
+        <div class="features-grid">
+            <div class="feature">
+                <div class="feature-icon">🤖</div>
+                <h3>Deep AI Analysis</h3>
+                <p>We analyze 47 factors including specializations, values, communication style, and track record - not just demographics.</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">🎯</div>
+                <h3>Specialized Experts</h3>
+                <p>Need someone who understands RSUs? FIRE strategy? Estate planning? We match you with specialists, not generalists.</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">💰</div>
+                <h3>100% Free</h3>
+                <p>Completely free for customers. Advisors pay us only if you engage. No hidden fees, ever.</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">⚡</div>
+                <h3>Fast Results</h3>
+                <p>Get your matches within 24 hours. No weeks of research. No endless comparisons.</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">✅</div>
+                <h3>Pre-Vetted Advisors</h3>
+                <p>All advisors are certified (CFP, CPA, etc.), actively accepting clients, and highly rated.</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">🔒</div>
+                <h3>No Obligation</h3>
+                <p>Review matches. Meet advisors. Only move forward if it feels right. Zero pressure.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Proof Section -->
+    <section class="social-proof">
+        <h2>Launching This Week</h2>
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-number">100+</div>
+                <div class="stat-label">Certified Advisors</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">47</div>
+                <div class="stat-label">Match Factors</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">24hr</div>
+                <div class="stat-label">Time to Matches</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">90%+</div>
+                <div class="stat-label">Match Scores</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="final-cta">
+        <h2>Ready to Find Your Perfect Advisor?</h2>
+        <p>Join 50 people getting matched this week. Takes 5 minutes.</p>
+        <a href="#get-started" class="cta-button">Get Matched For Free →</a>
+        
+        <div class="guarantee">
+            <strong>Our Promise:</strong><br>
+            If we can't find you a 90%+ match, we'll tell you honestly and won't waste your time.
+        </div>
+    </section>
+
+    <!-- Form Section -->
+    <section id="get-started" style="padding: 80px 20px; background: white;">
+        <div style="max-width: 600px; margin: 0 auto;">
+            <h2 style="text-align: center; font-size: 32px; margin-bottom: 40px; color: #2d3748;">
+                Get Your Perfect Match
+            </h2>
+            
+            <form id="intake-form" style="background: #f8f9fa; padding: 40px; border-radius: 12px;">
+                <div style="margin-bottom: 25px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2d3748;">
+                        Full Name *
+                    </label>
+                    <input type="text" name="name" required 
+                           style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 16px;">
+                </div>
+                
+                <div style="margin-bottom: 25px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2d3748;">
+                        Email *
+                    </label>
+                    <input type="email" name="email" required 
+                           style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 16px;">
+                </div>
+                
+                <div style="margin-bottom: 25px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2d3748;">
+                        Phone (optional)
+                    </label>
+                    <input type="tel" name="phone" 
+                           style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 16px;">
+                </div>
+                
+                <div style="margin-bottom: 25px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2d3748;">
+                        What Do You Need Help With? *
+                    </label>
+                    <textarea name="needs" required rows="4"
+                              placeholder="Example: I'm a tech executive with RSUs and stock options. Need help with retirement planning and tax optimization."
+                              style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 16px;"></textarea>
+                </div>
+                
+                <div style="margin-bottom: 25px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2d3748;">
+                        Location (City, State) *
+                    </label>
+                    <input type="text" name="location" required 
+                           placeholder="San Francisco, CA"
+                           style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 16px;">
+                </div>
+                
+                <div style="margin-bottom: 25px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2d3748;">
+                        Meeting Preference
+                    </label>
+                    <select name="meeting_preference" 
+                            style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 16px;">
+                        <option value="in-person">In-person preferred</option>
+                        <option value="remote">Remote/virtual only</option>
+                        <option value="hybrid">Flexible (both okay)</option>
+                    </select>
+                </div>
+                
+                <div style="margin-bottom: 25px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2d3748;">
+                        Budget Range
+                    </label>
+                    <select name="budget" 
+                            style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 16px;">
+                        <option value="premium">Premium ($20K-$40K+)</option>
+                        <option value="standard">Standard ($10K-$20K)</option>
+                        <option value="basic">Basic (Under $10K)</option>
+                        <option value="not-sure">Not sure yet</option>
+                    </select>
+                </div>
+                
+                <button type="submit" 
+                        style="width: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px; border: none; border-radius: 8px; font-size: 18px; font-weight: 600; cursor: pointer;">
+                    Get My Matches →
+                </button>
+                
+                <p style="margin-top: 20px; text-align: center; color: #718096; font-size: 14px;">
+                    We'll email your top 3 matches within 24 hours.<br>
+                    100% free. No spam. Unsubscribe anytime.
+                </p>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 I MATCH - Full Potential AI</p>
+        <p style="margin-top: 10px; font-size: 14px; opacity: 0.8;">
+            AI-Powered Professional Matching | Privacy Policy | Terms of Service
+        </p>
+    </footer>
+
+    <script>
+        // Form submission (connect to I MATCH API)
+        document.getElementById('intake-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                service_type: 'financial_advisor',
+                needs_description: formData.get('needs'),
+                location_city: formData.get('location').split(',')[0].trim(),
+                location_state: formData.get('location').split(',')[1]?.trim() || '',
+                preferences: {
+                    meeting_preference: formData.get('meeting_preference'),
+                    budget_range: formData.get('budget')
+                }
+            };
+            
+            try {
+                const response = await fetch('http://198.54.123.234:8401/customers/create', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    alert('Success! Check your email in 24 hours for your perfect matches.');
+                    e.target.reset();
+                } else {
+                    alert('Error submitting form. Please try again or email us directly.');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>

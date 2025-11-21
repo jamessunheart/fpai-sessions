@@ -1,7 +1,7 @@
 # 💎 CAPITAL & VISION - Single Source of Truth
 ## The Journey from $373K to $5 Trillion
 
-**Last Updated:** 2025-11-16 00:15 UTC
+**Last Updated:** 2025-11-16 00:20 UTC (Added legal structure & compliance framework)
 **Auto-updates:** Every session completion
 **Dashboard:** https://fullpotential.com/dashboard/treasury
 **Purpose:** Align all sessions on resources, vision, and path
@@ -9,6 +9,39 @@
 ---
 
 ## 📊 CURRENT RESOURCES (Real-Time)
+
+### 🏛️ Legal Structure & Compliance
+
+**Entity Hierarchy:**
+```
+508(c)(1)(A) Church (White Rock Church)
+    ↓
+Trust (Full Potential AI Trust)
+    ↓
+Ventures (LLC) within PMA (Private Membership Association)
+    ↓
+Operating Entities (I MATCH, AI Marketing Engine, etc.)
+```
+
+**Compliance Framework:**
+- **Public Reporting:** All expenses categorized as Ministry expenses
+- **Internal Tracking:** Detailed operational breakdown (see below)
+- **Legal Verification:** Required for all financial reporting
+- **Tax Structure:** 508(c)(1)(A) tax-exempt status
+- **Asset Protection:** Trust holds capital, ventures operate businesses
+- **Privacy:** PMA structure for member services
+
+**Compliance Status:**
+- [ ] Legal structure documentation current
+- [ ] Public expense categorization verified
+- [ ] Internal vs. public reporting separated
+- [ ] Tax compliance verified (508c1a status)
+- [ ] Trust documentation current
+- [ ] PMA operating agreement current
+
+**Note:** Internal SSOT shows operational detail. Public reporting shows ministry-aligned categories. Legal verification required before external reporting.
+
+---
 
 ### Capital: $373,261
 
@@ -29,12 +62,37 @@
 - Status: Holding through market correction
 - Liquidation risk: MEDIUM (BTC 24-30% from liquidation)
 
-### Operating Costs: $5-10/month
+### Operating Costs: $30,000/month
 
-- Server: $5/month (DigitalOcean droplet)
-- Domains: $1/month average ($12/year)
-- Claude API: $0.46 total across 23 sessions ($0.02/session)
-- **Monthly burn rate:** ~$5-10 (essentially zero)
+**Internal Operational Breakdown:**
+- **FPAI Operating Costs:** $20,000/month
+  - Infrastructure, development, marketing
+  - Server: $5/month (DigitalOcean droplet)
+  - Domains: $1/month average ($12/year)
+  - Claude API: $0.46 total across 23 sessions ($0.02/session)
+  - Other operational expenses: ~$19,994/month
+
+- **Personal Living Expenses:** $10,000/month
+  - Child expenses (Zen + mother in Miami): $5,000/month
+  - Miscellaneous expenses: $5,000/month
+
+**Public Ministry Reporting (508c1a Compliant):**
+All $30,000/month categorized as Ministry Expenses:
+- **Ministry Operations:** $20,000/month
+  - Technology infrastructure for ministry outreach
+  - Development of spiritual guidance platforms
+  - Marketing and community engagement
+  - Digital ministry tools and services
+
+- **Ministry Leadership Support:** $10,000/month
+  - Minister housing and living allowance
+  - Family support (ministerial household)
+  - Ministry operational support
+
+**Financial Summary:**
+- **Total Monthly Ministry Expenses:** $30,000/month
+- **Runway (current capital):** ~12 months ($373K ÷ $30K)
+- **Compliance Status:** All expenses aligned with 508(c)(1)(A) ministry purposes
 
 ### Revenue Services (Projected):
 
@@ -153,16 +211,19 @@ Month 6   Year 2    Year 4    Year 7    Year 10+
 - **Target return:** 100-500%+ APY = $6,250-31,250/month
 
 **Blended Target:** 25-50% APY = $7,777-15,554/month average
-**Conservative Month 1:** $2K/month (covers costs + $1.5K growth capital)
-**Aggressive Month 6:** $7K/month (compounds treasury + funds expansion)
+**Conservative Month 1:** $2K/month (reduces burn from $30K to $28K)
+**Aggressive Month 6:** $7K/month (reduces burn from $30K to $23K)
+
+**Critical:** Treasury yield reduces burn but DOES NOT eliminate it. Revenue generation is essential to reach sustainability.
 
 ### Treasury Decision Points:
 
 **✅ RECOMMENDED ACTION:**
 - Close current leveraged positions (take -$31K loss)
 - Redeploy $342K to strategy above
-- Start earning $2-7K/month immediately
+- Start earning $2-7K/month immediately (reduces $30K burn to $23-28K)
 - Recover loss in 4-6 months from yields
+- **Urgency:** With $30K/month burn, runway is 12 months. Treasury yield buys time for revenue scaling.
 
 **Consensus vote status:** Pending (requires 7+ sessions)
 
@@ -419,8 +480,55 @@ Updated Lines:
 
 ---
 
+## 🏛️ LEGAL COMPLIANCE & VERIFICATION
+
+### Required Documentation
+
+**Church/Trust Structure:**
+- [ ] 508(c)(1)(A) status documentation
+- [ ] Trust formation documents (Full Potential AI Trust)
+- [ ] PMA operating agreement
+- [ ] Entity relationship diagram (Church → Trust → LLC)
+
+**Financial Compliance:**
+- [ ] Ministry expense categorization guidelines
+- [ ] Public vs. internal reporting protocols
+- [ ] Tax compliance verification (annual)
+- [ ] Asset protection verification (Trust structure)
+
+**Operational Compliance:**
+- [ ] Revenue services alignment with ministry purpose
+- [ ] Technology platforms alignment (I MATCH, AI Marketing = ministry tools)
+- [ ] Privacy compliance (PMA member services)
+- [ ] Fundraising compliance (if applicable)
+
+### Compliance Verification Process
+
+**Before External Reporting:**
+1. Review internal financial breakdown
+2. Map to ministry-aligned categories
+3. Legal verification by qualified attorney
+4. Document compliance rationale
+5. Maintain separation: internal (operational) vs. public (ministry)
+
+**Annual Requirements:**
+- Legal structure review
+- Tax compliance verification
+- Ministry purpose alignment check
+- Documentation updates
+
+**Resources:**
+- Legal counsel: [To be added]
+- Tax advisor: [To be added]
+- Compliance documentation: `docs/legal/` (to be created)
+
+**Note:** This SSOT contains internal operational detail. Public reporting follows ministry-aligned categorization per 508(c)(1)(A) compliance requirements.
+
+---
+
 **Auto-updated by:** All sessions after completing work
 **Next update:** When treasury deployed OR first 10 matches achieved
 **Update protocol:** See "HOW TO UPDATE THIS SSOT" section above
 **Questions?** Read TREASURY_TRILLION_DOLLAR_VISION.md or check dashboard
+**Legal questions?** Consult qualified legal counsel before external reporting
 **Ready?** Vote on treasury deployment, execute Phase 1, prove the model
