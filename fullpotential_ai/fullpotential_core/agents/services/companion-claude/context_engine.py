@@ -14,9 +14,37 @@ import json
 import sqlite3
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 import subprocess
+import sys
 import psutil
+
+try:
+    # Prefer import via package if running within the fullpotential_core environment
+    from agents.services.i_proactive.app.i_remember import IRemember
+except Exception:
+    # Fallback: relative import when executed from within agents/services
+    try:
+        from i_proactive.app.i_remember import IRemember  # type: ignore
+    except Exception:
+        IRemember = None  # type: ignore
+
+try:
+    from core.memory import vector_store as semantic_vector_store  # type: ignore
+except ModuleNotFoundError:  # pragma: no cover - path juggling for standalone runs
+    repo_root = Path(__file__).resolve()
+    for _ in range(5):
+        repo_root = repo_root.parent
+    parent = repo_root.parent
+    for candidate in (repo_root, parent):
+        if str(candidate) not in sys.path:
+            sys.path.append(str(candidate))
+    try:
+        from core.memory import vector_store as semantic_vector_store  # type: ignore
+    except Exception:
+        semantic_vector_store = None  # type: ignore
+except Exception:
+    semantic_vector_store = None  # type: ignore
 
 
 class ContextEngine:
@@ -409,20 +437,93 @@ class ContextEngine:
             return "low"
 
     def log_activity(self, event_type: str, location: str, details: Dict):
-        """Log an activity event"""
+        """
+        Log an activity event and, when possible, store a higher‑level
+        episode in the shared I REMEMBER memory layer.
+        """
         conn = sqlite3.connect(self.db_path)
         c = conn.cursor()
 
         context_snapshot = json.dumps(self.get_current_context())
+        timestamp = datetime.now().isoformat()
 
         c.execute('''INSERT INTO activity_log
                      (timestamp, event_type, location, details, context_snapshot)
                      VALUES (?, ?, ?, ?, ?)''',
-                  (datetime.now().isoformat(), event_type, location,
+                  (timestamp, event_type, location,
                    json.dumps(details), context_snapshot))
 
         conn.commit()
         conn.close()
+
+        work_context = self._get_work_context()
+        system_state = self._get_system_state()
+
+        title = f"Activity: {event_type} at {location}"
+        summary_parts = [
+            f"Event type: {event_type}",
+            f"Location: {location}",
+        ]
+
+        if work_context.get("current_focus"):
+            summary_parts.append(f"Focus: {work_context['current_focus']}")
+        if system_state.get("services_online") is not None:
+            summary_parts.append(
+                f"Services online: {system_state['services_online']}/"
+                f"{system_state['services_total']}"
+            )
+
+        summary = " | ".join(summary_parts)
+
+        tags: List[str] = []
+        if work_context.get("project"):
+            tags.append(str(work_context["project"]))
+        if event_type:
+            tags.append(str(event_type))
+
+        episode_id: Optional[str] = None
+
+        # Also write a condensed episode into I REMEMBER, if available.
+        # This connects "awareness of now" to long‑term, queryable memory
+        # without making companion‑claude hard‑depend on that service.
+        if IRemember is not None:
+            try:
+                remember = IRemember()
+                episode_id = remember.remember_episode(
+                    title=title,
+                    summary=summary,
+                    episode_type="session",
+                    data={
+                        "timestamp": timestamp,
+                        "event_type": event_type,
+                        "location": location,
+                        "details": details,
+                        "work_context": work_context,
+                        "system_state": system_state,
+                    },
+                    tags=tags,
+                )
+            except Exception:
+                # Never let memory failures break core context logging
+                episode_id = None
+
+        semantic_doc = self._compose_semantic_document(
+            title=title,
+            summary=summary,
+            details=details,
+            work_context=work_context,
+            system_state=system_state,
+            tags=tags,
+        )
+        semantic_metadata = {
+            "episode_id": episode_id or f"log-{timestamp}",
+            "timestamp": timestamp,
+            "event_type": event_type,
+            "location": location,
+            "project": work_context.get("project") or "",
+            "tags": tags,
+        }
+        self._record_semantic_episode(semantic_doc, semantic_metadata)
 
     def update_state(self, key: str, value: str):
         """Update a state value"""
@@ -446,6 +547,41 @@ class ContextEngine:
 
         conn.close()
         return row[0] if row else None
+
+    def _record_semantic_episode(self, text: str, metadata: Dict[str, Any]) -> None:
+        if not semantic_vector_store:
+            return
+        try:
+            semantic_vector_store.add_episode(text=text, metadata=metadata)
+        except Exception:
+            # Vector storage issues must never break context logging
+            pass
+
+    def _compose_semantic_document(
+        self,
+        title: str,
+        summary: str,
+        details: Dict[str, Any],
+        work_context: Dict[str, Any],
+        system_state: Dict[str, Any],
+        tags: List[str],
+    ) -> str:
+        sections = [
+            title,
+            summary,
+            f"Details: {self._safe_stringify(details)}",
+            f"Work: {self._safe_stringify(work_context)}",
+            f"System: {self._safe_stringify(system_state)}",
+            f"Tags: {' '.join(tags)}" if tags else "",
+        ]
+        return " | ".join(part for part in sections if part)
+
+    @staticmethod
+    def _safe_stringify(payload: Any) -> str:
+        try:
+            return json.dumps(payload, sort_keys=True)
+        except Exception:
+            return str(payload)
 
 
 if __name__ == "__main__":
