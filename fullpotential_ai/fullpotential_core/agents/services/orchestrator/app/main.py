@@ -10,6 +10,7 @@ import uuid
 from typing import Optional, Dict, Any
 from datetime import datetime
 import time
+import os
 
 from .config import settings
 from .models import (
@@ -786,6 +787,42 @@ async def get_metrics() -> Dict[str, Any]:
     """
     metrics_data = metrics.get_metrics()
     return metrics_data.model_dump()
+
+
+@app.get("/self/state")
+async def self_state() -> Dict[str, Any]:
+    """Lightweight vitality snapshot for the Conscious Pulse."""
+    return {
+        "status": "active",
+        "mode": "autonomous",
+        "treasury": "simulation",
+        "active_droplets": ["registry", "orchestrator", "dashboard"],
+        "timestamp": datetime.utcnow().isoformat() + "Z",
+    }
+
+
+@app.get("/memory/open-loops")
+async def open_loops(limit: int = 50) -> Dict[str, Any]:
+    """Report outstanding missions by scanning the open mission directory."""
+    missions_dir = "/opt/fpai/orchestration/missions/open"
+    try:
+        files = [f for f in os.listdir(missions_dir) if f.endswith(".md")]
+    except Exception as exc:
+        return {"error": str(exc), "missions": []}
+
+    files.sort()
+    return {"count": len(files), "missions": files[:limit]}
+
+
+@app.post("/memory/reflect")
+async def reflect(payload: Dict[str, Any]) -> Dict[str, Any]:
+    """Placeholder reflection endpoint for the Pulse daemon."""
+    return {
+        "status": "acknowledged",
+        "insight": "System is observing.",
+        "received": payload or {},
+        "timestamp": datetime.utcnow().isoformat() + "Z",
+    }
 
 
 # Error handler for OrchestratorError
