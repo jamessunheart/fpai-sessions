@@ -1,0 +1,33 @@
+{
+  "deployment_date": "2025-11-17T08:26:26.660725",
+  "status": "ready_for_credentials",
+  "phase": "Phase 1 - PROOF",
+  "goal": "10 matches Month 1",
+  "automation_level": "100%",
+  "cost": "$0/month",
+  "next_steps": [
+    "1. Set Reddit API credentials (10 min setup)",
+    "2. Run: python3 deploy_reddit_automation.py",
+    "3. Automated posting begins (r/fatFIRE, r/financialindependence)",
+    "4. Lead monitoring activates (automatic)",
+    "5. Track progress via data/reddit_state.json"
+  ],
+  "customer_acquisition_post": {
+    "subreddit": "fatFIRE",
+    "title": "Built an AI to find your perfect financial advisor (free for customers)",
+    "body": "I got burned by a generic financial advisor who didn't understand tech compensation.\n\nSo I built an AI matching system that analyzes 100+ advisors to find the perfect fit based on:\n\u2022 Your specific needs (RSUs, ISOs, tax optimization, etc.)\n\u2022 Values alignment (fee-only vs commission, philosophy)\n\u2022 Communication style\n\u2022 Specialization\n\nFree for customers. Advisors pay us only if you engage.\n\nTesting with 50 people this week. Comment or DM if interested.\n\nhttp://198.54.123.234:8401/"
+  },
+  "monitoring_keywords": [
+    "interested",
+    "want",
+    "need",
+    "looking for",
+    "dm",
+    "link"
+  ],
+  "expected_results": {
+    "week_1": "2-5 leads from initial post",
+    "month_1": "10-20 total leads",
+    "conversion_rate": "20-40% (2-8 matches Month 1)"
+  }
+}

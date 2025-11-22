@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'SF Mono', 'Monaco', monospace;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e6ed;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container { max-width: 1600px; margin: 0 auto; }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #a0aec0;
+            font-size: 1.1em;
+            margin-top: 10px;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: rgba(255,255,255,0.05);
+            padding: 25px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .metric-label {
+            color: #a0aec0;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .metric-value.positive { color: #48bb78; }
+        .metric-value.negative { color: #f56565; }
+        .metric-value.neutral { color: #667eea; }
+
+        .metric-change {
+            font-size: 0.9em;
+            color: #718096;
+            margin-top: 10px;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            height: 20px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .vision-path {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .vision-path h2 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+
+        .path-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .path-step {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .path-arrow {
+            color: #667eea;
+            font-size: 2rem;
+        }
+
+        .path-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .path-value.current { color: #48bb78; }
+
+        .path-label {
+            font-size: 0.8rem;
+            color: #a0aec0;
+        }
+
+        .phases {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .phase {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .phase.active {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .phase h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .phase .duration {
+            color: #a0aec0;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .phase .capital {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .phase .target {
+            color: #718096;
+            font-size: 0.9em;
+        }
+
+        .tam-highlight {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+            border: 2px solid #667eea;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .tam-value {
+            font-size: 3em;
+            font-weight: bold;
+            color: #667eea;
+            margin: 15px 0;
+        }
+
+        .auto-update {
+            text-align: center;
+            color: #a0aec0;
+            font-size: 0.9rem;
+            margin-top: 30px;
+        }
+
+        .pulse {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #48bb78;
+            animation: pulse 2s infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+        }
+
+        .card h2 {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: #a0aec0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💎 Treasury Dashboard</h1>
+            <p class="subtitle">The Journey from $373K to $5 Trillion</p>
+        </header>
+
+        <!-- Current State Metrics -->
+        <div class="metrics">
+            <div class="metric-card">
+                <div class="metric-label">Current Capital</div>
+                <div class="metric-value neutral" id="current-capital">$373,261</div>
+                <div class="metric-change">
+                    P&L: <span id="pnl" class="negative">-$31,041 (-8.32%)</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-m6" style="width: 0%">0%</div>
+                </div>
+                <div class="metric-change">Progress to Month 6 ($500K)</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Phase 1 Progress</div>
+                <div class="metric-value neutral" id="matches">0 / 100</div>
+                <div class="metric-change">Matches Completed</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-matches" style="width: 0%">0%</div>
+                </div>
+                <div class="metric-change">Days Active: <span id="days-active">0</span> / 180</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Revenue (Projected)</div>
+                <div class="metric-value positive" id="revenue-m1">$2,500</div>
+                <div class="metric-change">Month 1 Target</div>
+                <div style="margin-top: 15px;">
+                    <div class="metric-change">Month 12: <span id="revenue-m12">$40,000</span></div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Operating Costs</div>
+                <div class="metric-value neutral">$5-10</div>
+                <div class="metric-change">Per Month</div>
+                <div style="margin-top: 15px;">
+                    <div class="metric-change">Server: $5 | Domains: $1 | Claude API: $0.46 total</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAM Highlight -->
+        <div class="tam-highlight">
+            <div class="metric-label">Total Addressable Market</div>
+            <div class="tam-value">$5.21 TRILLION</div>
+            <div class="metric-change">
+                10+ matching categories | Network effects: n⁴ value growth | 2030 projection
+            </div>
+        </div>
+
+        <!-- Vision Path -->
+        <div class="vision-path">
+            <h2>The 10-Year Path to Paradise</h2>
+            <div class="path-steps">
+                <div class="path-step">
+                    <div class="path-value current">$373K</div>
+                    <div class="path-label">Now</div>
+                </div>
+                <div class="path-arrow">→</div>
+                <div class="path-step">
+                    <div class="path-value">$5M</div>
+                    <div class="path-label">Month 6</div>
+                </div>
+                <div class="path-arrow">→</div>
+                <div class="path-step">
+                    <div class="path-value">$100M</div>
+                    <div class="path-label">Year 2</div>
+                </div>
+                <div class="path-arrow">→</div>
+                <div class="path-step">
+                    <div class="path-value">$3B</div>
+                    <div class="path-label">Year 4</div>
+                </div>
+                <div class="path-arrow">→</div>
+                <div class="path-step">
+                    <div class="path-value">$150B</div>
+                    <div class="path-label">Year 7</div>
+                </div>
+                <div class="path-arrow">→</div>
+                <div class="path-step">
+                    <div class="path-value current">$1-5T</div>
+                    <div class="path-label">Year 10+</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phases -->
+        <div class="card">
+            <h2>Journey Phases</h2>
+            <div class="phases" id="phases-container">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Grid for additional info -->
+        <div class="grid-2">
+            <div class="card">
+                <h2>Treasury Strategy</h2>
+                <div style="margin-top: 15px;">
+                    <div class="metric-change"><strong>40% Base Layer:</strong> Stable DeFi yield (6-10% APY)</div>
+                    <div class="metric-change" style="margin-top: 10px;"><strong>40% Tactical:</strong> Cycle-aware trading (30-100%+ APY)</div>
+                    <div class="metric-change" style="margin-top: 10px;"><strong>20% Moonshots:</strong> High-conviction bets (100-500%+ APY)</div>
+                    <div class="metric-change" style="margin-top: 20px; font-size: 1.1em; color: #667eea;">
+                        <strong>Target: 25-50% APY</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Phase 1 Goals</h2>
+                <div style="margin-top: 15px;">
+                    <div class="metric-change">✅ 100 matches (I MATCH financial advisors)</div>
+                    <div class="metric-change" style="margin-top: 10px;">✅ $500K treasury (from $373K)</div>
+                    <div class="metric-change" style="margin-top: 10px;">✅ NPS > 50 (user satisfaction)</div>
+                    <div class="metric-change" style="margin-top: 10px;">✅ CAC < LTV/5 (unit economics)</div>
+                    <div class="metric-change" style="margin-top: 10px;">✅ Viral coefficient > 0.3</div>
+                    <div class="metric-change" style="margin-top: 20px; font-size: 1.1em; color: #667eea;">
+                        <strong>Timeline: 6 months</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="auto-update">
+            <span class="pulse"></span>
+            Auto-updating every 30 seconds | Last update: <span id="last-update">--:--:--</span>
+        </div>
+    </div>
+
+    <script>
+        async function updateDashboard() {
+            try {
+                const response = await fetch('/api/treasury');
+                const data = await response.json();
+                const metrics = data.metrics;
+
+                // Update capital
+                const capital = metrics.current.capital || 373261;
+                const pnl = metrics.current.pnl || -31041;
+                const pnlPercent = metrics.current.pnl_percent || -8.32;
+
+                document.getElementById('current-capital').textContent =
+                    '$' + capital.toLocaleString();
+                document.getElementById('pnl').textContent =
+                    '$' + pnl.toLocaleString() + ' (' + pnlPercent.toFixed(2) + '%)';
+                document.getElementById('pnl').className = pnl >= 0 ? 'positive' : 'negative';
+
+                // Update progress
+                const progressM6 = metrics.progress.to_m6_percent || 0;
+                const progressFill = document.getElementById('progress-m6');
+                progressFill.style.width = progressM6 + '%';
+                progressFill.textContent = progressM6.toFixed(1) + '%';
+
+                // Update matches
+                const matches = metrics.progress.matches_current || 0;
+                const matchesTarget = metrics.progress.matches_target || 100;
+                document.getElementById('matches').textContent =
+                    matches + ' / ' + matchesTarget;
+                const matchProgress = (matches / matchesTarget) * 100;
+                const matchFill = document.getElementById('progress-matches');
+                matchFill.style.width = matchProgress + '%';
+                matchFill.textContent = matchProgress.toFixed(0) + '%';
+
+                // Update revenue
+                document.getElementById('revenue-m1').textContent =
+                    '$' + (metrics.revenue.month_1 || 2500).toLocaleString();
+                document.getElementById('revenue-m12').textContent =
+                    '$' + (metrics.revenue.month_12 || 40000).toLocaleString();
+
+                // Update timestamp
+                document.getElementById('last-update').textContent =
+                    new Date(data.timestamp).toLocaleTimeString();
+
+                // Load phases
+                if (metrics.phases) {
+                    const phasesContainer = document.getElementById('phases-container');
+                    phasesContainer.innerHTML = metrics.phases.map((phase, index) => `
+                        <div class="phase ${index === 0 ? 'active' : ''}">
+                            <h3>${phase.name}</h3>
+                            <div class="duration">${phase.duration}</div>
+                            <div class="capital">${phase.capital}</div>
+                            <div class="target">${phase.target}</div>
+                        </div>
+                    `).join('');
+                }
+
+            } catch (error) {
+                console.error('Error updating dashboard:', error);
+            }
+        }
+
+        // Initial load
+        updateDashboard();
+
+        // Auto-update every 30 seconds
+        setInterval(updateDashboard, 30000);
+    </script>
+</body>
+</html>

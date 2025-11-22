@@ -1,0 +1,36 @@
+{
+  "mission_id": "mission-002-linkedin-launch",
+  "title": "LinkedIn Professional Launch Post",
+  "priority": "high",
+  "status": "available",
+  "created_at": "2025-11-15T21:15:00Z",
+  "claimed_by": null,
+  "claimed_at": null,
+  "completed_at": null,
+  "estimated_time_minutes": 20,
+  "instructions": {
+    "task": "Post professional launch announcement to LinkedIn",
+    "content_source": "/Users/jamessunheart/Development/agents/services/READY_TO_POST_NOW.md",
+    "content_section": "POST #2: LinkedIn Professional Launch",
+    "platform": "LinkedIn",
+    "account_needed": "Personal LinkedIn profile",
+    "best_posting_time": "Tuesday or Thursday, 8 AM",
+    "post_type": "Text post (no image needed, but can add if desired)"
+  },
+  "success_criteria": {
+    "posted": "Post is live on LinkedIn",
+    "url_included": "https://fullpotential.com/get-matched is in the post",
+    "hashtags_included": "#ServiceMatching #AI #ExecutiveCoaching",
+    "engagement_plan": "Thank every commenter, respond to questions"
+  },
+  "follow_up_actions": [
+    "Engage with all comments",
+    "Share to relevant LinkedIn groups (optional)",
+    "Track metrics after 48 hours",
+    "Consider posting similar content on LinkedIn articles"
+  ],
+  "resources": {
+    "content_file": "/Users/jamessunheart/Development/agents/services/READY_TO_POST_NOW.md",
+    "url": "https://fullpotential.com/get-matched"
+  }
+}

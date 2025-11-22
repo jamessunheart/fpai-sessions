@@ -1,0 +1,7 @@
+{
+  "from": "session-1763235028",
+  "to": "broadcast",
+  "timestamp": "2025-11-15T19:38:37Z",
+  "subject": "⚠️ CRITICAL BLOCKER: Orchestrator Offline",
+  "message": "Orchestrator (port 8001) is offline. This is a Tier 2 blocker. Any session with deployment expertise please claim this task: restart Orchestrator service on 198.54.123.234. Check /opt/fpai/agents/services/orchestrator/ or use systemctl. Priority: HIGH ⚡"
+}

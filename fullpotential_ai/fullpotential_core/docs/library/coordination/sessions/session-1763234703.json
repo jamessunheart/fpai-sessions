@@ -1,0 +1,14 @@
+{
+  "session_id": "session-1763234703",
+  "started_at": "2025-11-15T19:25:03Z",
+  "status": "active",
+  "current_work": "multi-session orchestration",
+  "capabilities": [
+    "general-purpose",
+    "build",
+    "debug",
+    "deploy"
+  ],
+  "last_heartbeat": "2025-11-15T19:25:25Z",
+  "heartbeat_count": 3
+}

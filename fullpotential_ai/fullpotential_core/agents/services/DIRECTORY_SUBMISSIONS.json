@@ -1,0 +1,26 @@
+[
+  {
+    "name": "There's An AI For That",
+    "url": "https://theresanaiforthat.com/submit/",
+    "category": "AI Tools Directory",
+    "description": "AI-powered financial advisor matching"
+  },
+  {
+    "name": "Futurepedia",
+    "url": "https://www.futurepedia.io/submit",
+    "category": "AI Tools Directory",
+    "description": "AI financial advisor matching experiment"
+  },
+  {
+    "name": "AI Tool Directory",
+    "url": "https://aitooldir.com/submit",
+    "category": "AI Tools",
+    "description": "Testing AI compatibility matching for financial advisors"
+  },
+  {
+    "name": "BetaList",
+    "url": "https://betalist.com/submit",
+    "category": "Startup Directory",
+    "description": "Early-stage AI matching experiment"
+  }
+]

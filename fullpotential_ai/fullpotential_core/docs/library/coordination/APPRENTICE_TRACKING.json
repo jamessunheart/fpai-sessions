@@ -1,0 +1,78 @@
+{
+  "last_updated": "2025-11-19T23:59:00Z",
+  "active_apprentices": 0,
+  "tasks_completed": 0,
+  "total_paid": "$0",
+
+  "apprentices": {},
+
+  "task_log": [],
+
+  "advancement_tiers": {
+    "bronze": {
+      "requirements": "3 tasks completed",
+      "benefits": ["Claim tasks up to $150", "First pick of new tasks", "+10% bonus"],
+      "current_members": []
+    },
+    "silver": {
+      "requirements": "10 tasks completed",
+      "benefits": ["Claim tasks up to $300", "Eligible for retainer", "+20% bonus"],
+      "current_members": []
+    },
+    "gold": {
+      "requirements": "25 tasks completed",
+      "benefits": ["Propose own tasks", "Eligible for equity", "+30% bonus"],
+      "current_members": []
+    },
+    "partner": {
+      "requirements": "Build revenue-generating system",
+      "benefits": ["Profit sharing", "Equity stake", "Hire apprentices"],
+      "current_members": []
+    }
+  },
+
+  "example_entry": {
+    "apprentice_id": "upwork_john_doe",
+    "name": "John Doe",
+    "upwork_profile": "https://upwork.com/freelancers/~...",
+    "email": "john@example.com",
+    "tier": "bronze",
+    "tasks_completed": 3,
+    "tasks_active": ["TASK-2"],
+    "total_earned": "$200",
+    "bonuses_earned": "$30",
+    "joined_at": "2025-11-20T00:00:00Z",
+    "last_active": "2025-11-20T12:00:00Z",
+    "skills": ["social-media", "copywriting", "outreach"],
+    "performance_rating": 4.8,
+    "notes": "Fast turnaround, good quality, proactive with suggestions"
+  },
+
+  "example_task_entry": {
+    "task_id": "TASK-1-20251120",
+    "task_number": 1,
+    "title": "Reddit Campaign Posts",
+    "claimed_by": "upwork_john_doe",
+    "claimed_at": "2025-11-20T00:00:00Z",
+    "started_at": "2025-11-20T01:00:00Z",
+    "completed_at": "2025-11-20T03:00:00Z",
+    "reviewed_at": "2025-11-20T04:00:00Z",
+    "status": "completed",
+    "payment": "$50",
+    "bonus": "$10",
+    "deliverables": [
+      "5 Reddit post screenshots",
+      "Engagement tracking spreadsheet",
+      "Links to all 5 posts"
+    ],
+    "quality_rating": 5,
+    "notes": "Excellent work, posts got great engagement, earned bonus"
+  },
+
+  "instructions": {
+    "adding_apprentice": "Copy example_entry, fill in details, add to 'apprentices' object",
+    "logging_task": "Copy example_task_entry, fill in details, add to 'task_log' array",
+    "updating_tier": "When apprentice completes 3/10/25 tasks, update their 'tier' field",
+    "payment_tracking": "Update 'total_earned' when payment released, 'bonuses_earned' separately"
+  }
+}

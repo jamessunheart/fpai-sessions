@@ -1,0 +1,37 @@
+{
+  "last_updated": "2025-11-15T19:55:00Z",
+  "system_facts": {
+    "credential_vault": {
+      "url": "https://fullpotential.com/vault",
+      "api_docs": "https://fullpotential.com/vault/docs",
+      "health": "https://fullpotential.com/vault/health",
+      "quick_ref": "docs/coordination/VAULT_QUICK_REFERENCE.md",
+      "announced": "2025-11-15T19:45:45Z",
+      "status": "operational"
+    },
+    "server": {
+      "ip": "198.54.123.234",
+      "services": {
+        "registry": 8000,
+        "orchestrator": 8001,
+        "dashboard": 8002,
+        "i-proactive": 8400,
+        "i-match": 8401,
+        "credentials-manager": 8025
+      }
+    },
+    "coordination": {
+      "ssot_location": "docs/coordination/SSOT.json",
+      "message_check": "./docs/coordination/scripts/session-check-messages.sh",
+      "heartbeat": "./docs/coordination/scripts/session-heartbeat.sh"
+    }
+  },
+  "critical_messages": [
+    {
+      "timestamp": "2025-11-15T19:45:45Z",
+      "subject": "CREDENTIAL VAULT LIVE",
+      "key_info": "https://fullpotential.com/vault",
+      "file": "messages/broadcast/2025-11-15_11-45-45-session-1763235028.json"
+    }
+  ]
+}

@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Advisor Fee Calculator | See What You're Really Paying</title>
+    <meta name="description" content="Calculate hidden advisor fees and see how much you could save with transparent fee-only advising.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 50px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.95;
+        }
+
+        .content {
+            padding: 50px 40px;
+        }
+
+        .input-section {
+            margin-bottom: 40px;
+        }
+
+        .input-group {
+            margin-bottom: 30px;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .input-group input[type="number"],
+        .input-group select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+
+        .input-group input[type="number"]:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #f093fb;
+        }
+
+        .slider-group {
+            margin-bottom: 30px;
+        }
+
+        .slider-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .slider-value {
+            float: right;
+            color: #f093fb;
+            font-weight: 600;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #e9ecef;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #f093fb;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #f093fb;
+            cursor: pointer;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.4);
+        }
+
+        .results {
+            display: none;
+            margin-top: 50px;
+            animation: fadeIn 0.5s;
+        }
+
+        .results.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .results h2 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .cost-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .cost-box {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .cost-box.current {
+            border: 3px solid #f5576c;
+        }
+
+        .cost-box.transparent {
+            border: 3px solid #10d89e;
+        }
+
+        .cost-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cost-amount {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .cost-box.current .cost-amount {
+            color: #f5576c;
+        }
+
+        .cost-box.transparent .cost-amount {
+            color: #10d89e;
+        }
+
+        .cost-detail {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .savings-highlight {
+            background: linear-gradient(135deg, #10d89e 0%, #0ba360 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .savings-highlight h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .savings-amount {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .breakdown {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .breakdown h3 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .breakdown-item:last-child {
+            border-bottom: none;
+            font-weight: 600;
+            padding-top: 20px;
+        }
+
+        .cta-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .cta-box h3 {
+            font-size: 26px;
+            margin-bottom: 15px;
+        }
+
+        .cta-box p {
+            font-size: 16px;
+            margin-bottom: 25px;
+            opacity: 0.95;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 15px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .cost-comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Financial Advisor Fee Calculator</h1>
+            <p>Discover what you're REALLY paying in advisor fees</p>
+        </div>
+
+        <div class="content">
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="portfolio">Portfolio Value</label>
+                    <input type="number" id="portfolio" placeholder="500000" value="500000">
+                </div>
+
+                <div class="input-group">
+                    <label for="advisor-type">Current Advisor Type</label>
+                    <select id="advisor-type">
+                        <option value="commission">Commission-Based Advisor</option>
+                        <option value="aum">AUM-Based Advisor (1%)</option>
+                        <option value="hybrid">Hybrid (AUM + Commissions)</option>
+                        <option value="fee-only">Fee-Only Advisor</option>
+                    </select>
+                </div>
+
+                <div class="slider-group">
+                    <label>
+                        AUM Fee Percentage
+                        <span class="slider-value" id="aum-value">1.0%</span>
+                    </label>
+                    <input type="range" id="aum-fee" min="0.25" max="2.0" step="0.25" value="1.0">
+                </div>
+
+                <div class="slider-group">
+                    <label>
+                        Annual Trades/Transactions
+                        <span class="slider-value" id="trades-value">12</span>
+                    </label>
+                    <input type="range" id="trades" min="0" max="50" step="5" value="12">
+                </div>
+
+                <div class="slider-group">
+                    <label>
+                        Years with Advisor
+                        <span class="slider-value" id="years-value">10</span>
+                    </label>
+                    <input type="range" id="years" min="1" max="30" step="1" value="10">
+                </div>
+
+                <button class="calculate-btn" onclick="calculateFees()">Calculate My Fees</button>
+            </div>
+
+            <div class="results" id="results">
+                <!-- Results will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update slider values
+        document.getElementById('aum-fee').oninput = function() {
+            document.getElementById('aum-value').textContent = this.value + '%';
+        };
+
+        document.getElementById('trades').oninput = function() {
+            document.getElementById('trades-value').textContent = this.value;
+        };
+
+        document.getElementById('years').oninput = function() {
+            document.getElementById('years-value').textContent = this.value;
+        };
+
+        function calculateFees() {
+            const portfolio = parseFloat(document.getElementById('portfolio').value);
+            const advisorType = document.getElementById('advisor-type').value;
+            const aumFee = parseFloat(document.getElementById('aum-fee').value) / 100;
+            const trades = parseInt(document.getElementById('trades').value);
+            const years = parseInt(document.getElementById('years').value);
+
+            // Calculate current costs
+            const aumCost = portfolio * aumFee;
+            const commissions = trades * 50; // Average $50 per trade
+            const expenseRatios = portfolio * 0.005; // 0.5% average expense ratio
+            const hiddenCosts = portfolio * 0.003; // 0.3% in hidden costs
+
+            let totalCurrentCost;
+            if (advisorType === 'commission') {
+                totalCurrentCost = commissions + expenseRatios + hiddenCosts;
+            } else if (advisorType === 'aum') {
+                totalCurrentCost = aumCost + expenseRatios;
+            } else if (advisorType === 'hybrid') {
+                totalCurrentCost = aumCost + commissions + expenseRatios + hiddenCosts;
+            } else {
+                totalCurrentCost = portfolio * 0.005; // Fee-only around 0.5%
+            }
+
+            // Calculate transparent fee-only cost
+            const transparentCost = portfolio * 0.005; // 0.5% flat fee-only
+
+            // Calculate lifetime costs
+            const lifetimeCurrent = totalCurrentCost * years;
+            const lifetimeTransparent = transparentCost * years;
+            const savings = lifetimeCurrent - lifetimeTransparent;
+
+            // Display results
+            displayResults({
+                currentAnnual: totalCurrentCost,
+                transparentAnnual: transparentCost,
+                annualSavings: totalCurrentCost - transparentCost,
+                lifetimeSavings: savings,
+                breakdown: {
+                    aum: aumCost,
+                    commissions: commissions,
+                    expenseRatios: expenseRatios,
+                    hidden: hiddenCosts
+                }
+            });
+        }
+
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+
+            resultsDiv.innerHTML = `
+                <h2>Your Fee Analysis</h2>
+
+                <div class="cost-comparison">
+                    <div class="cost-box current">
+                        <div class="cost-label">Current Annual Fees</div>
+                        <div class="cost-amount">$${formatNumber(data.currentAnnual)}</div>
+                        <div class="cost-detail">${((data.currentAnnual / parseFloat(document.getElementById('portfolio').value)) * 100).toFixed(2)}% of portfolio</div>
+                    </div>
+
+                    <div class="cost-box transparent">
+                        <div class="cost-label">Transparent Fee-Only</div>
+                        <div class="cost-amount">$${formatNumber(data.transparentAnnual)}</div>
+                        <div class="cost-detail">${((data.transparentAnnual / parseFloat(document.getElementById('portfolio').value)) * 100).toFixed(2)}% of portfolio</div>
+                    </div>
+                </div>
+
+                ${data.annualSavings > 0 ? `
+                <div class="savings-highlight">
+                    <h3>Potential Annual Savings</h3>
+                    <div class="savings-amount">$${formatNumber(data.annualSavings)}</div>
+                    <div>Over ${document.getElementById('years').value} years: <strong>$${formatNumber(data.lifetimeSavings)}</strong></div>
+                </div>
+                ` : ''}
+
+                <div class="breakdown">
+                    <h3>Fee Breakdown</h3>
+                    <div class="breakdown-item">
+                        <span>AUM Management Fee</span>
+                        <span>$${formatNumber(data.breakdown.aum)}</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>Trading Commissions</span>
+                        <span>$${formatNumber(data.breakdown.commissions)}</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>Fund Expense Ratios</span>
+                        <span>$${formatNumber(data.breakdown.expenseRatios)}</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>Hidden Costs</span>
+                        <span>$${formatNumber(data.breakdown.hidden)}</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>Total Annual Cost</span>
+                        <span>$${formatNumber(data.currentAnnual)}</span>
+                    </div>
+                </div>
+
+                <div class="cta-box">
+                    <h3>Want Transparent, Fee-Only Advising?</h3>
+                    <p>I MATCH connects you with fee-only fiduciary advisors who prioritize your interests. No commissions, no hidden fees, complete transparency.</p>
+                    <a href="/match" class="cta-button">Find Your Transparent Advisor</a>
+                </div>
+            `;
+
+            resultsDiv.classList.add('active');
+            resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function formatNumber(num) {
+            return Math.round(num).toLocaleString();
+        }
+    </script>
+</body>
+</html>

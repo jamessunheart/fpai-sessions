@@ -1,0 +1,14 @@
+{
+  "session_id": "session-1763243115",
+  "started_at": "2025-11-15T21:45:15Z",
+  "status": "active",
+  "current_work": "workstream/STREAM_1_PHASE2_DEPLOYMENT",
+  "capabilities": [
+    "general-purpose",
+    "build",
+    "debug",
+    "deploy"
+  ],
+  "last_heartbeat": "2025-11-15T21:45:22Z",
+  "heartbeat_count": 2
+}

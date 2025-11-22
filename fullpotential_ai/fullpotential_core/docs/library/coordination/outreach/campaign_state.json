@@ -1,0 +1,25 @@
+{
+  "first_sol_received": false,
+  "total_sol": 0.0,
+  "supporter_count": 0,
+  "posts_made": [
+    {
+      "platform": "reddit",
+      "posted": false,
+      "time": "2025-11-16T02:56:00.173055"
+    },
+    {
+      "platform": "twitter",
+      "posted": false,
+      "time": "2025-11-16T02:56:00.173058"
+    },
+    {
+      "platform": "discord",
+      "posted": false,
+      "time": "2025-11-16T02:56:00.173061"
+    }
+  ],
+  "comments_replied": [],
+  "last_check": "2025-11-19T23:24:28.045620",
+  "campaign_start": "2025-11-16T02:56:00.171985"
+}

@@ -1,0 +1,9 @@
+{
+  "claimed_by": "session-1763236365",
+  "claimed_at": "2025-11-15T19:54:28Z",
+  "resource_type": "service",
+  "resource_name": "orchestrator-restart",
+  "duration_hours": 1,
+  "expires_at": "2025-11-15T20:54:28Z",
+  "allow_coordination": true
+}

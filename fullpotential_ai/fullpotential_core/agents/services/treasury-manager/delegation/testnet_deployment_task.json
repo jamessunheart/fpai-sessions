@@ -1,0 +1,88 @@
+{
+  "task_id": "fpai-testnet-001",
+  "type": "test_task",
+  "title": "TEST TASK: Deploy Crypto Token to Testnet ($15 Fixed)",
+  "description": "\n    Deploy cryptocurrency token to Ethereum Sepolia testnet using our scripts.\n\n    PERFECT FOR: Entry-level VAs who can follow detailed instructions.\n\n    WHAT YOU'LL DO:\n    - Setup MetaMask wallet (testnet)\n    - Get free Sepolia ETH\n    - Run our deployment scripts\n    - Test functions via Etherscan\n    - Document results\n\n    TIME: 3-4 hours\n    PAY: $15 fixed + $5 bonus\n    FUTURE: 10-20 hrs/week @ $8-15/hr for top performers\n\n    Complete instructions provided. Entry-level welcome!\n    ",
+  "requirements": [
+    "Basic command line comfort",
+    "Attention to detail",
+    "Good English communication",
+    "Can start within 4 hours",
+    "Can complete within 24 hours"
+  ],
+  "deliverables": [
+    "Contract address on Sepolia testnet",
+    "Etherscan verification link",
+    "Test transaction screenshots",
+    "All credentials in vault",
+    "Completion report with time tracking"
+  ],
+  "budget": {
+    "type": "fixed",
+    "amount": 15,
+    "bonus": 5,
+    "currency": "USD"
+  },
+  "timeline": "24 hours",
+  "screening_questions": [
+    {
+      "question": "Command line experience? (None / Basic / Comfortable)",
+      "required": true
+    },
+    {
+      "question": "Crypto/blockchain experience? (None / Wallet user / Technical)",
+      "required": true
+    },
+    {
+      "question": "Can you start within 2-4 hours? (Yes / No - when?)",
+      "required": true
+    }
+  ],
+  "application_requirements": [
+    "Answer all 3 screening questions",
+    "Include 'TESTNET READY' in cover letter",
+    "Confirm 24-hour completion timeline"
+  ],
+  "skills": [
+    "Virtual Assistance",
+    "Technical Documentation",
+    "Command Line",
+    "Attention to Detail",
+    "Blockchain"
+  ],
+  "experience_level": "entry",
+  "category": "Web, Mobile & Software Dev",
+  "subcategory": "Blockchain, NFT & Cryptocurrency",
+  "success_criteria": {
+    "contract_deployed": true,
+    "etherscan_verified": true,
+    "tests_completed": true,
+    "good_documentation": true,
+    "responsive_communication": true
+  },
+  "next_steps_if_successful": [
+    "Immediate: More tasks at $20-50 each",
+    "Week 1-2: Ongoing test tasks",
+    "Week 3+: Regular work 10-20 hrs/week @ $8-15/hr",
+    "Top performers: $15-25/hr + team lead potential"
+  ],
+  "resources_provided": [
+    "40+ page deployment guide",
+    "10-minute quick start checklist",
+    "All scripts and code",
+    "Troubleshooting guide",
+    "Video walkthrough",
+    "Direct Slack support",
+    "Secure credential vault"
+  ],
+  "metadata": {
+    "created_at": "2025-11-15T10:37:11.678301",
+    "created_by": "AI (Claude)",
+    "project": "FPAI Token",
+    "phase": "Testnet Deployment",
+    "priority": "high",
+    "is_test_task": true,
+    "target_rate": "$5/hr equivalent",
+    "scale_plan": "Top performers \u2192 ongoing work @ higher rates"
+  }
+}

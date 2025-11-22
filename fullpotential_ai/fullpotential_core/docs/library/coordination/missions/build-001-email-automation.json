@@ -1,0 +1,141 @@
+{
+  "mission_id": "build-001-email-automation",
+  "title": "BUILD: Email Automation System (Infinite Scale)",
+  "type": "build",
+  "priority": "critical",
+  "status": "available",
+  "created_at": "2025-11-15T21:45:00Z",
+  "claimed_by": null,
+  "claimed_at": null,
+  "completed_at": null,
+  "estimated_time_hours": 14,
+  "infinite_scale": true,
+  "instructions": {
+    "task": "Build autonomous email automation system that runs forever without human intervention",
+    "spec_file": "/Users/jamessunheart/Development/agents/services/email-automation-system/SPEC.md",
+    "architecture": "FastAPI + Celery + Redis + SendGrid",
+    "deployment_target": "198.54.123.234 at /opt/fpai/email-automation",
+    "port": 8500,
+    "scope": "Week 1 MVP - 3 core sequences, event triggers, SendGrid integration"
+  },
+  "what_to_build": {
+    "service_name": "email-automation",
+    "components": [
+      "FastAPI app for health/status endpoints",
+      "Celery worker for async email sending",
+      "Redis for task queue",
+      "Postgres tables for event/log tracking",
+      "SendGrid integration for email delivery",
+      "3 email sequences: new customer, consultation, engagement",
+      "Event listener (Postgres NOTIFY/LISTEN)",
+      "Jinja2 templates for emails",
+      "Prometheus metrics endpoint"
+    ]
+  },
+  "success_criteria": {
+    "functional": [
+      "Customer creation triggers confirmation email automatically",
+      "Match sent triggers match notification email automatically",
+      "Consultation booked triggers booking confirmation email automatically",
+      "Delayed emails (3 days, 7 days) trigger correctly",
+      "Emails render correctly in Gmail, Outlook, Apple Mail",
+      "Unsubscribe links work",
+      "Metrics endpoint shows email stats"
+    ],
+    "non_functional": [
+      "Service runs 24/7 without intervention",
+      "Handles 1000+ emails/day without issues",
+      "Email delivery rate >98%",
+      "Response time <500ms for API endpoints",
+      "Celery workers auto-recover from failures"
+    ],
+    "business_impact": [
+      "Conversion rate improves from 15% to 40%",
+      "Zero manual follow-up required",
+      "All customers get automated nurture sequence"
+    ]
+  },
+  "build_steps": [
+    "1. Set up project structure (FastAPI + Celery)",
+    "2. Create database schema (email_events, email_logs, email_sequence_state)",
+    "3. Implement SendGrid integration and email sending",
+    "4. Create Jinja2 email templates (base + 3 sequences)",
+    "5. Build event processing (Celery tasks)",
+    "6. Implement sequence logic (new customer, consultation, engagement)",
+    "7. Add Postgres NOTIFY/LISTEN for I MATCH integration",
+    "8. Set up Redis and Celery workers",
+    "9. Add metrics (Prometheus)",
+    "10. Dockerize and deploy to server",
+    "11. Test end-to-end (trigger events, verify emails sent)",
+    "12. Monitor first 100 emails for issues"
+  ],
+  "dependencies": {
+    "required": [
+      "I MATCH service running (customer events)",
+      "SendGrid account with API key",
+      "Redis server",
+      "Postgres database"
+    ],
+    "optional": [
+      "Sentry for error tracking",
+      "Prometheus for metrics",
+      "Grafana for dashboards"
+    ]
+  },
+  "deployment": {
+    "server": "198.54.123.234",
+    "path": "/opt/fpai/email-automation",
+    "port": 8500,
+    "systemd_service": "email-automation.service",
+    "docker_compose": true,
+    "env_vars_needed": [
+      "SENDGRID_API_KEY",
+      "DATABASE_URL",
+      "REDIS_URL",
+      "FROM_EMAIL",
+      "SENTRY_DSN (optional)"
+    ]
+  },
+  "testing_checklist": {
+    "unit_tests": [
+      "Test email template rendering",
+      "Test sequence logic",
+      "Test SendGrid API calls (mocked)",
+      "Test event processing"
+    ],
+    "integration_tests": [
+      "End-to-end: Create customer → email sent",
+      "End-to-end: Match sent → email sent",
+      "End-to-end: Delayed emails trigger correctly",
+      "Test unsubscribe flow"
+    ],
+    "manual_tests": [
+      "Send test email to own inbox",
+      "Verify email formatting on mobile",
+      "Check spam score (mail-tester.com)",
+      "Test all email links work"
+    ]
+  },
+  "expected_outcomes": {
+    "week_1": "MVP deployed, 3 sequences working, 100+ emails sent automatically",
+    "week_2": "A/B testing added, advanced tracking (opens/clicks)",
+    "month_1": "1000+ emails sent, 40%+ open rate, 15%+ click rate",
+    "month_3": "10,000+ emails sent, auto-optimization working, conversion rate improved 2.5x"
+  },
+  "roi_calculation": {
+    "build_time_cost": "14 hours × $0 (Claude) = $0",
+    "monthly_revenue_impact": "+$4,500 (25% conversion improvement)",
+    "annual_revenue_impact": "+$54,000",
+    "infinite_roi": "Runs forever after 14-hour build"
+  },
+  "resources": {
+    "spec": "/Users/jamessunheart/Development/agents/services/email-automation-system/SPEC.md",
+    "templates": "/Users/jamessunheart/Development/agents/services/email_templates.py",
+    "architecture_doc": "/Users/jamessunheart/Development/agents/services/INFINITE_SCALE_ARCHITECTURE.md"
+  },
+  "next_systems": [
+    "build-002-social-auto-poster (after this)",
+    "build-003-content-generation-engine",
+    "build-004-seo-landing-pages"
+  ]
+}

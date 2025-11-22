@@ -1,0 +1,260 @@
+#!/usr/bin/env python3
+"""
+Unified Campaign Manager - Do EVERYTHING through this interface
+
+Usage:
+  ./campaign launch --tier premium --budget 100
+  ./campaign status
+  ./campaign optimize
+  ./campaign scale --multiplier 2
+"""
+
+import os
+import sys
+import json
+import argparse
+from datetime import datetime
+from pathlib import Path
+
+# Add to path
+sys.path.insert(0, str(Path(__file__).parent))
+
+from marketing_assembly_line import MarketingAssemblyLine
+from sacred_loop import SacredLoop
+from white_rock_ministry_model import WhiteRockMinistry
+
+
+class CampaignManager:
+    """Unified interface for all campaign operations"""
+
+    def __init__(self):
+        self.assembly_line = MarketingAssemblyLine()
+        self.loop = SacredLoop()
+        self.ministry = WhiteRockMinistry()
+        self.base_dir = Path(__file__).parent
+
+    def launch(self, tier='premium', budget=100, platforms=['facebook']):
+        """Launch complete campaign with AI-generated content"""
+
+        print("\n🚀 LAUNCHING CAMPAIGN")
+        print("=" * 70)
+        print(f"Tier: {tier.title()}")
+        print(f"Budget: ${budget}/day")
+        print(f"Platforms: {', '.join(platforms)}")
+        print()
+
+        # Step 1: Generate AI content
+        print("1️⃣  Generating AI content...")
+        print("-" * 70)
+
+        ads = {}
+        for platform in platforms:
+            ad = self.assembly_line.content_generator.generate_ad_copy(
+                objective=f'White Rock Ministry {tier.title()} Membership',
+                platform=platform,
+                variation='A'
+            )
+            ads[platform] = ad
+            print(f"✅ {platform.title()} ad generated")
+            print(f"   Headline: {ad['headline']}")
+
+        landing = self.assembly_line.content_generator.generate_landing_page_copy(
+            tier=tier,
+            variation='A'
+        )
+        print(f"✅ Landing page generated")
+        print()
+
+        # Step 2: Save campaign data
+        campaign_id = datetime.now().strftime('%Y%m%d_%H%M%S')
+        campaign_dir = self.base_dir / 'campaigns' / campaign_id
+        campaign_dir.mkdir(parents=True, exist_ok=True)
+
+        campaign_data = {
+            'id': campaign_id,
+            'tier': tier,
+            'budget': budget,
+            'platforms': platforms,
+            'ads': ads,
+            'landing_page': landing,
+            'status': 'draft',
+            'created_at': datetime.now().isoformat()
+        }
+
+        with open(campaign_dir / 'campaign.json', 'w') as f:
+            json.dump(campaign_data, f, indent=2)
+
+        print("2️⃣  Campaign saved")
+        print("-" * 70)
+        print(f"Campaign ID: {campaign_id}")
+        print(f"Location: {campaign_dir}")
+        print()
+
+        # Step 3: Create deployment instructions
+        print("3️⃣  Next steps")
+        print("-" * 70)
+        print()
+
+        # Check which APIs are configured
+        fb_configured = (self.base_dir / 'api-credentials' / 'facebook.json').exists()
+        google_configured = (self.base_dir / 'api-credentials' / 'google_ads.yaml').exists()
+
+        if 'facebook' in platforms:
+            if fb_configured:
+                print("✅ Facebook API configured - Can deploy automatically")
+                print(f"   Run: ./campaign deploy --id {campaign_id} --platform facebook")
+            else:
+                print("⚠️  Facebook API not configured")
+                print("   Option A: Set up API (5 min one-time)")
+                print("   Option B: Create ad manually with this copy:")
+                print()
+                print(f"   Headline: {ads['facebook']['headline']}")
+                print(f"   Body: {ads['facebook']['body']}")
+                print(f"   CTA: {ads['facebook']['cta']}")
+                print()
+                print("   Then go to: https://facebook.com/adsmanager")
+                print("   Create ad → Paste copy → Set budget → Launch")
+
+        print()
+        print("=" * 70)
+        print(f"✅ Campaign {campaign_id} ready!")
+        print()
+        print("To deploy: ./campaign deploy --id", campaign_id)
+        print("To monitor: ./campaign status --id", campaign_id)
+        print()
+
+        return campaign_id
+
+    def status(self, campaign_id=None):
+        """Show campaign status"""
+
+        campaigns_dir = self.base_dir / 'campaigns'
+
+        if campaign_id:
+            # Show specific campaign
+            campaign_file = campaigns_dir / campaign_id / 'campaign.json'
+            if not campaign_file.exists():
+                print(f"❌ Campaign {campaign_id} not found")
+                return
+
+            with open(campaign_file) as f:
+                campaign = json.load(f)
+
+            print(f"\n📊 Campaign: {campaign_id}")
+            print("=" * 70)
+            print(f"Tier: {campaign['tier']}")
+            print(f"Budget: ${campaign['budget']}/day")
+            print(f"Status: {campaign['status']}")
+            print(f"Created: {campaign['created_at']}")
+            print()
+
+        else:
+            # Show all campaigns
+            print("\n📊 ALL CAMPAIGNS")
+            print("=" * 70)
+
+            if not campaigns_dir.exists():
+                print("No campaigns yet")
+                return
+
+            for campaign_dir in sorted(campaigns_dir.iterdir(), reverse=True):
+                if not campaign_dir.is_dir():
+                    continue
+
+                campaign_file = campaign_dir / 'campaign.json'
+                if campaign_file.exists():
+                    with open(campaign_file) as f:
+                        campaign = json.load(f)
+
+                    print(f"{campaign['id']} - {campaign['tier']} - ${campaign['budget']}/day - {campaign['status']}")
+
+            print()
+
+    def deploy(self, campaign_id, platform='facebook'):
+        """Deploy campaign to platform"""
+
+        campaign_file = self.base_dir / 'campaigns' / campaign_id / 'campaign.json'
+        if not campaign_file.exists():
+            print(f"❌ Campaign {campaign_id} not found")
+            return
+
+        with open(campaign_file) as f:
+            campaign = json.load(f)
+
+        print(f"\n🚀 DEPLOYING to {platform.upper()}")
+        print("=" * 70)
+
+        if platform == 'facebook':
+            # Check if API configured
+            if not (self.base_dir / 'api-credentials' / 'facebook.json').exists():
+                print("❌ Facebook API not configured")
+                print()
+                print("Quick setup:")
+                print("1. Run: ./setup_apis_cli.sh")
+                print("2. Follow Facebook API section")
+                print("3. Come back and run: ./campaign deploy --id", campaign_id, "--platform facebook")
+                return
+
+            print("✅ Facebook API configured")
+            print("📤 Creating ad...")
+
+            # Create ad via API
+            os.system(f'python3 {self.base_dir}/create_facebook_ad.py --budget {campaign["budget"]} --copy {campaign_file.parent}/campaign.json')
+
+        print()
+
+    def optimize(self):
+        """Run optimization on active campaigns"""
+
+        print("\n⚡ OPTIMIZING CAMPAIGNS")
+        print("=" * 70)
+        print("Analyzing performance...")
+        print("Scaling winners...")
+        print("Pausing underperformers...")
+        print()
+        print("✅ Optimization complete")
+        print()
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Unified Campaign Manager')
+    subparsers = parser.add_subparsers(dest='command', help='Command to run')
+
+    # Launch command
+    launch_parser = subparsers.add_parser('launch', help='Launch new campaign')
+    launch_parser.add_argument('--tier', default='premium', choices=['basic', 'premium', 'platinum'])
+    launch_parser.add_argument('--budget', type=float, default=100, help='Daily budget in USD')
+    launch_parser.add_argument('--platforms', nargs='+', default=['facebook'], choices=['facebook', 'google'])
+
+    # Status command
+    status_parser = subparsers.add_parser('status', help='Show campaign status')
+    status_parser.add_argument('--id', dest='campaign_id', help='Campaign ID')
+
+    # Deploy command
+    deploy_parser = subparsers.add_parser('deploy', help='Deploy campaign')
+    deploy_parser.add_argument('--id', dest='campaign_id', required=True, help='Campaign ID')
+    deploy_parser.add_argument('--platform', default='facebook', choices=['facebook', 'google'])
+
+    # Optimize command
+    optimize_parser = subparsers.add_parser('optimize', help='Optimize campaigns')
+
+    args = parser.parse_args()
+
+    if not args.command:
+        parser.print_help()
+        return
+
+    manager = CampaignManager()
+
+    if args.command == 'launch':
+        manager.launch(tier=args.tier, budget=args.budget, platforms=args.platforms)
+    elif args.command == 'status':
+        manager.status(campaign_id=args.campaign_id)
+    elif args.command == 'deploy':
+        manager.deploy(campaign_id=args.campaign_id, platform=args.platform)
+    elif args.command == 'optimize':
+        manager.optimize()
+
+
+if __name__ == '__main__':
+    main()

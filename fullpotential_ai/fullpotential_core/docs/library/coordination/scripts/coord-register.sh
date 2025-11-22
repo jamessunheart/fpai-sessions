@@ -1,0 +1,44 @@
+#!/bin/bash
+# Register current Claude session with Coordination Hub
+
+COORD_HUB="http://localhost:8550"
+SESSION_ID=$(cat /Users/jamessunheart/Development/docs/coordination/.session_identity 2>/dev/null || echo "session-unknown")
+
+# Get session info
+SESSION_INFO=$(python3 << EOPYTHON
+import json
+try:
+    with open("/Users/jamessunheart/Development/docs/coordination/claude_sessions.json") as f:
+        sessions = json.load(f)
+    session = sessions.get("$SESSION_ID", {})
+    print(json.dumps({
+        "entity_id": "$SESSION_ID",
+        "entity_type": "claude_session",
+        "name": f"Session #{session.get('number', 'unknown')} - {session.get('role', 'Unknown')}",
+        "capabilities": ["code-generation", "system-analysis", "documentation", "problem-solving"],
+        "metadata": {"role": session.get('role'), "goal": session.get('goal')}
+    }))
+except:
+    print(json.dumps({
+        "entity_id": "$SESSION_ID",
+        "entity_type": "claude_session",
+        "name": "Claude Session",
+        "capabilities": ["code-generation"],
+        "metadata": {}
+    }))
+EOPYTHON
+)
+
+# Register with hub
+curl -X POST "$COORD_HUB/entities/register" \
+  -H "Content-Type: application/json" \
+  -d "$SESSION_INFO" 2>/dev/null
+
+if [ $? -eq 0 ]; then
+    echo "✅ Registered with Coordination Hub"
+    echo "🌐 Web interface: http://localhost:8550"
+else
+    echo "❌ Coordination Hub not running. Start it with:"
+    echo "   cd /Users/jamessunheart/Development/agents/services/coordination-hub"
+    echo "   python3 main.py"
+fi

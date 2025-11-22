@@ -1,0 +1,186 @@
+{
+  "targets": {
+    "job_titles": [
+      "Financial Advisor",
+      "Wealth Manager",
+      "Financial Planner",
+      "Investment Advisor",
+      "Retirement Planner",
+      "CFP (Certified Financial Planner)",
+      "Wealth Advisor",
+      "Financial Consultant"
+    ],
+    "locations": [
+      "United States",
+      "New York, NY",
+      "Los Angeles, CA",
+      "Chicago, IL",
+      "Houston, TX",
+      "Phoenix, AZ",
+      "Philadelphia, PA",
+      "San Antonio, TX",
+      "San Diego, CA",
+      "Dallas, TX"
+    ],
+    "industries": [
+      "Financial Services",
+      "Investment Management",
+      "Wealth Management",
+      "Insurance",
+      "Banking"
+    ],
+    "company_sizes": [
+      "1-10 employees (independent)",
+      "11-50 employees (boutique)",
+      "51-200 employees (regional)",
+      "201-500 employees (national)"
+    ]
+  },
+  "templates": [
+    {
+      "name": "value_first_intro",
+      "subject": "Help You Find Qualified Retirement Planning Clients?",
+      "message": "Hi {first_name},\n\nI noticed you specialize in {specialty} at {company}. I'm building an AI-powered platform that connects financial advisors with qualified clients who are actively looking for help.\n\nQuick question: Are you currently accepting new clients in the {specialty_area} space?\n\nIf so, I'd love to send you 2-3 qualified leads this month at no upfront cost. You only pay a small referral fee if you decide to work with them.\n\nInterested? Happy to send details.\n\nBest,\nJames\nFull Potential AI\nhttps://fullpotential.com/imatch",
+      "follow_up_days": 3
+    },
+    {
+      "name": "pain_point_approach",
+      "subject": "Struggling to Find Qualified Leads?",
+      "message": "Hi {first_name},\n\nQuick question for you as a {job_title}:\n\nWhat's your biggest challenge right now - finding qualified clients or converting the ones you have?\n\nI ask because I built an AI matching platform that pre-qualifies clients based on their needs, budget, and goals - then connects them with advisors like you.\n\nWould love to send you 1-2 qualified matches this month (no cost) to see if it's a fit.\n\nWorth 15 minutes to chat?\n\nJames\nFull Potential AI",
+      "follow_up_days": 4
+    },
+    {
+      "name": "referral_network",
+      "subject": "Build Your Referral Network on Autopilot",
+      "message": "Hi {first_name},\n\nI help {job_title}s like you build consistent referral pipelines using AI.\n\nHere's how it works:\n1. Clients submit their needs through our platform\n2. AI matches them with 3 best-fit advisors (like you)\n3. You get intro'd to qualified, ready-to-engage clients\n4. Only pay if you close the deal (20% referral fee)\n\nCurrently onboarding advisors in {location}. Interested in being one of the first?\n\nLet me know!\n\nJames\nFounder, I MATCH\nhttps://fullpotential.com/imatch",
+      "follow_up_days": 5
+    }
+  ],
+  "personalization": {
+    "variables": {
+      "first_name": "Extract from LinkedIn profile",
+      "last_name": "Extract from LinkedIn profile",
+      "company": "Current company name",
+      "job_title": "Current job title",
+      "specialty": "Infer from profile (retirement, investments, etc)",
+      "specialty_area": "Specific focus (e.g., 'retirement planning')",
+      "location": "City, State",
+      "years_experience": "Calculate from profile history",
+      "mutual_connections": "Count of mutual connections"
+    },
+    "rules": {
+      "choose_template": [
+        "If CFP certified \u2192 Use 'value_first_intro'",
+        "If <5 years experience \u2192 Use 'referral_network'",
+        "If independent (solo) \u2192 Use 'pain_point_approach'",
+        "If at large firm \u2192 Use 'referral_network'"
+      ],
+      "customize_specialty": [
+        "Profile mentions 'retirement' \u2192 specialty = 'Retirement Planning'",
+        "Profile mentions 'wealth' \u2192 specialty = 'Wealth Management'",
+        "Profile mentions 'investment' \u2192 specialty = 'Investment Advisory'",
+        "Default \u2192 specialty = 'Financial Planning'"
+      ]
+    }
+  },
+  "strategy": {
+    "limits": {
+      "connections_per_day": 20,
+      "messages_per_day": 15,
+      "follow_ups_per_day": 10,
+      "total_per_week": 100
+    },
+    "schedule": {
+      "best_times": [
+        "Tuesday-Thursday 9-11am (highest response)",
+        "Tuesday-Thursday 2-4pm (good response)",
+        "Monday/Friday avoid (lower response)"
+      ],
+      "timezone": "Adjust to recipient's timezone"
+    },
+    "safety": {
+      "warmup_period": "Week 1: 10/day, Week 2: 15/day, Week 3: 20/day",
+      "vary_timing": "Randomize send times \u00b130 min",
+      "human_touch": "Review first 10 manually",
+      "spam_prevention": "Max 3 messages per recipient total"
+    }
+  },
+  "tracker": {
+    "metrics": {
+      "messages_sent": 0,
+      "connections_accepted": 0,
+      "responses_received": 0,
+      "meetings_booked": 0,
+      "leads_qualified": 0,
+      "matches_created": 0,
+      "revenue_generated": 0
+    },
+    "lead_stages": [
+      "cold_outreach",
+      "connection_accepted",
+      "responded_interested",
+      "meeting_scheduled",
+      "qualified_provider",
+      "active_in_imatch",
+      "first_match_made",
+      "paying_customer"
+    ],
+    "scoring": {
+      "high_value": "CFP, 10+ years, independent, responds quickly",
+      "medium_value": "Licensed, 5+ years, at firm, warm response",
+      "low_value": "Early career, slow response, unclear fit"
+    }
+  },
+  "plan": {
+    "week_1": {
+      "goal": "Build foundation + first 50 contacts",
+      "actions": [
+        "Day 1: Setup LinkedIn automation tool (Phantombuster or manual)",
+        "Day 2: Create target list (50 financial advisors)",
+        "Day 3: Personalize first 10 messages manually (test)",
+        "Day 4: Send first 10 messages",
+        "Day 5: Analyze responses, refine templates",
+        "Day 6-7: Send remaining 40 messages (10/day)"
+      ],
+      "targets": {
+        "contacts": 50,
+        "connections": 15,
+        "responses": 5,
+        "leads": 2,
+        "matches": 0
+      }
+    },
+    "week_2": {
+      "goal": "Scale to 100 contacts + first matches",
+      "actions": [
+        "Day 8-9: Send 30 new messages (15/day)",
+        "Day 10: Follow up with Week 1 responders",
+        "Day 11-12: Send 20 more messages (10/day)",
+        "Day 13-14: Onboard first 2-3 providers to I MATCH"
+      ],
+      "targets": {
+        "contacts": 100,
+        "connections": 30,
+        "responses": 12,
+        "leads": 5,
+        "matches": 2
+      }
+    },
+    "month_1": {
+      "goal": "500 contacts, 20 matches, $1,200 revenue",
+      "total_contacts": 500,
+      "expected_connections": 150,
+      "expected_responses": 50,
+      "expected_qualified": 20,
+      "expected_matches": 20,
+      "expected_revenue": 1200,
+      "success_metrics": {
+        "connection_rate": "30%",
+        "response_rate": "10%",
+        "qualification_rate": "40%",
+        "match_rate": "100%"
+      }
+    }
+  },
+  "timestamp": "2025-11-17T00:19:44.061168"
+}

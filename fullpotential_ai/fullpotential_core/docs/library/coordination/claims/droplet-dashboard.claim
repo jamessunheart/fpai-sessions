@@ -1,0 +1,9 @@
+{
+  "claimed_by": "session-1763235028",
+  "claimed_at": "2025-11-15T19:31:02Z",
+  "resource_type": "droplet",
+  "resource_name": "dashboard",
+  "duration_hours": 2,
+  "expires_at": "2025-11-15T21:31:02Z",
+  "allow_coordination": true
+}

@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cora Nation - Private Member Association of Conscious Beings</title>
+    <meta name="description" content="Join a community dedicated to consciousness, human flourishing, and the conscious circulation of resources through the Church of Consciousness.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #000;
+            color: #fff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .gradient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0f1419 0%, #1a1a2e 25%, #2d1b4e 50%, #1a1a2e 75%, #0f1419 100%);
+            opacity: 0.95;
+            z-index: -1;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { opacity: 0.95; }
+            50% { opacity: 1; }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            padding: 30px 0;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, #D4AF37, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline-small {
+            font-size: 0.9rem;
+            color: #D4AF37;
+            opacity: 0.8;
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #D4AF37;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 20px 80px;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.8; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 10px 25px;
+            background: rgba(212, 175, 55, 0.15);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 30px;
+            color: #D4AF37;
+        }
+
+        .hero h1 {
+            font-size: 5rem;
+            font-weight: 900;
+            margin-bottom: 30px;
+            line-height: 1.1;
+        }
+
+        .hero h1 .highlight {
+            background: linear-gradient(90deg, #D4AF37, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero .subtitle {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero .description {
+            font-size: 1.3rem;
+            margin-bottom: 50px;
+            opacity: 0.8;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.8;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 18px 45px;
+            background: linear-gradient(135deg, #D4AF37, #FFD700);
+            color: #000;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 2px solid rgba(212, 175, 55, 0.5);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: #D4AF37;
+        }
+
+        /* Philosophy Section */
+        .philosophy {
+            padding: 120px 20px;
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .philosophy h2 {
+            text-align: center;
+            font-size: 3.5rem;
+            margin-bottom: 30px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #D4AF37, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .philosophy .intro {
+            text-align: center;
+            font-size: 1.4rem;
+            max-width: 900px;
+            margin: 0 auto 80px;
+            opacity: 0.9;
+            line-height: 1.8;
+        }
+
+        .principles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .principle-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+            backdrop-filter: blur(10px);
+            padding: 50px;
+            border-radius: 20px;
+            border: 2px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .principle-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(212, 175, 55, 0.5);
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(212, 175, 55, 0.08));
+        }
+
+        .principle-icon {
+            font-size: 3.5rem;
+            margin-bottom: 25px;
+        }
+
+        .principle-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #D4AF37;
+        }
+
+        .principle-card p {
+            font-size: 1.1rem;
+            opacity: 0.85;
+            line-height: 1.7;
+        }
+
+        /* What We Offer */
+        .offerings {
+            padding: 120px 20px;
+        }
+
+        .offerings h2 {
+            text-align: center;
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            font-weight: 800;
+        }
+
+        .offerings .subtitle {
+            text-align: center;
+            font-size: 1.3rem;
+            margin-bottom: 80px;
+            opacity: 0.85;
+        }
+
+        .offerings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+        }
+
+        .offering-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+            padding: 45px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .offering-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(212, 175, 55, 0.4);
+        }
+
+        .offering-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .offering-card h3 {
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+            color: #FFD700;
+        }
+
+        .offering-card p {
+            font-size: 1.05rem;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        /* Church Section */
+        .church {
+            padding: 120px 20px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.08), rgba(212, 175, 55, 0.03));
+        }
+
+        .church-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .church h2 {
+            font-size: 3.5rem;
+            margin-bottom: 40px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #D4AF37, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .church p {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            opacity: 0.9;
+            line-height: 1.8;
+        }
+
+        .church .highlight-box {
+            background: rgba(212, 175, 55, 0.1);
+            border-left: 4px solid #D4AF37;
+            padding: 30px;
+            margin: 50px 0;
+            border-radius: 10px;
+        }
+
+        .church .highlight-box p {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #FFD700;
+            margin: 0;
+        }
+
+        /* Join Section */
+        .join {
+            padding: 120px 20px;
+            text-align: center;
+        }
+
+        .join h2 {
+            font-size: 4rem;
+            margin-bottom: 30px;
+            font-weight: 900;
+        }
+
+        .join h2 .highlight {
+            background: linear-gradient(90deg, #D4AF37, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .join p {
+            font-size: 1.5rem;
+            margin-bottom: 50px;
+            opacity: 0.9;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Footer */
+        footer {
+            padding: 60px 20px 30px;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 50px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: #D4AF37;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: #D4AF37;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.6;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 3rem; }
+            .hero .subtitle { font-size: 1.5rem; }
+            .philosophy h2, .offerings h2, .church h2 { font-size: 2.5rem; }
+            .principles-grid, .offerings-grid { grid-template-columns: 1fr; }
+            .header-content { flex-direction: column; gap: 20px; }
+            nav { flex-direction: column; gap: 15px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="gradient-bg"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-area">
+                    <div class="logo">Cora Nation</div>
+                    <div class="tagline-small">Church of Consciousness</div>
+                </div>
+                <nav>
+                    <a href="#philosophy">Philosophy</a>
+                    <a href="#offerings">Community</a>
+                    <a href="#church">Church</a>
+                    <a href="#join">Join</a>
+                    <a href="/donate" class="btn-secondary" style="padding: 10px 25px; font-size: 0.95rem;">Donate</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">Private Member Association • 508(c)(1)(a) Church</div>
+            <h1>A Community of<br><span class="highlight">Conscious Beings</span></h1>
+            <p class="subtitle">Dedicated to Human Flourishing & Conscious Circulation</p>
+            <p class="description">
+                Cora Nation is more than a community—it's a living practice of conscious resource circulation.
+                We believe that when consciousness guides our commerce, our communities, and our connections,
+                everyone flourishes.
+            </p>
+            <div class="cta-buttons">
+                <a href="#join" class="btn">Become a Member</a>
+                <a href="#philosophy" class="btn btn-secondary">Learn Our Philosophy</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Philosophy Section -->
+    <section class="philosophy" id="philosophy">
+        <div class="container">
+            <h2>Conscious Circulation of Resources</h2>
+            <p class="intro">
+                We reject the extractive model of traditional capitalism. Instead, we practice conscious circulation:
+                resources flow through our ecosystem—from economic activity to community benefit to expanded impact—
+                creating ever-expanding cycles of abundance.
+            </p>
+
+            <div class="principles-grid">
+                <div class="principle-card">
+                    <div class="principle-icon">🌊</div>
+                    <h3>Circulation Over Accumulation</h3>
+                    <p>Resources should flow like water, nourishing everything they touch, rather than pooling at the top. We believe in abundance through movement, not scarcity through hoarding.</p>
+                </div>
+
+                <div class="principle-card">
+                    <div class="principle-icon">🧠</div>
+                    <h3>Consciousness in Commerce</h3>
+                    <p>Every transaction carries intention. Every dollar moves with awareness. We bring consciousness to economics, transforming money from a tool of extraction into energy for good.</p>
+                </div>
+
+                <div class="principle-card">
+                    <div class="principle-icon">🤝</div>
+                    <h3>Community as Sacred</h3>
+                    <p>We are not atomized individuals competing for finite resources. We are interconnected beings whose flourishing is mutual. When one rises, we all rise.</p>
+                </div>
+
+                <div class="principle-card">
+                    <div class="principle-icon">♾️</div>
+                    <h3>Sustainable Abundance</h3>
+                    <p>True wealth isn't measured by what we extract, but by what we circulate. Our economic model creates expanding cycles of prosperity that serve all stakeholders.</p>
+                </div>
+
+                <div class="principle-card">
+                    <div class="principle-icon">🎯</div>
+                    <h3>Mission Over Profit</h3>
+                    <p>Profit is a tool, not a goal. We generate revenue to fund our mission of human flourishing. Success is measured by impact, not just income.</p>
+                </div>
+
+                <div class="principle-card">
+                    <div class="principle-icon">✨</div>
+                    <h3>Transformation Through Practice</h3>
+                    <p>We don't just talk about consciousness—we embody it in our structures, systems, and daily practices. The path IS the practice.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- What We Offer -->
+    <section class="offerings" id="offerings">
+        <div class="container">
+            <h2>What We Offer</h2>
+            <p class="subtitle">Benefits of Cora Nation Membership</p>
+
+            <div class="offerings-grid">
+                <div class="offering-card">
+                    <div class="offering-icon">🏛️</div>
+                    <h3>Spiritual Community</h3>
+                    <p>Connect with like-minded conscious beings through gatherings, events, and shared practices.</p>
+                </div>
+
+                <div class="offering-card">
+                    <div class="offering-icon">📚</div>
+                    <h3>Church Guidance</h3>
+                    <p>Access spiritual guidance through White Rock Ministry—1-on-1 coaching, group programs, and resources.</p>
+                </div>
+
+                <div class="offering-card">
+                    <div class="offering-icon">💼</div>
+                    <h3>Economic Opportunities</h3>
+                    <p>Participate in conscious commerce through Full Potential services—marketplace, treasury, AI, and more.</p>
+                </div>
+
+                <div class="offering-card">
+                    <div class="offering-icon">🌱</div>
+                    <h3>Personal Growth</h3>
+                    <p>Transform through community support, accountability, and shared commitment to consciousness.</p>
+                </div>
+
+                <div class="offering-card">
+                    <div class="offering-icon">🔒</div>
+                    <h3>Privacy Protection</h3>
+                    <p>As a Private Member Association, your membership and activities are private—protected from external scrutiny.</p>
+                </div>
+
+                <div class="offering-card">
+                    <div class="offering-icon">🎁</div>
+                    <h3>Member Benefits</h3>
+                    <p>Exclusive access to programs, discounts on services, and direct benefit from the conscious circulation of resources.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Church Section -->
+    <section class="church" id="church">
+        <div class="container">
+            <div class="church-content">
+                <h2>Church of Consciousness</h2>
+                <p>
+                    The Church of Consciousness is a 508(c)(1)(a) tax-exempt church dedicated to the spiritual practice
+                    of conscious living, human flourishing, and resource circulation.
+                </p>
+                <p>
+                    Unlike traditional churches focused solely on the afterlife, we believe consciousness matters NOW.
+                    We practice sacred economics, conscious commerce, and community flourishing as spiritual disciplines.
+                </p>
+
+                <div class="highlight-box">
+                    <p>"We don't just build businesses. We build infrastructure for human flourishing."</p>
+                </div>
+
+                <p>
+                    Our church receives resources from Full Potential services—commercial enterprises owned by Sunheart Private Trust.
+                    These resources circulate back to the community through programs, support, and charitable activities.
+                </p>
+                <p>
+                    <strong>This is conscious circulation in action:</strong> Commerce → Church → Community → Flourishing → More Commerce
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Join Section -->
+    <section class="join" id="join">
+        <div class="container">
+            <h2>Ready to Join the <span class="highlight">Movement</span>?</h2>
+            <p>Become a member of Cora Nation and participate in the conscious circulation revolution.</p>
+
+            <div class="cta-buttons">
+                <a href="/membership" class="btn">Apply for Membership</a>
+                <a href="/donate" class="btn btn-secondary">Support the Mission</a>
+                <a href="https://fullpotential.com" class="btn btn-secondary">Explore Our Services</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Cora Nation</h3>
+                    <p>Private Member Association<br>Church of Consciousness<br>508(c)(1)(a) Tax-Exempt Church</p>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Community</h3>
+                    <ul>
+                        <li><a href="/membership">Become a Member</a></li>
+                        <li><a href="/events">Events & Gatherings</a></li>
+                        <li><a href="/programs">Community Programs</a></li>
+                        <li><a href="/portal">Member Portal</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Church</h3>
+                    <ul>
+                        <li><a href="/beliefs">Our Beliefs</a></li>
+                        <li><a href="/philosophy">Philosophy</a></li>
+                        <li><a href="/donate">Donate</a></li>
+                        <li><a href="https://whiterock.us">White Rock Ministry</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Services</h3>
+                    <ul>
+                        <li><a href="https://fullpotential.com">Full Potential Hub</a></li>
+                        <li><a href="https://fullpotential.com/match">I MATCH Marketplace</a></li>
+                        <li><a href="https://fullpotential.com/coaching">Coaching</a></li>
+                        <li><a href="/impact">Our Impact</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 Cora Nation • Church of Consciousness • Conscious Circulation for Human Flourishing</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

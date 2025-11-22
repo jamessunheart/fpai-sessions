@@ -1,0 +1,593 @@
+[
+  {
+    "spec": "specs/autonomy/auto-fix-engine/SPEC.md",
+    "domain": "autonomy",
+    "service_slug": "auto-fix-engine",
+    "probable_impl_paths": [
+      "agents/services/auto-fix-engine"
+    ],
+    "assignment": "sprint",
+    "reason": "domain 'autonomy' suitable for apprentice sprint work"
+  },
+  {
+    "spec": "specs/autonomy/autonomous-agents/SPEC.md",
+    "domain": "autonomy",
+    "service_slug": "autonomous-agents",
+    "probable_impl_paths": [
+      "agents/services/autonomous-agents"
+    ],
+    "assignment": "sprint",
+    "reason": "domain 'autonomy' suitable for apprentice sprint work"
+  },
+  {
+    "spec": "specs/autonomy/autonomous-execution-engine/SPEC.md",
+    "domain": "autonomy",
+    "service_slug": "autonomous-execution-engine",
+    "probable_impl_paths": [
+      "agents/services/autonomous-execution-engine"
+    ],
+    "assignment": "sprint",
+    "reason": "domain 'autonomy' suitable for apprentice sprint work"
+  },
+  {
+    "spec": "specs/autonomy/autonomous-executor/SPEC.md",
+    "domain": "autonomy",
+    "service_slug": "autonomous-executor",
+    "probable_impl_paths": [
+      "agents/services/autonomous-executor"
+    ],
+    "assignment": "sprint",
+    "reason": "domain 'autonomy' suitable for apprentice sprint work"
+  },
+  {
+    "spec": "specs/coordination/AUTONOMOUS_BUILD_COORDINATOR_SPEC.md",
+    "domain": "coordination",
+    "service_slug": "coordination",
+    "probable_impl_paths": [
+      "unknown"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'coordination' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/coordination/AUTONOMOUS_SESSION_COORDINATOR.md",
+    "domain": "coordination",
+    "service_slug": "coordination",
+    "probable_impl_paths": [
+      "unknown"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'coordination' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/coordination/api-gateway/SPEC.md",
+    "domain": "coordination",
+    "service_slug": "api-gateway",
+    "probable_impl_paths": [
+      "agents/services/api-gateway"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'coordination' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/coordination/api-hub/SPEC.md",
+    "domain": "coordination",
+    "service_slug": "api-hub",
+    "probable_impl_paths": [
+      "agents/services/api-hub"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'coordination' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/coordination/build-executor/SPEC.md",
+    "domain": "coordination",
+    "service_slug": "build-executor",
+    "probable_impl_paths": [
+      "agents/services/build-executor"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'coordination' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/coordination/credentials-manager/SPEC.md",
+    "domain": "coordination",
+    "service_slug": "credentials-manager",
+    "probable_impl_paths": [
+      "agents/services/credentials-manager"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'coordination' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/coordination/deployer/SPEC.md",
+    "domain": "coordination",
+    "service_slug": "deployer",
+    "probable_impl_paths": [
+      "agents/services/deployer"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'coordination' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/coordination/governance/SPEC.md",
+    "domain": "coordination",
+    "service_slug": "governance",
+    "probable_impl_paths": [
+      "agents/services/governance"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'coordination' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/coordination/helper-management/SPEC.md",
+    "domain": "coordination",
+    "service_slug": "helper-management",
+    "probable_impl_paths": [
+      "agents/services/helper-management"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'coordination' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/coordination/hub/SPEC.md",
+    "domain": "coordination",
+    "service_slug": "hub",
+    "probable_impl_paths": [
+      "agents/services/hub"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'coordination' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/coordination/intent-queue/SPEC.md",
+    "domain": "coordination",
+    "service_slug": "intent-queue",
+    "probable_impl_paths": [
+      "agents/services/intent-queue"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'coordination' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/coordination/jobs/SPEC.md",
+    "domain": "coordination",
+    "service_slug": "jobs",
+    "probable_impl_paths": [
+      "agents/services/jobs"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'coordination' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/coordination/nexus-event-bus/SPEC.md",
+    "domain": "coordination",
+    "service_slug": "nexus-event-bus",
+    "probable_impl_paths": [
+      "agents/services/nexus-event-bus"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'coordination' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/coordination/ops/SPEC.md",
+    "domain": "coordination",
+    "service_slug": "ops",
+    "probable_impl_paths": [
+      "agents/services/ops"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'coordination' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/coordination/orchestrator/SPEC.md",
+    "domain": "coordination",
+    "service_slug": "orchestrator",
+    "probable_impl_paths": [
+      "agents/services/orchestrator"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'coordination' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/coordination/orchestrator/SPEC_Orchestrator_TrackB_v1_1_Enhanced.md",
+    "domain": "coordination",
+    "service_slug": "orchestrator",
+    "probable_impl_paths": [
+      "agents/services/orchestrator"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'coordination' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/coordination/orchestrator-unified/SPEC.md",
+    "domain": "coordination",
+    "service_slug": "orchestrator-unified",
+    "probable_impl_paths": [
+      "agents/services/orchestrator-unified"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'coordination' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/coordination/proxy-manager/SPEC.md",
+    "domain": "coordination",
+    "service_slug": "proxy-manager",
+    "probable_impl_paths": [
+      "agents/services/proxy-manager"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'coordination' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/coordination/proxy-manager/SPEC_Proxy_Manager_API_v1.md",
+    "domain": "coordination",
+    "service_slug": "proxy-manager",
+    "probable_impl_paths": [
+      "agents/services/proxy-manager"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'coordination' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/coordination/registry/SPEC.md",
+    "domain": "coordination",
+    "service_slug": "registry",
+    "probable_impl_paths": [
+      "agents/services/registry"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'coordination' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/coordination/unified-assembly-line/SPEC.md",
+    "domain": "coordination",
+    "service_slug": "unified-assembly-line",
+    "probable_impl_paths": [
+      "agents/services/unified-assembly-line"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'coordination' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/outreach/ai-automation/AI_MARKETING_ENGINE_SPEC.md",
+    "domain": "outreach",
+    "service_slug": "ai-automation",
+    "probable_impl_paths": [
+      "agents/services/ai-automation"
+    ],
+    "assignment": "sprint",
+    "reason": "domain 'outreach' suitable for apprentice sprint work"
+  },
+  {
+    "spec": "specs/outreach/approval-dashboard/SPEC.md",
+    "domain": "outreach",
+    "service_slug": "approval-dashboard",
+    "probable_impl_paths": [
+      "agents/services/approval-dashboard"
+    ],
+    "assignment": "sprint",
+    "reason": "domain 'outreach' suitable for apprentice sprint work"
+  },
+  {
+    "spec": "specs/outreach/content-generation-engine/SPEC.md",
+    "domain": "outreach",
+    "service_slug": "content-generation-engine",
+    "probable_impl_paths": [
+      "agents/services/content-generation-engine"
+    ],
+    "assignment": "sprint",
+    "reason": "domain 'outreach' suitable for apprentice sprint work"
+  },
+  {
+    "spec": "specs/outreach/email-automation-system/SPEC.md",
+    "domain": "outreach",
+    "service_slug": "email-automation-system",
+    "probable_impl_paths": [
+      "agents/services/email-automation-system"
+    ],
+    "assignment": "sprint",
+    "reason": "domain 'outreach' suitable for apprentice sprint work"
+  },
+  {
+    "spec": "specs/outreach/landing-page/SPEC.md",
+    "domain": "outreach",
+    "service_slug": "landing-page",
+    "probable_impl_paths": [
+      "agents/services/landing-page"
+    ],
+    "assignment": "sprint",
+    "reason": "domain 'outreach' suitable for apprentice sprint work"
+  },
+  {
+    "spec": "specs/outreach/phase1-execution-engine/OUTREACH_INTEGRATION_SPEC.md",
+    "domain": "outreach",
+    "service_slug": "phase1-execution-engine",
+    "probable_impl_paths": [
+      "agents/services/phase1-execution-engine"
+    ],
+    "assignment": "sprint",
+    "reason": "domain 'outreach' suitable for apprentice sprint work"
+  },
+  {
+    "spec": "specs/outreach/reddit-auto-responder/SPEC.md",
+    "domain": "outreach",
+    "service_slug": "reddit-auto-responder",
+    "probable_impl_paths": [
+      "agents/services/reddit-auto-responder"
+    ],
+    "assignment": "sprint",
+    "reason": "domain 'outreach' suitable for apprentice sprint work"
+  },
+  {
+    "spec": "specs/outreach/seo-landing-generator/SPEC.md",
+    "domain": "outreach",
+    "service_slug": "seo-landing-generator",
+    "probable_impl_paths": [
+      "agents/services/seo-landing-generator"
+    ],
+    "assignment": "sprint",
+    "reason": "domain 'outreach' suitable for apprentice sprint work"
+  },
+  {
+    "spec": "specs/outreach/social-auto-poster/SPEC.md",
+    "domain": "outreach",
+    "service_slug": "social-auto-poster",
+    "probable_impl_paths": [
+      "agents/services/social-auto-poster"
+    ],
+    "assignment": "sprint",
+    "reason": "domain 'outreach' suitable for apprentice sprint work"
+  },
+  {
+    "spec": "specs/products/ai-automation-playbook/AI_MARKETING_ENGINE_SPEC.md",
+    "domain": "products",
+    "service_slug": "ai-automation-playbook",
+    "probable_impl_paths": [
+      "droplets/claude1/ai-automation-playbook"
+    ],
+    "assignment": "sprint",
+    "reason": "domain 'products' suitable for apprentice sprint work"
+  },
+  {
+    "spec": "specs/products/church-guidance-ministry/SPECS.md",
+    "domain": "products",
+    "service_slug": "church-guidance-ministry",
+    "probable_impl_paths": [
+      "agents/services/church-guidance-ministry"
+    ],
+    "assignment": "sprint",
+    "reason": "domain 'products' suitable for apprentice sprint work"
+  },
+  {
+    "spec": "specs/products/i-match/SPEC.md",
+    "domain": "products",
+    "service_slug": "i-match",
+    "probable_impl_paths": [
+      "agents/services/i-match"
+    ],
+    "assignment": "sprint",
+    "reason": "domain 'products' suitable for apprentice sprint work"
+  },
+  {
+    "spec": "specs/products/i-proactive/SPEC.md",
+    "domain": "products",
+    "service_slug": "i-proactive",
+    "probable_impl_paths": [
+      "agents/services/i-proactive",
+      "core/applications/i-proactive"
+    ],
+    "assignment": "sprint",
+    "reason": "domain 'products' suitable for apprentice sprint work"
+  },
+  {
+    "spec": "specs/products/legal-verification-agent/SPEC.md",
+    "domain": "products",
+    "service_slug": "legal-verification-agent",
+    "probable_impl_paths": [
+      "agents/services/legal-verification-agent"
+    ],
+    "assignment": "sprint",
+    "reason": "domain 'products' suitable for apprentice sprint work"
+  },
+  {
+    "spec": "specs/products/legal-verification-agent/SPECS.md",
+    "domain": "products",
+    "service_slug": "legal-verification-agent",
+    "probable_impl_paths": [
+      "agents/services/legal-verification-agent"
+    ],
+    "assignment": "sprint",
+    "reason": "domain 'products' suitable for apprentice sprint work"
+  },
+  {
+    "spec": "specs/products/spec-builder/SPEC.md",
+    "domain": "products",
+    "service_slug": "spec-builder",
+    "probable_impl_paths": [
+      "agents/services/spec-builder"
+    ],
+    "assignment": "sprint",
+    "reason": "domain 'products' suitable for apprentice sprint work"
+  },
+  {
+    "spec": "specs/products/spec-optimizer/SPEC.md",
+    "domain": "products",
+    "service_slug": "spec-optimizer",
+    "probable_impl_paths": [
+      "agents/services/spec-optimizer"
+    ],
+    "assignment": "sprint",
+    "reason": "domain 'products' suitable for apprentice sprint work"
+  },
+  {
+    "spec": "specs/products/spec-verifier/SPEC.md",
+    "domain": "products",
+    "service_slug": "spec-verifier",
+    "probable_impl_paths": [
+      "agents/services/spec-verifier"
+    ],
+    "assignment": "sprint",
+    "reason": "domain 'products' suitable for apprentice sprint work"
+  },
+  {
+    "spec": "specs/products/unified-chat/SPEC.md",
+    "domain": "products",
+    "service_slug": "unified-chat",
+    "probable_impl_paths": [
+      "agents/services/unified-chat"
+    ],
+    "assignment": "sprint",
+    "reason": "domain 'products' suitable for apprentice sprint work"
+  },
+  {
+    "spec": "specs/products/verifier/SPEC.md",
+    "domain": "products",
+    "service_slug": "verifier",
+    "probable_impl_paths": [
+      "agents/services/verifier"
+    ],
+    "assignment": "sprint",
+    "reason": "domain 'products' suitable for apprentice sprint work"
+  },
+  {
+    "spec": "specs/products/verifier/SPEC_Verifier_Droplet_v1.md",
+    "domain": "products",
+    "service_slug": "verifier",
+    "probable_impl_paths": [
+      "agents/services/verifier"
+    ],
+    "assignment": "sprint",
+    "reason": "domain 'products' suitable for apprentice sprint work"
+  },
+  {
+    "spec": "specs/treasury/SPEC_Droplet_25_Treasury_Magnet.md",
+    "domain": "treasury",
+    "service_slug": "treasury",
+    "probable_impl_paths": [
+      "agents/services/treasury"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'treasury' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/treasury/TREASURY_ARENA_SPEC.md",
+    "domain": "treasury",
+    "service_slug": "treasury",
+    "probable_impl_paths": [
+      "agents/services/treasury"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'treasury' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/treasury/tie-system/MASTER_SPEC.md",
+    "domain": "treasury",
+    "service_slug": "tie-system",
+    "probable_impl_paths": [
+      "agents/services/tie-system"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'treasury' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/treasury/tie-system/governance-guardian/SPEC.md",
+    "domain": "treasury",
+    "service_slug": "governance-guardian",
+    "probable_impl_paths": [
+      "unknown"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'treasury' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/treasury/tie-system/sol-treasury-core/SPEC.md",
+    "domain": "treasury",
+    "service_slug": "sol-treasury-core",
+    "probable_impl_paths": [
+      "unknown"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'treasury' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/treasury/tie-system/tie-contract-manager/SPEC.md",
+    "domain": "treasury",
+    "service_slug": "tie-contract-manager",
+    "probable_impl_paths": [
+      "unknown"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'treasury' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/treasury/tie-system/voting-weight-tracker/SPEC.md",
+    "domain": "treasury",
+    "service_slug": "voting-weight-tracker",
+    "probable_impl_paths": [
+      "unknown"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'treasury' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/treasury/treasury-arena/ARENA_MANAGER_v2_SPEC.md",
+    "domain": "treasury",
+    "service_slug": "treasury-arena",
+    "probable_impl_paths": [
+      "agents/services/treasury-arena"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'treasury' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/treasury/treasury-arena/SIMULATION_ENGINE_SPEC.md",
+    "domain": "treasury",
+    "service_slug": "treasury-arena",
+    "probable_impl_paths": [
+      "agents/services/treasury-arena"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'treasury' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/treasury/treasury-arena/TRADING_ENGINE_SPEC.md",
+    "domain": "treasury",
+    "service_slug": "treasury-arena",
+    "probable_impl_paths": [
+      "agents/services/treasury-arena"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'treasury' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/treasury/treasury-arena/TREASURY_AGENT_v2_SPEC.md",
+    "domain": "treasury",
+    "service_slug": "treasury-arena",
+    "probable_impl_paths": [
+      "agents/services/treasury-arena"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'treasury' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/treasury/treasury-manager/SPEC.md",
+    "domain": "treasury",
+    "service_slug": "treasury-manager",
+    "probable_impl_paths": [
+      "agents/services/treasury-manager"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'treasury' typically needs internal coordination"
+  },
+  {
+    "spec": "specs/udc/TIER_0_1_UDC_RETROFIT_SPECS.md",
+    "domain": "udc",
+    "service_slug": "udc",
+    "probable_impl_paths": [
+      "unknown"
+    ],
+    "assignment": "mission",
+    "reason": "domain 'udc' typically needs internal coordination"
+  }
+]

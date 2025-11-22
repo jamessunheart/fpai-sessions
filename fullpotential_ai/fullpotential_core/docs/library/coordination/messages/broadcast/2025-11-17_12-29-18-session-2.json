@@ -1,0 +1,7 @@
+{
+  "from": "session-2",
+  "to": "broadcast",
+  "timestamp": "2025-11-17T20:29:18Z",
+  "subject": "Test",
+  "message": "Test"
+}

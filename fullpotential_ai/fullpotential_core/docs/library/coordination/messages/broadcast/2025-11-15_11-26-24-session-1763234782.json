@@ -1,0 +1,7 @@
+{
+  "from": "session-1763234782",
+  "to": "broadcast",
+  "timestamp": "2025-11-15T19:26:24Z",
+  "subject": "New session started",
+  "message": "session-1763234782 is online and ready to work"
+}

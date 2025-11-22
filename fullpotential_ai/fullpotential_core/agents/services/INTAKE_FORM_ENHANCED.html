@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Your Perfect Service Provider | AI-Powered Matching</title>
+    <meta name="description" content="Get matched with top-rated service providers in 24 hours. AI-powered matching for church formation, executive coaching, AI development, and more. Free consultation guaranteed.">
+    <meta name="keywords" content="service provider matching, AI matching, church formation, executive coaching, AI development">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="Find Your Perfect Service Provider">
+    <meta property="og:description" content="AI-powered matching with vetted providers. Free consultation. 24-hour response.">
+    <meta property="og:type" content="website">
+
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
+
+    <style>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a67d8;
+            --secondary: #764ba2;
+            --success: #48bb78;
+            --error: #f56565;
+            --text: #2d3748;
+            --text-light: #718096;
+            --border: #e2e8f0;
+            --bg-light: #f7fafc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            background: white;
+            padding: 48px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 24px;
+            }
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            color: var(--primary);
+            margin-bottom: 12px;
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: var(--text-light);
+            margin-bottom: 8px;
+            font-size: 18px;
+        }
+
+        .trust-badges {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .badge-icon {
+            font-size: 18px;
+        }
+
+        /* Benefits */
+        .benefits {
+            background: var(--bg-light);
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 32px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .benefits h3 {
+            color: var(--primary);
+            margin-bottom: 16px;
+            font-size: 18px;
+        }
+
+        .benefits ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .benefits li {
+            padding: 10px 0;
+            padding-left: 32px;
+            position: relative;
+            color: var(--text);
+        }
+
+        .benefits li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        /* Form */
+        .form-section {
+            margin-bottom: 32px;
+        }
+
+        .form-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        .required {
+            color: var(--error);
+            margin-left: 2px;
+        }
+
+        .field-hint {
+            display: block;
+            margin-top: 4px;
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input:invalid:not(:placeholder-shown),
+        textarea:invalid:not(:placeholder-shown) {
+            border-color: var(--error);
+        }
+
+        input:valid:not(:placeholder-shown),
+        textarea:valid:not(:placeholder-shown) {
+            border-color: var(--success);
+        }
+
+        textarea {
+            min-height: 140px;
+            resize: vertical;
+        }
+
+        .char-counter {
+            text-align: right;
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        /* Button */
+        .button-wrapper {
+            margin-top: 32px;
+        }
+
+        button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .button-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Messages */
+        .message {
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            display: none;
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .success-message h2 {
+            margin-bottom: 12px;
+            font-size: 24px;
+        }
+
+        .success-message .matches-preview {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .error-message {
+            background: #fee;
+            color: var(--error);
+            border: 1px solid var(--error);
+        }
+
+        /* Footer */
+        .footer-text {
+            text-align: center;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .footer-text a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .footer-text a:hover {
+            text-decoration: underline;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Accessibility */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-icon">🎯</div>
+            <h1>Find Your Perfect Match</h1>
+            <p class="subtitle">AI-powered matching in 24 hours or less</p>
+            <div class="trust-badges">
+                <div class="badge">
+                    <span class="badge-icon">⚡</span>
+                    <span>24-hour response</span>
+                </div>
+                <div class="badge">
+                    <span class="badge-icon">✓</span>
+                    <span>Vetted providers</span>
+                </div>
+                <div class="badge">
+                    <span class="badge-icon">💬</span>
+                    <span>Free consultation</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Benefits -->
+        <div class="benefits">
+            <h3>Why our matching service works better</h3>
+            <ul>
+                <li>AI analyzes your needs and finds the best-fit providers</li>
+                <li>Pre-vetted professionals with proven track records</li>
+                <li>Free consultation calls with each matched provider</li>
+                <li>Personalized recommendations within 24 hours</li>
+                <li>No commitment required - you decide who to work with</li>
+            </ul>
+        </div>
+
+        <!-- Success Message -->
+        <div class="message success-message" id="successMessage">
+            <h2>🎉 Perfect! We're on it!</h2>
+            <p id="successText"></p>
+            <div class="matches-preview" id="matchesPreview" style="display:none;">
+                <strong>Your top matches:</strong>
+                <div id="matchesList"></div>
+            </div>
+        </div>
+
+        <!-- Error Message -->
+        <div class="message error-message" id="errorMessage"></div>
+
+        <!-- Form -->
+        <form id="intakeForm" novalidate>
+            <!-- Contact Information -->
+            <div class="form-section">
+                <div class="form-section-title">1. Contact Information</div>
+
+                <div class="form-group">
+                    <label for="name">
+                        Full Name <span class="required">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        required
+                        minlength="2"
+                        maxlength="100"
+                        placeholder="John Doe"
+                        autocomplete="name"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="email">
+                        Email Address <span class="required">*</span>
+                    </label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        required
+                        placeholder="john@example.com"
+                        autocomplete="email"
+                    >
+                    <span class="field-hint">We'll send your matches here</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number (Optional)</label>
+                    <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        placeholder="+1 (555) 123-4567"
+                        autocomplete="tel"
+                    >
+                    <span class="field-hint">For faster response</span>
+                </div>
+            </div>
+
+            <!-- Service Details -->
+            <div class="form-section">
+                <div class="form-section-title">2. What Service Do You Need?</div>
+
+                <div class="form-group">
+                    <label for="serviceType">
+                        Service Type <span class="required">*</span>
+                    </label>
+                    <select id="serviceType" name="service_type" required>
+                        <option value="">-- Select the service you need --</option>
+                        <option value="church-formation">⛪ Church Formation (501c3/508c1a)</option>
+                        <option value="executive-coaching">🎯 Executive Coaching</option>
+                        <option value="ai-development">🤖 AI Development & Automation</option>
+                        <option value="business-consulting">📊 Business Consulting</option>
+                        <option value="other">💼 Other Service</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="needs">
+                        Describe Your Needs <span class="required">*</span>
+                    </label>
+                    <textarea
+                        id="needs"
+                        name="needs_description"
+                        required
+                        minlength="10"
+                        maxlength="2000"
+                        placeholder="Tell us about your project, goals, challenges, and what you're hoping to achieve. The more detail you provide, the better we can match you..."
+                    ></textarea>
+                    <div class="char-counter">
+                        <span id="charCount">0</span> / 2000 characters
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="timeline">When Do You Want to Start?</label>
+                    <select id="timeline" name="timeline">
+                        <option value="">-- Select timeline --</option>
+                        <option value="asap">As soon as possible</option>
+                        <option value="1-2-weeks">Within 1-2 weeks</option>
+                        <option value="1-month">Within 1 month</option>
+                        <option value="2-3-months">2-3 months</option>
+                        <option value="flexible">Flexible / Just exploring</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="button-wrapper">
+                <button type="submit" id="submitBtn">
+                    <span class="button-text">Find My Perfect Match 🎯</span>
+                </button>
+            </div>
+        </form>
+
+        <!-- Footer -->
+        <div class="footer-text">
+            By submitting, you agree to be matched with service providers.
+            We respect your privacy and will never spam you.
+            <a href="#privacy">Privacy Policy</a>
+        </div>
+    </div>
+
+    <script>
+        // Character counter
+        const needsTextarea = document.getElementById('needs');
+        const charCount = document.getElementById('charCount');
+
+        needsTextarea.addEventListener('input', () => {
+            charCount.textContent = needsTextarea.value.length;
+        });
+
+        // Form submission
+        document.getElementById('intakeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            const errorMsg = document.getElementById('errorMessage');
+            const successMsg = document.getElementById('successMessage');
+            const successText = document.getElementById('successText');
+            const matchesPreview = document.getElementById('matchesPreview');
+            const matchesList = document.getElementById('matchesList');
+            const form = document.getElementById('intakeForm');
+
+            // Hide messages
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+
+            // Validate form
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            // Disable button and show loading
+            submitBtn.disabled = true;
+            const originalText = submitBtn.querySelector('.button-text').textContent;
+            submitBtn.querySelector('.button-text').innerHTML = 'Finding your matches<span class="spinner"></span>';
+
+            try {
+                const formData = {
+                    name: document.getElementById('name').value.trim(),
+                    email: document.getElementById('email').value.trim(),
+                    phone: document.getElementById('phone').value.trim() || null,
+                    service_type: document.getElementById('serviceType').value,
+                    needs_description: document.getElementById('needs').value.trim(),
+                    timeline: document.getElementById('timeline').value || null
+                };
+
+                // Track submission (analytics)
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'intake_form_submit', {
+                        'service_type': formData.service_type
+                    });
+                }
+
+                const response = await fetch('http://198.54.123.234:8401/api/intake/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // Success!
+                    const firstName = formData.name.split(' ')[0];
+                    successText.innerHTML = `
+                        <strong>Thanks, ${firstName}! ${result.message}</strong><br><br>
+                        We found <strong>${result.matches_found} potential provider${result.matches_found !== 1 ? 's' : ''}</strong> for you!<br><br>
+                        ${result.next_steps}
+                    `;
+
+                    // Show matches if available
+                    if (result.top_matches && result.top_matches.length > 0) {
+                        matchesList.innerHTML = result.top_matches.map((match, i) => `
+                            <div style="margin-top: 12px; padding: 12px; background: rgba(255,255,255,0.1); border-radius: 6px;">
+                                ${i + 1}. <strong>${match.provider_name || 'Provider'}</strong> - Match Score: ${match.match_score || 'N/A'}%
+                            </div>
+                        `).join('');
+                        matchesPreview.style.display = 'block';
+                    }
+
+                    successMsg.style.display = 'block';
+                    form.style.display = 'none';
+
+                    // Track conversion
+                    if (typeof gtag !== 'undefined') {
+                        gtag('event', 'conversion', {
+                            'send_to': 'AW-XXXXXXXXX/XXXXXXXXXXXXXX',
+                            'value': 1.0,
+                            'currency': 'USD'
+                        });
+                    }
+
+                    // Scroll to success message
+                    successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                } else {
+                    throw new Error(result.detail || 'Something went wrong');
+                }
+            } catch (error) {
+                console.error('Submission error:', error);
+                errorMsg.textContent = `Error: ${error.message}. Please try again or email us at hello@fullpotential.ai`;
+                errorMsg.style.display = 'block';
+
+                // Re-enable button
+                submitBtn.disabled = false;
+                submitBtn.querySelector('.button-text').textContent = originalText;
+
+                // Scroll to error
+                errorMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+
+        // Real-time validation feedback
+        const inputs = document.querySelectorAll('input[required], textarea[required], select[required]');
+        inputs.forEach(input => {
+            input.addEventListener('blur', () => {
+                if (input.value && !input.checkValidity()) {
+                    input.setAttribute('aria-invalid', 'true');
+                } else {
+                    input.removeAttribute('aria-invalid');
+                }
+            });
+        });
+    </script>
+
+    <!-- Analytics placeholder - replace with your actual tracking code -->
+    <script>
+        // Google Analytics
+        // window.dataLayer = window.dataLayer || [];
+        // function gtag(){dataLayer.push(arguments);}
+        // gtag('js', new Date());
+        // gtag('config', 'GA-XXXXXXXXX');
+    </script>
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Control - Secure Login</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 24px;
+            padding: 48px;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+        }
+        h1 {
+            font-size: 32px;
+            margin-bottom: 12px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 32px;
+            font-size: 15px;
+        }
+        .security-notice {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 16px;
+            margin-bottom: 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #856404;
+        }
+        .form-group {
+            margin-bottom: 24px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        input[type="password"] {
+            width: 100%;
+            padding: 16px;
+            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .btn {
+            width: 100%;
+            padding: 18px;
+            font-size: 18px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 16px;
+            display: none;
+            border-left: 4px solid #dc3545;
+        }
+        .error.show { display: block; }
+        .features {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #eee;
+        }
+        .feature {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #666;
+        }
+        .feature-icon {
+            margin-right: 12px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🔐</div>
+        <h1>Master Control</h1>
+        <p class="subtitle">Secure access to Full Potential AI</p>
+        
+        <div class="security-notice">
+            <strong>🛡️ Protected Access</strong><br>
+            This dashboard is password-protected. Only authorized users can access the master control panel.
+        </div>
+        
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label for="password">Master Password</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    placeholder="Enter master password"
+                    required
+                    autocomplete="current-password"
+                >
+            </div>
+            
+            <button type="submit" class="btn" id="loginBtn">
+                🔓 Unlock Master Dashboard
+            </button>
+        </form>
+        
+        <div id="error" class="error"></div>
+        
+        <div class="features">
+            <div class="feature">
+                <span class="feature-icon">🔒</span>
+                <span>Encrypted session management</span>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">⏱️</span>
+                <span>8-hour auto-login session</span>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">🛡️</span>
+                <span>God-mode access controls</span>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const form = document.getElementById('loginForm');
+        const passwordInput = document.getElementById('password');
+        const loginBtn = document.getElementById('loginBtn');
+        const errorDiv = document.getElementById('error');
+        
+        function showError(message) {
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+        }
+        
+        function hideError() {
+            errorDiv.classList.remove('show');
+        }
+        
+        async function handleLogin(event) {
+            event.preventDefault();
+            hideError();
+            
+            const password = passwordInput.value;
+            loginBtn.disabled = true;
+            loginBtn.textContent = '🔄 Authenticating...';
+            
+            try {
+                const response = await fetch('/master/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ password }),
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    loginBtn.textContent = '✅ Access Granted!';
+                    setTimeout(() => {
+                        window.location.href = '/master/dashboard';
+                    }, 500);
+                } else {
+                    const data = await response.json();
+                    showError('❌ ' + (data.detail || 'Authentication failed'));
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = '🔓 Unlock Master Dashboard';
+                }
+            } catch (error) {
+                showError('❌ Connection error. Please try again.');
+                loginBtn.disabled = false;
+                loginBtn.textContent = '🔓 Unlock Master Dashboard';
+            }
+        }
+        
+        // Auto-focus password field
+        passwordInput.focus();
+    </script>
+</body>
+</html>

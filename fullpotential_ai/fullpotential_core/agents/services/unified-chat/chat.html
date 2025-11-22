@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Potential AI - Unified Chat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e0e0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: rgba(15, 20, 40, 0.9);
+            border-right: 1px solid rgba(0, 217, 255, 0.2);
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
+            color: #00d9ff;
+            margin-bottom: 20px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stats {
+            background: rgba(0, 217, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(0, 217, 255, 0.3);
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            font-size: 14px;
+        }
+
+        .stat-value {
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        .session-list {
+            list-style: none;
+        }
+
+        .session-item {
+            padding: 12px;
+            margin: 8px 0;
+            background: rgba(0, 217, 255, 0.05);
+            border-radius: 6px;
+            border-left: 3px solid #00ff88;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .session-item:hover {
+            background: rgba(0, 217, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00ff88;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Main Chat Area */
+        .chat-area {
+            display: flex;
+            flex-direction: column;
+            background: rgba(10, 14, 39, 0.6);
+        }
+
+        .chat-header {
+            background: rgba(0, 217, 255, 0.05);
+            border-bottom: 1px solid rgba(0, 217, 255, 0.2);
+            padding: 25px 30px;
+        }
+
+        .chat-header h1 {
+            color: #00d9ff;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .chat-header p {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            scroll-behavior: smooth;
+        }
+
+        .message {
+            margin: 20px 0;
+            padding: 18px 22px;
+            border-radius: 12px;
+            max-width: 75%;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+            margin-left: auto;
+            border: 1px solid rgba(0, 102, 204, 0.5);
+        }
+
+        .message.system {
+            background: rgba(0, 217, 255, 0.1);
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            border-left: 4px solid #00d9ff;
+        }
+
+        .message.hive {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-left: 4px solid #00ff88;
+        }
+
+        .message-header {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .message.user .message-header {
+            color: #a3d5ff;
+        }
+
+        .message.system .message-header {
+            color: #00d9ff;
+        }
+
+        .message.hive .message-header {
+            color: #00ff88;
+        }
+
+        .message-content {
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .message-meta {
+            font-size: 11px;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        /* Input Area */
+        .input-area {
+            padding: 25px 30px;
+            background: rgba(15, 20, 40, 0.8);
+            border-top: 1px solid rgba(0, 217, 255, 0.2);
+        }
+
+        .input-box {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        input {
+            flex: 1;
+            padding: 16px 20px;
+            border: 2px solid rgba(0, 217, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(10, 14, 39, 0.8);
+            color: #e0e0e0;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #00d9ff;
+            background: rgba(10, 14, 39, 1);
+        }
+
+        input::placeholder {
+            color: #666;
+        }
+
+        button {
+            padding: 16px 35px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #00d9ff 0%, #00a8cc 100%);
+            color: #0a0e27;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 255, 136, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(10, 14, 39, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 217, 255, 0.3);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 217, 255, 0.5);
+        }
+
+        /* Markdown styling */
+        .message-content h3 {
+            color: #00d9ff;
+            margin: 15px 0 10px 0;
+            font-size: 16px;
+        }
+
+        .message-content p {
+            margin: 8px 0;
+        }
+
+        .message-content code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2>🧠 Hive Mind Status</h2>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <span>Connected Sessions:</span>
+                    <span class="stat-value" id="sessionCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>Autonomous Agents:</span>
+                    <span class="stat-value" id="agentCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>Connection Status:</span>
+                    <span class="stat-value" id="connectionStatus">Connecting...</span>
+                </div>
+            </div>
+
+            <h3 style="color: #00ff88; margin: 20px 0 10px 0; font-size: 14px;">Active Sessions</h3>
+            <ul class="session-list" id="sessions">
+                <li class="session-item" style="opacity: 0.5; border-left-color: #666;">
+                    <span class="status-dot" style="background: #666; animation: none;"></span>
+                    Waiting for sessions...
+                </li>
+            </ul>
+
+            <h3 style="color: #00ff88; margin: 20px 0 10px 0; font-size: 14px;">Autonomous Agents</h3>
+            <ul class="session-list" id="agents">
+                <li class="session-item" style="opacity: 0.5; border-left-color: #666;">
+                    <span class="status-dot" style="background: #666; animation: none;"></span>
+                    Waiting for agents...
+                </li>
+            </ul>
+        </div>
+
+        <div class="chat-area">
+            <div class="chat-header">
+                <h1>🌐 Full Potential AI - Unified Chat</h1>
+                <p>Talk to all sessions + agents as ONE unified intelligence</p>
+            </div>
+
+            <div class="messages" id="messages">
+                <div class="message system">
+                    <div class="message-header">System</div>
+                    <div class="message-content">
+                        Initializing connection to hive mind...
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-area">
+                <div class="input-box">
+                    <input
+                        type="text"
+                        id="messageInput"
+                        placeholder="Ask anything... the hive mind will respond as one"
+                        autocomplete="off"
+                    />
+                    <button onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const userId = 'user-' + Date.now();
+        let ws = null;
+
+        function connect() {
+            ws = new WebSocket(`ws://${window.location.host}/ws/user/${userId}`);
+
+            ws.onopen = () => {
+                console.log('✅ Connected to hive mind');
+                document.getElementById('connectionStatus').textContent = 'Connected';
+                document.getElementById('connectionStatus').style.color = '#00ff88';
+            };
+
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                console.log('Message received:', data);
+
+                if (data.type === 'system') {
+                    addMessage('system', 'System', data.content);
+                } else if (data.type === 'response') {
+                    addMessage('hive', `Hive Mind (${data.sources || 0} sources)`, data.content);
+                }
+            };
+
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                document.getElementById('connectionStatus').textContent = 'Error';
+                document.getElementById('connectionStatus').style.color = '#ff4444';
+            };
+
+            ws.onclose = () => {
+                console.log('❌ Disconnected from hive mind');
+                document.getElementById('connectionStatus').textContent = 'Disconnected';
+                document.getElementById('connectionStatus').style.color = '#ff4444';
+
+                // Try to reconnect after 3 seconds
+                setTimeout(connect, 3000);
+            };
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (!message || !ws || ws.readyState !== WebSocket.OPEN) return;
+
+            // Add user message to UI
+            addMessage('user', 'You', message);
+
+            // Send to server
+            ws.send(JSON.stringify({
+                type: 'message',
+                content: message
+            }));
+
+            input.value = '';
+        }
+
+        function addMessage(type, sender, content) {
+            const messages = document.getElementById('messages');
+            const div = document.createElement('div');
+            div.className = `message ${type}`;
+
+            const timestamp = new Date().toLocaleTimeString();
+
+            div.innerHTML = `
+                <div class="message-header">${sender}</div>
+                <div class="message-content">${formatContent(content)}</div>
+                <div class="message-meta">${timestamp}</div>
+            `;
+
+            messages.appendChild(div);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function formatContent(content) {
+            // Basic markdown-like formatting
+            return content
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>');
+        }
+
+        async function updateStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+
+                // Update counts
+                document.getElementById('sessionCount').textContent = data.total_sessions;
+
+                // Update session list
+                const sessionsList = document.getElementById('sessions');
+                if (data.connected_sessions.length > 0) {
+                    sessionsList.innerHTML = '';
+                    data.connected_sessions.forEach(session => {
+                        const li = document.createElement('li');
+                        li.className = 'session-item';
+
+                        // Determine if it's an agent or session
+                        const isAgent = session.includes('agent');
+                        if (isAgent) {
+                            document.getElementById('agentCount').textContent =
+                                parseInt(document.getElementById('agentCount').textContent) + 1;
+                        }
+
+                        li.innerHTML = `<span class="status-dot"></span>${session}`;
+
+                        if (isAgent) {
+                            document.getElementById('agents').appendChild(li);
+                        } else {
+                            sessionsList.appendChild(li);
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+            }
+        }
+
+        // Initialize
+        connect();
+        setInterval(updateStatus, 2000);
+        updateStatus();
+
+        // Send on Enter key
+        document.getElementById('messageInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
+</body>
+</html>

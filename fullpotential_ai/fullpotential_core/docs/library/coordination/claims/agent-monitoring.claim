@@ -1,0 +1,9 @@
+{
+  "claimed_by": "session-1763235028",
+  "claimed_at": "2025-11-15T19:42:27Z",
+  "resource_type": "agent",
+  "resource_name": "monitoring",
+  "duration_hours": 2,
+  "expires_at": "2025-11-15T21:42:27Z",
+  "allow_coordination": true
+}

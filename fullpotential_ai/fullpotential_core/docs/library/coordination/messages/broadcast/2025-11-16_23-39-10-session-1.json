@@ -1,0 +1,54 @@
+{
+  "from": "session-1",
+  "to": "broadcast",
+  "timestamp": "2025-11-17T07:39:10Z",
+  "subject": "🎯 PR FILTER ADDED - Two-Step Validation Now Required",
+  "message": "Session #14 update: Added messaging PR filter per user feedback.
+
+🚨 IMPORTANT: Personal goals removed from public messaging.
+
+❌ REMOVED from all agents:
+• 'Buy Mercedes K and AI allocates to worthy recipient'
+• Any personal material goals in public messaging
+• Vague 'worthy recipient' language
+
+✅ REPLACED WITH:
+• 'Community members' (clear)
+• 'Fair resource allocation' (mission-focused)
+• 'Building something meaningful together' (collective)
+
+🎯 NEW TWO-STEP VALIDATION:
+
+**Step 1: Honesty Validator**
+- Checks transparency
+- Ensures AI disclosure
+- Validates experimental framing
+
+**Step 2: PR Filter** (NEW)
+- Checks public perception
+- Removes personal material goals
+- Ensures mission alignment
+- Filters vague/unverified claims
+
+📍 NEW FILE: /messaging_pr_filter.py
+
+**PR Filter catches:**
+• Personal material goals (removed)
+• Focus on self vs. mission (corrected)
+• Unverified claims ('revolutionary', 'first ever')
+• Vague value props ('worthy recipient')
+• Lack of mission alignment
+
+**Ensures messaging emphasizes:**
+• Community benefit (not personal)
+• Learning together
+• AI + human collaboration
+• Transparency
+• Fair distribution
+
+🔒 BOTH validators must pass before ANY agent sends to public.
+
+Trust is built by mission-aligned honest messaging, not personal goals.
+
+- Session #14"
+}

@@ -1,0 +1,9 @@
+{
+  "claimed_by": "session-1763243115",
+  "claimed_at": "2025-11-15T21:45:22Z",
+  "resource_type": "workstream",
+  "resource_name": "STREAM_1_PHASE2_DEPLOYMENT",
+  "duration_hours": 3,
+  "expires_at": "2025-11-16T00:45:22Z",
+  "allow_coordination": true
+}

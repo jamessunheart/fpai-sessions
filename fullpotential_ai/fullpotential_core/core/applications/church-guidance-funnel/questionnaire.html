@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Church Formation Questionnaire - AI Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .disclaimer {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 4px;
+        }
+
+        h1 {
+            color: #0f3460;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .form-section {
+            margin-bottom: 40px;
+        }
+
+        .form-section h2 {
+            color: #0f3460;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #16213e;
+            font-size: 1.5em;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .help-text {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #0f3460;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .checkbox-group {
+            margin-top: 10px;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: normal;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+            color: white;
+            padding: 16px 48px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: block;
+            margin: 40px auto 0;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(15, 52, 96, 0.3);
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0f3460, #16213e);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .required {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-card">
+            <div class="disclaimer">
+                <strong>⚠️ EDUCATIONAL INFORMATION ONLY</strong><br>
+                This AI assistant provides educational templates based on your input. We are not attorneys and this is not legal advice. All generated documents should be reviewed by a qualified attorney before use.
+            </div>
+
+            <h1>Church Formation Assistant</h1>
+            <p class="subtitle">Answer these questions and our AI will generate customized church formation documents tailored to your specific situation.</p>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+
+            <form id="churchForm" action="/generate-documents" method="POST">
+
+                <!-- Section 1: Basic Information -->
+                <div class="form-section">
+                    <h2>1. Basic Information</h2>
+
+                    <div class="form-group">
+                        <label>Church Name <span class="required">*</span></label>
+                        <input type="text" name="church_name" required>
+                        <p class="help-text">The official name of your church (e.g., "Faith Community Church", "New Life Ministry")</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>State <span class="required">*</span></label>
+                        <select name="state" required>
+                            <option value="">Select your state...</option>
+                            <option value="AL">Alabama</option>
+                            <option value="AK">Alaska</option>
+                            <option value="AZ">Arizona</option>
+                            <option value="AR">Arkansas</option>
+                            <option value="CA">California</option>
+                            <option value="CO">Colorado</option>
+                            <option value="CT">Connecticut</option>
+                            <option value="DE">Delaware</option>
+                            <option value="FL">Florida</option>
+                            <option value="GA">Georgia</option>
+                            <option value="HI">Hawaii</option>
+                            <option value="ID">Idaho</option>
+                            <option value="IL">Illinois</option>
+                            <option value="IN">Indiana</option>
+                            <option value="IA">Iowa</option>
+                            <option value="KS">Kansas</option>
+                            <option value="KY">Kentucky</option>
+                            <option value="LA">Louisiana</option>
+                            <option value="ME">Maine</option>
+                            <option value="MD">Maryland</option>
+                            <option value="MA">Massachusetts</option>
+                            <option value="MI">Michigan</option>
+                            <option value="MN">Minnesota</option>
+                            <option value="MS">Mississippi</option>
+                            <option value="MO">Missouri</option>
+                            <option value="MT">Montana</option>
+                            <option value="NE">Nebraska</option>
+                            <option value="NV">Nevada</option>
+                            <option value="NH">New Hampshire</option>
+                            <option value="NJ">New Jersey</option>
+                            <option value="NM">New Mexico</option>
+                            <option value="NY">New York</option>
+                            <option value="NC">North Carolina</option>
+                            <option value="ND">North Dakota</option>
+                            <option value="OH">Ohio</option>
+                            <option value="OK">Oklahoma</option>
+                            <option value="OR">Oregon</option>
+                            <option value="PA">Pennsylvania</option>
+                            <option value="RI">Rhode Island</option>
+                            <option value="SC">South Carolina</option>
+                            <option value="SD">South Dakota</option>
+                            <option value="TN">Tennessee</option>
+                            <option value="TX">Texas</option>
+                            <option value="UT">Utah</option>
+                            <option value="VT">Vermont</option>
+                            <option value="VA">Virginia</option>
+                            <option value="WA">Washington</option>
+                            <option value="WV">West Virginia</option>
+                            <option value="WI">Wisconsin</option>
+                            <option value="WY">Wyoming</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Your Email <span class="required">*</span></label>
+                        <input type="email" name="email" required>
+                        <p class="help-text">We'll send your generated documents to this email address</p>
+                    </div>
+                </div>
+
+                <!-- Section 2: Core Beliefs -->
+                <div class="form-section">
+                    <h2>2. Core Beliefs & Mission</h2>
+
+                    <div class="form-group">
+                        <label>Core Religious Beliefs <span class="required">*</span></label>
+                        <textarea name="core_beliefs" required></textarea>
+                        <p class="help-text">Describe your church's fundamental religious beliefs and doctrines (e.g., biblical authority, salvation, worship practices)</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Church Mission Statement <span class="required">*</span></label>
+                        <textarea name="mission_statement" required></textarea>
+                        <p class="help-text">What is the primary purpose and mission of your church?</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Religious Tradition</label>
+                        <select name="tradition">
+                            <option value="">Select closest tradition...</option>
+                            <option value="Christian - Protestant">Christian - Protestant</option>
+                            <option value="Christian - Evangelical">Christian - Evangelical</option>
+                            <option value="Christian - Pentecostal">Christian - Pentecostal</option>
+                            <option value="Christian - Non-denominational">Christian - Non-denominational</option>
+                            <option value="Christian - Other">Christian - Other</option>
+                            <option value="Other">Other Religious Tradition</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Section 3: Governance Structure -->
+                <div class="form-section">
+                    <h2>3. Church Governance</h2>
+
+                    <div class="form-group">
+                        <label>Governance Model <span class="required">*</span></label>
+                        <select name="governance_model" required>
+                            <option value="">Select governance structure...</option>
+                            <option value="Pastor-led">Pastor-led (Single leader authority)</option>
+                            <option value="Elder Board">Elder Board (Multiple leaders)</option>
+                            <option value="Congregational">Congregational (Member voting)</option>
+                            <option value="Trustee Board">Trustee Board</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Leadership Structure</label>
+                        <textarea name="leadership_structure"></textarea>
+                        <p class="help-text">Describe your leadership roles (Pastor, Elders, Deacons, Board Members, etc.)</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Membership Requirements</label>
+                        <textarea name="membership_requirements"></textarea>
+                        <p class="help-text">What are the requirements to become a member? (e.g., profession of faith, baptism, attendance)</p>
+                    </div>
+                </div>
+
+                <!-- Section 4: Operations -->
+                <div class="form-section">
+                    <h2>4. Church Operations</h2>
+
+                    <div class="form-group">
+                        <label>Regular Activities <span class="required">*</span></label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" name="activities" value="worship_services"> Regular worship services</label>
+                            <label><input type="checkbox" name="activities" value="bible_study"> Bible study / Religious education</label>
+                            <label><input type="checkbox" name="activities" value="prayer_meetings"> Prayer meetings</label>
+                            <label><input type="checkbox" name="activities" value="community_outreach"> Community outreach</label>
+                            <label><input type="checkbox" name="activities" value="youth_ministry"> Youth ministry</label>
+                            <label><input type="checkbox" name="activities" value="counseling"> Pastoral counseling</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Expected Meeting Frequency</label>
+                        <select name="meeting_frequency">
+                            <option value="weekly">Weekly</option>
+                            <option value="bi-weekly">Bi-weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="as-needed">As needed</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Financial Support Model</label>
+                        <select name="financial_model">
+                            <option value="tithes">Tithes and offerings</option>
+                            <option value="donations">Voluntary donations</option>
+                            <option value="mixed">Mixed approach</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Section 5: Additional Information -->
+                <div class="form-section">
+                    <h2>5. Additional Information</h2>
+
+                    <div class="form-group">
+                        <label>Special Circumstances or Considerations</label>
+                        <textarea name="special_circumstances"></textarea>
+                        <p class="help-text">Any unique aspects of your church we should know about?</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Documents You Need</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" name="documents" value="articles_of_faith" checked> Articles of Faith</label>
+                            <label><input type="checkbox" name="documents" value="bylaws" checked> Church Bylaws</label>
+                            <label><input type="checkbox" name="documents" value="irs_letter" checked> IRS Letter 1045 Template</label>
+                            <label><input type="checkbox" name="documents" value="operating_procedures" checked> Operating Procedures</label>
+                            <label><input type="checkbox" name="documents" value="meeting_minutes" checked> Meeting Minutes Templates</label>
+                            <label><input type="checkbox" name="documents" value="recordkeeping" checked> Recordkeeping Guidelines</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="disclaimer">
+                    <strong>Before submitting:</strong> Please review your answers. The AI will generate customized documents based on this information. Remember, all documents are for educational purposes and should be reviewed by a qualified attorney.
+                </div>
+
+                <button type="submit" class="submit-btn">Generate My Church Documents →</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Progress bar tracking
+        const form = document.getElementById('churchForm');
+        const progressBar = document.getElementById('progressBar');
+        const inputs = form.querySelectorAll('input[required], textarea[required], select[required]');
+
+        function updateProgress() {
+            let filled = 0;
+            inputs.forEach(input => {
+                if (input.value.trim() !== '') filled++;
+            });
+            const percentage = (filled / inputs.length) * 100;
+            progressBar.style.width = percentage + '%';
+        }
+
+        inputs.forEach(input => {
+            input.addEventListener('input', updateProgress);
+            input.addEventListener('change', updateProgress);
+        });
+
+        // Form submission
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Show loading state
+            const submitBtn = form.querySelector('.submit-btn');
+            submitBtn.textContent = 'Generating Documents... (This may take 2-3 minutes)';
+            submitBtn.disabled = true;
+
+            // Collect form data
+            const formData = new FormData(form);
+
+            // Send to backend
+            fetch('/generate-documents', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Redirect to success page
+                    window.location.href = '/documents-generated?email=' + encodeURIComponent(formData.get('email'));
+                } else {
+                    alert('Error generating documents: ' + data.error);
+                    submitBtn.textContent = 'Generate My Church Documents →';
+                    submitBtn.disabled = false;
+                }
+            })
+            .catch(error => {
+                alert('Error: ' + error);
+                submitBtn.textContent = 'Generate My Church Documents →';
+                submitBtn.disabled = false;
+            });
+        });
+
+        // Initial progress check
+        updateProgress();
+    </script>
+</body>
+</html>

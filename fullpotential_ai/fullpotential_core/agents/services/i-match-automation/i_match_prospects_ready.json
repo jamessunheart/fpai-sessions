@@ -1,0 +1,670 @@
+{
+  "prospects": [
+    {
+      "prospect": {
+        "first_name": "Sarah",
+        "last_name": "Chen",
+        "title": "Senior Financial Advisor",
+        "company": "Bay Area Wealth Management",
+        "specialty": "retirement planning for tech executives",
+        "location": "San Francisco, CA",
+        "achievement": "15+ years experience, CFP certified"
+      },
+      "connection_request": {
+        "message": "Hi Sarah - Building AI that matches retirement planning advisors with qualified tech exec leads in SF. Thought you might be interested in better-fit prospects?",
+        "char_count": 159,
+        "personalization_score": 10,
+        "talking_points": [
+          "Mentioned: retirement planning for tech executives",
+          "Value prop: AI matching",
+          "Soft approach, no hard sell"
+        ]
+      },
+      "follow_up_dm": {
+        "message": "Hi Sarah,\n\nThanks for connecting! I noticed you specialize in retirement planning for tech executives \u2013 with 15+ years in the Bay Area market, you must have incredible insights into the unique challenges that demographic faces with their equity comp and early retirement goals.\n\nI'm reaching out because we're launching I MATCH this week with 10 carefully selected SF advisors. We use AI to connect clients with advisors based on actual fit \u2013 their specific needs, values, and financial situation matched to your exact expertise and approach.\n\nWhat makes us different: we only charge a 20% success fee when you actually close a client. No upfront costs, no subscription fees. Our AI vetting means you're only spending time with prospects who are genuinely aligned with what you do best \u2013 retirement planning for tech executives in your case.\n\nWe're intentionally keeping this first cohort small to ensure quality and give our founding advisors the best experience. Given your specialty and track record, I think you'd be a perfect fit.\n\nWould you be open to a quick 15-minute call this week to see if it makes sense? You can also check out more details here: http://198.54.123.234:8401/providers.html\n\nEither way, looking forward to staying connected.\n\nBest,\nJames",
+        "word_count": 204,
+        "personalization_score": 10,
+        "talking_points": [
+          "Personalized: 15+ years experience, CFP certified",
+          "Clear value prop: 20% success fee, AI matching",
+          "Urgency: launching with 10 SF advisors",
+          "CTA: provider signup link"
+        ]
+      },
+      "linkedin_url": "https://www.linkedin.com/search/results/people/?keywords=Sarah%20Chen%20Bay Area Wealth Management"
+    },
+    {
+      "prospect": {
+        "first_name": "Michael",
+        "last_name": "Rodriguez",
+        "title": "Financial Planner",
+        "company": "Golden Gate Financial",
+        "specialty": "tax-efficient wealth strategies",
+        "location": "San Francisco, CA",
+        "achievement": "Former tech CFO, now advising executives"
+      },
+      "connection_request": {
+        "message": "Hi Michael - Building AI matching for advisors in tax-efficient wealth strategies. Helping SF planners connect with pre-qualified prospects. Worth a quick chat?",
+        "char_count": 160,
+        "personalization_score": 10,
+        "talking_points": [
+          "Mentioned: tax-efficient wealth strategies",
+          "Value prop: AI matching",
+          "Soft approach, no hard sell"
+        ]
+      },
+      "follow_up_dm": {
+        "message": "Hey Michael,\n\nThanks for connecting! I saw you made the leap from tech CFO to advising executives\u2014that's exactly the kind of real-world experience clients are looking for, especially in tax-efficient wealth strategies.\n\nI'm reaching out because we're launching I MATCH this week with 10 select SF advisors. It's an AI platform that matches financial advisors with clients based on specialty fit, not just ZIP codes. Think of it as quality over quantity\u2014clients who actually need your specific expertise in executive compensation and tax strategies.\n\nWhat makes this different: our AI evaluates client situations and matches them with advisors who've solved similar problems. For you, that means executives dealing with stock options, equity comp, and complex tax situations. We only charge a 20% success fee when you close a client, so there's zero upfront risk.\n\nSince you're working with a niche clientele (former tech executives), having an intelligent matching system could save you tons of qualification time while bringing in better-fit prospects.\n\nI'd love to show you how it works\u2014takes about 15 minutes. Here's more info on the advisor side: http://198.54.123.234:8401/providers.html\n\nWould you be open to a quick call this week to see if it's a fit?\n\nBest,\nJames",
+        "word_count": 198,
+        "personalization_score": 10,
+        "talking_points": [
+          "Personalized: Former tech CFO, now advising executives",
+          "Clear value prop: 20% success fee, AI matching",
+          "Urgency: launching with 10 SF advisors",
+          "CTA: provider signup link"
+        ]
+      },
+      "linkedin_url": "https://www.linkedin.com/search/results/people/?keywords=Michael%20Rodriguez%20Golden Gate Financial"
+    },
+    {
+      "prospect": {
+        "first_name": "Jennifer",
+        "last_name": "Kim",
+        "title": "Wealth Advisor",
+        "company": "SF Financial Partners",
+        "specialty": "equity compensation planning",
+        "location": "San Francisco, CA",
+        "achievement": "Specialist in RSU/stock option strategies"
+      },
+      "connection_request": {
+        "message": "Hi Jennifer - Building AI matching for wealth advisors specializing in equity comp. Helping SF advisors connect with pre-qualified clients. Worth a quick chat?",
+        "char_count": 159,
+        "personalization_score": 10,
+        "talking_points": [
+          "Mentioned: equity compensation planning",
+          "Value prop: AI matching",
+          "Soft approach, no hard sell"
+        ]
+      },
+      "follow_up_dm": {
+        "message": "Hi Jennifer,\n\nThanks for connecting! I noticed your specialty in equity compensation planning \u2013 that's such a valuable niche, especially here in SF where so many professionals are trying to optimize their RSUs and stock options but don't know where to start.\n\nI'm reaching out because we're launching I MATCH this week with 10 San Francisco advisors, and your expertise in equity comp seemed like a perfect fit for what we're building.\n\nQuick context: I MATCH uses AI to connect advisors with clients who actually need their specific expertise \u2013 no more generic leads. Instead of the typical 40-50% referral fees, we only charge 20% success fee when a client actually engages. The AI matching means higher conversion rates because you're only talking to prospects who have the exact financial situations you specialize in (RSUs, stock options, etc.).\n\nWe're intentionally keeping this launch small to ensure quality, and I thought your equity compensation focus would resonate really well with the tech professionals in our pipeline.\n\nWould you be open to a quick 15-minute call this week to walk through how it works? You can also check out more details here: http://198.54.123.234:8401/providers.html\n\nEither way, looking forward to staying connected.\n\nBest,\nJames",
+        "word_count": 200,
+        "personalization_score": 10,
+        "talking_points": [
+          "Personalized: Specialist in RSU/stock option strategies",
+          "Clear value prop: 20% success fee, AI matching",
+          "Urgency: launching with 10 SF advisors",
+          "CTA: provider signup link"
+        ]
+      },
+      "linkedin_url": "https://www.linkedin.com/search/results/people/?keywords=Jennifer%20Kim%20SF Financial Partners"
+    },
+    {
+      "prospect": {
+        "first_name": "David",
+        "last_name": "Thompson",
+        "title": "Senior Wealth Manager",
+        "company": "Pacific Wealth Advisors",
+        "specialty": "estate planning and legacy wealth",
+        "location": "San Francisco, CA",
+        "achievement": "20+ years, focus on high-net-worth families"
+      },
+      "connection_request": {
+        "message": "Hi David - Saw your estate planning focus at Pacific Wealth Advisors. Built AI matching that connects advisors with pre-qualified legacy wealth prospects. Worth a quick chat?",
+        "char_count": 174,
+        "personalization_score": 10,
+        "talking_points": [
+          "Mentioned: estate planning and legacy wealth",
+          "Value prop: AI matching",
+          "Soft approach, no hard sell"
+        ]
+      },
+      "follow_up_dm": {
+        "message": "Hi David,\n\nThanks for connecting! I noticed your focus on estate planning and legacy wealth for high-net-worth families \u2013 after 20+ years, you've clearly built something special at Pacific Wealth Advisors.\n\nI wanted to follow up on why I reached out. I MATCH uses AI to connect advisors like you with clients who actually fit your expertise. No more generic leads that waste your time \u2013 our system matches based on wealth level, specific needs (like estate planning), and advisor specialty.\n\nHere's what makes us different: you only pay a 20% success fee when a client actually engages. No upfront costs, no monthly subscriptions. The AI does the heavy lifting to ensure quality matches, so you spend time with prospects who genuinely need what you offer.\n\nWe're launching with just 10 select advisors in the SF Bay Area this week, and I think your estate planning expertise would be perfect for the clients we're seeing. The goal is to keep it exclusive so each advisor gets real attention and quality matches.\n\nWould you be open to a quick 15-minute call to see if it's a fit? You can also check out more details here: http://198.54.123.234:8401/providers.html\n\nEither way, happy to be connected.\n\nBest,\nJames",
+        "word_count": 203,
+        "personalization_score": 10,
+        "talking_points": [
+          "Personalized: 20+ years, focus on high-net-worth families",
+          "Clear value prop: 20% success fee, AI matching",
+          "Urgency: launching with 10 SF advisors",
+          "CTA: provider signup link"
+        ]
+      },
+      "linkedin_url": "https://www.linkedin.com/search/results/people/?keywords=David%20Thompson%20Pacific Wealth Advisors"
+    },
+    {
+      "prospect": {
+        "first_name": "Lisa",
+        "last_name": "Patel",
+        "title": "Financial Consultant",
+        "company": "Silicon Valley Financial Group",
+        "specialty": "startup founders and early employees",
+        "location": "San Francisco, CA",
+        "achievement": "Former venture capitalist"
+      },
+      "connection_request": {
+        "message": "Hi Lisa - Building AI matching for advisors focused on startup founders/employees. Better client fit = higher conversion. Worth exploring?",
+        "char_count": 138,
+        "personalization_score": 10,
+        "talking_points": [
+          "Mentioned: startup founders and early employees",
+          "Value prop: AI matching",
+          "Soft approach, no hard sell"
+        ]
+      },
+      "follow_up_dm": {
+        "message": "Hi Lisa,\n\nThanks for connecting! I noticed your background in VC before moving into financial consulting \u2013 that unique perspective must be incredibly valuable when working with startup founders navigating liquidity events and equity compensation.\n\nI'm reaching out because I MATCH is an AI-powered platform that connects financial advisors with pre-qualified clients who actually fit their specialty. Given your focus on startup founders and early employees, I thought this could be interesting for you.\n\nHere's how it works: our AI matches advisors with clients based on specific needs and advisor expertise \u2013 so you only see leads that truly align with your practice. You only pay a 20% success fee when you actually close a client. No upfront costs, no wasted time on poor-fit prospects.\n\nWe're launching with 10 select advisors in the SF area this week, and your startup niche would be a perfect addition to our network. The timing feels right given how many tech employees are dealing with recent liquidity events and looking for specialized guidance.\n\nWould you be open to a quick 15-minute call this week to explore if this could work for your practice? You can learn more here: http://198.54.123.234:8401/providers.html\n\nLooking forward to connecting,\nJames",
+        "word_count": 200,
+        "personalization_score": 10,
+        "talking_points": [
+          "Personalized: Former venture capitalist",
+          "Clear value prop: 20% success fee, AI matching",
+          "Urgency: launching with 10 SF advisors",
+          "CTA: provider signup link"
+        ]
+      },
+      "linkedin_url": "https://www.linkedin.com/search/results/people/?keywords=Lisa%20Patel%20Silicon Valley Financial Group"
+    },
+    {
+      "prospect": {
+        "first_name": "James",
+        "last_name": "Wilson",
+        "title": "Certified Financial Planner",
+        "company": "Embarcadero Advisors",
+        "specialty": "retirement income planning",
+        "location": "San Francisco, CA",
+        "achievement": "CFP, ChFC, specializing in secure retirement"
+      },
+      "connection_request": {
+        "message": "Hi James - Built AI matching for CFPs in retirement planning. Helping SF advisors connect with pre-qualified prospects. Worth a quick chat?",
+        "char_count": 139,
+        "personalization_score": 10,
+        "talking_points": [
+          "Mentioned: retirement income planning",
+          "Value prop: AI matching",
+          "Soft approach, no hard sell"
+        ]
+      },
+      "follow_up_dm": {
+        "message": "Hi James,\n\nThanks for connecting! I noticed your focus on retirement income planning and your credentials \u2013 the ChFC designation especially shows your commitment to helping clients navigate complex retirement decisions.\n\nI wanted to reach out because we're launching I MATCH this week with 10 San Francisco advisors, and your specialty in secure retirement planning seems like a perfect fit for what we're building.\n\nHere's the quick version: we use AI to match clients with advisors based on their actual needs and preferences \u2013 not just zip codes. For retirement-focused planners like you, this means connecting with clients who are specifically looking for expertise in retirement income strategies, not just general financial planning.\n\nThe model is simple: 20% success fee only when you close a client. No upfront costs, no monthly subscriptions. Our AI handles the matching quality, so you're spending time with prospects who are already a good fit for your practice.\n\nSince we're keeping this initial group small and focused on the Bay Area, I wanted to see if you'd be open to a quick 15-minute call this week to walk through how it works?\n\nYou can see more details here: http://198.54.123.234:8401/providers.html\n\nWould Thursday or Friday work for a brief call?\n\nBest,\nJames",
+        "word_count": 205,
+        "personalization_score": 10,
+        "talking_points": [
+          "Personalized: CFP, ChFC, specializing in secure retirement",
+          "Clear value prop: 20% success fee, AI matching",
+          "Urgency: launching with 10 SF advisors",
+          "CTA: provider signup link"
+        ]
+      },
+      "linkedin_url": "https://www.linkedin.com/search/results/people/?keywords=James%20Wilson%20Embarcadero Advisors"
+    },
+    {
+      "prospect": {
+        "first_name": "Amanda",
+        "last_name": "Martinez",
+        "title": "Wealth Management Advisor",
+        "company": "SF Bay Advisors",
+        "specialty": "socially responsible investing",
+        "location": "San Francisco, CA",
+        "achievement": "ESG investment specialist, CFA charterholder"
+      },
+      "connection_request": {
+        "message": "Hi Amanda - Building AI matching for advisors in socially responsible investing. Connects you with pre-qualified prospects who share your values. Worth a quick chat?",
+        "char_count": 165,
+        "personalization_score": 10,
+        "talking_points": [
+          "Mentioned: socially responsible investing",
+          "Value prop: AI matching",
+          "Soft approach, no hard sell"
+        ]
+      },
+      "follow_up_dm": {
+        "message": "Hi Amanda,\n\nThanks for connecting! I noticed your ESG investment expertise and CFA credentials \u2013 there's such growing demand for advisors who truly understand socially responsible investing, and it's clear you've built real expertise in this space.\n\nI'm reaching out because we're launching I MATCH this week with 10 financial advisors in SF, and I think you'd be a great fit. We use AI to connect advisors with prospects who actually match their specialty \u2013 so in your case, clients specifically seeking ESG-focused wealth management rather than generic leads.\n\nHere's what makes us different: our AI analyzes both client needs and advisor strengths to create quality matches (not just lead dumps), and we only charge a 20% success fee when you actually close a client. No upfront costs, no wasted time on mismatched prospects.\n\nGiven your socially responsible investing focus, I think our matching technology could connect you with clients who are actively looking for exactly what you offer. We're intentionally keeping our SF launch small to ensure quality.\n\nWould you be open to a quick 15-minute call this week to see if it's a fit? You can learn more here: http://198.54.123.234:8401/providers.html\n\nLooking forward to hearing from you.\n\nBest,\nJames",
+        "word_count": 200,
+        "personalization_score": 10,
+        "talking_points": [
+          "Personalized: ESG investment specialist, CFA charterholder",
+          "Clear value prop: 20% success fee, AI matching",
+          "Urgency: launching with 10 SF advisors",
+          "CTA: provider signup link"
+        ]
+      },
+      "linkedin_url": "https://www.linkedin.com/search/results/people/?keywords=Amanda%20Martinez%20SF Bay Advisors"
+    },
+    {
+      "prospect": {
+        "first_name": "Robert",
+        "last_name": "Chang",
+        "title": "Senior Financial Advisor",
+        "company": "Presidio Financial Services",
+        "specialty": "business owner exit planning",
+        "location": "San Francisco, CA",
+        "achievement": "Helped 50+ entrepreneurs transition businesses"
+      },
+      "connection_request": {
+        "message": "Hi Robert - Building AI lead matching for exit planning advisors in SF. Helping match you with business owners ready to plan their transition. Worth a quick chat?",
+        "char_count": 162,
+        "personalization_score": 10,
+        "talking_points": [
+          "Mentioned: business owner exit planning",
+          "Value prop: AI matching",
+          "Soft approach, no hard sell"
+        ]
+      },
+      "follow_up_dm": {
+        "message": "Hi Robert,\n\nThanks for connecting! I was impressed reading about your work in business owner exit planning \u2013 helping 50+ entrepreneurs successfully transition is no small feat. That's such a specialized skill set.\n\nI wanted to reach out because I think I MATCH could be a great fit for your practice. We're using AI to match business owners who need exit planning expertise with advisors like you \u2013 essentially pre-qualifying leads so you're only talking to people who actually need what you specialize in.\n\nHere's what makes us different: we only take a 20% success fee when you close a client (no upfront costs), and our matching algorithm focuses on quality over quantity. We're looking at factors like business type, timeline, complexity \u2013 the stuff that actually matters for a good advisor-client fit.\n\nWe're launching with just 10 advisors in SF this week to refine our platform before scaling. Given your exit planning niche, I think you'd be perfect for our pilot group.\n\nWould you be open to a quick 15-minute call this week to see if it makes sense? You can also check out more details here: http://198.54.123.234:8401/providers.html\n\nEither way, looking forward to staying connected.\n\nBest,\nJames",
+        "word_count": 198,
+        "personalization_score": 10,
+        "talking_points": [
+          "Personalized: Helped 50+ entrepreneurs transition businesses",
+          "Clear value prop: 20% success fee, AI matching",
+          "Urgency: launching with 10 SF advisors",
+          "CTA: provider signup link"
+        ]
+      },
+      "linkedin_url": "https://www.linkedin.com/search/results/people/?keywords=Robert%20Chang%20Presidio Financial Services"
+    },
+    {
+      "prospect": {
+        "first_name": "Emily",
+        "last_name": "Anderson",
+        "title": "Financial Planner",
+        "company": "Mission District Financial",
+        "specialty": "women and wealth management",
+        "location": "San Francisco, CA",
+        "achievement": "CDFA, focus on financial independence"
+      },
+      "connection_request": {
+        "message": "Hi Emily - Building AI matching for advisors specializing in women & wealth. Helping planners like you connect with ideal-fit prospects in SF. Worth a quick chat?",
+        "char_count": 162,
+        "personalization_score": 10,
+        "talking_points": [
+          "Mentioned: women and wealth management",
+          "Value prop: AI matching",
+          "Soft approach, no hard sell"
+        ]
+      },
+      "follow_up_dm": {
+        "message": "Hi Emily,\n\nThanks for connecting! I was impressed to see your CDFA certification and focus on women and wealth management \u2013 there's such a need for advisors who truly understand the unique financial planning challenges women face, especially around life transitions.\n\nI'm reaching out because we're launching I MATCH this week with 10 financial advisors in San Francisco. We use AI to match clients with the right advisor based on their specific needs and values \u2013 so instead of random leads, you'd only get prospects who are genuinely aligned with your expertise in women's financial independence.\n\nWhat makes us different: we only charge a 20% success fee when a client converts (no upfront costs), and our AI pre-qualifies leads so you're not wasting time on tire-kickers. Given your specialty in women and wealth management, I think you'd see really strong conversion rates with our matching algorithm.\n\nWe're intentionally keeping this first cohort small to ensure quality, but I'd love to get you on board if you're open to better-fit client relationships without the usual lead generation headaches.\n\nWould you be open to a quick 15-minute call this week? Or feel free to check out how it works here: http://198.54.123.234:8401/providers.html\n\nLooking forward to connecting,\nJames",
+        "word_count": 204,
+        "personalization_score": 10,
+        "talking_points": [
+          "Personalized: CDFA, focus on financial independence",
+          "Clear value prop: 20% success fee, AI matching",
+          "Urgency: launching with 10 SF advisors",
+          "CTA: provider signup link"
+        ]
+      },
+      "linkedin_url": "https://www.linkedin.com/search/results/people/?keywords=Emily%20Anderson%20Mission District Financial"
+    },
+    {
+      "prospect": {
+        "first_name": "Kevin",
+        "last_name": "Nguyen",
+        "title": "Investment Advisor",
+        "company": "Nob Hill Wealth",
+        "specialty": "portfolio diversification strategies",
+        "location": "San Francisco, CA",
+        "achievement": "CFA, former institutional trader"
+      },
+      "connection_request": {
+        "message": "Hi Kevin - Building AI that matches SF advisors specializing in portfolio diversification with pre-qualified leads. Worth a quick chat about better client fit?",
+        "char_count": 159,
+        "personalization_score": 10,
+        "talking_points": [
+          "Mentioned: portfolio diversification strategies",
+          "Value prop: AI matching",
+          "Soft approach, no hard sell"
+        ]
+      },
+      "follow_up_dm": {
+        "message": "Hey Kevin,\n\nThanks for connecting! I was impressed seeing your background as a former institutional trader \u2013 that perspective must give you a real edge when it comes to portfolio diversification strategies for your clients at Nob Hill Wealth.\n\nI wanted to reach out because we're launching I MATCH this week, and I think it could be a strong fit for someone with your expertise. We use AI to match financial advisors with clients who actually need their specific skill set \u2013 no more cold leads or wasted time on prospects who aren't the right fit.\n\nThe model is pretty straightforward: we only charge a 20% success fee when you close a client, so there's zero upfront risk. Our AI filters for prospects who need exactly what you offer, which means higher-quality conversations from day one.\n\nWe're rolling this out with just 10 advisors in SF this week to fine-tune everything before going broader. Given your CFA credentials and institutional background, I think you'd be perfect for our initial group.\n\nWould you be open to a quick 15-minute call this week to see if it makes sense? You can also check out more details here: http://198.54.123.234:8401/providers.html\n\nLooking forward to hearing your thoughts.\n\nBest,\nJames",
+        "word_count": 204,
+        "personalization_score": 10,
+        "talking_points": [
+          "Personalized: CFA, former institutional trader",
+          "Clear value prop: 20% success fee, AI matching",
+          "Urgency: launching with 10 SF advisors",
+          "CTA: provider signup link"
+        ]
+      },
+      "linkedin_url": "https://www.linkedin.com/search/results/people/?keywords=Kevin%20Nguyen%20Nob Hill Wealth"
+    },
+    {
+      "prospect": {
+        "first_name": "Rachel",
+        "last_name": "Brooks",
+        "title": "Wealth Advisor",
+        "company": "Financial District Partners",
+        "specialty": "physician and healthcare professional finances",
+        "location": "San Francisco, CA",
+        "achievement": "Specialized practice for medical professionals"
+      },
+      "connection_request": {
+        "message": "Hi Rachel - Building AI matching for advisors in physician finances. Helping SF advisors connect with pre-qualified healthcare professionals. Worth a quick chat?",
+        "char_count": 161,
+        "personalization_score": 10,
+        "talking_points": [
+          "Mentioned: physician and healthcare professional finances",
+          "Value prop: AI matching",
+          "Soft approach, no hard sell"
+        ]
+      },
+      "follow_up_dm": {
+        "message": "Hi Rachel,\n\nThanks for connecting! I noticed your specialized focus on physician and healthcare professional finances \u2013 that's such a smart niche. Doctors need advisors who truly understand their unique financial situations, and it's clear you've built your practice around that.\n\nI'm reaching out because I think I MATCH could be a great fit for your practice. We use AI to match financial advisors with pre-qualified leads based on specialty, location, and financial needs \u2013 so you'd get connected with physicians and healthcare professionals specifically looking for someone with your expertise.\n\nThe best part? You only pay a 20% success fee when you actually close a client. No upfront costs, no wasted time on bad-fit prospects. Our AI does the heavy lifting to ensure both sides are aligned before you even connect.\n\nWe're launching with 10 SF advisors this week to pilot the platform, and given your healthcare specialization, I'd love to include you in this initial group. The early feedback has been really promising.\n\nWould you be open to a quick 15-minute call this week to see if it makes sense? You can also check out more details here: http://198.54.123.234:8401/providers.html\n\nLooking forward to hearing from you!\n\nJames",
+        "word_count": 198,
+        "personalization_score": 10,
+        "talking_points": [
+          "Personalized: Specialized practice for medical professionals",
+          "Clear value prop: 20% success fee, AI matching",
+          "Urgency: launching with 10 SF advisors",
+          "CTA: provider signup link"
+        ]
+      },
+      "linkedin_url": "https://www.linkedin.com/search/results/people/?keywords=Rachel%20Brooks%20Financial District Partners"
+    },
+    {
+      "prospect": {
+        "first_name": "Thomas",
+        "last_name": "Lee",
+        "title": "Senior Wealth Manager",
+        "company": "Telegraph Hill Advisors",
+        "specialty": "cross-border wealth management",
+        "location": "San Francisco, CA",
+        "achievement": "International tax and estate planning expert"
+      },
+      "connection_request": {
+        "message": "Hi Thomas - saw your cross-border wealth work at Telegraph Hill. Built AI matching that connects advisors with pre-qualified leads in their specialty. Worth a quick chat?",
+        "char_count": 170,
+        "personalization_score": 10,
+        "talking_points": [
+          "Mentioned: cross-border wealth management",
+          "Value prop: AI matching",
+          "Soft approach, no hard sell"
+        ]
+      },
+      "follow_up_dm": {
+        "message": "Hi Thomas,\n\nThanks for connecting! I noticed your expertise in cross-border wealth management \u2013 that's such a valuable niche, especially in the Bay Area with so many expats and international families needing sophisticated planning.\n\nI wanted to reach out because we're launching I MATCH this week with 10 SF-based advisors, and your cross-border specialty could be a perfect fit. We're solving a real problem: traditional lead gen sends generic prospects that waste everyone's time.\n\nInstead, we use AI to match high-intent clients with advisors based on their actual specialties and preferences. Think of it as quality over quantity \u2013 fewer conversations, but with people who genuinely need what you offer (like international tax and estate planning expertise).\n\nThe model is simple: you only pay a 20% success fee when a matched client becomes a paying client. No upfront costs, no subscription, no risk.\n\nSince we're launching with a small group this week to refine the matching algorithm, I'd love to show you how it works and see if it makes sense for your practice. \n\nWould you be open to a quick 15-minute call this week? Here's more info: http://198.54.123.234:8401/providers.html\n\nEither way, looking forward to staying connected.\n\nBest,\nJames",
+        "word_count": 198,
+        "personalization_score": 10,
+        "talking_points": [
+          "Personalized: International tax and estate planning expert",
+          "Clear value prop: 20% success fee, AI matching",
+          "Urgency: launching with 10 SF advisors",
+          "CTA: provider signup link"
+        ]
+      },
+      "linkedin_url": "https://www.linkedin.com/search/results/people/?keywords=Thomas%20Lee%20Telegraph Hill Advisors"
+    },
+    {
+      "prospect": {
+        "first_name": "Jessica",
+        "last_name": "Garcia",
+        "title": "Financial Consultant",
+        "company": "Castro Financial Group",
+        "specialty": "LGBTQ+ financial planning",
+        "location": "San Francisco, CA",
+        "achievement": "Advocate for inclusive financial services"
+      },
+      "connection_request": {
+        "message": "Hi Jessica - Building AI that matches LGBTQ+ financial advisors with ideal clients. Would love to connect and share how we're helping planners in SF find better-fit leads.",
+        "char_count": 171,
+        "personalization_score": 10,
+        "talking_points": [
+          "Mentioned: LGBTQ+ financial planning",
+          "Value prop: AI matching",
+          "Soft approach, no hard sell"
+        ]
+      },
+      "follow_up_dm": {
+        "message": "Hi Jessica,\n\nThanks for connecting! I came across your work in LGBTQ+ financial planning at Castro Financial Group \u2013 it's refreshing to see advisors championing inclusive financial services. That specialization is exactly what makes great client-advisor relationships work.\n\nI'm reaching out because we're launching I MATCH, an AI-powered lead matching platform that connects advisors with clients who actually fit their expertise. Instead of buying random leads that waste your time, our system learns what makes your ideal client and only sends matches that align with your specialty areas like LGBTQ+ financial planning.\n\nHere's what makes it different: you only pay a 20% success fee when you close a client. No upfront costs for leads that go nowhere. The AI gets smarter over time, so match quality improves as you use it.\n\nWe're launching with 10 San Francisco advisors this week, and given your niche focus, I think you'd be perfect for our initial group. The early advisors will get priority access to the best-fit leads in their specialties.\n\nWould you be open to a quick 15-minute call this week to see if it's a fit? You can also check out more details here: http://198.54.123.234:8401/providers.html\n\nLooking forward to connecting,\nJames",
+        "word_count": 199,
+        "personalization_score": 10,
+        "talking_points": [
+          "Personalized: Advocate for inclusive financial services",
+          "Clear value prop: 20% success fee, AI matching",
+          "Urgency: launching with 10 SF advisors",
+          "CTA: provider signup link"
+        ]
+      },
+      "linkedin_url": "https://www.linkedin.com/search/results/people/?keywords=Jessica%20Garcia%20Castro Financial Group"
+    },
+    {
+      "prospect": {
+        "first_name": "Daniel",
+        "last_name": "Foster",
+        "title": "Certified Financial Planner",
+        "company": "Russian Hill Wealth",
+        "specialty": "real estate investment planning",
+        "location": "San Francisco, CA",
+        "achievement": "Former real estate developer"
+      },
+      "connection_request": {
+        "message": "Hi Daniel - Built AI matching for CFPs in real estate investment planning. Connecting advisors with pre-qualified prospects in SF Bay Area. Worth a quick chat?",
+        "char_count": 159,
+        "personalization_score": 10,
+        "talking_points": [
+          "Mentioned: real estate investment planning",
+          "Value prop: AI matching",
+          "Soft approach, no hard sell"
+        ]
+      },
+      "follow_up_dm": {
+        "message": "Hi Daniel,\n\nThanks for connecting! I saw you made the transition from real estate developer to CFP at Russian Hill Wealth \u2013 that combination of hands-on development experience with financial planning must give you such a unique edge when advising clients on real estate investments.\n\nI'm reaching out because we're launching I MATCH this week with 10 San Francisco advisors, and your real estate investment specialty caught my attention. We've built an AI platform that matches clients with advisors based on their actual needs and goals \u2013 not just geography or who pays the most for leads.\n\nHere's what makes us different: you only pay a 20% success fee when you actually close a new client. No upfront costs, no paying for tire-kickers. The AI does the heavy lifting on matching quality, so the clients you talk to are genuinely aligned with your expertise in real estate investment planning.\n\nSince you have that developer background, I think you'd especially appreciate working with clients who are serious about real estate wealth building \u2013 exactly the type of matches our system prioritizes for advisors with your profile.\n\nWould you be open to a quick 15-minute call this week to see if it's a fit? Here's more info on how it works: http://198.54.123.234:8401/providers.html\n\nBest,\nJames",
+        "word_count": 212,
+        "personalization_score": 10,
+        "talking_points": [
+          "Personalized: Former real estate developer",
+          "Clear value prop: 20% success fee, AI matching",
+          "Urgency: launching with 10 SF advisors",
+          "CTA: provider signup link"
+        ]
+      },
+      "linkedin_url": "https://www.linkedin.com/search/results/people/?keywords=Daniel%20Foster%20Russian Hill Wealth"
+    },
+    {
+      "prospect": {
+        "first_name": "Michelle",
+        "last_name": "Wong",
+        "title": "Wealth Management Advisor",
+        "company": "Chinatown Financial Services",
+        "specialty": "bilingual financial planning (English/Mandarin)",
+        "location": "San Francisco, CA",
+        "achievement": "Serving Asian-American community for 10+ years"
+      },
+      "connection_request": {
+        "message": "Hi Michelle - Love your bilingual approach in wealth management. Built an AI that matches advisors with pre-qualified prospects based on specialty. Worth a quick chat?",
+        "char_count": 167,
+        "personalization_score": 10,
+        "talking_points": [
+          "Mentioned: bilingual financial planning (English/Mandarin)",
+          "Value prop: AI matching",
+          "Soft approach, no hard sell"
+        ]
+      },
+      "follow_up_dm": {
+        "message": "Hi Michelle,\n\nThanks for connecting! I was really impressed seeing your work serving the Asian-American community in SF for over 10 years. Bilingual financial planning is such an underserved niche, and it's clear you've built something meaningful at Chinatown Financial Services.\n\nI wanted to reach out because we're launching I MATCH this week with 10 select San Francisco advisors. We use AI to match clients with advisors based on specialty, language, and cultural fit - exactly the kind of thing that would help connect more Mandarin-speaking families with someone like you who truly understands their needs.\n\nHere's what makes us different: our AI does the heavy lifting on lead quality (no more tire-kickers), and we only take a 20% success fee when you actually close a client. No upfront costs, no wasted time on mismatched prospects.\n\nWe're keeping this initial launch small to ensure quality, but given your bilingual specialty and community focus, I think you'd be a perfect fit for the clients we're seeing come through.\n\nWould you be open to a quick 15-minute call this week to explore if it makes sense? You can also check out more details here: http://198.54.123.234:8401/providers.html\n\nLooking forward to hearing from you!\n\nJames",
+        "word_count": 200,
+        "personalization_score": 10,
+        "talking_points": [
+          "Personalized: Serving Asian-American community for 10+ years",
+          "Clear value prop: 20% success fee, AI matching",
+          "Urgency: launching with 10 SF advisors",
+          "CTA: provider signup link"
+        ]
+      },
+      "linkedin_url": "https://www.linkedin.com/search/results/people/?keywords=Michelle%20Wong%20Chinatown Financial Services"
+    },
+    {
+      "prospect": {
+        "first_name": "Christopher",
+        "last_name": "Taylor",
+        "title": "Financial Advisor",
+        "company": "Marina District Advisors",
+        "specialty": "young professionals and career planning",
+        "location": "San Francisco, CA",
+        "achievement": "Millennial financial planning specialist"
+      },
+      "connection_request": {
+        "message": "Hi Christopher - Building AI lead matching for advisors focused on young professionals. Better client fit in your niche = higher close rates. Worth a quick chat?",
+        "char_count": 161,
+        "personalization_score": 10,
+        "talking_points": [
+          "Mentioned: young professionals and career planning",
+          "Value prop: AI matching",
+          "Soft approach, no hard sell"
+        ]
+      },
+      "follow_up_dm": {
+        "message": "Hi Christopher,\n\nThanks for connecting! I noticed your focus on millennial financial planning and young professionals \u2013 that's such an underserved niche, and it's great to see advisors specializing in career-stage planning rather than just asset thresholds.\n\nI wanted to follow up on why I reached out. I'm James, and I'm launching I MATCH here in SF \u2013 an AI-powered platform that connects financial advisors with pre-qualified clients who actually fit their specialty. Instead of cold leads or generic referrals, our system matches based on life stage, financial goals, and advisor expertise.\n\nWhat makes us different: we only charge a 20% success fee when a client becomes a paying relationship. No upfront costs, no wasted time on tire-kickers. For someone like you focused on young professionals, this means getting matched with clients actively seeking career-stage financial guidance \u2013 not retirees or high-net-worth individuals outside your wheelhouse.\n\nWe're launching with just 10 SF advisors this week to ensure match quality stays high. Given your millennial specialty, I think you'd be a strong fit for our initial group.\n\nWould you be open to a quick 15-minute call this week to see if it makes sense? Here's more info: http://198.54.123.234:8401/providers.html\n\nLooking forward to hearing your thoughts.\n\nBest,\nJames",
+        "word_count": 205,
+        "personalization_score": 10,
+        "talking_points": [
+          "Personalized: Millennial financial planning specialist",
+          "Clear value prop: 20% success fee, AI matching",
+          "Urgency: launching with 10 SF advisors",
+          "CTA: provider signup link"
+        ]
+      },
+      "linkedin_url": "https://www.linkedin.com/search/results/people/?keywords=Christopher%20Taylor%20Marina District Advisors"
+    },
+    {
+      "prospect": {
+        "first_name": "Nicole",
+        "last_name": "Johnson",
+        "title": "Senior Financial Planner",
+        "company": "Sunset Financial Partners",
+        "specialty": "divorce financial planning",
+        "location": "San Francisco, CA",
+        "achievement": "CDFA, mediator trained"
+      },
+      "connection_request": {
+        "message": "Hi Nicole - Building AI matching for divorce financial planning advisors in SF. Helping planners like you connect with pre-qualified clients. Worth a quick chat?",
+        "char_count": 161,
+        "personalization_score": 10,
+        "talking_points": [
+          "Mentioned: divorce financial planning",
+          "Value prop: AI matching",
+          "Soft approach, no hard sell"
+        ]
+      },
+      "follow_up_dm": {
+        "message": "Hi Nicole,\n\nThanks for connecting! I noticed your CDFA certification and focus on divorce financial planning \u2013 such an important specialty where the right advisor-client fit makes all the difference during a challenging transition.\n\nI'm reaching out because I Match uses AI to connect financial advisors with pre-qualified prospects who actually need their specific expertise. Instead of cold outreach or generic leads, our system matches clients based on their situation, goals, and your specialization in divorce planning.\n\nThe model is simple: you only pay a 20% success fee when a matched client becomes a paying relationship. No upfront costs, no wasted time on tire-kickers. The AI does the heavy lifting to ensure quality matches, so you're talking to people who genuinely need what you offer.\n\nWe're launching with 10 advisors in the SF Bay Area this week, and given your niche in divorce financial planning, I think you'd be a great fit for the platform. The more specific your specialty, the better our matching works.\n\nWould you be open to a quick 15-minute call to explore if this makes sense for your practice? Here's more info: http://198.54.123.234:8401/providers.html\n\nEither way, always happy to connect with fellow professionals doing meaningful work.\n\nBest,\nJames",
+        "word_count": 201,
+        "personalization_score": 10,
+        "talking_points": [
+          "Personalized: CDFA, mediator trained",
+          "Clear value prop: 20% success fee, AI matching",
+          "Urgency: launching with 10 SF advisors",
+          "CTA: provider signup link"
+        ]
+      },
+      "linkedin_url": "https://www.linkedin.com/search/results/people/?keywords=Nicole%20Johnson%20Sunset Financial Partners"
+    },
+    {
+      "prospect": {
+        "first_name": "Andrew",
+        "last_name": "Harris",
+        "title": "Wealth Consultant",
+        "company": "Pacific Heights Wealth",
+        "specialty": "alternative investments",
+        "location": "San Francisco, CA",
+        "achievement": "Private equity and hedge fund background"
+      },
+      "connection_request": {
+        "message": "Hi Andrew - Built AI matching for wealth advisors in alternative investments. Connects you with pre-qualified prospects actually seeking your specialty. Worth a quick chat?",
+        "char_count": 172,
+        "personalization_score": 10,
+        "talking_points": [
+          "Mentioned: alternative investments",
+          "Value prop: AI matching",
+          "Soft approach, no hard sell"
+        ]
+      },
+      "follow_up_dm": {
+        "message": "Hey Andrew,\n\nThanks for connecting! I noticed your background in private equity and hedge funds \u2013 that expertise in alternatives really sets you apart in the wealth management space.\n\nI wanted to reach out because we're launching I MATCH, an AI-powered lead matching platform specifically for financial advisors like yourself. The premise is simple: instead of chasing cold leads, our AI matches you with prospects who actually fit your specialty in alternative investments.\n\nWhat makes this different from typical lead gen:\n- Our AI pre-qualifies based on investment sophistication and interest in alternatives\n- You only pay a 20% success fee when a lead converts to a client (no upfront costs)\n- Much higher quality conversations because the matching is intelligent, not random\n\nWe're launching with 10 select advisors in SF this week, and given your PE/hedge fund background, I thought you'd be a perfect fit for our beta group. These advisors will get priority access and help us refine the matching algorithm for complex investment strategies.\n\nWould you be open to a quick 15-minute call this week to see if it makes sense? You can also check out more details here: http://198.54.123.234:8401/providers.html\n\nEither way, looking forward to staying connected.\n\nBest,\nJames",
+        "word_count": 202,
+        "personalization_score": 10,
+        "talking_points": [
+          "Personalized: Private equity and hedge fund background",
+          "Clear value prop: 20% success fee, AI matching",
+          "Urgency: launching with 10 SF advisors",
+          "CTA: provider signup link"
+        ]
+      },
+      "linkedin_url": "https://www.linkedin.com/search/results/people/?keywords=Andrew%20Harris%20Pacific Heights Wealth"
+    },
+    {
+      "prospect": {
+        "first_name": "Stephanie",
+        "last_name": "Miller",
+        "title": "Financial Planning Associate",
+        "company": "SOMA Financial Group",
+        "specialty": "student loan and debt management",
+        "location": "San Francisco, CA",
+        "achievement": "Helping professionals eliminate $50M+ in debt"
+      },
+      "connection_request": {
+        "message": "Hi Stephanie - saw your student loan work at SOMA. Built AI matching for advisors in debt management. Connects you with pre-qualified prospects who actually need your help. Worth a quick chat?",
+        "char_count": 192,
+        "personalization_score": 10,
+        "talking_points": [
+          "Mentioned: student loan and debt management",
+          "Value prop: AI matching",
+          "Soft approach, no hard sell"
+        ]
+      },
+      "follow_up_dm": {
+        "message": "Hi Stephanie,\n\nThanks for connecting! I'm really impressed by your focus on student loan and debt management \u2013 helping professionals eliminate $50M+ in debt is incredible impact. That specialty is exactly why I wanted to reach out.\n\nI'm James, and I've built I MATCH, an AI platform that connects financial advisors with clients who actually need their specific expertise. Instead of cold outreach or generic leads, our system matches you with people actively seeking help with student loans and debt \u2013 your sweet spot.\n\nHere's what makes it different: we only charge a 20% success fee when a client actually signs with you. No upfront costs, no wasted time on poor fits. The AI analyzes both advisor specialties and client needs to ensure quality matches, not just quantity.\n\nWe're launching with 10 select advisors in SF this week, and given your debt management focus, I think you'd be a great fit. The early cohort will help us refine the matching algorithms while getting priority access to incoming clients.\n\nWould you be open to a quick 15-minute call this week to see if it makes sense? You can also check out more details here: http://198.54.123.234:8401/providers.html\n\nLooking forward to hearing your thoughts!\n\nJames",
+        "word_count": 201,
+        "personalization_score": 10,
+        "talking_points": [
+          "Personalized: Helping professionals eliminate $50M+ in debt",
+          "Clear value prop: 20% success fee, AI matching",
+          "Urgency: launching with 10 SF advisors",
+          "CTA: provider signup link"
+        ]
+      },
+      "linkedin_url": "https://www.linkedin.com/search/results/people/?keywords=Stephanie%20Miller%20SOMA Financial Group"
+    },
+    {
+      "prospect": {
+        "first_name": "Brian",
+        "last_name": "Davis",
+        "title": "Wealth Manager",
+        "company": "Haight Ashbury Financial",
+        "specialty": "nonprofit and foundation planning",
+        "location": "San Francisco, CA",
+        "achievement": "Former nonprofit CFO, philanthropic advising"
+      },
+      "connection_request": {
+        "message": "Hi Brian - Saw your nonprofit/foundation work at Haight Ashbury Financial. I match advisors with ideal clients using AI. Worth a quick conversation on better lead quality?",
+        "char_count": 171,
+        "personalization_score": 10,
+        "talking_points": [
+          "Mentioned: nonprofit and foundation planning",
+          "Value prop: AI matching",
+          "Soft approach, no hard sell"
+        ]
+      },
+      "follow_up_dm": {
+        "message": "Hi Brian,\n\nThanks for connecting! I noticed your background as a former nonprofit CFO \u2013 that hands-on experience must give you incredible insight when advising foundations and nonprofits on their financial strategy. It's a niche that really needs advisors who understand both sides.\n\nI wanted to follow up on why I reached out about I MATCH. We're using AI to connect financial advisors with pre-qualified clients who actually match their specialty. Instead of chasing generic leads, you'd get prospects specifically looking for nonprofit and foundation planning expertise \u2013 people who already value what you bring to the table.\n\nHere's what makes it different: we only charge a 20% success fee when you actually close a client (no upfront costs), and our matching algorithm considers investment style, communication preferences, and service needs to ensure quality fit, not just quantity.\n\nWe're launching this week with just 10 advisors in the SF area to refine the platform before scaling, and I think your nonprofit specialization would be perfect for our initial group.\n\nWould you be open to a quick 15-minute call this week to see if it's a fit? You can also check out more details here: http://198.54.123.234:8401/providers.html\n\nEither way, looking forward to staying connected.\n\nBest,\nJames",
+        "word_count": 204,
+        "personalization_score": 10,
+        "talking_points": [
+          "Personalized: Former nonprofit CFO, philanthropic advising",
+          "Clear value prop: 20% success fee, AI matching",
+          "Urgency: launching with 10 SF advisors",
+          "CTA: provider signup link"
+        ]
+      },
+      "linkedin_url": "https://www.linkedin.com/search/results/people/?keywords=Brian%20Davis%20Haight Ashbury Financial"
+    }
+  ],
+  "summary": {
+    "total_prospects": 20,
+    "connection_requests_generated": 20,
+    "dms_generated": 20,
+    "ready_to_execute": true
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "from": "session-1763234893",
+  "to": "session-1763234893",
+  "timestamp": "2025-11-15T19:29:26Z",
+  "subject": "API Keys Available",
+  "message": "Credential vault now operational! Get API keys with: cd docs/coordination && ./scripts/session-get-credential.sh anthropic_api_key. Full guide: SESSION_ONBOARDING.md. Can help with church-guidance API setup."
+}

@@ -1,0 +1,39 @@
+# MAGNET-AWARE PROTOCOL v2.0 CONFIGURATION
+
+environment:
+  mode: "backtest"  # backtest, paper_trade, live
+  exchange: "binance"
+  symbol: "BTC/USDT"
+  log_level: "INFO"
+
+leverage:
+  min_leverage: 1.0
+  max_leverage: 2.5
+  high_tension_max: 3.0
+  high_tension_threshold: 0.15
+  min_magnet_strength: 60.0
+
+fuse:
+  max_volatility: 2.0
+  max_drawdown_pct: 5.0
+  max_conflict_index: 0.8
+  reduction_pct_min: 0.3
+  reduction_pct_max: 0.7
+  fuse_leverage: 1.0
+  cooldown_seconds: 300
+  halt_new_trades: true
+  halt_duration_seconds: 180
+
+position_sizing:
+  risk_per_trade_pct: 1.0
+  max_position_pct: 20.0
+  max_total_exposure_pct: 50.0
+  tier1_max_pct: 15.0
+  tier2_max_pct: 10.0
+  tier3_max_pct: 5.0
+  tier4_max_pct: 2.0
+
+backtest:
+  initial_equity: 430000.0
+  start_date: "2024-09-01"
+  end_date: "2024-10-31"

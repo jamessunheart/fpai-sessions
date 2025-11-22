@@ -1,0 +1,222 @@
+{
+  "sequences": {
+    "provider_onboarding": {
+      "name": "Financial Advisor Onboarding Sequence",
+      "audience": "Financial advisors from LinkedIn/Reddit",
+      "goal": "Convert interested advisors to active providers",
+      "emails": [
+        {
+          "day": 0,
+          "subject": "Your I MATCH Account is Ready - Here's What Happens Next",
+          "content": "Hi {first_name},\n\nThanks for joining I MATCH! You're now part of a network that helps financial advisors find their ideal clients using AI.\n\n**What happens next:**\n\n1. **Complete Your Profile** (5 minutes)\n   - Add your specialties (retirement, wealth management, etc)\n   - Set your availability preferences\n   - Upload photo and credentials\n\n2. **Get Matched** (automated)\n   - Our AI will match you with clients who fit your expertise\n   - You'll receive 1-3 introductions per week (on average)\n   - Only clients who specifically need YOUR specialty\n\n3. **Close Deals** (on your terms)\n   - Interview the clients we send you\n   - You decide who to work with\n   - Pay 20% referral fee only when you close\n\n**Your First Step:**\n\nComplete your profile here: [Link to profile setup]\n\nThis takes 5 minutes and unlocks the matching system.\n\n**Questions?**\n\nReply to this email - I personally respond to every message.\n\nBest,\nJames\nFounder, I MATCH\n\nP.S. The advisors who complete their profile within 24 hours get matched 3x faster. Don't wait!",
+          "cta": "Complete profile",
+          "expected_open_rate": 60,
+          "expected_click_rate": 30
+        },
+        {
+          "day": 3,
+          "subject": "3 Clients Are Looking for Someone Like You Right Now",
+          "content": "Hi {first_name},\n\nQuick update: We currently have 3 clients in our system who are looking for a financial advisor with your exact expertise:\n\n**Client 1:** 34-year-old tech professional, $200K income, needs retirement planning\n**Client 2:** Small business owner, looking for tax-efficient wealth management\n**Client 3:** Recently inherited $500K, needs comprehensive financial planning\n\nThe problem? Your profile isn't complete yet, so our AI can't match you with them.\n\n**It takes 5 minutes:**\n[Link to complete profile]\n\n**What you're missing:**\n- Specialty areas (what you're best at)\n- Availability preferences\n- Professional credentials\n- Client testimonials (optional but powerful)\n\nOnce complete, you'll start receiving 1-3 qualified introductions per week.\n\n**How matching works:**\n\n1. Client fills out detailed questionnaire\n2. AI analyzes their needs, budget, goals\n3. AI finds 3 best-fit advisors (like you)\n4. Client interviews all 3 and chooses\n5. You only pay if they hire you (20% referral fee)\n\nComplete your profile now and you could be talking to these clients by end of week:\n[Link]\n\nBest,\nJames\n\nP.S. These clients won't wait forever. Complete your profile before someone else gets matched.",
+          "cta": "Complete profile urgently",
+          "expected_open_rate": 50,
+          "expected_click_rate": 25
+        },
+        {
+          "day": 7,
+          "subject": "How Sarah Closed $120K in AUM in Her First Month on I MATCH",
+          "content": "Hi {first_name},\n\nI wanted to share a quick success story from one of our advisors.\n\n**Meet Sarah** (CFP in Austin, TX):\n\nMonth 1 on I MATCH:\n- Received 4 client introductions\n- Interviewed all 4\n- Signed 2 new clients\n- $120K in assets under management\n- Paid $480 in referral fees (20% of first year fee of $2,400)\n- Net: $1,920 in new recurring revenue\n\n**What made her successful:**\n\n1. **Complete profile** - Took 5 minutes, unlocked matching\n2. **Fast response** - Contacted new leads within 24 hours\n3. **Personalized approach** - Used AI match data to customize pitch\n4. **Professional follow-up** - Sent thank you notes to all referrals\n\n**The difference:**\n\nBefore I MATCH: Spent $500/month on Google Ads, got 2 unqualified leads\nAfter I MATCH: Pays only when she closes, gets pre-qualified leads\n\n**Your turn:**\n\nComplete your profile: [Link]\nStart getting matched this week\n\n**Common questions:**\n\nQ: How much does it cost?\nA: $0 upfront. 20% referral fee only when you close a client.\n\nQ: How many leads will I get?\nA: Typically 1-3 qualified introductions per week.\n\nQ: What if the client isn't a good fit?\nA: You're never required to work with anyone. We just make intros.\n\nReady to get started?\n[Link to complete profile]\n\nBest,\nJames\n\nP.S. Have questions? Reply to this email. I respond personally.",
+          "cta": "Complete profile with social proof",
+          "expected_open_rate": 45,
+          "expected_click_rate": 20
+        },
+        {
+          "day": 14,
+          "subject": "Last Chance: Your I MATCH Account Will Be Paused",
+          "content": "Hi {first_name},\n\nI noticed you haven't completed your I MATCH profile yet.\n\n**Here's what that means:**\n\nYour account will be paused in 3 days. You'll stop receiving client introductions and won't be matched with anyone looking for advisors like you.\n\n**If you want to keep your account active:**\n\nComplete your profile here: [Link]\nTakes 5 minutes\n\n**What you're missing out on:**\n\nThis week alone:\n- 12 clients signed up looking for financial advisors\n- 3 of them specifically needed someone with your expertise\n- They were matched with other advisors whose profiles were complete\n\n**One last thing:**\n\nI built I MATCH to help advisors like you find ideal clients without the hassle of expensive marketing or cold calling.\n\nIt works. But only if you complete your profile.\n\nDecision time:\n- Complete profile \u2192 Start getting matched \u2192 Grow your practice\n- Don't complete \u2192 Account paused \u2192 Keep doing what you're doing now\n\nYour choice: [Link to complete profile]\n\nBest,\nJames\n\nP.S. If you're not interested, no worries - just reply \"unsubscribe\" and I'll remove you from the list. No hard feelings.",
+          "cta": "Urgency - last chance",
+          "expected_open_rate": 40,
+          "expected_click_rate": 15
+        }
+      ]
+    },
+    "customer_nurture": {
+      "name": "Customer Nurture Sequence",
+      "audience": "People who started questionnaire but didn't finish",
+      "goal": "Get them to complete matching questionnaire",
+      "emails": [
+        {
+          "day": 0,
+          "subject": "You're 80% Done Finding Your Perfect Financial Advisor",
+          "content": "Hi {first_name},\n\nI noticed you started our AI matching questionnaire but didn't finish.\n\nYou're so close! Just 2 more minutes and you'll get matched with 3 financial advisors who are perfect for your specific situation.\n\n**Where you left off:**\n[Link to continue questionnaire]\n\n**What happens after you finish:**\n\n1. Our AI analyzes your needs, goals, budget\n2. You get matched with 3 best-fit advisors within 24 hours\n3. You schedule calls with all 3 (or just the ones you like)\n4. You choose the advisor that feels right\n5. Start working toward your financial goals\n\n**Why people love our matching:**\n\n\"I spent weeks Googling advisors and had no idea who to choose. I MATCH gave me 3 perfect matches in one day. Hired the second one I talked to.\" - Michael R.\n\n**Complete your questionnaire:**\n[Link]\n\nTakes 2 minutes. Get matched within 24 hours.\n\nBest,\nJames\nFounder, I MATCH\n\nP.S. Your partial answers are saved. Just pick up where you left off.",
+          "cta": "Complete questionnaire",
+          "expected_open_rate": 55,
+          "expected_click_rate": 35
+        },
+        {
+          "day": 2,
+          "subject": "Finding a Financial Advisor Shouldn't Be This Hard",
+          "content": "Hi {first_name},\n\nYou know that feeling when you need help with your finances but have no idea how to find the right advisor?\n\nThat's exactly why I built I MATCH.\n\n**The old way of finding advisors:**\n- Google \"financial advisor near me\" \u2192 Overwhelmed by ads\n- Ask friends \u2192 Everyone recommends someone different\n- Interview advisors \u2192 Takes weeks, still unsure\n- Pick one \u2192 Hope it works out\n\n**The I MATCH way:**\n- Fill out 5-minute questionnaire \u2192 Done\n- Get matched with 3 best-fit advisors \u2192 24 hours\n- Interview all 3 \u2192 Choose the best fit\n- Start working together \u2192 Confidence\n\n**Why it works:**\n\nOur AI doesn't just match on credentials. It matches on:\n- Your specific goals (retirement, home buying, investing, etc)\n- Your budget (we find advisors who work with your assets)\n- Communication style (phone person vs email person)\n- Life stage (30-year-old tech worker needs different advice than 60-year-old retiree)\n\n**Finish your questionnaire:**\n[Link]\n\n2 minutes \u2192 Matched within 24 hours \u2192 Financial clarity\n\nBest,\nJames\n\nP.S. This is completely free for you. Advisors pay us a small referral fee only if you hire them.",
+          "cta": "Finish questionnaire with benefits",
+          "expected_open_rate": 50,
+          "expected_click_rate": 30
+        },
+        {
+          "day": 7,
+          "subject": "Your Matches Are Waiting (But Not for Long)",
+          "content": "Hi {first_name},\n\nQuick heads up: We already have 3 financial advisors in our system who would be perfect for your situation.\n\n**Based on what you told us so far:**\n- Your goal: {goal_from_partial_questionnaire}\n- Your situation: {situation_from_partial_questionnaire}\n- Your preference: {preference_from_partial_questionnaire}\n\n**Your potential matches:**\n- Advisor 1: CFP specializing in {specialty}, 15 years experience\n- Advisor 2: Fee-only fiduciary, expert in {specialty}\n- Advisor 3: Highly rated for {specialty}\n\n**Problem:** You didn't finish the questionnaire, so we can't officially match you.\n\n**Solution:** Finish the last 2 questions (60 seconds)\n[Link to complete]\n\n**What happens next:**\n1. You finish questionnaire (60 seconds)\n2. AI confirms your 3 matches (instant)\n3. You get intro emails with their profiles (today)\n4. You schedule calls (this week)\n5. You choose your advisor (your timeline)\n\nDon't let 60 seconds stand between you and financial clarity.\n\nFinish now: [Link]\n\nBest,\nJames\n\nP.S. These advisors are actively accepting new clients, but spots fill up fast. Complete your questionnaire before they're matched with someone else.",
+          "cta": "Urgency with specifics",
+          "expected_open_rate": 45,
+          "expected_click_rate": 25
+        }
+      ]
+    },
+    "reengagement": {
+      "name": "Re-engagement Campaign",
+      "audience": "Dormant users (no activity in 30 days)",
+      "goal": "Bring them back to platform",
+      "emails": [
+        {
+          "day": 0,
+          "subject": "We've Made I MATCH 10x Better Since You Last Visited",
+          "content": "Hi {first_name},\n\nIt's been a while since you last checked out I MATCH.\n\nA lot has changed. We've made the matching process 10x better:\n\n**What's new:**\n\n\u2705 **Faster matching** - Get matched in under 24 hours (was 3-5 days)\n\u2705 **Better AI** - Improved accuracy by 40%\n\u2705 **More advisors** - 100+ vetted advisors now in network\n\u2705 **More specialties** - Retirement, tax planning, estate planning, and more\n\n**Special offer for returning users:**\n\nComplete your profile this week and get:\n- Priority matching (top of the queue)\n- Extended advisor interviews (30 min vs 15 min)\n- Personal follow-up from me\n\n**Get matched now:**\n[Link]\n\nBest,\nJames\n\nP.S. Still have questions from last time? Reply to this email - I'll answer personally.",
+          "cta": "Re-engage with new features",
+          "expected_open_rate": 35,
+          "expected_click_rate": 15
+        }
+      ]
+    }
+  },
+  "variables": {
+    "basic": {
+      "first_name": "User's first name",
+      "last_name": "User's last name",
+      "email": "User's email",
+      "signup_date": "When they signed up",
+      "last_activity": "Last time they logged in"
+    },
+    "provider_specific": {
+      "specialty": "Financial advisor specialty",
+      "location": "City, State",
+      "years_experience": "Years in practice",
+      "credentials": "CFP, CFA, etc"
+    },
+    "customer_specific": {
+      "goal": "Primary financial goal",
+      "budget": "Assets or income range",
+      "situation": "Life stage (buying home, retiring, etc)",
+      "preference": "Communication or service preferences"
+    },
+    "engagement": {
+      "profile_completion": "% of profile completed",
+      "questionnaire_progress": "% of questionnaire completed",
+      "matches_received": "Number of matches",
+      "messages_sent": "Outreach attempts"
+    }
+  },
+  "testing": {
+    "subject_line_tests": {
+      "test_1": {
+        "variant_a": "Your I MATCH Account is Ready",
+        "variant_b": "3 Clients Are Waiting to Meet You",
+        "hypothesis": "Urgency drives higher open rates"
+      },
+      "test_2": {
+        "variant_a": "How Sarah Closed $120K in Her First Month",
+        "variant_b": "You're Leaving Money on the Table",
+        "hypothesis": "Case studies outperform fear of loss"
+      }
+    },
+    "cta_tests": {
+      "test_1": {
+        "variant_a": "Complete Your Profile",
+        "variant_b": "Start Getting Matched Today",
+        "hypothesis": "Outcome-focused CTAs convert better"
+      },
+      "test_2": {
+        "variant_a": "Get Started Now",
+        "variant_b": "Show Me My Matches",
+        "hypothesis": "Specific CTAs outperform generic"
+      }
+    },
+    "timing_tests": {
+      "test_1": {
+        "variant_a": "Send Day 0, 3, 7, 14",
+        "variant_b": "Send Day 0, 1, 3, 7",
+        "hypothesis": "Faster cadence improves completion"
+      }
+    },
+    "metrics_to_track": [
+      "Open rate",
+      "Click rate",
+      "Conversion rate (profile completion)",
+      "Unsubscribe rate",
+      "Reply rate"
+    ]
+  },
+  "dashboard": {
+    "campaign_metrics": {
+      "emails_sent": 0,
+      "emails_delivered": 0,
+      "opens": 0,
+      "clicks": 0,
+      "conversions": 0,
+      "unsubscribes": 0,
+      "bounces": 0
+    },
+    "performance_by_sequence": {
+      "provider_onboarding": {
+        "completion_rate": 0,
+        "avg_time_to_convert": "0 days",
+        "revenue_generated": 0
+      },
+      "customer_nurture": {
+        "completion_rate": 0,
+        "avg_time_to_convert": "0 days",
+        "matches_created": 0
+      },
+      "reengagement": {
+        "reactivation_rate": 0,
+        "avg_time_dormant": "0 days"
+      }
+    },
+    "best_performing": {
+      "subject_lines": [],
+      "send_times": [],
+      "ctas": []
+    }
+  },
+  "plan": {
+    "week_1_setup": {
+      "goal": "Setup email infrastructure",
+      "actions": [
+        "Day 1: Choose email service (SendGrid recommended)",
+        "Day 2: Setup email templates",
+        "Day 3: Configure automation triggers",
+        "Day 4: Test sequences with test accounts",
+        "Day 5: Launch provider onboarding sequence",
+        "Day 6-7: Monitor and optimize"
+      ],
+      "tools_needed": [
+        "SendGrid account (free up to 100 emails/day)",
+        "Email template builder",
+        "Analytics tracking"
+      ]
+    },
+    "month_1_targets": {
+      "emails_sent": 500,
+      "open_rate": 45,
+      "click_rate": 20,
+      "conversion_rate": 10,
+      "provider_completions": 50,
+      "customer_completions": 25,
+      "revenue_impact": 600
+    },
+    "scaling_plan": {
+      "month_2": "Add customer nurture sequence",
+      "month_3": "Add reengagement campaign",
+      "month_6": "Advanced segmentation",
+      "month_12": "Fully automated multi-sequence nurture"
+    }
+  },
+  "timestamp": "2025-11-17T00:26:12.975707"
+}

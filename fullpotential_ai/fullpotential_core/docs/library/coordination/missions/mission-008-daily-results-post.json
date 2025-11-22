@@ -1,0 +1,81 @@
+{
+  "mission_id": "mission-008-daily-results-post",
+  "title": "Daily Results Post - $0 Marketing Challenge Update",
+  "priority": "medium",
+  "status": "available",
+  "created_at": "2025-11-15T21:15:00Z",
+  "claimed_by": null,
+  "claimed_at": null,
+  "completed_at": null,
+  "estimated_time_minutes": 20,
+  "recurrence": "daily",
+  "instructions": {
+    "task": "Post daily update on $0 Marketing Challenge results",
+    "frequency": "Once per day at end of day",
+    "duration": "Days 1-7 (or longer if performing well)",
+    "content_source": "/Users/jamessunheart/Development/agents/services/READY_TO_POST_NOW.md",
+    "content_section": "POST #11: The 'Numbers' Post",
+    "platform": "Twitter AND/OR LinkedIn",
+    "depends_on": "mission-007-daily-monitoring (need metrics first)"
+  },
+  "post_template": {
+    "structure": [
+      "Day X Results - $0 Marketing Challenge",
+      "Metrics (submissions, matches, consultations)",
+      "$0 spent on ads",
+      "What worked",
+      "What flopped",
+      "Tomorrow's goal",
+      "Link to product",
+      "Question to engage audience"
+    ],
+    "tone": "Transparent, humble, learning in public",
+    "hashtags": "#buildinpublic #entrepreneurship #indiehackers"
+  },
+  "success_criteria": {
+    "posted_daily": "Post every day for at least 7 days",
+    "actual_metrics": "Use real numbers, not made up",
+    "transparent": "Share both wins AND failures",
+    "engaging": "Ask question at end to encourage replies",
+    "consistent": "Post at same time each day"
+  },
+  "metrics_to_include": {
+    "required": [
+      "Form submissions",
+      "Matches created",
+      "Amount spent on ads ($0)"
+    ],
+    "optional": [
+      "Consultations booked",
+      "Social media engagement",
+      "Top traffic source",
+      "Interesting feedback received"
+    ]
+  },
+  "engagement_strategy": {
+    "reply_to_all": "Respond to every comment",
+    "ask_for_advice": "Genuinely ask what others would try",
+    "share_learnings": "Be specific about what worked/didn't",
+    "build_narrative": "Tell the journey story day by day"
+  },
+  "example_metrics": {
+    "day_1": {
+      "submissions": "5-15",
+      "matches": "4-12",
+      "consultations": "0-3",
+      "spent": "$0",
+      "top_tactic": "Personal DMs to friends"
+    }
+  },
+  "follow_up_actions": [
+    "Engage with all commenters",
+    "Note which daily post got most engagement",
+    "Adjust tactics based on what's working",
+    "Consider creating summary thread after Day 7"
+  ],
+  "resources": {
+    "template_file": "/Users/jamessunheart/Development/agents/services/READY_TO_POST_NOW.md",
+    "metrics_source": "mission-007-daily-monitoring results",
+    "url": "https://fullpotential.com/get-matched"
+  }
+}

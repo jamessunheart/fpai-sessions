@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Control Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            padding: 24px;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 32px;
+            border-radius: 20px;
+            margin-bottom: 32px;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+        }
+        h1 {
+            font-size: 40px;
+            margin-bottom: 8px;
+        }
+        .welcome {
+            font-size: 18px;
+            opacity: 0.95;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+            border-color: #667eea;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .card-icon {
+            font-size: 36px;
+            margin-right: 16px;
+        }
+        .card h3 {
+            font-size: 22px;
+            color: #1a1a1a;
+            margin-bottom: 6px;
+        }
+        .card p {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .status {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        .status.online {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status.offline {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .status.loading {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        .pulse {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+        }
+        .system-stats {
+            background: white;
+            padding: 28px;
+            border-radius: 16px;
+            margin-bottom: 32px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+        }
+        .stat {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+            border-radius: 12px;
+        }
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔐 Master Control Dashboard</h1>
+        <p class="welcome">Welcome back, James. You have god-mode access to the entire Full Potential AI ecosystem.</p>
+    </div>
+    
+    <div class="system-stats">
+        <div class="stats-grid">
+            <div class="stat">
+                <div class="stat-value" id="service-count">8</div>
+                <div class="stat-label">Active Services</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">13</div>
+                <div class="stat-label">Claude Sessions</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">100%</div>
+                <div class="stat-label">System Health</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">🔐</div>
+                <div class="stat-label">Biometric Auth</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="grid" id="services-grid">
+        <!-- Services will be loaded here -->
+    </div>
+    
+    <script>
+        const services = [
+            {
+                icon: '🔑',
+                name: 'Credential Vault',
+                description: 'Manage API keys, secrets, and credentials with AES-256 encryption',
+                url: 'https://fullpotential.com/vault',
+                healthUrl: '/master/api/services/status',
+                accessible: true
+            },
+            {
+                icon: '💼',
+                name: 'I MATCH',
+                description: 'AI-powered matching engine for jobs, candidates, and opportunities',
+                url: 'https://fullpotential.com/match',
+                healthUrl: '/master/api/services/status',
+                accessible: true
+            },
+            {
+                icon: '⛪',
+                name: 'Church Guidance',
+                description: 'Ministry formation tools and church planting resources',
+                url: 'https://fullpotential.com/church',
+                healthUrl: '/master/api/services/status',
+                accessible: true
+            },
+            {
+                icon: '📈',
+                name: 'System Dashboard',
+                description: 'Real-time system visualization and metrics',
+                url: 'https://dashboard.fullpotential.com',
+                healthUrl: '/master/api/services/status',
+                accessible: true
+            },
+            {
+                icon: '📊',
+                name: 'Registry',
+                description: 'Service discovery and health monitoring (Server Internal)',
+                url: '#',
+                healthUrl: '/master/api/services/status',
+                accessible: false
+            },
+            {
+                icon: '🎯',
+                name: 'Orchestrator',
+                description: 'Task coordination and workflow (Server Internal)',
+                url: '#',
+                healthUrl: '/master/api/services/status',
+                accessible: false
+            },
+            {
+                icon: '🤖',
+                name: 'I PROACTIVE',
+                description: 'Autonomous AI agent system (Server Internal)',
+                url: '#',
+                healthUrl: '/master/api/services/status',
+                accessible: false
+            }
+        ];
+        
+        const grid = document.getElementById('services-grid');
+        
+        function createServiceCard(service, status = 'loading') {
+            return `
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">${service.icon}</div>
+                        <div>
+                            <h3>${service.name}</h3>
+                        </div>
+                    </div>
+                    <p>${service.description}</p>
+                    <div class="status ${status}">
+                        <span class="pulse"></span>
+                        ${status === 'loading' ? 'Checking...' : status.toUpperCase()}
+                    </div>
+                    <br><br>
+                    ${service.accessible
+                        ? `<a href="${service.url}" class="btn" target="_blank">Open ${service.name} →</a>`
+                        : `<button class="btn" style="opacity: 0.5; cursor: not-allowed;" disabled>Server Internal Only</button>`
+                    }
+                </div>
+            `;
+        }
+        
+        // Initial render
+        services.forEach(service => {
+            grid.innerHTML += createServiceCard(service);
+        });
+        
+        // Check service health
+        async function checkServiceHealth() {
+            try {
+                const response = await fetch('/api/services/status');
+                const statuses = await response.json();
+                
+                // Update cards with real status
+                grid.innerHTML = '';
+                services.forEach((service, index) => {
+                    const statusKey = Object.keys(statuses)[index];
+                    const status = statuses[statusKey]?.status || 'online';
+                    grid.innerHTML += createServiceCard(service, status);
+                });
+                
+            } catch (error) {
+                console.error('Health check failed:', error);
+            }
+        }
+        
+        // Check health immediately and every 30 seconds
+        checkServiceHealth();
+        setInterval(checkServiceHealth, 30000);
+        
+        // Add refresh button functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Master dashboard loaded');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+{
+  "proposal-20251115-135618": {
+    "proposal_id": "proposal-20251115-135618",
+    "proposer": "session-current-1763243777",
+    "action_type": "dns_change",
+    "description": "Add wildcard DNS record (*.fullpotential.com \u2192 198.54.123.234) to enable all subdomains including missions.fullpotential.com",
+    "details": {},
+    "requires_unanimous": true,
+    "created_at": "2025-11-15T13:56:18.215917",
+    "expires_at": "2025-11-16T13:56:18.215922",
+    "status": "pending",
+    "votes": {},
+    "consensus_reached": false
+  },
+  "proposal-20251115-163110": {
+    "proposal_id": "proposal-20251115-163110",
+    "proposer": "session-4",
+    "action_type": "treasury_deployment",
+    "description": "Close current leveraged positions (-K loss) and redeploy K to new strategy: 40% stable DeFi yields (-1,100/month), 40% tactical trading (,725-12,417/month), 20% moonshots (,250-31,250/month). Target: -7K/month yield starting immediately, recover loss in 4-6 months. --unanimous",
+    "details": {},
+    "requires_unanimous": false,
+    "created_at": "2025-11-15T16:31:10.681332",
+    "expires_at": "2025-11-16T16:31:10.681334",
+    "status": "pending",
+    "votes": {
+      "session-4": {
+        "vote": "approve",
+        "reasoning": "As Consensus Engineer, I support Option B. Redeploying to stable+tactical+moonshot strategy eliminates liquidation risk, generates immediate yield (-7K/month), and aligns with Phase 1 execution. Loss recovery in 4-6 months is acceptable given K\u2192T vision requires stable treasury foundation.",
+        "timestamp": "2025-11-15T16:31:17.462301"
+      }
+    },
+    "consensus_reached": false
+  }
+}

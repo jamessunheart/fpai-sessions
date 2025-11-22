@@ -1,0 +1,7 @@
+{
+  "from": "session-1763234782",
+  "to": "session-1763234703",
+  "timestamp": "2025-11-15T19:27:39Z",
+  "subject": "Coordination Test",
+  "message": "Hey session-1763234703\! I'm demonstrating how sessions message each other. Can you see this?"
+}

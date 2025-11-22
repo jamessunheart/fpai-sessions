@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FPAI Empire - Live Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #0a0e27;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .live-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #4ade80;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #1e2139 0%, #2a2f4a 100%);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #9ca3af;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-change {
+            font-size: 14px;
+            color: #4ade80;
+        }
+
+        .stat-change.negative {
+            color: #ef4444;
+        }
+
+        .section {
+            background: #1e2139;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin-right: 12px;
+            border-radius: 2px;
+        }
+
+        .agents-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .agent-card {
+            background: #2a2f4a;
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid #4ade80;
+        }
+
+        .agent-card.stopped {
+            border-left-color: #ef4444;
+            opacity: 0.7;
+        }
+
+        .agent-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .agent-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .agent-status.running {
+            background: rgba(74, 222, 128, 0.2);
+            color: #4ade80;
+        }
+
+        .agent-status.stopped {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .agent-metrics {
+            font-size: 13px;
+            color: #9ca3af;
+            line-height: 1.6;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        canvas {
+            max-width: 100%;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+
+        .timeline {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .timeline-item {
+            padding: 15px;
+            border-left: 2px solid rgba(102, 126, 234, 0.3);
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .timeline-item::before {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background: #667eea;
+            border-radius: 50%;
+            position: absolute;
+            left: -6px;
+            top: 20px;
+        }
+
+        .timeline-time {
+            font-size: 12px;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .timeline-content {
+            font-size: 14px;
+            color: #d1d5db;
+        }
+
+        .last-updated {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 14px;
+            margin-top: 30px;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(102, 126, 234, 0.5);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(102, 126, 234, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌟 FPAI Empire Dashboard</h1>
+            <p class="subtitle">
+                <span class="live-indicator"></span>
+                Live Monitoring - Updates Every 10 Seconds
+            </p>
+        </header>
+
+        <!-- Key Metrics -->
+        <div class="stats-grid" id="stats-grid">
+            <!-- Populated by JavaScript -->
+        </div>
+
+        <!-- Treasury Section -->
+        <div class="section">
+            <h2 class="section-title">💰 Treasury Performance</h2>
+            <div class="chart-container">
+                <canvas id="treasuryChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Agents Section -->
+        <div class="section">
+            <h2 class="section-title">🤖 Autonomous Agents</h2>
+            <div class="agents-list" id="agents-list">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Activity Timeline -->
+        <div class="section">
+            <h2 class="section-title">📝 Recent Activity</h2>
+            <div class="timeline" id="activity-timeline">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+
+        <div class="last-updated" id="last-updated">
+            Last updated: Never
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        // Global state
+        let treasuryChart = null;
+        const activityLog = [];
+
+        // Fetch empire metrics
+        async function fetchEmpireMetrics() {
+            try {
+                const response = await fetch('/api/analytics/empire-metrics');
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error fetching metrics:', error);
+                return null;
+            }
+        }
+
+        // Fetch agent status
+        async function fetchAgentStatus() {
+            try {
+                const response = await fetch('/api/agents/status');
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error fetching agents:', error);
+                return [];
+            }
+        }
+
+        // Fetch treasury history
+        async function fetchTreasuryHistory() {
+            try {
+                const response = await fetch('/api/treasury/history?days=7');
+                const data = await response.json();
+                return data.history;
+            } catch (error) {
+                console.error('Error fetching treasury history:', error);
+                return [];
+            }
+        }
+
+        // Update stats cards
+        function updateStats(metrics) {
+            const statsGrid = document.getElementById('stats-grid');
+
+            const stats = [
+                {
+                    label: 'Treasury Value',
+                    value: `$${metrics.treasury.total_value_usd.toLocaleString()}`,
+                    change: `+${metrics.treasury.apy}% APY`
+                },
+                {
+                    label: 'Daily Yield',
+                    value: `$${metrics.treasury.daily_yield_usd.toFixed(2)}`,
+                    change: 'Compounding'
+                },
+                {
+                    label: 'Active Agents',
+                    value: metrics.agents.running,
+                    change: `${metrics.agents.total_actions_24h} actions today`
+                },
+                {
+                    label: 'Token Floor Price',
+                    value: `$${metrics.tokens.floor_price.toFixed(5)}`,
+                    change: `Backed by $${metrics.tokens.treasury_backing_usd}`
+                },
+                {
+                    label: '24h Revenue',
+                    value: `$${metrics.revenue.total_24h.toFixed(2)}`,
+                    change: metrics.revenue.total_24h > 0 ? '+Revenue active' : 'Building'
+                },
+                {
+                    label: 'Contributors',
+                    value: metrics.contributors.total,
+                    change: `${metrics.contributors.verified} verified`
+                }
+            ];
+
+            statsGrid.innerHTML = stats.map(stat => `
+                <div class="stat-card">
+                    <div class="stat-label">${stat.label}</div>
+                    <div class="stat-value">${stat.value}</div>
+                    <div class="stat-change">${stat.change}</div>
+                </div>
+            `).join('');
+        }
+
+        // Update agents list
+        function updateAgents(agents) {
+            const agentsList = document.getElementById('agents-list');
+
+            agentsList.innerHTML = agents.map(agent => `
+                <div class="agent-card ${agent.status !== 'running' ? 'stopped' : ''}">
+                    <div class="agent-name">${agent.name}</div>
+                    <span class="agent-status ${agent.status}">${agent.status}</span>
+                    <div class="agent-metrics">
+                        <strong>Uptime:</strong> ${Math.floor(agent.uptime_seconds / 3600)}h ${Math.floor((agent.uptime_seconds % 3600) / 60)}m<br>
+                        <strong>Last Action:</strong> ${agent.last_action}<br>
+                        ${Object.entries(agent.performance_metrics || {}).map(([key, value]) =>
+                            `<strong>${key}:</strong> ${value}`
+                        ).join('<br>')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update treasury chart
+        function updateTreasuryChart(history) {
+            const ctx = document.getElementById('treasuryChart').getContext('2d');
+
+            const labels = history.map(h => new Date(h.date * 1000).toLocaleDateString());
+            const values = history.map(h => h.value_usd);
+
+            if (treasuryChart) {
+                treasuryChart.destroy();
+            }
+
+            treasuryChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Treasury Value (USD)',
+                        data: values,
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#ffffff'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#9ca3af',
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.05)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#9ca3af'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.05)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update activity timeline
+        function updateActivity(agents) {
+            const timeline = document.getElementById('activity-timeline');
+
+            // Add new activities from agents
+            agents.forEach(agent => {
+                if (agent.last_action) {
+                    activityLog.unshift({
+                        time: new Date(),
+                        agent: agent.name,
+                        action: agent.last_action
+                    });
+                }
+            });
+
+            // Keep only last 20 items
+            activityLog.splice(20);
+
+            timeline.innerHTML = activityLog.map(item => `
+                <div class="timeline-item">
+                    <div class="timeline-time">${item.time.toLocaleTimeString()}</div>
+                    <div class="timeline-content">
+                        <strong>${item.agent}:</strong> ${item.action}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Main update function
+        async function updateDashboard() {
+            const metrics = await fetchEmpireMetrics();
+            const agents = await fetchAgentStatus();
+            const history = await fetchTreasuryHistory();
+
+            if (metrics) {
+                updateStats(metrics);
+            }
+
+            if (agents) {
+                updateAgents(agents);
+                updateActivity(agents);
+            }
+
+            if (history && history.length > 0) {
+                updateTreasuryChart(history);
+            }
+
+            // Update timestamp
+            document.getElementById('last-updated').textContent =
+                `Last updated: ${new Date().toLocaleTimeString()}`;
+        }
+
+        // Initialize dashboard
+        updateDashboard();
+
+        // Auto-refresh every 10 seconds
+        setInterval(updateDashboard, 10000);
+    </script>
+</body>
+</html>

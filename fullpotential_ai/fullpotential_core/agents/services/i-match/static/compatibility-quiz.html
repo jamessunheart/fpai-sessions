@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Your Perfect Financial Advisor Match | I MATCH Quiz</title>
+    <meta name="description" content="Discover what type of financial advisor aligns with your values and vision. Take our 2-minute compatibility quiz.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.95;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .question {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .question.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question h2 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .option:hover {
+            background: #e9ecef;
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .option-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .option-desc {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .progress {
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.5s;
+        }
+
+        .results {
+            display: none;
+            text-align: center;
+        }
+
+        .results.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        .results h2 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .match-type {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+
+        .match-type h3 {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        .match-desc {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .characteristics {
+            background: white;
+            color: #333;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .characteristics h4 {
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+
+        .characteristics ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .characteristics li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .characteristics li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 18px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 18px;
+            margin-top: 30px;
+            transition: all 0.3s;
+            border: 3px solid white;
+        }
+
+        .cta-button:hover {
+            background: transparent;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .share-buttons {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .share-button {
+            display: inline-block;
+            margin: 0 10px;
+            padding: 12px 25px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .share-button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .question-count {
+            text-align: center;
+            color: #999;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Financial Advisor Compatibility Quiz</h1>
+            <p>Discover the advisor approach that aligns with your vision</p>
+        </div>
+
+        <div class="content">
+            <div class="progress">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+
+            <!-- Questions -->
+            <div class="question active" data-question="1">
+                <div class="question-count">Question 1 of 8</div>
+                <h2>What's your primary relationship with money?</h2>
+                <div class="options">
+                    <div class="option" data-value="growth">
+                        <div class="option-title">Growth & Possibility</div>
+                        <div class="option-desc">Money is a tool to expand what's possible in my life</div>
+                    </div>
+                    <div class="option" data-value="security">
+                        <div class="option-title">Security & Stability</div>
+                        <div class="option-desc">Money provides safety and protection for my future</div>
+                    </div>
+                    <div class="option" data-value="freedom">
+                        <div class="option-title">Freedom & Flexibility</div>
+                        <div class="option-desc">Money gives me choices and independence</div>
+                    </div>
+                    <div class="option" data-value="impact">
+                        <div class="option-title">Impact & Contribution</div>
+                        <div class="option-desc">Money lets me make a difference in the world</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question" data-question="2">
+                <div class="question-count">Question 2 of 8</div>
+                <h2>How do you prefer to make important decisions?</h2>
+                <div class="options">
+                    <div class="option" data-value="data">
+                        <div class="option-title">Data & Analysis</div>
+                        <div class="option-desc">Show me the numbers, I'll decide based on facts</div>
+                    </div>
+                    <div class="option" data-value="collaborative">
+                        <div class="option-title">Collaborative Discussion</div>
+                        <div class="option-desc">Talk it through with someone I trust</div>
+                    </div>
+                    <div class="option" data-value="intuition">
+                        <div class="option-title">Intuition & Values</div>
+                        <div class="option-desc">What feels aligned with my deeper values?</div>
+                    </div>
+                    <div class="option" data-value="balanced">
+                        <div class="option-title">Balanced Approach</div>
+                        <div class="option-desc">Combination of data, discussion, and gut feeling</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question" data-question="3">
+                <div class="question-count">Question 3 of 8</div>
+                <h2>What matters most in an advisor relationship?</h2>
+                <div class="options">
+                    <div class="option" data-value="transparency">
+                        <div class="option-title">Total Transparency</div>
+                        <div class="option-desc">I need to understand exactly what I'm paying and why</div>
+                    </div>
+                    <div class="option" data-value="expertise">
+                        <div class="option-title">Deep Expertise</div>
+                        <div class="option-desc">I want someone who knows more than I ever could</div>
+                    </div>
+                    <div class="option" data-value="alignment">
+                        <div class="option-title">Values Alignment</div>
+                        <div class="option-desc">Someone who shares my worldview and life philosophy</div>
+                    </div>
+                    <div class="option" data-value="accessibility">
+                        <div class="option-title">Accessibility</div>
+                        <div class="option-desc">Easy to reach when I need guidance</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question" data-question="4">
+                <div class="question-count">Question 4 of 8</div>
+                <h2>What's your vision for the next 10 years?</h2>
+                <div class="options">
+                    <div class="option" data-value="expansion">
+                        <div class="option-title">Life Expansion</div>
+                        <div class="option-desc">Building something bigger, taking meaningful risks</div>
+                    </div>
+                    <div class="option" data-value="stability">
+                        <div class="option-title">Steady Growth</div>
+                        <div class="option-desc">Consistent progress toward comfortable retirement</div>
+                    </div>
+                    <div class="option" data-value="adventure">
+                        <div class="option-title">Adventure & Experience</div>
+                        <div class="option-desc">Travel, exploration, new experiences</div>
+                    </div>
+                    <div class="option" data-value="contribution">
+                        <div class="option-title">Meaningful Contribution</div>
+                        <div class="option-desc">Using resources to help others and make impact</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question" data-question="5">
+                <div class="question-count">Question 5 of 8</div>
+                <h2>How do you feel about financial complexity?</h2>
+                <div class="options">
+                    <div class="option" data-value="simple">
+                        <div class="option-title">Keep It Simple</div>
+                        <div class="option-desc">Explain it in plain English or I'm not interested</div>
+                    </div>
+                    <div class="option" data-value="detailed">
+                        <div class="option-title">Love The Details</div>
+                        <div class="option-desc">I want to understand every nuance and strategy</div>
+                    </div>
+                    <div class="option" data-value="strategic">
+                        <div class="option-title">Strategic Overview</div>
+                        <div class="option-desc">Big picture strategy, delegate the details</div>
+                    </div>
+                    <div class="option" data-value="education">
+                        <div class="option-title">Teach Me</div>
+                        <div class="option-desc">Help me understand enough to be confident</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question" data-question="6">
+                <div class="question-count">Question 6 of 8</div>
+                <h2>What does "wealth" mean to you?</h2>
+                <div class="options">
+                    <div class="option" data-value="freedom">
+                        <div class="option-title">Time Freedom</div>
+                        <div class="option-desc">Ability to spend time how I choose</div>
+                    </div>
+                    <div class="option" data-value="security">
+                        <div class="option-title">Financial Security</div>
+                        <div class="option-desc">Never worrying about money again</div>
+                    </div>
+                    <div class="option" data-value="growth">
+                        <div class="option-title">Personal Growth</div>
+                        <div class="option-desc">Resources to become my fullest potential</div>
+                    </div>
+                    <div class="option" data-value="legacy">
+                        <div class="option-title">Legacy & Impact</div>
+                        <div class="option-desc">Creating lasting positive change</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question" data-question="7">
+                <div class="question-count">Question 7 of 8</div>
+                <h2>How involved do you want to be in financial decisions?</h2>
+                <div class="options">
+                    <div class="option" data-value="collaborative">
+                        <div class="option-title">Collaborative Partner</div>
+                        <div class="option-desc">Work together on every major decision</div>
+                    </div>
+                    <div class="option" data-value="delegated">
+                        <div class="option-title">Trusted Delegation</div>
+                        <div class="option-desc">Set strategy, let advisor handle execution</div>
+                    </div>
+                    <div class="option" data-value="informed">
+                        <div class="option-title">Stay Informed</div>
+                        <div class="option-desc">Regular updates, I make final calls</div>
+                    </div>
+                    <div class="option" data-value="educated">
+                        <div class="option-title">Learn & Decide</div>
+                        <div class="option-desc">Teach me so I can make informed choices</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question" data-question="8">
+                <div class="question-count">Question 8 of 8</div>
+                <h2>What's your biggest financial frustration?</h2>
+                <div class="options">
+                    <div class="option" data-value="clarity">
+                        <div class="option-title">Lack of Clarity</div>
+                        <div class="option-desc">Too much jargon, not enough straight talk</div>
+                    </div>
+                    <div class="option" data-value="alignment">
+                        <div class="option-title">Misalignment</div>
+                        <div class="option-desc">Advisors don't understand my actual goals</div>
+                    </div>
+                    <div class="option" data-value="trust">
+                        <div class="option-title">Trust Issues</div>
+                        <div class="option-desc">Hidden fees, conflicts of interest</div>
+                    </div>
+                    <div class="option" data-value="overwhelm">
+                        <div class="option-title">Overwhelm</div>
+                        <div class="option-desc">Too many choices, don't know where to start</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div class="results" id="results">
+                <!-- Results will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 1;
+        const totalQuestions = 8;
+        const answers = {};
+
+        // Add click handlers to all options
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', function() {
+                const questionNum = this.closest('.question').dataset.question;
+                const value = this.dataset.value;
+                answers[questionNum] = value;
+                nextQuestion();
+            });
+        });
+
+        function nextQuestion() {
+            if (currentQuestion < totalQuestions) {
+                // Hide current question
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.remove('active');
+
+                // Show next question
+                currentQuestion++;
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.add('active');
+
+                // Update progress
+                updateProgress();
+            } else {
+                // Show results
+                showResults();
+            }
+        }
+
+        function updateProgress() {
+            const progress = (currentQuestion / totalQuestions) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function showResults() {
+            // Hide all questions
+            document.querySelectorAll('.question').forEach(q => q.style.display = 'none');
+
+            // Calculate advisor type
+            const advisorType = calculateAdvisorType(answers);
+
+            // Show results
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = generateResultsHTML(advisorType);
+            resultsDiv.classList.add('active');
+
+            // Full progress
+            document.getElementById('progressBar').style.width = '100%';
+        }
+
+        function calculateAdvisorType(answers) {
+            // Count value frequencies
+            const counts = {};
+            Object.values(answers).forEach(value => {
+                counts[value] = (counts[value] || 0) + 1;
+            });
+
+            // Determine dominant themes
+            const hasGrowth = (counts.growth || 0) + (counts.expansion || 0) >= 2;
+            const hasTransparency = (counts.transparency || 0) + (counts.simple || 0) + (counts.clarity || 0) >= 2;
+            const hasCollaborative = (counts.collaborative || 0) + (counts.educated || 0) >= 2;
+            const hasImpact = (counts.impact || 0) + (counts.contribution || 0) + (counts.legacy || 0) >= 2;
+
+            // Match to advisor types
+            if (hasGrowth && hasTransparency) {
+                return 'transformational';
+            } else if (hasTransparency && hasCollaborative) {
+                return 'partner';
+            } else if (hasImpact) {
+                return 'values-aligned';
+            } else if (counts.security >= 3) {
+                return 'conservative';
+            } else {
+                return 'balanced';
+            }
+        }
+
+        function generateResultsHTML(type) {
+            const types = {
+                transformational: {
+                    title: 'The Transformational Advisor',
+                    description: 'You need an advisor who sees money as a tool for life expansion, not just preservation. You value transparency, growth mindset, and thinking bigger than traditional retirement planning.',
+                    characteristics: [
+                        'Fee-only fiduciary (no conflicts of interest)',
+                        'Plain English communication',
+                        'Focuses on what becomes possible, not just what to avoid',
+                        'Aligns finances with personal growth',
+                        'Challenges you to think bigger',
+                        'Partners with you on vision, not just portfolio'
+                    ]
+                },
+                partner: {
+                    title: 'The Collaborative Partner',
+                    description: 'You value an advisor who works alongside you, explaining everything clearly and involving you in decisions. Transparency and education are paramount.',
+                    characteristics: [
+                        'Highly communicative and accessible',
+                        'Explains complex concepts simply',
+                        'Collaborates on every major decision',
+                        'No hidden fees or jargon',
+                        'Values your input and questions',
+                        'Teaches while advising'
+                    ]
+                },
+                'values-aligned': {
+                    title: 'The Values-Aligned Advisor',
+                    description: 'You need an advisor who shares your worldview and understands that wealth is about impact and contribution, not just accumulation.',
+                    characteristics: [
+                        'Understands your definition of wealth',
+                        'Helps align money with meaning',
+                        'Supports impact investing',
+                        'Sees bigger picture beyond numbers',
+                        'Values-driven investment philosophy',
+                        'Legacy and contribution focused'
+                    ]
+                },
+                conservative: {
+                    title: 'The Steady Guardian',
+                    description: 'You value security and stability. You need an advisor with deep expertise who can provide confidence and protect your financial future.',
+                    characteristics: [
+                        'Risk management expertise',
+                        'Conservative, proven strategies',
+                        'Focus on wealth preservation',
+                        'Comprehensive planning',
+                        'Regular monitoring and updates',
+                        'Long-term stability focus'
+                    ]
+                },
+                balanced: {
+                    title: 'The Balanced Strategist',
+                    description: 'You appreciate a well-rounded approach combining expertise, accessibility, and strategic thinking. You want an advisor who can adapt to your evolving needs.',
+                    characteristics: [
+                        'Flexible communication style',
+                        'Strategic and tactical expertise',
+                        'Balanced risk approach',
+                        'Adapts to your preferences',
+                        'Comprehensive financial planning',
+                        'Both big picture and details'
+                    ]
+                }
+            };
+
+            const result = types[type];
+            const shareText = encodeURIComponent(`I just discovered I need "${result.title}" - find yours!`);
+            const shareUrl = encodeURIComponent(window.location.href);
+
+            return `
+                <h2>Your Perfect Match:</h2>
+                <div class="match-type">
+                    <h3>${result.title}</h3>
+                    <div class="match-desc">${result.description}</div>
+
+                    <div class="characteristics">
+                        <h4>What to look for in your advisor:</h4>
+                        <ul>
+                            ${result.characteristics.map(char => `<li>${char}</li>`).join('')}
+                        </ul>
+                    </div>
+
+                    <a href="/match" class="cta-button">Find Your Advisor Match on I MATCH</a>
+
+                    <div class="share-buttons">
+                        <div style="color: white; margin-bottom: 15px; opacity: 0.9;">Share your results:</div>
+                        <a href="https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}" target="_blank" class="share-button">Share on Twitter</a>
+                        <a href="https://www.facebook.com/sharer/sharer.php?u=${shareUrl}" target="_blank" class="share-button">Share on Facebook</a>
+                        <a href="https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}" target="_blank" class="share-button">Share on LinkedIn</a>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Initialize progress
+        updateProgress();
+    </script>
+</body>
+</html>
