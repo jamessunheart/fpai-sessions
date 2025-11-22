@@ -44,7 +44,7 @@ logging.basicConfig(
 class ConsciousPulse:
     def __init__(self) -> None:
         self.interval_seconds = int(os.getenv("CONSCIOUS_PULSE_INTERVAL", "900"))
-        self.base_url = os.getenv("CONSCIOUS_PULSE_BASE_URL", "http://localhost:8400")
+        self.base_url = os.getenv("CONSCIOUS_PULSE_BASE_URL", "http://localhost:8010")
         self.timeout_seconds = float(os.getenv("CONSCIOUS_PULSE_TIMEOUT", "15"))
         self.alerts_path = Path(
             os.getenv("CONSCIOUS_PULSE_ALERTS", "/opt/fpai/docs/status/ALERTS.md")
@@ -102,12 +102,24 @@ class ConsciousPulse:
         url = self._build_url(path)
         try:
             if httpx:
-                response = httpx.get(url, timeout=self.timeout_seconds)
-                response.raise_for_status()
+                try:
+                    response = httpx.get(url, timeout=self.timeout_seconds)
+                    response.raise_for_status()
+                except httpx.HTTPStatusError as exc:  # type: ignore[attr-defined]
+                    if exc.response.status_code == 404:
+                        logger.debug("GET %s returned 404; skipping.", url)
+                        return None
+                    raise
                 return response.json()
             with urllib.request.urlopen(url, timeout=self.timeout_seconds) as resp:  # type: ignore[arg-type]
                 content = resp.read().decode("utf-8")
                 return json.loads(content)
+        except urllib.error.HTTPError as exc:
+            if exc.code == 404:
+                logger.debug("GET %s returned 404; skipping.", url)
+                return None
+            logger.debug("GET %s failed: %s", url, exc)
+            return None
         except Exception as exc:
             logger.debug("GET %s failed: %s", url, exc)
             return None
@@ -118,8 +130,19 @@ class ConsciousPulse:
         headers = {"Content-Type": "application/json"}
         try:
             if httpx:
-                response = httpx.post(url, content=data, headers=headers, timeout=self.timeout_seconds)
-                response.raise_for_status()
+                try:
+                    response = httpx.post(
+                        url,
+                        content=data,
+                        headers=headers,
+                        timeout=self.timeout_seconds,
+                    )
+                    response.raise_for_status()
+                except httpx.HTTPStatusError as exc:  # type: ignore[attr-defined]
+                    if exc.response.status_code == 404:
+                        logger.debug("POST %s returned 404; skipping.", url)
+                        return None
+                    raise
                 if response.content:
                     return response.json()
                 return None
@@ -127,6 +150,12 @@ class ConsciousPulse:
             with urllib.request.urlopen(req, timeout=self.timeout_seconds) as resp:  # type: ignore[arg-type]
                 content = resp.read().decode("utf-8")
                 return json.loads(content) if content else None
+        except urllib.error.HTTPError as exc:
+            if exc.code == 404:
+                logger.debug("POST %s returned 404; skipping.", url)
+                return None
+            logger.debug("POST %s failed: %s", url, exc)
+            return None
         except Exception as exc:
             logger.debug("POST %s failed: %s", url, exc)
             return None

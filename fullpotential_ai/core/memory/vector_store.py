@@ -191,7 +191,7 @@ class SemanticVectorStore:
             query_embeddings=[query_vector],
             n_results=limit,
             where=where_clause or None,
-            include=["documents", "metadatas", "distances", "ids"],
+            include=["documents", "metadatas", "distances"],
         )
 
         hits: List[RecallResult] = []
