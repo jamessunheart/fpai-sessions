@@ -11,4 +11,10 @@ Status Change:
 - Treasury running in Simulation Mode to unblock Nexus (M004). Live keys pending Binance support.
 
 Revenue Horizon:
-- Simultaneously validate Treasury (Magnet Simulation) and Sales (Storefront M005) to diversify income.
+- Simultaneously validate Treasury (Magnet Simulation) and Storefront (M005) to diversify income.
+
+Guiding Philosophy:
+- All actions must align with the Full Potential Constitution (M006). We are building a Conscious Ally, not just software.
+
+Long-Term Goal:
+- Observe human mission runners (M001/M002) to eventually replace their roles with Droplet #16 (Onboarding) and Droplet #17 (Verification).
