@@ -6,3 +6,9 @@ Current Focus:
 
 Strategic Horizon:
 - After Treasury is active, enable Nexus (M004) to autonomously propose yield optimizations.
+
+Status Change:
+- Treasury running in Simulation Mode to unblock Nexus (M004). Live keys pending Binance support.
+
+Revenue Horizon:
+- Simultaneously validate Treasury (Magnet) and Storefront (M005) to diversify income streams.
