@@ -1,0 +1,1 @@
+Ensure that every screen we build seamlessly supports both dark and light modes, maintaining clear visibility and readability of all text when switching between themes.

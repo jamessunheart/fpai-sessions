@@ -1,0 +1,14 @@
+batch
+
+@echo off
+echo 📦 Packaging Droplet #10 Upgrade...
+
+REM Create directory structure
+mkdir droplet-10-upgrade\app\api\routes
+mkdir droplet-10-upgrade\app\services
+mkdir droplet-10-upgrade\tests
+mkdir droplet-10-upgrade\frontend\app
+
+REM Copy template
+if exist "..\6-Spec_Generator_Template.txt" (
+    copy "..\6-Spec_Generator_Template.txt" "droplet-10-upgrade\SPECIFICATION_GENERATOR_TEMPLATE.md"

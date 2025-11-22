@@ -1,0 +1,10 @@
+{
+  "project_id": "dmgr-001",
+  "endpoints": [
+    { "path": "/health", "expect": { "status": 200, "json_keys": ["ok"] } },
+    { "path": "/register", "method": "POST", "body": { "name": "test" }, "expect": { "status": 200 } },
+    { "path": "/list", "expect": { "status": 200, "must_include": "droplets" } }
+  ],
+  "timeout_ms": 4000,
+  "auth_header": "X-API-KEY"
+}

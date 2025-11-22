@@ -1,0 +1,34 @@
+bash
+
+#!/bin/bash
+set -e
+
+echo "📦 Packaging Droplet #10 Upgrade..."
+
+# Create directory structure
+mkdir -p droplet-10-upgrade/{app/{api/routes,services},tests,frontend/app}
+
+# Copy all generated files (you'll need to save them first)
+echo "Copying files..."
+# (Files already saved from previous outputs)
+
+# Copy template from project
+if [ -f "../6-Spec_Generator_Template.txt" ]; then
+    cp "../6-Spec_Generator_Template.txt" droplet-10-upgrade/SPECIFICATION_GENERATOR_TEMPLATE.md
+    echo "✅ Template copied"
+else
+    echo "⚠️ Warning: Template not found. Please copy manually."
+fi
+
+# Create archive
+cd droplet-10-upgrade
+tar -czf ../droplet-10-upgrade-v2.0.tar.gz .
+cd ..
+
+echo "✅ Package created: droplet-10-upgrade-v2.0.tar.gz"
+echo ""
+echo "Next steps:"
+echo "1. Extract: tar -xzf droplet-10-upgrade-v2.0.tar.gz"
+echo "2. Configure: cp .env.example .env && edit .env"
+echo "3. Launch: docker-compose up -d"
+echo "4. Verify: curl http://localhost:8000/health"

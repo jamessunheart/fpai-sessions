@@ -1,0 +1,219 @@
+{
+  "info": {
+    "name": "Droplet 2 - Dashboard API",
+    "description": "API endpoints for Full Potential Dashboard (Droplet #2)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://drop2.fullpotential.ai",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Heartbeats",
+      "item": [
+        {
+          "name": "Submit Heartbeat (Metrics)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Cell_ID\": \"droplet_13\",\n  \"CPU_Usage\": 45.2,\n  \"RAM_Usage\": 512,\n  \"Status\": \"active\",\n  \"Timestamp\": \"2025-01-15T10:30:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/heartbeats",
+              "host": ["{{base_url}}"],
+              "path": ["heartbeats"]
+            },
+            "description": "Submit system metrics from a droplet. Use this endpoint for cross-droplet sync."
+          }
+        },
+        {
+          "name": "Get All Heartbeats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/heartbeats",
+              "host": ["{{base_url}}"],
+              "path": ["heartbeats"]
+            },
+            "description": "Retrieve all heartbeat records from the system"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sprints",
+      "item": [
+        {
+          "name": "Get All Sprints",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/sprints",
+              "host": ["{{base_url}}"],
+              "path": ["sprints"]
+            },
+            "description": "Retrieve all sprint records"
+          }
+        },
+        {
+          "name": "Create Sprint",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Sprint_ID\": \"sprint_002\",\n  \"Name\": \"Dashboard Metrics Endpoint\",\n  \"Dev_Name\": \"Haythem\",\n  \"Status\": \"Active\",\n  \"Time_Spent_hr\": 2.0,\n  \"Notes\": \"Creating metrics API\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/sprints",
+              "host": ["{{base_url}}"],
+              "path": ["sprints"]
+            },
+            "description": "Create a new sprint"
+          }
+        },
+        {
+          "name": "Update Sprint",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Status\": \"Done\",\n  \"Time_Spent_hr\": 8.5,\n  \"Proof_URL\": \"https://github.com/proof\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/sprints/recABC123",
+              "host": ["{{base_url}}"],
+              "path": ["sprints", "recABC123"]
+            },
+            "description": "Update an existing sprint. Replace 'recABC123' with actual record ID"
+          }
+        },
+        {
+          "name": "Delete Sprint",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/sprints/recABC123",
+              "host": ["{{base_url}}"],
+              "path": ["sprints", "recABC123"]
+            },
+            "description": "Delete a sprint. Replace 'recABC123' with actual record ID"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cells (Droplets)",
+      "item": [
+        {
+          "name": "Get All Cells",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/cells",
+              "host": ["{{base_url}}"],
+              "path": ["cells"]
+            },
+            "description": "Retrieve all droplet/cell status information"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Proofs",
+      "item": [
+        {
+          "name": "Get All Proofs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/proof",
+              "host": ["{{base_url}}"],
+              "path": ["proof"]
+            },
+            "description": "Retrieve all proof submissions"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analytics",
+      "item": [
+        {
+          "name": "Generate Daily Digest",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}/daily-digest",
+              "host": ["{{base_url}}"],
+              "path": ["daily-digest"]
+            },
+            "description": "Generate daily analytics report"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+) else (
+    echo ⚠️ Warning: Template not found. Please copy manually.
+)
+
+REM Create ZIP archive
+cd droplet-10-upgrade
+powershell Compress-Archive -Path * -DestinationPath ..\droplet-10-upgrade-v2.0.zip
+cd ..

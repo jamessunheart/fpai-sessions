@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  airtable-server:
+    build: .
+    ports:
+      - "80:8000"
+      - "443:8000"
+    environment:
+      - AIRTABLE_API_KEY=${AIRTABLE_API_KEY}
+      - BASE_ID=${BASE_ID}
+      - ORCHESTRATOR_URL=${ORCHESTRATOR_URL}
+      - REGISTRY_URL=${REGISTRY_URL}
+      - DROPLET_ID=${DROPLET_ID}
+      - DROPLET_REGISTRY_ID=${DROPLET_REGISTRY_ID}
+      - DROPLET_NAME=${DROPLET_NAME}
+      - DROPLET_STEWARD=${DROPLET_STEWARD}
+      - DROPLET_URL=${DROPLET_URL}
+      - DROPLET_VERSION=${DROPLET_VERSION}
+      - DROPLET_UDC_VERSION=${DROPLET_UDC_VERSION}
+      - ENVIRONMENT=${ENVIRONMENT}
+      - PORT=${PORT}
+    restart: unless-stopped

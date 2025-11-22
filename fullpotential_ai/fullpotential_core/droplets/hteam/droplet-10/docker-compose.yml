@@ -1,0 +1,101 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: orchestrator-db
+    environment:
+      POSTGRES_USER: orchestrator
+      POSTGRES_PASSWORD: changeme
+      POSTGRES_DB: orchestrator
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8"
+    ports:
+      - "5433:5432"   # ✅ fixed internal port
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./schema.sql:/docker-entrypoint-initdb.d/init.sql:ro  # <-- Change this part
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U orchestrator_user -d orchestrator_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - orchestrator-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: orchestrator-redis
+    command: redis-server --appendonly yes
+    ports:
+      - "6378:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    networks:
+      - orchestrator-network
+    restart: unless-stopped
+
+  orchestrator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: orchestrator-app
+    environment:
+      APP_NAME: Orchestrator
+      APP_VERSION: 2.0.0
+      ENVIRONMENT: development
+      DEBUG: "true"
+      LOG_LEVEL: INFO
+
+      HOST: 0.0.0.0
+      PORT: 8002
+      WORKERS: 4
+      RELOAD: "false"
+    
+      DATABASE_URL: postgresql+asyncpg://orchestrator:changeme@db:5432/orchestrator  # ✅ fixed
+      REDIS_URL: redis://redis:6379/0  # ✅ fixed
+      DROPLET_ENDPOINT: http://orchestrator:8002  # ✅ fixed
+
+      JWT_SECRET_KEY: xEx0PgTl08v7hHvFr4oRDhkkGIU2F9fZh5NzXiDJhRwO4_oI9j3O3yg1-lJsRBjbQ42T97TOXqPy6Etj6P9SnQ
+      JWT_ALGORITHM: HS256
+      JWT_EXPIRATION: 86400
+
+    ports:
+      - "8002:8002"
+      - "9090:9090"
+
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+    volumes:
+      - ./app:/app/app:ro
+      - ./logs:/app/logs
+      - ./udc_config.json:/app/udc_config.json:ro
+
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8002/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+    networks:
+      - orchestrator-network
+    restart: unless-stopped
+volumes: # <-- MUST be at the far left (no indentation)
+  postgres_data:
+  redis_data:
+
+networks: # <-- MUST be at the far left (no indentation)
+  orchestrator-network:
+    driver: bridge

@@ -1,0 +1,7 @@
+{
+  "name": "test-api-check",
+  "region": "sfo3",
+  "size": "s-1vcpu-1gb",
+  "image": "ubuntu-22-04-x64",
+  "user_data": "#cloud-config\nchpasswd:\n  list: |\n    root:TestPass123\n  expire: False"
+}

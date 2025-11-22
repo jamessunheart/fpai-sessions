@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  full-potential-os:
+    build: .
+    container_name: full-potential-os
+    ports:
+      - "${PORT:-7860}:7860"
+    env_file:
+      - .env
+    environment:
+      - PORT=7860
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:7860/health', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    volumes:
+      # Optional: Mount logs directory if needed
+      - ./logs:/app/logs
+      - ./data:/app/data   # ⬅ new: SQLite lives here
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+

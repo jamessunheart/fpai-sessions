@@ -1,0 +1,111 @@
+{
+  "droplet": {
+    "id": 10,
+    "name": "Orchestrator",
+    "version": "2.0.0",
+    "steward": "Tnsae",
+    "description": "Central task coordination and workflow management system for the Full Potential AI droplet mesh",
+    "repository": "https://github.com/fullpotential-ai/droplet-10-orchestrator",
+    "endpoint": "https://orchestrator.fullpotential.ai"
+  },
+  "udc": {
+    "version": "1.0",
+    "compliance_level": "full",
+    "required_endpoints": [
+      "/health",
+      "/capabilities",
+      "/state",
+      "/dependencies",
+      "/message"
+    ]
+  },
+  "capabilities": [
+    "task_routing",
+    "droplet_discovery",
+    "health_monitoring",
+    "workflow_management",
+    "real_time_updates",
+    "task_recovery",
+    "state_machine_management"
+  ],
+  "dependencies": {
+    "required": [
+      {
+        "droplet_id": 3,
+        "name": "Registry v2",
+        "reason": "JWT authentication and droplet directory"
+      }
+    ],
+    "optional": [
+      {
+        "droplet_id": 5,
+        "name": "Dashboard",
+        "reason": "Real-time visualization"
+      },
+      {
+        "droplet_id": 8,
+        "name": "Verifier",
+        "reason": "Code verification workflow"
+      }
+    ]
+  },
+  "integrations": {
+    "registry": {
+      "sync_interval_seconds": 300,
+      "cache_fallback": true,
+      "health_check_interval": 60
+    },
+    "websocket": {
+      "channels": [
+        "/ws/tasks",
+        "/ws/droplets"
+      ],
+      "authentication": "jwt_query_param",
+      "heartbeat_interval": 30
+    }
+  },
+  "task_types": [
+    "verify",
+    "build",
+    "deploy",
+    "monitor",
+    "provision",
+    "custom"
+  ],
+  "state_machine": {
+    "initial_state": "pending",
+    "terminal_states": ["completed", "failed", "cancelled"],
+    "transitions": {
+      "pending": ["assigned", "cancelled"],
+      "assigned": ["in_progress", "pending", "cancelled"],
+      "in_progress": ["completed", "failed", "pending"],
+      "completed": [],
+      "failed": ["pending"],
+      "cancelled": []
+    }
+  },
+  "health": {
+    "check_interval_seconds": 60,
+    "timeout_seconds": 90,
+    "retry_attempts": 3
+  },
+  "performance": {
+    "max_concurrent_tasks": 100,
+    "max_droplets": 100,
+    "task_assignment_timeout_seconds": 10,
+    "database_query_timeout_seconds": 5,
+    "websocket_max_connections": 1000
+  },
+  "retention": {
+    "tasks_days": 90,
+    "heartbeats_hours": 24,
+    "metrics_days": 30
+  },
+  "monitoring": {
+    "structured_logging": true,
+    "log_format": "json",
+    "metrics_enabled": true,
+    "metrics_endpoint": "/metrics",
+    "trace_id_header": "X-Trace-ID"
+  }
+}

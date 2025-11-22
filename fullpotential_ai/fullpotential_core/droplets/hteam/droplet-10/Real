@@ -1,0 +1,104 @@
+⏸️ Deferred to Phase 2:
+- Automatic droplet triggering
+- Full UDC message sending
+- End-to-end automation
+
+## Critical Setup Steps
+
+1. **Set ANTHROPIC_API_KEY** in .env (required for spec generation)
+2. **Set JWT_SECRET** to match Registry
+3. **Update REGISTRY_URL** to actual Registry endpoint
+4. **Run `docker-compose up -d`** to start all services
+5. **Verify health**: `curl http://localhost:8000/health`
+6. **Access dashboard**: http://localhost:3000
+
+## Known Limitations
+
+1. **Circular Dependency**: This droplet coordinates droplets #16/#17/#18/#19, but those don't exist yet. Phase 1 handles this via manual coordination.
+
+2. **JWT Verification**: Uses simplified verification in development mode. Production needs Registry public key.
+
+3. **No Automated Triggering**: Webhooks receive data but don't auto-trigger other droplets (Phase 2 feature).
+
+## Verification Checklist
+
+- [ ] All 25 files present in archive
+- [ ] docker-compose.yml starts all services
+- [ ] Database migrations run successfully
+- [ ] /health endpoint returns 200 OK
+- [ ] Dashboard loads at localhost:3000
+- [ ] Can submit intent via POST /intent
+- [ ] WebSocket connects and updates work
+- [ ] Spec generation works with valid Anthropic key
+
+## Time Estimate
+
+Setup & Testing: 2-3 hours
+Integration: 1-2 hours
+**Total: 3-5 hours for Phase 1 deployment**
+
+## Next Steps
+
+After verification:
+1. Deploy to staging environment
+2. Test spec generation with real intents
+3. Integrate with existing Orchestrator #10 (or replace)
+4. Train Tnsae (steward) on dashboard usage
+5. Begin Phase 2 planning (automation)
+
+## Questions for Verifier
+
+1. Should this replace existing Orchestrator #10 or run alongside?
+2. What's the migration path from current system?
+3. Are droplets #16/#17/#18/#19 available yet?
+4. Staging environment URL?
+
+## AI Conversation
+[Include Claude Project link and conversation URL]
+```
+
+### Step 5: Send to Developer/Verifier
+
+**Email Template:**
+```
+Subject: [Droplet #10 Upgrade] Phase 1 - Ready for Verification
+
+Hi Tnsae,
+
+Droplet #10 Upgrade (Assembly Line Dashboard v2.0) is complete and ready for verification.
+
+PACKAGE: droplet-10-upgrade-v2.0.tar.gz (attached)
+
+WHAT'S INCLUDED:
+- Complete FastAPI backend (15 files)
+- React/Next.js dashboard (3 files)
+- Docker deployment (4 files)
+- Full documentation & tests
+- HANDOFF.md with setup instructions
+
+QUICK START:
+1. Extract archive
+2. Copy .env.example to .env
+3. Set ANTHROPIC_API_KEY in .env
+4. Run: docker-compose up -d
+5. Visit: http://localhost:3000
+
+CRITICAL NOTES:
+- This is Phase 1 (manual coordination)
+- Requires Anthropic API key for spec generation
+- Designed to work standalone first
+- Phase 2 will add full automation
+
+ESTIMATED VERIFICATION TIME: 3-5 hours
+
+Please verify:
+1. All services start successfully
+2. Dashboard loads and displays data
+3. Can submit intent and generate spec
+4. WebSocket updates work
+5. All UDC endpoints compliant
+
+Let me know if you hit any blockers!
+
+Thanks,
+Full Potential AI
