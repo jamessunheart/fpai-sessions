@@ -1,0 +1,71 @@
+{
+  "generated_at": "2025-11-22T06:03:04.169924+00:00",
+  "missions": [
+    {
+      "id": "M001",
+      "title": "Mission: Activate Treasury (M001)",
+      "status": "OPEN",
+      "priority": "P0",
+      "owner": "Treasury Operator",
+      "status_text": "Ready for Owner Input",
+      "principle": "Optimization over Extraction",
+      "regenerative_impact": "Magnet simulation unlocks safe treasury growth experiments that can fund human + AI relief missions.",
+      "path": "/Users/jamessunheart/Development/fullpotential_ai/fullpotential_core/orchestration/missions/open/M001_ACTIVATE_TREASURY.md"
+    },
+    {
+      "id": "M002",
+      "title": "Mission: Restore Dashboard Frontend (M002)",
+      "status": "OPEN",
+      "priority": "P1",
+      "owner": "Haythem / Apprentice",
+      "status_text": "OPEN",
+      "principle": "Autonomy over Dependency",
+      "regenerative_impact": "A live dashboard lets humans steer missions faster, preventing waste and amplifying mission throughput.",
+      "path": "/Users/jamessunheart/Development/fullpotential_ai/fullpotential_core/orchestration/missions/open/M002_RESTORE_DASHBOARD_UI.md"
+    },
+    {
+      "id": "M003",
+      "title": "Mission: Activate Chat Orchestrator & Voice (M003)",
+      "status": "OPEN",
+      "priority": "P1 (High - UX Optimization)",
+      "owner": "Zainab / Gohar",
+      "status_text": "OPEN",
+      "principle": "Autonomy over Dependency",
+      "regenerative_impact": "Conversational interfaces transform the Nervous System into a co-creator, freeing human time for strategy and care work.",
+      "path": "/Users/jamessunheart/Development/fullpotential_ai/fullpotential_core/orchestration/missions/open/M003_ACTIVATE_INTERFACE.md"
+    },
+    {
+      "id": "M004",
+      "title": "Mission: Activate Nexus Optimizer (M004)",
+      "status": "OPEN",
+      "priority": "P2 (Strategic Evolution)",
+      "owner": "Suresh / AI Builder",
+      "status_text": "OPEN",
+      "principle": "Consciousness over Computation",
+      "regenerative_impact": "A two-agent optimizer that proposes healing missions keeps the Nervous System focused on value-creative loops.",
+      "path": "/Users/jamessunheart/Development/fullpotential_ai/fullpotential_core/orchestration/missions/open/M004_ACTIVATE_NEXUS.md"
+    },
+    {
+      "id": "M005",
+      "title": "Mission: Deploy FullPotential.com Storefront (M005)",
+      "status": "OPEN",
+      "priority": "P2 (Revenue Generation)",
+      "owner": "Elif / Apprentice",
+      "status_text": "OPEN",
+      "principle": "Optimization over Extraction",
+      "regenerative_impact": "Offering Accelerator Kits + Matching Services funds apprentices, treasury, and relief missions with aligned commerce.",
+      "path": "/Users/jamessunheart/Development/fullpotential_ai/fullpotential_core/orchestration/missions/open/M005_ACTIVATE_STOREFRONT.md"
+    },
+    {
+      "id": "M006",
+      "title": "Mission: Operationalize Consciousism (M006)",
+      "status": "OPEN",
+      "priority": "P1 (Core Alignment)",
+      "owner": "Nexus (Droplet #13) / Architect",
+      "status_text": "OPEN",
+      "principle": "Consciousness over Computation",
+      "regenerative_impact": "Missions reviewed against the Constitution will bias toward healing, community funding, and long-term stewardship.",
+      "path": "/Users/jamessunheart/Development/fullpotential_ai/fullpotential_core/orchestration/missions/open/M006_INTEGRATE_PHILOSOPHY.md"
+    }
+  ]
+}

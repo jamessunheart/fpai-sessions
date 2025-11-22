@@ -64,6 +64,27 @@
       padding: 0.9rem 1rem;
       background: rgba(8,12,24,0.7);
     }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.5rem;
+    }
+    th, td {
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding: 0.75rem;
+      text-align: left;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+    th {
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.8rem;
+      color: #f8fafc;
+    }
+    .priority-p0 { color: #f87171; font-weight: 600; }
+    .priority-p1 { color: #fb923c; font-weight: 600; }
+    .priority-default { color: var(--text); }
   </style>
 </head>
 <body>
@@ -90,6 +111,60 @@
         ⚖️ Church & Civic Legal Toolkit — reference for compliant regenerative structures.
       </a>
     </div>
+
+    <section id="mission-board">
+      <h2 style="margin-top:2.5rem;">Live Mission Board</h2>
+      <p style="color:var(--text);">The Nervous System publishes every mission here. Filter by priority directly in the UI.</p>
+      <div id="mission-table-wrapper">Loading mission feed…</div>
+    </section>
   </div>
+  <script>
+    const wrapper = document.getElementById('mission-table-wrapper');
+    fetch('/docs/status/missions.json')
+      .then(resp => resp.json())
+      .then(payload => renderTable(payload.missions || []))
+      .catch(() => {
+        wrapper.textContent = 'Unable to load mission feed. Check Town Crier logs.';
+      });
+
+    function renderTable(missions) {
+      if (!missions.length) {
+        wrapper.textContent = 'No missions detected.';
+        return;
+      }
+      const rows = missions
+        .filter(m => m.status === 'OPEN')
+        .map(m => {
+          const priorityClass = m.priority
+            ? `priority-${m.priority.toLowerCase()}`
+            : 'priority-default';
+          const owner = m.owner || 'UNASSIGNED';
+          return `
+            <tr>
+              <td>${m.id}</td>
+              <td>${m.title}</td>
+              <td class="${priorityClass}">${m.priority || '-'}</td>
+              <td>${owner}</td>
+              <td>${m.principle || '-'}</td>
+            </tr>
+          `;
+        })
+        .join('');
+      wrapper.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Mission</th>
+              <th>Priority</th>
+              <th>Owner</th>
+              <th>Principle</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    }
+  </script>
 </body>
 </html>

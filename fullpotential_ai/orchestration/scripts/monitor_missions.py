@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List
@@ -13,6 +14,7 @@ STATE_PATH = Path("/var/log/fpai/mission_state.json")
 ALERT_LOG_PATH = Path("/var/log/fpai/mission_alerts.log")
 ALERT_MD_PATH = Path("/opt/fpai/docs/status/ALERTS.md")
 CONSTITUTION_PATH = Path("/opt/fpai/core/knowledge/CONSTITUTION.md")
+FEED_SCRIPT = Path("/opt/fpai/orchestration/tools/generate_mission_feed.py")
 SLACK_WEBHOOK = os.environ.get("FPAI_SLACK_WEBHOOK")  # Placeholder for future use
 
 
@@ -101,6 +103,12 @@ def main() -> None:
         notify_slack_placeholder(block)
 
     save_state(current)
+    refresh_mission_feed()
+
+
+def refresh_mission_feed() -> None:
+    if FEED_SCRIPT.exists():
+        subprocess.run(["python3", str(FEED_SCRIPT)], check=False)
 
 
 if __name__ == "__main__":
