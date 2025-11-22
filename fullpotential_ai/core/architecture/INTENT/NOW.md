@@ -11,4 +11,4 @@ Status Change:
 - Treasury running in Simulation Mode to unblock Nexus (M004). Live keys pending Binance support.
 
 Revenue Horizon:
-- Simultaneously validate Treasury (Magnet) and Storefront (M005) to diversify income streams.
+- Simultaneously validate Treasury (Magnet Simulation) and Sales (Storefront M005) to diversify income.
