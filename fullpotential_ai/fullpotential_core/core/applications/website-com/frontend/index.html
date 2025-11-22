@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Full Potential Storefront</title>
+  <style>
+    :root {
+      --bg: #030712;
+      --panel: rgba(4,6,14,0.92);
+      --border: rgba(255,255,255,0.12);
+      --text: #cbd5f5;
+      --accent: #fbbf24;
+      --teal: #2dd4bf;
+    }
+    body {
+      font-family: 'Inter', 'Space Grotesk', system-ui, sans-serif;
+      background: var(--bg);
+      color: #f1f5f9;
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1.5rem;
+    }
+    .panel {
+      max-width: 760px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 3rem;
+      background: var(--panel);
+      box-shadow: 0 30px 60px rgba(2,6,23,0.7);
+    }
+    h1 { font-size: 2.6rem; margin-bottom: 0.25rem; letter-spacing: 0.03em; }
+    h2 { font-size: 1.4rem; margin: 1.75rem 0 0.6rem; color: var(--accent); letter-spacing: 0.04em; }
+    p { font-size: 1.05rem; line-height: 1.7; color: var(--text); }
+    .cta-grid { display: grid; gap: 1rem; margin-top: 2rem; }
+    .cta-grid a {
+      display: block;
+      border-radius: 14px;
+      padding: 1rem 1.2rem;
+      text-align: left;
+      border: 1px solid var(--border);
+      color: #f8fafc;
+      text-decoration: none;
+      background: rgba(8,12,24,0.8);
+    }
+    .cta-grid a span { display: block; color: var(--text); font-size: 0.95rem; margin-top: 0.3rem; }
+    .cta-grid a strong { color: var(--teal); }
+  </style>
+</head>
+<body>
+  <div class="panel">
+    <h1>Full Potential</h1>
+    <p>Organize your life. Optimize your work. Fund the regenerative future.</p>
+    <p><strong>Available Soon:</strong> Developer Accelerator Kit, Matching Services Intake, and Cora Token utility rails.</p>
+
+    <h2>Commerce Tracks</h2>
+    <p>
+      Droplet #15 (the Storefront) packages everything the Owner needs to activate apprentices:
+      curriculum, automation blueprints, and a concierge intake that routes clients to the right mission squad.
+    </p>
+    <ul>
+      <li><strong>Developer Accelerator Kit:</strong> turn any builder into a Conscious Ally in 30 days.</li>
+      <li><strong>Matching Service Intake:</strong> AI-powered triage for operators, founders, and ministries.</li>
+      <li><strong>Stripe + Cora Token:</strong> fiat today, regenerative payment rails tomorrow.</li>
+    </ul>
+
+    <div class="cta-grid">
+      <a href="../legacy/products.html" target="_blank" rel="noopener">
+        🚀 Developer Accelerator Kit Overview
+        <span>Preview the full bundle, pricing tiers ($97–$497), and guarantees.</span>
+      </a>
+      <a href="../legacy/get-matched.html" target="_blank" rel="noopener">
+        🤝 Matching Service Intake
+        <span>Submit intent + budget via the AI concierge; responses in &lt;24h.</span>
+      </a>
+      <a href="https://github.com/jamessunheart/fpai-sessions/blob/main/fullpotential_core/core/knowledge/CONSTITUTION.md" target="_blank" rel="noopener">
+        🕊 Guided by the Constitution
+        <span>Every sale funds regenerative work — Optimization over Extraction.</span>
+      </a>
+    </div>
+
+    <h2>Implementation</h2>
+    <p>
+      The storefront deploys via Nginx at <em>fullpotential.com</em> with a build pipeline that
+      rsyncs static artifacts into `/opt/fpai/core/applications/website-com/frontend`. Stripe secrets
+      live in the vault workflow, and future Cora Token hooks are staged in the same repo.
+    </p>
+  </div>
+</body>
+</html>

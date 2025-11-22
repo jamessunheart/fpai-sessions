@@ -3,6 +3,8 @@
 - **Priority:** P0
 - **Status:** Ready for Owner Input
 - **Owner:** Treasury Operator
+- **Constitution Principle:** **Optimization over Extraction** — every trade should expand shared capital rather than drain reserves.
+- **Regenerative Impact:** Magnet simulation unlocks safe treasury growth experiments that can fund human + AI relief missions.
 - **Objective:** Prime Magnet trading stack with Binance testnet keys and confirm vault automation.
 - **Files/Systems:** `droplets/hteam/droplet-3/`, `infra/secrets.vault.example.json`, `orchestration/tools/inject_vault.py`, `/opt/fpai/env/magnet.env`
 - **Dependencies:** Registry + Orchestrator live, secrets vault template ready.

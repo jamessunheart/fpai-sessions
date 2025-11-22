@@ -6,6 +6,8 @@
 - **Priority:** Px (P0 highest)
 - **Human Role:** e.g., Ops Coordinator, Technical Editor, Growth Partner
 - **Linked Specs:** reference any file in `docs/library/coordination/missions/` or `specs/*` that gives context
+- **Constitution Principle:** cite the clause from `core/knowledge/CONSTITUTION.md` that this mission advances.
+- **Regenerative Impact:** describe how the outcome creates net-new value rather than pure efficiency.
 
 ## Objective
 Short summary of what success looks like. Tie it to a measurable unlock (revenue, risk reduction, learning) per the patterns in `docs/library/coordination/MEMORY/PRINCIPLES.md`.

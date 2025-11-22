@@ -1,39 +1,22 @@
-# Sensitive files - DO NOT COMMIT
-**/config.json
-**/.env
-**/.env.*
-**/*.key
-**/*.pem
-**/.credentials
-**/.current_session
+# Large legacy trees that remain archived outside of version control
+fullpotential_ai/fullpotential_claude1/
+fullpotential_ai/fullpotential_hteam1/
+fullpotential_ai/phase4-worktree/
 
-# Python
-__pycache__/
-*.py[cod]
-*.pyd
-*.pyo
-*.sqlite3
-.venv/
-venv/
-*.egg-info/
+# Knowledge Library (Heavy Assets)
+core/knowledge/library/
+core/knowledge/papers.zip
+fullpotential_core/docs/papers/
+fullpotential_ai/fullpotential_core/core/knowledge/library/
+fullpotential_ai/fullpotential_core/core/knowledge/papers.zip
+fullpotential_ai/fullpotential_core/docs/papers/
+*.pdf
+*.docx
 
-# Build artifacts
-dist/
-build/
+# System Artifacts
 *.log
-*.tar.gz
+/opt/fpai/
+*.DS_Store
+*.pyc
+__pycache__/
 
-# System files
-.DS_Store
-.claude/
-*.swp
-*~
-
-# Node
-node_modules/
-package-lock.json
-
-# Coordination sensitive files
-COORDINATION/messages/*.json
-docs/coordination/messages/*.json
-SERVICES/api-hub/api_vault.json

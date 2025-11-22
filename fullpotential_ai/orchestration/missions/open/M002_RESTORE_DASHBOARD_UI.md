@@ -3,6 +3,8 @@
 - **Priority:** P1
 - **Status:** OPEN
 - **Owner:** Haythem / Apprentice
+- **Constitution Principle:** **Autonomy over Dependency** — restoring the UI returns situational awareness to the Owner without manual routing.
+- **Regenerative Impact:** A live dashboard lets humans steer missions faster, preventing waste and amplifying mission throughput.
 - **Objective:** Locate the missing dashboard UI source for Droplet #2 and prepare it for deployment.
 - **Files/Systems:** `droplets/hteam/droplet-2/frontend`, `docs/library/resources/docs/autonomous-research-agent/ui`, mission portal.
 
