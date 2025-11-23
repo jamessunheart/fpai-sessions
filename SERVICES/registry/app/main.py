@@ -31,6 +31,9 @@ from app.models import (
     DeleteResponse,
     ErrorResponse,
     ErrorDetail,
+    SystemMapResponse,
+    SystemMapNode,
+    SystemMapEdge,
 )
 
 # Configure logging
@@ -284,6 +287,62 @@ async def send_message(request: SendRequest) -> SendResponse:
 # ============================================================================
 # REGISTRY CORE ENDPOINTS
 # ============================================================================
+
+@app.get("/registry/map", response_model=SystemMapResponse)
+async def get_system_map() -> SystemMapResponse:
+    """Get the full system map (nodes and edges).
+
+    Returns:
+        Graph of all connected droplets and their health status.
+    """
+    nodes = []
+    edges = []
+
+    # 1. Add Registry Node (Self)
+    registry_node = SystemMapNode(
+        id="registry",
+        label="Registry (SSOT)",
+        type="core",
+        status="active",
+        metadata={"version": "1.0.0"}
+    )
+    nodes.append(registry_node)
+
+    # 2. Add other droplets
+    for d_id, droplet in droplets.items():
+        # Avoid duplicate registry if it registered itself
+        if droplet.name.lower() == "registry":
+            continue
+
+        node = SystemMapNode(
+            id=droplet.name,
+            label=droplet.name,
+            type="droplet",
+            status=droplet.status,
+            metadata=droplet.metadata
+        )
+        nodes.append(node)
+
+        # 3. Create Edge (Registry -> Droplet)
+        # Logic: Green if both active, Red if either error
+        edge_status = "active"
+        if droplet.status == "error":
+            edge_status = "error"
+
+        edge = SystemMapEdge(
+            id=f"registry-{droplet.name}",
+            source="registry",
+            target=droplet.name,
+            status=edge_status
+        )
+        edges.append(edge)
+
+    return SystemMapResponse(
+        nodes=nodes,
+        edges=edges,
+        timestamp=datetime.utcnow().isoformat() + "Z"
+    )
+
 
 @app.post("/droplets", response_model=DropletResponse, status_code=status.HTTP_201_CREATED)
 async def register_droplet(request: RegisterDropletRequest) -> DropletResponse:

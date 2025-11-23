@@ -177,3 +177,34 @@ class ErrorResponse(BaseModel):
 
     status: Literal["error"] = "error"
     error: ErrorDetail
+
+
+# ============================================================================
+# SYSTEM MAP MODELS (M010)
+# ============================================================================
+
+class SystemMapNode(BaseModel):
+    """Node in the system map."""
+
+    id: str
+    label: str
+    type: str = "droplet"  # droplet, service, system
+    status: Literal["active", "inactive", "error"]
+    metadata: Optional[Dict[str, Any]] = None
+
+
+class SystemMapEdge(BaseModel):
+    """Edge in the system map."""
+
+    id: str
+    source: str
+    target: str
+    status: Literal["active", "inactive", "error"] = "active"
+
+
+class SystemMapResponse(BaseModel):
+    """Response for /registry/map endpoint."""
+
+    nodes: List[SystemMapNode]
+    edges: List[SystemMapEdge]
+    timestamp: str
