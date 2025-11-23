@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Librarian Dashboard</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --panel: #1e293b;
+            --text: #e2e8f0;
+            --accent: #38bdf8;
+            --border: #334155;
+            --danger: #ef4444;
+            --success: #22c55e;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        /* Sidebar */
+        .sidebar {
+            width: 300px;
+            background: var(--panel);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .sidebar-header h1 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--accent);
+        }
+        .file-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+        .file-item {
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            border: 1px solid transparent;
+        }
+        .file-item:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        .file-item.active {
+            background: rgba(56, 189, 248, 0.1);
+            border-color: var(--accent);
+        }
+        .file-name {
+            font-weight: 500;
+            margin-bottom: 0.2rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .file-meta {
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+        
+        /* Main Content */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .toolbar {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.5);
+        }
+        .preview-area {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        .preview-pane {
+            flex: 2;
+            background: #000;
+            border-right: 1px solid var(--border);
+            position: relative;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .analysis-pane {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            background: var(--bg);
+            min-width: 350px;
+        }
+        
+        /* Components */
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn:hover { opacity: 0.9; }
+        .btn-primary { background: var(--accent); color: #0f172a; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        
+        .tag {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--accent);
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        h3 { margin-top: 0; color: #94a3b8; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: white;
+            margin-bottom: 1rem;
+        }
+        
+        .empty-state {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #64748b;
+            font-size: 1.2rem;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1>📚 Research Librarian</h1>
+            <button class="btn btn-primary" style="width:100%; margin-top:1rem;" onclick="triggerScan()">
+                🔍 Scan System
+            </button>
+        </div>
+        <div class="file-list" id="fileList">
+            <!-- Files injected here -->
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="toolbar">
+            <div id="currentFile">Select a file to review</div>
+            <div class="actions" id="actionButtons" style="display:none;">
+                <button class="btn btn-danger" onclick="deleteFile()">Delete</button>
+                <button class="btn btn-success" onclick="approveFile()">Approve & Publish</button>
+            </div>
+        </div>
+        
+        <div class="preview-area" id="previewArea">
+            <div class="empty-state">Select a file from the inbox</div>
+        </div>
+    </div>
+
+    <script>
+        let currentFilename = null;
+        let aiAnalysis = null;
+
+        async function loadFiles() {
+            const res = await fetch('/api/files');
+            const data = await res.json();
+            const list = document.getElementById('fileList');
+            list.innerHTML = '';
+            
+            data.files.forEach(file => {
+                const item = document.createElement('div');
+                item.className = 'file-item';
+                item.innerHTML = `
+                    <div class="file-name">${file.name}</div>
+                    <div class="file-meta">${file.size_kb} KB • ${file.type}</div>
+                `;
+                item.onclick = () => selectFile(file.name, item);
+                list.appendChild(item);
+            });
+        }
+
+        async function selectFile(filename, el) {
+            // UI updates
+            document.querySelectorAll('.file-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            currentFilename = filename;
+            document.getElementById('currentFile').innerText = filename;
+            document.getElementById('actionButtons').style.display = 'flex';
+
+            const area = document.getElementById('previewArea');
+            
+            if (filename.toLowerCase().endsWith('.pdf')) {
+                // PDF View (Iframe)
+                area.innerHTML = `
+                    <div class="preview-pane">
+                        <iframe src="/api/preview/${filename}"></iframe>
+                    </div>
+                    <div class="analysis-pane" id="analysisPane">
+                        ${renderLoadingCard()}
+                    </div>
+                `;
+            } else {
+                // Text/MD View (Fetch & Render)
+                try {
+                    const res = await fetch(`/api/preview/${filename}`);
+                    const text = await res.text();
+                    area.innerHTML = `
+                        <div class="preview-pane" style="background:var(--panel); color:var(--text); padding:2rem; overflow:auto; white-space:pre-wrap; font-family:monospace; border-right: 1px solid var(--border);">
+                            ${escapeHtml(text)}
+                        </div>
+                        <div class="analysis-pane" id="analysisPane">
+                            ${renderLoadingCard()}
+                        </div>
+                    `;
+                } catch (e) {
+                    area.innerHTML = `<div class="empty-state">Error loading file preview.</div>`;
+                }
+            }
+
+            // Fetch AI Analysis
+            const res = await fetch(`/api/analyze/${filename}`);
+            aiAnalysis = await res.json();
+            renderAnalysis(aiAnalysis);
+        }
+
+        function renderLoadingCard() {
+            return `
+                <div class="card">
+                    <h3>AI Analysis</h3>
+                    <div style="text-align:center; padding:2rem;">
+                        <div class="loading"></div> Analyzing...
+                    </div>
+                </div>
+            `;
+        }
+
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function renderAnalysis(data) {
+            const pane = document.getElementById('analysisPane');
+            
+            let warningHtml = '';
+            if (data.is_valid_paper === false) {
+                warningHtml = `
+                    <div class="card" style="border-color: var(--danger); background: rgba(239, 68, 68, 0.1);">
+                        <h3 style="color: var(--danger)">⚠️ Security Warning</h3>
+                        <p>${data.warning || "This file may contain code or sensitive data."}</p>
+                    </div>
+                `;
+            }
+
+            pane.innerHTML = `
+                ${warningHtml}
+                <div class="card">
+                    <h3>Suggested Filename</h3>
+                    <input type="text" id="newFilename" value="${data.filename || currentFilename}">
+                </div>
+                <div class="card">
+                    <h3>Summary</h3>
+                    <p style="line-height: 1.6;">${data.summary || "No summary available."}</p>
+                </div>
+                <div class="card">
+                    <h3>Tags</h3>
+                    <div>
+                        ${(data.tags || []).map(t => `<span class="tag">${t}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        async function approveFile() {
+            if (!currentFilename) return;
+            
+            // Check security override
+            if (aiAnalysis && aiAnalysis.is_valid_paper === false) {
+                if (!confirm("⚠️ SECURITY WARNING: This file was flagged as potentially unsafe. Are you sure you want to publish it?")) {
+                    return;
+                }
+            }
+
+            const newName = document.getElementById('newFilename').value;
+            
+            const res = await fetch('/api/approve', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    filename: currentFilename,
+                    new_filename: newName
+                })
+            });
+            
+            if (res.ok) {
+                // alert('Published successfully!');
+                loadFiles();
+                document.getElementById('previewArea').innerHTML = '<div class="empty-state">Published! Select next file.</div>';
+                document.getElementById('actionButtons').style.display = 'none';
+            }
+        }
+
+        async function deleteFile() {
+            if (!currentFilename || !confirm('Are you sure you want to delete this file?')) return;
+            
+            await fetch(`/api/delete/${currentFilename}`, { method: 'POST' });
+            loadFiles();
+            document.getElementById('previewArea').innerHTML = '<div class="empty-state">Deleted. Select next file.</div>';
+            document.getElementById('actionButtons').style.display = 'none';
+        }
+        
+        async function triggerScan() {
+            const btn = document.querySelector('.btn-primary');
+            const originalText = btn.innerText;
+            btn.innerText = 'Scanning...';
+            btn.disabled = true;
+            
+            try {
+                await fetch('/api/scan', { method: 'POST' });
+                await loadFiles();
+            } catch (e) {
+                alert('Scan failed or timed out.');
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // Initial load
+        loadFiles();
+    </script>
+</body>
+</html>
+

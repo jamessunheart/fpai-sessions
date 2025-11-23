@@ -2,13 +2,13 @@
   "session_id": "session-1763926653",
   "started_at": "2025-11-23T19:37:33Z",
   "status": "active",
-  "current_work": "registry-map",
+  "current_work": "standardization",
   "capabilities": [
     "general-purpose",
     "build",
     "debug",
     "deploy"
   ],
-  "last_heartbeat": "2025-11-23T19:38:03Z",
-  "heartbeat_count": 3
+  "last_heartbeat": "2025-11-23T20:23:20Z",
+  "heartbeat_count": 7
 }

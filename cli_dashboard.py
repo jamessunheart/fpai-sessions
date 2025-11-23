@@ -117,6 +117,7 @@ def main():
         print("\nCOMMANDS:")
         print("   [r] Refresh View")
         print("   [n] New Mission (Dispatch)")
+        print("   [l] Research Librarian (Manage Papers)")
         print("   [s] Stop All (Emergency)")
         print("   [q] Quit")
         
@@ -130,6 +131,15 @@ def main():
             break
         elif choice == 'n':
             create_mission()
+        elif choice == 'l':
+            import subprocess
+            print("\n📚 Launching Research Librarian...")
+            # Try to use python3 from current env
+            try:
+                subprocess.run([sys.executable, "core/knowledge/research_librarian.py", "--review"])
+            except Exception as e:
+                print(f"Error launching librarian: {e}")
+                input("Press Enter to continue...")
         elif choice == 's':
             emergency_stop()
         elif choice == 'r':
