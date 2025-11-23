@@ -1,49 +1,24 @@
 # CURRENT_STATE - Living SSOT
 
-**Last Updated:** 2025-11-15 (Session: Standardization)
-**Updated By:** Assembly Line Foundation Complete
+**Last Updated:** 2025-11-23 (Session: System Map Mission)
+**Updated By:** session-1763923279 (Coordinator)
 **System Status:** ✅ 100% Operational (Registry + Orchestrator LIVE)
 
 ---
 
 ## 🎯 CURRENT PRIORITY (The ONE Thing)
 
-### Priority: DECISION POINT - Choose Path Forward
-**Status:** 🟨 DECISION NEEDED
-**Why:** Multiple high-priority paths available - need to choose direction
+### Priority: Visualize the autonomous mesh (M010) to validate architecture
+**Status:** 🟢 ACTIVE (Queue System Map)
+**Why:** The dashboard needs a live topology view to confirm Registry ↔ Orchestrator ↔ Magnet ↔ Storefront connectivity before the next deployments.
 
-**Three Paths:**
+**Mission Focus (M010 – Deploy Live System Map):**
+1. Registry Droplet #1 exposes `/registry/map` returning the full droplet graph with health metadata.  
+2. Dashboard implements `frontend/app/map/page.tsx` via `react-flow-renderer` or D3 to render the mesh.  
+3. Registry sits at the center with visible edges to Orchestrator, Magnet, and Storefront.  
+4. Health indicated through link colors (green = active, red = error) refreshed in near real time.
 
-**Path A: Complete Standardization (NEW - RECOMMENDED)**
-- Generate SPECs for critical services (registry, dashboard, i-proactive, i-match)
-- Foundation Files created ✅
-- Templates created ✅
-- Timeline: 2-4 hours
-- Impact: All services follow assembly line standard
-
-**Path B: Deploy Dashboard**
-- Deploy Dashboard to server (18% → 27% progress)
-- Timeline: 30-60 minutes
-- Impact: Complete current milestone
-
-**Path C: Test Manifestation Engine**
-- Priority 1: Test content generation (needs ANTHROPIC_API_KEY)
-- Timeline: 1 hour
-- Impact: Validate revenue infrastructure
-
-**Path D: Deploy Treasury ($400K)**
-- Execute dynamic strategy (25-50% APY)
-- Market timing: OPTIMAL (mid-cycle, MVRV 2.43)
-- Timeline: 2-4 hours
-- Impact: Passive income stream
-
-**Path E: Consciousness Revolution**
-- Build I PROACTIVE (23 hours)
-- Launch Church Formation
-- Timeline: Week 1 Critical Path
-- Impact: $5-10K/month recurring
-
-**Next Action:** User decides which path to prioritize
+**Next Action:** Ship mission artifacts and begin implementing the `/registry/map` endpoint + dashboard map page.
 
 ---
 
