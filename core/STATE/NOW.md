@@ -8,23 +8,25 @@
 
 ## 🎯 CURRENT PRIORITY (The ONE Thing)
 
-### Priority: Visualize the autonomous mesh (M010) to validate architecture
-**Status:** 🟢 ACTIVE (Queue System Map)
-**Why:** The dashboard needs a live topology view to confirm Registry ↔ Orchestrator ↔ Magnet ↔ Storefront connectivity before the next deployments.
+### Priority: DECISION POINT - Choose Path Forward
+**Status:** 🟨 DECISION NEEDED
+**Why:** M010 implementation complete (local). Ready for deployment or next task.
 
-**Mission Focus (M010 – Deploy Live System Map):**
-1. Registry Droplet #1 exposes `/registry/map` returning the full droplet graph with health metadata.  
-2. Dashboard implements `frontend/app/map/page.tsx` via `react-flow-renderer` or D3 to render the mesh.  
-3. Registry sits at the center with visible edges to Orchestrator, Magnet, and Storefront.  
-4. Health indicated through link colors (green = active, red = error) refreshed in near real time.
-
-**Next Action:** Ship mission artifacts and begin implementing the `/registry/map` endpoint + dashboard map page.
+**Next Action:** Deploy dashboard or select next mission from backlog.
 
 ---
 
 ## ✅ RECENTLY COMPLETED (Last 6)
 
-1. **Assembly Line Foundation Complete** (2025-11-15 - Standardization Session)
+1. **Visualize the autonomous mesh (M010)** (2025-11-23 - System Map Mission)
+   - **Created:** `opt/fpai/orchestration/missions/open/M010_SYSTEM_MAP.md`
+   - **Implemented:** `/registry/map` endpoint in Registry (Droplet #1)
+   - **Implemented:** `remote_frontend/app_map_page.tsx` with live SVG visualization
+   - **Verified:** Unit tests passed for registry endpoint
+   - **Status:** Code complete, pending deployment (git push failed)
+   - **Result:** System Map ready to visualize architecture
+
+2. **Assembly Line Foundation Complete** (2025-11-15 - Standardization Session)
    - Created 5 Foundation Files in ARCHITECTURE/foundation/
      - UDC_COMPLIANCE.md (600 lines) - Universal Droplet Contract
      - TECH_STACK.md (500 lines) - Standard technology choices
