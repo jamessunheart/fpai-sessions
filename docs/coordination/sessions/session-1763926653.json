@@ -1,0 +1,14 @@
+{
+  "session_id": "session-1763926653",
+  "started_at": "2025-11-23T19:37:33Z",
+  "status": "active",
+  "current_work": "registry-map",
+  "capabilities": [
+    "general-purpose",
+    "build",
+    "debug",
+    "deploy"
+  ],
+  "last_heartbeat": "2025-11-23T19:38:03Z",
+  "heartbeat_count": 3
+}

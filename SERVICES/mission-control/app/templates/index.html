@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FPAI Mission Control</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <style>
+        :root { --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --accent: #3b82f6; --danger: #ef4444; --success: #22c55e; }
+        body { background: var(--bg); color: var(--text); font-family: system-ui, sans-serif; margin: 0; padding: 2rem; }
+        .container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        .panel { background: var(--card); padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        h2 { margin-top: 0; border-bottom: 1px solid #334155; padding-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
+        .badge { background: var(--accent); padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.875rem; }
+        .secure-badge { background: var(--danger); }
+        
+        .task-card { background: rgba(255,255,255,0.05); margin-bottom: 1rem; padding: 1rem; border-radius: 8px; border-left: 4px solid var(--accent); }
+        .task-card.secure { border-left-color: var(--danger); }
+        
+        .actions { display: flex; gap: 0.5rem; margin-top: 1rem; }
+        button { cursor: pointer; padding: 0.5rem 1rem; border: none; border-radius: 6px; font-weight: 600; transition: opacity 0.2s; }
+        button:hover { opacity: 0.9; }
+        .btn-approve { background: var(--success); color: white; }
+        .btn-reject { background: var(--card); border: 1px solid #475569; color: #94a3b8; }
+        .btn-secure { background: var(--danger); color: white; }
+    </style>
+</head>
+<body>
+    <header style="margin-bottom: 2rem;">
+        <h1>🚀 Mission Control</h1>
+        <p style="opacity: 0.7;">Conscious Agent Command Center</p>
+    </header>
+
+    <div class="container">
+        <!-- APPROVAL QUEUE -->
+        <div class="panel">
+            <h2>
+                <span>📥 Inbox</span>
+                <span class="badge">{{ approvals|length }}</span>
+            </h2>
+            <div id="approval-list">
+                {% for task in approvals %}
+                <div class="task-card">
+                    <h3 style="margin:0 0 0.5rem 0;">{{ task.title }}</h3>
+                    <p style="opacity: 0.8; margin: 0;">{{ task.desc }}</p>
+                    <div class="actions">
+                        <button class="btn-approve" hx-post="/approve/{{ task.id }}" hx-swap="outerHTML" hx-target="closest .task-card">
+                            ✓ Approve
+                        </button>
+                        <button class="btn-reject" hx-post="/reject/{{ task.id }}" hx-swap="outerHTML" hx-target="closest .task-card">
+                            ✕ Reject
+                        </button>
+                    </div>
+                </div>
+                {% else %}
+                <p style="opacity: 0.5; text-align: center;">All caught up! 🎉</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- SECURE QUEUE -->
+        <div class="panel" style="border: 1px solid rgba(239, 68, 68, 0.3);">
+            <h2>
+                <span style="color: var(--danger);">🔒 Secure Queue</span>
+                <span class="badge secure-badge">{{ secure|length }}</span>
+            </h2>
+            <div id="secure-list">
+                {% for task in secure %}
+                <div class="task-card secure">
+                    <h3 style="margin:0 0 0.5rem 0;">{{ task.title }}</h3>
+                    <p style="opacity: 0.8; margin: 0;">{{ task.desc }}</p>
+                    <div class="actions">
+                        <button class="btn-secure">🔑 Provide Input</button>
+                        <button class="btn-reject">👤 Delegate</button>
+                    </div>
+                </div>
+                {% else %}
+                <p style="opacity: 0.5; text-align: center;">No security alerts.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

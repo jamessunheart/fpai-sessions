@@ -1,0 +1,150 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap");
+
+:root {
+  --bg: radial-gradient(circle at top, #0f172a, #020617 65%);
+  --panel: rgba(15, 23, 42, 0.88);
+  --border: rgba(255, 255, 255, 0.12);
+  --text: #cbd5f5;
+  --accent: #fbbf24;
+  --blue: #38bdf8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  font-family: "Space Grotesk", "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  color: #f8fafc;
+}
+
+a {
+  color: var(--blue);
+}
+
+.home {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+}
+
+.panel {
+  width: 100%;
+  max-width: 760px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 3rem;
+  background: var(--panel);
+  box-shadow: 0 35px 80px rgba(2, 6, 23, 0.65);
+}
+
+.panel h1 {
+  font-size: 2.7rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.05em;
+}
+
+.panel p {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+.panel strong {
+  color: var(--accent);
+}
+
+.panel em {
+  color: var(--blue);
+}
+
+.panel ul {
+  margin: 1.5rem 0;
+  padding-left: 1.2rem;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.links {
+  display: grid;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.links a {
+  display: block;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+  background: rgba(8, 12, 24, 0.7);
+  text-decoration: none;
+  transition: border-color 0.2s ease;
+}
+
+.links a:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.mission-board {
+  margin-top: 2.5rem;
+}
+
+.mission-board h2 {
+  margin-bottom: 0.5rem;
+}
+
+.mission-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+}
+
+.mission-table th,
+.mission-table td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.75rem;
+  text-align: left;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.mission-table th {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.8rem;
+  color: #f8fafc;
+}
+
+.priority-chip {
+  font-weight: 600;
+}
+
+.priority-chip.p0 {
+  color: #f87171;
+}
+
+.priority-chip.p1 {
+  color: #fb923c;
+}
+
+.priority-chip.default {
+  color: var(--text);
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  background: rgba(56, 189, 248, 0.12);
+  color: var(--blue);
+}
+

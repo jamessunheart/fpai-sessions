@@ -1,0 +1,31 @@
+<div hx-swap-oob="innerHTML:#muscle-status">{{ status }}</div>
+
+{% if builds %}
+    <div class="space-y-3">
+        {% for build in builds %}
+        <div class="bg-slate-800 p-3 rounded border-l-4 
+            {% if build.status == 'in_progress' %}border-green-500{% elif build.status == 'failed' %}border-red-500{% else %}border-slate-500{% endif %}">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-xs font-mono text-slate-400">{{ build.build_id }}</span>
+                <span class="text-xs px-2 py-0.5 rounded 
+                    {% if build.status == 'in_progress' %}bg-green-900 text-green-300 animate-pulse{% else %}bg-slate-700 text-slate-300{% endif %}">
+                    {{ build.status }}
+                </span>
+            </div>
+            <h3 class="font-bold">{{ build.droplet_name }}</h3>
+            
+            {% if build.progress %}
+            <div class="w-full bg-slate-700 rounded-full h-1.5 mt-2">
+                <div class="bg-green-500 h-1.5 rounded-full transition-all duration-500" style="width: {{ build.progress }}"></div>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="text-center text-slate-500 mt-10">
+        <p>No active builds.</p>
+        <p class="text-xs mt-2">Muscle is resting.</p>
+    </div>
+{% endif %}
+

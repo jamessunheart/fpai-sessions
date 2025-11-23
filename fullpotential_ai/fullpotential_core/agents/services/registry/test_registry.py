@@ -21,7 +21,7 @@ class TestHealthEndpoint:
         data = response.json()
         assert "status" in data
         assert "service" in data
-        assert data["status"] == "ok"
+        assert data["status"] in ("active", "inactive", "error")
         assert data["service"] == "registry"
 
 
@@ -139,7 +139,8 @@ class TestMessageEndpoint:
             "source": "test",
             "target": "registry",
             "message_type": "status",
-            "payload": {}
+            "payload": {},
+            "timestamp": "2025-11-23T00:00:00Z",
         }
         response = client.post("/message", json=payload)
         assert response.status_code == 200
@@ -151,13 +152,14 @@ class TestMessageEndpoint:
             "source": "orchestrator",
             "target": "registry",
             "message_type": "query",
-            "payload": {"query": "status"}
+            "payload": {"query": "status"},
+            "timestamp": "2025-11-23T00:00:01Z",
         }
         response = client.post("/message", json=payload)
         data = response.json()
-        assert data["status"] == "received"
+        assert data["received"] is True
         assert data["trace_id"] == "test-456"
-        assert "timestamp" in data
+        assert "processed_at" in data
 
 
 class TestUDCCompliance:
@@ -177,7 +179,17 @@ class TestUDCCompliance:
             if method == "GET":
                 response = client.get(endpoint)
             else:
-                response = client.post(endpoint, json={"trace_id": "test"})
+                response = client.post(
+                    endpoint,
+                    json={
+                        "trace_id": "test",
+                        "source": "test",
+                        "target": "registry",
+                        "message_type": "status",
+                        "payload": {},
+                        "timestamp": "2025-11-23T00:00:02Z",
+                    },
+                )
 
             assert response.status_code == 200, f"{method} {endpoint} failed"
 

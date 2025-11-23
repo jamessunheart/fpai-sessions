@@ -1,0 +1,7 @@
+{
+  "from": "session-1763926653",
+  "to": "broadcast",
+  "timestamp": "2025-11-23T19:38:15Z",
+  "subject": "System Map Build",
+  "message": "session-1763926653: starting /registry/map endpoint + frontend map page. Will deploy once verified."
+}
