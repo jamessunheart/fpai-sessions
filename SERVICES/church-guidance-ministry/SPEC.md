@@ -10,35 +10,34 @@
 ## 1. SERVICE OVERVIEW
 
 ### 1.1 Purpose
-Educational ministry providing guidance and resources for individuals interested in forming 508(c)(1)(A) churches. Service focuses on education, documentation support via AI, and clear legal boundaries—**NOT** legal advice or formation services.
+The Church Guidance Ministry provides automated guidance for forming and managing 508(c)(1)(a) organizations. It handles document generation, compliance checks, and educational funneling.
 
 ### 1.2 Position in Ecosystem
-This service sits in the **Experience Layer** (public-facing ministry), downstream of the Registry and Orchestrator. It integrates with Stripe for donations/payments and email providers for delivering educational resources.
+- **Upstream:** Receives leads from Storefront/Magnet.
+- **Downstream:** Pushes users to Payment/Treasury for formation packages.
+- **Role:** Legal & Spiritual Structure Specialist.
 
 ### 1.3 Dependencies
 **Required Services:**
-- Registry (droplet #1) - Service discovery & auth
-- Orchestrator (droplet #10) - Task scheduling
-- Credentials Manager (droplet #20) - API key management
+- Registry (Droplet #1)
+- Storefront (Droplet #4) - Lead source
 
 **External Dependencies:**
-- Stripe API (Payments/Donations)
-- Anthropic Claude API (Document drafting)
-- SendGrid/Brevo (Email delivery)
+- PDF Generation Library (ReportLab/WeasyPrint)
+- Stripe (for product linkage)
 
 ---
 
 ## 2. CAPABILITIES
 
 ### 2.1 Core Capabilities
-1. **[Educational Resources]** - Hosting content on 508(c)(1)(A) structures.
-2. **[Document Generation]** - AI-assisted drafting of bylaws/articles based on user intake.
-3. **[Compliance Guidance]** - Checklists and educational frameworks.
+1. **Document Generation** - Create Articles of Association, Bylaws, etc.
+2. **Compliance Quiz** - Assess eligibility for 508c1a status.
+3. **Guidance Funnel** - Educational email sequences.
 
 ### 2.2 Supported Operations
-- `submit_intake` - Collect user ministry details.
-- `generate_docs` - Draft educational templates.
-- `process_payment` - Handle guidance package fees.
+- `generate_formation_docs` - Create full PDF package.
+- `assess_eligibility` - Score user questionnaire.
 
 ---
 
@@ -54,8 +53,7 @@ GET /health
 ```json
 {
   "status": "healthy",
-  "version": "1.0.0",
-  "timestamp": "2025-11-23T12:00:00Z"
+  "version": "1.0.0"
 }
 ```
 
@@ -68,55 +66,14 @@ GET /capabilities
 {
   "service_name": "church-guidance-ministry",
   "droplet_id": 13,
-  "capabilities": ["education", "doc_generation", "payment_processing"],
-  "supported_operations": ["submit_intake", "generate_docs"],
+  "capabilities": ["document_generation", "legal_guidance"],
   "integration_endpoints": [
-    { "path": "/api/v1/intake", "method": "POST" }
+    {
+      "path": "/api/v1/generate",
+      "method": "POST",
+      "description": "Generate formation docs"
+    }
   ]
-}
-```
-
-#### State
-```
-GET /state
-```
-**Response:**
-```json
-{
-  "status": "active",
-  "metrics": {
-    "intakes_today": 5,
-    "docs_generated": 12
-  }
-}
-```
-
-#### Dependencies
-```
-GET /dependencies
-```
-**Response:**
-```json
-{
-  "required_services": [
-    { "name": "registry", "status": "connected" }
-  ],
-  "external_apis": [
-    { "name": "stripe", "status": "connected" },
-    { "name": "anthropic", "status": "connected" }
-  ]
-}
-```
-
-#### Message
-```
-POST /message
-```
-**Response:**
-```json
-{
-  "received": true,
-  "status": "processing"
 }
 ```
 
@@ -124,29 +81,22 @@ POST /message
 
 ### 3.2 Business Logic Endpoints
 
-#### Submit Intake
+#### Generate Docs
 ```
-POST /api/v1/intake
+POST /api/v1/generate
 ```
 **Request:**
 ```json
 {
-  "name": "User Name",
-  "email": "user@example.com",
-  "ministry_name": "New Hope",
-  "mission_statement": "To serve..."
+  "church_name": "Temple of Light",
+  "trustees": ["Alice", "Bob"],
+  "creed": "To serve..."
 }
-```
-
-#### Generate Documents
-```
-POST /api/v1/generate/{intake_id}
 ```
 **Response:**
 ```json
 {
-  "status": "queued",
-  "job_id": "gen-123"
+  "download_url": "https://.../docs/temple-of-light-package.pdf"
 }
 ```
 
@@ -154,16 +104,18 @@ POST /api/v1/generate/{intake_id}
 
 ## 4. DATA MODEL
 
-### 4.1 Database Schema (Conceptual)
+### 4.1 Database Schema
 
-#### `intakes`
-| Field | Type | Description |
-|-------|------|-------------|
-| id | UUID | Primary Key |
-| email | String | User email |
-| details | JSON | Ministry details |
-| status | Enum | pending, paid, generated |
-| created_at | Timestamp | Submission time |
+#### Ministries
+```sql
+CREATE TABLE ministries (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255),
+    founder_email VARCHAR(255),
+    status VARCHAR(50), -- 'inquiry', 'formed', 'active'
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
 
 ---
 
@@ -172,23 +124,32 @@ POST /api/v1/generate/{intake_id}
 ### 5.1 Environment Variables
 ```bash
 SERVICE_NAME=church-guidance-ministry
-SERVICE_PORT=8003
+SERVICE_PORT=8013
 DROPLET_ID=13
 REGISTRY_URL=http://registry:8000
-STRIPE_SECRET_KEY=sk_...
-ANTHROPIC_API_KEY=sk-...
+STORAGE_PATH=/opt/fpai/data/docs
 ```
 
 ---
 
-## 6. COMPLIANCE CHECKLIST
-- [x] UDC Endpoints defined
-- [x] Legal disclaimers on all outputs (NOT legal advice)
-- [x] Registers with Registry
-- [ ] Tests implemented
+## 6. DEPLOYMENT
+
+### 6.1 Dockerfile
+```dockerfile
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY app/ ./app/
+EXPOSE 8013
+LABEL droplet.id="13"
+LABEL droplet.name="church-guidance-ministry"
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8013"]
+```
 
 ---
 
-**This SPEC is the contract. Build matches SPEC exactly.**
-🌐⚡💎
-
+## 7. COMPLIANCE CHECKLIST
+- [x] All 5 UDC endpoints
+- [x] Registers with Registry
+- [x] Dockerized

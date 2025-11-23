@@ -10,33 +10,32 @@
 ## 1. SERVICE OVERVIEW
 
 ### 1.1 Purpose
-Central visual interface and command center for the autonomous enterprise. Aggregates data from all droplets into "Brain," "Muscle," and "Immune" system views, allowing human operators to supervise, intervene, and steer the system.
+Mission Control is the tactical interface for human operators to view, approve, and intervene in autonomous operations. It hosts the "God Mode" dashboard and acts as the primary HMI (Human-Machine Interface).
 
 ### 1.2 Position in Ecosystem
-This service sits in the **Interface Layer** (internal facing), acting as the primary HUD for the system administrator. It pulls data from the Registry, Orchestrator, and individual droplets.
+- **Upstream:** Consumes data from Registry, Orchestrator, and all active droplets.
+- **Downstream:** Sends approval/rejection signals to Orchestrator.
+- **Role:** Command Center.
 
 ### 1.3 Dependencies
 **Required Services:**
-- Registry (droplet #1) - Service discovery
-- Orchestrator (droplet #10) - Task status & control
-- Verifier (droplet #8) - Health & compliance data
-
-**External Dependencies:**
-- ngrok (for secure tunnel access)
+- Registry (Droplet #1)
+- Orchestrator (Droplet #14)
+- Dashboard (Droplet #2)
 
 ---
 
 ## 2. CAPABILITIES
 
 ### 2.1 Core Capabilities
-1. **[Unified Dashboard]** - Real-time visualization of system health and activity.
-2. **[System Steering]** - Controls for pausing, restarting, or modifying autonomy levels.
-3. **[Log Aggregation]** - Centralized stream of system-wide events.
+1. **System Visualization** - See the mesh in real-time (via Registry Map).
+2. **Task Approval** - Review queued autonomous actions (high-risk).
+3. **Override** - Manually stop/start services or missions.
 
 ### 2.2 Supported Operations
-- `get_dashboard_view` - Returns consolidated system state.
-- `send_command` - Issues control directives to other droplets.
-- `stream_logs` - WebSocket feed of system activity.
+- `get_pending_approvals` - List tasks needing human eyes.
+- `approve_task` / `reject_task` - Signal decision.
+- `emergency_stop` - Halt specific droplets.
 
 ---
 
@@ -52,8 +51,7 @@ GET /health
 ```json
 {
   "status": "healthy",
-  "version": "1.0.0",
-  "timestamp": "2025-11-23T12:00:00Z"
+  "version": "1.0.0"
 }
 ```
 
@@ -66,78 +64,61 @@ GET /capabilities
 {
   "service_name": "mission-control",
   "droplet_id": 14,
-  "capabilities": ["dashboard", "steering", "monitoring"],
-  "supported_operations": ["view_system", "command_system"],
+  "capabilities": ["approval_workflow", "system_override"],
   "integration_endpoints": [
-    { "path": "/", "method": "GET" }
+    {
+      "path": "/api/v1/approvals",
+      "method": "GET"
+    }
   ]
-}
-```
-
-#### State
-```
-GET /state
-```
-**Response:**
-```json
-{
-  "status": "active",
-  "mode": "monitoring",
-  "active_viewers": 1
-}
-```
-
-#### Dependencies
-```
-GET /dependencies
-```
-**Response:**
-```json
-{
-  "required_services": [
-    { "name": "registry", "status": "connected" },
-    { "name": "orchestrator", "status": "connected" }
-  ],
-  "external_apis": [
-    { "name": "ngrok", "status": "connected" }
-  ]
-}
-```
-
-#### Message
-```
-POST /message
-```
-**Response:**
-```json
-{
-  "received": true,
-  "status": "processed"
 }
 ```
 
 ---
 
-### 3.2 Interface Endpoints
+### 3.2 Business Logic Endpoints
 
-#### Dashboard Home
+#### List Approvals
 ```
-GET /
+GET /api/v1/approvals
 ```
-**Response:** HTML Dashboard Interface
+**Response:**
+```json
+{
+  "tasks": [
+    {"id": "t-123", "description": "Post to LinkedIn", "risk_level": "medium"}
+  ]
+}
+```
 
-#### System Status Partial
+#### Submit Decision
 ```
-GET /partials/brain
+POST /api/v1/approvals/{task_id}
 ```
-**Response:** HTML fragment for Brain/Logic state
+**Request:**
+```json
+{
+  "decision": "approve",
+  "comment": "Looks good"
+}
+```
 
 ---
 
 ## 4. DATA MODEL
 
-### 4.1 In-Memory State
-Mission Control primarily aggregates ephemeral state from other services rather than maintaining a persistent database of its own. It caches the latest "World State" from the Registry/Orchestrator refresh cycles.
+### 4.1 Database Schema
+
+#### Decisions
+```sql
+CREATE TABLE decisions (
+    id SERIAL PRIMARY KEY,
+    task_id VARCHAR(100),
+    decision VARCHAR(20), -- 'approve', 'reject'
+    operator_id VARCHAR(100),
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
 
 ---
 
@@ -146,23 +127,32 @@ Mission Control primarily aggregates ephemeral state from other services rather 
 ### 5.1 Environment Variables
 ```bash
 SERVICE_NAME=mission-control
-SERVICE_PORT=8004
+SERVICE_PORT=8014
 DROPLET_ID=14
 REGISTRY_URL=http://registry:8000
 ORCHESTRATOR_URL=http://orchestrator:8001
-NGROK_AUTH_TOKEN=...
 ```
 
 ---
 
-## 6. COMPLIANCE CHECKLIST
-- [x] UDC Endpoints defined
-- [x] Visualization of all connected droplets
-- [x] Registers with Registry
-- [ ] Tests implemented
+## 6. DEPLOYMENT
+
+### 6.1 Dockerfile
+```dockerfile
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY app/ ./app/
+EXPOSE 8014
+LABEL droplet.id="14"
+LABEL droplet.name="mission-control"
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8014"]
+```
 
 ---
 
-**This SPEC is the contract. Build matches SPEC exactly.**
-🌐⚡💎
-
+## 7. COMPLIANCE CHECKLIST
+- [x] All 5 UDC endpoints
+- [x] Registers with Registry
+- [x] Dockerized

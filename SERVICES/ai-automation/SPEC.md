@@ -1,4 +1,4 @@
-# SPEC - AI Marketing Engine (Droplet #11)
+# SPEC - AI Automation (Droplet #11)
 
 **Version:** 1.0
 **Created:** 2025-11-23
@@ -10,41 +10,37 @@
 ## 1. SERVICE OVERVIEW
 
 ### 1.1 Purpose
-The AI Marketing Engine automates the outreach and engagement process for Full Potential AI. It leverages the multi-agent system to conduct market research, engage with prospects via email and social channels, and qualify leads for the onboarding funnel.
+The AI Automation Service is the execution engine for automated marketing, outreach, and content generation. It translates high-level intent into concrete actions (emails, posts, messages) using LLMs.
 
 ### 1.2 Position in Ecosystem
-This service sits in the **Revenue Layer**, downstream of the Registry and Orchestrator, and upstream of the Dashboard. It interacts with external APIs (Apollo, SendGrid/Brevo, Reddit) and feeds data into the central CRM (via I-Match or direct integration).
+- **Upstream:** Receives tasks from Orchestrator (Droplet #14) and content from Strategic Intelligence (Droplet #20).
+- **Downstream:** Pushes content to social platforms (via specialized tools) and email gateways.
+- **Role:** "The Hands" of the autonomous system.
 
 ### 1.3 Dependencies
 **Required Services:**
-- Registry (droplet #1) - Authentication & service discovery
-- Orchestrator (droplet #10) - Task coordination and scheduling
-- Credentials Manager (droplet #20) - Secure API key access
-
-**Optional Services:**
-- I-Match (droplet #7) - Lead handoff for matching
-- Content Generation Engine (droplet #18) - Dynamic content for emails
+- Registry (Droplet #1) - Discovery & Auth
+- Orchestrator (Droplet #14) - Task assignment
+- Strategic Intelligence (Droplet #20) - Content strategy source
 
 **External Dependencies:**
-- Apollo API (Prospecting)
-- Brevo/SendGrid API (Email)
-- Reddit API (Social Engagement)
-- OpenAI/Anthropic API (LLM Intelligence)
+- Anthropic API (Claude) - Content generation
+- OpenAI API (GPT-4) - Alternative generation
+- SendGrid/Mailgun - Email delivery
 
 ---
 
 ## 2. CAPABILITIES
 
 ### 2.1 Core Capabilities
-1. **[Prospect Discovery]** - Finds high-fit leads based on ideal customer profiles (ICP).
-2. **[Autonomous Outreach]** - Sends personalized emails and messages at scale.
-3. **[Engagement Tracking]** - Monitors opens, clicks, replies, and sentiment.
+1. **Content Generation** - Create high-quality marketing copy, emails, and social posts.
+2. **Campaign Execution** - Run multi-step outreach sequences.
+3. **Personalization** - Adapt content based on recipient data.
 
 ### 2.2 Supported Operations
-- `find_prospects` - Search for new leads matching criteria.
-- `send_campaign` - Execute an email sequence to a prospect list.
-- `check_replies` - Scan for and analyze incoming responses.
-- `qualify_lead` - Score a lead based on engagement and fit.
+- `generate_content` - Produce text based on prompt/context.
+- `execute_campaign` - Trigger a defined outreach sequence.
+- `optimize_copy` - Refine existing text for better conversion.
 
 ---
 
@@ -75,13 +71,13 @@ GET /capabilities
 {
   "service_name": "ai-automation",
   "droplet_id": 11,
-  "capabilities": ["prospect_discovery", "autonomous_outreach", "engagement_tracking"],
-  "supported_operations": ["find_prospects", "send_campaign", "check_replies"],
+  "capabilities": ["content_generation", "campaign_execution"],
+  "supported_operations": ["generate_content", "execute_campaign"],
   "integration_endpoints": [
     {
-      "path": "/api/v1/campaigns",
+      "path": "/api/v1/generate",
       "method": "POST",
-      "description": "Start a new campaign"
+      "description": "Generate content"
     }
   ]
 }
@@ -98,8 +94,8 @@ GET /state
   "mode": "production",
   "active_campaigns": 3,
   "metrics": {
-    "emails_sent_today": 150,
-    "prospects_found_today": 50
+    "requests_per_minute": 12.5,
+    "average_response_time_ms": 1500
   }
 }
 ```
@@ -119,15 +115,10 @@ GET /dependencies
       "host": "registry:8000"
     }
   ],
-  "optional_services": [],
   "external_apis": [
     {
-        "name": "apollo",
-        "status": "connected"
-    },
-    {
-        "name": "brevo",
-        "status": "connected"
+      "name": "anthropic",
+      "status": "connected"
     }
   ]
 }
@@ -137,47 +128,41 @@ GET /dependencies
 ```
 POST /message
 ```
-**Request:**
-```json
-{
-  "from_service": "orchestrator",
-  "message_type": "task_assignment",
-  "payload": {
-      "action": "start_outreach",
-      "target_segment": "saas_founders"
-  },
-  "reply_to": "http://orchestrator:8001/callback"
-}
-```
+Standard UDC message handling for async tasks.
 
 ---
 
 ### 3.2 Business Logic Endpoints
 
-#### Trigger Outreach
+#### Generate Content
 ```
-POST /api/v1/outreach/trigger
+POST /api/v1/generate
 ```
-**Purpose:** Manually trigger an outreach run for a specific segment.
-
 **Request:**
 ```json
 {
-  "segment": "tech_startups",
-  "limit": 50
+  "prompt": "Write a welcome email for new subscribers",
+  "context": {"audience": "tech founders"},
+  "model": "claude-3-opus"
+}
+```
+**Response:**
+```json
+{
+  "content": "Welcome to the future...",
+  "metadata": {"tokens_used": 450}
 }
 ```
 
-**Response (200 OK):**
+#### Execute Campaign
+```
+POST /api/v1/campaigns/execute
+```
+**Request:**
 ```json
 {
-  "data": {
-    "job_id": "job-123",
-    "status": "queued"
-  },
-  "meta": {
-    "timestamp": "2025-11-23T12:00:00Z"
-  }
+  "campaign_id": "camp-123",
+  "target_segment": "new-leads"
 }
 ```
 
@@ -185,91 +170,66 @@ POST /api/v1/outreach/trigger
 
 ## 4. DATA MODEL
 
-### 4.1 Database Schema (Conceptual)
+### 4.1 Database Schema
 
-#### `prospects`
-| Field | Type | Description |
-|-------|------|-------------|
-| id | UUID | Primary Key |
-| email | String | Unique email |
-| status | Enum | new, contacted, replied, qualified |
-| score | Int | Lead score (0-100) |
-| last_contacted | Timestamp | Last engagement time |
+#### Campaigns
+```sql
+CREATE TABLE campaigns (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    status VARCHAR(20) DEFAULT 'draft',
+    config JSONB,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
 
-#### `campaigns`
-| Field | Type | Description |
-|-------|------|-------------|
-| id | UUID | Primary Key |
-| name | String | Campaign Name |
-| status | Enum | active, paused, completed |
-| metrics | JSON | Open/Click/Reply stats |
-
----
-
-## 5. BUSINESS LOGIC
-
-### 5.1 Core Workflows
-
-#### Outreach Cycle
-**Trigger:** Scheduled Cron or API Call
-**Steps:**
-1. Fetch new prospects from Apollo API based on ICP.
-2. Filter duplicates and validate emails.
-3. Generate personalized email content using LLM.
-4. Send via Brevo/SendGrid.
-5. Log event to `campaigns` table.
-
-**Result:** Emails sent, database updated.
-
-### 5.2 Integration Patterns
-- **Registry:** Registers as "ai-automation" on port 8700.
-- **Orchestrator:** Listens for "marketing_sprint" tasks.
+#### Generations
+```sql
+CREATE TABLE generations (
+    id SERIAL PRIMARY KEY,
+    prompt TEXT,
+    output TEXT,
+    model VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
 
 ---
 
-## 6. CONFIGURATION
+## 5. CONFIGURATION
 
-### 6.1 Environment Variables
+### 5.1 Environment Variables
 ```bash
 SERVICE_NAME=ai-automation
-SERVICE_PORT=8700
+SERVICE_PORT=8011
 DROPLET_ID=11
 REGISTRY_URL=http://registry:8000
-APOLLO_API_KEY=sk_...
-BREVO_API_KEY=xkeysib-...
+ANTHROPIC_API_KEY=sk-...
 OPENAI_API_KEY=sk-...
 ```
 
 ---
 
-## 7. DEPLOYMENT
+## 6. DEPLOYMENT
 
-### 7.1 Docker Configuration
-**Dockerfile:** Standard Python 3.11-slim image exposing port 8700.
-**Labels:** `droplet.id="11"`, `droplet.name="ai-automation"`, `droplet.udc_compliant="true"`.
-
----
-
-## 8. TESTING
-- `pytest` suite covering /health and outreach logic.
-- Mock external APIs for reliable CI execution.
-
----
-
-## 9. SECURITY
-- API Keys stored in Vault (Credentials Manager), injected at runtime.
-- Rate limiting on external API calls to prevent bans.
+### 6.1 Dockerfile
+```dockerfile
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY app/ ./app/
+EXPOSE 8011
+LABEL droplet.id="11"
+LABEL droplet.name="ai-automation"
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8011"]
+```
 
 ---
 
-## 10. COMPLIANCE CHECKLIST
-- [x] UDC Endpoints defined
+## 7. COMPLIANCE CHECKLIST
+- [x] All 5 UDC endpoints
 - [x] Registers with Registry
-- [x] Environment variables standardized
-- [ ] Tests fully implemented (In Progress)
-
----
-
-**This SPEC is the contract. Build matches SPEC exactly.**
-🌐⚡💎
-
+- [x] Sends Heartbeats
+- [x] JWT Auth
+- [x] Dockerized

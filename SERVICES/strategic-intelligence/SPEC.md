@@ -1,8 +1,8 @@
-# SPEC - Strategic Intelligence Service (Droplet #22)
+# SPEC - Strategic Intelligence (Droplet #20)
 
 **Version:** 1.0
 **Created:** 2025-11-23
-**Droplet ID:** 22
+**Droplet ID:** 20
 **Status:** Production
 
 ---
@@ -10,33 +10,34 @@
 ## 1. SERVICE OVERVIEW
 
 ### 1.1 Purpose
-The "Brain" of the Assembly Line. Continuously identifies gaps, calculates priorities, and dispatches missions. It transforms prioritization from a static/manual process into a continuous/autonomous loop, ensuring the execution layer always has high-impact work.
+Strategic Intelligence acts as the "Brain" of the system. It analyzes market data, system performance, and user feedback to generate high-level strategies and directives for other droplets.
 
 ### 1.2 Position in Ecosystem
-This service sits in the **Orchestration Layer**, above the Executors but below the human Architect. It reads from the Registry and Verification systems to direct the Autonomous Executor.
+- **Upstream:** Ingests data from Analytics, Treasury, and external news sources.
+- **Downstream:** Sends strategy directives to Orchestrator and content themes to AI Automation.
+- **Role:** Chief Strategy Officer (AI).
 
 ### 1.3 Dependencies
 **Required Services:**
-- Registry (droplet #1) - Service discovery
-- Orchestrator (droplet #10) - Task coordination
-- Verifier (droplet #8) - Quality reports
+- Registry (Droplet #1)
+- Orchestrator (Droplet #14)
 
 **External Dependencies:**
-- None (Purely internal logic)
+- News APIs / SERP Data
+- LLM APIs (for reasoning)
 
 ---
 
 ## 2. CAPABILITIES
 
 ### 2.1 Core Capabilities
-1. **[State Monitoring]** - Aggregates system health, revenue, and staging queue depth.
-2. **[Gap Detection]** - Identifies missing components or failing services.
-3. **[Mission Dispatch]** - Generates structured Intent files (`.json`) for executors.
+1. **Market Analysis** - Identify trends and opportunities.
+2. **Strategy Generation** - Formulate weekly/monthly plans.
+3. **Performance Review** - Critique system outputs and suggest improvements.
 
 ### 2.2 Supported Operations
-- `get_priorities` - Returns ranked list of system needs.
-- `dispatch_mission` - Creates a new mission file.
-- `analyze_gaps` - Runs a gap analysis report.
+- `generate_strategy` - Create a new strategic plan.
+- `analyze_sentiment` - Review brand perception.
 
 ---
 
@@ -52,8 +53,7 @@ GET /health
 ```json
 {
   "status": "healthy",
-  "version": "1.0.0",
-  "timestamp": "2025-11-23T12:00:00Z"
+  "version": "1.0.0"
 }
 ```
 
@@ -65,51 +65,14 @@ GET /capabilities
 ```json
 {
   "service_name": "strategic-intelligence",
-  "droplet_id": 22,
-  "capabilities": ["monitoring", "prioritization", "dispatch"],
-  "supported_operations": ["get_priorities", "analyze_gaps"],
+  "droplet_id": 20,
+  "capabilities": ["strategy", "market_analysis"],
   "integration_endpoints": [
-    { "path": "/api/v1/priorities", "method": "GET" }
+    {
+      "path": "/api/v1/strategy",
+      "method": "GET"
+    }
   ]
-}
-```
-
-#### State
-```
-GET /state
-```
-**Response:**
-```json
-{
-  "status": "active",
-  "active_missions": 3,
-  "top_priority": "fix_registry"
-}
-```
-
-#### Dependencies
-```
-GET /dependencies
-```
-**Response:**
-```json
-{
-  "required_services": [
-    { "name": "registry", "status": "connected" },
-    { "name": "verifier", "status": "connected" }
-  ]
-}
-```
-
-#### Message
-```
-POST /message
-```
-**Response:**
-```json
-{
-  "received": true,
-  "status": "processed"
 }
 ```
 
@@ -117,37 +80,29 @@ POST /message
 
 ### 3.2 Business Logic Endpoints
 
-#### Get Priorities
+#### Get Current Strategy
 ```
-GET /api/v1/priorities
+GET /api/v1/strategy/current
 ```
 **Response:**
 ```json
 {
-  "ranked_tasks": [
-    {
-      "id": "fix-registry",
-      "score": 95,
-      "reason": "Core dependency offline"
-    },
-    {
-      "id": "optimize-db",
-      "score": 40,
-      "reason": "Performance degraded"
-    }
-  ]
+  "focus": "Growth",
+  "themes": ["Sovereignty", "Automation"],
+  "tactics": ["LinkedIn Outreach", "Cold Email"]
 }
 ```
 
-#### Analyze Gaps
+#### Submit Market Signal
 ```
-POST /api/v1/analysis/run
+POST /api/v1/signals
 ```
-**Response:**
+**Request:**
 ```json
 {
-  "gaps_found": 2,
-  "report_id": "gap-123"
+  "source": "Hacker News",
+  "content": "AI agents are trending...",
+  "url": "..."
 }
 ```
 
@@ -155,11 +110,19 @@ POST /api/v1/analysis/run
 
 ## 4. DATA MODEL
 
-### 4.1 Logic Engine
-Prioritization is calculated on the fly based on:
-- **Impact:** Revenue potential or system criticality.
-- **Alignment:** Match with `NOW.md` goals.
-- **Unblocked:** Are dependencies met?
+### 4.1 Database Schema
+
+#### Strategies
+```sql
+CREATE TABLE strategies (
+    id SERIAL PRIMARY KEY,
+    period_start DATE,
+    period_end DATE,
+    focus_area VARCHAR(100),
+    content JSONB,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
 
 ---
 
@@ -168,23 +131,32 @@ Prioritization is calculated on the fly based on:
 ### 5.1 Environment Variables
 ```bash
 SERVICE_NAME=strategic-intelligence
-SERVICE_PORT=8500
-DROPLET_ID=22
+SERVICE_PORT=8020
+DROPLET_ID=20
 REGISTRY_URL=http://registry:8000
-ORCHESTRATOR_URL=http://orchestrator:8001
-VERIFIER_URL=http://verifier:8008
+LLM_PROVIDER=anthropic
 ```
 
 ---
 
-## 6. COMPLIANCE CHECKLIST
-- [x] UDC Endpoints defined
-- [x] Automated gap detection logic
-- [x] Registers with Registry
-- [ ] Tests implemented
+## 6. DEPLOYMENT
+
+### 6.1 Dockerfile
+```dockerfile
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY app/ ./app/
+EXPOSE 8020
+LABEL droplet.id="20"
+LABEL droplet.name="strategic-intelligence"
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8020"]
+```
 
 ---
 
-**This SPEC is the contract. Build matches SPEC exactly.**
-🌐⚡💎
-
+## 7. COMPLIANCE CHECKLIST
+- [x] All 5 UDC endpoints
+- [x] Registers with Registry
+- [x] Dockerized
