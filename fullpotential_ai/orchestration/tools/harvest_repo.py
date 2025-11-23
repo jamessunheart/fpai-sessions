@@ -151,7 +151,18 @@ def harvest(url: str, branch: str, target_path: str) -> None:
         add_remote(repo_root, url)
         remote_added = True
         run_subtree_add(repo_root, prefix, branch, commit_message)
+        
+        # VERIFICATION STEP
+        verify_harvest(repo_root, prefix)
+        
+    except Exception:
+        # If verification or anything else fails, we might want to cleanup
+        # But subtree add is already committed by default if we don't be careful
+        # For now, we rely on 'verify_harvest' raising an error which stops the script
+        # before the final push.
+        raise
     finally:
+
         if remote_added:
             try:
                 remove_remote(repo_root)
@@ -161,6 +172,35 @@ def harvest(url: str, branch: str, target_path: str) -> None:
     commit_if_needed(repo_root, prefix, commit_message)
     push_main(repo_root)
     print("Harvest complete.")
+
+
+def verify_harvest(repo_root: Path, prefix: str) -> None:
+    """
+    Runs validation tests on the harvested code.
+    If validation fails, raises HarvestError to trigger a rollback/abort.
+    """
+    target_path = repo_root / prefix
+    
+    # Check for existence of tests
+    if not (target_path / "tests").exists() and not list(target_path.glob("test_*.py")):
+        print(f"⚠️  Warning: No tests found in harvested directory '{prefix}'. Proceeding with caution.")
+        return
+
+    print(f"🧪 Verifying harvested code in '{prefix}'...")
+    
+    # Run pytest in the target directory
+    # We assume the environment is set up or we run basic syntax checks
+    try:
+        subprocess.run(
+            ["pytest", prefix],
+            cwd=repo_root,
+            check=True,
+            capture_output=False
+        )
+        print("✅ Verification Passed.")
+    except subprocess.CalledProcessError:
+        raise HarvestError(f"Verification FAILED for '{prefix}'. Tests did not pass. Harvest aborted.")
+
 
 
 def build_parser() -> argparse.ArgumentParser:

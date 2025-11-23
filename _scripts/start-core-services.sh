@@ -71,6 +71,23 @@ start_service \
     8001 \
     "python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8001"
 
+
+# Pulse (Port 8002) - Conscious Heartbeat
+# Using a simpler start mechanism as it might be a daemon script not a uvicorn app,
+# but for consistency and if it exposes health, we treat it similarly.
+# Assuming conscious_pulse.py runs a loop. We background it.
+echo "📦 Starting Pulse (Daemon)..."
+PULSE_SCRIPT="/Users/jamessunheart/FPAI_Cockpit/fullpotential_ai/orchestration/daemons/conscious_pulse.py"
+if [ -f "$PULSE_SCRIPT" ]; then
+    nohup python3 "$PULSE_SCRIPT" > "/tmp/pulse.log" 2>&1 &
+    PULSE_PID=$!
+    echo "pulse:$PULSE_PID:DAEMON" >> "$PIDS_FILE"
+    echo "   ✅ Started (PID: $PULSE_PID)"
+else
+    echo "   ⚠️  Pulse script not found at $PULSE_SCRIPT"
+fi
+
+
 echo ""
 echo "═══════════════════════════════════════"
 echo "  ✅ Core Services Started"
