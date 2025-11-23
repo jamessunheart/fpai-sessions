@@ -41,4 +41,6 @@ mkdir -p "${LOG_DIR}"
   fi
 } >> "${LOG_FILE}" 2>&1
 
+python3 /opt/fpai/infra/verify_deployment.py >> /var/log/fpai/verify.log 2>&1
+
 
