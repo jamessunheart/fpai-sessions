@@ -1,0 +1,85 @@
+{
+  "security_policy": {
+    "version": "1.0.0",
+    "last_updated": "2025-11-23",
+    "levels": {
+      "public": {
+        "code": "🟢",
+        "description": "Open source, safe for public consumption and contribution.",
+        "access": "Anyone",
+        "harvester_action": "Publish"
+      },
+      "internal": {
+        "code": "🟠",
+        "description": "Internal system logic, operational tooling, and non-sensitive business logic.",
+        "access": "Team Members & Trusted AI",
+        "harvester_action": "Index (No Public Publish)"
+      },
+      "restricted": {
+        "code": "🔴",
+        "description": "Critical security infrastructure, secrets management, and sensitive financial/user data.",
+        "access": "Core Team & High-Privilege AI Only",
+        "harvester_action": "Ignore/Obfuscate"
+      }
+    }
+  },
+  "services": {
+    "registry": {
+      "level": "public",
+      "reason": "Service discovery interface must be accessible."
+    },
+    "dashboard": {
+      "level": "internal",
+      "reason": "Displays internal system state and metrics."
+    },
+    "i-proactive": {
+      "level": "internal",
+      "reason": "Orchestrates internal workflows and intent."
+    },
+    "i-match": {
+      "level": "internal",
+      "reason": "Handles business logic and matching algorithms."
+    },
+    "autonomous-executor": {
+      "level": "internal",
+      "reason": "Executes tasks on behalf of the system."
+    },
+    "auto-fix-engine": {
+      "level": "internal",
+      "reason": "Modifies codebase automatically."
+    },
+    "credentials-manager": {
+      "level": "restricted",
+      "reason": "Stores and manages sensitive secrets and keys."
+    },
+    "deployer": {
+      "level": "restricted",
+      "reason": "Controls production infrastructure deployment."
+    },
+    "helper-management": {
+      "level": "internal",
+      "reason": "Coordinates human and AI resources."
+    },
+    "jobs": {
+      "level": "internal",
+      "reason": "Processes background tasks."
+    },
+    "landing-page": {
+      "level": "public",
+      "reason": "Public entry point and marketing material."
+    },
+    "membership": {
+      "level": "internal",
+      "reason": "Manages user accounts (sensitive PII handled carefully)."
+    },
+    "ops": {
+      "level": "internal",
+      "reason": "Operational tooling for system maintenance."
+    },
+    "orchestrator": {
+      "level": "internal",
+      "reason": "Central nervous system for task coordination."
+    }
+  }
+}
+
