@@ -1,28 +1,43 @@
-from pydantic import BaseModel, Field
-from typing import Optional
+"""Models for the Proxy Manager."""
+from typing import List, Optional, Dict, Any, Literal
 from datetime import datetime
+from pydantic import BaseModel, Field
 
-class ProxyConfig(BaseModel):
+class ProxyConfigRequest(BaseModel):
+    """Request to configure a proxy."""
+    domain: str = Field(..., description="The domain name to route (e.g. registry.fpai.io)")
+    upstream_host: str = Field(..., description="The internal IP or hostname of the service")
+    upstream_port: int = Field(..., description="The internal port of the service")
+    ssl_enabled: bool = Field(False, description="Whether to enable SSL (requires valid domain)")
+    metadata: Optional[Dict[str, Any]] = Field(default_factory=dict)
+
+class ProxyConfig(ProxyConfigRequest):
+    """Internal proxy configuration model."""
     droplet_name: str
-    domain: str
-    upstream_host: str
-    upstream_port: int
-    ssl_enabled: bool = False
-    require_healthy: bool = True
+    status: str = "inactive"
+    last_health_status: Optional[str] = None
+    last_health_checked_at: Optional[datetime] = None
 
-class ProxyStatus(BaseModel):
-    droplet_name: str
-    domain: str
-    upstream: str
-    ssl_enabled: bool
-    status: str
+class ProxyConfigResponse(ProxyConfig):
+    """Response model for proxy configuration."""
+    pass
 
-class SSLCertRequest(BaseModel):
-    email: Optional[str] = None
-    force_renew: bool = False
+class ErrorDetail(BaseModel):
+    """Error detail model."""
+    code: str
+    message: str
 
-class HealthResponse(BaseModel):
-    status: str
-    nginx: dict
-    ssl: dict
+class ErrorResponse(BaseModel):
+    """Standard error response."""
+    error: ErrorDetail
 
+class MessageRequest(BaseModel):
+    """UDC Message Request."""
+    sender: str
+    content: Dict[str, Any]
+    timestamp: datetime
+
+class MessageResponse(BaseModel):
+    """UDC Message Response."""
+    received: bool
+    processed_at: datetime

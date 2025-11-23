@@ -1,74 +1,100 @@
 from fastapi import FastAPI, HTTPException, status
-from app.models import ProxyConfig, ProxyStatus, SSLCertRequest, HealthResponse
-from app.nginx_manager import NginxManager
+from datetime import datetime
+from typing import List, Dict, Any
+
 from app.config import settings
-import logging
-
-# Setup logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-app = FastAPI(
-    title="Proxy Manager API",
-    version="1.0.0",
-    description="Automates NGINX reverse proxy and SSL management for FPAI droplets."
+from app.models import (
+    ProxyConfigRequest, ProxyConfigResponse, ProxyConfig,
+    ErrorResponse, MessageRequest, MessageResponse
 )
+from app.nginx_manager import NGINXManager
 
-nginx_manager = NginxManager()
+app = FastAPI(title="FPAI Proxy Manager", version="1.0.0")
 
-@app.put("/proxies/{droplet_name}", response_model=ProxyStatus, status_code=status.HTTP_201_CREATED)
-async def create_update_proxy(droplet_name: str, config: ProxyConfig):
-    config.droplet_name = droplet_name # Ensure name matches path
+nginx_manager = NGINXManager()
+
+# In-memory store for now (should be persisted)
+PROXIES: Dict[str, ProxyConfig] = {}
+
+@app.get("/health")
+async def health():
+    """UDC Health Check."""
+    return {
+        "status": "active",
+        "version": "1.0.0",
+        "timestamp": datetime.utcnow().isoformat(),
+        "proxies_managed": len(PROXIES)
+    }
+
+@app.get("/capabilities")
+async def capabilities():
+    """UDC Capabilities."""
+    return {
+        "name": "proxy-manager",
+        "version": "1.0.0",
+        "capabilities": ["nginx-config", "ssl-management", "routing"],
+        "endpoints": ["/proxies", "/proxies/{droplet_name}"]
+    }
+
+@app.put("/proxies/{droplet_name}", response_model=ProxyConfigResponse)
+async def create_update_proxy(droplet_name: str, request: ProxyConfigRequest):
+    """Create or update a proxy configuration."""
     
-    if not nginx_manager.create_config(config):
-        raise HTTPException(status_code=500, detail="Failed to write NGINX config")
-        
-    if not nginx_manager.test_and_reload():
-        # Rollback attempt could go here
-        raise HTTPException(status_code=422, detail="NGINX config test failed")
-        
-    return ProxyStatus(
+    # Create internal config object
+    config = ProxyConfig(
         droplet_name=droplet_name,
-        domain=config.domain,
-        upstream=f"http://{config.upstream_host}:{config.upstream_port}",
-        ssl_enabled=config.ssl_enabled,
-        status="active"
+        **request.dict()
     )
+    
+    # Write Nginx Config
+    success, error = nginx_manager.write_config(config)
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to write config: {error}"
+        )
+        
+    # Test and Reload
+    success, output = nginx_manager.test_config()
+    if not success:
+        # Rollback? For now just fail
+        nginx_manager.delete_config(droplet_name)
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid Nginx config generated: {output}"
+        )
+        
+    success, output = nginx_manager.reload()
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to reload Nginx: {output}"
+        )
+        
+    config.status = "active"
+    PROXIES[droplet_name] = config
+    
+    return config
 
 @app.delete("/proxies/{droplet_name}")
 async def delete_proxy(droplet_name: str):
-    if not nginx_manager.delete_config(droplet_name):
-        raise HTTPException(status_code=500, detail="Failed to delete config")
+    """Delete a proxy configuration."""
+    if droplet_name not in PROXIES:
+        # Check if config file exists anyway
+        pass
+        
+    success, error = nginx_manager.delete_config(droplet_name)
+    if not success:
+        raise HTTPException(status_code=500, detail=str(error))
+        
+    nginx_manager.reload()
     
-    nginx_manager.test_and_reload()
-    return {"status": "deleted"}
+    if droplet_name in PROXIES:
+        del PROXIES[droplet_name]
+        
+    return {"status": "deleted", "droplet_name": droplet_name}
 
-@app.post("/proxies/{droplet_name}/ssl")
-async def enable_ssl(droplet_name: str, request: SSLCertRequest):
-    # Placeholder for Certbot integration
-    # In v1, we'd call subprocess.run([settings.certbot_bin, ...])
-    return {"status": "ssl_triggered", "droplet": droplet_name}
-
-@app.get("/proxy-manager/health", response_model=HealthResponse)
-async def health_check():
-    return HealthResponse(
-        status="healthy",
-        nginx={"present": True, "config_test_ok": True},
-        ssl={"certbot_present": True, "last_operation": "none"}
-    )
-
-# UDC Standard Endpoints
-@app.get("/health")
-async def udc_health():
-    return {"status": "healthy", "version": "1.0.0"}
-
-@app.get("/capabilities")
-async def udc_capabilities():
-    return {
-        "service_name": "proxy-manager",
-        "droplet_id": 3, # Assuming ID 3 or similar
-        "capabilities": ["proxy_management", "ssl_termination"],
-        "integration_endpoints": [
-            {"path": "/proxies/{droplet_name}", "method": "PUT"}
-        ]
-    }
+@app.get("/proxies", response_model=List[ProxyConfigResponse])
+async def list_proxies():
+    """List all managed proxies."""
+    return list(PROXIES.values())

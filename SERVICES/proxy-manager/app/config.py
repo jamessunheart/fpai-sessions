@@ -1,22 +1,22 @@
-# Config settings
+"""Configuration settings for Proxy Manager."""
 import os
+from typing import Optional
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    service_name: str = "proxy-manager"
-    service_port: int = 8100
+    PROJECT_NAME: str = "Proxy Manager"
+    VERSION: str = "1.0.0"
     
-    # Nginx configuration - Default to local temp dirs for development/testing
-    nginx_sites_available: str = os.getenv("NGINX_SITES_AVAILABLE", "./tmp/nginx/sites-available")
-    nginx_sites_enabled: str = os.getenv("NGINX_SITES_ENABLED", "./tmp/nginx/sites-enabled")
-    nginx_bin: str = os.getenv("NGINX_BIN", "/usr/sbin/nginx")
+    # Server
+    PROXY_MANAGER_PORT: int = 8100
     
-    # SSL configuration
-    certbot_bin: str = os.getenv("CERTBOT_BIN", "/usr/bin/certbot")
-    default_ssl_email: str = "admin@fullpotential.ai"
+    # Nginx
+    nginx_bin: str = "nginx"
+    nginx_sites_available: str = "/etc/nginx/sites-available"
+    nginx_sites_enabled: str = "/etc/nginx/sites-enabled"
     
-    # Registry integration
-    registry_url: str = "http://localhost:8000"
+    # UDC
+    registry_url: Optional[str] = None
     
     class Config:
         env_file = ".env"
