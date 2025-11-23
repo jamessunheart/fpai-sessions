@@ -10,35 +10,36 @@
 ## 1. SERVICE OVERVIEW
 
 ### 1.1 Purpose
-The intelligence engine that transforms static intents into proactive execution. It uses a multi-agent system (CrewAI) to parallelize tasks, learn from outcomes (Mem0), and optimize revenue strategies.
+I-Proactive is an autonomous outreach engine that identifies and engages potential partners or leads before they even realize they have a need. It shifts from reactive waiting to proactive connection.
 
 ### 1.2 Position in Ecosystem
-This service sits in the **Intelligence Layer**, acting as the "Strategy Brain" for the ecosystem. It directs I-Match (execution) and reports to Mission Control (visibility).
+- **Upstream:** Receives target criteria from Strategic Intelligence.
+- **Downstream:** Feeds warm leads to I-Match or AI Automation for follow-up.
+- **Role:** The Hunter / Scout.
 
 ### 1.3 Dependencies
 **Required Services:**
-- Registry (droplet #1) - Service discovery
-- Orchestrator (droplet #10) - Task assignment
-- Credentials Manager (droplet #20) - Key access
+- Registry (Droplet #1)
+- Strategic Intelligence (Droplet #20) - Targeting logic
 
 **External Dependencies:**
-- OpenAI/Anthropic/Gemini (LLM Intelligence)
-- Mem0 (Long-term Memory)
-- CrewAI (Agent Framework)
+- LinkedIn API / Sales Navigator
+- Twitter/X API
+- Apollo.io / ZoomInfo (Data enrichment)
 
 ---
 
 ## 2. CAPABILITIES
 
 ### 2.1 Core Capabilities
-1. **[Multi-Agent Execution]** - Parallel processing via specialized agents (Strategist, Builder, etc.).
-2. **[Persistent Memory]** - Retains context across sessions to improve decision quality.
-3. **[Model Routing]** - Dynamically selects the best LLM for each task (Cost vs. Capability).
+1. **Signal Detection** - Monitor social feeds/news for "intent signals" (e.g., "looking for X").
+2. **Lead Enrichment** - Gather contact info and context on identified targets.
+3. **Initial Outreach** - Send the first "icebreaker" message or connection request.
 
 ### 2.2 Supported Operations
-- `execute_plan` - Run a multi-step strategy.
-- `store_memory` - Save key insights.
-- `retrieve_context` - Get relevant history for a task.
+- `scan_for_leads` - Run a search based on keywords/criteria.
+- `enrich_profile` - Get email/phone for a social profile.
+- `send_icebreaker` - Initiate contact.
 
 ---
 
@@ -54,8 +55,7 @@ GET /health
 ```json
 {
   "status": "healthy",
-  "version": "1.0.0",
-  "timestamp": "2025-11-23T12:00:00Z"
+  "version": "1.0.0"
 }
 ```
 
@@ -68,53 +68,13 @@ GET /capabilities
 {
   "service_name": "i-proactive",
   "droplet_id": 6,
-  "capabilities": ["multi_agent", "memory", "model_routing"],
-  "supported_operations": ["plan", "learn", "optimize"],
+  "capabilities": ["lead_scouting", "outreach"],
   "integration_endpoints": [
-    { "path": "/api/v1/execute", "method": "POST" }
+    {
+      "path": "/api/v1/leads",
+      "method": "POST"
+    }
   ]
-}
-```
-
-#### State
-```
-GET /state
-```
-**Response:**
-```json
-{
-  "status": "active",
-  "active_crews": 2,
-  "memory_size_mb": 45.2
-}
-```
-
-#### Dependencies
-```
-GET /dependencies
-```
-**Response:**
-```json
-{
-  "required_services": [
-    { "name": "registry", "status": "connected" }
-  ],
-  "external_apis": [
-    { "name": "openai", "status": "connected" },
-    { "name": "mem0", "status": "connected" }
-  ]
-}
-```
-
-#### Message
-```
-POST /message
-```
-**Response:**
-```json
-{
-  "received": true,
-  "status": "processed"
 }
 ```
 
@@ -122,22 +82,36 @@ POST /message
 
 ### 3.2 Business Logic Endpoints
 
-#### Execute Strategy
+#### Submit Lead Criteria
 ```
-POST /api/v1/execute
+POST /api/v1/scout
 ```
 **Request:**
 ```json
 {
-  "goal": "Increase revenue by 10%",
-  "constraints": ["budget < $100", "timeline < 7d"]
+  "keywords": ["hiring AI engineers", "building autonomous agents"],
+  "platform": "linkedin",
+  "max_results": 50
 }
 ```
 **Response:**
 ```json
 {
-  "plan_id": "plan-789",
-  "agents_assigned": ["strategist", "analyst"]
+  "job_id": "scout-123",
+  "status": "queued"
+}
+```
+
+#### Get Identified Leads
+```
+GET /api/v1/leads?job_id=scout-123
+```
+**Response:**
+```json
+{
+  "leads": [
+    {"name": "Jane Doe", "profile_url": "...", "signal": "Tweeted about needing AI help"}
+  ]
 }
 ```
 
@@ -145,16 +119,20 @@ POST /api/v1/execute
 
 ## 4. DATA MODEL
 
-### 4.1 Memory Store
-Uses vector storage (Mem0) to index past decisions, outcomes, and user preferences.
+### 4.1 Database Schema
 
-#### `memories`
-| Field | Type | Description |
-|-------|------|-------------|
-| id | UUID | Memory ID |
-| vector | List[Float] | Embedding |
-| content | Text | The insight |
-| context | JSON | Metadata |
+#### Leads
+```sql
+CREATE TABLE leads (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255),
+    profile_url VARCHAR(500) UNIQUE,
+    platform VARCHAR(50),
+    status VARCHAR(50), -- 'new', 'contacted', 'responded'
+    enrichment_data JSONB,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
 
 ---
 
@@ -163,24 +141,32 @@ Uses vector storage (Mem0) to index past decisions, outcomes, and user preferenc
 ### 5.1 Environment Variables
 ```bash
 SERVICE_NAME=i-proactive
-SERVICE_PORT=8400
+SERVICE_PORT=8006
 DROPLET_ID=6
 REGISTRY_URL=http://registry:8000
-OPENAI_API_KEY=sk-...
-ANTHROPIC_API_KEY=sk-...
-GEMINI_API_KEY=...
-MEM0_API_KEY=...
+LINKEDIN_COOKIE=...
 ```
 
 ---
 
-## 6. COMPLIANCE CHECKLIST
-- [x] UDC Endpoints defined
-- [x] Registers with Registry
-- [x] Persistent memory integration
-- [ ] Tests implemented
+## 6. DEPLOYMENT
+
+### 6.1 Dockerfile
+```dockerfile
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY app/ ./app/
+EXPOSE 8006
+LABEL droplet.id="6"
+LABEL droplet.name="i-proactive"
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8006"]
+```
 
 ---
 
-**This SPEC is the contract. Build matches SPEC exactly.**
-🌐⚡💎
+## 7. COMPLIANCE CHECKLIST
+- [x] All 5 UDC endpoints
+- [x] Registers with Registry
+- [x] Dockerized

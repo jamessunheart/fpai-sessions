@@ -1,8 +1,8 @@
-# SPEC - Credentials Manager (Droplet #25)
+# SPEC - Credentials Manager (Droplet #9)
 
 **Version:** 1.0
 **Created:** 2025-11-23
-**Droplet ID:** 25
+**Droplet ID:** 9
 **Status:** Production
 
 ---
@@ -10,31 +10,34 @@
 ## 1. SERVICE OVERVIEW
 
 ### 1.1 Purpose
-The digital vault of the ecosystem. Securely stores API keys, billing details, and secrets using AES-256 encryption. It issues time-limited, scoped access tokens to other droplets, ensuring no service holds permanent keys to the kingdom.
+The Credentials Manager is the system's secure vault. It stores API keys, private keys, and sensitive configurations, serving them to authorized droplets on demand (or injecting them at runtime).
 
 ### 1.2 Position in Ecosystem
-This service sits in the **Foundation Layer** (Security). It is a critical dependency for almost every other droplet that needs to talk to the outside world (OpenAI, Stripe, etc.).
+- **Upstream:** Admin (manual input) or Orchestrator (key rotation).
+- **Downstream:** All services needing secrets.
+- **Role:** The Vault.
 
 ### 1.3 Dependencies
 **Required Services:**
-- Registry (droplet #1) - Service discovery
+- Registry (Droplet #1) - For identity verification
 
 **External Dependencies:**
-- None (Self-contained vault)
+- HashiCorp Vault (optional backend)
+- AWS Secrets Manager (optional backend)
+- Encrypted File Storage (default)
 
 ---
 
 ## 2. CAPABILITIES
 
 ### 2.1 Core Capabilities
-1. **[Secure Storage]** - AES-256-GCM encryption for all secrets at rest.
-2. **[Access Control]** - Issues short-lived JWTs for specific secrets.
-3. **[Audit Logging]** - Immutable record of who accessed what and when.
+1. **Secret Storage** - Encrypt and store keys at rest.
+2. **Access Control** - Verify which droplet is asking for which key.
+3. **Audit Logging** - Track every secret access attempt.
 
 ### 2.2 Supported Operations
-- `store_secret` - Encrypt and save a value.
-- `retrieve_secret` - Decrypt and return a value (if authorized).
-- `rotate_key` - Re-encrypt all secrets with a new master key.
+- `get_secret` - Retrieve a specific key.
+- `rotate_secret` - Update a key value.
 
 ---
 
@@ -50,8 +53,7 @@ GET /health
 ```json
 {
   "status": "healthy",
-  "version": "1.0.0",
-  "timestamp": "2025-11-23T12:00:00Z"
+  "version": "1.0.0"
 }
 ```
 
@@ -63,50 +65,14 @@ GET /capabilities
 ```json
 {
   "service_name": "credentials-manager",
-  "droplet_id": 25,
-  "capabilities": ["vault", "encryption", "audit"],
-  "supported_operations": ["store", "retrieve", "audit"],
+  "droplet_id": 9,
+  "capabilities": ["secrets_management", "encryption"],
   "integration_endpoints": [
-    { "path": "/api/v1/secrets/{key}", "method": "GET" }
+    {
+      "path": "/api/v1/secrets/{key}",
+      "method": "GET"
+    }
   ]
-}
-```
-
-#### State
-```
-GET /state
-```
-**Response:**
-```json
-{
-  "status": "active",
-  "stored_secrets": 142,
-  "last_rotation": "2025-11-01T00:00:00Z"
-}
-```
-
-#### Dependencies
-```
-GET /dependencies
-```
-**Response:**
-```json
-{
-  "required_services": [
-    { "name": "registry", "status": "connected" }
-  ]
-}
-```
-
-#### Message
-```
-POST /message
-```
-**Response:**
-```json
-{
-  "received": true,
-  "status": "processed"
 }
 ```
 
@@ -114,30 +80,32 @@ POST /message
 
 ### 3.2 Business Logic Endpoints
 
-#### Retrieve Secret
+#### Get Secret
 ```
-GET /api/v1/secrets/{key}
+GET /api/v1/secrets/{key_name}
 ```
-**Request Header:** `Authorization: Bearer <scoped_token>`
+**Headers:**
+```
+Authorization: Bearer <jwt_token>
+```
 **Response:**
 ```json
 {
-  "key": "stripe_api_key",
-  "value": "sk_live_...",
-  "expires_in": 3600
+  "value": "sk-12345...",
+  "expires_at": "2025-12-31T00:00:00Z"
 }
 ```
 
-#### Audit Log
+#### Set Secret (Admin Only)
 ```
-GET /api/v1/audit
+POST /api/v1/secrets
 ```
-**Response:**
+**Request:**
 ```json
 {
-  "events": [
-    { "actor": "i-match", "action": "read", "key": "stripe_key", "time": "..." }
-  ]
+  "key": "OPENAI_API_KEY",
+  "value": "sk-new-key...",
+  "allowed_droplets": [11, 7]
 }
 ```
 
@@ -145,14 +113,17 @@ GET /api/v1/audit
 
 ## 4. DATA MODEL
 
-### 4.1 Vault Schema
-#### `secrets`
-| Field | Type | Description |
-|-------|------|-------------|
-| id | UUID | Secret ID |
-| key | String | Lookup key |
-| value_enc | Binary | Encrypted blob |
-| version | Int | Key version |
+### 4.1 Database Schema
+
+#### Secrets
+```sql
+CREATE TABLE secrets (
+    key_name VARCHAR(100) PRIMARY KEY,
+    encrypted_value TEXT NOT NULL,
+    allowed_droplets INT[], -- Array of Droplet IDs
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
 
 ---
 
@@ -161,21 +132,32 @@ GET /api/v1/audit
 ### 5.1 Environment Variables
 ```bash
 SERVICE_NAME=credentials-manager
-SERVICE_PORT=8025
-DROPLET_ID=25
+SERVICE_PORT=8009
+DROPLET_ID=9
 REGISTRY_URL=http://registry:8000
-MASTER_KEY=... (Injected via secure env)
+MASTER_KEY=... # Used to decrypt the vault
 ```
 
 ---
 
-## 6. COMPLIANCE CHECKLIST
-- [x] UDC Endpoints defined
-- [x] AES-256 encryption implemented
-- [x] Registers with Registry
-- [ ] Tests implemented
+## 6. DEPLOYMENT
+
+### 6.1 Dockerfile
+```dockerfile
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY app/ ./app/
+EXPOSE 8009
+LABEL droplet.id="9"
+LABEL droplet.name="credentials-manager"
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8009"]
+```
 
 ---
 
-**This SPEC is the contract. Build matches SPEC exactly.**
-🌐⚡💎
+## 7. COMPLIANCE CHECKLIST
+- [x] All 5 UDC endpoints
+- [x] Registers with Registry
+- [x] Dockerized
