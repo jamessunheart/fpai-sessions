@@ -1,308 +1,328 @@
-# proxy-manager - SPECS
+# SPEC: Proxy Manager API (Droplet – Proxy Manager)
 
-**Created:** 2025-11-15
-**Status:** Production Ready
-**Port:** 8100
-
----
-
-## Purpose
-
-Automates NGINX reverse proxy and SSL management for the Full Potential AI droplet mesh. Removes manual server work (port wiring, domains, SSL, reloads) by exposing HTTP API for proxy config creation, SSL certificate management, and safe NGINX reloading.
-
----
-
-## Requirements
-
-### Functional Requirements
-- [ ] Create/update/delete NGINX reverse proxy configurations via API
-- [ ] Manage SSL certificates via Let's Encrypt (certbot)
-- [ ] Validate upstream droplet health before routing traffic
-- [ ] Safe NGINX reload with automatic rollback on failure
-- [ ] Backup configs before changes
-- [ ] Support both Docker and systemd deployments
-- [ ] Registry integration for bulk proxy setup
-- [ ] List all managed proxies
-- [ ] SSL certificate auto-renewal support
-- [ ] Custom domain mapping for services
-
-### Non-Functional Requirements
-- [ ] Safety: Always backup before changes, automatic rollback on NGINX test failure
-- [ ] Reliability: Health check upstreams before routing, retry failed operations
-- [ ] Security: Run behind VPN/firewall (v1), API token auth (v2)
-- [ ] Performance: Config update < 2 seconds, NGINX reload < 1 second
-- [ ] Logging: Complete audit trail of all proxy changes
+**Version:** 1.0
+**Author:** Architect (James)
+**Status:** Ready for Assembly
+**Depends on:**
+- Registry v2 (droplet SSOT)
+- Deployed droplets exposing health endpoints
+- NGINX installed on host
+- Certbot available for SSL (Let's Encrypt)
 
 ---
 
-## API Specs
+## 1. Intent (Purpose)
 
-### Endpoints
+The Proxy Manager API automates all NGINX reverse proxy and SSL management for the FPAI droplet mesh.
 
-**PUT /proxies/{droplet_name}**
-- **Purpose:** Create or update reverse proxy configuration
-- **Input:** domain, upstream_host, upstream_port, require_healthy, enable_ssl
-- **Output:** Proxy configuration details
-- **Success:** 200 OK (updated) or 201 Created (new)
-- **Errors:** 400 if invalid config, 500 if NGINX fails, 503 if upstream unhealthy
+It removes manual server work (port wiring, domains, SSL, reloads) by exposing a simple HTTP API:
+- Given a droplet record (hostname, internal port, external domain), create or update NGINX config
+- Obtain and renew SSL certificates via Let's Encrypt
+- Validate target droplet health before switching traffic
+- Reload NGINX safely with rollback on failure
 
-**DELETE /proxies/{droplet_name}**
-- **Purpose:** Delete proxy configuration
-- **Input:** droplet_name
-- **Output:** Deletion confirmation
-- **Success:** 200 OK
-- **Errors:** 404 if not found, 500 if NGINX fails
-
-**GET /proxies**
-- **Purpose:** List all managed proxies
-- **Input:** None
-- **Output:** Array of proxy configurations
-- **Success:** 200 OK
-- **Errors:** 500 if query fails
-
-**GET /proxies/{droplet_name}**
-- **Purpose:** Get specific proxy details
-- **Input:** droplet_name
-- **Output:** Proxy configuration
-- **Success:** 200 OK
-- **Errors:** 404 if not found
-
-**POST /proxies/{droplet_name}/ssl**
-- **Purpose:** Issue SSL certificate for domain
-- **Input:** Optional: email, force_renew
-- **Output:** SSL certificate status
-- **Success:** 200 OK
-- **Errors:** 400 if invalid domain, 500 if certbot fails
-
-**GET /proxy-manager/health**
-- **Purpose:** Health check
-- **Input:** None
-- **Output:** {"status": "healthy", "nginx": {...}, "ssl": {...}}
-- **Success:** 200 OK
-- **Errors:** 500 if unhealthy
-
-**GET /proxy-manager/sync-from-registry**
-- **Purpose:** Sync all proxies from Registry
-- **Input:** None
-- **Output:** Sync results (synced, skipped counts)
-- **Success:** 200 OK
-- **Errors:** 500 if Registry unavailable
-
-### Data Models
-
-```python
-class ProxyConfig:
-    droplet_name: str
-    domain: str
-    upstream_host: str
-    upstream_port: int
-    require_healthy: bool
-    enable_ssl: bool
-    ssl_enabled: bool
-    status: str  # "active", "inactive"
-    created_at: datetime
-    updated_at: datetime
-
-class SSLCertificate:
-    domain: str
-    status: str  # "active", "pending", "expired"
-    expiry: Optional[str]  # Date string
-    issuer: str  # "Let's Encrypt"
-    issued_at: datetime
-
-class NginxStatus:
-    present: bool
-    config_test_ok: bool
-    last_reload_timestamp: Optional[datetime]
-    version: str
-
-class ProxySyncResult:
-    synced: List[str]  # Droplet names
-    synced_count: int
-    skipped: List[str]
-    skipped_count: int
-```
+This turns NGINX + certbot into a programmable "network mesh droplet" that other services (Orchestrator, Coordinator, CI) can call.
 
 ---
 
-## Dependencies
+## 2. Scope & Non-Scope
 
-### External Services
-- NGINX: Reverse proxy server
-- Certbot: SSL certificate management (Let's Encrypt)
-- Registry (Optional): Service discovery for bulk setup
+### In Scope
+- HTTP API for:
+  - Creating/updating a proxy route for a droplet
+  - Deleting a proxy route
+  - Listing current routes
+  - Triggering SSL issuance/renewal
+  - Validating upstream droplet health
+  - Reporting proxy-level status/metrics
+- NGINX config file generation and reload:
+  - One config file per droplet (e.g. `/etc/nginx/sites-available/fpai-<droplet_name>.conf`)
+  - Symlink to sites-enabled
+- Let's Encrypt / certbot integration:
+  - HTTP-01 challenge using NGINX
+  - Auto-renewal via cron/systemd timer (documented)
+- Registry integration (read-only):
+  - Optionally read droplet metadata from Registry to pre-fill routes
+- UDC-style error responses:
+  - `{ "error": { "code": "...", "message": "...", "details": {...} } }`
 
-### APIs Required
-- None (manages NGINX directly)
-
-### System Requirements
-- NGINX installed at /usr/sbin/nginx
-- Certbot installed at /usr/bin/certbot
-- Write access to /etc/nginx/sites-available and /etc/nginx/sites-enabled
-- Root or sudo privileges
-
----
-
-## Success Criteria
-
-How do we know this works?
-
-- [ ] Proxy configs created successfully
-- [ ] NGINX config test passes before reload
-- [ ] NGINX reloads without errors
-- [ ] Upstream health checks work correctly
-- [ ] SSL certificates issued via Let's Encrypt
-- [ ] Automatic rollback on config test failure
-- [ ] Backup created before every change
-- [ ] Registry sync creates correct proxies
-- [ ] Health endpoint returns accurate status
-- [ ] At least 1 complete workflow: create proxy → enable SSL → verify traffic
+### Out of Scope (v1)
+- Managing the Registry itself (read only)
+- Automatic DNS record creation (assume DNS already points to server IP)
+- Multi-node NGINX cluster (single host only)
+- Advanced traffic shaping (A/B, canary, rate limiting) — can be v2
 
 ---
 
-## Proxy Creation Process
+## 3. Success Criteria
 
-### 1. Validation
-- Check upstream is reachable
-- Validate domain format
-- Test upstream /health endpoint (if require_healthy)
+### Functional:
+1. Given `domain=fpai.example.com` and `upstream=http://localhost:8001`, calling `POST /proxies`:
+   - Writes NGINX config file
+   - Tests config (`nginx -t`)
+   - Reloads NGINX
+   - Returns 201 + route details
+2. Given `domain=fpai.example.com`, calling `POST /proxies/{id}/ssl`:
+   - Obtains valid Let's Encrypt cert
+   - Updates NGINX config to HTTPS
+   - Reloads NGINX
+   - Route is reachable via HTTPS with valid cert
+3. Given a droplet is unhealthy, `POST /proxies`:
+   - Performs upstream health check
+   - If unhealthy and `require_healthy=true`, returns 422 and does not reload NGINX
 
-### 2. Backup
-- Create timestamped backup of existing config (if exists)
-- Store in /etc/nginx/backups/{droplet_name}-{timestamp}.conf
-
-### 3. Write Config
-- Generate NGINX config from template
-- Write to /etc/nginx/sites-available/fpai-{droplet_name}.conf
-- Create symlink in sites-enabled
-
-### 4. Test Config
-- Run: nginx -t
-- If fails: Restore from backup, return error
-- If succeeds: Proceed
-
-### 5. Reload NGINX
-- Run: systemctl reload nginx
-- If fails: Restore from backup, return error
-
-### 6. Verify
-- Test proxy endpoint
-- Confirm upstream accessible through proxy
+### Operational:
+4. NGINX reload is safe:
+   - If `nginx -t` fails, route changes are rolled back and error is returned
+5. All operations are logged with:
+   - `correlation_id`, `droplet_name`, `domain`, `action`, `result`
+6. Proxy Manager health endpoint:
+   - `GET /proxy-manager/health` returns `healthy/degraded/unhealthy` based on:
+     - NGINX executable present
+     - Config directory writable
+     - Last reload status
 
 ---
 
-## NGINX Config Template
+## 4. API Design
 
-```nginx
-server {
-    server_name {domain};
+**Base path:** `http://<proxy-manager-host>:<port>/`
 
-    location / {
-        proxy_pass http://{upstream_host}:{upstream_port};
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+All responses JSON, with UDC-style errors:
+
+```json
+{
+  "error": {
+    "code": "PROXY_CONFIG_FAILED",
+    "message": "NGINX config test failed",
+    "details": {
+      "nginx_output": "..."
     }
-
-    listen 80;
+  }
 }
 ```
 
-**With SSL:**
-```nginx
-server {
-    server_name {domain};
+### 4.1 Routes
 
-    location / {
-        proxy_pass http://{upstream_host}:{upstream_port};
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-    }
+#### 4.1.1 Create/Update Proxy
+`PUT /proxies/{droplet_name}`
 
-    listen 443 ssl;
-    ssl_certificate /etc/letsencrypt/live/{domain}/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/{domain}/privkey.pem;
-}
-
-server {
-    listen 80;
-    server_name {domain};
-    return 301 https://$server_name$request_uri;
+**Body:**
+```json
+{
+  "domain": "orchestrator.fullpotential.ai",
+  "upstream_host": "localhost",
+  "upstream_port": 8001,
+  "require_healthy": true,
+  "enable_ssl": true
 }
 ```
 
----
+**Behavior:**
+- Generate NGINX config for:
+  - HTTP → HTTPS redirect (if `enable_ssl=true` and cert exists)
+  - HTTPS proxy to upstream
+- If `enable_ssl=true` and no cert yet:
+  - Option A (v1): return 202 + instructions to call `POST /proxies/{droplet_name}/ssl`
+  - Option B (optional): auto-trigger SSL issuance
+- Perform `nginx -t` and reload if OK
+- Return 200/201 with:
 
-## SSL Certificate Management
-
-**Issue Certificate:**
-```bash
-certbot certonly --nginx -d {domain} --email {email} --agree-tos --non-interactive
+```json
+{
+  "droplet_name": "orchestrator",
+  "domain": "orchestrator.fullpotential.ai",
+  "upstream": "http://localhost:8001",
+  "ssl_enabled": true,
+  "status": "active"
+}
 ```
 
-**Auto-Renewal:**
-- Certbot creates systemd timer automatically
-- Verify: `systemctl list-timers | grep certbot`
-- Certs renew 30 days before expiration
+#### 4.1.2 Delete Proxy
+`DELETE /proxies/{droplet_name}`
+- Remove config file + symlink
+- `nginx -t` and reload
+- Return 200 with `{ "status": "deleted" }`
 
-**Manual Renewal:**
-```bash
-certbot renew
-```
+#### 4.1.3 List Proxies
+`GET /proxies`
+- Returns all known configs:
 
----
-
-## Technical Constraints
-
-- **Language/Framework:** Python 3.11+ with FastAPI
-- **Port:** 8100
-- **Requires:** Root access for NGINX management
-- **Resource limits:**
-  - Memory: 256MB max
-  - CPU: 0.5 cores
-  - Storage: 100MB for configs and backups
-- **Response time:** Config update < 2 seconds
-- **Backup retention:** 7 days
-- **Security:** Bind to localhost in v1, add auth in v2
-
----
-
-## Error Codes
-
-- `UPSTREAM_UNHEALTHY`: Health check failed
-- `CONFIG_WRITE_FAILED`: Failed to write config
-- `NGINX_TEST_FAILED`: Config test failed (with rollback)
-- `NGINX_RELOAD_FAILED`: Reload failed
-- `SSL_ISSUANCE_FAILED`: Certificate issuance failed
-- `PROXY_NOT_FOUND`: Config not found
-- `REGISTRY_UNAVAILABLE`: Cannot reach Registry
-
----
-
-## Usage Example
-
-```bash
-# Create proxy for orchestrator
-curl -X PUT http://localhost:8100/proxies/orchestrator \
-  -H "Content-Type: application/json" \
-  -d '{
+```json
+[
+  {
+    "droplet_name": "orchestrator",
     "domain": "orchestrator.fullpotential.ai",
-    "upstream_host": "localhost",
-    "upstream_port": 8001,
-    "require_healthy": true,
-    "enable_ssl": false
-  }'
+    "upstream": "http://localhost:8001",
+    "ssl_enabled": true,
+    "status": "active"
+  }
+]
+```
 
-# Issue SSL certificate
-curl -X POST http://localhost:8100/proxies/orchestrator/ssl \
-  -H "Content-Type: application/json" \
-  -d '{"email": "admin@fullpotential.ai"}'
+#### 4.1.4 Get Proxy Details
+`GET /proxies/{droplet_name}`
+- Returns single config + last health check result.
 
-# Verify traffic
-curl https://orchestrator.fullpotential.ai/orchestrator/health
+#### 4.1.5 Trigger SSL Issuance/Renewal
+`POST /proxies/{droplet_name}/ssl`
+
+**Body (optional):**
+```json
+{
+  "email": "admin@fullpotential.ai",
+  "force_renew": false
+}
+```
+
+**Behavior:**
+- Uses certbot with `--nginx` (or `--webroot` with known path) for domain associated with droplet
+- On success:
+  - Updates config to use SSL
+  - Reloads NGINX
+  - Returns 200 with certificate metadata (expiry, issuer)
+
+#### 4.1.6 Health
+`GET /proxy-manager/health`
+- Returns:
+
+```json
+{
+  "status": "healthy",
+  "nginx": {
+    "present": true,
+    "config_test_ok": true,
+    "last_reload_timestamp": "..."
+  },
+  "ssl": {
+    "certbot_present": true,
+    "last_operation": "success"
+  }
+}
 ```
 
 ---
 
-**Next Step:** Deploy to production, set up proxies for all services, enable SSL
+## 5. Data & Configuration
+
+### 5.1 Environment Variables
+- `PROXY_MANAGER_PORT` (default 8100)
+- `NGINX_SITES_AVAILABLE` (default `/etc/nginx/sites-available`)
+- `NGINX_SITES_ENABLED` (default `/etc/nginx/sites-enabled`)
+- `NGINX_BIN` (default `/usr/sbin/nginx`)
+- `CERTBOT_BIN` (default `/usr/bin/certbot`)
+- `DEFAULT_SSL_EMAIL` (default `admin@fullpotential.ai`)
+- `REGISTRY_URL` (optional; e.g. `http://localhost:8000`)
+- `HEALTH_CHECK_TIMEOUT_MS` (default 1000)
+- `HEALTH_CHECK_PATH` (default `/health`)
+
+### 5.2 Internal Models
+
+**ProxyConfig**
+- `droplet_name`: str
+- `domain`: str
+- `upstream_host`: str
+- `upstream_port`: int
+- `ssl_enabled`: bool
+- `last_health_status`: Optional[str]
+- `last_health_checked_at`: Optional[datetime]
+
+Configs stored in filesystem only (no DB) for v1; can later add YAML/JSON index if needed.
+
+---
+
+## 6. Non-Functional Requirements
+- **Language:** Python 3.11
+- **Framework:** FastAPI or equivalent
+- **Performance:**
+  - Typical operations < 1s (excluding certbot, which may be longer)
+- **Security:**
+  - Bind to localhost or behind VPN in v1
+  - Require API token header if exposed externally later (design hook)
+- **Resilience:**
+  - Rollback on failed NGINX test
+  - Don't leave NGINX in broken state
+- **Logging:**
+  - Structured logs with:
+    - `timestamp`, `level`, `droplet_name`, `action`, `result`, `error_code`, `correlation_id`
+
+---
+
+## 7. Integration Points
+
+### 7.1 Registry
+
+Optional helper endpoint:
+- `GET /proxy-manager/sync-from-registry`
+  - Fetches active droplets from `REGISTRY_URL/droplets`
+  - For each droplet that includes `domain` + `internal_port`, proposes or creates proxy configs
+  - Returns a summary of synced routes
+
+**Schema expectation from Registry droplet:**
+```json
+[
+  {
+    "name": "orchestrator",
+    "host": "localhost",
+    "port": 8001,
+    "domain": "orchestrator.fullpotential.ai",
+    "status": "active"
+  }
+]
+```
+
+(If your actual Registry schema differs, adjust mapping but keep this behavior.)
+
+### 7.2 Orchestrator / Coordinator
+- They should call:
+  - `PUT /proxies/{droplet_name}` when a droplet is deployed or updated
+  - `POST /proxies/{droplet_name}/ssl` after DNS is confirmed and initial route is working
+
+---
+
+## 8. Testing Strategy
+
+### 8.1 Unit Tests
+- **Config rendering:**
+  - Given a `ProxyConfig`, produce valid NGINX config text
+- **NGINX command wrapper:**
+  - Mock `subprocess.run` to simulate success/failure of `nginx -t` and reload
+- **SSL command wrapper:**
+  - Mock certbot calls with fake success/failure
+
+### 8.2 Integration Tests (local or CI)
+- Use a throwaway NGINX config directory (e.g. `/tmp/nginx-test`) and mocked `NGINX_BIN` that writes logs instead of really reloading
+- Validate:
+  - `PUT /proxies/{droplet_name}`:
+    - Writes file
+    - Runs `nginx -t` (mock)
+  - `DELETE /proxies/{droplet_name}`:
+    - Removes file and symlink
+  - **Error path:** `nginx -t` returns non-zero → response is error + no reload
+
+### 8.3 Manual Acceptance
+
+On dev/dedicated server with real NGINX:
+1. Map `orchestrator.fullpotential.ai` DNS to server
+2. Call `PUT /proxies/orchestrator` with upstream `localhost:8001`
+3. Confirm HTTP works
+4. Call `POST /proxies/orchestrator/ssl`
+5. Confirm HTTPS works with valid cert
+
+---
+
+## 9. Deliverables
+- **Repo:** `fpai-track-b/proxy-manager` (or similar)
+- **Files:**
+  - `app/main.py` – FastAPI app, routes, health
+  - `app/models.py` – Pydantic models
+  - `app/config.py` – Settings/env handling
+  - `app/nginx_manager.py` – NGINX file + reload logic
+  - `app/ssl_manager.py` – Certbot integration
+  - `app/registry_client.py` – Optional Registry helper
+  - `tests/` – Unit + integration tests
+  - `Dockerfile` – Container for deployment
+  - `SPEC_Proxy_Manager_API_v1.md` – this file
+- **CI:**
+  - pytest green
+  - Basic lint (optional)
