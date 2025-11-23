@@ -1,9 +1,9 @@
 {
-  "name": "{{droplet_name}}",
+  "name": "droplet-name",
   "version": "0.1.0",
-  "description": "A parallel execution droplet for FPAI",
-  "type": "microservice",
+  "description": "Description of this droplet",
+  "type": "service",
   "inputs": [],
-  "outputs": []
+  "outputs": [],
+  "owner": "Builder"
 }
-

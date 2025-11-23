@@ -1,4 +1,5 @@
 _TEMPLATE
+ai-automation
 api-gateway
 api-hub
 approval-dashboard
@@ -7,6 +8,7 @@ autonomous-agents
 autonomous-execution-engine
 autonomous-executor
 build-executor
+church-guidance-ministry
 content-generation-engine
 credentials-manager
 deployer
@@ -20,6 +22,7 @@ intent-queue
 jobs
 landing-page
 legal-verification-agent
+mission-control
 nexus-event-bus
 ops
 orchestrator
@@ -33,6 +36,7 @@ sovereign-factory
 spec-builder
 spec-optimizer
 spec-verifier
+strategic-intelligence
 treasury-manager
 unified-assembly-line
 unified-chat

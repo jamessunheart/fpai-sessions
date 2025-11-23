@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: god-mode-backend
+    volumes:
+      - ../../../docs:/docs
+      - ../../../core:/core
+    environment:
+      - COORDINATION_DIR=/docs/coordination
+      - INBOX_FILE=/core/STATE/INBOX.json
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: god-mode-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+

@@ -102,6 +102,7 @@ email_templates.py
 feedback-tracker.py
 fpai-hub
 get-ssl-certs.sh
+god-mode
 governance
 health-monitor-cron.sh
 helper-management

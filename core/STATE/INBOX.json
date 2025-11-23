@@ -1,0 +1,24 @@
+{
+  "approvals": [
+    {
+      "id": "tsk_001",
+      "title": "Deploy Treasury V2",
+      "desc": "Deploy $500 to ETH-USDC Pool",
+      "status": "pending"
+    },
+    {
+      "id": "tsk_002",
+      "title": "Publish Blog Post",
+      "desc": "Review 'The Age of AGI' draft",
+      "status": "pending"
+    }
+  ],
+  "secure": [
+    {
+      "id": "sec_001",
+      "title": "Reddit API Access",
+      "desc": "Requires Client ID & Secret",
+      "status": "waiting_input"
+    }
+  ]
+}

@@ -20,12 +20,13 @@ app.add_middleware(
 )
 
 # --- PATHS ---
-COORDINATION_DIR = Path("../../../docs/coordination").resolve()
+COORDINATION_DIR = Path(os.getenv("COORDINATION_DIR", "../../../docs/coordination")).resolve()
+INBOX_FILE = Path(os.getenv("INBOX_FILE", "../../../core/STATE/INBOX.json")).resolve()
+
 INTENTS_DIR = COORDINATION_DIR / "intents"
 CLAIMS_DIR = COORDINATION_DIR / "claims"
 HEARTBEATS_DIR = COORDINATION_DIR / "heartbeats"
 MESSAGES_DIR = COORDINATION_DIR / "messages/broadcast"
-INBOX_FILE = Path("../../../core/STATE/INBOX.json").resolve()
 
 # Ensure dirs
 MESSAGES_DIR.mkdir(parents=True, exist_ok=True)

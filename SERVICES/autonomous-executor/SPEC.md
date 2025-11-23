@@ -1,291 +1,196 @@
-# autonomous-executor - SPECS
+# SPEC - Autonomous Executor (Droplet #20)
 
-**Created:** 2025-11-15
-**Status:** MVP (Droplet #20)
-**Port:** 8400
-
----
-
-## Purpose
-
-Enables true self-optimization by accepting architect intent and executing the entire Sacred Loop autonomously from intent to deployment. Eliminates manual copy-paste commands and enables the system to build itself without human intervention in the loop.
+**Version:** 1.0
+**Created:** 2025-11-23
+**Droplet ID:** 20
+**Status:** Production
 
 ---
 
-## Requirements
+## 1. SERVICE OVERVIEW
 
-### Functional Requirements
-- [ ] Accept architect intent via API (text description of what to build)
-- [ ] Generate detailed SPEC using Claude API
-- [ ] Create repository structure (coordinator step)
-- [ ] Generate complete service code using Claude API (apprentice step)
-- [ ] Run tests and verification automatically
-- [ ] Deploy to production server
-- [ ] Register service with Registry
-- [ ] Track build progress with real-time status updates
-- [ ] Support approval modes: auto (full autonomy), checkpoints (guided), final (review before deploy)
-- [ ] Stream progress via WebSocket
-- [ ] Retry failed steps with auto-recovery
-- [ ] Maximum 10 retry attempts per step
-- [ ] UDC compliance endpoints (health, capabilities)
+### 1.1 Purpose
+Enables true self-optimization by accepting architect intent and executing the entire "Sacred Loop" autonomously—from intent to deployment. It eliminates manual boilerplate and enables the system to build itself.
 
-### Non-Functional Requirements
-- [ ] Performance: SPEC generation < 2 minutes, full build < 2 hours
-- [ ] Reliability: Retry logic for all external API calls, graceful failure handling
-- [ ] Progress tracking: Real-time updates via WebSocket and status endpoint
-- [ ] Concurrency: Support multiple concurrent builds (queue-based)
-- [ ] Persistence: Database storage for build state (planned: SQLite/PostgreSQL)
+### 1.2 Position in Ecosystem
+This service sits in the **Orchestration Layer** (Acting as the hands of the Architect). It interacts with the Strategic Intelligence Service (brain) and the Deployer (execution arm).
+
+### 1.3 Dependencies
+**Required Services:**
+- Registry (droplet #1) - Service discovery
+- Orchestrator (droplet #10) - Task queuing
+- Verifier (droplet #8) - Quality assurance
+
+**External Dependencies:**
+- Claude API (Code Generation)
+- GitHub API (Version Control)
 
 ---
 
-## API Specs
+## 2. CAPABILITIES
 
-### Endpoints
+### 2.1 Core Capabilities
+1. **[Intent-to-Code]** - Transforms high-level requests ("Build X") into runnable services.
+2. **[Full-Cycle Automation]** - Handles SPEC -> Package -> Build -> Verify -> Deploy loop.
+3. **[Self-Recovery]** - Retries failed steps and requests fixes from Claude.
 
-**POST /executor/build-droplet**
-- **Purpose:** Submit architect intent to build new droplet
-- **Input:** JSON with architect_intent, optional droplet_id, droplet_name, approval_mode, auto_deploy
-- **Output:** build_id, status, estimated_completion, stream_url, status_url
-- **Success:** 202 Accepted
-- **Errors:** 400 if invalid input, 500 if job creation fails
+### 2.2 Supported Operations
+- `submit_intent` - Start a new build.
+- `track_progress` - WebSocket stream of build steps.
+- `approve_checkpoint` - Human-in-the-loop gating.
 
-**GET /executor/builds/{build_id}/status**
-- **Purpose:** Get current status of build job
-- **Input:** build_id
-- **Output:** Build status, current_phase, progress_percent, estimated_time_remaining
-- **Success:** 200 OK
-- **Errors:** 404 if build not found
+---
 
-**WS /executor/builds/{build_id}/stream**
-- **Purpose:** WebSocket stream of real-time build progress
-- **Input:** build_id (in URL)
-- **Output:** Stream of progress events (phase_start, phase_progress, phase_complete, error)
-- **Success:** WebSocket connection
-- **Errors:** 404 if build not found
+## 3. API SPECIFICATION
 
-**GET /executor/builds**
-- **Purpose:** List all build jobs
-- **Input:** Optional filters (status, date_range)
-- **Output:** Array of build job summaries
-- **Success:** 200 OK
-- **Errors:** 500 if query fails
+### 3.1 UDC Endpoints (Required)
 
-**POST /executor/builds/{build_id}/approve**
-- **Purpose:** Approve a build at checkpoint or for final deployment
-- **Input:** build_id, approved (boolean), notes
-- **Output:** Approval result, next steps
-- **Success:** 200 OK
-- **Errors:** 404 if build not found, 409 if not awaiting approval
+#### Health Check
+```
+GET /health
+```
+**Response:**
+```json
+{
+  "status": "healthy",
+  "version": "1.0.0",
+  "timestamp": "2025-11-23T12:00:00Z"
+}
+```
 
-**POST /executor/builds/{build_id}/cancel**
-- **Purpose:** Cancel an in-progress build
-- **Input:** build_id
-- **Output:** Cancellation confirmation
-- **Success:** 200 OK
-- **Errors:** 404 if build not found, 409 if already completed
+#### Capabilities
+```
+GET /capabilities
+```
+**Response:**
+```json
+{
+  "service_name": "autonomous-executor",
+  "droplet_id": 20,
+  "capabilities": ["code_gen", "build_automation", "deployment"],
+  "supported_operations": ["build", "test", "deploy"],
+  "integration_endpoints": [
+    { "path": "/api/v1/builds", "method": "POST" }
+  ]
+}
+```
 
-**GET /executor/health**
-- **Purpose:** UDC health check
-- **Input:** None
-- **Output:** {"status": "healthy", "active_builds": 2, "claude_api": "connected"}
-- **Success:** 200 OK
-- **Errors:** 500 if unhealthy
+#### State
+```
+GET /state
+```
+**Response:**
+```json
+{
+  "status": "active",
+  "active_builds": 1,
+  "cpu_load": 0.45
+}
+```
 
-**GET /executor/capabilities**
-- **Purpose:** UDC capabilities endpoint
-- **Input:** None
-- **Output:** Supported approval modes, max concurrent builds, Claude model info
-- **Success:** 200 OK
-- **Errors:** 500 if unavailable
+#### Dependencies
+```
+GET /dependencies
+```
+**Response:**
+```json
+{
+  "required_services": [
+    { "name": "registry", "status": "connected" },
+    { "name": "verifier", "status": "connected" }
+  ],
+  "external_apis": [
+    { "name": "claude", "status": "connected" }
+  ]
+}
+```
 
-### Data Models
-
-```python
-class BuildRequest:
-    architect_intent: str
-    droplet_id: Optional[int]
-    droplet_name: Optional[str]
-    approval_mode: str  # "auto", "checkpoints", "final"
-    auto_deploy: bool = True
-
-class BuildPhase:
-    phase_name: str  # "SPEC Generation", "Package", "Build", "Verify", "Deploy", "Register"
-    status: str  # "pending", "running", "completed", "failed", "skipped"
-    started_at: Optional[datetime]
-    completed_at: Optional[datetime]
-    duration_seconds: Optional[int]
-    progress_percent: int
-    details: dict
-    error: Optional[str]
-
-class BuildJob:
-    build_id: str
-    architect_intent: str
-    droplet_id: Optional[int]
-    droplet_name: str
-    approval_mode: str
-    status: str  # "queued", "running", "awaiting_approval", "completed", "failed", "cancelled"
-    current_phase: str
-    progress_percent: int
-    phases: List[BuildPhase]
-    created_at: datetime
-    started_at: Optional[datetime]
-    completed_at: Optional[datetime]
-    estimated_completion: Optional[datetime]
-    final_decision: Optional[str]
-    deployment_url: Optional[str]
-    error: Optional[str]
-
-class ProgressEvent:
-    event_type: str  # "phase_start", "phase_progress", "phase_complete", "error"
-    build_id: str
-    phase_name: str
-    progress_percent: int
-    message: str
-    timestamp: datetime
-    data: Optional[dict]
+#### Message
+```
+POST /message
+```
+**Response:**
+```json
+{
+  "received": true,
+  "status": "processed"
+}
 ```
 
 ---
 
-## Dependencies
+### 3.2 Business Logic Endpoints
 
-### External Services
-- Claude API (Anthropic): SPEC generation, code generation, decision making
-- Verifier (Port 8200): Service verification
-- Auto-Fix Engine (Port 8300): Auto-fixing failed verifications
-- Deployer (Port 8007): Production deployment
-- Registry (Port 8000): Service registration
+#### Submit Build
+```
+POST /api/v1/builds
+```
+**Request:**
+```json
+{
+  "intent": "Create a Twitter bot for daily summaries",
+  "approval_mode": "auto"
+}
+```
+**Response:**
+```json
+{
+  "build_id": "build-999",
+  "status": "queued"
+}
+```
 
-### APIs Required
-- Anthropic Claude API: For SPEC and code generation
-- Verifier API: POST /verify, GET /verify/{job_id}
-- Auto-Fix API: POST /fix (optional, for auto-recovery)
-- Deployer API: POST /deploy
-- Registry API: POST /register
-
-### Data Sources
-- Foundation Files: Templates and base code
-- Sacred Loop scripts: For orchestration
-- Git repository: For version control
-
----
-
-## Success Criteria
-
-How do we know this works?
-
-- [ ] Accepts architect intent via API
-- [ ] Generates valid SPEC using Claude API
-- [ ] Creates complete repository structure
-- [ ] Generates working code using Claude API
-- [ ] Tests pass on first attempt OR auto-fix resolves issues
-- [ ] Deploys successfully to server
-- [ ] Registers with Registry
-- [ ] Progress tracking works in real-time
-- [ ] WebSocket streaming functions correctly
-- [ ] All approval modes work as expected
-- [ ] Error recovery and retry logic prevents permanent failures
-- [ ] Complete at least 1 full autonomous build from intent to deployment
+#### Get Status
+```
+GET /api/v1/builds/{build_id}
+```
+**Response:**
+```json
+{
+  "status": "building",
+  "phase": "code_generation",
+  "progress": 45
+}
+```
 
 ---
 
-## Sacred Loop Automation
+## 4. DATA MODEL
 
-### Step-by-Step Automation
+### 4.1 Build State
+Tracks the lifecycle of every autonomous intent.
 
-**Step 1: Intent (API)**
-- User submits architect_intent via POST /executor/build-droplet
-- System creates build job with unique build_id
-
-**Step 2: SPEC Generation (Claude API)**
-- Claude generates detailed SPEC based on intent
-- SPEC saved to repository
-- If approval_mode = checkpoints: Wait for human approval
-
-**Step 3: Package (Coordinator)**
-- Create repository structure
-- Copy Foundation Files
-- Initialize git repository
-
-**Step 4: Build (Claude API)**
-- Claude generates complete code (main.py, models.py, tests, Dockerfile, etc.)
-- Write files to repository
-- This is the breakthrough: Programmatic code generation
-
-**Step 5: Verify (Verifier API)**
-- Submit to Verifier
-- Wait for verification results
-- If FIXES_REQUIRED and auto_deploy: Trigger Auto-Fix Engine
-
-**Step 6: Deploy (Deployer API)**
-- Submit to Deployer
-- Deployer handles SSH, Docker, health checks
-- If approval_mode = final: Wait for human approval before deploying
-
-**Step 7: Register (Registry API)**
-- Register service with Registry
-- Update service directory
-
-**Step 8: Complete**
-- Notify architect of completion
-- Return deployment URL and status
+#### `builds`
+| Field | Type | Description |
+|-------|------|-------------|
+| id | UUID | Build ID |
+| intent | Text | Original prompt |
+| status | Enum | queued, building, verifying, complete |
+| logs | JSON | Step-by-step output |
 
 ---
 
-## Approval Modes
+## 5. CONFIGURATION
 
-### Auto Mode (Full Autonomy)
-- No human intervention required
-- System makes all decisions
-- Builds, tests, deploys automatically
-- Best for: Well-defined services, trusted process
-
-### Checkpoints Mode (Guided Autonomy)
-- Human approves after SPEC generation
-- Human approves before deployment
-- System executes between checkpoints
-- Best for: Important services, learning the system
-
-### Final Mode (Review Before Deploy)
-- System builds and tests autonomously
-- Human approves final deployment
-- Best for: Production systems, risk mitigation
+### 5.1 Environment Variables
+```bash
+SERVICE_NAME=autonomous-executor
+SERVICE_PORT=8400
+DROPLET_ID=20
+REGISTRY_URL=http://registry:8000
+ANTHROPIC_API_KEY=sk-...
+VERIFIER_URL=http://verifier:8008
+```
 
 ---
 
-## Technical Constraints
-
-- **Language/Framework:** Python 3.11+ with FastAPI
-- **Port:** 8400
-- **Resource limits:**
-  - Memory: 1GB max
-  - CPU: 2 cores (for parallel Claude API calls)
-  - Storage: 5GB for build artifacts
-- **Response time:** SPEC generation < 2 min, full build < 2 hours
-- **Concurrency:** Max 3 concurrent builds
-- **Claude API:** Uses claude-sonnet-4-5-20250929, max 4096 tokens per request
-- **Timeout:** 2 hours per build job
-- **Persistence:** In-memory (v1), database (v2)
+## 6. COMPLIANCE CHECKLIST
+- [x] UDC Endpoints defined
+- [x] Registers with Registry
+- [x] WebSocket progress streaming
+- [ ] Tests implemented
 
 ---
 
-## Time Savings
-
-**Before:** 3-4 hours architect hands-on time per droplet
-- Manual SPEC writing: 30-60 min
-- Manual coding: 2-3 hours
-- Manual testing: 30 min
-- Manual deployment: 30 min
-
-**After:** 5 minutes architect time (submit intent + review result)
-- SPEC generation: 2 min (autonomous)
-- Code generation: 10-30 min (autonomous)
-- Testing: 3-5 min (autonomous)
-- Deployment: 2-5 min (autonomous)
-
-**Time Savings: 95%+**
-
----
-
-**Next Step:** Complete database persistence, test with real build, integrate with all Sacred Loop services
+**This SPEC is the contract. Build matches SPEC exactly.**
+🌐⚡💎

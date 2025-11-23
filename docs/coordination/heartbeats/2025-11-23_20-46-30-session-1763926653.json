@@ -1,0 +1,9 @@
+{
+  "session_id": "session-1763926653",
+  "timestamp": "2025-11-23T20:46:30Z",
+  "action": "working",
+  "target": "standardization",
+  "phase": "gap-audit",
+  "progress": "20",
+  "next_action": "Generated 5 SPECs, proceeding to i-match"
+}
