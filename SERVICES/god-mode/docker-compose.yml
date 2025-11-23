@@ -17,6 +17,9 @@ services:
     container_name: god-mode-frontend
     ports:
       - "80:80"
+    environment:
+      - BASIC_AUTH_USER=architect
+      - BASIC_AUTH_PASS=sovereign  # CHANGE THIS!
     depends_on:
       - backend
     restart: unless-stopped

@@ -8,12 +8,17 @@ related missions can quickly find source material.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+import json
+import argparse
+from dataclasses import dataclass, asdict
 from pathlib import Path
-from typing import Iterable, List
+from typing import Iterable, List, Any, Dict
 
-WORKSPACE_ROOT = Path(__file__).resolve().parents[3]
-OUTPUT_PATH = Path(__file__).with_name("PAPERS_INDEX.md")
+WORKSPACE_ROOT = Path(__file__).resolve().parents[2] # Fix: Should be parents[2] for core/knowledge/script
+OUTPUT_MD_PATH = Path(__file__).with_name("PAPERS_INDEX.md")
+# Default JSON path relative to workspace root, can be overridden
+DEFAULT_JSON_PATH = WORKSPACE_ROOT / "fullpotential_ai/fullpotential_core/core/applications/website-ai/frontend/papers.json"
+
 SCRIPT_NAME = Path(__file__).name
 KEYWORDS = ["consciousism", "consciousness", "paradigm", "extractive", "regenerative"]
 TEXT_EXTENSIONS = {
@@ -36,10 +41,23 @@ class PaperEntry:
     extension: str
     size_kb: float
     keywords: List[str]
+    filename: str
 
     def to_row(self) -> str:
         keyword_text = ", ".join(self.keywords) if self.keywords else "–"
         return f"| `{self.relative_path}` | `{self.extension}` | {self.size_kb:>7.1f} | {keyword_text} |"
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "id": self.filename.replace(".", "_").replace(" ", "_"),
+            "title": self.filename.rsplit(".", 1)[0].replace("_", " ").replace("-", " ").title(),
+            "filename": self.filename,
+            "path": str(self.relative_path),
+            "type": self.extension.strip("."),
+            "size_kb": self.size_kb,
+            "tags": self.keywords,
+            "url": f"https://github.com/jamessunheart/fpai-sessions/blob/main/{self.relative_path}" # Constructing a guess at the URL
+        }
 
 
 def discover_paper_dirs(root: Path) -> List[Path]:
@@ -72,6 +90,7 @@ def build_entries(directories: Iterable[Path]) -> List[PaperEntry]:
                     extension=file_path.suffix.lower() or "n/a",
                     size_kb=size_kb,
                     keywords=keywords,
+                    filename=file_path.name
                 )
             )
     return sorted(entries, key=lambda entry: entry.relative_path.as_posix())
@@ -98,11 +117,32 @@ def render_markdown(directories: List[Path], entries: List[PaperEntry]) -> str:
     return "\n".join(header + rows) + "\n"
 
 
+def render_json(entries: List[PaperEntry]) -> str:
+    data = {
+        "generated_at": "2025-11-23", # You might want to add actual timestamp generation
+        "papers": [entry.to_dict() for entry in entries]
+    }
+    return json.dumps(data, indent=2)
+
+
 def main() -> None:
+    parser = argparse.ArgumentParser(description="Index research papers.")
+    parser.add_argument("--json", action="store_true", help="Output JSON file for website")
+    parser.add_argument("--output-json", type=Path, default=DEFAULT_JSON_PATH, help="Path to output JSON file")
+    args = parser.parse_args()
+
     paper_dirs = discover_paper_dirs(WORKSPACE_ROOT)
     entries = build_entries(paper_dirs)
-    OUTPUT_PATH.write_text(render_markdown(paper_dirs, entries))
-    print(f"Wrote {OUTPUT_PATH} with {len(entries)} entries from {len(paper_dirs)} directories.")
+    
+    OUTPUT_MD_PATH.write_text(render_markdown(paper_dirs, entries))
+    print(f"Wrote {OUTPUT_MD_PATH} with {len(entries)} entries.")
+
+    if args.json:
+        json_output = render_json(entries)
+        # Ensure parent directory exists
+        args.output_json.parent.mkdir(parents=True, exist_ok=True)
+        args.output_json.write_text(json_output)
+        print(f"Wrote JSON index to {args.output_json}")
 
 
 if __name__ == "__main__":

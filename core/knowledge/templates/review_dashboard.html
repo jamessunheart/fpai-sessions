@@ -204,11 +204,11 @@
     </div>
 
     <script>
-        let currentFilename = null;
-        let aiAnalysis = null;
+        // Helper to handle paths correctly when mounted
+        const API_BASE = window.location.pathname.replace(/\/$/, ''); // e.g. "/librarian_app" or ""
 
         async function loadFiles() {
-            const res = await fetch('/api/files');
+            const res = await fetch(`${API_BASE}/api/files`);
             const data = await res.json();
             const list = document.getElementById('fileList');
             list.innerHTML = '';
@@ -239,7 +239,7 @@
                 // PDF View (Iframe)
                 area.innerHTML = `
                     <div class="preview-pane">
-                        <iframe src="/api/preview/${filename}"></iframe>
+                        <iframe src="${API_BASE}/api/preview/${filename}"></iframe>
                     </div>
                     <div class="analysis-pane" id="analysisPane">
                         ${renderLoadingCard()}
@@ -248,7 +248,7 @@
             } else {
                 // Text/MD View (Fetch & Render)
                 try {
-                    const res = await fetch(`/api/preview/${filename}`);
+                    const res = await fetch(`${API_BASE}/api/preview/${filename}`);
                     const text = await res.text();
                     area.innerHTML = `
                         <div class="preview-pane" style="background:var(--panel); color:var(--text); padding:2rem; overflow:auto; white-space:pre-wrap; font-family:monospace; border-right: 1px solid var(--border);">
@@ -264,7 +264,7 @@
             }
 
             // Fetch AI Analysis
-            const res = await fetch(`/api/analyze/${filename}`);
+            const res = await fetch(`${API_BASE}/api/analyze/${filename}`);
             aiAnalysis = await res.json();
             renderAnalysis(aiAnalysis);
         }
@@ -333,7 +333,7 @@
 
             const newName = document.getElementById('newFilename').value;
             
-            const res = await fetch('/api/approve', {
+            const res = await fetch(`${API_BASE}/api/approve`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
@@ -353,7 +353,7 @@
         async function deleteFile() {
             if (!currentFilename || !confirm('Are you sure you want to delete this file?')) return;
             
-            await fetch(`/api/delete/${currentFilename}`, { method: 'POST' });
+            await fetch(`${API_BASE}/api/delete/${currentFilename}`, { method: 'POST' });
             loadFiles();
             document.getElementById('previewArea').innerHTML = '<div class="empty-state">Deleted. Select next file.</div>';
             document.getElementById('actionButtons').style.display = 'none';
@@ -366,7 +366,7 @@
             btn.disabled = true;
             
             try {
-                await fetch('/api/scan', { method: 'POST' });
+                await fetch(`${API_BASE}/api/scan`, { method: 'POST' });
                 await loadFiles();
             } catch (e) {
                 alert('Scan failed or timed out.');

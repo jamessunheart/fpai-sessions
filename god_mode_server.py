@@ -445,7 +445,11 @@ async def open_librarian():
 
 @app.get("/research")
 async def open_research_page():
-    # Adjust path if the file moved or serve content directly
+    # Serve the static research page if accessed directly or redirect
+    # For now, assume it's hosted on the main site port or file
+    # We can serve the file directly if needed, but linking to the static file is easier for local dev
+    
+    # 1. Try to serve the file if we can find it
     research_path = BASE_DIR / "fullpotential_ai/fullpotential_core/core/applications/website-ai/frontend/research.html"
     
     # Fallback: Search for it if path structure is different in dev
@@ -456,8 +460,28 @@ async def open_research_page():
     
     if research_path.exists():
         return FileResponse(research_path)
+    
+    # 2. If file missing, return a helpful error page
+    return HTMLResponse("""
+        <html><body style="background:#0f172a; color:#f8fafc; font-family:sans-serif; display:flex; justify-content:center; align-items:center; height:100vh;">
+        <div style="text-align:center;">
+            <h1>404: Research Library Not Found</h1>
+            <p>The file <code>research.html</code> is missing.</p>
+            <p>Please ensure <code>fullpotential_ai/fullpotential_core/core/applications/website-ai/frontend/research.html</code> exists.</p>
+        </div>
+        </body></html>
+    """, status_code=404)
+
+# Also serve papers.json so research.html can fetch it
+@app.get("/papers.json")
+async def get_papers_json():
+    json_path = BASE_DIR / "fullpotential_ai/fullpotential_core/core/applications/website-ai/frontend/papers.json"
+    if not json_path.exists():
+        json_path = Path("fullpotential_ai/fullpotential_core/core/applications/website-ai/frontend/papers.json")
         
-    return HTMLResponse("Research page not found. Please ensure 'research.html' exists.")
+    if json_path.exists():
+        return FileResponse(json_path)
+    return {"papers": []}
 
 @app.post("/api/dispatch")
 async def dispatch_mission(data: dict):

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Research Library | Full Potential AI</title>
+  <style>
+    :root {
+      --bg: radial-gradient(circle at top, #0f172a, #020617);
+      --panel: rgba(15,23,42,0.88);
+      --border: rgba(255,255,255,0.12);
+      --text: #cbd5f5;
+      --accent: #fbbf24;
+      --blue: #38bdf8;
+      --green: #4ade80;
+    }
+    body {
+      font-family: 'Space Grotesk', 'Inter', Arial, sans-serif;
+      background: var(--bg);
+      color: #f8fafc;
+      min-height: 100vh;
+      margin: 0;
+      padding: 3rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container {
+      max-width: 1200px;
+      width: 100%;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.05em;
+    }
+    p.subtitle {
+      font-size: 1.2rem;
+      color: var(--text);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .nav-back {
+      display: inline-block;
+      margin-bottom: 1.5rem;
+      color: var(--blue);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .nav-back:hover { text-decoration: underline; }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      justify-content: center;
+    }
+    input[type="text"] {
+      background: rgba(8,12,24,0.5);
+      border: 1px solid var(--border);
+      padding: 0.8rem 1.2rem;
+      border-radius: 8px;
+      color: white;
+      width: 300px;
+      font-family: inherit;
+    }
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--blue);
+    }
+
+    /* Grid */
+    .papers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .paper-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+    .paper-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      border-color: var(--blue);
+    }
+    .paper-type {
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    .paper-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 0 0 0.5rem 0;
+      line-height: 1.4;
+      flex-grow: 1;
+    }
+    .paper-meta {
+      font-size: 0.85rem;
+      color: var(--text);
+      margin-bottom: 1rem;
+      display: flex;
+      gap: 1rem;
+    }
+    .paper-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .tag {
+      background: rgba(255,255,255,0.05);
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      color: var(--text);
+    }
+    .btn-download {
+      display: inline-block;
+      text-align: center;
+      background: var(--blue);
+      color: #0f172a;
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+    }
+    .btn-download:hover {
+      background: #7dd3fc;
+    }
+    .loading {
+      text-align: center;
+      width: 100%;
+      color: var(--text);
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a href="index.html" class="nav-back">← Back to Dashboard</a>
+      <h1>Research Library</h1>
+      <p class="subtitle">Exploring the intersection of AI, regenerative economics, and human potential.</p>
+    </header>
+
+    <div class="controls">
+      <input type="text" id="search" placeholder="Search papers..." onkeyup="filterPapers()" />
+    </div>
+
+    <div id="papers-grid" class="papers-grid">
+      <div class="loading">Loading research library...</div>
+    </div>
+  </div>
+
+  <script>
+    let allPapers = [];
+    const grid = document.getElementById('papers-grid');
+
+    fetch('papers.json')
+      .then(resp => resp.json())
+      .then(data => {
+        allPapers = data.papers;
+        renderPapers(allPapers);
+      })
+      .catch(err => {
+        console.error(err);
+        grid.innerHTML = '<div class="loading">Unable to load research index.</div>';
+      });
+
+    function renderPapers(papers) {
+      if (papers.length === 0) {
+        grid.innerHTML = '<div class="loading">No papers found matching your search.</div>';
+        return;
+      }
+
+      grid.innerHTML = papers.map(paper => {
+        const tagsHtml = paper.tags.map(tag => `<span class="tag">#${tag}</span>`).join('');
+        const typeClass = paper.type === 'pdf' ? 'PDF' : 'DOC';
+        // Clean up title
+        let title = paper.title;
+        if(title.endsWith('.Md')) title = title.slice(0, -3);
+        if(title.endsWith('.Pdf')) title = title.slice(0, -4);
+        
+        return `
+          <div class="paper-card">
+            <div class="paper-type">${paper.type.toUpperCase()}</div>
+            <h3 class="paper-title">${title}</h3>
+            <div class="paper-meta">
+              <span>${paper.size_kb} KB</span>
+            </div>
+            <div class="paper-tags">${tagsHtml}</div>
+            <a href="${paper.url}" target="_blank" class="btn-download">View Paper</a>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function filterPapers() {
+      const query = document.getElementById('search').value.toLowerCase();
+      const filtered = allPapers.filter(p => {
+        return p.title.toLowerCase().includes(query) || 
+               p.tags.some(t => t.toLowerCase().includes(query));
+      });
+      renderPapers(filtered);
+    }
+  </script>
+</body>
+</html>
+

@@ -1,301 +1,181 @@
-# credentials-manager - SPECS
+# SPEC - Credentials Manager (Droplet #25)
 
-**Created:** 2025-11-15
-**Status:** Production Ready (Droplet #25)
-**Port:** 8025
-
----
-
-## Purpose
-
-Secure storage and management of API keys, billing details, and passwords with AES-256 encryption. Manages helper access with scoped, time-limited tokens. Maintains complete audit trail of all credential access. Foundation for secure Business Operating System.
+**Version:** 1.0
+**Created:** 2025-11-23
+**Droplet ID:** 25
+**Status:** Production
 
 ---
 
-## Requirements
+## 1. SERVICE OVERVIEW
 
-### Functional Requirements
-- [ ] Store credentials with AES-256 encryption
-- [ ] Support multiple credential types: api_key, credit_card, password, oauth_token
-- [ ] Admin authentication with JWT tokens
-- [ ] Create, read, update, delete credentials (admin only)
-- [ ] Generate scoped access tokens for helpers with time limits
-- [ ] Helper access limited to specific credentials only
-- [ ] Auto-revoke tokens after expiration time
-- [ ] Complete audit logging (who, when, what, IP address)
-- [ ] Credential metadata (service name, environment, notes)
-- [ ] Credential status (active, inactive, expired)
-- [ ] Backup and restore encrypted vault
+### 1.1 Purpose
+The digital vault of the ecosystem. Securely stores API keys, billing details, and secrets using AES-256 encryption. It issues time-limited, scoped access tokens to other droplets, ensuring no service holds permanent keys to the kingdom.
 
-### Non-Functional Requirements
-- [ ] Security: AES-256-GCM encryption, PBKDF2 key derivation (100,000 iterations)
-- [ ] Performance: Key retrieval < 50ms, encryption/decryption < 100ms
-- [ ] Audit: Every access logged with timestamp, accessor, IP, success/failure
-- [ ] Availability: 99.9% uptime
-- [ ] Token expiration: Default 24 hours, configurable per token
-- [ ] Backup: Encrypted backups every 6 hours
+### 1.2 Position in Ecosystem
+This service sits in the **Foundation Layer** (Security). It is a critical dependency for almost every other droplet that needs to talk to the outside world (OpenAI, Stripe, etc.).
+
+### 1.3 Dependencies
+**Required Services:**
+- Registry (droplet #1) - Service discovery
+
+**External Dependencies:**
+- None (Self-contained vault)
 
 ---
 
-## API Specs
+## 2. CAPABILITIES
 
-### Endpoints
+### 2.1 Core Capabilities
+1. **[Secure Storage]** - AES-256-GCM encryption for all secrets at rest.
+2. **[Access Control]** - Issues short-lived JWTs for specific secrets.
+3. **[Audit Logging]** - Immutable record of who accessed what and when.
 
-**POST /auth/admin**
-- **Purpose:** Admin authentication
-- **Input:** username, password (form data)
-- **Output:** access_token (JWT), token_type
-- **Success:** 200 OK
-- **Errors:** 401 if invalid credentials
+### 2.2 Supported Operations
+- `store_secret` - Encrypt and save a value.
+- `retrieve_secret` - Decrypt and return a value (if authorized).
+- `rotate_key` - Re-encrypt all secrets with a new master key.
 
-**POST /credentials**
-- **Purpose:** Create new credential (admin only)
-- **Input:** name, type, value, service, metadata (optional)
-- **Output:** Credential ID, confirmation
-- **Success:** 201 Created
-- **Errors:** 400 if validation fails, 401 if not admin, 409 if name exists
+---
 
-**GET /credentials**
-- **Purpose:** List all credentials (names only, not values)
-- **Input:** None
-- **Output:** Array of credential metadata
-- **Success:** 200 OK
-- **Errors:** 401 if not authenticated
+## 3. API SPECIFICATION
 
-**GET /credentials/{id}**
-- **Purpose:** Get credential with decrypted value
-- **Input:** credential ID
-- **Output:** Credential with decrypted value
-- **Success:** 200 OK
-- **Errors:** 401 if not authenticated, 403 if not authorized, 404 if not found
+### 3.1 UDC Endpoints (Required)
 
-**PUT /credentials/{id}**
-- **Purpose:** Update credential (admin only)
-- **Input:** Optional: value, is_active, metadata
-- **Output:** Updated credential
-- **Success:** 200 OK
-- **Errors:** 400 if validation fails, 401 if not admin, 404 if not found
+#### Health Check
+```
+GET /health
+```
+**Response:**
+```json
+{
+  "status": "healthy",
+  "version": "1.0.0",
+  "timestamp": "2025-11-23T12:00:00Z"
+}
+```
 
-**DELETE /credentials/{id}**
-- **Purpose:** Delete credential (admin only)
-- **Input:** credential ID
-- **Output:** Deletion confirmation
-- **Success:** 200 OK
-- **Errors:** 401 if not admin, 404 if not found
+#### Capabilities
+```
+GET /capabilities
+```
+**Response:**
+```json
+{
+  "service_name": "credentials-manager",
+  "droplet_id": 25,
+  "capabilities": ["vault", "encryption", "audit"],
+  "supported_operations": ["store", "retrieve", "audit"],
+  "integration_endpoints": [
+    { "path": "/api/v1/secrets/{key}", "method": "GET" }
+  ]
+}
+```
 
-**POST /tokens**
-- **Purpose:** Create helper access token (admin only)
-- **Input:** helper_name, credential_ids (array), scope (read_only), expires_hours
-- **Output:** token (JWT), expires_at
-- **Success:** 201 Created
-- **Errors:** 400 if validation fails, 401 if not admin, 404 if credential not found
+#### State
+```
+GET /state
+```
+**Response:**
+```json
+{
+  "status": "active",
+  "stored_secrets": 142,
+  "last_rotation": "2025-11-01T00:00:00Z"
+}
+```
 
-**GET /tokens**
-- **Purpose:** List all access tokens
-- **Input:** None
-- **Output:** Array of token metadata (not token values)
-- **Success:** 200 OK
-- **Errors:** 401 if not admin
+#### Dependencies
+```
+GET /dependencies
+```
+**Response:**
+```json
+{
+  "required_services": [
+    { "name": "registry", "status": "connected" }
+  ]
+}
+```
 
-**DELETE /tokens/{id}**
-- **Purpose:** Revoke access token (admin only)
-- **Input:** token ID
-- **Output:** Revocation confirmation
-- **Success:** 200 OK
-- **Errors:** 401 if not admin, 404 if not found
-
-**GET /audit**
-- **Purpose:** View audit logs (admin only)
-- **Input:** Optional: date_range, credential_id, accessor
-- **Output:** Array of audit log entries
-- **Success:** 200 OK
-- **Errors:** 401 if not admin
-
-**GET /health**
-- **Purpose:** Health check
-- **Input:** None
-- **Output:** {"status": "healthy", "service": "credentials-manager", "encryption": "active"}
-- **Success:** 200 OK
-- **Errors:** 500 if unhealthy
-
-### Data Models
-
-```python
-class Credential:
-    id: int
-    name: str
-    type: str  # "api_key", "credit_card", "password", "oauth_token"
-    encrypted_value: str  # AES-256-GCM encrypted
-    service: str
-    environment: str  # "production", "staging", "development"
-    is_active: bool
-    metadata: dict
-    created_at: datetime
-    updated_at: datetime
-    created_by: str
-    last_accessed: Optional[datetime]
-
-class AccessToken:
-    id: int
-    helper_name: str
-    credential_ids: List[int]
-    scope: str  # "read_only" (only supported scope for now)
-    token_hash: str  # Hashed token value
-    expires_at: datetime
-    created_at: datetime
-    revoked: bool
-    revoked_at: Optional[datetime]
-
-class AuditLog:
-    id: int
-    credential_id: int
-    action: str  # "access", "create", "update", "delete"
-    accessor: str  # Admin username or helper name
-    accessor_type: str  # "admin", "helper"
-    ip_address: str
-    timestamp: datetime
-    success: bool
-    error: Optional[str]
-    details: dict
+#### Message
+```
+POST /message
+```
+**Response:**
+```json
+{
+  "received": true,
+  "status": "processed"
+}
 ```
 
 ---
 
-## Dependencies
+### 3.2 Business Logic Endpoints
 
-### External Services
-- None (self-contained)
-
-### APIs Required
-- None (standalone service)
-
-### Data Sources
-- PostgreSQL: Credential storage, access tokens, audit logs
-- Environment variable: Master encryption key
-
----
-
-## Success Criteria
-
-How do we know this works?
-
-- [ ] Credentials stored with AES-256 encryption
-- [ ] Decryption retrieves original values correctly
-- [ ] Admin can CRUD all credentials
-- [ ] Helper tokens grant access only to specified credentials
-- [ ] Token expiration enforced automatically
-- [ ] All access logged in audit trail
-- [ ] Encryption key rotation works without data loss
-- [ ] Backup and restore preserves encrypted data
-- [ ] Performance: key retrieval < 50ms
-- [ ] Security: No plaintext credentials in logs or errors
-
----
-
-## Security Model
-
-### Encryption
+#### Retrieve Secret
 ```
-Plaintext → AES-256-GCM → Encrypted → Base64 → Database
-Database → Base64 → Encrypted → AES-256-GCM → Plaintext
+GET /api/v1/secrets/{key}
+```
+**Request Header:** `Authorization: Bearer <scoped_token>`
+**Response:**
+```json
+{
+  "key": "stripe_api_key",
+  "value": "sk_live_...",
+  "expires_in": 3600
+}
 ```
 
-**Key Derivation:**
-- Master key (32 bytes) from environment variable
-- PBKDF2 with 100,000 iterations
-- Unique salt per credential
-- Fernet symmetric encryption (built on AES-256-GCM)
-
-### Access Control
-
-**Admin:**
-- Full CRUD on credentials
-- Create/revoke access tokens
-- View audit logs
-- Rotate encryption keys
-
-**Helper (with token):**
-- Read-only access to assigned credentials
-- Cannot create, update, or delete
-- Cannot see other credentials
-- Cannot grant access to others
-
-### Audit Trail
-Every credential access logged:
-- Credential ID
-- Accessor (admin username or helper name)
-- Timestamp
-- IP address
-- Success/failure
-- Action type
-
----
-
-## Integration Examples
-
-### Service Retrieves API Key
-```python
-import httpx
-
-# Service needs SendGrid API key
-response = httpx.get(
-    "http://credentials-manager:8025/credentials/1",
-    headers={"Authorization": f"Bearer {service_token}"}
-)
-sendgrid_key = response.json()["value"]
-
-# Use for email sending
-send_email(sendgrid_key, to, subject, body)
+#### Audit Log
 ```
-
-### Helper Management Integration
-```python
-# Helper management creates token for contractor
-response = httpx.post(
-    "http://credentials-manager:8025/tokens",
-    headers={"Authorization": f"Bearer {admin_token}"},
-    json={
-        "helper_name": "contractor_john",
-        "credential_ids": [5],  # SendGrid billing only
-        "scope": "read_only",
-        "expires_hours": 24
-    }
-)
-
-token = response.json()["token"]
-# Send token to contractor
-send_to_contractor(token)
+GET /api/v1/audit
+```
+**Response:**
+```json
+{
+  "events": [
+    { "actor": "i-match", "action": "read", "key": "stripe_key", "time": "..." }
+  ]
+}
 ```
 
 ---
 
-## Technical Constraints
+## 4. DATA MODEL
 
-- **Language/Framework:** Python 3.11+ with FastAPI
-- **Port:** 8025
-- **Database:** PostgreSQL (with asyncpg)
-- **Resource limits:**
-  - Memory: 256MB max
-  - CPU: 0.5 cores
-  - Storage: 1GB for database
-- **Response time:** < 50ms for key retrieval
-- **Encryption:** AES-256-GCM via Fernet
-- **Token expiration:** Checked on every request
-- **Audit retention:** 1 year
+### 4.1 Vault Schema
+#### `secrets`
+| Field | Type | Description |
+|-------|------|-------------|
+| id | UUID | Secret ID |
+| key | String | Lookup key |
+| value_enc | Binary | Encrypted blob |
+| version | Int | Key version |
 
 ---
 
-## Security Best Practices
+## 5. CONFIGURATION
 
-1. Never log credential values
-2. Rotate master encryption key every 6-12 months
-3. Monitor audit logs for suspicious access patterns
-4. Revoke unused tokens immediately
-5. Use HTTPS in production
-6. Backup database with encryption
-7. Limit token lifetime (default 24h, shorter for sensitive)
-8. Use strong admin password (bcrypt hashed)
+### 5.1 Environment Variables
+```bash
+SERVICE_NAME=credentials-manager
+SERVICE_PORT=8025
+DROPLET_ID=25
+REGISTRY_URL=http://registry:8000
+MASTER_KEY=... (Injected via secure env)
+```
 
 ---
 
-**Next Step:** Deploy to production, integrate with helper-management
+## 6. COMPLIANCE CHECKLIST
+- [x] UDC Endpoints defined
+- [x] AES-256 encryption implemented
+- [x] Registers with Registry
+- [ ] Tests implemented
+
+---
+
+**This SPEC is the contract. Build matches SPEC exactly.**
+🌐⚡💎

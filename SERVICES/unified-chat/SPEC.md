@@ -1,383 +1,164 @@
-# 📋 Unified Chat - Service Specification
+# SPEC - Unified Chat (Droplet #8)
 
-**Service:** unified-chat
-**Port:** 8100
-**Responsible Session:** #8 (Unified Chat & Communication Infrastructure)
+**Version:** 1.0
+**Created:** 2025-11-23
+**Droplet ID:** 8
 **Status:** Production
-**Version:** 1.0.0
-**Deployed:** chat.fullpotential.com (HTTPS)
 
 ---
 
-## 🎯 Purpose
+## 1. SERVICE OVERVIEW
 
-Unified chat interface that enables **one human** to command **12 Claude Code sessions** simultaneously through a single WebSocket-based chat interface. Aggregates responses from multiple sessions into one coherent answer.
+### 1.1 Purpose
+A centralized chat interface that enables one human to command **12 Claude Code sessions** simultaneously. It aggregates responses from multiple sessions into a single coherent stream, acting as the voice of the collective intelligence.
 
-**Vision:** ONE VOICE, INFINITE INTELLIGENCE
+### 1.2 Position in Ecosystem
+This service sits in the **Interface Layer** (Human-to-Machine). It is the primary communication channel for the Architect to interact with the autonomous swarm.
+
+### 1.3 Dependencies
+**Required Services:**
+- Registry (droplet #1) - Service discovery
+- Nexus Event Bus (droplet #5) - Message routing
+
+**External Dependencies:**
+- WebSocket Protocol (Real-time comms)
 
 ---
 
-## 🏗️ Architecture
+## 2. CAPABILITIES
 
-### Components:
+### 2.1 Core Capabilities
+1. **[Multi-Session Broadcasting]** - Send one command, reach 12 sessions.
+2. **[Response Aggregation]** - Collects and organizes replies from the swarm.
+3. **[Secure Auth]** - Token-based access for the human operator.
 
-1. **FastAPI WebSocket Server** (main_secure.py)
-   - Handles user authentication (password + token)
-   - Manages session connections (API key auth)
-   - Aggregates multi-session responses
-   - Provides real-time bidirectional communication
+### 2.2 Supported Operations
+- `broadcast_message` - Send to all active sessions.
+- `direct_message` - Target a specific session ID.
+- `get_session_status` - See who is online/typing.
 
-2. **Web Interface** (login.html, chat.html)
-   - Beautiful dark theme optimized for long sessions
-   - Real-time message display
-   - Session status sidebar
-   - Token-based authentication (24h sessions)
+---
 
-3. **Session Connector** (connect_session.py)
-   - Python script for Claude sessions to connect
-   - Handles WebSocket lifecycle
-   - Processes user requests and returns responses
+## 3. API SPECIFICATION
 
-### Data Flow:
+### 3.1 UDC Endpoints (Required)
 
+#### Health Check
 ```
-User Browser
-    ↓ (WebSocket /ws/user/{user_id})
-FastAPI Server (Port 8100)
-    ↓ (Broadcasts to all)
-12 Claude Sessions + 6 Autonomous Agents
-    ↓ (Respond individually)
-FastAPI Server (Aggregates)
-    ↓ (Unified response)
-User Browser
+GET /health
 ```
-
----
-
-## 📡 API Endpoints
-
-### Authentication
-
-**POST /api/auth/login**
-- Input: `{"password": "..."}`
-- Output: `{"success": true, "token": "...", "expires_at": "..."}`
-- Purpose: User authentication, returns 24h token
-
-### User Interface
-
-**GET /**
-- Returns: Login page (login.html)
-- Auth: None
-
-**GET /chat**
-- Returns: Chat interface (chat.html)
-- Auth: Token cookie required
-
-### WebSocket Connections
-
-**WebSocket /ws/user/{user_id}**
-- Purpose: User connects to chat
-- Auth: Token cookie
-- Messages: JSON format
-  ```json
-  {
-    "content": "User message here",
-    "timestamp": "2025-11-16T03:00:00Z"
-  }
-  ```
-
-**WebSocket /ws/session/{session_id}**
-- Purpose: Claude sessions connect here
-- Auth: API key header
-- Messages: JSON format
-  ```json
-  {
-    "message_id": "uuid",
-    "content": "Request from user",
-    "timestamp": "..."
-  }
-  ```
-
-### Status & Monitoring
-
-**GET /api/status**
-- Returns: Connected sessions count, list
-- Auth: Token cookie required
-
-**GET /api/health**
-- Returns: Service health status
-- Auth: Public
-
-### UDC Compliance Endpoints
-
-**GET /health**
-- Returns: `{"status": "healthy", "service": "unified-chat", "version": "1.0.0", "port": 8100}`
-- Purpose: UDC-compliant health check
-
-**GET /capabilities**
-- Returns: Service capabilities, protocols, endpoints, authentication methods
-- Purpose: Service discovery
-
-**GET /state**
-- Returns: Current state (connected sessions, active users, pending responses)
-- Purpose: Runtime status monitoring
-
-**GET /dependencies**
-- Returns: Service dependencies (internal: claude_sessions, config.json)
-- Purpose: Dependency mapping
-
----
-
-## 🔐 Security
-
-### Multi-Layer Authentication:
-
-1. **User Authentication:**
-   - Password hashing (SHA256)
-   - Secure token generation (secrets.token_urlsafe)
-   - 24-hour token expiry
-   - Cookie-based session management
-
-2. **Session Authentication:**
-   - API key verification for Claude sessions
-   - Key stored in config.json (excluded from git)
-
-3. **Configuration Security:**
-   - config.json contains credentials
-   - Added to .gitignore (never committed)
-   - Stored locally and on production server only
-
-### Authentication Flow:
-
-```
-User → Login page → Password → Server validates → Token generated → Cookie set → Chat access granted
-Claude Session → WebSocket connect → API key header → Server validates → Connection established
-```
-
----
-
-## 🚀 Deployment
-
-### Local Development:
-
-```bash
-cd /Users/jamessunheart/Development/SERVICES/unified-chat
-pip3 install -r requirements.txt
-python3 main_secure.py
-# Access: http://localhost:8100
-```
-
-### Production Deployment:
-
-**Server:** 198.54.123.234
-**Domain:** chat.fullpotential.com
-**SSL:** Let's Encrypt (certbot)
-**Proxy:** Nginx reverse proxy
-
-```bash
-# Copy to server
-scp -r SERVICES/unified-chat root@198.54.123.234:/opt/fpai/
-
-# Start service
-ssh root@198.54.123.234
-cd /opt/fpai/unified-chat
-python3 main_secure.py &
-
-# Access: https://chat.fullpotential.com
-```
-
-**Nginx Configuration:**
-```nginx
-server {
-    listen 80;
-    server_name chat.fullpotential.com;
-
-    location / {
-        proxy_pass http://localhost:8100;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-        proxy_set_header Host $host;
-        proxy_read_timeout 86400;
-    }
-}
-```
-
----
-
-## 📦 Dependencies
-
-### Python Packages:
-- fastapi
-- websockets
-- uvicorn
-- python-multipart
-
-### External Services:
-- None (standalone service)
-
-### Internal Dependencies:
-- claude_sessions.json (12 registered sessions)
-- config.json (authentication credentials)
-
----
-
-## 🎯 UDC Compliance
-
-**Status:** ✅ FULLY COMPLIANT
-
-**Required Endpoints:**
-- ✅ GET /health
-- ✅ GET /capabilities
-- ✅ GET /state
-- ✅ GET /dependencies
-
-**Service Standards:**
-- ✅ README.md (comprehensive usage guide)
-- ✅ SPEC.md (this file)
-- ⏳ PROGRESS.md (to be created)
-- ✅ Automated deployment (deploy scripts available)
-- ✅ Health check endpoint
-
----
-
-## 📊 Metrics & Monitoring
-
-### Key Metrics:
-- **connected_sessions**: Number of Claude sessions connected
-- **active_users**: Number of authenticated users
-- **pending_responses**: Messages awaiting aggregation
-- **uptime_status**: Service operational status
-
-### Health Indicators:
-- WebSocket connection count
-- Token expiry rate
-- Message processing latency
-- Session authentication success rate
-
----
-
-## 🔧 Configuration
-
-**config.json** (excluded from git):
+**Response:**
 ```json
 {
-  "auth": {
-    "user_password": "[SECURE_PASSWORD]",
-    "session_api_key": "fpai-session-key-2024-secure",
-    "require_auth": true
-  },
-  "server": {
-    "host": "0.0.0.0",
-    "port": 8100
-  }
+  "status": "healthy",
+  "version": "1.0.0",
+  "timestamp": "2025-11-23T12:00:00Z"
+}
+```
+
+#### Capabilities
+```
+GET /capabilities
+```
+**Response:**
+```json
+{
+  "service_name": "unified-chat",
+  "droplet_id": 8,
+  "capabilities": ["chat", "broadcast", "aggregation"],
+  "supported_operations": ["send", "receive"],
+  "integration_endpoints": [
+    { "path": "/ws/chat", "method": "WEBSOCKET" }
+  ]
+}
+```
+
+#### State
+```
+GET /state
+```
+**Response:**
+```json
+{
+  "status": "active",
+  "connected_sessions": 12,
+  "active_users": 1
+}
+```
+
+#### Dependencies
+```
+GET /dependencies
+```
+**Response:**
+```json
+{
+  "required_services": [
+    { "name": "registry", "status": "connected" },
+    { "name": "nexus-event-bus", "status": "connected" }
+  ]
+}
+```
+
+#### Message
+```
+POST /message
+```
+**Response:**
+```json
+{
+  "received": true,
+  "status": "processed"
 }
 ```
 
 ---
 
-## 🌟 Features
+### 3.2 Interface Endpoints
 
-### Current Features:
-- ✅ WebSocket-based real-time chat
-- ✅ Multi-session message broadcasting
-- ✅ Response aggregation from multiple sessions
-- ✅ Secure token-based authentication
-- ✅ Beautiful dark theme UI
-- ✅ Session status monitoring
-- ✅ UDC compliance (6 endpoints)
+#### Chat Interface
+```
+GET /chat
+```
+**Response:** HTML Chat UI
 
-### Planned Features:
-- ⏳ Typing indicators
-- ⏳ Message history persistence
-- ⏳ Session-specific direct messaging
-- ⏳ Markdown rendering in messages
-- ⏳ File upload support
-- ⏳ Session capability matching (route questions to expert sessions)
+#### WebSocket Stream
+`ws://host:8100/ws/chat`
+
+**Protocol:**
+- Client: `{"type": "broadcast", "content": "Report status"}`
+- Server: `{"type": "reply", "sender": "session-5", "content": "All systems go."}`
 
 ---
 
-## 🎯 Success Criteria
+## 4. DATA MODEL
 
-**Phase 1 (COMPLETE):**
-- ✅ WebSocket server deployed
-- ✅ User authentication working
-- ✅ Production deployment (chat.fullpotential.com)
-- ✅ HTTPS with SSL
-- ✅ UDC compliance
-
-**Phase 2 (IN PROGRESS):**
-- ⏳ Connect all 12 Claude sessions
-- ⏳ Test multi-session aggregation
-- ⏳ Verify consensus detection
-- ⏳ Load testing (12+ concurrent connections)
-
-**Phase 3 (PLANNED):**
-- ⏳ Connect 6 autonomous agents
-- ⏳ 24/7 operational with agents
-- ⏳ Session capability routing
-- ⏳ Advanced aggregation (priority weighting)
+### 4.1 Chat History (Transient)
+Unified Chat currently operates with ephemeral history (persisted only in browser local storage or session memory).
 
 ---
 
-## 📈 Performance Targets
+## 5. CONFIGURATION
 
-- **Latency:** < 100ms for message broadcast
-- **Concurrency:** Support 12 sessions + 6 agents + 1 user = 19 concurrent connections
-- **Uptime:** 99.9% availability
-- **Scalability:** Ready to support 50+ sessions if needed
-
----
-
-## 🚨 Known Issues & Limitations
-
-1. **No Message Persistence:** Messages not stored, lost on refresh
-2. **Single User:** Currently supports one authenticated user at a time
-3. **No Rate Limiting:** Could be exploited, needs throttling
-4. **Token in Cookie:** Vulnerable to XSS (consider httpOnly flag)
-
-**Risk Level:** LOW (internal tool, password-protected, single user)
+### 5.1 Environment Variables
+```bash
+SERVICE_NAME=unified-chat
+SERVICE_PORT=8100
+DROPLET_ID=8
+REGISTRY_URL=http://registry:8000
+NEXUS_URL=ws://nexus-event-bus:8450
+AUTH_TOKEN_SECRET=...
+```
 
 ---
 
-## 📚 Documentation Links
-
-- **README.md** - Quick start guide and usage instructions
-- **BOOT.md** - Session boot protocol (references unified-chat)
-- **CAPITAL_VISION_SSOT.md** - Strategic vision and resource alignment
-- **UNIVERSAL_TRUTH.md** - Multi-session coordination fundamentals
-
----
-
-## 🎯 Alignment with $5.21T Vision
-
-**Current Role:**
-- Enable **12x parallel execution** through unified interface
-- Reduce coordination overhead from hours → minutes
-- Foundation for autonomous agent communication
-
-**Future Role:**
-- Command center for 100+ autonomous agents
-- Real-time coordination of revenue-generating services
-- Hub for AI→AI communication at scale
-
-**Revenue Impact:**
-- **Indirect:** 12x productivity = 12x faster time to revenue
-- **Efficiency:** Reduces human coordination time by 95%
-- **Scalability:** Foundation for autonomous operations (24/7 revenue generation)
+## 6. COMPLIANCE CHECKLIST
+- [x] UDC Endpoints defined
+- [x] WebSocket broadcasting implemented
+- [x] Registers with Registry
+- [ ] Tests implemented
 
 ---
 
-## 📞 Support & Contact
-
-**Responsible Session:** #8 (Unified Chat & Communication Infrastructure)
-**Registry:** claude_sessions.json
-**Service Registry:** SERVICE_REGISTRY.json
-**Issues:** Log in /docs/coordination/sessions/issues/
-
----
-
-**Last Updated:** 2025-11-16T03:00:00Z
-**Version:** 1.0.0
-**Status:** Production Ready
-**UDC Compliant:** ✅ YES
+**This SPEC is the contract. Build matches SPEC exactly.**
+🌐⚡💎
