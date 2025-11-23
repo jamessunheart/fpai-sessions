@@ -4,6 +4,7 @@
 **Created:** [Date]
 **Droplet ID:** [XX]
 **Status:** Draft | In Development | Production
+**Security Level:** 🟢 Public | 🟠 Internal | 🔴 Restricted
 
 ---
 
@@ -15,7 +16,14 @@
 ### 1.2 Position in Ecosystem
 [How this service fits into the Full Potential AI system]
 
-### 1.3 Dependencies
+### 1.3 Security Classification
+**Level:** [Level Name]
+**Rationale:** [Why this level was chosen]
+**Access Requirements:**
+- [Who can access this service]
+- [Required credentials]
+
+### 1.4 Dependencies
 **Required Services:**
 - Registry (droplet #1) - Authentication & service discovery
 - [Other required services]
