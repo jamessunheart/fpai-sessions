@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Tuple, Optional
 
 from app.models import PhaseResult, PhaseStatus, Check
-from app.config import settings
+from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 

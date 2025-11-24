@@ -6,6 +6,9 @@ from pathlib import Path
 class Settings(BaseSettings):
     """Application settings."""
 
+    PROJECT_NAME: str = "Verifier Service"
+    VERSION: str = "1.0.0"
+
     # Service
     verifier_port: int = 8200
 
@@ -25,3 +28,4 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
