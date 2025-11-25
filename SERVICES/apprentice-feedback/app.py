@@ -111,25 +111,32 @@ async def home():
             button:active {
                 transform: translateY(0);
             }
-            .success-message {
+            .spinner {
                 display: none;
-                background: #10b981;
-                color: white;
-                padding: 15px;
-                border-radius: 8px;
-                margin-bottom: 20px;
-                text-align: center;
+                width: 40px;
+                height: 40px;
+                margin: 20px auto;
+                border: 4px solid #f3f3f3;
+                border-top: 4px solid #667eea;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
             }
-            .missions-link {
-                display: block;
-                text-align: center;
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+            .verification-result {
+                display: none;
                 margin-top: 20px;
-                color: #667eea;
-                text-decoration: none;
-                font-weight: 600;
+                padding: 20px;
+                border-radius: 8px;
+                background: #f8fafc;
+                border: 1px solid #e2e8f0;
             }
-            .missions-link:hover {
-                text-decoration: underline;
+            .score-badge {
+                font-size: 24px;
+                font-weight: bold;
+                color: #667eea;
             }
         </style>
     </head>
@@ -138,8 +145,17 @@ async def home():
             <h1>🚀 Mission Feedback</h1>
             <p>Report completion or get help with your mission</p>
 
+            <div id="loadingSpinner" class="spinner"></div>
+            <div id="statusText" style="text-align: center; display: none; color: #666; margin-bottom: 20px;">Processing...</div>
+
             <div id="successMessage" class="success-message">
-                ✅ Feedback submitted! The system is processing your input.
+                ✅ Feedback submitted!
+            </div>
+
+            <div id="verificationResult" class="verification-result">
+                <h3>🔍 Verification Results</h3>
+                <div id="scoreDisplay"></div>
+                <pre id="feedbackDetails" style="white-space: pre-wrap; margin-top: 10px; font-family: monospace; font-size: 13px; color: #333;"></pre>
             </div>
 
             <form id="feedbackForm" onsubmit="submitFeedback(event)">
@@ -203,6 +219,18 @@ async def home():
 
             async function submitFeedback(e) {
                 e.preventDefault();
+                
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                const isCodeSubmission = document.getElementById('status').value === 'submission';
+                
+                submitBtn.disabled = true;
+                submitBtn.innerText = isCodeSubmission ? 'Running Verification...' : 'Submitting...';
+                
+                if (isCodeSubmission) {
+                    document.getElementById('loadingSpinner').style.display = 'block';
+                    document.getElementById('statusText').style.display = 'block';
+                    document.getElementById('statusText').innerText = "🚜 Harvesting repo & running tests...";
+                }
 
                 const formData = new FormData(e.target);
                 const data = {
@@ -222,19 +250,57 @@ async def home():
 
                     if (response.ok) {
                         const result = await response.json();
+                        
+                        // Hide spinner
+                        document.getElementById('loadingSpinner').style.display = 'none';
+                        document.getElementById('statusText').style.display = 'none';
+                        
+                        // Show success message
                         const msgDiv = document.getElementById('successMessage');
                         msgDiv.innerText = '✅ ' + result.message;
                         msgDiv.style.display = 'block';
                         
+                        // If we have verification results, show them
+                        if (result.harvest_result) {
+                            const vDiv = document.getElementById('verificationResult');
+                            vDiv.style.display = 'block';
+                            
+                            const score = result.harvest_result.score || 0;
+                            let icon = score >= 90 ? '🏆' : (score >= 80 ? '✅' : '⚠️');
+                            
+                            document.getElementById('scoreDisplay').innerHTML = `
+                                <div class="score-badge">${icon} Quality Score: ${score}/100</div>
+                                <div style="margin-top: 5px; font-weight: bold; color: ${score >= 80 ? '#10b981' : '#f59e0b'}">
+                                    Status: ${result.harvest_result.status}
+                                </div>
+                            `;
+                            
+                            // Format feedback nicely
+                            let details = "";
+                            if (result.harvest_result.path) details += `📂 Location: ${result.harvest_result.path}\n`;
+                            if (result.harvest_result.error) details += `❌ Error: ${result.harvest_result.error}\n`;
+                            
+                            document.getElementById('feedbackDetails').innerText = details;
+                        }
+                        
                         document.getElementById('feedbackForm').reset();
                         document.getElementById('repoGroup').style.display = 'none';
+                        submitBtn.innerText = "Submit Feedback";
+                        submitBtn.disabled = false;
                         
-                        setTimeout(() => {
-                            msgDiv.style.display = 'none';
-                        }, 5000);
+                        // Only hide success message after delay if it's NOT a code submission
+                        // We want code results to stay visible
+                        if (!isCodeSubmission) {
+                            setTimeout(() => {
+                                msgDiv.style.display = 'none';
+                            }, 5000);
+                        }
                     }
                 } catch (error) {
                     alert('Error submitting feedback. Please try again.');
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = "Submit Feedback";
+                    document.getElementById('loadingSpinner').style.display = 'none';
                 }
             }
         </script>
@@ -264,20 +330,60 @@ async def submit_feedback(feedback: FeedbackSubmission):
     if feedback.status == "submission" and feedback.repo_url:
         try:
             import subprocess
-            # Run harvest script in background
-            # Using a relative path or environment variable would be better, but hardcoding for now based on context
+            import re
+            
+            # Run harvest script SYNCHRONOUSLY to capture output
             script_path = Path("/Users/jamessunheart/FPAI_Cockpit/_scripts/harvest-apprentice.py")
+            # Adjust path for production server if needed
+            if not script_path.exists():
+                 script_path = Path("/root/FPAI_Cockpit/_scripts/harvest-apprentice.py")
+            
             if script_path.exists():
                 cmd = [
                     str(script_path),
                     feedback.name.replace(" ", ""),
                     feedback.repo_url
                 ]
-                subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                return {"status": "success", "message": "Code submission received! Auto-harvest system triggered."}
+                
+                # Run with timeout
+                result = subprocess.run(
+                    cmd, 
+                    capture_output=True, 
+                    text=True,
+                    timeout=300 # 5 min max
+                )
+                
+                # Parse output for score
+                output = result.stdout
+                score = 0
+                score_match = re.search(r'Score:\s*(\d+)', output)
+                if score_match:
+                    score = int(score_match.group(1))
+                
+                status = "APPROVED" if "SUCCESS" in output else "FAILED"
+                path = ""
+                path_match = re.search(r'Location:\s*(.+)', output)
+                if path_match:
+                    path = path_match.group(1).strip()
+                
+                return {
+                    "status": "success", 
+                    "message": "Verification Complete!",
+                    "harvest_result": {
+                        "status": status,
+                        "score": score,
+                        "path": path,
+                        "output": output[-500:] if len(output) > 500 else output
+                    }
+                }
+                
         except Exception as e:
             print(f"Failed to auto-harvest: {e}")
-            return {"status": "success", "message": "Submission received (Auto-harvest failed, admin notified)"}
+            return {
+                "status": "success", 
+                "message": "Submission received but verification failed.",
+                "harvest_result": {"error": str(e), "status": "ERROR"}
+            }
 
     return {"status": "success", "message": "Feedback received! We will review it shortly."}
 
@@ -394,5 +500,6 @@ async def health():
 
 if __name__ == "__main__":
     import uvicorn
-    # Bind to 127.0.0.1 for local dev, 0.0.0.0 for prod
-    uvicorn.run(app, host="127.0.0.1", port=8055)
+    # Bind to 0.0.0.0 to allow external access on server
+    uvicorn.run(app, host="0.0.0.0", port=8055)
+
