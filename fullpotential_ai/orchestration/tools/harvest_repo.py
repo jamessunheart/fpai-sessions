@@ -176,30 +176,145 @@ def harvest(url: str, branch: str, target_path: str) -> None:
 
 def verify_harvest(repo_root: Path, prefix: str) -> None:
     """
-    Runs validation tests on the harvested code.
+    Enhanced verification with multiple quality checks.
     If validation fails, raises HarvestError to trigger a rollback/abort.
     """
     target_path = repo_root / prefix
     
-    # Check for existence of tests
-    if not (target_path / "tests").exists() and not list(target_path.glob("test_*.py")):
-        print(f"⚠️  Warning: No tests found in harvested directory '{prefix}'. Proceeding with caution.")
-        return
-
-    print(f"🧪 Verifying harvested code in '{prefix}'...")
+    print(f"\n🔍 Verifying harvested code in '{prefix}'...")
+    print("=" * 60)
     
-    # Run pytest in the target directory
-    # We assume the environment is set up or we run basic syntax checks
-    try:
-        subprocess.run(
-            ["pytest", prefix],
-            cwd=repo_root,
-            check=True,
-            capture_output=False
+    checks = {
+        "tests_exist": False,
+        "tests_pass": False,
+        "has_readme": False,
+        "has_dependencies": False,
+        "no_obvious_secrets": True
+    }
+    
+    # Check 1: Tests exist
+    if (target_path / "tests").exists() or list(target_path.glob("test_*.py")):
+        checks["tests_exist"] = True
+        print("✅ Tests found")
+        
+        # Check 2: Tests pass
+        print("🧪 Running tests...")
+        try:
+            result = subprocess.run(
+                ["pytest", prefix, "-v", "--tb=short"],
+                cwd=repo_root,
+                check=True,
+                capture_output=True,
+                text=True,
+                timeout=300  # 5 minute timeout
+            )
+            checks["tests_pass"] = True
+            print("✅ Tests passed")
+        except subprocess.TimeoutExpired:
+            print("⚠️  Tests timed out after 5 minutes")
+        except subprocess.CalledProcessError as e:
+            print("❌ Tests failed")
+            if e.stdout:
+                print(f"   Output: {e.stdout[-500:]}")  # Last 500 chars
+        except FileNotFoundError:
+            print("⚠️  pytest not available, skipping test execution")
+    else:
+        print("⚠️  No tests found")
+    
+    # Check 3: Documentation
+    if (target_path / "README.md").exists():
+        checks["has_readme"] = True
+        print("✅ README.md found")
+    else:
+        print("⚠️  No README.md")
+    
+    # Check 4: Dependencies declared
+    has_reqs = (target_path / "requirements.txt").exists()
+    has_pkg = (target_path / "package.json").exists()
+    if has_reqs or has_pkg:
+        checks["has_dependencies"] = True
+        dep_file = "requirements.txt" if has_reqs else "package.json"
+        print(f"✅ Dependencies specified ({dep_file})")
+    else:
+        print("⚠️  No dependency file (requirements.txt, package.json)")
+    
+    # Check 5: No obvious secrets
+    print("🔐 Scanning for hardcoded secrets...")
+    secret_patterns = ["API_KEY", "SECRET_KEY", "PASSWORD", "TOKEN", "PRIVATE_KEY"]
+    found_secrets = False
+    
+    for pattern in secret_patterns:
+        try:
+            result = subprocess.run(
+                ["grep", "-r", "-i", pattern, str(prefix), 
+                 "--exclude-dir=.git", "--exclude-dir=venv", 
+                 "--exclude-dir=node_modules", "--exclude=*.pyc"],
+                cwd=repo_root,
+                capture_output=True,
+                text=True
+            )
+            if result.returncode == 0 and result.stdout:
+                # Filter out comments and common false positives
+                lines = result.stdout.split('\n')
+                real_matches = [l for l in lines if l and '# nosec' not in l and 'example' not in l.lower()]
+                if real_matches:
+                    found_secrets = True
+                    print(f"⚠️  Possible secret '{pattern}' found in code")
+                    for match in real_matches[:2]:  # Show first 2 matches
+                        print(f"     {match[:100]}")
+        except Exception:
+            pass
+    
+    if found_secrets:
+        checks["no_obvious_secrets"] = False
+    else:
+        print("✅ No obvious secrets detected")
+    
+    # Calculate score
+    score = sum(checks.values()) / len(checks) * 100
+    
+    print("=" * 60)
+    print(f"📊 Verification Score: {score:.0f}%")
+    print()
+    print("Checks:")
+    for check_name, passed in checks.items():
+        symbol = "✅" if passed else "❌"
+        display_name = check_name.replace('_', ' ').title()
+        print(f"  {symbol} {display_name}")
+    print("=" * 60)
+    
+    # Decision
+    if not checks["tests_exist"]:
+        raise HarvestError(
+            f"CRITICAL: No tests found in '{prefix}'. "
+            "All submissions must include tests. Harvest aborted."
         )
-        print("✅ Verification Passed.")
-    except subprocess.CalledProcessError:
-        raise HarvestError(f"Verification FAILED for '{prefix}'. Tests did not pass. Harvest aborted.")
+    
+    if not checks["tests_pass"]:
+        raise HarvestError(
+            f"CRITICAL: Tests failed for '{prefix}'. "
+            "Fix failing tests before resubmitting. Harvest aborted."
+        )
+    
+    if score < 60:
+        raise HarvestError(
+            f"Verification failed (score: {score:.0f}%). "
+            "Code needs significant improvement before acceptance."
+        )
+    elif score < 80:
+        print(f"\n⚠️  WARNING: Score is acceptable ({score:.0f}%) but improvements recommended.")
+        print("Consider adding:")
+        if not checks["has_readme"]:
+            print("  - README.md with documentation")
+        if not checks["has_dependencies"]:
+            print("  - Dependency specification file")
+        if not checks["no_obvious_secrets"]:
+            print("  - Move secrets to environment variables")
+        print()
+    else:
+        print(f"\n✅ Excellent! High quality submission ({score:.0f}%)")
+    
+    print("Proceeding with harvest...\n")
 
 
 

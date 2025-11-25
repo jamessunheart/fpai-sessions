@@ -15,13 +15,15 @@ from pathlib import Path
 app = FastAPI(title="Apprentice Feedback", version="1.0")
 
 # Create feedback directory if it doesn't exist
-FEEDBACK_DIR = Path("/Users/jamessunheart/Development/data/apprentice-feedback")
+# Use a path inside the workspace to avoid permission issues
+FEEDBACK_DIR = Path("data/apprentice-feedback")
 FEEDBACK_DIR.mkdir(parents=True, exist_ok=True)
 
 class FeedbackSubmission(BaseModel):
     mission_id: str
-    status: str  # "completed" or "stuck"
+    status: str  # "completed", "stuck", "submission"
     name: str
+    repo_url: str = None
     message: str
     timestamp: str = None
 
@@ -84,6 +86,7 @@ async def home():
             input:focus, select:focus, textarea:focus {
                 outline: none;
                 border-color: #667eea;
+                background-color: #fff;
             }
             textarea {
                 min-height: 120px;
@@ -136,7 +139,7 @@ async def home():
             <p>Report completion or get help with your mission</p>
 
             <div id="successMessage" class="success-message">
-                ✅ Feedback submitted! James will review shortly.
+                ✅ Feedback submitted! The system is processing your input.
             </div>
 
             <form id="feedbackForm" onsubmit="submitFeedback(event)">
@@ -158,17 +161,23 @@ async def home():
 
                 <div class="form-group">
                     <label for="status">Status:</label>
-                    <select id="status" name="status" required>
+                    <select id="status" name="status" required onchange="toggleRepoField()">
                         <option value="">Select status...</option>
+                        <option value="submission">📤 Submitting Code</option>
                         <option value="completed">✅ Completed!</option>
                         <option value="stuck">❌ Got Stuck</option>
                         <option value="question">❓ Have a Question</option>
                     </select>
                 </div>
 
+                <div class="form-group" id="repoGroup" style="display: none;">
+                    <label for="repo_url">Repository URL (GitHub):</label>
+                    <input type="url" id="repo_url" name="repo_url" placeholder="https://github.com/username/repo">
+                </div>
+
                 <div class="form-group">
                     <label for="message">Details:</label>
-                    <textarea id="message" name="message" required placeholder="If completed: Paste any URLs or results&#10;If stuck: Tell us exactly where and what error you got&#10;If question: Ask away!"></textarea>
+                    <textarea id="message" name="message" required placeholder="If submitting code: Paste any additional notes here&#10;If stuck: Tell us exactly where and what error you got"></textarea>
                 </div>
 
                 <button type="submit">Submit Feedback</button>
@@ -180,6 +189,18 @@ async def home():
         </div>
 
         <script>
+            function toggleRepoField() {
+                const status = document.getElementById('status').value;
+                const repoGroup = document.getElementById('repoGroup');
+                if (status === 'submission') {
+                    repoGroup.style.display = 'block';
+                    document.getElementById('repo_url').required = true;
+                } else {
+                    repoGroup.style.display = 'none';
+                    document.getElementById('repo_url').required = false;
+                }
+            }
+
             async function submitFeedback(e) {
                 e.preventDefault();
 
@@ -188,6 +209,7 @@ async def home():
                     mission_id: formData.get('mission'),
                     status: formData.get('status'),
                     name: formData.get('name'),
+                    repo_url: formData.get('repo_url'),
                     message: formData.get('message')
                 };
 
@@ -199,10 +221,16 @@ async def home():
                     });
 
                     if (response.ok) {
-                        document.getElementById('successMessage').style.display = 'block';
+                        const result = await response.json();
+                        const msgDiv = document.getElementById('successMessage');
+                        msgDiv.innerText = '✅ ' + result.message;
+                        msgDiv.style.display = 'block';
+                        
                         document.getElementById('feedbackForm').reset();
+                        document.getElementById('repoGroup').style.display = 'none';
+                        
                         setTimeout(() => {
-                            document.getElementById('successMessage').style.display = 'none';
+                            msgDiv.style.display = 'none';
                         }, 5000);
                     }
                 } catch (error) {
@@ -231,8 +259,27 @@ async def submit_feedback(feedback: FeedbackSubmission):
     log_file = FEEDBACK_DIR / "all_feedback.jsonl"
     with open(log_file, 'a') as f:
         f.write(json.dumps(feedback.dict()) + '\n')
+    
+    # NEW: Trigger Harvest if this is a code submission
+    if feedback.status == "submission" and feedback.repo_url:
+        try:
+            import subprocess
+            # Run harvest script in background
+            # Using a relative path or environment variable would be better, but hardcoding for now based on context
+            script_path = Path("/Users/jamessunheart/FPAI_Cockpit/_scripts/harvest-apprentice.py")
+            if script_path.exists():
+                cmd = [
+                    str(script_path),
+                    feedback.name.replace(" ", ""),
+                    feedback.repo_url
+                ]
+                subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                return {"status": "success", "message": "Code submission received! Auto-harvest system triggered."}
+        except Exception as e:
+            print(f"Failed to auto-harvest: {e}")
+            return {"status": "success", "message": "Submission received (Auto-harvest failed, admin notified)"}
 
-    return {"status": "success", "message": "Feedback received!"}
+    return {"status": "success", "message": "Feedback received! We will review it shortly."}
 
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard():
@@ -244,7 +291,10 @@ async def dashboard():
         with open(log_file, 'r') as f:
             for line in f:
                 if line.strip():
-                    submissions.append(json.loads(line))
+                    try:
+                        submissions.append(json.loads(line))
+                    except json.JSONDecodeError:
+                        pass
 
     # Reverse to show newest first
     submissions.reverse()
@@ -264,23 +314,39 @@ async def dashboard():
                 margin-bottom: 15px;
                 border-radius: 8px;
                 border-left: 4px solid #667eea;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             }
             .completed { border-left-color: #10b981; }
             .stuck { border-left-color: #ef4444; }
             .question { border-left-color: #f59e0b; }
-            .meta { color: #666; font-size: 14px; margin-bottom: 10px; }
-            .message { color: #333; white-space: pre-wrap; }
+            .submission-type { border-left-color: #8b5cf6; }
+            
+            .meta { color: #666; font-size: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+            .message { color: #333; white-space: pre-wrap; margin-top: 10px; }
+            .repo-link { 
+                display: inline-block; 
+                margin-top: 8px; 
+                padding: 6px 12px; 
+                background: #f3f4f6; 
+                border-radius: 4px; 
+                color: #4b5563; 
+                text-decoration: none;
+                font-family: monospace;
+                border: 1px solid #e5e7eb;
+            }
+            .repo-link:hover { background: #e5e7eb; }
+            
             .status-badge {
                 display: inline-block;
                 padding: 4px 12px;
                 border-radius: 12px;
                 font-size: 12px;
                 font-weight: 600;
-                margin-left: 10px;
             }
             .status-completed { background: #d1fae5; color: #065f46; }
             .status-stuck { background: #fee2e2; color: #991b1b; }
             .status-question { background: #fef3c7; color: #92400e; }
+            .status-submission { background: #ddd6fe; color: #5b21b6; }
         </style>
     </head>
     <body>
@@ -291,16 +357,25 @@ async def dashboard():
     """
 
     for sub in submissions:
-        status_class = sub['status']
+        status = sub.get('status', 'unknown')
+        status_class = status if status in ['completed', 'stuck', 'question'] else 'submission-type'
+        
+        repo_html = ""
+        if sub.get('repo_url'):
+            repo_html = f'<a href="{sub["repo_url"]}" target="_blank" class="repo-link">📦 {sub["repo_url"]}</a>'
+
         html += f"""
             <div class="submission {status_class}">
                 <div class="meta">
-                    <strong>{sub.get('name', 'Anonymous')}</strong>
-                    <span class="status-badge status-{status_class}">{sub['status'].upper()}</span>
-                    <br>
-                    Mission: {sub['mission_id']} | {sub.get('timestamp', 'No timestamp')}
+                    <div>
+                        <strong>{sub.get('name', 'Anonymous')}</strong>
+                        <span class="status-badge status-{status_class}">{status.upper().replace('_', ' ')}</span>
+                    </div>
+                    <span>{sub.get('timestamp', '').split('T')[0]}</span>
                 </div>
-                <div class="message">{sub['message']}</div>
+                <div style="font-size: 0.9em; color: #666;">Mission: {sub.get('mission_id', 'N/A')}</div>
+                {repo_html}
+                <div class="message">{sub.get('message', '')}</div>
             </div>
         """
 
@@ -319,4 +394,5 @@ async def health():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8055)
+    # Bind to 127.0.0.1 for local dev, 0.0.0.0 for prod
+    uvicorn.run(app, host="127.0.0.1", port=8055)

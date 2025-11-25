@@ -1,0 +1,15 @@
+{
+  "version": "1.0",
+  "default_target": "SERVICES",
+  "auto_verify": true,
+  "require_tests": true,
+  "auto_push": false,
+  "score_thresholds": {
+    "auto_approve": 90,
+    "approved_with_warnings": 80,
+    "needs_improvement": 60,
+    "rejected": 0
+  },
+  "submissions": []
+}
+
