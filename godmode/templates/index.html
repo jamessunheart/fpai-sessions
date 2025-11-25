@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>God Mode | System Map</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --text-color: #e2e8f0;
+            --card-bg: #1e293b;
+            --accent: #3b82f6;
+            --success: #22c55e;
+            --border: #334155;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+        }
+        h1 { margin: 0; font-size: 1.5rem; color: var(--accent); }
+        .status-badge {
+            background: var(--card-bg);
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            border: 1px solid var(--border);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+        .card-content ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .card-content li {
+            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        .path {
+            font-family: monospace;
+            color: #cbd5e1;
+        }
+        .meta {
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: #64748b;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚡ God Mode</h1>
+            <div class="status-badge">Version {{ system_map.version }}</div>
+        </header>
+
+        <div class="grid">
+            {% for layer_name, layer in system_map.layers.items() %}
+            <div class="card">
+                <div class="card-header">
+                    <span>{{ layer_name }}</span>
+                    <span style="color: var(--success)">● {{ layer.status }}</span>
+                </div>
+                <div class="card-content">
+                    <div style="margin-bottom: 1rem;">
+                        <small style="color: #64748b">PATH</small><br>
+                        <span class="path">{{ layer.path }}</span>
+                    </div>
+                    
+                    {% if layer.components %}
+                    <small style="color: #64748b">COMPONENTS</small>
+                    <ul>
+                        {% for comp in layer.components %}
+                        <li>{{ comp }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="card" style="margin-top: 1.5rem;">
+            <div class="card-header">Integration Points</div>
+            <div class="card-content">
+                <ul>
+                {% for name, url in system_map.integration_points.items() %}
+                    <li>
+                        <span>{{ name }}</span>
+                        <a href="{{ url }}" target="_blank" style="color: var(--accent)">{{ url }}</a>
+                    </li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="meta">
+            Last Updated: {{ system_map.last_updated }}
+        </div>
+    </div>
+</body>
+</html>
+
