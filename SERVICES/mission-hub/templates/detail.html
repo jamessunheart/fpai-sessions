@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ mission.title }} | Mission Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-elevated: #1a1a24;
+            --border: #2a2a3a;
+            --text: #e4e4e7;
+            --text-muted: #71717a;
+            --accent-primary: #8b5cf6;
+            --accent-secondary: #06b6d4;
+            --accent-success: #10b981;
+            --accent-warning: #f59e0b;
+            --accent-danger: #ef4444;
+            --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Space Grotesk', -apple-system, sans-serif;
+            background: var(--bg-deep);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Header */
+        header {
+            padding: 24px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 40px;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 16px;
+            transition: color 0.2s;
+        }
+        
+        .back-link:hover {
+            color: var(--accent-primary);
+        }
+        
+        .mission-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        
+        .mission-info {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .badges {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge-priority {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+        }
+        
+        .badge-type {
+            background: rgba(139, 92, 246, 0.15);
+            color: #a78bfa;
+        }
+        
+        .badge-status {
+            background: rgba(6, 182, 212, 0.15);
+            color: #22d3ee;
+        }
+        
+        .badge-status.claimed {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+        }
+        
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+        
+        .principle {
+            color: var(--accent-secondary);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .btn {
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: none;
+            min-width: 200px;
+        }
+        
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+        
+        .btn-claimed {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            cursor: default;
+        }
+        
+        /* Content Sections */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 32px;
+            margin-bottom: 60px;
+        }
+        
+        @media (max-width: 900px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .main-content {
+            min-width: 0;
+        }
+        
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+        }
+        
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* Mission Content */
+        .mission-content {
+            font-size: 15px;
+            line-height: 1.8;
+        }
+        
+        .mission-content h1,
+        .mission-content h2,
+        .mission-content h3 {
+            margin-top: 24px;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+        
+        .mission-content h2 {
+            font-size: 20px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .mission-content h3 {
+            font-size: 17px;
+            color: var(--accent-primary);
+        }
+        
+        .mission-content p {
+            margin-bottom: 16px;
+            color: var(--text-muted);
+        }
+        
+        .mission-content ul,
+        .mission-content ol {
+            margin-bottom: 16px;
+            padding-left: 24px;
+        }
+        
+        .mission-content li {
+            margin-bottom: 8px;
+            color: var(--text-muted);
+        }
+        
+        .mission-content code {
+            background: var(--bg-elevated);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+        }
+        
+        .mission-content pre {
+            background: var(--bg-elevated);
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-bottom: 16px;
+        }
+        
+        .mission-content pre code {
+            background: none;
+            padding: 0;
+        }
+        
+        .mission-content a {
+            color: var(--accent-primary);
+        }
+        
+        /* Impact Card */
+        .impact-text {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        /* Claim Info */
+        .claim-info {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .claim-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+        
+        .claim-label {
+            color: var(--text-muted);
+        }
+        
+        .claim-value {
+            color: var(--text);
+            font-weight: 500;
+        }
+        
+        /* Activity Feed */
+        .activity-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .activity-item {
+            display: flex;
+            gap: 12px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        
+        .activity-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+        
+        .activity-dot.success {
+            background: var(--accent-success);
+        }
+        
+        .activity-dot.warning {
+            background: var(--accent-warning);
+        }
+        
+        .activity-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .activity-title {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .activity-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        /* Claim Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            max-width: 480px;
+            width: 100%;
+            animation: modalIn 0.3s ease-out;
+        }
+        
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        .modal h2 {
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+        
+        .modal p {
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+        
+        .modal-actions .btn {
+            min-width: 120px;
+        }
+        
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 32px 0;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+        
+        footer a {
+            color: var(--accent-primary);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+    
+    <div class="container">
+        <header>
+            <a href="/missions" class="back-link">
+                ← Back to Mission Hub
+            </a>
+            
+            <div class="mission-header">
+                <div class="mission-info">
+                    <div class="badges">
+                        <span class="badge badge-priority">{{ mission.priority[:2] if mission.priority else 'P3' }}</span>
+                        <span class="badge badge-type">{{ mission.type_info.label }}</span>
+                        {% if mission.claim %}
+                        <span class="badge badge-status claimed">Claimed</span>
+                        {% elif mission.live_status.status == 'completed' %}
+                        <span class="badge badge-status" style="background: rgba(16,185,129,0.15); color: #34d399;">Completed</span>
+                        {% else %}
+                        <span class="badge badge-status">Open</span>
+                        {% endif %}
+                    </div>
+                    
+                    <h1>{{ mission.title }}</h1>
+                    
+                    <div class="principle">
+                        <span>📜</span>
+                        {{ mission.principle }}
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    {% if mission.claim %}
+                    <span class="btn btn-claimed">⏳ Claimed by {{ mission.claim.contributor_name }}</span>
+                    <a href="/services/harvester?mission={{ mission.id }}&title={{ mission.title|urlencode }}" class="btn btn-secondary">
+                        Submit Work →
+                    </a>
+                    {% elif mission.live_status.status == 'completed' %}
+                    <span class="btn btn-secondary">✅ Mission Complete</span>
+                    {% else %}
+                    <button class="btn btn-primary" onclick="openClaimModal()">
+                        ⚡ Claim This Mission
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </header>
+        
+        <div class="content-grid">
+            <main class="main-content">
+                <div class="card">
+                    <h2 class="card-title">📋 Mission Details</h2>
+                    
+                    {% if content %}
+                    <div class="mission-content">
+                        {{ content | safe }}
+                    </div>
+                    {% else %}
+                    <div class="mission-content">
+                        <p>{{ mission.regenerative_impact }}</p>
+                        <p><em>Full mission brief not available. Contact a coordinator for details.</em></p>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                {% if recent_jobs %}
+                <div class="card" style="margin-top: 24px;">
+                    <h2 class="card-title">📊 Recent Submissions</h2>
+                    
+                    <div class="activity-feed">
+                        {% for job in recent_jobs %}
+                        <div class="activity-item">
+                            <div class="activity-dot {{ 'success' if job.status == 'completed' else ('warning' if job.status == 'failed' else '') }}"></div>
+                            <div class="activity-content">
+                                <div class="activity-title">
+                                    {{ job.status | upper }} by {{ job.apprentice }}
+                                    {% if job.score is not none %}
+                                    · Score: {{ job.score }}/100
+                                    {% endif %}
+                                </div>
+                                <div class="activity-meta">
+                                    {{ job.started_at[:16].replace('T', ' ') if job.started_at else '—' }}
+                                    {% if job.repo_url %}
+                                    · <a href="{{ job.repo_url }}" target="_blank">View Repo</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </main>
+            
+            <aside class="sidebar">
+                <!-- Impact -->
+                <div class="card">
+                    <h3 class="card-title">🌱 Regenerative Impact</h3>
+                    <p class="impact-text">{{ mission.regenerative_impact }}</p>
+                </div>
+                
+                <!-- Claim Info -->
+                {% if mission.claim %}
+                <div class="card">
+                    <h3 class="card-title">👤 Current Contributor</h3>
+                    <div class="claim-info">
+                        <div class="claim-row">
+                            <span class="claim-label">Name</span>
+                            <span class="claim-value">{{ mission.claim.contributor_name }}</span>
+                        </div>
+                        <div class="claim-row">
+                            <span class="claim-label">Claimed</span>
+                            <span class="claim-value">{{ mission.claim.claimed_at[:10] if mission.claim.claimed_at else '—' }}</span>
+                        </div>
+                        {% if mission.claim.notes %}
+                        <div style="margin-top: 8px; font-size: 13px; color: var(--text-muted);">
+                            "{{ mission.claim.notes }}"
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Status History -->
+                {% if mission.live_status.history %}
+                <div class="card">
+                    <h3 class="card-title">📜 Status History</h3>
+                    <div class="activity-feed">
+                        {% for event in mission.live_status.history[-5:] | reverse %}
+                        <div class="activity-item">
+                            <div class="activity-dot"></div>
+                            <div class="activity-content">
+                                <div class="activity-title">{{ event.status | upper }}</div>
+                                <div class="activity-meta">
+                                    {{ event.timestamp[:10] if event.timestamp else '' }} by {{ event.updated_by }}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Quick Actions -->
+                <div class="card">
+                    <h3 class="card-title">⚡ Quick Actions</h3>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <a href="/services/harvester?mission={{ mission.id }}&title={{ mission.title|urlencode }}" class="btn btn-secondary" style="width: 100%;">
+                            🚜 Submit Code
+                        </a>
+                        <a href="/missions" class="btn btn-secondary" style="width: 100%;">
+                            🎯 Browse Missions
+                        </a>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+    
+    <!-- Claim Modal -->
+    <div class="modal-overlay" id="claimModal">
+        <div class="modal">
+            <h2>⚡ Claim Mission</h2>
+            <p>You're about to claim <strong>{{ mission.title }}</strong>. This lets others know you're working on it.</p>
+            
+            <form id="claimForm" onsubmit="submitClaim(event)">
+                <div class="form-group">
+                    <label for="name">Your Name *</label>
+                    <input type="text" id="name" name="name" required placeholder="e.g., Alex Chen">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email (optional)</label>
+                    <input type="email" id="email" name="email" placeholder="alex@example.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="notes">Notes (optional)</label>
+                    <textarea id="notes" name="notes" placeholder="Any initial thoughts or questions..."></textarea>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeClaimModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Claim Mission</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>
+                Full Potential AI · 
+                <a href="https://fullpotential.ai">fullpotential.ai</a>
+            </p>
+        </div>
+    </footer>
+    
+    <script>
+        const missionId = "{{ mission.id }}";
+        
+        function openClaimModal() {
+            document.getElementById('claimModal').classList.add('active');
+            document.getElementById('name').focus();
+        }
+        
+        function closeClaimModal() {
+            document.getElementById('claimModal').classList.remove('active');
+        }
+        
+        async function submitClaim(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const notes = document.getElementById('notes').value;
+            
+            try {
+                const response = await fetch('/missions/api/claim', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        mission_id: missionId,
+                        contributor_name: name,
+                        contributor_email: email,
+                        notes: notes
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert('Mission claimed! Redirecting to harvester...');
+                    window.location.href = result.next_step || '/services/harvester?mission=' + missionId;
+                } else {
+                    alert(result.detail || 'Failed to claim mission');
+                }
+            } catch (error) {
+                alert('Error claiming mission. Please try again.');
+            }
+        }
+        
+        // Close modal on escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeClaimModal();
+        });
+        
+        // Close modal on overlay click
+        document.getElementById('claimModal').addEventListener('click', (e) => {
+            if (e.target.id === 'claimModal') closeClaimModal();
+        });
+    </script>
+</body>
+</html>
+

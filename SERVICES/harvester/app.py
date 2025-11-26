@@ -4,26 +4,32 @@ Simple Apprentice Feedback System
 Port 8055 - Allows apprentices to report mission completion/issues
 """
 
-from fastapi import FastAPI, Form, HTTPException, BackgroundTasks
+import json
+import os
+import sys
+import time
+import uuid
+from datetime import datetime
+from pathlib import Path
+from typing import Dict, List, Optional
+
+from fastapi import BackgroundTasks, FastAPI, Form, HTTPException, Query
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-from datetime import datetime
-import json
-import os
-import uuid
-import time
-from pathlib import Path
-from typing import Dict
+
+ROOT_DIR = Path(__file__).resolve().parents[2]
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+
+from core.config import settings as app_settings
+from core.jobs import registry as job_registry  # noqa: E402
 
 app = FastAPI(title="Apprentice Feedback", version="1.0")
 
-# Create feedback directory if it doesn't exist
-# Use a path inside the workspace to avoid permission issues
-FEEDBACK_DIR = Path("data/apprentice-feedback")
-JOBS_DIR = Path("data/harvester-jobs")
-FEEDBACK_DIR.mkdir(parents=True, exist_ok=True)
-JOBS_DIR.mkdir(parents=True, exist_ok=True)
+# Centralized paths
+FEEDBACK_DIR = app_settings.feedback_dir
+JOBS_DIR = app_settings.jobs_dir
 
 # Mount static files
 app.mount("/static", StaticFiles(directory="SERVICES/landing-page/app/static"), name="static")
@@ -38,7 +44,7 @@ class FeedbackSubmission(BaseModel):
 
 def run_harvest_job(job_id: str, name: str, repo_url: str, mission_id: str = None):
     """Run harvest in background and stream logs to file"""
-    job_file = JOBS_DIR / f"{job_id}.json"
+    job_file = job_registry.job_state_path(job_id)
     
     # Initial state
     state = {
@@ -57,6 +63,7 @@ def run_harvest_job(job_id: str, name: str, repo_url: str, mission_id: str = Non
     def update_state(new_log=None, step_idx=None, step_status=None, final_score=None, final_status=None):
         if new_log:
             state["logs"].append(new_log)
+            job_registry.append_log(job_id, new_log)
         if step_idx is not None:
             state["steps"][step_idx]["status"] = step_status
         if final_score is not None:
@@ -68,35 +75,37 @@ def run_harvest_job(job_id: str, name: str, repo_url: str, mission_id: str = Non
             json.dump(state, f)
 
     update_state() # Save initial
+    job_registry.update_job(job_id, status="running")
     
-    # Update Mission Control if mission_id provided
-    def notify_mission_control(status: str, score: int = None):
+    # Update Mission Hub if mission_id provided
+    def notify_mission_hub(status: str, score: int = None):
         if not mission_id:
             return
         
         try:
             import requests
-            mission_control_url = "http://127.0.0.1:8700/api/status"
+            mission_hub_url = "http://127.0.0.1:8700/api/status"
             
             payload = {
                 "mission_id": mission_id,
                 "status": status,
                 "updated_by": name,
-                "notes": f"Code submission via Harvester",
+                "notes": f"Code submission via Harvester (score: {score}/100)" if score else "Code submission via Harvester",
                 "repo_url": repo_url,
-                "harvest_score": score
+                "score": score
             }
             
-            requests.post(mission_control_url, json=payload, timeout=5)
+            requests.post(mission_hub_url, json=payload, timeout=5)
+            print(f"✅ Notified Mission Hub: {status}")
         except Exception as e:
-            print(f"Warning: Could not notify Mission Control: {e}")
+            print(f"⚠️ Could not notify Mission Hub: {e}")
 
     try:
         import subprocess
         import re
         
         # Notify that submission is in progress
-        notify_mission_control("submitted")
+        notify_mission_hub("submitted")
         
         script_path = Path("/Users/jamessunheart/FPAI_Cockpit/_scripts/harvest-apprentice.py")
         # Adjust path for production server if needed
@@ -105,6 +114,7 @@ def run_harvest_job(job_id: str, name: str, repo_url: str, mission_id: str = Non
         
         if not script_path.exists():
             update_state("❌ Error: Harvester script not found!", final_status="failed")
+            job_registry.update_job(job_id, status="failed", metadata={"error": "harvester script missing"})
             return
 
         update_state("📦 Cloning repository...", step_idx=0, step_status="running")
@@ -160,15 +170,31 @@ def run_harvest_job(job_id: str, name: str, repo_url: str, mission_id: str = Non
             with open(job_file, "w") as f:
                 json.dump(state, f)
             
-            # Notify Mission Control of completion
-            notify_mission_control("completed", final_score)
+            # Notify Mission Hub of completion
+            notify_mission_hub("completed", final_score)
+            job_registry.update_job(
+                job_id,
+                status="completed",
+                score=final_score,
+                metadata={"result": "completed", "mission_id": mission_id},
+            )
         else:
             update_state("❌ Harvest failed. See logs.", final_status="failed")
-            notify_mission_control("blocked", 0)
+            notify_mission_hub("blocked", 0)
+            job_registry.update_job(
+                job_id,
+                status="failed",
+                metadata={"result": "failed", "mission_id": mission_id},
+            )
             
     except Exception as e:
         update_state(f"💥 System Error: {str(e)}", final_status="failed")
-        notify_mission_control("blocked", 0)
+        notify_mission_hub("blocked", 0)
+        job_registry.update_job(
+            job_id,
+            status="failed",
+            metadata={"error": str(e), "mission_id": mission_id},
+        )
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -340,6 +366,110 @@ async def home():
             }
             .result-score { font-size: 32px; font-weight: bold; color: #166534; }
             
+            .tabs {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+            .tab-link {
+                flex: 1;
+                padding: 12px;
+                border-radius: 8px;
+                border: 1px solid #e5e7eb;
+                background: #fff;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            .tab-link.active {
+                background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+                color: white;
+                border-color: transparent;
+            }
+            .tab-panels .tab-panel { display: none; }
+            .tab-panel.active { display: block; }
+
+            .two-column {
+                display: flex;
+                gap: 16px;
+                flex-wrap: wrap;
+            }
+            .two-column > div { flex: 1 1 200px; }
+
+            .rubric-card {
+                margin-top: 24px;
+                background: #f8fafc;
+                border-radius: 12px;
+                padding: 20px;
+                border: 1px solid #e2e8f0;
+            }
+            .rubric-card h3 { margin-bottom: 12px; color: var(--secondary); }
+            .rubric-card ul { padding-left: 20px; margin-bottom: 10px; }
+            .rubric-card li { margin-bottom: 6px; }
+            .note { font-size: 12px; color: #64748b; margin-top: 8px; }
+
+            .flash-success {
+                background: #ecfdf5;
+                border: 1px solid #bbf7d0;
+                color: #166534;
+                padding: 12px;
+                border-radius: 8px;
+                margin-bottom: 16px;
+                font-weight: 600;
+                text-align: center;
+            }
+
+            .history-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+            }
+            .history-status { font-size: 13px; color: #64748b; }
+            .history-list { display: flex; flex-direction: column; gap: 12px; }
+            .history-card {
+                border: 1px solid #e5e7eb;
+                border-radius: 12px;
+                padding: 16px;
+                background: white;
+            }
+            .history-card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 8px;
+            }
+            .history-mission { font-weight: 600; color: #1f2937; }
+            .history-score { font-weight: 600; color: #1f2937; }
+            .history-status-success { color: #15803d; }
+            .history-status-error { color: #b91c1c; }
+            .history-card-body { font-size: 14px; color: #475569; line-height: 1.5; }
+            .history-card-body a { color: var(--primary); }
+            .history-card-footer { text-align: right; margin-top: 12px; }
+            .view-log-btn {
+                background: none;
+                border: 1px solid var(--primary);
+                color: var(--primary);
+                padding: 6px 12px;
+                border-radius: 6px;
+                cursor: pointer;
+            }
+            .view-log-btn:hover {
+                background: var(--primary);
+                color: white;
+            }
+
+            .checklist-card {
+                background: #f8fafc;
+                border-radius: 12px;
+                padding: 20px;
+                border: 1px solid #e2e8f0;
+                line-height: 1.6;
+            }
+            .checklist-card ol { padding-left: 20px; }
+            .checklist-card li { margin-bottom: 10px; }
+            .checklist-card a { color: var(--primary); }
+
         </style>
     </head>
     <body>
@@ -347,10 +477,18 @@ async def home():
         
         <div class="container">
             <h1>Apprentice Portal</h1>
-            <p class="subtitle">Submit missions • Get Feedback • Auto-Harvest</p>
+            <p class="subtitle">Submit missions • Track history • <a href="/missions" style="color: var(--primary);">Browse Mission Hub →</a></p>
 
-            <div id="successMessage" style="display:none; text-align: center; color: #10b981; font-weight: bold; margin-bottom: 20px;">
-                ✅ Submission Received!
+            <div class="tabs">
+                <button class="tab-link active" id="tab-submit-btn" onclick="switchTab('submit')">Submit</button>
+                <button class="tab-link" id="tab-history-btn" onclick="switchTab('history')">History</button>
+                <button class="tab-link" id="tab-checklist-btn" onclick="switchTab('checklist')">Checklist</button>
+            </div>
+
+            <div class="tab-panels">
+                <div class="tab-panel active" id="tab-submit">
+                    <div id="successMessage" class="flash-success" style="display:none;">
+                        ✅ Submission Received!
             </div>
 
             <form id="feedbackForm" onsubmit="submitFeedback(event)">
@@ -359,7 +497,8 @@ async def home():
                     <input type="text" id="name" name="name" required placeholder="e.g., Alex">
                 </div>
 
-                <div class="form-group">
+                        <div class="form-group two-column">
+                            <div>
                     <label for="mission">Mission:</label>
                     <select id="mission" name="mission" required>
                         <option value="">Select a mission...</option>
@@ -369,65 +508,103 @@ async def home():
                         <option value="other">Other</option>
                     </select>
                 </div>
-
-                <div class="form-group">
-                    <label for="status">Action:</label>
+                            <div>
+                                <label for="status">Action:</label>
                     <select id="status" name="status" required onchange="toggleRepoField()">
-                        <option value="">Select action...</option>
-                        <option value="submission">📤 Submit Code for Review</option>
-                        <option value="completed">✅ Report Completion (No Code)</option>
-                        <option value="stuck">❌ Report Blocked/Stuck</option>
-                        <option value="question">❓ Ask Question</option>
+                                    <option value="">Select action...</option>
+                                    <option value="submission">📤 Submit Code for Review</option>
+                                    <option value="completed">✅ Report Completion (No Code)</option>
+                                    <option value="stuck">❌ Report Blocked/Stuck</option>
+                                    <option value="question">❓ Ask Question</option>
                     </select>
+                            </div>
                 </div>
 
                 <div class="form-group" id="repoGroup" style="display: none;">
-                    <label for="repo_url">GitHub Repository URL:</label>
+                            <label for="repo_url">GitHub Repository URL:</label>
                     <input type="url" id="repo_url" name="repo_url" placeholder="https://github.com/username/repo">
                 </div>
 
                 <div class="form-group">
-                    <label for="message">Notes:</label>
-                    <textarea id="message" name="message" required placeholder="Details..."></textarea>
+                            <label for="message">Notes:</label>
+                            <textarea id="message" name="message" required placeholder="Details..."></textarea>
+                        </div>
+
+                        <button type="submit" id="submitBtn">Submit</button>
+                    </form>
+
+                    <div class="rubric-card">
+                        <h3>Quality Rubric</h3>
+                        <ul>
+                            <li>✅ Tests exist (20%)</li>
+                            <li>✅ Tests pass (30%)</li>
+                            <li>✅ README / documentation (20%)</li>
+                            <li>✅ Dependencies declared (15%)</li>
+                            <li>✅ No secrets/static keys (15%)</li>
+                        </ul>
+                        <p class="note">Tip: run <code>./_scripts/apprentice-preflight-check.sh</code> before submitting.</p>
+                    </div>
+                    
+                    <div id="progressContainer" class="progress-container">
+                        <h3>🚜 Auto-Harvest in Progress...</h3>
+                        
+                        <div class="steps" id="stepsContainer">
+                            <div class="step">
+                                <div class="step-dot"></div>
+                                Clone
+                            </div>
+                            <div class="step">
+                                <div class="step-dot"></div>
+                                Verify
+                            </div>
+                            <div class="step">
+                                <div class="step-dot"></div>
+                                Test
+                            </div>
+                            <div class="step">
+                                <div class="step-dot"></div>
+                                Scan
+                            </div>
+                            <div class="step">
+                                <div class="step-dot"></div>
+                                Score
+                            </div>
+                        </div>
+                        
+                        <div class="log-window" id="logWindow">
+                            <div class="log-entry">> Initialization complete.</div>
+                        </div>
+                        
+                        <div id="resultCard" class="result-card">
+                            <div>Quality Score</div>
+                            <div class="result-score" id="finalScore">--</div>
+                            <div id="finalStatus"></div>
+                        </div>
+                    </div>
                 </div>
 
-                <button type="submit" id="submitBtn">Submit</button>
-            </form>
-            
-            <div id="progressContainer" class="progress-container">
-                <h3>🚜 Auto-Harvest in Progress...</h3>
-                
-                <div class="steps" id="stepsContainer">
-                    <div class="step">
-                        <div class="step-dot"></div>
-                        Clone
+                <div class="tab-panel" id="tab-history">
+                    <div class="history-header">
+                        <h3>Recent Harvests</h3>
+                        <span id="historyStatus" class="history-status">Enter your name to load history.</span>
                     </div>
-                    <div class="step">
-                        <div class="step-dot"></div>
-                        Verify
-                    </div>
-                    <div class="step">
-                        <div class="step-dot"></div>
-                        Test
-                    </div>
-                    <div class="step">
-                        <div class="step-dot"></div>
-                        Scan
-                    </div>
-                    <div class="step">
-                        <div class="step-dot"></div>
-                        Score
-                    </div>
+                    <div id="historyList" class="history-list"></div>
                 </div>
-                
-                <div class="log-window" id="logWindow">
-                    <div class="log-entry">> Initialization complete.</div>
-                </div>
-                
-                <div id="resultCard" class="result-card">
-                    <div>Quality Score</div>
-                    <div class="result-score" id="finalScore">--</div>
-                    <div id="finalStatus"></div>
+
+                <div class="tab-panel" id="tab-checklist">
+                    <div class="checklist-card">
+                        <h3>Preflight Checklist</h3>
+                        <ol>
+                            <li>Run <code>./_scripts/apprentice-preflight-check.sh</code> locally.</li>
+                            <li>Ensure tests pass: <code>pytest -v</code>.</li>
+                            <li>Create/Update <code>README.md</code> with overview + setup.</li>
+                            <li>Declare dependencies (<code>requirements.txt</code> or <code>package.json</code>).</li>
+                            <li>Scan for secrets: <code>rg -i "API_KEY|SECRET|TOKEN"</code>.</li>
+                            <li>Clean git status (`git status` should only show intentional files).</li>
+                            <li>Push to GitHub before submitting here.</li>
+                        </ol>
+                        <p class="note">Need help? See <a href="/_guides/operations/APPRENTICE_SUBMISSION_GUIDE.html" target="_blank">Apprentice Submission Guide</a>.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -440,7 +617,12 @@ async def home():
                 const urlParams = new URLSearchParams(window.location.search);
                 const missionId = urlParams.get('mission');
                 const missionTitle = urlParams.get('title');
+                const storedName = localStorage.getItem('apprenticeName');
                 
+                if (storedName) {
+                    document.getElementById('name').value = storedName;
+                }
+
                 if (missionId) {
                     const select = document.getElementById('mission');
                     
@@ -468,7 +650,30 @@ async def home():
                     statusSelect.value = 'submission';
                     toggleRepoField();
                 }
+
+                document.getElementById('name').addEventListener('change', () => {
+                    const nameValue = document.getElementById('name').value.trim();
+                    if (nameValue) {
+                        localStorage.setItem('apprenticeName', nameValue);
+                        loadJobHistory();
+                    }
+                });
+
+                if (storedName) {
+                    loadJobHistory();
+                }
             };
+
+            function switchTab(tabId) {
+                document.querySelectorAll('.tab-link').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+                document.getElementById(`tab-${tabId}-btn`).classList.add('active');
+                document.getElementById(`tab-${tabId}`).classList.add('active');
+                
+                if (tabId === 'history') {
+                    loadJobHistory();
+                }
+            }
 
             function toggleRepoField() {
                 const status = document.getElementById('status').value;
@@ -511,18 +716,20 @@ async def home():
                         body: JSON.stringify(data)
                     });
 
-                    const result = await response.json();
+                        const result = await response.json();
+                    localStorage.setItem('apprenticeName', data.name);
                     
                     if (isCodeSubmission && result.job_id) {
                         // Start polling for progress
                         pollProgress(result.job_id);
+                        loadJobHistory();
                     } else {
                         document.getElementById('successMessage').style.display = 'block';
                         document.getElementById('feedbackForm').reset();
                         submitBtn.disabled = false;
-                        setTimeout(() => {
+                            setTimeout(() => {
                             document.getElementById('successMessage').style.display = 'none';
-                        }, 5000);
+                            }, 5000);
                     }
                     
                 } catch (error) {
@@ -561,16 +768,73 @@ async def home():
                             document.getElementById('submitBtn').disabled = false;
                             document.getElementById('submitBtn').innerText = "Submit Another";
                             
-                            if (data.status === 'completed') {
+                       if (data.status === 'completed') {
                                 document.getElementById('resultCard').style.display = 'block';
                                 document.getElementById('finalScore').innerText = data.score + '/100';
                                 document.getElementById('finalStatus').innerText = data.score >= 90 ? "APPROVED ✅" : "NEEDS IMPROVEMENT ⚠️";
                             }
+                       loadJobHistory();
                         }
                     } catch (e) {
                         console.error(e);
                     }
                 }, 1000);
+            }
+
+        async function loadJobHistory() {
+            const name = document.getElementById('name').value.trim();
+            const historyStatus = document.getElementById('historyStatus');
+            const historyList = document.getElementById('historyList');
+            
+            if (!name) {
+                historyStatus.innerText = "Enter your name to load history.";
+                historyList.innerHTML = '';
+                return;
+            }
+
+            historyStatus.innerText = "Loading history...";
+            try {
+                const res = await fetch(`${BASE_PATH}/jobs?apprentice=${encodeURIComponent(name)}&limit=10`);
+                const data = await res.json();
+                if (!data.jobs || data.jobs.length === 0) {
+                    historyStatus.innerText = "No submissions yet. Run your first harvest!";
+                    historyList.innerHTML = '';
+                    return;
+                }
+                historyStatus.innerText = `Showing ${data.jobs.length} recent submissions.`;
+                historyList.innerHTML = data.jobs.map(job => renderJobCard(job)).join('');
+            } catch (err) {
+                console.error(err);
+                historyStatus.innerText = "Unable to load history.";
+            }
+        }
+
+        function renderJobCard(job) {
+            const score = job.score !== null && job.score !== undefined ? `${job.score}/100` : '—';
+            const submitted = job.started_at ? formatTimestamp(job.started_at) : '—';
+            const mission = job.mission_id || '—';
+            const repo = job.repo_url ? `<a href="${job.repo_url}" target="_blank">${job.repo_url}</a>` : '—';
+            const statusClass = job.status === 'completed' ? 'history-status-success' : (job.status === 'failed' ? 'history-status-error' : '');
+            return `
+                <div class="history-card">
+                    <div class="history-card-header">
+                        <span class="history-mission">Mission: ${mission}</span>
+                        <span class="history-score ${statusClass}">${job.status?.toUpperCase()} • Score ${score}</span>
+                    </div>
+                    <div class="history-card-body">
+                        <div><strong>Repo:</strong> ${repo}</div>
+                        <div><strong>Started:</strong> ${submitted}</div>
+                        ${job.finished_at ? `<div><strong>Finished:</strong> ${formatTimestamp(job.finished_at)}</div>` : ''}
+                    </div>
+                    <div class="history-card-footer">
+                        <button class="view-log-btn" onclick="window.open('${BASE_PATH}/status/${job.job_id}', '_blank')">View Logs →</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function formatTimestamp(ts) {
+            return ts ? ts.replace('T', ' ').slice(0, 19) : '—';
             }
         </script>
     </body>
@@ -599,6 +863,16 @@ async def submit_feedback(feedback: FeedbackSubmission, background_tasks: Backgr
     job_id = None
     if feedback.status == "submission" and feedback.repo_url:
         job_id = str(uuid.uuid4())
+        job_registry.create_job(
+            job_id=job_id,
+            apprentice=feedback.name,
+            repo_url=feedback.repo_url,
+            mission_id=feedback.mission_id,
+            mode="gatekeeper",
+            source="web",
+            status="queued",
+            metadata={"submission_type": feedback.status},
+        )
         # Run as background task so we can return job_id immediately
         background_tasks.add_task(
             run_harvest_job, 
@@ -607,11 +881,11 @@ async def submit_feedback(feedback: FeedbackSubmission, background_tasks: Backgr
             feedback.repo_url,
             feedback.mission_id  # Pass mission ID for status updates
         )
-
-    return {
-        "status": "success", 
+                
+                return {
+                    "status": "success", 
         "message": "Feedback received!",
-        "job_id": job_id
+        "job_id": job_id,
     }
 
 @app.get("/status/{job_id}")
@@ -622,6 +896,38 @@ async def get_job_status(job_id: str):
         with open(job_file, 'r') as f:
             return json.load(f)
     return {"status": "unknown", "logs": [], "steps": []}
+
+
+@app.get("/jobs")
+async def list_jobs(
+    apprentice: str = Query(..., description="Apprentice name to filter by"),
+    limit: int = Query(10, ge=1, le=50),
+    mission_id: Optional[str] = Query(None, description="Optional mission filter"),
+):
+    """Return recent harvest jobs for an apprentice (optionally filtered by mission)."""
+    jobs = job_registry.list_jobs(
+        limit=limit,
+        apprentice=apprentice if apprentice else None,
+        mission_id=mission_id,
+        source=None,
+    )
+    formatted: List[Dict[str, Optional[str]]] = []
+    for job in jobs:
+        formatted.append(
+            {
+                "job_id": job.get("job_id"),
+                "apprentice": job.get("apprentice"),
+                "mission_id": job.get("mission_id"),
+                "repo_url": job.get("repo_url"),
+                "mode": job.get("mode"),
+                "status": job.get("status"),
+                "score": job.get("score"),
+                "started_at": job.get("started_at"),
+                "finished_at": job.get("finished_at"),
+                "metadata": job.get("metadata", {}),
+            }
+        )
+    return {"jobs": formatted}
 
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard():
@@ -636,7 +942,7 @@ async def dashboard():
                     try: submissions.append(json.loads(line))
                     except: pass
     submissions.reverse()
-    
+
     rows = ""
     for sub in submissions:
         rows += f"<div style='background:white; padding:15px; margin-bottom:10px; border-radius:8px;'><strong>{sub.get('name')}</strong> - {sub.get('status')} <br> {sub.get('message')}</div>"

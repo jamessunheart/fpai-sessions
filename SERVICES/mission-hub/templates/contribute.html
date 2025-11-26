@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contribute | Full Potential AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-elevated: #1a1a24;
+            --border: #2a2a3a;
+            --text: #e4e4e7;
+            --text-muted: #71717a;
+            --accent-primary: #8b5cf6;
+            --accent-secondary: #06b6d4;
+            --accent-success: #10b981;
+            --accent-warning: #f59e0b;
+            --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Space Grotesk', -apple-system, sans-serif;
+            background: var(--bg-deep);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 30% 20%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(6, 182, 212, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.08) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 80px 0 60px;
+        }
+        
+        .hero-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(139, 92, 246, 0.15);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--accent-primary);
+            margin-bottom: 24px;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero p {
+            font-size: 20px;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+        
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+        }
+        
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(139, 92, 246, 0.4);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+        
+        /* How It Works */
+        .section {
+            padding: 60px 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 48px;
+        }
+        
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        
+        .step {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .step:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-primary);
+        }
+        
+        .step-number {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0 auto 20px;
+        }
+        
+        .step h3 {
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+        
+        .step p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+        
+        /* Mission Types */
+        .types-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        
+        .type-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            transition: all 0.3s;
+        }
+        
+        .type-card:hover {
+            border-color: var(--accent-primary);
+        }
+        
+        .type-icon {
+            font-size: 40px;
+            margin-bottom: 16px;
+        }
+        
+        .type-card h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+        
+        .type-card p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+        
+        .type-examples {
+            font-size: 13px;
+            color: var(--accent-secondary);
+        }
+        
+        /* Featured Missions */
+        .missions-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+        
+        .mission-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s;
+        }
+        
+        .mission-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-primary);
+        }
+        
+        .mission-card h4 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        
+        .mission-card p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+        
+        .mission-card .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            background: rgba(139, 92, 246, 0.15);
+            color: #a78bfa;
+            margin-right: 8px;
+        }
+        
+        /* CTA */
+        .cta {
+            text-align: center;
+            padding: 80px 0;
+        }
+        
+        .cta h2 {
+            font-size: 36px;
+            margin-bottom: 16px;
+        }
+        
+        .cta p {
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            font-size: 18px;
+        }
+        
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 32px 0;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+        
+        footer a {
+            color: var(--accent-primary);
+            text-decoration: none;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .hero, .section {
+            animation: fadeInUp 0.6s ease-out backwards;
+        }
+        
+        .section:nth-child(2) { animation-delay: 0.1s; }
+        .section:nth-child(3) { animation-delay: 0.2s; }
+        .section:nth-child(4) { animation-delay: 0.3s; }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+    
+    <div class="container">
+        <!-- Hero -->
+        <section class="hero">
+            <div class="hero-badge">✨ Open for Contributors</div>
+            <h1>Build Heaven on Earth</h1>
+            <p>Join Full Potential AI's mission to create regenerative systems that empower humanity. Your skills can make a real difference.</p>
+            
+            <div class="hero-actions">
+                <a href="/missions" class="btn btn-primary">
+                    🎯 Browse Missions
+                </a>
+                <a href="/services/harvester" class="btn btn-secondary">
+                    🚜 Submit Work
+                </a>
+            </div>
+        </section>
+        
+        <!-- How It Works -->
+        <section class="section">
+            <h2 class="section-title">How It Works</h2>
+            
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Find a Mission</h3>
+                    <p>Browse open missions that match your skills. Each mission has a clear goal and regenerative impact.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Claim & Build</h3>
+                    <p>Claim a mission to let others know you're working on it. Build your solution with AI assistance.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Submit & Harvest</h3>
+                    <p>Push your code to GitHub and submit via the Harvester. AI reviews and scores your work automatically.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Impact & Grow</h3>
+                    <p>Your contribution gets deployed. Track your impact on the leaderboard and unlock harder missions.</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Mission Types -->
+        <section class="section">
+            <h2 class="section-title">Types of Missions</h2>
+            
+            <div class="types-grid">
+                <div class="type-card">
+                    <div class="type-icon">🤖</div>
+                    <h3>AI-Only Missions</h3>
+                    <p>These can be completed entirely by AI agents. Humans provide oversight and final approval.</p>
+                    <div class="type-examples">Examples: Bug fixes, test writing, refactoring, deployment</div>
+                </div>
+                
+                <div class="type-card">
+                    <div class="type-icon">🤝</div>
+                    <h3>Hybrid Missions</h3>
+                    <p>AI drafts the solution, humans refine and validate. Best of both worlds.</p>
+                    <div class="type-examples">Examples: New features, UI design, documentation</div>
+                </div>
+                
+                <div class="type-card">
+                    <div class="type-icon">👤</div>
+                    <h3>Human-Required Missions</h3>
+                    <p>These need human creativity, judgment, or real-world action that AI can't provide.</p>
+                    <div class="type-examples">Examples: Strategy, community building, partnerships</div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Featured Missions -->
+        <section class="section">
+            <h2 class="section-title">Featured Missions</h2>
+            
+            <div class="missions-preview">
+                {% for mission in missions %}
+                <a href="/missions/mission/{{ mission.id }}" class="mission-card" style="text-decoration: none; color: inherit;">
+                    <h4>{{ mission.title }}</h4>
+                    <p>{{ mission.regenerative_impact[:120] }}...</p>
+                    <span class="badge">{{ mission.priority[:2] if mission.priority else 'P3' }}</span>
+                    <span class="badge">{{ mission.type_info.label }}</span>
+                </a>
+                {% endfor %}
+            </div>
+            
+            {% if not missions %}
+            <p style="text-align: center; color: var(--text-muted);">All missions are currently claimed! Check back soon.</p>
+            {% endif %}
+        </section>
+        
+        <!-- CTA -->
+        <section class="cta">
+            <h2>Ready to Make an Impact?</h2>
+            <p>Every contribution moves us closer to a world that works for everyone.</p>
+            <a href="/missions" class="btn btn-primary">
+                ⚡ Start Contributing
+            </a>
+        </section>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>
+                Full Potential AI · 
+                <a href="https://fullpotential.ai">fullpotential.ai</a> · 
+                Optimization over Extraction · Autonomy over Dependency · Consciousness over Computation
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
+
