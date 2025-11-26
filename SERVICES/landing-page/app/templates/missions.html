@@ -104,8 +104,8 @@
   <script>
     const wrapper = document.getElementById('mission-table-wrapper');
     
-    // Fetch from the dashboard API
-    fetch('http://198.54.123.234:8002/api/missions')
+    // Fetch from the dashboard API or static file
+    fetch('/static/missions.json')
       .then(resp => {
         if (!resp.ok) throw new Error('Failed to load missions');
         return resp.json();
