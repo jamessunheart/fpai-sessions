@@ -49,12 +49,16 @@ GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
 
 
 class AIModel(Enum):
-    CLAUDE = "claude-3-5-sonnet-20241022"
+    # Claude - latest Sonnet for complex reasoning
+    CLAUDE = "claude-sonnet-4-20250514"
     CLAUDE_HAIKU = "claude-3-5-haiku-20241022"
-    GPT4 = "gpt-4-turbo-preview"
+    # OpenAI - latest models
+    GPT4 = "gpt-4-turbo"
     GPT4O = "gpt-4o"
-    GEMINI = "gemini-1.5-pro-latest"
-    GEMINI_FLASH = "gemini-1.5-flash-latest"
+    O1 = "o1-preview"  # For complex reasoning
+    # Gemini - latest models  
+    GEMINI = "gemini-2.0-flash-exp"
+    GEMINI_PRO = "gemini-pro"
 
 
 class TaskStatus(Enum):
@@ -121,8 +125,17 @@ class AIClient:
             try:
                 import google.generativeai as genai
                 genai.configure(api_key=GOOGLE_API_KEY)
-                self.gemini_model = genai.GenerativeModel('gemini-1.5-flash')
-                print("✅ Gemini client initialized")
+                # Use gemini-2.0-flash (latest) or fallback to gemini-pro
+                try:
+                    self.gemini_model = genai.GenerativeModel('gemini-2.0-flash-exp')
+                    print("✅ Gemini client initialized (gemini-2.0-flash-exp)")
+                except:
+                    try:
+                        self.gemini_model = genai.GenerativeModel('gemini-pro')
+                        print("✅ Gemini client initialized (gemini-pro)")
+                    except:
+                        self.gemini_model = genai.GenerativeModel('models/gemini-pro')
+                        print("✅ Gemini client initialized (models/gemini-pro)")
             except Exception as e:
                 print(f"⚠️ Gemini not available: {e}")
     
