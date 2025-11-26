@@ -148,3 +148,156 @@ a {
   color: var(--blue);
 }
 
+/* Services */
+.services-page {
+  min-height: 100vh;
+  padding: 4rem 1.5rem 5rem;
+  color: var(--text);
+}
+
+.services-page .panel {
+  max-width: 100%;
+}
+
+.services-hero {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.services-hero h1 {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.services-hero p {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+.service-card {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  background: rgba(8, 12, 24, 0.75);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s ease;
+}
+
+.service-card:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.service-card h3 {
+  margin: 0;
+  font-size: 1.4rem;
+  color: #f8fafc;
+}
+
+.service-card .status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--blue);
+}
+
+.detail-layout {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  margin-top: 2.5rem;
+}
+
+.detail-panel {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: rgba(8, 12, 24, 0.82);
+  padding: 1.75rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.stat {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 0.9rem;
+  text-align: center;
+}
+
+.stat small {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(203, 213, 245, 0.8);
+}
+
+.stat strong {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 1.2rem;
+  color: #f8fafc;
+}
+
+.cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.2rem;
+}
+
+.cta-row a {
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  padding: 0.55rem 1.15rem;
+  text-decoration: none;
+  background: rgba(56, 189, 248, 0.12);
+  color: var(--blue);
+  font-weight: 600;
+}
+
+.tag-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+}
+
+.tag {
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.15);
+  font-size: 0.8rem;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  color: #bfdbfe;
+}
+
+.link-grid {
+  display: grid;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.link-grid a {
+  display: inline-flex;
+  gap: 0.35rem;
+  align-items: center;
+  text-decoration: none;
+  color: var(--blue);
+}
+

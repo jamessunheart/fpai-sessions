@@ -2,13 +2,13 @@
   "session_id": "session-1763926653",
   "started_at": "2025-11-23T19:37:33Z",
   "status": "active",
-  "current_work": "verifier",
+  "current_work": "harvester-website-services",
   "capabilities": [
     "general-purpose",
     "build",
     "debug",
     "deploy"
   ],
-  "last_heartbeat": "2025-11-24T12:04:00Z",
-  "heartbeat_count": 25
+  "last_heartbeat": "2025-11-26T01:32:31Z",
+  "heartbeat_count": 28
 }

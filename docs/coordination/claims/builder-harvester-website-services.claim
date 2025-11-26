@@ -1,0 +1,9 @@
+{
+  "claimed_by": "session-1763926653",
+  "claimed_at": "2025-11-26T01:06:12Z",
+  "resource_type": "builder",
+  "resource_name": "harvester-website-services",
+  "duration_hours": 4,
+  "expires_at": "2025-11-26T05:06:12Z",
+  "allow_coordination": true
+}

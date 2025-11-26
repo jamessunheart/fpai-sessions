@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>fullpotential.ai/services</title>
+  <style>
+    :root {
+      --bg: radial-gradient(circle at top, #0f172a, #020617 70%);
+      --panel: rgba(15, 23, 42, 0.92);
+      --border: rgba(255, 255, 255, 0.12);
+      --text: #cbd5f5;
+      --accent: #fbbf24;
+      --blue: #38bdf8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: #f8fafc;
+      font-family: 'Space Grotesk', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      padding: 4rem 1.5rem 5rem;
+      display: flex;
+      justify-content: center;
+    }
+    .panel {
+      width: 100%;
+      max-width: 1024px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 3rem;
+      background: var(--panel);
+      box-shadow: 0 35px 80px rgba(2, 6, 23, 0.65);
+    }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.05em;
+    }
+    p {
+      font-size: 1.1rem;
+      line-height: 1.7;
+      color: var(--text);
+    }
+    a { color: var(--blue); text-decoration: none; }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--blue);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.25rem;
+      margin-top: 2.5rem;
+    }
+    .service-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      background: rgba(7, 11, 24, 0.85);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.2s ease;
+      min-height: 220px;
+    }
+    .service-card:hover {
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+    .service-card h3 {
+      margin: 0;
+      font-size: 1.4rem;
+    }
+    .card-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.85rem;
+      color: var(--blue);
+    }
+    .card-status span {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22c55e;
+    }
+    .card-meta {
+      font-size: 0.95rem;
+      color: #94a3b8;
+    }
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 2rem;
+    }
+    .links a {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.45rem 1rem;
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--blue);
+      font-weight: 600;
+    }
+    @media (max-width: 640px) {
+      .panel { padding: 2rem; }
+      h1 { font-size: 2.3rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="panel">
+    <p class="status-pill">Live · Services</p>
+    <h1>fullpotential.ai/services</h1>
+    <p>
+      Every autonomous droplet is observable, UDC-compliant, and tethered to the Constitution.
+      Explore the active services below. Each card exposes its own health surface and deployment notes.
+    </p>
+
+    <div class="services-grid">
+      <a class="service-card" href="/services/whaletrack/">
+        <div class="card-status"><span></span>Online</div>
+        <h3>WhaleTrack</h3>
+        <p>
+          Magnet-driven trading brain. Reads whale intention → magnet and streams entry/exit signals.
+          Live on port 8600 with bridge integration.
+        </p>
+        <p class="card-meta">Markets Core · Port 8600</p>
+      </a>
+
+      <a class="service-card" href="/services/harvester/">
+        <div class="card-status"><span></span>Online</div>
+        <h3>Harvester – Mission Submission Portal</h3>
+        <p>
+          Submit your completed mission repositories for verification and deployment through the
+          autonomous Harvester pipeline.
+        </p>
+        <p class="card-meta">Submission Portal · Port 8055</p>
+      </a>
+
+      <div class="service-card">
+        <div class="card-status"><span></span>Online</div>
+        <h3>God Mode</h3>
+        <p>System map + mission board. Visualizes every claim, heartbeat, and droplet topology.</p>
+        <p class="card-meta">Core Map · Port 8300</p>
+      </div>
+
+      <div class="service-card">
+        <div class="card-status" style="color:#fbbf24;"><span style="background:#fbbf24;"></span>Building</div>
+        <h3>Strategic Intelligence</h3>
+        <p>Autonomous prioritization layer. Ingests dashboards + treasury feeds to rank missions.</p>
+        <p class="card-meta">Brain Team · Port 8500</p>
+      </div>
+    </div>
+
+    <div class="links">
+      <a href="/">← Back to main site</a>
+      <a href="https://github.com/fullpotential-ai/whaletrack-magnetic-trader" target="_blank" rel="noreferrer">
+        GitHub · WhaleTrack Repo
+      </a>
+      <a href="https://198.54.123.234:8600/health" target="_blank" rel="noreferrer">
+        WhaleTrack Health
+      </a>
+    </div>
+  </div>
+</body>
+</html>
+

@@ -36,7 +36,7 @@ class FeedbackSubmission(BaseModel):
     message: str
     timestamp: str = None
 
-def run_harvest_job(job_id: str, name: str, repo_url: str):
+def run_harvest_job(job_id: str, name: str, repo_url: str, mission_id: str = None):
     """Run harvest in background and stream logs to file"""
     job_file = JOBS_DIR / f"{job_id}.json"
     
@@ -68,10 +68,35 @@ def run_harvest_job(job_id: str, name: str, repo_url: str):
             json.dump(state, f)
 
     update_state() # Save initial
+    
+    # Update Mission Control if mission_id provided
+    def notify_mission_control(status: str, score: int = None):
+        if not mission_id:
+            return
+        
+        try:
+            import requests
+            mission_control_url = "http://127.0.0.1:8700/api/status"
+            
+            payload = {
+                "mission_id": mission_id,
+                "status": status,
+                "updated_by": name,
+                "notes": f"Code submission via Harvester",
+                "repo_url": repo_url,
+                "harvest_score": score
+            }
+            
+            requests.post(mission_control_url, json=payload, timeout=5)
+        except Exception as e:
+            print(f"Warning: Could not notify Mission Control: {e}")
 
     try:
         import subprocess
         import re
+        
+        # Notify that submission is in progress
+        notify_mission_control("submitted")
         
         script_path = Path("/Users/jamessunheart/FPAI_Cockpit/_scripts/harvest-apprentice.py")
         # Adjust path for production server if needed
@@ -95,6 +120,7 @@ def run_harvest_job(job_id: str, name: str, repo_url: str):
         
         # Stream output
         output_buffer = ""
+        final_score = 0
         for line in process.stdout:
             line = line.strip()
             if not line: continue
@@ -121,8 +147,8 @@ def run_harvest_job(job_id: str, name: str, repo_url: str):
                 # Extract score
                 score_match = re.search(r'Score:\s*(\d+)', line)
                 if score_match:
-                    score = int(score_match.group(1))
-                    update_state(final_score=score)
+                    final_score = int(score_match.group(1))
+                    update_state(final_score=final_score)
 
         process.wait()
         
@@ -133,11 +159,16 @@ def run_harvest_job(job_id: str, name: str, repo_url: str):
                 state["steps"][i]["status"] = "completed"
             with open(job_file, "w") as f:
                 json.dump(state, f)
+            
+            # Notify Mission Control of completion
+            notify_mission_control("completed", final_score)
         else:
             update_state("❌ Harvest failed. See logs.", final_status="failed")
+            notify_mission_control("blocked", 0)
             
     except Exception as e:
         update_state(f"💥 System Error: {str(e)}", final_status="failed")
+        notify_mission_control("blocked", 0)
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -569,7 +600,13 @@ async def submit_feedback(feedback: FeedbackSubmission, background_tasks: Backgr
     if feedback.status == "submission" and feedback.repo_url:
         job_id = str(uuid.uuid4())
         # Run as background task so we can return job_id immediately
-        background_tasks.add_task(run_harvest_job, job_id, feedback.name, feedback.repo_url)
+        background_tasks.add_task(
+            run_harvest_job, 
+            job_id, 
+            feedback.name, 
+            feedback.repo_url,
+            feedback.mission_id  # Pass mission ID for status updates
+        )
 
     return {
         "status": "success", 

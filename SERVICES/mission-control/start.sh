@@ -1,17 +1,14 @@
 #!/bin/bash
-# START MISSION CONTROL (Port 8080)
-set -e
+# Start Mission Control Service
 
 cd "$(dirname "$0")"
-if [ ! -d "venv" ]; then
-    echo "📦 Creating virtual environment..."
-    python3 -m venv venv
-    source venv/bin/activate
-    pip install -r requirements.txt
-else
-    source venv/bin/activate
-fi
 
-echo "🚀 Launching Mission Control on Port 8080..."
-uvicorn app.main:app --host 0.0.0.0 --port 8080 --reload
+# Kill any existing process
+pkill -f "mission-control/app.py"
+fuser -k 8700/tcp 2>/dev/null
 
+# Start service
+nohup python3 app.py > mission-control.log 2>&1 &
+
+echo "✅ Mission Control started on port 8700"
+echo "   Logs: tail -f mission-control.log"

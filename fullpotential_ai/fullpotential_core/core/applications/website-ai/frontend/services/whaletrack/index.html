@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WhaleTrack · fullpotential.ai/services</title>
+  <style>
+    :root {
+      --bg: radial-gradient(circle at top, #0b1120, #020617 70%);
+      --panel: rgba(15, 23, 42, 0.94);
+      --border: rgba(255, 255, 255, 0.12);
+      --text: #cbd5f5;
+      --accent: #fbbf24;
+      --blue: #38bdf8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: #f8fafc;
+      font-family: 'Space Grotesk', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      padding: 4rem 1.5rem 5rem;
+      display: flex;
+      justify-content: center;
+    }
+    .panel {
+      width: 100%;
+      max-width: 1024px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 3rem;
+      background: var(--panel);
+      box-shadow: 0 35px 80px rgba(2, 6, 23, 0.65);
+    }
+    a { color: var(--blue); text-decoration: none; }
+    h1 { font-size: 3rem; margin-bottom: 0.4rem; letter-spacing: 0.05em; }
+    p { font-size: 1.05rem; line-height: 1.7; color: var(--text); }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--blue);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0 2rem;
+    }
+    .stat {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 1rem;
+      text-align: center;
+    }
+    .stat small {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(203, 213, 245, 0.8);
+    }
+    .stat strong {
+      display: block;
+      margin-top: 0.35rem;
+      font-size: 1.2rem;
+    }
+    .section {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 1.75rem;
+      background: rgba(7, 11, 24, 0.9);
+      margin-bottom: 1.5rem;
+    }
+    .tag-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .tag {
+      padding: 0.35rem 0.7rem;
+      border-radius: 999px;
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      font-size: 0.82rem;
+      color: #bfdbfe;
+    }
+    pre {
+      background: rgba(2, 6, 23, 0.85);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+      overflow-x: auto;
+      color: #e2e8f0;
+    }
+    code { color: #e2e8f0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    th, td {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0.65rem 0;
+      text-align: left;
+      color: var(--text);
+    }
+    th { text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em; color: #f8fafc; }
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    .cta-row a {
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      padding: 0.55rem 1.1rem;
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--blue);
+      font-weight: 600;
+    }
+    @media (max-width: 640px) {
+      .panel { padding: 2rem; }
+      h1 { font-size: 2.3rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="panel">
+    <a class="status-pill" href="/services/">← Back to services</a>
+    <header style="margin-top: 1rem;">
+      <p class="status-pill" style="margin-bottom: 0.8rem;">Markets · Magnet Engine</p>
+      <h1>WhaleTrack</h1>
+      <p>
+        Autonomous liquidity radar. Watches sweeps, scores magnets, and rides the path that requires
+        the least energy. Deployed on port 8600 with live UDC surface and bridge integration.
+      </p>
+    </header>
+
+    <div class="stats-grid">
+      <div class="stat">
+        <small>Port</small>
+        <strong>8600</strong>
+      </div>
+      <div class="stat">
+        <small>Status</small>
+        <strong>✅ Online</strong>
+      </div>
+      <div class="stat">
+        <small>Verifier</small>
+        <strong>34 tests</strong>
+      </div>
+      <div class="stat">
+        <small>Mode</small>
+        <strong>Paper + Live</strong>
+      </div>
+    </div>
+
+    <section class="section">
+      <h2>Trading loop</h2>
+      <p>
+        WhaleTrack executes the 10-step magnet loop: read whale direction, score magnets, select the
+        cheapest flow, wait for alignment, enter with momentum/retrace/reversal discipline, exit at
+        the magnet (or front-run / sweep snapback), then look for reversals.
+      </p>
+      <div class="tag-grid">
+        <span class="tag">Magnet scanner (0–100 score)</span>
+        <span class="tag">Whale state (UP / DOWN / FOG)</span>
+        <span class="tag">Flow map · efficiency & obstructions</span>
+        <span class="tag">Momentum / retrace / reversal entries</span>
+        <span class="tag">Exit engine · magnet + snapback</span>
+        <span class="tag">Reversal engine after sweep</span>
+      </div>
+      <div class="cta-row">
+        <a href="https://198.54.123.234:8600/health" target="_blank" rel="noreferrer">API Health</a>
+        <a href="https://198.54.123.234:8600/api/whale/status" target="_blank" rel="noreferrer">Whale status</a>
+        <a href="https://github.com/fullpotential-ai/whaletrack-magnetic-trader" target="_blank" rel="noreferrer">
+          GitHub Repo
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Bridge service — live data feed</h2>
+      <p>
+        Keep WhaleTrack fed with real candles and log paper trades. Swap exchanges via env vars
+        (Kraken, KuCoin, Bybit…) and move from paper → live when you inject API keys.
+      </p>
+      <pre><code>git clone https://github.com/fullpotential-ai/whaletrack-magnetic-trader.git
+cd whaletrack-magnetic-trader
+pip3 install -r bridge/requirements.txt
+export BRIDGE_EXCHANGE=kraken
+export BRIDGE_SYMBOL=BTC/USD
+export WHALETRACK_API_BASE=http://198.54.123.234:8600
+python3 bridge/bridge_service.py</code></pre>
+      <p>
+        Paper trades are stored in <code>bridge/paper_trades.json</code> with entry/exit context.
+        Hook this to your telemetry bus or let Nexus ingest it.
+      </p>
+      <div class="cta-row">
+        <a href="https://github.com/fullpotential-ai/whaletrack-magnetic-trader/blob/main/bridge/bridge_service.py" target="_blank" rel="noreferrer">
+          Bridge source
+        </a>
+        <a href="https://github.com/fullpotential-ai/whaletrack-magnetic-trader/blob/main/bridge/paper_trades.json" target="_blank" rel="noreferrer">
+          Paper trade log
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>UDC surface</h2>
+      <p>Standard endpoints plus trading-specific APIs exposed on port 8600.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Endpoint</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>/health</td><td>UDC health payload with proof + steward</td></tr>
+          <tr><td>/capabilities</td><td>Feature manifest</td></tr>
+          <tr><td>/state</td><td>CPU / uptime / cache counters</td></tr>
+          <tr><td>/dependencies</td><td>Registry + optional services</td></tr>
+          <tr><td>/message</td><td>Emergency stop / control plane</td></tr>
+          <tr><td>/api/whale/update</td><td>POST new candle batch</td></tr>
+          <tr><td>/api/whale/status</td><td>Whale direction + confidence</td></tr>
+          <tr><td>/api/magnets/current</td><td>Active magnet stack</td></tr>
+          <tr><td>/api/signals/entry</td><td>Momentum / retrace / reversal call</td></tr>
+          <tr><td>/api/signals/exit</td><td>Exit instructions</td></tr>
+          <tr><td>/api/position/current</td><td>Current simulated/live position</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+</body>
+</html>
+
