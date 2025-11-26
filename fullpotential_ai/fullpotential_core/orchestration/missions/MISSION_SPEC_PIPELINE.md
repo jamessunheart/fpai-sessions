@@ -4,21 +4,62 @@
 
 Every mission must go through the **Spec Pipeline** before being published to the Mission Hub. This ensures contributors have clear, actionable instructions to succeed.
 
+## AI-First Mission System
+
+**Key Principle:** AI attempts to complete missions first. Humans only step in when needed.
+
+```
+┌──────────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+│  Mission     │ --> │  AI Worker   │ --> │  AI Verify   │ --> │  Human       │
+│  Created     │     │  Attempts    │     │  Results     │     │  Review      │
+└──────────────┘     └──────────────┘     └──────────────┘     └──────────────┘
+                            │                    │
+                            v                    v
+                     ┌──────────────┐     ┌──────────────┐
+                     │ AI-to-AI Log │     │  If stuck:   │
+                     │ (transparent)│     │  Escalate    │
+                     └──────────────┘     └──────────────┘
+```
+
+### The Flow
+
+1. **Mission Created** (by AI or human)
+2. **AI Worker Attempts** - Uses Claude/GPT-4/Gemini to:
+   - Analyze the mission spec
+   - Create execution plan
+   - Generate code/content
+   - Self-verify results
+3. **If AI Succeeds** → Submit for human approval (optional for low-risk)
+4. **If AI Gets Stuck** → Escalate with detailed log of what was tried
+
+### AI-to-AI Communication Log
+
+Every AI attempt is logged to `missions/ai_logs/`:
+- Full conversation between AI agents (Planner, Executor, Verifier)
+- What was tried and why
+- Where it got stuck
+- Suggestions for human intervention
+
+This log helps humans:
+- Understand what AI already tried
+- Pick up where AI left off
+- Improve specs based on AI confusion
+
 ## Two Entry Points
 
 ### 🤖 AI-Generated Missions
 AI identifies needs from codebase analysis, user feedback, or system monitoring:
 ```
-AI detects need → Creates brief → Auto-generates spec → Human reviews → Publish
+AI detects need → Creates brief → Auto-generates spec → AI attempts → Human reviews if needed
 ```
 
 ### 👤 Human-Submitted Missions  
 Humans submit ideas through Mission Hub or directly:
 ```
-Human submits idea → AI generates spec → Human reviews → Publish
+Human submits idea → AI generates spec → AI attempts → Human reviews if needed
 ```
 
-**Both paths converge at spec generation** - every mission gets a complete, actionable spec.
+**Both paths go through AI attempt first** - humans only handle what AI can't.
 
 ## Pipeline Stages
 
@@ -48,6 +89,57 @@ Human submits idea → AI generates spec → Human reviews → Publish
 | 2-3 hours | Complex feature |
 | 3-4 hours | Maximum single mission |
 | 4+ hours | **Split into multiple missions** |
+
+## 🤖 AI Models & APIs
+
+The AI Mission Worker uses multiple models for different strengths:
+
+### Required APIs (in `.env`)
+
+| Provider | Env Variable | Best For | Cost |
+|----------|--------------|----------|------|
+| **Anthropic Claude** | `ANTHROPIC_API_KEY` | Complex reasoning, code analysis | ~$3-15/1M tokens |
+| **OpenAI GPT-4** | `OPENAI_API_KEY` | Code generation, structured output | ~$10-30/1M tokens |
+| **Google Gemini** | `GOOGLE_API_KEY` | Research, long context, cheap | ~$0.50-1/1M tokens |
+
+### Recommended Additional APIs
+
+| Provider | Env Variable | Use Case |
+|----------|--------------|----------|
+| **Perplexity** | `PERPLEXITY_API_KEY` | Real-time web research |
+| **Groq** | `GROQ_API_KEY` | Fast inference for simple tasks |
+| **Mistral** | `MISTRAL_API_KEY` | European hosting, good for EU data |
+| **Cohere** | `COHERE_API_KEY` | Embeddings, semantic search |
+
+### Model Selection Strategy
+
+```python
+# ai_mission_worker.py uses this logic:
+if task.requires_reasoning:
+    use("claude-3-5-sonnet")  # Best reasoning
+elif task.requires_code:
+    use("gpt-4o")  # Great at code
+elif task.requires_research:
+    use("gemini-1.5-pro")  # Long context, web access
+elif task.is_simple:
+    use("claude-3-5-haiku")  # Fast and cheap
+```
+
+### Running the AI Worker
+
+```bash
+# Attempt mission with Claude (default)
+python orchestration/tools/ai_mission_worker.py M001
+
+# Use GPT-4 instead
+python orchestration/tools/ai_mission_worker.py M001 --model gpt4
+
+# Dry run (plan only, no execution)
+python orchestration/tools/ai_mission_worker.py M001 --dry-run
+
+# Check AI attempt logs
+ls fullpotential_ai/fullpotential_core/orchestration/missions/ai_logs/
+```
 
 ## Stage 1: BRIEF (drafts/)
 
