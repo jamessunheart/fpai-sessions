@@ -4,7 +4,7 @@
 - **Priority:** P2 (Revenue Generation)
 - **Status:** SPEC_REVIEW
 - **Owner:** Elif / Apprentice
-- **Estimated Time:** 1-2 hours
+- **Estimated Time:** ~30 minutes
 - **Difficulty:** Advanced
 - **Mission Type:** 🤖 AI-Only
 
@@ -108,6 +108,6 @@ pytest -v
 - ⚠️ Reuse dashboard design tokens where possible for brand consistency.
 
 ---
-*Generated: 2025-11-26 20:36*
+*Generated: 2025-11-26 20:48*
 *Spec Status: DRAFT - Requires human review before publishing*
 *Mission ID: M005*

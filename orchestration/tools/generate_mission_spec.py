@@ -128,17 +128,36 @@ def estimate_difficulty(mission: Dict) -> str:
 
 
 def estimate_time(mission: Dict) -> str:
-    """Estimate completion time based on actions"""
+    """Estimate completion time based on actions - always in hours/minutes"""
     num_actions = len(mission.get("actions", []))
+    content = mission.get("raw_content", "").lower()
     
-    if num_actions <= 2:
-        return "1-2 hours"
-    elif num_actions <= 4:
-        return "2-4 hours"
-    elif num_actions <= 6:
-        return "4-8 hours"
+    # Base time per action (in minutes)
+    base_minutes = 20
+    
+    # Complexity multipliers
+    if any(word in content for word in ['deploy', 'production', 'migration']):
+        base_minutes = 30
+    elif any(word in content for word in ['test', 'fix', 'update']):
+        base_minutes = 15
+    
+    total_minutes = num_actions * base_minutes + 15  # +15 for setup/submission
+    
+    if total_minutes <= 30:
+        return "~30 minutes"
+    elif total_minutes <= 60:
+        return "~1 hour"
+    elif total_minutes <= 90:
+        return "1-1.5 hours"
+    elif total_minutes <= 120:
+        return "1.5-2 hours"
+    elif total_minutes <= 180:
+        return "2-3 hours"
+    elif total_minutes <= 240:
+        return "3-4 hours"
     else:
-        return "1-2 days"
+        # If > 4 hours, mission should be split
+        return "4+ hours (consider splitting)"
 
 
 def classify_mission_type(mission: Dict) -> str:

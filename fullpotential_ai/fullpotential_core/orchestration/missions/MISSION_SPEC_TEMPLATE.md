@@ -4,9 +4,11 @@
 - **Priority:** P0 | P1 | P2 | P3
 - **Status:** DRAFT | READY | OPEN | CLAIMED | IN_PROGRESS | COMPLETED
 - **Owner:** [Role / Name]
-- **Estimated Time:** [X hours/days]
+- **Estimated Time:** [30 min | 1 hour | 1.5 hours | 2 hours | 3 hours | 4+ hours (split if >4h)]
 - **Difficulty:** Beginner | Intermediate | Advanced
 - **Mission Type:** 🤖 AI-Only | 🤝 Hybrid | 👤 Human-Required
+
+> ⏱️ **Note:** Missions should be completable in a single work session (1-4 hours max). If a mission takes longer, split it into smaller missions.
 
 ## Constitution Alignment
 - **Principle:** [Which principle this serves]

@@ -4,7 +4,7 @@
 - **Priority:** P1 (Core Alignment)
 - **Status:** SPEC_REVIEW
 - **Owner:** Nexus (Droplet #13) / Architect
-- **Estimated Time:** 1-2 hours
+- **Estimated Time:** ~30 minutes
 - **Difficulty:** Beginner
 - **Mission Type:** 👤 Human-Required
 
@@ -104,6 +104,6 @@ pytest -v
 - ⚠️ Feed learnings back into Nexus (optimizer_loop.py) so optimization == healing.
 
 ---
-*Generated: 2025-11-26 20:36*
+*Generated: 2025-11-26 20:48*
 *Spec Status: DRAFT - Requires human review before publishing*
 *Mission ID: M006*

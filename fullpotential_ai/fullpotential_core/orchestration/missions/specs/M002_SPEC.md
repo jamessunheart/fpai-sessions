@@ -4,7 +4,7 @@
 - **Priority:** P1
 - **Status:** SPEC_REVIEW
 - **Owner:** Haythem / Apprentice
-- **Estimated Time:** 2-4 hours
+- **Estimated Time:** 1.5-2 hours
 - **Difficulty:** Advanced
 - **Mission Type:** 👤 Human-Required
 
@@ -179,6 +179,6 @@ rg -i "TODO|FIXME|XXX" --type py
 - ⚠️ Coordinate with registry/orchestrator teams before pointing to production data.
 
 ---
-*Generated: 2025-11-26 20:36*
+*Generated: 2025-11-26 20:48*
 *Spec Status: DRAFT - Requires human review before publishing*
 *Mission ID: M002*

@@ -4,7 +4,7 @@
 - **Priority:** P1 (High - UX Optimization)
 - **Status:** SPEC_REVIEW
 - **Owner:** Zainab / Gohar
-- **Estimated Time:** 1-2 hours
+- **Estimated Time:** ~30 minutes
 - **Difficulty:** Advanced
 - **Mission Type:** 👤 Human-Required
 
@@ -105,6 +105,6 @@ pytest -v
 - ⚠️ Consider reusing the existing mission portal for transcript logging.
 
 ---
-*Generated: 2025-11-26 20:36*
+*Generated: 2025-11-26 20:48*
 *Spec Status: DRAFT - Requires human review before publishing*
 *Mission ID: M003*

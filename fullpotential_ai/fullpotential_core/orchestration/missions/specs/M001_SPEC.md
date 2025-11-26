@@ -4,7 +4,7 @@
 - **Priority:** P0
 - **Status:** SPEC_REVIEW
 - **Owner:** Treasury Operator
-- **Estimated Time:** 2-4 hours
+- **Estimated Time:** 1-1.5 hours
 - **Difficulty:** Advanced
 - **Mission Type:** 👤 Human-Required
 
@@ -206,6 +206,6 @@ rg -i "TODO|FIXME|XXX" --type py
 - ⚠️ Contact ops if registry JWT rotates; both registry + orchestrator must share the new value.
 
 ---
-*Generated: 2025-11-26 20:33*
+*Generated: 2025-11-26 20:48*
 *Spec Status: DRAFT - Requires human review before publishing*
 *Mission ID: M001*

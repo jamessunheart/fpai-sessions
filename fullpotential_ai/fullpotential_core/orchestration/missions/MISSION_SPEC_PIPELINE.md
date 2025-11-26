@@ -4,18 +4,50 @@
 
 Every mission must go through the **Spec Pipeline** before being published to the Mission Hub. This ensures contributors have clear, actionable instructions to succeed.
 
+## Two Entry Points
+
+### 🤖 AI-Generated Missions
+AI identifies needs from codebase analysis, user feedback, or system monitoring:
+```
+AI detects need → Creates brief → Auto-generates spec → Human reviews → Publish
+```
+
+### 👤 Human-Submitted Missions  
+Humans submit ideas through Mission Hub or directly:
+```
+Human submits idea → AI generates spec → Human reviews → Publish
+```
+
+**Both paths converge at spec generation** - every mission gets a complete, actionable spec.
+
 ## Pipeline Stages
 
 ```
 ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
 │   BRIEF     │ -> │  SPEC GEN   │ -> │   REVIEW    │ -> │  PUBLISH    │ -> │   LIVE      │
 │             │    │             │    │             │    │             │    │             │
-│ Quick idea  │    │ AI expands  │    │ Human       │    │ Move to     │    │ Visible on  │
-│ or need     │    │ into full   │    │ validates   │    │ open/       │    │ Mission Hub │
+│ AI or Human │    │ AI expands  │    │ Human       │    │ Move to     │    │ Visible on  │
+│ idea        │    │ into full   │    │ validates   │    │ open/       │    │ Mission Hub │
 │             │    │ spec        │    │ & refines   │    │             │    │             │
 └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
      drafts/           specs/            specs/             open/           Mission Hub
 ```
+
+## ⏱️ Time Constraint
+
+**Missions must be completable in 1-4 hours.** This ensures:
+- Contributors can finish in a single work session
+- Progress is visible and frequent
+- Large tasks get broken into manageable pieces
+
+| Time Estimate | Guideline |
+|---------------|-----------|
+| ~30 min | Simple fix, config change |
+| 1 hour | Small feature, bug fix |
+| 1.5-2 hours | Standard mission |
+| 2-3 hours | Complex feature |
+| 3-4 hours | Maximum single mission |
+| 4+ hours | **Split into multiple missions** |
 
 ## Stage 1: BRIEF (drafts/)
 
