@@ -30,6 +30,85 @@ from pydantic import BaseModel
 from core.config import settings as app_settings
 from core.jobs import registry as job_registry
 
+# Simple markdown to HTML converter
+def markdown_to_html(text: str) -> str:
+    """Convert basic markdown to HTML"""
+    import re
+    if not text:
+        return ""
+    
+    lines = text.split('\n')
+    html_lines = []
+    in_list = False
+    in_code_block = False
+    
+    for line in lines:
+        # Code blocks
+        if line.strip().startswith('```'):
+            if in_code_block:
+                html_lines.append('</code></pre>')
+                in_code_block = False
+            else:
+                html_lines.append('<pre><code>')
+                in_code_block = True
+            continue
+        
+        if in_code_block:
+            html_lines.append(line)
+            continue
+        
+        # Headers
+        if line.startswith('### '):
+            html_lines.append(f'<h3>{line[4:]}</h3>')
+            continue
+        if line.startswith('## '):
+            html_lines.append(f'<h2>{line[3:]}</h2>')
+            continue
+        if line.startswith('# '):
+            html_lines.append(f'<h1>{line[2:]}</h1>')
+            continue
+        
+        # List items
+        if line.strip().startswith('- ') or line.strip().startswith('* '):
+            if not in_list:
+                html_lines.append('<ul>')
+                in_list = True
+            content = line.strip()[2:]
+            html_lines.append(f'<li>{content}</li>')
+            continue
+        elif line.strip().startswith(tuple(f'{i}. ' for i in range(1, 10))):
+            if not in_list:
+                html_lines.append('<ol>')
+                in_list = True
+            content = re.sub(r'^\d+\.\s*', '', line.strip())
+            html_lines.append(f'<li>{content}</li>')
+            continue
+        else:
+            if in_list:
+                html_lines.append('</ul>' if html_lines[-2].startswith('<ul') or '<li>' in html_lines[-1] else '</ol>')
+                in_list = False
+        
+        # Bold and italic
+        line = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', line)
+        line = re.sub(r'\*(.+?)\*', r'<em>\1</em>', line)
+        
+        # Inline code
+        line = re.sub(r'`([^`]+)`', r'<code>\1</code>', line)
+        
+        # Links
+        line = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2">\1</a>', line)
+        
+        # Paragraphs
+        if line.strip():
+            html_lines.append(f'<p>{line}</p>')
+        else:
+            html_lines.append('')
+    
+    if in_list:
+        html_lines.append('</ul>')
+    
+    return '\n'.join(html_lines)
+
 # ============================================================================
 # APP CONFIGURATION
 # ============================================================================
@@ -337,13 +416,14 @@ async def mission_detail(request: Request, mission_id: str):
         raise HTTPException(status_code=404, detail="Mission not found")
     
     mission = enrich_mission(mission)
-    content = get_mission_content(mission_id)
+    raw_content = get_mission_content(mission_id)
+    content_html = markdown_to_html(raw_content) if raw_content else None
     recent_jobs = get_recent_jobs(mission_id, limit=10)
     
     return templates.TemplateResponse("detail.html", {
         "request": request,
         "mission": mission,
-        "content": content,
+        "content": content_html,
         "recent_jobs": recent_jobs,
         "mission_types": MISSION_TYPES
     })
@@ -383,7 +463,24 @@ async def mission_board_alias(request: Request):
 @app.get("/missions/mission/{mission_id}", response_class=HTMLResponse)
 async def mission_detail_alias(request: Request, mission_id: str):
     """Alias for /missions/mission/{id} path"""
-    return await mission_detail(request, mission_id)
+    missions = load_missions()
+    mission = next((m for m in missions if m['id'] == mission_id), None)
+    
+    if not mission:
+        raise HTTPException(status_code=404, detail="Mission not found")
+    
+    mission = enrich_mission(mission)
+    raw_content = get_mission_content(mission_id)
+    content_html = markdown_to_html(raw_content) if raw_content else None
+    recent_jobs = get_recent_jobs(mission_id, limit=10)
+    
+    return templates.TemplateResponse("detail.html", {
+        "request": request,
+        "mission": mission,
+        "content": content_html,
+        "recent_jobs": recent_jobs,
+        "mission_types": MISSION_TYPES
+    })
 
 @app.get("/missions/contribute", response_class=HTMLResponse)
 async def contribute_alias(request: Request):
