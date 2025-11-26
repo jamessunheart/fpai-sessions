@@ -1,0 +1,13 @@
+[Unit]
+Description=Harvester Service
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/root/FPAI_Cockpit/SERVICES/harvester
+ExecStart=/usr/bin/python3 app.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+

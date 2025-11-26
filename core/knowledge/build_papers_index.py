@@ -56,7 +56,19 @@ class PaperEntry:
             "type": self.extension.strip("."),
             "size_kb": self.size_kb,
             "tags": self.keywords,
-            "url": f"https://github.com/jamessunheart/fpai-sessions/blob/main/{self.relative_path}" # Constructing a guess at the URL
+            # Link to raw file path relative to document root (assuming we deploy correctly)
+            # Or link to the specific GitHub blob if we want to keep it hosted there.
+            # Current issue: GitHub URLs are hardcoded to a potentially old repo structure.
+            # Let's try to make them relative to the current site deployment if possible,
+            # otherwise fix the GitHub URL construction.
+            # For now, let's assume we want to serve them directly if they are in the repo.
+            
+            # If we are hosting the site ourselves, we can serve the files statically.
+            # Let's construct a relative URL assuming the 'docs' folder is available at root or similar.
+            # But since we are doing a quick fix for "specific files", let's just fix the GitHub link 
+            # to use 'raw' if it's a PDF to trigger download/view, or 'blob' for others.
+            # properly encoding spaces and special characters
+            "url": f"https://github.com/jamessunheart/fpai-sessions/raw/main/{str(self.relative_path).replace(' ', '%20')}" if self.extension == ".pdf" else f"https://github.com/jamessunheart/fpai-sessions/blob/main/{str(self.relative_path).replace(' ', '%20')}"
         }
 
 

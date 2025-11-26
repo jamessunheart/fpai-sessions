@@ -22,6 +22,14 @@ import httpx
 from pathlib import Path
 from typing import Dict, Optional
 
+# Add core to path to import telemetry_client
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent / "core"))
+try:
+    from telemetry_client import TelemetryClient
+    TELEMETRY_AVAILABLE = True
+except ImportError:
+    TELEMETRY_AVAILABLE = False
+
 # Configuration
 VERIFIER_URL = "http://localhost:8200"
 STAGING_DIR = Path("STAGING/incoming")
@@ -68,6 +76,10 @@ class Gatekeeper:
         # Ensure directories exist
         self.staging_dir.mkdir(parents=True, exist_ok=True)
         self.intents_dir.mkdir(parents=True, exist_ok=True)
+
+        self.telemetry = None
+        if TELEMETRY_AVAILABLE:
+            self.telemetry = TelemetryClient()
 
     async def harvest_safe(self, url: str, branch: str, repo_name: str) -> Path:
         """
@@ -185,13 +197,32 @@ class Gatekeeper:
             
             logger.info(f"📊 Score: {score}/100 | Decision: {decision}")
             
+            if self.telemetry:
+                self.telemetry.capture("gatekeeper", "verification_complete", {
+                    "repo_name": name,
+                    "score": score,
+                    "decision": decision,
+                    "report_summary": report.get("summary", {})
+                })
+
             # 3. Decide
             if decision == "APPROVED" or score >= 90:
                 await self.promote_to_production(name, path)
                 print(f"\n✅ SUCCESS: {name} merged to production.\n")
+                
+                if self.telemetry:
+                    self.telemetry.capture("gatekeeper", "promotion_success", {
+                        "repo_name": name
+                    })
             else:
                 await self.dispatch_fix_mission(name, report)
                 print(f"\n❌ REJECTED: {name} needs fixes. Autonomous Agent dispatched.\n")
+                
+                if self.telemetry:
+                    self.telemetry.capture("gatekeeper", "promotion_rejected", {
+                        "repo_name": name,
+                        "action": "fix_dispatched"
+                    })
                 
         except Exception as e:
             logger.error(f"Gatekeeper halted: {e}")

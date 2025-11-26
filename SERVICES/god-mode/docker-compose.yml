@@ -5,8 +5,8 @@ services:
     build: ./backend
     container_name: god-mode-backend
     volumes:
-      - ../../../docs:/docs
-      - ../../../core:/core
+      - ../docs:/docs
+      - ../core:/core
     environment:
       - COORDINATION_DIR=/docs/coordination
       - INBOX_FILE=/core/STATE/INBOX.json
@@ -16,7 +16,7 @@ services:
     build: ./frontend
     container_name: god-mode-frontend
     ports:
-      - "80:80"
+      - "8080:80"
     environment:
       - BASIC_AUTH_USER=architect
       - BASIC_AUTH_PASS=sovereign  # CHANGE THIS!

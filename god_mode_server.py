@@ -3,17 +3,37 @@
 God Mode Web Dashboard
 The unified visual command center for Full Potential OS.
 """
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect, Body
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
 import uvicorn
 import os
 import json
-import subprocess
+import asyncio
 import sys
 from pathlib import Path
 from datetime import datetime
+import uuid
+
+import httpx
+from typing import List, Dict, Any
+
+# --- INTEGRATE MISSION CONTROL TELEMETRY ---
+# Try localhost first for dev, then remote
+MISSION_CONTROL_URL = os.getenv("MISSION_CONTROL_URL", "http://localhost:8080")
+
+async def fetch_mission_telemetry() -> List[Dict[str, Any]]:
+    """Fetch live telemetry from Mission Control."""
+    try:
+        async with httpx.AsyncClient(timeout=2.0) as client:
+            response = await client.get(f"{MISSION_CONTROL_URL}/telemetry?limit=10")
+            if response.status_code == 200:
+                return response.json()
+    except Exception as e:
+        # print(f"⚠️ Warning: Could not fetch telemetry: {e}")
+        pass
+    return []
 
 # --- INTEGRATE LIBRARIAN ---
 # Add core/knowledge to path to import librarian_server
@@ -37,348 +57,190 @@ TEMPLATES_DIR = BASE_DIR / "core" / "knowledge" / "templates"
 COORDINATION_DIR = Path("docs/coordination")
 INTENTS_DIR = COORDINATION_DIR / "intents"
 CLAIMS_DIR = COORDINATION_DIR / "claims"
-STAGING_DIR = Path("STAGING/incoming")
+HEARTBEATS_DIR = COORDINATION_DIR / "heartbeats"
+MESSAGES_DIR = COORDINATION_DIR / "messages/broadcast"
+STAGING_DIR = BASE_DIR / "core" / "knowledge" / "_incoming"
+TREASURY_FILE = BASE_DIR / "core" / "STATE" / "TREASURY.json"
 
-# Ensure templates dir exists
+# Ensure dirs
 if not TEMPLATES_DIR.exists():
     TEMPLATES_DIR.mkdir(parents=True)
+if not MESSAGES_DIR.exists():
+    MESSAGES_DIR.mkdir(parents=True, exist_ok=True)
 
 TEMPLATES = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
-# --- Dashboard HTML Template ---
-DASHBOARD_HTML = """
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#020617">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="manifest" href="/manifest.json">
-    <link rel="apple-touch-icon" href="https://fav.farm/🏛️">
-    <link rel="icon" href="https://fav.farm/🏛️">
-    <title>🏛️ GOD MODE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #020617;
-            --panel: #0f172a;
-            --text: #f8fafc;
-            --text-dim: #94a3b8;
-            --accent: #fbbf24; /* Gold for God Mode */
-            --blue: #38bdf8;
-            --red: #ef4444;
-            --green: #22c55e;
-            --border: #1e293b;
-        }
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            margin: 0;
-            min-height: 100vh;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-            padding-bottom: 6rem; /* Space for bottom nav on mobile if needed */
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 1.5rem;
-        }
-        h1 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 2rem;
-            margin: 0;
-            color: var(--accent);
-            letter-spacing: -0.02em;
-        }
-        .subtitle {
-            color: var(--text-dim);
-            font-size: 0.9rem;
-            margin-top: 0.25rem;
-        }
-        
-        /* Grid */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        /* Cards */
-        .card {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 1.5rem;
-            transition: transform 0.2s, border-color 0.2s;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-        .card:active {
-            transform: scale(0.98);
-        }
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.2rem;
-        }
-        .card-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.25rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .status-badge {
-            font-size: 0.7rem;
-            padding: 0.25rem 0.6rem;
-            border-radius: 999px;
-            background: rgba(255,255,255,0.1);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            font-weight: 600;
-        }
-        .status-active { background: rgba(34, 197, 94, 0.15); color: var(--green); border: 1px solid rgba(34, 197, 94, 0.3); }
-        .status-idle { background: rgba(148, 163, 184, 0.1); color: var(--text-dim); }
-        
-        /* Lists */
-        .item-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .item {
-            padding: 1rem;
-            background: rgba(0,0,0,0.3);
-            border-radius: 10px;
-            margin-bottom: 0.75rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid rgba(255,255,255,0.03);
-        }
-        .item-title { font-weight: 500; font-size: 0.95rem; }
-        .item-meta { color: var(--text-dim); font-size: 0.8rem; }
-        
-        /* Actions */
-        .actions {
-            display: flex;
-            gap: 0.75rem;
-            margin-top: 1.5rem;
-        }
-        .btn {
-            background: var(--accent);
-            color: #0f172a;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            transition: opacity 0.2s;
-            font-size: 0.95rem;
-            width: auto;
-        }
-        .btn:hover { opacity: 0.9; }
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text);
-        }
-        .btn-outline:hover {
-            border-color: var(--text);
-            background: rgba(255,255,255,0.03);
-        }
-        
-        /* Stats */
-        .stat-row {
-            display: flex;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-            overflow-x: auto;
-            padding-bottom: 0.5rem; /* Scrollbar space */
-        }
-        .stat {
-            background: var(--panel);
-            padding: 1.25rem;
-            border-radius: 12px;
-            flex: 1;
-            min-width: 140px; /* Prevent squishing on mobile */
-            text-align: center;
-            border: 1px solid var(--border);
-        }
-        .stat-val {
-            font-size: 2rem;
-            font-weight: 700;
-            font-family: 'Space Grotesk', sans-serif;
-            color: var(--text);
-        }
-        .stat-label {
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            font-size: 0.7rem;
-            margin-top: 0.4rem;
-        }
+# --- WEBSOCKET MANAGER ---
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: list[WebSocket] = []
 
-        /* Mobile Optimization */
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-            header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-            header .btn {
-                width: 100%;
-            }
-            .grid {
-                grid-template-columns: 1fr;
-            }
-            .stat-row {
-                gap: 1rem;
-            }
-            .stat-val {
-                font-size: 1.75rem;
-            }
-            .card {
-                padding: 1.25rem;
-            }
-            .btn {
-                width: 100%;
-                padding: 1rem; /* Larger touch target */
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <div>
-                <h1>🏛️ THE COUNCIL</h1>
-                <div class="subtitle">God Mode Control Center • {{ timestamp }}</div>
-            </div>
-            <div>
-                <a href="/librarian" target="_blank" class="btn">
-                    📚 Manage Library
-                </a>
-                <a href="/research" target="_blank" class="btn btn-outline" style="margin-left: 0.5rem;">
-                    🌐 Public Site
-                </a>
-            </div>
-        </header>
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
 
-        <div class="stat-row">
-            <div class="stat">
-                <div class="stat-val">{{ stats.intents }}</div>
-                <div class="stat-label">Active Missions</div>
-            </div>
-            <div class="stat">
-                <div class="stat-val">{{ stats.claims }}</div>
-                <div class="stat-label">Agents Working</div>
-            </div>
-            <div class="stat">
-                <div class="stat-val">{{ stats.papers }}</div>
-                <div class="stat-label">Papers Indexed</div>
-            </div>
-        </div>
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
 
-        <div class="grid">
-            <!-- BRAIN -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">🧠 Strategy (Brain)</div>
-                    <span class="status-badge {{ 'status-active' if stats.intents > 0 else 'status-idle' }}">
-                        {{ 'Active' if stats.intents > 0 else 'Idle' }}
-                    </span>
-                </div>
-                <ul class="item-list">
-                    {% for intent in intents %}
-                    <li class="item">
-                        <div class="item-title">{{ intent.name }}</div>
-                        <div class="item-meta">Priority: {{ intent.score }}</div>
-                    </li>
-                    {% else %}
-                    <li class="item" style="justify-content:center; color:var(--text-dim);">No active missions</li>
-                    {% endfor %}
-                </ul>
-                <div class="actions">
-                    <button class="btn btn-outline" style="width:100%" onclick="dispatchMission()">+ Dispatch New Mission</button>
-                </div>
-            </div>
+    async def broadcast(self, message: dict):
+        for connection in self.active_connections:
+            try:
+                await connection.send_json(message)
+            except:
+                pass
 
-            <!-- MUSCLE -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">💪 Execution (Muscle)</div>
-                    <span class="status-badge {{ 'status-active' if stats.claims > 0 else 'status-idle' }}">
-                        {{ 'Working' if stats.claims > 0 else 'Resting' }}
-                    </span>
-                </div>
-                <ul class="item-list">
-                    {% for claim in claims %}
-                    <li class="item">
-                        <div class="item-title">{{ claim.name }}</div>
-                        <div class="item-meta">Active</div>
-                    </li>
-                    {% else %}
-                    <li class="item" style="justify-content:center; color:var(--text-dim);">All agents idle</li>
-                    {% endfor %}
-                </ul>
-            </div>
+manager = ConnectionManager()
 
-            <!-- KNOWLEDGE -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">🛡️ Knowledge (Immunity)</div>
-                    <span class="status-badge status-active">Secure</span>
-                </div>
-                <div style="text-align:center; padding: 1rem 0;">
-                    <p style="color:var(--text-dim); margin-bottom:1.5rem; font-size: 0.9rem;">
-                        Review incoming research, classify documents, and synthesize new insights.
-                    </p>
-                    <a href="/librarian" class="btn btn-outline" style="width:100%">Manage Library →</a>
-                </div>
-            </div>
-        </div>
-    </div>
+# --- DATA HELPERS ---
 
-    <script>
-        function dispatchMission() {
-            const name = prompt("Mission Name (e.g. optimize-db):");
-            if(name) {
-                fetch('/api/dispatch', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({name: name})
-                }).then(() => window.location.reload());
-            }
-        }
-    </script>
-</body>
-</html>
-"""
+def get_stats_data():
+    intents = len(list(INTENTS_DIR.glob("*.json"))) if INTENTS_DIR.exists() else 0
+    claims = len(list(CLAIMS_DIR.glob("*.claim"))) if CLAIMS_DIR.exists() else 0
+    
+    papers_count = 0
+    index_path = BASE_DIR / "fullpotential_ai/fullpotential_core/core/applications/website-ai/frontend/papers.json"
+    if index_path.exists():
+        try:
+            with open(index_path) as f:
+                data = json.load(f)
+                papers_count = len(data.get("papers", []))
+        except: pass
 
-# Write template
-with open(TEMPLATES_DIR / "god_mode.html", "w") as f:
-    f.write(DASHBOARD_HTML)
+    pending_reviews = 0
+    if STAGING_DIR.exists():
+        pending_reviews = len([f for f in STAGING_DIR.iterdir() if f.is_file() and f.name != ".gitkeep"])
+    
+    return {
+        "intents": intents,
+        "claims": claims,
+        "papers": papers_count,
+        "pending_reviews": pending_reviews
+    }
+
+def get_kanban_data():
+    board = {
+        "intent": [],
+        "building": [],
+        "deployed": []
+    }
+    claims = set()
+    if CLAIMS_DIR.exists():
+        for f in CLAIMS_DIR.glob("*.claim"):
+            claims.add(f.stem)
+
+    if INTENTS_DIR.exists():
+        for f in INTENTS_DIR.glob("*.json"):
+            try:
+                with open(f) as jf:
+                    data = json.load(jf)
+                    item = {
+                        "id": f.stem,
+                        "title": data.get("droplet_name", f.stem),
+                        "desc": data.get("architect_intent", ""),
+                        "score": data.get("score", 0)
+                    }
+                    # Simple logic for column placement
+                    is_claimed = False
+                    for claim in claims:
+                        if item["id"] in claim or item["title"] in claim:
+                            is_claimed = True
+                            break
+                    
+                    if is_claimed:
+                        board["building"].append(item)
+                    else:
+                        board["intent"].append(item)
+            except:
+                pass
+    return board
+
+def get_graph_data():
+    nodes = []
+    links = []
+    seen_agents = set()
+
+    # Agents from Heartbeats
+    if HEARTBEATS_DIR.exists():
+        files = sorted(list(HEARTBEATS_DIR.glob("*.json")), reverse=True)[:50]
+        for f in files:
+            try:
+                name = f.stem.split('-session-')[-1] if 'session' in f.stem else f.stem
+                if name not in seen_agents:
+                    nodes.append({"id": name, "group": "agent", "status": "active"})
+                    seen_agents.add(name)
+            except:
+                pass
+
+    # Claims link Agents to Tasks
+    if CLAIMS_DIR.exists():
+        for f in CLAIMS_DIR.glob("*.claim"):
+            try:
+                with open(f) as cf:
+                    data = json.load(cf)
+                    session_id = data.get("session_id", "unknown")
+                    resource = f.stem
+                    nodes.append({"id": resource, "group": "work", "status": "claimed"})
+                    links.append({"source": session_id, "target": resource})
+                    if session_id not in seen_agents:
+                        nodes.append({"id": session_id, "group": "agent", "status": "working"})
+                        seen_agents.add(session_id)
+            except:
+                pass
+                
+    for core in ["Brain", "Muscle", "Immune", "Architect"]:
+        if core not in seen_agents:
+            nodes.append({"id": core, "group": "core", "status": "idle"})
+
+    return {"nodes": nodes, "links": links}
+
+def get_messages(limit=20):
+    msgs = []
+    if MESSAGES_DIR.exists():
+        files = sorted(list(MESSAGES_DIR.glob("*.json")), reverse=True)[:limit]
+        for f in files:
+            try:
+                with open(f) as jf:
+                    data = json.load(jf)
+                    msgs.append(data)
+            except:
+                pass
+    return sorted(msgs, key=lambda x: x.get('timestamp', ''))
+
+def get_treasury_data():
+    if not TREASURY_FILE.exists():
+        return {}
+    try:
+        with open(TREASURY_FILE, 'r') as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"Error reading treasury: {e}")
+        return {}
+
+def get_recent_papers(limit=5):
+    papers = []
+    index_path = BASE_DIR / "fullpotential_ai/fullpotential_core/core/applications/website-ai/frontend/papers.json"
+    if index_path.exists():
+        try:
+            with open(index_path) as f:
+                data = json.load(f)
+                papers = data.get("papers", [])
+                # Sort by size or some other metric if timestamp missing, or just take first N
+                return papers[:limit]
+        except: pass
+    return []
+
+# --- ROUTES ---
+
+@app.get("/", response_class=HTMLResponse)
+async def dashboard(request: Request):
+    return TEMPLATES.TemplateResponse("god_mode.html", {
+        "request": request,
+        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "stats": get_stats_data(),
+        "kanban": get_kanban_data(),
+        "intents": get_kanban_data()["intent"], # Legacy support for template
+        "claims": get_kanban_data()["building"]
+    })
 
 @app.get("/manifest.json")
 async def manifest():
@@ -389,99 +251,49 @@ async def manifest():
         "display": "standalone",
         "background_color": "#020617",
         "theme_color": "#020617",
-        "icons": [
-            {
-                "src": "https://fav.farm/🏛️",
-                "sizes": "192x192",
-                "type": "image/png"
-            }
-        ]
+        "icons": [{"src": "https://fav.farm/🏛️", "sizes": "192x192", "type": "image/png"}]
     }
-
-@app.get("/", response_class=HTMLResponse)
-async def dashboard(request: Request):
-    # Gather Stats
-    intents = []
-    if INTENTS_DIR.exists():
-        for f in INTENTS_DIR.glob("*.json"):
-            try:
-                with open(f) as json_file:
-                    data = json.load(json_file)
-                    intents.append({"name": f.stem, "score": data.get("score", 50)})
-            except:
-                pass
-    
-    claims = []
-    if CLAIMS_DIR.exists():
-        claims = [{"name": f.stem} for f in CLAIMS_DIR.glob("*.claim")]
-
-    # Count papers (approx)
-    papers_count = 0
-    index_path = BASE_DIR / "fullpotential_ai/fullpotential_core/core/applications/website-ai/frontend/papers.json"
-    if index_path.exists():
-        with open(index_path) as f:
-            data = json.load(f)
-            papers_count = len(data.get("papers", []))
-
-    return TEMPLATES.TemplateResponse("god_mode.html", {
-        "request": request,
-        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M"),
-        "stats": {
-            "intents": len(intents),
-            "claims": len(claims),
-            "papers": papers_count
-        },
-        "intents": intents,
-        "claims": claims
-    })
 
 @app.get("/librarian")
 async def open_librarian():
-    # If mounted, redirect to the internal app path
     if LIBRARIAN_AVAILABLE:
         return RedirectResponse(url="/librarian_app/")
-    # Fallback to expected port if running separately
     return RedirectResponse(url="http://localhost:8081")
 
 @app.get("/research")
 async def open_research_page():
-    # Serve the static research page if accessed directly or redirect
-    # For now, assume it's hosted on the main site port or file
-    # We can serve the file directly if needed, but linking to the static file is easier for local dev
-    
-    # 1. Try to serve the file if we can find it
     research_path = BASE_DIR / "fullpotential_ai/fullpotential_core/core/applications/website-ai/frontend/research.html"
-    
-    # Fallback: Search for it if path structure is different in dev
-    if not research_path.exists():
-        # Try to find it in the workspace relative to root
-        # Assuming we are in root/god_mode_server.py
-        research_path = Path("fullpotential_ai/fullpotential_core/core/applications/website-ai/frontend/research.html")
-    
     if research_path.exists():
         return FileResponse(research_path)
-    
-    # 2. If file missing, return a helpful error page
-    return HTMLResponse("""
-        <html><body style="background:#0f172a; color:#f8fafc; font-family:sans-serif; display:flex; justify-content:center; align-items:center; height:100vh;">
-        <div style="text-align:center;">
-            <h1>404: Research Library Not Found</h1>
-            <p>The file <code>research.html</code> is missing.</p>
-            <p>Please ensure <code>fullpotential_ai/fullpotential_core/core/applications/website-ai/frontend/research.html</code> exists.</p>
-        </div>
-        </body></html>
-    """, status_code=404)
+    return HTMLResponse("Research page not found", status_code=404)
 
-# Also serve papers.json so research.html can fetch it
 @app.get("/papers.json")
 async def get_papers_json():
     json_path = BASE_DIR / "fullpotential_ai/fullpotential_core/core/applications/website-ai/frontend/papers.json"
-    if not json_path.exists():
-        json_path = Path("fullpotential_ai/fullpotential_core/core/applications/website-ai/frontend/papers.json")
-        
     if json_path.exists():
         return FileResponse(json_path)
     return {"papers": []}
+
+# --- API ---
+
+@app.get("/api/data")
+async def api_data():
+    telemetry = await fetch_mission_telemetry()
+    return {
+        "stats": get_stats_data(),
+        "kanban": get_kanban_data(),
+        "graph": get_graph_data(),
+        "chat": get_messages(),
+        "telemetry": telemetry
+    }
+
+@app.get("/api/treasury")
+async def api_treasury():
+    return get_treasury_data()
+
+@app.get("/api/recent_papers")
+async def api_recent_papers():
+    return {"papers": get_recent_papers()}
 
 @app.post("/api/dispatch")
 async def dispatch_mission(data: dict):
@@ -496,7 +308,52 @@ async def dispatch_mission(data: dict):
                 "status": "pending",
                 "score": 50
             }, f, indent=2)
+        await manager.broadcast({"type": "update", "data": await api_data()})
     return {"status": "ok"}
+
+# --- WEBSOCKET ---
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await manager.connect(websocket)
+    try:
+        while True:
+            data = await websocket.receive_json()
+            # Handle incoming chat or commands
+            if data.get("type") == "chat":
+                # Save chat message
+                msg_data = {
+                    "sender": "ARCHITECT",
+                    "content": data.get("content"),
+                    "timestamp": datetime.now().isoformat()
+                }
+                filename = f"{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}-{uuid.uuid4().hex[:4]}.json"
+                with open(MESSAGES_DIR / filename, 'w') as f:
+                    json.dump(msg_data, f)
+                await manager.broadcast({"type": "update", "data": await api_data()})
+            
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+
+# --- BACKGROUND ---
+
+async def watch_changes():
+    while True:
+        # In a real app, use file watchers. Here we poll every few seconds.
+        # For efficiency, we only broadcast if something likely changed or every 5s.
+        await asyncio.sleep(5)
+        
+        # Broadcast main data
+        data = await api_data()
+        await manager.broadcast({"type": "update", "data": data})
+        
+        # Broadcast treasury specifically
+        treasury = get_treasury_data()
+        await manager.broadcast({"type": "treasury_update", "data": treasury})
+
+@app.on_event("startup")
+async def startup():
+    asyncio.create_task(watch_changes())
 
 if __name__ == "__main__":
     print("🏛️  GOD MODE WEB SERVER running at http://localhost:8085")

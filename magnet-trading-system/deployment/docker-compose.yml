@@ -7,7 +7,7 @@ services:
       dockerfile: deployment/Dockerfile
     container_name: magnet-backend
     ports:
-      - "8000:8000"
+      - "8600:8600"
     environment:
       - DATABASE_URL=postgresql://magnet_user:${DB_PASSWORD}@db:5432/magnet_trading
       - REDIS_URL=redis://redis:6379/0

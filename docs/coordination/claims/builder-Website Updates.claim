@@ -1,0 +1,9 @@
+{
+  "claimed_by": "session-1763926653",
+  "claimed_at": "2025-11-23T21:53:05Z",
+  "resource_type": "builder",
+  "resource_name": "Website Updates",
+  "duration_hours": 4,
+  "expires_at": "2025-11-24T01:53:05Z",
+  "allow_coordination": true
+}

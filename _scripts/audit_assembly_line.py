@@ -1,86 +1,104 @@
 #!/usr/bin/env python3
-"""
-Assembly Line Audit
-Checks the health of the 5 Factory Stations.
-Updates core/STATE/ASSEMBLY_LINE.md
-"""
-import json
 import requests
+import json
+import os
 from pathlib import Path
 
-# --- Configuration ---
-ROOT_DIR = Path(__file__).parent.parent.absolute()
-ASSEMBLY_FILE = ROOT_DIR / "core/STATE/ASSEMBLY_LINE.md"
-PULSE_FILE = ROOT_DIR / "core/STATE/PULSE.json"
+# --- Config ---
+ROOT_DIR = Path("/opt/fpai")
+STATE_DIR = ROOT_DIR / "core/STATE"
+ASSEMBLY_FILE_MD = STATE_DIR / "ASSEMBLY_LINE.md"
+ASSEMBLY_FILE_JSON = STATE_DIR / "ASSEMBLY.json"
 
-# URLs
 STOREFRONT_URL = "https://fullpotential.com/accelerator-kit"
-CHECKOUT_API = "http://127.0.0.1:3001/api/health" # Internal check
+CHECKOUT_API = "http://127.0.0.1:3001/api/health"
+ENV_FILE = "/etc/fpai/env/fpai-website-com.env"
 
-def check_traffic():
-    # Placeholder: In future, read Nginx logs or Analytics API
-    return "⚪ Unknown (No Analytics Connected)"
-
-def check_storefront():
+def check_fulfillment_config():
+    """Checks if SMTP is configured in the env file."""
     try:
-        # r = requests.get(STOREFRONT_URL, timeout=5)
-        # if r.status_code == 200 and "Accelerator" in r.text:
-        #     return "🟢 Active"
-        # return f"🔴 Error {r.status_code}"
-        return "⚪ Network Restricted (Run on Server)"
+        with open(ENV_FILE, "r") as f:
+            content = f.read()
+            if "SMTP_URL=" in content and "smtps://" in content:
+                return "🟢 Ready"
+            return "🔴 Blocked (Missing SMTP)"
     except:
-        return "🔴 Unreachable"
+        return "⚪ Unknown (Access Denied)"
 
-def check_checkout():
+def main():
+    # 1. Initialize State
+    stations = {
+        "traffic": {"status": "⚪ Unknown", "metric": "0 visits", "blocker": "No Probe"},
+        "storefront": {"status": "⚪ Pending", "metric": "HTTP Status", "blocker": None},
+        "checkout": {"status": "⚪ Pending", "metric": "API Health", "blocker": None},
+        "fulfillment": {"status": "⚪ Pending", "metric": "Config Check", "blocker": None},
+        "retention": {"status": "⚪ Unknown", "metric": "No Telemetry", "blocker": "No Probe"}
+    }
+
+    # 2. Audit Storefront
     try:
-        # r = requests.get(CHECKOUT_API, timeout=2)
-        # if r.status_code == 200:
-        #     return "🟢 Ready (Stripe Configured)"
-        # return "🔴 API Error"
-        return "⚪ Network Restricted (Run on Server)"
-    except:
-        return "🔴 Service Down"
+        r = requests.get(STOREFRONT_URL, timeout=5)
+        if r.status_code == 200:
+            stations["storefront"]["status"] = "🟢 Active"
+        else:
+            stations["storefront"]["status"] = f"🔴 Error {r.status_code}"
+            stations["storefront"]["blocker"] = f"HTTP {r.status_code}"
+    except Exception as e:
+        stations["storefront"]["status"] = "🔴 Unreachable"
+        stations["storefront"]["blocker"] = str(e)
 
-def check_fulfillment():
-    return "🟡 Pending Verification" 
+    # 3. Audit Checkout
+    try:
+        r = requests.get(CHECKOUT_API, timeout=2)
+        if r.status_code == 200:
+            stations["checkout"]["status"] = "🟢 Ready"
+        else:
+            stations["checkout"]["status"] = "🔴 API Error"
+            stations["checkout"]["blocker"] = "API Health Fail"
+    except Exception as e:
+        stations["checkout"]["status"] = "🔴 Service Down"
+        stations["checkout"]["blocker"] = str(e)
 
-def generate_report(stations):
-    content = f"""# 🏭 FPAI ASSEMBLY LINE STATUS
+    # 4. Audit Fulfillment
+    stations["fulfillment"]["status"] = check_fulfillment_config()
+    if "Blocked" in stations["fulfillment"]["status"]:
+        stations["fulfillment"]["blocker"] = "Missing SMTP Credentials"
+
+    # 5. Write Machine State (JSON)
+    STATE_DIR.mkdir(parents=True, exist_ok=True)
+    with open(ASSEMBLY_FILE_JSON, "w") as f:
+        json.dump(stations, f, indent=2)
+
+    # 6. Write Human State (Markdown)
+    md_content = f"""# 🏭 FPAI ASSEMBLY LINE STATUS
 
 > **Last Audit:** {json.dumps(stations, indent=2)}
 
 ## 1. TRAFFIC (Inbound)
-- **Status:** {stations['traffic']}
+- **Status:** {stations['traffic']['status']}
+- **Blocker:** {stations['traffic']['blocker'] or 'None'}
 
 ## 2. STOREFRONT (Conversion)
-- **Status:** {stations['storefront']}
+- **Status:** {stations['storefront']['status']}
 - **URL:** {STOREFRONT_URL}
+- **Blocker:** {stations['storefront']['blocker'] or 'None'}
 
 ## 3. CHECKOUT (Transaction)
-- **Status:** {stations['checkout']}
+- **Status:** {stations['checkout']['status']}
+- **Blocker:** {stations['checkout']['blocker'] or 'None'}
 
 ## 4. FULFILLMENT (Delivery)
-- **Status:** {stations['fulfillment']}
+- **Status:** {stations['fulfillment']['status']}
+- **Blocker:** {stations['fulfillment']['blocker'] or 'None'}
 
 ## 5. RETENTION (Experience)
-- **Status:** ⚪ Unknown (No Telemetry)
+- **Status:** {stations['retention']['status']}
+- **Blocker:** {stations['retention']['blocker'] or 'None'}
 """
-    ASSEMBLY_FILE.parent.mkdir(parents=True, exist_ok=True)
-    with open(ASSEMBLY_FILE, 'w', encoding='utf-8') as f:
-        f.write(content)
-
-def main():
-    print("🕵️ Auditing Assembly Line...")
+    with open(ASSEMBLY_FILE_MD, "w") as f:
+        f.write(md_content)
     
-    stations = {
-        "traffic": check_traffic(),
-        "storefront": check_storefront(),
-        "checkout": check_checkout(),
-        "fulfillment": check_fulfillment()
-    }
-    
-    generate_report(stations)
-    print(f"✅ Audit Complete. Updated {ASSEMBLY_FILE}")
+    print("Audit complete. JSON State updated.")
 
 if __name__ == "__main__":
     main()

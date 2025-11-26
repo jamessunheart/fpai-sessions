@@ -1,7 +1,7 @@
 """Telemetry ingestion endpoints."""
 from typing import List
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Request, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -20,6 +20,7 @@ router = APIRouter(prefix="/telemetry", tags=["Telemetry"])
 )
 async def create_telemetry_event(
     event_in: TelemetryEventCreate,
+    request: Request,
     session: AsyncSession = Depends(get_db),
 ) -> TelemetryEvent:
     """Record a new telemetry event from an agent."""
@@ -27,6 +28,15 @@ async def create_telemetry_event(
     session.add(event)
     await session.commit()
     await session.refresh(event)
+    await request.app.state.telemetry_bus.broadcast(
+        {
+            "id": str(event.id),
+            "source": event.source,
+            "event_type": event.event_type,
+            "payload": event.payload,
+            "timestamp": event.timestamp.isoformat(),
+        }
+    )
     return event
 
 

@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 async def verify_udc(droplet_path: Path, droplet_name: str) -> PhaseResult:
     """
-    Verify UDC compliance by starting droplet and testing endpoints.
+    Verify UDC compliance by testing endpoints on running service or starting it.
 
     Checks:
     - /health endpoint exists and has correct schema
@@ -31,28 +31,35 @@ async def verify_udc(droplet_path: Path, droplet_name: str) -> PhaseResult:
     try:
         # Find port from config or use default
         port = await _find_droplet_port(droplet_path)
-
-        # Start droplet
-        process = await _start_droplet(droplet_path, port)
-
-        # Wait for startup
         base_url = f"http://localhost:{port}"
-        if not await _wait_for_startup(base_url, timeout=settings.startup_timeout_seconds):
-            checks.append(
-                Check(
-                    name="Droplet startup",
-                    status="FAIL",
-                    details=f"Droplet failed to start within {settings.startup_timeout_seconds}s",
-                )
-            )
-            return PhaseResult(
-                phase="UDC Compliance",
-                status=PhaseStatus.FAIL,
-                duration_seconds=settings.startup_timeout_seconds,
-                checks=checks,
-            )
 
-        checks.append(Check(name="Droplet startup", status="PASS"))
+        # Check if service is already running
+        is_running = await _check_if_running(base_url)
+        
+        if not is_running:
+            logger.info(f"Service not running on port {port}, attempting to start...")
+            # Start droplet
+            process = await _start_droplet(droplet_path, port)
+            
+            # Wait for startup
+            if not await _wait_for_startup(base_url, timeout=settings.startup_timeout_seconds):
+                checks.append(
+                    Check(
+                        name="Droplet startup",
+                        status="FAIL",
+                        details=f"Droplet failed to start within {settings.startup_timeout_seconds}s",
+                    )
+                )
+                return PhaseResult(
+                    phase="UDC Compliance",
+                    status=PhaseStatus.FAIL,
+                    duration_seconds=settings.startup_timeout_seconds,
+                    checks=checks,
+                )
+            checks.append(Check(name="Droplet startup", status="PASS", details="Started successfully"))
+        else:
+            logger.info(f"Service already running on port {port}, skipping startup")
+            checks.append(Check(name="Droplet startup", status="PASS", details="Already running"))
 
         # Test /health endpoint
         health_check = await _test_health_endpoint(base_url)
@@ -77,7 +84,7 @@ async def verify_udc(droplet_path: Path, droplet_name: str) -> PhaseResult:
             )
         )
     finally:
-        # Stop droplet
+        # Stop droplet ONLY if we started it
         if process:
             try:
                 process.terminate()
@@ -113,16 +120,42 @@ async def _find_droplet_port(droplet_path: Path) -> int:
                 if "=" in line:
                     try:
                         port_str = line.split("=")[1].strip()
+                        # Handle optional comments
+                        if "#" in port_str:
+                            port_str = port_str.split("#")[0].strip()
                         return int(port_str)
                     except:
                         pass
+            # Handle direct assignment: PROXY_MANAGER_PORT = 8100
+            if "PORT" in line and "=" in line:
+                 try:
+                    port_str = line.split("=")[1].strip()
+                    return int(port_str)
+                 except:
+                    pass
 
     # Default port for testing
     return 9999
 
 
-async def _start_droplet(droplet_path: Path, port: int) -> subprocess.Popen:
+async def _check_if_running(base_url: str) -> bool:
+    """Check if service is already running."""
+    try:
+        async with httpx.AsyncClient(timeout=1) as client:
+            response = await client.get(f"{base_url}/health")
+            return response.status_code == 200
+    except:
+        return False
+
+
+async def _start_droplet(droplet_path: Path, port: int) -> Optional[subprocess.Popen]:
     """Start droplet in subprocess."""
+    # Check for virtual environment
+    venv_path = droplet_path / ".venv"
+    if not venv_path.exists():
+        logger.warning(f"No .venv found at {venv_path}. Skipping startup.")
+        return None
+
     # Setup virtual environment and start
     process = subprocess.Popen(
         [

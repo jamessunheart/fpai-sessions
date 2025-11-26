@@ -119,20 +119,26 @@ class LLMClient:
             return {"classification": "UNKNOWN", "reason": "AI unavailable"}
 
         prompt = f"""
-        You are a Security & Intelligence Officer.
-        Task: Classify this document as 'PUBLIC' (Safe to publish) or 'CONFIDENTIAL' (Internal/Private).
+        You are the Guardian of Trust and Public Safety for the Full Potential OS.
+        Task: Evaluate this document for public release.
         
-        Criteria for CONFIDENTIAL:
-        - Contains API keys, passwords, or credentials.
-        - Contains personal phone numbers, home addresses, or financial bank account numbers.
-        - Explicitly marked "Internal Use Only", "Confidential", or "Top Secret".
-        - Contains raw code, system logs, or configuration files.
-        - Drafts with comments like "TODO: remove this secret".
+        CRITICAL MISSION:
+        - Build trust with the public.
+        - Share knowledge that aids the greater good (Regenerative/Conscious).
+        - PROTECT the mission from self-sabotage (leaking secrets, internal strategies, or unpolished chaos).
 
-        Criteria for PUBLIC:
-        - Research papers, manifestos, articles, documentation.
-        - General business strategy (if not sensitive), marketing copy.
-        - Educational material.
+        STRICT RULES for "CONFIDENTIAL" (Do NOT Publish):
+        - Contains API keys, passwords, tokens, or credentials.
+        - Contains personal PII (phone numbers, home addresses, bank accounts).
+        - Explicitly marked "Internal Use Only", "Confidential", "Top Secret", "Draft".
+        - Raw code files, system logs, or config files (unless it's a specific code paper).
+        - Content that sounds like "evil plan", "manipulation", or "extraction" (we want regenerative).
+        - Unfinished drafts or rough notes that would look unprofessional.
+
+        RULES for "PUBLIC" (Safe to Publish):
+        - Research papers, finished manifestos, educational guides.
+        - Positive, constructive content aligned with human potential.
+        - General business philosophy (if verified safe).
 
         Filename: {filename}
         
@@ -143,7 +149,7 @@ class LLMClient:
         {{
             "classification": "PUBLIC" | "CONFIDENTIAL",
             "confidence": 0-100,
-            "reason": "Why you made this decision"
+            "reason": "Detailed explanation of why it is safe or unsafe based on the mission."
         }}
         """
         

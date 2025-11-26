@@ -10,7 +10,7 @@
   "terminals": ["s000", "s001", "s004"],
   "server_status": {
     "8000": "online",
-    "8001": "offline",
+    "8001": "online",
     "8002": "online",
     "8009": "offline",
     "8010": "offline",

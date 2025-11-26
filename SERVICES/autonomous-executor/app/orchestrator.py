@@ -15,10 +15,19 @@ This module orchestrates the entire Sacred Loop autonomously:
 import os
 import subprocess
 import json
+import sys
 from pathlib import Path
 from typing import Optional
 from datetime import datetime
 import anthropic
+
+# Add core to path to import telemetry_client
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent.parent / "core"))
+try:
+    from telemetry_client import TelemetryClient
+    TELEMETRY_AVAILABLE = True
+except ImportError:
+    TELEMETRY_AVAILABLE = False
 
 from .models import (
     BuildRequest,
@@ -38,6 +47,10 @@ class BuildOrchestrator:
         self.claude_client = None
         if settings.anthropic_api_key:
             self.claude_client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
+        
+        self.telemetry = None
+        if TELEMETRY_AVAILABLE:
+            self.telemetry = TelemetryClient()
 
     async def execute_autonomous_build(
         self,
@@ -54,6 +67,12 @@ class BuildOrchestrator:
         try:
             # Update status to in_progress
             progress_tracker.update_status(build_id, BuildStatus.IN_PROGRESS)
+            
+            if self.telemetry:
+                self.telemetry.capture("executor", "mission_started", {
+                    "mission_id": build_id,
+                    "intent": request.architect_intent
+                })
 
             # STEP 1: Intent (Already captured)
             await self._step_1_intent(build_id, request, progress_tracker)
@@ -92,11 +111,24 @@ class BuildOrchestrator:
 
             # Mark as completed
             progress_tracker.update_status(build_id, BuildStatus.COMPLETED)
+            
+            if self.telemetry:
+                self.telemetry.capture("executor", "mission_completed", {
+                    "mission_id": build_id,
+                    "status": "success"
+                })
 
         except Exception as e:
             # Mark as failed
             progress_tracker.update_status(build_id, BuildStatus.FAILED)
             progress_tracker.set_error(build_id, str(e))
+            
+            if self.telemetry:
+                self.telemetry.capture("executor", "mission_failed", {
+                    "mission_id": build_id,
+                    "error": str(e)
+                })
+            
             raise
 
     async def _step_1_intent(self, build_id: str, request: BuildRequest, progress_tracker: ProgressTracker):

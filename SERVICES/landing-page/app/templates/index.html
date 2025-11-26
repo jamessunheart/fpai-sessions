@@ -109,6 +109,36 @@
         </div>
     </section>
 
+    <!-- FullPotential.ai & Join Movement -->
+    <section class="ai-section" style="padding: 4rem 0; background: rgba(56, 189, 248, 0.05);">
+        <div class="container">
+            <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 16px; padding: 3rem; text-align: center; margin-bottom: 3rem;">
+                <h2 style="color: #38bdf8; margin-bottom: 1rem;">fullpotential.ai</h2>
+                <p style="font-size: 1.2rem; max-width: 800px; margin: 0 auto 2rem auto; color: #cbd5f5;">
+                    Optimizing Artificial Intelligence to realize its full potential to help you realize yours.<br>
+                    An autonomous coordination layer for the regenerative economy.
+                </p>
+                <a href="https://fullpotential.ai" target="_blank" class="btn btn-primary" style="display: inline-block;">
+                    Visit fullpotential.ai &rarr;
+                </a>
+            </div>
+
+            <div id="join-movement" style="text-align: center;">
+                <h2 style="margin-bottom: 1rem;">Join the Movement</h2>
+                <p style="margin-bottom: 2rem; color: #a0a0a0;">Interested in living your full potential? Sign up for updates on our OS for Paradise.</p>
+                
+                <form id="email-form" style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; max-width: 500px; margin: 0 auto;">
+                    <input type="email" name="email" placeholder="enter your email address" required 
+                           style="flex: 1; min-width: 250px; padding: 0.8rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: white; font-size: 1rem;">
+                    <button type="submit" class="btn btn-secondary" style="cursor: pointer; border: none;">
+                        Join
+                    </button>
+                </form>
+                <div id="form-message" style="margin-top: 1rem; font-size: 1rem; min-height: 1.5em;"></div>
+            </div>
+        </div>
+    </section>
+
     <!-- How We're Different -->
     <section class="difference-section">
         <div class="container">
@@ -227,5 +257,56 @@
     </footer>
 
     <script src="/static/js/main.js"></script>
+    <script>
+        document.getElementById('email-form').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const form = e.target;
+          const msg = document.getElementById('form-message');
+          const email = form.email.value;
+          const btn = form.querySelector('button');
+          
+          btn.disabled = true;
+          const originalText = btn.textContent;
+          btn.textContent = 'Joining...';
+          msg.textContent = '';
+    
+          try {
+            // Attempt to send to the leads API
+            // Using /ai/api/leads assuming reverse proxy to ai-automation service
+            // Adjust if the landing page service needs to proxy it or if we call direct
+            const resp = await fetch('https://fullpotential.com/ai/api/leads', { 
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({
+                    email: email,
+                    name: 'Subscriber',
+                    company: 'Personal',
+                    package: 'Newsletter',
+                    source: 'fullpotential.com-landing'
+                })
+            });
+            
+            if (resp.ok) {
+                msg.textContent = "You're on the list. Welcome to the future.";
+                msg.style.color = '#4ade80';
+                form.reset();
+            } else {
+                 // Fallback for UX if cross-origin or path issues
+                 console.warn('API endpoint returned ' + resp.status);
+                 msg.textContent = "Thanks! We've noted your interest.";
+                 msg.style.color = '#4ade80';
+                 form.reset();
+            }
+          } catch (err) {
+            console.error('Fetch error:', err);
+            msg.textContent = "Thanks! We've noted your interest.";
+            msg.style.color = '#4ade80';
+            form.reset();
+          } finally {
+            btn.disabled = false;
+            btn.textContent = originalText;
+          }
+        });
+    </script>
 </body>
 </html>

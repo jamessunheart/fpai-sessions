@@ -1,0 +1,9 @@
+{
+  "session_id": "session-1763926653",
+  "timestamp": "2025-11-23T22:06:02Z",
+  "action": "claimed",
+  "target": "mission/M008_build_verifier",
+  "phase": "CLAIMED",
+  "progress": "",
+  "next_action": ""
+}

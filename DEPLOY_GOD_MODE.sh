@@ -30,7 +30,7 @@ echo "📦 Packaging and Uploading to $SSH_USER@$SERVER_IP..."
 # Ensure target dir exists first
 ssh $SSH_USER@$SERVER_IP "mkdir -p $TARGET_DIR/god-mode"
 
-# 2. Upload (Explicit trailing slash to ensure content goes INTO god-mode)
+# 2. Upload
 rsync -avz --progress \
     --exclude 'node_modules' \
     --exclude '.venv' \
@@ -64,18 +64,19 @@ ssh $SSH_USER@$SERVER_IP "
     docker-compose up -d && \
     
     echo '⏳  Waiting for healthy status...' && \
-    sleep 5 && \
+    sleep 8 && \
     
     echo '🔍  Diagnostics:' && \
     docker-compose ps && \
     
-    echo '🧪  Local Connectivity Check:' && \
-    curl -I http://localhost || echo '❌ Local Curl Failed'
+    echo '📝 Backend Logs (Crash Debug):' && \
+    docker-compose logs --tail=20 backend && \
+    
+    echo '🧪  Local Connectivity Check (Port 8080):' && \
+    curl -I http://localhost:8080 || echo '❌ Local Curl Failed'
 "
 
 echo ""
 echo "✅ DEPLOYMENT COMPLETE"
-echo "🌍 Access God Mode at: http://$SERVER_IP"
+echo "🌍 Access God Mode at: http://$SERVER_IP:8080"
 echo "   User: architect"
-echo ""
-echo "⚠️  If the link fails, check your Server Firewall (Allow Port 80)."

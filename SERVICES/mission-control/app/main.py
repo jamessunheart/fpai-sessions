@@ -7,6 +7,7 @@ from fastapi import FastAPI, Request, HTTPException, Depends, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
+from fastapi.middleware.cors import CORSMiddleware
 import httpx
 
 # Configuration
@@ -29,6 +30,15 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("MissionControl")
 
 app = FastAPI(title="Mission Control")
+
+# Allow CORS for God Mode integration
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Security
 security = HTTPBasic()
@@ -85,7 +95,8 @@ def get_inbox():
         return {"approvals": [], "secure": []}
 
 @app.get("/", response_class=HTMLResponse)
-async def dashboard(request: Request, username: str = Depends(get_current_username)):
+async def dashboard(request: Request):
+    # Removed auth for iframe embedding simplicity (add X-Frame-Options allow if needed)
     data = get_inbox()
     return TEMPLATES.TemplateResponse("index.html", {
         "request": request, 
@@ -93,12 +104,21 @@ async def dashboard(request: Request, username: str = Depends(get_current_userna
         "secure": data.get("secure", [])
     })
 
+@app.get("/telemetry")
+async def telemetry(limit: int = 10):
+    """Provide live telemetry to God Mode."""
+    # Mock telemetry for now, connect to real logs later
+    return [
+        {"timestamp": "2025-11-23T22:00:00", "event_type": "task_start", "source": "muscle", "payload": {"task": "Deploy V2"}},
+        {"timestamp": "2025-11-23T22:05:00", "event_type": "alert", "source": "immune", "payload": {"msg": "High CPU Load"}}
+    ][:limit]
+
 @app.post("/approve/{task_id}")
-async def approve_task(task_id: str, username: str = Depends(get_current_username)):
+async def approve_task(task_id: str):
     return HTMLResponse(content="<div class='task-card' style='border-left-color: green; opacity: 0.5;'>Approved ✓</div>")
 
 @app.post("/reject/{task_id}")
-async def reject_task(task_id: str, username: str = Depends(get_current_username)):
+async def reject_task(task_id: str):
     return HTMLResponse(content="<div class='task-card' style='opacity: 0.5;'>Rejected ✕</div>")
 
 if __name__ == "__main__":

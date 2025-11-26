@@ -1,4 +1,6 @@
 """Tests for mission status aggregation."""
+import uuid
+
 from fastapi.testclient import TestClient
 
 from app.api.schemas import MissionState
@@ -7,7 +9,7 @@ from app.main import app
 
 def test_mission_status_lifecycle() -> None:
     """Verify that telemetry events correctly update mission status."""
-    mission_id = "M099_test_mission"
+    mission_id = f"M099_{uuid.uuid4()}"
 
     with TestClient(app) as client:
         # 1. Verify 404 for unknown mission

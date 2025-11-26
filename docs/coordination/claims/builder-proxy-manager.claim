@@ -1,0 +1,9 @@
+{
+  "claimed_by": "session-1763926653",
+  "claimed_at": "2025-11-23T21:35:08Z",
+  "resource_type": "builder",
+  "resource_name": "proxy-manager",
+  "duration_hours": 4,
+  "expires_at": "2025-11-24T01:35:08Z",
+  "allow_coordination": true
+}

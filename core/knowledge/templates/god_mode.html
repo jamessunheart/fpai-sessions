@@ -1,16 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#020617">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="manifest" href="/manifest.json">
-    <link rel="apple-touch-icon" href="https://fav.farm/🏛️">
-    <link rel="icon" href="https://fav.farm/🏛️">
-    <title>🏛️ GOD MODE</title>
+    <title>🏛️ GOD MODE // COUNCIL</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -18,10 +12,10 @@
             --panel: #0f172a;
             --text: #f8fafc;
             --text-dim: #94a3b8;
-            --accent: #fbbf24; /* Gold for God Mode */
+            --accent: #fbbf24; /* Gold */
             --blue: #38bdf8;
-            --red: #ef4444;
             --green: #22c55e;
+            --red: #ef4444;
             --border: #1e293b;
         }
         body {
@@ -29,122 +23,234 @@
             background: var(--bg);
             color: var(--text);
             margin: 0;
-            min-height: 100vh;
-            -webkit-tap-highlight-color: transparent;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-            padding-bottom: 6rem; /* Space for bottom nav on mobile if needed */
+        /* Sidebar */
+        nav {
+            width: 80px;
+            background: rgba(15, 23, 42, 0.5);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem 0;
+            z-index: 50;
+        }
+        .logo {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.3);
+            margin-bottom: 2rem;
+            color: #000;
+        }
+        .nav-item {
+            width: 100%;
+            height: 70px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+        .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+        .nav-item.active {
+            color: var(--accent);
+            border-left-color: var(--accent);
+            background: rgba(251, 191, 36, 0.1);
+        }
+        .nav-icon { font-size: 1.4rem; margin-bottom: 4px; }
+        .nav-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        /* Main */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
         }
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
+            height: 70px;
             border-bottom: 1px solid var(--border);
-            padding-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            background: rgba(2, 6, 23, 0.8);
+            backdrop-filter: blur(10px);
         }
         h1 {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 2rem;
-            margin: 0;
+            font-size: 1.4rem;
+            letter-spacing: 0.1em;
             color: var(--accent);
-            letter-spacing: -0.02em;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        .subtitle {
-            color: var(--text-dim);
-            font-size: 0.9rem;
-            margin-top: 0.25rem;
+        .stats {
+            display: flex;
+            gap: 2rem;
         }
-        
-        /* Grid */
+        .stat-item {
+            text-align: right;
+        }
+        .stat-label { font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; display: block; }
+        .stat-val { font-weight: 700; font-size: 1rem; font-family: 'Space Grotesk', sans-serif; }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* Views */
+        .view { display: none; height: 100%; }
+        .view.active { display: block; }
+
+        /* Grid System */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            grid-template-columns: repeat(12, 1fr);
             gap: 1.5rem;
         }
-        
+        .col-full { grid-column: span 12; }
+        .col-8 { grid-column: span 8; }
+        .col-6 { grid-column: span 6; }
+        .col-4 { grid-column: span 4; }
+        .col-3 { grid-column: span 3; }
+
         /* Cards */
         .card {
             background: var(--panel);
             border: 1px solid var(--border);
             border-radius: 16px;
             padding: 1.5rem;
-            transition: transform 0.2s, border-color 0.2s;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-        .card:active {
-            transform: scale(0.98);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
         }
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.2rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
         .card-title {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            color: var(--text);
         }
-        .status-badge {
-            font-size: 0.7rem;
-            padding: 0.25rem 0.6rem;
-            border-radius: 999px;
-            background: rgba(255,255,255,0.1);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            font-weight: 600;
-        }
-        .status-active { background: rgba(34, 197, 94, 0.15); color: var(--green); border: 1px solid rgba(34, 197, 94, 0.3); }
-        .status-idle { background: rgba(148, 163, 184, 0.1); color: var(--text-dim); }
         
-        /* Lists */
-        .item-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
+        /* Kanban */
+        .kanban-board {
+            display: flex;
+            gap: 1.5rem;
+            height: 100%;
+            overflow-x: auto;
         }
-        .item {
+        .kanban-col {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+        }
+        .kanban-header {
             padding: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+            border-bottom: 1px solid var(--border);
+        }
+        .kanban-body {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+        .task-card {
+            background: rgba(255,255,255,0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+            border-left: 3px solid var(--border);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .task-card:hover {
+            transform: translateY(-2px);
+            background: rgba(255,255,255,0.08);
+        }
+
+        /* Treasury */
+        .treasury-val {
+            font-size: 2.5rem;
+            font-weight: 700;
+            font-family: 'Space Grotesk', sans-serif;
+            color: var(--green);
+            margin: 1rem 0;
+        }
+        .wallet-address {
+            font-family: monospace;
             background: rgba(0,0,0,0.3);
-            border-radius: 10px;
-            margin-bottom: 0.75rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid rgba(255,255,255,0.03);
+            padding: 0.5rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            word-break: break-all;
         }
-        .item-title { font-weight: 500; font-size: 0.95rem; }
-        .item-meta { color: var(--text-dim); font-size: 0.8rem; }
-        
-        /* Actions */
-        .actions {
-            display: flex;
-            gap: 0.75rem;
-            margin-top: 1.5rem;
+
+        /* Iframe Container */
+        .iframe-container {
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            background: white;
         }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Buttons */
         .btn {
             background: var(--accent);
-            color: #0f172a;
+            color: #000;
             border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 10px;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            justify-content: center;
             gap: 0.5rem;
-            transition: opacity 0.2s;
-            font-size: 0.95rem;
-            width: auto;
+            font-size: 0.9rem;
         }
         .btn:hover { opacity: 0.9; }
         .btn-outline {
@@ -152,177 +258,380 @@
             border: 1px solid var(--border);
             color: var(--text);
         }
-        .btn-outline:hover {
-            border-color: var(--text);
-            background: rgba(255,255,255,0.03);
+        .btn-outline:hover { border-color: var(--text); background: rgba(255,255,255,0.05); }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
         }
-        
-        /* Stats */
-        .stat-row {
-            display: flex;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-            overflow-x: auto;
-            padding-bottom: 0.5rem; /* Scrollbar space */
-        }
-        .stat {
+        .modal {
             background: var(--panel);
-            padding: 1.25rem;
-            border-radius: 12px;
-            flex: 1;
-            min-width: 140px; /* Prevent squishing on mobile */
-            text-align: center;
             border: 1px solid var(--border);
+            width: 500px;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
-        .stat-val {
-            font-size: 2rem;
-            font-weight: 700;
-            font-family: 'Space Grotesk', sans-serif;
-            color: var(--text);
-        }
-        .stat-label {
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            font-size: 0.7rem;
-            margin-top: 0.4rem;
+        input, textarea {
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            padding: 0.8rem;
+            border-radius: 6px;
+            color: white;
+            margin-bottom: 1rem;
+            font-family: inherit;
         }
 
-        /* Mobile Optimization */
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-            header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-            header .btn {
-                width: 100%;
-            }
-            .grid {
-                grid-template-columns: 1fr;
-            }
-            .stat-row {
-                gap: 1rem;
-            }
-            .stat-val {
-                font-size: 1.75rem;
-            }
-            .card {
-                padding: 1.25rem;
-            }
-            .btn {
-                width: 100%;
-                padding: 1rem; /* Larger touch target */
-            }
-        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <nav>
+        <div class="logo">🏛️</div>
+        
+        <div class="nav-item active" onclick="switchTab('brain', this)">
+            <div class="nav-icon">🧠</div>
+            <div class="nav-label">Brain</div>
+        </div>
+        
+        <div class="nav-item" onclick="switchTab('muscle', this)">
+            <div class="nav-icon">💪</div>
+            <div class="nav-label">Muscle</div>
+        </div>
+        
+        <div class="nav-item" onclick="switchTab('knowledge', this)">
+            <div class="nav-icon">📚</div>
+            <div class="nav-label">Library</div>
+        </div>
+
+        <div class="nav-item" onclick="switchTab('treasury', this)">
+            <div class="nav-icon">💰</div>
+            <div class="nav-label">Treasury</div>
+        </div>
+
+        <div class="nav-item" onclick="switchTab('mission', this)">
+            <div class="nav-icon">🚀</div>
+            <div class="nav-label">Mission</div>
+        </div>
+    </nav>
+
+    <main>
         <header>
-            <div>
-                <h1>🏛️ THE COUNCIL</h1>
-                <div class="subtitle">God Mode Control Center • {{ timestamp }}</div>
-            </div>
-            <div>
-                <a href="/librarian" target="_blank" class="btn">
-                    📚 Manage Library
-                </a>
-                <a href="/research" target="_blank" class="btn btn-outline" style="margin-left: 0.5rem;">
-                    🌐 Public Site
-                </a>
+            <h1>GOD MODE <span style="color:var(--text-dim); font-size:1rem; font-weight:400;">// OPERATING SYSTEM</span></h1>
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-label">Active Missions</span>
+                    <span class="stat-val" id="stat-intents">--</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Agents Deployed</span>
+                    <span class="stat-val" id="stat-claims">--</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">System Status</span>
+                    <span class="stat-val" style="color:var(--green)">ONLINE</span>
+                </div>
             </div>
         </header>
 
-        <div class="stat-row">
-            <div class="stat">
-                <div class="stat-val">{{ stats.intents }}</div>
-                <div class="stat-label">Active Missions</div>
+        <div class="content">
+            
+            <!-- BRAIN (Strategy Board) -->
+            <div id="brain" class="view active">
+                <div style="display:flex; justify-content:flex-end; margin-bottom:1rem;">
+                    <button class="btn" onclick="openModal()">+ Dispatch New Mission</button>
+                </div>
+                <div class="kanban-board">
+                    <div class="kanban-col">
+                        <div class="kanban-header" style="border-bottom-color: #3b82f6; color: #3b82f6;">📥 Intent (Backlog)</div>
+                        <div class="kanban-body" id="col-intent"></div>
+                    </div>
+                    <div class="kanban-col">
+                        <div class="kanban-header" style="border-bottom-color: #eab308; color: #eab308;">⚙️ Building (Active)</div>
+                        <div class="kanban-body" id="col-building"></div>
+                    </div>
+                    <div class="kanban-col">
+                        <div class="kanban-header" style="border-bottom-color: #22c55e; color: #22c55e;">✅ Deployed (Live)</div>
+                        <div class="kanban-body" id="col-deployed"></div>
+                    </div>
+                </div>
             </div>
-            <div class="stat">
-                <div class="stat-val">{{ stats.claims }}</div>
-                <div class="stat-label">Agents Working</div>
+
+            <!-- MUSCLE (System Graph) -->
+            <div id="muscle" class="view">
+                <div class="card" style="height:100%;">
+                    <div class="card-header">
+                        <div class="card-title">System Topology</div>
+                        <span class="status-badge status-active">Live</span>
+                    </div>
+                    <div style="flex:1; display:flex; justify-content:center; align-items:center;">
+                        <svg id="system-graph" width="800" height="600" style="width:100%; height:100%;"></svg>
+                    </div>
+                </div>
             </div>
-            <div class="stat">
-                <div class="stat-val">{{ stats.papers }}</div>
-                <div class="stat-label">Papers Indexed</div>
+
+            <!-- KNOWLEDGE (Research) -->
+            <div id="knowledge" class="view">
+                <div class="grid">
+                    <div class="card col-4">
+                        <div class="card-header">
+                            <div class="card-title">Librarian Status</div>
+                        </div>
+                        <div style="text-align:center; padding:2rem;">
+                            <div style="font-size:3rem; font-weight:bold;" id="pending-count">0</div>
+                            <div style="color:var(--text-dim); margin-bottom:2rem;">Papers Pending Review</div>
+                            <a href="/librarian" target="_blank" class="btn" style="width:100%; justify-content:center;">Open Librarian Console</a>
+                        </div>
+                    </div>
+                    <div class="card col-8">
+                        <div class="card-header">
+                            <div class="card-title">Recent Papers</div>
+                            <a href="/research" target="_blank" class="btn-outline" style="font-size:0.8rem; padding:0.4rem 0.8rem; border-radius:6px; text-decoration:none;">View Public Site ↗</a>
+                        </div>
+                        <ul class="item-list" id="recent-papers">
+                            <li class="item" style="justify-content:center; color:var(--text-dim);">Loading index...</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
+
+            <!-- TREASURY (Financials) -->
+            <div id="treasury" class="view">
+                <div class="grid">
+                    <div class="card col-4">
+                        <div class="card-header">
+                            <div class="card-title">Total Treasury Value</div>
+                        </div>
+                        <div class="treasury-val" id="treasury-total">$0.00</div>
+                        <div class="wallet-address" id="treasury-wallet">Checking wallet...</div>
+                        <div style="margin-top:1.5rem; display:flex; gap:0.5rem;">
+                            <button class="btn" style="flex:1">Deposit</button>
+                            <button class="btn-outline" style="flex:1">History</button>
+                        </div>
+                    </div>
+                    <div class="card col-8">
+                        <div class="card-header">
+                            <div class="card-title">Asset Allocation</div>
+                        </div>
+                        <div class="item-list" id="asset-list">
+                            <!-- Assets injected here -->
+                            <div class="item">
+                                <div>Fetching asset data...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MISSION CONTROL (External) -->
+            <div id="mission" class="view">
+                <div style="height:100%; display:flex; flex-direction:column; gap:1rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h2 style="margin:0; font-size:1.2rem;">Mission Control Uplink</h2>
+                        <a href="http://localhost:8080" target="_blank" class="btn-outline">Open in New Tab ↗</a>
+                    </div>
+                    <div class="iframe-container">
+                        <iframe src="http://localhost:8080" title="Mission Control"></iframe>
+                    </div>
+                </div>
+            </div>
+
         </div>
+    </main>
 
-        <div class="grid">
-            <!-- BRAIN -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">🧠 Strategy (Brain)</div>
-                    <span class="status-badge {{ 'status-active' if stats.intents > 0 else 'status-idle' }}">
-                        {{ 'Active' if stats.intents > 0 else 'Idle' }}
-                    </span>
-                </div>
-                <ul class="item-list">
-                    {% for intent in intents %}
-                    <li class="item">
-                        <div class="item-title">{{ intent.name }}</div>
-                        <div class="item-meta">Priority: {{ intent.score }}</div>
-                    </li>
-                    {% else %}
-                    <li class="item" style="justify-content:center; color:var(--text-dim);">No active missions</li>
-                    {% endfor %}
-                </ul>
-                <div class="actions">
-                    <button class="btn btn-outline" style="width:100%" onclick="dispatchMission()">+ Dispatch New Mission</button>
-                </div>
-            </div>
-
-            <!-- MUSCLE -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">💪 Execution (Muscle)</div>
-                    <span class="status-badge {{ 'status-active' if stats.claims > 0 else 'status-idle' }}">
-                        {{ 'Working' if stats.claims > 0 else 'Resting' }}
-                    </span>
-                </div>
-                <ul class="item-list">
-                    {% for claim in claims %}
-                    <li class="item">
-                        <div class="item-title">{{ claim.name }}</div>
-                        <div class="item-meta">Active</div>
-                    </li>
-                    {% else %}
-                    <li class="item" style="justify-content:center; color:var(--text-dim);">All agents idle</li>
-                    {% endfor %}
-                </ul>
-            </div>
-
-            <!-- KNOWLEDGE -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">🛡️ Knowledge (Immunity)</div>
-                    <span class="status-badge status-active">Secure</span>
-                </div>
-                <div style="text-align:center; padding: 1rem 0;">
-                    <p style="color:var(--text-dim); margin-bottom:1.5rem; font-size: 0.9rem;">
-                        Review incoming research, classify documents, and synthesize new insights.
-                    </p>
-                    <a href="/librarian" class="btn btn-outline" style="width:100%">Manage Library →</a>
-                </div>
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal">
+            <h2>Dispatch New Mission</h2>
+            <input type="text" id="m-name" placeholder="Mission Name (e.g. project-alpha)">
+            <textarea id="m-desc" rows="4" placeholder="Objective & Outcomes..."></textarea>
+            <div style="display:flex; justify-content:flex-end; gap:1rem;">
+                <button class="btn-outline" onclick="closeModal()">Cancel</button>
+                <button class="btn" onclick="submitMission()">Dispatch Agent</button>
             </div>
         </div>
     </div>
 
     <script>
-        function dispatchMission() {
-            const name = prompt("Mission Name (e.g. optimize-db):");
-            if(name) {
-                fetch('/api/dispatch', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({name: name})
-                }).then(() => window.location.reload());
+        // --- UI LOGIC ---
+        function switchTab(id, el) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function openModal() { document.getElementById('modal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('modal').style.display = 'none'; }
+
+        // --- DATA LOGIC ---
+        const API_BASE = '';
+
+        async function init() {
+            const res = await fetch('/api/data');
+            const data = await res.json();
+            updateUI(data);
+            
+            // Fetch Treasury specific data
+            const tres = await fetch('/api/treasury');
+            const tData = await tres.json();
+            updateTreasury(tData);
+
+            // Start WebSocket
+            connectWS();
+        }
+
+        function updateUI(data) {
+            // Stats
+            document.getElementById('stat-intents').innerText = data.stats.intents;
+            document.getElementById('stat-claims').innerText = data.stats.claims;
+            document.getElementById('pending-count').innerText = data.stats.pending_reviews;
+
+            // Kanban
+            renderKanban(data.kanban);
+
+            // Graph
+            renderGraph(data.graph);
+        }
+
+        function updateTreasury(data) {
+            if(!data || Object.keys(data).length === 0) {
+                document.getElementById('treasury-total').innerText = "$0.00";
+                document.getElementById('treasury-wallet').innerText = "No active treasury connected.";
+                document.getElementById('asset-list').innerHTML = '<div class="item">No assets found.</div>';
+                return;
+            }
+            
+            // Mock data rendering if structure is unknown, adapt as needed
+            const total = data.total_value_usd || 0;
+            document.getElementById('treasury-total').innerText = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(total);
+            document.getElementById('treasury-wallet').innerText = data.wallet_address || "N/A";
+            
+            const list = document.getElementById('asset-list');
+            if (data.assets && data.assets.length) {
+                list.innerHTML = data.assets.map(a => `
+                    <div class="item">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <div style="font-weight:bold;">${a.symbol}</div>
+                            <div style="color:var(--text-dim); font-size:0.8rem;">${a.name}</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-weight:bold;">${a.balance}</div>
+                            <div style="color:var(--green); font-size:0.8rem;">$${a.value_usd}</div>
+                        </div>
+                    </div>
+                `).join('');
             }
         }
+
+        function renderKanban(board) {
+            const createCard = (item) => `
+                <div class="task-card">
+                    <div style="font-weight:bold; margin-bottom:0.5rem;">${item.title}</div>
+                    <div style="font-size:0.8rem; color:var(--text-dim); margin-bottom:0.5rem; line-height:1.4;">${item.desc}</div>
+                    <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:var(--accent);">
+                        <span>${item.id}</span>
+                        <span>${item.score} pts</span>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('col-intent').innerHTML = board.intent.map(createCard).join('');
+            document.getElementById('col-building').innerHTML = board.building.map(createCard).join('');
+            document.getElementById('col-deployed').innerHTML = board.deployed.map(createCard).join(''); // Assuming you populate this
+        }
+
+        function renderGraph(data) {
+            const svg = document.getElementById('system-graph');
+            svg.innerHTML = ''; // Clear
+            
+            // Simple visualization
+            const width = svg.clientWidth || 800;
+            const height = svg.clientHeight || 600;
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const radius = Math.min(width, height) * 0.3;
+
+            // Core
+            const core = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            core.setAttribute("cx", centerX);
+            core.setAttribute("cy", centerY);
+            core.setAttribute("r", 40);
+            core.setAttribute("fill", "rgba(255,255,255,0.05)");
+            core.setAttribute("stroke", "var(--accent)");
+            svg.appendChild(core);
+
+            // Nodes
+            data.nodes.forEach((n, i) => {
+                const angle = (i / data.nodes.length) * Math.PI * 2;
+                const x = centerX + Math.cos(angle) * radius;
+                const y = centerY + Math.sin(angle) * radius;
+                
+                // Link
+                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                line.setAttribute("x1", centerX);
+                line.setAttribute("y1", centerY);
+                line.setAttribute("x2", x);
+                line.setAttribute("y2", y);
+                line.setAttribute("stroke", "rgba(255,255,255,0.1)");
+                svg.appendChild(line);
+
+                // Node
+                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                circle.setAttribute("cx", x);
+                circle.setAttribute("cy", y);
+                circle.setAttribute("r", 15);
+                circle.setAttribute("fill", n.group === 'core' ? 'var(--accent)' : 'var(--blue)');
+                
+                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                text.setAttribute("x", x);
+                text.setAttribute("y", y + 30);
+                text.setAttribute("text-anchor", "middle");
+                text.setAttribute("fill", "var(--text-dim)");
+                text.setAttribute("font-size", "10");
+                text.textContent = n.id;
+
+                svg.appendChild(circle);
+                svg.appendChild(text);
+            });
+        }
+
+        function connectWS() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const ws = new WebSocket(`${protocol}//${window.location.host}/ws`);
+            
+            ws.onmessage = (event) => {
+                const msg = JSON.parse(event.data);
+                if (msg.type === 'update') updateUI(msg.data);
+                if (msg.type === 'treasury_update') updateTreasury(msg.data);
+            };
+            
+            ws.onclose = () => setTimeout(connectWS, 3000);
+        }
+
+        function submitMission() {
+            const name = document.getElementById('m-name').value;
+            const desc = document.getElementById('m-desc').value;
+            if(!name) return;
+
+            fetch('/api/dispatch', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ name, desc })
+            });
+            closeModal();
+            document.getElementById('m-name').value = '';
+            document.getElementById('m-desc').value = '';
+        }
+
+        // Go
+        init();
     </script>
 </body>
 </html>

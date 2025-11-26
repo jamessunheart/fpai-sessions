@@ -43,6 +43,7 @@
       color: var(--text);
       max-width: 600px;
       margin: 0 auto;
+      line-height: 1.6;
     }
     .nav-back {
       display: inline-block;
@@ -53,9 +54,45 @@
     }
     .nav-back:hover { text-decoration: underline; }
 
-    /* Controls */
+    /* Coming Soon Section */
+    .coming-soon {
+      text-align: center;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4rem 2rem;
+      margin-top: 2rem;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+    .coming-soon h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: var(--accent);
+    }
+    .coming-soon p {
+      font-size: 1.1rem;
+      color: var(--text);
+      max-width: 500px;
+      margin: 0 auto 2rem auto;
+    }
+    .pulse-dot {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      background: var(--green);
+      border-radius: 50%;
+      margin-right: 8px;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+    }
+
+    /* Controls (Hidden for now) */
     .controls {
-      display: flex;
+      display: none; 
       gap: 1rem;
       margin-bottom: 2rem;
       justify-content: center;
@@ -74,9 +111,9 @@
       border-color: var(--blue);
     }
 
-    /* Grid */
+    /* Grid (Hidden for now) */
     .papers-grid {
-      display: grid;
+      display: none;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 1.5rem;
     }
@@ -159,6 +196,18 @@
       <p class="subtitle">Exploring the intersection of AI, regenerative economics, and human potential.</p>
     </header>
 
+    <div class="coming-soon">
+      <h2><span class="pulse-dot"></span>Library Under Review</h2>
+      <p>
+        Our autonomous research agent is currently vetting hundreds of documents for public release. 
+        We are committed to sharing knowledge that aids the greater good while ensuring trust and alignment.
+      </p>
+      <p>
+        <em>Check back soon for access to the full archives.</em>
+      </p>
+    </div>
+
+    <!-- Hidden Components for future activation -->
     <div class="controls">
       <input type="text" id="search" placeholder="Search papers..." onkeyup="filterPapers()" />
     </div>
@@ -168,7 +217,9 @@
     </div>
   </div>
 
+  <!-- Script kept but inactive for now -->
   <script>
+    /*
     let allPapers = [];
     const grid = document.getElementById('papers-grid');
 
@@ -219,7 +270,7 @@
       });
       renderPapers(filtered);
     }
+    */
   </script>
 </body>
 </html>
-

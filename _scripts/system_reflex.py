@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 System Reflex
-Reads the Nervous System (PULSE.json) and triggers automated responses (Missions).
+Reads the Nervous System (PULSE.json + ASSEMBLY.json) and triggers automated responses (Missions).
 Acts as the autonomic nervous system, maintaining homeostasis and seizing opportunity.
 """
 import json
@@ -14,37 +14,34 @@ from pathlib import Path
 ROOT_DIR = Path(__file__).parent.parent.absolute()
 STATE_DIR = ROOT_DIR / "core/STATE"
 PULSE_FILE = STATE_DIR / "PULSE.json"
+ASSEMBLY_FILE = STATE_DIR / "ASSEMBLY.json"
 MISSIONS_DIR = ROOT_DIR / "missions"
 GENERATOR_SCRIPT = ROOT_DIR / "_scripts/generate_mission_spec.py"
 
-def load_pulse():
-    if not PULSE_FILE.exists():
-        print("⚠️ No Pulse found. Skipping reflex.")
-        return None
+def load_json(path):
+    if not path.exists():
+        return {}
     try:
-        with open(PULSE_FILE, 'r') as f:
-            return json.load(f)
-    except Exception as e:
-        print(f"❌ Error reading Pulse: {e}")
-        return None
+        return json.loads(path.read_text(encoding='utf-8'))
+    except:
+        return {}
 
 def mission_exists(title_fragment):
-    """Checks if a mission with a similar title already exists to avoid spam."""
+    """Checks if a mission with this title already exists (active or completed)."""
     if not MISSIONS_DIR.exists():
         return False
-    for f in MISSIONS_DIR.glob("*.md"):
-        if title_fragment.lower() in f.name.lower().replace("-", " "):
+    for file in MISSIONS_DIR.glob("*.md"):
+        if title_fragment.lower().replace(" ", "-") in file.name.lower():
             return True
     return False
 
 def trigger_mission(title, goal, security, complexity, context, deliverables, steps):
-    """Calls the spec generator to spawn a new mission."""
+    """Calls the generator script to create a new mission."""
     if mission_exists(title):
-        print(f"⏸ Mission '{title}' already active. Skipping.")
+        print(f"⏭️  Mission '{title}' already exists. Skipping.")
         return
 
-    print(f"⚡ TRIGGERING MISSION: {title}")
-    
+    print(f"⚡ TRIGGERING REFLEX: {title}")
     cmd = [
         str(GENERATOR_SCRIPT),
         "--title", title,
@@ -55,21 +52,59 @@ def trigger_mission(title, goal, security, complexity, context, deliverables, st
         "--deliverables", *deliverables,
         "--steps", *steps
     ]
-    
     try:
         subprocess.run(cmd, check=True)
+        print(f"✅ Mission Created: {title}")
     except subprocess.CalledProcessError as e:
         print(f"❌ Failed to trigger mission: {e}")
 
-def check_reflexes(pulse):
-    """Evaluates state and fires reflexes."""
+def check_assembly_health(assembly):
+    """Checks for blockages in the assembly line."""
     
+    # 1. TRAFFIC BLINDNESS
+    if assembly.get("traffic", {}).get("status") == "⚪ Unknown":
+        trigger_mission(
+            title="Install Traffic Probe",
+            goal="Enable visibility into inbound traffic sources.",
+            security="low",
+            complexity="simple",
+            context="The assembly line is blind to traffic. We need to install a tracker (PostHog/Google Analytics/Log Analyzer).",
+            deliverables=["Analytics Script Installed", "Dashboard Link"],
+            steps=["Select analytics provider", "Add script to layout.tsx", "Verify data flow"]
+        )
+
+    # 2. STOREFRONT DOWN
+    storefront_status = assembly.get("storefront", {}).get("status", "")
+    if "🔴" in storefront_status or "Error" in storefront_status:
+         trigger_mission(
+            title="Emergency Storefront Repair",
+            goal="Restore public access to fullpotential.com immediately.",
+            security="high",
+            complexity="moderate",
+            context=f"Storefront reported status: {storefront_status}. Traffic is hitting a wall.",
+            deliverables=["Root Cause Analysis", "Fix Deployed", "200 OK Verification"],
+            steps=["Check Nginx logs", "Check Next.js service status", "Restart services", "Verify with curl"]
+        )
+
+    # 3. FULFILLMENT BLOCKED
+    fulfillment = assembly.get("fulfillment", {})
+    if "Blocked" in fulfillment.get("status", ""):
+        trigger_mission(
+            title="Unblock Fulfillment SMTP",
+            goal="Restore email delivery capabilities.",
+            security="medium",
+            complexity="moderate",
+            context=f"Blocker detected: {fulfillment.get('blocker')}. Customers are paying but not receiving products.",
+            deliverables=["SMTP Credentials Injected", "Test Email Sent"],
+            steps=["Obtain SMTP Connection String", "Update /etc/fpai/env file", "Restart Service", "Run Test Order"]
+        )
+
+def check_business_reflexes(pulse):
+    """Evaluates business state (Revenue/Missions)."""
     revenue = pulse.get("revenue", {})
     missions = pulse.get("missions", {})
-    timestamp = pulse.get("timestamp")
     
-    # 1. SURVIVAL REFLEX: No Revenue > 24h (Simulated check, logic can be refined)
-    # For v1, we just check if revenue is exactly 0 and we haven't panicked yet
+    # 1. SURVIVAL REFLEX: No Revenue > 24h
     if revenue.get("total_revenue", 0) == 0:
         trigger_mission(
             title="First Sale Traffic",
@@ -82,7 +117,6 @@ def check_reflexes(pulse):
         )
 
     # 2. GROWTH REFLEX: Momentum Detected
-    # If we have sales but low open missions, scale up
     if revenue.get("total_revenue", 0) > 0 and missions.get("open", 0) < 3:
         trigger_mission(
             title="Scale Ad Spend",
@@ -94,15 +128,19 @@ def check_reflexes(pulse):
             steps=["Analyze top traffic source", "Create creative assets", "Launch test campaign"]
         )
 
-    # 3. MAINTENANCE REFLEX: High Workload
-    if missions.get("open", 0) > 10:
-        print("⚠️ High workload detected. Suppressing new growth missions.")
-
 def main():
     print("🧠 System Reflex Active...")
-    pulse = load_pulse()
+    
+    # Load States
+    pulse = load_json(PULSE_FILE)
+    assembly = load_json(ASSEMBLY_FILE)
+    
+    # Check Reflexes
+    if assembly:
+        check_assembly_health(assembly)
+    
     if pulse:
-        check_reflexes(pulse)
+        check_business_reflexes(pulse)
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,9 @@
+{
+  "claimed_by": "session-1763926653",
+  "claimed_at": "2025-11-23T21:21:23Z",
+  "resource_type": "mission",
+  "resource_name": "M007_i_match",
+  "duration_hours": 4,
+  "expires_at": "2025-11-24T01:21:23Z",
+  "allow_coordination": true
+}
