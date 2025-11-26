@@ -1050,13 +1050,37 @@ def api_health():
     })
 
 
-# Legacy route compatibility (when accessed directly on port 8888)
+# Root route - serve dashboard directly (no redirect!)
 @app.route('/', methods=['GET', 'POST'])
-def legacy_root():
-    """Show dashboard at root too (for direct access)"""
+def root():
+    """Serve dashboard at root (for nginx proxy)"""
     if request.method == 'POST':
         return setup()
-    return dashboard()
+    # Return dashboard directly - NO REDIRECT to avoid loops
+    stats = get_api_gateway_stats()
+    services_online = 0
+    for key, svc in SERVICES.items():
+        try:
+            import socket
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(0.5)
+            result = sock.connect_ex(('127.0.0.1', svc['port']))
+            sock.close()
+            if result == 0:
+                SERVICES[key]['status'] = 'healthy'
+                services_online += 1
+            else:
+                SERVICES[key]['status'] = 'offline'
+        except:
+            SERVICES[key]['status'] = 'offline'
+    
+    return render_template_string(
+        ADMIN_TEMPLATE,
+        stats=stats,
+        services=SERVICES,
+        services_online=services_online,
+        services_total=len(SERVICES),
+    )
 
 
 # ============================================================
