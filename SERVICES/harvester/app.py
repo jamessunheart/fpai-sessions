@@ -404,6 +404,41 @@ async def home():
         <script>
             const BASE_PATH = window.location.pathname.startsWith('/harvester') ? '/harvester' : '';
 
+            // Initialize form from URL params
+            window.onload = function() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const missionId = urlParams.get('mission');
+                const missionTitle = urlParams.get('title');
+                
+                if (missionId) {
+                    const select = document.getElementById('mission');
+                    
+                    // Check if option exists, if not add it
+                    let found = false;
+                    for (let i = 0; i < select.options.length; i++) {
+                        if (select.options[i].value === missionId) {
+                            select.selectedIndex = i;
+                            found = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!found) {
+                        const option = document.createElement('option');
+                        option.value = missionId;
+                        option.text = missionTitle ? `${missionId}: ${missionTitle}` : missionId;
+                        option.selected = true;
+                        // Insert after default option
+                        select.add(option, select.options[1]);
+                    }
+                    
+                    // If mission is present, assume submission intent
+                    const statusSelect = document.getElementById('status');
+                    statusSelect.value = 'submission';
+                    toggleRepoField();
+                }
+            };
+
             function toggleRepoField() {
                 const status = document.getElementById('status').value;
                 const repoGroup = document.getElementById('repoGroup');

@@ -3,176 +3,308 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Live Missions | Full Potential AI</title>
+  <title>Mission Control | Full Potential AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: radial-gradient(circle at top, #0f172a, #020617);
-      --panel: rgba(15,23,42,0.88);
-      --border: rgba(255,255,255,0.12);
+      --bg: #020617;
+      --bg-secondary: #0f172a;
+      --card-bg: rgba(30, 41, 59, 0.5);
+      --border: rgba(255,255,255,0.1);
       --text: #cbd5f5;
-      --accent: #fbbf24;
-      --blue: #38bdf8;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      
+      --p0: #ef4444;
+      --p1: #f97316;
+      --p2: #eab308;
+      --p3: #22c55e;
     }
+    
+    * { box-sizing: border-box; }
+
     body {
-      font-family: 'Space Grotesk', 'Inter', Arial, sans-serif;
-      background: var(--bg);
-      color: #f8fafc;
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #020617 60%);
+      color: var(--text);
       min-height: 100vh;
       margin: 0;
       padding: 2rem 1.5rem;
     }
+
     .container {
-      max-width: 1200px;
+      max-width: 1400px;
       margin: 0 auto;
     }
+    
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 3rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    
     h1 {
+      font-family: 'Space Grotesk', sans-serif;
       font-size: 2.5rem;
-      margin-bottom: 0.5rem;
+      margin: 0;
+      letter-spacing: -0.02em;
+      background: linear-gradient(90deg, #fff, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .back-link {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: opacity 0.2s;
+    }
+    .back-link:hover { opacity: 0.8; }
+
+    /* Grid */
+    .mission-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    /* Card */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s, border-color 0.2s;
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .mission-id {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      color: var(--text-muted);
+      font-size: 0.875rem;
       letter-spacing: 0.05em;
     }
-    p {
-      font-size: 1.1rem;
-      line-height: 1.7;
-      color: var(--text);
-      margin-bottom: 2rem;
-    }
-    .back-link {
-      display: inline-block;
-      color: var(--blue);
-      text-decoration: none;
-      margin-bottom: 2rem;
-      font-size: 1rem;
-    }
-    .back-link:hover {
-      text-decoration: underline;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: var(--panel);
-      border-radius: 12px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-    }
-    th, td {
-      border-bottom: 1px solid var(--border);
-      padding: 1rem;
-      text-align: left;
-      font-size: 0.95rem;
-      font-weight: 400;
-    }
-    th {
-      background: rgba(15, 23, 42, 0.6);
+
+    .badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      font-size: 0.85rem;
-      color: #f8fafc;
+    }
+    
+    .badge-p0 { background: rgba(239, 68, 68, 0.15); color: var(--p0); border: 1px solid rgba(239, 68, 68, 0.3); }
+    .badge-p1 { background: rgba(249, 115, 22, 0.15); color: var(--p1); border: 1px solid rgba(249, 115, 22, 0.3); }
+    .badge-p2 { background: rgba(234, 179, 8, 0.15); color: var(--p2); border: 1px solid rgba(234, 179, 8, 0.3); }
+    .badge-p3 { background: rgba(34, 197, 94, 0.15); color: var(--p3); border: 1px solid rgba(34, 197, 94, 0.3); }
+    
+    h2 {
+      font-size: 1.25rem;
+      margin: 0 0 0.5rem 0;
+      line-height: 1.4;
       font-weight: 600;
     }
-    td {
-      color: var(--text);
+
+    .principle-badge {
+      display: inline-block;
+      background: rgba(56, 189, 248, 0.1);
+      color: var(--accent);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      margin-bottom: 1rem;
     }
-    .priority-p0 { color: #f87171; font-weight: 600; }
-    .priority-p1 { color: #fb923c; font-weight: 600; }
-    .priority-p2 { color: #fbbf24; font-weight: 600; }
-    .priority-default { color: var(--text); }
-    .status-open { color: #4ade80; }
-    .loading {
-      text-align: center;
-      padding: 3rem;
-      color: var(--text);
+
+    .impact {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      flex-grow: 1;
+      margin-bottom: 1.5rem;
     }
-    .error {
+
+    .footer {
+      margin-top: auto;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .owner {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .avatar {
+      width: 24px;
+      height: 24px;
+      background: #334155;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+
+    .action-btn {
+      background: var(--accent);
+      color: #0f172a;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      transition: all 0.2s;
+    }
+    
+    .action-btn:hover {
+      background: #7dd3fc;
+      transform: translateY(-1px);
+    }
+
+    .loading, .error {
       text-align: center;
-      padding: 3rem;
-      color: #f87171;
+      padding: 4rem;
+      color: var(--text-muted);
+      font-family: 'Space Grotesk';
+    }
+    
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 4rem;
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1px dashed var(--border);
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <a href="/" class="back-link">← Back to Home</a>
+    <div class="header">
+      <div>
+        <h1>Mission Control</h1>
+        <div class="subtitle">Live tactical feed from the Nervous System</div>
+      </div>
+      <a href="/" class="back-link">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        Return to Base
+      </a>
+    </div>
     
-    <h1>Live Mission Board</h1>
-    <p>Real-time missions from the Nervous System. All OPEN missions are listed here.</p>
-    
-    <div id="mission-table-wrapper" class="loading">
-      Loading missions...
+    <div id="mission-grid" class="mission-grid">
+      <div class="loading">Establishing Uplink...</div>
     </div>
   </div>
   
   <script>
-    const wrapper = document.getElementById('mission-table-wrapper');
+    const grid = document.getElementById('mission-grid');
     
-    // Fetch from the dashboard API or static file
+    // Fetch from static JSON
     fetch('/static/missions.json')
       .then(resp => {
-        if (!resp.ok) throw new Error('Failed to load missions');
+        if (!resp.ok) throw new Error('Uplink failed');
         return resp.json();
       })
-      .then(payload => renderTable(payload.missions || []))
+      .then(payload => renderGrid(payload.missions || []))
       .catch(error => {
-        // Fallback to loading local file if API fails
-        fetch('/static/missions.json')
-            .then(resp => resp.json())
-            .then(payload => renderTable(payload.missions || []))
-            .catch(err => {
-                wrapper.className = 'error';
-                wrapper.textContent = 'Unable to load missions. Please try again later.';
-                console.error('Error:', error);
-            });
+        console.error('Error:', error);
+        grid.innerHTML = '<div class="error">⚠ SIGNAL LOST. Unable to retrieve mission feed.</div>';
       });
 
-    function renderTable(missions) {
-      if (!missions || missions.length === 0) {
-        wrapper.innerHTML = '<p class="error">No missions found.</p>';
-        return;
-      }
-      
+    function renderGrid(missions) {
       // Filter for OPEN missions
       const openMissions = missions.filter(m => m.status === 'OPEN');
       
       if (openMissions.length === 0) {
-        wrapper.innerHTML = '<p class="loading">No open missions at this time.</p>';
+        grid.innerHTML = `
+          <div class="empty-state">
+            <h3>No Active Missions</h3>
+            <p>All tactical objectives have been cleared. Stand by for new directives.</p>
+          </div>
+        `;
         return;
       }
       
-      const rows = openMissions
-        .map(m => {
-          const priorityClass = m.priority
-            ? `priority-${m.priority.toLowerCase()}`
-            : 'priority-default';
-          const owner = m.owner || 'Unassigned';
-          const principle = m.principle || '-';
-          
-          return `
-            <tr>
-              <td><strong>${m.id}</strong></td>
-              <td>${m.title}</td>
-              <td class="${priorityClass}">${m.priority || 'Normal'}</td>
-              <td>${owner}</td>
-              <td>${principle}</td>
-            </tr>
-          `;
-        })
-        .join('');
-      
-      wrapper.innerHTML = `
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Mission</th>
-              <th>Priority</th>
-              <th>Owner</th>
-              <th>Principle</th>
-            </tr>
-          </thead>
-          <tbody>${rows}</tbody>
-        </table>
-      `;
+      grid.innerHTML = openMissions.map(m => {
+        // Determine priority class
+        let pClass = 'badge-p2';
+        if (m.priority && m.priority.includes('P0')) pClass = 'badge-p0';
+        if (m.priority && m.priority.includes('P1')) pClass = 'badge-p1';
+        if (m.priority && m.priority.includes('P3')) pClass = 'badge-p3';
+        
+        // Format Priority Label (strip extra text)
+        const pLabel = m.priority ? m.priority.split(' ')[0] : 'NORMAL';
+        
+        // Encode for URL
+        const claimUrl = `/services/harvester?mission=${encodeURIComponent(m.id)}&title=${encodeURIComponent(m.title)}`;
+        
+        // Initial (first letter of owner)
+        const ownerName = m.owner || '?';
+        const initial = ownerName.charAt(0).toUpperCase();
+
+        return `
+          <div class="card">
+            <div class="card-header">
+              <span class="mission-id">${m.id}</span>
+              <span class="badge ${pClass}">${pLabel}</span>
+            </div>
+            
+            <h2>${m.title.replace(/Mission: /g, '').replace(/\(M\d+\)/g, '')}</h2>
+            
+            ${m.principle ? `<div class="principle-badge">${m.principle}</div>` : ''}
+            
+            <p class="impact">
+              ${m.regenerative_impact || 'No impact data available.'}
+            </p>
+            
+            <div class="footer">
+              <div class="owner">
+                <div class="avatar">${initial}</div>
+                <span>${ownerName.split('/')[0]}</span>
+              </div>
+              <a href="${claimUrl}" class="action-btn">CLAIM & EXECUTE →</a>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
   </script>
 </body>
 </html>
-
