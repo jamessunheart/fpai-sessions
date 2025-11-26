@@ -49,17 +49,18 @@ GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
 
 
 class AIModel(Enum):
-    # Claude - latest models
-    CLAUDE = "claude-sonnet-4-20250514"
-    CLAUDE_HAIKU = "claude-3-5-haiku-20241022"
+    # Claude - latest models (Nov 2024)
+    CLAUDE_OPUS = "claude-opus-4-20250514"  # Most capable
+    CLAUDE_SONNET = "claude-sonnet-4-20250514"  # Balanced
+    CLAUDE_HAIKU = "claude-3-5-haiku-20241022"  # Fast
     # OpenAI - latest models
-    GPT4 = "gpt-4-turbo"
-    GPT4O = "gpt-4o"
-    O1 = "o1-preview"  # For complex reasoning
-    # Gemini - latest 2.5 models (Dec 2024)
-    GEMINI = "models/gemini-2.5-flash"  # Fast, great for most tasks
-    GEMINI_PRO = "models/gemini-2.5-pro"  # Best quality
-    GEMINI_THINKING = "models/gemini-2.0-flash-thinking-exp"  # For complex reasoning
+    GPT4O = "gpt-4o"  # Best overall
+    GPT4_TURBO = "gpt-4-turbo"
+    O1 = "o1-preview"  # Complex reasoning
+    O3_MINI = "o3-mini"  # Fast reasoning
+    # Gemini - auto-detected (see AIClient)
+    GEMINI_FLASH = "gemini-flash"  # Fast
+    GEMINI_PRO = "gemini-pro"  # Best quality
 
 
 class TaskStatus(Enum):
@@ -126,10 +127,35 @@ class AIClient:
             try:
                 import google.generativeai as genai
                 genai.configure(api_key=GOOGLE_API_KEY)
-                # Use Gemini 2.5 Flash (latest and fast)
-                self.gemini_model = genai.GenerativeModel('models/gemini-2.5-flash')
-                self.gemini_pro_model = genai.GenerativeModel('models/gemini-2.5-pro')
-                print("✅ Gemini client initialized (gemini-2.5-flash + gemini-2.5-pro)")
+                
+                # Auto-detect latest models
+                available_models = [m.name for m in genai.list_models() 
+                                   if 'generateContent' in m.supported_generation_methods]
+                
+                # Priority order for best models (newest first)
+                pro_preferences = [
+                    'models/gemini-3-pro-preview',
+                    'models/gemini-2.5-pro',
+                    'models/gemini-2.0-pro-exp',
+                    'models/gemini-pro-latest',
+                ]
+                flash_preferences = [
+                    'models/gemini-2.5-flash',
+                    'models/gemini-2.0-flash',
+                    'models/gemini-flash-latest',
+                ]
+                
+                # Find best available pro model
+                self.gemini_pro_name = next((m for m in pro_preferences if m in available_models), None)
+                # Find best available flash model
+                self.gemini_flash_name = next((m for m in flash_preferences if m in available_models), None)
+                
+                if self.gemini_flash_name:
+                    self.gemini_model = genai.GenerativeModel(self.gemini_flash_name)
+                if self.gemini_pro_name:
+                    self.gemini_pro_model = genai.GenerativeModel(self.gemini_pro_name)
+                
+                print(f"✅ Gemini initialized: flash={self.gemini_flash_name}, pro={self.gemini_pro_name}")
             except Exception as e:
                 print(f"⚠️ Gemini not available: {e}")
     
@@ -137,11 +163,16 @@ class AIClient:
         """Return list of available models"""
         models = []
         if self.anthropic_client:
-            models.extend(["claude", "claude-haiku"])
+            models.extend(["claude-opus", "claude-sonnet", "claude-haiku"])
         if self.openai_client:
-            models.extend(["gpt4", "gpt4o"])
+            models.extend(["gpt4o", "gpt4-turbo", "o1"])
         if self.gemini_model:
-            models.extend(["gemini", "gemini-flash"])
+            gemini_names = []
+            if hasattr(self, 'gemini_flash_name') and self.gemini_flash_name:
+                gemini_names.append(f"gemini-flash ({self.gemini_flash_name})")
+            if hasattr(self, 'gemini_pro_name') and self.gemini_pro_name:
+                gemini_names.append(f"gemini-pro ({self.gemini_pro_name})")
+            models.extend(gemini_names if gemini_names else ["gemini"])
         return models
     
     async def chat(
@@ -169,7 +200,13 @@ class AIClient:
         if not self.anthropic_client:
             raise ValueError("Anthropic client not available")
         
-        model_id = AIModel.CLAUDE.value if model == "claude" else AIModel.CLAUDE_HAIKU.value
+        # Model selection: opus > sonnet > haiku
+        if model == "claude-opus" or model == "claude":
+            model_id = AIModel.CLAUDE_OPUS.value
+        elif model == "claude-sonnet":
+            model_id = AIModel.CLAUDE_SONNET.value
+        else:
+            model_id = AIModel.CLAUDE_HAIKU.value
         
         response = self.anthropic_client.messages.create(
             model=model_id,
@@ -179,8 +216,8 @@ class AIClient:
         )
         
         tokens = response.usage.input_tokens + response.usage.output_tokens
-        # Claude pricing: ~$3/1M input, ~$15/1M output for Sonnet
-        cost = (response.usage.input_tokens * 0.003 + response.usage.output_tokens * 0.015) / 1000
+        # Claude Opus 4 pricing: ~$15/1M input, ~$75/1M output
+        cost = (response.usage.input_tokens * 0.015 + response.usage.output_tokens * 0.075) / 1000
         
         return response.content[0].text, tokens, cost
     
