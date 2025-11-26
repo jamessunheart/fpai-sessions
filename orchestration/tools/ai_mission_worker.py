@@ -49,16 +49,17 @@ GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
 
 
 class AIModel(Enum):
-    # Claude - latest Sonnet for complex reasoning
+    # Claude - latest models
     CLAUDE = "claude-sonnet-4-20250514"
     CLAUDE_HAIKU = "claude-3-5-haiku-20241022"
     # OpenAI - latest models
     GPT4 = "gpt-4-turbo"
     GPT4O = "gpt-4o"
     O1 = "o1-preview"  # For complex reasoning
-    # Gemini - latest models  
-    GEMINI = "gemini-2.0-flash-exp"
-    GEMINI_PRO = "gemini-pro"
+    # Gemini - latest 2.5 models (Dec 2024)
+    GEMINI = "models/gemini-2.5-flash"  # Fast, great for most tasks
+    GEMINI_PRO = "models/gemini-2.5-pro"  # Best quality
+    GEMINI_THINKING = "models/gemini-2.0-flash-thinking-exp"  # For complex reasoning
 
 
 class TaskStatus(Enum):
@@ -125,17 +126,10 @@ class AIClient:
             try:
                 import google.generativeai as genai
                 genai.configure(api_key=GOOGLE_API_KEY)
-                # Use gemini-2.0-flash (latest) or fallback to gemini-pro
-                try:
-                    self.gemini_model = genai.GenerativeModel('gemini-2.0-flash-exp')
-                    print("✅ Gemini client initialized (gemini-2.0-flash-exp)")
-                except:
-                    try:
-                        self.gemini_model = genai.GenerativeModel('gemini-pro')
-                        print("✅ Gemini client initialized (gemini-pro)")
-                    except:
-                        self.gemini_model = genai.GenerativeModel('models/gemini-pro')
-                        print("✅ Gemini client initialized (models/gemini-pro)")
+                # Use Gemini 2.5 Flash (latest and fast)
+                self.gemini_model = genai.GenerativeModel('models/gemini-2.5-flash')
+                self.gemini_pro_model = genai.GenerativeModel('models/gemini-2.5-pro')
+                print("✅ Gemini client initialized (gemini-2.5-flash + gemini-2.5-pro)")
             except Exception as e:
                 print(f"⚠️ Gemini not available: {e}")
     
