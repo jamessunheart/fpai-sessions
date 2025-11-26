@@ -205,6 +205,8 @@ async def home():
         </div>
 
         <script>
+            const BASE_PATH = window.location.pathname.startsWith('/harvester') ? '/harvester' : '';
+
             function toggleRepoField() {
                 const status = document.getElementById('status').value;
                 const repoGroup = document.getElementById('repoGroup');
@@ -242,7 +244,7 @@ async def home():
                 };
 
                 try {
-                    const response = await fetch('/submit', {
+                    const response = await fetch(`${BASE_PATH}/submit`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data)
