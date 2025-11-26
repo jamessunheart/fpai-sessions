@@ -25,3 +25,7 @@ __pycache__/
 **/.next/
 out/
 **/out/
+.next/
+**/.next/
+out/
+**/out/
