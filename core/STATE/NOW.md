@@ -65,7 +65,6 @@
 ✅ Verifier      Port 8200  ONLINE (Quality Gates)
 ✅ God Mode      Port 8300  ONLINE (System Map)
 ✅ Strat Intel   Port 8500  ONLINE (The Brain)
-✅ WhaleTrack    Port 8600  ONLINE (Magnet Trading)
 ```
 
 ### Services

@@ -26,8 +26,7 @@ class LeverageConfig:
     min_leverage: float = 1.0
     max_leverage: float = 2.5
     high_tension_max: float = 3.0
-    high_tension_threshold: float = 0.35
-    high_tension_distance: float = 3.0
+    high_tension_threshold: float = 0.15
     min_magnet_strength: float = 60.0
 
 
@@ -63,8 +62,7 @@ class LeverageEngine:
         total_friction = C + V
         is_high_tension = (
             total_friction < self.config.high_tension_threshold and
-            state.magnet_strength >= self.config.min_magnet_strength and
-            D >= self.config.high_tension_distance
+            state.magnet_strength >= self.config.min_magnet_strength
         )
 
         if is_high_tension:
