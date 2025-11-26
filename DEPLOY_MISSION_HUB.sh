@@ -68,3 +68,4 @@ echo "🔗 Nginx Routes (configure if needed):"
 echo "   /missions → http://127.0.0.1:8700"
 echo ""
 
+

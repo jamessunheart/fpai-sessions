@@ -16,3 +16,4 @@ echo "✅ Mission Hub started on port 8700"
 echo "   View: http://localhost:8700"
 echo "   Logs: tail -f mission-hub.log"
 
+
