@@ -39,7 +39,7 @@ cd ../..
 
 echo ""
 echo "✅ Services Deployed!"
-echo "   - Master Dashboard: http://localhost:3000"
+echo "   - Master Dashboard: http://localhost:3005"
 echo "   - Harvester Service: http://localhost:8055"
 echo "   - Admin Gate: http://localhost:8888"
 echo ""
