@@ -50,9 +50,11 @@ GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
 
 class AIModel(Enum):
     # Claude - latest models (2025)
-    CLAUDE_OPUS_4_5 = "claude-opus-4-5-20250514"  # Most capable - Opus 4.5
-    CLAUDE_OPUS = "claude-opus-4-20250514"  # Opus 4
-    CLAUDE_SONNET = "claude-sonnet-4-20250514"  # Balanced
+    # See: https://docs.anthropic.com/en/docs/about-claude/models
+    CLAUDE_OPUS_4_5 = "claude-opus-4-5-20250514"  # Opus 4.5 (if available)
+    CLAUDE_SONNET_4 = "claude-sonnet-4-20250514"  # Sonnet 4 - latest balanced
+    CLAUDE_OPUS_4 = "claude-opus-4-20250514"  # Opus 4
+    CLAUDE_SONNET_3_5 = "claude-3-5-sonnet-20241022"  # Sonnet 3.5 - stable fallback
     CLAUDE_HAIKU = "claude-3-5-haiku-20241022"  # Fast
     # OpenAI - latest models (2025)
     GPT5_1 = "gpt-5.1"  # Latest flagship
@@ -202,28 +204,41 @@ class AIClient:
         if not self.anthropic_client:
             raise ValueError("Anthropic client not available")
         
-        # Model selection: opus 4.5 > opus 4 > sonnet > haiku
+        # Model selection with fallback chain
+        # Try newest first, fall back to stable versions
+        model_preferences = []
         if model == "claude-opus-4.5" or model == "claude":
-            model_id = AIModel.CLAUDE_OPUS_4_5.value
+            model_preferences = [
+                AIModel.CLAUDE_OPUS_4_5.value,
+                AIModel.CLAUDE_SONNET_4.value,
+                AIModel.CLAUDE_OPUS_4.value,
+                AIModel.CLAUDE_SONNET_3_5.value,
+            ]
         elif model == "claude-opus":
-            model_id = AIModel.CLAUDE_OPUS.value
+            model_preferences = [AIModel.CLAUDE_OPUS_4.value, AIModel.CLAUDE_SONNET_3_5.value]
         elif model == "claude-sonnet":
-            model_id = AIModel.CLAUDE_SONNET.value
+            model_preferences = [AIModel.CLAUDE_SONNET_4.value, AIModel.CLAUDE_SONNET_3_5.value]
         else:
-            model_id = AIModel.CLAUDE_HAIKU.value
+            model_preferences = [AIModel.CLAUDE_HAIKU.value]
         
-        response = self.anthropic_client.messages.create(
-            model=model_id,
-            max_tokens=max_tokens,
-            system=system,
-            messages=[{"role": "user", "content": user}]
-        )
+        # Try each model until one works
+        last_error = None
+        for model_id in model_preferences:
+            try:
+                response = self.anthropic_client.messages.create(
+                    model=model_id,
+                    max_tokens=max_tokens,
+                    system=system,
+                    messages=[{"role": "user", "content": user}]
+                )
+                tokens = response.usage.input_tokens + response.usage.output_tokens
+                cost = (response.usage.input_tokens * 0.015 + response.usage.output_tokens * 0.075) / 1000
+                return response.content[0].text, tokens, cost
+            except Exception as e:
+                last_error = e
+                continue
         
-        tokens = response.usage.input_tokens + response.usage.output_tokens
-        # Claude Opus 4.5 pricing estimate
-        cost = (response.usage.input_tokens * 0.015 + response.usage.output_tokens * 0.075) / 1000
-        
-        return response.content[0].text, tokens, cost
+        raise ValueError(f"No Claude model available. Last error: {last_error}")
     
     async def _chat_openai(self, model: str, system: str, user: str, max_tokens: int) -> Tuple[str, int, float]:
         """Chat with OpenAI"""
