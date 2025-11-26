@@ -875,7 +875,7 @@ API_GATEWAY_TEMPLATE = """
                 <div class="stat-label">Total Tokens</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">${{ "%.4f"|format(stats.total_cost / max(stats.total_requests, 1)) }}</div>
+                <div class="stat-value">${{ "%.4f"|format(avg_cost_per_request) }}</div>
                 <div class="stat-label">Avg Cost/Request</div>
             </div>
         </div>
@@ -1026,10 +1026,15 @@ def api_gateway():
         by_provider[provider]['tokens'] += u.get('input_tokens', 0) + u.get('output_tokens', 0)
         by_provider[provider]['cost_usd'] += u.get('cost_usd', 0)
     
+    # Calculate average cost per request
+    total_requests = stats.get('total_requests', 0)
+    avg_cost = stats.get('total_cost', 0) / total_requests if total_requests > 0 else 0
+    
     return render_template_string(
         API_GATEWAY_TEMPLATE,
         stats=stats,
         by_provider=by_provider,
+        avg_cost_per_request=avg_cost,
     )
 
 
