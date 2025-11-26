@@ -53,8 +53,8 @@ class AIModel(Enum):
     CLAUDE_HAIKU = "claude-3-5-haiku-20241022"
     GPT4 = "gpt-4-turbo-preview"
     GPT4O = "gpt-4o"
-    GEMINI = "gemini-1.5-pro"
-    GEMINI_FLASH = "gemini-1.5-flash"
+    GEMINI = "gemini-1.5-pro-latest"
+    GEMINI_FLASH = "gemini-1.5-flash-latest"
 
 
 class TaskStatus(Enum):
@@ -121,7 +121,7 @@ class AIClient:
             try:
                 import google.generativeai as genai
                 genai.configure(api_key=GOOGLE_API_KEY)
-                self.gemini_model = genai.GenerativeModel('gemini-1.5-pro')
+                self.gemini_model = genai.GenerativeModel('gemini-1.5-flash')
                 print("✅ Gemini client initialized")
             except Exception as e:
                 print(f"⚠️ Gemini not available: {e}")
