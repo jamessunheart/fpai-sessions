@@ -43,6 +43,12 @@ async def home(request: Request):
     })
 
 
+@app.get("/missions", response_class=HTMLResponse)
+async def missions(request: Request):
+    """Live Missions Board"""
+    return templates.TemplateResponse("missions.html", {"request": request})
+
+
 @app.get("/offers", response_class=HTMLResponse)
 async def offers(request: Request):
     """Conscious marketplace - Curated offers"""

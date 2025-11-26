@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Missions | Full Potential AI</title>
+  <style>
+    :root {
+      --bg: radial-gradient(circle at top, #0f172a, #020617);
+      --panel: rgba(15,23,42,0.88);
+      --border: rgba(255,255,255,0.12);
+      --text: #cbd5f5;
+      --accent: #fbbf24;
+      --blue: #38bdf8;
+    }
+    body {
+      font-family: 'Space Grotesk', 'Inter', Arial, sans-serif;
+      background: var(--bg);
+      color: #f8fafc;
+      min-height: 100vh;
+      margin: 0;
+      padding: 2rem 1.5rem;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.05em;
+    }
+    p {
+      font-size: 1.1rem;
+      line-height: 1.7;
+      color: var(--text);
+      margin-bottom: 2rem;
+    }
+    .back-link {
+      display: inline-block;
+      color: var(--blue);
+      text-decoration: none;
+      margin-bottom: 2rem;
+      font-size: 1rem;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--panel);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 1rem;
+      text-align: left;
+      font-size: 0.95rem;
+      font-weight: 400;
+    }
+    th {
+      background: rgba(15, 23, 42, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.85rem;
+      color: #f8fafc;
+      font-weight: 600;
+    }
+    td {
+      color: var(--text);
+    }
+    .priority-p0 { color: #f87171; font-weight: 600; }
+    .priority-p1 { color: #fb923c; font-weight: 600; }
+    .priority-p2 { color: #fbbf24; font-weight: 600; }
+    .priority-default { color: var(--text); }
+    .status-open { color: #4ade80; }
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text);
+    }
+    .error {
+      text-align: center;
+      padding: 3rem;
+      color: #f87171;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-link">← Back to Home</a>
+    
+    <h1>Live Mission Board</h1>
+    <p>Real-time missions from the Nervous System. All OPEN missions are listed here.</p>
+    
+    <div id="mission-table-wrapper" class="loading">
+      Loading missions...
+    </div>
+  </div>
+  
+  <script>
+    const wrapper = document.getElementById('mission-table-wrapper');
+    
+    // Fetch from the dashboard API
+    fetch('http://198.54.123.234:8002/api/missions')
+      .then(resp => {
+        if (!resp.ok) throw new Error('Failed to load missions');
+        return resp.json();
+      })
+      .then(payload => renderTable(payload.missions || []))
+      .catch(error => {
+        // Fallback to loading local file if API fails
+        fetch('/static/missions.json')
+            .then(resp => resp.json())
+            .then(payload => renderTable(payload.missions || []))
+            .catch(err => {
+                wrapper.className = 'error';
+                wrapper.textContent = 'Unable to load missions. Please try again later.';
+                console.error('Error:', error);
+            });
+      });
+
+    function renderTable(missions) {
+      if (!missions || missions.length === 0) {
+        wrapper.innerHTML = '<p class="error">No missions found.</p>';
+        return;
+      }
+      
+      // Filter for OPEN missions
+      const openMissions = missions.filter(m => m.status === 'OPEN');
+      
+      if (openMissions.length === 0) {
+        wrapper.innerHTML = '<p class="loading">No open missions at this time.</p>';
+        return;
+      }
+      
+      const rows = openMissions
+        .map(m => {
+          const priorityClass = m.priority
+            ? `priority-${m.priority.toLowerCase()}`
+            : 'priority-default';
+          const owner = m.owner || 'Unassigned';
+          const principle = m.principle || '-';
+          
+          return `
+            <tr>
+              <td><strong>${m.id}</strong></td>
+              <td>${m.title}</td>
+              <td class="${priorityClass}">${m.priority || 'Normal'}</td>
+              <td>${owner}</td>
+              <td>${principle}</td>
+            </tr>
+          `;
+        })
+        .join('');
+      
+      wrapper.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Mission</th>
+              <th>Priority</th>
+              <th>Owner</th>
+              <th>Principle</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    }
+  </script>
+</body>
+</html>
+
