@@ -21,3 +21,7 @@ fullpotential_ai/fullpotential_core/docs/papers/
 __pycache__/
 
 **/node_modules/
+.next/
+**/.next/
+out/
+**/out/
