@@ -20,3 +20,4 @@ fullpotential_ai/fullpotential_core/docs/papers/
 *.pyc
 __pycache__/
 
+**/node_modules/
