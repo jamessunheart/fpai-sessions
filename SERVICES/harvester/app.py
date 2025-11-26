@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Simple Apprentice Feedback System
-Port 8055 - Allows apprentices to report mission completion/issues
+Apprentice Harvester Portal
+Port 8055 - Submit missions, track history, run code reviews
 """
 
 import json
@@ -23,16 +23,19 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from core.config import settings as app_settings
-from core.jobs import registry as job_registry  # noqa: E402
+from core.jobs import registry as job_registry
 
-app = FastAPI(title="Apprentice Feedback", version="1.0")
+app = FastAPI(title="Apprentice Harvester", version="2.0")
 
 # Centralized paths
 FEEDBACK_DIR = app_settings.feedback_dir
 JOBS_DIR = app_settings.jobs_dir
 
 # Mount static files
-app.mount("/static", StaticFiles(directory="SERVICES/landing-page/app/static"), name="static")
+BASE_DIR = Path(__file__).resolve().parent
+STATIC_DIR = BASE_DIR / "static"
+STATIC_DIR.mkdir(parents=True, exist_ok=True)
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 class FeedbackSubmission(BaseModel):
     mission_id: str
@@ -74,10 +77,9 @@ def run_harvest_job(job_id: str, name: str, repo_url: str, mission_id: str = Non
         with open(job_file, "w") as f:
             json.dump(state, f)
 
-    update_state() # Save initial
+    update_state()
     job_registry.update_job(job_id, status="running")
     
-    # Update Mission Hub if mission_id provided
     def notify_mission_hub(status: str, score: int = None):
         if not mission_id:
             return
@@ -104,13 +106,11 @@ def run_harvest_job(job_id: str, name: str, repo_url: str, mission_id: str = Non
         import subprocess
         import re
         
-        # Notify that submission is in progress
         notify_mission_hub("submitted")
         
         script_path = Path("/Users/jamessunheart/FPAI_Cockpit/_scripts/harvest-apprentice.py")
-        # Adjust path for production server if needed
         if not script_path.exists():
-                script_path = Path("/root/FPAI_Cockpit/_scripts/harvest-apprentice.py")
+            script_path = Path("/root/FPAI_Cockpit/_scripts/harvest-apprentice.py")
         
         if not script_path.exists():
             update_state("❌ Error: Harvester script not found!", final_status="failed")
@@ -119,16 +119,14 @@ def run_harvest_job(job_id: str, name: str, repo_url: str, mission_id: str = Non
 
         update_state("📦 Cloning repository...", step_idx=0, step_status="running")
         
-        # Run the command unbuffered
         process = subprocess.Popen(
             [str(script_path), name.replace(" ", ""), repo_url],
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
-            bufsize=1 # Line buffered
+            bufsize=1
         )
         
-        # Stream output
         output_buffer = ""
         final_score = 0
         for line in process.stdout:
@@ -138,7 +136,6 @@ def run_harvest_job(job_id: str, name: str, repo_url: str, mission_id: str = Non
             output_buffer += line + "\n"
             update_state(f"> {line}")
             
-            # Heuristic step updating based on log output
             if "Running git subtree" in line or "Cloning" in line:
                 update_state(step_idx=0, step_status="completed")
                 update_state(step_idx=1, step_status="running")
@@ -154,7 +151,6 @@ def run_harvest_job(job_id: str, name: str, repo_url: str, mission_id: str = Non
                 update_state(step_idx=3, step_status="completed")
                 update_state(step_idx=4, step_status="completed")
                 
-                # Extract score
                 score_match = re.search(r'Score:\s*(\d+)', line)
                 if score_match:
                     final_score = int(score_match.group(1))
@@ -164,13 +160,11 @@ def run_harvest_job(job_id: str, name: str, repo_url: str, mission_id: str = Non
         
         if process.returncode == 0:
             update_state("✅ Harvest complete!", final_status="completed")
-            # Ensure all steps marked complete
             for i in range(5):
                 state["steps"][i]["status"] = "completed"
             with open(job_file, "w") as f:
                 json.dump(state, f)
             
-            # Notify Mission Hub of completion
             notify_mission_hub("completed", final_score)
             job_registry.update_job(
                 job_id,
@@ -199,354 +193,641 @@ def run_harvest_job(job_id: str, name: str, repo_url: str, mission_id: str = Non
 
 @app.get("/", response_class=HTMLResponse)
 async def home():
-    """Show feedback form"""
+    """Show harvester portal"""
     return """
     <!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Apprentice Portal | Full Potential AI</title>
+        <title>Harvester | Full Potential AI</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
         <style>
             :root {
-                --primary: #667eea;
-                --secondary: #764ba2;
-                --bg: #f3f4f6;
-                --text: #1f2937;
-                --card-bg: #ffffff;
+                --bg-deep: #0a0a0f;
+                --bg-card: #12121a;
+                --bg-elevated: #1a1a24;
+                --border: #2a2a3a;
+                --text: #e4e4e7;
+                --text-muted: #71717a;
+                --accent-primary: #8b5cf6;
+                --accent-secondary: #06b6d4;
+                --accent-success: #10b981;
+                --accent-warning: #f59e0b;
+                --accent-danger: #ef4444;
+                --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%);
             }
+            
             * { margin: 0; padding: 0; box-sizing: border-box; }
+            
             body {
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                background: var(--bg);
+                font-family: 'Outfit', -apple-system, sans-serif;
+                background: var(--bg-deep);
                 color: var(--text);
                 min-height: 100vh;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                padding: 40px 20px;
+                line-height: 1.6;
             }
+            
+            .bg-pattern {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: 
+                    radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
+                    radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.05) 0%, transparent 40%);
+                pointer-events: none;
+                z-index: 0;
+            }
+            
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 40px 24px;
+                position: relative;
+                z-index: 1;
+            }
+            
+            /* Header */
+            header {
+                text-align: center;
+                margin-bottom: 40px;
+            }
+            
             .logo {
-                width: 80px;
-                height: 80px;
-                margin-bottom: 20px;
-                background: white;
-                border-radius: 50%;
+                display: inline-flex;
+                align-items: center;
+                gap: 16px;
+                margin-bottom: 16px;
+            }
+            
+            .logo-icon {
+                width: 64px;
+                height: 64px;
+                background: var(--gradient-primary);
+                border-radius: 16px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                font-size: 40px;
+                font-size: 32px;
+                box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
             }
-            .container {
-                background: var(--card-bg);
-                border-radius: 16px;
-                padding: 40px;
-                max-width: 600px;
-                width: 100%;
-                box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            
+            .logo-text h1 {
+                font-size: 28px;
+                font-weight: 700;
+                background: var(--gradient-primary);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
             }
-            h1 {
-                color: var(--secondary);
-                margin-bottom: 10px;
-                font-size: 24px;
-                text-align: center;
-            }
-            p.subtitle {
-                color: #666;
-                margin-bottom: 30px;
-                text-align: center;
-            }
-            .form-group {
-                margin-bottom: 20px;
-            }
-            label {
-                display: block;
-                color: #333;
-                font-weight: 600;
-                margin-bottom: 8px;
-            }
-            input, select, textarea {
-                width: 100%;
-                padding: 12px;
-                border: 2px solid #e0e0e0;
-                border-radius: 8px;
-                font-size: 14px;
-                font-family: inherit;
-                transition: border-color 0.3s;
-            }
-            input:focus, select:focus, textarea:focus {
-                outline: none;
-                border-color: var(--primary);
-            }
-            textarea {
-                min-height: 100px;
-                resize: vertical;
-            }
-            button {
-                width: 100%;
-                padding: 14px;
-                background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-                color: white;
-                border: none;
-                border-radius: 8px;
+            
+            .subtitle {
+                color: var(--text-muted);
                 font-size: 16px;
-                font-weight: 600;
-                cursor: pointer;
-                transition: transform 0.2s, box-shadow 0.2s;
-            }
-            button:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-            }
-            button:disabled {
-                opacity: 0.7;
-                cursor: not-allowed;
-                transform: none;
             }
             
-            /* Progress & Logs */
-            .progress-container {
-                display: none;
-                margin-top: 30px;
-                border-top: 1px solid #eee;
-                padding-top: 20px;
+            .subtitle a {
+                color: var(--accent-primary);
+                text-decoration: none;
             }
-            .steps {
-                display: flex;
-                justify-content: space-between;
-                margin-bottom: 20px;
-                font-size: 12px;
-            }
-            .step {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                color: #aaa;
-                position: relative;
-                flex: 1;
-            }
-            .step.active { color: var(--primary); font-weight: bold; }
-            .step.completed { color: #10b981; }
-            .step-dot {
-                width: 12px;
-                height: 12px;
-                border-radius: 50%;
-                background: #eee;
-                margin-bottom: 5px;
-                border: 2px solid white;
-                box-shadow: 0 0 0 1px #ddd;
-            }
-            .step.active .step-dot { background: var(--primary); box-shadow: 0 0 0 2px var(--primary); }
-            .step.completed .step-dot { background: #10b981; box-shadow: 0 0 0 1px #10b981; }
             
-            .log-window {
-                background: #1e1e1e;
-                color: #00ff00;
-                font-family: monospace;
-                padding: 15px;
-                border-radius: 8px;
-                height: 200px;
-                overflow-y: auto;
-                font-size: 12px;
-                line-height: 1.5;
-                margin-top: 10px;
+            .subtitle a:hover {
+                text-decoration: underline;
             }
-            .log-entry { margin-bottom: 2px; }
-            .log-entry.error { color: #ff4444; }
             
-            .result-card {
-                display: none;
-                margin-top: 20px;
-                padding: 20px;
-                background: #f0fdf4;
-                border: 1px solid #bbf7d0;
-                border-radius: 8px;
-                text-align: center;
-            }
-            .result-score { font-size: 32px; font-weight: bold; color: #166534; }
-            
+            /* Tabs */
             .tabs {
                 display: flex;
-                gap: 10px;
-                margin-bottom: 20px;
+                gap: 8px;
+                background: var(--bg-card);
+                padding: 6px;
+                border-radius: 12px;
+                border: 1px solid var(--border);
+                margin-bottom: 24px;
             }
-            .tab-link {
+            
+            .tab-btn {
                 flex: 1;
-                padding: 12px;
+                padding: 12px 16px;
                 border-radius: 8px;
-                border: 1px solid #e5e7eb;
-                background: #fff;
+                border: none;
+                background: transparent;
+                color: var(--text-muted);
+                font-family: inherit;
+                font-size: 14px;
                 font-weight: 600;
                 cursor: pointer;
                 transition: all 0.2s;
             }
-            .tab-link.active {
-                background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            
+            .tab-btn:hover {
+                color: var(--text);
+            }
+            
+            .tab-btn.active {
+                background: var(--gradient-primary);
                 color: white;
-                border-color: transparent;
             }
-            .tab-panels .tab-panel { display: none; }
-            .tab-panel.active { display: block; }
-
-            .two-column {
-                display: flex;
-                gap: 16px;
-                flex-wrap: wrap;
+            
+            .tab-panel {
+                display: none;
             }
-            .two-column > div { flex: 1 1 200px; }
-
-            .rubric-card {
-                margin-top: 24px;
-                background: #f8fafc;
-                border-radius: 12px;
-                padding: 20px;
-                border: 1px solid #e2e8f0;
+            
+            .tab-panel.active {
+                display: block;
             }
-            .rubric-card h3 { margin-bottom: 12px; color: var(--secondary); }
-            .rubric-card ul { padding-left: 20px; margin-bottom: 10px; }
-            .rubric-card li { margin-bottom: 6px; }
-            .note { font-size: 12px; color: #64748b; margin-top: 8px; }
-
-            .flash-success {
-                background: #ecfdf5;
-                border: 1px solid #bbf7d0;
-                color: #166534;
-                padding: 12px;
-                border-radius: 8px;
-                margin-bottom: 16px;
+            
+            /* Card */
+            .card {
+                background: var(--bg-card);
+                border: 1px solid var(--border);
+                border-radius: 20px;
+                padding: 32px;
+                margin-bottom: 24px;
+            }
+            
+            .card-title {
+                font-size: 18px;
                 font-weight: 600;
+                margin-bottom: 20px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            /* Form */
+            .form-group {
+                margin-bottom: 20px;
+            }
+            
+            .form-row {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+            }
+            
+            @media (max-width: 600px) {
+                .form-row {
+                    grid-template-columns: 1fr;
+                }
+            }
+            
+            label {
+                display: block;
+                font-size: 14px;
+                font-weight: 500;
+                margin-bottom: 8px;
+                color: var(--text);
+            }
+            
+            input, select, textarea {
+                width: 100%;
+                padding: 14px 16px;
+                background: var(--bg-elevated);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                color: var(--text);
+                font-family: inherit;
+                font-size: 14px;
+                transition: border-color 0.2s, box-shadow 0.2s;
+            }
+            
+            input:focus, select:focus, textarea:focus {
+                outline: none;
+                border-color: var(--accent-primary);
+                box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+            }
+            
+            textarea {
+                min-height: 100px;
+                resize: vertical;
+            }
+            
+            .btn {
+                padding: 14px 28px;
+                border-radius: 12px;
+                font-family: inherit;
+                font-size: 15px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                border: none;
+                width: 100%;
+            }
+            
+            .btn-primary {
+                background: var(--gradient-primary);
+                color: white;
+            }
+            
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4);
+            }
+            
+            .btn-primary:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+                transform: none;
+            }
+            
+            /* Progress */
+            .progress-container {
+                display: none;
+                margin-top: 24px;
+            }
+            
+            .progress-container.active {
+                display: block;
+            }
+            
+            .steps {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 24px;
+            }
+            
+            .step {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                font-size: 12px;
+                color: var(--text-muted);
+                flex: 1;
+                position: relative;
+            }
+            
+            .step-dot {
+                width: 14px;
+                height: 14px;
+                border-radius: 50%;
+                background: var(--bg-elevated);
+                border: 2px solid var(--border);
+                margin-bottom: 8px;
+                transition: all 0.3s;
+            }
+            
+            .step.active .step-dot {
+                background: var(--accent-primary);
+                border-color: var(--accent-primary);
+                box-shadow: 0 0 12px rgba(139, 92, 246, 0.5);
+            }
+            
+            .step.completed .step-dot {
+                background: var(--accent-success);
+                border-color: var(--accent-success);
+            }
+            
+            .step.active {
+                color: var(--accent-primary);
+                font-weight: 600;
+            }
+            
+            .step.completed {
+                color: var(--accent-success);
+            }
+            
+            .log-window {
+                background: #0d0d12;
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                padding: 16px;
+                height: 250px;
+                overflow-y: auto;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 12px;
+                line-height: 1.6;
+            }
+            
+            .log-entry {
+                color: #22c55e;
+                margin-bottom: 4px;
+            }
+            
+            .log-entry.error {
+                color: #ef4444;
+            }
+            
+            .result-card {
+                display: none;
+                margin-top: 24px;
+                padding: 32px;
+                background: rgba(16, 185, 129, 0.1);
+                border: 1px solid rgba(16, 185, 129, 0.3);
+                border-radius: 16px;
                 text-align: center;
             }
-
+            
+            .result-card.active {
+                display: block;
+            }
+            
+            .result-score {
+                font-size: 48px;
+                font-weight: 800;
+                background: var(--gradient-primary);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+            
+            .result-status {
+                font-size: 18px;
+                font-weight: 600;
+                margin-top: 8px;
+            }
+            
+            .result-status.success {
+                color: var(--accent-success);
+            }
+            
+            .result-status.warning {
+                color: var(--accent-warning);
+            }
+            
+            /* Rubric */
+            .rubric {
+                background: var(--bg-elevated);
+                border-radius: 12px;
+                padding: 20px;
+                margin-top: 24px;
+            }
+            
+            .rubric h4 {
+                font-size: 14px;
+                font-weight: 600;
+                margin-bottom: 12px;
+                color: var(--accent-secondary);
+            }
+            
+            .rubric ul {
+                list-style: none;
+                padding: 0;
+            }
+            
+            .rubric li {
+                padding: 8px 0;
+                font-size: 13px;
+                color: var(--text-muted);
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            
+            .rubric li::before {
+                content: "✓";
+                color: var(--accent-success);
+                font-weight: bold;
+            }
+            
+            /* History */
+            .history-list {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+            
+            .history-card {
+                background: var(--bg-elevated);
+                border: 1px solid var(--border);
+                border-radius: 16px;
+                padding: 20px;
+                transition: all 0.2s;
+            }
+            
+            .history-card:hover {
+                border-color: var(--accent-primary);
+            }
+            
             .history-header {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
                 margin-bottom: 12px;
             }
-            .history-status { font-size: 13px; color: #64748b; }
-            .history-list { display: flex; flex-direction: column; gap: 12px; }
-            .history-card {
-                border: 1px solid #e5e7eb;
-                border-radius: 12px;
-                padding: 16px;
-                background: white;
+            
+            .history-mission {
+                font-weight: 600;
+                font-size: 15px;
             }
-            .history-card-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 8px;
+            
+            .history-score {
+                font-weight: 700;
+                font-size: 14px;
             }
-            .history-mission { font-weight: 600; color: #1f2937; }
-            .history-score { font-weight: 600; color: #1f2937; }
-            .history-status-success { color: #15803d; }
-            .history-status-error { color: #b91c1c; }
-            .history-card-body { font-size: 14px; color: #475569; line-height: 1.5; }
-            .history-card-body a { color: var(--primary); }
-            .history-card-footer { text-align: right; margin-top: 12px; }
+            
+            .history-score.success {
+                color: var(--accent-success);
+            }
+            
+            .history-score.failed {
+                color: var(--accent-danger);
+            }
+            
+            .history-meta {
+                font-size: 13px;
+                color: var(--text-muted);
+            }
+            
+            .history-meta a {
+                color: var(--accent-primary);
+            }
+            
             .view-log-btn {
-                background: none;
-                border: 1px solid var(--primary);
-                color: var(--primary);
-                padding: 6px 12px;
-                border-radius: 6px;
+                margin-top: 12px;
+                padding: 8px 16px;
+                background: transparent;
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                color: var(--text-muted);
+                font-family: inherit;
+                font-size: 13px;
                 cursor: pointer;
+                transition: all 0.2s;
             }
+            
             .view-log-btn:hover {
-                background: var(--primary);
-                color: white;
+                border-color: var(--accent-primary);
+                color: var(--accent-primary);
             }
-
-            .checklist-card {
-                background: #f8fafc;
+            
+            .empty-state {
+                text-align: center;
+                padding: 40px;
+                color: var(--text-muted);
+            }
+            
+            .empty-state .icon {
+                font-size: 48px;
+                margin-bottom: 16px;
+            }
+            
+            /* Checklist */
+            .checklist {
+                background: var(--bg-elevated);
+                border-radius: 16px;
+                padding: 24px;
+            }
+            
+            .checklist h3 {
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 16px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            
+            .checklist ol {
+                padding-left: 24px;
+            }
+            
+            .checklist li {
+                padding: 10px 0;
+                color: var(--text-muted);
+                font-size: 14px;
+            }
+            
+            .checklist code {
+                background: var(--bg-card);
+                padding: 2px 8px;
+                border-radius: 4px;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 12px;
+                color: var(--accent-secondary);
+            }
+            
+            .checklist a {
+                color: var(--accent-primary);
+            }
+            
+            /* Flash */
+            .flash-success {
+                display: none;
+                background: rgba(16, 185, 129, 0.15);
+                border: 1px solid rgba(16, 185, 129, 0.3);
+                color: #34d399;
+                padding: 16px 20px;
                 border-radius: 12px;
-                padding: 20px;
-                border: 1px solid #e2e8f0;
-                line-height: 1.6;
+                margin-bottom: 24px;
+                font-weight: 500;
+                text-align: center;
             }
-            .checklist-card ol { padding-left: 20px; }
-            .checklist-card li { margin-bottom: 10px; }
-            .checklist-card a { color: var(--primary); }
-
+            
+            .flash-success.show {
+                display: block;
+            }
+            
+            /* Footer */
+            footer {
+                text-align: center;
+                padding: 32px 0;
+                color: var(--text-muted);
+                font-size: 14px;
+            }
+            
+            footer a {
+                color: var(--accent-primary);
+                text-decoration: none;
+            }
         </style>
     </head>
     <body>
-        <div class="logo">⚡</div>
+        <div class="bg-pattern"></div>
         
         <div class="container">
-            <h1>Apprentice Portal</h1>
-            <p class="subtitle">Submit missions • Track history • <a href="/missions" style="color: var(--primary);">Browse Mission Hub →</a></p>
-
+            <header>
+                <div class="logo">
+                    <div class="logo-icon">🚜</div>
+                    <div class="logo-text">
+                        <h1>Harvester</h1>
+                    </div>
+                </div>
+                <p class="subtitle">Submit code • Get reviewed • <a href="/missions">Browse Mission Hub →</a></p>
+            </header>
+            
             <div class="tabs">
-                <button class="tab-link active" id="tab-submit-btn" onclick="switchTab('submit')">Submit</button>
-                <button class="tab-link" id="tab-history-btn" onclick="switchTab('history')">History</button>
-                <button class="tab-link" id="tab-checklist-btn" onclick="switchTab('checklist')">Checklist</button>
+                <button class="tab-btn active" onclick="switchTab('submit')">📤 Submit</button>
+                <button class="tab-btn" onclick="switchTab('history')">📊 History</button>
+                <button class="tab-btn" onclick="switchTab('checklist')">✅ Checklist</button>
             </div>
-
-            <div class="tab-panels">
-                <div class="tab-panel active" id="tab-submit">
-                    <div id="successMessage" class="flash-success" style="display:none;">
-                        ✅ Submission Received!
-            </div>
-
-            <form id="feedbackForm" onsubmit="submitFeedback(event)">
-                <div class="form-group">
-                    <label for="name">Your Name:</label>
-                    <input type="text" id="name" name="name" required placeholder="e.g., Alex">
+            
+            <!-- Submit Tab -->
+            <div class="tab-panel active" id="tab-submit">
+                <div id="successMessage" class="flash-success">
+                    ✅ Submission received! Processing...
                 </div>
-
-                        <div class="form-group two-column">
-                            <div>
-                    <label for="mission">Mission:</label>
-                    <select id="mission" name="mission" required>
-                        <option value="">Select a mission...</option>
-                        <option value="mission-1">Mission 1: Reddit Launch</option>
-                        <option value="mission-2">Mission 2: Magnet Trading Keys</option>
-                        <option value="mission-3">Mission 3: Both Missions</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-                            <div>
-                                <label for="status">Action:</label>
-                    <select id="status" name="status" required onchange="toggleRepoField()">
+                
+                <div class="card">
+                    <h2 class="card-title">🚀 Submit Your Code</h2>
+                    
+                    <form id="submitForm" onsubmit="handleSubmit(event)">
+                        <div class="form-group">
+                            <label for="name">Your Name</label>
+                            <input type="text" id="name" name="name" required placeholder="e.g., Alex Chen">
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="mission">Mission</label>
+                                <select id="mission" name="mission" required>
+                                    <option value="">Select a mission...</option>
+                                    <option value="mission-1">Mission 1: Reddit Launch</option>
+                                    <option value="mission-2">Mission 2: Magnet Trading</option>
+                                    <option value="mission-3">Mission 3: Both Missions</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="status">Action</label>
+                                <select id="status" name="status" required onchange="toggleRepoField()">
                                     <option value="">Select action...</option>
                                     <option value="submission">📤 Submit Code for Review</option>
-                                    <option value="completed">✅ Report Completion (No Code)</option>
-                                    <option value="stuck">❌ Report Blocked/Stuck</option>
-                                    <option value="question">❓ Ask Question</option>
-                    </select>
+                                    <option value="completed">✅ Report Completion</option>
+                                    <option value="stuck">❌ Report Blocked</option>
+                                </select>
                             </div>
-                </div>
-
-                <div class="form-group" id="repoGroup" style="display: none;">
-                            <label for="repo_url">GitHub Repository URL:</label>
-                    <input type="url" id="repo_url" name="repo_url" placeholder="https://github.com/username/repo">
-                </div>
-
-                <div class="form-group">
-                            <label for="message">Notes:</label>
-                            <textarea id="message" name="message" required placeholder="Details..."></textarea>
                         </div>
-
-                        <button type="submit" id="submitBtn">Submit</button>
+                        
+                        <div class="form-group" id="repoGroup" style="display: none;">
+                            <label for="repo_url">GitHub Repository URL</label>
+                            <input type="url" id="repo_url" name="repo_url" placeholder="https://github.com/username/repo">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message">Notes</label>
+                            <textarea id="message" name="message" required placeholder="Describe your submission..."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            ⚡ Submit
+                        </button>
                     </form>
-
-                    <div class="rubric-card">
-                        <h3>Quality Rubric</h3>
-                        <ul>
-                            <li>✅ Tests exist (20%)</li>
-                            <li>✅ Tests pass (30%)</li>
-                            <li>✅ README / documentation (20%)</li>
-                            <li>✅ Dependencies declared (15%)</li>
-                            <li>✅ No secrets/static keys (15%)</li>
-                        </ul>
-                        <p class="note">Tip: run <code>./_scripts/apprentice-preflight-check.sh</code> before submitting.</p>
-                    </div>
                     
-                    <div id="progressContainer" class="progress-container">
-                        <h3>🚜 Auto-Harvest in Progress...</h3>
+                    <div class="rubric">
+                        <h4>📋 Quality Rubric</h4>
+                        <ul>
+                            <li>Tests exist (20%)</li>
+                            <li>Tests pass (30%)</li>
+                            <li>README / documentation (20%)</li>
+                            <li>Dependencies declared (15%)</li>
+                            <li>No secrets/static keys (15%)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="progress-container" id="progressContainer">
+                    <div class="card">
+                        <h2 class="card-title">🔄 Processing Submission</h2>
                         
                         <div class="steps" id="stepsContainer">
                             <div class="step">
@@ -572,47 +853,61 @@ async def home():
                         </div>
                         
                         <div class="log-window" id="logWindow">
-                            <div class="log-entry">> Initialization complete.</div>
-                        </div>
-                        
-                        <div id="resultCard" class="result-card">
-                            <div>Quality Score</div>
-                            <div class="result-score" id="finalScore">--</div>
-                            <div id="finalStatus"></div>
+                            <div class="log-entry">> Initializing...</div>
                         </div>
                     </div>
-                </div>
-
-                <div class="tab-panel" id="tab-history">
-                    <div class="history-header">
-                        <h3>Recent Harvests</h3>
-                        <span id="historyStatus" class="history-status">Enter your name to load history.</span>
-                    </div>
-                    <div id="historyList" class="history-list"></div>
-                </div>
-
-                <div class="tab-panel" id="tab-checklist">
-                    <div class="checklist-card">
-                        <h3>Preflight Checklist</h3>
-                        <ol>
-                            <li>Run <code>./_scripts/apprentice-preflight-check.sh</code> locally.</li>
-                            <li>Ensure tests pass: <code>pytest -v</code>.</li>
-                            <li>Create/Update <code>README.md</code> with overview + setup.</li>
-                            <li>Declare dependencies (<code>requirements.txt</code> or <code>package.json</code>).</li>
-                            <li>Scan for secrets: <code>rg -i "API_KEY|SECRET|TOKEN"</code>.</li>
-                            <li>Clean git status (`git status` should only show intentional files).</li>
-                            <li>Push to GitHub before submitting here.</li>
-                        </ol>
-                        <p class="note">Need help? See <a href="/_guides/operations/APPRENTICE_SUBMISSION_GUIDE.html" target="_blank">Apprentice Submission Guide</a>.</p>
+                    
+                    <div class="result-card" id="resultCard">
+                        <div>Quality Score</div>
+                        <div class="result-score" id="finalScore">--</div>
+                        <div class="result-status" id="finalStatus"></div>
                     </div>
                 </div>
             </div>
+            
+            <!-- History Tab -->
+            <div class="tab-panel" id="tab-history">
+                <div class="card">
+                    <h2 class="card-title">📊 Your Submissions</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 16px;" id="historyStatus">Enter your name in the Submit tab to load history.</p>
+                    <div id="historyList" class="history-list"></div>
+                </div>
+            </div>
+            
+            <!-- Checklist Tab -->
+            <div class="tab-panel" id="tab-checklist">
+                <div class="card">
+                    <div class="checklist">
+                        <h3>✅ Preflight Checklist</h3>
+                        <ol>
+                            <li>Run <code>./_scripts/apprentice-preflight-check.sh</code> locally</li>
+                            <li>Ensure tests pass: <code>pytest -v</code></li>
+                            <li>Create/Update <code>README.md</code> with overview + setup</li>
+                            <li>Declare dependencies (<code>requirements.txt</code> or <code>package.json</code>)</li>
+                            <li>Scan for secrets: <code>rg -i "API_KEY|SECRET|TOKEN"</code></li>
+                            <li>Clean git status (only intentional files)</li>
+                            <li>Push to GitHub before submitting</li>
+                        </ol>
+                        <p style="margin-top: 16px; font-size: 13px; color: var(--text-muted);">
+                            Need help? See the <a href="/missions/contribute">Contribution Guide</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <footer>
+                <p>
+                    <a href="/missions">Mission Hub</a> · 
+                    <a href="https://fullpotential.ai">Full Potential AI</a>
+                </p>
+            </footer>
         </div>
-
+        
         <script>
-            const BASE_PATH = window.location.pathname.startsWith('/harvester') ? '/harvester' : '';
-
-            // Initialize form from URL params
+            const BASE_PATH = window.location.pathname.startsWith('/harvester') ? '/harvester' : 
+                              window.location.pathname.startsWith('/services/harvester') ? '/services/harvester' : '';
+            
+            // Initialize
             window.onload = function() {
                 const urlParams = new URLSearchParams(window.location.search);
                 const missionId = urlParams.get('mission');
@@ -622,11 +917,9 @@ async def home():
                 if (storedName) {
                     document.getElementById('name').value = storedName;
                 }
-
+                
                 if (missionId) {
                     const select = document.getElementById('mission');
-                    
-                    // Check if option exists, if not add it
                     let found = false;
                     for (let i = 0; i < select.options.length; i++) {
                         if (select.options[i].value === missionId) {
@@ -641,16 +934,13 @@ async def home():
                         option.value = missionId;
                         option.text = missionTitle ? `${missionId}: ${missionTitle}` : missionId;
                         option.selected = true;
-                        // Insert after default option
                         select.add(option, select.options[1]);
                     }
                     
-                    // If mission is present, assume submission intent
-                    const statusSelect = document.getElementById('status');
-                    statusSelect.value = 'submission';
+                    document.getElementById('status').value = 'submission';
                     toggleRepoField();
                 }
-
+                
                 document.getElementById('name').addEventListener('change', () => {
                     const nameValue = document.getElementById('name').value.trim();
                     if (nameValue) {
@@ -658,23 +948,24 @@ async def home():
                         loadJobHistory();
                     }
                 });
-
+                
                 if (storedName) {
                     loadJobHistory();
                 }
             };
-
+            
             function switchTab(tabId) {
-                document.querySelectorAll('.tab-link').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
                 document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
-                document.getElementById(`tab-${tabId}-btn`).classList.add('active');
+                
+                event.target.classList.add('active');
                 document.getElementById(`tab-${tabId}`).classList.add('active');
                 
                 if (tabId === 'history') {
                     loadJobHistory();
                 }
             }
-
+            
             function toggleRepoField() {
                 const status = document.getElementById('status').value;
                 const repoGroup = document.getElementById('repoGroup');
@@ -686,20 +977,21 @@ async def home():
                     document.getElementById('repo_url').required = false;
                 }
             }
-
-            async function submitFeedback(e) {
+            
+            async function handleSubmit(e) {
                 e.preventDefault();
                 
                 const submitBtn = document.getElementById('submitBtn');
                 const isCodeSubmission = document.getElementById('status').value === 'submission';
                 
                 submitBtn.disabled = true;
+                submitBtn.textContent = 'Submitting...';
                 
                 if (isCodeSubmission) {
-                    document.getElementById('progressContainer').style.display = 'block';
+                    document.getElementById('progressContainer').classList.add('active');
                     document.getElementById('logWindow').innerHTML = '<div class="log-entry">> Sending submission...</div>';
                 }
-
+                
                 const formData = new FormData(e.target);
                 const data = {
                     mission_id: formData.get('mission'),
@@ -708,33 +1000,35 @@ async def home():
                     repo_url: formData.get('repo_url'),
                     message: formData.get('message')
                 };
-
+                
+                localStorage.setItem('apprenticeName', data.name);
+                
                 try {
                     const response = await fetch(`${BASE_PATH}/submit`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data)
                     });
-
-                        const result = await response.json();
-                    localStorage.setItem('apprenticeName', data.name);
+                    
+                    const result = await response.json();
                     
                     if (isCodeSubmission && result.job_id) {
-                        // Start polling for progress
                         pollProgress(result.job_id);
                         loadJobHistory();
                     } else {
-                        document.getElementById('successMessage').style.display = 'block';
-                        document.getElementById('feedbackForm').reset();
+                        document.getElementById('successMessage').classList.add('show');
+                        document.getElementById('submitForm').reset();
                         submitBtn.disabled = false;
-                            setTimeout(() => {
-                            document.getElementById('successMessage').style.display = 'none';
-                            }, 5000);
+                        submitBtn.textContent = '⚡ Submit';
+                        setTimeout(() => {
+                            document.getElementById('successMessage').classList.remove('show');
+                        }, 5000);
                     }
                     
                 } catch (error) {
-                    alert('Error submitting feedback. Please try again.');
+                    alert('Error submitting. Please try again.');
                     submitBtn.disabled = false;
+                    submitBtn.textContent = '⚡ Submit';
                 }
             }
             
@@ -748,11 +1042,9 @@ async def home():
                         const res = await fetch(`${BASE_PATH}/status/${jobId}`);
                         const data = await res.json();
                         
-                        // Update Logs
                         logWindow.innerHTML = data.logs.map(l => `<div class="log-entry">${l}</div>`).join('');
                         logWindow.scrollTop = logWindow.scrollHeight;
                         
-                        // Update Steps
                         data.steps.forEach((step, idx) => {
                             if (step.status === 'completed') {
                                 steps[idx].classList.add('completed');
@@ -762,79 +1054,92 @@ async def home():
                             }
                         });
                         
-                        // Check completion
                         if (data.status === 'completed' || data.status === 'failed') {
                             clearInterval(interval);
                             document.getElementById('submitBtn').disabled = false;
-                            document.getElementById('submitBtn').innerText = "Submit Another";
+                            document.getElementById('submitBtn').textContent = '⚡ Submit Another';
                             
-                       if (data.status === 'completed') {
-                                document.getElementById('resultCard').style.display = 'block';
-                                document.getElementById('finalScore').innerText = data.score + '/100';
-                                document.getElementById('finalStatus').innerText = data.score >= 90 ? "APPROVED ✅" : "NEEDS IMPROVEMENT ⚠️";
+                            if (data.status === 'completed') {
+                                const resultCard = document.getElementById('resultCard');
+                                resultCard.classList.add('active');
+                                document.getElementById('finalScore').textContent = data.score + '/100';
+                                const statusEl = document.getElementById('finalStatus');
+                                if (data.score >= 90) {
+                                    statusEl.textContent = 'APPROVED ✅';
+                                    statusEl.className = 'result-status success';
+                                } else {
+                                    statusEl.textContent = 'NEEDS IMPROVEMENT ⚠️';
+                                    statusEl.className = 'result-status warning';
+                                }
                             }
-                       loadJobHistory();
+                            loadJobHistory();
                         }
                     } catch (e) {
                         console.error(e);
                     }
                 }, 1000);
             }
-
-        async function loadJobHistory() {
-            const name = document.getElementById('name').value.trim();
-            const historyStatus = document.getElementById('historyStatus');
-            const historyList = document.getElementById('historyList');
             
-            if (!name) {
-                historyStatus.innerText = "Enter your name to load history.";
-                historyList.innerHTML = '';
-                return;
-            }
-
-            historyStatus.innerText = "Loading history...";
-            try {
-                const res = await fetch(`${BASE_PATH}/jobs?apprentice=${encodeURIComponent(name)}&limit=10`);
-                const data = await res.json();
-                if (!data.jobs || data.jobs.length === 0) {
-                    historyStatus.innerText = "No submissions yet. Run your first harvest!";
+            async function loadJobHistory() {
+                const name = document.getElementById('name').value.trim();
+                const historyStatus = document.getElementById('historyStatus');
+                const historyList = document.getElementById('historyList');
+                
+                if (!name) {
+                    historyStatus.textContent = 'Enter your name in the Submit tab to load history.';
                     historyList.innerHTML = '';
                     return;
                 }
-                historyStatus.innerText = `Showing ${data.jobs.length} recent submissions.`;
-                historyList.innerHTML = data.jobs.map(job => renderJobCard(job)).join('');
-            } catch (err) {
-                console.error(err);
-                historyStatus.innerText = "Unable to load history.";
+                
+                historyStatus.textContent = 'Loading...';
+                
+                try {
+                    const res = await fetch(`${BASE_PATH}/jobs?apprentice=${encodeURIComponent(name)}&limit=10`);
+                    const data = await res.json();
+                    
+                    if (!data.jobs || data.jobs.length === 0) {
+                        historyStatus.textContent = 'No submissions yet. Run your first harvest!';
+                        historyList.innerHTML = `
+                            <div class="empty-state">
+                                <div class="icon">📭</div>
+                                <p>No submissions found</p>
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    historyStatus.textContent = `Showing ${data.jobs.length} recent submissions`;
+                    historyList.innerHTML = data.jobs.map(job => renderJobCard(job)).join('');
+                } catch (err) {
+                    console.error(err);
+                    historyStatus.textContent = 'Unable to load history.';
+                }
             }
-        }
-
-        function renderJobCard(job) {
-            const score = job.score !== null && job.score !== undefined ? `${job.score}/100` : '—';
-            const submitted = job.started_at ? formatTimestamp(job.started_at) : '—';
-            const mission = job.mission_id || '—';
-            const repo = job.repo_url ? `<a href="${job.repo_url}" target="_blank">${job.repo_url}</a>` : '—';
-            const statusClass = job.status === 'completed' ? 'history-status-success' : (job.status === 'failed' ? 'history-status-error' : '');
-            return `
-                <div class="history-card">
-                    <div class="history-card-header">
-                        <span class="history-mission">Mission: ${mission}</span>
-                        <span class="history-score ${statusClass}">${job.status?.toUpperCase()} • Score ${score}</span>
-                    </div>
-                    <div class="history-card-body">
-                        <div><strong>Repo:</strong> ${repo}</div>
-                        <div><strong>Started:</strong> ${submitted}</div>
-                        ${job.finished_at ? `<div><strong>Finished:</strong> ${formatTimestamp(job.finished_at)}</div>` : ''}
-                    </div>
-                    <div class="history-card-footer">
+            
+            function renderJobCard(job) {
+                const score = job.score !== null && job.score !== undefined ? `${job.score}/100` : '—';
+                const submitted = job.started_at ? formatTimestamp(job.started_at) : '—';
+                const mission = job.mission_id || '—';
+                const repo = job.repo_url ? `<a href="${job.repo_url}" target="_blank">${job.repo_url.split('/').slice(-1)[0]}</a>` : '—';
+                const statusClass = job.status === 'completed' ? 'success' : (job.status === 'failed' ? 'failed' : '');
+                
+                return `
+                    <div class="history-card">
+                        <div class="history-header">
+                            <span class="history-mission">Mission: ${mission}</span>
+                            <span class="history-score ${statusClass}">${job.status?.toUpperCase()} • ${score}</span>
+                        </div>
+                        <div class="history-meta">
+                            <div><strong>Repo:</strong> ${repo}</div>
+                            <div><strong>Started:</strong> ${submitted}</div>
+                        </div>
                         <button class="view-log-btn" onclick="window.open('${BASE_PATH}/status/${job.job_id}', '_blank')">View Logs →</button>
                     </div>
-                </div>
-            `;
-        }
-
-        function formatTimestamp(ts) {
-            return ts ? ts.replace('T', ' ').slice(0, 19) : '—';
+                `;
+            }
+            
+            function formatTimestamp(ts) {
+                return ts ? ts.replace('T', ' ').slice(0, 19) : '—';
             }
         </script>
     </body>
@@ -844,22 +1149,18 @@ async def home():
 @app.post("/submit")
 async def submit_feedback(feedback: FeedbackSubmission, background_tasks: BackgroundTasks):
     """Save feedback submission"""
-    # Add timestamp
     feedback.timestamp = datetime.now().isoformat()
 
-    # Save to file
     filename = f"feedback_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
     filepath = FEEDBACK_DIR / filename
 
     with open(filepath, 'w') as f:
         json.dump(feedback.dict(), f, indent=2)
 
-    # Also append to master log
     log_file = FEEDBACK_DIR / "all_feedback.jsonl"
     with open(log_file, 'a') as f:
         f.write(json.dumps(feedback.dict()) + '\n')
     
-    # NEW: Trigger Harvest if this is a code submission
     job_id = None
     if feedback.status == "submission" and feedback.repo_url:
         job_id = str(uuid.uuid4())
@@ -873,17 +1174,16 @@ async def submit_feedback(feedback: FeedbackSubmission, background_tasks: Backgr
             status="queued",
             metadata={"submission_type": feedback.status},
         )
-        # Run as background task so we can return job_id immediately
         background_tasks.add_task(
             run_harvest_job, 
             job_id, 
             feedback.name, 
             feedback.repo_url,
-            feedback.mission_id  # Pass mission ID for status updates
+            feedback.mission_id
         )
-                
-                return {
-                    "status": "success", 
+    
+    return {
+        "status": "success", 
         "message": "Feedback received!",
         "job_id": job_id,
     }
@@ -904,7 +1204,7 @@ async def list_jobs(
     limit: int = Query(10, ge=1, le=50),
     mission_id: Optional[str] = Query(None, description="Optional mission filter"),
 ):
-    """Return recent harvest jobs for an apprentice (optionally filtered by mission)."""
+    """Return recent harvest jobs for an apprentice"""
     jobs = job_registry.list_jobs(
         limit=limit,
         apprentice=apprentice if apprentice else None,
@@ -913,26 +1213,23 @@ async def list_jobs(
     )
     formatted: List[Dict[str, Optional[str]]] = []
     for job in jobs:
-        formatted.append(
-            {
-                "job_id": job.get("job_id"),
-                "apprentice": job.get("apprentice"),
-                "mission_id": job.get("mission_id"),
-                "repo_url": job.get("repo_url"),
-                "mode": job.get("mode"),
-                "status": job.get("status"),
-                "score": job.get("score"),
-                "started_at": job.get("started_at"),
-                "finished_at": job.get("finished_at"),
-                "metadata": job.get("metadata", {}),
-            }
-        )
+        formatted.append({
+            "job_id": job.get("job_id"),
+            "apprentice": job.get("apprentice"),
+            "mission_id": job.get("mission_id"),
+            "repo_url": job.get("repo_url"),
+            "mode": job.get("mode"),
+            "status": job.get("status"),
+            "score": job.get("score"),
+            "started_at": job.get("started_at"),
+            "finished_at": job.get("finished_at"),
+            "metadata": job.get("metadata", {}),
+        })
     return {"jobs": formatted}
 
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard():
     """View all feedback submissions"""
-    # (Existing dashboard code remains mostly same, just simpler for brevity in this snippet)
     log_file = FEEDBACK_DIR / "all_feedback.jsonl"
     submissions = []
     if log_file.exists():
@@ -957,9 +1254,8 @@ async def dashboard():
 @app.get("/health")
 async def health():
     """Health check"""
-    return {"status": "healthy", "service": "apprentice-feedback"}
+    return {"status": "healthy", "service": "harvester"}
 
 if __name__ == "__main__":
     import uvicorn
-    # Bind to 0.0.0.0 to allow external access on server
     uvicorn.run(app, host="0.0.0.0", port=8055)

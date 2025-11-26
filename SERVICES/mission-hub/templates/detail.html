@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ mission.title }} | Mission Hub</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-deep: #0a0a0f;
@@ -25,7 +25,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            font-family: 'Space Grotesk', -apple-system, sans-serif;
+            font-family: 'Outfit', -apple-system, sans-serif;
             background: var(--bg-deep);
             color: var(--text);
             min-height: 100vh;
@@ -376,6 +376,10 @@
             color: var(--text-muted);
         }
         
+        .activity-meta a {
+            color: var(--accent-primary);
+        }
+        
         /* Claim Modal */
         .modal-overlay {
             display: none;
@@ -471,6 +475,23 @@
             min-width: 120px;
         }
         
+        /* Success message */
+        .success-message {
+            display: none;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #34d399;
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .success-message.show {
+            display: block;
+        }
+        
         /* Footer */
         footer {
             border-top: 1px solid var(--border);
@@ -495,10 +516,14 @@
                 ← Back to Mission Hub
             </a>
             
+            <div id="successMessage" class="success-message">
+                ✅ Mission claimed successfully! You can now start working on it.
+            </div>
+            
             <div class="mission-header">
                 <div class="mission-info">
                     <div class="badges">
-                        <span class="badge badge-priority">{{ mission.priority[:2] if mission.priority else 'P3' }}</span>
+                        <span class="badge badge-priority">{{ (mission.priority or 'P3')[:2] }}</span>
                         <span class="badge badge-type">{{ mission.type_info.label }}</span>
                         {% if mission.claim %}
                         <span class="badge badge-status claimed">Claimed</span>
@@ -517,7 +542,7 @@
                     </div>
                 </div>
                 
-                <div class="action-buttons">
+                <div class="action-buttons" id="actionButtons">
                     {% if mission.claim %}
                     <span class="btn btn-claimed">⏳ Claimed by {{ mission.claim.contributor_name }}</span>
                     <a href="/services/harvester?mission={{ mission.id }}&title={{ mission.title|urlencode }}" class="btn btn-secondary">
@@ -669,7 +694,7 @@
                 
                 <div class="modal-actions">
                     <button type="button" class="btn btn-secondary" onclick="closeClaimModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Claim Mission</button>
+                    <button type="submit" class="btn btn-primary" id="claimBtn">Claim Mission</button>
                 </div>
             </form>
         </div>
@@ -686,6 +711,15 @@
     
     <script>
         const missionId = "{{ mission.id }}";
+        const missionTitle = "{{ mission.title | replace('"', '\\"') }}";
+        
+        // Load saved name from localStorage
+        window.onload = function() {
+            const savedName = localStorage.getItem('apprenticeName');
+            if (savedName) {
+                document.getElementById('name').value = savedName;
+            }
+        };
         
         function openClaimModal() {
             document.getElementById('claimModal').classList.add('active');
@@ -699,18 +733,25 @@
         async function submitClaim(e) {
             e.preventDefault();
             
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const notes = document.getElementById('notes').value;
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const notes = document.getElementById('notes').value.trim();
+            const claimBtn = document.getElementById('claimBtn');
+            
+            // Save name for future use
+            localStorage.setItem('apprenticeName', name);
+            
+            claimBtn.disabled = true;
+            claimBtn.textContent = 'Claiming...';
             
             try {
+                // Use the correct API path that works with nginx proxy
                 const response = await fetch('/missions/api/claim', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         mission_id: missionId,
                         contributor_name: name,
-                        contributor_email: email,
                         notes: notes
                     })
                 });
@@ -718,13 +759,37 @@
                 const result = await response.json();
                 
                 if (response.ok) {
-                    alert('Mission claimed! Redirecting to harvester...');
-                    window.location.href = result.next_step || '/services/harvester?mission=' + missionId;
+                    closeClaimModal();
+                    
+                    // Show success message
+                    document.getElementById('successMessage').classList.add('show');
+                    
+                    // Update the action buttons to show claimed state
+                    const actionButtons = document.getElementById('actionButtons');
+                    actionButtons.innerHTML = `
+                        <span class="btn btn-claimed">⏳ Claimed by ${name}</span>
+                        <a href="/services/harvester?mission=${missionId}&title=${encodeURIComponent(missionTitle)}" class="btn btn-secondary">
+                            Submit Work →
+                        </a>
+                    `;
+                    
+                    // Update badge
+                    const statusBadge = document.querySelector('.badge-status');
+                    if (statusBadge) {
+                        statusBadge.className = 'badge badge-status claimed';
+                        statusBadge.textContent = 'Claimed';
+                    }
+                    
                 } else {
                     alert(result.detail || 'Failed to claim mission');
+                    claimBtn.disabled = false;
+                    claimBtn.textContent = 'Claim Mission';
                 }
             } catch (error) {
+                console.error('Claim error:', error);
                 alert('Error claiming mission. Please try again.');
+                claimBtn.disabled = false;
+                claimBtn.textContent = 'Claim Mission';
             }
         }
         
@@ -740,5 +805,3 @@
     </script>
 </body>
 </html>
-
-

@@ -77,7 +77,7 @@ class Contributor(BaseModel):
 class MissionClaim(BaseModel):
     """A claim on a mission"""
     mission_id: str
-    contributor_id: str
+    contributor_id: str = None
     contributor_name: str
     claimed_at: str = None
     expected_completion: str = None
@@ -260,6 +260,15 @@ def get_recent_jobs(mission_id: str = None, limit: int = 5) -> List[Dict]:
     except Exception:
         return []
 
+def get_all_contributors() -> List[Dict]:
+    """Get all contributors sorted by score"""
+    contributors = []
+    for f in CONTRIBUTORS_DIR.glob("*.json"):
+        with open(f, 'r') as fh:
+            contributors.append(json.load(fh))
+    contributors.sort(key=lambda x: x.get('total_score', 0), reverse=True)
+    return contributors
+
 def enrich_mission(mission: Dict) -> Dict:
     """Add live status, claim info, and recent jobs to a mission"""
     mission_id = mission.get('id', '')
@@ -288,7 +297,7 @@ def enrich_mission(mission: Dict) -> Dict:
     return mission
 
 # ============================================================================
-# ROUTES - UI
+# ROUTES - UI (Root paths)
 # ============================================================================
 
 @app.get("/", response_class=HTMLResponse)
@@ -302,6 +311,9 @@ async def mission_board(request: Request):
     claimed = sum(1 for m in enriched if m.get('claim'))
     completed = sum(1 for m in enriched if m.get('live_status', {}).get('status') == 'completed')
     
+    # Get top contributors for embedded leaderboard
+    top_contributors = get_all_contributors()[:5]
+    
     return templates.TemplateResponse("board.html", {
         "request": request,
         "missions": enriched,
@@ -311,7 +323,8 @@ async def mission_board(request: Request):
             "completed": completed,
             "open": total - claimed - completed
         },
-        "mission_types": MISSION_TYPES
+        "mission_types": MISSION_TYPES,
+        "top_contributors": top_contributors
     })
 
 @app.get("/mission/{mission_id}", response_class=HTMLResponse)
@@ -343,7 +356,7 @@ async def contribute_page(request: Request):
     
     return templates.TemplateResponse("contribute.html", {
         "request": request,
-        "missions": open_missions[:6],  # Show top 6 available
+        "missions": open_missions[:6],
         "skill_tags": SKILL_TAGS,
         "mission_types": MISSION_TYPES
     })
@@ -351,20 +364,17 @@ async def contribute_page(request: Request):
 @app.get("/leaderboard", response_class=HTMLResponse)
 async def leaderboard(request: Request):
     """Contributor leaderboard"""
-    contributors = []
-    for f in CONTRIBUTORS_DIR.glob("*.json"):
-        with open(f, 'r') as fh:
-            contributors.append(json.load(fh))
-    
-    # Sort by total score
-    contributors.sort(key=lambda x: x.get('total_score', 0), reverse=True)
+    contributors = get_all_contributors()[:20]
     
     return templates.TemplateResponse("leaderboard.html", {
         "request": request,
-        "contributors": contributors[:20]  # Top 20
+        "contributors": contributors
     })
 
-# Alias routes for nginx proxy compatibility
+# ============================================================================
+# ROUTES - UI (Aliased for /missions prefix from nginx)
+# ============================================================================
+
 @app.get("/missions", response_class=HTMLResponse)
 async def mission_board_alias(request: Request):
     """Alias for /missions path"""
@@ -375,11 +385,22 @@ async def mission_detail_alias(request: Request, mission_id: str):
     """Alias for /missions/mission/{id} path"""
     return await mission_detail(request, mission_id)
 
+@app.get("/missions/contribute", response_class=HTMLResponse)
+async def contribute_alias(request: Request):
+    """Alias for /missions/contribute path"""
+    return await contribute_page(request)
+
+@app.get("/missions/leaderboard", response_class=HTMLResponse)
+async def leaderboard_alias(request: Request):
+    """Alias for /missions/leaderboard path"""
+    return await leaderboard(request)
+
 # ============================================================================
-# ROUTES - API
+# ROUTES - API (Both root and /missions prefix for flexibility)
 # ============================================================================
 
 @app.post("/api/claim")
+@app.post("/missions/api/claim")
 async def claim_mission(claim: MissionClaim):
     """Claim a mission to work on"""
     existing = get_claim(claim.mission_id)
@@ -403,6 +424,7 @@ async def claim_mission(claim: MissionClaim):
     }
 
 @app.post("/api/submit")
+@app.post("/missions/api/submit")
 async def submit_mission(submission: MissionSubmission):
     """Submit work for a mission - triggers harvester"""
     # Update status to submitted
@@ -414,7 +436,6 @@ async def submit_mission(submission: MissionSubmission):
         notes=submission.notes
     ))
     
-    # Return redirect to harvester with pre-filled data
     return {
         "status": "success",
         "message": "Submission recorded! Redirecting to harvester...",
@@ -422,6 +443,7 @@ async def submit_mission(submission: MissionSubmission):
     }
 
 @app.post("/api/status")
+@app.post("/missions/api/status")
 async def update_mission_status(update: StatusUpdate):
     """Update mission status (called by harvester or manually)"""
     status = update_status(update)
@@ -442,6 +464,7 @@ async def update_mission_status(update: StatusUpdate):
     }
 
 @app.get("/api/missions")
+@app.get("/missions/api/missions")
 async def get_missions():
     """Get all missions with live status"""
     missions = load_missions()
@@ -454,6 +477,7 @@ async def get_missions():
     }
 
 @app.get("/api/mission/{mission_id}")
+@app.get("/missions/api/mission/{mission_id}")
 async def get_mission(mission_id: str):
     """Get single mission with full details"""
     missions = load_missions()
@@ -472,6 +496,7 @@ async def get_mission(mission_id: str):
     }
 
 @app.get("/api/stats")
+@app.get("/missions/api/stats")
 async def get_stats():
     """Get system-wide statistics"""
     missions = load_missions()
@@ -495,6 +520,16 @@ async def get_stats():
         "timestamp": datetime.now().isoformat()
     }
 
+@app.get("/api/leaderboard")
+@app.get("/missions/api/leaderboard")
+async def get_leaderboard():
+    """Get leaderboard data as JSON"""
+    contributors = get_all_contributors()[:20]
+    return {
+        "contributors": contributors,
+        "timestamp": datetime.now().isoformat()
+    }
+
 @app.get("/health")
 async def health():
     """Health check"""
@@ -512,5 +547,3 @@ async def health():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8700)
-
-
