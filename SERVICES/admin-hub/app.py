@@ -1050,13 +1050,13 @@ def api_health():
     })
 
 
-# Legacy route compatibility
+# Legacy route compatibility (when accessed directly on port 8888)
 @app.route('/', methods=['GET', 'POST'])
 def legacy_root():
-    """Redirect legacy root to /admin or handle setup"""
-    if request.method == 'POST' or not is_password_set():
+    """Show dashboard at root too (for direct access)"""
+    if request.method == 'POST':
         return setup()
-    return redirect('/admin')
+    return dashboard()
 
 
 # ============================================================
