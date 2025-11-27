@@ -492,6 +492,18 @@ async def leaderboard_alias(request: Request):
     """Alias for /missions/leaderboard path"""
     return await leaderboard(request)
 
+@app.get("/faq", response_class=HTMLResponse)
+async def faq_page(request: Request):
+    """FAQ page for missions"""
+    return templates.TemplateResponse("faq.html", {
+        "request": request
+    })
+
+@app.get("/missions/faq", response_class=HTMLResponse)
+async def faq_alias(request: Request):
+    """Alias for /missions/faq path"""
+    return await faq_page(request)
+
 # ============================================================================
 # ROUTES - API (Both root and /missions prefix for flexibility)
 # ============================================================================

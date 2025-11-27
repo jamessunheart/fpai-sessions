@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mission FAQ | Full Potential AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Outfit', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: rgba(0,0,0,0.4);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00d4ff, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+        
+        nav a {
+            color: #888;
+            text-decoration: none;
+            margin-left: 2rem;
+            transition: color 0.2s;
+        }
+        
+        nav a:hover { color: #00d4ff; }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #00d4ff, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            color: #888;
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+        }
+        
+        .faq-section {
+            margin-bottom: 3rem;
+        }
+        
+        .faq-section h2 {
+            font-size: 1.5rem;
+            color: #00d4ff;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(0,212,255,0.3);
+        }
+        
+        .faq-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        
+        .faq-question {
+            padding: 1.25rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        
+        .faq-question:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .faq-question::after {
+            content: '+';
+            font-size: 1.5rem;
+            color: #00d4ff;
+            transition: transform 0.3s;
+        }
+        
+        .faq-item.open .faq-question::after {
+            transform: rotate(45deg);
+        }
+        
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .faq-item.open .faq-answer {
+            max-height: 1000px;
+        }
+        
+        .faq-answer-content {
+            padding: 0 1.5rem 1.5rem;
+            color: #b0b0b0;
+        }
+        
+        .faq-answer-content p {
+            margin-bottom: 1rem;
+        }
+        
+        .faq-answer-content ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .faq-answer-content li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .highlight {
+            background: rgba(0,212,255,0.1);
+            border-left: 3px solid #00d4ff;
+            padding: 1rem 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1rem 0;
+        }
+        
+        .cta-box {
+            background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(124,58,237,0.1));
+            border: 1px solid rgba(0,212,255,0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 3rem;
+        }
+        
+        .cta-box h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+            margin: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #7c3aed);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,212,255,0.3);
+        }
+        
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: #e0e0e0;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.15);
+        }
+        
+        .contact-box {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .contact-box h4 {
+            margin-bottom: 0.5rem;
+            color: #00d4ff;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            margin-top: 3rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <a href="/missions" class="logo">🎯 Mission Hub</a>
+            <nav>
+                <a href="/missions">Missions</a>
+                <a href="/missions/contribute">Contribute</a>
+                <a href="/missions/leaderboard">Leaderboard</a>
+                <a href="/missions/faq">FAQ</a>
+            </nav>
+        </div>
+    </header>
+    
+    <div class="container">
+        <h1>❓ Mission FAQ</h1>
+        <p class="subtitle">Everything you need to know about completing missions for Full Potential AI</p>
+        
+        <!-- Getting Started -->
+        <div class="faq-section">
+            <h2>🚀 Getting Started</h2>
+            
+            <div class="faq-item open">
+                <div class="faq-question">What are missions?</div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>Missions are specific tasks that help build Full Potential AI's ecosystem. They range from coding and development to documentation, design, and research.</p>
+                        <p>Each mission has:</p>
+                        <ul>
+                            <li><strong>Clear objectives</strong> - What needs to be accomplished</li>
+                            <li><strong>Specifications</strong> - Detailed requirements and steps</li>
+                            <li><strong>Estimated time</strong> - How long it should take</li>
+                            <li><strong>Reward</strong> - Compensation for completion</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">How do I claim a mission?</div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>1. Browse available missions on the <a href="/missions">Mission Board</a></p>
+                        <p>2. Click on a mission to see its full details and specifications</p>
+                        <p>3. Click "Claim Mission" and enter your name/identifier</p>
+                        <p>4. Start working! The mission is now assigned to you.</p>
+                        <div class="highlight">
+                            <strong>💡 Tip:</strong> Only claim missions you can complete within the estimated time. This helps keep the board moving!
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Should mission work be included in my Upwork time?</div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p><strong>Yes!</strong> If you're working through Upwork, mission work counts as billable time.</p>
+                        <ul>
+                            <li>Track your time normally in Upwork</li>
+                            <li>Reference the mission ID (e.g., M001) in your work diary notes</li>
+                            <li>Missions are legitimate project work</li>
+                        </ul>
+                        <div class="highlight">
+                            <strong>📝 Note:</strong> When logging time, mention which mission you worked on (e.g., "M003 - Chat Orchestrator implementation")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mission Claims -->
+        <div class="faq-section">
+            <h2>🎯 Mission Claims & Assignments</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question">If a mission is already claimed, can someone else do it?</div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p><strong>Generally, no.</strong> Once claimed, a mission is assigned to that person. However:</p>
+                        <ul>
+                            <li><strong>Stale claims</strong> - If no progress after 48 hours, the mission may be released</li>
+                            <li><strong>Collaboration</strong> - You can ask to collaborate with the current assignee</li>
+                            <li><strong>Similar work</strong> - Ask if there's a related mission you can take</li>
+                        </ul>
+                        <p>If you see a claimed mission with no activity, message the team - we may reassign it.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">What if I can't finish a mission I claimed?</div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>No problem! Just let us know:</p>
+                        <ul>
+                            <li>Update the mission status to "Blocked" with a note</li>
+                            <li>Or message the team to release the mission</li>
+                            <li>Document any progress you made so the next person can continue</li>
+                        </ul>
+                        <p>We'd rather you release a mission early than let it sit incomplete.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Can I work on multiple missions at once?</div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p><strong>Yes, but be realistic.</strong> We recommend:</p>
+                        <ul>
+                            <li>Maximum 2-3 active missions at a time</li>
+                            <li>Focus on completing one before starting another</li>
+                            <li>Don't claim missions you can't start within 24 hours</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Rewards & Recognition -->
+        <div class="faq-section">
+            <h2>🏆 Rewards & Recognition</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question">Will those who do more missions remain on the team?</div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p><strong>Absolutely!</strong> Mission completion is a key factor in team decisions:</p>
+                        <ul>
+                            <li><strong>Consistent contributors</strong> get priority for ongoing work</li>
+                            <li><strong>Quality completions</strong> lead to more complex/higher-paying missions</li>
+                            <li><strong>Leaderboard recognition</strong> highlights top contributors</li>
+                            <li><strong>Long-term roles</strong> are offered to proven performers</li>
+                        </ul>
+                        <div class="highlight">
+                            <strong>🌟 Bottom line:</strong> The more missions you complete well, the more opportunities you'll receive. We invest in people who invest in the mission.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">How are missions compensated?</div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>Compensation depends on your arrangement:</p>
+                        <ul>
+                            <li><strong>Upwork contractors:</strong> Bill your normal hourly rate</li>
+                            <li><strong>Direct contributors:</strong> Per-mission bounties (listed on each mission)</li>
+                            <li><strong>FPAI Token holders:</strong> Additional token rewards for completion</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">What's the leaderboard?</div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>The <a href="/missions/leaderboard">Leaderboard</a> tracks top contributors by:</p>
+                        <ul>
+                            <li>Number of missions completed</li>
+                            <li>Quality of work</li>
+                            <li>Speed of completion</li>
+                            <li>Community contributions</li>
+                        </ul>
+                        <p>Top contributors get recognition and first access to new opportunities!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Submitting Work -->
+        <div class="faq-section">
+            <h2>📤 Submitting Work</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question">How do I submit completed mission work?</div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>Use the <a href="/services/harvester">Harvester</a> to submit your code:</p>
+                        <ol>
+                            <li>Go to the Harvester portal</li>
+                            <li>Enter the mission ID</li>
+                            <li>Paste your code or upload files</li>
+                            <li>Add notes about your implementation</li>
+                            <li>Submit for review</li>
+                        </ol>
+                        <p>Your submission will be reviewed and merged if it meets the specifications.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">What if my work needs revisions?</div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>Revisions are normal! If your submission needs changes:</p>
+                        <ul>
+                            <li>You'll receive feedback on what to adjust</li>
+                            <li>Make the changes and resubmit</li>
+                            <li>The mission stays assigned to you during revisions</li>
+                        </ul>
+                        <p>We work collaboratively to get submissions merged.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CTA Box -->
+        <div class="cta-box">
+            <h3>Ready to Start?</h3>
+            <p>Browse available missions and claim your first one!</p>
+            <a href="/missions" class="btn btn-primary">View Missions</a>
+            <a href="/missions/contribute" class="btn btn-secondary">Learn More</a>
+        </div>
+        
+        <!-- Contact -->
+        <div class="contact-box">
+            <h4>Still have questions?</h4>
+            <p>Reach out to the team:</p>
+            <ul>
+                <li>Email: <a href="mailto:james@fullpotential.ai">james@fullpotential.ai</a></li>
+                <li>Or ask in the team chat</li>
+            </ul>
+        </div>
+    </div>
+    
+    <footer>
+        Full Potential AI · Building Heaven on Earth, One Mission at a Time
+    </footer>
+    
+    <script>
+        // Toggle FAQ items
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const item = question.parentElement;
+                item.classList.toggle('open');
+            });
+        });
+    </script>
+</body>
+</html>
+
