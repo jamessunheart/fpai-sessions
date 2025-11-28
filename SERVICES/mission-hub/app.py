@@ -209,13 +209,48 @@ SKILL_TAGS = [
 # DATA HELPERS
 # ============================================================================
 
+# Path to optimized missions (AI-first workflow)
+OPTIMIZED_MISSIONS = ROOT_DIR / "docs" / "coordination" / "missions" / "OPTIMIZED_MISSIONS.json"
+
 def load_missions() -> List[Dict]:
-    """Load missions from JSON feed"""
+    """Load missions from optimized JSON feed (AI-first) or legacy feed"""
+    missions = []
+    
+    # First, load from optimized missions (AI-first workflow)
+    if OPTIMIZED_MISSIONS.exists():
+        with open(OPTIMIZED_MISSIONS, 'r') as f:
+            data = json.load(f)
+            for m in data.get('active_missions', []):
+                # Convert to standard mission format
+                mission = {
+                    'id': m.get('id'),
+                    'title': m.get('title'),
+                    'description': m.get('description'),
+                    'type': 'ai_only' if m.get('category') == 'ai_autonomous' else (
+                        'hybrid' if m.get('ai_percentage', 0) >= 50 else 'human_required'
+                    ),
+                    'priority': m.get('priority', 'medium'),
+                    'estimated_time': m.get('estimated_time', '4 hours'),
+                    'ai_percentage': m.get('ai_percentage', 50),
+                    'ai_tasks': m.get('ai_tasks', []),
+                    'human_tasks': m.get('human_tasks', []),
+                    'blockers': m.get('blockers', []),
+                    'files': m.get('files', []),
+                    'success_criteria': m.get('success_criteria', []),
+                    'category': m.get('category', 'ai_assisted')
+                }
+                missions.append(mission)
+    
+    # Also load from legacy feed if exists
     if MISSIONS_JSON.exists():
         with open(MISSIONS_JSON, 'r') as f:
             data = json.load(f)
-            return data.get('missions', [])
-    return []
+            for m in data.get('missions', []):
+                # Avoid duplicates
+                if not any(existing['id'] == m.get('id') for existing in missions):
+                    missions.append(m)
+    
+    return missions
 
 def get_mission_content(mission_id: str) -> Optional[str]:
     """Load full markdown content for a mission"""

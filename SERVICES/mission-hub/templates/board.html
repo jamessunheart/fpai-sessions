@@ -662,6 +662,105 @@
         .mission-card:nth-child(4) { animation-delay: 0.2s; }
         .mission-card:nth-child(5) { animation-delay: 0.25s; }
         .mission-card:nth-child(6) { animation-delay: 0.3s; }
+        
+        /* AI-First Banner */
+        .ai-first-banner {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 16px;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+        
+        .ai-banner-icon {
+            font-size: 40px;
+            flex-shrink: 0;
+        }
+        
+        .ai-banner-content {
+            flex: 1;
+        }
+        
+        .ai-banner-content h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--accent-success);
+            margin-bottom: 4px;
+        }
+        
+        .ai-banner-content p {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        
+        .ai-banner-link {
+            color: var(--accent-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        
+        .ai-banner-link:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .ai-first-banner {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+        
+        /* AI Percentage Badge */
+        .ai-percentage {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+        
+        .ai-percentage-bar {
+            flex: 1;
+            height: 6px;
+            background: var(--bg-elevated);
+            border-radius: 3px;
+            overflow: hidden;
+            max-width: 100px;
+        }
+        
+        .ai-percentage-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        
+        .ai-percentage-text {
+            font-weight: 600;
+            color: var(--accent-primary);
+        }
+        
+        /* Category badges */
+        .badge-ai-autonomous {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+        }
+        
+        .badge-ai-primary {
+            background: rgba(139, 92, 246, 0.15);
+            color: #a78bfa;
+        }
+        
+        .badge-human-required {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+        }
     </style>
 </head>
 <body>
@@ -684,6 +783,16 @@
                 </nav>
             </div>
         </header>
+        
+        <!-- AI-First Workflow Banner -->
+        <div class="ai-first-banner">
+            <div class="ai-banner-icon">🤖</div>
+            <div class="ai-banner-content">
+                <h3>AI-First Mission System</h3>
+                <p>Every mission goes through AI triage first. AI completes what it can, humans handle the rest.</p>
+            </div>
+            <a href="/missions/faq" class="ai-banner-link">Learn how it works →</a>
+        </div>
         
         <!-- Stats -->
         <div class="stats-bar">
@@ -717,15 +826,15 @@
                     
                     <div class="filter-tabs">
                         <button class="filter-tab active" data-filter="all">All</button>
-                        <button class="filter-tab" data-filter="open">Open</button>
+                        <button class="filter-tab" data-filter="ai">🤖 AI-Ready</button>
+                        <button class="filter-tab" data-filter="human">👤 Human Needed</button>
                         <button class="filter-tab" data-filter="claimed">In Progress</button>
-                        <button class="filter-tab" data-filter="completed">Completed</button>
                     </div>
                 </div>
                 
                 <div class="mission-grid" id="missionGrid">
                     {% for mission in missions %}
-                    <div class="mission-card" data-status="{{ mission.live_status.status or 'open' }}">
+                    <div class="mission-card" data-status="{{ mission.live_status.status or 'open' }}" data-category="{{ mission.category or '' }}" data-ai-percentage="{{ mission.ai_percentage or 50 }}">
                         <div class="mission-header">
                             <div class="mission-badges">
                                 <span class="badge badge-priority {{ 'p1' if 'P1' in (mission.priority or '') else ('p2' if 'P2' in (mission.priority or '') else '') }}">
@@ -754,7 +863,17 @@
                         </div>
                         
                         <div class="mission-body">
-                            <p class="mission-impact">{{ mission.regenerative_impact }}</p>
+                            <p class="mission-impact">{{ mission.description or mission.regenerative_impact }}</p>
+                            
+                            {% if mission.ai_percentage is defined %}
+                            <div class="ai-percentage">
+                                <span>🤖 AI:</span>
+                                <div class="ai-percentage-bar">
+                                    <div class="ai-percentage-fill" style="width: {{ mission.ai_percentage }}%"></div>
+                                </div>
+                                <span class="ai-percentage-text">{{ mission.ai_percentage }}%</span>
+                            </div>
+                            {% endif %}
                         </div>
                         
                         <div class="mission-footer">
@@ -870,13 +989,16 @@
                 
                 cards.forEach(card => {
                     const status = card.dataset.status;
+                    const category = card.dataset.category || '';
+                    const aiPct = parseInt(card.dataset.aiPercentage || '50');
+                    
                     if (filter === 'all') {
                         card.style.display = 'flex';
-                    } else if (filter === 'open' && (!status || status === 'open')) {
+                    } else if (filter === 'ai' && (category.includes('ai_autonomous') || category.includes('ai_primary') || aiPct >= 80)) {
+                        card.style.display = 'flex';
+                    } else if (filter === 'human' && (category.includes('human') || aiPct < 50)) {
                         card.style.display = 'flex';
                     } else if (filter === 'claimed' && (status === 'claimed' || status === 'in_progress' || status === 'submitted')) {
-                        card.style.display = 'flex';
-                    } else if (filter === 'completed' && status === 'completed') {
                         card.style.display = 'flex';
                     } else {
                         card.style.display = 'none';

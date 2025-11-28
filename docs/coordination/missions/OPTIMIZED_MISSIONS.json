@@ -1,0 +1,217 @@
+{
+  "version": "2.0",
+  "generated_at": "2025-11-27",
+  "philosophy": "AI-First: Every mission goes through AI triage. AI attempts work first, humans handle what AI cannot.",
+  
+  "active_missions": [
+    {
+      "id": "M-AI-001",
+      "title": "API Gateway Enhancement",
+      "category": "ai_autonomous",
+      "ai_percentage": 100,
+      "description": "Add rate limiting, caching, and better error handling to the API Gateway",
+      "ai_tasks": [
+        "Review current api-gateway/app.py implementation",
+        "Add Redis-based rate limiting",
+        "Implement response caching for repeated requests",
+        "Add better error messages and logging",
+        "Write tests for new functionality"
+      ],
+      "human_tasks": [],
+      "estimated_time": "2 hours",
+      "priority": "high",
+      "files": ["SERVICES/api-gateway/app.py"],
+      "success_criteria": [
+        "Rate limiting prevents >100 requests/minute per client",
+        "Cache reduces API calls by 30%+",
+        "All errors return helpful JSON responses"
+      ]
+    },
+    {
+      "id": "M-AI-002", 
+      "title": "Mission Hub UI Polish",
+      "category": "ai_autonomous",
+      "ai_percentage": 100,
+      "description": "Improve Mission Hub UI with better animations, mobile responsiveness, and loading states",
+      "ai_tasks": [
+        "Add loading skeletons to mission cards",
+        "Improve mobile layout for board.html",
+        "Add smooth transitions between pages",
+        "Improve accessibility (aria labels, keyboard nav)",
+        "Add dark/light mode toggle"
+      ],
+      "human_tasks": [],
+      "estimated_time": "3 hours",
+      "priority": "medium",
+      "files": ["SERVICES/mission-hub/templates/*.html"],
+      "success_criteria": [
+        "Lighthouse accessibility score >90",
+        "Mobile layout works on 320px+ screens",
+        "All interactive elements have hover/focus states"
+      ]
+    },
+    {
+      "id": "M-AI-003",
+      "title": "Unified Health Dashboard",
+      "category": "ai_autonomous", 
+      "ai_percentage": 100,
+      "description": "Create a single dashboard showing health status of all FPAI services",
+      "ai_tasks": [
+        "Create health-dashboard service",
+        "Poll all service /health endpoints",
+        "Display status with uptime history",
+        "Add alerts for down services",
+        "Create beautiful visualization"
+      ],
+      "human_tasks": [],
+      "estimated_time": "4 hours",
+      "priority": "high",
+      "files": ["SERVICES/health-dashboard/"],
+      "success_criteria": [
+        "Shows all 12+ services status",
+        "Updates every 30 seconds",
+        "Sends alert when service goes down"
+      ]
+    },
+    {
+      "id": "M-AI-004",
+      "title": "Documentation Generator",
+      "category": "ai_autonomous",
+      "ai_percentage": 100,
+      "description": "Auto-generate API documentation from all FPAI services",
+      "ai_tasks": [
+        "Scan all SERVICES/*/app.py files",
+        "Extract FastAPI routes and models",
+        "Generate OpenAPI specs",
+        "Create unified docs portal",
+        "Add code examples"
+      ],
+      "human_tasks": [],
+      "estimated_time": "3 hours",
+      "priority": "medium",
+      "files": ["orchestration/tools/generate_docs.py"],
+      "success_criteria": [
+        "All services have generated docs",
+        "Docs accessible at /docs endpoint",
+        "Includes request/response examples"
+      ]
+    },
+    {
+      "id": "M-HU-001",
+      "title": "Treasury Activation",
+      "category": "human_primary",
+      "ai_percentage": 30,
+      "description": "Activate Magnet trading system with Binance testnet credentials",
+      "ai_tasks": [
+        "Prepare configuration templates",
+        "Document setup process",
+        "Create verification scripts"
+      ],
+      "human_tasks": [
+        "Create Binance testnet account",
+        "Generate API keys",
+        "Insert credentials into vault",
+        "Run activation script",
+        "Verify trading simulation works"
+      ],
+      "estimated_time": "1.5 hours",
+      "priority": "critical",
+      "files": ["infra/secrets.vault.example.json", "orchestration/tools/inject_vault.py"],
+      "success_criteria": [
+        "Magnet connects to Binance testnet",
+        "Paper trades execute successfully",
+        "Vault secrets properly encrypted"
+      ],
+      "blockers": ["CREDENTIALS: Binance API keys required"]
+    },
+    {
+      "id": "M-HU-002",
+      "title": "Email Automation Setup",
+      "category": "ai_primary",
+      "ai_percentage": 80,
+      "description": "Deploy email automation system with SendGrid integration",
+      "ai_tasks": [
+        "Build FastAPI email service",
+        "Create email templates",
+        "Implement Celery workers",
+        "Add sequence logic",
+        "Write tests"
+      ],
+      "human_tasks": [
+        "Provide SendGrid API key",
+        "Approve email templates",
+        "Test with real email addresses"
+      ],
+      "estimated_time": "8 hours (6 AI + 2 human)",
+      "priority": "high",
+      "files": ["SERVICES/email-automation/"],
+      "success_criteria": [
+        "3 email sequences working",
+        "Emails render correctly",
+        "Unsubscribe links work"
+      ],
+      "blockers": ["CREDENTIALS: SendGrid API key required"]
+    },
+    {
+      "id": "M-HU-003",
+      "title": "Content Engine WordPress Integration",
+      "category": "ai_primary",
+      "ai_percentage": 75,
+      "description": "Connect content generation to WordPress for auto-publishing",
+      "ai_tasks": [
+        "Build WordPress API client",
+        "Create content scheduling system",
+        "Implement SEO optimization",
+        "Add analytics tracking"
+      ],
+      "human_tasks": [
+        "Provide WordPress credentials",
+        "Review first 3 articles before auto-publish",
+        "Approve content guidelines"
+      ],
+      "estimated_time": "6 hours (4.5 AI + 1.5 human)",
+      "priority": "medium",
+      "files": ["SERVICES/content-engine/"],
+      "success_criteria": [
+        "Articles publish to WordPress",
+        "SEO score >70",
+        "Analytics tracking works"
+      ],
+      "blockers": ["CREDENTIALS: WordPress app password required"]
+    }
+  ],
+
+  "workflow": {
+    "step_1": {
+      "name": "AI Triage",
+      "description": "Every new mission runs through ai_mission_triage.py",
+      "action": "python orchestration/tools/ai_mission_triage.py --triage <mission_id>"
+    },
+    "step_2": {
+      "name": "AI Attempt",
+      "description": "For ai_autonomous and ai_primary missions, AI worker attempts completion",
+      "action": "python orchestration/tools/ai_mission_worker.py <mission_id>"
+    },
+    "step_3": {
+      "name": "Human Review/Complete",
+      "description": "Human reviews AI work or completes blocked tasks",
+      "action": "Submit via Harvester or complete manual tasks"
+    },
+    "step_4": {
+      "name": "Verification",
+      "description": "AI verifies completion, human approves for deployment",
+      "action": "Automated tests + human sign-off"
+    }
+  },
+
+  "priority_order": [
+    "M-AI-001 (API Gateway - quick AI win)",
+    "M-AI-003 (Health Dashboard - visibility)",
+    "M-HU-001 (Treasury - critical path)",
+    "M-HU-002 (Email - revenue impact)",
+    "M-AI-002 (UI Polish - user experience)",
+    "M-AI-004 (Docs - developer experience)",
+    "M-HU-003 (Content - long-term growth)"
+  ]
+}
+
