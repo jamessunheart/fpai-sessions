@@ -551,6 +551,14 @@
                     {% elif mission.live_status.status == 'completed' %}
                     <span class="btn btn-secondary">✅ Mission Complete</span>
                     {% else %}
+                    
+                    <!-- AI Deployment Button -->
+                    {% if mission.type == 'ai_only' or mission.ai_percentage >= 80 %}
+                    <button class="btn btn-primary" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);" onclick="deployAgent()">
+                        🤖 Deploy AI Agent
+                    </button>
+                    {% endif %}
+                    
                     <button class="btn btn-primary" onclick="openClaimModal()">
                         ⚡ Claim This Mission
                     </button>
@@ -724,6 +732,40 @@
         function openClaimModal() {
             document.getElementById('claimModal').classList.add('active');
             document.getElementById('name').focus();
+        }
+        
+        async function deployAgent() {
+            if (!confirm('Deploy autonomous AI agent for this mission? It will use available credits.')) return;
+            
+            const btn = document.querySelector('button[onclick="deployAgent()"]');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '🤖 Deploying...';
+            
+            try {
+                const response = await fetch(`/missions/api/mission/${missionId}/start_agent`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('successMessage').innerHTML = `✅ ${result.message}`;
+                    document.getElementById('successMessage').classList.add('show');
+                    btn.innerHTML = '🚀 Agent Running';
+                    
+                    // Refresh page after 2 seconds to show new status
+                    setTimeout(() => window.location.reload(), 2000);
+                } else {
+                    alert(result.detail || 'Failed to deploy agent');
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+            } catch (error) {
+                console.error('Deployment error:', error);
+                alert('Error deploying agent');
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
         }
         
         function closeClaimModal() {

@@ -15,6 +15,7 @@ import json
 import os
 import sys
 import hashlib
+import subprocess
 
 # Setup path for core imports
 ROOT_DIR = Path(__file__).resolve().parents[2]
@@ -566,6 +567,54 @@ async def claim_mission(claim: MissionClaim):
         "claim": claim.dict(),
         "next_step": f"/services/harvester?mission={claim.mission_id}"
     }
+
+@app.post("/api/mission/{mission_id}/start_agent")
+@app.post("/missions/api/mission/{mission_id}/start_agent")
+async def start_mission_agent(mission_id: str):
+    """Start an autonomous AI agent for this mission"""
+    
+    # Verify mission exists
+    missions = load_missions()
+    mission = next((m for m in missions if m['id'] == mission_id), None)
+    if not mission:
+        raise HTTPException(status_code=404, detail="Mission not found")
+    
+    # Path to worker script
+    worker_script = ROOT_DIR / "orchestration" / "tools" / "ai_mission_worker.py"
+    if not worker_script.exists():
+        raise HTTPException(status_code=500, detail="AI worker script not found")
+    
+    # Log file for this run
+    log_dir = DATA_DIR / "agent_logs"
+    log_dir.mkdir(parents=True, exist_ok=True)
+    log_file = log_dir / f"{mission_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
+    
+    try:
+        # Start worker in background
+        with open(log_file, "w") as f:
+            subprocess.Popen(
+                [sys.executable, str(worker_script), mission_id, "--model", "claude"],
+                stdout=f,
+                stderr=subprocess.STDOUT,
+                cwd=str(ROOT_DIR)
+            )
+            
+        # Update status to in_progress
+        update_status(StatusUpdate(
+            mission_id=mission_id,
+            status="in_progress",
+            updated_by="AI Agent (Claude)",
+            notes="Autonomous agent deployed"
+        ))
+        
+        return {
+            "status": "success",
+            "message": "AI Agent deployed successfully!",
+            "log_file": str(log_file)
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to start agent: {str(e)}")
 
 @app.post("/api/submit")
 @app.post("/missions/api/submit")
