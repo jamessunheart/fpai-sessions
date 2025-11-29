@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "jobs": [
+    {
+      "job_id": "2bdeba76-67f8-4004-982a-c5a9d4a5f601",
+      "apprentice": "DebugTest",
+      "mission_id": "debug-test",
+      "repo_url": "https://github.com/octocat/Hello-World",
+      "mode": "gatekeeper",
+      "source": "web",
+      "status": "failed",
+      "score": null,
+      "breakdown": {},
+      "started_at": "2025-11-27T17:25:51.067385Z",
+      "finished_at": "2025-11-27T17:25:51.826070Z",
+      "logs_path": "/root/FPAI_Cockpit/data/harvester-jobs/2bdeba76-67f8-4004-982a-c5a9d4a5f601.json",
+      "metadata": {
+        "submission_type": "submission",
+        "result": "failed",
+        "mission_id": "debug-test"
+      },
+      "updated_at": "2025-11-27T17:25:51.826065Z"
+    }
+  ]
+}

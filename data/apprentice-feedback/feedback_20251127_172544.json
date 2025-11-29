@@ -1,0 +1,8 @@
+{
+  "mission_id": "test-debug",
+  "status": "stuck",
+  "name": "DebugTest",
+  "repo_url": null,
+  "message": "Testing API endpoint",
+  "timestamp": "2025-11-27T17:25:44.993213"
+}

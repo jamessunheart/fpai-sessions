@@ -73,6 +73,16 @@ async def check_service_health(name: str, port: int) -> dict:
         return {"status": "offline", "error": str(e)}
 
 
+
+def get_storage_status():
+    try:
+        path = Path("/opt/fpai/data/storage_alert.json")
+        if path.exists():
+            return json.loads(path.read_text())
+    except Exception:
+        pass
+    return {"usage_percent": "?", "days_remaining": "?", "status": "unknown"}
+
 def get_api_gateway_stats():
     """Get API Gateway usage stats"""
     try:
@@ -427,6 +437,12 @@ ADMIN_TEMPLATE = """
         
         <!-- Stats -->
         <div class="stats-grid">
+            <div class="stat-card" style="border-color: {{ '#ff4444' if storage.status == 'critical' else ('#ffaa00' if storage.status == 'warning' else 'rgba(255,255,255,0.1)') }}">
+                <div class="stat-icon">💾</div>
+                <div class="stat-value">{{ storage.usage_percent }}%</div>
+                <div class="stat-label">Storage ({{ storage.days_remaining }} days left)</div>
+            </div>
+
             <div class="stat-card">
                 <div class="stat-icon">⚡</div>
                 <div class="stat-value">{{ stats.total_requests }}</div>
@@ -458,6 +474,7 @@ ADMIN_TEMPLATE = """
                 <a href="/admin/api-gateway" class="btn btn-primary">📊 View API Usage</a>
                 <a href="/missions" class="btn btn-secondary" target="_blank">🎯 Mission Hub</a>
                 <a href="/services/harvester" class="btn btn-secondary" target="_blank">🌾 Harvester</a>
+                <a href="/admin/backup" class="btn btn-secondary">🛡️ Backups</a>
                 <a href="/admin/setup" class="btn btn-secondary">🔐 Change Password</a>
             </div>
         </div>
@@ -862,6 +879,12 @@ API_GATEWAY_TEMPLATE = """
         <p class="subtitle">Centralized AI API usage and billing</p>
         
         <div class="stats-grid">
+            <div class="stat-card" style="border-color: {{ '#ff4444' if storage.status == 'critical' else ('#ffaa00' if storage.status == 'warning' else 'rgba(255,255,255,0.1)') }}">
+                <div class="stat-icon">💾</div>
+                <div class="stat-value">{{ storage.usage_percent }}%</div>
+                <div class="stat-label">Storage ({{ storage.days_remaining }} days left)</div>
+            </div>
+
             <div class="stat-card">
                 <div class="stat-value">{{ stats.total_requests }}</div>
                 <div class="stat-label">Total Requests</div>
@@ -952,6 +975,7 @@ API_GATEWAY_TEMPLATE = """
 def dashboard():
     """Main admin dashboard"""
     stats = get_api_gateway_stats()
+    storage = get_storage_status()
     
     # Check service health (simplified - just check if port responds)
     services_online = 0
@@ -1015,6 +1039,7 @@ def setup():
 def api_gateway():
     """API Gateway usage dashboard"""
     stats = get_api_gateway_stats()
+    storage = get_storage_status()
     
     # Group by provider
     by_provider = {}
@@ -1063,6 +1088,7 @@ def root():
         return setup()
     # Return dashboard directly - NO REDIRECT to avoid loops
     stats = get_api_gateway_stats()
+    storage = get_storage_status()
     services_online = 0
     for key, svc in SERVICES.items():
         try:

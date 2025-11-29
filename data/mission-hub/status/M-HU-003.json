@@ -1,0 +1,16 @@
+{
+  "mission_id": "M-HU-003",
+  "status": "claimed",
+  "history": [
+    {
+      "status": "claimed",
+      "timestamp": "2025-11-28T09:49:12.234127",
+      "updated_by": "imtiaz",
+      "notes": "Claimed by imtiaz",
+      "repo_url": null,
+      "score": null
+    }
+  ],
+  "last_updated": "2025-11-28T09:49:12.234121",
+  "last_updated_by": "imtiaz"
+}

@@ -1,0 +1,16 @@
+{
+  "mission_id": "M001",
+  "status": "claimed",
+  "history": [
+    {
+      "status": "claimed",
+      "timestamp": "2025-11-27T05:30:22.146492",
+      "updated_by": "Aderajew Yeshiwendm",
+      "notes": "Claimed by Aderajew Yeshiwendm",
+      "repo_url": null,
+      "score": null
+    }
+  ],
+  "last_updated": "2025-11-27T05:30:22.146475",
+  "last_updated_by": "Aderajew Yeshiwendm"
+}

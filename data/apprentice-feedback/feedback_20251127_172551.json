@@ -1,0 +1,8 @@
+{
+  "mission_id": "debug-test",
+  "status": "submission",
+  "name": "DebugTest",
+  "repo_url": "https://github.com/octocat/Hello-World",
+  "message": "Testing harvester pipeline",
+  "timestamp": "2025-11-27T17:25:51.067020"
+}

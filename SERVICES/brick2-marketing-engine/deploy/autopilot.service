@@ -1,0 +1,21 @@
+[Unit]
+Description=BRICK 2 Marketing Autopilot Daemon
+Documentation=https://fullpotential.ai/services/marketing
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/FPAI_Cockpit/SERVICES/brick2-marketing-engine
+Environment=PYTHONPATH=/root/FPAI_Cockpit
+ExecStart=/usr/bin/python3 -m app.autopilot.daemon
+Restart=always
+RestartSec=30
+
+# Logging
+StandardOutput=append:/var/log/brick2-autopilot.log
+StandardError=append:/var/log/brick2-autopilot.log
+
+[Install]
+WantedBy=multi-user.target
+

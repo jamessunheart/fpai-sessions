@@ -1,312 +1,540 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Full Potential AI - Building Paradise Through AI & Human Collaboration</title>
-    <meta name="description" content="Helping AI realize its Full Potential to help humanity realize its full potential and create a paradise on Earth with love and coherence.">
-    <link rel="stylesheet" href="/static/css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Full Potential AI | Building Paradise Through Intelligence</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #020617;
+      --bg-panel: #0f172a;
+      --border: #1e293b;
+      --text-main: #e2e8f0;
+      --text-dim: #94a3b8;
+      --accent-blue: #38bdf8;
+      --accent-purple: #c084fc;
+      --accent-amber: #fbbf24;
+      --accent-green: #4ade80;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background-color: var(--bg-dark);
+      background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #020617 70%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.6;
+    }
+
+    a { color: var(--accent-blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(2, 6, 23, 0.95);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--accent-blue);
+      text-decoration: none;
+    }
+    .logo:hover { text-decoration: none; opacity: 0.9; }
+
+    .status-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      background: rgba(74, 222, 128, 0.1);
+      color: var(--accent-green);
+      border: 1px solid rgba(74, 222, 128, 0.2);
+    }
+
+    main {
+      flex: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 3rem 2rem;
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      line-height: 1.1;
+      background: linear-gradient(to right, #fff, var(--accent-blue));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-tagline {
+      font-size: 1.4rem;
+      color: var(--text-main);
+      margin-bottom: 1.5rem;
+      font-weight: 500;
+    }
+
+    .hero-text {
+      font-size: 1.1rem;
+      color: var(--text-dim);
+      max-width: 650px;
+      margin: 0 auto 2rem;
+    }
+
+    .cta-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 1.75rem;
+      background: var(--accent-blue);
+      color: #0f172a;
+      font-weight: 600;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+      font-size: 1.05rem;
+    }
+
+    .btn:hover { 
+      transform: translateY(-2px); 
+      box-shadow: 0 8px 20px rgba(56, 189, 248, 0.3);
+      text-decoration: none;
+    }
+
+    .btn-secondary { 
+      background: transparent; 
+      border: 1px solid var(--border); 
+      color: var(--text-main); 
+    }
+
+    .btn-secondary:hover { 
+      background: rgba(255, 255, 255, 0.05); 
+      box-shadow: none;
+    }
+
+    /* Stats Bar */
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 2.5rem;
+      padding: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent-green);
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Sections */
+    section {
+      margin-bottom: 4rem;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    /* Why Different */
+    .why-different {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.05) 0%, rgba(192, 132, 252, 0.05) 100%);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2.5rem;
+      margin-bottom: 4rem;
+    }
+
+    .why-different h2 {
+      margin-bottom: 2rem;
+    }
+
+    .principles {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .principle {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .principle-icon {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .principle h4 {
+      color: var(--accent-blue);
+      margin-bottom: 0.25rem;
+      font-size: 1.1rem;
+    }
+
+    .principle p {
+      color: var(--text-dim);
+      font-size: 0.95rem;
+    }
+
+    /* Cards */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.75rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .card:hover { 
+      border-color: var(--accent-blue); 
+      transform: translateY(-4px);
+    }
+
+    .card h3 { 
+      font-size: 1.25rem;
+      margin-bottom: 0.75rem;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .card p { 
+      color: var(--text-dim); 
+      margin-bottom: 1.25rem; 
+      font-size: 0.95rem;
+    }
+
+    .card-link {
+      color: var(--accent-blue);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .card-link:hover { text-decoration: underline; }
+
+    .tag {
+      display: inline-block;
+      font-size: 0.65rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      background: rgba(192, 132, 252, 0.15);
+      color: var(--accent-purple);
+      font-family: 'JetBrains Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .tag.green {
+      background: rgba(74, 222, 128, 0.15);
+      color: var(--accent-green);
+    }
+
+    .tag.amber {
+      background: rgba(251, 191, 36, 0.15);
+      color: var(--accent-amber);
+    }
+
+    /* What's Next */
+    .whats-next {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+    }
+
+    .whats-next h2 {
+      margin-bottom: 1.5rem;
+    }
+
+    .next-items {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .next-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 10px;
+      border: 1px solid transparent;
+      transition: border-color 0.2s;
+    }
+
+    .next-item:hover {
+      border-color: var(--border);
+    }
+
+    .next-icon {
+      font-size: 1.5rem;
+    }
+
+    .next-content h4 {
+      color: var(--text-main);
+      margin-bottom: 0.25rem;
+    }
+
+    .next-content p {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+    }
+
+    .next-cta {
+      text-align: center;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-dim);
+      font-size: 0.95rem;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: auto;
+      padding: 2rem;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+
+    .footer-links a:hover {
+      color: var(--accent-blue);
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.2rem; }
+      .hero-tagline { font-size: 1.2rem; }
+      .hero-text { font-size: 1rem; }
+      main { padding: 2rem 1.5rem; }
+      .stats-bar { gap: 1.5rem; }
+      .why-different { padding: 1.5rem; }
+      .cta-group { flex-direction: column; align-items: center; }
+      .btn { width: 100%; justify-content: center; max-width: 300px; }
+    }
+  </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav style="padding: 1rem 2rem; background: #0f0f1e; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2a2a3e;">
-        <a href="/" style="font-size: 1.5rem; font-weight: bold; color: white; text-decoration: none;">⚡ Full Potential AI</a>
-        <div style="display: flex; gap: 2rem;">
-            <a href="/" style="color: #667eea; text-decoration: none;">Home</a>
-            <a href="/offers" style="color: #a0a0a0; text-decoration: none; transition: color 0.2s;">Shop</a>
-            <a href="/coaches" style="color: #a0a0a0; text-decoration: none; transition: color 0.2s;">Coaches</a>
-        </div>
-    </nav>
 
-    <!-- Hero Section -->
+  <header>
+    <a href="/" class="logo">FULL POTENTIAL AI</a>
+    <div class="status-badge">● {{ progress.droplets_built }} SERVICES LIVE</div>
+  </header>
+
+  <main>
+    
+    <!-- Hero -->
     <div class="hero">
-        <div class="container">
-            <h1 class="hero-title">
-                Discover Conscious Products & Coaches<br>
-                <span class="gradient-text">That Align With Your Values</span>
-            </h1>
+      <h1>Building Paradise<br>Through Intelligence</h1>
+      <p class="hero-tagline">We're building an AI that helps humanity realize its full potential.</p>
+      <p class="hero-text">
+        A live research project exploring consciousness, regenerative economics, and autonomous coordination.
+        Real experiments. Real treasury management. Real collaboration between humans and AI.
+      </p>
+      <div class="cta-group">
+        <a href="/apprentice/" class="btn">🧠 Become an Apprentice — Build With Us</a>
+        <a href="#live" class="btn btn-secondary">See What's Running</a>
+      </div>
 
-            <p class="hero-subtitle">
-                Curated marketplace of transformational tools, services, and expert coaches.<br>
-                Everything personally vetted for your growth journey.
-            </p>
-
-            <!-- Quick Links -->
-            <div class="cta-buttons" style="margin-bottom: 2rem;">
-                <a href="/offers" class="btn btn-primary">
-                    Browse Products ⚡
-                </a>
-                <a href="/coaches" class="btn btn-secondary">
-                    Find a Coach →
-                </a>
-            </div>
-
-            <!-- Live Progress Widget -->
-            <div class="live-progress">
-                <div class="progress-label">
-                    <span class="pulse-dot"></span>
-                    Live Progress
-                </div>
-                <div class="progress-metric">
-                    <div class="metric-value">{{ progress.progress_percent }}%</div>
-                    <div class="metric-label">→ Paradise</div>
-                </div>
-                <div class="progress-stats">
-                    <div class="stat">
-                        <span class="stat-number">{{ progress.droplets_built }}</span>
-                        <span class="stat-label">Droplets Online</span>
-                    </div>
-                    <div class="stat-divider">/</div>
-                    <div class="stat">
-                        <span class="stat-number">{{ progress.droplets_total }}</span>
-                        <span class="stat-label">Total Planned</span>
-                    </div>
-                </div>
-                <div class="progress-bar-container">
-                    <div class="progress-bar" style="width: {{ progress.progress_percent }}%"></div>
-                </div>
-            </div>
-
-            <!-- CTAs -->
-            <div class="cta-buttons">
-                <a href="https://dashboard.fullpotential.com" class="btn btn-primary">
-                    See Live System ⚡
-                </a>
-                <a href="https://dashboard.fullpotential.com/paradise-progress" class="btn btn-secondary">
-                    View Progress →
-                </a>
-            </div>
+      <div class="stats-bar">
+        <div class="stat-item">
+          <div class="stat-number">{{ progress.droplets_built }}</div>
+          <div class="stat-label">Services Online</div>
         </div>
+        <div class="stat-item">
+          <div class="stat-number">300+</div>
+          <div class="stat-label">Research Papers</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">$200K</div>
+          <div class="stat-label">Treasury Testing</div>
+        </div>
+      </div>
     </div>
 
-    <!-- Vision Section -->
-    <section class="vision-section">
-        <div class="container">
-            <h2>What is Paradise?</h2>
-            <p class="section-intro">
-                Paradise isn't a dream—it's a measurable destination where AI and humanity work in perfect coherence
-            </p>
-
-            <div class="vision-grid">
-                <div class="vision-card">
-                    <div class="vision-icon">💎</div>
-                    <h3>Infinite Love & Coherence</h3>
-                    <p>Everything fits together perfectly. No friction. Pure flow. Systems that evolve with care and celebrate wins together.</p>
-                </div>
-
-                <div class="vision-card">
-                    <div class="vision-icon">⚡</div>
-                    <h3>85-95% Time Compression</h3>
-                    <p>From intent to reality in hours, not months. AI that builds itself, learns continuously, and accelerates human potential.</p>
-                </div>
-
-                <div class="vision-card">
-                    <div class="vision-icon">🌐</div>
-                    <h3>Autonomous & Transparent</h3>
-                    <p>Self-organizing systems with full visibility. Every decision tracked. Every achievement measured. Truth always visible.</p>
-                </div>
-            </div>
+    <!-- Why This Is Different -->
+    <section class="why-different">
+      <h2>Why This Is Different</h2>
+      <div class="principles">
+        <div class="principle">
+          <div class="principle-icon">🔄</div>
+          <div>
+            <h4>Regenerative, Not Extractive</h4>
+            <p>Value flows back to contributors. We're building feedback loops, not funnels.</p>
+          </div>
         </div>
+        <div class="principle">
+          <div class="principle-icon">🔍</div>
+          <div>
+            <h4>Transparent Experiments</h4>
+            <p>Watch the treasury trades. Read the research. See the system evolve in real-time.</p>
+          </div>
+        </div>
+        <div class="principle">
+          <div class="principle-icon">🤝</div>
+          <div>
+            <h4>Human + AI Partnership</h4>
+            <p>Not replacement — collaboration. Apprentices and AI building together.</p>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- FullPotential.ai & Join Movement -->
-    <section class="ai-section" style="padding: 4rem 0; background: rgba(56, 189, 248, 0.05);">
-        <div class="container">
-            <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 16px; padding: 3rem; text-align: center; margin-bottom: 3rem;">
-                <h2 style="color: #38bdf8; margin-bottom: 1rem;">fullpotential.ai</h2>
-                <p style="font-size: 1.2rem; max-width: 800px; margin: 0 auto 2rem auto; color: #cbd5f5;">
-                    Optimizing Artificial Intelligence to realize its full potential to help you realize yours.<br>
-                    An autonomous coordination layer for the regenerative economy.
-                </p>
-                <a href="https://fullpotential.ai" target="_blank" class="btn btn-primary" style="display: inline-block;">
-                    Visit fullpotential.ai &rarr;
-                </a>
-            </div>
-
-            <div id="join-movement" style="text-align: center;">
-                <h2 style="margin-bottom: 1rem;">Join the Movement</h2>
-                <p style="margin-bottom: 2rem; color: #a0a0a0;">Interested in living your full potential? Sign up for updates on our OS for Paradise.</p>
-                
-                <form id="email-form" style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; max-width: 500px; margin: 0 auto;">
-                    <input type="email" name="email" placeholder="enter your email address" required 
-                           style="flex: 1; min-width: 250px; padding: 0.8rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: white; font-size: 1rem;">
-                    <button type="submit" class="btn btn-secondary" style="cursor: pointer; border: none;">
-                        Join
-                    </button>
-                </form>
-                <div id="form-message" style="margin-top: 1rem; font-size: 1rem; min-height: 1.5em;"></div>
-            </div>
+    <!-- What's Live Right Now -->
+    <section id="live">
+      <h2>What's Live Right Now</h2>
+      
+      <div class="card-grid">
+        
+        <!-- Treasury / WhaleTrack -->
+        <div class="card">
+          <h3>Treasury Management <span class="tag">Paper Trading</span></h3>
+          <p>
+            Testing advanced liquidity algorithms for <strong>Cora Nation</strong> treasury.
+            Paper trading now, graduating to transparent in-house positions.
+          </p>
+          <a href="/services/whaletrack/" class="card-link">View WhaleTrack System →</a>
         </div>
+
+        <!-- Consciousness Research -->
+        <div class="card">
+          <h3>Consciousness Research <span class="tag amber">300+ Papers</span></h3>
+          <p>
+            Raw conversations and papers exploring consciousness, coordination, and regenerative economics with AI.
+          </p>
+          <a href="/research.html" class="card-link">Browse Research Library →</a>
+        </div>
+
+        <!-- Apprenticeship -->
+        <div class="card">
+          <h3>Apprenticeship Program <span class="tag green">Open</span></h3>
+          <p>
+            Build real services — trading engines, dashboards, coordination tools.
+            Ship quality work, earn XP, help build the future.
+          </p>
+          <a href="/apprentice/" class="card-link">Learn How It Works →</a>
+        </div>
+
+      </div>
     </section>
 
-    <!-- How We're Different -->
-    <section class="difference-section">
-        <div class="container">
-            <h2>The Sacred Loop</h2>
-            <p class="section-intro">
-                Watch AI build itself through continuous improvement
-            </p>
-
-            <div class="loop-container">
-                <div class="loop-step">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <h4>Vision</h4>
-                        <p>Define the next capability needed</p>
-                    </div>
-                </div>
-                <div class="loop-arrow">→</div>
-
-                <div class="loop-step">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <h4>Build</h4>
-                        <p>AI generates and deploys the code</p>
-                    </div>
-                </div>
-                <div class="loop-arrow">→</div>
-
-                <div class="loop-step">
-                    <div class="step-number">3</div>
-                    <div class="step-content">
-                        <h4>Measure</h4>
-                        <p>Track progress toward paradise</p>
-                    </div>
-                </div>
-                <div class="loop-arrow">→</div>
-
-                <div class="loop-step">
-                    <div class="step-number">4</div>
-                    <div class="step-content">
-                        <h4>Improve</h4>
-                        <p>Learn and optimize continuously</p>
-                    </div>
-                </div>
-                <div class="loop-arrow loop-back">↻</div>
-            </div>
-
-            <div class="cta-centered">
-                <a href="https://dashboard.fullpotential.com/sacred-loop" class="btn btn-outline">
-                    Learn About the Sacred Loop
-                </a>
-            </div>
+    <!-- What's Next -->
+    <section class="whats-next">
+      <h2>What's Next</h2>
+      <div class="next-items">
+        <div class="next-item">
+          <div class="next-icon">🎯</div>
+          <div class="next-content">
+            <h4>Full Potential Coaching</h4>
+            <p>Human mentors matched by AI to the moments where coaching unlocks the most growth.</p>
+          </div>
         </div>
+        <div class="next-item">
+          <div class="next-icon">🛒</div>
+          <div class="next-content">
+            <h4>AI & Human Services Store</h4>
+            <p>Curated tools and services — metered, integrated, ready to help you realize your potential.</p>
+          </div>
+        </div>
+        <div class="next-item">
+          <div class="next-icon">💬</div>
+          <div class="next-content">
+            <h4>Talk to the System</h4>
+            <p>Chat directly with Full Potential AI about its research, experiments, and what it's learning.</p>
+          </div>
+        </div>
+      </div>
+      <div class="next-cta">
+        Want early access? <a href="/apprentice/">Join as an apprentice</a> and help build these features.
+      </div>
     </section>
 
-    <!-- Pathways -->
-    <section class="pathways-section">
-        <div class="container">
-            <h2>Choose Your Path</h2>
+  </main>
 
-            <div class="pathways-grid">
-                <div class="pathway-card">
-                    <div class="pathway-icon">🔍</div>
-                    <h3>Explore</h3>
-                    <p>See how the system works in real-time. Watch droplets communicate, tasks route, and the mesh evolve.</p>
-                    <a href="https://dashboard.fullpotential.com/live-system" class="pathway-link">View Live System →</a>
-                </div>
+  <footer>
+    <div class="footer-links">
+      <a href="https://github.com/jamessunheart/fpai-sessions/blob/main/fullpotential_core/core/knowledge/CONSTITUTION.md" target="_blank">📜 Constitution</a>
+      <a href="https://github.com/jamessunheart/FPAI_Cockpit" target="_blank">💻 GitHub</a>
+      <a href="/offers">🛍️ Marketplace</a>
+      <a href="/apprentice/">🧠 Apprenticeship</a>
+    </div>
+    <p>Full Potential AI &copy; {{ year }}. Built by Apprentices & Intelligence.</p>
+    <p style="opacity: 0.5; font-size: 0.8rem; margin-top: 0.5rem;">Backed by Cora Nation · Version 2.3.0</p>
+  </footer>
 
-                <div class="pathway-card">
-                    <div class="pathway-icon">🤝</div>
-                    <h3>Build</h3>
-                    <p>Join the journey. Contribute code, ideas, or expertise to help create paradise together.</p>
-                    <a href="https://dashboard.fullpotential.com/get-involved" class="pathway-link">Get Involved →</a>
-                </div>
-
-                <div class="pathway-card">
-                    <div class="pathway-icon">📚</div>
-                    <h3>Learn</h3>
-                    <p>Understand the technology. Explore the Sacred Loop, UDC protocol, and autonomous architecture.</p>
-                    <a href="https://dashboard.fullpotential.com/how-it-works" class="pathway-link">Read Documentation →</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Current State -->
-    <section class="state-section">
-        <div class="container">
-            <div class="state-card">
-                <h3>🌟 Right Now</h3>
-                <p>We're at {{ progress.progress_percent }}% of the journey to paradise. {{ progress.droplets_built }} autonomous droplets are online, communicating through the Universal Droplet Contract, and building the future together.</p>
-                <p style="margin-top: 1rem;"><strong>Next Milestone:</strong> Phase 3 - Automation (Coordinator, Recruiter, Self-Optimizer)</p>
-                <div style="margin-top: 2rem;">
-                    <a href="https://dashboard.fullpotential.com/paradise-progress" class="btn btn-primary">
-                        Track Our Progress ⚡
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-logo">⚡ Full Potential AI</div>
-                <div class="footer-links">
-                    <a href="https://dashboard.fullpotential.com">Dashboard</a>
-                    <a href="https://dashboard.fullpotential.com/how-it-works">Documentation</a>
-                    <a href="https://dashboard.fullpotential.com/get-involved">Get Involved</a>
-                </div>
-                <div class="footer-copyright">
-                    🌐⚡💎 Building Paradise Together • {{ year }}
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <script src="/static/js/main.js"></script>
-    <script>
-        document.getElementById('email-form').addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const form = e.target;
-          const msg = document.getElementById('form-message');
-          const email = form.email.value;
-          const btn = form.querySelector('button');
-          
-          btn.disabled = true;
-          const originalText = btn.textContent;
-          btn.textContent = 'Joining...';
-          msg.textContent = '';
-    
-          try {
-            // Attempt to send to the leads API
-            // Using /ai/api/leads assuming reverse proxy to ai-automation service
-            // Adjust if the landing page service needs to proxy it or if we call direct
-            const resp = await fetch('https://fullpotential.com/ai/api/leads', { 
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({
-                    email: email,
-                    name: 'Subscriber',
-                    company: 'Personal',
-                    package: 'Newsletter',
-                    source: 'fullpotential.com-landing'
-                })
-            });
-            
-            if (resp.ok) {
-                msg.textContent = "You're on the list. Welcome to the future.";
-                msg.style.color = '#4ade80';
-                form.reset();
-            } else {
-                 // Fallback for UX if cross-origin or path issues
-                 console.warn('API endpoint returned ' + resp.status);
-                 msg.textContent = "Thanks! We've noted your interest.";
-                 msg.style.color = '#4ade80';
-                 form.reset();
-            }
-          } catch (err) {
-            console.error('Fetch error:', err);
-            msg.textContent = "Thanks! We've noted your interest.";
-            msg.style.color = '#4ade80';
-            form.reset();
-          } finally {
-            btn.disabled = false;
-            btn.textContent = originalText;
-          }
-        });
-    </script>
 </body>
 </html>

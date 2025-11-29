@@ -1,0 +1,3 @@
+{"mission_id": "test-debug", "status": "stuck", "name": "DebugTest", "repo_url": null, "message": "Testing API endpoint", "timestamp": "2025-11-27T17:25:44.993213"}
+{"mission_id": "debug-test", "status": "submission", "name": "DebugTest", "repo_url": "https://github.com/octocat/Hello-World", "message": "Testing harvester pipeline", "timestamp": "2025-11-27T17:25:51.067020"}
+{"mission_id": "route-test", "status": "stuck", "name": "RouteTest", "repo_url": null, "message": "Verifying proxy route works", "timestamp": "2025-11-27T17:30:58.333628"}

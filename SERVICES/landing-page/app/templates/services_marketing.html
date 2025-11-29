@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Marketing Services | Full Potential AI</title>
+    <meta name="description" content="AI-powered marketing automation for conscious businesses. Content creation, lead generation, and campaign management powered by Claude, GPT, and Gemini.">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #d4af37;
+            --gold-light: #f4e4bc;
+            --deep-purple: #1a0a2e;
+            --midnight: #0d0d1a;
+            --cosmic: #2d1b4e;
+            --accent-pink: #ff6b9d;
+            --accent-cyan: #00d4ff;
+            --text-light: #e8e8f0;
+            --text-muted: #9090a0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', system-ui, sans-serif;
+            background: var(--midnight);
+            color: var(--text-light);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Cosmic background */
+        .cosmic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(0, 212, 255, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, var(--deep-purple) 0%, var(--midnight) 100%);
+            z-index: -1;
+        }
+
+        /* Stars effect */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .stars::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(1px 1px at 20px 30px, white, transparent),
+                radial-gradient(1px 1px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 50px 160px, rgba(255,255,255,0.6), transparent),
+                radial-gradient(1px 1px at 90px 40px, white, transparent),
+                radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.7), transparent),
+                radial-gradient(2px 2px at 160px 120px, rgba(212,175,55,0.8), transparent);
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            animation: twinkle 8s ease-in-out infinite;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(13, 13, 26, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+        }
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gold);
+            text-decoration: none;
+        }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover {
+            color: var(--gold);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 6rem 2rem;
+        }
+        .hero-badge {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--accent-pink) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            max-width: 900px;
+        }
+        .hero h1 span {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold) 0%, #b8960a 100%);
+            color: var(--midnight);
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(212, 175, 55, 0.3);
+        }
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-light);
+            padding: 1rem 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+            margin-left: 1rem;
+        }
+        .btn-secondary:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        /* AI Providers Strip */
+        .ai-providers {
+            display: flex;
+            gap: 3rem;
+            margin-top: 4rem;
+            opacity: 0.6;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .ai-provider {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        .ai-provider .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Services Grid */
+        .services-section {
+            padding: 6rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        .section-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .section-header p {
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+        .service-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 2.5rem;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gold), var(--accent-cyan));
+            transform: scaleX(0);
+            transition: transform 0.4s;
+        }
+        .service-card:hover {
+            border-color: rgba(212, 175, 55, 0.3);
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .service-card:hover::before {
+            transform: scaleX(1);
+        }
+        .service-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .service-card h3 {
+            font-size: 1.35rem;
+            margin-bottom: 1rem;
+            color: var(--gold-light);
+        }
+        .service-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+        .service-features {
+            list-style: none;
+        }
+        .service-features li {
+            padding: 0.5rem 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .service-features li::before {
+            content: '✓';
+            color: var(--gold);
+        }
+
+        /* Pricing Section */
+        .pricing-section {
+            padding: 6rem 2rem;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .pricing-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+        .pricing-card.featured {
+            border-color: var(--gold);
+            transform: scale(1.05);
+        }
+        .pricing-card.featured::before {
+            content: 'Most Popular';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gold);
+            color: var(--midnight);
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .pricing-tier {
+            font-size: 0.85rem;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+        }
+        .pricing-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .pricing-price {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .pricing-price span {
+            font-size: 1rem;
+            font-weight: 400;
+            color: var(--text-muted);
+        }
+        .pricing-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+        .pricing-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 2rem;
+        }
+        .pricing-features li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+        }
+        .pricing-features li::before {
+            content: '✓';
+            color: var(--gold);
+            font-weight: bold;
+        }
+
+        /* BPO Section */
+        .bpo-section {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .bpo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        .bpo-content h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .bpo-content p {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+        .commission-table {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        .commission-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .commission-row:last-child {
+            border-bottom: none;
+        }
+        .commission-row .rate {
+            color: var(--text-muted);
+        }
+        .commission-row .pct {
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 8rem 2rem;
+            text-align: center;
+            background: linear-gradient(180deg, transparent 0%, rgba(212, 175, 55, 0.05) 100%);
+        }
+        .cta-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+        .cta-section p {
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Footer */
+        footer {
+            padding: 3rem 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+        }
+        footer p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        footer a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            .btn-secondary {
+                display: none;
+            }
+            .bpo-grid {
+                grid-template-columns: 1fr;
+            }
+            .pricing-card.featured {
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cosmic-bg"></div>
+    <div class="stars"></div>
+
+    <nav>
+        <a href="/" class="logo">Full Potential AI</a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/missions">Missions</a>
+            <a href="/services/marketing" style="color: var(--gold);">Marketing</a>
+            <a href="/offers">Offers</a>
+            <a href="/coaches">Coaches</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-badge">AI-Powered Marketing Automation</div>
+        <h1>Marketing That <span>Grows While You Sleep</span></h1>
+        <p>Harness the power of Claude, GPT, and Gemini to create content, qualify leads, and run campaigns — all on autopilot. Built for conscious businesses ready to scale.</p>
+        <div>
+            <a href="#pricing" class="btn-primary">Start Free Trial</a>
+            <a href="#services" class="btn-secondary">See Services</a>
+        </div>
+        <div class="ai-providers">
+            <div class="ai-provider">
+                <span class="dot"></span>
+                Claude Opus 4.5
+            </div>
+            <div class="ai-provider">
+                <span class="dot"></span>
+                Gemini 2.5 Pro
+            </div>
+            <div class="ai-provider">
+                <span class="dot"></span>
+                GPT-4o
+            </div>
+        </div>
+    </section>
+
+    <!-- Services -->
+    <section class="services-section" id="services">
+        <div class="section-header">
+            <h2>Marketing Services</h2>
+            <p>End-to-end marketing automation powered by the world's most advanced AI models</p>
+        </div>
+
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">✍️</div>
+                <h3>AI Content Creation</h3>
+                <p>Generate high-converting copy, blog posts, social content, and email sequences in your brand voice.</p>
+                <ul class="service-features">
+                    <li>Blog posts & articles</li>
+                    <li>Social media content</li>
+                    <li>Email sequences</li>
+                    <li>Ad copy & landing pages</li>
+                </ul>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">🎯</div>
+                <h3>Lead Generation</h3>
+                <p>AI-powered prospecting and qualification that fills your pipeline with ideal clients.</p>
+                <ul class="service-features">
+                    <li>Ideal client profiling</li>
+                    <li>Multi-channel outreach</li>
+                    <li>Lead scoring & qualification</li>
+                    <li>CRM integration</li>
+                </ul>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">📊</div>
+                <h3>Market Research</h3>
+                <p>Deep competitive analysis and market insights powered by Gemini's research capabilities.</p>
+                <ul class="service-features">
+                    <li>Competitor analysis</li>
+                    <li>Market trend reports</li>
+                    <li>Audience research</li>
+                    <li>Opportunity mapping</li>
+                </ul>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">🤖</div>
+                <h3>Campaign Automation</h3>
+                <p>Set it and forget it marketing systems that run 24/7 without human intervention.</p>
+                <ul class="service-features">
+                    <li>Email automation</li>
+                    <li>Social scheduling</li>
+                    <li>Retargeting sequences</li>
+                    <li>Performance optimization</li>
+                </ul>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">💬</div>
+                <h3>AI Conversations</h3>
+                <p>Intelligent chatbots that qualify leads and book calls while you focus on delivery.</p>
+                <ul class="service-features">
+                    <li>Website chat</li>
+                    <li>Lead qualification</li>
+                    <li>Appointment booking</li>
+                    <li>Human handoff</li>
+                </ul>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">📈</div>
+                <h3>Analytics & Reporting</h3>
+                <p>Real-time insights and AI-powered recommendations to optimize your marketing ROI.</p>
+                <ul class="service-features">
+                    <li>Custom dashboards</li>
+                    <li>Attribution tracking</li>
+                    <li>AI recommendations</li>
+                    <li>Revenue forecasting</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="pricing-section" id="pricing">
+        <div class="section-header">
+            <h2>Simple, Transparent Pricing</h2>
+            <p>Start free, scale as you grow. No hidden fees, no surprises.</p>
+        </div>
+
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div class="pricing-tier">Starter</div>
+                <div class="pricing-name">Conscious Creator</div>
+                <div class="pricing-price">$97<span>/mo</span></div>
+                <div class="pricing-desc">Perfect for solopreneurs and coaches</div>
+                <ul class="pricing-features">
+                    <li>50 AI content pieces/month</li>
+                    <li>Basic lead generation</li>
+                    <li>Email automation (500 contacts)</li>
+                    <li>Social scheduling</li>
+                    <li>Email support</li>
+                </ul>
+                <a href="/start?plan=starter" class="btn-primary" style="width: 100%;">Start Free Trial</a>
+            </div>
+
+            <div class="pricing-card featured">
+                <div class="pricing-tier">Growth</div>
+                <div class="pricing-name">Expansion Engine</div>
+                <div class="pricing-price">$297<span>/mo</span></div>
+                <div class="pricing-desc">For growing businesses ready to scale</div>
+                <ul class="pricing-features">
+                    <li>Unlimited AI content</li>
+                    <li>Advanced lead generation</li>
+                    <li>Email automation (5,000 contacts)</li>
+                    <li>AI chatbot included</li>
+                    <li>Market research reports</li>
+                    <li>Priority support</li>
+                </ul>
+                <a href="/start?plan=growth" class="btn-primary" style="width: 100%;">Start Free Trial</a>
+            </div>
+
+            <div class="pricing-card">
+                <div class="pricing-tier">Enterprise</div>
+                <div class="pricing-name">Full Potential</div>
+                <div class="pricing-price">Custom</div>
+                <div class="pricing-desc">For organizations with complex needs</div>
+                <ul class="pricing-features">
+                    <li>Everything in Growth</li>
+                    <li>Dedicated AI model training</li>
+                    <li>Custom integrations</li>
+                    <li>White-label options</li>
+                    <li>Dedicated account manager</li>
+                    <li>SLA guarantee</li>
+                </ul>
+                <a href="/contact?plan=enterprise" class="btn-secondary" style="width: 100%; margin: 0; border-color: var(--gold); color: var(--gold);">Contact Sales</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- BPO Referral Section -->
+    <section class="bpo-section">
+        <div class="bpo-grid">
+            <div class="bpo-content">
+                <h2>Earn by Referring</h2>
+                <p>Join our referral program and earn commissions for connecting businesses with our hybrid AI + human VA services in the Philippines.</p>
+                <p>Our skilled virtual assistants handle everything from customer support to content creation, powered by AI tools that make them 3x more productive.</p>
+                <a href="/missions" class="btn-primary">Join Referral Program</a>
+            </div>
+            <div class="commission-table">
+                <div class="commission-row" style="background: rgba(212, 175, 55, 0.1);">
+                    <span>VA Hourly Rate</span>
+                    <span class="pct">Your Commission</span>
+                </div>
+                <div class="commission-row">
+                    <span class="rate">$12.00+/hour</span>
+                    <span class="pct">10% monthly</span>
+                </div>
+                <div class="commission-row">
+                    <span class="rate">$10.00 - $11.99/hour</span>
+                    <span class="pct">8% monthly</span>
+                </div>
+                <div class="commission-row">
+                    <span class="rate">$8.00 - $9.99/hour</span>
+                    <span class="pct">5% monthly</span>
+                </div>
+                <div class="commission-row" style="background: rgba(0, 212, 255, 0.05);">
+                    <span class="rate">Example: $12/hr VA × 160 hrs</span>
+                    <span class="pct">$192/month passive</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <h2>Ready to Grow on Autopilot?</h2>
+        <p>Join conscious businesses using AI to scale their impact without sacrificing their values. Start your free trial today.</p>
+        <a href="/start" class="btn-primary">Start Your Free Trial</a>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© {{ year }} Full Potential AI · <a href="/missions">Missions</a> · <a href="https://coranation.org">Cora Nation</a> · Built with consciousness ✨</p>
+    </footer>
+
+    <script>
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+

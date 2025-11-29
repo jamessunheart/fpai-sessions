@@ -10,6 +10,16 @@
     "needs_improvement": 60,
     "rejected": 0
   },
-  "submissions": []
+  "submissions": [
+    {
+      "timestamp": "2025-11-27T17:25:51.211993",
+      "apprentice": "DebugTest",
+      "service": "Hello-World",
+      "repo_url": "https://github.com/octocat/Hello-World",
+      "branch": "main",
+      "mode": "gatekeeper",
+      "status": "FAILED",
+      "error": "Gatekeeper verification failed (exit code 1)"
+    }
+  ]
 }
-

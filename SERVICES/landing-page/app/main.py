@@ -245,6 +245,23 @@ async def affiliate_redirect(offer_id: str):
     return RedirectResponse(url=redirect_url, status_code=302)
 
 
+@app.get("/services/marketing", response_class=HTMLResponse)
+async def services_marketing(request: Request):
+    """AI Marketing Services - BRICK 2 Marketing Engine"""
+    return templates.TemplateResponse("services_marketing.html", {
+        "request": request,
+        "year": datetime.now().year
+    })
+
+
+@app.get("/start", response_class=HTMLResponse)
+async def start_trial(request: Request, plan: str = "growth"):
+    """Marketing service signup - redirect to Calendly or form"""
+    # TODO: Create proper signup flow
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url="https://calendly.com/fullpotential/marketing-consultation", status_code=302)
+
+
 @app.get("/health")
 async def health():
     """Health check endpoint"""

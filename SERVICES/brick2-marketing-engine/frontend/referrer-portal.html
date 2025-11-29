@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Referrer Portal | Full Potential BPO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-card-hover: #1a1a24;
+            --accent-gold: #d4af37;
+            --accent-gold-dim: rgba(212, 175, 55, 0.15);
+            --accent-emerald: #10b981;
+            --accent-emerald-dim: rgba(16, 185, 129, 0.15);
+            --accent-coral: #f97316;
+            --text-primary: #f5f5f7;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-accent: rgba(212, 175, 55, 0.3);
+            --gradient-gold: linear-gradient(135deg, #d4af37 0%, #f5d76e 50%, #d4af37 100%);
+            --gradient-dark: linear-gradient(180deg, #0a0a0f 0%, #12121a 100%);
+            --shadow-glow: 0 0 60px rgba(212, 175, 55, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Animated background */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(ellipse at 20% 20%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+            margin-bottom: 3rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-gold);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-sub {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 44px;
+            height: 44px;
+            background: var(--accent-gold-dim);
+            border: 2px solid var(--accent-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--accent-gold);
+        }
+
+        .user-name {
+            font-weight: 500;
+        }
+
+        .user-tier {
+            font-size: 0.75rem;
+            color: var(--accent-gold);
+            background: var(--accent-gold-dim);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1.75rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-gold);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: var(--border-accent);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--gradient-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.85rem;
+            color: var(--accent-emerald);
+            margin-top: 0.5rem;
+        }
+
+        .stat-change.negative {
+            color: var(--accent-coral);
+        }
+
+        /* Main Grid Layout */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Section Cards */
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--accent-gold);
+            border-radius: 50%;
+        }
+
+        .section-action {
+            font-size: 0.85rem;
+            color: var(--accent-gold);
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .section-action:hover {
+            opacity: 0.8;
+        }
+
+        /* Referrals Table */
+        .referrals-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .referrals-table th {
+            text-align: left;
+            padding: 1rem 1.5rem;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+            background: rgba(0,0,0,0.2);
+        }
+
+        .referrals-table td {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .referrals-table tr:hover td {
+            background: var(--bg-card-hover);
+        }
+
+        .client-name {
+            font-weight: 500;
+        }
+
+        .client-service {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .rate-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .commission-amount {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-emerald);
+            font-weight: 600;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: var(--accent-emerald-dim);
+            color: var(--accent-emerald);
+        }
+
+        .status-pending {
+            background: rgba(249, 115, 22, 0.15);
+            color: var(--accent-coral);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        /* Referral Link Card */
+        .referral-link-card {
+            padding: 1.5rem;
+        }
+
+        .referral-link-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+
+        .referral-link-box {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .referral-link-input {
+            flex: 1;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 0.875rem 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+        }
+
+        .copy-btn {
+            background: var(--gradient-gold);
+            border: none;
+            border-radius: 8px;
+            padding: 0 1.25rem;
+            font-weight: 600;
+            color: var(--bg-dark);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .copy-btn:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .copy-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Commission Tiers */
+        .tiers-list {
+            padding: 1.5rem;
+        }
+
+        .tier-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.875rem 1rem;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            border: 1px solid var(--border-subtle);
+            transition: border-color 0.2s;
+        }
+
+        .tier-item:hover {
+            border-color: var(--border-accent);
+        }
+
+        .tier-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .tier-range {
+            font-size: 0.9rem;
+        }
+
+        .tier-rate {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            color: var(--accent-gold);
+        }
+
+        /* Calculator */
+        .calculator {
+            padding: 1.5rem;
+        }
+
+        .calc-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .calc-field {
+            flex: 1;
+        }
+
+        .calc-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .calc-input {
+            width: 100%;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            color: var(--text-primary);
+            transition: border-color 0.2s;
+        }
+
+        .calc-input:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+        }
+
+        .calc-result {
+            background: var(--accent-gold-dim);
+            border: 1px solid var(--border-accent);
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-align: center;
+        }
+
+        .calc-result-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .calc-result-value {
+            font-size: 2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            color: var(--accent-gold);
+            margin-top: 0.25rem;
+        }
+
+        .calc-result-sub {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 4rem;
+            padding: 2rem 0;
+            border-top: 1px solid var(--border-subtle);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: var(--accent-gold);
+            text-decoration: none;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; opacity: 0; }
+        .delay-2 { animation-delay: 0.2s; opacity: 0; }
+        .delay-3 { animation-delay: 0.3s; opacity: 0; }
+        .delay-4 { animation-delay: 0.4s; opacity: 0; }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--accent-emerald);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+    
+    <div class="container">
+        <header class="animate-in">
+            <div class="logo">
+                <div class="logo-icon">🚀</div>
+                <div>
+                    <div class="logo-text">Full Potential</div>
+                    <div class="logo-sub">Referrer Portal</div>
+                </div>
+            </div>
+            <div class="user-info">
+                <div>
+                    <div class="user-name">John Smith</div>
+                    <span class="user-tier">Gold Partner</span>
+                </div>
+                <div class="user-avatar">JS</div>
+            </div>
+        </header>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card animate-in delay-1">
+                <div class="stat-label">Monthly Earnings</div>
+                <div class="stat-value" id="monthlyEarnings">$1,847</div>
+                <div class="stat-change">↑ 23% from last month</div>
+            </div>
+            <div class="stat-card animate-in delay-2">
+                <div class="stat-label">Active Referrals</div>
+                <div class="stat-value" id="activeReferrals">12</div>
+                <div class="stat-change">↑ 2 new this month</div>
+            </div>
+            <div class="stat-card animate-in delay-3">
+                <div class="stat-label">Retention Rate</div>
+                <div class="stat-value">94%</div>
+                <div class="stat-change">↑ 3% improvement</div>
+            </div>
+            <div class="stat-card animate-in delay-4">
+                <div class="stat-label">Annual Projection</div>
+                <div class="stat-value" id="annualProjection">$22,164</div>
+                <div class="stat-change">Based on current placements</div>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Left Column -->
+            <div>
+                <!-- Referrals Table -->
+                <div class="section-card animate-in delay-2" style="margin-bottom: 2rem;">
+                    <div class="section-header">
+                        <h2 class="section-title">Your Referrals</h2>
+                        <a href="#" class="section-action">View All →</a>
+                    </div>
+                    <table class="referrals-table">
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th>Rate</th>
+                                <th>Hours/Mo</th>
+                                <th>Commission</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="referralsTableBody">
+                            <tr>
+                                <td>
+                                    <div class="client-name">TechCorp Inc</div>
+                                    <div class="client-service">Call Center Support</div>
+                                </td>
+                                <td class="rate-badge">$12.00/hr</td>
+                                <td>160</td>
+                                <td class="commission-amount">$192.00</td>
+                                <td><span class="status-badge status-active"><span class="status-dot"></span>Active</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="client-name">StartupXYZ</div>
+                                    <div class="client-service">Virtual Assistant</div>
+                                </td>
+                                <td class="rate-badge">$10.00/hr</td>
+                                <td>80</td>
+                                <td class="commission-amount">$64.00</td>
+                                <td><span class="status-badge status-active"><span class="status-dot"></span>Active</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="client-name">LocalBiz LLC</div>
+                                    <div class="client-service">Data Entry</div>
+                                </td>
+                                <td class="rate-badge">$8.00/hr</td>
+                                <td>120</td>
+                                <td class="commission-amount">$48.00</td>
+                                <td><span class="status-badge status-active"><span class="status-dot"></span>Active</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="client-name">GrowthCo</div>
+                                    <div class="client-service">Customer Support</div>
+                                </td>
+                                <td class="rate-badge">$9.50/hr</td>
+                                <td>160</td>
+                                <td class="commission-amount">$98.80</td>
+                                <td><span class="status-badge status-pending"><span class="status-dot"></span>Pending</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Referral Link -->
+                <div class="section-card animate-in delay-3">
+                    <div class="section-header">
+                        <h2 class="section-title">Your Referral Link</h2>
+                    </div>
+                    <div class="referral-link-card">
+                        <div class="referral-link-label">Share this link to earn commissions on every placement</div>
+                        <div class="referral-link-box">
+                            <input type="text" class="referral-link-input" id="referralLink" value="https://fullpotential.ai/bpo?ref=john-smith-x7k9" readonly>
+                            <button class="copy-btn" onclick="copyLink()">Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div>
+                <!-- Commission Calculator -->
+                <div class="section-card animate-in delay-2" style="margin-bottom: 2rem;">
+                    <div class="section-header">
+                        <h2 class="section-title">Commission Calculator</h2>
+                    </div>
+                    <div class="calculator">
+                        <div class="calc-row">
+                            <div class="calc-field">
+                                <label class="calc-label">Hourly Rate ($)</label>
+                                <input type="number" class="calc-input" id="calcRate" value="12" min="1" step="0.50" onchange="calculate()">
+                            </div>
+                            <div class="calc-field">
+                                <label class="calc-label">Hours/Month</label>
+                                <input type="number" class="calc-input" id="calcHours" value="160" min="1" onchange="calculate()">
+                            </div>
+                        </div>
+                        <div class="calc-result">
+                            <div class="calc-result-label">Monthly Commission</div>
+                            <div class="calc-result-value" id="calcResult">$192.00</div>
+                            <div class="calc-result-sub" id="calcTier">10.00% tier ($12+)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Commission Tiers -->
+                <div class="section-card animate-in delay-3">
+                    <div class="section-header">
+                        <h2 class="section-title">Commission Tiers</h2>
+                    </div>
+                    <div class="tiers-list">
+                        <div class="tier-item">
+                            <span class="tier-range">$8.00 and below</span>
+                            <span class="tier-rate">5.00%</span>
+                        </div>
+                        <div class="tier-item">
+                            <span class="tier-range">$8.01 - $8.49</span>
+                            <span class="tier-rate">5.50%</span>
+                        </div>
+                        <div class="tier-item">
+                            <span class="tier-range">$8.50 - $9.99</span>
+                            <span class="tier-rate">6.50%</span>
+                        </div>
+                        <div class="tier-item">
+                            <span class="tier-range">$10.00 - $11.99</span>
+                            <span class="tier-rate">8.00%</span>
+                        </div>
+                        <div class="tier-item" style="border-color: var(--border-accent); background: var(--accent-gold-dim);">
+                            <span class="tier-range">$12.00 and above</span>
+                            <span class="tier-rate">10.00%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Full Potential AI • BPO Staffing & Referral Program</p>
+            <p style="margin-top: 0.5rem;">
+                <a href="https://fullpotential.ai/missions">Browse Missions</a> • 
+                <a href="mailto:support@fullpotential.ai">Support</a> • 
+                <a href="#">Terms</a>
+            </p>
+        </footer>
+    </div>
+
+    <div class="toast" id="toast">Link copied to clipboard!</div>
+
+    <script>
+        // Commission tier calculator
+        function getCommissionRate(hourlyRate) {
+            if (hourlyRate <= 8.00) return { rate: 0.0500, tier: '5.00% tier (≤$8)' };
+            if (hourlyRate <= 8.49) return { rate: 0.0550, tier: '5.50% tier ($8.01-$8.49)' };
+            if (hourlyRate <= 9.99) return { rate: 0.0650, tier: '6.50% tier ($8.50-$9.99)' };
+            if (hourlyRate <= 11.99) return { rate: 0.0800, tier: '8.00% tier ($10-$11.99)' };
+            return { rate: 0.1000, tier: '10.00% tier ($12+)' };
+        }
+
+        function calculate() {
+            const rate = parseFloat(document.getElementById('calcRate').value) || 0;
+            const hours = parseFloat(document.getElementById('calcHours').value) || 0;
+            
+            const { rate: commissionRate, tier } = getCommissionRate(rate);
+            const commission = rate * hours * commissionRate;
+            
+            document.getElementById('calcResult').textContent = '$' + commission.toFixed(2);
+            document.getElementById('calcTier').textContent = tier;
+        }
+
+        function copyLink() {
+            const link = document.getElementById('referralLink');
+            link.select();
+            document.execCommand('copy');
+            
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        // Fetch real data from API (when available)
+        async function fetchDashboardData() {
+            try {
+                const response = await fetch('http://localhost:8700/api/v1/bpo/commission/tiers');
+                if (response.ok) {
+                    console.log('API connected:', await response.json());
+                }
+            } catch (e) {
+                console.log('API not available, using demo data');
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            calculate();
+            fetchDashboardData();
+        });
+    </script>
+</body>
+</html>
+
