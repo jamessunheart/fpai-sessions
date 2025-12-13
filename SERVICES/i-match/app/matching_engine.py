@@ -1,7 +1,6 @@
-"""AI-powered matching engine using Ollama (Llama 3.1) and Claude API fallback"""
+"""AI-powered matching engine using AI Brain service (routes to Claude/Ollama)"""
 
 from typing import List, Dict, Any, Tuple
-from anthropic import Anthropic
 import httpx
 import json
 
@@ -13,8 +12,9 @@ class MatchingEngine:
     """
     AI-powered matching engine that finds optimal provider matches for customers.
 
-    SOVEREIGNTY FIRST: Uses local Ollama (Llama 3.1) for $0 cost.
-    Fallback to Claude API only if Ollama unavailable.
+    Uses central AI Brain service (162.0.208.88:8101) which routes to:
+    - Claude (Anthropic) for high-quality matching
+    - Ollama for local inference when available
 
     Analyzes deep compatibility across multiple dimensions:
     - Service fit and expertise
@@ -27,10 +27,8 @@ class MatchingEngine:
 
     def __init__(self):
         """Initialize matching engine"""
-        self.ollama_endpoint = settings.ollama_endpoint if settings.ollama_endpoint else None
-        self.client = None
-        if settings.anthropic_api_key:
-            self.client = Anthropic(api_key=settings.anthropic_api_key)
+        # Use AI Brain service for all AI operations
+        self.ai_brain_url = "http://162.0.208.88:8101"
 
     async def find_matches(
         self,
@@ -49,8 +47,7 @@ class MatchingEngine:
         Returns:
             List of match results with scores and reasoning
         """
-        if not self.ollama_endpoint and not self.client:
-            raise Exception("No AI models configured (need either Ollama or Anthropic API key)")
+        # AI Brain service handles all AI routing
 
         # Filter providers by service type
         relevant_providers = [
@@ -82,8 +79,7 @@ class MatchingEngine:
         """
         Analyze compatibility between customer and provider.
 
-        SOVEREIGNTY FIRST: Uses Ollama (Llama 3.1) for $0 cost.
-        Fallback to Claude API if Ollama fails.
+        Uses AI Brain service which routes to the best available AI model.
 
         Returns:
             {
@@ -103,73 +99,28 @@ class MatchingEngine:
         # Build analysis prompt
         prompt = self._build_analysis_prompt(customer, provider)
 
-        # Try Ollama first (SOVEREIGN - $0 cost)
-        if self.ollama_endpoint:
-            try:
-                response_text = await self._call_ollama(prompt)
-                return self._parse_match_response(response_text, provider.id)
-            except Exception as e:
-                # Ollama failed, fall back to Claude if available
-                if not self.client:
-                    raise Exception(f"Ollama failed and no Claude fallback: {e}")
-
-        # Fallback to Claude API
-        if self.client:
-            # Try multiple models in order of capability
-            models_to_try = [
-                "claude-3-opus-20240229",      # Most capable Claude 3
-                "claude-3-5-sonnet-20241022",  # Latest Sonnet 3.5
-                "claude-3-5-sonnet-20240620",  # Stable Sonnet 3.5
-                "claude-3-sonnet-20240229",    # Fallback Sonnet
-                "claude-3-haiku-20240307",     # Fastest, most accessible
-            ]
-
-            message = None
-            last_error = None
-
-            for model in models_to_try:
-                try:
-                    message = self.client.messages.create(
-                        model=model,
-                        max_tokens=2000,
-                        messages=[{
-                            "role": "user",
-                            "content": prompt
-                        }]
-                    )
-                    break  # Success! Exit loop
-                except Exception as e:
-                    last_error = e
-                    continue  # Try next model
-
-            if not message:
-                raise Exception(f"No available Claude models. Last error: {last_error}")
-
-            # Parse response
-            response_text = message.content[0].text
-        else:
-            raise Exception("No AI models available")
-
+        # Call AI Brain service
+        response_text = await self._call_ai_brain(prompt)
+        
         return self._parse_match_response(response_text, provider.id)
-
-    async def _call_ollama(self, prompt: str) -> str:
-        """Call local Ollama API - SOVEREIGN AI ($0 cost)"""
+    
+    async def _call_ai_brain(self, prompt: str) -> str:
+        """Call AI Brain service for AI generation"""
         async with httpx.AsyncClient(timeout=60.0) as client:
-            response = await client.post(
-                f"{self.ollama_endpoint}/api/generate",
-                json={
-                    "model": settings.ollama_model,
-                    "prompt": prompt,
-                    "stream": False,
-                    "options": {
-                        "num_predict": 2000,
-                        "temperature": 0.7
+            try:
+                response = await client.post(
+                    f"{self.ai_brain_url}/generate",
+                    json={
+                        "prompt": prompt,
+                        "max_tokens": 2000
                     }
-                }
-            )
-            response.raise_for_status()
-            result = response.json()
-            return result.get("response", "")
+                )
+                response.raise_for_status()
+                result = response.json()
+                return result.get("text", "")
+            except Exception as e:
+                raise Exception(f"AI Brain service failed: {e}")
+
 
     def _parse_match_response(self, response_text: str, provider_id: int) -> Dict[str, Any]:
         """Parse AI response into match result"""
