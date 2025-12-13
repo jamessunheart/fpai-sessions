@@ -3,10 +3,14 @@
 from typing import List, Dict, Any, Optional
 from datetime import datetime
 import uuid
+import httpx
+import logging
 
 from .config import settings
 from .models import Decision, DecisionCriteria, Task, TaskPriority
 from .memory_manager import MemoryManager
+
+logger = logging.getLogger(__name__)
 
 
 class DecisionEngine:
@@ -17,11 +21,14 @@ class DecisionEngine:
     - weighted_multi_criteria: Weighted scoring across multiple criteria
     - simple: Basic priority-based decisions
     - ml_based: Machine learning from past decisions (future)
+    
+    Now integrates with the Memory System for wisdom-based context.
     """
 
     def __init__(self, memory_manager: MemoryManager):
         """Initialize decision engine with memory"""
         self.memory = memory_manager
+        self.data_service_url = getattr(settings, 'data_service_url', 'http://198.54.123.234:8125')
 
         # Default weights for multi-criteria decision making
         self.criteria_weights = {
@@ -31,13 +38,58 @@ class DecisionEngine:
             "resource_requirement": -0.10,  # 10% negative weight (less resources is better)
             "strategic_alignment": 0.30   # 30% weight - second highest priority
         }
+    
+    async def get_memory_wisdom(self, topic: str) -> Dict[str, Any]:
+        """
+        Query the Memory System for wisdom on a decision topic.
+        
+        Returns patterns, learnings, and past decision outcomes related to the topic.
+        """
+        try:
+            async with httpx.AsyncClient(timeout=5.0) as client:
+                resp = await client.get(f"{self.data_service_url}/api/memory/wisdom/{topic}")
+                if resp.status_code == 200:
+                    wisdom = resp.json()
+                    logger.info(f"📚 Retrieved memory wisdom for '{topic}': {len(wisdom.get('patterns', []))} patterns, {len(wisdom.get('learnings', []))} learnings")
+                    return wisdom
+                else:
+                    logger.warning(f"Memory wisdom request returned {resp.status_code}")
+                    return {}
+        except Exception as e:
+            logger.warning(f"Could not fetch memory wisdom: {e}")
+            return {}
+    
+    def _extract_wisdom_insights(self, wisdom: Dict[str, Any]) -> List[str]:
+        """Extract actionable insights from memory wisdom."""
+        insights = []
+        
+        # Extract from patterns
+        for pattern in wisdom.get("patterns", [])[:3]:
+            content = pattern.get("content", pattern.get("memory", ""))
+            if content:
+                insights.append(f"Pattern: {content[:200]}")
+        
+        # Extract from learnings
+        for learning in wisdom.get("learnings", [])[:3]:
+            content = learning.get("content", learning.get("memory", ""))
+            if content:
+                insights.append(f"Learning: {content[:200]}")
+        
+        # Extract from past decisions
+        for decision in wisdom.get("past_decisions", [])[:2]:
+            content = decision.get("content", decision.get("memory", ""))
+            if content:
+                insights.append(f"Past decision: {content[:200]}")
+        
+        return insights
 
     def make_decision(
         self,
         title: str,
         description: str,
         options: List[str],
-        criteria: DecisionCriteria
+        criteria: DecisionCriteria,
+        memory_wisdom: Optional[Dict[str, Any]] = None
     ) -> Decision:
         """
         Make a strategic decision.
@@ -47,14 +99,21 @@ class DecisionEngine:
             description: What needs to be decided
             options: List of possible options
             criteria: Evaluation criteria
+            memory_wisdom: Optional wisdom from the memory system (patterns, learnings)
 
         Returns:
             Decision with recommended option and reasoning
         """
         decision_id = f"decision-{uuid.uuid4().hex[:8]}"
 
-        # Check for similar past decisions
+        # Check for similar past decisions (local)
         similar_decisions = self.memory.recall_similar_decisions(title, limit=3)
+        
+        # Extract wisdom insights if provided
+        wisdom_insights = []
+        if memory_wisdom:
+            wisdom_insights = self._extract_wisdom_insights(memory_wisdom)
+            logger.info(f"📚 Decision '{title}' informed by {len(wisdom_insights)} memory insights")
 
         # Calculate scores for each option
         option_scores = {}
@@ -76,6 +135,12 @@ class DecisionEngine:
             recommended = options[0] if options else None
             confidence = 0.5
             reasoning = "No scoring algorithm available, selected first option"
+        
+        # Enhance reasoning with wisdom insights
+        if wisdom_insights:
+            reasoning = f"{reasoning}\n\n📚 Memory-Informed Context:\n" + "\n".join(f"- {i}" for i in wisdom_insights[:3])
+            # Boost confidence slightly when we have relevant memory context
+            confidence = min(confidence * 1.1, 1.0)
 
         decision = Decision(
             decision_id=decision_id,
@@ -90,6 +155,25 @@ class DecisionEngine:
         )
 
         return decision
+    
+    async def make_decision_with_wisdom(
+        self,
+        title: str,
+        description: str,
+        options: List[str],
+        criteria: DecisionCriteria
+    ) -> Decision:
+        """
+        Make a strategic decision with automatic memory wisdom retrieval.
+        
+        This is the preferred method when called from async context.
+        """
+        # Query memory system for relevant wisdom
+        topic = title.lower().replace(" ", "_")
+        wisdom = await self.get_memory_wisdom(topic)
+        
+        # Make decision with wisdom context
+        return self.make_decision(title, description, options, criteria, memory_wisdom=wisdom)
 
     def _weighted_multi_criteria(
         self,
