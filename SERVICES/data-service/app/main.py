@@ -1398,6 +1398,159 @@ async def record_observation(request: ObservationRequest):
 
 
 # ─────────────────────────────────────────────────────────────────────────────────
+# UNIFIED MEMORY ENDPOINTS (Level 10)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+@app.get("/api/memory/stats")
+async def get_memory_stats():
+    """
+    Get memory system statistics.
+    
+    Returns counts, latencies, and health metrics.
+    """
+    memory = get_memory()
+    tracker = get_tracker()
+    
+    report = tracker.get_report()
+    
+    return {
+        "enabled": memory.enabled,
+        "stats": report["metrics"],
+        "avg_relevance": report["avg_relevance"],
+        "recent_observations": report["observations"],
+        "recommendations": report["recommendations"],
+        "total_operations": report["total_operations"]
+    }
+
+
+@app.get("/api/memory/system-stats")
+async def get_memory_system_stats():
+    """
+    Get Python process memory statistics.
+    
+    Shows actual RAM usage of the Data Service process,
+    useful for monitoring memory leaks and optimization.
+    """
+    import psutil
+    import os
+    
+    process = psutil.Process(os.getpid())
+    memory_info = process.memory_info()
+    
+    # Get system memory
+    system_memory = psutil.virtual_memory()
+    
+    # Get retrieval tracker stats
+    from .memory_hygiene import get_tracker as get_retrieval_tracker
+    retrieval_tracker = get_retrieval_tracker()
+    retrieval_stats = retrieval_tracker.get_stats()
+    
+    return {
+        "process": {
+            "pid": os.getpid(),
+            "rss_mb": round(memory_info.rss / 1024 / 1024, 2),
+            "vms_mb": round(memory_info.vms / 1024 / 1024, 2),
+            "percent": round(process.memory_percent(), 2)
+        },
+        "system": {
+            "total_gb": round(system_memory.total / 1024 / 1024 / 1024, 2),
+            "available_gb": round(system_memory.available / 1024 / 1024 / 1024, 2),
+            "used_percent": system_memory.percent
+        },
+        "memory_hygiene": retrieval_stats,
+        "thresholds": {
+            "warning_mb": 500,
+            "critical_mb": 1000,
+            "status": "healthy" if memory_info.rss < 500 * 1024 * 1024 else 
+                      "warning" if memory_info.rss < 1000 * 1024 * 1024 else "critical"
+        }
+    }
+
+
+@app.post("/api/memory/search")
+async def unified_memory_search(request: MemorySearchRequest):
+    """
+    Unified memory search across all types with quality weighting.
+    """
+    memory = get_memory()
+    results = await memory.search_all(
+        request.query, 
+        request.limit, 
+        quality_weighted=True
+    )
+    return results
+
+
+@app.get("/api/memory/wisdom/{topic}")
+async def get_memory_wisdom(topic: str):
+    """
+    Get aggregated wisdom for a domain.
+    
+    Returns patterns, learnings, and past decisions for informed decision-making.
+    """
+    memory = get_memory()
+    return await memory.get_wisdom(topic)
+
+
+@app.post("/api/learning/trade")
+async def capture_trade_learning(
+    symbol: str,
+    direction: str,
+    entry_price: float,
+    exit_price: float,
+    pnl_usd: float,
+    strategy: str = "unknown",
+    duration_minutes: float = 0
+):
+    """
+    Capture learning from a completed trade.
+    """
+    memory = get_memory()
+    
+    outcome = "profitable" if pnl_usd > 0 else "loss"
+    pnl_pct = ((exit_price - entry_price) / entry_price * 100) if direction == "long" else ((entry_price - exit_price) / entry_price * 100)
+    
+    content = f"Trade on {symbol}: {direction} from {entry_price} to {exit_price}, PnL ${pnl_usd:.2f} ({pnl_pct:.2f}%). Strategy: {strategy}. Outcome: {outcome}."
+    
+    result = await memory.store_learning(
+        context=f"Trading {symbol} with {strategy}",
+        action=f"{direction} entry at {entry_price}",
+        outcome=outcome,
+        lesson=content
+    )
+    
+    return {"status": "captured", "trade": symbol, "pnl_usd": pnl_usd, "result": result}
+
+
+@app.post("/api/learning/deployment")
+async def capture_deployment_learning(
+    service_name: str,
+    version: str,
+    success: bool,
+    duration_seconds: float,
+    error_message: str = ""
+):
+    """
+    Capture learning from a deployment.
+    """
+    memory = get_memory()
+    
+    outcome = "successful" if success else "failed"
+    content = f"Deployment of {service_name} v{version} was {outcome} in {duration_seconds:.1f}s."
+    if error_message:
+        content += f" Error: {error_message}"
+    
+    result = await memory.store_learning(
+        context=f"Deploying {service_name} version {version}",
+        action=f"Deployment {'succeeded' if success else 'failed'}",
+        outcome=outcome,
+        lesson=content
+    )
+    
+    return {"status": "captured", "service": service_name, "success": success, "result": result}
+
+
+# ─────────────────────────────────────────────────────────────────────────────────
 # ADMIN ENDPOINTS
 # ─────────────────────────────────────────────────────────────────────────────────
 
