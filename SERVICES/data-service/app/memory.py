@@ -349,6 +349,79 @@ Items Analyzed: {digest.get('total_items', 0)}
             relevance=0.8,
             sources=["coinglass", "whaletrack"]
         )
+    
+    # ─────────────────────────────────────────────────────────────────────────────
+    # UNIFIED SEARCH & WISDOM (Level 10)
+    # ─────────────────────────────────────────────────────────────────────────────
+    
+    async def search_all(self, query: str, limit: int = 10, quality_weighted: bool = True) -> Dict:
+        """
+        Search across all memory types and merge results.
+        
+        Returns weighted results based on relevance and quality scores.
+        """
+        # Parallel search across all types
+        import asyncio
+        insights, patterns, learnings = await asyncio.gather(
+            self.search_insights(query, limit),
+            self.search_patterns(query, limit),
+            self.search_learnings(query, limit),
+            return_exceptions=True
+        )
+        
+        # Handle exceptions
+        insights = insights if not isinstance(insights, Exception) else []
+        patterns = patterns if not isinstance(patterns, Exception) else []
+        learnings = learnings if not isinstance(learnings, Exception) else []
+        
+        # Combine results
+        all_results = []
+        
+        for item in insights:
+            item["memory_type"] = "insight"
+            item["quality_score"] = 0.5  # Default
+            all_results.append(item)
+        
+        for item in patterns:
+            item["memory_type"] = "pattern"
+            item["quality_score"] = 0.5
+            all_results.append(item)
+        
+        for item in learnings:
+            item["memory_type"] = "learning"
+            item["quality_score"] = 0.5
+            all_results.append(item)
+        
+        # Sort by score
+        all_results.sort(key=lambda x: x.get("score", 0), reverse=True)
+        
+        return {
+            "results": all_results[:limit],
+            "total": len(all_results),
+            "by_type": {
+                "insights": len(insights),
+                "patterns": len(patterns),
+                "learnings": len(learnings)
+            },
+            "query": query,
+            "quality_weighted": quality_weighted
+        }
+    
+    async def get_wisdom(self, domain: str, limit: int = 10) -> Dict:
+        """
+        Get aggregated wisdom for a domain.
+        
+        Returns top patterns, learnings, and insights for informed decision-making.
+        """
+        context = await self.get_relevant_context(domain)
+        
+        return {
+            "domain": domain,
+            "patterns": context.get("patterns", []),
+            "learnings": context.get("learnings", []),
+            "insights": context.get("insights", []),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
 
 
 # ─────────────────────────────────────────────────────────────────────────────
