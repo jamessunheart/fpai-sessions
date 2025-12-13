@@ -1,5 +1,5 @@
 {
-  "last_update": "2025-12-11T07:05:00Z",
+  "last_update": "2025-12-12T17:00:00Z",
   "system_status": "green",
   "strategic_directive": "YIELD (Revenue First) + EFFICIENCY",
   "fleet": {
@@ -13,8 +13,7 @@
         "ram": "7.7GB",
         "services": {
           "critical": [
-            "whaletrack-live:8601",
-            "whaletrack-magnet:8602",
+            "whaletrack-magnet:8600",
             "fpai-credits-gateway:8765",
             "fpai-fp-credits-gateway",
             "fpai-data-service:8125",
@@ -27,8 +26,6 @@
           "stopped_on_purpose": [
             "fpai-ai-brain (use secondary:8101)",
             "fpai-ai-chat",
-            "fpai-aria",
-            "fpai-voice-companion",
             "fpai-consciousness-optimizer (use secondary)",
             "fpai-consciousness_evolution (use secondary)",
             "fpai-consciousness_verifier (use secondary)",
@@ -41,6 +38,13 @@
             "fpai-proactive-alerter",
             "fpai-ri-loop",
             "fpai-resource-intelligence"
+          ],
+          "migrating_to_secondary": [
+            "fpai-aria:8710 → secondary:8710 (Dec 13 2025)",
+            "fpai-sparket-engine:8711 → secondary:8711 (Dec 13 2025)"
+          ],
+          "demo_active": [
+            "fpai-voice-companion:8705"
           ]
         },
         "notes": "Dec 11 2025: Optimized - stopped 16 services to reduce memory pressure"
@@ -77,6 +81,10 @@
             "fpai-aware-brain",
             "fpai-autonomous-healer"
           ],
+          "migrated_from_primary": [
+            "fpai-aria:8710 (Dec 13 2025)",
+            "fpai-sparket-engine:8711 (Dec 13 2025)"
+          ],
           "ollama_models": [
             "codellama:7b",
             "mistral:7b",
@@ -102,7 +110,7 @@
       "ai_inference": "http://162.0.208.88:8101",
       "ollama": "http://162.0.208.88:11434",
       "data_service": "http://198.54.123.234:8125",
-      "trading": "http://198.54.123.234:8601",
+      "trading": "http://198.54.123.234:8600",
       "nerve_center": "http://198.54.123.234:8120"
     }
   },
@@ -124,11 +132,34 @@
         "revenue_model": "$120k MRR Potential"
       },
       {
-        "name": "whaletrack-live",
-        "port": 8601,
+        "name": "whaletrack-magnet",
+        "port": 8600,
         "server": "primary",
         "status": "live",
         "revenue_model": "Trading Bot"
+      }
+    ],
+    "commons_ministry": [
+      {
+        "name": "trust-index",
+        "port": 8560,
+        "server": "primary",
+        "status": "ready",
+        "role": "Trust Index Calculator"
+      },
+      {
+        "name": "contribution-tracker",
+        "port": 8570,
+        "server": "primary",
+        "status": "ready",
+        "role": "TRUST Token Issuer"
+      },
+      {
+        "name": "needs-allocation",
+        "port": 8565,
+        "server": "primary",
+        "status": "ready",
+        "role": "Needs Distribution Engine"
       }
     ],
     "core_infrastructure": [
@@ -167,6 +198,10 @@
       "path": "docs/protocols/TOKENS_STRATEGY.md",
       "quick_ref": "docs/protocols/TOKENS_QUICK_REFERENCE.md",
       "version": "1.0.0"
+    },
+    "zend_uc_credits": {
+      "path": "docs/protocols/ZEND_UC_CREDITS_SPEC.md",
+      "version": "1.0"
     },
     "universal_credits": {
       "path": "docs/protocols/UNIVERSAL_CREDITS_PROTOCOL.md",
