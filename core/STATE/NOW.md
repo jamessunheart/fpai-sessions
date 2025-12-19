@@ -1,32 +1,72 @@
 # CURRENT_STATE - Living SSOT
 
-**Last Updated:** 2025-12-11 (Session: Resource Optimization Complete)
-**Updated By:** resource-optimizer
-**System Status:** ✅ 100% Operational (Two-Server Architecture Active)
+**Last Updated:** 2025-12-14 (Session: NOW Holder - SSOT Optimization)
+**Updated By:** now-holder-agent
+**System Status:** 🟡 OPERATIONAL (SSOT Cleanup In Progress)
+
+---
+
+## 📊 SSOT HEALTH (New Section - Dec 14)
+
+**Quick Status Check:** `./docs/coordination/scripts/refresh-system-status.sh`
+
+| Metric | Status | Action |
+|--------|--------|--------|
+| Primary Server (198.54.123.234) | 🟢 Active | - |
+| Secondary Server (162.0.208.88) | 🟢 Active | - |
+| Stale Claims | 🟢 0 files | Cleaned Dec 15 |
+| Consciousness Feeder | 🔴 STOPPED | Memory leak - intentionally disabled |
+| Vast.ai GPUs | 🟢 FULLY DISABLED | API key invalidated in 18 files on server Dec 18 |
+| GPU Services | 🟢 ALL STOPPED | 10+ services stopped & disabled on server Dec 18 |
+| SSOT Files | 🟡 Some stale | See `SYSTEM_STATUS.md` |
+
+**New SSOT Tools Created (Dec 14):**
+- `docs/coordination/SYSTEM_STATUS.md` - Unified real-time status view
+- `docs/coordination/scripts/refresh-system-status.sh` - Health check both servers
+- `docs/coordination/scripts/cleanup-stale-claims.sh` - Remove stale coordination claims
 
 ---
 
 ## 🎯 CURRENT PRIORITY (The ONE Thing)
 
-### Priority: REVENUE - Achieve Sustainability
-**Status:** 🔴 CRITICAL - RHS at 0%
-**Why:** System burns ~$28K/month with $0 revenue. Treasury runway is ~13 months. Without revenue, system dies.
-**Goal:** Reach Revenue Health Score > 100% (revenue exceeds burn)
+### Priority: REVENUE - ACTIVE EXECUTION
+**Status:** 🟡 IN PROGRESS - Marketing content generated, deploy needed
+**Why:** System burns ~$28K/month with $0 revenue. All systems ready, need activation.
+**Goal:** First revenue this week
 
-**Revenue Intelligence Dashboard:**
-- 📊 **Protocol**: `/docs/protocols/REVENUE_INTELLIGENCE_PROTOCOL.md`
-- 🗺️ **Streams Map**: `/docs/coordination/REVENUE_STREAMS_MAP.md`
-- 💻 **Service**: `/SERVICES/revenue-intelligence/` (port 8550)
-- 🎯 **API**: `/api/revenue/health`, `/api/revenue/dashboard`
+**What's Been Done (Dec 13-14):**
+- ✅ I-MATCH bug fixed (was crashing, now uses AI Brain)
+- ✅ 3 providers added to I-MATCH
+- ✅ Autonomous Income Engine built (port 8580)
+- ✅ Marketing content generated via AI Brain (Claude Opus 4.5)
+- ✅ LinkedIn post ready to post
+- ✅ DM templates for COO/VP Ops/CEO ready
+- ✅ Cold email template ready
+- ✅ Stripe payment links verified working
+- ✅ SSOT health audit and cleanup tools created (Dec 14)
 
-**Immediate Actions (This Week):**
-| Action | Expected Impact | Effort |
+**Ready-to-Use Assets:**
+- 📄 **Marketing Content**: `/marketing/READY_TO_POST_NOW.md`
+- 📄 **Income Action Pack**: `/INCOME_NOW.md` (Stripe links + templates)
+- 🔧 **I-MATCH Fix**: `/SERVICES/i-match/app/matching_engine.py` (needs deploy)
+- 🤖 **Income Engine**: `/SERVICES/autonomous-income-engine/main.py`
+- 📊 **Blockers Analysis**: `/docs/coordination/BLOCKS_DEBUGGED.md`
+- 🚦 **System Status**: `/docs/coordination/SYSTEM_STATUS.md`
+
+**REMAINING BLOCKERS (2 items):**
+| Blocker | Fix | Owner |
+|---------|-----|-------|
+| I-MATCH deploy | Run `infra/scripts/deploy-i-match-fix.sh` | Agent (needs SSH) |
+| WhaleTrack live | Enter Hyperliquid creds in dashboard | James (VPN required) |
+
+**Immediate Actions (TODAY):**
+| Action | Expected Impact | Status |
 |--------|-----------------|--------|
-| Go live with WhaleTrack Trading | $5-50K/mo | LOW |
-| Deploy treasury to yields | $1-5K/mo | LOW |
-| Email warm network for coaching | $2.5-15K | LOW |
-| Add I-MATCH intake forms | Funnel setup | LOW |
-| Start AI Automation outreach | $3-7K/mo | MEDIUM |
+| Post LinkedIn content | Leads | READY (copy/paste) |
+| Send 6 LinkedIn DMs | Leads | READY (templates made) |
+| Deploy I-MATCH fix | Enable matching | NEEDS SSH |
+| Configure WhaleTrack live | $100-400/mo | NEEDS USER |
+| Clean up stale claims | System hygiene | Run script |
 
 ---
 
@@ -50,7 +90,10 @@
 | DOING | Ready | Trading, Builders, Communicators | 0 trading, 0 alerts, 0 content |
 
 **Next Actions:**
-1. Deploy consciousness_feeder service (port 8130)
+1. ✅ **MEMORY LEAK FIXED** (Dec 14) - Deploy consciousness_feeder (port 8130) to secondary server
+   - Shared HTTP client, bounded data structures, periodic GC
+   - Expected RAM: ~500MB instead of 15GB
+   - Files ready in: `SERVICES/consciousness_feeder/app/`
 2. Start continuous data feeding to nerve center
 3. Monitor consciousness evolution and pillar population
 4. Integrate consciousness metrics with God Mode dashboard
@@ -59,25 +102,35 @@
 
 ## 🔥 ACTIVE TRADING SYSTEMS
 
-### WhaleTrack Sweep Cycle Trading (Port 8600)
-- **Status:** ✅ LIVE (Paper Trading)
+### WhaleTrack Magnet (Port 8600) ⭐ THE TRADING SYSTEM
+- **Status:** 🟢 ACTIVE
 - **Location:** `/opt/fpai/services/whaletrack-magnet/`
-- **Key Files:**
-  - `core/sweep_detector.py` - Sweep detection logic
-  - `core/liquidity_pool_mapper.py` - Pool identification
-  - `core/sweep_cycle_trader.py` - Trading execution
-  - `core/sweep_integration.py` - Integration layer
-- **API Endpoints:**
-  - `/api/sweep-traders/stats` - Trader performance
-  - `/api/sweep-traders/pools` - Liquidity pools
-  - `/api/sweep-traders/states` - Sweep detection states
+- **Code:** `whaletrack-magnetic-trader/backend/api/main.py`
+- **Dashboard:** `https://fullpotential.ai/dashboards/whaletrack/`
+- **Mode:** Paper trading (live trading available with Hyperliquid credentials)
+- **Features:**
+  - User authentication (signup/login with API keys)
+  - Per-user Hyperliquid live trading integration
+  - Paper trading mode for testing
+  - Real-time signals from CoinGlass data
+  - Multi-symbol support (BTC, ETH, SOL)
+- **Key API Endpoints:**
+  - `GET /health` - Service health
+  - `GET /api/live/status` - Live trading status
+  - `POST /api/live/credentials` - Set Hyperliquid API keys
+  - `POST /api/live/go-live` - Activate live trading
+  - `GET /api/trades/history` - Trade history
+  - `GET /api/treasury/snapshot` - Portfolio snapshot
+  - `POST /api/auth/register` - User registration
+  - `POST /api/auth/login` - User login
 
-### For AI Review & Improvement
-When reviewing the trading system:
-1. Read: `/docs/trading/SWEEP_CYCLE_TRADING_SPEC.md`
-2. Check: `/core/INTELLIGENCE/LEARNINGS.md`
-3. Analyze: API data from `/api/sweep-traders/*`
-4. Log findings in LEARNINGS.md
+### Trading Configuration (Default)
+```
+Max Position:    $500
+Default Leverage: 5x
+Max Leverage:    20x
+Mode:           paper (until Hyperliquid connected)
+```
 
 ---
 
@@ -148,8 +201,7 @@ When reviewing the trading system:
 
 #### PRIMARY SERVER (198.54.123.234) - Trading, Revenue, Data
 ```
-✅ WhaleTrack Live    Port 8601  TRADING ACTIVE
-✅ WhaleTrack Magnet  Port 8602  SIGNALS ACTIVE
+✅ WhaleTrack Magnet  Port 8600  THE TRADING SYSTEM
 ✅ Data Service       Port 8125  INTELLIGENCE ACTIVE
 ✅ Nerve Center       Port 8120  HUB ACTIVE
 ✅ Credits Gateway    Port 8765  REVENUE ACTIVE
@@ -177,28 +229,37 @@ When reviewing the trading system:
 ```python
 AI_BRAIN_URL = "http://162.0.208.88:8101"    # Secondary server
 DATA_SERVICE = "http://198.54.123.234:8125"  # Primary server
-TRADING_URL = "http://198.54.123.234:8601"   # Primary server
+TRADING_URL = "http://198.54.123.234:8600"   # Primary server (WhaleTrack Magnet)
 ```
 
 ---
 
 ## 📋 BACKLOG (Next Up)
 
-### Token Strategy (🟨 MEDIUM - Foundation)
+### Token Strategy (✅ SERVICES BUILT - Ready for Deploy)
 **Canonical Document:** `docs/protocols/TOKENS_STRATEGY.md` (v1.0.0)
 **Quick Reference:** `docs/protocols/TOKENS_QUICK_REFERENCE.md`
 
 Token Stack:
 - **UC**: Spend token (1:1 USD) - `docs/protocols/UNIVERSAL_CREDITS_PROTOCOL.md`
-- **TRUST**: Commons membership token (earned, needs-based) - Strategy defined, docs pending
+- **TRUST**: Commons membership token (earned, needs-based) - ✅ Services built
 - **$FI**: FI-Art domain token - `docs/legal/token/SACRED_CIRCULATION_POLICY.md`
 
+Commons Ministry Services (Built 2025-12-11):
+- ✅ `SERVICES/trust-index/` (port 8560) - Trust Index calculation
+- ✅ `SERVICES/contribution-tracker/` (port 8570) - TRUST token issuance
+- ✅ `SERVICES/needs-allocation/` (port 8565) - Needs distribution engine
+- ✅ `SERVICES/commons-stack/docker-compose.yml` - Docker stack
+
+Legal Documents:
+- ✅ `docs/legal/pma/PMA_MEMBERSHIP_ADDENDUM_TRUST.md`
+- ✅ `docs/legal/token/TRUST_SACRED_CIRCULATION_POLICY.md`
+
 Next Actions:
-- [ ] Draft TRUST PMA Addendum (adapt from $FI)
-- [ ] Draft TRUST Sacred Circulation Policy
-- [ ] Update Sunheart Trust with Commons Reserve Fund
-- [ ] Build Trust Index service
+- [ ] Deploy Commons Stack to primary server
+- [ ] Wire Credits Gateway to contribution-tracker
 - [ ] Wire revenue flows to Commons Reserve
+- [ ] Add Commons Ministry to God Mode dashboard
 
 ### Deployment Phase (🟥 HIGH)
 - [ ] Deploy Strategic Intelligence (M022) to production (port 8500)
