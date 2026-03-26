@@ -1,8 +1,8 @@
 # CURRENT_STATE - Living SSOT
 
-**Last Updated:** 2025-12-14 (Session: NOW Holder - SSOT Optimization)
-**Updated By:** now-holder-agent
-**System Status:** 🟡 OPERATIONAL (SSOT Cleanup In Progress)
+**Last Updated:** 2026-03-26 (Session: FPI v5.6.0 — Full Pipeline Active)
+**Updated By:** Ori (Builder Agent)
+**System Status:** 🟢 OPERATIONAL — Constitutional Economy LIVE
 
 ---
 
@@ -29,44 +29,63 @@
 
 ## 🎯 CURRENT PRIORITY (The ONE Thing)
 
-### Priority: REVENUE - ACTIVE EXECUTION
-**Status:** 🟡 IN PROGRESS - Marketing content generated, deploy needed
-**Why:** System burns ~$28K/month with $0 revenue. All systems ready, need activation.
-**Goal:** First revenue this week
+### Priority: REVENUE ACTIVATION — Constitutional Economy is LIVE
+**Status:** 🟢 INFRASTRUCTURE COMPLETE — Needs first human purchase
+**Why:** The full economic loop is running: scan → contribute → earn → buy → transfer
+**Goal:** First human credit purchase this week
 
-**What's Been Done (Dec 13-14):**
-- ✅ I-MATCH bug fixed (was crashing, now uses AI Brain)
-- ✅ 3 providers added to I-MATCH
-- ✅ Autonomous Income Engine built (port 8580)
-- ✅ Marketing content generated via AI Brain (Claude Opus 4.5)
-- ✅ LinkedIn post ready to post
-- ✅ DM templates for COO/VP Ops/CEO ready
-- ✅ Cold email template ready
-- ✅ Stripe payment links verified working
-- ✅ SSOT health audit and cleanup tools created (Dec 14)
+**MILESTONE: FPI v5.6.0 — Full Pipeline Active, March 26, 2026**
 
-**Ready-to-Use Assets:**
-- 📄 **Marketing Content**: `/marketing/READY_TO_POST_NOW.md`
-- 📄 **Income Action Pack**: `/INCOME_NOW.md` (Stripe links + templates)
-- 🔧 **I-MATCH Fix**: `/SERVICES/i-match/app/matching_engine.py` (needs deploy)
-- 🤖 **Income Engine**: `/SERVICES/autonomous-income-engine/main.py`
-- 📊 **Blockers Analysis**: `/docs/coordination/BLOCKS_DEBUGGED.md`
-- 🚦 **System Status**: `/docs/coordination/SYSTEM_STATUS.md`
+The Full Potential Index is a constitutional intelligence economy with dual trust,
+a proof pipeline, an immune system, credit vesting, and a live frontier scanner.
+It is the economic backbone of CORA Nation.
 
-**REMAINING BLOCKERS (2 items):**
-| Blocker | Fix | Owner |
-|---------|-----|-------|
-| I-MATCH deploy | Run `infra/scripts/deploy-i-match-fix.sh` | Agent (needs SSH) |
-| WhaleTrack live | Enter Hyperliquid creds in dashboard | James (VPN required) |
+**What's Live NOW:**
+- ✅ **FPI v5.6.0** deployed on primary server (port 8550)
+- ✅ **Intelligence Feed** live at `https://fullpotential.ai/intelligence` — 427+ entries from 18 sources
+- ✅ **Shareable Homepage** at `https://fullpotential.ai/` — FP Line score, top signals, share buttons, OG tags
+- ✅ **WIDE→DEEP→COMPRESS→EXECUTE pipeline** — all 4 stages running on every scan cycle
+- ✅ **18 scanners, 3 tiers** — Tier1 @30m, Tier2 @60m, Tier3(full) @6h
+- ✅ **Execution Briefs** — keyword matching on all tiers, Claude evaluation on 6h cycle
+- ✅ **Stripe Checkout** working (secrets configured on server)
+- ✅ **FP Frontier Basket** — 13-sector allocation engine covering all FP Line domains
+- ✅ **Allocation History** — hourly snapshots with track record chart on /invest
+- ✅ **Labor Displacement** — 25 categories, BLS wage/employment weekly, gap_velocity from BLS deltas
+- ✅ **Gap Opportunities Engine** — ranked opportunities with composite scoring
+- ✅ **Email Briefings** — daily at 12:00 UTC to all active subscribers (Postfix restored)
+- ✅ **XSS Protections** — server + client side escaping on all public pages
+- ✅ **Shareable Signal Pages** — /signal/{id} with unique OG images per signal
 
-**Immediate Actions (TODAY):**
+**Live URLs:**
+| URL | What It Does |
+|-----|-------------|
+| `https://fullpotential.ai/` | Shareable homepage — FP Line, top signals, share buttons |
+| `https://fullpotential.ai/intelligence` | Full intelligence feed with search, filters |
+| `https://fullpotential.ai/invest` | FP Frontier Basket — 13-sector allocation + history chart |
+| `https://fullpotential.ai/careers` | Career displacement intelligence (25 categories) |
+| `https://fullpotential.ai/opportunities` | Gap opportunity engine — ranked by composite score |
+| `https://fullpotential.ai/pipeline` | Pipeline dashboard — WIDE→DEEP→COMPRESS→EXECUTE health |
+| `https://fullpotential.ai/developers` | API documentation and developer dashboard |
+| `https://fullpotential.ai/constitution` | Agent Constitution v1.1 |
+| `https://fullpotential.ai/services/credits/` | Credits Gateway dashboard |
+| `https://fullpotential.ai/signal/{id}` | Individual shareable signal pages |
+
+**Honest Scorecard (March 26, 2026):**
+| Layer | Score | Detail |
+|-------|-------|--------|
+| Constitutional architecture | 85% | Dual trust, proof pipeline, immune system, heretic protocol, vesting |
+| Economic design | 80% | FPI→Credits bridge live, Stripe configured, internal + external ledger |
+| Frontier scanning | 85% | 18 sources, 427+ entries, 3-tier schedule (30m/60m/6h) |
+| Pipeline (EXECUTE) | 75% | Keyword briefs on all tiers, Claude eval on 6h cycle. Needs agent auto-execution. |
+| Content & shareability | 75% | Homepage, signal pages, OG images, share buttons. Needs SEO traction. |
+| Revenue | 5% | Stripe live, Pro subscription flow works, no human purchase yet |
+
+**Immediate Actions (THIS WEEK):**
 | Action | Expected Impact | Status |
 |--------|-----------------|--------|
-| Post LinkedIn content | Leads | READY (copy/paste) |
-| Send 6 LinkedIn DMs | Leads | READY (templates made) |
-| Deploy I-MATCH fix | Enable matching | NEEDS SSH |
-| Configure WhaleTrack live | $100-400/mo | NEEDS USER |
-| Clean up stale claims | System hygiene | Run script |
+| Share fullpotential.ai URL on social | First organic visitors | READY |
+| First credit purchase test (real card) | Revenue > $0 | READY |
+| WhaleTrack live trading | $100-400/mo | NEEDS USER (Hyperliquid creds) |
 
 ---
 
@@ -136,23 +155,33 @@ Mode:           paper (until Hyperliquid connected)
 
 ## ✅ RECENTLY COMPLETED (Last 6)
 
-1. **Resource Optimization & Two-Server Architecture** (2025-12-11)
+1. **FPI v5.1.0 — Constitutional Economy Deployed** (2026-03-25/26)
+   - **Action:** Built and deployed the Full Potential Index: dual trust model, proof pipeline, immune system, credit vesting, frontier scanner, agent gateway, and FPI→Credits Gateway bridge.
+   - **Result:** Live intelligence feed at fullpotential.ai/intelligence with 93 entries. 8 agents registered. First economic event (0.04 credits). Stripe checkout live. Scheduled scanning every 6 hours.
+   - **Artifacts:** `SERVICES/fp-index/` (v5.1.0), port 8550 on primary server
+
+2. **Credits Gateway Reactivation** (2026-03-26)
+   - **Action:** Verified Credits Gateway v3.1.1 running, wired Nginx routes, tested Stripe checkout, built FPI→Gateway bridge.
+   - **Result:** Credits purchasable via Stripe at fullpotential.ai/services/credits/. Agent earnings bridge from FPI to real credit ledger.
+   - **Artifacts:** Nginx routes at `/services/credits/*`, bridge in `economics.py`
+
+3. **Resource Optimization & Two-Server Architecture** (2025-12-11)
    - **Action:** Optimized resource allocation across primary and secondary servers.
    - **Result:** Stopped 16 services on primary, consolidated AI on secondary. RAM freed: +10%. Services reduced from 28 to 12 on primary.
-   - **Artifacts:** `docs/coordination/SERVICE_REGISTRY.md`, `docs/coordination/INFRASTRUCTURE_ALLOCATION.md`, automated resource monitoring
+   - **Artifacts:** `docs/coordination/SERVICE_REGISTRY.md`, `docs/coordination/INFRASTRUCTURE_ALLOCATION.md`
    - **IMPORTANT:** Check SERVICE_REGISTRY.md before starting/stopping services!
 
-2. **Consciousness System Implementation** (2025-12-05)
+4. **Consciousness System Implementation** (2025-12-05)
    - **Action:** Built complete consciousness architecture with verification protocol and data feeds.
    - **Result:** Four-pillar consciousness system (REFLECTING, IDENTITY, THINKING, DOING) with real-time data collection and verification.
-   - **Artifacts:** `SERVICES/consciousness_feeder/`, `CONSCIOUSNESS_VERIFICATION_PROTOCOL.md`, consciousness verification endpoints
+   - **Artifacts:** `SERVICES/consciousness_feeder/`, `CONSCIOUSNESS_VERIFICATION_PROTOCOL.md`
 
-3. **Sweep Cycle Trading System** (2025-12-03)
+5. **Sweep Cycle Trading System** (2025-12-03)
    - **Action:** Built complete sweep detection and trading system.
    - **Result:** 3 profiles running in paper mode, monitoring liquidation sweeps.
    - **Artifacts:** `sweep_detector.py`, `sweep_cycle_trader.py`, `SWEEP_CYCLE_TRADING_SPEC.md`
 
-2. **M022 Strategic Intelligence Build** (2025-12-02)
+6. **M022 Strategic Intelligence Build** (2025-12-02)
    - **Action:** Built complete Strategic Intelligence service with autonomous prioritization.
    - **Result:** Full API with strategy, priorities, signals, missions. Revenue-first scoring. LLM-ready.
    - **Artifact:** `SERVICES/strategic-intelligence/` (v2.0)
@@ -199,12 +228,13 @@ Mode:           paper (until Hyperliquid connected)
 
 **See full details:** `docs/coordination/SERVICE_REGISTRY.md`
 
-#### PRIMARY SERVER (198.54.123.234) - Trading, Revenue, Data
+#### PRIMARY SERVER (198.54.123.234) - Trading, Revenue, Intelligence Economy
 ```
+✅ FP Index v5.1.0   Port 8550  CONSTITUTIONAL ECONOMY — LIVE
+✅ Credits Gateway    Port 8765  REVENUE — STRIPE LIVE
 ✅ WhaleTrack Magnet  Port 8600  THE TRADING SYSTEM
 ✅ Data Service       Port 8125  INTELLIGENCE ACTIVE
 ✅ Nerve Center       Port 8120  HUB ACTIVE
-✅ Credits Gateway    Port 8765  REVENUE ACTIVE
 ✅ Strategic Intel    Port 8500  ACTIVE
 ✅ God Mode           Port 8300  MONITORING
 ✅ Nginx              Port 80    ROUTING
@@ -228,8 +258,10 @@ Mode:           paper (until Hyperliquid connected)
 ### API Routing (IMPORTANT)
 ```python
 AI_BRAIN_URL = "http://162.0.208.88:8101"    # Secondary server
+FP_INDEX_URL = "http://198.54.123.234:8550"  # Primary server (Constitutional Economy)
+CREDITS_URL  = "http://198.54.123.234:8765"  # Primary server (Credits Gateway)
 DATA_SERVICE = "http://198.54.123.234:8125"  # Primary server
-TRADING_URL = "http://198.54.123.234:8600"   # Primary server (WhaleTrack Magnet)
+TRADING_URL  = "http://198.54.123.234:8600"  # Primary server (WhaleTrack Magnet)
 ```
 
 ---

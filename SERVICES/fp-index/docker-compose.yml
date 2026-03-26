@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  fp-index:
+    build: .
+    container_name: fpai-fp-index
+    ports:
+      - "8550:8550"
+    environment:
+      - FP_INDEX_PORT=8550
+      - FP_INDEX_DB=sqlite+aiosqlite:///./fp_index.db
+      - AI_BRAIN_URL=http://162.0.208.88:8101
+      - NERVE_CENTER_URL=http://198.54.123.234:8120
+    volumes:
+      - fp-index-data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8550/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  fp-index-data:
