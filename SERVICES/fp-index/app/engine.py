@@ -227,10 +227,13 @@ class FPIndexEngine:
         return briefs
 
     async def _process_pending_briefs(self) -> None:
-        """Evaluate pending execution briefs with Claude and generate implementation proposals.
+        """Evaluate pending execution briefs with Claude — scoring, routing, and narration.
         
-        This closes the EXECUTE loop: scanner finds → brief generated → Claude evaluates
-        applicability → implementation_path written → brief status updated.
+        Each brief receives:
+          - relevance_score (0.0-1.0): how applicable to our system
+          - execution_track: self_upgrade | investment | product
+          - narrative: human-readable one-liner for the /intelligence feed
+          - implementation_path: Claude's full evaluation
         """
         api_key = os.getenv("ANTHROPIC_API_KEY", "")
         if not api_key or not api_key.startswith("sk-ant"):
@@ -258,7 +261,7 @@ class FPIndexEngine:
 
             for brief in pending:
                 try:
-                    prompt = f"""You are an AI systems architect evaluating whether a new AI capability should trigger a self-upgrade in the Full Potential Index system.
+                    prompt = f"""You are the intelligence analyst for the Full Potential Index — a live AI frontier scanner. Evaluate whether this detected capability should trigger action in our system.
 
 CAPABILITY DETECTED:
 - Title: {brief.entry_title}
@@ -266,39 +269,74 @@ CAPABILITY DETECTED:
 - Affected agents: {', '.join(brief.affected_agents or [])}
 - Priority: {brief.priority}
 
-OUR SYSTEM COMPONENTS:
+OUR SYSTEM:
 - fp-scanner: Scans 18 sources for AI frontier signals
 - fp-index: FastAPI service computing the FP Line Score
+- allocation-engine: Maps FP Line signals to 13-sector capital allocation
+- displacement-engine: Tracks AI vs labor across 25 job categories
+- opportunity-engine: Ranks gap opportunities by composite score
 - cora/aria: Conversational AI agents
 - intelligence-briefing: Daily AI briefing generator
 - immune-system: Threat detection and integrity enforcement
-- credits-gateway: Economic transaction layer
 
-EVALUATE:
-1. Is this capability directly applicable to upgrading our system? (yes/no with one-line reason)
-2. If yes, write a concrete 2-3 sentence implementation path (what file to change, what to add/modify)
-3. Estimated effort: trivial (< 1 hour), moderate (1-4 hours), significant (> 4 hours)
-4. Risk level: low, medium, high
+EVALUATE (be precise, not generous):
 
-FORMAT (strict):
-APPLICABLE: [yes/no] — [reason]
+1. RELEVANCE_SCORE: Float 0.0-1.0. How directly does this capability apply to improving our system? 0.0=irrelevant, 0.3=tangentially related, 0.5=moderately useful, 0.7=clearly applicable, 0.9+=critical upgrade.
+
+2. TRACK: Classify as exactly one of:
+   - SELF_UPGRADE: Affects our codebase, scanners, agents, or infrastructure
+   - INVESTMENT: Affects sector allocation weights, dimension scoring, or market signals
+   - PRODUCT: Affects gap opportunity rankings, displacement scores, or build priorities
+
+3. IMPLEMENTATION: 2-3 sentences. What specifically to change, in which component, and expected impact.
+
+4. NARRATIVE: One sentence (under 120 chars) that a reader of /intelligence would understand. Example: "Agent framework X shipped tool-use v2 — evaluating for scanner pipeline upgrade."
+
+5. EFFORT: trivial / moderate / significant
+6. RISK: low / medium / high
+
+FORMAT (strict — one value per line):
+RELEVANCE_SCORE: [0.0-1.0]
+TRACK: [SELF_UPGRADE/INVESTMENT/PRODUCT]
 IMPLEMENTATION: [2-3 sentences]
+NARRATIVE: [one sentence under 120 chars]
 EFFORT: [trivial/moderate/significant]
 RISK: [low/medium/high]"""
 
                     response = client.messages.create(
                         model="claude-sonnet-4-20250514",
-                        max_tokens=300,
+                        max_tokens=400,
                         messages=[{"role": "user", "content": prompt}],
                     )
                     text = response.content[0].text.strip()
 
-                    applicable = "yes" in text.split("\n")[0].lower() if text else False
+                    score = 0.0
+                    track = "self_upgrade"
+                    narrative = ""
+                    for line in text.split("\n"):
+                        line_l = line.strip()
+                        if line_l.startswith("RELEVANCE_SCORE:"):
+                            try:
+                                score = float(line_l.split(":", 1)[1].strip())
+                                score = max(0.0, min(1.0, score))
+                            except ValueError:
+                                pass
+                        elif line_l.startswith("TRACK:"):
+                            raw_track = line_l.split(":", 1)[1].strip().lower().replace("-", "_")
+                            if raw_track in {"self_upgrade", "investment", "product"}:
+                                track = raw_track
+                        elif line_l.startswith("NARRATIVE:"):
+                            narrative = line_l.split(":", 1)[1].strip()[:200]
+
+                    brief.relevance_score = score
+                    brief.execution_track = track
+                    brief.narrative = narrative
                     brief.implementation_path = text
-                    brief.status = "evaluated" if applicable else "dismissed"
+                    brief.status = "evaluated" if score >= 0.3 else "dismissed"
                     brief.executed_at = datetime.now(timezone.utc)
 
-                    logger.info(f"[EXECUTE] Brief '{brief.entry_title[:50]}' → {brief.status}")
+                    logger.info(f"[EXECUTE] Brief '{brief.entry_title[:50]}' → "
+                                f"{brief.status} (score={score:.2f}, track={track})")
 
                 except Exception as e:
                     logger.warning(f"[EXECUTE] Failed to process brief {brief.id}: {e}")
@@ -309,6 +347,71 @@ RISK: [low/medium/high]"""
 
         evaluated = sum(1 for b in pending if b.status == "evaluated")
         logger.info(f"[EXECUTE] Processed {len(pending)} briefs: {evaluated} applicable")
+
+        high_scored = [b for b in pending if b.status == "evaluated" and (b.relevance_score or 0) >= 0.5]
+        if high_scored:
+            await self._narrate_briefs(high_scored)
+
+    async def _narrate_briefs(self, briefs: list) -> None:
+        """Narration engine: high-scored evaluated briefs become intelligence feed entries.
+        
+        This is the content moat — the system's evolution narrated in real time.
+        Every self-improvement proposal is verifiable, timestamped content.
+        """
+        async with async_session() as session:
+            for brief in briefs:
+                existing = await session.execute(
+                    select(IndexEntryRow).where(
+                        IndexEntryRow.source == "execute_narration",
+                        IndexEntryRow.title.contains(brief.entry_title[:60]),
+                    )
+                )
+                if existing.scalar_one_or_none():
+                    continue
+
+                track_labels = {
+                    "self_upgrade": "System Self-Upgrade Proposal",
+                    "investment": "Investment Signal Update",
+                    "product": "Product Opportunity Detected",
+                }
+                track_label = track_labels.get(brief.execution_track, "System Proposal")
+
+                narrative = brief.narrative or f"Evaluated: {brief.entry_title[:100]}"
+                summary = (
+                    f"[{track_label}] {narrative}\n\n"
+                    f"Relevance: {brief.relevance_score:.0%} · "
+                    f"Track: {brief.execution_track} · "
+                    f"Priority: {brief.priority} · "
+                    f"Affects: {', '.join(brief.affected_agents or [])}"
+                )
+
+                entry_id = f"narr-{brief.id}-{int(datetime.now(timezone.utc).timestamp())}"
+                row = IndexEntryRow(
+                    id=entry_id,
+                    dimension="intelligence",
+                    title=f"[EXECUTE] {narrative}",
+                    summary=summary,
+                    source="execute_narration",
+                    source_url="",
+                    source_category="tool_launch",
+                    source_type="primary",
+                    capability_type="agent_framework",
+                    domains=["agents"],
+                    alignment="light",
+                    readiness="production",
+                    impact_score=brief.relevance_score or 0.5,
+                    tags=["execute", brief.execution_track or "self_upgrade", "narration"],
+                    entities=[],
+                    action_signals=[],
+                    dark_flag=False,
+                    verification_status="verified",
+                    fingerprint=f"exec-narr-{brief.id}",
+                    scanned_at=datetime.now(timezone.utc),
+                )
+                session.add(row)
+
+            await session.commit()
+            logger.info(f"[NARRATE] Created {len(briefs)} narration entries in intelligence feed")
 
     async def _persist_entries(self, entries: list[IndexEntry]) -> int:
         """Store new entries with fingerprints, skip duplicates."""

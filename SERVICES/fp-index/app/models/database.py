@@ -361,6 +361,9 @@ class ExecutionBriefRow(Base):
     implementation_path = Column(Text, default="")
     priority = Column(String(20), default="medium")
     status = Column(String(20), default="pending")
+    relevance_score = Column(Float, default=0.0)
+    execution_track = Column(String(30), default="self_upgrade")
+    narrative = Column(Text, default="")
     executed_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
@@ -418,6 +421,26 @@ async_session = async_sessionmaker(db_engine, class_=AsyncSession, expire_on_com
 async def init_db():
     async with db_engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+    await _upgrade_schema()
+
+
+async def _upgrade_schema():
+    """Add columns that may be missing from older databases."""
+    _migrations = [
+        ("execution_briefs", "relevance_score", "REAL DEFAULT 0.0"),
+        ("execution_briefs", "execution_track", "VARCHAR(30) DEFAULT 'self_upgrade'"),
+        ("execution_briefs", "narrative", "TEXT DEFAULT ''"),
+    ]
+    async with db_engine.begin() as conn:
+        for table, col, col_type in _migrations:
+            try:
+                await conn.execute(
+                    __import__("sqlalchemy").text(
+                        f"ALTER TABLE {table} ADD COLUMN {col} {col_type}"
+                    )
+                )
+            except Exception:
+                pass
 
 
 async def get_session() -> AsyncSession:

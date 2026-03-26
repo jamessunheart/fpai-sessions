@@ -2007,35 +2007,6 @@ async def get_daily_briefing():
     return briefing
 
 
-@app.get("/api/v1/execution-briefs")
-async def get_execution_briefs(limit: int = 20, status: str = None):
-    """Execution briefs from the EXECUTE step — self-upgrade proposals."""
-    from .models.database import async_session as _session, ExecutionBriefRow
-    from sqlalchemy import select
-
-    async with _session() as session:
-        query = select(ExecutionBriefRow).order_by(ExecutionBriefRow.created_at.desc())
-        if status:
-            query = query.where(ExecutionBriefRow.status == status)
-        query = query.limit(limit)
-        rows = (await session.execute(query)).scalars().all()
-
-    return [
-        {
-            "id": r.id,
-            "entry_title": r.entry_title,
-            "applicability": r.applicability,
-            "affected_agents": r.affected_agents,
-            "implementation_path": r.implementation_path,
-            "priority": r.priority,
-            "status": r.status,
-            "executed_at": r.executed_at.isoformat() if r.executed_at else None,
-            "created_at": r.created_at.isoformat() if r.created_at else None,
-        }
-        for r in rows
-    ]
-
-
 @app.post("/api/v1/subscribe")
 async def subscribe_email(req: EmailSubscribeRequest):
     """Subscribe to the daily AI frontier briefing."""
@@ -2071,29 +2042,49 @@ async def subscriber_count():
 
 
 @app.get("/api/v1/execution-briefs")
-async def get_execution_briefs(limit: int = 20, status: str = "all"):
-    """EXECUTE step output — self-upgrade briefs generated from scanner intelligence."""
+async def get_execution_briefs(
+    limit: int = Query(20, ge=1, le=100),
+    status: str = "all",
+    min_score: float = Query(0.0, ge=0.0, le=1.0),
+    track: str = "all",
+):
+    """EXECUTE step output — scored, routed self-upgrade proposals.
+    
+    Filter by status (pending/evaluated/dismissed/all),
+    min_score (0.0-1.0), or track (self_upgrade/investment/product/all).
+    """
     from .models.database import ExecutionBriefRow
     async with db_session() as session:
         from sqlalchemy import select
-        query = select(ExecutionBriefRow).order_by(ExecutionBriefRow.created_at.desc()).limit(limit)
+        query = select(ExecutionBriefRow).order_by(
+            ExecutionBriefRow.relevance_score.desc(),
+            ExecutionBriefRow.created_at.desc(),
+        ).limit(limit)
         if status != "all":
             query = query.where(ExecutionBriefRow.status == status)
+        if min_score > 0:
+            query = query.where(ExecutionBriefRow.relevance_score >= min_score)
+        if track != "all":
+            query = query.where(ExecutionBriefRow.execution_track == track)
         rows = (await session.execute(query)).scalars().all()
-        return {
-            "count": len(rows),
-            "briefs": [{
+        return [
+            {
                 "id": r.id,
                 "entry_id": r.entry_id,
                 "entry_title": r.entry_title,
                 "applicability": r.applicability,
                 "affected_agents": r.affected_agents,
+                "implementation_path": r.implementation_path,
                 "priority": r.priority,
                 "status": r.status,
+                "relevance_score": r.relevance_score or 0.0,
+                "execution_track": r.execution_track or "self_upgrade",
+                "narrative": r.narrative or "",
                 "created_at": r.created_at.isoformat() if r.created_at else None,
                 "executed_at": r.executed_at.isoformat() if r.executed_at else None,
-            } for r in rows],
-        }
+            }
+            for r in rows
+        ]
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -3191,8 +3182,11 @@ footer a{color:var(--accent);text-decoration:none}
 <!-- ═══ SYSTEM UPGRADE PROPOSALS (EXECUTE step output) ═══ -->
 <div id="exec-briefs-section" style="display:none;margin-top:32px">
   <div class="section-head">
-    <div class="section-title">System Upgrade Proposals</div>
+    <div class="section-title">What the System Wants to Become</div>
     <a href="/pipeline" style="font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--dim);text-decoration:none">View Pipeline →</a>
+  </div>
+  <div style="color:var(--dim);font-size:0.8rem;margin-bottom:16px;font-family:'IBM Plex Mono',monospace">
+    The scanner detects frontier shifts. The EXECUTE step evaluates whether they apply to our system. These are the highest-scored proposals — intelligence acting on itself.
   </div>
   <div id="exec-briefs"></div>
 </div>
@@ -3465,21 +3459,34 @@ async function subscribeProFromIntel(e) {
 
 async function loadExecBriefs() {
   try {
-    const resp = await fetch('/api/v1/execution-briefs?limit=5&status=evaluated');
+    const resp = await fetch('/api/v1/execution-briefs?limit=8&status=evaluated&min_score=0.3');
     const briefs = await resp.json();
     if (!briefs || !briefs.length) return;
     const section = document.getElementById('exec-briefs-section');
     section.style.display = 'block';
     const el = document.getElementById('exec-briefs');
+
+    const trackColors = {
+      self_upgrade: {bg: 'rgba(0,212,255,0.1)', fg: '#00d4ff', label: 'SELF-UPGRADE'},
+      investment: {bg: 'rgba(255,180,0,0.1)', fg: '#ffb400', label: 'INVESTMENT'},
+      product: {bg: 'rgba(78,205,196,0.1)', fg: '#4ecdc4', label: 'PRODUCT'},
+    };
+
     el.innerHTML = briefs.map(b => {
-      const ptag = b.priority === 'high' ? 'impact-high' : 'impact-med';
+      const score = (b.relevance_score || 0).toFixed(2);
+      const scoreColor = b.relevance_score >= 0.7 ? 'var(--green)' : b.relevance_score >= 0.5 ? 'var(--gold)' : 'var(--dim)';
+      const track = trackColors[b.execution_track] || trackColors.self_upgrade;
+      const narrative = escHtml(b.narrative || '');
       const agents = escHtml((b.affected_agents || []).join(', '));
       const impl = escHtml((b.implementation_path || '').split('\\n').filter(l => l.startsWith('IMPLEMENTATION:')).map(l => l.replace('IMPLEMENTATION:','').trim()).join('') || '');
-      return '<div class="entry" style="border-left:3px solid var(--purple)">' +
+
+      return '<div class="entry" style="border-left:3px solid ' + track.fg + '">' +
         '<div class="entry-head"><div class="entry-title">' + escHtml(b.entry_title || '') + '</div>' +
-        '<span class="entry-impact ' + ptag + '">' + escHtml((b.priority || 'medium').toUpperCase()) + '</span></div>' +
+        '<span style="font-family:IBM Plex Mono,monospace;font-size:0.75rem;color:' + scoreColor + ';font-weight:600">' + score + '</span></div>' +
+        (narrative ? '<div class="entry-summary" style="color:var(--accent);font-style:italic;font-size:0.82rem">' + narrative + '</div>' : '') +
         (impl ? '<div class="entry-summary">' + impl + '</div>' : '') +
-        '<div class="entry-meta"><span class="tag" style="background:rgba(123,47,255,0.1);color:#9966ff">EXECUTE</span>' +
+        '<div class="entry-meta">' +
+        '<span class="tag" style="background:' + track.bg + ';color:' + track.fg + '">' + track.label + '</span>' +
         (agents ? '<span class="tag source-tag">' + agents + '</span>' : '') +
         '<span class="time">' + escHtml(b.created_at ? new Date(b.created_at).toLocaleString() : '') + '</span></div></div>';
     }).join('');
