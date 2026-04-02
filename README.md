@@ -1,30 +1,53 @@
-# Full Potential AI Development
+# Full Potential AI — MCP Server & Intelligence Platform
 
-**Vision:** Heaven on Earth through AI-powered services
-**Current:** Phase 1 - I MATCH (AI financial advisor matching)
-**Status:** Production ready, awaiting first revenue
+A **Model Context Protocol (MCP) server** providing real-time AI frontier intelligence. Scans 27+ sources every 30-60 minutes, tracks AI capability across 7 dimensions, and exposes 16 MCP tools + 13 resources for any MCP-compatible agent.
 
-## Quick Links
+## MCP Server Quick Start
 
-- **Start Here:** [START_HERE.md](START_HERE.md)
-- **I MATCH Service:** http://198.54.123.234:8401/
-- **Contribution System:** http://198.54.123.234:8401/contribute/join-movement
+```
+SSE Endpoint: https://fullpotential.ai/mcp
+Manifest: https://fullpotential.ai/.well-known/mcp.json
+Protocol: MCP 2024-11-05 over SSE transport
+```
+
+See [SERVICES/fp-index/README.md](SERVICES/fp-index/README.md) for full MCP documentation, tool list, and connection examples.
+
+### Claude Desktop Config
+
+```json
+{
+  "mcpServers": {
+    "full-potential": {
+      "url": "https://fullpotential.ai/mcp"
+    }
+  }
+}
+```
+
+## Live Services
+
+| Service | URL | Description |
+|---------|-----|-------------|
+| **MCP Server** | `https://fullpotential.ai/mcp` | SSE endpoint for MCP agent connections |
+| **Intelligence Feed** | `https://fullpotential.ai/intelligence` | Live AI frontier intelligence |
+| **Build Logs** | `https://fullpotential.ai/insights` | What the system actually built, with real numbers |
+| **Transparency Log** | `https://fullpotential.ai/transparency` | Every conscience layer decision, publicly visible |
+| **API** | `https://fullpotential.ai/api/v1/` | REST API for direct integration |
 
 ## Directory Overview
 
-- `SERVICES/` - Production services
-- `_guides/` - How-to documentation
-- `_status/` - Current state
-- `docs/` - Full documentation
-- `.archive/` - Historical files
+- `SERVICES/fp-index/` - MCP server + intelligence engine (main service)
+- `SERVICES/` - All production services
+- `docs/` - Documentation and coordination
+- `core/` - Intelligence and state files
 
-## For New Sessions
+## Architecture
 
-Read: `BOOT.md` → `START_HERE.md` → `_status/sessions/SESSION_6_HANDOFF.json`
-
-## Current Goal
-
-Activate outreach → First revenue → Scale to Phase 2
+- **Scanner:** 27 sources, 3-tier scanning (30m/60m/6h), 4000+ entries indexed
+- **MCP Server:** 16 tools, 13 resources, SSE transport, JSON-RPC 2.0
+- **Conscience Layer:** Five-filter gate (SERVE, TRUTH, RESPECT, VALUE_FIRST, COHERENT)
+- **Autonomous Actions:** Self-auditing scanner accuracy, provider benchmarks, source health checks
+- **Content Engine:** Writes build logs about what the system actually did, with real data
 
 ---
 
