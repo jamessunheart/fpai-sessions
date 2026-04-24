@@ -47,43 +47,72 @@ chmod 700 "$SECRETS_DIR" "$ETC_DIR"
 
 if [ ! -f "$ENV_FILE" ]; then
   log "generating $ENV_FILE"
-  POSTGRES_PW=$(openssl rand -base64 24)
-  MINIO_PW=$(openssl rand -base64 24)
+  POSTGRES_PW=$(openssl rand -hex 32)
+  MINIO_AK="shbrain$(openssl rand -hex 6)"
+  MINIO_SK=$(openssl rand -hex 24)
   JWT=$(openssl rand -hex 32)
   ADMIN_PW=$(openssl rand -base64 24)
   OWNER_PW=$(openssl rand -base64 24)
-  BRAIN_INDEX_PW=$(openssl rand -base64 24)
+  BRAIN_INDEX_PW=$(openssl rand -hex 32)
+
   cat > "$ENV_FILE" <<EOF
+# ========== URLs ==========
 APPFLOWY_BASE_URL=https://$WEB_DOMAIN
+APPFLOWY_WEB_URL=https://$WEB_DOMAIN
 APPFLOWY_WEBSOCKET_BASE_URL=wss://$WEB_DOMAIN/ws
+API_EXTERNAL_URL=https://$WEB_DOMAIN/gotrue
 
-POSTGRES_USER=appflowy
+# ========== Postgres ==========
+POSTGRES_HOST=postgres
+POSTGRES_USER=postgres
 POSTGRES_PASSWORD=$POSTGRES_PW
-POSTGRES_DB=appflowy
-GOTRUE_POSTGRES_PASSWORD=$POSTGRES_PW
+POSTGRES_DB=postgres
+POSTGRES_PORT=5432
+APPFLOWY_DATABASE_URL=postgres://postgres:$POSTGRES_PW@postgres:5432/postgres
+GOTRUE_DATABASE_URL=postgres://postgres:$POSTGRES_PW@postgres:5432/postgres?search_path=auth
+APPFLOWY_DATABASE_MAX_CONNECTIONS=40
+
+# brain-index connects as its own role, set by bootstrap's ALTER ROLE step
 BRAIN_INDEX_DB_PASSWORD=$BRAIN_INDEX_PW
+BRAIN_INDEX_DB_URL=postgres://brain_index:$BRAIN_INDEX_PW@127.0.0.1:25432/postgres
 
-MINIO_ROOT_USER=appflowyminio
-MINIO_ROOT_PASSWORD=$MINIO_PW
+# ========== Redis ==========
+APPFLOWY_REDIS_URI=redis://redis:6379
 
+# ========== MinIO (S3) ==========
+APPFLOWY_S3_ACCESS_KEY=$MINIO_AK
+APPFLOWY_S3_SECRET_KEY=$MINIO_SK
+APPFLOWY_S3_BUCKET=appflowy
+APPFLOWY_S3_USE_MINIO=true
+APPFLOWY_S3_MINIO_URL=http://minio:9000
+APPFLOWY_S3_CREATE_BUCKET=true
+APPFLOWY_S3_REGION=
+
+# ========== GoTrue ==========
 GOTRUE_JWT_SECRET=$JWT
+GOTRUE_JWT_EXP=7200
 GOTRUE_ADMIN_EMAIL=admin@sunheart.com
 GOTRUE_ADMIN_PASSWORD=$ADMIN_PW
-GOTRUE_DISABLE_SIGNUP=true
+GOTRUE_DISABLE_SIGNUP=false
+GOTRUE_MAILER_AUTOCONFIRM=true
 
-GOTRUE_SMTP_HOST=smtp.resend.com
+# SMTP (optional — leave blank until you paste in a Resend key)
+GOTRUE_SMTP_HOST=
 GOTRUE_SMTP_PORT=465
-GOTRUE_SMTP_USER=resend
-GOTRUE_SMTP_PASS=REPLACE_WITH_RESEND_KEY
-GOTRUE_SMTP_ADMIN_EMAIL=onboarding@resend.dev
+GOTRUE_SMTP_USER=
+GOTRUE_SMTP_PASS=
+GOTRUE_SMTP_ADMIN_EMAIL=admin@sunheart.com
 
+# ========== Workspace owner (provisioned by scripts/provision_user.sh) ==========
 SH_OWNER_EMAIL=james.rick.stinson@gmail.com
 SH_OWNER_PASSWORD=$OWNER_PW
 
+# ========== Embeddings / AI ==========
 OLLAMA_BASE=http://host.docker.internal:11434
 OLLAMA_EMBED_MODEL=nomic-embed-text
 OPENAI_API_KEY=
 OPENAI_EMBED_MODEL=text-embedding-3-small
+AI_OPENAI_API_KEY=
 
 RUST_LOG=info
 EOF
@@ -122,42 +151,54 @@ docker exec -e PGPASSWORD="$POSTGRES_PASSWORD" sh-brain-postgres \
   -c "ALTER ROLE brain_index WITH PASSWORD '$BRAIN_INDEX_DB_PASSWORD';" >/dev/null
 
 # ---------------------------------------------------------------------------
-# 4. Host nginx vhost
+# 4. Host nginx vhost (two-phase: HTTP-only → issue cert → install full vhost)
 # ---------------------------------------------------------------------------
 
 if command -v nginx >/dev/null; then
-  log "installing nginx vhost for $WEB_DOMAIN"
-  install -m 644 "$ROOT/nginx/brain.sunheart.com.conf" "/etc/nginx/sites-available/brain.sunheart.com.conf"
+  install -d -m 755 /var/www/letsencrypt
+
+  HAS_CERT=0
+  [ -f "/etc/letsencrypt/live/$WEB_DOMAIN/fullchain.pem" ] && HAS_CERT=1
+
+  if [ "$HAS_CERT" -eq 0 ]; then
+    log "phase 4a: installing HTTP-only vhost so certbot can solve ACME"
+    cat > /etc/nginx/sites-available/brain.sunheart.com.conf <<EOF_HTTP
+server {
+    listen 80;
+    listen [::]:80;
+    server_name $WEB_DOMAIN;
+    location /.well-known/acme-challenge/ { root /var/www/letsencrypt; }
+    location / { return 200 "sh-brain: waiting for TLS\n"; add_header Content-Type text/plain; }
+}
+EOF_HTTP
+    [ -L /etc/nginx/sites-enabled/brain.sunheart.com.conf ] || \
+      ln -s ../sites-available/brain.sunheart.com.conf /etc/nginx/sites-enabled/brain.sunheart.com.conf
+    nginx -t && systemctl reload nginx
+
+    log "phase 4b: issuing Let's Encrypt cert via dockerized certbot (avoids host pyOpenSSL mismatches)"
+    docker run --rm \
+      -v /etc/letsencrypt:/etc/letsencrypt \
+      -v /var/lib/letsencrypt:/var/lib/letsencrypt \
+      -v /var/www/letsencrypt:/var/www/letsencrypt \
+      certbot/certbot certonly --webroot -w /var/www/letsencrypt \
+      -d "$WEB_DOMAIN" --non-interactive --agree-tos -m "admin@sunheart.com" || \
+      die "certbot (docker) failed — check DNS + /var/log/letsencrypt"
+  else
+    log "cert already exists for $WEB_DOMAIN"
+  fi
+
+  log "phase 4c: installing full HTTPS vhost"
+  install -m 644 "$ROOT/nginx/brain.sunheart.com.conf" /etc/nginx/sites-available/brain.sunheart.com.conf
   [ -L /etc/nginx/sites-enabled/brain.sunheart.com.conf ] || \
     ln -s ../sites-available/brain.sunheart.com.conf /etc/nginx/sites-enabled/brain.sunheart.com.conf
 
-  # certbot needs the plain HTTP server block in place first; the config above
-  # already has the :80 ACME location, so we just need /var/www/letsencrypt.
-  install -d -m 755 /var/www/letsencrypt
-
-  if ! nginx -t; then
-    warn "nginx -t failed — check output, vhost not reloaded"
-  else
+  if nginx -t; then
     systemctl reload nginx
+  else
+    die "nginx -t failed after installing full vhost — investigate"
   fi
 else
   warn "nginx not installed on host — skipping vhost step"
-fi
-
-# ---------------------------------------------------------------------------
-# 5. Let's Encrypt cert
-# ---------------------------------------------------------------------------
-
-if [ ! -d /etc/letsencrypt/live/$WEB_DOMAIN ]; then
-  if command -v certbot >/dev/null; then
-    log "issuing Let's Encrypt cert for $WEB_DOMAIN"
-    certbot --nginx -d "$WEB_DOMAIN" --non-interactive --agree-tos -m "admin@sunheart.com" || \
-      warn "certbot failed — run manually: certbot --nginx -d $WEB_DOMAIN"
-  else
-    warn "certbot not installed — install and run: certbot --nginx -d $WEB_DOMAIN"
-  fi
-else
-  log "cert already exists for $WEB_DOMAIN"
 fi
 
 log "bootstrap done. Next:"

@@ -33,7 +33,7 @@ SECRETS=/root/sh-brain-secrets/brain.env
 set -a; source "$SECRETS"; set +a
 
 cat > /etc/sh-brain/index.env <<EOF
-BRAIN_INDEX_DB_URL=postgres://brain_index:${BRAIN_INDEX_DB_PASSWORD}@127.0.0.1:5432/${POSTGRES_DB}
+BRAIN_INDEX_DB_URL=postgres://brain_index:${BRAIN_INDEX_DB_PASSWORD}@127.0.0.1:25432/${POSTGRES_DB}
 BRAIN_INDEX_TOKENS_FILE=/etc/sh-brain/index-tokens.json
 BRAIN_INDEX_HOST=127.0.0.1
 BRAIN_INDEX_PORT=28090
@@ -64,10 +64,15 @@ EOF
 # For simplicity, index service runs inside docker network via --network sh-brain_default.
 # If you prefer host-networking, publish port 5432 on postgres service.
 
-# Internal token the mcp uses to reach the index (written to both tokens files).
+# Internal token the MCP uses to reach the index. Admin-scoped so it can
+# both write (ingest) and forward arbitrary agent identities for audit.
 INTERNAL=$(openssl rand -hex 32)
 if [ ! -f /etc/sh-brain/index-tokens.json ]; then
-  echo "{\"$INTERNAL\":\"internal-mcp\"}" > /etc/sh-brain/index-tokens.json
+  cat > /etc/sh-brain/index-tokens.json <<EOF_T
+{
+  "$INTERNAL": { "agent": "sh-mcp-http", "scopes": ["admin"] }
+}
+EOF_T
   chmod 600 /etc/sh-brain/index-tokens.json
 fi
 if [ ! -f /etc/sh-brain/mcp-tokens.json ]; then

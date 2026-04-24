@@ -39,11 +39,19 @@ OWNER_TOKEN=$(curl -fsS \
   -d "{\"email\":\"$SH_OWNER_EMAIL\",\"password\":\"$SH_OWNER_PASSWORD\"}" \
   | python3 -c 'import sys,json; print(json.load(sys.stdin)["access_token"])')
 
-curl -fsS "$BASE/api/user/verify" -H "Authorization: Bearer $OWNER_TOKEN" >/dev/null
+# The endpoint is /api/user/verify/{access_token} (token in path, not header)
+# — this is what triggers af_user + default workspace provisioning.
+curl -fsS "$BASE/api/user/verify/$OWNER_TOKEN" >/dev/null
 
 echo "→ fetching workspace_id"
 WS_JSON=$(curl -fsS "$BASE/api/workspace" -H "Authorization: Bearer $OWNER_TOKEN")
-WS_ID=$(echo "$WS_JSON" | python3 -c 'import sys,json; d=json.load(sys.stdin); print(d["data"][0]["workspace_id"])')
+WS_ID=$(echo "$WS_JSON" | python3 -c 'import sys,json; d=json.load(sys.stdin); rows=d.get("data") or []; print(rows[0]["workspace_id"] if rows else "")')
+if [ -z "$WS_ID" ]; then
+  echo "  /api/workspace returned no rows — fetching via /api/user/workspace"
+  INFO_JSON=$(curl -fsS "$BASE/api/user/workspace" -H "Authorization: Bearer $OWNER_TOKEN")
+  WS_ID=$(echo "$INFO_JSON" | python3 -c 'import sys,json; d=json.load(sys.stdin); info=d.get("data") or d; v=info.get("visiting_workspace") or (info.get("workspaces") or [{}])[0]; print(v.get("workspace_id") or v.get("id") or "")')
+fi
+[ -n "$WS_ID" ] || { echo "could not resolve workspace_id; aborting"; exit 1; }
 
 echo "→ renaming workspace to 'Sunheart Brain'"
 curl -fsS -X PATCH "$BASE/api/workspace/$WS_ID" \

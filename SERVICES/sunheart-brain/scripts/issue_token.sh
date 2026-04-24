@@ -86,15 +86,13 @@ echo "Scopes: $SCOPES"
 echo "Token:  $TOKEN"
 echo
 
-# The brain-index service has its OWN tokens file; mirror ingest/admin tokens there too
-# so brain-ingest (CLI) and sh-mcp-http can both authenticate against /index endpoints.
+# Mirror EVERY token into the brain-index tokens file too. The per-endpoint
+# scope check (require_scope) in brain-index is the real gate; this just lets
+# any agent call public /index endpoints (e.g. GPT Custom Connector doing /search).
 INDEX_TOKENS=/etc/sh-brain/index-tokens.json
 [ -f "$INDEX_TOKENS" ] || echo "{}" > "$INDEX_TOKENS"
 chmod 600 "$INDEX_TOKENS"
-# Mirror any token that might talk to brain-index (ingest, admin, personal).
-case ",$SCOPES," in
-  *,ingest,*|*,admin,*|*,personal,*)
-    python3 - "$INDEX_TOKENS" "$AGENT" "$SCOPES" "$TOKEN" <<'PY'
+python3 - "$INDEX_TOKENS" "$AGENT" "$SCOPES" "$TOKEN" <<'PY'
 import json, sys
 path, agent, scopes_csv, token = sys.argv[1:]
 scopes = [s.strip() for s in scopes_csv.split(",") if s.strip()]
@@ -107,9 +105,7 @@ for k, v in list(data.items()):
 data[token] = {"agent": agent, "scopes": scopes}
 json.dump(data, open(path, "w"), indent=2, sort_keys=True)
 PY
-    echo "(also mirrored into $INDEX_TOKENS)"
-    ;;
-esac
+echo "(also mirrored into $INDEX_TOKENS)"
 
 echo
 echo "Client config (mcp-remote pattern, works for Claude Desktop + Cursor):"

@@ -31,6 +31,7 @@ import logging
 import os
 import sys
 from contextlib import asynccontextmanager
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Literal
 
@@ -40,7 +41,7 @@ import psycopg
 from dataclasses import dataclass
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from pgvector.psycopg import register_vector
+from pgvector.psycopg import register_vector_async
 from pydantic import BaseModel, Field
 
 log = logging.getLogger("brain-index")
@@ -88,7 +89,7 @@ def _db_host() -> str:
 
 async def _connect():
     conn = await psycopg.AsyncConnection.connect(DB_URL, autocommit=True)
-    await register_vector(conn)
+    await register_vector_async(conn)
     return conn
 
 
@@ -393,7 +394,7 @@ async def upsert_note(req: UpsertNoteRequest, request: Request, agent: AgentInfo
                 INSERT INTO brain_index.note_chunks
                     (note_row_id, chunk_idx, content, content_sha1, embedding, embedding_model, source, source_id, tags)
                 VALUES
-                    (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    (%s, %s, %s, %s, %s::vector, %s, %s, %s, %s)
                 ON CONFLICT (note_row_id, chunk_idx) DO UPDATE SET
                     content         = EXCLUDED.content,
                     content_sha1    = EXCLUDED.content_sha1,
@@ -437,12 +438,13 @@ async def search(req: SearchRequest, request: Request, agent: AgentInfo = Depend
     if req.tags:
         where.append("tags && %s")
         params.append(req.tags)
+    # %s::vector forces pgvector to adapt the list → vector type on the wire.
     sql = f"""
         SELECT note_row_id, chunk_idx, content, source, tags, sensitivity,
-               1 - (embedding <=> %s) AS score
+               1 - (embedding <=> %s::vector) AS score
           FROM brain_index.note_chunks
          WHERE {' AND '.join(where)}
-         ORDER BY embedding <=> %s
+         ORDER BY embedding <=> %s::vector
          LIMIT %s
     """
     conn = request.app.state.conn
@@ -534,6 +536,79 @@ def _chunk(text: str) -> list[str]:
     if buf:
         out.append("\n\n".join(buf))
     return out
+
+
+# ---------------------------------------------------------------------------
+# AppFlowy cell renderers (shared with ingest_routes via `from app import ...`)
+# ---------------------------------------------------------------------------
+
+def _select_options(field_meta: dict) -> list[dict]:
+    """Extract the option list from a SingleSelect/MultiSelect AppFlowy field."""
+    to = field_meta.get("type_option") or {}
+    content = to.get("content")
+    if isinstance(content, dict) and isinstance(content.get("options"), list):
+        return content["options"]
+    if isinstance(content, str):
+        try:
+            parsed = json.loads(content)
+            if isinstance(parsed, dict) and isinstance(parsed.get("options"), list):
+                return parsed["options"]
+        except Exception:
+            pass
+    if isinstance(to.get("options"), list):
+        return to["options"]
+    return []
+
+
+def _field_kind(field_meta: dict) -> str:
+    ft = field_meta.get("field_type")
+    if isinstance(ft, str):
+        return ft
+    fid = field_meta.get("field_type_id", ft)
+    return {
+        0: "RichText", 1: "Number", 2: "DateTime", 3: "SingleSelect",
+        4: "MultiSelect", 5: "Checkbox", 7: "Checkbox",
+    }.get(fid, "RichText")
+
+
+def _render_cell(field_meta: dict, value: Any) -> Any:
+    if value is None:
+        return ""
+    kind = _field_kind(field_meta)
+    if kind in ("RichText", "Number"):
+        return str(value)
+    if kind == "DateTime":
+        if isinstance(value, datetime):
+            return value.astimezone(timezone.utc).isoformat()
+        return str(value)
+    if kind == "Checkbox":
+        if isinstance(value, bool):
+            return "Yes" if value else "No"
+        return str(value)
+    if kind == "SingleSelect":
+        opts = _select_options(field_meta)
+        for o in opts:
+            if str(o.get("name", "")).lower() == str(value).lower():
+                return o["id"]
+        log.warning("SingleSelect %r: value %r not in options %s",
+                    field_meta.get("name"), value, [o.get("name") for o in opts])
+        return str(value)
+    if kind == "MultiSelect":
+        opts = _select_options(field_meta)
+        name_to_id = {str(o.get("name", "")).lower(): o["id"] for o in opts}
+        if isinstance(value, str):
+            value = [v.strip() for v in value.split(",") if v.strip()]
+        ids = []
+        for v in value:
+            sid = name_to_id.get(str(v).lower())
+            if sid:
+                ids.append(sid)
+            else:
+                log.warning("MultiSelect %r: option %r not in %s",
+                            field_meta.get("name"), v, list(name_to_id))
+                ids.append(str(v))
+        return ",".join(ids)
+    return str(value)
 
 
 # ---------------------------------------------------------------------------

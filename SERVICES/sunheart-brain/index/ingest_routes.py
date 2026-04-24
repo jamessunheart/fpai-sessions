@@ -134,9 +134,16 @@ class _AF:
             f"/api/workspace/{self.workspace_id}/database/{db_id}/row",
             json={"cells": cells},
         )
+        # AppFlowy returns {"code":0,"data":"<row_id>"} — data is the id string.
         if isinstance(out, dict):
-            data = out.get("data") or {}
-            return data.get("id") or out.get("id") or ""
+            data = out.get("data")
+            if isinstance(data, str):
+                return data
+            if isinstance(data, dict):
+                return data.get("id") or data.get("row_id") or ""
+            return out.get("id") or ""
+        if isinstance(out, str):
+            return out
         return ""
 
     async def find_row_by_source_id(self, db_key: str, source_id_field: str, source_id_value: str) -> str | None:
@@ -292,7 +299,7 @@ async def add_note(req: AddNoteReq, request: Request):
                     INSERT INTO brain_index.note_chunks
                         (note_row_id, chunk_idx, content, content_sha1, embedding, embedding_model,
                          source, source_id, tags, sensitivity, pii_flags)
-                    VALUES (%s, 0, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    VALUES (%s, 0, %s, %s, %s::vector, %s, %s, %s, %s, %s, %s)
                     ON CONFLICT (note_row_id, chunk_idx) DO UPDATE SET
                         content=EXCLUDED.content, content_sha1=EXCLUDED.content_sha1,
                         embedding=EXCLUDED.embedding, embedding_model=EXCLUDED.embedding_model,

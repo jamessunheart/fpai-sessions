@@ -1,27 +1,28 @@
--- Sunheart Brain — postgres initialization
--- Runs once, on first container start (thanks to /docker-entrypoint-initdb.d/).
--- All the standard AppFlowy bootstrap is handled by the appflowy_cloud image;
--- here we only add what pgvector + brain-index need on top.
+-- sh-brain postgres init
+-- Runs ONCE on first container start (docker-entrypoint-initdb.d).
+-- After this, AppFlowy-Cloud's migrations create af_* tables in the public schema,
+-- and the brain-index service creates its own tables under brain_index.
 
--- pgvector extension lives in the same DB that AppFlowy uses. AppFlowy doesn't
--- touch the brain_index schema, so there's no risk of collision.
+-- pgvector: the reason this stack uses pgvector/pgvector:pg16 instead of
+-- the stock postgres image.
 CREATE EXTENSION IF NOT EXISTS vector;
 
--- Dedicated schema for the semantic index (isolated from appflowy_cloud tables).
+-- Trigram for fuzzy concept name lookups (used by brain-index /search).
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+-- Dedicated schema + role for the brain-index service so it can't touch
+-- AppFlowy's tables even if compromised. Role password is set by
+-- scripts/bootstrap.sh after the cluster is up (via ALTER ROLE).
 CREATE SCHEMA IF NOT EXISTS brain_index;
 
--- Role the brain-index service uses (least privilege: only brain_index schema).
--- Password is passed via environment at bootstrap-time by scripts/bootstrap.sh.
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'brain_index') THEN
-    CREATE ROLE brain_index LOGIN;
-  END IF;
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'brain_index') THEN
+        CREATE ROLE brain_index LOGIN;
+    END IF;
 END $$;
 
 GRANT USAGE, CREATE ON SCHEMA brain_index TO brain_index;
 ALTER DEFAULT PRIVILEGES IN SCHEMA brain_index
-  GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO brain_index;
-
--- Tables are created by brain-index on first startup (Alembic-style but simpler).
--- See index/schema.sql.
+    GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO brain_index;
+ALTER DEFAULT PRIVILEGES IN SCHEMA brain_index
+    GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO brain_index;

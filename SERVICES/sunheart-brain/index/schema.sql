@@ -1,7 +1,8 @@
 -- brain-index — pgvector tables in the brain_index schema.
 -- Applied by brain-index on first startup if tables don't exist.
 
-SET search_path TO brain_index;
+-- Include public so the pgvector `vector` type (installed into public) resolves.
+SET search_path TO brain_index, public;
 
 -- One row per Note chunk (Notes >4KB get split; each chunk has its own embedding).
 CREATE TABLE IF NOT EXISTS note_chunks (
