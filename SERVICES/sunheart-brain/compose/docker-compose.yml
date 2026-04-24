@@ -1,0 +1,153 @@
+# Sunheart Brain — AppFlowy Cloud stack
+#
+# Second docker-compose project on Secondary (162.0.208.88). Runs alongside
+# the existing Zen Village Brain stack but is fully isolated: separate
+# project name, separate volumes, separate ports, separate database.
+#
+# Differences from stock AppFlowy Cloud compose:
+#   - Postgres replaced with pgvector/pgvector:pg15 so the same DB can host
+#     the semantic index (schema: brain_index).
+#   - Port mapping bumped to 28080 (nginx) / 28081 (direct appflowy_cloud API)
+#     so it doesn't collide with zen-village on 18080.
+#   - Project name `sh-brain` prefixes all container + volume names.
+#
+# Ops:
+#   cd /opt/sh-brain/compose
+#   docker compose -p sh-brain --env-file /root/sh-brain-secrets/brain.env up -d
+#   docker compose -p sh-brain logs -f appflowy_cloud
+#
+# See scripts/bootstrap.sh for the full first-time install.
+
+name: sh-brain
+
+x-appflowy-env: &appflowy-env
+  RUST_LOG: ${RUST_LOG:-info}
+  APPFLOWY_BASE_URL: ${APPFLOWY_BASE_URL}
+  APPFLOWY_WEBSOCKET_BASE_URL: ${APPFLOWY_WEBSOCKET_BASE_URL}
+  APPFLOWY_DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+  APPFLOWY_REDIS_URI: redis://redis:6379
+  APPFLOWY_S3_CREATE_BUCKET: "true"
+  APPFLOWY_S3_USE_MINIO: "true"
+  APPFLOWY_S3_MINIO_URL: http://minio:9000
+  APPFLOWY_S3_ACCESS_KEY: ${MINIO_ROOT_USER}
+  APPFLOWY_S3_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
+  APPFLOWY_S3_BUCKET: appflowy
+  APPFLOWY_S3_REGION: ""
+  APPFLOWY_GOTRUE_BASE_URL: http://gotrue:9999
+  APPFLOWY_GOTRUE_JWT_SECRET: ${GOTRUE_JWT_SECRET}
+  APPFLOWY_GOTRUE_JWT_EXP: "7200"
+  APPFLOWY_ACCESS_CONTROL: "true"
+  AI_SERVER_HOST: ""
+  AI_SERVER_PORT: ""
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg15
+    container_name: sh-brain-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-pgvector.sql:/docker-entrypoint-initdb.d/00-pgvector.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7
+    container_name: sh-brain-redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+
+  minio:
+    image: minio/minio:latest
+    container_name: sh-brain-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    volumes:
+      - minio_data:/data
+
+  gotrue:
+    image: appflowyinc/gotrue:latest
+    container_name: sh-brain-gotrue
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      GOTRUE_DB_DRIVER: postgres
+      GOTRUE_DB_DATABASE_URL: postgres://supabase_auth_admin:${GOTRUE_POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      GOTRUE_DISABLE_SIGNUP: ${GOTRUE_DISABLE_SIGNUP:-true}
+      GOTRUE_SITE_URL: ${APPFLOWY_BASE_URL}
+      GOTRUE_URI_ALLOW_LIST: "*"
+      GOTRUE_JWT_SECRET: ${GOTRUE_JWT_SECRET}
+      GOTRUE_JWT_EXP: "7200"
+      GOTRUE_ADMIN_EMAIL: ${GOTRUE_ADMIN_EMAIL}
+      GOTRUE_ADMIN_PASSWORD: ${GOTRUE_ADMIN_PASSWORD}
+      GOTRUE_MAILER_AUTOCONFIRM: "true"
+      API_EXTERNAL_URL: ${APPFLOWY_BASE_URL}/gotrue
+      PORT: 9999
+
+  appflowy_cloud:
+    image: appflowyinc/appflowy_cloud:latest
+    container_name: sh-brain-cloud
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      gotrue:
+        condition: service_started
+    environment: *appflowy-env
+
+  admin_frontend:
+    image: appflowyinc/admin_frontend:latest
+    container_name: sh-brain-admin
+    restart: unless-stopped
+    depends_on:
+      - gotrue
+      - appflowy_cloud
+    environment:
+      ADMIN_FRONTEND_REDIRECT_URL: ${APPFLOWY_BASE_URL}
+      ADMIN_FRONTEND_APPFLOWY_CLOUD_URL: http://appflowy_cloud:8000
+      ADMIN_FRONTEND_GOTRUE_URL: http://gotrue:9999
+
+  appflowy_web:
+    image: appflowyinc/appflowy_web:latest
+    container_name: sh-brain-web
+    restart: unless-stopped
+    environment:
+      AF_BASE_URL: ${APPFLOWY_BASE_URL}
+      AF_GOTRUE_URL: ${APPFLOWY_BASE_URL}/gotrue
+      AF_WS_URL: ${APPFLOWY_WEBSOCKET_BASE_URL}
+
+  nginx:
+    image: nginx:1.25
+    container_name: sh-brain-nginx
+    restart: unless-stopped
+    depends_on:
+      - appflowy_cloud
+      - gotrue
+      - admin_frontend
+      - appflowy_web
+      - minio
+    ports:
+      - "127.0.0.1:28080:80"
+    volumes:
+      - ./internal-nginx.conf:/etc/nginx/nginx.conf:ro
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:

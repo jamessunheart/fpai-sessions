@@ -1,0 +1,156 @@
+{
+  "_meta": {
+    "name": "Sunheart Brain workspace schema",
+    "version": "0.1",
+    "workspace": "Sunheart Brain",
+    "description": "Canonical spec for the 5 Sunheart Brain databases. Used by build_schema.py to create/verify the AppFlowy workspace state at brain.sunheart.com."
+  },
+  "databases": [
+    {
+      "name": "01 · Notes",
+      "slug": "notes",
+      "purpose": "Raw firehose — every atom of content ingested from any source (Bear, ChatGPT, Claude, Cursor, manual). One row per note. Full-text searchable.",
+      "fields": [
+        {"name": "Title", "type": "text", "required": true, "note": "First 80 chars of content if no explicit title"},
+        {"name": "Content", "type": "long_text", "required": true, "note": "Full body (markdown). Can be very long; truncated to 32 KB."},
+        {"name": "Source", "type": "single_select", "options": ["Bear", "ChatGPT", "Claude", "Cursor", "Manual", "Web", "Other"]},
+        {"name": "Source ID", "type": "text", "note": "Stable external id: Bear note uuid, ChatGPT conversation id+msg idx, Claude msg id, Cursor chat uuid."},
+        {"name": "Source URL", "type": "url", "note": "Deep link back to original (bear://, chat.openai.com/c/…, claude.ai/chat/…)"},
+        {"name": "Original Created At", "type": "date", "note": "When the note/message was originally written"},
+        {"name": "Imported At", "type": "date", "auto_on_create": true},
+        {"name": "Tags", "type": "multi_select", "options": []},
+        {"name": "Linked Concepts", "type": "relation", "relates_to": "02 · Concepts"},
+        {"name": "Linked Conversation", "type": "relation", "relates_to": "03 · Conversations"},
+        {"name": "Dedup Status", "type": "single_select", "options": ["🆕 New", "🔗 Linked to Concept", "🟡 Near-Duplicate", "⚫ Merged Into Other"]},
+        {"name": "Embedding Hash", "type": "text", "note": "SHA1 of the text that was embedded. Lets us reembed on change."},
+        {"name": "Note Type", "type": "single_select", "options": ["User Message", "AI Response", "Journal", "Reference", "Snippet", "Idea", "Conversation Turn"]},
+        {"name": "Sensitivity", "type": "single_select", "options": ["🟢 Public", "🟡 Personal", "🔴 Private"], "note": "Public = any AI can read. Personal = local embeddings only, blocked from GPT Connector. Private = should have been filtered at ingest; if present, never returned via search."},
+        {"name": "PII Flags", "type": "multi_select", "options": ["SSN", "Credit Card", "API Key", "Password", "Email Chain", "Phone Number", "Address", "Medical", "Financial", "Legal"], "note": "Set by ingest PII scrubber or manually. Any flagged row is force-tiered ≥ 🟡."}
+      ],
+      "views": [
+        {"name": "Inbox (Not Yet Linked)", "type": "grid", "filter": {"Dedup Status": "🆕 New"}, "sort": [{"field": "Imported At", "order": "desc"}]},
+        {"name": "Recent", "type": "grid", "sort": [{"field": "Imported At", "order": "desc"}], "limit": 100},
+        {"name": "By Source", "type": "grid", "group_by": "Source"},
+        {"name": "By Sensitivity", "type": "grid", "group_by": "Sensitivity"},
+        {"name": "PII-Flagged (review)", "type": "grid", "filter": {"PII Flags_not_empty": true}},
+        {"name": "Near-Duplicates Queue", "type": "grid", "filter": {"Dedup Status": "🟡 Near-Duplicate"}}
+      ]
+    },
+    {
+      "name": "02 · Concepts",
+      "slug": "concepts",
+      "purpose": "Canonical deduped layer. Many Notes → one Concept. This is the semantic map of your brain.",
+      "fields": [
+        {"name": "Concept", "type": "text", "required": true},
+        {"name": "Aliases", "type": "long_text", "note": "Other phrasings that mean the same thing, newline-separated"},
+        {"name": "Description", "type": "long_text", "note": "AI-synthesized summary of what this concept is"},
+        {"name": "Parent Concept", "type": "relation", "relates_to": "02 · Concepts"},
+        {"name": "Related Concepts", "type": "relation", "relates_to": "02 · Concepts"},
+        {"name": "Linked Notes", "type": "relation", "relates_to": "01 · Notes"},
+        {"name": "Note Count", "type": "number", "note": "Maintained by brain-index on dedup"},
+        {"name": "Domain", "type": "multi_select", "options": ["Personal", "Business", "Spiritual", "Relationships", "Health", "Technology", "Philosophy", "Creative", "Finance", "Other"]},
+        {"name": "Salience", "type": "single_select", "options": ["⭐ Core", "🔵 Active", "🟡 Dormant", "⚫ Archived"]},
+        {"name": "First Seen", "type": "date", "auto_on_create": true},
+        {"name": "Last Reinforced", "type": "date"},
+        {"name": "Embedding Centroid", "type": "text", "note": "Reference id into brain-index pgvector table"}
+      ],
+      "views": [
+        {"name": "Core Concepts", "type": "grid", "filter": {"Salience": "⭐ Core"}, "sort": [{"field": "Note Count", "order": "desc"}]},
+        {"name": "Recently Reinforced", "type": "grid", "sort": [{"field": "Last Reinforced", "order": "desc"}], "limit": 50},
+        {"name": "By Domain", "type": "grid", "group_by": "Domain"},
+        {"name": "Orphans (no Parent)", "type": "grid", "filter": {"Parent Concept_empty": true}}
+      ]
+    },
+    {
+      "name": "03 · Conversations",
+      "slug": "conversations",
+      "purpose": "AI chat threads. A conversation has many notes (one per useful message). Lets you re-enter a thread with full context.",
+      "fields": [
+        {"name": "Title", "type": "text", "required": true},
+        {"name": "Source", "type": "single_select", "options": ["ChatGPT", "Claude", "Cursor", "Grok", "Perplexity", "Other"]},
+        {"name": "External ID", "type": "text", "note": "Provider's conversation id"},
+        {"name": "Source URL", "type": "url"},
+        {"name": "Started At", "type": "date"},
+        {"name": "Last Message At", "type": "date"},
+        {"name": "Message Count", "type": "number"},
+        {"name": "Summary", "type": "long_text", "note": "AI-generated 2-3 sentence summary of what this thread was about"},
+        {"name": "Topics", "type": "multi_select", "options": []},
+        {"name": "Linked Notes", "type": "relation", "relates_to": "01 · Notes"},
+        {"name": "Status", "type": "single_select", "options": ["📥 Imported", "🧠 Summarized", "✅ Processed", "⚫ Archived"]}
+      ],
+      "views": [
+        {"name": "Recent", "type": "grid", "sort": [{"field": "Last Message At", "order": "desc"}], "limit": 100},
+        {"name": "By Source", "type": "grid", "group_by": "Source"},
+        {"name": "Needs Summary", "type": "grid", "filter": {"Status": "📥 Imported"}}
+      ]
+    },
+    {
+      "name": "04 · Sources",
+      "slug": "sources",
+      "purpose": "Provenance registry. One row per data source (Bear app instance, ChatGPT export file, etc.).",
+      "fields": [
+        {"name": "Name", "type": "text", "required": true},
+        {"name": "Type", "type": "single_select", "options": ["Bear", "ChatGPT Export", "Claude Export", "Cursor Transcripts", "Web Clip", "Manual", "API", "Other"]},
+        {"name": "Location", "type": "text", "note": "SQLite path, export zip path, directory, URL, etc."},
+        {"name": "First Imported", "type": "date", "auto_on_create": true},
+        {"name": "Last Imported", "type": "date"},
+        {"name": "Note Count", "type": "number"},
+        {"name": "Notes", "type": "long_text"},
+        {"name": "Enabled", "type": "checkbox", "note": "If unchecked, brain-ingest skips this source"}
+      ],
+      "views": [
+        {"name": "Active", "type": "grid", "filter": {"Enabled": true}},
+        {"name": "All", "type": "grid"}
+      ]
+    },
+    {
+      "name": "05 · Tags",
+      "slug": "tags",
+      "purpose": "Controlled tag vocabulary. AI proposes new tags during ingest; you curate weekly.",
+      "fields": [
+        {"name": "Tag", "type": "text", "required": true},
+        {"name": "Description", "type": "long_text"},
+        {"name": "Parent Tag", "type": "relation", "relates_to": "05 · Tags"},
+        {"name": "Linked Notes", "type": "relation", "relates_to": "01 · Notes"},
+        {"name": "Note Count", "type": "number"},
+        {"name": "Status", "type": "single_select", "options": ["✅ Canonical", "🟡 Proposed", "⚫ Merged/Archived"]},
+        {"name": "Merged Into", "type": "relation", "relates_to": "05 · Tags"},
+        {"name": "First Seen", "type": "date", "auto_on_create": true}
+      ],
+      "views": [
+        {"name": "Canonical", "type": "grid", "filter": {"Status": "✅ Canonical"}, "sort": [{"field": "Note Count", "order": "desc"}]},
+        {"name": "Proposed (needs review)", "type": "grid", "filter": {"Status": "🟡 Proposed"}},
+        {"name": "Merge Graveyard", "type": "grid", "filter": {"Status": "⚫ Merged/Archived"}}
+      ]
+    },
+    {
+      "name": "06 · Audit",
+      "slug": "audit",
+      "purpose": "Every MCP/index call logged. Review weekly to spot anomalies (unexpected agents, unusual query patterns, scope violations).",
+      "fields": [
+        {"name": "When", "type": "date", "auto_on_create": true},
+        {"name": "Agent", "type": "text", "note": "Which token (agent name from tokens.json)"},
+        {"name": "Tool", "type": "text", "note": "brain_search_semantic | brain_add_note | /index/search | …"},
+        {"name": "Query Prefix", "type": "text", "note": "First 60 chars of the query or note title"},
+        {"name": "Scope Used", "type": "single_select", "options": ["public", "personal", "ingest", "admin"]},
+        {"name": "Result Count", "type": "number"},
+        {"name": "Blocked?", "type": "checkbox", "note": "True if the request was blocked by scope"},
+        {"name": "Source IP", "type": "text"},
+        {"name": "Notes", "type": "long_text"}
+      ],
+      "views": [
+        {"name": "Last 7 Days", "type": "grid", "sort": [{"field": "When", "order": "desc"}], "limit": 500},
+        {"name": "Blocked Only", "type": "grid", "filter": {"Blocked?": true}},
+        {"name": "By Agent", "type": "grid", "group_by": "Agent"}
+      ]
+    }
+  ],
+  "seed_data": {
+    "sources": [
+      {"Name": "Bear (local macOS)", "Type": "Bear", "Location": "~/Library/Group Containers/9K33E3U3T4.net.shinyfrog.bear/Application Data/database.sqlite", "Enabled": true, "Notes": "Primary note-taking app on the Mac"},
+      {"Name": "ChatGPT Export", "Type": "ChatGPT Export", "Location": "~/Downloads/chatgpt-export/conversations.json", "Enabled": true, "Notes": "From Settings → Data Controls → Export data"},
+      {"Name": "Claude Export", "Type": "Claude Export", "Location": "~/Downloads/claude-export/conversations.json", "Enabled": true, "Notes": "From Settings → Privacy → Export data"},
+      {"Name": "Cursor Agent Transcripts", "Type": "Cursor Transcripts", "Location": "~/.cursor/projects/*/agent-transcripts/*.jsonl", "Enabled": true, "Notes": "Local Cursor chat history, already structured"}
+    ]
+  }
+}
