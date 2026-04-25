@@ -4,11 +4,11 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <title>World Peace Weekend · May 2–3 · Zen Village</title>
-<meta name="description" content="Saturday May 2 + Sunday May 3 at Zen Village. A living prototype of the New Earth. Saturday we raise the field. Sunday we ground it." />
+<meta name="description" content="Dance for world peace. Saturday May 2 + Sunday May 3 at Zen Village. A living prototype of the New Earth, in collaboration with Reign Dance Movement. Saturday we raise the field. Sunday we ground it." />
 <meta name="theme-color" content="#1a1530" />
 
-<meta property="og:title" content="World Peace Weekend · Zen Village" />
-<meta property="og:description" content="A living prototype of the New Earth. Two days. One intention. Celebrate life. Practice peace. Create the future." />
+<meta property="og:title" content="World Peace Weekend · Zen Village · May 2–3" />
+<meta property="og:description" content="Dance for world peace. A living prototype of the New Earth, in collaboration with Reign Dance Movement. Two days. One intention. Celebrate life. Practice peace. Create the future." />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zenvillage.live/peace" />
 <meta property="og:image" content="https://zenvillage.live/peace/og.png" />
@@ -186,6 +186,23 @@
     color: var(--rose);
     margin: 14px 0 0;
   }
+
+  /* HERO COLLAB BADGE */
+  .collab-badge {
+    margin: 6px 0 18px;
+    font-size: 12px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .collab-badge a {
+    color: var(--lilac);
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 1px solid var(--lilac-soft);
+    padding-bottom: 1px;
+  }
+  .collab-badge a:hover { color: var(--rose); border-color: var(--rose); }
 
   /* SECTION HEAD */
   .section { padding: 64px 24px; }
@@ -416,26 +433,65 @@
 
   /* COLLAB */
   .collab {
-    margin-top: 28px;
+    margin-top: 40px;
     text-align: center;
-    padding: 24px;
-    border-top: 1px dashed var(--line);
+    padding: 40px 28px 32px;
+    border-radius: 24px;
+    background:
+      radial-gradient(60% 80% at 50% 0%, rgba(155,124,199,.18), transparent 70%),
+      rgba(255,255,255,.55);
+    border: 1px solid var(--line);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 30px 60px -30px rgba(26,21,48,.18);
   }
   .collab .lbl {
     font-size: 11px;
-    letter-spacing: .3em;
+    letter-spacing: .35em;
     text-transform: uppercase;
     color: var(--ink-soft);
-    margin-bottom: 6px;
+    margin: 0 0 18px;
   }
-  .collab .name {
+  .collab-logo-link {
+    display: inline-block;
+    transition: transform .25s ease, filter .25s ease;
+  }
+  .collab-logo-link:hover { transform: scale(1.04); filter: drop-shadow(0 12px 24px rgba(155,124,199,.35)); }
+  .collab-logo {
+    width: clamp(180px, 26vw, 240px);
+    height: auto;
+    display: block;
+    margin: 0 auto;
+  }
+  .collab-tagline {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
-    font-size: 24px;
-    color: var(--rose);
-    margin-bottom: 6px;
+    font-size: clamp(26px, 3.6vw, 34px);
+    color: var(--ink);
+    margin: 18px 0 4px;
+    background: linear-gradient(120deg, #b56cc4 0%, #7e7ec4 50%, #4f9d94 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
-  .collab .desc { font-size: 14px; color: var(--ink-soft); }
+  .collab .desc {
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin: 8px 0 14px;
+    letter-spacing: .04em;
+  }
+  .collab-handle {
+    margin: 0;
+    font-size: 13px;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+  }
+  .collab-handle a {
+    color: var(--rose);
+    text-decoration: none;
+    border-bottom: 1px solid var(--rose);
+    padding-bottom: 1px;
+  }
+  .collab-handle a:hover { color: var(--lilac); border-color: var(--lilac); }
 
   /* CLOSING */
   .closing {
@@ -513,10 +569,11 @@
       <h1 class="title-script">World&nbsp;Peace</h1>
       <h2 class="title-block">Weekend</h2>
 
-      <p class="lede">A living prototype of the New Earth.</p>
+      <p class="lede">Dance for world peace. A living prototype of the New Earth.</p>
       <p class="subline">Two days · One intention · Celebrate life · Practice peace · Create the future</p>
 
       <p class="whisper">The field matters. ♡</p>
+      <p class="collab-badge">in collaboration with <a href="https://instagram.com/reigndancemovement" target="_blank" rel="noopener">Reign Dance Movement</a></p>
 
       <div class="meta-row">
         <span><strong>Saturday May 2</strong> + <strong>Sunday May 3</strong></span>
@@ -660,8 +717,12 @@
 
       <div class="collab reveal">
         <p class="lbl">In collaboration with</p>
-        <p class="name"><a href="https://instagram.com/reigndancemovement" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;border-bottom:1px solid var(--rose);">@reigndancemovement</a></p>
+        <a href="https://instagram.com/reigndancemovement" target="_blank" rel="noopener" class="collab-logo-link" aria-label="Reign Dance Movement on Instagram">
+          <img src="reign-dance-movement.png" alt="Reign Dance Movement" class="collab-logo" loading="lazy" />
+        </a>
+        <p class="collab-tagline">Dance for World Peace</p>
         <p class="desc">Movement · Embodiment · Ecstatic dance · A journey back to sovereignty.</p>
+        <p class="collab-handle"><a href="https://instagram.com/reigndancemovement" target="_blank" rel="noopener">@reigndancemovement</a></p>
       </div>
     </div>
   </section>
