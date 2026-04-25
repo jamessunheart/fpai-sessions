@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>World Peace Weekend · May 2–3 · Zen Village</title>
+<meta name="description" content="Saturday May 2 + Sunday May 3 at Zen Village. A living prototype of the New Earth. Saturday we raise the field. Sunday we ground it." />
+<meta name="theme-color" content="#1a1530" />
+
+<meta property="og:title" content="World Peace Weekend · Zen Village" />
+<meta property="og:description" content="A living prototype of the New Earth. Two days. One intention. Celebrate life. Practice peace. Create the future." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://zenvillage.live/peace" />
+<meta property="og:image" content="https://zenvillage.live/peace/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Caveat:wght@500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --ink: #1a1530;
+    --ink-soft: #2d2547;
+    --paper: #f6f1ea;
+    --paper-warm: #efe6d8;
+    --gold: #c89b3c;
+    --gold-soft: #e8c87a;
+    --rose: #d97a7a;
+    --lilac: #9b7cc7;
+    --lilac-soft: #c8b5e0;
+    --teal: #4f9d94;
+    --teal-soft: #9ec9c2;
+    --leaf: #6b8e5a;
+    --line: rgba(26,21,48,.12);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--paper);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content:"";
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(1200px 800px at 90% -10%, rgba(155,124,199,.18), transparent 60%),
+      radial-gradient(900px 700px at -10% 30%, rgba(79,157,148,.15), transparent 60%),
+      radial-gradient(700px 600px at 50% 110%, rgba(217,122,122,.12), transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content:"";
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.18 0 0 0 0.06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    opacity: .5;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+    z-index: 0;
+  }
+
+  main { position: relative; z-index: 1; }
+
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  /* HERO */
+  .hero {
+    padding: 72px 24px 56px;
+    text-align: center;
+    position: relative;
+  }
+
+  .eyebrow {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: .35em;
+    text-transform: uppercase;
+    font-size: 12px;
+    color: var(--lilac);
+    margin: 0 0 16px;
+    display: flex; align-items: center; justify-content: center; gap: 14px;
+  }
+  .eyebrow::before, .eyebrow::after {
+    content:""; display:block; width: 36px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--lilac), transparent);
+  }
+
+  .title-script {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-style: italic;
+    font-size: clamp(56px, 11vw, 132px);
+    line-height: .9;
+    letter-spacing: -.02em;
+    margin: 0;
+    background: linear-gradient(120deg, #b56cc4 0%, #7e7ec4 35%, #4f9d94 70%, #6b8e5a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 1px 0 rgba(255,255,255,.4);
+  }
+
+  .title-block {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(28px, 5.5vw, 56px);
+    letter-spacing: .35em;
+    text-transform: uppercase;
+    margin: 6px 0 24px;
+    color: var(--ink);
+  }
+
+  .lede {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(18px, 2.4vw, 22px);
+    color: var(--ink-soft);
+    max-width: 640px;
+    margin: 0 auto 8px;
+  }
+
+  .subline {
+    font-size: 13px;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 18px 0 32px;
+  }
+
+  .meta-row {
+    display: flex; gap: 28px; flex-wrap: wrap;
+    justify-content: center;
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin-bottom: 36px;
+  }
+  .meta-row .dot { color: var(--gold); margin: 0 4px; }
+
+  .cta {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 16px 32px;
+    background: var(--ink);
+    color: var(--paper);
+    text-decoration: none;
+    border-radius: 999px;
+    font-weight: 500;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-size: 13px;
+    transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+    box-shadow: 0 10px 30px -10px rgba(26,21,48,.5);
+  }
+  .cta:hover { transform: translateY(-2px); background: var(--ink-soft); box-shadow: 0 14px 40px -10px rgba(26,21,48,.6); }
+  .cta.secondary {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--ink);
+    box-shadow: none;
+  }
+  .cta.secondary:hover { background: var(--ink); color: var(--paper); }
+
+  .cta-row { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+
+  /* PEACE SYMBOL */
+  .peace {
+    width: clamp(120px, 16vw, 180px);
+    height: auto;
+    margin: 0 auto 24px;
+    display: block;
+    opacity: .9;
+  }
+
+  /* WHISPER */
+  .whisper {
+    font-family: 'Caveat', cursive;
+    font-size: 28px;
+    color: var(--rose);
+    margin: 14px 0 0;
+  }
+
+  /* SECTION HEAD */
+  .section { padding: 64px 24px; }
+  .section-head { text-align: center; margin-bottom: 48px; }
+  .section-eyebrow {
+    font-family: 'Caveat', cursive;
+    color: var(--lilac);
+    font-size: 26px;
+    margin: 0 0 6px;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 400;
+    font-size: clamp(32px, 5vw, 52px);
+    margin: 0;
+    letter-spacing: -.01em;
+  }
+
+  /* SCHEDULE */
+  .schedule {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+  @media (max-width: 760px) { .schedule { grid-template-columns: 1fr; } }
+
+  .day {
+    background: rgba(255,255,255,.6);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    padding: 36px 28px;
+    border: 1px solid var(--line);
+    box-shadow: 0 30px 60px -30px rgba(26,21,48,.25);
+  }
+
+  .day.saturday { background: linear-gradient(180deg, rgba(200,181,224,.25), rgba(255,255,255,.65)); }
+  .day.sunday   { background: linear-gradient(180deg, rgba(158,201,194,.25), rgba(255,255,255,.65)); }
+
+  .day-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 28px;
+    text-align: center;
+    margin: 0;
+    color: var(--ink);
+  }
+  .day-tag {
+    font-family: 'Caveat', cursive;
+    font-size: 22px;
+    text-align: center;
+    display: block;
+    margin: 4px 0 24px;
+  }
+  .saturday .day-tag { color: var(--lilac); }
+  .sunday .day-tag   { color: var(--teal); }
+
+  .day-tag::before, .day-tag::after { content: " ~ "; opacity: .5; }
+
+  .agenda { list-style: none; margin: 0; padding: 0; }
+  .agenda li {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px dashed var(--line);
+    align-items: baseline;
+  }
+  .agenda li:last-child { border-bottom: none; }
+  .agenda time {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 18px;
+    color: var(--ink);
+  }
+  .agenda .what { font-size: 15px; color: var(--ink-soft); }
+  .agenda .what strong {
+    display: block;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+
+  /* MAGIC LAYER */
+  .magic {
+    margin-top: 36px;
+    padding: 28px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(155,124,199,.15), rgba(79,157,148,.15));
+    border: 1px solid var(--line);
+    text-align: center;
+  }
+  .magic h3 {
+    font-family: 'Caveat', cursive;
+    font-weight: 600;
+    font-size: 28px;
+    color: var(--lilac);
+    margin: 0 0 18px;
+  }
+  .magic-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+  @media (max-width: 600px) { .magic-grid { grid-template-columns: repeat(2, 1fr); } }
+  .magic-item {
+    font-size: 12px;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+  .magic-item .icon {
+    font-size: 26px;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .magic-foot {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px dashed var(--line);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+
+  /* SIGNATURE MOVE */
+  .signature {
+    margin: 56px auto 0;
+    max-width: 720px;
+    text-align: center;
+    padding: 36px 28px;
+    border-radius: 20px;
+    background: rgba(255,255,255,.5);
+    border: 1px solid var(--gold-soft);
+    position: relative;
+  }
+  .signature::before {
+    content: "✿";
+    position: absolute; top: -16px; left: 50%; transform: translateX(-50%);
+    background: var(--paper); padding: 0 10px; color: var(--gold); font-size: 18px;
+  }
+  .signature .label {
+    font-size: 12px;
+    letter-spacing: .35em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin: 0 0 10px;
+  }
+  .signature .move {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(28px, 4vw, 40px);
+    color: var(--ink);
+    margin: 0 0 8px;
+    line-height: 1.2;
+  }
+  .signature .move b { color: var(--rose); font-weight: 500; }
+  .signature .tag {
+    font-size: 13px;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  /* PRINCIPLES */
+  .principles {
+    background: linear-gradient(180deg, transparent, rgba(232,200,122,.1));
+    padding: 72px 24px;
+  }
+  .principles-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+    max-width: 1080px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  @media (max-width: 800px) { .principles-grid { grid-template-columns: repeat(2, 1fr); } }
+  .principle .icon { font-size: 32px; margin-bottom: 10px; display: block; }
+  .principle p {
+    font-size: 13px;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* PRACTICAL */
+  .practical-wrap {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+  @media (max-width: 880px) { .practical-wrap { grid-template-columns: 1fr; } }
+
+  .card {
+    background: rgba(255,255,255,.65);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    padding: 28px;
+    border: 1px solid var(--line);
+  }
+  .card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 24px;
+    margin: 0 0 14px;
+    color: var(--ink);
+  }
+  .card h3 .leaf { color: var(--leaf); font-size: 18px; }
+  .card p, .card li { font-size: 15px; color: var(--ink-soft); }
+  .card ul { margin: 0; padding-left: 18px; }
+  .card li { padding: 4px 0; }
+  .card .label-mini {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--lilac);
+    margin: 14px 0 6px;
+  }
+  .sunday-label .label-mini { color: var(--teal); }
+
+  /* COLLAB */
+  .collab {
+    margin-top: 28px;
+    text-align: center;
+    padding: 24px;
+    border-top: 1px dashed var(--line);
+  }
+  .collab .lbl {
+    font-size: 11px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+  .collab .name {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 24px;
+    color: var(--rose);
+    margin-bottom: 6px;
+  }
+  .collab .desc { font-size: 14px; color: var(--ink-soft); }
+
+  /* CLOSING */
+  .closing {
+    text-align: center;
+    padding: 80px 24px 64px;
+  }
+  .closing-line {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(22px, 3vw, 30px);
+    color: var(--ink);
+    max-width: 680px;
+    margin: 0 auto 28px;
+  }
+  .closing-tag {
+    font-family: 'Caveat', cursive;
+    font-size: 30px;
+    color: var(--rose);
+  }
+  .closing .cta-row { margin-top: 28px; }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 32px 24px 48px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    border-top: 1px solid var(--line);
+    background: rgba(255,255,255,.4);
+  }
+  footer a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--gold); }
+  footer .also { font-family: 'Caveat', cursive; font-size: 18px; color: var(--lilac); margin-top: 6px; }
+
+  /* divider */
+  .divider {
+    text-align: center;
+    color: var(--gold);
+    font-size: 12px;
+    letter-spacing: .8em;
+    padding: 12px 0;
+    opacity: .6;
+  }
+
+  /* reveal */
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity .8s ease, transform .8s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+  }
+</style>
+</head>
+<body>
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <p class="eyebrow">Zen Village Presents</p>
+
+      <svg class="peace" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="pg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#b56cc4"/>
+            <stop offset="50%" stop-color="#7e7ec4"/>
+            <stop offset="100%" stop-color="#4f9d94"/>
+          </linearGradient>
+        </defs>
+        <circle cx="100" cy="100" r="86" stroke="url(#pg)" stroke-width="6" />
+        <line x1="100" y1="14" x2="100" y2="186" stroke="url(#pg)" stroke-width="6" stroke-linecap="round"/>
+        <line x1="100" y1="100" x2="40" y2="160" stroke="url(#pg)" stroke-width="6" stroke-linecap="round"/>
+        <line x1="100" y1="100" x2="160" y2="160" stroke="url(#pg)" stroke-width="6" stroke-linecap="round"/>
+      </svg>
+
+      <h1 class="title-script">World&nbsp;Peace</h1>
+      <h2 class="title-block">Weekend</h2>
+
+      <p class="lede">A living prototype of the New Earth.</p>
+      <p class="subline">Two days · One intention · Celebrate life · Practice peace · Create the future</p>
+
+      <p class="whisper">The field matters. ♡</p>
+
+      <div class="meta-row">
+        <span><strong>Saturday May 2</strong> + <strong>Sunday May 3</strong></span>
+        <span class="dot">✿</span>
+        <span><strong>Zen Village</strong> · Costa Rica</span>
+        <span class="dot">✿</span>
+        <span>By invitation &amp; intention</span>
+      </div>
+
+      <div class="cta-row">
+        <a class="cta" href="#rsvp">RSVP / Join the field</a>
+        <a class="cta secondary" href="#schedule">See the flow</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+  <!-- SCHEDULE -->
+  <section class="section" id="schedule">
+    <div class="container">
+      <header class="section-head reveal">
+        <p class="section-eyebrow">the flow</p>
+        <h2 class="section-title">Two days, one breath</h2>
+      </header>
+
+      <div class="schedule">
+
+        <article class="day saturday reveal">
+          <h3 class="day-name">Saturday · May 2</h3>
+          <span class="day-tag">raise the field</span>
+          <ul class="agenda">
+            <li><time>5:00</time><div class="what"><strong>Arrival</strong>tea, soft landing</div></li>
+            <li><time>5:30</time><div class="what"><strong>Cacao Ceremony</strong>opening the heart</div></li>
+            <li><time>5:45</time><div class="what"><strong>Sunset Circle</strong>The Field Matters</div></li>
+            <li><time>6:00</time><div class="what"><strong>Grounding Meal</strong>chef-prepared, plant-forward</div></li>
+            <li><time>6:45</time><div class="what"><strong>DJ Warmup</strong>rhythm rises</div></li>
+            <li><time>7:30</time><div class="what"><strong>Peak Dance + Fire</strong>embodied transmission</div></li>
+            <li><time>8:30</time><div class="what"><strong>World Peace Room Opens</strong>quiet sanctuary</div></li>
+            <li><time>9:00</time><div class="what"><strong>Heart Hour</strong>live artist, softer presence</div></li>
+            <li><time>9:30</time><div class="what"><strong>World Council + World Token Ritual</strong></div></li>
+            <li><time>10:00</time><div class="what"><strong>Fire Circle</strong>tea, sauna, river, stars</div></li>
+          </ul>
+        </article>
+
+        <article class="day sunday reveal">
+          <h3 class="day-name">Sunday · May 3</h3>
+          <span class="day-tag">ground it</span>
+          <ul class="agenda">
+            <li><time>10:00</time><div class="what"><strong>Gentle Arrival</strong>tea, river, sauna</div></li>
+            <li><time>11:00</time><div class="what"><strong>Nature Walk</strong>rest &amp; integration</div></li>
+            <li><time>12:30</time><div class="what"><strong>Community Potluck</strong>+ Zen Village base meal</div></li>
+            <li><time>2:00</time><div class="what"><strong>World Council</strong>one peaceful action</div></li>
+            <li><time>3:00</time><div class="what"><strong>Service Hour</strong>clean · plant · repair · bless · organize</div></li>
+            <li><time>4:00</time><div class="what"><strong>Closing Tea</strong>acoustic music, integration</div></li>
+          </ul>
+        </article>
+      </div>
+
+      <!-- MAGIC LAYER -->
+      <aside class="magic reveal">
+        <h3>The Magic Layer · all night</h3>
+        <div class="magic-grid">
+          <div class="magic-item"><span class="icon">✦</span>Projection<br/>Mapping</div>
+          <div class="magic-item"><span class="icon">☮</span>World<br/>Peace Room</div>
+          <div class="magic-item"><span class="icon">◈</span>World<br/>Council</div>
+          <div class="magic-item"><span class="icon">✺</span>World<br/>Token</div>
+        </div>
+        <p class="magic-foot">Dance Transmission · embodied dance activation to raise the field</p>
+      </aside>
+
+      <!-- SIGNATURE -->
+      <div class="signature reveal">
+        <p class="label">The Signature Move</p>
+        <p class="move"><b>One peaceful action</b><br/>carried into the world</p>
+        <p class="tag">♡ This is what we take home ♡</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRINCIPLES -->
+  <section class="principles">
+    <div class="container">
+      <header class="section-head reveal">
+        <p class="section-eyebrow">the why</p>
+        <h2 class="section-title">Peace begins in the field between us</h2>
+      </header>
+
+      <div class="principles-grid reveal">
+        <div class="principle"><span class="icon">👥</span><p>Every person<br/>matters</p></div>
+        <div class="principle"><span class="icon">💬</span><p>Every conversation<br/>matters</p></div>
+        <div class="principle"><span class="icon">🌐</span><p>Every act of care<br/>shapes the field</p></div>
+        <div class="principle"><span class="icon">☼</span><p>Not just a party<br/>a prototype</p></div>
+        <div class="principle"><span class="icon">🌈</span><p>Saturday raises it<br/>Sunday grounds it</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRACTICAL -->
+  <section class="section">
+    <div class="container">
+      <header class="section-head reveal">
+        <p class="section-eyebrow">come prepared</p>
+        <h2 class="section-title">What to know &amp; bring</h2>
+      </header>
+
+      <div class="practical-wrap">
+
+        <div class="card reveal">
+          <h3>🍃 Food</h3>
+          <p class="label-mini">Saturday Night</p>
+          <p>Chef-prepared grounding meal — included.</p>
+          <div class="sunday-label">
+            <p class="label-mini">Sunday Day</p>
+            <p>Community potluck. Zen Village provides a nourishing base meal — bring a dish to add to the table.</p>
+          </div>
+        </div>
+
+        <div class="card reveal">
+          <h3>🌿 Zen Village</h3>
+          <p><em>River · Forest · Community · Nature's Classroom</em></p>
+          <ul>
+            <li>Dress for nature</li>
+            <li>Bring a towel, water bottle</li>
+            <li>Drum, instrument, or offering welcome</li>
+            <li>Leave with one peaceful action you'll carry into the world</li>
+          </ul>
+        </div>
+
+        <div class="card reveal">
+          <h3>✦ Practical</h3>
+          <ul>
+            <li>Respect the land</li>
+            <li>No drugs · No drama</li>
+            <li>Phones down · Presence up</li>
+            <li>Co-create the field</li>
+            <li>Clean up · Lift up</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="collab reveal">
+        <p class="lbl">In collaboration with</p>
+        <p class="name"><a href="https://instagram.com/reigndancemovement" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;border-bottom:1px solid var(--rose);">@reigndancemovement</a></p>
+        <p class="desc">Movement · Embodiment · Ecstatic dance · A journey back to sovereignty.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSING / RSVP -->
+  <section class="closing" id="rsvp">
+    <div class="container">
+      <p class="closing-line reveal">We are here to build a more peaceful world — together.</p>
+      <p class="reveal" style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(18px,2.4vw,22px);color:var(--ink-soft);max-width:620px;margin:18px auto 0;">
+        Come as you are. Bring your joy, your prayer, your weird brilliance, and your willingness to help peace become real.
+      </p>
+      <p class="closing-tag reveal" style="margin-top:32px;">Join us ↓</p>
+      <div class="cta-row reveal">
+        <a class="cta" href="https://wa.me/?text=I%27d%20like%20to%20join%20World%20Peace%20Weekend%20at%20Zen%20Village%20%E2%80%94%20May%202%E2%80%933" target="_blank" rel="noopener">RSVP via WhatsApp</a>
+        <a class="cta secondary" href="mailto:hello@zenvillagecr.com?subject=World%20Peace%20Weekend%20RSVP%20%E2%80%94%20May%202%E2%80%933">Email us</a>
+      </div>
+      <p style="margin-top:36px;font-family:'Caveat',cursive;font-size:22px;color:var(--lilac);">More info &amp; directions · zenvillage.live/peace</p>
+    </div>
+  </section>
+
+  <footer>
+    <p>Zen Village · Costa Rica · <a href="https://zenvillagecr.com" target="_blank" rel="noopener">zenvillagecr.com</a></p>
+    <p class="also">a living prototype of the New Earth ✿</p>
+  </footer>
+
+</main>
+
+<script>
+  // gentle reveal on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
