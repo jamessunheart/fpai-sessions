@@ -1,0 +1,24 @@
+[Unit]
+Description=STreasury Bot — sovereign treasury Telegram bot
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=streasury
+Group=streasury
+WorkingDirectory=/opt/streasury-bot
+EnvironmentFile=/etc/streasury-bot/streasury.env
+ExecStart=/opt/streasury-bot/.venv/bin/python -m app
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=15
+StandardOutput=journal
+StandardError=journal
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
