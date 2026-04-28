@@ -24,18 +24,28 @@
 ## Deploy from the cockpit
 
 ```bash
-SERVICES/streasury-bot/scripts/deploy.sh
+SERVICES/streasury-bot/scripts/deploy.sh             # standard
+SERVICES/streasury-bot/scripts/deploy.sh --dry-run   # show what would run
+SERVICES/streasury-bot/scripts/deploy.sh --skip-backup  # first install only
 ```
 
-This runs the standard `infra/scripts/deploy-to-server.sh streasury-bot brain`
-which handles:
+The deploy script (which mirrors the existing per-service scripts in
+`infra/scripts/`):
 
-1. Pre-deploy backup of `streasury` schema → `/opt/fpai/backups/streasury/`.
-2. `rsync` source to `/opt/streasury-bot/` on Brain.
-3. Build venv from pinned `requirements.txt` if needed.
-4. Apply `schema/streasury_schema.sql` (idempotent — safe every deploy).
+1. **Local syntax check** — every `app/*.py` must `py_compile` clean.
+2. **Pre-deploy backup** to `/opt/fpai/backups/streasury-bot/<timestamp>/`
+   plus a `pg_dump --schema=streasury` if the env file is configured.
+3. `rsync` source to `/opt/streasury-bot/` on Brain.
+4. Run `scripts/bootstrap.sh` remotely — creates user, venv, env-file
+   skeleton (idempotent), applies schema, installs systemd unit.
 5. `systemctl daemon-reload && systemctl restart streasury-bot`.
 6. Health: `curl http://127.0.0.1:8620/health` returns `{"ok": true, …}`.
+
+> **Note:** `AGENTS.md` references a canonical
+> `infra/scripts/deploy-to-server.sh` that doesn't exist in this repo.
+> Until that's added, `streasury-bot/scripts/deploy.sh` is the canonical
+> path for this service and follows the same structure as the existing
+> per-service scripts (`deploy-coracle-engine.sh`, `aria-safe-deploy.sh`).
 
 ## First-run on the server
 
