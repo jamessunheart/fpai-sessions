@@ -8,23 +8,30 @@ from __future__ import annotations
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
+from ..config import settings
 from ..db import connect
 
 
-async def build_snapshot(*, lookback_days: int = 90) -> dict[str, Any]:
+async def build_snapshot(*, lookback_days: int = 90, tenant_id: int | None = None) -> dict[str, Any]:
     """Return a structured snapshot. Render with `format_snapshot_md`."""
+    tid = tenant_id if tenant_id is not None else settings.default_tenant_id
     since = datetime.now(timezone.utc) - timedelta(days=lookback_days)
     async with connect() as conn:
         async with conn.cursor() as cur:
             await cur.execute(
                 "SELECT slug, name, currency, kind, balance, txn_count, last_txn_at "
-                "FROM streasury.v_account_balance WHERE archived = FALSE ORDER BY balance DESC NULLS LAST"
+                "FROM streasury.v_account_balance "
+                "WHERE tenant_id = %s AND archived = FALSE "
+                "ORDER BY balance DESC NULLS LAST",
+                (tid,),
             )
             accounts = await cur.fetchall()
 
             await cur.execute(
                 "SELECT slug, name, quantity, last_unit_usd, last_valued_at "
-                "FROM streasury.holding ORDER BY (quantity * COALESCE(last_unit_usd, 0)) DESC NULLS LAST"
+                "FROM streasury.holding WHERE tenant_id = %s "
+                "ORDER BY (quantity * COALESCE(last_unit_usd, 0)) DESC NULLS LAST",
+                (tid,),
             )
             holdings = await cur.fetchall()
 
@@ -33,9 +40,9 @@ async def build_snapshot(*, lookback_days: int = 90) -> dict[str, Any]:
                 "       SUM(CASE WHEN amount > 0 THEN amount ELSE 0 END) AS income, "
                 "       SUM(CASE WHEN amount < 0 THEN -amount ELSE 0 END) AS expense, "
                 "       COUNT(*) AS n "
-                "FROM streasury.txn WHERE occurred_at >= %s "
+                "FROM streasury.txn WHERE tenant_id = %s AND occurred_at >= %s "
                 "GROUP BY category ORDER BY (income + expense) DESC LIMIT 20",
-                (since,),
+                (tid, since),
             )
             by_category = await cur.fetchall()
 
@@ -43,15 +50,17 @@ async def build_snapshot(*, lookback_days: int = 90) -> dict[str, Any]:
                 "SELECT date_trunc('month', occurred_at) AS month, "
                 "       SUM(CASE WHEN amount > 0 THEN amount ELSE 0 END) AS income, "
                 "       SUM(CASE WHEN amount < 0 THEN -amount ELSE 0 END) AS expense "
-                "FROM streasury.txn WHERE occurred_at >= %s "
+                "FROM streasury.txn WHERE tenant_id = %s AND occurred_at >= %s "
                 "GROUP BY month ORDER BY month",
-                (since,),
+                (tid, since),
             )
             by_month = await cur.fetchall()
 
             await cur.execute(
                 "SELECT DISTINCT ON (name) name, value, unit, occurred_at "
-                "FROM streasury.kpi_point ORDER BY name, occurred_at DESC"
+                "FROM streasury.kpi_point WHERE tenant_id = %s "
+                "ORDER BY name, occurred_at DESC",
+                (tid,),
             )
             kpis = await cur.fetchall()
 

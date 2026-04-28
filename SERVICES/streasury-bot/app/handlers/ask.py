@@ -23,9 +23,9 @@ async def _save_conversation(tg_user_id: int, kind: str, role: str, content: str
         async with connect() as conn:
             async with conn.cursor() as cur:
                 await cur.execute(
-                    "INSERT INTO streasury.conversation (tg_user_id, role, kind, content, model) "
-                    "VALUES (%s, %s, %s, %s, %s)",
-                    (tg_user_id, role, kind, content[:8000], model),
+                    "INSERT INTO streasury.conversation (tenant_id, tg_user_id, role, kind, content, model) "
+                    "VALUES (%s, %s, %s, %s, %s, %s)",
+                    (settings.default_tenant_id, tg_user_id, role, kind, content[:8000], model),
                 )
     except Exception as e:
         log.warning("conversation persist failed: %s", e)
@@ -63,9 +63,9 @@ async def cmd_council(chat_id: int, args: str, *, tg_user_id: int) -> tuple[str,
         async with connect() as conn:
             async with conn.cursor() as cur:
                 await cur.execute(
-                    "INSERT INTO streasury.council_brief (question, claude_answer, openai_answer, synthesis) "
-                    "VALUES (%s, %s, %s, %s)",
-                    (q, res.claude_answer, res.openai_answer, res.synthesis),
+                    "INSERT INTO streasury.council_brief (tenant_id, question, claude_answer, openai_answer, synthesis) "
+                    "VALUES (%s, %s, %s, %s, %s)",
+                    (settings.default_tenant_id, q, res.claude_answer, res.openai_answer, res.synthesis),
                 )
     except Exception as e:
         log.warning("council_brief persist failed: %s", e)

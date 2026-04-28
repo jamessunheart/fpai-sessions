@@ -92,9 +92,9 @@ async def import_csv_bytes(filename: str, content: bytes, account_slug: str) -> 
     async with connect() as conn:
         async with conn.cursor() as cur:
             await cur.execute(
-                "INSERT INTO streasury.import_batch (source, filename, file_sha1, rows_seen) "
-                "VALUES (%s, %s, %s, %s) RETURNING id",
-                (f"csv:{filename}", filename, sha1, len(rows)),
+                "INSERT INTO streasury.import_batch (tenant_id, source, filename, file_sha1, rows_seen) "
+                "VALUES (%s, %s, %s, %s, %s) RETURNING id",
+                (1, f"csv:{filename}", filename, sha1, len(rows)),
             )
             batch_id = int((await cur.fetchone())[0])
 

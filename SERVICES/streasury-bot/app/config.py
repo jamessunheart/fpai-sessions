@@ -43,6 +43,9 @@ class Settings(BaseSettings):
     default_currency: str = "USD"
     coingecko_base: str = "https://api.coingecko.com/api/v3"
 
+    default_tenant_id: int = 1
+    """Phase 1 single-tenant mode. Phase 2 will resolve tenant from owner_tg_id."""
+
     http_host: str = "0.0.0.0"
     http_port: int = 8620
 
