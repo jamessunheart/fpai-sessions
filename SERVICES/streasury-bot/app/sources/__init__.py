@@ -15,3 +15,6 @@ The unique index on (tenant_id, source, source_ref) guarantees idempotent sync.
 
 See app/sources/README.md for the full adapter pattern + roadmap.
 """
+
+# Self-registering adapters — import here so they appear in base.ADAPTERS.
+from . import outbounders  # noqa: F401

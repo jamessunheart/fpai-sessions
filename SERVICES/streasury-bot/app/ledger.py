@@ -97,7 +97,16 @@ async def insert_txn(t: TxnInsert) -> dict[str, Any]:
     tid = _tenant_id(t.tenant_id)
     occurred_at = t.occurred_at or datetime.now(timezone.utc)
     account_id = await ensure_account(t.account_slug, currency=t.currency, tenant_id=tid)
-    dh = dedup_hash(occurred_at, t.amount, t.vendor) if t.source != "stripe" else None
+    # When the adapter supplies a stable source_ref, the (source, source_ref)
+    # unique index is sufficient. Computing dedup_hash on top would falsely
+    # collide on legitimate recurring payments (same client, same amount, same
+    # day) — so skip it whenever source_ref is present. Manual / photo / voice
+    # entries (which have no source_ref) still get hash-based dedup.
+    dh = (
+        None
+        if t.source_ref or t.source == "stripe"
+        else dedup_hash(occurred_at, t.amount, t.vendor)
+    )
 
     async with connect() as conn:
         async with conn.cursor() as cur:
