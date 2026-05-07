@@ -69,6 +69,32 @@ def file_mtime_iso(path: Path) -> str | None:
         return None
 
 
+def commits_by_day(days: int = 30) -> list[tuple[str, int]]:
+    """Return [(YYYY-MM-DD, count)] for the last `days` days, oldest first."""
+    from collections import Counter
+    from datetime import timedelta
+    try:
+        out = subprocess.check_output(
+            ["git", "-C", str(ROOT), "log", f"--since={days} days ago", "--pretty=format:%cs"],
+            text=True,
+        )
+        c = Counter(line for line in out.strip().split("\n") if line)
+    except Exception:
+        c = {}
+    today = datetime.now().date()
+    series = []
+    for i in range(days - 1, -1, -1):
+        d = (today - timedelta(days=i)).strftime("%Y-%m-%d")
+        series.append((d, c.get(d, 0)))
+    return series
+
+
+def parse_money(s: str) -> float:
+    """Extract a dollar number from strings like '$69.88' or '~$30–50' (uses lower bound)."""
+    m = re.search(r"\$?\s*~?\$?(\d+(?:\.\d+)?)", s.replace(",", ""))
+    return float(m.group(1)) if m else 0.0
+
+
 def extract_section(md: str, header: str) -> str:
     """Pull a markdown section by its `## Header` line until the next `## ` or `---`."""
     pattern = rf"## {re.escape(header)}.*?(?=^## |^---\s*$)"
@@ -358,6 +384,34 @@ a.link:hover { text-decoration: underline; }
 .fresh-rel { font-size: 11px; color: var(--accent); margin-top: 2px; }
 #autoStatus.on { color: var(--good); }
 #autoStatus.stale { color: var(--bad); }
+
+/* Money breakdown bar */
+.money-bar { margin-bottom: 16px; }
+.bar-track {
+  display: flex;
+  height: 28px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.bar-seg { transition: filter 0.15s; }
+.bar-seg:hover { filter: brightness(1.2); }
+.bar-total { font-size: 13px; color: var(--muted); margin-top: 8px; }
+.bar-total strong { color: var(--accent); font-size: 18px; }
+.bar-legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; font-size: 12px; }
+.leg-item { display: inline-flex; align-items: center; gap: 6px; }
+.leg-sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; }
+.leg-pct { color: var(--muted); margin-left: 4px; }
+
+/* Tag donut layout */
+.donut-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
+.donut-legend { display: flex; flex-direction: column; gap: 4px; font-size: 12px; }
+.donut-legend .leg-item { gap: 8px; }
+.donut-legend .leg-pct { color: var(--text); font-weight: 600; }
+
+/* Sparkline */
+.sparkline-card { margin-top: 8px; }
+.sparkline-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
 """
 
 
@@ -531,6 +585,144 @@ def _first_probable_url(text: str) -> str | None:
     return None
 
 
+TAG_COLORS = {
+    "P1": "#ff6b6b",
+    "P2": "#4ecdc4",
+    "infra": "#7ec8e3",
+    "cruft": "#5a6068",
+    "unknown": "#b58be0",
+}
+
+
+def render_tag_donut(counts: dict[str, int], size: int = 140) -> str:
+    """Inline SVG donut chart of service tag distribution."""
+    total = sum(counts.values()) or 1
+    cx = cy = size / 2
+    r_outer = size / 2 - 4
+    r_inner = r_outer * 0.55
+    parts = [
+        f"<svg viewBox='0 0 {size} {size}' width='{size}' height='{size}' "
+        f"style='display:block'>"
+    ]
+    angle = -90  # start at top
+    import math
+    for tag in ("P1", "P2", "infra", "unknown", "cruft"):
+        n = counts.get(tag, 0)
+        if not n:
+            continue
+        sweep = 360 * n / total
+        a1 = math.radians(angle)
+        a2 = math.radians(angle + sweep)
+        # large-arc flag if sweep > 180
+        large = 1 if sweep > 180 else 0
+        x1, y1 = cx + r_outer * math.cos(a1), cy + r_outer * math.sin(a1)
+        x2, y2 = cx + r_outer * math.cos(a2), cy + r_outer * math.sin(a2)
+        x3, y3 = cx + r_inner * math.cos(a2), cy + r_inner * math.sin(a2)
+        x4, y4 = cx + r_inner * math.cos(a1), cy + r_inner * math.sin(a1)
+        d = (
+            f"M {x1:.2f} {y1:.2f} "
+            f"A {r_outer} {r_outer} 0 {large} 1 {x2:.2f} {y2:.2f} "
+            f"L {x3:.2f} {y3:.2f} "
+            f"A {r_inner} {r_inner} 0 {large} 0 {x4:.2f} {y4:.2f} Z"
+        )
+        parts.append(
+            f"<path d='{d}' fill='{TAG_COLORS[tag]}' opacity='0.92'>"
+            f"<title>{tag}: {n} ({100*n/total:.0f}%)</title></path>"
+        )
+        angle += sweep
+    parts.append(
+        f"<text x='{cx}' y='{cy - 4}' text-anchor='middle' "
+        f"font-size='20' font-weight='700' fill='var(--text)'>{total}</text>"
+        f"<text x='{cx}' y='{cy + 14}' text-anchor='middle' "
+        f"font-size='10' fill='var(--muted)'>services</text>"
+    )
+    parts.append("</svg>")
+    return "".join(parts)
+
+
+def render_money_bar(rows: list[list[str]]) -> str:
+    """Stacked horizontal SVG bar of monthly burn breakdown."""
+    if not rows or len(rows) < 2:
+        return ""
+    body = rows[1:]
+    items: list[tuple[str, float]] = []
+    total = 0.0
+    for r in body:
+        if not r or len(r) < 2:
+            continue
+        if "TOTAL" in r[0].upper():
+            total = parse_money(r[1])
+            continue
+        v = parse_money(r[1])
+        if v > 0:
+            items.append((r[0], v))
+    if not items:
+        return ""
+    if total <= 0:
+        total = sum(v for _, v in items)
+    items.sort(key=lambda x: -x[1])
+    palette = ["#ff6b6b", "#f7b955", "#4ecdc4", "#7ec8e3", "#b58be0", "#a3e635", "#fb923c", "#5a6068"]
+    parts = ["<div class='money-bar'><div class='bar-track'>"]
+    legend = ["<div class='bar-legend'>"]
+    for i, (label, v) in enumerate(items):
+        pct = 100 * v / total
+        color = palette[i % len(palette)]
+        parts.append(
+            f"<div class='bar-seg' style='width:{pct:.2f}%;background:{color};' "
+            f"title='{escape(label)}: ${v:.2f} ({pct:.0f}%)'></div>"
+        )
+        legend.append(
+            f"<span class='leg-item'><span class='leg-sw' style='background:{color}'></span>"
+            f"{escape(label)} <span class='leg-pct'>${v:.0f} · {pct:.0f}%</span></span>"
+        )
+    parts.append("</div>")
+    legend.append("</div>")
+    parts.append(
+        f"<div class='bar-total'>Total: <strong>${total:.2f}</strong>/mo</div>"
+    )
+    parts.extend(legend)
+    parts.append("</div>")
+    return "".join(parts)
+
+
+def render_sparkline(series: list[tuple[str, int]], width: int = 360, height: int = 56) -> str:
+    """SVG bar sparkline of commits/day for the past N days."""
+    if not series:
+        return ""
+    n = len(series)
+    max_v = max((v for _, v in series), default=1) or 1
+    pad = 2
+    bar_w = (width - pad * 2) / n
+    parts = [
+        f"<svg viewBox='0 0 {width} {height}' width='100%' height='{height}' "
+        f"style='display:block'>"
+    ]
+    # baseline
+    parts.append(
+        f"<line x1='0' y1='{height - 1}' x2='{width}' y2='{height - 1}' "
+        f"stroke='var(--border)' stroke-width='1'/>"
+    )
+    today = series[-1][0]
+    for i, (d, v) in enumerate(series):
+        x = pad + i * bar_w
+        h = (height - 6) * (v / max_v) if v else 0
+        y = height - 2 - h
+        if v == 0:
+            # tiny stub for visual rhythm even on empty days
+            parts.append(
+                f"<rect x='{x:.2f}' y='{height - 3}' width='{max(bar_w-1,1):.2f}' height='1.5' "
+                f"fill='var(--border)'><title>{d}: 0</title></rect>"
+            )
+        else:
+            color = "var(--accent)" if d != today else "var(--good)"
+            parts.append(
+                f"<rect x='{x:.2f}' y='{y:.2f}' width='{max(bar_w-1,1):.2f}' height='{h:.2f}' "
+                f"fill='{color}' rx='1'><title>{d}: {v} commit{'s' if v != 1 else ''}</title></rect>"
+            )
+    parts.append("</svg>")
+    return "".join(parts)
+
+
 def render_live_table(rows: list[list[str]]) -> str:
     """Live Now table with a probe-status dot prepended to each row.
 
@@ -648,6 +840,25 @@ def render_html() -> str:
 
     services_html = render_services(catalog, services)
 
+    # tag counts for donut
+    tag_counts: dict[str, int] = {"P1": 0, "P2": 0, "infra": 0, "cruft": 0, "unknown": 0}
+    for s in services:
+        role = catalog.get("tags", {}).get(s, "unknown")
+        tag_counts[role] = tag_counts.get(role, 0) + 1
+    donut_svg = render_tag_donut(tag_counts)
+    donut_legend = "".join(
+        f"<span class='leg-item'><span class='leg-sw' style='background:{TAG_COLORS[t]}'></span>"
+        f"{t} <span class='leg-pct'>{tag_counts.get(t,0)}</span></span>"
+        for t in ("P1", "P2", "infra", "unknown", "cruft") if tag_counts.get(t, 0)
+    )
+
+    money_bar_svg = render_money_bar(money_rows)
+
+    sparkline_series = commits_by_day(30)
+    sparkline_svg = render_sparkline(sparkline_series)
+    n_active_days = sum(1 for _, v in sparkline_series if v > 0)
+    n_total_commits = sum(v for _, v in sparkline_series)
+
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
     generated_iso = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
     commit_iso = last_commit_iso() or ""
@@ -738,10 +949,13 @@ def render_html() -> str:
       </p>
     </div>
     <div class="card">
-      <div class="kpi-label">Services tagged</div>
-      <div class="kpi">{n_tagged}<span style="font-size:14px;color:var(--muted);"> / {n_total}</span></div>
-      <p style="color:var(--muted);margin:8px 0 0;">
-        {n_untagged} untagged (decision candidates). 138+ tagged <span class='badge cruft'>cruft</span>.
+      <div class="kpi-label">Service distribution</div>
+      <div class="donut-row">
+        {donut_svg}
+        <div class="donut-legend">{donut_legend}</div>
+      </div>
+      <p style="color:var(--muted);margin:0;font-size:12px;">
+        {n_untagged} untagged · most are <span class='badge cruft'>cruft</span> (deprioritized).
       </p>
     </div>
   </div>
@@ -763,7 +977,9 @@ def render_html() -> str:
 
   <div class="card full" style="margin-bottom:16px;">
     <h2>Money</h2>
-    <h3>Outflow</h3>
+    <h3>Outflow &mdash; proportional</h3>
+    {money_bar_svg}
+    <h3>Outflow &mdash; detail</h3>
     {render_table(money_rows)}
     <h3>Inflow</h3>
     {render_table(inflow_rows)}
@@ -791,7 +1007,13 @@ def render_html() -> str:
 
   <div class="grid">
     <div class="card">
-      <h2>Recent commits</h2>
+      <h2>30-day activity</h2>
+      <div class="sparkline-meta">
+        <span>{n_total_commits} commits across {n_active_days} days</span>
+        <span>30 days ago &rarr; today</span>
+      </div>
+      {sparkline_svg}
+      <h3 style="margin-top:16px;">Recent commits</h3>
       {commits_html}
     </div>
     <div class="card">
