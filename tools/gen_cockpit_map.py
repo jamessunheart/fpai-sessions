@@ -51,6 +51,24 @@ def recent_commits(n: int = 10) -> list[tuple[str, str]]:
         return []
 
 
+def last_commit_iso() -> str | None:
+    try:
+        return subprocess.check_output(
+            ["git", "-C", str(ROOT), "log", "-1", "--pretty=format:%cI"],
+            text=True,
+        ).strip()
+    except Exception:
+        return None
+
+
+def file_mtime_iso(path: Path) -> str | None:
+    try:
+        ts = path.stat().st_mtime
+        return datetime.fromtimestamp(ts).strftime("%Y-%m-%dT%H:%M:%S")
+    except Exception:
+        return None
+
+
 def extract_section(md: str, header: str) -> str:
     """Pull a markdown section by its `## Header` line until the next `## ` or `---`."""
     pattern = rf"## {re.escape(header)}.*?(?=^## |^---\s*$)"
@@ -326,6 +344,20 @@ a.link:hover { text-decoration: underline; }
   font-size: 13px;
 }
 .untagged-callout strong { color: var(--unknown); }
+.freshness {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 8px 0 24px;
+}
+.fresh-row { display: flex; gap: 24px; flex-wrap: wrap; }
+.fresh-stat { display: flex; flex-direction: column; min-width: 140px; }
+.fresh-lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.fresh-val { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13px; color: var(--text); margin-top: 2px; }
+.fresh-rel { font-size: 11px; color: var(--accent); margin-top: 2px; }
+#autoStatus.on { color: var(--good); }
+#autoStatus.stale { color: var(--bad); }
 """
 
 
@@ -398,6 +430,53 @@ document.querySelectorAll('tr.no-probe .live-status').forEach(d => {
   d.style.background = 'var(--cruft)';
   d.title = 'no URL to probe';
 });
+
+// --- Relative timestamps -------------------------------------------------
+function relTime(iso) {
+  if (!iso) return '';
+  const t = new Date(iso).getTime();
+  if (isNaN(t)) return '';
+  const diff = (Date.now() - t) / 1000;
+  if (diff < 60) return Math.round(diff) + 's ago';
+  if (diff < 3600) return Math.round(diff/60) + 'm ago';
+  if (diff < 86400) return Math.round(diff/3600) + 'h ago';
+  return Math.round(diff/86400) + 'd ago';
+}
+function refreshRelTimes() {
+  document.querySelectorAll('.fresh-rel[data-ts]').forEach(el => {
+    el.textContent = relTime(el.dataset.ts);
+  });
+}
+refreshRelTimes();
+setInterval(refreshRelTimes, 30000);
+
+// --- Auto-reload when the file regenerates -------------------------------
+// The generator stamps data-generated on the freshness card. Poll the file
+// itself every 15s; if its embedded timestamp has changed, reload.
+const myGenerated = document.getElementById('freshness')?.dataset.generated;
+const autoStatus = document.getElementById('autoStatus');
+
+async function checkForUpdate() {
+  if (!myGenerated || !autoStatus) return;
+  try {
+    const res = await fetch(location.href, { cache: 'no-store' });
+    const text = await res.text();
+    const m = text.match(/data-generated="([^"]+)"/);
+    if (m && m[1] !== myGenerated) {
+      autoStatus.textContent = 'newer file detected — reloading…';
+      autoStatus.className = 'fresh-val stale';
+      setTimeout(() => location.reload(), 600);
+      return;
+    }
+    autoStatus.textContent = 'on (15s poll)';
+    autoStatus.className = 'fresh-val on';
+  } catch (e) {
+    autoStatus.textContent = 'paused (' + (e.name || 'error') + ')';
+    autoStatus.className = 'fresh-val';
+  }
+}
+checkForUpdate();
+setInterval(checkForUpdate, 15000);
 """
 
 
@@ -570,6 +649,10 @@ def render_html() -> str:
     services_html = render_services(catalog, services)
 
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
+    generated_iso = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+    commit_iso = last_commit_iso() or ""
+    now_md_iso = file_mtime_iso(NOW) or ""
+    catalog_iso = file_mtime_iso(CATALOG) or ""
 
     return f"""<!doctype html>
 <html lang="en">
@@ -581,9 +664,34 @@ def render_html() -> str:
 <body>
 <div class="wrap">
   <h1>FPAI Cockpit &mdash; Big Picture</h1>
-  <div class="subtitle">
-    Generated {now_str} from <code>core/STATE/NOW.md</code> + <code>core/STATE/catalog.json</code>.
-    Re-run <code>python3 tools/gen_cockpit_map.py</code> to refresh.
+  <div class="freshness" id="freshness" data-generated="{generated_iso}">
+    <div class="fresh-row">
+      <div class="fresh-stat">
+        <span class="fresh-lbl">Map generated</span>
+        <span class="fresh-val" data-ts="{generated_iso}">{now_str}</span>
+        <span class="fresh-rel" data-ts="{generated_iso}">just now</span>
+      </div>
+      <div class="fresh-stat">
+        <span class="fresh-lbl">Last commit</span>
+        <span class="fresh-val" data-ts="{commit_iso}">{commit_iso[:16].replace('T',' ')}</span>
+        <span class="fresh-rel" data-ts="{commit_iso}"></span>
+      </div>
+      <div class="fresh-stat">
+        <span class="fresh-lbl">NOW.md edited</span>
+        <span class="fresh-val" data-ts="{now_md_iso}">{now_md_iso[:16].replace('T',' ')}</span>
+        <span class="fresh-rel" data-ts="{now_md_iso}"></span>
+      </div>
+      <div class="fresh-stat">
+        <span class="fresh-lbl">catalog.json edited</span>
+        <span class="fresh-val" data-ts="{catalog_iso}">{catalog_iso[:16].replace('T',' ')}</span>
+        <span class="fresh-rel" data-ts="{catalog_iso}"></span>
+      </div>
+      <div class="fresh-stat" style="text-align:right;">
+        <span class="fresh-lbl">Auto-reload</span>
+        <span id="autoStatus" class="fresh-val">checking…</span>
+        <span class="fresh-rel"><a class="link" href="#" onclick="location.reload();return false;">reload now</a></span>
+      </div>
+    </div>
   </div>
 
   <div class="filter">
