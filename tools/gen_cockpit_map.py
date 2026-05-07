@@ -297,6 +297,30 @@ footer { color: var(--muted); font-size: 12px; margin-top: 32px; padding-top: 16
   user-select: none;
 }
 .tag-pill.active { background: var(--accent); color: #1a0e02; border-color: var(--accent); }
+a.link { color: var(--accent); text-decoration: none; }
+a.link:hover { text-decoration: underline; }
+.queue {
+  background: linear-gradient(135deg, rgba(247,185,85,0.06), rgba(247,185,85,0.02));
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+.queue h2 { margin-top: 0; }
+.queue-row { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 12px; }
+.queue-stat { flex: 1 1 140px; }
+.queue-stat .n { font-size: 32px; font-weight: 700; color: var(--accent); line-height: 1; }
+.queue-stat .lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+.queue ol { margin: 0; padding-left: 20px; }
+.untagged-callout {
+  background: rgba(181, 139, 224, 0.08);
+  border-left: 3px solid var(--unknown);
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+.untagged-callout strong { color: var(--unknown); }
 """
 
 
@@ -339,13 +363,41 @@ pills.forEach(p => {
 """
 
 
+URL_RE = re.compile(r"https?://[^\s)<>\"]+")
+BARE_DOMAIN_RE = re.compile(
+    r"\b((?:[a-z0-9][a-z0-9-]*\.)+(?:com|ai|io|me|net|org|co|app|dev|sh)(?:/[^\s)<>\"]*)?)\b",
+    re.IGNORECASE,
+)
+
+
+def _wrap(url: str, full: str | None = None) -> str:
+    href = full or url
+    if not href.startswith("http"):
+        href = "https://" + href
+    return f"<a class='link' href='{href}' target='_blank' rel='noopener'>{url}</a>"
+
+
+def linkify(text: str) -> str:
+    """Escape a cell's text and convert URLs / bare domains into clickable links."""
+    safe = escape(text)
+    # full URLs first (so we don't double-wrap their domain)
+    safe = URL_RE.sub(lambda m: _wrap(m.group(0)), safe)
+    # bare domains (skip anything already inside an <a ...>...</a>)
+    parts = re.split(r"(<a\s[^>]*>.*?</a>)", safe)
+    for i, p in enumerate(parts):
+        if p.startswith("<a "):
+            continue
+        parts[i] = BARE_DOMAIN_RE.sub(lambda m: _wrap(m.group(0)), p)
+    return "".join(parts)
+
+
 def render_table(rows: list[list[str]]) -> str:
     if not rows:
         return "<p class='muted'>(none)</p>"
     head, *body = rows
     th = "".join(f"<th>{escape(c)}</th>" for c in head)
     trs = "".join(
-        "<tr>" + "".join(f"<td>{escape(c)}</td>" for c in r) + "</tr>"
+        "<tr>" + "".join(f"<td>{linkify(c)}</td>" for c in r) + "</tr>"
         for r in body
     )
     return f"<table><thead><tr>{th}</tr></thead><tbody>{trs}</tbody></table>"
@@ -464,6 +516,29 @@ def render_html() -> str:
     for The Village within 30 days? If not, deprioritize.
   </div>
 
+  <div class="queue">
+    <h2>Decision queue &mdash; needs James</h2>
+    <div class="queue-row">
+      <div class="queue-stat">
+        <div class="n">{len(decisions)}</div>
+        <div class="lbl">Open decisions</div>
+      </div>
+      <div class="queue-stat">
+        <div class="n">{n_untagged}</div>
+        <div class="lbl">Untagged services</div>
+      </div>
+      <div class="queue-stat">
+        <div class="n">{len(drift)}</div>
+        <div class="lbl">Drift / blind spots</div>
+      </div>
+      <div class="queue-stat">
+        <div class="n">{len([r for r in rubric if not r.startswith('[x]')])}</div>
+        <div class="lbl">30-day rubric items</div>
+      </div>
+    </div>
+    <ol>{decisions_html}</ol>
+  </div>
+
   <div class="grid">
     <div class="card">
       <div class="kpi-label">Priority 1</div>
@@ -527,12 +602,19 @@ def render_html() -> str:
 
   <div class="grid">
     <div class="card">
-      <h2>Open decisions</h2>
-      <ul>{decisions_html}</ul>
-    </div>
-    <div class="card">
       <h2>Recent commits</h2>
       {commits_html}
+    </div>
+    <div class="card">
+      <h2>Untagged services ({n_untagged})</h2>
+      <div class="untagged-callout">
+        <strong>Decision candidates.</strong> Each is a kill / keep / promote call.
+        Edit <code>core/STATE/catalog.json</code> &rarr; <code>tags</code> to assign:
+        <code>P1</code>, <code>P2</code>, <code>infra</code>, or <code>cruft</code>.
+      </div>
+      <p style="color:var(--muted);font-size:12px;margin:0;">
+        Filter the service tree above by clicking the <span class='badge unknown'>unknown</span> pill.
+      </p>
     </div>
     <div class="card">
       <h2>Source files</h2>
