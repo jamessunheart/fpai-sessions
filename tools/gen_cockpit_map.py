@@ -240,6 +240,11 @@ th { color: var(--muted); font-weight: 600; font-size: 11px; text-transform: upp
 .dot.live { background: var(--good); }
 .dot.warn { background: var(--warn); }
 .dot.bad { background: var(--bad); }
+.live-status {
+  background: var(--muted);
+  transition: background 0.3s;
+}
+.live-table td:first-child { width: 16px; padding-right: 0; }
 ul { padding-left: 20px; margin: 8px 0; }
 li { margin-bottom: 4px; }
 details { margin: 8px 0; }
@@ -360,6 +365,39 @@ pills.forEach(p => {
     applyFilters();
   });
 });
+
+// --- Live probes ---------------------------------------------------------
+// Fire mode=no-cors fetch for each probe row. Opaque success = reachable.
+// AbortController gives us a 5s ceiling. Failure means DNS / network / timeout.
+async function probeRow(row) {
+  const url = row.dataset.probe;
+  const dot = row.querySelector('.live-status');
+  if (!url || !dot) return;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 5000);
+  try {
+    await fetch(url, { mode: 'no-cors', signal: controller.signal, cache: 'no-store' });
+    dot.classList.add('live');
+    dot.title = 'reachable';
+  } catch (e) {
+    // mixed-content blocks (http on https page) and private hosts land here.
+    if (url.startsWith('http://') && location.protocol === 'https:') {
+      dot.classList.add('warn');
+      dot.title = 'probe blocked (mixed-content)';
+    } else {
+      dot.classList.add('bad');
+      dot.title = 'unreachable: ' + (e.name || 'error');
+    }
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+document.querySelectorAll('tr.probe').forEach(probeRow);
+document.querySelectorAll('tr.no-probe .live-status').forEach(d => {
+  d.style.background = 'var(--cruft)';
+  d.title = 'no URL to probe';
+});
 """
 
 
@@ -401,6 +439,43 @@ def render_table(rows: list[list[str]]) -> str:
         for r in body
     )
     return f"<table><thead><tr>{th}</tr></thead><tbody>{trs}</tbody></table>"
+
+
+def _first_probable_url(text: str) -> str | None:
+    """Extract the first URL or bare domain we can actually fetch."""
+    m = URL_RE.search(text)
+    if m:
+        return m.group(0)
+    m = BARE_DOMAIN_RE.search(text)
+    if m:
+        return "https://" + m.group(0)
+    return None
+
+
+def render_live_table(rows: list[list[str]]) -> str:
+    """Live Now table with a probe-status dot prepended to each row.
+
+    JS on page load fetches the row's URL (mode=no-cors, 5s timeout) and flips
+    the dot green (reachable), red (failed), or gray (no probable URL).
+    """
+    if not rows:
+        return "<p class='muted'>(none)</p>"
+    head, *body = rows
+    th = "<th></th>" + "".join(f"<th>{escape(c)}</th>" for c in head)
+    trs_html = []
+    for r in body:
+        joined = " ".join(r)
+        url = _first_probable_url(joined)
+        attr = f" data-probe='{escape(url)}'" if url else ""
+        cls = "probe" if url else "no-probe"
+        cells = "".join(f"<td>{linkify(c)}</td>" for c in r)
+        trs_html.append(
+            f"<tr class='{cls}'{attr}>"
+            f"<td><span class='dot live-status' title='not yet probed'></span></td>"
+            f"{cells}</tr>"
+        )
+    trs = "".join(trs_html)
+    return f"<table class='live-table'><thead><tr>{th}</tr></thead><tbody>{trs}</tbody></table>"
 
 
 def render_services(catalog: dict, services: list[str]) -> str:
@@ -587,8 +662,14 @@ def render_html() -> str:
   </div>
 
   <div class="card full" style="margin-bottom:16px;">
-    <h2>What's live now</h2>
-    {render_table(live_rows)}
+    <h2>What's live now <span style="font-size:12px;font-weight:400;color:var(--muted);">&mdash; status dots probed live on page load</span></h2>
+    {render_live_table(live_rows)}
+    <p style="color:var(--muted);font-size:11px;margin:12px 0 0;">
+      <span class="dot live"></span> reachable &nbsp;
+      <span class="dot bad"></span> unreachable &nbsp;
+      <span class="dot warn"></span> probe blocked (CORS / private host) &nbsp;
+      <span class="dot" style="background:var(--cruft);"></span> no URL to probe
+    </p>
   </div>
 
   <div class="card full" style="margin-bottom:16px;">

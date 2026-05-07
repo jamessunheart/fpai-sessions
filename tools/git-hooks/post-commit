@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Auto-regenerate cockpit-map.html after each commit.
+# Installed via tools/git-hooks/install.sh (or `make install-hooks`).
+# Silent on success, prints errors. Never blocks (post-commit can't fail the commit).
+
+set -e
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT" || exit 0
+
+# Only run if the generator is present (e.g. don't break on shallow checkouts)
+[ -f tools/gen_cockpit_map.py ] || exit 0
+
+python3 tools/gen_cockpit_map.py >/dev/null 2>&1 || {
+  echo "[post-commit] cockpit map regeneration failed; run 'make map' to see error" >&2
+  exit 0
+}
