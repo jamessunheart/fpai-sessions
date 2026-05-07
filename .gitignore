@@ -31,3 +31,10 @@ out/
 **/out/
 .env
 **/.env
+
+# Cursor local exports (may contain paths / noise)
+.cursor/cursor-yolo-command-allowlist-export.json
+SERVICES/concierge/.env
+
+# Generated cockpit map (regenerate with `make map`)
+cockpit-map.html
