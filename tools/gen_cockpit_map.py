@@ -801,7 +801,8 @@ body {
 }
 .wrap { max-width: 1400px; margin: 0 auto; padding: 24px; position: relative; z-index: 1; }
 h1 {
-  font-size: 28px;
+  font-family: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  font-size: 36px;
   margin: 0 0 4px;
   font-weight: 600;
   letter-spacing: -0.5px;
@@ -859,7 +860,16 @@ h3 { font-size: 12px; margin: 16px 0 8px; color: var(--muted); text-transform: u
   to { transform: rotate(360deg); }
 }
 .pb-label { font-size: 10px; color: var(--accent); letter-spacing: 1.8px; font-weight: 700; }
-.pb-quote { font-size: 17px; color: var(--text-bright); font-style: italic; margin-top: 6px; line-height: 1.5; }
+.pb-quote {
+  font-family: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  font-size: 22px;
+  color: var(--text-bright);
+  font-style: italic;
+  margin-top: 6px;
+  line-height: 1.4;
+  font-weight: 500;
+  letter-spacing: -0.2px;
+}
 .pb-test { font-size: 12px; color: var(--muted); margin-top: 8px; line-height: 1.6; }
 .pb-test strong { color: var(--accent-bright); font-weight: 600; }
 .pb-link { font-size: 11px; color: var(--accent); display: inline-block; margin-top: 6px; text-decoration: none; }
@@ -900,7 +910,16 @@ h3 { font-size: 12px; margin: 16px 0 8px; color: var(--muted); text-transform: u
   animation: pulse-glow 3s ease-in-out infinite;
 }
 .sb-label { font-size: 10px; color: var(--p2); letter-spacing: 1.8px; font-weight: 700; }
-.sb-quote { font-size: 17px; color: var(--text-bright); font-style: italic; margin-top: 6px; line-height: 1.5; }
+.sb-quote {
+  font-family: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  font-size: 22px;
+  color: var(--text-bright);
+  font-style: italic;
+  margin-top: 6px;
+  line-height: 1.4;
+  font-weight: 500;
+  letter-spacing: -0.2px;
+}
 .sb-test { font-size: 12px; color: var(--muted); margin-top: 8px; line-height: 1.6; }
 .sb-test strong { color: var(--p2); font-weight: 600; }
 @media (max-width: 700px) { .signaling-banner { grid-template-columns: 1fr; text-align: center; } .sb-glyph { margin: 0 auto; } }
@@ -1956,7 +1975,15 @@ body.mode-field .player-only { display: none !important; }
   justify-content: center;
 }
 .fw-label { font-size: 10px; color: var(--accent); letter-spacing: 1.5px; font-weight: 700; }
-.fw-quote { font-size: 14px; color: var(--text); margin-top: 8px; line-height: 1.6; font-style: italic; }
+.fw-quote {
+  font-family: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  font-size: 18px;
+  color: var(--text-bright);
+  margin-top: 8px;
+  line-height: 1.5;
+  font-style: italic;
+  font-weight: 500;
+}
 .fw-attribution { font-size: 11px; color: var(--muted); margin-top: 8px; }
 
 /* After-sign card */
@@ -3426,6 +3453,9 @@ def render_html() -> str:
 <head>
 <meta charset="utf-8" />
 <title>Full Potential Game · Coherent Champions of CHRIST</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap" />
 <meta name="description" content="A proof-based operating system for human potential. Sign the World Peace Agreement. Run your first 7-Day Game. We are Coherent Champions of CHRIST." />
 <meta name="theme-color" content="#f7b955" />
 
