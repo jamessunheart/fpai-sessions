@@ -1,6 +1,6 @@
 # FPAI Cockpit - Directory Structure
 
-**Last Updated:** 2026-04-29
+**Last Updated:** 2026-05-07 (added Mission Layer references)
 **Status:** Reorganized for clarity and maintainability
 
 ---
@@ -8,6 +8,32 @@
 ## 🔴 READ THIS FIRST
 
 **Single source of truth for priorities: `core/STATE/NOW.md`.** Read it before navigating anything else. It defines the current Priority 1 (Zen Village retreat) and the decision filter — *does this serve proof / revenue / clarity / ease for the core offer in 30 days?*
+
+**For the *why* (mission), not the *what-now*:** `core/INTENT/`. Founding documents, the manifesto, and Peace Agreements live there. NOW.md governs operational priority; INTENT governs identity/mission/vision.
+
+---
+
+## 🌟 Mission Layer — `core/INTENT/`
+
+The supreme intent. Two layers; Layer 1 (mission) governs Layer 2 (engineering).
+
+| File | What |
+|---|---|
+| [`core/INTENT/README.md`](./core/INTENT/README.md) | Layer clarification (Mission vs Engineering Substrate) |
+| [`core/INTENT/COHERENT_CHAMPIONS_MANIFESTO.md`](./core/INTENT/COHERENT_CHAMPIONS_MANIFESTO.md) | Manifesto v1.0 — founding document of WPO / Zen Village |
+| [`core/INTENT/WORLD_PEACE_AGREEMENT.md`](./core/INTENT/WORLD_PEACE_AGREEMENT.md) | Canonical template for forming Peace Agreements |
+| [`core/INTENT/FORMING_AGREEMENTS.md`](./core/INTENT/FORMING_AGREEMENTS.md) | Protocol for instantiating specific Agreements |
+| [`core/INTENT/AGREEMENTS/`](./core/INTENT/AGREEMENTS/) | Specific formed Agreements (one file per instance, YAML front-matter) |
+| [`core/INTENT/AGREEMENTS/INDEX.md`](./core/INTENT/AGREEMENTS/INDEX.md) | Human-readable registry (auto-generated — do not edit) |
+| [`core/INTENT/AGREEMENTS/registry.json`](./core/INTENT/AGREEMENTS/registry.json) | Machine-readable registry (auto-generated) |
+| [`tools/registry/build_index.py`](./tools/registry/build_index.py) | Registry regenerator. Scans `AGREEMENTS/*.md`, rebuilds INDEX + registry |
+| `core/INTENT/IDENTITY.md`, `PURPOSE.md`, `PRINCIPLES.md` | Layer 2 — engineering substrate (older, narrower scope) |
+
+**Naming:** World Peace Party = World Peace Organization = World Peace Headquarters = Zen Village.
+**Mission:** paradise on Earth through cooperation.
+**Founder:** James Sunheart.
+
+---
 
 **`SERVICES/` has ~261 entries. Most are paused.** The only services actively serving the engine are `fp-index`, the Zen Village booking site, nginx, and the Adam/Aria companion relay. Don't burn time exploring the rest unless explicitly asked.
 

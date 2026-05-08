@@ -155,7 +155,13 @@ Mode:           paper (until Hyperliquid connected)
 
 ## ✅ RECENTLY COMPLETED (Last 6)
 
-1. **FPI v5.1.0 — Constitutional Economy Deployed** (2026-03-25/26)
+1. **WPO Foundation Stack — Manifesto v1.0, Agreement Registry, First Two Agreements** (2026-05-07)
+   - **Action:** Authored Coherent Champions of CHRIST Manifesto v1.0 as WPO/Zen Village founding document. Extracted World Peace Agreement as canonical template. Wrote forming protocol with YAML schema. Built Agreement Registry (auto-generated INDEX + JSON, idempotent regenerator at `tools/registry/build_index.py`). Formed first Agreement (James + Claude) — making "AI as tool/companion/amplifier — not ruler" operational in code with refusal-as-service clause. Drafted second Agreement (WPO + Zen Village Land, status: proposed) — operationalizing the Regeneration principle, awaiting founder ratification. Added root `STRUCTURE.md` cockpit map.
+   - **Result:** Naming aligned: World Peace Organization = World Peace Party = World Peace Headquarters = Zen Village. Mission: paradise on Earth through cooperation. AI role bounded by Agreement. Registry handles diverse party types (human, ai, organization, land) and statuses (active, proposed). Practice now exists for "tracking agreements between all parties" — v0 local-file based; v1+ deploy to public roll on `zenvillage.live` when ready.
+   - **Artifacts:** `core/INTENT/README.md`, `COHERENT_CHAMPIONS_MANIFESTO.md`, `WORLD_PEACE_AGREEMENT.md` (template), `FORMING_AGREEMENTS.md`, `AGREEMENTS/INDEX.md`, `AGREEMENTS/registry.json`, `AGREEMENTS/2026-05-07_JAMES_SUNHEART_AND_CLAUDE.md` (active), `AGREEMENTS/2026-05-07_WPO_AND_LAND_OF_ZEN_VILLAGE.md` (proposed), `tools/registry/build_index.py`, `STRUCTURE.md`
+   - **Commits:** 19992340, e26acd0a, d7e3e923, d6ee98e2, 20fb6a32, c32aef9d (all on `claude/magical-wu-6cdcc7`, not yet pushed)
+
+2. **FPI v5.1.0 — Constitutional Economy Deployed** (2026-03-25/26)
    - **Action:** Built and deployed the Full Potential Index: dual trust model, proof pipeline, immune system, credit vesting, frontier scanner, agent gateway, and FPI→Credits Gateway bridge.
    - **Result:** Live intelligence feed at fullpotential.ai/intelligence with 93 entries. 8 agents registered. First economic event (0.04 credits). Stripe checkout live. Scheduled scanning every 6 hours.
    - **Artifacts:** `SERVICES/fp-index/` (v5.1.0), port 8550 on primary server

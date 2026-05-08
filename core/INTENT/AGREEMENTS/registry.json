@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "count": 2,
+  "agreements": [
+    {
+      "agreement_id": "2026-05-07_james-sunheart_and_claude",
+      "date_formed": "2026-05-07",
+      "parties": [
+        {
+          "name": "James Sunheart",
+          "role": "Founder, World Peace Organization (Zen Village)",
+          "party_type": "human"
+        },
+        {
+          "name": "Claude",
+          "role": "AI agent (Anthropic), operating in FPAI_Cockpit",
+          "party_type": "ai"
+        }
+      ],
+      "context": "First specific Agreement under Manifesto v1.0 — governs founder/AI working relationship; makes \"AI as tool/companion/amplifier — not ruler\" operational",
+      "scope_tags": [
+        "working_relationship",
+        "asymmetric_power",
+        "founding",
+        "ai_alignment"
+      ],
+      "status": "active",
+      "public": true,
+      "witness": {
+        "type": "git_commit",
+        "reference": "d7e3e923"
+      },
+      "canonical_record": "file",
+      "amendments": [],
+      "repairs": [],
+      "filename": "2026-05-07_JAMES_SUNHEART_AND_CLAUDE.md"
+    },
+    {
+      "agreement_id": "2026-05-07_wpo_and_land-of-zen-village",
+      "date_formed": "2026-05-07",
+      "parties": [
+        {
+          "name": "World Peace Organization (Zen Village)",
+          "role": "Institution; represented by founder James Sunheart",
+          "party_type": "organization"
+        },
+        {
+          "name": "The Land of Zen Village",
+          "role": "Costa Rican land held in stewardship for the WPO mission",
+          "party_type": "land"
+        }
+      ],
+      "context": "Stewardship Agreement under Manifesto v1.0 — WPO commits to relating to the land as a partner in regeneration rather than property to extract from. Operationalizes the Regeneration principle.",
+      "scope_tags": [
+        "stewardship",
+        "regeneration",
+        "land",
+        "founding"
+      ],
+      "status": "proposed",
+      "public": true,
+      "witness": {
+        "type": "founder_authorization",
+        "reference": "pending-ratification"
+      },
+      "canonical_record": "file",
+      "amendments": [],
+      "repairs": [],
+      "proposed_by": "Claude",
+      "proposed_on": "2026-05-07",
+      "ratification_required_from": [
+        "James Sunheart (on behalf of WPO)"
+      ],
+      "filename": "2026-05-07_WPO_AND_LAND_OF_ZEN_VILLAGE.md"
+    }
+  ]
+}
