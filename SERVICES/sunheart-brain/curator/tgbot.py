@@ -1475,40 +1475,71 @@ async def _money_view() -> str:
     revenue = data.get("revenue", []) or []
     total_cost = float(data.get("total_cost_monthly_usd") or sum(float(c.get("monthly_usd", 0) or 0) for c in costs))
     total_rev = float(data.get("total_revenue_monthly_usd") or 0)
-    net = float(data.get("net_monthly_usd") or (total_rev - total_cost))
+
+    # Take-home: revenue × per-stream take_home_pct (default 1.0 if not set).
+    # Pull take_home_pct from the underlying ledger.json since chief-of-staff
+    # may not surface it.
+    pct_by_stream: dict[str, float] = {}
+    try:
+        ledger_raw = _money_load_ledger()
+        for k, v in (ledger_raw.get("revenue_monthly") or {}).items():
+            pct_by_stream[k] = float(v.get("take_home_pct", 1.0) or 1.0)
+    except Exception:
+        pass
+    take_home_total = 0.0
+    for r in revenue:
+        stream = r.get("stream") or ""
+        rev_usd = float(r.get("revenue_usd", 0) or 0)
+        pct = pct_by_stream.get(stream, 1.0)
+        take_home_total += rev_usd * pct
+    net_take_home = take_home_total - total_cost
 
     lines = ["💰 <b>Money — current resources by source</b>\n"]
-    lines.append(f"<b>Costs:</b> ${total_cost:,.0f}/mo  ·  <b>Revenue:</b> ${total_rev:,.0f}/mo  ·  <b>Net:</b> ${net:+,.0f}/mo\n")
+    lines.append(f"<b>Gross revenue:</b> ${total_rev:,.0f}/mo  ·  <b>Costs:</b> ${total_cost:,.0f}/mo")
+    lines.append(f"<b>Take-home:</b> ${take_home_total:,.0f}/mo (after payroll/COGS)  ·  <b>Net to James:</b> <b>${net_take_home:+,.0f}/mo</b>\n")
 
-    # Revenue rows have shape: {stream, revenue_usd, last30d_revenue_usd, note, ...}
+    # Revenue rows
     rev_real = [r for r in revenue if float(r.get("revenue_usd", 0) or 0) > 0]
     if rev_real:
-        lines.append("<b>Revenue streams</b>")
+        max_rev = max(float(r.get("revenue_usd", 0) or 0) for r in rev_real)
+        lines.append("<b>Revenue streams</b> <i>(gross · take-home)</i>")
         for r in sorted(rev_real, key=lambda x: -float(x.get("revenue_usd", 0) or 0))[:8]:
             stream = r.get("stream") or r.get("name") or "?"
             mo = float(r.get("revenue_usd", 0) or 0)
-            last30 = r.get("last30d_revenue_usd")
-            extra = f" · last 30d ${float(last30):,.0f}" if last30 is not None else ""
-            note = (r.get("note") or "")[:80]
-            lines.append(f"  + ${mo:,.0f}/mo  {tg._esc(stream)}{extra}")
-            if note:
-                lines.append(f"     <i>{tg._esc(note)}</i>")
+            pct = pct_by_stream.get(stream, 1.0)
+            take = mo * pct
+            bar = _money_bar(mo, max_rev)
+            tag = f"{int(pct*100)}% take" if pct < 1.0 else "100%"
+            lines.append(f"  <code>{bar}</code>  ${mo:,.0f}  →  <b>${take:,.0f}</b>  <i>{tg._esc(tag)}</i>  {tg._esc(stream)}")
+        lines.append("")
     else:
-        lines.append("<b>Revenue:</b> <i>0 active revenue streams yet.</i>")
+        lines.append("<b>Revenue:</b> <i>0 active revenue streams yet.</i>\n")
 
-    lines.append("")
     if costs:
+        max_cost = max(float(c.get("monthly_usd", 0) or 0) for c in costs)
         lines.append("<b>Top costs</b>")
         for c in sorted(costs, key=lambda x: -float(x.get("monthly_usd", 0) or 0))[:8]:
             kill = " 🗑" if c.get("kill_candidate") else ""
-            lines.append(f"  − ${float(c.get('monthly_usd',0)):,.0f}  {tg._esc(c.get('name','?'))}{kill}")
+            amt = float(c.get('monthly_usd', 0) or 0)
+            bar = _money_bar(amt, max_cost)
+            lines.append(f"  <code>{bar}</code>  ${amt:,.0f}  {tg._esc(c.get('name','?'))}{kill}")
 
     biggest_leak = data.get("biggest_leak")
     if biggest_leak:
         lines.append(f"\n<b>🔧 Biggest leak:</b> {tg._esc(biggest_leak.get('name','?'))} (${float(biggest_leak.get('monthly_usd',0)):,.0f}/mo)")
 
     lines.append("\n<i>Source: Chief of Staff /money endpoint · 127.0.0.1:8107 (loopback)</i>")
+    lines.append("<i>Modify: /money set &lt;id&gt; &lt;amt&gt; · /money add cost/revenue ... · /money &lt;free text&gt;</i>")
     return "\n".join(lines)
+
+
+def _money_bar(value: float, max_value: float, width: int = 12) -> str:
+    """Render a simple unicode bar chart cell."""
+    if max_value <= 0:
+        return " " * width
+    filled = int(round((value / max_value) * width))
+    filled = max(0, min(width, filled))
+    return "█" * filled + "░" * (width - filled)
 
 
 # ───────────────────────────── /log ──────────────────────────────
