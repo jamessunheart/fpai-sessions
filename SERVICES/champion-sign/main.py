@@ -34,6 +34,8 @@ PROOFS_DIR = Path(os.environ.get("PROOFS_DATA_DIR", "/var/lib/full-potential/pro
 PROOFS_DIR.mkdir(parents=True, exist_ok=True)
 CARDS_DIR = Path(os.environ.get("CARDS_DATA_DIR", "/var/lib/full-potential/cards"))
 CARDS_DIR.mkdir(parents=True, exist_ok=True)
+LEADS_DIR = Path(os.environ.get("LEADS_DATA_DIR", "/var/lib/full-potential/leads"))
+LEADS_DIR.mkdir(parents=True, exist_ok=True)
 RETREAT_DIR = Path(os.environ.get("RETREAT_DATA_DIR", "/var/lib/full-potential/retreat-interests"))
 RETREAT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -1005,6 +1007,147 @@ This interest is **{'PUBLIC' if public else req.consent.upper()}**.
 ---
 
 *Submitted via Retreat Interest form at https://fullpotential.com/game on {today}.*
+"""
+
+
+# ===== Lead-capture endpoint (Diagnose page) =============================
+class LeadSubmit(BaseModel):
+    name: str = Field(..., min_length=2, max_length=100)
+    email: str = Field(..., min_length=5, max_length=120)
+    bottleneck: str = Field(..., min_length=2, max_length=4000)
+    phone: Optional[str] = Field(None, max_length=40)
+    timezone: Optional[str] = Field(None, max_length=80)
+    preferred_contact: Optional[str] = Field(None, max_length=60)  # email | phone | whatsapp | telegram | call
+    interest: Optional[str] = Field(None, max_length=80)  # session | course | weekly_call | retreat | unsure
+    seven_areas: Optional[dict] = None  # {body: 'circulating', mind: 'stuck', ...}
+    company: Optional[str] = Field(None, max_length=120)  # honeypot
+
+    @validator("name", "email", "preferred_contact", "interest")
+    def _no_html(cls, v):
+        if v is None:
+            return v
+        if re.search(r"[<>]", v):
+            raise ValueError("contains forbidden characters")
+        return v.strip()
+
+
+@app.post("/lead/submit")
+async def submit_lead(req: LeadSubmit, request: Request) -> dict:
+    """Capture an inbound lead from the diagnose page (or anywhere).
+
+    Stores at /var/lib/full-potential/leads/{date}_{slug}.md, fires
+    a Telegram alert to James so he can respond quickly.
+    """
+    if req.company:
+        return {"ok": True, "honeypot": True}
+
+    ip = request.client.host if request.client else "unknown"
+    if not _check_rate(ip):
+        raise HTTPException(status_code=429, detail="Too many submissions. Try again later.")
+
+    today = datetime.now().strftime("%Y-%m-%d")
+    slug = re.sub(r"[^a-z0-9]+", "-", req.name.lower()).strip("-") or "unnamed"
+    fname = f"{today}_{slug}.md"
+    out = LEADS_DIR / fname
+    if out.exists():
+        for i in range(2, 100):
+            alt = LEADS_DIR / f"{today}_{slug}-{i}.md"
+            if not alt.exists():
+                out = alt
+                break
+
+    md = _render_lead_md(req, today)
+    out.write_text(md, encoding="utf-8")
+
+    # Audit log
+    audit = LEADS_DIR / "audit.jsonl"
+    with audit.open("a", encoding="utf-8") as f:
+        f.write(json.dumps({
+            "ts": datetime.now().isoformat(),
+            "kind": "lead",
+            "name": req.name,
+            "email": req.email,
+            "interest": req.interest or "",
+            "ip_hash": str(hash(ip))[-6:],
+            "filename": fname,
+        }) + "\n")
+
+    # Founder ping — high-priority, leads should be noticed quickly
+    try:
+        import urllib.request
+        bottleneck_excerpt = (req.bottleneck or "")[:140]
+        if len(req.bottleneck or "") > 140:
+            bottleneck_excerpt += "..."
+        msg_lines = [
+            f"📍 NEW DIAGNOSTIC LEAD — {req.name}",
+            f"Email: {req.email}",
+        ]
+        if req.phone:
+            msg_lines.append(f"Phone: {req.phone}")
+        if req.preferred_contact:
+            msg_lines.append(f"Prefers: {req.preferred_contact}")
+        if req.interest:
+            msg_lines.append(f"Interest: {req.interest}")
+        msg_lines.append(f"\nBottleneck: {bottleneck_excerpt}")
+        urllib.request.urlopen(
+            urllib.request.Request(
+                "http://127.0.0.1:8766/alert",
+                data=json.dumps({
+                    "message": "\n".join(msg_lines),
+                    "source": "diagnose-lead",
+                }).encode(),
+                headers={"Content-Type": "application/json"},
+            ),
+            timeout=2,
+        )
+    except Exception:
+        pass
+
+    return {
+        "ok": True,
+        "filename": fname,
+        "message": (
+            f"Thank you, {req.name.split()[0]}. Your message reached Sunheart directly. "
+            f"You'll hear back personally within 48 hours."
+        ),
+    }
+
+
+def _render_lead_md(req: LeadSubmit, today: str) -> str:
+    seven_block = ""
+    if req.seven_areas:
+        seven_block = "\n## Seven Areas — self-rated\n\n"
+        for k, v in req.seven_areas.items():
+            seven_block += f"- **{k}**: {v}\n"
+    return f"""---
+lead_id: {today}_{re.sub(r'[^a-z0-9]+', '-', req.name.lower()).strip('-')}
+date_submitted: {today}
+name: {req.name}
+email: {req.email}
+phone: {req.phone or ''}
+timezone: {req.timezone or ''}
+preferred_contact: {req.preferred_contact or ''}
+interest: {req.interest or ''}
+status: new
+source: diagnose-page
+---
+
+# {req.name} — Diagnostic Lead
+
+**Submitted:** {today}
+**Email:** {req.email}
+{('**Phone:** ' + req.phone) if req.phone else ''}
+{('**Timezone:** ' + req.timezone) if req.timezone else ''}
+{('**Preferred contact:** ' + req.preferred_contact) if req.preferred_contact else ''}
+{('**Interest:** ' + req.interest) if req.interest else ''}
+
+## Bottleneck — what they wrote
+
+{req.bottleneck}
+{seven_block}
+---
+
+*Captured via the /diagnose page on {today}.*
 """
 
 
