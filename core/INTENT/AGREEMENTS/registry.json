@@ -24,14 +24,22 @@
         "founding",
         "ai_alignment"
       ],
-      "status": "active",
+      "status": "ratified-active",
       "public": true,
       "witness": {
         "type": "git_commit",
         "reference": "d7e3e923"
       },
+      "ratified_by_founder": true,
+      "ratified_on": "2026-05-08",
+      "ratification_authority": "explicit founder directive (see ratification record at end of file)",
       "canonical_record": "file",
       "amendments": [],
+      "amendment_paths_open": [
+        "founder commitments wording (drafted by Claude — may be rewritten in founder's own voice)",
+        "witness type / reference (currently git commit; may evolve)",
+        "scope clauses (may narrow or expand as the working relationship matures)"
+      ],
       "repairs": [],
       "filename": "2026-05-07_JAMES_SUNHEART_AND_CLAUDE.md"
     },
@@ -57,20 +65,25 @@
         "land",
         "founding"
       ],
-      "status": "proposed",
+      "status": "ratified-active",
       "public": true,
       "witness": {
         "type": "founder_authorization",
-        "reference": "pending-ratification"
+        "reference": "2026-05-08-explicit-directive"
       },
+      "ratified_by_founder": true,
+      "ratified_on": "2026-05-08",
+      "ratification_authority": "explicit founder directive (see ratification record at end of file)",
       "canonical_record": "file",
       "amendments": [],
+      "amendment_paths_open": [
+        "framing of \"the land as a party\" (alternative framings — \"WPO + future inhabitants,\" \"WPO's land-stewardship vow\" — remain available)",
+        "specific stewardship clauses (carrying capacity, biocide policy, etc. — refine as lived practice teaches)",
+        "witness type (currently founder_authorization; may evolve to ceremony, council, or community attestation)"
+      ],
       "repairs": [],
       "proposed_by": "Claude",
       "proposed_on": "2026-05-07",
-      "ratification_required_from": [
-        "James Sunheart (on behalf of WPO)"
-      ],
       "filename": "2026-05-07_WPO_AND_LAND_OF_ZEN_VILLAGE.md"
     }
   ]

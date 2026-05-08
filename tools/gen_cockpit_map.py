@@ -3134,13 +3134,16 @@ def render_sparkline(series: list[tuple[str, int]], width: int = 360, height: in
 
 
 STATUS_DOT = {
-    "active": ("#4ade80", "Active"),
-    "proposed": ("#fbbf24", "Proposed"),
-    "repairing": ("#fbbf24", "Repairing"),
-    "repaired": ("#4ade80", "Repaired"),
-    "breached": ("#f87171", "Breached"),
-    "withdrawn": ("#8b949e", "Withdrawn"),
-    "archived": ("#5a6068", "Archived"),
+    "active": ("#84d488", "Active"),
+    "ratified-active": ("#84d488", "Ratified · Active"),
+    "ratified": ("#84d488", "Ratified"),
+    "proposed": ("#e8c479", "Proposed"),
+    "repairing": ("#e8c479", "Repairing"),
+    "repaired": ("#84d488", "Repaired"),
+    "breached": ("#e58787", "Breached"),
+    "superseded": ("#8fa1c2", "Superseded"),
+    "withdrawn": ("#8fa1c2", "Withdrawn"),
+    "archived": ("#5a6680", "Archived"),
 }
 
 
