@@ -1665,14 +1665,21 @@ async def _cmd_signals(arg: str = "") -> str:
     cos_url = _os.environ.get("CHIEF_OF_STAFF_URL", "http://127.0.0.1:8107")
     wt_base = _os.environ.get("WHALETRACK_PUBLIC_BASE", "https://fullpotential.ai/dashboards/whaletrack")
 
+    wt_symbols = [s.strip().upper() for s in
+                  _os.environ.get("WHALETRACK_SYMBOLS", "SOL,BTC,ETH,XRP").split(",") if s.strip()]
+
     fetches = []
     fetches.append(_fetch_json(f"{base}/api/champion/signals") if show_game or show_leads else _async_none())
     fetches.append(_fetch_json(f"{base}/api/champion/retreat/list") if show_leads else _async_none())
     fetches.append(_fetch_json(f"{base}/api/champion/leaderboard") if show_leads else _async_none())
     fetches.append(_fetch_json(f"{base}/api/champion/list") if show_leads else _async_none())
     fetches.append(_fetch_json(f"{cos_url}/money") if show_money else _async_none())
-    fetches.append(_fetch_json(f"{wt_base}/api/recommendations") if show_trading else _async_none())
-    game_signals, retreats, board, listing, money, recs = await asyncio.gather(*fetches)
+    if show_trading:
+        sig_reads = asyncio.gather(*[_fetch_json(f"{wt_base}/api/signal-read/{s}") for s in wt_symbols])
+    else:
+        sig_reads = _async_none()
+    fetches.append(sig_reads)
+    game_signals, retreats, board, listing, money, signal_reads = await asyncio.gather(*fetches)
 
     title = {
         "compact": "📡 <b>Signals</b>",
@@ -1704,7 +1711,7 @@ async def _cmd_signals(arg: str = "") -> str:
     if show_trading:
         if show_game or show_money or show_leads:
             lines.append("")
-        lines.extend(_render_trading(recs, wt_base, full=full_trading))
+        lines.extend(_render_trading(signal_reads, wt_symbols, wt_base, full=full_trading))
 
     if mode == "compact":
         lines.append("")
@@ -1898,55 +1905,92 @@ def _render_leads(retreat_count: int, champ_count: int, cards_filled: int,
     return out
 
 
-def _render_trading(recs: dict | None, wt_base: str, *, full: bool) -> list[str]:
+_VERDICT_DOT = {"green": "🟢", "yellow": "🟡", "red": "🔴"}
+
+
+def _render_trading(signal_reads: list | None, symbols: list[str], wt_base: str,
+                    *, full: bool) -> list[str]:
+    """Render WhaleTrack signals using /api/signal-read/<sym> per symbol —
+    same source as the WhaleTrack Telegram bot, so verdicts match
+    (honesty multiplier + asymmetry boost applied).
+    """
     out: list[str] = ["<b>📈 TRADING · WhaleTrack</b> <i>(paper)</i>"]
-    if not recs:
-        out.append(f"  🔴 <i>WhaleTrack unreachable at {tg._esc(wt_base)}</i>")
+    if not signal_reads or not any(signal_reads):
+        out.append(f"  🔴 <i>WhaleTrack signal-read unreachable at {tg._esc(wt_base)}</i>")
         return out
 
-    anchor = recs.get("btc_anchor") or {}
-    a_dir = (anchor.get("direction") or "").upper()
-    a_conf = anchor.get("confidence")
-    a_price = anchor.get("price")
-    if a_dir or a_conf is not None:
-        arrow = "📉" if a_dir == "DOWN" else ("📈" if a_dir == "UP" else "•")
-        conf_str = f"{float(a_conf):.0f}%" if a_conf is not None else "?"
-        price_str = f" · BTC ${float(a_price):,.0f}" if a_price else ""
-        out.append(f"  {arrow} <b>BTC anchor:</b> {tg._esc(a_dir or '?')} · {conf_str}{price_str}")
+    # Surface a single most-severe system_alerts banner (matches WT bot)
+    banner = None
+    for d in signal_reads:
+        if not d:
+            continue
+        for a in d.get("system_alerts") or []:
+            if banner is None:
+                banner = a
+                break
+        if banner:
+            break
+    if banner:
+        sev = (banner.get("severity") or "").lower()
+        icon = "⚠️" if sev == "warn" else ("🔔" if sev == "info" else "ℹ️")
+        out.append(f"  {icon} <b>{tg._esc(banner.get('headline','') or '')}</b>")
+        if full and banner.get("detail"):
+            out.append(f"     <i>{tg._esc(banner['detail'][:200])}</i>")
 
-    limit = 10 if full else 3
-    top = (recs.get("recommendations") or [])[:limit]
-    if not top:
-        out.append("  ⚪ <i>No recommendations right now.</i>")
-        return out
+    rendered = 0
+    for sym, d in zip(symbols, signal_reads):
+        if not d:
+            out.append(f"  ⚪ <i>{tg._esc(sym)}: no signal</i>")
+            continue
+        v = d.get("verdict") or {}
+        action = (v.get("action") or "?").upper()
+        color = (v.get("color") or "").lower()
+        dot = _VERDICT_DOT.get(color, "⚪")
+        conf = v.get("confidence_pct")
+        raw = v.get("confidence_raw_pct")
+        price = d.get("current_price")
+        chg = d.get("change_24h_pct")
+        chg_str = f" ({chg:+.1f}%)" if isinstance(chg, (int, float)) else ""
+        conf_str = f"{conf:.0f}%" if isinstance(conf, (int, float)) else "?"
 
-    for r in top:
-        sym = tg._esc(str(r.get("symbol") or "?"))
-        sig = r.get("signal") or {}
-        trade = r.get("trade") or {}
-        direction = (sig.get("direction") or "").upper()
-        conf = sig.get("confidence")
-        cp = r.get("current_price")
-        target = trade.get("target") or ""
-        rr = trade.get("risk_reward") or ""
-        glyph = "🟢" if direction == "LONG" else ("🔴" if direction == "SHORT" else "⚪")
-        conf_str = f"{float(conf):.0f}%" if conf is not None else "?"
-        price_str = f" @ ${_fmt_price(cp)}" if cp is not None else ""
-        target_str = f" → target {tg._esc(target)}" if target and target.upper() != "N/A" else ""
-        rr_str = f" <i>(R:R {tg._esc(rr)})</i>" if rr and rr.upper() != "N/A" else ""
-        out.append(f"  {glyph} <b>{sym}</b> {tg._esc(direction or '?')}{price_str} · {conf_str}{target_str}{rr_str}")
+        # Asymmetry tag (e.g. "↗ liq long 4.0:1") when the signal carries it
+        asym_tag = ""
+        a_sig = (v.get("asymmetry_signal") or "").upper()
+        a_ratio = v.get("asymmetry_ratio")
+        if a_sig in ("LONG", "SHORT") and isinstance(a_ratio, (int, float)) and a_ratio > 1.2:
+            arrow = "↗" if a_sig == "LONG" else "↘"
+            asym_tag = f"  <i>{arrow} liq {a_sig.lower()} {a_ratio:.1f}:1</i>"
+
+        head = f"  {dot} <b>{tg._esc(sym)}</b> ${_fmt_price(price)}{chg_str} → <b>{tg._esc(action)}</b> ({conf_str}){asym_tag}"
+        out.append(head)
+
         if full:
-            entry = trade.get("entry_zone") or ""
-            stop = trade.get("stop_loss") or ""
-            extra = []
-            if entry:
-                extra.append(f"entry {tg._esc(entry)}")
-            if stop:
-                extra.append(f"stop {tg._esc(stop)}")
-            if extra:
-                out.append(f"     <i>{' · '.join(extra)}</i>")
+            # Show the raw vs adjusted confidence breakdown so the gap is visible
+            adj_bits = []
+            if isinstance(raw, (int, float)) and raw is not None:
+                adj_bits.append(f"raw {raw:.0f}%")
+            ab = v.get("asymmetry_boost_pct")
+            if isinstance(ab, (int, float)) and abs(ab) > 0.5:
+                adj_bits.append(f"asym {ab:+.0f}%")
+            hm = v.get("honesty_multiplier")
+            if isinstance(hm, (int, float)):
+                adj_bits.append(f"honesty ×{hm:.2f}")
+            if adj_bits:
+                out.append(f"     <i>{' · '.join(adj_bits)}</i>")
+            ag_n = v.get("agreement_score")
+            ag_t = v.get("total_sources")
+            ag_pct = v.get("agreement_pct")
+            if ag_n is not None and ag_t:
+                pct_str = f", {ag_pct:.0f}% agree" if isinstance(ag_pct, (int, float)) else ""
+                out.append(f"     <i>{ag_n}/{ag_t} sources{pct_str}</i>")
+        rendered += 1
+
+    if rendered == 0:
+        out.append("  ⚪ <i>No signal-read responses came back.</i>")
+        return out
+
     if full:
-        out.append(f"  <i>Source: {tg._esc(wt_base)}/api/recommendations</i>")
+        out.append(f"  <i>Source: {tg._esc(wt_base)}/api/signal-read/&lt;sym&gt; · matches @whaletrack bot</i>")
     return out
 
 
