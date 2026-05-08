@@ -482,6 +482,9 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
             "  /projects  — projects ranked most→least important (from NOW.md)\n"
             "  /questions — open inquiries across qb books (fpai/game/sunheart)\n"
             "  /characters — Champions in the Game · roster + KPIs\n"
+            "  /invite NAME [email|phone|@handle] [path] — render invitation + deep link (paths: game/apprenticeship/witnessing/commerce/coaching/retreat/party/village)\n"
+            "  /invites — your sent invitations with status (sent/clicked/signed)\n"
+            "  /invite-types — list available invitation templates\n"
             "  /match [name] — one specific helpful next move (defaults to James)\n"
             "  /game      — vital Game stats for the architect\n"
             "  /signals   — trading + lead signals (retreat / party / coaching / commerce)\n"
@@ -606,6 +609,12 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
         return await _cmd_questions()
     if cmd in ("characters", "champions"):
         return await _cmd_characters()
+    if cmd == "invite":
+        return await _cmd_invite(rest)
+    if cmd == "invites":
+        return await _cmd_invites()
+    if cmd in ("invite-types", "invite_types", "invitetypes"):
+        return await _cmd_invite_types()
     if cmd == "match":
         return await _cmd_match(rest)
     if cmd == "game":
@@ -891,6 +900,319 @@ def _qb_short(text: str, n: int) -> str:
     if len(text) <= n:
         return text
     return text[: n - 1] + "…"
+
+
+# ───────────────────────────── /invite + /invites ──────────────────────────────
+_INVITE_TEMPLATES_PATH = _os.path.join(_STATE_DIR, "INVITE_TEMPLATES.md")
+_INVITES_LOG_PATH = _os.path.join(_STATE_DIR, "invites.jsonl")
+_INVITER_NAME = _os.environ.get("INVITER_NAME", "James Sunheart")
+_INVITE_BASE_URL = _os.environ.get("INVITE_BASE_URL", "https://fullpotential.com/game/")
+_DEFAULT_PATH = "game"
+
+# Detection regexes (deliberately permissive — friction-min, not validation)
+import re as _re_inv
+_RE_EMAIL = _re_inv.compile(r"^[\w.+\-]+@[\w\-]+\.[\w.\-]+$")
+_RE_TG_HANDLE = _re_inv.compile(r"^@[A-Za-z0-9_]{3,}$")
+_RE_PHONE = _re_inv.compile(r"^\+?[\d][\d\s().\-]{6,}$")
+
+
+def _parse_invite_args(rest: str, available_paths: set[str]) -> dict:
+    """Parse `/invite NAME [contact] [path] [why_them...]` polymorphically.
+
+    Strategy: tokenize by whitespace, classify each token as email / phone /
+    tg-handle / known-path / name-fragment. First name-fragment(s) collapse
+    into NAME. Remaining name-fragments after the contact/path become
+    {WHY_THEM}. All fields optional except NAME.
+    """
+    tokens = [t for t in rest.strip().split() if t]
+    out = {"name": "", "contact": "", "channel": "", "path": "",
+           "why_them": "", "raw": rest.strip()}
+    name_parts: list[str] = []
+    why_parts: list[str] = []
+    contact_seen = False
+    path_seen = False
+    for tok in tokens:
+        if not contact_seen and _RE_EMAIL.match(tok):
+            out["contact"] = tok
+            out["channel"] = "email"
+            contact_seen = True
+            continue
+        if not contact_seen and _RE_TG_HANDLE.match(tok):
+            out["contact"] = tok
+            out["channel"] = "telegram"
+            contact_seen = True
+            continue
+        if not contact_seen and _RE_PHONE.match(tok):
+            out["contact"] = tok
+            out["channel"] = "whatsapp"
+            contact_seen = True
+            continue
+        tok_lower = tok.lower()
+        if not path_seen and tok_lower in available_paths:
+            out["path"] = tok_lower
+            path_seen = True
+            continue
+        # Otherwise: name fragment (before contact) or why-them (after)
+        if not contact_seen and not path_seen:
+            name_parts.append(tok)
+        else:
+            why_parts.append(tok)
+    out["name"] = " ".join(name_parts).strip()
+    out["why_them"] = " ".join(why_parts).strip()
+    if not out["path"]:
+        out["path"] = _DEFAULT_PATH
+    return out
+
+
+def _load_invite_templates() -> dict[str, str]:
+    """Parse INVITE_TEMPLATES.md → {path_slug: body}. Each `## slug` heading
+    starts a template; body runs until the next `## ` or `---` divider."""
+    try:
+        with open(_INVITE_TEMPLATES_PATH, encoding="utf-8") as f:
+            md = f.read()
+    except Exception:
+        return {}
+    templates: dict[str, str] = {}
+    current_slug = None
+    current_body: list[str] = []
+    for line in md.splitlines():
+        m = _re_inv.match(r"^##\s+([A-Za-z][A-Za-z0-9\-_]*)\s*$", line)
+        if m:
+            if current_slug and current_body:
+                templates[current_slug] = "\n".join(current_body).strip()
+            current_slug = m.group(1).lower()
+            current_body = []
+            continue
+        if line.strip() == "---" and current_slug:
+            templates[current_slug] = "\n".join(current_body).strip()
+            current_slug = None
+            current_body = []
+            continue
+        if current_slug:
+            current_body.append(line)
+    if current_slug and current_body:
+        templates[current_slug] = "\n".join(current_body).strip()
+    return templates
+
+
+def _render_template(body: str, name: str, why_them: str, link: str) -> str:
+    """Substitute {NAME}, {WHY_THEM}, {TRACKED_LINK}. Empty WHY_THEM → blank line."""
+    first_name = (name.split()[0] if name else "there")
+    out = body.replace("{NAME}", first_name)
+    if why_them:
+        out = out.replace("{WHY_THEM}", why_them)
+    else:
+        out = _re_inv.sub(r"\n*\{WHY_THEM\}\n*", "\n", out)
+    out = out.replace("{TRACKED_LINK}", link)
+    return out.strip()
+
+
+def _build_tracked_link(path: str) -> str:
+    """Tracked invite link with inviter attribution. champion-sign reads
+    ?inviter= and credits affiliate score on sign (Loop 13)."""
+    from urllib.parse import quote as _quote
+    inviter_enc = _quote(_INVITER_NAME)
+    base = _INVITE_BASE_URL.rstrip("/") + "/"
+    # Path arg gets passed through for analytics; champion-sign ignores extras
+    if path and path != _DEFAULT_PATH:
+        return f"{base}?inviter={inviter_enc}&path={_quote(path)}"
+    return f"{base}?inviter={inviter_enc}"
+
+
+def _build_deep_links(channel: str, contact: str, rendered_text: str) -> list[tuple[str, str]]:
+    """Return list of (label, url) for whatever channel the contact maps to."""
+    from urllib.parse import quote as _quote
+    out: list[tuple[str, str]] = []
+    if channel == "email":
+        subject = "Invitation to Full Potential — from James"
+        out.append(("📧 Open in Mail",
+                    f"mailto:{contact}?subject={_quote(subject)}&body={_quote(rendered_text)}"))
+    elif channel == "whatsapp":
+        digits = "".join(c for c in contact if c.isdigit() or c == "+")
+        wa_phone = digits.lstrip("+")  # wa.me wants no leading +
+        out.append(("💬 Open in WhatsApp",
+                    f"https://wa.me/{wa_phone}?text={_quote(rendered_text)}"))
+        out.append(("📱 SMS fallback",
+                    f"sms:{digits}&body={_quote(rendered_text)}"))
+    elif channel == "telegram":
+        out.append(("✈️ Forward in Telegram",
+                    f"https://t.me/{contact.lstrip('@')}"))
+    return out
+
+
+def _log_invite(name: str, contact: str, channel: str, path: str,
+                link: str, why_them: str = "") -> None:
+    """Append the invite to the immutable log."""
+    import json as _json
+    from datetime import datetime as _dt
+    row = {
+        "ts": _dt.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "inviter": _INVITER_NAME,
+        "name": name,
+        "contact": contact,
+        "channel": channel or "copy-paste",
+        "path": path,
+        "link": link,
+        "why_them": why_them,
+        "status": "sent",
+    }
+    try:
+        _os.makedirs(_STATE_DIR, exist_ok=True)
+        with open(_INVITES_LOG_PATH, "a", encoding="utf-8") as f:
+            f.write(_json.dumps(row, ensure_ascii=False) + "\n")
+    except Exception as e:
+        log.warning("invite log write failed: %s", e)
+
+
+async def _cmd_invite(rest: str) -> str:
+    """`/invite NAME [contact] [path] [why_them...]`
+
+    Friction-min: detects email / phone / @handle / name from any token order.
+    Always renders copy-paste-ready text + tracked link. Adds appropriate
+    deep link for the detected channel (mailto: / wa.me / TG forward).
+    """
+    templates = _load_invite_templates()
+    if not templates:
+        return (
+            "📨 <b>Invite</b>\n\n"
+            f"Templates not loaded from <code>{tg._esc(_INVITE_TEMPLATES_PATH)}</code>.\n"
+            "Run <code>sync_now_to_brain.sh</code> from the laptop "
+            "(it auto-syncs INVITE_TEMPLATES.md alongside NOW.md)."
+        )
+    available = set(templates.keys())
+    args = _parse_invite_args(rest, available)
+    if not args["name"]:
+        path_list = ", ".join(sorted(available))
+        return (
+            "📨 <b>/invite</b> — render an invitation\n\n"
+            "<b>Usage:</b>\n"
+            "<code>/invite NAME [email|phone|@handle] [path] [why-them...]</code>\n\n"
+            "Anything you don't pass is skipped. Examples:\n"
+            "<code>/invite Mark</code> — copy-paste text only\n"
+            "<code>/invite Mark mark@example.com</code> — opens Mail\n"
+            "<code>/invite Mark +15551234567 retreat</code> — opens WhatsApp\n"
+            "<code>/invite Mark @markhandle apprenticeship</code> — TG forward link\n\n"
+            f"<b>Available paths:</b> {tg._esc(path_list)}\n"
+            "Default path: <b>game</b>"
+        )
+    if args["path"] not in templates:
+        path_list = ", ".join(sorted(available))
+        return (f"📨 Unknown path: <code>{tg._esc(args['path'])}</code>\n"
+                f"Available: {tg._esc(path_list)}")
+
+    body = templates[args["path"]]
+    link = _build_tracked_link(args["path"])
+    rendered = _render_template(body, args["name"], args["why_them"], link)
+    _log_invite(args["name"], args["contact"], args["channel"], args["path"],
+                link, args["why_them"])
+
+    deep_links = _build_deep_links(args["channel"], args["contact"], rendered)
+
+    lines = [
+        f"📨 <b>Invitation drafted</b> — <i>{tg._esc(args['path'])}</i> path · {tg._esc(args['name'])}",
+    ]
+    if args["channel"]:
+        lines.append(f"<i>Channel: {tg._esc(args['channel'])} → {tg._esc(args['contact'])}</i>")
+    else:
+        lines.append("<i>No channel — copy-paste only</i>")
+    lines.append("")
+    lines.append("<pre>" + tg._esc(rendered) + "</pre>")
+    if deep_links:
+        lines.append("")
+        for label, url in deep_links:
+            lines.append(f'<a href="{tg._esc(url)}">{tg._esc(label)}</a>')
+    lines.append("")
+    lines.append(f"<i>Logged to invites.jsonl · /invites for status</i>")
+    return "\n".join(lines)
+
+
+async def _cmd_invites() -> str:
+    """List sent invites with status enriched from /api/champion/list."""
+    import json as _json
+    rows: list[dict] = []
+    try:
+        with open(_INVITES_LOG_PATH, encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    rows.append(_json.loads(line))
+                except Exception:
+                    continue
+    except FileNotFoundError:
+        return "📨 <b>Invites</b>\n\n<i>No invites sent yet. Try <code>/invite NAME</code>.</i>"
+    except Exception as e:
+        return f"📨 <b>Invites</b>\n\n⚠️ log read failed: {tg._esc(str(e))}"
+
+    if not rows:
+        return "📨 <b>Invites</b>\n\n<i>Log empty. Try <code>/invite NAME</code>.</i>"
+
+    # Pull current Champion roster for status enrichment
+    signed_names: set[str] = set()
+    try:
+        import httpx as _httpx
+        async with _httpx.AsyncClient(timeout=4.0) as c:
+            r = await c.get(f"{_FPAI_BASE.rstrip('/')}/api/champion/list")
+            if r.status_code == 200:
+                data = r.json()
+                for ch in data.get("champions", []) if isinstance(data, dict) else data:
+                    nm = (ch.get("name") or "").strip().lower()
+                    if nm:
+                        signed_names.add(nm)
+    except Exception:
+        pass  # status enrichment is best-effort
+
+    rows.sort(key=lambda r: r.get("ts", ""), reverse=True)
+    lines = [f"📨 <b>Invites — {len(rows)} sent</b>\n"]
+    for r in rows[:15]:
+        name = r.get("name", "?")
+        signed = name.strip().lower() in signed_names
+        glyph = "✓ signed" if signed else "· sent"
+        path = r.get("path", "game")
+        ch_part = f" · {r.get('channel')}" if r.get("channel") else ""
+        ts = (r.get("ts") or "")[:10]  # date only
+        lines.append(f"  <b>{tg._esc(name)}</b> · {tg._esc(path)}{tg._esc(ch_part)} · {tg._esc(ts)} · {glyph}")
+    if len(rows) > 15:
+        lines.append(f"\n<i>… and {len(rows) - 15} older.</i>")
+    n_signed = sum(1 for r in rows if r.get("name", "").strip().lower() in signed_names)
+    lines.append(f"\n<i>{n_signed}/{len(rows)} signed</i>")
+    return "\n".join(lines)
+
+
+async def _cmd_invite_types() -> str:
+    """List the available invitation paths from INVITE_TEMPLATES.md."""
+    templates = _load_invite_templates()
+    if not templates:
+        return (
+            "📨 <b>Invite types</b>\n\n"
+            f"Templates not loaded from <code>{tg._esc(_INVITE_TEMPLATES_PATH)}</code>."
+        )
+    lines = ["📨 <b>Invite types</b> — pass any of these as the path arg\n"]
+    for slug in sorted(templates.keys()):
+        body = templates[slug]
+        # First substantive content line — skip greeting (`{NAME} —`),
+        # blanks, the {WHY_THEM} placeholder, and the signoff (`— James`).
+        summary = ""
+        for line in body.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            if line.startswith("{") and line.endswith("}"):
+                continue
+            if line.startswith("—"):  # signoff
+                continue
+            if line.endswith("—"):  # greeting line ends with em-dash
+                continue
+            if len(line) < 25:  # too short to be a real sentence
+                continue
+            summary = line
+            break
+        marker = " ⭐" if slug == _DEFAULT_PATH else ""
+        lines.append(f"  <b>{tg._esc(slug)}</b>{marker} — <i>{tg._esc(summary[:110])}</i>")
+    lines.append(f"\n<i>Edit <code>core/STATE/INVITE_TEMPLATES.md</code> to add/tune; "
+                 "sync_now_to_brain.sh syncs them to the brain server.</i>")
+    return "\n".join(lines)
 
 
 # ───────────────────────────── /characters ──────────────────────────────
@@ -1670,8 +1992,244 @@ async def _money_view() -> str:
     if biggest_leak:
         lines.append(f"\n<b>🔧 Biggest leak:</b> {tg._esc(biggest_leak.get('name','?'))} (${float(biggest_leak.get('monthly_usd',0)):,.0f}/mo)")
 
-    lines.append("\n<i>Source: Chief of Staff /money endpoint · 127.0.0.1:8107 (loopback)</i>")
-    lines.append("<i>Modify: /money set &lt;id&gt; &lt;amt&gt; · /money add cost/revenue ... · /money &lt;free text&gt;</i>")
+    # Liquid + runway summary inline
+    try:
+        ledger_raw = _money_load_ledger()
+        liq = ledger_raw.get("liquid_assets")
+        if liq:
+            confirmed, pending = _money_liquid_totals(liq)
+            lines.append(f"\n<b>💵 Liquid:</b> ${confirmed:,.0f} confirmed"
+                         + (f" (+ ${pending:,.0f} pending)" if pending > 0 else ""))
+            if total_cost > 0:
+                runway_no_rev = confirmed / total_cost
+                if take_home_total >= total_cost:
+                    lines.append(f"<b>Runway:</b> infinite (take-home ≥ costs)  ·  if revenue stops: {runway_no_rev:.0f} months")
+                else:
+                    burn = total_cost - take_home_total
+                    runway_with_rev = confirmed / burn
+                    lines.append(f"<b>Runway:</b> {runway_with_rev:.0f}mo at current take-home  ·  {runway_no_rev:.0f}mo if revenue stops")
+            lines.append("<i>/money liquid for breakdown by account</i>")
+        trades = ledger_raw.get("trades", [])
+        open_trades = [t for t in trades if t.get("status") == "open"]
+        if open_trades:
+            total_basis = sum(float(t.get("qty", 0) or 0) * float(t.get("entry_price", 0) or 0) for t in open_trades)
+            lines.append(f"\n<b>📈 Open trades:</b> {len(open_trades)} positions · cost basis ${total_basis:,.0f}")
+            lines.append("<i>/money trades for per-position detail</i>")
+    except Exception as e:
+        log.warning("liquid summary failed: %s", e)
+
+    lines.append("\n<i>Source: Chief of Staff /money + ledger.json · loopback 127.0.0.1:8107</i>")
+    lines.append("<i>Modify: /money set / set-balance / add / trade / liquid · /money &lt;free text&gt;</i>")
+    return "\n".join(lines)
+
+
+
+
+def _money_liquid_totals(liq: dict) -> tuple[float, float]:
+    confirmed = 0.0
+    pending = 0.0
+    for g in liq.get("groups", []):
+        for a in g.get("accounts", []):
+            bal = float(a.get("balance_usd", 0) or 0)
+            if a.get("pending"):
+                pending += bal
+            else:
+                confirmed += bal
+    return confirmed, pending
+
+
+async def _money_liquid_view() -> str:
+    try:
+        ledger = _money_load_ledger()
+    except Exception as e:
+        return f"\U0001F4B5 <b>Liquid</b>\n\n<i>ledger unreachable: {tg._esc(str(e))}</i>"
+    liq = ledger.get("liquid_assets")
+    if not liq:
+        return ("\U0001F4B5 <b>Liquid</b>\n\n"
+                "<i>No liquid_assets section in ledger.json. Use "
+                "<code>/money set-balance &lt;account-id&gt; &lt;amount&gt;</code> to seed.</i>")
+    confirmed, pending = _money_liquid_totals(liq)
+    as_of = liq.get("as_of", "?")
+    lines = [
+        f"\U0001F4B5 <b>Liquid balances</b> <i>(as of {tg._esc(as_of)})</i>\n",
+        f"<b>Confirmed:</b> ${confirmed:,.0f}"
+        + (f"  ·  <b>Pending:</b> ${pending:,.0f}  ·  <b>Total:</b> ${confirmed+pending:,.0f}" if pending > 0 else ""),
+        "",
+    ]
+    all_accts = []
+    for g in liq.get("groups", []):
+        for a in g.get("accounts", []):
+            all_accts.append(a)
+    max_bal = max((float(a.get("balance_usd", 0) or 0) for a in all_accts), default=1.0)
+
+    for g in liq.get("groups", []):
+        accts = g.get("accounts", [])
+        group_total = sum(float(a.get("balance_usd", 0) or 0) for a in accts if not a.get("pending"))
+        group_pending = sum(float(a.get("balance_usd", 0) or 0) for a in accts if a.get("pending"))
+        est = g.get("estimated_total_usd")
+        est_str = f" <i>(est: ${est:,.0f})</i>" if est else ""
+        head = f"<b>\U0001F4C1 {tg._esc(g.get('name','?'))}</b> — ${group_total:,.0f}"
+        if group_pending > 0:
+            head += f" + ${group_pending:,.0f} pending"
+        head += est_str
+        lines.append(head)
+        for a in sorted(accts, key=lambda x: -float(x.get("balance_usd", 0) or 0)):
+            bal = float(a.get("balance_usd", 0) or 0)
+            bar = _money_bar(bal, max_bal, width=10)
+            tag = " <i>pending</i>" if a.get("pending") else ""
+            lines.append(f"  <code>{bar}</code>  ${bal:,.2f}  {tg._esc(a.get('name','?'))}{tag}  <code>{tg._esc(a.get('id','?'))}</code>")
+        lines.append("")
+
+    lines.append("<i>Modify: /money set-balance &lt;account-id&gt; &lt;amount&gt;</i>")
+    return "\n".join(lines)
+
+
+async def _money_set_balance(arg: str) -> str:
+    parts = arg.split(maxsplit=1)
+    if len(parts) < 2:
+        return ("Usage: <code>/money set-balance &lt;account-id&gt; &lt;amount&gt;</code>\n"
+                "Example: <code>/money set-balance macu-cn 73000</code>\n"
+                "Run <code>/money liquid</code> to see all account ids.")
+    acct_id = parts[0]
+    try:
+        amount = float(parts[1].lstrip("$").replace(",", ""))
+    except ValueError:
+        return f"⚠️ amount must be a number (got <code>{tg._esc(parts[1])}</code>)"
+
+    try:
+        ledger = _money_load_ledger()
+    except Exception as e:
+        return f"⚠️ ledger unreachable: {tg._esc(str(e))}"
+    liq = ledger.get("liquid_assets")
+    if not liq:
+        return "⚠️ no liquid_assets section in ledger.json yet."
+
+    target = None
+    target_group = None
+    for g in liq.get("groups", []):
+        for a in g.get("accounts", []):
+            if a.get("id") == acct_id:
+                target = a
+                target_group = g
+                break
+        if target:
+            break
+    if not target:
+        ids = []
+        for g in liq.get("groups", []):
+            ids += [a.get("id", "?") for a in g.get("accounts", [])]
+        return f"⚠️ account <code>{tg._esc(acct_id)}</code> not found.\nKnown ids: <code>{tg._esc(', '.join(ids))}</code>"
+
+    old = float(target.get("balance_usd", 0) or 0)
+    target["balance_usd"] = amount
+    from datetime import datetime as _dt7
+    liq["as_of"] = _dt7.utcnow().strftime("%Y-%m-%d")
+    ledger["last_updated"] = liq["as_of"]
+    try:
+        _money_save_ledger(ledger)
+    except Exception as e:
+        return f"⚠️ ledger save failed: {tg._esc(str(e))}"
+    _money_audit("set_balance", {"id": acct_id, "old": old, "new": amount,
+                                  "group": target_group.get("id") if target_group else None})
+
+    delta = amount - old
+    sign = "+" if delta >= 0 else ""
+    return (f"✅ <b>Balance updated:</b> {tg._esc(target.get('name', acct_id))}\n"
+            f"  ${old:,.2f} → <b>${amount:,.2f}</b>  ({sign}${delta:,.2f})\n"
+            f"  group: {tg._esc(target_group.get('name','?')) if target_group else '?'}")
+
+
+async def _money_trade(arg: str) -> str:
+    """Open a trade. Format: <symbol> <side> <qty> @ <price> [note]"""
+    import re as _re
+    if not arg.strip():
+        return ("Usage: <code>/money trade &lt;symbol&gt; &lt;side&gt; &lt;qty&gt; @ &lt;price&gt; [note]</code>\n"
+                "Example: <code>/money trade BTC long 0.5 @ 65000 sweep entry</code>\n"
+                "Sides: <b>long</b> or <b>short</b>.\n"
+                "<i>Screenshot-based ingest is a v1 path — text format works today.</i>")
+
+    m = _re.match(r"^\s*(\S+)\s+(long|short|buy|sell)\s+([\d.]+)\s*@\s*\$?([\d.,]+)\s*(.*)$",
+                   arg, _re.IGNORECASE)
+    if not m:
+        return "⚠️ Couldn't parse. Use: <code>/money trade &lt;symbol&gt; &lt;side&gt; &lt;qty&gt; @ &lt;price&gt; [note]</code>"
+    symbol = m.group(1).upper()
+    side = "long" if m.group(2).lower() in ("long", "buy") else "short"
+    try:
+        qty = float(m.group(3))
+        price = float(m.group(4).replace(",", ""))
+    except ValueError:
+        return "⚠️ qty and price must be numbers"
+    note = m.group(5).strip()
+
+    from datetime import datetime as _dt8
+    import secrets as _sec
+    trade_id = f"t-{_dt8.utcnow().strftime('%Y%m%d')}-{_sec.token_hex(3)}"
+    trade = {
+        "id": trade_id, "symbol": symbol, "side": side, "qty": qty,
+        "entry_price": price,
+        "entry_at": _dt8.utcnow().isoformat() + "Z",
+        "status": "open", "note": note,
+    }
+
+    try:
+        ledger = _money_load_ledger()
+    except Exception as e:
+        return f"⚠️ ledger unreachable: {tg._esc(str(e))}"
+    trades = ledger.setdefault("trades", [])
+    trades.append(trade)
+    ledger["last_updated"] = _dt8.utcnow().strftime("%Y-%m-%d")
+    try:
+        _money_save_ledger(ledger)
+    except Exception as e:
+        return f"⚠️ ledger save failed: {tg._esc(str(e))}"
+    _money_audit("trade_open", trade)
+
+    cost_basis = qty * price
+    return (f"\U0001F4C8 <b>Trade opened:</b> {tg._esc(symbol)} {side} {qty} @ ${price:,.2f}\n"
+            f"  cost basis: ${cost_basis:,.2f}\n"
+            f"  id: <code>{tg._esc(trade_id)}</code>"
+            + (f"\n  <i>{tg._esc(note)}</i>" if note else "")
+            + f"\n\n<i>/money trades to see all positions</i>")
+
+
+async def _money_trades_view() -> str:
+    try:
+        ledger = _money_load_ledger()
+    except Exception as e:
+        return f"\U0001F4C8 <b>Trades</b>\n\n<i>ledger unreachable: {tg._esc(str(e))}</i>"
+    trades = ledger.get("trades", [])
+    open_trades = [t for t in trades if t.get("status") == "open"]
+    closed_trades = [t for t in trades if t.get("status") == "closed"]
+    if not trades:
+        return ("\U0001F4C8 <b>Trades</b>\n\n"
+                "<i>No trades recorded yet. Use:</i>\n"
+                "<code>/money trade BTC long 0.5 @ 65000 sweep entry</code>")
+
+    lines = [f"\U0001F4C8 <b>Trades</b> — {len(open_trades)} open, {len(closed_trades)} closed\n"]
+    if open_trades:
+        lines.append("<b>Open positions</b>")
+        total_basis = 0.0
+        for t in open_trades:
+            sym = t.get("symbol", "?")
+            side = t.get("side", "?")
+            qty = float(t.get("qty", 0) or 0)
+            entry = float(t.get("entry_price", 0) or 0)
+            basis = qty * entry
+            total_basis += basis
+            arrow = "↗" if side == "long" else "↘"
+            lines.append(f"  {arrow} {tg._esc(sym)} {tg._esc(side)} {qty} @ ${entry:,.2f}  "
+                         f"basis ${basis:,.0f}  <code>{tg._esc(t.get('id','?'))}</code>")
+            if t.get("note"):
+                lines.append(f"     <i>{tg._esc(t['note'][:80])}</i>")
+        lines.append(f"\n<i>Total cost basis: ${total_basis:,.0f}</i>")
+        lines.append("<i>Live P/L is a v1 path — would need price-feed wiring.</i>")
+    if closed_trades:
+        lines.append(f"\n<b>Recently closed</b> ({len(closed_trades)})")
+        for t in sorted(closed_trades, key=lambda x: x.get("closed_at", ""), reverse=True)[:5]:
+            sym = t.get("symbol", "?")
+            pl = float(t.get("realized_pl_usd", 0) or 0)
+            sign = "+" if pl >= 0 else ""
+            lines.append(f"  {tg._esc(sym)} {sign}${pl:,.0f}  <code>{tg._esc(t.get('id','?'))}</code>")
     return "\n".join(lines)
 
 

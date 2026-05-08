@@ -90,5 +90,124 @@
       "source": "obapp_outbounders.main_transaction (credits, deleted='N')"
     }
   },
-  "last_updated": "2026-05-08"
+  "liquid_assets": {
+    "_doc": "Current liquid balances by account, grouped. Updated via /money set-balance <account-id> <amount> on @sunheartbrain_bot. SENSITIVE \u2014 owner-gated.",
+    "as_of": "2026-05-08",
+    "groups": [
+      {
+        "id": "primary-cash",
+        "name": "Primary cash",
+        "estimated_total_usd": 85000,
+        "accounts": [
+          {
+            "id": "macu-cn",
+            "name": "MACU CN",
+            "balance_usd": 72774.27,
+            "type": "bank"
+          },
+          {
+            "id": "shv-check",
+            "name": "SHV Check",
+            "balance_usd": 10000,
+            "type": "bank"
+          },
+          {
+            "id": "cn-mkt",
+            "name": "CN Mkt",
+            "balance_usd": 1975.69,
+            "type": "bank"
+          },
+          {
+            "id": "michael-m",
+            "name": "Michael M",
+            "balance_usd": 5000,
+            "type": "receivable",
+            "pending": true,
+            "_note": "Italicized in source \u2014 appears to be pending/expected, not yet in account"
+          },
+          {
+            "id": "wise-cora",
+            "name": "Wise Cora",
+            "balance_usd": 3842.4,
+            "type": "bank"
+          }
+        ]
+      },
+      {
+        "id": "crypto",
+        "name": "Crypto wallets",
+        "estimated_total_usd": 50000,
+        "accounts": [
+          {
+            "id": "btr",
+            "name": "BTR",
+            "balance_usd": 32000,
+            "type": "crypto"
+          },
+          {
+            "id": "sh-trust",
+            "name": "SH Trust Wallet",
+            "balance_usd": 10392,
+            "type": "crypto"
+          },
+          {
+            "id": "b-jungle",
+            "name": "B Jungle",
+            "balance_usd": 4000,
+            "type": "crypto"
+          },
+          {
+            "id": "atomic",
+            "name": "Atomic",
+            "balance_usd": 300,
+            "type": "crypto"
+          },
+          {
+            "id": "hot",
+            "name": "HOT",
+            "balance_usd": 2375,
+            "type": "crypto"
+          },
+          {
+            "id": "kapi",
+            "name": "Kapi",
+            "balance_usd": 3000,
+            "type": "crypto"
+          }
+        ]
+      },
+      {
+        "id": "transactional",
+        "name": "Transactional",
+        "accounts": [
+          {
+            "id": "wells",
+            "name": "Wells",
+            "balance_usd": 500,
+            "type": "bank"
+          },
+          {
+            "id": "joint-boa",
+            "name": "Joint BOA",
+            "balance_usd": 2000,
+            "type": "bank"
+          },
+          {
+            "id": "paypal",
+            "name": "Paypal",
+            "balance_usd": 1448.06,
+            "type": "wallet"
+          },
+          {
+            "id": "venmo",
+            "name": "Venmo",
+            "balance_usd": 3309,
+            "type": "wallet"
+          }
+        ]
+      }
+    ]
+  },
+  "last_updated": "2026-05-08",
+  "trades": []
 }
