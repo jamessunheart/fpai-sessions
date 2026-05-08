@@ -2069,6 +2069,30 @@ body.mode-field .player-only { display: none !important; }
 }
 .ps-contrib-pill strong { color: var(--accent); margin-right: 3px; }
 
+/* Goal card (Loop 21) — founder's 30-day goal, public top-of-page */
+.goal-card {
+  background: linear-gradient(135deg, rgba(232,185,116,0.18) 0%, rgba(132,212,136,0.10) 100%);
+  border: 2px solid var(--accent);
+  border-radius: 14px;
+  padding: 20px 24px;
+  margin: 0 0 18px;
+  box-shadow: 0 2px 18px rgba(232,185,116,0.10);
+}
+.goal-header { display: flex; align-items: center; gap: 14px; }
+.goal-icon { font-size: 34px; line-height: 1; }
+.goal-title-block { flex: 1; min-width: 0; }
+.goal-label { font-size: 10px; color: var(--accent); letter-spacing: 1.6px; font-weight: 700; }
+.goal-title { font-size: 19px; font-weight: 700; color: var(--text); margin-top: 3px; line-height: 1.3; }
+.goal-progress { text-align: right; }
+.goal-progress-n { font-size: 32px; font-weight: 800; color: var(--accent); line-height: 1; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+.goal-progress-lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 2px; }
+.goal-blurb { color: var(--text); font-size: 13px; line-height: 1.7; margin: 12px 0 8px; opacity: 0.92; }
+.goal-meta { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.goal-meta-item strong { color: var(--text); }
+.goal-meta a { color: var(--accent); text-decoration: none; border-bottom: 1px dashed var(--accent); }
+.goal-meta a:hover { color: var(--text); }
+.goal-meta-sep { color: var(--border); }
+
 /* Paths overview (Loop 20) — one Game, many ways in */
 .paths-card {
   background: linear-gradient(135deg, rgba(60,60,90,0.16) 0%, rgba(80,60,40,0.12) 100%);
@@ -3087,6 +3111,20 @@ async function loadGameState() {
     animate('gsProofs', d.proofs?.total ?? 0);
     animate('gsAffiliates', d.affiliate_links ?? 0);
     animate('gsScore', d.field_score_sum ?? 0);
+
+    // === Goal panel — public progress on the 30-day goal ===
+    const gpN = document.getElementById('goalProgressN');
+    const gpL = document.getElementById('goalProgressLbl');
+    const gTitle = document.getElementById('goalTitle');
+    const gBlurb = document.getElementById('goalBlurb');
+    const totalChamps = d.champions?.total ?? 0;
+    if (gpN) gpN.textContent = totalChamps;
+    if (gpL) gpL.textContent = totalChamps === 1 ? 'Champion (just James)' : (totalChamps + ' Champion' + (totalChamps === 1 ? '' : 's'));
+    // When goal is hit (≥2 champions), reframe the panel as achieved + show what's next
+    if (totalChamps >= 2) {
+      if (gTitle) gTitle.textContent = '✓ Goal hit. The Game is no longer N=1.';
+      if (gBlurb) gBlurb.textContent = 'The substrate proved it can hold a non-founder Champion. Next 30-day goal forms from here — see core/STATE/AI_GOALS.md for the AI system\\'s working goals.';
+    }
     const growth = d.growth_this_week?.total ?? 0;
     const gEl = document.getElementById('gsGrowth');
     if (gEl) {
@@ -4777,6 +4815,29 @@ def render_html() -> str:
       <div class="role-item"><strong>Author of</strong> &mdash; Manifesto v1.0 · Ecosystem · Treasury v0.10 · Game v1.3 · WPAP · Forming Agreements · Cockpit</div>
       <div class="role-item"><strong>Holds</strong> &mdash; spiritual + doctrinal authority within CORA Nation · NOT fiduciary control over OneBPO (governance firewall, by design)</div>
       <div class="role-item"><strong>Body in the room when</strong> &mdash; ratification · ceremony · steward initiation · civilization-quest decisions</div>
+    </div>
+  </div>
+
+  <div class="goal-card" id="goalCard">
+    <div class="goal-header">
+      <div class="goal-icon">🎯</div>
+      <div class="goal-title-block">
+        <div class="goal-label">FOUNDER GOAL · 30 DAYS</div>
+        <div class="goal-title" id="goalTitle">First non-James human to engage with the Game.</div>
+      </div>
+      <div class="goal-progress">
+        <div class="goal-progress-n" id="goalProgressN">—</div>
+        <div class="goal-progress-lbl" id="goalProgressLbl">Champions</div>
+      </div>
+    </div>
+    <p class="goal-blurb" id="goalBlurb">
+      The substrate is built — 20+ loops, 9 Paradigm Shifts, full funnel from Sign → Card → Proof → Affiliate → Path.
+      What's missing is one other human in it. Sign / file a proof / express interest in any path — you become the proof that the Game is more than its founder.
+    </p>
+    <div class="goal-meta">
+      <span class="goal-meta-item">Decision filter: <strong>proof · revenue · clarity · ease</strong> in 30 days</span>
+      <span class="goal-meta-sep">·</span>
+      <span class="goal-meta-item">AI working goals: <a href="https://github.com/jamessunheart/FPAI_Cockpit/blob/main/core/STATE/AI_GOALS.md" target="_blank" rel="noopener">core/STATE/AI_GOALS.md</a></span>
     </div>
   </div>
 

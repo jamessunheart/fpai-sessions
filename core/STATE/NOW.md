@@ -1,15 +1,19 @@
 # CURRENT_STATE — Living SSOT
 
-**Last Updated:** 2026-05-08 (Session: Loop 15 retreat-card + Loop 16 leaderboard shipped from parallel sessions)
+**Last Updated:** 2026-05-08 (Session: Loop 21 — Goal panel + AI_GOALS.md SSOT shipped)
 **Updated By:** Claude (in FPAI_Cockpit, with James)
 **System Status:** 🟢 OPERATIONAL — The Game is playing itself
+
+> **🎯 30-day goal:** First non-James human to engage with the Game (sign / file proof / express path interest). The substrate is built; what's missing is one other human in it.
+>
+> **🤖 AI working goals** are tracked in [`core/STATE/AI_GOALS.md`](AI_GOALS.md). Founder reads it to see what the AI system is optimizing for; AI sessions read it on startup to align across terminals.
 
 ---
 
 ## 🎯 CURRENT PRIORITY (The ONE Thing)
 
 ### Priority: The Full Potential Game — Founder's First Game / Zen Village substrate
-**Status:** 🟢 ACTIVE — 16 loops shipped in 36 hours, 7 Paradigm Shifts
+**Status:** 🟢 ACTIVE — 20+ loops shipped in 36 hours, 9 Paradigm Shifts (see proofs/ for canonical count)
 **Live at:** `https://fullpotential.com/game`
 **Decision filter:** proof / revenue / clarity / ease — 30-day horizon
 
@@ -82,6 +86,20 @@ Remaining ranked options:
 
 ---
 
+## 🎯 GOALS — top 3 (most-important first)
+
+*The system reads this section. `/goals` on `@sunheartbrain_bot` renders it. Edit to redirect attention. Each goal has a target, timeframe, and a current state line so progress is visible.*
+
+| # | Goal | Target | Timeframe | Current state |
+|---|---|---|---|---|
+| 1 | **Enroll first cohort of Champions across the Game's multi-path funnel** | 10 real Champions in the network, each routed to ≥1 path (apprenticeship / village / parties / retreats / commerce / coaching / witnessing) | 30 days | 1 Champion (James #1) · 0 affiliates · invite link live |
+| 2 | **First Zen Village retreat — date + first 3 commitments** | Date set + price set + 3 confirmed attendees | 30 days | 0 retreat-interest submissions · interest form live · no date/price/capacity set |
+| 3 | **Card-completion rate ≥80% for enrolled Champions** | 8/10 Cards filled (Aspirational + Reality layers, witnessed) | 45 days | 0/1 cards filled · Card Quest live · AI Port-In prompt ready |
+
+*To modify: edit this section, then `SERVICES/sunheart-brain/ingest/sync_now_to_brain.sh` to push.*
+
+---
+
 ## 📊 PROJECT RANKING — most-important first
 
 *Synthesized 2026-05-08 from memory (stated priorities) + git momentum (last 14d) + live surface state + open qb questions. This is the SSOT for `/projects` ordering on `@sunheartbrain_bot` — bot reads ranks here, not guesses.*
@@ -106,12 +124,15 @@ Remaining ranked options:
 
 *Pulled from qb across books (fpai / game / sunheart) on 2026-05-08, ordered by gating power on the P1 funnel. `/questions` on `@sunheartbrain_bot` renders this live; this section captures the why-it-matters context the bot's terse view doesn't.*
 
-### #1 · [game/q-20260508-870956] Who in James's field is the first 5–10 to invite, and what does each invitation say?
-**Why #1 (gates everything else):** Loop 20+ is positioned around enrollment. James's reframe on the retreat question made this the gating move: *enroll first → Game framework pulls Champions through quests → retreat (or village / apprenticeship / parties / commerce / coaching / witnessing — see `feedback_game_is_many_pathed_funnel.md`).* Without initial invitations, the funnel has nobody to pull through. `/characters` command just shipped to surface the live roster + KPIs from `/api/champion/list`.
-**Stuck on:** James-side work (writing the actual invites) gated by who-shows on the roster. Substrate is ready; signal is needed.
+### #1 · [game/q-20260508-f75d50] GOAL — Enroll Champions across the Game's multi-path funnel
+**Why #1 (the umbrella):** This is the META P1 inquiry — all other game-book questions sit under it. Per `feedback_game_is_many_pathed_funnel.md`, paths are *apprenticeship / village / parties / retreats / commerce / coaching / witnessing*. Don't pitch retreat as the singular outcome; enroll once, route per person.
 
-### #2 · [game/q-20260508-456895] Who's coming to the first Zen Village retreat, and what does the booking page need to convert them?
-**Why #2 (downstream of #1):** Originally framed as "build the booking page first." James reframed: *enroll first → Game pulls Champions through quests → retreat.* So booking-page work shouldn't lead — Champion-recruitment does. This question waits for the funnel-top to fill.
+### #2 · [game/q-20260508-870956] Who in James's field is the first 5–10 to invite, and what does each invitation look like?
+**Why #2 (operationalizes #1 — gates everything downstream):** Without the invite list, the multi-path funnel has no entrants. `/characters` command just shipped to surface the live roster + KPIs from `/api/champion/list`.
+**Stuck on:** James-side work (drafting the actual invitations). Substrate is ready; signal is needed.
+
+### #3 · [game/q-20260508-456895] Who's coming to the first Zen Village retreat, and what does the booking page need to convert them?
+**Why #3 (downstream of #2):** Originally framed as "build the booking page first." James reframed: *enroll first → Game pulls Champions through quests → retreat.* So booking-page work shouldn't lead — Champion-recruitment does. This question waits for #2 to yield Champions.
 **Substrate state:** `/retreat/interest` endpoint exists (champion-sign), `/retreat/list` public, founder TG alerts on submit, `fullpotential.ai/retreat` returns 200. Page is ready when Champions are.
 
 ### Latent (worth opening when they persist)
