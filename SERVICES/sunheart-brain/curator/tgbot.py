@@ -1634,11 +1634,13 @@ async def _cmd_signals() -> str:
             return None
 
     base = _os.environ.get("FPAI_BASE_URL", "https://fullpotential.com")
-    game_signals, retreats, board, listing = await asyncio.gather(
+    cos_url = _os.environ.get("CHIEF_OF_STAFF_URL", "http://127.0.0.1:8107")
+    game_signals, retreats, board, listing, money = await asyncio.gather(
         _fetch_json(f"{base}/api/champion/signals"),
         _fetch_json(f"{base}/api/champion/retreat/list"),
         _fetch_json(f"{base}/api/champion/leaderboard"),
         _fetch_json(f"{base}/api/champion/list"),
+        _fetch_json(f"{cos_url}/money"),
     )
 
     retreat_count = (retreats or {}).get("count", 0)
@@ -1696,6 +1698,33 @@ async def _cmd_signals() -> str:
     else:
         lines.append("<b>🎮 GAME · Full Potential</b>")
         lines.append("  ⚪ <i>/api/champion/signals unreachable</i>")
+
+    # MONEY · headline net + biggest leak (Chief of Staff /money)
+    lines.append("\n<b>💰 MONEY · Chief of Staff</b>")
+    if money:
+        total_cost = float(money.get("total_cost_monthly_usd") or 0)
+        total_rev = float(money.get("total_revenue_monthly_usd") or 0)
+        net = float(money.get("net_monthly_usd") or (total_rev - total_cost))
+        net_glyph = "🟢" if net > 0 else ("🔴" if net < 0 else "⚪")
+        lines.append(
+            f"  {net_glyph} Net: <b>${net:+,.0f}/mo</b> · "
+            f"Revenue ${total_rev:,.0f} · Cost ${total_cost:,.0f}"
+        )
+        liquid = money.get("liquid_assets") or {}
+        liquid_total = liquid.get("total_usd") if isinstance(liquid, dict) else None
+        if liquid_total is not None:
+            runway = money.get("runway_months") or money.get("runway")
+            extra = f" · Runway <b>{runway} mo</b>" if runway else ""
+            lines.append(f"  💵 Liquid: <b>${float(liquid_total):,.0f}</b>{extra}")
+        leak = money.get("biggest_leak") or {}
+        if leak.get("name"):
+            lines.append(
+                f"  🔧 Biggest leak: {tg._esc(leak.get('name','?'))} "
+                f"(${float(leak.get('monthly_usd',0)):,.0f}/mo)"
+            )
+        lines.append("  <i>/money for full breakdown</i>")
+    else:
+        lines.append(f"  ⚪ <i>Chief of Staff at {tg._esc(cos_url)} unreachable</i>")
 
     # LEADS pipeline (per-channel breakdown the GAME endpoint doesn't surface)
     lines.append("\n<b>📥 LEADS pipeline</b> <i>(0 today is signal too)</i>")
