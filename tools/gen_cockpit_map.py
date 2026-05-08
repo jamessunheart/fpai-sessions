@@ -3168,12 +3168,21 @@ async function loadPlayerState() {
 
     const tip = document.getElementById('psTip');
     if (tip) {
+      let alreadyInterested = false;
+      try { alreadyInterested = !!localStorage.getItem('fpai-cockpit-retreat-interest'); } catch (e) {}
       const next = !d.champion ? 'Sign the Agreement to become a Champion.'
         : !d.card_present ? 'Build your Character Card next (5 min · AI Port-In above).'
         : d.proofs_filed === 0 ? 'Run a 7-Day First Game and file your first Proof.'
         : d.affiliates_count === 0 ? 'Share your invite link — when an aligned person signs through it, your score grows.'
-        : 'You\\'re moving. Keep going — file the next proof, witness another player, ascend the Player Path.';
+        : alreadyInterested ? 'You\\'re on the retreat list. Keep filing proofs and bringing aligned people — the cohort takes shape from here.'
+        : 'Express interest in the first Costa Rica retreat below — the Game\\'s terminus is in person.';
       tip.textContent = '→ ' + next;
+    }
+
+    // === Retreat Interest panel — visible to any signed Champion ===
+    const retreatCard = document.getElementById('retreatCard');
+    if (retreatCard && d.champion) {
+      retreatCard.style.display = '';
     }
 
     // === Your Contributions ===
@@ -3235,6 +3244,74 @@ function progressiveDisclosure(state) {
 }
 loadPlayerState();
 setInterval(loadPlayerState, 60000);
+
+// --- Retreat Interest (Loop 15) -----------------------------------------
+async function loadRetreatCount() {
+  try {
+    const res = await fetch('/api/retreat/stats', { cache: 'no-store' });
+    if (!res.ok) return;
+    const d = await res.json();
+    const el = document.getElementById('retreatCount');
+    if (el) el.textContent = d.public ?? d.total ?? '0';
+  } catch (e) {}
+}
+loadRetreatCount();
+setInterval(loadRetreatCount, 90000);
+
+document.getElementById('rtSubmit')?.addEventListener('click', async (ev) => {
+  ev.preventDefault();
+  const btn = document.getElementById('rtSubmit');
+  const msg = document.getElementById('retreatMsg');
+  const showMsg = (text, kind) => {
+    if (!msg) return;
+    msg.className = 'retreat-msg ' + kind;
+    msg.textContent = text;
+    msg.style.display = '';
+  };
+  let player = '';
+  try { player = localStorage.getItem('fpai-cockpit-name') || ''; } catch (e) {}
+  if (!player) {
+    showMsg('Identify yourself first via "Already a Coherent Champion?" above.', 'err');
+    return;
+  }
+  const dates = (document.getElementById('rtDates')?.value || '').trim();
+  const contribution = (document.getElementById('rtContrib')?.value || '').trim();
+  const why = (document.getElementById('rtWhy')?.value || '').trim();
+  const isPublic = !!document.getElementById('rtPublic')?.checked;
+  const honeypot = (document.getElementById('rtCompany')?.value || '').trim();
+
+  if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
+  try {
+    const res = await fetch('/api/retreat/interest', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        player,
+        preferred_dates: dates || null,
+        contribution: contribution || null,
+        why_irresistible: why || null,
+        consent: isPublic ? 'public' : 'private',
+        company: honeypot || null,
+      }),
+    });
+    const d = await res.json();
+    if (!res.ok || !d.ok) {
+      showMsg(d.detail || 'Could not submit. Try again in a moment.', 'err');
+    } else {
+      showMsg(d.message || 'You\\'re on the list. Thank you.', 'ok');
+      try { localStorage.setItem('fpai-cockpit-retreat-interest', '1'); } catch (e) {}
+      ['rtDates', 'rtContrib', 'rtWhy'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      loadRetreatCount();
+    }
+  } catch (e) {
+    showMsg('Network error. Try again.', 'err');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '🌴 I\\'m interested →'; }
+  }
+});
 
 document.getElementById('psCopyInviteBtn')?.addEventListener('click', async () => {
   const url = document.getElementById('psInviteUrl')?.textContent || '';

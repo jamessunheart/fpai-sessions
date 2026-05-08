@@ -34,6 +34,8 @@ PROOFS_DIR = Path(os.environ.get("PROOFS_DATA_DIR", "/var/lib/full-potential/pro
 PROOFS_DIR.mkdir(parents=True, exist_ok=True)
 CARDS_DIR = Path(os.environ.get("CARDS_DATA_DIR", "/var/lib/full-potential/cards"))
 CARDS_DIR.mkdir(parents=True, exist_ok=True)
+RETREAT_DIR = Path(os.environ.get("RETREAT_DATA_DIR", "/var/lib/full-potential/retreat-interests"))
+RETREAT_DIR.mkdir(parents=True, exist_ok=True)
 
 app = FastAPI(title="Champion Sign", version="0.1.0")
 app.add_middleware(
@@ -821,6 +823,131 @@ async def submit_card(req: CardSubmit, request: Request) -> dict:
     }
 
 
+class RetreatInterest(BaseModel):
+    player: str = Field(..., min_length=2, max_length=100)
+    handle: Optional[str] = Field(None, max_length=60)
+    email: Optional[str] = Field(None, max_length=120)
+    preferred_dates: Optional[str] = Field(None, max_length=200)
+    contribution: Optional[str] = Field(None, max_length=600)
+    why_irresistible: Optional[str] = Field(None, max_length=600)
+    consent: str = Field("public")
+    company: Optional[str] = Field(None, max_length=120)  # honeypot
+
+    @validator("player", "preferred_dates", "contribution", "why_irresistible")
+    def _no_html(cls, v):
+        if v is None:
+            return v
+        if re.search(r"[<>]", v):
+            raise ValueError("contains forbidden characters")
+        return v.strip()
+
+
+@app.post("/retreat/interest")
+async def submit_retreat_interest(req: RetreatInterest, request: Request) -> dict:
+    if req.company:
+        return {"ok": True, "honeypot": True}
+
+    ip = request.client.host if request.client else "unknown"
+    if not _check_rate(ip):
+        raise HTTPException(status_code=429, detail="Too many submissions. Try again later.")
+
+    today = datetime.now().strftime("%Y-%m-%d")
+    slug = re.sub(r"[^a-z0-9]+", "-", req.player.lower()).strip("-") or "unnamed"
+    fname = f"{today}_{slug}.md"
+    out = RETREAT_DIR / fname
+    if out.exists():
+        for i in range(2, 100):
+            alt = RETREAT_DIR / f"{today}_{slug}-{i}.md"
+            if not alt.exists():
+                out = alt
+                break
+
+    public = req.consent.lower() == "public"
+    md = _render_retreat_md(req, today)
+    out.write_text(md, encoding="utf-8")
+
+    audit = RETREAT_DIR / "audit.jsonl"
+    with audit.open("a", encoding="utf-8") as f:
+        f.write(json.dumps({
+            "ts": datetime.now().isoformat(),
+            "kind": "retreat_interest",
+            "player": req.player if public else "(private)",
+            "preferred_dates": req.preferred_dates if public else None,
+            "consent": req.consent,
+            "ip_hash": str(hash(ip))[-6:],
+            "filename": fname,
+        }) + "\n")
+
+    try:
+        import urllib.request
+        alert_msg = (
+            f"🌴 Retreat interest from {req.player}"
+            f"{' — dates: ' + req.preferred_dates if req.preferred_dates else ''}"
+        )
+        urllib.request.urlopen(
+            urllib.request.Request(
+                "http://127.0.0.1:8766/alert",
+                data=json.dumps({"message": alert_msg, "source": "retreat-interest"}).encode(),
+                headers={"Content-Type": "application/json"},
+            ),
+            timeout=2,
+        )
+    except Exception:
+        pass
+
+    return {
+        "ok": True,
+        "filename": fname,
+        "message": f"You're on the list, {req.player.split()[0]}. The first retreat takes shape from here.",
+    }
+
+
+@app.get("/retreat/list")
+async def list_retreat_interests() -> dict:
+    """Return public retreat interests, newest first."""
+    items = []
+    for p in sorted(RETREAT_DIR.glob("*.md"), reverse=True):
+        try:
+            text = p.read_text(encoding="utf-8")
+            fm = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+            if not fm:
+                continue
+            data: dict = {}
+            for line in fm.group(1).split("\n"):
+                m = re.match(r"^([a-z_]+):\s*(.*)$", line)
+                if m:
+                    data[m.group(1)] = m.group(2).strip().strip('"')
+            consent = (data.get("consent") or "").lower()
+            if consent != "public":
+                continue
+            data.pop("email", None)
+            items.append(data)
+        except Exception:
+            continue
+    return {"count": len(items), "interests": items}
+
+
+@app.get("/retreat/stats")
+async def retreat_stats() -> dict:
+    """Public counter — how many Champions have raised their hand."""
+    total = 0
+    public_count = 0
+    for p in RETREAT_DIR.glob("*.md"):
+        total += 1
+        try:
+            text = p.read_text(encoding="utf-8")
+            fm = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+            if not fm:
+                continue
+            for line in fm.group(1).split("\n"):
+                if line.startswith("consent:") and line.split(":", 1)[1].strip().strip('"').lower() == "public":
+                    public_count += 1
+                    break
+        except Exception:
+            continue
+    return {"total": total, "public": public_count}
+
+
 @app.get("/card/list")
 async def list_cards() -> dict:
     """Return public + player-tier cards."""
@@ -844,6 +971,41 @@ async def list_cards() -> dict:
         except Exception:
             continue
     return {"count": len(cards), "cards": cards}
+
+
+def _render_retreat_md(req: RetreatInterest, today: str) -> str:
+    public = req.consent.lower() == "public"
+    return f"""---
+player: {req.player}
+handle: {req.handle or ''}
+email: {req.email or ''}
+preferred_dates: {req.preferred_dates or ''}
+consent: {req.consent}
+date_submitted: {today}
+source: webhook
+status: interested
+---
+
+# Retreat Interest — {req.player}
+
+**Preferred dates:** {req.preferred_dates or '(open)'}
+
+## What I'd contribute
+
+{req.contribution or '(not specified)'}
+
+## What would make this retreat irresistible to me
+
+{req.why_irresistible or '(not specified)'}
+
+## Visibility
+
+This interest is **{'PUBLIC' if public else req.consent.upper()}**.
+
+---
+
+*Submitted via Retreat Interest form at https://fullpotential.com/game on {today}.*
+"""
 
 
 def _render_card_md(req: CardSubmit, today: str) -> str:
