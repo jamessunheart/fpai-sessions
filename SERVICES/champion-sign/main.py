@@ -1842,3 +1842,478 @@ async def game_signals() -> dict:
         },
         "top_inviter": top_inviter,
     }
+
+
+# ===== /credits — Coherent Credit ledger v0 (Loop 30) =====================
+#
+# Credits ≠ Points (Field Score). Points reward participation; Credits are
+# the wallet currency exchanged in /store. Players start at 0 — they must
+# earn (gameplay or grant) or top up to acquire credits.
+#
+# Architecture:
+#   - Append-only ledger at /var/lib/full-potential/credits/ledger.jsonl
+#   - Balance = sum(received) - sum(sent) computed on read
+#   - Three transaction kinds:
+#       earn   — earned through gameplay action
+#       grant  — minted by architect (admin token required)
+#       send   — peer-to-peer transfer
+#
+# v0 bootstrap rules:
+#   - 0 starting balance for everyone
+#   - Architect grants via admin endpoint
+#   - Earning hooks (filed-witnessed proof, affiliate signs, etc.) — Loop 32
+
+CREDITS_DIR = Path(os.environ.get("CREDITS_DATA_DIR", "/var/lib/full-potential/credits"))
+CREDITS_DIR.mkdir(parents=True, exist_ok=True)
+CREDITS_LEDGER = CREDITS_DIR / "ledger.jsonl"
+
+
+def _norm_handle(h: str) -> str:
+    """Normalize a handle: lowercase, strip @, dashes for non-alnum."""
+    if not h:
+        return ""
+    h = h.strip().lstrip("@").lower()
+    return re.sub(r"[^a-z0-9]+", "-", h).strip("-")
+
+
+def _credit_balance(handle: str) -> int:
+    handle = _norm_handle(handle)
+    if not handle or not CREDITS_LEDGER.exists():
+        return 0
+    bal = 0
+    for line in CREDITS_LEDGER.read_text(encoding="utf-8").splitlines():
+        try:
+            tx = json.loads(line)
+        except Exception:
+            continue
+        if _norm_handle(tx.get("to", "")) == handle:
+            bal += int(tx.get("amount", 0))
+        if _norm_handle(tx.get("from", "")) == handle:
+            bal -= int(tx.get("amount", 0))
+    return bal
+
+
+def _credit_history(handle: str, limit: int = 20) -> list[dict]:
+    handle = _norm_handle(handle)
+    if not handle or not CREDITS_LEDGER.exists():
+        return []
+    out = []
+    for line in CREDITS_LEDGER.read_text(encoding="utf-8").splitlines():
+        try:
+            tx = json.loads(line)
+        except Exception:
+            continue
+        from_n = _norm_handle(tx.get("from", ""))
+        to_n = _norm_handle(tx.get("to", ""))
+        if handle in (from_n, to_n):
+            direction = "out" if from_n == handle else "in"
+            other = tx.get("from") if direction == "in" else tx.get("to")
+            out.append({
+                "ts": tx.get("ts"),
+                "kind": tx.get("kind"),
+                "direction": direction,
+                "amount": tx.get("amount"),
+                "other": other,
+                "memo": tx.get("memo"),
+            })
+    return list(reversed(out))[:limit]
+
+
+def _credit_append(tx: dict) -> None:
+    tx["ts"] = datetime.now().isoformat()
+    with CREDITS_LEDGER.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(tx) + "\n")
+
+
+class CreditSend(BaseModel):
+    from_handle: str = Field(..., min_length=1, max_length=60)
+    to_handle: str = Field(..., min_length=1, max_length=60)
+    amount: int = Field(..., gt=0, le=100000)
+    memo: Optional[str] = Field(None, max_length=200)
+
+    @validator("from_handle", "to_handle")
+    def _clean(cls, v: str) -> str:
+        if re.search(r"[<>\s]", v):
+            raise ValueError("handle cannot contain spaces or HTML")
+        return v.strip().lstrip("@")
+
+
+class CreditGrant(BaseModel):
+    to_handle: str = Field(..., min_length=1, max_length=60)
+    amount: int = Field(..., gt=0, le=1000000)
+    memo: Optional[str] = Field(None, max_length=200)
+
+    @validator("to_handle")
+    def _clean(cls, v: str) -> str:
+        if re.search(r"[<>\s]", v):
+            raise ValueError("handle cannot contain spaces or HTML")
+        return v.strip().lstrip("@")
+
+
+@app.get("/credits/balance/{handle}")
+async def credits_balance(handle: str) -> dict:
+    return {"handle": handle, "balance": _credit_balance(handle)}
+
+
+@app.get("/credits/history/{handle}")
+async def credits_history(handle: str, limit: int = 20) -> dict:
+    return {
+        "handle": handle,
+        "balance": _credit_balance(handle),
+        "history": _credit_history(handle, limit=limit),
+    }
+
+
+@app.post("/credits/send")
+async def credits_send(req: CreditSend) -> dict:
+    """Peer-to-peer transfer. Requires sufficient balance."""
+    from_n = _norm_handle(req.from_handle)
+    to_n = _norm_handle(req.to_handle)
+    if from_n == to_n:
+        raise HTTPException(status_code=400, detail="cannot send to self")
+    bal = _credit_balance(from_n)
+    if bal < req.amount:
+        raise HTTPException(status_code=400, detail=f"insufficient balance ({bal} credits)")
+    _credit_append({
+        "kind": "send",
+        "from": req.from_handle,
+        "to": req.to_handle,
+        "amount": req.amount,
+        "memo": req.memo or "",
+    })
+    return {
+        "ok": True,
+        "from_balance": _credit_balance(from_n),
+        "to_balance": _credit_balance(to_n),
+        "message": f"Sent {req.amount} credits to @{to_n}.",
+    }
+
+
+@app.post("/credits/grant")
+async def credits_grant(req: CreditGrant, x_admin_token: Optional[str] = Header(None)) -> dict:
+    """Architect-only — mint credits to a handle."""
+    _check_admin(x_admin_token)
+    _credit_append({
+        "kind": "grant",
+        "from": "(architect)",
+        "to": req.to_handle,
+        "amount": req.amount,
+        "memo": req.memo or "",
+    })
+    return {
+        "ok": True,
+        "to_balance": _credit_balance(req.to_handle),
+        "message": f"Granted {req.amount} credits to @{_norm_handle(req.to_handle)}.",
+    }
+
+
+@app.get("/credits/leaderboard")
+async def credits_leaderboard(limit: int = 10) -> dict:
+    """Top balances. Tallies the entire ledger."""
+    if not CREDITS_LEDGER.exists():
+        return {"holders": [], "total_in_circulation": 0}
+    bals: dict[str, int] = {}
+    total = 0
+    for line in CREDITS_LEDGER.read_text(encoding="utf-8").splitlines():
+        try:
+            tx = json.loads(line)
+        except Exception:
+            continue
+        amt = int(tx.get("amount", 0))
+        to_n = _norm_handle(tx.get("to", ""))
+        from_n = _norm_handle(tx.get("from", ""))
+        if to_n:
+            bals[to_n] = bals.get(to_n, 0) + amt
+        if from_n and from_n != "(architect)":
+            bals[from_n] = bals.get(from_n, 0) - amt
+        if tx.get("kind") in ("grant", "earn"):
+            total += amt
+    holders = sorted([{"handle": h, "balance": b} for h, b in bals.items() if b > 0], key=lambda x: -x["balance"])
+    return {"holders": holders[:limit], "total_in_circulation": total}
+
+
+# ===== /store — Coherent Marketplace (Loop 31) ============================
+#
+# Anyone can list. Items accessed with credits. Ranking favors credit-
+# accepting offers (incentivizes circulation):
+#
+#   tier 0 (top): credit-only offers (no $ accepted)
+#   tier 1:       hybrid offers, ranked by credit-share within tier
+#   tier 2:       $-only offers (no credits accepted)
+#
+# Within a tier, recency breaks ties.
+#
+# Architecture:
+#   - Per-offer markdown at /var/lib/full-potential/store/{slug}.md
+#   - Frontmatter holds price/inventory/credit-share/status
+#   - /store/buy is atomic: deduct credits, increment sold, append ledger
+
+STORE_DIR = Path(os.environ.get("STORE_DATA_DIR", "/var/lib/full-potential/store"))
+STORE_DIR.mkdir(parents=True, exist_ok=True)
+STORE_USD_TO_CREDIT_RATE = float(os.environ.get("STORE_USD_TO_CREDIT_RATE", "1.0"))
+
+
+class StoreOffer(BaseModel):
+    owner_handle: str = Field(..., min_length=1, max_length=60)
+    title: str = Field(..., min_length=2, max_length=120)
+    description: Optional[str] = Field(None, max_length=2000)
+    price_credits: Optional[int] = Field(None, ge=0, le=1000000)
+    price_usd: Optional[float] = Field(None, ge=0, le=1000000)
+    url: Optional[str] = Field(None, max_length=500)
+    tags: Optional[str] = Field(None, max_length=200)  # comma-separated
+    inventory: Optional[int] = Field(None, ge=0, le=100000)
+    company: Optional[str] = Field(None, max_length=120)  # honeypot
+
+    @validator("owner_handle")
+    def _clean(cls, v: str) -> str:
+        if re.search(r"[<>\s]", v):
+            raise ValueError("handle cannot contain spaces or HTML")
+        return v.strip().lstrip("@")
+
+    @validator("title", "description")
+    def _no_html(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return v
+        if re.search(r"[<>]", v):
+            raise ValueError("contains forbidden characters")
+        return v.strip()
+
+
+class StoreBuy(BaseModel):
+    buyer_handle: str = Field(..., min_length=1, max_length=60)
+    offer_id: str = Field(..., min_length=1, max_length=120)
+
+    @validator("buyer_handle", "offer_id")
+    def _clean(cls, v: str) -> str:
+        if re.search(r"[<>\s]", v):
+            raise ValueError("invalid character")
+        return v.strip().lstrip("@")
+
+
+def _offer_credit_share(price_credits: Optional[int], price_usd: Optional[float]) -> float:
+    """Compute the credit-share weight: 1.0 = credit-only, 0.0 = $-only."""
+    pc = price_credits or 0
+    pu = price_usd or 0
+    if pc == 0 and pu == 0:
+        return 0.5  # gift / unspecified
+    pu_in_credits = pu * STORE_USD_TO_CREDIT_RATE
+    total = pc + pu_in_credits
+    if total == 0:
+        return 0.0
+    return round(pc / total, 3)
+
+
+def _offer_tier(price_credits: Optional[int], price_usd: Optional[float]) -> int:
+    pc = price_credits or 0
+    pu = price_usd or 0
+    if pc > 0 and pu == 0:
+        return 0  # credit-only
+    if pc > 0 and pu > 0:
+        return 1  # hybrid
+    if pc == 0 and pu > 0:
+        return 2  # $-only
+    return 3  # gift / free / undefined
+
+
+def _read_offer(p: Path) -> Optional[dict]:
+    try:
+        text = p.read_text(encoding="utf-8")
+        fm = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+        if not fm:
+            return None
+        data = {}
+        for line in fm.group(1).split("\n"):
+            m = re.match(r"^([a-z_]+):\s*(.*)$", line)
+            if m:
+                v = m.group(2).strip().strip('"')
+                if v.lower() in ("null", "none", ""):
+                    data[m.group(1)] = None
+                elif v.isdigit():
+                    data[m.group(1)] = int(v)
+                elif v.replace(".", "").isdigit():
+                    try: data[m.group(1)] = float(v)
+                    except: data[m.group(1)] = v
+                else:
+                    data[m.group(1)] = v
+        data["_mtime"] = p.stat().st_mtime
+        data["_filename"] = p.name
+        return data
+    except Exception:
+        return None
+
+
+@app.post("/store/post")
+async def store_post(req: StoreOffer, request: Request) -> dict:
+    """List a new offer. Anyone (not just architect) can post."""
+    if req.company:
+        return {"ok": True, "honeypot": True}
+    ip = request.client.host if request.client else "unknown"
+    if not _check_rate(ip):
+        raise HTTPException(status_code=429, detail="Too many posts from this address. Try later.")
+    if (req.price_credits or 0) == 0 and (req.price_usd or 0) == 0:
+        raise HTTPException(status_code=400, detail="must specify price_credits or price_usd (or both)")
+
+    today = datetime.now().strftime("%Y-%m-%d")
+    title_slug = re.sub(r"[^a-z0-9]+", "-", req.title.lower()).strip("-")[:40] or "offer"
+    offer_id = f"{today}_{title_slug}"
+    out = STORE_DIR / f"{offer_id}.md"
+    suffix = 2
+    while out.exists():
+        offer_id = f"{today}_{title_slug}-{suffix}"
+        out = STORE_DIR / f"{offer_id}.md"
+        suffix += 1
+
+    credit_share = _offer_credit_share(req.price_credits, req.price_usd)
+    tier = _offer_tier(req.price_credits, req.price_usd)
+
+    md = f"""---
+offer_id: {offer_id}
+date_listed: {today}
+owner_handle: "{req.owner_handle}"
+title: "{(req.title or '').replace('"', "'")[:120]}"
+price_credits: {req.price_credits if req.price_credits is not None else 'null'}
+price_usd: {req.price_usd if req.price_usd is not None else 'null'}
+credit_share: {credit_share}
+tier: {tier}
+url: "{(req.url or '')}"
+tags: "{(req.tags or '')}"
+inventory: {req.inventory if req.inventory is not None else 'null'}
+sold: 0
+status: active
+---
+
+# {req.title}
+
+**Listed by:** @{req.owner_handle}
+
+{req.description or ''}
+
+{('**Link:** ' + req.url) if req.url else ''}
+"""
+    out.write_text(md, encoding="utf-8")
+
+    return {
+        "ok": True,
+        "offer_id": offer_id,
+        "tier": tier,
+        "credit_share": credit_share,
+        "message": f"Posted: {req.title}",
+    }
+
+
+@app.get("/store/list")
+async def store_list(limit: int = 20) -> dict:
+    """List active offers, ranked by tier (credit-share-favored)."""
+    if not STORE_DIR.exists():
+        return {"offers": [], "count": 0}
+    offers = []
+    for p in STORE_DIR.glob("*.md"):
+        d = _read_offer(p)
+        if not d:
+            continue
+        if (d.get("status") or "active") != "active":
+            continue
+        offers.append(d)
+    # Sort: tier asc, credit_share desc, mtime desc
+    offers.sort(key=lambda o: (
+        o.get("tier", 3),
+        -(o.get("credit_share") or 0),
+        -(o.get("_mtime") or 0),
+    ))
+    out = []
+    for d in offers[:limit]:
+        out.append({
+            "offer_id": d.get("offer_id"),
+            "title": d.get("title"),
+            "owner_handle": d.get("owner_handle"),
+            "price_credits": d.get("price_credits"),
+            "price_usd": d.get("price_usd"),
+            "credit_share": d.get("credit_share"),
+            "tier": d.get("tier"),
+            "url": d.get("url"),
+            "tags": d.get("tags"),
+            "inventory": d.get("inventory"),
+            "sold": d.get("sold", 0),
+            "date_listed": d.get("date_listed"),
+        })
+    return {"offers": out, "count": len(offers)}
+
+
+@app.get("/store/get/{offer_id}")
+async def store_get(offer_id: str) -> dict:
+    p = STORE_DIR / f"{offer_id}.md"
+    if not p.exists():
+        raise HTTPException(status_code=404, detail="offer not found")
+    d = _read_offer(p)
+    if not d:
+        raise HTTPException(status_code=500, detail="offer unreadable")
+    return d
+
+
+@app.post("/store/buy")
+async def store_buy(req: StoreBuy) -> dict:
+    """Buy with credits. Atomic: deduct credits, increment sold."""
+    p = STORE_DIR / f"{req.offer_id}.md"
+    if not p.exists():
+        raise HTTPException(status_code=404, detail="offer not found")
+    d = _read_offer(p)
+    if not d:
+        raise HTTPException(status_code=500, detail="offer unreadable")
+    if (d.get("status") or "active") != "active":
+        raise HTTPException(status_code=400, detail=f"offer is {d.get('status')}")
+    pc = d.get("price_credits")
+    if pc is None or pc == 0:
+        # Buy via credits requires credits price; $-only items must be visited via URL
+        raise HTTPException(status_code=400, detail="this offer is $-only — visit the URL to purchase")
+    inv = d.get("inventory")
+    if inv is not None and (d.get("sold", 0) >= inv):
+        raise HTTPException(status_code=400, detail="sold out")
+    # Check buyer balance
+    buyer_n = _norm_handle(req.buyer_handle)
+    bal = _credit_balance(buyer_n)
+    if bal < pc:
+        raise HTTPException(status_code=400, detail=f"insufficient credits ({bal} < {pc})")
+
+    # Atomic: ledger send + inventory increment
+    _credit_append({
+        "kind": "send",
+        "from": req.buyer_handle,
+        "to": d.get("owner_handle"),
+        "amount": pc,
+        "memo": f"store: {d.get('title')} ({req.offer_id})",
+    })
+    # Update offer file with new sold count
+    text = p.read_text(encoding="utf-8")
+    new_sold = (d.get("sold") or 0) + 1
+    new_text = re.sub(r"^sold:\s*\d+", f"sold: {new_sold}", text, count=1, flags=re.MULTILINE)
+    if inv is not None and new_sold >= inv:
+        new_text = re.sub(r"^status:\s*active", "status: sold-out", new_text, count=1, flags=re.MULTILINE)
+    p.write_text(new_text, encoding="utf-8")
+
+    return {
+        "ok": True,
+        "offer_id": req.offer_id,
+        "title": d.get("title"),
+        "price_credits": pc,
+        "buyer_balance": _credit_balance(buyer_n),
+        "url": d.get("url"),
+        "message": f"Bought: {d.get('title')} for {pc} credits.",
+    }
+
+
+@app.post("/store/remove")
+async def store_remove(offer_id: str, owner_handle: str, x_admin_token: Optional[str] = Header(None)) -> dict:
+    """Remove an offer. Either owner (TBD auth) or admin."""
+    p = STORE_DIR / f"{offer_id}.md"
+    if not p.exists():
+        raise HTTPException(status_code=404, detail="offer not found")
+    d = _read_offer(p)
+    if not d:
+        raise HTTPException(status_code=500, detail="unreadable")
+    is_admin = ADMIN_TOKEN and x_admin_token == ADMIN_TOKEN
+    if not is_admin and _norm_handle(d.get("owner_handle", "")) != _norm_handle(owner_handle):
+        raise HTTPException(status_code=403, detail="not your offer")
+    text = p.read_text(encoding="utf-8")
+    new_text = re.sub(r"^status:\s*\w+", "status: removed", text, count=1, flags=re.MULTILINE)
+    p.write_text(new_text, encoding="utf-8")
+    return {"ok": True, "offer_id": offer_id, "status": "removed"}

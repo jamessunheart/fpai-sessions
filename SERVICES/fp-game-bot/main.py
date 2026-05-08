@@ -140,6 +140,8 @@ A proof-based operating system for human potential. Coherent Champions of CHRIST
   /stats — your Player State
   /field — live game-state metrics
   /signals — vital signs · Field Coherence · 30d goal · 7d activity
+  /credits — wallet balance · send · history · leaderboard
+  /store — coherent marketplace · credit-accepting offers ranked first
   /invite — your unique invite link
   /whoami — what name you're registered as
   /help — show this menu
@@ -167,6 +169,202 @@ async def cmd_cancel(client, chat_id: int, args: str) -> None:
         await tg_send(client, chat_id, "↩️ Cancelled. Type /help to see commands.")
     else:
         await tg_send(client, chat_id, "Nothing to cancel. Type /help to see commands.")
+
+
+async def cmd_store(client, chat_id: int, args: str) -> None:
+    """Coherent Marketplace.
+
+    Usage:
+      /store              — top offers
+      /store buy <id>     — purchase with credits
+      /store mine         — your listings
+      Posting: use /game/store on web for now (multi-step on Telegram coming).
+    """
+    args_t = (args or "").strip()
+    name = _saved_name(chat_id)
+
+    # Buy subcommand
+    if args_t.lower().startswith("buy "):
+        if not name:
+            await tg_send(client, chat_id, "Sign first to buy: /sign")
+            return
+        offer_id = args_t.split(None, 1)[1].strip()
+        try:
+            d = await api_post(client, "/store/buy", {"buyer_handle": name, "offer_id": offer_id})
+        except Exception as e:
+            await tg_send(client, chat_id, f"⚠️ {esc(e)}")
+            return
+        if d.get("ok"):
+            url = d.get("url")
+            url_line = f"\n🔗 <a href=\"{esc(url)}\">{esc(url)}</a>" if url else ""
+            await tg_send(client, chat_id,
+                f"✅ Bought: <b>{esc(d.get('title') or '')}</b> for <b>{d.get('price_credits', 0)}</b> credits.\n"
+                f"Balance: <b>{d.get('buyer_balance', 0)}</b>{url_line}")
+        else:
+            await tg_send(client, chat_id, f"⚠️ {esc(d.get('detail') or 'failed')}")
+        return
+
+    # List
+    try:
+        d = await api_get(client, "/store/list", {"limit": 12})
+    except Exception as e:
+        await tg_send(client, chat_id, f"⚠️ {esc(e)}")
+        return
+
+    offers = d.get("offers", [])
+    if args_t.lower() == "mine":
+        offers = [o for o in offers if (o.get("owner_handle") or "").lower() == (name or "").lower()]
+
+    if not offers:
+        await tg_send(client, chat_id,
+            "🛍 <b>STORE</b>\n\n"
+            "<i>No active offers yet.</i>\n\n"
+            "Anyone can list — credit-only offers rank highest, then hybrid (by credit share), then $-only.")
+        return
+
+    lines = ["🛍 <b>COHERENT STORE</b>\n"]
+    tier_labels = {0: "💎 CREDIT-ONLY", 1: "⚖️ HYBRID", 2: "💵 USD"}
+    last_tier = -1
+    for o in offers[:12]:
+        t = o.get("tier", 3)
+        if t != last_tier:
+            lines.append(f"\n<b>{tier_labels.get(t, '· ·')}</b>")
+            last_tier = t
+        pc = o.get("price_credits")
+        pu = o.get("price_usd")
+        if pc and pu:
+            price = f"<b>{pc}</b>c + ${pu}"
+        elif pc:
+            price = f"<b>{pc}</b>c"
+        elif pu:
+            price = f"${pu}"
+        else:
+            price = "free"
+        sold = o.get("sold", 0)
+        inv = o.get("inventory")
+        avail = "" if inv is None else f" · {inv-sold}/{inv} left"
+        lines.append(
+            f"  • <b>{esc(o.get('title') or '?')}</b> · {price}{avail}\n"
+            f"    @{esc(o.get('owner_handle') or '?')} · <code>{esc(o.get('offer_id') or '')}</code>"
+        )
+    lines.append("\n<i>Buy with credits: <code>/store buy &lt;id&gt;</code></i>")
+    await tg_send(client, chat_id, "\n".join(lines))
+
+
+async def cmd_credits(client, chat_id: int, args: str) -> None:
+    """Coherent Credit wallet — balance, send, history.
+
+    Usage:
+      /credits             — show your balance + last 5 txns
+      /credits send 10 to @bob thanks for the witness
+      /credits history     — last 20 txns
+      /credits leaderboard — top holders
+    """
+    name = _saved_name(chat_id)
+    if not name:
+        await tg_send(client, chat_id,
+            "I don't know who you are yet. Type /sign first to register, "
+            "or /whoami to set your name.")
+        return
+
+    args_t = (args or "").strip()
+    handle = name  # use the player's name as handle
+
+    # Subcommand: leaderboard
+    if args_t.lower().startswith("leaderboard") or args_t.lower() == "lb":
+        try:
+            d = await api_get(client, "/credits/leaderboard", {"limit": 10})
+        except Exception as e:
+            await tg_send(client, chat_id, f"⚠️ {esc(e)}")
+            return
+        rows = d.get("holders", [])
+        if not rows:
+            await tg_send(client, chat_id, "💰 No credits in circulation yet.")
+            return
+        lines = [f"<b>{i+1}.</b> @{esc(r['handle'])} — <b>{r['balance']}</b>" for i, r in enumerate(rows)]
+        msg = (
+            "💰 <b>CREDIT HOLDERS</b>\n\n"
+            + "\n".join(lines) +
+            f"\n\n<i>{d.get('total_in_circulation', 0)} credits total in circulation</i>"
+        )
+        await tg_send(client, chat_id, msg)
+        return
+
+    # Subcommand: history
+    if args_t.lower().startswith("history") or args_t.lower() == "h":
+        try:
+            d = await api_get(client, f"/credits/history/{handle}", {"limit": 20})
+        except Exception as e:
+            await tg_send(client, chat_id, f"⚠️ {esc(e)}")
+            return
+        hist = d.get("history", [])
+        if not hist:
+            await tg_send(client, chat_id, f"💰 No transactions yet. Balance: <b>{d.get('balance', 0)}</b>")
+            return
+        lines = []
+        for tx in hist:
+            sign = "+" if tx["direction"] == "in" else "−"
+            other = esc(tx.get("other") or "?")
+            memo = f" — {esc(tx['memo'])}" if tx.get("memo") else ""
+            lines.append(f"  {sign}<b>{tx['amount']}</b> {tx['kind']} {('from' if tx['direction']=='in' else 'to')} @{other}{memo}")
+        msg = (
+            f"💰 <b>YOUR CREDIT HISTORY</b>\n"
+            f"Balance: <b>{d.get('balance', 0)}</b>\n\n"
+            + "\n".join(lines)
+        )
+        await tg_send(client, chat_id, msg)
+        return
+
+    # Subcommand: send N to @handle [memo]
+    if args_t.lower().startswith("send "):
+        # Parse: "send 10 to @bob thanks for the witness"
+        m = re.match(r"send\s+(\d+)\s+to\s+@?(\w[\w\-\.]*)\s*(.*)$", args_t, re.IGNORECASE)
+        if not m:
+            await tg_send(client, chat_id,
+                "Usage: <code>/credits send 10 to @handle [memo]</code>")
+            return
+        amount = int(m.group(1))
+        to_handle = m.group(2)
+        memo = m.group(3).strip()
+        try:
+            d = await api_post(client, "/credits/send", {
+                "from_handle": handle,
+                "to_handle": to_handle,
+                "amount": amount,
+                "memo": memo or None,
+            })
+        except Exception as e:
+            await tg_send(client, chat_id, f"⚠️ {esc(e)}")
+            return
+        if d.get("ok"):
+            await tg_send(client, chat_id,
+                f"✅ Sent <b>{amount}</b> credits to @{esc(to_handle)}.\n"
+                f"Your balance: <b>{d.get('from_balance', 0)}</b>"
+                f"{(' · memo: ' + esc(memo)) if memo else ''}")
+        else:
+            await tg_send(client, chat_id, f"⚠️ {esc(d.get('detail') or d.get('message') or 'failed')}")
+        return
+
+    # Default: show balance + last 5
+    try:
+        d = await api_get(client, f"/credits/history/{handle}", {"limit": 5})
+    except Exception as e:
+        await tg_send(client, chat_id, f"⚠️ {esc(e)}")
+        return
+    bal = d.get("balance", 0)
+    hist = d.get("history", [])
+    msg_lines = [f"💰 <b>YOUR CREDIT WALLET</b>\n", f"Balance: <b>{bal}</b> credits\n"]
+    if hist:
+        msg_lines.append("<b>Recent:</b>")
+        for tx in hist:
+            sign = "+" if tx["direction"] == "in" else "−"
+            other = esc(tx.get("other") or "?")
+            msg_lines.append(f"  {sign}<b>{tx['amount']}</b> {tx['kind']} · @{other}")
+    else:
+        msg_lines.append("<i>No transactions yet. Earn credits through gameplay or get a top-up.</i>")
+    msg_lines.append("\n<i>Send: <code>/credits send 10 to @handle memo</code></i>")
+    msg_lines.append("<i>History: <code>/credits history</code> · Top: <code>/credits leaderboard</code></i>")
+    await tg_send(client, chat_id, "\n".join(msg_lines))
 
 
 async def cmd_signals(client, chat_id: int, args: str) -> None:
@@ -894,6 +1092,8 @@ COMMAND_HANDLERS = {
     "cancel": cmd_cancel,
     "field": cmd_field,
     "signals": cmd_signals,
+    "credits": cmd_credits,
+    "store": cmd_store,
     "stats": cmd_stats,
     "invite": cmd_invite,
     "whoami": cmd_whoami,
