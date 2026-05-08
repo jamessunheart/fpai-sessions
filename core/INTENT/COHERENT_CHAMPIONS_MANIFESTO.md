@@ -213,6 +213,10 @@ Your daily choices.
 
 We are Coherent Champions of CHRIST.
 
+**TOGETHER, WE CAN BUILD A FUTURE WORTH INHERITING.**
+
+*Coherence · Healing · Regeneration · Intelligence · Service · Truth.*
+
 ---
 
 ## OPERATIONAL ALIGNMENT

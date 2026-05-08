@@ -647,6 +647,114 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Welcome modal */
+.welcome-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(14, 17, 22, 0.94);
+  backdrop-filter: blur(8px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 24px;
+  animation: welcomeFade 0.4s ease-out;
+}
+.welcome-modal.show { display: flex; }
+@keyframes welcomeFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.welcome-card {
+  background: linear-gradient(135deg, rgba(247,185,85,0.12), rgba(74,222,128,0.06));
+  border: 1px solid var(--accent);
+  border-radius: 16px;
+  padding: 36px 32px;
+  max-width: 520px;
+  text-align: center;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 60px rgba(247,185,85,0.15);
+  animation: welcomeRise 0.5s ease-out;
+}
+@keyframes welcomeRise {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.welcome-icon { font-size: 48px; margin-bottom: 12px; }
+.welcome-card button { font-family: inherit; cursor: pointer; border: none; }
+
+/* Sticky TOC */
+.toc-nav {
+  position: fixed;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  pointer-events: none;
+}
+.toc-toggle {
+  pointer-events: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--accent);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 16px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.toc-toggle:hover { background: var(--accent); color: #1a0e02; transform: scale(1.05); }
+.toc-list {
+  pointer-events: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 4px;
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 200px;
+  max-height: 70vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+.toc-nav.open .toc-list { display: flex; }
+.toc-link {
+  background: transparent;
+  border: none;
+  text-align: left;
+  color: var(--muted);
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.1s;
+  border-left: 2px solid transparent;
+}
+.toc-link:hover { background: var(--surface-2); color: var(--text); }
+.toc-link.active { color: var(--accent); border-left-color: var(--accent); background: rgba(247,185,85,0.06); }
+
+@media (max-width: 700px) {
+  .toc-nav { right: 8px; }
+  .toc-list { max-width: calc(100vw - 80px); font-size: 11px; }
+  .header-row { flex-direction: column; gap: 12px; }
+  .mode-toggle { width: 100%; }
+  .mode-btn { flex: 1; padding: 8px 6px; font-size: 12px; }
+  .wrap { padding: 12px; }
+  h1 { font-size: 20px; }
+  .player-hero { padding: 20px; }
+  .next-move { flex-direction: column; align-items: stretch; gap: 12px; padding: 12px 16px; }
+  .nm-cta { text-align: center; }
+  .funnel-step { width: 100%; }
+}
+
 /* Greeting badge */
 .greeting {
   display: inline-block;
@@ -1796,6 +1904,71 @@ function refreshRelTimes() {
 refreshRelTimes();
 setInterval(refreshRelTimes, 30000);
 
+// --- Welcome modal (first-time visitors) ----------------------------------
+(function initWelcome() {
+  const modal = document.getElementById('welcomeModal');
+  if (!modal) return;
+  let seen = false;
+  try { seen = localStorage.getItem('fpai-cockpit-welcomed') === '1'; } catch (e) {}
+  if (!seen) modal.classList.add('show');
+  function dismiss() {
+    modal.classList.remove('show');
+    try { localStorage.setItem('fpai-cockpit-welcomed', '1'); } catch (e) {}
+  }
+  document.getElementById('welcomeDismiss')?.addEventListener('click', dismiss);
+  document.getElementById('welcomeStart')?.addEventListener('click', () => {
+    dismiss();
+    setTimeout(() => {
+      const target = document.getElementById('doc-manifesto');
+      if (target) {
+        target.open = true;
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 300);
+  });
+})();
+
+// --- Sticky TOC navigation ------------------------------------------------
+(function initTOC() {
+  const nav = document.getElementById('tocNav');
+  const list = document.getElementById('tocList');
+  const toggle = document.getElementById('tocToggle');
+  if (!nav || !list || !toggle) return;
+
+  // Find all h2 elements in the wrap (skip ones inside inline-doc bodies)
+  const headings = Array.from(document.querySelectorAll('.wrap h2')).filter(h => {
+    return !h.closest('.inline-doc-body');
+  });
+
+  headings.forEach((h, i) => {
+    if (!h.id) h.id = 'sec-' + i;
+    const txt = h.textContent.replace(/\s+—.*/, '').replace(/\s+\d+/, '').trim().slice(0, 40);
+    const btn = document.createElement('button');
+    btn.className = 'toc-link';
+    btn.textContent = txt;
+    btn.addEventListener('click', () => {
+      h.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      nav.classList.remove('open');
+    });
+    list.appendChild(btn);
+  });
+
+  toggle.addEventListener('click', () => nav.classList.toggle('open'));
+
+  // Highlight active section as you scroll
+  const links = list.querySelectorAll('.toc-link');
+  function updateActive() {
+    let active = 0;
+    const scrollY = window.scrollY + 100;
+    headings.forEach((h, i) => {
+      if (h.offsetTop <= scrollY) active = i;
+    });
+    links.forEach((l, i) => l.classList.toggle('active', i === active));
+  }
+  document.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+})();
+
 // --- Scroll progress bar -------------------------------------------------
 (function initScrollProgress() {
   const bar = document.getElementById('scrollProgress');
@@ -2706,12 +2879,60 @@ def render_html() -> str:
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>FPAI Cockpit Map</title>
+<title>Full Potential Game · Coherent Champions of CHRIST</title>
+<meta name="description" content="A proof-based operating system for human potential. Sign the World Peace Agreement. Run your first 7-Day Game. We are Coherent Champions of CHRIST." />
+<meta name="theme-color" content="#f7b955" />
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Full Potential Game · Coherent Champions of CHRIST" />
+<meta property="og:description" content="Reality is already a game. This is the guide for those who know. Sign the World Peace Agreement, run your first 7-Day proof loop. AI in service to life." />
+<meta property="og:image" content="https://fullpotential.com/game/core/INTENT/assets/full-potential-framework-poster.png" />
+<meta property="og:image:alt" content="The Full Potential Framework — A Peace Coordination Civilization Stack" />
+<meta property="og:url" content="https://fullpotential.com/game/" />
+<meta property="og:site_name" content="Full Potential" />
+
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Full Potential Game · Coherent Champions of CHRIST" />
+<meta name="twitter:description" content="Reality is already a game. Sign the World Peace Agreement, run your first 7-Day proof loop. AI in service to life." />
+<meta name="twitter:image" content="https://fullpotential.com/game/core/INTENT/assets/full-potential-framework-poster.png" />
+
+<!-- Favicon (uses the manifesto poster scaled by browser) -->
+<link rel="icon" type="image/png" href="core/INTENT/assets/coherent-champions-poster.png" />
+<link rel="apple-touch-icon" href="core/INTENT/assets/coherent-champions-poster.png" />
+
 <style>{CSS}</style>
 </head>
 <body>
 <div class="scroll-progress" id="scrollProgress"></div>
 <svg class="starfield" id="starfield" preserveAspectRatio="xMidYMid slice"></svg>
+
+<div class="welcome-modal" id="welcomeModal">
+  <div class="welcome-card">
+    <div class="welcome-icon">✨</div>
+    <h2 style="margin-top:0;color:var(--accent);">Welcome to the Full Potential Game</h2>
+    <p style="font-size:14px;color:var(--text);line-height:1.6;">
+      Reality is already a game. This is the guide for those who know.
+    </p>
+    <p style="font-size:13px;color:var(--muted);line-height:1.6;">
+      A proof-based operating system for human potential. AI in service to life.
+      Your first move: read the Manifesto, sign the World Peace Agreement, run your first 7-Day proof loop.
+    </p>
+    <div style="display:flex;gap:8px;margin-top:20px;justify-content:center;flex-wrap:wrap;">
+      <button class="player-cta-primary" id="welcomeStart">🌱 Start the journey</button>
+      <button class="player-cta-secondary" id="welcomeDismiss">I've been here before</button>
+    </div>
+    <p style="font-size:11px;color:var(--muted);margin-top:16px;">
+      <em>"This is not a religion of superiority. It is a practice of becoming trustworthy with power."</em>
+    </p>
+  </div>
+</div>
+
+<nav class="toc-nav" id="tocNav" aria-label="Sections">
+  <button class="toc-toggle" id="tocToggle" aria-label="Toggle navigation">⊞</button>
+  <div class="toc-list" id="tocList"></div>
+</nav>
 
 <div class="wrap">
   <div class="header-row">
