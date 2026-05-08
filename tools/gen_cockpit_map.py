@@ -871,6 +871,156 @@ details.eco-layer[open] {
   font-weight: 700;
   text-transform: uppercase;
 }
+
+/* Mode toggle */
+.header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.header-sub { color: var(--muted); font-size: 13px; margin-top: 2px; }
+.mode-toggle {
+  display: inline-flex;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 4px;
+  gap: 2px;
+}
+.mode-btn {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 13px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.mode-btn:hover { background: var(--surface-2); color: var(--text); }
+.mode-btn.active {
+  background: var(--accent);
+  color: #1a0e02;
+}
+
+body.mode-founder .player-only,
+body.mode-founder .field-only { display: none !important; }
+body.mode-player .founder-only,
+body.mode-player .field-only { display: none !important; }
+body.mode-field .founder-only,
+body.mode-field .player-only { display: none !important; }
+
+/* Founder profile */
+.founder-profile {
+  background: linear-gradient(135deg, rgba(247,185,85,0.08), rgba(78,205,196,0.04));
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+}
+.profile-row { display: grid; grid-template-columns: auto 1fr auto; gap: 20px; align-items: center; }
+@media (max-width: 800px) { .profile-row { grid-template-columns: 1fr; } }
+.profile-avatar {
+  font-size: 56px;
+  width: 80px;
+  height: 80px;
+  background: var(--surface);
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.profile-role { font-size: 11px; color: var(--accent); letter-spacing: 1.5px; font-weight: 700; }
+.profile-name { font-size: 24px; font-weight: 700; color: var(--text); margin: 4px 0; }
+.profile-quest { font-size: 14px; color: var(--text); }
+.profile-rule { font-size: 12px; color: var(--muted); margin-top: 6px; font-style: italic; }
+.profile-rule em { color: var(--accent); }
+.profile-stats { display: flex; gap: 24px; }
+.profile-stat { text-align: center; min-width: 80px; }
+.profile-stat-n { font-size: 28px; font-weight: 700; color: var(--accent); line-height: 1; }
+.profile-stat-lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+.profile-roles { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; }
+.role-item { font-size: 12px; color: var(--text); line-height: 1.5; }
+.role-item strong { color: var(--accent); }
+
+/* Steward queue */
+.steward-queue {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+.steward-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 8px;
+}
+.steward-item {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 14px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: start;
+}
+.steward-item.steward-pending { border-left: 3px solid var(--warn); }
+.steward-icon { font-size: 18px; line-height: 1.2; }
+.steward-action { font-weight: 700; font-size: 13px; color: var(--text); grid-column: 2; }
+.steward-detail { font-size: 11px; color: var(--muted); line-height: 1.5; grid-column: 2; margin-top: 2px; }
+
+/* Player hero */
+.player-hero {
+  background: linear-gradient(135deg, rgba(74,222,128,0.08), rgba(247,185,85,0.04));
+  border: 1px solid var(--good);
+  border-radius: 12px;
+  padding: 32px 36px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+.player-cta-row { display: flex; gap: 12px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+.player-cta-primary {
+  background: var(--good);
+  color: #062013;
+  padding: 14px 24px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 16px;
+  transition: all 0.15s;
+}
+.player-cta-primary:hover { background: var(--accent); transform: translateY(-1px); }
+.player-cta-secondary {
+  background: var(--surface-2);
+  color: var(--text);
+  padding: 14px 24px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  border: 1px solid var(--border);
+}
+.player-cta-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Field hero */
+.field-hero {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+.field-stats { display: flex; gap: 32px; margin-top: 16px; flex-wrap: wrap; }
+.field-stat { text-align: center; min-width: 100px; }
 """
 
 
@@ -962,6 +1112,36 @@ function refreshRelTimes() {
 }
 refreshRelTimes();
 setInterval(refreshRelTimes, 30000);
+
+// --- Mode toggle ---------------------------------------------------------
+const MODE_KEY = 'fpai-cockpit-mode';
+const MODES = {
+  founder: 'The operating dashboard for the World Peace Organization & Full Potential Game.',
+  player: 'The entry point for new players. Welcome — your first move is one real agreement.',
+  field: 'The public aggregate. As proofs flow and consent permits, this surface populates.',
+};
+
+function setMode(mode) {
+  if (!MODES[mode]) mode = 'founder';
+  document.body.classList.remove('mode-founder', 'mode-player', 'mode-field');
+  document.body.classList.add('mode-' + mode);
+  document.querySelectorAll('.mode-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.mode === mode);
+  });
+  const sub = document.getElementById('modeSubtitle');
+  if (sub) sub.textContent = MODES[mode];
+  try { localStorage.setItem(MODE_KEY, mode); } catch (e) {}
+}
+
+document.querySelectorAll('.mode-btn').forEach(b => {
+  b.addEventListener('click', () => setMode(b.dataset.mode));
+});
+
+(function initMode() {
+  let saved = 'founder';
+  try { saved = localStorage.getItem(MODE_KEY) || 'founder'; } catch (e) {}
+  setMode(saved);
+})();
 
 // --- Auto-reload when the file regenerates -------------------------------
 // The generator stamps data-generated on the freshness card. Poll the file
@@ -1430,8 +1610,100 @@ def render_html() -> str:
 </head>
 <body>
 <div class="wrap">
-  <h1>FPAI Cockpit &mdash; Big Picture</h1>
-  <div class="freshness" id="freshness" data-generated="{generated_iso}">
+  <div class="header-row">
+    <div>
+      <h1>FPAI Cockpit &mdash; Big Picture</h1>
+      <div class="header-sub" id="modeSubtitle">The operating dashboard for the World Peace Organization &amp; Full Potential Game.</div>
+    </div>
+    <div class="mode-toggle" role="tablist" aria-label="View mode">
+      <button class="mode-btn active" data-mode="founder" title="James's private operations + steward queue">⚓ Founder</button>
+      <button class="mode-btn" data-mode="player" title="What a new player sees arriving">🌱 Player Entry</button>
+      <button class="mode-btn" data-mode="field" title="Public aggregate view">🌍 Field</button>
+    </div>
+  </div>
+
+  <div class="founder-only founder-profile">
+    <div class="profile-row">
+      <div class="profile-avatar">👁</div>
+      <div class="profile-content">
+        <div class="profile-role">FOUNDING STEWARD &middot; AUTHOR &middot; ARCHITECT</div>
+        <div class="profile-name">James Sunheart</div>
+        <div class="profile-quest">Civilization Quest tier &mdash; building the substrate so others can play</div>
+        <div class="profile-rule">Sunheart Rule: <em>"Do only what you do better than AI. Everything else, the system handles."</em></div>
+      </div>
+      <div class="profile-stats">
+        <div class="profile-stat">
+          <div class="profile-stat-n" id="docsAuthored">9</div>
+          <div class="profile-stat-lbl">Founding documents</div>
+        </div>
+        <div class="profile-stat">
+          <div class="profile-stat-n" id="agreementsAuthored">{agreements_count}</div>
+          <div class="profile-stat-lbl">Agreements drafted</div>
+        </div>
+        <div class="profile-stat">
+          <div class="profile-stat-n">3</div>
+          <div class="profile-stat-lbl">Civ-Quests in motion</div>
+        </div>
+      </div>
+    </div>
+    <div class="profile-roles">
+      <div class="role-item"><strong>Founder of</strong> &mdash; World Peace Organization · CORA Nation · Zen Village · Full Potential AI · Coherence</div>
+      <div class="role-item"><strong>Author of</strong> &mdash; Manifesto v1.0 · Ecosystem · Treasury v0.10 · Game v1.3 · WPAP · Forming Agreements · Cockpit</div>
+      <div class="role-item"><strong>Holds</strong> &mdash; spiritual + doctrinal authority within CORA Nation · NOT fiduciary control over OneBPO (governance firewall, by design)</div>
+      <div class="role-item"><strong>Body in the room when</strong> &mdash; ratification · ceremony · steward initiation · civilization-quest decisions</div>
+    </div>
+  </div>
+
+  <div class="player-only player-hero">
+    <h2 style="margin-top:0;color:var(--accent);font-size:28px;">Welcome to the Full Potential Game.</h2>
+    <p style="font-size:16px;color:var(--text);margin:8px 0 16px;">
+      Reality is already a game. This is where you find your pieces.
+    </p>
+    <p style="color:var(--muted);font-size:14px;line-height:1.7;">
+      The Full Potential Game is a proof-based operating system for human potential. It makes the work people do for each other &mdash; agreements kept, offers delivered, transformations witnessed, resources circulated &mdash; <em>visible, scored, and recognized</em> in a way the dominant economy cannot.
+    </p>
+    <div class="player-cta-row">
+      <a class="player-cta-primary" href="cursor://file{INTENT_DIR}/AGREEMENT_BUILDER_PROMPT.md">
+        🌱 Start your 7-Day First Game →
+      </a>
+      <a class="player-cta-secondary" href="cursor://file{INTENT_DIR}/FULL_POTENTIAL_GAME.md">
+        Read the Player's Guide
+      </a>
+    </div>
+    <p style="margin:16px 0 0;color:var(--muted);font-size:12px;">
+      Your first move is simple: choose one real agreement, complete it, have it witnessed, log the proof. The Game does not begin when you understand it. It begins when you complete the first agreement.
+    </p>
+  </div>
+
+  <div class="field-only field-hero">
+    <h2 style="margin-top:0;color:var(--accent);">The Field</h2>
+    <p style="color:var(--text);font-size:14px;">
+      The public aggregate view. As players begin running 7-Day First Games and consenting their proofs to public visibility, this surface populates with witnessed transformation, treasury growth, and the lived shape of coherence-in-practice.
+    </p>
+    <div class="field-stats">
+      <div class="field-stat">
+        <div class="profile-stat-n">0</div>
+        <div class="profile-stat-lbl">Public proofs sealed</div>
+      </div>
+      <div class="field-stat">
+        <div class="profile-stat-n">{agreements_active}</div>
+        <div class="profile-stat-lbl">Active Agreements</div>
+      </div>
+      <div class="field-stat">
+        <div class="profile-stat-n">0</div>
+        <div class="profile-stat-lbl">Coherent Credit issued</div>
+      </div>
+      <div class="field-stat">
+        <div class="profile-stat-n">1</div>
+        <div class="profile-stat-lbl">Players</div>
+      </div>
+    </div>
+    <p style="color:var(--muted);font-size:12px;margin-top:16px;">
+      The numbers will tell the true story when there's a true story to tell. Until then, this view is mostly empty &mdash; honestly so. Ask: *will your proof loop be the first public one?*
+    </p>
+  </div>
+
+  <div class="freshness founder-only" id="freshness" data-generated="{generated_iso}">
     <div class="fresh-row">
       <div class="fresh-stat">
         <span class="fresh-lbl">Map generated</span>
@@ -1839,7 +2111,46 @@ def render_html() -> str:
     {agreements_html}
   </div>
 
-  <div class="queue">
+  <div class="founder-only steward-queue">
+    <h2>Steward Queue &mdash; founder-only actions</h2>
+    <p style="color:var(--muted);font-size:12px;margin:0 0 12px;">
+      Things only James can do as Founding Steward. AI cannot substitute judgment on identity / mission / vision / value (per the James↔Claude Agreement).
+    </p>
+    <div class="steward-grid">
+      <div class="steward-item steward-pending">
+        <div class="steward-icon">📜</div>
+        <div class="steward-action">Ratify James↔Claude Agreement</div>
+        <div class="steward-detail">Drafted by Claude in desktop session, awaits founder ratification or amendment.</div>
+      </div>
+      <div class="steward-item steward-pending">
+        <div class="steward-icon">📜</div>
+        <div class="steward-action">Ratify WPO↔Land Agreement</div>
+        <div class="steward-detail">Currently <code>status: proposed</code> — your call to ratify, amend, or redraft.</div>
+      </div>
+      <div class="steward-item">
+        <div class="steward-icon">✍️</div>
+        <div class="steward-action">Witness proofs (when players begin)</div>
+        <div class="steward-detail">No public proofs awaiting signature yet. As 7-Day Games run, witness queue populates here.</div>
+      </div>
+      <div class="steward-item">
+        <div class="steward-icon">🚀</div>
+        <div class="steward-action">Push 19+ commits to origin</div>
+        <div class="steward-detail">Today's WPO foundation work is local-only. Per Agreement, push requires explicit per-action authorization.</div>
+      </div>
+      <div class="steward-item">
+        <div class="steward-icon">🎯</div>
+        <div class="steward-action">Run your own 7-Day First Game</div>
+        <div class="steward-detail">Founder Player Card. The architect who has not run a loop is decoration; the architect who runs one becomes the system.</div>
+      </div>
+      <div class="steward-item">
+        <div class="steward-icon">📝</div>
+        <div class="steward-action">Manifesto footer alignment</div>
+        <div class="steward-detail">Add "TOGETHER, WE CAN BUILD A FUTURE WORTH INHERITING" + acronym summary from poster.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="founder-only queue">
     <h2>Decision queue &mdash; needs James</h2>
     <div class="queue-row">
       <div class="queue-stat">
@@ -1862,7 +2173,7 @@ def render_html() -> str:
     <ol>{decisions_html}</ol>
   </div>
 
-  <div class="grid">
+  <div class="grid founder-only">
     <div class="card">
       <div class="kpi-label">Priority 1</div>
       <div class="kpi" style="font-size:18px;">The Village</div>
@@ -1889,7 +2200,7 @@ def render_html() -> str:
     </div>
   </div>
 
-  <div class="grid">
+  <div class="grid founder-only">
     <div class="card">
       <h2>Current focus</h2>
       {focus_html}
@@ -1904,7 +2215,7 @@ def render_html() -> str:
     </div>
   </div>
 
-  <div class="card full" style="margin-bottom:16px;">
+  <div class="card full founder-only" style="margin-bottom:16px;">
     <h2>Money</h2>
     <h3>Outflow &mdash; proportional</h3>
     {money_bar_svg}
@@ -1914,7 +2225,7 @@ def render_html() -> str:
     {render_table(inflow_rows)}
   </div>
 
-  <div class="card full" style="margin-bottom:16px;">
+  <div class="card full founder-only" style="margin-bottom:16px;">
     <h2>What's live now <span style="font-size:12px;font-weight:400;color:var(--muted);">&mdash; status dots probed live on page load</span></h2>
     {render_live_table(live_rows)}
     <p style="color:var(--muted);font-size:11px;margin:12px 0 0;">
@@ -1925,7 +2236,7 @@ def render_html() -> str:
     </p>
   </div>
 
-  <div class="card full" style="margin-bottom:16px;">
+  <div class="card full founder-only" style="margin-bottom:16px;">
     <h2>Services ({n_total} total)</h2>
     <p style="color:var(--muted);margin:0 0 12px;">
       Click a service name to open its directory in your editor (vscode:// link).
@@ -1934,7 +2245,7 @@ def render_html() -> str:
     {services_html}
   </div>
 
-  <div class="grid">
+  <div class="grid founder-only">
     <div class="card">
       <h2>30-day activity</h2>
       <div class="sparkline-meta">
