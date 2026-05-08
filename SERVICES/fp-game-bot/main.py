@@ -45,8 +45,11 @@ if not BOT_TOKEN:
 
 API_BASE = os.environ.get("CHAMPION_API_URL", "https://fullpotential.com/api/champion").rstrip("/")
 GAME_URL = os.environ.get("GAME_URL", "https://fullpotential.com/game")
+BOT_USERNAME = os.environ.get("BOT_USERNAME", "fullpotentialgamebot")
 OFFSET_FILE = Path(os.environ.get("OFFSET_FILE", "/var/lib/fp-game-bot/offset"))
 OFFSET_FILE.parent.mkdir(parents=True, exist_ok=True)
+INVITE_TEMPLATES_PATH = Path(os.environ.get("INVITE_TEMPLATES_PATH", "/var/lib/fp-game-bot/state/INVITE_TEMPLATES.md"))
+INVITES_LOG_PATH = Path(os.environ.get("INVITES_LOG_PATH", "/var/lib/fp-game-bot/state/invites.jsonl"))
 
 # Owner / Founding Steward
 OWNER_TG_ID = os.environ.get("OWNER_TG_ID", "").strip()  # e.g. "8514069423"
@@ -66,6 +69,8 @@ def is_owner(chat_id: int) -> bool:
 
 # In-memory per-chat conversation state {chat_id: {flow, step, data}}
 STATE: dict[int, dict] = {}
+# Attribution captured from /start invite_X deep-link; consumed by /sign.
+ATTRIB: dict[int, dict] = {}
 
 TG_API = f"https://api.telegram.org/bot{BOT_TOKEN}"
 
@@ -157,8 +162,38 @@ HELP_TEXT = WELCOME
 
 
 async def cmd_start(client, chat_id: int, args: str) -> None:
-    STATE.pop(chat_id, None)  # clear any in-progress flow
-    await tg_send(client, chat_id, WELCOME)
+    """Welcome + orientation. If invoked via invite deep-link
+    (?start=invite_INVITER[_PATH]), attribute the inviter for /sign credit
+    and greet with referrer context."""
+    STATE.pop(chat_id, None)
+    payload = (args or "").strip()
+    inviter_attr = None
+    path_attr = None
+    if payload.startswith("invite_"):
+        rest_p = payload[len("invite_"):]
+        # Format: invite_FirstName_LastName[_PATH]; PATH is the trailing token
+        # if it matches a known path slug, else everything is the inviter.
+        templates = _load_invite_templates()
+        known_paths = set(templates.keys()) if templates else {INVITE_DEFAULT_PATH}
+        parts = rest_p.split("_")
+        if len(parts) > 1 and parts[-1].lower() in known_paths and parts[-1].lower() != INVITE_DEFAULT_PATH:
+            path_attr = parts[-1].lower()
+            inviter_attr = " ".join(parts[:-1])
+        else:
+            inviter_attr = " ".join(parts)
+        # Save attribution on the invitee's chat state for downstream /sign
+        ATTRIB[chat_id] = {"inviter": inviter_attr, "path": path_attr or INVITE_DEFAULT_PATH}
+
+    if inviter_attr:
+        path_line = f" · path: <i>{esc(path_attr)}</i>" if path_attr else ""
+        await tg_send(client, chat_id,
+            f"👋 Welcome — invited by <b>{esc(inviter_attr)}</b>{path_line}\n\n"
+            "You're a tap from being Champion #N in the Full Potential Game.\n"
+            "Type /sign to take the World Peace Agreement (3 minutes).\n"
+            "Your inviter gets +3 Field Score when you sign.\n\n"
+            "Or browse first: /game · /field · /signals")
+    else:
+        await tg_send(client, chat_id, WELCOME)
 
 
 async def cmd_help(client, chat_id: int, args: str) -> None:
@@ -550,10 +585,10 @@ async def cmd_game(client, chat_id: int, args: str) -> None:
             log.warning("/game fetch %s failed: %s", path, e)
             return None
 
-    stats, retreats, board = await asyncio.gather(
+    stats, retreats, proofs = await asyncio.gather(
         _fetch("/stats"),
         _fetch("/retreat/stats"),
-        _fetch("/leaderboard"),
+        _fetch("/proof/list"),
     )
 
     if not stats:
@@ -572,7 +607,15 @@ async def cmd_game(client, chat_id: int, args: str) -> None:
     growth_total = growth.get("total", 0) or sum(int(growth.get(k, 0) or 0) for k in ("signatures", "proofs", "cards"))
     retreat_total = (retreats or {}).get("total", 0) if retreats else 0
     retreat_public = (retreats or {}).get("public", 0) if retreats else 0
-    top_loops = ((board or {}).get("top_loops") or [])[:3]
+    # Sort proofs numerically by loop_number desc (the API list is alphanumeric on filenames,
+    # which puts loop-9 before loop-23 — wrong for our purpose).
+    all_proofs = (proofs or {}).get("proofs", []) if proofs else []
+    def _loop_n(p):
+        try:
+            return int(str(p.get("loop_number", 0)).split(".")[0])
+        except Exception:
+            return 0
+    latest_loops = sorted(all_proofs, key=_loop_n, reverse=True)[:3]
 
     goal_hit = champs_total >= 2
     goal_line = (
@@ -592,34 +635,309 @@ async def cmd_game(client, chat_id: int, args: str) -> None:
         f"🌴 Retreat interest: <b>{retreat_total}</b> ({retreat_public} public)",
         f"📈 Growth this week: <b>+{growth_total}</b>",
     ]
-    if top_loops:
+    if latest_loops:
         lines.append("\n<b>Latest loops</b>")
-        for L in top_loops:
+        for L in latest_loops:
             n = L.get("loop_number") or "?"
             player = esc(L.get("player") or "?")
-            quest = esc((L.get("quest") or "")[:80])
-            lines.append(f"  L{n} · {player} — {quest}")
+            agreement = esc(L.get("agreement_type") or "")
+            date = esc(L.get("date_committed") or "")
+            tag = f" · <i>{agreement}</i>" if agreement else ""
+            lines.append(f"  L{n} · {player}{tag} · {date}")
     lines.append(f"\n<i>Source: {esc(API_BASE)} · Web: <a href=\"{GAME_URL}\">fullpotential.com/game</a></i>")
     await tg_send(client, chat_id, "\n".join(lines))
 
 
+# ───────────────────────── invite substrate ─────────────────────────────
+_RE_INVITE_EMAIL = re.compile(r"^[\w.+\-]+@[\w\-]+\.[\w.\-]+$")
+_RE_INVITE_TG = re.compile(r"^@[A-Za-z0-9_]{3,}$")
+_RE_INVITE_PHONE = re.compile(r"^\+?[\d][\d\s().\-]{6,}$")
+INVITE_DEFAULT_PATH = "game"
+
+
+def _load_invite_templates() -> dict:
+    """Parse INVITE_TEMPLATES.md → {path_slug: body}.
+
+    Each `## slug` heading starts a template; body runs until next `## ` or
+    `---` divider. Returns empty dict if file missing.
+    """
+    try:
+        md = INVITE_TEMPLATES_PATH.read_text(encoding="utf-8")
+    except Exception:
+        return {}
+    templates: dict = {}
+    current_slug = None
+    current_body: list = []
+    for line in md.splitlines():
+        m = re.match(r"^##\s+([A-Za-z][A-Za-z0-9\-_]*)\s*$", line)
+        if m:
+            if current_slug and current_body:
+                templates[current_slug] = "\n".join(current_body).strip()
+            current_slug = m.group(1).lower()
+            current_body = []
+            continue
+        if line.strip() == "---" and current_slug:
+            templates[current_slug] = "\n".join(current_body).strip()
+            current_slug = None
+            current_body = []
+            continue
+        if current_slug:
+            current_body.append(line)
+    if current_slug and current_body:
+        templates[current_slug] = "\n".join(current_body).strip()
+    return templates
+
+
+def _parse_invite_args(rest: str, available: set) -> dict:
+    tokens = [t for t in (rest or "").strip().split() if t]
+    out = {"name": "", "contact": "", "channel": "", "path": "", "why_them": ""}
+    name_parts: list = []
+    why_parts: list = []
+    contact_seen = path_seen = False
+    for tok in tokens:
+        if not contact_seen and _RE_INVITE_EMAIL.match(tok):
+            out["contact"] = tok
+            out["channel"] = "email"
+            contact_seen = True
+            continue
+        if not contact_seen and _RE_INVITE_TG.match(tok):
+            out["contact"] = tok
+            out["channel"] = "telegram"
+            contact_seen = True
+            continue
+        if not contact_seen and _RE_INVITE_PHONE.match(tok):
+            out["contact"] = tok
+            out["channel"] = "whatsapp"
+            contact_seen = True
+            continue
+        if not path_seen and tok.lower() in available:
+            out["path"] = tok.lower()
+            path_seen = True
+            continue
+        if not contact_seen and not path_seen:
+            name_parts.append(tok)
+        else:
+            why_parts.append(tok)
+    out["name"] = " ".join(name_parts).strip()
+    out["why_them"] = " ".join(why_parts).strip()
+    if not out["path"]:
+        out["path"] = INVITE_DEFAULT_PATH
+    return out
+
+
+def _render_invite(body: str, name: str, why_them: str, link: str) -> str:
+    first = name.split()[0] if name else "there"
+    out = body.replace("{NAME}", first)
+    if why_them:
+        out = out.replace("{WHY_THEM}", why_them)
+    else:
+        out = re.sub(r"\n*\{WHY_THEM\}\n*", "\n", out)
+    out = out.replace("{TRACKED_LINK}", link)
+    return out.strip()
+
+
+def _build_invite_link(inviter: str, path: str) -> str:
+    """Tracked Telegram deep-link to @fullpotentialgamebot.
+
+    Prefer Telegram deep-link over web URL — invitees stay in TG, can /sign
+    without context-switch. Bot's /start handler reads `invite_INVITER_PATH`
+    payload to set attribution.
+    """
+    from urllib.parse import quote
+    inviter_slug = inviter.replace(" ", "_")
+    payload = f"invite_{inviter_slug}_{path}" if path != INVITE_DEFAULT_PATH else f"invite_{inviter_slug}"
+    return f"https://t.me/{BOT_USERNAME}?start={quote(payload)}"
+
+
+def _build_invite_deep_links(channel: str, contact: str, rendered: str) -> list:
+    from urllib.parse import quote
+    out: list = []
+    if channel == "email":
+        subject = "Invitation to Full Potential"
+        out.append(("📧 Open in Mail",
+                    f"mailto:{contact}?subject={quote(subject)}&body={quote(rendered)}"))
+    elif channel == "whatsapp":
+        digits = "".join(c for c in contact if c.isdigit() or c == "+")
+        wa_phone = digits.lstrip("+")
+        out.append(("💬 Open in WhatsApp",
+                    f"https://wa.me/{wa_phone}?text={quote(rendered)}"))
+        out.append(("📱 SMS fallback",
+                    f"sms:{digits}&body={quote(rendered)}"))
+    elif channel == "telegram":
+        out.append(("✈️ Open chat",
+                    f"https://t.me/{contact.lstrip('@')}"))
+    return out
+
+
+def _log_invite(inviter: str, name: str, contact: str, channel: str,
+                path: str, link: str, why_them: str = "") -> None:
+    from datetime import datetime as _dt
+    row = {
+        "ts": _dt.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "inviter": inviter,
+        "name": name,
+        "contact": contact,
+        "channel": channel or "copy-paste",
+        "path": path,
+        "link": link,
+        "why_them": why_them,
+        "status": "sent",
+    }
+    try:
+        INVITES_LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+        with INVITES_LOG_PATH.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(row, ensure_ascii=False) + "\n")
+    except Exception as e:
+        log.warning("invite log write failed: %s", e)
+
+
 async def cmd_invite(client, chat_id: int, args: str) -> None:
-    name = _saved_name(chat_id)
-    if not name:
+    """Polymorphic /invite — detects email / phone / @handle / name in any
+    order. Renders path-specific template + tracked Telegram deep-link
+    (so invitees can sign inside Telegram, no browser context-switch)."""
+    inviter = _saved_name(chat_id)
+    if not inviter:
         await tg_send(client, chat_id,
             "I don't know your name yet. Type /sign first, or "
             "<code>/whoami YourName</code> to register.")
         return
-    from urllib.parse import quote
-    url = f"{GAME_URL}?inviter={quote(name)}"
-    msg = (
-        f"🤝 <b>Your invite link</b>\n\n"
-        f"<code>{esc(url)}</code>\n\n"
-        f"Share with anyone aligned. When they sign through this URL, they're "
-        f"credited as your affiliate and your Field Score grows by <b>+3</b>.\n\n"
-        f"<i>Don't recruit — invite. Resonance, not pressure.</i>"
-    )
-    await tg_send(client, chat_id, msg)
+
+    templates = _load_invite_templates()
+    if not templates:
+        await tg_send(client, chat_id,
+            f"📨 Invitation templates not loaded from <code>{esc(str(INVITE_TEMPLATES_PATH))}</code>.\n"
+            "Run sync_invite_templates_to_primary.sh from the cockpit.")
+        return
+
+    parsed = _parse_invite_args(args, set(templates.keys()))
+    if not parsed["name"]:
+        path_list = ", ".join(sorted(templates.keys()))
+        await tg_send(client, chat_id,
+            "📨 <b>/invite</b> — render a personalized invitation\n\n"
+            "<b>Usage:</b>\n"
+            "<code>/invite NAME [email|phone|@handle] [path] [why-them...]</code>\n\n"
+            "Pass whatever you have; order doesn't matter. Examples:\n"
+            "<code>/invite Mark</code> — copy-paste only\n"
+            "<code>/invite Mark mark@x.com</code> — opens Mail\n"
+            "<code>/invite Mark +15551234567 retreat</code> — opens WhatsApp\n"
+            "<code>/invite Mark @markhandle apprenticeship</code> — TG forward\n\n"
+            f"<b>Paths:</b> {esc(path_list)} (default: <b>game</b>)\n\n"
+            "<i>Tracked links use t.me/fullpotentialgamebot — invitees can /sign right here in Telegram.</i>")
+        return
+    if parsed["path"] not in templates:
+        await tg_send(client, chat_id,
+            f"📨 Unknown path: <code>{esc(parsed['path'])}</code>\n"
+            f"Available: {esc(', '.join(sorted(templates.keys())))}")
+        return
+
+    body = templates[parsed["path"]]
+    link = _build_invite_link(inviter, parsed["path"])
+    rendered = _render_invite(body, parsed["name"], parsed["why_them"], link)
+    _log_invite(inviter, parsed["name"], parsed["contact"], parsed["channel"],
+                parsed["path"], link, parsed["why_them"])
+
+    deep_links = _build_invite_deep_links(parsed["channel"], parsed["contact"], rendered)
+
+    out = [f"📨 <b>Invitation drafted</b> — <i>{esc(parsed['path'])}</i> · {esc(parsed['name'])}"]
+    if parsed["channel"]:
+        out.append(f"<i>Channel: {esc(parsed['channel'])} → {esc(parsed['contact'])}</i>")
+    else:
+        out.append("<i>Copy-paste only — no channel detected</i>")
+    out.append("")
+    out.append("<pre>" + esc(rendered) + "</pre>")
+    if deep_links:
+        out.append("")
+        for label, url in deep_links:
+            out.append(f'<a href="{esc(url)}">{esc(label)}</a>')
+    out.append("")
+    out.append(f"<i>+3 Field Score per signed Champion · /invites for status</i>")
+    await tg_send(client, chat_id, "\n".join(out))
+
+
+async def cmd_invites(client, chat_id: int, args: str) -> None:
+    """List invites this Champion has sent + status."""
+    inviter = _saved_name(chat_id)
+    if not inviter:
+        await tg_send(client, chat_id,
+            "Sign first: /sign · or <code>/whoami YourName</code>")
+        return
+    rows: list = []
+    try:
+        with INVITES_LOG_PATH.open(encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    r = json.loads(line)
+                    if (r.get("inviter") or "").strip().lower() == inviter.strip().lower():
+                        rows.append(r)
+                except Exception:
+                    continue
+    except FileNotFoundError:
+        await tg_send(client, chat_id,
+            "📨 <b>Invites</b>\n\n<i>You haven't sent any yet. Try <code>/invite NAME</code>.</i>")
+        return
+
+    if not rows:
+        await tg_send(client, chat_id,
+            "📨 <b>Invites</b>\n\n<i>No invites under your name yet. Try <code>/invite NAME</code>.</i>")
+        return
+
+    # Status enrichment from Champion API
+    signed: set = set()
+    try:
+        async with httpx.AsyncClient(timeout=4.0) as c:
+            r = await c.get(f"{API_BASE}/list")
+            if r.status_code == 200:
+                data = r.json()
+                champs = data.get("champions", []) if isinstance(data, dict) else data
+                for ch in champs:
+                    nm = (ch.get("name") or "").strip().lower()
+                    if nm:
+                        signed.add(nm)
+    except Exception:
+        pass
+
+    rows.sort(key=lambda r: r.get("ts", ""), reverse=True)
+    n_signed = sum(1 for r in rows if r.get("name", "").strip().lower() in signed)
+    out = [f"📨 <b>Your invites — {len(rows)} sent · {n_signed} signed</b>\n"]
+    for r in rows[:15]:
+        nm = r.get("name", "?")
+        ok = nm.strip().lower() in signed
+        glyph = "✓ signed" if ok else "· sent"
+        path = r.get("path", "game")
+        ch = f" · {r.get('channel')}" if r.get("channel") and r.get("channel") != "copy-paste" else ""
+        ts = (r.get("ts") or "")[:10]
+        out.append(f"  <b>{esc(nm)}</b> · {esc(path)}{esc(ch)} · {esc(ts)} · {glyph}")
+    if len(rows) > 15:
+        out.append(f"\n<i>… and {len(rows) - 15} older.</i>")
+    await tg_send(client, chat_id, "\n".join(out))
+
+
+async def cmd_invite_types(client, chat_id: int, args: str) -> None:
+    """List available invitation paths."""
+    templates = _load_invite_templates()
+    if not templates:
+        await tg_send(client, chat_id,
+            f"📨 Templates not loaded from <code>{esc(str(INVITE_TEMPLATES_PATH))}</code>.")
+        return
+    out = ["📨 <b>Invite types</b> — pass any as the path arg\n"]
+    for slug in sorted(templates.keys()):
+        body = templates[slug]
+        summary = ""
+        for line in body.splitlines():
+            line = line.strip()
+            if not line or line.startswith("{") and line.endswith("}"):
+                continue
+            if line.startswith("—") or line.endswith("—") or len(line) < 25:
+                continue
+            summary = line
+            break
+        marker = " ⭐" if slug == INVITE_DEFAULT_PATH else ""
+        out.append(f"  <b>{esc(slug)}</b>{marker} — <i>{esc(summary[:110])}</i>")
+    out.append(f"\n<i>Edit core/STATE/INVITE_TEMPLATES.md to tune.</i>")
+    await tg_send(client, chat_id, "\n".join(out))
 
 
 async def cmd_whoami(client, chat_id: int, args: str) -> None:
@@ -695,6 +1013,10 @@ async def handle_sign_step(client, chat_id: int, text: str) -> None:
             payload = {"name": data["name"], "public": data["public"]}
             if data.get("why"):
                 payload["why"] = data["why"]
+            # Carry attribution from /start invite_X deep-link, if any
+            attrib = ATTRIB.pop(chat_id, None)
+            if attrib and attrib.get("inviter"):
+                payload["inviter"] = attrib["inviter"]
             r = await api_post(client, "/sign", payload)
             num = r.get("champion_number", "?")
             _save_name(chat_id, data["name"])
@@ -1188,6 +1510,9 @@ COMMAND_HANDLERS = {
     "match": cmd_match,
     "game": cmd_game,
     "invite": cmd_invite,
+    "invites": cmd_invites,
+    "invite-types": cmd_invite_types,
+    "invite_types": cmd_invite_types,
     "whoami": cmd_whoami,
     "sign": cmd_sign,
     "card": cmd_card,
