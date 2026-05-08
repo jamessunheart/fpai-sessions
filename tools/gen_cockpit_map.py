@@ -1932,6 +1932,36 @@ body.mode-field .player-only { display: none !important; }
 .sc-action { color: var(--muted); font-size: 12px; }
 .sc-next { background: var(--surface-2); padding: 10px 14px; border-radius: 6px; margin-top: 12px; }
 
+/* Character Card Quest */
+.character-card-quest {
+  background: linear-gradient(135deg, rgba(184, 156, 213, 0.08), rgba(232, 185, 116, 0.04));
+  border: 1px solid var(--unknown);
+  border-radius: 10px;
+  padding: 18px 22px;
+  margin-bottom: 24px;
+}
+.card-tiers, .card-levels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 6px;
+  margin: 8px 0;
+}
+.card-tier, .card-level {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  text-align: center;
+  font-size: 12px;
+}
+.card-level { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.cl-num { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13px; font-weight: 700; color: var(--accent); }
+.cl-name { font-weight: 700; font-size: 12px; color: var(--text); }
+.cl-detail { font-size: 10px; color: var(--muted); }
+.ct-icon { font-size: 22px; line-height: 1; }
+.ct-label { font-weight: 700; font-size: 12px; margin-top: 4px; color: var(--text); }
+.ct-sub { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
 /* Proof submit card */
 .proof-submit-card {
   background: linear-gradient(135deg, rgba(132, 212, 136, 0.06), rgba(124, 196, 168, 0.04));
@@ -2612,6 +2642,163 @@ document.getElementById('signEmailBtn')?.addEventListener('click', (e) => {
   const body = encodeURIComponent(md);
   window.location.href = `mailto:james.rick.stinson@gmail.com?subject=${subject}&body=${body}`;
   showSignConfirmation(name, 'opened in your email');
+});
+
+// --- Character Card Quest -----------------------------------------------
+const CARD_PORTIN_PROMPT = `You are helping me draft my Character Card for the Full Potential Game — a purpose-driven social network where players coordinate around quests, offers/needs matching, and witnessed reputation. Cards have a privacy-tiered, progressive structure.
+
+Using everything you know about me from our prior conversations and any context I've shared with you, draft my Character Card following the schema below.
+
+CRITICAL RULES:
+- Be honest. For fields where you don't have enough data, write "[NEEDS INPUT]". Do not fabricate.
+- Don't slip into hero-myth or marketing voice. Plain, direct, true.
+- For the Reality layer, only fill what's actually documented. Mark gaps clearly.
+- After the draft, list the top 5 fields where you most need my input to refine.
+
+VISIBILITY TIERS:
+🌐 Public — syndicates to social media
+👥 Player — visible to other game players
+🤍 Inner Circle — visible only to my Witness Roster
+🔒 Sacred — only me + my AI
+
+LEVELS (progressive depth):
+🟢 L1 Signup · 🟡 L2 Player · 🔵 L3 Matching Depth · 🟣 L4 Living Character
+
+SCHEMA TO FILL (output as clean markdown matching this structure):
+
+# [MY NAME] — Character Card
+
+## ✦ ASPIRATIONAL
+
+### 🌐 🟢 Public Bio
+[One paragraph, ~280 chars max, syndication-ready. Lead with name + archetype, mission shorthand, current activity, what I'm available for.]
+
+### 🌐 🟢 Identity
+- Full name + chosen name(s)
+- Roles
+- Locations
+- Self-described archetype (my own myth-name for myself)
+
+### 🌐 🟢 Mission
+[One sentence. What I'm playing for.]
+
+### Active Quests
+🌐 🟢 Public titles (3–5)
+👥 🟡 Player view: each quest with current status + bottleneck
+
+### 🌐 🟢 Offers (3–6, concrete, verb-led)
+
+### 👥 🟡 Needs
+
+### 👥 🟡 Give / Receive / Deal Breakers
+
+### 🌐 🟡 Living Agreements (how to engage with me)
+
+### 🪶 👥 🔵 Energy / Typing
+- Human Design (Type, Strategy, Authority, Profile, Definition)
+- Astrology (Sun / Moon / Rising; full chart at L4)
+- Enneagram (type + wing)
+- Gene Keys (Life's Work, Evolution, Radiance, Purpose)
+- Self-described archetype
+
+### ⚙️ 👥 🔵 Operating Style
+- Timezone + working hours
+- Async ↔ Sync ratio
+- Communication channels (ranked)
+- Response time norm
+- Meeting tolerance
+- Solo ↔ Collaborative ratio
+- Languages spoken
+
+### 🛠 👥 🔵 Skills & Domains
+- Concrete skills (verbs)
+- Domain expertise
+- Tool stack
+- Witness domains (what I'm qualified to witness on someone else's card)
+
+### 📖 🤍 🔵 Story / Mythos
+- Origin story (1–2 paragraphs · plain, not marketing voice)
+- Wound → Medicine
+- Lineages (teachers, traditions, books, frameworks)
+- Initiation moments
+
+### 🌱 👥 🔵 Body / Practice
+- Daily practices
+- Body / temple notes (optional)
+- Substances / sobriety status (🤍 Inner)
+- Sleep pattern
+
+### 🤝 👥 🔵 Compatibility
+- Best collaborator type
+- What shuts me down (friction triggers)
+- Conflict style
+- Trust default
+
+## ✦ REALITY (mark every field [NEEDS INPUT] unless you have specific documented evidence)
+
+### 👥 Receipts — what shipped (last 90 days)
+### 🤍 Designed but not yet shipped (active build)
+### 🤍 Graveyard — consciously released
+### 🤍 Recurring Patterns
+### 🔒 Money Reality
+### 🤍 Body / Energy / Capacity (this week)
+### Relational Reality (👥 Active / 🤍 Drifted-Ended / 🔒 Family / 👥 Currently seeking)
+### 👥 Witness Roster (3–5 people authorized to call drift between Aspirational and Reality)
+
+End with: "Top 5 fields where I most need your input to refine:" followed by the list.`;
+
+document.getElementById('cardCopyPromptBtn')?.addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(CARD_PORTIN_PROMPT);
+    const btn = document.getElementById('cardCopyPromptBtn');
+    if (btn) {
+      btn.textContent = '✓ Copied — paste into your AI';
+      setTimeout(() => { btn.textContent = '📋 Copy AI Port-In Prompt'; }, 4000);
+    }
+  } catch (e) {
+    alert('Could not copy. Open the Quest doc and copy from there.');
+  }
+});
+
+document.getElementById('cardSubmitBtn')?.addEventListener('click', async () => {
+  const player = (document.getElementById('cardPlayer')?.value || '').trim();
+  const handle = (document.getElementById('cardHandle')?.value || '').trim();
+  const email = (document.getElementById('cardEmail')?.value || '').trim();
+  const level = document.getElementById('cardLevel')?.value || 'L1';
+  const visibility_default = document.getElementById('cardVisibility')?.value || 'player';
+  const card_markdown = (document.getElementById('cardMarkdown')?.value || '').trim();
+  const honeypot = (document.getElementById('cardHoneypot')?.value || '').trim();
+
+  if (!player) { alert('Please enter your name.'); return; }
+  if (card_markdown.length < 20) { alert('Please paste your Character Card markdown (the AI will produce something substantial).'); return; }
+
+  const btn = document.getElementById('cardSubmitBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '🎴 Submitting...'; }
+
+  try {
+    const res = await fetch('/api/champion/card/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ player, handle, email, level, visibility_default, card_markdown, company: honeypot }),
+    });
+    const data = await res.json();
+    if (!res.ok || !data.ok) {
+      const msg = data?.detail || data?.message || ('HTTP ' + res.status);
+      throw new Error(msg);
+    }
+    if (btn) { btn.textContent = `✓ Card ${data.level} saved`; }
+    const card = document.getElementById('characterCardQuest');
+    if (card && !document.getElementById('cardConfirm')) {
+      const conf = document.createElement('div');
+      conf.id = 'cardConfirm';
+      conf.className = 'sign-confirmation show';
+      conf.innerHTML = `<div class="sc-burst">🎴</div><h3>Character Card ${data.level} saved.</h3><p>${escapeHTML(data.message || '')}</p><p class="sc-action">Your card is now a node in the network. You can update it anytime by submitting again with the same name.</p>`;
+      card.appendChild(conf);
+    }
+  } catch (e) {
+    if (btn) { btn.disabled = false; btn.textContent = '🎴 Submit my Character Card'; }
+    alert('Could not submit: ' + e.message);
+  }
 });
 
 // --- Proof Submit (file a completed loop) -----------------------------
@@ -3470,6 +3657,12 @@ def render_html() -> str:
             "core/INTENT/AGREEMENT_BUILDER_PROMPT.md",
             "Paste-into-Claude prompt that turns the AI into your 7-Day Game facilitator. Generates your Proof Log."
         ),
+        render_inline_doc_card(
+            "character-card", "🎴", "Character Card Quest",
+            "Onboarding Quest #1 — your living node in the network",
+            "core/INTENT/CHARACTER_CARD_QUEST.md",
+            "Two layers (Aspirational + Reality), four visibility tiers, four levels of depth. Includes the AI Port-In Prompt — paste it into Claude/ChatGPT and your card drafts itself."
+        ),
     ])
 
     # Founder metrics
@@ -3809,6 +4002,81 @@ def render_html() -> str:
     </div>
     <p style="color:var(--muted);font-size:11px;margin:14px 0 0;text-align:center;">
       <em>"This is not a religion of superiority. It is a practice of becoming trustworthy with power."</em>
+    </p>
+  </div>
+
+  <div class="character-card-quest" id="characterCardQuest">
+    <h2>🎴 Character Card Quest <span style="font-size:12px;font-weight:400;color:var(--muted);">&mdash; Quest #1 · Onboarding · 5 minutes</span></h2>
+    <p style="color:var(--muted);font-size:13px;margin:0 0 12px;line-height:1.6;">
+      Your <strong>Character Card</strong> is your living node in the Game's network. Two layers, four visibility tiers, four levels of depth.
+      Sign-up is 5 minutes. Your AI fills the draft. You refine. Your witnesses keep it honest with reality.
+    </p>
+
+    <div class="card-tiers">
+      <div class="card-tier"><div class="ct-icon">🌐</div><div class="ct-label">Public</div><div class="ct-sub">syndicates to social</div></div>
+      <div class="card-tier"><div class="ct-icon">👥</div><div class="ct-label">Player</div><div class="ct-sub">other players see</div></div>
+      <div class="card-tier"><div class="ct-icon">🤍</div><div class="ct-label">Inner Circle</div><div class="ct-sub">your Witness Roster</div></div>
+      <div class="card-tier"><div class="ct-icon">🔒</div><div class="ct-label">Sacred</div><div class="ct-sub">you + your AI only</div></div>
+    </div>
+
+    <div class="card-levels">
+      <div class="card-level"><span class="cl-num">🟢 L1</span><span class="cl-name">Signup</span><span class="cl-detail">5 min · card goes live</span></div>
+      <div class="card-level"><span class="cl-num">🟡 L2</span><span class="cl-name">Player</span><span class="cl-detail">15 min · matchable</span></div>
+      <div class="card-level"><span class="cl-num">🔵 L3</span><span class="cl-name">Matching</span><span class="cl-detail">30 min · team-formable</span></div>
+      <div class="card-level"><span class="cl-num">🟣 L4</span><span class="cl-name">Living</span><span class="cl-detail">ongoing · AI-maintained</span></div>
+    </div>
+
+    <h3 style="margin-top:18px;">Step 1 · Get your AI Port-In prompt</h3>
+    <p style="color:var(--muted);font-size:12px;margin:0 0 8px;">
+      Copy the prompt, paste it into Claude / ChatGPT / Gemini / your AI. Your AI drafts your Character Card from what it already knows about you. Honest about gaps (writes <code>[NEEDS INPUT]</code> rather than fabricating).
+    </p>
+    <div class="sign-actions" style="margin-bottom:12px;">
+      <button id="cardCopyPromptBtn" class="player-cta-primary">📋 Copy AI Port-In Prompt</button>
+      <a class="player-cta-secondary" href="#doc-character-card" onclick="document.getElementById('doc-character-card').open=true;">Read full Quest doc</a>
+    </div>
+
+    <h3>Step 2 · Submit your draft</h3>
+    <p style="color:var(--muted);font-size:12px;margin:0 0 8px;">
+      Refine your AI's draft. Paste the final markdown below and submit. Your card joins the substrate at the visibility tier you choose.
+    </p>
+    <div class="sign-form">
+      <label><span>Your name (or chosen name)</span><input type="text" id="cardPlayer" placeholder="e.g. Maria Lopez or @maria" /></label>
+      <label><span>Handle (optional)</span><input type="text" id="cardHandle" placeholder="@yourhandle" /></label>
+      <label><span>Email (optional · private)</span><input type="email" id="cardEmail" placeholder="you@example.com" /></label>
+      <label>
+        <span>Level</span>
+        <select id="cardLevel" style="background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit;">
+          <option value="L1">🟢 L1 Signup (5 min · card goes live)</option>
+          <option value="L2">🟡 L2 Player (15 min · matchable)</option>
+          <option value="L3">🔵 L3 Matching (30 min · team-formable)</option>
+          <option value="L4">🟣 L4 Living (ongoing)</option>
+        </select>
+      </label>
+      <label>
+        <span>Default visibility</span>
+        <select id="cardVisibility" style="background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit;">
+          <option value="player">👥 Player — visible to other players (default)</option>
+          <option value="public">🌐 Public — syndicates to social</option>
+          <option value="inner">🤍 Inner Circle — Witness Roster only</option>
+          <option value="sacred">🔒 Sacred — me + my AI only</option>
+        </select>
+      </label>
+      <label style="grid-column:1/-1;"><span>Your Card Markdown — paste full output from your AI</span><textarea id="cardMarkdown" rows="12" placeholder="# Your Name — Character Card
+
+## ✦ ASPIRATIONAL
+
+### 🌐 🟢 Public Bio
+...
+
+(paste your AI's draft here, refined to taste)"></textarea></label>
+    </div>
+    <input type="text" id="cardHoneypot" name="company" style="position:absolute;left:-9999px;" tabindex="-1" autocomplete="off" />
+    <div class="sign-actions" style="margin-top:8px;">
+      <button id="cardSubmitBtn" class="player-cta-primary">🎴 Submit my Character Card</button>
+    </div>
+    <p style="color:var(--muted);font-size:11px;margin:12px 0 0;">
+      Your card becomes a node in the Game's network. Other Players matchable on offers / needs / quests.
+      You can update your card anytime — submit again with the same name. The fields the founder said: amendable / reversible.
     </p>
   </div>
 

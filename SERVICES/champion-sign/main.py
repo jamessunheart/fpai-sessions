@@ -32,6 +32,8 @@ DATA_DIR = Path(os.environ.get("CHAMPION_DATA_DIR", "/var/lib/full-potential/cha
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 PROOFS_DIR = Path(os.environ.get("PROOFS_DATA_DIR", "/var/lib/full-potential/proofs"))
 PROOFS_DIR.mkdir(parents=True, exist_ok=True)
+CARDS_DIR = Path(os.environ.get("CARDS_DATA_DIR", "/var/lib/full-potential/cards"))
+CARDS_DIR.mkdir(parents=True, exist_ok=True)
 
 app = FastAPI(title="Champion Sign", version="0.1.0")
 app.add_middleware(
@@ -364,6 +366,139 @@ async def list_proofs() -> dict:
         except Exception:
             continue
     return {"count": len(proofs), "proofs": proofs}
+
+
+# ===== Character Card endpoints ===========================================
+class CardSubmit(BaseModel):
+    player: str = Field(..., min_length=2, max_length=100)
+    handle: Optional[str] = Field(None, max_length=60)
+    email: Optional[str] = Field(None, max_length=120)
+    level: str = Field("L1")  # L1 Signup | L2 Player | L3 Matching | L4 Living
+    visibility_default: str = Field("player")  # public | player | inner | sacred
+    card_markdown: str = Field(..., min_length=20, max_length=20000)
+    company: Optional[str] = Field(None, max_length=120)  # honeypot
+
+    @validator("player")
+    def _no_html(cls, v):
+        if v is None:
+            return v
+        if re.search(r"[<>]", v):
+            raise ValueError("contains forbidden characters")
+        return v.strip()
+
+    @validator("level")
+    def _level(cls, v):
+        if v not in ("L1", "L2", "L3", "L4"):
+            return "L1"
+        return v
+
+    @validator("visibility_default")
+    def _vis(cls, v):
+        if v not in ("public", "player", "inner", "sacred"):
+            return "player"
+        return v
+
+
+@app.post("/card/submit")
+async def submit_card(req: CardSubmit, request: Request) -> dict:
+    if req.company:
+        return {"ok": True, "honeypot": True}
+
+    ip = request.client.host if request.client else "unknown"
+    if not _check_rate(ip):
+        raise HTTPException(status_code=429, detail="Too many submissions. Try again later.")
+
+    today = datetime.now().strftime("%Y-%m-%d")
+    slug = re.sub(r"[^a-z0-9]+", "-", req.player.lower()).strip("-") or "unnamed"
+    fname = f"{slug}.md"
+    out = CARDS_DIR / fname
+
+    # Each card is overwritten on update — one card per player slug
+    md = _render_card_md(req, today)
+    out.write_text(md, encoding="utf-8")
+
+    audit = CARDS_DIR / "audit.jsonl"
+    with audit.open("a", encoding="utf-8") as f:
+        f.write(json.dumps({
+            "ts": datetime.now().isoformat(),
+            "kind": "card",
+            "player": req.player if req.visibility_default in ("public", "player") else "(private)",
+            "level": req.level,
+            "visibility": req.visibility_default,
+            "ip_hash": str(hash(ip))[-6:],
+            "filename": fname,
+        }) + "\n")
+
+    # Founder ping
+    try:
+        import urllib.request
+        msg = (
+            f"🎴 Character Card {req.level} submitted by {req.player}"
+            f"{' (' + (req.handle or '') + ')' if req.handle else ''}"
+            f" — {req.visibility_default}"
+        )
+        urllib.request.urlopen(
+            urllib.request.Request(
+                "http://127.0.0.1:8766/alert",
+                data=json.dumps({"message": msg, "source": "card-submit"}).encode(),
+                headers={"Content-Type": "application/json"},
+            ),
+            timeout=2,
+        )
+    except Exception:
+        pass
+
+    return {
+        "ok": True,
+        "filename": fname,
+        "level": req.level,
+        "message": f"Character Card {req.level} saved. Welcome to the Game, {req.player.split()[0]}.",
+    }
+
+
+@app.get("/card/list")
+async def list_cards() -> dict:
+    """Return public + player-tier cards."""
+    cards = []
+    for p in sorted(CARDS_DIR.glob("*.md")):
+        try:
+            text = p.read_text(encoding="utf-8")
+            fm = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+            if not fm:
+                continue
+            data: dict = {}
+            for line in fm.group(1).split("\n"):
+                m = re.match(r"^([a-z_]+):\s*(.*)$", line)
+                if m:
+                    data[m.group(1)] = m.group(2).strip().strip('"')
+            vis = (data.get("visibility_default") or "").lower()
+            if vis not in ("public", "player"):
+                continue
+            data.pop("email", None)
+            cards.append(data)
+        except Exception:
+            continue
+    return {"count": len(cards), "cards": cards}
+
+
+def _render_card_md(req: CardSubmit, today: str) -> str:
+    return f"""---
+player: {req.player}
+handle: {req.handle or ''}
+email: {req.email or ''}
+level: {req.level}
+visibility_default: {req.visibility_default}
+date_first_submitted: {today}
+date_last_updated: {today}
+source: webhook
+---
+
+{req.card_markdown}
+
+---
+
+*Submitted via Character Card Quest at https://fullpotential.com/game on {today}.*
+"""
 
 
 def _render_proof_md(req: ProofSubmit, today: str) -> str:
