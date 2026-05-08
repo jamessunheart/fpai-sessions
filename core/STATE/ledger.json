@@ -70,16 +70,24 @@
       "id": "housing-chirripo-rent",
       "category": "housing",
       "engine_role": "infra",
-      "monthly_usd": 1000.0,
-      "purpose": "James share of Chirripo rent (gross 1500 minus 500 from Renae)"
+      "monthly_usd": 1500.0,
+      "purpose": "Zen Palace Chirripo rent (gross) \u2014 Renae contributes via separate offset"
     },
     {
       "name": "Chirripo-utilities-James-half",
       "id": "housing-chirripo-utilities",
       "category": "housing",
       "engine_role": "infra",
-      "monthly_usd": 125.0,
-      "purpose": "Half of estimated 250/mo water+electricity split with Renae"
+      "monthly_usd": 250.0,
+      "purpose": "Zen Palace Chirripo utilities (gross water+electric) \u2014 split 50/50 with Renae"
+    },
+    {
+      "name": "Zen-Village-utilities",
+      "id": "zen-village-utilities",
+      "category": "housing",
+      "engine_role": "infra",
+      "monthly_usd": 300.0,
+      "purpose": "Costa Rica retreat property: electrical + water + trash recurring"
     }
   ],
   "revenue_monthly": {
@@ -112,6 +120,11 @@
       "lifetime_revenue_usd": 12429801.85,
       "activity_summary": "26 txns last 30d \u00b7 32,104 lifetime \u00b7 $12,429,802 cumulative",
       "source": "obapp_outbounders.main_transaction (credits, deleted='N')"
+    },
+    "renae-contribution": {
+      "revenue_usd": 625.0,
+      "_note": "Household contribution from Renae: 500 rent + 125 utility share \u2014 applies to housing-chirripo-rent and housing-chirripo-utilities",
+      "as_of": "2026-05-08T17:06:58.904351Z"
     }
   },
   "liquid_assets": {
