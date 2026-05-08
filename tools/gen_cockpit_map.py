@@ -2487,6 +2487,99 @@ document.getElementById('signEmailBtn')?.addEventListener('click', (e) => {
   showSignConfirmation(name, 'opened in your email');
 });
 
+// --- Sign & Submit (the substrate-direct path: the Game plays itself) ---
+document.getElementById('signSubmitBtn')?.addEventListener('click', async () => {
+  const name = (document.getElementById('signName')?.value || '').trim();
+  if (!name) { alert('Please enter your name first.'); return; }
+  const handle = (document.getElementById('signHandle')?.value || '').trim();
+  const email = (document.getElementById('signEmail')?.value || '').trim();
+  const witness = (document.getElementById('signWitness')?.value || '').trim();
+  const why = (document.getElementById('signWhy')?.value || '').trim();
+  const isPublic = document.querySelector('input[name="signPublic"]:checked')?.value === 'true';
+  const honeypot = (document.getElementById('signHoneypot')?.value || '').trim();
+  const btn = document.getElementById('signSubmitBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '🌀 Signing...'; }
+  try {
+    const res = await fetch('/api/champion/sign', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, handle, email, witness, public: isPublic, why, company: honeypot }),
+    });
+    const data = await res.json();
+    if (!res.ok || !data.ok) {
+      const msg = data?.detail || data?.message || ('HTTP ' + res.status);
+      throw new Error(msg);
+    }
+    showSignConfirmation(name, `submitted live — you are Coherent Champion #${data.champion_number}`);
+    if (btn) { btn.textContent = `✓ Champion #${data.champion_number}`; }
+    // Refresh the live Roll
+    setTimeout(loadLiveChampions, 500);
+  } catch (e) {
+    if (btn) { btn.disabled = false; btn.textContent = '🌀 Sign & join the Roll'; }
+    alert('Could not submit: ' + e.message + '. Try Email or Download as backup.');
+  }
+});
+
+// --- Live Champions Roll fetch ----------------------------------------
+async function loadLiveChampions() {
+  try {
+    const res = await fetch('/api/champion/list', { cache: 'no-store' });
+    if (!res.ok) return;
+    const data = await res.json();
+    const liveCount = data.count || 0;
+    if (liveCount === 0) return;
+    // Find existing champions list and append/merge
+    const list = document.querySelector('.champions-list');
+    if (!list) return;
+    // Don't duplicate James (champion_number 1 is on the static page already);
+    // append any with champion_number > 0 from the live API that aren't already in DOM
+    const seenNames = new Set(
+      Array.from(list.querySelectorAll('.champion-name')).map(el => el.textContent.trim())
+    );
+    let appended = 0;
+    for (const c of data.champions) {
+      const name = c.name || '[unnamed]';
+      if (seenNames.has(name)) continue;
+      const num = c.champion_number || '?';
+      const date = c.date_signed || '';
+      const handle = c.handle || '';
+      const role = c.role || '';
+      const row = document.createElement('div');
+      row.className = 'champion-row';
+      row.innerHTML = `
+        <div class="champion-num">#${num}</div>
+        <div class="champion-info">
+          <div class="champion-name">${escapeHTML(name)}</div>
+          ${role ? '<div class="champion-role">' + escapeHTML(role) + '</div>' : ''}
+        </div>
+        <div class="champion-meta">
+          ${handle ? '<span>' + escapeHTML(handle) + '</span>' : ''}
+          <span class="champion-date">${escapeHTML(date)}</span>
+        </div>
+      `;
+      list.appendChild(row);
+      appended++;
+    }
+    if (appended > 0) {
+      const card = list.closest('.champions-card');
+      const heading = card?.querySelector('h2');
+      if (heading) {
+        const m = heading.innerHTML.match(/(\d+) signed · (\d+) public/);
+        if (m) {
+          heading.innerHTML = heading.innerHTML.replace(/(\d+) signed/, liveCount + ' signed').replace(/(\d+) public/, liveCount + ' public');
+        }
+      }
+    }
+  } catch (e) {
+    // Silent — the static Roll still shows
+  }
+}
+function escapeHTML(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+loadLiveChampions();
+setInterval(loadLiveChampions, 60000); // refresh every minute
+
 // --- Invitation generator ------------------------------------------------
 function buildInvitation() {
   return `Reality is already a game. This is the guide for those who know.
@@ -3437,14 +3530,17 @@ def render_html() -> str:
       </label>
       <label><span>One sentence — why are you signing?</span><textarea id="signWhy" rows="2" placeholder="optional"></textarea></label>
     </div>
+    <!-- honeypot: hidden field bots fill -->
+    <input type="text" id="signHoneypot" name="company" style="position:absolute;left:-9999px;" tabindex="-1" autocomplete="off" />
     <div class="sign-actions">
-      <button id="signCopyBtn" class="player-cta-primary">📋 Copy signed Agreement</button>
-      <button id="signDownloadBtn" class="player-cta-secondary">⬇ Download as .md</button>
-      <a id="signEmailBtn" class="player-cta-secondary" href="#">✉ Email to founder</a>
+      <button id="signSubmitBtn" class="player-cta-primary">🌀 Sign &amp; join the Roll</button>
+      <button id="signCopyBtn" class="player-cta-secondary">📋 Copy</button>
+      <button id="signDownloadBtn" class="player-cta-secondary">⬇ Download</button>
+      <a id="signEmailBtn" class="player-cta-secondary" href="#">✉ Email</a>
     </div>
     <p style="color:var(--muted);font-size:11px;margin:12px 0 0;">
-      Three options to commit: copy to clipboard, download .md, or email to <code>james.rick.stinson@gmail.com</code>.
-      Once received, your signature is added to <code>core/INTENT/AGREEMENTS/champions/</code> and you appear in the Champions Roll.
+      <strong>Sign &amp; join the Roll</strong> submits directly to the substrate — your name appears on the Champions Roll within seconds. The Game plays itself.
+      Backup options: copy / download / email.
     </p>
   </div>
 
