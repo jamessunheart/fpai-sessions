@@ -105,6 +105,124 @@ def read_agreements() -> dict:
         return {"count": 0, "agreements": []}
 
 
+def strip_front_matter(md: str) -> str:
+    """Drop YAML front-matter block from the top of a markdown doc."""
+    if md.startswith("---"):
+        end = md.find("\n---", 3)
+        if end != -1:
+            return md[end + 4:].lstrip()
+    return md
+
+
+def md_to_html(md: str) -> str:
+    """Tiny markdown → HTML converter. Handles headings, lists, bold, italic,
+    inline code, code blocks, blockquotes, hr, paragraphs, links. Good enough
+    for Agreement bodies; not a full CommonMark engine."""
+    # Code blocks first (escape contents)
+    code_blocks: list[str] = []
+
+    def stash_code(m: re.Match) -> str:
+        code_blocks.append(escape(m.group(1)))
+        return f"@@CODEBLOCK_{len(code_blocks) - 1}@@"
+
+    md = re.sub(r"```[a-zA-Z0-9]*\n(.*?)```", stash_code, md, flags=re.DOTALL)
+
+    out: list[str] = []
+    in_ul = False
+    in_ol = False
+
+    def close_lists() -> None:
+        nonlocal in_ul, in_ol
+        if in_ul:
+            out.append("</ul>")
+            in_ul = False
+        if in_ol:
+            out.append("</ol>")
+            in_ol = False
+
+    def inline(s: str) -> str:
+        # Don't escape — we trust agreement files. Keep markup intact.
+        s = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", s)
+        s = re.sub(r"(?<!\*)\*(?!\*)([^*\n]+?)\*(?!\*)", r"<em>\1</em>", s)
+        s = re.sub(r"`([^`\n]+?)`", r"<code>\1</code>", s)
+        s = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r"<a class='link' href='\2' target='_blank'>\1</a>", s)
+        return s
+
+    paragraph: list[str] = []
+
+    def flush_paragraph() -> None:
+        if paragraph:
+            out.append("<p>" + inline(" ".join(paragraph)) + "</p>")
+            paragraph.clear()
+
+    for line in md.splitlines():
+        stripped = line.rstrip()
+        if not stripped:
+            flush_paragraph()
+            close_lists()
+            continue
+        if stripped == "---":
+            flush_paragraph()
+            close_lists()
+            out.append("<hr/>")
+            continue
+        h = re.match(r"^(#{1,6})\s+(.+)$", stripped)
+        if h:
+            flush_paragraph()
+            close_lists()
+            level = len(h.group(1))
+            out.append(f"<h{level}>{inline(h.group(2))}</h{level}>")
+            continue
+        ul = re.match(r"^[-*]\s+(.+)$", stripped)
+        if ul:
+            flush_paragraph()
+            if in_ol:
+                out.append("</ol>")
+                in_ol = False
+            if not in_ul:
+                out.append("<ul>")
+                in_ul = True
+            out.append(f"<li>{inline(ul.group(1))}</li>")
+            continue
+        ol = re.match(r"^\d+\.\s+(.+)$", stripped)
+        if ol:
+            flush_paragraph()
+            if in_ul:
+                out.append("</ul>")
+                in_ul = False
+            if not in_ol:
+                out.append("<ol>")
+                in_ol = True
+            out.append(f"<li>{inline(ol.group(1))}</li>")
+            continue
+        bq = re.match(r"^>\s*(.*)$", stripped)
+        if bq:
+            flush_paragraph()
+            close_lists()
+            out.append(f"<blockquote>{inline(bq.group(1))}</blockquote>")
+            continue
+        # Otherwise: paragraph text
+        paragraph.append(stripped)
+
+    flush_paragraph()
+    close_lists()
+
+    html = "\n".join(out)
+    # Restore code blocks
+    for i, code in enumerate(code_blocks):
+        html = html.replace(f"@@CODEBLOCK_{i}@@", f"<pre><code>{code}</code></pre>")
+    return html
+
+
+def agreement_file_path(agreement_id: str) -> Path | None:
+    """Resolve an agreement_id to its on-disk file path."""
+    if not agreement_id:
+        return None
+    date_part, _, rest = agreement_id.partition("_")
+    fname_body = rest.upper().replace("-", "_")
+    return INTENT_DIR / "AGREEMENTS" / f"{date_part}_{fname_body}.md"
+
+
 def extract_section(md: str, header: str) -> str:
     """Pull a markdown section by its `## Header` line until the next `## ` or `---`."""
     pattern = rf"## {re.escape(header)}.*?(?=^## |^---\s*$)"
@@ -469,6 +587,55 @@ a.link:hover { text-decoration: underline; }
   margin-right: 2px;
   font-size: 13px;
 }
+
+/* Agreement expandable cards */
+.agreement {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+.agreement[open] { border-color: var(--accent); }
+.agreement-summary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+}
+.agreement-summary::-webkit-details-marker { display: none; }
+.agreement-summary:hover { background: rgba(247, 185, 85, 0.04); }
+.ag-date { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; color: var(--muted); min-width: 88px; }
+.ag-parties { font-weight: 600; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ag-status { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+.ag-expand { font-size: 11px; color: var(--accent); margin-left: auto; }
+.agreement[open] .ag-expand { color: var(--muted); }
+.agreement-meta { padding: 0 16px 8px 40px; border-bottom: 1px solid var(--border); }
+.agreement-body {
+  padding: 16px 16px 16px 40px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* Embedded markdown styling */
+.markdown-body h1, .markdown-body h2, .markdown-body h3 { color: var(--accent); margin-top: 16px; margin-bottom: 8px; }
+.markdown-body h1 { font-size: 18px; }
+.markdown-body h2 { font-size: 15px; }
+.markdown-body h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
+.markdown-body p { margin: 8px 0; }
+.markdown-body ul, .markdown-body ol { margin: 8px 0; padding-left: 24px; }
+.markdown-body li { margin-bottom: 4px; }
+.markdown-body strong { color: var(--text); font-weight: 700; }
+.markdown-body em { color: var(--accent); font-style: italic; }
+.markdown-body code { background: var(--bg); padding: 1px 5px; border-radius: 3px; font-size: 12px; }
+.markdown-body pre { background: var(--bg); padding: 10px; border-radius: 4px; overflow-x: auto; }
+.markdown-body pre code { background: none; padding: 0; }
+.markdown-body blockquote { border-left: 3px solid var(--accent); padding: 6px 12px; margin: 12px 0; color: var(--muted); font-style: italic; background: rgba(247,185,85,0.04); }
+.markdown-body hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+.markdown-body a.link { word-break: break-word; }
 """
 
 
@@ -796,46 +963,75 @@ def render_agreements(reg: dict) -> str:
     if not agreements:
         return (
             "<p class='muted'>No Agreements yet. See "
-            "<a class='link' href='vscode://file" + str(INTENT_DIR / "FORMING_AGREEMENTS.md") + "'>"
+            "<a class='link' href='cursor://file" + str(INTENT_DIR / "FORMING_AGREEMENTS.md") + "'>"
             "FORMING_AGREEMENTS.md</a> for the protocol.</p>"
         )
-    parts = ["<table>",
-             "<thead><tr><th></th><th>Date</th><th>Parties</th><th>Status</th><th>Context</th><th></th></tr></thead><tbody>"]
+    parts: list[str] = []
     for a in agreements:
         status = (a.get("status") or "").lower()
         color, label = STATUS_DOT.get(status, ("#8b949e", status or "—"))
         parties = a.get("parties", [])
         party_str = " ↔ ".join(p.get("name", "?") for p in parties[:2]) or "—"
         date = a.get("date_formed", "")
-        context = (a.get("context") or "")[:100] + ("…" if len(a.get("context") or "") > 100 else "")
-        # Find the file path from agreement_id
+        context_full = a.get("context") or ""
+        scope_tags = a.get("scope_tags", [])
+        public = a.get("public", False)
+        witness = a.get("witness", {}) or {}
         aid = a.get("agreement_id", "")
-        if aid:
-            # construct {date}_{slugified-parties}.md
-            fname = aid.upper() + ".md"
-            # actual filenames use underscores: 2026-05-07_JAMES_SUNHEART_AND_CLAUDE.md
-            fname = fname.replace("-", "_", 2).replace("_", "-", 2)  # date keeps hyphens
-            fname = aid.replace("_", "-", 2)
-            fname = a.get("agreement_id", "")
-            # The id is `2026-05-07_james-sunheart_and_claude` → file uses ALL CAPS underscores after date
-            date_part, _, rest = aid.partition("_")
-            fname_body = rest.upper().replace("-", "_")
-            fname = f"{date_part}_{fname_body}.md"
+        file_path = agreement_file_path(aid)
+
+        body_html = ""
+        raw_path = ""
+        if file_path and file_path.exists():
+            try:
+                full_md = file_path.read_text(encoding="utf-8")
+                body_md = strip_front_matter(full_md)
+                body_html = md_to_html(body_md)
+                raw_path = str(file_path)
+            except Exception:
+                body_html = "<p class='muted'>(could not read file)</p>"
         else:
-            fname = ""
-        link = ""
-        if fname:
-            file_path = INTENT_DIR / "AGREEMENTS" / fname
-            link = f"<a class='link' href='vscode://file{file_path}'>open</a>"
-        parts.append(
-            f"<tr><td><span class='dot' style='background:{color};' title='{label}'></span></td>"
-            f"<td>{escape(date)}</td>"
-            f"<td><strong>{escape(party_str)}</strong></td>"
-            f"<td>{escape(label)}</td>"
-            f"<td style='color:var(--muted);font-size:12px;'>{escape(context)}</td>"
-            f"<td>{link}</td></tr>"
+            body_html = "<p class='muted'>(file not found)</p>"
+
+        meta_pills_html = "".join(
+            f"<span class='christ-pill'>{escape(t)}</span>" for t in scope_tags
         )
-    parts.append("</tbody></table>")
+        public_pill = (
+            "<span class='christ-pill' style='border-color:var(--good);color:var(--good)'>public</span>"
+            if public
+            else "<span class='christ-pill' style='border-color:var(--muted);color:var(--muted)'>private</span>"
+        )
+
+        witness_html = ""
+        if witness.get("type"):
+            witness_html = f"witness: {escape(witness.get('type'))}"
+            if witness.get("reference"):
+                witness_html += f" <code>{escape(str(witness['reference']))}</code>"
+
+        link_html = ""
+        if raw_path:
+            link_html = (
+                f" &middot; <a class='link' href='cursor://file{escape(raw_path)}'>open in cursor</a>"
+                f" &middot; <a class='link' href='file://{escape(raw_path)}' target='_blank'>raw file</a>"
+            )
+
+        parts.append(
+            f"<details class='agreement'>"
+            f"<summary class='agreement-summary'>"
+            f"<span class='dot' style='background:{color};margin-right:8px;' title='{label}'></span>"
+            f"<span class='ag-date'>{escape(date)}</span>"
+            f"<span class='ag-parties'>{escape(party_str)}</span>"
+            f"<span class='ag-status' style='color:{color}'>{escape(label)}</span>"
+            f"<span class='ag-expand'>read &rarr;</span>"
+            f"</summary>"
+            f"<div class='agreement-meta'>"
+            f"<p style='color:var(--muted);font-size:12px;margin:4px 0;'>{escape(context_full)}</p>"
+            f"<div class='christ-row' style='margin-top:8px;'>{public_pill}{meta_pills_html}</div>"
+            f"<p style='color:var(--muted);font-size:11px;margin:8px 0 0;'>{witness_html}{link_html}</p>"
+            f"</div>"
+            f"<div class='agreement-body markdown-body'>{body_html}</div>"
+            f"</details>"
+        )
     return "".join(parts)
 
 
@@ -898,7 +1094,7 @@ def render_services(catalog: dict, services: list[str]) -> str:
             f"<div class='svc-grid'>"
         )
         for s in items:
-            href = f"vscode://file{(SERVICES_DIR / s).resolve()}"
+            href = f"cursor://file{(SERVICES_DIR / s).resolve()}"
             cls = "svc" + (" untagged" if tag == "unknown" else "")
             parts.append(f"<a class='{cls}' href='{href}'>{escape(s)}</a>")
         parts.append("</div></details>")
@@ -1044,24 +1240,24 @@ def render_html() -> str:
       <div class="mission-content">
         <div class="kpi-label">Founding</div>
         <p style="margin:4px 0 12px;font-size:16px;">
-          <a class='link' href='vscode://file{INTENT_DIR}/COHERENT_CHAMPIONS_MANIFESTO.md'>Coherent Champions of CHRIST</a>
+          <a class='link' href='cursor://file{INTENT_DIR}/COHERENT_CHAMPIONS_MANIFESTO.md'>Coherent Champions of CHRIST</a>
           &mdash; Manifesto v1.0
         </p>
         <p style="margin:0 0 16px;color:var(--text);font-style:italic;font-size:13px;">
           "This is not a religion of superiority. It is a practice of becoming trustworthy with power."
         </p>
         <div class="christ-row">
-          <span class="christ-pill"><strong>C</strong>oherence</span>
-          <span class="christ-pill"><strong>H</strong>ealing</span>
-          <span class="christ-pill"><strong>R</strong>egeneration</span>
-          <span class="christ-pill"><strong>I</strong>ntelligence</span>
-          <span class="christ-pill"><strong>S</strong>ervice</span>
-          <span class="christ-pill"><strong>T</strong>ruth</span>
+          <span class="christ-pill" title="Alignment between thought, word, action, technology, and consequence."><strong>C</strong>oherence</span>
+          <span class="christ-pill" title="Healing individuals, relationships, communities, and ecosystems is sacred work."><strong>H</strong>ealing</span>
+          <span class="christ-pill" title="Build systems that restore more life than they consume."><strong>R</strong>egeneration</span>
+          <span class="christ-pill" title="Honor intelligence guided by wisdom, humility, discernment, and care."><strong>I</strong>ntelligence</span>
+          <span class="christ-pill" title="Use our gifts in service to the flourishing of life."><strong>S</strong>ervice</span>
+          <span class="christ-pill" title="Seek truth courageously while remaining compassionate toward human imperfection."><strong>T</strong>ruth</span>
         </div>
         <p style="margin:12px 0 0;color:var(--muted);font-size:12px;">
-          <a class='link' href='vscode://file{INTENT_DIR}/WORLD_PEACE_AGREEMENT.md'>Template</a> &middot;
-          <a class='link' href='vscode://file{INTENT_DIR}/FORMING_AGREEMENTS.md'>Forming protocol</a> &middot;
-          <a class='link' href='vscode://file{INTENT_DIR}/README.md'>Layer guide</a>
+          <a class='link' href='cursor://file{INTENT_DIR}/WORLD_PEACE_AGREEMENT.md'>Template</a> &middot;
+          <a class='link' href='cursor://file{INTENT_DIR}/FORMING_AGREEMENTS.md'>Forming protocol</a> &middot;
+          <a class='link' href='cursor://file{INTENT_DIR}/README.md'>Layer guide</a>
         </p>
         <p style="margin:12px 0 0;font-size:12px;">
           <strong style="color:var(--accent);">{agreements_active}</strong> active /
@@ -1193,9 +1389,9 @@ def render_html() -> str:
     <div class="card">
       <h2>Source files</h2>
       <p>
-        <a class="svc" href="vscode://file{NOW}"><code>core/STATE/NOW.md</code></a> &mdash; SSOT.<br>
-        <a class="svc" href="vscode://file{CATALOG}"><code>core/STATE/catalog.json</code></a> &mdash; service tags.<br>
-        <a class="svc" href="vscode://file{ROOT/'STRUCTURE.md'}"><code>STRUCTURE.md</code></a> &mdash; layout.
+        <a class="svc" href="cursor://file{NOW}"><code>core/STATE/NOW.md</code></a> &mdash; SSOT.<br>
+        <a class="svc" href="cursor://file{CATALOG}"><code>core/STATE/catalog.json</code></a> &mdash; service tags.<br>
+        <a class="svc" href="cursor://file{ROOT/'STRUCTURE.md'}"><code>STRUCTURE.md</code></a> &mdash; layout.
       </p>
       <p style="color:var(--muted);font-size:12px;">
         Edit <code>NOW.md</code>, then re-run the generator to refresh this map.
