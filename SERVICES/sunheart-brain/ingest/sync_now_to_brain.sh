@@ -67,10 +67,18 @@ if [ -f "$CAP_FILE" ]; then
         || echo "warn: CAPABILITIES.md scp failed"
 fi
 
-# Sync INVITE_TEMPLATES.md alongside (read by /invite on @sunheartbrain_bot).
+# Sync INVITE_TEMPLATES.md alongside (read by /invite on @sunheartbrain_bot
+# AND @fullpotentialgamebot — both bots share one templates file).
 INVITE_FILE="$(dirname "$NOW_FILE")/INVITE_TEMPLATES.md"
 if [ -f "$INVITE_FILE" ]; then
     scp -o ConnectTimeout=5 -q "$INVITE_FILE" "$BRAIN_HOST:$BRAIN_STATE_DIR/INVITE_TEMPLATES.md" \
         && echo "synced INVITE_TEMPLATES.md → $BRAIN_HOST:$BRAIN_STATE_DIR/" \
-        || echo "warn: INVITE_TEMPLATES.md scp failed"
+        || echo "warn: INVITE_TEMPLATES.md scp failed (brain)"
+    # Also push to primary server (fp-game-bot)
+    PRIMARY_HOST="${PRIMARY_HOST:-root@198.54.123.234}"
+    PRIMARY_STATE_DIR="${PRIMARY_STATE_DIR:-/var/lib/fp-game-bot/state}"
+    ssh -o ConnectTimeout=5 "$PRIMARY_HOST" "mkdir -p $PRIMARY_STATE_DIR" >/dev/null 2>&1 \
+        && scp -o ConnectTimeout=5 -q "$INVITE_FILE" "$PRIMARY_HOST:$PRIMARY_STATE_DIR/INVITE_TEMPLATES.md" \
+        && echo "synced INVITE_TEMPLATES.md → $PRIMARY_HOST:$PRIMARY_STATE_DIR/" \
+        || echo "warn: INVITE_TEMPLATES.md scp failed (primary)"
 fi
