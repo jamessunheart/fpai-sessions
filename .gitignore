@@ -38,3 +38,6 @@ SERVICES/concierge/.env
 
 # Generated cockpit map (regenerate with `make map`)
 cockpit-map.html
+
+# Public deploy build (regenerate with `make public` / `make deploy-game`)
+dist/

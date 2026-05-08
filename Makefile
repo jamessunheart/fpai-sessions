@@ -1,4 +1,4 @@
-.PHONY: map map-open audit audit-apply agreements install-hooks help
+.PHONY: map map-open public deploy-game audit audit-apply agreements install-hooks help
 
 PYTHON ?= python3
 
@@ -18,6 +18,12 @@ agreements:
 
 map: agreements
 	@$(PYTHON) tools/gen_cockpit_map.py
+
+public: agreements
+	@$(PYTHON) tools/gen_cockpit_map.py --public
+
+deploy-game:
+	@bash tools/deploy_game.sh
 
 map-open: map
 	@open cockpit-map.html

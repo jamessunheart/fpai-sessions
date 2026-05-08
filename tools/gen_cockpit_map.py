@@ -3401,9 +3401,98 @@ def render_html() -> str:
 """
 
 
+def strip_founder_content(html: str) -> str:
+    """Public-mode: remove all elements with class 'founder-only' from the HTML.
+
+    Also strips the Founder button from the mode toggle and defaults body to player mode.
+    """
+    try:
+        from bs4 import BeautifulSoup
+    except ImportError:
+        # Fallback: regex strip (less reliable but works for our pattern)
+        # Match <div ... class="...founder-only..."> ... </div> with balanced nesting
+        # We emit founder blocks at top level so a stack-based pass is sufficient.
+        return _regex_strip_founder(html)
+
+    soup = BeautifulSoup(html, "html.parser")
+    for el in soup.find_all(class_="founder-only"):
+        el.decompose()
+    # Remove Founder button from mode toggle
+    for btn in soup.find_all("button", class_="mode-btn"):
+        if btn.get("data-mode") == "founder":
+            btn.decompose()
+    # Default body to player mode (the JS will pick this up via init)
+    # We also clear the localStorage default by setting a marker
+    body = soup.find("body")
+    if body:
+        body["data-default-mode"] = "player"
+    return str(soup)
+
+
+def _regex_strip_founder(html: str) -> str:
+    """Stack-based <div> removal for elements whose opening tag has class 'founder-only'."""
+    out = []
+    i = 0
+    n = len(html)
+    while i < n:
+        m = re.search(r'<(\w+)([^>]*\bclass="[^"]*\bfounder-only\b[^"]*")', html[i:])
+        if not m:
+            out.append(html[i:])
+            break
+        out.append(html[i:i + m.start()])
+        tag = m.group(1)
+        # Find the matching close tag balancing nested same-tag pairs
+        j = i + m.start()
+        depth = 0
+        k = j
+        while k < n:
+            open_m = re.search(rf"<{tag}\b", html[k:])
+            close_m = re.search(rf"</{tag}>", html[k:])
+            if not close_m:
+                k = n
+                break
+            if open_m and (open_m.start() < close_m.start()):
+                depth += 1
+                k += open_m.end()
+            else:
+                if depth == 0:
+                    k += close_m.end()
+                    break
+                depth -= 1
+                k += close_m.end()
+        i = k
+    return "".join(out)
+
+
 def main() -> None:
-    OUT.write_text(render_html(), encoding="utf-8")
-    print(f"wrote {OUT}")
+    import argparse
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--public", action="store_true",
+                    help="Build the public version (strip founder-only content, default to Player mode)")
+    ap.add_argument("--out", default=None, help="Output path (default: cockpit-map.html, or dist/index.html in --public)")
+    args = ap.parse_args()
+
+    html = render_html()
+    if args.public:
+        html = strip_founder_content(html)
+        # Init body class to mode-player by default in public build
+        html = html.replace('<body>', '<body class="mode-player">', 1)
+
+    out = Path(args.out) if args.out else (ROOT / "dist" / "index.html" if args.public else OUT)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(html, encoding="utf-8")
+    print(f"wrote {out}")
+
+    if args.public:
+        # Copy poster assets so the relative paths still work
+        public_assets = out.parent / "core" / "INTENT" / "assets"
+        public_assets.mkdir(parents=True, exist_ok=True)
+        src_assets = ROOT / "core" / "INTENT" / "assets"
+        if src_assets.exists():
+            import shutil
+            for png in src_assets.glob("*.png"):
+                shutil.copy2(png, public_assets / png.name)
+            print(f"copied {len(list(src_assets.glob('*.png')))} poster assets to {public_assets}")
 
 
 if __name__ == "__main__":
