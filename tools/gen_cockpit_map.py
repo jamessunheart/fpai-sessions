@@ -2069,6 +2069,48 @@ body.mode-field .player-only { display: none !important; }
 }
 .ps-contrib-pill strong { color: var(--accent); margin-right: 3px; }
 
+/* Paths overview (Loop 20) — one Game, many ways in */
+.paths-card {
+  background: linear-gradient(135deg, rgba(60,60,90,0.16) 0%, rgba(80,60,40,0.12) 100%);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin: 16px 0;
+}
+.paths-header { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+.paths-icon { font-size: 28px; line-height: 1; }
+.paths-title-block { flex: 1; }
+.paths-label { font-size: 10px; color: var(--accent); letter-spacing: 1.4px; font-weight: 700; }
+.paths-title { font-size: 16px; font-weight: 700; color: var(--text); margin-top: 2px; }
+.paths-blurb { color: var(--muted); font-size: 12px; line-height: 1.6; margin: 6px 0 14px; }
+.paths-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+.path-tile {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, transform 0.1s;
+}
+.path-tile.path-live { border-color: var(--accent); cursor: pointer; }
+.path-tile.path-live:hover { transform: translateY(-1px); border-color: var(--accent); }
+a.path-tile { display: flex; }
+.path-glyph { font-size: 22px; line-height: 1; }
+.path-name { font-weight: 700; font-size: 13px; color: var(--text); margin-top: 2px; }
+.path-desc { font-size: 11px; color: var(--muted); line-height: 1.5; flex: 1; }
+.path-status { font-size: 10px; letter-spacing: 0.6px; font-weight: 600; margin-top: 4px; }
+.path-status-live { color: #84d488; }
+.path-status-soon { color: var(--accent); }
+.path-status-watch { color: var(--muted); }
+
 /* Retreat Interest card (Loop 15) */
 .retreat-card {
   background: linear-gradient(135deg, rgba(40,80,60,0.18) 0%, rgba(60,40,80,0.14) 100%);
@@ -3174,12 +3216,16 @@ async function loadPlayerState() {
         : !d.card_present ? 'Build your Character Card next (5 min · AI Port-In above).'
         : d.proofs_filed === 0 ? 'Run a 7-Day First Game and file your first Proof.'
         : d.affiliates_count === 0 ? 'Share your invite link — when an aligned person signs through it, your score grows.'
-        : alreadyInterested ? 'You\\'re on the retreat list. Keep filing proofs and bringing aligned people — the cohort takes shape from here.'
-        : 'Express interest in the first Costa Rica retreat below — the Game\\'s terminus is in person.';
+        : alreadyInterested ? 'You\\'re on the retreat list. Pick another path above too — the Game opens many doors.'
+        : 'Pick a path below — retreat, apprenticeship, village, parties, commerce, coaching, witnessing. Many doors, one Game.';
       tip.textContent = '→ ' + next;
     }
 
-    // === Retreat Interest panel — visible to any signed Champion ===
+    // === Paths overview + Retreat Interest panel — visible to any signed Champion ===
+    const pathsCard = document.getElementById('pathsCard');
+    if (pathsCard && d.champion) {
+      pathsCard.style.display = '';
+    }
     const retreatCard = document.getElementById('retreatCard');
     if (retreatCard && d.champion) {
       retreatCard.style.display = '';
@@ -4816,12 +4862,69 @@ def render_html() -> str:
     </div>
   </div>
 
+  <div class="paths-card" id="pathsCard" style="display:none;">
+    <div class="paths-header">
+      <div class="paths-icon">🌟</div>
+      <div class="paths-title-block">
+        <div class="paths-label">PATHS INTO THE GAME</div>
+        <div class="paths-title">One Game. Many ways in.</div>
+      </div>
+    </div>
+    <p class="paths-blurb">
+      The Game opens many doors. Retreats are one. Apprenticeship, village living, parties &amp; gatherings, commerce, coaching, witnessing — each a real way to participate. The Game is the substrate; these are the practices that grow on it.
+    </p>
+    <div class="paths-grid">
+      <a class="path-tile path-live" href="#retreatCard">
+        <div class="path-glyph">🌴</div>
+        <div class="path-name">Retreat</div>
+        <div class="path-desc">First Costa Rica gathering. Express interest below.</div>
+        <div class="path-status path-status-live">🟢 Open</div>
+      </a>
+      <div class="path-tile">
+        <div class="path-glyph">🎓</div>
+        <div class="path-name">Apprenticeship</div>
+        <div class="path-desc">Learn the substrate by building loops alongside a mentor Champion.</div>
+        <div class="path-status path-status-soon">🟡 Forming</div>
+      </div>
+      <div class="path-tile">
+        <div class="path-glyph">🏡</div>
+        <div class="path-name">Village living</div>
+        <div class="path-desc">In-person presence in Zen Village — short stays, work-trades, residency.</div>
+        <div class="path-status path-status-soon">🟡 Forming</div>
+      </div>
+      <div class="path-tile">
+        <div class="path-glyph">🎉</div>
+        <div class="path-name">Parties &amp; jams</div>
+        <div class="path-desc">Music + problem jams. Couch = Oracle Stage. Local + traveling.</div>
+        <div class="path-status path-status-soon">🟡 Forming</div>
+      </div>
+      <div class="path-tile">
+        <div class="path-glyph">🛒</div>
+        <div class="path-name">Commerce</div>
+        <div class="path-desc">Coherent Credits, store, products + services in the substrate.</div>
+        <div class="path-status path-status-watch">⚪ Concept</div>
+      </div>
+      <div class="path-tile">
+        <div class="path-glyph">🧭</div>
+        <div class="path-name">Coaching</div>
+        <div class="path-desc">Champions guiding Champions through the Player Path.</div>
+        <div class="path-status path-status-soon">🟡 Forming</div>
+      </div>
+      <div class="path-tile">
+        <div class="path-glyph">👁</div>
+        <div class="path-name">Witnessing</div>
+        <div class="path-desc">Witness Roster — non-Claude humans signing as proof witnesses.</div>
+        <div class="path-status path-status-watch">⚪ Concept</div>
+      </div>
+    </div>
+  </div>
+
   <div class="retreat-card" id="retreatCard" style="display:none;">
     <div class="retreat-header">
       <div class="retreat-icon">🌴</div>
       <div class="retreat-title-block">
         <div class="retreat-label">FIRST RETREAT — COSTA RICA</div>
-        <div class="retreat-title">Where the Game lands in person.</div>
+        <div class="retreat-title">One way the Game lands in person.</div>
       </div>
       <div class="retreat-counter">
         <div class="retreat-counter-n" id="retreatCount">—</div>
@@ -4829,8 +4932,8 @@ def render_html() -> str:
       </div>
     </div>
     <p class="retreat-blurb">
-      The Game has a terminus. Champions who've shown up here — signed, built, witnessed — are the ones the first in-person retreat is built for.
-      No date locked yet. No payment yet. This is the substrate raising its hand.
+      One of several paths into the Game (see Paths overview above). For Champions whose calling is in-person presence — signed, built, witnessed — the first Costa Rica retreat is being shaped from the substrate raising its hand.
+      No date locked yet. No payment yet.
     </p>
     <div class="retreat-form" id="retreatForm">
       <label class="retreat-field">
