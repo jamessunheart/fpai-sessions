@@ -3258,6 +3258,30 @@ async function loadRetreatCount() {
 loadRetreatCount();
 setInterval(loadRetreatCount, 90000);
 
+async function loadRetreatRoll() {
+  try {
+    const res = await fetch('/api/retreat/list', { cache: 'no-store' });
+    if (!res.ok) return;
+    const d = await res.json();
+    const items = d.interests || [];
+    const wrap = document.getElementById('retreatRoll');
+    const list = document.getElementById('retreatRollList');
+    const countEl = document.getElementById('retreatRollCount');
+    if (!wrap || !list) return;
+    if (items.length === 0) { wrap.style.display = 'none'; return; }
+    if (countEl) countEl.textContent = items.length;
+    list.innerHTML = items.map(it => {
+      const player = (it.player || '[anonymous]').replace(/[<>]/g, '');
+      const dates = (it.preferred_dates || '').replace(/[<>]/g, '');
+      const date = (it.date_submitted || '').replace(/[<>]/g, '');
+      return `<div class="champion-row"><div class="champion-num">🌴</div><div class="champion-info"><div class="champion-name">${player}</div><div class="champion-role">${dates ? 'Window: ' + dates : 'Open to dates'}</div></div><div class="champion-meta"><span class="champion-date">${date}</span></div></div>`;
+    }).join('');
+    wrap.style.display = '';
+  } catch (e) {}
+}
+loadRetreatRoll();
+setInterval(loadRetreatRoll, 120000);
+
 document.getElementById('rtSubmit')?.addEventListener('click', async (ev) => {
   ev.preventDefault();
   const btn = document.getElementById('rtSubmit');
@@ -3305,6 +3329,7 @@ document.getElementById('rtSubmit')?.addEventListener('click', async (ev) => {
         if (el) el.value = '';
       });
       loadRetreatCount();
+      loadRetreatRoll();
     }
   } catch (e) {
     showMsg('Network error. Try again.', 'err');
@@ -5156,6 +5181,11 @@ def render_html() -> str:
     </p>
     {champions_html}
     {('<h3 style="margin-top:20px;">Public Proof Loops</h3>' + proofs_html) if public_proofs > 0 else ''}
+    <div class="retreat-roll" id="retreatRoll" style="display:none;">
+      <h3 style="margin-top:20px;">🌴 Retreat Interest Roll <span style="font-size:12px;font-weight:400;color:var(--muted);">&mdash; <span id="retreatRollCount">0</span> Champions raised their hand</span></h3>
+      <p style="color:var(--muted);font-size:12px;margin:0 0 12px;">Champions who've expressed public interest in the first Costa Rica retreat. Private interests exist but are not listed by their consent.</p>
+      <div class="champions-list" id="retreatRollList"></div>
+    </div>
   </div>
 
   <div class="connector">
