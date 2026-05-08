@@ -84,7 +84,8 @@
 - **2026-04-29** · FP Index v5.6.0 (port 8550) · `fullpotential.ai/intelligence` · 🟢 live
 - **2026-04-29** · FP Frontier Basket · `fullpotential.ai/invest` · 🟢 live
 - **2026-04-29** · Credits Gateway (8765) · 🟢 live
-- **2026-04-29** · WhaleTrack (8600) · 🟡 paper mode · X-API-Key auth · sunheart-brain wiring pending
+- **2026-04-29** · WhaleTrack (8600) · 🟢 paper mode · 224/226 read endpoints public, no auth needed
+- **2026-05-08** · `/signals` (`@sunheartbrain_bot`) → live WhaleTrack BTC anchor + top 5 recommendations · 🟢 live (Loop 29)
 - **2026-04-29** · WhaleTrack-live (8601) · 🟡 paper mode · `fpai_ai_token` for mutations
 - **2026-04-29** · Outbounders.com (legacy 209.74.93.72) · 🟢 live · cost-anchored, no active dev
 
