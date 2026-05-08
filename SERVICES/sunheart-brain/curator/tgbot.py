@@ -486,14 +486,19 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
             "  /game      — vital Game stats for the architect\n"
             "  /signals   — trading + lead signals (retreat / party / coaching / commerce)\n"
             "  /decisions — unified queue of items needing your decision\n"
-            "  /money     — costs + revenue + biggest leak\n"
-            "       /money set &lt;id&gt; &lt;amount&gt; [purpose]   — update an existing line\n"
+            "  /money     — costs + revenue + liquid + runway\n"
+            "       /money liquid                                — liquid balances by account\n"
+            "       /money trades                                — open trade positions + P/L\n"
+            "       /money set &lt;id&gt; &lt;amount&gt; [purpose]    — update an existing cost line\n"
+            "       /money set-balance &lt;account&gt; &lt;amt&gt;     — update an account balance\n"
+            "       /money trade &lt;sym&gt; &lt;side&gt; &lt;qty&gt; @ &lt;price&gt; [note] — open a trade position\n"
             "       /money add cost &lt;id&gt; &lt;name&gt; &lt;amt&gt; &lt;cat&gt; — add new cost\n"
             "       /money add revenue &lt;stream&gt; &lt;amt&gt; [note] — add/update revenue\n"
             "       /money &lt;free text&gt;                       — capture as money note (queued)\n"
             "  /servers   — live server + hosting status (primary / brain / legacy)\n"
             "  /roi       — yesterday's brain ROI ledger (cost vs engagement)\n"
             "  /opportunities — run today's proactive scan now (silent if nothing)\n"
+            "  /capabilities [category] — what this system can do (and when it shipped)\n"
             "  /log       — recent AI activity timeline\n"
             "  /pending — list pending queue items with approve buttons\n"
             "  /digest  — today's brain stats\n"
@@ -625,6 +630,8 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
         await tg.send("⏳ Running opportunities scan…")
         asyncio.create_task(_run_opportunities_async())
         return None
+    if cmd == "capabilities":
+        return await _cmd_capabilities(rest.strip())
     return f"Unknown command: /{tg._esc(cmd)}. Try /help."
 
 
@@ -1394,6 +1401,14 @@ async def _cmd_money(rest: str = "") -> str:
         return await _money_set(arg)
     if sub == "add":
         return await _money_add(arg)
+    if sub in ("balance", "balances", "liquid"):
+        return await _money_liquid_view()
+    if sub == "set-balance":
+        return await _money_set_balance(arg)
+    if sub == "trade":
+        return await _money_trade(arg)
+    if sub == "trades":
+        return await _money_trades_view()
     # Anything else: free-text money note → propose via Curator Queue
     return await _money_note(rest)
 
@@ -2036,6 +2051,192 @@ async def _systemctl_active_many(units: tuple[str, ...]) -> list[tuple[str, str]
         except Exception:
             return (unit, "unknown")
     return list(await _asyncio.gather(*[_one(u) for u in units]))
+
+
+# ───────────────────────────── /capabilities ──────────────────────────────
+_CAPABILITIES_PATH = _os.path.join(_STATE_DIR, "CAPABILITIES.md")
+_CATEGORY_ALIASES = {
+    "game": "Game",
+    "brain": "Sunheart Brain",
+    "sunheart": "Sunheart Brain",
+    "inquiry": "Inquiry",
+    "coordination": "Inquiry",
+    "money": "Economics",
+    "economics": "Economics",
+    "trading": "Trading",
+    "signals": "Trading",
+    "infra": "Infrastructure",
+    "infrastructure": "Infrastructure",
+    "village": "Village",
+    "bots": "Other Telegram Bots",
+    "deprecated": "Deprecated",
+    "retired": "Deprecated",
+}
+
+
+async def _cmd_capabilities(rest: str = "") -> str:
+    """Render core/STATE/CAPABILITIES.md grouped by category.
+
+    Optional arg filters to a category alias (game, brain, inquiry, money,
+    trading, infra, village, bots, deprecated). The file lives at
+    /var/lib/sh-brain/state/CAPABILITIES.md, synced from the laptop via
+    sync_now_to_brain.sh.
+    """
+    try:
+        with open(_CAPABILITIES_PATH, encoding="utf-8") as f:
+            md = f.read()
+    except Exception as e:
+        return (
+            "🛠 <b>Capabilities</b>\n\n"
+            f"<i>CAPABILITIES.md unreachable at <code>{tg._esc(_CAPABILITIES_PATH)}</code>: "
+            f"{tg._esc(str(e))}</i>\n\n"
+            "Run <code>SERVICES/sunheart-brain/ingest/sync_now_to_brain.sh</code> from the laptop."
+        )
+
+    sections = _parse_capabilities(md)
+    if not sections:
+        return "🛠 <b>Capabilities</b>\n\n<i>No category sections parsed from CAPABILITIES.md.</i>"
+
+    filter_token = (rest or "").strip().lower()
+    filter_match: str | None = None
+    if filter_token:
+        filter_match = _CATEGORY_ALIASES.get(filter_token)
+        if filter_match is None:
+            for key in _CATEGORY_ALIASES.keys():
+                if key.startswith(filter_token):
+                    filter_match = _CATEGORY_ALIASES[key]
+                    break
+
+    import os as _os6
+    age = ""
+    try:
+        from datetime import datetime as _dt5
+        diff = (_dt5.now() - _dt5.fromtimestamp(_os6.path.getmtime(_CAPABILITIES_PATH))).total_seconds()
+        if diff < 3600: age = f"{int(diff//60)}m ago"
+        elif diff < 86400: age = f"{int(diff//3600)}h ago"
+        else: age = f"{int(diff//86400)}d ago"
+    except Exception:
+        pass
+
+    lines = ["🛠 <b>Capabilities — what this system can do</b>"]
+    if age:
+        lines.append(f"<i>Last synced: {age}</i>")
+
+    total_entries = sum(len(s["entries"]) for s in sections)
+    shown = 0
+    matched_section_count = 0
+
+    for sec in sections:
+        if filter_match and filter_match.lower() not in sec["title"].lower():
+            continue
+        matched_section_count += 1
+        lines.append(f"\n<b>{tg._esc(sec['emoji'] + ' ' if sec['emoji'] else '')}{tg._esc(sec['title'])}</b>")
+        per_section_cap = 999 if filter_match else 8
+        entries = sec["entries"][:per_section_cap]
+        for e in entries:
+            shown += 1
+            date = e.get("date") or ""
+            name = e.get("name") or ""
+            status = e.get("status") or ""
+            desc = e.get("desc") or ""
+            date_part = f"<code>{tg._esc(date)}</code> · " if date else ""
+            status_part = f" {tg._esc(status)}" if status else ""
+            desc_part = f" — <i>{tg._esc(desc)}</i>" if desc else ""
+            lines.append(f"  · {date_part}<b>{tg._esc(name)}</b>{status_part}{desc_part}")
+        remaining = len(sec["entries"]) - len(entries)
+        if remaining > 0:
+            lines.append(f"  <i>…+{remaining} more</i>")
+
+    if filter_match and matched_section_count == 0:
+        return (
+            f"🛠 <b>Capabilities</b>\n\n<i>No category matched '{tg._esc(filter_token)}'. "
+            f"Try: {', '.join(sorted(set(_CATEGORY_ALIASES.keys())))}.</i>"
+        )
+
+    if not filter_match and total_entries > shown:
+        lines.append(f"\n<i>Showing top per category. {total_entries} total entries.</i>")
+    lines.append(
+        "\n<i>Source: core/STATE/CAPABILITIES.md · "
+        "/capabilities &lt;category&gt; to filter (game, brain, inquiry, money, trading, infra, village, bots, deprecated)</i>"
+    )
+    return "\n".join(lines)
+
+
+def _parse_capabilities(md: str) -> list[dict]:
+    """Parse CAPABILITIES.md into [{title, emoji, entries:[{date,name,status,desc}]}].
+
+    Section heading: '## <emoji?> <Title>' (skips Update Protocol + the file's
+    top-level # heading). Entry format:
+      - **YYYY-MM-DD** · <name> · <status icon + words> <description?>
+      - <name> · <status>
+    Anything else is ignored.
+    """
+    import re
+    sections: list[dict] = []
+    cur: dict | None = None
+    lines = md.splitlines()
+    head_re = re.compile(r"^##\s+(.+?)\s*$")
+    for raw in lines:
+        line = raw.rstrip()
+        m = head_re.match(line)
+        if m:
+            title_full = m.group(1).strip()
+            if title_full.lower().startswith("update protocol"):
+                cur = None
+                continue
+            emoji, _, title = title_full.partition(" ")
+            if not any(c.isalpha() for c in emoji):
+                title_clean = title.strip() or title_full
+                emoji_clean = emoji
+            else:
+                title_clean = title_full
+                emoji_clean = ""
+            cur = {"title": title_clean, "emoji": emoji_clean, "entries": []}
+            sections.append(cur)
+            continue
+        if cur is None:
+            continue
+        if not line.startswith("- "):
+            continue
+        body = line[2:].strip()
+        entry = _parse_capability_line(body)
+        if entry:
+            cur["entries"].append(entry)
+    return [s for s in sections if s["entries"]]
+
+
+def _parse_capability_line(body: str) -> dict | None:
+    """Parse a bullet body like:
+    '**2026-05-08** · Foo · 🟢 live · short description'
+    """
+    import re
+    parts = [p.strip() for p in body.split(" · ")]
+    if not parts:
+        return None
+    date = ""
+    first = parts[0]
+    md_date = re.match(r"^\*\*(\d{4}-\d{2}-\d{2})\*\*$", first)
+    plain_date = re.match(r"^(\d{4}-\d{2}-\d{2})$", first)
+    if md_date:
+        date = md_date.group(1)
+        parts = parts[1:]
+    elif plain_date:
+        date = plain_date.group(1)
+        parts = parts[1:]
+    if not parts:
+        return None
+    name = re.sub(r"\*\*(.+?)\*\*", r"\1", parts[0]).strip()
+    status = ""
+    desc = ""
+    if len(parts) >= 2:
+        status_candidate = parts[1].strip()
+        if any(g in status_candidate for g in ("🟢", "🟡", "⚪", "⚠️", "🔴")):
+            status = status_candidate
+            if len(parts) >= 3:
+                desc = " · ".join(parts[2:]).strip()
+        else:
+            desc = " · ".join(parts[1:]).strip()
+    return {"date": date, "name": name, "status": status, "desc": desc}
 
 
 def _render_basic_markdown_html(text: str) -> str:

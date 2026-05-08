@@ -58,3 +58,11 @@ ssh -o ConnectTimeout=5 "$BRAIN_HOST" "mkdir -p $BRAIN_STATE_DIR" >/dev/null 2>&
     && scp -o ConnectTimeout=5 -q "$NOW_FILE" "$BRAIN_HOST:$BRAIN_STATE_DIR/NOW.md" \
     && echo "synced NOW.md → $BRAIN_HOST:$BRAIN_STATE_DIR/" \
     || echo "warn: file-sync to $BRAIN_HOST failed (note still pushed via API)"
+
+# Sync CAPABILITIES.md alongside (read by /capabilities on @sunheartbrain_bot).
+CAP_FILE="$(dirname "$NOW_FILE")/CAPABILITIES.md"
+if [ -f "$CAP_FILE" ]; then
+    scp -o ConnectTimeout=5 -q "$CAP_FILE" "$BRAIN_HOST:$BRAIN_STATE_DIR/CAPABILITIES.md" \
+        && echo "synced CAPABILITIES.md → $BRAIN_HOST:$BRAIN_STATE_DIR/" \
+        || echo "warn: CAPABILITIES.md scp failed"
+fi
