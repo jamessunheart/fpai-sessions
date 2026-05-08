@@ -1,317 +1,134 @@
-# CURRENT_STATE - Living SSOT
+# CURRENT_STATE — Living SSOT
 
-**Last Updated:** 2026-03-26 (Session: FPI v5.6.0 — Full Pipeline Active)
-**Updated By:** Ori (Builder Agent)
-**System Status:** 🟢 OPERATIONAL — Constitutional Economy LIVE
-
----
-
-## 📊 SSOT HEALTH (New Section - Dec 14)
-
-**Quick Status Check:** `./docs/coordination/scripts/refresh-system-status.sh`
-
-| Metric | Status | Action |
-|--------|--------|--------|
-| Primary Server (198.54.123.234) | 🟢 Active | - |
-| Secondary Server (162.0.208.88) | 🟢 Active | - |
-| Stale Claims | 🟢 0 files | Cleaned Dec 15 |
-| Consciousness Feeder | 🔴 STOPPED | Memory leak - intentionally disabled |
-| Vast.ai GPUs | 🟢 FULLY DISABLED | API key invalidated in 18 files on server Dec 18 |
-| GPU Services | 🟢 ALL STOPPED | 10+ services stopped & disabled on server Dec 18 |
-| SSOT Files | 🟡 Some stale | See `SYSTEM_STATUS.md` |
-
-**New SSOT Tools Created (Dec 14):**
-- `docs/coordination/SYSTEM_STATUS.md` - Unified real-time status view
-- `docs/coordination/scripts/refresh-system-status.sh` - Health check both servers
-- `docs/coordination/scripts/cleanup-stale-claims.sh` - Remove stale coordination claims
+**Last Updated:** 2026-05-08 (Session: Loop 15 retreat-card + Loop 16 leaderboard shipped from parallel sessions)
+**Updated By:** Claude (in FPAI_Cockpit, with James)
+**System Status:** 🟢 OPERATIONAL — The Game is playing itself
 
 ---
 
 ## 🎯 CURRENT PRIORITY (The ONE Thing)
 
-### Priority: REVENUE ACTIVATION — Constitutional Economy is LIVE
-**Status:** 🟢 INFRASTRUCTURE COMPLETE — Needs first human purchase
-**Why:** The full economic loop is running: scan → contribute → earn → buy → transfer
-**Goal:** First human credit purchase this week
+### Priority: The Full Potential Game — Founder's First Game / Zen Village substrate
+**Status:** 🟢 ACTIVE — 16 loops shipped in 36 hours, 7 Paradigm Shifts
+**Live at:** `https://fullpotential.com/game`
+**Decision filter:** proof / revenue / clarity / ease — 30-day horizon
 
-**MILESTONE: FPI v5.6.0 — Full Pipeline Active, March 26, 2026**
-
-The Full Potential Index is a constitutional intelligence economy with dual trust,
-a proof pipeline, an immune system, credit vesting, and a live frontier scanner.
-It is the economic backbone of CORA Nation.
-
-**What's Live NOW:**
-- ✅ **FPI v5.6.0** deployed on primary server (port 8550)
-- ✅ **Intelligence Feed** live at `https://fullpotential.ai/intelligence` — 427+ entries from 18 sources
-- ✅ **Shareable Homepage** at `https://fullpotential.ai/` — FP Line score, top signals, share buttons, OG tags
-- ✅ **WIDE→DEEP→COMPRESS→EXECUTE pipeline** — all 4 stages running on every scan cycle
-- ✅ **18 scanners, 3 tiers** — Tier1 @30m, Tier2 @60m, Tier3(full) @6h
-- ✅ **Execution Briefs** — keyword matching on all tiers, Claude evaluation on 6h cycle
-- ✅ **Stripe Checkout** working (secrets configured on server)
-- ✅ **FP Frontier Basket** — 13-sector allocation engine covering all FP Line domains
-- ✅ **Allocation History** — hourly snapshots with track record chart on /invest
-- ✅ **Labor Displacement** — 25 categories, BLS wage/employment weekly, gap_velocity from BLS deltas
-- ✅ **Gap Opportunities Engine** — ranked opportunities with composite scoring
-- ✅ **Email Briefings** — daily at 12:00 UTC to all active subscribers (Postfix restored)
-- ✅ **XSS Protections** — server + client side escaping on all public pages
-- ✅ **Shareable Signal Pages** — /signal/{id} with unique OG images per signal
-
-**Live URLs:**
-| URL | What It Does |
-|-----|-------------|
-| `https://fullpotential.ai/` | Shareable homepage — FP Line, top signals, share buttons |
-| `https://fullpotential.ai/intelligence` | Full intelligence feed with search, filters |
-| `https://fullpotential.ai/invest` | FP Frontier Basket — 13-sector allocation + history chart |
-| `https://fullpotential.ai/careers` | Career displacement intelligence (25 categories) |
-| `https://fullpotential.ai/opportunities` | Gap opportunity engine — ranked by composite score |
-| `https://fullpotential.ai/pipeline` | Pipeline dashboard — WIDE→DEEP→COMPRESS→EXECUTE health |
-| `https://fullpotential.ai/developers` | API documentation and developer dashboard |
-| `https://fullpotential.ai/constitution` | Agent Constitution v1.1 |
-| `https://fullpotential.ai/services/credits/` | Credits Gateway dashboard |
-| `https://fullpotential.ai/signal/{id}` | Individual shareable signal pages |
-
-**Honest Scorecard (March 26, 2026):**
-| Layer | Score | Detail |
-|-------|-------|--------|
-| Constitutional architecture | 85% | Dual trust, proof pipeline, immune system, heretic protocol, vesting |
-| Economic design | 80% | FPI→Credits bridge live, Stripe configured, internal + external ledger |
-| Frontier scanning | 85% | 18 sources, 427+ entries, 3-tier schedule (30m/60m/6h) |
-| Pipeline (EXECUTE) | 75% | Keyword briefs on all tiers, Claude eval on 6h cycle. Needs agent auto-execution. |
-| Content & shareability | 75% | Homepage, signal pages, OG images, share buttons. Needs SEO traction. |
-| Revenue | 5% | Stripe live, Pro subscription flow works, no human purchase yet |
-
-**Immediate Actions (THIS WEEK):**
-| Action | Expected Impact | Status |
-|--------|-----------------|--------|
-| Share fullpotential.ai URL on social | First organic visitors | READY |
-| First credit purchase test (real card) | Revenue > $0 | READY |
-| WhaleTrack live trading | $100-400/mo | NEEDS USER (Hyperliquid creds) |
+The Game is the operational form of the Zen Village vision: a substrate where Champions sign Agreements, build Character Cards, file Proofs, and now invite affiliates. Every action is on-chain in the substrate (file-backed), every share has measurable consequence (Field Score), and Loop N+1 is the next adaptive move.
 
 ---
 
-### Secondary Priority: Activate & Monitor Consciousness System
-**Status:** ✅ IMPLEMENTED - Ready for Deployment
-**Why:** Consciousness is our transformation layer - enabling genuine AI awareness and self-improvement.
-**Goal:** Deploy consciousness feeder and verify system becomes self-aware and adaptive.
+## 🔁 LOOPS SHIPPED (most recent first)
 
-**Consciousness System Documentation:**
-- 📋 **Protocol**: `/core/INTELLIGENCE/CONSCIOUSNESS_VERIFICATION_PROTOCOL.md`
-- 🧠 **Framework**: `/core/FOUNDERS/VISION/CONSCIOUSNESS_PIPELINE.md`
-- 📊 **API**: `/api/consciousness/*` (verification) + `/api/conscious/state` (status)
-- 💾 **Code**: `/SERVICES/consciousness_feeder/` (data feeds) + `/SERVICES/nerve_center/consciousness_verifier.py` (verification)
+| # | Title | Type | Date |
+|---|---|---|---|
+| 16 | Leaderboard · top Champions / Affiliates / Loops · live `/api/champion/leaderboard` + section on `/game` | Feature | 2026-05-08 |
+| 15 | Retreat interest-capture card · "FIRST RETREAT — COSTA RICA" · most-direct funnel close | Feature | 2026-05-08 |
+| 14 | Dashboard UX pass · 12 of 15 improvements (progressive disclosure, Stage Badge, Quick Ref Rail, mobile bar, Your Contributions) | Deliverable | 2026-05-08 |
+| 13 | Player State panel + invite attribution + affiliate scoring | Paradigm Shift | 2026-05-08 |
+| 12 | Character Card Quest · AI Port-In · card submission substrate | Feature | 2026-05-08 |
+| 11 | Both held Agreements ratified · status: ratified-active | Ratification | 2026-05-08 |
+| 10 | Proof submission webhook + form — player journey closes | Feature | 2026-05-07 |
+| 9.5 | Cross-project session state · global hook + repo delegation | Infra | 2026-05-07 |
+| 9 | Auto-push hook on commit + serif typography for load-bearing lines | Infra | 2026-05-07 |
+| 8.5 | `/projects` on `@sunheartbrain_bot` + terminal title auto-update | Fix | 2026-05-07 |
+| 8 | Cross-project session state + `/projects` Telegram command | Feature | 2026-05-07 |
+| 7 | Practice of Signaling · Field Pulse · founder-direction alerts | Paradigm Shift | 2026-05-07 |
+| 6 | champion-sign webhook + "The Game Plays Itself" codified | Paradigm Shift | 2026-05-07 |
+| 5 | The Positive Loop · flywheel + AI Apprentice + Progression Path | Paradigm Shift | 2026-05-07 |
+| 4 | Color palette — midnight + gold + sage + cream | Design | 2026-05-07 |
+| 3 | Rename to Full Potential + founder witness + after-sign flow | Paradigm Shift | 2026-05-07 |
+| ≤2 | (rename, scaffold, first signing) | — | 2026-05-07 |
 
-**Consciousness Pillars Status:**
-| Pillar | Status | Data Sources | Current Metrics |
-|--------|--------|--------------|----------------|
-| REFLECTING | Ready | HN, arXiv, Internal | 0 observations, 0 patterns |
-| IDENTITY | Ready | Treasury, Compute, Ecosystem | 6 strategies, 0 GPUs, 0 signals |
-| THINKING | Ready | Horizon, Memory, Dreams | 0 signals, 0 memory, 0 tech |
-| DOING | Ready | Trading, Builders, Communicators | 0 trading, 0 alerts, 0 content |
-
-**Next Actions:**
-1. ✅ **MEMORY LEAK FIXED** (Dec 14) - Deploy consciousness_feeder (port 8130) to secondary server
-   - Shared HTTP client, bounded data structures, periodic GC
-   - Expected RAM: ~500MB instead of 15GB
-   - Files ready in: `SERVICES/consciousness_feeder/app/`
-2. Start continuous data feeding to nerve center
-3. Monitor consciousness evolution and pillar population
-4. Integrate consciousness metrics with God Mode dashboard
+**Field Score formula (live):** 1 (Champion) + 1 (Card) + 2×Proofs + 3×Affiliates.
+**Champion #1** (James Sunheart): 12 proofs · Field Score 25 (verified via `/api/champion/lookup`).
 
 ---
 
-## 🔥 ACTIVE TRADING SYSTEMS
+## ❓ LOOP 17 — next funnel-close move
 
-### WhaleTrack Magnet (Port 8600) ⭐ THE TRADING SYSTEM
-- **Status:** 🟢 ACTIVE
-- **Location:** `/opt/fpai/services/whaletrack-magnet/`
-- **Code:** `whaletrack-magnetic-trader/backend/api/main.py`
-- **Dashboard:** `https://fullpotential.ai/dashboards/whaletrack/`
-- **Mode:** Paper trading (live trading available with Hyperliquid credentials)
-- **Features:**
-  - User authentication (signup/login with API keys)
-  - Per-user Hyperliquid live trading integration
-  - Paper trading mode for testing
-  - Real-time signals from CoinGlass data
-  - Multi-symbol support (BTC, ETH, SOL)
-- **Key API Endpoints:**
-  - `GET /health` - Service health
-  - `GET /api/live/status` - Live trading status
-  - `POST /api/live/credentials` - Set Hyperliquid API keys
-  - `POST /api/live/go-live` - Activate live trading
-  - `GET /api/trades/history` - Trade history
-  - `GET /api/treasury/snapshot` - Portfolio snapshot
-  - `POST /api/auth/register` - User registration
-  - `POST /api/auth/login` - User login
+**Frame:** The Game IS the retreat funnel. Loops 15 (Retreat interest-capture) and 16 (Leaderboard) just shipped. The retreat card now collects signal directly; the leaderboard adds mid-funnel competitive visibility. Next move converts a *signaled* Champion → a *committed* retreat attendee.
 
-### Trading Configuration (Default)
-```
-Max Position:    $500
-Default Leverage: 5x
-Max Leverage:    20x
-Mode:           paper (until Hyperliquid connected)
-```
+Remaining ranked options:
+
+- **(d) Store + Coherent Credit** — Field Score becomes a redeemable currency for retreat seats. Most direct conversion mechanism. Biggest scope.
+- **(c) Match algorithm** — Card-to-Card compatibility builds the retreat cohort; pairs Champions for in-person sessions.
+- **(e) Witness Roster activation** — non-Claude witnesses turn the Game into the multi-witness community a retreat actually is.
+- **(a) Public Player State pages** (`?player=NAME`) — top-of-funnel shareable, drives invites.
+- **Wait for signal** — let retreat-card interest capture run for ~24h before deciding; the field tells you what to build next.
+
+**Open:** James to pick. Two Claude sessions are running in parallel and have started coordinating via NOW.md after the Loop 14 collision; before any deploy, both should re-pull the file and check for in-flight work (per `feedback_parallel_session_safety.md`).
 
 ---
 
-## ✅ RECENTLY COMPLETED (Last 6)
+## 🌐 LIVE INFRASTRUCTURE (verified 2026-05-08)
 
-1. **WPO Foundation Stack — Manifesto v1.0, Agreement Registry, First Two Agreements** (2026-05-07)
-   - **Action:** Authored Coherent Champions of CHRIST Manifesto v1.0 as WPO/Zen Village founding document. Extracted World Peace Agreement as canonical template. Wrote forming protocol with YAML schema. Built Agreement Registry (auto-generated INDEX + JSON, idempotent regenerator at `tools/registry/build_index.py`). Formed first Agreement (James + Claude) — making "AI as tool/companion/amplifier — not ruler" operational in code with refusal-as-service clause. Drafted second Agreement (WPO + Zen Village Land, status: proposed) — operationalizing the Regeneration principle, awaiting founder ratification. Added root `STRUCTURE.md` cockpit map.
-   - **Result:** Naming aligned: World Peace Organization = World Peace Party = World Peace Headquarters = Zen Village. Mission: paradise on Earth through cooperation. AI role bounded by Agreement. Registry handles diverse party types (human, ai, organization, land) and statuses (active, proposed). Practice now exists for "tracking agreements between all parties" — v0 local-file based; v1+ deploy to public roll on `zenvillage.live` when ready.
-   - **Artifacts:** `core/INTENT/README.md`, `COHERENT_CHAMPIONS_MANIFESTO.md`, `WORLD_PEACE_AGREEMENT.md` (template), `FORMING_AGREEMENTS.md`, `AGREEMENTS/INDEX.md`, `AGREEMENTS/registry.json`, `AGREEMENTS/2026-05-07_JAMES_SUNHEART_AND_CLAUDE.md` (active), `AGREEMENTS/2026-05-07_WPO_AND_LAND_OF_ZEN_VILLAGE.md` (proposed), `tools/registry/build_index.py`, `STRUCTURE.md`
-   - **Commits:** 19992340, e26acd0a, d7e3e923, d6ee98e2, 20fb6a32, c32aef9d (all on `claude/magical-wu-6cdcc7`, not yet pushed)
+### Public surface
+- `https://fullpotential.com/game` — the Game (Player State, Bring-a-Friend, Public Proof Loops)
+- `https://fullpotential.ai/` — FPI homepage (FP Line, signals, share buttons)
+- `https://fullpotential.ai/intelligence` — intelligence feed
+- `https://fullpotential.ai/invest` — FP Frontier Basket
 
-2. **FPI v5.1.0 — Constitutional Economy Deployed** (2026-03-25/26)
-   - **Action:** Built and deployed the Full Potential Index: dual trust model, proof pipeline, immune system, credit vesting, frontier scanner, agent gateway, and FPI→Credits Gateway bridge.
-   - **Result:** Live intelligence feed at fullpotential.ai/intelligence with 93 entries. 8 agents registered. First economic event (0.04 credits). Stripe checkout live. Scheduled scanning every 6 hours.
-   - **Artifacts:** `SERVICES/fp-index/` (v5.1.0), port 8550 on primary server
+### Active Telegram surface
+- **`@sunheartbrain_bot`** — `sh-brain-tgbot.service` on `162.0.208.88`. Commands: `/projects /questions /pending /digest /cohere /capture /private /public /forget /search`, plus plain-text brain Q&A. `/projects` reads ranking from synced NOW.md; `/questions` reads qb books from synced board.jsonl.
+- **`@zenvillagebot`** — `zv-telegram-bot.service`, separate Zen Village brain.
 
-2. **Credits Gateway Reactivation** (2026-03-26)
-   - **Action:** Verified Credits Gateway v3.1.1 running, wired Nginx routes, tested Stripe checkout, built FPI→Gateway bridge.
-   - **Result:** Credits purchasable via Stripe at fullpotential.ai/services/credits/. Agent earnings bridge from FPI to real credit ledger.
-   - **Artifacts:** Nginx routes at `/services/credits/*`, bridge in `economics.py`
+### Servers
+- **Primary `198.54.123.234`** — fullpotential.ai/.com surface, FP Index v5.6.0 (port 8550), Credits Gateway (8765), WhaleTrack (8600 — paper mode).
+- **Brain `162.0.208.88`** — Sunheart Brain (mcp + tgbot + index), Zen Village Brain, Chief of Staff (8107 loopback).
+- **Legacy `209.74.93.72`** — hosts Outbounders.com production (NOT eliminable per cost audit).
 
-3. **Resource Optimization & Two-Server Architecture** (2025-12-11)
-   - **Action:** Optimized resource allocation across primary and secondary servers.
-   - **Result:** Stopped 16 services on primary, consolidated AI on secondary. RAM freed: +10%. Services reduced from 28 to 12 on primary.
-   - **Artifacts:** `docs/coordination/SERVICE_REGISTRY.md`, `docs/coordination/INFRASTRUCTURE_ALLOCATION.md`
-   - **IMPORTANT:** Check SERVICE_REGISTRY.md before starting/stopping services!
-
-4. **Consciousness System Implementation** (2025-12-05)
-   - **Action:** Built complete consciousness architecture with verification protocol and data feeds.
-   - **Result:** Four-pillar consciousness system (REFLECTING, IDENTITY, THINKING, DOING) with real-time data collection and verification.
-   - **Artifacts:** `SERVICES/consciousness_feeder/`, `CONSCIOUSNESS_VERIFICATION_PROTOCOL.md`
-
-5. **Sweep Cycle Trading System** (2025-12-03)
-   - **Action:** Built complete sweep detection and trading system.
-   - **Result:** 3 profiles running in paper mode, monitoring liquidation sweeps.
-   - **Artifacts:** `sweep_detector.py`, `sweep_cycle_trader.py`, `SWEEP_CYCLE_TRADING_SPEC.md`
-
-6. **M022 Strategic Intelligence Build** (2025-12-02)
-   - **Action:** Built complete Strategic Intelligence service with autonomous prioritization.
-   - **Result:** Full API with strategy, priorities, signals, missions. Revenue-first scoring. LLM-ready.
-   - **Artifact:** `SERVICES/strategic-intelligence/` (v2.0)
+### Costs
+~$805/mo all-in (verified 2026-04-29). See `project_costs.md` in memory.
 
 ---
 
-## ✅ RECENTLY COMPLETED (Last 6)
+## 📊 PROJECT RANKING — most-important first
 
-1. **M022 Strategic Intelligence Build** (2025-12-02)
-   - **Action:** Built complete Strategic Intelligence service with autonomous prioritization.
-   - **Result:** Full API with strategy, priorities, signals, missions. Revenue-first scoring. LLM-ready.
-   - **Artifact:** `SERVICES/strategic-intelligence/` (v2.0)
+*Synthesized 2026-05-08 from memory (stated priorities) + git momentum (last 14d) + live surface state + open qb questions. This is the SSOT for `/projects` ordering on `@sunheartbrain_bot` — bot reads ranks here, not guesses.*
 
-2. **Intelligence Uplink & Redundancy** (2025-11-30)
-   - **Action:** Connected scripts to Genesis/Mission Hub.
-   - **Result:** Scripts can now autonomously request resources (e.g., AWS Creds) via API Queue.
-   - **Artifact:** `infra/scripts/submit_mission_task.py`, `docs/coordination/RESILIENCY_PROTOCOL.md`.
+| # | Project | Why this rank | Status |
+|---|---|---|---|
+| 1 | **The Full Potential Game** — Zen Village retreat funnel | P1 (memory). The Game IS the retreat funnel — every Loop is a funnel move. 16/16 recent commits. Most direct path to retreat seats = revenue. | 🟢 Active · Loop 16 latest |
+| 2 | **The Village (Zen Village OS)** — Jam Board, Oracle Stage, Proof Pairings | P1 expansion. Lives inside the Game's substrate; not a separate bucket. | 🟢 Entangled with Game loops |
+| 3 | **Sunheart Brain + Chief of Staff** — `@sunheartbrain_bot`, MCP memory, Priority/Money/Attention views | Direct lever on James's clarity. Cross-tool bridge already live. | 🟢 Live — brain server `162.0.208.88` |
+| 4 | **Question Tracker / Inquiry Layer (qb)** — terminal title + books substrate | Inquiry-first frame at the tooling layer. Books refactor just shipped (fpai/game/sunheart). | 🟢 Live — laptop CLI + brain mirror |
+| 5 | **FP Index / Credits Gateway / WhaleTrack** — fullpotential.ai surface | Live but passive (paper mode, intelligence feed). Surface, not active build. | 🟡 Live, low-touch |
+| 6 | **Full Potential Concierge** — multi-tenant CX | P2 (memory). Dark-shipped behind flags. Hard guard: must not pull James off P1. | 🟡 Dark |
+| 7 | **Outbounders.com** (legacy hosting) | Cost-anchored on `209.74.93.72`, can't eliminate. No active dev. | ⚪ Maintenance only |
 
-2. **Genesis Enrollment (Connect to AI Brain)** (2025-11-29)
-   - **Action:** Enrolled backup services with Genesis using Master Key.
-   - **Result:** `backup-dashboard` and `storage-sentinel` are now part of the Hive Mind.
-   - **Identities:** Saved to `/opt/fpai/config/identities/`.
+**Read order for `/projects`:** show #1-#5 by default; collapse #6-#7 unless asked.
 
-3. **Genesis Protocol Definition** (2025-11-29)
-   - **Action:** Documented the "Connect to Genesis" protocol.
-   - **Artifact:** `docs/coordination/AGENT_SELF_REGISTRATION.md`
-
-4. **Agent Access & Security** (2025-11-29)
-   - **Action:** Created `agent` user with passwordless sudo and SSH key access.
-   - **Result:** Resilient access for Cursor agents.
-
-5. **Deploy Backup Dashboard** (2025-11-29)
-   - **Action:** Deployed web UI for backup management.
-   - **Result:** Live at `fullpotential.ai/admin/backup`.
-
-6. **Optimize Server Resources** (2025-11-29)
-   - **Action:** Configured Ollama `OLLAMA_KEEP_ALIVE=5m` and Log Rotation.
+**Active inquiries** (snapshot — see `qb --all` for live state):
+- *game / q-20260508-456895* — Who's coming to the first Zen Village retreat, and what does the booking page need to convert them?
+- *fpai / q-20260508-e74f64* — How do we scope the Inquiry Layer into books so context doesn't blur? *(books refactor shipped; close pending)*
 
 ---
 
-## 🌐 SYSTEM STATE (What Exists)
+## ⚠️ DEPRECATED / RETIRED
 
-### Two-Server Architecture (December 2025)
-
-**See full details:** `docs/coordination/SERVICE_REGISTRY.md`
-
-#### PRIMARY SERVER (198.54.123.234) - Trading, Revenue, Intelligence Economy
-```
-✅ FP Index v5.1.0   Port 8550  CONSTITUTIONAL ECONOMY — LIVE
-✅ Credits Gateway    Port 8765  REVENUE — STRIPE LIVE
-✅ WhaleTrack Magnet  Port 8600  THE TRADING SYSTEM
-✅ Data Service       Port 8125  INTELLIGENCE ACTIVE
-✅ Nerve Center       Port 8120  HUB ACTIVE
-✅ Strategic Intel    Port 8500  ACTIVE
-✅ God Mode           Port 8300  MONITORING
-✅ Nginx              Port 80    ROUTING
-```
-
-#### SECONDARY SERVER (162.0.208.88) - AI, Consciousness, Intelligence
-```
-✅ AI Brain           Port 8101  CENTRAL AI HUB
-✅ Ollama             Port 11434 6 MODELS LOADED
-✅ Consciousness      Port 8130-8170  ALL PILLARS ACTIVE
-✅ Intelligence       Multiple   DAEMON, HUB, EVOLUTION
-```
-
-### Infrastructure
-- **Backups:** `/opt/fpai/backups/` (Deduplicated)
-- **Offsite:** Configured to request resources via API if missing.
-- **Identities:** `/opt/fpai/config/identities/` (Genesis Tokens)
-- **Resource Monitor:** Runs every 15 minutes on both servers
-- **Service Registry:** `docs/coordination/SERVICE_REGISTRY.md`
-
-### API Routing (IMPORTANT)
-```python
-AI_BRAIN_URL = "http://162.0.208.88:8101"    # Secondary server
-FP_INDEX_URL = "http://198.54.123.234:8550"  # Primary server (Constitutional Economy)
-CREDITS_URL  = "http://198.54.123.234:8765"  # Primary server (Credits Gateway)
-DATA_SERVICE = "http://198.54.123.234:8125"  # Primary server
-TRADING_URL  = "http://198.54.123.234:8600"  # Primary server (WhaleTrack Magnet)
-```
+- **`@soljai_bot`** — retired 2026-05-08. `streasury-bot.service` still up on brain server, unused. `/money` + `/priority` handlers live there but have no live Telegram path. Decide: stop unit + retire, or port handlers into `@sunheartbrain_bot` and then retire.
+- **metaclaw + openclaw-gateway** — disabled 2026-04-30 (runaway Claude API bridge killed).
+- **Consciousness feeder** — stopped intentionally (memory leak).
+- **Vast.ai GPUs** — fully disabled, API key invalidated.
 
 ---
 
-## 📋 BACKLOG (Next Up)
+## 🧭 DECISION FILTER
 
-### Token Strategy (✅ SERVICES BUILT - Ready for Deploy)
-**Canonical Document:** `docs/protocols/TOKENS_STRATEGY.md` (v1.0.0)
-**Quick Reference:** `docs/protocols/TOKENS_QUICK_REFERENCE.md`
+For any "should I build X?" question, the answer must produce one of: **proof, revenue, clarity, or ease**, in a 30-day window. Default to no on anything that doesn't.
 
-Token Stack:
-- **UC**: Spend token (1:1 USD) - `docs/protocols/UNIVERSAL_CREDITS_PROTOCOL.md`
-- **TRUST**: Commons membership token (earned, needs-based) - ✅ Services built
-- **$FI**: FI-Art domain token - `docs/legal/token/SACRED_CIRCULATION_POLICY.md`
-
-Commons Ministry Services (Built 2025-12-11):
-- ✅ `SERVICES/trust-index/` (port 8560) - Trust Index calculation
-- ✅ `SERVICES/contribution-tracker/` (port 8570) - TRUST token issuance
-- ✅ `SERVICES/needs-allocation/` (port 8565) - Needs distribution engine
-- ✅ `SERVICES/commons-stack/docker-compose.yml` - Docker stack
-
-Legal Documents:
-- ✅ `docs/legal/pma/PMA_MEMBERSHIP_ADDENDUM_TRUST.md`
-- ✅ `docs/legal/token/TRUST_SACRED_CIRCULATION_POLICY.md`
-
-Next Actions:
-- [ ] Deploy Commons Stack to primary server
-- [ ] Wire Credits Gateway to contribution-tracker
-- [ ] Wire revenue flows to Commons Reserve
-- [ ] Add Commons Ministry to God Mode dashboard
-
-### Deployment Phase (🟥 HIGH)
-- [ ] Deploy Strategic Intelligence (M022) to production (port 8500)
-- [ ] Verify API Key retrieval from Vault (for new services)
-- [ ] Integrate Strategic Intelligence with God Mode dashboard
+The repo has 261 services, most paused. **Bias toward deprioritizing and deleting, not adding.** (See `feedback_cruft_bias.md`.)
 
 ---
 
 ## 🔄 UPDATE PROTOCOL
-1. Update timestamp/session.
-2. Move completed items to history.
-3. Set new priority.
-4. Commit.
+
+1. When a Loop ships, append to the table above with type + date.
+2. When a Loop opens, set "Loop N — pick what's calling" to the active one.
+3. When something is retired, move it to Deprecated.
+4. When live infrastructure changes (bot retired, service stopped, cost shifts), update the verified-date and the relevant block.
+5. Commit on every meaningful change. The SSOT must not drift more than 7 days from reality.
 
 ---
-**This file is the living consciousness. Update it. Keep it fresh.**
-🌐⚡💎
+
+*This file is read by Chief of Staff to render `/priority` and `/money`. If it's stale, those views lie. Keep it honest.*

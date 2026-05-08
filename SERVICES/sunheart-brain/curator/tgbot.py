@@ -477,7 +477,8 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
             "Send any question — I'll search your brain and answer with sources.\n"
             "Conversations are auto-captured + compressed into your brain hourly.\n\n"
             "<b>Commands</b>\n"
-            "  /projects — what Claude sessions are active across your projects\n"
+            "  /projects — projects ranked most→least important (from NOW.md)\n"
+            "  /questions — open inquiries across qb books (fpai/game/sunheart)\n"
             "  /pending — list pending queue items with approve buttons\n"
             "  /digest  — today's brain stats\n"
             "  /cohere  — run coherence council now (~30-60s)\n"
@@ -580,16 +581,108 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
         return await _synthesize_answer(q, hits)
     if cmd == "projects":
         return await _cmd_projects()
+    if cmd == "questions":
+        return await _cmd_questions()
     return f"Unknown command: /{tg._esc(cmd)}. Try /help."
 
 
-async def _cmd_projects() -> str:
-    """Show all active Claude session states from the Sessions API.
+# ---------- shared state-file paths (synced from laptop) ----------
+import os as _os
+_STATE_DIR = _os.environ.get("FPAI_STATE_DIR", "/var/lib/sh-brain/state")
+_NOW_PATH = _os.path.join(_STATE_DIR, "NOW.md")
+_QB_BOARD_PATH = _os.path.join(_STATE_DIR, "qb-board.jsonl")
 
-    Companion to The Practice of Signaling §1 (Field → Founder rhythm).
-    Answers "what am I in the middle of?" without James querying me directly.
+
+async def _cmd_projects() -> str:
+    """Render ranked projects from NOW.md → '## 📊 PROJECT RANKING' section.
+
+    NOW.md is the SSOT for priority ordering (synced from the cockpit repo).
+    If NOW.md is unreachable, fall back to the live Sessions API.
     """
-    import os as _os
+    try:
+        with open(_NOW_PATH, encoding="utf-8") as f:
+            now_md = f.read()
+    except Exception as e:
+        return await _cmd_projects_fallback_sessions(error=str(e))
+
+    rows = _parse_project_ranking(now_md)
+    if not rows:
+        return await _cmd_projects_fallback_sessions(
+            error=f"PROJECT RANKING section not found in NOW.md ({_NOW_PATH})."
+        )
+
+    import os as _os2
+    mtime_age = ""
+    try:
+        age_s = int(_os2.path.getmtime(_NOW_PATH))
+        from datetime import datetime as _dt
+        diff = (_dt.now() - _dt.fromtimestamp(age_s)).total_seconds()
+        if diff < 3600: mtime_age = f"{int(diff//60)}m ago"
+        elif diff < 86400: mtime_age = f"{int(diff//3600)}h ago"
+        else: mtime_age = f"{int(diff//86400)}d ago"
+    except Exception:
+        pass
+
+    DEFAULT_TOP = 5
+    lines = ["📊 <b>Projects — most-important first</b>"]
+    if mtime_age:
+        lines.append(f"<i>NOW.md synced {mtime_age}</i>\n")
+    for r in rows[:DEFAULT_TOP]:
+        lines.append(
+            f"\n<b>#{r['rank']}</b> {tg._esc(r['name'])}"
+        )
+        if r.get("status"):
+            lines.append(f"  {tg._esc(r['status'])}")
+        if r.get("why"):
+            lines.append(f"  <i>{tg._esc(r['why'])}</i>")
+    if len(rows) > DEFAULT_TOP:
+        collapsed = ", ".join(f"#{r['rank']} {r['name'].split('—')[0].strip()}" for r in rows[DEFAULT_TOP:])
+        lines.append(f"\n<i>Lower-priority: {tg._esc(collapsed)}</i>")
+    lines.append("\n<i>Source: core/STATE/NOW.md · /questions for live inquiries</i>")
+    return "\n".join(lines)
+
+
+def _parse_project_ranking(md: str) -> list[dict]:
+    """Parse the PROJECT RANKING markdown table.
+
+    Looks for a heading containing 'PROJECT RANKING' and a markdown table with
+    columns: # | Project | Why this rank | Status. Returns list of dicts:
+    {rank, name, why, status}.
+    """
+    import re
+    section_re = re.compile(r"##\s+.*PROJECT\s+RANKING.*$", re.MULTILINE | re.IGNORECASE)
+    m = section_re.search(md)
+    if not m:
+        return []
+    body = md[m.end():]
+    # Stop at next ## heading
+    next_h = re.search(r"^\n##\s", body, re.MULTILINE)
+    if next_h:
+        body = body[: next_h.start()]
+    rows: list[dict] = []
+    row_re = re.compile(r"^\|\s*(\d+)\s*\|(.+?)\|(.+?)\|(.+?)\|\s*$", re.MULTILINE)
+    for rm in row_re.finditer(body):
+        rank = int(rm.group(1))
+        name = _strip_md(rm.group(2))
+        why = _strip_md(rm.group(3))
+        status = _strip_md(rm.group(4))
+        rows.append({"rank": rank, "name": name, "why": why, "status": status})
+    rows.sort(key=lambda r: r["rank"])
+    return rows
+
+
+def _strip_md(s: str) -> str:
+    """Strip basic markdown emphasis from a table cell."""
+    import re
+    s = s.strip()
+    s = re.sub(r"\*\*(.+?)\*\*", r"\1", s)
+    s = re.sub(r"`(.+?)`", r"\1", s)
+    s = re.sub(r"\[(.+?)\]\([^)]+\)", r"\1", s)
+    return s.strip()
+
+
+async def _cmd_projects_fallback_sessions(error: str = "") -> str:
+    """Legacy /projects: live Claude session state from the Sessions API."""
     import httpx as _httpx
     from datetime import datetime as _dt
     api_url = _os.environ.get("SESSIONS_API_URL", "https://fullpotential.com/api/sessions")
@@ -601,47 +694,154 @@ async def _cmd_projects() -> str:
             r.raise_for_status()
             data = r.json()
     except Exception as e:
-        return f"📡 <b>Projects</b>\n\nCould not reach the sessions API: {tg._esc(str(e))}"
+        prefix = f"📡 <b>Projects</b>\n\n<i>NOW.md ranking unavailable: {tg._esc(error)}</i>\n" if error else "📡 <b>Projects</b>\n\n"
+        return f"{prefix}Could not reach the sessions API either: {tg._esc(str(e))}"
     sessions = data.get("sessions", [])
-    if not sessions:
-        return (
-            "📡 <b>Projects</b>\n\n"
-            "<i>No active sessions tracked yet.</i>\n\n"
-            "Push state from any Claude session:\n"
-            "<code>python3 tools/session_state.py update --quest 'X' --next-move 'Y'</code>"
-        )
-
-    def _rel(iso: str) -> str:
-        if not iso:
-            return ""
-        try:
-            d = _dt.fromisoformat(iso)
-            diff = (_dt.now() - d).total_seconds()
-            if diff < 60: return f"{int(diff)}s ago"
-            if diff < 3600: return f"{int(diff//60)}m ago"
-            if diff < 86400: return f"{int(diff//3600)}h ago"
-            return f"{int(diff//86400)}d ago"
-        except Exception:
-            return ""
-
     glyphs = {"active": "🟢", "paused": "⏸", "blocked": "🛑", "complete": "✓"}
-    lines = ["📡 <b>Projects — what you're in the middle of</b>\n"]
+    lines = ["📡 <b>Projects — live session state</b>"]
+    if error:
+        lines.append(f"<i>NOW.md ranking unavailable: {tg._esc(error)}</i>")
+    lines.append("")
+    if not sessions:
+        lines.append("<i>No active sessions tracked yet.</i>")
+        return "\n".join(lines)
     for s in sessions[:10]:
         glyph = glyphs.get((s.get("status") or "").lower(), "•")
         project = tg._esc(s.get("project", "?"))
         loop = s.get("loop_number")
         loop_str = f" · Loop {loop}" if loop is not None else ""
-        last = _rel(s.get("last_activity", ""))
-        lines.append(f"\n{glyph} <b>{project}</b>{loop_str} <i>· {tg._esc(last)}</i>")
+        lines.append(f"\n{glyph} <b>{project}</b>{loop_str}")
         if s.get("quest"):
             lines.append(f"  Quest: {tg._esc(s['quest'])}")
         if s.get("next_move"):
             lines.append(f"  Next: <i>{tg._esc(s['next_move'])}</i>")
-        if s.get("branch"):
-            lines.append(f"  Branch: <code>{tg._esc(s['branch'])}</code>")
-    if len(sessions) > 10:
-        lines.append(f"\n<i>... and {len(sessions) - 10} more.</i>")
     return "\n".join(lines)
+
+
+async def _cmd_questions() -> str:
+    """Show active inquiries across qb books, reduced from synced board.jsonl."""
+    try:
+        with open(_QB_BOARD_PATH, encoding="utf-8") as f:
+            raw = f.read()
+    except Exception as e:
+        return (
+            "❓ <b>Questions</b>\n\n"
+            f"qb board unavailable at <code>{tg._esc(_QB_BOARD_PATH)}</code>: {tg._esc(str(e))}\n\n"
+            "Run <code>sync_qb_to_brain.sh</code> from the laptop."
+        )
+
+    import json as _json
+    events: list[dict] = []
+    for line in raw.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            events.append(_json.loads(line))
+        except Exception:
+            continue
+
+    state = _qb_derive_state(events)
+    if not state:
+        return "❓ <b>Questions</b>\n\n<i>No qb events on file yet.</i>"
+
+    by_book: dict[str, list[dict]] = {}
+    for q in state.values():
+        by_book.setdefault(q.get("book") or "fpai", []).append(q)
+
+    book_order = ["fpai", "game", "sunheart"]
+    extras = sorted(b for b in by_book.keys() if b not in book_order)
+    ordered = [b for b in book_order if b in by_book] + extras
+
+    lines = ["❓ <b>Open inquiries — qb across books</b>\n"]
+    any_active = False
+    for book in ordered:
+        qs = by_book[book]
+        active = sorted(
+            [q for q in qs if q["status"] == "active"],
+            key=lambda q: q["updated_at"], reverse=True,
+        )
+        blocked = [q for q in qs if q["status"] == "blocked"]
+        if not active and not blocked:
+            continue
+        any_active = True
+        lines.append(f"\n<b>📖 {tg._esc(book)}</b> <i>({len(active)} active{f', {len(blocked)} blocked' if blocked else ''})</i>")
+        for q in active[:5]:
+            lines.append(f"  ● {tg._esc(_qb_short(q['text'], 110))}")
+            if q.get("progress"):
+                last = q["progress"][-1].get("note", "")
+                if last:
+                    lines.append(f"     ↳ <i>{tg._esc(_qb_short(last, 100))}</i>")
+        for q in blocked[:3]:
+            lines.append(f"  ⊗ {tg._esc(_qb_short(q['text'], 110))}")
+            if q.get("block_reason"):
+                lines.append(f"     ⊗ <i>{tg._esc(_qb_short(q['block_reason'], 100))}</i>")
+
+    if not any_active:
+        lines.append("<i>No open questions across any book. Clean board.</i>")
+
+    lines.append("\n<i>Source: ~/.claude/question-tracker/board.jsonl · use `qb` on laptop to manage</i>")
+    return "\n".join(lines)
+
+
+def _qb_derive_state(events: list[dict]) -> dict[str, dict]:
+    """Reduce qb events → per-question current state. Mirrors qb's own logic."""
+    state: dict[str, dict] = {}
+    for ev in events:
+        qid = ev.get("qid")
+        if not qid:
+            continue
+        s = state.setdefault(qid, {
+            "qid": qid,
+            "text": "",
+            "status": "open",
+            "book": ev.get("book") or "fpai",
+            "owner": None,
+            "updated_at": ev.get("ts", ""),
+            "progress": [],
+            "block_reason": None,
+            "answer": None,
+        })
+        s["updated_at"] = ev.get("ts", s["updated_at"])
+        if ev.get("book"):
+            s["book"] = ev["book"]
+        kind = ev.get("event")
+        if kind == "open":
+            s["text"] = ev.get("text", s["text"])
+            s["status"] = "active"
+        elif kind == "supersede":
+            s["text"] = ev.get("text", s["text"])
+            s["status"] = "active"
+        elif kind == "take":
+            s["status"] = "active"
+        elif kind == "pulse":
+            note = ev.get("note", "")
+            if note:
+                s["progress"].append({"ts": ev.get("ts", ""), "note": note})
+            if s["status"] == "blocked":
+                s["status"] = "active"
+            s["block_reason"] = None
+        elif kind == "block":
+            s["status"] = "blocked"
+            s["block_reason"] = ev.get("note", "")
+        elif kind == "unblock":
+            s["status"] = "active"
+            s["block_reason"] = None
+        elif kind == "answer":
+            s["status"] = "answered"
+            s["answer"] = ev.get("note") or ev.get("text") or ""
+        elif kind == "rebook":
+            new_book = ev.get("note") or ev.get("book")
+            if new_book:
+                s["book"] = new_book
+    return state
+
+
+def _qb_short(text: str, n: int) -> str:
+    text = (text or "").replace("\n", " ").strip()
+    if len(text) <= n:
+        return text
+    return text[: n - 1] + "…"
 
 
 async def _handle_message(msg: dict) -> None:
