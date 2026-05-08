@@ -482,6 +482,8 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
             "  /projects  — projects ranked most→least important (from NOW.md)\n"
             "  /questions — open inquiries across qb books (fpai/game/sunheart)\n"
             "  /characters — Champions in the Game · roster + KPIs\n"
+            "  /match [name] — one specific helpful next move (defaults to James)\n"
+            "  /game      — vital Game stats for the architect\n"
             "  /signals   — trading + lead signals (retreat / party / coaching / commerce)\n"
             "  /decisions — unified queue of items needing your decision\n"
             "  /money     — costs + revenue + biggest leak\n"
@@ -599,6 +601,10 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
         return await _cmd_questions()
     if cmd in ("characters", "champions"):
         return await _cmd_characters()
+    if cmd == "match":
+        return await _cmd_match(rest)
+    if cmd == "game":
+        return await _cmd_game()
     if cmd == "now":
         return await _cmd_now()
     if cmd == "goals":
@@ -980,6 +986,116 @@ async def _cmd_characters() -> str:
             lines.append(f"  <i>…+{len(champions) - 10} more</i>")
 
     lines.append("\n<i>Source: fullpotential.com/api/champion · invite link: fullpotential.com/game?inviter=YOUR-HANDLE</i>")
+    return "\n".join(lines)
+
+
+# ───────────────────────────── /match ──────────────────────────────
+async def _cmd_match(rest: str) -> str:
+    """One specific helpful next move for the named Champion.
+
+    Reads the player's lookup state via /api/champion/match and renders the
+    chosen move + action URL. Defaults to "James Sunheart" when no name given.
+    """
+    import httpx as _httpx
+    name = (rest or "").strip() or "James Sunheart"
+    url = f"{_FPAI_BASE.rstrip('/')}/api/champion/match"
+    try:
+        async with _httpx.AsyncClient(timeout=6.0) as c:
+            r = await c.get(url, params={"name": name})
+            r.raise_for_status()
+            d = r.json()
+    except Exception as e:
+        return f"🎯 <b>Match</b>\n\n<i>Could not reach {tg._esc(_FPAI_BASE)}: {tg._esc(str(e))}</i>"
+
+    if not d.get("ok"):
+        err = d.get("error") or "unknown error"
+        return f"🎯 <b>Match for {tg._esc(name)}</b>\n\n<i>{tg._esc(err)}</i>"
+
+    icon = d.get("icon", "🎯")
+    move = d.get("move", "Keep playing.")
+    action = d.get("action", "")
+    action_url = d.get("url", "")
+    out = [f"{icon} <b>Match for {tg._esc(name)}</b>\n", tg._esc(move)]
+    if action_url:
+        out.append(f"\n<a href=\"{tg._esc(action_url)}\">→ Open</a>")
+    if action:
+        out.append(f"<i>action: {tg._esc(action)}</i>")
+    return "\n".join(out)
+
+
+# ───────────────────────────── /game ──────────────────────────────
+async def _cmd_game() -> str:
+    """Vital Game stats for the architect — composed from existing endpoints.
+
+    Pulls from:
+      GET /api/champion/stats          → counts + Field Score sum + growth
+      GET /api/retreat/stats           → retreat-interest counter
+      GET /api/champion/leaderboard    → top champions, top affiliates, top loops
+    Each call is best-effort; missing data degrades the section, not the reply.
+    """
+    import httpx as _httpx
+    headers = {"Accept": "application/json"}
+    async def _fetch(path: str) -> dict | None:
+        try:
+            async with _httpx.AsyncClient(timeout=6.0) as c:
+                r = await c.get(f"{_FPAI_BASE.rstrip('/')}{path}", headers=headers)
+                r.raise_for_status()
+                return r.json()
+        except Exception as e:
+            log.warning("/game fetch %s failed: %s", path, e)
+            return None
+
+    stats, retreats, board = await asyncio.gather(
+        _fetch("/api/champion/stats"),
+        _fetch("/api/retreat/stats"),
+        _fetch("/api/champion/leaderboard"),
+    )
+
+    if not stats:
+        return f"🎮 <b>Game Stats</b>\n\n<i>Could not reach {tg._esc(_FPAI_BASE)}.</i>"
+
+    champs_total = (stats.get("champions") or {}).get("total", 0)
+    champs_public = (stats.get("champions") or {}).get("public", 0)
+    cards_total = (stats.get("cards") or {}).get("total", 0)
+    proofs_total = (stats.get("proofs") or {}).get("total", 0)
+    proofs_public = (stats.get("proofs") or {}).get("public", 0)
+    affiliate_links = stats.get("affiliate_links", 0)
+    field_score = stats.get("field_score_sum", 0)
+    growth = (stats.get("growth_this_week") or {})
+    growth_total = growth.get("total", 0) or sum(int(growth.get(k, 0) or 0) for k in ("signatures", "proofs", "cards"))
+    retreat_total = (retreats or {}).get("total", 0) if retreats else 0
+    retreat_public = (retreats or {}).get("public", 0) if retreats else 0
+    top_loops = ((board or {}).get("top_loops") or [])[:3]
+
+    # 30-day goal status: champs >= 2 means "first non-James human" hit
+    goal_hit = champs_total >= 2
+    goal_line = (
+        "✓ Goal hit — Game is no longer N=1." if goal_hit
+        else f"✗ Champions: {champs_total} (need ≥2 for first non-James human)"
+    )
+
+    lines = [
+        "🎮 <b>Game · Vital Stats</b>",
+        f"\n🎯 <b>30-day goal:</b> {goal_line}",
+        "",
+        f"🌀 Champions: <b>{champs_total}</b> ({champs_public} public)",
+        f"🎴 Characters built: <b>{cards_total}</b>",
+        f"🌱 Proofs filed: <b>{proofs_total}</b> ({proofs_public} public)",
+        f"🤝 Affiliate links generated: <b>{affiliate_links}</b>",
+        f"📊 Field Score sum: <b>{field_score}</b>",
+        f"🌴 Retreat interest: <b>{retreat_total}</b> ({retreat_public} public)",
+        f"📈 Growth this week: <b>+{growth_total}</b>",
+    ]
+
+    if top_loops:
+        lines.append("\n<b>Latest loops</b>")
+        for L in top_loops:
+            n = L.get("loop_number") or "?"
+            player = tg._esc(L.get("player") or "?")
+            quest = tg._esc((L.get("quest") or "")[:80])
+            lines.append(f"  L{n} · {player} — {quest}")
+
+    lines.append("\n<i>Source: fullpotential.com/api/champion + /api/retreat</i>")
     return "\n".join(lines)
 
 

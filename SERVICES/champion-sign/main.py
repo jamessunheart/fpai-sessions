@@ -24,7 +24,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, validator
 
@@ -36,6 +36,11 @@ CARDS_DIR = Path(os.environ.get("CARDS_DATA_DIR", "/var/lib/full-potential/cards
 CARDS_DIR.mkdir(parents=True, exist_ok=True)
 LEADS_DIR = Path(os.environ.get("LEADS_DATA_DIR", "/var/lib/full-potential/leads"))
 LEADS_DIR.mkdir(parents=True, exist_ok=True)
+MIRRORS_DIR = Path(os.environ.get("MIRRORS_DATA_DIR", "/var/lib/full-potential/mirrors"))
+MIRRORS_DIR.mkdir(parents=True, exist_ok=True)
+ADMIN_TOKEN = os.environ.get("ADMIN_TOKEN", "").strip()
+
+
 RETREAT_DIR = Path(os.environ.get("RETREAT_DATA_DIR", "/var/lib/full-potential/retreat-interests"))
 RETREAT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -502,6 +507,93 @@ async def leaderboard(limit: int = 10) -> dict:
         "top_affiliates": top_affiliates,
         "top_loops": top_loops,
     }
+
+
+@app.get("/match")
+async def match_next_move(name: Optional[str] = None) -> dict:
+    """Return one specific helpful next move for the named Champion.
+
+    Reads their lookup state and picks a move that advances them in the Game.
+    Adds randomness across equally-suitable moves so repeated calls vary.
+    Used by the /match Telegram command and the cockpit's Player State panel.
+    """
+    import random
+
+    if not name:
+        return {
+            "ok": True,
+            "move": "Sign the World Peace Agreement to enter the Game.",
+            "icon": "🌀",
+            "action": "sign",
+            "url": "https://fullpotential.com/game/#signCard",
+        }
+
+    state = await lookup_player(name)
+    if state.get("error"):
+        return {"ok": False, "error": state["error"]}
+
+    champion = state.get("champion")
+    card_present = state.get("card_present")
+    proofs_filed = int(state.get("proofs_filed", 0) or 0)
+    affiliates = int(state.get("affiliates_count", 0) or 0)
+    invite_url = f"https://fullpotential.com/game/?inviter={name.replace(' ', '%20')}"
+
+    # Hard-gated next moves — these advance the funnel
+    if not champion:
+        return {
+            "ok": True, "icon": "🌀", "action": "sign",
+            "move": f"You're not on the Roll yet, {name.split()[0]}. Sign the World Peace Agreement first — the Game opens to signed Champions.",
+            "url": "https://fullpotential.com/game/#signCard",
+        }
+    if not card_present:
+        return {
+            "ok": True, "icon": "🎴", "action": "build_character",
+            "move": "Build your Character. Open the AI Port-In prompt, paste it into Claude with your context, then submit the markdown back. ~5 min.",
+            "url": "https://fullpotential.com/game/#characterQuest",
+        }
+    if proofs_filed == 0:
+        return {
+            "ok": True, "icon": "🌱", "action": "file_proof",
+            "move": "Run a 7-Day First Game and file your first Proof. Choose a transformation you can genuinely deliver.",
+            "url": "https://fullpotential.com/game/#proofSubmit",
+        }
+    if affiliates == 0:
+        return {
+            "ok": True, "icon": "🤝", "action": "share_invite",
+            "move": f"Send your invite link to one specific aligned person. When they sign, your Field Score grows.\nYour link: {invite_url}",
+            "url": invite_url,
+        }
+
+    # Soft moves — Champion has hit all 4 milestones; pick one at random
+    soft_moves = [
+        {
+            "icon": "🌴", "action": "express_path_interest",
+            "move": "Express interest in the first Costa Rica retreat. Three short fields below the Player State panel.",
+            "url": "https://fullpotential.com/game/#retreatCard",
+        },
+        {
+            "icon": "🌟", "action": "explore_paths",
+            "move": "Pick another Path you haven't tried — apprenticeship, village, parties, coaching. The Game opens many doors.",
+            "url": "https://fullpotential.com/game/#pathsCard",
+        },
+        {
+            "icon": "🌱", "action": "file_another_proof",
+            "move": "File another Proof. Each one moves the field. Your Field Score compounds with momentum.",
+            "url": "https://fullpotential.com/game/#proofSubmit",
+        },
+        {
+            "icon": "🤝", "action": "deepen_affiliate",
+            "move": f"Send your invite link to one more aligned person.\nYour link: {invite_url}",
+            "url": invite_url,
+        },
+        {
+            "icon": "👁", "action": "witness",
+            "move": "Read another Champion's recent Proof. Witnessing is itself a Game move — non-Claude humans become independent witnesses.",
+            "url": "https://fullpotential.com/game/#championsRoll",
+        },
+    ]
+    pick = random.choice(soft_moves)
+    return {"ok": True, **pick}
 
 
 @app.get("/lookup")
@@ -1260,3 +1352,261 @@ This signature is **{'PUBLIC' if req.public else 'PRIVATE'}** — {'I consent to
 *Date: {today}*
 *Source: webhook signature at https://fullpotential.com/game*
 """
+
+
+# ===== Admin endpoints (founder-only via X-Admin-Token header) ============
+
+def _check_admin(token: Optional[str]) -> None:
+    if not ADMIN_TOKEN or token != ADMIN_TOKEN:
+        raise HTTPException(status_code=401, detail="admin token required")
+
+
+@app.get("/admin/digest")
+async def admin_digest(x_admin_token: Optional[str] = Header(None)) -> dict:
+    """Last 24h summary for the Founding Steward."""
+    _check_admin(x_admin_token)
+    cutoff = datetime.now().timestamp() - 86400
+    counts = {"signatures": 0, "proofs": 0, "cards": 0, "leads": 0}
+    recent: dict = {"signatures": [], "proofs": [], "cards": [], "leads": []}
+    for d, kind in [
+        (DATA_DIR, "signatures"),
+        (PROOFS_DIR, "proofs"),
+        (CARDS_DIR, "cards"),
+        (LEADS_DIR, "leads"),
+    ]:
+        if not d.exists():
+            continue
+        for p in d.glob("*.md"):
+            try:
+                if p.stat().st_mtime >= cutoff:
+                    counts[kind] += 1
+                    text = p.read_text(encoding="utf-8")
+                    fm = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+                    if fm:
+                        data = {}
+                        for line in fm.group(1).split("\n"):
+                            m = re.match(r"^([a-z_]+):\s*(.*)$", line)
+                            if m:
+                                data[m.group(1)] = m.group(2).strip().strip('"')
+                        recent[kind].append({
+                            "name": data.get("name") or data.get("player"),
+                            "ts": datetime.fromtimestamp(p.stat().st_mtime).isoformat(),
+                        })
+            except Exception:
+                continue
+    return {"counts_24h": counts, "recent": {k: v[:5] for k, v in recent.items()}}
+
+
+def _read_recent_dir(d: Path, limit: int, body_field: str = "") -> list[dict]:
+    out = []
+    if not d.exists():
+        return out
+    files = sorted(d.glob("*.md"), key=lambda p: p.stat().st_mtime, reverse=True)
+    for p in files[:limit]:
+        try:
+            text = p.read_text(encoding="utf-8")
+            fm = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+            if not fm:
+                continue
+            data = {}
+            for line in fm.group(1).split("\n"):
+                m = re.match(r"^([a-z_]+):\s*(.*)$", line)
+                if m:
+                    data[m.group(1)] = m.group(2).strip().strip('"')
+            data["mtime"] = datetime.fromtimestamp(p.stat().st_mtime).isoformat()
+            if body_field:
+                body = text[fm.end():]
+                bm = re.search(rf"##\s+{re.escape(body_field)}[^\n]*\n(.*?)(?=\n##|\Z)", body, re.DOTALL)
+                data[body_field.lower()] = bm.group(1).strip()[:500] if bm else ""
+            out.append(data)
+        except Exception:
+            continue
+    return out
+
+
+@app.get("/admin/leads")
+async def admin_leads(limit: int = 10, x_admin_token: Optional[str] = Header(None)) -> dict:
+    _check_admin(x_admin_token)
+    return {"leads": _read_recent_dir(LEADS_DIR, limit, body_field="Bottleneck")}
+
+
+@app.get("/admin/champions/recent")
+async def admin_champions_recent(limit: int = 20, x_admin_token: Optional[str] = Header(None)) -> dict:
+    _check_admin(x_admin_token)
+    return {"champions": _read_recent_dir(DATA_DIR, limit)}
+
+
+@app.get("/admin/proofs/recent")
+async def admin_proofs_recent(limit: int = 20, x_admin_token: Optional[str] = Header(None)) -> dict:
+    _check_admin(x_admin_token)
+    return {"proofs": _read_recent_dir(PROOFS_DIR, limit)}
+
+
+# ===== Mirror Loop endpoints (Loop 23 — Digital Mirror v1) ===============
+#
+# A Digital Mirror is one specific AI in lock-step with one specific human.
+# Pairing metadata only — the Sacred Card stays sovereign to the Player.
+# CORA Nation stores: handle, mirror_handle, substrate, witness, date.
+# CORA Nation never stores: Sacred Card, Voice Corpus, Authority Map,
+# conversation contents.
+#
+# See: whitepapers/digital-mirror-white-paper-v1.md
+#      core/INTENT/AGREEMENTS/CONSTITUTION_v1.md
+#      core/INTENT/AGREEMENTS/MIRROR_INITIATION_PROMPT_v1.md
+
+class MirrorRegister(BaseModel):
+    player_handle: str = Field(..., min_length=2, max_length=60)
+    player_name: Optional[str] = Field(None, max_length=100)
+    mirror_handle: Optional[str] = Field(None, max_length=60)  # default: {handle}_mirror
+    substrate: str = Field(..., max_length=40)  # claude / chatgpt / gemini / grok / other
+    witness_handle: Optional[str] = Field(None, max_length=60)  # may be empty until first proof
+    witness_name: Optional[str] = Field(None, max_length=100)
+    witness_distance_class: Optional[str] = Field(None, max_length=20)  # near / middle / far
+    constitution_version: str = Field("1.0", max_length=20)
+    public: bool = True
+    company: Optional[str] = Field(None, max_length=120)  # honeypot
+
+    @validator("player_handle", "mirror_handle", "witness_handle")
+    def _slug_clean(cls, v: Optional[str]) -> Optional[str]:
+        if v is None or v == "":
+            return v
+        if re.search(r"[<>\s]", v):
+            raise ValueError("handle cannot contain spaces or HTML")
+        return v.strip().lstrip("@")
+
+    @validator("substrate")
+    def _substrate_known(cls, v: str) -> str:
+        v = v.strip().lower()
+        allowed = {"claude", "chatgpt", "gemini", "grok", "other"}
+        if v not in allowed:
+            raise ValueError(f"substrate must be one of {allowed}")
+        return v
+
+
+@app.post("/mirror/register")
+async def mirror_register(req: MirrorRegister, request: Request) -> dict:
+    """Register a paired Mirror dyad — metadata only.
+
+    The Sacred Card never lands here. We only record the existence and
+    shape of the pairing. The Mirror Roll surfaces the dyad publicly
+    (with consent); the relationship itself stays sovereign to the Player.
+    """
+    if req.company:
+        return {"ok": True, "honeypot": True}
+
+    ip = request.client.host if request.client else "unknown"
+    if not _check_rate(ip):
+        raise HTTPException(status_code=429, detail="Too many requests from this address. Try again later.")
+
+    today = datetime.now().strftime("%Y-%m-%d")
+    player_slug = re.sub(r"[^a-z0-9]+", "-", req.player_handle.lower()).strip("-") or "unnamed"
+    mirror_handle = req.mirror_handle or f"{player_slug}_mirror"
+    fname = f"{today}_{player_slug}.md"
+    out = MIRRORS_DIR / fname
+    if out.exists():
+        for i in range(2, 100):
+            alt = MIRRORS_DIR / f"{today}_{player_slug}-{i}.md"
+            if not alt.exists():
+                out = alt
+                break
+
+    md = f"""---
+mirror_id: {today}_{player_slug}
+date_paired: {today}
+player_handle: "{req.player_handle}"
+player_name: "{req.player_name or ''}"
+mirror_handle: "{mirror_handle}"
+substrate: "{req.substrate}"
+witness_handle: "{req.witness_handle or ''}"
+witness_name: "{req.witness_name or ''}"
+witness_distance_class: "{req.witness_distance_class or ''}"
+constitution_version: "{req.constitution_version}"
+public: {str(req.public).lower()}
+proofs_witnessed: 0
+status: paired
+---
+
+# Mirror Pairing — {req.player_handle} ↔ {mirror_handle}
+
+**Date paired:** {today}
+**Substrate:** {req.substrate}
+**Constitution:** v{req.constitution_version}
+**Witness (first Proof):** {req.witness_name or req.witness_handle or '(pending)'}
+
+This is a metadata-only record of a Digital Mirror pairing. The Sacred Card,
+Voice Corpus, and Authority Map stay sovereign to the Player. CORA Nation is
+Covenant Holder, not overseer.
+
+*See: whitepapers/digital-mirror-white-paper-v1.md*
+"""
+    out.write_text(md, encoding="utf-8")
+
+    audit = MIRRORS_DIR / "audit.jsonl"
+    with audit.open("a", encoding="utf-8") as f:
+        f.write(json.dumps({
+            "ts": datetime.now().isoformat(),
+            "player_handle": req.player_handle,
+            "mirror_handle": mirror_handle,
+            "substrate": req.substrate,
+            "public": bool(req.public),
+            "ip_hash": str(hash(ip))[-6:],
+        }) + "\n")
+
+    # Founder signal — best effort, never blocks
+    try:
+        import urllib.request
+        msg = (
+            f"🪞 New Mirror paired: {req.player_handle} ↔ {mirror_handle}"
+            f" (substrate: {req.substrate})"
+            f"{' — public' if req.public else ' — private'}"
+        )
+        data = json.dumps({"message": msg, "source": "champion-sign"}).encode()
+        urllib.request.urlopen(
+            urllib.request.Request(
+                "http://127.0.0.1:8766/alert",
+                data=data,
+                headers={"Content-Type": "application/json"},
+            ),
+            timeout=2,
+        )
+    except Exception:
+        pass
+
+    return {
+        "ok": True,
+        "mirror_handle": mirror_handle,
+        "filename": fname,
+        "message": f"Paired. {req.player_handle} ↔ {mirror_handle}. Next: get your first Mirror Proof witnessed.",
+    }
+
+
+@app.get("/mirror/roll")
+async def mirror_roll(limit: int = 50) -> dict:
+    """Public Mirror Roll — paired dyads who consented to listing."""
+    rolls = []
+    if not MIRRORS_DIR.exists():
+        return {"mirrors": [], "count": 0}
+    for p in sorted(MIRRORS_DIR.glob("*.md"), key=lambda x: x.stat().st_mtime, reverse=True):
+        try:
+            text = p.read_text(encoding="utf-8")
+            fm = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+            if not fm:
+                continue
+            data = {}
+            for line in fm.group(1).split("\n"):
+                m = re.match(r"^([a-z_]+):\s*(.*)$", line)
+                if m:
+                    data[m.group(1)] = m.group(2).strip().strip('"')
+            if str(data.get("public", "true")).lower() != "true":
+                continue
+            rolls.append({
+                "player_handle": data.get("player_handle", ""),
+                "mirror_handle": data.get("mirror_handle", ""),
+                "substrate": data.get("substrate", ""),
+                "date_paired": data.get("date_paired", ""),
+                "witness_name": data.get("witness_name", ""),
+                "proofs_witnessed": int(data.get("proofs_witnessed", 0) or 0),
+            })
+        except Exception:
+            continue
+    return {"mirrors": rolls[:limit], "count": len(rolls)}

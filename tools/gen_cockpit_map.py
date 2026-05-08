@@ -2480,7 +2480,7 @@ a.path-tile { display: flex; }
 .sc-action { color: var(--muted); font-size: 12px; }
 .sc-next { background: var(--surface-2); padding: 10px 14px; border-radius: 6px; margin-top: 12px; }
 
-/* Character Card Quest */
+/* Character Quest */
 .character-card-quest {
   background: linear-gradient(135deg, rgba(184, 156, 213, 0.08), rgba(232, 185, 116, 0.04));
   border: 1px solid var(--unknown);
@@ -3228,7 +3228,7 @@ async function loadPlayerState() {
     if (unlockEl) {
       const unlocks = {
         'Visitor':    `<strong>Next: Guest</strong> · Sign the World Peace Agreement to join the Roll.`,
-        'Guest':      `<strong>Next: Player</strong> · Build your Character Card so others can find you for matching.`,
+        'Guest':      `<strong>Next: Player</strong> · Build your Character so others can find you for matching.`,
         'Player':     `<strong>Next: Apprentice</strong> · Run a 7-Day First Game and file your first Proof.`,
         'Apprentice': `<strong>Next: Steward</strong> · File ${Math.max(0, 3 - d.proofs_filed)} more Proof${(3 - d.proofs_filed) === 1 ? '' : 's'} to ascend.`,
         'Steward':    `<strong>Next: Builder</strong> · Bring ${Math.max(0, 3 - d.affiliates_count)} more aligned ${(3 - d.affiliates_count) === 1 ? 'person' : 'people'} into the Game.`,
@@ -3241,7 +3241,7 @@ async function loadPlayerState() {
     // Mobile sticky stage bar
     const msb = document.getElementById('mobileStageBar');
     if (msb) {
-      msb.innerHTML = `<span class="msb-stage">${stageGlyph} ${stage}</span><span class="msb-score">·  ${d.field_score_simple} pts</span><span class="msb-next">→ ${(!d.champion ? 'Sign' : !d.card_present ? 'Build Card' : d.proofs_filed === 0 ? 'File Proof' : 'Share invite')}</span>`;
+      msb.innerHTML = `<span class="msb-stage">${stageGlyph} ${stage}</span><span class="msb-score">·  ${d.field_score_simple} pts</span><span class="msb-next">→ ${(!d.champion ? 'Sign' : !d.card_present ? 'Build Character' : d.proofs_filed === 0 ? 'File Proof' : 'Share invite')}</span>`;
       msb.classList.add('show');
       document.body.classList.add('has-mobile-bar');
     }
@@ -3251,7 +3251,7 @@ async function loadPlayerState() {
       let alreadyInterested = false;
       try { alreadyInterested = !!localStorage.getItem('fpai-cockpit-retreat-interest'); } catch (e) {}
       const next = !d.champion ? 'Sign the Agreement to become a Champion.'
-        : !d.card_present ? 'Build your Character Card next (5 min · AI Port-In above).'
+        : !d.card_present ? 'Build your Character next (5 min · AI Port-In above).'
         : d.proofs_filed === 0 ? 'Run a 7-Day First Game and file your first Proof.'
         : d.affiliates_count === 0 ? 'Share your invite link — when an aligned person signs through it, your score grows.'
         : alreadyInterested ? 'You\\'re on the retreat list. Pick another path above too — the Game opens many doors.'
@@ -3277,7 +3277,7 @@ async function loadPlayerState() {
       if (d.champion) pills.push(`<span class="ps-contrib-pill"><strong>🌀</strong>Champion #${d.champion.champion_number}</span>`);
       if (d.proofs_filed > 0) pills.push(`<span class="ps-contrib-pill"><strong>🌱</strong>${d.proofs_filed} proof${d.proofs_filed === 1 ? '' : 's'}</span>`);
       if (d.affiliates_count > 0) pills.push(`<span class="ps-contrib-pill"><strong>🤝</strong>${d.affiliates_count} affiliate${d.affiliates_count === 1 ? '' : 's'}</span>`);
-      if (d.card_present) pills.push(`<span class="ps-contrib-pill"><strong>🎴</strong>Card ${d.card_level || ''}</span>`);
+      if (d.card_present) pills.push(`<span class="ps-contrib-pill"><strong>🎴</strong>Character ${d.card_level || ''}</span>`);
       if (pills.length > 0) {
         contribRow.innerHTML = pills.join('');
         contribCard.style.display = '';
@@ -3309,7 +3309,7 @@ function progressiveDisclosure(state) {
   if (signCard && state.signed && !signCard.classList.contains('completed')) {
     signCard.classList.add('completed');
   }
-  // Collapse the Character Card section if a card is present
+  // Collapse the Character section if a card is present
   const ccQuest = document.getElementById('characterCardQuest');
   if (ccQuest && state.hasCard && !ccQuest.classList.contains('completed')) {
     ccQuest.classList.add('completed');
@@ -3641,10 +3641,10 @@ document.getElementById('signEmailBtn')?.addEventListener('click', (e) => {
   showSignConfirmation(name, 'opened in your email');
 });
 
-// --- Character Card Quest -----------------------------------------------
-const CARD_PORTIN_PROMPT = `You are helping me draft my Character Card for the Full Potential Game — a purpose-driven social network where players coordinate around quests, offers/needs matching, and witnessed reputation. Cards have a privacy-tiered, progressive structure.
+// --- Character Quest -----------------------------------------------
+const CARD_PORTIN_PROMPT = `You are helping me draft my Character for the Full Potential Game — a purpose-driven social network where players coordinate around quests, offers/needs matching, and witnessed reputation. Cards have a privacy-tiered, progressive structure.
 
-Using everything you know about me from our prior conversations and any context I've shared with you, draft my Character Card following the schema below.
+Using everything you know about me from our prior conversations and any context I've shared with you, draft my Character following the schema below.
 
 CRITICAL RULES:
 - Be honest. For fields where you don't have enough data, write "[NEEDS INPUT]". Do not fabricate.
@@ -3663,7 +3663,7 @@ LEVELS (progressive depth):
 
 SCHEMA TO FILL (output as clean markdown matching this structure):
 
-# [MY NAME] — Character Card
+# [MY NAME] — Character
 
 ## ✦ ASPIRATIONAL
 
@@ -3767,7 +3767,7 @@ document.getElementById('cardSubmitBtn')?.addEventListener('click', async () => 
   const honeypot = (document.getElementById('cardHoneypot')?.value || '').trim();
 
   if (!player) { alert('Please enter your name.'); return; }
-  if (card_markdown.length < 20) { alert('Please paste your Character Card markdown (the AI will produce something substantial).'); return; }
+  if (card_markdown.length < 20) { alert('Please paste your Character markdown (the AI will produce something substantial).'); return; }
 
   const btn = document.getElementById('cardSubmitBtn');
   if (btn) { btn.disabled = true; btn.textContent = '🎴 Submitting...'; }
@@ -3789,11 +3789,11 @@ document.getElementById('cardSubmitBtn')?.addEventListener('click', async () => 
       const conf = document.createElement('div');
       conf.id = 'cardConfirm';
       conf.className = 'sign-confirmation show';
-      conf.innerHTML = `<div class="sc-burst">🎴</div><h3>Character Card ${data.level} saved.</h3><p>${escapeHTML(data.message || '')}</p><p class="sc-action">Your card is now a node in the network. You can update it anytime by submitting again with the same name.</p>`;
+      conf.innerHTML = `<div class="sc-burst">🎴</div><h3>Character ${data.level} saved.</h3><p>${escapeHTML(data.message || '')}</p><p class="sc-action">Your card is now a node in the network. You can update it anytime by submitting again with the same name.</p>`;
       card.appendChild(conf);
     }
   } catch (e) {
-    if (btn) { btn.disabled = false; btn.textContent = '🎴 Submit my Character Card'; }
+    if (btn) { btn.disabled = false; btn.textContent = '🎴 Submit my Character'; }
     alert('Could not submit: ' + e.message);
   }
 });
@@ -4663,7 +4663,7 @@ def render_html() -> str:
             "Paste-into-Claude prompt that turns the AI into your 7-Day Game facilitator. Generates your Proof Log."
         ),
         render_inline_doc_card(
-            "character-card", "🎴", "Character Card Quest",
+            "character-card", "🎴", "Character Quest",
             "Onboarding Quest #1 — your living node in the network",
             "core/INTENT/CHARACTER_CARD_QUEST.md",
             "Two layers (Aspirational + Reality), four visibility tiers, four levels of depth. Includes the AI Port-In Prompt — paste it into Claude/ChatGPT and your card drafts itself."
@@ -4831,7 +4831,7 @@ def render_html() -> str:
       </div>
     </div>
     <p class="goal-blurb" id="goalBlurb">
-      The substrate is built — 20+ loops, 9 Paradigm Shifts, full funnel from Sign → Card → Proof → Affiliate → Path.
+      The substrate is built — 22+ loops, 10+ Paradigm Shifts, full funnel from Sign → Character → Proof → Affiliate → Path.
       What's missing is one other human in it. Sign / file a proof / express interest in any path — you become the proof that the Game is more than its founder.
     </p>
     <div class="goal-meta">
@@ -4848,7 +4848,7 @@ def render_html() -> str:
     </div>
     <div class="gs-metrics" id="gsMetrics">
       <div class="gs-metric"><div class="gs-icon">🌀</div><div class="gs-n" id="gsChampions">—</div><div class="gs-lbl">Champions</div></div>
-      <div class="gs-metric"><div class="gs-icon">🎴</div><div class="gs-n" id="gsCards">—</div><div class="gs-lbl">Cards built</div></div>
+      <div class="gs-metric"><div class="gs-icon">🎴</div><div class="gs-n" id="gsCards">—</div><div class="gs-lbl">Characters built</div></div>
       <div class="gs-metric"><div class="gs-icon">🌱</div><div class="gs-n" id="gsProofs">—</div><div class="gs-lbl">Proofs filed</div></div>
       <div class="gs-metric"><div class="gs-icon">🤝</div><div class="gs-n" id="gsAffiliates">—</div><div class="gs-lbl">Affiliate links</div></div>
       <div class="gs-metric gs-metric-accent"><div class="gs-icon">📊</div><div class="gs-n" id="gsScore">—</div><div class="gs-lbl">Field Score sum</div></div>
@@ -4891,7 +4891,7 @@ def render_html() -> str:
       <div class="ps-stat"><div class="ps-stat-n" id="psChampNum">—</div><div class="ps-stat-lbl">Champion #</div></div>
       <div class="ps-stat"><div class="ps-stat-n" id="psLoops">0</div><div class="ps-stat-lbl">Loops filed</div></div>
       <div class="ps-stat"><div class="ps-stat-n" id="psAffiliates">0</div><div class="ps-stat-lbl">Affiliates signed</div></div>
-      <div class="ps-stat"><div class="ps-stat-n" id="psCard">—</div><div class="ps-stat-lbl">Character Card</div></div>
+      <div class="ps-stat"><div class="ps-stat-n" id="psCard">—</div><div class="ps-stat-lbl">Character</div></div>
     </div>
 
     <div class="progression-bar" id="progressionBar">
@@ -5227,13 +5227,13 @@ def render_html() -> str:
 
   <div class="connector">
     <span class="conn-arrow">↓</span>
-    <span class="conn-text">Your Character Card is your matchable node. Without it, players can't find each other for collaborations and quests.</span>
+    <span class="conn-text">Your Character is your matchable node. Without it, players can't find each other for collaborations and quests.</span>
   </div>
 
   <div class="character-card-quest" id="characterCardQuest">
-    <h2>🎴 Character Card Quest <span style="font-size:12px;font-weight:400;color:var(--muted);">&mdash; Quest #1 · Onboarding · 5 minutes</span></h2>
+    <h2>🎴 Character Quest <span style="font-size:12px;font-weight:400;color:var(--muted);">&mdash; Quest #1 · Onboarding · 5 minutes</span></h2>
     <p style="color:var(--muted);font-size:13px;margin:0 0 12px;line-height:1.6;">
-      Your <strong>Character Card</strong> is your living node in the Game's network. Two layers, four visibility tiers, four levels of depth.
+      Your <strong>Character</strong> is your living node in the Game's network. Two layers, four visibility tiers, four levels of depth.
       Sign-up is 5 minutes. Your AI fills the draft. You refine. Your witnesses keep it honest with reality.
     </p>
 
@@ -5253,7 +5253,7 @@ def render_html() -> str:
 
     <h3 style="margin-top:18px;">Step 1 · Get your AI Port-In prompt</h3>
     <p style="color:var(--muted);font-size:12px;margin:0 0 8px;">
-      Copy the prompt, paste it into Claude / ChatGPT / Gemini / your AI. Your AI drafts your Character Card from what it already knows about you. Honest about gaps (writes <code>[NEEDS INPUT]</code> rather than fabricating).
+      Copy the prompt, paste it into Claude / ChatGPT / Gemini / your AI. Your AI drafts your Character from what it already knows about you. Honest about gaps (writes <code>[NEEDS INPUT]</code> rather than fabricating).
     </p>
     <div class="sign-actions" style="margin-bottom:12px;">
       <button id="cardCopyPromptBtn" class="player-cta-primary">📋 Copy AI Port-In Prompt</button>
@@ -5287,7 +5287,7 @@ def render_html() -> str:
           <option value="sacred">🔒 Sacred — me + my AI only</option>
         </select>
       </label>
-      <label style="grid-column:1/-1;"><span>Your Card Markdown — paste full output from your AI</span><textarea id="cardMarkdown" rows="12" placeholder="# Your Name — Character Card
+      <label style="grid-column:1/-1;"><span>Your Card Markdown — paste full output from your AI</span><textarea id="cardMarkdown" rows="12" placeholder="# Your Name — Character
 
 ## ✦ ASPIRATIONAL
 
@@ -5298,7 +5298,7 @@ def render_html() -> str:
     </div>
     <input type="text" id="cardHoneypot" name="company" style="position:absolute;left:-9999px;" tabindex="-1" autocomplete="off" />
     <div class="sign-actions" style="margin-top:8px;">
-      <button id="cardSubmitBtn" class="player-cta-primary">🎴 Submit my Character Card</button>
+      <button id="cardSubmitBtn" class="player-cta-primary">🎴 Submit my Character</button>
     </div>
     <p style="color:var(--muted);font-size:11px;margin:12px 0 0;">
       Your card becomes a node in the Game's network. Other Players matchable on offers / needs / quests.
@@ -5920,7 +5920,7 @@ def render_html() -> str:
         <span class="cl-icon">📚</span>
         <div class="cl-title-block">
           <div class="cl-title">Read the Canon — every founding document</div>
-          <div class="cl-sub">Manifesto · Framework · Loop · Treasury · Game · WPAP · Agreement · Forming · Player Card · Builder Prompt · Character Card · Plays Itself · Signaling</div>
+          <div class="cl-sub">Manifesto · Framework · Loop · Treasury · Game · WPAP · Agreement · Forming · Player Card · Builder Prompt · Character · Plays Itself · Signaling</div>
         </div>
         <span class="cl-expand">expand library →</span>
       </summary>
