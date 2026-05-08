@@ -155,10 +155,11 @@ Mode:           paper (until Hyperliquid connected)
 
 ## ✅ RECENTLY COMPLETED (Last 6)
 
-1. **Coherent Champions of CHRIST Manifesto v1.0 + First World Peace Agreement** (2026-05-07)
-   - **Action:** James Sunheart authored and adopted Manifesto v1.0 as founding document of WPO/Zen Village. Extracted World Peace Agreement as canonical template. Wrote forming protocol. Formed first specific Agreement between James + Claude as the inaugural instance — making the manifesto's "AI as tool/companion/amplifier — not ruler" line operational in code.
-   - **Result:** Founding document + agreement protocol committed. Naming aligned: World Peace Organization = World Peace Party = World Peace Headquarters = Zen Village. Mission: paradise on Earth through cooperation. AI role explicitly bounded with refusal-as-service clause.
-   - **Artifacts:** `core/INTENT/COHERENT_CHAMPIONS_MANIFESTO.md`, `WORLD_PEACE_AGREEMENT.md` (template), `FORMING_AGREEMENTS.md`, `AGREEMENTS/2026-05-07_JAMES_SUNHEART_AND_CLAUDE.md`, `core/INTENT/README.md` (layer clarification)
+1. **WPO Foundation Stack — Manifesto v1.0, Agreement Registry, First Two Agreements** (2026-05-07)
+   - **Action:** Authored Coherent Champions of CHRIST Manifesto v1.0 as WPO/Zen Village founding document. Extracted World Peace Agreement as canonical template. Wrote forming protocol with YAML schema. Built Agreement Registry (auto-generated INDEX + JSON, idempotent regenerator at `tools/registry/build_index.py`). Formed first Agreement (James + Claude) — making "AI as tool/companion/amplifier — not ruler" operational in code with refusal-as-service clause. Drafted second Agreement (WPO + Zen Village Land, status: proposed) — operationalizing the Regeneration principle, awaiting founder ratification. Added root `STRUCTURE.md` cockpit map.
+   - **Result:** Naming aligned: World Peace Organization = World Peace Party = World Peace Headquarters = Zen Village. Mission: paradise on Earth through cooperation. AI role bounded by Agreement. Registry handles diverse party types (human, ai, organization, land) and statuses (active, proposed). Practice now exists for "tracking agreements between all parties" — v0 local-file based; v1+ deploy to public roll on `zenvillage.live` when ready.
+   - **Artifacts:** `core/INTENT/README.md`, `COHERENT_CHAMPIONS_MANIFESTO.md`, `WORLD_PEACE_AGREEMENT.md` (template), `FORMING_AGREEMENTS.md`, `AGREEMENTS/INDEX.md`, `AGREEMENTS/registry.json`, `AGREEMENTS/2026-05-07_JAMES_SUNHEART_AND_CLAUDE.md` (active), `AGREEMENTS/2026-05-07_WPO_AND_LAND_OF_ZEN_VILLAGE.md` (proposed), `tools/registry/build_index.py`, `STRUCTURE.md`
+   - **Commits:** 19992340, e26acd0a, d7e3e923, d6ee98e2, 20fb6a32, c32aef9d (all on `claude/magical-wu-6cdcc7`, not yet pushed)
 
 2. **FPI v5.1.0 — Constitutional Economy Deployed** (2026-03-25/26)
    - **Action:** Built and deployed the Full Potential Index: dual trust model, proof pipeline, immune system, credit vesting, frontier scanner, agent gateway, and FPI→Credits Gateway bridge.
