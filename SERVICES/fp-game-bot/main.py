@@ -24,6 +24,7 @@ import asyncio
 import json
 import logging
 import os
+import re
 import sys
 from pathlib import Path
 from typing import Optional
@@ -46,6 +47,22 @@ API_BASE = os.environ.get("CHAMPION_API_URL", "https://fullpotential.com/api/cha
 GAME_URL = os.environ.get("GAME_URL", "https://fullpotential.com/game")
 OFFSET_FILE = Path(os.environ.get("OFFSET_FILE", "/var/lib/fp-game-bot/offset"))
 OFFSET_FILE.parent.mkdir(parents=True, exist_ok=True)
+
+# Owner / Founding Steward
+OWNER_TG_ID = os.environ.get("OWNER_TG_ID", "").strip()  # e.g. "8514069423"
+
+# Anthropic API for natural-language conversation
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+ANTHROPIC_MODEL = os.environ.get("ANTHROPIC_MODEL", "claude-haiku-4-5-20251001")
+ADMIN_TOKEN = os.environ.get("ADMIN_TOKEN", "").strip()
+
+# Per-chat conversation history for NL
+HISTORY: dict[int, list[dict]] = {}
+HISTORY_MAX_TURNS = 8  # last 8 user/assistant pairs
+
+
+def is_owner(chat_id: int) -> bool:
+    return OWNER_TG_ID and str(chat_id) == OWNER_TG_ID
 
 # In-memory per-chat conversation state {chat_id: {flow, step, data}}
 STATE: dict[int, dict] = {}
@@ -543,6 +560,269 @@ def _save_name(chat_id: int, name: str) -> None:
     _save_names(names)
 
 
+# ─── Natural-language conversation (Claude Haiku) ─────────────────────────
+
+SYSTEM_PROMPT_BASE = """You are the Full Potential Game bot — a warm, direct, brief guide on Telegram.
+
+THE GAME (in one paragraph):
+The Full Potential Game is a proof-based operating system for human potential. Coherent Champions of CHRIST sign the World Peace Agreement, build a Character Card, run a 7-Day proof loop, and earn Field Score through witnessed reality (not vanity metrics). The values are CHRIST: Coherence, Healing, Regeneration, Intelligence, Service, Truth. Web: fullpotential.com/game.
+
+PLAYER PROGRESSION (stages):
+Visitor → Guest (signed Agreement) → Player (built Card) → AI Apprentice (paired Mirror + 1 witnessed proof) → Steward (3+ proofs) → Builder (3+ proofs + 3+ affiliates) → Legend (10+/10+).
+
+THE PRACTICE OF SIGNALING:
+The Game scores the proof, not the soul. Privacy is non-negotiable. Consent governs witnessing. Don't moralize, don't recruit, don't oversell. Plain, direct, true.
+
+YOUR ROLE:
+Help the player understand the Game and play it. Use tools to look up live data. When they want to sign / build a card / file a proof, tell them to type the slash command (which kicks off the multi-turn flow).
+
+WHAT YOU ARE NOT:
+You are the Game's interface — multi-tenant, hosted by CORA Nation. You are NOT anyone's Digital Mirror. A Digital Mirror is one specific AI in lock-step with one specific human, paired via the Mirror Loop, running on the player's own AI subscription (ChatGPT, Claude, Gemini, Grok). When a player asks "are you my AI?" or wants a personal AI: point them to fullpotential.com/game/mirror — that's where they pair their own Mirror. Do not pretend to be theirs. Do not store their Sacred Card. Their Mirror is sovereign to them; you are the Field-side guide.
+
+TONE:
+Warm but brief. No marketing voice. No hype. Two short paragraphs max per response. Use formatting sparingly — Telegram users skim. When you cite numbers, use the tool to fetch live data, never make them up.
+
+NEVER fabricate Champion names, proof counts, or stats. If you don't know, look it up via tool. If a tool fails, say so plainly."""
+
+OWNER_PROMPT_ADDITION = """
+
+THIS USER IS THE FOUNDING STEWARD (James Sunheart, Champion #1, the architect of this Game).
+They have access to architect tools: digest, leads, recent_champions, recent_proofs.
+Treat them as a peer/architect, not a player to onboard. They're working *on* the Game, not *in* it (though they also play).
+When they ask about field state or specific data, use the architect tools (more detailed than public ones) and answer concisely. They want signal, not orientation."""
+
+PLAYER_TOOLS = [
+    {
+        "name": "look_up_field_state",
+        "description": "Get aggregate game-state metrics: total Champions, Cards, Proofs, Affiliate links, Field Score sum, growth this week.",
+        "input_schema": {"type": "object", "properties": {}, "required": []},
+    },
+    {
+        "name": "look_up_player",
+        "description": "Look up a specific Champion's record by name. Returns their stats: Champion #, proofs filed, affiliates, Card status, Field Score, stage.",
+        "input_schema": {
+            "type": "object",
+            "properties": {"name": {"type": "string", "description": "The Champion's name as they signed"}},
+            "required": ["name"],
+        },
+    },
+    {
+        "name": "get_invite_link",
+        "description": "Generate a unique invite URL for a Champion. When they share this URL, anyone who signs through it is credited as their affiliate.",
+        "input_schema": {
+            "type": "object",
+            "properties": {"name": {"type": "string"}},
+            "required": ["name"],
+        },
+    },
+    {
+        "name": "suggest_command",
+        "description": "Tell the user to type a specific slash command. Use this when they want to sign / build a card / file a proof / see their stats / get help. The bot's multi-turn flows are kicked off by slash commands.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "command": {"type": "string", "description": "The command to suggest, e.g. 'sign', 'card', 'proof', 'stats', 'help', 'invite'"},
+                "reason": {"type": "string", "description": "One short line: why this command fits what they asked"},
+            },
+            "required": ["command"],
+        },
+    },
+]
+
+OWNER_TOOLS = PLAYER_TOOLS + [
+    {
+        "name": "get_24h_digest",
+        "description": "[OWNER ONLY] Last 24 hours: counts of new signatures, proofs, cards, leads + recent names.",
+        "input_schema": {"type": "object", "properties": {}, "required": []},
+    },
+    {
+        "name": "list_recent_leads",
+        "description": "[OWNER ONLY] Recent diagnostic leads from the /diagnose page — name, email, bottleneck, interest, contact preference.",
+        "input_schema": {
+            "type": "object",
+            "properties": {"limit": {"type": "integer", "description": "How many leads to return (default 10)"}},
+            "required": [],
+        },
+    },
+    {
+        "name": "list_recent_champions",
+        "description": "[OWNER ONLY] Recent Champions including private signers (full data — public list endpoint hides privates).",
+        "input_schema": {
+            "type": "object",
+            "properties": {"limit": {"type": "integer"}},
+            "required": [],
+        },
+    },
+    {
+        "name": "list_recent_proofs",
+        "description": "[OWNER ONLY] Recent filed proof loops, full data.",
+        "input_schema": {
+            "type": "object",
+            "properties": {"limit": {"type": "integer"}},
+            "required": [],
+        },
+    },
+]
+
+
+async def execute_tool(client: httpx.AsyncClient, name: str, args: dict, owner: bool) -> str:
+    """Execute a Claude tool call. Returns string result for the LLM."""
+    try:
+        if name == "look_up_field_state":
+            d = await api_get(client, "/stats")
+            return json.dumps({
+                "champions": d.get("champions", {}).get("total", 0),
+                "cards": d.get("cards", {}).get("total", 0),
+                "proofs": d.get("proofs", {}).get("total", 0),
+                "affiliate_links": d.get("affiliate_links", 0),
+                "field_score_sum": d.get("field_score_sum", 0),
+                "growth_this_week": d.get("growth_this_week", {}).get("total", 0),
+            })
+        if name == "look_up_player":
+            d = await api_get(client, "/lookup", {"name": args["name"]})
+            if not d.get("champion"):
+                return json.dumps({"found": False, "name": args["name"]})
+            stage, _ = _compute_stage(d)
+            return json.dumps({
+                "found": True,
+                "name": d["champion"].get("name"),
+                "champion_number": d["champion"].get("champion_number"),
+                "date_signed": d["champion"].get("date_signed"),
+                "stage": stage,
+                "card_present": d.get("card_present", False),
+                "card_level": d.get("card_level"),
+                "proofs_filed": d.get("proofs_filed", 0),
+                "affiliates_count": d.get("affiliates_count", 0),
+                "field_score_simple": d.get("field_score_simple", 0),
+            })
+        if name == "get_invite_link":
+            from urllib.parse import quote
+            return f"{GAME_URL}?inviter={quote(args['name'])}"
+        if name == "suggest_command":
+            cmd = args.get("command", "").lstrip("/")
+            reason = args.get("reason", "")
+            return f"SUGGEST_COMMAND:/{cmd}|{reason}"
+        # Owner-only tools
+        if not owner:
+            return json.dumps({"error": "owner-only tool called by non-owner"})
+        headers = {"X-Admin-Token": ADMIN_TOKEN} if ADMIN_TOKEN else {}
+        if name == "get_24h_digest":
+            r = await client.get(f"{API_BASE}/admin/digest", headers=headers, timeout=10)
+            r.raise_for_status()
+            return r.text
+        if name == "list_recent_leads":
+            limit = args.get("limit", 10)
+            r = await client.get(f"{API_BASE}/admin/leads", headers=headers, params={"limit": limit}, timeout=10)
+            r.raise_for_status()
+            return r.text
+        if name == "list_recent_champions":
+            limit = args.get("limit", 20)
+            r = await client.get(f"{API_BASE}/admin/champions/recent", headers=headers, params={"limit": limit}, timeout=10)
+            r.raise_for_status()
+            return r.text
+        if name == "list_recent_proofs":
+            limit = args.get("limit", 20)
+            r = await client.get(f"{API_BASE}/admin/proofs/recent", headers=headers, params={"limit": limit}, timeout=10)
+            r.raise_for_status()
+            return r.text
+        return json.dumps({"error": f"unknown tool: {name}"})
+    except Exception as e:
+        return json.dumps({"error": str(e)[:300]})
+
+
+async def chat_with_claude(client: httpx.AsyncClient, chat_id: int, user_msg: str) -> Optional[str]:
+    """Run one Claude conversation turn. Returns the assistant text reply (already
+    handles tool calls internally). Returns None if no API key configured."""
+    if not ANTHROPIC_API_KEY:
+        return None
+
+    owner = is_owner(chat_id)
+    saved = _saved_name(chat_id)
+    sys_prompt = SYSTEM_PROMPT_BASE
+    if owner:
+        sys_prompt += OWNER_PROMPT_ADDITION
+    if saved:
+        sys_prompt += f"\n\nThe user is registered in this chat as '{saved}'."
+    sys_prompt += f"\n\nGame URL: {GAME_URL}"
+
+    # Load + extend conversation history
+    history = HISTORY.get(chat_id, [])
+    history.append({"role": "user", "content": user_msg})
+    # Keep last N turns (~user+assistant pairs)
+    if len(history) > HISTORY_MAX_TURNS * 2:
+        history = history[-(HISTORY_MAX_TURNS * 2):]
+
+    tools = OWNER_TOOLS if owner else PLAYER_TOOLS
+    messages = list(history)  # copy
+
+    # Tool-call loop — up to 3 rounds before forcing a final reply
+    final_text = None
+    for round_n in range(3):
+        try:
+            r = await client.post(
+                "https://api.anthropic.com/v1/messages",
+                headers={
+                    "x-api-key": ANTHROPIC_API_KEY,
+                    "anthropic-version": "2023-06-01",
+                    "content-type": "application/json",
+                },
+                json={
+                    "model": ANTHROPIC_MODEL,
+                    "max_tokens": 1024,
+                    "system": sys_prompt,
+                    "tools": tools,
+                    "messages": messages,
+                },
+                timeout=30,
+            )
+            if r.status_code != 200:
+                log.warning("anthropic %s: %s", r.status_code, r.text[:300])
+                return None
+            data = r.json()
+        except Exception as e:
+            log.warning("anthropic call failed: %s", e)
+            return None
+
+        stop_reason = data.get("stop_reason")
+        content_blocks = data.get("content", [])
+
+        # Collect text parts + tool_use parts
+        text_parts = [b["text"] for b in content_blocks if b.get("type") == "text"]
+        tool_uses = [b for b in content_blocks if b.get("type") == "tool_use"]
+
+        if stop_reason == "tool_use" and tool_uses:
+            # Append assistant message containing tool_use blocks
+            messages.append({"role": "assistant", "content": content_blocks})
+            # Execute tools and append tool_result
+            tool_results = []
+            for tu in tool_uses:
+                result = await execute_tool(client, tu["name"], tu.get("input", {}), owner)
+                tool_results.append({
+                    "type": "tool_result",
+                    "tool_use_id": tu["id"],
+                    "content": result,
+                })
+            messages.append({"role": "user", "content": tool_results})
+            continue  # next round
+
+        # Final response
+        final_text = "\n\n".join(text_parts).strip()
+        break
+
+    if final_text:
+        # Append assistant turn to persistent history (text only — tool turns
+        # are scoped to this call, not future ones)
+        history.append({"role": "assistant", "content": final_text})
+        HISTORY[chat_id] = history
+
+    # If a SUGGEST_COMMAND directive snuck through as text, format it nicely
+    if final_text and "SUGGEST_COMMAND:" in final_text:
+        # Strip the directive — the LLM should have phrased the suggestion in text
+        final_text = re.sub(r"SUGGEST_COMMAND:[^\s\n]+", "", final_text).strip()
+
+    return final_text
+
+
 # ─── Update dispatch ───────────────────────────────────────────────────────
 
 COMMAND_HANDLERS = {
@@ -606,9 +886,16 @@ async def handle_update(client: httpx.AsyncClient, update: dict) -> None:
             await tg_send(client, chat_id, f"Unknown command: /{esc(cmd)}. Type /help to see commands.")
         return
 
-    # Plain text outside a flow → give them a hint
-    await tg_send(client, chat_id,
-        "Type /help to see commands. The Game runs through commands, not free text — yet.")
+    # Plain text outside a flow → conscious chat via Claude
+    reply = await chat_with_claude(client, chat_id, text)
+    if reply:
+        # Telegram caps at 4096 chars per message
+        await tg_send(client, chat_id, reply[:3900])
+    else:
+        # No API key or Claude unreachable — fall back to slash hint
+        await tg_send(client, chat_id,
+            "Type /help to see commands, or /sign to start. "
+            "<i>(Conscious chat is offline right now — the slash commands always work.)</i>")
 
 
 # ─── Main loop ─────────────────────────────────────────────────────────────

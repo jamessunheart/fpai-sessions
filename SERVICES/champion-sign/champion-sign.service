@@ -6,6 +6,7 @@ After=network.target
 Type=simple
 WorkingDirectory=/opt/fpai/services/champion-sign
 Environment="CHAMPION_DATA_DIR=/var/lib/full-potential/champions"
+EnvironmentFile=-/etc/champion-sign.env
 ExecStart=/opt/fpai/services/champion-sign/.venv/bin/uvicorn main:app --host 127.0.0.1 --port 8771
 Restart=on-failure
 RestartSec=5
