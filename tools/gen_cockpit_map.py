@@ -1932,6 +1932,15 @@ body.mode-field .player-only { display: none !important; }
 .sc-action { color: var(--muted); font-size: 12px; }
 .sc-next { background: var(--surface-2); padding: 10px 14px; border-radius: 6px; margin-top: 12px; }
 
+/* Proof submit card */
+.proof-submit-card {
+  background: linear-gradient(135deg, rgba(132, 212, 136, 0.06), rgba(124, 196, 168, 0.04));
+  border: 1px solid var(--good);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+
 /* Champions Roll */
 .champions-card {
   background: var(--surface);
@@ -2605,6 +2614,55 @@ document.getElementById('signEmailBtn')?.addEventListener('click', (e) => {
   showSignConfirmation(name, 'opened in your email');
 });
 
+// --- Proof Submit (file a completed loop) -----------------------------
+document.getElementById('prfSubmitBtn')?.addEventListener('click', async () => {
+  const player = (document.getElementById('prfPlayer')?.value || '').trim();
+  const loopRaw = (document.getElementById('prfLoop')?.value || '').trim();
+  const quest = (document.getElementById('prfQuest')?.value || '').trim();
+  const output = (document.getElementById('prfOutput')?.value || '').trim();
+  if (!player) { alert('Please enter your name or handle.'); return; }
+  if (!loopRaw) { alert('Please enter a loop number.'); return; }
+  if (!quest) { alert('Please enter the quest you set out to deliver.'); return; }
+  if (!output) { alert('Please describe the output — what was completed.'); return; }
+  const loop_number = parseInt(loopRaw, 10);
+  if (isNaN(loop_number) || loop_number < 1) { alert('Loop number must be a positive integer.'); return; }
+  const result = (document.getElementById('prfResult')?.value || '').trim();
+  const witness = (document.getElementById('prfWitness')?.value || '').trim();
+  const email = (document.getElementById('prfEmail')?.value || '').trim();
+  const consent = document.querySelector('input[name="prfConsent"]:checked')?.value || 'public';
+  const honeypot = (document.getElementById('prfHoneypot')?.value || '').trim();
+
+  const btn = document.getElementById('prfSubmitBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '🌱 Filing...'; }
+  try {
+    const res = await fetch('/api/champion/proof/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ player, handle: '', email, loop_number, quest, output, result, witness, consent, agreement_type: 'deliverable_by_date', company: honeypot }),
+    });
+    const data = await res.json();
+    if (!res.ok || !data.ok) {
+      const msg = data?.detail || data?.message || ('HTTP ' + res.status);
+      throw new Error(msg);
+    }
+    if (btn) { btn.textContent = `✓ ${data.message || 'Filed'}`; }
+    // Trigger Pulse refresh so the new event shows up
+    setTimeout(() => { if (typeof loadFieldPulse === 'function') loadFieldPulse(); }, 500);
+    // Show celebration card
+    const card = document.getElementById('proofSubmitCard');
+    if (card && !document.getElementById('prfConfirm')) {
+      const conf = document.createElement('div');
+      conf.id = 'prfConfirm';
+      conf.className = 'sign-confirmation show';
+      conf.innerHTML = `<div class="sc-burst">🌱</div><h3>Proof L${loop_number} filed.</h3><p>${escapeHTML(data.message || '')}</p><p class="sc-action">It will appear in the Field Pulse within seconds.</p>`;
+      card.appendChild(conf);
+    }
+  } catch (e) {
+    if (btn) { btn.disabled = false; btn.textContent = '🌱 File the proof'; }
+    alert('Could not submit: ' + e.message);
+  }
+});
+
 // --- Sign & Submit (the substrate-direct path: the Game plays itself) ---
 document.getElementById('signSubmitBtn')?.addEventListener('click', async () => {
   const name = (document.getElementById('signName')?.value || '').trim();
@@ -2713,7 +2771,8 @@ async function loadFieldPulse() {
     feed.innerHTML = data.events.map(e => {
       const t = e.ts ? relativeTime(e.ts) : '';
       const icon = e.kind === 'signature' ? '🌀' : '⚡';
-      return '<div class="fp-event"><span class="fp-icon">' + icon + '</span><span class="fp-msg">' + escapeHTML(e.message || '') + '</span><span class="fp-time">' + escapeHTML(t) + '</span></div>';
+      const evIcon = e.icon || (e.kind === 'proof' ? '🌱' : '🌀');
+      return '<div class="fp-event"><span class="fp-icon">' + evIcon + '</span><span class="fp-msg">' + escapeHTML(e.message || '') + '</span><span class="fp-time">' + escapeHTML(t) + '</span></div>';
     }).join('');
     const sub = document.getElementById('fpSub');
     if (sub) sub.textContent = `live · ${data.events.length} recent signal${data.events.length === 1 ? '' : 's'}`;
@@ -3747,6 +3806,33 @@ def render_html() -> str:
     </div>
     <p style="color:var(--muted);font-size:11px;margin:14px 0 0;text-align:center;">
       <em>"This is not a religion of superiority. It is a practice of becoming trustworthy with power."</em>
+    </p>
+  </div>
+
+  <div class="proof-submit-card" id="proofSubmitCard">
+    <h2>🌱 File a Proof Loop <span style="font-size:12px;font-weight:400;color:var(--muted);">&mdash; for Champions who completed a 7-Day Game</span></h2>
+    <p style="color:var(--muted);font-size:12px;margin:0 0 14px;">
+      You completed a proof loop. A witness saw it. Submit it to the substrate.
+      Public proofs appear on the live Field Pulse and the Public Proofs roll.
+    </p>
+    <div class="sign-form">
+      <label><span>Your name (or handle)</span><input type="text" id="prfPlayer" placeholder="e.g. Maria Lopez or @maria" /></label>
+      <label><span>Loop number</span><input type="number" id="prfLoop" min="1" placeholder="e.g. 1" /></label>
+      <label style="grid-column:1/-1;"><span>Quest — the transformation you set out to deliver</span><input type="text" id="prfQuest" placeholder="One sentence." /></label>
+      <label style="grid-column:1/-1;"><span>Output — what was completed</span><textarea id="prfOutput" rows="3" placeholder="Concrete description of what shipped, was delivered, or was witnessed."></textarea></label>
+      <label style="grid-column:1/-1;"><span>Result — what changed (optional)</span><textarea id="prfResult" rows="2" placeholder="The transformation that occurred. What is true now that wasn't before."></textarea></label>
+      <label><span>Witness (name or @)</span><input type="text" id="prfWitness" placeholder="Who saw it" /></label>
+      <label><span>Email (optional, private)</span><input type="email" id="prfEmail" placeholder="you@example.com" /></label>
+      <label class="sign-radio"><input type="radio" name="prfConsent" value="public" checked /> Public — visible on Field Pulse + Public Proofs</label>
+      <label class="sign-radio"><input type="radio" name="prfConsent" value="anonymized" /> Anonymized — referenceable, name not shown</label>
+      <label class="sign-radio"><input type="radio" name="prfConsent" value="private" /> Private — your ledger only</label>
+    </div>
+    <input type="text" id="prfHoneypot" name="company" style="position:absolute;left:-9999px;" tabindex="-1" autocomplete="off" />
+    <div class="sign-actions" style="margin-top:8px;">
+      <button id="prfSubmitBtn" class="player-cta-primary">🌱 File the proof</button>
+    </div>
+    <p style="color:var(--muted);font-size:11px;margin:12px 0 0;">
+      Per <em>The Practice of Signaling</em>: <strong>each filed proof becomes a Field → Field signal</strong>, strengthening the next Player's confidence that the Game is real and being played.
     </p>
   </div>
 

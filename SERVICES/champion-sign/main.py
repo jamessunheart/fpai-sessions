@@ -30,6 +30,8 @@ from pydantic import BaseModel, Field, validator
 
 DATA_DIR = Path(os.environ.get("CHAMPION_DATA_DIR", "/var/lib/full-potential/champions"))
 DATA_DIR.mkdir(parents=True, exist_ok=True)
+PROOFS_DIR = Path(os.environ.get("PROOFS_DATA_DIR", "/var/lib/full-potential/proofs"))
+PROOFS_DIR.mkdir(parents=True, exist_ok=True)
 
 app = FastAPI(title="Champion Sign", version="0.1.0")
 app.add_middleware(
@@ -159,34 +161,57 @@ async def sign(req: SignRequest, request: Request) -> dict:
 
 
 @app.get("/recent")
-async def recent_activity(limit: int = 10) -> dict:
+async def recent_activity(limit: int = 12) -> dict:
     """Field Pulse — recent activity feed for the cockpit ticker.
 
-    Reads the audit log and returns the most recent N events as a list of
-    {ts, kind, message} for client-side rendering.
+    Merges signature events from champions/audit.jsonl and proof events
+    from proofs/audit.jsonl, returns most recent N sorted by timestamp.
     """
-    audit = DATA_DIR / "audit.jsonl"
-    if not audit.exists():
-        return {"events": []}
-    try:
-        lines = audit.read_text(encoding="utf-8").strip().split("\n")
-        events = []
-        for line in reversed(lines[-limit * 2:]):
+    events = []
+
+    # Champion signatures
+    champ_audit = DATA_DIR / "audit.jsonl"
+    if champ_audit.exists():
+        for line in champ_audit.read_text(encoding="utf-8").strip().split("\n"):
             try:
                 e = json.loads(line)
                 if not e.get("public"):
-                    # Surface anonymized for the public pulse
                     msg = f"Champion #{e.get('champion_number')} signed (private)"
                 else:
                     msg = f"Champion #{e.get('champion_number')} — {e.get('name')} signed"
-                events.append({"ts": e.get("ts"), "kind": "signature", "message": msg})
-                if len(events) >= limit:
-                    break
+                events.append({
+                    "ts": e.get("ts"),
+                    "kind": "signature",
+                    "icon": "🌀",
+                    "message": msg,
+                })
             except Exception:
                 continue
-        return {"events": events}
-    except Exception:
-        return {"events": []}
+
+    # Proof submissions
+    proof_audit = PROOFS_DIR / "audit.jsonl"
+    if proof_audit.exists():
+        for line in proof_audit.read_text(encoding="utf-8").strip().split("\n"):
+            try:
+                e = json.loads(line)
+                consent = (e.get("consent") or "").lower()
+                player = e.get("player") if consent == "public" else "(private)"
+                loop_n = e.get("loop_number", "?")
+                if consent == "public":
+                    msg = f"Loop {loop_n} filed — {player}"
+                else:
+                    msg = f"Loop {loop_n} filed (private)"
+                events.append({
+                    "ts": e.get("ts"),
+                    "kind": "proof",
+                    "icon": "🌱",
+                    "message": msg,
+                })
+            except Exception:
+                continue
+
+    events.sort(key=lambda e: e.get("ts", ""), reverse=True)
+    return {"events": events[:limit]}
 
 
 @app.get("/list")
@@ -222,6 +247,165 @@ async def list_champions() -> dict:
 
 def _count_champions() -> int:
     return sum(1 for p in DATA_DIR.glob("*.md") if not p.name.startswith("."))
+
+
+# ===== Proof endpoints ====================================================
+class ProofSubmit(BaseModel):
+    player: str = Field(..., min_length=2, max_length=100)
+    handle: Optional[str] = Field(None, max_length=60)
+    email: Optional[str] = Field(None, max_length=120)
+    loop_number: int = Field(..., ge=1, le=9999)
+    quest: str = Field(..., min_length=2, max_length=400)
+    output: str = Field(..., min_length=2, max_length=2000)
+    result: Optional[str] = Field(None, max_length=2000)
+    witness: Optional[str] = Field(None, max_length=200)
+    consent: str = Field("public")  # public | anonymized | private
+    agreement_type: str = Field("deliverable_by_date")
+    company: Optional[str] = Field(None, max_length=120)  # honeypot
+
+    @validator("player", "quest", "output", "witness")
+    def _no_html(cls, v):
+        if v is None:
+            return v
+        if re.search(r"[<>]", v):
+            raise ValueError("contains forbidden characters")
+        return v.strip()
+
+
+@app.post("/proof/submit")
+async def submit_proof(req: ProofSubmit, request: Request) -> dict:
+    if req.company:
+        return {"ok": True, "honeypot": True}
+
+    ip = request.client.host if request.client else "unknown"
+    if not _check_rate(ip):
+        raise HTTPException(status_code=429, detail="Too many submissions. Try again later.")
+
+    today = datetime.now().strftime("%Y-%m-%d")
+    slug = re.sub(r"[^a-z0-9]+", "-", req.player.lower()).strip("-") or "unnamed"
+    fname = f"{today}_{slug}_loop-{req.loop_number}.md"
+    out = PROOFS_DIR / fname
+    if out.exists():
+        for i in range(2, 100):
+            alt = PROOFS_DIR / f"{today}_{slug}_loop-{req.loop_number}-{i}.md"
+            if not alt.exists():
+                out = alt
+                break
+
+    public = req.consent.lower() == "public"
+    md = _render_proof_md(req, today)
+    out.write_text(md, encoding="utf-8")
+
+    audit = PROOFS_DIR / "audit.jsonl"
+    with audit.open("a", encoding="utf-8") as f:
+        f.write(json.dumps({
+            "ts": datetime.now().isoformat(),
+            "kind": "proof",
+            "player": req.player if public else "(private)",
+            "loop_number": req.loop_number,
+            "quest": req.quest if public else None,
+            "consent": req.consent,
+            "ip_hash": str(hash(ip))[-6:],
+            "filename": fname,
+        }) + "\n")
+
+    # Founder-direction signal
+    try:
+        import urllib.request
+        alert_msg = (
+            f"🌱 Proof L{req.loop_number} filed by {req.player}"
+            f"{' (' + (req.handle or '') + ')' if req.handle else ''}"
+            f" — {req.consent}"
+        )
+        urllib.request.urlopen(
+            urllib.request.Request(
+                "http://127.0.0.1:8766/alert",
+                data=json.dumps({"message": alert_msg, "source": "proof-submit"}).encode(),
+                headers={"Content-Type": "application/json"},
+            ),
+            timeout=2,
+        )
+    except Exception:
+        pass
+
+    return {
+        "ok": True,
+        "filename": fname,
+        "loop_number": req.loop_number,
+        "message": f"Proof L{req.loop_number} witnessed and recorded. Thank you, {req.player.split()[0]}.",
+    }
+
+
+@app.get("/proof/list")
+async def list_proofs() -> dict:
+    """Return public proofs sorted by date (newest first)."""
+    proofs = []
+    for p in sorted(PROOFS_DIR.glob("*.md"), reverse=True):
+        try:
+            text = p.read_text(encoding="utf-8")
+            fm = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+            if not fm:
+                continue
+            data: dict = {}
+            for line in fm.group(1).split("\n"):
+                m = re.match(r"^([a-z_]+):\s*(.*)$", line)
+                if m:
+                    key, val = m.group(1), m.group(2).strip().strip('"')
+                    if val.lower() == "true":
+                        val = True
+                    elif val.lower() == "false":
+                        val = False
+                    data[key] = val
+            consent = (data.get("consent") or "").lower()
+            if consent != "public":
+                continue
+            data.pop("email", None)
+            proofs.append(data)
+        except Exception:
+            continue
+    return {"count": len(proofs), "proofs": proofs}
+
+
+def _render_proof_md(req: ProofSubmit, today: str) -> str:
+    public = req.consent.lower() == "public"
+    return f"""---
+proof_id: {today}_{re.sub(r'[^a-z0-9]+', '-', req.player.lower()).strip('-')}_loop-{req.loop_number}
+loop_number: {req.loop_number}
+date_committed: {today}
+player: {req.player}
+handle: {req.handle or ''}
+email: {req.email or ''}
+witness: {req.witness or ''}
+consent: {req.consent}
+agreement_type: {req.agreement_type}
+status: complete
+source: webhook
+---
+
+# Loop {req.loop_number} — {req.player}
+
+## Quest
+
+{req.quest}
+
+## Output — what was completed
+
+{req.output}
+
+{('## Result — what changed' + chr(10) + chr(10) + req.result) if req.result else ''}
+
+## Witness
+
+{req.witness or '(no witness named at submission)'}
+
+## Visibility
+
+This proof is **{'PUBLIC' if public else req.consent.upper()}**.
+
+---
+
+*Submitted via webhook at https://fullpotential.com/game on {today}.*
+"""
 
 
 def _render_md(req: SignRequest, num: int, today: str) -> str:
