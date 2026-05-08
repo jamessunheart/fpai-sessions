@@ -1863,9 +1863,16 @@ async def game_signals() -> dict:
 #   - Architect grants via admin endpoint
 #   - Earning hooks (filed-witnessed proof, affiliate signs, etc.) — Loop 32
 
+# Local ledger kept as historical audit (Loop 30); canonical SSOT now is
+# fp-credits-gateway (Loop 32 bridge). Reads route to gateway. The local
+# ledger.jsonl is no longer written to as of Loop 33.
 CREDITS_DIR = Path(os.environ.get("CREDITS_DATA_DIR", "/var/lib/full-potential/credits"))
 CREDITS_DIR.mkdir(parents=True, exist_ok=True)
 CREDITS_LEDGER = CREDITS_DIR / "ledger.jsonl"
+
+GATEWAY_URL = os.environ.get("FP_CREDITS_GATEWAY_URL", "").rstrip("/")
+GATEWAY_KEY = os.environ.get("FP_CREDITS_API_KEY", "").strip()
+GATEWAY_CREDIT_TYPE = os.environ.get("FP_CREDITS_TYPE", "fp_credits")
 
 
 def _norm_handle(h: str) -> str:
@@ -1876,53 +1883,78 @@ def _norm_handle(h: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", h).strip("-")
 
 
-def _credit_balance(handle: str) -> int:
-    handle = _norm_handle(handle)
-    if not handle or not CREDITS_LEDGER.exists():
-        return 0
-    bal = 0
-    for line in CREDITS_LEDGER.read_text(encoding="utf-8").splitlines():
+def _gw_call(method: str, path: str, payload: Optional[dict] = None) -> dict:
+    """Call fp-credits-gateway. Raises HTTPException on failure."""
+    import urllib.request
+    import urllib.error
+    if not GATEWAY_URL or not GATEWAY_KEY:
+        raise HTTPException(status_code=503, detail="credit gateway not configured")
+    url = f"{GATEWAY_URL}{path}"
+    data = json.dumps(payload).encode() if payload else None
+    headers = {"X-API-Key": GATEWAY_KEY}
+    if payload:
+        headers["Content-Type"] = "application/json"
+    req = urllib.request.Request(url, data=data, headers=headers, method=method)
+    try:
+        with urllib.request.urlopen(req, timeout=10) as r:
+            return json.loads(r.read())
+    except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8", errors="replace")
         try:
-            tx = json.loads(line)
+            detail = json.loads(body).get("detail", body)
         except Exception:
-            continue
-        if _norm_handle(tx.get("to", "")) == handle:
-            bal += int(tx.get("amount", 0))
-        if _norm_handle(tx.get("from", "")) == handle:
-            bal -= int(tx.get("amount", 0))
-    return bal
+            detail = body
+        raise HTTPException(status_code=e.code, detail=str(detail)[:300])
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"gateway error: {e}")
+
+
+def _credit_balance(handle: str) -> int:
+    """Read fp_credits balance from canonical gateway."""
+    handle = _norm_handle(handle)
+    if not handle:
+        return 0
+    try:
+        r = _gw_call("GET", f"/api/balance/{handle}")
+        return int(r.get("balances", {}).get(GATEWAY_CREDIT_TYPE, 0) or 0)
+    except HTTPException:
+        return 0
 
 
 def _credit_history(handle: str, limit: int = 20) -> list[dict]:
+    """Pull transaction history from gateway. Returns our normalized format."""
     handle = _norm_handle(handle)
-    if not handle or not CREDITS_LEDGER.exists():
+    if not handle:
         return []
+    try:
+        r = _gw_call("GET", f"/api/transactions/{handle}?limit={limit}")
+    except HTTPException:
+        return []
+    txns = r if isinstance(r, list) else r.get("transactions") or []
     out = []
-    for line in CREDITS_LEDGER.read_text(encoding="utf-8").splitlines():
-        try:
-            tx = json.loads(line)
-        except Exception:
-            continue
-        from_n = _norm_handle(tx.get("from", ""))
-        to_n = _norm_handle(tx.get("to", ""))
-        if handle in (from_n, to_n):
-            direction = "out" if from_n == handle else "in"
-            other = tx.get("from") if direction == "in" else tx.get("to")
-            out.append({
-                "ts": tx.get("ts"),
-                "kind": tx.get("kind"),
-                "direction": direction,
-                "amount": tx.get("amount"),
-                "other": other,
-                "memo": tx.get("memo"),
-            })
-    return list(reversed(out))[:limit]
-
-
-def _credit_append(tx: dict) -> None:
-    tx["ts"] = datetime.now().isoformat()
-    with CREDITS_LEDGER.open("a", encoding="utf-8") as f:
-        f.write(json.dumps(tx) + "\n")
+    for tx in txns:
+        # Gateway tx shape varies — normalize to our format
+        amount = int(float(tx.get("amount") or 0))
+        tx_type = tx.get("type") or tx.get("kind") or ""
+        # Direction inference: 'credit' = received, 'debit' = sent, 'transfer' uses from/to
+        if tx_type == "credit":
+            direction = "in"; other = tx.get("source") or "(architect)"
+        elif tx_type == "debit":
+            direction = "out"; other = tx.get("destination") or "?"
+        else:
+            from_a = (tx.get("from_account") or tx.get("from") or "").lower()
+            to_a = (tx.get("to_account") or tx.get("to") or "").lower()
+            direction = "out" if from_a == handle else "in"
+            other = to_a if direction == "out" else from_a
+        out.append({
+            "ts": tx.get("created_at") or tx.get("ts") or "",
+            "kind": tx_type or "tx",
+            "direction": direction,
+            "amount": amount,
+            "other": other,
+            "memo": tx.get("reason") or tx.get("memo") or "",
+        })
+    return out[:limit]
 
 
 class CreditSend(BaseModel):
@@ -1966,70 +1998,74 @@ async def credits_history(handle: str, limit: int = 20) -> dict:
 
 @app.post("/credits/send")
 async def credits_send(req: CreditSend) -> dict:
-    """Peer-to-peer transfer. Requires sufficient balance."""
+    """Peer-to-peer transfer via fp-credits-gateway."""
     from_n = _norm_handle(req.from_handle)
     to_n = _norm_handle(req.to_handle)
     if from_n == to_n:
         raise HTTPException(status_code=400, detail="cannot send to self")
-    bal = _credit_balance(from_n)
-    if bal < req.amount:
-        raise HTTPException(status_code=400, detail=f"insufficient balance ({bal} credits)")
-    _credit_append({
-        "kind": "send",
-        "from": req.from_handle,
-        "to": req.to_handle,
+    r = _gw_call("POST", "/api/transfer", {
+        "from_account": from_n,
+        "to_account": to_n,
         "amount": req.amount,
-        "memo": req.memo or "",
+        "credit_type": GATEWAY_CREDIT_TYPE,
+        "reason": req.memo or "p2p send",
     })
     return {
-        "ok": True,
+        "ok": bool(r.get("success")),
         "from_balance": _credit_balance(from_n),
         "to_balance": _credit_balance(to_n),
+        "tx_id": r.get("from_transaction"),
         "message": f"Sent {req.amount} credits to @{to_n}.",
     }
 
 
 @app.post("/credits/grant")
 async def credits_grant(req: CreditGrant, x_admin_token: Optional[str] = Header(None)) -> dict:
-    """Architect-only — mint credits to a handle."""
+    """Architect-only — mint credits via fp-credits-gateway."""
     _check_admin(x_admin_token)
-    _credit_append({
-        "kind": "grant",
-        "from": "(architect)",
-        "to": req.to_handle,
+    to_n = _norm_handle(req.to_handle)
+    r = _gw_call("POST", "/api/credit", {
+        "account_id": to_n,
         "amount": req.amount,
-        "memo": req.memo or "",
+        "credit_type": GATEWAY_CREDIT_TYPE,
+        "reason": req.memo or "architect grant",
     })
     return {
-        "ok": True,
-        "to_balance": _credit_balance(req.to_handle),
-        "message": f"Granted {req.amount} credits to @{_norm_handle(req.to_handle)}.",
+        "ok": r.get("status") == "completed",
+        "to_balance": _credit_balance(to_n),
+        "tx_id": r.get("transaction_id"),
+        "message": f"Granted {req.amount} credits to @{to_n}.",
     }
 
 
 @app.get("/credits/leaderboard")
 async def credits_leaderboard(limit: int = 10) -> dict:
-    """Top balances. Tallies the entire ledger."""
-    if not CREDITS_LEDGER.exists():
-        return {"holders": [], "total_in_circulation": 0}
-    bals: dict[str, int] = {}
-    total = 0
-    for line in CREDITS_LEDGER.read_text(encoding="utf-8").splitlines():
-        try:
-            tx = json.loads(line)
-        except Exception:
-            continue
-        amt = int(tx.get("amount", 0))
-        to_n = _norm_handle(tx.get("to", ""))
-        from_n = _norm_handle(tx.get("from", ""))
-        if to_n:
-            bals[to_n] = bals.get(to_n, 0) + amt
-        if from_n and from_n != "(architect)":
-            bals[from_n] = bals.get(from_n, 0) - amt
-        if tx.get("kind") in ("grant", "earn"):
-            total += amt
-    holders = sorted([{"handle": h, "balance": b} for h, b in bals.items() if b > 0], key=lambda x: -x["balance"])
-    return {"holders": holders[:limit], "total_in_circulation": total}
+    """Top fp_credits holders. Aggregated from gateway-known accounts.
+
+    The gateway doesn't expose a leaderboard endpoint directly. We probe
+    handles known to the Game (Champions Roll + recent store actors) and
+    pull balances. Imperfect but bounded — the only handles that show up
+    are ones the Game has touched.
+    """
+    handles: set[str] = set()
+    if DATA_DIR.exists():
+        for p in DATA_DIR.glob("*.md"):
+            try:
+                meta = _read_proof_meta(p)
+                name = meta.get("name") or ""
+                if name:
+                    handles.add(_norm_handle(name))
+            except Exception:
+                continue
+    # Add architect explicitly
+    handles.add("jamessunheart")
+    bals = []
+    for h in handles:
+        b = _credit_balance(h)
+        if b > 0:
+            bals.append({"handle": h, "balance": b})
+    bals.sort(key=lambda x: -x["balance"])
+    return {"holders": bals[:limit], "source": "fp-credits-gateway"}
 
 
 # ===== /store — Coherent Marketplace (Loop 31) ============================
@@ -2274,13 +2310,14 @@ async def store_buy(req: StoreBuy) -> dict:
     if bal < pc:
         raise HTTPException(status_code=400, detail=f"insufficient credits ({bal} < {pc})")
 
-    # Atomic: ledger send + inventory increment
-    _credit_append({
-        "kind": "send",
-        "from": req.buyer_handle,
-        "to": d.get("owner_handle"),
+    # Atomic: gateway transfer (canonical SSOT) + inventory increment
+    owner_n = _norm_handle(d.get("owner_handle") or "")
+    _gw_call("POST", "/api/transfer", {
+        "from_account": buyer_n,
+        "to_account": owner_n,
         "amount": pc,
-        "memo": f"store: {d.get('title')} ({req.offer_id})",
+        "credit_type": GATEWAY_CREDIT_TYPE,
+        "reason": f"store buy: {d.get('title')} ({req.offer_id})",
     })
     # Update offer file with new sold count
     text = p.read_text(encoding="utf-8")
