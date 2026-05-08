@@ -37,6 +37,21 @@ rsync -az --delete \
   -e "ssh -i $SSH_KEY -o StrictHostKeyChecking=no" \
   "$ROOT/dist/" "${SERVER}:${REMOTE_PATH}/"
 
+# Sync repo's seed champions/proofs/cards to /var/lib/full-potential/ so the
+# webhook lookup endpoints see them. Webhook submissions add to this same dir
+# (different filenames). Syncing repo files into it merges seed data with
+# submitted data without overwriting submissions.
+echo "→ Syncing seed champions/proofs/cards to substrate..."
+ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no "$SERVER" "
+  mkdir -p /var/lib/full-potential/champions /var/lib/full-potential/proofs /var/lib/full-potential/cards
+"
+rsync -az -e "ssh -i $SSH_KEY -o StrictHostKeyChecking=no" \
+  --include='*.md' --exclude='INDEX.md' --exclude='registry.json' --exclude='.gitkeep' \
+  "$ROOT/core/INTENT/AGREEMENTS/champions/" "${SERVER}:/var/lib/full-potential/champions/" 2>&1 | tail -5 || true
+rsync -az -e "ssh -i $SSH_KEY -o StrictHostKeyChecking=no" \
+  --include='*.md' --exclude='.gitkeep' \
+  "$ROOT/core/INTENT/AGREEMENTS/proofs/" "${SERVER}:/var/lib/full-potential/proofs/" 2>&1 | tail -5 || true
+
 echo "→ Verifying on server..."
 ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no "$SERVER" "ls -la $REMOTE_PATH/ && head -5 $REMOTE_PATH/index.html"
 

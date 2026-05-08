@@ -74,6 +74,7 @@ class SignRequest(BaseModel):
     witness: Optional[str] = Field(None, max_length=120)
     public: bool = True
     why: Optional[str] = Field(None, max_length=2000)
+    inviter: Optional[str] = Field(None, max_length=100)  # the Champion who invited this signer
     # Honeypot — bots fill this; humans don't see it
     company: Optional[str] = Field(None, max_length=120)
 
@@ -249,6 +250,122 @@ async def list_champions() -> dict:
 
 def _count_champions() -> int:
     return sum(1 for p in DATA_DIR.glob("*.md") if not p.name.startswith("."))
+
+
+@app.get("/lookup")
+async def lookup_player(name: str) -> dict:
+    """Return a player's full state across champions / proofs / cards / affiliates.
+
+    Read-only and privacy-respecting: returns counts and public flags, not raw
+    private fields. Used by the cockpit to render "Your Player State" once a
+    player has identified themselves locally.
+    """
+    name_norm = name.strip().lower()
+    if not name_norm:
+        return {"error": "name required"}
+
+    # Find this player's Champion file (match by name, case-insensitive)
+    champion = None
+    for p in DATA_DIR.glob("*.md"):
+        try:
+            text = p.read_text(encoding="utf-8")
+            fm = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+            if not fm:
+                continue
+            data = {}
+            for line in fm.group(1).split("\n"):
+                m = re.match(r"^([a-z_]+):\s*(.*)$", line)
+                if m:
+                    val = m.group(2).strip().strip('"')
+                    if val.lower() == "true":
+                        val = True
+                    elif val.lower() == "false":
+                        val = False
+                    data[m.group(1)] = val
+            if (data.get("name") or "").strip().lower() == name_norm:
+                data.pop("email", None)
+                champion = data
+                break
+        except Exception:
+            continue
+
+    # Count proofs filed by this player
+    proofs_filed = 0
+    if PROOFS_DIR.exists():
+        for p in PROOFS_DIR.glob("*.md"):
+            try:
+                text = p.read_text(encoding="utf-8")
+                fm = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+                if not fm:
+                    continue
+                for line in fm.group(1).split("\n"):
+                    if line.startswith("player:"):
+                        if line.split(":", 1)[1].strip().strip('"').lower() == name_norm:
+                            proofs_filed += 1
+                        break
+            except Exception:
+                continue
+
+    # Count affiliates: champions whose inviter matches this name
+    affiliates = []
+    for p in DATA_DIR.glob("*.md"):
+        try:
+            text = p.read_text(encoding="utf-8")
+            fm = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+            if not fm:
+                continue
+            data = {}
+            for line in fm.group(1).split("\n"):
+                m = re.match(r"^([a-z_]+):\s*(.*)$", line)
+                if m:
+                    data[m.group(1)] = m.group(2).strip().strip('"')
+            if (data.get("inviter") or "").strip().lower() == name_norm:
+                affiliates.append({
+                    "name": data.get("name") if (data.get("public") in (True, "true")) else "(private)",
+                    "champion_number": data.get("champion_number"),
+                    "date": data.get("date_signed"),
+                })
+        except Exception:
+            continue
+
+    # Has a Character Card?
+    card_present = False
+    card_level = None
+    if CARDS_DIR.exists():
+        slug = re.sub(r"[^a-z0-9]+", "-", name_norm).strip("-")
+        for p in CARDS_DIR.glob(f"{slug}*.md"):
+            card_present = True
+            try:
+                text = p.read_text(encoding="utf-8")
+                fm = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+                if fm:
+                    for line in fm.group(1).split("\n"):
+                        if line.startswith("level:"):
+                            card_level = line.split(":", 1)[1].strip().strip('"')
+                            break
+            except Exception:
+                pass
+            break
+
+    # Compose simple Field Score (counts only — full CPI is aspirational)
+    score = 0
+    if champion:
+        score += 1
+    if card_present:
+        score += 1
+    score += proofs_filed * 2
+    score += len(affiliates) * 3
+
+    return {
+        "name": name.strip(),
+        "champion": champion,
+        "proofs_filed": proofs_filed,
+        "affiliates_count": len(affiliates),
+        "affiliates": affiliates[:10],
+        "card_present": card_present,
+        "card_level": card_level,
+        "field_score_simple": score,
+    }
 
 
 # ===== Proof endpoints ====================================================
@@ -546,6 +663,7 @@ This proof is **{'PUBLIC' if public else req.consent.upper()}**.
 def _render_md(req: SignRequest, num: int, today: str) -> str:
     name = req.name
     why_block = f"\n## Why I am signing\n\n{req.why}\n" if req.why else ""
+    inviter_block = f"inviter: {req.inviter}\n" if req.inviter else ""
     return f"""---
 champion_id: {today}_{re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')}
 champion_number: {num}
@@ -555,7 +673,7 @@ handle: {req.handle or ''}
 email: {req.email or ''}
 witness: {req.witness or ''}
 public: {str(req.public).lower()}
-status: signed
+{inviter_block}status: signed
 manifesto_version: v1.0
 source: webhook
 ---

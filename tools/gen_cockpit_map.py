@@ -1764,6 +1764,98 @@ body.mode-field .player-only { display: none !important; }
 .glossary-def code { font-size: 11px; }
 .glossary-def strong { color: var(--accent); }
 
+/* Player State panel */
+.player-state {
+  background: linear-gradient(135deg, rgba(132, 212, 136, 0.08), rgba(232, 185, 116, 0.04));
+  border: 1px solid var(--good);
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin-bottom: 16px;
+}
+.ps-header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.ps-icon { font-size: 36px; line-height: 1; }
+.ps-label { font-size: 10px; color: var(--good); letter-spacing: 1.5px; font-weight: 700; }
+.ps-name { font-size: 22px; font-weight: 700; color: var(--text-bright); margin-top: 2px; }
+.ps-score { text-align: right; }
+.ps-score-n {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--accent-bright);
+  line-height: 1;
+}
+.ps-score-lbl { font-size: 10px; color: var(--muted); letter-spacing: 0.5px; text-transform: uppercase; }
+.ps-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.ps-stat {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px;
+  text-align: center;
+}
+.ps-stat-n {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+}
+.ps-stat-lbl { font-size: 10px; color: var(--muted); margin-top: 4px; }
+.ps-invite {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+}
+.ps-invite-label {
+  font-size: 10px;
+  color: var(--accent);
+  letter-spacing: 1px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.ps-invite-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ps-invite-url {
+  flex: 1;
+  background: var(--bg);
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  color: var(--text);
+  overflow-x: auto;
+  white-space: nowrap;
+  display: inline-block;
+}
+.ps-tip { font-size: 11px; color: var(--muted); margin: 8px 0 0; line-height: 1.5; }
+
+/* Inviter banner — when arriving via someone's invite link */
+.inviter-banner {
+  background: linear-gradient(135deg, rgba(184, 156, 213, 0.12), rgba(132, 212, 136, 0.04));
+  border: 1px solid var(--unknown);
+  border-radius: 10px;
+  padding: 12px 18px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--text-bright);
+}
+.inviter-banner .inv-icon { font-size: 20px; margin-right: 8px; }
+.inviter-banner strong { color: var(--accent-bright); }
+
 /* Next move coach */
 .next-move {
   display: flex;
@@ -2439,6 +2531,90 @@ setInterval(refreshRelTimes, 30000);
   svg.innerHTML = stars;
 })();
 
+// --- Inviter capture (?inviter=NAME URL param) -------------------------
+(function captureInviter() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const inv = (params.get('inviter') || '').trim();
+    if (inv) {
+      // Persist for sign payload + display
+      localStorage.setItem('fpai-cockpit-inviter', inv);
+      const banner = document.getElementById('inviterBanner');
+      const txt = document.getElementById('inviterText');
+      if (banner && txt) {
+        txt.innerHTML = 'You arrived through <strong>' + inv.replace(/[<>&]/g, '') + '</strong>\\'s invite. When you sign, they\\'re credited as your inviter — their Field Score grows alongside yours.';
+        banner.style.display = 'block';
+      }
+    } else {
+      // Show banner if previously stored from a redirect
+      const stored = localStorage.getItem('fpai-cockpit-inviter');
+      if (stored) {
+        const banner = document.getElementById('inviterBanner');
+        const txt = document.getElementById('inviterText');
+        if (banner && txt) {
+          txt.innerHTML = 'Your inviter on record: <strong>' + stored.replace(/[<>&]/g, '') + '</strong>';
+          banner.style.display = 'block';
+        }
+      }
+    }
+  } catch (e) {}
+})();
+
+// --- Player State (renders for anyone who's identified locally) -------
+async function loadPlayerState() {
+  let name = '';
+  try {
+    name = localStorage.getItem('fpai-cockpit-name') || '';
+  } catch (e) {}
+  if (!name) return;
+  const card = document.getElementById('playerStateCard');
+  try {
+    const res = await fetch('/api/champion/lookup?name=' + encodeURIComponent(name), { cache: 'no-store' });
+    if (!res.ok) return;
+    const d = await res.json();
+    if (!d.champion && d.proofs_filed === 0 && d.affiliates_count === 0 && !d.card_present) {
+      // Player isn't on the substrate yet; don't show
+      return;
+    }
+    if (card) card.style.display = '';
+    const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    setText('psName', d.name);
+    setText('psScore', d.field_score_simple);
+    setText('psChampNum', d.champion ? '#' + d.champion.champion_number : '—');
+    setText('psLoops', d.proofs_filed);
+    setText('psAffiliates', d.affiliates_count);
+    setText('psCard', d.card_present ? (d.card_level || '✓') : '—');
+    const url = location.origin + location.pathname + '?inviter=' + encodeURIComponent(d.name);
+    const inviteEl = document.getElementById('psInviteUrl');
+    if (inviteEl) inviteEl.textContent = url;
+    const tip = document.getElementById('psTip');
+    if (tip) {
+      const next = !d.champion ? 'Sign the Agreement to become a Champion.'
+        : !d.card_present ? 'Build your Character Card next (5 min · AI Port-In above).'
+        : d.proofs_filed === 0 ? 'Run a 7-Day First Game and file your first Proof.'
+        : d.affiliates_count === 0 ? 'Share your invite link — when an aligned person signs through it, your score grows.'
+        : 'You\\'re moving. Keep going — file the next proof, witness another player, ascend the Player Path.';
+      tip.textContent = '→ ' + next;
+    }
+  } catch (e) {}
+}
+loadPlayerState();
+setInterval(loadPlayerState, 60000);
+
+document.getElementById('psCopyInviteBtn')?.addEventListener('click', async () => {
+  const url = document.getElementById('psInviteUrl')?.textContent || '';
+  try {
+    await navigator.clipboard.writeText(url);
+    const btn = document.getElementById('psCopyInviteBtn');
+    if (btn) {
+      btn.textContent = '✓ Copied';
+      setTimeout(() => { btn.textContent = '📋 Copy'; }, 3000);
+    }
+  } catch (e) {
+    alert('Could not copy. URL: ' + url);
+  }
+});
+
 // --- Personalized greeting ----------------------------------------------
 (function initGreeting() {
   const el = document.getElementById('greeting');
@@ -2863,10 +3039,12 @@ document.getElementById('signSubmitBtn')?.addEventListener('click', async () => 
   const btn = document.getElementById('signSubmitBtn');
   if (btn) { btn.disabled = true; btn.textContent = '🌀 Signing...'; }
   try {
+    let inviter = '';
+    try { inviter = localStorage.getItem('fpai-cockpit-inviter') || ''; } catch (e) {}
     const res = await fetch('/api/champion/sign', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, handle, email, witness, public: isPublic, why, company: honeypot }),
+      body: JSON.stringify({ name, handle, email, witness, public: isPublic, why, inviter, company: honeypot }),
     });
     const data = await res.json();
     if (!res.ok || !data.ok) {
@@ -2981,6 +3159,12 @@ setInterval(loadFieldPulse, 30000); // refresh every 30s
 
 // --- Invitation generator ------------------------------------------------
 function buildInvitation() {
+  let me = '';
+  try { me = localStorage.getItem('fpai-cockpit-name') || ''; } catch (e) {}
+  const baseUrl = (typeof location !== 'undefined') ? (location.origin + location.pathname) : 'https://fullpotential.com/game';
+  const inviteUrl = me ? (baseUrl + '?inviter=' + encodeURIComponent(me)) : baseUrl;
+  const fromLine = me ? `\\n\\nFrom: ${me}` : '';
+
   return `Reality is already a game. This is the guide for those who know.
 
 I'm signing the World Peace Agreement and starting a 7-Day First Game — a proof-based operating system for human potential. Six pillars: Coherence · Healing · Regeneration · Intelligence · Service · Truth.
@@ -2989,9 +3173,9 @@ It's not a religion. It's not a movement. It's a practice of becoming trustworth
 
 If you're tired of chaos, manipulation, performative outrage — read the Manifesto. Sign if it lands. Run your first 7-day proof loop.
 
-Coherent Champions of CHRIST: ${typeof location !== 'undefined' ? location.href : 'cockpit-map.html'}
+Coherent Champions of CHRIST: ${inviteUrl}
 
-We are human and AI allies, committed to bringing coherence, healing, and regeneration to our world.`;
+We are human and AI allies, committed to bringing coherence, healing, and regeneration to our world.${fromLine}`;
 }
 
 document.getElementById('inviteCopyBtn')?.addEventListener('click', async () => {
@@ -3809,6 +3993,39 @@ def render_html() -> str:
       <div class="role-item"><strong>Holds</strong> &mdash; spiritual + doctrinal authority within CORA Nation · NOT fiduciary control over OneBPO (governance firewall, by design)</div>
       <div class="role-item"><strong>Body in the room when</strong> &mdash; ratification · ceremony · steward initiation · civilization-quest decisions</div>
     </div>
+  </div>
+
+  <div class="inviter-banner" id="inviterBanner" style="display:none;">
+    <span class="inv-icon">🤝</span>
+    <span id="inviterText">You arrived through someone's invitation.</span>
+  </div>
+
+  <div class="player-state" id="playerStateCard" style="display:none;">
+    <div class="ps-header">
+      <div class="ps-icon">🎮</div>
+      <div>
+        <div class="ps-label">YOUR PLAYER STATE</div>
+        <div class="ps-name" id="psName">—</div>
+      </div>
+      <div class="ps-score">
+        <div class="ps-score-n" id="psScore">0</div>
+        <div class="ps-score-lbl">Field Score</div>
+      </div>
+    </div>
+    <div class="ps-stats" id="psStats">
+      <div class="ps-stat"><div class="ps-stat-n" id="psChampNum">—</div><div class="ps-stat-lbl">Champion #</div></div>
+      <div class="ps-stat"><div class="ps-stat-n" id="psLoops">0</div><div class="ps-stat-lbl">Loops filed</div></div>
+      <div class="ps-stat"><div class="ps-stat-n" id="psAffiliates">0</div><div class="ps-stat-lbl">Affiliates signed</div></div>
+      <div class="ps-stat"><div class="ps-stat-n" id="psCard">—</div><div class="ps-stat-lbl">Character Card</div></div>
+    </div>
+    <div class="ps-invite">
+      <div class="ps-invite-label">YOUR INVITE LINK <span style="color:var(--muted);font-weight:400;font-size:11px;">— share this URL · when others sign through it, your Field Score grows</span></div>
+      <div class="ps-invite-row">
+        <code class="ps-invite-url" id="psInviteUrl">https://fullpotential.com/game?inviter=...</code>
+        <button class="player-cta-secondary" id="psCopyInviteBtn" style="font-size:12px;padding:8px 14px;">📋 Copy</button>
+      </div>
+    </div>
+    <p class="ps-tip" id="psTip"></p>
   </div>
 
   <div class="next-move" id="nextMove">
