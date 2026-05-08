@@ -484,7 +484,11 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
             "  /characters — Champions in the Game · roster + KPIs\n"
             "  /signals   — trading + lead signals (retreat / party / coaching / commerce)\n"
             "  /decisions — unified queue of items needing your decision\n"
-            "  /money     — costs + revenue + biggest leak (Chief of Staff money view)\n"
+            "  /money     — costs + revenue + biggest leak\n"
+            "       /money set &lt;id&gt; &lt;amount&gt; [purpose]   — update an existing line\n"
+            "       /money add cost &lt;id&gt; &lt;name&gt; &lt;amt&gt; &lt;cat&gt; — add new cost\n"
+            "       /money add revenue &lt;stream&gt; &lt;amt&gt; [note] — add/update revenue\n"
+            "       /money &lt;free text&gt;                       — capture as money note (queued)\n"
             "  /log       — recent AI activity timeline\n"
             "  /pending — list pending queue items with approve buttons\n"
             "  /digest  — today's brain stats\n"
@@ -601,7 +605,7 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
     if cmd == "decisions":
         return await _cmd_decisions()
     if cmd == "money":
-        return await _cmd_money()
+        return await _cmd_money(rest)
     if cmd == "log":
         return await _cmd_log()
     return f"Unknown command: /{tg._esc(cmd)}. Try /help."
@@ -1209,7 +1213,252 @@ async def _cmd_decisions() -> str:
 
 
 # ───────────────────────────── /money ──────────────────────────────
-async def _cmd_money() -> str:
+_LEDGER_PATH = _os.environ.get(
+    "LEDGER_PATH", "/opt/chief-of-staff/state/ledger.json"
+)
+_MONEY_AUDIT_PATH = _os.environ.get(
+    "MONEY_AUDIT_PATH", "/var/lib/sh-brain/state/money_edits.jsonl"
+)
+
+
+def _money_load_ledger() -> dict:
+    import json as _json
+    with open(_LEDGER_PATH) as f:
+        return _json.load(f)
+
+
+def _money_save_ledger(data: dict) -> None:
+    """Atomic write."""
+    import json as _json
+    tmp = _LEDGER_PATH + ".tmp"
+    with open(tmp, "w") as f:
+        _json.dump(data, f, indent=2)
+    _os.replace(tmp, _LEDGER_PATH)
+
+
+def _money_audit(action: str, payload: dict) -> None:
+    """Append a one-line audit record. Best-effort; silent failure."""
+    import json as _json
+    from datetime import datetime as _dt
+    try:
+        _os.makedirs(_os.path.dirname(_MONEY_AUDIT_PATH), exist_ok=True)
+        rec = {
+            "ts": _dt.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "action": action,
+            **payload,
+        }
+        with open(_MONEY_AUDIT_PATH, "a") as f:
+            f.write(_json.dumps(rec) + "\n")
+    except Exception as e:
+        log.warning("money audit log failed: %s", e)
+
+
+async def _cmd_money(rest: str = "") -> str:
+    """Dispatcher. /money [set|add|<free text>]."""
+    rest = (rest or "").strip()
+    if not rest:
+        return await _money_view()
+
+    parts = rest.split(maxsplit=1)
+    sub = parts[0].lower()
+    arg = parts[1] if len(parts) > 1 else ""
+
+    if sub == "set":
+        return await _money_set(arg)
+    if sub == "add":
+        return await _money_add(arg)
+    # Anything else: free-text money note → propose via Curator Queue
+    return await _money_note(rest)
+
+
+async def _money_set(arg: str) -> str:
+    """Update an existing cost line. Format: <id> <amount> [purpose]"""
+    parts = arg.split(maxsplit=2)
+    if len(parts) < 2:
+        return ("Usage: <code>/money set &lt;id&gt; &lt;amount&gt; [purpose]</code>\n"
+                "Example: <code>/money set anthropic-max 200</code>")
+    item_id = parts[0]
+    try:
+        amount = float(parts[1].lstrip("$").replace(",", ""))
+    except ValueError:
+        return f"⚠️ amount must be a number (got <code>{tg._esc(parts[1])}</code>)"
+    new_purpose = parts[2] if len(parts) > 2 else None
+
+    try:
+        ledger = _money_load_ledger()
+    except Exception as e:
+        return f"⚠️ ledger unreachable at <code>{tg._esc(_LEDGER_PATH)}</code>: {tg._esc(str(e))}"
+
+    costs = ledger.get("costs_monthly_usd", [])
+    target = next((c for c in costs if c.get("id") == item_id), None)
+    if not target:
+        existing = ", ".join(c.get("id", "?") for c in costs)
+        return f"⚠️ id <code>{tg._esc(item_id)}</code> not found in costs.\nKnown ids: <code>{tg._esc(existing)}</code>"
+
+    old_amount = float(target.get("monthly_usd", 0) or 0)
+    old_purpose = target.get("purpose", "")
+    target["monthly_usd"] = amount
+    if new_purpose:
+        target["purpose"] = new_purpose
+    from datetime import datetime as _dt2
+    ledger["last_updated"] = _dt2.utcnow().strftime("%Y-%m-%d")
+
+    try:
+        _money_save_ledger(ledger)
+    except Exception as e:
+        return f"⚠️ ledger save failed: {tg._esc(str(e))}"
+
+    _money_audit("set", {"id": item_id, "old": old_amount, "new": amount, "purpose": new_purpose})
+    delta = amount - old_amount
+    sign = "+" if delta >= 0 else ""
+    lines = [
+        f"✅ <b>Updated:</b> {tg._esc(target.get('name', item_id))}",
+        f"  ${old_amount:,.0f}/mo → <b>${amount:,.0f}/mo</b>  ({sign}${delta:,.0f})",
+    ]
+    if new_purpose:
+        lines.append(f"  purpose: <i>{tg._esc(new_purpose)}</i>")
+    lines.append(f"\n<i>Audit: {tg._esc(_MONEY_AUDIT_PATH)}</i>")
+    lines.append("<i>To pull change back to repo: scp from brain server</i>")
+    return "\n".join(lines)
+
+
+async def _money_add(arg: str) -> str:
+    """Add new cost or revenue line.
+
+    Formats:
+      add cost <id> <name-or-quoted-name> <amount> <category> [purpose]
+      add revenue <stream> <amount/mo> [note]
+    """
+    parts = arg.split(maxsplit=1)
+    if not parts:
+        return ("Usage:\n"
+                "  <code>/money add cost &lt;id&gt; &lt;name&gt; &lt;amount&gt; &lt;category&gt; [purpose]</code>\n"
+                "  <code>/money add revenue &lt;stream&gt; &lt;amount/mo&gt; [note]</code>")
+    kind = parts[0].lower()
+    body = parts[1] if len(parts) > 1 else ""
+
+    try:
+        ledger = _money_load_ledger()
+    except Exception as e:
+        return f"⚠️ ledger unreachable: {tg._esc(str(e))}"
+
+    if kind == "cost":
+        # id name amount category [purpose...]
+        bits = body.split(maxsplit=4)
+        if len(bits) < 4:
+            return ("Usage: <code>/money add cost &lt;id&gt; &lt;name&gt; &lt;amount&gt; &lt;category&gt; [purpose]</code>\n"
+                    "Example: <code>/money add cost stripe-fees 'Stripe processing' 45 fees Card processing</code>")
+        item_id, name, amt_raw, category = bits[0], bits[1].strip("\"'"), bits[2], bits[3]
+        purpose = bits[4] if len(bits) > 4 else ""
+        try:
+            amount = float(amt_raw.lstrip("$").replace(",", ""))
+        except ValueError:
+            return f"⚠️ amount must be a number (got <code>{tg._esc(amt_raw)}</code>)"
+        costs = ledger.setdefault("costs_monthly_usd", [])
+        if any(c.get("id") == item_id for c in costs):
+            return f"⚠️ id <code>{tg._esc(item_id)}</code> already exists. Use /money set instead."
+        new_row = {
+            "name": name, "id": item_id, "category": category,
+            "engine_role": "infra", "monthly_usd": amount, "purpose": purpose,
+        }
+        costs.append(new_row)
+        from datetime import datetime as _dt3
+        ledger["last_updated"] = _dt3.utcnow().strftime("%Y-%m-%d")
+        try:
+            _money_save_ledger(ledger)
+        except Exception as e:
+            return f"⚠️ ledger save failed: {tg._esc(str(e))}"
+        _money_audit("add_cost", new_row)
+        return (f"✅ <b>Added cost:</b> {tg._esc(name)} (id <code>{tg._esc(item_id)}</code>)\n"
+                f"  ${amount:,.0f}/mo  ·  category: {tg._esc(category)}")
+
+    if kind == "revenue":
+        # stream amount [note...]
+        bits = body.split(maxsplit=2)
+        if len(bits) < 2:
+            return ("Usage: <code>/money add revenue &lt;stream&gt; &lt;amount/mo&gt; [note]</code>\n"
+                    "Example: <code>/money add revenue stripe_credits 250 First Stripe credit purchase</code>")
+        stream, amt_raw = bits[0], bits[1]
+        note = bits[2] if len(bits) > 2 else ""
+        try:
+            amount = float(amt_raw.lstrip("$").replace(",", ""))
+        except ValueError:
+            return f"⚠️ amount must be a number (got <code>{tg._esc(amt_raw)}</code>)"
+        rev = ledger.setdefault("revenue_monthly", {})
+        if stream in rev:
+            old = float(rev[stream].get("revenue_usd", 0) or 0)
+            rev[stream]["revenue_usd"] = amount
+            if note:
+                rev[stream]["_note"] = note
+            from datetime import datetime as _dt4
+            rev[stream]["as_of"] = _dt4.utcnow().isoformat() + "Z"
+            action = "update_revenue"
+            verb = "Updated"
+            extra = f"${old:,.0f}/mo → <b>${amount:,.0f}/mo</b>"
+        else:
+            from datetime import datetime as _dt5
+            rev[stream] = {
+                "revenue_usd": amount,
+                "_note": note,
+                "as_of": _dt5.utcnow().isoformat() + "Z",
+            }
+            action = "add_revenue"
+            verb = "Added"
+            extra = f"${amount:,.0f}/mo"
+        from datetime import datetime as _dt6
+        ledger["last_updated"] = _dt6.utcnow().strftime("%Y-%m-%d")
+        try:
+            _money_save_ledger(ledger)
+        except Exception as e:
+            return f"⚠️ ledger save failed: {tg._esc(str(e))}"
+        _money_audit(action, {"stream": stream, "amount": amount, "note": note})
+        msg = f"✅ <b>{verb} revenue stream:</b> {tg._esc(stream)}\n  {extra}"
+        if note:
+            msg += f"\n  <i>{tg._esc(note)}</i>"
+        return msg
+
+    return f"⚠️ Unknown /money add kind: <code>{tg._esc(kind)}</code> (try <b>cost</b> or <b>revenue</b>)"
+
+
+async def _money_note(text: str) -> str:
+    """Free-text money note. Captures to brain + queues a Curator proposal."""
+    _money_audit("note", {"text": text[:500]})
+
+    # Try to write a Curator Queue proposal so it surfaces in /pending and /decisions.
+    queued = False
+    queue_err = ""
+    try:
+        from .proposals import Proposal, ProposalWriter
+        async with AppFlowy() as af:
+            writer = ProposalWriter(af)
+            p = Proposal(
+                proposal=f"💰 Money note: {text[:160]}",
+                type="money-note",
+                confidence_score=0.5,
+                proposed_by="tgbot:/money",
+                reasoning=("User-submitted free-text money note via /money command. "
+                           "Review and decide whether to set/add a ledger entry "
+                           "(/money set <id> <amount> or /money add cost/revenue ...)."),
+                diff={"raw_text": text, "kind": "free-text-money-note"},
+            )
+            await writer.write(p, auto_apply=False)
+            queued = True
+    except Exception as e:
+        queue_err = str(e)
+        log.warning("money-note queue failed: %s", e)
+
+    lines = ["📝 <b>Money note captured</b>"]
+    lines.append(f"<i>{tg._esc(text[:300])}</i>\n")
+    if queued:
+        lines.append("✅ Queued to Curator Queue (will surface in <code>/decisions</code> and <code>/pending</code>).")
+    else:
+        lines.append(f"⚠️ Curator Queue write failed: <i>{tg._esc(queue_err[:140])}</i>")
+        lines.append(f"Audit log still recorded at <code>{tg._esc(_MONEY_AUDIT_PATH)}</code>.")
+    lines.append("\n<b>Apply directly</b>: <code>/money set &lt;id&gt; &lt;amount&gt;</code> or <code>/money add cost/revenue …</code>")
+    return "\n".join(lines)
+
+
+async def _money_view() -> str:
     """Cross-system money view from Chief of Staff (loopback on brain server)."""
     import httpx as _httpx
     cos_url = _os.environ.get("CHIEF_OF_STAFF_URL", "http://127.0.0.1:8107")
