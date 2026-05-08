@@ -1940,6 +1940,103 @@ body.mode-field .player-only { display: none !important; }
   overflow-y: auto;
 }
 
+/* Loop poster row + 4 quadrants */
+.loop-poster-row {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+  margin: 8px 0 16px;
+  align-items: start;
+}
+@media (max-width: 900px) { .loop-poster-row { grid-template-columns: 1fr; } }
+.loop-quadrants {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+@media (max-width: 600px) { .loop-quadrants { grid-template-columns: 1fr; } }
+.loop-q {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  position: relative;
+}
+.loop-q-num {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  width: 22px;
+  height: 22px;
+  background: var(--surface);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11px;
+  font-weight: 700;
+}
+.loop-q-icon { font-size: 26px; line-height: 1; margin-bottom: 4px; }
+.loop-q-title { font-weight: 700; font-size: 13px; color: var(--text); }
+.loop-q-sub { font-size: 10px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+.loop-q-tag { font-size: 11px; color: var(--muted); margin-top: 6px; line-height: 1.4; }
+.loop-q-1 { border-left: 3px solid #b89cd5; }   /* magenta — Party */
+.loop-q-2 { border-left: 3px solid #84d488; }   /* green — Game */
+.loop-q-3 { border-left: 3px solid #7cb8e0; }   /* blue — Apprentice */
+.loop-q-4 { border-left: 3px solid var(--accent); } /* gold — Builder */
+
+/* Progression path */
+.progression-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 8px 0;
+}
+.prog-stage {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  text-align: center;
+  flex: 1;
+  min-width: 140px;
+  border-top: 3px solid var(--accent);
+}
+.prog-icon { font-size: 24px; line-height: 1; }
+.prog-name { font-weight: 700; font-size: 13px; color: var(--text); margin-top: 4px; }
+.prog-quote { font-size: 10px; color: var(--muted); margin-top: 4px; font-style: italic; line-height: 1.3; }
+.prog-arrow { color: var(--muted); font-size: 16px; }
+@media (max-width: 700px) { .prog-arrow { display: none; } }
+
+/* 7 System Areas */
+.systems-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 8px;
+}
+.sys-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 14px;
+  border-top: 3px solid var(--p2);
+}
+.sys-icon { font-size: 22px; line-height: 1; }
+.sys-name { font-weight: 700; font-size: 13px; color: var(--text); margin-top: 4px; }
+.sys-desc { font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+.sys-card:nth-child(1) { border-top-color: #b89cd5; }
+.sys-card:nth-child(2) { border-top-color: #7cb8e0; }
+.sys-card:nth-child(3) { border-top-color: var(--accent); }
+.sys-card:nth-child(4) { border-top-color: #e57b7b; }
+.sys-card:nth-child(5) { border-top-color: var(--good); }
+.sys-card:nth-child(6) { border-top-color: var(--accent-bright); }
+.sys-card:nth-child(7) { border-top-color: var(--p2); }
+
 /* Framework poster row */
 .framework-poster-row {
   display: grid;
@@ -2964,6 +3061,12 @@ def render_html() -> str:
             "Eight layers: Org · Agreement · Game · AI · Treasury · Village · Cultural · Media. The complete stack."
         ),
         render_inline_doc_card(
+            "positive-loop", "🔄", "The Positive Loop",
+            "Party · Play · Apprentice · Build — the HOW IT GROWS",
+            "core/INTENT/THE_POSITIVE_LOOP.md",
+            "The flywheel: Party → Game → AI Apprentice → Build → more Party. Plus 7 System Areas and the Progression Path (Guest → Player → Apprentice → Steward → Builder)."
+        ),
+        render_inline_doc_card(
             "game", "🎮", "The Full Potential Game",
             "Player's Guide v1.3 — the player-facing OS",
             "core/INTENT/FULL_POTENTIAL_GAME.md",
@@ -3840,6 +3943,94 @@ def render_html() -> str:
     </p>
     <div class="canonical-library">
       {inline_docs_html}
+    </div>
+
+    <h3 style="margin-top:24px;">🔄 The Positive Loop &mdash; how the field grows</h3>
+    <p style="color:var(--muted);font-size:12px;margin:0 0 12px;">
+      Party → Play → Apprentice → Build → more Party. A self-reinforcing flywheel.
+      <a class='link' href='#doc-positive-loop' onclick="document.getElementById('doc-positive-loop').open=true;">Read full doc inline →</a>
+    </p>
+    <div class="loop-poster-row">
+      <a class="mission-poster" href="core/INTENT/assets/positive-loop-poster.png" target="_blank" title="Open full-size loop poster">
+        <img src="core/INTENT/assets/positive-loop-poster.png" alt="The Positive Loop — flywheel" />
+      </a>
+      <div class="loop-quadrants">
+        <div class="loop-q loop-q-1">
+          <div class="loop-q-num">1</div>
+          <div class="loop-q-icon">🎉</div>
+          <div class="loop-q-title">World Peace Party</div>
+          <div class="loop-q-sub">The Emotional Ignition</div>
+          <div class="loop-q-tag">Joy · Connection · Belonging · Inspiration</div>
+        </div>
+        <div class="loop-q loop-q-2">
+          <div class="loop-q-num">2</div>
+          <div class="loop-q-icon">🎮</div>
+          <div class="loop-q-title">Play the Full Potential Game</div>
+          <div class="loop-q-sub">The Experiential Path</div>
+          <div class="loop-q-tag">Learn · Agree · Contribute · Earn &amp; Impact</div>
+        </div>
+        <div class="loop-q loop-q-3">
+          <div class="loop-q-num">3</div>
+          <div class="loop-q-icon">🤖</div>
+          <div class="loop-q-title">Become an AI Apprentice</div>
+          <div class="loop-q-sub">The Transformational Path</div>
+          <div class="loop-q-tag">Systems · Coherence · Stewardship · Regeneration · AI Collaboration</div>
+        </div>
+        <div class="loop-q loop-q-4">
+          <div class="loop-q-num">4</div>
+          <div class="loop-q-icon">🏗</div>
+          <div class="loop-q-title">Build the Operating Systems</div>
+          <div class="loop-q-sub">The Creative Builder Path</div>
+          <div class="loop-q-tag">Design · Code · Test · Iterate · Deploy · Impact</div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:20px;">🎓 The Progression Path</h3>
+    <div class="progression-row">
+      <div class="prog-stage">
+        <div class="prog-icon">👥</div>
+        <div class="prog-name">Guest</div>
+        <div class="prog-quote">"I came for the party"</div>
+      </div>
+      <div class="prog-arrow">→</div>
+      <div class="prog-stage">
+        <div class="prog-icon">🎮</div>
+        <div class="prog-name">Player</div>
+        <div class="prog-quote">"I discovered the Game"</div>
+      </div>
+      <div class="prog-arrow">→</div>
+      <div class="prog-stage">
+        <div class="prog-icon">🎓</div>
+        <div class="prog-name">Apprentice</div>
+        <div class="prog-quote">"I'm learning and growing"</div>
+      </div>
+      <div class="prog-arrow">→</div>
+      <div class="prog-stage">
+        <div class="prog-icon">🌱</div>
+        <div class="prog-name">Steward</div>
+        <div class="prog-quote">"I take responsibility and lead"</div>
+      </div>
+      <div class="prog-arrow">→</div>
+      <div class="prog-stage">
+        <div class="prog-icon">🏗</div>
+        <div class="prog-name">Builder</div>
+        <div class="prog-quote">"I build systems for a better world"</div>
+      </div>
+    </div>
+    <p style="color:var(--muted);font-size:11px;margin:8px 0 0;text-align:center;font-style:italic;">
+      You don't pick your stage. The stage picks you. Field response confirms readiness.
+    </p>
+
+    <h3 style="margin-top:20px;">🛠 The 7 System Areas <span style="font-size:11px;font-weight:400;color:var(--muted);">&mdash; what Builders build</span></h3>
+    <div class="systems-grid">
+      <div class="sys-card"><div class="sys-icon">✓</div><div class="sys-name">Agreement Systems</div><div class="sys-desc">Clear agreements, shared values, conflict transformation.</div></div>
+      <div class="sys-card"><div class="sys-icon">🕸</div><div class="sys-name">Coordination Systems</div><div class="sys-desc">Collaborative tools, decision making, collective intelligence.</div></div>
+      <div class="sys-card"><div class="sys-icon">💰</div><div class="sys-name">Treasury Systems</div><div class="sys-desc">Transparent funding, abundance models, regenerative economics.</div></div>
+      <div class="sys-card"><div class="sys-icon">👥</div><div class="sys-name">Community Systems</div><div class="sys-desc">Local + global networks, belonging, support, celebration.</div></div>
+      <div class="sys-card"><div class="sys-icon">🤖</div><div class="sys-name">AI Systems</div><div class="sys-desc">Ethical AI, open models, human-AI collaboration aligned with life.</div></div>
+      <div class="sys-card"><div class="sys-icon">🎨</div><div class="sys-name">Cultural Systems</div><div class="sys-desc">Stories, rituals, art, education and media that elevate humanity.</div></div>
+      <div class="sys-card"><div class="sys-icon">🌍</div><div class="sys-name">Regeneration Systems</div><div class="sys-desc">Food, water, energy, biodiversity, planet healing.</div></div>
     </div>
 
     <h3 style="margin-top:24px;">📐 The Full Potential Framework &mdash; eight-layer stack</h3>
