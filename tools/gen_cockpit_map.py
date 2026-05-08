@@ -1378,6 +1378,59 @@ body.mode-field .player-only { display: none !important; }
 .invite-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .invite-actions button, .invite-actions a { font-family: inherit; cursor: pointer; border: none; }
 .invite-preview pre { word-break: break-word; }
+
+/* Canonical Documents Library — inline rendering */
+.canonical-library {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  margin: 8px 0 16px;
+}
+.inline-doc {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.inline-doc[open] { border-color: var(--accent); }
+.inline-doc-summary {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+}
+.inline-doc-summary::-webkit-details-marker { display: none; }
+.inline-doc-summary:hover { background: rgba(247,185,85,0.04); }
+.doc-icon { font-size: 22px; line-height: 1; flex-shrink: 0; }
+.doc-title-block { flex: 1; min-width: 0; }
+.doc-title { font-weight: 700; font-size: 14px; color: var(--text); }
+.doc-subtitle { font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+.doc-summary { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.doc-expand { font-size: 11px; color: var(--accent); margin-left: auto; flex-shrink: 0; }
+.inline-doc[open] .doc-expand { color: var(--muted); }
+.inline-doc-body {
+  padding: 16px 24px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 13px;
+  line-height: 1.7;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* Framework poster row */
+.framework-poster-row {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+  margin: 8px 0 16px;
+  align-items: start;
+}
+@media (max-width: 900px) { .framework-poster-row { grid-template-columns: 1fr; } }
+.framework-content { min-width: 0; }
 """
 
 
@@ -1473,9 +1526,9 @@ setInterval(refreshRelTimes, 30000);
 // --- Onboarding journey + Next Move coach ---------------------------------
 const ONBOARD_KEY = 'fpai-cockpit-onboard';
 const NEXT_MOVES = [
-  { key: 'read', action: 'Read the Manifesto.', cta: 'Open →', href: 'cursor://file__INTENT_DIR_PLACEHOLDER__/COHERENT_CHAMPIONS_MANIFESTO.md' },
+  { key: 'read', action: 'Read the Manifesto.', cta: 'Read inline →', href: '#doc-manifesto', openDoc: 'doc-manifesto' },
   { key: 'sign', action: 'Sign the World Peace Agreement.', cta: 'Sign now →', href: '#signCard' },
-  { key: 'play', action: 'Run your 7-Day First Game.', cta: 'Open prompt →', href: 'cursor://file__INTENT_DIR_PLACEHOLDER__/AGREEMENT_BUILDER_PROMPT.md' },
+  { key: 'play', action: 'Run your 7-Day First Game.', cta: 'Open prompt →', href: '#doc-agreement-builder', openDoc: 'doc-agreement-builder' },
   { key: 'witness', action: 'Get one witness signature on your proof.', cta: 'Find a witness →', href: '#onboardSteps' },
   { key: 'invite', action: 'Bring one aligned person.', cta: 'Open invitation →', href: '#inviteCopyBtn' },
   { key: 'done', action: 'Run another loop, witness someone else, become a steward.', cta: 'Keep going →', href: '#' },
@@ -1496,8 +1549,16 @@ function updateNextMove() {
   if (actionEl) actionEl.textContent = move.action;
   if (ctaEl) {
     ctaEl.textContent = move.cta;
-    // Replace placeholder INTENT_DIR with same path used elsewhere
     ctaEl.href = move.href;
+    // For doc anchors, open the details element when clicked
+    if (move.openDoc) {
+      ctaEl.onclick = (ev) => {
+        const doc = document.getElementById(move.openDoc);
+        if (doc) doc.open = true;
+      };
+    } else {
+      ctaEl.onclick = null;
+    }
   }
 }
 const obState = loadOnboard();
@@ -1956,6 +2017,51 @@ STATUS_DOT = {
 }
 
 
+def render_inline_doc_card(
+    anchor: str,
+    icon: str,
+    title: str,
+    subtitle: str,
+    rel_path: str,
+    summary: str,
+) -> str:
+    """Render a canonical doc as an expandable card with full inline content."""
+    abs_path = ROOT / rel_path
+    body_html = ""
+    if abs_path.exists():
+        try:
+            md = abs_path.read_text(encoding="utf-8")
+            md = strip_front_matter(md)
+            # Strip the leading H1 since the card already has a title
+            md = re.sub(r"^#\s+.+?\n", "", md, count=1)
+            body_html = md_to_html(md)
+        except Exception:
+            body_html = "<p class='muted'>(could not render — file may be too large)</p>"
+    else:
+        body_html = "<p class='muted'>(file not found)</p>"
+    abs_path_str = str(abs_path)
+    return (
+        f"<details class='inline-doc' id='doc-{anchor}'>"
+        f"<summary class='inline-doc-summary'>"
+        f"<span class='doc-icon'>{icon}</span>"
+        f"<div class='doc-title-block'>"
+        f"<div class='doc-title'>{escape(title)}</div>"
+        f"<div class='doc-subtitle'>{escape(subtitle)}</div>"
+        f"<div class='doc-summary'>{escape(summary)}</div>"
+        f"</div>"
+        f"<span class='doc-expand'>read inline →</span>"
+        f"</summary>"
+        f"<div class='inline-doc-body markdown-body'>"
+        f"<p style='font-size:11px;color:var(--muted);margin:0 0 12px;'>"
+        f"<a class='link' href='cursor://file{abs_path_str}'>open in editor</a> &middot; "
+        f"<a class='link' href='file://{abs_path_str}' target='_blank'>raw file</a>"
+        f"</p>"
+        f"{body_html}"
+        f"</div>"
+        f"</details>"
+    )
+
+
 def render_agreements(reg: dict) -> str:
     agreements = reg.get("agreements", []) if isinstance(reg, dict) else []
     if not agreements:
@@ -2159,6 +2265,64 @@ def render_html() -> str:
         if (a.get("status") or "").lower() == "active"
     ) if isinstance(agreements_reg, dict) else 0
     agreements_ratified = 0  # held — neither ratified yet
+
+    # Inline doc cards — read the canonical text right in the cockpit, no app required
+    inline_docs_html = "".join([
+        render_inline_doc_card(
+            "manifesto", "✨", "Coherent Champions of CHRIST",
+            "Manifesto v1.0 — the WHY",
+            "core/INTENT/COHERENT_CHAMPIONS_MANIFESTO.md",
+            "The founding document. CHRIST principles, the seven principles, the role of AI, the invitation."
+        ),
+        render_inline_doc_card(
+            "framework", "🌍", "The Full Potential Framework",
+            "Peace Coordination Civilization Stack — the WHAT",
+            "core/INTENT/FULL_POTENTIAL_FRAMEWORK.md",
+            "Eight layers: Org · Agreement · Game · AI · Treasury · Village · Cultural · Media. The complete stack."
+        ),
+        render_inline_doc_card(
+            "game", "🎮", "The Full Potential Game",
+            "Player's Guide v1.3 — the player-facing OS",
+            "core/INTENT/FULL_POTENTIAL_GAME.md",
+            "Three Currencies, Sacred Trinity, 7-Day First Game, Awareness Ladder, Sunheart Rule, Quest Tiers."
+        ),
+        render_inline_doc_card(
+            "treasury", "🏦", "The Remarkably Coherent Treasury",
+            "v0.10 architectural spec — the economy",
+            "core/INTENT/REMARKABLY_COHERENT_TREASURY.md",
+            "Two-Economy Model · Three-Layer Architecture · Circulation Equity Formula · Verification Escrow."
+        ),
+        render_inline_doc_card(
+            "wpap", "🕊", "World Peace Agreements Protocol",
+            "WPAP — the AI substrate",
+            "core/INTENT/WORLD_PEACE_AGREEMENTS_PROTOCOL.md",
+            "Six AI modules: Agreement Builder · Memory · Translator · Mediator · Repair Guide · Cultural Translator."
+        ),
+        render_inline_doc_card(
+            "agreement-template", "📜", "World Peace Agreement",
+            "The signable template",
+            "core/INTENT/WORLD_PEACE_AGREEMENT.md",
+            "The 7 commitments. What every Coherent Champion signs."
+        ),
+        render_inline_doc_card(
+            "forming", "✍️", "Forming Agreements",
+            "Manual protocol",
+            "core/INTENT/FORMING_AGREEMENTS.md",
+            "Step-by-step for forming any specific Peace Agreement (the manual flow; WPAP §1 is AI-assisted)."
+        ),
+        render_inline_doc_card(
+            "player-card", "🌱", "Player Card",
+            "One-page fillable",
+            "core/INTENT/FULL_POTENTIAL_GAME_PLAYER_CARD.md",
+            "The fillable card for running your 7-Day First Game and logging your Proof."
+        ),
+        render_inline_doc_card(
+            "agreement-builder", "🤖", "Agreement Builder Prompt",
+            "AI-assisted Player Card",
+            "core/INTENT/AGREEMENT_BUILDER_PROMPT.md",
+            "Paste-into-Claude prompt that turns the AI into your 7-Day Game facilitator. Generates your Proof Log."
+        ),
+    ])
 
     # Founder metrics
     intent_docs = count_intent_docs()
@@ -2871,6 +3035,39 @@ def render_html() -> str:
 
     <h3 style="margin-top:20px;">Active &amp; pending Agreements</h3>
     {agreements_html}
+
+    <h3 style="margin-top:24px;">📚 Canonical Documents &mdash; read inline, no app required</h3>
+    <p style="color:var(--muted);font-size:12px;margin:0 0 12px;">
+      Every founding document, fully rendered. Click any to expand and read in place.
+      No external app, no permission popups. Each doc also has fallback links to open in cursor or as raw file.
+    </p>
+    <div class="canonical-library">
+      {inline_docs_html}
+    </div>
+
+    <h3 style="margin-top:24px;">📐 The Full Potential Framework &mdash; eight-layer stack</h3>
+    <div class="framework-poster-row">
+      <a class="mission-poster" href="core/INTENT/assets/full-potential-framework-poster.png" target="_blank" title="Open full-size framework poster">
+        <img src="core/INTENT/assets/full-potential-framework-poster.png" alt="The Full Potential Framework — eight-layer civilization stack" />
+      </a>
+      <div class="framework-content">
+        <p style="font-size:13px;color:var(--text);margin:0 0 12px;">
+          <strong>ONE MISSION · ONE AGREEMENT · ONE GAME · ONE TREASURY · ONE HUMAN FAMILY</strong>
+        </p>
+        <p style="color:var(--muted);font-size:12px;line-height:1.7;margin:0;">
+          The complete coordination stack supersedes the earlier ecosystem framing. Eight layers:
+          ① World Peace Organization · ② World Peace Agreement · ③ Full Potential Game ·
+          ④ Coherent AI Layer · ⑤ Coherent Treasury · ⑥ Zen Village + Local Nodes ·
+          ⑦ Cultural Activation · ⑧ Media + AI + Local Networks.
+          The Outcome: <strong>Visible Human Flourishing</strong>.
+        </p>
+        <p style="margin:12px 0 0;font-size:12px;">
+          <a class='link' href='#doc-framework' onclick="document.getElementById('doc-framework').open=true;" style="font-weight:700;">
+            → Read the full framework inline
+          </a>
+        </p>
+      </div>
+    </div>
   </div>
 
   <div class="founder-only steward-queue">
