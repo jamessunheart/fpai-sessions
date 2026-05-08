@@ -2593,6 +2593,52 @@ def _money_ping_audit_filter(action: str) -> tuple[str, str] | None:
     return table.get(action)
 
 
+
+async def _money_onebpo_view() -> str:
+    """OneBPO Managed Services P&L + Cora Nation contribution timeline."""
+    try:
+        ledger = _money_load_ledger()
+    except Exception as e:
+        return f"📊 <b>OneBPO P&L</b>\n\n<i>ledger unreachable: {tg._esc(str(e))}</i>"
+    pl = ledger.get("business_pl")
+    if not pl:
+        return "📊 <b>OneBPO P&L</b>\n\n<i>No business_pl section in ledger.json.</i>"
+    months = pl.get("monthly", [])
+    if not months:
+        return "📊 <b>OneBPO P&L</b>\n\n<i>No monthly data.</i>"
+
+    lines = [f"📊 <b>{tg._esc(pl.get('company','OneBPO'))} P&L</b>"]
+    lines.append(f"<i>as of {tg._esc(pl.get('as_of','?'))}</i>\n")
+
+    total_rev = sum(float(m.get("operating_income_usd", 0) or 0) for m in months)
+    total_op = sum(float(m.get("operating_profit_usd", 0) or 0) for m in months)
+    total_net = sum(float(m.get("net_profit_usd", 0) or 0) for m in months)
+    total_cora = float(pl.get("cora_nation_contribution_total_usd", 0) or 0)
+    period = f"{months[0].get('month','?')} → {months[-1].get('month','?')}"
+
+    lines.append(f"<b>Period totals</b> ({tg._esc(period)})")
+    lines.append(f"  Revenue: <b>${total_rev:,.0f}</b>")
+    lines.append(f"  Operating profit: <b>${total_op:,.0f}</b>")
+    lines.append(f"  Net profit: <b>${total_net:,.0f}</b>")
+    lines.append(f"  🌿 <b>Cora Nation contribution: ${total_cora:,.0f}</b>")
+    lines.append("")
+
+    lines.append("<b>Monthly</b>")
+    for m in months:
+        rev = float(m.get("operating_income_usd", 0) or 0)
+        op = float(m.get("operating_profit_usd", 0) or 0)
+        net = float(m.get("net_profit_usd", 0) or 0)
+        cora = float(m.get("cora_nation_contribution_usd", 0) or 0)
+        lines.append(f"<b>{tg._esc(m.get('month','?'))}</b>  rev ${rev:,.0f} · op ${op:,.0f} · net ${net:,.0f} · 🌿 cora ${cora:,.0f}")
+
+    lines.append("")
+    note = pl.get("_note") or pl.get("note")
+    if note:
+        lines.append(f"<i>{tg._esc(note)}</i>")
+    lines.append("<i>Source: ledger.json business_pl</i>")
+    return "\n".join(lines)
+
+
 def _money_bar(value: float, max_value: float, width: int = 12) -> str:
     """Render a simple unicode bar chart cell."""
     if max_value <= 0:

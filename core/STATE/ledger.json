@@ -246,5 +246,35 @@
     ]
   },
   "last_updated": "2026-05-08",
-  "trades": []
+  "trades": [],
+  "business_pl": {
+    "_doc": "Quarterly business P&L from OneBPO Managed Services (operating company). Source: Profit and Loss spreadsheet, manually ingested. Distinct from `revenue_monthly` which tracks James's direct cashflow streams.",
+    "as_of": "2026-03-31",
+    "company": "OneBPO Managed Services",
+    "monthly": [
+      {
+        "month": "2026-01",
+        "operating_income_usd": 279393.93,
+        "operating_profit_usd": 47176.01,
+        "net_profit_usd": 3093.99,
+        "cora_nation_contribution_usd": 34876.24
+      },
+      {
+        "month": "2026-02",
+        "operating_income_usd": 258273.01,
+        "operating_profit_usd": 32113.96,
+        "net_profit_usd": 10859.16,
+        "cora_nation_contribution_usd": 51196.66
+      },
+      {
+        "month": "2026-03",
+        "operating_income_usd": 287130.39,
+        "operating_profit_usd": 68631.15,
+        "net_profit_usd": 67925.45,
+        "cora_nation_contribution_usd": 48562.59
+      }
+    ],
+    "cora_nation_contribution_total_usd": 134635.49,
+    "_note": "Cora Nation contribution methodology is per James's spreadsheet \u2014 not a simple % of net profit. Surface as authoritative."
+  }
 }
