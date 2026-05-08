@@ -38,6 +38,7 @@ REGISTRY_FILE = AGREEMENTS_DIR / "registry.json"
 EXCLUDE = {"INDEX.md", "README.md"}
 
 STATUS_LABELS = {
+    "proposed":   "🟠 Proposed (awaiting ratification)",
     "active":     "🟢 Active",
     "breached":   "🔴 Breached",
     "repairing":  "🟡 Repairing",
@@ -162,7 +163,7 @@ def render_index_md(agreements: list[dict]) -> str:
         "",
         "---",
         "",
-        "**Statuses:** 🟢 Active · 🔴 Breached · 🟡 Repairing · 🟢 Repaired · ⚪ Withdrawn · ⚫ Archived",
+        "**Statuses:** 🟠 Proposed · 🟢 Active · 🔴 Breached · 🟡 Repairing · 🟢 Repaired · ⚪ Withdrawn · ⚫ Archived",
         "",
         "**Public visibility:** Each Agreement may be marked `public: true` or `public: false`",
         "in front-matter. This local index lists all Agreements regardless. Public roll on",

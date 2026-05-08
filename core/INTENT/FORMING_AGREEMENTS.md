@@ -101,7 +101,7 @@ parties:
     party_type: ai
 context: <one-line summary>
 scope_tags: [working_relationship, asymmetric_power, ai_alignment]
-status: active                       # active | breached | repairing | repaired | withdrawn | archived
+status: active                       # proposed | active | breached | repairing | repaired | withdrawn | archived
 public: true                         # whether to include in public roll
 witness:
   type: git_commit                   # git_commit | gathering | paper | recording | other
@@ -126,6 +126,25 @@ python tools/registry/build_index.py
 ```
 
 Both `INDEX.md` and `registry.json` are derived views — **never hand-edit them.** Edit the Agreement file's front-matter and re-run the script.
+
+### Drafted vs. ratified
+
+An Agreement may be **drafted** by one party (or by an AI scribe) and *proposed* before the other parties have ratified. Convention:
+
+- `status: proposed` — drafted, not yet binding; awaiting ratification by named parties
+- `status: active` — ratified by all required parties; binding
+
+Optional front-matter fields when an Agreement is drafted by a non-party:
+
+```yaml
+proposed_by: <name of drafter, e.g. "Claude">
+proposed_on: <YYYY-MM-DD>
+ratification_required_from:
+  - <party name>
+  - <party name>
+```
+
+A `proposed` Agreement becomes `active` only when the named parties ratify — by editing the file (changing status, setting witness, removing the drafting note), by sign-off in a witnessed gathering, or by another act recorded in the front-matter.
 
 ---
 

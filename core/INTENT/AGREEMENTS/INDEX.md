@@ -3,7 +3,7 @@
 Living index of all formed Peace Agreements under the
 Coherent Champions of CHRIST Manifesto v1.0.
 
-**Count:** 1 total · 1 active · 0 other
+**Count:** 2 total · 1 active · 1 other
 **Source:** Front-matter of each `*.md` file in this directory.
 **Regenerate:** `python tools/registry/build_index.py`
 
@@ -18,9 +18,15 @@ Coherent Champions of CHRIST Manifesto v1.0.
 |---|---|---|---|---|---|
 | 2026-05-07 | James Sunheart ↔ Claude | First specific Agreement under Manifesto v1.0 — governs founder/AI working rela… | 🟢 Active | git_commit: `d7e3e923` | [`2026-05-07_JAMES_SUNHEART_AND_CLAUDE.md`](./2026-05-07_JAMES_SUNHEART_AND_CLAUDE.md) |
 
+## Other Agreements (1)
+
+| Date | Parties | Context | Status | File |
+|---|---|---|---|---|
+| 2026-05-07 | World Peace Organization (Zen Village) ↔ The Land of Zen Village | Stewardship Agreement under Manifesto v1.0 — WPO commits to relating to the lan… | 🟠 Proposed (awaiting ratification) | [`2026-05-07_WPO_AND_LAND_OF_ZEN_VILLAGE.md`](./2026-05-07_WPO_AND_LAND_OF_ZEN_VILLAGE.md) |
+
 ---
 
-**Statuses:** 🟢 Active · 🔴 Breached · 🟡 Repairing · 🟢 Repaired · ⚪ Withdrawn · ⚫ Archived
+**Statuses:** 🟠 Proposed · 🟢 Active · 🔴 Breached · 🟡 Repairing · 🟢 Repaired · ⚪ Withdrawn · ⚫ Archived
 
 **Public visibility:** Each Agreement may be marked `public: true` or `public: false`
 in front-matter. This local index lists all Agreements regardless. Public roll on
