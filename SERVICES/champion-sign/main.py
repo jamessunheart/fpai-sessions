@@ -121,11 +121,34 @@ async def sign(req: SignRequest, request: Request) -> dict:
         f.write(json.dumps({
             "ts": datetime.now().isoformat(),
             "champion_number": champion_number,
-            "name": req.name,
-            "public": req.public,
-            "ip": ip,
+            "name": req.name if req.public else "(private)",
+            "public": bool(req.public),
+            "ip_hash": str(hash(ip))[-6:],  # never store raw IP — just a short hash for rate-tracking
             "filename": fname,
         }) + "\n")
+
+    # Send a founder-direction signal: Telegram alert via the existing
+    # alerts service on primary:8766 (per The Practice of Signaling §1
+    # Founder ← Field). Best-effort — never block the response.
+    try:
+        import urllib.request
+        import urllib.parse
+        alert_msg = (
+            f"🌀 Coherent Champion #{champion_number} signed: {req.name}"
+            f"{' (' + (req.handle or '') + ')' if req.handle else ''}"
+            f"{' — public' if req.public else ' — private'}"
+        )
+        data = json.dumps({"message": alert_msg, "source": "champion-sign"}).encode()
+        urllib.request.urlopen(
+            urllib.request.Request(
+                "http://127.0.0.1:8766/alert",
+                data=data,
+                headers={"Content-Type": "application/json"},
+            ),
+            timeout=2,
+        )
+    except Exception:
+        pass
 
     return {
         "ok": True,
@@ -133,6 +156,37 @@ async def sign(req: SignRequest, request: Request) -> dict:
         "filename": fname,
         "message": f"Welcome, {req.name.split()[0]}. You are Coherent Champion #{champion_number}.",
     }
+
+
+@app.get("/recent")
+async def recent_activity(limit: int = 10) -> dict:
+    """Field Pulse — recent activity feed for the cockpit ticker.
+
+    Reads the audit log and returns the most recent N events as a list of
+    {ts, kind, message} for client-side rendering.
+    """
+    audit = DATA_DIR / "audit.jsonl"
+    if not audit.exists():
+        return {"events": []}
+    try:
+        lines = audit.read_text(encoding="utf-8").strip().split("\n")
+        events = []
+        for line in reversed(lines[-limit * 2:]):
+            try:
+                e = json.loads(line)
+                if not e.get("public"):
+                    # Surface anonymized for the public pulse
+                    msg = f"Champion #{e.get('champion_number')} signed (private)"
+                else:
+                    msg = f"Champion #{e.get('champion_number')} — {e.get('name')} signed"
+                events.append({"ts": e.get("ts"), "kind": "signature", "message": msg})
+                if len(events) >= limit:
+                    break
+            except Exception:
+                continue
+        return {"events": events}
+    except Exception:
+        return {"events": []}
 
 
 @app.get("/list")

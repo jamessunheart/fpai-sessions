@@ -865,6 +865,97 @@ h3 { font-size: 12px; margin: 16px 0 8px; color: var(--muted); text-transform: u
 .pb-link { font-size: 11px; color: var(--accent); display: inline-block; margin-top: 6px; text-decoration: none; }
 .pb-link:hover { color: var(--accent-bright); text-decoration: underline; }
 @media (max-width: 700px) { .principle-banner { grid-template-columns: 1fr; text-align: center; } .pb-glyph { margin: 0 auto; } }
+
+/* Signaling banner */
+.signaling-banner {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  gap: 18px;
+  align-items: center;
+  background:
+    radial-gradient(ellipse at top left, rgba(124, 184, 224, 0.08), transparent 60%),
+    linear-gradient(135deg, rgba(124, 196, 168, 0.04), rgba(232, 185, 116, 0.04));
+  border: 1px solid var(--p2);
+  border-radius: 14px;
+  padding: 18px 22px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.signaling-banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 10% 50%, rgba(124, 184, 224, 0.06), transparent 40%);
+  pointer-events: none;
+}
+@keyframes pulse-glow {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(124, 184, 224, 0.2)); }
+  50% { filter: drop-shadow(0 0 16px rgba(124, 184, 224, 0.5)); }
+}
+.sb-glyph {
+  font-size: 44px;
+  text-align: center;
+  line-height: 1;
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+.sb-label { font-size: 10px; color: var(--p2); letter-spacing: 1.8px; font-weight: 700; }
+.sb-quote { font-size: 17px; color: var(--text-bright); font-style: italic; margin-top: 6px; line-height: 1.5; }
+.sb-test { font-size: 12px; color: var(--muted); margin-top: 8px; line-height: 1.6; }
+.sb-test strong { color: var(--p2); font-weight: 600; }
+@media (max-width: 700px) { .signaling-banner { grid-template-columns: 1fr; text-align: center; } .sb-glyph { margin: 0 auto; } }
+
+/* Field Pulse */
+.field-pulse {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--p2);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 24px;
+}
+.fp-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.fp-label {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: var(--p2);
+  font-weight: 700;
+}
+.fp-label::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: var(--good);
+  border-radius: 50%;
+  margin-right: 6px;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+.fp-sub { font-size: 11px; color: var(--muted); }
+.fp-feed { display: flex; flex-direction: column; gap: 4px; max-height: 200px; overflow-y: auto; }
+.fp-event {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 10px;
+  padding: 6px 10px;
+  background: var(--surface-2);
+  border-radius: 4px;
+  font-size: 12px;
+  align-items: center;
+  animation: fpSlideIn 0.4s ease-out;
+}
+@keyframes fpSlideIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.fp-icon { font-size: 14px; }
+.fp-msg { color: var(--text); }
+.fp-time { color: var(--muted); font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10px; }
+.fp-empty { color: var(--muted); font-size: 12px; font-style: italic; padding: 6px 10px; }
 .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
 @media (max-width: 1100px) { .grid { grid-template-columns: 1fr; } }
 .card {
@@ -2580,6 +2671,41 @@ function escapeHTML(s) {
 loadLiveChampions();
 setInterval(loadLiveChampions, 60000); // refresh every minute
 
+// --- Field Pulse — live activity ticker ----------------------------------
+async function loadFieldPulse() {
+  try {
+    const res = await fetch('/api/champion/recent?limit=8', { cache: 'no-store' });
+    if (!res.ok) return;
+    const data = await res.json();
+    const feed = document.getElementById('fpFeed');
+    if (!feed) return;
+    if (!data.events || data.events.length === 0) {
+      feed.innerHTML = '<div class="fp-empty">Listening for signals — be the first to sign.</div>';
+      return;
+    }
+    feed.innerHTML = data.events.map(e => {
+      const t = e.ts ? relativeTime(e.ts) : '';
+      const icon = e.kind === 'signature' ? '🌀' : '⚡';
+      return '<div class="fp-event"><span class="fp-icon">' + icon + '</span><span class="fp-msg">' + escapeHTML(e.message || '') + '</span><span class="fp-time">' + escapeHTML(t) + '</span></div>';
+    }).join('');
+    const sub = document.getElementById('fpSub');
+    if (sub) sub.textContent = `live · ${data.events.length} recent signal${data.events.length === 1 ? '' : 's'}`;
+  } catch (e) {
+    // Silent fail
+  }
+}
+function relativeTime(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const diff = (Date.now() - d.getTime()) / 1000;
+  if (diff < 60) return Math.round(diff) + 's ago';
+  if (diff < 3600) return Math.round(diff / 60) + 'm ago';
+  if (diff < 86400) return Math.round(diff / 3600) + 'h ago';
+  return Math.round(diff / 86400) + 'd ago';
+}
+loadFieldPulse();
+setInterval(loadFieldPulse, 30000); // refresh every 30s
+
 // --- Invitation generator ------------------------------------------------
 function buildInvitation() {
   return `Reality is already a game. This is the guide for those who know.
@@ -3208,6 +3334,12 @@ def render_html() -> str:
             "Identified by James 2026-05-07. The advancement test: every loop must make the Game more self-playing, not more founder-bottlenecked. Loop 6 is the threshold."
         ),
         render_inline_doc_card(
+            "signaling", "📡", "The Practice of Signaling",
+            "Frequency × Depth-of-meaning = momentum",
+            "core/INTENT/THE_PRACTICE_OF_SIGNALING.md",
+            "Identified by James after Loop 6. The substrate principle that propels the Game. Signals are first-class concerns — opt-in, deep, rhythmic, never coercive. Loop 7 ships the first primitives."
+        ),
+        render_inline_doc_card(
             "game", "🎮", "The Full Potential Game",
             "Player's Guide v1.3 — the player-facing OS",
             "core/INTENT/FULL_POTENTIAL_GAME.md",
@@ -3718,6 +3850,29 @@ def render_html() -> str:
         First → ship. Second → redesign.
       </div>
       <a class="pb-link" href="#doc-plays-itself" onclick="document.getElementById('doc-plays-itself').open=true;">Read the principle inline →</a>
+    </div>
+  </div>
+
+  <div class="signaling-banner">
+    <div class="sb-glyph">📡</div>
+    <div class="sb-content">
+      <div class="sb-label">THE PROPULSION PRINCIPLE</div>
+      <div class="sb-quote">"The frequency of signaling and the depth of the meaning will propel the game."</div>
+      <div class="sb-test">
+        Test for every signal: <strong>opt-in · deep · rhythmic · serves the receiver · never coercive.</strong>
+        Frequency × Meaning = momentum.
+      </div>
+      <a class="pb-link" href="#doc-signaling" onclick="document.getElementById('doc-signaling').open=true;">Read the practice inline →</a>
+    </div>
+  </div>
+
+  <div class="field-pulse" id="fieldPulse">
+    <div class="fp-header">
+      <div class="fp-label">⚡ FIELD PULSE</div>
+      <div class="fp-sub" id="fpSub">live · last activity in the field</div>
+    </div>
+    <div class="fp-feed" id="fpFeed">
+      <div class="fp-empty">Listening for signals...</div>
     </div>
   </div>
 
