@@ -105,6 +105,38 @@ def read_agreements() -> dict:
         return {"count": 0, "agreements": []}
 
 
+def count_intent_docs() -> int:
+    """Count canonical INTENT docs (excludes README)."""
+    if not INTENT_DIR.exists():
+        return 0
+    return sum(
+        1 for p in INTENT_DIR.iterdir()
+        if p.is_file() and p.suffix == ".md" and p.name != "README.md"
+    )
+
+
+def count_proofs() -> int:
+    proofs = INTENT_DIR / "AGREEMENTS" / "proofs"
+    if not proofs.exists():
+        return 0
+    return sum(
+        1 for p in proofs.iterdir()
+        if p.is_file() and p.suffix == ".md" and not p.name.startswith(".")
+    )
+
+
+def count_civ_quest_commits(days: int = 7) -> int:
+    """Roughly: commits in last N days that touch core/INTENT/ — Civ-Quest milestones."""
+    try:
+        out = subprocess.check_output(
+            ["git", "-C", str(ROOT), "log", f"--since={days} days ago", "--oneline", "--", "core/INTENT/"],
+            text=True,
+        )
+        return sum(1 for line in out.strip().split("\n") if line)
+    except Exception:
+        return 0
+
+
 def strip_front_matter(md: str) -> str:
     """Drop YAML front-matter block from the top of a markdown doc."""
     if md.startswith("---"):
@@ -1021,6 +1053,143 @@ body.mode-field .player-only { display: none !important; }
 }
 .field-stats { display: flex; gap: 32px; margin-top: 16px; flex-wrap: wrap; }
 .field-stat { text-align: center; min-width: 100px; }
+
+/* Founder Scoreboard / Player Scoreboard */
+.scoreboard, .player-scoreboard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+.player-scoreboard { border-left-color: var(--good); }
+.metric-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 8px;
+}
+.metric-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+}
+.metric-icon { font-size: 20px; line-height: 1; margin-bottom: 4px; }
+.metric-n {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+}
+.metric-frac { font-size: 14px; color: var(--muted); }
+.metric-lbl { font-size: 11px; color: var(--text); margin-top: 4px; line-height: 1.3; }
+.metric-sub { font-size: 10px; color: var(--muted); margin-top: 4px; }
+
+/* Awareness Ladder */
+.ladder {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.rung {
+  background: var(--surface-2);
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  font-weight: 600;
+  flex: 1;
+  min-width: 90px;
+}
+.rung:hover { border-color: var(--accent); color: var(--text); }
+.rung.active {
+  background: var(--accent);
+  color: #1a0e02;
+  border-color: var(--accent);
+}
+.rung.passed {
+  background: rgba(247, 185, 85, 0.15);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* 6 C's sliders */
+.cs-meta { margin: 8px 0 12px; padding: 10px 14px; background: rgba(247, 185, 85, 0.06); border-left: 3px solid var(--accent); border-radius: 4px; }
+.cs-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; }
+@media (max-width: 700px) { .cs-row { grid-template-columns: 1fr; } }
+.c-row {
+  display: grid;
+  grid-template-columns: 160px 1fr 32px;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  padding: 4px 0;
+}
+.cs-meta .c-row { grid-template-columns: 1fr 1fr 32px; }
+.c-label { color: var(--text); }
+.c-label .muted { color: var(--muted); font-size: 11px; font-weight: 400; }
+.c-slider {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  outline: none;
+  width: 100%;
+}
+.c-slider::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+}
+.c-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+.c-value {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px;
+  color: var(--accent);
+  font-weight: 700;
+  text-align: right;
+}
+
+/* Metrics glossary */
+.metrics-glossary {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+.glossary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 10px;
+}
+.glossary-item {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+}
+.glossary-term { font-weight: 700; color: var(--accent); font-size: 13px; margin-bottom: 4px; }
+.glossary-def { font-size: 11px; color: var(--text); line-height: 1.5; }
+.glossary-def code { font-size: 11px; }
+.glossary-def strong { color: var(--accent); }
 """
 
 
@@ -1112,6 +1281,57 @@ function refreshRelTimes() {
 }
 refreshRelTimes();
 setInterval(refreshRelTimes, 30000);
+
+// --- Awareness Ladder ----------------------------------------------------
+const LADDER_KEY = 'fpai-cockpit-ladder';
+const LADDER_NOTES = [
+  'Noise — scattered, unfiltered input. Most days start here.',
+  'Distraction — pulled by competing inputs; intent fragmented.',
+  'Attention — chosen focus. The first directed move.',
+  'Zense — felt shift; the body recognizes it has been called back.',
+  'Presence — undivided here-and-now. Reactive spirals stop.',
+  'Coherence — alignment between thought, word, action.',
+  'Flow — effortless engaged work; time dilates.',
+  'Stillness — full coherence at rest. Rare. Earned.',
+];
+function setLadder(rung) {
+  document.querySelectorAll('.rung').forEach((r, i) => {
+    r.classList.toggle('active', i === rung);
+    r.classList.toggle('passed', i < rung);
+  });
+  const note = document.getElementById('ladderNote');
+  if (note) note.textContent = LADDER_NOTES[rung] || '';
+  try { localStorage.setItem(LADDER_KEY, rung); } catch (e) {}
+}
+document.querySelectorAll('.rung').forEach((r, i) => {
+  r.addEventListener('click', () => setLadder(i));
+});
+(function initLadder() {
+  let saved = 2;
+  try { saved = parseInt(localStorage.getItem(LADDER_KEY) || '2', 10); } catch (e) {}
+  setLadder(isNaN(saved) ? 2 : saved);
+})();
+
+// --- 6 C's sliders -------------------------------------------------------
+const CS_KEY = 'fpai-cockpit-cs';
+function loadCs() {
+  try { return JSON.parse(localStorage.getItem(CS_KEY) || '{}'); } catch (e) { return {}; }
+}
+function saveCs(state) {
+  try { localStorage.setItem(CS_KEY, JSON.stringify(state)); } catch (e) {}
+}
+const csState = loadCs();
+document.querySelectorAll('.c-slider').forEach(s => {
+  const key = s.dataset.c;
+  if (csState[key] !== undefined) s.value = csState[key];
+  const valEl = document.querySelector(`.c-value[data-for="${key}"]`);
+  if (valEl) valEl.textContent = s.value;
+  s.addEventListener('input', () => {
+    csState[key] = s.value;
+    saveCs(csState);
+    if (valEl) valEl.textContent = s.value;
+  });
+});
 
 // --- Mode toggle ---------------------------------------------------------
 const MODE_KEY = 'fpai-cockpit-mode';
@@ -1575,6 +1795,13 @@ def render_html() -> str:
         1 for a in agreements_reg.get("agreements", [])
         if (a.get("status") or "").lower() == "active"
     ) if isinstance(agreements_reg, dict) else 0
+    agreements_ratified = 0  # held — neither ratified yet
+
+    # Founder metrics
+    intent_docs = count_intent_docs()
+    proofs_count = count_proofs()
+    civ_milestones_7d = count_civ_quest_commits(7)
+    civ_milestones_30d = count_civ_quest_commits(30)
 
     # tag counts for donut
     tag_counts: dict[str, int] = {"P1": 0, "P2": 0, "infra": 0, "cruft": 0, "unknown": 0}
@@ -1633,16 +1860,16 @@ def render_html() -> str:
       </div>
       <div class="profile-stats">
         <div class="profile-stat">
-          <div class="profile-stat-n" id="docsAuthored">9</div>
+          <div class="profile-stat-n">{intent_docs}</div>
           <div class="profile-stat-lbl">Founding documents</div>
         </div>
         <div class="profile-stat">
-          <div class="profile-stat-n" id="agreementsAuthored">{agreements_count}</div>
+          <div class="profile-stat-n">{agreements_count}</div>
           <div class="profile-stat-lbl">Agreements drafted</div>
         </div>
         <div class="profile-stat">
-          <div class="profile-stat-n">3</div>
-          <div class="profile-stat-lbl">Civ-Quests in motion</div>
+          <div class="profile-stat-n">{civ_milestones_7d}</div>
+          <div class="profile-stat-lbl">Civ-Quest commits (7d)</div>
         </div>
       </div>
     </div>
@@ -2146,6 +2373,157 @@ def render_html() -> str:
         <div class="steward-icon">📝</div>
         <div class="steward-action">Manifesto footer alignment</div>
         <div class="steward-detail">Add "TOGETHER, WE CAN BUILD A FUTURE WORTH INHERITING" + acronym summary from poster.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="founder-only scoreboard">
+    <h2>Founder Scoreboard <span style="font-size:12px;font-weight:400;color:var(--muted);">&mdash; civilization-quest tier metrics</span></h2>
+    <p style="color:var(--muted);font-size:12px;margin:0 0 12px;">
+      Different from a Player's scoreboard. The founder's <em>Useful Output</em> is *building the substrate* — every document, system, and Civilization Quest milestone shipped.
+    </p>
+    <div class="metric-row">
+      <div class="metric-card">
+        <div class="metric-icon">📜</div>
+        <div class="metric-n">{intent_docs}</div>
+        <div class="metric-lbl">Founding documents authored</div>
+        <div class="metric-sub">in <code>core/INTENT/</code></div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon">⚖️</div>
+        <div class="metric-n">{agreements_count}<span class="metric-frac"> / {agreements_count}</span></div>
+        <div class="metric-lbl">Agreements drafted (none yet ratified)</div>
+        <div class="metric-sub">{agreements_ratified} ratified by founder</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon">🚀</div>
+        <div class="metric-n">{civ_milestones_30d}</div>
+        <div class="metric-lbl">Civ-Quest commits (30d)</div>
+        <div class="metric-sub">{civ_milestones_7d} in last 7 days</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon">✍️</div>
+        <div class="metric-n">0</div>
+        <div class="metric-lbl">Proofs witnessed</div>
+        <div class="metric-sub">queue empty — populates as players run loops</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon">🌱</div>
+        <div class="metric-n">{proofs_count}</div>
+        <div class="metric-lbl">Own proof loops completed</div>
+        <div class="metric-sub">"the architect who runs one becomes the system"</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon">🏛</div>
+        <div class="metric-n">5</div>
+        <div class="metric-lbl">Stewardship containers held</div>
+        <div class="metric-sub">WPO · CORA · Zen Village · Full Potential AI · Coherence</div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:20px;">Awareness Ladder <span style="font-size:11px;font-weight:400;color:var(--muted);">&mdash; click your current rung; persists in your browser</span></h3>
+    <div class="ladder" id="ladder">
+      <button class="rung" data-rung="0">Noise</button>
+      <button class="rung" data-rung="1">Distraction</button>
+      <button class="rung" data-rung="2">Attention</button>
+      <button class="rung" data-rung="3">Zense</button>
+      <button class="rung" data-rung="4">Presence</button>
+      <button class="rung" data-rung="5">Coherence</button>
+      <button class="rung" data-rung="6">Flow</button>
+      <button class="rung" data-rung="7">Stillness</button>
+    </div>
+    <p class="ladder-note" id="ladderNote" style="color:var(--muted);font-size:11px;margin:8px 0 0;"></p>
+
+    <h3 style="margin-top:20px;">6 C's snapshot <span style="font-size:11px;font-weight:400;color:var(--muted);">&mdash; quick self-rate; meta-ratio above</span></h3>
+    <div class="cs-meta">
+      <label class="c-row">
+        <span class="c-label"><strong>Creation / Consumption ratio</strong> <span class='muted'>(meta — when this inverts, all C's go noisy)</span></span>
+        <input type="range" min="0" max="100" value="50" data-c="meta" class="c-slider" />
+        <span class="c-value" data-for="meta">50</span>
+      </label>
+    </div>
+    <div class="cs-row">
+      <label class="c-row"><span class="c-label">Coherence</span><input type="range" min="0" max="100" value="50" data-c="coherence" class="c-slider" /><span class="c-value" data-for="coherence">50</span></label>
+      <label class="c-row"><span class="c-label">Celebration</span><input type="range" min="0" max="100" value="50" data-c="celebration" class="c-slider" /><span class="c-value" data-for="celebration">50</span></label>
+      <label class="c-row"><span class="c-label">Care/Communication</span><input type="range" min="0" max="100" value="50" data-c="care" class="c-slider" /><span class="c-value" data-for="care">50</span></label>
+      <label class="c-row"><span class="c-label">Connections</span><input type="range" min="0" max="100" value="50" data-c="connections" class="c-slider" /><span class="c-value" data-for="connections">50</span></label>
+      <label class="c-row"><span class="c-label">Cash Flow</span><input type="range" min="0" max="100" value="50" data-c="cash" class="c-slider" /><span class="c-value" data-for="cash">50</span></label>
+    </div>
+    <p style="color:var(--muted);font-size:11px;margin:8px 0 0;">
+      Honest snapshot beats aspirational rating. Lived coherence over measured coherence. (Treasury §3 — Measurement Humility Law.)
+    </p>
+  </div>
+
+  <div class="player-only player-scoreboard">
+    <h2>Your Scoreboard <span style="font-size:12px;font-weight:400;color:var(--muted);">&mdash; preview · populates as you run loops</span></h2>
+    <p style="color:var(--muted);font-size:12px;margin:0 0 12px;">
+      The Game tracks witnessed proof, not your soul. Your scoreboard fills in as you complete proof loops with witness signatures.
+    </p>
+    <div class="metric-row">
+      <div class="metric-card"><div class="metric-icon">🤝</div><div class="metric-n">0</div><div class="metric-lbl">Agreements kept</div></div>
+      <div class="metric-card"><div class="metric-icon">📦</div><div class="metric-n">0</div><div class="metric-lbl">Useful outputs shipped</div></div>
+      <div class="metric-card"><div class="metric-icon">🌱</div><div class="metric-n">0</div><div class="metric-lbl">Transformations witnessed</div></div>
+      <div class="metric-card"><div class="metric-icon">🔄</div><div class="metric-n">0</div><div class="metric-lbl">Resources circulated</div></div>
+      <div class="metric-card"><div class="metric-icon">🌬</div><div class="metric-n">0</div><div class="metric-lbl">Clean pauses completed</div></div>
+    </div>
+    <p style="color:var(--muted);font-size:11px;margin:12px 0 0;">
+      <strong>Field Score</strong> = sum of witnessed proofs · <strong>CPI</strong> (Trust) = compounded positive impact, network-weighted · See glossary below.
+    </p>
+  </div>
+
+  <div class="metrics-glossary">
+    <h2>Metrics glossary</h2>
+    <p style="color:var(--muted);font-size:12px;margin:0 0 12px;">
+      What every term in this dashboard actually means. Most are aspirational while infrastructure ships; the Minimum Viable Scoreboard is what runs today.
+    </p>
+    <div class="glossary-grid">
+      <div class="glossary-item">
+        <div class="glossary-term">Field Score</div>
+        <div class="glossary-def">Per-event scoring of a witnessed proof. The atomic unit. Lives in <code>AGREEMENTS/proofs/</code>. (Game §5)</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">CPI &mdash; Compounded Positive Impact</div>
+        <div class="glossary-def">Trust metric. Rolled-up sum of Field Scores over time, weighted by network responsiveness. <strong>Approximated by the Minimum Viable Scoreboard</strong> until full rollup engine ships. (Game §5 + Stewards' Cut)</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Minimum Viable Scoreboard (MVS)</div>
+        <div class="glossary-def">The 5 metrics every player tracks today: Agreements kept · Outputs shipped · Transformations witnessed · Resources circulated · Clean pauses. (Game §6)</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Useful Output</div>
+        <div class="glossary-def">Concrete measurable value produced. Hard-number floor. Role-specific oracle (commits merged, tickets closed, harvests, etc.). Required to be tamper-proof. (Treasury §7)</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Coherence Multiplier</div>
+        <div class="glossary-def">-1.0 to +2.0 factor adjusting Useful Output by how cleanly the work strengthened or degraded the seven-dimension field. Triangulated; never set unilaterally. (Treasury §7)</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Dividend Formula</div>
+        <div class="glossary-def">Useful Output × Coherence Multiplier × Profit Pool Share. Both must be real — gaming one alone catches the other to zero. (Treasury §7)</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Verification Escrow</div>
+        <div class="glossary-def">70% of Contribution Dividend pays now; 30% releases 6-12 months later if longitudinal drift confirms. No clawback. (Treasury §7)</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Awareness Ladder</div>
+        <div class="glossary-def">Noise → Distraction → Attention → Zense → Presence → Coherence → Flow → Stillness. Move up by reps, not reading. (Game §8)</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">6 C's</div>
+        <div class="glossary-def">Coherence · Celebration · Care/Communication · Connections · Cash Flow. Above all of them: Creation/Consumption ratio. When that inverts, every C below goes noisy. (Game §8)</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Sunheart Rule</div>
+        <div class="glossary-def">"Do only what you do better than AI. Everything else, the system handles." Founder's operating rule. (Game §8)</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Five Agreement Types</div>
+        <div class="glossary-def">Date-Specific Showup · Time Block · Deliverable by Date · Priority Interrupt · Paradigm Shift. Score differently because they cost differently. (Game §6)</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Distance-Weighted Witness</div>
+        <div class="glossary-def">Witnesses count more the further they are from the player (different team / org / no dependency). Collusion can't game what it can't reach. (Treasury §7)</div>
       </div>
     </div>
   </div>
