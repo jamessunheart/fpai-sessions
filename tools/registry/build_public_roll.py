@@ -27,7 +27,13 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 REGISTRY_JSON = REPO_ROOT / "core" / "INTENT" / "AGREEMENTS" / "registry.json"
-OUTPUT_HTML = REPO_ROOT / "sites" / "zenvillage-peace" / "peace" / "registry" / "index.html"
+# Write the same rendered roll to every public surface that hosts it.
+OUTPUT_HTMLS = [
+    REPO_ROOT / "sites" / "fullpotential-com" / "peace" / "registry" / "index.html",  # primary canonical
+    REPO_ROOT / "sites" / "zenvillage-peace" / "peace" / "registry" / "index.html",   # prototype mirror
+]
+# Backwards-compat alias for any older code paths that referenced OUTPUT_HTML.
+OUTPUT_HTML = OUTPUT_HTMLS[0]
 
 STATUS_BADGES = {
     "proposed":  ("🟠", "Proposed", "var(--gold)"),
@@ -394,15 +400,17 @@ def main() -> int:
     new_html = build_html(public_agreements, totals)
 
     if check_only:
-        old_html = OUTPUT_HTML.read_text(encoding="utf-8") if OUTPUT_HTML.exists() else ""
-        if old_html != new_html:
-            sys.stderr.write("Public roll would change. Run without --check to update.\n")
-            return 1
+        for out_path in OUTPUT_HTMLS:
+            old_html = out_path.read_text(encoding="utf-8") if out_path.exists() else ""
+            if old_html != new_html:
+                sys.stderr.write(f"Public roll at {out_path.relative_to(REPO_ROOT)} would change. Run without --check to update.\n")
+                return 1
         return 0
 
-    OUTPUT_HTML.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT_HTML.write_text(new_html, encoding="utf-8")
-    print(f"Wrote {OUTPUT_HTML.relative_to(REPO_ROOT)}  ({len(public_agreements)} public agreements, {len(parties)} parties)")
+    for out_path in OUTPUT_HTMLS:
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(new_html, encoding="utf-8")
+        print(f"Wrote {out_path.relative_to(REPO_ROOT)}  ({len(public_agreements)} public agreements, {len(parties)} parties)")
     return 0
 
 

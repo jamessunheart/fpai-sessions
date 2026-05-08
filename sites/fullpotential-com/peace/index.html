@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peace · Full Potential</title>
+    <meta name="description" content="The World Peace Agreement. Coherent Champions of CHRIST. A practice of becoming trustworthy with power.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://fullpotential.com/peace">
+    <meta property="og:title" content="Peace · Full Potential">
+    <meta property="og:description" content="The World Peace Agreement. A practice of becoming trustworthy with power.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◯</text></svg>">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #F7F3EB;
+            --text: #1A1A1A;
+            --muted: #8A8478;
+            --accent: #B5654A;
+            --rule: rgba(26, 26, 26, 0.12);
+            --serif: Georgia, 'Times New Roman', serif;
+            --sans: Inter, system-ui, -apple-system, sans-serif;
+        }
+
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--serif);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container { max-width: 720px; margin: 0 auto; padding: 0 1.5rem; }
+
+        /* Nav (matches fullpotential.com home) */
+        nav {
+            padding: 1.5rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .nav-mark {
+            font-family: var(--sans);
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            color: var(--text);
+            text-decoration: none;
+        }
+        .nav-links { display: flex; gap: 2rem; list-style: none; flex-wrap: wrap; }
+        .nav-links a {
+            font-family: var(--sans);
+            font-size: 0.8rem;
+            font-weight: 400;
+            color: var(--muted);
+            text-decoration: none;
+            letter-spacing: 0.02em;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--text); }
+        .nav-links a.current { color: var(--text); font-weight: 500; }
+
+        @media (max-width: 640px) {
+            nav { flex-direction: column; gap: 1rem; }
+            .nav-links { gap: 1rem; }
+        }
+
+        /* Hero */
+        .hero { padding: 3rem 1.5rem 2rem; }
+        .hero h1 {
+            font-family: var(--serif);
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 400;
+            line-height: 1.15;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.01em;
+        }
+        .hero h1 em { font-style: italic; color: var(--accent); }
+        .hero .lede { font-size: 1.15rem; color: var(--text); }
+        .hero .sub {
+            font-family: var(--sans);
+            font-size: 0.85rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-top: 1.5rem;
+        }
+
+        /* Section */
+        section { padding: 3rem 0 2rem; border-top: 1px solid var(--rule); }
+        section h2 {
+            font-family: var(--serif);
+            font-size: 1.75rem;
+            font-weight: 400;
+            margin-bottom: 1.25rem;
+            letter-spacing: -0.005em;
+        }
+        section h3 {
+            font-family: var(--serif);
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin: 2rem 0 0.5rem;
+        }
+        section p { margin-bottom: 1rem; }
+        section a {
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 1px solid rgba(181, 101, 74, 0.3);
+            transition: border-color 0.2s;
+        }
+        section a:hover { border-color: var(--accent); }
+
+        /* CHRIST grid */
+        .christ-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem 2rem;
+            margin: 1.5rem 0;
+        }
+        @media (min-width: 720px) { .christ-grid { grid-template-columns: repeat(3, 1fr); } }
+        .christ-grid > div { padding: 0.5rem 0; }
+        .christ-grid strong {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 0.2rem;
+        }
+        .christ-grid span {
+            font-size: 0.95rem;
+            color: var(--text);
+        }
+
+        .pull {
+            font-style: italic;
+            font-size: 1.1rem;
+            color: var(--text);
+            border-left: 3px solid var(--accent);
+            padding-left: 1.25rem;
+            margin: 2rem 0;
+        }
+
+        /* Agreement clauses */
+        .clauses {
+            list-style: none;
+            margin: 1.5rem 0;
+            padding: 0;
+        }
+        .clauses li {
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--rule);
+            font-size: 1.05rem;
+        }
+        .clauses li:last-child { border-bottom: none; }
+        .clauses strong { font-weight: 600; }
+
+        /* CTA button */
+        .cta {
+            display: inline-block;
+            padding: 0.85rem 1.75rem;
+            background: var(--text);
+            color: var(--bg);
+            font-family: var(--sans);
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            text-decoration: none;
+            border: 1px solid var(--text);
+            border-bottom: 1px solid var(--text);
+            transition: opacity 0.2s;
+            margin-top: 1rem;
+        }
+        .cta:hover { opacity: 0.85; }
+        .cta.outline {
+            background: transparent;
+            color: var(--text);
+            border-bottom: 1px solid var(--text);
+        }
+
+        /* Stack — 8 layers */
+        .stack { margin: 2rem 0; }
+        .layer {
+            display: grid;
+            grid-template-columns: 2.5rem 1fr;
+            gap: 1rem;
+            padding: 0.9rem 0;
+            border-bottom: 1px dotted var(--rule);
+        }
+        .layer:last-child { border-bottom: none; }
+        .layer .num {
+            font-family: var(--sans);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+        .layer .label { font-weight: 600; }
+        .layer .what {
+            font-size: 0.95rem;
+            color: var(--muted);
+            margin-top: 0.15rem;
+        }
+
+        /* Three currencies */
+        .currencies {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        @media (max-width: 640px) { .currencies { grid-template-columns: 1fr; } }
+        .currency {
+            padding: 1rem 0;
+            border-top: 2px solid var(--accent);
+        }
+        .currency h4 {
+            font-family: var(--sans);
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 0.4rem;
+        }
+        .currency p {
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        /* Player path */
+        .path {
+            font-family: var(--sans);
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin: 1.5rem 0;
+            line-height: 2;
+        }
+        .path span {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        /* Footer */
+        footer {
+            padding: 3rem 1.5rem 4rem;
+            border-top: 1px solid var(--rule);
+            margin-top: 3rem;
+        }
+        footer .container {
+            font-family: var(--sans);
+            font-size: 0.85rem;
+            color: var(--muted);
+            text-align: center;
+        }
+        footer a { color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--rule); }
+        footer a:hover { color: var(--text); }
+        footer .closing {
+            font-family: var(--serif);
+            font-style: italic;
+            color: var(--text);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="nav-mark">Full Potential</a>
+        <ul class="nav-links">
+            <li><a href="/diagnose">Diagnose</a></li>
+            <li><a href="/#work">Work</a></li>
+            <li><a href="/call">Call</a></li>
+            <li><a href="/#learn">Learn</a></li>
+            <li><a href="/peace" class="current">Peace</a></li>
+            <li><a href="mailto:james@fullpotential.com">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div class="hero">
+        <div class="container">
+            <h1>The Work of <em>Peace</em>.</h1>
+            <p class="lede">
+                The same framework that diagnoses individual coherence describes how cooperation works at scale. The World Peace Agreement is the social protocol of the Full Potential framework — a covenant any party can form, witnessed and recorded, renewed not by re-signing but by being lived.
+            </p>
+            <p class="sub">Coherent Champions of CHRIST · A practice of becoming trustworthy with power</p>
+        </div>
+    </div>
+
+    <!-- THE PHILOSOPHY -->
+    <section id="philosophy">
+        <div class="container">
+            <h2>the philosophy</h2>
+            <p>
+                Most movements try to fix the world by force. This one is built on the recognition that power without coherence fractures whatever it touches. The work is to become trustworthy first — coherent in thought, word, action, and consequence — and let that coherence become contagious.
+            </p>
+            <p>
+                <strong>CHRIST</strong> names the six dimensions of the practice:
+            </p>
+            <div class="christ-grid">
+                <div><strong>C · Coherence</strong><span>Alignment between thought, word, action, technology, consequence.</span></div>
+                <div><strong>H · Healing</strong><span>For individuals, relationships, communities, ecosystems.</span></div>
+                <div><strong>R · Regeneration</strong><span>Systems that restore more life than they consume.</span></div>
+                <div><strong>I · Intelligence</strong><span>Guided by wisdom, humility, discernment, care.</span></div>
+                <div><strong>S · Service</strong><span>Gifts in service to the flourishing of life.</span></div>
+                <div><strong>T · Truth</strong><span>Sought courageously, held compassionately.</span></div>
+            </div>
+            <div class="pull">This is not a religion of superiority. It is a practice of becoming trustworthy with power.</div>
+        </div>
+    </section>
+
+    <!-- THE AGREEMENT -->
+    <section id="agreement">
+        <div class="container">
+            <h2>the agreement</h2>
+            <p>
+                The World Peace Agreement is a covenant — between two parties, or many. The seven clauses are the spine. Each formed Agreement adds the names, the context, and the specific commitments that turn intention into practice.
+            </p>
+            <ul class="clauses">
+                <li>I agree to <strong>practice peace</strong> in thought, word, and action.</li>
+                <li>I agree to <strong>reduce unnecessary suffering</strong>.</li>
+                <li>I agree to <strong>seek understanding</strong> before hatred.</li>
+                <li>I agree to <strong>repair</strong> where I have caused harm.</li>
+                <li>I agree to <strong>protect life, truth, beauty, and future generations</strong>.</li>
+                <li>I agree to <strong>become trustworthy</strong> with intelligence, influence, and resources.</li>
+                <li>I agree that <strong>peace must become visible through action</strong>.</li>
+            </ul>
+            <p style="font-style:italic;color:var(--muted);">Signed not in perfection, but in sincere participation.</p>
+            <p style="margin-top:2rem;">
+                <a class="cta" href="mailto:james@fullpotential.com?subject=I%20sign%20the%20World%20Peace%20Agreement&body=My%20name%3A%20%0A%0AI%20agree%20to%20practice%20peace%20in%20thought%2C%20word%2C%20and%20action.%0AI%20agree%20to%20reduce%20unnecessary%20suffering.%0AI%20agree%20to%20seek%20understanding%20before%20hatred.%0AI%20agree%20to%20repair%20where%20I%20have%20caused%20harm.%0AI%20agree%20to%20protect%20life%2C%20truth%2C%20beauty%2C%20and%20future%20generations.%0AI%20agree%20to%20become%20trustworthy%20with%20intelligence%2C%20influence%2C%20and%20resources.%0AI%20agree%20that%20peace%20must%20become%20visible%20through%20action.%0A%0ASigned%20not%20in%20perfection%2C%20but%20in%20sincere%20participation.">Sign by email</a>
+                <a class="cta outline" href="/peace/registry/">View the public roll</a>
+            </p>
+        </div>
+    </section>
+
+    <!-- THE STACK -->
+    <section id="stack">
+        <div class="container">
+            <h2>the stack</h2>
+            <p>
+                Eight layers — a Peace Coordination Civilization Stack. Each layer rests on those below and serves those above. Detail in the <a href="https://github.com/jamessunheart/fpai-sessions/blob/main/core/INTENT/FULL_POTENTIAL_FRAMEWORK.md">canonical framework document</a>.
+            </p>
+            <div class="stack">
+                <div class="layer"><div class="num">1</div><div><div class="label">World Peace Organization</div><div class="what">The civilizational mission. Steward, protect, organize, coordinate.</div></div></div>
+                <div class="layer"><div class="num">2</div><div><div class="label">World Peace Agreement</div><div class="what">The social protocol. Shared values, witnessed participation, repair.</div></div></div>
+                <div class="layer"><div class="num">3</div><div><div class="label">Full Potential Game</div><div class="what">The human coordination engine. Proof · Trust · Cash. Score the proof, not the soul.</div></div></div>
+                <div class="layer"><div class="num">4</div><div><div class="label">Coherent AI Layer</div><div class="what">The intelligence layer. AI in service to life. Not a ruler, but a companion.</div></div></div>
+                <div class="layer"><div class="num">5</div><div><div class="label">Remarkably Coherent Treasury</div><div class="what">The resource circulation engine. Money becomes a multiplier of regeneration.</div></div></div>
+                <div class="layer"><div class="num">6</div><div><div class="label">Zen Village + Local Nodes</div><div class="what">The embodiment layer. Living prototypes of coherent civilization.</div></div></div>
+                <div class="layer"><div class="num">7</div><div><div class="label">Cultural Activation</div><div class="what">World Peace Party · World Peace Weekend. Music, dance, ceremony, joy.</div></div></div>
+                <div class="layer"><div class="num">8</div><div><div class="label">Media + AI + Local Networks</div><div class="what">The scaling layer. Stories that inspire, technology that connects.</div></div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- THE GAME -->
+    <section id="game">
+        <div class="container">
+            <h2>the game</h2>
+            <p>
+                The Full Potential Game is a proof-based operating system for human coordination. Three currencies move together: proof generates trust, trust attracts cash, cash circulates to fund more proof. The loop, run honestly, makes life more coherent and resources flow without corrupting the one they flow through.
+            </p>
+            <div class="currencies">
+                <div class="currency"><h4>Proof</h4><p>What was witnessed and recorded. Agreements kept. Transformations delivered. Beauty created.</p></div>
+                <div class="currency"><h4>Trust</h4><p>Confidence earned through repeated proof. People move when you signal.</p></div>
+                <div class="currency"><h4>Cash</h4><p>Real money still matters. It flows toward trust over time.</p></div>
+            </div>
+            <h3>The player path</h3>
+            <p class="path">
+                <span>Villager</span> · run the 7-day first game<br>
+                <span>Contributor</span> · complete quests, earn proof<br>
+                <span>Builder</span> · lead projects, build alliances<br>
+                <span>Steward</span> · hold space, guide others<br>
+                <span>Guardian</span> · protect the framework, expand the mission<br>
+                <span>Legend</span> · create legacy that outlives you
+            </p>
+            <h3>Protection boundaries</h3>
+            <p>
+                <em>Score the proof, not the soul.</em> Levels mark practice; they never define personal worth. <em>Private life is private.</em> The public roll lists what participants choose to make visible. <em>Consent is non-negotiable.</em> <em>Data is sacred.</em> <em>Power is accountable</em> — including the framework's own.
+            </p>
+        </div>
+    </section>
+
+    <!-- HOW THIS RELATES -->
+    <section id="how">
+        <div class="container">
+            <h2>how this fits</h2>
+            <p>
+                Full Potential is the work. Zen Village is the prototype. The World Peace Agreement is the social protocol. CORA Nation is the organizational vessel. They are not the same thing; together they form a coherent whole.
+            </p>
+            <p>
+                The diagnostic asks: where is your life circulating, and where is it stuck? The Agreement asks: what are you willing to practice, in public, with witness? Both are coherence work. One is internal, one relational. Both belong in the framework.
+            </p>
+            <p>
+                If you came here through the diagnostic and want to extend the practice into how you relate, the Agreement is here. If you came here through the Agreement and want to know where the work began for you, the diagnostic is at <a href="/diagnose">/diagnose</a>.
+            </p>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p class="closing">peace becomes real when humans agree to practice it</p>
+            <p>
+                <a href="/">Full Potential</a> · <a href="https://zenvillagecr.com">Zen Village</a> · <a href="https://coranation.org">CORA Nation</a> · <a href="mailto:james@fullpotential.com">james@fullpotential.com</a>
+            </p>
+            <p style="margin-top:0.5rem;">
+                Coherence · Healing · Regeneration · Intelligence · Service · Truth
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
