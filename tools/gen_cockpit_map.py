@@ -541,6 +541,31 @@ body {
   min-height: 100vh;
 }
 
+/* Mobile sticky stage bar */
+.mobile-stage-bar {
+  position: fixed;
+  top: 3px;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--accent);
+  padding: 6px 14px;
+  font-size: 11px;
+  z-index: 999;
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+.mobile-stage-bar .msb-stage { color: var(--accent-bright); font-weight: 700; }
+.mobile-stage-bar .msb-score { color: var(--accent); }
+.mobile-stage-bar .msb-next { color: var(--muted); font-size: 10px; flex: 1; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 700px) {
+  .mobile-stage-bar.show { display: flex; }
+  body.has-mobile-bar .wrap { padding-top: 36px; }
+}
+
 /* Scroll progress bar */
 .scroll-progress {
   position: fixed;
@@ -1782,6 +1807,18 @@ body.mode-field .player-only { display: none !important; }
 .ps-icon { font-size: 36px; line-height: 1; }
 .ps-label { font-size: 10px; color: var(--good); letter-spacing: 1.5px; font-weight: 700; }
 .ps-name { font-size: 22px; font-weight: 700; color: var(--text-bright); margin-top: 2px; }
+.ps-stage {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 3px 10px;
+  background: var(--surface);
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  font-size: 11px;
+  color: var(--accent-bright);
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
 .ps-score { text-align: right; }
 .ps-score-n {
   font-size: 32px;
@@ -1842,6 +1879,18 @@ body.mode-field .player-only { display: none !important; }
   display: inline-block;
 }
 .ps-tip { font-size: 11px; color: var(--muted); margin: 8px 0 0; line-height: 1.5; }
+.ps-contrib { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+.ps-contrib-label { font-size: 10px; color: var(--accent); letter-spacing: 1px; font-weight: 700; margin-bottom: 6px; }
+.ps-contrib-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.ps-contrib-pill {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.ps-contrib-pill strong { color: var(--accent); margin-right: 3px; }
 
 /* Inviter banner — when arriving via someone's invite link */
 .inviter-banner {
@@ -1960,6 +2009,89 @@ body.mode-field .player-only { display: none !important; }
 .step-title { font-weight: 700; font-size: 14px; color: var(--text); }
 .step-desc { font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
 
+/* Quick Reference rail — Three Currencies, Player Promise, etc. */
+.quick-ref {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.qr-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+.qr-icon { font-size: 22px; line-height: 1; }
+.qr-title { font-weight: 700; font-size: 13px; color: var(--text-bright); margin-top: 4px; }
+.qr-list { list-style: none; padding: 0; margin: 8px 0 0; font-size: 11px; line-height: 1.6; color: var(--muted); }
+.qr-list li { padding: 2px 0; }
+.qr-list strong { color: var(--accent); }
+
+/* Connective tissue between player-journey sections */
+.connector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  margin: -8px 0 12px;
+  background: rgba(232, 185, 116, 0.04);
+  border-left: 2px dashed var(--accent);
+  border-radius: 0 6px 6px 0;
+}
+.conn-arrow {
+  font-size: 18px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+.conn-text {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* Progressive disclosure: completed forms collapse to summary */
+.sign-card.completed,
+.character-card-quest.completed,
+.proof-submit-card.completed {
+  position: relative;
+}
+.sign-card.completed > *:not(h2),
+.character-card-quest.completed > *:not(h2),
+.proof-submit-card.completed > *:not(h2) {
+  display: none;
+}
+.sign-card.completed h2::after,
+.character-card-quest.completed h2::after,
+.proof-submit-card.completed h2::after {
+  content: " · ✓ done — click to expand";
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--good);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.sign-card.completed,
+.character-card-quest.completed,
+.proof-submit-card.completed {
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.18s;
+}
+.sign-card.completed:hover,
+.character-card-quest.completed:hover,
+.proof-submit-card.completed:hover { opacity: 1; }
+.sign-card.completed.expanded > *,
+.character-card-quest.completed.expanded > *,
+.proof-submit-card.completed.expanded > * { display: revert; }
+
+/* Next step gets gold ring */
+.next-step {
+  box-shadow: 0 0 0 2px var(--accent), 0 8px 32px rgba(232,185,116,0.18);
+}
+
 /* Sign Agreement form */
 .sign-card {
   background: var(--surface);
@@ -2002,6 +2134,23 @@ body.mode-field .player-only { display: none !important; }
 .sign-form input:focus, .sign-form textarea:focus { outline: none; border-color: var(--good); }
 .sign-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .sign-actions button { font-family: inherit; cursor: pointer; border: none; }
+
+.sign-extras {
+  margin: 12px 0;
+}
+.sign-extras-summary {
+  cursor: pointer;
+  color: var(--accent);
+  font-size: 12px;
+  padding: 8px 12px;
+  background: var(--surface-2);
+  border-radius: 6px;
+  user-select: none;
+  list-style: none;
+}
+.sign-extras-summary::-webkit-details-marker { display: none; }
+.sign-extras-summary:hover { background: var(--border); }
+.sign-extras[open] .sign-extras-summary::after { content: " (collapse)"; opacity: 0.6; }
 
 .sign-confirmation {
   margin-top: 20px;
@@ -2188,6 +2337,37 @@ body.mode-field .player-only { display: none !important; }
 .invite-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .invite-actions button, .invite-actions a { font-family: inherit; cursor: pointer; border: none; }
 .invite-preview pre { word-break: break-word; }
+
+/* Canonical Library wrapper — collapsed by default, click to reveal all docs */
+.canonical-library-wrapper {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin: 16px 0;
+  overflow: hidden;
+}
+.canonical-library-wrapper[open] { border-color: var(--accent); }
+.cl-summary {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+.cl-summary::-webkit-details-marker { display: none; }
+.cl-summary:hover { background: rgba(232,185,116,0.04); }
+.cl-icon { font-size: 26px; line-height: 1; }
+.cl-title-block { flex: 1; min-width: 0; }
+.cl-title { font-weight: 700; font-size: 14px; color: var(--text); }
+.cl-sub { font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.4; }
+.cl-expand { font-size: 11px; color: var(--accent); white-space: nowrap; }
+.canonical-library-wrapper[open] .cl-expand { display: none; }
+.canonical-library-wrapper > .canonical-library {
+  padding: 0 18px 18px;
+  border-top: 1px solid var(--border);
+}
 
 /* Canonical Documents Library — inline rendering */
 .canonical-library {
@@ -2445,11 +2625,20 @@ setInterval(refreshRelTimes, 30000);
   document.getElementById('welcomeStart')?.addEventListener('click', () => {
     dismiss();
     setTimeout(() => {
+      const wrapper = document.querySelector('.canonical-library-wrapper');
+      if (wrapper) wrapper.open = true;
       const target = document.getElementById('doc-manifesto');
       if (target) {
         target.open = true;
         target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
+    }, 300);
+  });
+  document.getElementById('welcomeSign')?.addEventListener('click', () => {
+    dismiss();
+    setTimeout(() => {
+      const target = document.getElementById('signCard');
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 300);
   });
 })();
@@ -2587,6 +2776,26 @@ async function loadPlayerState() {
     const url = location.origin + location.pathname + '?inviter=' + encodeURIComponent(d.name);
     const inviteEl = document.getElementById('psInviteUrl');
     if (inviteEl) inviteEl.textContent = url;
+
+    // === Compute stage from completion state ===
+    let stage = 'Visitor';
+    let stageGlyph = '👋';
+    if (d.champion) { stage = 'Guest'; stageGlyph = '👥'; }
+    if (d.champion && d.card_present) { stage = 'Player'; stageGlyph = '🎮'; }
+    if (d.champion && d.card_present && d.proofs_filed >= 1) { stage = 'Apprentice'; stageGlyph = '🎓'; }
+    if (d.champion && d.card_present && d.proofs_filed >= 3) { stage = 'Steward'; stageGlyph = '🌱'; }
+    if (d.champion && d.card_present && d.proofs_filed >= 3 && d.affiliates_count >= 3) { stage = 'Builder'; stageGlyph = '🏗'; }
+    if (d.proofs_filed >= 10 && d.affiliates_count >= 10) { stage = 'Legend'; stageGlyph = '👑'; }
+    setText('psStage', stageGlyph + ' ' + stage);
+
+    // Mobile sticky stage bar
+    const msb = document.getElementById('mobileStageBar');
+    if (msb) {
+      msb.innerHTML = `<span class="msb-stage">${stageGlyph} ${stage}</span><span class="msb-score">·  ${d.field_score_simple} pts</span><span class="msb-next">→ ${(!d.champion ? 'Sign' : !d.card_present ? 'Build Card' : d.proofs_filed === 0 ? 'File Proof' : 'Share invite')}</span>`;
+      msb.classList.add('show');
+      document.body.classList.add('has-mobile-bar');
+    }
+
     const tip = document.getElementById('psTip');
     if (tip) {
       const next = !d.champion ? 'Sign the Agreement to become a Champion.'
@@ -2596,7 +2805,63 @@ async function loadPlayerState() {
         : 'You\\'re moving. Keep going — file the next proof, witness another player, ascend the Player Path.';
       tip.textContent = '→ ' + next;
     }
+
+    // === Your Contributions ===
+    const contribRow = document.getElementById('psContribRow');
+    const contribCard = document.getElementById('psContrib');
+    if (contribRow && contribCard) {
+      const pills = [];
+      if (d.champion) pills.push(`<span class="ps-contrib-pill"><strong>🌀</strong>Champion #${d.champion.champion_number}</span>`);
+      if (d.proofs_filed > 0) pills.push(`<span class="ps-contrib-pill"><strong>🌱</strong>${d.proofs_filed} proof${d.proofs_filed === 1 ? '' : 's'}</span>`);
+      if (d.affiliates_count > 0) pills.push(`<span class="ps-contrib-pill"><strong>🤝</strong>${d.affiliates_count} affiliate${d.affiliates_count === 1 ? '' : 's'}</span>`);
+      if (d.card_present) pills.push(`<span class="ps-contrib-pill"><strong>🎴</strong>Card ${d.card_level || ''}</span>`);
+      if (pills.length > 0) {
+        contribRow.innerHTML = pills.join('');
+        contribCard.style.display = '';
+      }
+    }
+
+    // === Progressive disclosure: collapse completed forms ===
+    progressiveDisclosure({
+      signed: !!d.champion,
+      hasCard: !!d.card_present,
+      hasProof: d.proofs_filed > 0,
+      hasAffiliate: d.affiliates_count > 0,
+    });
   } catch (e) {}
+}
+
+// Allow click-to-expand on completed forms
+document.addEventListener('click', (ev) => {
+  const card = ev.target.closest('.sign-card.completed, .character-card-quest.completed, .proof-submit-card.completed');
+  if (!card) return;
+  // Only expand on the heading click (not on body)
+  if (ev.target.tagName === 'BUTTON' || ev.target.closest('input, textarea, select, a, button')) return;
+  card.classList.toggle('expanded');
+});
+
+function progressiveDisclosure(state) {
+  // Collapse the Sign card if signed
+  const signCard = document.getElementById('signCard');
+  if (signCard && state.signed && !signCard.classList.contains('completed')) {
+    signCard.classList.add('completed');
+  }
+  // Collapse the Character Card section if a card is present
+  const ccQuest = document.getElementById('characterCardQuest');
+  if (ccQuest && state.hasCard && !ccQuest.classList.contains('completed')) {
+    ccQuest.classList.add('completed');
+  }
+  // Collapse the Proof Submit if at least one proof filed
+  const proofCard = document.getElementById('proofSubmitCard');
+  if (proofCard && state.hasProof && !proofCard.classList.contains('completed')) {
+    proofCard.classList.add('completed');
+  }
+  // Reveal the relevant "next step" by adding a focus class
+  let target = null;
+  if (!state.signed) target = signCard;
+  else if (!state.hasCard) target = ccQuest;
+  else if (!state.hasProof) target = proofCard;
+  if (target) target.classList.add('next-step');
 }
 loadPlayerState();
 setInterval(loadPlayerState, 60000);
@@ -3922,6 +4187,7 @@ def render_html() -> str:
 <body>
 <div class="horizon-glow"></div>
 <div class="scroll-progress" id="scrollProgress"></div>
+<div class="mobile-stage-bar" id="mobileStageBar" style="display:none;"></div>
 <svg class="starfield" id="starfield" preserveAspectRatio="xMidYMid slice"></svg>
 
 <div class="welcome-modal" id="welcomeModal">
@@ -3936,7 +4202,8 @@ def render_html() -> str:
       Your first move: read the Manifesto, sign the World Peace Agreement, run your first 7-Day proof loop.
     </p>
     <div style="display:flex;gap:8px;margin-top:20px;justify-content:center;flex-wrap:wrap;">
-      <button class="player-cta-primary" id="welcomeStart">🌱 Start the journey</button>
+      <button class="player-cta-primary" id="welcomeStart">📖 Read the Manifesto first</button>
+      <button class="player-cta-secondary" id="welcomeSign">✍ Skip — go straight to Sign</button>
       <button class="player-cta-secondary" id="welcomeDismiss">I've been here before</button>
     </div>
     <p style="font-size:11px;color:var(--muted);margin-top:16px;">
@@ -4006,6 +4273,7 @@ def render_html() -> str:
       <div>
         <div class="ps-label">YOUR PLAYER STATE</div>
         <div class="ps-name" id="psName">—</div>
+        <div class="ps-stage" id="psStage"></div>
       </div>
       <div class="ps-score">
         <div class="ps-score-n" id="psScore">0</div>
@@ -4026,6 +4294,10 @@ def render_html() -> str:
       </div>
     </div>
     <p class="ps-tip" id="psTip"></p>
+    <div class="ps-contrib" id="psContrib" style="display:none;">
+      <div class="ps-contrib-label">YOUR CONTRIBUTIONS</div>
+      <div class="ps-contrib-row" id="psContribRow"></div>
+    </div>
   </div>
 
   <div class="next-move" id="nextMove">
@@ -4152,18 +4424,23 @@ def render_html() -> str:
       <em>Signed not in perfection, but in sincere participation.</em>
     </blockquote>
     <div class="sign-form">
-      <label><span>Your name</span><input type="text" id="signName" placeholder="e.g. Maria Lopez" /></label>
-      <label><span>Handle (optional)</span><input type="text" id="signHandle" placeholder="@yourhandle" /></label>
-      <label><span>Email (optional)</span><input type="email" id="signEmail" placeholder="you@example.com" /></label>
-      <label><span>Witness (optional)</span><input type="text" id="signWitness" placeholder="someone who saw you sign" /></label>
-      <label class="sign-radio">
-        <input type="radio" name="signPublic" value="true" checked /> Public (appear on the Champions Roll)
-      </label>
-      <label class="sign-radio">
-        <input type="radio" name="signPublic" value="false" /> Private (signed; not publicly listed)
-      </label>
-      <label><span>One sentence — why are you signing?</span><textarea id="signWhy" rows="2" placeholder="optional"></textarea></label>
+      <label style="grid-column:1/-1;"><span>Your name</span><input type="text" id="signName" placeholder="e.g. Maria Lopez" /></label>
     </div>
+    <details class="sign-extras">
+      <summary class="sign-extras-summary">+ Add witness, why, handle, email, visibility (optional)</summary>
+      <div class="sign-form" style="margin-top:10px;">
+        <label><span>Handle (optional)</span><input type="text" id="signHandle" placeholder="@yourhandle" /></label>
+        <label><span>Email (optional)</span><input type="email" id="signEmail" placeholder="you@example.com" /></label>
+        <label><span>Witness (optional)</span><input type="text" id="signWitness" placeholder="someone who saw you sign" /></label>
+        <label style="grid-column:1/-1;"><span>One sentence — why are you signing?</span><textarea id="signWhy" rows="2" placeholder="optional"></textarea></label>
+        <label class="sign-radio">
+          <input type="radio" name="signPublic" value="true" checked /> Public (appear on the Champions Roll)
+        </label>
+        <label class="sign-radio">
+          <input type="radio" name="signPublic" value="false" /> Private (signed; not publicly listed)
+        </label>
+      </div>
+    </details>
     <!-- honeypot: hidden field bots fill -->
     <input type="text" id="signHoneypot" name="company" style="position:absolute;left:-9999px;" tabindex="-1" autocomplete="off" />
     <div class="sign-actions">
@@ -4176,6 +4453,11 @@ def render_html() -> str:
       <strong>Sign &amp; join the Roll</strong> submits directly to the substrate — your name appears on the Champions Roll within seconds. The Game plays itself.
       Backup options: copy / download / email.
     </p>
+  </div>
+
+  <div class="connector">
+    <span class="conn-arrow">↓</span>
+    <span class="conn-text">After signing → your Champion # is assigned and the next steps unlock. Here's the path.</span>
   </div>
 
   <div class="after-sign-card">
@@ -4222,6 +4504,11 @@ def render_html() -> str:
     </p>
   </div>
 
+  <div class="connector">
+    <span class="conn-arrow">↓</span>
+    <span class="conn-text">Your Character Card is your matchable node. Without it, players can't find each other for collaborations and quests.</span>
+  </div>
+
   <div class="character-card-quest" id="characterCardQuest">
     <h2>🎴 Character Card Quest <span style="font-size:12px;font-weight:400;color:var(--muted);">&mdash; Quest #1 · Onboarding · 5 minutes</span></h2>
     <p style="color:var(--muted);font-size:13px;margin:0 0 12px;line-height:1.6;">
@@ -4249,7 +4536,8 @@ def render_html() -> str:
     </p>
     <div class="sign-actions" style="margin-bottom:12px;">
       <button id="cardCopyPromptBtn" class="player-cta-primary">📋 Copy AI Port-In Prompt</button>
-      <a class="player-cta-secondary" href="#doc-character-card" onclick="document.getElementById('doc-character-card').open=true;">Read full Quest doc</a>
+      <a class="player-cta-secondary" href="https://claude.ai/new" target="_blank">🤖 Open Claude.ai (then paste)</a>
+      <a class="player-cta-secondary" href="#doc-character-card" onclick="document.querySelector('.canonical-library-wrapper').open=true;document.getElementById('doc-character-card').open=true;">Read full Quest doc</a>
     </div>
 
     <h3>Step 2 · Submit your draft</h3>
@@ -4297,6 +4585,11 @@ def render_html() -> str:
     </p>
   </div>
 
+  <div class="connector">
+    <span class="conn-arrow">↓</span>
+    <span class="conn-text">Run a 7-Day First Game (use the AI-Assisted Player Card prompt above). When complete and witnessed, file your Proof here.</span>
+  </div>
+
   <div class="proof-submit-card" id="proofSubmitCard">
     <h2>🌱 File a Proof Loop <span style="font-size:12px;font-weight:400;color:var(--muted);">&mdash; for Champions who completed a 7-Day Game</span></h2>
     <p style="color:var(--muted);font-size:12px;margin:0 0 14px;">
@@ -4333,10 +4626,15 @@ def render_html() -> str:
     {('<h3 style="margin-top:20px;">Public Proof Loops</h3>' + proofs_html) if public_proofs > 0 else ''}
   </div>
 
+  <div class="connector">
+    <span class="conn-arrow">↓</span>
+    <span class="conn-text">Each Champion gets a unique invite URL. When others sign through your link, they're credited as your affiliates and your Field Score grows.</span>
+  </div>
+
   <div class="invite-card">
-    <h2>Bring a Friend <span style="font-size:12px;font-weight:400;color:var(--muted);">&mdash; the Game spreads by resonance</span></h2>
+    <h2>Bring a Friend <span style="font-size:12px;font-weight:400;color:var(--muted);">&mdash; the Game spreads by resonance · +3 score per signed affiliate</span></h2>
     <p style="color:var(--muted);font-size:12px;margin:0 0 12px;">
-      Don't recruit. Invite. Give it to someone who's already living something close to this — they'll recognize it. The first proof loop is the real test of resonance.
+      Don't recruit. Invite. Give it to someone who's already living something close to this. Your invite link is in your <strong>Player State</strong> panel above (or use the templates below).
     </p>
     <div class="invite-actions">
       <button id="inviteCopyBtn" class="player-cta-primary">📋 Copy invitation</button>
@@ -4360,8 +4658,47 @@ def render_html() -> str:
     </div>
   </div>
 
+  <div class="quick-ref">
+    <div class="qr-card">
+      <div class="qr-icon">💎</div>
+      <div class="qr-title">The Three Currencies</div>
+      <ul class="qr-list">
+        <li><strong>Proof</strong> — what was witnessed and recorded</li>
+        <li><strong>Trust</strong> — confidence earned through repeated proof</li>
+        <li><strong>Cash</strong> — flows toward Trust over time</li>
+      </ul>
+    </div>
+    <div class="qr-card">
+      <div class="qr-icon">🌟</div>
+      <div class="qr-title">Player Promise</div>
+      <ul class="qr-list">
+        <li>Your life gets more coherent</li>
+        <li>Your work becomes easier to trust</li>
+        <li>More resources flow through you</li>
+      </ul>
+    </div>
+    <div class="qr-card">
+      <div class="qr-icon">🌱</div>
+      <div class="qr-title">Treasury Principles</div>
+      <ul class="qr-list">
+        <li>Circulation over hoarding</li>
+        <li>Regeneration over extraction</li>
+        <li>Transparency over secrecy</li>
+      </ul>
+    </div>
+    <div class="qr-card">
+      <div class="qr-icon">🛡</div>
+      <div class="qr-title">Protection Boundaries</div>
+      <ul class="qr-list">
+        <li>Score the proof, not the soul</li>
+        <li>Private life is private</li>
+        <li>Consent is non-negotiable</li>
+      </ul>
+    </div>
+  </div>
+
   <div class="player-only player-hero">
-    <h2 style="margin-top:0;color:var(--accent);font-size:28px;">Welcome to the Full Potential Game.</h2>
+    <h2 style="margin-top:0;color:var(--accent);font-size:28px;">Reality is already a game. This is the guide for those who know.</h2>
     <p style="font-size:16px;color:var(--text);margin:8px 0 16px;">
       Reality is already a game. This is where you find your pieces.
     </p>
@@ -4852,14 +5189,22 @@ def render_html() -> str:
     <h3 style="margin-top:20px;">Active &amp; pending Agreements</h3>
     {agreements_html}
 
-    <h3 style="margin-top:24px;">📚 Canonical Documents &mdash; read inline, no app required</h3>
-    <p style="color:var(--muted);font-size:12px;margin:0 0 12px;">
-      Every founding document, fully rendered. Click any to expand and read in place.
-      No external app, no permission popups. Each doc also has fallback links to open in cursor or as raw file.
-    </p>
-    <div class="canonical-library">
-      {inline_docs_html}
-    </div>
+    <details class="canonical-library-wrapper">
+      <summary class="cl-summary">
+        <span class="cl-icon">📚</span>
+        <div class="cl-title-block">
+          <div class="cl-title">Read the Canon — every founding document</div>
+          <div class="cl-sub">Manifesto · Framework · Loop · Treasury · Game · WPAP · Agreement · Forming · Player Card · Builder Prompt · Character Card · Plays Itself · Signaling</div>
+        </div>
+        <span class="cl-expand">expand library →</span>
+      </summary>
+      <div class="canonical-library">
+        <p style="color:var(--muted);font-size:12px;margin:8px 0 12px;">
+          Every founding document, fully rendered inline. Click any card to read in place — no external app, no permission popups.
+        </p>
+        {inline_docs_html}
+      </div>
+    </details>
 
     <h3 style="margin-top:24px;">🔄 The Positive Loop &mdash; how the field grows</h3>
     <p style="color:var(--muted);font-size:12px;margin:0 0 12px;">
