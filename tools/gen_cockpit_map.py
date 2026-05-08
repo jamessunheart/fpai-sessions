@@ -741,6 +741,80 @@ details.eco-layer[open] {
 .eco-media { border-left: 3px solid #b58be0; }
 .eco-econ { border-left: 3px solid var(--accent); }
 .eco-vision { border-left: 3px solid var(--accent); background: linear-gradient(135deg, rgba(247,185,85,0.10), transparent); padding: 14px 16px; }
+
+/* WPAP section */
+.wpap-tldr {
+  background: rgba(126, 200, 227, 0.06);
+  border-left: 3px solid #7ec8e3;
+  padding: 12px 16px;
+  margin: 0 0 16px;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.7;
+  font-style: italic;
+}
+.wpap-modules {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.wpap-mod {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  border-left: 3px solid #7ec8e3;
+}
+.wpap-icon { font-size: 18px; flex-shrink: 0; line-height: 1.2; }
+.wpap-name { font-weight: 700; font-size: 13px; color: var(--text); }
+.wpap-fn { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+.wpap-phases {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 8px;
+}
+.wpap-phase {
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  border-top: 3px solid var(--border);
+}
+.wpap-phase-current {
+  border-top-color: var(--good);
+  background: linear-gradient(180deg, rgba(74,222,128,0.06), var(--surface-2));
+}
+.wpap-phase-num {
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+.wpap-phase-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-top: 4px;
+}
+.wpap-phase-tag {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+.wpap-phase-status {
+  font-size: 11px;
+  color: var(--accent);
+  margin-top: 8px;
+  font-weight: 600;
+}
+.wpap-phase-current .wpap-phase-status { color: var(--good); }
 """
 
 
@@ -1591,6 +1665,53 @@ def render_html() -> str:
           <div class="eco-tag">A world where intelligence serves life. A civilization organized around coherence instead of chaos. A culture where peace becomes lived reality.</div>
           <div class="eco-tag" style="color:var(--accent);font-weight:600;">Together, we can build a future worth inheriting.</div>
         </div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:24px;">WPAP &mdash; World Peace Agreements Protocol</h3>
+    <p style="color:var(--muted);font-size:12px;margin:0 0 12px;">
+      The AI-assisted system that operationalizes Layer 5 (AI for Peace).
+      <a class='link' href='cursor://file{INTENT_DIR}/WORLD_PEACE_AGREEMENTS_PROTOCOL.md'>Open WPAP doc</a>
+    </p>
+    <blockquote class="wpap-tldr">
+      Help humans make clearer agreements.<br>
+      Help humans remember those agreements.<br>
+      Help humans repair when agreements strain.<br>
+      Help intelligence serve peace instead of escalation.
+    </blockquote>
+    <div class="wpap-modules">
+      <div class="wpap-mod"><span class="wpap-icon">🕊</span><div><div class="wpap-name">Agreement Builder</div><div class="wpap-fn">Interactive coherent agreement creation</div></div></div>
+      <div class="wpap-mod"><span class="wpap-icon">🧠</span><div><div class="wpap-name">Coherence Analyzer</div><div class="wpap-fn">Detects ambiguity, imbalance, missing expectations</div></div></div>
+      <div class="wpap-mod"><span class="wpap-icon">❤️</span><div><div class="wpap-name">Conflict Translator</div><div class="wpap-fn">Reframes emotionally charged language</div></div></div>
+      <div class="wpap-mod"><span class="wpap-icon">🔄</span><div><div class="wpap-name">Repair Guide</div><div class="wpap-fn">Guides repair and reconciliation processes</div></div></div>
+      <div class="wpap-mod"><span class="wpap-icon">📜</span><div><div class="wpap-name">Peace Ledger</div><div class="wpap-fn">Tracks versions, acknowledgments, commitments</div></div></div>
+      <div class="wpap-mod"><span class="wpap-icon">🌍</span><div><div class="wpap-name">Cultural Translator</div><div class="wpap-fn">Bridges values and communication globally</div></div></div>
+    </div>
+    <h3 style="margin-top:20px;">Phased rollout</h3>
+    <div class="wpap-phases">
+      <div class="wpap-phase wpap-phase-current">
+        <div class="wpap-phase-num">Phase 1</div>
+        <div class="wpap-phase-name">Cultural Layer</div>
+        <div class="wpap-phase-tag">Build emotional resonance first.</div>
+        <div class="wpap-phase-status">In progress</div>
+      </div>
+      <div class="wpap-phase">
+        <div class="wpap-phase-num">Phase 2</div>
+        <div class="wpap-phase-name">Operational Layer</div>
+        <div class="wpap-phase-tag">Make coherence tangible. Simple AI agreement tools.</div>
+        <div class="wpap-phase-status">Next</div>
+      </div>
+      <div class="wpap-phase">
+        <div class="wpap-phase-num">Phase 3</div>
+        <div class="wpap-phase-name">Peace Infrastructure</div>
+        <div class="wpap-phase-tag">Real social technology — mediation, translation, repair, memory.</div>
+        <div class="wpap-phase-status">Future</div>
+      </div>
+      <div class="wpap-phase">
+        <div class="wpap-phase-num">Phase 4</div>
+        <div class="wpap-phase-name">Global Protocol</div>
+        <div class="wpap-phase-tag">Open frameworks any community can adopt. World Peace stops being abstract.</div>
+        <div class="wpap-phase-status">Long arc</div>
       </div>
     </div>
     <h3 style="margin-top:20px;">Active &amp; pending Agreements</h3>

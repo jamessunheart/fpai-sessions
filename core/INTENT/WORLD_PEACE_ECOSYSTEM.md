@@ -130,6 +130,8 @@ See [`WORLD_PEACE_AGREEMENT.md`](./WORLD_PEACE_AGREEMENT.md) for the canonical t
 
 *AI is not our ruler. AI is our tool, companion, and amplifier for good.*
 
+This layer is operationalized by the **[World Peace Agreements Protocol (WPAP)](./WORLD_PEACE_AGREEMENTS_PROTOCOL.md)** — six AI modules that turn "AI for Peace" from aspiration into a concrete coherence layer for agreements: 🕊 Agreement Builder · 🧠 Coherence Analyzer · ❤️ Conflict Translator · 🔄 Repair Guide · 📜 Peace Ledger · 🌍 Cultural Translator.
+
 ---
 
 ### 6. Zen Village Prototype — *The Living Prototype Layer*

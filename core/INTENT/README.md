@@ -11,7 +11,8 @@ The supreme intent of this work, in two layers.
 - **[COHERENT_CHAMPIONS_MANIFESTO.md](./COHERENT_CHAMPIONS_MANIFESTO.md)** — Manifesto v1.0 by James Sunheart. The **why**. Names CHRIST as the practice (Coherence / Healing / Regeneration / Intelligence / Service / Truth), defines the seven principles, scopes the role of AI, and invites participation.
 - **[WORLD_PEACE_ECOSYSTEM.md](./WORLD_PEACE_ECOSYSTEM.md)** — The **what**. Layered architectural map (Philosophy → Organization → Agreement → Party / Weekend / AI for Peace → Zen Village → Media → Economy → Vision) showing how the work expresses itself in the world.
 - **[WORLD_PEACE_AGREEMENT.md](./WORLD_PEACE_AGREEMENT.md)** — The signable covenant extracted from the manifesto. Maps to the TRUST token as the membership primitive.
-- **[FORMING_AGREEMENTS.md](./FORMING_AGREEMENTS.md)** — Protocol for instantiating specific Peace Agreements between specific parties.
+- **[WORLD_PEACE_AGREEMENTS_PROTOCOL.md](./WORLD_PEACE_AGREEMENTS_PROTOCOL.md)** — **WPAP**, the AI-assisted system for forming, witnessing, translating, and repairing agreements at any scale. Six AI modules (Agreement Builder · Coherence Analyzer · Conflict Translator · Repair Guide · Peace Ledger · Cultural Translator). Operationalizes the Ecosystem's Layer 5 (AI for Peace).
+- **[FORMING_AGREEMENTS.md](./FORMING_AGREEMENTS.md)** — Protocol for instantiating specific Peace Agreements between specific parties (manual flow; WPAP's Agreement Builder is the AI-assisted version).
 - **[AGREEMENTS/](./AGREEMENTS/)** — Specific formed Agreements (one file per instance).
 
 **Mission:** Creating paradise on Earth through cooperation.
