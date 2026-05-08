@@ -1789,6 +1789,37 @@ body.mode-field .player-only { display: none !important; }
 .glossary-def code { font-size: 11px; }
 .glossary-def strong { color: var(--accent); }
 
+/* Identity prompt — for returning Champions who haven't logged in yet */
+.identity-prompt {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 16px;
+  align-items: center;
+  background: linear-gradient(135deg, rgba(124, 184, 224, 0.08), rgba(184, 156, 213, 0.04));
+  border: 1px dashed var(--infra);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+}
+.ip-icon { font-size: 28px; line-height: 1; }
+.ip-label { font-size: 10px; color: var(--infra); letter-spacing: 1.2px; font-weight: 700; }
+.ip-text { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.ip-row { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.ip-row input {
+  flex: 1;
+  min-width: 200px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 8px 12px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+}
+.ip-row input:focus { outline: none; border-color: var(--infra); }
+.ip-row button { font-size: 13px; padding: 8px 16px; }
+.ip-error { font-size: 11px; color: var(--bad); margin-top: 6px; }
+
 /* Game State card — aggregate field metrics, top of page */
 .game-state-card {
   background: linear-gradient(135deg, rgba(232, 185, 116, 0.06), rgba(124, 196, 168, 0.04));
@@ -1808,12 +1839,18 @@ body.mode-field .player-only { display: none !important; }
 .gs-label::before {
   content: "";
   display: inline-block;
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   background: var(--good);
   border-radius: 50%;
-  margin-right: 6px;
-  animation: pulse-dot 2s ease-in-out infinite;
+  margin-right: 8px;
+  animation: pulse-dot-strong 1.6s ease-in-out infinite;
+  box-shadow: 0 0 0 0 rgba(132, 212, 136, 0.7);
+}
+@keyframes pulse-dot-strong {
+  0% { box-shadow: 0 0 0 0 rgba(132, 212, 136, 0.7); transform: scale(1); }
+  50% { box-shadow: 0 0 0 8px rgba(132, 212, 136, 0); transform: scale(1.3); }
+  100% { box-shadow: 0 0 0 0 rgba(132, 212, 136, 0); transform: scale(1); }
 }
 .gs-tagline { font-size: 12px; color: var(--muted); font-style: italic; }
 .gs-metrics {
@@ -1830,8 +1867,22 @@ body.mode-field .player-only { display: none !important; }
 }
 .gs-metric-accent { border-color: var(--accent); background: rgba(232,185,116,0.08); }
 .gs-icon { font-size: 18px; line-height: 1; }
-.gs-n { font-size: 20px; font-weight: 700; color: var(--accent); margin-top: 4px; line-height: 1; }
-.gs-metric-accent .gs-n { color: var(--accent-bright); }
+.gs-n {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-top: 4px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+}
+.gs-metric-accent .gs-n { color: var(--accent-bright); font-size: 26px; }
+.gs-metric { transition: all 0.3s ease-out; }
+.gs-metric.changed {
+  transform: scale(1.05);
+  border-color: var(--good);
+  box-shadow: 0 0 16px rgba(132, 212, 136, 0.3);
+}
 .gs-lbl { font-size: 10px; color: var(--muted); margin-top: 4px; line-height: 1.2; }
 
 /* Progression Path bar */
@@ -2017,6 +2068,70 @@ body.mode-field .player-only { display: none !important; }
   color: var(--muted);
 }
 .ps-contrib-pill strong { color: var(--accent); margin-right: 3px; }
+
+/* Retreat Interest card (Loop 15) */
+.retreat-card {
+  background: linear-gradient(135deg, rgba(40,80,60,0.18) 0%, rgba(60,40,80,0.14) 100%);
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  padding: 20px 22px;
+  margin: 18px 0 16px;
+  position: relative;
+}
+.retreat-header { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
+.retreat-icon { font-size: 32px; line-height: 1; }
+.retreat-title-block { flex: 1; min-width: 0; }
+.retreat-label { font-size: 10px; color: var(--accent); letter-spacing: 1.4px; font-weight: 700; }
+.retreat-title { font-size: 18px; font-weight: 700; color: var(--text); margin-top: 2px; }
+.retreat-counter { text-align: right; }
+.retreat-counter-n { font-size: 28px; font-weight: 800; color: var(--accent); line-height: 1; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+.retreat-counter-lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 2px; }
+.retreat-blurb { color: var(--muted); font-size: 13px; line-height: 1.6; margin: 8px 0 14px; }
+.retreat-form { display: flex; flex-direction: column; gap: 10px; }
+.retreat-field { display: flex; flex-direction: column; gap: 4px; position: relative; }
+.retreat-field > span { font-size: 11px; color: var(--accent); letter-spacing: 0.6px; text-transform: uppercase; font-weight: 600; }
+.retreat-field input,
+.retreat-field textarea {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  resize: vertical;
+}
+.retreat-field input:focus,
+.retreat-field textarea:focus { border-color: var(--accent); outline: none; }
+.retreat-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+.retreat-checkbox { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); cursor: pointer; }
+.retreat-submit {
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 6px;
+  padding: 10px 18px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 13px;
+}
+.retreat-submit:hover { filter: brightness(1.1); }
+.retreat-submit:disabled { opacity: 0.6; cursor: progress; }
+.retreat-msg {
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+.retreat-msg.ok { background: rgba(132,212,136,0.14); border: 1px solid rgba(132,212,136,0.5); color: var(--text); }
+.retreat-msg.err { background: rgba(212,90,90,0.14); border: 1px solid rgba(212,90,90,0.5); color: var(--text); }
 
 /* Inviter banner — when arriving via someone's invite link */
 .inviter-banner {
@@ -2846,19 +2961,97 @@ setInterval(refreshRelTimes, 30000);
   svg.innerHTML = stars;
 })();
 
+// --- Identity prompt — Champions who haven't logged in yet -------------
+(function initIdentity() {
+  const promptEl = document.getElementById('identityPrompt');
+  if (!promptEl) return;
+  let saved = '';
+  try { saved = localStorage.getItem('fpai-cockpit-name') || ''; } catch (e) {}
+  if (saved) {
+    promptEl.style.display = 'none';
+    return;
+  }
+  const submit = async () => {
+    const name = (document.getElementById('ipName')?.value || '').trim();
+    const errEl = document.getElementById('ipError');
+    if (!name) { return; }
+    try {
+      const res = await fetch('/api/champion/lookup?name=' + encodeURIComponent(name), { cache: 'no-store' });
+      const d = await res.json();
+      if (!d.champion) {
+        if (errEl) {
+          errEl.textContent = 'No Champion found by that name. Sign below to become one — or check the spelling.';
+          errEl.style.display = '';
+        }
+        return;
+      }
+      try { localStorage.setItem('fpai-cockpit-name', name); } catch (e) {}
+      promptEl.style.display = 'none';
+      if (typeof loadPlayerState === 'function') loadPlayerState();
+    } catch (e) {
+      if (errEl) {
+        errEl.textContent = 'Could not reach the substrate. Try again.';
+        errEl.style.display = '';
+      }
+    }
+  };
+  document.getElementById('ipSubmit')?.addEventListener('click', submit);
+  document.getElementById('ipName')?.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
+})();
+
+// --- Animated number count-up ------------------------------------------
+function animateNumber(el, from, to, duration = 800) {
+  if (!el) return;
+  const fromN = Number(from) || 0;
+  const toN = Number(to) || 0;
+  if (fromN === toN) { el.textContent = to; return; }
+  const start = performance.now();
+  const tick = (now) => {
+    const elapsed = Math.min(1, (now - start) / duration);
+    // ease-out cubic
+    const eased = 1 - Math.pow(1 - elapsed, 3);
+    const v = Math.round(fromN + (toN - fromN) * eased);
+    el.textContent = String(to).startsWith('+') ? '+' + v : v;
+    if (elapsed < 1) requestAnimationFrame(tick);
+    else el.textContent = to;
+  };
+  requestAnimationFrame(tick);
+}
+
 // --- Game State (aggregate field metrics) -------------------------------
+let _gsLast = {};
 async function loadGameState() {
   try {
     const res = await fetch('/api/champion/stats', { cache: 'no-store' });
     if (!res.ok) return;
     const d = await res.json();
-    const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-    setText('gsChampions', d.champions?.total ?? 0);
-    setText('gsCards', d.cards?.total ?? 0);
-    setText('gsProofs', d.proofs?.total ?? 0);
-    setText('gsAffiliates', d.affiliate_links ?? 0);
-    setText('gsScore', d.field_score_sum ?? 0);
-    setText('gsGrowth', '+' + (d.growth_this_week?.total ?? 0));
+    const animate = (id, newVal) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const oldVal = _gsLast[id] !== undefined ? _gsLast[id] : 0;
+      animateNumber(el, oldVal, newVal);
+      // Pulse the parent metric card if value changed
+      if (oldVal !== newVal && _gsLast[id] !== undefined) {
+        const card = el.closest('.gs-metric');
+        if (card) {
+          card.classList.add('changed');
+          setTimeout(() => card.classList.remove('changed'), 1400);
+        }
+      }
+      _gsLast[id] = newVal;
+    };
+    animate('gsChampions', d.champions?.total ?? 0);
+    animate('gsCards', d.cards?.total ?? 0);
+    animate('gsProofs', d.proofs?.total ?? 0);
+    animate('gsAffiliates', d.affiliate_links ?? 0);
+    animate('gsScore', d.field_score_sum ?? 0);
+    const growth = d.growth_this_week?.total ?? 0;
+    const gEl = document.getElementById('gsGrowth');
+    if (gEl) {
+      const oldG = Number(String(_gsLast.gsGrowth || '0').replace('+', '')) || 0;
+      animateNumber(gEl, oldG, '+' + growth);
+      _gsLast.gsGrowth = growth;
+    }
     // Tagline auto-adapts to field state
     const tagline = document.getElementById('gsTagline');
     if (tagline) {
@@ -4459,6 +4652,19 @@ def render_html() -> str:
     <span id="inviterText">You arrived through someone's invitation.</span>
   </div>
 
+  <div class="identity-prompt" id="identityPrompt">
+    <div class="ip-icon">🎮</div>
+    <div class="ip-content">
+      <div class="ip-label">ALREADY A COHERENT CHAMPION?</div>
+      <div class="ip-text">Tell us who you are to see your Player State, progression, and unique invite link.</div>
+      <div class="ip-row">
+        <input type="text" id="ipName" placeholder="Your name (must match the Champions Roll)" />
+        <button id="ipSubmit" class="player-cta-secondary">Look me up →</button>
+      </div>
+      <div class="ip-error" id="ipError" style="display:none;"></div>
+    </div>
+  </div>
+
   <div class="player-state" id="playerStateCard" style="display:none;">
     <div class="ps-header">
       <div class="ps-icon">🎮</div>
@@ -4505,6 +4711,47 @@ def render_html() -> str:
     <div class="ps-contrib" id="psContrib" style="display:none;">
       <div class="ps-contrib-label">YOUR CONTRIBUTIONS</div>
       <div class="ps-contrib-row" id="psContribRow"></div>
+    </div>
+  </div>
+
+  <div class="retreat-card" id="retreatCard" style="display:none;">
+    <div class="retreat-header">
+      <div class="retreat-icon">🌴</div>
+      <div class="retreat-title-block">
+        <div class="retreat-label">FIRST RETREAT — COSTA RICA</div>
+        <div class="retreat-title">Where the Game lands in person.</div>
+      </div>
+      <div class="retreat-counter">
+        <div class="retreat-counter-n" id="retreatCount">—</div>
+        <div class="retreat-counter-lbl">interested</div>
+      </div>
+    </div>
+    <p class="retreat-blurb">
+      The Game has a terminus. Champions who've shown up here — signed, built, witnessed — are the ones the first in-person retreat is built for.
+      No date locked yet. No payment yet. This is the substrate raising its hand.
+    </p>
+    <div class="retreat-form" id="retreatForm">
+      <label class="retreat-field">
+        <span>Preferred dates / window</span>
+        <input type="text" id="rtDates" placeholder="e.g. Jan 2027, Q1 2027, anytime" />
+      </label>
+      <label class="retreat-field">
+        <span>What you'd contribute</span>
+        <textarea id="rtContrib" rows="2" placeholder="A practice, a session, a meal, presence, music…"></textarea>
+      </label>
+      <label class="retreat-field">
+        <span>What would make this retreat irresistible to you?</span>
+        <textarea id="rtWhy" rows="2" placeholder="What you most need, what you most want to find here…"></textarea>
+      </label>
+      <div class="retreat-actions">
+        <label class="retreat-checkbox">
+          <input type="checkbox" id="rtPublic" checked />
+          <span>List me publicly on the interest roll</span>
+        </label>
+        <button class="retreat-submit" id="rtSubmit">🌴 I'm interested →</button>
+      </div>
+      <div class="retreat-msg" id="retreatMsg" style="display:none;"></div>
+      <input type="text" id="rtCompany" name="company" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;" aria-hidden="true" />
     </div>
   </div>
 
