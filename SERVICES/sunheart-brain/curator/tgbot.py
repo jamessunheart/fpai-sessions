@@ -495,6 +495,7 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
             "       /money set &lt;id&gt; &lt;amount&gt; [purpose]    — update an existing cost line\n"
             "       /money set-balance &lt;account&gt; &lt;amt&gt;     — update an account balance\n"
             "       /money trade &lt;sym&gt; &lt;side&gt; &lt;qty&gt; @ &lt;price&gt; [note] — open a trade position\n"
+            "       /money onebpo                                — OneBPO P&L + Cora Nation contribution\n"
             "       /money add cost &lt;id&gt; &lt;name&gt; &lt;amt&gt; &lt;cat&gt; — add new cost\n"
             "       /money add revenue &lt;stream&gt; &lt;amt&gt; [note] — add/update revenue\n"
             "       /money &lt;free text&gt;                       — capture as money note (queued)\n"
@@ -502,6 +503,7 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
             "  /roi       — yesterday's brain ROI ledger (cost vs engagement)\n"
             "  /opportunities — run today's proactive scan now (silent if nothing)\n"
             "  /capabilities [category] — what this system can do (and when it shipped)\n"
+            "  /more      — same as /signals more (expanded view: liquidity, costs, etc.)\n"
             "  /log       — recent AI activity timeline\n"
             "  /pending — list pending queue items with approve buttons\n"
             "  /digest  — today's brain stats\n"
@@ -624,7 +626,9 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
     if cmd == "goals":
         return await _cmd_goals()
     if cmd == "signals":
-        return await _cmd_signals()
+        return await _cmd_signals(rest.strip().lower())
+    if cmd == "more":
+        return await _cmd_signals("more")
     if cmd == "decisions":
         return await _cmd_decisions()
     if cmd == "money":
@@ -1613,13 +1617,14 @@ def _parse_goals(md: str) -> list[dict]:
 
 
 # ───────────────────────────── /signals ──────────────────────────────
-async def _cmd_signals() -> str:
-    """Trading signals + LEADS (retreat / party / coaching / commerce / etc.).
+async def _cmd_signals(arg: str = "") -> str:
+    """Compose live signals: GAME · MONEY · LEADS · TRADING.
 
-    LEADS counts come from live data (fullpotential.com APIs); trading signals
-    require WhaleTrack auth (currently 401 from the bot). v0 surfaces leads
-    with current counts so progress is visible even at 0.
+    arg in {"more","expand","detail","details","verbose"} → expand each
+    section: liquidity breakdown by group + accounts, top costs / revenue,
+    more trade recs, Field Coherence notes. Default = compact view.
     """
+    more = (arg or "").strip().lower() in ("more", "expand", "detail", "details", "verbose")
     import httpx as _httpx
     headers = {"Accept": "application/json"}
 
@@ -1695,11 +1700,37 @@ async def _cmd_signals() -> str:
                 f"+{act.get('new_proofs',0)} proofs · "
                 f"+{act.get('new_mirrors',0)} mirrors · last {last_str}"
             )
+            if more and lp.get("player"):
+                lines.append(
+                    f"     <i>last proof: {tg._esc(lp.get('player','?'))} · "
+                    f"L{tg._esc(str(lp.get('loop_number','?')))} · "
+                    f"{tg._esc((lp.get('ts','') or '')[:16])}</i>"
+                )
+        if more:
+            top_inviter = game_signals.get("top_inviter")
+            if top_inviter:
+                lines.append(f"  ↗ Top inviter: <b>{tg._esc(top_inviter.get('name','?'))}</b> · {top_inviter.get('count',0)} invited")
+            notes = coh.get("notes") or {}
+            if notes:
+                lines.append("  <i>Coherence notes:</i>")
+                for k in ("activity", "witness", "conversion", "drift"):
+                    n = notes.get(k)
+                    if n:
+                        lines.append(f"     · <b>{k}:</b> <i>{tg._esc(str(n)[:160])}</i>")
+            stats = coh.get("stats") or {}
+            if stats:
+                lines.append(
+                    f"  📐 Coherence stats: "
+                    f"{stats.get('proofs_total',0)} proofs total · "
+                    f"{stats.get('proofs_distance_weighted_witnessed',0)} DWW · "
+                    f"{stats.get('proofs_self_or_ai_witnessed',0)} self/AI · "
+                    f"{stats.get('mirrors_paired',0)} mirrors"
+                )
     else:
         lines.append("<b>🎮 GAME · Full Potential</b>")
         lines.append("  ⚪ <i>/api/champion/signals unreachable</i>")
 
-    # MONEY · headline net + biggest leak (Chief of Staff /money)
+    # MONEY · headline net + biggest leak (Chief of Staff /money + ledger.json)
     lines.append("\n<b>💰 MONEY · Chief of Staff</b>")
     if money:
         total_cost = float(money.get("total_cost_monthly_usd") or 0)
@@ -1710,19 +1741,101 @@ async def _cmd_signals() -> str:
             f"  {net_glyph} Net: <b>${net:+,.0f}/mo</b> · "
             f"Revenue ${total_rev:,.0f} · Cost ${total_cost:,.0f}"
         )
-        liquid = money.get("liquid_assets") or {}
-        liquid_total = liquid.get("total_usd") if isinstance(liquid, dict) else None
-        if liquid_total is not None:
-            runway = money.get("runway_months") or money.get("runway")
-            extra = f" · Runway <b>{runway} mo</b>" if runway else ""
-            lines.append(f"  💵 Liquid: <b>${float(liquid_total):,.0f}</b>{extra}")
+
+        # Liquid + runway pulled from ledger.json (chief-of-staff /money endpoint
+        # doesn't surface these yet; bot reads the same ledger directly).
+        ledger_liquid = None
+        try:
+            ledger = _money_load_ledger()
+            ledger_liquid = ledger.get("liquid_assets") if isinstance(ledger, dict) else None
+        except Exception as e:
+            log.warning("/signals ledger read failed: %s", e)
+
+        groups = (ledger_liquid or {}).get("groups") if isinstance(ledger_liquid, dict) else None
+        liquid_total = 0.0
+        if isinstance(groups, list):
+            for g in groups:
+                for a in (g.get("accounts") or []):
+                    bal = a.get("balance_usd")
+                    if bal is not None:
+                        try:
+                            liquid_total += float(bal)
+                        except Exception:
+                            pass
+        runway_months = None
+        if liquid_total > 0 and total_cost > 0 and net <= 0:
+            runway_months = liquid_total / total_cost
+        if liquid_total > 0:
+            runway_str = ""
+            if runway_months is not None:
+                runway_str = f" · Runway <b>{runway_months:.1f} mo</b> <i>(if revenue stops)</i>"
+            elif net > 0:
+                if total_cost > 0:
+                    runway_if_zero = liquid_total / total_cost
+                    runway_str = f" · Runway <b>∞</b> <i>at current take-home (zero-rev: {runway_if_zero:.0f} mo)</i>"
+            lines.append(f"  💵 Liquid: <b>${liquid_total:,.0f}</b>{runway_str}")
+
         leak = money.get("biggest_leak") or {}
         if leak.get("name"):
             lines.append(
                 f"  🔧 Biggest leak: {tg._esc(leak.get('name','?'))} "
                 f"(${float(leak.get('monthly_usd',0)):,.0f}/mo)"
             )
-        lines.append("  <i>/money for full breakdown</i>")
+
+        if more:
+            # Liquid breakdown by group + accounts (the "where is the liquidity" view)
+            if isinstance(groups, list) and groups:
+                lines.append("  <i>Liquid breakdown:</i>")
+                for g in groups:
+                    g_name = g.get("name") or g.get("id") or "?"
+                    accts = g.get("accounts") or []
+                    g_total = sum(float(a.get("balance_usd") or 0) for a in accts)
+                    lines.append(f"    · <b>{tg._esc(g_name)}</b> — <b>${g_total:,.0f}</b>")
+                    for a in sorted(accts, key=lambda x: -float(x.get("balance_usd") or 0))[:6]:
+                        a_name = a.get("name") or a.get("id") or "?"
+                        a_bal = float(a.get("balance_usd") or 0)
+                        a_type = a.get("type") or ""
+                        type_str = f" <i>({tg._esc(a_type)})</i>" if a_type else ""
+                        lines.append(f"       ${a_bal:>9,.0f}  {tg._esc(a_name)}{type_str}")
+                    if len(accts) > 6:
+                        lines.append(f"       <i>…+{len(accts)-6} more accounts</i>")
+            # Top revenue streams
+            rev = money.get("revenue") or []
+            rev_real = [r for r in rev if float(r.get("revenue_usd", 0) or 0) > 0]
+            if rev_real:
+                lines.append("  <i>Top revenue streams:</i>")
+                for r in sorted(rev_real, key=lambda x: -float(x.get("revenue_usd",0) or 0))[:5]:
+                    stream = r.get("stream") or r.get("name") or "?"
+                    mo = float(r.get("revenue_usd", 0) or 0)
+                    lines.append(f"    + ${mo:,.0f}/mo  {tg._esc(stream)}")
+            # Top costs
+            costs = money.get("costs") or []
+            if costs:
+                lines.append("  <i>Top costs:</i>")
+                for c in sorted(costs, key=lambda x: -float(x.get("monthly_usd",0) or 0))[:5]:
+                    nm = tg._esc(c.get("name", "?"))
+                    mo = float(c.get("monthly_usd", 0) or 0)
+                    kill = " 🗑" if c.get("kill_candidate") else ""
+                    lines.append(f"    − ${mo:,.0f}  {nm}{kill}")
+            # Open trades, if any
+            try:
+                trades = (ledger or {}).get("trades") or []
+            except Exception:
+                trades = []
+            open_trades = [t for t in trades if not t.get("closed_at")]
+            if open_trades:
+                lines.append(f"  <i>Open trades: {len(open_trades)}</i>")
+                for t in open_trades[:5]:
+                    sym = tg._esc(str(t.get("symbol") or "?"))
+                    side = tg._esc(str(t.get("side") or ""))
+                    qty = t.get("qty")
+                    px = t.get("price")
+                    lines.append(f"    · {sym} {side} {qty} @ {px}")
+
+        if not more:
+            lines.append("  <i>/more for liquidity breakdown · /money for full ledger</i>")
+        else:
+            lines.append("  <i>/money for live edits and ledger commands</i>")
     else:
         lines.append(f"  ⚪ <i>Chief of Staff at {tg._esc(cos_url)} unreachable</i>")
 
@@ -1753,7 +1866,7 @@ async def _cmd_signals() -> str:
             conf_str = f"{float(a_conf):.0f}%" if a_conf is not None else "?"
             lines.append(f"  {arrow} <b>BTC anchor:</b> {tg._esc(a_dir or '?')} · confidence {conf_str}")
 
-        top = (recs.get("recommendations") or [])[:5]
+        top = (recs.get("recommendations") or [])[: 10 if more else 5]
         if top:
             for r in top:
                 sym = tg._esc(str(r.get("symbol") or "?"))
@@ -1776,7 +1889,8 @@ async def _cmd_signals() -> str:
             lines.append("  ⚪ <i>No recommendations returned right now.</i>")
         lines.append(f"  <i>Source: {tg._esc(wt_base)}/api/recommendations · public read</i>")
 
-    lines.append("\n<i>Tweak which signals matter: edit _cmd_signals in tgbot.py · v1 will read from a SIGNALS_CONFIG file</i>")
+    if not more:
+        lines.append("\n<i>/signals more (or /more) for liquidity breakdown + top costs/revenue + Coherence notes + extra trade recs</i>")
     return "\n".join(lines)
 
 
@@ -1916,6 +2030,8 @@ async def _cmd_money(rest: str = "") -> str:
         return await _money_trade(arg)
     if sub == "trades":
         return await _money_trades_view()
+    if sub in ("onebpo", "business", "pl", "p&l"):
+        return await _money_onebpo_view()
     # Anything else: free-text money note → propose via Curator Queue
     return await _money_note(rest)
 
@@ -2202,6 +2318,18 @@ async def _money_view() -> str:
             lines.append("<i>/money trades for per-position detail</i>")
     except Exception as e:
         log.warning("liquid summary failed: %s", e)
+
+    # OneBPO / Cora Nation contribution highlight
+    try:
+        pl = ledger_raw.get("business_pl")
+        if pl and pl.get("monthly"):
+            latest = pl["monthly"][-1]
+            cora_total = float(pl.get("cora_nation_contribution_total_usd", 0) or 0)
+            cora_latest = float(latest.get("cora_nation_contribution_usd", 0) or 0)
+            lines.append(f"\n<b>🌿 OneBPO mission flow</b> — Cora Nation contribution {tg._esc(latest.get('month','?'))}: ${cora_latest:,.0f} · cumulative: ${cora_total:,.0f}")
+            lines.append("<i>/money onebpo for full P&L</i>")
+    except Exception:
+        pass
 
     lines.append("\n<i>Source: Chief of Staff /money + ledger.json · loopback 127.0.0.1:8107</i>")
     lines.append("<i>Modify: /money set / set-balance / add / trade / liquid · /money &lt;free text&gt;</i>")
