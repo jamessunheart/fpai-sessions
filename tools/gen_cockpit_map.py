@@ -2170,6 +2170,32 @@ body.mode-field .player-only { display: none !important; }
   display: inline-block;
 }
 .ps-tip { font-size: 11px; color: var(--muted); margin: 8px 0 0; line-height: 1.5; }
+.ps-next-moves { margin-top: 16px; }
+.ps-nm-label { font-size: 10px; color: var(--accent); letter-spacing: 1.5px; font-weight: 700; margin-bottom: 8px; }
+.ps-nm-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+@media (max-width: 720px) { .ps-nm-grid { grid-template-columns: 1fr; } }
+.ps-nm-tile {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--text);
+  transition: all 0.2s ease-out;
+  cursor: pointer;
+}
+.ps-nm-tile:hover { border-color: var(--accent); background: var(--surface); transform: translateY(-1px); }
+.ps-nm-tile.disabled { opacity: 0.5; cursor: default; pointer-events: none; }
+.ps-nm-rank { font-family: "Cormorant Garamond", Georgia, serif; font-size: 22px; color: var(--accent); font-weight: 600; line-height: 1; }
+.ps-nm-icon { font-size: 22px; line-height: 1; margin-right: -4px; }
+.ps-nm-body { min-width: 0; }
+.ps-nm-text { color: var(--text-bright); font-size: 13px; font-weight: 600; line-height: 1.3; }
+.ps-nm-reward { color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: 0.3px; margin-top: 3px; }
+.ps-nm-cta { color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: 0.4px; }
 .ps-match-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
 .ps-match-btn {
   background: var(--accent); color: var(--bg); border: none; border-radius: 6px;
@@ -3408,6 +3434,79 @@ async function loadPlayerState() {
         else if (badge.id === 'psFoundMirror') window.open('/game/mirror/', '_self');
       });
     });
+
+    // === Top 3 Next Moves: stage-aware tile grid (Loop 29) ===
+    (async () => {
+      const grid = document.getElementById('psNextMovesGrid');
+      if (!grid) return;
+      const moves = [];
+
+      // Determine Mirror state from roll
+      let mirrorPaired = false;
+      try {
+        const mr = await fetch('/api/champion/mirror/roll', { cache: 'no-store' });
+        if (mr.ok) {
+          const mrd = await mr.json();
+          const myslug = (d.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+          mirrorPaired = (mrd.mirrors || []).some(m =>
+            (m.player_handle || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') === myslug
+          );
+        }
+      } catch (e) {}
+
+      // Stage-aware move generation
+      if (!d.champion) {
+        moves.push({icon: '🌀', text: 'Sign the World Peace Agreement', reward: '+1 pt · → Guest', anchor: '.signature-card-quest', cta: 'Sign'});
+        moves.push({icon: '📖', text: 'Read the Manifesto v1.0', reward: 'understand the frame', anchor: '#manifesto', cta: 'Read'});
+        moves.push({icon: '👀', text: 'See the Champions Roll', reward: 'who else is in', anchor: '#champions', cta: 'View'});
+      } else if (!d.card_present) {
+        moves.push({icon: '🎴', text: 'Build your Character', reward: '+1 pt · → Player', anchor: '.character-card-quest, .build-character-quest', cta: 'Build'});
+        moves.push({icon: '🌱', text: 'File your first Proof', reward: '+2 pts', anchor: '.proof-card-quest, #proof', cta: 'File'});
+        moves.push({icon: '🤝', text: 'Share your invite link', reward: '+3 pts per sign', anchor: '#psInviteUrl', cta: 'Copy'});
+      } else if (!mirrorPaired) {
+        moves.push({icon: '🪞', text: 'Pair your Digital Mirror', reward: '→ AI Apprentice', url: '/game/mirror/', cta: 'Open'});
+        moves.push({icon: '🌱', text: 'File a Proof', reward: '+2 pts', anchor: '.proof-card-quest, #proof', cta: 'File'});
+        moves.push({icon: '🤝', text: 'Share your invite link', reward: '+3 pts per sign', anchor: '#psInviteUrl', cta: 'Copy'});
+      } else {
+        moves.push({icon: '🌱', text: 'File another Proof', reward: '+2 pts', anchor: '.proof-card-quest, #proof', cta: 'File'});
+        moves.push({icon: '🤝', text: 'Bring 1 aligned person in', reward: '+3 pts when they sign', anchor: '#psInviteUrl', cta: 'Copy'});
+        moves.push({icon: '👥', text: 'Witness another player\'s proof', reward: 'lifts Field Coherence', anchor: '#proofs', cta: 'View'});
+      }
+
+      grid.innerHTML = moves.slice(0, 3).map((m, i) => {
+        const rank = '#' + (i + 1);
+        const action = m.url ? ('href="' + m.url + '"') : ('data-anchor="' + (m.anchor || '') + '"');
+        const tag = m.url ? 'a' : 'div';
+        return `<${tag} class="ps-nm-tile" ${action}>
+          <div class="ps-nm-rank">${rank}</div>
+          <div class="ps-nm-icon">${m.icon}</div>
+          <div class="ps-nm-body">
+            <div class="ps-nm-text">${m.text.replace(/[<>]/g, '')}</div>
+            <div class="ps-nm-reward">${m.reward.replace(/[<>]/g, '')}</div>
+          </div>
+          <div class="ps-nm-cta">${m.cta}</div>
+        </${tag}>`;
+      }).join('');
+
+      // Anchor scroll behavior
+      grid.querySelectorAll('[data-anchor]').forEach(tile => {
+        tile.addEventListener('click', (ev) => {
+          ev.preventDefault();
+          const sel = tile.dataset.anchor;
+          if (!sel) return;
+          if (sel === '#psInviteUrl') {
+            // Copy invite link
+            const url = document.getElementById('psInviteUrl')?.textContent || '';
+            if (url && navigator.clipboard) navigator.clipboard.writeText(url);
+            const cta = tile.querySelector('.ps-nm-cta');
+            if (cta) { const orig = cta.textContent; cta.textContent = 'Copied ✓'; setTimeout(() => cta.textContent = orig, 1800); }
+            return;
+          }
+          const target = document.querySelector(sel.split(',')[0].trim());
+          if (target) target.scrollIntoView({behavior: 'smooth', block: 'start'});
+        });
+      });
+    })();
     const url = location.origin + location.pathname + '?inviter=' + encodeURIComponent(d.name);
     const inviteEl = document.getElementById('psInviteUrl');
     if (inviteEl) inviteEl.textContent = url;
@@ -5154,7 +5253,11 @@ def render_html() -> str:
       </div>
     </div>
     <p class="ps-tip" id="psTip"></p>
-    <div class="ps-match-row">
+    <div class="ps-next-moves" id="psNextMoves">
+      <div class="ps-nm-label">YOUR TOP 3 NEXT MOVES</div>
+      <div class="ps-nm-grid" id="psNextMovesGrid"></div>
+    </div>
+    <div class="ps-match-row" style="display:none;">
       <button class="ps-match-btn" id="psMatchBtn">🎯 What's my next move?</button>
       <span class="ps-match-hint">(same as <code>/match</code> on @sunheartbrain_bot)</span>
     </div>
