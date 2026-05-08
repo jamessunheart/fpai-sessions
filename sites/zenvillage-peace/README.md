@@ -75,6 +75,7 @@ The domain currently shows the Namecheap parking page. Swap two records and you'
 - 5 field principles ("Peace begins in the field between us")
 - Food / Zen Village / Practical cards
 - Reign Dance Movement collab → links to `instagram.com/reigndancemovement`
+- **The Manifesto** (added 2026-05-07) — Coherent Champions of CHRIST acronym, seven-clause World Peace Agreement, "Sign by email" CTA pointing to `hello@zenvillagecr.com`, current registry state showing the founding Agreement
 - Closing invitation in your voice + RSVP CTAs (WhatsApp + email)
 
 ## Things to set before the page goes "fully live"
@@ -83,5 +84,8 @@ The domain currently shows the Namecheap parking page. Swap two records and you'
 |---|---|
 | **WhatsApp number** | search `wa.me/?text=` in `peace/index.html` and add the number after `wa.me/` |
 | **Contact email** | currently `hello@zenvillagecr.com` — change if needed |
+| **Manifesto signing email** | currently `hello@zenvillagecr.com` (same as RSVP); change if you want a dedicated signing inbox |
 | **OG image** for social previews | drop a `og.png` (1200×630) into `peace/` and uncomment the `og:image` tag (already references `https://zenvillage.live/peace/og.png`) |
 | **Real RSVP form** | swap the two CTAs in `#rsvp` for a Tally / Typeform / Mailchimp embed |
+| **Page metadata** | `<title>` and `og:` tags still describe the May 2–3 weekend only. Update when you want the page's primary identity to be "WPO Manifesto + past weekend retrospective" |
+| **Public roll** | the manifesto section says "public roll coming" — wire this to render `core/INTENT/AGREEMENTS/registry.json` (filtered to `public: true`) when ready |
