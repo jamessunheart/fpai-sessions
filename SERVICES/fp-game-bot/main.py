@@ -138,6 +138,8 @@ A proof-based operating system for human potential. Coherent Champions of CHRIST
   /card — submit your Character Card
   /proof — file a 7-Day Proof Loop
   /stats — your Player State
+  /match — one specific helpful next move (just for you)
+  /game — vital Game stats · 30-day goal status
   /field — live game-state metrics
   /signals — vital signs · Field Coherence · 30d goal · 7d activity
   /credits — wallet balance · send · history · leaderboard
@@ -511,6 +513,94 @@ def _next_action(d: dict) -> str:
     if d.get("affiliates_count", 0) == 0:
         return "Type /invite to get your invite link — bring others into the field."
     return "You're moving. File the next proof, witness another player, ascend the path."
+
+
+async def cmd_match(client, chat_id: int, args: str) -> None:
+    """One specific helpful next move for the named Champion (defaults to saved name)."""
+    name = (args or "").strip() or _saved_name(chat_id)
+    try:
+        params = {"name": name} if name else {}
+        d = await api_get(client, "/match", params)
+    except Exception as e:
+        await tg_send(client, chat_id, f"⚠️ Match failed: {esc(e)}")
+        return
+    if not d.get("ok"):
+        await tg_send(client, chat_id,
+            f"Could not match: <i>{esc(d.get('error') or 'unknown error')}</i>")
+        return
+    icon = d.get("icon", "🎯")
+    move = d.get("move", "Keep playing.")
+    action = d.get("action", "")
+    url = d.get("url", "")
+    label = f"<b>Match for {esc(name)}</b>" if name else "<b>Match (anonymous)</b>"
+    parts = [f"{icon} {label}", "", esc(move)]
+    if url:
+        parts.append(f"\n<a href=\"{esc(url)}\">→ Take this move</a>")
+    if action:
+        parts.append(f"<i>action: {esc(action)}</i>")
+    await tg_send(client, chat_id, "\n".join(parts))
+
+
+async def cmd_game(client, chat_id: int, args: str) -> None:
+    """Vital Game stats for the architect — composed from existing endpoints."""
+    async def _fetch(path: str, params: dict | None = None) -> dict | None:
+        try:
+            return await api_get(client, path, params or {})
+        except Exception as e:
+            log.warning("/game fetch %s failed: %s", path, e)
+            return None
+
+    stats, retreats, board = await asyncio.gather(
+        _fetch("/stats"),
+        _fetch("/retreat/stats"),
+        _fetch("/leaderboard"),
+    )
+
+    if not stats:
+        await tg_send(client, chat_id,
+            f"🎮 <b>Game Stats</b>\n\n<i>Could not reach {esc(API_BASE)}.</i>")
+        return
+
+    champs_total = (stats.get("champions") or {}).get("total", 0)
+    champs_public = (stats.get("champions") or {}).get("public", 0)
+    cards_total = (stats.get("cards") or {}).get("total", 0)
+    proofs_total = (stats.get("proofs") or {}).get("total", 0)
+    proofs_public = (stats.get("proofs") or {}).get("public", 0)
+    affiliate_links = stats.get("affiliate_links", 0)
+    field_score = stats.get("field_score_sum", 0)
+    growth = stats.get("growth_this_week") or {}
+    growth_total = growth.get("total", 0) or sum(int(growth.get(k, 0) or 0) for k in ("signatures", "proofs", "cards"))
+    retreat_total = (retreats or {}).get("total", 0) if retreats else 0
+    retreat_public = (retreats or {}).get("public", 0) if retreats else 0
+    top_loops = ((board or {}).get("top_loops") or [])[:3]
+
+    goal_hit = champs_total >= 2
+    goal_line = (
+        "✓ Goal hit — Game is no longer N=1." if goal_hit
+        else f"✗ Champions: {champs_total} (need ≥2 for first non-James human)"
+    )
+
+    lines = [
+        "🎮 <b>Game · Vital Stats</b>",
+        f"\n🎯 <b>30-day goal:</b> {goal_line}",
+        "",
+        f"🌀 Champions: <b>{champs_total}</b> ({champs_public} public)",
+        f"🎴 Characters built: <b>{cards_total}</b>",
+        f"🌱 Proofs filed: <b>{proofs_total}</b> ({proofs_public} public)",
+        f"🤝 Affiliate links generated: <b>{affiliate_links}</b>",
+        f"📊 Field Score sum: <b>{field_score}</b>",
+        f"🌴 Retreat interest: <b>{retreat_total}</b> ({retreat_public} public)",
+        f"📈 Growth this week: <b>+{growth_total}</b>",
+    ]
+    if top_loops:
+        lines.append("\n<b>Latest loops</b>")
+        for L in top_loops:
+            n = L.get("loop_number") or "?"
+            player = esc(L.get("player") or "?")
+            quest = esc((L.get("quest") or "")[:80])
+            lines.append(f"  L{n} · {player} — {quest}")
+    lines.append(f"\n<i>Source: {esc(API_BASE)} · Web: <a href=\"{GAME_URL}\">fullpotential.com/game</a></i>")
+    await tg_send(client, chat_id, "\n".join(lines))
 
 
 async def cmd_invite(client, chat_id: int, args: str) -> None:
@@ -1095,6 +1185,8 @@ COMMAND_HANDLERS = {
     "credits": cmd_credits,
     "store": cmd_store,
     "stats": cmd_stats,
+    "match": cmd_match,
+    "game": cmd_game,
     "invite": cmd_invite,
     "whoami": cmd_whoami,
     "sign": cmd_sign,
