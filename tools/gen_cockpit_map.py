@@ -512,6 +512,7 @@ CSS = """
   --bad: #f87171;
 }
 * { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
@@ -519,6 +520,147 @@ body {
   color: var(--text);
   line-height: 1.5;
   font-size: 14px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Scroll progress bar */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0;
+  background: linear-gradient(90deg, var(--accent), var(--good));
+  z-index: 1000;
+  transition: width 0.1s ease-out;
+  box-shadow: 0 0 8px rgba(247, 185, 85, 0.5);
+}
+
+/* Starfield background */
+.starfield {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.5;
+}
+.star {
+  fill: var(--accent);
+  animation: twinkle 4s ease-in-out infinite;
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.5; }
+}
+
+/* Universal hover lift on cards */
+.card,
+.queue,
+.onboarding-card,
+.sign-card,
+.champions-card,
+.invite-card,
+.scoreboard,
+.player-scoreboard,
+.metrics-glossary,
+.steward-queue,
+.funnel-card,
+.founder-profile,
+.player-hero,
+.field-hero,
+.next-move,
+.treasury-card,
+.framing,
+.eco-layer,
+.metric-card,
+.glossary-item,
+.wpap-mod,
+.wpap-phase,
+.proof-loop-card,
+.steward-item,
+.champion-row,
+.inline-doc,
+.agreement {
+  transition: transform 0.18s ease-out, box-shadow 0.18s ease-out, border-color 0.18s ease-out;
+}
+.card:hover,
+.queue:hover,
+.onboarding-card:hover,
+.sign-card:hover,
+.champions-card:hover,
+.invite-card:hover,
+.scoreboard:hover,
+.player-scoreboard:hover,
+.metrics-glossary:hover,
+.steward-queue:hover,
+.funnel-card:hover,
+.next-move:hover,
+.treasury-card:hover,
+.framing:hover,
+.metric-card:hover,
+.glossary-item:hover,
+.wpap-mod:hover,
+.wpap-phase:hover,
+.proof-loop-card:hover,
+.steward-item:hover,
+.champion-row:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(247, 185, 85, 0.15);
+}
+
+/* Step completion celebration */
+@keyframes burst {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.15); filter: drop-shadow(0 0 8px var(--good)); }
+  100% { transform: scale(1); }
+}
+.onboard-step.celebrating .step-num {
+  animation: burst 0.6s ease-out;
+  background: var(--good);
+  color: #062013;
+  border-color: var(--good);
+}
+
+/* Champion-row glow when first added */
+@keyframes glowIn {
+  0% { box-shadow: 0 0 0 rgba(74, 222, 128, 0); }
+  50% { box-shadow: 0 0 24px rgba(74, 222, 128, 0.6); }
+  100% { box-shadow: 0 0 0 rgba(74, 222, 128, 0); }
+}
+.champion-row:first-child {
+  animation: glowIn 2.5s ease-out 0.5s;
+}
+
+/* Page entrance fade-up */
+.wrap > * {
+  animation: fadeUp 0.5s ease-out backwards;
+}
+.wrap > *:nth-child(1) { animation-delay: 0s; }
+.wrap > *:nth-child(2) { animation-delay: 0.05s; }
+.wrap > *:nth-child(3) { animation-delay: 0.1s; }
+.wrap > *:nth-child(4) { animation-delay: 0.15s; }
+.wrap > *:nth-child(5) { animation-delay: 0.2s; }
+.wrap > *:nth-child(n+6) { animation-delay: 0.25s; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Greeting badge */
+.greeting {
+  display: inline-block;
+  background: rgba(247, 185, 85, 0.12);
+  color: var(--accent);
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  margin-left: 8px;
+  letter-spacing: 0.3px;
+}
+.greeting::before {
+  content: "✨ ";
 }
 .wrap { max-width: 1400px; margin: 0 auto; padding: 24px; }
 h1 { font-size: 24px; margin: 0 0 4px; }
@@ -1654,6 +1796,66 @@ function refreshRelTimes() {
 refreshRelTimes();
 setInterval(refreshRelTimes, 30000);
 
+// --- Scroll progress bar -------------------------------------------------
+(function initScrollProgress() {
+  const bar = document.getElementById('scrollProgress');
+  if (!bar) return;
+  function update() {
+    const h = document.documentElement;
+    const total = h.scrollHeight - h.clientHeight;
+    const pct = total > 0 ? (h.scrollTop / total) * 100 : 0;
+    bar.style.width = pct + '%';
+  }
+  document.addEventListener('scroll', update, { passive: true });
+  update();
+})();
+
+// --- Starfield (subtle, slow, atmospheric) -------------------------------
+(function initStarfield() {
+  const svg = document.getElementById('starfield');
+  if (!svg) return;
+  const w = window.innerWidth;
+  const h = Math.max(window.innerHeight, document.documentElement.scrollHeight);
+  svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  svg.setAttribute('width', w);
+  svg.setAttribute('height', h);
+  // Density: ~1 star per 12000px²
+  const count = Math.min(180, Math.floor((w * h) / 12000));
+  let stars = '';
+  for (let i = 0; i < count; i++) {
+    const x = Math.random() * w;
+    const y = Math.random() * h;
+    const r = Math.random() * 1.4 + 0.3;
+    const delay = Math.random() * 4;
+    stars += `<circle class="star" cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${r.toFixed(1)}" style="animation-delay:${delay.toFixed(1)}s" />`;
+  }
+  svg.innerHTML = stars;
+})();
+
+// --- Personalized greeting ----------------------------------------------
+(function initGreeting() {
+  const el = document.getElementById('greeting');
+  if (!el) return;
+  let name = '';
+  try {
+    const cs = JSON.parse(localStorage.getItem('fpai-cockpit-cs') || '{}');
+    name = localStorage.getItem('fpai-cockpit-name') || '';
+  } catch (e) {}
+  // Also try to pick up from sign form on input
+  const nameInput = document.getElementById('signName');
+  function setGreeting(n) {
+    if (n && n.trim()) {
+      el.innerHTML = '<span class="greeting">welcome, ' + n.split(' ')[0] + '</span>';
+      try { localStorage.setItem('fpai-cockpit-name', n.trim()); } catch (e) {}
+    }
+  }
+  if (name) setGreeting(name);
+  if (nameInput) {
+    if (name && !nameInput.value) nameInput.value = name;
+    nameInput.addEventListener('input', () => setGreeting(nameInput.value));
+  }
+})();
+
 // --- Onboarding journey + Next Move coach ---------------------------------
 const ONBOARD_KEY = 'fpai-cockpit-onboard';
 const NEXT_MOVES = [
@@ -1700,6 +1902,13 @@ document.querySelectorAll('.onboard-step input[type="checkbox"]').forEach(cb => 
     obState[key] = cb.checked;
     saveOnboard(obState);
     updateNextMove();
+    if (cb.checked) {
+      const step = cb.closest('.onboard-step');
+      if (step) {
+        step.classList.add('celebrating');
+        setTimeout(() => step.classList.remove('celebrating'), 700);
+      }
+    }
   });
 });
 updateNextMove();
@@ -2501,10 +2710,13 @@ def render_html() -> str:
 <style>{CSS}</style>
 </head>
 <body>
+<div class="scroll-progress" id="scrollProgress"></div>
+<svg class="starfield" id="starfield" preserveAspectRatio="xMidYMid slice"></svg>
+
 <div class="wrap">
   <div class="header-row">
     <div>
-      <h1>FPAI Cockpit &mdash; Big Picture</h1>
+      <h1>FPAI Cockpit &mdash; Big Picture<span id="greeting"></span></h1>
       <div class="header-sub" id="modeSubtitle">The operating dashboard for the World Peace Organization &amp; Full Potential Game.</div>
     </div>
     <div class="mode-toggle" role="tablist" aria-label="View mode">
