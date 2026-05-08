@@ -815,6 +815,62 @@ details.eco-layer[open] {
   font-weight: 600;
 }
 .wpap-phase-current .wpap-phase-status { color: var(--good); }
+
+/* Treasury & Game */
+.treasury-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 8px 0 16px;
+}
+@media (max-width: 900px) { .treasury-row { grid-template-columns: 1fr; } }
+.treasury-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 16px;
+}
+.t-icon { font-size: 28px; line-height: 1; margin-bottom: 8px; }
+.t-title { font-weight: 700; font-size: 16px; color: var(--text); }
+.t-version { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+.t-tag { font-style: italic; color: var(--accent); margin: 12px 0; font-size: 13px; }
+.t-points { padding-left: 20px; margin: 8px 0 0; font-size: 12px; line-height: 1.6; }
+.t-points li { margin-bottom: 4px; }
+.t-points strong { color: var(--text); }
+
+.proof-loop-card {
+  background: linear-gradient(135deg, rgba(74,222,128,0.08), rgba(247,185,85,0.04));
+  border: 1px solid var(--good);
+  border-radius: 8px;
+  padding: 18px 20px;
+  margin: 8px 0 16px;
+}
+.proof-loop-header { display: flex; align-items: center; gap: 14px; margin-bottom: 8px; }
+.proof-loop-header .t-icon { font-size: 32px; margin-bottom: 0; }
+.proof-7day {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 6px;
+  margin-top: 8px;
+}
+.proof-day {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.proof-day-num {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 10px;
+  color: var(--accent);
+  font-weight: 700;
+  text-transform: uppercase;
+}
 """
 
 
@@ -1714,6 +1770,71 @@ def render_html() -> str:
         <div class="wpap-phase-status">Long arc</div>
       </div>
     </div>
+    <h3 style="margin-top:24px;">Treasury &amp; Game &mdash; how the economy starts growing</h3>
+    <div class="treasury-row">
+      <div class="treasury-card">
+        <div class="t-icon">🏦</div>
+        <div class="t-title">Remarkably Coherent Treasury</div>
+        <div class="t-version">v0.10 · architectural spec</div>
+        <p class="t-tag">"Make it easier to live in truth than to live out of alignment."</p>
+        <ul class="t-points">
+          <li><strong>Wedge equation:</strong> Total System Power = Money × Velocity × Coherence</li>
+          <li><strong>Two-Economy Model:</strong> dollar economy + parallel Coherent Credit network</li>
+          <li><strong>Three-Layer:</strong> Interface (legal payroll) · Logic (coherence math) · Covenant (religious community)</li>
+          <li><strong>Five-component compensation:</strong> Dignity Base · Contribution Dividend · Circulation Share · Stewardship Vesting · Trust Participation</li>
+        </ul>
+        <p style="margin:12px 0 0;font-size:11px;">
+          <a class='link' href='cursor://file{INTENT_DIR}/REMARKABLY_COHERENT_TREASURY.md'>Open full spec (1076 lines)</a>
+        </p>
+      </div>
+      <div class="treasury-card">
+        <div class="t-icon">🎮</div>
+        <div class="t-title">The Full Potential Game</div>
+        <div class="t-version">v1.3 · player-facing OS</div>
+        <p class="t-tag">"Reality is already a game. This is the guide for those who know."</p>
+        <ul class="t-points">
+          <li><strong>Sacred Trinity:</strong> Community · Communication · Currency</li>
+          <li><strong>Four Containers:</strong> Zen Village · Coherence · Full Potential AI · CORA Nation</li>
+          <li><strong>Three Currencies:</strong> Proof · Trust · Cash</li>
+          <li><strong>Awareness Ladder:</strong> Noise → Distraction → Attention → Zense → Presence → Coherence → Flow → Stillness</li>
+        </ul>
+        <p style="margin:12px 0 0;font-size:11px;">
+          <a class='link' href='cursor://file{INTENT_DIR}/FULL_POTENTIAL_GAME.md'>Open Game guide</a> &middot;
+          <a class='link' href='cursor://file{INTENT_DIR}/FULL_POTENTIAL_GAME_PLAYER_CARD.md'>Player Card</a>
+        </p>
+      </div>
+    </div>
+
+    <div class="proof-loop-card">
+      <div class="proof-loop-header">
+        <div class="t-icon">🌱</div>
+        <div>
+          <div class="t-title">7-Day First Game &mdash; <span style="color:var(--good);">START HERE</span></div>
+          <div class="t-version">The smallest move that grows the Treasury · AI-assisted</div>
+        </div>
+      </div>
+      <p style="margin:8px 0 12px;color:var(--text);">
+        Every completed loop produces a Proof Log entry, a witnessed transformation, and one tick of Useful Output.
+        The Treasury grows by accumulating verified coherence production — <strong>one loop at a time.</strong>
+      </p>
+      <div class="proof-7day">
+        <div class="proof-day"><span class="proof-day-num">Day 1</span><span>Choose one transformation</span></div>
+        <div class="proof-day"><span class="proof-day-num">Day 2</span><span>Write the offer (one sentence)</span></div>
+        <div class="proof-day"><span class="proof-day-num">Day 3</span><span>Film one real ad</span></div>
+        <div class="proof-day"><span class="proof-day-num">Day 4</span><span>Send to 20 aligned people</span></div>
+        <div class="proof-day"><span class="proof-day-num">Day 5</span><span>Book one</span></div>
+        <div class="proof-day"><span class="proof-day-num">Day 6</span><span>Deliver the experience</span></div>
+        <div class="proof-day"><span class="proof-day-num">Day 7</span><span>Write + log the Proof</span></div>
+      </div>
+      <p style="margin:12px 0 0;font-size:13px;">
+        <a class='link' href='cursor://file{INTENT_DIR}/AGREEMENT_BUILDER_PROMPT.md' style="font-weight:700;">→ Open the AI-Assisted Player Card prompt</a>
+        &nbsp; Paste into Claude (terminal / desktop / web). Claude facilitates the loop and writes your Proof Log entry.
+      </p>
+      <p style="margin:8px 0 0;font-size:11px;color:var(--muted);">
+        Minimum Viable Scoreboard: <span class='christ-pill'>Agreements kept</span><span class='christ-pill'>Outputs shipped</span><span class='christ-pill'>Transformations witnessed</span><span class='christ-pill'>Resources circulated</span><span class='christ-pill'>Clean pauses</span>
+      </p>
+    </div>
+
     <h3 style="margin-top:20px;">Active &amp; pending Agreements</h3>
     {agreements_html}
   </div>

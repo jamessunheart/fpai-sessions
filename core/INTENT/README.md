@@ -14,6 +14,10 @@ The supreme intent of this work, in two layers.
 - **[WORLD_PEACE_AGREEMENTS_PROTOCOL.md](./WORLD_PEACE_AGREEMENTS_PROTOCOL.md)** — **WPAP**, the AI-assisted system for forming, witnessing, translating, and repairing agreements at any scale. Six AI modules (Agreement Builder · Coherence Analyzer · Conflict Translator · Repair Guide · Peace Ledger · Cultural Translator). Operationalizes the Ecosystem's Layer 5 (AI for Peace).
 - **[FORMING_AGREEMENTS.md](./FORMING_AGREEMENTS.md)** — Protocol for instantiating specific Peace Agreements between specific parties (manual flow; WPAP's Agreement Builder is the AI-assisted version).
 - **[AGREEMENTS/](./AGREEMENTS/)** — Specific formed Agreements (one file per instance).
+- **[REMARKABLY_COHERENT_TREASURY.md](./REMARKABLY_COHERENT_TREASURY.md)** — The **economy**. v0.10 architectural spec for the parallel coherence-economy: Coherent Credit, Two-Economy Model, Three-Layer Architecture (Interface / Logic / Covenant), Circulation Equity Formula (Dignity Base + Contribution Dividend + Circulation Share + Stewardship Vesting + Trust Participation), Verification Escrow, governance firewall. Operationalizes the Ecosystem's Layer 8 (Regenerative Economy).
+- **[FULL_POTENTIAL_GAME.md](./FULL_POTENTIAL_GAME.md)** — The **player-facing OS**. v1.3 of the Full Potential Game — a proof-based operating system for human potential. The 7-Day First Game, Three Currencies (Proof / Trust / Cash), Five Agreement Types, Proof Log structure, Awareness Ladder, 6 C's, Sunheart Rule, Quest Tiers, Event Formats. The visible board on which players play.
+- **[FULL_POTENTIAL_GAME_PLAYER_CARD.md](./FULL_POTENTIAL_GAME_PLAYER_CARD.md)** — One-page fillable card for running a 7-Day First Game and logging the Proof.
+- **[AGREEMENT_BUILDER_PROMPT.md](./AGREEMENT_BUILDER_PROMPT.md)** — AI-assisted Player Card prompt. Paste into Claude/Claude Code to run a 7-Day First Game with AI guidance. The first WPAP Phase-2 tool. Produces a Proof Log entry when complete. **This is how the Treasury starts growing — one proof loop at a time.**
 
 **Mission:** Creating paradise on Earth through cooperation.
 
