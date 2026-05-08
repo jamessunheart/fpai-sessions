@@ -1617,14 +1617,35 @@ def _parse_goals(md: str) -> list[dict]:
 
 
 # ───────────────────────────── /signals ──────────────────────────────
+_SIGNALS_CATEGORIES = {"game", "money", "leads", "trading"}
+_SIGNALS_MORE_TOKENS = {"more", "expand", "detail", "details", "verbose", "all", "full"}
+
+
 async def _cmd_signals(arg: str = "") -> str:
     """Compose live signals: GAME · MONEY · LEADS · TRADING.
 
-    arg in {"more","expand","detail","details","verbose"} → expand each
-    section: liquidity breakdown by group + accounts, top costs / revenue,
-    more trade recs, Field Coherence notes. Default = compact view.
+    Modes:
+      ""              — compact (top 3 each, one-line trades)
+      "more"          — everything expanded (liquid breakdown, top costs, etc.)
+      "game"/"money"/"leads"/"trading" — drill into one section in full detail
     """
-    more = (arg or "").strip().lower() in ("more", "expand", "detail", "details", "verbose")
+    a = (arg or "").strip().lower()
+    if a in _SIGNALS_MORE_TOKENS:
+        mode = "more"
+    elif a in _SIGNALS_CATEGORIES:
+        mode = a
+    else:
+        mode = "compact"
+
+    show_game = mode in ("compact", "more", "game")
+    show_money = mode in ("compact", "more", "money")
+    show_leads = mode in ("compact", "more", "leads")
+    show_trading = mode in ("compact", "more", "trading")
+    full_game = mode in ("more", "game")
+    full_money = mode in ("more", "money")
+    full_leads = mode in ("more", "leads")
+    full_trading = mode in ("more", "trading")
+
     import httpx as _httpx
     headers = {"Accept": "application/json"}
 
@@ -1640,258 +1661,304 @@ async def _cmd_signals(arg: str = "") -> str:
 
     base = _os.environ.get("FPAI_BASE_URL", "https://fullpotential.com")
     cos_url = _os.environ.get("CHIEF_OF_STAFF_URL", "http://127.0.0.1:8107")
-    game_signals, retreats, board, listing, money = await asyncio.gather(
-        _fetch_json(f"{base}/api/champion/signals"),
-        _fetch_json(f"{base}/api/champion/retreat/list"),
-        _fetch_json(f"{base}/api/champion/leaderboard"),
-        _fetch_json(f"{base}/api/champion/list"),
-        _fetch_json(f"{cos_url}/money"),
-    )
+    wt_base = _os.environ.get("WHALETRACK_PUBLIC_BASE", "https://fullpotential.ai/dashboards/whaletrack")
 
-    retreat_count = (retreats or {}).get("count", 0)
-    champ_count = (listing or {}).get("count", 0)
-    top_champs = (board or {}).get("top_champions", [])
-    cards_filled = sum(1 for c in top_champs if c.get("card"))
-    affiliates_total = sum(int(c.get("affiliates", 0) or 0) for c in top_champs)
+    fetches = []
+    fetches.append(_fetch_json(f"{base}/api/champion/signals") if show_game or show_leads else _async_none())
+    fetches.append(_fetch_json(f"{base}/api/champion/retreat/list") if show_leads else _async_none())
+    fetches.append(_fetch_json(f"{base}/api/champion/leaderboard") if show_leads else _async_none())
+    fetches.append(_fetch_json(f"{base}/api/champion/list") if show_leads else _async_none())
+    fetches.append(_fetch_json(f"{cos_url}/money") if show_money else _async_none())
+    fetches.append(_fetch_json(f"{wt_base}/api/recommendations") if show_trading else _async_none())
+    game_signals, retreats, board, listing, money, recs = await asyncio.gather(*fetches)
 
-    lines = ["📡 <b>Signals</b>\n"]
+    title = {
+        "compact": "📡 <b>Signals</b>",
+        "more": "📡 <b>Signals — full</b>",
+        "game": "🎮 <b>Signals · Game</b>",
+        "money": "💰 <b>Signals · Money</b>",
+        "leads": "📥 <b>Signals · Leads</b>",
+        "trading": "📈 <b>Signals · Trading</b>",
+    }[mode]
+    lines = [title, ""]
 
-    # GAME · Field Coherence + 30d goal + Field State + 7d activity
-    if game_signals:
-        goal = game_signals.get("goal_30d") or {}
-        coh = game_signals.get("field_coherence") or {}
-        comps = coh.get("components") or {}
-        state = game_signals.get("field_state") or {}
-        act = game_signals.get("activity_7d") or {}
+    if show_game:
+        lines.extend(_render_game(game_signals, full=full_game))
+    if show_money:
+        if show_game:
+            lines.append("")
+        lines.extend(_render_money(money, full=full_money))
+    if show_leads:
+        if show_game or show_money:
+            lines.append("")
+        retreat_count = (retreats or {}).get("count", 0)
+        champ_count = (listing or {}).get("count", 0)
+        top_champs = (board or {}).get("top_champions", [])
+        cards_filled = sum(1 for c in top_champs if c.get("card"))
+        affiliates_total = sum(int(c.get("affiliates", 0) or 0) for c in top_champs)
+        lines.extend(_render_leads(
+            retreat_count, champ_count, cards_filled, affiliates_total, full=full_leads,
+        ))
+    if show_trading:
+        if show_game or show_money or show_leads:
+            lines.append("")
+        lines.extend(_render_trading(recs, wt_base, full=full_trading))
 
-        lines.append("<b>🎮 GAME · Full Potential</b>")
-        if goal.get("name"):
-            tgt = goal.get("target")
-            cur = goal.get("current")
-            done = "✓" if goal.get("complete") else f"{cur}/{tgt}"
-            lines.append(f"  🎯 30-day goal: <i>{tg._esc(goal['name'])}</i> · <b>{tg._esc(str(done))}</b>")
+    if mode == "compact":
+        lines.append("")
+        lines.append("<i>/more · /signals game|money|leads|trading</i>")
+    return "\n".join(lines)
 
-        head = coh.get("headline")
-        if head is not None:
-            head_str = f"{float(head):.2f}" if head != 0 else "0.00"
+
+async def _async_none():
+    return None
+
+
+def _render_game(game_signals: dict | None, *, full: bool) -> list[str]:
+    out: list[str] = ["<b>🎮 GAME</b>"]
+    if not game_signals:
+        out.append("  ⚪ <i>/api/champion/signals unreachable</i>")
+        return out
+    goal = game_signals.get("goal_30d") or {}
+    coh = game_signals.get("field_coherence") or {}
+    comps = coh.get("components") or {}
+    state = game_signals.get("field_state") or {}
+    act = game_signals.get("activity_7d") or {}
+
+    if goal.get("name"):
+        cur = goal.get("current")
+        tgt = goal.get("target")
+        done = "✓" if goal.get("complete") else f"{cur}/{tgt}"
+        out.append(f"  🎯 <i>{tg._esc(goal['name'])}</i> · <b>{tg._esc(str(done))}</b>")
+
+    head = coh.get("headline")
+    if head is not None:
+        head_str = f"{float(head):.2f}"
+        if full:
             comp_strs = []
             for k in ("activity", "witness", "conversion", "drift"):
                 v = comps.get(k)
-                if v is None:
-                    comp_strs.append(f"{k} —")
-                else:
-                    comp_strs.append(f"{k} {float(v):.2f}")
-            lines.append(f"  🌡 Field Coherence: <b>{head_str}</b> · " + " · ".join(comp_strs))
+                comp_strs.append(f"{k} {'—' if v is None else f'{float(v):.2f}'}")
+            out.append(f"  🌡 Coherence: <b>{head_str}</b> · " + " · ".join(comp_strs))
+        else:
+            out.append(f"  🌡 Coherence: <b>{head_str}</b>")
 
-        if state:
-            lines.append(
-                f"  📊 Field State: {state.get('champions',0)} champ · "
-                f"{state.get('characters',0)} characters · "
-                f"{state.get('proofs',0)} proofs · "
-                f"{state.get('mirrors',0)} mirrors · "
-                f"{state.get('leads',0)} leads · "
-                f"score {state.get('field_score_sum',0)}"
+    if state:
+        out.append(
+            f"  📊 {state.get('champions',0)} champ · "
+            f"{state.get('proofs',0)} proofs · "
+            f"{state.get('mirrors',0)} mirrors · "
+            f"{state.get('leads',0)} leads · "
+            f"score {state.get('field_score_sum',0)}"
+        )
+    if act:
+        lp = act.get("last_proof") or {}
+        last_str = f"L{lp.get('loop_number')}" if lp.get("loop_number") else "?"
+        out.append(
+            f"  📈 7d: +{act.get('new_champions',0)} champs · "
+            f"+{act.get('new_proofs',0)} proofs · "
+            f"+{act.get('new_mirrors',0)} mirrors · last {last_str}"
+        )
+        if full and lp.get("player"):
+            out.append(
+                f"     <i>last proof: {tg._esc(lp.get('player','?'))} · "
+                f"L{tg._esc(str(lp.get('loop_number','?')))} · "
+                f"{tg._esc((lp.get('ts','') or '')[:16])}</i>"
             )
-        if act:
-            lp = act.get("last_proof") or {}
-            last_str = f"L{lp.get('loop_number')}" if lp.get("loop_number") else "?"
-            lines.append(
-                f"  📈 7-day activity: +{act.get('new_champions',0)} champs · "
-                f"+{act.get('new_proofs',0)} proofs · "
-                f"+{act.get('new_mirrors',0)} mirrors · last {last_str}"
+    if full:
+        top_inviter = game_signals.get("top_inviter")
+        if top_inviter:
+            out.append(f"  ↗ Top inviter: <b>{tg._esc(top_inviter.get('name','?'))}</b> · {top_inviter.get('count',0)} invited")
+        notes = coh.get("notes") or {}
+        for k in ("activity", "witness", "conversion", "drift"):
+            n = notes.get(k)
+            if n:
+                out.append(f"     <i>{k}:</i> <i>{tg._esc(str(n)[:160])}</i>")
+        stats = coh.get("stats") or {}
+        if stats:
+            out.append(
+                f"  📐 stats: {stats.get('proofs_total',0)} proofs · "
+                f"{stats.get('proofs_distance_weighted_witnessed',0)} DWW · "
+                f"{stats.get('proofs_self_or_ai_witnessed',0)} self/AI · "
+                f"{stats.get('mirrors_paired',0)} mirrors"
             )
-            if more and lp.get("player"):
-                lines.append(
-                    f"     <i>last proof: {tg._esc(lp.get('player','?'))} · "
-                    f"L{tg._esc(str(lp.get('loop_number','?')))} · "
-                    f"{tg._esc((lp.get('ts','') or '')[:16])}</i>"
-                )
-        if more:
-            top_inviter = game_signals.get("top_inviter")
-            if top_inviter:
-                lines.append(f"  ↗ Top inviter: <b>{tg._esc(top_inviter.get('name','?'))}</b> · {top_inviter.get('count',0)} invited")
-            notes = coh.get("notes") or {}
-            if notes:
-                lines.append("  <i>Coherence notes:</i>")
-                for k in ("activity", "witness", "conversion", "drift"):
-                    n = notes.get(k)
-                    if n:
-                        lines.append(f"     · <b>{k}:</b> <i>{tg._esc(str(n)[:160])}</i>")
-            stats = coh.get("stats") or {}
-            if stats:
-                lines.append(
-                    f"  📐 Coherence stats: "
-                    f"{stats.get('proofs_total',0)} proofs total · "
-                    f"{stats.get('proofs_distance_weighted_witnessed',0)} DWW · "
-                    f"{stats.get('proofs_self_or_ai_witnessed',0)} self/AI · "
-                    f"{stats.get('mirrors_paired',0)} mirrors"
-                )
-    else:
-        lines.append("<b>🎮 GAME · Full Potential</b>")
-        lines.append("  ⚪ <i>/api/champion/signals unreachable</i>")
+    return out
 
-    # MONEY · headline net + biggest leak (Chief of Staff /money + ledger.json)
-    lines.append("\n<b>💰 MONEY · Chief of Staff</b>")
-    if money:
-        total_cost = float(money.get("total_cost_monthly_usd") or 0)
-        total_rev = float(money.get("total_revenue_monthly_usd") or 0)
-        net = float(money.get("net_monthly_usd") or (total_rev - total_cost))
-        net_glyph = "🟢" if net > 0 else ("🔴" if net < 0 else "⚪")
-        lines.append(
-            f"  {net_glyph} Net: <b>${net:+,.0f}/mo</b> · "
-            f"Revenue ${total_rev:,.0f} · Cost ${total_cost:,.0f}"
+
+def _render_money(money: dict | None, *, full: bool) -> list[str]:
+    out: list[str] = ["<b>💰 MONEY</b>"]
+    if not money:
+        out.append("  ⚪ <i>Chief of Staff unreachable</i>")
+        return out
+    total_cost = float(money.get("total_cost_monthly_usd") or 0)
+    total_rev = float(money.get("total_revenue_monthly_usd") or 0)
+    net = float(money.get("net_monthly_usd") or (total_rev - total_cost))
+    net_glyph = "🟢" if net > 0 else ("🔴" if net < 0 else "⚪")
+    out.append(
+        f"  {net_glyph} Net: <b>${net:+,.0f}/mo</b> · rev ${total_rev:,.0f} · cost ${total_cost:,.0f}"
+    )
+
+    ledger = None
+    try:
+        ledger = _money_load_ledger()
+    except Exception as e:
+        log.warning("/signals ledger read failed: %s", e)
+    ledger_liquid = ledger.get("liquid_assets") if isinstance(ledger, dict) else None
+    groups = (ledger_liquid or {}).get("groups") if isinstance(ledger_liquid, dict) else None
+    liquid_total = 0.0
+    if isinstance(groups, list):
+        for g in groups:
+            for a in g.get("accounts") or []:
+                try:
+                    liquid_total += float(a.get("balance_usd") or 0)
+                except Exception:
+                    pass
+    if liquid_total > 0:
+        if net > 0 and total_cost > 0:
+            zr = liquid_total / total_cost
+            runway_str = f" · runway <b>∞</b> <i>(zero-rev: {zr:.0f} mo)</i>"
+        elif total_cost > 0:
+            runway_str = f" · runway <b>{liquid_total/total_cost:.1f} mo</b>"
+        else:
+            runway_str = ""
+        out.append(f"  💵 Liquid: <b>${liquid_total:,.0f}</b>{runway_str}")
+
+    leak = money.get("biggest_leak") or {}
+    if leak.get("name"):
+        out.append(
+            f"  🔧 Biggest leak: {tg._esc(leak.get('name','?'))} "
+            f"(${float(leak.get('monthly_usd',0)):,.0f}/mo)"
         )
 
-        # Liquid + runway pulled from ledger.json (chief-of-staff /money endpoint
-        # doesn't surface these yet; bot reads the same ledger directly).
-        ledger_liquid = None
-        try:
-            ledger = _money_load_ledger()
-            ledger_liquid = ledger.get("liquid_assets") if isinstance(ledger, dict) else None
-        except Exception as e:
-            log.warning("/signals ledger read failed: %s", e)
-
-        groups = (ledger_liquid or {}).get("groups") if isinstance(ledger_liquid, dict) else None
-        liquid_total = 0.0
-        if isinstance(groups, list):
+    if full:
+        if isinstance(groups, list) and groups:
+            out.append("  <i>Liquid breakdown:</i>")
             for g in groups:
-                for a in (g.get("accounts") or []):
-                    bal = a.get("balance_usd")
-                    if bal is not None:
-                        try:
-                            liquid_total += float(bal)
-                        except Exception:
-                            pass
-        runway_months = None
-        if liquid_total > 0 and total_cost > 0 and net <= 0:
-            runway_months = liquid_total / total_cost
-        if liquid_total > 0:
-            runway_str = ""
-            if runway_months is not None:
-                runway_str = f" · Runway <b>{runway_months:.1f} mo</b> <i>(if revenue stops)</i>"
-            elif net > 0:
-                if total_cost > 0:
-                    runway_if_zero = liquid_total / total_cost
-                    runway_str = f" · Runway <b>∞</b> <i>at current take-home (zero-rev: {runway_if_zero:.0f} mo)</i>"
-            lines.append(f"  💵 Liquid: <b>${liquid_total:,.0f}</b>{runway_str}")
+                g_name = g.get("name") or g.get("id") or "?"
+                accts = g.get("accounts") or []
+                g_total = sum(float(a.get("balance_usd") or 0) for a in accts)
+                out.append(f"    · <b>{tg._esc(g_name)}</b> — <b>${g_total:,.0f}</b>")
+                for a in sorted(accts, key=lambda x: -float(x.get("balance_usd") or 0))[:6]:
+                    a_name = a.get("name") or a.get("id") or "?"
+                    a_bal = float(a.get("balance_usd") or 0)
+                    a_type = a.get("type") or ""
+                    type_str = f" <i>({tg._esc(a_type)})</i>" if a_type else ""
+                    out.append(f"       ${a_bal:>9,.0f}  {tg._esc(a_name)}{type_str}")
+                if len(accts) > 6:
+                    out.append(f"       <i>…+{len(accts)-6} more</i>")
+        rev = money.get("revenue") or []
+        rev_real = [r for r in rev if float(r.get("revenue_usd", 0) or 0) > 0]
+        if rev_real:
+            out.append("  <i>Revenue streams:</i>")
+            for r in sorted(rev_real, key=lambda x: -float(x.get("revenue_usd",0) or 0))[:5]:
+                stream = r.get("stream") or r.get("name") or "?"
+                mo = float(r.get("revenue_usd", 0) or 0)
+                out.append(f"    + ${mo:,.0f}/mo  {tg._esc(stream)}")
+        costs = money.get("costs") or []
+        if costs:
+            out.append("  <i>Top costs:</i>")
+            for c in sorted(costs, key=lambda x: -float(x.get("monthly_usd",0) or 0))[:5]:
+                nm = tg._esc(c.get("name", "?"))
+                mo = float(c.get("monthly_usd", 0) or 0)
+                kill = " 🗑" if c.get("kill_candidate") else ""
+                out.append(f"    − ${mo:,.0f}  {nm}{kill}")
+        trades = (ledger or {}).get("trades") or []
+        open_trades = [t for t in trades if not t.get("closed_at")]
+        if open_trades:
+            out.append(f"  <i>Open trades: {len(open_trades)}</i>")
+            for t in open_trades[:5]:
+                out.append(
+                    f"    · {tg._esc(str(t.get('symbol') or '?'))} "
+                    f"{tg._esc(str(t.get('side') or ''))} "
+                    f"{t.get('qty')} @ {t.get('price')}"
+                )
+    return out
 
-        leak = money.get("biggest_leak") or {}
-        if leak.get("name"):
-            lines.append(
-                f"  🔧 Biggest leak: {tg._esc(leak.get('name','?'))} "
-                f"(${float(leak.get('monthly_usd',0)):,.0f}/mo)"
-            )
 
-        if more:
-            # Liquid breakdown by group + accounts (the "where is the liquidity" view)
-            if isinstance(groups, list) and groups:
-                lines.append("  <i>Liquid breakdown:</i>")
-                for g in groups:
-                    g_name = g.get("name") or g.get("id") or "?"
-                    accts = g.get("accounts") or []
-                    g_total = sum(float(a.get("balance_usd") or 0) for a in accts)
-                    lines.append(f"    · <b>{tg._esc(g_name)}</b> — <b>${g_total:,.0f}</b>")
-                    for a in sorted(accts, key=lambda x: -float(x.get("balance_usd") or 0))[:6]:
-                        a_name = a.get("name") or a.get("id") or "?"
-                        a_bal = float(a.get("balance_usd") or 0)
-                        a_type = a.get("type") or ""
-                        type_str = f" <i>({tg._esc(a_type)})</i>" if a_type else ""
-                        lines.append(f"       ${a_bal:>9,.0f}  {tg._esc(a_name)}{type_str}")
-                    if len(accts) > 6:
-                        lines.append(f"       <i>…+{len(accts)-6} more accounts</i>")
-            # Top revenue streams
-            rev = money.get("revenue") or []
-            rev_real = [r for r in rev if float(r.get("revenue_usd", 0) or 0) > 0]
-            if rev_real:
-                lines.append("  <i>Top revenue streams:</i>")
-                for r in sorted(rev_real, key=lambda x: -float(x.get("revenue_usd",0) or 0))[:5]:
-                    stream = r.get("stream") or r.get("name") or "?"
-                    mo = float(r.get("revenue_usd", 0) or 0)
-                    lines.append(f"    + ${mo:,.0f}/mo  {tg._esc(stream)}")
-            # Top costs
-            costs = money.get("costs") or []
-            if costs:
-                lines.append("  <i>Top costs:</i>")
-                for c in sorted(costs, key=lambda x: -float(x.get("monthly_usd",0) or 0))[:5]:
-                    nm = tg._esc(c.get("name", "?"))
-                    mo = float(c.get("monthly_usd", 0) or 0)
-                    kill = " 🗑" if c.get("kill_candidate") else ""
-                    lines.append(f"    − ${mo:,.0f}  {nm}{kill}")
-            # Open trades, if any
-            try:
-                trades = (ledger or {}).get("trades") or []
-            except Exception:
-                trades = []
-            open_trades = [t for t in trades if not t.get("closed_at")]
-            if open_trades:
-                lines.append(f"  <i>Open trades: {len(open_trades)}</i>")
-                for t in open_trades[:5]:
-                    sym = tg._esc(str(t.get("symbol") or "?"))
-                    side = tg._esc(str(t.get("side") or ""))
-                    qty = t.get("qty")
-                    px = t.get("price")
-                    lines.append(f"    · {sym} {side} {qty} @ {px}")
-
-        if not more:
-            lines.append("  <i>/more for liquidity breakdown · /money for full ledger</i>")
-        else:
-            lines.append("  <i>/money for live edits and ledger commands</i>")
+def _render_leads(retreat_count: int, champ_count: int, cards_filled: int,
+                  affiliates_total: int, *, full: bool) -> list[str]:
+    out: list[str] = ["<b>📥 LEADS</b>"]
+    if full:
+        out.append(f"  🏝 Retreat leads: <b>{retreat_count}</b>")
+        out.append(f"  🎉 Party leads: <b>0</b> <i>(no endpoint yet)</i>")
+        out.append(f"  🤝 Coaching leads: <b>0</b> <i>(no marketplace yet)</i>")
+        out.append(f"  🛍 Commerce leads: <b>0</b> <i>(no marketplace yet)</i>")
+        out.append(f"  👥 Champions: <b>{champ_count}</b>")
+        out.append(f"  📇 Cards filled: <b>{cards_filled}/{champ_count}</b>")
+        out.append(f"  ↗ Affiliates: <b>{affiliates_total}</b>")
     else:
-        lines.append(f"  ⚪ <i>Chief of Staff at {tg._esc(cos_url)} unreachable</i>")
+        out.append(
+            f"  🏝 {retreat_count} retreat · "
+            f"👥 {champ_count} champion{'s' if champ_count != 1 else ''} · "
+            f"📇 {cards_filled}/{champ_count} cards · "
+            f"↗ {affiliates_total} affiliates"
+        )
+    return out
 
-    # LEADS pipeline (per-channel breakdown the GAME endpoint doesn't surface)
-    lines.append("\n<b>📥 LEADS pipeline</b> <i>(0 today is signal too)</i>")
-    lines.append(f"  🏝 Retreat leads: <b>{retreat_count}</b>")
-    lines.append(f"  🎉 Party leads: <b>0</b> <i>(no party-interest endpoint yet)</i>")
-    lines.append(f"  🤝 Coaching leads: <b>0</b> <i>(no coaching-marketplace yet)</i>")
-    lines.append(f"  🛍 Commerce leads: <b>0</b> <i>(no commerce-marketplace yet)</i>")
-    lines.append(f"  👥 Champion enrollments: <b>{champ_count}</b>")
-    lines.append(f"  📇 Cards filled: <b>{cards_filled}/{champ_count}</b>")
-    lines.append(f"  ↗ Affiliate links earned: <b>{affiliates_total}</b>")
 
-    lines.append("\n<b>📈 TRADING · WhaleTrack</b> <i>(paper)</i>")
-    wt_base = _os.environ.get(
-        "WHALETRACK_PUBLIC_BASE",
-        "https://fullpotential.ai/dashboards/whaletrack",
-    )
-    recs = await _fetch_json(f"{wt_base}/api/recommendations")
+def _render_trading(recs: dict | None, wt_base: str, *, full: bool) -> list[str]:
+    out: list[str] = ["<b>📈 TRADING · WhaleTrack</b> <i>(paper)</i>"]
     if not recs:
-        lines.append(f"  🔴 <i>WhaleTrack reachable check failed at {tg._esc(wt_base)}</i>")
-    else:
-        anchor = recs.get("btc_anchor") or {}
-        a_dir = (anchor.get("direction") or "").upper()
-        a_conf = anchor.get("confidence")
-        if a_dir or a_conf is not None:
-            arrow = "📉" if a_dir == "DOWN" else ("📈" if a_dir == "UP" else "•")
-            conf_str = f"{float(a_conf):.0f}%" if a_conf is not None else "?"
-            lines.append(f"  {arrow} <b>BTC anchor:</b> {tg._esc(a_dir or '?')} · confidence {conf_str}")
+        out.append(f"  🔴 <i>WhaleTrack unreachable at {tg._esc(wt_base)}</i>")
+        return out
 
-        top = (recs.get("recommendations") or [])[: 10 if more else 5]
-        if top:
-            for r in top:
-                sym = tg._esc(str(r.get("symbol") or "?"))
-                sig = r.get("signal") or {}
-                trade = r.get("trade") or {}
-                direction = (sig.get("direction") or "").upper()
-                conf = sig.get("confidence")
-                entry = trade.get("entry_zone") or ""
-                target = trade.get("target") or ""
-                rr = trade.get("risk_reward") or ""
-                glyph = "🟢" if direction == "LONG" else ("🔴" if direction == "SHORT" else "⚪")
-                conf_str = f"{float(conf):.0f}%" if conf is not None else "?"
-                head = f"  {glyph} <b>{sym}</b> · {tg._esc(direction or '?')} · conf {conf_str}"
-                if rr:
-                    head += f" · R:R {tg._esc(rr)}"
-                lines.append(head)
-                if entry or target:
-                    lines.append(f"     entry {tg._esc(entry)} → target {tg._esc(target)}")
-        else:
-            lines.append("  ⚪ <i>No recommendations returned right now.</i>")
-        lines.append(f"  <i>Source: {tg._esc(wt_base)}/api/recommendations · public read</i>")
+    anchor = recs.get("btc_anchor") or {}
+    a_dir = (anchor.get("direction") or "").upper()
+    a_conf = anchor.get("confidence")
+    a_price = anchor.get("price")
+    if a_dir or a_conf is not None:
+        arrow = "📉" if a_dir == "DOWN" else ("📈" if a_dir == "UP" else "•")
+        conf_str = f"{float(a_conf):.0f}%" if a_conf is not None else "?"
+        price_str = f" · BTC ${float(a_price):,.0f}" if a_price else ""
+        out.append(f"  {arrow} <b>BTC anchor:</b> {tg._esc(a_dir or '?')} · {conf_str}{price_str}")
 
-    if not more:
-        lines.append("\n<i>/signals more (or /more) for liquidity breakdown + top costs/revenue + Coherence notes + extra trade recs</i>")
-    return "\n".join(lines)
+    limit = 10 if full else 3
+    top = (recs.get("recommendations") or [])[:limit]
+    if not top:
+        out.append("  ⚪ <i>No recommendations right now.</i>")
+        return out
+
+    for r in top:
+        sym = tg._esc(str(r.get("symbol") or "?"))
+        sig = r.get("signal") or {}
+        trade = r.get("trade") or {}
+        direction = (sig.get("direction") or "").upper()
+        conf = sig.get("confidence")
+        cp = r.get("current_price")
+        target = trade.get("target") or ""
+        rr = trade.get("risk_reward") or ""
+        glyph = "🟢" if direction == "LONG" else ("🔴" if direction == "SHORT" else "⚪")
+        conf_str = f"{float(conf):.0f}%" if conf is not None else "?"
+        price_str = f" @ ${_fmt_price(cp)}" if cp is not None else ""
+        target_str = f" → target {tg._esc(target)}" if target and target.upper() != "N/A" else ""
+        rr_str = f" <i>(R:R {tg._esc(rr)})</i>" if rr and rr.upper() != "N/A" else ""
+        out.append(f"  {glyph} <b>{sym}</b> {tg._esc(direction or '?')}{price_str} · {conf_str}{target_str}{rr_str}")
+        if full:
+            entry = trade.get("entry_zone") or ""
+            stop = trade.get("stop_loss") or ""
+            extra = []
+            if entry:
+                extra.append(f"entry {tg._esc(entry)}")
+            if stop:
+                extra.append(f"stop {tg._esc(stop)}")
+            if extra:
+                out.append(f"     <i>{' · '.join(extra)}</i>")
+    if full:
+        out.append(f"  <i>Source: {tg._esc(wt_base)}/api/recommendations</i>")
+    return out
+
+
+def _fmt_price(p) -> str:
+    """Format price: thousands separator + appropriate decimals."""
+    try:
+        v = float(p)
+    except Exception:
+        return str(p)
+    if v >= 1000:
+        return f"{v:,.0f}"
+    if v >= 1:
+        return f"{v:,.2f}"
+    return f"{v:,.4f}"
 
 
 # ───────────────────────────── /decisions ──────────────────────────────
