@@ -1,5 +1,7 @@
 # COHERENT CHAMPIONS OF CHRIST
 
+![Coherent Champions of CHRIST — A Declaration for the Age of Intelligence](./assets/coherent-champions-poster.png)
+
 **Manifesto v1.0**
 **Founder:** James Sunheart
 **Adopted:** 2026-05-07

@@ -426,6 +426,49 @@ a.link:hover { text-decoration: underline; }
 /* Mission row */
 .mission-row { display: flex; gap: 24px; flex-wrap: wrap; }
 .mission-block { flex: 1 1 240px; }
+
+.mission-poster-row {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+@media (max-width: 800px) {
+  .mission-poster-row { grid-template-columns: 1fr; }
+}
+.mission-poster {
+  display: block;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  transition: transform 0.15s, box-shadow 0.15s;
+  background: #000;
+}
+.mission-poster:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(247, 185, 85, 0.15);
+  border-color: var(--accent);
+}
+.mission-poster img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.mission-content { min-width: 0; }
+.christ-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.christ-pill {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 11px;
+  color: var(--text);
+}
+.christ-pill strong {
+  color: var(--accent);
+  margin-right: 2px;
+  font-size: 13px;
+}
 """
 
 
@@ -994,25 +1037,39 @@ def render_html() -> str:
 
   <div class="card full" style="margin-bottom:24px;">
     <h2>Mission &amp; Agreements <span style="font-size:12px;font-weight:400;color:var(--muted);">&mdash; Layer 1: why this exists</span></h2>
-    <div class="mission-row">
-      <div class="mission-block">
+    <div class="mission-poster-row">
+      <a class="mission-poster" href="core/INTENT/assets/coherent-champions-poster.png" target="_blank" title="Open full-size poster">
+        <img src="core/INTENT/assets/coherent-champions-poster.png" alt="Coherent Champions of CHRIST manifesto poster" />
+      </a>
+      <div class="mission-content">
         <div class="kpi-label">Founding</div>
-        <p style="margin:4px 0 0;">
+        <p style="margin:4px 0 12px;font-size:16px;">
           <a class='link' href='vscode://file{INTENT_DIR}/COHERENT_CHAMPIONS_MANIFESTO.md'>Coherent Champions of CHRIST</a>
           &mdash; Manifesto v1.0
         </p>
-        <p style="margin:4px 0 0;color:var(--muted);font-size:12px;">
+        <p style="margin:0 0 16px;color:var(--text);font-style:italic;font-size:13px;">
+          "This is not a religion of superiority. It is a practice of becoming trustworthy with power."
+        </p>
+        <div class="christ-row">
+          <span class="christ-pill"><strong>C</strong>oherence</span>
+          <span class="christ-pill"><strong>H</strong>ealing</span>
+          <span class="christ-pill"><strong>R</strong>egeneration</span>
+          <span class="christ-pill"><strong>I</strong>ntelligence</span>
+          <span class="christ-pill"><strong>S</strong>ervice</span>
+          <span class="christ-pill"><strong>T</strong>ruth</span>
+        </div>
+        <p style="margin:12px 0 0;color:var(--muted);font-size:12px;">
           <a class='link' href='vscode://file{INTENT_DIR}/WORLD_PEACE_AGREEMENT.md'>Template</a> &middot;
           <a class='link' href='vscode://file{INTENT_DIR}/FORMING_AGREEMENTS.md'>Forming protocol</a> &middot;
           <a class='link' href='vscode://file{INTENT_DIR}/README.md'>Layer guide</a>
         </p>
-      </div>
-      <div class="mission-block">
-        <div class="kpi-label">Agreements</div>
-        <div class="kpi" style="font-size:24px;">{agreements_active}<span style="font-size:12px;color:var(--muted);"> active / {agreements_count} total</span></div>
+        <p style="margin:12px 0 0;font-size:12px;">
+          <strong style="color:var(--accent);">{agreements_active}</strong> active /
+          <strong>{agreements_count}</strong> total Agreements
+        </p>
       </div>
     </div>
-    <h3 style="margin-top:16px;">Active &amp; pending Agreements</h3>
+    <h3 style="margin-top:20px;">Active &amp; pending Agreements</h3>
     {agreements_html}
   </div>
 
