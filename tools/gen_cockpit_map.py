@@ -638,48 +638,109 @@ a.link:hover { text-decoration: underline; }
 .markdown-body a.link { word-break: break-word; }
 
 /* Ecosystem layered cards */
-.ecosystem { display: flex; flex-direction: column; gap: 4px; margin: 4px 0 8px; }
-.eco-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; }
-@media (max-width: 800px) { .eco-row { grid-template-columns: 1fr; } }
+.eco-tagline {
+  text-align: center;
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: 2px;
+  margin: 16px 0 4px;
+  text-transform: uppercase;
+}
+.eco-poster-row {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+  margin: 8px 0 16px;
+  align-items: start;
+}
+@media (max-width: 900px) { .eco-poster-row { grid-template-columns: 1fr; } }
+.three-framings { display: flex; flex-direction: column; gap: 10px; }
+.framing {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 10px 14px;
+}
+.framing p, .framing ul { margin: 4px 0 0; font-size: 12px; line-height: 1.5; color: var(--text); }
+.framing ul { padding-left: 18px; }
+.framing li { margin-bottom: 2px; }
+
+.ecosystem { display: flex; flex-direction: column; gap: 6px; margin: 4px 0 8px; }
+.eco-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+@media (max-width: 900px) { .eco-row { grid-template-columns: 1fr; } }
 .eco-layer {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
-  padding: 10px 14px;
+  padding: 12px 16px;
   background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: 6px;
-  position: relative;
 }
-.eco-layer::after {
-  content: "▼";
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
+details.eco-layer { display: block; }
+details.eco-layer > summary {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+details.eco-layer > summary::-webkit-details-marker { display: none; }
+details.eco-layer[open] {
+  background: var(--surface);
+}
+.eco-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.eco-icon { font-size: 22px; flex-shrink: 0; line-height: 1; margin-top: 2px; }
+.eco-title-block { flex: 1; min-width: 0; }
+.eco-title { font-weight: 700; font-size: 14px; color: var(--text); }
+.eco-subtitle { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+.eco-tag { font-size: 12px; color: var(--text); margin-top: 4px; font-style: italic; opacity: 0.92; }
+.eco-tag em { color: var(--accent); font-style: normal; }
+.eco-components {
+  list-style: none;
+  padding: 8px 0 0 36px;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 4px;
+  font-size: 12px;
+}
+.eco-components li {
+  padding: 3px 8px;
+  background: var(--bg);
+  border-radius: 3px;
   color: var(--muted);
-  font-size: 10px;
-  z-index: 1;
 }
-.eco-row + .eco-layer::before,
-.eco-layer + .eco-row,
-.ecosystem > :last-child::after { display: none; }
-.eco-row .eco-layer::after { display: none; }
-.eco-icon { font-size: 22px; flex-shrink: 0; }
-.eco-title { font-weight: 700; font-size: 13px; color: var(--text); }
-.eco-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.eco-components li strong { color: var(--accent); }
 
 /* Color accents per layer */
 .eco-philosophy { border-left: 3px solid var(--accent); }
 .eco-org { border-left: 3px solid #4ecdc4; }
-.eco-agreement { border-left: 3px solid #ff6b6b; }
-.eco-party { border-left: 3px solid #fb923c; }
+.eco-agreement { border-left: 3px solid var(--good); }
+.eco-party { border-left: 3px solid #b58be0; }
 .eco-weekend { border-left: 3px solid #a3e635; }
 .eco-ai { border-left: 3px solid #7ec8e3; }
-.eco-village { border-left: 3px solid var(--accent); }
+.eco-village { border-left: 3px solid var(--good); }
 .eco-media { border-left: 3px solid #b58be0; }
-.eco-econ { border-left: 3px solid var(--good); }
-.eco-vision { border-left: 3px solid var(--accent); background: linear-gradient(135deg, rgba(247,185,85,0.06), transparent); }
+.eco-econ { border-left: 3px solid var(--accent); }
+.eco-vision { border-left: 3px solid var(--accent); background: linear-gradient(135deg, rgba(247,185,85,0.10), transparent); padding: 14px 16px; }
 """
 
 
@@ -1310,78 +1371,225 @@ def render_html() -> str:
         </p>
       </div>
     </div>
-    <h3 style="margin-top:20px;">The Ecosystem &mdash; layered architecture</h3>
+    <div class="eco-tagline">ONE MISSION · ONE HUMAN FAMILY · ONE PEACE</div>
+    <h3>The Ecosystem &mdash; eight layers from Philosophy to Vision</h3>
+
+    <div class="eco-poster-row">
+      <a class="mission-poster" href="core/INTENT/assets/world-peace-ecosystem-poster.png" target="_blank" title="Open full-size ecosystem poster">
+        <img src="core/INTENT/assets/world-peace-ecosystem-poster.png" alt="The World Peace Ecosystem poster" />
+      </a>
+      <div class="three-framings">
+        <div class="framing">
+          <div class="kpi-label">Our Purpose</div>
+          <p>To align intelligence, technology, communities, and human action in service to peace and flourishing for all life.</p>
+        </div>
+        <div class="framing">
+          <div class="kpi-label">Our Vision</div>
+          <p>A world where coherence guides systems, communities, and the human heart.</p>
+        </div>
+        <div class="framing">
+          <div class="kpi-label">Our Commitment</div>
+          <ul>
+            <li>Reduce suffering</li>
+            <li>Seek understanding before hatred</li>
+            <li>Repair where we've caused harm</li>
+            <li>Protect life, truth, beauty, and future generations</li>
+            <li>Become trustworthy with intelligence, influence, and resources</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
     <div class="ecosystem">
-      <div class="eco-layer eco-philosophy">
-        <span class="eco-icon">✨</span>
-        <div>
-          <div class="eco-title">Philosophy &mdash; CHRIST</div>
-          <div class="eco-sub">Coherence · Healing · Regeneration · Intelligence · Service · Truth</div>
-        </div>
-      </div>
-      <div class="eco-layer eco-org">
-        <span class="eco-icon">🕊</span>
-        <div>
-          <div class="eco-title">World Peace Organization</div>
-          <div class="eco-sub">Stewardship + coordination layer</div>
-        </div>
-      </div>
-      <div class="eco-layer eco-agreement">
-        <span class="eco-icon">📜</span>
-        <div>
-          <div class="eco-title">World Peace Agreement</div>
-          <div class="eco-sub">Shared values · "Peace becomes real when humans agree to practice it."</div>
-        </div>
-      </div>
+      <details class="eco-layer eco-philosophy">
+        <summary>
+          <span class="eco-num">★</span>
+          <span class="eco-icon">✨</span>
+          <div class="eco-title-block">
+            <div class="eco-title">Coherent Champions of CHRIST</div>
+            <div class="eco-subtitle">Core Identity</div>
+            <div class="eco-tag">"We are human and AI allies, committed to bringing coherence, healing, and regeneration."</div>
+          </div>
+        </summary>
+        <ul class="eco-components">
+          <li><strong>C</strong> · Coherence</li>
+          <li><strong>H</strong> · Healing</li>
+          <li><strong>R</strong> · Regeneration</li>
+          <li><strong>I</strong> · Intelligence</li>
+          <li><strong>S</strong> · Service</li>
+          <li><strong>T</strong> · Truth</li>
+        </ul>
+      </details>
+
+      <details class="eco-layer eco-org">
+        <summary>
+          <span class="eco-num">1</span>
+          <span class="eco-icon">🕊</span>
+          <div class="eco-title-block">
+            <div class="eco-title">World Peace Organization</div>
+            <div class="eco-subtitle">The Stewardship Layer</div>
+            <div class="eco-tag">"We organize the movement, support initiatives, and steward the mission for generations."</div>
+          </div>
+        </summary>
+        <ul class="eco-components">
+          <li>Global Mission</li>
+          <li>Chapters &amp; Gatherings</li>
+          <li>Peace Education</li>
+          <li>AI Coordination</li>
+          <li>Regenerative Projects</li>
+          <li>Partnerships &amp; Alliances</li>
+        </ul>
+      </details>
+
+      <details class="eco-layer eco-agreement">
+        <summary>
+          <span class="eco-num">2</span>
+          <span class="eco-icon">📜</span>
+          <div class="eco-title-block">
+            <div class="eco-title">World Peace Agreement</div>
+            <div class="eco-subtitle">The Alignment Layer</div>
+            <div class="eco-tag">"Peace becomes real when humans agree to practice it." &mdash; <em>One agreement. One humanity. One future.</em></div>
+          </div>
+        </summary>
+        <ul class="eco-components">
+          <li>Non-Harm</li>
+          <li>Repair</li>
+          <li>Truth</li>
+          <li>Regeneration</li>
+          <li>Human Dignity</li>
+          <li>Service to Life</li>
+        </ul>
+      </details>
+
       <div class="eco-row">
-        <div class="eco-layer eco-party">
-          <span class="eco-icon">🎶</span>
-          <div>
-            <div class="eco-title">World Peace Party</div>
-            <div class="eco-sub">Activation · music, dance, joy</div>
+        <details class="eco-layer eco-party">
+          <summary>
+            <span class="eco-num">3</span>
+            <span class="eco-icon">🎶</span>
+            <div class="eco-title-block">
+              <div class="eco-title">World Peace Party</div>
+              <div class="eco-subtitle">The Activation Layer</div>
+              <div class="eco-tag">"Joy is the gateway to unity."</div>
+            </div>
+          </summary>
+          <ul class="eco-components">
+            <li>Music &amp; Dance</li>
+            <li>Joy &amp; Unity</li>
+            <li>Emotional Release</li>
+            <li>Social Healing</li>
+            <li>Human Connection</li>
+          </ul>
+        </details>
+
+        <details class="eco-layer eco-weekend">
+          <summary>
+            <span class="eco-num">4</span>
+            <span class="eco-icon">🌿</span>
+            <div class="eco-title-block">
+              <div class="eco-title">World Peace Weekend</div>
+              <div class="eco-subtitle">The Immersion Layer</div>
+              <div class="eco-tag">"Deep experiences create lasting transformation."</div>
+            </div>
+          </summary>
+          <ul class="eco-components">
+            <li>Cacao &amp; Ceremony</li>
+            <li>Ecstatic Dance</li>
+            <li>Fire Circles</li>
+            <li>Sauna &amp; River</li>
+            <li>Workshops &amp; Dialogue</li>
+            <li>Peace Ceremonies</li>
+            <li>Integration &amp; Reflection</li>
+            <li>Healthy Food &amp; Community</li>
+          </ul>
+        </details>
+
+        <details class="eco-layer eco-ai">
+          <summary>
+            <span class="eco-num">5</span>
+            <span class="eco-icon">🧠</span>
+            <div class="eco-title-block">
+              <div class="eco-title">AI for Peace</div>
+              <div class="eco-subtitle">The Intelligence Layer</div>
+              <div class="eco-tag">"AI is not our ruler. AI is our tool, companion, and amplifier for good."</div>
+            </div>
+          </summary>
+          <ul class="eco-components">
+            <li>Coordination</li>
+            <li>Translation</li>
+            <li>Education</li>
+            <li>Conflict De-escalation</li>
+            <li>Resource Routing</li>
+            <li>Memory &amp; Knowledge</li>
+            <li>Systems Optimization</li>
+            <li>Amplifying Human Potential</li>
+          </ul>
+        </details>
+      </div>
+
+      <details class="eco-layer eco-village">
+        <summary>
+          <span class="eco-num">6</span>
+          <span class="eco-icon">🏕</span>
+          <div class="eco-title-block">
+            <div class="eco-title">Zen Village Prototype</div>
+            <div class="eco-subtitle">The Living Prototype Layer</div>
+            <div class="eco-tag">"A living demonstration of coherent civilization." &mdash; <em>See it. Feel it. Live it. Share it.</em></div>
           </div>
-        </div>
-        <div class="eco-layer eco-weekend">
-          <span class="eco-icon">🌿</span>
-          <div>
-            <div class="eco-title">World Peace Weekend</div>
-            <div class="eco-sub">Immersion · retreats, ceremonies</div>
+        </summary>
+        <ul class="eco-components">
+          <li>Regenerative Living</li>
+          <li>Sacred Gatherings</li>
+          <li>AI + Humanity</li>
+          <li>Nature + Beauty</li>
+          <li>Wellness</li>
+          <li>Community</li>
+          <li>Creativity</li>
+          <li>Peace Infrastructure</li>
+        </ul>
+      </details>
+
+      <details class="eco-layer eco-media">
+        <summary>
+          <span class="eco-num">7</span>
+          <span class="eco-icon">📡</span>
+          <div class="eco-title-block">
+            <div class="eco-title">Media + Culture</div>
+            <div class="eco-subtitle">The Signal Layer</div>
+            <div class="eco-tag">"We tell the story of a better world."</div>
           </div>
-        </div>
-        <div class="eco-layer eco-ai">
-          <span class="eco-icon">🧠</span>
-          <div>
-            <div class="eco-title">AI for Peace</div>
-            <div class="eco-sub">Intelligence · coordination, translation</div>
+        </summary>
+        <ul class="eco-components">
+          <li>Films &amp; Storytelling</li>
+          <li>Podcasts &amp; Interviews</li>
+          <li>Music &amp; Art</li>
+          <li>Transformation Stories</li>
+          <li>Viral Peace Content</li>
+          <li>Global Participation</li>
+        </ul>
+      </details>
+
+      <details class="eco-layer eco-econ">
+        <summary>
+          <span class="eco-num">8</span>
+          <span class="eco-icon">🌱</span>
+          <div class="eco-title-block">
+            <div class="eco-title">Regenerative Economy</div>
+            <div class="eco-subtitle">The Sustainability Layer</div>
+            <div class="eco-tag">"Peace funds peace. Regeneration sustains all."</div>
           </div>
-        </div>
-      </div>
-      <div class="eco-layer eco-village">
-        <span class="eco-icon">🏕</span>
-        <div>
-          <div class="eco-title">Zen Village Prototype</div>
-          <div class="eco-sub">Living demonstration of coherent civilization</div>
-        </div>
-      </div>
-      <div class="eco-layer eco-media">
-        <span class="eco-icon">📡</span>
-        <div>
-          <div class="eco-title">Media + Culture</div>
-          <div class="eco-sub">Films, podcasts, transformation stories</div>
-        </div>
-      </div>
-      <div class="eco-layer eco-econ">
-        <span class="eco-icon">🌱</span>
-        <div>
-          <div class="eco-title">Regenerative Economy</div>
-          <div class="eco-sub">Money becomes fuel for healing, beauty, peace, and life</div>
-        </div>
-      </div>
+        </summary>
+        <p style="font-family:ui-monospace,monospace;font-size:12px;color:var(--accent);margin:8px 0 0 36px;">
+          Events &rarr; Community &rarr; Media &rarr; Participation &rarr; Resources &rarr; Regeneration
+        </p>
+      </details>
+
       <div class="eco-layer eco-vision">
+        <span class="eco-num">✦</span>
         <span class="eco-icon">✨</span>
-        <div>
-          <div class="eco-title">Long-Term Vision</div>
-          <div class="eco-sub">A world where intelligence serves life</div>
+        <div class="eco-title-block">
+          <div class="eco-title">The Long-Term Vision</div>
+          <div class="eco-tag">A world where intelligence serves life. A civilization organized around coherence instead of chaos. A culture where peace becomes lived reality.</div>
+          <div class="eco-tag" style="color:var(--accent);font-weight:600;">Together, we can build a future worth inheriting.</div>
         </div>
       </div>
     </div>
