@@ -246,9 +246,24 @@
     ]
   },
   "last_updated": "2026-05-08",
-  "trades": [],
+  "trades": [
+    {
+      "id": "t-20260508-58fdcc",
+      "symbol": "BTC",
+      "side": "short",
+      "qty": 1.205,
+      "leverage": 3.0,
+      "entry_price": 79650.0,
+      "notional_usd": 95978.25,
+      "margin_usd": 31992.75,
+      "wallet_id": "BTR",
+      "entry_at": "2026-05-08T17:35:22.265533Z",
+      "status": "open",
+      "note": "full $32K margin"
+    }
+  ],
   "business_pl": {
-    "_doc": "Quarterly business P&L from OneBPO Managed Services (operating company). Source: Profit and Loss spreadsheet, manually ingested. Distinct from `revenue_monthly` which tracks James's direct cashflow streams.",
+    "_doc": "OneBPO Managed Services P&L. Source: 'Profit and Loss March 2026.xlsx'.",
     "as_of": "2026-03-31",
     "company": "OneBPO Managed Services",
     "monthly": [
@@ -257,24 +272,45 @@
         "operating_income_usd": 279393.93,
         "operating_profit_usd": 47176.01,
         "net_profit_usd": 3093.99,
-        "cora_nation_contribution_usd": 34876.24
+        "cora_nation_contribution_usd": 34876.24,
+        "implied_available_net_usd": 77502.76,
+        "implied_reserve_usd": 7750.28,
+        "implied_other_half_usd": 34876.24
       },
       {
         "month": "2026-02",
         "operating_income_usd": 258273.01,
         "operating_profit_usd": 32113.96,
         "net_profit_usd": 10859.16,
-        "cora_nation_contribution_usd": 51196.66
+        "cora_nation_contribution_usd": 51196.66,
+        "implied_available_net_usd": 113770.36,
+        "implied_reserve_usd": 11377.04,
+        "implied_other_half_usd": 51196.66
       },
       {
         "month": "2026-03",
         "operating_income_usd": 287130.39,
         "operating_profit_usd": 68631.15,
         "net_profit_usd": 67925.45,
-        "cora_nation_contribution_usd": 48562.59
+        "cora_nation_contribution_usd": 48562.59,
+        "implied_available_net_usd": 107916.87,
+        "implied_reserve_usd": 10791.69,
+        "implied_other_half_usd": 48562.59
       }
     ],
     "cora_nation_contribution_total_usd": 134635.49,
-    "_note": "Cora Nation contribution methodology is per James's spreadsheet \u2014 not a simple % of net profit. Surface as authoritative."
+    "_note": "Cora contribution is computed in James's spreadsheet from 'available net' (not CSV Net Profit/Loss). Implied available net back-derived from contribution / 0.45. The other 45% goes to James-share-or-retained \u2014 see open qb question.",
+    "formula": {
+      "description": "Cora Nation contribution = 50% of available net AFTER 10% reserve",
+      "steps": [
+        "1. available_net = (per James's spreadsheet \u2014 NOT same as CSV Net Profit/Loss; appears to add back certain non-op items like Bonus & Commission)",
+        "2. reserve = 0.10 \u00d7 available_net",
+        "3. distributable = 0.90 \u00d7 available_net",
+        "4. cora_nation_contribution = 0.50 \u00d7 distributable = 0.45 \u00d7 available_net",
+        "5. james_share_or_retained = 0.50 \u00d7 distributable = 0.45 \u00d7 available_net (other half)"
+      ],
+      "ratio_cora_to_available_net": 0.45,
+      "ratio_reserve_to_available_net": 0.1
+    }
   }
 }

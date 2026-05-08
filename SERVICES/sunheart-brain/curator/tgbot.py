@@ -491,7 +491,9 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
             "  /decisions — unified queue of items needing your decision\n"
             "  /money     — costs + revenue + liquid + runway\n"
             "       /money liquid                                — liquid balances by account\n"
-            "       /money trades                                — open trade positions + P/L\n"
+            "       /money trades                                — open trade positions + live P/L\n"
+            "       /money trade close &lt;id&gt; [@ &lt;exit&gt;] [note]   — close a position (uses live mark if no price)\n"
+            "       /money trade delete &lt;id&gt;                     — remove a trade record (typo-correction)\n"
             "       /money set &lt;id&gt; &lt;amount&gt; [purpose]    — update an existing cost line\n"
             "       /money set-balance &lt;account&gt; &lt;amt&gt;     — update an account balance\n"
             "       /money trade &lt;sym&gt; &lt;side&gt; &lt;qty&gt; @ &lt;price&gt; [note] — open a trade position\n"
@@ -2094,6 +2096,12 @@ async def _cmd_money(rest: str = "") -> str:
     if sub == "set-balance":
         return await _money_set_balance(arg)
     if sub == "trade":
+        # Sub-subcommands: close / delete / cancel
+        sub_parts = arg.split(maxsplit=1)
+        if sub_parts and sub_parts[0].lower() in ("close", "exit"):
+            return await _money_trade_close(sub_parts[1] if len(sub_parts) > 1 else "")
+        if sub_parts and sub_parts[0].lower() in ("delete", "remove", "cancel", "del"):
+            return await _money_trade_delete(sub_parts[1] if len(sub_parts) > 1 else "")
         return await _money_trade(arg)
     if sub == "trades":
         return await _money_trades_view()
@@ -2728,6 +2736,128 @@ async def _fetch_live_prices() -> dict[str, float]:
     return out
 
 
+async def _money_trade_close(arg: str) -> str:
+    """Close an open trade. Usage:
+       /money trade close <id> [@ <exit_price>] [note]
+
+    If no exit price supplied, uses the live mark from WhaleTrack.
+    Computes realized P/L = (mark-entry)*qty for long, (entry-mark)*qty for short.
+    Sets status='closed', exit_price, closed_at, realized_pl_usd."""
+    import re as _re
+    arg = (arg or "").strip()
+    if not arg:
+        return ("Usage: <code>/money trade close &lt;id&gt; [@ &lt;exit_price&gt;] [note]</code>\n"
+                "Example: <code>/money trade close t-20260508-58fdcc @ 80000 took profit</code>\n"
+                "If you omit the price, the live WhaleTrack mark is used.")
+
+    m = _re.match(r"^\s*(\S+)(?:\s*@\s*\$?([\d.,]+))?\s*(.*)$", arg)
+    if not m:
+        return "⚠️ Couldn't parse. Use: <code>/money trade close &lt;id&gt; [@ &lt;exit_price&gt;] [note]</code>"
+    trade_id = m.group(1).strip()
+    exit_price_arg = m.group(2)
+    close_note = (m.group(3) or "").strip()
+
+    try:
+        ledger = _money_load_ledger()
+    except Exception as e:
+        return f"⚠️ ledger unreachable: {tg._esc(str(e))}"
+    trades = ledger.get("trades", [])
+    target = next((t for t in trades if t.get("id") == trade_id), None)
+    if target is None:
+        return f"⚠️ No trade with id <code>{tg._esc(trade_id)}</code>. <code>/money trades</code> to list."
+    if target.get("status") == "closed":
+        return f"⚠️ Trade <code>{tg._esc(trade_id)}</code> is already closed."
+
+    sym = (target.get("symbol") or "").upper()
+    entry = float(target.get("entry_price") or 0)
+    qty = float(target.get("qty") or 0)
+    side = target.get("side") or "long"
+
+    if exit_price_arg:
+        try:
+            exit_price = float(exit_price_arg.replace(",", ""))
+        except ValueError:
+            return "⚠️ exit_price must be a number"
+        price_source = "manual"
+    else:
+        prices = await _fetch_live_prices()
+        if sym not in prices:
+            return (f"⚠️ No live mark for {tg._esc(sym)} (not in WhaleTrack feed). "
+                    f"Specify exit price: <code>/money trade close {tg._esc(trade_id)} @ &lt;price&gt;</code>")
+        exit_price = prices[sym]
+        price_source = "live mark from WhaleTrack"
+
+    if side == "long":
+        pnl = (exit_price - entry) * qty
+    else:
+        pnl = (entry - exit_price) * qty
+
+    from datetime import datetime as _dt9
+    target["status"] = "closed"
+    target["exit_price"] = exit_price
+    target["closed_at"] = _dt9.utcnow().isoformat() + "Z"
+    target["realized_pl_usd"] = pnl
+    if close_note:
+        target["close_note"] = close_note
+    ledger["last_updated"] = _dt9.utcnow().strftime("%Y-%m-%d")
+    try:
+        _money_save_ledger(ledger)
+    except Exception as e:
+        return f"⚠️ ledger save failed: {tg._esc(str(e))}"
+    _money_audit("trade_close", {"id": trade_id, "exit_price": exit_price, "realized_pl_usd": pnl, "source": price_source})
+
+    notional = float(target.get("notional_usd") or qty * entry)
+    margin = float(target.get("margin_usd") or notional)
+    pct_notional = (pnl / notional * 100) if notional else 0
+    pct_margin = (pnl / margin * 100) if margin else 0
+    glyph = "🟢" if pnl > 0 else ("🔴" if pnl < 0 else "⚪")
+    sign = "+" if pnl >= 0 else ""
+    return (
+        f"\U0001F4C8 <b>Trade closed:</b> {tg._esc(sym)} {tg._esc(side)} "
+        f"{qty} @ entry ${entry:,.2f} → exit ${exit_price:,.2f}\n"
+        f"  {glyph} Realized P/L <b>{sign}${pnl:,.0f}</b> "
+        f"({sign}{pct_notional:.2f}% notional, {sign}{pct_margin:.2f}% margin)\n"
+        f"  id: <code>{tg._esc(trade_id)}</code> · price: <i>{tg._esc(price_source)}</i>"
+        + (f"\n  <i>{tg._esc(close_note)}</i>" if close_note else "")
+    )
+
+
+async def _money_trade_delete(arg: str) -> str:
+    """Delete a trade entirely (typo correction). Usage:
+       /money trade delete <id>
+
+    Removes the record from the ledger. Audit-logged. Use 'close' instead
+    when you actually exited the position — delete is for fixing mistakes."""
+    trade_id = (arg or "").strip().split()[0] if arg.strip() else ""
+    if not trade_id:
+        return ("Usage: <code>/money trade delete &lt;id&gt;</code>\n"
+                "Use this for typo-correction. To exit a position, use "
+                "<code>/money trade close</code> instead so realized P/L is logged.")
+    try:
+        ledger = _money_load_ledger()
+    except Exception as e:
+        return f"⚠️ ledger unreachable: {tg._esc(str(e))}"
+    trades = ledger.get("trades", [])
+    target = next((t for t in trades if t.get("id") == trade_id), None)
+    if target is None:
+        return f"⚠️ No trade with id <code>{tg._esc(trade_id)}</code>. <code>/money trades</code> to list."
+    ledger["trades"] = [t for t in trades if t.get("id") != trade_id]
+    from datetime import datetime as _dt10
+    ledger["last_updated"] = _dt10.utcnow().strftime("%Y-%m-%d")
+    try:
+        _money_save_ledger(ledger)
+    except Exception as e:
+        return f"⚠️ ledger save failed: {tg._esc(str(e))}"
+    _money_audit("trade_delete", {"id": trade_id, "deleted_record": target})
+    sym = target.get("symbol", "?")
+    side = target.get("side", "?")
+    qty = target.get("qty", "?")
+    return (
+        f"🗑 <b>Trade deleted:</b> {tg._esc(sym)} {tg._esc(side)} {qty} "
+        f"<code>{tg._esc(trade_id)}</code>\n"
+        f"<i>Audit-logged. Original record preserved in money_edits.jsonl.</i>"
+    )
+
 
 # ───────────────────────────── money pings ──────────────────────────────
 # Generic ping helper. Any process (Telegram bot, future Stripe webhook,
@@ -2800,13 +2930,26 @@ async def _money_onebpo_view() -> str:
     lines.append(f"  🌿 <b>Cora Nation contribution: ${total_cora:,.0f}</b>")
     lines.append("")
 
+    formula = pl.get("formula") or {}
+    if formula.get("description"):
+        lines.append(f"<b>Formula:</b> <i>{tg._esc(formula['description'])}</i>")
+        lines.append("")
+
     lines.append("<b>Monthly</b>")
     for m in months:
         rev = float(m.get("operating_income_usd", 0) or 0)
         op = float(m.get("operating_profit_usd", 0) or 0)
         net = float(m.get("net_profit_usd", 0) or 0)
         cora = float(m.get("cora_nation_contribution_usd", 0) or 0)
-        lines.append(f"<b>{tg._esc(m.get('month','?'))}</b>  rev ${rev:,.0f} · op ${op:,.0f} · net ${net:,.0f} · 🌿 cora ${cora:,.0f}")
+        avail = float(m.get("implied_available_net_usd", 0) or 0)
+        reserve = float(m.get("implied_reserve_usd", 0) or 0)
+        other = float(m.get("implied_other_half_usd", 0) or 0)
+        lines.append(f"<b>{tg._esc(m.get('month','?'))}</b>")
+        lines.append(f"   csv: rev ${rev:,.0f} · op ${op:,.0f} · net ${net:,.0f}")
+        if avail > 0:
+            lines.append(f"   <i>implied available net</i> <b>${avail:,.0f}</b>  →  reserve ${reserve:,.0f} (10%) + 🌿 cora ${cora:,.0f} (45%) + other ${other:,.0f} (45%)")
+        else:
+            lines.append(f"   🌿 cora ${cora:,.0f}")
 
     lines.append("")
     note = pl.get("_note") or pl.get("note")
