@@ -66,3 +66,11 @@ if [ -f "$CAP_FILE" ]; then
         && echo "synced CAPABILITIES.md → $BRAIN_HOST:$BRAIN_STATE_DIR/" \
         || echo "warn: CAPABILITIES.md scp failed"
 fi
+
+# Sync INVITE_TEMPLATES.md alongside (read by /invite on @sunheartbrain_bot).
+INVITE_FILE="$(dirname "$NOW_FILE")/INVITE_TEMPLATES.md"
+if [ -f "$INVITE_FILE" ]; then
+    scp -o ConnectTimeout=5 -q "$INVITE_FILE" "$BRAIN_HOST:$BRAIN_STATE_DIR/INVITE_TEMPLATES.md" \
+        && echo "synced INVITE_TEMPLATES.md → $BRAIN_HOST:$BRAIN_STATE_DIR/" \
+        || echo "warn: INVITE_TEMPLATES.md scp failed"
+fi

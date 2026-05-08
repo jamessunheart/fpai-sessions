@@ -44,7 +44,7 @@ The Game is the operational form of the Zen Village vision: a substrate where Ch
 | ≤2 | (rename, scaffold, first signing) | — | 2026-05-07 |
 
 **Field Score formula (live):** 1 (Champion) + 1 (Card) + 2×Proofs + 3×Affiliates.
-**Champion #1** (James Sunheart): 12 proofs · Field Score 25 (verified via `/api/champion/lookup`).
+**Champion #1** (James Sunheart): 19 proofs · Field Score 39 (verified 2026-05-08 via `/api/champion/leaderboard`).
 
 ---
 
