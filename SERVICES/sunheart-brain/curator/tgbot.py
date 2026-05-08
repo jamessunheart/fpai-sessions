@@ -807,38 +807,107 @@ async def _cmd_questions() -> str:
     for q in state.values():
         by_book.setdefault(q.get("book") or "fpai", []).append(q)
 
-    book_order = ["fpai", "game", "sunheart"]
+    # Display order: P1 books first. Game (Champion enrollment / retreat funnel)
+    # outranks fpai (substrate). Sunheart (personal) sits between.
+    book_order = ["game", "sunheart", "fpai"]
     extras = sorted(b for b in by_book.keys() if b not in book_order)
     ordered = [b for b in book_order if b in by_book] + extras
 
+    from datetime import datetime as _dtq, timezone as _tzq
+    now = _dtq.now(_tzq.utc)
+
+    def _is_goal(q: dict) -> bool:
+        text = (q.get("text") or "").strip().upper()
+        return text.startswith("GOAL:") or text.startswith("🎯") or text.startswith("⭐")
+
+    def _rel_age(ts_str: str) -> str:
+        try:
+            ts = _dtq.fromisoformat(ts_str.replace("Z", "+00:00"))
+            secs = (now - ts).total_seconds()
+        except Exception:
+            return ""
+        if secs < 60: return "just now"
+        if secs < 3600: return f"{int(secs//60)}m ago"
+        if secs < 86400: return f"{int(secs//3600)}h ago"
+        if secs < 86400*7: return f"{int(secs//86400)}d ago"
+        if secs < 86400*30: return f"{int(secs//(86400*7))}w ago"
+        return f"{int(secs//(86400*30))}mo ago"
+
+    def _stale(q: dict) -> bool:
+        try:
+            ts = _dtq.fromisoformat(q["updated_at"].replace("Z", "+00:00"))
+            return (now - ts).total_seconds() > 86400 * 7
+        except Exception:
+            return False
+
+    def _show_pulse(q: dict) -> str | None:
+        """Show last pulse only if recent (<24h) AND substantive. Returns rendered line or None."""
+        prog = q.get("progress") or []
+        if not prog:
+            return None
+        last = prog[-1]
+        note = (last.get("note") or "").strip()
+        if not note:
+            return None
+        try:
+            ts = _dtq.fromisoformat(last.get("ts", "").replace("Z", "+00:00"))
+            secs = (now - ts).total_seconds()
+            if secs > 86400:  # older than 24h — drop it
+                return None
+        except Exception:
+            return None
+        # Filter "shipped X" status pulses — they're noise on /questions (use /log for those)
+        low = note.lower()
+        if any(low.startswith(p) for p in ("shipped", "deployed", "committed", "✅", "/", "verified")):
+            return None
+        age = _rel_age(last.get("ts", ""))
+        return f"     ↳ <i>{age}: {tg._esc(_qb_short(note, 180))}</i>"
+
     lines = ["❓ <b>Open inquiries — qb across books</b>\n"]
     any_active = False
+
     for book in ordered:
         qs = by_book[book]
-        active = sorted(
-            [q for q in qs if q["status"] == "active"],
-            key=lambda q: q["updated_at"], reverse=True,
-        )
+        active_all = [q for q in qs if q["status"] == "active"]
         blocked = [q for q in qs if q["status"] == "blocked"]
-        if not active and not blocked:
+        if not active_all and not blocked:
             continue
         any_active = True
+
+        # Sort: goals first, then by most-recently-updated.
+        goals = sorted([q for q in active_all if _is_goal(q)],
+                        key=lambda q: q["updated_at"], reverse=True)
+        non_goals = sorted([q for q in active_all if not _is_goal(q)],
+                            key=lambda q: q["updated_at"], reverse=True)
+        active = goals + non_goals
+
         lines.append(f"\n<b>📖 {tg._esc(book)}</b> <i>({len(active)} active{f', {len(blocked)} blocked' if blocked else ''})</i>")
-        for q in active[:5]:
-            lines.append(f"  ● {tg._esc(_qb_short(q['text'], 110))}")
-            if q.get("progress"):
-                last = q["progress"][-1].get("note", "")
-                if last:
-                    lines.append(f"     ↳ <i>{tg._esc(_qb_short(last, 100))}</i>")
+        for q in active[:6]:
+            icon = "🎯" if _is_goal(q) else "❓"
+            text = q["text"]
+            # Strip "GOAL:" prefix in display since icon carries the meaning
+            if _is_goal(q) and text.upper().startswith("GOAL:"):
+                text = text[5:].strip()
+            stale_tag = " <i>[stale]</i>" if _stale(q) else ""
+            age = _rel_age(q["updated_at"])
+            lines.append(f"  {icon} {tg._esc(_qb_short(text, 200))}{stale_tag}")
+            pulse_line = _show_pulse(q)
+            if pulse_line:
+                lines.append(pulse_line)
+            elif age and not stale_tag:
+                # Show age only if we didn't show a pulse
+                pass  # keep output tight; age shown via pulse line otherwise
+
         for q in blocked[:3]:
-            lines.append(f"  ⊗ {tg._esc(_qb_short(q['text'], 110))}")
+            lines.append(f"  ⊗ {tg._esc(_qb_short(q['text'], 200))}")
             if q.get("block_reason"):
-                lines.append(f"     ⊗ <i>{tg._esc(_qb_short(q['block_reason'], 100))}</i>")
+                lines.append(f"     ⊗ <i>{tg._esc(_qb_short(q['block_reason'], 160))}</i>")
 
     if not any_active:
         lines.append("<i>No open questions across any book. Clean board.</i>")
 
-    lines.append("\n<i>Source: ~/.claude/question-tracker/board.jsonl · use `qb` on laptop to manage</i>")
+    lines.append("\n<i>Legend: 🎯 goal · ❓ question · ⊗ blocked · pulse shown only if &lt;24h and substantive</i>")
+    lines.append("<i>Source: qb-board.jsonl · use `qb` on laptop to manage</i>")
     return "\n".join(lines)
 
 
