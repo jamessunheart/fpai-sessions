@@ -1,7 +1,40 @@
 {
   "schema_version": 1,
-  "count": 2,
+  "count": 3,
   "agreements": [
+    {
+      "agreement_id": "2026-05-08_james-sunheart-personal-signing",
+      "date_formed": "2026-05-08",
+      "parties": [
+        {
+          "name": "James Sunheart",
+          "role": "Founder, Coherent Champion of CHRIST (personal signer)",
+          "party_type": "human"
+        },
+        {
+          "name": "World Peace Organization (Zen Village)",
+          "role": "Receiver of public Agreements",
+          "party_type": "organization"
+        }
+      ],
+      "context": "First personal signing of the World Peace Agreement v1.0 — the founder enters the practice as a participant, not only its author. Signed via fullpotential.com/game form at 04:09 UTC.",
+      "scope_tags": [
+        "public_signer",
+        "founding_signer",
+        "founder_personal",
+        "inaugural_human_signer"
+      ],
+      "status": "active",
+      "public": true,
+      "witness": {
+        "type": "web_form",
+        "reference": "fullpotential.com/game form, 2026-05-08 04:09 UTC"
+      },
+      "canonical_record": "file",
+      "amendments": [],
+      "repairs": [],
+      "filename": "2026-05-08_JAMES_SUNHEART_PERSONAL_SIGNING.md"
+    },
     {
       "agreement_id": "2026-05-07_james-sunheart_and_claude",
       "date_formed": "2026-05-07",

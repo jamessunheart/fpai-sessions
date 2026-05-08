@@ -3,7 +3,7 @@
 Living index of all formed Peace Agreements under the
 Coherent Champions of CHRIST Manifesto v1.0.
 
-**Count:** 2 total · 1 active · 1 other
+**Count:** 3 total · 2 active · 1 other
 **Source:** Front-matter of each `*.md` file in this directory.
 **Regenerate:** `python tools/registry/build_index.py`
 
@@ -12,10 +12,11 @@ Coherent Champions of CHRIST Manifesto v1.0.
 
 ---
 
-## Active Agreements (1)
+## Active Agreements (2)
 
 | Date | Parties | Context | Status | Witness | File |
 |---|---|---|---|---|---|
+| 2026-05-08 | James Sunheart ↔ World Peace Organization (Zen Village) | First personal signing of the World Peace Agreement v1.0 — the founder enters t… | 🟢 Active | web_form: `fullpotential.com/game form, 2026-05-08 04:09 UTC` | [`2026-05-08_JAMES_SUNHEART_PERSONAL_SIGNING.md`](./2026-05-08_JAMES_SUNHEART_PERSONAL_SIGNING.md) |
 | 2026-05-07 | James Sunheart ↔ Claude | First specific Agreement under Manifesto v1.0 — governs founder/AI working rela… | 🟢 Active | git_commit: `d7e3e923` | [`2026-05-07_JAMES_SUNHEART_AND_CLAUDE.md`](./2026-05-07_JAMES_SUNHEART_AND_CLAUDE.md) |
 
 ## Other Agreements (1)

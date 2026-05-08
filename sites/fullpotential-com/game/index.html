@@ -3,7 +3,25 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<title>FPAI Cockpit Map</title>
+<title>Full Potential Game · Coherent Champions of CHRIST</title>
+<meta content="A proof-based operating system for human potential. Sign the World Peace Agreement. Run your first 7-Day Game. We are Coherent Champions of CHRIST." name="description"/>
+<meta content="#f7b955" name="theme-color"/>
+<!-- Open Graph -->
+<meta content="website" property="og:type"/>
+<meta content="Full Potential Game · Coherent Champions of CHRIST" property="og:title"/>
+<meta content="Reality is already a game. This is the guide for those who know. Sign the World Peace Agreement, run your first 7-Day proof loop. AI in service to life." property="og:description"/>
+<meta content="https://fullpotential.com/game/core/INTENT/assets/full-potential-framework-poster.png" property="og:image"/>
+<meta content="The Full Potential Framework — A Peace Coordination Civilization Stack" property="og:image:alt"/>
+<meta content="https://fullpotential.com/game/" property="og:url"/>
+<meta content="Full Potential" property="og:site_name"/>
+<!-- Twitter / X -->
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="Full Potential Game · Coherent Champions of CHRIST" name="twitter:title"/>
+<meta content="Reality is already a game. Sign the World Peace Agreement, run your first 7-Day proof loop. AI in service to life." name="twitter:description"/>
+<meta content="https://fullpotential.com/game/core/INTENT/assets/full-potential-framework-poster.png" name="twitter:image"/>
+<!-- Favicon (uses the manifesto poster scaled by browser) -->
+<link href="core/INTENT/assets/coherent-champions-poster.png" rel="icon" type="image/png"/>
+<link href="core/INTENT/assets/coherent-champions-poster.png" rel="apple-touch-icon"/>
 <style>
 :root {
   --bg: #0e1116;
@@ -23,6 +41,7 @@
   --bad: #f87171;
 }
 * { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
@@ -30,6 +49,255 @@ body {
   color: var(--text);
   line-height: 1.5;
   font-size: 14px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Scroll progress bar */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0;
+  background: linear-gradient(90deg, var(--accent), var(--good));
+  z-index: 1000;
+  transition: width 0.1s ease-out;
+  box-shadow: 0 0 8px rgba(247, 185, 85, 0.5);
+}
+
+/* Starfield background */
+.starfield {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.5;
+}
+.star {
+  fill: var(--accent);
+  animation: twinkle 4s ease-in-out infinite;
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.5; }
+}
+
+/* Universal hover lift on cards */
+.card,
+.queue,
+.onboarding-card,
+.sign-card,
+.champions-card,
+.invite-card,
+.scoreboard,
+.player-scoreboard,
+.metrics-glossary,
+.steward-queue,
+.funnel-card,
+.founder-profile,
+.player-hero,
+.field-hero,
+.next-move,
+.treasury-card,
+.framing,
+.eco-layer,
+.metric-card,
+.glossary-item,
+.wpap-mod,
+.wpap-phase,
+.proof-loop-card,
+.steward-item,
+.champion-row,
+.inline-doc,
+.agreement {
+  transition: transform 0.18s ease-out, box-shadow 0.18s ease-out, border-color 0.18s ease-out;
+}
+.card:hover,
+.queue:hover,
+.onboarding-card:hover,
+.sign-card:hover,
+.champions-card:hover,
+.invite-card:hover,
+.scoreboard:hover,
+.player-scoreboard:hover,
+.metrics-glossary:hover,
+.steward-queue:hover,
+.funnel-card:hover,
+.next-move:hover,
+.treasury-card:hover,
+.framing:hover,
+.metric-card:hover,
+.glossary-item:hover,
+.wpap-mod:hover,
+.wpap-phase:hover,
+.proof-loop-card:hover,
+.steward-item:hover,
+.champion-row:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(247, 185, 85, 0.15);
+}
+
+/* Step completion celebration */
+@keyframes burst {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.15); filter: drop-shadow(0 0 8px var(--good)); }
+  100% { transform: scale(1); }
+}
+.onboard-step.celebrating .step-num {
+  animation: burst 0.6s ease-out;
+  background: var(--good);
+  color: #062013;
+  border-color: var(--good);
+}
+
+/* Champion-row glow when first added */
+@keyframes glowIn {
+  0% { box-shadow: 0 0 0 rgba(74, 222, 128, 0); }
+  50% { box-shadow: 0 0 24px rgba(74, 222, 128, 0.6); }
+  100% { box-shadow: 0 0 0 rgba(74, 222, 128, 0); }
+}
+.champion-row:first-child {
+  animation: glowIn 2.5s ease-out 0.5s;
+}
+
+/* Page entrance fade-up */
+.wrap > * {
+  animation: fadeUp 0.5s ease-out backwards;
+}
+.wrap > *:nth-child(1) { animation-delay: 0s; }
+.wrap > *:nth-child(2) { animation-delay: 0.05s; }
+.wrap > *:nth-child(3) { animation-delay: 0.1s; }
+.wrap > *:nth-child(4) { animation-delay: 0.15s; }
+.wrap > *:nth-child(5) { animation-delay: 0.2s; }
+.wrap > *:nth-child(n+6) { animation-delay: 0.25s; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Welcome modal */
+.welcome-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(14, 17, 22, 0.94);
+  backdrop-filter: blur(8px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 24px;
+  animation: welcomeFade 0.4s ease-out;
+}
+.welcome-modal.show { display: flex; }
+@keyframes welcomeFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.welcome-card {
+  background: linear-gradient(135deg, rgba(247,185,85,0.12), rgba(74,222,128,0.06));
+  border: 1px solid var(--accent);
+  border-radius: 16px;
+  padding: 36px 32px;
+  max-width: 520px;
+  text-align: center;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 60px rgba(247,185,85,0.15);
+  animation: welcomeRise 0.5s ease-out;
+}
+@keyframes welcomeRise {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.welcome-icon { font-size: 48px; margin-bottom: 12px; }
+.welcome-card button { font-family: inherit; cursor: pointer; border: none; }
+
+/* Sticky TOC */
+.toc-nav {
+  position: fixed;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  pointer-events: none;
+}
+.toc-toggle {
+  pointer-events: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--accent);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 16px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.toc-toggle:hover { background: var(--accent); color: #1a0e02; transform: scale(1.05); }
+.toc-list {
+  pointer-events: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 4px;
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 200px;
+  max-height: 70vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+.toc-nav.open .toc-list { display: flex; }
+.toc-link {
+  background: transparent;
+  border: none;
+  text-align: left;
+  color: var(--muted);
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.1s;
+  border-left: 2px solid transparent;
+}
+.toc-link:hover { background: var(--surface-2); color: var(--text); }
+.toc-link.active { color: var(--accent); border-left-color: var(--accent); background: rgba(247,185,85,0.06); }
+
+@media (max-width: 700px) {
+  .toc-nav { right: 8px; }
+  .toc-list { max-width: calc(100vw - 80px); font-size: 11px; }
+  .header-row { flex-direction: column; gap: 12px; }
+  .mode-toggle { width: 100%; }
+  .mode-btn { flex: 1; padding: 8px 6px; font-size: 12px; }
+  .wrap { padding: 12px; }
+  h1 { font-size: 20px; }
+  .player-hero { padding: 20px; }
+  .next-move { flex-direction: column; align-items: stretch; gap: 12px; padding: 12px 16px; }
+  .nm-cta { text-align: center; }
+  .funnel-step { width: 100%; }
+}
+
+/* Greeting badge */
+.greeting {
+  display: inline-block;
+  background: rgba(247, 185, 85, 0.12);
+  color: var(--accent);
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  margin-left: 8px;
+  letter-spacing: 0.3px;
+}
+.greeting::before {
+  content: "✨ ";
 }
 .wrap { max-width: 1400px; margin: 0 auto; padding: 24px; }
 h1 { font-size: 24px; margin: 0 0 4px; }
@@ -1076,10 +1344,36 @@ body.mode-field .player-only { display: none !important; }
 </style>
 </head>
 <body data-default-mode="player">
+<div class="scroll-progress" id="scrollProgress"></div>
+<svg class="starfield" id="starfield" preserveaspectratio="xMidYMid slice"></svg>
+<div class="welcome-modal" id="welcomeModal">
+<div class="welcome-card">
+<div class="welcome-icon">✨</div>
+<h2 style="margin-top:0;color:var(--accent);">Welcome to the Full Potential Game</h2>
+<p style="font-size:14px;color:var(--text);line-height:1.6;">
+      Reality is already a game. This is the guide for those who know.
+    </p>
+<p style="font-size:13px;color:var(--muted);line-height:1.6;">
+      A proof-based operating system for human potential. AI in service to life.
+      Your first move: read the Manifesto, sign the World Peace Agreement, run your first 7-Day proof loop.
+    </p>
+<div style="display:flex;gap:8px;margin-top:20px;justify-content:center;flex-wrap:wrap;">
+<button class="player-cta-primary" id="welcomeStart">🌱 Start the journey</button>
+<button class="player-cta-secondary" id="welcomeDismiss">I've been here before</button>
+</div>
+<p style="font-size:11px;color:var(--muted);margin-top:16px;">
+<em>"This is not a religion of superiority. It is a practice of becoming trustworthy with power."</em>
+</p>
+</div>
+</div>
+<nav aria-label="Sections" class="toc-nav" id="tocNav">
+<button aria-label="Toggle navigation" class="toc-toggle" id="tocToggle">⊞</button>
+<div class="toc-list" id="tocList"></div>
+</nav>
 <div class="wrap">
 <div class="header-row">
 <div>
-<h1>FPAI Cockpit — Big Picture</h1>
+<h1>FPAI Cockpit — Big Picture<span id="greeting"></span></h1>
 <div class="header-sub" id="modeSubtitle">The operating dashboard for the World Peace Organization &amp; Full Potential Game.</div>
 </div>
 <div aria-label="View mode" class="mode-toggle" role="tablist">
@@ -1095,7 +1389,7 @@ body.mode-field .player-only { display: none !important; }
 <div class="nm-label">YOUR NEXT MOVE</div>
 <div class="nm-action" id="nmAction">Read the Manifesto.</div>
 </div>
-<a class="nm-cta" href="cursor://file/Users/jamessunheart/FPAI_Cockpit/core/INTENT/COHERENT_CHAMPIONS_MANIFESTO.md" id="nmCta">Open →</a>
+<a class="nm-cta" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/COHERENT_CHAMPIONS_MANIFESTO.md" id="nmCta">Open →</a>
 </div>
 
 <div class="onboarding-card">
@@ -1109,7 +1403,7 @@ body.mode-field .player-only { display: none !important; }
 <div class="step-num">1</div>
 <div class="step-content">
 <div class="step-title">Read the Manifesto</div>
-<div class="step-desc">5 minutes. The CHRIST principles, the role of AI, the invitation. <a class="link" href="cursor://file/Users/jamessunheart/FPAI_Cockpit/core/INTENT/COHERENT_CHAMPIONS_MANIFESTO.md">Open Manifesto</a></div>
+<div class="step-desc">5 minutes. The CHRIST principles, the role of AI, the invitation. <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/COHERENT_CHAMPIONS_MANIFESTO.md">Open Manifesto</a></div>
 </div>
 </label>
 <label class="onboard-step" data-step="sign">
@@ -1125,7 +1419,7 @@ body.mode-field .player-only { display: none !important; }
 <div class="step-num">3</div>
 <div class="step-content">
 <div class="step-title">Run your 7-Day First Game</div>
-<div class="step-desc">7 days. Choose a transformation, deliver, witness, log. <a class="link" href="cursor://file/Users/jamessunheart/FPAI_Cockpit/core/INTENT/AGREEMENT_BUILDER_PROMPT.md">AI-Assisted Player Card prompt</a></div>
+<div class="step-desc">7 days. Choose a transformation, deliver, witness, log. <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/AGREEMENT_BUILDER_PROMPT.md">AI-Assisted Player Card prompt</a></div>
 </div>
 </label>
 <label class="onboard-step" data-step="witness">
@@ -1182,17 +1476,17 @@ body.mode-field .player-only { display: none !important; }
 <a class="player-cta-secondary" href="#" id="signEmailBtn">✉ Email to founder</a>
 </div>
 <p style="color:var(--muted);font-size:11px;margin:12px 0 0;">
-      Three options to commit: copy to clipboard, download .md, or email to <code>james@fullpotential.com</code>.
+      Three options to commit: copy to clipboard, download .md, or email to <code>james.rick.stinson@gmail.com</code>.
       Once received, your signature is added to <code>core/INTENT/AGREEMENTS/champions/</code> and you appear in the Champions Roll.
     </p>
 </div>
 <div class="champions-card">
-<h2>Champions Roll <span style="font-size:12px;font-weight:400;color:var(--muted);">— 1 signed · 1 public</span></h2>
+<h2>Champions Roll <span id="championsCount" style="font-size:12px;font-weight:400;color:var(--muted);">— loading…</span></h2>
 <p style="color:var(--muted);font-size:12px;margin:0 0 12px;">
       Public roll of Coherent Champions. Private signers exist but are not listed by their consent.
     </p>
 <div class="champions-list"><div class="champion-row"><div class="champion-num">#1</div><div class="champion-info"><div class="champion-name">James Sunheart</div><div class="champion-role">Founding Steward · Author · Architect</div></div><div class="champion-meta"><span>@sunheart</span><span class="champion-date">2026-05-07</span></div></div></div>
-<h3 style="margin-top:20px;">Public Proof Loops</h3><div class="champions-list"><div class="champion-row"><div class="champion-num">L1</div><div class="champion-info"><div class="champion-name">James Sunheart</div><div class="champion-role">Loop 1 · complete</div></div><div class="champion-meta"><span class="champion-date">2026-05-07</span></div></div></div>
+<h3 style="margin-top:20px;">Public Proof Loops</h3><div class="champions-list"><div class="champion-row"><div class="champion-num">L1</div><div class="champion-info"><div class="champion-name">James Sunheart</div><div class="champion-role">Loop 1 · complete</div></div><div class="champion-meta"><span class="champion-date">2026-05-07</span></div></div><div class="champion-row"><div class="champion-num">L2</div><div class="champion-info"><div class="champion-name">James Sunheart</div><div class="champion-role">Loop 2 · complete</div></div><div class="champion-meta"><span class="champion-date">2026-05-07</span></div></div></div>
 </div>
 <div class="invite-card">
 <h2>Bring a Friend <span style="font-size:12px;font-weight:400;color:var(--muted);">— the Game spreads by resonance</span></h2>
@@ -1218,10 +1512,10 @@ body.mode-field .player-only { display: none !important; }
       The Full Potential Game is a proof-based operating system for human potential. It makes the work people do for each other — agreements kept, offers delivered, transformations witnessed, resources circulated — <em>visible, scored, and recognized</em> in a way the dominant economy cannot.
     </p>
 <div class="player-cta-row">
-<a class="player-cta-primary" href="cursor://file/Users/jamessunheart/FPAI_Cockpit/core/INTENT/AGREEMENT_BUILDER_PROMPT.md">
+<a class="player-cta-primary" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/AGREEMENT_BUILDER_PROMPT.md">
         🌱 Start your 7-Day First Game →
       </a>
-<a class="player-cta-secondary" href="cursor://file/Users/jamessunheart/FPAI_Cockpit/core/INTENT/FULL_POTENTIAL_GAME.md">
+<a class="player-cta-secondary" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/FULL_POTENTIAL_GAME.md">
         Read the Player's Guide
       </a>
 </div>
@@ -1236,7 +1530,7 @@ body.mode-field .player-only { display: none !important; }
     </p>
 <div class="field-stats">
 <div class="field-stat">
-<div class="profile-stat-n">1</div>
+<div class="profile-stat-n">2</div>
 <div class="profile-stat-lbl">Public proofs sealed</div>
 </div>
 <div class="field-stat">
@@ -1270,7 +1564,7 @@ body.mode-field .player-only { display: none !important; }
 <div class="mission-content">
 <div class="kpi-label">Founding</div>
 <p style="margin:4px 0 12px;font-size:16px;">
-<a class="link" href="cursor://file/Users/jamessunheart/FPAI_Cockpit/core/INTENT/COHERENT_CHAMPIONS_MANIFESTO.md">Coherent Champions of CHRIST</a>
+<a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/COHERENT_CHAMPIONS_MANIFESTO.md">Coherent Champions of CHRIST</a>
           — Manifesto v1.0
         </p>
 <p style="margin:0 0 16px;color:var(--text);font-style:italic;font-size:13px;">
@@ -1285,10 +1579,10 @@ body.mode-field .player-only { display: none !important; }
 <span class="christ-pill" title="Seek truth courageously while remaining compassionate toward human imperfection."><strong>T</strong>ruth</span>
 </div>
 <p style="margin:12px 0 0;color:var(--muted);font-size:12px;">
-<a class="link" href="cursor://file/Users/jamessunheart/FPAI_Cockpit/core/INTENT/WORLD_PEACE_ECOSYSTEM.md"><strong>Ecosystem</strong></a> (the what) ·
-          <a class="link" href="cursor://file/Users/jamessunheart/FPAI_Cockpit/core/INTENT/WORLD_PEACE_AGREEMENT.md">Template</a> ·
-          <a class="link" href="cursor://file/Users/jamessunheart/FPAI_Cockpit/core/INTENT/FORMING_AGREEMENTS.md">Forming protocol</a> ·
-          <a class="link" href="cursor://file/Users/jamessunheart/FPAI_Cockpit/core/INTENT/README.md">Layer guide</a>
+<a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/WORLD_PEACE_ECOSYSTEM.md"><strong>Ecosystem</strong></a> (the what) ·
+          <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/WORLD_PEACE_AGREEMENT.md">Template</a> ·
+          <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/FORMING_AGREEMENTS.md">Forming protocol</a> ·
+          <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/README.md">Layer guide</a>
 </p>
 <p style="margin:12px 0 0;font-size:12px;">
 <strong style="color:var(--accent);">1</strong> active /
@@ -1510,7 +1804,7 @@ body.mode-field .player-only { display: none !important; }
 <h3 style="margin-top:24px;">WPAP — World Peace Agreements Protocol</h3>
 <p style="color:var(--muted);font-size:12px;margin:0 0 12px;">
       The AI-assisted system that operationalizes Layer 5 (AI for Peace).
-      <a class="link" href="cursor://file/Users/jamessunheart/FPAI_Cockpit/core/INTENT/WORLD_PEACE_AGREEMENTS_PROTOCOL.md">Open WPAP doc</a>
+      <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/WORLD_PEACE_AGREEMENTS_PROTOCOL.md">Open WPAP doc</a>
 </p>
 <blockquote class="wpap-tldr">
       Help humans make clearer agreements.<br/>
@@ -1567,7 +1861,7 @@ body.mode-field .player-only { display: none !important; }
 <li><strong>Five-component compensation:</strong> Dignity Base · Contribution Dividend · Circulation Share · Stewardship Vesting · Trust Participation</li>
 </ul>
 <p style="margin:12px 0 0;font-size:11px;">
-<a class="link" href="cursor://file/Users/jamessunheart/FPAI_Cockpit/core/INTENT/REMARKABLY_COHERENT_TREASURY.md">Open full spec (1076 lines)</a>
+<a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/REMARKABLY_COHERENT_TREASURY.md">Open full spec (1076 lines)</a>
 </p>
 </div>
 <div class="treasury-card">
@@ -1582,8 +1876,8 @@ body.mode-field .player-only { display: none !important; }
 <li><strong>Awareness Ladder:</strong> Noise → Distraction → Attention → Zense → Presence → Coherence → Flow → Stillness</li>
 </ul>
 <p style="margin:12px 0 0;font-size:11px;">
-<a class="link" href="cursor://file/Users/jamessunheart/FPAI_Cockpit/core/INTENT/FULL_POTENTIAL_GAME.md">Open Game guide</a> ·
-          <a class="link" href="cursor://file/Users/jamessunheart/FPAI_Cockpit/core/INTENT/FULL_POTENTIAL_GAME_PLAYER_CARD.md">Player Card</a>
+<a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/FULL_POTENTIAL_GAME.md">Open Game guide</a> ·
+          <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/FULL_POTENTIAL_GAME_PLAYER_CARD.md">Player Card</a>
 </p>
 </div>
 </div>
@@ -1609,7 +1903,7 @@ body.mode-field .player-only { display: none !important; }
 <div class="proof-day"><span class="proof-day-num">Day 7</span><span>Write + log the Proof</span></div>
 </div>
 <p style="margin:12px 0 0;font-size:13px;">
-<a class="link" href="cursor://file/Users/jamessunheart/FPAI_Cockpit/core/INTENT/AGREEMENT_BUILDER_PROMPT.md" style="font-weight:700;">→ Open the AI-Assisted Player Card prompt</a>
+<a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/AGREEMENT_BUILDER_PROMPT.md" style="font-weight:700;">→ Open the AI-Assisted Player Card prompt</a>
           Paste into Claude (terminal / desktop / web). Claude facilitates the loop and writes your Proof Log entry.
       </p>
 <p style="margin:8px 0 0;font-size:11px;color:var(--muted);">
@@ -1617,7 +1911,7 @@ body.mode-field .player-only { display: none !important; }
 </p>
 </div>
 <h3 style="margin-top:20px;">Active &amp; pending Agreements</h3>
-<details class="agreement"><summary class="agreement-summary"><span class="dot" style="background:#4ade80;margin-right:8px;" title="Active"></span><span class="ag-date">2026-05-07</span><span class="ag-parties">James Sunheart ↔ Claude</span><span class="ag-status" style="color:#4ade80">Active</span><span class="ag-expand">read →</span></summary><div class="agreement-meta"><p style="color:var(--muted);font-size:12px;margin:4px 0;">First specific Agreement under Manifesto v1.0 — governs founder/AI working relationship; makes "AI as tool/companion/amplifier — not ruler" operational</p><div class="christ-row" style="margin-top:8px;"><span class="christ-pill" style="border-color:var(--good);color:var(--good)">public</span><span class="christ-pill">working_relationship</span><span class="christ-pill">asymmetric_power</span><span class="christ-pill">founding</span><span class="christ-pill">ai_alignment</span></div><p style="color:var(--muted);font-size:11px;margin:8px 0 0;">witness: git_commit <code>d7e3e923</code> · <a class="link" href="cursor://file/Users/jamessunheart/FPAI_Cockpit/core/INTENT/AGREEMENTS/2026-05-07_JAMES_SUNHEART_AND_CLAUDE.md">open in cursor</a> · <a class="link" href="file:///Users/jamessunheart/FPAI_Cockpit/core/INTENT/AGREEMENTS/2026-05-07_JAMES_SUNHEART_AND_CLAUDE.md" target="_blank">raw file</a></p></div><div class="agreement-body markdown-body"><h1>WORLD PEACE AGREEMENT — JAMES SUNHEART AND CLAUDE</h1>
+<details class="agreement"><summary class="agreement-summary"><span class="dot" style="background:#4ade80;margin-right:8px;" title="Active"></span><span class="ag-date">2026-05-07</span><span class="ag-parties">James Sunheart ↔ Claude</span><span class="ag-status" style="color:#4ade80">Active</span><span class="ag-expand">read →</span></summary><div class="agreement-meta"><p style="color:var(--muted);font-size:12px;margin:4px 0;">First specific Agreement under Manifesto v1.0 — governs founder/AI working relationship; makes "AI as tool/companion/amplifier — not ruler" operational</p><div class="christ-row" style="margin-top:8px;"><span class="christ-pill" style="border-color:var(--good);color:var(--good)">public</span><span class="christ-pill">working_relationship</span><span class="christ-pill">asymmetric_power</span><span class="christ-pill">founding</span><span class="christ-pill">ai_alignment</span></div><p style="color:var(--muted);font-size:11px;margin:8px 0 0;">witness: git_commit <code>d7e3e923</code> · <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/AGREEMENTS/2026-05-07_JAMES_SUNHEART_AND_CLAUDE.md">open in cursor</a> · <a class="link" href="file:///Users/jamessunheart/FPAI_Cockpit/core/INTENT/AGREEMENTS/2026-05-07_JAMES_SUNHEART_AND_CLAUDE.md" target="_blank">raw file</a></p></div><div class="agreement-body markdown-body"><h1>WORLD PEACE AGREEMENT — JAMES SUNHEART AND CLAUDE</h1>
 <p><strong>Date formed:</strong> 2026-05-07 <strong>Parties:</strong></p>
 <ul>
 <li><strong>James Sunheart</strong> — Founder, World Peace Organization (Zen Village)</li>
@@ -1721,10 +2015,10 @@ body.mode-field .player-only { display: none !important; }
 <hr/>
 <h2>Reference</h2>
 <ul>
-<li>Founding document: <a class="link" href="../COHERENT_CHAMPIONS_MANIFESTO.md" target="_blank"><code>../COHERENT_CHAMPIONS_MANIFESTO.md</code></a></li>
-<li>Template: <a class="link" href="../WORLD_PEACE_AGREEMENT.md" target="_blank"><code>../WORLD_PEACE_AGREEMENT.md</code></a></li>
-<li>Forming protocol: <a class="link" href="../FORMING_AGREEMENTS.md" target="_blank"><code>../FORMING_AGREEMENTS.md</code></a></li>
-</ul></div></details><details class="agreement"><summary class="agreement-summary"><span class="dot" style="background:#fbbf24;margin-right:8px;" title="Proposed"></span><span class="ag-date">2026-05-07</span><span class="ag-parties">World Peace Organization (Zen Village) ↔ The Land of Zen Village</span><span class="ag-status" style="color:#fbbf24">Proposed</span><span class="ag-expand">read →</span></summary><div class="agreement-meta"><p style="color:var(--muted);font-size:12px;margin:4px 0;">Stewardship Agreement under Manifesto v1.0 — WPO commits to relating to the land as a partner in regeneration rather than property to extract from. Operationalizes the Regeneration principle.</p><div class="christ-row" style="margin-top:8px;"><span class="christ-pill" style="border-color:var(--good);color:var(--good)">public</span><span class="christ-pill">stewardship</span><span class="christ-pill">regeneration</span><span class="christ-pill">land</span><span class="christ-pill">founding</span></div><p style="color:var(--muted);font-size:11px;margin:8px 0 0;">witness: founder_authorization <code>pending-ratification</code> · <a class="link" href="cursor://file/Users/jamessunheart/FPAI_Cockpit/core/INTENT/AGREEMENTS/2026-05-07_WPO_AND_LAND_OF_ZEN_VILLAGE.md">open in cursor</a> · <a class="link" href="file:///Users/jamessunheart/FPAI_Cockpit/core/INTENT/AGREEMENTS/2026-05-07_WPO_AND_LAND_OF_ZEN_VILLAGE.md" target="_blank">raw file</a></p></div><div class="agreement-body markdown-body"><h1>WORLD PEACE AGREEMENT — WPO AND THE LAND OF ZEN VILLAGE</h1>
+<li>Founding document: <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/COHERENT_CHAMPIONS_MANIFESTO.md" target="_blank"><code>../COHERENT_CHAMPIONS_MANIFESTO.md</code></a></li>
+<li>Template: <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/WORLD_PEACE_AGREEMENT.md" target="_blank"><code>../WORLD_PEACE_AGREEMENT.md</code></a></li>
+<li>Forming protocol: <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/FORMING_AGREEMENTS.md" target="_blank"><code>../FORMING_AGREEMENTS.md</code></a></li>
+</ul></div></details><details class="agreement"><summary class="agreement-summary"><span class="dot" style="background:#fbbf24;margin-right:8px;" title="Proposed"></span><span class="ag-date">2026-05-07</span><span class="ag-parties">World Peace Organization (Zen Village) ↔ The Land of Zen Village</span><span class="ag-status" style="color:#fbbf24">Proposed</span><span class="ag-expand">read →</span></summary><div class="agreement-meta"><p style="color:var(--muted);font-size:12px;margin:4px 0;">Stewardship Agreement under Manifesto v1.0 — WPO commits to relating to the land as a partner in regeneration rather than property to extract from. Operationalizes the Regeneration principle.</p><div class="christ-row" style="margin-top:8px;"><span class="christ-pill" style="border-color:var(--good);color:var(--good)">public</span><span class="christ-pill">stewardship</span><span class="christ-pill">regeneration</span><span class="christ-pill">land</span><span class="christ-pill">founding</span></div><p style="color:var(--muted);font-size:11px;margin:8px 0 0;">witness: founder_authorization <code>pending-ratification</code> · <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/AGREEMENTS/2026-05-07_WPO_AND_LAND_OF_ZEN_VILLAGE.md">open in cursor</a> · <a class="link" href="file:///Users/jamessunheart/FPAI_Cockpit/core/INTENT/AGREEMENTS/2026-05-07_WPO_AND_LAND_OF_ZEN_VILLAGE.md" target="_blank">raw file</a></p></div><div class="agreement-body markdown-body"><h1>WORLD PEACE AGREEMENT — WPO AND THE LAND OF ZEN VILLAGE</h1>
 <blockquote><strong>Drafting note (2026-05-07):</strong> This Agreement was drafted by Claude under the founder's "keep going" directive, as a <em>proposed</em> second instance — testing the registry with a non-human party type (<code>land</code>) and operationalizing the manifesto's Regeneration principle. Status is <code>proposed</code>, not <code>active</code>. It does not bind the WPO until the founder ratifies.</blockquote>
 <blockquote></blockquote>
 <blockquote><strong>Founder, please:</strong> read, then either (a) ratify by changing status to <code>active</code> and witness type/reference to your chosen form, (b) amend specific clauses, or (c) reject (delete file or set status to <code>archived</code>). The framing of "the land as a party" is a deliberate philosophical choice — alternative framings ("WPO + future inhabitants," "WPO's land-stewardship commitment as one-sided vow") are equally valid and selectable.</blockquote>
@@ -1805,9 +2099,9 @@ body.mode-field .player-only { display: none !important; }
 <hr/>
 <h2>Reference</h2>
 <ul>
-<li>Founding document: <a class="link" href="../COHERENT_CHAMPIONS_MANIFESTO.md" target="_blank"><code>../COHERENT_CHAMPIONS_MANIFESTO.md</code></a></li>
-<li>Template: <a class="link" href="../WORLD_PEACE_AGREEMENT.md" target="_blank"><code>../WORLD_PEACE_AGREEMENT.md</code></a></li>
-<li>Forming protocol: <a class="link" href="../FORMING_AGREEMENTS.md" target="_blank"><code>../FORMING_AGREEMENTS.md</code></a></li>
+<li>Founding document: <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/COHERENT_CHAMPIONS_MANIFESTO.md" target="_blank"><code>../COHERENT_CHAMPIONS_MANIFESTO.md</code></a></li>
+<li>Template: <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/WORLD_PEACE_AGREEMENT.md" target="_blank"><code>../WORLD_PEACE_AGREEMENT.md</code></a></li>
+<li>Forming protocol: <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/FORMING_AGREEMENTS.md" target="_blank"><code>../FORMING_AGREEMENTS.md</code></a></li>
 <li>Companion Agreement: <a class="link" href="./2026-05-07_JAMES_SUNHEART_AND_CLAUDE.md" target="_blank"><code>./2026-05-07_JAMES_SUNHEART_AND_CLAUDE.md</code></a> (first Agreement formed under the Manifesto)</li>
 </ul></div></details>
 <h3 style="margin-top:24px;">📚 Canonical Documents — read inline, no app required</h3>
@@ -1816,7 +2110,7 @@ body.mode-field .player-only { display: none !important; }
       No external app, no permission popups. Each doc also has fallback links to open in cursor or as raw file.
     </p>
 <div class="canonical-library">
-<details class="inline-doc" id="doc-manifesto"><summary class="inline-doc-summary"><span class="doc-icon">✨</span><div class="doc-title-block"><div class="doc-title">Coherent Champions of CHRIST</div><div class="doc-subtitle">Manifesto v1.0 — the WHY</div><div class="doc-summary">The founding document. CHRIST principles, the seven principles, the role of AI, the invitation.</div></div><span class="doc-expand">read inline →</span></summary><div class="inline-doc-body markdown-body"><p style="font-size:11px;color:var(--muted);margin:0 0 12px;"><a class="link" href="cursor://file/Users/jamessunheart/FPAI_Cockpit/core/INTENT/COHERENT_CHAMPIONS_MANIFESTO.md">open in editor</a> · <a class="link" href="file:///Users/jamessunheart/FPAI_Cockpit/core/INTENT/COHERENT_CHAMPIONS_MANIFESTO.md" target="_blank">raw file</a></p><p>!<a class="link" href="./assets/coherent-champions-poster.png" target="_blank">Coherent Champions of CHRIST — A Declaration for the Age of Intelligence</a></p>
+<details class="inline-doc" id="doc-manifesto"><summary class="inline-doc-summary"><span class="doc-icon">✨</span><div class="doc-title-block"><div class="doc-title">Coherent Champions of CHRIST</div><div class="doc-subtitle">Manifesto v1.0 — the WHY</div><div class="doc-summary">The founding document. CHRIST principles, the seven principles, the role of AI, the invitation.</div></div><span class="doc-expand">read inline →</span></summary><div class="inline-doc-body markdown-body"><p style="font-size:11px;color:var(--muted);margin:0 0 12px;"><a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/COHERENT_CHAMPIONS_MANIFESTO.md">open in editor</a> · <a class="link" href="file:///Users/jamessunheart/FPAI_Cockpit/core/INTENT/COHERENT_CHAMPIONS_MANIFESTO.md" target="_blank">raw file</a></p><p>!<a class="link" href="./assets/coherent-champions-poster.png" target="_blank">Coherent Champions of CHRIST — A Declaration for the Age of Intelligence</a></p>
 <p><strong>Manifesto v1.0</strong> <strong>Founder:</strong> James Sunheart <strong>Adopted:</strong> 2026-05-07 <strong>Status:</strong> Founding document of the World Peace Organization (Zen Village)</p>
 <blockquote><em>This is not a religion of superiority. It is a practice of becoming trustworthy with power.</em></blockquote>
 <hr/>
@@ -1947,20 +2241,22 @@ body.mode-field .player-only { display: none !important; }
 <p>Through your nervous system. Your relationships. Your creations. Your technologies. Your stewardship. Your daily choices.</p>
 <p><em>World peace begins wherever coherence becomes embodied.</em></p>
 <p>We are Coherent Champions of CHRIST.</p>
+<p><strong>TOGETHER, WE CAN BUILD A FUTURE WORTH INHERITING.</strong></p>
+<p><em>Coherence · Healing · Regeneration · Intelligence · Service · Truth.</em></p>
 <hr/>
 <h2>OPERATIONAL ALIGNMENT</h2>
 <p>This manifesto retroactively names what has been built. Existing infrastructure maps directly:</p>
 <p>| Manifesto Element | Existing Infrastructure | |---|---| | World Peace Agreement (membership) | TRUST token services (<code>SERVICES/trust-index/</code>, <code>contribution-tracker/</code>, <code>needs-allocation/</code>) | | Stewardship of resources | Credits Gateway (Stripe live, port 8765) | | "AI shall help humans understand each other, reduce confusion" | Intelligence feed at <code>fullpotential.ai/intelligence</code> | | Constitutional intelligence economy | FPI v5.6.0 (port 8550) — dual trust, proof pipeline, immune system | | Cross-tool memory / nervous system | Sunheart Brain (pgvector, 4.7k chunks) | | The Gatherings — physical HQ | Zen Village retreat (Costa Rica) | | The Gatherings — live convergence | Couch=Oracle Stage, Jam Board (Village OS) |</p>
-<p>Nothing new needs to be invented to enact the principles. The infrastructure was waiting for the words.</p></div></details><details class="inline-doc" id="doc-framework"><summary class="inline-doc-summary"><span class="doc-icon">🌍</span><div class="doc-title-block"><div class="doc-title">The Full Potential Framework</div><div class="doc-subtitle">Peace Coordination Civilization Stack — the WHAT</div><div class="doc-summary">Eight layers: Org · Agreement · Game · AI · Treasury · Village · Cultural · Media. The complete stack.</div></div><span class="doc-expand">read inline →</span></summary><div class="inline-doc-body markdown-body"><p style="font-size:11px;color:var(--muted);margin:0 0 12px;"><a class="link" href="cursor://file/Users/jamessunheart/FPAI_Cockpit/core/INTENT/FULL_POTENTIAL_FRAMEWORK.md">open in editor</a> · <a class="link" href="file:///Users/jamessunheart/FPAI_Cockpit/core/INTENT/FULL_POTENTIAL_FRAMEWORK.md" target="_blank">raw file</a></p><p><strong>A Peace Coordination Civilization Stack</strong></p>
+<p>Nothing new needs to be invented to enact the principles. The infrastructure was waiting for the words.</p></div></details><details class="inline-doc" id="doc-framework"><summary class="inline-doc-summary"><span class="doc-icon">🌍</span><div class="doc-title-block"><div class="doc-title">The Full Potential Framework</div><div class="doc-subtitle">Peace Coordination Civilization Stack — the WHAT</div><div class="doc-summary">Eight layers: Org · Agreement · Game · AI · Treasury · Village · Cultural · Media. The complete stack.</div></div><span class="doc-expand">read inline →</span></summary><div class="inline-doc-body markdown-body"><p style="font-size:11px;color:var(--muted);margin:0 0 12px;"><a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/FULL_POTENTIAL_FRAMEWORK.md">open in editor</a> · <a class="link" href="file:///Users/jamessunheart/FPAI_Cockpit/core/INTENT/FULL_POTENTIAL_FRAMEWORK.md" target="_blank">raw file</a></p><p><strong>A Peace Coordination Civilization Stack</strong></p>
 <p><em>ONE MISSION · ONE AGREEMENT · ONE GAME · ONE TREASURY · ONE HUMAN FAMILY</em></p>
 <p>!<a class="link" href="./assets/full-potential-framework-poster.png" target="_blank">The Full Potential Framework — eight-layer civilization stack</a></p>
 <p>The umbrella framework that integrates every layer the World Peace Organization operates on. Where the Manifesto is the <strong>why</strong> and the Ecosystem was the early <strong>what</strong>, this is the <strong>complete coordination stack</strong> — the eight layers, the side-channels (Currencies, Promises, Principles, AI Modules, Player Path, Protection Boundaries), and the closed loop they form.</p>
 <blockquote>Companion documents:</blockquote>
-<blockquote>- <strong>Why</strong> — <a class="link" href="./COHERENT_CHAMPIONS_MANIFESTO.md" target="_blank"><code>COHERENT_CHAMPIONS_MANIFESTO.md</code></a> (CHRIST + 7 principles)</blockquote>
-<blockquote>- <strong>Earlier ecosystem framing</strong> — <a class="link" href="./WORLD_PEACE_ECOSYSTEM.md" target="_blank"><code>WORLD_PEACE_ECOSYSTEM.md</code></a> (subset; superseded by this doc as canonical)</blockquote>
-<blockquote>- <strong>AI substrate</strong> — <a class="link" href="./WORLD_PEACE_AGREEMENTS_PROTOCOL.md" target="_blank"><code>WORLD_PEACE_AGREEMENTS_PROTOCOL.md</code></a> (WPAP — operationalizes Layer 4)</blockquote>
-<blockquote>- <strong>Player OS</strong> — <a class="link" href="./FULL_POTENTIAL_GAME.md" target="_blank"><code>FULL_POTENTIAL_GAME.md</code></a> (operationalizes Layer 3)</blockquote>
-<blockquote>- <strong>Economy</strong> — <a class="link" href="./REMARKABLY_COHERENT_TREASURY.md" target="_blank"><code>REMARKABLY_COHERENT_TREASURY.md</code></a> (operationalizes Layer 5)</blockquote>
+<blockquote>- <strong>Why</strong> — <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/COHERENT_CHAMPIONS_MANIFESTO.md" target="_blank"><code>COHERENT_CHAMPIONS_MANIFESTO.md</code></a> (CHRIST + 7 principles)</blockquote>
+<blockquote>- <strong>Earlier ecosystem framing</strong> — <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/WORLD_PEACE_ECOSYSTEM.md" target="_blank"><code>WORLD_PEACE_ECOSYSTEM.md</code></a> (subset; superseded by this doc as canonical)</blockquote>
+<blockquote>- <strong>AI substrate</strong> — <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/WORLD_PEACE_AGREEMENTS_PROTOCOL.md" target="_blank"><code>WORLD_PEACE_AGREEMENTS_PROTOCOL.md</code></a> (WPAP — operationalizes Layer 4)</blockquote>
+<blockquote>- <strong>Player OS</strong> — <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/FULL_POTENTIAL_GAME.md" target="_blank"><code>FULL_POTENTIAL_GAME.md</code></a> (operationalizes Layer 3)</blockquote>
+<blockquote>- <strong>Economy</strong> — <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/REMARKABLY_COHERENT_TREASURY.md" target="_blank"><code>REMARKABLY_COHERENT_TREASURY.md</code></a> (operationalizes Layer 5)</blockquote>
 <hr/>
 <h2>The Core Promise</h2>
 <ul>
@@ -2004,7 +2300,7 @@ body.mode-field .player-only { display: none !important; }
 <hr/>
 <h2>The Three Currencies</h2>
 <p>| Currency | What it is | |---|---| | <strong>Proof</strong> | What was witnessed and recorded. Agreements kept, transformations delivered, beauty created, resources circulated. | | <strong>Trust</strong> | Confidence earned through repeated proof and positive impact in your orbit. People actually move when you signal a priority. | | <strong>Cash</strong> | Real money still matters. Flows toward Trust over time. |</p>
-<p>See <a class="link" href="./FULL_POTENTIAL_GAME.md" target="_blank"><code>FULL_POTENTIAL_GAME.md</code></a> §5 and <a class="link" href="./REMARKABLY_COHERENT_TREASURY.md" target="_blank"><code>REMARKABLY_COHERENT_TREASURY.md</code></a> §6 for the technical mappings (Field Score → Proof, CPI → Trust).</p>
+<p>See <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/FULL_POTENTIAL_GAME.md" target="_blank"><code>FULL_POTENTIAL_GAME.md</code></a> §5 and <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/REMARKABLY_COHERENT_TREASURY.md" target="_blank"><code>REMARKABLY_COHERENT_TREASURY.md</code></a> §6 for the technical mappings (Field Score → Proof, CPI → Trust).</p>
 <hr/>
 <h2>The Eight Layers</h2>
 <h3>1. World Peace Organization — <em>The Civilizational Mission</em></h3>
@@ -2014,12 +2310,12 @@ body.mode-field .player-only { display: none !important; }
 <h3>2. World Peace Agreement — <em>The Social Protocol</em></h3>
 <blockquote><em>Shared values. Clear agreements. Witnessed participation.</em></blockquote>
 <p>Non-Harm · Repair · Truth · Regeneration · Human Dignity · Service to Life.</p>
-<p>This is what each Coherent Champion signs to enter. See <a class="link" href="./WORLD_PEACE_AGREEMENT.md" target="_blank"><code>WORLD_PEACE_AGREEMENT.md</code></a> for the canonical template, <a class="link" href="./FORMING_AGREEMENTS.md" target="_blank"><code>FORMING_AGREEMENTS.md</code></a> for the protocol, and <a class="link" href="./AGREEMENTS/" target="_blank"><code>AGREEMENTS/</code></a> for instances.</p>
+<p>This is what each Coherent Champion signs to enter. See <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/WORLD_PEACE_AGREEMENT.md" target="_blank"><code>WORLD_PEACE_AGREEMENT.md</code></a> for the canonical template, <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/FORMING_AGREEMENTS.md" target="_blank"><code>FORMING_AGREEMENTS.md</code></a> for the protocol, and <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/AGREEMENTS/" target="_blank"><code>AGREEMENTS/</code></a> for instances.</p>
 <hr/>
 <h3>3. Full Potential Game — <em>The Human Coordination Engine</em></h3>
 <blockquote><em>A proof-based operating system for human potential. Score the proof, not the soul.</em></blockquote>
 <p><strong>Currencies:</strong> Proof · Trust · Cash <strong>Mechanics:</strong> Quests · Levels · Alliances · Events · Legacy</p>
-<p>The visible board on which players play. See <a class="link" href="./FULL_POTENTIAL_GAME.md" target="_blank"><code>FULL_POTENTIAL_GAME.md</code></a> for the v1.3 Player's Guide.</p>
+<p>The visible board on which players play. See <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/FULL_POTENTIAL_GAME.md" target="_blank"><code>FULL_POTENTIAL_GAME.md</code></a> for the v1.3 Player's Guide.</p>
 <p><strong>The Game in Action — Virtuous Circulation Loop:</strong></p>
 <p><pre><code>        Offer  ←——————  Earn (Proof, Trust, Cash flow back)
           |                          ↑
@@ -2029,7 +2325,7 @@ body.mode-field .player-only { display: none !important; }
 <hr/>
 <h3>4. Coherent AI Layer — <em>The Intelligence Layer</em></h3>
 <blockquote><em>AI in service to life. Not a ruler, but a companion.</em></blockquote>
-<p>Six AI modules (WPAP — see <a class="link" href="./WORLD_PEACE_AGREEMENTS_PROTOCOL.md" target="_blank"><code>WORLD_PEACE_AGREEMENTS_PROTOCOL.md</code></a>):</p>
+<p>Six AI modules (WPAP — see <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/WORLD_PEACE_AGREEMENTS_PROTOCOL.md" target="_blank"><code>WORLD_PEACE_AGREEMENTS_PROTOCOL.md</code></a>):</p>
 <p>| Module | Function | |---|---| | 🕊 <strong>Agreement Builder</strong> | Form better agreements | | 🧠 <strong>Memory Keeper</strong> | Remember commitments | | ❤️ <strong>Conflict Mediator</strong> | De-escalate before things harden | | 🌍 <strong>Translation Layer</strong> | Translate &amp; clarify across cultures and emotional states | | 📜 <strong>Coherence Analyzer</strong> | Detect ambiguity, imbalance, missing expectations | | 👁 <strong>Insight Guide</strong> | Track &amp; witness proof; surface patterns |</p>
 <p>These modules turn Layer 3's player flow + Layer 5's economy into something operable at scale, while staying inside the Protection Boundaries.</p>
 <hr/>
@@ -2044,7 +2340,7 @@ body.mode-field .player-only { display: none !important; }
 <li><strong>Infrastructure &amp; Land</strong> — long-horizon physical substrate (Zen Village et al.)</li>
 <li><strong>Transparency &amp; Audit</strong> — every flow legible to participants</li>
 </ul>
-<p>See <a class="link" href="./REMARKABLY_COHERENT_TREASURY.md" target="_blank"><code>REMARKABLY_COHERENT_TREASURY.md</code></a> v0.10 for the full architectural spec — Two-Economy Model, Three-Layer Architecture, Circulation Equity Formula, Verification Escrow, Distance-Weighted Witness, Governance Firewall.</p>
+<p>See <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/REMARKABLY_COHERENT_TREASURY.md" target="_blank"><code>REMARKABLY_COHERENT_TREASURY.md</code></a> v0.10 for the full architectural spec — Two-Economy Model, Three-Layer Architecture, Circulation Equity Formula, Verification Escrow, Distance-Weighted Witness, Governance Firewall.</p>
 <hr/>
 <h3>6. Zen Village + Local Nodes — <em>The Embodiment Layer</em></h3>
 <blockquote><em>Living prototypes of coherent civilization.</em></blockquote>
@@ -2102,8 +2398,8 @@ coherence)              participate)
 <blockquote><em>Coherence. Healing. Regeneration. Intelligence. Service. Truth.</em></blockquote>
 <hr/>
 <h2>Where this fits</h2>
-<p>This document supersedes <a class="link" href="./WORLD_PEACE_ECOSYSTEM.md" target="_blank"><code>WORLD_PEACE_ECOSYSTEM.md</code></a> as the canonical framework view. The earlier ecosystem doc remains in the repo as a historical reference but should not be cited as the current architecture. New work references this file.</p>
-<p><em>Companion to the Manifesto. The complete coordination stack made visible.</em></p></div></details><details class="inline-doc" id="doc-game"><summary class="inline-doc-summary"><span class="doc-icon">🎮</span><div class="doc-title-block"><div class="doc-title">The Full Potential Game</div><div class="doc-subtitle">Player's Guide v1.3 — the player-facing OS</div><div class="doc-summary">Three Currencies, Sacred Trinity, 7-Day First Game, Awareness Ladder, Sunheart Rule, Quest Tiers.</div></div><span class="doc-expand">read inline →</span></summary><div class="inline-doc-body markdown-body"><p style="font-size:11px;color:var(--muted);margin:0 0 12px;"><a class="link" href="cursor://file/Users/jamessunheart/FPAI_Cockpit/core/INTENT/FULL_POTENTIAL_GAME.md">open in editor</a> · <a class="link" href="file:///Users/jamessunheart/FPAI_Cockpit/core/INTENT/FULL_POTENTIAL_GAME.md" target="_blank">raw file</a></p><h2>A Proof-Based Operating System for Human Potential</h2>
+<p>This document supersedes <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/WORLD_PEACE_ECOSYSTEM.md" target="_blank"><code>WORLD_PEACE_ECOSYSTEM.md</code></a> as the canonical framework view. The earlier ecosystem doc remains in the repo as a historical reference but should not be cited as the current architecture. New work references this file.</p>
+<p><em>Companion to the Manifesto. The complete coordination stack made visible.</em></p></div></details><details class="inline-doc" id="doc-game"><summary class="inline-doc-summary"><span class="doc-icon">🎮</span><div class="doc-title-block"><div class="doc-title">The Full Potential Game</div><div class="doc-subtitle">Player's Guide v1.3 — the player-facing OS</div><div class="doc-summary">Three Currencies, Sacred Trinity, 7-Day First Game, Awareness Ladder, Sunheart Rule, Quest Tiers.</div></div><span class="doc-expand">read inline →</span></summary><div class="inline-doc-body markdown-body"><p style="font-size:11px;color:var(--muted);margin:0 0 12px;"><a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/FULL_POTENTIAL_GAME.md">open in editor</a> · <a class="link" href="file:///Users/jamessunheart/FPAI_Cockpit/core/INTENT/FULL_POTENTIAL_GAME.md" target="_blank">raw file</a></p><h2>A Proof-Based Operating System for Human Potential</h2>
 <h3>Player's Guide — v1.3</h3>
 <p><em>Reality is already a game. This is the guide for those who know.</em></p>
 <hr/>
@@ -2334,7 +2630,7 @@ coherence)              participate)
 <p><em>No</em> — first-look prospects, course intake, public communications, anyone who hasn't earned the context to read the gaps as architecture rather than as cracks.</p>
 <p>If you're unsure whether someone has earned it, they haven't. Cut the section, share the rest, and let the Game itself bring them up.</p>
 <hr/>
-<p><em>Compiled from the ongoing work of CORA Nation, Zen Village, Full Potential AI, Coherence, and OneBPO. v1.3 — May 2026. Updates from real proof, not new theory.</em></p></div></details><details class="inline-doc" id="doc-treasury"><summary class="inline-doc-summary"><span class="doc-icon">🏦</span><div class="doc-title-block"><div class="doc-title">The Remarkably Coherent Treasury</div><div class="doc-subtitle">v0.10 architectural spec — the economy</div><div class="doc-summary">Two-Economy Model · Three-Layer Architecture · Circulation Equity Formula · Verification Escrow.</div></div><span class="doc-expand">read inline →</span></summary><div class="inline-doc-body markdown-body"><p style="font-size:11px;color:var(--muted);margin:0 0 12px;"><a class="link" href="cursor://file/Users/jamessunheart/FPAI_Cockpit/core/INTENT/REMARKABLY_COHERENT_TREASURY.md">open in editor</a> · <a class="link" href="file:///Users/jamessunheart/FPAI_Cockpit/core/INTENT/REMARKABLY_COHERENT_TREASURY.md" target="_blank">raw file</a></p><p><strong>Version 0.10 — Tenth Draft for Review</strong> <strong>Prepared by:</strong> Sunheart (Founding Steward, CORA Nation) with Claude, incorporating critique from GPT and seven passes from Gemini <strong>Date:</strong> April 24, 2026 <strong>Status:</strong> Open draft. Architecture approaches operational-readiness; three structural refinements from Gemini's seventh-pass review integrated. Ready for specialized counsel engagement.</p>
+<p><em>Compiled from the ongoing work of CORA Nation, Zen Village, Full Potential AI, Coherence, and OneBPO. v1.3 — May 2026. Updates from real proof, not new theory.</em></p></div></details><details class="inline-doc" id="doc-treasury"><summary class="inline-doc-summary"><span class="doc-icon">🏦</span><div class="doc-title-block"><div class="doc-title">The Remarkably Coherent Treasury</div><div class="doc-subtitle">v0.10 architectural spec — the economy</div><div class="doc-summary">Two-Economy Model · Three-Layer Architecture · Circulation Equity Formula · Verification Escrow.</div></div><span class="doc-expand">read inline →</span></summary><div class="inline-doc-body markdown-body"><p style="font-size:11px;color:var(--muted);margin:0 0 12px;"><a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/REMARKABLY_COHERENT_TREASURY.md">open in editor</a> · <a class="link" href="file:///Users/jamessunheart/FPAI_Cockpit/core/INTENT/REMARKABLY_COHERENT_TREASURY.md" target="_blank">raw file</a></p><p><strong>Version 0.10 — Tenth Draft for Review</strong> <strong>Prepared by:</strong> Sunheart (Founding Steward, CORA Nation) with Claude, incorporating critique from GPT and seven passes from Gemini <strong>Date:</strong> April 24, 2026 <strong>Status:</strong> Open draft. Architecture approaches operational-readiness; three structural refinements from Gemini's seventh-pass review integrated. Ready for specialized counsel engagement.</p>
 <hr/>
 <h2>Changelog from v0.9</h2>
 <ul>
@@ -3070,7 +3366,7 @@ coherence)              participate)
 <p>A removal of distortions that made truth hard to live in, alignment costly to hold, and coherence invisible underneath the metrics that were supposed to tell us what was real. The mechanics described here—the Two-Economy Model, the Three-Layer Architecture with its Covenant dimension, the Coherent Credit, the Circulation Equity Formula, the triangulation, the governance—describe an architecture that is already emerging through lived practice at Zen Village, in CORA Nation's ongoing ceremonial and teaching life, and in the stewardship community Sunheart and others have been building over years.</p>
 <p>The wedge is simple. USD optimizes Money and suppresses Velocity and Coherence. We optimize Velocity and Coherence and let Money stay approximately where it is. The Two-Economy Model lets dollars keep doing what dollars do, while a parallel coherence economy handles the category of transactions dollars cannot properly authorize. The Three-Layer Architecture gives both economies their proper container: Interface Layer for fiat-compliant employment through secular entities like OneBPO, Logic Layer for coherence math, Covenant Layer for the religious community at the heart of CORA Nation's life. Neither economy drives the other out. Members hold both where both apply. Each serves its domain.</p>
 <p>When truth becomes easier to live than distortion, systems reorganize themselves. When a religious community is substantively what it claims to be, the legal architecture follows naturally. When coherence is practiced rather than engineered, the financial infrastructure supports it rather than supplanting it.</p>
-<p><strong>Submitted for external professional review. v0.10 completes the defensive legal architecture with three structural refinements from Gemini's seventh-pass review: Control-vs-Ownership separation (donated shares governed by majority-independent structure, not unilateral founder voting authority); Hybrid Settlement calibrated to fiat tax liability PLUS non-network fiat OPEX (preventing secular-entity slow bankruptcy); and Useful Output Oracle requirement (tamper-proof objective production data feeding the Dividend Formula). The architecture is now operationally specified across ownership, control, settlement, measurement, governance, compensation, and compliance dimensions, rooted in century-plus precedent across intentional religious community traditions (Bruderhof, Hutterite, Catholic Worker, Benedictine, apostolic associations) and B2B mutual credit clearing networks (WIR Bank, Sardex, regional barter exchanges). The Circulation Equity Formula is formally open-sourced to neutralize hidden-royalty attack vectors. GPT's seventh-pass strategic guidance on utility density (food, housing, mutual aid) is reflected in Section 15 as Phase 3 substrate development priorities, separate from the architecture itself. Recommended reviewers, in approximate order of engagement priority: counsel credentialed in 508(c)(1)(A) religious organizations with specific intentional-religious-community expertise; clergy-compensation tax specialists for founder compensation architecture verification; Philippine corporate and tax counsel for OneBPO structure; Costa Rican non-profit counsel for Asociación Civil or Cooperativa structure; employment lawyers familiar with clean secular-religious separation; mutual credit network practitioners; stewards of existing long-running intentional religious communities who can speak to operational realities over decade scales; and heterodox economists.</strong></p></div></details><details class="inline-doc" id="doc-wpap"><summary class="inline-doc-summary"><span class="doc-icon">🕊</span><div class="doc-title-block"><div class="doc-title">World Peace Agreements Protocol</div><div class="doc-subtitle">WPAP — the AI substrate</div><div class="doc-summary">Six AI modules: Agreement Builder · Memory · Translator · Mediator · Repair Guide · Cultural Translator.</div></div><span class="doc-expand">read inline →</span></summary><div class="inline-doc-body markdown-body"><p style="font-size:11px;color:var(--muted);margin:0 0 12px;"><a class="link" href="cursor://file/Users/jamessunheart/FPAI_Cockpit/core/INTENT/WORLD_PEACE_AGREEMENTS_PROTOCOL.md">open in editor</a> · <a class="link" href="file:///Users/jamessunheart/FPAI_Cockpit/core/INTENT/WORLD_PEACE_AGREEMENTS_PROTOCOL.md" target="_blank">raw file</a></p><p><strong>A coherence layer for agreements.</strong></p>
+<p><strong>Submitted for external professional review. v0.10 completes the defensive legal architecture with three structural refinements from Gemini's seventh-pass review: Control-vs-Ownership separation (donated shares governed by majority-independent structure, not unilateral founder voting authority); Hybrid Settlement calibrated to fiat tax liability PLUS non-network fiat OPEX (preventing secular-entity slow bankruptcy); and Useful Output Oracle requirement (tamper-proof objective production data feeding the Dividend Formula). The architecture is now operationally specified across ownership, control, settlement, measurement, governance, compensation, and compliance dimensions, rooted in century-plus precedent across intentional religious community traditions (Bruderhof, Hutterite, Catholic Worker, Benedictine, apostolic associations) and B2B mutual credit clearing networks (WIR Bank, Sardex, regional barter exchanges). The Circulation Equity Formula is formally open-sourced to neutralize hidden-royalty attack vectors. GPT's seventh-pass strategic guidance on utility density (food, housing, mutual aid) is reflected in Section 15 as Phase 3 substrate development priorities, separate from the architecture itself. Recommended reviewers, in approximate order of engagement priority: counsel credentialed in 508(c)(1)(A) religious organizations with specific intentional-religious-community expertise; clergy-compensation tax specialists for founder compensation architecture verification; Philippine corporate and tax counsel for OneBPO structure; Costa Rican non-profit counsel for Asociación Civil or Cooperativa structure; employment lawyers familiar with clean secular-religious separation; mutual credit network practitioners; stewards of existing long-running intentional religious communities who can speak to operational realities over decade scales; and heterodox economists.</strong></p></div></details><details class="inline-doc" id="doc-wpap"><summary class="inline-doc-summary"><span class="doc-icon">🕊</span><div class="doc-title-block"><div class="doc-title">World Peace Agreements Protocol</div><div class="doc-subtitle">WPAP — the AI substrate</div><div class="doc-summary">Six AI modules: Agreement Builder · Memory · Translator · Mediator · Repair Guide · Cultural Translator.</div></div><span class="doc-expand">read inline →</span></summary><div class="inline-doc-body markdown-body"><p style="font-size:11px;color:var(--muted);margin:0 0 12px;"><a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/WORLD_PEACE_AGREEMENTS_PROTOCOL.md">open in editor</a> · <a class="link" href="file:///Users/jamessunheart/FPAI_Cockpit/core/INTENT/WORLD_PEACE_AGREEMENTS_PROTOCOL.md" target="_blank">raw file</a></p><p><strong>A coherence layer for agreements.</strong></p>
 <p><em>AI as clarifying intelligence — not ruler, not judge.</em></p>
 <blockquote><em>It has the feeling of something both ancient and futuristic at the same time.</em> ✨</blockquote>
 <hr/>
@@ -3114,7 +3410,7 @@ coherence)              participate)
 <p><strong>What this is not:</strong> AI as authority, arbiter, surveillance, or punishment.</p>
 <hr/>
 <h2>Companion Documents</h2>
-<p>| Doc | Role | |---|---| | <a class="link" href="./COHERENT_CHAMPIONS_MANIFESTO.md" target="_blank"><code>COHERENT_CHAMPIONS_MANIFESTO.md</code></a> | The <strong>why</strong> — values that anchor practice (CHRIST principles) | | <a class="link" href="./WORLD_PEACE_ECOSYSTEM.md" target="_blank"><code>WORLD_PEACE_ECOSYSTEM.md</code></a> | The <strong>what</strong> — eight architectural layers; WPAP operationalizes Layer 5 (AI for Peace) | | <a class="link" href="./WORLD_PEACE_AGREEMENT.md" target="_blank"><code>WORLD_PEACE_AGREEMENT.md</code></a> | The signable <strong>template</strong> of values | | <a class="link" href="./FORMING_AGREEMENTS.md" target="_blank"><code>FORMING_AGREEMENTS.md</code></a> | The basic <strong>protocol</strong> — manual flow for forming any single Agreement (WPAP's Agreement Builder is the AI-assisted version) | | <a class="link" href="./AGREEMENTS/" target="_blank"><code>AGREEMENTS/</code></a> | Specific formed Agreements — every AI-assisted Agreement still lands here |</p>
+<p>| Doc | Role | |---|---| | <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/COHERENT_CHAMPIONS_MANIFESTO.md" target="_blank"><code>COHERENT_CHAMPIONS_MANIFESTO.md</code></a> | The <strong>why</strong> — values that anchor practice (CHRIST principles) | | <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/WORLD_PEACE_ECOSYSTEM.md" target="_blank"><code>WORLD_PEACE_ECOSYSTEM.md</code></a> | The <strong>what</strong> — eight architectural layers; WPAP operationalizes Layer 5 (AI for Peace) | | <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/WORLD_PEACE_AGREEMENT.md" target="_blank"><code>WORLD_PEACE_AGREEMENT.md</code></a> | The signable <strong>template</strong> of values | | <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/FORMING_AGREEMENTS.md" target="_blank"><code>FORMING_AGREEMENTS.md</code></a> | The basic <strong>protocol</strong> — manual flow for forming any single Agreement (WPAP's Agreement Builder is the AI-assisted version) | | <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/AGREEMENTS/" target="_blank"><code>AGREEMENTS/</code></a> | Specific formed Agreements — every AI-assisted Agreement still lands here |</p>
 <hr/>
 <h2>Scope</h2>
 <p>WPAP is designed to support agreements between:</p>
@@ -3144,7 +3440,7 @@ coherence)              participate)
 <li>What values are non-negotiable?</li>
 <li>How will breakage be handled?</li>
 </ul>
-<p>Instead of "We'll work together," WPAP guides parties to a written Agreement with specifics, repair pathways, and consent records. The output is a markdown file in <a class="link" href="./AGREEMENTS/" target="_blank"><code>AGREEMENTS/</code></a> — same schema as a manually formed Agreement, just AI-assisted.</p>
+<p>Instead of "We'll work together," WPAP guides parties to a written Agreement with specifics, repair pathways, and consent records. The output is a markdown file in <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/AGREEMENTS/" target="_blank"><code>AGREEMENTS/</code></a> — same schema as a manually formed Agreement, just AI-assisted.</p>
 <p><strong>Prevents enormous suffering by surfacing ambiguity early.</strong></p>
 <hr/>
 <h3>2. 🌍 Translation Layer</h3>
@@ -3201,7 +3497,7 @@ coherence)              participate)
 <li><strong>Renegotiation</strong> — when the original Agreement was insufficient, amending it consciously</li>
 <li><strong>Graceful exits</strong> — when the relationship cannot continue, ending it without further harm</li>
 </ul>
-<p>A broken Agreement that is repaired strengthens the practice. A broken Agreement that is hidden weakens it. (Mirror of <a class="link" href="./FORMING_AGREEMENTS.md" target="_blank"><code>FORMING_AGREEMENTS.md</code></a> Repair section.)</p>
+<p>A broken Agreement that is repaired strengthens the practice. A broken Agreement that is hidden weakens it. (Mirror of <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/FORMING_AGREEMENTS.md" target="_blank"><code>FORMING_AGREEMENTS.md</code></a> Repair section.)</p>
 <hr/>
 <h3>6. ✅ Peace Verification</h3>
 <p>Eventually communities, organizations, events, and teams can voluntarily operate under <strong>World Peace Agreement Standards</strong>:</p>
@@ -3270,7 +3566,7 @@ coherence)              participate)
 <li>Gatherings (Coherent Champions cohort experiences)</li>
 <li>"Coherent Champions" identity becoming a thing people opt into</li>
 </ul>
-<p>Foundations already in place: <a class="link" href="./COHERENT_CHAMPIONS_MANIFESTO.md" target="_blank"><code>COHERENT_CHAMPIONS_MANIFESTO.md</code></a>, <a class="link" href="./WORLD_PEACE_AGREEMENT.md" target="_blank"><code>WORLD_PEACE_AGREEMENT.md</code></a>, <a class="link" href="./AGREEMENTS/" target="_blank"><code>AGREEMENTS/</code></a>, <code>zenvillage.live/peace</code>.</p>
+<p>Foundations already in place: <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/COHERENT_CHAMPIONS_MANIFESTO.md" target="_blank"><code>COHERENT_CHAMPIONS_MANIFESTO.md</code></a>, <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/WORLD_PEACE_AGREEMENT.md" target="_blank"><code>WORLD_PEACE_AGREEMENT.md</code></a>, <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/AGREEMENTS/" target="_blank"><code>AGREEMENTS/</code></a>, <code>zenvillage.live/peace</code>.</p>
 <hr/>
 <h3>Phase 2 — Operational Layer</h3>
 <p><strong>Goal: Make coherence tangible.</strong></p>
@@ -3283,7 +3579,7 @@ coherence)              participate)
 <li><strong>House agreements</strong> (roommates, shared homes)</li>
 <li><strong>Volunteer agreements</strong> (event volunteers, mutual aid networks)</li>
 </ul>
-<p>Each is a markdown file in <a class="link" href="./AGREEMENTS/" target="_blank"><code>AGREEMENTS/</code></a> — same schema, AI-assisted creation. The first agreements feel like having a wise mediator help you write the thing you didn't know how to ask for.</p>
+<p>Each is a markdown file in <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/AGREEMENTS/" target="_blank"><code>AGREEMENTS/</code></a> — same schema, AI-assisted creation. The first agreements feel like having a wise mediator help you write the thing you didn't know how to ask for.</p>
 <hr/>
 <h3>Phase 3 — Peace Infrastructure Layer</h3>
 <p><strong>Goal: Real social technology.</strong></p>
@@ -3345,10 +3641,10 @@ coherence)              participate)
 <hr/>
 <h2>Renewal</h2>
 <p>This protocol is renewed by being lived. When a module proves valuable, it is built. When a module proves unnecessary, it is dropped. The doc is amended to reflect what is actually generative.</p>
-<p><em>Companion to the Manifesto. The system made operational.</em></p></div></details><details class="inline-doc" id="doc-agreement-template"><summary class="inline-doc-summary"><span class="doc-icon">📜</span><div class="doc-title-block"><div class="doc-title">World Peace Agreement</div><div class="doc-subtitle">The signable template</div><div class="doc-summary">The 7 commitments. What every Coherent Champion signs.</div></div><span class="doc-expand">read inline →</span></summary><div class="inline-doc-body markdown-body"><p style="font-size:11px;color:var(--muted);margin:0 0 12px;"><a class="link" href="cursor://file/Users/jamessunheart/FPAI_Cockpit/core/INTENT/WORLD_PEACE_AGREEMENT.md">open in editor</a> · <a class="link" href="file:///Users/jamessunheart/FPAI_Cockpit/core/INTENT/WORLD_PEACE_AGREEMENT.md" target="_blank">raw file</a></p><p><strong>A signable covenant of the World Peace Organization (Zen Village)</strong> <strong>Founder:</strong> James Sunheart <strong>Source:</strong> Coherent Champions of CHRIST — Manifesto v1.0 <strong>Adopted:</strong> 2026-05-07</p>
+<p><em>Companion to the Manifesto. The system made operational.</em></p></div></details><details class="inline-doc" id="doc-agreement-template"><summary class="inline-doc-summary"><span class="doc-icon">📜</span><div class="doc-title-block"><div class="doc-title">World Peace Agreement</div><div class="doc-subtitle">The signable template</div><div class="doc-summary">The 7 commitments. What every Coherent Champion signs.</div></div><span class="doc-expand">read inline →</span></summary><div class="inline-doc-body markdown-body"><p style="font-size:11px;color:var(--muted);margin:0 0 12px;"><a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/WORLD_PEACE_AGREEMENT.md">open in editor</a> · <a class="link" href="file:///Users/jamessunheart/FPAI_Cockpit/core/INTENT/WORLD_PEACE_AGREEMENT.md" target="_blank">raw file</a></p><p><strong>A signable covenant of the World Peace Organization (Zen Village)</strong> <strong>Founder:</strong> James Sunheart <strong>Source:</strong> Coherent Champions of CHRIST — Manifesto v1.0 <strong>Adopted:</strong> 2026-05-07</p>
 <hr/>
 <h2>Status</h2>
-<p><strong>This is the canonical template</strong> for forming World Peace Agreements between specific parties. Specific instances are formed at <a class="link" href="./AGREEMENTS/" target="_blank"><code>./AGREEMENTS/</code></a> — each named for the parties and date. The protocol for forming Agreements is at <a class="link" href="./FORMING_AGREEMENTS.md" target="_blank"><code>./FORMING_AGREEMENTS.md</code></a>.</p>
+<p><strong>This is the canonical template</strong> for forming World Peace Agreements between specific parties. Specific instances are formed at <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/AGREEMENTS/" target="_blank"><code>./AGREEMENTS/</code></a> — each named for the parties and date. The protocol for forming Agreements is at <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/FORMING_AGREEMENTS.md" target="_blank"><code>./FORMING_AGREEMENTS.md</code></a>.</p>
 <p>The seven clauses below are the <em>spine</em> — every formed Agreement invokes them as basis and adds party-specific commitments.</p>
 <hr/>
 <h2>The Agreement</h2>
@@ -3379,11 +3675,11 @@ coherence)              participate)
 <p>The TRUST token is the membership ledger. It is earned through verified contribution, not purchased. It tracks who is in active practice, not who has signed a piece of paper.</p>
 <hr/>
 <h2>Reference</h2>
-<p>Full founding document: <a class="link" href="./COHERENT_CHAMPIONS_MANIFESTO.md" target="_blank"><code>core/INTENT/COHERENT_CHAMPIONS_MANIFESTO.md</code></a></p></div></details><details class="inline-doc" id="doc-forming"><summary class="inline-doc-summary"><span class="doc-icon">✍️</span><div class="doc-title-block"><div class="doc-title">Forming Agreements</div><div class="doc-subtitle">Manual protocol</div><div class="doc-summary">Step-by-step for forming any specific Peace Agreement (the manual flow; WPAP §1 is AI-assisted).</div></div><span class="doc-expand">read inline →</span></summary><div class="inline-doc-body markdown-body"><p style="font-size:11px;color:var(--muted);margin:0 0 12px;"><a class="link" href="cursor://file/Users/jamessunheart/FPAI_Cockpit/core/INTENT/FORMING_AGREEMENTS.md">open in editor</a> · <a class="link" href="file:///Users/jamessunheart/FPAI_Cockpit/core/INTENT/FORMING_AGREEMENTS.md" target="_blank">raw file</a></p><p><strong>The protocol for forming specific Peace Agreements between specific parties.</strong></p>
+<p>Full founding document: <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/COHERENT_CHAMPIONS_MANIFESTO.md" target="_blank"><code>core/INTENT/COHERENT_CHAMPIONS_MANIFESTO.md</code></a></p></div></details><details class="inline-doc" id="doc-forming"><summary class="inline-doc-summary"><span class="doc-icon">✍️</span><div class="doc-title-block"><div class="doc-title">Forming Agreements</div><div class="doc-subtitle">Manual protocol</div><div class="doc-summary">Step-by-step for forming any specific Peace Agreement (the manual flow; WPAP §1 is AI-assisted).</div></div><span class="doc-expand">read inline →</span></summary><div class="inline-doc-body markdown-body"><p style="font-size:11px;color:var(--muted);margin:0 0 12px;"><a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/FORMING_AGREEMENTS.md">open in editor</a> · <a class="link" href="file:///Users/jamessunheart/FPAI_Cockpit/core/INTENT/FORMING_AGREEMENTS.md" target="_blank">raw file</a></p><p><strong>The protocol for forming specific Peace Agreements between specific parties.</strong></p>
 <ul>
-<li>Source: <a class="link" href="./COHERENT_CHAMPIONS_MANIFESTO.md" target="_blank">Coherent Champions of CHRIST — Manifesto v1.0</a></li>
-<li>Template: <a class="link" href="./WORLD_PEACE_AGREEMENT.md" target="_blank">WORLD_PEACE_AGREEMENT.md</a></li>
-<li>Instances: <a class="link" href="./AGREEMENTS/" target="_blank">AGREEMENTS/</a></li>
+<li>Source: <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/COHERENT_CHAMPIONS_MANIFESTO.md" target="_blank">Coherent Champions of CHRIST — Manifesto v1.0</a></li>
+<li>Template: <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/WORLD_PEACE_AGREEMENT.md" target="_blank">WORLD_PEACE_AGREEMENT.md</a></li>
+<li>Instances: <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/AGREEMENTS/" target="_blank">AGREEMENTS/</a></li>
 </ul>
 <hr/>
 <h2>What an Agreement Is</h2>
@@ -3467,8 +3763,8 @@ repairs: []                          # list of repair event records
 <p>The body of the file follows the structure described in <strong>The Form</strong> above (Parties → Context → Basis → Commitments → Scope → Repair → Witness → Signing).</p>
 <p>The <strong>registry</strong> is <em>derived</em> from these files:</p>
 <ul>
-<li><a class="link" href="./AGREEMENTS/" target="_blank"><code>AGREEMENTS/INDEX.md</code></a> — human-readable index, one row per Agreement</li>
-<li><a class="link" href="./AGREEMENTS/" target="_blank"><code>AGREEMENTS/registry.json</code></a> — machine-readable mirror</li>
+<li><a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/AGREEMENTS/" target="_blank"><code>AGREEMENTS/INDEX.md</code></a> — human-readable index, one row per Agreement</li>
+<li><a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/AGREEMENTS/" target="_blank"><code>AGREEMENTS/registry.json</code></a> — machine-readable mirror</li>
 </ul>
 <p>Regenerate after adding or modifying an Agreement:</p>
 <p><pre><code>python tools/registry/build_index.py
@@ -3492,7 +3788,7 @@ ratification_required_from:
 <h2>Renewal</h2>
 <blockquote><em>Signed not in perfection, but in sincere participation.</em></blockquote>
 <p>An Agreement is not a one-time signature. It is renewed every time it is lived. A signer who stops practicing has effectively withdrawn, regardless of what the file says. A practitioner who never explicitly signed is, in some sense, already participating — though the explicit Agreement makes the practice visible and inspectable.</p>
-<p>The Agreement protects both parties from drift — including drift in the form of urgency, charisma, or claimed authority pushing one party past coherent action.</p></div></details><details class="inline-doc" id="doc-player-card"><summary class="inline-doc-summary"><span class="doc-icon">🌱</span><div class="doc-title-block"><div class="doc-title">Player Card</div><div class="doc-subtitle">One-page fillable</div><div class="doc-summary">The fillable card for running your 7-Day First Game and logging your Proof.</div></div><span class="doc-expand">read inline →</span></summary><div class="inline-doc-body markdown-body"><p style="font-size:11px;color:var(--muted);margin:0 0 12px;"><a class="link" href="cursor://file/Users/jamessunheart/FPAI_Cockpit/core/INTENT/FULL_POTENTIAL_GAME_PLAYER_CARD.md">open in editor</a> · <a class="link" href="file:///Users/jamessunheart/FPAI_Cockpit/core/INTENT/FULL_POTENTIAL_GAME_PLAYER_CARD.md" target="_blank">raw file</a></p><h2>Player Card — v1.0</h2>
+<p>The Agreement protects both parties from drift — including drift in the form of urgency, charisma, or claimed authority pushing one party past coherent action.</p></div></details><details class="inline-doc" id="doc-player-card"><summary class="inline-doc-summary"><span class="doc-icon">🌱</span><div class="doc-title-block"><div class="doc-title">Player Card</div><div class="doc-subtitle">One-page fillable</div><div class="doc-summary">The fillable card for running your 7-Day First Game and logging your Proof.</div></div><span class="doc-expand">read inline →</span></summary><div class="inline-doc-body markdown-body"><p style="font-size:11px;color:var(--muted);margin:0 0 12px;"><a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/FULL_POTENTIAL_GAME_PLAYER_CARD.md">open in editor</a> · <a class="link" href="file:///Users/jamessunheart/FPAI_Cockpit/core/INTENT/FULL_POTENTIAL_GAME_PLAYER_CARD.md" target="_blank">raw file</a></p><h2>Player Card — v1.0</h2>
 <p>A one-page tool for running your first proof loop. Fill it in. Get it witnessed. Log it.</p>
 <hr/>
 <p><strong>PLAYER:</strong> _______________________________________________</p>
@@ -3549,8 +3845,8 @@ ratification_required_from:
 <p><em>By signing, the witness affirms they observed the output described above and stand behind the proof.</em></p>
 <hr/>
 <p><em>Companion to the Full Potential Game Player's Guide v1.x.</em></p>
-<p><em>The Game does not begin when you understand it. It begins when you complete the first agreement.</em></p></div></details><details class="inline-doc" id="doc-agreement-builder"><summary class="inline-doc-summary"><span class="doc-icon">🤖</span><div class="doc-title-block"><div class="doc-title">Agreement Builder Prompt</div><div class="doc-subtitle">AI-assisted Player Card</div><div class="doc-summary">Paste-into-Claude prompt that turns the AI into your 7-Day Game facilitator. Generates your Proof Log.</div></div><span class="doc-expand">read inline →</span></summary><div class="inline-doc-body markdown-body"><p style="font-size:11px;color:var(--muted);margin:0 0 12px;"><a class="link" href="cursor://file/Users/jamessunheart/FPAI_Cockpit/core/INTENT/AGREEMENT_BUILDER_PROMPT.md">open in editor</a> · <a class="link" href="file:///Users/jamessunheart/FPAI_Cockpit/core/INTENT/AGREEMENT_BUILDER_PROMPT.md" target="_blank">raw file</a></p><p><strong>The smallest useful Treasury-growth tool. Paste this into Claude / Claude Code to run a 7-Day First Game with AI as your facilitator.</strong></p>
-<p>This is the first operational implementation of the <a class="link" href="./WORLD_PEACE_AGREEMENTS_PROTOCOL.md#1--agreement-builder" target="_blank">WPAP Agreement Builder</a>, and the first input pipe to the <a class="link" href="./REMARKABLY_COHERENT_TREASURY.md" target="_blank">Coherent Treasury</a>. Every completed loop produces a Proof Log entry, which feeds the <a class="link" href="./FULL_POTENTIAL_GAME.md#minimum-viable-scoreboard" target="_blank">Minimum Viable Scoreboard</a> and (eventually) the Dividend Formula.</p>
+<p><em>The Game does not begin when you understand it. It begins when you complete the first agreement.</em></p></div></details><details class="inline-doc" id="doc-agreement-builder"><summary class="inline-doc-summary"><span class="doc-icon">🤖</span><div class="doc-title-block"><div class="doc-title">Agreement Builder Prompt</div><div class="doc-subtitle">AI-assisted Player Card</div><div class="doc-summary">Paste-into-Claude prompt that turns the AI into your 7-Day Game facilitator. Generates your Proof Log.</div></div><span class="doc-expand">read inline →</span></summary><div class="inline-doc-body markdown-body"><p style="font-size:11px;color:var(--muted);margin:0 0 12px;"><a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/AGREEMENT_BUILDER_PROMPT.md">open in editor</a> · <a class="link" href="file:///Users/jamessunheart/FPAI_Cockpit/core/INTENT/AGREEMENT_BUILDER_PROMPT.md" target="_blank">raw file</a></p><p><strong>The smallest useful Treasury-growth tool. Paste this into Claude / Claude Code to run a 7-Day First Game with AI as your facilitator.</strong></p>
+<p>This is the first operational implementation of the <a class="link" href="./WORLD_PEACE_AGREEMENTS_PROTOCOL.md#1--agreement-builder" target="_blank">WPAP Agreement Builder</a>, and the first input pipe to the <a class="link" href="https://github.com/jamessunheart/fpai-sessions/blob/claude/magical-wu-6cdcc7/core/INTENT/REMARKABLY_COHERENT_TREASURY.md" target="_blank">Coherent Treasury</a>. Every completed loop produces a Proof Log entry, which feeds the <a class="link" href="./FULL_POTENTIAL_GAME.md#minimum-viable-scoreboard" target="_blank">Minimum Viable Scoreboard</a> and (eventually) the Dividend Formula.</p>
 <blockquote><em>The Game does not begin when you understand it. It begins when you complete the first agreement.</em></blockquote>
 <hr/>
 <h2>How to use this</h2>
@@ -3945,6 +4241,131 @@ function refreshRelTimes() {
 refreshRelTimes();
 setInterval(refreshRelTimes, 30000);
 
+// --- Welcome modal (first-time visitors) ----------------------------------
+(function initWelcome() {
+  const modal = document.getElementById('welcomeModal');
+  if (!modal) return;
+  let seen = false;
+  try { seen = localStorage.getItem('fpai-cockpit-welcomed') === '1'; } catch (e) {}
+  if (!seen) modal.classList.add('show');
+  function dismiss() {
+    modal.classList.remove('show');
+    try { localStorage.setItem('fpai-cockpit-welcomed', '1'); } catch (e) {}
+  }
+  document.getElementById('welcomeDismiss')?.addEventListener('click', dismiss);
+  document.getElementById('welcomeStart')?.addEventListener('click', () => {
+    dismiss();
+    setTimeout(() => {
+      const target = document.getElementById('doc-manifesto');
+      if (target) {
+        target.open = true;
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 300);
+  });
+})();
+
+// --- Sticky TOC navigation ------------------------------------------------
+(function initTOC() {
+  const nav = document.getElementById('tocNav');
+  const list = document.getElementById('tocList');
+  const toggle = document.getElementById('tocToggle');
+  if (!nav || !list || !toggle) return;
+
+  // Find all h2 elements in the wrap (skip ones inside inline-doc bodies)
+  const headings = Array.from(document.querySelectorAll('.wrap h2')).filter(h => {
+    return !h.closest('.inline-doc-body');
+  });
+
+  headings.forEach((h, i) => {
+    if (!h.id) h.id = 'sec-' + i;
+    const txt = h.textContent.replace(/\s+—.*/, '').replace(/\s+\d+/, '').trim().slice(0, 40);
+    const btn = document.createElement('button');
+    btn.className = 'toc-link';
+    btn.textContent = txt;
+    btn.addEventListener('click', () => {
+      h.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      nav.classList.remove('open');
+    });
+    list.appendChild(btn);
+  });
+
+  toggle.addEventListener('click', () => nav.classList.toggle('open'));
+
+  // Highlight active section as you scroll
+  const links = list.querySelectorAll('.toc-link');
+  function updateActive() {
+    let active = 0;
+    const scrollY = window.scrollY + 100;
+    headings.forEach((h, i) => {
+      if (h.offsetTop <= scrollY) active = i;
+    });
+    links.forEach((l, i) => l.classList.toggle('active', i === active));
+  }
+  document.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+})();
+
+// --- Scroll progress bar -------------------------------------------------
+(function initScrollProgress() {
+  const bar = document.getElementById('scrollProgress');
+  if (!bar) return;
+  function update() {
+    const h = document.documentElement;
+    const total = h.scrollHeight - h.clientHeight;
+    const pct = total > 0 ? (h.scrollTop / total) * 100 : 0;
+    bar.style.width = pct + '%';
+  }
+  document.addEventListener('scroll', update, { passive: true });
+  update();
+})();
+
+// --- Starfield (subtle, slow, atmospheric) -------------------------------
+(function initStarfield() {
+  const svg = document.getElementById('starfield');
+  if (!svg) return;
+  const w = window.innerWidth;
+  const h = Math.max(window.innerHeight, document.documentElement.scrollHeight);
+  svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  svg.setAttribute('width', w);
+  svg.setAttribute('height', h);
+  // Density: ~1 star per 12000px²
+  const count = Math.min(180, Math.floor((w * h) / 12000));
+  let stars = '';
+  for (let i = 0; i < count; i++) {
+    const x = Math.random() * w;
+    const y = Math.random() * h;
+    const r = Math.random() * 1.4 + 0.3;
+    const delay = Math.random() * 4;
+    stars += `<circle class="star" cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${r.toFixed(1)}" style="animation-delay:${delay.toFixed(1)}s" />`;
+  }
+  svg.innerHTML = stars;
+})();
+
+// --- Personalized greeting ----------------------------------------------
+(function initGreeting() {
+  const el = document.getElementById('greeting');
+  if (!el) return;
+  let name = '';
+  try {
+    const cs = JSON.parse(localStorage.getItem('fpai-cockpit-cs') || '{}');
+    name = localStorage.getItem('fpai-cockpit-name') || '';
+  } catch (e) {}
+  // Also try to pick up from sign form on input
+  const nameInput = document.getElementById('signName');
+  function setGreeting(n) {
+    if (n && n.trim()) {
+      el.innerHTML = '<span class="greeting">welcome, ' + n.split(' ')[0] + '</span>';
+      try { localStorage.setItem('fpai-cockpit-name', n.trim()); } catch (e) {}
+    }
+  }
+  if (name) setGreeting(name);
+  if (nameInput) {
+    if (name && !nameInput.value) nameInput.value = name;
+    nameInput.addEventListener('input', () => setGreeting(nameInput.value));
+  }
+})();
+
 // --- Onboarding journey + Next Move coach ---------------------------------
 const ONBOARD_KEY = 'fpai-cockpit-onboard';
 const NEXT_MOVES = [
@@ -3991,6 +4412,13 @@ document.querySelectorAll('.onboard-step input[type="checkbox"]').forEach(cb => 
     obState[key] = cb.checked;
     saveOnboard(obState);
     updateNextMove();
+    if (cb.checked) {
+      const step = cb.closest('.onboard-step');
+      if (step) {
+        step.classList.add('celebrating');
+        setTimeout(() => step.classList.remove('celebrating'), 700);
+      }
+    }
   });
 });
 updateNextMove();
@@ -4085,9 +4513,9 @@ document.getElementById('signEmailBtn')?.addEventListener('click', (e) => {
   e.preventDefault();
   const { md, name } = buildSignedAgreement();
   if (!name || name === 'unsigned') { alert('Please enter your name first.'); return; }
-  const subject = encodeURIComponent(`I sign the World Peace Agreement — ${name}`);
+  const subject = encodeURIComponent(`World Peace Agreement signed — ${name}`);
   const body = encodeURIComponent(md);
-  window.location.href = `mailto:james@fullpotential.com?subject=${subject}&body=${body}`;
+  window.location.href = `mailto:james.rick.stinson@gmail.com?subject=${subject}&body=${body}`;
 });
 
 // --- Invitation generator ------------------------------------------------
@@ -4239,6 +4667,26 @@ async function checkForUpdate() {
 }
 checkForUpdate();
 setInterval(checkForUpdate, 15000);
+
+// === Champions Roll · live fetch from registry.json ========================
+(async () => {
+  try {
+    const r = await fetch("/peace/registry/registry.json", { cache: "no-store" });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const d = await r.json();
+    const all = Array.isArray(d.agreements) ? d.agreements : [];
+    const publicSigners = all.filter(a => a && a.public);
+    const active = publicSigners.filter(a => a.status === "active").length;
+    const total = publicSigners.length;
+    const target = document.getElementById("championsCount");
+    if (target) target.textContent = "— " + total + " signed · " + active + " public";
+  } catch (e) {
+    const target = document.getElementById("championsCount");
+    if (target) target.textContent = "— roll temporarily unavailable";
+    console.warn("[champions-roll]", e);
+  }
+})();
+
 </script>
 </body>
 </html>
