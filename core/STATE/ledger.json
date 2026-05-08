@@ -1,0 +1,84 @@
+{
+  "_doc": "Money ledger \u2014 costs (servers/APIs/tooling) and revenue. Source for Chief of Staff Money view.",
+  "costs_monthly_usd": [
+    {
+      "name": "Primary droplet",
+      "id": "198.54.123.234",
+      "category": "server",
+      "engine_role": "P1",
+      "monthly_usd": 70,
+      "purpose": "ZV site, chat, brain"
+    },
+    {
+      "name": "Secondary droplet",
+      "id": "162.0.208.88",
+      "category": "server",
+      "engine_role": "infra",
+      "monthly_usd": 75,
+      "purpose": "Adam Telegram relay, brain server"
+    },
+    {
+      "name": "Outbounders prod droplet",
+      "id": "209.74.93.72",
+      "category": "server",
+      "engine_role": "infra",
+      "monthly_usd": 330,
+      "purpose": "Hosts Outbounders.com production \u2014 live revenue product, not eliminable"
+    },
+    {
+      "name": "Anthropic API (chat+companion)",
+      "id": "anthropic-api",
+      "category": "api",
+      "engine_role": "P1",
+      "monthly_usd": 40,
+      "purpose": "Powers chat + companion brain"
+    },
+    {
+      "name": "Cursor Ultra",
+      "id": "cursor-ultra",
+      "category": "tooling",
+      "engine_role": "infra",
+      "monthly_usd": 200,
+      "purpose": "AI coding (primary)"
+    },
+    {
+      "name": "Anthropic Max (Claude Code)",
+      "id": "anthropic-max",
+      "category": "tooling",
+      "engine_role": "infra",
+      "monthly_usd": 200,
+      "purpose": "AI coding (now primary at 20x Max tier — upgraded from $100 5x)"
+    }
+  ],
+  "revenue_monthly": {
+    "zen_village": {
+      "inquiries": 12,
+      "bookings_confirmed": 10,
+      "revenue_usd": 0,
+      "as_of": "2026-04-30T20:23:35+00:00",
+      "source_endpoint": "http://198.54.123.234:8770/admin/stats",
+      "_note": "Counts pulled live from ZV ops summary. revenue_usd not yet wired (per-booking price lookup pending).",
+      "recent_inquiries": 8,
+      "recent_bookings": 4,
+      "applications": 29
+    },
+    "concierge": {
+      "active_tenants": 0,
+      "revenue_usd": 0,
+      "as_of": null,
+      "_note": "P2 \u2014 dark-shipped, no live revenue yet"
+    },
+    "outbounders": {
+      "revenue_usd": 15433.67,
+      "as_of": "2026-05-02T15:13:57+00:00",
+      "_note": "6-month avg: $15,434/mo. Last 30d: $14,326.",
+      "last30d_revenue_usd": 14326.0,
+      "last30d_txns": 26,
+      "lifetime_txns": 32104,
+      "lifetime_revenue_usd": 12429801.85,
+      "activity_summary": "26 txns last 30d \u00b7 32,104 lifetime \u00b7 $12,429,802 cumulative",
+      "source": "obapp_outbounders.main_transaction (credits, deleted='N')"
+    }
+  },
+  "last_updated": "2026-05-08"
+}

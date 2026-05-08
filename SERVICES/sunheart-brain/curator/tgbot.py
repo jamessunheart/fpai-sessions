@@ -1224,20 +1224,28 @@ async def _cmd_money() -> str:
 
     costs = data.get("costs", []) or []
     revenue = data.get("revenue", []) or []
-    total_cost = sum(float(c.get("monthly_usd", 0) or 0) for c in costs)
-    total_rev = sum(float(r.get("monthly_usd", 0) or 0) for r in revenue)
-    net = total_rev - total_cost
+    total_cost = float(data.get("total_cost_monthly_usd") or sum(float(c.get("monthly_usd", 0) or 0) for c in costs))
+    total_rev = float(data.get("total_revenue_monthly_usd") or 0)
+    net = float(data.get("net_monthly_usd") or (total_rev - total_cost))
 
     lines = ["💰 <b>Money — current resources by source</b>\n"]
     lines.append(f"<b>Costs:</b> ${total_cost:,.0f}/mo  ·  <b>Revenue:</b> ${total_rev:,.0f}/mo  ·  <b>Net:</b> ${net:+,.0f}/mo\n")
 
-    rev_real = [r for r in revenue if r.get("name") and float(r.get("monthly_usd", 0) or 0) > 0]
+    # Revenue rows have shape: {stream, revenue_usd, last30d_revenue_usd, note, ...}
+    rev_real = [r for r in revenue if float(r.get("revenue_usd", 0) or 0) > 0]
     if rev_real:
-        lines.append("<b>Revenue sources</b>")
-        for r in sorted(rev_real, key=lambda x: -float(x.get("monthly_usd", 0) or 0))[:8]:
-            lines.append(f"  + ${float(r.get('monthly_usd',0)):,.0f}  {tg._esc(r.get('name','?'))}  <i>{tg._esc(r.get('purpose','')[:60])}</i>")
+        lines.append("<b>Revenue streams</b>")
+        for r in sorted(rev_real, key=lambda x: -float(x.get("revenue_usd", 0) or 0))[:8]:
+            stream = r.get("stream") or r.get("name") or "?"
+            mo = float(r.get("revenue_usd", 0) or 0)
+            last30 = r.get("last30d_revenue_usd")
+            extra = f" · last 30d ${float(last30):,.0f}" if last30 is not None else ""
+            note = (r.get("note") or "")[:80]
+            lines.append(f"  + ${mo:,.0f}/mo  {tg._esc(stream)}{extra}")
+            if note:
+                lines.append(f"     <i>{tg._esc(note)}</i>")
     else:
-        lines.append("<b>Revenue:</b> <i>0 active revenue sources yet.</i>")
+        lines.append("<b>Revenue:</b> <i>0 active revenue streams yet.</i>")
 
     lines.append("")
     if costs:
