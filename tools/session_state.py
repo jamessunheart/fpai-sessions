@@ -110,6 +110,21 @@ def _detect_project(cwd: Path) -> tuple[str, str, str]:
     return project, branch, last
 
 
+def _set_terminal_title(title: str) -> None:
+    """Emit ANSI escape to set the terminal window/tab title.
+
+    Works in Terminal.app, iTerm2, Cursor terminal, VS Code terminal, etc.
+    Silently no-ops if stdout isn't a TTY.
+    """
+    if not sys.stdout.isatty():
+        return
+    try:
+        sys.stdout.write(f"\033]0;{title}\007")
+        sys.stdout.flush()
+    except Exception:
+        pass
+
+
 def update(args: argparse.Namespace) -> None:
     cwd = Path.cwd()
     project, branch, last_commit = _detect_project(cwd)
@@ -138,6 +153,15 @@ def update(args: argparse.Namespace) -> None:
     try:
         with _open(req, timeout=10) as r:
             resp = json.loads(r.read().decode("utf-8"))
+        # Update terminal title to reflect current state
+        title_parts = []
+        status_glyph = {"active": "🟢", "paused": "⏸", "blocked": "🛑", "complete": "✓"}.get(args.status, "🟢")
+        title_parts.append(f"{status_glyph} {project}")
+        if args.loop_number is not None:
+            title_parts.append(f"Loop {args.loop_number}")
+        if args.quest:
+            title_parts.append(args.quest[:60])
+        _set_terminal_title(" · ".join(title_parts))
         print(f"✓ {project} updated · status={resp.get('state',{}).get('status')} · loop={resp.get('state',{}).get('loop_number')}")
         if args.verbose:
             print(json.dumps(resp, indent=2))
