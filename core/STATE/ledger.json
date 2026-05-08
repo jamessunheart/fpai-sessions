@@ -13,9 +13,9 @@
       "name": "Secondary droplet",
       "id": "162.0.208.88",
       "category": "server",
-      "engine_role": "infra",
+      "engine_role": "P1",
       "monthly_usd": 75,
-      "purpose": "Adam Telegram relay, brain server"
+      "purpose": "Brain server: sh-brain (MCP+tgbot+index), Chief of Staff, ZV Brain \u2014 daily-driver substrate"
     },
     {
       "name": "Outbounders prod droplet",
@@ -47,7 +47,15 @@
       "category": "tooling",
       "engine_role": "infra",
       "monthly_usd": 200,
-      "purpose": "AI coding (now primary at 20x Max tier — upgraded from $100 5x)"
+      "purpose": "AI coding (now primary at 20x Max tier \u2014 upgraded from $100 5x)"
+    },
+    {
+      "name": "Domain-registrations",
+      "id": "domains",
+      "category": "infra",
+      "engine_role": "infra",
+      "monthly_usd": 1.0,
+      "purpose": "Domain registrar fees"
     }
   ],
   "revenue_monthly": {
@@ -70,7 +78,7 @@
     },
     "outbounders": {
       "revenue_usd": 15433.67,
-      "take_home_pct": 0.10,
+      "take_home_pct": 0.1,
       "_take_home_note": "~90% goes to payroll; James's actual take-home is roughly 10% of gross.",
       "as_of": "2026-05-02T15:13:57+00:00",
       "_note": "6-month avg: $15,434/mo. Last 30d: $14,326.",
