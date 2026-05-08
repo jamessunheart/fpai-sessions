@@ -2525,33 +2525,66 @@ async def _money_set_balance(arg: str) -> str:
 
 
 async def _money_trade(arg: str) -> str:
-    """Open a trade. Format: <symbol> <side> <qty> @ <price> [note]"""
+    """Open a trade. Format: <symbol> <side> <qty> [Nx] @ <price> [from <wallet>] [note]
+
+    Examples:
+      /money trade BTC long 0.5 @ 65000 spot DCA
+      /money trade BTC short 1.205 3x @ 79650 from BTR $32K margin
+      /money trade SOL short 100 5x @ 90 from kucoin perp
+    """
     import re as _re
     if not arg.strip():
-        return ("Usage: <code>/money trade &lt;symbol&gt; &lt;side&gt; &lt;qty&gt; @ &lt;price&gt; [note]</code>\n"
-                "Example: <code>/money trade BTC long 0.5 @ 65000 sweep entry</code>\n"
-                "Sides: <b>long</b> or <b>short</b>.\n"
-                "<i>Screenshot-based ingest is a v1 path — text format works today.</i>")
+        return (
+            "Usage: <code>/money trade &lt;sym&gt; &lt;side&gt; &lt;qty&gt; [Nx] @ &lt;price&gt; [from &lt;wallet&gt;] [note]</code>\n"
+            "Examples:\n"
+            "  <code>/money trade BTC long 0.5 @ 65000 sweep entry</code>\n"
+            "  <code>/money trade BTC short 1.205 3x @ 79650 from BTR $32K margin</code>\n"
+            "Sides: <b>long</b> | <b>short</b>. Leverage <code>Nx</code> optional (default 1x = spot).\n"
+            "Wallet: optional <code>from &lt;id&gt;</code> ties this position to a liquid-asset account."
+        )
 
-    m = _re.match(r"^\s*(\S+)\s+(long|short|buy|sell)\s+([\d.]+)\s*@\s*\$?([\d.,]+)\s*(.*)$",
-                   arg, _re.IGNORECASE)
+    # Parse: symbol, side, qty, optional leverage (Nx), price, optional "from <wallet>" + note
+    pattern = (
+        r"^\s*(\S+)\s+"                 # 1: symbol
+        r"(long|short|buy|sell)\s+"     # 2: side
+        r"([\d.]+)\s*"                  # 3: qty
+        r"(?:([\d.]+)x\s+)?"            # 4: optional leverage (e.g., 3x)
+        r"@\s*\$?([\d.,]+)\s*"          # 5: price
+        r"(.*)$"                        # 6: rest (may contain "from <wallet>" + note)
+    )
+    m = _re.match(pattern, arg, _re.IGNORECASE)
     if not m:
-        return "⚠️ Couldn't parse. Use: <code>/money trade &lt;symbol&gt; &lt;side&gt; &lt;qty&gt; @ &lt;price&gt; [note]</code>"
+        return "⚠️ Couldn't parse. Use: <code>/money trade &lt;sym&gt; &lt;side&gt; &lt;qty&gt; [Nx] @ &lt;price&gt; [from &lt;wallet&gt;] [note]</code>"
     symbol = m.group(1).upper()
     side = "long" if m.group(2).lower() in ("long", "buy") else "short"
     try:
         qty = float(m.group(3))
-        price = float(m.group(4).replace(",", ""))
+        leverage = float(m.group(4)) if m.group(4) else 1.0
+        price = float(m.group(5).replace(",", ""))
     except ValueError:
-        return "⚠️ qty and price must be numbers"
-    note = m.group(5).strip()
+        return "⚠️ qty, leverage, and price must be numbers"
+    rest = (m.group(6) or "").strip()
+
+    wallet_id = ""
+    note = rest
+    wm = _re.match(r"^from\s+(\S+)\s*(.*)$", rest, _re.IGNORECASE)
+    if wm:
+        wallet_id = wm.group(1)
+        note = wm.group(2).strip()
+
+    notional = qty * price
+    margin = notional / leverage if leverage else notional
 
     from datetime import datetime as _dt8
     import secrets as _sec
     trade_id = f"t-{_dt8.utcnow().strftime('%Y%m%d')}-{_sec.token_hex(3)}"
     trade = {
         "id": trade_id, "symbol": symbol, "side": side, "qty": qty,
+        "leverage": leverage,
         "entry_price": price,
+        "notional_usd": notional,
+        "margin_usd": margin,
+        "wallet_id": wallet_id,
         "entry_at": _dt8.utcnow().isoformat() + "Z",
         "status": "open", "note": note,
     }
@@ -2569,12 +2602,14 @@ async def _money_trade(arg: str) -> str:
         return f"⚠️ ledger save failed: {tg._esc(str(e))}"
     _money_audit("trade_open", trade)
 
-    cost_basis = qty * price
-    return (f"\U0001F4C8 <b>Trade opened:</b> {tg._esc(symbol)} {side} {qty} @ ${price:,.2f}\n"
-            f"  cost basis: ${cost_basis:,.2f}\n"
+    lev_str = f" {leverage:g}x" if leverage and leverage != 1 else " spot"
+    wallet_str = f"\n  wallet: <code>{tg._esc(wallet_id)}</code>" if wallet_id else ""
+    return (f"\U0001F4C8 <b>Trade opened:</b> {tg._esc(symbol)} {side}{lev_str} {qty} @ ${price:,.2f}\n"
+            f"  notional: ${notional:,.2f}  ·  margin: ${margin:,.2f}\n"
             f"  id: <code>{tg._esc(trade_id)}</code>"
+            + wallet_str
             + (f"\n  <i>{tg._esc(note)}</i>" if note else "")
-            + f"\n\n<i>/money trades to see all positions</i>")
+            + f"\n\n<i>/money trades for live P/L</i>")
 
 
 async def _money_trades_view() -> str:
@@ -2588,26 +2623,68 @@ async def _money_trades_view() -> str:
     if not trades:
         return ("\U0001F4C8 <b>Trades</b>\n\n"
                 "<i>No trades recorded yet. Use:</i>\n"
-                "<code>/money trade BTC long 0.5 @ 65000 sweep entry</code>")
+                "<code>/money trade BTC long 0.5 @ 65000 sweep entry</code>\n"
+                "<code>/money trade BTC short 1.205 3x @ 79650 from BTR</code> <i>(leveraged)</i>")
+
+    prices = await _fetch_live_prices() if open_trades else {}
 
     lines = [f"\U0001F4C8 <b>Trades</b> — {len(open_trades)} open, {len(closed_trades)} closed\n"]
     if open_trades:
         lines.append("<b>Open positions</b>")
-        total_basis = 0.0
+        total_margin = 0.0
+        total_pl = 0.0
         for t in open_trades:
             sym = t.get("symbol", "?")
             side = t.get("side", "?")
             qty = float(t.get("qty", 0) or 0)
             entry = float(t.get("entry_price", 0) or 0)
-            basis = qty * entry
-            total_basis += basis
+            leverage = float(t.get("leverage", 1) or 1)
+            margin = float(t.get("margin_usd") or (qty * entry / leverage if leverage else qty * entry))
+            notional = float(t.get("notional_usd") or (qty * entry))
+            wallet = t.get("wallet_id") or ""
+            total_margin += margin
+
             arrow = "↗" if side == "long" else "↘"
-            lines.append(f"  {arrow} {tg._esc(sym)} {tg._esc(side)} {qty} @ ${entry:,.2f}  "
-                         f"basis ${basis:,.0f}  <code>{tg._esc(t.get('id','?'))}</code>")
+            lev_str = f" {leverage:g}x" if leverage and leverage != 1 else ""
+            head = (f"  {arrow} <b>{tg._esc(sym)}</b> {tg._esc(side)}{lev_str} "
+                    f"{qty} @ ${entry:,.2f}")
+            lines.append(head)
+
+            current = prices.get(sym.upper())
+            if current is not None:
+                if side == "long":
+                    pnl = (current - entry) * qty
+                else:
+                    pnl = (entry - current) * qty
+                total_pl += pnl
+                pl_pct_notional = (pnl / notional * 100) if notional else 0
+                pl_pct_margin = (pnl / margin * 100) if margin else 0
+                pnl_glyph = "🟢" if pnl > 0 else ("🔴" if pnl < 0 else "⚪")
+                pnl_sign = "+" if pnl >= 0 else ""
+                lines.append(
+                    f"     {pnl_glyph} mark ${current:,.2f}  ·  "
+                    f"P/L <b>{pnl_sign}${pnl:,.0f}</b> "
+                    f"({pnl_sign}{pl_pct_notional:.1f}% notional, "
+                    f"{pnl_sign}{pl_pct_margin:.1f}% margin)"
+                )
+            else:
+                lines.append(f"     ⚪ <i>no live price for {tg._esc(sym)} (not in WhaleTrack feed)</i>")
+            meta = f"     notional ${notional:,.0f} · margin ${margin:,.0f}"
+            if wallet:
+                meta += f" · from <code>{tg._esc(wallet)}</code>"
+            meta += f" · <code>{tg._esc(t.get('id','?'))}</code>"
+            lines.append(meta)
             if t.get("note"):
-                lines.append(f"     <i>{tg._esc(t['note'][:80])}</i>")
-        lines.append(f"\n<i>Total cost basis: ${total_basis:,.0f}</i>")
-        lines.append("<i>Live P/L is a v1 path — would need price-feed wiring.</i>")
+                lines.append(f"     <i>{tg._esc(t['note'][:120])}</i>")
+
+        if total_margin > 0:
+            sign = "+" if total_pl >= 0 else ""
+            pct = (total_pl / total_margin * 100) if total_margin else 0
+            lines.append(f"\n<b>Totals:</b> margin ${total_margin:,.0f} · "
+                         f"P/L <b>{sign}${total_pl:,.0f}</b> ({sign}{pct:.1f}% on margin)")
+        if not prices:
+            lines.append("<i>(live-price fetch from WhaleTrack failed — P/L not computed)</i>")
+
     if closed_trades:
         lines.append(f"\n<b>Recently closed</b> ({len(closed_trades)})")
         for t in sorted(closed_trades, key=lambda x: x.get("closed_at", ""), reverse=True)[:5]:
@@ -2616,6 +2693,39 @@ async def _money_trades_view() -> str:
             sign = "+" if pl >= 0 else ""
             lines.append(f"  {tg._esc(sym)} {sign}${pl:,.0f}  <code>{tg._esc(t.get('id','?'))}</code>")
     return "\n".join(lines)
+
+
+async def _fetch_live_prices() -> dict[str, float]:
+    """Pull current prices for open trade symbols from WhaleTrack /api/recommendations.
+
+    Returns a dict of UPPERCASE_SYMBOL -> current_price. Best-effort; on failure
+    returns {}. Also reads BTC anchor.price as a backup BTC source.
+    """
+    import httpx as _httpx
+    wt_base = _os.environ.get("WHALETRACK_PUBLIC_BASE", "https://fullpotential.ai/dashboards/whaletrack")
+    out: dict[str, float] = {}
+    try:
+        async with _httpx.AsyncClient(timeout=6.0) as c:
+            r = await c.get(f"{wt_base}/api/recommendations")
+            r.raise_for_status()
+            data = r.json()
+        anchor = data.get("btc_anchor") or {}
+        if anchor.get("price"):
+            try:
+                out["BTC"] = float(anchor["price"])
+            except Exception:
+                pass
+        for rec in data.get("recommendations") or []:
+            sym = (rec.get("symbol") or "").upper()
+            cp = rec.get("current_price")
+            if sym and cp is not None:
+                try:
+                    out[sym] = float(cp)
+                except Exception:
+                    pass
+    except Exception as e:
+        log.warning("/money trades live-price fetch failed: %s", e)
+    return out
 
 
 
