@@ -1634,7 +1634,8 @@ async def _cmd_signals() -> str:
             return None
 
     base = _os.environ.get("FPAI_BASE_URL", "https://fullpotential.com")
-    retreats, board, listing = await asyncio.gather(
+    game_signals, retreats, board, listing = await asyncio.gather(
+        _fetch_json(f"{base}/api/champion/signals"),
         _fetch_json(f"{base}/api/champion/retreat/list"),
         _fetch_json(f"{base}/api/champion/leaderboard"),
         _fetch_json(f"{base}/api/champion/list"),
@@ -1647,7 +1648,57 @@ async def _cmd_signals() -> str:
     affiliates_total = sum(int(c.get("affiliates", 0) or 0) for c in top_champs)
 
     lines = ["📡 <b>Signals</b>\n"]
-    lines.append("<b>LEADS</b> <i>(refine over time — 0 today is signal too)</i>")
+
+    # GAME · Field Coherence + 30d goal + Field State + 7d activity
+    if game_signals:
+        goal = game_signals.get("goal_30d") or {}
+        coh = game_signals.get("field_coherence") or {}
+        comps = coh.get("components") or {}
+        state = game_signals.get("field_state") or {}
+        act = game_signals.get("activity_7d") or {}
+
+        lines.append("<b>🎮 GAME · Full Potential</b>")
+        if goal.get("name"):
+            tgt = goal.get("target")
+            cur = goal.get("current")
+            done = "✓" if goal.get("complete") else f"{cur}/{tgt}"
+            lines.append(f"  🎯 30-day goal: <i>{tg._esc(goal['name'])}</i> · <b>{tg._esc(str(done))}</b>")
+
+        head = coh.get("headline")
+        if head is not None:
+            head_str = f"{float(head):.2f}" if head != 0 else "0.00"
+            comp_strs = []
+            for k in ("activity", "witness", "conversion", "drift"):
+                v = comps.get(k)
+                if v is None:
+                    comp_strs.append(f"{k} —")
+                else:
+                    comp_strs.append(f"{k} {float(v):.2f}")
+            lines.append(f"  🌡 Field Coherence: <b>{head_str}</b> · " + " · ".join(comp_strs))
+
+        if state:
+            lines.append(
+                f"  📊 Field State: {state.get('champions',0)} champ · "
+                f"{state.get('characters',0)} characters · "
+                f"{state.get('proofs',0)} proofs · "
+                f"{state.get('mirrors',0)} mirrors · "
+                f"{state.get('leads',0)} leads · "
+                f"score {state.get('field_score_sum',0)}"
+            )
+        if act:
+            lp = act.get("last_proof") or {}
+            last_str = f"L{lp.get('loop_number')}" if lp.get("loop_number") else "?"
+            lines.append(
+                f"  📈 7-day activity: +{act.get('new_champions',0)} champs · "
+                f"+{act.get('new_proofs',0)} proofs · "
+                f"+{act.get('new_mirrors',0)} mirrors · last {last_str}"
+            )
+    else:
+        lines.append("<b>🎮 GAME · Full Potential</b>")
+        lines.append("  ⚪ <i>/api/champion/signals unreachable</i>")
+
+    # LEADS pipeline (per-channel breakdown the GAME endpoint doesn't surface)
+    lines.append("\n<b>📥 LEADS pipeline</b> <i>(0 today is signal too)</i>")
     lines.append(f"  🏝 Retreat leads: <b>{retreat_count}</b>")
     lines.append(f"  🎉 Party leads: <b>0</b> <i>(no party-interest endpoint yet)</i>")
     lines.append(f"  🤝 Coaching leads: <b>0</b> <i>(no coaching-marketplace yet)</i>")
@@ -1656,7 +1707,7 @@ async def _cmd_signals() -> str:
     lines.append(f"  📇 Cards filled: <b>{cards_filled}/{champ_count}</b>")
     lines.append(f"  ↗ Affiliate links earned: <b>{affiliates_total}</b>")
 
-    lines.append("\n<b>TRADING</b> <i>(WhaleTrack · paper)</i>")
+    lines.append("\n<b>📈 TRADING · WhaleTrack</b> <i>(paper)</i>")
     wt_base = _os.environ.get(
         "WHALETRACK_PUBLIC_BASE",
         "https://fullpotential.ai/dashboards/whaletrack",
