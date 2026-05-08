@@ -125,6 +125,26 @@ def count_proofs() -> int:
     )
 
 
+def count_champions() -> tuple[int, int]:
+    """Return (total_champions, public_champions) by scanning AGREEMENTS/champions/."""
+    champ_dir = INTENT_DIR / "AGREEMENTS" / "champions"
+    if not champ_dir.exists():
+        return (0, 0)
+    total = 0
+    public = 0
+    for p in champ_dir.iterdir():
+        if not (p.is_file() and p.suffix == ".md" and not p.name.startswith(".")):
+            continue
+        total += 1
+        try:
+            text = p.read_text(encoding="utf-8")
+            if re.search(r"^public:\s*true", text, re.MULTILINE):
+                public += 1
+        except Exception:
+            pass
+    return (total, public)
+
+
 def count_civ_quest_commits(days: int = 7) -> int:
     """Roughly: commits in last N days that touch core/INTENT/ — Civ-Quest milestones."""
     try:
@@ -1190,6 +1210,174 @@ body.mode-field .player-only { display: none !important; }
 .glossary-def { font-size: 11px; color: var(--text); line-height: 1.5; }
 .glossary-def code { font-size: 11px; }
 .glossary-def strong { color: var(--accent); }
+
+/* Next move coach */
+.next-move {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, rgba(247,185,85,0.08), rgba(247,185,85,0.02));
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+.nm-icon { font-size: 28px; color: var(--accent); flex-shrink: 0; }
+.nm-text { flex: 1; min-width: 0; }
+.nm-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+.nm-action { font-size: 16px; font-weight: 700; color: var(--text); margin-top: 4px; }
+.nm-cta {
+  background: var(--accent);
+  color: #1a0e02;
+  padding: 10px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.nm-cta:hover { transform: translateY(-1px); }
+
+/* Funnel */
+.funnel-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+.funnel { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.funnel-step {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 16px;
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  gap: 12px;
+  align-items: center;
+  width: min(100%, 480px);
+}
+.funnel-step-active { border-left: 3px solid var(--good); }
+.funnel-num { font-size: 22px; font-weight: 700; color: var(--accent); text-align: center; }
+.funnel-label { font-weight: 700; font-size: 13px; color: var(--text); }
+.funnel-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.funnel-arrow { color: var(--muted); font-size: 12px; }
+
+/* Onboarding journey */
+.onboarding-card {
+  background: var(--surface);
+  border: 1px solid var(--good);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+.onboard-steps { display: flex; flex-direction: column; gap: 6px; }
+.onboard-step {
+  display: grid;
+  grid-template-columns: 24px 36px 1fr;
+  gap: 12px;
+  align-items: start;
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.onboard-step:hover { border-color: var(--good); }
+.onboard-step input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  accent-color: var(--good);
+  cursor: pointer;
+}
+.onboard-step input[type="checkbox"]:checked ~ .step-content .step-title {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+.step-num {
+  width: 32px;
+  height: 32px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-weight: 700;
+  color: var(--accent);
+  font-size: 14px;
+}
+.step-title { font-weight: 700; font-size: 14px; color: var(--text); }
+.step-desc { font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+
+/* Sign Agreement form */
+.sign-card {
+  background: var(--surface);
+  border: 1px solid var(--good);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+.sign-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 14px;
+  margin-bottom: 16px;
+}
+@media (max-width: 700px) { .sign-form { grid-template-columns: 1fr; } }
+.sign-form label { display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+.sign-form label.sign-radio {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 400;
+}
+.sign-form label:has(textarea) { grid-column: 1 / -1; }
+.sign-form input, .sign-form textarea {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 8px 10px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 400;
+}
+.sign-form input:focus, .sign-form textarea:focus { outline: none; border-color: var(--good); }
+.sign-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.sign-actions button { font-family: inherit; cursor: pointer; border: none; }
+
+/* Champions Roll */
+.champions-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+
+/* Invitation */
+.invite-card {
+  background: linear-gradient(135deg, rgba(78,205,196,0.06), transparent);
+  border: 1px solid #4ecdc4;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+.invite-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.invite-actions button, .invite-actions a { font-family: inherit; cursor: pointer; border: none; }
+.invite-preview pre { word-break: break-word; }
 """
 
 
@@ -1281,6 +1469,181 @@ function refreshRelTimes() {
 }
 refreshRelTimes();
 setInterval(refreshRelTimes, 30000);
+
+// --- Onboarding journey + Next Move coach ---------------------------------
+const ONBOARD_KEY = 'fpai-cockpit-onboard';
+const NEXT_MOVES = [
+  { key: 'read', action: 'Read the Manifesto.', cta: 'Open →', href: 'cursor://file__INTENT_DIR_PLACEHOLDER__/COHERENT_CHAMPIONS_MANIFESTO.md' },
+  { key: 'sign', action: 'Sign the World Peace Agreement.', cta: 'Sign now →', href: '#signCard' },
+  { key: 'play', action: 'Run your 7-Day First Game.', cta: 'Open prompt →', href: 'cursor://file__INTENT_DIR_PLACEHOLDER__/AGREEMENT_BUILDER_PROMPT.md' },
+  { key: 'witness', action: 'Get one witness signature on your proof.', cta: 'Find a witness →', href: '#onboardSteps' },
+  { key: 'invite', action: 'Bring one aligned person.', cta: 'Open invitation →', href: '#inviteCopyBtn' },
+  { key: 'done', action: 'Run another loop, witness someone else, become a steward.', cta: 'Keep going →', href: '#' },
+];
+function loadOnboard() {
+  try { return JSON.parse(localStorage.getItem(ONBOARD_KEY) || '{}'); } catch(e) { return {}; }
+}
+function saveOnboard(s) {
+  try { localStorage.setItem(ONBOARD_KEY, JSON.stringify(s)); } catch(e) {}
+}
+function updateNextMove() {
+  const state = loadOnboard();
+  let nextIdx = NEXT_MOVES.findIndex(m => m.key !== 'done' && !state[m.key]);
+  if (nextIdx === -1) nextIdx = NEXT_MOVES.length - 1;
+  const move = NEXT_MOVES[nextIdx];
+  const actionEl = document.getElementById('nmAction');
+  const ctaEl = document.getElementById('nmCta');
+  if (actionEl) actionEl.textContent = move.action;
+  if (ctaEl) {
+    ctaEl.textContent = move.cta;
+    // Replace placeholder INTENT_DIR with same path used elsewhere
+    ctaEl.href = move.href;
+  }
+}
+const obState = loadOnboard();
+document.querySelectorAll('.onboard-step input[type="checkbox"]').forEach(cb => {
+  const key = cb.dataset.stepKey;
+  if (obState[key]) cb.checked = true;
+  cb.addEventListener('change', () => {
+    obState[key] = cb.checked;
+    saveOnboard(obState);
+    updateNextMove();
+  });
+});
+updateNextMove();
+
+// --- Sign the Agreement --------------------------------------------------
+function buildSignedAgreement() {
+  const name = (document.getElementById('signName')?.value || '').trim();
+  const handle = (document.getElementById('signHandle')?.value || '').trim();
+  const email = (document.getElementById('signEmail')?.value || '').trim();
+  const witness = (document.getElementById('signWitness')?.value || '').trim();
+  const why = (document.getElementById('signWhy')?.value || '').trim();
+  const isPublic = document.querySelector('input[name="signPublic"]:checked')?.value === 'true';
+  const today = new Date().toISOString().slice(0, 10);
+  const safeName = name || 'unsigned';
+  const slug = safeName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'unnamed';
+  const filename = `${today}_${slug}.md`;
+
+  const md = `---
+champion_id: ${today}_${slug}
+date_signed: ${today}
+name: ${name || '[your name]'}
+handle: ${handle}
+email: ${email}
+witness: ${witness}
+public: ${isPublic}
+status: signed
+manifesto_version: v1.0
+---
+
+# Coherent Champion of CHRIST
+
+I, **${name || '[your name]'}**, having read the Coherent Champions of CHRIST Manifesto v1.0,
+sign the World Peace Agreement.
+
+## I agree
+
+- to practice peace in thought, word, and action
+- to reduce unnecessary suffering
+- to seek understanding before hatred
+- to repair where I have caused harm
+- to protect life, truth, beauty, and future generations
+- to become trustworthy with intelligence, influence, and resources
+- that peace must become visible through action
+
+*Signed not in perfection, but in sincere participation.*
+
+${why ? `## Why I am signing\n\n${why}\n` : ''}
+## Witness
+
+${witness || '(no witness named at signing)'}
+
+## Visibility
+
+This signature is **${isPublic ? 'PUBLIC' : 'PRIVATE'}** — ${isPublic ? 'I consent to appearing on the public Champions Roll.' : 'this is a private signing; I prefer not to be listed publicly.'}
+
+---
+
+*Date: ${today}*
+*Filename suggestion: \`core/INTENT/AGREEMENTS/champions/${filename}\`*
+`;
+  return { md, filename, name, isPublic };
+}
+
+document.getElementById('signCopyBtn')?.addEventListener('click', async () => {
+  const { md, name } = buildSignedAgreement();
+  if (!name || name === 'unsigned') { alert('Please enter your name first.'); return; }
+  try {
+    await navigator.clipboard.writeText(md);
+    document.getElementById('signCopyBtn').textContent = '✓ Copied — paste it where you can save it';
+    setTimeout(() => { document.getElementById('signCopyBtn').textContent = '📋 Copy signed Agreement'; }, 3000);
+  } catch (e) {
+    alert('Could not copy to clipboard. Use Download instead.');
+  }
+});
+
+document.getElementById('signDownloadBtn')?.addEventListener('click', () => {
+  const { md, filename, name } = buildSignedAgreement();
+  if (!name || name === 'unsigned') { alert('Please enter your name first.'); return; }
+  const blob = new Blob([md], { type: 'text/markdown' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById('signEmailBtn')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  const { md, name } = buildSignedAgreement();
+  if (!name || name === 'unsigned') { alert('Please enter your name first.'); return; }
+  const subject = encodeURIComponent(`World Peace Agreement signed — ${name}`);
+  const body = encodeURIComponent(md);
+  window.location.href = `mailto:james.rick.stinson@gmail.com?subject=${subject}&body=${body}`;
+});
+
+// --- Invitation generator ------------------------------------------------
+function buildInvitation() {
+  return `Reality is already a game. This is the guide for those who know.
+
+I'm signing the World Peace Agreement and starting a 7-Day First Game — a proof-based operating system for human potential. Six pillars: Coherence · Healing · Regeneration · Intelligence · Service · Truth.
+
+It's not a religion. It's not a movement. It's a practice of becoming trustworthy with power.
+
+If you're tired of chaos, manipulation, performative outrage — read the Manifesto. Sign if it lands. Run your first 7-day proof loop.
+
+Coherent Champions of CHRIST: ${typeof location !== 'undefined' ? location.href : 'cockpit-map.html'}
+
+We are human and AI allies, committed to bringing coherence, healing, and regeneration to our world.`;
+}
+
+document.getElementById('inviteCopyBtn')?.addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(buildInvitation());
+    document.getElementById('inviteCopyBtn').textContent = '✓ Copied — paste anywhere';
+    setTimeout(() => { document.getElementById('inviteCopyBtn').textContent = '📋 Copy invitation'; }, 3000);
+  } catch (e) {
+    alert('Could not copy. Use the preview below.');
+  }
+});
+
+const inviteWa = document.getElementById('inviteWhatsApp');
+if (inviteWa) inviteWa.href = `https://wa.me/?text=${encodeURIComponent(buildInvitation())}`;
+
+const inviteEmail = document.getElementById('inviteEmail');
+if (inviteEmail) {
+  inviteEmail.addEventListener('click', (e) => {
+    e.preventDefault();
+    const subject = encodeURIComponent('You should see this — Coherent Champions of CHRIST');
+    const body = encodeURIComponent(buildInvitation());
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  });
+}
+
+const invitePreview = document.getElementById('invitePreview');
+if (invitePreview) invitePreview.textContent = buildInvitation();
 
 // --- Awareness Ladder ----------------------------------------------------
 const LADDER_KEY = 'fpai-cockpit-ladder';
@@ -1802,6 +2165,7 @@ def render_html() -> str:
     proofs_count = count_proofs()
     civ_milestones_7d = count_civ_quest_commits(7)
     civ_milestones_30d = count_civ_quest_commits(30)
+    champions_total, champions_public = count_champions()
 
     # tag counts for donut
     tag_counts: dict[str, int] = {"P1": 0, "P2": 0, "infra": 0, "cruft": 0, "unknown": 0}
@@ -1879,6 +2243,177 @@ def render_html() -> str:
       <div class="role-item"><strong>Holds</strong> &mdash; spiritual + doctrinal authority within CORA Nation · NOT fiduciary control over OneBPO (governance firewall, by design)</div>
       <div class="role-item"><strong>Body in the room when</strong> &mdash; ratification · ceremony · steward initiation · civilization-quest decisions</div>
     </div>
+  </div>
+
+  <div class="next-move" id="nextMove">
+    <div class="nm-icon">⟶</div>
+    <div class="nm-text">
+      <div class="nm-label">YOUR NEXT MOVE</div>
+      <div class="nm-action" id="nmAction">Read the Manifesto.</div>
+    </div>
+    <a class="nm-cta" id="nmCta" href="cursor://file{INTENT_DIR}/COHERENT_CHAMPIONS_MANIFESTO.md">Open →</a>
+  </div>
+
+  <div class="founder-only funnel-card">
+    <h2>Adoption Funnel <span style="font-size:12px;font-weight:400;color:var(--muted);">&mdash; how many at each stage</span></h2>
+    <p style="color:var(--muted);font-size:12px;margin:0 0 12px;">
+      The conversion sequence: stranger → reader → signer → player → witness → steward. Numbers populate as adoption begins.
+    </p>
+    <div class="funnel">
+      <div class="funnel-step funnel-step-active">
+        <div class="funnel-num">∞</div>
+        <div class="funnel-label">Visitors</div>
+        <div class="funnel-sub">Anyone who landed here</div>
+      </div>
+      <div class="funnel-arrow">↓</div>
+      <div class="funnel-step funnel-step-active">
+        <div class="funnel-num">—</div>
+        <div class="funnel-label">Readers</div>
+        <div class="funnel-sub">Opened the Manifesto</div>
+      </div>
+      <div class="funnel-arrow">↓</div>
+      <div class="funnel-step">
+        <div class="funnel-num">{champions_total}</div>
+        <div class="funnel-label">Coherent Champions</div>
+        <div class="funnel-sub">Signed the World Peace Agreement</div>
+      </div>
+      <div class="funnel-arrow">↓</div>
+      <div class="funnel-step">
+        <div class="funnel-num">{proofs_count}</div>
+        <div class="funnel-label">Players</div>
+        <div class="funnel-sub">Started a 7-Day First Game</div>
+      </div>
+      <div class="funnel-arrow">↓</div>
+      <div class="funnel-step">
+        <div class="funnel-num">0</div>
+        <div class="funnel-label">Witnesses</div>
+        <div class="funnel-sub">Signed behind another's proof</div>
+      </div>
+      <div class="funnel-arrow">↓</div>
+      <div class="funnel-step">
+        <div class="funnel-num">1</div>
+        <div class="funnel-label">Stewards</div>
+        <div class="funnel-sub">CORA Nation covenant stewards</div>
+      </div>
+    </div>
+    <p style="color:var(--muted);font-size:11px;margin:12px 0 0;">
+      Today: 1 founder-steward (you), 0 champions yet signed, 0 active players.
+      First champion signature is the unblock for everything below it.
+    </p>
+  </div>
+
+  <div class="onboarding-card">
+    <h2>The Onboarding Journey <span style="font-size:12px;font-weight:400;color:var(--muted);">&mdash; from stranger to Coherent Champion to Player</span></h2>
+    <p style="color:var(--muted);font-size:12px;margin:0 0 12px;">
+      Five steps. Click each as you complete it; progress saves locally. The path: <strong>read → sign → play → witness → invite</strong>.
+    </p>
+    <div class="onboard-steps" id="onboardSteps">
+      <label class="onboard-step" data-step="read">
+        <input type="checkbox" data-step-key="read" />
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Read the Manifesto</div>
+          <div class="step-desc">5 minutes. The CHRIST principles, the role of AI, the invitation. <a class='link' href='cursor://file{INTENT_DIR}/COHERENT_CHAMPIONS_MANIFESTO.md'>Open Manifesto</a></div>
+        </div>
+      </label>
+      <label class="onboard-step" data-step="sign">
+        <input type="checkbox" data-step-key="sign" />
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Sign the World Peace Agreement</div>
+          <div class="step-desc">1 minute. Signing makes you a Coherent Champion. Use the form below — generates your signed file.</div>
+        </div>
+      </label>
+      <label class="onboard-step" data-step="play">
+        <input type="checkbox" data-step-key="play" />
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Run your 7-Day First Game</div>
+          <div class="step-desc">7 days. Choose a transformation, deliver, witness, log. <a class='link' href='cursor://file{INTENT_DIR}/AGREEMENT_BUILDER_PROMPT.md'>AI-Assisted Player Card prompt</a></div>
+        </div>
+      </label>
+      <label class="onboard-step" data-step="witness">
+        <input type="checkbox" data-step-key="witness" />
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">Get one witness signature</div>
+          <div class="step-desc">A witness who can stand behind your proof. Distance-Weighted (different team / no dependency / outside your social graph).</div>
+        </div>
+      </label>
+      <label class="onboard-step" data-step="invite">
+        <input type="checkbox" data-step-key="invite" />
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <div class="step-title">Bring one aligned person</div>
+          <div class="step-desc">The Game spreads through resonance, not recruitment. Who do you know who's tired of chaos? Use the invitation card below.</div>
+        </div>
+      </label>
+    </div>
+  </div>
+
+  <div class="sign-card" id="signCard">
+    <h2>Sign the World Peace Agreement</h2>
+    <p style="color:var(--muted);font-size:12px;margin:0 0 12px;">
+      Adopting the values of the Manifesto. Signing makes you a Coherent Champion of CHRIST.
+      The act is real; the form just records it.
+    </p>
+    <blockquote style="background:rgba(74,222,128,0.06);border-left:3px solid var(--good);padding:10px 14px;margin:0 0 16px;font-size:13px;font-style:italic;">
+      I agree to practice peace in thought, word, and action.
+      I agree to reduce unnecessary suffering.
+      I agree to seek understanding before hatred.
+      I agree to repair where I have caused harm.
+      I agree to protect life, truth, beauty, and future generations.
+      I agree to become trustworthy with intelligence, influence, and resources.
+      I agree that peace must become visible through action.
+      <br><br>
+      <em>Signed not in perfection, but in sincere participation.</em>
+    </blockquote>
+    <div class="sign-form">
+      <label><span>Your name</span><input type="text" id="signName" placeholder="e.g. Maria Lopez" /></label>
+      <label><span>Handle (optional)</span><input type="text" id="signHandle" placeholder="@yourhandle" /></label>
+      <label><span>Email (optional)</span><input type="email" id="signEmail" placeholder="you@example.com" /></label>
+      <label><span>Witness (optional)</span><input type="text" id="signWitness" placeholder="someone who saw you sign" /></label>
+      <label class="sign-radio">
+        <input type="radio" name="signPublic" value="true" checked /> Public (appear on the Champions Roll)
+      </label>
+      <label class="sign-radio">
+        <input type="radio" name="signPublic" value="false" /> Private (signed; not publicly listed)
+      </label>
+      <label><span>One sentence — why are you signing?</span><textarea id="signWhy" rows="2" placeholder="optional"></textarea></label>
+    </div>
+    <div class="sign-actions">
+      <button id="signCopyBtn" class="player-cta-primary">📋 Copy signed Agreement</button>
+      <button id="signDownloadBtn" class="player-cta-secondary">⬇ Download as .md</button>
+      <a id="signEmailBtn" class="player-cta-secondary" href="#">✉ Email to founder</a>
+    </div>
+    <p style="color:var(--muted);font-size:11px;margin:12px 0 0;">
+      Three options to commit: copy to clipboard, download .md, or email to <code>james.rick.stinson@gmail.com</code>.
+      Once received, your signature is added to <code>core/INTENT/AGREEMENTS/champions/</code> and you appear in the Champions Roll.
+    </p>
+  </div>
+
+  <div class="champions-card">
+    <h2>Champions Roll <span style="font-size:12px;font-weight:400;color:var(--muted);">&mdash; {champions_total} signed · {champions_public} public</span></h2>
+    <p style="color:var(--muted);font-size:12px;margin:0 0 12px;">
+      Public roll of Coherent Champions. Private signers exist but are not listed by their consent.
+    </p>
+    {('<p class="muted">No public signatures yet. <strong>The first signature is yours.</strong> Sign above.</p>' if champions_public == 0 else '<div class="champion-list">[Champions list rendered here]</div>')}
+  </div>
+
+  <div class="invite-card">
+    <h2>Bring a Friend <span style="font-size:12px;font-weight:400;color:var(--muted);">&mdash; the Game spreads by resonance</span></h2>
+    <p style="color:var(--muted);font-size:12px;margin:0 0 12px;">
+      Don't recruit. Invite. Give it to someone who's already living something close to this — they'll recognize it. The first proof loop is the real test of resonance.
+    </p>
+    <div class="invite-actions">
+      <button id="inviteCopyBtn" class="player-cta-primary">📋 Copy invitation</button>
+      <a id="inviteWhatsApp" class="player-cta-secondary" href="#" target="_blank">💬 WhatsApp</a>
+      <a id="inviteEmail" class="player-cta-secondary" href="#">✉ Email</a>
+    </div>
+    <details class="invite-preview" style="margin-top:12px;">
+      <summary style="cursor:pointer;color:var(--accent);font-size:12px;">Preview invitation text</summary>
+      <pre id="invitePreview" style="background:var(--surface-2);border:1px solid var(--border);padding:12px;border-radius:6px;font-size:12px;white-space:pre-wrap;margin-top:8px;line-height:1.5;font-family:inherit;"></pre>
+    </details>
   </div>
 
   <div class="player-only player-hero">
@@ -2663,7 +3198,7 @@ def render_html() -> str:
     This is a snapshot &mdash; for live state always check <code>git log</code> + <code>git status</code> + <code>NOW.md</code>.
   </footer>
 </div>
-<script>{JS}</script>
+<script>{JS.replace("__INTENT_DIR_PLACEHOLDER__", str(INTENT_DIR))}</script>
 </body>
 </html>
 """
