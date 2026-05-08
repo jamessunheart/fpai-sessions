@@ -56,6 +56,30 @@
       "engine_role": "infra",
       "monthly_usd": 1.0,
       "purpose": "Domain registrar fees"
+    },
+    {
+      "name": "House-Zenith-Zen-Miami",
+      "id": "housing-miami",
+      "category": "housing",
+      "engine_role": "infra",
+      "monthly_usd": 3200.0,
+      "purpose": "Miami house for Zenith and Zen"
+    },
+    {
+      "name": "Zen-Palace-Chirripo-rent-net-of-Renae",
+      "id": "housing-chirripo-rent",
+      "category": "housing",
+      "engine_role": "infra",
+      "monthly_usd": 1000.0,
+      "purpose": "James share of Chirripo rent (gross 1500 minus 500 from Renae)"
+    },
+    {
+      "name": "Chirripo-utilities-James-half",
+      "id": "housing-chirripo-utilities",
+      "category": "housing",
+      "engine_role": "infra",
+      "monthly_usd": 125.0,
+      "purpose": "Half of estimated 250/mo water+electricity split with Renae"
     }
   ],
   "revenue_monthly": {
