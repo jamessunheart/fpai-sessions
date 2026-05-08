@@ -1710,6 +1710,27 @@ body.mode-field .player-only { display: none !important; }
 .sign-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .sign-actions button { font-family: inherit; cursor: pointer; border: none; }
 
+.sign-confirmation {
+  margin-top: 20px;
+  padding: 24px;
+  background: linear-gradient(135deg, rgba(74,222,128,0.10), rgba(247,185,85,0.06));
+  border: 1px solid var(--good);
+  border-radius: 10px;
+  text-align: center;
+  display: none;
+  animation: signCelebrate 0.6s ease-out;
+}
+.sign-confirmation.show { display: block; }
+@keyframes signCelebrate {
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.sc-burst { font-size: 48px; line-height: 1; margin-bottom: 8px; animation: burst 0.6s ease-out; }
+.sign-confirmation h3 { color: var(--good); margin: 8px 0 4px; font-size: 18px; }
+.sign-confirmation p { font-size: 13px; color: var(--text); margin: 6px 0; }
+.sc-action { color: var(--muted); font-size: 12px; }
+.sc-next { background: var(--surface-2); padding: 10px 14px; border-radius: 6px; margin-top: 12px; }
+
 /* Champions Roll */
 .champions-card {
   background: var(--surface);
@@ -1718,6 +1739,74 @@ body.mode-field .player-only { display: none !important; }
   padding: 16px 20px;
   margin-bottom: 24px;
 }
+
+/* Brand subtitle */
+.brand-sub { font-size: 14px; font-weight: 400; color: var(--muted); margin-left: 4px; }
+@media (max-width: 700px) { .brand-sub { display: block; font-size: 12px; margin-left: 0; margin-top: 2px; } }
+
+/* Founder Witness card (player mode social proof) */
+.founder-witness-card {
+  background: linear-gradient(135deg, rgba(247,185,85,0.10), rgba(78,205,196,0.04));
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.founder-witness-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(247,185,85,0.08), transparent 50%);
+  pointer-events: none;
+}
+.fw-row { display: grid; grid-template-columns: 56px 1fr; gap: 16px; align-items: start; position: relative; }
+.fw-icon {
+  font-size: 36px;
+  width: 56px;
+  height: 56px;
+  background: var(--surface);
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fw-label { font-size: 10px; color: var(--accent); letter-spacing: 1.5px; font-weight: 700; }
+.fw-quote { font-size: 14px; color: var(--text); margin-top: 8px; line-height: 1.6; font-style: italic; }
+.fw-attribution { font-size: 11px; color: var(--muted); margin-top: 8px; }
+
+/* After-sign card */
+.after-sign-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+.after-sign-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 8px;
+}
+.after-step {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+}
+.after-step-num {
+  font-size: 24px;
+  color: var(--accent);
+  font-weight: 700;
+  line-height: 1;
+}
+.after-step-title { font-weight: 700; font-size: 13px; color: var(--text); }
+.after-step-desc { font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
 
 /* Champions list */
 .champions-list { display: flex; flex-direction: column; gap: 6px; }
@@ -2145,13 +2234,43 @@ This signature is **${isPublic ? 'PUBLIC' : 'PRIVATE'}** — ${isPublic ? 'I con
   return { md, filename, name, isPublic };
 }
 
+function showSignConfirmation(name, action) {
+  const card = document.getElementById('signCard');
+  if (!card) return;
+  let conf = document.getElementById('signConfirmation');
+  if (!conf) {
+    conf = document.createElement('div');
+    conf.id = 'signConfirmation';
+    conf.className = 'sign-confirmation';
+    card.appendChild(conf);
+  }
+  conf.innerHTML = `
+    <div class="sc-burst">✨</div>
+    <h3>You signed the World Peace Agreement.</h3>
+    <p>You are <strong>${name.split(' ')[0]}</strong>, Coherent Champion in formation.</p>
+    <p class="sc-action">Your file was ${action}. Email it to <code>james.rick.stinson@gmail.com</code> if you haven't already — once it's committed to the repo, your name appears in the Champions Roll below.</p>
+    <p class="sc-next"><strong>Your next move:</strong> open the AI-Assisted Player Card prompt and run your first 7-Day Game. <a class="link" href="#doc-agreement-builder" onclick="document.getElementById('doc-agreement-builder').open=true;">Open the prompt →</a></p>
+  `;
+  conf.classList.add('show');
+  // Mark sign step in onboarding journey
+  try {
+    const ob = JSON.parse(localStorage.getItem('fpai-cockpit-onboard') || '{}');
+    ob.sign = true;
+    localStorage.setItem('fpai-cockpit-onboard', JSON.stringify(ob));
+    const cb = document.querySelector('.onboard-step input[data-step-key="sign"]');
+    if (cb) cb.checked = true;
+    if (typeof updateNextMove === 'function') updateNextMove();
+  } catch (e) {}
+}
+
 document.getElementById('signCopyBtn')?.addEventListener('click', async () => {
   const { md, name } = buildSignedAgreement();
   if (!name || name === 'unsigned') { alert('Please enter your name first.'); return; }
   try {
     await navigator.clipboard.writeText(md);
-    document.getElementById('signCopyBtn').textContent = '✓ Copied — paste it where you can save it';
+    document.getElementById('signCopyBtn').textContent = '✓ Copied';
     setTimeout(() => { document.getElementById('signCopyBtn').textContent = '📋 Copy signed Agreement'; }, 3000);
+    showSignConfirmation(name, 'copied to your clipboard');
   } catch (e) {
     alert('Could not copy to clipboard. Use Download instead.');
   }
@@ -2167,6 +2286,7 @@ document.getElementById('signDownloadBtn')?.addEventListener('click', () => {
   a.download = filename;
   a.click();
   URL.revokeObjectURL(url);
+  showSignConfirmation(name, `downloaded as ${filename}`);
 });
 
 document.getElementById('signEmailBtn')?.addEventListener('click', (e) => {
@@ -2176,6 +2296,7 @@ document.getElementById('signEmailBtn')?.addEventListener('click', (e) => {
   const subject = encodeURIComponent(`World Peace Agreement signed — ${name}`);
   const body = encodeURIComponent(md);
   window.location.href = `mailto:james.rick.stinson@gmail.com?subject=${subject}&body=${body}`;
+  showSignConfirmation(name, 'opened in your email');
 });
 
 // --- Invitation generator ------------------------------------------------
@@ -2273,9 +2394,9 @@ document.querySelectorAll('.c-slider').forEach(s => {
 // --- Mode toggle ---------------------------------------------------------
 const MODE_KEY = 'fpai-cockpit-mode';
 const MODES = {
-  founder: 'The operating dashboard for the World Peace Organization & Full Potential Game.',
-  player: 'The entry point for new players. Welcome — your first move is one real agreement.',
-  field: 'The public aggregate. As proofs flow and consent permits, this surface populates.',
+  founder: 'Founder cockpit · steward queue · adoption funnel · all metrics visible.',
+  player: 'Reality is already a game. This is the guide for those who know.',
+  field: 'The public aggregate · proof loops · champions roll · treasury growth.',
 };
 
 function setMode(mode) {
@@ -2937,8 +3058,8 @@ def render_html() -> str:
 <div class="wrap">
   <div class="header-row">
     <div>
-      <h1>FPAI Cockpit &mdash; Big Picture<span id="greeting"></span></h1>
-      <div class="header-sub" id="modeSubtitle">The operating dashboard for the World Peace Organization &amp; Full Potential Game.</div>
+      <h1>Full Potential <span class="brand-sub">· Coherent Champions of CHRIST</span><span id="greeting"></span></h1>
+      <div class="header-sub" id="modeSubtitle">One Mission · One Agreement · One Game · One Treasury · One Human Family.</div>
     </div>
     <div class="mode-toggle" role="tablist" aria-label="View mode">
       <button class="mode-btn active" data-mode="founder" title="James's private operations + steward queue">⚓ Founder</button>
@@ -3126,6 +3247,50 @@ def render_html() -> str:
     </p>
   </div>
 
+  <div class="after-sign-card">
+    <h2>What happens after you sign? <span style="font-size:12px;font-weight:400;color:var(--muted);">&mdash; the path forward</span></h2>
+    <div class="after-sign-grid">
+      <div class="after-step">
+        <div class="after-step-num">①</div>
+        <div class="after-step-content">
+          <div class="after-step-title">Your file lands in the Champions Roll</div>
+          <div class="after-step-desc">You email or download the .md → it goes into <code>core/INTENT/AGREEMENTS/champions/</code> → next refresh, your name appears here. Public if you consented.</div>
+        </div>
+      </div>
+      <div class="after-step">
+        <div class="after-step-num">②</div>
+        <div class="after-step-content">
+          <div class="after-step-title">You run your 7-Day First Game</div>
+          <div class="after-step-desc">Choose a transformation you can genuinely help one person achieve in 7 days. Open the AI-Assisted Player Card prompt — Claude facilitates the loop with you.</div>
+        </div>
+      </div>
+      <div class="after-step">
+        <div class="after-step-num">③</div>
+        <div class="after-step-content">
+          <div class="after-step-title">A witness signs your proof</div>
+          <div class="after-step-desc">Someone outside your immediate circle (per Distance-Weighted Witness, Treasury §7) confirms what they saw. Your first proof becomes part of the public field.</div>
+        </div>
+      </div>
+      <div class="after-step">
+        <div class="after-step-num">④</div>
+        <div class="after-step-content">
+          <div class="after-step-title">You bring one aligned person</div>
+          <div class="after-step-desc">Not recruitment — invitation. Someone tired of chaos who's already living something close to this. They run their first loop. The field grows by resonance.</div>
+        </div>
+      </div>
+      <div class="after-step">
+        <div class="after-step-num">⑤</div>
+        <div class="after-step-content">
+          <div class="after-step-title">You ascend the Player Path</div>
+          <div class="after-step-desc">Villager → Contributor → Builder → Steward → Guardian → Legend. The stage picks you, not the other way around. Field response confirms readiness.</div>
+        </div>
+      </div>
+    </div>
+    <p style="color:var(--muted);font-size:11px;margin:14px 0 0;text-align:center;">
+      <em>"This is not a religion of superiority. It is a practice of becoming trustworthy with power."</em>
+    </p>
+  </div>
+
   <div class="champions-card">
     <h2>Champions Roll <span style="font-size:12px;font-weight:400;color:var(--muted);">&mdash; {champions_total} signed · {champions_public} public</span></h2>
     <p style="color:var(--muted);font-size:12px;margin:0 0 12px;">
@@ -3149,6 +3314,17 @@ def render_html() -> str:
       <summary style="cursor:pointer;color:var(--accent);font-size:12px;">Preview invitation text</summary>
       <pre id="invitePreview" style="background:var(--surface-2);border:1px solid var(--border);padding:12px;border-radius:6px;font-size:12px;white-space:pre-wrap;margin-top:8px;line-height:1.5;font-family:inherit;"></pre>
     </details>
+  </div>
+
+  <div class="player-only founder-witness-card">
+    <div class="fw-row">
+      <div class="fw-icon">👁</div>
+      <div class="fw-content">
+        <div class="fw-label">FROM THE FOUNDING STEWARD</div>
+        <div class="fw-quote">"I signed the World Peace Agreement first, and ran my first 7-Day proof loop on the day I deployed this page. The architect who has not run a loop is decoration; the architect who runs one becomes the system. I'm in the Game. Come play with me."</div>
+        <div class="fw-attribution">— James Sunheart · Champion #1 · 2 loops complete</div>
+      </div>
+    </div>
   </div>
 
   <div class="player-only player-hero">
