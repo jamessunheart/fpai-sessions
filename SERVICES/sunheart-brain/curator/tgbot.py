@@ -489,6 +489,9 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
             "       /money add cost &lt;id&gt; &lt;name&gt; &lt;amt&gt; &lt;cat&gt; — add new cost\n"
             "       /money add revenue &lt;stream&gt; &lt;amt&gt; [note] — add/update revenue\n"
             "       /money &lt;free text&gt;                       — capture as money note (queued)\n"
+            "  /servers   — live server + hosting status (primary / brain / legacy)\n"
+            "  /roi       — yesterday's brain ROI ledger (cost vs engagement)\n"
+            "  /opportunities — run today's proactive scan now (silent if nothing)\n"
             "  /log       — recent AI activity timeline\n"
             "  /pending — list pending queue items with approve buttons\n"
             "  /digest  — today's brain stats\n"
@@ -608,6 +611,14 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
         return await _cmd_money(rest)
     if cmd == "log":
         return await _cmd_log()
+    if cmd == "servers":
+        return await _cmd_servers()
+    if cmd == "roi":
+        return await _cmd_roi()
+    if cmd == "opportunities":
+        await tg.send("⏳ Running opportunities scan…")
+        asyncio.create_task(_run_opportunities_async())
+        return None
     return f"Unknown command: /{tg._esc(cmd)}. Try /help."
 
 
@@ -1672,6 +1683,243 @@ async def _run_council_async() -> None:
             await tg.send(f"⚠️ Council failed: {tg._esc(str(e)[:400])}")
         except Exception:
             pass
+
+
+async def _run_opportunities_async() -> None:
+    """Fire-and-forget opportunities scan. The job sends its own Telegram
+    message when there's substance; surface only errors here."""
+    from .jobs import opportunities as opp
+    run_id = uuid.uuid4().hex[:12]
+    try:
+        row = await opp.run(run_id)
+        log.info("opportunities on-demand run=%s silent=%s sent=%s",
+                 run_id, row.get("silent"), row.get("sent"))
+        if row.get("silent"):
+            try:
+                await tg.send("🤫 <i>Scan ran. No concrete opportunities surfaced — keeping quiet.</i>")
+            except Exception:
+                pass
+    except Exception as e:
+        log.exception("opportunities on-demand failed: %s", e)
+        try:
+            await tg.send(f"⚠️ Opportunities scan failed: {tg._esc(str(e)[:300])}")
+        except Exception:
+            pass
+
+
+# ───────────────────────────── /roi ──────────────────────────────
+_ROI_LEDGER_PATH = _os.environ.get("SH_ROI_LEDGER", "/var/lib/sh-brain/roi.jsonl")
+
+
+async def _cmd_roi() -> str:
+    """Render the most recent ROI ledger row.
+
+    Source: /var/lib/sh-brain/roi.jsonl, written nightly by `python -m curator roi`.
+    """
+    import json as _json
+    p = _os.path.abspath(_ROI_LEDGER_PATH)
+    if not _os.path.exists(p):
+        return ("📈 <b>ROI ledger</b>\n\n"
+                f"<i>No ledger yet at <code>{tg._esc(p)}</code>. "
+                "Runs nightly via brain-curator-roi.timer; first row appears "
+                "after the first scheduled run.</i>")
+    last_row = None
+    try:
+        with open(p, encoding="utf-8") as f:
+            for line in f:
+                if line.strip():
+                    last_row = line
+        if not last_row:
+            return "📈 <b>ROI ledger</b>\n\n<i>Ledger file present but empty.</i>"
+        row = _json.loads(last_row)
+    except Exception as e:
+        return f"📈 <b>ROI ledger</b>\n\n<i>Could not read ledger: {tg._esc(str(e))}</i>"
+
+    bot = row.get("bot_replies_24h", 0)
+    james = row.get("james_messages_24h", 0)
+    cost = float(row.get("est_cost_usd_24h") or 0)
+    cpc = float(row.get("cost_per_call_usd") or 0)
+    vp = row.get("value_proxy_james_per_bot_reply")
+    alerts = row.get("alerts") or []
+    totals = row.get("totals_lifetime") or {}
+    date = row.get("date", "?")
+
+    lines = [f"📈 <b>Brain ROI · {tg._esc(date)} (last 24h)</b>\n"]
+    lines.append(f"  Bot replies (Claude-call proxy): <b>{bot}</b>")
+    lines.append(f"  James messages: <b>{james}</b>")
+    lines.append(f"  Est cost: <b>${cost:.2f}</b>  <i>(@ ${cpc:.3f}/call)</i>")
+    if vp is not None:
+        lines.append(f"  Value proxy (james/reply): <b>{vp}</b>")
+    else:
+        lines.append("  Value proxy: <i>n/a (no replies)</i>")
+    if alerts:
+        nice = ", ".join(alerts).replace("_", " ")
+        lines.append(f"\n🚨 <b>Alerts:</b> {tg._esc(nice)}")
+    if totals:
+        lines.append(f"\n<i>Lifetime: {totals.get('bot', 0)} bot · {totals.get('user', 0)} user msgs</i>")
+    lines.append(f"<i>Source: {tg._esc(p)}</i>")
+    return "\n".join(lines)
+
+
+# ───────────────────────────── /servers ──────────────────────────────
+async def _cmd_servers() -> str:
+    """Live server + hosting status.
+
+    Combines:
+      - NOW.md "### Servers" subsection (canonical inventory)
+      - Local brain-server vitals (load, mem, disk, uptime)
+      - systemctl status of key sh-brain units
+      - HTTP pings to the public surface (fullpotential.com / .ai)
+    """
+    import shutil as _shutil
+    import asyncio as _asyncio
+    import httpx as _httpx
+    import os as _os5
+
+    lines = ["🖥️ <b>Servers — live status</b>\n"]
+
+    # 1. NOW.md inventory
+    inventory = _parse_servers_section()
+    if inventory:
+        lines.append("<b>Inventory (from NOW.md)</b>")
+        for name, body in inventory:
+            lines.append(f"  · <b>{tg._esc(name)}</b>")
+            lines.append(f"     <i>{tg._esc(body[:240])}</i>")
+        lines.append("")
+    else:
+        lines.append("<i>NOW.md Servers section not found — inventory skipped.</i>\n")
+
+    # 2. Brain server vitals (this process)
+    lines.append("<b>This server (brain) · live</b>")
+    try:
+        with open("/proc/uptime") as f:
+            up_s = float(f.read().split()[0])
+        days = int(up_s // 86400)
+        hours = int((up_s % 86400) // 3600)
+        lines.append(f"  ⏱️ uptime: {days}d {hours}h")
+    except Exception:
+        pass
+    try:
+        with open("/proc/loadavg") as f:
+            la = f.read().split()[:3]
+        lines.append(f"  📊 load: {la[0]} · {la[1]} · {la[2]}")
+    except Exception:
+        pass
+    try:
+        with open("/proc/meminfo") as f:
+            meminfo = {}
+            for ln in f:
+                k, _, v = ln.partition(":")
+                meminfo[k.strip()] = v.strip()
+        total_kb = int(meminfo.get("MemTotal", "0").split()[0] or 0)
+        avail_kb = int(meminfo.get("MemAvailable", "0").split()[0] or 0)
+        used_pct = 100 * (total_kb - avail_kb) / total_kb if total_kb else 0
+        lines.append(f"  🧠 mem: {used_pct:.0f}% used  ({(total_kb-avail_kb)//1024}MB / {total_kb//1024}MB)")
+    except Exception:
+        pass
+    try:
+        du = _shutil.disk_usage("/")
+        used_pct = 100 * du.used / du.total if du.total else 0
+        lines.append(f"  💾 disk /: {used_pct:.0f}% used  ({du.used // (1024**3)}G / {du.total // (1024**3)}G)")
+    except Exception:
+        pass
+    lines.append("")
+
+    # 3. Key services on this box
+    SERVICE_UNITS = (
+        "sh-brain-tgbot",
+        "sh-brain-index",
+        "sh-mcp-http",
+        "postgresql",
+        "ollama",
+    )
+    statuses = await _systemctl_active_many(SERVICE_UNITS)
+    lines.append("<b>Brain services</b>")
+    for unit, state in statuses:
+        glyph = "🟢" if state == "active" else ("🟡" if state in ("activating", "reloading") else "🔴")
+        lines.append(f"  {glyph} <code>{tg._esc(unit)}</code> · {tg._esc(state)}")
+    lines.append("")
+
+    # 4. Public surface pings
+    PUBLIC_TARGETS = (
+        ("fullpotential.com", "https://fullpotential.com/"),
+        ("fullpotential.ai", "https://fullpotential.ai/"),
+        ("fullpotential.com/api/champion/list", "https://fullpotential.com/api/champion/list"),
+    )
+    async def _ping(url: str) -> tuple[int | None, float | None]:
+        try:
+            t0 = _asyncio.get_event_loop().time()
+            async with _httpx.AsyncClient(timeout=6.0, follow_redirects=True) as c:
+                r = await c.get(url)
+                ms = (_asyncio.get_event_loop().time() - t0) * 1000.0
+            return (r.status_code, ms)
+        except Exception:
+            return (None, None)
+
+    pings = await _asyncio.gather(*[_ping(u) for _, u in PUBLIC_TARGETS])
+    lines.append("<b>Public surface (primary)</b>")
+    for (name, _url), (code, ms) in zip(PUBLIC_TARGETS, pings):
+        if code is None:
+            lines.append(f"  🔴 {tg._esc(name)} · unreachable")
+        else:
+            glyph = "🟢" if 200 <= code < 400 else "🟡"
+            lines.append(f"  {glyph} {tg._esc(name)} · {code} · {ms:.0f}ms")
+    lines.append("")
+
+    # 5. Cost line (from memory: ~$805/mo all-in verified 2026-04-29)
+    lines.append("<i>~$805/mo all-in (verified 2026-04-29). See /money for live breakdown · Source: NOW.md + /proc + systemctl + HTTP pings</i>")
+    return "\n".join(lines)
+
+
+def _parse_servers_section() -> list[tuple[str, str]]:
+    """Pull the '### Servers' subsection from NOW.md as (name, description) pairs."""
+    try:
+        with open(_NOW_PATH, encoding="utf-8") as f:
+            md = f.read()
+    except Exception:
+        return []
+    import re as _re
+    m = _re.search(r"^###\s+Servers\s*$", md, _re.MULTILINE | _re.IGNORECASE)
+    if not m:
+        return []
+    body = md[m.end():]
+    nh = _re.search(r"^(###|##)\s", body, _re.MULTILINE)
+    if nh:
+        body = body[: nh.start()]
+    out: list[tuple[str, str]] = []
+    for line in body.splitlines():
+        line = line.strip()
+        if not line.startswith("- "):
+            continue
+        line = line[2:].strip()
+        if " — " in line:
+            name, _, rest = line.partition(" — ")
+        elif " - " in line:
+            name, _, rest = line.partition(" - ")
+        else:
+            name, rest = line, ""
+        name = _strip_md(name)
+        rest = _strip_md(rest)
+        out.append((name, rest))
+    return out
+
+
+async def _systemctl_active_many(units: tuple[str, ...]) -> list[tuple[str, str]]:
+    """Return [(unit, state)]. state is 'active', 'inactive', 'failed',
+    'activating', or 'unknown' if systemctl is unavailable."""
+    import asyncio as _asyncio
+    async def _one(unit: str) -> tuple[str, str]:
+        try:
+            proc = await _asyncio.create_subprocess_exec(
+                "systemctl", "is-active", unit,
+                stdout=_asyncio.subprocess.PIPE,
+                stderr=_asyncio.subprocess.DEVNULL,
+            )
+            out, _ = await _asyncio.wait_for(proc.communicate(), timeout=3.0)
+            return (unit, (out.decode().strip() or "unknown"))
+        except Exception:
+            return (unit, "unknown")
+    return list(await _asyncio.gather(*[_one(u) for u in units]))
 
 
 def _render_basic_markdown_html(text: str) -> str:

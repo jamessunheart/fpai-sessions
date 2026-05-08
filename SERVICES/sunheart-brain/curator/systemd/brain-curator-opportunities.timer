@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily proactive opportunities scan (silent if nothing)
+
+[Timer]
+OnCalendar=*-*-* 08:15:00 America/Denver
+Unit=brain-curator@opportunities.service
+Persistent=true
+
+[Install]
+WantedBy=timers.target

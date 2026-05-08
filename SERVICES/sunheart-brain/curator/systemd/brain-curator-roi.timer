@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily brain ROI ledger (cost vs engagement)
+
+[Timer]
+OnCalendar=*-*-* 23:55:00 America/Denver
+Unit=brain-curator@roi.service
+Persistent=true
+
+[Install]
+WantedBy=timers.target
