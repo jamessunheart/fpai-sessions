@@ -1656,9 +1656,45 @@ async def _cmd_signals() -> str:
     lines.append(f"  📇 Cards filled: <b>{cards_filled}/{champ_count}</b>")
     lines.append(f"  ↗ Affiliate links earned: <b>{affiliates_total}</b>")
 
-    lines.append("\n<b>TRADING</b> <i>(WhaleTrack)</i>")
-    lines.append("  ⚪ <i>WhaleTrack signals require auth from this bot — pending wiring.</i>")
-    lines.append("  See https://fullpotential.ai/dashboards/whaletrack/")
+    lines.append("\n<b>TRADING</b> <i>(WhaleTrack · paper)</i>")
+    wt_base = _os.environ.get(
+        "WHALETRACK_PUBLIC_BASE",
+        "https://fullpotential.ai/dashboards/whaletrack",
+    )
+    recs = await _fetch_json(f"{wt_base}/api/recommendations")
+    if not recs:
+        lines.append(f"  🔴 <i>WhaleTrack reachable check failed at {tg._esc(wt_base)}</i>")
+    else:
+        anchor = recs.get("btc_anchor") or {}
+        a_dir = (anchor.get("direction") or "").upper()
+        a_conf = anchor.get("confidence")
+        if a_dir or a_conf is not None:
+            arrow = "📉" if a_dir == "DOWN" else ("📈" if a_dir == "UP" else "•")
+            conf_str = f"{float(a_conf):.0f}%" if a_conf is not None else "?"
+            lines.append(f"  {arrow} <b>BTC anchor:</b> {tg._esc(a_dir or '?')} · confidence {conf_str}")
+
+        top = (recs.get("recommendations") or [])[:5]
+        if top:
+            for r in top:
+                sym = tg._esc(str(r.get("symbol") or "?"))
+                sig = r.get("signal") or {}
+                trade = r.get("trade") or {}
+                direction = (sig.get("direction") or "").upper()
+                conf = sig.get("confidence")
+                entry = trade.get("entry_zone") or ""
+                target = trade.get("target") or ""
+                rr = trade.get("risk_reward") or ""
+                glyph = "🟢" if direction == "LONG" else ("🔴" if direction == "SHORT" else "⚪")
+                conf_str = f"{float(conf):.0f}%" if conf is not None else "?"
+                head = f"  {glyph} <b>{sym}</b> · {tg._esc(direction or '?')} · conf {conf_str}"
+                if rr:
+                    head += f" · R:R {tg._esc(rr)}"
+                lines.append(head)
+                if entry or target:
+                    lines.append(f"     entry {tg._esc(entry)} → target {tg._esc(target)}")
+        else:
+            lines.append("  ⚪ <i>No recommendations returned right now.</i>")
+        lines.append(f"  <i>Source: {tg._esc(wt_base)}/api/recommendations · public read</i>")
 
     lines.append("\n<i>Tweak which signals matter: edit _cmd_signals in tgbot.py · v1 will read from a SIGNALS_CONFIG file</i>")
     return "\n".join(lines)
@@ -2203,6 +2239,11 @@ async def _money_set_balance(arg: str) -> str:
 
     delta = amount - old
     sign = "+" if delta >= 0 else ""
+    # Emit money ping for the change.
+    asyncio.create_task(_money_ping(
+        "💵", "Balance updated",
+        f"{target.get('name', acct_id)}: ${old:,.2f} → ${amount:,.2f} ({sign}${delta:,.2f})",
+    ))
     return (f"✅ <b>Balance updated:</b> {tg._esc(target.get('name', acct_id))}\n"
             f"  ${old:,.2f} → <b>${amount:,.2f}</b>  ({sign}${delta:,.2f})\n"
             f"  group: {tg._esc(target_group.get('name','?')) if target_group else '?'}")
@@ -2300,6 +2341,48 @@ async def _money_trades_view() -> str:
             sign = "+" if pl >= 0 else ""
             lines.append(f"  {tg._esc(sym)} {sign}${pl:,.0f}  <code>{tg._esc(t.get('id','?'))}</code>")
     return "\n".join(lines)
+
+
+
+# ───────────────────────────── money pings ──────────────────────────────
+# Generic ping helper. Any process (Telegram bot, future Stripe webhook,
+# bank-sync job, receipt OCR pipeline, sibling agent) can call _money_ping
+# to push a money-event notification to the owner.
+#
+# Categories that ping by default:
+#   - trade_open / trade_close
+#   - set_balance (account balance changes)
+#   - add_revenue (new revenue stream)
+# Categories that do NOT ping (already loud via chat reply):
+#   - set (cost update via /money set)
+#   - add_cost
+#   - note (free-text)
+#
+# To toggle: future /money pings on|off command writes to a config file
+# read here. For now, always-on for the categories above.
+
+async def _money_ping(emoji: str, headline: str, detail: str = "") -> None:
+    """Send a money-event ping to the owner. Best-effort, silent failure."""
+    try:
+        msg = f"{emoji} <b>{tg._esc(headline)}</b>"
+        if detail:
+            msg += f"\n{tg._esc(detail)}"
+        msg += "\n<i>(money ping · /money for full view)</i>"
+        await tg.send(msg)
+    except Exception as e:
+        log.warning("money ping failed: %s", e)
+
+
+def _money_ping_audit_filter(action: str) -> tuple[str, str] | None:
+    """Decide whether an audit action triggers a ping. Returns (emoji, headline) or None."""
+    table = {
+        "set_balance": ("💵", "Balance updated"),
+        "trade_open": ("📈", "Trade opened"),
+        "trade_close": ("📉", "Trade closed"),
+        "add_revenue": ("✨", "New revenue stream"),
+        "update_revenue": ("💰", "Revenue updated"),
+    }
+    return table.get(action)
 
 
 def _money_bar(value: float, max_value: float, width: int = 12) -> str:
