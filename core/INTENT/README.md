@@ -6,10 +6,13 @@ The supreme intent of this work, in two layers.
 
 ## Layer 1 — The Mission (Why this exists)
 
-**Founding document of the World Peace Organization (Zen Village):**
+**Founding documents of the World Peace Organization (Zen Village):**
 
-- **[COHERENT_CHAMPIONS_MANIFESTO.md](./COHERENT_CHAMPIONS_MANIFESTO.md)** — Manifesto v1.0 by James Sunheart. Names CHRIST as the practice (Coherence / Healing / Regeneration / Intelligence / Service / Truth), defines the seven principles, scopes the role of AI, and invites participation.
+- **[COHERENT_CHAMPIONS_MANIFESTO.md](./COHERENT_CHAMPIONS_MANIFESTO.md)** — Manifesto v1.0 by James Sunheart. The **why**. Names CHRIST as the practice (Coherence / Healing / Regeneration / Intelligence / Service / Truth), defines the seven principles, scopes the role of AI, and invites participation.
+- **[WORLD_PEACE_ECOSYSTEM.md](./WORLD_PEACE_ECOSYSTEM.md)** — The **what**. Layered architectural map (Philosophy → Organization → Agreement → Party / Weekend / AI for Peace → Zen Village → Media → Economy → Vision) showing how the work expresses itself in the world.
 - **[WORLD_PEACE_AGREEMENT.md](./WORLD_PEACE_AGREEMENT.md)** — The signable covenant extracted from the manifesto. Maps to the TRUST token as the membership primitive.
+- **[FORMING_AGREEMENTS.md](./FORMING_AGREEMENTS.md)** — Protocol for instantiating specific Peace Agreements between specific parties.
+- **[AGREEMENTS/](./AGREEMENTS/)** — Specific formed Agreements (one file per instance).
 
 **Mission:** Creating paradise on Earth through cooperation.
 

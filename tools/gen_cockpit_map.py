@@ -636,6 +636,50 @@ a.link:hover { text-decoration: underline; }
 .markdown-body blockquote { border-left: 3px solid var(--accent); padding: 6px 12px; margin: 12px 0; color: var(--muted); font-style: italic; background: rgba(247,185,85,0.04); }
 .markdown-body hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
 .markdown-body a.link { word-break: break-word; }
+
+/* Ecosystem layered cards */
+.ecosystem { display: flex; flex-direction: column; gap: 4px; margin: 4px 0 8px; }
+.eco-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; }
+@media (max-width: 800px) { .eco-row { grid-template-columns: 1fr; } }
+.eco-layer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  position: relative;
+}
+.eco-layer::after {
+  content: "▼";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--muted);
+  font-size: 10px;
+  z-index: 1;
+}
+.eco-row + .eco-layer::before,
+.eco-layer + .eco-row,
+.ecosystem > :last-child::after { display: none; }
+.eco-row .eco-layer::after { display: none; }
+.eco-icon { font-size: 22px; flex-shrink: 0; }
+.eco-title { font-weight: 700; font-size: 13px; color: var(--text); }
+.eco-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* Color accents per layer */
+.eco-philosophy { border-left: 3px solid var(--accent); }
+.eco-org { border-left: 3px solid #4ecdc4; }
+.eco-agreement { border-left: 3px solid #ff6b6b; }
+.eco-party { border-left: 3px solid #fb923c; }
+.eco-weekend { border-left: 3px solid #a3e635; }
+.eco-ai { border-left: 3px solid #7ec8e3; }
+.eco-village { border-left: 3px solid var(--accent); }
+.eco-media { border-left: 3px solid #b58be0; }
+.eco-econ { border-left: 3px solid var(--good); }
+.eco-vision { border-left: 3px solid var(--accent); background: linear-gradient(135deg, rgba(247,185,85,0.06), transparent); }
 """
 
 
@@ -1255,6 +1299,7 @@ def render_html() -> str:
           <span class="christ-pill" title="Seek truth courageously while remaining compassionate toward human imperfection."><strong>T</strong>ruth</span>
         </div>
         <p style="margin:12px 0 0;color:var(--muted);font-size:12px;">
+          <a class='link' href='cursor://file{INTENT_DIR}/WORLD_PEACE_ECOSYSTEM.md'><strong>Ecosystem</strong></a> (the what) &middot;
           <a class='link' href='cursor://file{INTENT_DIR}/WORLD_PEACE_AGREEMENT.md'>Template</a> &middot;
           <a class='link' href='cursor://file{INTENT_DIR}/FORMING_AGREEMENTS.md'>Forming protocol</a> &middot;
           <a class='link' href='cursor://file{INTENT_DIR}/README.md'>Layer guide</a>
@@ -1263,6 +1308,81 @@ def render_html() -> str:
           <strong style="color:var(--accent);">{agreements_active}</strong> active /
           <strong>{agreements_count}</strong> total Agreements
         </p>
+      </div>
+    </div>
+    <h3 style="margin-top:20px;">The Ecosystem &mdash; layered architecture</h3>
+    <div class="ecosystem">
+      <div class="eco-layer eco-philosophy">
+        <span class="eco-icon">✨</span>
+        <div>
+          <div class="eco-title">Philosophy &mdash; CHRIST</div>
+          <div class="eco-sub">Coherence · Healing · Regeneration · Intelligence · Service · Truth</div>
+        </div>
+      </div>
+      <div class="eco-layer eco-org">
+        <span class="eco-icon">🕊</span>
+        <div>
+          <div class="eco-title">World Peace Organization</div>
+          <div class="eco-sub">Stewardship + coordination layer</div>
+        </div>
+      </div>
+      <div class="eco-layer eco-agreement">
+        <span class="eco-icon">📜</span>
+        <div>
+          <div class="eco-title">World Peace Agreement</div>
+          <div class="eco-sub">Shared values · "Peace becomes real when humans agree to practice it."</div>
+        </div>
+      </div>
+      <div class="eco-row">
+        <div class="eco-layer eco-party">
+          <span class="eco-icon">🎶</span>
+          <div>
+            <div class="eco-title">World Peace Party</div>
+            <div class="eco-sub">Activation · music, dance, joy</div>
+          </div>
+        </div>
+        <div class="eco-layer eco-weekend">
+          <span class="eco-icon">🌿</span>
+          <div>
+            <div class="eco-title">World Peace Weekend</div>
+            <div class="eco-sub">Immersion · retreats, ceremonies</div>
+          </div>
+        </div>
+        <div class="eco-layer eco-ai">
+          <span class="eco-icon">🧠</span>
+          <div>
+            <div class="eco-title">AI for Peace</div>
+            <div class="eco-sub">Intelligence · coordination, translation</div>
+          </div>
+        </div>
+      </div>
+      <div class="eco-layer eco-village">
+        <span class="eco-icon">🏕</span>
+        <div>
+          <div class="eco-title">Zen Village Prototype</div>
+          <div class="eco-sub">Living demonstration of coherent civilization</div>
+        </div>
+      </div>
+      <div class="eco-layer eco-media">
+        <span class="eco-icon">📡</span>
+        <div>
+          <div class="eco-title">Media + Culture</div>
+          <div class="eco-sub">Films, podcasts, transformation stories</div>
+        </div>
+      </div>
+      <div class="eco-layer eco-econ">
+        <span class="eco-icon">🌱</span>
+        <div>
+          <div class="eco-title">Regenerative Economy</div>
+          <div class="eco-sub">Money becomes fuel for healing, beauty, peace, and life</div>
+        </div>
+      </div>
+      <div class="eco-layer eco-vision">
+        <span class="eco-icon">✨</span>
+        <div>
+          <div class="eco-title">Long-Term Vision</div>
+          <div class="eco-sub">A world where intelligence serves life</div>
+        </div>
       </div>
     </div>
     <h3 style="margin-top:20px;">Active &amp; pending Agreements</h3>
