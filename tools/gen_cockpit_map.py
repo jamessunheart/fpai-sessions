@@ -20,6 +20,8 @@ NOW = ROOT / "core/STATE/NOW.md"
 CATALOG = ROOT / "core/STATE/catalog.json"
 SERVICES_DIR = ROOT / "SERVICES"
 OUT = ROOT / "cockpit-map.html"
+AGREEMENTS_REGISTRY = ROOT / "core/INTENT/AGREEMENTS/registry.json"
+INTENT_DIR = ROOT / "core/INTENT"
 
 
 def read_now() -> str:
@@ -93,6 +95,14 @@ def parse_money(s: str) -> float:
     """Extract a dollar number from strings like '$69.88' or '~$30–50' (uses lower bound)."""
     m = re.search(r"\$?\s*~?\$?(\d+(?:\.\d+)?)", s.replace(",", ""))
     return float(m.group(1)) if m else 0.0
+
+
+def read_agreements() -> dict:
+    """Return parsed registry.json or empty stub."""
+    try:
+        return json.loads(AGREEMENTS_REGISTRY.read_text(encoding="utf-8"))
+    except Exception:
+        return {"count": 0, "agreements": []}
 
 
 def extract_section(md: str, header: str) -> str:
@@ -412,6 +422,10 @@ a.link:hover { text-decoration: underline; }
 /* Sparkline */
 .sparkline-card { margin-top: 8px; }
 .sparkline-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+
+/* Mission row */
+.mission-row { display: flex; gap: 24px; flex-wrap: wrap; }
+.mission-block { flex: 1 1 240px; }
 """
 
 
@@ -723,6 +737,65 @@ def render_sparkline(series: list[tuple[str, int]], width: int = 360, height: in
     return "".join(parts)
 
 
+STATUS_DOT = {
+    "active": ("#4ade80", "Active"),
+    "proposed": ("#fbbf24", "Proposed"),
+    "repairing": ("#fbbf24", "Repairing"),
+    "repaired": ("#4ade80", "Repaired"),
+    "breached": ("#f87171", "Breached"),
+    "withdrawn": ("#8b949e", "Withdrawn"),
+    "archived": ("#5a6068", "Archived"),
+}
+
+
+def render_agreements(reg: dict) -> str:
+    agreements = reg.get("agreements", []) if isinstance(reg, dict) else []
+    if not agreements:
+        return (
+            "<p class='muted'>No Agreements yet. See "
+            "<a class='link' href='vscode://file" + str(INTENT_DIR / "FORMING_AGREEMENTS.md") + "'>"
+            "FORMING_AGREEMENTS.md</a> for the protocol.</p>"
+        )
+    parts = ["<table>",
+             "<thead><tr><th></th><th>Date</th><th>Parties</th><th>Status</th><th>Context</th><th></th></tr></thead><tbody>"]
+    for a in agreements:
+        status = (a.get("status") or "").lower()
+        color, label = STATUS_DOT.get(status, ("#8b949e", status or "—"))
+        parties = a.get("parties", [])
+        party_str = " ↔ ".join(p.get("name", "?") for p in parties[:2]) or "—"
+        date = a.get("date_formed", "")
+        context = (a.get("context") or "")[:100] + ("…" if len(a.get("context") or "") > 100 else "")
+        # Find the file path from agreement_id
+        aid = a.get("agreement_id", "")
+        if aid:
+            # construct {date}_{slugified-parties}.md
+            fname = aid.upper() + ".md"
+            # actual filenames use underscores: 2026-05-07_JAMES_SUNHEART_AND_CLAUDE.md
+            fname = fname.replace("-", "_", 2).replace("_", "-", 2)  # date keeps hyphens
+            fname = aid.replace("_", "-", 2)
+            fname = a.get("agreement_id", "")
+            # The id is `2026-05-07_james-sunheart_and_claude` → file uses ALL CAPS underscores after date
+            date_part, _, rest = aid.partition("_")
+            fname_body = rest.upper().replace("-", "_")
+            fname = f"{date_part}_{fname_body}.md"
+        else:
+            fname = ""
+        link = ""
+        if fname:
+            file_path = INTENT_DIR / "AGREEMENTS" / fname
+            link = f"<a class='link' href='vscode://file{file_path}'>open</a>"
+        parts.append(
+            f"<tr><td><span class='dot' style='background:{color};' title='{label}'></span></td>"
+            f"<td>{escape(date)}</td>"
+            f"<td><strong>{escape(party_str)}</strong></td>"
+            f"<td>{escape(label)}</td>"
+            f"<td style='color:var(--muted);font-size:12px;'>{escape(context)}</td>"
+            f"<td>{link}</td></tr>"
+        )
+    parts.append("</tbody></table>")
+    return "".join(parts)
+
+
 def render_live_table(rows: list[list[str]]) -> str:
     """Live Now table with a probe-status dot prepended to each row.
 
@@ -840,6 +913,15 @@ def render_html() -> str:
 
     services_html = render_services(catalog, services)
 
+    # Agreements
+    agreements_reg = read_agreements()
+    agreements_html = render_agreements(agreements_reg)
+    agreements_count = len(agreements_reg.get("agreements", [])) if isinstance(agreements_reg, dict) else 0
+    agreements_active = sum(
+        1 for a in agreements_reg.get("agreements", [])
+        if (a.get("status") or "").lower() == "active"
+    ) if isinstance(agreements_reg, dict) else 0
+
     # tag counts for donut
     tag_counts: dict[str, int] = {"P1": 0, "P2": 0, "infra": 0, "cruft": 0, "unknown": 0}
     for s in services:
@@ -908,6 +990,30 @@ def render_html() -> str:
   <div class="filter">
     <strong>Decision filter:</strong> Does this increase <em>proof / revenue / clarity / ease</em>
     for The Village within 30 days? If not, deprioritize.
+  </div>
+
+  <div class="card full" style="margin-bottom:24px;">
+    <h2>Mission &amp; Agreements <span style="font-size:12px;font-weight:400;color:var(--muted);">&mdash; Layer 1: why this exists</span></h2>
+    <div class="mission-row">
+      <div class="mission-block">
+        <div class="kpi-label">Founding</div>
+        <p style="margin:4px 0 0;">
+          <a class='link' href='vscode://file{INTENT_DIR}/COHERENT_CHAMPIONS_MANIFESTO.md'>Coherent Champions of CHRIST</a>
+          &mdash; Manifesto v1.0
+        </p>
+        <p style="margin:4px 0 0;color:var(--muted);font-size:12px;">
+          <a class='link' href='vscode://file{INTENT_DIR}/WORLD_PEACE_AGREEMENT.md'>Template</a> &middot;
+          <a class='link' href='vscode://file{INTENT_DIR}/FORMING_AGREEMENTS.md'>Forming protocol</a> &middot;
+          <a class='link' href='vscode://file{INTENT_DIR}/README.md'>Layer guide</a>
+        </p>
+      </div>
+      <div class="mission-block">
+        <div class="kpi-label">Agreements</div>
+        <div class="kpi" style="font-size:24px;">{agreements_active}<span style="font-size:12px;color:var(--muted);"> active / {agreements_count} total</span></div>
+      </div>
+    </div>
+    <h3 style="margin-top:16px;">Active &amp; pending Agreements</h3>
+    {agreements_html}
   </div>
 
   <div class="queue">
