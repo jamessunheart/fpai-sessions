@@ -479,6 +479,7 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
             "<b>Commands</b>\n"
             "  /projects — projects ranked most→least important (from NOW.md)\n"
             "  /questions — open inquiries across qb books (fpai/game/sunheart)\n"
+            "  /characters — Champions in the Game · roster + KPIs\n"
             "  /pending — list pending queue items with approve buttons\n"
             "  /digest  — today's brain stats\n"
             "  /cohere  — run coherence council now (~30-60s)\n"
@@ -583,6 +584,8 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
         return await _cmd_projects()
     if cmd == "questions":
         return await _cmd_questions()
+    if cmd in ("characters", "champions"):
+        return await _cmd_characters()
     return f"Unknown command: /{tg._esc(cmd)}. Try /help."
 
 
@@ -842,6 +845,109 @@ def _qb_short(text: str, n: int) -> str:
     if len(text) <= n:
         return text
     return text[: n - 1] + "…"
+
+
+# ───────────────────────────── /characters ──────────────────────────────
+_FPAI_BASE = _os.environ.get("FPAI_BASE_URL", "https://fullpotential.com")
+
+
+async def _cmd_characters() -> str:
+    """Show enrolled Champions + latest Game KPIs.
+
+    Sources:
+      - GET /api/champion/list          → roster
+      - GET /api/champion/leaderboard   → field-score + affiliate ranking
+      - GET /api/champion/retreat/list  → retreat-interest count
+    Each call is best-effort; missing data degrades the section, not the reply.
+    """
+    import httpx as _httpx
+    headers = {"Accept": "application/json"}
+    async def _fetch(path: str) -> dict | None:
+        url = f"{_FPAI_BASE.rstrip('/')}{path}"
+        try:
+            async with _httpx.AsyncClient(timeout=6.0) as c:
+                r = await c.get(url, headers=headers)
+                r.raise_for_status()
+                return r.json()
+        except Exception as e:
+            log.warning("/characters fetch %s failed: %s", path, e)
+            return None
+
+    listing, board, retreats = await asyncio.gather(
+        _fetch("/api/champion/list"),
+        _fetch("/api/champion/leaderboard"),
+        _fetch("/api/champion/retreat/list"),
+    )
+
+    if not listing and not board:
+        return ("🎴 <b>Characters</b>\n\n"
+                f"<i>Could not reach Champion APIs at {tg._esc(_FPAI_BASE)}.</i>")
+
+    champions = (listing or {}).get("champions", []) if listing else []
+    total = (listing or {}).get("count", len(champions)) if listing else 0
+    top_champs = (board or {}).get("top_champions", []) if board else []
+    top_affs = (board or {}).get("top_affiliates", []) if board else []
+    top_loops = (board or {}).get("top_loops", []) if board else []
+    interest_count = (retreats or {}).get("count", 0) if retreats else 0
+
+    total_proofs = sum(int(c.get("proofs", 0) or 0) for c in top_champs)
+    total_affiliates = sum(int(c.get("affiliates", 0) or 0) for c in top_champs)
+    cards_filled = sum(1 for c in top_champs if c.get("card"))
+
+    lines = [f"🎴 <b>Characters in the Game</b> — {total} Champion{'s' if total != 1 else ''}\n"]
+
+    # KPI strip
+    kpis = [
+        f"⚡ Field proofs: <b>{total_proofs}</b>",
+        f"🤝 Affiliates: <b>{total_affiliates}</b>",
+        f"📇 Cards filled: <b>{cards_filled}/{total}</b>",
+        f"🏝 Retreat interest: <b>{interest_count}</b>",
+    ]
+    lines.append(" · ".join(kpis))
+
+    # Top champions by Field Score
+    if top_champs:
+        lines.append("\n<b>Top Champions by Field Score</b>")
+        for c in top_champs[:8]:
+            name = tg._esc(c.get("name") or "?")
+            num = c.get("champion_number") or "—"
+            fs = c.get("field_score", 0)
+            proofs = c.get("proofs", 0)
+            affs = c.get("affiliates", 0)
+            card = "🎴" if c.get("card") else "—"
+            lines.append(f"  #{num} <b>{name}</b> · score {fs} · {proofs} proofs · {affs} affiliates · card {card}")
+
+    # Top affiliates (people who invited the most)
+    if top_affs:
+        lines.append("\n<b>Top Affiliates (most invites)</b>")
+        for a in top_affs[:5]:
+            name = tg._esc(a.get("name") or a.get("inviter") or "?")
+            count = a.get("affiliate_count") or a.get("count") or 0
+            lines.append(f"  ↗ <b>{name}</b> · {count} invited")
+    else:
+        lines.append("\n<i>No affiliates yet — share your invite link to start the network.</i>")
+
+    # Loop activity
+    if top_loops:
+        recent_loops = sorted(top_loops, key=lambda l: l.get("loop_number") or 0, reverse=True)[:5]
+        loop_strs = [f"L{l.get('loop_number')}({l.get('proof_count', 0)})" for l in recent_loops]
+        lines.append(f"\n<b>Recent Loops</b>: {' · '.join(loop_strs)}")
+
+    # Roster (compact, only if list endpoint returned)
+    if champions:
+        lines.append("\n<b>Roster</b>")
+        for c in champions[:10]:
+            name = tg._esc(c.get("name") or "?")
+            handle = c.get("handle") or ""
+            handle_str = f" <i>{tg._esc(handle)}</i>" if handle else ""
+            num = c.get("champion_number") or "—"
+            role = tg._esc((c.get("role") or "")[:60])
+            lines.append(f"  #{num} {name}{handle_str}{f' · {role}' if role else ''}")
+        if len(champions) > 10:
+            lines.append(f"  <i>…+{len(champions) - 10} more</i>")
+
+    lines.append("\n<i>Source: fullpotential.com/api/champion · invite link: fullpotential.com/game?inviter=YOUR-HANDLE</i>")
+    return "\n".join(lines)
 
 
 async def _handle_message(msg: dict) -> None:
