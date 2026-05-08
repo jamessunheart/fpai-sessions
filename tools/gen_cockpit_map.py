@@ -127,22 +127,124 @@ def count_proofs() -> int:
 
 def count_champions() -> tuple[int, int]:
     """Return (total_champions, public_champions) by scanning AGREEMENTS/champions/."""
+    return (len(read_champions()), sum(1 for c in read_champions() if c.get("public")))
+
+
+def read_champions() -> list[dict]:
+    """Return list of champion dicts parsed from AGREEMENTS/champions/*.md front-matter."""
     champ_dir = INTENT_DIR / "AGREEMENTS" / "champions"
     if not champ_dir.exists():
-        return (0, 0)
-    total = 0
-    public = 0
-    for p in champ_dir.iterdir():
+        return []
+    out = []
+    for p in sorted(champ_dir.iterdir()):
         if not (p.is_file() and p.suffix == ".md" and not p.name.startswith(".")):
             continue
-        total += 1
         try:
             text = p.read_text(encoding="utf-8")
-            if re.search(r"^public:\s*true", text, re.MULTILINE):
-                public += 1
+            fm = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+            if not fm:
+                continue
+            data: dict = {}
+            for line in fm.group(1).split("\n"):
+                m = re.match(r"^([a-z_]+):\s*(.*)$", line)
+                if m:
+                    key, val = m.group(1), m.group(2).strip().strip('"')
+                    if val.lower() == "true":
+                        val = True
+                    elif val.lower() == "false":
+                        val = False
+                    data[key] = val
+            data["_path"] = str(p)
+            out.append(data)
         except Exception:
             pass
-    return (total, public)
+    return out
+
+
+def read_proofs() -> list[dict]:
+    """Return list of proof loop dicts parsed from AGREEMENTS/proofs/*.md front-matter."""
+    proof_dir = INTENT_DIR / "AGREEMENTS" / "proofs"
+    if not proof_dir.exists():
+        return []
+    out = []
+    for p in sorted(proof_dir.iterdir()):
+        if not (p.is_file() and p.suffix == ".md" and not p.name.startswith(".")):
+            continue
+        try:
+            text = p.read_text(encoding="utf-8")
+            fm = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+            if not fm:
+                continue
+            data: dict = {}
+            for line in fm.group(1).split("\n"):
+                m = re.match(r"^([a-z_]+):\s*(.*)$", line)
+                if m:
+                    key, val = m.group(1), m.group(2).strip().strip('"')
+                    if val.lower() == "true":
+                        val = True
+                    elif val.lower() == "false":
+                        val = False
+                    data[key] = val
+            data["_path"] = str(p)
+            out.append(data)
+        except Exception:
+            pass
+    return out
+
+
+def render_champions_list(champions: list[dict]) -> str:
+    """Render the Champions Roll as a list of public champions."""
+    public = [c for c in champions if c.get("public")]
+    if not public:
+        return "<p class='muted'>No public signatures yet. <strong>The first signature is yours.</strong> Sign above.</p>"
+    rows = []
+    for c in public:
+        num = c.get("champion_number", "")
+        name = c.get("name", "[unnamed]")
+        date = c.get("date_signed", "")
+        role = c.get("role", "")
+        handle = c.get("handle", "")
+        rows.append(
+            f"<div class='champion-row'>"
+            f"<div class='champion-num'>#{escape(str(num))}</div>"
+            f"<div class='champion-info'>"
+            f"<div class='champion-name'>{escape(str(name))}</div>"
+            f"{('<div class=\"champion-role\">' + escape(str(role)) + '</div>') if role else ''}"
+            f"</div>"
+            f"<div class='champion-meta'>"
+            f"{('<span>' + escape(str(handle)) + '</span>') if handle else ''}"
+            f"<span class='champion-date'>{escape(str(date))}</span>"
+            f"</div>"
+            f"</div>"
+        )
+    return f"<div class='champions-list'>{''.join(rows)}</div>"
+
+
+def render_proofs_list(proofs: list[dict]) -> str:
+    """Render the Public Proofs roll."""
+    public = [p for p in proofs if (p.get("consent") or "").lower() == "public"]
+    if not public:
+        return ""
+    rows = []
+    for p in public:
+        loop_n = p.get("loop_number", "?")
+        player = p.get("player", "[unnamed]")
+        date = p.get("date_committed") or p.get("date_started", "")
+        status = p.get("status", "")
+        path = p.get("_path", "")
+        rows.append(
+            f"<div class='champion-row'>"
+            f"<div class='champion-num'>L{escape(str(loop_n))}</div>"
+            f"<div class='champion-info'>"
+            f"<div class='champion-name'>{escape(str(player))}</div>"
+            f"<div class='champion-role'>Loop {escape(str(loop_n))} &middot; {escape(str(status))}</div>"
+            f"</div>"
+            f"<div class='champion-meta'>"
+            f"<span class='champion-date'>{escape(str(date))}</span>"
+            f"</div>"
+            f"</div>"
+        )
+    return f"<div class='champions-list'>{''.join(rows)}</div>"
 
 
 def count_civ_quest_commits(days: int = 7) -> int:
@@ -1367,6 +1469,35 @@ body.mode-field .player-only { display: none !important; }
   margin-bottom: 24px;
 }
 
+/* Champions list */
+.champions-list { display: flex; flex-direction: column; gap: 6px; }
+.champion-row {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  gap: 14px;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--good);
+  border-radius: 6px;
+}
+.champion-num {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent);
+  text-align: center;
+  background: var(--bg);
+  border-radius: 4px;
+  padding: 6px 8px;
+}
+.champion-info { min-width: 0; }
+.champion-name { font-weight: 700; color: var(--text); font-size: 14px; }
+.champion-role { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.champion-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-size: 11px; color: var(--muted); }
+.champion-date { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+
 /* Invitation */
 .invite-card {
   background: linear-gradient(135deg, rgba(78,205,196,0.06), transparent);
@@ -2329,7 +2460,13 @@ def render_html() -> str:
     proofs_count = count_proofs()
     civ_milestones_7d = count_civ_quest_commits(7)
     civ_milestones_30d = count_civ_quest_commits(30)
-    champions_total, champions_public = count_champions()
+    champions = read_champions()
+    champions_total = len(champions)
+    champions_public = sum(1 for c in champions if c.get("public"))
+    champions_html = render_champions_list(champions)
+    proofs = read_proofs()
+    public_proofs = sum(1 for p in proofs if (p.get("consent") or "").lower() == "public")
+    proofs_html = render_proofs_list(proofs)
 
     # tag counts for donut
     tag_counts: dict[str, int] = {"P1": 0, "P2": 0, "infra": 0, "cruft": 0, "unknown": 0}
@@ -2392,12 +2529,12 @@ def render_html() -> str:
           <div class="profile-stat-lbl">Founding documents</div>
         </div>
         <div class="profile-stat">
-          <div class="profile-stat-n">{agreements_count}</div>
-          <div class="profile-stat-lbl">Agreements drafted</div>
+          <div class="profile-stat-n">{champions_total}</div>
+          <div class="profile-stat-lbl">Champions signed (incl. you)</div>
         </div>
         <div class="profile-stat">
-          <div class="profile-stat-n">{civ_milestones_7d}</div>
-          <div class="profile-stat-lbl">Civ-Quest commits (7d)</div>
+          <div class="profile-stat-n">{public_proofs}</div>
+          <div class="profile-stat-lbl">Loops completed (yours)</div>
         </div>
       </div>
     </div>
@@ -2436,33 +2573,33 @@ def render_html() -> str:
         <div class="funnel-sub">Opened the Manifesto</div>
       </div>
       <div class="funnel-arrow">↓</div>
-      <div class="funnel-step">
+      <div class="funnel-step{' funnel-step-active' if champions_total > 0 else ''}">
         <div class="funnel-num">{champions_total}</div>
         <div class="funnel-label">Coherent Champions</div>
         <div class="funnel-sub">Signed the World Peace Agreement</div>
       </div>
       <div class="funnel-arrow">↓</div>
-      <div class="funnel-step">
-        <div class="funnel-num">{proofs_count}</div>
+      <div class="funnel-step{' funnel-step-active' if public_proofs > 0 else ''}">
+        <div class="funnel-num">{public_proofs}</div>
         <div class="funnel-label">Players</div>
         <div class="funnel-sub">Started a 7-Day First Game</div>
       </div>
       <div class="funnel-arrow">↓</div>
-      <div class="funnel-step">
-        <div class="funnel-num">0</div>
+      <div class="funnel-step{' funnel-step-active' if public_proofs > 0 else ''}">
+        <div class="funnel-num">{public_proofs}</div>
         <div class="funnel-label">Witnesses</div>
         <div class="funnel-sub">Signed behind another's proof</div>
       </div>
       <div class="funnel-arrow">↓</div>
-      <div class="funnel-step">
+      <div class="funnel-step funnel-step-active">
         <div class="funnel-num">1</div>
         <div class="funnel-label">Stewards</div>
         <div class="funnel-sub">CORA Nation covenant stewards</div>
       </div>
     </div>
     <p style="color:var(--muted);font-size:11px;margin:12px 0 0;">
-      Today: 1 founder-steward (you), 0 champions yet signed, 0 active players.
-      First champion signature is the unblock for everything below it.
+      {champions_total} champion(s) · {public_proofs} public proof loop(s) · 1 founder-steward.
+      The roll is open.
     </p>
   </div>
 
@@ -2561,7 +2698,8 @@ def render_html() -> str:
     <p style="color:var(--muted);font-size:12px;margin:0 0 12px;">
       Public roll of Coherent Champions. Private signers exist but are not listed by their consent.
     </p>
-    {('<p class="muted">No public signatures yet. <strong>The first signature is yours.</strong> Sign above.</p>' if champions_public == 0 else '<div class="champion-list">[Champions list rendered here]</div>')}
+    {champions_html}
+    {('<h3 style="margin-top:20px;">Public Proof Loops</h3>' + proofs_html) if public_proofs > 0 else ''}
   </div>
 
   <div class="invite-card">
@@ -2608,8 +2746,12 @@ def render_html() -> str:
     </p>
     <div class="field-stats">
       <div class="field-stat">
-        <div class="profile-stat-n">0</div>
+        <div class="profile-stat-n">{public_proofs}</div>
         <div class="profile-stat-lbl">Public proofs sealed</div>
+      </div>
+      <div class="field-stat">
+        <div class="profile-stat-n">{champions_total}</div>
+        <div class="profile-stat-lbl">Coherent Champions</div>
       </div>
       <div class="field-stat">
         <div class="profile-stat-n">{agreements_active}</div>
@@ -2618,10 +2760,6 @@ def render_html() -> str:
       <div class="field-stat">
         <div class="profile-stat-n">0</div>
         <div class="profile-stat-lbl">Coherent Credit issued</div>
-      </div>
-      <div class="field-stat">
-        <div class="profile-stat-n">1</div>
-        <div class="profile-stat-lbl">Players</div>
       </div>
     </div>
     <p style="color:var(--muted);font-size:12px;margin-top:16px;">
