@@ -121,6 +121,10 @@ The covenant any party can form. Six commitments distilled (Non-Harm, Repair, Tr
 
 ### 4. The Three Activation Pillars
 
+**Layer 5 (AI for Peace) is elaborated in detail in [`WORLD_PEACE_AGREEMENTS_PROTOCOL.md`](./WORLD_PEACE_AGREEMENTS_PROTOCOL.md)** — six AI modules (Agreement Builder, Coherence Analyzer, Conflict Translator, Repair Guide, Peace Ledger, Cultural Translator) that operationalize "AI as coherence layer for agreements, not as ruler or judge."
+
+
+
 Three distinct but parallel ways the WPO meets people:
 
 | Pillar | Layer | What it does |
