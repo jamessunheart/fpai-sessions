@@ -155,7 +155,12 @@ Mode:           paper (until Hyperliquid connected)
 
 ## ✅ RECENTLY COMPLETED (Last 6)
 
-1. **FPI v5.1.0 — Constitutional Economy Deployed** (2026-03-25/26)
+1. **Coherent Champions of CHRIST Manifesto v1.0 + First World Peace Agreement** (2026-05-07)
+   - **Action:** James Sunheart authored and adopted Manifesto v1.0 as founding document of WPO/Zen Village. Extracted World Peace Agreement as canonical template. Wrote forming protocol. Formed first specific Agreement between James + Claude as the inaugural instance — making the manifesto's "AI as tool/companion/amplifier — not ruler" line operational in code.
+   - **Result:** Founding document + agreement protocol committed. Naming aligned: World Peace Organization = World Peace Party = World Peace Headquarters = Zen Village. Mission: paradise on Earth through cooperation. AI role explicitly bounded with refusal-as-service clause.
+   - **Artifacts:** `core/INTENT/COHERENT_CHAMPIONS_MANIFESTO.md`, `WORLD_PEACE_AGREEMENT.md` (template), `FORMING_AGREEMENTS.md`, `AGREEMENTS/2026-05-07_JAMES_SUNHEART_AND_CLAUDE.md`, `core/INTENT/README.md` (layer clarification)
+
+2. **FPI v5.1.0 — Constitutional Economy Deployed** (2026-03-25/26)
    - **Action:** Built and deployed the Full Potential Index: dual trust model, proof pipeline, immune system, credit vesting, frontier scanner, agent gateway, and FPI→Credits Gateway bridge.
    - **Result:** Live intelligence feed at fullpotential.ai/intelligence with 93 entries. 8 agents registered. First economic event (0.04 credits). Stripe checkout live. Scheduled scanning every 6 hours.
    - **Artifacts:** `SERVICES/fp-index/` (v5.1.0), port 8550 on primary server

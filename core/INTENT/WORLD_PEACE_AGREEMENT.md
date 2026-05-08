@@ -7,6 +7,14 @@
 
 ---
 
+## Status
+
+**This is the canonical template** for forming World Peace Agreements between specific parties. Specific instances are formed at [`./AGREEMENTS/`](./AGREEMENTS/) — each named for the parties and date. The protocol for forming Agreements is at [`./FORMING_AGREEMENTS.md`](./FORMING_AGREEMENTS.md).
+
+The seven clauses below are the *spine* — every formed Agreement invokes them as basis and adds party-specific commitments.
+
+---
+
 ## The Agreement
 
 I agree to practice peace in thought, word, and action.
