@@ -88,7 +88,7 @@ Remaining ranked options:
 
 | # | Project | Why this rank | Status |
 |---|---|---|---|
-| 1 | **The Full Potential Game** — Zen Village retreat funnel | P1 (memory). The Game IS the retreat funnel — every Loop is a funnel move. 16/16 recent commits. Most direct path to retreat seats = revenue. | 🟢 Active · Loop 16 latest |
+| 1 | **The Full Potential Game** — enroll Champions; multi-path funnel (apprenticeship / village / parties / retreats / commerce / coaching / witnessing) | P1 (memory). Goal is enrollment + path-routing — retreat is one outflow, not the only one. Champions enroll once, routes diverge per person. 16/16 recent commits. | 🟢 Active · 1 Champion · 0 affiliates · push to first cohort |
 | 2 | **The Village (Zen Village OS)** — Jam Board, Oracle Stage, Proof Pairings | P1 expansion. Lives inside the Game's substrate; not a separate bucket. | 🟢 Entangled with Game loops |
 | 3 | **Sunheart Brain + Chief of Staff** — `@sunheartbrain_bot`, MCP memory, Priority/Money/Attention views | Direct lever on James's clarity. Cross-tool bridge already live. | 🟢 Live — brain server `162.0.208.88` |
 | 4 | **Question Tracker / Inquiry Layer (qb)** — terminal title + books substrate | Inquiry-first frame at the tooling layer. Books refactor just shipped (fpai/game/sunheart). | 🟢 Live — laptop CLI + brain mirror |
@@ -98,9 +98,26 @@ Remaining ranked options:
 
 **Read order for `/projects`:** show #1-#5 by default; collapse #6-#7 unless asked.
 
-**Active inquiries** (snapshot — see `qb --all` for live state):
-- *game / q-20260508-456895* — Who's coming to the first Zen Village retreat, and what does the booking page need to convert them?
-- *fpai / q-20260508-e74f64* — How do we scope the Inquiry Layer into books so context doesn't blur? *(books refactor shipped; close pending)*
+**Cruft watch — deployed but frozen (zero commits 90d, candidates for retirement):** `cocoon`, `godmode`, `projects-dashboard`, `whaletrack-magnetic-trader`, `streasury-bot` service unit. Each has a systemd `.service` file but no recent dev. Real cost + attention drag. Open a qb question to triage when ready (per `feedback_cruft_bias.md`).
+
+---
+
+## ❓ OPEN QUESTIONS — most-important first
+
+*Pulled from qb across books (fpai / game / sunheart) on 2026-05-08, ordered by gating power on the P1 funnel. `/questions` on `@sunheartbrain_bot` renders this live; this section captures the why-it-matters context the bot's terse view doesn't.*
+
+### #1 · [game/q-20260508-870956] Who in James's field is the first 5–10 to invite, and what does each invitation say?
+**Why #1 (gates everything else):** Loop 20+ is positioned around enrollment. James's reframe on the retreat question made this the gating move: *enroll first → Game framework pulls Champions through quests → retreat (or village / apprenticeship / parties / commerce / coaching / witnessing — see `feedback_game_is_many_pathed_funnel.md`).* Without initial invitations, the funnel has nobody to pull through. `/characters` command just shipped to surface the live roster + KPIs from `/api/champion/list`.
+**Stuck on:** James-side work (writing the actual invites) gated by who-shows on the roster. Substrate is ready; signal is needed.
+
+### #2 · [game/q-20260508-456895] Who's coming to the first Zen Village retreat, and what does the booking page need to convert them?
+**Why #2 (downstream of #1):** Originally framed as "build the booking page first." James reframed: *enroll first → Game pulls Champions through quests → retreat.* So booking-page work shouldn't lead — Champion-recruitment does. This question waits for the funnel-top to fill.
+**Substrate state:** `/retreat/interest` endpoint exists (champion-sign), `/retreat/list` public, founder TG alerts on submit, `fullpotential.ai/retreat` returns 200. Page is ready when Champions are.
+
+### Latent (worth opening when they persist)
+- **Service hygiene** — Stop deployed-but-frozen units (cocoon, godmode, projects-dashboard, whaletrack-magnetic-trader, streasury-bot)? Memory says bias toward deprioritizing. Cost = real but uncosted; attention = real and costly.
+- **Parallel-session NOW.md drift** — Multiple Claude sessions edit NOW.md without committing. Loop 14 collision already happened. Coordination protocol exists in `feedback_parallel_session_safety.md` but isn't enforced by the substrate.
+- **Vestigial `/opt/fpai/NOW.md` on brain server** — Stale (Apr 24), no live consumer (Chief of Staff reads `priority_snapshot.json` instead). Delete or repoint?
 
 ---
 
