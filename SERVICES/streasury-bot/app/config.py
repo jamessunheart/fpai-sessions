@@ -56,5 +56,19 @@ class Settings(BaseSettings):
         description="Where to persist Telegram getUpdates offset.",
     )
 
+    cockpit_api_url: str = Field(
+        default="http://127.0.0.1:8107",
+        description="Chief of Staff service base URL — backs /money and /priority.",
+    )
+
+    sessions_api_url: str = Field(
+        default="https://fullpotential.com/api/sessions",
+        description="Sessions API base URL — backs /projects.",
+    )
+    sessions_api_token: str = Field(
+        default="",
+        description="Token for Sessions API (read from SESSIONS_API_TOKEN env or .env).",
+    )
+
 
 settings = Settings()

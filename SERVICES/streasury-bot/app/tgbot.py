@@ -37,10 +37,12 @@ from .config import settings
 from .handlers import (
     ask as h_ask,
     balance as h_balance,
+    cos as h_cos,
     holding as h_holding,
     import_ as h_import,
     kpi as h_kpi,
     log as h_log,
+    projects as h_projects,
     report as h_report,
 )
 
@@ -111,6 +113,9 @@ HELP_TEXT = (
     "<b>Track KPIs</b>\n"
     "  <code>/kpi set NAME VALUE [UNIT] [\"NOTE\"]</code>\n"
     "  <code>/kpi show NAME</code> · <code>/kpi list</code>\n\n"
+    "<b>Cross-system view</b> (Chief of Staff)\n"
+    "  <code>/money</code> — costs, revenue, biggest leak\n"
+    "  <code>/priority</code> — services by engine role\n\n"
     "<b>Ask</b>\n"
     "  <code>/ask &lt;question&gt;</code> — one AI, fast\n"
     "  <code>/council &lt;question&gt;</code> — Claude × GPT + synthesis\n\n"
@@ -185,6 +190,15 @@ async def _handle_command(text: str, *, chat_id: int, user_id: int) -> None:
         return
     if cmd == "report":
         await telegram.send(chat_id, await h_report.cmd_report(chat_id, args))
+        return
+    if cmd == "money":
+        await telegram.send(chat_id, await h_cos.cmd_money(chat_id, args))
+        return
+    if cmd == "priority":
+        await telegram.send(chat_id, await h_cos.cmd_priority(chat_id, args))
+        return
+    if cmd == "projects":
+        await telegram.send(chat_id, await h_projects.cmd_projects(chat_id, args))
         return
     if cmd == "ask":
         await telegram.send(chat_id, await h_ask.cmd_ask(chat_id, args, tg_user_id=user_id))
