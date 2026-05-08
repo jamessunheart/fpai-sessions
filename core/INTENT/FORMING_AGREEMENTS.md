@@ -84,6 +84,51 @@ A broken Agreement that is repaired strengthens the practice. A broken Agreement
 
 ---
 
+## Schema and Registry
+
+Each formed Agreement is a markdown file at `core/INTENT/AGREEMENTS/{date}_{parties}.md` with YAML front-matter at the top:
+
+```yaml
+---
+agreement_id: 2026-05-07_james-sunheart_and_claude
+date_formed: 2026-05-07
+parties:
+  - name: James Sunheart
+    role: Founder
+    party_type: human               # human | ai | organization | community | land | system
+  - name: Claude
+    role: AI agent
+    party_type: ai
+context: <one-line summary>
+scope_tags: [working_relationship, asymmetric_power, ai_alignment]
+status: active                       # active | breached | repairing | repaired | withdrawn | archived
+public: true                         # whether to include in public roll
+witness:
+  type: git_commit                   # git_commit | gathering | paper | recording | other
+  reference: <commit-hash | event-id>
+canonical_record: file               # file | paper | recording | external | brain
+amendments: []                       # list of amendment file paths
+repairs: []                          # list of repair event records
+---
+```
+
+The body of the file follows the structure described in **The Form** above (Parties → Context → Basis → Commitments → Scope → Repair → Witness → Signing).
+
+The **registry** is *derived* from these files:
+
+- [`AGREEMENTS/INDEX.md`](./AGREEMENTS/) — human-readable index, one row per Agreement
+- [`AGREEMENTS/registry.json`](./AGREEMENTS/) — machine-readable mirror
+
+Regenerate after adding or modifying an Agreement:
+
+```bash
+python tools/registry/build_index.py
+```
+
+Both `INDEX.md` and `registry.json` are derived views — **never hand-edit them.** Edit the Agreement file's front-matter and re-run the script.
+
+---
+
 ## Renewal
 
 > *Signed not in perfection, but in sincere participation.*

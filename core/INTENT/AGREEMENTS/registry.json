@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "count": 1,
+  "agreements": [
+    {
+      "agreement_id": "2026-05-07_james-sunheart_and_claude",
+      "date_formed": "2026-05-07",
+      "parties": [
+        {
+          "name": "James Sunheart",
+          "role": "Founder, World Peace Organization (Zen Village)",
+          "party_type": "human"
+        },
+        {
+          "name": "Claude",
+          "role": "AI agent (Anthropic), operating in FPAI_Cockpit",
+          "party_type": "ai"
+        }
+      ],
+      "context": "First specific Agreement under Manifesto v1.0 — governs founder/AI working relationship; makes \"AI as tool/companion/amplifier — not ruler\" operational",
+      "scope_tags": [
+        "working_relationship",
+        "asymmetric_power",
+        "founding",
+        "ai_alignment"
+      ],
+      "status": "active",
+      "public": true,
+      "witness": {
+        "type": "git_commit",
+        "reference": "d7e3e923"
+      },
+      "canonical_record": "file",
+      "amendments": [],
+      "repairs": [],
+      "filename": "2026-05-07_JAMES_SUNHEART_AND_CLAUDE.md"
+    }
+  ]
+}

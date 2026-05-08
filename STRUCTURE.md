@@ -19,7 +19,10 @@ The supreme intent. Two layers; Layer 1 governs Layer 2.
 | [`core/INTENT/COHERENT_CHAMPIONS_MANIFESTO.md`](./core/INTENT/COHERENT_CHAMPIONS_MANIFESTO.md) | Manifesto v1.0 — founding document of WPO / Zen Village |
 | [`core/INTENT/WORLD_PEACE_AGREEMENT.md`](./core/INTENT/WORLD_PEACE_AGREEMENT.md) | Canonical template for forming Peace Agreements |
 | [`core/INTENT/FORMING_AGREEMENTS.md`](./core/INTENT/FORMING_AGREEMENTS.md) | Protocol for instantiating specific Agreements |
-| [`core/INTENT/AGREEMENTS/`](./core/INTENT/AGREEMENTS/) | Specific formed Agreements (one file per instance) |
+| [`core/INTENT/AGREEMENTS/`](./core/INTENT/AGREEMENTS/) | Specific formed Agreements (one file per instance, with YAML front-matter) |
+| [`core/INTENT/AGREEMENTS/INDEX.md`](./core/INTENT/AGREEMENTS/INDEX.md) | Human-readable registry (auto-generated — do not edit by hand) |
+| [`core/INTENT/AGREEMENTS/registry.json`](./core/INTENT/AGREEMENTS/registry.json) | Machine-readable registry (auto-generated) |
+| [`tools/registry/build_index.py`](./tools/registry/build_index.py) | Registry regenerator. Scans `AGREEMENTS/*.md`, rebuilds INDEX + registry |
 | `core/INTENT/IDENTITY.md`, `PURPOSE.md`, `PRINCIPLES.md` | Layer 2 — engineering substrate (older, narrower scope) |
 
 **Naming**: World Peace Party = World Peace Organization = World Peace Headquarters = Zen Village.
@@ -146,3 +149,5 @@ These do not advance the current priority. **Default answer to "should we touch 
 When NOW.md changes substantively (new priority, new live service, new shutdown), this file may go stale. Treat NOW.md as authoritative when they disagree.
 
 A future `tools/gen_cockpit_map.py` could regenerate this file from NOW.md automatically. Not built yet.
+
+For the Agreement registry generator — already built — see `tools/registry/build_index.py`.
