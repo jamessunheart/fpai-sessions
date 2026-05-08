@@ -477,9 +477,15 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
             "Send any question — I'll search your brain and answer with sources.\n"
             "Conversations are auto-captured + compressed into your brain hourly.\n\n"
             "<b>Commands</b>\n"
-            "  /projects — projects ranked most→least important (from NOW.md)\n"
+            "  /now       — current priority + status from NOW.md (cross-terminal coordination)\n"
+            "  /goals     — top 3 active goals · edit NOW.md GOALS section to modify\n"
+            "  /projects  — projects ranked most→least important (from NOW.md)\n"
             "  /questions — open inquiries across qb books (fpai/game/sunheart)\n"
             "  /characters — Champions in the Game · roster + KPIs\n"
+            "  /signals   — trading + lead signals (retreat / party / coaching / commerce)\n"
+            "  /decisions — unified queue of items needing your decision\n"
+            "  /money     — costs + revenue + biggest leak (Chief of Staff money view)\n"
+            "  /log       — recent AI activity timeline\n"
             "  /pending — list pending queue items with approve buttons\n"
             "  /digest  — today's brain stats\n"
             "  /cohere  — run coherence council now (~30-60s)\n"
@@ -586,6 +592,18 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
         return await _cmd_questions()
     if cmd in ("characters", "champions"):
         return await _cmd_characters()
+    if cmd == "now":
+        return await _cmd_now()
+    if cmd == "goals":
+        return await _cmd_goals()
+    if cmd == "signals":
+        return await _cmd_signals()
+    if cmd == "decisions":
+        return await _cmd_decisions()
+    if cmd == "money":
+        return await _cmd_money()
+    if cmd == "log":
+        return await _cmd_log()
     return f"Unknown command: /{tg._esc(cmd)}. Try /help."
 
 
@@ -947,6 +965,346 @@ async def _cmd_characters() -> str:
             lines.append(f"  <i>…+{len(champions) - 10} more</i>")
 
     lines.append("\n<i>Source: fullpotential.com/api/champion · invite link: fullpotential.com/game?inviter=YOUR-HANDLE</i>")
+    return "\n".join(lines)
+
+
+# ───────────────────────────── /now ──────────────────────────────
+async def _cmd_now() -> str:
+    """Render current priority + status from top of NOW.md.
+
+    Surfaces the cross-terminal coordination state so any session — Telegram,
+    Claude Code, Cursor — can see what's being worked on right now.
+    """
+    try:
+        with open(_NOW_PATH, encoding="utf-8") as f:
+            now_md = f.read()
+    except Exception as e:
+        return f"📍 <b>Now</b>\n\n<i>NOW.md unreachable: {tg._esc(str(e))}</i>"
+
+    import re as _re
+    from datetime import datetime as _dt
+    import os as _os3
+
+    # Last-updated line + priority block (between '## 🎯 CURRENT PRIORITY' and next '##')
+    updated_m = _re.search(r"\*\*Last Updated:\*\*\s*(.+)", now_md)
+    updated = updated_m.group(1).strip() if updated_m else "?"
+
+    prio_section = ""
+    pm = _re.search(r"##\s+.*CURRENT\s+PRIORITY.*$", now_md, _re.IGNORECASE | _re.MULTILINE)
+    if pm:
+        body = now_md[pm.end():]
+        next_h = _re.search(r"^---\s*$|^##\s", body, _re.MULTILINE)
+        if next_h:
+            body = body[: next_h.start()]
+        prio_section = body.strip()
+
+    age = ""
+    try:
+        diff = (_dt.now() - _dt.fromtimestamp(_os3.path.getmtime(_NOW_PATH))).total_seconds()
+        if diff < 3600: age = f"{int(diff//60)}m ago"
+        elif diff < 86400: age = f"{int(diff//3600)}h ago"
+        else: age = f"{int(diff//86400)}d ago"
+    except Exception:
+        pass
+
+    lines = ["📍 <b>Now</b>"]
+    lines.append(f"<i>NOW.md last updated: {tg._esc(updated)}{f' · synced {age}' if age else ''}</i>\n")
+    if prio_section:
+        # Compact: convert markdown headings + bullets to telegram HTML
+        for raw in prio_section.splitlines()[:30]:
+            line = raw.strip()
+            if not line:
+                lines.append("")
+                continue
+            if line.startswith("###"):
+                lines.append(f"<b>{tg._esc(line.lstrip('#').strip())}</b>")
+            elif line.startswith("**") and line.endswith("**"):
+                lines.append(f"<b>{tg._esc(line.strip('*').strip())}</b>")
+            elif line.startswith("- ") or line.startswith("* "):
+                lines.append(f"  • {tg._esc(line[2:])}")
+            else:
+                lines.append(_render_basic_markdown_html(line))
+    lines.append("\n<i>Source: core/STATE/NOW.md · /goals · /projects · /questions for more</i>")
+    return "\n".join(lines)
+
+
+# ───────────────────────────── /goals ──────────────────────────────
+async def _cmd_goals() -> str:
+    """Render the top 3 goals from NOW.md GOALS section."""
+    try:
+        with open(_NOW_PATH, encoding="utf-8") as f:
+            now_md = f.read()
+    except Exception as e:
+        return f"🎯 <b>Goals</b>\n\n<i>NOW.md unreachable: {tg._esc(str(e))}</i>"
+
+    rows = _parse_goals(now_md)
+    if not rows:
+        return ("🎯 <b>Goals</b>\n\n"
+                "<i>GOALS section not found in NOW.md. Add a `## 🎯 GOALS` section "
+                "with a markdown table (# | Goal | Target | Timeframe | Current state) "
+                "and run sync_now_to_brain.sh.</i>")
+    lines = ["🎯 <b>Goals — top 3 (most-important first)</b>\n"]
+    for r in rows[:3]:
+        lines.append(f"<b>#{r['rank']}</b> {tg._esc(r['goal'])}")
+        if r.get("target"):
+            lines.append(f"  🎯 <b>Target:</b> {tg._esc(r['target'])}")
+        if r.get("timeframe"):
+            lines.append(f"  🕐 <b>By:</b> {tg._esc(r['timeframe'])}")
+        if r.get("state"):
+            lines.append(f"  📍 <i>{tg._esc(r['state'])}</i>")
+        lines.append("")
+    if len(rows) > 3:
+        lines.append(f"<i>+{len(rows)-3} more goals stored. Top 3 surface here.</i>")
+    lines.append("<i>To modify: edit core/STATE/NOW.md GOALS section, run sync_now_to_brain.sh</i>")
+    return "\n".join(lines)
+
+
+def _parse_goals(md: str) -> list[dict]:
+    """Parse GOALS markdown table — columns: # | Goal | Target | Timeframe | Current state."""
+    import re
+    sec = re.search(r"##\s+.*GOALS.*$", md, re.MULTILINE | re.IGNORECASE)
+    if not sec:
+        return []
+    body = md[sec.end():]
+    nh = re.search(r"^\n##\s", body, re.MULTILINE)
+    if nh:
+        body = body[: nh.start()]
+    rows: list[dict] = []
+    row_re = re.compile(r"^\|\s*(\d+)\s*\|(.+?)\|(.+?)\|(.+?)\|(.+?)\|\s*$", re.MULTILINE)
+    for rm in row_re.finditer(body):
+        rows.append({
+            "rank": int(rm.group(1)),
+            "goal": _strip_md(rm.group(2)),
+            "target": _strip_md(rm.group(3)),
+            "timeframe": _strip_md(rm.group(4)),
+            "state": _strip_md(rm.group(5)),
+        })
+    rows.sort(key=lambda r: r["rank"])
+    return rows
+
+
+# ───────────────────────────── /signals ──────────────────────────────
+async def _cmd_signals() -> str:
+    """Trading signals + LEADS (retreat / party / coaching / commerce / etc.).
+
+    LEADS counts come from live data (fullpotential.com APIs); trading signals
+    require WhaleTrack auth (currently 401 from the bot). v0 surfaces leads
+    with current counts so progress is visible even at 0.
+    """
+    import httpx as _httpx
+    headers = {"Accept": "application/json"}
+
+    async def _fetch_json(url: str) -> dict | None:
+        try:
+            async with _httpx.AsyncClient(timeout=6.0) as c:
+                r = await c.get(url, headers=headers)
+                r.raise_for_status()
+                return r.json()
+        except Exception as e:
+            log.warning("/signals fetch %s failed: %s", url, e)
+            return None
+
+    base = _os.environ.get("FPAI_BASE_URL", "https://fullpotential.com")
+    retreats, board, listing = await asyncio.gather(
+        _fetch_json(f"{base}/api/champion/retreat/list"),
+        _fetch_json(f"{base}/api/champion/leaderboard"),
+        _fetch_json(f"{base}/api/champion/list"),
+    )
+
+    retreat_count = (retreats or {}).get("count", 0)
+    champ_count = (listing or {}).get("count", 0)
+    top_champs = (board or {}).get("top_champions", [])
+    cards_filled = sum(1 for c in top_champs if c.get("card"))
+    affiliates_total = sum(int(c.get("affiliates", 0) or 0) for c in top_champs)
+
+    lines = ["📡 <b>Signals</b>\n"]
+    lines.append("<b>LEADS</b> <i>(refine over time — 0 today is signal too)</i>")
+    lines.append(f"  🏝 Retreat leads: <b>{retreat_count}</b>")
+    lines.append(f"  🎉 Party leads: <b>0</b> <i>(no party-interest endpoint yet)</i>")
+    lines.append(f"  🤝 Coaching leads: <b>0</b> <i>(no coaching-marketplace yet)</i>")
+    lines.append(f"  🛍 Commerce leads: <b>0</b> <i>(no commerce-marketplace yet)</i>")
+    lines.append(f"  👥 Champion enrollments: <b>{champ_count}</b>")
+    lines.append(f"  📇 Cards filled: <b>{cards_filled}/{champ_count}</b>")
+    lines.append(f"  ↗ Affiliate links earned: <b>{affiliates_total}</b>")
+
+    lines.append("\n<b>TRADING</b> <i>(WhaleTrack)</i>")
+    lines.append("  ⚪ <i>WhaleTrack signals require auth from this bot — pending wiring.</i>")
+    lines.append("  See https://fullpotential.ai/dashboards/whaletrack/")
+
+    lines.append("\n<i>Tweak which signals matter: edit _cmd_signals in tgbot.py · v1 will read from a SIGNALS_CONFIG file</i>")
+    return "\n".join(lines)
+
+
+# ───────────────────────────── /decisions ──────────────────────────────
+async def _cmd_decisions() -> str:
+    """Unified decision queue — Curator Queue + qb blocked questions."""
+    lines = ["⚖️ <b>Decisions — items waiting on you</b>\n"]
+    found = False
+
+    # Source 1: Curator Queue 🟡 Proposed rows
+    try:
+        async with AppFlowy() as af:
+            _, db_id = await af.find_database_id("07 · Curator Queue")
+            ids = await af.list_rows(db_id, limit=40)
+            curator_pending = []
+            for i in ids:
+                rid = i.get("id")
+                if not rid:
+                    continue
+                d = await af.get(
+                    f"/api/workspace/{af.workspace_id}/database/{db_id}/row/detail",
+                    ids=rid,
+                )
+                data = d.get("data") or []
+                row = data[0] if isinstance(data, list) and data else (data if isinstance(data, dict) else {})
+                cells = row.get("cells") or {}
+                status = cells.get("Status") or ""
+                prop = cells.get("Proposal") or ""
+                if status.startswith("🟡 Proposed") and prop:
+                    curator_pending.append((rid, prop))
+                if len(curator_pending) >= 5:
+                    break
+        if curator_pending:
+            found = True
+            lines.append(f"<b>📋 Curator Queue</b> <i>({len(curator_pending)} pending)</i>")
+            for _rid, prop in curator_pending:
+                lines.append(f"  · {tg._esc(prop[:140])}")
+            lines.append("  <i>Use /pending to see approve buttons.</i>\n")
+    except Exception as e:
+        lines.append(f"<i>Curator Queue unavailable: {tg._esc(str(e)[:120])}</i>\n")
+
+    # Source 2: qb blocked questions across books
+    try:
+        with open(_QB_BOARD_PATH, encoding="utf-8") as f:
+            raw = f.read()
+        import json as _json
+        events = []
+        for ln in raw.splitlines():
+            ln = ln.strip()
+            if not ln:
+                continue
+            try:
+                events.append(_json.loads(ln))
+            except Exception:
+                continue
+        state = _qb_derive_state(events)
+        blocked = [q for q in state.values() if q["status"] == "blocked"]
+        if blocked:
+            found = True
+            lines.append(f"<b>⊗ qb blocked</b> <i>({len(blocked)})</i>")
+            for q in blocked[:5]:
+                book = q.get("book") or "?"
+                lines.append(f"  · [{tg._esc(book)}] {tg._esc(_qb_short(q['text'], 110))}")
+                if q.get("block_reason"):
+                    lines.append(f"     ⊗ <i>{tg._esc(_qb_short(q['block_reason'], 100))}</i>")
+            lines.append("")
+    except Exception:
+        pass
+
+    if not found:
+        lines.append("✅ <i>Nothing waiting on you. Decision queue clear.</i>")
+
+    lines.append("<i>Sources: Curator Queue (AppFlowy) + qb blocked across books</i>")
+    return "\n".join(lines)
+
+
+# ───────────────────────────── /money ──────────────────────────────
+async def _cmd_money() -> str:
+    """Cross-system money view from Chief of Staff (loopback on brain server)."""
+    import httpx as _httpx
+    cos_url = _os.environ.get("CHIEF_OF_STAFF_URL", "http://127.0.0.1:8107")
+    try:
+        async with _httpx.AsyncClient(timeout=6.0) as c:
+            r = await c.get(f"{cos_url}/money", headers={"Accept": "application/json"})
+            r.raise_for_status()
+            data = r.json()
+    except Exception as e:
+        return (f"💰 <b>Money</b>\n\n"
+                f"<i>Chief of Staff at {tg._esc(cos_url)} unreachable: {tg._esc(str(e))}</i>")
+
+    costs = data.get("costs", []) or []
+    revenue = data.get("revenue", []) or []
+    total_cost = sum(float(c.get("monthly_usd", 0) or 0) for c in costs)
+    total_rev = sum(float(r.get("monthly_usd", 0) or 0) for r in revenue)
+    net = total_rev - total_cost
+
+    lines = ["💰 <b>Money — current resources by source</b>\n"]
+    lines.append(f"<b>Costs:</b> ${total_cost:,.0f}/mo  ·  <b>Revenue:</b> ${total_rev:,.0f}/mo  ·  <b>Net:</b> ${net:+,.0f}/mo\n")
+
+    rev_real = [r for r in revenue if r.get("name") and float(r.get("monthly_usd", 0) or 0) > 0]
+    if rev_real:
+        lines.append("<b>Revenue sources</b>")
+        for r in sorted(rev_real, key=lambda x: -float(x.get("monthly_usd", 0) or 0))[:8]:
+            lines.append(f"  + ${float(r.get('monthly_usd',0)):,.0f}  {tg._esc(r.get('name','?'))}  <i>{tg._esc(r.get('purpose','')[:60])}</i>")
+    else:
+        lines.append("<b>Revenue:</b> <i>0 active revenue sources yet.</i>")
+
+    lines.append("")
+    if costs:
+        lines.append("<b>Top costs</b>")
+        for c in sorted(costs, key=lambda x: -float(x.get("monthly_usd", 0) or 0))[:8]:
+            kill = " 🗑" if c.get("kill_candidate") else ""
+            lines.append(f"  − ${float(c.get('monthly_usd',0)):,.0f}  {tg._esc(c.get('name','?'))}{kill}")
+
+    biggest_leak = data.get("biggest_leak")
+    if biggest_leak:
+        lines.append(f"\n<b>🔧 Biggest leak:</b> {tg._esc(biggest_leak.get('name','?'))} (${float(biggest_leak.get('monthly_usd',0)):,.0f}/mo)")
+
+    lines.append("\n<i>Source: Chief of Staff /money endpoint · 127.0.0.1:8107 (loopback)</i>")
+    return "\n".join(lines)
+
+
+# ───────────────────────────── /log ──────────────────────────────
+async def _cmd_log() -> str:
+    """Recent AI activity timeline — qb events + NOW.md sync + recent council jobs."""
+    import os as _os4
+    from datetime import datetime as _dt2
+    events_out: list[tuple[str, str]] = []  # (ts, line)
+
+    # qb events (last 10)
+    try:
+        with open(_QB_BOARD_PATH, encoding="utf-8") as f:
+            lines = f.read().splitlines()
+        import json as _json
+        recent = []
+        for ln in lines[-30:]:
+            ln = ln.strip()
+            if not ln:
+                continue
+            try:
+                recent.append(_json.loads(ln))
+            except Exception:
+                continue
+        for ev in recent[-15:]:
+            ts = ev.get("ts", "")
+            kind = ev.get("event", "?")
+            book = ev.get("book", "?")
+            text = (ev.get("text") or ev.get("note") or "")[:80]
+            icon = {"open": "○", "pulse": "·", "answer": "✓", "block": "⊗", "unblock": "○"}.get(kind, "•")
+            events_out.append((ts, f"{icon} qb [{tg._esc(book)}] <i>{tg._esc(kind)}</i> — {tg._esc(text)}"))
+    except Exception as e:
+        events_out.append(("", f"<i>(qb log unreadable: {tg._esc(str(e)[:80])})</i>"))
+
+    # NOW.md last sync mtime
+    try:
+        mt = _os4.path.getmtime(_NOW_PATH)
+        ts = _dt2.fromtimestamp(mt).strftime("%Y-%m-%dT%H:%M:%SZ")
+        events_out.append((ts, f"📝 NOW.md synced from cockpit"))
+    except Exception:
+        pass
+
+    # Sort by ts descending
+    events_out.sort(key=lambda t: t[0], reverse=True)
+
+    lines = ["🕐 <b>Recent activity</b>\n"]
+    if not events_out:
+        lines.append("<i>No recent activity to surface.</i>")
+    else:
+        for ts, line in events_out[:15]:
+            short_ts = ts[5:16] if ts and len(ts) >= 16 else ""
+            lines.append(f"  <code>{short_ts}</code>  {line}")
+
+    lines.append("\n<i>Sources: qb events + NOW.md sync mtime · v1 will add council jobs + treasury txns</i>")
     return "\n".join(lines)
 
 
