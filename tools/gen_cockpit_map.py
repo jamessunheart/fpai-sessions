@@ -823,6 +823,48 @@ h3 { font-size: 12px; margin: 16px 0 8px; color: var(--muted); text-transform: u
   color: var(--accent-bright);
   box-shadow: 0 4px 16px rgba(232, 185, 116, 0.08);
 }
+
+/* Principle banner — "The Game Plays Itself" */
+.principle-banner {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  gap: 18px;
+  align-items: center;
+  background:
+    radial-gradient(ellipse at top right, rgba(232, 185, 116, 0.10), transparent 60%),
+    linear-gradient(135deg, rgba(184, 156, 213, 0.06), rgba(124, 196, 168, 0.04));
+  border: 1px solid var(--accent);
+  border-radius: 14px;
+  padding: 18px 22px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.principle-banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 90% 50%, rgba(232, 185, 116, 0.06), transparent 40%);
+  pointer-events: none;
+}
+.pb-glyph {
+  font-size: 44px;
+  text-align: center;
+  line-height: 1;
+  filter: drop-shadow(0 0 12px rgba(232, 185, 116, 0.4));
+  animation: spin-slow 60s linear infinite;
+}
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.pb-label { font-size: 10px; color: var(--accent); letter-spacing: 1.8px; font-weight: 700; }
+.pb-quote { font-size: 17px; color: var(--text-bright); font-style: italic; margin-top: 6px; line-height: 1.5; }
+.pb-test { font-size: 12px; color: var(--muted); margin-top: 8px; line-height: 1.6; }
+.pb-test strong { color: var(--accent-bright); font-weight: 600; }
+.pb-link { font-size: 11px; color: var(--accent); display: inline-block; margin-top: 6px; text-decoration: none; }
+.pb-link:hover { color: var(--accent-bright); text-decoration: underline; }
+@media (max-width: 700px) { .principle-banner { grid-template-columns: 1fr; text-align: center; } .pb-glyph { margin: 0 auto; } }
 .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
 @media (max-width: 1100px) { .grid { grid-template-columns: 1fr; } }
 .card {
@@ -3067,6 +3109,12 @@ def render_html() -> str:
             "The flywheel: Party → Game → AI Apprentice → Build → more Party. Plus 7 System Areas and the Progression Path (Guest → Player → Apprentice → Steward → Builder)."
         ),
         render_inline_doc_card(
+            "plays-itself", "🌀", "The Game Plays Itself",
+            "The load-bearing principle of advancement",
+            "core/INTENT/THE_GAME_PLAYS_ITSELF.md",
+            "Identified by James 2026-05-07. The advancement test: every loop must make the Game more self-playing, not more founder-bottlenecked. Loop 6 is the threshold."
+        ),
+        render_inline_doc_card(
             "game", "🎮", "The Full Potential Game",
             "Player's Guide v1.3 — the player-facing OS",
             "core/INTENT/FULL_POTENTIAL_GAME.md",
@@ -3562,6 +3610,19 @@ def render_html() -> str:
   <div class="filter">
     <strong>Decision filter:</strong> Does this increase <em>proof / revenue / clarity / ease</em>
     for The Village within 30 days? If not, deprioritize.
+  </div>
+
+  <div class="principle-banner">
+    <div class="pb-glyph">🌀</div>
+    <div class="pb-content">
+      <div class="pb-label">THE LOAD-BEARING PRINCIPLE</div>
+      <div class="pb-quote">"The Game is playing itself" — this line is everything to its advancement.</div>
+      <div class="pb-test">
+        Advancement test for every loop: <strong>does this make the Game more self-playing, or more founder-bottlenecked?</strong>
+        First → ship. Second → redesign.
+      </div>
+      <a class="pb-link" href="#doc-plays-itself" onclick="document.getElementById('doc-plays-itself').open=true;">Read the principle inline →</a>
+    </div>
   </div>
 
   <div class="card full" style="margin-bottom:24px;">
