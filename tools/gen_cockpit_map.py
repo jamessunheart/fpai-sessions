@@ -2056,6 +2056,26 @@ body.mode-field .player-only { display: none !important; }
   display: inline-block;
 }
 .ps-tip { font-size: 11px; color: var(--muted); margin: 8px 0 0; line-height: 1.5; }
+.ps-match-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+.ps-match-btn {
+  background: var(--accent); color: var(--bg); border: none; border-radius: 6px;
+  padding: 9px 16px; font-weight: 700; font-size: 13px; cursor: pointer;
+}
+.ps-match-btn:hover { filter: brightness(1.08); }
+.ps-match-btn:disabled { opacity: 0.6; cursor: progress; }
+.ps-match-hint { font-size: 10px; color: var(--muted); }
+.ps-match-hint code { background: var(--surface-2); padding: 1px 5px; border-radius: 3px; font-size: 10px; }
+.ps-match-result {
+  background: var(--surface-2); border: 1px solid var(--accent); border-radius: 8px;
+  padding: 12px 14px; margin-top: 10px; font-size: 13px; line-height: 1.6;
+}
+.ps-match-result-icon { font-size: 22px; line-height: 1; margin-right: 6px; vertical-align: middle; }
+.ps-match-result-text { color: var(--text); }
+.ps-match-result-cta {
+  display: inline-block; margin-top: 8px; background: var(--accent); color: var(--bg);
+  text-decoration: none; padding: 6px 12px; border-radius: 5px; font-size: 12px; font-weight: 700;
+}
+.ps-match-result-cta:hover { filter: brightness(1.08); }
 .ps-contrib { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
 .ps-contrib-label { font-size: 10px; color: var(--accent); letter-spacing: 1px; font-weight: 700; margin-bottom: 6px; }
 .ps-contrib-row { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -3419,6 +3439,67 @@ document.getElementById('rtSubmit')?.addEventListener('click', async (ev) => {
     showMsg('Network error. Try again.', 'err');
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = '🌴 I\\'m interested →'; }
+  }
+});
+
+// --- /match button + keyboard shortcut (Loop 24) -----------------------
+async function runMatch() {
+  let name = '';
+  try { name = localStorage.getItem('fpai-cockpit-name') || ''; } catch (e) {}
+  const btn = document.getElementById('psMatchBtn');
+  const out = document.getElementById('psMatchResult');
+  if (!out) return;
+  if (btn) { btn.disabled = true; btn.textContent = '🎯 Finding your next move…'; }
+  try {
+    const url = '/api/champion/match' + (name ? '?name=' + encodeURIComponent(name) : '');
+    const res = await fetch(url, { cache: 'no-store' });
+    const d = await res.json();
+    if (!d.ok) {
+      out.innerHTML = '<span class="ps-match-result-text">Could not match: ' + (d.error || 'unknown error').replace(/[<>]/g, '') + '</span>';
+    } else {
+      const safeMove = (d.move || '').replace(/[<>]/g, '');
+      const safeUrl = (d.url || '').replace(/[<>"']/g, '');
+      const safeIcon = d.icon || '🎯';
+      const ctaHtml = safeUrl ? '<a class="ps-match-result-cta" href="' + safeUrl + '">→ Take this move</a>' : '';
+      out.innerHTML = '<span class="ps-match-result-icon">' + safeIcon + '</span><span class="ps-match-result-text">' + safeMove + '</span><br>' + ctaHtml;
+    }
+    out.style.display = '';
+  } catch (e) {
+    out.innerHTML = '<span class="ps-match-result-text">Network error. Try again.</span>';
+    out.style.display = '';
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '🎯 What\\'s my next move?'; }
+  }
+}
+document.getElementById('psMatchBtn')?.addEventListener('click', runMatch);
+
+// Listen for slash-commands typed anywhere on the page (intercept before they go nowhere)
+let _slashBuffer = '';
+let _slashTimer = null;
+document.addEventListener('keydown', (ev) => {
+  // Skip if user is typing in an input/textarea
+  if (ev.target.matches('input, textarea, select, [contenteditable]')) return;
+  if (ev.key === '/') {
+    _slashBuffer = '/';
+    if (_slashTimer) clearTimeout(_slashTimer);
+    _slashTimer = setTimeout(() => { _slashBuffer = ''; }, 2500);
+    return;
+  }
+  if (_slashBuffer.startsWith('/') && /^[a-z]$/i.test(ev.key)) {
+    _slashBuffer += ev.key.toLowerCase();
+    if (_slashTimer) clearTimeout(_slashTimer);
+    _slashTimer = setTimeout(() => { _slashBuffer = ''; }, 2500);
+  }
+  if (ev.key === 'Enter' && _slashBuffer.startsWith('/')) {
+    const cmd = _slashBuffer.slice(1).toLowerCase();
+    _slashBuffer = '';
+    if (cmd === 'match') { ev.preventDefault(); runMatch(); }
+    else if (cmd === 'game') { ev.preventDefault(); window.open('https://t.me/sunheartbrain_bot?text=/game', '_blank'); }
+    else if (cmd === 'characters' || cmd === 'champions') {
+      ev.preventDefault();
+      const el = document.querySelector('.champions-card');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
   }
 });
 
@@ -4917,6 +4998,11 @@ def render_html() -> str:
       </div>
     </div>
     <p class="ps-tip" id="psTip"></p>
+    <div class="ps-match-row">
+      <button class="ps-match-btn" id="psMatchBtn">🎯 What's my next move?</button>
+      <span class="ps-match-hint">(same as <code>/match</code> on @sunheartbrain_bot)</span>
+    </div>
+    <div class="ps-match-result" id="psMatchResult" style="display:none;"></div>
     <div class="ps-contrib" id="psContrib" style="display:none;">
       <div class="ps-contrib-label">YOUR CONTRIBUTIONS</div>
       <div class="ps-contrib-row" id="psContribRow"></div>
