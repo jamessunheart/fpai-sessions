@@ -1996,6 +1996,120 @@ body.mode-field .player-only { display: none !important; }
   font-weight: 600;
   letter-spacing: 0.3px;
 }
+.ps-foundations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.ps-found-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  font-size: 11px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-deep);
+  color: var(--muted);
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  cursor: default;
+  transition: all 0.2s ease-out;
+}
+.ps-found-badge[data-state="checked"] {
+  color: var(--good);
+  border-color: var(--good);
+  background: rgba(132,212,136,0.08);
+}
+.ps-found-badge[data-state="unchecked"] {
+  color: var(--muted);
+  border-color: var(--border);
+  cursor: pointer;
+}
+.ps-found-badge[data-state="unchecked"]:hover {
+  color: var(--accent-bright);
+  border-color: var(--accent);
+}
+/* ===== Field Coherence card ===== */
+.coherence-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px 24px;
+  margin: 16px 0;
+}
+.coh-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.coh-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+  margin-right: 8px;
+}
+.coh-headline {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--accent-bright);
+  font-family: "Cormorant Garamond", Georgia, serif;
+  line-height: 1;
+}
+.coh-headline-max { font-size: 14px; color: var(--muted); margin-left: -4px; }
+.coh-trend { font-size: 12px; color: var(--muted); margin-left: auto; }
+.coh-components {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 18px;
+  margin-bottom: 12px;
+}
+@media (max-width: 700px) { .coh-components { grid-template-columns: 1fr; } }
+.coh-comp {
+  display: grid;
+  grid-template-columns: 110px 1fr 50px;
+  align-items: center;
+  gap: 10px;
+}
+.coh-comp-lbl { font-size: 12px; color: var(--text); font-weight: 600; }
+.coh-tag {
+  font-size: 9px;
+  background: var(--bg-deep);
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 5px;
+  margin-left: 4px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.coh-comp-bar {
+  height: 5px;
+  background: var(--bg-deep);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+.coh-comp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-bright));
+  width: 0%;
+  transition: width 0.6s ease-out;
+}
+.coh-comp[data-na="true"] .coh-comp-fill { background: var(--border); }
+.coh-comp[data-na="true"] .coh-comp-n { color: var(--muted); font-style: italic; }
+.coh-comp-n { font-size: 13px; font-weight: 700; color: var(--accent-bright); text-align: right; font-variant-numeric: tabular-nums; }
+.coh-note { font-size: 11px; color: var(--muted); font-style: italic; line-height: 1.5; }
+/* ===== goal-card-demoted ===== */
+.goal-card-demoted {
+  opacity: 0.85;
+  border-color: var(--border) !important;
+  background: var(--surface) !important;
+}
+.goal-card-demoted .goal-label { color: var(--muted) !important; }
+.goal-card-demoted .goal-title { font-size: 18px !important; }
 .ps-score { text-align: right; }
 .ps-score-n {
   font-size: 32px;
@@ -3104,6 +3218,44 @@ function animateNumber(el, from, to, duration = 800) {
   requestAnimationFrame(tick);
 }
 
+// --- Field Coherence (quality of field state) --------------------------
+async function loadFieldCoherence() {
+  try {
+    const res = await fetch('/api/champion/signals', { cache: 'no-store' });
+    if (!res.ok) return;
+    const d = await res.json();
+    const fc = d.field_coherence || {};
+    const head = fc.headline;
+    const headEl = document.getElementById('cohHeadline');
+    if (headEl) headEl.textContent = (head !== null && head !== undefined) ? head.toFixed(2) : '—';
+    const comps = fc.components || {};
+    const stats = fc.stats || {};
+    document.querySelectorAll('.coh-comp').forEach(el => {
+      const key = el.dataset.comp;
+      const val = comps[key];
+      const fill = el.querySelector('.coh-comp-fill');
+      const num = el.querySelector('.coh-comp-n');
+      if (val === null || val === undefined) {
+        el.dataset.na = 'true';
+        if (fill) fill.style.width = '8%';
+        if (num) num.textContent = 'n/a';
+      } else {
+        el.dataset.na = 'false';
+        if (fill) fill.style.width = (val * 100).toFixed(0) + '%';
+        if (num) num.textContent = val.toFixed(2);
+      }
+    });
+    // Trend line: simple — show 7d new proofs as activity hint
+    const trendEl = document.getElementById('cohTrend');
+    const a7 = d.activity_7d || {};
+    if (trendEl && a7.new_proofs !== undefined) {
+      trendEl.textContent = '+' + a7.new_proofs + ' proofs · 7d';
+    }
+    // Mirror Roll count badge update
+    if (window.__cohMirrorsCount === undefined) window.__cohMirrorsCount = stats.mirrors_paired || 0;
+  } catch (e) {}
+}
+
 // --- Game State (aggregate field metrics) -------------------------------
 let _gsLast = {};
 async function loadGameState() {
@@ -3165,6 +3317,8 @@ async function loadGameState() {
 }
 loadGameState();
 setInterval(loadGameState, 60000);
+loadFieldCoherence();
+setInterval(loadFieldCoherence, 60000);
 
 // --- Inviter capture (?inviter=NAME URL param) -------------------------
 (function captureInviter() {
@@ -3219,6 +3373,41 @@ async function loadPlayerState() {
     setText('psLoops', d.proofs_filed);
     setText('psAffiliates', d.affiliates_count);
     setText('psCard', d.card_present ? (d.card_level || '✓') : '—');
+
+    // === Foundational checkmarks: WPA / Character / Mirror ===
+    const setBadge = (id, checked, label) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.dataset.state = checked ? 'checked' : 'unchecked';
+      el.textContent = (checked ? '✓ ' : '○ ') + label;
+    };
+    setBadge('psFoundWPA', !!d.champion, 'World Peace Agreement');
+    setBadge('psFoundCharacter', !!d.card_present, 'Character');
+    // Mirror state: check Mirror Roll for this player_handle
+    (async () => {
+      try {
+        const mr = await fetch('/api/champion/mirror/roll', { cache: 'no-store' });
+        if (!mr.ok) { setBadge('psFoundMirror', false, 'Mirror Paired'); return; }
+        const mrd = await mr.json();
+        const myslug = (d.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        const paired = (mrd.mirrors || []).some(m =>
+          (m.player_handle || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') === myslug
+        );
+        setBadge('psFoundMirror', paired, 'Mirror Paired');
+      } catch (e) {
+        setBadge('psFoundMirror', false, 'Mirror Paired');
+      }
+    })();
+    // Click handler: unchecked badges link to the action
+    document.querySelectorAll('.ps-found-badge[data-state="unchecked"]').forEach(badge => {
+      if (badge.__bound) return;
+      badge.__bound = true;
+      badge.addEventListener('click', () => {
+        if (badge.id === 'psFoundWPA') document.querySelector('.signature-card-quest')?.scrollIntoView({behavior: 'smooth'});
+        else if (badge.id === 'psFoundCharacter') document.querySelector('.character-card-quest, .build-character-quest')?.scrollIntoView({behavior: 'smooth'});
+        else if (badge.id === 'psFoundMirror') window.open('/game/mirror/', '_self');
+      });
+    });
     const url = location.origin + location.pathname + '?inviter=' + encodeURIComponent(d.name);
     const inviteEl = document.getElementById('psInviteUrl');
     if (inviteEl) inviteEl.textContent = url;
@@ -4899,44 +5088,6 @@ def render_html() -> str:
     </div>
   </div>
 
-  <div class="goal-card" id="goalCard">
-    <div class="goal-header">
-      <div class="goal-icon">🎯</div>
-      <div class="goal-title-block">
-        <div class="goal-label">FOUNDER GOAL · 30 DAYS</div>
-        <div class="goal-title" id="goalTitle">First non-James human to engage with the Game.</div>
-      </div>
-      <div class="goal-progress">
-        <div class="goal-progress-n" id="goalProgressN">—</div>
-        <div class="goal-progress-lbl" id="goalProgressLbl">Champions</div>
-      </div>
-    </div>
-    <p class="goal-blurb" id="goalBlurb">
-      The substrate is built — 22+ loops, 10+ Paradigm Shifts, full funnel from Sign → Character → Proof → Affiliate → Path.
-      What's missing is one other human in it. Sign / file a proof / express interest in any path — you become the proof that the Game is more than its founder.
-    </p>
-    <div class="goal-meta">
-      <span class="goal-meta-item">Decision filter: <strong>proof · revenue · clarity · ease</strong> in 30 days</span>
-      <span class="goal-meta-sep">·</span>
-      <span class="goal-meta-item">AI working goals: <a href="https://github.com/jamessunheart/FPAI_Cockpit/blob/main/core/STATE/AI_GOALS.md" target="_blank" rel="noopener">core/STATE/AI_GOALS.md</a></span>
-    </div>
-  </div>
-
-  <div class="game-state-card" id="gameStateCard">
-    <div class="gs-header">
-      <div class="gs-label">⚡ FIELD STATE</div>
-      <div class="gs-tagline" id="gsTagline">A proof-based operating system for human potential.</div>
-    </div>
-    <div class="gs-metrics" id="gsMetrics">
-      <div class="gs-metric"><div class="gs-icon">🌀</div><div class="gs-n" id="gsChampions">—</div><div class="gs-lbl">Champions</div></div>
-      <div class="gs-metric"><div class="gs-icon">🎴</div><div class="gs-n" id="gsCards">—</div><div class="gs-lbl">Characters built</div></div>
-      <div class="gs-metric"><div class="gs-icon">🌱</div><div class="gs-n" id="gsProofs">—</div><div class="gs-lbl">Proofs filed</div></div>
-      <div class="gs-metric"><div class="gs-icon">🤝</div><div class="gs-n" id="gsAffiliates">—</div><div class="gs-lbl">Affiliate links</div></div>
-      <div class="gs-metric gs-metric-accent"><div class="gs-icon">📊</div><div class="gs-n" id="gsScore">—</div><div class="gs-lbl">Field Score sum</div></div>
-      <div class="gs-metric"><div class="gs-icon">📈</div><div class="gs-n" id="gsGrowth">—</div><div class="gs-lbl">This week</div></div>
-    </div>
-  </div>
-
   <div class="inviter-banner" id="inviterBanner" style="display:none;">
     <span class="inv-icon">🤝</span>
     <span id="inviterText">You arrived through someone's invitation.</span>
@@ -4962,6 +5113,11 @@ def render_html() -> str:
         <div class="ps-label">YOUR PLAYER STATE</div>
         <div class="ps-name" id="psName">—</div>
         <div class="ps-stage" id="psStage"></div>
+        <div class="ps-foundations" id="psFoundations">
+          <span class="ps-found-badge" id="psFoundWPA" data-state="unknown">○ World Peace Agreement</span>
+          <span class="ps-found-badge" id="psFoundCharacter" data-state="unknown">○ Character</span>
+          <span class="ps-found-badge" id="psFoundMirror" data-state="unknown">○ Mirror Paired</span>
+        </div>
       </div>
       <div class="ps-score">
         <div class="ps-score-n" id="psScore">0</div>
@@ -5006,6 +5162,60 @@ def render_html() -> str:
     <div class="ps-contrib" id="psContrib" style="display:none;">
       <div class="ps-contrib-label">YOUR CONTRIBUTIONS</div>
       <div class="ps-contrib-row" id="psContribRow"></div>
+    </div>
+  </div>
+
+  <div class="coherence-card" id="coherenceCard">
+    <div class="coh-header">
+      <div class="coh-label">⚡ FIELD COHERENCE</div>
+      <div class="coh-headline" id="cohHeadline">—</div>
+      <div class="coh-headline-max">/ 1.00</div>
+      <div class="coh-trend" id="cohTrend"></div>
+    </div>
+    <div class="coh-components" id="cohComponents">
+      <div class="coh-comp" data-comp="activity"><div class="coh-comp-lbl">Activity</div><div class="coh-comp-bar"><div class="coh-comp-fill"></div></div><div class="coh-comp-n">—</div></div>
+      <div class="coh-comp" data-comp="witness"><div class="coh-comp-lbl">Witness <span class="coh-tag">DW</span></div><div class="coh-comp-bar"><div class="coh-comp-fill"></div></div><div class="coh-comp-n">—</div></div>
+      <div class="coh-comp" data-comp="conversion"><div class="coh-comp-lbl">Conversion</div><div class="coh-comp-bar"><div class="coh-comp-fill"></div></div><div class="coh-comp-n">—</div></div>
+      <div class="coh-comp" data-comp="drift"><div class="coh-comp-lbl">Drift <span class="coh-tag">Mirrors</span></div><div class="coh-comp-bar"><div class="coh-comp-fill"></div></div><div class="coh-comp-n">—</div></div>
+    </div>
+    <div class="coh-note" id="cohNote">Quality of the field state — distinct from Field Score (quantity). Witness counts only Distance-Weighted (per white paper §4.5).</div>
+  </div>
+
+  <div class="game-state-card" id="gameStateCard">
+    <div class="gs-header">
+      <div class="gs-label">⚡ FIELD STATE</div>
+      <div class="gs-tagline" id="gsTagline">A proof-based operating system for human potential.</div>
+    </div>
+    <div class="gs-metrics" id="gsMetrics">
+      <div class="gs-metric"><div class="gs-icon">🌀</div><div class="gs-n" id="gsChampions">—</div><div class="gs-lbl">Champions</div></div>
+      <div class="gs-metric"><div class="gs-icon">🎴</div><div class="gs-n" id="gsCards">—</div><div class="gs-lbl">Characters built</div></div>
+      <div class="gs-metric"><div class="gs-icon">🌱</div><div class="gs-n" id="gsProofs">—</div><div class="gs-lbl">Proofs filed</div></div>
+      <div class="gs-metric"><div class="gs-icon">🤝</div><div class="gs-n" id="gsAffiliates">—</div><div class="gs-lbl">Affiliate links</div></div>
+      <div class="gs-metric gs-metric-accent"><div class="gs-icon">📊</div><div class="gs-n" id="gsScore">—</div><div class="gs-lbl">Field Score sum</div></div>
+      <div class="gs-metric"><div class="gs-icon">📈</div><div class="gs-n" id="gsGrowth">—</div><div class="gs-lbl">This week</div></div>
+    </div>
+  </div>
+
+  <div class="goal-card goal-card-demoted" id="goalCard">
+    <div class="goal-header">
+      <div class="goal-icon">🎯</div>
+      <div class="goal-title-block">
+        <div class="goal-label">FOUNDER GOAL · 30 DAYS</div>
+        <div class="goal-title" id="goalTitle">First non-James human to engage with the Game.</div>
+      </div>
+      <div class="goal-progress">
+        <div class="goal-progress-n" id="goalProgressN">—</div>
+        <div class="goal-progress-lbl" id="goalProgressLbl">Champions</div>
+      </div>
+    </div>
+    <p class="goal-blurb" id="goalBlurb">
+      The substrate is built — 22+ loops, 10+ Paradigm Shifts, full funnel from Sign → Character → Proof → Affiliate → Path.
+      What's missing is one other human in it. Sign / file a proof / express interest in any path — you become the proof that the Game is more than its founder.
+    </p>
+    <div class="goal-meta">
+      <span class="goal-meta-item">Decision filter: <strong>proof · revenue · clarity · ease</strong> in 30 days</span>
+      <span class="goal-meta-sep">·</span>
+      <span class="goal-meta-item">AI working goals: <a href="https://github.com/jamessunheart/FPAI_Cockpit/blob/main/core/STATE/AI_GOALS.md" target="_blank" rel="noopener">core/STATE/AI_GOALS.md</a></span>
     </div>
   </div>
 

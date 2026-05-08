@@ -1610,3 +1610,235 @@ async def mirror_roll(limit: int = 50) -> dict:
         except Exception:
             continue
     return {"mirrors": rolls[:limit], "count": len(rolls)}
+
+
+# ===== /signals — vital game signals (Loop 27) ============================
+#
+# A single comprehensive read of the Game's state for both the bot
+# (/signals command) and the dashboard (Field Coherence headline).
+#
+# Field Coherence v0 components:
+#   activity     = proofs in last 7d / champions          (capped at 1.0)
+#   witness      = proofs witnessed by other / total      (currently any
+#                  witness_signed=true; v1 will require Distance-Weighted)
+#   conversion   = champions / leads                       (null if no leads)
+#   drift        = mirrors not in drift / mirrors          (null until live)
+#
+# Headline = mean of measurable components. Honest about what's not
+# yet measured.
+
+def _read_proof_meta(p: Path) -> dict:
+    try:
+        text = p.read_text(encoding="utf-8")
+        fm = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+        if not fm:
+            return {}
+        out = {"_mtime": p.stat().st_mtime}
+        for line in fm.group(1).split("\n"):
+            m = re.match(r"^([a-z_]+):\s*(.*)$", line)
+            if m:
+                out[m.group(1)] = m.group(2).strip().strip('"')
+        return out
+    except Exception:
+        return {}
+
+
+def _compute_field_coherence() -> dict:
+    """Field Coherence v0 — architecturally honest. Refines as substrate matures.
+
+    Returns null for components without sufficient data rather than faking a
+    number. Witness component requires Distance-Weighted (per white paper §4.5)
+    — self-witness or AI-witness do NOT count.
+    """
+    now = datetime.now().timestamp()
+    week = 7 * 86400
+
+    champions = 0
+    if DATA_DIR.exists():
+        champions = sum(1 for _ in DATA_DIR.glob("*.md"))
+
+    proofs_7d = 0
+    proofs_total = 0
+    proofs_dw_witnessed = 0      # Distance-Weighted: not self, not AI
+    proofs_self_or_ai = 0
+    if PROOFS_DIR.exists():
+        for p in PROOFS_DIR.glob("*.md"):
+            meta = _read_proof_meta(p)
+            if not meta:
+                continue
+            proofs_total += 1
+            if now - meta["_mtime"] < week:
+                proofs_7d += 1
+            if str(meta.get("witness_signed", "")).lower() == "true":
+                witness_str = (meta.get("witness") or "").lower()
+                player_str = (meta.get("player") or "").lower()
+                ai_markers = ["claude", "anthropic", "openai", "gpt-", "the bot", " ai ", "(ai", "ai)"]
+                is_ai = any(m in witness_str for m in ai_markers)
+                first_name = player_str.split()[0] if player_str else ""
+                is_self = first_name and first_name in witness_str
+                if witness_str and not is_ai and not is_self:
+                    proofs_dw_witnessed += 1
+                else:
+                    proofs_self_or_ai += 1
+
+    leads_total = 0
+    if LEADS_DIR.exists():
+        leads_total = sum(1 for _ in LEADS_DIR.glob("*.md"))
+
+    mirrors_total = 0
+    if MIRRORS_DIR.exists():
+        mirrors_total = sum(1 for _ in MIRRORS_DIR.glob("*.md"))
+
+    components: dict = {}
+
+    # Activity: proofs per champion per day, capped at 1.0 (1/day = healthy)
+    if champions > 0:
+        rate = proofs_7d / (champions * 7)
+        components["activity"] = round(min(1.0, rate), 3)
+    else:
+        components["activity"] = None
+
+    # Witness: Distance-Weighted only ÷ total
+    if proofs_total > 0:
+        components["witness"] = round(proofs_dw_witnessed / proofs_total, 3)
+    else:
+        components["witness"] = None
+
+    # Conversion: null when no leads — 1/1 with no field is meaningless
+    if leads_total > 0:
+        components["conversion"] = round(champions / (champions + leads_total), 3)
+    else:
+        components["conversion"] = None
+
+    # Drift: null until paired Mirrors run weekly drift checks
+    components["drift"] = None
+
+    measurable = [v for v in components.values() if v is not None]
+    headline = round(sum(measurable) / len(measurable), 3) if measurable else None
+
+    return {
+        "headline": headline,
+        "components": components,
+        "stats": {
+            "proofs_total": proofs_total,
+            "proofs_distance_weighted_witnessed": proofs_dw_witnessed,
+            "proofs_self_or_ai_witnessed": proofs_self_or_ai,
+            "leads_pending": leads_total,
+            "mirrors_paired": mirrors_total,
+        },
+        "notes": {
+            "activity": f"{proofs_7d} proofs by {champions} champions in last 7d, capped at 1/day/champion",
+            "witness": "only Distance-Weighted Witnesses count (per white paper §4.5) — self-signed and AI-signed proofs excluded",
+            "drift": "null until paired Mirrors run weekly drift checks (next: Mirror #1)",
+            "conversion": f"null until leads exist — currently {leads_total} leads",
+        },
+    }
+
+
+@app.get("/signals")
+async def game_signals() -> dict:
+    """Vital signs of the Game — comprehensive state read.
+
+    Composes existing endpoints + Field Coherence + Mirror state + 30d goal.
+    Public endpoint (no auth) — matches the privacy frame of /stats.
+    """
+    now = datetime.now().timestamp()
+    week = 7 * 86400
+
+    # Champions / Cards / Affiliates / Field Score
+    champions_total = 0
+    champions_7d = 0
+    cards_total = 0
+    affiliates = 0
+    field_score = 0
+    top_inviter = None
+    inviter_counts: dict[str, int] = {}
+
+    if DATA_DIR.exists():
+        for p in DATA_DIR.glob("*.md"):
+            meta = _read_proof_meta(p)
+            if not meta:
+                continue
+            champions_total += 1
+            if now - meta["_mtime"] < week:
+                champions_7d += 1
+            inviter = meta.get("inviter")
+            if inviter:
+                affiliates += 1
+                inviter_counts[inviter.lower()] = inviter_counts.get(inviter.lower(), 0) + 1
+
+    if CARDS_DIR.exists():
+        cards_total = sum(1 for _ in CARDS_DIR.glob("*.md"))
+
+    proofs_total = 0
+    proofs_7d = 0
+    last_proof = None
+    if PROOFS_DIR.exists():
+        proofs_sorted = sorted(PROOFS_DIR.glob("*.md"), key=lambda x: x.stat().st_mtime, reverse=True)
+        for p in proofs_sorted:
+            meta = _read_proof_meta(p)
+            if not meta:
+                continue
+            proofs_total += 1
+            if now - meta["_mtime"] < week:
+                proofs_7d += 1
+            if last_proof is None:
+                last_proof = {
+                    "loop_number": meta.get("loop_number"),
+                    "player": meta.get("player"),
+                    "ts": datetime.fromtimestamp(meta["_mtime"]).isoformat(),
+                }
+
+    leads_total = 0
+    if LEADS_DIR.exists():
+        leads_total = sum(1 for _ in LEADS_DIR.glob("*.md"))
+
+    mirrors_total = 0
+    mirrors_paired_7d = 0
+    if MIRRORS_DIR.exists():
+        for p in MIRRORS_DIR.glob("*.md"):
+            mirrors_total += 1
+            if now - p.stat().st_mtime < week:
+                mirrors_paired_7d += 1
+
+    # Field Score = 1·champ + 1·card + 2·proof + 3·affiliate
+    field_score = champions_total + cards_total + 2 * proofs_total + 3 * affiliates
+
+    # Top inviter
+    if inviter_counts:
+        top_inviter = max(inviter_counts.items(), key=lambda kv: kv[1])
+        top_inviter = {"handle": top_inviter[0], "count": top_inviter[1]}
+
+    # 30-day founder goal: first non-James human in
+    non_james_champions = max(0, champions_total - 1)
+    goal = {
+        "name": "First non-James human to engage with the Game",
+        "target": 1,
+        "current": non_james_champions,
+        "complete": non_james_champions >= 1,
+        "horizon_days": 30,
+    }
+
+    coherence = _compute_field_coherence()
+
+    return {
+        "ts": datetime.now().isoformat(),
+        "goal_30d": goal,
+        "field_coherence": coherence,
+        "field_state": {
+            "champions": champions_total,
+            "characters": cards_total,
+            "proofs": proofs_total,
+            "affiliates": affiliates,
+            "mirrors": mirrors_total,
+            "leads": leads_total,
+            "field_score_sum": field_score,
+        },
+        "activity_7d": {
+            "new_champions": champions_7d,
+            "new_proofs": proofs_7d,
+            "new_mirrors": mirrors_paired_7d,
+            "last_proof": last_proof,
+        },
+        "top_inviter": top_inviter,
+    }

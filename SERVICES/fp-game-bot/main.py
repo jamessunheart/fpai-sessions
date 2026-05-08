@@ -139,6 +139,7 @@ A proof-based operating system for human potential. Coherent Champions of CHRIST
   /proof — file a 7-Day Proof Loop
   /stats — your Player State
   /field — live game-state metrics
+  /signals — vital signs · Field Coherence · 30d goal · 7d activity
   /invite — your unique invite link
   /whoami — what name you're registered as
   /help — show this menu
@@ -166,6 +167,68 @@ async def cmd_cancel(client, chat_id: int, args: str) -> None:
         await tg_send(client, chat_id, "↩️ Cancelled. Type /help to see commands.")
     else:
         await tg_send(client, chat_id, "Nothing to cancel. Type /help to see commands.")
+
+
+async def cmd_signals(client, chat_id: int, args: str) -> None:
+    """Vital signs of the Game — a comprehensive single-screen read."""
+    try:
+        d = await api_get(client, "/signals")
+    except Exception as e:
+        await tg_send(client, chat_id, f"⚠️ Couldn't reach the substrate: {esc(e)}")
+        return
+
+    goal = d.get("goal_30d", {})
+    fc = d.get("field_coherence", {})
+    fs = d.get("field_state", {})
+    a7 = d.get("activity_7d", {})
+
+    # 30-day goal line
+    g_status = "✅" if goal.get("complete") else "🎯"
+    goal_line = f"{g_status} <b>{goal.get('current', 0)}/{goal.get('target', 1)}</b> · {esc(goal.get('name', ''))}"
+
+    # Field Coherence headline + components
+    head = fc.get("headline")
+    head_str = f"<b>{head:.2f}</b>/1.00" if head is not None else "<i>insufficient data</i>"
+    comps = fc.get("components", {})
+    def _comp(name: str, label: str) -> str:
+        v = comps.get(name)
+        if v is None:
+            return f"  └ <i>{label}: not yet measurable</i>\n"
+        return f"  └ {label}: <b>{v:.2f}</b>\n"
+    coherence_block = (
+        f"⚡ <b>FIELD COHERENCE</b> · {head_str}\n"
+        f"{_comp('activity', 'Activity')}"
+        f"{_comp('witness', 'Witness')}"
+        f"{_comp('conversion', 'Conversion')}"
+        f"{_comp('drift', 'Drift (Mirrors)')}"
+    )
+
+    # Field state
+    state_block = (
+        f"📊 <b>FIELD STATE</b>\n"
+        f"  • {fs.get('champions', 0)} Champions · {fs.get('characters', 0)} Characters · {fs.get('proofs', 0)} Proofs\n"
+        f"  • {fs.get('affiliates', 0)} Affiliates · {fs.get('mirrors', 0)} Mirrors · {fs.get('leads', 0)} Leads\n"
+        f"  • Field Score sum: <b>{fs.get('field_score_sum', 0)}</b>\n"
+    )
+
+    # 7-day activity
+    last_proof = a7.get("last_proof") or {}
+    last_str = f"#{last_proof.get('loop_number')} — {esc(last_proof.get('player') or '?')}" if last_proof else "—"
+    activity_block = (
+        f"🔥 <b>LAST 7 DAYS</b>\n"
+        f"  • +{a7.get('new_proofs', 0)} proofs · +{a7.get('new_champions', 0)} champs · +{a7.get('new_mirrors', 0)} mirrors\n"
+        f"  • Last loop: {last_str}\n"
+    )
+
+    msg = (
+        f"🩺 <b>GAME VITAL SIGNS</b>\n\n"
+        f"{goal_line}\n\n"
+        f"{coherence_block}\n"
+        f"{state_block}\n"
+        f"{activity_block}\n"
+        f"<i><a href=\"{GAME_URL}\">fullpotential.com/game</a> · /field for collective · /whoami for personal</i>"
+    )
+    await tg_send(client, chat_id, msg)
 
 
 async def cmd_field(client, chat_id: int, args: str) -> None:
@@ -830,6 +893,7 @@ COMMAND_HANDLERS = {
     "help": cmd_help,
     "cancel": cmd_cancel,
     "field": cmd_field,
+    "signals": cmd_signals,
     "stats": cmd_stats,
     "invite": cmd_invite,
     "whoami": cmd_whoami,
