@@ -21,6 +21,23 @@ if [[ "${1:-}" == "--with-nginx" ]]; then WITH_NGINX="true"; fi
 
 cd "$(dirname "$0")"
 
+echo "→ dry-run rsync to preview what would change (safety check)"
+DRYRUN_OUTPUT=$(rsync -avzn --delete -e "ssh $SSH_OPTS" peace/ "root@${SERVER_IP}:${DEPLOY_PATH}/peace/")
+DELETIONS=$(echo "$DRYRUN_OUTPUT" | grep -E "^deleting " || true)
+
+if [[ -n "$DELETIONS" ]]; then
+  echo
+  echo "⚠  WARNING: --delete will REMOVE the following from production:"
+  echo "$DELETIONS" | sed 's/^/    /'
+  echo
+  if [[ "${CONFIRM_DELETE:-}" != "yes" ]]; then
+    echo "✗ Aborting. To proceed, re-run with: CONFIRM_DELETE=yes ./deploy.sh"
+    echo "  Or add the missing files to peace/ first to preserve them."
+    exit 1
+  fi
+  echo "→ CONFIRM_DELETE=yes — proceeding with deletions"
+fi
+
 echo "→ rsync site files"
 rsync -avz --delete -e "ssh $SSH_OPTS" peace/ "root@${SERVER_IP}:${DEPLOY_PATH}/peace/"
 
