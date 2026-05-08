@@ -252,6 +252,254 @@ def _count_champions() -> int:
     return sum(1 for p in DATA_DIR.glob("*.md") if not p.name.startswith("."))
 
 
+@app.get("/stats")
+async def game_stats() -> dict:
+    """Aggregate game-state metrics — what's happening in the field overall.
+
+    Privacy: counts only, no names of private signers / cards.
+    Drives the Game State card at the top of the public dashboard.
+    """
+    from datetime import timedelta
+
+    champions_total = 0
+    champions_public = 0
+    proofs_total = 0
+    proofs_public = 0
+    cards_total = 0
+    cards_public = 0
+    affiliate_links = 0
+    field_score_sum = 0
+
+    inviter_set = set()
+
+    # Champions
+    if DATA_DIR.exists():
+        for p in DATA_DIR.glob("*.md"):
+            try:
+                text = p.read_text(encoding="utf-8")
+                fm = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+                if not fm:
+                    continue
+                champions_total += 1
+                fm_text = fm.group(1)
+                if re.search(r"^public:\s*true", fm_text, re.MULTILINE):
+                    champions_public += 1
+                inv_match = re.search(r"^inviter:\s*(.+)$", fm_text, re.MULTILINE)
+                if inv_match and inv_match.group(1).strip():
+                    affiliate_links += 1
+                    inviter_set.add(inv_match.group(1).strip().lower())
+            except Exception:
+                continue
+
+    # Proofs
+    if PROOFS_DIR.exists():
+        for p in PROOFS_DIR.glob("*.md"):
+            try:
+                text = p.read_text(encoding="utf-8")
+                fm = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+                if not fm:
+                    continue
+                proofs_total += 1
+                if re.search(r"^consent:\s*public", fm.group(1), re.MULTILINE):
+                    proofs_public += 1
+            except Exception:
+                continue
+
+    # Cards
+    if CARDS_DIR.exists():
+        for p in CARDS_DIR.glob("*.md"):
+            try:
+                text = p.read_text(encoding="utf-8")
+                fm = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+                if not fm:
+                    continue
+                cards_total += 1
+                vis_match = re.search(r"^visibility_default:\s*(\w+)", fm.group(1), re.MULTILINE)
+                if vis_match and vis_match.group(1) in ("public", "player"):
+                    cards_public += 1
+            except Exception:
+                continue
+
+    # Field Score sum (rough — sum of components)
+    field_score_sum = (
+        champions_total * 1
+        + cards_total * 1
+        + proofs_total * 2
+        + affiliate_links * 3
+    )
+
+    # Growth this week (count files modified in last 7 days)
+    week_ago = datetime.now().timestamp() - 7 * 86400
+    week_signatures = 0
+    week_proofs = 0
+    week_cards = 0
+    for d, target in [(DATA_DIR, "sig"), (PROOFS_DIR, "proof"), (CARDS_DIR, "card")]:
+        if not d.exists():
+            continue
+        for p in d.glob("*.md"):
+            try:
+                if p.stat().st_mtime >= week_ago:
+                    if target == "sig":
+                        week_signatures += 1
+                    elif target == "proof":
+                        week_proofs += 1
+                    elif target == "card":
+                        week_cards += 1
+            except Exception:
+                continue
+
+    return {
+        "champions": {"total": champions_total, "public": champions_public},
+        "proofs": {"total": proofs_total, "public": proofs_public},
+        "cards": {"total": cards_total, "public": cards_public},
+        "affiliate_links": affiliate_links,
+        "active_inviters": len(inviter_set),
+        "field_score_sum": field_score_sum,
+        "growth_this_week": {
+            "signatures": week_signatures,
+            "proofs": week_proofs,
+            "cards": week_cards,
+            "total": week_signatures + week_proofs + week_cards,
+        },
+    }
+
+
+def _parse_frontmatter(path: Path) -> Optional[dict]:
+    try:
+        text = path.read_text(encoding="utf-8")
+    except Exception:
+        return None
+    fm = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+    if not fm:
+        return None
+    data: dict = {}
+    for line in fm.group(1).split("\n"):
+        m = re.match(r"^([a-z_]+):\s*(.*)$", line)
+        if not m:
+            continue
+        k, v = m.group(1), m.group(2).strip().strip('"')
+        if v.lower() == "true":
+            v = True
+        elif v.lower() == "false":
+            v = False
+        data[k] = v
+    return data
+
+
+@app.get("/leaderboard")
+async def leaderboard(limit: int = 10) -> dict:
+    """Three rankings of substrate participation.
+
+    - top_champions: by Field Score (champion + card + 2×proofs + 3×affiliates)
+    - top_affiliates: by # of public Champions they invited
+    - top_loops: by # of public proofs filed against each loop_number
+    """
+    # Load public champions, keyed by lowercased name
+    champions: dict[str, dict] = {}
+    for p in DATA_DIR.glob("*.md"):
+        d = _parse_frontmatter(p)
+        if not d or not d.get("public"):
+            continue
+        name = (d.get("name") or "").strip()
+        if name:
+            champions[name.lower()] = d
+
+    # Walk public proofs once: count by player and by loop
+    proofs_by_player: dict[str, int] = {}
+    proofs_by_loop: dict[int, dict] = {}
+    for p in PROOFS_DIR.glob("*.md"):
+        d = _parse_frontmatter(p)
+        if not d or (d.get("consent") or "").lower() != "public":
+            continue
+        player = (d.get("player") or "").strip().lower()
+        if player:
+            proofs_by_player[player] = proofs_by_player.get(player, 0) + 1
+        try:
+            ln = int(d.get("loop_number") or 0)
+        except (TypeError, ValueError):
+            ln = 0
+        if ln:
+            bucket = proofs_by_loop.setdefault(ln, {"count": 0, "provers": set()})
+            bucket["count"] += 1
+            if player:
+                bucket["provers"].add(player)
+
+    # Cards: which players have at least one public/player-visible card
+    players_with_card: set[str] = set()
+    for p in CARDS_DIR.glob("*.md"):
+        d = _parse_frontmatter(p)
+        if not d:
+            continue
+        owner = (d.get("player") or d.get("owner") or d.get("name") or "").strip().lower()
+        if owner:
+            players_with_card.add(owner)
+
+    # Affiliate linkage from champion frontmatter
+    affiliates_by_inviter: dict[str, list[str]] = {}
+    for c in champions.values():
+        inv = (c.get("inviter") or "").strip().lower()
+        if inv:
+            affiliates_by_inviter.setdefault(inv, []).append(c.get("name") or "")
+
+    # Top Champions
+    top_champions = []
+    for name_lower, c in champions.items():
+        proofs = proofs_by_player.get(name_lower, 0)
+        affs = len(affiliates_by_inviter.get(name_lower, []))
+        has_card = name_lower in players_with_card
+        score = 1 + (1 if has_card else 0) + 2 * proofs + 3 * affs
+        try:
+            cn = int(c.get("champion_number") or 99999)
+        except (TypeError, ValueError):
+            cn = 99999
+        top_champions.append({
+            "name": c.get("name"),
+            "champion_number": c.get("champion_number"),
+            "field_score": score,
+            "proofs": proofs,
+            "affiliates": affs,
+            "card": has_card,
+            "_cn": cn,
+        })
+    top_champions.sort(key=lambda x: (-x["field_score"], x["_cn"]))
+    for c in top_champions:
+        c.pop("_cn", None)
+    top_champions = top_champions[:limit]
+
+    # Top Affiliates — resolve original-cased name where possible
+    name_by_lower = {k: v.get("name") for k, v in champions.items()}
+    top_affiliates = []
+    for inviter_lower, invitees in affiliates_by_inviter.items():
+        if not invitees:
+            continue
+        top_affiliates.append({
+            "name": name_by_lower.get(inviter_lower, inviter_lower.title()),
+            "count": len(invitees),
+            "invitees": [n for n in invitees if n][:3],
+        })
+    top_affiliates.sort(key=lambda x: -x["count"])
+    top_affiliates = top_affiliates[:limit]
+
+    # Top Loops
+    top_loops = sorted(
+        (
+            {
+                "loop_number": ln,
+                "proof_count": d["count"],
+                "unique_provers": len(d["provers"]),
+            }
+            for ln, d in proofs_by_loop.items()
+        ),
+        key=lambda x: (-x["proof_count"], -x["unique_provers"], x["loop_number"]),
+    )[:limit]
+
+    return {
+        "top_champions": top_champions,
+        "top_affiliates": top_affiliates,
+        "top_loops": top_loops,
+    }
+
+
 @app.get("/lookup")
 async def lookup_player(name: str) -> dict:
     """Return a player's full state across champions / proofs / cards / affiliates.

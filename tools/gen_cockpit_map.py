@@ -1789,6 +1789,132 @@ body.mode-field .player-only { display: none !important; }
 .glossary-def code { font-size: 11px; }
 .glossary-def strong { color: var(--accent); }
 
+/* Game State card — aggregate field metrics, top of page */
+.game-state-card {
+  background: linear-gradient(135deg, rgba(232, 185, 116, 0.06), rgba(124, 196, 168, 0.04));
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--accent);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+}
+.gs-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.gs-label {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: var(--accent-bright);
+  font-weight: 700;
+}
+.gs-label::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: var(--good);
+  border-radius: 50%;
+  margin-right: 6px;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+.gs-tagline { font-size: 12px; color: var(--muted); font-style: italic; }
+.gs-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 6px;
+}
+.gs-metric {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 8px;
+  text-align: center;
+}
+.gs-metric-accent { border-color: var(--accent); background: rgba(232,185,116,0.08); }
+.gs-icon { font-size: 18px; line-height: 1; }
+.gs-n { font-size: 20px; font-weight: 700; color: var(--accent); margin-top: 4px; line-height: 1; }
+.gs-metric-accent .gs-n { color: var(--accent-bright); }
+.gs-lbl { font-size: 10px; color: var(--muted); margin-top: 4px; line-height: 1.2; }
+
+/* Progression Path bar */
+.progression-bar {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.pb-rail {
+  position: relative;
+  height: 4px;
+  background: var(--surface-2);
+  border-radius: 2px;
+  margin: 0 22px 16px;
+}
+.pb-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--good), var(--accent), var(--accent-bright));
+  border-radius: 2px;
+  transition: width 0.6s ease-out;
+}
+.pb-stages {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin-top: -28px;
+}
+.pb-stage {
+  text-align: center;
+  width: 44px;
+  margin-top: 0;
+}
+.pbs-glyph {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  margin: 0 auto;
+  transition: all 0.18s;
+  filter: grayscale(0.5);
+  opacity: 0.5;
+}
+.pbs-name {
+  font-size: 9px;
+  color: var(--muted);
+  margin-top: 4px;
+  letter-spacing: 0.3px;
+}
+.pb-stage.passed .pbs-glyph {
+  border-color: var(--good);
+  background: rgba(132, 212, 136, 0.12);
+  filter: grayscale(0);
+  opacity: 0.85;
+}
+.pb-stage.current .pbs-glyph {
+  border-color: var(--accent);
+  background: rgba(232, 185, 116, 0.15);
+  box-shadow: 0 0 16px rgba(232, 185, 116, 0.4);
+  filter: grayscale(0);
+  opacity: 1;
+  transform: scale(1.15);
+}
+.pb-stage.current .pbs-name {
+  color: var(--accent-bright);
+  font-weight: 700;
+}
+.pb-unlock {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: var(--surface-2);
+  border-left: 3px solid var(--accent);
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.5;
+}
+.pb-unlock strong { color: var(--accent-bright); }
+
 /* Player State panel */
 .player-state {
   background: linear-gradient(135deg, rgba(132, 212, 136, 0.08), rgba(232, 185, 116, 0.04));
@@ -2720,6 +2846,33 @@ setInterval(refreshRelTimes, 30000);
   svg.innerHTML = stars;
 })();
 
+// --- Game State (aggregate field metrics) -------------------------------
+async function loadGameState() {
+  try {
+    const res = await fetch('/api/champion/stats', { cache: 'no-store' });
+    if (!res.ok) return;
+    const d = await res.json();
+    const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    setText('gsChampions', d.champions?.total ?? 0);
+    setText('gsCards', d.cards?.total ?? 0);
+    setText('gsProofs', d.proofs?.total ?? 0);
+    setText('gsAffiliates', d.affiliate_links ?? 0);
+    setText('gsScore', d.field_score_sum ?? 0);
+    setText('gsGrowth', '+' + (d.growth_this_week?.total ?? 0));
+    // Tagline auto-adapts to field state
+    const tagline = document.getElementById('gsTagline');
+    if (tagline) {
+      const total = (d.champions?.total ?? 0) + (d.proofs?.total ?? 0);
+      if (total < 5) tagline.textContent = 'A new game. The first signatures are seeding the field.';
+      else if (total < 50) tagline.textContent = 'Early players. The Game is beginning to play itself.';
+      else if (total < 500) tagline.textContent = 'The field is alive. Loops compound. Witnesses confirm.';
+      else tagline.textContent = 'A movement in motion. Each Champion adds their voice.';
+    }
+  } catch (e) {}
+}
+loadGameState();
+setInterval(loadGameState, 60000);
+
 // --- Inviter capture (?inviter=NAME URL param) -------------------------
 (function captureInviter() {
   try {
@@ -2787,6 +2940,30 @@ async function loadPlayerState() {
     if (d.champion && d.card_present && d.proofs_filed >= 3 && d.affiliates_count >= 3) { stage = 'Builder'; stageGlyph = '🏗'; }
     if (d.proofs_filed >= 10 && d.affiliates_count >= 10) { stage = 'Legend'; stageGlyph = '👑'; }
     setText('psStage', stageGlyph + ' ' + stage);
+
+    // Progression bar — animate fill + highlight current stage
+    const stageOrder = ['Visitor', 'Guest', 'Player', 'Apprentice', 'Steward', 'Builder', 'Legend'];
+    const currentIdx = stageOrder.indexOf(stage);
+    const fillPct = currentIdx <= 0 ? 4 : (currentIdx / (stageOrder.length - 1)) * 100;
+    const fillEl = document.getElementById('pbFill');
+    if (fillEl) fillEl.style.width = fillPct + '%';
+    document.querySelectorAll('.pb-stage').forEach((el, i) => {
+      el.classList.toggle('passed', i < currentIdx);
+      el.classList.toggle('current', i === currentIdx);
+    });
+    const unlockEl = document.getElementById('pbUnlock');
+    if (unlockEl) {
+      const unlocks = {
+        'Visitor':    `<strong>Next: Guest</strong> · Sign the World Peace Agreement to join the Roll.`,
+        'Guest':      `<strong>Next: Player</strong> · Build your Character Card so others can find you for matching.`,
+        'Player':     `<strong>Next: Apprentice</strong> · Run a 7-Day First Game and file your first Proof.`,
+        'Apprentice': `<strong>Next: Steward</strong> · File ${Math.max(0, 3 - d.proofs_filed)} more Proof${(3 - d.proofs_filed) === 1 ? '' : 's'} to ascend.`,
+        'Steward':    `<strong>Next: Builder</strong> · Bring ${Math.max(0, 3 - d.affiliates_count)} more aligned ${(3 - d.affiliates_count) === 1 ? 'person' : 'people'} into the Game.`,
+        'Builder':    `<strong>Next: Legend</strong> · Build infrastructure that outlasts you. ${Math.max(0, 10 - d.proofs_filed)} more Proofs · ${Math.max(0, 10 - d.affiliates_count)} more Affiliates.`,
+        'Legend':     `<strong>Legend</strong> · Legacy that outlasts you. The Game continues to play through what you built.`,
+      };
+      unlockEl.innerHTML = unlocks[stage] || '';
+    }
 
     // Mobile sticky stage bar
     const msb = document.getElementById('mobileStageBar');
@@ -4262,6 +4439,21 @@ def render_html() -> str:
     </div>
   </div>
 
+  <div class="game-state-card" id="gameStateCard">
+    <div class="gs-header">
+      <div class="gs-label">⚡ FIELD STATE</div>
+      <div class="gs-tagline" id="gsTagline">A proof-based operating system for human potential.</div>
+    </div>
+    <div class="gs-metrics" id="gsMetrics">
+      <div class="gs-metric"><div class="gs-icon">🌀</div><div class="gs-n" id="gsChampions">—</div><div class="gs-lbl">Champions</div></div>
+      <div class="gs-metric"><div class="gs-icon">🎴</div><div class="gs-n" id="gsCards">—</div><div class="gs-lbl">Cards built</div></div>
+      <div class="gs-metric"><div class="gs-icon">🌱</div><div class="gs-n" id="gsProofs">—</div><div class="gs-lbl">Proofs filed</div></div>
+      <div class="gs-metric"><div class="gs-icon">🤝</div><div class="gs-n" id="gsAffiliates">—</div><div class="gs-lbl">Affiliate links</div></div>
+      <div class="gs-metric gs-metric-accent"><div class="gs-icon">📊</div><div class="gs-n" id="gsScore">—</div><div class="gs-lbl">Field Score sum</div></div>
+      <div class="gs-metric"><div class="gs-icon">📈</div><div class="gs-n" id="gsGrowth">—</div><div class="gs-lbl">This week</div></div>
+    </div>
+  </div>
+
   <div class="inviter-banner" id="inviterBanner" style="display:none;">
     <span class="inv-icon">🤝</span>
     <span id="inviterText">You arrived through someone's invitation.</span>
@@ -4285,6 +4477,22 @@ def render_html() -> str:
       <div class="ps-stat"><div class="ps-stat-n" id="psLoops">0</div><div class="ps-stat-lbl">Loops filed</div></div>
       <div class="ps-stat"><div class="ps-stat-n" id="psAffiliates">0</div><div class="ps-stat-lbl">Affiliates signed</div></div>
       <div class="ps-stat"><div class="ps-stat-n" id="psCard">—</div><div class="ps-stat-lbl">Character Card</div></div>
+    </div>
+
+    <div class="progression-bar" id="progressionBar">
+      <div class="pb-rail">
+        <div class="pb-fill" id="pbFill" style="width:0%;"></div>
+      </div>
+      <div class="pb-stages">
+        <div class="pb-stage" data-stage="0"><div class="pbs-glyph">👋</div><div class="pbs-name">Visitor</div></div>
+        <div class="pb-stage" data-stage="1"><div class="pbs-glyph">👥</div><div class="pbs-name">Guest</div></div>
+        <div class="pb-stage" data-stage="2"><div class="pbs-glyph">🎮</div><div class="pbs-name">Player</div></div>
+        <div class="pb-stage" data-stage="3"><div class="pbs-glyph">🎓</div><div class="pbs-name">Apprentice</div></div>
+        <div class="pb-stage" data-stage="4"><div class="pbs-glyph">🌱</div><div class="pbs-name">Steward</div></div>
+        <div class="pb-stage" data-stage="5"><div class="pbs-glyph">🏗</div><div class="pbs-name">Builder</div></div>
+        <div class="pb-stage" data-stage="6"><div class="pbs-glyph">👑</div><div class="pbs-name">Legend</div></div>
+      </div>
+      <div class="pb-unlock" id="pbUnlock"></div>
     </div>
     <div class="ps-invite">
       <div class="ps-invite-label">YOUR INVITE LINK <span style="color:var(--muted);font-weight:400;font-size:11px;">— share this URL · when others sign through it, your Field Score grows</span></div>
