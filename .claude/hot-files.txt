@@ -1,0 +1,13 @@
+# Hot files — protected against parallel-session collisions.
+# Pre-edit hook blocks Edit/Write/MultiEdit if these have uncommitted changes
+# from a different Claude Code session. Add SSOT files only — over-listing
+# slows every edit.
+#
+# Format: one repo-relative path per line. # comments OK. Blank lines OK.
+# To add a path, also commit it so sibling sessions see the update.
+
+core/STATE/NOW.md
+core/STATE/AI_GOALS.md
+core/STATE/INVITE_TEMPLATES.md
+core/INTENT/FULL_POTENTIAL_GAME.md
+CLAUDE.md

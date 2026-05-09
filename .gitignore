@@ -41,3 +41,7 @@ cockpit-map.html
 
 # Public deploy build (regenerate with `make public` / `make deploy-game`)
 dist/
+
+# Per-session collision-prevention state (see .claude/hooks/README.md)
+.claude/sessions/
+.claude/worktrees/
