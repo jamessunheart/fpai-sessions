@@ -1,9 +1,0 @@
-{
-  "claimed_by": "session-1763926653",
-  "claimed_at": "2025-11-23T21:15:34Z",
-  "resource_type": "mission",
-  "resource_name": "M003_build_proxy_manager",
-  "duration_hours": 4,
-  "expires_at": "2025-11-24T01:15:34Z",
-  "allow_coordination": true
-}
