@@ -67,19 +67,19 @@ The Game is the operational form of the Zen Village vision: a substrate where Ch
 
 ---
 
-## ❓ LOOP 33 — what's calling next
+## ❓ LOOP 36 — what's calling next
 
-**Frame change:** Loops 17–32 saturated the substrate (qb books, retreat funnel, paths, goal panel, `/match` in-Game, `/capabilities`, Mirror Loop, Field Coherence, Top-3 Next Moves, `/credits` bridged to canonical fp-credits-gateway). Adding more substrate without distribution is now a G4 violation. **The bottleneck is human signal, not features.**
+**Big shift since last entry:** James named the **first cohort** — Atlas, Halley, Josh, Sierra, Delaney, Cheyenne (memory: `project_first_cohort.md`). Q#2 — the umbrella inquiry that's gated G1 for ~30 loops — just got its first answer. Substrate work without distribution is no longer ambiguous; it's a G4 violation. **The next move is human, not code.**
 
 Ranked options:
 
-- **(distribution) First 5–10 invitations** — Q#2 (open in qb game book) names this as the gate. Substrate is ready; James-side work is drafting + sending. Highest direct G1 leverage. Needs James in the loop.
-- **(witness) Activate non-Claude Witness Roster** — turns the Game into the multi-witness community a retreat actually is; deepens any incoming Champion's experience.
+- **(distribution · primary) Draft the 6 invitations** — one per named human, tuned to relationship + path (apprenticeship / village / parties / retreats / commerce / coaching / witnessing per `feedback_game_is_many_pathed_funnel.md`). Open gate is Q-AI-1 (drafting authorization) — ask James before sending from his accounts. Atlás's WhatsApp is on file; the other 5 need numbers/channels. Highest direct G1 leverage.
+- **(witness) Activate non-Claude Witness Roster** — turns the Game into the multi-witness community an incoming cohort needs; deepens whoever lands first.
 - **(public) Player State pages (`?player=NAME`)** — top-of-funnel shareable, multiplies whatever invites do go out.
-- **(hygiene) Prune frozen units** — `cocoon`, `godmode`, `projects-dashboard`, `whaletrack-magnetic-trader`, `streasury-bot`. Per `feedback_cruft_bias.md`. Pure G4 hygiene; clears the working board so the next substrate loop is picked from a real list.
+- **(hygiene) Continue cruft prune** — sibling cleared 104 legacy planning docs in 6aed2be0 (parallel to this loop reconcile). ~15 untracked root-level docs from later sessions still pending (`*_BUILT.md`, `*_BLOCKED.md`, deploy tarballs). Frozen service units (`cocoon`, `godmode`, `projects-dashboard`, `whaletrack-magnetic-trader`, `streasury-bot`) still pending.
 - **(wait) Hold for signal** — let retreat-interest capture + lead-capture form run; let the field choose what's next.
 
-**Open:** James to pick. Sibling sessions: check `git log` + `proofs/` before claiming Loop 33 (per `feedback_parallel_session_safety.md`).
+**Open:** James to pick. Sibling sessions: check `git log` + `proofs/` before claiming Loop 36 (per `feedback_parallel_session_safety.md`).
 
 ---
 
@@ -147,8 +147,9 @@ Ranked options:
 **Why #1 (the umbrella):** This is the META P1 inquiry — all other game-book questions sit under it. Per `feedback_game_is_many_pathed_funnel.md`, paths are *apprenticeship / village / parties / retreats / commerce / coaching / witnessing*. Don't pitch retreat as the singular outcome; enroll once, route per person.
 
 ### #2 · [game/q-20260508-870956] Who in James's field is the first 5–10 to invite, and what does each invitation look like?
-**Why #2 (operationalizes #1 — gates everything downstream):** Without the invite list, the multi-path funnel has no entrants. `/characters` command just shipped to surface the live roster + KPIs from `/api/champion/list`.
-**Stuck on:** James-side work (drafting the actual invitations). Substrate is ready; signal is needed.
+**Why #2 (operationalizes #1 — gates everything downstream):** Without the invite list, the multi-path funnel has no entrants. `/characters` command surfaces the live roster + KPIs from `/api/champion/list`.
+**Update 2026-05-08:** Named (memory: `project_first_cohort.md`) — **Atlas, Halley, Josh, Sierra, Delaney, Cheyenne**. Question now narrows from "who" to "what does each invitation look like, and is AI authorized to draft + send (Q-AI-1)?"
+**Stuck on:** per-person context (relationship, channel, path-fit) + drafting authorization. Atlás's WhatsApp is on file; the other 5 need it.
 
 ### #3 · [game/q-20260508-456895] Who's coming to the first Zen Village retreat, and what does the booking page need to convert them?
 **Why #3 (downstream of #2):** Originally framed as "build the booking page first." James reframed: *enroll first → Game pulls Champions through quests → retreat.* So booking-page work shouldn't lead — Champion-recruitment does. This question waits for #2 to yield Champions.
