@@ -1,20 +1,22 @@
 ---
-artifact: camp_director_offer_letter
-version: 0.2 (draft, all fields filled by Claude)
+artifact: camp_zen_stewardship_offer
+version: 0.3 (reframed: Player not employee · Game as guide)
 date_drafted: 2026-05-08
 drafted_by: Claude (FPAI_Cockpit)
-recipient: Atlás (WhatsApp +1 858-867-9217)
+recipient: Atlás (already on-property at Zen Village; WhatsApp +1 858-867-9217)
 sender: James Sunheart (Founding Steward, Zen Village)
-status: DRAFT — every blank filled with Claude's best judgment; James refines before send
+status: DRAFT — reframed to reflect Atlás's actual situation (resident villager, Game-guided)
 gate: Q-AI-1 (drafting authorization granted; sending requires explicit per-action authorization)
-companion: core/INTENT/CAMP_ZEN_BLUEPRINT.md (or wherever the blueprint lives — link before sending)
+companion: Camp Zen Blueprint
 ---
 
-# Camp Director Offer · Atlás
+# Camp Zen Stewardship · Atlás
 
-**This is a v0.2 draft.** I (Claude) filled every previously-blank field with my best judgment, sized to the blueprint's unit economics, Costa Rica cost of living, and the role's scope. James refines.
+**This is a v0.3 draft.** Reframed from v0.2 (which assumed Atlás was being hired from outside) to reflect what's actually true: Atlás is already a villager at Zen Village, housing + food are already provided, and his work IS playing the Full Potential Game. The Game is his manager — daily guidance via the dashboard's Top 3 Next Moves, Field Coherence, earn hooks, stage progression. James does strategic, not daily.
 
-The offer is structured to be readable in 5 minutes — short enough to be felt, formal enough to be real.
+His compensation is **field-aligned**: small cash stipend for personal life off-property, large revenue share on what he generates, plus the Game's existing earning mechanics (credits via earn hooks, Field Score progression, stage advancement). He grows with potential — the architecture compounds his rewards as his execution compounds.
+
+The offer is structured to be readable in 5 minutes.
 
 ---
 
@@ -26,9 +28,11 @@ Atlás,
 
 Before this is an offer, it's a recognition.
 
-You've already been in the work. We've been building together — you know what Zen Village is, you know the Game, you've held space when things were forming and seen the bones underneath. The next thing forming is **Camp Zen** — the guest-experience layer of the Village — and I want you to run it.
+You're already here. You're already in the work. You've held space, walked the property, seen what's forming. **Camp Zen** — the guest-experience layer of the Village — is the next thing forming, and you're already standing where it forms. I'm not asking you to come work for me; I'm asking you to formalize what you're already doing and **steward Camp Zen as your Game.**
 
-I'm asking you to be **Camp Director.**
+You'd play the Full Potential Game with Camp Zen as your field. The Game guides you day-to-day — the dashboard's Top 3 Next Moves, the Field Coherence signal, the earn hooks that pay you when you do field-building work. I show up Friday for 30 minutes to align on strategy. The day-to-day is between you and the Game.
+
+This is the role: **Camp Director, formal title.** Player, in the Game's language. You grow with potential.
 
 ---
 
@@ -47,43 +51,49 @@ The deeper job underneath all of it — what I want you to feel from day one —
 
 ### What I'm offering you in return
 
-**Cash compensation:**
+The Village already gives you housing, food, and the field. The compensation below is **the cash and credit layer on top** — sized so your earnings grow with what you generate, not with hours logged.
 
-- **Monthly base:** **$5,000 USD/month** to start, reviewed at 90 days. After 90-day mutual fit, this becomes the steady-state base, adjusted at the annual review.
-- **Retreat participation:** **5% of net retreat revenue.** Paid quarterly. At our 24-month target (8 retreats/yr, $600K) that's ~$30K/yr upside. At year-one reality (likely 4–6 retreats), more like $10–15K. Designed so you have direct skin in retreat success.
-- **Membership participation:** None directly. Membership is my KPI; you support member retreats but don't carry the growth target. Keeps the role boundaries clean.
+**Cash:**
 
-**Equity-style:**
+- **Monthly stipend:** **$1,500 USD/month** for off-property life — phone, family calls, gear, anything you need that the Village doesn't cover. Small by design. The Village covers your existence; this covers your personhood beyond it.
+- **Revenue share:** **15% of net new revenue** in your ownership zone (retreats, residency, anchor host). Paid quarterly, scaled to actual cash collected. At year-1 reality (~$250K net new in your zone) → ~$37K. At 24-month run-rate (~$1.1M net new in your zone) → ~$165K/yr. Your upside is direct and uncapped.
+- **Profit-share:** Once Camp Zen's monthly net (after all camp costs including your stipend + revenue share) clears **$25K/month consistently**, you receive **15% of that net above the threshold**. Aligns you with margin, not just top-line.
 
-- **CORA credits grant:** **2,500 credits** vesting quarterly through year one (625 per quarter). At today's gateway rate (1 CORA = $1 USD), that's ~$2,500 in field-currency value, redeemable in the Coherent Store, transferable, or held as ownership signal.
+**Game-mechanical earnings (the architecture pays you automatically):**
 
-**On-property:**
+- **Earn hooks** (already live, Loop 34): every action you take in the Game pays credits to your wallet. File a witnessed proof: +5 to +20 credits. Distance-Weighted witnessing of another player: +30 credits. Bring a player in via your invite link who signs the WPA: +50 credits. Pair your Mirror: +100 credits one-time. These accumulate without anyone signing off.
+- **Field Score** compounds with each champion / character / proof / affiliate. Visible on the dashboard. Public.
+- **Stage progression**: as you ascend Visitor → Guest → Player → AI Apprentice → Steward → Builder → Legend, your role expands automatically. Steward gets explicit say in member retreats. Builder gets co-investment rights in the next property. Legend is permanent — your name lives in the Roll.
 
-- **Housing:** On-property accommodation included — your own space at the camp, no rent.
-- **Meals:** All meals from the kitchen included while on property.
-- **Work phone + plan:** Covered.
+**Founding stewardship grant:**
 
-**Annual:**
+- **CORA credits**: **10,000 credits** vesting through year one (2,500/quarter). At today's gateway rate (1 CORA = $1 USD) that's $10K in field currency. You can spend it in the Coherent Store, transfer it, or hold as ownership signal. This is the "you're a co-builder, not staff" line — it reflects that you're standing in the field as it forms.
 
-- **Health stipend:** **$250/month** ($3K/yr) — sized to cover Costa Rica expat health insurance with margin.
-- **Learning budget:** **$2,000/year** for tools, courses, books, retreats elsewhere — your call how to spend it.
-- **Travel home:** **2 round-trip flights/year** to wherever family is, on the camp.
-- **Time off:** **15 working days/year** plus **1 personal-retreat week** off-grid annually. Holidays observed at the camp's pace, not a corporate calendar. Trust-based — you tell me when you're going, not ask.
+**Annual life-support:**
+
+- **Health stipend**: **$200/month** ($2.4K/yr) for Costa Rica expat insurance.
+- **Learning + tools budget**: **$2,000/year** — your call on courses, books, retreats elsewhere, gear.
+- **Travel home**: **2 round-trip flights/year** to family.
+- **Time off**: **15 working days/year** plus **1 personal-retreat week** off-grid annually. Trust-based — you tell me when you're going, not ask. Annual retreat-elsewhere is non-negotiable for you specifically; you cannot run a retreat center without being a guest somewhere else once a year.
 
 **If it doesn't work at 90 days:**
 
-If we mutually decide at the 90-day mark that it's not the right fit, you walk with: **30 days of base as transition pay**, the CORA credits already vested (625), and a real recommendation for whatever you do next. Clean exit, no theater.
+If we mutually decide at the 90-day mark that it's not the right fit, **you stay at the Village** (your housing/food relationship with the Village is independent of this role) and you walk away from the Camp Director title with: the CORA credits already vested (2,500), 30 days of stipend as transition, all earned credits via earn hooks (yours forever), and full credit on the Field Score you've built. Clean exit, no theater. The Village is yours regardless.
 
-The numbers are sized to the model right now. As the camp grows — more retreats, higher occupancy, real margin — your participation grows with it. The first 90 days are real work but a softer load: you stabilize, audit, run one full retreat. The next 90, you're at full velocity.
+**How this compounds:**
+
+Year 1, you stabilize. Cash to you: ~$55K (stipend + revenue share + Game earnings + CORA grant). Year 2, you're at velocity. Cash to you: ~$200K+ (revenue share scales sharply, profit-share kicks in). Year 3+, if the model hits, you're at $300K+ with permanent stage standing in the Game and material participation in whatever the Village builds next.
+
+You grow with potential. That's the deal.
 
 ---
 
 ### What I'm asking from you
 
-- **Start date:** **June 1, 2026** — ideally. If you need more wind-down time on what you're doing now, let's talk; the latest I'd want is end of June.
-- **Term:** First 90 days as the orientation/mutual-fit period. After that, indefinite, reviewed annually.
-- **Move:** **Full-time on-property** as primary residence. Travel off-property (family visits, events I need you at, your annual retreat week) is expected and easy. Primary lives at the camp.
-- **Commitment:** Daily 8 AM team huddle, daily walk of the property, the cadence in §5 of the blueprint. Pick up the Sunheart Rule — you do what only the Camp Director can do; everything else delegates or systematizes.
+- **Start date:** **Immediately.** You're already here. Let's mark this Friday's call as Day 1 of the formal 90-day window.
+- **Term:** First 90 days as the formal mutual-fit period — both of us can opt out cleanly. After that, indefinite, reviewed annually at the strategic offsite.
+- **Daily commitment:** 8 AM team huddle, daily walk of the property, the cadence in §5 of the blueprint. **Play the Game** — log into the dashboard daily, work through your Top 3 Next Moves, file proofs of what you ship, witness others when invited. The Game scores you in real-time; trust the metrics, course-correct against them, lift Field Coherence with what you do.
+- **Sunheart Rule:** Pick it up. You do what only the Camp Director can do. Everything else delegates, systematizes, or asks the Game.
 
 ---
 
@@ -137,28 +147,53 @@ Founding Steward · Zen Village
 
 ---
 
-## My reasoning per field (so you can refine with context)
+## v0.3 reframe — what changed and why
 
-| Field | I picked | Why |
-|---|---|---|
-| Decision threshold | **$5K** | Blueprint default. Fits Costa Rica costs — kitchen equipment, vehicle repair, vendor contracts under it. |
-| Monthly base | **$5K USD/mo** | $60K base. Costa Rica COL is ~⅓ of US for similar lifestyle; with housing+meals included this is meaningful. Reviewed at 90 days creates natural raise moment if fit confirmed. |
-| Retreat % | **5% of net retreat revenue** | At target ($600K) → $30K upside. At year-1 reality (~$300K) → $15K. Sized so retreat success directly rewards him without distorting the unit economics. |
-| Membership % | **None** | Per blueprint §6 membership is your KPI. Including it muddies role boundaries. He carries layers 2–4 cleanly. |
-| CORA credits | **2,500 vesting quarterly through year 1 (625/quarter)** | Real signal of ownership without being huge. Quarterly vesting = tangible "you earned this past quarter" moment. Vested-on-exit clause keeps it fair. |
-| Housing | **On-property + all meals** | Camp Director needs to live on property. Meals from the kitchen are negligible marginal cost. Removes ~$1.5K/mo expense from his side, makes the cash package feel like ~$7K effective. |
-| Health | **$250/mo stipend** | Costa Rica expat insurance ~$200/mo. Margin to be real. |
-| Learning | **$2K/yr** | Books, courses, retreats elsewhere — keeps him sharp without bureaucracy. |
-| Travel home | **2 round-trips/yr** | Family connection matters. Cheaper than losing him. |
-| Time off | **15 days + 1 retreat week, trust-based** | Generous and structured. Annual retreat is non-negotiable for someone running a retreat center — they need to be a guest somewhere else. |
-| Start date | **June 1, 2026 ideal, end of June latest** | Today is May 8. Gives 3+ weeks for him to wind down. Aligns with summer retreat season ramp. |
-| Move | **Full-time on-property** | Can't run daily ops remote. Travel off-property is fine and expected. |
-| Decision deadline | **"by next Friday"** | Soft deadline; you check in if no response. Relative phrasing means you can send any day this week and the language still works. |
-| 90-day exit clause | **30 days base + vested CORA + recommendation** | Clean exit if mutual fit fails. Honest, not stingy, not theatrical. |
+**v0.2 → v0.3** reflected a fundamental correction from James: Atlás is already a villager, housing/food are already provided by the Village independent of this role, and his actual day-to-day manager is **the Full Potential Game**, not me. The compensation structure shifted from "fixed base + small variable" (employee model) to "small stipend + large revenue share + Game mechanics" (Player model).
 
-**Total year-one package value: ~$102K** (cash + housing/meals + retreat % + benefits) for a Costa Rica-based role with full P&L ownership over a $1M-trajectory operation. Reasonable, slightly tilted toward upside-on-success rather than guaranteed cash, which fits the "circulation economics" non-negotiable.
+### Compensation structure comparison
 
-If any of these feel wrong — **especially the base, the retreat %, or the CORA grant size** — those are the three where my judgment has the most variance. Refine and tell me; I'll regenerate clean.
+| Layer | v0.2 (employee) | v0.3 (Player) | Why the shift |
+|---|---|---|---|
+| Cash base | $5,000/mo | $1,500/mo stipend | Village covers housing/food/existence; cash is for off-property life only |
+| Variable cash | 5% retreats only | 15% net new revenue layers 2-4 | Broader base, larger share — reflects field economics over employer/employee |
+| Profit-share | None | 15% of net above $25K/mo | Aligns with margin once camp is profitable |
+| CORA grant | 2,500 / yr 1 | 10,000 / yr 1 | Founding-steward signal, not new-hire signal |
+| Game earnings | Implicit | **Explicit** — earn hooks pay automatically | The substrate already pays; the offer just names it |
+| Stage progression | Not mentioned | Explicit — Steward → Builder → Legend | The Game's promotion mechanic |
+
+### Year-1 cash to Atlás
+
+| Source | v0.3 Year-1 estimate |
+|---|---|
+| Stipend | $18K |
+| Revenue share (15% × ~$250K net new) | ~$37K |
+| Profit-share (sub-threshold year 1) | $0 |
+| Game earn hooks (cumulative) | ~$1-3K equivalent |
+| CORA grant vested | $10K equivalent |
+| Health/learning/travel | ~$8K |
+| **Total year-1 cash + credit value** | **~$74-76K** |
+
+### Year-2 cash to Atlás (run-rate)
+
+| Source | Annual at run-rate |
+|---|---|
+| Stipend | $18K |
+| Revenue share (15% × $1.1M net new) | ~$165K |
+| Profit-share (15% × ~$200K net above threshold) | ~$30K |
+| Game earn hooks | ~$5-10K equivalent |
+| CORA further vesting (if extended) | TBD |
+| **Total year-2** | **~$220K** |
+
+### Variance flags (places James most likely refines)
+
+1. **Stipend ($1,500/mo)** — could be $1K (true minimum) or $2.5K (more breathing room). I picked middle.
+2. **Revenue share % (15%)** — could be 10% (more conservative) or 20% (more aggressive). 15% is industry-norm for hospitality general managers with P&L ownership.
+3. **Profit-share threshold ($25K/mo net)** — entirely judgment-based. Could be $15K (faster activation) or $50K (later). I picked a number that activates around year 2 month 6 if blueprint hits.
+4. **CORA grant (10K)** — could be 5K (more conservative) or 25K (signal "co-builder, not employee"). 10K is the founding-steward-tier number to me.
+5. **Start date "immediately"** — could be "this Monday" with formal 30-min orientation call, depending on what's already happened.
+
+**Total year-1 cash flow to Atlás:** ~$75K (vs ~$102K in v0.2 if you count the housing/meals; ~$60K if you don't). Lower guaranteed cash, higher field-aligned upside, exposure to Game mechanics that compound with execution.
 
 ---
 

@@ -88,7 +88,7 @@ The blueprint's targets are achievable but **the camp itself (Atlás's ownership
 
 | Category | Annual | Notes |
 |---|---|---|
-| Camp Director (Atlás) | $90K | Base + retreat % + benefits per Loop 39 offer |
+| Camp Director (Atlás) | $74K | Stipend + 15% revenue share + benefits per Loop 41 reframe (housing/food already in property baseline, not double-counted) |
 | Property team (4 ppl) | $100K | CR rates, partial on-property living |
 | Food/kitchen | $72K | $30/person/day × ~200 person-days/month |
 | Property maintenance | $30K | grounds + buildings |
@@ -100,15 +100,17 @@ The blueprint's targets are achievable but **the camp itself (Atlás's ownership
 | B2B facilitator commissions | $45K | ~30% of B2B revenue |
 | Anchor Host facilitator splits | $49K | ~70% of host revenue (revenue gross; net to camp already in revenue line) |
 | Retreat facilitator costs | $40K | $10K × 4 retreats |
-| **Total Year 1 OpEx** | **~$556K** | |
+| **Total Year 1 OpEx** | **~$540K** | (after the Anchor-Host double-count fix below) |
 
-**⚠️ Note:** I double-counted Anchor Host splits. Revenue line $70K is *net* to camp (after paying host). Removing $49K cost line: **~$507K**.
+**Updated for Loop 41 reframe:** Atlás's line dropped from $90K (employee model) to $74K (Player model — stipend + revenue share + benefits, housing/food already in property baseline). Net Year 1 OpEx: **~$491K** (was $507K).
+
+**⚠️ Note:** I double-counted Anchor Host splits. Revenue line $70K is *net* to camp (after paying host). Removing $49K cost line: **~$491K**.
 
 ### Year 2 OpEx
 
 | Category | Annual | Notes |
 |---|---|---|
-| Camp Director + raises | $100K | post-90-day adjustment |
+| Camp Director (Atlás) — Year 2 run-rate | $220K | Stipend + 15% revenue share + 15% profit-share + benefits per Loop 41 reframe; revenue share is the dominant line as layers 2-4 scale |
 | Property team (5+ ppl) | $150K | scaled for 8 retreats |
 | Food/kitchen | $130K | doubles with retreat volume |
 | Property maintenance | $40K | |
@@ -119,7 +121,7 @@ The blueprint's targets are achievable but **the camp itself (Atlás's ownership
 | Insurance, legal, accounting | $20K | |
 | B2B commissions | $120K | scales with B2B revenue |
 | Retreat facilitator costs | $80K | $10K × 8 |
-| **Total Year 2 OpEx** | **~$825K** | (Anchor Host splits already in revenue) |
+| **Total Year 2 OpEx** | **~$945K** | Atlás's revenue share scales with revenue (15% × $1.1M net new = $165K); his line jumped from $100K → $220K. Counter-intuitive but field-correct: he gets paid more because the camp earns more. |
 
 ---
 
@@ -127,9 +129,11 @@ The blueprint's targets are achievable but **the camp itself (Atlás's ownership
 
 | Period | Revenue | OpEx | Net |
 |---|---|---|---|
-| Year 1 | $430K | $507K | **−$77K** |
-| Year 2 | $1,560K | $825K | **+$735K** |
-| **24-mo cumulative** | **$1,990K** | **$1,332K** | **+$658K** |
+| Year 1 | $430K | $491K | **−$61K** |
+| Year 2 | $1,560K | $945K | **+$615K** |
+| **24-mo cumulative** | **$1,990K** | **$1,436K** | **+$554K** |
+
+*Updated for Loop 41 reframe: Atlás's comp shifts from fixed (employee model) to revenue-share (Player model). Year 1 cheaper, Year 2 more expensive — but the structure aligns his incentives with camp performance, which is the architecturally honest thing.*
 
 **Cash trough**: roughly month 8–10 at ~−$150K (when Year 1 expenses outpace ramping revenue). This is the working-capital number you need to have available.
 
