@@ -2030,6 +2030,125 @@ body.mode-field .player-only { display: none !important; }
   color: var(--accent-bright);
   border-color: var(--accent);
 }
+/* Camp Zen Steward badge — appears for stewards specifically */
+.ps-steward-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  font-size: 11px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(232, 185, 116, 0.18), rgba(132, 212, 136, 0.12));
+  border: 1px solid var(--accent);
+  color: var(--accent-bright);
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+/* ===== Camp Zen Operations card ===== */
+.camp-zen-card {
+  background: linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%);
+  border: 1px solid var(--accent);
+  border-radius: 14px;
+  padding: 24px 28px;
+  margin: 16px 0;
+}
+.cz-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.cz-label {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--accent-bright);
+  letter-spacing: 0.5px;
+}
+.cz-status {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--good);
+  font-weight: 700;
+}
+.cz-blurb {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+  font-style: italic;
+  margin: 0 0 18px;
+}
+.cz-section { margin-bottom: 20px; }
+.cz-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+.cz-checklist { display: grid; gap: 6px; }
+.cz-task {
+  font-size: 13px;
+  color: var(--text);
+  padding: 8px 12px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.cz-task:hover { border-color: var(--accent); background: var(--surface); }
+.cz-task.done { color: var(--good); border-color: var(--good); }
+.cz-future { opacity: 0.55; }
+.cz-future .cz-task { cursor: default; }
+.cz-future .cz-task:hover { border-color: var(--border); background: var(--bg-deep); }
+.cz-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 8px;
+}
+@media (max-width: 700px) { .cz-metrics { grid-template-columns: repeat(2, 1fr); } }
+.cz-metric {
+  text-align: center;
+  padding: 14px 10px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.cz-metric-n {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--accent-bright);
+  line-height: 1;
+}
+.cz-metric-lbl {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 6px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+.cz-metrics-note {
+  font-size: 11px;
+  color: var(--muted);
+  font-style: italic;
+  line-height: 1.5;
+  margin: 6px 0 0;
+}
+.cz-rules {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+.cz-rules li { margin-bottom: 4px; }
 /* ===== Field Coherence card ===== */
 .coherence-card {
   background: var(--surface);
@@ -3533,8 +3652,29 @@ async function loadPlayerState() {
         }
       } catch (e) {}
 
+      // === Camp Zen Steward role detection (Loop 42) ===
+      // Atlás's dashboard shows Camp-Director-specific Top 3 instead of generic.
+      // The Game's substrate becomes his actual operating system.
+      const playerNameLc = (d.name || '').toLowerCase();
+      const isCampSteward = ['atlas', 'atlás'].some(n => playerNameLc === n || playerNameLc.startsWith(n));
+
       // Stage-aware move generation
-      if (!d.champion) {
+      if (isCampSteward && !d.champion) {
+        // Atlás pre-sign: get him into the Game first, then point to Camp work
+        moves.push({icon: '🌀', text: 'Sign the World Peace Agreement', reward: 'enter the Game · → Guest', anchor: '.signature-card-quest', cta: 'Sign'});
+        moves.push({icon: '🪞', text: 'Pair your Digital Mirror', reward: '→ AI Apprentice · +100c', url: '/game/mirror/', cta: 'Open'});
+        moves.push({icon: '📅', text: 'Audit retreat calendar — next 6 months', reward: 'Camp Director · Day 1', anchor: '#campZenOps', cta: 'View'});
+      } else if (isCampSteward && !mirrorPaired) {
+        // Atlás signed, no Mirror yet
+        moves.push({icon: '🪞', text: 'Pair your Digital Mirror', reward: '→ AI Apprentice · +100c', url: '/game/mirror/', cta: 'Open'});
+        moves.push({icon: '📅', text: 'Audit retreat calendar — next 6 months', reward: 'file as proof · +5–20c', anchor: '#campZenOps', cta: 'Begin'});
+        moves.push({icon: '👥', text: '1:1 with each team member', reward: 'Josh · Halley · Michael · Sierra', anchor: '#campZenOps', cta: 'Plan'});
+      } else if (isCampSteward) {
+        // Atlás full Camp Director mode (Mirror paired, in stabilize/improve phase)
+        moves.push({icon: '🏠', text: 'Spend a full day as a guest', reward: 'find friction · file proof · +20c', anchor: '#campZenOps', cta: 'Plan'});
+        moves.push({icon: '📅', text: 'Confirm next 6 months of retreat dates', reward: 'revenue + risk surfaced', anchor: '#campZenOps', cta: 'Begin'});
+        moves.push({icon: '🤝', text: 'Close 2 Anchor Host bookings (with Halley)', reward: '+50c per affiliate sign', anchor: '#campZenOps', cta: 'Plan'});
+      } else if (!d.champion) {
         moves.push({icon: '🌀', text: 'Sign the World Peace Agreement', reward: '+1 pt · → Guest', anchor: '.signature-card-quest', cta: 'Sign'});
         moves.push({icon: '📖', text: 'Read the Manifesto v1.0', reward: 'understand the frame', anchor: '#manifesto', cta: 'Read'});
         moves.push({icon: '👀', text: 'See the Champions Roll', reward: 'who else is in', anchor: '#champions', cta: 'View'});
@@ -3550,6 +3690,25 @@ async function loadPlayerState() {
         moves.push({icon: '🌱', text: 'File another Proof', reward: '+2 pts', anchor: '.proof-card-quest, #proof', cta: 'File'});
         moves.push({icon: '🤝', text: 'Bring 1 aligned person in', reward: '+3 pts when they sign', anchor: '#psInviteUrl', cta: 'Copy'});
         moves.push({icon: '👥', text: 'Witness another player\'s proof', reward: 'lifts Field Coherence', anchor: '#proofs', cta: 'View'});
+      }
+
+      // Show/hide Camp Zen Operations card based on steward detection
+      const campOpsCard = document.getElementById('campZenOps');
+      if (campOpsCard) campOpsCard.style.display = isCampSteward ? '' : 'none';
+      const stewardBadge = document.getElementById('psStewardBadge');
+      if (stewardBadge) stewardBadge.style.display = isCampSteward ? '' : 'none';
+
+      // Pull credit balance for steward (his earnings via Game hooks)
+      if (isCampSteward) {
+        try {
+          const slug = (d.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+          const cr = await fetch('/api/champion/credits/balance/' + encodeURIComponent(slug), { cache: 'no-store' });
+          if (cr.ok) {
+            const cd = await cr.json();
+            const cEl = document.getElementById('czCredits');
+            if (cEl) cEl.textContent = (cd.balance || 0) + 'c';
+          }
+        } catch (e) {}
       }
 
       grid.innerHTML = moves.slice(0, 3).map((m, i) => {
@@ -5295,6 +5454,7 @@ def render_html() -> str:
           <span class="ps-found-badge" id="psFoundWPA" data-state="unknown">○ World Peace Agreement</span>
           <span class="ps-found-badge" id="psFoundCharacter" data-state="unknown">○ Character</span>
           <span class="ps-found-badge" id="psFoundMirror" data-state="unknown">○ Mirror Paired</span>
+          <span class="ps-steward-badge" id="psStewardBadge" style="display:none;">🏕 Camp Zen Steward</span>
         </div>
       </div>
       <div class="ps-score">
@@ -5344,6 +5504,74 @@ def render_html() -> str:
     <div class="ps-contrib" id="psContrib" style="display:none;">
       <div class="ps-contrib-label">YOUR CONTRIBUTIONS</div>
       <div class="ps-contrib-row" id="psContribRow"></div>
+    </div>
+  </div>
+
+  <div class="camp-zen-card" id="campZenOps" style="display:none;">
+    <div class="cz-header">
+      <div class="cz-label">🏕 CAMP ZEN OPERATIONS</div>
+      <div class="cz-status">Day 1 of 90 · stabilize phase</div>
+    </div>
+    <p class="cz-blurb">
+      Your role at Camp Zen — Camp Director. The Game guides you day-to-day; James does Friday strategy. The blueprint is your reference; this card tracks your progress through it.
+    </p>
+
+    <div class="cz-section">
+      <div class="cz-section-label">90-DAY STABILIZE — DAYS 1–30</div>
+      <div class="cz-checklist">
+        <div class="cz-task" data-key="team-1on1">○ 1:1 with each team member (Josh · Halley · Michael · Sierra) — week 1</div>
+        <div class="cz-task" data-key="retreat-audit">○ Audit retreat calendar — next 6 months · gaps + risks</div>
+        <div class="cz-task" data-key="ops-audit">○ Audit property ops (kitchen · housekeeping · maintenance · sauna)</div>
+        <div class="cz-task" data-key="asset-inventory">○ Inventory guest-facing assets (rooms · beds · kitchen capacity · vehicles)</div>
+        <div class="cz-task" data-key="cadence">○ Establish weekly cadence (8 AM huddles · Monday team mtg · Friday call)</div>
+        <div class="cz-task" data-key="day-as-guest">○ Spend one full day as a guest — find the friction</div>
+      </div>
+    </div>
+
+    <div class="cz-section">
+      <div class="cz-section-label">DAYS 31–60 · IMPROVE</div>
+      <div class="cz-checklist cz-future">
+        <div class="cz-task">○ Tighten guest journey — arrival ritual · daily flow · departure</div>
+        <div class="cz-task">○ Train team on Coherence Membership</div>
+        <div class="cz-task">○ Run one retreat with full operational ownership</div>
+        <div class="cz-task">○ Close 2 Anchor Host bookings for next quarter (with Halley)</div>
+        <div class="cz-task">○ Draft the operating manual</div>
+      </div>
+    </div>
+
+    <div class="cz-section">
+      <div class="cz-section-label">DAYS 61–90 · LEVER UP</div>
+      <div class="cz-checklist cz-future">
+        <div class="cz-task">○ Run a member-only retreat (the peak ritual proof)</div>
+        <div class="cz-task">○ Lock metrics baseline</div>
+        <div class="cz-task">○ Identify 1–2 high-leverage hires or system improvements</div>
+        <div class="cz-task">○ Present 12-month plan to the Founder</div>
+      </div>
+    </div>
+
+    <div class="cz-section">
+      <div class="cz-section-label">CAMP METRICS · YOUR P&L DASHBOARD</div>
+      <div class="cz-metrics">
+        <div class="cz-metric"><div class="cz-metric-n" id="czRetreatOcc">—</div><div class="cz-metric-lbl">Retreat occupancy</div></div>
+        <div class="cz-metric"><div class="cz-metric-n" id="czNps">—</div><div class="cz-metric-lbl">Guest NPS</div></div>
+        <div class="cz-metric"><div class="cz-metric-n" id="czAnchor">—</div><div class="cz-metric-lbl">Anchor Host bookings</div></div>
+        <div class="cz-metric"><div class="cz-metric-n" id="czMargin">—</div><div class="cz-metric-lbl">Operating margin</div></div>
+        <div class="cz-metric"><div class="cz-metric-n" id="czRevShare">—</div><div class="cz-metric-lbl">Your revenue share (q)</div></div>
+        <div class="cz-metric"><div class="cz-metric-n" id="czCredits">—</div><div class="cz-metric-lbl">Credits earned</div></div>
+      </div>
+      <p class="cz-metrics-note">Metrics populate as actions happen. Report monthly to James. Targets per blueprint §6: 90% retreat occupancy · 70+ NPS · 4+ Anchor Host bookings · 35%+ retreat margin.</p>
+    </div>
+
+    <div class="cz-section">
+      <div class="cz-section-label">NON-NEGOTIABLES (BLUEPRINT §8)</div>
+      <ol class="cz-rules">
+        <li>The golden rule — the spiritual ideal isn't the joke; the gap between ideal and human is.</li>
+        <li>No guest is a unit of revenue. Every guest is a soul we honor.</li>
+        <li>The Sunheart Rule — protect James's time. He does only what only he can do.</li>
+        <li>Circulation economics — premium prices, value flows, earned participation. Never extract.</li>
+        <li>Field coherence over short-term revenue.</li>
+        <li>Honesty over comfort.</li>
+      </ol>
     </div>
   </div>
 
