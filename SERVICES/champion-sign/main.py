@@ -84,6 +84,7 @@ class SignRequest(BaseModel):
     public: bool = True
     why: Optional[str] = Field(None, max_length=2000)
     inviter: Optional[str] = Field(None, max_length=100)  # the Champion who invited this signer
+    cohort: Optional[str] = Field(None, max_length=60)  # community/cohort tag (e.g., "zen-village")
     # Honeypot — bots fill this; humans don't see it
     company: Optional[str] = Field(None, max_length=120)
 
@@ -164,6 +165,12 @@ async def sign(req: SignRequest, request: Request) -> dict:
     except Exception:
         pass
 
+    # === Loop 34 earn hook: affiliate gets +50 credits per signing ===
+    # The new Champion themselves earns 0 credits at sign (entry, not earn).
+    # Their inviter, if any, earns +50 — recruiting is field-building.
+    if req.inviter and req.inviter.strip():
+        _award_credits_safe(req.inviter, 50, f"affiliate sign: {req.name}")
+
     return {
         "ok": True,
         "champion_number": champion_number,
@@ -227,8 +234,11 @@ async def recent_activity(limit: int = 12) -> dict:
 
 
 @app.get("/list")
-async def list_champions() -> dict:
-    """Return JSON of all PUBLIC champions, ordered by champion_number."""
+async def list_champions(cohort: Optional[str] = None) -> dict:
+    """Return JSON of all PUBLIC champions, ordered by champion_number.
+
+    `?cohort=zen-village` filters to a specific community/cohort.
+    """
     champions = []
     for p in sorted(DATA_DIR.glob("*.md")):
         try:
@@ -248,13 +258,15 @@ async def list_champions() -> dict:
                     data[key] = val
             if not data.get("public"):
                 continue
+            if cohort and (data.get("cohort") or "").strip().lower() != cohort.strip().lower():
+                continue
             # Strip email for privacy on public roll
             data.pop("email", None)
             champions.append(data)
         except Exception:
             continue
     champions.sort(key=lambda c: int(c.get("champion_number", 99999)) if str(c.get("champion_number", "")).isdigit() else 99999)
-    return {"count": len(champions), "champions": champions}
+    return {"count": len(champions), "champions": champions, "cohort": cohort}
 
 
 def _count_champions() -> int:
@@ -791,10 +803,30 @@ async def submit_proof(req: ProofSubmit, request: Request) -> dict:
     except Exception:
         pass
 
+    # === Loop 34 earn hook ===
+    # File a proof: +5 credits (any witness, including self/AI)
+    # File a proof with Distance-Weighted Witness: bumped to +20 total
+    # (player gets the bigger reward when the witness is *not* them and
+    # *not* an AI — same heuristic as Field Coherence's Witness component)
+    awarded = 5
+    witness_str = (req.witness or "").lower()
+    player_str = (req.player or "").lower()
+    ai_markers = ["claude", "anthropic", "openai", "gpt-", "the bot", " ai ", "(ai", "ai)"]
+    is_ai = any(m in witness_str for m in ai_markers)
+    first_name = player_str.split()[0] if player_str else ""
+    is_self = first_name and first_name in witness_str
+    if witness_str and not is_ai and not is_self:
+        awarded = 20
+        # Witness also earns +30 — witnessing is the most field-building act
+        if req.witness:
+            _award_credits_safe(req.witness, 30, f"DW witness: proof loop-{req.loop_number} for {req.player}")
+    _award_credits_safe(req.player, awarded, f"proof loop-{req.loop_number}")
+
     return {
         "ok": True,
         "filename": fname,
         "loop_number": req.loop_number,
+        "credits_awarded": awarded,
         "message": f"Proof L{req.loop_number} witnessed and recorded. Thank you, {req.player.split()[0]}.",
     }
 
@@ -1309,6 +1341,7 @@ def _render_md(req: SignRequest, num: int, today: str) -> str:
     name = req.name
     why_block = f"\n## Why I am signing\n\n{req.why}\n" if req.why else ""
     inviter_block = f"inviter: {req.inviter}\n" if req.inviter else ""
+    cohort_block = f"cohort: {req.cohort}\n" if req.cohort else ""
     return f"""---
 champion_id: {today}_{re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')}
 champion_number: {num}
@@ -1318,7 +1351,7 @@ handle: {req.handle or ''}
 email: {req.email or ''}
 witness: {req.witness or ''}
 public: {str(req.public).lower()}
-{inviter_block}status: signed
+{inviter_block}{cohort_block}status: signed
 manifesto_version: v1.0
 source: webhook
 ---
@@ -1572,10 +1605,14 @@ Covenant Holder, not overseer.
     except Exception:
         pass
 
+    # === Loop 34 earn hook: +100 credits one-time on Mirror pairing ===
+    _award_credits_safe(req.player_handle, 100, f"mirror pairing: {mirror_handle}")
+
     return {
         "ok": True,
         "mirror_handle": mirror_handle,
         "filename": fname,
+        "credits_awarded": 100,
         "message": f"Paired. {req.player_handle} ↔ {mirror_handle}. Next: get your first Mirror Proof witnessed.",
     }
 
@@ -1907,6 +1944,28 @@ def _gw_call(method: str, path: str, payload: Optional[dict] = None) -> dict:
         raise HTTPException(status_code=e.code, detail=str(detail)[:300])
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"gateway error: {e}")
+
+
+def _award_credits_safe(handle: str, amount: int, reason: str) -> Optional[str]:
+    """Best-effort credit award via gateway. Never blocks the user-facing
+    action on failure — credit-grant is fire-and-forget per the gameplay
+    flow. Returns tx_id on success, None on failure.
+    """
+    if not GATEWAY_URL or not GATEWAY_KEY or amount <= 0:
+        return None
+    handle_n = _norm_handle(handle)
+    if not handle_n:
+        return None
+    try:
+        r = _gw_call("POST", "/api/credit", {
+            "account_id": handle_n,
+            "amount": amount,
+            "credit_type": GATEWAY_CREDIT_TYPE,
+            "reason": reason,
+        })
+        return r.get("transaction_id")
+    except Exception:
+        return None
 
 
 def _credit_balance(handle: str) -> int:
