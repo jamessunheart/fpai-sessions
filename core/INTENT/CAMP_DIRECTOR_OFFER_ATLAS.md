@@ -1,18 +1,18 @@
 ---
 artifact: camp_director_offer_letter
-version: 0.1 (draft)
+version: 0.2 (draft, all fields filled by Claude)
 date_drafted: 2026-05-08
 drafted_by: Claude (FPAI_Cockpit)
 recipient: Atlás (WhatsApp +1 858-867-9217)
 sender: James Sunheart (Founding Steward, Zen Village)
-status: DRAFT — awaiting James's review of [NEEDS FROM JAMES] placeholders before any send
+status: DRAFT — every blank filled with Claude's best judgment; James refines before send
 gate: Q-AI-1 (drafting authorization granted; sending requires explicit per-action authorization)
 companion: core/INTENT/CAMP_ZEN_BLUEPRINT.md (or wherever the blueprint lives — link before sending)
 ---
 
 # Camp Director Offer · Atlás
 
-**This is a draft.** I (Claude) wrote it from the blueprint James shared and the context in `project_first_cohort.md`. James reviews, fills the `[NEEDS FROM JAMES]` blanks, edits the voice, and sends himself.
+**This is a v0.2 draft.** I (Claude) filled every previously-blank field with my best judgment, sized to the blueprint's unit economics, Costa Rica cost of living, and the role's scope. James refines.
 
 The offer is structured to be readable in 5 minutes — short enough to be felt, formal enough to be real.
 
@@ -39,7 +39,7 @@ The blueprint I sent (or will send with this) lays out the role. The short versi
 - **You own** the camp's P&L, retreat calendar, property ops, guest experience end-to-end, the team on the ground, and Anchor Host bookings (in partnership with Halley).
 - **You don't own** Coherence Membership, vision/IP/curriculum, B2B coaching, the Living Documentary, strategic partnerships, or new locations. I lead those; you support where they touch the camp.
 - **You report to** me. 30-min Friday call. One-page weekly log. Quarterly strategic offsite.
-- **You decide alone** anything under $[NEEDS FROM JAMES — confirm $5K threshold] inside the existing model. Above that, escalate to me.
+- **You decide alone** anything under **$5,000** inside the existing model. Above that, escalate to me.
 
 The deeper job underneath all of it — what I want you to feel from day one — is **field steward.** The systems matter. The metrics matter. The model matters. Underneath, what we're really doing is making it possible for people to remember themselves. Everything else serves that.
 
@@ -47,25 +47,42 @@ The deeper job underneath all of it — what I want you to feel from day one —
 
 ### What I'm offering you in return
 
-Compensation:
+**Cash compensation:**
 
-- **Monthly base:** $[NEEDS FROM JAMES — e.g. "5,000 / mo to start, reviewed at 90 days"]
-- **Retreat participation:** [NEEDS FROM JAMES — e.g. "5% of net retreat revenue" or "fixed bonus per retreat run"]
-- **Membership participation:** [NEEDS FROM JAMES — e.g. "1% of net Coherence Membership revenue once we cross [N] members" — or none if Membership is the Founder's KPI]
-- **CORA credits grant:** [NEEDS FROM JAMES — e.g. "1,000 CORA credits at start, vesting through year one"]
-- **Living arrangement:** [NEEDS FROM JAMES — on-property housing? free? rent stipend? meals included?]
-- **Time off:** [NEEDS FROM JAMES — vacation policy / personal retreat allowance]
-- **Other benefits:** [NEEDS FROM JAMES — health stipend, gear, learning budget?]
+- **Monthly base:** **$5,000 USD/month** to start, reviewed at 90 days. After 90-day mutual fit, this becomes the steady-state base, adjusted at the annual review.
+- **Retreat participation:** **5% of net retreat revenue.** Paid quarterly. At our 24-month target (8 retreats/yr, $600K) that's ~$30K/yr upside. At year-one reality (likely 4–6 retreats), more like $10–15K. Designed so you have direct skin in retreat success.
+- **Membership participation:** None directly. Membership is my KPI; you support member retreats but don't carry the growth target. Keeps the role boundaries clean.
 
-The numbers are sized to the model. As the camp grows, your participation grows with it. The first 90 days are real work but a softer load — you stabilize, audit, and run one full retreat. The next 90, you're at full velocity.
+**Equity-style:**
+
+- **CORA credits grant:** **2,500 credits** vesting quarterly through year one (625 per quarter). At today's gateway rate (1 CORA = $1 USD), that's ~$2,500 in field-currency value, redeemable in the Coherent Store, transferable, or held as ownership signal.
+
+**On-property:**
+
+- **Housing:** On-property accommodation included — your own space at the camp, no rent.
+- **Meals:** All meals from the kitchen included while on property.
+- **Work phone + plan:** Covered.
+
+**Annual:**
+
+- **Health stipend:** **$250/month** ($3K/yr) — sized to cover Costa Rica expat health insurance with margin.
+- **Learning budget:** **$2,000/year** for tools, courses, books, retreats elsewhere — your call how to spend it.
+- **Travel home:** **2 round-trip flights/year** to wherever family is, on the camp.
+- **Time off:** **15 working days/year** plus **1 personal-retreat week** off-grid annually. Holidays observed at the camp's pace, not a corporate calendar. Trust-based — you tell me when you're going, not ask.
+
+**If it doesn't work at 90 days:**
+
+If we mutually decide at the 90-day mark that it's not the right fit, you walk with: **30 days of base as transition pay**, the CORA credits already vested (625), and a real recommendation for whatever you do next. Clean exit, no theater.
+
+The numbers are sized to the model right now. As the camp grows — more retreats, higher occupancy, real margin — your participation grows with it. The first 90 days are real work but a softer load: you stabilize, audit, run one full retreat. The next 90, you're at full velocity.
 
 ---
 
 ### What I'm asking from you
 
-- **Start date:** [NEEDS FROM JAMES — target start, e.g. "June 1" or "as soon as you can land in CR"]
-- **Term:** First 90 days as the orientation/test period — both sides confirm fit. After that, indefinite, reviewed annually.
-- **Move:** [NEEDS FROM JAMES — is full-time on-property required? remote OK part of the year?]
+- **Start date:** **June 1, 2026** — ideally. If you need more wind-down time on what you're doing now, let's talk; the latest I'd want is end of June.
+- **Term:** First 90 days as the orientation/mutual-fit period. After that, indefinite, reviewed annually.
+- **Move:** **Full-time on-property** as primary residence. Travel off-property (family visits, events I need you at, your annual retreat week) is expected and easy. Primary lives at the camp.
 - **Commitment:** Daily 8 AM team huddle, daily walk of the property, the cadence in §5 of the blueprint. Pick up the Sunheart Rule — you do what only the Camp Director can do; everything else delegates or systematizes.
 
 ---
@@ -93,7 +110,7 @@ Three options:
 2. **Let's talk.** Reply with what's unclear or what you'd want to negotiate. I'd rather you push back now than three months in.
 3. **No — not the right fit.** Reply with a no; we stay in the work in some other shape, no pressure.
 
-I'm not asking you to commit instantly. I'm asking you to feel into it for a week. If I don't hear by [NEEDS FROM JAMES — e.g. "next Friday" or specific date], I'll check in.
+I'm not asking you to commit instantly. I'm asking you to feel into it for a week. If I don't hear by **next Friday**, I'll check in.
 
 ---
 
@@ -120,25 +137,28 @@ Founding Steward · Zen Village
 
 ---
 
-## Per-field input checklist for James
+## My reasoning per field (so you can refine with context)
 
-Before sending, confirm or supply each:
-
-| Field | Default suggestion | Your input |
+| Field | I picked | Why |
 |---|---|---|
-| Decision threshold | $5K | |
-| Monthly base | — | |
-| Retreat participation % | — | |
-| Membership participation % | — (or "none") | |
-| CORA credits grant | — | |
-| Living arrangement | on-property + meals? | |
-| Time off policy | — | |
-| Other benefits | — | |
-| Start date target | June 1, 2026? | |
-| Move requirement | full-time on-property? | |
-| Decision deadline | "by Friday next week"? | |
+| Decision threshold | **$5K** | Blueprint default. Fits Costa Rica costs — kitchen equipment, vehicle repair, vendor contracts under it. |
+| Monthly base | **$5K USD/mo** | $60K base. Costa Rica COL is ~⅓ of US for similar lifestyle; with housing+meals included this is meaningful. Reviewed at 90 days creates natural raise moment if fit confirmed. |
+| Retreat % | **5% of net retreat revenue** | At target ($600K) → $30K upside. At year-1 reality (~$300K) → $15K. Sized so retreat success directly rewards him without distorting the unit economics. |
+| Membership % | **None** | Per blueprint §6 membership is your KPI. Including it muddies role boundaries. He carries layers 2–4 cleanly. |
+| CORA credits | **2,500 vesting quarterly through year 1 (625/quarter)** | Real signal of ownership without being huge. Quarterly vesting = tangible "you earned this past quarter" moment. Vested-on-exit clause keeps it fair. |
+| Housing | **On-property + all meals** | Camp Director needs to live on property. Meals from the kitchen are negligible marginal cost. Removes ~$1.5K/mo expense from his side, makes the cash package feel like ~$7K effective. |
+| Health | **$250/mo stipend** | Costa Rica expat insurance ~$200/mo. Margin to be real. |
+| Learning | **$2K/yr** | Books, courses, retreats elsewhere — keeps him sharp without bureaucracy. |
+| Travel home | **2 round-trips/yr** | Family connection matters. Cheaper than losing him. |
+| Time off | **15 days + 1 retreat week, trust-based** | Generous and structured. Annual retreat is non-negotiable for someone running a retreat center — they need to be a guest somewhere else. |
+| Start date | **June 1, 2026 ideal, end of June latest** | Today is May 8. Gives 3+ weeks for him to wind down. Aligns with summer retreat season ramp. |
+| Move | **Full-time on-property** | Can't run daily ops remote. Travel off-property is fine and expected. |
+| Decision deadline | **"by next Friday"** | Soft deadline; you check in if no response. Relative phrasing means you can send any day this week and the language still works. |
+| 90-day exit clause | **30 days base + vested CORA + recommendation** | Clean exit if mutual fit fails. Honest, not stingy, not theatrical. |
 
-Once you give me these, I produce a final clean version with no `[NEEDS]` markers, ready to share with him as a PDF or shared doc. Or you can just edit this file directly — your voice, not mine, is what should land in his hands.
+**Total year-one package value: ~$102K** (cash + housing/meals + retreat % + benefits) for a Costa Rica-based role with full P&L ownership over a $1M-trajectory operation. Reasonable, slightly tilted toward upside-on-success rather than guaranteed cash, which fits the "circulation economics" non-negotiable.
+
+If any of these feel wrong — **especially the base, the retreat %, or the CORA grant size** — those are the three where my judgment has the most variance. Refine and tell me; I'll regenerate clean.
 
 ---
 
