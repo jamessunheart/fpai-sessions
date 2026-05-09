@@ -478,7 +478,8 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
             "Conversations are auto-captured + compressed into your brain hourly.\n\n"
             "<b>Commands</b>\n"
             "  /now       — current priority + status from NOW.md (cross-terminal coordination)\n"
-            "  /goals     — top 3 active goals · edit NOW.md GOALS section to modify\n"
+            "  /vision    — unifying vision: 30-day goal + ONE Thing + AI alignment\n"
+            "  /goals [james|ai|team] — goals broken down by audience (founder · AI · team)\n"
             "  /projects  — projects ranked most→least important (from NOW.md)\n"
             "  /questions — open inquiries across qb books (fpai/game/sunheart)\n"
             "  /characters — Champions in the Game · roster + KPIs\n"
@@ -632,7 +633,9 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
     if cmd == "now":
         return await _cmd_now()
     if cmd == "goals":
-        return await _cmd_goals()
+        return await _cmd_goals(rest)
+    if cmd == "vision":
+        return await _cmd_vision()
     if cmd == "signals":
         return await _cmd_signals(rest.strip().lower())
     if cmd == "more":
@@ -660,7 +663,9 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
 import os as _os
 _STATE_DIR = _os.environ.get("FPAI_STATE_DIR", "/var/lib/sh-brain/state")
 _NOW_PATH = _os.path.join(_STATE_DIR, "NOW.md")
+_AI_GOALS_PATH = _os.path.join(_STATE_DIR, "AI_GOALS.md")
 _QB_BOARD_PATH = _os.path.join(_STATE_DIR, "qb-board.jsonl")
+_DEFAULT_TEAM_COHORT = _os.environ.get("DEFAULT_TEAM_COHORT", "zen-village")
 
 
 async def _cmd_projects() -> str:
@@ -1702,35 +1707,258 @@ async def _cmd_now() -> str:
     return "\n".join(lines)
 
 
-# ───────────────────────────── /goals ──────────────────────────────
-async def _cmd_goals() -> str:
-    """Render the top 3 goals from NOW.md GOALS section."""
+# ───────────────────────────── /vision ─────────────────────────────
+async def _cmd_vision() -> str:
+    """Surface the unifying vision: priority + 30-day goal + (if present) AI's
+    Founder priority line. Source of truth is NOW.md + AI_GOALS.md."""
     try:
         with open(_NOW_PATH, encoding="utf-8") as f:
             now_md = f.read()
     except Exception as e:
-        return f"🎯 <b>Goals</b>\n\n<i>NOW.md unreachable: {tg._esc(str(e))}</i>"
+        return f"🌅 <b>Vision</b>\n\n<i>NOW.md unreachable: {tg._esc(str(e))}</i>"
 
+    parts = ["🌅 <b>Vision</b>\n"]
+
+    # 30-day goal blockquote (top of NOW.md, e.g. "> **🎯 30-day goal:** ...")
+    import re as _re_v
+    g30 = _re_v.search(r"^>\s*\*\*🎯\s*30-day goal[^*]*\*\*\s*(.+?)$",
+                       now_md, _re_v.MULTILINE)
+    if g30:
+        parts.append(f"<b>🎯 30-day goal</b>")
+        parts.append(f"<i>{tg._esc(g30.group(1).strip())}</i>\n")
+
+    # CURRENT PRIORITY section
+    pri = _re_v.search(r"##\s+.*CURRENT PRIORITY[^\n]*\n+(?:###\s+)?(?:Priority:\s*)?(.+?)\n",
+                       now_md, _re_v.IGNORECASE | _re_v.DOTALL)
+    if pri:
+        # Parse the few lines after CURRENT PRIORITY
+        sec_start = pri.start()
+        sec = now_md[sec_start: sec_start + 2000]
+        # Title line
+        title_m = _re_v.search(r"###\s+Priority:\s*(.+?)$", sec, _re_v.MULTILINE)
+        status_m = _re_v.search(r"\*\*Status:\*\*\s*(.+?)$", sec, _re_v.MULTILINE)
+        live_m = _re_v.search(r"\*\*Live at:\*\*\s*`?(.+?)`?\s*$", sec, _re_v.MULTILINE)
+        filt_m = _re_v.search(r"\*\*Decision filter:\*\*\s*(.+?)$", sec, _re_v.MULTILINE)
+        # First narrative paragraph after the bold metadata
+        narrative_m = _re_v.search(r"^\n([A-Z][^\n]{40,}\.)\s*$", sec, _re_v.MULTILINE)
+        parts.append("<b>🎯 The ONE Thing</b>")
+        if title_m:
+            parts.append(f"<b>{tg._esc(_strip_md(title_m.group(1)))}</b>")
+        if status_m:
+            parts.append(f"  {tg._esc(_strip_md(status_m.group(1)))}")
+        if live_m:
+            parts.append(f"  Live: {tg._esc(_strip_md(live_m.group(1)))}")
+        if filt_m:
+            parts.append(f"  <i>Decision filter: {tg._esc(_strip_md(filt_m.group(1)))}</i>")
+        if narrative_m:
+            parts.append(f"\n{tg._esc(_strip_md(narrative_m.group(1)))}")
+        parts.append("")
+
+    # Founder priority from AI_GOALS.md (one paragraph, mirrored from NOW.md)
+    try:
+        with open(_AI_GOALS_PATH, encoding="utf-8") as f:
+            ai_md = f.read()
+        fp = _re_v.search(r"\*\*Founder priority[^*]*\*\*\s*(.+?)(?=\n\n|\n##)",
+                          ai_md, _re_v.DOTALL)
+        if fp:
+            parts.append("<b>🤖 What the AI is aligned to</b>")
+            parts.append(f"<i>{tg._esc(_strip_md(fp.group(1).strip())[:600])}</i>\n")
+    except Exception:
+        pass
+
+    parts.append("<i>For the goal breakdown: /goals · for the priority list: /projects</i>")
+    return "\n".join(parts)
+
+
+# ───────────────────────────── /goals ──────────────────────────────
+async def _cmd_goals(arg: str = "") -> str:
+    """Render goals broken down by audience: Founder (James) · AI · Team.
+
+    Usage:
+      /goals               — all three sections (compact)
+      /goals james|founder — just James's goals (full detail, top 3 from NOW.md)
+      /goals ai            — just AI working goals (from AI_GOALS.md)
+      /goals team [COHORT] — just team/cohort goals (default cohort: zen-village)
+    """
+    a = (arg or "").strip().lower()
+    only = ""
+    cohort_arg = ""
+    if a in ("james", "founder", "me"):
+        only = "founder"
+    elif a in ("ai", "system", "claude"):
+        only = "ai"
+    elif a == "team" or a.startswith("team "):
+        only = "team"
+        rest = a[4:].strip()
+        if rest:
+            cohort_arg = rest
+    elif a.startswith("cohort "):
+        only = "team"
+        cohort_arg = a[7:].strip()
+
+    sections: list[str] = []
+
+    # ── Founder (James) — from NOW.md GOALS table ──────────────────────
+    if only in ("", "founder"):
+        founder_block = await _render_founder_goals(detail=(only == "founder"))
+        if founder_block:
+            sections.append(founder_block)
+
+    # ── AI working goals — from AI_GOALS.md ────────────────────────────
+    if only in ("", "ai"):
+        ai_block = _render_ai_goals(detail=(only == "ai"))
+        if ai_block:
+            sections.append(ai_block)
+
+    # ── Team / cohort goals — from champion-sign /cohort/{name} ────────
+    if only in ("", "team"):
+        team_cohort = cohort_arg or _DEFAULT_TEAM_COHORT
+        team_block = await _render_team_goals(team_cohort, detail=(only == "team"))
+        if team_block:
+            sections.append(team_block)
+
+    if not sections:
+        return ("🎯 <b>Goals</b>\n\n<i>No goals found in any tier. Add to NOW.md GOALS section, "
+                "AI_GOALS.md, or via /setgoal on @fullpotentialgamebot.</i>")
+
+    header = "🎯 <b>Goals — broken down by audience</b>\n" if not only else ""
+    footer = ("\n<i>/goals james · /goals ai · /goals team [cohort] for one tier. "
+              "/vision for the unifying frame.</i>" if not only else "")
+    return header + "\n\n".join(sections) + footer
+
+
+async def _render_founder_goals(detail: bool = False) -> str:
+    """Top-3 founder goals from NOW.md GOALS table."""
+    try:
+        with open(_NOW_PATH, encoding="utf-8") as f:
+            now_md = f.read()
+    except Exception as e:
+        return f"<b>👤 For James (founder)</b>\n<i>NOW.md unreachable: {tg._esc(str(e))}</i>"
     rows = _parse_goals(now_md)
     if not rows:
-        return ("🎯 <b>Goals</b>\n\n"
-                "<i>GOALS section not found in NOW.md. Add a `## 🎯 GOALS` section "
-                "with a markdown table (# | Goal | Target | Timeframe | Current state) "
-                "and run sync_now_to_brain.sh.</i>")
-    lines = ["🎯 <b>Goals — top 3 (most-important first)</b>\n"]
-    for r in rows[:3]:
+        return ("<b>👤 For James (founder)</b>\n"
+                "<i>No GOALS section in NOW.md. Add `## 🎯 GOALS` with a markdown table.</i>")
+    lines = ["<b>👤 For James (founder)</b> — <i>top 3 from NOW.md</i>"]
+    n = 3 if not detail else len(rows)
+    for r in rows[:n]:
         lines.append(f"<b>#{r['rank']}</b> {tg._esc(r['goal'])}")
-        if r.get("target"):
-            lines.append(f"  🎯 <b>Target:</b> {tg._esc(r['target'])}")
-        if r.get("timeframe"):
-            lines.append(f"  🕐 <b>By:</b> {tg._esc(r['timeframe'])}")
-        if r.get("state"):
-            lines.append(f"  📍 <i>{tg._esc(r['state'])}</i>")
-        lines.append("")
-    if len(rows) > 3:
-        lines.append(f"<i>+{len(rows)-3} more goals stored. Top 3 surface here.</i>")
-    lines.append("<i>To modify: edit core/STATE/NOW.md GOALS section, run sync_now_to_brain.sh</i>")
+        if detail:
+            if r.get("target"):
+                lines.append(f"   🎯 <b>Target:</b> {tg._esc(r['target'])}")
+            if r.get("timeframe"):
+                lines.append(f"   🕐 <b>By:</b> {tg._esc(r['timeframe'])}")
+            if r.get("state"):
+                lines.append(f"   📍 <i>{tg._esc(r['state'])}</i>")
+        else:
+            bits = []
+            if r.get("target"): bits.append(tg._esc(r['target']))
+            if r.get("timeframe"): bits.append(tg._esc(r['timeframe']))
+            if bits:
+                lines.append(f"   <i>{' · '.join(bits)}</i>")
+    if not detail and len(rows) > 3:
+        lines.append(f"   <i>+{len(rows)-3} more — /goals james for full list</i>")
     return "\n".join(lines)
+
+
+def _render_ai_goals(detail: bool = False) -> str:
+    """Active AI working goals from AI_GOALS.md."""
+    try:
+        with open(_AI_GOALS_PATH, encoding="utf-8") as f:
+            ai_md = f.read()
+    except Exception:
+        return ("<b>🤖 For the AI</b>\n"
+                f"<i>AI_GOALS.md not synced (expected at {tg._esc(_AI_GOALS_PATH)}).</i>")
+    rows = _parse_ai_goals(ai_md)
+    if not rows:
+        return "<b>🤖 For the AI</b>\n<i>No `### G<n> — Title` entries found in AI_GOALS.md.</i>"
+    lines = ["<b>🤖 For the AI</b> — <i>working goals from AI_GOALS.md</i>"]
+    n = 4 if not detail else len(rows)
+    for r in rows[:n]:
+        lines.append(f"<b>{tg._esc(r['id'])}</b> {tg._esc(r['title'])}")
+        if detail:
+            if r.get("why"):
+                lines.append(f"   <i>Why:</i> {tg._esc(r['why'][:200])}")
+            if r.get("how"):
+                lines.append(f"   <i>How:</i> {tg._esc(r['how'][:200])}")
+            if r.get("status"):
+                lines.append(f"   📍 <i>{tg._esc(r['status'][:120])}</i>")
+        elif r.get("status"):
+            lines.append(f"   <i>📍 {tg._esc(r['status'][:120])}</i>")
+    return "\n".join(lines)
+
+
+async def _render_team_goals(cohort: str, detail: bool = False) -> str:
+    """Per-Champion active goals across one cohort, via champion-sign API."""
+    import httpx as _httpx
+    try:
+        async with _httpx.AsyncClient(timeout=6.0) as c:
+            r = await c.get(f"{_FPAI_BASE.rstrip('/')}/api/champion/cohort/{cohort}")
+            r.raise_for_status()
+            data = r.json()
+    except Exception as e:
+        return (f"<b>👥 For the team — cohort: {tg._esc(cohort)}</b>\n"
+                f"<i>API unreachable: {tg._esc(str(e))}</i>")
+    members = data.get("members", [])
+    if not members:
+        return (f"<b>👥 For the team — cohort: {tg._esc(cohort)}</b>\n"
+                f"<i>No Champions in this cohort yet. Invite some via "
+                f"`/invite NAME contact path cohort={tg._esc(cohort)}`.</i>")
+    members_with_goals = [m for m in members if (m.get("active_goals") or [])]
+    lines = [f"<b>👥 For the team — cohort: {tg._esc(cohort)}</b> "
+             f"<i>· {len(members)} members · {len(members_with_goals)} with active goals</i>"]
+    if not members_with_goals:
+        lines.append("<i>No active per-Champion goals yet. Members can /setgoal on @fullpotentialgamebot.</i>")
+        return "\n".join(lines)
+    for m in members_with_goals[:8]:
+        nm = m.get("name") or "?"
+        cn = m.get("champion_number") or "?"
+        lines.append(f"<b>#{cn} {tg._esc(nm)}</b>")
+        for g in (m.get("active_goals") or [])[:3]:
+            text = g.get("goal", "")
+            if not text:
+                continue
+            meta = []
+            if g.get("target"): meta.append(f"target: {g['target']}")
+            if g.get("timeframe"): meta.append(f"by {g['timeframe']}")
+            meta_str = f" <i>({' · '.join(meta)})</i>" if meta else ""
+            lines.append(f"   🎯 {tg._esc(text[:120])}{meta_str}")
+    if len(members_with_goals) > 8:
+        lines.append(f"<i>+{len(members_with_goals)-8} more team members with goals.</i>")
+    return "\n".join(lines)
+
+
+def _parse_ai_goals(md: str) -> list[dict]:
+    """Parse AI_GOALS.md '### G<n> — Title' blocks. Each block has Why/How/Status lines."""
+    import re
+    sec = re.search(r"##\s+.*ACTIVE AI WORKING GOALS.*$", md,
+                    re.MULTILINE | re.IGNORECASE)
+    if not sec:
+        return []
+    body = md[sec.end():]
+    nh = re.search(r"^##\s", body, re.MULTILINE)
+    if nh:
+        body = body[: nh.start()]
+    rows: list[dict] = []
+    # Split on `### G<n>` entries
+    block_re = re.compile(r"^###\s+(G\d+(?:\.\d+)?)\s*[—-]\s*(.+?)$", re.MULTILINE)
+    matches = list(block_re.finditer(body))
+    for i, m in enumerate(matches):
+        gid = m.group(1).strip()
+        title = m.group(2).strip()
+        block_start = m.end()
+        block_end = matches[i + 1].start() if i + 1 < len(matches) else len(body)
+        block = body[block_start:block_end]
+        why_m = re.search(r"\*\*Why:\*\*\s*(.+?)(?=\n\*\*|\n###|\Z)", block, re.DOTALL)
+        how_m = re.search(r"\*\*How AI applies:\*\*\s*(.+?)(?=\n\*\*|\n###|\Z)", block, re.DOTALL)
+        status_m = re.search(r"\*\*Status:\*\*\s*(.+?)(?=\n\*\*|\n###|\Z)", block, re.DOTALL)
+        rows.append({
+            "id": gid,
+            "title": title,
+            "why": _strip_md(why_m.group(1).strip().replace("\n", " ")) if why_m else "",
+            "how": _strip_md(how_m.group(1).strip().replace("\n", " ")) if how_m else "",
+            "status": _strip_md(status_m.group(1).strip().replace("\n", " ")) if status_m else "",
+        })
+    return rows
 
 
 def _parse_goals(md: str) -> list[dict]:

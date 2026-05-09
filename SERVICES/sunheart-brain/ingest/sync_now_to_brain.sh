@@ -67,6 +67,14 @@ if [ -f "$CAP_FILE" ]; then
         || echo "warn: CAPABILITIES.md scp failed"
 fi
 
+# Sync AI_GOALS.md alongside (read by /vision and /goals on @sunheartbrain_bot).
+AI_GOALS_FILE="$(dirname "$NOW_FILE")/AI_GOALS.md"
+if [ -f "$AI_GOALS_FILE" ]; then
+    scp -o ConnectTimeout=5 -q "$AI_GOALS_FILE" "$BRAIN_HOST:$BRAIN_STATE_DIR/AI_GOALS.md" \
+        && echo "synced AI_GOALS.md → $BRAIN_HOST:$BRAIN_STATE_DIR/" \
+        || echo "warn: AI_GOALS.md scp failed"
+fi
+
 # Sync INVITE_TEMPLATES.md alongside (read by /invite on @sunheartbrain_bot
 # AND @fullpotentialgamebot — both bots share one templates file).
 INVITE_FILE="$(dirname "$NOW_FILE")/INVITE_TEMPLATES.md"
