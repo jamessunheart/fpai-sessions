@@ -1,10 +1,10 @@
 # CURRENT_STATE — Living SSOT
 
-**Last Updated:** 2026-05-08 (post-Loop 35 — `/store post` multi-step bot flow)
+**Last Updated:** 2026-05-09 (Day 1 of *The Village* mockumentary)
 **Updated By:** Claude (in FPAI_Cockpit, with James)
-**System Status:** 🟢 OPERATIONAL — substrate at 35 loops; funnel still empty of non-James humans
+**System Status:** 🟢 OPERATIONAL — substrate at 35 loops; **Day 1 of *The Village* (the mockumentary) starts today (2026-05-09)**. Kai (silent listener AI) captures media in The Village TG group; first cut at 19:00 CR; screening at 20:00 in the dining hall.
 
-> **🎯 30-day goal:** First non-James human to engage with the Game (sign / file proof / express path interest). The substrate is built; what's missing is one other human in it.
+> **🎯 30-day goal:** First non-James human enters the Game by joining *The Village* — the daily mockumentary of Camp Zen. Path: join The Village TG group → share a moment of your day → Kai captures it → that's your first Proof.
 >
 > **🤖 AI working goals** are tracked in [`core/STATE/AI_GOALS.md`](AI_GOALS.md). Founder reads it to see what the AI system is optimizing for; AI sessions read it on startup to align across terminals.
 
@@ -18,6 +18,15 @@
 **Decision filter:** proof / revenue / clarity / ease — 30-day horizon
 
 The Game is the operational form of the Zen Village vision: a substrate where Champions sign Agreements, build Character Cards, file Proofs, and now invite affiliates. Every action is on-chain in the substrate (file-backed), every share has measurable consequence (Field Score), and Loop N+1 is the next adaptive move.
+
+### *The Village* (mockumentary) — Day 1 wiring (live as of 2026-05-09)
+- **Genre:** mockumentary · **spirit:** Zen Comedy (gap between ideal and human is the joke)
+- **Kai listener daemon:** `kai-listener.service` on brain server, capturing The Village TG group (chat_id `-5254235033`) → `/var/lib/kai/captures/<date>/`
+- **Two-bot split:** `@OfficialKaibot` (Kai — silent in The Village group) · `@sunheartbrain_bot` (private director DM only — never in any group)
+- **Director-only pings:** 07:30 pre-brief · 19:00 cut review · 19:55 dining call (Costa Rica time)
+- **First Cohort:** Atlas, Halley, Josh, Sierra, Delaney
+- **Written companion:** *Field Notes from The Village* (Substack), nightly
+- **Wiring memory:** `~/.claude/projects/-Users-jamessunheart-FPAI-Cockpit/memory/reference_zen_comedy.md`
 
 ---
 
@@ -63,7 +72,7 @@ The Game is the operational form of the Zen Village vision: a substrate where Ch
 | ≤2 | (rename, scaffold, first signing) | — | 2026-05-07 |
 
 **Field Score formula (live):** 1 (Champion) + 1 (Card) + 2×Proofs + 3×Affiliates.
-**Champion #1** (James Sunheart): 19 proofs · Field Score 39 (verified 2026-05-08 via `/api/champion/leaderboard`).
+**Champion #1** (James Sunheart): 35 proofs · Field Score 71 (verified 2026-05-09 via `/api/champion/leaderboard`).
 
 ---
 
@@ -73,11 +82,12 @@ The Game is the operational form of the Zen Village vision: a substrate where Ch
 
 Ranked options:
 
-- **(distribution · primary) Draft the 6 invitations** — one per named human, tuned to relationship + path (apprenticeship / village / parties / retreats / commerce / coaching / witnessing per `feedback_game_is_many_pathed_funnel.md`). Open gate is Q-AI-1 (drafting authorization) — ask James before sending from his accounts. Atlás's WhatsApp is on file; the other 5 need numbers/channels. Highest direct G1 leverage.
+- **(landing · pre-flight) Verify Atlás's first 30 seconds** — he's getting the invite now; what does a logged-out stranger see at `fullpotential.com/game`? Is sign flow clean from a fresh browser? Does founder TG ping fire on champion-sign? AI-side, no James input needed, ~5min. *Most valuable right now because Atlás could click any minute.*
+- **(distribution · queued) Next 5 invitations** — Halley, Josh, Sierra, Delaney, Cheyenne. Need channels + ~1 sentence per person on relationship/path-fit before drafting. Open gate is Q-AI-1 (drafting authorization).
 - **(witness) Activate non-Claude Witness Roster** — turns the Game into the multi-witness community an incoming cohort needs; deepens whoever lands first.
 - **(public) Player State pages (`?player=NAME`)** — top-of-funnel shareable, multiplies whatever invites do go out.
 - **(hygiene) Continue cruft prune** — sibling cleared 104 legacy planning docs in 6aed2be0 (parallel to this loop reconcile). ~15 untracked root-level docs from later sessions still pending (`*_BUILT.md`, `*_BLOCKED.md`, deploy tarballs). Frozen service units (`cocoon`, `godmode`, `projects-dashboard`, `whaletrack-magnetic-trader`, `streasury-bot`) still pending.
-- **(wait) Hold for signal** — let retreat-interest capture + lead-capture form run; let the field choose what's next.
+- **(wait) Hold for Atlás response** — first real human signal in the system. What he says (or doesn't) shapes how the next 5 invitations get framed.
 
 **Open:** James to pick. Sibling sessions: check `git log` + `proofs/` before claiming Loop 36 (per `feedback_parallel_session_safety.md`).
 
@@ -92,7 +102,7 @@ Ranked options:
 - `https://fullpotential.ai/invest` — FP Frontier Basket
 
 ### Active Telegram surface
-- **`@sunheartbrain_bot`** — `sh-brain-tgbot.service` on `162.0.208.88`. Commands: `/projects /questions /pending /digest /cohere /capture /private /public /forget /search`, plus plain-text brain Q&A. `/projects` reads ranking from synced NOW.md; `/questions` reads qb books from synced board.jsonl.
+- **`@sunheartbrain_bot`** — `sh-brain-tgbot.service` on `162.0.208.88`. Commands: `/projects /goals /questions /pending /digest /cohere /capture /private /public /forget /search /capabilities /signals /match /characters /servers /credits /store`, plus plain-text brain Q&A. `/projects` and `/goals` read from synced NOW.md; `/questions` reads qb books from synced board.jsonl; `/capabilities` reads `CAPABILITIES.md`.
 - **`@zenvillagebot`** — `zv-telegram-bot.service`, separate Zen Village brain.
 
 ### Servers
@@ -111,7 +121,7 @@ Ranked options:
 
 | # | Goal | Target | Timeframe | Current state |
 |---|---|---|---|---|
-| 1 | **Enroll first cohort of Champions across the Game's multi-path funnel** | 10 real Champions in the network, each routed to ≥1 path (apprenticeship / village / parties / retreats / commerce / coaching / witnessing) | 30 days | 1 Champion (James #1) · 0 affiliates · invite link live |
+| 1 | **Enroll first cohort of Champions across the Game's multi-path funnel** | 10 real Champions in the network, each routed to ≥1 path (apprenticeship / village / parties / retreats / commerce / coaching / witnessing) | 30 days | 1 Champion (James #1) · 0 affiliates · cohort named (6) · **first invitation in flight to Atlás** |
 | 2 | **First Zen Village retreat — date + first 3 commitments** | Date set + price set + 3 confirmed attendees | 30 days | 0 retreat-interest submissions · interest form live · no date/price/capacity set |
 | 3 | **Card-completion rate ≥80% for enrolled Champions** | 8/10 Cards filled (Aspirational + Reality layers, witnessed) | 45 days | 0/1 cards filled · Card Quest live · AI Port-In prompt ready |
 
@@ -125,7 +135,7 @@ Ranked options:
 
 | # | Project | Why this rank | Status |
 |---|---|---|---|
-| 1 | **The Full Potential Game** — enroll Champions; multi-path funnel (apprenticeship / village / parties / retreats / commerce / coaching / witnessing) | P1 (memory). Goal is enrollment + path-routing — retreat is one outflow, not the only one. Champions enroll once, routes diverge per person. 16/16 recent commits. | 🟢 Active · 1 Champion · 0 affiliates · push to first cohort |
+| 1 | **The Full Potential Game** — enroll Champions; multi-path funnel (apprenticeship / village / parties / retreats / commerce / coaching / witnessing) | P1 (memory). Goal is enrollment + path-routing — retreat is one outflow, not the only one. Champions enroll once, routes diverge per person. 35+ loops shipped in ~48h. | 🟢 Active · 1 Champion · 0 affiliates · cohort of 6 named · **first invite in flight (Atlás)** |
 | 2 | **The Village (Zen Village OS)** — Jam Board, Oracle Stage, Proof Pairings | P1 expansion. Lives inside the Game's substrate; not a separate bucket. | 🟢 Entangled with Game loops |
 | 3 | **Sunheart Brain + Chief of Staff** — `@sunheartbrain_bot`, MCP memory, Priority/Money/Attention views | Direct lever on James's clarity. Cross-tool bridge already live. | 🟢 Live — brain server `162.0.208.88` |
 | 4 | **Question Tracker / Inquiry Layer (qb)** — terminal title + books substrate | Inquiry-first frame at the tooling layer. Books refactor just shipped (fpai/game/sunheart). | 🟢 Live — laptop CLI + brain mirror |
@@ -148,8 +158,8 @@ Ranked options:
 
 ### #2 · [game/q-20260508-870956] Who in James's field is the first 5–10 to invite, and what does each invitation look like?
 **Why #2 (operationalizes #1 — gates everything downstream):** Without the invite list, the multi-path funnel has no entrants. `/characters` command surfaces the live roster + KPIs from `/api/champion/list`.
-**Update 2026-05-08:** Named (memory: `project_first_cohort.md`) — **Atlas, Halley, Josh, Sierra, Delaney, Cheyenne**. Question now narrows from "who" to "what does each invitation look like, and is AI authorized to draft + send (Q-AI-1)?"
-**Stuck on:** per-person context (relationship, channel, path-fit) + drafting authorization. Atlás's WhatsApp is on file; the other 5 need it.
+**Update 2026-05-08:** Named (memory: `project_first_cohort.md`) — **Atlas, Halley, Josh, Sierra, Delaney, Cheyenne**. **Atlás's invitation is in flight (sibling terminal).** Question now narrows from "who" to "what shape does each remaining invitation take, given Atlás's response?"
+**Stuck on:** channels + per-person context for the other 5 (Halley, Josh, Sierra, Delaney, Cheyenne) + drafting authorization (Q-AI-1).
 
 ### #3 · [game/q-20260508-456895] Who's coming to the first Zen Village retreat, and what does the booking page need to convert them?
 **Why #3 (downstream of #2):** Originally framed as "build the booking page first." James reframed: *enroll first → Game pulls Champions through quests → retreat.* So booking-page work shouldn't lead — Champion-recruitment does. This question waits for #2 to yield Champions.
