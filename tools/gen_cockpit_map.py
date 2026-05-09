@@ -5358,24 +5358,24 @@ def render_html() -> str:
         <div class="path-desc">Music + problem jams. Couch = Oracle Stage. Local + traveling.</div>
         <div class="path-status path-status-soon">🟡 Forming</div>
       </div>
-      <div class="path-tile">
+      <a class="path-tile path-live" href="/game/store/">
         <div class="path-glyph">🛒</div>
         <div class="path-name">Commerce</div>
-        <div class="path-desc">Coherent Credits, store, products + services in the substrate.</div>
-        <div class="path-status path-status-watch">⚪ Concept</div>
-      </div>
+        <div class="path-desc">Coherent Credits + Store. Credit-accepting offers ranked first by design.</div>
+        <div class="path-status path-status-live">🟢 Open</div>
+      </a>
       <div class="path-tile">
         <div class="path-glyph">🧭</div>
         <div class="path-name">Coaching</div>
         <div class="path-desc">Champions guiding Champions through the Player Path.</div>
         <div class="path-status path-status-soon">🟡 Forming</div>
       </div>
-      <div class="path-tile">
-        <div class="path-glyph">👁</div>
-        <div class="path-name">Witnessing</div>
-        <div class="path-desc">Witness Roster — non-Claude humans signing as proof witnesses.</div>
-        <div class="path-status path-status-watch">⚪ Concept</div>
-      </div>
+      <a class="path-tile path-live" href="/game/mirror/">
+        <div class="path-glyph">🪞</div>
+        <div class="path-name">Mirror Loop</div>
+        <div class="path-desc">Pair your Digital Mirror — one AI in lock-step with you. Distance-Weighted witness for first proof.</div>
+        <div class="path-status path-status-live">🟢 Open</div>
+      </a>
     </div>
   </div>
 
