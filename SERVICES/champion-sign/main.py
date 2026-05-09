@@ -1946,15 +1946,39 @@ def _gw_call(method: str, path: str, payload: Optional[dict] = None) -> dict:
         raise HTTPException(status_code=503, detail=f"gateway error: {e}")
 
 
+EARN_AUDIT_LOG = CREDITS_DIR / "earn_audit.jsonl"
+
+
+def _earn_audit(handle: str, amount: int, reason: str, status: str, detail: str = "") -> None:
+    """Append an earn-attempt record to the audit log. Visible whether
+    the gateway grant succeeded or failed — so we never lose track of
+    awards we tried to make."""
+    try:
+        with EARN_AUDIT_LOG.open("a", encoding="utf-8") as f:
+            f.write(json.dumps({
+                "ts": datetime.now().isoformat(),
+                "handle": handle,
+                "amount": amount,
+                "reason": reason,
+                "status": status,  # "ok" / "fail" / "skip"
+                "detail": detail[:200] if detail else "",
+            }) + "\n")
+    except Exception:
+        pass  # last-resort silent — audit log itself failing shouldn't break the flow
+
+
 def _award_credits_safe(handle: str, amount: int, reason: str) -> Optional[str]:
     """Best-effort credit award via gateway. Never blocks the user-facing
-    action on failure — credit-grant is fire-and-forget per the gameplay
-    flow. Returns tx_id on success, None on failure.
+    action on failure. Logs every attempt (ok/fail/skip) to earn_audit.jsonl
+    so failed awards are recoverable. Returns tx_id on success, None on
+    failure or skip.
     """
     if not GATEWAY_URL or not GATEWAY_KEY or amount <= 0:
+        _earn_audit(handle, amount, reason, "skip", "gateway not configured or amount<=0")
         return None
     handle_n = _norm_handle(handle)
     if not handle_n:
+        _earn_audit(handle, amount, reason, "skip", "empty handle after normalize")
         return None
     try:
         r = _gw_call("POST", "/api/credit", {
@@ -1963,8 +1987,11 @@ def _award_credits_safe(handle: str, amount: int, reason: str) -> Optional[str]:
             "credit_type": GATEWAY_CREDIT_TYPE,
             "reason": reason,
         })
-        return r.get("transaction_id")
-    except Exception:
+        tx_id = r.get("transaction_id")
+        _earn_audit(handle_n, amount, reason, "ok", tx_id or "")
+        return tx_id
+    except Exception as e:
+        _earn_audit(handle_n, amount, reason, "fail", str(e))
         return None
 
 

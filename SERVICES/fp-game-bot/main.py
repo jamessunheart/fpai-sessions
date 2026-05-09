@@ -149,7 +149,8 @@ A proof-based operating system for human potential. Coherent Champions of CHRIST
   /signals — vital signs · Field Coherence · 30d goal · 7d activity
   /credits — wallet balance · send · history · leaderboard
   /store — marketplace · /store post to list · /store buy &lt;id&gt; to purchase
-  /invite — your unique invite link
+  /setgoal &lt;text&gt; — set a personal goal · /mygoals to view · /completegoal &lt;id&gt; to close
+  /invite NAME [contact] [path] [cohort=NAME] — render invitation + deep link
   /whoami — what name you're registered as
   /help — show this menu
 
@@ -170,6 +171,13 @@ async def cmd_start(client, chat_id: int, args: str) -> None:
     inviter_attr = None
     path_attr = None
     cohort_attr = None
+
+    # Deep-link to buy a specific offer: /start buy_<offer_id>
+    if payload.startswith("buy_"):
+        offer_id = payload[len("buy_"):]
+        await cmd_store(client, chat_id, f"buy {offer_id}")
+        return
+
     if payload.startswith("invite_"):
         rest_p = payload[len("invite_"):]
         # New marker format: n_<INVITER>_p_<PATH>_c_<COHORT> (any optional)
@@ -1164,6 +1172,94 @@ async def handle_card_step(client, chat_id: int, text: str) -> None:
 
 # ─── /proof multi-turn flow ────────────────────────────────────────────────
 
+# ───────────────────────── per-Champion goals ────────────────────────────
+async def cmd_setgoal(client, chat_id: int, args: str) -> None:
+    """`/setgoal <text>` — set a personal goal. Stored per-Champion."""
+    name = _saved_name(chat_id)
+    if not name:
+        await tg_send(client, chat_id, "Sign first: /sign · or <code>/whoami YourName</code>")
+        return
+    goal_text = (args or "").strip()
+    if not goal_text:
+        await tg_send(client, chat_id,
+            "🎯 <b>/setgoal &lt;text&gt;</b>\n\n"
+            "Add a personal goal you're working toward.\n"
+            "Example: <code>/setgoal Ship retreat booking page in 14 days</code>\n\n"
+            "View with /mygoals · close with /completegoal &lt;id&gt;.")
+        return
+    try:
+        r = await api_post(client, "/goal/set", {"player": name, "goal": goal_text})
+        gid = r.get("goal_id", "?")
+        await tg_send(client, chat_id,
+            f"🎯 <b>Goal set</b> · <code>{esc(gid)}</code>\n\n"
+            f"<i>{esc(goal_text)}</i>\n\n"
+            f"View all: /mygoals · complete: <code>/completegoal {esc(gid)}</code>")
+    except Exception as e:
+        await tg_send(client, chat_id, f"⚠️ Failed to set goal: {esc(str(e))}")
+
+
+async def cmd_mygoals(client, chat_id: int, args: str) -> None:
+    """`/mygoals` — list active goals for this Champion."""
+    name = _saved_name(chat_id)
+    if not name:
+        await tg_send(client, chat_id, "Sign first: /sign · or <code>/whoami YourName</code>")
+        return
+    show_all = (args or "").strip().lower() in ("all", "completed", "done")
+    try:
+        params = {"player": name}
+        if show_all:
+            params["status"] = "all"
+        d = await api_get(client, "/goal/list", params)
+        goals = d.get("goals", [])
+    except Exception as e:
+        await tg_send(client, chat_id, f"⚠️ Goal lookup failed: {esc(str(e))}")
+        return
+    if not goals:
+        suffix = "" if show_all else " active"
+        await tg_send(client, chat_id,
+            f"🎯 <b>No{suffix} goals yet.</b>\n\n"
+            f"Add one: <code>/setgoal &lt;text&gt;</code>")
+        return
+    label = "All goals" if show_all else "Active goals"
+    out = [f"🎯 <b>{label} — {esc(name)}</b>\n"]
+    for g in goals[:15]:
+        gid = g.get("goal_id", "?")
+        text = g.get("goal", "")
+        status = g.get("status", "active")
+        glyph = "✓" if status == "completed" else "●"
+        target_part = f" · target: <i>{esc(g.get('target') or '')}</i>" if g.get("target") else ""
+        tf_part = f" · {esc(g.get('timeframe') or '')}" if g.get("timeframe") else ""
+        out.append(f"  {glyph} <code>{esc(gid)}</code> — {esc(text)}{target_part}{tf_part}")
+    if len(goals) > 15:
+        out.append(f"\n<i>… and {len(goals) - 15} more.</i>")
+    out.append(f"\n<i>/completegoal &lt;id&gt; to mark done · /mygoals all to include completed</i>")
+    await tg_send(client, chat_id, "\n".join(out))
+
+
+async def cmd_completegoal(client, chat_id: int, args: str) -> None:
+    """`/completegoal <id> [note]` — mark a goal complete."""
+    name = _saved_name(chat_id)
+    if not name:
+        await tg_send(client, chat_id, "Sign first: /sign · or <code>/whoami YourName</code>")
+        return
+    parts = (args or "").strip().split(maxsplit=1)
+    if not parts:
+        await tg_send(client, chat_id,
+            "✓ <b>/completegoal &lt;id&gt; [note]</b>\n\n"
+            "Find IDs with /mygoals.")
+        return
+    gid = parts[0]
+    note = parts[1] if len(parts) > 1 else None
+    payload = {"player": name, "goal_id": gid}
+    if note:
+        payload["note"] = note
+    try:
+        await api_post(client, "/goal/complete", payload)
+        await tg_send(client, chat_id, f"✓ Goal <code>{esc(gid)}</code> marked complete.")
+    except Exception as e:
+        await tg_send(client, chat_id, f"⚠️ Failed: {esc(str(e))}")
+
+
 async def cmd_proof(client, chat_id: int, args: str) -> None:
     name = _saved_name(chat_id)
     if not name:
@@ -1565,6 +1661,9 @@ COMMAND_HANDLERS = {
     "invites": cmd_invites,
     "invite-types": cmd_invite_types,
     "invite_types": cmd_invite_types,
+    "setgoal": cmd_setgoal,
+    "mygoals": cmd_mygoals,
+    "completegoal": cmd_completegoal,
     "whoami": cmd_whoami,
     "sign": cmd_sign,
     "card": cmd_card,

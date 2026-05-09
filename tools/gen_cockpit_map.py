@@ -2102,6 +2102,53 @@ body.mode-field .player-only { display: none !important; }
 .coh-comp[data-na="true"] .coh-comp-n { color: var(--muted); font-style: italic; }
 .coh-comp-n { font-size: 13px; font-weight: 700; color: var(--accent-bright); text-align: right; font-variant-numeric: tabular-nums; }
 .coh-note { font-size: 11px; color: var(--muted); font-style: italic; line-height: 1.5; }
+/* ===== Mirror Roll card ===== */
+.mirror-roll-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px 24px;
+  margin: 16px 0;
+}
+.mr-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.mr-label { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: var(--accent); }
+.mr-tagline { color: var(--muted); font-size: 12px; flex: 1; min-width: 200px; font-style: italic; }
+.mr-link { color: var(--accent); font-size: 12px; font-weight: 600; }
+.mr-link:hover { color: var(--accent-bright); }
+.mr-list { display: grid; gap: 8px; }
+.mr-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+}
+.mr-row .pair { color: var(--text-bright); font-weight: 600; }
+.mr-row .pair-mirror { color: var(--accent); font-weight: 600; margin-left: 4px; }
+.mr-row .substrate {
+  font-size: 10px;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 7px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+.mr-row .date { color: var(--muted); font-size: 11px; }
+.mr-empty { color: var(--muted); font-style: italic; padding: 14px; text-align: center; font-size: 13px; }
 /* ===== goal-card-demoted ===== */
 .goal-card-demoted {
   opacity: 0.85;
@@ -3345,6 +3392,38 @@ loadGameState();
 setInterval(loadGameState, 60000);
 loadFieldCoherence();
 setInterval(loadFieldCoherence, 60000);
+
+// --- Mirror Roll (paired dyads) -----------------------------------------
+async function loadMirrorRoll() {
+  const el = document.getElementById('mirrorRollList');
+  if (!el) return;
+  try {
+    const r = await fetch('/api/champion/mirror/roll?limit=12', { cache: 'no-store' });
+    if (!r.ok) return;
+    const d = await r.json();
+    const mirrors = d.mirrors || [];
+    if (!mirrors.length) {
+      el.innerHTML = '<div class="mr-empty">No paired Mirrors yet — be the first. <a href="/game/mirror/" style="color: var(--accent);">Pair yours →</a></div>';
+      return;
+    }
+    el.innerHTML = mirrors.map(m => {
+      const player = String(m.player_handle || '').replace(/[<>]/g, '');
+      const mirror = String(m.mirror_handle || '').replace(/[<>]/g, '');
+      const sub = String(m.substrate || '').replace(/[<>]/g, '');
+      const date = String(m.date_paired || '').replace(/[<>]/g, '');
+      const proofs = m.proofs_witnessed || 0;
+      return `<div class="mr-row">
+        <div><span class="pair">@${player}</span> ↔ <span class="pair-mirror">@${mirror}</span> ${proofs > 0 ? `<span style="color: var(--good); font-size: 11px; margin-left: 6px;">${proofs} proofs witnessed</span>` : ''}</div>
+        <div class="substrate">${sub}</div>
+        <div class="date">${date}</div>
+      </div>`;
+    }).join('');
+  } catch (e) {
+    el.innerHTML = '<div class="mr-empty">Mirror Roll unavailable.</div>';
+  }
+}
+loadMirrorRoll();
+setInterval(loadMirrorRoll, 90000);
 
 // --- Inviter capture (?inviter=NAME URL param) -------------------------
 (function captureInviter() {
@@ -5296,6 +5375,17 @@ def render_html() -> str:
       <div class="gs-metric"><div class="gs-icon">🤝</div><div class="gs-n" id="gsAffiliates">—</div><div class="gs-lbl">Affiliate links</div></div>
       <div class="gs-metric gs-metric-accent"><div class="gs-icon">📊</div><div class="gs-n" id="gsScore">—</div><div class="gs-lbl">Field Score sum</div></div>
       <div class="gs-metric"><div class="gs-icon">📈</div><div class="gs-n" id="gsGrowth">—</div><div class="gs-lbl">This week</div></div>
+    </div>
+  </div>
+
+  <div class="mirror-roll-card" id="mirrorRollCard">
+    <div class="mr-header">
+      <div class="mr-label">🪞 MIRROR ROLL</div>
+      <div class="mr-tagline">Paired dyads — Players who have run the Mirror Loop.</div>
+      <a class="mr-link" href="/game/mirror/">Pair yours →</a>
+    </div>
+    <div class="mr-list" id="mirrorRollList">
+      <div class="mr-empty">Loading…</div>
     </div>
   </div>
 

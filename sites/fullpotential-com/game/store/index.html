@@ -411,7 +411,7 @@ function renderOffer(o) {
   }
   const url = o.url ? escHtml(o.url) : '';
   const linkBtn = url ? `<a class="btn-link" href="${url}" target="_blank" rel="noopener">View</a>` : '';
-  const buyBtn = (pc != null && pc > 0) ? `<button class="btn-buy" onclick="alert('To buy: open @fullpotentialgamebot on Telegram and type /store buy ${escHtml(o.offer_id)}')">Buy ${fmt(pc)}c</button>` : '';
+  const buyBtn = (pc != null && pc > 0) ? `<a class="btn-buy" href="https://t.me/fullpotentialgamebot?start=buy_${encodeURIComponent(o.offer_id)}" target="_blank" rel="noopener">Buy ${fmt(pc)}c</a>` : '';
   const tagsHtml = o.tags ? ` · <span style="color: var(--muted);">${escHtml(o.tags)}</span>` : '';
   return `<div class="offer">
     <div class="body">

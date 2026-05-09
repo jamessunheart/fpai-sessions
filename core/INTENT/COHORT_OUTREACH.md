@@ -1,10 +1,12 @@
 ---
 artifact: cohort_outreach_drafts
-version: 0.1
+version: 0.2
 date_started: 2026-05-08
+last_updated: 2026-05-08
 session: 1018b927
 gate: Q-AI-1 (drafting authorization — James reviews before any send)
-target_cohort: First Cohort named 2026-05-08 (Atlas, Halley, Josh, Sierra, Delaney, Cheyenne)
+target_cohort: First Cohort (Atlás, Halley, Josh, Sierra, Delaney, Cheyenne)
+status: 1 of 6 sent (Atlás · 2026-05-08); 5 awaiting James-side context
 ---
 
 # First Cohort Outreach — Draft Messages
@@ -17,34 +19,19 @@ target_cohort: First Cohort named 2026-05-08 (Atlas, Halley, Josh, Sierra, Delan
 
 ---
 
-## 1. Atlás · WhatsApp +1 (858) 867-9217
+## 1. Atlás · WhatsApp +1 (858) 867-9217 — ✅ SENT 2026-05-08
 
-**What I know:**
-- Phone number on file (memory `project_first_cohort.md`)
-- Name has an accent on the "á" — important to spell correctly
-- Everything else: `[NEEDS FROM JAMES]`
+**Status:** First WhatsApp invite already sent 2026-05-08 with `?inviter=James%20Sunheart` for affiliate attribution (per memory `project_first_cohort.md`). No re-draft needed.
 
-**What I need from you to draft a real message:**
-- How long have you known Atlás and through what? (work, friendship, love, mutual friend?)
-- When did you last connect — recent or has it been a while?
-- What was the most recent exchange about?
-- Which path fits him most — apprenticeship / village / parties / retreats / commerce / coaching / witnessing?
+**What I know (from memory):**
+- Already in ops with James, familiar with Game framing, will help beta test
+- **Path: Village / ops** — villager #1 per `core/INTENT/FULL_POTENTIAL_GAME.md` line 75; 7-day arc spec'd
+- Name carries accent: "Atlás" not "Atlas"
 
-**Draft (placeholder — needs your input above before I'd actually send):**
-
-> Hey Atlás,
->
-> Quick one. I've been building something this last week that feels significant, and I wanted you to be among the first to see it. It's called the Full Potential Game — a proof-based operating system, but really it's a way of inviting people I trust into a more coherent way of working and living together.
->
-> [NEEDS FROM JAMES: 1-2 sentences naming what specifically resonates with Atlás's situation — e.g. "given what you've been working on with X" or "this lines up with what you said at Y about Z"]
->
-> Have a look: https://fullpotential.com/game
->
-> [NEEDS FROM JAMES: which path to highlight — e.g. "There's a Costa Rica retreat forming" / "I'm pairing apprentices" / "Couch Oracle / parties this fall"]
->
-> No pressure. If it lands, sign the World Peace Agreement and you're in. If not, glad we're still in touch.
->
-> — James
+**Next move on Atlás (not a draft, a follow-up):**
+- Watch for sign-on at `/api/champion/list` (filtered by inviter=James%20Sunheart)
+- If signed: confirm Village path live, walk him through the 7-day arc
+- If not signed within ~3 days: light follow-up touch to check whether the link landed
 
 ---
 
@@ -118,9 +105,11 @@ target_cohort: First Cohort named 2026-05-08 (Atlas, Halley, Josh, Sierra, Delan
 
 ## How to use this file
 
+**Status: 1 of 6 sent.** Atlás is in flight. The 5 below await your input.
+
 The pattern: **you give me 4 things per person, I write the real draft, you tweak and send.**
 
-Per person:
+Per person (Halley / Josh / Sierra / Delaney / Cheyenne):
 1. **Relationship history** (1-2 sentences — how do you know them, how long, through what)
 2. **Recency** (when did you last connect, what was it about)
 3. **Current state** (anything you know is happening for them right now — life situation, work, where they are mentally)
