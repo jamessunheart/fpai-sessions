@@ -9,6 +9,32 @@ Templates for `/invite` on `@sunheartbrain_bot`. Each is a starting point — ed
 
 **Default path** is `game`. **Voice register**: matches public site (Coherent Champions, World Peace Agreement, Character Card, Field Score). Strip the heavier framing for friends who'd resist it.
 
+**Length variants**: each path has an email-length form (`## path`) and a WhatsApp-length form (`## path-wa-short`). The WhatsApp short forms are 1–3 lines, designed for first-touch on phone — no sign-off, no preamble, just frame + link. `scripts/cohort/wa-invite.sh` reads them.
+
+---
+
+## village
+
+{NAME} —
+
+{WHY_THEM}
+
+We just started *The Village* — a daily 8 PM mockumentary at Camp Zen. Each day everyone shares whatever they share normally in our Telegram group (also called The Village); an AI editor named Kai listens silently and weaves the day into a short film we watch together at the dining hall.
+
+You're not making content. You're just being in the village. The film is the byproduct. Your first share is your first Proof in the Game.
+
+Two things you need: (1) join The Village TG group https://t.me/OfficialKaibot; (2) anything you'd rather not see in a cut, just say so or DM me. That's it.
+
+Day 1 is 2026-05-09. Curtain at 8.
+
+— James
+
+---
+
+## village-wa-short
+
+{NAME} — opening Day 1 of *The Village* tonight (Camp Zen mockumentary, 8 PM dining hall). You're invited as a co-builder. Join the TG group: https://t.me/OfficialKaibot. Just be in the village; an AI editor named Kai patches the day into the cut. — J
+
 ---
 
 ## game
@@ -26,6 +52,46 @@ The substrate is live. I'm Champion #1. Looking for the first 5–10 humans in.
 {TRACKED_LINK}
 
 — James
+
+---
+
+## game-wa-short
+
+{NAME} — Full Potential Game's live: {TRACKED_LINK}
+
+I'm beta-testing now. Take a look, sign if you want, lmk what's broken.
+
+---
+
+## apprenticeship-wa-short
+
+{NAME} — Full Potential Game's live: {TRACKED_LINK}
+
+Looking for ~3 to apprentice with directly. Sign in, AI Port-In card asks the questions. Talk after.
+
+---
+
+## village-wa-short
+
+{NAME} — building Full Potential at the village: {TRACKED_LINK}
+
+Looking for 3–5 humans living near for a season+. Sign in, hit the Village interest path.
+
+---
+
+## witnessing-wa-short
+
+{NAME} — quick ask: be a Witness in something I'm building. {TRACKED_LINK}
+
+Sign in, opt into Witness Roster from your dashboard. Low time, high signal.
+
+---
+
+## retreat-wa-short
+
+{NAME} — first Zen Village retreat is forming, Costa Rica, ≤10 cohort. {TRACKED_LINK}
+
+Sign in + file retreat-interest from your Player State. Date/price set when first 3 commit.
 
 ---
 
