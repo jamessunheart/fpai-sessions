@@ -2269,6 +2269,113 @@ body.mode-field .player-only { display: none !important; }
   line-height: 1.7;
 }
 .cz-rules li { margin-bottom: 4px; }
+/* ===== Founding Steward Cockpit overlay ===== */
+.founding-steward-card {
+  background: linear-gradient(135deg, #1a1f3d 0%, var(--surface-2) 100%);
+  border-color: var(--accent-bright);
+}
+.fs-cohort {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 8px;
+}
+.fs-person {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 12px;
+  align-items: baseline;
+  padding: 10px 14px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+}
+.fs-person.fs-invited { border-color: var(--good); }
+.fs-person.fs-invited .fs-status { color: var(--good); }
+.fs-person.fs-pending .fs-status { color: var(--muted); }
+.fs-status {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+.fs-name {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 18px;
+  color: var(--text-bright);
+  font-weight: 600;
+}
+.fs-path {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: 11px;
+  font-style: italic;
+  margin-top: 2px;
+}
+.fs-state-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+}
+.fs-state {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 8px;
+  align-items: baseline;
+  padding: 8px 12px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--text);
+}
+.fs-state-icon { color: var(--good); font-weight: 700; font-size: 14px; }
+.fs-pins {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.8;
+}
+.fs-pins li b { color: var(--accent-bright); margin-right: 4px; }
+.fs-pins code {
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 1px 5px;
+  font-size: 11px;
+  color: var(--accent);
+}
+.fs-handoff {
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--text);
+  margin: 0 0 12px;
+  padding: 12px 16px;
+  background: var(--bg-deep);
+  border-left: 2px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+}
+.fs-handoff b { color: var(--accent-bright); }
+.fs-handoff code {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0 4px;
+  font-size: 11px;
+  color: var(--accent);
+}
+.cz-session-marker {
+  text-align: center;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.cz-session-marker code {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+}
 /* ===== Field Coherence card ===== */
 .coherence-card {
   background: var(--surface);
@@ -3781,14 +3888,20 @@ async function loadPlayerState() {
         }
       } catch (e) {}
 
-      // === Camp Zen Steward role detection (Loop 42) ===
-      // Atlás's dashboard shows Camp-Director-specific Top 3 instead of generic.
-      // The Game's substrate becomes his actual operating system.
+      // === Role detection (Loop 42 / 44) ===
+      // Atlás → Camp Zen Steward (Camp Director moves)
+      // James → Founding Steward (founder priorities)
       const playerNameLc = (d.name || '').toLowerCase();
       const isCampSteward = ['atlas', 'atlás'].some(n => playerNameLc === n || playerNameLc.startsWith(n));
+      const isFoundingSteward = ['james', 'james sunheart', 'sunheart'].some(n => playerNameLc === n || playerNameLc.startsWith(n));
 
       // Stage-aware move generation
-      if (isCampSteward && !d.champion) {
+      if (isFoundingSteward) {
+        // James's actual priorities right now (not generic Game moves)
+        moves.push({icon: '🪞', text: 'Pair Mirror #1', reward: 'choose Distance-Weighted Witness · lifts Field Coherence Witness above 0', url: '/game/mirror/', cta: 'Open'});
+        moves.push({icon: '✉️', text: 'Send 4 cohort invites', reward: 'Halley · Josh · Sierra · Delaney · need context per person', anchor: '#foundingStewardOps', cta: 'Plan'});
+        moves.push({icon: '📜', text: 'Refine + send Atlás offer', reward: '5 variance points · stipend · rev% · profit-share · CORA · start', anchor: '#foundingStewardOps', cta: 'Edit'});
+      } else if (isCampSteward && !d.champion) {
         // Atlás pre-sign: get him into the Game first, then point to Camp work
         moves.push({icon: '🌀', text: 'Sign the World Peace Agreement', reward: 'enter the Game · → Guest', anchor: '.signature-card-quest', cta: 'Sign'});
         moves.push({icon: '🎬', text: 'Show up in The Village today', reward: 'share normally · Kai captures · 1st Proof', anchor: '#villageCard', cta: 'View'});
@@ -3825,12 +3938,20 @@ async function loadPlayerState() {
       // Steward-specific Village CTA refinement
       const vcCta = document.getElementById('vcCta');
       if (vcCta) {
-        if (isCampSteward) {
+        if (isFoundingSteward) {
+          vcCta.innerHTML = '<span class="vc-cta-text">You\'re directing the show. Today\'s pings to your DM via <code>@sunheartbrain_bot</code>: <b>07:30 pre-brief · 19:00 cut review · 19:55 dining call</b>. Curtain 20:00 dining hall.</span>';
+        } else if (isCampSteward) {
           vcCta.innerHTML = '<span class="vc-cta-text">You\'re in The Village. Show up today, share normally, Kai patches it into tonight\'s cut at 20:00. <b>Pre-brief 07:30 · Cut review 19:00 · Dining call 19:55</b> — director-only DMs from <code>@sunheartbrain_bot</code>.</span>';
         } else if (d.champion) {
           vcCta.innerHTML = '<span class="vc-cta-text">You\'re a Champion. Want in The Village? Reply to James (or DM <code>@fullpotentialgamebot</code>) — invitations from current Villagers count too.</span>';
         }
       }
+
+      // Founding Steward operations card visibility
+      const fsOps = document.getElementById('foundingStewardOps');
+      if (fsOps) fsOps.style.display = isFoundingSteward ? '' : 'none';
+      const fsBadge = document.getElementById('psFoundingStewardBadge');
+      if (fsBadge) fsBadge.style.display = isFoundingSteward ? '' : 'none';
 
       // Show/hide Camp Zen Operations card based on steward detection
       const campOpsCard = document.getElementById('campZenOps');
@@ -5620,6 +5741,7 @@ def render_html() -> str:
           <span class="ps-found-badge" id="psFoundCharacter" data-state="unknown">○ Character</span>
           <span class="ps-found-badge" id="psFoundMirror" data-state="unknown">○ Mirror Paired</span>
           <span class="ps-steward-badge" id="psStewardBadge" style="display:none;">🏕 Camp Zen Steward</span>
+          <span class="ps-steward-badge" id="psFoundingStewardBadge" style="display:none;">👁 Founding Steward · Director</span>
         </div>
       </div>
       <div class="ps-score">
@@ -5748,6 +5870,84 @@ def render_html() -> str:
         <li>Field coherence over short-term revenue.</li>
         <li>Honesty over comfort.</li>
       </ol>
+    </div>
+  </div>
+
+  <div class="camp-zen-card founding-steward-card" id="foundingStewardOps" style="display:none;">
+    <div class="cz-header">
+      <div class="cz-label">👁 FOUNDING STEWARD · COCKPIT</div>
+      <div class="cz-status">Day 1 of The Village · Substrate complete</div>
+    </div>
+    <p class="cz-blurb">
+      Your visual control panel. What's true now, what you carry, what AI carries forward when you close this terminal.
+    </p>
+
+    <div class="cz-section">
+      <div class="cz-section-label">📍 THIS WEEK · 3 MOVES ONLY YOU CAN MAKE</div>
+      <div class="cz-checklist">
+        <div class="cz-task">○ <b>Pair Mirror #1</b> — choose a Distance-Weighted Witness from your Formation Circle (NOT Claude, NOT a co-founder, NOT a paid employee, NOT a romantic partner per white paper §4.5). When this happens, Field Coherence Witness component lifts above 0.0 for the first time.</div>
+        <div class="cz-task">○ <b>Refine + send Atlás's Camp Director offer</b> — 5 variance points to confirm: stipend ($1,500/mo) · revenue % (15%) · profit-share threshold ($25K/mo net) · CORA grant (10K) · start date (immediately). File at <code>core/INTENT/CAMP_DIRECTOR_OFFER_ATLAS.md</code>.</div>
+        <div class="cz-task">○ <b>4 cohort invites</b> — Halley, Josh, Sierra, Delaney. Each needs 4 sentences from you (relationship · recency · current state · path fit). Then Claude drafts. File at <code>core/INTENT/COHORT_OUTREACH.md</code>.</div>
+      </div>
+    </div>
+
+    <div class="cz-section">
+      <div class="cz-section-label">🎯 FIRST COHORT · OUTREACH STATUS</div>
+      <div class="fs-cohort">
+        <div class="fs-person fs-invited"><span class="fs-status">✓ INVITED</span><span class="fs-name">Atlás</span><span class="fs-path">Camp Director · WhatsApp sent</span></div>
+        <div class="fs-person fs-pending"><span class="fs-status">○ PENDING</span><span class="fs-name">Halley</span><span class="fs-path">Anchor Host partnership · awaiting context</span></div>
+        <div class="fs-person fs-pending"><span class="fs-status">○ PENDING</span><span class="fs-name">Josh</span><span class="fs-path">on-property team · awaiting context</span></div>
+        <div class="fs-person fs-pending"><span class="fs-status">○ PENDING</span><span class="fs-name">Sierra</span><span class="fs-path">on-property team · awaiting context</span></div>
+        <div class="fs-person fs-pending"><span class="fs-status">○ PENDING</span><span class="fs-name">Delaney</span><span class="fs-path">on-property team · awaiting context</span></div>
+        <div class="fs-person fs-pending"><span class="fs-status">○ PENDING</span><span class="fs-name">Cheyenne</span><span class="fs-path">unspec'd · awaiting context</span></div>
+      </div>
+    </div>
+
+    <div class="cz-section">
+      <div class="cz-section-label">🏗 SUBSTRATE STATE · WHAT'S BUILT</div>
+      <div class="fs-state-grid">
+        <div class="fs-state"><span class="fs-state-icon">✓</span><span>Mirror Loop Phase 1 (Constitution + Initiation Prompt + /game/mirror)</span></div>
+        <div class="fs-state"><span class="fs-state-icon">✓</span><span>Field Coherence v0 (honest 0.50 — Witness component awaits first DW signature)</span></div>
+        <div class="fs-state"><span class="fs-state-icon">✓</span><span>Player-first dashboard · Top 3 Next Moves · foundational checkmarks</span></div>
+        <div class="fs-state"><span class="fs-state-icon">✓</span><span>Coherent Credit ledger bridged to fp-credits-gateway (canonical SSOT · 980 credits)</span></div>
+        <div class="fs-state"><span class="fs-state-icon">✓</span><span>Coherent Store · 3-tier ranking · 3 architect offers seeded</span></div>
+        <div class="fs-state"><span class="fs-state-icon">✓</span><span>Earn hooks (sign +50, proof +5/+20, DW witness +30, mirror +100)</span></div>
+        <div class="fs-state"><span class="fs-state-icon">✓</span><span>The Village Day 1 live · Kai listener capturing TG group</span></div>
+        <div class="fs-state"><span class="fs-state-icon">✓</span><span>Camp Zen Steward dashboard view (Atlás role-aware)</span></div>
+      </div>
+    </div>
+
+    <div class="cz-section">
+      <div class="cz-section-label">📜 PINNED ARTIFACTS · YOUR REFERENCES</div>
+      <ul class="fs-pins">
+        <li><b>Vision (this session):</b> <code>core/INTENT/VISION_2026-05-09.md</code></li>
+        <li><b>Camp Zen Blueprint:</b> the CEO handoff document for Atlás</li>
+        <li><b>Camp Director offer (v0.3):</b> <code>core/INTENT/CAMP_DIRECTOR_OFFER_ATLAS.md</code></li>
+        <li><b>Financial projection:</b> <code>core/INTENT/CAMP_ZEN_FINANCIAL_PROJECTIONS.md</code></li>
+        <li><b>Cohort outreach drafts:</b> <code>core/INTENT/COHORT_OUTREACH.md</code></li>
+        <li><b>Mirror Constitution v1.0:</b> <code>core/INTENT/AGREEMENTS/CONSTITUTION_v1.md</code></li>
+        <li><b>Field SSOT:</b> <code>core/STATE/NOW.md</code> · <b>AI lens:</b> <code>core/STATE/AI_GOALS.md</code></li>
+      </ul>
+    </div>
+
+    <div class="cz-section">
+      <div class="cz-section-label">🤖 AI HANDOFF · WHAT FUTURE CLAUDE CARRIES FORWARD</div>
+      <p class="fs-handoff">
+        <b>The bottleneck is no longer technical.</b> Substrate is Phase-1 complete per the Digital Mirror white paper. What's missing is human action — James pairs Mirror #1, the cohort invites land, the first non-James Champion enters via The Village.
+      </p>
+      <p class="fs-handoff">
+        <b>For future Claude sessions opening this repo:</b> Read <code>NOW.md</code> + <code>AI_GOALS.md</code> + <code>CLAUDE.md</code> first. Substrate work without distribution is now a G4 violation per AI_GOALS.md. Default move when asked to "keep building" is now to refuse-as-service and surface what only James can do (cohort context, Mirror witness pick). Per Mirror Constitution commitment 5: refusal is service.
+      </p>
+      <p class="fs-handoff">
+        <b>Open architectural items:</b> Mirror #1 pairing · Hold-Commit-Release escrow for first Mirror Proof (gateway wallet_id semantics need clarification) · Account-naming reconciliation against gateway's 20 pre-existing Postgres accounts · /witness substrate (drafted in Loop 36, deferred — re-ship when humans are in the field) · Genesis enrollment for fp-credits-gateway.
+      </p>
+      <p class="fs-handoff">
+        <b>Loops 26 → 44 shipped this session.</b> The Game built itself out from Mirror Loop ignition through The Village mockumentary launch over ~36 hours. Field Coherence reads honestly low (0.50). Mirror Roll empty. Champions count: 1. The first humans entering this week is the test the architecture was built for.
+      </p>
+    </div>
+
+    <div class="cz-session-marker">
+      <code>session 1018b927 · loops 26–44 · last commit before terminal close</code>
     </div>
   </div>
 
