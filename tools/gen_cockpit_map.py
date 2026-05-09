@@ -2043,6 +2043,126 @@ body.mode-field .player-only { display: none !important; }
   font-weight: 700;
   letter-spacing: 0.4px;
 }
+/* ===== The Village card (mockumentary funnel) ===== */
+.village-card {
+  background: linear-gradient(135deg, var(--bg-deep) 0%, var(--surface) 100%);
+  border: 2px solid var(--accent);
+  border-radius: 16px;
+  padding: 28px 32px;
+  margin: 16px 0;
+  position: relative;
+  overflow: hidden;
+}
+.village-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(232, 185, 116, 0.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+.vc-header {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 12px;
+  position: relative;
+}
+.vc-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+.vc-status {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(132, 212, 136, 0.15);
+  border: 1px solid var(--good);
+  color: var(--good);
+  text-transform: uppercase;
+  margin-left: auto;
+}
+.vc-headline {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(22px, 3.5vw, 30px);
+  font-weight: 500;
+  color: var(--text-bright);
+  margin-bottom: 12px;
+  line-height: 1.2;
+  position: relative;
+}
+.vc-blurb {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.65;
+  margin: 0 0 18px;
+  max-width: 680px;
+  position: relative;
+}
+.vc-blurb b { color: var(--accent-bright); }
+.vc-blurb em { color: var(--accent); font-style: normal; font-weight: 600; }
+.vc-schedule {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 18px;
+  position: relative;
+}
+@media (max-width: 600px) { .vc-schedule { grid-template-columns: repeat(2, 1fr); } }
+.vc-time {
+  text-align: center;
+  padding: 12px 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.vc-time-peak {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.vc-time-n {
+  display: block;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--accent-bright);
+  line-height: 1;
+}
+.vc-time-lbl {
+  display: block;
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 4px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+.vc-footer { position: relative; }
+.vc-cta {
+  background: var(--surface);
+  border-left: 3px solid var(--accent);
+  padding: 12px 16px;
+  border-radius: 0 8px 8px 0;
+  margin-bottom: 12px;
+}
+.vc-cta-text {
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.vc-meta {
+  color: var(--muted);
+  font-size: 11px;
+  font-style: italic;
+  letter-spacing: 0.3px;
+}
+.vc-meta em { color: var(--text); font-style: italic; }
 /* ===== Camp Zen Operations card ===== */
 .camp-zen-card {
   background: linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%);
@@ -3512,6 +3632,15 @@ setInterval(loadGameState, 60000);
 loadFieldCoherence();
 setInterval(loadFieldCoherence, 60000);
 
+// --- The Village day counter (Day N since 2026-05-09 launch) ----------
+(function updateVillageDayBadge() {
+  const launch = new Date('2026-05-09T00:00:00-06:00'); // Costa Rica time
+  const now = new Date();
+  const days = Math.floor((now - launch) / 86400000) + 1;
+  const badge = document.getElementById('vcDayBadge');
+  if (badge) badge.textContent = `Day ${Math.max(1, days)} · Live`;
+})();
+
 // --- Mirror Roll (paired dyads) -----------------------------------------
 async function loadMirrorRoll() {
   const el = document.getElementById('mirrorRollList');
@@ -3662,34 +3791,45 @@ async function loadPlayerState() {
       if (isCampSteward && !d.champion) {
         // Atlás pre-sign: get him into the Game first, then point to Camp work
         moves.push({icon: '🌀', text: 'Sign the World Peace Agreement', reward: 'enter the Game · → Guest', anchor: '.signature-card-quest', cta: 'Sign'});
+        moves.push({icon: '🎬', text: 'Show up in The Village today', reward: 'share normally · Kai captures · 1st Proof', anchor: '#villageCard', cta: 'View'});
         moves.push({icon: '🪞', text: 'Pair your Digital Mirror', reward: '→ AI Apprentice · +100c', url: '/game/mirror/', cta: 'Open'});
-        moves.push({icon: '📅', text: 'Audit retreat calendar — next 6 months', reward: 'Camp Director · Day 1', anchor: '#campZenOps', cta: 'View'});
       } else if (isCampSteward && !mirrorPaired) {
-        // Atlás signed, no Mirror yet
+        // Atlás signed, no Mirror yet — daily Village action is now central
+        moves.push({icon: '🎬', text: 'Share a moment of your day in The Village', reward: 'Kai captures · auto-Proof', anchor: '#villageCard', cta: 'Plan'});
         moves.push({icon: '🪞', text: 'Pair your Digital Mirror', reward: '→ AI Apprentice · +100c', url: '/game/mirror/', cta: 'Open'});
         moves.push({icon: '📅', text: 'Audit retreat calendar — next 6 months', reward: 'file as proof · +5–20c', anchor: '#campZenOps', cta: 'Begin'});
-        moves.push({icon: '👥', text: '1:1 with each team member', reward: 'Josh · Halley · Michael · Sierra', anchor: '#campZenOps', cta: 'Plan'});
       } else if (isCampSteward) {
         // Atlás full Camp Director mode (Mirror paired, in stabilize/improve phase)
-        moves.push({icon: '🏠', text: 'Spend a full day as a guest', reward: 'find friction · file proof · +20c', anchor: '#campZenOps', cta: 'Plan'});
+        moves.push({icon: '🎬', text: 'Be in today\'s Village cut', reward: 'screening 20:00 dining hall', anchor: '#villageCard', cta: 'Plan'});
         moves.push({icon: '📅', text: 'Confirm next 6 months of retreat dates', reward: 'revenue + risk surfaced', anchor: '#campZenOps', cta: 'Begin'});
         moves.push({icon: '🤝', text: 'Close 2 Anchor Host bookings (with Halley)', reward: '+50c per affiliate sign', anchor: '#campZenOps', cta: 'Plan'});
       } else if (!d.champion) {
+        // Visitor: The Village is the headline path
         moves.push({icon: '🌀', text: 'Sign the World Peace Agreement', reward: '+1 pt · → Guest', anchor: '.signature-card-quest', cta: 'Sign'});
+        moves.push({icon: '🎬', text: 'See The Village (live mockumentary)', reward: 'how the Game plays itself', anchor: '#villageCard', cta: 'View'});
         moves.push({icon: '📖', text: 'Read the Manifesto v1.0', reward: 'understand the frame', anchor: '#manifesto', cta: 'Read'});
-        moves.push({icon: '👀', text: 'See the Champions Roll', reward: 'who else is in', anchor: '#champions', cta: 'View'});
       } else if (!d.card_present) {
         moves.push({icon: '🎴', text: 'Build your Character', reward: '+1 pt · → Player', anchor: '.character-card-quest, .build-character-quest', cta: 'Build'});
+        moves.push({icon: '🎬', text: 'Ask James about The Village invite', reward: 'be in tonight\'s cut', anchor: '#villageCard', cta: 'View'});
         moves.push({icon: '🌱', text: 'File your first Proof', reward: '+2 pts', anchor: '.proof-card-quest, #proof', cta: 'File'});
-        moves.push({icon: '🤝', text: 'Share your invite link', reward: '+3 pts per sign', anchor: '#psInviteUrl', cta: 'Copy'});
       } else if (!mirrorPaired) {
         moves.push({icon: '🪞', text: 'Pair your Digital Mirror', reward: '→ AI Apprentice', url: '/game/mirror/', cta: 'Open'});
-        moves.push({icon: '🌱', text: 'File a Proof', reward: '+2 pts', anchor: '.proof-card-quest, #proof', cta: 'File'});
+        moves.push({icon: '🎬', text: 'Show up in The Village today', reward: 'Kai captures · counts as Proof', anchor: '#villageCard', cta: 'View'});
         moves.push({icon: '🤝', text: 'Share your invite link', reward: '+3 pts per sign', anchor: '#psInviteUrl', cta: 'Copy'});
       } else {
         moves.push({icon: '🌱', text: 'File another Proof', reward: '+2 pts', anchor: '.proof-card-quest, #proof', cta: 'File'});
         moves.push({icon: '🤝', text: 'Bring 1 aligned person in', reward: '+3 pts when they sign', anchor: '#psInviteUrl', cta: 'Copy'});
         moves.push({icon: '👥', text: 'Witness another player\'s proof', reward: 'lifts Field Coherence', anchor: '#proofs', cta: 'View'});
+      }
+
+      // Steward-specific Village CTA refinement
+      const vcCta = document.getElementById('vcCta');
+      if (vcCta) {
+        if (isCampSteward) {
+          vcCta.innerHTML = '<span class="vc-cta-text">You\'re in The Village. Show up today, share normally, Kai patches it into tonight\'s cut at 20:00. <b>Pre-brief 07:30 · Cut review 19:00 · Dining call 19:55</b> — director-only DMs from <code>@sunheartbrain_bot</code>.</span>';
+        } else if (d.champion) {
+          vcCta.innerHTML = '<span class="vc-cta-text">You\'re a Champion. Want in The Village? Reply to James (or DM <code>@fullpotentialgamebot</code>) — invitations from current Villagers count too.</span>';
+        }
       }
 
       // Show/hide Camp Zen Operations card based on steward detection
@@ -5430,6 +5570,31 @@ def render_html() -> str:
     <span id="inviterText">You arrived through someone's invitation.</span>
   </div>
 
+  <div class="village-card" id="villageCard">
+    <div class="vc-header">
+      <div class="vc-label">🎬 THE VILLAGE</div>
+      <div class="vc-status" id="vcDayBadge">Day 1 · Live</div>
+    </div>
+    <div class="vc-headline">A daily 8 PM mockumentary at Camp Zen.</div>
+    <p class="vc-blurb">
+      Each day villagers share whatever they share normally in our Telegram group called <em>The Village</em>. <b>Kai</b> — an AI editor — listens silently, captures the day, and weaves it into a short film we watch together at the dining hall. You're not making content. You're just in the village. The film is the byproduct. Your first share is your first <b>Proof</b> in the Game.
+    </p>
+    <div class="vc-schedule">
+      <div class="vc-time"><span class="vc-time-n">07:30</span><span class="vc-time-lbl">pre-brief</span></div>
+      <div class="vc-time"><span class="vc-time-n">19:00</span><span class="vc-time-lbl">cut review</span></div>
+      <div class="vc-time"><span class="vc-time-n">19:55</span><span class="vc-time-lbl">dining call</span></div>
+      <div class="vc-time vc-time-peak"><span class="vc-time-n">20:00</span><span class="vc-time-lbl">screening</span></div>
+    </div>
+    <div class="vc-footer">
+      <div class="vc-cta" id="vcCta">
+        <span class="vc-cta-text">Want in? Sign the World Peace Agreement first; invitations to The Village come from James or a current Villager.</span>
+      </div>
+      <div class="vc-meta">
+        Genre: <em>mockumentary</em> · Spirit: <em>Zen Comedy — the gap between ideal and human is the joke</em> · Costa Rica time
+      </div>
+    </div>
+  </div>
+
   <div class="identity-prompt" id="identityPrompt">
     <div class="ip-icon">🎮</div>
     <div class="ip-content">
@@ -5515,6 +5680,17 @@ def render_html() -> str:
     <p class="cz-blurb">
       Your role at Camp Zen — Camp Director. The Game guides you day-to-day; James does Friday strategy. The blueprint is your reference; this card tracks your progress through it.
     </p>
+
+    <div class="cz-section">
+      <div class="cz-section-label">🎬 TODAY IN THE VILLAGE</div>
+      <div class="cz-checklist">
+        <div class="cz-task">○ Show up in <code>@OfficialKaibot</code> chat (The Village TG group · Kai is silent)</div>
+        <div class="cz-task">○ Share whatever you'd share normally — text · photo · video</div>
+        <div class="cz-task">○ 19:00 — cut review DM from director (<code>@sunheartbrain_bot</code>)</div>
+        <div class="cz-task">○ 20:00 — screening at the dining hall</div>
+      </div>
+      <p class="cz-metrics-note">Kai listens silently and patches the day into the cut. Comedy comes from noticing, not prompting. Anything you'd rather not see in the cut, just say so — Kai will skip.</p>
+    </div>
 
     <div class="cz-section">
       <div class="cz-section-label">90-DAY STABILIZE — DAYS 1–30</div>
