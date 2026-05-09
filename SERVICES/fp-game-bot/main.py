@@ -219,8 +219,9 @@ async def cmd_start(client, chat_id: int, args: str) -> None:
             f"👋 Welcome — invited by <b>{esc(inviter_attr)}</b>{ctx_line}\n\n"
             "You're a tap from being Champion #N in the Full Potential Game.\n"
             "Type /sign to take the World Peace Agreement (3 minutes).\n"
-            "Your inviter gets +3 Field Score when you sign.\n\n"
-            "Or browse first: /game · /field · /signals")
+            "Your inviter earns +3 Field Score and +50 credits when you sign.\n\n"
+            "After /sign, build your Character Card with /card and set your first "
+            "goal with /setgoal. Browse first if you want: /game · /field · /signals")
     else:
         await tg_send(client, chat_id, WELCOME)
 
@@ -785,6 +786,22 @@ def _render_invite(body: str, name: str, why_them: str, link: str) -> str:
     return out.strip()
 
 
+def _build_web_fallback_link(inviter: str, path: str, cohort: str = "") -> str:
+    """Web URL alternative for recipients who won't install Telegram.
+
+    Lands on fullpotential.com/game/ with inviter attribution. champion-sign
+    reads ?inviter= on sign for affiliate credit.
+    """
+    from urllib.parse import quote
+    base = GAME_URL.rstrip("/") + "/"
+    qs = [f"inviter={quote(inviter)}"]
+    if path and path != INVITE_DEFAULT_PATH:
+        qs.append(f"path={quote(path)}")
+    if cohort:
+        qs.append(f"cohort={quote(cohort)}")
+    return f"{base}?{'&'.join(qs)}"
+
+
 def _build_invite_link(inviter: str, path: str, cohort: str = "") -> str:
     """Tracked Telegram deep-link to @fullpotentialgamebot.
 
@@ -888,6 +905,7 @@ async def cmd_invite(client, chat_id: int, args: str) -> None:
 
     body = templates[parsed["path"]]
     link = _build_invite_link(inviter, parsed["path"], parsed.get("cohort", ""))
+    web_link = _build_web_fallback_link(inviter, parsed["path"], parsed.get("cohort", ""))
     rendered = _render_invite(body, parsed["name"], parsed["why_them"], link)
     _log_invite(inviter, parsed["name"], parsed["contact"], parsed["channel"],
                 parsed["path"], link, parsed["why_them"], parsed.get("cohort", ""))
@@ -907,7 +925,10 @@ async def cmd_invite(client, chat_id: int, args: str) -> None:
         for label, url in deep_links:
             out.append(f'<a href="{esc(url)}">{esc(label)}</a>')
     out.append("")
-    out.append(f"<i>+3 Field Score per signed Champion · /invites for status</i>")
+    out.append(f'🌐 <a href="{esc(web_link)}">Web fallback</a> '
+               "<i>— for recipients who won't install Telegram</i>")
+    out.append("")
+    out.append(f"<i>+3 Field Score and +50 credits per signed Champion · /invites for status</i>")
     await tg_send(client, chat_id, "\n".join(out))
 
 
@@ -965,8 +986,9 @@ async def cmd_invites(client, chat_id: int, args: str) -> None:
         glyph = "✓ signed" if ok else "· sent"
         path = r.get("path", "game")
         ch = f" · {r.get('channel')}" if r.get("channel") and r.get("channel") != "copy-paste" else ""
+        coh = f" · 👥{r.get('cohort')}" if r.get("cohort") else ""
         ts = (r.get("ts") or "")[:10]
-        out.append(f"  <b>{esc(nm)}</b> · {esc(path)}{esc(ch)} · {esc(ts)} · {glyph}")
+        out.append(f"  <b>{esc(nm)}</b> · {esc(path)}{esc(ch)}{esc(coh)} · {esc(ts)} · {glyph}")
     if len(rows) > 15:
         out.append(f"\n<i>… and {len(rows) - 15} older.</i>")
     await tg_send(client, chat_id, "\n".join(out))
@@ -1174,26 +1196,64 @@ async def handle_card_step(client, chat_id: int, text: str) -> None:
 
 # ───────────────────────── per-Champion goals ────────────────────────────
 async def cmd_setgoal(client, chat_id: int, args: str) -> None:
-    """`/setgoal <text>` — set a personal goal. Stored per-Champion."""
+    """`/setgoal <text> [target=...] [timeframe=...]` — set a personal goal.
+
+    Examples:
+      /setgoal Ship retreat booking page
+      /setgoal Find first 3 retreat attendees target=3 timeframe=30d
+      /setgoal Build my Card target="all 4 layers" timeframe=14d
+    """
     name = _saved_name(chat_id)
     if not name:
         await tg_send(client, chat_id, "Sign first: /sign · or <code>/whoami YourName</code>")
         return
-    goal_text = (args or "").strip()
+    raw = (args or "").strip()
+    if not raw:
+        await tg_send(client, chat_id,
+            "🎯 <b>/setgoal &lt;text&gt; [target=...] [timeframe=...]</b>\n\n"
+            "Examples:\n"
+            "<code>/setgoal Ship retreat booking page</code>\n"
+            "<code>/setgoal Find first 3 attendees target=3 timeframe=30d</code>\n"
+            "<code>/setgoal Build my Card target=\"all 4 layers\" timeframe=14d</code>\n\n"
+            "View: /mygoals · close: /completegoal &lt;id&gt;")
+        return
+
+    # Parse target= and timeframe= flags from anywhere in the string.
+    # Supports quoted values. Everything not matched is goal text.
+    target = None
+    timeframe = None
+    flag_re = re.compile(r'(target|timeframe)=(?:"([^"]*)"|(\S+))', re.IGNORECASE)
+    for m in flag_re.finditer(raw):
+        key = m.group(1).lower()
+        val = (m.group(2) if m.group(2) is not None else m.group(3) or "").strip()
+        if key == "target" and val:
+            target = val
+        elif key == "timeframe" and val:
+            timeframe = val
+    goal_text = flag_re.sub("", raw).strip()
     if not goal_text:
         await tg_send(client, chat_id,
-            "🎯 <b>/setgoal &lt;text&gt;</b>\n\n"
-            "Add a personal goal you're working toward.\n"
-            "Example: <code>/setgoal Ship retreat booking page in 14 days</code>\n\n"
-            "View with /mygoals · close with /completegoal &lt;id&gt;.")
+            "🎯 Need a goal text — flags only isn't enough. Try:\n"
+            "<code>/setgoal &lt;your goal&gt; [target=...] [timeframe=...]</code>")
         return
+
+    payload = {"player": name, "goal": goal_text}
+    if target:
+        payload["target"] = target
+    if timeframe:
+        payload["timeframe"] = timeframe
+
     try:
-        r = await api_post(client, "/goal/set", {"player": name, "goal": goal_text})
+        r = await api_post(client, "/goal/set", payload)
         gid = r.get("goal_id", "?")
-        await tg_send(client, chat_id,
-            f"🎯 <b>Goal set</b> · <code>{esc(gid)}</code>\n\n"
-            f"<i>{esc(goal_text)}</i>\n\n"
-            f"View all: /mygoals · complete: <code>/completegoal {esc(gid)}</code>")
+        bits = [f"🎯 <b>Goal set</b> · <code>{esc(gid)}</code>\n", f"<i>{esc(goal_text)}</i>"]
+        meta = []
+        if target: meta.append(f"target: <b>{esc(target)}</b>")
+        if timeframe: meta.append(f"timeframe: <b>{esc(timeframe)}</b>")
+        if meta:
+            bits.append(" · ".join(meta))
+        bits.append(f"\nView all: /mygoals · complete: <code>/completegoal {esc(gid)}</code>")
+        await tg_send(client, chat_id, "\n".join(bits))
     except Exception as e:
         await tg_send(client, chat_id, f"⚠️ Failed to set goal: {esc(str(e))}")
 

@@ -43,6 +43,20 @@ ADMIN_TOKEN = os.environ.get("ADMIN_TOKEN", "").strip()
 
 RETREAT_DIR = Path(os.environ.get("RETREAT_DATA_DIR", "/var/lib/full-potential/retreat-interests"))
 RETREAT_DIR.mkdir(parents=True, exist_ok=True)
+GOALS_DIR = Path(os.environ.get("GOALS_DATA_DIR", "/var/lib/full-potential/goals"))
+GOALS_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def _normalize_cohort_slug(s: Optional[str]) -> Optional[str]:
+    """Canonicalize cohort tags so 'Zen Village', 'zen_village', 'ZENVILLAGE'
+    all map to 'zen-village'. Returns None for empty input."""
+    if not s:
+        return None
+    s = s.strip().lower()
+    s = re.sub(r"[\s_]+", "-", s)
+    s = re.sub(r"[^a-z0-9\-]", "", s)
+    s = re.sub(r"-+", "-", s).strip("-")
+    return s or None
 
 app = FastAPI(title="Champion Sign", version="0.1.0")
 app.add_middleware(
@@ -96,6 +110,10 @@ class SignRequest(BaseModel):
             raise ValueError("contains forbidden characters")
         return v.strip()
 
+    @validator("cohort")
+    def _normalize_cohort(cls, v: Optional[str]) -> Optional[str]:
+        return _normalize_cohort_slug(v)
+
 
 @app.get("/health")
 async def health() -> dict:
@@ -148,15 +166,24 @@ async def sign(req: SignRequest, request: Request) -> dict:
     try:
         import urllib.request
         import urllib.parse
+        cohort_part = f" · cohort: {req.cohort}" if req.cohort else ""
+        inviter_part = f" · invited by {req.inviter}" if req.inviter else ""
         alert_msg = (
             f"🌀 Coherent Champion #{champion_number} signed: {req.name}"
             f"{' (' + (req.handle or '') + ')' if req.handle else ''}"
             f"{' — public' if req.public else ' — private'}"
+            f"{inviter_part}{cohort_part}"
         )
-        data = json.dumps({"message": alert_msg, "source": "champion-sign"}).encode()
+        # Endpoint: POST /send {channel, recipient, message} → 200 queued.
+        # (Pre-2026-05-08 this hit /alert which 404s — silently swallowed by except.)
+        data = json.dumps({
+            "channel": "telegram",
+            "recipient": "default",
+            "message": alert_msg,
+        }).encode()
         urllib.request.urlopen(
             urllib.request.Request(
-                "http://127.0.0.1:8766/alert",
+                "http://127.0.0.1:8766/send",
                 data=data,
                 headers={"Content-Type": "application/json"},
             ),
@@ -258,8 +285,11 @@ async def list_champions(cohort: Optional[str] = None) -> dict:
                     data[key] = val
             if not data.get("public"):
                 continue
-            if cohort and (data.get("cohort") or "").strip().lower() != cohort.strip().lower():
-                continue
+            if cohort:
+                want = _normalize_cohort_slug(cohort) or ""
+                got = _normalize_cohort_slug(data.get("cohort")) or ""
+                if want != got:
+                    continue
             # Strip email for privacy on public roll
             data.pop("email", None)
             champions.append(data)
@@ -1392,6 +1422,218 @@ This signature is **{'PUBLIC' if req.public else 'PRIVATE'}** — {'I consent to
 def _check_admin(token: Optional[str]) -> None:
     if not ADMIN_TOKEN or token != ADMIN_TOKEN:
         raise HTTPException(status_code=401, detail="admin token required")
+
+
+# ───────────────────────── per-Champion goals ────────────────────────────
+class GoalSet(BaseModel):
+    player: str = Field(..., min_length=2, max_length=100)
+    goal: str = Field(..., min_length=3, max_length=500)
+    target: Optional[str] = Field(None, max_length=200)
+    timeframe: Optional[str] = Field(None, max_length=60)
+
+
+def _player_goals_path(player: str) -> Path:
+    slug = re.sub(r"[^a-z0-9]+", "-", player.strip().lower()).strip("-") or "unnamed"
+    return GOALS_DIR / f"{slug}.jsonl"
+
+
+def _read_goals(player: str) -> list[dict]:
+    p = _player_goals_path(player)
+    if not p.exists():
+        return []
+    out: list[dict] = []
+    for line in p.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            out.append(json.loads(line))
+        except Exception:
+            continue
+    by_id: dict = {}
+    for ev in out:
+        gid = ev.get("goal_id")
+        if not gid:
+            continue
+        by_id[gid] = ev
+    return list(by_id.values())
+
+
+@app.post("/goal/set")
+async def goal_set(req: GoalSet) -> dict:
+    """Add a new goal for a Champion. Append-only event log."""
+    import uuid as _uuid
+    goal_id = _uuid.uuid4().hex[:12]
+    row = {
+        "event": "set",
+        "goal_id": goal_id,
+        "player": req.player,
+        "goal": req.goal,
+        "target": req.target,
+        "timeframe": req.timeframe,
+        "ts": datetime.utcnow().isoformat() + "Z",
+        "status": "active",
+    }
+    p = _player_goals_path(req.player)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    with p.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(row, ensure_ascii=False) + "\n")
+    return {"ok": True, "goal_id": goal_id, "player": req.player}
+
+
+@app.get("/goal/list")
+async def goal_list(player: str, status: Optional[str] = None) -> dict:
+    """List a Champion's goals (default: active only). status=all|active|completed."""
+    goals = _read_goals(player)
+    if status != "all":
+        goals = [g for g in goals if g.get("status", "active") == (status or "active")]
+    goals.sort(key=lambda g: g.get("ts", ""), reverse=True)
+    return {"player": player, "count": len(goals), "goals": goals}
+
+
+class GoalComplete(BaseModel):
+    player: str = Field(..., min_length=2, max_length=100)
+    goal_id: str = Field(..., min_length=4, max_length=64)
+    note: Optional[str] = Field(None, max_length=500)
+
+
+@app.post("/goal/complete")
+async def goal_complete(req: GoalComplete) -> dict:
+    """Mark a goal complete. Appends a new event row, doesn't mutate prior."""
+    existing = {g.get("goal_id"): g for g in _read_goals(req.player)}
+    g = existing.get(req.goal_id)
+    if not g:
+        raise HTTPException(status_code=404, detail=f"goal_id not found for player {req.player}")
+    row = {**g, "event": "complete", "status": "completed",
+           "completed_ts": datetime.utcnow().isoformat() + "Z",
+           "completion_note": req.note}
+    p = _player_goals_path(req.player)
+    with p.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(row, ensure_ascii=False) + "\n")
+    return {"ok": True, "goal_id": req.goal_id}
+
+
+# ───────────────────────── cohort organizer view ─────────────────────────
+@app.get("/cohort/{cohort_name}")
+async def cohort_view(cohort_name: str) -> dict:
+    """Per-Champion flow status for one cohort.
+
+    Returns enriched data (signed ✓, card status, # proofs, # affiliates,
+    field_score, active_goals) for every Champion tagged with this cohort.
+    """
+    cohort_lower = _normalize_cohort_slug(cohort_name) or ""
+    if not cohort_lower:
+        raise HTTPException(status_code=400, detail="cohort name required")
+
+    members: list[dict] = []
+    for p in DATA_DIR.glob("*.md"):
+        d = _parse_frontmatter(p)
+        if not d:
+            continue
+        d_cohort = _normalize_cohort_slug(d.get("cohort"))
+        if d_cohort != cohort_lower:
+            continue
+        members.append(d)
+
+    if not members:
+        return {"cohort": cohort_lower, "count": 0, "members": []}
+
+    proofs_by_player: dict[str, int] = {}
+    for p in PROOFS_DIR.glob("*.md"):
+        d = _parse_frontmatter(p)
+        if not d or (d.get("consent") or "").lower() != "public":
+            continue
+        player = (d.get("player") or "").strip().lower()
+        if player:
+            proofs_by_player[player] = proofs_by_player.get(player, 0) + 1
+
+    cards_by_player: dict[str, dict] = {}
+    for p in CARDS_DIR.glob("*.md"):
+        d = _parse_frontmatter(p)
+        if not d:
+            continue
+        owner = (d.get("player") or d.get("owner") or d.get("name") or "").strip().lower()
+        if owner:
+            cards_by_player[owner] = d
+
+    affiliates_by_inviter: dict[str, int] = {}
+    for q in DATA_DIR.glob("*.md"):
+        d = _parse_frontmatter(q)
+        if not d:
+            continue
+        inv = (d.get("inviter") or "").strip().lower()
+        if inv:
+            affiliates_by_inviter[inv] = affiliates_by_inviter.get(inv, 0) + 1
+
+    out_members = []
+    for m in members:
+        name = (m.get("name") or "").strip()
+        name_lower = name.lower()
+        proofs = proofs_by_player.get(name_lower, 0)
+        affs = affiliates_by_inviter.get(name_lower, 0)
+        card = cards_by_player.get(name_lower)
+        has_card = card is not None
+        score = 1 + (1 if has_card else 0) + 2 * proofs + 3 * affs
+        active_goals = [g for g in _read_goals(name) if g.get("status", "active") == "active"]
+        out_members.append({
+            "name": name if m.get("public") else "(private)",
+            "champion_number": m.get("champion_number"),
+            "handle": m.get("handle"),
+            "date_signed": m.get("date_signed"),
+            "inviter": m.get("inviter"),
+            "field_score": score,
+            "proofs": proofs,
+            "affiliates": affs,
+            "card": has_card,
+            "card_level": card.get("level") if has_card else None,
+            "active_goals": [{"goal_id": g.get("goal_id"), "goal": g.get("goal"),
+                              "target": g.get("target"), "timeframe": g.get("timeframe")}
+                             for g in active_goals],
+            "public": bool(m.get("public")),
+        })
+    out_members.sort(key=lambda x: (-x["field_score"], x.get("date_signed") or ""))
+    return {"cohort": cohort_lower, "count": len(out_members), "members": out_members}
+
+
+@app.get("/card/get/{slug}")
+async def get_card(slug: str, admin_token: Optional[str] = None) -> dict:
+    """Return full Card content for a Champion by slug or name."""
+    slug_lower = slug.strip().lower()
+    target_path = None
+    target_data = None
+    for p in CARDS_DIR.glob("*.md"):
+        d = _parse_frontmatter(p)
+        if not d:
+            continue
+        owner = (d.get("player") or d.get("owner") or d.get("name") or "").strip().lower()
+        owner_slug = re.sub(r"[^a-z0-9]+", "-", owner).strip("-")
+        if owner == slug_lower or owner_slug == slug_lower or p.stem.lower() == slug_lower:
+            target_path = p
+            target_data = d
+            break
+    if not target_path:
+        raise HTTPException(status_code=404, detail=f"Card not found for: {slug}")
+
+    text = target_path.read_text(encoding="utf-8")
+    body = re.sub(r"^---\n.*?\n---\n*", "", text, count=1, flags=re.DOTALL)
+    visibility = (target_data.get("visibility_default") or "public").lower()
+    if visibility in ("inner", "sacred"):
+        if admin_token != ADMIN_TOKEN:
+            return {
+                "ok": False,
+                "name": target_data.get("player") or target_data.get("name"),
+                "visibility": visibility,
+                "message": f"Card visibility is '{visibility}' — admin token required to view content.",
+            }
+    return {
+        "ok": True,
+        "name": target_data.get("player") or target_data.get("name"),
+        "visibility": visibility,
+        "level": target_data.get("level"),
+        "date_first_submitted": target_data.get("date_first_submitted"),
+        "date_last_updated": target_data.get("date_last_updated"),
+        "content": body.strip(),
+    }
 
 
 @app.get("/admin/digest")

@@ -482,7 +482,9 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
             "  /projects  — projects ranked most→least important (from NOW.md)\n"
             "  /questions — open inquiries across qb books (fpai/game/sunheart)\n"
             "  /characters — Champions in the Game · roster + KPIs\n"
-            "  /invite NAME [email|phone|@handle] [path] — render invitation + deep link (paths: game/apprenticeship/witnessing/commerce/coaching/retreat/party/village)\n"
+            "  /cohort NAME — per-Champion flow status for one cohort (e.g., zen-village)\n"
+            "  /show-card NAME — view a Champion's Character Card content\n"
+            "  /invite NAME [email|phone|@handle] [path] [cohort=ZV] — render invitation + deep link\n"
             "  /invites — your sent invitations with status (sent/clicked/signed)\n"
             "  /invite-types — list available invitation templates\n"
             "  /match [name] — one specific helpful next move (defaults to James)\n"
@@ -619,6 +621,10 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
         return await _cmd_invites()
     if cmd in ("invite-types", "invite_types", "invitetypes"):
         return await _cmd_invite_types()
+    if cmd == "cohort":
+        return await _cmd_cohort(rest)
+    if cmd in ("show-card", "showcard", "card"):
+        return await _cmd_show_card(rest)
     if cmd == "match":
         return await _cmd_match(rest)
     if cmd == "game":
@@ -982,6 +988,7 @@ _INVITE_TEMPLATES_PATH = _os.path.join(_STATE_DIR, "INVITE_TEMPLATES.md")
 _INVITES_LOG_PATH = _os.path.join(_STATE_DIR, "invites.jsonl")
 _INVITER_NAME = _os.environ.get("INVITER_NAME", "James Sunheart")
 _INVITE_BASE_URL = _os.environ.get("INVITE_BASE_URL", "https://fullpotential.com/game/")
+_GAME_BOT_USERNAME = _os.environ.get("GAME_BOT_USERNAME", "fullpotentialgamebot")
 _DEFAULT_PATH = "game"
 
 # Detection regexes (deliberately permissive — friction-min, not validation)
@@ -1001,12 +1008,17 @@ def _parse_invite_args(rest: str, available_paths: set[str]) -> dict:
     """
     tokens = [t for t in rest.strip().split() if t]
     out = {"name": "", "contact": "", "channel": "", "path": "",
-           "why_them": "", "raw": rest.strip()}
+           "cohort": "", "why_them": "", "raw": rest.strip()}
     name_parts: list[str] = []
     why_parts: list[str] = []
     contact_seen = False
     path_seen = False
     for tok in tokens:
+        # Explicit `cohort=zen-village` (or `c=zen-village`) syntax
+        low = tok.lower()
+        if low.startswith("cohort=") or low.startswith("c="):
+            out["cohort"] = tok.split("=", 1)[1].strip().lower()
+            continue
         if not contact_seen and _RE_EMAIL.match(tok):
             out["contact"] = tok
             out["channel"] = "email"
@@ -1082,13 +1094,30 @@ def _render_template(body: str, name: str, why_them: str, link: str) -> str:
     return out.strip()
 
 
-def _build_tracked_link(path: str) -> str:
-    """Tracked invite link with inviter attribution. champion-sign reads
-    ?inviter= and credits affiliate score on sign (Loop 13)."""
+def _build_tracked_link(path: str, cohort: str = "") -> str:
+    """Tracked Telegram deep-link to @fullpotentialgamebot.
+
+    Payload format: invite_n_<INVITER>_p_<PATH>_c_<COHORT> — markers all
+    optional after `invite_`. Recipients land in the Game-bot, /sign in TG.
+    """
+    from urllib.parse import quote as _quote
+    inviter_slug = _INVITER_NAME.replace(" ", "_")
+    parts = [f"invite_n_{inviter_slug}"]
+    if path and path != _DEFAULT_PATH:
+        parts.append(f"p_{path}")
+    if cohort:
+        parts.append(f"c_{cohort}")
+    payload = "_".join(parts)
+    return f"https://t.me/{_GAME_BOT_USERNAME}?start={_quote(payload)}"
+
+
+def _build_tracked_link_legacy_web(path: str) -> str:
+    """Web fallback URL — kept for cases where TG deep-link won't work
+    (recipient firmly resists installing Telegram). Returns the website
+    URL with inviter attribution that champion-sign reads on sign."""
     from urllib.parse import quote as _quote
     inviter_enc = _quote(_INVITER_NAME)
     base = _INVITE_BASE_URL.rstrip("/") + "/"
-    # Path arg gets passed through for analytics; champion-sign ignores extras
     if path and path != _DEFAULT_PATH:
         return f"{base}?inviter={inviter_enc}&path={_quote(path)}"
     return f"{base}?inviter={inviter_enc}"
@@ -1116,7 +1145,7 @@ def _build_deep_links(channel: str, contact: str, rendered_text: str) -> list[tu
 
 
 def _log_invite(name: str, contact: str, channel: str, path: str,
-                link: str, why_them: str = "") -> None:
+                link: str, why_them: str = "", cohort: str = "") -> None:
     """Append the invite to the immutable log."""
     import json as _json
     from datetime import datetime as _dt
@@ -1127,6 +1156,7 @@ def _log_invite(name: str, contact: str, channel: str, path: str,
         "contact": contact,
         "channel": channel or "copy-paste",
         "path": path,
+        "cohort": cohort,
         "link": link,
         "why_them": why_them,
         "status": "sent",
@@ -1176,15 +1206,16 @@ async def _cmd_invite(rest: str) -> str:
                 f"Available: {tg._esc(path_list)}")
 
     body = templates[args["path"]]
-    link = _build_tracked_link(args["path"])
+    link = _build_tracked_link(args["path"], args.get("cohort", ""))
     rendered = _render_template(body, args["name"], args["why_them"], link)
     _log_invite(args["name"], args["contact"], args["channel"], args["path"],
-                link, args["why_them"])
+                link, args["why_them"], args.get("cohort", ""))
 
     deep_links = _build_deep_links(args["channel"], args["contact"], rendered)
 
+    cohort_part = f" · cohort: <i>{tg._esc(args['cohort'])}</i>" if args.get("cohort") else ""
     lines = [
-        f"📨 <b>Invitation drafted</b> — <i>{tg._esc(args['path'])}</i> path · {tg._esc(args['name'])}",
+        f"📨 <b>Invitation drafted</b> — <i>{tg._esc(args['path'])}</i> path · {tg._esc(args['name'])}{cohort_part}",
     ]
     if args["channel"]:
         lines.append(f"<i>Channel: {tg._esc(args['channel'])} → {tg._esc(args['contact'])}</i>")
@@ -1246,8 +1277,9 @@ async def _cmd_invites() -> str:
         glyph = "✓ signed" if signed else "· sent"
         path = r.get("path", "game")
         ch_part = f" · {r.get('channel')}" if r.get("channel") else ""
+        coh_part = f" · 👥{r.get('cohort')}" if r.get("cohort") else ""
         ts = (r.get("ts") or "")[:10]  # date only
-        lines.append(f"  <b>{tg._esc(name)}</b> · {tg._esc(path)}{tg._esc(ch_part)} · {tg._esc(ts)} · {glyph}")
+        lines.append(f"  <b>{tg._esc(name)}</b> · {tg._esc(path)}{tg._esc(ch_part)}{tg._esc(coh_part)} · {tg._esc(ts)} · {glyph}")
     if len(rows) > 15:
         lines.append(f"\n<i>… and {len(rows) - 15} older.</i>")
     n_signed = sum(1 for r in rows if r.get("name", "").strip().lower() in signed_names)
@@ -1394,6 +1426,113 @@ async def _cmd_characters() -> str:
 
 
 # ───────────────────────────── /match ──────────────────────────────
+async def _cmd_cohort(rest: str) -> str:
+    """Organizer view of a cohort — per-Champion flow status.
+
+    Usage: /cohort zen-village
+    Hits champion-sign /cohort/{name} which returns enriched per-Champion
+    data (signed ✓, card status, # proofs, # affiliates, field_score).
+    """
+    cohort_name = rest.strip().lower()
+    if not cohort_name:
+        return ("👥 <b>/cohort COHORT_NAME</b>\n\n"
+                "Show per-Champion flow status for one cohort. Example:\n"
+                "<code>/cohort zen-village</code>\n\n"
+                "Tag a Champion with cohort by adding <code>cohort=NAME</code> "
+                "to <code>/invite</code> (e.g., <code>/invite Mark mark@x.com retreat cohort=zen-village</code>).")
+
+    import httpx as _httpx
+    try:
+        async with _httpx.AsyncClient(timeout=6.0) as c:
+            r = await c.get(f"{_FPAI_BASE.rstrip('/')}/api/champion/cohort/{cohort_name}")
+            r.raise_for_status()
+            data = r.json()
+    except Exception as e:
+        return f"👥 <b>Cohort: {tg._esc(cohort_name)}</b>\n\nAPI unreachable: {tg._esc(str(e))}"
+
+    members = data.get("members", [])
+    if not members:
+        return (f"👥 <b>Cohort: {tg._esc(cohort_name)}</b>\n\n"
+                f"<i>No Champions tagged with this cohort yet.</i>\n\n"
+                f"Invite someone with <code>/invite NAME contact path cohort={tg._esc(cohort_name)}</code> "
+                f"to start the cohort.")
+
+    lines = [f"👥 <b>Cohort: {tg._esc(cohort_name)}</b> · {len(members)} members\n"]
+    # Aggregate header
+    n_card = sum(1 for m in members if m.get("card"))
+    n_proofs = sum(m.get("proofs", 0) for m in members)
+    n_affs = sum(m.get("affiliates", 0) for m in members)
+    lines.append(f"<i>Aggregate: {n_card}/{len(members)} cards · "
+                 f"{n_proofs} proofs · {n_affs} affiliates</i>\n")
+
+    for m in members[:25]:
+        nm = m.get("name") or "?"
+        cn = m.get("champion_number") or "?"
+        card_glyph = "📇" if m.get("card") else "·  "
+        card_part = f" {card_glyph}" + (f" {tg._esc(m.get('card_level') or '')}" if m.get("card") else "")
+        proofs = m.get("proofs", 0)
+        affs = m.get("affiliates", 0)
+        score = m.get("field_score", 0)
+        flow_bits = []
+        if proofs: flow_bits.append(f"{proofs}🌀")
+        if affs: flow_bits.append(f"{affs}🤝")
+        flow_str = " · ".join(flow_bits) if flow_bits else "no proofs/affs yet"
+        lines.append(f"  <b>#{cn} {tg._esc(nm)}</b>{card_part} · FS {score} · {tg._esc(flow_str)}")
+        for g in (m.get("active_goals") or [])[:3]:
+            gtext = g.get("goal", "")
+            if gtext:
+                lines.append(f"     🎯 <i>{tg._esc(gtext[:80])}</i>")
+
+    if len(members) > 25:
+        lines.append(f"\n<i>… and {len(members) - 25} more.</i>")
+    lines.append(f"\n<i>📇 = card · 🌀 = proof · 🤝 = affiliate · 🎯 = goal · "
+                 f"<code>/show-card NAME</code> for content</i>")
+    return "\n".join(lines)
+
+
+async def _cmd_show_card(rest: str) -> str:
+    """View a Champion's Character Card content (visibility-aware).
+
+    Usage: /show-card NAME
+    For inner/sacred cards, set ADMIN_TOKEN in env to bypass visibility gate.
+    """
+    name_or_slug = rest.strip()
+    if not name_or_slug:
+        return ("📇 <b>/show-card NAME</b>\n\n"
+                "View a Champion's Character Card content.\n"
+                "Example: <code>/show-card James Sunheart</code>")
+
+    import httpx as _httpx
+    admin_token = _os.environ.get("ADMIN_TOKEN", "")
+    params = {"admin_token": admin_token} if admin_token else {}
+    try:
+        async with _httpx.AsyncClient(timeout=6.0) as c:
+            r = await c.get(f"{_FPAI_BASE.rstrip('/')}/api/champion/card/get/{name_or_slug}",
+                            params=params)
+            if r.status_code == 404:
+                return f"📇 <b>No card found for: {tg._esc(name_or_slug)}</b>"
+            r.raise_for_status()
+            data = r.json()
+    except Exception as e:
+        return f"📇 <b>Card lookup failed</b>: {tg._esc(str(e))}"
+
+    if not data.get("ok"):
+        return (f"📇 <b>{tg._esc(data.get('name') or name_or_slug)}</b>\n\n"
+                f"<i>{tg._esc(data.get('message') or 'card not viewable')}</i>")
+
+    name = data.get("name") or name_or_slug
+    level = data.get("level") or "?"
+    visibility = data.get("visibility") or "?"
+    updated = data.get("date_last_updated") or data.get("date_first_submitted") or ""
+    content = data.get("content") or ""
+    # Telegram caps at ~4096; trim if needed
+    if len(content) > 3500:
+        content = content[:3500] + "\n\n…<i>(truncated — view file directly for full)</i>"
+    return (f"📇 <b>Card: {tg._esc(name)}</b> · L{tg._esc(str(level))} · "
+            f"{tg._esc(visibility)} · {tg._esc(updated)}\n\n"
+            f"<pre>{tg._esc(content)}</pre>")
+
+
 async def _cmd_match(rest: str) -> str:
     """One specific helpful next move for the named Champion.
 
