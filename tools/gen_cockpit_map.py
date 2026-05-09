@@ -6016,7 +6016,7 @@ def render_html() -> str:
     </div>
   </div>
 
-  <div class="paths-card" id="pathsCard" style="display:none;">
+  <div class="paths-card" id="pathsCard">
     <div class="paths-header">
       <div class="paths-icon">🌟</div>
       <div class="paths-title-block">
