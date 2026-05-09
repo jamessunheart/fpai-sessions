@@ -148,7 +148,7 @@ A proof-based operating system for human potential. Coherent Champions of CHRIST
   /field — live game-state metrics
   /signals — vital signs · Field Coherence · 30d goal · 7d activity
   /credits — wallet balance · send · history · leaderboard
-  /store — coherent marketplace · credit-accepting offers ranked first
+  /store — marketplace · /store post to list · /store buy &lt;id&gt; to purchase
   /invite — your unique invite link
   /whoami — what name you're registered as
   /help — show this menu
@@ -163,31 +163,52 @@ HELP_TEXT = WELCOME
 
 async def cmd_start(client, chat_id: int, args: str) -> None:
     """Welcome + orientation. If invoked via invite deep-link
-    (?start=invite_INVITER[_PATH]), attribute the inviter for /sign credit
-    and greet with referrer context."""
+    (?start=invite_n_INVITER_p_PATH_c_COHORT), attribute the inviter,
+    path, and cohort so /sign carries them through."""
     STATE.pop(chat_id, None)
     payload = (args or "").strip()
     inviter_attr = None
     path_attr = None
+    cohort_attr = None
     if payload.startswith("invite_"):
         rest_p = payload[len("invite_"):]
-        # Format: invite_FirstName_LastName[_PATH]; PATH is the trailing token
-        # if it matches a known path slug, else everything is the inviter.
-        templates = _load_invite_templates()
-        known_paths = set(templates.keys()) if templates else {INVITE_DEFAULT_PATH}
-        parts = rest_p.split("_")
-        if len(parts) > 1 and parts[-1].lower() in known_paths and parts[-1].lower() != INVITE_DEFAULT_PATH:
-            path_attr = parts[-1].lower()
-            inviter_attr = " ".join(parts[:-1])
+        # New marker format: n_<INVITER>_p_<PATH>_c_<COHORT> (any optional)
+        if rest_p.startswith("n_") or "_p_" in rest_p or "_c_" in rest_p:
+            # Extract cohort first (always at end if present)
+            if "_c_" in rest_p:
+                rest_p, cohort_attr = rest_p.rsplit("_c_", 1)
+                cohort_attr = cohort_attr.strip().lower()
+            if "_p_" in rest_p:
+                rest_p, path_attr = rest_p.rsplit("_p_", 1)
+                path_attr = path_attr.strip().lower()
+            if rest_p.startswith("n_"):
+                rest_p = rest_p[len("n_"):]
+            inviter_attr = rest_p.replace("_", " ").strip()
         else:
-            inviter_attr = " ".join(parts)
-        # Save attribution on the invitee's chat state for downstream /sign
-        ATTRIB[chat_id] = {"inviter": inviter_attr, "path": path_attr or INVITE_DEFAULT_PATH}
+            # Backward-compat: invite_<INVITER>[_<PATH>]
+            templates = _load_invite_templates()
+            known_paths = set(templates.keys()) if templates else {INVITE_DEFAULT_PATH}
+            parts = rest_p.split("_")
+            if len(parts) > 1 and parts[-1].lower() in known_paths and parts[-1].lower() != INVITE_DEFAULT_PATH:
+                path_attr = parts[-1].lower()
+                inviter_attr = " ".join(parts[:-1])
+            else:
+                inviter_attr = " ".join(parts)
+        ATTRIB[chat_id] = {
+            "inviter": inviter_attr,
+            "path": path_attr or INVITE_DEFAULT_PATH,
+            "cohort": cohort_attr or "",
+        }
 
     if inviter_attr:
-        path_line = f" · path: <i>{esc(path_attr)}</i>" if path_attr else ""
+        bits = []
+        if path_attr:
+            bits.append(f"path: <i>{esc(path_attr)}</i>")
+        if cohort_attr:
+            bits.append(f"cohort: <i>{esc(cohort_attr)}</i>")
+        ctx_line = (" · " + " · ".join(bits)) if bits else ""
         await tg_send(client, chat_id,
-            f"👋 Welcome — invited by <b>{esc(inviter_attr)}</b>{path_line}\n\n"
+            f"👋 Welcome — invited by <b>{esc(inviter_attr)}</b>{ctx_line}\n\n"
             "You're a tap from being Champion #N in the Full Potential Game.\n"
             "Type /sign to take the World Peace Agreement (3 minutes).\n"
             "Your inviter gets +3 Field Score when you sign.\n\n"
@@ -219,6 +240,21 @@ async def cmd_store(client, chat_id: int, args: str) -> None:
     """
     args_t = (args or "").strip()
     name = _saved_name(chat_id)
+
+    # Post subcommand — multi-step flow
+    if args_t.lower() == "post":
+        if not name:
+            await tg_send(client, chat_id,
+                "Sign first to list an offer: /sign\n"
+                "(Or set your name with <code>/whoami YourName</code> if you signed elsewhere.)")
+            return
+        STATE[chat_id] = {"flow": "store", "step": "title", "data": {"owner_handle": name}}
+        await tg_send(client, chat_id,
+            "🛍 <b>List an offer in the Coherent Store</b>\n\n"
+            "I'll walk you through 5 quick fields. Type /cancel to back out anytime.\n\n"
+            "<b>1. Title</b> — what's the offer? "
+            "(e.g. \"60-min Coaching Session\" or \"Hand-bound Journal\")")
+        return
 
     # Buy subcommand
     if args_t.lower().startswith("buy "):
@@ -690,11 +726,16 @@ def _load_invite_templates() -> dict:
 
 def _parse_invite_args(rest: str, available: set) -> dict:
     tokens = [t for t in (rest or "").strip().split() if t]
-    out = {"name": "", "contact": "", "channel": "", "path": "", "why_them": ""}
+    out = {"name": "", "contact": "", "channel": "", "path": "", "cohort": "", "why_them": ""}
     name_parts: list = []
     why_parts: list = []
     contact_seen = path_seen = False
     for tok in tokens:
+        # Explicit `cohort=zen-village` (or `c=zen-village`) syntax
+        low = tok.lower()
+        if low.startswith("cohort=") or low.startswith("c="):
+            out["cohort"] = tok.split("=", 1)[1].strip().lower()
+            continue
         if not contact_seen and _RE_INVITE_EMAIL.match(tok):
             out["contact"] = tok
             out["channel"] = "email"
@@ -736,16 +777,22 @@ def _render_invite(body: str, name: str, why_them: str, link: str) -> str:
     return out.strip()
 
 
-def _build_invite_link(inviter: str, path: str) -> str:
+def _build_invite_link(inviter: str, path: str, cohort: str = "") -> str:
     """Tracked Telegram deep-link to @fullpotentialgamebot.
 
-    Prefer Telegram deep-link over web URL — invitees stay in TG, can /sign
-    without context-switch. Bot's /start handler reads `invite_INVITER_PATH`
-    payload to set attribution.
+    Payload format (markers, all optional after invite_):
+        invite_n_<INVITER>_p_<PATH>_c_<COHORT>
+    Path/cohort omitted when default/empty. Backward-compat: also parses the
+    older `invite_<INVITER>` and `invite_<INVITER>_<PATH>` forms.
     """
     from urllib.parse import quote
     inviter_slug = inviter.replace(" ", "_")
-    payload = f"invite_{inviter_slug}_{path}" if path != INVITE_DEFAULT_PATH else f"invite_{inviter_slug}"
+    parts = [f"invite_n_{inviter_slug}"]
+    if path and path != INVITE_DEFAULT_PATH:
+        parts.append(f"p_{path}")
+    if cohort:
+        parts.append(f"c_{cohort}")
+    payload = "_".join(parts)
     return f"https://t.me/{BOT_USERNAME}?start={quote(payload)}"
 
 
@@ -770,7 +817,7 @@ def _build_invite_deep_links(channel: str, contact: str, rendered: str) -> list:
 
 
 def _log_invite(inviter: str, name: str, contact: str, channel: str,
-                path: str, link: str, why_them: str = "") -> None:
+                path: str, link: str, why_them: str = "", cohort: str = "") -> None:
     from datetime import datetime as _dt
     row = {
         "ts": _dt.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -779,6 +826,7 @@ def _log_invite(inviter: str, name: str, contact: str, channel: str,
         "contact": contact,
         "channel": channel or "copy-paste",
         "path": path,
+        "cohort": cohort,
         "link": link,
         "why_them": why_them,
         "status": "sent",
@@ -831,14 +879,15 @@ async def cmd_invite(client, chat_id: int, args: str) -> None:
         return
 
     body = templates[parsed["path"]]
-    link = _build_invite_link(inviter, parsed["path"])
+    link = _build_invite_link(inviter, parsed["path"], parsed.get("cohort", ""))
     rendered = _render_invite(body, parsed["name"], parsed["why_them"], link)
     _log_invite(inviter, parsed["name"], parsed["contact"], parsed["channel"],
-                parsed["path"], link, parsed["why_them"])
+                parsed["path"], link, parsed["why_them"], parsed.get("cohort", ""))
 
     deep_links = _build_invite_deep_links(parsed["channel"], parsed["contact"], rendered)
 
-    out = [f"📨 <b>Invitation drafted</b> — <i>{esc(parsed['path'])}</i> · {esc(parsed['name'])}"]
+    cohort_part = f" · cohort: <i>{esc(parsed['cohort'])}</i>" if parsed.get("cohort") else ""
+    out = [f"📨 <b>Invitation drafted</b> — <i>{esc(parsed['path'])}</i> · {esc(parsed['name'])}{cohort_part}"]
     if parsed["channel"]:
         out.append(f"<i>Channel: {esc(parsed['channel'])} → {esc(parsed['contact'])}</i>")
     else:
@@ -1015,8 +1064,11 @@ async def handle_sign_step(client, chat_id: int, text: str) -> None:
                 payload["why"] = data["why"]
             # Carry attribution from /start invite_X deep-link, if any
             attrib = ATTRIB.pop(chat_id, None)
-            if attrib and attrib.get("inviter"):
-                payload["inviter"] = attrib["inviter"]
+            if attrib:
+                if attrib.get("inviter"):
+                    payload["inviter"] = attrib["inviter"]
+                if attrib.get("cohort"):
+                    payload["cohort"] = attrib["cohort"]
             r = await api_post(client, "/sign", payload)
             num = r.get("champion_number", "?")
             _save_name(chat_id, data["name"])
@@ -1519,10 +1571,102 @@ COMMAND_HANDLERS = {
     "proof": cmd_proof,
 }
 
+async def handle_store_step(client, chat_id: int, text: str) -> None:
+    """Multi-step /store post flow: title → desc → credits → usd → url → confirm."""
+    state = STATE[chat_id]
+    step = state["step"]
+    data = state["data"]
+
+    if step == "title":
+        if len(text.strip()) < 2 or len(text) > 120:
+            await tg_send(client, chat_id, "Title should be 2–120 characters. Try again, or /cancel.")
+            return
+        data["title"] = text.strip()
+        state["step"] = "description"
+        await tg_send(client, chat_id,
+            f"✓ Title: <b>{esc(data['title'])}</b>\n\n"
+            f"<b>2. Description</b> — a few sentences (2000 char max), or type <code>skip</code>.")
+        return
+
+    if step == "description":
+        if text.strip().lower() not in ("skip", "-", "none"):
+            data["description"] = text[:2000].strip()
+        state["step"] = "credits"
+        await tg_send(client, chat_id,
+            "<b>3. Price in credits</b> — number, or <code>0</code> for USD-only.\n"
+            "<i>Tip: credit-only offers rank above hybrid above USD-only.</i>")
+        return
+
+    if step == "credits":
+        try:
+            v = int(text.strip())
+            if v < 0 or v > 1_000_000:
+                raise ValueError()
+            data["price_credits"] = v if v > 0 else None
+        except Exception:
+            await tg_send(client, chat_id, "Reply with a whole number (or 0). Try again, or /cancel.")
+            return
+        state["step"] = "usd"
+        await tg_send(client, chat_id,
+            "<b>4. Price in USD</b> — number (e.g. <code>50</code> or <code>49.99</code>), or <code>0</code> for credit-only.")
+        return
+
+    if step == "usd":
+        try:
+            v = float(text.strip())
+            if v < 0 or v > 1_000_000:
+                raise ValueError()
+            data["price_usd"] = v if v > 0 else None
+        except Exception:
+            await tg_send(client, chat_id, "Reply with a number (or 0). Try again, or /cancel.")
+            return
+        if not data.get("price_credits") and not data.get("price_usd"):
+            await tg_send(client, chat_id,
+                "An offer must have a price. Restart with <code>/store post</code>.")
+            STATE.pop(chat_id, None)
+            return
+        state["step"] = "url"
+        await tg_send(client, chat_id,
+            "<b>5. Link</b> (optional) — paste a URL where buyers can learn more, or type <code>skip</code>.")
+        return
+
+    if step == "url":
+        if text.strip().lower() not in ("skip", "-", "none"):
+            url = text.strip()
+            if not (url.startswith("http://") or url.startswith("https://")):
+                await tg_send(client, chat_id, "URL must start with http:// or https://. Try again, or <code>skip</code>.")
+                return
+            data["url"] = url[:500]
+        # Submit
+        try:
+            r = await api_post(client, "/store/post", {
+                "owner_handle": data.get("owner_handle"),
+                "title": data.get("title"),
+                "description": data.get("description"),
+                "price_credits": data.get("price_credits"),
+                "price_usd": data.get("price_usd"),
+                "url": data.get("url"),
+            })
+            STATE.pop(chat_id, None)
+            tier_label = {0: "💎 Credit-only", 1: "⚖️ Hybrid", 2: "💵 USD-only"}.get(r.get("tier"), "?")
+            await tg_send(client, chat_id,
+                f"✅ <b>Posted.</b>\n\n"
+                f"<b>{esc(data.get('title') or '')}</b>\n"
+                f"Tier: {tier_label} · credit share <b>{r.get('credit_share', 0):.2f}</b>\n"
+                f"Offer ID: <code>{esc(r.get('offer_id', ''))}</code>\n\n"
+                f"View: <a href=\"https://fullpotential.com/game/store/\">fullpotential.com/game/store</a>\n"
+                f"<i>Tip: credit-accepting offers get more visibility — by design.</i>")
+        except Exception as e:
+            STATE.pop(chat_id, None)
+            await tg_send(client, chat_id, f"⚠️ Post failed: {esc(e)}\nTry <code>/store post</code> again.")
+        return
+
+
 FLOW_HANDLERS = {
     "sign": handle_sign_step,
     "card": handle_card_step,
     "proof": handle_proof_step,
+    "store": handle_store_step,
 }
 
 
