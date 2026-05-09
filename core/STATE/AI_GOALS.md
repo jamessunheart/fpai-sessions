@@ -2,7 +2,7 @@
 
 **Purpose:** A second-tier SSOT alongside `NOW.md`. NOW.md is the founder's priority lens; this file is the AI system's working-goal lens. AI sessions read this on session start to know what they're aligned on. James reads this to see what the AI is currently optimizing for and propose adjustments.
 
-**Last Updated:** 2026-05-08 (Loop 21 · session `fcf4bb02`)
+**Last Updated:** 2026-05-08 (post-Loop 35 — Mirror Loop + Field Coherence + bridged credit/store ecosystem)
 **Founder priority (mirrored from NOW.md):** First non-James human to engage with the Game (sign / file proof / express path interest) within 30 days. The substrate is built; what's missing is one other human in it.
 
 ---
@@ -51,6 +51,29 @@ When a session ends with state worth preserving for the next session, append her
 - Sibling sessions today shipped Loops 14-17 (UX, gamification, identity prompt + animated metrics, Inquiry Layer + Books); this session shipped Loops 18-20 (retreat substrate, public roll, paths overview)
 - Sibling added LEADS_DIR to champion-sign — they're building lead-capture for visitors who don't sign (funnel-top complement to G1)
 - Active inquiry in qb game book: "Who's coming to the first Zen Village retreat..." (q-20260508-456895)
+
+**2026-05-08 · Loops 26–35 · session `1018b927`:**
+- Major substrate buildout, all in service of G1 (operational substrate for first non-James player) and G4 (substrate honesty over theater).
+- **Mirror Loop substrate (Loop 26):** Constitution v1.0 + Initiation Prompt v1 + `/api/champion/mirror/register` + `/api/champion/mirror/roll` + `/game/mirror/` page. Bot has explicit "WHAT YOU ARE NOT" — points players to /game/mirror to pair their own Mirror; never roleplays as one.
+- **Field Coherence v0 (Loop 27):** `/api/champion/signals` + `/signals` Telegram command. Headline reads honestly low (currently 0.50) because Witness component requires Distance-Weighted (per white paper §4.5), and zero of 22 proofs are DW-witnessed. The substrate now self-measures.
+- **Player-first dashboard reorg (Loops 28–29):** player-state above goal, foundational checkmarks (✓ WPA / ○ Character / ○ Mirror Paired) on identity card, Field Coherence panel, Top 3 Next Moves stage-aware grid replacing single match button. Founder Goal demoted (still visible, no longer dominant).
+- **Coherent Credit + Store (Loops 30–31):** built parallel ledger first; James flagged. Then **bridged to canonical fp-credits-gateway in Loop 32** — `/credits/balance/send/grant/history/leaderboard` and `/store/buy` all route to gateway. James has 979 fp_credits in canonical gateway; ledger.jsonl is now historical audit only.
+- **Earn hooks (Loop 34):** `/sign` (with inviter) + `/proof/submit` + `/mirror/register` auto-credit via gateway. Schedule: affiliate sign +50 (to inviter), proof file +5 (any) or +20 (DW), DW witness +30, mirror pair +100. The architecture pays most for distance-weighted witnessing — exactly what Field Coherence asks the field to grow.
+- **Public store + bot post (Loops 33, 35):** /game/store/ web page (anyone can browse + list) and `/store post` 5-step Telegram flow (anyone can list from phone). Three architect offers seeded: Mirror Witnessing (50c), Coaching (150c), Retreat (500c+$1500).
+
+**Open architecturally:**
+- **Mirror #1 (Founding Steward) not yet paired** — gates on James choosing a Distance-Weighted Witness from his Formation Circle (NOT me, NOT a co-founder, NOT a paid employee, NOT a romantic partner — per §4.5). When this happens, Field Coherence's Witness component finally moves above 0.0.
+- **Hold-Commit-Release escrow for Mirror first-proof (deferred Loop)** — gateway has the primitive but uses `wallet_id` semantics that diverge from the `account_id` we're using. Returned "Insufficient balance. Has 0.0" on a 979-credit account. Needs deeper gateway code reading or actual Mirror #1 + first-proof to test against.
+- **Account-naming reconciliation** — gateway has 20 pre-existing Postgres accounts; we've been creating Game accounts under handle slugs. May collide.
+- **Genesis enrollment** — gateway logs `Genesis: Not enrolled` at boot. Unrelated to Game work but flagged.
+
+**Operational state on the canonical gateway (post-Loop 32 bridge):**
+- Master key: `02d7ceaf...` (server-only, in `/etc/fp-credits-gateway.env`)
+- fp-game service key: `fps_d199...` (in `/etc/champion-sign.env`)
+- James balance: 979 fp_credits
+- Two test accounts: `test_buyer` (1c), `test_friend` (25c) — smoke-test artifacts; can be left or refunded.
+
+**The bottleneck is no longer technical.** Substrate is operationally complete for Phase 1 of the white paper. What's missing: (a) James pairing Mirror #1, (b) one non-James human entering the funnel.
 
 ---
 

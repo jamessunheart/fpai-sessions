@@ -1,8 +1,8 @@
 # CURRENT_STATE — Living SSOT
 
-**Last Updated:** 2026-05-08 (Session: Loop 21 — Goal panel + AI_GOALS.md SSOT shipped)
+**Last Updated:** 2026-05-08 (post-Loop 35 — `/store post` multi-step bot flow)
 **Updated By:** Claude (in FPAI_Cockpit, with James)
-**System Status:** 🟢 OPERATIONAL — The Game is playing itself
+**System Status:** 🟢 OPERATIONAL — substrate at 35 loops; funnel still empty of non-James humans
 
 > **🎯 30-day goal:** First non-James human to engage with the Game (sign / file proof / express path interest). The substrate is built; what's missing is one other human in it.
 >
@@ -13,7 +13,7 @@
 ## 🎯 CURRENT PRIORITY (The ONE Thing)
 
 ### Priority: The Full Potential Game — Founder's First Game / Zen Village substrate
-**Status:** 🟢 ACTIVE — 20+ loops shipped in 36 hours, 9 Paradigm Shifts (see proofs/ for canonical count)
+**Status:** 🟢 ACTIVE — 35 loops shipped in ~48 hours (see proofs/ for canonical count). Substrate is saturated; the gate is now distribution, not features.
 **Live at:** `https://fullpotential.com/game`
 **Decision filter:** proof / revenue / clarity / ease — 30-day horizon
 
@@ -25,6 +25,25 @@ The Game is the operational form of the Zen Village vision: a substrate where Ch
 
 | # | Title | Type | Date |
 |---|---|---|---|
+| 35 | `/store post` multi-step bot flow — list offers from Telegram | Feature | 2026-05-08 |
+| 34 | Earn hooks · auto-credit on architecturally-honest actions (witness +30, affiliate +50, mirror +100) | Paradigm Shift | 2026-05-08 |
+| 33 | `/game/store` web page · Commerce + Mirror surfaced as live paths | Feature | 2026-05-08 |
+| 32 | Bridge champion-sign `/credits` → fp-credits-gateway · canonical SSOT (eliminates parallel ledger) | Fix | 2026-05-08 |
+| 31 | `/store` substrate · Coherent Marketplace | Feature | 2026-05-08 |
+| 30 | `/credits` substrate · Coherent Credit ledger v0 | Feature | 2026-05-08 |
+| 29 | Top 3 Next Moves · stage-aware action grid on dashboard | Feature | 2026-05-08 |
+| 28 | Player-first dashboard · Field Coherence + foundational checkmarks | Feature | 2026-05-08 |
+| 27 | `/signals` + Field Coherence v0 — substrate tells the truth about itself | Paradigm Shift | 2026-05-08 |
+| 26 | Mirror Loop ignition · Phase 1 substrate (Mirror Constitution) | Paradigm Shift | 2026-05-08 |
+| 25 | `/capabilities` command + `CAPABILITIES.md` SSOT | Feature | 2026-05-08 |
+| 24 | `/match` works in the Game dashboard (not only Telegram) | Feature | 2026-05-08 |
+| 23 | Cards → Characters · `/match` · `/game` (architect bundle) | Paradigm Shift | 2026-05-08 |
+| 22 | Port Adam ROI ledger + opportunities scan into `@sunheartbrain_bot` · `/servers` | Feature | 2026-05-08 |
+| 21 | 🎯 Goal panel on Game dashboard + `AI_GOALS.md` SSOT + `CLAUDE.md` orientation | Paradigm Shift | 2026-05-08 |
+| 20 | One Game, many paths — Paths overview panel + `@fullpotentialgamebot` Telegram bot | Paradigm Shift | 2026-05-08 |
+| 19 | Public retreat-interest roll · `/diagnose` redesign · lead-capture form · founder TG ping | Deliverable | 2026-05-08 |
+| 18 | Champion → retreat seat funnel substrate (Field Score → seat path) | Paradigm Shift | 2026-05-08 |
+| 17 | Inquiry Layer / qb books (`fpai` / `game` / `sunheart` / per-character) | Paradigm Shift | 2026-05-08 |
 | 16 | Leaderboard · top Champions / Affiliates / Loops · live `/api/champion/leaderboard` + section on `/game` | Feature | 2026-05-08 |
 | 15 | Retreat interest-capture card · "FIRST RETREAT — COSTA RICA" · most-direct funnel close | Feature | 2026-05-08 |
 | 14 | Dashboard UX pass · 12 of 15 improvements (progressive disclosure, Stage Badge, Quick Ref Rail, mobile bar, Your Contributions) | Deliverable | 2026-05-08 |
@@ -48,19 +67,19 @@ The Game is the operational form of the Zen Village vision: a substrate where Ch
 
 ---
 
-## ❓ LOOP 17 — next funnel-close move
+## ❓ LOOP 33 — what's calling next
 
-**Frame:** The Game IS the retreat funnel. Loops 15 (Retreat interest-capture) and 16 (Leaderboard) just shipped. The retreat card now collects signal directly; the leaderboard adds mid-funnel competitive visibility. Next move converts a *signaled* Champion → a *committed* retreat attendee.
+**Frame change:** Loops 17–32 saturated the substrate (qb books, retreat funnel, paths, goal panel, `/match` in-Game, `/capabilities`, Mirror Loop, Field Coherence, Top-3 Next Moves, `/credits` bridged to canonical fp-credits-gateway). Adding more substrate without distribution is now a G4 violation. **The bottleneck is human signal, not features.**
 
-Remaining ranked options:
+Ranked options:
 
-- **(d) Store + Coherent Credit** — Field Score becomes a redeemable currency for retreat seats. Most direct conversion mechanism. Biggest scope.
-- **(c) Match algorithm** — Card-to-Card compatibility builds the retreat cohort; pairs Champions for in-person sessions.
-- **(e) Witness Roster activation** — non-Claude witnesses turn the Game into the multi-witness community a retreat actually is.
-- **(a) Public Player State pages** (`?player=NAME`) — top-of-funnel shareable, drives invites.
-- **Wait for signal** — let retreat-card interest capture run for ~24h before deciding; the field tells you what to build next.
+- **(distribution) First 5–10 invitations** — Q#2 (open in qb game book) names this as the gate. Substrate is ready; James-side work is drafting + sending. Highest direct G1 leverage. Needs James in the loop.
+- **(witness) Activate non-Claude Witness Roster** — turns the Game into the multi-witness community a retreat actually is; deepens any incoming Champion's experience.
+- **(public) Player State pages (`?player=NAME`)** — top-of-funnel shareable, multiplies whatever invites do go out.
+- **(hygiene) Prune frozen units** — `cocoon`, `godmode`, `projects-dashboard`, `whaletrack-magnetic-trader`, `streasury-bot`. Per `feedback_cruft_bias.md`. Pure G4 hygiene; clears the working board so the next substrate loop is picked from a real list.
+- **(wait) Hold for signal** — let retreat-interest capture + lead-capture form run; let the field choose what's next.
 
-**Open:** James to pick. Two Claude sessions are running in parallel and have started coordinating via NOW.md after the Loop 14 collision; before any deploy, both should re-pull the file and check for in-flight work (per `feedback_parallel_session_safety.md`).
+**Open:** James to pick. Sibling sessions: check `git log` + `proofs/` before claiming Loop 33 (per `feedback_parallel_session_safety.md`).
 
 ---
 
