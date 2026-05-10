@@ -51,6 +51,20 @@ Default no on anything that doesn't produce one of those.
 - Substrate: 261 services, ~6 active 14d, rest paused/frozen
 - Bias: deprioritize and delete, not add
 
+## Method (prototype 1 of Camp Zen Founder/Creator Camp)
+
+James embodies the offer Camp Zen will productize:
+
+1. **REST first** — cocoon, presence, no grinding
+2. **VISION with AI** — canonical layer holds state; AI keeps continuity
+3. **STEWARDS execute** — AI Roster runs domains while James rests
+4. **PASSIVE INCOME through coherence** — stewarded systems compound
+
+Camp Zen Founder/Creator Camp = productized version. James is prototype 1.
+The Village mockumentary documents the lived demo.
+
+Maps to Zen Village arc: REST → RECHARGE → REENGAGE.
+
 ## Feedback rules (always-apply)
 - Default to AI-side execution over human-side (speed)
 - Bias toward deprioritizing/deleting, not adding

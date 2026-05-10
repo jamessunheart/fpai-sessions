@@ -24,6 +24,7 @@ Each AI has a canonical note at `core/STATE/roster/<NAME>_CANONICAL.md`.
 | **Game Steward** | Champions, Field Coherence, loops | TODO | 39 |
 | **Ops Steward** | Servers, infra costs, deploys | TODO | 40 |
 | **Brain Steward** | Canonical notes, memory integrity, sync | TODO | 40 |
+| **Vision Steward** | Listens to rest, surfaces vision, writes to canonical (for Champions/Camp Zen guests) | TODO | 41 |
 
 ---
 
