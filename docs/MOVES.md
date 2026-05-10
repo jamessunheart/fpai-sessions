@@ -35,3 +35,13 @@ Each entry:
 2026-05-09T17:57Z | mission_control.log       | _archive/ephemeral/         | log file (gitignored — filesystem move only) | <pending>
 ```
 
+### Batch 2 — 2026-05-09 — root cleanup, stale planning docs
+
+```
+2026-05-09T18:02Z | URGENT_HIRE_REDDIT_MANAGER.txt | _archive/planning/ | stale task file                | <pending>
+2026-05-09T18:02Z | has_spec.txt                   | _archive/planning/ | stale planning artifact        | <pending>
+2026-05-09T18:02Z | INTEGRATION_ROADMAP.md         | _archive/planning/ | superseded planning doc        | <pending>
+2026-05-09T18:02Z | MIGRATION_LOG.md               | _archive/planning/ | superseded planning doc        | <pending>
+```
+
+
