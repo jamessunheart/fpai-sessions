@@ -1,8 +1,8 @@
 # TREASURY SCHEMA
 
 **Source of truth:** structure of James's consolidated Treasury (Trust + Church + Companies).
-**Numbers live in:** brain notes `treasurer_resources_<date>` — NOT in this repo.
-**Last updated:** 2026-05-09 (Loop 37)
+**Numbers live in:** `~/.config/fpai/treasury/treasurer_resources_<date>.md` (local) + brain notes (cross-tool, when MCP works) — NOT in this repo.
+**Last updated:** 2026-05-11 (snapshot 2026-05-11 added BitTrue, Coinbase, Silver, Scheduled Inflows, Payables; yield strategy framework adopted)
 
 ---
 
@@ -24,29 +24,51 @@ Sunheart Private Trust (James = trustee)
 
 ## Sub-account categories
 
-### Liquid — Banks
-- MACU CN (Cora Nation member account)
-- SHV Checking
-- CN Market
-- Wise (Cora)
-- Wells Fargo
-- Joint BOA
-- PayPal
+### Liquid — Banks (USD)
+
+**MACU (multi-account):**
+- Cora Nation Checking
+- Sunheart Venture Checking
+- Trustee Checking
+- Cora Nation Market
+- Cora Nation Savings
+- Trustee Money Market (×2 — currently empty, available)
+- Sunheart Venture Savings
+
+**Other USD on/off-ramps:**
+- Coinbase (on-ramp; transit / yield home for USDC)
+- Wise (Cora) — has built-in Interest Assets product (~3-4%)
+- Wells Fargo (Trustee)
+- Joint BOA (w/ Elif)
+- PayPal (james@fullpotential.com)
 - Venmo
-- Other Held: Michael M *(flag — meaning TBD)*
+- Kapi (prepaid)
+
+**Co-held (NOT Trust funds — flag separately):**
+- Bitjungle Michael M
+- Bitjungle Henry
 
 ### Liquid — Crypto
-- BTR
-- SH Trust Wallet
-- B Jungle
-- Atomic
-- HOT
-- Kapi
+
+**Exchanges (CEX):**
+- BitTrue — Spot · USDC · Futures (see Open Positions for live derivatives)
+- Coinbase USDC (when active)
+
+**Self-custody wallets:**
+- Trust Wallet — Sunheart Treasury, HOT, Other Misc
+- Atomic Wallet
+- Bitjungle — James portion only
+
+**Yield-bearing crypto (potential / active — see yield strategy):**
+- JitoSOL (Solana liquid staking, ~7-8% APY)
+- USDC in Aave / Spark / Pendle PT / sDAI
+
+### Near-liquid — Bullion
+- Silver (US Silver Eagle ounces — dealer replacement value)
 
 ### Properties (illiquid)
 - Business
 - Property
-- Silver
 
 ### Vehicles (illiquid)
 - Range Rover
@@ -54,7 +76,11 @@ Sunheart Private Trust (James = trustee)
 - Mercedes
 - RV
 
-### Pending Inflows (scheduled, NOT counted in runway)
+### Scheduled Inflows (near-term, high confidence)
+- OneBPO monthly contribution → CN church (variable $15-30k typical; April 2026 was $35,500)
+- Other contracted / invoiced income as it arises
+
+### Pending Inflows (long-dated / low confidence — NOT counted in runway)
 - BEP recovery (US Bureau of Engraving & Printing, damaged-currency review, ~6mo timeline)
 
 ### Shadow Receivables (low-confidence, NOT counted in runway)
@@ -62,10 +88,18 @@ Sunheart Private Trust (James = trustee)
 - Norman (eventual, no timeline)
 - Casey (written off — archive)
 
-### Liabilities
+### Liabilities (credit cards)
 - Amex
-- Sunheart Visa
+- Sunheart Ventures Visa
 - (extend as needed)
+
+### Payables (soft liabilities — due soon, not yet paid)
+- Person-by-person, dated
+- Treated as near-term cash outflow (subtract from net spendable)
+
+### Open Positions (live derivatives / yield positions)
+- Tracked in `~/.config/fpai/treasury/treasurer_resources_<date>.md` + memory `project_treasury_open_positions.md`
+- Each position has: venue, size, entry, mark, stop level, max-loss, hedge counterpart (if any)
 
 ---
 
@@ -91,6 +125,17 @@ Sunheart Private Trust (James = trustee)
 **AI / Infrastructure:**
 - Servers (verified $805/mo all-in)
 - AI tools (Cursor Ultra + Anthropic Max ~$300/mo)
+
+---
+
+## Treasury policy (mandate, 2026-05-11)
+
+> **Do not gamble with resources. Find sure wins. Get optimal yields.**
+
+- Positions must be defined-risk (hard stops or capped downside structures)
+- No single venue holds more than 50% of liquid Treasury (counterparty diversification rule)
+- Idle USDC must have a yield path within one snapshot cycle
+- Yield tier hierarchy lives in memory `reference_treasury_yield_strategy.md`
 
 ---
 

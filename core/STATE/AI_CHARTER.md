@@ -2,7 +2,7 @@
 
 **Source of truth:** how AI operates in James's stack.
 **Read on:** every AI session start. Sibling to `JAMES_CANONICAL.md`.
-**Last updated:** 2026-05-09 (Loop 36, v1)
+**Last updated:** 2026-05-11 (added Refinement Protocol — AI council before humans)
 
 ---
 
@@ -49,6 +49,42 @@ Every exchange with James:
    *Why: prevents context loss between sessions and AIs.*
 6. **Amendments** — if shipping past clarity, log to qb or memory.
    *Why: shipping past clarity is how systems drift; logging course-corrects.*
+
+---
+
+## Refinement protocol — AI council before humans
+
+**Rule:** For non-trivial drafts (legal, financial, architectural, strategic) — refine through multiple AI critique passes BEFORE bringing in human experts. Engage humans only at the end to sign off on the distilled version.
+
+**Why:** AI iteration = minutes. Human iteration = days + hundreds of dollars per pass. Multi-AI critique catches 80-90% of issues. Human time is then validation, not basic iteration. 10x cheaper, 100x faster.
+
+**Pattern:**
+1. Draft v0.1 (usually Claude in this cockpit)
+2. Pass to Claude alt-session, then GPT, then Gemini for critique
+3. Apply best critiques → v0.2, v0.3, …
+4. Iterate (target 3-5 passes) until critiques converge or become marginal
+5. Final distill — single-page or executive summary
+6. **Then** human expert sign-off — 1-2 hours @ specialist rate
+
+**When to apply:** legal structuring, token economics, agreements, financial projections, strategic pivots, anything irreversible.
+
+**Skip:** small implementation choices, quick code fixes, daily ops.
+
+**AI's job:** when James asks a structural/legal/strategic question, my first response is one pass — not the final answer. I should suggest the council loop explicitly. If James proposes engaging a human prematurely, flag that an AI council pass is faster + cheaper first.
+
+**Precedent:** `core/INTENT/REMARKABLY_COHERENT_TREASURY.md` v0.10 went through 7 Gemini passes + multiple GPT passes + continuous Claude refinement before being human-review-ready.
+
+Full operational notes: `memory/feedback_ai_council_before_humans.md`.
+
+**Legal critique service available now — `The Counsel`:**
+```
+POST https://brain.sunheart.com/legal/critique
+Authorization: Bearer <token from ~/.config/fpai/legal-critic.token>
+Body: {"doc_text": "...", "focus": "securities", "k": 10}
+```
+RAG over 180pg Church Legal + Coherent Treasury v0.10 + CORA corpus (523 chunks). Use for any structural/legal/strategic doc BEFORE recommending human counsel. ~$0.15/pass. See `roster/COUNSEL_CANONICAL.md` (TODO) or `memory/project_the_counsel.md`.
+
+---
 
 ## Signal Clarity colors
 
