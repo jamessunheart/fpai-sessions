@@ -1,12 +1,14 @@
 # CURRENT_STATE — Living SSOT
 
-**Last Updated:** 2026-05-09 (Day 1 of *The Village* mockumentary)
+**Last Updated:** 2026-05-09 (Loop 37 — reframe to vision-hold + AI-execute = passive income)
 **Updated By:** Claude (in FPAI_Cockpit, with James)
-**System Status:** 🟢 OPERATIONAL — substrate at 35 loops; **Day 1 of *The Village* (the mockumentary) starts today (2026-05-09)**. Kai (silent listener AI) captures media in The Village TG group; first cut at 19:00 CR; screening at 20:00 in the dining hall.
+**System Status:** 🟢 OPERATIONAL — substrate at 37 loops; canonical layer + AI Roster + Treasury schema shipped today. James entering vision-hold mode; AI Context Steward + planned Human Context Steward handle execution.
 
-> **🎯 30-day goal:** First non-James human enters the Game by joining *The Village* — the daily mockumentary of Camp Zen. Path: join The Village TG group → share a moment of your day → Kai captures it → that's your first Proof.
+> **🎯 30-day goal:** Ship first paid Camp Zen / Zen Village-related offer (Bottleneck Session $500-1,500, 14-day launch plan) and **receive first revenue**. James holds vision; AI Roster runs substrate. Camp Zen / ZV-related offers are the easiest passive-income jumpstart.
 >
-> **🤖 AI working goals** are tracked in [`core/STATE/AI_GOALS.md`](AI_GOALS.md). Founder reads it to see what the AI system is optimizing for; AI sessions read it on startup to align across terminals.
+> **Path:** Day 1-2 finalize Bottleneck Session offer + assets · Day 3-7 outreach (10/day from warm list) · Day 8-12 deliver first sessions · Day 13-14 systematize · upsell flow into Full Potential Breakthrough Program ($2.5-10k+) or Camp Zen Founder/Creator Camp.
+>
+> **🤖 AI working goals** are tracked in [`core/STATE/AI_GOALS.md`](AI_GOALS.md). **Identity + operating rules** in [`JAMES_CANONICAL.md`](JAMES_CANONICAL.md), [`AI_CHARTER.md`](AI_CHARTER.md), [`AI_ROSTER.md`](AI_ROSTER.md). The whole canonical layer auto-loads on every AI session (per `CLAUDE.md`).
 
 ---
 
@@ -19,14 +21,18 @@
 
 The Game is the operational form of the Zen Village vision: a substrate where Champions sign Agreements, build Character Cards, file Proofs, and now invite affiliates. Every action is on-chain in the substrate (file-backed), every share has measurable consequence (Field Score), and Loop N+1 is the next adaptive move.
 
-### *The Village* (mockumentary) — Day 1 wiring (live as of 2026-05-09)
-- **Genre:** mockumentary · **spirit:** Zen Comedy (gap between ideal and human is the joke)
-- **Kai listener daemon:** `kai-listener.service` on brain server, capturing The Village TG group (chat_id `-5254235033`) → `/var/lib/kai/captures/<date>/`
-- **Two-bot split:** `@OfficialKaibot` (Kai — silent in The Village group) · `@sunheartbrain_bot` (private director DM only — never in any group)
-- **Director-only pings:** 07:30 pre-brief · 19:00 cut review · 19:55 dining call (Costa Rica time)
-- **First Cohort:** Atlas, Halley, Josh, Sierra, Delaney
-- **Written companion:** *Field Notes from The Village* (Substack), nightly
-- **Wiring memory:** `~/.claude/projects/-Users-jamessunheart-FPAI-Cockpit/memory/reference_zen_comedy.md`
+### *The Village* (mockumentary) — 🟡 deferred (concept preserved)
+- Originally planned Day 1 launch 2026-05-09, but screenings + group not actually launched.
+- Frame preserved as future content engine for Camp Zen + Cohort enrollment.
+- Kai listener daemon spec ready when activated.
+- First Cohort (Atlas, Halley, Josh, Sierra, Delaney, Cheyenne) still named but enrollment shape TBD.
+- Wiring memory: `reference_zen_comedy.md`.
+
+### Camp Zen / Zen Village-related offers — 🟢 ACTIVE passive-income jumpstart
+- **Bottleneck Session** ($500-1,500, 90-min) — smallest paid offer, 14-day launch plan (see `~/.claude/memory-global/reference_bottleneck_session.md`)
+- **Full Potential Breakthrough Program** ($2.5-10k, 4-12wk) — upsell from Bottleneck
+- **Camp Zen Founder/Creator Camp** — productized "Rest + AI Vision = Passive Income" (the trunk, see `reference_trunk_branches.md`)
+- **Zen Village retreats / Saturday Social** — physical-world activations
 
 ---
 
@@ -76,20 +82,24 @@ The Game is the operational form of the Zen Village vision: a substrate where Ch
 
 ---
 
-## ❓ LOOP 36 — what's calling next
+## ❓ LOOP 38 — what's calling next
 
-**Big shift since last entry:** James named the **first cohort** — Atlas, Halley, Josh, Sierra, Delaney, Cheyenne (memory: `project_first_cohort.md`). Q#2 — the umbrella inquiry that's gated G1 for ~30 loops — just got its first answer. Substrate work without distribution is no longer ambiguous; it's a G4 violation. **The next move is human, not code.**
+**Big shift Loop 37 (2026-05-09):** Consolidation + reframe.
+- 10 commits shipped: canonical layer (`JAMES_CANONICAL`, `AI_CHARTER`, `AI_ROSTER`, `TREASURER_CANONICAL`, `HUMAN_CONTEXT_STEWARD_SPEC`, `TREASURY_SCHEMA`), pre-reorg safety net, root cleanup (81→40 entries, 23 dirs to `_archive/projects/`), Telegram spec.
+- Cross-project memory built (`~/.claude/memory-global/` symlinked from each project).
+- James enters **vision-hold mode**: AI Context Steward (Claude Code) + planned Human Context Steward (Alice candidate) execute.
+- Atlás invite was sent earlier but fit-in-Game unclear; Village mockumentary deferred.
+- New 30-day target = **first paid revenue** via Camp Zen / ZV-related offer.
 
-Ranked options:
+Ranked options for Loop 38:
 
-- **(landing · pre-flight) Verify Atlás's first 30 seconds** — he's getting the invite now; what does a logged-out stranger see at `fullpotential.com/game`? Is sign flow clean from a fresh browser? Does founder TG ping fire on champion-sign? AI-side, no James input needed, ~5min. *Most valuable right now because Atlás could click any minute.*
-- **(distribution · queued) Next 5 invitations** — Halley, Josh, Sierra, Delaney, Cheyenne. Need channels + ~1 sentence per person on relationship/path-fit before drafting. Open gate is Q-AI-1 (drafting authorization).
-- **(witness) Activate non-Claude Witness Roster** — turns the Game into the multi-witness community an incoming cohort needs; deepens whoever lands first.
-- **(public) Player State pages (`?player=NAME`)** — top-of-funnel shareable, multiplies whatever invites do go out.
-- **(hygiene) Continue cruft prune** — sibling cleared 104 legacy planning docs in 6aed2be0 (parallel to this loop reconcile). ~15 untracked root-level docs from later sessions still pending (`*_BUILT.md`, `*_BLOCKED.md`, deploy tarballs). Frozen service units (`cocoon`, `godmode`, `projects-dashboard`, `whaletrack-magnetic-trader`, `streasury-bot`) still pending.
-- **(wait) Hold for Atlás response** — first real human signal in the system. What he says (or doesn't) shapes how the next 5 invitations get framed.
+- **(revenue · highest leverage) Bottleneck Session 14-day launch — Day 1** — finalize offer + price + assets. Build landing page Day 2. Outreach script Day 3. Most direct path to first revenue (your own "smallest paid offer in 14 days" plan).
+- **(infra · 5sec from James) `/quit` + reopen Claude Code** — picks up brain MCP `ingest` scope fix → AI Stewards write across surfaces (Cursor + Telegram inherit canonical + Treasury snapshots).
+- **(spec→ship) Ship `/treasurer` Telegram handler** (Loop 37 spec ready at `core/STATE/roster/TREASURER_TELEGRAM_SPEC.md`) → real weekly digests, real numbers, real visibility.
+- **(hire) Send Human Context Steward spec to candidate Alice** — unblocks Master Vault Trunk-6 #1. Spec at `core/STATE/roster/HUMAN_CONTEXT_STEWARD_SPEC.md`.
+- **(deferred) Atlás follow-up + cohort path** — was rushed. Hold until Bottleneck Session offer is live so there's something concrete to invite into.
 
-**Open:** James to pick. Sibling sessions: check `git log` + `proofs/` before claiming Loop 36 (per `feedback_parallel_session_safety.md`).
+**Open:** James in vision-hold. AI defaults to executing highest-leverage move unless James redirects. Sibling sessions: check `git log` + `proofs/` before claiming Loop 38 (per `feedback_parallel_session_safety.md`).
 
 ---
 
@@ -121,9 +131,9 @@ Ranked options:
 
 | # | Goal | Target | Timeframe | Current state |
 |---|---|---|---|---|
-| 1 | **Enroll first cohort of Champions across the Game's multi-path funnel** | 10 real Champions in the network, each routed to ≥1 path (apprenticeship / village / parties / retreats / commerce / coaching / witnessing) | 30 days | 1 Champion (James #1) · 0 affiliates · cohort named (6) · **first invitation in flight to Atlás** |
-| 2 | **First Zen Village retreat — date + first 3 commitments** | Date set + price set + 3 confirmed attendees | 30 days | 0 retreat-interest submissions · interest form live · no date/price/capacity set |
-| 3 | **Card-completion rate ≥80% for enrolled Champions** | 8/10 Cards filled (Aspirational + Reality layers, witnessed) | 45 days | 0/1 cards filled · Card Quest live · AI Port-In prompt ready |
+| 1 | **First paid Camp Zen / ZV-related revenue** | First Bottleneck Session sold ($500-1,500), client served, testimonial captured | 14-30 days | 0 sold · 14-day launch plan ready (`reference_bottleneck_session.md`) |
+| 2 | **AI Roster operational — Treasurer + AI Context Steward live** | `/treasurer` handler shipped on @sunheartbrain_bot · weekly digest cron · cross-tool brain sync working | 30 days | canonicals shipped Loop 37 · Telegram handler specced · brain MCP ingest scope fixed (pending /quit) |
+| 3 | **Human Context Steward hired (Trunk-6 #1)** | Alice (or other candidate) signed + onboarded · interface contract with AI Context Steward live | 45 days | spec written (`HUMAN_CONTEXT_STEWARD_SPEC.md`) · not yet sent |
 
 *To modify: edit this section, then `SERVICES/sunheart-brain/ingest/sync_now_to_brain.sh` to push.*
 
