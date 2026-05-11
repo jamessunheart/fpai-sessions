@@ -44,4 +44,39 @@ Each entry:
 2026-05-09T18:02Z | MIGRATION_LOG.md               | _archive/planning/ | superseded planning doc        | <pending>
 ```
 
+### Batch 3 — 2026-05-09 — root cleanup, frozen project dirs
+
+```
+# Reorganized after freshness audit:
+# - whitepapers/ → docs/ (kept accessible, single white paper)
+# - accounting/ stays at root (Treasurer data source — see TREASURER_CANONICAL.md)
+# - All other ~23 root project dirs moved to _archive/projects/
+
+2026-05-09T18:05Z | whitepapers/                     | docs/whitepapers/                     | white paper kept accessible in docs tree         | <pending>
+2026-05-09T18:05Z | church-treasury/                 | _archive/projects/church-treasury/    | only __pycache__ residue (no source files)       | <pending>
+2026-05-09T18:05Z | satellites/                      | _archive/projects/satellites/         | test_satellite only, no real services            | <pending>
+2026-05-09T18:05Z | marketing/                       | _archive/projects/marketing/          | 2 LinkedIn promo .md, never committed            | <pending>
+2026-05-09T18:05Z | apprentice-os/                   | _archive/projects/apprentice-os/      | Apprentice OS WIP (P2 paused), never committed   | <pending>
+2026-05-09T18:05Z | cocoon/                          | _archive/projects/cocoon/             | NOW.md cruft watch (server+brain), never committed | <pending>
+2026-05-09T18:05Z | pulse/                           | _archive/projects/pulse/              | fpai-pulse related (dead per memory)             | <pending>
+2026-05-09T18:05Z | cora-loop/                       | _archive/projects/cora-loop/          | Cora agent project, unclear status               | <pending>
+2026-05-09T18:05Z | projects-dashboard/              | _archive/projects/projects-dashboard/ | NOW.md cruft watch, never committed              | <pending>
+2026-05-09T18:05Z | fullpotential_ai/                | _archive/projects/fullpotential_ai/   | 434M, 12k files, last commit 2025-11-27          | <pending>
+2026-05-09T18:05Z | whaletrack-magnetic-trader/      | _archive/projects/whaletrack-magnetic-trader/ | last commit 2025-11-25                 | <pending>
+2026-05-09T18:05Z | magnet-trading-system/           | _archive/projects/magnet-trading-system/      | last commit 2025-11-25                 | <pending>
+2026-05-09T18:05Z | godmode/                         | _archive/projects/godmode/            | NOW.md cruft watch, last commit 2025-11-25       | <pending>
+2026-05-09T18:05Z | missions/                        | _archive/projects/missions/           | last commit 2025-11-25                           | <pending>
+2026-05-09T18:05Z | specs/                           | _archive/projects/specs/              | last commit 2025-11-23                           | <pending>
+2026-05-09T18:05Z | opt/                             | _archive/projects/opt/                | last commit 2025-11-23                           | <pending>
+2026-05-09T18:05Z | remote_frontend/                 | _archive/projects/remote_frontend/    | last commit 2025-11-23                           | <pending>
+2026-05-09T18:05Z | systems/                         | _archive/projects/systems/            | last commit 2025-11-21                           | <pending>
+2026-05-09T18:05Z | Magnetic Trading/                | _archive/projects/Magnetic Trading/   | last commit 2025-11-21                           | <pending>
+2026-05-09T18:05Z | fpai-analytics/                  | _archive/projects/fpai-analytics/     | empty, last commit 2025-11-21                    | <pending>
+2026-05-09T18:05Z | i-proactive/                     | _archive/projects/i-proactive/        | empty, last commit 2025-11-21                    | <pending>
+2026-05-09T18:05Z | church-guidance-funnel/          | _archive/projects/church-guidance-funnel/     | last commit 2025-11-15                  | <pending>
+2026-05-09T18:05Z | white-rock-landing/              | _archive/projects/white-rock-landing/         | last commit 2025-11-15                  | <pending>
+2026-05-09T18:05Z | custom-gpt-services/             | _archive/projects/custom-gpt-services/        | last commit 2025-11-15                  | <pending>
+```
+
+
 

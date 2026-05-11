@@ -1,0 +1,15 @@
+[Unit]
+Description=Full Potential Projects Dashboard
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/fpai/projects-dashboard
+ExecStart=/opt/fpai/projects-dashboard/venv/bin/python -m uvicorn server:app --host 0.0.0.0 --port 8660
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+

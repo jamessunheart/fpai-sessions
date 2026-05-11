@@ -1,0 +1,61 @@
+{
+  "name": "Metric Alert Workflow",
+  "description": "Triggered when a metric crosses a threshold. Sends notification via Telegram.",
+  "nodes": [
+    {
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "parameters": {
+        "path": "metric-alert",
+        "httpMethod": "POST"
+      }
+    },
+    {
+      "name": "Check Severity",
+      "type": "n8n-nodes-base.if",
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.severity }}",
+              "operation": "equals",
+              "value2": "critical"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Send Telegram (Critical)",
+      "type": "n8n-nodes-base.telegram",
+      "parameters": {
+        "chatId": "{{ $env.TELEGRAM_CHAT_ID }}",
+        "text": "🔴 CRITICAL ALERT\n\nMetric: {{ $json.metric }}\nValue: {{ $json.value }}\nThreshold: {{ $json.threshold }}\nTime: {{ $json.timestamp }}"
+      }
+    },
+    {
+      "name": "Send Telegram (Warning)",
+      "type": "n8n-nodes-base.telegram",
+      "parameters": {
+        "chatId": "{{ $env.TELEGRAM_CHAT_ID }}",
+        "text": "🟡 Warning Alert\n\nMetric: {{ $json.metric }}\nValue: {{ $json.value }}\nThreshold: {{ $json.threshold }}"
+      }
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [["Check Severity"]]
+    },
+    "Check Severity": {
+      "main": [["Send Telegram (Critical)"], ["Send Telegram (Warning)"]]
+    }
+  },
+  "settings": {
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true
+  },
+  "tags": ["alerts", "governance"],
+  "notes": "Import this workflow into n8n via the web UI. Configure Telegram credentials first."
+}
+
+

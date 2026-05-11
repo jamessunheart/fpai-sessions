@@ -31,6 +31,8 @@ Track cash, costs, runway. Report weekly. Escalate by trigger.
 - `/servers` data on `@sunheartbrain_bot` (Adam ROI ledger, Loop 22)
 - fp-credits-gateway `/balance` API (master key in `/etc/fp-credits-gateway.env`)
 - `core/STATE/COSTS.md` (manual ledger for non-server costs — TODO create)
+- `accounting/` (root dir) — expense analysis scripts (Amex/Venmo/categorized);
+  Treasurer can read or extend here
 - `treasurer_income_log` + `treasurer_expense_log` brain notes
 - Opening cash position: TBD (privacy: encrypted on brain server, not repo)
 

@@ -1,0 +1,10 @@
+{
+  "cycle_number": 0,
+  "timestamp": null,
+  "status": "initialized",
+  "locked_by": null,
+  "cora_directive": null,
+  "operator_report": null,
+  "sunheart_steering": [],
+  "history": []
+}
