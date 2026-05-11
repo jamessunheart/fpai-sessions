@@ -1,9 +1,34 @@
 # OneBPO → CORA Nation Transfer Pricing Policy v0.1
 
-**Status:** DRAFT — for immediate adoption; supersedes any prior informal practice. Subject to refinement after counsel engagement.
-**Date adopted:** 2026-05-11
-**Adopted by:** [OneBPO independent board / CORA Nation board — initials required before activation]
+**Status:** DRAFT v0.1 — preconditions identified by Counsel sanity-check (2026-05-11). DO NOT ADOPT YET. See "🛑 Preconditions before Policy adoption" below.
+**Date drafted:** 2026-05-11
+**Adopted by:** [pending preconditions — see below]
 **Review cadence:** Quarterly; full board re-ratification annually.
+
+---
+
+## 🛑 PRECONDITIONS BEFORE POLICY ADOPTION (added 2026-05-11 post-sanity-check)
+
+This Policy cannot be operative until ALL of the following are confirmed. Counsel sanity-check identified that adopting without these creates **worse** legal exposure than no policy at all:
+
+### Precondition #1 — Confirm genuine Independent Directors EXIST on OneBPO board NOW
+- Independence is **behavioral, not structural**. The IRS tests independence by looking for observable dissent on other boards.
+- Independent Directors must: NOT be James, NOT be CORA Nation members, NOT be Sunheart entity employees, NOT be personal friends or business partners of James, AND have a documentable history of independent judgment.
+- **If OneBPO does NOT currently have 2+ Directors meeting this standard:** recruit them BEFORE the Policy is adopted. Convening a paper meeting with non-independent directors creates a false paper trail that is worse than no paper trail.
+
+### Precondition #2 — Confirm OneBPO's jurisdiction of incorporation + applicable corporate law
+- OneBPO is likely a Philippine corporation (per references in Coherent Treasury v0.10 to Philippine wage operations).
+- Philippine corporate law (Revised Corporation Code, R.A. 11232) governs board composition, director qualifications, and resolution formalities — NOT US-style paper meetings.
+- **Required:** 1-hour consultation with Philippine corporate attorney to confirm: (a) jurisdiction, (b) whether independent-director composition described here is permitted, (c) what formalities are required for valid board resolutions, (d) whether non-resident directors can exercise the authority described.
+
+### Precondition #3 — Document April $35,500 contemporaneously now, NOT as "retroactive ratification"
+- "Retroactive ratification" is legally imprecise. Boards cannot retroactively make a past transfer arm's-length; they can document the contemporaneous understanding that motivated it.
+- Better framing: a **Contemporaneous Documentation Resolution** that records what OneBPO's leadership understood about the April $35,500 transfer at the time it was made — its purpose, its classification, its arm's-length character. This is honest. Retroactive ratification is not.
+- Documentation should reflect: leadership's understanding *at the time* (not reconstructed today), why no quid pro quo existed, and adoption of this Policy as the going-forward framework.
+
+**Until all three preconditions are satisfied, do not convene a board meeting under this Policy.**
+
+---
 
 ---
 
@@ -23,9 +48,9 @@ Every OneBPO → CORA Nation transfer must be classified as ONE of:
 - OneBPO makes a voluntary donation to CORA Nation's religious mission
 - No goods or services received in return (no quid pro quo)
 - No benefit flowing back to OneBPO or James personally
-- OneBPO claims charitable deduction (IRC §170)
-- CORA Nation receives donative income (no UBIT)
-- **Approval required:** OneBPO independent board resolution; CORA Nation board acknowledgment
+- **Tax treatment caveat:** If OneBPO is a Philippine corporation, IRC §170 (US charitable deduction) does NOT apply directly. Philippine corporate tax rules govern. CORA Nation's tax treatment of receipt is US-side; the donor-side treatment depends on OneBPO's tax jurisdiction. Cross-border charitable deductibility is complex — counsel must opine.
+- CORA Nation receives donative income (no UBIT analysis on Type A)
+- **Approval required:** OneBPO independent board resolution under applicable corporate law; CORA Nation board acknowledgment
 
 ### Type B: Commercial Payment for Services
 - CORA Nation provides specific identifiable services to OneBPO at fair market value
@@ -72,9 +97,11 @@ This documentation is stored locally at `~/.config/fpai/treasury/onebpo_transfer
 
 ---
 
-## Retroactive ratification — April 2026 contribution
+## Contemporaneous Documentation — April 2026 contribution
 
-The April 2026 contribution of **$35,500** is hereby ratified retroactively under this Policy:
+(Replaces what v0.1 called "retroactive ratification" — see Precondition #3 above for why language matters.)
+
+The April 2026 contribution of **$35,500** is hereby documented per OneBPO's contemporaneous understanding at the time of the transfer:
 
 - **Date:** 2026-04-30 (assumed; confirm actual transfer date)
 - **Amount:** $35,500

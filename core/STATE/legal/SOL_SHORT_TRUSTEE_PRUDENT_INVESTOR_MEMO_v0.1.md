@@ -7,6 +7,39 @@
 
 ---
 
+## 🛑 PRECONDITION BEFORE EXECUTING ANY PATH (added 2026-05-11 post-sanity-check)
+
+**Confirm the Sunheart Private Trust's actual legal character first.** The "prudent investor standard" analysis below applies if and only if the Trust is a US-jurisdictioned charitable trust or otherwise subject to UPIA. Different trust forms have materially different fiduciary frameworks:
+
+- **Revocable living trust:** Trustee has broad latitude; UPIA may not apply directly during settlor's lifetime
+- **Irrevocable charitable trust:** UPIA applies fully; trustee fiduciary duties to beneficiaries (including the religious community) are strict
+- **Foreign trust:** Different jurisdictional rules apply (FBAR/FATCA reporting if US person is involved)
+- **Express purpose trust:** Trust instrument's stated purposes may explicitly permit or prohibit specific investment types
+
+**Action before executing Path A, B, or anything else:**
+1. Locate the actual Trust instrument (declaration of trust, trustee handbook, formation documents)
+2. Identify: jurisdiction of formation, trust type, named trustees, beneficiary class, permitted investments, prudent-investor language
+3. If Trust instrument is unclear or missing, engage trust counsel BEFORE any disposition action
+
+Without confirming the Trust's character, the entire prudent-investor framing of this memo may be over- or under-stated.
+
+**Path A (close the position) is the safest action regardless of Trust character** — it removes ambiguity from the Trust and aligns with the new Treasury Policy. So Path A can proceed without confirming Trust character first if speed matters more than analysis. But Path B (transfer to personal) has tax + related-party + fiduciary issues that depend heavily on Trust character — do NOT proceed with Path B without trust-counsel review.
+
+---
+
+## Path B mechanics — expanded caveats (added 2026-05-11 post-sanity-check)
+
+If considering Path B (transfer position to personal account):
+- **Tax basis:** Transfer at "fair value" creates a deemed sale for the Trust at the transfer price. Realized P&L at that price is fixed; tax-basis to James personally starts at that price. Document carefully.
+- **Related-party transfer rules:** Trust transferring to its trustee personally is a related-party transaction. IRC §267 or state-level fiduciary law may impose restrictions.
+- **Fiduciary breach risk:** Transferring a position to a trustee personally at a price favorable to the trustee (vs the Trust) is a breach of fiduciary duty. Must be at genuine fair-market value, contemporaneously documented, ideally with independent valuation.
+- **Insurance / professional liability:** If trustee has professional E&O coverage, Path B may not be covered (related-party self-dealing exclusion).
+- **Documentation:** Path B requires far more documentation than Path A. Consider engaging an independent valuation specialist for the transfer price.
+
+**Recommendation re-confirmed:** Path A (close) is the safest choice. Path B is acceptable but requires more legal work than this memo specifies.
+
+---
+
 ## The issue (per Counsel critique 2026-05-11)
 
 The 3x leveraged short SOL position is indefensible under the **prudent investor standard** (Uniform Prudent Investor Act, adopted in most US states) when held inside a charitable trust that supports a 508(c)(1)(A) religious community.

@@ -19,6 +19,23 @@ Per Counsel: *"Before onboarding any more Champion Stack members to commercial o
 
 ---
 
+## 🛑 PRECONDITION TO LLC FORMATION (added 2026-05-11 post-sanity-check)
+
+**Identify Cheyenne's state of legal residence FIRST.** This affects two material decisions:
+
+1. **LLC formation choice:**
+   - If Cheyenne lives in her home state, forming an LLC in Delaware (or any state other than home) means registering as a foreign LLC in her home state — added cost ($100-300/yr registered agent in BOTH states), added compliance, no real benefit for a small services LLC.
+   - For Sapphire's scale (psychic readings, single member, simple commercial activity): **Cheyenne's home state is likely the cleanest choice** unless she has specific reason for Delaware.
+   - Delaware is best for entities raising outside investment or planning multi-state expansion. Sapphire is neither.
+
+2. **Psychic services regulatory profile:**
+   - State licensing requirements vary substantially: California has local fortune-telling ordinances; New York §165.35 requires "entertainment only" disclaimer to avoid Class B misdemeanor; Florida varies by county; most other states have lighter rules.
+   - The right disclaimer language and pricing posture depends on Cheyenne's residence + where her clients are.
+
+**Action before LLC filing:** Confirm Cheyenne's state of residence and her primary client geography. Form the LLC accordingly. The Delaware-default in v0.1 may not be the right answer for her specific situation.
+
+---
+
 ## Action sequence
 
 ### Immediate (this week) — Interim guardrails until LLC is formed
