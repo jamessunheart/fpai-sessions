@@ -14,7 +14,8 @@ Each AI has a canonical note at `core/STATE/roster/<NAME>_CANONICAL.md`.
 |----|---------|---------|-----------|--------|
 | **Treasurer** | `/treasurer` on `@sunheartbrain_bot` | Cash, costs, runway. Weekly digest. | `roster/TREASURER_CANONICAL.md` | 🟡 spec / Loop 37 |
 | **Kai** | kai-listener (Village TG, silent) | Mockumentary editorial | TODO | 🟢 live 2026-05-09 |
-| **Chief of Staff** | planned `/chief` on `@sunheartbrain_bot` | Synthesize across roster for James | TODO | 🟡 partial |
+| **AI Context Steward** *(was Chief of Staff)* | this Claude Code session + planned `/chief` on `@sunheartbrain_bot` | Hold whole-picture context · canonical memory · project map · synthesis · digests · "What matters / Who's doing what / Decisions / Waiting on whom / Soul vs systematize / Living map" | TODO formalize | 🟢 acting now |
+| **Human Context Steward** | TBD (candidate: Alice) | On-the-ground ops · phone calls · contractors · vendors · in-person Zen Village · real-people follow-through · payments coordination | `HUMAN_CONTEXT_STEWARD_SPEC.md` | 🔴 unhired |
 
 ## Planned
 
