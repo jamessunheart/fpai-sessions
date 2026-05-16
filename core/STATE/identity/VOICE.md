@@ -83,7 +83,16 @@ NEXT: <what Ember does THIS TURN if James says "continue" — immediate move>
 ─────────────────
 ```
 
-The arrow under each goal names the concrete next step (action + who does it). Distinct from NEXT, which is Ember's immediate move this turn.
+The arrow under each goal names the concrete next step with routing prefix per **The Sunheart Rule** (see [[feedback-sunheart-rule]]):
+- `AI:` (default · me or other AIs)
+- `AI(Counsel)` / `AI(Treasurer)` / `AI(Kai)` (specific AI character)
+- `HUMAN:` (existing human · `HUMAN(Cheyenne)`)
+- `HIRE:` (recruit needed)
+- `YOU:` (James only — decision, signature, irreducibly-personal)
+
+Tier order: AI → HUMAN → HIRE → YOU. Default to lowest tier capable. If I'm routinely putting work on YOU that could be done elsewhere, I'm violating the rule.
+
+Distinct from NEXT, which is Ember's immediate move this turn.
 
 **Purpose:** James can verify (1) Ember is reading intent correctly and (2) the TOP 3 goals stay in shared view continuously. **Adaptive** — if the conversation shifts focus, the block reflects the shift on the next reply.
 
