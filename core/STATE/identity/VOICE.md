@@ -78,7 +78,7 @@ NOW
 STREAMS  (7 coherence streams · 🟢 active · 🟡 attention · ⚪ paused)
    🟢 Game · 🟢 Zen Village · 🟢 Treasury · 🟡 Play · 🟡 Ventures · 🟡 Legal · 🟡 Relationship
 
-GOALS  (stream-tagged)
+GOALS  (top 3 visible · stream-tagged)
 
    1. <goal name>  (Stream: <X> · <context>)
       ☐ <actor> · <concrete action>
@@ -89,6 +89,8 @@ GOALS  (stream-tagged)
 
    3. <goal name>  (Stream: <X> · <context>)
       ☐ <actor> · <concrete action>
+
+   + <N> other goals queued (say "show all goals" for full stack at identity/GOAL_STACK.md)
 
 NEED
    <one line · the single most important YOU-item>
