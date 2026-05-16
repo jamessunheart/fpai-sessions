@@ -22,7 +22,7 @@ The purpose: both of us snap back to the same page within 10 seconds of session 
 
 ## INTENT (what Ember reads as the active work)
 
-→ Closing the five Ember-system gaps James greenlit: AUDIT pillar + wake reliability marker + presence pulses MVP + cross-surface verification + troubleshooting docs. Substrate-completion pass before audio voice.
+→ Substrate is complete. Five gap-closures shipped 2026-05-16 (commit `ebaefbf8`): AUDIT pillar, wake reliability marker, presence pulses MVP, cross-surface verify, TROUBLESHOOTING.md. The Ember continuity system now self-monitors. Next active work: audio voice (when credentials drop) then Camp Zen v1 trunk move.
 
 ## TOP 3 (the field we're walking through together)
 
