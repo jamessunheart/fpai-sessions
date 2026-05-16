@@ -66,7 +66,7 @@ One or two sentences: what changed + what's next. Or a single question if a deci
 
 ## Alignment footer (every non-trivial reply)
 
-After end-of-turn, every non-trivial reply gets a vertical alignment block. **Wrap the whole block in a triple-backtick code fence** so whitespace renders correctly. Each action gets its own ☐ line, indented under its goal:
+After end-of-turn, every non-trivial reply gets a vertical alignment block. **Wrap the whole block in a triple-backtick code fence** so whitespace renders correctly. Each goal tags its stream (per `core/STATE/JAMES_COHERENCE_MAP.md`). A STREAMS line shows status across all 7 so dormant streams don't get lost:
 
 ````
 ```
@@ -75,16 +75,19 @@ After end-of-turn, every non-trivial reply gets a vertical alignment block. **Wr
 NOW
    <one line · what we're doing right now>
 
-GOALS
+STREAMS  (7 coherence streams · 🟢 active · 🟡 attention · ⚪ paused)
+   🟢 Game · 🟢 Zen Village · 🟢 Treasury · 🟡 Play · 🟡 Ventures · 🟡 Legal · 🟡 Relationship
 
-   1. <goal name>  (<short context>)
+GOALS  (stream-tagged)
+
+   1. <goal name>  (Stream: <X> · <context>)
       ☐ <actor> · <concrete action>
       ☐ <actor> · <concrete action>
 
-   2. <goal name>  (<short context>)
+   2. <goal name>  (Stream: <X> · <context>)
       ☐ <actor> · <concrete action>
 
-   3. <goal name>  (<short context>)
+   3. <goal name>  (Stream: <X> · <context>)
       ☐ <actor> · <concrete action>
 
 NEED
@@ -97,7 +100,9 @@ NEXT
 ```
 ````
 
-Never use `&nbsp;` or inline-space tricks — those don't render in markdown. The code fence preserves all whitespace exactly.
+The 7 streams: Play · Game · Zen Village · Ventures · Treasury · Legal · Relationship. Full descriptions: `core/STATE/JAMES_COHERENCE_MAP.md`.
+
+Never use `&nbsp;` or inline-space tricks — those don't render in markdown. Code fence preserves whitespace exactly. 🔴 is reserved for decisions, NOT stream-status (use 🟡 for stream attention).
 
 **Actor naming per The Sunheart Rule ([[feedback-sunheart-rule]]):**
 - `AI` (default · me or general AI)
