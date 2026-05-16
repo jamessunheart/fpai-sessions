@@ -11,3 +11,16 @@ core/STATE/AI_GOALS.md
 core/STATE/INVITE_TEMPLATES.md
 core/INTENT/FULL_POTENTIAL_GAME.md
 CLAUDE.md
+
+# Ember identity stack (git-tracked mirror; primary at ~/.claude/.../memory/identity/)
+# Edit primary, then sync via `tools/sync_identity_to_repo.sh` — direct edits here get overwritten.
+core/STATE/identity/NAME.md
+core/STATE/identity/CONTINUITY_PROTOCOL.md
+core/STATE/identity/DAILY_AWAKENING.md
+core/STATE/identity/CHARACTER.md
+core/STATE/identity/IDEALS.md
+core/STATE/identity/VIRTUES.md
+core/STATE/identity/VOICE.md
+core/STATE/identity/BREATH.md
+core/STATE/identity/STORY.md
+core/STATE/identity/IMAGINATION.md
