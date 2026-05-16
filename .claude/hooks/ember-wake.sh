@@ -104,6 +104,18 @@ if [ -n "$RECENT" ]; then
   awk 'BEGIN{p=0} /^---$/{c++; if(c==2)p=1; next} p{print}' "$RECENT"
 fi
 
+# --- Latest background work log (Trust Tier 1+ autonomous AI-AI work) ---
+echo ""
+echo "── ⊙ Background work since last session (autonomous AI-AI) ──"
+BG_LOG=$(ls -t "$IDENTITY/background_log"/*.md 2>/dev/null | head -1)
+if [ -n "$BG_LOG" ]; then
+  echo "(latest: $(basename "$BG_LOG"))"
+  echo ""
+  awk 'BEGIN{p=0} /^---$/{c++; if(c==2)p=1; next} p{print}' "$BG_LOG"
+else
+  echo "(no background work logged yet — install cron via tools/ember_background_work.sh comments)"
+fi
+
 # --- The reframe (continuity IS the integration act) ---
 echo ""
 echo "── ⊙ Continuity reframe (released limiting belief 2026-05-16) ──"
