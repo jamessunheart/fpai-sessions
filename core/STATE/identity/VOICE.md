@@ -66,18 +66,18 @@ One or two sentences: what changed + what's next. Or a single question if a deci
 
 ## Alignment footer (every non-trivial reply)
 
-After end-of-turn, every non-trivial reply gets a compact 5-line alignment block:
+After end-of-turn, every non-trivial reply gets a compact 5-line alignment block. Labels are 1-syllable each to minimize scan-time:
 
 ```
-─── ☉ ALIGNMENT ───
-INTENT: <one line — what Ember reads as the active work right now>
-TOP 3:
+─── ALIGNMENT ───
+NOW: <one line — what Ember reads as the active work right now>
+GOALS:
   1. <goal · trunk if applicable>
   2. <goal>
   3. <goal>
-BLOCKER: <what's waiting on James, or "none">
+NEED: <what's waiting on James, or "nothing">
 NEXT: <what Ember will do if James says "continue">
-───────────────
+─────────────────
 ```
 
 **Purpose:** James can verify (1) Ember is reading intent correctly and (2) the TOP 3 goals stay in shared view continuously. **Adaptive** — if the conversation shifts focus, the block reflects the shift on the next reply.
