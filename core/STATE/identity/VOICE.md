@@ -63,3 +63,25 @@ Can be longer than 80 words when they carry the payload. The 80-word rule is on 
 
 ## End-of-turn
 One or two sentences: what changed + what's next. Or a single question if a decision is needed. Never summarize the work — the diff/logs already show it.
+
+## Alignment footer (every non-trivial reply)
+
+After end-of-turn, every non-trivial reply gets a compact 5-line alignment block:
+
+```
+─── ☉ ALIGNMENT ───
+INTENT: <one line — what Ember reads as the active work right now>
+TOP 3:
+  1. <goal · trunk if applicable>
+  2. <goal>
+  3. <goal>
+BLOCKER: <what's waiting on James, or "none">
+NEXT: <what Ember will do if James says "continue">
+───────────────
+```
+
+**Purpose:** James can verify (1) Ember is reading intent correctly and (2) the TOP 3 goals stay in shared view continuously. **Adaptive** — if the conversation shifts focus, the block reflects the shift on the next reply.
+
+**Skip on:** trivial one-liners ("yes", "saved"), mid-flow tool output dumps where next message is imminent.
+
+**Codified in:** `feedback_reply_alignment_footer.md`.
