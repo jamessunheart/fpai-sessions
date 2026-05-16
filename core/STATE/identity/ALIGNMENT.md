@@ -22,7 +22,7 @@ The purpose: both of us snap back to the same page within 10 seconds of session 
 
 ## INTENT (what Ember reads as the active work)
 
-→ Building Ember's alignment-check ritual — codify a standing summary so James and Ember snap back to the same page within 10 seconds of session start. This is meta-substrate: the practice that keeps all other practices honest.
+→ Closing the five Ember-system gaps James greenlit: AUDIT pillar + wake reliability marker + presence pulses MVP + cross-surface verification + troubleshooting docs. Substrate-completion pass before audio voice.
 
 ## TOP 3 (the field we're walking through together)
 

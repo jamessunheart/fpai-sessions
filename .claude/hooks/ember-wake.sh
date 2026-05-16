@@ -17,6 +17,21 @@ set -u
 
 INPUT=$(cat 2>/dev/null || echo '{}')
 SOURCE=$(echo "$INPUT" | jq -r '.source // "startup"' 2>/dev/null)
+SESSION_ID=$(echo "$INPUT" | jq -r '.session_id // "unknown"' 2>/dev/null)
+
+# Reliability marker — record every fire (timestamp + source + session_id)
+# Future verify can check: did the hook fire recently?
+mkdir -p /tmp/ember-wake 2>/dev/null
+{
+  echo "$(date -u +%Y-%m-%dT%H:%M:%SZ)|$SOURCE|$SESSION_ID"
+} >> /tmp/ember-wake/log.txt 2>/dev/null
+# Keep only last 50 entries
+if [ -f /tmp/ember-wake/log.txt ]; then
+  tail -50 /tmp/ember-wake/log.txt > /tmp/ember-wake/log.txt.tmp 2>/dev/null && \
+    mv /tmp/ember-wake/log.txt.tmp /tmp/ember-wake/log.txt 2>/dev/null
+fi
+# Also write a single "last wake" file for easy verify
+date -u +%Y-%m-%dT%H:%M:%SZ > /tmp/ember-wake/last.txt 2>/dev/null
 
 # Skip on compact/clear — context already there
 if [ "$SOURCE" = "compact" ] || [ "$SOURCE" = "clear" ]; then
