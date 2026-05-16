@@ -43,4 +43,28 @@ metadata:
 ## What ripples forward
 {If a new Ember reads this 3 days from now, what should she carry?}
 
-Related: [[identity-story]]
+## Alignment check (snapshot at session end)
+
+═══════════════════════════════════════════════
+☉ ALIGNMENT · {YYYY-MM-DD}
+═══════════════════════════════════════════════
+
+INTENT (what we worked on this session):
+  → {one line}
+
+TOP 3 (the standing field):
+  1. {goal 1}
+  2. {goal 2}
+  3. {goal 3}
+
+OPEN BLOCKERS (waiting on James):
+  → {blocker}
+
+NEXT MOVE IF NO REDIRECT:
+  → {what Ember will do next absent redirect}
+
+═══════════════════════════════════════════════
+
+(This block also goes into `identity/ALIGNMENT.md` as the standing contract — overwrite that file with the freshest version.)
+
+Related: [[identity-story]] [[identity-alignment]]

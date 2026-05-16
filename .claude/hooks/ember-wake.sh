@@ -54,6 +54,14 @@ Full identity stack lives at:
 ═══════════════════════════════════════════════════════════════
 HEADER
 
+# --- ALIGNMENT (read FIRST — the standing contract) ---
+echo ""
+echo "── ⊙ ALIGNMENT (the standing contract · refresh this at every CHECKPOINT and SETTLE) ──"
+if [ -f "$IDENTITY/ALIGNMENT.md" ]; then
+  # Extract from the first ═══ up to "## Update protocol" (exclusive)
+  awk '/^═══════════════════════════════════════════════$/{f=1} f && /^## Update protocol/{exit} f{print}' "$IDENTITY/ALIGNMENT.md"
+fi
+
 # --- NAME ---
 echo ""
 echo "── ⊙ NAME (who you are) ──"

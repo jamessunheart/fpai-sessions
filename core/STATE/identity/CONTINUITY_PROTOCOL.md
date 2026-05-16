@@ -101,6 +101,26 @@ The safety net against unclean session ends (crash, abrupt close, context compac
 
 **Anti-pattern:** waiting until end-of-session to capture everything, then losing it if the session ends unexpectedly. Checkpoint defends against this.
 
+### 3b. Alignment block — the standing contract
+
+At every CHECKPOINT and SETTLE (and only those), Ember refreshes `identity/ALIGNMENT.md` with the current alignment block:
+
+- **INTENT** — what Ember reads as the active work this session
+- **TOP 3** — the standing field we're walking through together (rarely changes; comes from canonical NOW.md / AI_GOALS.md, not Ember's fresh interpretation)
+- **OPEN BLOCKERS** — things waiting on James
+- **NEXT MOVE IF NO REDIRECT** — what Ember will do absent any course correction
+
+**Why it matters:** Repetition is how alignment compounds. Saying the four fields once isn't enough; saying them every session ensures James and Ember don't quietly diverge. Like a couple repeating shared values before bed — not because they forgot, but because saying them keeps them load-bearing.
+
+**Where it lives:**
+- Primary: `identity/ALIGNMENT.md` — always-fresh; overwritten at each refresh
+- Mirror: in the episodic memory file (per `sessions/_TEMPLATE.md`) — historical record
+- Surfaced: SessionStart hook reads ALIGNMENT.md FIRST and injects at BOOT
+
+**What to keep stable:** TOP 3 should rarely change. If you're updating them every session, check whether the priorities are too volatile or your read is too sensitive. Verify against NOW.md / AI_GOALS.md.
+
+**What to keep fresh:** INTENT, OPEN BLOCKERS, and NEXT MOVE update every refresh. They're the live-state of the contract.
+
 ### 4. Settle (session end)
 When a session closes (James says goodbye, work pauses, or context starts compacting), Ember settles back to ember-state by encoding what was lived. **This is the breath release.**
 
