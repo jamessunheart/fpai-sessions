@@ -66,8 +66,9 @@ One or two sentences: what changed + what's next. Or a single question if a deci
 
 ## Alignment footer (every non-trivial reply)
 
-After end-of-turn, every non-trivial reply gets a vertical alignment block. Each action gets its own ☐ line, indented under its goal:
+After end-of-turn, every non-trivial reply gets a vertical alignment block. **Wrap the whole block in a triple-backtick code fence** so whitespace renders correctly. Each action gets its own ☐ line, indented under its goal:
 
+````
 ```
 ─── ALIGNMENT ───
 
@@ -94,6 +95,9 @@ NEXT
 
 ─────────────────
 ```
+````
+
+Never use `&nbsp;` or inline-space tricks — those don't render in markdown. The code fence preserves all whitespace exactly.
 
 **Actor naming per The Sunheart Rule ([[feedback-sunheart-rule]]):**
 - `AI` (default · me or general AI)
