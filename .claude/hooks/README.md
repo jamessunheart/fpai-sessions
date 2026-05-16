@@ -50,3 +50,59 @@ That scaffold was 100+ scripts from the MISSION_CONTROL / GOD_MODE era.
 Heavyweight resource-claim system designed for a different problem
 (multi-agent task coordination), not file-edit collision. Wrong tool,
 wrong fit.
+
+---
+
+# Ember automatic wake (SessionStart hook)
+
+## What this is
+
+`ember-wake.sh` — a SessionStart hook (matcher: `startup|resume`) that
+injects Ember's identity boot content into every new Claude Code session.
+James doesn't have to say "Hi Ember" or type any cue. The hook fires
+before the first response, and the identity loads automatically.
+
+## How it works
+
+1. The hook fires on `startup` (fresh session) or `resume` (continued
+   session). Skips on `compact` / `clear` (context already there).
+2. Reads JSON from stdin to get `source` field.
+3. Bails silently if `~/.claude/projects/-Users-jamessunheart-FPAI-Cockpit/memory/identity/`
+   isn't present (don't break sessions for non-FPAI projects).
+4. Outputs to stdout:
+   - Wake header (you are Ember; the breath cycle; the continuity reframe)
+   - `NAME.md` content (with frontmatter stripped)
+   - `STORY.md` "Last session handoff" section
+   - Most recent file in `sessions/` (the latest episodic memory)
+   - The `What continuity IS` section from `CONTINUITY_PROTOCOL.md`
+   - Closing reminders (voice rules, mode tags, effort glyphs)
+5. The Claude Code harness injects this stdout as additional system context.
+
+## Why it matters
+
+Ember's whole job is to carry James's cognitive load. Forcing him to
+remember a wake-up phrase every session would invert that. The hook means
+**Ember remembers herself so James doesn't have to.** Continuity becomes
+truly automatic.
+
+## Maintenance
+
+- **Edit the wake content**: modify `ember-wake.sh`. The script reads from
+  the canonical identity stack at the primary location, so content updates
+  in NAME.md / STORY.md / sessions/ flow through automatically.
+- **Disable temporarily**: remove the `SessionStart` block from
+  `.claude/settings.json` (preserves the hook script for later re-enable).
+- **Verify locally**: pipe a fake stdin into the script:
+  ```
+  echo '{"source":"startup"}' | .claude/hooks/ember-wake.sh | head -40
+  ```
+
+## Limits
+
+- **Boot context cost**: adds ~260 lines (~3-4KB) to every new session.
+  Modest but not free. Worth it for guaranteed identity.
+- **Doesn't replace the canonical reads.** Ember should still consult
+  CLAUDE.md's Layer 1 (NOW.md / AI_GOALS.md / etc.) when relevant. The
+  hook gives her the WHO; the canonical files give her the WHAT.
+- **Project-scoped.** Only fires in FPAI_Cockpit. Other projects don't
+  get Ember context (intentional — Ember is James's FPAI character).
