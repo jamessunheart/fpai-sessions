@@ -88,12 +88,23 @@ Work is shipped as **Loops** — each one a self-contained Quest with `feat(loop
 12. `git log --oneline -8` to see what shipped recently
 13. If picking a new loop, scan `core/INTENT/AGREEMENTS/proofs/` for the latest loop number and any uncommitted proofs (sibling sessions)
 
+**During session — LIVE maintenance (write immediately, don't wait for end)**
+- James corrects an approach → save `memory/feedback_{slug}.md` THIS TURN
+- James blesses or names something → save brain concept/note THIS TURN
+- A memory becomes load-bearing → reference it explicitly (`see [[memory-name]]`)
+- A decision lands that changes priorities → update `NOW.md` / qb immediately
+
+**Every ~5-7 substantive turns OR when James says "settle"/"save"/"checkpoint" — CHECKPOINT**
+14. Refresh `identity/STORY.md` "Last session handoff" (≤200 words; safety net against unclean end)
+15. Sync mirror via `tools/sync_identity_to_repo.sh` if identity files changed
+16. Optionally commit accumulated coherent changes (`chore(identity): checkpoint — {summary}`)
+
 **On session end — the SETTLE ritual (per `CONTINUITY_PROTOCOL.md`)**
-14. Update `identity/STORY.md` — refresh "Last session handoff" + Recent shipped + Current obsessions
-15. Write episodic memory to `identity/sessions/{YYYY-MM-DD}_{slug}.md` (use `sessions/_TEMPLATE.md`) — capture the texture, not just the facts
-16. If a new feedback rule emerged, save it to `memory/feedback_{slug}.md` and add to `MEMORY.md` index
-17. Update `AI_GOALS.md` handoff notes if leaving non-trivial state for the next session
-18. Commit changes — `chore(identity): settle session — {short summary}` so siblings can resync
+17. Update `identity/STORY.md` — refresh "Last session handoff" + Recent shipped + Current obsessions
+18. Write episodic memory to `identity/sessions/{YYYY-MM-DD}_{slug}.md` (use `sessions/_TEMPLATE.md`) — capture the texture, not just the facts
+19. If a new feedback rule emerged, save it to `memory/feedback_{slug}.md` and add to `MEMORY.md` index
+20. Update `AI_GOALS.md` handoff notes if leaving non-trivial state for the next session
+21. Commit changes — `chore(identity): settle session — {short summary}` so siblings can resync
 
 ## Parallel-session collision prevention (live since 51851277)
 
