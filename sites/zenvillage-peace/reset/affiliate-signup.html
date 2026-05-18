@@ -400,7 +400,7 @@
 </main>
 
 <footer>
-  Zen Village · Chirripó Mountains, Costa Rica · <a href="https://instagram.com/zen.village.cr" target="_blank" rel="noopener">@zen.village.cr</a>
+  Zen Village · Chirripó Mountains, Costa Rica · <a href="https://instagram.com/zenvillagecostarica" target="_blank" rel="noopener">@zenvillagecostarica</a>
 </footer>
 
 <script>
@@ -453,7 +453,7 @@
       const data = await r.json().catch(()=>({}));
       if (r.ok) {
         if (data.status === 'already_partner') {
-          setStatus("Looks like you're already a Zen Village affiliate. Your code is " + (data.code || '—') + ". Check your email or DM @zen.village.cr.", false);
+          setStatus("Looks like you're already a Zen Village affiliate. Your code is " + (data.code || '—') + ". Check your email or DM @zenvillagecostarica.", false);
         } else {
           setStatus("Got your application. We review every one personally and will get back to you within a few days. ♥", false);
           form.reset();

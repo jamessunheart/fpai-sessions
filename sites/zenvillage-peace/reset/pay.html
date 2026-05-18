@@ -1,0 +1,772 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Reserve Your Reset · 5 Day Reset Retreat · Zen Village</title>
+<meta name="description" content="Reserve your spot in the 5 Day Reset Retreat. Pay via PayPal, Venmo, Wise, or Bitcoin. Small group, Chirripó Mountains, Costa Rica." />
+<meta name="theme-color" content="#1f2e1a" />
+<meta name="robots" content="noindex" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --forest:       #1f2e1a;
+    --forest-deep:  #15201f;
+    --forest-soft:  #3a4f33;
+    --paper:        #f0e8d8;
+    --paper-warm:   #e6dcc6;
+    --paper-edge:   rgba(31,46,26,.10);
+    --ink:          #1a1f17;
+    --ink-soft:     rgba(26,31,23,.72);
+    --ink-muted:    rgba(26,31,23,.55);
+    --gold:         #c89b3c;
+    --leaf:         #6b8e5a;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--paper);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    font-size: 17px;
+  }
+  body::after {
+    content:""; position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.12 0 0 0 0 0.18 0 0 0 0 0.10 0 0 0 0.06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    opacity: .5; pointer-events: none; mix-blend-mode: multiply; z-index: 0;
+  }
+  main { position: relative; z-index: 1; }
+  .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+  .topbar {
+    background: var(--forest);
+    color: var(--paper);
+    padding: 14px 24px;
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    letter-spacing: .35em;
+    text-transform: uppercase;
+    font-size: 13px;
+  }
+  .topbar a { color: var(--gold); text-decoration: none; border-bottom: 1px solid rgba(200,155,60,.4); }
+
+  /* Referral banner — populated by JS */
+  .ref-banner {
+    display: none;
+    background: var(--forest-deep);
+    color: var(--paper);
+    text-align: center;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-style: italic;
+    font-family: 'Cormorant Garamond', serif;
+  }
+  .ref-banner.visible { display: block; }
+  .ref-banner strong { color: var(--gold); font-style: normal; font-weight: 500; }
+
+  .hero {
+    text-align: center;
+    padding: 48px 24px 12px;
+  }
+  .eyebrow {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    letter-spacing: .35em;
+    text-transform: uppercase;
+    font-size: 12px;
+    color: var(--forest-soft);
+    margin: 0 0 12px;
+  }
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: clamp(36px, 6vw, 52px);
+    line-height: 1.05;
+    margin: 0 0 12px;
+    color: var(--forest);
+  }
+  .lead {
+    font-size: 17px;
+    color: var(--ink-soft);
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  .form-wrap { padding: 32px 24px 64px; }
+
+  form {
+    background: var(--paper-warm);
+    border: 1px solid var(--paper-edge);
+    border-radius: 2px;
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .step-label {
+    font-family: 'Cormorant Garamond', serif;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    font-size: 13px;
+    color: var(--forest);
+    margin: 8px 0 0;
+    font-weight: 500;
+  }
+  .step-label .num {
+    display: inline-block;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--forest);
+    color: var(--paper);
+    line-height: 22px;
+    text-align: center;
+    font-size: 12px;
+    margin-right: 8px;
+  }
+
+  label.input-label {
+    font-size: 12.5px;
+    color: var(--forest);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  input[type="text"], input[type="email"], input[type="tel"], textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--paper-edge);
+    background: var(--paper);
+    border-radius: 2px;
+    font: inherit;
+    font-size: 15px;
+    color: var(--ink);
+  }
+  input:focus, textarea:focus { outline: none; border-color: var(--forest); }
+  textarea { min-height: 70px; resize: vertical; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .hp { position: absolute; left: -9999px; }
+
+  /* Package + payment-method radio cards */
+  .pick-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .pick {
+    position: relative;
+    cursor: pointer;
+    padding: 14px 16px;
+    background: var(--paper);
+    border: 1px solid var(--paper-edge);
+    border-radius: 2px;
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .pick input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .pick:hover { border-color: var(--forest-soft); }
+  .pick.checked, .pick:has(input:checked) {
+    border-color: var(--forest);
+    background: rgba(106,142,90,.10);
+  }
+  .pick .pick-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 15px;
+    letter-spacing: .04em;
+    color: var(--forest);
+    margin: 0 0 2px;
+  }
+  .pick .pick-meta {
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
+  .pick .pick-amt {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 18px;
+    color: var(--ink);
+    margin-left: 8px;
+  }
+  .pick-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  /* Payment-method picks — 2 cols on desktop, 1 on mobile */
+  .pay-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .pay-pick .pay-meta {
+    font-size: 12px;
+    color: var(--ink-muted);
+    margin-top: 4px;
+  }
+
+  .submit-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+  }
+  .note { font-size: 12.5px; color: var(--ink-muted); }
+  .btn {
+    display: inline-block;
+    background: var(--forest);
+    color: var(--paper);
+    padding: 14px 28px;
+    border-radius: 2px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-size: 13px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: transform .15s ease, background .2s ease;
+  }
+  .btn:hover { background: var(--forest-deep); transform: translateY(-1px); }
+  .btn:disabled { opacity: .5; cursor: wait; }
+  .btn.ghost {
+    background: transparent;
+    color: var(--forest);
+    border: 1px solid var(--forest);
+  }
+  .btn.ghost:hover { background: var(--forest); color: var(--paper); }
+
+  .status {
+    margin-top: 14px;
+    padding: 14px 16px;
+    background: var(--paper);
+    border-left: 3px solid var(--leaf);
+    color: var(--forest);
+    font-size: 14.5px;
+    display: none;
+    border-radius: 2px;
+  }
+  .status.visible { display: block; }
+  .status.error { border-color: #b04a3a; color: #6e3022; }
+
+  /* ─── Success screen ─────────────────────────────────────────────── */
+  .success-wrap { display: none; padding: 24px 0 64px; }
+  .success-wrap.visible { display: block; }
+  .success-card {
+    background: var(--paper-warm);
+    border: 1px solid var(--paper-edge);
+    border-radius: 2px;
+    padding: 28px 24px;
+    margin-bottom: 16px;
+  }
+  .success-card h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 32px;
+    margin: 0 0 10px;
+    color: var(--forest);
+  }
+  .success-card .sub {
+    color: var(--ink-soft);
+    margin: 0 0 18px;
+    font-size: 15px;
+  }
+  .pay-card {
+    background: var(--forest);
+    color: var(--paper);
+    border-radius: 2px;
+    padding: 24px 22px;
+    margin-bottom: 16px;
+  }
+  .pay-card .label {
+    font-family: 'Cormorant Garamond', serif;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    font-size: 12px;
+    color: var(--gold);
+    margin: 0 0 6px;
+  }
+  .pay-card .amount {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    font-weight: 500;
+    margin: 0 0 14px;
+    color: var(--paper);
+  }
+  .pay-card .method {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 500;
+    margin: 0 0 4px;
+  }
+  .pay-card .addr {
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(240,232,216,.10);
+    padding: 12px 14px;
+    border-radius: 2px;
+    font-size: 14px;
+    color: var(--paper);
+    word-break: break-all;
+    margin: 8px 0 16px;
+    border: 1px dashed rgba(240,232,216,.25);
+  }
+  .copy-btn {
+    background: var(--paper);
+    color: var(--forest);
+    border: none;
+    padding: 6px 12px;
+    border-radius: 2px;
+    font-family: inherit;
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-left: 8px;
+  }
+  .copy-btn:hover { background: var(--gold); }
+  .copy-btn.copied { background: var(--leaf); color: var(--paper); }
+
+  .pay-card .ref {
+    background: var(--paper);
+    color: var(--forest);
+    padding: 12px 14px;
+    border-radius: 2px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    letter-spacing: .02em;
+    text-align: center;
+    margin: 4px 0 12px;
+  }
+  .pay-card .instr {
+    font-size: 14px;
+    color: rgba(240,232,216,.85);
+    margin: 4px 0;
+    line-height: 1.5;
+  }
+  .pay-card .instr strong { color: var(--gold); font-weight: 500; }
+  .pay-card .open-link {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--forest-deep);
+    padding: 12px 22px;
+    border-radius: 2px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-top: 12px;
+  }
+  .pay-card .open-link:hover { background: #d8b265; }
+
+  footer {
+    background: var(--forest);
+    color: rgba(240,232,216,.78);
+    padding: 28px 24px;
+    text-align: center;
+    font-size: 13px;
+    letter-spacing: .12em;
+  }
+  footer a { color: var(--gold); text-decoration: none; }
+
+  @media (max-width: 620px) {
+    .row, .pick-grid, .pay-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  ← <a href="/reset">Back to the 5 Day Reset Retreat</a>
+</div>
+
+<div id="ref-banner" class="ref-banner">
+  Referred by <strong id="ref-name">a friend</strong> ♥
+</div>
+
+<main>
+
+  <section class="hero">
+    <div class="container">
+      <p class="eyebrow">Reserve · Pay · We confirm within 24h</p>
+      <h1>Reserve your Reset</h1>
+      <p class="lead">Pick your package + payment method. We hold your spot the moment payment lands. Small group — once 10 spots are gone, the cohort closes.</p>
+    </div>
+  </section>
+
+  <section class="form-wrap" id="form-section">
+    <div class="container">
+
+      <form id="reserve-form" autocomplete="on">
+
+        <div>
+          <p class="step-label"><span class="num">1</span>Who's coming</p>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label class="input-label" for="name">Name</label>
+            <input id="name" type="text" name="name" required />
+          </div>
+          <div class="field">
+            <label class="input-label" for="email">Email</label>
+            <input id="email" type="email" name="email" required />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label class="input-label" for="phone">Phone / WhatsApp (optional)</label>
+            <input id="phone" type="tel" name="phone" />
+          </div>
+          <div class="field">
+            <label class="input-label" for="dates">Preferred dates / month</label>
+            <input id="dates" type="text" name="dates" placeholder="e.g. June 10–14 or 'flexible'" />
+          </div>
+        </div>
+
+        <div>
+          <p class="step-label"><span class="num">2</span>Pick your package</p>
+        </div>
+
+        <div class="pick-grid">
+          <label class="pick">
+            <input type="radio" name="package" value="premium_food" data-amount="1333" data-label="Premium Stay (with food)" required />
+            <div class="pick-row">
+              <div>
+                <div class="pick-title">Premium · with food</div>
+                <div class="pick-meta">Comfortable room, nourishing meals included</div>
+              </div>
+              <div class="pick-amt">$1,333</div>
+            </div>
+          </label>
+          <label class="pick">
+            <input type="radio" name="package" value="premium_no_food" data-amount="1111" data-label="Premium Stay (without food)" />
+            <div class="pick-row">
+              <div>
+                <div class="pick-title">Premium · no food</div>
+                <div class="pick-meta">Comfortable room, bring/source own meals</div>
+              </div>
+              <div class="pick-amt">$1,111</div>
+            </div>
+          </label>
+          <label class="pick">
+            <input type="radio" name="package" value="dome_food" data-amount="777" data-label="Dome Stay (with food)" />
+            <div class="pick-row">
+              <div>
+                <div class="pick-title">Dome · with food</div>
+                <div class="pick-meta">Geodesic dome, nourishing meals included</div>
+              </div>
+              <div class="pick-amt">$777</div>
+            </div>
+          </label>
+          <label class="pick">
+            <input type="radio" name="package" value="dome_no_food" data-amount="555" data-label="Dome Stay (without food)" />
+            <div class="pick-row">
+              <div>
+                <div class="pick-title">Dome · no food</div>
+                <div class="pick-meta">Geodesic dome, bring/source own meals</div>
+              </div>
+              <div class="pick-amt">$555</div>
+            </div>
+          </label>
+        </div>
+
+        <div>
+          <p class="step-label"><span class="num">3</span>How you want to pay</p>
+        </div>
+
+        <div class="pay-grid">
+          <label class="pick pay-pick">
+            <input type="radio" name="payment_method" value="paypal" required />
+            <div class="pick-title">PayPal · Friends &amp; Family</div>
+            <div class="pay-meta">james@fullpotential.com · no card fees</div>
+          </label>
+          <label class="pick pay-pick">
+            <input type="radio" name="payment_method" value="venmo" />
+            <div class="pick-title">Venmo · Friends &amp; Family</div>
+            <div class="pay-meta">@James-Stinson-65 · US only</div>
+          </label>
+          <label class="pick pay-pick">
+            <input type="radio" name="payment_method" value="wise" />
+            <div class="pick-title">Wise (Bank transfer)</div>
+            <div class="pay-meta">International-friendly · low fees</div>
+          </label>
+          <label class="pick pay-pick">
+            <input type="radio" name="payment_method" value="btc" />
+            <div class="pick-title">Bitcoin (BTC)</div>
+            <div class="pay-meta">On-chain · paid at current rate</div>
+          </label>
+        </div>
+
+        <div class="field">
+          <label class="input-label" for="message">Anything else? (allergies, intentions, questions — optional)</label>
+          <textarea id="message" name="message" placeholder="Optional notes for us…"></textarea>
+        </div>
+
+        <!-- honeypot -->
+        <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" />
+
+        <div class="submit-row">
+          <span class="note">We'll never share your info. F&amp;F payments avoid 3% card fees.</span>
+          <button class="btn" type="submit">Continue → Payment Instructions</button>
+        </div>
+
+        <div class="status" id="reserve-status"></div>
+
+      </form>
+    </div>
+  </section>
+
+  <!-- ─── Success / payment-instructions screen ─────────────────────── -->
+  <section class="success-wrap" id="success-section">
+    <div class="container">
+
+      <div class="success-card">
+        <h2>✓ Reservation request received</h2>
+        <p class="sub" id="success-sub">Hold tight — your spot is being reviewed. Send payment using the instructions below; we'll confirm within 24 hours of receipt.</p>
+      </div>
+
+      <div class="pay-card">
+        <p class="label">Amount</p>
+        <p class="amount" id="pay-amount">$0</p>
+        <p class="method" id="pay-method">—</p>
+        <p class="instr" id="pay-instr-pre">Send to:</p>
+        <div class="addr">
+          <span id="pay-addr">—</span>
+          <button type="button" class="copy-btn" id="copy-addr">Copy</button>
+        </div>
+        <p class="instr"><strong>Reference / Note:</strong> include this so we can match your payment</p>
+        <div class="ref" id="pay-ref">—</div>
+        <p class="instr" id="pay-instr-post"></p>
+        <a class="open-link" id="pay-open-link" href="#" target="_blank" rel="noopener" style="display:none;">Open payment app →</a>
+      </div>
+
+      <div class="success-card">
+        <h2 style="font-size:20px;letter-spacing:.04em;">After you've sent payment</h2>
+        <p class="sub">DM <a href="https://instagram.com/zenvillagecostarica" target="_blank" rel="noopener"><strong>@zenvillagecostarica</strong></a> with your reference code so we can match + confirm your spot. Or email <a href="mailto:james@fullpotential.com">james@fullpotential.com</a>.</p>
+        <p style="margin-top:12px;"><button type="button" class="btn ghost" id="back-btn">← Reserve another spot</button></p>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Zen Village · Chirripó Mountains, Costa Rica · <a href="https://instagram.com/zenvillagecostarica" target="_blank" rel="noopener">@zenvillagecostarica</a>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+
+  // ─── Cookie + ref handling ─────────────────────────────────────────
+  function getCookie(name) {
+    const v = document.cookie.split('; ').find(r => r.startsWith(name + '='));
+    return v ? v.split('=')[1] : '';
+  }
+  function getQueryParam(name) {
+    const m = new RegExp('[?&]' + name + '=([^&]+)').exec(location.search);
+    return m ? decodeURIComponent(m[1]) : '';
+  }
+
+  // Auto-track ref from URL if present
+  const refParam = (getQueryParam('ref') || '').toUpperCase();
+  if (refParam) {
+    fetch('/api/affiliates/track', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ partner_code: refParam, page: '/reset/pay' })
+    }).catch(()=>{});
+  }
+
+  // Surface "Referred by X" banner
+  fetch('/api/affiliates/check')
+    .then(r => r.json())
+    .then(data => {
+      if (data && data.has_referral && data.partner_name) {
+        const banner = document.getElementById('ref-banner');
+        document.getElementById('ref-name').textContent = data.partner_name;
+        banner.classList.add('visible');
+      }
+    }).catch(()=>{});
+
+  // ─── Pre-select package from ?pkg= URL param ──────────────────────
+  const pkgParam = getQueryParam('pkg');
+  if (pkgParam) {
+    const radio = document.querySelector(`input[name="package"][value="${pkgParam}"]`);
+    if (radio) radio.checked = true;
+  }
+
+  // ─── Form submit ──────────────────────────────────────────────────
+  const form = document.getElementById('reserve-form');
+  const statusEl = document.getElementById('reserve-status');
+  const formSection = document.getElementById('form-section');
+  const successSection = document.getElementById('success-section');
+
+  function setStatus(msg, isError) {
+    statusEl.textContent = msg;
+    statusEl.classList.add('visible');
+    statusEl.classList.toggle('error', !!isError);
+  }
+
+  // ─── Payment-method instruction builder ────────────────────────────
+  function buildPaymentInstructions(method, amount, refCode) {
+    const instructions = {
+      paypal: {
+        method: 'PayPal · Friends & Family',
+        addr: 'james@fullpotential.com',
+        post: 'Send via PayPal. Choose "Friends & Family" — this avoids 3% card fees so 100% of your payment goes to the retreat.',
+        openLink: `https://www.paypal.com/myaccount/transfer/homepage/send?amt=${amount}&note=${encodeURIComponent('5DayReset-'+refCode)}`,
+        openLabel: 'Open PayPal →',
+      },
+      venmo: {
+        method: 'Venmo · Friends & Family',
+        addr: '@James-Stinson-65',
+        post: 'Send via Venmo. Mark as "Friends & Family" (not a Purchase) — US accounts only.',
+        openLink: `https://venmo.com/u/James-Stinson-65?txn=pay&amount=${amount}&note=${encodeURIComponent('5DayReset-'+refCode)}`,
+        openLabel: 'Open Venmo →',
+      },
+      wise: {
+        method: 'Wise · Bank transfer',
+        addr: 'https://wise.com/pay/business/coranationchurch',
+        post: 'Click the link to pay via Wise. Use your reference code as the payment note so we can match it.',
+        openLink: 'https://wise.com/pay/business/coranationchurch',
+        openLabel: 'Open Wise payment page →',
+      },
+      btc: {
+        method: 'Bitcoin · On-chain',
+        addr: '13tXYGWCZWgPoZ8WZXi7vTt2kwax2ekpz7',
+        post: `Send the BTC equivalent of $${amount} at current market rate. DM @zenvillagecostarica with your TX hash + reference code so we can confirm.`,
+        openLink: null,
+        openLabel: null,
+      },
+    };
+    return instructions[method] || null;
+  }
+
+  // Update pick visual state (Safari fallback for :has)
+  document.querySelectorAll('.pick input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      document.querySelectorAll(`.pick input[name="${radio.name}"]`).forEach(r => {
+        r.closest('.pick').classList.toggle('checked', r.checked);
+      });
+    });
+  });
+
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    const fd = new FormData(form);
+    if ((fd.get('website') || '').trim()) {
+      setStatus("Thanks — we'll be in touch.", false);
+      form.reset();
+      return;
+    }
+
+    const pkgInput = document.querySelector('input[name="package"]:checked');
+    if (!pkgInput) { setStatus('Please pick a package above.', true); return; }
+    const payInput = document.querySelector('input[name="payment_method"]:checked');
+    if (!payInput) { setStatus('Please pick a payment method.', true); return; }
+
+    const amount = parseInt(pkgInput.dataset.amount || '0', 10);
+    const pkgLabel = pkgInput.dataset.label;
+    const partnerCode = (getCookie('zv_ref') || '').toUpperCase();
+
+    const payload = {
+      name: (fd.get('name') || '').trim(),
+      email: (fd.get('email') || '').trim(),
+      phone: (fd.get('phone') || '').trim() || null,
+      inquiry_type: '5 Day Reset Retreat',
+      dates: (fd.get('dates') || '').trim() || null,
+      accommodation: pkgLabel,
+      message: ((fd.get('message') || '').trim() ? (fd.get('message').trim() + '\n\n') : '')
+               + `Selected package: ${pkgLabel} ($${amount})`,
+      payment_method: payInput.value,
+      partner_code: partnerCode || null,
+    };
+
+    setStatus('Reserving your spot…', false);
+    const btn = form.querySelector('button[type="submit"]');
+    if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+
+    try {
+      const r = await fetch('/api/inquiries/submit', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+      });
+      const data = await r.json().catch(() => ({}));
+      if (r.ok && data.success !== false) {
+        // Build success screen
+        const refCode = data.inquiry_id || ('5DAY-' + Math.random().toString(36).slice(2, 8).toUpperCase());
+        const instr = buildPaymentInstructions(payInput.value, amount, refCode);
+
+        document.getElementById('pay-amount').textContent = '$' + amount.toLocaleString();
+        document.getElementById('pay-method').textContent = instr ? instr.method : (data.payment_info && data.payment_info.method) || payInput.value;
+        document.getElementById('pay-addr').textContent = instr ? instr.addr : ((data.payment_info && data.payment_info.address) || '—');
+        document.getElementById('pay-ref').textContent = refCode;
+        document.getElementById('pay-instr-post').textContent = instr ? instr.post : '';
+
+        const openLink = document.getElementById('pay-open-link');
+        if (instr && instr.openLink) {
+          openLink.href = instr.openLink;
+          openLink.textContent = instr.openLabel;
+          openLink.style.display = 'inline-block';
+        } else {
+          openLink.style.display = 'none';
+        }
+
+        document.getElementById('success-sub').textContent =
+          `${pkgLabel} · $${amount} · paying via ${instr ? instr.method : payInput.value}. Send payment using the instructions below — we confirm within 24h of receipt.`;
+
+        formSection.style.display = 'none';
+        successSection.classList.add('visible');
+        window.scrollTo({top: 0, behavior: 'smooth'});
+      } else {
+        setStatus((data && data.detail) || "Something went wrong — please DM @zenvillagecostarica or email james@fullpotential.com.", true);
+      }
+    } catch (err) {
+      setStatus("Network hiccup — please DM @zenvillagecostarica or email james@fullpotential.com.", true);
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Continue → Payment Instructions'; }
+    }
+  });
+
+  // ─── Copy-button ─────────────────────────────────────────────────
+  document.getElementById('copy-addr').addEventListener('click', function() {
+    const text = document.getElementById('pay-addr').textContent.trim();
+    navigator.clipboard.writeText(text).then(() => {
+      this.textContent = 'Copied ✓';
+      this.classList.add('copied');
+      setTimeout(() => { this.textContent = 'Copy'; this.classList.remove('copied'); }, 2000);
+    }).catch(() => {
+      this.textContent = 'Long-press to copy';
+    });
+  });
+
+  document.getElementById('back-btn').addEventListener('click', function() {
+    successSection.classList.remove('visible');
+    formSection.style.display = '';
+    statusEl.classList.remove('visible');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  });
+})();
+</script>
+
+</body>
+</html>
