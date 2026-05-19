@@ -606,11 +606,36 @@
       }
     }).catch(()=>{});
 
-  // ─── Pre-select package from ?pkg= URL param ──────────────────────
+  // ─── Pre-fill from URL params (?name=&email=&dates=&pkg=&from=) ────
+  // Set when redirected from /reset landing soft-lead form. Lets a user
+  // who filled the soft form continue straight into payment without
+  // re-typing their info.
+  function setIfParam(qname, fieldId) {
+    const v = (getQueryParam(qname) || '').trim();
+    if (!v) return;
+    const el = document.getElementById(fieldId);
+    if (el) el.value = v;
+  }
+  setIfParam('name',  'name');
+  setIfParam('email', 'email');
+  setIfParam('dates', 'dates');
+
   const pkgParam = getQueryParam('pkg');
   if (pkgParam) {
     const radio = document.querySelector(`input[name="package"][value="${pkgParam}"]`);
-    if (radio) radio.checked = true;
+    if (radio) {
+      radio.checked = true;
+      radio.closest('.pick').classList.add('checked');
+    }
+  }
+
+  // If they came from the landing soft-form, soften the lead copy + scroll
+  // them to the package picker (info already filled).
+  if (getQueryParam('from') === 'landing') {
+    const leadEl = document.querySelector('.hero .lead');
+    if (leadEl) {
+      leadEl.textContent = 'Almost there. We pre-filled what you sent us — confirm your package + payment method and your spot is held.';
+    }
   }
 
   // ─── Form submit ──────────────────────────────────────────────────

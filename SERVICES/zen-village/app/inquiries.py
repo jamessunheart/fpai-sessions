@@ -138,8 +138,23 @@ async def notify_telegram(inquiry: dict):
         # Mirror Pulse Topic: Coherent/Stay → Bookings, Support → Financials
         topic = "financials" if itype.lower().startswith("support") else "bookings"
         partner = _f("partner_code")
+        pm = _f("payment_method")
+        accommodation = _f("accommodation")
+
+        # Paid-intent detection — reservation came through /reset/pay (user
+        # picked a package + payment method, not a soft inquiry).
+        # Distinct header so James can spot real buyers vs cold leads in TG.
+        is_paid_intent = bool(pm) and ("reset retreat" in itype.lower() or "jungle exhale" in itype.lower())
+
+        if is_paid_intent:
+            pm_info = PAYMENT_METHODS.get(pm, {})
+            pm_label = pm_info.get("name", pm)
+            header = f"<b>💰 PAID-INTENT RESERVATION — {itype}</b>"
+        else:
+            header = f"<b>📥 New {itype} inquiry</b>"
+
         lines = [
-            f"<b>📥 New {itype} inquiry</b>",
+            header,
             f"From: <b>{_f('name', 'Anonymous')}</b>",
             f"Email: <code>{_f('email', '')}</code>",
         ]
@@ -149,10 +164,19 @@ async def notify_telegram(inquiry: dict):
             lines.append("Dates: " + _f("dates"))
         if _f("guests"):
             lines.append("Guests: " + _f("guests"))
+        if is_paid_intent:
+            if accommodation:
+                lines.append(f"📦 Package: <b>{accommodation}</b>")
+            lines.append(f"💳 Pay method: <b>{pm_label}</b>")
+            if partner:
+                lines.append(f"🤝 Affiliate: <code>{partner}</code> (commission on confirm)")
         if _f("message"):
             lines.append("\n<i>" + _f("message")[:600] + "</i>")
-        if partner:
+        if partner and not is_paid_intent:
             lines.append(f"\nReferred by: <code>{partner}</code>")
+        if is_paid_intent:
+            lines.append(f"\n<i>Reference: {inquiry.get('id', '')}</i>")
+            lines.append("<i>Action: watch inbox for payment receipt, then mark sale via /api/affiliates/convert</i>")
         msg = "\n".join(lines)
 
         # Build same submission key the cockpit uses so the buttons can mark
