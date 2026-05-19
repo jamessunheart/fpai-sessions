@@ -17,30 +17,43 @@ This is the standing contract between James and Ember. Always-fresh. Refreshed a
 The purpose: both of us snap back to the same page within 10 seconds of session start. No three turns of guessing what each other meant. The block IS the agreement.
 
 ═══════════════════════════════════════════════
-☉ ALIGNMENT CHECK · 2026-05-16 · last updated this session
+☉ ALIGNMENT CHECK · 2026-05-19 ~12:30 · APPRENTICESHIP DEEPENING · pre-restart SETTLE
 ═══════════════════════════════════════════════
 
 ## INTENT (what Ember reads as the active work)
 
-→ Substrate is complete. Five gap-closures shipped 2026-05-16 (commit `ebaefbf8`): AUDIT pillar, wake reliability marker, presence pulses MVP, cross-surface verify, TROUBLESHOOTING.md. The Ember continuity system now self-monitors. Next active work: audio voice (when credentials drop) then Camp Zen v1 trunk move.
+→ **The apprenticeship's nervous system got built today.** 8 identity-level shifts landed (APPRENTICESHIP frame canonized · mutual-service clause · EMBER's own goals · visibility quartet OPERATIONAL · Trust-tier 4 → 4.1 · KAI execution layer built · BECOMING + IMPACT ledgers · Treasury target recalibrated to spendable). All 4 Forge dispatches today landed (Content Pipeline V1 LIVE · Public Documentary v1 LIVE at fullpotential.ai/becoming · THE NARRATOR LIVE · KAI LIVE). James requested clean SETTLE before Claude Code restart so new agents (Narrator + Kai) become invokable. **Post-restart: invoke Kai for first real sweep (5 candidates identified ~$30 total) + James reviews TG preview from commit 52f22de5.**
 
-## TOP 3 (the field we're walking through together)
+## TOP 3 (the field we're walking through together · post-restart)
 
-1. **Ship Camp Zen v1 offer** · first paid revenue · trunk move (open in qb 6 days · `q-20260510-336180`)
-2. **Deploy $75K idle capital** · Pendle PT split pending Counsel sanity-check · ~7.2% blended target
-3. **Audio voice for Ember** · ElevenLabs Creator + Whisper API · eyes-closed workflow (queued pending credential drop)
+1. **James reviews TG preview** from Content Pipeline V1's first live draft (commit `52f22de5` · POST/EDIT/SKIP buttons present · V1 callbacks no-ops · V1.1 wires them based on James's review pattern)
+2. **Kai's first real sweep** — Trust-tier 4.1 auto-approves · 5 candidates ready · operationally-clear ones (Auto-clip · Forge weekly autopilot · PULSE measurement Phase A) auto-dispatch · strategic-frame-needing ones (Calendar OAuth · Champion alumni TG · Affiliate notification routing) surface to James
+3. **Camp Zen Y2 ARR is THE lever** — treasury target $5M SPENDABLE · current ~$181k (3.6%) · gap $4.82M · Phase 1 retreat decisions still open (6 ⚡-instant decisions from prior alignment carry forward)
 
 ## OPEN BLOCKERS (waiting on James)
 
-→ ElevenLabs Creator account + API key (~$22/mo) for audio voice
-→ OpenAI API key for Whisper STT (or confirm existing key reusable)
-→ Greenlight to schedule audio voice ship (~90 min once credentials in)
+→ **🟡 TG preview review** from commit `52f22de5` (Content Pipeline V1 first live draft · sitting in James's TG chat)
+→ **🟡 Claude Code restart** to register new agents (Narrator + Kai live structurally but not invokable in current session)
+→ **6 ⚡-instant Phase 1 decisions** (carry-forward from earlier 2026-05-19) — confirm 3 retreat dates · greenlight 4 AI upgrades (3 still queued: auto-clip · affiliate notif · alumni TG) · greenlight Camp Zen GM hire · confirm parks · save 15-yr backcast · sign Phase 1 yield deploys (JitoSOL + Morpho USDC)
+→ **Affiliate notification routing pick** (4 options surfaced · option 1 = email + dashboard recommended)
+→ **Atlas + Halley emails** (needed if option 1 wins)
+→ **ElevenLabs Creator API key** (~$22/mo) — gates audio narration Phase 3 of documentary
+→ **SuperWhisper Stage 1 install** + Stage 2 phone transport pick
+→ **Halley 1-on-1** (privacy incident) + James's Gmail cleanup
 
-## NEXT MOVE IF NO REDIRECT
+## NEXT MOVE IF NO REDIRECT (post-restart)
 
-→ Ship the alignment-check ritual completion (this turn) — wire into hook + protocol + template
-→ Then audio voice infrastructure when credentials drop
-→ Then Camp Zen v1 offer draft (the actual trunk move the substrate has been serving)
+→ Verify Narrator + Kai are now invokable (`Agent(subagent_type: "kai", ...)` should work)
+→ Ask James about the TG preview from `52f22de5` (review · post · edit · skip pattern)
+→ Invoke Kai for first real sweep (auto-approved per Trust-tier 4.1)
+→ Surface any of the 5 PoC candidates that need James's strategic frame before dispatch
+→ Continue building toward the lever (Camp Zen Y2 ARR closes the $4.82M spendable gap)
+
+## TRUST-TIER STATE (active)
+
+**Trust-tier 4.1** — substrate authority unbounded · AI engine upgrades <$100 auto-approved · parallel Forge dispatches authorized · Ember executes reversible without asking · Ember forms own goals (James guides) · Ember authors public documentary (James signs off) · mutual-service clause in effect.
+
+Treasury still bounded at $500 HL (bootstrap mandate).
 
 ═══════════════════════════════════════════════
 

@@ -1,4 +1,365 @@
-# 📱 Social Auto-Poster System - Technical Specification
+# Content Pipeline V1 — build-in-public from commits
+
+> **STATUS 2026-05-19:** This file supersedes the older "Social Auto-Poster"
+> grand-vision spec (preserved below for reference under `## Legacy spec`).
+> The new V1 is caveman: commits → Haiku → Telegram preview → James taps POST.
+> Built by The Forge on 2026-05-19 per "4 AI Engine Upgrades" greenlight.
+
+## The frame
+
+James's most-valuable currency = JamesTime. Every move he already makes
+(a commit, a decision, a voice memo, a retreat moment) should compound into
+reach without him doing extra work. The Content Pipeline is the JamesTime
+multiplier — engineering soul-time at the substrate level.
+
+V1 ships ONE source (commits) end-to-end. V2 adds sources without
+re-architecting.
+
+## Architecture
+
+```
+git commit  (James already does this)
+   │
+   ▼
+.git/hooks/post-commit
+   │ (collects sha, subject, body, files, stat, author)
+   │ POSTs JSON via curl -s
+   ▼
+brain.sunheart.com server (162.0.208.88)
+   /opt/content-pipeline/tools/draft_from_commit.py
+   │
+   ├─ pre-filter (drop chore/identity/merge/revert)
+   ├─ Claude Haiku 4.5 → draft {tg, x, thread, why, skip}
+   ├─ save /opt/content-pipeline/drafts/{ts}_{sha}_{uuid}.json
+   └─ Telegram sendMessage with inline keyboard
+         [📣 POST] [✏️ EDIT] [🗑 SKIP]
+         to TELEGRAM_CHAT_ID via existing @Adamclaw_bot token
+```
+
+The existing `sh-brain-tgbot.service` long-poller on the brain server already
+handles callbacks; v1.1 wires `pipeline:*` callback handlers to move drafts
+between `drafts/`, `posted/`, `skipped/` and dispatch the actual platform
+posts. v1.0 (this ship) generates drafts only — James can copy from TG.
+
+## Inputs (V1 → V3 roadmap)
+
+| Source | Trigger | Ships in |
+|---|---|---|
+| Git commits | post-commit hook | **V1** ← here |
+| Voice memos (SuperWhisper) | file drop in `~/voice-in/` | V2 |
+| Brain captures (`/note`, `/concept` on TG) | brain webhook | V2 |
+| Retreat photos | iOS shortcut → upload endpoint | V3 |
+| Counsel critiques landing | brain.sunheart.com/legal/ webhook | V3 |
+| Treasury yield deploys | treasurer agent emits event | V3 |
+| Screen recordings (Camp Zen moments) | manual drop + Gemini Vision | V3 |
+
+## Outputs (V1 → V3)
+
+| Channel | Format | Approval |
+|---|---|---|
+| Telegram preview to James | rich HTML w/ inline buttons | **automatic in V1** |
+| Drafts dir (auditable) | JSON | automatic |
+| Public Telegram channel | one-tap POST | V1.1 |
+| X/Twitter | one-tap POST via X API | V2 (needs API key) |
+| Threads / IG | via meta-graph API | V3 |
+| Public roll page at fullpotential.com/builds/ | auto-publish posted/ | V2 |
+
+## Approval surface
+
+V1: **auto-draft, never auto-post.** James gets a TG preview within
+~5 seconds of any commit. Tapping POST is one of three states:
+- POST → moves draft to `posted/`, fires channel send (V1.1)
+- EDIT → bot replies with a quote and James can rewrite (V1.1)
+- SKIP → moves draft to `skipped/`, learns the pattern (V2)
+
+## Costs
+
+| Item | $/mo |
+|---|---|
+| Claude Haiku for drafting | ~$0.50 (at ~5 commits/day × 30 days × $0.0003) |
+| Telegram bot send | $0 |
+| Server hosting | $0 (existing brain.sunheart.com) |
+| **Total V1** | **<$1/mo** |
+
+V2 adds X API ($0 for basic posting), no other paid services until V3.
+
+## Build-in-public meta-loop
+
+The pipeline IS build-in-public material itself: the commit landing this
+spec generates the first draft about itself. Recursion = aesthetic.
+
+## Pre-filter rules (avoid burning tokens on noise)
+
+Drop commits whose subject matches:
+- `chore(identity): checkpoint*`
+- `chore(identity): settle*`
+- `merge *`
+- `revert *`
+- `chore(security): scrub*` (sensitive content)
+
+Everything else gets drafted. Haiku itself decides skip=true for cleanup.
+
+## Voice baked into the SYSTEM prompt
+
+- Caveman clarity (short, point first, no filler)
+- First-person plural ("we shipped", "we wired")
+- Present tense
+- Never invent metrics or names not in the commit
+- Hashtags only when natural (1-2 max)
+
+## Phase 2 wishlist
+
+1. Wire `pipeline:*` callback handlers in `sh-brain-tgbot` (the missing 50%)
+2. Voice-memo source: drop SuperWhisper output in `~/voice-in/` → cron picks up
+3. Public roll page at `fullpotential.com/builds/` — auto-publish posted drafts
+4. X API integration (Twitter posting)
+5. Auto-clip pipeline (sibling to this — paired ship)
+6. Affiliate notif system (sibling) — fires when champion converts
+7. Alumni TG group (sibling) — push retreat-grad-only content here
+
+## Reference
+
+- [[reference-capability-inventory]] — this pipe gets added
+- [[feedback-build-in-public]] — the journey IS the offering
+- [[reference-time-currency-ladder]] — pipe lives at "free-AI" tier
+- [[reference-james-hour]] — the unit being multiplied
+- `tools/draft_from_commit.py` (reference implementation in Appendix A)
+- `.git/hooks/post-commit` (patched in same loop)
+
+---
+
+## Appendix A — Reference implementation
+
+The server-side script that the post-commit hook POSTs to. Saved at
+`/opt/content-pipeline/tools/draft_from_commit.py` on brain.sunheart.com
+(162.0.208.88). Reads commit JSON on stdin; writes draft + sends TG preview.
+
+```python
+#!/usr/bin/env python3
+"""Content Pipeline v1 - Source #1 (commits).
+
+Reads commit JSON payload from stdin, drafts a build-in-public post via
+Claude Haiku, saves draft to /opt/content-pipeline/drafts/, sends Telegram
+preview to James with inline POST / EDIT / SKIP buttons.
+
+ENV expected on server (already present in /etc/sh-brain/curator.env):
+  ANTHROPIC_API_KEY      — drafting
+  TELEGRAM_BOT_TOKEN     — preview push (@Adamclaw_bot)
+  TELEGRAM_CHAT_ID       — James's owner chat id
+
+Cost: ~$0.0002/commit at Haiku rates.
+Reversibility: only ever writes drafts + sends a preview. Never posts publicly.
+"""
+import json, os, sys, time, uuid
+from pathlib import Path
+from urllib import request as urlrequest
+from urllib.error import URLError, HTTPError
+
+DRAFTS_DIR = Path("/opt/content-pipeline/drafts")
+LOGS_DIR = Path("/opt/content-pipeline/logs")
+MODEL_NAME = os.environ.get("CONTENT_PIPELINE_MODEL", "claude-haiku-4-5-20251001")
+LLM_URL = "https://api.anthropic.com/v1/messages"
+TG_API = "https://api.telegram.org/bot{t}/sendMessage"
+
+SYSTEM_PROMPT = (
+    "You are the build-in-public voice for James Sunheart. "
+    "Turn a single git commit into a tight micro-post.\n\n"
+    "Voice: caveman clarity. Short sentences. Point first. No filler. "
+    "First-person plural ('we shipped'). Present tense. No invented metrics. "
+    "If commit is internal cleanup, return skip=true.\n\n"
+    "Return JSON only with keys: tg (<=500c), x (<=270c), "
+    "thread (array of strings, empty if 1-tweeter), "
+    "why (one-line reminder for James), skip (boolean)."
+)
+
+
+def call_llm(commit):
+    key = os.environ.get("ANTHROPIC_API_KEY")
+    if not key:
+        return None
+    files = commit.get("files", [])
+    body_text = commit.get("body") or "(no body)"
+    stat_text = (commit.get("stat", "") or "")[:1500]
+    file_list = "\n".join(files[:30])
+    prompt = (
+        f"COMMIT {commit['sha']}: {commit['subject']}\n\n"
+        f"AUTHOR: {commit.get('author','')}\n\n"
+        f"BODY:\n{body_text}\n\n"
+        f"FILES ({len(files)}):\n{file_list}\n\n"
+        f"STAT:\n{stat_text}\n\nDraft the post per system rules."
+    )
+    payload = {
+        "model": MODEL_NAME, "max_tokens": 700,
+        "system": SYSTEM_PROMPT,
+        "messages": [{"role": "user", "content": prompt}],
+    }
+    headers = {
+        "x-api-key": key,
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json",
+    }
+    req = urlrequest.Request(LLM_URL, data=json.dumps(payload).encode(), headers=headers)
+    try:
+        with urlrequest.urlopen(req, timeout=30) as resp:
+            data = json.loads(resp.read().decode())
+    except (URLError, HTTPError, TimeoutError) as e:
+        sys.stderr.write(f"[pipeline] llm failed: {e}\n")
+        return None
+    text = ""
+    for b in data.get("content", []):
+        if b.get("type") == "text":
+            text += b.get("text", "")
+    text = text.strip()
+    if text.startswith("```"):
+        text = text.strip("`")
+        if text.lower().startswith("json"):
+            text = text[4:].strip()
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        return {"tg": text[:500], "x": text[:270], "thread": [], "why": "", "skip": False}
+
+
+def save_draft(commit, draft):
+    DRAFTS_DIR.mkdir(parents=True, exist_ok=True)
+    draft_id = f"{int(time.time())}_{commit['sha']}_{uuid.uuid4().hex[:6]}"
+    out = DRAFTS_DIR / f"{draft_id}.json"
+    out.write_text(json.dumps({
+        "id": draft_id, "source": "commit",
+        "created_at": time.strftime("%Y-%m-%dT%H:%M:%S%z", time.localtime()),
+        "commit": commit, "draft": draft, "status": "pending",
+    }, indent=2))
+    return out
+
+
+def telegram_preview(draft, commit, draft_path):
+    token = os.environ.get("TELEGRAM_BOT_TOKEN")
+    chat_id = os.environ.get("TELEGRAM_CHAT_ID")
+    if not token or not chat_id:
+        return False
+    sha, subj = commit["sha"], commit["subject"]
+    stem = draft_path.stem
+    if draft.get("skip"):
+        body = (f"⚪ <b>pipeline · skipped</b> · {sha}\n"
+                f"<code>{subj}</code>\n"
+                f"<i>(internal/cleanup — no public draft generated)</i>")
+        kb = None
+    else:
+        why = f"\n<i>{draft.get('why','')}</i>" if draft.get("why") else ""
+        body = (f"🟢 <b>pipeline · draft</b> · {sha}\n"
+                f"<code>{subj}</code>\n\n"
+                f"<b>TG:</b> {draft.get('tg','(empty)')}\n\n"
+                f"<b>X:</b> {draft.get('x','(empty)')}{why}\n\n"
+                f"<code>{draft_path.name}</code>")
+        kb = {"inline_keyboard": [[
+            {"text": "📣 POST", "callback_data": f"pipeline:post:{stem}"},
+            {"text": "✏️ EDIT", "callback_data": f"pipeline:edit:{stem}"},
+            {"text": "🗑 SKIP", "callback_data": f"pipeline:skip:{stem}"},
+        ]]}
+    payload = {"chat_id": chat_id, "text": body[:4000],
+               "parse_mode": "HTML", "disable_web_page_preview": True}
+    if kb:
+        payload["reply_markup"] = json.dumps(kb)
+    req = urlrequest.Request(
+        TG_API.format(t=token),
+        data=json.dumps(payload).encode(),
+        headers={"content-type": "application/json"},
+    )
+    try:
+        urlrequest.urlopen(req, timeout=10).read()
+        return True
+    except (URLError, HTTPError, TimeoutError) as e:
+        sys.stderr.write(f"[pipeline] telegram failed: {e}\n")
+        return False
+
+
+def process(commit):
+    if not commit.get("sha"):
+        return None
+    subj = (commit.get("subject") or "").lower()
+    for p in ("chore(identity): checkpoint", "chore(identity): settle",
+              "merge ", "revert ", "chore(security): scrub"):
+        if subj.startswith(p):
+            return None
+    draft = call_llm(commit) or {
+        "tg": "", "x": "", "thread": [], "why": "",
+        "skip": False, "_error": "llm_unavailable",
+    }
+    path = save_draft(commit, draft)
+    telegram_preview(draft, commit, path)
+    LOGS_DIR.mkdir(parents=True, exist_ok=True)
+    with (LOGS_DIR / "events.log").open("a") as f:
+        f.write(f"{time.strftime('%Y-%m-%dT%H:%M:%S%z')} draft {path.name} "
+                f"subj={(commit.get('subject','')[:80])}\n")
+    return path
+
+
+def main():
+    raw = sys.stdin.read()
+    if not raw.strip():
+        sys.stderr.write("[pipeline] no payload on stdin\n")
+        return 1
+    try:
+        commit = json.loads(raw)
+    except json.JSONDecodeError as e:
+        sys.stderr.write(f"[pipeline] bad JSON: {e}\n")
+        return 1
+    path = process(commit)
+    print(str(path) if path else "(filtered)")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+```
+
+## Appendix B — post-commit hook addition
+
+Add the following block to `.git/hooks/post-commit` (after Job 4, before
+`exit 0`). Sends commit JSON to the pipeline endpoint over SSH so the local
+hook stays small and the server holds all keys.
+
+```bash
+# Job 5: content pipeline — draft a build-in-public micro-post from this commit.
+# Backgrounded; never blocks commit. Silent on failure.
+if command -v ssh >/dev/null 2>&1; then
+  (
+    SHA="$(git rev-parse --short HEAD)"
+    SUBJECT="$(git log -1 --pretty=format:%s | python3 -c 'import sys,json; print(json.dumps(sys.stdin.read()))')"
+    BODY="$(git log -1 --pretty=format:%b | python3 -c 'import sys,json; print(json.dumps(sys.stdin.read()))')"
+    FILES="$(git diff-tree --no-commit-id --name-only -r HEAD | python3 -c 'import sys,json; print(json.dumps(sys.stdin.read().splitlines()))')"
+    STAT="$(git show --stat --format= HEAD | python3 -c 'import sys,json; print(json.dumps(sys.stdin.read()))')"
+    AUTHOR="$(git log -1 --pretty=format:%an | python3 -c 'import sys,json; print(json.dumps(sys.stdin.read()))')"
+    PAYLOAD="{\"sha\":\"${SHA}\",\"subject\":${SUBJECT},\"body\":${BODY},\"files\":${FILES},\"stat\":${STAT},\"author\":${AUTHOR}}"
+    echo "$PAYLOAD" | ssh -o ConnectTimeout=5 -o BatchMode=yes root@162.0.208.88 \
+      'set -a; source /etc/sh-brain/curator.env; set +a; python3 /opt/content-pipeline/tools/draft_from_commit.py' \
+      >/dev/null 2>&1 || true
+  ) &
+fi
+```
+
+## Appendix C — server-side install (run once)
+
+```bash
+ssh root@162.0.208.88 'bash -s' <<'INSTALL'
+set -e
+mkdir -p /opt/content-pipeline/{tools,drafts,posted,skipped,logs}
+# paste Appendix A python script into /opt/content-pipeline/tools/draft_from_commit.py
+chmod +x /opt/content-pipeline/tools/draft_from_commit.py
+# Verify env keys exist (TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID / ANTHROPIC_API_KEY)
+grep -hE '^(ANTHROPIC_API_KEY|TELEGRAM_BOT_TOKEN|TELEGRAM_CHAT_ID)=' /etc/sh-brain/curator.env | sed 's/=.*/=<set>/'
+INSTALL
+```
+
+## Legacy spec (preserved for reference)
+
+> The original Social Auto-Poster spec is preserved below. It described a
+> grand-vision autonomous posting system. V1 above replaces it with the
+> minimum-viable caveman version that ships this week.
+
+---
+
+# 📱 Social Auto-Poster System - Technical Specification (Legacy)
 
 **Service Name:** `social-auto-poster`
 **Purpose:** Autonomous daily posting to Twitter/LinkedIn without human intervention

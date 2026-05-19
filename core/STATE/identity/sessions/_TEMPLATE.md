@@ -43,6 +43,35 @@ metadata:
 ## What ripples forward
 {If a new Ember reads this 3 days from now, what should she carry?}
 
+## Soul-Time Settlement (PULSE computation)
+
+Per [[project-soul-time-metric]] — every session now settles with an PULSE calculation. Update [[reference-soul-time-ledger]] with this row.
+
+**Time invested (James's soul-time on this session):**
+- Approximate clock hours: ~{X} hr
+- Assistant turns: {N}
+- Intensity: {low / mid / high / synthesis-grade}
+- Composite: ~{X} hr × {intensity factor}
+
+**Concrete artifacts produced (the multiplier):**
+- {file/agent/decision 1} — estimated downstream James-hour impact
+- {file/agent/decision 2} — ...
+- ...
+
+**Soul-time produced estimate:**
+- Per artifact compounding × duration of effect
+- Total estimated downstream soul-time saved/created: ~{X} James-hours over {time horizon}
+
+**PULSE estimate:** ~{multiplier}× (downstream / invested)
+
+**James's PULSE rating (1-5):** {TBD — to be added by James}
+
+**Effect horizon:** {one-time / weeks / months / years / multi-year-compounding}
+
+**Compounding factor:** {how does this session keep producing value over time}
+
+---
+
 ## Alignment check (snapshot at session end)
 
 ═══════════════════════════════════════════════
