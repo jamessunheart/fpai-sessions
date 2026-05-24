@@ -37,6 +37,14 @@ PAYMENT_METHODS = {
     "other": {"name": "Other", "address": "To be discussed"},
 }
 
+# Co-stewards BCC'd on every inquiry notification (closes affiliate-visibility gap).
+# Override via ZV_COSTEWARDS env var (comma-separated). Empty string disables.
+_COSTEWARDS_ENV = os.environ.get("ZV_COSTEWARDS")
+if _COSTEWARDS_ENV is not None:
+    CO_STEWARDS = [e.strip() for e in _COSTEWARDS_ENV.split(",") if e.strip()]
+else:
+    CO_STEWARDS = ["atlas@zenvillagecr.com", "halley@zenvillagecr.com"]
+
 class InquiryRequest(BaseModel):
     name: str
     email: EmailStr
@@ -195,6 +203,147 @@ async def notify_telegram(inquiry: dict):
         print("Telegram notify failed: " + str(e))
 
 
+def notify_partner_on_referral(inquiry: dict):
+    """If inquiry has a partner_code, email that partner about the lead.
+
+    Silent skip cases (each logs why):
+    - No partner_code on the inquiry
+    - Partner code not found in partners.json
+    - Partner status is not 'active'
+    - Partner has no email address on file
+    """
+    try:
+        code = (inquiry.get("partner_code") or "").upper().strip()
+        if not code:
+            return False
+
+        from app.affiliates import (
+            _load as _aff_load,
+            PARTNERS_FILE,
+            partner_dashboard_token,
+        )
+        partners = _aff_load(PARTNERS_FILE)
+        partner = partners.get(code)
+        if not partner:
+            print("partner notify skipped: unknown code " + code)
+            return False
+        if (partner.get("status") or "active") != "active":
+            print("partner notify skipped: code " + code + " is not active")
+            return False
+
+        partner_email = (partner.get("email") or "").strip()
+        if not partner_email:
+            print("partner notify skipped: code " + code + " has no email")
+            return False
+
+        partner_name = partner.get("name") or code
+        token = partner_dashboard_token(code)
+        site_base = (os.environ.get("ZV_SITE_BASE") or "https://zenvillagecr.com").rstrip("/")
+        dashboard_url = site_base + "/reset/me?code=" + code + "&token=" + token
+
+        def _f(key: str, default: str = "") -> str:
+            v = inquiry.get(key)
+            return v if v else default
+
+        name = _f("name", "Anonymous")
+        guest_email = _f("email", "")
+        inquiry_type = _f("inquiry_type", "Stay")
+        pm = _f("payment_method", "")
+        pm_info = PAYMENT_METHODS.get(pm, {})
+        pm_display = pm_info.get("name", pm) if pm_info else pm
+        is_paid_intent = bool(pm) and (
+            "reset retreat" in inquiry_type.lower() or "jungle exhale" in inquiry_type.lower()
+        )
+
+        subject_prefix = "💰 PAID intent" if is_paid_intent else "📥 New lead"
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = subject_prefix + " from your ref " + code + " — " + name
+        msg["From"] = "noreply@zenvillagecr.com"
+        msg["To"] = partner_email
+        msg["Reply-To"] = "james@fullpotential.com"
+
+        text_lines = [
+            "Hi " + partner_name + ",",
+            "",
+            "Someone just used your referral code " + code + " on zenvillagecr.com/reset.",
+            "",
+            "Type: " + inquiry_type,
+            "From: " + name,
+            "Email: " + guest_email,
+            "Phone: " + _f("phone", "Not provided"),
+            "Dates: " + _f("dates", "Flexible"),
+            "Guests: " + _f("guests", "Not specified"),
+            "Accommodation: " + _f("accommodation", "Not specified"),
+        ]
+        if is_paid_intent:
+            text_lines.append("Payment method: " + pm_display)
+            text_lines.append("")
+            text_lines.append("** Paid-intent reservation. ** Commission lands once James confirms payment.")
+        text_lines.extend([
+            "",
+            "See all your leads + commissions: " + dashboard_url,
+            "",
+            "Questions? Reply to this email — it goes to James.",
+            "",
+            "— Zen Village",
+        ])
+        text = "\n".join(text_lines)
+
+        header_color = "#c4a35a" if is_paid_intent else "#1a2e1a"
+        header_label = "💰 Paid-intent reservation" if is_paid_intent else "📥 New lead"
+
+        rows_html = (
+            '<tr><td style="padding:6px 0;font-weight:bold;width:140px;">Type:</td><td>' + inquiry_type + '</td></tr>'
+            '<tr><td style="padding:6px 0;font-weight:bold;">Name:</td><td>' + name + '</td></tr>'
+            '<tr><td style="padding:6px 0;font-weight:bold;">Email:</td><td><a href="mailto:' + guest_email + '">' + guest_email + '</a></td></tr>'
+            '<tr><td style="padding:6px 0;font-weight:bold;">Phone:</td><td>' + _f("phone", "Not provided") + '</td></tr>'
+            '<tr><td style="padding:6px 0;font-weight:bold;">Dates:</td><td>' + _f("dates", "Flexible") + '</td></tr>'
+            '<tr><td style="padding:6px 0;font-weight:bold;">Guests:</td><td>' + _f("guests", "Not specified") + '</td></tr>'
+            '<tr><td style="padding:6px 0;font-weight:bold;">Accommodation:</td><td>' + _f("accommodation", "Not specified") + '</td></tr>'
+        )
+        if is_paid_intent:
+            rows_html += '<tr><td style="padding:6px 0;font-weight:bold;">Payment:</td><td>' + pm_display + '</td></tr>'
+
+        commission_note = ""
+        if is_paid_intent:
+            commission_note = (
+                '<div style="margin-top:16px;padding:14px;background:#fffdf5;border-radius:8px;border:2px solid #c4a35a;">'
+                '<strong style="color:#c4a35a;">💰 Paid-intent reservation</strong><br>'
+                'Commission will land once James confirms payment receipt.</div>'
+            )
+
+        html = (
+            '<html><body style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">'
+            '<div style="background:' + header_color + ';color:#faf9f5;padding:20px;text-align:center;">'
+            '<h1 style="margin:0;font-size:20px;">' + header_label + '</h1>'
+            '<div style="margin-top:6px;opacity:0.85;font-size:14px;">From your ref code <strong>' + code + '</strong></div></div>'
+            '<div style="padding:20px;background:#f0f4ec;">'
+            '<p style="margin-top:0;">Hi <strong>' + partner_name + '</strong>,</p>'
+            '<p>Someone just used your referral code on zenvillagecr.com/reset.</p>'
+            '<table style="width:100%;border-collapse:collapse;background:white;padding:12px;border-radius:8px;">'
+            + rows_html +
+            '</table>'
+            + commission_note +
+            '<div style="margin-top:20px;text-align:center;">'
+            '<a href="' + dashboard_url + '" style="display:inline-block;padding:12px 24px;background:#1a2e1a;color:#faf9f5;text-decoration:none;border-radius:8px;font-weight:bold;">'
+            'See all your leads + commissions →</a></div>'
+            '<p style="margin-top:20px;font-size:13px;color:#666;">Questions? Reply to this email — it goes to James.</p>'
+            '<p style="font-size:13px;color:#666;text-align:center;margin-top:30px;">— Zen Village</p>'
+            '</div></body></html>'
+        )
+
+        msg.attach(MIMEText(text, "plain"))
+        msg.attach(MIMEText(html, "html"))
+
+        with smtplib.SMTP("localhost", 25) as server:
+            server.sendmail(msg["From"], [partner_email], msg.as_string())
+        print("partner notify sent: " + code + " → " + partner_email)
+        return True
+    except Exception as e:
+        print("Partner notify failed: " + str(e))
+        return False
+
+
 def send_email_notification(inquiry: dict):
     try:
         # Coerce Optional fields (None) to readable defaults — Pydantic stores
@@ -259,8 +408,9 @@ def send_email_notification(inquiry: dict):
         msg.attach(MIMEText(text, "plain"))
         msg.attach(MIMEText(html, "html"))
 
+        recipients = [msg["To"]] + list(CO_STEWARDS)
         with smtplib.SMTP("localhost", 25) as server:
-            server.sendmail(msg["From"], [msg["To"]], msg.as_string())
+            server.sendmail(msg["From"], recipients, msg.as_string())
         return True
     except Exception as e:
         print("Email send failed: " + str(e))
@@ -294,6 +444,7 @@ async def submit_inquiry(inquiry: InquiryRequest, background_tasks: BackgroundTa
     background_tasks.add_task(_sync_inquiry_to_nocodb, inquiry_data)
     background_tasks.add_task(send_email_notification, inquiry_data)
     background_tasks.add_task(notify_telegram, inquiry_data)
+    background_tasks.add_task(notify_partner_on_referral, inquiry_data)
 
     # Auto-acknowledgment so guests know we got their message.
     try:
