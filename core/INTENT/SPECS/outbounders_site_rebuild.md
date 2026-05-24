@@ -111,16 +111,42 @@
 | Migration + redirects + testing | 1 | AI |
 | **Total** | **6-7 wks** | AI-led, James reviews at each phase |
 
-## Open questions for James
+## Decisions locked 2026-05-23
 
-1. **Brand positioning** — A, B, C, or D from the table above?
-2. **Real customer case studies** — who would let us write about them?
-3. **Tone / voice** — confident-startup vibe (Linear), warm-craft vibe (Hatch), or operator-direct (Beam)?
-4. **Pricing fee transparency** — comfortable disclosing the platform's % cut publicly?
-5. **AI-augmentation features to ship FIRST** — script generator? call coaching? matching?
+| # | Question | AI's call | James confirm |
+|---|----------|-----------|---------------|
+| 1 | Brand positioning | **A · Modernize** as "Outbounders, now AI-augmented" — preserves 11yr domain equity, no SEO fragmentation | ✅ Confirmed by James 2026-05-23 |
+| 2 | Case study candidates | Top 3 active flagship clients identified from DB (see table below) | ☐ Pending — approve outreach to these 3 |
+| 3 | Tone/voice | **Confident-operator hybrid (Linear × Beam)** — crisp, results-oriented, no fluff · matches B2B sales-ops buyer | ☐ Pending |
+| 4 | Pricing fee transparency | **Yes, disclose platform fee % publicly** — trust signal in 2026 · aligns with AI-augmented modern positioning · Upwork/Fiverr both disclose | ☐ Pending — also need actual fee % (I can dig from app config OR you provide) |
+| 5 | AI-augmentation first feature | **AI Script Generator** — visible value in 30 sec · standalone marketing piece ("Try free") · differentiates immediately · lowest tech complexity vs call coaching / matching | ☐ Pending |
+
+## Case study candidates (top 3 active flagship clients · 2026-05-23 query)
+
+| Client ID | Name / Company | Email | Country | Tenure | Lifetime $ | Last login | Why feature |
+|-----------|---------------|-------|---------|--------|-----------:|-----------|-------------|
+| 40856 | Noam Simckes / GNS Services LLC | gnsservicesllc@gmail.com | US | 10 years (since 2016) | $1,333,081 | 2026-05-19 | Largest customer · still active · 629 transactions · "decade-long partnership" story |
+| 12990 | Deep Discount Inkjet (sales contact) | sales@deepdiscountinkjet.com | US | 12 years (since 2014) | $163,476 | 2026-05-23 (today!) | Longest-tenured active client · 795 transactions · "outbound sales engine since 2014" |
+| 48193 | Marcia Dixon / Keep The Faith | finance@keepthefaith.co.uk | UK (NZ in profile) | 9 years (since 2017) | $220,462 | 2026-05-19 | International · ministry sector · 630 transactions · diversity of use cases |
+
+These 3 alone represent ~85% of last-12mo deposit revenue. They are the platform's flagship proof.
+
+## Phase 1 build kickoff (AI Script Generator)
+
+Pending James's confirm on Q5 above. Once approved, AI will:
+- Create feature branch `feat/outbounders-ai-script-gen`
+- Standalone Next.js or HTML page at `script.outbounders.com` (subdomain) or `outbounders.com/ai-script-generator/`
+- UX: client describes campaign in plain English (industry, offer, target, goal) → AI returns 800-word script + 10 common objections + 5 qualifying questions
+- Backend: Anthropic Claude API · ~$0.01 per generation · estimated <$5 in dev costs
+- Public-facing FREE tool (lead-gen play) · captures email to send results
+- Embeddable on outbounders.com homepage as the "see what AI-augmented means" demo
+- No touch to production app.outbounders.com
+
+ETA from approval: 3-5 days for MVP, James reviews live before public link.
 
 ## Dependencies
 
 - AI-augmentation Phase 1 (script generator) needs to be working before site claims it
 - Google Search Console access needed to forensic the 23× decline + measure recovery
 - Decision on `app.outbounders.com` — keep as-is or also modernize? (separate spec)
+- Actual platform fee % needed before pricing-page transparency push
