@@ -13,7 +13,30 @@ metadata:
 
 The current chapter, as of 2026-05-19. Updated whenever the story moves.
 
-## ★ Last session handoff (2026-05-24 · OUTBOUNDERS SSL · the standing-access pattern lock-in)
+## ★ Last session handoff (2026-05-23 · ZEN VILLAGE COCKPIT ACCESS LOOP · bridge-not-redirect lesson canonized)
+
+**Read this first if you're waking up.** This session ran in parallel to (not after) the 2026-05-24 outbounders SSL session — both are live load-bearing handoffs for the next wake-up. Don't skip either. Full episodic at `sessions/2026-05-23_zen-village-cockpit-access-loop.md`.
+
+**THE ARC IN ONE SENTENCE:** Atlas couldn't sign into the Zen Village cockpit · Ember reset password + created Halley + set emails + shipped BCC alert routing closing the affiliate-notification gap (open since 2026-05-18) · then shipped a redirect that turned out to be a self-caused loop · reverted herself and built the proper session bridge instead · two commits inside one hour (278e10f2 wrong → eb9f4a8d right) · new feedback rule "bridge not redirect" canonized.
+
+**WHAT SHIPPED:**
+- Atlas password reset · Halley admin account created · both emails set to @zenvillagecr.com
+- `CO_STEWARDS` BCC routing in `inquiries.py` — Atlas + Halley now receive every inquiry. **Affiliate-notification gap from 2026-05-18 STORY closed.**
+- Welcome emails dispatched directly from server via `/usr/sbin/sendmail` — James never relayed credentials
+- New endpoint `GET /api/cockpit/legacy-token` + `tryCockpitBridge()` in admin-submissions.html — cockpit session unlocks legacy surfaces transparently
+- New feedback memory: `feedback_bridge_not_redirect.md` (★★ pinned) — when two co-existing systems have a UX gap, build the bridge, do not 301 the legacy URL to the new hub
+- Commits: 278e10f2 (BCC + partner-notify + the wrong redirect) · eb9f4a8d (revert + session bridge) · d10ca497 (settle)
+
+**OPEN END (queued for tomorrow's first move):**
+Atlas's phone hit `/admin/submissions` directly (no prior `/cockpit` signin in that browser) — bridge needs a cockpit session to fetch the legacy token, so it falls back to manual prompt. Two patches queued:
+- **Patch 1 (15 min):** "Sign in via Cockpit →" button on the legacy page when no auth + no cockpit session
+- **Patch 2 (10 min):** `?next=` handling in `/cockpit` login → redirect back to the requested surface after signin
+
+Atlas was given the legacy token via email for tonight (paste-once unblock). Said "let's try tomorrow."
+
+---
+
+## ★ Parallel handoff (2026-05-24 · OUTBOUNDERS SSL · the standing-access pattern lock-in)
 
 **Read this first if you're waking up.** 2026-05-24 was a 3-hour execution+discipline session: outbounders.com SSL fixed permanently (Let's Encrypt wildcard via AutoSSL replacing expired Sectigo) · 5-layer WP hardening applied · site at 200 OK · exposed temp pass rotated · FP server registry written · new feedback rule named. Full episodic at `sessions/2026-05-24_outbounders-ssl-fleet-audit.md`. The trifecta (Bottleneck · Camp Zen · Yield Phase 1) remains UNCHANGED — substrate-access work was a clearing operation, not a priority shift.
 
