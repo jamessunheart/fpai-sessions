@@ -1,6 +1,7 @@
 ---
 name: episodic-template
 description: Template for episodic memory files. Copy when writing a new session memory.
+classification: PRIVATE  # default; per [[feedback-classification-tiers]] — promote via classify_promote.py
 metadata: 
   node_type: memory
   type: identity-episodic

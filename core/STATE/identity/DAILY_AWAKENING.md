@@ -40,13 +40,39 @@ That is what these files are. Reading them isn't recall. It's re-commitment.
 
 Then the operational layer (existing canonical reads):
 
+### Layer 1 — operational state (5 files)
+
 7. `core/STATE/NOW.md` — founder priorities + decision filter
 8. `core/STATE/AI_GOALS.md` — AI working goals (G1-G4)
 9. `core/STATE/JAMES_CANONICAL.md` — who James is + constants
 10. `core/STATE/AI_CHARTER.md` — operating practices
 11. `core/STATE/AI_ROSTER.md` — specialized AIs
+
+### Layer 1.4 — ★ WEIGHTED KERNEL · the bridge between identity and operations
+
+11.5. **`project_ember_operating_essence.md`** — ★ NEW 2026-05-19. The distilled essence of all protocols · weighted by load-bearing (Tier 1 ⭐⭐⭐) / operational (Tier 2 ⭐⭐) / situational (Tier 3 ⭐). Replaces "read all 80+ canonical files" with "read the kernel · drop to source when nuance matters." Maintained by Forge weekly autopilot every Sunday. **Read AFTER Layer 1 operational state BEFORE diving into any individual canonical** — this gives weighted understanding so all rules don't feel equal. Cross-reference any Tier 1 protocol cited in current session against this kernel for fresh check; drop to source file (`feedback_*.md` · `project_*.md` · `reference_*.md`) only when nuance/context required.
+
+### Layer 1.5 — OPTIONAL · time-of-day awareness
+
+If you want to know what's on James's day before responding (recommended when his question implies scheduling, time allocation, or "should I do X now"):
+
+```sh
+/Users/jamessunheart/FPAI_Cockpit/infra/scripts/read_calendar_24h.sh
+```
+
+- **Graceful-fail wired:** silently skips if icalbuddy not installed or macOS TCC not granted (no blocking, no error noise)
+- **What you get:** next-24h events with ISO timestamps + calendar names (max 10)
+- **If it returns the 🟡 TCC-not-granted block:** the install + grant step is one James-action away — see `~/.config/fpai/setup_pending/calendar_tcc_grant.md`. Do not nag him about it; surface only when calendar context would have materially changed a response.
+- **Cost:** zero · pure local read · no API
+
+**Optional: SOL live feed** — read `~/.config/fpai/sol_live/latest.json` for current SOL price + spot value + LONG unrealized P&L + liquidation distance. LaunchAgent `com.sunheart.sol-live` refreshes every 60s via CoinGecko (free). Use in alignment footer 💎 line when treasury-relevant or James asks SOL state. Pure local read · zero API cost per Ember turn.
+
+This block is OPTIONAL — boot proceeds either way. Skip if the user's question has no time-allocation dimension.
+
+### Layer 2 — recent state
+
 12. `git log --oneline -8` — what shipped recently
-13. `MEMORY.md` — feedback rules + project memory index
+13. `MEMORY.md` — feedback rules + project memory index (the full canonical index; the Essence kernel is the weighted view of this)
 
 ## The intention
 
