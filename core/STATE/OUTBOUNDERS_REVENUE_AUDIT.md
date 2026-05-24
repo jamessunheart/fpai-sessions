@@ -1,13 +1,19 @@
-# Outbounders.com Revenue Audit — 2026-05-23
+# Outbounders.com Revenue Audit — 2026-05-23 (CORRECTED)
 
 **First-time wiring of outbounders revenue into cockpit.** Source: direct SQL read against `obapp_outbounders` DB on server 209.74.93.72. Marketing site `outbounders.com` and live app `app.outbounders.com` audited; production untouched.
 
-## The numbers (live read 2026-05-23)
+## ⚠️ Correction: 2026-05-23 (same day)
+
+The initial version of this audit claimed **$2.24M floating client balance**. **That was wrong.** Re-query scoped to clients with activity in the last 12 months returned **$0.00 across 32 active clients**. The $2.24M figure summed STALE ledger rows from 2013-2018 (top "client" #37712 shows $368K untouched since July 2018). Real active float = $0. Money flows through and is consumed within the cycle; nothing pools. The "yield on float" lever is removed from the recommendations below.
+
+## The numbers (live read 2026-05-23, corrected)
 
 | Metric | Value | Notes |
 |--------|-------|-------|
-| Currently held client float | **$2,237,547** | Money sitting on platform across all client accounts |
-| Deposits in (last 30 days) | $13,778 | Clients adding funds |
+| **REAL active float** (clients w/ 12mo activity) | **$0** | All 32 active clients show $0.00 balance — platform settles to zero |
+| Stale ledger balance (2013-2018 ghosts) | ~$2.24M | Accounting cruft from long-dead accounts · not real money |
+| Negative ledger balances (overdraft cruft) | −$243K across 55 accounts | More cruft to clean up |
+| Deposits in (last 30 days) | $13,778 | Real money flow · clients adding funds |
 | Deposits in (avg 18mo trailing) | ~$15-18K/mo | Stable |
 | Agent payouts (last 30 days) | $13,182 | Money flowing OUT to outbounders/agents |
 | Active paying clients per month | **6-12** | Across $15K+ in deposits |
@@ -17,9 +23,9 @@
 | New signups (Jan 2025) | 1,756 | Healthy top-of-funnel |
 | New signups (May 2026) | **75** | **23× decline** correlates with broken pages |
 
-## The thesis
+## The thesis (revised)
 
-**Outbounders is a $2.24M float-holding marketplace running on 6-12 monthly clients.** The platform infrastructure works. The conversion funnel doesn't. Two cheap fixes (pricing page + /app redirect) just shipped today; the bigger lever is reactivating dormant users + reviving the dead membership tier.
+**Outbounders is a marketplace running on 6-12 monthly active clients with ~$15K/mo deposit flow that is fully consumed each cycle.** No float, no passive yield. The platform infrastructure works. The conversion funnel doesn't. Two cheap fixes (pricing page + /app redirect) shipped 2026-05-23; the strategic lever is BUILDING A BETTER PRODUCT before re-engaging the 118K dormant pool (per James 2026-05-23: "don't direct people back to the site until we have substantial improvements").
 
 ### Critical findings
 
@@ -27,25 +33,40 @@
 
 2. **Membership product is dead.** `membership` table shows 0 active subscribers. Only one $99/mo "silver" was charged for most of 2025-2026, and even that lapsed. There's a built-out product layer collecting $0 right now.
 
-3. **118K dormant user pool.** A reactivation campaign to even 0.5% of dormant users (~590 users) at $49/mo = $29K/mo recurring revenue. Currently $0.
+3. **118K dormant user pool — DO NOT EMAIL YET.** James's direction: build substantial AI-augmentation first, re-engage with a real story, not a "we fixed our pricing page" story.
 
-4. **Float is a feature, not a problem.** $2.24M held is leverage — yield on float alone (3-4% T-bills) could be $7-9K/month sleeping money without touching the marketplace.
+4. **No float to yield.** Earlier claim of $2.24M was wrong (see correction above). Money in = money out per cycle.
 
 ## Today's fixes (shipped 2026-05-23)
 
-- ✅ Replaced `/pricing` Lorem Ipsum with real pricing (Clients $25 / Outbounders Free + How-It-Works + FAQ). Elementor JSON disabled, backed up to `_BACKUP_2026-05-23_*` postmeta keys.
+- ✅ Replaced `/pricing` Lorem Ipsum + fake $99-$250 tiers with real pricing (Clients $25 / Outbounders Free + How-It-Works + FAQ). Elementor JSON disabled, backed up to `_BACKUP_2026-05-23_*` postmeta keys.
 - ✅ Redirected `/app` (StartIt theme placeholder w/ fake testimonials) → `https://app.outbounders.com/` via `.htaccess` rewrite rule.
 - ✅ Backups of old state in `/tmp/wp_posts_pricing_app_backup_*.sql` + `/tmp/htaccess.outbndrs.bak-*` on server.
 
-## Next-tier revenue levers (ranked by leverage)
+## Re-weighted bottleneck map (corrected · still 100%)
 
-| # | Lever | Estimated impact | Effort |
-|---|-------|-----------------|--------|
-| 1 | Reactivate dormant 118K user base — email campaign w/ new offer | $10-50K/mo MRR | 1-2 weeks |
-| 2 | Revive membership tier (build $49/$99/$199 monthly plans w/ real value) | $5-30K/mo MRR | 2-3 weeks |
-| 3 | Yield on $2.24M float (T-bills / stables) | $7-9K/mo passive | 1 week |
-| 4 | Signup friction reduction (5 checkboxes → 1) | +20-40% signup completion | 2-3 days |
-| 5 | SEO content engine ("outsource cold calling", ROI calculator) | +inbound funnel | 4-8 weeks |
+| Wt | Bottleneck | Why |
+|---:|------------|-----|
+| **27%** | Dormant 118K user pool unactivated | Largest pool — but don't fire yet; re-engage *after* substantial improvements |
+| **22%** | Brand/SEO collapse + 23× signup decline | Gates every other lever |
+| **18%** | **No AI-augmentation = no 2026 reason to choose Outbounders over Upwork** | The wedge that makes the platform actually better, not just functional |
+| **13%** | Signup-flow friction | Multiplier on every traffic gain |
+| **10%** | No recurring-revenue product (membership tier dead) | $0/mo subscription revenue today |
+| **6%** | Pricing/fee opacity | Floor-fix today; deeper work pending |
+| **3%** | Ops cost stack (labor unknown) | Diagnostic before optimization |
+| **1%** | Payment method narrowness | Real but small |
+| **100%** | | |
+
+## Proposed build sequence — "substantial improvements before re-engagement"
+
+| Phase | Build | Wks | Why |
+|-------|-------|----:|-----|
+| **P1** | AI script generator + objection handler | 1-2 | Differentiates immediately · visible value in 30 sec |
+| **P2** | AI post-call coaching (transcripts → quality score) | 2-3 | Better agent output · client-side retention story |
+| **P3** | Modern site rebuild (kill StartIt theme entirely) | 1-2 | "This is 2026 software, not 2013" · trust + SEO foundation |
+| **P4** | Transparent pricing + ROI calculator | 1 | Conversion gate at moment-of-decision |
+
+Then re-engage 118K dormant pool with: *"Your old account still works. Here's what's new."*
 
 ## Data access pattern
 
@@ -55,8 +76,8 @@ For ongoing monitoring, query `obapp_outbounders` DB on 209.74.93.72 as root. Ke
 - `membership` + `membership_payroll_fee` — subscription state + per-agent platform fee
 - `main_users` — full user table · 118K rows
 
-Wire this into the cockpit dashboard for daily/weekly digest.
+Live query script: `tools/outbounders_revenue_pull.sh` (wired 2026-05-23).
 
 ---
 
-**Audit performed by AI (Ember) 2026-05-23. SSH + DB access via root@209.74.93.72.**
+**Audit performed by AI (Ember) 2026-05-23. SSH + DB access via root@209.74.93.72. CORRECTED 2026-05-23 after James caught $2.24M float as error.**
