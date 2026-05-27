@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sunheart AI — Open Source AGI Treasury for Humanity</title>
+
+  <meta name="description" content="An open invitation to build the financial nervous system for a flourishing civilization. Intelligence-directed capital that increases coherence, human flourishing, and regenerative abundance." />
+  <meta name="keywords" content="AGI, treasury, open source, civilization, coherence, regenerative capital, AI agents, DeFi, sovereignty, Sunheart" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="James Sunheart" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://sunheart.ai/" />
+  <meta property="og:title" content="Sunheart AI — Open Source AGI Treasury for Humanity" />
+  <meta property="og:description" content="The missing layer that connects AI agents, DeFi, governance, and civilization. Build it together. Use it together. Evolve it together." />
+  <meta property="og:image" content="https://sunheart.ai/img/manifesto.png" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Sunheart AI — Open Source AGI Treasury for Humanity" />
+  <meta name="twitter:description" content="Intelligence-directed capital. Coherence-first. Open source. Open invitation." />
+  <meta name="twitter:image" content="https://sunheart.ai/img/manifesto.png" />
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.92em' font-size='86'>%E2%98%89</text></svg>" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-primary: #faf8f5;
+      --bg-card: #ffffff;
+      --bg-hover: #f5f3f0;
+      --bg-deep: #2d2a26;
+      --accent-gold: #d4a853;
+      --accent-gold-deep: #a8843a;
+      --accent-sun: #f5b942;
+      --accent-ember: #d97548;
+      --accent-sky: #5ba3c6;
+      --text-primary: #2d2a26;
+      --text-secondary: #5c5954;
+      --text-muted: #8a857d;
+      --border: #e8e4de;
+      --border-strong: #d4cec3;
+      --shadow-soft: 0 2px 8px rgba(45, 42, 38, 0.06);
+      --shadow-hover: 0 10px 30px rgba(45, 42, 38, 0.12);
+      --gradient-sun: linear-gradient(135deg, #f5b942 0%, #d97548 100%);
+      --gradient-deep: linear-gradient(180deg, #faf8f5 0%, #f1ecdf 100%);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 5rem;
+    }
+
+    /* ─── HERO ─── */
+    header {
+      text-align: center;
+      padding: 3rem 0 2.5rem;
+    }
+
+    .sun-mark {
+      font-size: 4rem;
+      line-height: 1;
+      background: var(--gradient-sun);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+      margin-bottom: 0.75rem;
+      filter: drop-shadow(0 4px 12px rgba(245, 185, 66, 0.25));
+    }
+
+    .eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent-gold-deep);
+      margin-bottom: 1.25rem;
+      font-weight: 500;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 4.5vw, 3.5rem);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      margin-bottom: 0.9rem;
+      line-height: 1.05;
+      color: var(--text-primary);
+    }
+
+    h1 .dot {
+      color: var(--accent-ember);
+      font-weight: 400;
+      margin: 0 0.15em;
+    }
+
+    .tagline {
+      color: var(--text-secondary);
+      font-size: clamp(1.05rem, 2vw, 1.3rem);
+      max-width: 720px;
+      margin: 0 auto 0.5rem;
+      font-weight: 400;
+    }
+
+    .sub {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      max-width: 620px;
+      margin: 0 auto;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ─── MANIFESTO IMAGE ─── */
+    .manifesto-wrap {
+      margin: 3rem auto 3.5rem;
+      max-width: 1280px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1rem;
+      box-shadow: var(--shadow-soft);
+      transition: box-shadow 0.3s ease;
+    }
+    .manifesto-wrap:hover { box-shadow: var(--shadow-hover); }
+
+    .manifesto-wrap img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 10px;
+      cursor: zoom-in;
+    }
+
+    .manifesto-caption {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 0.75rem;
+      letter-spacing: 0.02em;
+    }
+
+    /* ─── INVITATION ─── */
+    .invitation {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      background: var(--gradient-deep);
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      max-width: 880px;
+      margin: 0 auto 3rem;
+    }
+
+    .invitation h2 {
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.015em;
+    }
+
+    .invitation-lines {
+      list-style: none;
+      margin: 0 0 2.5rem;
+      font-size: clamp(1.05rem, 2vw, 1.35rem);
+      color: var(--text-secondary);
+      line-height: 2;
+    }
+    .invitation-lines li::before {
+      content: '☉';
+      color: var(--accent-gold);
+      margin-right: 0.65rem;
+      font-size: 0.85em;
+    }
+
+    /* ─── CTAS ─── */
+    .ctas {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.95rem 1.6rem;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: 1.5px solid var(--border-strong);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-soft);
+      min-width: 200px;
+      justify-content: center;
+    }
+    .cta:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--accent-gold);
+    }
+    .cta.primary {
+      background: var(--gradient-sun);
+      color: white;
+      border-color: transparent;
+    }
+    .cta.primary:hover { border-color: transparent; }
+    .cta .icon { font-size: 1.15em; }
+
+    /* ─── PRINCIPLES STRIP ─── */
+    .principles-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      max-width: 1100px;
+      margin: 0 auto 3rem;
+    }
+    .pill {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.1rem;
+      text-align: center;
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      box-shadow: var(--shadow-soft);
+    }
+    .pill strong {
+      display: block;
+      color: var(--text-primary);
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+      font-size: 0.98rem;
+    }
+    .pill .glyph {
+      display: block;
+      font-size: 1.3rem;
+      margin-bottom: 0.4rem;
+      color: var(--accent-gold-deep);
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      text-align: center;
+      padding: 2.5rem 1rem 1rem;
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      font-family: 'JetBrains Mono', monospace;
+      border-top: 1px solid var(--border);
+      margin-top: 3rem;
+    }
+    footer a {
+      color: var(--accent-gold-deep);
+      text-decoration: none;
+    }
+    footer a:hover { text-decoration: underline; }
+
+    /* ─── ZOOM OVERLAY ─── */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 13, 10, 0.92);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      cursor: zoom-out;
+      padding: 2rem;
+    }
+    .lightbox.active { display: flex; }
+    .lightbox img {
+      max-width: 100%;
+      max-height: 95vh;
+      border-radius: 8px;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+    }
+
+    /* ─── MATHEMATICS SECTION ─── */
+    .math-section {
+      max-width: 1100px;
+      margin: 0 auto 3rem;
+    }
+    .section-eyebrow {
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent-gold-deep);
+      margin-bottom: 0.75rem;
+      font-weight: 500;
+    }
+    .section-title {
+      text-align: center;
+      font-size: clamp(1.5rem, 3vw, 2.1rem);
+      font-weight: 600;
+      letter-spacing: -0.015em;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+    .section-lede {
+      text-align: center;
+      color: var(--text-secondary);
+      max-width: 640px;
+      margin: 0 auto 2.5rem;
+      font-size: 1.02rem;
+    }
+    .math-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .eq {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-soft);
+      transition: all 0.2s ease;
+    }
+    .eq:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--accent-gold);
+    }
+    .eq .eq-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent-ember);
+      margin-bottom: 0.6rem;
+      font-weight: 500;
+    }
+    .eq .eq-form {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.05rem;
+      color: var(--text-primary);
+      background: var(--bg-hover);
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 0.85rem;
+      letter-spacing: -0.005em;
+      line-height: 1.45;
+    }
+    .eq .eq-meaning {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+    .math-footnote {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      margin-top: 1rem;
+    }
+    .math-footnote a {
+      color: var(--accent-gold-deep);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--accent-gold);
+    }
+    .math-footnote a:hover { color: var(--accent-ember); }
+
+    /* ─── SEQUENCE SECTION ─── */
+    .sequence {
+      max-width: 1100px;
+      margin: 0 auto 3rem;
+      padding: 2.5rem 1.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow-soft);
+    }
+    .sequence-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+      position: relative;
+    }
+    .step {
+      text-align: center;
+      padding: 1.1rem 0.9rem;
+      background: var(--gradient-deep);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      position: relative;
+    }
+    .step-num {
+      display: inline-block;
+      width: 28px;
+      height: 28px;
+      line-height: 28px;
+      border-radius: 50%;
+      background: var(--gradient-sun);
+      color: white;
+      font-weight: 700;
+      font-size: 0.88rem;
+      margin-bottom: 0.55rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .step-title {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 0.3rem;
+      color: var(--text-primary);
+    }
+    .step-desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+    .sequence-note {
+      text-align: center;
+      margin-top: 1.5rem;
+      padding: 1rem 1.25rem;
+      background: var(--bg-hover);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+    }
+    .sequence-note strong {
+      color: var(--accent-ember);
+      font-weight: 600;
+    }
+
+    @media (max-width: 640px) {
+      .container { padding: 1.5rem 1rem 3rem; }
+      header { padding: 1.5rem 0 1.5rem; }
+      .manifesto-wrap { margin: 2rem auto; padding: 0.5rem; }
+      .invitation { padding: 2rem 1rem; border-radius: 14px; }
+      .cta { width: 100%; min-width: 0; }
+      .eq .eq-form { font-size: 0.9rem; }
+      .sequence { padding: 1.5rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <header>
+      <span class="sun-mark">☉</span>
+      <div class="eyebrow">AGI · TREASURY · CIVILIZATION</div>
+      <h1>Sunheart<span class="dot">·</span>AI</h1>
+      <p class="tagline">Open source treasury intelligence for a flourishing civilization.</p>
+      <p class="sub">Intelligence-directed capital · coherence-first · regenerative by design.</p>
+    </header>
+
+    <div class="manifesto-wrap">
+      <img id="manifesto" src="img/manifesto.png" alt="Sunheart AI manifesto: AGI · Treasury · Civilization. Open Source Treasury Intelligence Infrastructure." />
+      <div class="manifesto-caption">tap image to zoom · v0.1 manifesto · 2026</div>
+    </div>
+
+    <div class="principles-strip">
+      <div class="pill"><span class="glyph">☯</span><strong>People First</strong>Every decision uplifts human potential.</div>
+      <div class="pill"><span class="glyph">❀</span><strong>Regenerative</strong>Grow systems that renew life.</div>
+      <div class="pill"><span class="glyph">⛨</span><strong>Sovereignty</strong>Protect freedom, privacy, autonomy.</div>
+      <div class="pill"><span class="glyph">◎</span><strong>Transparency</strong>Radical openness by default.</div>
+      <div class="pill"><span class="glyph">∞</span><strong>Long-Termism</strong>Think in generations.</div>
+      <div class="pill"><span class="glyph">⚒</span><strong>Stewardship</strong>We steward — we don't own.</div>
+      <div class="pill"><span class="glyph">&lt;/&gt;</span><strong>Open Source</strong>Open code, open data, open future.</div>
+    </div>
+
+    <section class="math-section">
+      <div class="section-eyebrow">THE MATHEMATICS</div>
+      <h2 class="section-title">The shape underneath is surprisingly elegant.</h2>
+      <p class="section-lede">Not traditional finance mathematics alone — flow, intelligence, coherence, and coordination converging into one objective: <strong>flourishing efficiency</strong>.</p>
+
+      <div class="math-grid">
+        <div class="eq">
+          <div class="eq-label">① The Core Equation</div>
+          <div class="eq-form">Power = Money × Velocity × Coherence</div>
+          <div class="eq-meaning">$1 moving intelligently outperforms $10 sitting idle. Optimize circulation and alignment, not accumulation.</div>
+        </div>
+
+        <div class="eq">
+          <div class="eq-label">② Coherence-Adjusted Yield</div>
+          <div class="eq-form">CAY = Yield × Coherence × Sustainability</div>
+          <div class="eq-meaning">Not all yield is equal. 5% regenerative may outperform 15% extractive long-term. Externalities count.</div>
+        </div>
+
+        <div class="eq">
+          <div class="eq-label">③ Treasury Efficiency</div>
+          <div class="eq-form">Efficiency = Productive Flow ÷ Entropy</div>
+          <div class="eq-meaning">Minimize the friction — fragmentation, idle capital, cognitive load, coordination drag. The drag <em>is</em> the problem.</div>
+        </div>
+
+        <div class="eq">
+          <div class="eq-label">④ Recursive Intelligence</div>
+          <div class="eq-form">Intelligence(t+1) = Intelligence(t) + Verified Learning</div>
+          <div class="eq-meaning">Every allocation becomes training data. The treasury literally becomes smarter over time.</div>
+        </div>
+      </div>
+
+      <p class="math-footnote">+ four more layers — velocity, intelligence routing, civilization-scale coordination, the flourishing-efficiency objective shift. <a href="https://github.com/jamessunheart/sunheart-ai/blob/main/MATHEMATICS.md" target="_blank" rel="noopener">Full mathematics on GitHub →</a></p>
+    </section>
+
+    <section class="sequence">
+      <div class="section-eyebrow">THE SEQUENCE</div>
+      <h2 class="section-title">Carefully. In this order.</h2>
+      <p class="section-lede">Most projects rush to a token. We're doing it differently — utility first, contribution second, treasury formation only when trust is earned.</p>
+
+      <div class="sequence-row">
+        <div class="step">
+          <span class="step-num">1</span>
+          <div class="step-title">Clarity</div>
+          <div class="step-desc">Thesis · architecture · mathematics · principles.</div>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <div class="step-title">Useful Software</div>
+          <div class="step-desc">Dashboard · aggregation · routing · yield visibility.</div>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <div class="step-title">Open Contribution</div>
+          <div class="step-desc">Developers · researchers · economists · communities.</div>
+        </div>
+        <div class="step">
+          <span class="step-num">4</span>
+          <div class="step-title">Treasury Formation</div>
+          <div class="step-desc">Only after trust + utility + measurable outcomes.</div>
+        </div>
+      </div>
+
+      <div class="sequence-note">
+        <strong>No speculative token. No fundraising hype.</strong> Open source first. Trust earned through use. If a token emerges later, it represents real utility — governance, routing, coordination — not future promises.
+      </div>
+    </section>
+
+    <section class="invitation">
+      <h2>The Invitation</h2>
+      <ul class="invitation-lines">
+        <li>Build it together.</li>
+        <li>Use it together.</li>
+        <li>Evolve it together.</li>
+      </ul>
+
+      <div class="ctas">
+        <a class="cta primary" href="https://t.me/sunheartbrain_bot" target="_blank" rel="noopener">
+          <span class="icon">💬</span> Join the conversation
+        </a>
+        <a class="cta" href="https://github.com/jamessunheart/sunheart-ai" target="_blank" rel="noopener">
+          <span class="icon">⚡</span> Build on GitHub
+        </a>
+        <a class="cta" href="mailto:james.rick.stinson@gmail.com?subject=Sunheart%20AI%20%E2%80%94%20I%27m%20in&body=I%20want%20to%20help%20build%2Fuse%2Fevolve%20Sunheart%20AI.%20Here%27s%20what%20I%20bring%3A%0A%0A%0A">
+          <span class="icon">✉</span> Email James
+        </a>
+      </div>
+    </section>
+
+    <footer>
+      <p>☉ Sunheart AI · open mission · 2026 · drafted in Costa Rica</p>
+      <p style="margin-top:0.5rem;">A <a href="https://fullpotential.com/game" target="_blank" rel="noopener">Full Potential</a> initiative.</p>
+    </footer>
+
+  </div>
+
+  <div class="lightbox" id="lightbox" onclick="this.classList.remove('active')">
+    <img src="img/manifesto.png" alt="Sunheart AI manifesto — zoomed" />
+  </div>
+
+  <script>
+    document.getElementById('manifesto').addEventListener('click', () => {
+      document.getElementById('lightbox').classList.add('active');
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') document.getElementById('lightbox').classList.remove('active');
+    });
+  </script>
+</body>
+</html>
