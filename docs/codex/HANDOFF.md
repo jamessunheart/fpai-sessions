@@ -46,6 +46,17 @@
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-05 · Service Registry sorted overlay detected · branch `feat/service-registry`
+
+- **Status:** coordinated / holding
+- **Files changed:** `tools/decisions/daily_sync.py`; generated vault HOME + daily refresh.
+- **Summary:** Ember organized the Service Registry into `[[SERVICE REGISTRY — SORTED]]`. HOME now treats this as a new state: not “review raw map,” but “decide cleanup spec.” Codex remains Buildstream-only here: no pruning, stopping, deleting, or archiving until James approves a separate reversible cleanup spec.
+- **Tests:** `python3 -m py_compile tools/decisions/daily_sync.py`; live vault refresh; HOME read-back should point to `[[SERVICE REGISTRY — SORTED]]` with `spec cleanup-services` / `hold cleanup` / `checkpoint`.
+- **Cost:** ~$0 marginal · GPT Pro flat-rate · source: Codex desktop.
+- **Risks:** The sorted overlay is human-judgment Midstream output; Codex should use it as input only after a cleanup spec is approved.
+- **Rollback:** revert the `daily_sync.py` state transition; HOME falls back to raw map review.
+- **Questions for Ember/James:** approve a reversible cleanup spec, or hold cleanup.
+
 ### 2026-06-05 · HOME attention surfaces · branch `feat/service-registry`
 
 - **Status:** done

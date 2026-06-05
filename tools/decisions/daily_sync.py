@@ -35,6 +35,7 @@ CODEX_REPO = os.environ.get("FPAI_CODEX_REPO", "/Users/jamessunheart/FPAI_Cockpi
 CODEX_SPECS = Path(CODEX_REPO) / "docs" / "codex" / "specs"
 CODEX_HANDOFF = Path(CODEX_REPO) / "docs" / "codex" / "HANDOFF.md"
 SERVICE_REGISTRY_VAULT = VAULT / "00_MEMORY" / "SERVICE REGISTRY.md"
+SERVICE_REGISTRY_SORTED_VAULT = VAULT / "00_MEMORY" / "SERVICE REGISTRY — SORTED.md"
 SOL_LIVE = Path.home() / ".config" / "fpai" / "sol_live" / "latest.json"
 DAILY = VAULT / "07_DAILY"
 SEEDS_NOTE = VAULT / "05_CONCEPTS" / "SIX SEEDS.md"
@@ -228,6 +229,17 @@ def service_registry_awaiting_review():
 
 def james_next_move(now):
     """HOME/Daily top-of-stream action: James signal first, downstream build second."""
+    if SERVICE_REGISTRY_SORTED_VAULT.exists():
+        late = now.hour >= 19 or now.hour < 6
+        return {
+            "title": "Decide cleanup spec",
+            "look": "[[SERVICE REGISTRY — SORTED]]",
+            "yes": "spec cleanup-services",
+            "reason": "The map is sorted. Only you decide whether cleanup becomes a reversible spec.",
+            "downstream": "Drafts cleanup only. No service stops, deletes, or pruning without another yes.",
+            "say": ["spec cleanup-services", "hold cleanup", "checkpoint"],
+            "late": late,
+        }
     if service_registry_awaiting_review():
         late = now.hour >= 19 or now.hour < 6
         return {
@@ -580,6 +592,10 @@ def refresh_home_stamp(now, place, tz):
         return True
     return False
 
+def checkbox_state(doc, label):
+    m = re.search(rf"- \[([ xX])\]\s+\*\*{re.escape(label)}(?:[:*]|\b)", doc)
+    return "x" if m and m.group(1).lower() == "x" else " "
+
 def refresh_home_decide():
     """Keep the James-only area as simple decisions, not doctrine."""
     if not HOME.exists():
@@ -587,12 +603,20 @@ def refresh_home_decide():
     doc = read(HOME)
     if "## 🌱 Streams" not in doc:
         return False
+    if SERVICE_REGISTRY_SORTED_VAULT.exists():
+        service_yes = ("Service cleanup — yes", "`spec cleanup-services`")
+        service_no = ("Service cleanup — no", "`hold cleanup`")
+    else:
+        service_yes = ("Service map — yes", "`spec prune`")
+        service_no = ("Service map — no", "`hold`")
+    sol_exit = checkbox_state(doc, "SOL — exit/de-lever")
+    sol_hold = checkbox_state(doc, "SOL — hold")
     block = (
         "## 🔴 Decide\n\n"
-        "- [ ] **Service map — yes:** `spec prune`\n"
-        "- [ ] **Service map — no:** `hold`\n"
-        "- [ ] **SOL — exit/de-lever**\n"
-        "- [ ] **SOL — hold**\n"
+        f"- [ ] **{service_yes[0]}:** {service_yes[1]}\n"
+        f"- [ ] **{service_no[0]}:** {service_no[1]}\n"
+        f"- [{sol_exit}] **SOL — exit/de-lever**\n"
+        f"- [{sol_hold}] **SOL — hold**\n"
         "- [ ] **Public / money / people:** `yes` / `no` when surfaced"
     )
     if re.search(r"## 🔴 (?:Only you|Decide)", doc):
