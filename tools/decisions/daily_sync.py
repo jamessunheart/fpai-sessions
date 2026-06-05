@@ -220,8 +220,22 @@ def codex_next_spec():
         return m.group(1).strip(), re.sub(r"\s+", " ", m.group(2)).strip()
     return None, None
 
+def service_registry_awaiting_review():
+    seg = active_handoff_section().lower()
+    report = Path(CODEX_REPO) / "docs" / "codex" / "SERVICE_REGISTRY.md"
+    return report.exists() and "spec_service-registry" in seg and "awaiting review" in seg
+
 def james_next_move(now):
     """HOME/Daily top-of-stream action: James signal first, downstream build second."""
+    if service_registry_awaiting_review():
+        late = now.hour >= 19 or now.hour < 6
+        return {
+            "title": "Your move: receive the map, then give one signal" if late else "Your move: review the Service Registry map",
+            "yes": "map received — spec prune candidates",
+            "reason": "The read-only Service Registry map is generated. Only you decide whether cleanup should become a separate spec.",
+            "downstream": "AI turns your signal into a separate prune/retire spec. No service changes happen from this map.",
+            "late": late,
+        }
     spec, detail = codex_next_spec()
     is_service_registry = spec and "service-registry" in spec
     late = now.hour >= 19 or now.hour < 6

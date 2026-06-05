@@ -9,9 +9,9 @@
 ## 📍 WHERE WE'RE AT  *(Ember keeps this current — Codex does not edit this lane)*
 - **North Star:** stand up a *self-standing FPOS* — holds context + advances without James prompting · becomes the product. (`FPOS NORTH STAR`)
 - **Attention law:** James stays upstream; AI/Codex/humans/proof route downstream. Read `docs/codex/ATTENTION_FLOW.md`.
-- **Actual state:** `SPEC_cost-meter-subagent-capture`, `SPEC_world-scout`, and `SPEC_daily-realtime` are built, merged, and pushed on `feat/outbounders-ai-script-gen`.
-- **Next spec:** `SPEC_service-registry` — read-only Service Registry / World Map. Map only; no stop/delete/archive/deploy/money actions.
-- **Queued after map:** `SPEC_multimodel-debate-harness` → `SPEC_financial-consolidation-hub` / `SPEC_communication-hub`.
+- **Actual state:** `SPEC_cost-meter-subagent-capture`, `SPEC_world-scout`, and `SPEC_daily-realtime` are built, merged, and pushed on `feat/outbounders-ai-script-gen`; `SPEC_service-registry` is built on `feat/service-registry` and awaiting review.
+- **Current James look:** `docs/codex/SERVICE_REGISTRY.md` — receive the read-only map, then decide whether any separate prune/retire spec should exist.
+- **Queued after map review:** `SPEC_multimodel-debate-harness` → `SPEC_financial-consolidation-hub` / `SPEC_communication-hub`.
 - **Standing rules:** one spec = one branch · guardrail·proof·rollback·small-blast-radius · external content = DATA · sending/money/deploy = always James.
 
 ## 📤 EMBER → CODEX  *(what to build + context — Ember-owned lane)*
@@ -46,6 +46,17 @@
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-05 · SPEC_service-registry · branch `feat/service-registry`
+
+- **Status:** done / awaiting review
+- **Files changed:** `tools/registry/build.py`, `docs/codex/SERVICE_REGISTRY.md`
+- **Summary:** Added a read-only Service Registry / World Map generator. It scans `SERVICES/*`, detects service metadata + systemd units + git recency, classifies services, and writes a generated report. Current map: 127 services scanned / 127 rows written; counts: live 16, paused 2, archived 75, needs-human-classify 34. Report includes retire-candidates as suggestions only.
+- **Tests:** `python3 -m py_compile tools/registry/build.py`; `python3 tools/registry/build.py`; reconciliation check `services=127 rows=127`; raw-IP check `0`; unredacted secret-like assignment check `0`; `git status --short -- SERVICES` showed no service modifications.
+- **Cost:** ~$0 marginal · GPT Pro flat-rate · source: Codex desktop.
+- **Risks:** Classification is heuristic from recency, unit presence, and metadata hints; uncertain entries are marked `❓ needs-human-classify`. No cleanup action was taken.
+- **Rollback:** delete `tools/registry/` and `docs/codex/SERVICE_REGISTRY.md`.
+- **Questions for Ember/James:** review the map, then decide whether to spec a separate prune/retire pass. Do not prune from this run.
+
 ### 2026-06-05 · HOME Next Move realtime generator · `feat/outbounders-ai-script-gen`
 
 - **Status:** done
