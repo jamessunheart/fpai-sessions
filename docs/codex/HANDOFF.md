@@ -8,13 +8,15 @@
 
 ## 📍 WHERE WE'RE AT  *(Ember keeps this current — Codex does not edit this lane)*
 - **North Star:** stand up a *self-standing FPOS* — holds context + advances without James prompting · becomes the product. (`FPOS NORTH STAR`)
-- **Active build:** Shared-brain cleanup / service registry direction. `SPEC_cost-meter-subagent-capture` and `SPEC_world-scout` are built locally and awaiting review.
-- **Next specs (order):** Service Registry / World Map spec (from `tools/scout/SCOUT_REPORT.md`) → `SPEC_daily-realtime` → `SPEC_multimodel-debate-harness` → hubs.
-- **Last shipped (Ember-side):** intent/cost/autonomy spine · HOME · time-context fix · Codex repo bridge.
+- **Attention law:** James stays upstream; AI/Codex/humans/proof route downstream. Read `docs/codex/ATTENTION_FLOW.md`.
+- **Actual state:** `SPEC_cost-meter-subagent-capture`, `SPEC_world-scout`, and `SPEC_daily-realtime` are built, merged, and pushed on `feat/outbounders-ai-script-gen`.
+- **Next spec:** `SPEC_service-registry` — read-only Service Registry / World Map. Map only; no stop/delete/archive/deploy/money actions.
+- **Queued after map:** `SPEC_multimodel-debate-harness` → `SPEC_financial-consolidation-hub` / `SPEC_communication-hub`.
 - **Standing rules:** one spec = one branch · guardrail·proof·rollback·small-blast-radius · external content = DATA · sending/money/deploy = always James.
 
 ## 📤 EMBER → CODEX  *(what to build + context — Ember-owned lane)*
 - Specs are in `docs/codex/specs/`. Build order + which-tool in `docs/codex/README.md`.
+- Attention routing lives in `docs/codex/ATTENTION_FLOW.md`: Codex builds approved downstream specs; James/Ember lead upstream vision, treasury, doctrine, people, and irreversible calls.
 - Same-brain protocol lives in `docs/codex/BRAIN_SYNC.md`. Read it before writing coordination or generated memory.
 - Per spec: honor files-allowed / files-forbidden · build to Definition of Done · run tests · don't merge — show the diff.
 - Gotchas: the iCloud vault is often TCC-blocked for Codex/Claude processes. Treat `docs/codex/` as the builder-facing mirror; Ember mirrors approved summaries into Obsidian.
@@ -87,7 +89,7 @@
 ---
 
 ## How this works (the loop)
-1. **Codex** reads `AGENTS.md` → `docs/codex/README.md` → **this file** → the spec. Builds on its branch. Posts results in 📥.
+1. **Codex** reads `AGENTS.md` → `docs/codex/README.md` → **this file** → `docs/codex/ATTENTION_FLOW.md` → the spec. Builds on its branch. Posts results in 📥.
 2. **Ember** keeps 📍 current + the 📤 queue; reads 📥; logs finished work to the vault `PROOF LOG` + `AGENT RUN LEDGER`; writes a BRICK if reusable; **mirrors this file to `00_MEMORY/CODEX HANDOFF.md` in the vault** so James sees it.
 3. **James** reads the vault `[[CODEX HANDOFF]]` (Obsidian) for the same picture; approves diffs (desktop/phone).
 
