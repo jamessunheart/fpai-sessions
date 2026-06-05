@@ -241,6 +241,7 @@ def james_next_move(now):
         return {
             "title": "No action — cleanup is routed",
             "look": "[[SERVICE REGISTRY — SORTED]] only if you want the detail",
+            "tell": "No one. If you want to override, tell Claude Code / Ember.",
             "yes": "checkpoint",
             "reason": "The cleanup decision is made. AI/Codex carry the reversible Buildstream work.",
             "downstream": "Builds the cleanup-services path from the sorted registry; no live stops or irreversible deletes.",
@@ -252,6 +253,7 @@ def james_next_move(now):
         return {
             "title": "Decide cleanup spec",
             "look": "[[SERVICE REGISTRY — SORTED]]",
+            "tell": "Claude Code / Ember.",
             "yes": "spec cleanup-services",
             "reason": "The map is sorted. Only you decide whether cleanup becomes a reversible spec.",
             "downstream": "Drafts cleanup only. No service stops, deletes, or pruning without another yes.",
@@ -263,6 +265,7 @@ def james_next_move(now):
         return {
             "title": "Review map",
             "look": "[[SERVICE REGISTRY]]" if SERVICE_REGISTRY_VAULT.exists() else "`docs/codex/SERVICE_REGISTRY.md`",
+            "tell": "Claude Code / Ember.",
             "yes": "spec prune",
             "reason": "See what exists before cleanup. Nothing changes without another yes.",
             "downstream": "Drafts a prune spec only. No service changes.",
@@ -275,13 +278,16 @@ def james_next_move(now):
     if is_service_registry:
         yes = "yes — proceed with Service Registry map-only"
         downstream = "Codex builds Service Registry as a read-only map. No stops. No deletes. No pruning."
+        tell = "Codex."
     elif spec:
         label = spec.replace("SPEC_", "").replace("-", " ").replace("_", " ").strip().title()
         yes = f"yes — proceed with {label}"
         downstream = f"Codex builds `{spec}` after your upstream yes."
+        tell = "Codex."
     else:
         yes = "yes — proceed with the next routed build"
         downstream = "AI carries the routed downstream work."
+        tell = "Claude Code / Ember."
     title = "Your move: give one upstream signal"
     if late:
         title = "Your move: one upstream signal, then close clean"
@@ -291,6 +297,7 @@ def james_next_move(now):
     return {
         "title": title,
         "look": "this section",
+        "tell": tell,
         "yes": yes,
         "reason": reason,
         "downstream": downstream,
@@ -666,6 +673,7 @@ def refresh_home_next_move(now):
         "## ▶️ NEXT MOVE\n\n"
         f"**{move['title']}.**\n\n"
         f"**Look:** {move['look']}\n\n"
+        f"**Tell:** {move['tell']}\n\n"
         f"**Why:** {move['reason']}\n\n"
         "**Say:** " + " / ".join(f"`{s}`" for s in move["say"]) + "\n\n"
         f"**AI does:** {move['downstream']}\n\n"

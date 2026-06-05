@@ -46,6 +46,17 @@
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-05 · HOME next move target clarified · branch `feat/service-registry`
+
+- **Status:** done
+- **Files changed:** `tools/decisions/daily_sync.py`; generated vault HOME + daily refresh.
+- **Summary:** HOME `NEXT MOVE` now includes `Tell:` so James knows who/model receives the signal: Codex for Buildstream specs, Claude Code / Ember for Midstream routing/overrides, and no one when the work is already routed unless James wants to override.
+- **Tests:** `python3 -m py_compile tools/decisions/daily_sync.py`; `git diff --check`; live vault refresh; HOME read-back shows `Tell: No one. If you want to override, tell Claude Code / Ember.`
+- **Cost:** ~$0 marginal · GPT Pro flat-rate · source: Codex desktop.
+- **Risks:** Targeting is heuristic from the active next-move state; future human-specific moves should set `Tell:` to the named human.
+- **Rollback:** revert the `daily_sync.py` `tell` field/render addition.
+- **Questions for Ember/James:** none.
+
 ### 2026-06-05 · cleanup-services routed downstream · branch `feat/service-registry`
 
 - **Status:** routed / waiting for full spec artifact
