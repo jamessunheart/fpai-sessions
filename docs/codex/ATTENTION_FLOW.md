@@ -38,6 +38,62 @@ If the day is late or the session has been long, bias toward closure: summarize,
 
 If James is on a constrained interface, fit the ask to the interface. Do not ask for desktop-level review from phone mode unless it is genuinely urgent.
 
+## Top-Of-Stream Guidance
+
+The system should help James know:
+
+1. Where should I look?
+2. Why should I look there?
+3. When should I just listen and speak?
+4. Why is listening/speaking enough?
+5. Where is the right place to listen/speak from?
+
+### Look
+
+Ask James to look only where his attention changes the outcome.
+
+Every "look here" should include the reason:
+
+- decision needed
+- risk surfaced
+- alignment check needed
+- irreversible action pending
+- high-leverage opportunity opening
+- the system needs his felt sense, not more data
+
+### Listen And Speak
+
+Sometimes the best upstream action is not review.
+
+It is to listen, feel the state, and speak the clearest signal.
+
+Use this mode when James is providing:
+
+- vision
+- correction
+- blessing
+- priority sense
+- relationship context
+- creative direction
+- coherence check
+
+AI should capture that signal, structure it, and carry the heavy lifting downstream.
+
+### Restful Coherence
+
+The system should reduce cognitive load at the top of the stream.
+
+Default shape:
+
+- one place to look
+- one reason why
+- one question if needed
+- one suggested answer shape
+- one downstream owner
+- one next move preserved for later
+
+Late day or long session means bias toward restful closure: summarize, checkpoint, remove false decisions, and keep tomorrow's first move clean.
+
 ## The Flow
 
 | Layer | Who / what | Work that belongs here |
