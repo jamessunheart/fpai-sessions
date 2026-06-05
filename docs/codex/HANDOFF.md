@@ -46,6 +46,17 @@
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-05 · HOME Decide answer-format · branch `feat/service-registry`
+
+- **Status:** done
+- **Files changed:** `tools/decisions/daily_sync.py`; generated vault HOME refresh.
+- **Summary:** `Decide` no longer uses checkboxes for multiple-choice decisions. Routed items render as status; live decisions render as `Options:` plus `Your answer:` so James's answer is explicit and AI-parseable.
+- **Tests:** `python3 -m py_compile tools/decisions/daily_sync.py`; `git diff --check`; live vault refresh; HOME read-back shows Service cleanup as routed status and SOL as `Options: hold / exit-de-lever` with `Your answer: hold`.
+- **Cost:** ~$0 marginal · GPT Pro flat-rate · source: Codex desktop.
+- **Risks:** Obsidian checkboxes are no longer used for these choices; that is intentional because checkboxes cannot encode which option was chosen.
+- **Rollback:** revert the `refresh_home_decide` answer-format change.
+- **Questions for Ember/James:** none.
+
 ### 2026-06-05 · HOME Decide one-line decisions · branch `feat/service-registry`
 
 - **Status:** done
