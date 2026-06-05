@@ -227,8 +227,26 @@ def service_registry_awaiting_review():
     report = Path(CODEX_REPO) / "docs" / "codex" / "SERVICE_REGISTRY.md"
     return report.exists() and "spec_service-registry" in seg and "awaiting review" in seg
 
+def cleanup_services_routed():
+    spec_log = read(SPECLOG).lower()
+    return (
+        "cleanup-services" in spec_log
+        and ("decided" in spec_log or "executing" in spec_log)
+    )
+
 def james_next_move(now):
     """HOME/Daily top-of-stream action: James signal first, downstream build second."""
+    if cleanup_services_routed():
+        late = now.hour >= 19 or now.hour < 6
+        return {
+            "title": "No action — cleanup is routed",
+            "look": "[[SERVICE REGISTRY — SORTED]] only if you want the detail",
+            "yes": "checkpoint",
+            "reason": "The cleanup decision is made. AI/Codex carry the reversible Buildstream work.",
+            "downstream": "Builds the cleanup-services path from the sorted registry; no live stops or irreversible deletes.",
+            "say": ["checkpoint", "change cleanup: ..."],
+            "late": late,
+        }
     if SERVICE_REGISTRY_SORTED_VAULT.exists():
         late = now.hour >= 19 or now.hour < 6
         return {
@@ -603,7 +621,10 @@ def refresh_home_decide():
     doc = read(HOME)
     if "## 🌱 Streams" not in doc:
         return False
-    if SERVICE_REGISTRY_SORTED_VAULT.exists():
+    if cleanup_services_routed():
+        service_yes = ("Service cleanup — routed", "`checkpoint`")
+        service_no = ("Service cleanup — override", "`change cleanup: ...`")
+    elif SERVICE_REGISTRY_SORTED_VAULT.exists():
         service_yes = ("Service cleanup — yes", "`spec cleanup-services`")
         service_no = ("Service cleanup — no", "`hold cleanup`")
     else:

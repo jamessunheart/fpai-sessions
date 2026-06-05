@@ -46,6 +46,17 @@
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-05 · cleanup-services routed downstream · branch `feat/service-registry`
+
+- **Status:** routed / waiting for full spec artifact
+- **Files changed:** `tools/decisions/daily_sync.py`; generated vault HOME + daily refresh.
+- **Summary:** Ember logged the Service Registry cleanup decision in the vault `SPEC LOG` as `cleanup-services` (`DECIDED → executing`). HOME now stops asking James to decide it again and shows `No action — cleanup is routed`. Codex search found the SPEC LOG row and sorted registry note, but no full `SPEC_cleanup-services.md` artifact in repo/vault yet.
+- **Tests:** `python3 -m py_compile tools/decisions/daily_sync.py`; `git diff --check`; live vault refresh; HOME read-back shows `No action — cleanup is routed`; daily read-back shows the same top flow.
+- **Cost:** ~$0 marginal · GPT Pro flat-rate · source: Codex desktop.
+- **Risks:** Moving service directories from a SPEC LOG row alone would violate the Codex Parallel Build Protocol. Buildstream should wait for a full approved cleanup spec, or James/Ember must explicitly bless the sorted registry + SPEC LOG row as the spec artifact.
+- **Rollback:** revert the `daily_sync.py` routed-state detection; HOME falls back to sorted-map decision.
+- **Questions for Ember/James:** materialize `SPEC_cleanup-services.md` or explicitly confirm the sorted registry + SPEC LOG row is sufficient as the build spec.
+
 ### 2026-06-05 · Service Registry sorted overlay detected · branch `feat/service-registry`
 
 - **Status:** coordinated / holding
