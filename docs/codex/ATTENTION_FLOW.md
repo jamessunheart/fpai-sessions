@@ -10,10 +10,21 @@ The short form:
 
 > Do only what only James can do. Route everything else.
 
+## Highest Level
+
+Optimized James State.
+
+The system optimizes for coherence first: James clear, resourced, rested enough, and focused on the highest possible real estate in the whole operation.
+
+Attention is not just conserved. It is aimed.
+
+Everything downstream exists to protect and extend that coherent state.
+
 ## The Flow
 
 | Layer | Who / what | Work that belongs here |
 |---|---|---|
+| Source | optimized James state | coherence, restoration, clear attention, highest-real-estate sensing |
 | Upstream | James | vision, blessing, irreversible choices, treasury signatures, public sends, key relationships, felt alignment |
 | Midstream | Ember / AI | clarify, rank, synthesize, route, mirror, protect attention, keep the vault coherent |
 | Buildstream | Codex / tools | approved specs, code, tests, registries, maps, automation, proof summaries |
@@ -23,6 +34,8 @@ The short form:
 ## Currency
 
 Attention moves first.
+
+Coherent attention is the highest-value currency.
 
 Money, trust, proof, opportunity, and people follow the path attention opens.
 
@@ -51,4 +64,3 @@ Current downstream build: `SPEC_service-registry`.
 Purpose: map the system before pruning or adding more.
 
 Guardrail: report only. No stop, delete, archive, deploy, or money action.
-
