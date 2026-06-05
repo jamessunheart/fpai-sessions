@@ -46,6 +46,17 @@
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-05 · HOME attention surfaces · branch `feat/service-registry`
+
+- **Status:** done
+- **Files changed:** `tools/decisions/daily_sync.py`; generated vault HOME + daily refresh.
+- **Summary:** Simplified HOME for attention: `NEXT MOVE` now renders as one clear action (`Look` / `Why` / `Say` / `AI does`), `Today` is marker-free live context, and the old “Only you” prose section is now `Decide` with checkboxes and yes/no-style options. This keeps James at the top of stream and routes detail downstream.
+- **Tests:** `python3 -m py_compile tools/decisions/daily_sync.py`; real vault refresh produced `home_stamp=1 · home_next=1 · home_decide=1`; read-back confirmed HOME has no visible `%%HOME_LIVE%%` markers and daily points to `Review map`.
+- **Cost:** ~$0 marginal · GPT Pro flat-rate · source: Codex desktop.
+- **Risks:** HOME remains only as clear as the active handoff/spec state. If Service Registry review finishes, the next run must refresh HOME again.
+- **Rollback:** revert the `daily_sync.py` change; restore HOME/daily from Obsidian/iCloud history if desired.
+- **Questions for Ember/James:** none. James asked for simpler attention UI; this is now generator-owned.
+
 ### 2026-06-05 · SPEC_service-registry · branch `feat/service-registry`
 
 - **Status:** done / awaiting review

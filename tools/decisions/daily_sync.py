@@ -34,6 +34,7 @@ SPECLOG = VAULT / "02_SPECS" / "SPEC LOG.md"
 CODEX_REPO = os.environ.get("FPAI_CODEX_REPO", "/Users/jamessunheart/FPAI_Cockpit")   # the directory James points Codex at
 CODEX_SPECS = Path(CODEX_REPO) / "docs" / "codex" / "specs"
 CODEX_HANDOFF = Path(CODEX_REPO) / "docs" / "codex" / "HANDOFF.md"
+SERVICE_REGISTRY_VAULT = VAULT / "00_MEMORY" / "SERVICE REGISTRY.md"
 SOL_LIVE = Path.home() / ".config" / "fpai" / "sol_live" / "latest.json"
 DAILY = VAULT / "07_DAILY"
 SEEDS_NOTE = VAULT / "05_CONCEPTS" / "SIX SEEDS.md"
@@ -230,10 +231,12 @@ def james_next_move(now):
     if service_registry_awaiting_review():
         late = now.hour >= 19 or now.hour < 6
         return {
-            "title": "Your move: receive the map, then give one signal" if late else "Your move: review the Service Registry map",
-            "yes": "map received — spec prune candidates",
-            "reason": "The read-only Service Registry map is generated. Only you decide whether cleanup should become a separate spec.",
-            "downstream": "AI turns your signal into a separate prune/retire spec. No service changes happen from this map.",
+            "title": "Review map",
+            "look": "[[SERVICE REGISTRY]]" if SERVICE_REGISTRY_VAULT.exists() else "`docs/codex/SERVICE_REGISTRY.md`",
+            "yes": "spec prune",
+            "reason": "See what exists before cleanup. Nothing changes without another yes.",
+            "downstream": "Drafts a prune spec only. No service changes.",
+            "say": ["spec prune", "hold", "checkpoint"],
             "late": late,
         }
     spec, detail = codex_next_spec()
@@ -257,9 +260,11 @@ def james_next_move(now):
         reason = f"{detail} Only you can bless, change, or hold it."
     return {
         "title": title,
+        "look": "this section",
         "yes": yes,
         "reason": reason,
         "downstream": downstream,
+        "say": [yes, "change first: ...", "checkpoint"],
         "late": late,
     }
 
@@ -267,7 +272,7 @@ def live_priorities_top3(allopen, now):
     """Top-3 from live sources: DECISIONS first, North Star second, GOALS MIRROR only as fallback."""
     out = []
     move = james_next_move(now)
-    out.append((move["title"], f"`{move['yes']}` / `change X first` / `checkpoint`"))
+    out.append((move["title"], " / ".join(f"`{s}`" for s in move["say"])))
     out.append(("AI carries downstream", move["downstream"]))
     for q, unblock, _aff in allopen[:2]:
         if "start codex building" in q.lower():
@@ -557,28 +562,43 @@ def care_check(now):
     return "💗 Evening — start easing the screens down; the day closes cleaner."
 
 def refresh_home_stamp(now, place, tz):
-    """Update only HOME's marked live stamp block; if absent, create it inside Today's section."""
+    """Keep HOME's Today section visible and marker-free."""
     if not HOME.exists():
         return False
     doc = read(HOME)
     tz_label = now.tzname() or tz or "local"
     place_line = f"📍 **{place}**" if place else "📍 **Current location**"
-    line = (
-        "%%HOME_LIVE:START%%\n"
-        f"{place_line} · ⏰ refreshed `{now.strftime('%a %b')} {now.day} · {now.strftime('%-I:%M %p')} {tz_label}` · "
-        "source: `tools/decisions/daily_sync.py`\n"
-        "%%HOME_LIVE:END%%"
+    block = (
+        "## 🌅 Today\n\n"
+        f"{place_line} · refreshed **{now.strftime('%a %b')} {now.day} · {now.strftime('%-I:%M %p')} {tz_label}**"
     )
-    if "%%HOME_LIVE:START%%" in doc and "%%HOME_LIVE:END%%" in doc:
-        new = re.sub(r"%%HOME_LIVE:START%%.*?%%HOME_LIVE:END%%", line, doc, flags=re.S)
+    if "## 🌅 Today" not in doc:
+        return False
+    new = re.sub(r"## 🌅 Today.*?(?=\n## |\Z)", block + "\n\n", doc, flags=re.S)
+    if new != doc:
+        HOME.write_text(new)
+        return True
+    return False
+
+def refresh_home_decide():
+    """Keep the James-only area as simple decisions, not doctrine."""
+    if not HOME.exists():
+        return False
+    doc = read(HOME)
+    if "## 🌱 Streams" not in doc:
+        return False
+    block = (
+        "## 🔴 Decide\n\n"
+        "- [ ] **Service map — yes:** `spec prune`\n"
+        "- [ ] **Service map — no:** `hold`\n"
+        "- [ ] **SOL — exit/de-lever**\n"
+        "- [ ] **SOL — hold**\n"
+        "- [ ] **Public / money / people:** `yes` / `no` when surfaced"
+    )
+    if re.search(r"## 🔴 (?:Only you|Decide)", doc):
+        new = re.sub(r"## 🔴 (?:Only you|Decide).*?(?=\n## 🌱 Streams)", block + "\n\n", doc, flags=re.S)
     else:
-        m = re.search(r"(## 🌅 Today\n)(.*?)(?=\n## |\Z)", doc, re.S)
-        if not m:
-            return False
-        body = m.group(2).strip()
-        body = re.sub(r"^📍 .*?(?:\n|$)", "", body, count=1).strip()
-        replacement = m.group(1) + line + ("\n" + body if body else "") + "\n"
-        new = doc[:m.start()] + replacement + doc[m.end():]
+        new = doc.replace("## 🌱 Streams", block + "\n\n## 🌱 Streams", 1)
     if new != doc:
         HOME.write_text(new)
         return True
@@ -600,13 +620,10 @@ def refresh_home_next_move(now):
     block = (
         "## ▶️ NEXT MOVE\n\n"
         f"**{move['title']}.**\n\n"
-        "**Look:** this section. Open [[SUNHEART ATTENTION FLOW]] only if the rule itself feels off.\n\n"
-        f"**Why look:** {move['reason']}\n\n"
-        "**Then speak one line:**\n\n"
-        f"- `{move['yes']}`\n"
-        "- or `change this first: ...`\n"
-        "- or `checkpoint`\n\n"
-        f"**AI carries downstream:** {move['downstream']}\n\n"
+        f"**Look:** {move['look']}\n\n"
+        f"**Why:** {move['reason']}\n\n"
+        "**Say:** " + " / ".join(f"`{s}`" for s in move["say"]) + "\n\n"
+        f"**AI does:** {move['downstream']}\n\n"
         f"{close_line}"
     )
     new = re.sub(r"## ▶️ NEXT MOVE.*?(?=\n## 🌅 Today)", block + "\n\n", doc, flags=re.S)
@@ -801,8 +818,9 @@ def main():
     note.write_text(doc)
     home_refreshed = refresh_home_stamp(now, place, tz)
     home_next = refresh_home_next_move(now)
+    home_decide = refresh_home_decide()
     tasks = my_tasks(doc)
-    print(f"daily_sync v9 → {note.name}: refreshed {stamp_full} {place or ''} · open={ndec} · decided_now={len(decided_now)} · my_tasks={len(tasks)} · streak={nships} · home_stamp={int(home_refreshed)} · home_next={int(home_next)}")
+    print(f"daily_sync v9 → {note.name}: refreshed {stamp_full} {place or ''} · open={ndec} · decided_now={len(decided_now)} · my_tasks={len(tasks)} · streak={nships} · home_stamp={int(home_refreshed)} · home_next={int(home_next)} · home_decide={int(home_decide)}")
 
 if __name__ == "__main__":
     main()
