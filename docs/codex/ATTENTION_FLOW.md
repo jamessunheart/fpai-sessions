@@ -119,6 +119,27 @@ Before building, check whether the requested work belongs upstream.
 
 If it is vision, doctrine, treasury, public outreach, people, or an irreversible choice, do not lead it. Ask for James or Ember to route it.
 
+## Upstream Routing Table
+
+These categories start above Codex. Codex can support only after they are routed downstream into a spec, draft, report, or proof task.
+
+| Upstream item | Highest source | James does | Ember / AI does | Codex may do downstream |
+|---|---|---|---|---|
+| Vision | coherent James state | speaks the north star, priority, felt direction | distills into intent, sequence, doctrine candidates | build approved tools/specs that serve the vision |
+| Doctrine | James blessing + coherence test | blesses or corrects the rule | drafts language, compares with existing principles, tracks drift | mirror docs, tests, linting, implementation after approval |
+| Treasury | James risk sense + signature authority | chooses risk posture, signs transactions, approves capital moves | frames options, monitors, models, summarizes exposure | build read-only dashboards, ledgers, alerts, reports |
+| Public outreach | James voice + relationship truth | approves sends, records/speaks the real message, chooses timing | drafts, batches, personalizes, routes, prepares review packets | build tooling, templates, queues, CRM/report surfaces |
+| People | James relational sense | chooses key people, blesses hires/partners, holds core relationships | creates work orders, context packets, role specs, follow-up plans | build trackers, onboarding docs, forms, status maps |
+| Irreversible choice | James final yes/no | makes the call | clarifies stakes, options, reversibility, timing, state fit | implement only after explicit approval and safe handoff |
+
+Downstream rule: once the upstream signal is clear, turn it into one of these:
+
+- `DECISIONS` item for James residue.
+- `INTENT RADAR` entry for ranking.
+- `SPEC LOG` entry for buildable work.
+- `CODEX HANDOFF` item for active builder coordination.
+- `PROOF LOG` entry when shipped.
+
 Also check the state context: time of day, session length, and interface. A correct task at the wrong time can still be bad routing.
 
 If it is an approved downstream spec, build it cleanly:
