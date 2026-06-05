@@ -46,6 +46,16 @@
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-05 · HOME Next Move realtime generator · `feat/outbounders-ai-script-gen`
+
+- **Status:** done
+- **Files changed:** `tools/decisions/daily_sync.py`; generated vault HOME + daily refresh; proof/journal/ledger updated.
+- **Summary:** HOME `NEXT MOVE` now refreshes as a top-of-stream James-action surface: one upstream signal, then AI/Codex carries Service Registry downstream. Daily top flow uses the same logic. Stale historical handoff entries no longer create "review/merge" priorities.
+- **Tests:** `python3 -m py_compile tools/decisions/daily_sync.py`; real vault refresh: `home_stamp=1 · home_next=1`; read-back confirmed HOME + daily visible sections.
+- **Risks:** The active repo handoff lane remains the source for the next build. If that lane drifts, HOME will reflect the drift.
+- **Rollback:** revert the `daily_sync.py` change and restore HOME/daily from Obsidian/iCloud history.
+- **Questions for Ember/James:** none. James confirmed the Flow gives clarity; HOME now carries it live.
+
 ### 2026-06-05 · SPEC_daily-realtime · branch `feat/daily-realtime`
 - Status: done / awaiting review
 - Files changed: `tools/decisions/daily_sync.py`, generated vault blocks in `07_DAILY/2026-06-05.md` + `HOME.md`

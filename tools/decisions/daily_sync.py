@@ -202,16 +202,61 @@ def north_star_priority():
         return re.sub(r"\s+", " ", m.group(1)).title(), re.sub(r"\s+", " ", m.group(2)).strip()
     return None
 
-def live_priorities_top3(allopen):
+def active_handoff_section():
+    txt = read(CODEX_HANDOFF)
+    if "## 📍 WHERE" not in txt:
+        return txt
+    seg = txt.split("## 📍 WHERE", 1)[1]
+    return seg.split("## 📤", 1)[0]
+
+def codex_next_spec():
+    """Current next build from the active HANDOFF lane, ignoring historical run summaries."""
+    seg = active_handoff_section()
+    m = re.search(r"\*\*Next spec:\*\*\s*`?([^`—\n]+)`?\s*—\s*(.+)", seg)
+    if m:
+        return m.group(1).strip(), re.sub(r"\s+", " ", m.group(2)).strip()
+    m = re.search(r"Next(?: approved-ready)? build:\s*`?([^`—\n]+)`?\s*—\s*(.+)", seg, re.I)
+    if m:
+        return m.group(1).strip(), re.sub(r"\s+", " ", m.group(2)).strip()
+    return None, None
+
+def james_next_move(now):
+    """HOME/Daily top-of-stream action: James signal first, downstream build second."""
+    spec, detail = codex_next_spec()
+    is_service_registry = spec and "service-registry" in spec
+    late = now.hour >= 19 or now.hour < 6
+    if is_service_registry:
+        yes = "yes — proceed with Service Registry map-only"
+        downstream = "Codex builds Service Registry as a read-only map. No stops. No deletes. No pruning."
+    elif spec:
+        label = spec.replace("SPEC_", "").replace("-", " ").replace("_", " ").strip().title()
+        yes = f"yes — proceed with {label}"
+        downstream = f"Codex builds `{spec}` after your upstream yes."
+    else:
+        yes = "yes — proceed with the next routed build"
+        downstream = "AI carries the routed downstream work."
+    title = "Your move: give one upstream signal"
+    if late:
+        title = "Your move: one upstream signal, then close clean"
+    reason = "Only you can bless, change, or hold the next downstream move."
+    if detail:
+        reason = f"{detail} Only you can bless, change, or hold it."
+    return {
+        "title": title,
+        "yes": yes,
+        "reason": reason,
+        "downstream": downstream,
+        "late": late,
+    }
+
+def live_priorities_top3(allopen, now):
     """Top-3 from live sources: DECISIONS first, North Star second, GOALS MIRROR only as fallback."""
     out = []
-    handoff = read(CODEX_HANDOFF)
-    if "awaiting review" in handoff and "SPEC_daily-realtime" in handoff:
-        out.append(("Review/merge Codex branches + choose next build", "daily-realtime is running now; Service Registry / World Map is next"))
-    elif "awaiting review" in handoff:
-        out.append(("Review/merge Codex branches", "keeps the Codex build loop moving"))
+    move = james_next_move(now)
+    out.append((move["title"], f"`{move['yes']}` / `change X first` / `checkpoint`"))
+    out.append(("AI carries downstream", move["downstream"]))
     for q, unblock, _aff in allopen[:2]:
-        if "start codex building" in q.lower() and "awaiting review" in handoff:
+        if "start codex building" in q.lower():
             continue
         out.append((q, unblock or "awaits James's call"))
     ns = north_star_priority()
@@ -525,6 +570,37 @@ def refresh_home_stamp(now, place, tz):
         return True
     return False
 
+def refresh_home_next_move(now):
+    """Keep HOME's top section as James-action, not a downstream project board."""
+    if not HOME.exists():
+        return False
+    doc = read(HOME)
+    if "## ▶️ NEXT MOVE" not in doc or "## 🌅 Today" not in doc:
+        return False
+    move = james_next_move(now)
+    close_line = (
+        "**If you are tired or time-limited:** just say `checkpoint` and I preserve the next clean move."
+        if move["late"]
+        else "**If you want to stay upstream:** speak the signal; AI carries the structure downstream."
+    )
+    block = (
+        "## ▶️ NEXT MOVE\n\n"
+        f"**{move['title']}.**\n\n"
+        "**Look:** this section. Open [[SUNHEART ATTENTION FLOW]] only if the rule itself feels off.\n\n"
+        f"**Why look:** {move['reason']}\n\n"
+        "**Then speak one line:**\n\n"
+        f"- `{move['yes']}`\n"
+        "- or `change this first: ...`\n"
+        "- or `checkpoint`\n\n"
+        f"**AI carries downstream:** {move['downstream']}\n\n"
+        f"{close_line}"
+    )
+    new = re.sub(r"## ▶️ NEXT MOVE.*?(?=\n## 🌅 Today)", block + "\n\n", doc, flags=re.S)
+    if new != doc:
+        HOME.write_text(new)
+        return True
+    return False
+
 def main():
     place, tz = location()
     now = tz_now(tz)                       # James's local time, wherever he is
@@ -586,7 +662,7 @@ def main():
     # Lead the LIVING note with TIME + day + place (the filename already carries the ISO date — no repeat),
     # then the FLOW from here: the body's state NOW → the priorities to move through. The system knows the flow.
     L = [f"# {icon} {daylabel}  ·  `{tlabel}`{where}", ""]
-    top3 = live_priorities_top3(allopen)
+    top3 = live_priorities_top3(allopen, now)
     if   h >= 22 or h < 5: first = "🌙 **Sleep** — rest now; the build keeps till morning"
     elif h < 11:           first = "☀️ **Ground + hydrate** — 2 min before the first decision"
     elif h < 15:           first = "🍽️ **Fuel** — water + a real meal, then focus"
@@ -710,8 +786,9 @@ def main():
 
     note.write_text(doc)
     home_refreshed = refresh_home_stamp(now, place, tz)
+    home_next = refresh_home_next_move(now)
     tasks = my_tasks(doc)
-    print(f"daily_sync v9 → {note.name}: refreshed {stamp_full} {place or ''} · open={ndec} · decided_now={len(decided_now)} · my_tasks={len(tasks)} · streak={nships} · home_stamp={int(home_refreshed)}")
+    print(f"daily_sync v9 → {note.name}: refreshed {stamp_full} {place or ''} · open={ndec} · decided_now={len(decided_now)} · my_tasks={len(tasks)} · streak={nships} · home_stamp={int(home_refreshed)} · home_next={int(home_next)}")
 
 if __name__ == "__main__":
     main()
