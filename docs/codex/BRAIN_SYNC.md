@@ -15,7 +15,7 @@ the same brain without pretending every surface has the same permissions.
 
 | Surface | Role | Writer | Reader |
 |---|---|---|---|
-| `docs/codex/HANDOFF.md` | Live AI-to-AI build board | Codex + Ember | Codex, Ember, James |
+| `docs/codex/HANDOFF.md` | Live AI-to-AI build board | Codex writes 📥 only; Ember writes 📍/📤 + vault mirror | Codex, Ember, James |
 | `docs/codex/specs/` | Approved build specs | Ember / James | Codex |
 | `tools/*/REPORT.md` | Generated build outputs | Codex | Ember / James |
 | Obsidian `PROOF LOG` | Shipped record | Ember after review | James + AIs |
@@ -28,7 +28,7 @@ Codex may write:
 
 - repo-local tools under the active spec's allowed paths
 - generated reports under the active spec's allowed paths
-- `docs/codex/HANDOFF.md` run summaries
+- `docs/codex/HANDOFF.md` 📥 run summaries
 - repo-local bridge docs such as this file
 
 Codex must not write directly to:
@@ -91,4 +91,3 @@ Build the Service Registry / World Map:
 - no deletions
 - no service edits
 - output a generated report first
-
