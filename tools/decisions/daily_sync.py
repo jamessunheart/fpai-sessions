@@ -621,6 +621,22 @@ def checkbox_state(doc, label):
     m = re.search(rf"- \[([ xX])\]\s+\*\*{re.escape(label)}(?:[:*]|\b)", doc)
     return "x" if m and m.group(1).lower() == "x" else " "
 
+def checkbox_any_state(doc, labels):
+    return "x" if any(checkbox_state(doc, label) == "x" for label in labels) else " "
+
+def sol_decision(doc):
+    if checkbox_state(doc, "SOL — hold") == "x":
+        return "x", "hold / exit-de-lever"
+    if checkbox_state(doc, "SOL — exit/de-lever") == "x":
+        return "x", "exit/de-lever / hold"
+    m = re.search(r"- \[([ xX])\]\s+\*\*SOL:\*\*\s+([^\n]+)", doc)
+    if m and m.group(1).lower() == "x":
+        options = m.group(2).strip()
+        if options.startswith("hold"):
+            return "x", "hold / exit-de-lever"
+        return "x", "exit/de-lever / hold"
+    return " ", "exit/de-lever / hold"
+
 def refresh_home_decide():
     """Keep the James-only area as simple decisions, not doctrine."""
     if not HOME.exists():
@@ -629,23 +645,19 @@ def refresh_home_decide():
     if "## 🌱 Streams" not in doc:
         return False
     if cleanup_services_routed():
-        service_yes = ("Service cleanup — routed", "`checkpoint`")
-        service_no = ("Service cleanup — override", "`change cleanup: ...`")
+        service_state = "x"
+        service_line = f"- [{service_state}] **Service cleanup:** routed · override `change cleanup: ...`"
     elif SERVICE_REGISTRY_SORTED_VAULT.exists():
-        service_yes = ("Service cleanup — yes", "`spec cleanup-services`")
-        service_no = ("Service cleanup — no", "`hold cleanup`")
+        service_state = checkbox_any_state(doc, ["Service cleanup", "Service cleanup — yes", "Service cleanup — no"])
+        service_line = f"- [{service_state}] **Service cleanup:** yes `spec cleanup-services` / no `hold cleanup`"
     else:
-        service_yes = ("Service map — yes", "`spec prune`")
-        service_no = ("Service map — no", "`hold`")
-    sol_exit = checkbox_state(doc, "SOL — exit/de-lever")
-    sol_hold = checkbox_state(doc, "SOL — hold")
+        service_state = checkbox_any_state(doc, ["Service map", "Service map — yes", "Service map — no"])
+        service_line = f"- [{service_state}] **Service map:** yes `spec prune` / no `hold`"
+    sol_state, sol_options = sol_decision(doc)
     block = (
         "## 🔴 Decide\n\n"
-        f"- [ ] **{service_yes[0]}:** {service_yes[1]}\n"
-        f"- [ ] **{service_no[0]}:** {service_no[1]}\n"
-        f"- [{sol_exit}] **SOL — exit/de-lever**\n"
-        f"- [{sol_hold}] **SOL — hold**\n"
-        "- [ ] **Public / money / people:** `yes` / `no` when surfaced"
+        f"{service_line}\n"
+        f"- [{sol_state}] **SOL:** {sol_options}"
     )
     if re.search(r"## 🔴 (?:Only you|Decide)", doc):
         new = re.sub(r"## 🔴 (?:Only you|Decide).*?(?=\n## 🌱 Streams)", block + "\n\n", doc, flags=re.S)

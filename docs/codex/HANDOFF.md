@@ -46,6 +46,17 @@
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-05 · HOME Decide one-line decisions · branch `feat/service-registry`
+
+- **Status:** done
+- **Files changed:** `tools/decisions/daily_sync.py`; generated vault HOME refresh.
+- **Summary:** `Decide` now renders one line per actual decision: Service cleanup/map on one line, SOL on one line. Removed the vague `Public / money / people` row. The generator preserves old two-line SOL state and the new one-line SOL state, so checked `SOL: hold` stays checked across refreshes.
+- **Tests:** `python3 -m py_compile tools/decisions/daily_sync.py`; `git diff --check`; live vault refresh; HOME read-back shows only `Service cleanup` and `SOL` decision rows.
+- **Cost:** ~$0 marginal · GPT Pro flat-rate · source: Codex desktop.
+- **Risks:** Inline options are less task-checkbox granular, but much clearer for attention.
+- **Rollback:** revert the `refresh_home_decide` formatting change.
+- **Questions for Ember/James:** none.
+
 ### 2026-06-05 · HOME next move target clarified · branch `feat/service-registry`
 
 - **Status:** done
