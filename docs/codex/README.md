@@ -26,6 +26,17 @@ money movement · outreach/messages · production deploys · background jobs · 
 5. James reviews the diff (desktop or phone) → approves/merges.
 6. On done: it gets logged to the vault PROOF LOG + SPEC LOG + AGENT RUN LEDGER (Ember does this from the run summary James pastes back).
 
+## Codex surface protocol (Mac · phone · cloud · SSH)
+Future Codex should infer the operating lane from the surface James is using:
+
+- **Mac / laptop Codex = local truth.** Use for full builds, vault/iCloud context, local config, credentials, screenshots, local dirty worktree context, first-time setup, and high-risk approvals.
+- **Phone controlling Mac host = same brain, smaller interface.** Use for steering, approvals, diff review, and continuing an active local thread. This only works while the Mac host is awake, online, signed in, and running Codex mobile remote control.
+- **Phone Codex Web / Cloud = GitHub-only Buildstream.** Use when the Mac is unavailable. Work from pushed GitHub branches and repo mirrors only. Do not assume access to Obsidian/iCloud, `~/.config/fpai`, local secrets, unpushed files, or the Mac worktree.
+- **SSH Codex Build Host = always-on repo builder.** Use only on a dedicated low-privilege dev host, not a production service host. Keep it repo-first; vault writes route back through `docs/codex/HANDOFF.md` for Ember/Claude to mirror.
+- **If the phone asks for SSH**, it is starting remote-host setup. That is optional. Normal phone operation is either Mac-host remote control or GitHub cloud.
+
+Phone/cloud/SSH kickoff rule: always read `AGENTS.md`, this file, `docs/codex/HANDOFF.md`, and `docs/codex/ATTENTION_FLOW.md`; work repo-only unless James explicitly grants a broader lane.
+
 ## Build order (start here)
 1. **`SPEC_service-registry`** — next approved direction from World Scout. Goal: read-only inventory + status classification. No stops, deletes, archives, deploys, or money actions.
 2. **`SPEC_multimodel-debate-harness`** — real Claude+GPT+Gemini debates.
