@@ -46,6 +46,17 @@
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-06 · HOME next move bridge prompt · branch `feat/service-registry`
+
+- **Status:** done
+- **Files changed:** `tools/decisions/daily_sync.py`; generated vault HOME + `[[NEXT MOVE DETAIL]]`.
+- **Summary:** HOME `NEXT MOVE` now tells James which agent receives the signal and the exact phrase to send. `[[NEXT MOVE DETAIL]]` adds `Send This` with the chosen phrase plus context pointers, so Claude Code / Ember or Codex can infer what to build instead of receiving a bare yes.
+- **Tests:** `python3 -m py_compile tools/decisions/daily_sync.py`; `git diff --check`; live vault refresh; HOME read-back shows `Tell: Claude Code / Ember` + `Send: yes - build it / no - after X / checkpoint`; detail note read-back includes `Send This`.
+- **Cost:** ~$0 marginal · GPT Pro flat-rate · source: Codex desktop.
+- **Risks:** This is still a manual bridge; no background Telegram/Obsidian watcher auto-executes the answer.
+- **Rollback:** revert the `send_detail`, HOME `Tell/Send`, and detail-note `Send This` additions.
+- **Questions for Ember/James:** proactive Telegram bridge should be its own small spec: detect current next move → DM James → record answer → route to Ember/Codex after confirmation.
+
 ### 2026-06-06 · HOME next move compact question · branch `feat/service-registry`
 
 - **Status:** done

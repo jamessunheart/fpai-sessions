@@ -256,6 +256,7 @@ def next_decision_move(now):
             "title": q,
             "look": "[[DECISIONS]] only if you want the queue detail",
             "tell": "Claude Code / Ember.",
+            "send_detail": "Use [[NEXT MOVE DETAIL]] + [[DECISIONS]] for context.",
             "yes": say[0],
             "reason": unblock,
             "downstream": downstream,
@@ -272,6 +273,7 @@ def james_next_move(now):
             "title": "Decide cleanup spec",
             "look": "[[SERVICE REGISTRY — SORTED]]",
             "tell": "Claude Code / Ember.",
+            "send_detail": "Use [[SERVICE REGISTRY — SORTED]] for context.",
             "yes": "spec cleanup-services",
             "reason": "The map is sorted. Only you decide whether cleanup becomes a reversible spec.",
             "downstream": "Drafts cleanup only. No service stops, deletes, or pruning without another yes.",
@@ -284,6 +286,7 @@ def james_next_move(now):
             "title": "Review map",
             "look": "[[SERVICE REGISTRY]]" if SERVICE_REGISTRY_VAULT.exists() else "`docs/codex/SERVICE_REGISTRY.md`",
             "tell": "Claude Code / Ember.",
+            "send_detail": "Use [[SERVICE REGISTRY]] for context.",
             "yes": "spec prune",
             "reason": "See what exists before cleanup. Nothing changes without another yes.",
             "downstream": "Drafts a prune spec only. No service changes.",
@@ -300,15 +303,18 @@ def james_next_move(now):
         yes = "yes — proceed with Service Registry map-only"
         downstream = "Codex builds Service Registry as a read-only map. No stops. No deletes. No pruning."
         tell = "Codex."
+        send_detail = "Use the approved spec and `docs/codex/HANDOFF.md`."
     elif spec:
         label = spec.replace("SPEC_", "").replace("-", " ").replace("_", " ").strip().title()
         yes = f"yes — proceed with {label}"
         downstream = f"Codex builds `{spec}` after your upstream yes."
         tell = "Codex."
+        send_detail = f"Use `{spec}` and `docs/codex/HANDOFF.md`."
     else:
         yes = "yes — proceed with the next routed build"
         downstream = "AI carries the routed downstream work."
         tell = "Claude Code / Ember."
+        send_detail = "Use [[NEXT MOVE DETAIL]] for context."
     title = "Your move: give one upstream signal"
     if late:
         title = "Your move: one upstream signal, then close clean"
@@ -319,6 +325,7 @@ def james_next_move(now):
         "title": title,
         "look": "this section",
         "tell": tell,
+        "send_detail": send_detail,
         "yes": yes,
         "reason": reason,
         "downstream": downstream,
@@ -711,7 +718,8 @@ def refresh_home_next_move(now):
     block = (
         "## ▶️ NEXT MOVE\n\n"
         f"**{title}**\n\n"
-        "**Answer:** " + " / ".join(f"`{s}`" for s in move["say"]) + "\n\n"
+        f"**Tell:** {move['tell']}\n\n"
+        "**Send:** " + " / ".join(f"`{s}`" for s in move["say"]) + "\n\n"
         "**Details:** [[NEXT MOVE DETAIL]]"
     )
     new = re.sub(r"## ▶️ NEXT MOVE.*?(?=\n## 🌅 Today)", block + "\n\n", doc, flags=re.S)
@@ -732,6 +740,8 @@ def write_next_move_detail(move, now):
             + "\n".join(f"- `{s}`" for s in move["say"])
             + "\n\n"
             f"## Tell\n{move['tell']}\n\n"
+            "## Send This\n"
+            f"`{move['yes']}` — {move.get('send_detail', 'Use this note for context.')}\n\n"
             f"## Where To Look\n{move['look']}\n\n"
             f"## Why This Matters\n{move['reason']}\n\n"
             f"## What AI Does Next\n{move['downstream']}\n\n"
