@@ -46,6 +46,17 @@
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-06 · HOME next move compact question · branch `feat/service-registry`
+
+- **Status:** done
+- **Files changed:** `tools/decisions/daily_sync.py`; generated vault HOME + `[[NEXT MOVE DETAIL]]`.
+- **Summary:** HOME `NEXT MOVE` now shows only one compact question, one answer line, and a clickable detail note. Routed/no-action work is filtered out of HOME; Service cleanup stays in logs/decision history, while the next actual James choice rises (`Build the financial-consolidation hub next?`). `[[NEXT MOVE DETAIL]]` carries who/where/why/how/AI-does.
+- **Tests:** `python3 -m py_compile tools/decisions/daily_sync.py`; `git diff --check`; live vault refresh; HOME read-back shows `Answer: yes - build it / no - after X / checkpoint`; detail note read-back includes Tell/Where/Why/AI-does.
+- **Cost:** ~$0 marginal · GPT Pro flat-rate · source: Codex desktop.
+- **Risks:** Decision queue freshness matters; stale open decisions in `[[DECISIONS]]` can still surface unless filtered or archived.
+- **Rollback:** revert the `refresh_home_next_move` compact format and `next_decision_move` routing changes.
+- **Questions for Ember/James:** none.
+
 ### 2026-06-05 · HOME Decide answer-format · branch `feat/service-registry`
 
 - **Status:** done

@@ -36,6 +36,7 @@ CODEX_SPECS = Path(CODEX_REPO) / "docs" / "codex" / "specs"
 CODEX_HANDOFF = Path(CODEX_REPO) / "docs" / "codex" / "HANDOFF.md"
 SERVICE_REGISTRY_VAULT = VAULT / "00_MEMORY" / "SERVICE REGISTRY.md"
 SERVICE_REGISTRY_SORTED_VAULT = VAULT / "00_MEMORY" / "SERVICE REGISTRY — SORTED.md"
+NEXT_MOVE_DETAIL = VAULT / "00_MEMORY" / "NEXT MOVE DETAIL.md"
 SOL_LIVE = Path.home() / ".config" / "fpai" / "sol_live" / "latest.json"
 DAILY = VAULT / "07_DAILY"
 SEEDS_NOTE = VAULT / "05_CONCEPTS" / "SIX SEEDS.md"
@@ -234,21 +235,38 @@ def cleanup_services_routed():
         and ("decided" in spec_log or "executing" in spec_log)
     )
 
-def james_next_move(now):
-    """HOME/Daily top-of-stream action: James signal first, downstream build second."""
-    if cleanup_services_routed():
+def next_decision_move(now):
+    """Promote the next actual James decision; routed statuses do not belong in NEXT MOVE."""
+    allopen, _ = decisions_top(5)
+    for q, unblock, affordance in allopen:
+        if "service registry" in q.lower():
+            continue
         late = now.hour >= 19 or now.hour < 6
+        if "financial-consolidation" in q.lower() or "financial consolidation" in q.lower():
+            say = ["yes - build it", "no - after X", "checkpoint"]
+            downstream = "Claude Code / Ember drafts the reversible file-only Financial Hub path, or reorders it."
+        elif "comms hub" in q.lower() or "conscious chat" in q.lower():
+            say = ["yes - build it", "no - after financial", "checkpoint"]
+            downstream = "Claude Code / Ember drafts the Comms Hub path, or parks it."
+        else:
+            quoted = re.findall(r'"([^"]+)"', affordance)
+            say = quoted[:2] + ["checkpoint"] if quoted else ["yes", "no", "checkpoint"]
+            downstream = affordance
         return {
-            "title": "No action — cleanup is routed",
-            "look": "[[SERVICE REGISTRY — SORTED]] only if you want the detail",
-            "tell": "No one. If you want to override, tell Claude Code / Ember.",
-            "yes": "checkpoint",
-            "reason": "The cleanup decision is made. AI/Codex carry the reversible Buildstream work.",
-            "downstream": "Builds the cleanup-services path from the sorted registry; no live stops or irreversible deletes.",
-            "say": ["checkpoint", "change cleanup: ..."],
+            "title": q,
+            "look": "[[DECISIONS]] only if you want the queue detail",
+            "tell": "Claude Code / Ember.",
+            "yes": say[0],
+            "reason": unblock,
+            "downstream": downstream,
+            "say": say,
             "late": late,
         }
-    if SERVICE_REGISTRY_SORTED_VAULT.exists():
+    return None
+
+def james_next_move(now):
+    """HOME/Daily top-of-stream action: James signal first, downstream build second."""
+    if SERVICE_REGISTRY_SORTED_VAULT.exists() and not cleanup_services_routed():
         late = now.hour >= 19 or now.hour < 6
         return {
             "title": "Decide cleanup spec",
@@ -260,7 +278,7 @@ def james_next_move(now):
             "say": ["spec cleanup-services", "hold cleanup", "checkpoint"],
             "late": late,
         }
-    if service_registry_awaiting_review():
+    if service_registry_awaiting_review() and not cleanup_services_routed():
         late = now.hour >= 19 or now.hour < 6
         return {
             "title": "Review map",
@@ -272,6 +290,9 @@ def james_next_move(now):
             "say": ["spec prune", "hold", "checkpoint"],
             "late": late,
         }
+    decision = next_decision_move(now)
+    if decision:
+        return decision
     spec, detail = codex_next_spec()
     is_service_registry = spec and "service-registry" in spec
     late = now.hour >= 19 or now.hour < 6
@@ -313,6 +334,8 @@ def live_priorities_top3(allopen, now):
     out.append(("AI carries downstream", move["downstream"]))
     for q, unblock, _aff in allopen[:2]:
         if "start codex building" in q.lower():
+            continue
+        if q == move["title"]:
             continue
         out.append((q, unblock or "awaits James's call"))
     ns = north_star_priority()
@@ -646,31 +669,26 @@ def refresh_home_decide():
     doc = read(HOME)
     if "## 🌱 Streams" not in doc:
         return False
-    if cleanup_services_routed():
-        service_block = (
-            "**Service cleanup:** routed downstream.\n"
-            "Override: `change cleanup: ...`"
-        )
-    elif SERVICE_REGISTRY_SORTED_VAULT.exists():
-        service_block = (
+    blocks = []
+    if SERVICE_REGISTRY_SORTED_VAULT.exists() and not cleanup_services_routed():
+        blocks.append(
             "**Service cleanup?**\n"
             "Options: `spec cleanup-services` / `hold cleanup`\n"
             "Your answer: `...`"
         )
-    else:
-        service_block = (
+    elif not cleanup_services_routed():
+        blocks.append(
             "**Service map?**\n"
             "Options: `spec prune` / `hold`\n"
             "Your answer: `...`"
         )
     sol_answer = sol_decision(doc)
-    block = (
-        "## 🔴 Decide\n\n"
-        f"{service_block}\n\n"
+    blocks.append(
         "**SOL?**\n"
         "Options: `hold` / `exit/de-lever`\n"
         f"Your answer: `{sol_answer}`"
     )
+    block = "## 🔴 Decide\n\n" + "\n\n".join(blocks)
     if re.search(r"## 🔴 (?:Only you|Decide)", doc):
         new = re.sub(r"## 🔴 (?:Only you|Decide).*?(?=\n## 🌱 Streams)", block + "\n\n", doc, flags=re.S)
     else:
@@ -688,26 +706,41 @@ def refresh_home_next_move(now):
     if "## ▶️ NEXT MOVE" not in doc or "## 🌅 Today" not in doc:
         return False
     move = james_next_move(now)
-    close_line = (
-        "**If you are tired or time-limited:** just say `checkpoint` and I preserve the next clean move."
-        if move["late"]
-        else "**If you want to stay upstream:** speak the signal; AI carries the structure downstream."
-    )
+    write_next_move_detail(move, now)
+    title = move["title"] if re.search(r"[?.!]$", move["title"]) else f"{move['title']}."
     block = (
         "## ▶️ NEXT MOVE\n\n"
-        f"**{move['title']}.**\n\n"
-        f"**Look:** {move['look']}\n\n"
-        f"**Tell:** {move['tell']}\n\n"
-        f"**Why:** {move['reason']}\n\n"
-        "**Say:** " + " / ".join(f"`{s}`" for s in move["say"]) + "\n\n"
-        f"**AI does:** {move['downstream']}\n\n"
-        f"{close_line}"
+        f"**{title}**\n\n"
+        "**Answer:** " + " / ".join(f"`{s}`" for s in move["say"]) + "\n\n"
+        "**Details:** [[NEXT MOVE DETAIL]]"
     )
     new = re.sub(r"## ▶️ NEXT MOVE.*?(?=\n## 🌅 Today)", block + "\n\n", doc, flags=re.S)
     if new != doc:
         HOME.write_text(new)
         return True
     return False
+
+def write_next_move_detail(move, now):
+    """Put the who/where/why/how outside HOME so HOME stays a clean input surface."""
+    try:
+        title = move["title"] if re.search(r"[?.!]$", move["title"]) else f"{move['title']}."
+        detail = (
+            "# NEXT MOVE DETAIL\n\n"
+            f"*Generated: {now.strftime('%Y-%m-%d %H:%M %Z')} · source: `tools/decisions/daily_sync.py`*\n\n"
+            f"## Question\n{title}\n\n"
+            "## Answer Options\n"
+            + "\n".join(f"- `{s}`" for s in move["say"])
+            + "\n\n"
+            f"## Tell\n{move['tell']}\n\n"
+            f"## Where To Look\n{move['look']}\n\n"
+            f"## Why This Matters\n{move['reason']}\n\n"
+            f"## What AI Does Next\n{move['downstream']}\n\n"
+            "## Rest Option\n"
+            "If you are tired or time-limited, answer `checkpoint`. AI preserves the next clean move.\n"
+        )
+        NEXT_MOVE_DETAIL.write_text(detail)
+    except Exception:
+        pass
 
 def main():
     place, tz = location()
