@@ -8,6 +8,7 @@
 
 ## 📍 WHERE WE'RE AT  *(Ember keeps this current — Codex does not edit this lane)*
 - **🔒 Doctrine (read first):** `docs/codex/AI_PROTOCOLS.md` — the Layer-3 Intelligence Engine doctrine. James locked the **Full Potential OS Master Map** as canonical top of the stack on 2026-06-06. It defines the **self-standing goal · the 4 bars · the 4 rungs (build ladder) · the Resource Discipline Gate · the self-standing pass/fail test.** Everything below serves this.
+- **Index of Indexes:** `docs/codex/INDEX_OF_INDEXES.md` — map of key vault/repo/server indexes, active work claims, and timestamp hygiene. Check it before editing a major surface.
 - **Intent Buildstream:** `docs/codex/INTENT_BUILDSTREAM.md` — the live sequential map. It turns the queue into a cascade: Source → Routing → Build → Resource → Human → World → Proof. A build is valid only when it unlocks the next adjacent intent.
 - **Portable phone/cloud handoff:** `docs/codex/PHONE_HANDOFF.md` — use this when Codex is running from phone, cloud, or SSH and may not have iCloud/vault/local config.
 - **North Star:** stand up a *self-standing FPOS* — holds context + advances without James prompting · becomes the product. (`FPOS NORTH STAR`)
