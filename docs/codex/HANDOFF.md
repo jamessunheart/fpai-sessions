@@ -46,6 +46,17 @@
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-06 · SPEC_financial-consolidation-hub · branch `feat/financial-hub`
+
+- **Status:** done / awaiting review
+- **Files changed:** `tools/financial_hub/refresh.py`; `tools/decisions/daily_sync.py`; generated vault `[[FINANCIAL HUB]]`, HOME, `[[NEXT MOVE DETAIL]]`; cleaned vault DECISIONS / SPEC LOG / FPOS COCKPIT / PROOF LOG / AGENT RUN LEDGER / CODEX JOURNAL.
+- **Summary:** Built the secret-free Financial Hub refresh script. It reads canonical local/vault financial sources and writes one consolidated money picture: net spendable, cash/crypto/bullion split, burn, SOL monitor, Zen Village ops, AI cost posture, open reconciliation, source map, and guardrails. It filters the resolved Bitrue reconciliation so an old local snapshot does not reopen settled concern. Attention cleanup moved completed Service Registry + Financial Hub prompts out of active DECISIONS, marked Financial Hub built in SPEC LOG, linked the hub in the cockpit, and refreshed HOME so the next true James signal is now Comms Hub.
+- **Tests:** `python3 -m py_compile tools/financial_hub/refresh.py tools/decisions/daily_sync.py`; `python3 tools/financial_hub/refresh.py --check-only`; live `python3 tools/financial_hub/refresh.py`; live `python3 tools/decisions/daily_sync.py`; leak/stale scan on `[[FINANCIAL HUB]]`; HOME/detail read-back; `git diff --check`.
+- **Cost:** ~$0 marginal · GPT Pro flat-rate · source: Codex desktop.
+- **Risks:** Hub uses rounded summary figures and source pointers, not decrypted exact account detail. Remaining reconciliation items are real unresolved questions from the latest resources snapshot. No money actions were taken.
+- **Rollback:** delete `tools/financial_hub/`; revert the one-line Comms Hub answer cleanup in `tools/decisions/daily_sync.py`; restore vault notes from Obsidian/iCloud history if desired.
+- **Questions for Ember/James:** review the Financial Hub picture; next surfaced signal is Comms Hub (`yes - build it` / `no - after X` / `checkpoint`).
+
 ### 2026-06-06 · HOME next move bridge prompt · branch `feat/service-registry`
 
 - **Status:** done

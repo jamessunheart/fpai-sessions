@@ -246,7 +246,7 @@ def next_decision_move(now):
             say = ["yes - build it", "no - after X", "checkpoint"]
             downstream = "Claude Code / Ember drafts the reversible file-only Financial Hub path, or reorders it."
         elif "comms hub" in q.lower() or "conscious chat" in q.lower():
-            say = ["yes - build it", "no - after financial", "checkpoint"]
+            say = ["yes - build it", "no - after X", "checkpoint"]
             downstream = "Claude Code / Ember drafts the Comms Hub path, or parks it."
         else:
             quoted = re.findall(r'"([^"]+)"', affordance)
