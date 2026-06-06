@@ -7,6 +7,14 @@ The **Full Potential OS Master Map** is the canonical top of the stack: 7 layers
 `COHERENCE → ATTENTION → INTELLIGENCE → RESOURCES → HUMANS → HEAVEN ON EARTH → PROOF → BETTER INTELLIGENCE`.
 This doc governs **Layer 3 — the Intelligence Engine** (Ember/Claude Code + Codex + the Routing Brain) and the **Resource Discipline Gate** below it.
 
+## The Buildstream Law (blessed by James 2026-06-06)
+**A build is valid only if it unlocks the next adjacent, nameable downstream intent. If it unlocks nothing adjacent, it must be labeled honestly as `maintenance`, `decoration`, or `drift`.**
+- No vague unlocks: "improves the system" / "supports Heaven on Earth" / "makes things better" are rejected. Name the NEXT practical intent it opens — adjacent, nameable, ideally already queued.
+- Every proof row carries four fields: **Intent solved · Unlocks next · Proof · Next move.** When Auto-proof is present on the branch/host, `tools/proof/log.py` should enforce this and refuse vague/empty unlocks.
+- Log a ship with Auto-proof when available: `python3 tools/proof/log.py --summary "..." --unlocks "next adjacent intent" --next "next move" --tested "..." --files "..."`.
+
+Builder-facing sequence lives in `docs/codex/INTENT_BUILDSTREAM.md`. Use that file to decide whether a candidate is the next unlock, downstream material, or drift.
+
 ## Prime directive
 **Make FPOS (the Intelligence Engine) self-standing first.** Treasury (Layer 4), Comms Hub, Financial Hub, and everything downstream are **products of a finished engine**, not parts you build to finish it. Self-standing = the loop runs one full day untouched: remembers, routes, refreshes its own surfaces, proves its own work, stops only at genuine James-gates, never overspends.
 
