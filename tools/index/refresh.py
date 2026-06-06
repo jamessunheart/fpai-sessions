@@ -36,6 +36,26 @@ REPO = Path(os.environ.get("FPAI_REPO", HOME / "FPAI_Cockpit"))
 VAULT_INDEX = VAULT / "00_MEMORY" / "INDEX OF INDEXES.md"
 REPO_INDEX = REPO / "docs" / "codex" / "INDEX_OF_INDEXES.md"
 PROOF = VAULT / "00_MEMORY" / "PROOF LOG.md"
+SELFMODEL = VAULT / "00_MEMORY" / "SYSTEM SELF-MODEL.md"
+
+
+def parse_spine() -> list[str]:
+    """Curated operating spine — the single source of truth is SYSTEM SELF-MODEL.md.
+
+    Reads `- [[Name]] — why` lines between <!-- SPINE:START --> and <!-- SPINE:END -->.
+    """
+    if not SELFMODEL.exists():
+        return []
+    text = SELFMODEL.read_text(encoding="utf-8")
+    m = re.search(r"<!-- SPINE:START -->(.*?)<!-- SPINE:END -->", text, re.DOTALL)
+    if not m:
+        return []
+    spine = []
+    for ln in m.group(1).splitlines():
+        lm = re.match(r"\s*-\s*\[\[([^\]|#]+)", ln)
+        if lm:
+            spine.append(lm.group(1).strip())
+    return spine
 
 START = "<!-- AUTO:START -->"
 END = "<!-- AUTO:END -->"
@@ -153,91 +173,176 @@ def latest_updates() -> str:
     return "\n".join(out) if out else "_(no entries parsed)_"
 
 
+# Category display order + icon. Anything else falls through to alphabetical.
+CATEGORY_ORDER = [
+    ("🏠 Root", "🏠 Root"),
+    ("00_MEMORY", "🧠 Memory · 00_MEMORY"),
+    ("02_SPECS", "📐 Specs · 02_SPECS"),
+    ("01_OFFERS", "💵 Offers · 01_OFFERS"),
+    ("04_VISUALS", "🖼️ Visuals · 04_VISUALS"),
+    ("Mindmaps", "🗺️ Mindmaps"),
+    ("05_CONCEPTS", "💡 Concepts · 05_CONCEPTS"),
+    ("06_SHOW FRAMES", "🎬 Show Frames · 06_SHOW FRAMES"),
+    ("03_TICKETS", "🎟️ Tickets · 03_TICKETS"),
+    ("07_DAILY", "🌤️ Daily · 07_DAILY"),
+    ("08_JOURNAL", "📓 Journal · 08_JOURNAL"),
+]
+ACTIVE_WINDOW_S = 24 * 3600  # "actively working" = touched in the last 24h
+SKIP_PARTS = ("_ember_memory", "_archive", "node_modules", ".trash", ".obsidian")
+
+
+def categorize(path: Path) -> str | None:
+    rel = path.relative_to(VAULT)
+    parts = rel.parts
+    if any(p in SKIP_PARTS or p.startswith(".") for p in parts):
+        return None
+    if len(parts) == 1:
+        return "🏠 Root"
+    if parts[0] == "04_VISUALS" and len(parts) > 1 and parts[1] == "Mindmaps":
+        return "Mindmaps"
+    return parts[0]
+
+
+def pagerank(outlinks: dict[str, set[str]], nodes: set[str], d: float = 0.85, iters: int = 50) -> dict[str, float]:
+    """PageRank over the wikilink graph → each page's share of system importance (Σ=1.0)."""
+    n = len(nodes)
+    if n == 0:
+        return {}
+    rank = {s: 1.0 / n for s in nodes}
+    outdeg = {s: len(outlinks.get(s, ())) for s in nodes}
+    for _ in range(iters):
+        dangling = sum(rank[s] for s in nodes if outdeg[s] == 0)
+        new = {s: (1 - d) / n + d * dangling / n for s in nodes}
+        for s in nodes:
+            if outdeg[s]:
+                share = d * rank[s] / outdeg[s]
+                for t in outlinks[s]:
+                    if t in new:
+                        new[t] += share
+        rank = new
+    total = sum(rank.values()) or 1.0
+    return {s: rank[s] / total for s in nodes}
+
+
+TOP_WEIGHTED = 30
+
+
 def build_auto_block(index_text: str, now: dt.datetime) -> str:
     stems = vault_note_stems()
     link_body, ok, broken = link_health(index_text, stems)
     outlinks, backlinks, paths = build_link_graph()
+    weight = pagerank(outlinks, stems)
 
-    def degree(stem: str) -> tuple[int, int]:
-        return len(backlinks.get(stem, ())), len(outlinks.get(stem, ()))
+    # --- ⭐ Operating spine (curated — source of truth: SYSTEM SELF-MODEL.md) ---
+    spine = parse_spine()
+    spine_set = set(spine)
+    if spine:
+        spine_rows = "\n".join(
+            f"| {i} | [[{s}]] | {weight.get(s, 0) * 100:.1f}% |"
+            for i, s in enumerate(spine, 1)
+        )
+        spine_section = (
+            "### ⭐ Operating spine  *(curated — what RUNS the system · "
+            "see [[SYSTEM SELF-MODEL]] for how these were chosen)*\n\n"
+            "| # | Page | Weight |\n|---|---|---|\n" + spine_rows + "\n"
+        )
+    else:
+        spine_section = ""
 
-    # --- Surface freshness (tracked paths), now with clickable links + connectivity ---
-    tokens = re.findall(r"`((?:00_MEMORY|02_SPECS|04_VISUALS|docs/codex|tools)/[^`]+|AGENTS\.md|HOME\.md|FPOS COCKPIT\.md)`", index_text)
-    seen = set()
-    tokens = [t for t in tokens if not (t in seen or seen.add(t))]
-    rows = []
-    miss = 0
-    for tk in tokens:
-        if tk.endswith("/*") or tk.endswith("/"):
+    # group every note by category + collect active
+    cats: dict[str, list[Path]] = {}
+    active: list[tuple[float, Path]] = []
+    cutoff = now.timestamp() - ACTIVE_WINDOW_S
+    total = 0
+    for p in sorted(VAULT.rglob("*.md")):
+        cat = categorize(p)
+        if cat is None:
             continue
-        path, label = resolve_tracked_path(tk)
-        exists = label != "missing"
-        if not exists:
-            miss += 1
-        mark = "✓" if exists else "✗ MISSING"
-        stem = Path(tk).stem
-        # vault notes → clickable wikilink + in/out connectivity; repo files → path
-        if label == "vault" and stem in stems:
-            ind, outd = degree(stem)
-            surface = f"[[{stem}]]"
-            conn = f"{ind}·{outd}"
-        else:
-            surface = f"`{tk}`"
-            conn = "—"
-        rows.append(f"| {surface} | {label} | {fmt_mtime(path) if exists else '—'} | {conn} | {mark} |")
-    table = "\n".join(rows)
+        total += 1
+        cats.setdefault(cat, []).append(p)
+        try:
+            mt = p.stat().st_mtime
+        except OSError:
+            mt = 0
+        if mt >= cutoff:
+            active.append((mt, p))
 
-    # --- Hubs: the system's centers of gravity (highest total link degree) ---
-    deg_all = sorted(stems, key=lambda s: (len(backlinks[s]) + len(outlinks.get(s, ()))), reverse=True)
-    hub_rows = []
-    for s in deg_all[:12]:
-        ind, outd = degree(s)
-        if ind + outd == 0:
-            break
-        hub_rows.append(f"| [[{s}]] | {ind} | {outd} | {ind + outd} |")
-    hubs = "\n".join(hub_rows)
-
-    # --- Orphans: operational notes with no links in OR out (invisible to the system) ---
-    orphans = [
-        s for s in stems
-        if len(backlinks[s]) == 0 and len(outlinks.get(s, ())) == 0 and is_operational(paths[s])
-    ]
-    orphans.sort()
-    orphan_sample = ", ".join(f"[[{s}]]" for s in orphans[:10])
-    orphan_more = f" … +{len(orphans) - 10} more" if len(orphans) > 10 else ""
-    orphan_line = (
-        f"✅ none in operational dirs" if not orphans
-        else f"⚠️ **{len(orphans)}** unlinked: {orphan_sample}{orphan_more}"
+    # --- ⭐ Most weighted pages (the headline: importance, Σ=100%) ---
+    # rank only the SAME categorized notes the directory counts, so counts stay consistent
+    cat_stems = {p.stem for lst in cats.values() for p in lst}
+    ranked = [kv for kv in sorted(weight.items(), key=lambda kv: kv[1], reverse=True) if kv[0] in cat_stems]
+    shown = sum(w for _, w in ranked[:TOP_WEIGHTED]) * 100
+    top_rows = "\n".join(
+        f"| {i} | [[{s}]] | {w * 100:.1f}% |"
+        for i, (s, w) in enumerate(ranked[:TOP_WEIGHTED], 1)
     )
+    tail = sum(w for _, w in ranked[TOP_WEIGHTED:]) * 100
+    tail_line = f"_top {TOP_WEIGHTED} = {shown:.1f}% · + {len(ranked) - TOP_WEIGHTED} more pages = {tail:.1f}%_" if len(ranked) > TOP_WEIGHTED else ""
+
+    # --- 🔴 Active now (highlights — the only dated entries) ---
+    active.sort(reverse=True)
+    if active:
+        active_lines = "\n".join(
+            f"- 🔴 [[{p.stem}]] · {dt.datetime.fromtimestamp(mt).astimezone():%m-%d %H:%M}"
+            for mt, p in active[:10]
+        )
+        if len(active) > 10:
+            active_lines += f"\n- … +{len(active) - 10} more touched today"
+    else:
+        active_lines = "_nothing touched in the last 24h_"
+
+    # --- 🗂️ Full directory: ONE collapsed toggle, categories inside (links only) ---
+    ordered = [c for c, _ in CATEGORY_ORDER if c in cats]
+    ordered += sorted(c for c in cats if c not in {c0 for c0, _ in CATEGORY_ORDER})
+    label = {c0: lbl for c0, lbl in CATEGORY_ORDER}
+    inner = []
+    for cat in ordered:
+        files = sorted(cats[cat], key=lambda p: weight.get(p.stem, 0), reverse=True)
+        inner.append(f"> **{label.get(cat, cat)} · {len(files)}**")
+        inner.extend(f"> - [[{p.stem}]]" for p in files)
+        inner.append(">")
+    directory = f"> [!abstract]- 🗂️ Full directory — every page by category · {total}\n" + "\n".join(inner)
+
+    # --- 🧭 Orphans: collapsed ---
+    orphans = sorted(
+        p.stem for p in (q for lst in cats.values() for q in lst)
+        if len(backlinks.get(p.stem, ())) == 0 and len(outlinks.get(p.stem, ())) == 0 and is_operational(p)
+    )
+    if orphans:
+        orphan_block = (
+            f"> [!warning]- 🧭 Orphans (unlinked — wire or archive) · {len(orphans)}\n"
+            + "\n".join(f"> - [[{s}]]" for s in orphans)
+        )
+    else:
+        orphan_block = "> [!success] 🧭 Orphans · 0 — every operational note is linked"
 
     gen = now.strftime("%Y-%m-%d %H:%M %Z")
-    health_flag = "🟢" if broken == 0 and miss == 0 else "🔴"
-    total_notes = len(stems)
+    health = "🟢" if broken == 0 else "🔴"
 
     return f"""{START}
-## 🔄 Live Status  *(auto-generated by `tools/index/refresh.py` — do not edit by hand)*
+## 🗂️ Index of Indexes  *(auto-generated · do not edit by hand)*
 
-**Generated:** {gen}  ·  {health_flag} link health: {link_body}  ·  tracked surfaces missing: {miss}  ·  vault notes: {total_notes}
+_{gen} · {total} pages · {health} links {ok}/{ok + broken} · weight = PageRank over wikilinks (Σ = 100%) · refresh: `python3 tools/index/refresh.py`_
 
-### Latest updates (live from PROOF LOG)
+{spine_section}
+### 📊 Most weighted pages  *(computed — what the system is ABOUT, by link-density)*
 
-{latest_updates()}
+| # | Page | Weight |
+|---|---|---|
+{top_rows}
 
-### 🕸️ Link graph — what the system sees
+{tail_line}
 
-**Hubs** (most-linked notes — the real centers of gravity · in·out):
+### 🔴 Active now  *(touched in last 24h — the only dated entries)*
 
-| Note | In | Out | Total |
-|---|---|---|---|
-{hubs}
+{active_lines}
 
-**Orphans** (operational notes with no links in *or* out — the system never reaches them): {orphan_line}
+{directory}
 
-### Surface freshness (real mtimes · links in·out)
+{orphan_block}
 
-| Surface | Lane | Last updated (mtime) | in·out | Exists |
-|---|---|---|---|---|
-{table}
+> [!note]- ⚙️ Protocol, work-claims, drift rules, repo & layer maps
+> Moved off this page to keep it a clean surface → see [[INDEX OF INDEXES — PROTOCOL]].
 {END}"""
 
 
