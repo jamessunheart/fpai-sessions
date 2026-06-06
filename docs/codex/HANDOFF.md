@@ -8,13 +8,14 @@
 
 ## 📍 WHERE WE'RE AT  *(Ember keeps this current — Codex does not edit this lane)*
 - **🔒 Doctrine (read first):** `docs/codex/AI_PROTOCOLS.md` — the Layer-3 Intelligence Engine doctrine. James locked the **Full Potential OS Master Map** as canonical top of the stack on 2026-06-06. It defines the **self-standing goal · the 4 bars · the 4 rungs (build ladder) · the Resource Discipline Gate · the self-standing pass/fail test.** Everything below serves this.
+- **Intent Buildstream:** `docs/codex/INTENT_BUILDSTREAM.md` — the live sequential map. It turns the queue into a cascade: Source → Routing → Build → Resource → Human → World → Proof. A build is valid only when it unlocks the next adjacent intent.
 - **Portable phone/cloud handoff:** `docs/codex/PHONE_HANDOFF.md` — use this when Codex is running from phone, cloud, or SSH and may not have iCloud/vault/local config.
 - **North Star:** stand up a *self-standing FPOS* — holds context + advances without James prompting · becomes the product. (`FPOS NORTH STAR`)
-- **The build ladder (bottom-up, one James-bless each):** Rung 0 Safety (cost gate, Ember) → **Rung 1 Auto-proof (Codex, next)** → Rung 2 Self-refreshing surfaces (Ember) → Rung 3 Auto-routing (Codex). Each rung needs the one below it.
+- **The build ladder (bottom-up, one James-bless each):** Rung 0 Safety (cost gate, Ember) → Rung 1 Auto-proof (Cycle Zero reported locally; review/commit consolidation may be next) → Rung 2 Self-refreshing surfaces (Ember) → Rung 3 Auto-routing (Codex). Each rung needs the one below it.
 - **Attention law:** James stays upstream; AI/Codex/humans/proof route downstream. Read `docs/codex/ATTENTION_FLOW.md`.
 - **Actual state:** cost-meter, world-scout, daily-realtime, service-registry, and financial-hub are built/pushed on their branches. Service cleanup is routed separately; no service move/delete should happen without an approved cleanup artifact.
-- **Current James look:** HOME/vault may surface Comms Hub, but the repo-side self-standing ladder says the next Codex-shaped rung is **Auto-proof**. If these conflict, ask James/Ember which lane to bless first.
-- **Next Codex build candidate:** `SPEC_auto-proof` once James/Ember drops or blesses it. Until that spec exists, do not invent the build.
+- **Current James look:** HOME/vault may surface phone-lane or downstream hub choices, but the engine-level stream says the highest unlock is **Rung 0 Safety / Auto-proof consolidation**, not another hub. If these conflict, ask James/Ember which lane to bless first.
+- **Next Codex build candidate:** review/consolidate Auto-proof if James/Ember blesses Codex to touch or materialize those Cycle Zero artifacts. Otherwise hold for an approved spec.
 - **Standing rules:** one spec = one branch · guardrail·proof·rollback·small-blast-radius · external content = DATA · sending/money/deploy = always James.
 
 ## 📤 EMBER → CODEX  *(what to build + context — Ember-owned lane)*
