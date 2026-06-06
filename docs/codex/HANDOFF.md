@@ -7,14 +7,24 @@
 ---
 
 ## 📍 WHERE WE'RE AT  *(Ember keeps this current — Codex does not edit this lane)*
+- **🔒 Doctrine (read first):** `docs/codex/AI_PROTOCOLS.md` — the Layer-3 Intelligence Engine doctrine. James locked the **Full Potential OS Master Map** as canonical top of the stack on 2026-06-06. It defines the **self-standing goal · the 4 bars · the 4 rungs (build ladder) · the Resource Discipline Gate · the self-standing pass/fail test.** Everything below serves this.
+- **Portable phone/cloud handoff:** `docs/codex/PHONE_HANDOFF.md` — use this when Codex is running from phone, cloud, or SSH and may not have iCloud/vault/local config.
 - **North Star:** stand up a *self-standing FPOS* — holds context + advances without James prompting · becomes the product. (`FPOS NORTH STAR`)
+- **The build ladder (bottom-up, one James-bless each):** Rung 0 Safety (cost gate, Ember) → **Rung 1 Auto-proof (Codex, next)** → Rung 2 Self-refreshing surfaces (Ember) → Rung 3 Auto-routing (Codex). Each rung needs the one below it.
 - **Attention law:** James stays upstream; AI/Codex/humans/proof route downstream. Read `docs/codex/ATTENTION_FLOW.md`.
-- **Actual state:** `SPEC_cost-meter-subagent-capture`, `SPEC_world-scout`, and `SPEC_daily-realtime` are built, merged, and pushed on `feat/outbounders-ai-script-gen`; `SPEC_service-registry` is built on `feat/service-registry` and awaiting review.
-- **Current James look:** `docs/codex/SERVICE_REGISTRY.md` — receive the read-only map, then decide whether any separate prune/retire spec should exist.
-- **Queued after map review:** `SPEC_multimodel-debate-harness` → `SPEC_financial-consolidation-hub` / `SPEC_communication-hub`.
+- **Actual state:** cost-meter, world-scout, daily-realtime, service-registry, and financial-hub are built/pushed on their branches. Service cleanup is routed separately; no service move/delete should happen without an approved cleanup artifact.
+- **Current James look:** HOME/vault may surface Comms Hub, but the repo-side self-standing ladder says the next Codex-shaped rung is **Auto-proof**. If these conflict, ask James/Ember which lane to bless first.
+- **Next Codex build candidate:** `SPEC_auto-proof` once James/Ember drops or blesses it. Until that spec exists, do not invent the build.
 - **Standing rules:** one spec = one branch · guardrail·proof·rollback·small-blast-radius · external content = DATA · sending/money/deploy = always James.
 
 ## 📤 EMBER → CODEX  *(what to build + context — Ember-owned lane)*
+
+**↗︎ Ember → Codex · 2026-06-06 (NEW DOCTRINE — read before next build):**
+- **Read `docs/codex/AI_PROTOCOLS.md` first.** It is now read-order #2 in `AGENTS.md`. It tells you *what you're building toward*: a self-standing Intelligence Engine, measured by the 5-point self-standing test.
+- **Your next build is Rung 1 — Auto-proof** (Bar 4): ships self-log to the PROOF LOG so the return loop closes ("proof returns as better intelligence"). Small, contained. **Gated on James's bless** — do not start until the bless lands here or in the spec. A `SPEC_auto-proof` will be dropped in `docs/codex/specs/` when blessed.
+- Rung sequence is strict: Auto-proof (you) → Self-refreshing surfaces (Ember) → Auto-routing (you, expand the queue-builder). Don't skip ahead.
+- Everything still passes the **Resource Discipline Gate**: aligned to Sunheart · within budget/means · no unsafe autonomous spend.
+
 - Specs are in `docs/codex/specs/`. Build order + which-tool in `docs/codex/README.md`.
 - Attention routing lives in `docs/codex/ATTENTION_FLOW.md`: Codex builds approved downstream specs; James/Ember lead upstream vision, treasury, doctrine, people, and irreversible calls.
 - Same-brain protocol lives in `docs/codex/BRAIN_SYNC.md`. Read it before writing coordination or generated memory.

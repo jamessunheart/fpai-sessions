@@ -8,9 +8,11 @@
 ## Before changing any code — read, in order
 1. `AGENTS.md` (repo root) — orientation + the Codex section.
 2. This file (`docs/codex/README.md`).
-3. **`docs/codex/HANDOFF.md`** — the shared board: where things stand + what to build. **Post your run results in its 📥 lane.**
-4. **`docs/codex/ATTENTION_FLOW.md`** — James stays upstream; Codex builds routed downstream specs.
-5. The spec you're building: `docs/codex/specs/SPEC_<name>.md`.
+3. **`docs/codex/PHONE_HANDOFF.md`** — portable phone/cloud/SSH rules when iCloud/vault/local config may be unavailable.
+4. **`docs/codex/AI_PROTOCOLS.md`** — current self-standing Intelligence Engine doctrine.
+5. **`docs/codex/HANDOFF.md`** — the shared board: where things stand + what to build. **Post your run results in its 📥 lane.**
+6. **`docs/codex/ATTENTION_FLOW.md`** — James stays upstream; Codex builds routed downstream specs.
+7. The spec you're building: `docs/codex/specs/SPEC_<name>.md`.
 
 ## What Codex MAY build (from an approved spec only)
 scripts · repo edits · tests · refactors · bot fixes · safe automation · Obsidian helper tools · Linear/GitHub bridge code · code review.
@@ -35,13 +37,15 @@ Future Codex should infer the operating lane from the surface James is using:
 - **SSH Codex Build Host = always-on repo builder.** Use only on a dedicated low-privilege dev host, not a production service host. Keep it repo-first; vault writes route back through `docs/codex/HANDOFF.md` for Ember/Claude to mirror.
 - **If the phone asks for SSH**, it is starting remote-host setup. That is optional. Normal phone operation is either Mac-host remote control or GitHub cloud.
 
-Phone/cloud/SSH kickoff rule: always read `AGENTS.md`, this file, `docs/codex/HANDOFF.md`, and `docs/codex/ATTENTION_FLOW.md`; work repo-only unless James explicitly grants a broader lane.
+Phone/cloud/SSH kickoff rule: always read `AGENTS.md`, this file, `docs/codex/PHONE_HANDOFF.md`, `docs/codex/AI_PROTOCOLS.md`, `docs/codex/HANDOFF.md`, and `docs/codex/ATTENTION_FLOW.md`; work repo-only unless James explicitly grants a broader lane.
 
-## Build order (start here)
-1. **`SPEC_service-registry`** — next approved direction from World Scout. Goal: read-only inventory + status classification. No stops, deletes, archives, deploys, or money actions.
-2. **`SPEC_multimodel-debate-harness`** — real Claude+GPT+Gemini debates.
-3. **`SPEC_financial-consolidation-hub`** + **`SPEC_communication-hub`** — the completeness hubs after the service map clarifies the system.
-4. **`SPEC_oss-bulk-lane`** — defer until a hub needs it.
+## Build order
+Use `docs/codex/HANDOFF.md` + `docs/codex/PHONE_HANDOFF.md` as the current source of truth. Do not rely on stale static ordering.
+
+Current doctrine says the system is building toward self-standing FPOS:
+Rung 0 Safety -> Rung 1 Auto-proof -> Rung 2 Self-refreshing surfaces -> Rung 3 Auto-routing.
+
+The next Codex-shaped rung is **Rung 1: Auto-proof**, but it is gated until James/Ember provides or blesses `SPEC_auto-proof`. If no approved spec exists, summarize the handoff and ask for the next go.
 
 Done / merged + pushed:
 - **`SPEC_cost-meter-subagent-capture`** — branch `fix/cost-meter-subagent-capture`.
@@ -51,4 +55,4 @@ Done / merged + pushed:
 *(Ignore `SPEC_comms-hub.md` if duplicated — `SPEC_communication-hub.md` is canonical. `SPEC_adopt-*` are scout suggestions, not yet approved.)*
 
 ## Kickoff prompt (paste into Codex, swap the spec name)
-> Read `AGENTS.md`, then `docs/codex/README.md`, then `docs/codex/HANDOFF.md`, then `docs/codex/ATTENTION_FLOW.md`, then `docs/codex/BRAIN_SYNC.md`, then the target spec. Work ONLY on the branch named in the spec. Touch only the files-allowed; never the files-forbidden. Build to the Definition of Done, run the tests, then update the 📥 lane in `docs/codex/HANDOFF.md` and give me: files changed · summary · tests · risks · rollback. Do not merge — show me the diff first.
+> Read `AGENTS.md`, then `docs/codex/README.md`, then `docs/codex/PHONE_HANDOFF.md`, then `docs/codex/AI_PROTOCOLS.md`, then `docs/codex/HANDOFF.md`, then `docs/codex/ATTENTION_FLOW.md`, then `docs/codex/BRAIN_SYNC.md`, then the target spec if one is named. Work ONLY on the branch named in the spec. Touch only the files-allowed; never the files-forbidden. Build to the Definition of Done, run the tests, then update the 📥 lane in `docs/codex/HANDOFF.md` and give me: files changed · summary · tests · risks · rollback. Do not merge — show me the diff first. If no approved spec exists, summarize the handoff and ask for my go.
