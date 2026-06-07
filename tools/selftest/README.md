@@ -18,10 +18,22 @@ JSON:
 python3 tools/selftest/check.py --json
 ```
 
+Render the Markdown proof report:
+
+```bash
+python3 tools/selftest/report.py
+```
+
+Write the repo-local report explicitly:
+
+```bash
+python3 tools/selftest/report.py --output docs/codex/SELF_STANDING_TEST_REPORT.md
+```
+
 Tests:
 
 ```bash
-python3 -m unittest tools.selftest.test_check
+python3 -m unittest tools.selftest.test_check tools.selftest.test_report
 ```
 
 ## What It Checks
