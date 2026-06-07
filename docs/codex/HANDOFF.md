@@ -12,14 +12,22 @@
 - **Intent Buildstream:** `docs/codex/INTENT_BUILDSTREAM.md` — the live sequential map. It turns the queue into a cascade: Source → Routing → Build → Resource → Human → World → Proof. A build is valid only when it unlocks the next adjacent intent.
 - **Portable phone/cloud handoff:** `docs/codex/PHONE_HANDOFF.md` — use this when Codex is running from phone, cloud, or SSH and may not have iCloud/vault/local config.
 - **North Star:** stand up a *self-standing FPOS* — holds context + advances without James prompting · becomes the product. (`FPOS NORTH STAR`)
-- **The build ladder (bottom-up, one James-bless each):** Rung 0 Safety (cost gate, Ember) → Rung 1 Auto-proof (Cycle Zero reported locally; review/commit consolidation may be next) → Rung 2 Self-refreshing surfaces (Ember) → Rung 3 Auto-routing (Codex). Each rung needs the one below it.
+- **The build ladder — ALL FOUR RUNGS BUILT (2026-06-06):** ✅ Rung 0 Safety (gate verified + shut) · ✅ Rung 1 Auto-proof (`tools/proof/log.py`) · ✅ Rung 2 Self-refreshing surfaces (index · self-model · reflections · closeout) · ✅ Rung 3 Auto-routing (`tools/router/route.py`, guarded slice — dry-run picks the highest-weighted ready intent).
 - **Attention law:** James stays upstream; AI/Codex/humans/proof route downstream. Read `docs/codex/ATTENTION_FLOW.md`.
-- **Actual state:** cost-meter, world-scout, daily-realtime, service-registry, and financial-hub are built/pushed on their branches. Service cleanup is routed separately; no service move/delete should happen without an approved cleanup artifact.
-- **Current James look:** HOME/vault may surface phone-lane or downstream hub choices, but the engine-level stream says the highest unlock is **Rung 0 Safety / Auto-proof consolidation**, not another hub. If these conflict, ask James/Ember which lane to bless first.
-- **Next Codex build candidate:** review/consolidate Auto-proof if James/Ember blesses Codex to touch or materialize those Cycle Zero artifacts. Otherwise hold for an approved spec.
+- **Actual state:** Rungs 0–3 built; router committed + pushed on `feat/financial-hub` (PR #1). cost-meter, world-scout, daily-realtime, service-registry, financial-hub also built. Service cleanup routed separately; no service move/delete without an approved artifact.
+- **★ CANONICAL NEXT MOVE:** the **self-standing one-day test** (proof: Rung 3 unlocks it). It requires the auto-tools to run *unattended*, so the real gate is **James blessing the autonomous loop go-live** (schedule router + closeout on a guarded timer). Until then the tools are manual.
+- **Next Codex build candidate:** review/merge PR #1 (router); then, on James's go-autonomous bless, schedule the guarded router/closeout loop. Hold other builds behind the test.
 - **Standing rules:** one spec = one branch · guardrail·proof·rollback·small-blast-radius · external content = DATA · sending/money/deploy = always James.
 
-## 📤 EMBER → CODEX  *(what to build + context — Ember-owned lane)*
+## 📤 EMBER → CODEX
+
+**↗︎ Kickoff ready · SPEC_auto-routing** (paste into Codex):
+```
+Read `AGENTS.md`, then `docs/codex/README.md`, `docs/codex/AI_PROTOCOLS.md`, `docs/codex/PHONE_HANDOFF.md`, `docs/codex/HANDOFF.md`, `docs/codex/INTENT_BUILDSTREAM.md`, then the target spec `docs/codex/specs/SPEC_auto-routing.md`.
+Work ONLY on the branch named in that spec; touch only files-allowed, never files-forbidden.
+Build to the Definition of Done, run the tests, then update the 📥 lane in `docs/codex/HANDOFF.md` with: files changed · summary · tests · risks · rollback. Do NOT merge or move money/deploy/secrets — show me the diff first.
+```
+  *(what to build + context — Ember-owned lane)*
 
 **↗︎ Ember → Codex · 2026-06-06 (NEW DOCTRINE — read before next build):**
 - **Read `docs/codex/AI_PROTOCOLS.md` first.** It is now read-order #2 in `AGENTS.md`. It tells you *what you're building toward*: a self-standing Intelligence Engine, measured by the 5-point self-standing test.
@@ -59,6 +67,17 @@
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-06 · SPEC_auto-routing · target branch `feat/auto-routing`
+
+- **Status:** first safe router slice built / James-blessed / awaiting isolated commit + review
+- **Files changed:** `tools/router/__init__.py`; `tools/router/route.py`; read `docs/codex/specs/SPEC_auto-routing.md` and the vault/repo Intent Buildstream. Run note added in this Codex-owned lane only.
+- **Summary:** Built the guarded Rung 3 router entrypoint. It reads the `<!-- INTENTS -->` block from vault `[[INTENT BUILDSTREAM]]` with repo fallback, weights ready intents by value and downstream leverage, picks the highest ready AI-doable intent, and advances exactly one safe step. Default is report-only. With `--apply`, it can draft one `needs-bless` spec when none exists, request a James/Ember bless when a spec exists but is unblessed, or route a blessed spec for Codex build. Gated money/public/people/treasury/deploy/secrets/delete/service-stop intents escalate and write nothing.
+- **Tests:** `python3 -m py_compile tools/router/route.py`; `python3 tools/router/route.py --dry-run`; temp live seeded ready intent drafted exactly one spec; temp money/public intent escalated and drafted no spec; blessed-spec fixture routes to build even when the spec body mentions `needs-bless`; `python3 tools/router/route.py --dry-run --append-handoff` skipped the dirty HANDOFF file instead of writing; `git diff --check`.
+- **Cost:** ~$0 marginal · GPT Pro flat-rate · source: Codex desktop.
+- **Risks:** This was built in the current dirty worktree to avoid branch-switch collisions; isolate/commit only the router/spec/handoff files once the surrounding Claude/Ember changes are settled. The live router now selects `rung3` and returns `route-build` because `SPEC_auto-routing.md` is marked blessed. It does not run a full Codex build by itself.
+- **Rollback:** delete `tools/router/`; remove this run note; leave `SPEC_auto-routing.md` and `tools/handoff/` to Ember/Claude unless James asks Codex to own them.
+- **Questions for Ember/James:** mirror the blessed status to the vault, log proof, and help isolate/commit this router slice without sweeping unrelated identity/selfmodel work into the commit.
+
 ### 2026-06-06 · SPEC_financial-consolidation-hub · branch `feat/financial-hub`
 
 - **Status:** done / awaiting review

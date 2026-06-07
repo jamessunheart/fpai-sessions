@@ -167,7 +167,7 @@ def decisions_top(n=3):
     seg = txt.split("## 🟡 Open", 1)[1].split("## ✅", 1)[0]
     out = []
     # each: - 🟡 **question**[ (qualifier)] — unblock  \n  ↳ answer: affordance
-    for m in re.finditer(r"- 🟡 \*\*(.+?)\*\*([^—\n]*)—\s*(.+?)\n\s*↳\s*answer:\s*(.+)", seg):
+    for m in re.finditer(r"- [🔴🟡] \*\*(.+?)\*\*([^—\n]*)—\s*(.+?)\n\s*↳\s*answer:\s*(.+)", seg):
         q = (m.group(1).strip() + " " + m.group(2).strip()).strip()
         unblock = re.sub(r"\s+", " ", m.group(3).strip())
         unblock = re.sub(r"^unblocks?\s+", "", unblock, flags=re.I)  # avoid "unblocks: unblocks…"

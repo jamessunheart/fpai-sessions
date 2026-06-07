@@ -24,6 +24,14 @@ Builder-facing sequence lives in `docs/codex/INTENT_BUILDSTREAM.md`. Use that fi
 3. **Self-refreshing surfaces** — HOME/daily/cockpit regenerate after each ship; no stale page asks James to decide finished work. *(partial)*
 4. **Auto-proof** — ships log themselves to the PROOF LOG; proof returns upward as intelligence (the return loop), not bookkeeping. *(manual)*
 
+## The Decision Protocol (anti-stall — decisions are the #1 bottleneck)
+**Default owner of every decision is AI, not James.** Escalate to James ONLY for the Reserved Class: change direction · move money/resources · hire/fire/reward · public voice · legal · irreversible · alter core mission.
+- Uncertainty is NOT an escalation trigger — only the Reserved Class is. AI picks the best option by judgment.
+- Reversibility is the safety net, not pre-approval: reversible + within the gate + not Reserved → just do it; James reverses if wrong.
+- Batch genuine James-decisions into ONE low-load surface with a recommended default; never drip mid-flow; one ask max per surface.
+- Default-action on stall: every James-decision carries a safe default + what happens if unanswered. Silence resolves to the default; never freeze waiting.
+- If a non-Reserved decision lands on James, the protocol failed — re-route to AI. Measure success by a decreasing count of James-decisions per cycle.
+
 ## The Resource Discipline Gate (permission, NOT a bar)
 The gate on autonomy itself. The engine may not run untouched until it cannot spend untouched.
 **Aligned to Sunheart · Within budget / within means · No unsafe autonomous spend.** Hard cap: $20/day metered.

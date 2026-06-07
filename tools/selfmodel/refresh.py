@@ -29,6 +29,62 @@ VAULT = Path(
 )
 PROOF = VAULT / "00_MEMORY" / "PROOF LOG.md"
 SELFMODEL = VAULT / "00_MEMORY" / "SYSTEM SELF-MODEL.md"
+INTENTBUILD = VAULT / "00_MEMORY" / "INTENT BUILDSTREAM.md"
+
+READINESS = {"ready": 1.0, "blocked": 0.3, "done": 0.0}
+STATUS_ICON = {"ready": "🟢", "blocked": "⛔", "done": "✅"}
+
+
+def parse_intents() -> list[dict]:
+    """Read the structured INTENTS block: id | value | unlocks | status | desc."""
+    if not INTENTBUILD.exists():
+        return []
+    text = INTENTBUILD.read_text(encoding="utf-8")
+    m = re.search(r"<!-- INTENTS:START -->(.*?)<!-- INTENTS:END -->", text, re.DOTALL)
+    if not m:
+        return []
+    KNOWN = {"id", "value", "unlocks", "status", "route", "link"}
+    out = []
+    for ln in m.group(1).splitlines():
+        ln = ln.strip()
+        if not ln.startswith("- "):
+            continue
+        f = {"value": 0, "unlocks": "none", "status": "blocked", "route": "ember",
+             "link": "INTENT BUILDSTREAM", "desc": "", "id": ""}
+        for tok in ln[2:].split(" | "):
+            tok = tok.strip()
+            km = re.match(r"(\w+):(.*)$", tok)
+            if km and km.group(1) in KNOWN:
+                key, val = km.group(1), km.group(2).strip()
+                f[key] = int(val) if (key == "value" and val.isdigit()) else val
+            else:
+                f["desc"] = tok  # the lone non-key token is the description
+        if f["id"]:
+            f["status"] = str(f["status"]).lower()
+            out.append(f)
+    return out
+
+
+def weigh_intents(intents: list[dict]) -> list[dict]:
+    """weight = value × (1 + transitive downstream leverage) × readiness.
+
+    So the unblocked, highest-leverage, highest-value intent ranks first and the
+    sort order reproduces the correct build sequence.
+    """
+    by_id = {i["id"]: i for i in intents}
+
+    def leverage(iid: str, seen: set) -> int:
+        nxt = by_id.get(iid, {}).get("unlocks", "none")
+        if nxt in ("none", "") or nxt in seen or nxt not in by_id:
+            return 0
+        seen.add(nxt)
+        return 1 + leverage(nxt, seen)
+
+    for i in intents:
+        lev = leverage(i["id"], set())
+        i["leverage"] = lev
+        i["weight"] = i["value"] * (1 + lev) * READINESS.get(i["status"], 0.3)
+    return sorted(intents, key=lambda x: x["weight"], reverse=True)
 
 UP_START, UP_END = "<!-- UPGRADES:START -->", "<!-- UPGRADES:END -->"
 BS_START, BS_END = "<!-- BUILDSTREAM:START -->", "<!-- BUILDSTREAM:END -->"
@@ -82,21 +138,42 @@ def build_blocks(now: dt.datetime) -> tuple[str, str]:
     ups = "\n".join(f"- `{r['stamp']}` — {r['solved']}" for r in rows[:N_UPGRADES] if r["solved"]) or "_none yet_"
     up_block = f"{UP_START}\n### ⬆️ Upgrades  *(what shipped — live from [[PROOF LOG]] · {gen})*\n\n{ups}\n{UP_END}"
 
-    # Buildstream = the live forward intents (unlocks/next from recent ships), deduped
-    seen, intents = set(), []
-    for r in rows:
-        for fld in (r["next"], r["unlocks"]):
-            key = fld.lower()[:40]
-            if fld and key not in seen:
-                seen.add(key)
-                intents.append(fld)
-        if len(intents) >= N_BUILDSTREAM:
-            break
-    bs = "\n".join(f"- 🔮 {x}" for x in intents[:N_BUILDSTREAM]) or "_none yet_"
-    bs_block = (
-        f"{BS_START}\n### 🔮 Buildstream  *(open intents — what recent ships unlocked · live from [[PROOF LOG]])*\n\n"
-        f"{bs}\n\n_Curated build order + rungs: [[INTENT BUILDSTREAM]] · [[SPEC LOG]] · [[AI PROTOCOLS]] (the 4 Rungs)._\n{BS_END}"
-    )
+    # Buildstream = WEIGHTED intents (value × leverage × readiness) — the weight maps the order.
+    weighed = weigh_intents(parse_intents())
+    if weighed:
+        open_rows = [i for i in weighed if i["status"] != "done"]
+        total_w = sum(i["weight"] for i in open_rows) or 1.0
+        route_badge = {
+            "ember": "🔥 Ember · flat", "codex": "🧩 Codex · flat", "auto": "🤖 auto · flat",
+            "api": "🛰️ API · metered", "james": "👑 James · gate",
+        }
+        bs_rows = "\n".join(
+            f"| {n} | [[{i['link']}\\|{i['desc']}]] | {i['weight'] / total_w * 100:.0f}% "
+            f"| {route_badge.get(i['route'], i['route'])} | {STATUS_ICON.get(i['status'], '·')} |"
+            for n, i in enumerate(open_rows, 1)
+        )
+        bs_block = (
+            f"{BS_START}\n### 🔮 Buildstream  *(weighted — value × what-it-unlocks × readiness · Σ = 100% · the weight IS the build order)*\n\n"
+            f"| # | Intent | Weight | Route (build path · cost) | Status |\n|---|---|---|---|---|\n{bs_rows}\n\n"
+            f"_Route honors cost-first: 🔥/🧩/🤖 = flat-rate (~\\$0) · 🛰️ metered API only when speed justifies it · 👑 Reserved (James). "
+            f"🟢 ready · ⛔ blocked. Edit value/status/route in [[INTENT BUILDSTREAM]]; re-ranks on refresh._\n{BS_END}"
+        )
+    else:
+        # fallback: forward intents pulled from recent proof rows
+        seen, intents = set(), []
+        for r in rows:
+            for fld in (r["next"], r["unlocks"]):
+                key = fld.lower()[:40]
+                if fld and key not in seen:
+                    seen.add(key)
+                    intents.append(fld)
+            if len(intents) >= N_BUILDSTREAM:
+                break
+        bs = "\n".join(f"- 🔮 {x}" for x in intents[:N_BUILDSTREAM]) or "_none yet_"
+        bs_block = (
+            f"{BS_START}\n### 🔮 Buildstream  *(forward intents — live from [[PROOF LOG]])*\n\n"
+            f"{bs}\n\n_Add a structured INTENTS block to [[INTENT BUILDSTREAM]] for weighted ordering._\n{BS_END}"
+        )
     return bs_block, up_block
 
 

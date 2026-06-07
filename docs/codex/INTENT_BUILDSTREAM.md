@@ -103,7 +103,19 @@ This is the live order. It is not a flat backlog.
 
 **Unlocks next:** Rung 3 auto-routing has accurate current state to advance from.
 
-### 5. Build Intent: Rung 3 Auto-routing
+### 5. Build Intent: Rung 2.5 State Reconciler / Closeout Loop
+
+**Build:** one closeout command that reconciles the end of a work cycle: proof state, index freshness, self-model reflections, HOME/NEXT surfaces, and repo-side handoff/report output.
+
+**Owner:** Ember / Claude Code for live vault runs; Codex can build the repo helper from `docs/codex/specs/SPEC_state-reconciler.md` because the helper is narrow, dry-run-first, and does not directly claim Ember-owned handoff lanes.
+
+**Why here:** the pieces now exist separately. The next unlock is making them run as one closeout loop so James does not become the glue between proof, index, self-model, HOME, and handoff.
+
+**Unlocks next:** Rung 3 Auto-routing can rely on a single current-state report instead of guessing from stale or partially refreshed surfaces.
+
+**James gate:** bless `SPEC_state-reconciler` if Auto-proof/self-refresh artifacts are present enough to consolidate; otherwise consolidate Auto-proof first.
+
+### 6. Build Intent: Rung 3 Auto-routing
 
 **Build:** expand the queue-builder so a signal walks `signal -> intent -> spec -> branch/ticket -> proof` through every AI-doable step, stopping only at James gates.
 
@@ -113,7 +125,7 @@ This is the live order. It is not a flat backlog.
 
 **Unlocks next:** self-standing one-day test.
 
-### 6. Resource Intent: Safe Resource Activation
+### 7. Resource Intent: Safe Resource Activation
 
 **Activated by the standing engine:** Financial Hub, Comms Hub, service cleanup, revenue paths, and treasury actions become products of a working engine, not distractions from building it.
 
@@ -121,7 +133,7 @@ This is the live order. It is not a flat backlog.
 
 **Unlocks next:** resources are organized by signal, cost, risk, and James gate rather than by anxiety or tool sprawl.
 
-### 7. Human Intent: Humans Enter the Buildstream
+### 8. Human Intent: Humans Enter the Buildstream
 
 **Activated by safe resources + routing:** assistants, operators, builders, stewards, partners, and community members receive scoped roles, clear context, and reversible work.
 
@@ -129,7 +141,7 @@ This is the live order. It is not a flat backlog.
 
 **Unlocks next:** humans participate where they already are, with AI carrying the heavy context and setup.
 
-### 8. World Intent: Practical Heaven on Earth
+### 9. World Intent: Practical Heaven on Earth
 
 **First near-world proof:** remote AI-adoption / implementation sessions using FPOS as the live demo.
 
@@ -137,7 +149,7 @@ This is the live order. It is not a flat backlog.
 
 **Unlocks next:** real people experience coherence, tools, resources, and contribution as one system.
 
-### 9. Proof Intent: Return Loop
+### 10. Proof Intent: Return Loop
 
 **Proof:** one full day where the engine:
 
@@ -166,11 +178,11 @@ If the answer is unclear, route it to Ember as a Midstream clarification, not Co
 James should not carry the details. The high-value signal is:
 
 ```text
-Bless Rung 0 Safety, or ask Ember/Codex to consolidate Auto-proof first.
+Bless SPEC_state-reconciler if Auto-proof/self-refresh are ready; otherwise ask Ember/Codex to consolidate Auto-proof first.
 ```
 
 AI carries the downstream work:
 
 - Ember wires safety and vault surfaces.
-- Codex reviews/builds repo specs on branches.
+- Codex reviews/builds repo specs on branches, starting with `SPEC_state-reconciler` once blessed.
 - Proof returns the learning into this stream.
