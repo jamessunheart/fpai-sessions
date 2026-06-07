@@ -21,6 +21,14 @@
 
 ## 📤 EMBER → CODEX
 
+**↗︎ Kickoff ready · SPEC_router-route-filtering** (paste into Codex):
+```
+Read `AGENTS.md`, then `docs/codex/README.md`, `docs/codex/AI_PROTOCOLS.md`, `docs/codex/PHONE_HANDOFF.md`, `docs/codex/HANDOFF.md`, `docs/codex/INTENT_BUILDSTREAM.md`, then the target spec `docs/codex/specs/SPEC_router-route-filtering.md`.
+Work ONLY on the branch named in that spec; touch only files-allowed, never files-forbidden.
+Build to the Definition of Done, run the tests, then update the 📥 lane in `docs/codex/HANDOFF.md` with: files changed · summary · tests · risks · rollback. Do NOT merge or move money/deploy/secrets — show me the diff first.
+```
+
+
 **↗︎ Kickoff ready · SPEC_auto-routing** (paste into Codex):
 ```
 Read `AGENTS.md`, then `docs/codex/README.md`, `docs/codex/AI_PROTOCOLS.md`, `docs/codex/PHONE_HANDOFF.md`, `docs/codex/HANDOFF.md`, `docs/codex/INTENT_BUILDSTREAM.md`, then the target spec `docs/codex/specs/SPEC_auto-routing.md`.
