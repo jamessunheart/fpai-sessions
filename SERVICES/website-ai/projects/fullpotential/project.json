@@ -1,0 +1,128 @@
+{
+  "project": {
+    "id": "fullpotential-30k-mission",
+    "name": "Full Potential $30k/mo Mission",
+    "status": "active",
+    "created": "2026-01-29",
+    "updated": "2026-01-29",
+    "url": "https://fullpotential.ai/projects/fullpotential/",
+    "goal": "$30,000/month recurring revenue",
+    "timeframe": "90 days"
+  },
+  "offer": {
+    "name": "Full Potential Partnership",
+    "price": 2500,
+    "billing": "monthly",
+    "description": "3-month goal realization partnership with AI + human support",
+    "includes": [
+      "Weekly 1:1 strategy calls (4/month)",
+      "Daily AI check-ins via Telegram/SMS",
+      "Custom goal roadmap with milestones",
+      "Accountability system with adaptive nudges",
+      "Access to Full Potential tools and dashboards",
+      "Emergency support for obstacles"
+    ],
+    "target_client": {
+      "profile": "Ambitious professional 32-55",
+      "income": "$100k-$500k household",
+      "mindset": "Growth-oriented, invested in self",
+      "pain": "Has achieved some success but feels stuck",
+      "desire": "Financial freedom, purpose alignment"
+    }
+  },
+  "financial_targets": {
+    "goal_mrr": 30000,
+    "current_mrr": 0,
+    "clients_needed": 12,
+    "current_clients": 0,
+    "price_per_client": 2500
+  },
+  "funnel_metrics": {
+    "traffic": 0,
+    "intake_forms": 0,
+    "discovery_calls": 0,
+    "proposals_sent": 0,
+    "clients_closed": 0,
+    "conversion_rates": {
+      "traffic_to_intake": 0.10,
+      "intake_to_call": 0.25,
+      "call_to_client": 0.33
+    }
+  },
+  "sprint_30_day": {
+    "week_1": {
+      "focus": "Foundation",
+      "tasks": [
+        { "id": "t1", "task": "Set up Calendly", "owner": "james", "status": "not_started" },
+        { "id": "t2", "task": "Create offer page", "owner": "ai+james", "status": "not_started" },
+        { "id": "t3", "task": "Wire Stripe", "owner": "james", "status": "not_started" },
+        { "id": "t4", "task": "Update intake form routing", "owner": "ai", "status": "not_started" }
+      ]
+    },
+    "week_2": {
+      "focus": "Outreach",
+      "tasks": [
+        { "id": "t5", "task": "Draft 3 LinkedIn posts", "owner": "ai+james", "status": "not_started" },
+        { "id": "t6", "task": "Identify 50 DM targets", "owner": "james", "status": "not_started" },
+        { "id": "t7", "task": "Send 5-10 DMs/day", "owner": "james", "status": "not_started" }
+      ]
+    },
+    "week_3_4": {
+      "focus": "Convert",
+      "tasks": [
+        { "id": "t8", "task": "Book 5 discovery calls", "owner": "james", "status": "not_started" },
+        { "id": "t9", "task": "Close first client", "owner": "james", "status": "not_started" },
+        { "id": "t10", "task": "Optimize based on learnings", "owner": "ai+james", "status": "not_started" }
+      ]
+    }
+  },
+  "ad_campaigns": {
+    "phase": "draft",
+    "total_budget_monthly": 2800,
+    "platforms": {
+      "meta": {
+        "budget": 1500,
+        "targeting": "Entrepreneurs 32-55, $100k+ household, personal development interests",
+        "expected_leads": 100,
+        "expected_clients": 5,
+        "status": "draft"
+      },
+      "linkedin": {
+        "budget": 800,
+        "targeting": "Founders, CEOs, Directors in Tech/Professional Services",
+        "expected_leads": 27,
+        "expected_clients": 3,
+        "status": "draft"
+      },
+      "google": {
+        "budget": 500,
+        "targeting": "High-intent keywords: life coach, goal achievement",
+        "expected_leads": 15,
+        "expected_clients": 2,
+        "status": "draft"
+      }
+    }
+  },
+  "unfair_advantages": [
+    "AI integration (daily check-ins, adaptive support)",
+    "Trading/financial expertise (wealth goals)",
+    "Spiritual + practical approach (alignment)",
+    "Built the tech stack (full transparency)",
+    "Living the journey publicly"
+  ],
+  "brain_config": {
+    "personality": "Encouraging, strategic, data-driven",
+    "capabilities": [
+      "Track progress on tasks",
+      "Update funnel metrics",
+      "Generate content drafts",
+      "Provide accountability nudges",
+      "Answer strategic questions"
+    ],
+    "api_endpoint": "http://162.0.208.88:8750/api/chat",
+    "fallback": "local_llm"
+  },
+  "activity_log": [],
+  "notes": []
+}
+

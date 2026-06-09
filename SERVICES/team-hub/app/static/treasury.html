@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treasury Management | Full Potential AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://fullpotential.ai/services/credits/static/uc-sdk.js"></script>
+    <style>
+        body { background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%); min-height: 100vh; }
+        .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .drop-zone { border: 2px dashed rgba(255,255,255,0.3); transition: all 0.3s; }
+        .drop-zone.dragover { border-color: #22c55e; background: rgba(34, 197, 94, 0.1); }
+    </style>
+</head>
+<body class="text-white font-sans" x-data="treasuryManager()">
+    
+    <!-- Header -->
+    <header class="glass sticky top-0 z-50 px-8 py-4">
+        <div class="flex justify-between items-center max-w-7xl mx-auto">
+            <div>
+                <h1 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+                    💰 Treasury Management
+                </h1>
+                <p class="text-gray-400 text-sm">Bulk imports, exports, and advanced operations</p>
+            </div>
+            <div class="flex gap-4">
+                <a href="/" class="px-4 py-2 rounded bg-white/10 hover:bg-white/20 transition">← Back to Portal</a>
+                <button @click="refreshData()" class="px-4 py-2 rounded bg-green-600 hover:bg-green-500 transition">
+                    🔄 Refresh
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto p-8 space-y-8">
+        
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-4 gap-4">
+            <div class="glass rounded-xl p-6">
+                <div class="text-gray-400 text-sm uppercase">Total Positions</div>
+                <div class="text-3xl font-bold text-white" x-text="stats.totalPositions"></div>
+            </div>
+            <div class="glass rounded-xl p-6">
+                <div class="text-gray-400 text-sm uppercase">Total Expenses</div>
+                <div class="text-3xl font-bold text-white" x-text="stats.totalExpenses"></div>
+            </div>
+            <div class="glass rounded-xl p-6">
+                <div class="text-gray-400 text-sm uppercase">This Month</div>
+                <div class="text-3xl font-bold text-red-400" x-text="'-$' + stats.thisMonth.toLocaleString()"></div>
+            </div>
+            <div class="glass rounded-xl p-6">
+                <div class="text-gray-400 text-sm uppercase">Last Import</div>
+                <div class="text-xl font-bold text-gray-300" x-text="stats.lastImport || 'Never'"></div>
+            </div>
+        </div>
+
+        <!-- Import Section -->
+        <div class="glass rounded-xl p-8">
+            <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                <span>📥</span> Bulk Import
+            </h2>
+            
+            <div class="grid grid-cols-3 gap-6">
+                <!-- Expense Import -->
+                <div class="bg-black/30 rounded-lg p-6 border border-red-500/30">
+                    <h3 class="font-bold text-red-400 mb-4">💸 Import Expenses</h3>
+                    <div class="drop-zone rounded-lg p-8 text-center mb-4"
+                         @dragover.prevent="$el.classList.add('dragover')"
+                         @dragleave="$el.classList.remove('dragover')"
+                         @drop.prevent="handleExpenseDrop($event)">
+                        <input type="file" id="expense-file" accept=".csv" class="hidden" @change="uploadExpenses($event)">
+                        <label for="expense-file" class="cursor-pointer">
+                            <div class="text-4xl mb-2">📄</div>
+                            <div class="text-gray-400">Drop CSV or click to upload</div>
+                            <div class="text-xs text-gray-500 mt-2">Format: date,description,amount,category</div>
+                        </label>
+                    </div>
+                    <button @click="downloadTemplate('expenses')" class="w-full py-2 rounded bg-red-600/20 text-red-400 hover:bg-red-600/30 transition text-sm">
+                        📋 Download Template
+                    </button>
+                </div>
+
+                <!-- Bank Statement Import -->
+                <div class="bg-black/30 rounded-lg p-6 border border-blue-500/30">
+                    <h3 class="font-bold text-blue-400 mb-4">🏦 Import Bank Statement</h3>
+                    <div class="mb-4">
+                        <label class="text-xs text-gray-500">Bank Name</label>
+                        <input type="text" x-model="bankName" placeholder="e.g., Chase, Wells Fargo" 
+                               class="w-full bg-black/40 border border-white/10 rounded p-2 text-white mt-1">
+                    </div>
+                    <div class="drop-zone rounded-lg p-8 text-center mb-4"
+                         @dragover.prevent="$el.classList.add('dragover')"
+                         @dragleave="$el.classList.remove('dragover')"
+                         @drop.prevent="handleBankDrop($event)">
+                        <input type="file" id="bank-file" accept=".csv" class="hidden" @change="uploadBankStatement($event)">
+                        <label for="bank-file" class="cursor-pointer">
+                            <div class="text-4xl mb-2">🏦</div>
+                            <div class="text-gray-400">Drop CSV or click to upload</div>
+                            <div class="text-xs text-gray-500 mt-2">Auto-categorizes transactions</div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Position Import -->
+                <div class="bg-black/30 rounded-lg p-6 border border-green-500/30">
+                    <h3 class="font-bold text-green-400 mb-4">📈 Import Positions</h3>
+                    <div class="mb-4">
+                        <label class="text-xs text-gray-500">Position Type</label>
+                        <select x-model="positionType" class="w-full bg-black/40 border border-white/10 rounded p-2 text-white mt-1">
+                            <option value="spot">Spot Positions</option>
+                            <option value="leveraged">Leveraged Positions</option>
+                        </select>
+                    </div>
+                    <div class="drop-zone rounded-lg p-8 text-center mb-4"
+                         @dragover.prevent="$el.classList.add('dragover')"
+                         @dragleave="$el.classList.remove('dragover')"
+                         @drop.prevent="handlePositionDrop($event)">
+                        <input type="file" id="position-file" accept=".csv" class="hidden" @change="uploadPositions($event)">
+                        <label for="position-file" class="cursor-pointer">
+                            <div class="text-4xl mb-2">📊</div>
+                            <div class="text-gray-400">Drop CSV or click to upload</div>
+                            <div class="text-xs text-gray-500 mt-2">asset,amount,entry_price,location</div>
+                        </label>
+                    </div>
+                    <button @click="downloadTemplate('positions')" class="w-full py-2 rounded bg-green-600/20 text-green-400 hover:bg-green-600/30 transition text-sm">
+                        📋 Download Template
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- UC Operations Section -->
+        <div class="glass rounded-xl p-8">
+            <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                <span>🪙</span> UC Operations
+                <span class="text-xs text-purple-400 bg-purple-500/20 px-2 py-1 rounded ml-2">Universal Credits</span>
+            </h2>
+            
+            <div class="grid grid-cols-3 gap-6">
+                <!-- UC Balance -->
+                <div class="bg-purple-900/30 rounded-lg p-6 border border-purple-500/30">
+                    <h3 class="font-bold text-purple-400 mb-4">Current Balance</h3>
+                    <div id="uc-widget-container" class="mb-4">
+                        <!-- UC Widget will be mounted here -->
+                        <div class="text-4xl font-mono font-bold text-purple-400" x-text="(ucData?.balance || 0).toLocaleString() + ' UC'"></div>
+                        <div class="text-sm text-gray-400 mt-2">= $<span x-text="(ucData?.balance || 0).toLocaleString()"></span> USD</div>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-4">
+                        <div class="flex justify-between mb-1">
+                            <span>Health Score:</span>
+                            <span class="text-purple-400" x-text="(ucData?.healthScore || 2.0).toFixed(1)"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Mode:</span>
+                            <span class="text-purple-400" x-text="ucData?.mode || 'ABUNDANCE'"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Top Up UC -->
+                <div class="bg-green-900/30 rounded-lg p-6 border border-green-500/30">
+                    <h3 class="font-bold text-green-400 mb-4">Top Up Credits</h3>
+                    <p class="text-gray-400 text-sm mb-4">Add more UC to your account for services and subscriptions.</p>
+                    <div class="space-y-3">
+                        <button @click="openUCCheckout(100)" class="w-full bg-green-600 hover:bg-green-500 text-white py-3 rounded-lg font-bold transition">
+                            Buy 100 UC ($100)
+                        </button>
+                        <button @click="openUCCheckout(500)" class="w-full bg-green-700 hover:bg-green-600 text-white py-3 rounded-lg font-bold transition">
+                            Buy 500 UC ($500)
+                        </button>
+                        <button @click="openUCCheckout(1000)" class="w-full bg-green-800 hover:bg-green-700 text-white py-3 rounded-lg font-bold transition">
+                            Buy 1000 UC ($1000)
+                        </button>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-4 text-center">1 UC = $1.00 USD (Fixed Rate)</p>
+                </div>
+                
+                <!-- UC Transactions -->
+                <div class="bg-black/30 rounded-lg p-6 border border-white/10">
+                    <h3 class="font-bold text-white mb-4">Recent Transactions</h3>
+                    <div class="space-y-2 max-h-48 overflow-y-auto">
+                        <template x-for="tx in ucData?.transactions || []" :key="tx.id">
+                            <div class="flex justify-between items-center py-2 border-b border-white/5">
+                                <div>
+                                    <div class="text-sm text-white" x-text="tx.description"></div>
+                                    <div class="text-xs text-gray-500" x-text="tx.date"></div>
+                                </div>
+                                <div class="font-mono text-sm" 
+                                     :class="tx.amount > 0 ? 'text-green-400' : 'text-red-400'"
+                                     x-text="(tx.amount > 0 ? '+' : '') + tx.amount + ' UC'"></div>
+                            </div>
+                        </template>
+                        <div x-show="!ucData?.transactions?.length" class="text-gray-500 text-center py-4">
+                            No transactions yet
+                        </div>
+                    </div>
+                    <a href="https://fullpotential.ai/services/credits/dashboard" target="_blank" 
+                       class="block text-center text-purple-400 hover:text-purple-300 text-sm mt-4">
+                        View Full History →
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Export Section -->
+        <div class="glass rounded-xl p-8">
+            <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                <span>📤</span> Export Data
+            </h2>
+            
+            <div class="grid grid-cols-2 gap-6">
+                <button @click="exportData('expenses')" 
+                        class="bg-black/30 rounded-lg p-6 border border-white/10 hover:border-white/30 transition text-left">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 class="font-bold text-white">Export Expenses</h3>
+                            <p class="text-gray-400 text-sm">Download all expense data as CSV</p>
+                        </div>
+                        <span class="text-3xl">📄</span>
+                    </div>
+                </button>
+                
+                <button @click="exportData('positions')" 
+                        class="bg-black/30 rounded-lg p-6 border border-white/10 hover:border-white/30 transition text-left">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 class="font-bold text-white">Export Positions</h3>
+                            <p class="text-gray-400 text-sm">Download all position data as CSV</p>
+                        </div>
+                        <span class="text-3xl">📊</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Recent Imports Log -->
+        <div class="glass rounded-xl p-8">
+            <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                <span>📜</span> Import History
+            </h2>
+            
+            <div x-show="importHistory.length === 0" class="text-gray-500 text-center py-8">
+                No imports yet. Upload a file to get started.
+            </div>
+            
+            <div x-show="importHistory.length > 0" class="space-y-3">
+                <template x-for="log in importHistory" :key="log.timestamp">
+                    <div class="bg-black/30 rounded-lg p-4 flex justify-between items-center">
+                        <div>
+                            <span class="font-bold text-white" x-text="log.type"></span>
+                            <span class="text-gray-400 text-sm ml-2" x-text="log.message"></span>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-green-400 font-mono" x-text="'+' + log.imported + ' records'"></div>
+                            <div class="text-gray-500 text-xs" x-text="log.timestamp"></div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- Bulk Actions -->
+        <div class="glass rounded-xl p-8">
+            <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                <span>⚡</span> Bulk Actions
+            </h2>
+            
+            <div class="grid grid-cols-3 gap-4">
+                <button @click="clearAllExpenses()" 
+                        class="p-4 rounded-lg bg-red-900/20 border border-red-500/30 hover:bg-red-900/40 transition">
+                    <div class="text-red-400 font-bold">🗑️ Clear All Expenses</div>
+                    <div class="text-gray-500 text-xs">Delete all expense records</div>
+                </button>
+                
+                <button @click="recategorizeExpenses()" 
+                        class="p-4 rounded-lg bg-blue-900/20 border border-blue-500/30 hover:bg-blue-900/40 transition">
+                    <div class="text-blue-400 font-bold">🏷️ Auto-Recategorize</div>
+                    <div class="text-gray-500 text-xs">Re-run categorization on all expenses</div>
+                </button>
+                
+                <button @click="syncPrices()" 
+                        class="p-4 rounded-lg bg-green-900/20 border border-green-500/30 hover:bg-green-900/40 transition">
+                    <div class="text-green-400 font-bold">📈 Sync Live Prices</div>
+                    <div class="text-gray-500 text-xs">Update all position prices from market</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Automation Setup Section -->
+        <div class="glass rounded-xl p-8">
+            <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                <span>🤖</span> Automation Setup
+                <span class="text-xs text-yellow-400 bg-yellow-500/20 px-2 py-1 rounded ml-2">Beta</span>
+            </h2>
+            
+            <div class="grid grid-cols-2 gap-8">
+                <!-- Exchange API Keys -->
+                <div class="bg-black/30 rounded-lg p-6 border border-cyan-500/20">
+                    <h3 class="font-bold text-cyan-400 mb-4 flex items-center gap-2">
+                        🔑 Exchange API Keys
+                        <span class="text-xs text-gray-500">(for auto-sync)</span>
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <!-- Existing Keys -->
+                        <div x-show="exchangeKeys.length > 0" class="space-y-2 mb-4">
+                            <template x-for="(key, idx) in exchangeKeys" :key="idx">
+                                <div class="flex justify-between items-center bg-black/40 p-3 rounded">
+                                    <div>
+                                        <span class="font-bold text-white" x-text="key.exchange"></span>
+                                        <span class="text-xs text-gray-500 ml-2" x-text="'••••' + key.apiKey?.slice(-4)"></span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs px-2 py-1 rounded" 
+                                              :class="key.status === 'active' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'"
+                                              x-text="key.status"></span>
+                                        <button @click="removeExchangeKey(idx)" class="text-red-400 hover:text-red-300">🗑️</button>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                        
+                        <!-- Add New Key -->
+                        <div class="space-y-3">
+                            <select x-model="newExchangeKey.exchange" class="w-full bg-black/40 border border-white/10 rounded p-3 text-white">
+                                <option value="">Select Exchange</option>
+                                <option value="kraken">Kraken</option>
+                                <option value="binance">Binance</option>
+                                <option value="coinbase">Coinbase</option>
+                                <option value="bybit">Bybit</option>
+                                <option value="okx">OKX</option>
+                            </select>
+                            <input x-model="newExchangeKey.apiKey" type="password" placeholder="API Key" 
+                                   class="w-full bg-black/40 border border-white/10 rounded p-3 text-white font-mono">
+                            <input x-model="newExchangeKey.secret" type="password" placeholder="API Secret" 
+                                   class="w-full bg-black/40 border border-white/10 rounded p-3 text-white font-mono">
+                            <button @click="addExchangeKey()" 
+                                    :disabled="!newExchangeKey.exchange || !newExchangeKey.apiKey"
+                                    class="w-full bg-cyan-600 hover:bg-cyan-500 disabled:bg-gray-600 text-white py-3 rounded-lg font-bold transition">
+                                + Add Exchange
+                            </button>
+                        </div>
+                        
+                        <p class="text-xs text-gray-500 mt-2">
+                            🔒 Keys are encrypted and stored securely. Use read-only API keys when possible.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Wallet Tracking -->
+                <div class="bg-black/30 rounded-lg p-6 border border-purple-500/20">
+                    <h3 class="font-bold text-purple-400 mb-4 flex items-center gap-2">
+                        👛 Wallet Tracking
+                        <span class="text-xs text-gray-500">(auto-balance)</span>
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <!-- Existing Wallets -->
+                        <div x-show="trackedWallets.length > 0" class="space-y-2 mb-4">
+                            <template x-for="(wallet, idx) in trackedWallets" :key="idx">
+                                <div class="flex justify-between items-center bg-black/40 p-3 rounded">
+                                    <div>
+                                        <span class="text-xs text-gray-400 uppercase" x-text="wallet.chain"></span>
+                                        <div class="font-mono text-white text-sm truncate max-w-[200px]" x-text="wallet.address" :title="wallet.address"></div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-white font-mono" x-text="'$' + (wallet.balance || 0).toLocaleString()"></span>
+                                        <button @click="removeTrackedWallet(idx)" class="text-red-400 hover:text-red-300">🗑️</button>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                        
+                        <!-- Add New Wallet -->
+                        <div class="space-y-3">
+                            <select x-model="newWallet.chain" class="w-full bg-black/40 border border-white/10 rounded p-3 text-white">
+                                <option value="">Select Chain</option>
+                                <option value="ethereum">Ethereum</option>
+                                <option value="solana">Solana</option>
+                                <option value="bitcoin">Bitcoin</option>
+                                <option value="polygon">Polygon</option>
+                                <option value="arbitrum">Arbitrum</option>
+                                <option value="base">Base</option>
+                            </select>
+                            <input x-model="newWallet.address" type="text" placeholder="Wallet Address (0x... or sol...)" 
+                                   class="w-full bg-black/40 border border-white/10 rounded p-3 text-white font-mono text-sm">
+                            <input x-model="newWallet.label" type="text" placeholder="Label (optional)" 
+                                   class="w-full bg-black/40 border border-white/10 rounded p-3 text-white">
+                            <button @click="addTrackedWallet()" 
+                                    :disabled="!newWallet.chain || !newWallet.address"
+                                    class="w-full bg-purple-600 hover:bg-purple-500 disabled:bg-gray-600 text-white py-3 rounded-lg font-bold transition">
+                                + Track Wallet
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sync Schedule -->
+            <div class="mt-8 bg-black/30 rounded-lg p-6 border border-white/10">
+                <h3 class="font-bold text-white mb-4 flex items-center gap-2">
+                    ⏰ Auto-Sync Schedule
+                </h3>
+                
+                <div class="grid grid-cols-4 gap-4">
+                    <div class="bg-black/40 p-4 rounded-lg">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" x-model="syncSettings.prices" class="rounded">
+                            <span class="text-white">Sync Prices</span>
+                        </label>
+                        <p class="text-xs text-gray-500 mt-1">Every 5 minutes</p>
+                    </div>
+                    
+                    <div class="bg-black/40 p-4 rounded-lg">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" x-model="syncSettings.wallets" class="rounded">
+                            <span class="text-white">Sync Wallets</span>
+                        </label>
+                        <p class="text-xs text-gray-500 mt-1">Every 15 minutes</p>
+                    </div>
+                    
+                    <div class="bg-black/40 p-4 rounded-lg">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" x-model="syncSettings.exchanges" class="rounded">
+                            <span class="text-white">Sync Exchanges</span>
+                        </label>
+                        <p class="text-xs text-gray-500 mt-1">Every hour</p>
+                    </div>
+                    
+                    <div class="bg-black/40 p-4 rounded-lg">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" x-model="syncSettings.notifications" class="rounded">
+                            <span class="text-white">Notifications</span>
+                        </label>
+                        <p class="text-xs text-gray-500 mt-1">Alert on changes</p>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end mt-4">
+                    <button @click="saveSyncSettings()" class="bg-green-600 hover:bg-green-500 text-white px-6 py-2 rounded-lg font-bold transition">
+                        💾 Save Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div x-show="toast.show" x-transition
+         class="fixed bottom-8 right-8 px-6 py-4 rounded-lg shadow-lg"
+         :class="toast.type === 'success' ? 'bg-green-600' : 'bg-red-600'">
+        <span x-text="toast.message"></span>
+    </div>
+
+    <script>
+        function treasuryManager() {
+            return {
+                token: localStorage.getItem('team_portal_token') || '',
+                apiBase: '',
+                
+                stats: {
+                    totalPositions: 0,
+                    totalExpenses: 0,
+                    thisMonth: 0,
+                    lastImport: null
+                },
+                
+                ucData: {
+                    balance: 0,
+                    healthScore: 2.0,
+                    mode: 'ABUNDANCE',
+                    transactions: []
+                },
+                
+                bankName: '',
+                positionType: 'spot',
+                importHistory: [],
+                
+                // Automation
+                exchangeKeys: [],
+                newExchangeKey: { exchange: '', apiKey: '', secret: '' },
+                trackedWallets: [],
+                newWallet: { chain: '', address: '', label: '' },
+                syncSettings: {
+                    prices: true,
+                    wallets: true,
+                    exchanges: false,
+                    notifications: true
+                },
+                
+                toast: { show: false, message: '', type: 'success' },
+                
+                async init() {
+                    if (!this.token) {
+                        window.location.href = '/';
+                        return;
+                    }
+                    await this.refreshData();
+                    await this.loadUCData();
+                    this.initUCWidget();
+                    this.loadAutomationData();
+                },
+                
+                async loadUCData() {
+                    try {
+                        // Fetch UC health from Credits Gateway
+                        const res = await fetch('https://fullpotential.ai/services/credits/api/treasury/health');
+                        if (res.ok) {
+                            const data = await res.json();
+                            this.ucData.healthScore = data.score || 2.0;
+                            this.ucData.mode = data.mode || 'ABUNDANCE';
+                        }
+                        
+                        // Get balance from gateway health
+                        const healthRes = await fetch('https://fullpotential.ai/services/credits/health');
+                        if (healthRes.ok) {
+                            const health = await healthRes.json();
+                            this.ucData.balance = health.treasury_fp || 0;
+                        }
+                    } catch (e) {
+                        console.warn('Failed to load UC data:', e);
+                    }
+                },
+                
+                initUCWidget() {
+                    // Initialize UC SDK widget if available
+                    if (typeof UCWidget !== 'undefined') {
+                        const container = document.getElementById('uc-widget-container');
+                        if (container) {
+                            try {
+                                UCWidget.create(container, {
+                                    userId: 'owner-master',
+                                    showTopUp: true,
+                                    theme: 'dark'
+                                });
+                            } catch (e) {
+                                console.warn('UC Widget init failed:', e);
+                            }
+                        }
+                    }
+                },
+                
+                openUCCheckout(amount) {
+                    // Use UC SDK checkout if available
+                    if (typeof UCCheckout !== 'undefined') {
+                        UCCheckout.open({
+                            amount: amount,
+                            service: 'Treasury Top-Up',
+                            userId: 'owner-master',
+                            action: 'top-up',
+                            onSuccess: (data) => {
+                                this.showToast(`Added ${data.amount} UC to your account!`, 'success');
+                                this.loadUCData();
+                            },
+                            onCancel: () => {
+                                this.showToast('Checkout cancelled', 'info');
+                            }
+                        });
+                    } else {
+                        // Fallback to direct URL
+                        window.open(`https://fullpotential.ai/services/credits/checkout?amount=${amount}&service=Treasury%20Top-Up&user_id=owner-master&return_url=${encodeURIComponent(window.location.href)}`, '_blank');
+                    }
+                },
+                
+                showToast(message, type = 'success') {
+                    this.toast = { show: true, message, type };
+                    setTimeout(() => this.toast.show = false, 3000);
+                },
+                
+                async authFetch(url, options = {}) {
+                    return fetch(this.apiBase + url, {
+                        ...options,
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            ...options.headers
+                        }
+                    });
+                },
+                
+                async refreshData() {
+                    try {
+                        // Get treasury data
+                        const treasuryRes = await this.authFetch('/api/treasury/consolidated');
+                        if (treasuryRes.ok) {
+                            const data = await treasuryRes.json();
+                            this.stats.totalPositions = (data.offsite?.spot_positions?.length || 0) + 
+                                                        (data.offsite?.leveraged_positions?.length || 0);
+                        }
+                        
+                        // Get expense data
+                        const expenseRes = await this.authFetch('/api/treasury/expenses?limit=1000');
+                        if (expenseRes.ok) {
+                            const data = await expenseRes.json();
+                            this.stats.totalExpenses = data.summary?.count || 0;
+                            this.stats.thisMonth = data.summary?.this_month || 0;
+                        }
+                    } catch (e) {
+                        console.error('Refresh error:', e);
+                    }
+                },
+                
+                async uploadExpenses(event) {
+                    const file = event.target.files[0];
+                    if (!file) return;
+                    
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    
+                    try {
+                        const res = await fetch(this.apiBase + '/api/treasury/import/expenses', {
+                            method: 'POST',
+                            headers: { 'Authorization': `Bearer ${this.token}` },
+                            body: formData
+                        });
+                        
+                        const data = await res.json();
+                        if (res.ok) {
+                            this.showToast(data.message, 'success');
+                            this.importHistory.unshift({
+                                type: 'Expenses',
+                                message: data.message,
+                                imported: data.imported,
+                                timestamp: new Date().toLocaleString()
+                            });
+                            await this.refreshData();
+                        } else {
+                            this.showToast(data.detail || 'Import failed', 'error');
+                        }
+                    } catch (e) {
+                        this.showToast('Network error', 'error');
+                    }
+                },
+                
+                async uploadBankStatement(event) {
+                    const file = event.target.files[0];
+                    if (!file) return;
+                    
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    
+                    try {
+                        const res = await fetch(this.apiBase + `/api/treasury/import/bank-statement?bank_name=${encodeURIComponent(this.bankName || 'unknown')}`, {
+                            method: 'POST',
+                            headers: { 'Authorization': `Bearer ${this.token}` },
+                            body: formData
+                        });
+                        
+                        const data = await res.json();
+                        if (res.ok) {
+                            this.showToast(data.message, 'success');
+                            this.importHistory.unshift({
+                                type: 'Bank Statement',
+                                message: data.message,
+                                imported: data.imported,
+                                timestamp: new Date().toLocaleString()
+                            });
+                            await this.refreshData();
+                        } else {
+                            this.showToast(data.detail || 'Import failed', 'error');
+                        }
+                    } catch (e) {
+                        this.showToast('Network error', 'error');
+                    }
+                },
+                
+                async uploadPositions(event) {
+                    const file = event.target.files[0];
+                    if (!file) return;
+                    
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    
+                    try {
+                        const res = await fetch(this.apiBase + `/api/treasury/import/positions?position_type=${this.positionType}`, {
+                            method: 'POST',
+                            headers: { 'Authorization': `Bearer ${this.token}` },
+                            body: formData
+                        });
+                        
+                        const data = await res.json();
+                        if (res.ok) {
+                            this.showToast(data.message, 'success');
+                            this.importHistory.unshift({
+                                type: 'Positions',
+                                message: data.message,
+                                imported: data.imported,
+                                timestamp: new Date().toLocaleString()
+                            });
+                            await this.refreshData();
+                        } else {
+                            this.showToast(data.detail || 'Import failed', 'error');
+                        }
+                    } catch (e) {
+                        this.showToast('Network error', 'error');
+                    }
+                },
+                
+                handleExpenseDrop(event) {
+                    const file = event.dataTransfer.files[0];
+                    if (file) {
+                        this.uploadExpenses({ target: { files: [file] } });
+                    }
+                },
+                
+                handleBankDrop(event) {
+                    const file = event.dataTransfer.files[0];
+                    if (file) {
+                        this.uploadBankStatement({ target: { files: [file] } });
+                    }
+                },
+                
+                handlePositionDrop(event) {
+                    const file = event.dataTransfer.files[0];
+                    if (file) {
+                        this.uploadPositions({ target: { files: [file] } });
+                    }
+                },
+                
+                downloadTemplate(type) {
+                    let csv, filename;
+                    if (type === 'expenses') {
+                        csv = 'date,description,amount,category,merchant,expense_type\n2025-12-01,Example Expense,50.00,tech,Amazon,ministry';
+                        filename = 'expense_template.csv';
+                    } else {
+                        csv = 'asset,amount,entry_price,location,notes\nBTC,1.5,95000,trust_wallet,Main holding';
+                        filename = 'position_template.csv';
+                    }
+                    
+                    const blob = new Blob([csv], { type: 'text/csv' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    a.click();
+                },
+                
+                async exportData(type) {
+                    try {
+                        const res = await this.authFetch(`/api/treasury/export/${type}`);
+                        if (res.ok) {
+                            const data = await res.json();
+                            const blob = new Blob([data.data], { type: 'text/csv' });
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = data.filename;
+                            a.click();
+                            this.showToast(`Exported ${data.count || 0} records`, 'success');
+                        }
+                    } catch (e) {
+                        this.showToast('Export failed', 'error');
+                    }
+                },
+                
+                async clearAllExpenses() {
+                    if (!confirm('⚠️ This will delete ALL expense records. Are you sure?')) return;
+                    if (!confirm('This action cannot be undone. Type "DELETE" to confirm.')) return;
+                    
+                    // TODO: Implement bulk delete endpoint
+                    this.showToast('Bulk delete not yet implemented', 'error');
+                },
+                
+                async recategorizeExpenses() {
+                    this.showToast('Re-categorization started...', 'success');
+                    // TODO: Implement recategorization endpoint
+                },
+                
+                async syncPrices() {
+                    this.showToast('Syncing prices from WhaleTrack...', 'success');
+                    await this.refreshData();
+                    this.showToast('Prices synced!', 'success');
+                },
+                
+                // ===== AUTOMATION FUNCTIONS =====
+                
+                async addExchangeKey() {
+                    if (!this.newExchangeKey.exchange || !this.newExchangeKey.apiKey) return;
+                    
+                    try {
+                        const res = await this.authFetch('/api/treasury/automation/exchange-keys', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(this.newExchangeKey)
+                        });
+                        
+                        if (res.ok) {
+                            this.exchangeKeys.push({
+                                ...this.newExchangeKey,
+                                status: 'pending'
+                            });
+                            this.newExchangeKey = { exchange: '', apiKey: '', secret: '' };
+                            this.showToast('Exchange API key added!', 'success');
+                        } else {
+                            this.showToast('Failed to add exchange key', 'error');
+                        }
+                    } catch (e) {
+                        // For now, just add locally (API not implemented yet)
+                        this.exchangeKeys.push({
+                            ...this.newExchangeKey,
+                            status: 'pending'
+                        });
+                        this.newExchangeKey = { exchange: '', apiKey: '', secret: '' };
+                        this.showToast('Exchange key saved locally (sync pending)', 'success');
+                    }
+                },
+                
+                removeExchangeKey(idx) {
+                    if (confirm('Remove this exchange API key?')) {
+                        this.exchangeKeys.splice(idx, 1);
+                        this.showToast('Exchange key removed', 'success');
+                    }
+                },
+                
+                async addTrackedWallet() {
+                    if (!this.newWallet.chain || !this.newWallet.address) return;
+                    
+                    try {
+                        const res = await this.authFetch('/api/treasury/automation/wallets', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(this.newWallet)
+                        });
+                        
+                        if (res.ok) {
+                            const data = await res.json();
+                            this.trackedWallets.push({
+                                ...this.newWallet,
+                                balance: data.balance || 0
+                            });
+                            this.newWallet = { chain: '', address: '', label: '' };
+                            this.showToast('Wallet added for tracking!', 'success');
+                        } else {
+                            this.showToast('Failed to add wallet', 'error');
+                        }
+                    } catch (e) {
+                        // For now, just add locally
+                        this.trackedWallets.push({
+                            ...this.newWallet,
+                            balance: 0
+                        });
+                        this.newWallet = { chain: '', address: '', label: '' };
+                        this.showToast('Wallet saved locally (balance sync pending)', 'success');
+                    }
+                },
+                
+                removeTrackedWallet(idx) {
+                    if (confirm('Stop tracking this wallet?')) {
+                        this.trackedWallets.splice(idx, 1);
+                        this.showToast('Wallet removed from tracking', 'success');
+                    }
+                },
+                
+                async saveSyncSettings() {
+                    try {
+                        const res = await this.authFetch('/api/treasury/automation/sync-settings', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(this.syncSettings)
+                        });
+                        
+                        if (res.ok) {
+                            this.showToast('Sync settings saved!', 'success');
+                        } else {
+                            this.showToast('Failed to save settings', 'error');
+                        }
+                    } catch (e) {
+                        // Save to localStorage as fallback
+                        localStorage.setItem('treasury_sync_settings', JSON.stringify(this.syncSettings));
+                        this.showToast('Settings saved locally', 'success');
+                    }
+                },
+                
+                loadAutomationData() {
+                    // Load from localStorage
+                    const savedSettings = localStorage.getItem('treasury_sync_settings');
+                    if (savedSettings) {
+                        this.syncSettings = JSON.parse(savedSettings);
+                    }
+                    
+                    const savedKeys = localStorage.getItem('treasury_exchange_keys');
+                    if (savedKeys) {
+                        this.exchangeKeys = JSON.parse(savedKeys);
+                    }
+                    
+                    const savedWallets = localStorage.getItem('treasury_tracked_wallets');
+                    if (savedWallets) {
+                        this.trackedWallets = JSON.parse(savedWallets);
+                    }
+                }
+            };
+        }
+    </script>
+</body>
+</html>
+

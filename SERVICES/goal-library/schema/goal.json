@@ -1,0 +1,324 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Full Potential Goal",
+  "description": "Schema for goals in the Full Potential Goal Library",
+  "type": "object",
+  "required": ["goal_id", "display", "alignment", "journey"],
+  
+  "properties": {
+    "goal_id": {
+      "type": "string",
+      "description": "Unique identifier for the goal",
+      "pattern": "^[a-z]+_[a-z0-9_]+$"
+    },
+    
+    "version": {
+      "type": "string",
+      "description": "Semantic version of this goal definition",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "default": "1.0.0"
+    },
+    
+    "display": {
+      "type": "object",
+      "required": ["name", "description", "category"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Human-readable goal name",
+          "maxLength": 100
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of the goal",
+          "maxLength": 500
+        },
+        "icon": {
+          "type": "string",
+          "description": "Emoji or icon identifier"
+        },
+        "category": {
+          "type": "string",
+          "description": "Primary category path",
+          "enum": [
+            "wealth/income",
+            "wealth/savings",
+            "wealth/debt_freedom",
+            "wealth/investment",
+            "wealth/business",
+            "health/physical",
+            "health/energy",
+            "health/nutrition",
+            "health/mental",
+            "health/longevity",
+            "happiness/emotional",
+            "happiness/fulfillment",
+            "happiness/balance",
+            "happiness/presence",
+            "purpose/career",
+            "purpose/impact",
+            "purpose/growth",
+            "purpose/calling",
+            "connection/relationships",
+            "connection/community",
+            "connection/social"
+          ]
+        },
+        "difficulty": {
+          "type": "string",
+          "enum": ["easy", "moderate", "challenging", "expert"],
+          "default": "moderate"
+        },
+        "typical_duration": {
+          "type": "string",
+          "description": "Typical time to achieve",
+          "examples": ["1-4 weeks", "1-3 months", "6-12 months"]
+        }
+      }
+    },
+    
+    "parameters": {
+      "type": "object",
+      "description": "Customizable parameters for the goal",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["currency", "number", "percentage", "duration", "text", "select"]
+          },
+          "default": {},
+          "min": {},
+          "max": {},
+          "options": {
+            "type": "array"
+          },
+          "customizable": {
+            "type": "boolean",
+            "default": true
+          },
+          "label": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    
+    "alignment": {
+      "type": "object",
+      "required": ["planetary_impact", "collective_impact", "integrity_questions"],
+      "properties": {
+        "planetary_impact": {
+          "type": "string",
+          "enum": ["positive", "neutral", "negative", "depends"],
+          "description": "Impact on Earth's systems"
+        },
+        "collective_impact": {
+          "type": "string",
+          "enum": ["positive", "neutral", "negative", "depends"],
+          "description": "Impact on other people/society"
+        },
+        "sustainability_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "How sustainable is this goal (1 = fully sustainable)"
+        },
+        "integrity_questions": {
+          "type": "array",
+          "description": "Questions to surface alignment",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "red_flags": {
+          "type": "array",
+          "description": "Patterns that suggest misalignment",
+          "items": {
+            "type": "string"
+          }
+        },
+        "alignment_suggestions": {
+          "type": "array",
+          "description": "Alternative goal suggestions for better alignment",
+          "items": {
+            "type": "object",
+            "properties": {
+              "trigger": {
+                "type": "string",
+                "description": "Condition that triggers this suggestion"
+              },
+              "suggest_goal": {
+                "type": "string",
+                "description": "goal_id of suggested alternative"
+              },
+              "message": {
+                "type": "string",
+                "description": "Message to user explaining the suggestion"
+              }
+            }
+          }
+        }
+      }
+    },
+    
+    "journey": {
+      "type": "object",
+      "properties": {
+        "phases": {
+          "type": "array",
+          "description": "Journey phases for this goal",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "typical_duration": {
+                "type": "string"
+              },
+              "milestones": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "recommended_check_ins": {
+          "type": "string",
+          "enum": ["daily", "every_other_day", "weekly", "bi_weekly", "monthly"]
+        },
+        "key_metrics": {
+          "type": "array",
+          "description": "Metrics to track progress",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    
+    "resources": {
+      "type": "object",
+      "properties": {
+        "tools": {
+          "type": "array",
+          "description": "Tool IDs that help with this goal",
+          "items": {
+            "type": "string"
+          }
+        },
+        "content": {
+          "type": "array",
+          "description": "Content IDs (courses, guides, etc.)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "support": {
+          "type": "array",
+          "description": "Support options",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    
+    "connections": {
+      "type": "object",
+      "properties": {
+        "prerequisites": {
+          "type": "array",
+          "description": "Goals that should be achieved first",
+          "items": {
+            "type": "string"
+          }
+        },
+        "enables": {
+          "type": "array",
+          "description": "Goals this unlocks upon completion",
+          "items": {
+            "type": "string"
+          }
+        },
+        "synergizes_with": {
+          "type": "array",
+          "description": "Goals that work well in parallel",
+          "items": {
+            "type": "string"
+          }
+        },
+        "conflicts_with": {
+          "type": "array",
+          "description": "Goals that may conflict",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    
+    "social_proof": {
+      "type": "object",
+      "description": "Aggregate data from users who pursued this goal",
+      "properties": {
+        "total_attempts": {
+          "type": "integer"
+        },
+        "success_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "average_duration_to_success": {
+          "type": "string"
+        },
+        "common_obstacles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "success_factors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    
+    "meta": {
+      "type": "object",
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "format": "date"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date"
+        },
+        "created_by": {
+          "type": "string"
+        },
+        "popularity_rank": {
+          "type": "integer"
+        },
+        "trending": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}
+
+
+

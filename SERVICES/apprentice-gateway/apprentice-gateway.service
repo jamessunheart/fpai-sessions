@@ -1,0 +1,17 @@
+[Unit]
+Description=FPAI Apprentice Gateway — Stripe checkout + provisioning for Champion Stack Apprentice
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/fpai/apps/apprentice-gateway
+Environment="PATH=/opt/fpai/apps/apprentice-gateway/.venv/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="PORT=8773"
+EnvironmentFile=-/etc/apprentice-gateway.env
+ExecStart=/opt/fpai/apps/apprentice-gateway/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8773
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

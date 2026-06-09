@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body { background: #f6f8fc; color: #0f172a; min-height: 100vh; }
+
+.card { @apply bg-white rounded-xl border border-slate-200 shadow-sm; }
+.btn-primary  { @apply px-4 py-2 rounded-md bg-accent text-white font-medium hover:brightness-110; }
+.btn-secondary{ @apply px-4 py-2 rounded-md border border-slate-200 hover:bg-slate-100; }
+.input        { @apply w-full px-3 py-2 rounded-md border border-slate-200 focus:outline-none focus:ring-2 focus:ring-accent/60; }
+.label        { @apply text-xs font-medium uppercase tracking-wider text-slate-500; }

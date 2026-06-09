@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Begin Your Journey | Full Potential</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Warm, organic palette */
+      --bg-cream: #FDFBF7;
+      --bg-warm: #F9F6F0;
+      --bg-soft: #F3EDE4;
+      --bg-card: #FFFFFF;
+      
+      /* Accent colors - nature inspired */
+      --green-deep: #2D5A3D;
+      --green-forest: #3D7A4F;
+      --green-fresh: #4A9D5B;
+      --green-soft: #E8F5E9;
+      
+      --gold-warm: #C4A052;
+      --gold-soft: #F5E6C8;
+      --gold-glow: #FFE4A0;
+      
+      --rose-warm: #C17B7B;
+      --rose-soft: #FCE8E8;
+      
+      --sky-soft: #E3F2FD;
+      --purple-soft: #F3E5F5;
+      
+      /* Text colors */
+      --text-deep: #1A2E1A;
+      --text-main: #2D3B2D;
+      --text-soft: #5A6B5A;
+      --text-muted: #8A9A8A;
+      
+      /* Borders */
+      --border-soft: rgba(45, 90, 61, 0.1);
+      --border-hover: rgba(45, 90, 61, 0.2);
+      
+      /* Shadows */
+      --shadow-soft: 0 2px 20px rgba(45, 90, 61, 0.08);
+      --shadow-card: 0 4px 30px rgba(45, 90, 61, 0.1);
+      --shadow-hover: 0 8px 40px rgba(45, 90, 61, 0.15);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg-cream);
+      color: var(--text-main);
+      min-height: 100vh;
+      line-height: 1.7;
+    }
+
+    /* Beautiful gradient background */
+    .page-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(ellipse at top left, rgba(232, 245, 233, 0.5) 0%, transparent 50%),
+        radial-gradient(ellipse at bottom right, rgba(245, 230, 200, 0.4) 0%, transparent 50%),
+        radial-gradient(ellipse at center, rgba(255, 255, 255, 0.8) 0%, transparent 70%),
+        var(--bg-cream);
+      z-index: -1;
+    }
+
+    /* Header */
+    header {
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 1.25rem;
+      color: var(--green-deep);
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      font-size: 1.5rem;
+    }
+
+    .progress-bar {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .progress-step {
+      width: 48px;
+      height: 4px;
+      background: var(--border-soft);
+      border-radius: 2px;
+      transition: all 0.4s ease;
+    }
+
+    .progress-step.active {
+      background: linear-gradient(90deg, var(--green-forest), var(--green-fresh));
+    }
+
+    .progress-step.complete {
+      background: var(--green-deep);
+    }
+
+    /* Main Container */
+    main {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 2rem 2rem 4rem;
+    }
+
+    /* Form Steps */
+    .step {
+      display: none;
+      animation: fadeUp 0.5s ease;
+    }
+
+    .step.active {
+      display: block;
+    }
+
+    @keyframes fadeUp {
+      from { 
+        opacity: 0; 
+        transform: translateY(20px); 
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0); 
+      }
+    }
+
+    .step-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .step-number {
+      display: inline-block;
+      font-size: 0.75rem;
+      color: var(--green-forest);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 0.75rem;
+      padding: 0.375rem 1rem;
+      background: var(--green-soft);
+      border-radius: 100px;
+    }
+
+    .step-title {
+      font-family: 'Fraunces', serif;
+      font-size: 2.25rem;
+      font-weight: 500;
+      color: var(--text-deep);
+      margin-bottom: 0.75rem;
+      line-height: 1.2;
+    }
+
+    .step-subtitle {
+      color: var(--text-soft);
+      font-size: 1.1rem;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-main);
+      margin-bottom: 0.5rem;
+    }
+
+    .label-hint {
+      font-weight: 400;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-soft);
+      border-radius: 12px;
+      color: var(--text-deep);
+      font-family: inherit;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-soft);
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--green-forest);
+      box-shadow: 0 0 0 4px rgba(61, 122, 79, 0.1), var(--shadow-soft);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: var(--text-muted);
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235A6B5A' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1.25rem center;
+      padding-right: 3rem;
+    }
+
+    /* ============================= */
+    /* GOAL CATEGORY CARDS */
+    /* ============================= */
+    .goal-categories {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 500px) {
+      .goal-categories {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .goal-card {
+      position: relative;
+      background: var(--bg-card);
+      border: 2px solid var(--border-soft);
+      border-radius: 20px;
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .goal-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .goal-card.selected {
+      border-color: var(--green-forest);
+      background: linear-gradient(135deg, var(--green-soft), var(--bg-card));
+      box-shadow: var(--shadow-card), 0 0 0 4px rgba(61, 122, 79, 0.1);
+    }
+
+    .goal-card input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      cursor: pointer;
+    }
+
+    .goal-card-icon {
+      font-size: 2.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .goal-card-title {
+      font-family: 'Fraunces', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text-deep);
+      margin-bottom: 0.25rem;
+    }
+
+    .goal-card-desc {
+      font-size: 0.85rem;
+      color: var(--text-soft);
+      line-height: 1.5;
+    }
+
+    /* Category-specific accent colors */
+    .goal-card[data-category="wealth"].selected {
+      background: linear-gradient(135deg, var(--gold-soft), var(--bg-card));
+      border-color: var(--gold-warm);
+    }
+    .goal-card[data-category="health"].selected {
+      background: linear-gradient(135deg, var(--green-soft), var(--bg-card));
+      border-color: var(--green-forest);
+    }
+    .goal-card[data-category="happiness"].selected {
+      background: linear-gradient(135deg, #FFF8E1, var(--bg-card));
+      border-color: #FFB300;
+    }
+    .goal-card[data-category="purpose"].selected {
+      background: linear-gradient(135deg, var(--purple-soft), var(--bg-card));
+      border-color: #9C27B0;
+    }
+    .goal-card[data-category="connection"].selected {
+      background: linear-gradient(135deg, var(--rose-soft), var(--bg-card));
+      border-color: var(--rose-warm);
+    }
+
+    /* Specific Goal Options */
+    .goal-options {
+      display: none;
+      margin-top: 1.5rem;
+      padding: 1.5rem;
+      background: var(--bg-warm);
+      border-radius: 16px;
+    }
+
+    .goal-options.visible {
+      display: block;
+      animation: fadeUp 0.4s ease;
+    }
+
+    .goal-options-title {
+      font-family: 'Fraunces', serif;
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--text-deep);
+      margin-bottom: 1rem;
+    }
+
+    .goal-option {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-soft);
+      border-radius: 12px;
+      margin-bottom: 0.75rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .goal-option:hover {
+      border-color: var(--border-hover);
+    }
+
+    .goal-option.selected {
+      border-color: var(--green-forest);
+      background: var(--green-soft);
+    }
+
+    .goal-option input[type="radio"] {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border-soft);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .goal-option input[type="radio"]:checked {
+      border-color: var(--green-forest);
+      background: var(--green-forest);
+      box-shadow: inset 0 0 0 3px white;
+    }
+
+    .goal-option-text {
+      flex: 1;
+    }
+
+    .goal-option-name {
+      font-weight: 500;
+      color: var(--text-deep);
+    }
+
+    .goal-option-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.125rem;
+    }
+
+    /* ============================= */
+    /* VALUE SECTION */
+    /* ============================= */
+    .value-section {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-soft);
+      border-radius: 24px;
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-card);
+    }
+
+    .value-question {
+      font-family: 'Fraunces', serif;
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: var(--text-deep);
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+
+    .value-hint {
+      font-size: 0.95rem;
+      color: var(--text-soft);
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .value-amount {
+      text-align: center;
+      font-family: 'Fraunces', serif;
+      font-size: 3rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--green-deep), var(--green-fresh));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.25rem;
+    }
+
+    .value-period {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+    }
+
+    .value-slider {
+      width: 100%;
+      height: 8px;
+      background: linear-gradient(90deg, 
+        var(--bg-soft) 0%, 
+        var(--green-soft) 50%, 
+        var(--green-forest) 100%
+      );
+      border-radius: 4px;
+      appearance: none;
+      cursor: pointer;
+    }
+
+    .value-slider::-webkit-slider-thumb {
+      appearance: none;
+      width: 28px;
+      height: 28px;
+      background: var(--bg-card);
+      border: 3px solid var(--green-forest);
+      border-radius: 50%;
+      cursor: grab;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+      transition: transform 0.2s;
+    }
+
+    .value-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.1);
+    }
+
+    .value-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.75rem;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .value-context {
+      margin-top: 2rem;
+      padding: 1.25rem;
+      background: var(--green-soft);
+      border-radius: 12px;
+      font-size: 0.9rem;
+      color: var(--text-main);
+      line-height: 1.6;
+    }
+
+    .value-context strong {
+      color: var(--green-deep);
+      font-weight: 600;
+    }
+
+    /* ============================= */
+    /* ALIGNMENT SECTION */
+    /* ============================= */
+    .alignment-section {
+      background: linear-gradient(135deg, var(--purple-soft), var(--sky-soft));
+      border: 1.5px solid rgba(156, 39, 176, 0.2);
+      border-radius: 24px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .alignment-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .alignment-icon {
+      font-size: 2.5rem;
+      flex-shrink: 0;
+    }
+
+    .alignment-question {
+      font-family: 'Fraunces', serif;
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: var(--text-deep);
+      margin-bottom: 0.5rem;
+    }
+
+    .alignment-hint {
+      font-size: 0.9rem;
+      color: var(--text-soft);
+      line-height: 1.6;
+    }
+
+    .alignment-input {
+      background: rgba(255, 255, 255, 0.9);
+      border-color: rgba(156, 39, 176, 0.2);
+    }
+
+    .alignment-input:focus {
+      border-color: #9C27B0;
+      box-shadow: 0 0 0 4px rgba(156, 39, 176, 0.1);
+    }
+
+    /* ============================= */
+    /* ROUTE PREVIEW */
+    /* ============================= */
+    .route-preview {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-soft);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-top: 2rem;
+      box-shadow: var(--shadow-card);
+    }
+
+    .route-preview-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .route-preview-icon {
+      font-size: 1.75rem;
+    }
+
+    .route-preview-title {
+      font-family: 'Fraunces', serif;
+      font-weight: 500;
+      color: var(--text-deep);
+      font-size: 1.1rem;
+    }
+
+    .route-preview-tier {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      background: var(--green-soft);
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--green-deep);
+      margin-bottom: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+
+    .route-preview-desc {
+      font-size: 0.95rem;
+      color: var(--text-soft);
+      line-height: 1.6;
+    }
+
+    /* Discovery CTA */
+    .discovery-cta {
+      background: linear-gradient(135deg, var(--gold-soft), var(--green-soft));
+      border: 1.5px solid var(--gold-warm);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    .discovery-cta-title {
+      font-family: 'Fraunces', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--text-deep);
+      margin-bottom: 0.5rem;
+    }
+
+    .discovery-cta-desc {
+      color: var(--text-soft);
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--green-forest), var(--green-deep));
+      color: white;
+      box-shadow: 0 4px 15px rgba(45, 90, 61, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(45, 90, 61, 0.4);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1.5px solid var(--border-soft);
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-soft);
+      border-color: var(--border-hover);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-large {
+      padding: 1.125rem 2.5rem;
+      font-size: 1.1rem;
+      border-radius: 14px;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2.5rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border-soft);
+    }
+
+    /* Terms */
+    .terms-checkbox {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      padding: 1.25rem;
+      background: var(--bg-warm);
+      border-radius: 12px;
+    }
+
+    .terms-checkbox input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      margin-top: 0.1rem;
+      cursor: pointer;
+      accent-color: var(--green-forest);
+    }
+
+    .terms-text {
+      font-size: 0.9rem;
+      color: var(--text-soft);
+      line-height: 1.6;
+    }
+
+    .terms-text a {
+      color: var(--green-forest);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .terms-text a:hover {
+      text-decoration: underline;
+    }
+
+    /* Success State */
+    .success-container {
+      text-align: center;
+      padding: 3rem 0;
+    }
+
+    .success-icon {
+      font-size: 5rem;
+      margin-bottom: 1.5rem;
+      animation: celebrate 0.6s ease;
+    }
+
+    @keyframes celebrate {
+      0% { transform: scale(0); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+
+    .success-title {
+      font-family: 'Fraunces', serif;
+      font-size: 2.5rem;
+      font-weight: 600;
+      color: var(--text-deep);
+      margin-bottom: 1rem;
+    }
+
+    .success-message {
+      color: var(--text-soft);
+      max-width: 400px;
+      margin: 0 auto 2rem;
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+
+    .next-steps {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-soft);
+      border-radius: 20px;
+      padding: 2rem;
+      max-width: 420px;
+      margin: 0 auto 2rem;
+      text-align: left;
+      box-shadow: var(--shadow-card);
+    }
+
+    .next-steps-title {
+      font-family: 'Fraunces', serif;
+      font-weight: 500;
+      color: var(--text-deep);
+      margin-bottom: 1.25rem;
+      font-size: 1.1rem;
+    }
+
+    .next-step-item {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .next-step-num {
+      width: 28px;
+      height: 28px;
+      background: var(--green-soft);
+      color: var(--green-deep);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .next-step-text {
+      font-size: 0.95rem;
+      color: var(--text-soft);
+      padding-top: 0.125rem;
+    }
+
+    /* Custom goal input */
+    .custom-goal {
+      margin-top: 1rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      main {
+        padding: 1.5rem 1.25rem 3rem;
+      }
+
+      .step-title {
+        font-size: 1.75rem;
+      }
+
+      .form-actions {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .form-actions .btn {
+        width: 100%;
+      }
+
+      .value-amount {
+        font-size: 2.5rem;
+      }
+
+      .value-labels {
+        font-size: 0.6rem;
+      }
+
+      .goal-categories {
+        gap: 0.75rem;
+      }
+
+      .value-section,
+      .alignment-section {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-bg"></div>
+
+  <header>
+    <a href="/" class="logo">
+      <span class="logo-icon">🌱</span>
+      <span>Full Potential</span>
+    </a>
+    <div class="progress-bar">
+      <div class="progress-step active" id="prog-1"></div>
+      <div class="progress-step" id="prog-2"></div>
+      <div class="progress-step" id="prog-3"></div>
+      <div class="progress-step" id="prog-4"></div>
+      <div class="progress-step" id="prog-5"></div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Step 1: Welcome -->
+    <div class="step active" id="step-1">
+      <div class="step-header">
+        <div class="step-number">Step 1 of 5</div>
+        <h1 class="step-title">Welcome to Your Journey</h1>
+        <p class="step-subtitle">Let's begin with a few basics so we can personalize your path to growth.</p>
+      </div>
+
+      <div class="form-group">
+        <label for="name">What should we call you?</label>
+        <input type="text" id="name" placeholder="Your first name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Where can we reach you?</label>
+        <input type="email" id="email" placeholder="your@email.com" required>
+      </div>
+
+      <div class="terms-checkbox">
+        <input type="checkbox" id="terms" required>
+        <label for="terms" class="terms-text">
+          I agree to the <a href="/whiterock/agreement.html" target="_blank">Full Potential Community Membership</a> 
+          and understand that Full Potential is a private membership community supporting human growth and potential.
+        </label>
+      </div>
+
+      <div class="form-actions">
+        <div></div>
+        <button class="btn btn-primary" onclick="nextStep(1)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Goal Category Selection -->
+    <div class="step" id="step-2">
+      <div class="step-header">
+        <div class="step-number">Step 2 of 5</div>
+        <h1 class="step-title">Where is life calling you to grow?</h1>
+        <p class="step-subtitle">Choose the area where you feel the strongest pull for transformation.</p>
+      </div>
+
+      <div class="goal-categories">
+        <div class="goal-card" data-category="wealth" onclick="selectCategory('wealth')">
+          <input type="radio" name="category" value="wealth">
+          <div class="goal-card-icon">💰</div>
+          <div class="goal-card-title">Wealth & Abundance</div>
+          <div class="goal-card-desc">Income, savings, financial freedom, prosperity</div>
+        </div>
+
+        <div class="goal-card" data-category="health" onclick="selectCategory('health')">
+          <input type="radio" name="category" value="health">
+          <div class="goal-card-icon">🌿</div>
+          <div class="goal-card-title">Health & Vitality</div>
+          <div class="goal-card-desc">Physical wellness, energy, mental clarity</div>
+        </div>
+
+        <div class="goal-card" data-category="happiness" onclick="selectCategory('happiness')">
+          <input type="radio" name="category" value="happiness">
+          <div class="goal-card-icon">✨</div>
+          <div class="goal-card-title">Joy & Fulfillment</div>
+          <div class="goal-card-desc">Inner peace, happiness, life satisfaction</div>
+        </div>
+
+        <div class="goal-card" data-category="purpose" onclick="selectCategory('purpose')">
+          <input type="radio" name="category" value="purpose">
+          <div class="goal-card-icon">🎯</div>
+          <div class="goal-card-title">Purpose & Impact</div>
+          <div class="goal-card-desc">Career, calling, making a difference</div>
+        </div>
+
+        <div class="goal-card" data-category="connection" onclick="selectCategory('connection')">
+          <input type="radio" name="category" value="connection">
+          <div class="goal-card-icon">💝</div>
+          <div class="goal-card-title">Love & Connection</div>
+          <div class="goal-card-desc">Relationships, community, belonging</div>
+        </div>
+
+        <div class="goal-card" data-category="custom" onclick="selectCategory('custom')">
+          <input type="radio" name="category" value="custom">
+          <div class="goal-card-icon">🌈</div>
+          <div class="goal-card-title">Something Unique</div>
+          <div class="goal-card-desc">A goal that's all your own</div>
+        </div>
+      </div>
+
+      <!-- Specific Goals -->
+      <div class="goal-options" id="goal-options-wealth">
+        <div class="goal-options-title">What specifically calls to you?</div>
+        
+        <div class="goal-option" onclick="selectGoal('wealth_first_1k')">
+          <input type="radio" name="specific_goal" value="wealth_first_1k">
+          <div class="goal-option-text">
+            <div class="goal-option-name">Earn my first $1,000 online</div>
+            <div class="goal-option-desc">Prove I can create income independently</div>
+          </div>
+        </div>
+        
+        <div class="goal-option" onclick="selectGoal('wealth_10k_monthly')">
+          <input type="radio" name="specific_goal" value="wealth_10k_monthly">
+          <div class="goal-option-text">
+            <div class="goal-option-name">Reach $10K/month income</div>
+            <div class="goal-option-desc">Financial flexibility and security</div>
+          </div>
+        </div>
+        
+        <div class="goal-option" onclick="selectGoal('wealth_debt_free')">
+          <input type="radio" name="specific_goal" value="wealth_debt_free">
+          <div class="goal-option-text">
+            <div class="goal-option-name">Become completely debt-free</div>
+            <div class="goal-option-desc">Experience the freedom of owing nothing</div>
+          </div>
+        </div>
+        
+        <div class="goal-option" onclick="selectGoal('wealth_passive')">
+          <input type="radio" name="specific_goal" value="wealth_passive">
+          <div class="goal-option-text">
+            <div class="goal-option-name">Build streams of passive income</div>
+            <div class="goal-option-desc">Money that flows without constant effort</div>
+          </div>
+        </div>
+        
+        <div class="goal-option" onclick="selectGoal('wealth_custom')">
+          <input type="radio" name="specific_goal" value="wealth_custom">
+          <div class="goal-option-text">
+            <div class="goal-option-name">Something else...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="goal-options" id="goal-options-health">
+        <div class="goal-options-title">What specifically calls to you?</div>
+        
+        <div class="goal-option" onclick="selectGoal('health_transform')">
+          <input type="radio" name="specific_goal" value="health_transform">
+          <div class="goal-option-text">
+            <div class="goal-option-name">Transform my body</div>
+            <div class="goal-option-desc">Lose weight, build strength, feel confident</div>
+          </div>
+        </div>
+        
+        <div class="goal-option" onclick="selectGoal('health_energy')">
+          <input type="radio" name="specific_goal" value="health_energy">
+          <div class="goal-option-text">
+            <div class="goal-option-name">Boundless energy all day</div>
+            <div class="goal-option-desc">Wake up alive, stay focused, sleep deeply</div>
+          </div>
+        </div>
+        
+        <div class="goal-option" onclick="selectGoal('health_mental')">
+          <input type="radio" name="specific_goal" value="health_mental">
+          <div class="goal-option-text">
+            <div class="goal-option-name">Heal my mental health</div>
+            <div class="goal-option-desc">Overcome anxiety, depression, or stress</div>
+          </div>
+        </div>
+        
+        <div class="goal-option" onclick="selectGoal('health_custom')">
+          <input type="radio" name="specific_goal" value="health_custom">
+          <div class="goal-option-text">
+            <div class="goal-option-name">Something else...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="goal-options" id="goal-options-happiness">
+        <div class="goal-options-title">What specifically calls to you?</div>
+        
+        <div class="goal-option" onclick="selectGoal('happiness_joy')">
+          <input type="radio" name="specific_goal" value="happiness_joy">
+          <div class="goal-option-text">
+            <div class="goal-option-name">More daily joy and gratitude</div>
+            <div class="goal-option-desc">Feel genuinely happy, not just "fine"</div>
+          </div>
+        </div>
+        
+        <div class="goal-option" onclick="selectGoal('happiness_balance')">
+          <input type="radio" name="specific_goal" value="happiness_balance">
+          <div class="goal-option-text">
+            <div class="goal-option-name">Real work-life balance</div>
+            <div class="goal-option-desc">Stop working so much, actually live</div>
+          </div>
+        </div>
+        
+        <div class="goal-option" onclick="selectGoal('happiness_peace')">
+          <input type="radio" name="specific_goal" value="happiness_peace">
+          <div class="goal-option-text">
+            <div class="goal-option-name">Inner peace and calm</div>
+            <div class="goal-option-desc">Quiet mind, presence, equanimity</div>
+          </div>
+        </div>
+        
+        <div class="goal-option" onclick="selectGoal('happiness_custom')">
+          <input type="radio" name="specific_goal" value="happiness_custom">
+          <div class="goal-option-text">
+            <div class="goal-option-name">Something else...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="goal-options" id="goal-options-purpose">
+        <div class="goal-options-title">What specifically calls to you?</div>
+        
+        <div class="goal-option" onclick="selectGoal('purpose_career')">
+          <input type="radio" name="specific_goal" value="purpose_career">
+          <div class="goal-option-text">
+            <div class="goal-option-name">Level up my career</div>
+            <div class="goal-option-desc">Promotion, new role, or complete pivot</div>
+          </div>
+        </div>
+        
+        <div class="goal-option" onclick="selectGoal('purpose_calling')">
+          <input type="radio" name="specific_goal" value="purpose_calling">
+          <div class="goal-option-text">
+            <div class="goal-option-name">Discover my life's purpose</div>
+            <div class="goal-option-desc">Find what I'm truly meant to do</div>
+          </div>
+        </div>
+        
+        <div class="goal-option" onclick="selectGoal('purpose_impact')">
+          <input type="radio" name="specific_goal" value="purpose_impact">
+          <div class="goal-option-text">
+            <div class="goal-option-name">Make a bigger impact</div>
+            <div class="goal-option-desc">Help more people, leave a legacy</div>
+          </div>
+        </div>
+        
+        <div class="goal-option" onclick="selectGoal('purpose_custom')">
+          <input type="radio" name="specific_goal" value="purpose_custom">
+          <div class="goal-option-text">
+            <div class="goal-option-name">Something else...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="goal-options" id="goal-options-connection">
+        <div class="goal-options-title">What specifically calls to you?</div>
+        
+        <div class="goal-option" onclick="selectGoal('connection_partner')">
+          <input type="radio" name="specific_goal" value="connection_partner">
+          <div class="goal-option-text">
+            <div class="goal-option-name">Find my life partner</div>
+            <div class="goal-option-desc">Meet someone truly special</div>
+          </div>
+        </div>
+        
+        <div class="goal-option" onclick="selectGoal('connection_improve')">
+          <input type="radio" name="specific_goal" value="connection_improve">
+          <div class="goal-option-text">
+            <div class="goal-option-name">Deepen my relationship</div>
+            <div class="goal-option-desc">More connection with partner or family</div>
+          </div>
+        </div>
+        
+        <div class="goal-option" onclick="selectGoal('connection_community')">
+          <input type="radio" name="specific_goal" value="connection_community">
+          <div class="goal-option-text">
+            <div class="goal-option-name">Find my tribe</div>
+            <div class="goal-option-desc">Connect with like-minded souls</div>
+          </div>
+        </div>
+        
+        <div class="goal-option" onclick="selectGoal('connection_custom')">
+          <input type="radio" name="specific_goal" value="connection_custom">
+          <div class="goal-option-text">
+            <div class="goal-option-name">Something else...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="goal-options visible" id="goal-options-custom" style="display: none;">
+        <div class="goal-options-title">Describe the transformation you seek</div>
+      </div>
+
+      <div class="form-group custom-goal" id="custom-goal-input" style="display: none;">
+        <label for="custom_goal">In your own words, what do you want to create or become?</label>
+        <textarea id="custom_goal" placeholder="I want to..."></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-secondary" onclick="prevStep(2)">← Back</button>
+        <button class="btn btn-primary" onclick="nextStep(2)" id="step2-next" disabled>Continue →</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Investment Value -->
+    <div class="step" id="step-3">
+      <div class="step-header">
+        <div class="step-number">Step 3 of 5</div>
+        <h1 class="step-title">What's this transformation worth?</h1>
+        <p class="step-subtitle">Not what you think you can afford—what would actually achieving this goal be worth to you?</p>
+      </div>
+
+      <div class="value-section">
+        <div class="value-question">If you knew you'd succeed...</div>
+        <div class="value-hint">What would you invest monthly to make it real?</div>
+        
+        <div class="value-amount" id="value-display">$300-500/mo</div>
+        <div class="value-period">Monthly investment in yourself</div>
+        
+        <input type="range" class="value-slider" id="value-slider" 
+               min="0" max="6" value="2" 
+               oninput="updateValueDisplay()">
+        
+        <div class="value-labels">
+          <span>&lt; $100</span>
+          <span>$100-300</span>
+          <span>$300-500</span>
+          <span>$500-1K</span>
+          <span>$1-3K</span>
+          <span>$3K+</span>
+          <span>Let's talk</span>
+        </div>
+
+        <div class="value-context" id="value-context">
+          At this level, you'd work with an <strong>AI Companion</strong> plus specialized tools—daily support and accountability tailored to your journey.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="urgency">How soon do you want to begin?</label>
+        <select id="urgency">
+          <option value="">Choose one...</option>
+          <option value="now">I'm ready to start right away</option>
+          <option value="soon">Within the next few weeks</option>
+          <option value="exploring">Just exploring for now</option>
+        </select>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-secondary" onclick="prevStep(3)">← Back</button>
+        <button class="btn btn-primary" onclick="nextStep(3)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Alignment -->
+    <div class="step" id="step-4">
+      <div class="step-header">
+        <div class="step-number">Step 4 of 5</div>
+        <h1 class="step-title">Beyond yourself</h1>
+        <p class="step-subtitle">Goals with purpose beyond ourselves tend to be more powerful and sustainable.</p>
+      </div>
+
+      <div class="alignment-section">
+        <div class="alignment-header">
+          <div class="alignment-icon">🌍</div>
+          <div>
+            <div class="alignment-question">When you achieve this goal, who else benefits?</div>
+            <div class="alignment-hint">
+              Family, friends, community, causes you care about—your transformation ripples outward.
+            </div>
+          </div>
+        </div>
+        <textarea id="alignment" class="alignment-input" 
+                  placeholder="When I achieve this, it will also help..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="blocker">
+          What's been standing in your way?
+          <span class="label-hint">— The obstacle you most need help with</span>
+        </label>
+        <textarea id="blocker" placeholder="The thing that's stopped me before is..."></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-secondary" onclick="prevStep(4)">← Back</button>
+        <button class="btn btn-primary" onclick="nextStep(4)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Step 5: Review -->
+    <div class="step" id="step-5">
+      <div class="step-header">
+        <div class="step-number">Step 5 of 5</div>
+        <h1 class="step-title">Your journey awaits</h1>
+        <p class="step-subtitle">Here's what we've prepared for you.</p>
+      </div>
+
+      <div class="route-preview" id="route-preview">
+        <div class="route-preview-header">
+          <span class="route-preview-icon">🌱</span>
+          <span class="route-preview-title">Your personalized path</span>
+        </div>
+        <div class="route-preview-tier" id="route-tier">AI COMPANION</div>
+        <div class="route-preview-desc" id="route-desc">
+          You'll have a personal AI guide for daily support and accountability, plus tools and resources tailored to your specific journey.
+        </div>
+      </div>
+
+      <div id="discovery-cta" class="discovery-cta" style="display: none;">
+        <div class="discovery-cta-title">Let's design this together</div>
+        <div class="discovery-cta-desc">
+          For transformations at this level, we begin with a personal conversation to understand your vision and create a custom path.
+        </div>
+        <a href="https://calendly.com/fullpotential/discovery" target="_blank" class="btn btn-primary btn-large">
+          Book Your Discovery Call →
+        </a>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-secondary" onclick="prevStep(5)">← Back</button>
+        <button class="btn btn-primary btn-large" onclick="submitForm()" id="submit-btn">
+          Begin My Journey →
+        </button>
+      </div>
+    </div>
+
+    <!-- Success -->
+    <div class="step" id="step-success">
+      <div class="success-container">
+        <div class="success-icon">🌱</div>
+        <h1 class="success-title">Welcome, beautiful soul</h1>
+        <p class="success-message">
+          Your journey toward your full potential has officially begun.
+        </p>
+        
+        <div class="next-steps">
+          <div class="next-steps-title">What happens next:</div>
+          <div class="next-step-item">
+            <span class="next-step-num">1</span>
+            <span class="next-step-text">Check your email for a welcome message</span>
+          </div>
+          <div class="next-step-item">
+            <span class="next-step-num">2</span>
+            <span class="next-step-text" id="next-step-2">We'll personally review your goals within 24 hours</span>
+          </div>
+          <div class="next-step-item">
+            <span class="next-step-num">3</span>
+            <span class="next-step-text">Your personalized path unfolds</span>
+          </div>
+        </div>
+        
+        <a href="/" class="btn btn-primary">Return Home</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    let currentStep = 1;
+    const totalSteps = 5;
+    let selectedCategory = null;
+    let selectedGoal = null;
+
+    const valueLabels = [
+      { text: '< $100/mo', tier: 'SELF-GUIDED', desc: 'Access to our goal library, AI chatbot for questions, and community of fellow travelers.' },
+      { text: '$100-300/mo', tier: 'AI COMPANION', desc: 'A personal AI guide (Aria) for daily check-ins, accountability, and personalized support on your journey.' },
+      { text: '$300-500/mo', tier: 'AI COMPANION+', desc: 'Everything in AI Companion plus premium tools and weekly personalized insights.' },
+      { text: '$500-1K/mo', tier: 'GUIDED JOURNEY', desc: 'A human guide joins your team with 2 live sessions monthly, plus full AI support between sessions.' },
+      { text: '$1-3K/mo', tier: 'DEEP SUPPORT', desc: '4 live sessions monthly with your guide, custom strategy, and priority support for significant transformation.' },
+      { text: '$3K+/mo', tier: 'FULL PARTNERSHIP', desc: 'Direct collaboration with our founders, custom solutions, and whatever it takes to realize your vision.' },
+      { text: "Let's design it", tier: 'DISCOVERY CALL', desc: 'For major life transformations, let\'s start with a conversation to understand your vision and design the right path together.' }
+    ];
+
+    function updateProgress() {
+      for (let i = 1; i <= totalSteps; i++) {
+        const el = document.getElementById(`prog-${i}`);
+        el.classList.remove('active', 'complete');
+        if (i < currentStep) {
+          el.classList.add('complete');
+        } else if (i === currentStep) {
+          el.classList.add('active');
+        }
+      }
+    }
+
+    function showStep(step) {
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.getElementById(`step-${step}`).classList.add('active');
+      updateProgress();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (step === 5) {
+        updateRoutePreview();
+      }
+    }
+
+    function nextStep(from) {
+      if (from === 1) {
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const terms = document.getElementById('terms').checked;
+        
+        if (!name || !email || !terms) {
+          alert('Please fill in all fields and accept the membership terms.');
+          return;
+        }
+      }
+      
+      if (from === 2) {
+        if (!selectedCategory) {
+          alert('Please choose an area of growth.');
+          return;
+        }
+        if (selectedCategory === 'custom' || (selectedGoal && selectedGoal.endsWith('_custom'))) {
+          const customGoal = document.getElementById('custom_goal').value.trim();
+          if (!customGoal) {
+            alert('Please describe your goal.');
+            return;
+          }
+        }
+      }
+
+      currentStep = from + 1;
+      showStep(currentStep);
+    }
+
+    function prevStep(from) {
+      currentStep = from - 1;
+      showStep(currentStep);
+    }
+
+    function selectCategory(category) {
+      selectedCategory = category;
+      selectedGoal = null;
+      
+      document.querySelectorAll('.goal-card').forEach(card => {
+        card.classList.remove('selected');
+        if (card.dataset.category === category) {
+          card.classList.add('selected');
+          card.querySelector('input[type="radio"]').checked = true;
+        }
+      });
+
+      document.querySelectorAll('.goal-options').forEach(opt => {
+        opt.style.display = 'none';
+        opt.classList.remove('visible');
+      });
+
+      const optionsEl = document.getElementById(`goal-options-${category}`);
+      if (optionsEl) {
+        optionsEl.style.display = 'block';
+        setTimeout(() => optionsEl.classList.add('visible'), 10);
+      }
+
+      if (category === 'custom') {
+        document.getElementById('custom-goal-input').style.display = 'block';
+        document.getElementById('step2-next').disabled = false;
+      } else {
+        document.getElementById('custom-goal-input').style.display = 'none';
+        document.getElementById('step2-next').disabled = true;
+      }
+
+      document.querySelectorAll('.goal-option').forEach(opt => {
+        opt.classList.remove('selected');
+        opt.querySelector('input[type="radio"]').checked = false;
+      });
+    }
+
+    function selectGoal(goalId) {
+      selectedGoal = goalId;
+      
+      document.querySelectorAll('.goal-option').forEach(opt => {
+        opt.classList.remove('selected');
+      });
+      
+      const selectedOpt = document.querySelector(`input[value="${goalId}"]`);
+      if (selectedOpt) {
+        selectedOpt.checked = true;
+        selectedOpt.closest('.goal-option').classList.add('selected');
+      }
+
+      if (goalId.endsWith('_custom')) {
+        document.getElementById('custom-goal-input').style.display = 'block';
+      } else {
+        document.getElementById('custom-goal-input').style.display = 'none';
+      }
+
+      document.getElementById('step2-next').disabled = false;
+    }
+
+    function updateValueDisplay() {
+      const slider = document.getElementById('value-slider');
+      const idx = parseInt(slider.value);
+      const val = valueLabels[idx];
+      
+      document.getElementById('value-display').textContent = val.text;
+      document.getElementById('value-context').innerHTML = `
+        At this level, you'd be in our <strong>${val.tier}</strong> path: ${val.desc}
+      `;
+    }
+
+    function updateRoutePreview() {
+      const slider = document.getElementById('value-slider');
+      const idx = parseInt(slider.value);
+      const val = valueLabels[idx];
+      
+      document.getElementById('route-tier').textContent = val.tier;
+      document.getElementById('route-desc').textContent = val.desc;
+
+      if (idx >= 5) {
+        document.getElementById('discovery-cta').style.display = 'block';
+        document.getElementById('submit-btn').textContent = 'Submit & Book Call →';
+      } else {
+        document.getElementById('discovery-cta').style.display = 'none';
+        document.getElementById('submit-btn').textContent = 'Begin My Journey →';
+      }
+    }
+
+    async function submitForm() {
+      const slider = document.getElementById('value-slider');
+      const idx = parseInt(slider.value);
+
+      const formData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        goal_category: selectedCategory,
+        goal_specific: selectedGoal,
+        goal_custom: document.getElementById('custom_goal')?.value || '',
+        investment_level: idx,
+        investment_label: valueLabels[idx].text,
+        tier: valueLabels[idx].tier,
+        urgency: document.getElementById('urgency').value,
+        alignment_answer: document.getElementById('alignment').value,
+        blockers: document.getElementById('blocker').value,
+        submitted_at: new Date().toISOString()
+      };
+
+      console.log('Journey submitted:', formData);
+      
+      try {
+        const response = await fetch('/api/intake/goal-journey', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          console.log('Success:', result);
+        }
+      } catch (error) {
+        console.error('Network error:', error);
+      }
+
+      localStorage.setItem('fpai-goal-journey', JSON.stringify(formData));
+
+      if (idx >= 5) {
+        document.getElementById('next-step-2').textContent = 
+          "Book your discovery call to design your path";
+      }
+      
+      showStep('success');
+
+      if (idx >= 5) {
+        setTimeout(() => {
+          window.open('https://calendly.com/fullpotential/discovery', '_blank');
+        }, 1500);
+      }
+    }
+
+    updateValueDisplay();
+  </script>
+
+</body>
+</html>
+

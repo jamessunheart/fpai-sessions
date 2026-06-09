@@ -1,0 +1,11 @@
+[Unit]
+Description=Compress recent Telegram conversation turns into brain notes
+
+[Timer]
+OnBootSec=15min
+OnUnitActiveSec=1h
+Unit=brain-curator@tg-capture.service
+Persistent=true
+
+[Install]
+WantedBy=timers.target

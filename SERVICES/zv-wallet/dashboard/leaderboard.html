@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zen Village · ZWC Leaderboard</title>
+<style>
+  :root {
+    --cream: #faf6ee; --gold: #b88a47; --sage: #6b8a5e;
+    --ink: #1a1814; --muted: #7a7060; --line: #e6dec8;
+  }
+  * { box-sizing: border-box; }
+  body { font-family: 'JetBrains Mono', 'Fira Code', monospace; background: var(--cream);
+         color: var(--ink); margin: 0; padding: 1rem; line-height: 1.5;
+         max-width: 820px; margin: 0 auto; }
+  h1 { font-family: Georgia, serif; color: var(--gold); margin: 0.4rem 0; }
+  h2 { font-family: Georgia, serif; color: var(--sage); margin-top: 1.4rem;
+       font-size: 1.1rem; letter-spacing: 0.5px; }
+  .card { background: white; border: 1px solid var(--line); border-radius: 8px;
+          padding: 1rem 1.2rem; margin: 0.8rem 0;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .hero { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.6rem;
+          text-align: center; }
+  .hero .stat .num { font-size: 1.8rem; color: var(--gold); font-weight: bold; }
+  .hero .stat .label { font-size: 0.75rem; color: var(--muted);
+                       text-transform: uppercase; letter-spacing: 1px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  td, th { padding: 0.45rem 0.3rem; border-bottom: 1px solid var(--line);
+           text-align: left; }
+  th { color: var(--muted); font-weight: normal; text-transform: uppercase;
+       font-size: 0.7rem; letter-spacing: 1px; }
+  .rank { color: var(--gold); font-weight: bold; width: 2.4rem; }
+  .wc { color: var(--sage); font-weight: bold; }
+  small.muted { color: var(--muted); }
+  .ticker-row { display: grid;
+                grid-template-columns: 5.5rem 1fr auto;
+                gap: 0.6rem; padding: 0.4rem 0;
+                border-bottom: 1px dotted var(--line);
+                font-size: 0.85rem; }
+  .ticker-row .when { color: var(--muted); }
+  .ticker-row .what b { color: var(--ink); }
+  .ticker-row .wc-amt { color: var(--sage); font-weight: bold; }
+  .footer { text-align: center; color: var(--muted); font-size: 0.75rem;
+            margin-top: 1.4rem; }
+  .updating { color: var(--gold); font-size: 0.7rem; }
+</style>
+</head>
+<body>
+
+<h1>🌀 Zen Village · ZWC Leaderboard</h1>
+<p><small class="muted">Rolling 7-day window · 1 hr = 20 ZWC · max 20 hrs ($400) / wk · witness-approved only · auto-refresh every 10s</small></p>
+
+<div class="card hero" id="hero">
+  <div class="stat"><div class="num" id="total-wc">—</div><div class="label">total ZWC this week</div></div>
+  <div class="stat"><div class="num" id="top-count">—</div><div class="label">villagers contributing</div></div>
+  <div class="stat"><div class="num" id="pending">—</div><div class="label">pending witness</div></div>
+</div>
+
+<div class="card">
+  <h2>Top 10 this week</h2>
+  <table id="top-table">
+    <tr><th>#</th><th>villager</th><th style="text-align:right">activities</th><th style="text-align:right">ZWC / cap</th></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>Live ticker · last 10 approved</h2>
+  <div id="ticker"></div>
+</div>
+
+<div class="footer">
+  <span class="updating" id="updating">live · polling…</span><br>
+  <small class="muted">Group messages stay private inside the village.<br>Only aggregated villager-level stats appear here.</small>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+
+function fmtWhen(ts) {
+  if (!ts) return "—";
+  const d = new Date(ts * 1000);
+  const now = new Date();
+  const diff = (now - d) / 1000;
+  if (diff < 60) return `${Math.floor(diff)}s ago`;
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+  return `${Math.floor(diff / 86400)}d ago`;
+}
+
+function esc(s) {
+  return (s == null ? "" : String(s)).replace(/[<>&]/g, c => ({
+    "<": "&lt;", ">": "&gt;", "&": "&amp;",
+  })[c]);
+}
+
+async function refresh() {
+  $("updating").textContent = "live · polling…";
+  try {
+    const r = await fetch("/api/leaderboard?week=current");
+    if (!r.ok) throw new Error("fetch failed");
+    const data = await r.json();
+    render(data);
+    $("updating").textContent = "live · " + new Date().toLocaleTimeString();
+  } catch (e) {
+    $("updating").textContent = "offline · retrying";
+  }
+}
+
+function render(data) {
+  $("total-wc").textContent = data.total_wc ?? 0;
+  $("top-count").textContent = (data.top || []).length;
+  $("pending").textContent = data.pending_count ?? 0;
+
+  const table = $("top-table");
+  // Keep header row, replace the rest
+  while (table.rows.length > 1) table.deleteRow(1);
+  const WC_WEEKLY_CAP = 400;
+  (data.top || []).forEach((entry, i) => {
+    const row = table.insertRow();
+    const atCap = entry.wc_total >= WC_WEEKLY_CAP;
+    const capLabel = atCap
+      ? `<b>${entry.wc_total}</b> / ${WC_WEEKLY_CAP} <small class="muted">(cap)</small>`
+      : `${entry.wc_total} / ${WC_WEEKLY_CAP}`;
+    row.innerHTML = `
+      <td class="rank">${i + 1}</td>
+      <td>${esc(entry.actor)}</td>
+      <td style="text-align:right"><small class="muted">${entry.activity_count}</small></td>
+      <td class="wc" style="text-align:right">${capLabel}</td>`;
+  });
+  if (!data.top || data.top.length === 0) {
+    const row = table.insertRow();
+    row.innerHTML = `<td colspan="4"><small class="muted">No approved ZWC this week yet — be the first.</small></td>`;
+  }
+
+  const ticker = $("ticker");
+  ticker.innerHTML = "";
+  (data.ticker || []).forEach(entry => {
+    const div = document.createElement("div");
+    div.className = "ticker-row";
+    div.innerHTML = `
+      <div class="when"><small>${esc(fmtWhen(entry.approved_at))}</small></div>
+      <div class="what">
+        <b>${esc(entry.actor)}</b> · ${esc(entry.activity)}
+        <br><small class="muted">${entry.hours}hr · witnessed by ${esc(entry.witness)}</small>
+      </div>
+      <div class="wc-amt">+${entry.wc} ZWC</div>`;
+    ticker.appendChild(div);
+  });
+  if (!data.ticker || data.ticker.length === 0) {
+    ticker.innerHTML = `<small class="muted">No activity yet.</small>`;
+  }
+}
+
+refresh();
+setInterval(refresh, 10000);
+</script>
+
+</body>
+</html>

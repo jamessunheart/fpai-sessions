@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Full Potential Hour | Free Weekly Call</title>
+  <meta name="description" content="Join 100 people every Thursday for a free live Zoom call. Get clarity on your biggest goal. Commute-friendly — listen from anywhere." />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://fullpotential.com/call" />
+  <meta property="og:title" content="The Full Potential Hour — Free Weekly Call" />
+  <meta property="og:description" content="100 people. Live on Zoom. Clarity on your next step. Your first call is free." />
+  <meta property="og:image" content="https://fullpotential.com/og-call.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="The Full Potential Hour — Free Weekly Call" />
+  <meta name="twitter:description" content="100 people. Live on Zoom. Clarity on your next step. Your first call is free." />
+  <meta name="twitter:image" content="https://fullpotential.com/og-call.png" />
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-cream: #FDFBF7;
+      --bg-warm: #F9F6F0;
+      --bg-soft: #F3EDE4;
+      --bg-card: #FFFFFF;
+      --green-deep: #2D5A3D;
+      --green-forest: #3D7A4F;
+      --green-fresh: #4A9D5B;
+      --green-soft: #E8F5E9;
+      --gold-warm: #C4A052;
+      --gold-soft: #F5E6C8;
+      --text-deep: #1A2E1A;
+      --text-main: #2D3B2D;
+      --text-soft: #5A6B5A;
+      --text-muted: #8A9A8A;
+      --border-soft: rgba(45, 90, 61, 0.1);
+      --shadow-soft: 0 2px 20px rgba(45, 90, 61, 0.08);
+      --shadow-card: 0 4px 30px rgba(45, 90, 61, 0.1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg-cream);
+      color: var(--text-main);
+      line-height: 1.7;
+      min-height: 100vh;
+      padding-bottom: 70px; /* space for sticky CTA on mobile */
+    }
+
+    .page-bg {
+      position: fixed; inset: 0;
+      background: 
+        radial-gradient(ellipse at top left, rgba(232, 245, 233, 0.6) 0%, transparent 50%),
+        radial-gradient(ellipse at bottom right, rgba(245, 230, 200, 0.5) 0%, transparent 50%),
+        radial-gradient(ellipse at center, rgba(255, 255, 255, 0.9) 0%, transparent 70%),
+        var(--bg-cream);
+      z-index: -1;
+    }
+
+    /* Header */
+    header {
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-soft);
+      background: rgba(253, 251, 247, 0.9);
+    }
+
+    .logo {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.25rem;
+      color: var(--green-deep); text-decoration: none;
+    }
+
+    .back-link {
+      color: var(--text-soft); text-decoration: none; font-size: 0.9rem;
+    }
+    .back-link:hover { color: var(--green-forest); }
+
+    /* Main */
+    main {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 4rem;
+    }
+
+    /* Hero */
+    .hero { text-align: center; margin-bottom: 2rem; }
+
+    .free-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: linear-gradient(135deg, var(--green-soft), #d4edda);
+      color: var(--green-deep);
+      padding: 0.5rem 1rem; border-radius: 100px;
+      font-size: 0.85rem; font-weight: 600; margin-bottom: 1.25rem;
+    }
+
+    .hero h1 {
+      font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 500;
+      color: var(--text-deep); line-height: 1.2; margin-bottom: 0.75rem;
+    }
+    .hero h1 .highlight { color: var(--green-forest); }
+
+    .hero p { font-size: 1rem; color: var(--text-soft); }
+    .hero .subtext {
+      font-size: 0.9rem; color: var(--text-muted); font-style: italic;
+      margin-top: 0.25rem;
+    }
+
+    /* Call Details */
+    .call-details {
+      display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap;
+      margin-bottom: 2rem; padding: 1rem; background: var(--bg-warm); border-radius: 12px;
+    }
+    .detail { text-align: center; }
+    .detail-icon { font-size: 1.25rem; margin-bottom: 0.25rem; }
+    .detail-text { font-size: 0.8rem; color: var(--text-soft); }
+    .detail-value { font-weight: 600; color: var(--text-deep); font-size: 0.9rem; }
+
+    /* Registration Card */
+    .registration-card {
+      background: var(--bg-card);
+      border: 2px solid var(--green-forest);
+      border-radius: 20px; padding: 2rem;
+      box-shadow: var(--shadow-card);
+    }
+
+    .spots-badge {
+      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .spots-dot {
+      width: 8px; height: 8px; background: var(--green-forest);
+      border-radius: 50%; animation: pulse 2s ease-in-out infinite;
+    }
+    .spots-dot.urgent { background: #e67e22; }
+    .spots-dot.critical { background: #e74c3c; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .spots-text { font-size: 0.9rem; font-weight: 600; color: var(--green-deep); }
+    .spots-text.urgent { color: #e67e22; }
+    .spots-text.critical { color: #e74c3c; }
+
+    /* Form */
+    .signup-form { display: flex; flex-direction: column; gap: 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: 0.375rem; }
+
+    .form-label { font-size: 0.85rem; font-weight: 600; color: var(--text-main); }
+    .form-label .optional { font-weight: 400; color: var(--text-muted); }
+
+    .form-input {
+      padding: 0.875rem 1rem; border: 1.5px solid var(--border-soft);
+      border-radius: 10px; font-size: 1rem; font-family: inherit;
+      background: var(--bg-cream); color: var(--text-main); transition: all 0.2s;
+    }
+    .form-input:focus {
+      outline: none; border-color: var(--green-forest); background: white;
+      box-shadow: 0 0 0 3px rgba(61, 122, 79, 0.1);
+    }
+    .form-input::placeholder { color: var(--text-muted); }
+
+    .submit-btn {
+      background: linear-gradient(135deg, var(--green-forest), var(--green-deep));
+      color: white; padding: 1rem 2rem; border: none; border-radius: 12px;
+      font-size: 1.1rem; font-weight: 600; font-family: inherit;
+      cursor: pointer; transition: all 0.3s ease; margin-top: 0.5rem;
+    }
+    .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(45, 90, 61, 0.4); }
+    .submit-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+    .form-note {
+      text-align: center; font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;
+    }
+    .form-note a { color: var(--green-forest); text-decoration: none; }
+
+    /* ===== SUCCESS STATE ===== */
+    .success-view { display: none; }
+    .success-view.show { display: block; }
+
+    .success-card {
+      background: var(--bg-card); border: 2px solid var(--green-forest);
+      border-radius: 20px; padding: 2rem; box-shadow: var(--shadow-card);
+      text-align: center;
+    }
+
+    .success-icon { font-size: 4rem; margin-bottom: 1rem; }
+    .success-title {
+      font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 600;
+      color: var(--green-deep); margin-bottom: 0.5rem;
+    }
+    .success-text { color: var(--text-soft); font-size: 0.95rem; margin-bottom: 1.5rem; }
+
+    /* Zoom Link Box */
+    .zoom-link-box {
+      background: var(--green-soft); border-radius: 12px; padding: 1.25rem;
+      text-align: center; margin-bottom: 1.5rem;
+    }
+    .zoom-link-label { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+    .zoom-link-text {
+      font-family: 'Fraunces', serif; font-size: 1.1rem; font-weight: 600;
+      color: var(--green-deep); word-break: break-all;
+    }
+    .zoom-link-note { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem; }
+
+    /* Calendar Buttons */
+    .calendar-section { margin-bottom: 1.5rem; }
+    .calendar-label {
+      font-size: 0.85rem; font-weight: 600; color: var(--text-main);
+      margin-bottom: 0.75rem; text-align: center;
+    }
+    .calendar-buttons { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
+    .cal-btn {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.8rem;
+      font-weight: 500; text-decoration: none; border: 1.5px solid var(--border-soft);
+      color: var(--text-main); background: white; transition: all 0.2s; cursor: pointer;
+    }
+    .cal-btn:hover { border-color: var(--green-forest); background: var(--green-soft); }
+
+    /* Share Section */
+    .share-section {
+      background: var(--bg-warm); border-radius: 12px; padding: 1.25rem;
+      text-align: center;
+    }
+    .share-title {
+      font-family: 'Fraunces', serif; font-size: 1.1rem; font-weight: 600;
+      color: var(--text-deep); margin-bottom: 0.5rem;
+    }
+    .share-subtitle { font-size: 0.85rem; color: var(--text-soft); margin-bottom: 0.75rem; }
+    .share-link-box {
+      display: flex; gap: 0.5rem; margin-bottom: 0.75rem;
+    }
+    .share-link-input {
+      flex: 1; padding: 0.6rem 0.75rem; border: 1.5px solid var(--border-soft);
+      border-radius: 8px; font-size: 0.8rem; font-family: inherit;
+      background: white; color: var(--text-main);
+    }
+    .copy-btn {
+      padding: 0.6rem 1rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600;
+      background: var(--green-forest); color: white; border: none; cursor: pointer;
+      transition: all 0.2s; white-space: nowrap;
+    }
+    .copy-btn:hover { background: var(--green-deep); }
+    .share-buttons { display: flex; gap: 0.5rem; justify-content: center; }
+    .share-btn {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.5rem 0.75rem; border-radius: 8px; font-size: 0.8rem;
+      font-weight: 500; text-decoration: none; border: none;
+      color: white; cursor: pointer; transition: all 0.2s;
+    }
+    .share-btn.whatsapp { background: #25D366; }
+    .share-btn.twitter { background: #1DA1F2; }
+    .share-btn.facebook { background: #1877F2; }
+    .share-btn.email-share { background: var(--text-soft); }
+    .share-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    /* Confirmation Details */
+    .confirm-details {
+      margin-top: 1.5rem; text-align: left;
+      border-top: 1px solid var(--border-soft); padding-top: 1rem;
+    }
+    .confirm-details p {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.85rem; margin-bottom: 0.5rem;
+    }
+    .confirm-details p:last-child { margin-bottom: 0; }
+
+    /* Benefits */
+    .benefits { margin-top: 2.5rem; text-align: center; }
+    .benefits h3 {
+      font-family: 'Fraunces', serif; font-size: 1.1rem; font-weight: 600;
+      color: var(--text-deep); margin-bottom: 1rem;
+    }
+    .benefits-list {
+      list-style: none; text-align: left; max-width: 350px; margin: 0 auto;
+    }
+    .benefits-list li {
+      display: flex; align-items: flex-start; gap: 0.5rem;
+      font-size: 0.9rem; color: var(--text-main); margin-bottom: 0.5rem;
+    }
+    .benefits-list li::before {
+      content: '✓'; color: var(--green-forest); font-weight: 700;
+    }
+
+    /* Upsell - After first call info */
+    .upsell-section {
+      margin-top: 2.5rem; background: var(--bg-warm);
+      border-radius: 16px; padding: 1.5rem; text-align: center;
+    }
+    .upsell-section h3 {
+      font-family: 'Fraunces', serif; font-size: 1.1rem; font-weight: 600;
+      color: var(--text-deep); margin-bottom: 0.5rem;
+    }
+    .upsell-section p {
+      font-size: 0.85rem; color: var(--text-soft); margin-bottom: 1rem;
+    }
+    .upsell-options { display: flex; flex-direction: column; gap: 0.75rem; }
+    .upsell-option {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.75rem; background: white; border-radius: 10px;
+      text-align: left; text-decoration: none; color: inherit;
+      transition: all 0.2s;
+    }
+    .upsell-option:hover { transform: translateX(4px); box-shadow: var(--shadow-soft); }
+    .upsell-emoji { font-size: 1.5rem; }
+    .upsell-info { flex: 1; }
+    .upsell-name { font-weight: 600; font-size: 0.9rem; color: var(--text-deep); }
+    .upsell-desc { font-size: 0.75rem; color: var(--text-soft); }
+    .upsell-price { font-size: 0.8rem; font-weight: 600; color: var(--green-deep); }
+
+    /* Footer */
+    footer {
+      text-align: center; padding: 2rem; font-size: 0.85rem; color: var(--text-muted);
+    }
+    footer a { color: var(--green-forest); text-decoration: none; }
+
+    /* ===== STICKY MOBILE CTA ===== */
+    .sticky-cta {
+      display: none;
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: rgba(253, 251, 247, 0.95);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid var(--border-soft);
+      padding: 0.75rem 1.5rem;
+      z-index: 1000;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+    }
+    .sticky-cta-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      max-width: 500px; margin: 0 auto; gap: 0.75rem;
+    }
+    .sticky-spots {
+      display: flex; align-items: center; gap: 0.35rem;
+      font-size: 0.8rem; font-weight: 600; color: var(--green-deep);
+    }
+    .sticky-spots .spots-dot { width: 6px; height: 6px; }
+    .sticky-btn {
+      background: linear-gradient(135deg, var(--green-forest), var(--green-deep));
+      color: white; padding: 0.6rem 1.25rem; border: none; border-radius: 10px;
+      font-size: 0.9rem; font-weight: 600; cursor: pointer;
+      text-decoration: none; white-space: nowrap;
+    }
+
+    @media (max-width: 768px) {
+      .sticky-cta { display: block; }
+      header { padding: 1rem 1.5rem; }
+      main { padding: 2rem 1.25rem 3rem; }
+    }
+
+    /* Hide sticky when form is in view or after success */
+    .sticky-cta.hidden { display: none !important; }
+
+    /* Full week animation */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-2px); }
+      75% { transform: translateX(2px); }
+    }
+    .spots-text.critical { animation: shake 0.5s ease-in-out; }
+  </style>
+</head>
+<body>
+
+  <div class="page-bg"></div>
+
+  <header>
+    <a href="/" class="logo">
+      <span>🌱</span>
+      <span>Full Potential</span>
+    </a>
+    <a href="/" class="back-link">← Home</a>
+  </header>
+
+  <!-- ===== REGISTRATION VIEW ===== -->
+  <main id="registrationView">
+    <!-- Hero -->
+    <div class="hero">
+      <div class="free-badge">
+        <span>🎁</span>
+        <span>Your First Call is Free</span>
+      </div>
+      <h1>The <span class="highlight">Full Potential Hour</span></h1>
+      <p>100 people. Live on Zoom. Clarity on your next step.</p>
+      <p class="subtext">Listen from your car, your couch, or your desk — just show up.</p>
+    </div>
+
+    <!-- Call Details -->
+    <div class="call-details">
+      <div class="detail">
+        <div class="detail-icon">📅</div>
+        <div class="detail-value">Thursdays</div>
+        <div class="detail-text">5pm PT / 7pm CT / 8pm ET</div>
+      </div>
+      <div class="detail">
+        <div class="detail-icon">⏱️</div>
+        <div class="detail-value">60 min</div>
+        <div class="detail-text">Live on Zoom</div>
+      </div>
+      <div class="detail">
+        <div class="detail-icon">💰</div>
+        <div class="detail-value">Free</div>
+        <div class="detail-text">First time</div>
+      </div>
+      <div class="detail">
+        <div class="detail-icon">🚗</div>
+        <div class="detail-value">Listen In</div>
+        <div class="detail-text">Commute-friendly</div>
+      </div>
+    </div>
+
+    <!-- Registration -->
+    <div class="registration-card" id="registrationCard">
+      <div class="spots-badge" id="spotsBadge">
+        <span class="spots-dot" id="spotsDot"></span>
+        <span class="spots-text" id="spotsText">Loading spots...</span>
+      </div>
+
+      <form class="signup-form" id="signupForm">
+        <div class="form-group">
+          <label class="form-label" for="firstName">First Name</label>
+          <input type="text" id="firstName" name="firstName" class="form-input" placeholder="James" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="email">Email</label>
+          <input type="email" id="email" name="email" class="form-input" placeholder="you@email.com" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="phone">Phone <span class="optional">(for text reminders)</span></label>
+          <input type="tel" id="phone" name="phone" class="form-input" placeholder="+1 (555) 000-0000">
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">
+          Save My Spot →
+        </button>
+
+        <p class="form-note">
+          No credit card. Zoom link sent instantly.
+        </p>
+      </form>
+    </div>
+
+    <!-- What You'll Get -->
+    <div class="benefits">
+      <h3>What Happens on the Call</h3>
+      <ul class="benefits-list">
+        <li>Get clarity on your biggest goal</li>
+        <li>Ask questions and get answers live</li>
+        <li>See AI-powered guidance in action</li>
+        <li>Connect with others on similar paths</li>
+        <li>Leave with your next concrete step</li>
+      </ul>
+    </div>
+
+    <!-- After First Call -->
+    <div class="upsell-section">
+      <h3>After Your Free Call</h3>
+      <p>Love the experience? Continue your journey:</p>
+      <div class="upsell-options">
+        <a href="#" class="upsell-option">
+          <span class="upsell-emoji">🌱</span>
+          <div class="upsell-info">
+            <div class="upsell-name">Weekly Group Coaching</div>
+            <div class="upsell-desc">Weekly calls + AI companion + community</div>
+          </div>
+          <span class="upsell-price">$97/mo</span>
+        </a>
+        <a href="#" class="upsell-option">
+          <span class="upsell-emoji">🔥</span>
+          <div class="upsell-info">
+            <div class="upsell-name">Mastermind</div>
+            <div class="upsell-desc">Monthly small-group sessions (20 max) + async access to James</div>
+          </div>
+          <span class="upsell-price">$497/mo</span>
+        </a>
+        <a href="#" class="upsell-option" style="border: 1.5px solid var(--gold-warm); background: linear-gradient(135deg, #FFFDF5, #FFF9E6);">
+          <span class="upsell-emoji">🌴</span>
+          <div class="upsell-info">
+            <div class="upsell-name">Private Partnership + Retreat</div>
+            <div class="upsell-desc">1-on-1 with James monthly + Zen Village retreat in Costa Rica</div>
+          </div>
+          <span class="upsell-price">$15k/yr · 20 spots</span>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== SUCCESS VIEW (hidden initially) ===== -->
+  <main id="successView" class="success-view" style="max-width:500px; margin:0 auto; padding:3rem 1.5rem 4rem;">
+    <div class="success-card">
+      <div class="success-icon">🎉</div>
+      <h2 class="success-title">You're In, <span id="successName"></span>!</h2>
+      <p class="success-text">Your spot is saved. Here's everything you need:</p>
+
+      <!-- Zoom Link -->
+      <div class="zoom-link-box">
+        <div class="zoom-link-label">YOUR ZOOM LINK</div>
+        <div class="zoom-link-text">Zoom link will be emailed shortly</div>
+        <div class="zoom-link-note">Check your inbox (and spam folder) within 5 minutes</div>
+      </div>
+
+      <!-- Calendar Buttons -->
+      <div class="calendar-section">
+        <div class="calendar-label">📅 Add to your calendar</div>
+        <div class="calendar-buttons">
+          <a class="cal-btn" id="calGoogle" href="#" target="_blank">
+            <span>📆</span> Google
+          </a>
+          <a class="cal-btn" id="calApple" href="#" download="full-potential-hour.ics">
+            <span>🍎</span> Apple
+          </a>
+          <a class="cal-btn" id="calOutlook" href="#" target="_blank">
+            <span>📧</span> Outlook
+          </a>
+        </div>
+      </div>
+
+      <!-- Share Section -->
+      <div class="share-section">
+        <div class="share-title">Know someone who needs this?</div>
+        <div class="share-subtitle">Share your personal link. If 2 friends join, you get priority Q&A!</div>
+        <div class="share-link-box">
+          <input type="text" class="share-link-input" id="shareLink" readonly value="https://fullpotential.com/call">
+          <button class="copy-btn" id="copyBtn" onclick="copyLink()">Copy</button>
+        </div>
+        <div class="share-buttons">
+          <a class="share-btn whatsapp" id="shareWhatsApp" href="#" target="_blank">
+            💬 WhatsApp
+          </a>
+          <a class="share-btn twitter" id="shareTwitter" href="#" target="_blank">
+            🐦 Twitter
+          </a>
+          <a class="share-btn facebook" id="shareFacebook" href="#" target="_blank">
+            📘 Facebook
+          </a>
+          <a class="share-btn email-share" id="shareEmail" href="#">
+            ✉️ Email
+          </a>
+        </div>
+      </div>
+
+      <!-- Confirmation Details -->
+      <div class="confirm-details">
+        <p>📧 Confirmation email sent</p>
+        <p>⏰ You'll get a reminder 24h before</p>
+        <p>📱 Text reminder 1 hour before (if phone provided)</p>
+        <p>🎬 Can't make it? You'll get the recording</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== STICKY MOBILE CTA ===== -->
+  <div class="sticky-cta" id="stickyCta">
+    <div class="sticky-cta-inner">
+      <div class="sticky-spots">
+        <span class="spots-dot" id="stickyDot"></span>
+        <span id="stickySpots">100 spots left</span>
+      </div>
+      <a href="#registrationCard" class="sticky-btn">Save My Spot →</a>
+    </div>
+  </div>
+
+  <footer>
+    Full Potential · A <a href="/whiterock/">WhiteRock</a> Community
+  </footer>
+
+  <script>
+    // ===== CONFIGURATION =====
+    const CALL_DAY = 4; // Thursday (0=Sun)
+    const CALL_HOUR = 17; // 5 PM PT (24h)
+    const CALL_DURATION = 60; // minutes
+    const CALL_TITLE = 'The Full Potential Hour';
+
+    // ===== STATE =====
+    let spotsLeft = 100;
+    let userRefCode = '';
+
+    // ===== REAL SPOT COUNTER =====
+    async function fetchSpots() {
+      try {
+        const res = await fetch('/api/intake/spots');
+        const data = await res.json();
+        spotsLeft = data.spots_left;
+        updateSpotsDisplay();
+      } catch (e) {
+        console.log('Spots fetch failed, using default');
+        updateSpotsDisplay();
+      }
+    }
+
+    function updateSpotsDisplay() {
+      const dot = document.getElementById('spotsDot');
+      const text = document.getElementById('spotsText');
+      const stickyDot = document.getElementById('stickyDot');
+      const stickyText = document.getElementById('stickySpots');
+
+      let className = '';
+      if (spotsLeft <= 10) className = 'critical';
+      else if (spotsLeft <= 30) className = 'urgent';
+
+      dot.className = 'spots-dot ' + className;
+      text.className = 'spots-text ' + className;
+      if (stickyDot) stickyDot.className = 'spots-dot ' + className;
+
+      const label = spotsLeft === 0 ? 'This week is full!' :
+                    `${spotsLeft} spot${spotsLeft !== 1 ? 's' : ''} left this week`;
+      text.textContent = label;
+      if (stickyText) stickyText.textContent = label;
+    }
+
+    // Fetch spots on load and every 30 seconds
+    fetchSpots();
+    setInterval(fetchSpots, 30000);
+
+    // ===== FORM SUBMISSION =====
+    const form = document.getElementById('signupForm');
+    const submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Saving...';
+
+      const ref = new URLSearchParams(window.location.search).get('ref') || '';
+      const formData = {
+        type: 'weekly-call-registration',
+        firstName: document.getElementById('firstName').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        ref: ref,
+        timestamp: new Date().toISOString(),
+        source: 'weekly-call-landing'
+      };
+
+      try {
+        const res = await fetch('/api/intake/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+        const result = await res.json();
+
+        if (result.success) {
+          userRefCode = result.ref_code || '';
+          spotsLeft = result.spots_left || spotsLeft;
+          showSuccess(formData.firstName, formData.email);
+        } else {
+          alert(result.message || 'Registration failed. Please try again.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Save My Spot →';
+        }
+      } catch (error) {
+        console.log('API error, storing locally');
+        // Store locally as backup
+        const regs = JSON.parse(localStorage.getItem('weeklyCallRegistrations') || '[]');
+        regs.push(formData);
+        localStorage.setItem('weeklyCallRegistrations', JSON.stringify(regs));
+        showSuccess(formData.firstName, formData.email);
+      }
+    });
+
+    // ===== SUCCESS VIEW =====
+    function showSuccess(name, email) {
+      document.getElementById('registrationView').style.display = 'none';
+      const sv = document.getElementById('successView');
+      sv.classList.add('show');
+      document.getElementById('successName').textContent = name;
+
+      // Hide sticky CTA
+      document.getElementById('stickyCta').classList.add('hidden');
+
+      // Set up referral link
+      const refLink = `https://fullpotential.com/call?ref=${userRefCode}`;
+      document.getElementById('shareLink').value = refLink;
+
+      // Set up calendar links
+      setupCalendarLinks();
+
+      // Set up share buttons
+      setupShareButtons(refLink);
+
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ===== CALENDAR LINKS =====
+    function setupCalendarLinks() {
+      const now = new Date();
+      // Find next Thursday at 5 PM PT
+      let next = new Date(now);
+      const daysUntil = (CALL_DAY - now.getDay() + 7) % 7;
+      next.setDate(now.getDate() + (daysUntil === 0 && now.getHours() >= CALL_HOUR ? 7 : daysUntil));
+
+      // PT to UTC: +8 hours (PST) or +7 (PDT)
+      // For simplicity, use America/Los_Angeles timezone
+      const year = next.getFullYear();
+      const month = String(next.getMonth() + 1).padStart(2, '0');
+      const day = String(next.getDate()).padStart(2, '0');
+
+      // Google Calendar
+      const gcStart = `${year}${month}${day}T170000`;
+      const gcEnd = `${year}${month}${day}T180000`;
+      const gcUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(CALL_TITLE)}&dates=${gcStart}/${gcEnd}&ctz=America/Los_Angeles&details=${encodeURIComponent('Join the free weekly call: https://fullpotential.com/call\\n\\nZoom link will be emailed before the call.')}&location=Zoom`;
+      document.getElementById('calGoogle').href = gcUrl;
+
+      // Apple Calendar (ICS)
+      const icsContent = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'BEGIN:VEVENT',
+        `DTSTART;TZID=America/Los_Angeles:${year}${month}${day}T170000`,
+        `DTEND;TZID=America/Los_Angeles:${year}${month}${day}T180000`,
+        `SUMMARY:${CALL_TITLE}`,
+        'DESCRIPTION:Join the free weekly call at https://fullpotential.com/call',
+        'LOCATION:Zoom',
+        'END:VEVENT',
+        'END:VCALENDAR'
+      ].join('\n');
+      const blob = new Blob([icsContent], { type: 'text/calendar' });
+      document.getElementById('calApple').href = URL.createObjectURL(blob);
+
+      // Outlook
+      const olUrl = `https://outlook.live.com/calendar/0/deeplink/compose?subject=${encodeURIComponent(CALL_TITLE)}&startdt=${year}-${month}-${day}T17:00:00&enddt=${year}-${month}-${day}T18:00:00&body=${encodeURIComponent('Join: https://fullpotential.com/call')}&location=Zoom`;
+      document.getElementById('calOutlook').href = olUrl;
+    }
+
+    // ===== SHARE BUTTONS =====
+    function setupShareButtons(refLink) {
+      const text = "I just signed up for a free weekly call that helps you unlock your full potential. 100 people, live on Zoom, every Thursday. Grab your spot:";
+
+      document.getElementById('shareWhatsApp').href =
+        `https://wa.me/?text=${encodeURIComponent(text + ' ' + refLink)}`;
+
+      document.getElementById('shareTwitter').href =
+        `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(refLink)}`;
+
+      document.getElementById('shareFacebook').href =
+        `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(refLink)}&quote=${encodeURIComponent(text)}`;
+
+      document.getElementById('shareEmail').href =
+        `mailto:?subject=${encodeURIComponent('You should check this out: The Full Potential Hour')}&body=${encodeURIComponent(text + '\n\n' + refLink)}`;
+    }
+
+    // ===== COPY LINK =====
+    function copyLink() {
+      const input = document.getElementById('shareLink');
+      input.select();
+      navigator.clipboard.writeText(input.value).then(() => {
+        const btn = document.getElementById('copyBtn');
+        btn.textContent = 'Copied!';
+        setTimeout(() => btn.textContent = 'Copy', 2000);
+      });
+    }
+
+    // ===== STICKY CTA VISIBILITY =====
+    const stickyCta = document.getElementById('stickyCta');
+    const regCard = document.getElementById('registrationCard');
+
+    if (regCard && stickyCta) {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (document.getElementById('successView').classList.contains('show')) return;
+          stickyCta.style.display = entry.isIntersecting ? 'none' : 'block';
+        },
+        { threshold: 0.1 }
+      );
+      observer.observe(regCard);
+    }
+
+    // ===== CHECK FOR REFERRAL =====
+    const urlRef = new URLSearchParams(window.location.search).get('ref');
+    if (urlRef) {
+      const badge = document.querySelector('.free-badge span:last-child');
+      if (badge) badge.textContent = 'Your First Call is Free — Invited by a friend!';
+    }
+  </script>
+
+</body>
+</html>
+

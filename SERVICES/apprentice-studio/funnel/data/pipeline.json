@@ -1,0 +1,166 @@
+{
+  "version": 1,
+  "saved_at": "2026-04-29T06:55:06.448731",
+  "candidates": [
+    {
+      "id": "49d9bdbdd19e",
+      "name": "Maya Chen",
+      "email": "maya.chen@example.com",
+      "stage": "screened",
+      "source": "inbound",
+      "application": {
+        "location": "Austin, TX",
+        "availability": "Yes \u2014 full-time, ready immediately.",
+        "shipped_thing": "https://github.com/mayac/quietnotes \u2014 a journaling app I shipped in 2025. Around 200 daily users. Built solo. Taught me that the writing prompt matters more than the AI behind it.",
+        "ai_workflow": "Cursor + Claude Sonnet for code, occasionally Opus for architecture. I keep a tools.md per project where I track which prompts worked. Local Ollama for stuff I want offline.",
+        "ai_collaborator_story": "On Quietnotes, I was stuck on how to handle journaling streaks without making them feel like a guilt-trip metric. I had a 90-minute conversation with Claude where I argued *against* my own design and it pushed back on me until I landed on a 'witnessed days' frame instead of a streak. The product is better for it. AI was a sparring partner, not a code monkey.",
+        "what_to_build": "An AI agent that runs co-op governance \u2014 meeting facilitation, conflict surfacing, decision tracking \u2014 for small worker-owned businesses.",
+        "lens_fit": "Regenerative + sovereignty. Co-ops keep wealth in the community and give workers agency. AI usually helps capital concentrate; this would do the opposite. The third lens (consciousness) shows up in the conflict-surfacing piece \u2014 making invisible group dynamics visible to the group.",
+        "why_this": "Because I want to spend my next 10 weeks building something I actually believe in, with people who think AI should make humans more, not less. I'm tired of building productivity tools for venture-scale loneliness.",
+        "equity_ok": "Yes",
+        "other": ""
+      },
+      "screening_score": 0.925,
+      "screening_rationale": "shipped: links + production language | ai-native: meaningful AI usage (3 hints) | mission: explicit alignment (5 hints) | clarity: tight, answers the question | availability: clean yes",
+      "challenge_score": null,
+      "challenge_rationale": "",
+      "interview_score": null,
+      "interview_rationale": "",
+      "flags": [],
+      "strengths": [
+        "Shipped Thing",
+        "Mission Fit",
+        "Clarity",
+        "Availability"
+      ],
+      "concerns": [],
+      "history": [
+        {
+          "timestamp": "2026-04-29T06:55:06.412435",
+          "stage_from": "applied",
+          "stage_to": "applied",
+          "decision": "advance",
+          "by": "intake",
+          "note": "Inbound application received"
+        },
+        {
+          "timestamp": "2026-04-29T06:55:06.448673",
+          "stage_from": "applied",
+          "stage_to": "screened",
+          "decision": null,
+          "by": "screener",
+          "note": "Screening score: 0.93"
+        }
+      ],
+      "created_at": "2026-04-29T06:55:06.412270",
+      "last_updated": "2026-04-29T06:55:06.448673"
+    },
+    {
+      "id": "81e1395a54db",
+      "name": "Devin Rao",
+      "email": "devin@hyperscale.dev",
+      "stage": "screened",
+      "source": "inbound",
+      "application": {
+        "location": "Bay Area",
+        "availability": "Yes",
+        "shipped_thing": "Multiple SaaS products at scale. Most recent: SignalRouter, an AI inbox triage tool. Tens of thousands of users. Sold in 2024.",
+        "ai_workflow": "Cursor heavily. Claude. GPT-5 for hard reasoning. I've automated most of my dev workflow with agents.",
+        "ai_collaborator_story": "I 10x'd my output by automating everything that wasn't strategic thinking. AI handles 90% of my code now. I just direct it.",
+        "what_to_build": "An agent platform that lets anyone replace their team with AI. Massive TAM. I've been thinking about it for months.",
+        "lens_fit": "Regenerative \u2014 it would make small businesses radically more efficient. Sovereignty \u2014 users own their agents.",
+        "why_this": "I want to build the next big thing in AI agents and your studio gives me a fast lane.",
+        "equity_ok": "yes",
+        "other": "I'd want to talk about scaling this beyond 10 weeks \u2014 I see a unicorn opportunity."
+      },
+      "screening_score": 0.79,
+      "screening_rationale": "shipped: long description, no concrete evidence | ai-native: rich tool vocabulary (5 hints) | mission: explicit alignment (3 hints) | clarity: tight, answers the question | availability: clean yes",
+      "challenge_score": null,
+      "challenge_rationale": "",
+      "interview_score": null,
+      "interview_rationale": "",
+      "flags": [],
+      "strengths": [
+        "Ai Native",
+        "Mission Fit",
+        "Clarity",
+        "Availability"
+      ],
+      "concerns": [
+        "Shipped Thing"
+      ],
+      "history": [
+        {
+          "timestamp": "2026-04-29T06:55:06.412580",
+          "stage_from": "applied",
+          "stage_to": "applied",
+          "decision": "advance",
+          "by": "intake",
+          "note": "Inbound application received"
+        },
+        {
+          "timestamp": "2026-04-29T06:55:06.448700",
+          "stage_from": "applied",
+          "stage_to": "screened",
+          "decision": null,
+          "by": "screener",
+          "note": "Screening score: 0.79"
+        }
+      ],
+      "created_at": "2026-04-29T06:55:06.412577",
+      "last_updated": "2026-04-29T06:55:06.448700"
+    },
+    {
+      "id": "d2817acb019f",
+      "name": "Sage Whitman",
+      "email": "sage@earthsystems.coop",
+      "stage": "screened",
+      "source": "inbound",
+      "application": {
+        "location": "Boulder, CO",
+        "availability": "Conditional \u2014 I have a part-time consulting commitment 8 hrs/week that I cannot break, but the other 32 hrs are yours.",
+        "shipped_thing": "https://earthsystems.coop/dashboard \u2014 climate-data dashboard for regenerative agriculture co-ops in the Rocky Mountain west. About 15 farms use it weekly. Open source: github.com/earthsys/dashboard.",
+        "ai_workflow": "Pretty light. I use ChatGPT for first drafts and Claude for thinking through hard design decisions. I'm not deeply AI-native yet \u2014 that's part of why I'm applying. I want to get fluent with AI as a co-builder, not as a tool.",
+        "ai_collaborator_story": "Honest answer: I haven't yet had the experience your prompt is asking about. I've used AI to write code faster, but I haven't experienced it as a collaborator in the way the studio describes. I'd like to learn that.",
+        "what_to_build": "An AI watershed steward \u2014 pulls in real-time water/soil/biodiversity data for a watershed, surfaces what humans should pay attention to, drafts the governance decisions for co-op members to vote on. Tools that help humans steward land at the scale of a watershed instead of a parcel.",
+        "lens_fit": "Regenerative is the obvious one \u2014 direct ecological work. Sovereignty fits because data stays with the watershed community. Consciousness fits in the deepest sense: it's about expanding human attention to the non-human world.",
+        "why_this": "I run a small co-op. We have land work to do. AI could 10x our capacity if we knew how to wield it. I want to come back from the studio with the fluency to do that, and a tool that other co-ops can use.",
+        "equity_ok": "yes \u2014 though I'd want to discuss how the IP works if the tool ends up being shared across our co-op network",
+        "other": "I'm older than most applicants probably (39). Been building tech in service of regenerative work for 12 years. If that's a fit issue, just tell me."
+      },
+      "screening_score": 0.865,
+      "screening_rationale": "shipped: links + production language | ai-native: meaningful AI usage (2 hints) | mission: explicit alignment (6 hints) | clarity: tight, answers the question | availability: conditional",
+      "challenge_score": null,
+      "challenge_rationale": "",
+      "interview_score": null,
+      "interview_rationale": "",
+      "flags": [],
+      "strengths": [
+        "Shipped Thing",
+        "Mission Fit",
+        "Clarity"
+      ],
+      "concerns": [],
+      "history": [
+        {
+          "timestamp": "2026-04-29T06:55:06.412738",
+          "stage_from": "applied",
+          "stage_to": "applied",
+          "decision": "advance",
+          "by": "intake",
+          "note": "Inbound application received"
+        },
+        {
+          "timestamp": "2026-04-29T06:55:06.448727",
+          "stage_from": "applied",
+          "stage_to": "screened",
+          "decision": null,
+          "by": "screener",
+          "note": "Screening score: 0.86"
+        }
+      ],
+      "created_at": "2026-04-29T06:55:06.412736",
+      "last_updated": "2026-04-29T06:55:06.448727"
+    }
+  ]
+}

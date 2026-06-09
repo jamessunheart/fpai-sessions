@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accounting · Receipts · Zen Village</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@300..700&family=Manrope:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4ECDC;--bg-soft:#ECE1CB;--ink:#1F1A14;--ink-soft:#4A3F32;
+  --moss:#3A4A2E;--clay:#B8553A;--gold:#C8924B;--rule:#2A2018;
+  --serif:'Fraunces',Georgia,serif;--sans:'Manrope',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:var(--sans);line-height:1.5}
+.page{max-width:1400px;margin:0 auto;padding:28px 22px 80px}
+header{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+h1{font-family:var(--serif);font-weight:300;font-size:34px;letter-spacing:-.01em}
+h1 em{font-style:italic;color:var(--moss)}
+.lead{color:var(--ink-soft);font-size:14px}
+.badge{display:inline-block;background:var(--ink);color:var(--bg);font-size:10px;letter-spacing:.18em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
+
+button,select,input{font-family:var(--sans)}
+button{font-weight:600;padding:9px 16px;border:1px solid var(--rule);background:var(--ink);color:var(--bg);border-radius:999px;cursor:pointer;font-size:13px}
+button.ghost{background:transparent;color:var(--ink)}
+button.moss{background:var(--moss);border-color:var(--moss)}
+button.clay{background:var(--clay);border-color:var(--clay)}
+button:disabled{opacity:.5;cursor:not-allowed}
+
+.token-row{display:none;gap:10px;margin-bottom:16px;align-items:center;background:var(--bg-soft);padding:12px 16px;border-radius:12px}
+.token-row.show{display:flex}
+.token-row input{flex:1;padding:10px 14px;border:1px solid var(--rule);border-radius:8px;background:transparent}
+
+.filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;background:var(--bg-soft);padding:14px;border-radius:12px;margin-bottom:14px}
+.filters label{display:flex;flex-direction:column;gap:4px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+.filters input,.filters select{padding:8px 10px;border:1px solid var(--rule);border-radius:8px;background:#fff;font-size:13px}
+.filters .actions{display:flex;align-items:flex-end;gap:8px}
+
+.totals{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:18px}
+.kpi{background:#fff;border:1px solid rgba(42,32,24,.18);border-radius:12px;padding:14px}
+.kpi .label{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft)}
+.kpi .value{font-family:var(--serif);font-size:24px;font-weight:400;margin-top:4px}
+.kpi .sub{font-size:12px;color:var(--ink-soft);margin-top:2px}
+
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;border:1px solid rgba(42,32,24,.18)}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid rgba(42,32,24,.08);font-size:13px;vertical-align:top}
+th{background:var(--bg-soft);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft);position:sticky;top:0;z-index:2}
+tr:last-child td{border-bottom:none}
+tr.has-photo{background:rgba(58,74,46,.04)}
+
+.thumb{width:64px;height:64px;object-fit:cover;border-radius:8px;cursor:pointer;border:1px solid rgba(42,32,24,.15)}
+.thumb-placeholder{width:64px;height:64px;border-radius:8px;background:var(--bg-soft);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--ink-soft);border:1px solid rgba(42,32,24,.15);text-align:center;padding:4px}
+.amt{font-variant-numeric:tabular-nums;font-weight:600}
+.amt.in{color:var(--moss)}
+.amt.out{color:var(--clay)}
+.amt.unk{color:var(--ink-soft)}
+.method{font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:2px 6px;border-radius:6px;background:var(--bg-soft);color:var(--ink-soft);display:inline-block;margin-top:3px;white-space:nowrap}
+.method.caption{background:var(--moss);color:#fff}
+.method.llm{background:var(--gold);color:#1F1A14}
+.method.ocr_keyword{background:#7A8B5E;color:#fff}
+.method.regex_fallback{background:var(--clay);color:#fff;opacity:.7}
+.method.none{opacity:.5}
+.vendor{font-weight:600;color:var(--ink)}
+.note{max-width:340px;white-space:pre-wrap;word-break:break-word;color:var(--ink)}
+.btn-reparse{font-size:10px;padding:4px 10px;background:transparent;color:var(--ink);border:1px solid var(--rule);border-radius:6px;cursor:pointer;font-weight:500}
+.btn-reparse:hover{background:var(--ink);color:var(--bg)}
+.btn-reparse.spinning{opacity:.5;pointer-events:none}
+.who{font-weight:600}
+.muted{color:var(--ink-soft);font-size:11px}
+.id{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:var(--ink-soft)}
+
+.empty{text-align:center;padding:60px 20px;color:var(--ink-soft);background:#fff;border-radius:12px;border:1px solid rgba(42,32,24,.12)}
+.loader-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--moss);margin-right:8px;animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
+.banner{padding:14px 16px;border-radius:12px;margin-bottom:14px;background:#fff;border-left:4px solid var(--clay);font-size:13px}
+.banner.ok{border-left-color:var(--moss)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 22px;border-radius:999px;font-size:13px;opacity:0;transition:opacity .2s;z-index:99}
+.toast.show{opacity:1}
+
+.lightbox{position:fixed;inset:0;background:rgba(20,16,10,.92);display:none;align-items:center;justify-content:center;z-index:100;padding:30px;cursor:zoom-out}
+.lightbox.show{display:flex}
+.lightbox img,.lightbox iframe{max-width:90vw;max-height:90vh;border-radius:8px;background:#fff}
+.lightbox iframe{width:90vw;height:90vh}
+.lightbox .close{position:absolute;top:20px;right:24px;color:#fff;font-size:14px;background:rgba(255,255,255,.1);border-color:transparent}
+
+/* Edit modal */
+.modal{position:fixed;inset:0;background:rgba(20,16,10,.6);display:none;align-items:center;justify-content:center;z-index:120;padding:20px}
+.modal.show{display:flex}
+.modal-card{background:var(--bg);border-radius:14px;width:100%;max-width:560px;max-height:90vh;overflow:auto;border:1px solid rgba(42,32,24,.2);box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.modal-head{padding:18px 22px;border-bottom:1px solid rgba(42,32,24,.1);display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.modal-head h3{font-family:var(--serif);font-weight:300;font-size:22px;margin:0}
+.modal-head .muted{font-size:11px;margin-top:2px}
+.modal-body{padding:18px 22px;display:flex;flex-direction:column;gap:14px}
+.modal-row{display:flex;gap:10px;align-items:flex-start}
+.modal-photo{width:120px;height:120px;object-fit:cover;border-radius:8px;border:1px solid rgba(42,32,24,.15);cursor:zoom-in;flex-shrink:0}
+.modal-fields{flex:1;display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.modal-fields label{display:flex;flex-direction:column;gap:4px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+.modal-fields label.full{grid-column:1 / -1}
+.modal-fields input,.modal-fields select,.modal-fields textarea{padding:9px 11px;border:1px solid var(--rule);border-radius:8px;background:#fff;font-size:14px;font-family:var(--sans)}
+.modal-fields textarea{min-height:60px;resize:vertical}
+.modal-meta{font-size:11px;color:var(--ink-soft);background:var(--bg-soft);padding:10px 12px;border-radius:8px;line-height:1.5}
+.modal-meta .label{font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-size:9px;color:var(--ink-soft)}
+.modal-foot{padding:14px 22px 18px;border-top:1px solid rgba(42,32,24,.1);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.modal-foot .left,.modal-foot .right{display:flex;gap:8px}
+.role-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;background:var(--bg-soft);color:var(--ink-soft);border:1px solid rgba(42,32,24,.18)}
+.role-badge.admin{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.role-badge.submitter{background:var(--moss);color:#fff;border-color:var(--moss)}
+.row-highlight{outline:2px solid var(--gold);outline-offset:-2px;background:#FFF7D6 !important}
+@keyframes flash {0%{background:#FFF7D6}100%{background:transparent}}
+.row-flash{animation:flash 2s ease-out}
+
+@media (max-width:720px){
+  .filters{grid-template-columns:repeat(2,1fr)}
+  .note{max-width:none}
+  .thumb,.thumb-placeholder{width:48px;height:48px}
+  th,td{padding:8px 8px;font-size:12px}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <div>
+      <h1>Accounting · <em>Receipts</em></h1>
+      <p class="lead">Everything captured by <code>@zenvillagebot</code>'s <code>/receipt</code> lane. <span class="role-badge" id="viewer-badge">Loading…</span></p>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="ghost" id="btn-csv">Export CSV</button>
+      <button class="moss" id="btn-refresh">Refresh</button>
+    </div>
+  </header>
+
+  <div id="auth-banner" class="banner" style="display:none"></div>
+
+  <div class="token-row" id="token-row">
+    <input id="token" type="password" placeholder="X-Admin-Token (only needed if not behind nginx basic-auth)" autocomplete="off">
+    <button id="save-token" class="ghost">Save</button>
+  </div>
+
+  <div class="filters">
+    <label>Month
+      <select id="f-month"><option value="">All months</option></select>
+    </label>
+    <label>Who
+      <input id="f-who" placeholder="halley, sunheart, …">
+    </label>
+    <label>Search
+      <input id="f-q" placeholder="vendor, note, id…">
+    </label>
+    <label>Has photo
+      <select id="f-photo">
+        <option value="">Any</option>
+        <option value="true">Photo only</option>
+        <option value="false">Text only</option>
+      </select>
+    </label>
+    <label>Parsed amount
+      <select id="f-amount">
+        <option value="">Any</option>
+        <option value="true">With amount</option>
+        <option value="false">No amount</option>
+      </select>
+    </label>
+    <label>Limit
+      <select id="f-limit">
+        <option>100</option>
+        <option selected>500</option>
+        <option>1000</option>
+        <option>5000</option>
+      </select>
+    </label>
+    <div class="actions">
+      <button id="btn-apply">Apply</button>
+      <button id="btn-clear" class="ghost">Clear</button>
+    </div>
+  </div>
+
+  <div class="totals" id="totals"></div>
+
+  <div id="table-wrap"></div>
+</div>
+
+<div class="lightbox" id="lightbox"><button class="close" id="lb-close">Close ×</button><div id="lb-content"></div></div>
+
+<!-- Edit modal -->
+<div class="modal" id="edit-modal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div>
+        <h3>Edit receipt</h3>
+        <div class="muted" id="edit-id"></div>
+      </div>
+      <button class="ghost" id="edit-close">Close ×</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-row">
+        <img id="edit-photo" class="modal-photo" alt="receipt">
+        <div class="modal-fields">
+          <label>Vendor
+            <input type="text" id="edit-vendor" placeholder="e.g. Pequeño Mundo">
+          </label>
+          <label>Date
+            <input type="date" id="edit-date">
+          </label>
+          <label>Amount
+            <input type="number" step="0.01" id="edit-amount" placeholder="e.g. 23500.00">
+          </label>
+          <label>Currency
+            <select id="edit-currency">
+              <option value="">— keep —</option>
+              <option value="CRC">CRC (₡ colones)</option>
+              <option value="USD">USD ($ dollars)</option>
+              <option value="UNK">UNK (not sure)</option>
+            </select>
+          </label>
+          <label>Type
+            <select id="edit-intake-kind">
+              <option value="">— keep —</option>
+              <option value="receipt">Receipt</option>
+              <option value="proforma">Proforma</option>
+              <option value="expense">Expense (no receipt)</option>
+              <option value="income">Income</option>
+              <option value="note">Note</option>
+            </select>
+          </label>
+          <label class="full">Note
+            <textarea id="edit-note" placeholder="What was this for? (optional)"></textarea>
+          </label>
+          <label class="full">Comment about this edit (optional)
+            <input type="text" id="edit-comment" placeholder="Why are you changing this? Visible in audit log.">
+          </label>
+        </div>
+      </div>
+      <div class="modal-meta" id="edit-meta"></div>
+    </div>
+    <div class="modal-foot">
+      <div class="left">
+        <button class="ghost" id="edit-rerun-ai" title="Re-run the AI parser on this receipt">↻ Re-run AI</button>
+        <button class="ghost" id="edit-hide" style="display:none;color:var(--clay)" title="Hide this from totals (admin only — soft delete)">Hide (admin)</button>
+      </div>
+      <div class="right">
+        <button class="ghost" id="edit-cancel">Cancel</button>
+        <button class="moss" id="edit-save">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const API = "/api/admin/receipts";
+const TOKEN_KEY = "zv_acct_admin_token";
+const $ = s => document.querySelector(s);
+
+let rowsById = {};
+let viewerCtx = {user: "?", is_admin: false};
+let deepLinkId = (new URLSearchParams(location.search).get("id") || "").trim() || null;
+
+function token(){ return localStorage.getItem(TOKEN_KEY) || ""; }
+function setToken(v){ if(v){ localStorage.setItem(TOKEN_KEY,v); } else { localStorage.removeItem(TOKEN_KEY); } }
+
+function toast(msg, ms=2200){
+  const t = $("#toast"); t.textContent = msg; t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), ms);
+}
+
+function authHeaders(){
+  // Behind nginx basic-auth, nginx injects the X-Admin-Token. If running
+  // without nginx (direct preview, dev), allow manual token paste.
+  const t = token();
+  return t ? {"X-Admin-Token": t} : {};
+}
+
+function showAuthIssue(detail){
+  const b = $("#auth-banner");
+  b.style.display = "block";
+  b.classList.remove("ok");
+  b.innerHTML = "<strong>Auth required.</strong> " + detail +
+    "<br><span class=muted>If you're hitting this through the password-protected subdomain, this should not appear. Otherwise paste your X-Admin-Token below.</span>";
+  $("#token-row").classList.add("show");
+}
+
+function clearAuthIssue(){
+  $("#auth-banner").style.display = "none";
+  $("#token-row").classList.remove("show");
+}
+
+function fmtMoney(v, cur){
+  if (v == null || v === "") return "—";
+  return (cur||"") + " " + Number(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+function fmtDate(iso){
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (isNaN(d)) return iso;
+  return d.toISOString().slice(0,16).replace("T"," ") + "Z";
+}
+
+function paramsFromForm(){
+  const p = new URLSearchParams();
+  const m = $("#f-month").value; if (m) p.set("months", m);
+  const w = $("#f-who").value.trim(); if (w) p.set("who", w);
+  const q = $("#f-q").value.trim(); if (q) p.set("q", q);
+  const ph = $("#f-photo").value; if (ph) p.set("has_photo", ph);
+  const am = $("#f-amount").value; if (am) p.set("has_amount", am);
+  const lim = $("#f-limit").value; if (lim) p.set("limit", lim);
+  return p;
+}
+
+async function apiGet(path){
+  const r = await fetch(path, {headers: authHeaders(), credentials: "same-origin"});
+  if (r.status === 401){ showAuthIssue("Token rejected (401)."); throw new Error("401"); }
+  if (r.status === 503){ showAuthIssue("Server has no admin token configured (503)."); throw new Error("503"); }
+  if (!r.ok) throw new Error("HTTP "+r.status);
+  return await r.json();
+}
+
+function renderTotals(t){
+  const wrap = $("#totals");
+  if (!t || !t.count){
+    wrap.innerHTML = `<div class="kpi"><div class="label">Total receipts</div><div class="value">0</div></div>`;
+    return;
+  }
+  let html = "";
+  html += `<div class="kpi"><div class="label">Total receipts</div><div class="value">${t.count}</div><div class="sub">${t.photo_count} photo${t.photo_count===1?"":"s"} · ${t.parsed_count} with amount</div></div>`;
+  for (const [cur, flow] of Object.entries(t.by_currency || {})){
+    const inv = flow["in"]||0, outv = flow["out"]||0, unkv = flow["unknown"]||0;
+    html += `<div class="kpi"><div class="label">${cur}</div>`;
+    if (outv>0) html += `<div class="value amt out">- ${outv.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</div><div class="sub">expenses</div>`;
+    if (inv>0)  html += `<div class="value amt in">+ ${inv.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</div><div class="sub">income</div>`;
+    if (unkv>0) html += `<div class="value amt unk">${unkv.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</div><div class="sub">flow not detected</div>`;
+    if (outv===0 && inv===0 && unkv===0) html += `<div class="value">—</div>`;
+    html += `</div>`;
+  }
+  wrap.innerHTML = html;
+}
+
+function escapeHtml(s){ return (s||"").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c])); }
+
+function renderRows(rows){
+  const wrap = $("#table-wrap");
+  if (!rows.length){
+    wrap.innerHTML = `<div class="empty">No receipts match these filters yet.<br><span class=muted>If you expected entries, check that <code>/authorize_accounting</code> ran for the user and they sent at least one <code>/acct</code> message.</span></div>`;
+    return;
+  }
+  const head = `<thead><tr>
+    <th>When</th><th>Who</th><th>Vendor / Note</th><th>Amount</th><th>File</th><th></th>
+  </tr></thead>`;
+  const body = rows.map(r => {
+    const photo = r.kind === "photo";
+    const fileCell = r.has_file
+      ? (photo
+          ? `<img class="thumb" src="${API}/file/${encodeURIComponent(r.id)}" alt="receipt" data-lb-id="${r.id}" data-lb-kind="photo">`
+          : `<div class="thumb-placeholder" data-lb-id="${r.id}" data-lb-kind="${escapeHtml(r.kind)}">${escapeHtml(r.file_name||r.kind)}</div>`)
+      : `<span class=muted>—</span>`;
+    const amtCls = r.flow === "in" ? "amt in" : r.flow === "out" ? "amt out" : "amt unk";
+    const method = r.parse_method || "none";
+    const conf = (r.parse_confidence != null) ? ` · ${Math.round(r.parse_confidence*100)}%` : "";
+    const methodLabel = {
+      caption: "from caption",
+      llm: "AI extracted",
+      ocr_keyword: "OCR keyword",
+      regex_fallback: "rough guess",
+      none: "no amount",
+      sidecar: "parsed",
+    }[method] || method;
+    const amt = r.amount != null
+      ? `<span class="${amtCls}">${fmtMoney(r.amount, r.currency)}</span><br><span class="method ${escapeHtml(method)}">${escapeHtml(methodLabel)}${conf}</span>`
+      : `<span class=muted>—</span><br><span class="method none">no amount</span>`;
+    const vendorLine = r.vendor
+      ? `<div class="vendor">${escapeHtml(r.vendor)}</div><div class="note muted" style="font-size:11px">${escapeHtml(r.note||"")}</div>`
+      : `<div class="note">${escapeHtml(r.note||"")}</div>`;
+    return `<tr class="${photo?"has-photo":""}">
+      <td><div>${escapeHtml(fmtDate(r.timestamp))}</div><div class="muted" style="font-size:10px">${escapeHtml(r.id||"")}</div></td>
+      <td><div class="who">${escapeHtml(r.user_name||"—")}</div><div class="muted">@${escapeHtml(r.username||"")}</div></td>
+      <td>${vendorLine}</td>
+      <td>${amt}</td>
+      <td>${fileCell}</td>
+      <td><button class="btn-reparse" data-edit-id="${r.id}" title="Edit this receipt">Edit ✎</button></td>
+    </tr>`;
+  }).join("");
+  wrap.innerHTML = `<table>${head}<tbody>${body}</tbody></table>`;
+
+  // Stash row data for the modal — keyed by id, latest fetch wins.
+  rowsById = {};
+  rows.forEach(r => { rowsById[r.id] = r; });
+
+  wrap.querySelectorAll("[data-lb-id]").forEach(el => {
+    el.addEventListener("click", () => openLightbox(el.dataset.lbId, el.dataset.lbKind));
+  });
+
+  wrap.querySelectorAll("[data-edit-id]").forEach(btn => {
+    btn.addEventListener("click", () => openEditModal(btn.dataset.editId));
+  });
+
+  // Deep-link from Telegram: /accounting/?id=rcpt_...
+  if (deepLinkId && rowsById[deepLinkId]) {
+    const target = wrap.querySelector(`[data-edit-id="${deepLinkId}"]`)?.closest("tr");
+    if (target) {
+      target.classList.add("row-flash");
+      target.scrollIntoView({behavior: "smooth", block: "center"});
+      setTimeout(() => openEditModal(deepLinkId), 600);
+      deepLinkId = null;  // only fire once
+    }
+  }
+}
+
+async function reparseFromModal(){
+  const id = $("#edit-id").dataset.id;
+  if (!id) return;
+  const btn = $("#edit-rerun-ai");
+  btn.disabled = true; btn.textContent = "Running AI…";
+  try {
+    const r = await fetch(`${API}/reparse/${encodeURIComponent(id)}`, {
+      method: "POST", headers: authHeaders(), credentials: "same-origin",
+    });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const data = await r.json();
+    const p = data.parsed || {};
+    if (p.amount != null) {
+      $("#edit-amount").value = p.amount;
+      if (p.currency) $("#edit-currency").value = p.currency;
+      if (p.vendor) $("#edit-vendor").value = p.vendor;
+      if (p.date) $("#edit-date").value = p.date;
+      toast(`AI: ${p.currency||""} ${p.amount} (${Math.round((p.confidence||0)*100)}% confident) — review then save`);
+    } else {
+      toast("AI couldn't find an amount on this one");
+    }
+  } catch(e){ toast("AI run failed: " + e.message); }
+  finally { btn.disabled = false; btn.textContent = "↻ Re-run AI"; }
+}
+
+function openEditModal(id){
+  const r = rowsById[id];
+  if (!r) return;
+  $("#edit-id").textContent = id + (r.timestamp ? " · " + fmtDate(r.timestamp) : "");
+  $("#edit-id").dataset.id = id;
+  if (r.has_file && r.kind === "photo") {
+    fetch(`${API}/file/${encodeURIComponent(id)}`, {headers: authHeaders(), credentials: "same-origin"})
+      .then(resp => resp.ok ? resp.blob() : null)
+      .then(blob => {
+        if (blob) {
+          $("#edit-photo").src = URL.createObjectURL(blob);
+          $("#edit-photo").style.display = "block";
+        }
+      });
+    $("#edit-photo").onclick = () => openLightbox(id, "photo");
+  } else {
+    $("#edit-photo").style.display = "none";
+  }
+  $("#edit-vendor").value = r.vendor || "";
+  $("#edit-date").value = r.parsed_date || "";
+  $("#edit-amount").value = r.amount != null ? r.amount : "";
+  $("#edit-currency").value = r.currency || "";
+  $("#edit-intake-kind").value = r.intake_kind || "";
+  $("#edit-note").value = r.note || "";
+  $("#edit-comment").value = "";
+  let metaHtml = `<span class="label">Submitted by:</span> ${escapeHtml(r.user_name||r.username||"—")}`;
+  if (r.parse_method) metaHtml += ` · <span class="label">Parsed via:</span> ${escapeHtml(r.parse_method)} (${Math.round((r.parse_confidence||0)*100)}%)`;
+  if (r.edited_by) metaHtml += `<br><span class="label">Last edit:</span> ${escapeHtml(r.edited_by)} on ${escapeHtml(fmtDate(r.edited_at||""))}`;
+  $("#edit-meta").innerHTML = metaHtml;
+  $("#edit-hide").style.display = viewerCtx.is_admin ? "inline-block" : "none";
+  $("#edit-modal").classList.add("show");
+}
+
+function closeEditModal(){ $("#edit-modal").classList.remove("show"); }
+
+async function saveEdit(extraFields){
+  const id = $("#edit-id").dataset.id;
+  if (!id) return;
+  const fields = Object.assign({
+    vendor: $("#edit-vendor").value.trim(),
+    date:   $("#edit-date").value || null,
+    amount: $("#edit-amount").value === "" ? null : Number($("#edit-amount").value),
+    currency: $("#edit-currency").value || null,
+    intake_kind: $("#edit-intake-kind").value || null,
+    note: $("#edit-note").value.trim(),
+  }, extraFields || {});
+  const comment = $("#edit-comment").value.trim();
+
+  // Strip "no change" entries (empty currency / intake_kind / null date).
+  Object.keys(fields).forEach(k => {
+    if (fields[k] === null && k !== "amount") delete fields[k];
+    if (fields[k] === "" && (k === "currency" || k === "intake_kind")) delete fields[k];
+  });
+
+  const btn = $("#edit-save");
+  btn.disabled = true; btn.textContent = "Saving…";
+  try {
+    const body = JSON.stringify({...fields, comment});
+    const r = await fetch(`${API}/edit/${encodeURIComponent(id)}`, {
+      method: "POST",
+      headers: {...authHeaders(), "Content-Type": "application/json"},
+      credentials: "same-origin",
+      body,
+    });
+    if (!r.ok){
+      const txt = await r.text();
+      throw new Error(`HTTP ${r.status}: ${txt}`);
+    }
+    closeEditModal();
+    toast("Saved ✓");
+    await load();
+  } catch(e){ toast("Save failed: " + e.message); }
+  finally { btn.disabled = false; btn.textContent = "Save changes"; }
+}
+
+async function openLightbox(id, kind){
+  const lb = $("#lightbox"); const c = $("#lb-content");
+  // Authenticated fetch as blob, then create object URL — keeps the X-Admin-Token header.
+  try {
+    const r = await fetch(`${API}/file/${encodeURIComponent(id)}`, {headers: authHeaders(), credentials: "same-origin"});
+    if (!r.ok) throw new Error("HTTP "+r.status);
+    const blob = await r.blob();
+    const url = URL.createObjectURL(blob);
+    if (kind === "photo" || (blob.type||"").startsWith("image/")){
+      c.innerHTML = `<img src="${url}" alt="receipt">`;
+    } else {
+      c.innerHTML = `<iframe src="${url}" title="receipt"></iframe>`;
+    }
+    lb.classList.add("show");
+  } catch(e){
+    toast("Could not open file: "+e.message);
+  }
+}
+$("#lightbox").addEventListener("click", e => { if (e.target.id==="lightbox" || e.target.id==="lb-close") $("#lightbox").classList.remove("show"); });
+
+async function loadMonths(){
+  try {
+    const meta = await apiGet(API + "/_meta");
+    const sel = $("#f-month");
+    sel.innerHTML = `<option value="">All months</option>` +
+      (meta.available_months||[]).map(m => `<option value="${m}">${m}</option>`).join("");
+    if (!meta.accounting_root_exists){
+      const b = $("#auth-banner");
+      b.style.display = "block";
+      b.classList.remove("ok");
+      b.innerHTML = `<strong>Heads-up:</strong> the accounting vault directory <code>${escapeHtml(meta.accounting_root)}</code> does not exist on this host yet. No receipts will appear until the bot writes its first one.`;
+    }
+  } catch(_){ /* auth issue already surfaced */ }
+}
+
+function renderViewerBadge(){
+  const b = $("#viewer-badge");
+  if (viewerCtx.is_admin){
+    b.className = "role-badge admin";
+    b.textContent = `admin · ${viewerCtx.user}`;
+  } else {
+    b.className = "role-badge submitter";
+    b.textContent = `submitter · ${viewerCtx.user}`;
+  }
+}
+
+async function load(){
+  $("#btn-refresh").disabled = true;
+  // Show a clear loading state so users don't think the page is empty.
+  const wrap = $("#table-wrap");
+  if (!wrap.querySelector("table")){
+    wrap.innerHTML = `<div class="empty"><div class="loader-dot"></div> Loading your receipts…</div>`;
+  }
+  try {
+    const data = await apiGet(API + "?" + paramsFromForm().toString());
+    clearAuthIssue();
+    if (data.viewer){ viewerCtx = data.viewer; renderViewerBadge(); }
+    renderTotals(data.totals);
+    renderRows(data.rows||[]);
+    if ((data.rows||[]).length === data.totals.count && data.totals.count >= +$("#f-limit").value){
+      toast(`Showing ${data.totals.count} (limit hit — increase the Limit filter)`);
+    }
+  } catch(err){
+    renderTotals(null);
+    wrap.innerHTML = `<div class="empty" style="color:var(--clay)">
+      Couldn't load receipts: ${escapeHtml(err.message || "unknown error")}<br>
+      <span class="muted">Try clicking Refresh. If this keeps happening, hard-reload (Cmd/Ctrl+Shift+R).</span>
+    </div>`;
+  } finally {
+    $("#btn-refresh").disabled = false;
+  }
+}
+
+$("#btn-apply").addEventListener("click", load);
+$("#btn-clear").addEventListener("click", () => {
+  $("#f-month").value = ""; $("#f-who").value = ""; $("#f-q").value = "";
+  $("#f-photo").value = ""; $("#f-amount").value = ""; $("#f-limit").value = "500";
+  load();
+});
+$("#btn-refresh").addEventListener("click", load);
+$("#btn-csv").addEventListener("click", async () => {
+  // Browser download — has to attach the auth header, so fetch + blob.
+  try {
+    const r = await fetch(API + "/csv?" + paramsFromForm().toString(), {headers: authHeaders(), credentials: "same-origin"});
+    if (!r.ok){ toast("CSV export failed: HTTP "+r.status); return; }
+    const blob = await r.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = (r.headers.get("content-disposition")||"").match(/filename="([^"]+)"/)?.[1] || "receipts.csv";
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  } catch(e){ toast("CSV export failed: "+e.message); }
+});
+
+$("#save-token").addEventListener("click", () => {
+  setToken($("#token").value.trim());
+  toast("Token saved");
+  load();
+});
+
+$("#token").value = token();
+
+// Edit modal wiring
+$("#edit-close").addEventListener("click", closeEditModal);
+$("#edit-cancel").addEventListener("click", closeEditModal);
+$("#edit-save").addEventListener("click", () => saveEdit());
+$("#edit-rerun-ai").addEventListener("click", reparseFromModal);
+$("#edit-hide").addEventListener("click", () => {
+  if (!confirm("Hide this receipt from the totals view? Admins can still see it with 'show hidden'.")) return;
+  saveEdit({hidden: true});
+});
+$("#edit-modal").addEventListener("click", e => { if (e.target.id === "edit-modal") closeEditModal(); });
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape"){
+    if ($("#edit-modal").classList.contains("show")) closeEditModal();
+    else if ($("#lightbox").classList.contains("show")) $("#lightbox").classList.remove("show");
+  }
+});
+
+(async () => {
+  await loadMonths();
+  await load();
+})();
+</script>
+</body>
+</html>

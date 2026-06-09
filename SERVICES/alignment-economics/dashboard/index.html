@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank of Blessings | Circulation Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #C9A962;
+            --gold-light: #E8D5A3;
+            --gold-dark: #8B7435;
+            --deep-blue: #1A2332;
+            --navy: #0F1520;
+            --slate: #2A3442;
+            --text: #E8E8E8;
+            --text-dim: #9BA3AF;
+            --green: #4ADE80;
+            --red: #F87171;
+            --amber: #FBBF24;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--navy);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
+            border-bottom: 1px solid var(--slate);
+        }
+
+        h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--gold);
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+            font-weight: 300;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--deep-blue);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--slate);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            color: var(--gold-light);
+            font-weight: 600;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-healthy { background: var(--green); }
+        .status-warning { background: var(--amber); }
+        .status-alert { background: var(--red); }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--slate);
+        }
+
+        .metric:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        .metric-value {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .metric-value.positive { color: var(--green); }
+        .metric-value.negative { color: var(--red); }
+        .metric-value.neutral { color: var(--text); }
+
+        .big-number {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--gold);
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .big-label {
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--slate);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold-dark), var(--gold));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .action-list {
+            list-style: none;
+        }
+
+        .action-item {
+            padding: 1rem;
+            background: var(--navy);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            border-left: 3px solid var(--gold);
+        }
+
+        .action-item.urgent {
+            border-left-color: var(--red);
+        }
+
+        .action-priority {
+            display: inline-block;
+            background: var(--slate);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-text {
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .action-reason {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .checklist {
+            list-style: none;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--slate);
+        }
+
+        .check-box {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--gold);
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .check-box.checked {
+            background: var(--gold);
+        }
+
+        .check-box.checked::after {
+            content: '✓';
+            color: var(--navy);
+            font-weight: bold;
+        }
+
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            color: var(--gold-light);
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--slate);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-dim);
+        }
+
+        .btn {
+            background: var(--gold);
+            color: var(--navy);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--gold-light);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-dim);
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            h1 { font-size: 1.75rem; }
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Bank of Blessings</h1>
+            <p class="subtitle">Circulation over accumulation • Forgiveness by design</p>
+        </header>
+
+        <div class="grid">
+            <!-- System Health -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">System Health</span>
+                    <span id="health-dot" class="status-dot status-healthy"></span>
+                </div>
+                <div class="big-number" id="stress-index">--</div>
+                <div class="big-label">Stress Index</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="stress-bar" style="width: 0%"></div>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Capital Velocity</span>
+                    <span class="metric-value neutral" id="velocity">--</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Liquidity Buffer</span>
+                    <span class="metric-value neutral" id="liquidity">--</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Circulation Efficiency</span>
+                    <span class="metric-value neutral" id="circulation">--</span>
+                </div>
+            </div>
+
+            <!-- Capital Overview -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Capital Overview</span>
+                </div>
+                <div class="big-number" id="net-position">$--</div>
+                <div class="big-label">Net Position</div>
+                <div class="metric">
+                    <span class="metric-label">Total Capital</span>
+                    <span class="metric-value positive" id="total-capital">$--</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Total Debt</span>
+                    <span class="metric-value negative" id="total-debt">$--</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Idle Capital</span>
+                    <span class="metric-value neutral" id="idle-capital">--</span>
+                </div>
+            </div>
+
+            <!-- Forgiveness Ready -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Ready for Forgiveness</span>
+                </div>
+                <ul class="action-list" id="forgiveness-list">
+                    <li class="empty-state">No debts ready for forgiveness</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2 class="section-title">Daily Checklist</h2>
+        <div class="grid">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Morning Checks</span>
+                </div>
+                <ul class="checklist" id="morning-checks">
+                    <li class="loading">Loading...</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Actions Needed</span>
+                </div>
+                <ul class="action-list" id="actions-list">
+                    <li class="loading">Loading...</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2 class="section-title">Recent Flows</h2>
+        <div class="card">
+            <ul class="action-list" id="flows-list">
+                <li class="loading">Loading...</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin.replace(':80', ':8760').replace(':443', ':8760');
+        
+        async function fetchData(endpoint) {
+            try {
+                const res = await fetch(`${API_BASE}${endpoint}`);
+                return await res.json();
+            } catch (e) {
+                console.error(`Failed to fetch ${endpoint}:`, e);
+                return null;
+            }
+        }
+
+        function formatCurrency(value) {
+            const num = parseFloat(value);
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(num);
+        }
+
+        function formatPercent(value) {
+            return (value * 100).toFixed(1) + '%';
+        }
+
+        async function loadHealth() {
+            const health = await fetchData('/health');
+            if (!health) return;
+
+            // Stress index
+            document.getElementById('stress-index').textContent = formatPercent(health.stress_index);
+            document.getElementById('stress-bar').style.width = (health.stress_index * 100) + '%';
+            
+            // Health status
+            const dot = document.getElementById('health-dot');
+            if (health.stress_index < 0.3) {
+                dot.className = 'status-dot status-healthy';
+            } else if (health.stress_index < 0.6) {
+                dot.className = 'status-dot status-warning';
+            } else {
+                dot.className = 'status-dot status-alert';
+            }
+
+            // Other metrics
+            document.getElementById('velocity').textContent = formatPercent(health.capital_velocity);
+            document.getElementById('liquidity').textContent = formatPercent(health.liquidity_ratio);
+            document.getElementById('circulation').textContent = formatPercent(health.circulation_efficiency);
+            
+            // Capital
+            document.getElementById('net-position').textContent = formatCurrency(health.net_position);
+            document.getElementById('total-capital').textContent = formatCurrency(health.total_capital);
+            document.getElementById('total-debt').textContent = formatCurrency(health.total_debt);
+            document.getElementById('idle-capital').textContent = formatPercent(health.idle_capital_ratio);
+        }
+
+        async function loadChecklist() {
+            const checklist = await fetchData('/checklist');
+            if (!checklist) return;
+
+            // Morning checks
+            const morningEl = document.getElementById('morning-checks');
+            morningEl.innerHTML = checklist.morning_checks.map(check => `
+                <li class="check-item">
+                    <div class="check-box ${check.status === 'ok' ? 'checked' : ''}"></div>
+                    <span>${check.item}</span>
+                </li>
+            `).join('');
+
+            // Actions
+            const actionsEl = document.getElementById('actions-list');
+            if (checklist.actions_needed.length === 0) {
+                actionsEl.innerHTML = '<li class="empty-state">No actions needed</li>';
+            } else {
+                actionsEl.innerHTML = checklist.actions_needed.map(action => `
+                    <li class="action-item ${action.urgency === 'immediate' ? 'urgent' : ''}">
+                        <span class="action-priority">Priority ${action.priority} • ${action.purpose}</span>
+                        <div class="action-text">${action.action}</div>
+                        <div class="action-reason">${action.reasoning}</div>
+                    </li>
+                `).join('');
+            }
+
+            // Forgiveness
+            const forgivEl = document.getElementById('forgiveness-list');
+            if (checklist.forgiveness_ready.length === 0) {
+                forgivEl.innerHTML = '<li class="empty-state">No debts ready for forgiveness</li>';
+            } else {
+                forgivEl.innerHTML = checklist.forgiveness_ready.map(f => `
+                    <li class="action-item">
+                        <span class="action-priority">${f.trigger}</span>
+                        <div class="action-text">${f.debt_name}: ${formatCurrency(f.amount)}</div>
+                        <div class="action-reason">${f.reasoning}</div>
+                        <button class="btn" style="margin-top: 0.5rem" onclick="forgive('${f.debt_id}')">
+                            Forgive Debt
+                        </button>
+                    </li>
+                `).join('');
+            }
+        }
+
+        async function loadFlows() {
+            const flows = await fetchData('/flows?days=7');
+            if (!flows) return;
+
+            const flowsEl = document.getElementById('flows-list');
+            if (flows.length === 0) {
+                flowsEl.innerHTML = '<li class="empty-state">No recent flows</li>';
+            } else {
+                flowsEl.innerHTML = flows.slice(0, 10).map(flow => `
+                    <li class="action-item">
+                        <span class="action-priority">${flow.purpose}</span>
+                        <div class="action-text">
+                            ${flow.from_position} → ${flow.to_position}: ${formatCurrency(flow.amount)}
+                        </div>
+                        <div class="action-reason">${flow.description || new Date(flow.timestamp).toLocaleDateString()}</div>
+                    </li>
+                `).join('');
+            }
+        }
+
+        async function forgive(debtId) {
+            const res = await fetch(`${API_BASE}/forgiveness/${debtId}`, { method: 'POST' });
+            if (res.ok) {
+                alert('Debt forgiven!');
+                loadChecklist();
+                loadHealth();
+            } else {
+                alert('Failed to forgive debt');
+            }
+        }
+
+        // Initial load
+        loadHealth();
+        loadChecklist();
+        loadFlows();
+
+        // Refresh every 30 seconds
+        setInterval(() => {
+            loadHealth();
+            loadChecklist();
+        }, 30000);
+    </script>
+</body>
+</html>
+
+

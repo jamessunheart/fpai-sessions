@@ -1,0 +1,234 @@
+{
+  "project": {
+    "name": "WhiteRock CORA Blessings Engine",
+    "version": "2.1.0",
+    "status": "live",
+    "description": "Faith-based community support platform powered by CORA (Community Vitality Credits)",
+    "owner": "James Sunheart",
+    "contact": "james@fullpotential.ai"
+  },
+  "urls": {
+    "production": "https://whiterock.us",
+    "api_docs": "https://whiterock.us/docs",
+    "health": "https://whiterock.us/health",
+    "metrics": "https://whiterock.us/metrics",
+    "member_portal": "https://whiterock.us/portal",
+    "admin_dashboard": "https://whiterock.us/admin"
+  },
+  "infrastructure": {
+    "server": {
+      "ip": "198.54.123.234",
+      "type": "Primary Server",
+      "path": "/opt/fpai/whiterock-blessings-engine"
+    },
+    "port": 8020,
+    "reverse_proxy": "nginx",
+    "ssl": true,
+    "database": {
+      "type": "PostgreSQL",
+      "version": "14",
+      "name": "whiterock"
+    },
+    "cache": {
+      "type": "Redis",
+      "host": "localhost",
+      "port": 6379
+    },
+    "background_jobs": {
+      "type": "Celery",
+      "broker": "Redis",
+      "workers": 6
+    }
+  },
+  "tech_stack": {
+    "language": "Python 3.11+",
+    "framework": "FastAPI",
+    "orm": "SQLAlchemy (Async)",
+    "validation": "Pydantic",
+    "authentication": "JWT (python-jose)",
+    "password_hashing": "Passlib (bcrypt)",
+    "background_tasks": "Celery",
+    "rate_limiting": "slowapi",
+    "logging": "structlog",
+    "metrics": "prometheus_client",
+    "migrations": "Alembic + raw SQL",
+    "testing": "pytest + pytest-asyncio",
+    "email": "SendGrid (planned)",
+    "payments": "Stripe (planned)"
+  },
+  "features": {
+    "completed": [
+      "Member registration and authentication",
+      "JWT access and refresh tokens",
+      "Role-based access control (Seeker, Steward, Elder, Pillar, Admin)",
+      "CORA credits system with decay logic",
+      "Tithe submission and tracking",
+      "Blessing request state machine (draft→pending→review→approved→disbursed→closed)",
+      "Committee review workflow",
+      "Full audit logging with 7-year retention",
+      "Compliance reporting and exports",
+      "Community capacity calculation",
+      "Rate limiting on sensitive endpoints",
+      "Redis caching for frequently accessed data",
+      "Prometheus metrics exposure",
+      "Structured JSON logging",
+      "Performance-optimized database indexes",
+      "Landing page with user journey explanation",
+      "Basic member portal and admin dashboard stubs"
+    ],
+    "in_progress": [],
+    "planned": [
+      "Full React member portal UI",
+      "Full admin/committee dashboard",
+      "Stripe payment integration for tithes",
+      "SendGrid email notifications",
+      "Service hours logging and verification",
+      "Mobile app (React Native)",
+      "Multi-church white-label support",
+      "AI-assisted blessing request triage"
+    ]
+  },
+  "cora_system": {
+    "description": "Non-transferable Community Vitality Credits",
+    "earning_rates": {
+      "tithe": "1 CORA per $10 donated",
+      "service": "5 CORA per hour of volunteer service"
+    },
+    "decay": {
+      "grace_period_days": 30,
+      "weekly_decay_rate": 0.02,
+      "minimum_balance": 0
+    },
+    "tiers": [
+      { "name": "Seeker", "min_cora": 0, "max_cora": 99, "privileges": ["basic_access"] },
+      { "name": "Steward", "min_cora": 100, "max_cora": 499, "privileges": ["request_blessings", "view_capacity"] },
+      { "name": "Elder", "min_cora": 500, "max_cora": 999, "privileges": ["committee_voting", "view_pending"] },
+      { "name": "Pillar", "min_cora": 1000, "max_cora": null, "privileges": ["full_governance", "audit_access"] }
+    ]
+  },
+  "blessing_states": {
+    "flow": "draft → pending → committee_review → (info_requested) → approved/denied → disbursed → closed",
+    "states": [
+      { "state": "draft", "description": "Member is preparing request" },
+      { "state": "pending", "description": "Submitted, awaiting initial review" },
+      { "state": "committee_review", "description": "Under committee evaluation" },
+      { "state": "info_requested", "description": "Additional information needed" },
+      { "state": "approved", "description": "Approved, pending disbursement" },
+      { "state": "denied", "description": "Request was not approved" },
+      { "state": "disbursed", "description": "Funds have been sent" },
+      { "state": "closed", "description": "Request complete" }
+    ]
+  },
+  "api_endpoints": {
+    "public": [
+      { "method": "POST", "path": "/members/register", "description": "Register new member" },
+      { "method": "POST", "path": "/members/login", "description": "Authenticate and get tokens" },
+      { "method": "GET", "path": "/health", "description": "Service health check" }
+    ],
+    "authenticated": [
+      { "method": "GET", "path": "/members/me", "description": "Get current member profile" },
+      { "method": "POST", "path": "/members/refresh", "description": "Refresh access token" },
+      { "method": "POST", "path": "/members/logout", "description": "Invalidate tokens" },
+      { "method": "POST", "path": "/tithes/", "description": "Submit a tithe" },
+      { "method": "GET", "path": "/tithes/history", "description": "Get tithe history" },
+      { "method": "GET", "path": "/cora/balance", "description": "Get CORA balance" },
+      { "method": "GET", "path": "/cora/tiers", "description": "Get tier information" },
+      { "method": "POST", "path": "/blessings/request", "description": "Submit blessing request" },
+      { "method": "GET", "path": "/blessings/my-requests", "description": "Get own requests" },
+      { "method": "GET", "path": "/capacity", "description": "Community blessing capacity" }
+    ],
+    "elder_plus": [
+      { "method": "GET", "path": "/blessings/pending", "description": "View pending requests" },
+      { "method": "POST", "path": "/blessings/{id}/transition", "description": "Transition blessing state" },
+      { "method": "POST", "path": "/blessings/{id}/vote", "description": "Cast committee vote" }
+    ],
+    "admin": [
+      { "method": "GET", "path": "/audit/logs", "description": "Query audit logs" },
+      { "method": "GET", "path": "/audit/compliance-report", "description": "Generate compliance report" },
+      { "method": "POST", "path": "/cora/grant", "description": "Admin grant CORA" },
+      { "method": "GET", "path": "/metrics", "description": "Prometheus metrics" }
+    ]
+  },
+  "repository": {
+    "path": "SERVICES/whiterock-blessings-engine",
+    "structure": {
+      "app/": "FastAPI application",
+      "app/routes/": "API endpoint handlers",
+      "app/services/": "Business logic services",
+      "app/middleware/": "Request middleware",
+      "app/static/": "Static files (landing, portal, admin)",
+      "app/models.py": "SQLAlchemy ORM models",
+      "app/schemas.py": "Pydantic request/response schemas",
+      "app/auth.py": "JWT authentication logic",
+      "app/config.py": "Settings from environment",
+      "app/database.py": "Database connection setup",
+      "worker/": "Celery background tasks",
+      "migrations/": "SQL migration scripts",
+      "tests/": "Pytest test suite",
+      "deploy.sh": "Production deployment script",
+      "requirements.txt": "Python dependencies"
+    }
+  },
+  "environment_variables": {
+    "required": [
+      "DATABASE_URL",
+      "JWT_SECRET",
+      "JWT_REFRESH_SECRET"
+    ],
+    "optional": [
+      "DEBUG (default: false)",
+      "REDIS_URL (default: redis://localhost:6379)",
+      "STRIPE_SECRET_KEY",
+      "SENDGRID_API_KEY",
+      "UDC_REGISTRY_URL"
+    ]
+  },
+  "deployment": {
+    "local": {
+      "commands": [
+        "python -m venv venv",
+        "source venv/bin/activate",
+        "pip install -r requirements.txt",
+        "cp .env.example .env (and configure)",
+        "uvicorn app.main:app --reload --port 8020"
+      ]
+    },
+    "production": {
+      "script": "./deploy.sh",
+      "steps": [
+        "SSH to server",
+        "Pull latest code",
+        "Install dependencies",
+        "Run migrations",
+        "Restart services"
+      ]
+    }
+  },
+  "handoff_notes": {
+    "priority_next_steps": [
+      "1. Build full React member portal UI (currently just stub HTML)",
+      "2. Build admin/committee dashboard for blessing review",
+      "3. Integrate Stripe for real tithe payments",
+      "4. Set up SendGrid for email notifications",
+      "5. Add service hours tracking feature"
+    ],
+    "known_issues": [
+      "Celery beat scheduler needs configuration for CORA decay cron",
+      "Email sending is stubbed out (no real SendGrid integration yet)",
+      "Stripe webhook handler needs implementation"
+    ],
+    "documentation_locations": [
+      "API docs: https://whiterock.us/docs (auto-generated OpenAPI)",
+      "Landing page: https://whiterock.us (explains user journey)",
+      "Project page: https://fullpotential.ai/projects/whiterock"
+    ],
+    "testing": {
+      "run_tests": "pytest tests/ -v",
+      "coverage": "pytest --cov=app tests/",
+      "note": "Test coverage is minimal - needs expansion"
+    }
+  },
+  "created": "2026-01-17",
+  "last_updated": "2026-01-29"
+}
+

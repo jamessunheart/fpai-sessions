@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Bazaar | Full Potential AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-card: #12121a;
+            --purple-primary: #a855f7;
+            --green-success: #22c55e;
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --border-color: rgba(168, 85, 247, 0.2);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            background-image: radial-gradient(circle at top, rgba(168,85,247,0.15), transparent 40%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        h1 {
+            font-family: 'Space Mono', monospace;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.15);
+            border-color: var(--purple-primary);
+        }
+
+        .service-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .service-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .service-desc {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+            line-height: 1.5;
+        }
+
+        .price-tag {
+            background: rgba(168, 85, 247, 0.1);
+            color: var(--purple-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            align-self: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            background: var(--purple-primary);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover { opacity: 0.9; }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            margin-top: 0.5rem;
+        }
+
+        .treasury-status {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0,0,0,0.8);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            font-size: 0.8rem;
+            backdrop-filter: blur(5px);
+        }
+    </style>
+</head>
+<body>
+    <div class="treasury-status" id="treasury-status">
+        Loading Treasury Status...
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>The Service Bazaar</h1>
+            <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">
+                Exchange Universal Credits (UC) for powerful AI services. 
+                Generate value, create content, and accelerate your mission.
+            </p>
+        </header>
+
+        <div class="grid" id="services-grid">
+            <!-- Services injected here -->
+        </div>
+    </div>
+
+    <script>
+        async function loadServices() {
+            try {
+                // Fetch services
+                const res = await fetch('/services/credits/api/services');
+                const data = await res.json();
+                const grid = document.getElementById('services-grid');
+                
+                grid.innerHTML = data.services.map(s => `
+                    <div class="card">
+                        <div class="service-icon">
+                            ${getIcon(s.id)}
+                        </div>
+                        <div class="service-name">${s.name}</div>
+                        <div class="service-desc">${s.description}</div>
+                        <div class="price-tag">${s.cost_uc} UC / ${s.unit}</div>
+                        <a href="#" onclick="alert('Connecting to ${s.name}...')" class="btn">Use Service</a>
+                        <a href="/services/credits/purchase" class="btn btn-secondary">Get Credits</a>
+                    </div>
+                `).join('');
+
+                // Fetch Treasury Health
+                const healthRes = await fetch('/services/credits/api/treasury/health');
+                const health = await healthRes.json();
+                const statusDiv = document.getElementById('treasury-status');
+                
+                const color = health.mode === 'DEFICIT' ? '#ef4444' : 
+                              health.mode === 'STABLE' ? '#eab308' : '#22c55e';
+                              
+                statusDiv.innerHTML = `
+                    <span style="color: ${color}">●</span> 
+                    Treasury: ${health.mode} 
+                    <span style="opacity: 0.5">|</span> 
+                    1 UC = $1.00
+                `;
+
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function getIcon(id) {
+            if (id.includes('ai')) return '🧠';
+            if (id.includes('voice')) return '🎙️';
+            if (id.includes('content')) return '✍️';
+            if (id.includes('image')) return '🎨';
+            if (id.includes('match')) return '🤝';
+            return '⚡';
+        }
+
+        loadServices();
+    </script>
+</body>
+</html>
+
+
+
+

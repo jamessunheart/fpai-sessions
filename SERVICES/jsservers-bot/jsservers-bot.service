@@ -1,0 +1,30 @@
+[Unit]
+Description=JSServers Telegram Bot — FPAI infra status
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/fpai/jsservers-bot
+EnvironmentFile=/root/.jsservers-bot.env
+ExecStart=/opt/fpai/jsservers-bot/.venv/bin/python /opt/fpai/jsservers-bot/bot.py
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ReadWritePaths=/var/log
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+ReadOnlyPaths=/opt/fpai/jsservers-bot /opt/fpai/cockpit /opt/fpai/learnings.json /opt/fpai/pulse /root/.jsservers-bot.env
+
+[Install]
+WantedBy=multi-user.target

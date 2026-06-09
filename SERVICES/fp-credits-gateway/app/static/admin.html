@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FP Credits Admin | Full Potential AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a24;
+            --accent-gold: #ffd700;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --text-primary: #f0f0f0;
+            --text-secondary: #a0a0a0;
+            --border-color: #2a2a3a;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-gold), #f97316);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .logo-text {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-value {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+        }
+        
+        .section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+        
+        .tab {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        
+        .tab:hover, .tab.active {
+            background: var(--bg-secondary);
+            color: var(--accent-gold);
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .form-group label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        input, select, textarea {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9rem;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+        }
+        
+        button {
+            background: linear-gradient(135deg, var(--accent-gold), #f97316);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            color: #000;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        button.secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        th {
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .badge.credit { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+        .badge.debit { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+        .badge.transfer { background: rgba(59, 130, 246, 0.2); color: var(--accent-blue); }
+        
+        .amount.positive { color: var(--accent-green); }
+        .amount.negative { color: var(--accent-red); }
+        
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--accent-green);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .toast.error { border-color: var(--accent-red); }
+        
+        @keyframes slideIn {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .api-key-display {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Space Mono', monospace;
+            word-break: break-all;
+            margin: 1rem 0;
+        }
+        
+        .copy-btn {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            margin-left: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">⚡</div>
+                <span class="logo-text">FP Credits Admin</span>
+            </div>
+            <div>
+                <button class="secondary" onclick="refreshData()">🔄 Refresh</button>
+            </div>
+        </header>
+        
+        <!-- Stats -->
+        <div class="stats-grid" id="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Accounts</div>
+                <div class="stat-value" id="stat-accounts">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Transactions</div>
+                <div class="stat-value" id="stat-transactions">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">FP Credits Circulating</div>
+                <div class="stat-value" id="stat-fp">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Active API Keys</div>
+                <div class="stat-value" id="stat-keys">-</div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="section">
+            <h2>⚡ Quick Actions</h2>
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('credit')">Credit</button>
+                <button class="tab" onclick="showTab('debit')">Debit</button>
+                <button class="tab" onclick="showTab('transfer')">Transfer</button>
+                <button class="tab" onclick="showTab('balance')">Check Balance</button>
+            </div>
+            
+            <div id="tab-credit" class="tab-content">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Account ID</label>
+                        <input type="text" id="credit-account" placeholder="user:123">
+                    </div>
+                    <div class="form-group">
+                        <label>Amount</label>
+                        <input type="number" id="credit-amount" placeholder="100" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Credit Type</label>
+                        <select id="credit-type">
+                            <option value="fp_credits">FP Credits</option>
+                            <option value="cora_credits">Cora Credits</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Reason</label>
+                        <input type="text" id="credit-reason" placeholder="Manual credit">
+                    </div>
+                </div>
+                <button onclick="doCredit()">💰 Add Credits</button>
+            </div>
+            
+            <div id="tab-debit" class="tab-content" style="display:none">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Account ID</label>
+                        <input type="text" id="debit-account" placeholder="user:123">
+                    </div>
+                    <div class="form-group">
+                        <label>Amount</label>
+                        <input type="number" id="debit-amount" placeholder="50" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Credit Type</label>
+                        <select id="debit-type">
+                            <option value="fp_credits">FP Credits</option>
+                            <option value="cora_credits">Cora Credits</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Reason</label>
+                        <input type="text" id="debit-reason" placeholder="Manual debit">
+                    </div>
+                </div>
+                <button onclick="doDebit()">💸 Deduct Credits</button>
+            </div>
+            
+            <div id="tab-transfer" class="tab-content" style="display:none">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>From Account</label>
+                        <input type="text" id="transfer-from" placeholder="user:123">
+                    </div>
+                    <div class="form-group">
+                        <label>To Account</label>
+                        <input type="text" id="transfer-to" placeholder="user:456">
+                    </div>
+                    <div class="form-group">
+                        <label>Amount</label>
+                        <input type="number" id="transfer-amount" placeholder="25" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Reason</label>
+                        <input type="text" id="transfer-reason" placeholder="Transfer">
+                    </div>
+                </div>
+                <button onclick="doTransfer()">🔄 Transfer</button>
+            </div>
+            
+            <div id="tab-balance" class="tab-content" style="display:none">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Account ID</label>
+                        <input type="text" id="balance-account" placeholder="user:123">
+                    </div>
+                </div>
+                <button onclick="checkBalance()">📊 Check Balance</button>
+                <div id="balance-result" style="margin-top:1rem"></div>
+            </div>
+        </div>
+        
+        <!-- API Keys -->
+        <div class="section">
+            <h2>🔑 API Keys</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Service Name</label>
+                    <input type="text" id="key-service" placeholder="my-service">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <input type="text" id="key-description" placeholder="My awesome service">
+                </div>
+                <div class="form-group">
+                    <label>Permissions</label>
+                    <select id="key-permissions" multiple>
+                        <option value="read" selected>Read</option>
+                        <option value="credit">Credit</option>
+                        <option value="debit" selected>Debit</option>
+                        <option value="transfer">Transfer</option>
+                        <option value="exchange">Exchange</option>
+                    </select>
+                </div>
+            </div>
+            <button onclick="createApiKey()">🔐 Create API Key</button>
+            <div id="new-key-display" style="display:none">
+                <p style="margin-top:1rem; color: var(--accent-gold);">⚠️ Save this key now - it won't be shown again!</p>
+                <div class="api-key-display" id="new-key-value"></div>
+                <button class="copy-btn" onclick="copyKey()">📋 Copy</button>
+            </div>
+            
+            <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Active Keys</h3>
+            <table id="keys-table">
+                <thead>
+                    <tr>
+                        <th>Key ID</th>
+                        <th>Service</th>
+                        <th>Permissions</th>
+                        <th>Usage</th>
+                        <th>Last Used</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="keys-body"></tbody>
+            </table>
+        </div>
+        
+        <!-- Recent Transactions -->
+        <div class="section">
+            <h2>📜 Recent Transactions</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Account</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Reason</th>
+                    </tr>
+                </thead>
+                <tbody id="transactions-body"></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="toast" id="toast"></div>
+    
+    <script>
+        const API_KEY = prompt('Enter admin API key:') || 'fpai_master_key_change_in_production';
+        const BASE_URL = window.location.origin;
+        
+        async function api(method, endpoint, body = null) {
+            const options = {
+                method,
+                headers: {
+                    'X-API-Key': API_KEY,
+                    'Content-Type': 'application/json'
+                }
+            };
+            if (body) options.body = JSON.stringify(body);
+            
+            const response = await fetch(`${BASE_URL}${endpoint}`, options);
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.detail || 'Request failed');
+            }
+            return response.json();
+        }
+        
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast' + (isError ? ' error' : '');
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', 3000);
+        }
+        
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+            document.getElementById(`tab-${tabName}`).style.display = 'block';
+            event.target.classList.add('active');
+        }
+        
+        async function refreshData() {
+            try {
+                // Get stats
+                const stats = await api('GET', '/api/stats');
+                document.getElementById('stat-accounts').textContent = stats.total_accounts || 0;
+                document.getElementById('stat-transactions').textContent = stats.total_transactions || 0;
+                document.getElementById('stat-fp').textContent = (stats.credits_in_circulation?.fp_credits || 0).toFixed(2);
+                document.getElementById('stat-keys').textContent = stats.active_api_keys || 0;
+                
+                // Get API keys
+                const keys = await api('GET', '/api/keys');
+                const keysBody = document.getElementById('keys-body');
+                keysBody.innerHTML = keys.keys?.map(k => `
+                    <tr>
+                        <td><code>${k.key_id}</code></td>
+                        <td>${k.service_name}</td>
+                        <td>${k.permissions?.join(', ') || '-'}</td>
+                        <td>${k.usage_count || 0}</td>
+                        <td>${k.last_used ? new Date(k.last_used).toLocaleString() : 'Never'}</td>
+                        <td><button class="secondary" onclick="revokeKey('${k.key_id}')">Revoke</button></td>
+                    </tr>
+                `).join('') || '<tr><td colspan="6">No keys found</td></tr>';
+                
+            } catch (e) {
+                showToast('Error: ' + e.message, true);
+            }
+        }
+        
+        async function doCredit() {
+            try {
+                const result = await api('POST', '/api/credit', {
+                    account_id: document.getElementById('credit-account').value,
+                    amount: parseFloat(document.getElementById('credit-amount').value),
+                    credit_type: document.getElementById('credit-type').value,
+                    reason: document.getElementById('credit-reason').value || 'Admin credit'
+                });
+                showToast(`✅ Credited ${result.amount} credits. New balance: ${result.balance_after}`);
+                refreshData();
+            } catch (e) {
+                showToast('Error: ' + e.message, true);
+            }
+        }
+        
+        async function doDebit() {
+            try {
+                const result = await api('POST', '/api/debit', {
+                    account_id: document.getElementById('debit-account').value,
+                    amount: parseFloat(document.getElementById('debit-amount').value),
+                    credit_type: document.getElementById('debit-type').value,
+                    reason: document.getElementById('debit-reason').value || 'Admin debit'
+                });
+                showToast(`✅ Debited ${Math.abs(result.amount)} credits. New balance: ${result.balance_after}`);
+                refreshData();
+            } catch (e) {
+                showToast('Error: ' + e.message, true);
+            }
+        }
+        
+        async function doTransfer() {
+            try {
+                const result = await api('POST', '/api/transfer', {
+                    from_account: document.getElementById('transfer-from').value,
+                    to_account: document.getElementById('transfer-to').value,
+                    amount: parseFloat(document.getElementById('transfer-amount').value),
+                    credit_type: 'fp_credits',
+                    reason: document.getElementById('transfer-reason').value || 'Admin transfer'
+                });
+                showToast('✅ Transfer complete!');
+                refreshData();
+            } catch (e) {
+                showToast('Error: ' + e.message, true);
+            }
+        }
+        
+        async function checkBalance() {
+            try {
+                const accountId = document.getElementById('balance-account').value;
+                const result = await api('GET', `/api/balance/${encodeURIComponent(accountId)}`);
+                document.getElementById('balance-result').innerHTML = `
+                    <div class="stat-card">
+                        <p><strong>FP Credits:</strong> ${result.balances?.fp_credits || 0}</p>
+                        <p><strong>Cora Credits:</strong> ${result.balances?.cora_credits || 0}</p>
+                        <p><strong>USD:</strong> $${result.balances?.usd || 0}</p>
+                    </div>
+                `;
+            } catch (e) {
+                showToast('Error: ' + e.message, true);
+            }
+        }
+        
+        async function createApiKey() {
+            try {
+                const perms = Array.from(document.getElementById('key-permissions').selectedOptions).map(o => o.value);
+                const result = await api('POST', '/api/keys', {
+                    service_name: document.getElementById('key-service').value,
+                    description: document.getElementById('key-description').value,
+                    permissions: perms
+                });
+                document.getElementById('new-key-value').textContent = result.api_key;
+                document.getElementById('new-key-display').style.display = 'block';
+                showToast('✅ API key created!');
+                refreshData();
+            } catch (e) {
+                showToast('Error: ' + e.message, true);
+            }
+        }
+        
+        function copyKey() {
+            const key = document.getElementById('new-key-value').textContent;
+            navigator.clipboard.writeText(key);
+            showToast('📋 Copied to clipboard!');
+        }
+        
+        async function revokeKey(keyId) {
+            if (!confirm('Are you sure you want to revoke this key?')) return;
+            try {
+                await api('DELETE', `/api/keys/${keyId}`);
+                showToast('✅ Key revoked');
+                refreshData();
+            } catch (e) {
+                showToast('Error: ' + e.message, true);
+            }
+        }
+        
+        // Initial load
+        refreshData();
+    </script>
+</body>
+</html>
+
+

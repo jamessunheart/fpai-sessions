@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inquire · Zen Village</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #F7F3EB;
+            --text: #1A1A1A;
+            --muted: #8A8478;
+            --accent: #B5654A;
+            --rule: rgba(26, 26, 26, 0.12);
+            --serif: Georgia, 'Times New Roman', serif;
+            --sans: Inter, system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            font-family: var(--serif);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 120px 1.5rem;
+        }
+
+        @media (max-width: 640px) {
+            .container { padding: 72px 1.5rem; }
+        }
+
+        h1 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            text-transform: lowercase;
+            color: var(--muted);
+            margin-bottom: 2rem;
+        }
+
+        .inquiry-form label {
+            display: block;
+            font-family: var(--sans);
+            font-size: 0.85rem;
+            color: var(--muted);
+            font-weight: 400;
+            margin-bottom: 0.4rem;
+            letter-spacing: 0.02em;
+        }
+
+        .inquiry-form input,
+        .inquiry-form textarea {
+            width: 100%;
+            font-family: var(--serif);
+            font-size: 1rem;
+            color: var(--text);
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--rule);
+            padding: 0.75rem 0;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .inquiry-form input:focus,
+        .inquiry-form textarea:focus {
+            border-bottom-color: var(--accent);
+        }
+
+        .inquiry-form textarea {
+            resize: vertical;
+            min-height: 120px;
+            line-height: 1.7;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .inquiry-form button {
+            font-family: var(--sans);
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text);
+            background: transparent;
+            border: 1px solid var(--text);
+            padding: 0.75rem 2rem;
+            cursor: pointer;
+            letter-spacing: 0.04em;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .inquiry-form button:hover {
+            background: var(--text);
+            color: var(--bg);
+        }
+
+        .form-note {
+            font-family: var(--sans);
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-top: 1rem;
+        }
+
+        .form-success {
+            display: none;
+            font-size: 1.05rem;
+            color: var(--text);
+            line-height: 1.8;
+            padding: 2rem 0;
+        }
+
+        .back {
+            margin-top: 4rem;
+        }
+
+        .back a {
+            font-family: var(--sans);
+            font-size: 0.85rem;
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .back a:hover {
+            border-bottom-color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>inquire</h1>
+
+    <form class="inquiry-form" id="inquire-form" action="/api/inquiries/submit" method="POST">
+        <input type="hidden" name="inquiry_type" value="Retreat">
+        <div class="form-group">
+            <label for="name">your name</label>
+            <input type="text" id="name" name="name" required autocomplete="name">
+        </div>
+        <div class="form-group">
+            <label for="email">email</label>
+            <input type="email" id="email" name="email" required autocomplete="email">
+        </div>
+        <div class="form-group">
+            <label for="called">what called you</label>
+            <textarea id="called" name="message"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="dates">when you want to come</label>
+            <input type="text" id="dates" name="dates" autocomplete="off">
+        </div>
+        <button type="submit">send</button>
+        <p class="form-note">Someone will write back within 48 hours.</p>
+    </form>
+
+    <p class="form-success" id="success">Received. Someone will write back within 48 hours.</p>
+
+    <div class="back">
+        <a href="/">← Zen Village</a>
+    </div>
+
+</div>
+
+<script>
+document.getElementById('inquire-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const form = e.target;
+    const data = new FormData(form);
+    const body = {};
+    data.forEach((v, k) => { body[k] = v; });
+
+    try {
+        const resp = await fetch('/api/inquiries/submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+        if (resp.ok) {
+            form.style.display = 'none';
+            document.getElementById('success').style.display = 'block';
+        }
+    } catch(err) {
+        form.style.display = 'none';
+        document.getElementById('success').style.display = 'block';
+    }
+});
+</script>
+
+</body>
+</html>

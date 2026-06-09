@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create your Zen Wallet · Zen Village</title>
+<meta name="description" content="Create your Zen Credits wallet in 30 seconds. Scan, sign in, top up.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Manrope:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4ECDC; --ink:#1F1A14; --ink-soft:#4A3F32;
+  --moss:#3A4A2E; --clay:#B8553A; --gold:#C8924B; --rule:#2A2018;
+  --serif:'Fraunces',Georgia,serif; --sans:'Manrope',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.55;
+  background-image:radial-gradient(circle at 15% 20%,rgba(184,85,58,.05) 0%,transparent 45%),
+                   radial-gradient(circle at 85% 75%,rgba(58,74,46,.06) 0%,transparent 45%);}
+.page{max-width:560px;margin:0 auto;padding:48px 28px;text-align:center}
+.mark{font-family:var(--serif);font-size:22px;font-weight:500;margin-bottom:48px}
+.mark em{font-style:italic;color:var(--moss)}
+h1{font-family:var(--serif);font-weight:300;font-size:clamp(36px,6vw,56px);line-height:1.02;letter-spacing:-.02em;margin-bottom:14px}
+h1 em{font-style:italic;color:var(--moss)}
+.lead{font-family:var(--serif);font-style:italic;color:var(--ink-soft);font-size:18px;margin-bottom:36px}
+
+.card{background:#fff;border:1px solid rgba(42,32,24,.18);border-radius:14px;padding:32px;text-align:left}
+label{display:block;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px;margin-top:14px}
+input{width:100%;font-family:var(--sans);font-size:16px;padding:14px 16px;background:transparent;border:1px solid rgba(42,32,24,.4);border-radius:8px;color:var(--ink)}
+button{width:100%;margin-top:24px;font-family:var(--sans);font-size:14px;font-weight:600;padding:14px 22px;
+  background:var(--ink);color:var(--bg);border:none;border-radius:999px;cursor:pointer;letter-spacing:.04em}
+button:disabled{opacity:.5;cursor:not-allowed}
+
+.benefits{margin-top:32px;text-align:left;color:var(--ink-soft);font-size:14px}
+.benefits li{margin-bottom:8px;list-style:none;padding-left:22px;position:relative}
+.benefits li::before{content:'✓';position:absolute;left:0;color:var(--moss);font-weight:700}
+
+.success{background:rgba(58,74,46,.1);border:1px solid var(--moss);padding:24px;border-radius:12px;margin-top:24px;text-align:center;display:none}
+.success.show{display:block}
+.success h2{font-family:var(--serif);font-size:24px;color:var(--moss);margin-bottom:8px}
+
+a.back{display:inline-block;margin-top:24px;font-size:13px;color:var(--ink-soft)}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="mark"><a href="/" style="color:inherit;text-decoration:none">Zen <em>Village</em></a></div>
+
+  <h1>Your <em>Zen Wallet</em></h1>
+  <p class="lead">30 seconds. No password.</p>
+
+  <div class="card" id="form-card">
+    <p style="color:var(--ink-soft);font-size:14px;margin-bottom:8px">We'll send you a one-tap link to open your wallet.</p>
+    <label for="name">Your name</label>
+    <input id="name" type="text" placeholder="Maya" autocomplete="given-name">
+    <label for="email">Email</label>
+    <input id="email" type="email" placeholder="you@example.com" autocomplete="email" required>
+    <button id="submit">Create my wallet</button>
+    <p id="msg" style="margin-top:14px;font-size:13px;color:var(--clay);min-height:18px"></p>
+  </div>
+
+  <div class="card success" id="success">
+    <h2>Check your inbox</h2>
+    <p style="color:var(--ink-soft);font-size:14px">We sent a one-tap link to <strong id="sent-to"></strong>. Open the link to access your wallet.</p>
+    <p style="color:var(--ink-soft);font-size:13px;margin-top:14px">The link expires in 30 minutes. You can request a new one anytime.</p>
+  </div>
+
+  <ul class="benefits">
+    <li>Top up once, spend everywhere — retreats, events, Zen Store</li>
+    <li>Lowest-fee rails (cash, Zelle, USDC) earn bonus credits</li>
+    <li>1 Zen Credit = $1 USD. Always.</li>
+  </ul>
+
+  <a href="/" class="back">← Back to Zen Village</a>
+</div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const ref = (params.get('ref') || (document.cookie.match(/zv_ref=([^;]+)/) || [])[1] || '').toUpperCase();
+
+document.getElementById('submit').addEventListener('click', async () => {
+  const email = document.getElementById('email').value.trim();
+  const name  = document.getElementById('name').value.trim();
+  const msg   = document.getElementById('msg');
+  if (!email){ msg.textContent='Please enter your email.'; return; }
+  document.getElementById('submit').disabled = true;
+  document.getElementById('submit').textContent = 'Sending…';
+  try {
+    const r = await fetch('/api/wallet/start', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({email, name, ref})
+    });
+    const d = await r.json();
+    if (d.ok){
+      document.getElementById('form-card').style.display='none';
+      document.getElementById('sent-to').textContent = email;
+      document.getElementById('success').classList.add('show');
+    } else {
+      msg.textContent = d.detail || 'Could not send link. Try again.';
+      document.getElementById('submit').disabled = false;
+      document.getElementById('submit').textContent = 'Create my wallet';
+    }
+  } catch(e){
+    msg.textContent = 'Network error. Try again.';
+    document.getElementById('submit').disabled = false;
+    document.getElementById('submit').textContent = 'Create my wallet';
+  }
+});
+</script>
+</body>
+</html>

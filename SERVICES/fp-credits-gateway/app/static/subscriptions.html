@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscriptions | Full Potential AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0f;
+            --purple-primary: #a855f7;
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --border-color: rgba(168, 85, 247, 0.2);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+        header {
+            text-align: center;
+            margin: 4rem 0 6rem;
+        }
+
+        h1 {
+            font-family: 'Space Mono', monospace;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 2.5rem;
+            position: relative;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            background: rgba(255,255,255,0.05);
+        }
+
+        .card.popular {
+            border-color: var(--purple-primary);
+            background: rgba(168, 85, 247, 0.05);
+        }
+
+        .badge {
+            position: absolute;
+            top: -12px; left: 50%;
+            transform: translateX(-50%);
+            background: var(--purple-primary);
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+        }
+
+        .plan-name {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .price {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+        }
+
+        .price span {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .features {
+            list-style: none;
+            margin-bottom: 2.5rem;
+        }
+
+        .features li {
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .features li::before {
+            content: "✓";
+            color: var(--purple-primary);
+            font-weight: bold;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--purple-primary);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: white;
+        }
+
+        .btn:hover { opacity: 0.9; }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 4rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Unlock Your Potential</h1>
+            <p style="color: var(--text-secondary); font-size: 1.2rem;">Choose a plan to accelerate your mission.</p>
+        </header>
+
+        <div class="pricing-grid">
+            <!-- Starter -->
+            <div class="card">
+                <div class="plan-name">Builder</div>
+                <div class="price">$10<span>/mo</span></div>
+                <ul class="features">
+                    <li>100 UC Monthly Credit</li>
+                    <li>Access to basic models</li>
+                    <li>Community support</li>
+                </ul>
+                <button class="btn btn-outline" onclick="alert('Coming soon')">Select Plan</button>
+            </div>
+
+            <!-- Pro -->
+            <div class="card popular">
+                <div class="badge">MOST POPULAR</div>
+                <div class="plan-name">Visionary</div>
+                <div class="price">$50<span>/mo</span></div>
+                <ul class="features">
+                    <li>550 UC Monthly Credit (+10%)</li>
+                    <li>Priority API Access</li>
+                    <li>GPT-4 & Claude 3.5 Access</li>
+                    <li>Dream Big Mask (Annual)</li>
+                </ul>
+                <button class="btn btn-primary" onclick="alert('Coming soon')">Select Plan</button>
+            </div>
+
+            <!-- Enterprise -->
+            <div class="card">
+                <div class="plan-name">Architect</div>
+                <div class="price">$200<span>/mo</span></div>
+                <ul class="features">
+                    <li>2,500 UC Monthly Credit (+25%)</li>
+                    <li>Dedicated Support Channel</li>
+                    <li>Custom Fine-tuning</li>
+                    <li>Early feature access</li>
+                </ul>
+                <button class="btn btn-outline" onclick="alert('Coming soon')">Contact Sales</button>
+            </div>
+        </div>
+
+        <a href="/services/credits/purchase" class="back-link">← Back to One-time Purchase</a>
+    </div>
+</body>
+</html>
+
