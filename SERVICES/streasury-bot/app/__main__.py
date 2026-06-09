@@ -30,6 +30,86 @@ def make_app() -> FastAPI:
         rep = await build_report(period)
         return render_report(rep)
 
+    @app.get("/api/revenue/summary")
+    async def revenue_summary(period: str = "24h") -> dict:
+        """Revenue summary for digest aggregation.
+
+        Args:
+            period: "24h", "7d", "30d", "90d" (default: "24h")
+
+        Returns:
+            {
+                "period": "24h",
+                "total": 540.00,
+                "count": 3,
+                "change_pct": 12.5,  # vs previous period
+                "trailing_30d": 14838.00,
+                "trailing_90d": 48019.00,
+                "trailing_365d": 194545.34
+            }
+        """
+        from datetime import datetime, timedelta, timezone
+        from .db import connect
+        from .config import settings
+
+        # Map period to days
+        period_map = {"24h": 1, "7d": 7, "30d": 30, "90d": 90}
+        days = period_map.get(period, 1)
+
+        now = datetime.now(timezone.utc)
+        start = now - timedelta(days=days)
+        prev_start = start - timedelta(days=days)
+
+        tid = settings.default_tenant_id
+
+        async with connect() as conn:
+            async with conn.cursor() as cur:
+                # Current period revenue (positive amounts only)
+                await cur.execute(
+                    "SELECT COALESCE(SUM(amount), 0), COUNT(*) "
+                    "FROM streasury.txn WHERE tenant_id = %s "
+                    "AND occurred_at >= %s AND occurred_at < %s "
+                    "AND amount > 0",
+                    (tid, start, now),
+                )
+                total, count = await cur.fetchone()
+
+                # Previous period revenue (for change %)
+                await cur.execute(
+                    "SELECT COALESCE(SUM(amount), 0) "
+                    "FROM streasury.txn WHERE tenant_id = %s "
+                    "AND occurred_at >= %s AND occurred_at < %s "
+                    "AND amount > 0",
+                    (tid, prev_start, start),
+                )
+                prev_total = (await cur.fetchone())[0]
+
+                # Trailing 30/90/365 days
+                await cur.execute(
+                    "SELECT "
+                    "  COALESCE(SUM(CASE WHEN occurred_at >= %s THEN amount ELSE 0 END), 0), "
+                    "  COALESCE(SUM(CASE WHEN occurred_at >= %s THEN amount ELSE 0 END), 0), "
+                    "  COALESCE(SUM(CASE WHEN occurred_at >= %s THEN amount ELSE 0 END), 0) "
+                    "FROM streasury.txn WHERE tenant_id = %s AND amount > 0",
+                    (now - timedelta(days=30), now - timedelta(days=90),
+                     now - timedelta(days=365), tid),
+                )
+                t30, t90, t365 = await cur.fetchone()
+
+        total = float(total or 0)
+        prev_total = float(prev_total or 0)
+        change_pct = ((total - prev_total) / prev_total * 100) if prev_total > 0 else 0.0
+
+        return {
+            "period": period,
+            "total": round(total, 2),
+            "count": int(count),
+            "change_pct": round(change_pct, 1),
+            "trailing_30d": round(float(t30 or 0), 2),
+            "trailing_90d": round(float(t90 or 0), 2),
+            "trailing_365d": round(float(t365 or 0), 2),
+        }
+
     @app.on_event("shutdown")
     async def _close() -> None:
         await close_pool()

@@ -254,9 +254,18 @@ window.setStatus = async (key, status) => {
 };
 
 async function tryCockpitBridge(){
-  // If user signed into /cockpit (cockpit session in localStorage), use it to
-  // fetch the legacy admin token transparently — no second prompt for villagers.
+  // If user signed into /cockpit, inherit credentials transparently — no
+  // second prompt for villagers. Two paths exist:
+  //   (a) username/password login → zv_cockpit_session (call /api/cockpit/legacy-token)
+  //   (b) "Use token" tab        → zv_cockpit_token (already the legacy token; adopt directly)
   try {
+    // (b) — direct token reuse, no API hop required.
+    const directToken = localStorage.getItem("zv_cockpit_token");
+    if (directToken) {
+      setToken(directToken);
+      return true;
+    }
+    // (a) — session-token → legacy-token swap.
     const raw = localStorage.getItem("zv_cockpit_session");
     if (!raw) return false;
     const session = JSON.parse(raw);

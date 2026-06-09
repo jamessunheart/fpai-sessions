@@ -38,6 +38,8 @@ LEADS_DIR = Path(os.environ.get("LEADS_DATA_DIR", "/var/lib/full-potential/leads
 LEADS_DIR.mkdir(parents=True, exist_ok=True)
 MIRRORS_DIR = Path(os.environ.get("MIRRORS_DATA_DIR", "/var/lib/full-potential/mirrors"))
 MIRRORS_DIR.mkdir(parents=True, exist_ok=True)
+TIERS_DIR = Path(os.environ.get("TIERS_DATA_DIR", "/var/lib/full-potential/tiers"))
+TIERS_DIR.mkdir(parents=True, exist_ok=True)
 ADMIN_TOKEN = os.environ.get("ADMIN_TOKEN", "").strip()
 
 
@@ -1634,6 +1636,85 @@ async def get_card(slug: str, admin_token: Optional[str] = None) -> dict:
         "date_last_updated": target_data.get("date_last_updated"),
         "content": body.strip(),
     }
+
+
+# ─────────────────── apprentice tier overlay (set-tier) ──────────────────
+class SetTierRequest(BaseModel):
+    email: Optional[str] = Field(None, max_length=200)
+    name: Optional[str] = Field(None, min_length=2, max_length=100)
+    tier: str = Field(..., min_length=2, max_length=40)
+    founding: bool = False
+    note: Optional[str] = Field(None, max_length=500)
+
+
+@app.post("/admin/set-tier")
+async def admin_set_tier(
+    req: SetTierRequest,
+    x_admin_token: Optional[str] = Header(None),
+) -> dict:
+    """Set or update a Champion tier overlay (e.g., tier='apprentice').
+
+    Writes a separate tier-overlay file at TIERS_DIR/{key}.json so the original
+    signed champion record stays integrity-preserved. Idempotent.
+
+    Called by apprentice-gateway on checkout.session.completed.
+    Identifies by email (preferred) or name slug.
+    """
+    _check_admin(x_admin_token)
+    if not req.email and not req.name:
+        raise HTTPException(400, "email or name required")
+
+    key_source = (req.email or req.name or "").lower().strip()
+    key = re.sub(r"[^a-z0-9]+", "-", key_source).strip("-") or "unnamed"
+    out = TIERS_DIR / f"{key}.json"
+
+    now = datetime.now().isoformat()
+    history: list[dict] = []
+    if out.exists():
+        try:
+            existing = json.loads(out.read_text(encoding="utf-8"))
+            history = existing.get("history", []) or []
+        except Exception:
+            history = []
+
+    history.append({
+        "ts": now,
+        "tier": req.tier,
+        "founding": bool(req.founding),
+        "note": req.note,
+    })
+
+    record = {
+        "email": req.email,
+        "name": req.name,
+        "tier": req.tier,
+        "founding": bool(req.founding),
+        "updated_at": now,
+        "history": history,
+    }
+    out.write_text(json.dumps(record, indent=2), encoding="utf-8")
+    return {"ok": True, "key": key, "tier": req.tier, "founding": bool(req.founding)}
+
+
+@app.get("/admin/get-tier")
+async def admin_get_tier(
+    email: Optional[str] = None,
+    name: Optional[str] = None,
+    x_admin_token: Optional[str] = Header(None),
+) -> dict:
+    _check_admin(x_admin_token)
+    key_source = (email or name or "").lower().strip()
+    if not key_source:
+        raise HTTPException(400, "email or name required")
+    key = re.sub(r"[^a-z0-9]+", "-", key_source).strip("-") or "unnamed"
+    out = TIERS_DIR / f"{key}.json"
+    if not out.exists():
+        return {"ok": True, "key": key, "tier": None}
+    try:
+        rec = json.loads(out.read_text(encoding="utf-8"))
+    except Exception:
+        raise HTTPException(500, "tier record corrupted")
+    return {"ok": True, "key": key, "record": rec}
 
 
 @app.get("/admin/digest")

@@ -4,6 +4,7 @@ import httpx
 from pathlib import Path
 from typing import Dict, Any, List
 from .config import settings
+from .signals import signal_store
 
 logger = logging.getLogger("StateMonitor")
 
@@ -19,7 +20,9 @@ class StateMonitor:
             "services": {},
             "sessions": {},
             "revenue": {},
-            "gaps": []
+            "gaps": [],
+            "signals": [],
+            "signals_stats": {}
         }
 
     async def update(self) -> Dict[str, Any]:
@@ -34,6 +37,10 @@ class StateMonitor:
         
         # 3. Load Revenue Data (Mock for now, or read from file)
         self._load_revenue_data()
+
+        # 4. Pull recent external signals (Data Service, Nerve Center digest, etc.)
+        self.world_model["signals"] = signal_store.recent(limit=200)
+        self.world_model["signals_stats"] = signal_store.stats()
         
         return self.world_model
 

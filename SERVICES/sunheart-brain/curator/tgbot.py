@@ -38,8 +38,16 @@ from pathlib import Path
 import httpx
 
 from . import telegram as tg
+from . import james_ask
 from .appflowy import AppFlowy
 from .proposals import SAFE_AUTO_APPLY
+
+
+async def _ask_send_wrapper(text: str):
+    """Adapter for james_ask.send_pending: tg.send returns bool, return a
+    minimal dict so message_id (None for now) fits the expected shape."""
+    ok = await tg.send(text)
+    return {"result": {"message_id": None}} if ok else None
 
 logging.basicConfig(
     level=os.environ.get("LOG_LEVEL", "INFO"),
@@ -51,6 +59,21 @@ log = logging.getLogger("curator.tgbot")
 
 OFFSET_FILE = Path(os.environ.get("SH_TGBOT_OFFSET_FILE", "/var/lib/sh-brain/tgbot.offset"))
 OWNER_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
+
+# Team capture: comma-separated `chat_id:display_name` pairs · these humans can
+# DM the bot to drop intents into Linear CAPTURED (river-only, no command access).
+# Format: "12345:Atlas,67890:Cheyenne,11111:Halley"
+_TEAM_RAW = os.environ.get("TEAM_CAPTURE_USERS", "")
+TEAM_CAPTURE: dict[str, str] = {}
+for _pair in _TEAM_RAW.split(","):
+    _pair = _pair.strip()
+    if ":" in _pair:
+        _cid, _name = _pair.split(":", 1)
+        TEAM_CAPTURE[_cid.strip()] = _name.strip()
+
+def _is_team_capture_user(uid: str) -> bool:
+    """Non-owner human authorized to drop captures (capture-only · no commands · no brain search)."""
+    return bool(uid) and uid in TEAM_CAPTURE
 
 # In-memory privacy mode: when active, neither inbound nor outbound messages are
 # logged to brain_index.tg_messages. Toggle with /private and /public.
@@ -508,6 +531,7 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
             "  /roi       — yesterday's brain ROI ledger (cost vs engagement)\n"
             "  /opportunities — run today's proactive scan now (silent if nothing)\n"
             "  /capabilities [category] — what this system can do (and when it shipped)\n"
+            "  /voice [on|off]  — toggle voice replies (default ON · voice-in always replies in voice)\n"
             "  /more      — same as /signals more (expanded view: liquidity, costs, etc.)\n"
             "  /log       — recent AI activity timeline\n"
             "  /pending — list pending queue items with approve buttons\n"
@@ -656,7 +680,61 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
         return None
     if cmd == "capabilities":
         return await _cmd_capabilities(rest.strip())
+    if cmd == "voice":
+        return _cmd_voice(rest.strip().lower())
     return f"Unknown command: /{tg._esc(cmd)}. Try /help."
+
+
+def _cmd_voice(arg: str) -> str:
+    """Runtime toggle for voice-out replies.
+
+    /voice          → show status
+    /voice on       → enable (remove lockfile)
+    /voice off      → disable (create lockfile)
+    /voice test     → return a small text reply that will get TTS'd back if
+                      issued from a voice message (the caller controls TTS
+                      dispatch; this just confirms the path is alive)
+    """
+    if arg in ("on", "enable", "enabled"):
+        try:
+            if _VOICE_DISABLE_LOCK.exists():
+                _VOICE_DISABLE_LOCK.unlink()
+            return ("🔊 <b>Voice replies: ON</b>\n"
+                    f"Voice messages will be answered with voice + text.\n"
+                    f"Model: <code>{tg._esc(_TTS_MODEL)}</code> · "
+                    f"Voice: <code>{tg._esc(_TTS_VOICE)}</code> · "
+                    f"Format: <code>{tg._esc(_TTS_FORMAT)}</code>")
+        except Exception as e:
+            return f"⚠️ Could not enable voice: {tg._esc(str(e))}"
+    if arg in ("off", "disable", "disabled", "mute"):
+        try:
+            _VOICE_DISABLE_LOCK.parent.mkdir(parents=True, exist_ok=True)
+            _VOICE_DISABLE_LOCK.write_text(
+                datetime.now(timezone.utc).isoformat() + "\n"
+            )
+            return ("🔇 <b>Voice replies: OFF</b>\n"
+                    "Voice messages will still be transcribed, but the bot will "
+                    "reply with text only. Re-enable with <code>/voice on</code>.")
+        except Exception as e:
+            return f"⚠️ Could not disable voice: {tg._esc(str(e))}"
+    # status / default
+    enabled = _voice_out_enabled()
+    state = "🔊 ON" if enabled else "🔇 OFF"
+    why = ""
+    if not enabled:
+        if os.environ.get("EMBER_TGBOT_VOICE_DISABLE", "").strip() in ("1", "true", "yes"):
+            why = " <i>(env EMBER_TGBOT_VOICE_DISABLE)</i>"
+        elif _VOICE_DISABLE_LOCK.exists():
+            why = f" <i>(lockfile {tg._esc(str(_VOICE_DISABLE_LOCK))})</i>"
+    return (
+        f"🎙️ <b>Voice status:</b> {state}{why}\n"
+        f"Model: <code>{tg._esc(_TTS_MODEL)}</code> · "
+        f"Voice: <code>{tg._esc(_TTS_VOICE)}</code> · "
+        f"Max chars: <code>{_TTS_MAX_CHARS}</code> · "
+        f"Format: <code>{tg._esc(_TTS_FORMAT)}</code>\n"
+        "Toggle: <code>/voice on</code> · <code>/voice off</code>\n"
+        "<i>Voice replies fire only when the inbound message was voice.</i>"
+    )
 
 
 # ---------- shared state-file paths (synced from laptop) ----------
@@ -3433,17 +3511,412 @@ async def _cmd_log() -> str:
     return "\n".join(lines)
 
 
+# ───────────────────────────── Linear (Sunheart Flow Spine Phase 2) ─────────────────────────────
+# Voice memo → Linear CAPTURED. Added 2026-05-23 per project_sunheart_flow_spine.
+# Token at ~/.config/fpai/linear/api.token (mode 600). Defaults map to Full Potential AI team FUL.
+_LINEAR_TOKEN_PATH = os.environ.get(
+    "LINEAR_API_TOKEN_PATH",
+    str(Path.home() / ".config" / "fpai" / "linear" / "api.token"),
+)
+_LINEAR_TEAM_ID = os.environ.get("LINEAR_TEAM_ID", "44963b86-9bc7-4cc1-8440-d094711408f8")
+_LINEAR_CAPTURED_STATE_ID = os.environ.get(
+    "LINEAR_CAPTURED_STATE_ID", "18529b8e-7c40-4e6d-9e36-d7e5082acfe1"
+)
+_LINEAR_API = "https://api.linear.app/graphql"
+_LINEAR_LABEL_CACHE: dict[str, str] = {}
+
+
+def _linear_token() -> str | None:
+    try:
+        return Path(_LINEAR_TOKEN_PATH).expanduser().read_text().strip() or None
+    except Exception:
+        return None
+
+
+async def _linear_label_lookup() -> dict[str, str]:
+    """Fetch labels once · cache name→id. Returns empty dict on failure."""
+    global _LINEAR_LABEL_CACHE
+    if _LINEAR_LABEL_CACHE:
+        return _LINEAR_LABEL_CACHE
+    token = _linear_token()
+    if not token:
+        return {}
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as cli:
+            r = await cli.post(
+                _LINEAR_API,
+                headers={"Authorization": token, "Content-Type": "application/json"},
+                json={
+                    "query": '{ issueLabels(filter: {team: {id: {eq: "'
+                    + _LINEAR_TEAM_ID
+                    + '"}}}) { nodes { id name } } }'
+                },
+            )
+            data = (r.json() or {}).get("data", {}) or {}
+            for n in (data.get("issueLabels", {}) or {}).get("nodes", []):
+                _LINEAR_LABEL_CACHE[n["name"]] = n["id"]
+    except Exception as e:
+        log.warning("linear label lookup failed: %s", e)
+    return _LINEAR_LABEL_CACHE
+
+
+async def _linear_capture(transcript: str, from_name: str = "James") -> str | None:
+    """Post transcript to Linear CAPTURED. Returns TG reply string with URL · None on failure.
+
+    Voice-prefix detection:
+      'rapid:' / 'urgent:' → ⚡ Rapid Current (default)
+      'active:' / 'flow:'  → 🌀 Active Flow
+      'slow:'  / 'later:'  → 🍃 Slow River
+      'dormant:' / 'park:' / 'someday:' → 💤 Dormant Pool
+    """
+    token = _linear_token()
+    if not token:
+        log.warning("linear: no token at %s · skipping capture", _LINEAR_TOKEN_PATH)
+        return None
+
+    t = (transcript or "").strip()
+    lower = t.lower()
+    label_name = "⚡ Rapid Current"
+    body = t
+    prefix_map = [
+        (("rapid:", "urgent:"), "⚡ Rapid Current"),
+        (("active:", "flow:"), "🌀 Active Flow"),
+        (("slow:", "later:"), "🍃 Slow River"),
+        (("dormant:", "park:", "someday:"), "💤 Dormant Pool"),
+    ]
+    for prefixes, label in prefix_map:
+        for p in prefixes:
+            if lower.startswith(p):
+                label_name = label
+                body = t[len(p):].strip()
+                break
+        if label_name != "⚡ Rapid Current" or body != t:
+            break
+
+    title_prefix = "" if from_name == "James" else f"[{from_name}] "
+    title = (title_prefix + (body.split("\n")[0][:80].strip())) or "(voice capture)"
+    description = (
+        f"Captured from {from_name} via @sunheartbrain_bot\n\n"
+        f"---\n\n{transcript}\n\n"
+        f"---\n_Captured by Sunheart Flow Spine Phase 2 wire ·"
+        f" {datetime.now(timezone.utc).isoformat()}_"
+    )
+
+    labels = await _linear_label_lookup()
+    label_id = labels.get(label_name)
+
+    mutation = """
+    mutation IssueCreate($input: IssueCreateInput!) {
+      issueCreate(input: $input) {
+        success
+        issue { identifier url }
+      }
+    }
+    """
+    variables: dict = {
+        "input": {
+            "teamId": _LINEAR_TEAM_ID,
+            "stateId": _LINEAR_CAPTURED_STATE_ID,
+            "title": title,
+            "description": description,
+        }
+    }
+    if label_id:
+        variables["input"]["labelIds"] = [label_id]
+
+    try:
+        async with httpx.AsyncClient(timeout=15.0) as cli:
+            r = await cli.post(
+                _LINEAR_API,
+                headers={"Authorization": token, "Content-Type": "application/json"},
+                json={"query": mutation, "variables": variables},
+            )
+            data = (r.json() or {}).get("data", {}) or {}
+            iss = ((data.get("issueCreate") or {}).get("issue")) or {}
+            if iss.get("url"):
+                return (
+                    f"🌊 <b>Captured in the river</b> · "
+                    f"<a href=\"{iss['url']}\">{iss['identifier']}</a> · "
+                    f"<i>{tg._esc(label_name)}</i>"
+                )
+    except Exception as e:
+        log.warning("linear capture failed: %s", e)
+    return None
+
+
+async def _transcribe_voice(file_id: str) -> str | None:
+    """Telegram voice file_id → OpenAI Whisper transcript. None on failure."""
+    openai_key = os.environ.get("OPENAI_API_KEY")
+    if not openai_key or not tg.BOT_TOKEN:
+        log.warning("voice: OPENAI_API_KEY or TELEGRAM_BOT_TOKEN missing")
+        return None
+    try:
+        async with httpx.AsyncClient(timeout=90) as client:
+            r = await client.get(
+                f"https://api.telegram.org/bot{tg.BOT_TOKEN}/getFile",
+                params={"file_id": file_id},
+            )
+            r.raise_for_status()
+            file_path = r.json()["result"]["file_path"]
+            r = await client.get(
+                f"https://api.telegram.org/file/bot{tg.BOT_TOKEN}/{file_path}"
+            )
+            r.raise_for_status()
+            audio_bytes = r.content
+            r = await client.post(
+                "https://api.openai.com/v1/audio/transcriptions",
+                headers={"Authorization": f"Bearer {openai_key}"},
+                files={"file": ("voice.ogg", audio_bytes, "audio/ogg")},
+                data={"model": "whisper-1"},
+            )
+            r.raise_for_status()
+            return (r.json().get("text") or "").strip() or None
+    except Exception as e:
+        log.exception("voice transcription failed: %s", e)
+        return None
+
+
+# ───────────────────────────── voice OUT (TTS) ─────────────────────────────
+# Reply-to-voice behavior is opt-out per James 2026-05-21:
+#   - Inbound voice → always reply with voice (and text).
+#   - EMBER_TGBOT_VOICE_DISABLE=1 env or voice_disable.lock file → text-only fallback.
+#   - Long replies get truncated for TTS (full text still sent as a normal message).
+
+_VOICE_DISABLE_LOCK = Path(
+    os.environ.get(
+        "EMBER_TGBOT_VOICE_LOCK",
+        "/var/lib/sh-brain/voice_disable.lock",
+    )
+)
+_TTS_MODEL = os.environ.get("SH_TGBOT_TTS_MODEL", "tts-1")  # tts-1 (fast/cheap) or tts-1-hd
+_TTS_VOICE = os.environ.get("SH_TGBOT_TTS_VOICE", "nova")    # alloy/echo/fable/onyx/nova/shimmer
+_TTS_MAX_CHARS = int(os.environ.get("SH_TGBOT_TTS_MAX_CHARS", "1200"))
+_TTS_FORMAT = os.environ.get("SH_TGBOT_TTS_FORMAT", "opus")  # opus = OGG/Opus, native TG voice
+_HTML_TAG_RE = re.compile(r"<[^>]+>")
+
+
+def _voice_out_enabled() -> bool:
+    if os.environ.get("EMBER_TGBOT_VOICE_DISABLE", "").strip() in ("1", "true", "yes"):
+        return False
+    try:
+        if _VOICE_DISABLE_LOCK.exists():
+            return False
+    except Exception:
+        pass
+    return True
+
+
+def _strip_for_tts(html_text: str) -> str:
+    """Remove HTML tags + entity-decode + collapse for the speech model.
+
+    Drops citation footers ([N] sources block) and code-fence noise, keeps
+    the first paragraph + Next moves bullets. Trims to _TTS_MAX_CHARS.
+    """
+    if not html_text:
+        return ""
+    # Cut everything after a "Sources" header — TTS shouldn't read citations.
+    cut = re.split(r"\n*<b>\s*Sources\b", html_text, maxsplit=1, flags=re.IGNORECASE)
+    text = cut[0]
+    # Strip tags
+    text = _HTML_TAG_RE.sub("", text)
+    # HTML entity decode (we only ever emit &amp; &lt; &gt;)
+    text = (text
+            .replace("&amp;", "&")
+            .replace("&lt;", "<")
+            .replace("&gt;", ">")
+            .replace("&quot;", '"')
+            .replace("&#x27;", "'"))
+    # Collapse bullet markers + extra whitespace
+    text = re.sub(r"^\s*[•\-\*]\s+", ". ", text, flags=re.MULTILINE)
+    text = re.sub(r"\n{2,}", ". ", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    if len(text) > _TTS_MAX_CHARS:
+        text = text[: _TTS_MAX_CHARS - 1].rstrip() + "…"
+    return text
+
+
+async def _synthesize_tts(text: str) -> tuple[bytes, str, str] | None:
+    """text → audio bytes via OpenAI TTS. Returns (bytes, mime, ext) or None.
+
+    Format defaults to OGG/Opus so Telegram renders the native voice bubble.
+    MP3 fallback is available for environments where Opus encoding is off.
+    """
+    openai_key = os.environ.get("OPENAI_API_KEY")
+    if not openai_key:
+        log.warning("voice-out: OPENAI_API_KEY missing")
+        return None
+    speak = _strip_for_tts(text)
+    if not speak or len(speak) < 2:
+        return None
+    fmt = _TTS_FORMAT
+    if fmt not in ("opus", "mp3", "aac", "flac", "wav", "pcm"):
+        fmt = "opus"
+    mime = {"opus": "audio/ogg", "mp3": "audio/mpeg", "aac": "audio/aac",
+            "flac": "audio/flac", "wav": "audio/wav", "pcm": "audio/L16"}.get(fmt, "audio/ogg")
+    ext = "ogg" if fmt == "opus" else fmt
+    try:
+        async with httpx.AsyncClient(timeout=60) as client:
+            r = await client.post(
+                "https://api.openai.com/v1/audio/speech",
+                headers={
+                    "Authorization": f"Bearer {openai_key}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "model": _TTS_MODEL,
+                    "voice": _TTS_VOICE,
+                    "input": speak,
+                    "response_format": fmt,
+                },
+            )
+            r.raise_for_status()
+            return r.content, mime, ext
+    except Exception as e:
+        log.exception("voice-out synthesis failed: %s", e)
+        return None
+
+
+async def _send_voice_reply(text: str) -> bool:
+    """Synthesize + send a voice reply. Returns True on success.
+
+    Caller controls when this fires (e.g. only when inbound was voice). On any
+    failure, returns False — caller already sent the text reply so user still
+    gets the answer.
+    """
+    if not _voice_out_enabled():
+        log.info("voice-out disabled (env or lockfile); skipping")
+        return False
+    synth = await _synthesize_tts(text)
+    if not synth:
+        return False
+    audio, mime, ext = synth
+    fname = f"reply.{ext}"
+    if mime == "audio/ogg":
+        return await tg.send_voice(audio, filename=fname, mime=mime)
+    return await tg.send_audio(audio, filename=fname, mime=mime)
+
+
 async def _handle_message(msg: dict) -> None:
     chat = msg.get("chat") or {}
     chat_id = chat.get("id")
     from_user = str((msg.get("from") or {}).get("id") or "")
     text = (msg.get("text") or "").strip()
     update_id = msg.get("message_id")  # not the update_id, but unique-ish
+    voice_in = False  # Track whether inbound was voice → reply with voice too
+
+    # Identify caller role: owner (full access) · team capture (Linear-only) · stranger (ignored)
+    is_owner = bool(OWNER_CHAT_ID) and from_user == OWNER_CHAT_ID
+    is_team = _is_team_capture_user(from_user)
+    capture_name = TEAM_CAPTURE.get(from_user, "James" if is_owner else "")
+
+    # Voice / audio note → Whisper transcription → Linear (always) → flow as text only for owner.
+    if not text and chat_id:
+        voice = msg.get("voice") or msg.get("audio")
+        if voice:
+            if not (is_owner or is_team):
+                log.info("ignoring voice from non-authorized user %s", from_user)
+                return
+            file_id = voice.get("file_id")
+            if not file_id:
+                return
+            await tg.send("🎙️ <i>Transcribing…</i>")
+            transcript = await _transcribe_voice(file_id)
+            if not transcript:
+                await tg.send("⚠️ Couldn't transcribe that voice note.")
+                return
+            await tg.send(f"🎙️ <b>Heard:</b> <i>{tg._esc(transcript)}</i>")
+            text = transcript
+            voice_in = True
+            # Sunheart Flow Spine Phase 2: drop into Linear CAPTURED (with attribution).
+            try:
+                linear_reply = await _linear_capture(transcript, from_name=capture_name or "Anonymous")
+                if linear_reply:
+                    await tg.send(linear_reply)
+            except Exception as e:
+                log.warning("linear capture wrapper failed: %s", e)
+            # Team-capture-only users: stop here. Don't run brain search / slash commands.
+            if is_team and not is_owner:
+                return
+
     if not text or not chat_id:
         return
-    if OWNER_CHAT_ID and from_user != OWNER_CHAT_ID:
-        log.info("ignoring message from non-owner user %s", from_user)
+
+    # Team-capture text-message: also drop to Linear, then stop.
+    if is_team and not is_owner:
+        if not text.startswith("/"):
+            try:
+                linear_reply = await _linear_capture(text, from_name=capture_name)
+                if linear_reply:
+                    await tg.send(linear_reply)
+                else:
+                    await tg.send("⚠️ Capture failed · text saved for retry.")
+            except Exception as e:
+                log.warning("team-capture text → linear failed: %s", e)
+        else:
+            await tg.send(
+                "ℹ️ Capture-only access. Send text or voice to drop intent into the river. "
+                "Slash commands are owner-only."
+            )
         return
+
+    if not is_owner:
+        # Self-onboarding: first message from a stranger gets a greeting with
+        # their chat_id so they can ask James to add them to TEAM_CAPTURE_USERS.
+        # Track greeted strangers to avoid spam.
+        _greeted_path = Path("/var/lib/sh-brain/greeted_strangers.txt")
+        already_greeted = False
+        try:
+            _greeted_path.parent.mkdir(parents=True, exist_ok=True)
+            if _greeted_path.exists():
+                already_greeted = from_user in _greeted_path.read_text().splitlines()
+        except Exception:
+            pass
+        if not already_greeted:
+            try:
+                first_name = (msg.get("from") or {}).get("first_name") or "there"
+                username = (msg.get("from") or {}).get("username") or ""
+                user_tag = f"@{username}" if username else ""
+                greeting = (
+                    f"👋 Hey {tg._esc(first_name)} · welcome to the Sunheart Flow.\n\n"
+                    f"<b>Your chat_id:</b> <code>{from_user}</code>\n\n"
+                    f"You're not authorized to capture into the river yet. "
+                    f"Send this to James to be added:\n\n"
+                    f"<i>'Hey James · please add me to the bot · "
+                    f"chat_id <code>{from_user}</code> · name &lt;your name&gt;'</i>\n\n"
+                    f"Once added · any text or voice memo you send here drops into the team river automatically."
+                )
+                await tg.send(greeting)
+                with _greeted_path.open("a") as f:
+                    f.write(from_user + "\n")
+            except Exception as e:
+                log.warning("stranger greeting failed: %s", e)
+        log.info("ignoring message from non-authorized user %s", from_user)
+        return
+
+    # james_ask inbound: if this text replies to an open ask, consume it +
+    # ack + return. Skip slash-commands (those are explicit non-asks).
+    if not text.startswith("/"):
+        try:
+            matched = await james_ask.try_match_reply(text, message_id=update_id)
+        except Exception as e:
+            log.warning("james_ask.try_match_reply failed: %s", e)
+            matched = None
+        if matched:
+            ack = (
+                f"✅ <b>Logged as your reply to</b> <code>{tg._esc(matched['id'])}</code>\n"
+                f"<i>From: {tg._esc(matched.get('from_agent', 'unknown'))}</i>\n"
+                f"<i>The asking agent will pick this up on next sweep.</i>"
+            )
+            try:
+                await tg.send(ack)
+            except Exception:
+                pass
+            if voice_in:
+                try:
+                    await _send_voice_reply(f"Got it · logged as reply to {matched['id']}")
+                except Exception:
+                    pass
+            return
 
     # Slash commands first (do NOT log them — they're not part of the conversation).
     if text.startswith("/"):
@@ -3454,6 +3927,14 @@ async def _handle_message(msg: dict) -> None:
             reply = f"⚠️ command error: {e}"
         if reply is not None:
             await tg.send(reply)
+            # Speak slash-command replies too when the inbound was voice — the
+            # whole point is eyes-closed conversation. Skip for commands that
+            # explicitly handle their own messaging (returned None above).
+            if voice_in:
+                try:
+                    await _send_voice_reply(reply)
+                except Exception as e:
+                    log.warning("voice-out (cmd) failed: %s", e)
         return
 
     # Plain text path — log inbound, answer, log outbound.
@@ -3461,7 +3942,8 @@ async def _handle_message(msg: dict) -> None:
 
     log.info("chat: %s", text[:120])
     hits = await _search_brain(text)
-    answer = _format_answer_for_telegram(await _synthesize_answer(text, hits))
+    answer_body = _format_answer_for_telegram(await _synthesize_answer(text, hits))
+    answer = answer_body
     # Citation footer: show all hits with a short preview
     if hits:
         cite_lines = ["", "<b>Sources</b> <i>([N] in answer maps here)</i>"]
@@ -3477,6 +3959,15 @@ async def _handle_message(msg: dict) -> None:
     await tg.send(answer)
     # Log outbound (the synthesized answer text only — no need to store sources block).
     await _log_tg_message(str(chat_id), "bot", answer)
+
+    # Voice-out: only when inbound was voice. Speak the answer BODY only
+    # (citations live in the text message; speaking [1][2][3] dumps would be
+    # noise on the ears). Best-effort — text already delivered.
+    if voice_in:
+        try:
+            await _send_voice_reply(answer_body)
+        except Exception as e:
+            log.warning("voice-out (chat) failed: %s", e)
 
 
 async def _run_capture_async() -> None:
@@ -4011,7 +4502,20 @@ async def run_forever() -> None:
     log.info("sh-brain-tgbot starting; polling messages + callback_query")
     offset = _load_offset()
     async with httpx.AsyncClient() as client:
+        _ja_tick = 0
         while True:
+            # james_ask outbound: deliver any pending asks each cycle (~25s)
+            try:
+                await james_ask.send_pending(_ask_send_wrapper, esc_fn=tg._esc)
+            except Exception as e:
+                log.warning("james_ask.send_pending failed: %s", e)
+            # Periodic expiry sweep (every ~50 cycles · ~20 min)
+            _ja_tick += 1
+            if _ja_tick % 50 == 0:
+                try:
+                    james_ask.expire_old()
+                except Exception:
+                    pass
             updates = await _poll_updates(client, offset)
             for u in updates:
                 uid = u.get("update_id", 0)

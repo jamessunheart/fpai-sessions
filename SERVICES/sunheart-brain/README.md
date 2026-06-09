@@ -50,7 +50,7 @@ SERVICES/sunheart-brain/
 ├── schema/            # sh_schema.json + build_schema.py  (5 DBs: Notes / Concepts / Conversations / Sources / Tags)
 ├── index/             # brain-index FastAPI service (embed + upsert + cosine search + dedup)
 ├── mcp/               # sh_mcp_server.py (stdio) + sh_mcp_http.py (SSE) + tokens template
-├── ingest/            # brain-ingest CLI: adapters for bear / chatgpt / claude / cursor transcripts
+├── ingest/            # brain-ingest CLI: bear / papers (PDF+md+txt) / chatgpt / claude / cursor
 ├── scripts/           # deploy helpers, backup extension, systemd units
 └── runbook/           # onboarding, troubleshooting, token rotation
 ```

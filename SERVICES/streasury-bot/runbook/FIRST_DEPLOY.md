@@ -3,6 +3,20 @@
 > **Goal:** from "scaffold committed" → "I can text @STreasury_Bot and it logs
 > a transaction" in ~20 minutes.
 
+## Fast path (recommended)
+
+If you want the shortest route, use the helper script and answer prompts:
+
+```bash
+cd /Users/jamessunheart/FPAI_Cockpit
+SERVICES/streasury-bot/scripts/quickstart.sh
+```
+
+It runs deploy + DB role + env file + restart for you, then prints a Telegram
+smoke test checklist.
+
+---
+
 There are five things to do, in this order. Each one is independent of the
 others; the bot won't *work* until all five are done, but you can do them in
 any order and pause anywhere.

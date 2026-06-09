@@ -126,6 +126,15 @@ SERVICES/streasury-bot/
 
 ## Quick start (local dev)
 
+Fastest beta bring-up (prompts + deploy + env + restart):
+
+```bash
+cd /Users/jamessunheart/FPAI_Cockpit
+SERVICES/streasury-bot/scripts/quickstart.sh
+```
+
+Manual/local dev flow:
+
 ```bash
 cd SERVICES/streasury-bot
 cp .env.example .env

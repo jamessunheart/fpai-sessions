@@ -44,6 +44,8 @@ Reject any candidate scoring below 100. Recommend AI/HUMAN/HIRE routing for the 
 
 **MANDATORY: Run `date "+%H:%M %A %Z"` before any work recommendation.** Real-time awareness is non-negotiable — recommending work at 1 AM that should happen at 9 AM damages the next 3 days of PULSE (per [[project-soul-time-metric]]).
 
+**MANDATORY: Get calendar state before any time-allocation recommendation.** You cannot optimize a James-hour you don't know is already committed. Per [[feedback-optimize-pending-james]] (Calendar TCC retired 2026-05-19 · risky-feeling · pivoted): **default to the ASK pattern.** Ask James at session boot: "Any fixed commitments in the next 24h I should know about?" Fold his answer into the rubric: any time slice colliding with a committed event scores 0 on Energy-match. (The icalbuddy path still exists as optional · `read_calendar_24h.sh` will run if James later grants TCC · but the ask-pattern is the default · safer · no permissions needed · works immediately.)
+
 Before recommending, ask the state-assessment questions:
 
 - **Current actual time** (just ran `date`) — apply time-of-day multipliers

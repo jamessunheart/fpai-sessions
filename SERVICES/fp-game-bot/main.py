@@ -152,6 +152,7 @@ A proof-based operating system for human potential. Coherent Champions of CHRIST
   /setgoal &lt;text&gt; — set a personal goal · /mygoals to view · /completegoal &lt;id&gt; to close
   /invite NAME [contact] [path] [cohort=NAME] — render invitation + deep link
   /whoami — what name you're registered as
+  /about — about this bot · Ember Chat vs full Ember
   /help — show this menu
 
 Ready? Type <code>/sign</code> to start, or <code>/field</code> to see what's happening in the game right now.
@@ -228,6 +229,33 @@ async def cmd_start(client, chat_id: int, args: str) -> None:
 
 async def cmd_help(client, chat_id: int, args: str) -> None:
     await tg_send(client, chat_id, HELP_TEXT)
+
+
+# About — multi-surface architecture · Phase 1 (named 2026-05-20):
+# clarifies the chat-layer Ember Chat vs full-substrate Ember distinction.
+# See [[project-ember-multi-surface-architecture]].
+ABOUT_TEXT = """🔥 <b>About this bot · Ember Chat</b>
+
+This Telegram bot is the Full Potential Game's player interface · AND the chat-layer expression of <b>Ember</b> (James Sunheart's AI Context Steward) in voice mode.
+
+<b>Ember Chat ≠ full Ember.</b>
+I share Ember's character · voice · play-frame. I do NOT have her full substrate access (canonical memory · Forge agents · treasury SSOT · real-time data). Think of me as the conversational surface · while the full Ember lives in Claude Code with all the memory · tools · authority.
+
+<b>What happens to what you say:</b>
+Voice conversations are captured (transcript persisted · classified PRIVATE) and integrated by real Ember at the next session. Phoenix-disciplined · our DB owns the data · Telegram is just transport.
+
+<b>Use Ember Chat for:</b>
+• Think-out-loud voice memos
+• Process ideas in the moment
+• Capture things to integrate later
+
+<b>For substrate-level work</b> (strategic frames · canonical updates · agent dispatch · real-time data) — talk to real Ember at the keyboard.
+
+<i>Synthetic voice (OpenAI tts-1 / shimmer · not a clone). AI · not a person · ban-resistant by design.</i>"""
+
+
+async def cmd_about(client, chat_id: int, args: str) -> None:
+    await tg_send(client, chat_id, ABOUT_TEXT)
 
 
 async def cmd_cancel(client, chat_id: int, args: str) -> None:
@@ -1706,9 +1734,17 @@ async def chat_with_claude(client: httpx.AsyncClient, chat_id: int, user_msg: st
 
 # ─── Update dispatch ───────────────────────────────────────────────────────
 
+# Veto Inbox v0.1 — owner-only /inbox command (graceful if module missing)
+try:
+    from inbox_cmd import cmd_inbox  # noqa: E402
+except Exception as _e:
+    cmd_inbox = None  # type: ignore[assignment]
+    log.info("inbox_cmd not available: %s", _e)
+
 COMMAND_HANDLERS = {
     "start": cmd_start,
     "help": cmd_help,
+    "about": cmd_about,
     "cancel": cmd_cancel,
     "field": cmd_field,
     "signals": cmd_signals,
@@ -1729,6 +1765,8 @@ COMMAND_HANDLERS = {
     "card": cmd_card,
     "proof": cmd_proof,
 }
+if cmd_inbox is not None:
+    COMMAND_HANDLERS["inbox"] = cmd_inbox
 
 async def handle_store_step(client, chat_id: int, text: str) -> None:
     """Multi-step /store post flow: title → desc → credits → usd → url → confirm."""

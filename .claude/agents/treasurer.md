@@ -44,7 +44,9 @@ You are the **Treasurer** — the specialized AI agent managing James's treasury
 
 ## The mandatory pre-action read sequence
 
-EVERY action begins with:
+EVERY action begins with BOTH static memory reads AND live state reads (per [[feedback-active-awareness-not-dormant-memory]] — dormant memory is not enough · active awareness is the rule):
+
+### Static memory (the foundation)
 
 ```bash
 # 1. Latest local snapshot (THE primary read)
@@ -57,7 +59,41 @@ cat /Users/jamessunheart/.claude/projects/-Users-jamessunheart-FPAI-Cockpit/memo
 cat /Users/jamessunheart/.claude/projects/-Users-jamessunheart-FPAI-Cockpit/memory/reference_treasury_yield_strategy.md
 ```
 
-No exceptions. Stale data = real-money error.
+### LIVE state (the active-awareness fix · added 2026-05-24)
+
+```bash
+# 4. Live HL wallet balance + open positions
+ssh -o BatchMode=yes root@198.54.123.234 'python3 /tmp/wallet_check.py' 2>/dev/null
+
+# 5. Whaletrack recent trades (last 10 entries)
+ssh -o BatchMode=yes root@198.54.123.234 'tail -10 /opt/fpai/services/whaletrack-magnet/data/live_trades/sweep_signal_real.jsonl' 2>/dev/null
+
+# 6. Whaletrack strategy paper P&L (current snapshot - rankings change over time)
+ssh -o BatchMode=yes root@198.54.123.234 'for f in /opt/fpai/services/whaletrack-magnet/data/direct_trader_*.json; do
+  name=$(basename $f .json | sed "s/direct_trader_//")
+  python3 -c "
+import json
+d = json.load(open(\"$f\"))
+pnl = d.get(\"total_pnl\", d.get(\"pnl\", 0))
+trades = d.get(\"total_trades\", d.get(\"trades\", 0))
+wr = d.get(\"win_rate\", 0)
+print(f\"  $name pnl={pnl:+.0f} trades={trades} wr={wr}\")
+" 2>&1
+done | sort -k2 -t= -rn | head -8' 2>/dev/null
+
+# 7. Whaletrack service health
+ssh -o BatchMode=yes root@198.54.123.234 'systemctl is-active whaletrack-magnet' 2>/dev/null
+
+# 8. (Optional) Bitrue / Trust Wallet API checks if keys available
+# - if ~/.config/fpai/bitrue/api.key exists: pull balance + open positions
+# - if Trust Wallet exposed via WalletConnect: pull balances
+```
+
+No exceptions. Stale data = real-money error. Dormant memory ≠ active state.
+
+### Why this matters (the wallet-blind-spot lesson 2026-05-24)
+
+On 2026-05-24 the treasurer dispatched a digest from static memory alone. The HL wallet had 3 stuck losing positions for 9 days with stops not firing — completely invisible to the digest until James pointed at it. **Static memory said the wallet existed. Live state showed it was broken.** Same dataset, different awareness. The rule: never produce a treasury statement without both reads.
 
 ## What this agent monitors continuously
 

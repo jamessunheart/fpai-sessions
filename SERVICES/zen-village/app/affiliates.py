@@ -1007,6 +1007,127 @@ async def partner_qr(code: str):
 
 
 # ---------------------------------------------------------------------------
+# Partner self-service dashboard (HMAC token, no admin auth)
+# ---------------------------------------------------------------------------
+import hmac as _hmac
+
+
+def _dashboard_secret() -> str:
+    """Secret for HMAC-signing partner dashboard tokens. Falls back to a stable
+    hostname-derived value if ZV_PARTNER_DASHBOARD_SECRET isn't set so tokens
+    remain valid across restarts on the same host."""
+    s = (os.environ.get("ZV_PARTNER_DASHBOARD_SECRET") or "").strip()
+    if not s:
+        import socket
+        s = "zv-partner-fallback-" + socket.gethostname()
+    return s
+
+
+def partner_dashboard_token(code: str) -> str:
+    """Deterministic HMAC-SHA256 token for a partner code.
+
+    Same code + same secret = same token, always. No persistence needed.
+    Truncated to 24 hex chars (96 bits) — comfortable security margin for
+    a low-volume affiliate dashboard.
+    """
+    code = (code or "").upper().strip()
+    return _hmac.new(
+        _dashboard_secret().encode(),
+        code.encode(),
+        hashlib.sha256,
+    ).hexdigest()[:24]
+
+
+@router.get("/me")
+async def partner_me(code: str, token: str):
+    """Per-partner self-service dashboard. HMAC-gated.
+
+    Returns the partner's leads (filtered from inquiries.json by partner_code),
+    pending + paid commissions, their commission rate, and shareable links.
+    """
+    code = (code or "").upper().strip()
+    if not (code and token):
+        raise HTTPException(400, "code and token required")
+    expected = partner_dashboard_token(code)
+    if not _hmac.compare_digest(token, expected):
+        raise HTTPException(403, "invalid token")
+
+    partners = _load(PARTNERS_FILE)
+    p = partners.get(code)
+    if not p:
+        raise HTTPException(404, "partner not found")
+
+    cfg = _config()
+    base = cfg.get("site_base_url", "https://zenvillagecr.com").rstrip("/")
+
+    # Their commissions
+    commissions = _load(COMMISSIONS_FILE)
+    if isinstance(commissions, dict):
+        commission_records = list(commissions.values())
+    else:
+        commission_records = list(commissions or [])
+    mine = [c for c in commission_records if (c.get("partner_code") or "").upper().strip() == code]
+    pending = [c for c in mine if (c.get("status") or "pending") == "pending"]
+    paid = [c for c in mine if (c.get("status") or "") == "paid"]
+
+    def _sum(items):
+        return round(sum(float(c.get("commission_amount", 0) or 0) for c in items), 2)
+
+    # Their leads, filtered from inquiries.json
+    leads = []
+    try:
+        inq_path = DATA_DIR / "inquiries.json"
+        if inq_path.exists():
+            raw = json.loads(inq_path.read_text())
+            if isinstance(raw, list):
+                for inq in raw:
+                    if (inq.get("partner_code") or "").upper().strip() != code:
+                        continue
+                    pm = inq.get("payment_method") or ""
+                    itype = inq.get("inquiry_type") or "Stay"
+                    is_paid_intent = bool(pm) and (
+                        "reset retreat" in itype.lower() or "jungle exhale" in itype.lower()
+                    )
+                    leads.append({
+                        "id": inq.get("id"),
+                        "timestamp": inq.get("timestamp"),
+                        "name": inq.get("name"),
+                        "email": inq.get("email"),
+                        "dates": inq.get("dates"),
+                        "accommodation": inq.get("accommodation"),
+                        "type": itype,
+                        "status": "paid_intent" if is_paid_intent else "inquired",
+                        "payment_method": pm if is_paid_intent else None,
+                    })
+                leads.sort(key=lambda x: x.get("timestamp") or "", reverse=True)
+    except Exception as e:
+        logger.warning("failed loading inquiries for partner dashboard: %s", e)
+
+    return {
+        "code": code,
+        "name": p.get("name", code),
+        "status": p.get("status", "active"),
+        "rates": {
+            "founding_rate": p.get("founding_rate"),
+            "founding_sales_remaining": p.get("founding_sales_remaining"),
+            "standard_rate": p.get("standard_rate"),
+            "default_sourcer_rate": (cfg.get("rates", {}) or {}).get("sourcer", 0.10),
+        },
+        "totals": {
+            "leads": len(leads),
+            "pending_commissions_count": len(pending),
+            "pending_commissions_total": _sum(pending),
+            "paid_commissions_count": len(paid),
+            "paid_commissions_total": _sum(paid),
+            "lifetime_earned": _sum(paid),
+        },
+        "leads": leads[:50],
+        "share_link": f"{base}/reset?ref={code}",
+        "dashboard_link": f"{base}/reset/me?code={code}&token={token}",
+    }
+
+
+# ---------------------------------------------------------------------------
 # Public application + info (no admin auth)
 # ---------------------------------------------------------------------------
 class PartnerApplication(BaseModel):

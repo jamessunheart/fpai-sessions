@@ -102,3 +102,22 @@ CREATE TABLE IF NOT EXISTS audit_log (
 CREATE INDEX IF NOT EXISTS audit_log_at_idx       ON audit_log (at DESC);
 CREATE INDEX IF NOT EXISTS audit_log_agent_idx    ON audit_log (agent);
 CREATE INDEX IF NOT EXISTS audit_log_blocked_idx  ON audit_log (blocked) WHERE blocked;
+
+-- Telegram conversation buffer.
+-- Every inbound (user) and outbound (bot) message is logged here.
+-- An hourly curator job (tg_capture) compresses unprocessed batches into
+-- summary notes that get ingested into note_chunks (and AppFlowy 01 · Notes).
+CREATE TABLE IF NOT EXISTS tg_messages (
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    chat_id         TEXT NOT NULL,
+    role            TEXT NOT NULL,           -- 'user' | 'bot'
+    text            TEXT NOT NULL,
+    private_flag    BOOLEAN NOT NULL DEFAULT FALSE,  -- skip during compression
+    processed_at    TIMESTAMPTZ,             -- set when picked up by tg_capture
+    note_row_id     TEXT,                    -- AppFlowy row this turn rolled up into
+    update_id       BIGINT                   -- Telegram update_id for dedup
+);
+
+CREATE INDEX IF NOT EXISTS tg_messages_chat_idx       ON tg_messages (chat_id, at DESC);
+CREATE INDEX IF NOT EXISTS tg_messages_unprocessed_idx ON tg_messages (chat_id, at) WHERE processed_at IS NULL AND NOT private_flag;
