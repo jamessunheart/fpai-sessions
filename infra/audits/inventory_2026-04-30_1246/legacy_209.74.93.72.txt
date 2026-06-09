@@ -1,0 +1,245 @@
+** WARNING: connection is not using a post-quantum key exchange algorithm.
+** This session may be vulnerable to "store now, decrypt later" attacks.
+** The server may need to be upgraded. See https://openssh.com/pq.html
+=== IDENTITY ===
+server1.outbounders.com
+NAME="CloudLinux"
+VERSION="9.6 (Georgy Dobrovolsky)"
+5.14.0-570.12.1.el9_6.x86_64
+
+=== UPTIME ===
+ 18:46:13 up 342 days,  6:10,  0 users,  load average: 0.37, 0.40, 0.42
+
+=== RAM ===
+               total        used        free      shared  buff/cache   available
+Mem:           125Gi        13Gi       7.6Gi       2.0Gi       107Gi       112Gi
+Swap:           31Gi       5.4Gi        26Gi
+
+=== DISK (physical) ===
+/dev/md1        1.8T  1.2T  595G  66% /
+/dev/md0        2.0G  288M  1.6G  16% /boot
+
+=== TOP 10 PROCESSES BY MEM ===
+USER             %CPU%  %MEM% COMMAND
+mysql             3.7%   5.4% /usr/sbin/mariadbd
+named             0.0%   0.1% /usr/sbin/named
+root              0.0%   0.1% spamd
+root              0.0%   0.1% spamd
+root              0.0%   0.1% /usr/local/cpanel/3rdparty/perl/542/bin/perl
+root              0.0%   0.0% /usr/lib/systemd/systemd-journald
+root              0.0%   0.0% /opt/cloudlinux/venv/bin/python3
+root              0.2%   0.0% /opt/cloudlinux/venv/bin/python3
+wp-tool+          0.0%   0.0% /usr/bin/sw-engine
+wp-tool+          0.0%   0.0% /usr/bin/sw-engine
+
+=== ACTIVE SYSTEMD SERVICES (running) ===
+atd.service
+auditd.service
+chronyd.service
+cpanel.service
+cpanel_php_fpm.service
+cpanellogd.service
+cpdavd.service
+cphulkd.service
+crond.service
+dbus-broker.service
+dnsadmin.service
+dovecot.service
+ea-php56-php-fpm.service
+ea-php73-php-fpm.service
+ea-php74-php-fpm.service
+ea-php80-php-fpm.service
+ea-php81-php-fpm.service
+exim.service
+fpai-health-agent.service
+getty@tty1.service
+gssproxy.service
+httpd.service
+lfd.service
+libstoragemgmt.service
+lvestats.service
+mariadb.service
+mcelog.service
+mdmonitor.service
+named.service
+NetworkManager.service
+nscd.service
+ob-dashboard.service
+p0f.service
+polkit.service
+proxyexecd.service
+pure-authd.service
+pure-ftpd.service
+queueprocd.service
+rhnsd.service
+rpcbind.service
+rsyslog.service
+smartd.service
+spamd.service
+ssa-agent.service
+sshd.service
+sw-engine.service
+systemd-journald.service
+systemd-logind.service
+systemd-udevd.service
+tailwatchd.service
+tuned.service
+user@0.service
+wp-toolkit-background-tasks.service
+wp-toolkit-scheduled-tasks.service
+
+=== LISTENING PORTS ===
+127.0.0.1:53 users:(("named",pid=1139942,fd=904))
+127.0.0.1:53 users:(("named",pid=1139942,fd=902))
+127.0.0.1:53 users:(("named",pid=1139942,fd=900))
+127.0.0.1:53 users:(("named",pid=1139942,fd=898))
+127.0.0.1:53 users:(("named",pid=1139942,fd=896))
+127.0.0.1:53 users:(("named",pid=1139942,fd=894))
+127.0.0.1:53 users:(("named",pid=1139942,fd=892))
+127.0.0.1:53 users:(("named",pid=1139942,fd=890))
+127.0.0.1:53 users:(("named",pid=1139942,fd=888))
+127.0.0.1:53 users:(("named",pid=1139942,fd=886))
+127.0.0.1:53 users:(("named",pid=1139942,fd=884))
+127.0.0.1:53 users:(("named",pid=1139942,fd=882))
+127.0.0.1:53 users:(("named",pid=1139942,fd=880))
+127.0.0.1:53 users:(("named",pid=1139942,fd=878))
+127.0.0.1:53 users:(("named",pid=1139942,fd=876))
+127.0.0.1:53 users:(("named",pid=1139942,fd=874))
+127.0.0.1:53 users:(("named",pid=1139942,fd=872))
+127.0.0.1:53 users:(("named",pid=1139942,fd=870))
+127.0.0.1:53 users:(("named",pid=1139942,fd=868))
+127.0.0.1:53 users:(("named",pid=1139942,fd=866))
+127.0.0.1:53 users:(("named",pid=1139942,fd=864))
+127.0.0.1:53 users:(("named",pid=1139942,fd=862))
+127.0.0.1:53 users:(("named",pid=1139942,fd=860))
+127.0.0.1:53 users:(("named",pid=1139942,fd=858))
+127.0.0.1:53 users:(("named",pid=1139942,fd=856))
+127.0.0.1:53 users:(("named",pid=1139942,fd=854))
+127.0.0.1:53 users:(("named",pid=1139942,fd=852))
+127.0.0.1:53 users:(("named",pid=1139942,fd=850))
+127.0.0.1:53 users:(("named",pid=1139942,fd=848))
+127.0.0.1:53 users:(("named",pid=1139942,fd=846))
+127.0.0.1:53 users:(("named",pid=1139942,fd=844))
+127.0.0.1:53 users:(("named",pid=1139942,fd=842))
+127.0.0.1:53 users:(("named",pid=1139942,fd=840))
+127.0.0.1:53 users:(("named",pid=1139942,fd=838))
+127.0.0.1:53 users:(("named",pid=1139942,fd=836))
+127.0.0.1:53 users:(("named",pid=1139942,fd=834))
+127.0.0.1:53 users:(("named",pid=1139942,fd=832))
+127.0.0.1:53 users:(("named",pid=1139942,fd=830))
+127.0.0.1:53 users:(("named",pid=1139942,fd=828))
+127.0.0.1:53 users:(("named",pid=1139942,fd=826))
+127.0.0.1:53 users:(("named",pid=1139942,fd=824))
+127.0.0.1:53 users:(("named",pid=1139942,fd=822))
+127.0.0.1:53 users:(("named",pid=1139942,fd=820))
+127.0.0.1:53 users:(("named",pid=1139942,fd=818))
+127.0.0.1:53 users:(("named",pid=1139942,fd=816))
+127.0.0.1:53 users:(("named",pid=1139942,fd=814))
+127.0.0.1:53 users:(("named",pid=1139942,fd=812))
+127.0.0.1:53 users:(("named",pid=1139942,fd=810))
+127.0.0.1:53 users:(("named",pid=1139942,fd=808))
+127.0.0.1:53 users:(("named",pid=1139942,fd=806))
+
+=== DOCKER ===
+(no docker)
+
+=== NGINX server_name LIST ===
+(no nginx)
+
+=== APACHE / CPANEL VHOSTS ===
+/etc/apache2/conf.d/userdata/:
+ssl
+std
+--- cPanel accounts (39 total) ---
+cmgrb1bpo
+coracom
+coradev
+coraorg
+corasupp
+coravida
+delray
+devfiart
+devonebpo
+emponebpo
+experiencescorav
+expresspay
+fiart
+fiartapp
+fpai
+fpapps
+fparchive
+fpdir3
+fpnews
+fpstore
+fullbhza
+globalsky
+helpdesk
+helpdeskob
+jamesrick
+jamesrickstinson
+maschristo
+obapp
+obmail
+obpo
+obposervices
+obsmail
+onebpo
+onebpo2
+outbndrs
+runbookobpo
+sunheart2
+system
+zenvill
+
+=== ROOT CRON ===
+25 4 * * * (/usr/local/cpanel/scripts/fix-cpanel-perl; /usr/local/cpanel/scripts/upcp --cron > /dev/null)
+0 2 * * * /usr/local/cpanel/bin/backup
+35 * * * * /usr/bin/test -x /usr/local/cpanel/bin/tail-check && /usr/local/cpanel/bin/tail-check
+0 6 * * * /usr/local/cpanel/scripts/exim_tidydb > /dev/null 2>&1
+30 5 * * * /usr/local/cpanel/scripts/optimize_eximstats > /dev/null 2>&1
+5,20,35,50 * * * * /usr/local/cpanel/scripts/eximstats_spam_check 2>&1
+45 */4 * * * /usr/bin/test -x /usr/local/cpanel/scripts/update_mailman_cache && /usr/local/cpanel/scripts/update_mailman_cache
+14 0 * * * /usr/local/cpanel/scripts/autorepair recoverymgmt >/dev/null 2>&1
+*/5 * * * * /usr/local/cpanel/scripts/dcpumon-wrapper >/dev/null 2>&1
+30 */4 * * * /usr/bin/test -x /usr/local/cpanel/scripts/update_db_cache && /usr/local/cpanel/scripts/update_db_cache
+25 */2 * * * /usr/local/cpanel/bin/mysqluserstore >/dev/null 2>&1
+15 */2 * * * /usr/local/cpanel/bin/dbindex >/dev/null 2>&1
+0 */2 * * * /usr/local/cpanel/scripts/shrink_modsec_ip_database -x 2>&1
+48 4 * * * /usr/local/cpanel/whostmgr/docroot/cgi/cpaddons_report.pl --notify
+09,39 * * * * /usr/local/cpanel/scripts/clean_user_php_sessions > /dev/null 2>&1
+4 * * * * /usr/local/cpanel/bin/process_team_queue > /dev/null 2>&1
+5,20,35,50 * * * * /usr/local/cpanel/whostmgr/bin/dnsqueue > /dev/null 2>&1
+
+=== /etc/cron.d ===
+0hourly
+backup_jobs_helper
+cl_detection_for_users
+cldiag-cron
+cloudlinux_clean_hosting_packages
+cloudlinux_clean_packages
+cloudlinux-cron
+cloudlinux_domains_collector
+cloudlinux_reset_effective_cache
+cl_plus
+comet_license_sync
+cpanel-analytics
+cpanel_autossl
+cpanel_php_sessions_cron
+cp-cagefs-cron
+csf-cron
+exclude_users_cagefs_cron
+kill_orphaned_php-cron
+lfd-cron
+lvemanager-cron
+
+=== ERRORS LAST 24H (count) ===
+221
+
+=== TOP 5 ERROR SOURCES LAST 24H ===
+     29 kernel:
+      6 sshd[1779802]:
+      6 sshd[1779514]:
+      6 sshd[1715946]:
+      6 sshd[1715913]:
+
+=== UFW / FIREWALL ===

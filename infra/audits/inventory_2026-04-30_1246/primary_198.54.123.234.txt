@@ -1,0 +1,172 @@
+=== IDENTITY ===
+nc-ph-0934-24
+NAME="Ubuntu"
+VERSION="22.04.5 LTS (Jammy Jellyfish)"
+5.15.0-164-generic
+
+=== UPTIME ===
+ 18:46:13 up 87 days, 17:54,  0 users,  load average: 0.48, 0.35, 0.30
+
+=== RAM ===
+               total        used        free      shared  buff/cache   available
+Mem:           7.7Gi       5.5Gi       853Mi       0.0Ki       1.3Gi       1.9Gi
+Swap:          4.0Gi       689Mi       3.3Gi
+
+=== DISK (physical) ===
+/dev/sda3       438G   80G  336G  20% /
+/dev/sda2       2.0G  252M  1.6G  14% /boot
+
+=== TOP 10 PROCESSES BY MEM ===
+USER             %CPU%  %MEM% COMMAND
+root             14.3%   9.1% /usr/bin/python3
+root              0.1%   7.0% /lib/systemd/systemd-journald
+root              0.0%   2.1% /usr/bin/node
+redis             0.1%   1.7% /usr/bin/redis-server
+root              0.2%   1.3% /opt/fpai/services/fp-index/.venv/bin/python
+root              0.1%   1.0% /opt/fpai/SERVICES/concierge/.venv/bin/python3
+root              0.1%   1.0% /usr/bin/python3
+root              0.3%   0.9% /usr/bin/python3
+root              0.1%   0.9% /opt/fpai/SERVICES/concierge/.venv/bin/python3
+root              0.1%   0.9% /opt/fpai/SERVICES/concierge/.venv/bin/python3
+
+=== ACTIVE SYSTEMD SERVICES (running) ===
+ad-portal.service
+concierge-ai-qa.service
+concierge-auto-training.service
+concierge-compliance-gate.service
+concierge-handoff-broker.service
+concierge-knowledge-ingest.service
+concierge-leads.service
+concierge-nerve-forwarder.service
+concierge-outbound-engine.service
+concierge-skills-mesh.service
+concierge-tenant-api.service
+concierge-touch-sequencer.service
+concierge-voice-router.service
+containerd.service
+dbus.service
+dovecot.service
+fail2ban.service
+fpai-ad-portal.service
+fpai-cocoon.service
+fpai-credits-gateway.service
+fpai-fp-index.service
+fpai-lead-capture.service
+fpai-nerve-center.service
+fpai-projects.service
+inboundleads-api.service
+jsservers-bot.service
+multipathd.service
+nginx.service
+nocodb.service
+opendkim.service
+packagekit.service
+polkit.service
+postfix@-.service
+postgresql@14-main.service
+redis-server.service
+rsyslog.service
+ssh.service
+systemd-journald.service
+systemd-logind.service
+systemd-networkd.service
+systemd-resolved.service
+systemd-timesyncd.service
+user@0.service
+weekly-call-registrations.service
+whaletrack-bridge-btc.service
+whaletrack-bridge-eth.service
+whaletrack-bridge-sol.service
+whaletrack-bridge-xrp.service
+whaletrack-live.service
+whaletrack-magnet.service
+whaletrack-telegram-bot.service
+zen-village-bot.service
+zen-village.service
+
+=== LISTENING PORTS ===
+0.0.0.0:8022 users:(("sshd",pid=650,fd=3))
+0.0.0.0:8120 users:(("python",pid=116751,fd=7))
+127.0.0.1:5432 users:(("postgres",pid=3990036,fd=6))
+127.0.0.53%lo:53 users:(("systemd-resolve",pid=628,fd=14))
+127.0.0.1:8823 users:(("uvicorn",pid=347455,fd=13))
+127.0.0.1:8822 users:(("uvicorn",pid=347479,fd=13))
+127.0.0.1:8821 users:(("uvicorn",pid=347445,fd=13))
+127.0.0.1:8820 users:(("uvicorn",pid=347472,fd=13))
+127.0.0.1:8825 users:(("uvicorn",pid=347462,fd=13))
+127.0.0.1:8824 users:(("uvicorn",pid=347440,fd=13))
+127.0.0.1:8652 users:(("uvicorn",pid=4092839,fd=13))
+198.54.123.234:5432 users:(("postgres",pid=3990036,fd=7))
+127.0.0.1:8199 users:(("python3",pid=1745804,fd=3))
+0.0.0.0:2222 users:(("sshd",pid=650,fd=5))
+127.0.0.1:8191 users:(("python3",pid=3468894,fd=3))
+127.0.0.1:8080 users:(("node",pid=4125974,fd=19))
+0.0.0.0:995 users:(("dovecot",pid=3047626,fd=22))
+0.0.0.0:993 users:(("dovecot",pid=3047626,fd=37))
+0.0.0.0:8770 users:(("python3",pid=489697,fd=13))
+0.0.0.0:587 users:(("master",pid=2995918,fd=18),("smtpd",pid=773948,fd=6))
+0.0.0.0:8800 users:(("uvicorn",pid=1740113,fd=15))
+0.0.0.0:8750 users:(("python3",pid=1745137,fd=3))
+0.0.0.0:8765 users:(("python3",pid=440356,fd=16))
+0.0.0.0:8850 users:(("uvicorn",pid=1740166,fd=15))
+0.0.0.0:8550 users:(("python",pid=347432,fd=8))
+0.0.0.0:8651 users:(("python",pid=1746352,fd=6))
+0.0.0.0:8660 users:(("python",pid=1745589,fd=6))
+0.0.0.0:8602 users:(("nginx",pid=4084575,fd=12),("nginx",pid=388888,fd=12),("nginx",pid=388887,fd=12),("nginx",pid=388886,fd=12),("nginx",pid=388885,fd=12),("nginx",pid=388884,fd=12),("nginx",pid=388883,fd=12),("nginx",pid=388882,fd=12),("nginx",pid=388881,fd=12))
+0.0.0.0:8601 users:(("python3",pid=547994,fd=17))
+0.0.0.0:8600 users:(("python3",pid=519973,fd=20))
+0.0.0.0:443 users:(("nginx",pid=4084575,fd=9),("nginx",pid=388888,fd=9),("nginx",pid=388887,fd=9),("nginx",pid=388886,fd=9),("nginx",pid=388885,fd=9),("nginx",pid=388884,fd=9),("nginx",pid=388883,fd=9),("nginx",pid=388882,fd=9),("nginx",pid=388881,fd=9))
+0.0.0.0:80 users:(("nginx",pid=4084575,fd=8),("nginx",pid=388888,fd=8),("nginx",pid=388887,fd=8),("nginx",pid=388886,fd=8),("nginx",pid=388885,fd=8),("nginx",pid=388884,fd=8),("nginx",pid=388883,fd=8),("nginx",pid=388882,fd=8),("nginx",pid=388881,fd=8))
+0.0.0.0:110 users:(("dovecot",pid=3047626,fd=21))
+0.0.0.0:22 users:(("sshd",pid=650,fd=7))
+0.0.0.0:25 users:(("master",pid=2995918,fd=13),("smtpd",pid=772694,fd=6))
+127.0.0.1:6379 users:(("redis-server",pid=3991430,fd=6))
+0.0.0.0:143 users:(("dovecot",pid=3047626,fd=36))
+[::]:8022 users:(("sshd",pid=650,fd=4))
+[::]:2222 users:(("sshd",pid=650,fd=6))
+[::]:587 users:(("master",pid=2995918,fd=19),("smtpd",pid=773948,fd=7))
+[::1]:5432 users:(("postgres",pid=3990036,fd=5))
+[::]:443 users:(("nginx",pid=4084575,fd=11),("nginx",pid=388888,fd=11),("nginx",pid=388887,fd=11),("nginx",pid=388886,fd=11),("nginx",pid=388885,fd=11),("nginx",pid=388884,fd=11),("nginx",pid=388883,fd=11),("nginx",pid=388882,fd=11),("nginx",pid=388881,fd=11))
+[::]:80 users:(("nginx",pid=4084575,fd=10),("nginx",pid=388888,fd=10),("nginx",pid=388887,fd=10),("nginx",pid=388886,fd=10),("nginx",pid=388885,fd=10),("nginx",pid=388884,fd=10),("nginx",pid=388883,fd=10),("nginx",pid=388882,fd=10),("nginx",pid=388881,fd=10))
+[::]:22 users:(("sshd",pid=650,fd=8))
+[::]:25 users:(("master",pid=2995918,fd=14),("smtpd",pid=772694,fd=7))
+
+=== DOCKER ===
+
+=== NGINX server_name LIST ===
+server_name aimail.fullpotential.ai;
+server_name fullpotential.ai www.fullpotential.ai;
+server_name fullpotential.com;
+server_name fullpotential.com www.fullpotential.com;
+server_name zenvillagecr.com www.zenvillagecr.com;
+
+=== APACHE / CPANEL VHOSTS ===
+
+=== ROOT CRON ===
+
+*/5 * * * * systemctl is-active sshd || systemctl restart sshd
+
+0 */6 * * * /opt/fpai/scripts/backup-credits-db.sh >> /var/log/credits-backup.log 2>&1
+
+0 3 * * 0 /opt/fpai/scripts/memory-hygiene.sh
+
+*/5 * * * * /opt/fpai/email-relay/monitor.sh
+
+=== /etc/cron.d ===
+certbot
+e2scrub_all
+fee_settlement
+fiart-health-check
+sysstat
+
+=== ERRORS LAST 24H (count) ===
+158
+
+=== TOP 5 ERROR SOURCES LAST 24H ===
+      1 sshd[774113]:
+      1 sshd[773464]:
+      1 sshd[772802]:
+      1 sshd[772193]:
+      1 sshd[771724]:
+
+=== UFW / FIREWALL ===

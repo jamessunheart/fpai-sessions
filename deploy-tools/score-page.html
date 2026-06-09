@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Full Potential Score — How Fully Are You Living?</title>
+
+<!-- OG tags for Meta/Facebook ad previews -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://fullpotential.ai/score">
+<meta property="og:title" content="What's Your Full Potential Score?">
+<meta property="og:description" content="Most people operate at 40-60% of their capacity. This 2-minute assessment reveals 9 dimensions of your potential — and where you're leaving growth on the table.">
+<meta property="og:image" content="https://fullpotential.ai/og-image.png">
+<meta property="og:site_name" content="Full Potential AI">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="What's Your Full Potential Score?">
+<meta name="twitter:description" content="9 dimensions. 2 minutes. One score that reveals your hidden potential.">
+<meta name="twitter:image" content="https://fullpotential.ai/og-image.png">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Georgia', serif;
+    background: #0a0a0f;
+    color: #e8e4df;
+    min-height: 100vh;
+  }
+  .container { max-width: 640px; margin: 0 auto; padding: 40px 24px 60px; }
+
+  /* Hero */
+  .hero { text-align: center; margin-bottom: 40px; }
+  .hero h1 { font-size: 2.2rem; font-weight: 400; line-height: 1.3; color: #fff; margin-bottom: 14px; }
+  .hero h1 em { font-style: italic; color: #c8a87c; }
+  .hero p { font-size: 1.05rem; line-height: 1.7; color: #a8a4a0; margin-bottom: 10px; }
+  .hero .time { font-size: 0.9rem; color: #666; }
+
+  /* Progress */
+  .progress-bar { width: 100%; height: 3px; background: #1a1a20; border-radius: 2px; margin-bottom: 36px; }
+  .progress-fill { height: 100%; background: #c8a87c; border-radius: 2px; transition: width 0.4s ease; }
+
+  /* Questions */
+  .dimension { display: none; animation: fadeIn 0.3s ease; }
+  .dimension.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .dim-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.15em; color: #c8a87c; margin-bottom: 6px; }
+  .dim-question { font-size: 1.3rem; color: #fff; margin-bottom: 8px; line-height: 1.4; }
+  .dim-sub { font-size: 0.9rem; color: #777; margin-bottom: 28px; font-style: italic; }
+  .scale { display: flex; gap: 8px; justify-content: center; margin-bottom: 12px; }
+  .scale button {
+    width: 52px; height: 52px; border-radius: 50%; border: 1px solid #2a2a30; background: #141418;
+    color: #e8e4df; font-size: 1.1rem; font-family: Georgia, serif; cursor: pointer; transition: all 0.2s;
+  }
+  .scale button:hover { border-color: #c8a87c; background: #1a1a1f; }
+  .scale button.selected { border-color: #c8a87c; background: #c8a87c; color: #0a0a0f; }
+  .scale-labels { display: flex; justify-content: space-between; font-size: 0.75rem; color: #555; padding: 0 4px; }
+
+  /* Results */
+  #results { display: none; text-align: center; animation: fadeIn 0.4s ease; }
+  .score-ring { position: relative; width: 180px; height: 180px; margin: 0 auto 24px; }
+  .score-ring svg { transform: rotate(-90deg); }
+  .score-ring .bg { stroke: #1a1a20; }
+  .score-ring .fill { stroke: #c8a87c; stroke-linecap: round; transition: stroke-dashoffset 1.5s ease; }
+  .score-number { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2.8rem; color: #fff; }
+  .score-number span { font-size: 1rem; color: #777; }
+  .score-label { font-size: 1.3rem; color: #c8a87c; margin-bottom: 8px; }
+  .score-desc { font-size: 1rem; color: #a8a4a0; line-height: 1.7; margin-bottom: 32px; }
+
+  .dim-bars { text-align: left; margin-bottom: 36px; }
+  .dim-bar { margin-bottom: 14px; }
+  .dim-bar-label { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px; }
+  .dim-bar-label .name { color: #ccc; }
+  .dim-bar-label .val { color: #c8a87c; }
+  .dim-bar-track { height: 6px; background: #1a1a20; border-radius: 3px; }
+  .dim-bar-fill { height: 100%; background: #c8a87c; border-radius: 3px; transition: width 1s ease; }
+  .dim-bar-fill.low { background: #e05555; }
+  .dim-bar-fill.mid { background: #c8a87c; }
+  .dim-bar-fill.high { background: #55b87a; }
+
+  .insight { background: #141418; border-left: 3px solid #c8a87c; padding: 20px; border-radius: 0 8px 8px 0; text-align: left; margin-bottom: 32px; }
+  .insight h3 { color: #c8a87c; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; font-weight: 400; }
+  .insight p { font-size: 0.95rem; line-height: 1.7; color: #a8a4a0; }
+
+  /* Email capture */
+  .email-gate { margin-top: 32px; padding: 28px; background: #141418; border-radius: 12px; }
+  .email-gate h3 { color: #fff; font-size: 1.1rem; margin-bottom: 8px; }
+  .email-gate p { color: #888; font-size: 0.9rem; margin-bottom: 16px; line-height: 1.6; }
+  .email-row { display: flex; gap: 10px; }
+  .email-row input {
+    flex: 1; padding: 14px 16px; background: #0a0a0f; border: 1px solid #2a2a30; border-radius: 8px;
+    color: #e8e4df; font-family: Georgia, serif; font-size: 1rem;
+  }
+  .email-row input:focus { outline: none; border-color: #c8a87c; }
+  .email-row button {
+    padding: 14px 24px; background: #c8a87c; color: #0a0a0f; border: none; border-radius: 8px;
+    font-family: Georgia, serif; font-size: 1rem; font-weight: 600; cursor: pointer; white-space: nowrap;
+  }
+  .email-row button:hover { background: #d4b88c; }
+  .email-row button:disabled { background: #4a4a50; color: #888; cursor: wait; }
+  .email-sent { display: none; color: #55b87a; font-size: 0.95rem; margin-top: 12px; }
+  .name-field { margin-bottom: 10px; }
+  .name-field input {
+    width: 100%; padding: 14px 16px; background: #0a0a0f; border: 1px solid #2a2a30; border-radius: 8px;
+    color: #e8e4df; font-family: Georgia, serif; font-size: 1rem;
+  }
+  .name-field input:focus { outline: none; border-color: #c8a87c; }
+
+  .session-cta { margin-top: 36px; padding: 32px; background: #141418; border-radius: 12px; text-align: center; }
+  .session-cta h3 { color: #fff; font-size: 1.15rem; margin-bottom: 12px; font-weight: 400; }
+  .session-cta p { color: #a8a4a0; font-size: 0.95rem; line-height: 1.7; margin-bottom: 24px; }
+  .cta-button {
+    display: inline-block; padding: 16px 36px; background: #c8a87c; color: #0a0a0f; border-radius: 8px;
+    font-family: Georgia, serif; font-size: 1.1rem; font-weight: 600; text-decoration: none; transition: background 0.2s;
+  }
+  .cta-button:hover { background: #d4b88c; }
+
+  .footer { text-align: center; padding: 40px 24px; color: #3a3a40; font-size: 0.8rem; }
+
+  @media (max-width: 480px) {
+    .hero h1 { font-size: 1.7rem; }
+    .container { padding: 28px 18px 40px; }
+    .scale button { width: 44px; height: 44px; font-size: 1rem; }
+    .email-row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="hero" id="hero">
+    <h1>How Fully Are You <em>Living?</em></h1>
+    <p>Your life has nine dimensions. Most people are thriving in two or three and neglecting the rest without realizing it.</p>
+    <p>This assessment maps all nine in under two minutes. No fluff — just an honest mirror.</p>
+    <p class="time">9 questions &middot; takes about 90 seconds</p>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+
+  <div id="questions"></div>
+
+  <div id="results">
+    <div class="score-ring">
+      <svg width="180" height="180">
+        <circle class="bg" cx="90" cy="90" r="78" fill="none" stroke-width="8"/>
+        <circle class="fill" id="score-circle" cx="90" cy="90" r="78" fill="none" stroke-width="8"
+          stroke-dasharray="490" stroke-dashoffset="490"/>
+      </svg>
+      <div class="score-number" id="score-number">0<span>/100</span></div>
+    </div>
+    <div class="score-label" id="score-label"></div>
+    <div class="score-desc" id="score-desc"></div>
+
+    <!-- EMAIL GATE: must enter email to see full breakdown -->
+    <div class="email-gate" id="email-gate">
+      <h3>See your full dimension breakdown</h3>
+      <p>Your score is just the surface. Enter your email to see which of your nine dimensions is strongest, which is draining the rest, and the one pattern that changes everything.</p>
+      <div class="name-field">
+        <input type="text" id="lead-name" placeholder="Your name">
+      </div>
+      <div class="email-row">
+        <input type="email" id="lead-email" placeholder="your@email.com">
+        <button onclick="submitLead()" id="email-btn">Show My Breakdown</button>
+      </div>
+    </div>
+
+    <!-- GATED CONTENT: only visible after email submitted -->
+    <div id="gated-results" style="display:none;">
+      <div class="dim-bars" id="dim-bars"></div>
+      <div class="insight" id="insight"></div>
+
+      <div class="session-cta">
+        <h3>Your Full Potential Score reveals the surface.</h3>
+        <p>A 90-minute session with James "Sunheart" Stinson reveals the architecture beneath it — the hidden connections between dimensions, the one shift that unlocks three others, and a map of who you're becoming.</p>
+        <a href="https://cal.com/james-sunheart-xhkewq/30min" target="_blank" rel="noopener" class="cta-button" id="cta-book" onclick="trackEvent('booking_click')">Book Your Session &rarr;</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">Full Potential &middot; Seeing the whole picture</div>
+
+<script>
+const DIMENSIONS = [
+  { key: "purpose", label: "Purpose & Direction", q: "How clear are you on what you're here to do?", sub: "Not your job title — your actual reason for being." },
+  { key: "relationships", label: "Relationships", q: "How deeply connected do you feel to the people in your life?", sub: "Quality over quantity. One real conversation beats a hundred surface ones." },
+  { key: "health", label: "Health & Vitality", q: "How alive does your body feel on a typical day?", sub: "Energy, sleep, movement — the physical foundation everything else rests on." },
+  { key: "finances", label: "Financial Reality", q: "How much peace do you have around money?", sub: "Not how much you have — how you relate to it." },
+  { key: "creativity", label: "Creativity & Expression", q: "How much of what's inside you is actually making it out into the world?", sub: "Ideas, art, projects, conversations — creative energy expressed, not just imagined." },
+  { key: "spirituality", label: "Inner Life & Spirituality", q: "How connected do you feel to something larger than yourself?", sub: "However you define it — presence, meaning, awe, the sacred." },
+  { key: "environment", label: "Environment & Space", q: "How much does your physical environment support who you're becoming?", sub: "Your home, your workspace, the spaces you spend time in." },
+  { key: "growth", label: "Growth & Learning", q: "How actively are you evolving right now?", sub: "New edges being explored, not just consuming content." },
+  { key: "contribution", label: "Contribution & Impact", q: "How much of your energy goes toward something that matters beyond you?", sub: "Service, legacy, making things better for others." }
+];
+
+let current = 0;
+let scores = {};
+
+function render() {
+  const container = document.getElementById('questions');
+  container.innerHTML = '';
+  DIMENSIONS.forEach((d, i) => {
+    let html = '<div class="dimension' + (i === 0 ? ' active' : '') + '" id="dim-' + i + '">';
+    html += '<div class="dim-label">' + d.label + '</div>';
+    html += '<div class="dim-question">' + d.q + '</div>';
+    html += '<div class="dim-sub">' + d.sub + '</div>';
+    html += '<div class="scale">';
+    for (let s = 1; s <= 10; s++) {
+      html += '<button onclick="answer(' + i + ',' + s + ')" id="btn-' + i + '-' + s + '">' + s + '</button>';
+    }
+    html += '</div>';
+    html += '<div class="scale-labels"><span>barely</span><span>fully alive</span></div>';
+    html += '</div>';
+    container.innerHTML += html;
+  });
+}
+
+function answer(dimIdx, score) {
+  const dim = DIMENSIONS[dimIdx];
+  scores[dim.key] = score;
+
+  // Highlight selected
+  for (let s = 1; s <= 10; s++) {
+    const btn = document.getElementById('btn-' + dimIdx + '-' + s);
+    btn.classList.toggle('selected', s === score);
+  }
+
+  // Advance after brief pause
+  setTimeout(() => {
+    document.getElementById('dim-' + dimIdx).classList.remove('active');
+    if (dimIdx < DIMENSIONS.length - 1) {
+      current = dimIdx + 1;
+      document.getElementById('dim-' + current).classList.add('active');
+      document.getElementById('progress').style.width = ((current + 1) / DIMENSIONS.length * 100) + '%';
+    } else {
+      showResults();
+    }
+  }, 250);
+}
+
+function showResults() {
+  document.getElementById('progress').style.width = '100%';
+  document.getElementById('hero').style.display = 'none';
+  document.getElementById('questions').style.display = 'none';
+
+  const vals = Object.values(scores);
+  const total = Math.round(vals.reduce((a, b) => a + b, 0) / vals.length * 10);
+
+  // Score ring animation
+  const circle = document.getElementById('score-circle');
+  const circumference = 490;
+  const offset = circumference - (total / 100) * circumference;
+  setTimeout(() => { circle.style.strokeDashoffset = offset; }, 100);
+
+  // Animated counter
+  let count = 0;
+  const numEl = document.getElementById('score-number');
+  const counter = setInterval(() => {
+    count += 2;
+    if (count >= total) { count = total; clearInterval(counter); }
+    numEl.innerHTML = count + '<span>/100</span>';
+  }, 30);
+
+  // Label
+  let label, desc;
+  if (total >= 80) { label = "Thriving"; desc = "You're living with unusual fullness. The question isn't whether you're doing well — it's what becomes possible when you close the remaining gaps. Often the last 20% is where the real transformation lives."; }
+  else if (total >= 60) { label = "Building Momentum"; desc = "You have real strength in several dimensions, but there are gaps pulling energy from the areas where you're strong. One targeted shift in your lowest dimension could unlock momentum across three or four others."; }
+  else if (total >= 40) { label = "At a Crossroads"; desc = "Something significant is ready to change. The gap between where you are and where you could be is wide enough to feel, and that discomfort is actually useful — it's the energy that fuels transformation when it's channeled instead of avoided."; }
+  else { label = "Ready for a Reset"; desc = "Honesty about where you are is the first act of courage. Most people at this score are either in a major transition or have been living someone else's version of their life. The rebuild starts with seeing the whole picture clearly."; }
+
+  document.getElementById('score-label').textContent = label;
+  document.getElementById('score-desc').textContent = desc;
+
+  document.getElementById('results').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  trackEvent('assessment_complete', {score: total});
+}
+
+function revealGatedResults() {
+  // Dimension bars — only shown after email captured
+  const barsEl = document.getElementById('dim-bars');
+  let barsHtml = '';
+  const sorted = DIMENSIONS.map(d => ({ ...d, score: scores[d.key] })).sort((a, b) => a.score - b.score);
+  sorted.forEach(d => {
+    const pct = d.score * 10;
+    const cls = pct <= 30 ? 'low' : pct <= 60 ? 'mid' : 'high';
+    barsHtml += '<div class="dim-bar"><div class="dim-bar-label"><span class="name">' + d.label + '</span><span class="val">' + d.score + '/10</span></div>';
+    barsHtml += '<div class="dim-bar-track"><div class="dim-bar-fill ' + cls + '" style="width:0%"></div></div></div>';
+  });
+  barsEl.innerHTML = barsHtml;
+  setTimeout(() => {
+    barsEl.querySelectorAll('.dim-bar-fill').forEach((el, i) => {
+      el.style.width = (sorted[i].score * 10) + '%';
+    });
+  }, 200);
+
+  // Key insight
+  const lowest = sorted[0];
+  const highest = sorted[sorted.length - 1];
+  const gap = highest.score - lowest.score;
+  let insightHtml = '<h3>Your Key Pattern</h3>';
+  if (gap >= 5) {
+    insightHtml += '<p>Your strongest dimension is <strong>' + highest.label + '</strong> (' + highest.score + '/10) and your most neglected is <strong>' + lowest.label + '</strong> (' + lowest.score + '/10). That ' + gap + '-point gap is significant — it means energy is being drained from your strengths to compensate for what\'s missing. In a Full Potential Session, this is exactly where we\'d start.</p>';
+  } else {
+    insightHtml += '<p>Your dimensions are relatively balanced — no single area is dramatically ahead or behind. The opportunity here isn\'t fixing a weakness, it\'s finding the leverage point where raising one dimension pulls several others up with it. That\'s what a Full Potential Session reveals.</p>';
+  }
+  document.getElementById('insight').innerHTML = insightHtml;
+
+  document.getElementById('email-gate').style.display = 'none';
+  document.getElementById('gated-results').style.display = 'block';
+}
+
+async function submitLead() {
+  const name = document.getElementById('lead-name').value;
+  const email = document.getElementById('lead-email').value;
+  if (!email) return;
+
+  const btn = document.getElementById('email-btn');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+
+  const dimScores = {};
+  DIMENSIONS.forEach(d => { dimScores[d.key] = scores[d.key]; });
+  const vals = Object.values(scores);
+  const total = Math.round(vals.reduce((a, b) => a + b, 0) / vals.length * 10);
+  const sorted = DIMENSIONS.map(d => ({ key: d.key, label: d.label, score: scores[d.key] })).sort((a, b) => a.score - b.score);
+
+  try {
+    await fetch('/api/leads/capture', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: name,
+        email: email,
+        source: 'fullpotential.ai/score',
+        message: 'Full Potential Score: ' + total + '/100. Strongest: ' + sorted[sorted.length-1].label + ' (' + sorted[sorted.length-1].score + '). Weakest: ' + sorted[0].label + ' (' + sorted[0].score + ').',
+        qualifying_answers: {
+          assessment_score: total,
+          dimension_scores: dimScores,
+          strongest: sorted[sorted.length-1].key,
+          weakest: sorted[0].key,
+          gap: sorted[sorted.length-1].score - sorted[0].score
+        }
+      })
+    });
+    trackEvent('email_captured', {score: total});
+    revealGatedResults();
+  } catch (e) {
+    btn.disabled = false;
+    btn.textContent = 'Send My Results';
+    alert('Connection error. Please try again.');
+  }
+}
+
+render();
+
+function trackEvent(event, metadata) {
+  try {
+    navigator.sendBeacon('/api/leads/analytics', JSON.stringify({
+      event: event,
+      page: 'score',
+      metadata: metadata || {}
+    }));
+  } catch(e) {
+    fetch('/api/leads/analytics', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ event: event, page: 'score', metadata: metadata || {} }),
+      keepalive: true
+    }).catch(function(){});
+  }
+}
+trackEvent('page_load');
+</script>
+</body>
+</html>

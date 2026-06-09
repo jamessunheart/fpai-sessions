@@ -1,0 +1,11 @@
+/var/log/brain-mesh-gateway/audit.jsonl {
+    su brainmesh brainmesh
+    daily
+    rotate 14
+    compress
+    delaycompress
+    missingok
+    notifempty
+    copytruncate
+    create 0640 brainmesh brainmesh
+}

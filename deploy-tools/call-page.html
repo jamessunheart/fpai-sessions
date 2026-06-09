@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book a Full Potential Session — James "Sunheart" Stinson</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Georgia', serif;
+    background: #0a0a0f;
+    color: #e8e4df;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .hero {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 60px 24px 40px;
+    text-align: center;
+  }
+  .hero h1 {
+    font-size: 2.4rem;
+    font-weight: 400;
+    line-height: 1.3;
+    color: #fff;
+    margin-bottom: 16px;
+    letter-spacing: -0.02em;
+  }
+  .hero h1 em { font-style: italic; color: #c8a87c; }
+  .hero p {
+    font-size: 1.15rem;
+    line-height: 1.7;
+    color: #a8a4a0;
+    margin-bottom: 12px;
+  }
+  .divider {
+    width: 60px;
+    height: 1px;
+    background: #c8a87c;
+    margin: 32px auto;
+  }
+  .form-container {
+    max-width: 560px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 24px 60px;
+  }
+  .form-container h2 {
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: #fff;
+    margin-bottom: 28px;
+    text-align: center;
+  }
+  .field {
+    margin-bottom: 24px;
+  }
+  .field label {
+    display: block;
+    font-size: 0.95rem;
+    color: #c8a87c;
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+  }
+  .field input, .field textarea {
+    width: 100%;
+    padding: 14px 16px;
+    background: #141418;
+    border: 1px solid #2a2a30;
+    border-radius: 8px;
+    color: #e8e4df;
+    font-family: 'Georgia', serif;
+    font-size: 1rem;
+    line-height: 1.5;
+    transition: border-color 0.2s;
+  }
+  .field input:focus, .field textarea:focus {
+    outline: none;
+    border-color: #c8a87c;
+  }
+  .field textarea { min-height: 100px; resize: vertical; }
+  .field .hint {
+    font-size: 0.82rem;
+    color: #6a6a70;
+    margin-top: 6px;
+    font-style: italic;
+  }
+  .submit-btn {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    background: #c8a87c;
+    color: #0a0a0f;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Georgia', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    margin-top: 32px;
+  }
+  .submit-btn:hover { background: #d4b88c; }
+  .submit-btn:active { transform: scale(0.99); }
+  .submit-btn:disabled { background: #4a4a50; color: #8a8a90; cursor: wait; }
+  .success-msg {
+    display: none;
+    text-align: center;
+    padding: 40px 24px;
+  }
+  .success-msg h2 {
+    font-size: 1.6rem;
+    color: #c8a87c;
+    margin-bottom: 16px;
+  }
+  .success-msg p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #a8a4a0;
+  }
+  .footer {
+    text-align: center;
+    padding: 40px 24px;
+    color: #4a4a50;
+    font-size: 0.85rem;
+  }
+  @media (max-width: 480px) {
+    .hero h1 { font-size: 1.8rem; }
+    .hero { padding: 40px 20px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>What if someone could see <em>all of you</em> — and show you what's possible?</h1>
+  <p>A Full Potential Session is 90 minutes of deep presence. We map all nine dimensions of your life, find the patterns holding you back, and unlock what wants to emerge.</p>
+  <p>This isn't coaching. This isn't therapy. It's someone who sees the whole picture — and reflects it back to you with clarity.</p>
+  <div class="divider"></div>
+  <p style="color:#888; font-size:0.95rem;">Sessions with James "Sunheart" Stinson are by application only. Fill out the form below and we'll be in touch within hours.</p>
+</div>
+
+<div class="form-container" id="form-section">
+  <h2>Apply for a Session</h2>
+  <form id="intake-form" onsubmit="return submitForm(event)">
+    <div class="field">
+      <label>Your name</label>
+      <input type="text" name="name" required placeholder="First and last name">
+    </div>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" name="email" required placeholder="your@email.com">
+    </div>
+    <div class="field">
+      <label>What are you navigating right now?</label>
+      <textarea name="navigating" required placeholder="What's the central challenge, transition, or question in your life right now?"></textarea>
+      <div class="hint">Be as honest as you're comfortable with. This helps me prepare to meet you where you are.</div>
+    </div>
+    <div class="field">
+      <label>What would make this investment worth it for you?</label>
+      <textarea name="investment_value" required placeholder="What would need to shift, click, or open up for you to feel this was deeply valuable?"></textarea>
+    </div>
+    <div class="field">
+      <label>Are you ready to go deep for 90 minutes?</label>
+      <textarea name="readiness" required placeholder="A Full Potential Session is intensive — we go beneath the surface. What makes you ready for that right now?"></textarea>
+    </div>
+    <button type="submit" class="submit-btn" id="submit-btn">Request a Session</button>
+  </form>
+</div>
+
+<div class="success-msg" id="success-section">
+  <h2>Thank you.</h2>
+  <p>Your application has been received. I'll review it personally and get back to you within 24 hours — often much sooner.</p>
+  <p style="margin-top:20px;">If this is the right fit, we'll get you on the calendar and I'll send prep instructions so we can make the most of our time together.</p>
+  <p style="margin-top:30px; color:#c8a87c;">— Sunheart</p>
+</div>
+
+<div class="footer">
+  Full Potential &middot; Seeing the whole picture
+</div>
+
+<script>
+async function submitForm(e) {
+  e.preventDefault();
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+
+  const form = document.getElementById('intake-form');
+  const data = {
+    name: form.name.value,
+    email: form.email.value,
+    message: [
+      'NAVIGATING: ' + form.navigating.value,
+      'INVESTMENT VALUE: ' + form.investment_value.value,
+      'READINESS: ' + form.readiness.value
+    ].join('\n\n'),
+    source: 'fullpotential.ai/call',
+    qualifying_answers: {
+      navigating: form.navigating.value,
+      investment_value: form.investment_value.value,
+      readiness: form.readiness.value
+    }
+  };
+
+  try {
+    const resp = await fetch('/api/leads/capture', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (resp.ok) {
+      document.getElementById('form-section').style.display = 'none';
+      document.getElementById('success-section').style.display = 'block';
+    } else {
+      btn.disabled = false;
+      btn.textContent = 'Request a Session';
+      alert('Something went wrong. Please try again or email james@fullpotential.ai directly.');
+    }
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = 'Request a Session';
+    alert('Connection error. Please try again.');
+  }
+}
+</script>
+</body>
+</html>
