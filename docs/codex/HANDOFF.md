@@ -85,6 +85,16 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - **Rollback:** delete `tools/autobuild/`; remove this HANDOFF note.
 - **Questions for Ember/James:** future specs should include an explicit `Branch` section so automated kickoffs can obey “branch named in spec” without inference.
 
+### 2026-06-09 · SPEC_human-edge-push Part A · branch `feat/human-edge-queue`
+
+- **Status:** done / awaiting review
+- **Files changed:** `core/STATE/HUMAN_EDGE_QUEUE.json`; `core/STATE/HUMAN_EDGE_QUEUE.md`; `tools/queue/__init__.py`; `tools/queue/build.py`; `tools/queue/test_build.py`; `tools/decisions/daily_sync.py`; `tools/decisions/push_update.py`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the canonical human-edge queue SSOT plus helpers: `add_gate()` creates one open gate per id, writes the JSON mirror and human-readable Markdown, and dedups repeated ids; `answer_gate()` is the only close path and records James's verb as `state: answered`. Added queue renderers for DECISIONS/HOME-shaped surfaces. Repointed the daily/HOME decision parser and print/push summary to read `core/STATE/HUMAN_EDGE_QUEUE.json` first; when the queue exists and is valid, even an empty queue renders as clear instead of falling back to hand-kept DECISIONS drift. Part B notifier/reply handling was not touched.
+- **Tests:** `python3 -m unittest tools.queue.test_build`; `python3 -m py_compile tools/queue/build.py tools/queue/test_build.py tools/decisions/daily_sync.py tools/decisions/push_update.py`; `FPAI_HUMAN_EDGE_QUEUE_JSON=/Users/jamessunheart/.codex/worktrees/a5ac/FPAI_Cockpit/core/STATE/HUMAN_EDGE_QUEUE.json python3 tools/decisions/push_update.py --print`; `git diff --check`
+- **Risks:** The target spec was present only in the main local checkout, not on this branch; Codex used that read-only local spec as the controlling document and did not add it because the spec's allowed files did not include spec docs. Existing legacy DECISIONS entries will stop surfacing once the queue file is merged unless Ember/loop migrates them into `HUMAN_EDGE_QUEUE`. No Telegram/notifier code, secrets, deploys, money paths, or outbound-to-world paths were touched.
+- **Rollback:** delete `core/STATE/HUMAN_EDGE_QUEUE.*` and `tools/queue/`; revert the `tools/decisions/daily_sync.py` and `tools/decisions/push_update.py` queue reads; remove this HANDOFF entry.
+- **Questions for Ember/James:** migrate any still-real open James gates from `[[DECISIONS]]` into `core/STATE/HUMAN_EDGE_QUEUE.json` before relying on the queue as live; then Part B can read this queue for Telegram pings.
+
 ### 2026-06-06 · SPEC_auto-routing · target branch `feat/auto-routing`
 
 - **Status:** first safe router slice built / James-blessed / awaiting isolated commit + review

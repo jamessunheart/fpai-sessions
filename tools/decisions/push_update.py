@@ -11,16 +11,31 @@ Usage:  push_update.py            # send if changed
         push_update.py --force    # send regardless
         push_update.py --print    # print only, don't send
 """
-import re, sys, hashlib, datetime, argparse
+import argparse, datetime, hashlib, os, re, sys
 from pathlib import Path
+REPO_ROOT_FOR_IMPORT = Path(__file__).resolve().parents[2]
+if str(REPO_ROOT_FOR_IMPORT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT_FOR_IMPORT))
+try:
+    from tools.queue import build as human_edge_queue
+except Exception:
+    human_edge_queue = None
 
 VAULT = Path.home() / "Library" / "Mobile Documents" / "iCloud~md~obsidian" / "Documents" / "FPOS" / "Full Potential OS"
 DECIDE = VAULT / "00_MEMORY" / "DECISIONS.md"  # single source of only-you decisions
 PROOF = VAULT / "00_MEMORY" / "PROOF LOG.md"
 STATE = Path.home() / ".config" / "fpai" / "push" / "last.txt"
+HUMAN_EDGE_QUEUE_JSON = Path.home() / "FPAI_Cockpit" / "core" / "STATE" / "HUMAN_EDGE_QUEUE.json"
+HUMAN_EDGE_QUEUE_JSON = Path(os.environ.get("FPAI_HUMAN_EDGE_QUEUE_JSON", HUMAN_EDGE_QUEUE_JSON))
 
 def plate_decisions():
-    """Open decisions from the single source (DECISIONS.md · '## 🟡 Open'). Same list the daily note shows."""
+    """Open decisions from the canonical human-edge queue, with legacy DECISIONS fallback."""
+    if human_edge_queue and HUMAN_EDGE_QUEUE_JSON.exists():
+        try:
+            decisions = [q for q, _unblock, _aff in human_edge_queue.decision_tuples(HUMAN_EDGE_QUEUE_JSON)]
+            return decisions
+        except Exception:
+            pass
     if not DECIDE.exists(): return []
     txt = DECIDE.read_text(errors="ignore")
     if "## 🟡 Open" not in txt: return []

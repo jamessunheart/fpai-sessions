@@ -9,12 +9,19 @@ Pulls:  THE PLATE (what needs YOU) · SURFACED CONCEPTS (hold in awareness) ·
         PROOF LOG today (forward motion) · SIX SEEDS (the why).
 Deterministic, ~$0, no LLM. The same signal the Telegram bot surfaces.
 """
-import os, re, datetime, json
+import os, re, datetime, json, sys
 from pathlib import Path
 try:
     from zoneinfo import ZoneInfo
 except Exception:
     ZoneInfo = None
+REPO_ROOT_FOR_IMPORT = Path(__file__).resolve().parents[2]
+if str(REPO_ROOT_FOR_IMPORT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT_FOR_IMPORT))
+try:
+    from tools.queue import build as human_edge_queue
+except Exception:
+    human_edge_queue = None
 
 VAULT = Path(os.environ.get(
     "FPAI_VAULT",
@@ -34,6 +41,10 @@ SPECLOG = VAULT / "02_SPECS" / "SPEC LOG.md"
 CODEX_REPO = os.environ.get("FPAI_CODEX_REPO", "/Users/jamessunheart/FPAI_Cockpit")   # the directory James points Codex at
 CODEX_SPECS = Path(CODEX_REPO) / "docs" / "codex" / "specs"
 CODEX_HANDOFF = Path(CODEX_REPO) / "docs" / "codex" / "HANDOFF.md"
+HUMAN_EDGE_QUEUE_JSON = Path(os.environ.get(
+    "FPAI_HUMAN_EDGE_QUEUE_JSON",
+    Path(CODEX_REPO) / "core" / "STATE" / "HUMAN_EDGE_QUEUE.json",
+))
 SERVICE_REGISTRY_VAULT = VAULT / "00_MEMORY" / "SERVICE REGISTRY.md"
 SERVICE_REGISTRY_SORTED_VAULT = VAULT / "00_MEMORY" / "SERVICE REGISTRY — SORTED.md"
 NEXT_MOVE_DETAIL = VAULT / "00_MEMORY" / "NEXT MOVE DETAIL.md"
@@ -161,7 +172,13 @@ def readiness():
     return pct, nxt
 
 def decisions_top(n=3):
-    """The James-facing decision queue — only the OPEN section, top n, framed for low load."""
+    """The James-facing decision queue, sourced from HUMAN_EDGE_QUEUE when present."""
+    if human_edge_queue and HUMAN_EDGE_QUEUE_JSON.exists():
+        try:
+            out = human_edge_queue.decision_tuples(HUMAN_EDGE_QUEUE_JSON)
+            return out[:n], max(0, len(out) - n)
+        except Exception:
+            pass
     txt = read(DECIDE)
     if "## 🟡 Open" not in txt: return [], 0
     seg = txt.split("## 🟡 Open", 1)[1].split("## ✅", 1)[0]
@@ -815,31 +832,39 @@ def sol_decision(doc):
     return "hold"
 
 def refresh_home_decide():
-    """Keep the James-only area as simple decisions, not doctrine."""
+    """Keep the James-only area as simple queue-rendered decisions, not doctrine."""
     if not HOME.exists():
         return False
     doc = read(HOME)
     if "## 🌱 Streams" not in doc:
         return False
-    blocks = []
-    if SERVICE_REGISTRY_SORTED_VAULT.exists() and not cleanup_services_routed():
+    if human_edge_queue and HUMAN_EDGE_QUEUE_JSON.exists():
+        try:
+            queue_body = human_edge_queue.render_home_decide(human_edge_queue.load_queue(HUMAN_EDGE_QUEUE_JSON))
+            blocks = [queue_body]
+        except Exception:
+            blocks = []
+    else:
+        blocks = []
+    if not blocks:
+        if SERVICE_REGISTRY_SORTED_VAULT.exists() and not cleanup_services_routed():
+            blocks.append(
+                "**Service cleanup?**\n"
+                "Options: `spec cleanup-services` / `hold cleanup`\n"
+                "Your answer: `...`"
+            )
+        elif not cleanup_services_routed():
+            blocks.append(
+                "**Service map?**\n"
+                "Options: `spec prune` / `hold`\n"
+                "Your answer: `...`"
+            )
+        sol_answer = sol_decision(doc)
         blocks.append(
-            "**Service cleanup?**\n"
-            "Options: `spec cleanup-services` / `hold cleanup`\n"
-            "Your answer: `...`"
+            "**SOL?**\n"
+            "Options: `hold` / `exit/de-lever`\n"
+            f"Your answer: `{sol_answer}`"
         )
-    elif not cleanup_services_routed():
-        blocks.append(
-            "**Service map?**\n"
-            "Options: `spec prune` / `hold`\n"
-            "Your answer: `...`"
-        )
-    sol_answer = sol_decision(doc)
-    blocks.append(
-        "**SOL?**\n"
-        "Options: `hold` / `exit/de-lever`\n"
-        f"Your answer: `{sol_answer}`"
-    )
     block = "## 🔴 Decide\n\n" + "\n\n".join(blocks)
     if re.search(r"## 🔴 (?:Only you|Decide)", doc):
         new = re.sub(r"## 🔴 (?:Only you|Decide).*?(?=\n## 🌱 Streams)", block + "\n\n", doc, flags=re.S)
