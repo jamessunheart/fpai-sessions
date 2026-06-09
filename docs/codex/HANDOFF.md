@@ -75,6 +75,16 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-09 · SPEC_human-edge-push Part A live migration · branch `feat/human-edge-queue`
+
+- **Status:** done / awaiting merge review
+- **Files changed:** `core/STATE/HUMAN_EDGE_QUEUE.json`; `core/STATE/HUMAN_EDGE_QUEUE.md`; `tools/queue/build.py`; `tools/queue/migrate_decisions.py`; `tools/queue/test_migrate_decisions.py`; `docs/codex/HANDOFF.md`. Vault surfaces rendered from the queue: `[[DECISIONS]]` Open lane, `HOME` Decide/NEXT MOVE, and `07_DAILY/2026-06-09`.
+- **Summary:** Committed the approved Part A baseline as `c84ec76d` (`Add human edge queue SSOT`), keeping the bundled `coherence_rest_gate` and `conscious_routing_fields` behavior. Added an idempotent migration helper that parses live `[[DECISIONS]]` Open items, calls `add_gate()` for each, preserves ranked order, and re-renders the DECISIONS Open lane from `core/STATE/HUMAN_EDGE_QUEUE.json` while preserving Watching/Decided lanes. Migrated 7 open gates into the queue: Run dispatched builds; Stage idle ~$25.5k -> yield; Cut AMEX waste; Onboard Atlas + Jojo; Camp Zen first-cohort offer shape; Village Roles v1; BUTR Universe v0.2. Re-rendered HOME and daily from the queue and read back both surfaces; both show the migrated gates.
+- **Tests:** `python3 -m unittest tools.queue.test_build tools.queue.test_migrate_decisions tools.decisions.test_daily_sync`; `python3 -m py_compile tools/queue/build.py tools/queue/migrate_decisions.py tools/queue/test_migrate_decisions.py tools/decisions/daily_sync.py tools/decisions/push_update.py tools/decisions/test_daily_sync.py`; `python3 tools/queue/migrate_decisions.py --decisions "<vault>/00_MEMORY/DECISIONS.md" --queue core/STATE/HUMAN_EDGE_QUEUE.json --render-decisions` (idempotent, reported 7 gates); `FPAI_CODEX_REPO=<worktree> FPAI_HUMAN_EDGE_QUEUE_JSON=<worktree>/core/STATE/HUMAN_EDGE_QUEUE.json python3 tools/decisions/daily_sync.py` (`open=7`, `home_decide=1`); `git diff --check`.
+- **Risks:** The migrated queue is now the live SSOT; any future hand edits to `[[DECISIONS]]` Open will drift unless they go through `add_gate()`. Treasury-labeled gates are decision data only; no money movement or financial execution occurred. The local post-commit hook reported cockpit map regeneration failed after commit; this run did not chase that unrelated hook failure. No notifier/Part B code, secrets, deploys, outbound-to-world, or money paths were touched.
+- **Rollback:** revert the uncommitted migration diff (`core/STATE/HUMAN_EDGE_QUEUE.*`, `tools/queue/build.py`, `tools/queue/migrate_decisions.py`, `tools/queue/test_migrate_decisions.py`, this HANDOFF note); restore `[[DECISIONS]]`, `HOME`, and `07_DAILY/2026-06-09` from Obsidian/iCloud history if needed; to roll back the committed baseline too, revert commit `c84ec76d`.
+- **Questions for Ember/James:** after merge, Part B can read `core/STATE/HUMAN_EDGE_QUEUE.json`; keep gate creation routed through `tools.queue.build.add_gate()` so Telegram pings dedup by id.
+
 ### 2026-06-07 · SPEC_headless-build · branch `feat/headless-build`
 
 - **Status:** done / awaiting review

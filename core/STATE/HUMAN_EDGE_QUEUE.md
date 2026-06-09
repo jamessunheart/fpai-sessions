@@ -4,7 +4,82 @@
 
 ## Open
 
-_No open human-edge gates._
+### decision-run-the-dispatched-builds
+- surfaced: `2026-06-09T09:42:55+00:00`
+- stream: `Game`
+- question: Run the dispatched builds
+- verbs: `running them` / `after X` / `checkpoint`
+- blocking: `true`
+- urgent: `true`
+- state: `open`
+- answer:
+- flags: blocking · urgent: 🔴
+
+### decision-stage-idle-25-5k-yield
+- surfaced: `2026-06-09T09:42:55+00:00`
+- stream: `Treasury`
+- question: Stage idle ~$25.5k → yield?
+- verbs: `stage it` / `checkpoint`
+- blocking: `true`
+- urgent: `false`
+- state: `open`
+- answer:
+- flags: blocking
+
+### decision-cut-amex-waste
+- surfaced: `2026-06-09T09:42:55+00:00`
+- stream: `Treasury`
+- question: Cut AMEX waste
+- verbs: `itemize` / `checkpoint`
+- blocking: `true`
+- urgent: `false`
+- state: `open`
+- answer:
+- flags: blocking
+
+### decision-onboard-atlas-jojo
+- surfaced: `2026-06-09T09:42:55+00:00`
+- stream: `Zen`
+- question: Onboard Atlas + Jojo
+- verbs: `go now` / `checkpoint`
+- blocking: `true`
+- urgent: `false`
+- state: `open`
+- answer:
+- flags: blocking
+
+### decision-camp-zen-first-cohort-offer-shape
+- surfaced: `2026-06-09T09:42:55+00:00`
+- stream: `Zen`
+- question: Camp Zen first-cohort offer shape
+- verbs: `pick the shape` / `checkpoint`
+- blocking: `true`
+- urgent: `false`
+- state: `open`
+- answer:
+- flags: blocking
+
+### decision-village-roles-v1
+- surfaced: `2026-06-09T09:42:55+00:00`
+- stream: `Zen`
+- question: Village Roles v1
+- verbs: `approve` / `checkpoint`
+- blocking: `true`
+- urgent: `false`
+- state: `open`
+- answer:
+- flags: blocking
+
+### decision-butr-universe-v0-2
+- surfaced: `2026-06-09T09:42:55+00:00`
+- stream: `Legal`
+- question: BUTR Universe v0.2
+- verbs: `release` / `hold` / `checkpoint`
+- blocking: `true`
+- urgent: `false`
+- state: `open`
+- answer:
+- flags: blocking
 
 ## Answered
 

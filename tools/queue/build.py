@@ -10,6 +10,7 @@ import argparse
 import datetime as dt
 import json
 import os
+import re
 from pathlib import Path
 from typing import Any
 
@@ -147,7 +148,7 @@ def answer_gate(gate_id: str, answer: str, path: Path | str | None = None) -> di
 
 def open_gates(path: Path | str | None = None) -> list[dict[str, Any]]:
     gates = [g for g in load_queue(path)["gates"] if g["state"] == "open"]
-    return sorted(gates, key=lambda g: (not g["urgent"], not g["blocking"], g["surfaced"], g["id"]))
+    return sorted(gates, key=lambda g: (not g["urgent"], not g["blocking"]))
 
 
 def gate_affordance(gate: dict[str, Any]) -> str:
@@ -184,20 +185,13 @@ def render_home_decide(data: dict[str, Any] | None = None) -> str:
 
 def open_gates_from_data(data: dict[str, Any]) -> list[dict[str, Any]]:
     gates = [g for g in data["gates"] if g["state"] == "open"]
-    return sorted(gates, key=lambda g: (not g["urgent"], not g["blocking"], g["surfaced"], g["id"]))
+    return sorted(gates, key=lambda g: (not g["urgent"], not g["blocking"]))
 
 
 def render_decisions(data: dict[str, Any] | None = None) -> str:
     q = data or load_queue()
     lines = ["# DECISIONS", "", "*Rendered from `core/STATE/HUMAN_EDGE_QUEUE.json`.*", "", "## 🟡 Open", ""]
-    open_items = open_gates_from_data(q)
-    if open_items:
-        for gate in open_items:
-            marker = "🔴" if gate["urgent"] else "🟡"
-            lines.append(f"- {marker} **{gate['question']}** ({gate['stream']} · `{gate['id']}`) — {gate_unblock(gate)}")
-            lines.append(f"  ↳ answer: {' / '.join(f'`{verb}`' for verb in gate['verbs'])}")
-    else:
-        lines.append("_No open human-edge gates._")
+    lines.extend(render_decisions_open_lines(q))
     lines.extend(["", "## ✅ Answered", ""])
     answered = [g for g in q["gates"] if g["state"] == "answered"]
     if answered:
@@ -206,6 +200,40 @@ def render_decisions(data: dict[str, Any] | None = None) -> str:
     else:
         lines.append("_No answered human-edge gates._")
     return "\n".join(lines).rstrip() + "\n"
+
+
+def render_decisions_open_lines(data: dict[str, Any] | None = None) -> list[str]:
+    q = data or load_queue()
+    lines = ["*Rendered from `core/STATE/HUMAN_EDGE_QUEUE.json`.*", ""]
+    open_items = open_gates_from_data(q)
+    if open_items:
+        for gate in open_items:
+            marker = "🔴" if gate["urgent"] else "🟡"
+            lines.append(f"- {marker} **{gate['question']}** ({gate['stream']} · `{gate['id']}`) — {gate_unblock(gate)}")
+            lines.append(f"  ↳ answer: {' / '.join(f'`{verb}`' for verb in gate['verbs'])}")
+    else:
+        lines.append("_No open human-edge gates._")
+    return lines
+
+
+def render_decisions_open_block(data: dict[str, Any] | None = None) -> str:
+    return "\n".join(render_decisions_open_lines(data)).rstrip() + "\n"
+
+
+def write_decisions_surface(decisions_path: Path | str, data: dict[str, Any] | None = None) -> bool:
+    """Replace the DECISIONS Open section with the queue render, preserving other lanes."""
+    path = Path(decisions_path)
+    doc = path.read_text(encoding="utf-8", errors="ignore") if path.exists() else "# DECISIONS\n\n## 🟡 Open\n\n"
+    heading = "## 🟡 Open — your call  (ranked · top 3 surface in today's note)"
+    block = f"{heading}\n\n{render_decisions_open_block(data)}"
+    if "## 🟡 Open" in doc:
+        new = re.sub(r"## 🟡 Open.*?(?=\n## |\Z)", block + "\n", doc, count=1, flags=re.S)
+    else:
+        new = doc.rstrip() + "\n\n" + block + "\n"
+    if new != doc:
+        path.write_text(new, encoding="utf-8")
+        return True
+    return False
 
 
 def render_queue_markdown(data: dict[str, Any] | None = None) -> str:
@@ -222,7 +250,7 @@ def render_queue_markdown(data: dict[str, Any] | None = None) -> str:
         if not gates:
             lines.extend([f"_No {state} human-edge gates._", ""])
             continue
-        for gate in sorted(gates, key=lambda g: (g["surfaced"], g["id"])):
+        for gate in sorted(gates, key=lambda g: (not g["urgent"], not g["blocking"])):
             flags = []
             if gate["blocking"]:
                 flags.append("blocking")
@@ -236,7 +264,7 @@ def render_queue_markdown(data: dict[str, Any] | None = None) -> str:
             lines.append(f"- blocking: `{str(gate['blocking']).lower()}`")
             lines.append(f"- urgent: `{str(gate['urgent']).lower()}`")
             lines.append(f"- state: `{gate['state']}`")
-            lines.append(f"- answer: `{gate['answer']}`" if gate["answer"] else "- answer: ")
+            lines.append(f"- answer: `{gate['answer']}`" if gate["answer"] else "- answer:")
             if flags:
                 lines.append("- flags: " + " · ".join(flags))
             lines.append("")
