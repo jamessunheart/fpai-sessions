@@ -75,6 +75,16 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-09 · SPEC_results-engine · branch `feat/results-engine`
+
+- **Status:** done / awaiting review
+- **Files changed:** `tools/results/__init__.py`; `tools/results/engine.py`; `tools/results/test_engine.py`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a read+propose results driver. It scans the Intent Buildstream for `results:` tagged READY opportunities, picks the highest weight, names the next move, and safely routes by tier: AI-doable moves append a draft to a review lane only; human-edge moves call `tools.queue.build.add_gate()` against the canonical queue; simulated consequences can be recorded to a local JSONL ledger. The live dry-run found no READY result-tagged opportunity, so no live draft/gate was written.
+- **Tests:** `python3 -m py_compile tools/results/engine.py tools/results/test_engine.py`; `python3 -m unittest tools.results.test_engine`; `python3 tools/results/engine.py --dry-run`; `git diff --check`.
+- **Risks:** The live buildstream needs explicit `results:` tags before the engine will advance real opportunities. The consequence tracker here is a narrow local results ledger, not the full future `tools/consequence/watch.py`. Gate writes depend on the Part A queue schema from `feat/headless-build`. No outbound send, money movement, deploy, secrets, or gate auto-resolve path was touched.
+- **Rollback:** delete `tools/results/`; remove this HANDOFF note; remove any future generated `docs/codex/RESULTS_LANE.md` or `core/STATE/RESULTS_DRAFTS/` entries if created by a later live run.
+- **Questions for Ember/James:** add/confirm the first READY `results:` tagged opportunity in `docs/codex/INTENT_BUILDSTREAM.md` when you want the engine to stage a real review artifact or gate.
+
 ### 2026-06-09 · SPEC_human-edge-push Part A live migration · branch `feat/human-edge-queue`
 
 - **Status:** done / awaiting merge review
