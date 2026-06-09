@@ -75,6 +75,26 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-09 · SPEC_reserved-class-boundary · branch `feat/headless-build`
+
+- **Status:** done / awaiting diff review
+- **Files changed:** `core/STATE/RESERVED_CLASS.yaml`; `tools/reserved/__init__.py`; `tools/reserved/classify.py`; `tools/reserved/test_classify.py`; `docs/codex/HANDOFF.md`
+- **Summary:** Encoded the Reserved-Class boundary as a canonical machine-loadable policy plus a fail-safe advisory classifier. `is_reserved(action_text, context=None)` returns reserved/category/reason/confidence; it escalates the five James-only categories, clears clearly advisory/reversible work, and defaults ambiguous consequential-looking moves to escalation. Added a stubbed `gate_or_proceed()` helper that can write a human-edge gate through `tools.queue.build.add_gate()` when explicitly called, but nothing is wired live.
+- **Tests:** `env PYTHONPYCACHEPREFIX=/private/tmp/fpai-pycache python3 -m py_compile tools/reserved/classify.py tools/reserved/test_classify.py`; `python3 -B -m unittest tools.reserved.test_classify` (10 tests OK); `git diff --check`
+- **Risks:** Keyword classification is conservative and may over-escalate; that is intentional per fail-safe. The policy file is JSON-compatible YAML to avoid adding a YAML runtime dependency. No live loop/apprentice wiring, sends, money movement, deploys, secrets, merges, or approvals were touched.
+- **Rollback:** delete `tools/reserved/` and `core/STATE/RESERVED_CLASS.yaml`; remove this HANDOFF note.
+- **Questions for Ember/James:** none. Rung 1 can now call this boundary in a separate approved wiring spec.
+
+### 2026-06-09 · Land Results Engine on headless loop · branch `feat/headless-build`
+
+- **Status:** done / awaiting diff review
+- **Files changed:** cherry-picked `b349c314` from `feat/results-engine` onto `feat/headless-build` as `0a5b4bd3` (`Add results engine driver`): `tools/results/__init__.py`; `tools/results/engine.py`; `tools/results/test_engine.py`; `docs/codex/HANDOFF.md`. Preserved existing uncommitted checkout changes: `core/INTELLIGENCE/narrator/sessions/2026-06-09.md`; `docs/codex/HANDOFF.md`; `docs/codex/specs/SPEC_human-edge-activation.md`.
+- **Summary:** Results Engine is now landed on the branch the loop runs from. The engine can wake when the buildstream gets READY `results:` tags: highest weight wins; AI-doable moves stage review drafts only; human-edge moves write gates through `tools.queue.build.add_gate()`; simulated consequence rows can be recorded. Live dry-run found no READY result-tagged opportunity yet, so no live draft or gate was written.
+- **Tests:** `python3 -m unittest tools.results.test_engine tools.queue.test_build` (7 tests OK); `python3 tools/results/engine.py --dry-run` (`No READY results-bearing opportunity found.`).
+- **Risks:** `feat/headless-build` is now four commits ahead of origin. The existing working checkout edits were restored and remain uncommitted; the temporary safety stash `stash@{0}` is still present because the HANDOFF reapply conflicted and was resolved by preserving both notes. The engine will stay idle until buildstream entries carry explicit READY `results:` tags. No outbound send, money movement, push, main merge, deploy, secrets, or gate auto-resolve path was touched.
+- **Rollback:** revert `0a5b4bd3` from `feat/headless-build` to remove the landed Results Engine; keep or drop `stash@{0}` only after confirming the restored uncommitted checkout is no longer needed as backup.
+- **Questions for Ember/James:** tag the first READY results-bearing opportunity in `docs/codex/INTENT_BUILDSTREAM.md` when you want the loop to stage a real review artifact or human-edge gate.
+
 ### 2026-06-09 · SPEC_results-engine · branch `feat/results-engine`
 
 - **Status:** done / awaiting review
@@ -84,6 +104,16 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - **Risks:** The live buildstream needs explicit `results:` tags before the engine will advance real opportunities. The consequence tracker here is a narrow local results ledger, not the full future `tools/consequence/watch.py`. Gate writes depend on the Part A queue schema from `feat/headless-build`. No outbound send, money movement, deploy, secrets, or gate auto-resolve path was touched.
 - **Rollback:** delete `tools/results/`; remove this HANDOFF note; remove any future generated `docs/codex/RESULTS_LANE.md` or `core/STATE/RESULTS_DRAFTS/` entries if created by a later live run.
 - **Questions for Ember/James:** add/confirm the first READY `results:` tagged opportunity in `docs/codex/INTENT_BUILDSTREAM.md` when you want the engine to stage a real review artifact or gate.
+
+### 2026-06-09 · Human-Edge Push Part A live on headless loop · branch `feat/headless-build`
+
+- **Status:** done / awaiting diff review
+- **Files changed:** committed preservation of the pre-existing `feat/headless-build` working checkout as `42f34541`; cherry-picked Human-Edge commits onto `feat/headless-build` as `2fcdec31` (`Add human edge queue SSOT`) and `1685765a` (`Migrate 7 live DECISIONS gates into HUMAN_EDGE_QUEUE (Part A live)`). Active files added/updated include `core/STATE/HUMAN_EDGE_QUEUE.json`; `core/STATE/HUMAN_EDGE_QUEUE.md`; `tools/queue/**`; `tools/decisions/daily_sync.py`; `tools/decisions/push_update.py`; `tools/decisions/test_daily_sync.py`; `docs/codex/HANDOFF.md`.
+- **Summary:** Made Human-Edge Push Part A live on the branch the autonomous loop actually runs from, `feat/headless-build`. Preserved the existing 56-file dirty headless checkout before cherry-picking. Resolved `daily_sync.py` conflicts by keeping both sides: headless-build's existing rest gate, weighted-priority, schedule, and conscious-routing behavior stayed intact, and Part A's queue-first `HUMAN_EDGE_QUEUE` read path remained the source for decisions/HOME/daily. Confirmed `core/STATE/HUMAN_EDGE_QUEUE.json` has 7 open gates and `tools/queue/` is present on `feat/headless-build`. Ran `daily_sync.py` from the headless checkout; it rendered `open=7`, `home_next=1`, `home_decide=1`, and read-back confirmed `[[DECISIONS]]`, `HOME`, and `07_DAILY/2026-06-09` show the queue gates.
+- **Tests:** `python3 -m unittest tools.queue.test_build tools.queue.test_migrate_decisions tools.decisions.test_daily_sync`; JSON readback confirmed `core/STATE/HUMAN_EDGE_QUEUE.json` exists with 7 gates and `tools/queue/build.py` + `tools/queue/migrate_decisions.py` exist; `FPAI_CODEX_REPO=/Users/jamessunheart/FPAI_Cockpit FPAI_HUMAN_EDGE_QUEUE_JSON=/Users/jamessunheart/FPAI_Cockpit/core/STATE/HUMAN_EDGE_QUEUE.json python3 tools/decisions/daily_sync.py` rendered 7 gates; read-back of vault `[[DECISIONS]]`, `HOME`, and daily confirmed queue-rendered gates.
+- **Risks:** `feat/headless-build` is now three commits ahead of origin: one preservation commit plus the two Human-Edge cherry-picks. The migration queue is live; future human-edge gate edits should go through `tools.queue.build.add_gate()` instead of hand-editing `[[DECISIONS]]` Open. Treasury-labeled gates are data only; no money movement occurred. No notifier/Part B, secrets, deploy, main merge, push, or outbound-to-world action was touched.
+- **Rollback:** revert `1685765a` to remove the migrated 7-gate queue state and migration helper from `feat/headless-build`; revert `2fcdec31` to remove the queue SSOT/repoint; revert `42f34541` only if James explicitly wants to undo the preserved pre-existing headless working state. Restore vault `[[DECISIONS]]`, `HOME`, and `07_DAILY/2026-06-09` from Obsidian/iCloud history if needed.
+- **Questions for Ember/James:** Part B should now target `feat/headless-build` / this checkout for its queue read path.
 
 ### 2026-06-09 · SPEC_human-edge-push Part A live migration · branch `feat/human-edge-queue`
 

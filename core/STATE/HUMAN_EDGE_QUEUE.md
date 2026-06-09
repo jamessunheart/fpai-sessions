@@ -81,6 +81,17 @@
 - answer:
 - flags: blocking
 
+### results-results-bottleneck-session
+- surfaced: `2026-06-09T13:15:15+00:00`
+- stream: `Ventures`
+- question: Approve next results move for Bottleneck Session: Name 3-5 warm leads for the founding $250 Bottleneck offer?
+- verbs: `name leads` / `draft cold list` / `checkpoint`
+- blocking: `true`
+- urgent: `false`
+- state: `open`
+- answer:
+- flags: blocking
+
 ## Answered
 
 _No answered human-edge gates._

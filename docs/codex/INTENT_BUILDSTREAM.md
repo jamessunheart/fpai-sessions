@@ -225,3 +225,20 @@ AI carries the downstream work:
 - Codex builds route-filtering and keeps the selftest report honest.
 - The next proof is one real friction -> captured -> routed -> fixed -> BRICK saved.
 - After that proof, route the Revenue Front Door: Full Potential diagnostic / bottleneck session intake.
+
+## Results Opportunities
+
+*Results-bearing intents the Results Engine (`tools/results/engine.py`) drives — it picks the highest-weighted READY one, drafts the AI-doable part, and routes the human-edge part to James via the queue. Weights reflect James's live priorities. Channel-agnostic: revenue / donation / funding / enrollment.*
+
+- Bottleneck Session | id: results-bottleneck-session | results: revenue | status: ready | weight: 90 | tier: human | next: Name 3-5 warm leads for the founding $250 Bottleneck offer | verbs: name leads, draft cold list, checkpoint | stream: Ventures
+- Camp Zen first cohort | id: results-camp-zen-cohort | results: enrollment | status: ready | weight: 70 | tier: human | next: Pick the first-cohort offer shape (3d/7d, price, AI tools) | verbs: pick the shape, draft it, checkpoint | stream: Zen
+
+## System-That-Builds-The-System — Sequenced Ladder (blessed by James 2026-06-09)
+
+*The meta-build: push the delegation line UP to James's irreducible core — **source intent · values/CARE · Reserved-Class blessings** — and let everything below self-construct via AI apprentices. Each rung is a prerequisite for the next. The hubs come LAST, built BY the system (not hand-built before it). See memory `project-apprentice-unbottleneck-model`.*
+
+- Rung 0 | id: rung0-reserved-class-boundary | route: codex | status: ready | stream: Game | next: SPEC_reserved-class-boundary — encode the irreducible-James gates + a fail-safe classifier the loop/apprentices call before any consequential move | why: keystone — apprentices cannot safely self-run until escalation rules are encoded
+- Rung 1 | id: rung1-apprentice-execution-tier | route: codex | status: blocked-on-rung0 | stream: Game | next: define an AI apprentice that owns a buildstream item end-to-end, escalating only its own bottleneck as a human-edge gate
+- Rung 2 | id: rung2-self-directing-loop | route: codex | status: blocked-on-rung1 | stream: Game | next: generalize the Results Engine — pick top weighted intent → assign apprentice → escalate Reserved-Class only
+- Rung 3 | id: rung3-auto-spec-drafting | route: codex | status: blocked-on-rung2 | stream: Game | next: the loop drafts its own next spec from intents (system builds system)
+- Rung 4 | id: rung4-hubs | route: apprentice | status: blocked-on-rung3 | stream: Game | next: apprentice fleet builds comms · financial · recruiting hubs, sequenced by leverage
