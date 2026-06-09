@@ -15,8 +15,37 @@ This doc governs **Layer 3 — the Intelligence Engine** (Ember/Claude Code + Co
 
 Builder-facing sequence lives in `docs/codex/INTENT_BUILDSTREAM.md`. Use that file to decide whether a candidate is the next unlock, downstream material, or drift.
 
+## Conscious Routing Contract
+Do not ask only "can AI do this?" Ask:
+
+- **Aware:** what real state, signal, constraint, time, cost, or human condition was noticed?
+- **Aligned:** what adjacent downstream intent does this serve?
+- **Care:** what boundary, James-state, relationship, cost, risk, or future consequence is protected?
+- **Proof:** what consequence will be checked, logged, or learned from on the next loop?
+
+This applies to next moves, specs, router actions, proof rows, and handoff notes. The system should become **aware, aligned, caring, and improving**, not merely faster.
+
+Current repo enforcement:
+
+- `tools/decisions/daily_sync.py` writes the four fields into `NEXT MOVE DETAIL`.
+- `tools/router/route.py` prints and handoff-logs the four fields for every routed intent.
+- `tools/selftest/report.py` includes the contract in the self-standing pass criteria.
+
 ## Prime directive
 **Make FPOS (the Intelligence Engine) self-standing first.** Treasury (Layer 4), Comms Hub, Financial Hub, and everything downstream are **products of a finished engine**, not parts you build to finish it. Self-standing = the loop runs one full day untouched: remembers, routes, refreshes its own surfaces, proves its own work, stops only at genuine James-gates, never overspends.
+
+## Coherence First Gate
+**Optimized James state is the source layer.** If James is depleted, sleep-deprived, late-night, overloaded, traveling, laptop-battery constrained, or on a narrow interface, the correct next move is usually not more building. It is checkpoint, preserve the next clean move, and reduce cognitive load.
+
+Hard routing rules:
+
+- After 22:00 local time: bias to closure. Summarize, preserve state, and avoid opening major new decisions.
+- From 00:00-06:00 local time, or when James reports no sleep: route to `checkpoint` / sleep unless there is a true emergency.
+- After a long active work session: ask one short state check or propose closure before asking for another build approval.
+- Never make HOME/NEXT lead with a build ask when the real scene says rest is the higher-leverage move.
+- If the time/place/interface picture is unclear and it matters, ask one short grounding question: where are you, where are you going next, and how much time/energy do we have?
+
+AI still may do safe downstream work while James rests, but it must not require James to be glue. Stop at Reserved Class gates and surface the morning handoff cleanly.
 
 ## The 4 Bars (capabilities — self-standing requires all four)
 1. **Memory** — remembers + recalls across sessions; no re-briefing. *(running)*
@@ -31,6 +60,8 @@ Builder-facing sequence lives in `docs/codex/INTENT_BUILDSTREAM.md`. Use that fi
 - Batch genuine James-decisions into ONE low-load surface with a recommended default; never drip mid-flow; one ask max per surface.
 - Default-action on stall: every James-decision carries a safe default + what happens if unanswered. Silence resolves to the default; never freeze waiting.
 - If a non-Reserved decision lands on James, the protocol failed — re-route to AI. Measure success by a decreasing count of James-decisions per cycle.
+
+- Three reasons a thing waits — never conflate: (a) Reserved Class = James's values call; (b) harness-gated = environment blocks it (e.g. push to main) — surface as 'tool needs your hand', not a decision; (c) large-blast-radius = reversible but risky (e.g. 200-commit conflicted merge) — AI schedules a careful pass, doesn't punt to James. A clean low-risk action is none of these — AI just does it.
 
 ## The Resource Discipline Gate (permission, NOT a bar)
 The gate on autonomy itself. The engine may not run untouched until it cannot spend untouched.
@@ -50,6 +81,11 @@ The gate on autonomy itself. The engine may not run untouched until it cannot sp
 - Memory intact — a fresh session re-orients with no re-briefing.
 
 Do not declare self-standing until all five hold for a day.
+
+## Work-claim protocol (no collisions)
+Before editing a major surface, claim it; after, clear it. Shows as 🔴 + owner in the Index of Indexes spine (with last-updated date).
+- Claim: `python3 tools/index/claim.py --page "<Page>" --owner <you>` · Clear: `--clear --page "<Page>"`.
+- Never edit a 🔴 page another builder holds. One active editor per surface (one spec = one branch). Claims in `~/.config/fpai/index/claims.json`.
 
 ## Builder lanes
 Ember = Midstream primary (clarify/route/mirror/vault, live small builds). Codex = Buildstream primary (branches/code/tests/reports, thin Midstream edge). Vault/live/small/judgment → Ember; well-specced/larger/pure-repo/async → Codex. Never two builders on one path; one spec = one branch.

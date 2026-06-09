@@ -186,6 +186,35 @@ def check_cost_guard() -> Check:
     return Check("cost guard", status, evidence, "Autonomous work must stay inside the metered spend gate.")
 
 
+def check_safety_seal(repo: Path) -> Check:
+    autoloop = repo / "tools" / "autoloop" / "tick.sh"
+    if not autoloop.exists():
+        return Check("Safety Seal", WARN, "missing tools/autoloop/tick.sh", "Cannot verify unattended-loop shutdown and logging.")
+    text = read(autoloop)
+    required = {
+        "cost guard": "cost-guard" in text,
+        "ambient pause switch": ".pause-ambient" in text,
+        "autoloop disable switch": ".disabled" in text,
+        "run log": "runs.log" in text,
+        "closeout step": "tools/closeout/run.py" in text,
+        "router step": "tools/router/route.py" in text,
+        "reserved-action ban": "MAY NOT" in text and "move money" in text and "deploy" in text and "secrets" in text,
+    }
+    missing = [name for name, ok in required.items() if not ok]
+    router_lines = [line.strip() for line in text.splitlines() if "tools/router/route.py" in line]
+    router_report_only = bool(router_lines) and not any("--apply" in line for line in router_lines)
+    if not router_report_only:
+        missing.append("report-only router tick")
+    if missing:
+        return Check("Safety Seal", WARN, f"missing: {', '.join(missing)}", "No uncontrolled exposure: loops need cap, log, kill switch, rollback posture.")
+    return Check(
+        "Safety Seal",
+        PASS,
+        "autoloop has cost guard, pause/disable switches, run log, closeout, report-only router",
+        "No uncontrolled exposure before expanded autonomy.",
+    )
+
+
 def check_phone_cloud_docs(repo: Path) -> Check:
     required = [
         "AGENTS.md",
@@ -226,6 +255,7 @@ def run_checks(repo: Path, vault: Path) -> list[Check]:
         check_proof(vault),
         check_home_buildstream(repo, vault),
         check_cost_guard(),
+        check_safety_seal(repo),
         check_phone_cloud_docs(repo),
         check_git_state(repo),
     ]

@@ -242,19 +242,46 @@ def next_decision_move(now):
         if "service registry" in q.lower():
             continue
         late = now.hour >= 19 or now.hour < 6
-        if "financial-consolidation" in q.lower() or "financial consolidation" in q.lower():
+        ql = q.lower()
+        if "go autonomous" in ql or "self-standing one-day" in ql or "one-day test" in ql:
+            say = ["go autonomous", "not yet", "checkpoint"]
+            downstream = (
+                "Claude Code / Ember starts and observes the guarded self-standing one-day test: "
+                "router + closeout loop run under the Safety Seal, proof/BRICK gets logged, "
+                "and the system stops at Reserved Class gates."
+            )
+            aware = "Rungs 0-3 are built enough to test whether the engine can run for a day without James as glue."
+            aligned = "This is the proof loop before downstream hubs/revenue acceleration."
+            care = "The test stays inside budget gates, kill switches, and Reserved Class boundaries; James can answer `checkpoint` if rest or timing matters more."
+            proof = "Pass/fail is measured by zero James-glue, spend under cap, no stale surfaces, self-logged ships, and memory continuity."
+        elif "dispatched builds" in ql or "run the dispatched" in ql:
+            quoted = re.findall(r'"([^"]+)"', affordance)
+            say = quoted[:2] + ["checkpoint"] if quoted else ["running them", "after X", "checkpoint"]
+            downstream = (
+                "Claude Code / Ember dispatches or observes the queued Codex builds one branch/spec at a time, "
+                "keeps collisions visible, and records proof when each build lands."
+            )
+            aware = "The next real scene is not another doctrine choice; several already-routed builds are queued."
+            aligned = unblock or "Running the queued builds tests whether the Buildstream can carry approved work without James-glue."
+            care = "Keeps James to one operating signal, preserves branch isolation, and stops if a build crosses a Reserved Class boundary."
+            proof = "Each dispatched build should return files changed, tests, risks, rollback, and the next unlocked move."
+        elif "financial-consolidation" in ql or "financial consolidation" in ql:
             say = ["yes - build it", "no - after X", "checkpoint"]
             downstream = "Claude Code / Ember drafts the reversible file-only Financial Hub path, or reorders it."
-        elif "comms hub" in q.lower() or "conscious chat" in q.lower():
+            aware = aligned = care = proof = None
+        elif "comms hub" in ql or "conscious chat" in ql:
             say = ["yes - build it", "no - after X", "checkpoint"]
             downstream = "Claude Code / Ember drafts the Comms Hub path, or parks it."
-        elif "phone codex" in q.lower():
+            aware = aligned = care = proof = None
+        elif "phone codex" in ql:
             say = ["github cloud for now", "set up SSH build host", "mac host only", "checkpoint"]
             downstream = "Claude Code / Ember records the operating lane and keeps repo/vault handoff surfaces aligned."
+            aware = aligned = care = proof = None
         else:
             quoted = re.findall(r'"([^"]+)"', affordance)
             say = quoted[:2] + ["checkpoint"] if quoted else ["yes", "no", "checkpoint"]
             downstream = affordance
+            aware = aligned = care = proof = None
         return {
             "title": q,
             "look": "[[DECISIONS]] only if you want the queue detail",
@@ -263,13 +290,84 @@ def next_decision_move(now):
             "yes": say[0],
             "reason": unblock,
             "downstream": downstream,
+            "aware": aware,
+            "aligned": aligned,
+            "care": care,
+            "proof": proof,
             "say": say,
             "late": late,
         }
     return None
 
+def coherence_rest_gate(now):
+    """James-state gate: late/no-sleep conditions outrank build momentum."""
+    h = now.hour
+    if h < 6:
+        return {
+            "title": "Stop building — checkpoint and sleep",
+            "look": "this section only",
+            "tell": "Claude Code / Ember.",
+            "send_detail": "This is a state-protection signal, not a build approval.",
+            "yes": "checkpoint",
+            "reason": "It is after midnight in James's active day. Coherence is the source layer; sleep protects tomorrow's attention better than another build decision.",
+            "downstream": "AI preserves the next clean move, logs any handoff needed, and does not ask for more decisions until morning unless there is a true emergency.",
+            "aware": "James's local clock is after midnight, and the real scene is sleep-debt risk rather than build leverage.",
+            "aligned": "Coherence is the source layer. Protecting state unlocks cleaner attention tomorrow.",
+            "care": "Protects sleep, reduces cognitive load, stops late-night escalation, and prevents the system from using James as glue while depleted.",
+            "proof": "A clean checkpoint preserves the next move for morning without opening another decision loop.",
+            "say": ["checkpoint", "sleep now", "urgent only: ..."],
+            "late": True,
+            "rest_gate": True,
+        }
+    if h >= 22:
+        return {
+            "title": "Close clean — no new major calls tonight",
+            "look": "this section only",
+            "tell": "Claude Code / Ember.",
+            "send_detail": "Use this to wind down while preserving the next clean move.",
+            "yes": "checkpoint",
+            "reason": "Late-day work should reduce cognitive load. Closure beats opening another thread from depletion.",
+            "downstream": "AI summarizes state, preserves the morning move, and keeps reversible Buildstream work parked unless James explicitly overrides.",
+            "aware": "James is in the late-day window, where opening major new work is usually less coherent than closure.",
+            "aligned": "The highest intent is a clean nervous-system exit, not one more unresolved thread.",
+            "care": "Protects sleep, decision quality, and tomorrow's command-layer attention.",
+            "proof": "The next clean move is preserved so the morning starts from continuity instead of re-briefing.",
+            "say": ["checkpoint", "one more safe build", "urgent only: ..."],
+            "late": True,
+            "rest_gate": True,
+        }
+    return None
+
+def conscious_routing_fields(move):
+    """Four-field routing contract from Conscious Intelligence: notice, align, care, prove."""
+    title = move.get("title", "next move")
+    reason = move.get("reason", "").strip()
+    downstream = move.get("downstream", "").strip()
+    fields = {
+        "aware": move.get("aware") or f"The surfaced move is `{title}`; route and timing are part of the signal.",
+        "aligned": move.get("aligned") or reason or "This is the current highest adjacent intent in the stream.",
+        "care": move.get("care"),
+        "proof": move.get("proof"),
+    }
+    if not fields["care"]:
+        if move.get("rest_gate"):
+            fields["care"] = "Protects James's coherence, sleep, and decision quality before adding more build pressure."
+        elif move.get("late"):
+            fields["care"] = "Keeps the ask to one reversible signal and avoids opening unnecessary late-day complexity."
+        else:
+            fields["care"] = "Keeps James in the upstream signal lane while AI carries reversible downstream work."
+    if not fields["proof"]:
+        if downstream:
+            fields["proof"] = f"AI can complete or preserve the downstream step: {downstream}"
+        else:
+            fields["proof"] = "The next handoff/proof row should record what was learned and what unlocked next."
+    return {k: re.sub(r"\s+", " ", str(v)).strip() for k, v in fields.items()}
+
 def james_next_move(now):
     """HOME/Daily top-of-stream action: James signal first, downstream build second."""
+    rest_gate = coherence_rest_gate(now)
+    if rest_gate:
+        return rest_gate
     if SERVICE_REGISTRY_SORTED_VAULT.exists() and not cleanup_services_routed():
         late = now.hour >= 19 or now.hour < 6
         return {
@@ -358,6 +456,46 @@ def live_priorities_top3(allopen, now):
             if len(out) >= 3:
                 break
     return out[:3]
+
+def weighted_priorities_line(n=3):
+    """Carry the weighted Buildstream into the day — top-n READY intents by value×leverage×readiness,
+       as a compact one-liner (full table lives in SYSTEM SELF-MODEL)."""
+    txt = read(VAULT / "00_MEMORY" / "INTENT BUILDSTREAM.md")
+    m = re.search(r"<!-- INTENTS:START -->(.*?)<!-- INTENTS:END -->", txt, re.S)
+    if not m:
+        return None
+    known = {"id", "value", "unlocks", "status", "route", "link"}
+    rows = []
+    for ln in m.group(1).splitlines():
+        ln = ln.strip()
+        if not ln.startswith("- "):
+            continue
+        d, desc = {}, ""
+        for tok in ln[2:].split(" | "):
+            km = re.match(r"(\w+):(.*)$", tok)
+            if km and km.group(1) in known:
+                d[km.group(1)] = km.group(2).strip()
+            else:
+                desc = tok
+        if not d.get("id"):
+            continue
+        d["desc"] = desc
+        d["value"] = int(d.get("value", "0") or 0)
+        rows.append(d)
+    by = {r["id"]: r for r in rows}
+    def lev(i, seen):
+        nx = by.get(i, {}).get("unlocks", "none")
+        if nx in ("none", "") or nx in seen or nx not in by:
+            return 0
+        seen.add(nx)
+        return 1 + lev(nx, seen)
+    ready = [r for r in rows if r.get("status") == "ready"]
+    for r in ready:
+        r["w"] = r["value"] * (1 + lev(r["id"], set()))
+    ready.sort(key=lambda r: r["w"], reverse=True)
+    tot = sum(r["w"] for r in ready) or 1
+    parts = [f"{r['desc'].split('—')[0].strip()[:32]} {r['w']/tot*100:.0f}%" for r in ready[:n]]
+    return " · ".join(parts) if parts else None
 
 def codex_ready():
     """Specs marked 'ready for Codex' in SPEC LOG → (name, est, gate, spec_link). Drives the cockpit's
@@ -530,6 +668,8 @@ def schedule_flow(now):
     title, items, light = sched
     sched_date = _schedule_date(title)
     today = now.date()
+    if sched_date and sched_date < today:
+        return None   # stale schedule (past date) → don't clutter today's flow with old struck items
     now_min = now.hour * 60 + now.minute
     classified = []
     for i, item in enumerate(items):
@@ -598,11 +738,11 @@ def wellness_done(note_text):
     return {m.group(1).strip().lower() for m in re.finditer(r"\[[xX]\]\s+(.+)$", seg, re.M)}
 
 def wellness_nudge(hour, done):
-    """One gentle, contextual care nudge — the right one for the moment, only if not already done."""
+    """One contextual care nudge — direct when depletion is likely, gentle otherwise."""
     M = "https://www.youtube.com/results?search_query="
     cands = []
     if hour >= 22 or hour < 6:
-        cands = [("🛌 screens off", "wind down — [sleep meditation]({}yoga+nidra+for+sleep) · or 4-7-8 breath".format(M))]
+        cands = [("🛌 screens off", "checkpoint, screens off — [sleep meditation]({}yoga+nidra+for+sleep) · or 4-7-8 breath".format(M))]
     elif hour < 11:
         cands = [("💧 water", "start with a glass of water 💧"),
                  ("🧘 meditate", "[10-min ground]({}10+minute+guided+meditation) before the day".format(M))]
@@ -623,8 +763,10 @@ def care_check(now):
     h = now.hour
     h12 = ((h + 11) % 12) + 1
     ampm = "am" if h < 12 else "pm"
-    if h >= 22 or h < 5:
-        return f"💗 It's {h12}{ampm} — the build will keep. Rest is tonight's real move; I'll hold the watch. → [[REST — THE CHARGING STATION]]"
+    if h < 6:
+        return f"💗 It's {h12}{ampm} — sleep is the real next move. Say `checkpoint`; AI holds the watch. → [[REST — THE CHARGING STATION]]"
+    if h >= 22:
+        return f"💗 It's {h12}{ampm} — close the loop, no new major calls. Say `checkpoint` if tired. → [[REST — THE CHARGING STATION]]"
     if h < 7:  return "💗 Early start — water + a few breaths before the day grabs you."
     if h < 11: return "💗 Morning — hydrate, then 2 min to ground before the first decision."
     if h < 15: return "💗 Midday — water + a real meal? Don't decide hungry."
@@ -735,6 +877,12 @@ def write_next_move_detail(move, now):
     """Put the who/where/why/how outside HOME so HOME stays a clean input surface."""
     try:
         title = move["title"] if re.search(r"[?.!]$", move["title"]) else f"{move['title']}."
+        cr = conscious_routing_fields(move)
+        rest_detail = (
+            "This is already the rest/checkpoint move. If there is no emergency, stop here and sleep.\n"
+            if move.get("rest_gate")
+            else "If you are tired or time-limited, answer `checkpoint`. AI preserves the next clean move.\n"
+        )
         detail = (
             "# NEXT MOVE DETAIL\n\n"
             f"*Generated: {now.strftime('%Y-%m-%d %H:%M %Z')} · source: `tools/decisions/daily_sync.py`*\n\n"
@@ -745,11 +893,16 @@ def write_next_move_detail(move, now):
             f"## Tell\n{move['tell']}\n\n"
             "## Send This\n"
             f"`{move['yes']}` — {move.get('send_detail', 'Use this note for context.')}\n\n"
+            "## Conscious Routing\n"
+            f"- **Aware:** {cr['aware']}\n"
+            f"- **Aligned:** {cr['aligned']}\n"
+            f"- **Care:** {cr['care']}\n"
+            f"- **Proof:** {cr['proof']}\n\n"
             f"## Where To Look\n{move['look']}\n\n"
             f"## Why This Matters\n{move['reason']}\n\n"
             f"## What AI Does Next\n{move['downstream']}\n\n"
             "## Rest Option\n"
-            "If you are tired or time-limited, answer `checkpoint`. AI preserves the next clean move.\n"
+            f"{rest_detail}"
         )
         NEXT_MOVE_DETAIL.write_text(detail)
     except Exception:
@@ -816,6 +969,10 @@ def main():
     # Lead the LIVING note with TIME + day + place (the filename already carries the ISO date — no repeat),
     # then the FLOW from here: the body's state NOW → the priorities to move through. The system knows the flow.
     L = [f"# {icon} {daylabel}  ·  `{tlabel}`{where}", ""]
+    care = care_check(now)
+    if care:
+        L.append(care)
+        L.append("")
     top3 = live_priorities_top3(allopen, now)
     if   h >= 22 or h < 5: first = "🌙 **Sleep** — rest now; the build keeps till morning"
     elif h < 11:           first = "☀️ **Ground + hydrate** — 2 min before the first decision"
@@ -826,6 +983,11 @@ def main():
     if sched:                                   # weave the day's real schedule into the living flow
         for line in schedule_flow_lines(sched):
             nodes.append("🗓️ " + line)
+    else:                                       # no fresh schedule → ask for the day's shape (don't show stale)
+        nodes.append("🧭 **Today's shape?** — no schedule set · say `my schedule is …`, or just flow")
+    wp = weighted_priorities_line(3)            # carry the weighted Buildstream into the day
+    if wp:
+        nodes.append(f"⚖️ **Building (weighted):** {wp} → [[SYSTEM SELF-MODEL]]")
     nodes += [f"🎯 **{g}** — {p}" for g, p in top3[:2]]
     for i, node in enumerate(nodes, 1):
         L.append(f"{i}. {node}")

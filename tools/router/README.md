@@ -14,7 +14,9 @@ Report only:
 python3 tools/router/route.py --dry-run
 ```
 
-Run one guarded write:
+Run one guarded write. This only acts on intents explicitly marked
+`route:auto`; `route:ember`, `route:codex`, `route:api`, `route:james`, and
+missing routes escalate instead of drafting or building.
 
 ```bash
 python3 tools/router/route.py --apply
@@ -33,6 +35,20 @@ python3 -m unittest tools.router.test_route
 - Route a blessed spec for Codex build.
 - Optionally append a note to the Codex-owned handoff lane.
 
+Only `route:auto` intents are eligible for those actions.
+
+## Conscious Routing Contract
+
+Every router output and optional handoff note carries the same four fields:
+
+- `Aware` — what the router noticed in the current state.
+- `Aligned` — which adjacent downstream intent the action serves.
+- `Care` — what risk, cost, James-state, or boundary is protected.
+- `Proof` — what consequence can be checked on the next loop.
+
+This keeps automation from becoming "can I do this?" and forces the better
+question: "should this be routed, now, by whom, at what cost, for what becoming?"
+
 ## What It Will Not Do
 
 - Move money or resources.
@@ -43,6 +59,10 @@ python3 -m unittest tools.router.test_route
 - Make doctrine, people, treasury, offer, legal, or irreversible choices.
 
 Those route back to James/Ember.
+
+It also will not auto-act on builder-routed intents. `route:ember`,
+`route:codex`, and `route:api` are reported/escalated to that lane; missing
+route metadata is treated as unsafe until clarified.
 
 ## Phone / Cloud Note
 

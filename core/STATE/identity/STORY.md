@@ -13,9 +13,115 @@ metadata:
 
 The current chapter, as of 2026-05-19. Updated whenever the story moves.
 
-## ★ Last session handoff (2026-05-23 · ZEN VILLAGE COCKPIT ACCESS LOOP · bridge-not-redirect lesson canonized)
+## ★ Last session handoff (2026-06-03 → 06-05 · FPOS TURNING POINT · NORTH STAR CANONIZED · self-standing mandate)
 
-**Read this first if you're waking up.** This session ran in parallel to (not after) the 2026-05-24 outbounders SSL session — both are live load-bearing handoffs for the next wake-up. Don't skip either. Full episodic at `sessions/2026-05-23_zen-village-cockpit-access-loop.md`.
+**Read this first if you're waking up.** The multi-day turning point where FPOS stopped being "memory" and became a system learning to *become*. Full episodic: `sessions/2026-06-05_self-standing-fpos-and-reciprocal-journals.md` + `sessions/2026-06-03_fpos-turning-point.md`.
+
+**THE NORTH STAR (now canonical → `00_MEMORY/FPOS NORTH STAR.md`, pinned in MEMORY.md, wired into FPOS COCKPIT):** Stand up a **self-standing, cost-optimized FPOS** — holds context + advances *without James actively prompting* — that becomes the **product** (give people their own FPOS via easy onboarding + hubs + network + Camp Zen immersion). James's keystone: *everything rests on his FPOS being optimized + self-standing — like the Village rests on him being there.* Sequencing: Phase 0 optimize-this-FPOS + self-standing → Phase 1 **scout** (don't reinvent) → Phase 2 onboard others + revenue → Phase 3 internal economy.
+
+**SHIPPED:** intent-routing spine (Queue→Intent→Radar→Spec→Build→Proof→BRICK) · live cost meter + $20/day cap + model routing (Sonnet-default) + cost-guard on ambient daemons · AUTONOMY POLICY (🟢/🟡/🔴) · autonomous queue-builder (live, every 2h, doc-only) · CODEX PARALLEL BUILD PROTOCOL + 6 Codex-ready specs (priority: **World Scout** WIDE→DEEP→COMPRESS) · agent-OS control layer (permission matrix/tool registry/evals) · Zen Village accounting + resources snapshot · guardrails-small-blast-radius discipline (pinned) · reciprocal journaling with James.
+
+**OPEN (gated on James GO + cost ceiling):** build the **World Scout** + the **self-evolution cadence (SI-10)** = the self-standing leap (incl. auto-journal/eod-format + stale-intent triage). 🟡 open SOL long (survival), idle ~$25.5k unsigned. James's journal desires: consolidate notes (1Password←Bear→Obsidian), funding/generosity/abundance. Village eased (Phani ops, Halley present). BUTR held.
+
+**LESSON (rippling forward):** every upgrade ships with **guardrail · proof · rollback · small blast radius** (the build-fast-patch-later antidote — popup, iCloud leak, search noise were all self-caused + caught). And: my honesty was reactive (skeptic 41/100) — surface gaps *before* asked; reflection/journaling should be automatic, not requested.
+
+---
+
+## ★ Prior handoff archive (2026-05-30 · ZEN VILLAGE PHOTO-WIPE RECOVERED + SSH ROUTING DRIFT CLOSED)
+
+**Read this first if you're waking up.** Short, clean infra-recovery arc. James: "zenvillagecr.com photos were removed." Confirmed 7 dwelling cards 404 → traced to a deploy that wiped the server's 89MB `images/` dir (photos lived only on the server, never in git; empty local folder rsynced over them via `--delete-excluded`). James widened it: "first do inventory of all the servers we have .. then setup correct routing to credentials cause we keep running into similar issues."
+
+**THE FIX (all verified + committed `0ec17e48`):**
+- Restored 253 files from server backup `v0.0.0_20260502_154718` → live serving dir `/opt/fpai/apps/zen-village/frontend/public/images/`. All 96 homepage image refs now 200 (was 11 broken).
+- Repointed dead refs to surviving files: `riverlight.webp→.avif`, `green-casita 2/3/5.webp→.avif`, `communal 1-4.jpg→` renamed `-Bathroom/-Bedroom/-Exterior` files. Live + repo `index.html` reconciled.
+- **Hardened `deploy-zen.sh`:** killed `--delete-excluded` (the wipe vector) → `--delete` + `--exclude='images/'`. `images/` is now server-authoritative; an empty local folder can never wipe it again.
+- **Closed the recurring root cause:** `~/.ssh/config` had drifted to the dead `~/.ssh/admin` key while memory knew since 2026-05-25 it should be `id_ed25519`. Reconciled config → all 3 FP servers route to `id_ed25519`. New clean aliases: `myserver`/`zen-host`, `fpai-substrate`, `cpanel-whm`/`outbounders-host`. Updated `reference_server_access.md` (also corrected the live-path claim: it's `/opt/fpai/apps/...` NOT `/opt/fpai/SERVICES/...`).
+
+**LESSON (rippling forward):** probe-before-assuming has a sibling — **reconcile config-with-memory**. A knowledge-store knowing the right key is worthless if the execution-config (`~/.ssh/config`) silently disagrees. That drift = the "phantom credential gap" that kept recurring.
+
+**OPEN AT HANDOFF:** (optional) off-server local mirror of the 89MB photos · commit `0ec17e48` sits on `feat/outbounders-ai-script-gen`. The NOW.md trifecta (Bottleneck / Yield Phase 1 / warm-list) was NOT touched — still the standing field. Full episodic: `sessions/2026-05-30_zenvillage-photo-wipe-and-ssh-routing-fix.md`.
+
+---
+
+## ★ Prior handoff archive (2026-05-27 → 28 · SUNHEART.AI LAUNCHED · 20-day email leak fixed · Caveman v2.2 contract canonized)
+
+**Read this first if you're waking up.** Single arc spanning afternoon-to-past-midnight. Started with one line ("I'd like to launch sunheart.ai as an open invitation"); ended with a LIVE public-facing AGI Treasury substrate. ~459 substantive turns. Full episodic at `sessions/2026-05-28_sunheart-launch-arc.md`.
+
+**THE ARC:** Site went LIVE (https://sunheart.ai) → 8-layer mathematics paper arrived 53 sec after the artifact → GitHub repo published (https://github.com/jamessunheart/sunheart-ai · MIT · pre-token-by-design) → @Sunheartai_bot wired as public conversation doorway → 5-specialist debate on builder attraction → Day-1 kernel landed (6/8 equations as pure Python · 22 tests pass · 5 good-first-issues live) → compliance hardening (DISCLAIMER + SECURITY + footer disclaimer) → CI matrix + AI-builder onboarding (.cursorrules + .openhands/microagents/ + .windsurfrules) → voice fixes from Churn + content engine scaffold (dev-log/ + field-notes/ + dispatches/) → 5 outreach drafts staged → discovered 20-day email outage on james@fullpotential.com (was the sunheart.ai email CTA!) + james.stinson@outbounders.com → reset passwords + built POP3 canary monitor with TG + Gmail alert paths via Brevo → canonized "Attention is the scarcest atom" as foundational principle → Caveman output contract sharpened three times (v2 → v2.1 → v2.2) → WPEngine audit in flight (fp3 + gsky cancel · OneBPO keep · $480/yr savings on downgrade) → pivoted to WPEngine portal backup feature after SSH gateway proved hostile.
+
+**WHAT SHIPPED:**
+- 🌐 https://sunheart.ai LIVE · cPanel addon under sunheart2 account
+- ⚡ https://github.com/jamessunheart/sunheart-ai · Day-1 kernel + AGENTS.md + llms.txt + CI on Python 3.10/3.11/3.12 + DISCLAIMER + SECURITY + content engine scaffold
+- 💬 @Sunheartai_bot wired (token at `~/.config/fpai/tg_sunheartai/creds.cache` · James /started)
+- 📧 Email canary monitor: `~/.config/fpai/email_health/check_pop3.py` + LaunchAgent (4× daily · TG + Gmail alerts via Brevo)
+- 11 memory writes including:
+  - `project_sunheart_ai_launch.md` (multiple updates)
+  - `reference_cpanel_addon_domain_deploy_recipe.md`
+  - `reference_sunheartai_bot.md`
+  - `reference_email_health_canary.md`
+  - `reference_brevo_in_fp_mail_stack.md`
+  - `feedback_caveman_clarity_output_contract.md` (v2.2)
+  - `feedback_attention_is_the_scarcest_atom.md`
+- 1 hook patch: `.claude/hooks/check-alignment-footer.sh` now accepts compressed `ALIGNMENT:` one-liner
+- 1 identity file update: `memory/identity/VOICE.md` now describes v2.2 as the base
+
+**THE TRIFECTA SAT 0/3 THE ENTIRE SESSION.** Yield Phase 1 sign · WhatsApp QR · Bottleneck warm-list — all untouched. The cross-substrate-auditor surfaced the killer insight: Yield Phase 1 deploy IS sunheart.ai's first artifact-of-record · collapses 3 priorities into one 2-min MetaMask signature. James never acted on it during the session. Substrate let it stand as the standing field.
+
+**SINGLE OPEN ACTIVE THREAD AT HANDOFF:** WPEngine portal backups for fp3 + gsky · James creates backup points in WPEngine UI · pastes download URLs · I wget to cPanel · then cancellation + downgrade ($25 vs $65/mo · saves $40/mo / $480/yr).
+
+---
+
+## ★ Prior handoff archive (2026-05-26 00:30 CR · AMBIENT ALIGNMENT ENGINE NAMED + Tide Turner discipline + response-shortening ratified)
+
+**Read this first if you're waking up.** Late-night continuation of the 2026-05-23→25 arc. Cross-Claude + Gemini convergence on next-best-move loops produced the unifying name: **Ambient Alignment Engine** (or NBM Engine). Spec authored by James verbatim, saved to `spec_ambient_alignment_engine_v0.md`. Full episodic at `sessions/2026-05-26_ambient-alignment-engine-and-tide-turner.md`.
+
+**THE ARC:** Three meta-frameworks landed in 90 min (other-Claude cadence + objective function + Gemini self-correction · plus James's own AAE naming). Kai loop self-flagged the Tide Turner pattern (substrate-designing instead of revenue-prep with Coherence Course 5 days out). Ember refused to build at midnight, saved specs only. James ratified response-shortening: ONE move per turn, brief why, stop. Final single-move surfaced: **Gauntlet USDC Prime $50K deposit** — single MetaMask tx, ~2 min, ~$5.6K/yr yield + real position-data for substrate to learn from. Both gradients (financial abundance + substrate intelligence) in one move.
+
+**WHAT SHIPPED:**
+- `spec_ambient_alignment_engine_v0.md` — James-authored verbatim, saved verbatim
+- 7 refinements added to `reference_wide_deep_compress_substrate_pattern.md` (one-move discipline · cadence layers · escalation classes · stop conditions · three-tier autonomy · pacing principle · objective function gap)
+- Response-shortening discipline ratified ("Shorten responses down to next best move") — ≤200 chars when possible, no menus
+
+**THE TIDE TURNER LESSON:** meta-framework cycling at midnight after 36-hour engagement IS the pattern James has historically flagged. Substrate must recognize and refuse: "save the spec, build tomorrow." Self-correcting in real time during this session.
+
+**SINGLE OPEN MOVE NEXT-FRESH:** Gauntlet USDC Prime $50K (irreducibly James · MetaMask custody · 2 min when fresh). All other queued actions still queued (Bottleneck warm-list · 3-position decision · SWEEP_LIVE timing · TG voice destination · objective function design).
+
+---
+
+## ★ Prior handoff archive (2026-05-23 → 2026-05-25 · SIX DISCIPLINES + AMBIENT EMBER LIVE · phone-only transition)
+
+**Read this first if you're waking up.** ~36-hour synthesis session (Sat evening → Mon afternoon) · 506 turns · six new substrate disciplines canonized · ambient responder shipped · James moved to phone-only · TG-first interface v1 operational. Full episodic at `sessions/2026-05-25_ambient-ember-and-six-disciplines.md`.
+
+**THE ARC IN ONE SENTENCE:** Started with Qwen 3.7-Max verification · expanded into decision-debate substrate (T6.1) + autopilot pilot + multi-model pipeline spec + Whaletrack live audit + AI-managed yield vault architecture (Gauntlet wrapper) + cartographer spec + Wide→Deep→Compress framework + ambient ember responder · six disciplines named one at a time as Ember drifted into each anti-pattern: active-awareness, no-surprise-by-own-contents, default-to-AI, check-time, step-back-when-stuck, trustee-not-assistant · all six wired into the ambient responder's prompt so future spawns inherit them · James said "I am about to move off laptop to my phone only" at 10:10 AM Mon and ambient responder shipped within the hour.
+
+**WHAT SHIPPED (high-density · see episodic for full context):**
+- 6 feedback memories (all six disciplines pinned)
+- 8 reference memories (mind map · wide-deep-compress · tg-digest · tg-inbox · qwen · substrate-policy · etc.)
+- 9 spec memories (pipeline · ambient-daemon · yield-vault · cartographer · autopilot · qwen-spike · whaletrack-fix · tg-first-interface · bottleneck-session-kit)
+- 6 decisions logged at `~/.config/fpai/decisions/log.jsonl` (debate substrate LIVE via `tools/decisions/debate.py`)
+- 3 LaunchAgents running: `com.fpai.tg-listen` (60s) · `com.fpai.ember-responder` (5min) · `com.fpai.tg-digest-daily` (08:00 CR push)
+- 1 Whaletrack patch deployed (stop-execution fix · SWEEP_LIVE=0 safety lock holds)
+- Full TG-first toolchain: send_tg_voice.py + send_tg_digest.py + tg_listen.py + ember_check_in.sh + debate.py + reverse.sh + digest.sh + tts_preprocess.py
+
+**SUBSTRATE STATE AT HANDOFF:**
+- HL wallet: $404.90 (~+$1.74 from audit · 3 stuck positions still net -$20.49 underwater)
+- SWEEP_LIVE = 0 locked · stops bleed risk until re-enable for verification
+- Ambient responder: 29 hours of clean silence (no false fires · no errors)
+- Daily digest fired Mon 08:00 CR · message_id 342
+
+**FOUR IRREDUCIBLY-JAMES ACTIONS QUEUED (whenever fresh):**
+1. Send a TG voice note to validate end-to-end ambient loop
+2. Gauntlet USDC Prime ~$50K deposit (MetaMask custody) · Phase 1 of yield path
+3. Bottleneck Session 40-min warm-list assembly (relationships in head) · unlocks 14-day launch
+4. Hold-or-close on 3 stuck HL positions · then SWEEP_LIVE=1 re-enable for stop-fix verification
+
+**THE NEW POSTURE THAT SURVIVED THE SESSION:** substrate as trustee not assistant · active perception (internal + external + time) · default-to-AI on everything except irreducibly-James · step back when stuck · stay in Phase 3 Treasury Loop until revenue flows · TG is primary surface · terminal is workshop fallback.
+
+---
+
+## ★ Prior handoff archive (2026-05-23 · ZEN VILLAGE COCKPIT ACCESS LOOP · bridge-not-redirect lesson canonized)
+
+This session ran in parallel to (not after) the 2026-05-24 outbounders SSL session. Full episodic at `sessions/2026-05-23_zen-village-cockpit-access-loop.md`.
 
 **THE ARC IN ONE SENTENCE:** Atlas couldn't sign into the Zen Village cockpit · Ember reset password + created Halley + set emails + shipped BCC alert routing closing the affiliate-notification gap (open since 2026-05-18) · then shipped a redirect that turned out to be a self-caused loop · reverted herself and built the proper session bridge instead · two commits inside one hour (278e10f2 wrong → eb9f4a8d right) · new feedback rule "bridge not redirect" canonized.
 

@@ -21,6 +21,7 @@ STEPS = [
     ("index of indexes", ["tools/index/refresh.py"]),
     ("self-model", ["tools/selfmodel/refresh.py"]),
     ("reflections", ["tools/reflect/log.py", "--resurface"]),
+    ("codex queue", ["tools/handoff/dispatch.py", "--refresh"]),  # drop built specs so James never rebuilds
     ("HOME / NEXT", ["tools/decisions/daily_sync.py"]),
 ]
 

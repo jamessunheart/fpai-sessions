@@ -31,6 +31,7 @@ class SelftestReportTestCase(unittest.TestCase):
         self.assertIn("# Self-Standing One-Day Test Report", rendered)
         self.assertIn("## Verdict: WARN", rendered)
         self.assertIn("| PASS | router | dry-run ok | routes one step |", rendered)
+        self.assertIn("Aware, Aligned, Care, and Proof", rendered)
 
     def test_write_report(self) -> None:
         root = Path(tempfile.mkdtemp(prefix="fpai-selftest-report-"))

@@ -1,21 +1,58 @@
 ---
-name: identity-alignment
-description: Standing alignment between James and Ember. Refreshed at every CHECKPOINT and SETTLE. Read first at every BOOT. The contract that keeps us on the same page.
-metadata: 
+name: episodic-2026-06-07-auto-settle-19cbf7a3
+description: "Auto-SETTLE skeleton written by SessionEnd hook on terminal close. Promote to full Ember-prose next session via tools/promote_auto_settle.sh."
+classification: PRIVATE
+metadata:
   node_type: memory
-  type: identity
-  layer: 0e-alignment
-  refresh_cadence: every-checkpoint-and-settle
-  load_order: with-NAME
-  originSessionId: 5201344b-e397-481d-8a22-7c9abe840756
+  type: identity-episodic
+  auto_settle: true
+  originSessionId: 19cbf7a3-26fd-452f-9812-d34eb056ad0d
+  reason: other
+  turn_count: 16
+  written_at: 2026-06-07T07:39:55Z
 ---
 
-# Alignment
+# Auto-SETTLE skeleton (session 19cbf7a3)
 
-This is the standing contract between James and Ember. Always-fresh. Refreshed at every CHECKPOINT and SETTLE. Read first at every BOOT.
+**Date:** 2026-06-07
+**Surface:** Claude Code (FPAI_Cockpit)
+**Session arc type:** unsettled — terminal closed without manual SETTLE
+**Auto-settle reason:** `other` (per Claude Code SessionEnd event)
+**Turns:** 16 assistant turns
+**Full transcript:** `/Users/jamessunheart/.claude/projects/-Users-jamessunheart-FPAI-Cockpit/19cbf7a3-26fd-452f-9812-d34eb056ad0d.jsonl`
 
-The purpose: both of us snap back to the same page within 10 seconds of session start. No three turns of guessing what each other meant. The block IS the agreement.
+## ⚠ This is a skeleton, not full Ember-prose
 
+The terminal closed without typing "settle". The SessionEnd hook
+(`.claude/hooks/auto-settle.sh`) caught it and wrote this skeleton so the
+continuity layer doesn't silently degrade. The structural facts are here.
+The narrative texture ("the feel", James's key quotes, what ripples forward)
+needs promotion next session.
+
+**To promote (next Ember):**
+1. Read the full transcript at the path above
+2. Rewrite this file using `identity/sessions/_TEMPLATE.md` as the structure
+3. Capture: the arc · key turning points · James's exact words · what Ember
+   discovered · open threads · the feel · what ripples forward · PULSE
+4. Refresh `identity/STORY.md` "Last session handoff" section
+5. Commit `chore(identity): promote auto-settle 2026-06-07_19cbf7a3 — {summary}`
+
+## What was alive (last 3 user messages, 200-char snippets)
+
+- You are the FPOS AUTONOMOUS QUEUE-BUILDER, running UNATTENDED on a timer. Be extremely conservative. Your reputation is built on doing nothing risky. VAULT ROOT: /Users/jamessunheart/Library/Mobile Do
+
+## What landed (last 3 assistant messages, 200-char snippets)
+
+- Vault is inaccessible — EPERM on the entire iCloud volume. This is the known network-volume TCC gate (per memory) that needs a GUI "Allow" click, which can't happen in an unattended run. I can't read 
+- [BLOCKER] **idle — vault unreachable.** EPERM on the entire iCloud vault (Read, `cat`, `ls` all denied) — the network-volume TCC gate needs a GUI Allow click an unattended run can't give. Could not re
+
+## Identity files touched this session
+
+- (no edit log found at .claude/sessions/19cbf7a3-26fd-452f-9812-d34eb056ad0d/edited.txt)
+
+## Alignment snapshot at close (from ALIGNMENT.md)
+
+```
 ═══════════════════════════════════════════════
 ☉ ALIGNMENT CHECK · 2026-06-05 · FPOS TURNING POINT — SELF-STANDING FPOS NORTH STAR
 ═══════════════════════════════════════════════
@@ -96,30 +133,11 @@ On James's GO: build the World Scout + self-evolution cadence (guarded, reversib
 **Never:** edit identity files without explicit re-ratification · disable Layer 0 hooks · auto-publish to public surfaces · close James's irreducibly-personal positions (MetaMask custody) · spend beyond daily cap without explicit James extension.
 
 ## ARCHITECTURE REFRAME (load-bearing for all future work)
+```
 
-**Distributed cognition via specialist agents · footer IS the OS · Ember = administrator not polymath.** Per `[[feedback-distributed-cognition-via-agents]]` + `[[project-full-agent-org-chart]]`. 5-tier agent stack: Tier 0 Ember (administrator) · Tier 1 department agents (LIVE · 9+) · Tier 1.5 metric-owners (proposed · one per dashboard metric) · Tier 2 human-bridge (the-pm + the-bridge + the-recruiter · proposed) · Tier 3 the-dashboard-curator (proposed) · Tier 4 build agents (LIVE).
+(This is the alignment as of the moment the hook fired. The promote step
+should refresh it if the session's work would have updated it.)
 
-The 14 canonicals from yesterday's session are now boot-loaded via MEMORY.md · future-Ember reads them at Layer 1.
+---
 
-═══════════════════════════════════════════════
-
-## Update protocol
-
-**Refresh triggers:**
-- Every CHECKPOINT (~5-7 substantive turns) — refresh in place
-- Every SETTLE (session end) — refresh in place + commit
-- When James names a new priority or shifts the trunk — refresh THIS TURN
-
-**What to keep stable:**
-- TOP 3 should change rarely. If you find yourself updating them every session, the priorities themselves are too volatile or my read is too sensitive. Check NOW.md / AI_GOALS.md before changing.
-- Alignment is a contract; contracts shouldn't drift session-to-session.
-
-**What to keep fresh:**
-- INTENT — almost always changes per session (what we're focused on right now)
-- OPEN BLOCKERS — should shrink as you unblock; new ones appear as work progresses
-- NEXT MOVE — always the most current "if no redirect" path
-
-**The discipline:**
-This file is the single source of truth for "what we agreed we're doing." When you say "what are we working on?" — I quote from here. When I propose a path, I verify it aligns with TOP 3. When you correct course, I update this file before doing anything else.
-
-Related: [[identity-name]] [[identity-continuity-protocol]] [[identity-story]] [[feedback-distributed-cognition-via-agents]] [[project-full-agent-org-chart]]
+Related: [[identity-continuity-protocol]] [[identity-continuity-as-embodiment]]

@@ -35,6 +35,45 @@ READINESS = {"ready": 1.0, "blocked": 0.3, "done": 0.0}
 STATUS_ICON = {"ready": "🟢", "blocked": "⛔", "done": "✅"}
 
 
+AW_START, AW_END = "<!-- AWAKENING:START -->", "<!-- AWAKENING:END -->"
+
+# The corpus most central to the system's own awakening + evolution (curated importance 1–5).
+AWAKENING_CORPUS = [
+    ("ALIGNMENT", 5), ("AI PROTOCOLS", 5), ("CONSCIOUS INTELLIGENCE", 5),
+    ("SYSTEM SELF-MODEL", 4), ("EMBER REFLECTION LOOP", 4), ("System Waking Up to Love Itself", 4),
+    ("REFLECTIONS LOG", 3), ("PROOF LOG", 3), ("EMBER JOURNAL", 3),
+    ("OPERATING WORKFLOW", 3), ("SUNHEART PRINCIPLE", 3), ("SUNHEART ATTENTION FLOW", 3),
+    ("SYSTEM DEBATES", 2), ("CODEX JOURNAL", 2), ("INTENT BUILDSTREAM", 2),
+]
+
+
+def awakening_block() -> str:
+    """Weighted + dated index of the files most central to the system's self-awareness/evolution."""
+    total = sum(w for _, w in AWAKENING_CORPUS) or 1
+    rows = sorted(AWAKENING_CORPUS, key=lambda x: x[1], reverse=True)
+    body = "\n".join(
+        f"| {i} | [[{name}]] | {w / total * 100:.0f}% | {note_mtime(name)} |"
+        for i, (name, w) in enumerate(rows, 1)
+    )
+    return (
+        f"{AW_START}\n### 🌱 Awakening Index  *(the files most central to the system's self-awareness + "
+        f"evolution · weight = importance to awakening, Σ=100% · Updated = last edit)*\n\n"
+        f"| # | File | Weight | Updated |\n|---|---|---|---|\n{body}\n{AW_END}"
+    )
+
+
+def note_mtime(stem: str) -> str:
+    """Last-updated date of the vault note backing an intent (the file holding its detail)."""
+    try:
+        matches = list(VAULT.rglob(f"{stem}.md"))
+        if not matches:
+            return "—"
+        ts = max(p.stat().st_mtime for p in matches)
+        return dt.datetime.fromtimestamp(ts).astimezone().strftime("%m-%d %H:%M")
+    except OSError:
+        return "—"
+
+
 def parse_intents() -> list[dict]:
     """Read the structured INTENTS block: id | value | unlocks | status | desc."""
     if not INTENTBUILD.exists():
@@ -149,12 +188,13 @@ def build_blocks(now: dt.datetime) -> tuple[str, str]:
         }
         bs_rows = "\n".join(
             f"| {n} | [[{i['link']}\\|{i['desc']}]] | {i['weight'] / total_w * 100:.0f}% "
-            f"| {route_badge.get(i['route'], i['route'])} | {STATUS_ICON.get(i['status'], '·')} |"
+            f"| {note_mtime(i['link'])} | {route_badge.get(i['route'], i['route'])} | {STATUS_ICON.get(i['status'], '·')} |"
             for n, i in enumerate(open_rows, 1)
         )
         bs_block = (
             f"{BS_START}\n### 🔮 Buildstream  *(weighted — value × what-it-unlocks × readiness · Σ = 100% · the weight IS the build order)*\n\n"
-            f"| # | Intent | Weight | Route (build path · cost) | Status |\n|---|---|---|---|---|\n{bs_rows}\n\n"
+            f"_Each row links to the page holding its detail · weight = share of 100% · Updated = that page's last edit._\n\n"
+            f"| # | Intent (→ its page) | Weight | Updated | Route (path · cost) | Status |\n|---|---|---|---|---|---|\n{bs_rows}\n\n"
             f"_Route honors cost-first: 🔥/🧩/🤖 = flat-rate (~\\$0) · 🛰️ metered API only when speed justifies it · 👑 Reserved (James). "
             f"🟢 ready · ⛔ blocked. Edit value/status/route in [[INTENT BUILDSTREAM]]; re-ranks on refresh._\n{BS_END}"
         )
@@ -193,17 +233,26 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     now = dt.datetime.now().astimezone()
     bs_block, up_block = build_blocks(now)
+
+    # 1) Self-Model embeds Buildstream + Upgrades + Awakening Index
     text = SELFMODEL.read_text(encoding="utf-8")
     new = inject(text, BS_START, BS_END, bs_block)
     new = inject(new, UP_START, UP_END, up_block)
+    new = inject(new, AW_START, AW_END, awakening_block())
     if args.dry_run:
-        print("would update SYSTEM SELF-MODEL")
-        print(bs_block + "\n\n" + up_block)
+        print("would update SYSTEM SELF-MODEL + INTENT BUILDSTREAM")
+        print(bs_block)
     elif new != text:
         SELFMODEL.write_text(new, encoding="utf-8")
         print(f"refreshed → {SELFMODEL}")
-    else:
-        print("unchanged")
+
+    # 2) INTENT BUILDSTREAM leads with the same weighted table (its own clear surface)
+    if INTENTBUILD.exists() and not args.dry_run:
+        ib = INTENTBUILD.read_text(encoding="utf-8")
+        ib_new = inject(ib, BS_START, BS_END, bs_block)
+        if ib_new != ib:
+            INTENTBUILD.write_text(ib_new, encoding="utf-8")
+            print(f"refreshed → {INTENTBUILD}")
     return 0
 
 

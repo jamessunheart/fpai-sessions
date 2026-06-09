@@ -69,6 +69,44 @@ class SelftestCheckTestCase(unittest.TestCase):
         self.assertEqual(result.status, check.WARN)
         self.assertIn("AGENTS.md", result.evidence)
 
+    def test_safety_seal_passes_for_guarded_report_only_autoloop(self) -> None:
+        repo, _ = self.make_roots()
+        (repo / "tools" / "autoloop").mkdir(parents=True)
+        (repo / "tools" / "autoloop" / "tick.sh").write_text(
+            "# MAY NOT: move money/deploy/secrets/delete/public\n"
+            "CFG=\"$HOME/.config/fpai/autoloop\"\n"
+            "LOG=\"$CFG/runs.log\"\n"
+            "[ -f \"$CFG/.disabled\" ] && exit 0\n"
+            "\"$HOME/.local/bin/cost-guard\" autoloop || exit 0\n"
+            "touch \"$HOME/.config/fpai/cost/.pause-ambient\"\n"
+            "python3 tools/closeout/run.py\n"
+            "python3 tools/router/route.py\n",
+            encoding="utf-8",
+        )
+
+        result = check.check_safety_seal(repo)
+
+        self.assertEqual(result.status, check.PASS)
+
+    def test_safety_seal_warns_when_router_tick_can_apply(self) -> None:
+        repo, _ = self.make_roots()
+        (repo / "tools" / "autoloop").mkdir(parents=True)
+        (repo / "tools" / "autoloop" / "tick.sh").write_text(
+            "# MAY NOT: move money/deploy/secrets/delete/public\n"
+            "LOG=\"$CFG/runs.log\"\n"
+            "\"$HOME/.local/bin/cost-guard\" autoloop || exit 0\n"
+            "[ -f \"$CFG/.disabled\" ] && exit 0\n"
+            "touch \"$HOME/.config/fpai/cost/.pause-ambient\"\n"
+            "python3 tools/closeout/run.py\n"
+            "python3 tools/router/route.py --apply\n",
+            encoding="utf-8",
+        )
+
+        result = check.check_safety_seal(repo)
+
+        self.assertEqual(result.status, check.WARN)
+        self.assertIn("report-only router tick", result.evidence)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -19,9 +19,14 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import json
 import os
 import re
 from pathlib import Path
+try:
+    from zoneinfo import ZoneInfo
+except Exception:  # pragma: no cover - fallback for very old Python builds
+    ZoneInfo = None
 
 HOME = Path.home()
 VAULT = Path(
@@ -32,6 +37,7 @@ VAULT = Path(
     )
 )
 REPO = Path(os.environ.get("FPAI_REPO", HOME / "FPAI_Cockpit"))
+LOC = Path(os.environ.get("FPAI_LOCATION_FILE", HOME / ".config" / "fpai" / "location.json"))
 
 VAULT_INDEX = VAULT / "00_MEMORY" / "INDEX OF INDEXES.md"
 REPO_INDEX = REPO / "docs" / "codex" / "INDEX_OF_INDEXES.md"
@@ -60,6 +66,67 @@ def parse_spine() -> list[str]:
 START = "<!-- AUTO:START -->"
 END = "<!-- AUTO:END -->"
 LATEST_N = 6
+
+
+def time_label(tz_name: str, place: str | None = None) -> str:
+    labels = {
+        "America/Costa_Rica": "CR Time",
+        "Europe/Athens": "Greece Time",
+        "America/Denver": "MT Time",
+        "America/Los_Angeles": "PT Time",
+        "America/New_York": "ET Time",
+    }
+    if tz_name in labels:
+        return labels[tz_name]
+    if place:
+        cleaned = re.sub(r"[^\w\s/-]", "", place).strip()
+        if "costa rica" in cleaned.lower():
+            return "CR Time"
+        if "greece" in cleaned.lower():
+            return "Greece Time"
+        if cleaned:
+            first = cleaned.split()[0]
+            return f"{first} Time"
+    return "Local Time"
+
+
+def display_time_context() -> tuple[dt.tzinfo, str]:
+    tz_name = os.environ.get("FPAI_DISPLAY_TZ")
+    label = os.environ.get("FPAI_DISPLAY_TZ_LABEL")
+    place = None
+    if not tz_name:
+        try:
+            loc = json.loads(LOC.read_text(encoding="utf-8"))
+            tz_name = loc.get("tz")
+            place = loc.get("place")
+        except Exception:
+            tz_name = None
+    if tz_name and ZoneInfo:
+        try:
+            zone = ZoneInfo(tz_name)
+            return zone, label or time_label(tz_name, place)
+        except Exception:
+            pass
+    local = dt.datetime.now().astimezone().tzinfo
+    return local or dt.timezone.utc, label or time_label(dt.datetime.now().astimezone().tzname() or "", place)
+
+
+DISPLAY_TZ, DISPLAY_LABEL = display_time_context()
+
+
+def clock(d: dt.datetime) -> str:
+    hour = d.hour % 12 or 12
+    return f"{hour}:{d:%M} {d:%p}"
+
+
+def fmt_time(d: dt.datetime, now: dt.datetime | None = None, *, force_date: bool = False) -> str:
+    local = d.astimezone(DISPLAY_TZ)
+    current = (now or dt.datetime.now(tz=DISPLAY_TZ)).astimezone(DISPLAY_TZ)
+    if not force_date and local.date() == current.date():
+        return f"{clock(local)} {DISPLAY_LABEL}"
+    if local.year == current.year:
+        return f"{local:%b} {local.day} · {clock(local)} {DISPLAY_LABEL}"
+    return f"{local:%b} {local.day}, {local.year} · {clock(local)} {DISPLAY_LABEL}"
 
 
 def vault_note_stems() -> set[str]:
@@ -103,12 +170,12 @@ def is_operational(path: Path) -> bool:
     return any(rel.startswith(d) for d in OPERATIONAL) or "/" not in rel  # root-level too
 
 
-def fmt_mtime(path: Path) -> str:
+def fmt_mtime(path: Path, now: dt.datetime | None = None) -> str:
     try:
         ts = path.stat().st_mtime
     except OSError:
         return "—"
-    return dt.datetime.fromtimestamp(ts).astimezone().strftime("%Y-%m-%d %H:%M %Z")
+    return fmt_time(dt.datetime.fromtimestamp(ts, tz=DISPLAY_TZ), now)
 
 
 def resolve_tracked_path(token: str) -> tuple[Path, str]:
@@ -225,6 +292,16 @@ def pagerank(outlinks: dict[str, set[str]], nodes: set[str], d: float = 0.85, it
 
 
 TOP_WEIGHTED = 30
+CLAIMS = Path(os.environ.get("FPAI_INDEX_CLAIMS", HOME / ".config" / "fpai" / "index" / "claims.json"))
+
+
+def load_claims() -> dict:
+    """Active work-claims: {page_stem: {owner, started}} — a 🔴 page is being edited; don't collide."""
+    try:
+        import json
+        return json.loads(CLAIMS.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
 
 
 def build_auto_block(index_text: str, now: dt.datetime) -> str:
@@ -236,15 +313,17 @@ def build_auto_block(index_text: str, now: dt.datetime) -> str:
     # --- ⭐ Operating spine (curated — source of truth: SYSTEM SELF-MODEL.md) ---
     spine = parse_spine()
     spine_set = set(spine)
+    claims = load_claims()
     if spine:
         spine_rows = "\n".join(
-            f"| {i} | [[{s}]] | {weight.get(s, 0) * 100:.1f}% |"
+            f"| {i} | [[{s}]] | {weight.get(s, 0) * 100:.1f}% | {fmt_mtime(paths[s], now) if s in paths else '—'} "
+            f"| {('🔴 ' + claims[s].get('owner', 'working')) if s in claims else '🟢 clear'} |"
             for i, s in enumerate(spine, 1)
         )
         spine_section = (
             "### ⭐ Operating spine  *(curated — what RUNS the system · "
             "see [[SYSTEM SELF-MODEL]] for how these were chosen)*\n\n"
-            "| # | Page | Weight |\n|---|---|---|\n" + spine_rows + "\n"
+            "| # | Page | Weight | Updated | Status |\n|---|---|---|---|---|\n" + spine_rows + "\n"
         )
     else:
         spine_section = ""
@@ -283,7 +362,7 @@ def build_auto_block(index_text: str, now: dt.datetime) -> str:
     active.sort(reverse=True)
     if active:
         active_lines = "\n".join(
-            f"- 🔴 [[{p.stem}]] · {dt.datetime.fromtimestamp(mt).astimezone():%m-%d %H:%M}"
+            f"- 🔴 [[{p.stem}]] · {fmt_time(dt.datetime.fromtimestamp(mt, tz=DISPLAY_TZ), now)}"
             for mt, p in active[:10]
         )
         if len(active) > 10:
@@ -316,13 +395,11 @@ def build_auto_block(index_text: str, now: dt.datetime) -> str:
     else:
         orphan_block = "> [!success] 🧭 Orphans · 0 — every operational note is linked"
 
-    gen = now.strftime("%Y-%m-%d %H:%M %Z")
+    gen = fmt_time(now, now, force_date=True)
     health = "🟢" if broken == 0 else "🔴"
 
     return f"""{START}
 ## 🗂️ Index of Indexes  *(auto-generated · do not edit by hand)*
-
-_{gen} · {total} pages · {health} links {ok}/{ok + broken} · weight = PageRank over wikilinks (Σ = 100%) · refresh: `python3 tools/index/refresh.py`_
 
 {spine_section}
 ### 📊 Most weighted pages  *(computed — what the system is ABOUT, by link-density)*
@@ -333,7 +410,7 @@ _{gen} · {total} pages · {health} links {ok}/{ok + broken} · weight = PageRan
 
 {tail_line}
 
-### 🔴 Active now  *(touched in last 24h — the only dated entries)*
+### 🔴 Active now  *(touched in last 24h)*
 
 {active_lines}
 
@@ -341,8 +418,14 @@ _{gen} · {total} pages · {health} links {ok}/{ok + broken} · weight = PageRan
 
 {orphan_block}
 
-> [!note]- ⚙️ Protocol, work-claims, drift rules, repo & layer maps
-> Moved off this page to keep it a clean surface → see [[INDEX OF INDEXES — PROTOCOL]].
+---
+### 📋 Reference  *(metadata + protocol — kept at the bottom so the index leads)*
+
+_{gen} · {total} pages · {health} links {ok}/{ok + broken} · weight = PageRank over wikilinks (Σ = 100%) · refresh: `python3 tools/index/refresh.py`_
+
+> ⚙️ **Work-claim protocol (no collisions):** before editing a surface, claim it →
+> `python3 tools/index/claim.py --page "<Page>" --owner <you>` (sets 🔴 in the spine Status above) · clear after →
+> `python3 tools/index/claim.py --clear --page "<Page>"`. **Never edit a 🔴 page another AI holds.** Drift rules, repo & layer maps → [[INDEX OF INDEXES — PROTOCOL]].
 {END}"""
 
 

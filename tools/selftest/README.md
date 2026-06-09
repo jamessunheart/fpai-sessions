@@ -44,6 +44,8 @@ python3 -m unittest tools.selftest.test_check tools.selftest.test_report
 - Latest proof row carries Buildstream-Law fields.
 - HOME and Intent Buildstream agree on the self-standing test.
 - Cost guard is visible.
+- Safety Seal holds: unattended loops expose a cost guard, pause/disable switches,
+  run log, closeout step, and report-only router posture.
 - Phone/cloud Codex has repo-visible docs.
 - Git state is clean enough to know what is committed vs local-only.
 

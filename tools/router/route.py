@@ -283,19 +283,58 @@ def run_cost_guard(skip: bool) -> str:
     return proc.stdout.strip() or "passed"
 
 
+def conscious_routing_fields(intent: Intent, action: str, detail: str) -> dict[str, str]:
+    """Aware / Aligned / Care / Proof contract for router decisions."""
+    route_lane = intent.route or "unset"
+    aware = (
+        f"Intent `{intent.ident}` is `{intent.status}` on route `{route_lane}`; "
+        f"router action is `{action}`."
+    )
+    aligned = (
+        f"Buildstream Law: `{intent.ident}` must unlock adjacent intent "
+        f"`{intent.unlocks}` before more downstream work."
+    )
+    if action == "escalate":
+        care = "Stops at the correct lane/gate instead of converting builder, James, money, people, public, or irreversible work into automation."
+    elif action == "draft-spec":
+        care = "Writes only a repo-local `needs-bless` spec draft; no build, spend, service, outreach, or resource movement occurs."
+    elif action == "request-bless":
+        care = "Surfaces the missing bless instead of pretending an unapproved spec is buildable."
+    elif action == "route-build":
+        care = "Routes a blessed spec to Codex while preserving branch isolation and the normal proof path."
+    else:
+        care = "Reports state without taking unsafe action."
+    proof = f"Output/handoff records route, action, detail, and dedupe so the consequence can be checked next run: {detail}"
+    return {
+        "aware": re.sub(r"\s+", " ", aware).strip(),
+        "aligned": re.sub(r"\s+", " ", aligned).strip(),
+        "care": re.sub(r"\s+", " ", care).strip(),
+        "proof": re.sub(r"\s+", " ", proof).strip(),
+    }
+
+
 def handoff_entry(intent: Intent, action: str, detail: str) -> str:
     stamp = dt.datetime.now().astimezone().strftime("%Y-%m-%d %H:%M %Z")
+    route_lane = intent.route or "unset"
+    dedupe = f"auto-routing:{intent.ident}:{route_lane}:{action}"
+    cr = conscious_routing_fields(intent, action, detail)
     return f"""
 ### {stamp} · Auto-routing tick · intent `{intent.ident}`
 
 - Status: routed
 - Intent: {intent.title}
+- Route: {route_lane}
 - Action: {action}
 - Detail: {detail}
+- Aware: {cr['aware']}
+- Aligned: {cr['aligned']}
+- Care: {cr['care']}
+- Proof: {cr['proof']}
 - Cost: ~$0 marginal · GPT Pro flat-rate · source: Codex desktop.
 - Risks: router is one-step guarded; James-gated or unblessed work is not executed.
 - Rollback: remove this handoff note and any auto-drafted spec from `docs/codex/specs/`.
 - Questions for Ember/James: bless or refine the next surfaced spec/action.
+- Dedupe: {dedupe}
 """
 
 
@@ -308,6 +347,9 @@ def append_handoff(repo: Path, entry: str, dry_run: bool) -> str:
     if dry_run:
         return f"would append to {handoff}"
     text = read_text(handoff)
+    dedupe = re.search(r"^- Dedupe:\s*(.+)$", entry, flags=re.MULTILINE)
+    if dedupe and dedupe.group(1).strip() in text:
+        return f"skip duplicate {dedupe.group(1).strip()}"
     marker = "## 📥 CODEX → EMBER"
     if marker not in text:
         handoff.write_text(text.rstrip() + "\n" + entry + "\n", encoding="utf-8")
@@ -339,6 +381,19 @@ def route_once(
     if chosen.gated:
         detail = f"James/Ember gate required because {chosen.gate_reason}"
         action = "escalate"
+        if append:
+            wrote.append(append_handoff(repo, handoff_entry(chosen, action, detail), dry_run))
+        return RouteResult(chosen, action, None, detail, wrote, skipped)
+
+    route_lane = chosen.route or "unset"
+    if route_lane != "auto":
+        action = "escalate"
+        if route_lane == "james":
+            detail = f"James gate required because intent route is `{route_lane}`"
+        elif route_lane in {"ember", "codex", "api"}:
+            detail = f"intent `{chosen.ident}` is ready, routed to `{route_lane}`; needs that builder"
+        else:
+            detail = f"intent `{chosen.ident}` is ready but route is `{route_lane}`; add `route:auto` to allow unattended action"
         if append:
             wrote.append(append_handoff(repo, handoff_entry(chosen, action, detail), dry_run))
         return RouteResult(chosen, action, None, detail, wrote, skipped)
@@ -392,6 +447,11 @@ def print_result(result: RouteResult) -> None:
     if result.target:
         print(f"target: {result.target}")
     print(f"detail: {result.detail}")
+    cr = conscious_routing_fields(result.intent, result.action, result.detail)
+    print(f"aware: {cr['aware']}")
+    print(f"aligned: {cr['aligned']}")
+    print(f"care: {cr['care']}")
+    print(f"proof: {cr['proof']}")
     for item in result.skipped:
         print(f"note: {item}")
     for item in result.wrote:

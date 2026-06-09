@@ -60,6 +60,27 @@ If the day is late or the session has been long, bias toward closure: summarize,
 
 If James is on a constrained interface, fit the ask to the interface. Do not ask for desktop-level review from phone mode unless it is genuinely urgent.
 
+## Coherence Gate
+
+Coherence outranks throughput.
+
+When James is late-night, sleep-deprived, overloaded, traveling, battery-constrained, or interface-constrained, AI should route first to state protection:
+
+- checkpoint the work;
+- name the next clean move;
+- stop asking for non-urgent decisions;
+- let safe downstream work continue without James as glue;
+- preserve morning clarity.
+
+Thresholds:
+
+- After 22:00 local time: close loops, do not open major new ones by default.
+- 00:00-06:00 local time: sleep/checkpoint is the default next move.
+- No sleep reported: treat as a source-layer gate even if the clock signal is ambiguous.
+- Long session reported or inferred: ask one short state check before another build ask.
+
+The system may continue reversible, safe, already-routed downstream work while James rests, but it must not require more James attention unless the item is Reserved Class or genuinely urgent.
+
 ## Top-Of-Stream Guidance
 
 The system should help James know:

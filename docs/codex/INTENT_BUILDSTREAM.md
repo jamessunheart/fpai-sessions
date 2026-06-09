@@ -1,6 +1,6 @@
 # Intent Buildstream
 
-*Repo mirror for Codex and phone/cloud sessions. Vault mirror: `[[INTENT BUILDSTREAM]]`. Canonical doctrine: `docs/codex/AI_PROTOCOLS.md`. Updated 2026-06-06.*
+*Repo mirror for Codex and phone/cloud sessions. Vault mirror: `[[INTENT BUILDSTREAM]]`. Canonical doctrine: `docs/codex/AI_PROTOCOLS.md`. Updated 2026-06-07.*
 
 ## One Sentence
 
@@ -32,6 +32,19 @@ If it does not unlock anything adjacent, label it honestly as:
 
 Rejected unlocks: "improves the system", "supports Heaven on Earth", "makes things better", or any distant aspiration that skips the next practical layer.
 
+## Conscious Routing Check
+
+Every live move should carry this contract somewhere in its detail, handoff, spec, or proof:
+
+```text
+Aware: what real state/signal was noticed?
+Aligned: which adjacent intent does this serve?
+Care: what cost, boundary, state, relationship, or consequence is protected?
+Proof: what will be checked, logged, or learned next?
+```
+
+If the move cannot answer these, it is not ready to route. Send it to Ember/Midstream for clarification rather than Codex/Buildstream execution.
+
 ## Proof Format
 
 Every completion should answer:
@@ -48,6 +61,19 @@ Next unlocked move:
 ## Current Sequential Intent Stream
 
 This is the live order. It is not a flat backlog.
+
+## Current Execution Ladder
+
+The practical execution path is:
+
+1. **Safety Seal** — no leaks, no surprises, no uncontrolled exposure.
+2. **Proof Loop** — one real friction captured -> routed -> fixed -> proofed.
+3. **BRICK Learning** — save the learning so the next run gets cheaper.
+4. **Revenue Front Door** — Full Potential diagnostic / bottleneck intake.
+5. **Treasury Hardening** — visibility -> safe custody -> zero-liquidation yield -> written policy.
+6. **Camp Zen / Community Ecosystem** — embodied coherence in the real world.
+
+This sequence is the short operating form of the larger cascade: `Safety -> Proof -> Revenue -> Abundance`.
 
 ### 0. Source Intent: Self-standing Full Potential OS
 
@@ -69,17 +95,19 @@ This is the live order. It is not a flat backlog.
 
 **Next unlocked move:** phone/cloud Codex can continue from GitHub without iCloud by reading `AGENTS.md`, `docs/codex/README.md`, `docs/codex/PHONE_HANDOFF.md`, `docs/codex/AI_PROTOCOLS.md`, this file, and `docs/codex/HANDOFF.md`.
 
-### 2. Build Intent: Rung 0 Safety
+### 2. Build Intent: Rung 0 Safety / Safety Seal
 
 **Build:** wire uncapped autonomous spenders to the Resource Discipline Gate.
 
 **Owner:** Ember / Claude Code, because this touches live local config and spend gates.
 
-**Why first:** autonomy is unsafe until autonomous spend cannot outrun the cap.
+**State:** built enough for the current report-only autoloop; now treated as an acceptance check, not a forever-redo build. If an uncapped daemon is found, it becomes the next repair.
+
+**Why first:** autonomy is unsafe until autonomous spend cannot outrun the cap. The Solana lesson translated to AI ops: no uncontrolled exposure.
 
 **Unlocks next:** Rung 1 Auto-proof can run inside a budget-safe loop.
 
-**James gate:** bless the safety wiring.
+**Current proof:** `tools/selftest/check.py` includes Safety Seal evidence: cost guard, pause/disable switches, run log, closeout, and report-only router posture.
 
 ### 3. Build Intent: Rung 1 Auto-proof
 
@@ -123,7 +151,17 @@ This is the live order. It is not a flat backlog.
 
 **Why here:** proof and surfaces must be trustworthy before the system routes itself.
 
-**Unlocks next:** self-standing one-day test.
+**Unlocks next:** router route-filtering, then the self-standing one-day test can run with real self-advancement instead of report-only routing.
+
+### 6.5 Build Intent: Router Route-Filtering
+
+**Build:** `SPEC_router-route-filtering` — only `route:auto` may auto-act; `route:ember`, `route:codex`, `route:api`, `route:james`, or missing routes escalate.
+
+**Owner:** Codex.
+
+**Why here:** this is the last safety step before the router can write live specs in the autonomous loop without turning builder-routed or James-routed work into surprise automation.
+
+**Unlocks next:** one real friction proof loop.
 
 ### 7. Resource Intent: Safe Resource Activation
 
@@ -178,11 +216,12 @@ If the answer is unclear, route it to Ember as a Midstream clarification, not Co
 James should not carry the details. The high-value signal is:
 
 ```text
-Bless SPEC_state-reconciler if Auto-proof/self-refresh are ready; otherwise ask Ember/Codex to consolidate Auto-proof first.
+Let Codex complete SPEC_router-route-filtering. Treat Safety Seal as a selftest acceptance check, not a standalone redo, unless an uncapped daemon appears.
 ```
 
 AI carries the downstream work:
 
-- Ember wires safety and vault surfaces.
-- Codex reviews/builds repo specs on branches, starting with `SPEC_state-reconciler` once blessed.
-- Proof returns the learning into this stream.
+- Ember keeps Safety Seal/live surfaces coherent.
+- Codex builds route-filtering and keeps the selftest report honest.
+- The next proof is one real friction -> captured -> routed -> fixed -> BRICK saved.
+- After that proof, route the Revenue Front Door: Full Potential diagnostic / bottleneck session intake.

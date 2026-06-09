@@ -27,7 +27,7 @@ class RouterTestCase(unittest.TestCase):
         repo, vault = self.make_roots()
         self.write_intents(
             vault,
-            "- id:test-router | value:5 | unlocks:test | status:ready | Test Router - create one safe helper\n"
+            "- id:test-router | value:5 | unlocks:test | status:ready | route:auto | Test Router - create one safe helper\n"
             "- id:test | value:5 | unlocks:none | status:blocked | Self-standing test",
         )
 
@@ -44,7 +44,7 @@ class RouterTestCase(unittest.TestCase):
         repo, vault = self.make_roots()
         self.write_intents(
             vault,
-            "- id:auto-routing | value:5 | unlocks:test | status:ready | route:codex | link:AI PROTOCOLS | Auto-routing - route one thing",
+            "- id:auto-routing | value:5 | unlocks:test | status:ready | route:auto | link:AI PROTOCOLS | Auto-routing - route one thing",
         )
         (repo / "docs" / "codex" / "specs" / "SPEC_auto-routing.md").write_text(
             "# SPEC_auto-routing\n\n"
@@ -57,8 +57,71 @@ class RouterTestCase(unittest.TestCase):
         result = route.route_once(repo, vault, None, dry_run=True, append=False, skip_cost_guard=True)
 
         self.assertEqual(result.action, "route-build")
-        self.assertEqual(result.intent.route, "codex")
+        self.assertEqual(result.intent.route, "auto")
         self.assertEqual(result.intent.link, "AI PROTOCOLS")
+
+    def test_ember_route_escalates_without_drafting(self) -> None:
+        repo, vault = self.make_roots()
+        self.write_intents(
+            vault,
+            "- id:surface | value:5 | unlocks:test | status:ready | route:ember | Refresh James-facing surfaces",
+        )
+
+        result = route.route_once(repo, vault, None, dry_run=False, append=False, skip_cost_guard=True)
+
+        self.assertEqual(result.action, "escalate")
+        self.assertIsNone(result.target)
+        self.assertIn("routed to `ember`", result.detail)
+        specs = list((repo / "docs" / "codex" / "specs").glob("*.md"))
+        self.assertEqual(specs, [])
+
+    def test_james_route_escalates_without_drafting(self) -> None:
+        repo, vault = self.make_roots()
+        self.write_intents(
+            vault,
+            "- id:bless | value:5 | unlocks:test | status:ready | route:james | Bless the next direction",
+        )
+
+        result = route.route_once(repo, vault, None, dry_run=False, append=False, skip_cost_guard=True)
+
+        self.assertEqual(result.action, "escalate")
+        self.assertIsNone(result.target)
+        self.assertIn("James gate", result.detail)
+        specs = list((repo / "docs" / "codex" / "specs").glob("*.md"))
+        self.assertEqual(specs, [])
+
+    def test_missing_route_escalates_until_marked_auto(self) -> None:
+        repo, vault = self.make_roots()
+        self.write_intents(
+            vault,
+            "- id:unknown-route | value:5 | unlocks:test | status:ready | Build something without an explicit route",
+        )
+
+        result = route.route_once(repo, vault, None, dry_run=False, append=False, skip_cost_guard=True)
+
+        self.assertEqual(result.action, "escalate")
+        self.assertIsNone(result.target)
+        self.assertIn("route:auto", result.detail)
+        specs = list((repo / "docs" / "codex" / "specs").glob("*.md"))
+        self.assertEqual(specs, [])
+
+    def test_conscious_routing_fields_name_gate_and_proof(self) -> None:
+        intent = route.Intent(
+            ident="test",
+            value=5,
+            unlocks="proof-loop",
+            status="ready",
+            title="Test - route one safe thing",
+            route="ember",
+        )
+
+        fields = route.conscious_routing_fields(intent, "escalate", "routed to ember")
+
+        self.assertEqual(set(fields), {"aware", "aligned", "care", "proof"})
+        self.assertIn("route `ember`", fields["aware"])
+        self.assertIn("proof-loop", fields["aligned"])
+        self.assertIn("gate", fields["care"])
+        self.assertIn("routed to ember", fields["proof"])
 
     def test_money_public_intent_escalates_without_writing(self) -> None:
         repo, vault = self.make_roots()
@@ -98,7 +161,7 @@ class RouterTestCase(unittest.TestCase):
         (repo / "docs" / "codex" / "INTENT_BUILDSTREAM.md").write_text(
             "# Intent Buildstream\n"
             f"{route.INTENTS_START}\n"
-            "- id:auto-routing | value:5 | unlocks:test | status:ready | Auto-routing - route from repo\n"
+            "- id:auto-routing | value:5 | unlocks:test | status:ready | route:auto | Auto-routing - route from repo\n"
             f"{route.INTENTS_END}\n",
             encoding="utf-8",
         )
