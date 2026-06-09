@@ -1,0 +1,31 @@
+---
+description: God Mode upgrade protocol — validate before replace to prevent feature regression
+globs: godmode-v*/**,**/god-mode/**,**/godmode/**
+alwaysApply: false
+---
+
+# God Mode Upgrade Protocol
+
+Multiple agents work on God Mode. Without coordination, new versions accidentally remove features other agents added. **Never just overwrite.**
+
+## Before modifying `/opt/fpai/godmode-v3/`
+
+1. **Validate your new version:**
+   ```bash
+   /opt/fpai/scripts/validate-godmode-upgrade.sh <your-new-server.py>
+   ```
+2. **If validation fails — MERGE, don't replace:**
+   ```bash
+   /opt/fpai/scripts/merge-godmode-versions.sh <your-new-server.py>
+   ```
+3. **Required features manifest:** `/opt/fpai/godmode-v3/REQUIRED_FEATURES.json`.
+
+## v4.0 features that MUST be preserved
+
+- Health Score Ring, Docker monitoring, Service logs
+- Streaming Llama Chat, Browser notifications, Auto-refresh toggle
+- Container health panel, Storage Sentinel, Intelligence Engine
+
+If your upgrade drops any of these, validation will fail and you'll need to merge.
+
+Related: `@docs/coordination/GODMODE_UPGRADE_PROTOCOL.md`.

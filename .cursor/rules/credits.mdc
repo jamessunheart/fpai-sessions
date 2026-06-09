@@ -1,0 +1,30 @@
+---
+description: Universal Credits protocol — 1 UC = 1 USD, never hardcode rates
+globs: **/credits/**,**/billing/**,**/payment*/**,**/*uc-*,**/*universal-credit*,**/pricing/**
+alwaysApply: false
+---
+
+# Universal Credits Protocol
+
+## The one rule
+
+**`1 UC = $1.00 USD`** (fixed, always).
+
+## Before touching any credit/payment code
+
+1. Read `@docs/protocols/UNIVERSAL_CREDITS_PROTOCOL.md`.
+2. **Never hardcode rates or credit values.** Fetch them:
+   - Exchange rates: `GET https://fullpotential.ai/services/credits/api/exchange-rates`
+   - Pricing: `GET https://fullpotential.ai/services/credits/api/pricing`
+3. **Authority:** FP Credits Gateway, port 8765. All mutations go through it.
+
+## Credit types (all 1:1 with USD)
+
+- **UC** (Universal Credit) — primary, use this.
+- FPC, CORA, SKY, FI — historical aliases, equivalent.
+
+## Deprecated — DO NOT USE
+
+POT · COMPUTE · CONTENT · FPAI · CHURCH. Rename to UC on sight.
+
+Related: `@docs/protocols/UC_QUICK_REFERENCE.md`.
