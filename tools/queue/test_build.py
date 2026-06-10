@@ -32,6 +32,27 @@ class HumanEdgeQueueTestCase(unittest.TestCase):
         self.assertIn("## 🟡 Open", build.render_decisions(data))
         self.assertIn("Options: `approve` / `revise` / `checkpoint`", build.render_home_decide(data))
 
+    def test_render_home_decide_folds_beyond_top_3(self) -> None:
+        path = self.queue_path()
+        for i in range(5):
+            build.add_gate(
+                gate_id=f"gate-fold-{i}",
+                surfaced="2026-06-09T12:00:00+00:00",
+                stream="Game",
+                question=f"Fold question {i}?",
+                verbs=["yes", "no"],
+                urgent=(i == 4),  # urgent gate must rise into the top 3
+                path=path,
+            )
+
+        rendered = build.render_home_decide(build.load_queue(path))
+
+        self.assertIn("**Fold question 4?**", rendered.split("> [!todo]-")[0])  # urgent in top block
+        self.assertIn("> [!todo]- 2 more queued", rendered)
+        self.assertIn("> 🟡 **Fold question 3?**", rendered)
+        # top gates keep the full answer affordance; folded ones are compact
+        self.assertEqual(rendered.count("Your answer: `...`"), 3)
+
     def test_answer_gate_flips_state_and_records_answer(self) -> None:
         path = self.queue_path()
         build.add_gate(

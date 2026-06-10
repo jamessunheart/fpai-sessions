@@ -168,18 +168,32 @@ def decision_tuples(path: Path | str | None = None) -> list[tuple[str, str, str]
     return [(g["question"], gate_unblock(g), gate_affordance(g)) for g in open_gates(path)]
 
 
-def render_home_decide(data: dict[str, Any] | None = None) -> str:
-    gates = [g for g in (data or load_queue())["gates"] if g["state"] == "open"]
+HOME_DECIDE_TOP_N = 3
+
+
+def render_home_decide(data: dict[str, Any] | None = None, top_n: int = HOME_DECIDE_TOP_N) -> str:
+    """Top N gates rendered in full; the rest fold into a collapsed Obsidian
+    callout so HOME stays a top-3 surface. As top gates are answered, the
+    next ones rise out of the fold on the following render."""
+    gates = open_gates_from_data(data or load_queue())
     if not gates:
         return "_No open human-edge gates._"
-    blocks = []
-    for gate in open_gates_from_data(data or load_queue()):
-        blocks.append(
-            f"**{gate['question']}**\n"
-            f"Stream: `{gate['stream']}` · id: `{gate['id']}`\n"
-            "Options: " + " / ".join(f"`{verb}`" for verb in gate["verbs"]) + "\n"
-            "Your answer: `...`"
-        )
+    blocks = [
+        f"**{gate['question']}**\n"
+        f"Stream: `{gate['stream']}` · id: `{gate['id']}`\n"
+        "Options: " + " / ".join(f"`{verb}`" for verb in gate["verbs"]) + "\n"
+        "Your answer: `...`"
+        for gate in gates[:top_n]
+    ]
+    rest = gates[top_n:]
+    if rest:
+        fold = [f"> [!todo]- {len(rest)} more queued — open when the top {len(blocks)} are clear"]
+        for gate in rest:
+            marker = "🔴" if gate["urgent"] else "🟡"
+            fold.append(">")
+            fold.append(f"> {marker} **{gate['question']}** · `{gate['stream']}` · id: `{gate['id']}`")
+            fold.append("> ↳ answer: " + " / ".join(f"`{verb}`" for verb in gate["verbs"]))
+        blocks.append("\n".join(fold))
     return "\n\n".join(blocks)
 
 
