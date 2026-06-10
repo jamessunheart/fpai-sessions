@@ -1130,17 +1130,20 @@ def main():
     home_next = refresh_home_next_move(now)
     home_decide = refresh_home_decide()
     # Index of Indexes calls itself self-refreshing; this is what makes that true.
-    # Guarded: an index failure must never break the daily note.
-    try:
-        import subprocess, sys
-        repo_root = Path(__file__).resolve().parents[2]
-        r = subprocess.run([sys.executable, str(repo_root / "tools" / "index" / "refresh.py")],
-                           capture_output=True, timeout=120)
-        index_ok = r.returncode == 0
-    except Exception:
-        index_ok = False
+    # Freshness auditor keeps the whole vault's promises checkable (FRESHNESS CHECK.md).
+    # Guarded: neither may ever break the daily note.
+    import subprocess, sys
+    repo_root = Path(__file__).resolve().parents[2]
+    def _guarded(script):
+        try:
+            return subprocess.run([sys.executable, str(repo_root / script)],
+                                  capture_output=True, timeout=120).returncode == 0
+        except Exception:
+            return False
+    index_ok = _guarded("tools/index/refresh.py")
+    fresh_ok = _guarded("tools/vault/freshness.py")
     tasks = my_tasks(doc)
-    print(f"daily_sync v9 → {note.name}: refreshed {stamp_full} {place or ''} · open={ndec} · decided_now={len(decided_now)} · my_tasks={len(tasks)} · streak={nships} · home_stamp={int(home_refreshed)} · home_next={int(home_next)} · home_decide={int(home_decide)} · index={int(index_ok)}")
+    print(f"daily_sync v9 → {note.name}: refreshed {stamp_full} {place or ''} · open={ndec} · decided_now={len(decided_now)} · my_tasks={len(tasks)} · streak={nships} · home_stamp={int(home_refreshed)} · home_next={int(home_next)} · home_decide={int(home_decide)} · index={int(index_ok)} · fresh={int(fresh_ok)}")
 
 if __name__ == "__main__":
     main()
