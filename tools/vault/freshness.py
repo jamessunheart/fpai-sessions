@@ -109,6 +109,11 @@ def audit(vault: Path | str = VAULT, now: dt.datetime | None = None) -> dict:
                 ages = {}
                 for src in sources:
                     try:
+                        # a source that declares itself stalled/paused/queued is being honest,
+                        # not breaking the dashboard's freshness promise — skip it
+                        head = "\n".join(src.read_text(encoding="utf-8", errors="ignore").splitlines()[:6])
+                        if re.search(r"status:.*(stalled|paused|queued)", head, re.I):
+                            continue
                         ages[src.stem] = (now - dt.datetime.fromtimestamp(src.stat().st_mtime)).days
                     except OSError:
                         continue

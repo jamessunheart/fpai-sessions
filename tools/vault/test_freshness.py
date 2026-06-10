@@ -63,6 +63,13 @@ class FreshnessAuditTestCase(unittest.TestCase):
         self.assertEqual(finding["age"], 9)
         self.assertEqual(finding["stale_embed"], "PANEL B")
 
+    def test_declared_stalled_sources_dont_break_composite(self) -> None:
+        _touch(self.vault / "HUB.md", "*(auto-refreshed)*\n![[FEED]]\n![[LIVE]]", 0, self.now)
+        _touch(self.vault / "FEED.md", "---\nstatus: stalled (pipe unscheduled)\n---\n# Feed", 9, self.now)
+        _touch(self.vault / "LIVE.md", "fresh", 0, self.now)
+        result = freshness.audit(self.vault, self.now)
+        self.assertEqual(result["findings"]["auto"], [])
+
     def test_heal_runs_only_allowlisted_scripts(self) -> None:
         _touch(self.vault / "00_MEMORY" / "INDEX OF INDEXES.md", "*(auto-generated)*", 5, self.now)
         _touch(self.vault / "ROGUE.md", "*(auto-generated)*", 5, self.now)
