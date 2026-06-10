@@ -1142,6 +1142,9 @@ def main():
             return False
     index_ok = _guarded("tools/index/refresh.py")
     fresh_ok = _guarded("tools/vault/freshness.py", "--heal")
+    # verb router (Standing Policy P3, pending bless — capture is safe either way:
+    # it only RECORDS James's own exact gate-verbs; execution stays Reserved-Class)
+    verbs_ok = _guarded("tools/queue/verb_router.py")
     tasks = my_tasks(doc)
     print(f"daily_sync v9 → {note.name}: refreshed {stamp_full} {place or ''} · open={ndec} · decided_now={len(decided_now)} · my_tasks={len(tasks)} · streak={nships} · home_stamp={int(home_refreshed)} · home_next={int(home_next)} · home_decide={int(home_decide)} · index={int(index_ok)} · fresh={int(fresh_ok)}")
 
