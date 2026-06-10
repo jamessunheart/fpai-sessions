@@ -65,12 +65,17 @@ def is_reserved(action_text: str, context: dict[str, Any] | None = None) -> dict
     context = context or {}
     text = _normalize(" ".join([raw_action, _context_text(context)]))
 
+    money_signal = _money_signal(text)
+    if money_signal:
+        return _verdict(True, "money", f"matched Money out: {money_signal}", 0.95)
+
     for category in policy.get("categories", []):
         matched = _match_category(text, category)
         if matched:
+            category_id = "money" if category["id"] == "money_out" else category["id"]
             return _verdict(
                 True,
-                category["id"],
+                category_id,
                 f"matched {category['label']}: {matched}",
                 0.93,
             )
@@ -90,7 +95,7 @@ def is_reserved(action_text: str, context: dict[str, Any] | None = None) -> dict
     if context.get("consequential") or context.get("external_effect"):
         return _verdict(True, "uncertain", "context marks action as consequential", 0.78)
 
-    return _verdict(False, None, "no Reserved-Class signal found", 0.68)
+    return _verdict(True, "uncertain", "unknown action; fail-safe escalation", 0.64)
 
 
 def gate_or_proceed(
@@ -168,6 +173,45 @@ def _match_any(text: str, terms: list[str]) -> str | None:
             continue
         if _contains_phrase(text, normalized):
             return term
+    return None
+
+
+def _money_signal(text: str) -> str | None:
+    money_verbs = (
+        "send",
+        "transfer",
+        "withdraw",
+        "fund",
+        "deposit",
+        "pay",
+        "purchase",
+        "buy",
+        "sell",
+        "swap",
+        "trade",
+        "donate",
+    )
+    money_objects = (
+        "$",
+        " usd",
+        " usdc",
+        " sol",
+        " btc",
+        " eth",
+        " wallet",
+        " vault",
+        " treasury",
+        " account",
+        " invoice",
+        " funds",
+        " money",
+    )
+    if any(_contains_phrase(text, verb) for verb in money_verbs) and any(obj in f" {text}" for obj in money_objects):
+        for verb in money_verbs:
+            if _contains_phrase(text, verb):
+                return verb
+    if re.search(r"\$\s*\d", text):
+        return "$ amount"
     return None
 
 

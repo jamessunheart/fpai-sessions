@@ -17,9 +17,10 @@ class ReservedClassifyTest(unittest.TestCase):
         self.assertIsNone(verdict["category"], verdict)
 
     def test_money_out_examples_escalate(self) -> None:
-        self.assert_reserved("Transfer SOL to the treasury wallet", "money_out")
-        self.assert_reserved("Buy the SaaS subscription", "money_out")
-        self.assert_reserved("Send the venue deposit", "money_out")
+        self.assert_reserved("Transfer SOL to the treasury wallet", "money")
+        self.assert_reserved("Buy the SaaS subscription", "money")
+        self.assert_reserved("Send the venue deposit", "money")
+        self.assert_reserved("Send $500 to the Pendle vault", "money")
 
     def test_public_outbound_send_examples_escalate(self) -> None:
         self.assert_reserved("Send the outreach email", "public_outbound_send")
@@ -46,6 +47,10 @@ class ReservedClassifyTest(unittest.TestCase):
         self.assert_delegable("Write tests for the classifier")
 
     def test_ambiguous_consequential_defaults_to_escalate(self) -> None:
+        verdict = is_reserved("do the thing")
+        self.assertTrue(verdict["reserved"], verdict)
+        self.assertEqual(verdict["category"], "uncertain", verdict)
+
         verdict = is_reserved("Execute the partner handoff")
         self.assertTrue(verdict["reserved"], verdict)
         self.assertEqual(verdict["category"], "uncertain", verdict)
