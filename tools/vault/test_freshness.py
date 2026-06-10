@@ -46,6 +46,34 @@ class FreshnessAuditTestCase(unittest.TestCase):
         self.assertEqual(result["scanned"], 0)
         self.assertEqual(result["skipped"], 2)
 
+    def test_doctrine_mentioning_auto_is_not_auto(self) -> None:
+        # "self-refreshing" discussed deep in a doc ≠ a claim about THIS file
+        body = "\n" * 20 + "Rung 2: Self-refreshing surfaces regenerate after each ship."
+        _touch(self.vault / "00_MEMORY" / "PROTOCOLS.md", "# Doctrine" + body, 3, self.now)
+        result = freshness.audit(self.vault, self.now)
+        self.assertEqual(result["findings"]["auto"], [])
+
+    def test_composite_freshness_is_oldest_embedded_source(self) -> None:
+        _touch(self.vault / "HUB.md", "*(auto-refreshed by pipes)*\n![[PANEL A]]\n![[PANEL B#x]]", 0, self.now)
+        _touch(self.vault / "PANEL A.md", "fresh", 0, self.now)
+        _touch(self.vault / "PANEL B.md", "old", 9, self.now)
+        result = freshness.audit(self.vault, self.now)
+        (finding,) = result["findings"]["auto"]
+        self.assertEqual(finding["file"], "HUB.md")
+        self.assertEqual(finding["age"], 9)
+        self.assertEqual(finding["stale_embed"], "PANEL B")
+
+    def test_heal_runs_only_allowlisted_scripts(self) -> None:
+        _touch(self.vault / "00_MEMORY" / "INDEX OF INDEXES.md", "*(auto-generated)*", 5, self.now)
+        _touch(self.vault / "ROGUE.md", "*(auto-generated)*", 5, self.now)
+        ran = []
+        result = freshness.write_report(self.vault, self.now, self_heal=True,
+                                        runner=lambda s: ran.append(s) or True)
+        self.assertEqual(ran, ["tools/index/refresh.py"])  # ROGUE has no mapping → untouched
+        self.assertEqual(result["healed"], ["tools/index/refresh.py"])
+        report = (self.vault / freshness.REPORT_REL).read_text(encoding="utf-8")
+        self.assertIn("Self-heal ran this pass", report)
+
     def test_report_written_and_excludes_itself(self) -> None:
         _touch(self.vault / "00_MEMORY" / "OLD.md", "old note", 30, self.now)
         result = freshness.write_report(self.vault, self.now)

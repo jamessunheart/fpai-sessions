@@ -25,6 +25,8 @@ VAULT = Path(os.environ.get(
 REPORT_REL = Path("00_MEMORY/FRESHNESS CHECK.md")
 
 AUTO_MARKERS = re.compile(r"auto-generated|self-refreshing|auto-refreshed|do not edit by hand", re.I)
+AUTO_HEADER_LINES = 12  # the claim must be about THIS file (header zone), not doctrine discussing the pattern
+EMBED_RE = re.compile(r"!\[\[([^\]#|]+)")
 CLAIM_RE = re.compile(
     r"(?:Last updated|Last organized|Snapshot|Refreshed|Generated|Updated(?: By)?)\s*[:\s·*]+\s*(\d{4}-\d{2}-\d{2})",
     re.I,
@@ -43,11 +45,26 @@ MACHINERY = {
     "00_MEMORY/INDEX OF INDEXES.md": "tools/index/refresh.py (via daily_sync since 2026-06-10)",
     "00_MEMORY/DECISIONS.md": "tools/queue/build.py via daily_sync",
     "00_MEMORY/FRESHNESS CHECK.md": "tools/vault/freshness.py (via daily_sync since 2026-06-10)",
+    "INTELLIGENCE HUB.md": "fpull component scripts (composite — freshness = its embedded sources)",
+}
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+# --heal allowlist: 🔴 finding → generator scripts safe to re-run (idempotent, vault-writing only).
+# NEVER daily_sync.py here — freshness runs inside it; that would recurse.
+HEAL_COMMANDS = {
+    "00_MEMORY/INDEX OF INDEXES.md": ["tools/index/refresh.py"],
+    "INTELLIGENCE HUB.md": [
+        "tools/decisions/mirror_pull.py",
+        "tools/decisions/concept_surfacer.py",
+        "tools/decisions/treasury_chart.py",
+        "tools/decisions/hub_charts.py",
+    ],
 }
 
 
 def file_tier(rel: Path, text: str) -> str:
-    if AUTO_MARKERS.search(text):
+    header = "\n".join(text.splitlines()[:AUTO_HEADER_LINES])
+    if AUTO_MARKERS.search(header):
         return "auto"
     if rel.parts and rel.parts[0] == "00_MEMORY":
         return "memory"
@@ -60,7 +77,9 @@ def audit(vault: Path | str = VAULT, now: dt.datetime | None = None) -> dict:
     now = now or dt.datetime.now()
     findings = {"auto": [], "memory": [], "other": []}
     scanned = skipped = 0
-    for md in sorted(vault.rglob("*.md")):
+    all_md = sorted(vault.rglob("*.md"))
+    by_stem = {p.stem: p for p in all_md}
+    for md in all_md:
         rel = md.relative_to(vault)
         if rel == REPORT_REL:
             continue  # the report doesn't audit itself
@@ -81,12 +100,30 @@ def audit(vault: Path | str = VAULT, now: dt.datetime | None = None) -> dict:
                 claim_age = (now.date() - dt.date.fromisoformat(claim.group(1))).days
             except ValueError:
                 pass
-        # auto: the machinery signal is mtime. hand: claimed content date wins when present.
-        age = mtime_age if tier == "auto" else (claim_age if claim_age is not None else mtime_age)
+        stale_embed = None
+        if tier == "auto":
+            # composite surface: panels are live transclusions, so its own mtime lies —
+            # freshness is the age of the OLDEST embedded source that still exists.
+            sources = [by_stem[s.strip()] for s in EMBED_RE.findall(text) if s.strip() in by_stem]
+            if sources:
+                ages = {}
+                for src in sources:
+                    try:
+                        ages[src.stem] = (now - dt.datetime.fromtimestamp(src.stat().st_mtime)).days
+                    except OSError:
+                        continue
+                if ages:
+                    stale_embed, age = max(ages.items(), key=lambda kv: kv[1])
+                else:
+                    age = mtime_age
+            else:
+                age = mtime_age  # machinery signal: did the generator rewrite the file?
+        else:
+            age = claim_age if claim_age is not None else mtime_age
         if age > THRESHOLDS[tier]:
             findings[tier].append({
                 "file": str(rel), "age": age, "mtime_age": mtime_age, "claim_age": claim_age,
-                "machinery": MACHINERY.get(str(rel)),
+                "stale_embed": stale_embed, "machinery": MACHINERY.get(str(rel)),
             })
     for tier in findings:
         findings[tier].sort(key=lambda f: -f["age"])
@@ -101,7 +138,9 @@ def _section(title: str, items: list[dict], cap: int = 25) -> list[str]:
         return lines
     for f in items[:cap]:
         bits = [f"- `{f['file']}` — **{f['age']}d**"]
-        if f["claim_age"] is not None and f["claim_age"] != f["mtime_age"]:
+        if f.get("stale_embed"):
+            bits.append(f"(oldest embedded source: [[{f['stale_embed']}]])")
+        elif f["claim_age"] is not None and f["claim_age"] != f["mtime_age"]:
             bits.append(f"(file {f['mtime_age']}d · claims {f['claim_age']}d — fresh file ≠ fresh truth)")
         if f["machinery"]:
             bits.append(f"· machinery: {f['machinery']}")
@@ -129,6 +168,9 @@ def render(result: dict) -> str:
         "---",
         "",
     ]
+    if result.get("healed"):
+        lines += ["🔵 **Self-heal ran this pass:** " + " · ".join(f"`{s}`" for s in result["healed"]) +
+                  " — findings below are POST-heal.", ""]
     lines += _section("## 🔴 Auto-claims with stalled machinery", f["auto"])
     lines += _section(f"## 🟡 Memory core aging (>{THRESHOLDS['memory']}d)", f["memory"])
     lines += _section(f"## 🟡 Other surfaces aging (>{THRESHOLDS['other']}d)", f["other"])
@@ -141,18 +183,55 @@ def render(result: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
-def write_report(vault: Path | str = VAULT, now: dt.datetime | None = None) -> dict:
+def heal(result: dict, runner=None) -> list[str]:
+    """Self-healing rung (blessed by James 2026-06-10): for each 🔴 finding whose
+    generator is on the explicit allowlist, re-run it. Allowlist-only, idempotent
+    scripts, never daily_sync (recursion). Returns the scripts run."""
+    import subprocess
+    import sys
+
+    def _default_runner(script: str) -> bool:
+        try:
+            return subprocess.run([sys.executable, str(REPO_ROOT / script)],
+                                  capture_output=True, timeout=120).returncode == 0
+        except Exception:
+            return False
+
+    runner = runner or _default_runner
+    ran: list[str] = []
+    for finding in result["findings"]["auto"]:
+        for script in HEAL_COMMANDS.get(finding["file"], []):
+            if script not in ran:
+                runner(script)
+                ran.append(script)
+    return ran
+
+
+def write_report(vault: Path | str = VAULT, now: dt.datetime | None = None,
+                 self_heal: bool = False, runner=None) -> dict:
     vault = Path(vault)
     result = audit(vault, now)
+    healed: list[str] = []
+    if self_heal and result["findings"]["auto"]:
+        healed = heal(result, runner)
+        if healed:
+            result = audit(vault, now)  # re-audit: report post-heal truth
+    result["healed"] = healed
     (vault / REPORT_REL).write_text(render(result), encoding="utf-8")
     return result
 
 
-def main() -> int:
-    result = write_report()
+def main(argv: list[str] | None = None) -> int:
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--heal", action="store_true",
+                    help="re-run allowlisted generators for 🔴 findings, then re-audit")
+    args = ap.parse_args(argv)
+    result = write_report(self_heal=args.heal)
     f = result["findings"]
+    healed = f" healed={len(result['healed'])}" if result["healed"] else ""
     print(f"freshness: scanned={result['scanned']} 🔴auto={len(f['auto'])} "
-          f"🟡memory={len(f['memory'])} 🟡other={len(f['other'])} → {REPORT_REL}")
+          f"🟡memory={len(f['memory'])} 🟡other={len(f['other'])}{healed} → {REPORT_REL}")
     return 0
 
 
