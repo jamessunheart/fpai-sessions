@@ -75,6 +75,163 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-10 · SPEC_comms-hub-rung4 · branch `feat/headless-build`
+
+- **Status:** done / awaiting diff review
+- **Files changed:** `tools/comms/__init__.py`; `tools/comms/hub.py`; `tools/comms/test_hub.py`; `tools/comms/channels/__init__.py`; `tools/comms/channels/email.py`; `tools/comms/fixtures/sample_email.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the Rung 4 comms hub v1. `tools/comms/hub.py` ingests fixture-backed email messages, triages each as `needs-reply` / `fyi` / `action` / `spam`, drafts reviewable replies for reply/action items, stages drafts to a lane when explicitly run with `--write`, and opens a Reserved-Class human-edge gate for each send candidate through the queue helper. `tools/comms/channels/email.py` is read-only/fixture-first; live email read refuses without an explicit James-set credential and still has no provider adapter or send path. The hub flags the failing intake-agent on host `198` as a scoped follow-up instead of fixing it blind. V1 never auto-sends.
+- **Tests:** `python3 -B -m unittest tools.comms.test_hub` (5 tests OK); `python3 -B -m unittest tools.comms.test_hub tools.reserved.test_classify tools.queue.test_build` (18 tests OK); `env PYTHONPYCACHEPREFIX=/private/tmp/fpai-pycache python3 -m py_compile tools/comms/hub.py tools/comms/test_hub.py tools/comms/channels/email.py tools/comms/__init__.py tools/comms/channels/__init__.py`; `python3 -B tools/comms/hub.py --fixture tools/comms/fixtures/sample_email.json --dry-run --json` (4 messages triaged, 2 drafts, 0 gates, wrote nothing); `python3 -B tools/comms/hub.py --fixture tools/comms/fixtures/sample_email.json --write --lane /private/tmp/fpai-comms-lane.md --queue /private/tmp/fpai-comms-queue.json --json` (temp lane + temp queue only; 2 send gates); `git diff --check -- docs/codex/HANDOFF.md`; `rg -n "[[:blank:]]$" tools/comms` (no matches)
+- **Risks:** Triage and draft text are deterministic v1 heuristics, not a trained inbox model. Live email read is intentionally not wired; future provider work needs a scoped spec and James-owned credentials. Send gates are only as good as queue review discipline; there is still no auto-send path.
+- **Rollback:** delete `tools/comms/`; delete any future generated `docs/codex/COMMS_LANE.md` or `core/STATE/COMMS_DRAFTS/` drafts; remove this HANDOFF note. No live queue, send, deploy, money, or secret state was changed.
+- **Questions for Ember/James:** review whether the first live comms follow-up should be a scoped email read adapter, the host `198` intake-agent repair, or promotion of the Bottleneck outreach path into this hub.
+
+### 2026-06-10 · SPEC_cruft-reaper-report · branch `feat/headless-build`
+
+- **Status:** done / awaiting diff review
+- **Files changed:** `tools/reaper/__init__.py`; `tools/reaper/scan.py`; `tools/reaper/test_scan.py`; `docs/codex/REAPER_REPORT.md`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a read-only cruft reaper report generator. `tools/reaper/scan.py` scans tracked artifact paths from `git ls-files`, oversized repo paths, and running/enabled systemd units when systemd evidence is available; it writes `docs/codex/REAPER_REPORT.md` as a ranked candidate kill-list with evidence, suggested action, `.gitignore` suggestions, and a red report-only banner. The live report found 7 candidates: `.claude`, `SERVICES`, `SERVICES/mission-control/venv`, and several tracked log/overnight-log paths. Systemd evidence was unavailable on this Mac host, so no frozen running-service candidates were asserted.
+- **Tests:** `python3 -B -m unittest tools.reaper.test_scan` (2 tests OK); `python3 -B -m unittest tools.reaper.test_scan tools.state_reconciler.test_status tools.spec.test_draft tools.loop.test_direct tools.apprentice.test_run tools.apprentice.test_select tools.reserved.test_classify tools.queue.test_build` (37 tests OK); `env PYTHONPYCACHEPREFIX=/private/tmp/fpai-pycache python3 -m py_compile tools/reaper/scan.py tools/reaper/test_scan.py tools/reaper/__init__.py`; `python3 -B tools/reaper/scan.py --output docs/codex/REAPER_REPORT.md` (7 candidate rows; report-only; required sandbox approval to write the report file in the primary checkout); `git diff --check -- tools/reaper docs/codex/REAPER_REPORT.md`
+- **Risks:** Size scans are local filesystem estimates and systemd data depends on host availability; this Mac did not expose `systemctl`, so service-freeze rows require a Linux/systemd host or supplied unit evidence. Every row is a candidate, not an instruction.
+- **Rollback:** delete `tools/reaper/`; delete `docs/codex/REAPER_REPORT.md`; remove this HANDOFF note.
+- **Questions for Ember/James:** review the report and choose any cleanup as a separate explicit approval. This run did not delete, stop, disable, untrack, edit `.gitignore`, merge, deploy, move money, send outreach, or touch secrets.
+
+### 2026-06-10 · SPEC_drift-detector-cron · branch `feat/headless-build`
+
+- **Status:** done / awaiting diff review
+- **Files changed:** `tools/state_reconciler/cron.py`; `tools/state_reconciler/test_cron.py`; `tools/state_reconciler/README.md`; `docs/codex/STATE_STATUS.md`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a scheduled-safe drift detector for the state reconciler. `tools/state_reconciler/cron.py` ranks findings across `NOW.md` freshness, buildstream-vs-actual rung drift, state mirror freshness, and human-edge queue state; `--dry-run` writes nothing; `--write-report` updates `docs/codex/STATE_STATUS.md` and opens one deduped human-edge gate only when `NOW.md` crosses the stale threshold. The documented cron snippet is available through `--schedule` and in `tools/state_reconciler/README.md`, but this run did not install it. Live dry-run/report found `NOW.md` fresh, mirror fresh, no rung drift, 8 open human-edge gates, and opened no drift gate.
+- **Tests:** `python3 -B -m unittest tools.state_reconciler.test_cron` (4 tests OK); `python3 -B -m unittest tools.state_reconciler.test_status tools.state_reconciler.test_cron tools.queue.test_build` (11 tests OK); `python3 -B tools/state_reconciler/cron.py --dry-run --json`; `python3 -B tools/state_reconciler/cron.py --schedule`; `python3 -B tools/state_reconciler/cron.py --write-report --json` (wrote only `docs/codex/STATE_STATUS.md`; gate `null` because current SSOTs are fresh); `env PYTHONPYCACHEPREFIX=/private/tmp/fpai-pycache python3 -m py_compile tools/state_reconciler/status.py tools/state_reconciler/cron.py tools/state_reconciler/test_status.py tools/state_reconciler/test_cron.py tools/state_reconciler/__init__.py`; `git diff --check -- tools/state_reconciler docs/codex/STATE_STATUS.md docs/codex/HANDOFF.md`
+- **Risks:** The detector observes and gates only; it does not fix stale SSOTs. Rung drift detection still depends on the current evidence markers in HANDOFF and repo artifacts. The schedule is documentation only until James/Ember installs it.
+- **Rollback:** delete `tools/state_reconciler/cron.py`, `tools/state_reconciler/test_cron.py`, and `tools/state_reconciler/README.md`; revert `docs/codex/STATE_STATUS.md`; remove this HANDOFF note. If a future stale run opens `state-drift-now-md-stale`, close/remove that queue gate manually after review.
+- **Intent solved:** the system can now notice SSOT staleness and ladder drift on a schedule-ready path instead of relying on James to remember to run the reconciler.
+- **Downstream intent unlocked:** James/Ember can install a reviewed cron/launchd schedule so drift becomes a human-edge gate automatically, without granting auto-fix authority.
+- **Questions for Ember/James:** review the non-installed schedule snippet; install only if you want the detector to run daily.
+
+### 2026-06-10 · SPEC_consequence-learn-loop · branch `feat/headless-build`
+
+- **Status:** done / awaiting diff review
+- **Files changed:** `tools/consequence/__init__.py`; `tools/consequence/watch.py`; `tools/consequence/test_watch.py`; `docs/codex/CONSEQUENCE_REPORT.md`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a consequence learner that checks whether shipped proof claims actually realized their stated unlocks. `tools/consequence/watch.py` parses proof-style Markdown rows and Codex HANDOFF close-outs, reads result/apprentice ledgers and the human-edge queue as evidence, assigns conservative `realized` / `not-yet` / `no` verdicts with confidence and evidence, aggregates realized rate and recurring non-realizations, and writes a generated `docs/codex/CONSEQUENCE_REPORT.md`. It records and proposes only: weight suggestions stay in the report review lane and no buildstream weights, gates, sends, money, deploys, secrets, or live-loop wiring were changed.
+- **Live report:** checked 20 recent claims; 11 realized, 9 not-yet, 0 no; realized rate 55%. Next improvement: add concrete evidence for `Part B (Telegram notifier) + Results Engine can now read/write the queue` or revise that claimed unlock.
+- **Tests:** `python3 -B -m unittest tools.consequence.test_watch` (6 tests OK); `python3 -B -m unittest tools.consequence.test_watch tools.apprentice.test_reflect tools.results.test_engine tools.queue.test_build tools.loop.test_direct tools.spec.test_draft` (26 tests OK); `env PYTHONPYCACHEPREFIX=/private/tmp/fpai-pycache python3 -m py_compile tools/consequence/watch.py tools/consequence/test_watch.py tools/consequence/__init__.py`; `python3 -B tools/consequence/watch.py --dry-run --json`; `python3 -B tools/consequence/watch.py --json` (wrote only the allowed report, with sandbox approval because this branch worktree is outside the Codex writable root); `git diff --check -- tools/consequence docs/codex/CONSEQUENCE_REPORT.md`; `rg -n "[[:blank:]]$" tools/consequence docs/codex/CONSEQUENCE_REPORT.md` (no matches).
+- **Risks:** Evidence matching is heuristic and intentionally conservative; sparse claims can remain `not-yet` until a file/gate/result/apprentice ledger proves the unlock. The watcher reads the newest available proof-like surfaces, so older vault proof rows may dominate until Ember mirrors newer rows. No auto-action path exists.
+- **Rollback:** delete `tools/consequence/`; delete `docs/codex/CONSEQUENCE_REPORT.md`; remove this HANDOFF note.
+- **Intent solved:** the loop can now ask "did the claimed unlock actually realize?" instead of treating completion as learning.
+- **Downstream intent unlocked:** consequence evidence can guide the next apprentice/spec improvement review without silently changing weights or taking action.
+- **Questions for Ember/James:** review the not-yet claims in `docs/codex/CONSEQUENCE_REPORT.md`; decide whether to add evidence, revise claims, or spec a repair for the top not-yet unlock.
+
+### 2026-06-10 · SPEC_auto-spec-drafting · branch `feat/headless-build`
+
+- **Status:** done / awaiting diff review
+- **Files changed:** `tools/spec/__init__.py`; `tools/spec/draft.py`; `tools/spec/test_draft.py`; `docs/codex/specs/SPEC_rung4-hubs.draft.md`; `docs/codex/HANDOFF.md`
+- **Summary:** Added Rung 3 auto-spec drafting. `tools/spec/draft.py draft_spec(intent) -> path` renders review-gated `SPEC_<slug>.draft.md` proposals from buildstream intents, includes the three declarations, DoD/files/safety/tests/rollback/close-out scaffolding, writes `TODO(review):` for unknowns, refuses to overwrite promoted specs or existing drafts, and supports dry-run CLI usage. Generated one real proposal, `SPEC_rung4-hubs.draft.md`, from the missing-spec `rung4-hubs` intent. It is explicitly DRAFT only and has not been dispatched, promoted, built, merged, deployed, or wired into the live loop.
+- **Tests:** `python3 -B -m unittest tools.spec.test_draft` (6 tests OK); `python3 -B -m unittest tools.spec.test_draft tools.loop.test_direct tools.apprentice.test_run tools.apprentice.test_select tools.reserved.test_classify tools.queue.test_build` (31 tests OK); `env PYTHONPYCACHEPREFIX=/private/tmp/fpai-pycache python3 -m py_compile tools/spec/draft.py tools/spec/test_draft.py tools/spec/__init__.py`; `python3 -B tools/spec/draft.py --id rung4-hubs --dry-run --json`; `python3 -B tools/spec/draft.py --id rung4-hubs --json` (wrote only the `.draft.md`, with sandbox approval because this branch worktree is outside the Codex writable root); `git diff --check -- tools/spec docs/codex/specs/SPEC_rung4-hubs.draft.md`; `rg -n "[[:blank:]]$" tools/spec docs/codex/specs/SPEC_rung4-hubs.draft.md` (no matches).
+- **Risks:** Draft quality depends on buildstream metadata; sparse intents intentionally leave TODO markers for Ember/James review. The buildstream parser is the current pipe-style parser from `tools.apprentice.select`, so richer future intent formats may need parser expansion. Existing unrelated dirty files remain in the `feat/headless-build` worktree and were left untouched.
+- **Rollback:** delete `tools/spec/`; delete `docs/codex/specs/SPEC_rung4-hubs.draft.md`; remove this HANDOFF note. No live wiring exists.
+- **Intent solved:** a buildstream intent with no spec can now produce a house-format draft proposal without human-writing the first spec pass.
+- **Downstream intent unlocked:** Rung 4 hub specs can be proposed by the system and then reviewed/promoted by Ember/James before any apprentice fleet build begins.
+- **Questions for Ember/James:** review `SPEC_rung4-hubs.draft.md`; if acceptable, edit TODOs and promote by renaming to `.md`. Do not dispatch the draft as-is.
+
+### 2026-06-10 · State status reconciler · branch `feat/headless-build`
+
+- **Status:** done / awaiting diff review
+- **Files changed:** `tools/state_reconciler/__init__.py`; `tools/state_reconciler/status.py`; `tools/state_reconciler/test_status.py`; `docs/codex/STATE_STATUS.md`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a read-only current-truth reconciler. `tools/state_reconciler/status.py` compares the System-That-Builds-The-System ladder in `INTENT_BUILDSTREAM.md` against HANDOFF evidence and built repo artifacts, reports stale/contradictory rung state, names the next valid unlock, and renders Obsidian-friendly mirror guidance. The live report was written to `docs/codex/STATE_STATUS.md`; after the concurrent auto-spec drafting entry landed, it now sees Rungs 0-3 built while the buildstream still marks them ready/blocked, and identifies Rung 4 apprentice-built hubs as the next adjacent unlock.
+- **Tests:** `python3 -B -m unittest tools.state_reconciler.test_status` (4 tests OK); `python3 -B -m unittest tools.state_reconciler.test_status tools.spec.test_draft tools.loop.test_direct tools.apprentice.test_run tools.apprentice.test_select tools.apprentice.test_artifact tools.apprentice.test_ledger tools.apprentice.test_reflect tools.reserved.test_classify tools.queue.test_build` (42 tests OK); `python3 -B tools/state_reconciler/status.py --json`; `python3 -B tools/state_reconciler/status.py --report docs/codex/STATE_STATUS.md --json`; `env PYTHONPYCACHEPREFIX=/private/tmp/fpai-pycache python3 -m py_compile tools/state_reconciler/status.py tools/state_reconciler/test_status.py tools/state_reconciler/__init__.py`; `git diff --check -- tools/state_reconciler docs/codex/STATE_STATUS.md docs/codex/HANDOFF.md`
+- **Risks:** This is observation, not authority. It does not edit the vault, update the buildstream, dispatch specs, move money, send outreach, deploy, touch secrets, or wire into the live autoloop. The report depends on explicit file/HANDOFF markers and may need more evidence rules as the ladder grows.
+- **Rollback:** delete `tools/state_reconciler/`; delete `docs/codex/STATE_STATUS.md`; remove this HANDOFF note.
+- **Questions for Ember/James:** Mirror `docs/codex/STATE_STATUS.md` into the Full Potential OS vault as `[[CODEX STATE STATUS]]` or the current FPOS cockpit/status surface after review.
+
+### 2026-06-10 · Foreman memory / idempotency · branch `feat/headless-build`
+
+- **Status:** done / awaiting diff review
+- **Files changed:** `tools/loop/direct.py`; `tools/loop/test_direct.py`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a small foreman memory ledger for the on-demand self-directing loop. `tick()` can now record each intent's last attempt, safe steps done, gate id/step, and next allowed action in `tools/loop/runs/foreman_memory.json`; before choosing work it reads that memory plus the human-edge queue and skips intents already blocked on an open gate, preventing duplicate asks while preserving the Reserved-Class stop. Dry-run still writes no memory, queue, log, or handoff state.
+- **Tests:** `python3 -B -m unittest tools.loop.test_direct` (4 tests OK, including the two-tick idempotency proof); `python3 -B -m unittest tools.loop.test_direct tools.apprentice.test_run tools.apprentice.test_select tools.apprentice.test_artifact tools.apprentice.test_ledger tools.apprentice.test_reflect tools.reserved.test_classify tools.queue.test_build` (32 tests OK); `python3 -B tools/loop/direct.py --dry-run --max-intents 2 --json` (touched two live buildstream intents, raised dry-run gates only, skipped none, wrote nothing); `env PYTHONPYCACHEPREFIX=/private/tmp/fpai-pycache python3 -m py_compile tools/loop/direct.py tools/loop/test_direct.py tools/loop/__init__.py`; `git diff --check -- tools/loop`
+- **Risks:** Memory skip depends on the gate id still being open in `HUMAN_EDGE_QUEUE.json`; if a gate is answered outside the queue helper or memory is hand-edited incorrectly, the foreman may need a reconciliation pass. It still uses the current pipe-style buildstream parser. No live autoloop wiring, sends, money movement, deploys, secrets, merges, or approvals were touched.
+- **Rollback:** revert the memory additions in `tools/loop/direct.py` and `tools/loop/test_direct.py`; delete any future `tools/loop/runs/foreman_memory.json`; remove this HANDOFF note. Nothing was wired live.
+- **Questions for Ember/James:** none. This gives the loop continuity before more authority.
+
+### 2026-06-10 · SPEC_self-directing-loop · branch `feat/headless-build`
+
+- **Status:** done / awaiting diff review
+- **Files changed:** `tools/loop/__init__.py`; `tools/loop/direct.py`; `tools/loop/test_direct.py`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the Rung 2 self-directing loop foreman. `tools/loop/direct.py tick(*, dry_run=False, max_intents=N)` reads READY buildstream intents via the existing apprentice selector parser, orders by weight, assigns each bounded intent to `tools.apprentice.run.run_intent`, records touched intents / executed safe steps / gates raised, and stops every Reserved-Class step at the Rung 0/Rung 1 gate boundary. It is runnable on demand only and is not wired into `com.fpai.autoloop`.
+- **Tests:** `python3 -B -m unittest tools.loop.test_direct` (3 tests OK); `python3 -B -m unittest tools.loop.test_direct tools.apprentice.test_run tools.apprentice.test_select tools.apprentice.test_artifact tools.reserved.test_classify tools.queue.test_build` (26 tests OK); `python3 -B tools/loop/direct.py --dry-run --max-intents 2 --json` (touched `results-bottleneck-session` and `results-camp-zen-cohort`, raised two dry-run gates, wrote nothing); `env PYTHONPYCACHEPREFIX=/private/tmp/fpai-pycache python3 -m py_compile tools/loop/direct.py tools/loop/test_direct.py tools/loop/__init__.py`; `git diff --check -- tools/loop`
+- **Risks:** The foreman reuses the current pipe-style buildstream parser, so richer future intent formats may need parser expansion. Non-dry-run mode can write apprentice gates/log summaries by design, but no live autoloop wiring, sends, money movement, deploys, secrets, merges, or approvals were touched.
+- **Rollback:** delete `tools/loop/`; remove this HANDOFF note. Nothing was wired live.
+- **Questions for Ember/James:** none. Rung 3 auto-spec drafting can now build on this on-demand foreman.
+
+### 2026-06-10 · Apprentice ledger reflection · branch `feat/headless-build`
+
+- **Status:** done / awaiting diff review
+- **Files changed:** `tools/apprentice/reflect.py`; `tools/apprentice/test_reflect.py`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a read-only reflection pass over apprentice review ledger JSONL. `tools/apprentice/reflect.py` summarizes total/gated/completed runs, top pauses, reserved reasons, streams, intents, and a next-improvement sentence. It can optionally write a Markdown report when given `--report`, but reads only by default. The temp demo reflected `/private/tmp/fpai-apprentice-review-ledger.jsonl` and identified `approve and send these 5` as the current bottleneck.
+- **Tests:** `python3 -B -m unittest tools.apprentice.test_run tools.apprentice.test_select tools.apprentice.test_artifact tools.apprentice.test_ledger tools.apprentice.test_reflect tools.reserved.test_classify tools.queue.test_build` (28 tests OK); `python3 -B tools/apprentice/reflect.py --ledger /private/tmp/fpai-apprentice-review-ledger.jsonl --report /private/tmp/fpai-apprentice-reflection.md --json`; `env PYTHONPYCACHEPREFIX=/private/tmp/fpai-pycache python3 -m py_compile tools/apprentice/run.py tools/apprentice/select.py tools/apprentice/artifact.py tools/apprentice/ledger.py tools/apprentice/reflect.py tools/apprentice/test_run.py tools/apprentice/test_select.py tools/apprentice/test_artifact.py tools/apprentice/test_ledger.py tools/apprentice/test_reflect.py`; `git diff --check -- tools/apprentice`
+- **Risks:** Reflection is only as useful as the ledger rows it reads; it is a signal surface, not an execution policy.
+- **Rollback:** delete `tools/apprentice/reflect.py` and `tools/apprentice/test_reflect.py`; remove this HANDOFF note.
+- **Questions for Ember/James:** none. The apprentice can now remember and reflect on its dry-run bottlenecks without gaining live authority.
+
+### 2026-06-10 · Apprentice review ledger · branch `feat/headless-build`
+
+- **Status:** done / awaiting diff review
+- **Files changed:** `tools/apprentice/ledger.py`; `tools/apprentice/test_ledger.py`; `tools/apprentice/select.py`; `tools/apprentice/test_select.py`; `docs/codex/HANDOFF.md`
+- **Summary:** Added an explicit opt-in JSONL ledger for apprentice dry-run reviews. `tools/apprentice/select.py --ledger <path>` records the selected intent, apprentice-doable steps, Reserved-Class pause, gate question, artifact path, and timestamp. The selector still writes no ledger by default, and the live buildstream demo wrote only to `/private/tmp/fpai-apprentice-review-ledger.jsonl`.
+- **Tests:** `python3 -B -m unittest tools.apprentice.test_run tools.apprentice.test_select tools.apprentice.test_artifact tools.apprentice.test_ledger tools.reserved.test_classify tools.queue.test_build` (25 tests OK); `python3 -B tools/apprentice/select.py --json --artifact /private/tmp/fpai-apprentice-ledger-review.md --ledger /private/tmp/fpai-apprentice-review-ledger.jsonl`; `env PYTHONPYCACHEPREFIX=/private/tmp/fpai-pycache python3 -m py_compile tools/apprentice/run.py tools/apprentice/select.py tools/apprentice/artifact.py tools/apprentice/ledger.py tools/apprentice/test_run.py tools/apprentice/test_select.py tools/apprentice/test_artifact.py tools/apprentice/test_ledger.py`; `git diff --check -- tools/apprentice`
+- **Risks:** This is memory, not authority. Ledger rows summarize dry-run intent only and must not be treated as approval to execute Reserved-Class steps.
+- **Rollback:** delete `tools/apprentice/ledger.py` and `tools/apprentice/test_ledger.py`; revert the `--ledger` option in `tools/apprentice/select.py`; remove this HANDOFF note.
+- **Questions for Ember/James:** none. The apprentice now has a review notebook before it has hands.
+
+### 2026-06-10 · Apprentice review artifact renderer · branch `feat/headless-build`
+
+- **Status:** done / awaiting diff review
+- **Files changed:** `tools/apprentice/artifact.py`; `tools/apprentice/test_artifact.py`; `tools/apprentice/select.py`; `docs/codex/HANDOFF.md`
+- **Summary:** Added an optional Markdown review artifact renderer for apprentice dry-runs. `tools/apprentice/select.py --artifact <path>` now turns the selected intent, apprentice-doable work, Reserved-Class pause, gate question, and bottleneck rationale into a human-reviewable artifact while still writing no queue gates, logs, sends, money moves, deploys, or live-loop state. The live buildstream artifact demo wrote only to `/private/tmp/fpai-apprentice-review.md`.
+- **Tests:** `python3 -B -m unittest tools.apprentice.test_run tools.apprentice.test_select tools.apprentice.test_artifact tools.reserved.test_classify tools.queue.test_build` (22 tests OK); `python3 -B tools/apprentice/select.py --json --artifact /private/tmp/fpai-apprentice-review.md`; `env PYTHONPYCACHEPREFIX=/private/tmp/fpai-pycache python3 -m py_compile tools/apprentice/run.py tools/apprentice/select.py tools/apprentice/artifact.py tools/apprentice/test_run.py tools/apprentice/test_select.py tools/apprentice/test_artifact.py`; `git diff --check -- tools/apprentice`
+- **Risks:** Artifact content is a review scaffold, not factual lead research or approval. It intentionally names the bottleneck but does not resolve it.
+- **Rollback:** delete `tools/apprentice/artifact.py` and `tools/apprentice/test_artifact.py`; revert the `--artifact` option in `tools/apprentice/select.py`; remove this HANDOFF note.
+- **Questions for Ember/James:** none. This makes apprentice cognition inspectable before any future live assignment.
+
+### 2026-06-10 · Apprentice dry-run selector · branch `feat/headless-build`
+
+- **Status:** done / awaiting diff review
+- **Files changed:** `tools/apprentice/__init__.py`; `tools/apprentice/select.py`; `tools/apprentice/test_select.py`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a dry-run selector that reads pipe-style intents from `docs/codex/INTENT_BUILDSTREAM.md`, selects the highest-weight ready intent or a requested id, runs it through the Rung 1 apprentice in dry-run only, and reports what the apprentice would do, where it would pause, and why that pause is the precise Reserved-Class bottleneck. The live buildstream dry-run selected `results-bottleneck-session`, would draft candidate leads, and would pause only at `approve and send these 5`.
+- **Tests:** `python3 -B -m unittest tools.apprentice.test_select` (4 tests OK); `python3 -B -m unittest tools.apprentice.test_run tools.apprentice.test_select tools.reserved.test_classify tools.queue.test_build` (20 tests OK); `python3 -B tools/apprentice/select.py --json`; `git diff --check -- tools/apprentice`
+- **Risks:** Selector parsing is intentionally narrow to current pipe-style buildstream rows; richer intent formats may need parser expansion. It writes no queue gates, logs, or handoff rows by default and does not wire into the live autoloop.
+- **Rollback:** delete `tools/apprentice/select.py` and `tools/apprentice/test_select.py`; revert the `tools/apprentice/__init__.py` export; remove this HANDOFF note.
+- **Questions for Ember/James:** none. This is a safe preview surface for deciding when to let apprentices run with real temp/live queues later.
+
+### 2026-06-10 · SPEC_apprentice-execution-tier · branch `feat/headless-build`
+
+- **Status:** done / awaiting diff review
+- **Files changed:** `tools/apprentice/__init__.py`; `tools/apprentice/run.py`; `tools/apprentice/test_run.py`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the Rung 1 apprentice unit. `run_intent(intent, *, dry_run=False)` decomposes one intent's `next` move into concrete steps, classifies each step through `tools.reserved.classify.is_reserved()`, records delegable advisory/staging work, and pauses at the first Reserved-Class bottleneck by writing a human-edge gate through `tools.queue.build.add_gate()`. It supports injected/temp queue writers for tests and demos, per-run JSONL logging, and optional HANDOFF summaries; it is not wired into the live autoloop.
+- **Tests:** `python3 -B -m unittest tools.apprentice.test_run` (3 tests OK); `env PYTHONPYCACHEPREFIX=/private/tmp/fpai-pycache python3 -m py_compile tools/apprentice/run.py tools/apprentice/test_run.py`; `git diff --check -- tools/apprentice`; temp dry-run and temp live gated run for `results-bottleneck-session` both paused only at `approve and send these 5` after drafting candidate leads.
+- **Risks:** The apprentice currently uses simple text splitting for v1 planning; complex intents may need better decomposition in Rung 2. The live demonstration used `/private/tmp` queue/log/handoff paths, not the production `HUMAN_EDGE_QUEUE`. No live wiring, sends, money movement, deploys, secrets, merges, or approvals were touched.
+- **Rollback:** delete `tools/apprentice/`; remove this HANDOFF note. Nothing was wired live.
+- **Questions for Ember/James:** none. Rung 2 can now assign intents to this apprentice runner in a separate approved spec.
+
+### 2026-06-09 · SPEC_reserved-class-boundary follow-up · branch `feat/headless-build`
+
+- **Status:** done / awaiting diff review
+- **Files changed:** `tools/reserved/classify.py`; `tools/reserved/test_classify.py`; `docs/codex/HANDOFF.md`
+- **Summary:** Tightened the fail-safe boundary so unknown/unparseable actions now escalate as `reserved: true` with category `uncertain`; only positive known-safe patterns clear as delegable. Added first-priority money detection so `send $`, transfers, withdrawals, funding, and vault deposits classify as category `money` instead of `public_outbound_send`.
+- **Tests:** `python3 -B -m unittest tools.reserved.test_classify` (10 tests OK); direct checks for `do the thing` -> `reserved: true`, `category: uncertain` and `Send $500 to the Pendle vault` -> `reserved: true`, `category: money`; `git diff --check -- tools/reserved/classify.py tools/reserved/test_classify.py`
+- **Risks:** The classifier is intentionally more conservative; vague work now escalates until phrased as a known-safe advisory action. No live wiring, sends, money movement, deploys, secrets, merges, or approvals were touched.
+- **Rollback:** revert `tools/reserved/classify.py` and `tools/reserved/test_classify.py`; remove this HANDOFF note.
+- **Questions for Ember/James:** none.
+
+### 2026-06-09 · SPEC_router-route-filtering · branch `feat/headless-build`
+
+- **Status:** done / awaiting diff review
+- **Files changed:** `tools/router/route.py`; `tools/router/test_route.py`; `docs/codex/HANDOFF.md`
+- **Summary:** Hardened router escalation appends so non-`route:auto` intents write stable one-line notes to the correct lane instead of using the generic Codex run entry. `route:ember`, `route:codex`, and `route:api` append to the 📤 builder lane; `route:james`, gated, missing, or unsafe routes append a Questions-for-James line in 📥. Dry-run still writes nothing, route:auto keeps the existing guarded draft/build/proof path, and duplicate escalation lines are skipped.
+- **Tests:** `python3 -m unittest tools.router.test_route` (14 tests OK); `python3 tools/router/route.py --dry-run` (current `route:ember` self-standing test escalates rather than drafting); `env PYTHONPYCACHEPREFIX=/private/tmp/fpai-pycache python3 -m py_compile tools/router/route.py tools/router/test_route.py`; `git diff --check -- tools/router/route.py tools/router/test_route.py tools/router/README.md`
+- **Risks:** Repo-wide `git diff --check` still fails on a pre-existing unrelated file outside this spec: `core/INTELLIGENCE/narrator/sessions/2026-06-09.md:118: new blank line at EOF`. This run left it untouched. Escalation append behavior still skips dirty HANDOFF files to avoid collision. No money, deploy, secrets, service changes, merge, push, or live apply path was touched.
+- **Rollback:** revert `tools/router/route.py` and `tools/router/test_route.py`; remove this HANDOFF note. Any future one-line router escalation notes are hand-removable.
+- **Questions for Ember/James:** none.
+
 ### 2026-06-09 · SPEC_reserved-class-boundary · branch `feat/headless-build`
 
 - **Status:** done / awaiting diff review
