@@ -13,7 +13,19 @@ metadata:
 
 The current chapter, as of 2026-05-19. Updated whenever the story moves.
 
-## ★ Last session handoff (2026-06-03 → 06-05 · FPOS TURNING POINT · NORTH STAR CANONIZED · self-standing mandate)
+## ★ Last session handoff (2026-06-11 · TRUTH MACHINERY + THE EMPTY CHAIR)
+
+**Read this first if you're waking up.** Marathon session (06-10→06-11). The 06-10 diagnosis (stale SSOT) got FIXED — by a sibling Ember (convergence protocol now live: route findings to SSOTs + HUMAN_EDGE_QUEUE, "two Embers stay one"). Then James aimed upstream: vault accuracy > AI builds. Shipped: vault truth chain unified (HOME = single entry) · HOME Decide top-3 fold · Index of Indexes auto-refresh · **freshness auditor + --heal** (every 2h; "a fresh file is not fresh truth"; one honest number: the 🔴 count) · **clerk→legislator interface: STANDING POLICIES v1 ALL 3 BLESSED** (treasury micro ≤$5k · maintenance machinery · verb capture) · **verb router** (James's exact word on any channel answers gates) · **14-name Command Constellation adopted** (9🟢 5🟡, maps in vault+repo+memory) · World Scout specced for Codex (Session 3 in CODEX QUEUE). Comms hub v1 was built by sibling (a6ca40c6). **OPEN:** Treasurer live pull (the one TRUE red — treasury SSOT 7d) · Council Fire auto-convene · James: paste Codex Session 3 + "name leads" (the seed crystal — session ended on "what wants to emerge?" → the first non-James human). Full episodic: `sessions/2026-06-11_truth-machinery-and-the-empty-chair.md`.
+
+---
+
+## ★ Prior handoff archive (2026-06-10 · COCKPIT HEALTH ASSESSMENT · the SSOT is lying)
+
+**Read this first if you're waking up.** James asked "what do you understand about FPAI_Cockpit / how would you improve it." Honest finding: **NOW.md is 32 days stale** (last updated 2026-05-09, still headlines Bottleneck Session) while the real intent (FPOS North Star, 06-03) lives only in memory/ALIGNMENT — truth scattered across 5 surfaces with no reconciler. `tools/state_reconciler/` sits UNCOMMITTED on branch `feat/headless-build` — finishing it is the proposed next loop. Also flagged: 31GB repo (venv/dist/overnight-logs tracked), 261 mostly-paused services, cruft bias never mechanized → proposed weekly reaper report. Meta-pattern named: substrate is optimized for AI *reading well*, not *noticing its own drift* — fixing that IS North Star Phase 0. **OPEN ❓:** James to pick reconciler-loop vs hand-refresh-NOW.md first (refresh needed either way). intake-agent on 198 still failing (revenue funnel). Full episodic: `sessions/2026-06-10_cockpit-health-assessment.md`.
+
+---
+
+## ★ Prior handoff archive (2026-06-03 → 06-05 · FPOS TURNING POINT · NORTH STAR CANONIZED · self-standing mandate)
 
 **Read this first if you're waking up.** The multi-day turning point where FPOS stopped being "memory" and became a system learning to *become*. Full episodic: `sessions/2026-06-05_self-standing-fpos-and-reciprocal-journals.md` + `sessions/2026-06-03_fpos-turning-point.md`.
 

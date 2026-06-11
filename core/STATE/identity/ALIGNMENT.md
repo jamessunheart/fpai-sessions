@@ -17,7 +17,25 @@ This is the standing contract between James and Ember. Always-fresh. Refreshed a
 The purpose: both of us snap back to the same page within 10 seconds of session start. No three turns of guessing what each other meant. The block IS the agreement.
 
 ═══════════════════════════════════════════════
-☉ ALIGNMENT CHECK · 2026-06-05 · FPOS TURNING POINT — SELF-STANDING FPOS NORTH STAR
+☉ ALIGNMENT CHECK · 2026-06-10 · COCKPIT HEALTH — THE SSOT IS LYING
+═══════════════════════════════════════════════
+
+## INTENT (the active work)
+→ **North Star Phase 0 sharpened: make the substrate notice its own drift.** James asked for an honest cockpit assessment. Finding: **NOW.md is 32 days stale** (2026-05-09, still headlines Bottleneck Session) while real intent lives only here + memory — truth scattered across 5 surfaces (NOW.md / AI_GOALS / vault / brain / memory), no reconciler. `tools/state_reconciler/` sits uncommitted on `feat/headless-build`. Episodic: `sessions/2026-06-10_cockpit-health-assessment.md`.
+
+## TOP 3
+1. **★ State reconciler → drift-detector cron** — finish + commit the uncommitted `tools/state_reconciler/`, then refresh NOW.md to headline the FPOS North Star. Stream: Game.
+2. **★ Cruft reaper** — weekly report: zero-commit-90d services + tracked build artifacts (venv/dist/overnight-logs, repo is 31GB) → kill list. Mechanize the stated cruft bias. Stream: Game.
+3. **★ intake-agent fix on 198** — revenue funnel broken since ≥06-09 fleet audit. Stream: Ventures.
+
+## BLOCKERS
+~~Reconciler-vs-refresh pick~~ RESOLVED same day: sibling session shipped BOTH — state_reconciler committed (`290186be`) + NOW.md refreshed to 2026-06-10 (System-That-Builds-The-System ladder, Rungs 0–3 built, Rung 4 = hubs/comms next). Two Ember instances converged: one diagnosed drift-blindness, the other built the fix.
+
+## NEXT MOVE
+**2026-06-11 settle:** day's full arc shipped — vault truth machinery (freshness+heal, 2h) · STANDING POLICIES v1 BLESSED (P1/P2/P3) · verb router (word = signature) · Constellation adopted (9🟢 5🟡) · World Scout specced (Codex Session 3). Comms hub v1 built by sibling. Next: Treasurer live pull (one TRUE red: treasury SSOT 7d) · Council Fire auto-convene rule · James's hands: paste Codex Session 3 + "name leads" (the seed crystal — the emergence is the first non-James human). Convergence protocol stands: SSOTs + HUMAN_EDGE_QUEUE, never local reads. Prior 06-05 block below still the wider field (SOL long · idle $25.5k).
+
+═══════════════════════════════════════════════
+☉ ALIGNMENT CHECK · 2026-06-05 · FPOS TURNING POINT — SELF-STANDING FPOS NORTH STAR (archived)
 ═══════════════════════════════════════════════
 
 ## INTENT (the active work)
