@@ -183,7 +183,17 @@ def list_positions(adapter: Any) -> list[Position]:
 
 
 def list_trigger_orders(adapter: Any) -> list[TriggerOrder]:
-    rows = _adapter_call(adapter, "list_resting_orders", "list_open_orders", "get_open_orders")
+    try:
+        rows = _adapter_call(adapter, "list_resting_orders", "list_open_orders", "get_open_orders")
+    except AttributeError:
+        # Production HyperliquidSDKAdapter (2026-06) exposes no order-listing
+        # method, but carries the SDK Info client + main account — query the
+        # exchange's frontend open orders directly (read-only).
+        info = getattr(adapter, "info", None)
+        account = getattr(adapter, "main_account", None)
+        if info is None or not account or not callable(getattr(info, "frontend_open_orders", None)):
+            raise
+        rows = info.frontend_open_orders(account)
     orders: list[TriggerOrder] = []
     for row in rows or []:
         if isinstance(row, dict):

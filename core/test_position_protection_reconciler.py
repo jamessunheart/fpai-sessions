@@ -118,5 +118,30 @@ class PositionProtectionReconcilerTest(unittest.TestCase):
         self.assertIn("target_unconfirmed", {event["phase"] for event in events})
 
 
+class FrontendOpenOrdersFallbackTestCase(unittest.TestCase):
+    def test_adapter_without_listing_method_uses_info_client(self) -> None:
+        class FakeInfo:
+            def frontend_open_orders(self, account):
+                assert account == "0xMAIN"
+                return [{"coin": "SOL", "isTrigger": True, "orderType": "Stop Market",
+                         "triggerPx": "150.0", "reduceOnly": True, "sz": "1.0"}]
+
+        class ProductionLikeAdapter:  # has info+main_account, no list_* methods
+            info = FakeInfo()
+            main_account = "0xMAIN"
+
+        orders = reconciler.list_trigger_orders(ProductionLikeAdapter())
+        self.assertEqual(len(orders), 1)
+        self.assertEqual(orders[0].symbol, "SOL")
+        self.assertEqual(orders[0].kind, "stop")
+
+    def test_adapter_without_info_still_raises(self) -> None:
+        class BareAdapter:
+            pass
+
+        with self.assertRaises(AttributeError):
+            reconciler.list_trigger_orders(BareAdapter())
+
+
 if __name__ == "__main__":
     unittest.main()
