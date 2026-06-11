@@ -1,0 +1,17 @@
+[Unit]
+Description=Whaletrack position protection reconciler
+After=network-online.target whaletrack-magnet.service whaletrack-live.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/fpai/services/whaletrack-magnet
+EnvironmentFile=-/etc/fpai/ai.env
+EnvironmentFile=-/opt/fpai/services/whaletrack-live/api/.env
+Environment=PYTHONPATH=/opt/fpai/services/whaletrack-magnet:/opt/fpai/services/whaletrack-live
+ExecStart=/usr/bin/python3 /opt/fpai/services/whaletrack-magnet/core/position_protection_reconciler.py --once
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target
