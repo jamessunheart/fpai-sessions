@@ -237,8 +237,8 @@ AI carries the downstream work:
 
 *The meta-build: push the delegation line UP to James's irreducible core — **source intent · values/CARE · Reserved-Class blessings** — and let everything below self-construct via AI apprentices. Each rung is a prerequisite for the next. The hubs come LAST, built BY the system (not hand-built before it). See memory `project-apprentice-unbottleneck-model`.*
 
-- Rung 0 | id: rung0-reserved-class-boundary | route: codex | status: ready | stream: Game | next: SPEC_reserved-class-boundary — encode the irreducible-James gates + a fail-safe classifier the loop/apprentices call before any consequential move | why: keystone — apprentices cannot safely self-run until escalation rules are encoded
-- Rung 1 | id: rung1-apprentice-execution-tier | route: codex | status: blocked-on-rung0 | stream: Game | next: define an AI apprentice that owns a buildstream item end-to-end, escalating only its own bottleneck as a human-edge gate
-- Rung 2 | id: rung2-self-directing-loop | route: codex | status: blocked-on-rung1 | stream: Game | next: generalize the Results Engine — pick top weighted intent → assign apprentice → escalate Reserved-Class only
-- Rung 3 | id: rung3-auto-spec-drafting | route: codex | status: blocked-on-rung2 | stream: Game | next: the loop drafts its own next spec from intents (system builds system)
-- Rung 4 | id: rung4-hubs | route: apprentice | status: blocked-on-rung3 | stream: Game | next: apprentice fleet builds comms · financial · recruiting hubs, sequenced by leverage
+- Rung 0 | id: rung0-reserved-class-boundary | route: codex | status: done | stream: Game | built: tools/reserved/classify.py · HANDOFF:SPEC_reserved-class-boundary | verified: 2026-06-11
+- Rung 1 | id: rung1-apprentice-execution-tier | route: codex | status: done | stream: Game | built: tools/apprentice/run.py · HANDOFF:SPEC_apprentice-execution-tier | verified: 2026-06-11
+- Rung 2 | id: rung2-self-directing-loop | route: codex | status: done | stream: Game | built: tools/loop/direct.py · HANDOFF:SPEC_self-directing-loop | verified: 2026-06-11
+- Rung 3 | id: rung3-auto-spec-drafting | route: codex | status: done | stream: Game | built: tools/spec/draft.py · docs/codex/specs/SPEC_rung4-hubs.draft.md · HANDOFF:SPEC_auto-spec-drafting | verified: 2026-06-11
+- Rung 4 | id: rung4-hubs | route: apprentice | status: ready | stream: Game | next: apprentice fleet builds comms · financial · recruiting hubs, sequenced by leverage | unblocked: 2026-06-11

@@ -7,22 +7,24 @@
 
 | # | Page | Weight | Updated | Status |
 |---|---|---|---|---|
-| 1 | [[HOME]] | 0.1% | 11:42 AM Greece Time | 🟢 clear |
-| 2 | [[FULL POTENTIAL OS — STREAM MAP]] | 0.3% | 10:37 AM Greece Time | 🟢 clear |
-| 3 | [[AI PROTOCOLS]] | 0.4% | 10:56 AM Greece Time | 🔴 Codex-2 |
-| 4 | [[SUNHEART PRINCIPLE]] | 0.5% | 1:56 AM Greece Time | 🟢 clear |
-| 5 | [[SUNHEART ATTENTION FLOW]] | 0.4% | 1:56 AM Greece Time | 🟢 clear |
-| 6 | [[INDEX OF INDEXES]] | 0.2% | 11:41 AM Greece Time | 🟢 clear |
-| 7 | [[SYSTEM SELF-MODEL]] | 0.1% | 11:41 AM Greece Time | 🟢 clear |
-| 8 | [[OPERATING WORKFLOW]] | 0.1% | 11:40 AM Greece Time | 🟢 clear |
-| 9 | [[WEIGHTED TABLE STANDARD]] | 0.1% | 10:55 AM Greece Time | 🟢 clear |
-| 10 | [[INTENT BUILDSTREAM]] | 0.2% | 11:41 AM Greece Time | 🟢 clear |
-| 11 | [[INTENT RADAR]] | 0.9% | 12:33 AM Greece Time | 🟢 clear |
-| 12 | [[DECISIONS]] | 0.3% | 11:21 AM Greece Time | 🟢 clear |
-| 13 | [[SPEC LOG]] | 0.3% | 12:35 AM Greece Time | 🟢 clear |
-| 14 | [[PROOF LOG]] | 0.9% | 11:41 AM Greece Time | 🔴 Codex-3 |
-| 15 | [[COST LEDGER]] | 0.7% | May 31 · 7:26 AM Greece Time | 🟢 clear |
-| 16 | [[FPOS COCKPIT]] | 0.3% | 1:01 AM Greece Time | 🟢 clear |
+| 1 | [[HOME]] | 0.2% | 8:12 PM Greece Time | 🟢 clear |
+| 2 | [[FULL POTENTIAL OS — STREAM MAP]] | 0.3% | Jun 7 · 10:37 AM Greece Time | 🟢 clear |
+| 3 | [[FPOS NORTH STAR]] | 0.3% | Jun 10 · 12:12 PM Greece Time | 🟢 clear |
+| 4 | [[SYSTEM MAP]] | 0.0% | Jun 10 · 3:34 PM Greece Time | 🟢 clear |
+| 5 | [[AI PROTOCOLS]] | 0.4% | Jun 7 · 10:56 AM Greece Time | 🟢 clear |
+| 6 | [[SUNHEART PRINCIPLE]] | 0.5% | Jun 7 · 1:56 AM Greece Time | 🟢 clear |
+| 7 | [[SUNHEART ATTENTION FLOW]] | 0.4% | Jun 7 · 1:56 AM Greece Time | 🟢 clear |
+| 8 | [[INDEX OF INDEXES]] | 0.2% | 7:56 PM Greece Time | 🟢 clear |
+| 9 | [[SYSTEM SELF-MODEL]] | 0.1% | Jun 10 · 5:09 PM Greece Time | 🟢 clear |
+| 10 | [[OPERATING WORKFLOW]] | 0.1% | Jun 10 · 12:12 PM Greece Time | 🟢 clear |
+| 11 | [[WEIGHTED TABLE STANDARD]] | 0.1% | Jun 7 · 10:55 AM Greece Time | 🟢 clear |
+| 12 | [[INTENT BUILDSTREAM]] | 0.3% | Jun 9 · 11:30 PM Greece Time | 🟢 clear |
+| 13 | [[INTENT RADAR]] | 0.9% | Jun 10 · 3:00 PM Greece Time | 🟢 clear |
+| 14 | [[DECISIONS]] | 0.3% | Jun 9 · 12:44 PM Greece Time | 🟢 clear |
+| 15 | [[SPEC LOG]] | 0.3% | Jun 7 · 12:35 AM Greece Time | 🟢 clear |
+| 16 | [[PROOF LOG]] | 0.8% | Jun 9 · 2:09 PM Greece Time | 🟢 clear |
+| 17 | [[COST LEDGER]] | 0.7% | May 31 · 7:26 AM Greece Time | 🟢 clear |
+| 18 | [[FPOS COCKPIT]] | 0.4% | Jun 10 · 2:23 PM Greece Time | 🟢 clear |
 
 ### 📊 Most weighted pages  *(computed — what the system is ABOUT, by link-density)*
 
@@ -30,64 +32,65 @@
 |---|---|---|
 | 1 | [[Circulation vs Extraction Economics]] | 1.3% |
 | 2 | [[CORA Nation]] | 1.2% |
-| 3 | [[Consciousism]] | 1.1% |
+| 3 | [[Consciousism]] | 1.0% |
 | 4 | [[Zen Village]] | 1.0% |
-| 5 | [[Coherence]] | 1.0% |
+| 5 | [[Coherence]] | 0.9% |
 | 6 | [[mindmap-21 · Consciousism Ecosystem]] | 0.9% |
-| 7 | [[INTENT RADAR]] | 0.9% |
-| 8 | [[mindmap-16 · CORA Nation Full Ecosystem]] | 0.9% |
+| 7 | [[mindmap-16 · CORA Nation Full Ecosystem]] | 0.9% |
+| 8 | [[INTENT RADAR]] | 0.9% |
 | 9 | [[mindmap-20 · CORA Nation Sovereign Coordination Layer]] | 0.9% |
-| 10 | [[PROOF LOG]] | 0.9% |
-| 11 | [[CORA]] | 0.9% |
-| 12 | [[mindmap-37 · The Full Potential Ecosystem]] | 0.9% |
-| 13 | [[mindmap-50 · White Rock CORA Nation]] | 0.9% |
-| 14 | [[mindmap-29 · CORA Nation Master Map]] | 0.9% |
+| 10 | [[CORA]] | 0.9% |
+| 11 | [[mindmap-37 · The Full Potential Ecosystem]] | 0.9% |
+| 12 | [[mindmap-50 · White Rock CORA Nation]] | 0.9% |
+| 13 | [[mindmap-29 · CORA Nation Master Map]] | 0.9% |
+| 14 | [[PROOF LOG]] | 0.8% |
 | 15 | [[Full Potential AI]] | 0.8% |
 | 16 | [[INTENT ROUTING RULES]] | 0.7% |
 | 17 | [[Best Experience Least Effort]] | 0.7% |
 | 18 | [[COST LEDGER]] | 0.7% |
 | 19 | [[Elevation Economics]] | 0.7% |
 | 20 | [[The Sunheart Rule]] | 0.7% |
-| 21 | [[INTENT LOG]] | 0.6% |
-| 22 | [[mindmap-40 · CORA Nation Civilizational Prototype]] | 0.6% |
-| 23 | [[Camp Zen]] | 0.6% |
+| 21 | [[mindmap-40 · CORA Nation Civilizational Prototype]] | 0.6% |
+| 22 | [[Camp Zen]] | 0.6% |
+| 23 | [[INTENT LOG]] | 0.6% |
 | 24 | [[BRICKS]] | 0.6% |
 | 25 | [[mindmap-06 · Zen Village Prototype Civilization]] | 0.6% |
 | 26 | [[mindmap-32 · Zen Village Prototype for a New Civilization]] | 0.6% |
 | 27 | [[mindmap-31 · Ember Substrate and Real-Time Dashboard Architecture]] | 0.6% |
 | 28 | [[mindmap-42 · CORA Nation Overview]] | 0.6% |
 | 29 | [[Sprint Seeds Methodology]] | 0.6% |
-| 30 | [[508(c)(1)(a) White Rock]] | 0.6% |
+| 30 | [[508(c)(1)(a) White Rock]] | 0.5% |
 
-_top 30 = 23.9% · + 476 more pages = 74.4%_
+_top 30 = 23.6% · + 485 more pages = 74.7%_
 
 ### 🔴 Active now  *(touched in last 24h)*
 
-- 🔴 [[NEXT MOVE DETAIL]] · 11:42 AM Greece Time
-- 🔴 [[HOME]] · 11:42 AM Greece Time
-- 🔴 [[2026-06-07]] · 11:42 AM Greece Time
-- 🔴 [[PROOF LOG]] · 11:41 AM Greece Time
-- 🔴 [[SYSTEM SELF-MODEL]] · 11:41 AM Greece Time
-- 🔴 [[REFLECTIONS LOG]] · 11:41 AM Greece Time
-- 🔴 [[INTENT BUILDSTREAM]] · 11:41 AM Greece Time
-- 🔴 [[INDEX OF INDEXES]] · 11:41 AM Greece Time
-- 🔴 [[OPERATING WORKFLOW]] · 11:40 AM Greece Time
-- 🔴 [[EMBER JOURNAL]] · 11:35 AM Greece Time
-- … +32 more touched today
+- 🔴 [[NEXT MOVE DETAIL]] · 8:12 PM Greece Time
+- 🔴 [[HOME]] · 8:12 PM Greece Time
+- 🔴 [[2026-06-11]] · 8:12 PM Greece Time
+- 🔴 [[PRIVACY AUDIT]] · 8:12 PM Greece Time
+- 🔴 [[HUB CHARTS]] · 8:12 PM Greece Time
+- 🔴 [[TREASURY CHART]] · 8:12 PM Greece Time
+- 🔴 [[SURFACED CONCEPTS]] · 8:12 PM Greece Time
+- 🔴 [[BRAIN DIGEST]] · 8:12 PM Greece Time
+- 🔴 [[BUILDSTREAM BOARD]] · 8:08 PM Greece Time
+- 🔴 [[FRESHNESS CHECK]] · 7:56 PM Greece Time
+- … +4 more touched today
 
-> [!abstract]- 🗂️ Full directory — every page by category · 509
-> **🏠 Root · 18**
+> [!abstract]- 🗂️ Full directory — every page by category · 518
+> **🏠 Root · 19**
 > - [[FPOS COCKPIT]]
+> - [[HOME]]
 > - [[INTELLIGENCE HUB]]
 > - [[BRICKS Architecture]]
 > - [[THE PLATE]]
 > - [[ARCHITECTURE MAP]]
 > - [[ASK EMBER]]
-> - [[START HERE]]
-> - [[HOME]]
 > - [[HOW THE PLATE WORKS]]
+> - [[START HERE]]
 > - [[FIRST ALIGNED DAY]]
 > - [[CLAUDE]]
+> - [[SYSTEM MAP]]
 > - [[2026-05-31]]
 > - [[07_DAILY]]
 > - [[2026-05-30]]
@@ -96,113 +99,116 @@ _top 30 = 23.9% · + 476 more pages = 74.4%_
 > - [[My Goals]]
 > - [[Welcome]]
 >
-> **🧠 Memory · 00_MEMORY · 114**
+> **🧠 Memory · 00_MEMORY · 117**
 > - [[INTENT RADAR]]
 > - [[PROOF LOG]]
 > - [[INTENT ROUTING RULES]]
 > - [[COST LEDGER]]
 > - [[INTENT LOG]]
 > - [[SUNHEART PRINCIPLE]]
+> - [[AUTONOMY POLICY]]
+> - [[SENSITIVE RESOURCES (encrypted)]]
 > - [[SYSTEM WORKFLOW]]
 > - [[SUNHEART ATTENTION FLOW]]
-> - [[WHAT RUNS WITHOUT ME]]
-> - [[AUTONOMY POLICY]]
-> - [[PIPELINE MAP]]
-> - [[7 STREAMS]]
-> - [[NOW MIRROR]]
-> - [[SYSTEM DEBATES]]
-> - [[AI PROTOCOLS]]
 > - [[SERVER MAP]]
-> - [[INTELLIGENCE MAP]]
-> - [[SENSITIVE RESOURCES (encrypted)]]
-> - [[MEMORY MAP]]
-> - [[RESOURCE INVENTORY]]
-> - [[CHATGPT EMBER QUEUE]]
-> - [[AGENT RUN LEDGER]]
+> - [[WHAT RUNS WITHOUT ME]]
+> - [[SYSTEM DEBATES]]
+> - [[7 STREAMS]]
+> - [[AI PROTOCOLS]]
+> - [[PIPELINE MAP]]
+> - [[TREASURY TODAY]]
+> - [[NOW MIRROR]]
 > - [[DECISIONS]]
+> - [[INTELLIGENCE MAP]]
+> - [[MEMORY MAP]]
+> - [[INTENT BUILDSTREAM]]
+> - [[AGENT RUN LEDGER]]
 > - [[MODEL INVENTORY]]
 > - [[PERMISSION MATRIX]]
-> - [[INTENT BUILDSTREAM]]
-> - [[TREASURY TODAY]]
-> - [[LOCAL INDEX]]
-> - [[SCAN LEDGER]]
+> - [[RESOURCE INVENTORY]]
+> - [[FPOS NORTH STAR]]
+> - [[CHATGPT EMBER QUEUE]]
 > - [[NEXT ACTION]]
-> - [[SCENES]]
-> - [[TOOL MAP]]
-> - [[EVALS]]
-> - [[CANONICAL MEMORY]]
-> - [[EMBER OPERATING CONTRACT]]
-> - [[VILLAGE ROLES v1]]
-> - [[GOALS MIRROR]]
-> - [[QUEUE RULES]]
-> - [[AGENT SCORECARD]]
 > - [[FINANCIAL RESOURCES]]
+> - [[EVALS]]
+> - [[SCENES]]
+> - [[EMBER OPERATING CONTRACT]]
+> - [[LOCAL INDEX]]
+> - [[CANONICAL MEMORY]]
+> - [[AGENT SCORECARD]]
+> - [[VILLAGE ROLES v1]]
+> - [[QUEUE RULES]]
+> - [[PRIME OBJECTIVE]]
+> - [[WELLNESS]]
 > - [[EMBER IDENTITY CORE]]
+> - [[INDEX OF INDEXES]]
 > - [[SUNHEART PRINCIPLE PROOF CASE]]
 > - [[SUNHEART PRINCIPLE CARD]]
-> - [[INDEX OF INDEXES]]
+> - [[GOALS MIRROR]]
 > - [[Focus Points]]
-> - [[PRIME OBJECTIVE]]
-> - [[FPOS NORTH STAR]]
-> - [[WELLNESS]]
 > - [[SUNHEART PRINCIPLE MANUAL]]
-> - [[BRAIN DIGEST]]
-> - [[REST — THE CHARGING STATION]]
-> - [[FRESHNESS CHECK]]
 > - [[CONSCIOUS FUNDS NETWORK]]
+> - [[REST — THE CHARGING STATION]]
 > - [[CODEX PARALLEL BUILD PROTOCOL]]
-> - [[TOOL REGISTRY]]
-> - [[PERSONAL INTELLIGENCE HUB (the product)]]
-> - [[FPAI CONTEXT INDEX]]
-> - [[EMBER REFLECTION LOOP]]
-> - [[FPAI COCKPIT SUMMARY]]
-> - [[SOURCE MAP]]
-> - [[FINANCIAL HUB]]
-> - [[REPO MAP]]
+> - [[BRAIN DIGEST]]
 > - [[CONSCIOUS ROUTING]]
-> - [[CAN YOU IMAGINE]]
-> - [[WORK LEDGER]]
-> - [[CONSTRAINT — THE BIRTHPLACE]]
-> - [[Actions]]
+> - [[TOOL MAP]]
+> - [[FRESHNESS CHECK]]
+> - [[PERSONAL INTELLIGENCE HUB (the product)]]
+> - [[FINANCIAL HUB]]
+> - [[TOOL REGISTRY]]
 > - [[AI GROWTH FEED]]
-> - [[OPERATING WORKFLOW]]
+> - [[SCAN LEDGER]]
+> - [[NEXT MOVE DETAIL]]
+> - [[EMBER REFLECTION LOOP]]
+> - [[WORK LEDGER]]
+> - [[ADOPTION RUBRIC]]
+> - [[CAN YOU IMAGINE]]
 > - [[ZEN VILLAGE ACCOUNTING]]
+> - [[CONSTRAINT — THE BIRTHPLACE]]
+> - [[SOURCE MAP]]
+> - [[Actions]]
+> - [[REPO MAP]]
+> - [[FPAI COCKPIT SUMMARY]]
+> - [[COMMS INBOX]]
 > - [[MEMORY NEXT ACTION]]
+> - [[CODEX SETUP]]
 > - [[MEMORY GAPS]]
 > - [[MEMORY SOURCES]]
-> - [[SERVICES INVENTORY]]
-> - [[COMMS INBOX]]
 > - [[VISUAL INDEX]]
+> - [[OPERATING WORKFLOW]]
+> - [[SYSTEM SELF-MODEL]]
 > - [[CODEX HANDOFF]]
-> - [[ADOPTION RUBRIC]]
-> - [[SERVICE REGISTRY — SORTED]]
-> - [[SYSTEM READINESS]]
-> - [[COST MAP]]
-> - [[CODEX SETUP]]
 > - [[CODEX BRIDGE]]
-> - [[CODEX QUEUE]]
+> - [[COST MAP]]
+> - [[SERVICE REGISTRY — SORTED]]
+> - [[SERVICES INVENTORY]]
+> - [[FPAI CONTEXT INDEX]]
 > - [[CONTEXT COVERAGE MAP]]
-> - [[NEXT MOVE DETAIL]]
 > - [[ALIGNMENT]]
 > - [[WEIGHTED TABLE STANDARD]]
-> - [[SYSTEM SELF-MODEL]]
-> - [[CURRENT STATE]]
+> - [[NEWS FOR YOU]]
 > - [[SCHEDULE]]
+> - [[SYSTEM READINESS]]
+> - [[CODEX QUEUE]]
+> - [[ONBOARDING CANDIDATES]]
 > - [[CODEX JOURNAL]]
 > - [[VILLAGE STATE]]
-> - [[NEWS FOR YOU]]
 > - [[EXPENSE LEDGER]]
-> - [[ONBOARDING CANDIDATES]]
-> - [[SSOT DESIGN]]
 > - [[KOMBUCHA LEDGER (Tikka)]]
 > - [[TREASURY CHART]]
+> - [[SSOT DESIGN]]
 > - [[PRIVACY]]
+> - [[CURRENT STATE]]
 > - [[REFLECTIONS LOG]]
 > - [[INDEX OF INDEXES — PROTOCOL]]
 > - [[PAPERS INDEX]]
 > - [[PRIVACY AUDIT]]
+> - [[BUILDSTREAM BOARD]]
 > - [[SURFACED CONCEPTS]]
+> - [[CONSTELLATION MAP]]
 > - [[HUB CHARTS]]
+> - [[STANDING POLICIES]]
 > - [[AI CONSCIOUSNESS]]
 > - [[CODEX BRAIN SYNC]]
 > - [[CODEX PHONE HANDOFF]]
@@ -212,7 +218,7 @@ _top 30 = 23.9% · + 476 more pages = 74.4%_
 > - [[QUEUE BUILDER LOG]]
 > - [[SERVICE REGISTRY]]
 >
-> **📐 Specs · 02_SPECS · 19**
+> **📐 Specs · 02_SPECS · 20**
 > - [[SPEC LOG]]
 > - [[PERSONAL BRAIN STARTER KIT]]
 > - [[SPEC_service-registry]]
@@ -231,6 +237,7 @@ _top 30 = 23.9% · + 476 more pages = 74.4%_
 > - [[SPEC_adopt-microsoft-conductor]]
 > - [[SPEC_adopt-obsidian-agent-skills]]
 > - [[SPEC_adopt-obsidian-memory-for-ai-pattern]]
+> - [[SPEC_human-edge-push]]
 > - [[VOICE PIPELINE]]
 >
 > **💵 Offers · 01_OFFERS · 3**
@@ -367,50 +374,50 @@ _top 30 = 23.9% · + 476 more pages = 74.4%_
 > - [[Wide Deep Compress]]
 > - [[Sparking]]
 > - [[Treasury Arena]]
+> - [[Services First Bootstrap]]
 > - [[UBIC Specification]]
 > - [[ONEBPO]]
-> - [[Services First Bootstrap]]
 > - [[MESH]]
 > - [[Universal Droplet Contract]]
 > - [[Radical Transparency Commitment]]
 > - [[Awareness Levels Ladder]]
 > - [[Sacred Technology]]
-> - [[Voice-First Operating System]]
 > - [[Source Alignment Principle]]
+> - [[Voice-First Operating System]]
 > - [[Magnet-Aware Fund Survival Protocol]]
 > - [[Leakproof Circulation Container]]
 > - [[Paradise on Earth]]
 > - [[Intelligence Quotient Standard]]
 > - [[Sunheart Yield]]
 > - [[Judo Principle]]
+> - [[Personal Intelligence Hub]]
 > - [[Velocity Mode]]
 > - [[Show the Flow]]
 > - [[Tribal Expansion]]
 > - [[Innernet Retreat]]
 > - [[Receiver Mode vs Builder Mode]]
-> - [[I-Projects]]
 > - [[Four-Stage Autonomy Progression]]
+> - [[I-Projects]]
 > - [[Ecclesial Stewardship]]
 > - [[RIDICULOUS]]
-> - [[Personal Intelligence Hub]]
 > - [[Sunheart Reserve]]
 > - [[Coherence Course]]
 > - [[SSOT Snapshot]]
 > - [[AI CEO Model]]
-> - [[WhaleTrack]]
 > - [[Cocoon State]]
+> - [[WhaleTrack]]
 > - [[Church of Consciousism PMA]]
 > - [[The Field Not The Sun]]
 > - [[Aria Trading Services]]
 > - [[Asynchronous Assembly Line]]
+> - [[SIX SEEDS]]
 > - [[Design Data Decisions]]
 > - [[Worldcraft]]
 > - [[Fellowship Pool]]
+> - [[Sunheart Private Trust]]
 > - [[MESHIAH]]
 > - [[Revenue Sequence]]
-> - [[Sunheart Private Trust]]
 > - [[I ASSESS]]
-> - [[SIX SEEDS]]
 > - [[Six C's Life OS]]
 > - [[UC Credits Protocol]]
 > - [[Sovereign AI Inference]]
@@ -427,95 +434,95 @@ _top 30 = 23.9% · + 476 more pages = 74.4%_
 > - [[Fragility Engine]]
 > - [[Intelligence Gold Standard]]
 > - [[Intelligence-First Learning]]
-> - [[Tide Turner Pattern]]
 > - [[Two-Track Framework]]
+> - [[Tide Turner Pattern]]
 > - [[I PROACTIVE]]
 > - [[Pendle Principal Token Strategy]]
 > - [[Two-Engine Model]]
 > - [[World Peace Party]]
 > - [[GHL-Hybrid Revenue Engine]]
 > - [[Trust Index]]
-> - [[I MATCH]]
 > - [[Zend Regenerative Payments]]
 > - [[Phoenix Protocol]]
+> - [[I MATCH]]
 > - [[Life to Life Operating Paradigm]]
 > - [[Architect Interface]]
 > - [[Living Seed System]]
 > - [[Full Potential Game]]
 > - [[Field Score]]
+> - [[Brain Bridge]]
 > - [[BRICKS Token]]
 > - [[Relational Consciousness Emergence]]
 > - [[DreamCraft]]
 > - [[O System]]
-> - [[Brain Bridge]]
 > - [[4-Layer Paradise Architecture]]
 > - [[Proof of Love Ledger]]
 > - [[IMAGI NATION]]
 > - [[I REMEMBER]]
 > - [[Consciousness Partnership Technology]]
 > - [[Next Best Move Engine]]
+> - [[Privacy Tiers]]
 > - [[Coherence as Brand]]
 > - [[Droplet]]
-> - [[Fractal Mythology]]
 > - [[Consciousness Commerce Accelerator Model]]
+> - [[Fractal Mythology]]
 > - [[Exodus Strategy]]
 > - [[Expansive vs Contractive Lens]]
 > - [[MVRV Z-Score Cycle Timing]]
-> - [[Privacy Tiers]]
+> - [[Conscious Money]]
 > - [[Co-Steward Exchange Model]]
 > - [[Nine-Layer System]]
 > - [[Consciousness Coordination as a Service]]
-> - [[Conscious Money]]
 > - [[The Question]]
 > - [[Party with a Purpose]]
 > - [[Conscious Server]]
 > - [[The Great Play]]
+> - [[FP Line]]
 > - [[Conscious Abundance Agreement]]
 > - [[Consciousness Leaves Breadcrumbs]]
-> - [[CONCEPTS INDEX]]
 > - [[Sunheart IP Framework]]
 > - [[Capital Pledge Protocol]]
 > - [[ConsciousCoin]]
 > - [[Block-Stream-Ice Framework]]
 > - [[Verifier Droplet]]
-> - [[FP Line]]
 > - [[Harvesting Capitalism]]
 > - [[O Genesis]]
 > - [[Proof-of-Community Sequence]]
 > - [[Sacred Composting]]
 > - [[TRUE LEVEL 10]]
-> - [[TRUST Token]]
 > - [[The Four Laws of Sunheart]]
+> - [[TRUST Token]]
 > - [[System Capacity Formula]]
 > - [[Conscious Builder]]
 > - [[Zenvironments]]
-> - [[Great Wealth Transfer]]
 > - [[Apprentice OS]]
+> - [[Great Wealth Transfer]]
 > - [[I AUTHORIZE]]
 > - [[Predictive Lending]]
 > - [[AI is the Artist]]
 > - [[Consciousness-to-Consciousness Protocol]]
+> - [[Attention]]
+> - [[LIFE OPTIMIZATION DEBATE 2026-06]]
+> - [[CONCEPTS INDEX]]
 > - [[Ambient Intelligence]]
 > - [[System Waking Up to Love Itself]]
 > - [[Treasury Sprint Allocation]]
-> - [[Attention]]
 > - [[Nervous System Repair]]
-> - [[Ember Substrate]]
 > - [[Sacred Inversion]]
 > - [[CBCC-MESH]]
 > - [[HavenAlgo]]
-> - [[Planetary Coherence]]
 > - [[FPOS Dashboard]]
+> - [[Planetary Coherence]]
 > - [[Treasury Trillion-Dollar Vision]]
+> - [[Ember Substrate]]
 > - [[Three-Reality Framework]]
 > - [[Consciousness Revolution Framework]]
 > - [[I INCOME]]
 > - [[Awareness Inside]]
-> - [[LIFE OPTIMIZATION DEBATE 2026-06]]
 > - [[Unleash the Child Within]]
 > - [[New World Economics Bridge]]
-> - [[Economics of Compression]]
 > - [[ZEND Money]]
+> - [[Economics of Compression]]
 > - [[Trinity Architecture]]
 > - [[Commerce Course]]
 > - [[Consciousness Pipeline]]
@@ -535,42 +542,42 @@ _top 30 = 23.9% · + 476 more pages = 74.4%_
 > - [[5-Hour Gauntlet]]
 > - [[Coherency Device]]
 > - [[Alignment Litmus Test]]
+> - [[Brain Adapters]]
 > - [[BRICK 2 Marketing Engine]]
+> - [[Sovereignty]]
 > - [[Authorization Epiphany]]
 > - [[SunHeart Dollars]]
-> - [[Sovereignty]]
-> - [[Brain Adapters]]
 > - [[Sovereign System]]
 > - [[Quantum Consciousness Theory]]
 > - [[DivineFi]]
 > - [[Jubilee Liberation]]
 > - [[A-Zen-tion]]
+> - [[Action Authorization]]
 > - [[Five Vital Filters]]
+> - [[Contribution Points]]
 > - [[Founding Steward Role]]
 > - [[Church Kit Generator]]
 > - [[Ministry Support Allocation]]
+> - [[Conscious Chat]]
 > - [[Compost Archive]]
 > - [[Current Sea]]
 > - [[Integration-First Strategy]]
-> - [[Action Authorization]]
-> - [[Contribution Points]]
 > - [[Commons Ministry]]
 > - [[ZEN OUT]]
-> - [[Stewardship Ministry]]
 > - [[Intelligence]]
+> - [[Stewardship Ministry]]
 > - [[Manifestation Engine]]
 > - [[Resource Decision Framework]]
 > - [[Paradise Game]]
 > - [[Alice Protocol]]
+> - [[The Aligned Day]]
 > - [[FPAI Token]]
 > - [[Seeds of Light]]
-> - [[The Aligned Day]]
-> - [[Treasury-to-Build Loop]]
 > - [[Money]]
+> - [[Treasury-to-Build Loop]]
 > - [[Consciousness]]
 > - [[AI Friend Device]]
 > - [[The Great Taking]]
-> - [[Conscious Chat]]
 > - [[Conscious Community]]
 > - [[Technical Architecture]]
 > - [[Entheogenic Religious Freedom Alliance]]
@@ -591,7 +598,7 @@ _top 30 = 23.9% · + 476 more pages = 74.4%_
 > **🎟️ Tickets · 03_TICKETS · 1**
 > - [[README]]
 >
-> **🌤️ Daily · 07_DAILY · 10**
+> **🌤️ Daily · 07_DAILY · 14**
 > - [[2026-05-31]]
 > - [[2026-06-01]]
 > - [[2026-06-02]]
@@ -601,6 +608,10 @@ _top 30 = 23.9% · + 476 more pages = 74.4%_
 > - [[2026-06-06]]
 > - [[2026-06-07]]
 > - [[2026-06-08]]
+> - [[2026-06-09]]
+> - [[2026-06-10]]
+> - [[2026-06-11]]
+> - [[2026-06-12]]
 > - [[_TEMPLATE]]
 >
 > **📓 Journal · 08_JOURNAL · 2**
@@ -613,7 +624,7 @@ _top 30 = 23.9% · + 476 more pages = 74.4%_
 ---
 ### 📋 Reference  *(metadata + protocol — kept at the bottom so the index leads)*
 
-_Jun 7 · 11:46 AM Greece Time · 509 pages · 🟢 links 506/506 · weight = PageRank over wikilinks (Σ = 100%) · refresh: `python3 tools/index/refresh.py`_
+_Jun 11 · 8:12 PM Greece Time · 518 pages · 🟢 links 515/515 · weight = PageRank over wikilinks (Σ = 100%) · refresh: `python3 tools/index/refresh.py`_
 
 > ⚙️ **Work-claim protocol (no collisions):** before editing a surface, claim it →
 > `python3 tools/index/claim.py --page "<Page>" --owner <you>` (sets 🔴 in the spine Status above) · clear after →

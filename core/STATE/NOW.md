@@ -1,38 +1,41 @@
 # CURRENT_STATE — Living SSOT
 
-**Last Updated:** 2026-05-09 (Loop 37 — reframe to vision-hold + AI-execute = passive income)
-**Updated By:** Claude (in FPAI_Cockpit, with James)
-**System Status:** 🟢 OPERATIONAL — substrate at 37 loops; canonical layer + AI Roster + Treasury schema shipped today. James entering vision-hold mode; AI Context Steward + planned Human Context Steward handle execution.
+**Last Updated:** 2026-06-11 (refreshed from 32-day drift — FPOS North Star now headlines)
+**Updated By:** Ember (FPAI_Cockpit · session 0b0ca1df)
+**System Status:** 🟢 OPERATIONAL — 37+ loops shipped · state reconciler + consequence loop + headless build infra live · Zen Village serving zenvillagecr.com · Watchfire trading infra on HL · FPOS autonomy ladder Rungs 0-3 complete.
 
-> **🎯 30-day goal:** Ship first paid Camp Zen / Zen Village-related offer (Bottleneck Session $500-1,500, 14-day launch plan) and **receive first revenue**. James holds vision; AI Roster runs substrate. Camp Zen / ZV-related offers are the easiest passive-income jumpstart.
+> **🎯 North Star:** Stand up a Full Potential OS that holds context + advances WITHOUT James prompting — removes the single point of failure, becomes the product. Phase 0 (optimize this FPOS) is active. Phase 1 (scout/assemble) follows. Phase 2 (onboard people + revenue) is the unlock for Camp Zen / Bottleneck Session / Zen Village.
 >
-> **Path:** Day 1-2 finalize Bottleneck Session offer + assets · Day 3-7 outreach (10/day from warm list) · Day 8-12 deliver first sessions · Day 13-14 systematize · upsell flow into Full Potential Breakthrough Program ($2.5-10k+) or Camp Zen Founder/Creator Camp.
+> **Decision filter:** does this move push the substrate toward self-standing? If yes → execute. If it requires James to carry the context → flag + reroute.
 >
-> **🤖 AI working goals** are tracked in [`core/STATE/AI_GOALS.md`](AI_GOALS.md). **Identity + operating rules** in [`JAMES_CANONICAL.md`](JAMES_CANONICAL.md), [`AI_CHARTER.md`](AI_CHARTER.md), [`AI_ROSTER.md`](AI_ROSTER.md). The whole canonical layer auto-loads on every AI session (per `CLAUDE.md`).
+> **🤖 AI working goals** are tracked in [`core/STATE/AI_GOALS.md`](AI_GOALS.md). **Identity + operating rules** in [`JAMES_CANONICAL.md`](JAMES_CANONICAL.md), [`AI_CHARTER.md`](AI_CHARTER.md), [`AI_ROSTER.md`](AI_ROSTER.md). Codex buildstream at `docs/codex/INTENT_BUILDSTREAM.md`.
 
 ---
 
 ## 🎯 CURRENT PRIORITY (The ONE Thing)
 
-### Priority: The Full Potential Game — Founder's First Game / Zen Village substrate
-**Status:** 🟢 ACTIVE — 35 loops shipped in ~48 hours (see proofs/ for canonical count). Substrate is saturated; the gate is now distribution, not features.
-**Live at:** `https://fullpotential.com/game`
-**Decision filter:** proof / revenue / clarity / ease — 30-day horizon
+### Priority: FPOS North Star — self-standing substrate
+**Status:** 🟢 ACTIVE — Phase 0 (optimize this FPOS). Autonomy ladder Rungs 0-3 built; Rung 4 (apprentice-built hubs) is the next unlock.
+**North Star:** FPOS holds context + advances WITHOUT James prompting. Removes single-point-of-failure. Becomes the product.
+**Decision filter:** does this move toward self-standing? If yes → AI executes. If it requires James to carry context → flag + reroute.
 
-The Game is the operational form of the Zen Village vision: a substrate where Champions sign Agreements, build Character Cards, file Proofs, and now invite affiliates. Every action is on-chain in the substrate (file-backed), every share has measurable consequence (Field Score), and Loop N+1 is the next adaptive move.
+**Phases:**
+- Phase 0 (active): optimize this FPOS — reconcile state, close drift, wire consequence loop
+- Phase 1: scout/assemble — Rung 4 hubs (comms · financial · recruiting), builder lane active
+- Phase 2: onboard people + revenue — Camp Zen · Zen Village · Bottleneck Session · FP sessions
+- Phase 3: internal economy — Cora Credits · treasury circulation · yield
 
-### *The Village* (mockumentary) — 🟡 deferred (concept preserved)
-- Originally planned Day 1 launch 2026-05-09, but screenings + group not actually launched.
-- Frame preserved as future content engine for Camp Zen + Cohort enrollment.
-- Kai listener daemon spec ready when activated.
-- First Cohort (Atlas, Halley, Josh, Sierra, Delaney, Cheyenne) still named but enrollment shape TBD.
-- Wiring memory: `reference_zen_comedy.md`.
+### Active surfaces (June 2026)
+- **zenvillagecr.com** — 🟢 Zen Village booking server (port 8770 · zen-host) · suri + James access live
+- **Watchfire** — 🟡 HL trading infra live · resting-order reconciler shipped · paper signals working · live execution still needs validation
+- **fullpotential.com/game** — 🟢 Game substrate (37+ loops) · Field Score · Affiliates · Store
+- **Sunheart Brain (@sunheartbrain_bot)** — 🟢 TG digest · inbox · bidirectional · 162.0.208.88
+- **Builder lane** — 🟢 'build:' intent via Telegram → spec → build → review · feat/headless-build branch
 
-### Camp Zen / Zen Village-related offers — 🟢 ACTIVE passive-income jumpstart
-- **Bottleneck Session** ($500-1,500, 90-min) — smallest paid offer, 14-day launch plan (see `~/.claude/memory-global/reference_bottleneck_session.md`)
-- **Full Potential Breakthrough Program** ($2.5-10k, 4-12wk) — upsell from Bottleneck
-- **Camp Zen Founder/Creator Camp** — productized "Rest + AI Vision = Passive Income" (the trunk, see `reference_trunk_branches.md`)
-- **Zen Village retreats / Saturday Social** — physical-world activations
+### Camp Zen / Zen Village-related offers — 🟡 PHASE 2 (after Phase 0/1 land)
+- **Bottleneck Session** ($500-1,500, 90-min) — ready when Phase 2 opens
+- **Camp Zen Founder/Creator Camp** — trunk offer · "Rest + AI Vision = Passive Income"
+- **Zen Village retreats** — physical activations
 
 ---
 
@@ -131,9 +134,9 @@ Ranked options for Loop 38:
 
 | # | Goal | Target | Timeframe | Current state |
 |---|---|---|---|---|
-| 1 | **First paid Camp Zen / ZV-related revenue** | First Bottleneck Session sold ($500-1,500), client served, testimonial captured | 14-30 days | 0 sold · 14-day launch plan ready (`reference_bottleneck_session.md`) |
-| 2 | **AI Roster operational — Treasurer + AI Context Steward live** | `/treasurer` handler shipped on @sunheartbrain_bot · weekly digest cron · cross-tool brain sync working | 30 days | canonicals shipped Loop 37 · Telegram handler specced · brain MCP ingest scope fixed (pending /quit) |
-| 3 | **Human Context Steward hired (Trunk-6 #1)** | Alice (or other candidate) signed + onboarded · interface contract with AI Context Steward live | 45 days | spec written (`HUMAN_CONTEXT_STEWARD_SPEC.md`) · not yet sent |
+| 1 | **FPOS self-standing — Phase 0 complete** | Rung 4 hubs specced + Rung 3 auto-routing live · daily state stays current without James | 30 days | Rungs 0-3 done · Rung 4 ready · state reconciler + consequence loop live · NOW.md refreshed 2026-06-11 |
+| 2 | **Zen Village operational + bookings flowing** | zenvillagecr.com serving · booking intake live · suri access working · intake-agent repaired | 30 days | site live · suri active · 🔴 intake-agent FAILING (revenue funnel broken — see [[reference-fleet-stream-map]]) |
+| 3 | **Watchfire / Treasury — live trading validated** | HL resting orders placing correctly · stops executing · first profitable closed trade logged | 30 days | reconciler shipped · paper signals working · live execution still needs stop-fix validation |
 
 *To modify: edit this section, then `SERVICES/sunheart-brain/ingest/sync_now_to_brain.sh` to push.*
 
