@@ -13,6 +13,7 @@ import argparse
 import importlib
 import json
 import logging
+import math
 import os
 import time
 from dataclasses import dataclass, field
@@ -252,10 +253,21 @@ def build_plan(
         symbol=position.symbol,
         side=position.side,
         size=position.size,
-        stop_price=round(float(stop), 8),
-        target_price=round(float(target), 8),
+        stop_price=round_trigger_price(float(stop)),
+        target_price=round_trigger_price(float(target)),
         source=source,
     )
+
+
+def round_trigger_price(px: float) -> float:
+    """Hyperliquid rejects prices over 5 significant figures with the silent
+    'Order has invalid price' embedded error (status stays 'ok' — the original
+    naked-position bug). Round to 5 sig figs, max 6 decimals."""
+    if px <= 0:
+        return px
+    magnitude = math.floor(math.log10(abs(px)))
+    decimals = min(max(0, 4 - magnitude), 6)
+    return round(px, decimals)
 
 
 def has_order(orders: Iterable[TriggerOrder], symbol: str, kind: str) -> bool:
