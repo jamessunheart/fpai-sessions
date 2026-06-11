@@ -10,6 +10,22 @@ Newest first. Each entry: `[UTC] · STREAM · what · why · REVERSE: <command/s
 
 ## 2026-06-11
 
+- **[build] · Game · Ember-as-builder lane shipped — `build:` Telegram messages → build intents.**
+  Added `tools/queue/build_intent_router.py` (+5 tests, green) + `core/BUILD/intents/`; wired into
+  `tools/decisions/daily_sync.py` next to the verb router. James speaks intent; Ember specs/builds/
+  reviews; James blesses. Capture-only — nothing builds/sends from here (Reserved-Class).
+  REVERSE: `git -C ~/FPAI_Cockpit revert <this-commit>` (removes the lane; daily_sync line reverts).
+
+- **[review] · Game · World Scout activation reviewed → PASS (committed `bbc69fad`).**
+  21 tests green, guardrails verified, fail-closed. Awaiting James merge of `feat/world-scout-activation`.
+  REVERSE: n/a (review note only).
+
+- **[build · autonomous] · Treasury · Codex ran spec 001 in isolated worktree (gpt-5.5, your plan).**
+  Built `tools/whaletrack_verdict.py` (repo-local scope, PASS); correctly REFUSED to fake the prod
+  adapter fix (live code not local) and stopped at the SSH boundary. Branch `build/001-whaletrack-watchfire`.
+  REVERSE: `git worktree remove ~/.fpai-build-worktrees/001-whaletrack-watchfire; git branch -D build/001-whaletrack-watchfire`.
+
+
 - **[setup] · Game · Proof-log + reversibility scaffold created.**
   Why: James authorized hands-off operation conditioned on logging + reversibility.
   REVERSE: `git -C ~/FPAI_Cockpit revert e80815b6` (build-loop) + delete `core/BUILD/`.
