@@ -100,6 +100,19 @@ function getToken(){ return localStorage.getItem(TOKEN_KEY) || ""; }
 function setToken(t){ localStorage.setItem(TOKEN_KEY, t); }
 function clearToken(){ localStorage.removeItem(TOKEN_KEY); }
 
+// Cockpit session token (set by /cockpit login). Lets a scoped member who's
+// been granted the `submissions` surface in authenticate WITHOUT ever holding
+// the master admin token — the API resolves the session + checks the grant.
+function getSessionToken(){
+  try {
+    const raw = localStorage.getItem("zv_cockpit_session");
+    if (!raw) return "";
+    const s = JSON.parse(raw);
+    return (s && s.session_token) ? s.session_token : "";
+  } catch (_) { return ""; }
+}
+function haveCreds(){ return !!(getToken() || getSessionToken()); }
+
 function showToast(text){
   $toast.textContent = text;
   $toast.classList.add("show");
@@ -131,7 +144,11 @@ function ageHours(s){
 async function api(path, opts){
   const r = await fetch(path, {
     method: (opts && opts.method) || "GET",
-    headers: { "x-admin-token": getToken(), "Content-Type": "application/json" },
+    headers: {
+      "x-admin-token": getToken(),
+      "x-session-token": getSessionToken(),
+      "Content-Type": "application/json",
+    },
     body: opts && opts.body ? JSON.stringify(opts.body) : undefined,
   });
   if (r.status === 401) { clearToken(); throw new Error("invalid token"); }
@@ -147,6 +164,9 @@ function renderLogin(err){
       <input id="t" type="password" placeholder="admin token" autofocus />
       ${err ? `<div class="err">${err}</div>` : ""}
       <button id="go">unlock</button>
+      <p style="color:var(--muted);font-size:12px;margin:14px 0 0;text-align:center">
+        Have a Cockpit login? <a href="/cockpit" style="color:#9ec5ff">Sign in there →</a>
+      </p>
     </div>`;
   document.getElementById("go").onclick = () => {
     const t = document.getElementById("t").value.trim();
@@ -282,7 +302,7 @@ async function tryCockpitBridge(){
 }
 
 async function boot(){
-  if (!getToken()) {
+  if (!haveCreds()) {
     const bridged = await tryCockpitBridge();
     if (!bridged) return renderLogin();
   }
@@ -296,7 +316,7 @@ async function boot(){
     ]);
   } catch (e) {
     // If the stashed legacy token went stale, try the cockpit bridge once before falling back to login.
-    if (!getToken()) {
+    if (!getToken() && !getSessionToken()) {
       const bridged = await tryCockpitBridge();
       if (bridged) { return boot(); }
     }

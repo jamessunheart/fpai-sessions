@@ -111,12 +111,38 @@ def _admin_token() -> str:
     )
 
 
-def _require_admin(x_admin_token: Optional[str]) -> None:
+def _require_admin(
+    x_admin_token: Optional[str],
+    x_session_token: Optional[str] = None,
+) -> None:
+    """Authorize a caller for the Submissions surface.
+
+    Two accepted credentials:
+      1. The shared legacy admin token (ZV_AFFILIATES_ADMIN_TOKEN) — owner
+         back-door, paste-the-token flow.
+      2. A cockpit session token (X-Session-Token) belonging to a user who
+         has been granted the `submissions` surface in the cockpit registry.
+         This is what lets a scoped `member` (e.g. Suri) in without ever
+         handing the master token to their browser.
+    """
     expected = _admin_token()
+    if expected and x_admin_token and x_admin_token == expected:
+        return
+    # Cockpit session path — resolve the user and check their surface grant.
+    if x_session_token:
+        try:
+            from app.cockpit_hub import _resolve_caller, _can_see
+            caller = _resolve_caller(None, x_session_token)
+            if _can_see(caller, "submissions"):
+                return
+            raise HTTPException(403, "Submissions surface not granted")
+        except HTTPException:
+            raise
+        except Exception:
+            pass
     if not expected:
         raise HTTPException(503, "Admin token not configured")
-    if not x_admin_token or x_admin_token != expected:
-        raise HTTPException(401, "Invalid admin token")
+    raise HTTPException(401, "Invalid admin token")
 
 
 def _load_inquiries() -> list[dict]:
@@ -263,6 +289,7 @@ def _sort_newest(rows: list[dict]) -> list[dict]:
 @router.get("/api/admin/submissions")
 async def list_all(
     x_admin_token: Optional[str] = Header(None),
+    x_session_token: Optional[str] = Header(None),
     kind: Optional[str] = Query(None, description="inquiry|application|booking|all"),
     lane: Optional[str] = Query(None),
     status: Optional[str] = Query(None, description="new|contacted|closed"),
@@ -270,7 +297,7 @@ async def list_all(
     limit: int = Query(500, ge=1, le=2000),
 ):
     """Combined feed. Default returns real inquiries + applications, newest first."""
-    _require_admin(x_admin_token)
+    _require_admin(x_admin_token, x_session_token)
 
     rows: list[dict] = []
     k = (kind or "all").lower()
@@ -299,9 +326,12 @@ async def list_all(
 
 
 @router.get("/api/admin/backup/status")
-async def backup_status(x_admin_token: Optional[str] = Header(None)):
+async def backup_status(
+    x_admin_token: Optional[str] = Header(None),
+    x_session_token: Optional[str] = Header(None),
+):
     """Report on the latest daily backup so we know it's actually running."""
-    _require_admin(x_admin_token)
+    _require_admin(x_admin_token, x_session_token)
     from pathlib import Path as _P
     import os
     base = _P("/opt/fpai/backups/zen-village")
@@ -334,12 +364,15 @@ async def backup_status(x_admin_token: Optional[str] = Header(None)):
 
 
 @router.post("/api/admin/submissions/run-auto-followup")
-async def run_auto_followup(x_admin_token: Optional[str] = Header(None)):
+async def run_auto_followup(
+    x_admin_token: Optional[str] = Header(None),
+    x_session_token: Optional[str] = Header(None),
+):
     """Send a soft follow-up email to every submission that is still 'new'
     and was submitted between 48h and 7d ago. Idempotent: marks each row as
     contacted with note 'auto-followup' so it never fires twice.
     """
-    _require_admin(x_admin_token)
+    _require_admin(x_admin_token, x_session_token)
     from app.mail import send_followup_48h
 
     statuses = _load_status()
@@ -386,6 +419,7 @@ async def run_auto_followup(x_admin_token: Optional[str] = Header(None)):
 async def reply_to_submission(
     payload: dict,
     x_admin_token: Optional[str] = Header(None),
+    x_session_token: Optional[str] = Header(None),
 ):
     """Send a real email to the person behind a submission, then mark contacted.
 
@@ -393,7 +427,7 @@ async def reply_to_submission(
     From-address defaults to hello@zenvillagecr.com (configurable per admin in
     the future).
     """
-    _require_admin(x_admin_token)
+    _require_admin(x_admin_token, x_session_token)
     key = (payload.get("key") or "").strip()
     message = (payload.get("message") or "").strip()
     if not key or not message:
@@ -446,13 +480,14 @@ async def reply_to_submission(
 async def set_status(
     payload: dict,
     x_admin_token: Optional[str] = Header(None),
+    x_session_token: Optional[str] = Header(None),
 ):
     """Mark a submission as new/contacted/closed.
 
     Body: {"key": "<row key>", "status": "contacted", "note": "<optional>"}
     Get the key from the row's `_key` field on /api/admin/submissions output.
     """
-    _require_admin(x_admin_token)
+    _require_admin(x_admin_token, x_session_token)
     key = (payload.get("key") or "").strip()
     new_status = (payload.get("status") or "").strip().lower()
     note = (payload.get("note") or "").strip()
@@ -473,11 +508,12 @@ async def set_status(
 @router.get("/api/admin/submissions/stats")
 async def stats(
     x_admin_token: Optional[str] = Header(None),
+    x_session_token: Optional[str] = Header(None),
     include_test: int = Query(0),
 ):
     """KPIs for the cockpit. Real-only by default."""
     from datetime import timedelta
-    _require_admin(x_admin_token)
+    _require_admin(x_admin_token, x_session_token)
     inq = _load_inquiries()
     apps = _load_applications()
     if not include_test:
