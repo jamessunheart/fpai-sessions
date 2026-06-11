@@ -75,6 +75,16 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-11 · SPEC_world-scout-activation · branch `feat/world-scout-activation`
+
+- **Status:** done / awaiting diff review
+- **Files changed:** `tools/scout/scout_run.py`; `tools/scout/test_scout_run.py`; `tools/decisions/daily_sync.py`; `tools/vault/freshness.py`; `tools/vault/test_freshness.py`; `docs/codex/CONSTELLATION_MAP.md`; `docs/codex/HANDOFF.md`. Confirmed `tools/scout/scout.py` has no diff.
+- **Summary:** Added the guarded World Scout pipe without changing the verdict engine. `scout_run.py` enforces the daily cursor, kill switches (`SCOUT_DISABLE=1` or `.disabled`), hard $1.50/run cap, payload validation, and all-or-nothing writes for `NEWS FOR YOU`, `AI GROWTH FEED`, root `COST LEDGER`, and root `PROOF LOG`. The daily loop now calls the runner through the existing guarded script path only; no new LaunchAgent, installs, sends, deploys, secrets, or money movement. Freshness machinery now names the scout runner for both outward notes, and the Lantern row is flipped green with this HANDOFF as evidence.
+- **Tests:** `python3 -B -m unittest tools.scout.test_scout_run tools.vault.test_freshness tools.decisions.test_daily_sync` (21 tests OK); `env PYTHONPYCACHEPREFIX=/private/tmp/fpai-pycache python3 -m py_compile tools/scout/scout_run.py tools/scout/test_scout_run.py tools/decisions/daily_sync.py tools/vault/freshness.py tools/vault/test_freshness.py tools/scout/scout.py`; fixture proof against `/private/tmp/fpai-scout-proof/vault` wrote 3 linked NEWS items, 2 AI GROWTH candidates, `$0.42` cost line, PROOF LOG line, and `freshness.audit(...)` returned `auto=0 memory=0 other=0`; live no-provider check `python3 -B tools/scout/scout_run.py --dry-run --json` returned `status: stalled` with `wrote: []`.
+- **Risks:** The live web-capable provider is intentionally an explicit seam (`SCOUT_MODEL_CMD` or `SCOUT_FIXTURE_JSON`); without it, the runner stalls closed and writes nothing. Provider output must include at least 3 news items, 2 growth candidates, http(s) URLs, and cost <= $1.50. Repeated daily-loop attempts will remain guarded/no-write until the provider command or kill switch is configured.
+- **Rollback:** remove `tools/scout/scout_run.py` and `tools/scout/test_scout_run.py`; revert the one guarded call in `tools/decisions/daily_sync.py`, the two MACHINERY entries and test in `tools/vault/`, and the Lantern row/status change in `docs/codex/CONSTELLATION_MAP.md`; delete any future generated scout cursor at `~/.config/fpai/scout/last_run.txt` if needed.
+- **Questions for Ember/James:** provide or confirm the live `SCOUT_MODEL_CMD` bridge for Claude/web search when ready; until then the pipe is installed but fail-closed.
+
 ### 2026-06-09 · SPEC_reserved-class-boundary · branch `feat/headless-build`
 
 - **Status:** done / awaiting diff review

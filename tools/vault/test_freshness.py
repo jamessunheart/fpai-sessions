@@ -81,6 +81,10 @@ class FreshnessAuditTestCase(unittest.TestCase):
         report = (self.vault / freshness.REPORT_REL).read_text(encoding="utf-8")
         self.assertIn("Self-heal ran this pass", report)
 
+    def test_world_scout_notes_have_declared_machinery(self) -> None:
+        self.assertIn("tools/scout/scout_run.py", freshness.MACHINERY["00_MEMORY/NEWS FOR YOU.md"])
+        self.assertIn("tools/scout/scout_run.py", freshness.MACHINERY["00_MEMORY/AI GROWTH FEED.md"])
+
     def test_report_written_and_excludes_itself(self) -> None:
         _touch(self.vault / "00_MEMORY" / "OLD.md", "old note", 30, self.now)
         result = freshness.write_report(self.vault, self.now)

@@ -45,6 +45,8 @@ MACHINERY = {
     "00_MEMORY/INDEX OF INDEXES.md": "tools/index/refresh.py (via daily_sync since 2026-06-10)",
     "00_MEMORY/DECISIONS.md": "tools/queue/build.py via daily_sync",
     "00_MEMORY/FRESHNESS CHECK.md": "tools/vault/freshness.py (via daily_sync since 2026-06-10)",
+    "00_MEMORY/NEWS FOR YOU.md": "tools/scout/scout_run.py (via daily_sync · 1/day cursor)",
+    "00_MEMORY/AI GROWTH FEED.md": "tools/scout/scout_run.py (via daily_sync · 1/day cursor)",
     "INTELLIGENCE HUB.md": "fpull component scripts (composite — freshness = its embedded sources)",
 }
 

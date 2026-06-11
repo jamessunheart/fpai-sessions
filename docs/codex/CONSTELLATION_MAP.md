@@ -7,7 +7,7 @@ Adopted as canonical naming 2026-06-10 (James). Status: 9 🟢 built · 5 🟡 p
 | # | Function | Does | Status | Machinery (repo-side) |
 |---|----------|------|--------|----------------------|
 | 1 | Compass | choose direction | 🟢 | vault HOME via `tools/decisions/daily_sync.py` · `core/STATE/NOW.md` · INTENT_BUILDSTREAM |
-| 2 | Lantern | notice reality, weak signals | 🟡 | narrator · freshness (inward); outward scout pipes stalled → World Scout GO |
+| 2 | Lantern | notice reality, weak signals | 🟡 | narrator · freshness (inward); `tools/scout/scout_run.py` installed, FAIL-CLOSED until SCOUT_MODEL_CMD provider configured — flips 🟢 on first live run evidence |
 | 3 | Maproom | know the terrain | 🟢 | `tools/index/refresh.py` · SERVER/fleet maps · cartographer |
 | 4 | Gate | protect the field | 🟢 | `core/STATE/RESERVED_CLASS.yaml` · `tools/reserved/classify.py` · cost cap · hooks |
 | 5 | Bridge | any signal → intent | 🟡 | `tools/queue/verb_router.py` · tg inbox · qb; full hub = Rung 4 (`spec comms`) |
