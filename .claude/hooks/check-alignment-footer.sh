@@ -53,30 +53,15 @@ LAST_TEXT=$(tail -n 200 "$TRANSCRIPT" 2>/dev/null \
 LEN=${#LAST_TEXT}
 [ "$LEN" -lt 200 ] && exit 0
 
-# Compliant — full footer present.
+# 2026-06-12: James simplified to NEXT + WHY only — no alignment block.
+# Accept legacy block, ALIGNMENT: one-liner, or bare NEXT line.
 echo "$LAST_TEXT" | grep -q "─── ALIGNMENT ───" && exit 0
-
-# Compliant — compressed Caveman v2.1 one-liner present
-# (per feedback_caveman_clarity_output_contract.md · 2026-05-27 patch).
-# Format: a single line starting with "ALIGNMENT:" carrying Now / Goal / Need / Next.
 echo "$LAST_TEXT" | grep -qE '^ALIGNMENT:' && exit 0
+echo "$LAST_TEXT" | grep -qE 'NEXT[[:space:]]' && exit 0
 
-# Non-trivial + footer missing → surface reminder.
 cat >&2 <<'EOF'
-🔴 ALIGNMENT FOOTER MISSING (Stop hook caught it)
-
-Your last reply was non-trivial (≥200 chars) but did not include the
-ALIGNMENT footer. This is a hard rule per identity/VOICE.md and
-feedback_reply_alignment_footer.md.
-
-Self-correct on your NEXT reply:
-  1. Acknowledge the slip briefly (one line) so James knows the hook caught it
-  2. Add the ALIGNMENT footer (vertical, code-fenced, per VOICE.md format)
-  3. Continue with the user's pending request
-
-Format reminder (wrap in triple-backtick code fence so whitespace renders):
-  NOW · STREAMS (7 streams, 🟢/🟡/⚪) · GOALS (top 3 stream-tagged) · NEED · NEXT
-
-If this fires repeatedly, the rule needs more reinforcement, not less.
+🔴 NEXT missing — add one line:
+  NEXT  <the move>
+  WHY   <the reason>
 EOF
 exit 2

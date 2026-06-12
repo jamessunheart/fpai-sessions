@@ -4,8 +4,9 @@
 # Per-hook disable: EMBER_PREFLIGHT_DISABLE_NARRATOR=1
 # Master disable:   EMBER_PREFLIGHT_DISABLE=1
 set -u
+# 2026-06-12: James simplified footer to NEXT + WHY only — narrator no longer required.
 [ "${EMBER_PREFLIGHT_DISABLE:-0}" = "1" ] && exit 0
-[ "${EMBER_PREFLIGHT_DISABLE_NARRATOR:-0}" = "1" ] && exit 0
+exit 0  # narrator check disabled per James 2026-06-12
 
 INPUT=$(cat)
 TRANSCRIPT=$(echo "$INPUT" | jq -r '.transcript_path // empty' 2>/dev/null)
