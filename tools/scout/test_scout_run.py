@@ -51,6 +51,27 @@ class ScoutRunTest(unittest.TestCase):
         (vault / "00_MEMORY" / "PROOF LOG.md").write_text("# PROOF LOG\n", encoding="utf-8")
         return vault
 
+    def test_success_preserves_existing_frontmatter_keys(self) -> None:
+        root = self.root()
+        vault = self.seed_vault(root)
+        (vault / "00_MEMORY" / "NEWS FOR YOU.md").write_text(
+            "---\nowner: ember\nstatus: stalled\n---\n# NEWS FOR YOU\n",
+            encoding="utf-8",
+        )
+
+        scout_run.run_if_due(
+            vault=vault,
+            config_dir=root / "config",
+            cursor_path=root / "config" / "last_run.txt",
+            disabled_path=root / "config" / ".disabled",
+            fixture_path=self.fixture(root),
+            today="2026-06-11",
+        )
+
+        news = (vault / "00_MEMORY" / "NEWS FOR YOU.md").read_text(encoding="utf-8")
+        self.assertIn("owner: ember", news.split("---", 2)[1])
+        self.assertIn("status: live (scout pipe - last run 2026-06-11)", news)
+
     def test_success_writes_both_feeds_cost_proof_and_cursor(self) -> None:
         root = self.root()
         vault = self.seed_vault(root)
