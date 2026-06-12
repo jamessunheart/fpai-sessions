@@ -86,19 +86,24 @@ def load_entries():
         except json.JSONDecodeError:
             continue
         et = e.get("event_type")
+        # Guard: malformed entries missing decision_id must not crash the digest.
+        if et in ("REVERSAL", "ACTIONS_TAKEN", "ANNOTATION") and not e.get("decision_id"):
+            continue
         if et == "REVERSAL":
             reversals[e["decision_id"]] = e
         elif et == "ACTIONS_TAKEN":
             actions[e["decision_id"]] = e
         elif et == "ANNOTATION":
             did = e["decision_id"]
-            annotations.setdefault(did, {})[e["field"]] = e["value"]
+            annotations.setdefault(did, {})[e.get("field")] = e.get("value")
         else:
+            if not e.get("decision_id"):
+                continue  # skip malformed decision records
             try:
                 e["_ts"] = datetime.fromisoformat(
                     e["started_at"].replace("Z", "+00:00")
                 ).timestamp()
-            except (KeyError, ValueError):
+            except (KeyError, ValueError, AttributeError):
                 e["_ts"] = 0
             decisions.append(e)
 
@@ -281,13 +286,7 @@ def send_to_telegram(text: str, creds: dict, test: bool = False) -> tuple[bool, 
         return False, f"missing creds: token={bool(token)} chat_id={bool(chat_id)}"
 
     if test:
-        text = (
-            "🟢 <b>Sunheart Brain · digest channel live</b>\n\n"
-            "<i>This is the first push from the substrate digest system. "
-            "You'll receive digests of decisions + reversal commands on a cadence.</i>\n\n"
-            f"<i>Source: <code>~/FPAI_Cockpit/tools/decisions/send_tg_digest.py</code></i>\n"
-            f"<i>Sent: {datetime.now(timezone.utc).isoformat()}</i>"
-        )
+        text = "hey — text channel working. —ember"
 
     url = f"{TG_API}/bot{token}/sendMessage"
     payload = {
@@ -344,10 +343,20 @@ def main():
     ap.add_argument("--since", default="24h", help="e.g. 24h, 48h, 7d")
     ap.add_argument("--all-open", action="store_true")
     ap.add_argument("--test", action="store_true", help="Send a one-line ping only")
+    ap.add_argument("--text", default=None, help="Send this exact text (plain) — skips digest building")
     ap.add_argument("--dry-run", action="store_true", help="Print formatted digest, don't send")
     args = ap.parse_args()
 
     creds = load_creds()
+
+    # Direct text send (used by the ambient responder for short plain replies).
+    # Also accepts text piped via stdin when --text is given with no value's worth.
+    if args.text is not None or (not sys.stdin.isatty() and not args.test):
+        text = args.text if args.text is not None else sys.stdin.read().strip()
+        if text:
+            ok, msg = send_to_telegram(text, creds, test=False)
+            print(f"{'✓' if ok else '✗'} {msg}")
+            sys.exit(0 if ok else 1)
 
     # Parse --since
     since = args.since

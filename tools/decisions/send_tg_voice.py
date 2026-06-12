@@ -147,6 +147,12 @@ def main():
         print(f"text too long ({len(text)} > 4096), truncating", file=sys.stderr)
         text = text[:4090] + "..."
 
+    # Log outbound text so we can read what was sent
+    _log_dir = HOME / ".config" / "fpai" / "tg_inbox" / "sent_log"
+    _log_dir.mkdir(parents=True, exist_ok=True)
+    _ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+    (_log_dir / f"{_ts}.txt").write_text(text)
+
     print(f"synthesizing · voice={args.voice} · {len(text)} chars", file=sys.stderr)
     audio = synthesize_voice(text, args.voice)
     if not audio:
