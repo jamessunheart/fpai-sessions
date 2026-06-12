@@ -1,5 +1,8 @@
 # SPEC · Financial Consolidation Hub
 
+> ⚠ SUPERSEDED 2026-06-12 by `SPEC_financial-hub-rung4.md` — consolidation scope folded
+> in there, plus anomaly watch + comms-hub digest + leak-scan gate. Build from the new spec.
+
 ## Source
 - From: James (2026-06-03, "build it") — the daily "one lever".
 - Why it matters: financial truth is scattered (TREASURY TODAY · ZEN VILLAGE ACCOUNTING · encrypted SENSITIVE RESOURCES · cost ledger · sol_live · banks/crypto/bullion). One consolidated view = James sees the whole picture in 10 seconds.
