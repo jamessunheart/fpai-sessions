@@ -7,7 +7,7 @@ recorded only as James-owned decisions.
 """
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 import json
@@ -59,7 +59,7 @@ BLOCKED_PRIVATE_PATTERNS = [
 
 
 def utc_now() -> str:
-    return datetime.utcnow().isoformat() + "Z"
+    return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
 def _read_json(path: Path, default: Any) -> Any:

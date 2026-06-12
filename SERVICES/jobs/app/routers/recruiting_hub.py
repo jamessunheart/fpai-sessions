@@ -25,6 +25,7 @@ templates_path = Path(__file__).parent.parent / "templates"
 templates = Jinja2Templates(directory=str(templates_path))
 
 ADMIN_KEY = os.getenv("RECRUITING_HUB_ADMIN_KEY") or os.getenv("JOBS_ADMIN_KEY")
+COOKIE_SECURE = os.getenv("RECRUITING_HUB_COOKIE_SECURE", "false").lower() == "true"
 AUTH_COOKIE = "recruiting_hub_admin"
 LOCAL_HOSTS = {"127.0.0.1", "::1", "localhost", "testclient"}
 
@@ -98,7 +99,6 @@ def _candidate_key(request: Request) -> Optional[str]:
     return (
         request.headers.get("x-admin-key")
         or request.cookies.get(AUTH_COOKIE)
-        or request.query_params.get("admin_key")
     )
 
 
@@ -169,7 +169,7 @@ async def recruiting_login(request: Request, admin_key: str = Form(...)):
         admin_key,
         max_age=60 * 60 * 12,
         httponly=True,
-        secure=False,
+        secure=COOKIE_SECURE,
         samesite="lax",
     )
     return redirect
