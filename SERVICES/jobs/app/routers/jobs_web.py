@@ -8,6 +8,7 @@ from fastapi.templating import Jinja2Templates
 from pathlib import Path
 import json
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -16,8 +17,11 @@ router = APIRouter()
 templates_path = Path(__file__).parent.parent / "templates"
 templates = Jinja2Templates(directory=str(templates_path))
 
-DATA_PATH = Path("/Users/jamessunheart/Development/SERVICES/jobs/data")
+DATA_PATH = Path(os.getenv("DATA_PATH", str(Path(__file__).parent.parent.parent / "data")))
 JOBS_FILE = DATA_PATH / "jobs.json"
+DATA_PATH.mkdir(parents=True, exist_ok=True)
+if not JOBS_FILE.exists():
+    JOBS_FILE.write_text("[]")
 
 
 @router.get("/jobs", response_class=HTMLResponse)

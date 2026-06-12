@@ -103,6 +103,139 @@ curl http://198.54.123.234:8008/jobs
 | `/api/jobs/{id}/applications` | GET | Get applications |
 | `/api/jobs/apply` | POST | Submit application |
 
+## Recruiting Hub Rung 4
+
+The gated recruiting hub lives inside this service at:
+
+```bash
+http://localhost:8008/recruiting
+```
+
+It seeds the first role spec, `Human Context Steward`, from the Rung 4 recruiting spec and stores data in the service `data/` directory:
+
+- `role_specs.json`
+- `candidates.json`
+- `recruiting_audit_log.json`
+
+### Recruiting Hub Endpoints
+
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/recruiting` | GET | Admin recruiting dashboard |
+| `/api/recruiting/roles` | GET | List role specs |
+| `/api/recruiting/roles` | POST | Create draft role spec |
+| `/api/recruiting/roles/{id}/approve` | POST | James approves role before screening |
+| `/api/recruiting/candidates` | GET | List candidates |
+| `/api/recruiting/review-queue` | GET | List candidates ordered by next review action |
+| `/api/recruiting/candidates` | POST | Add candidate without contact |
+| `/api/recruiting/candidates/{id}/status` | POST | Move candidate through inbox states |
+| `/api/recruiting/candidates/{id}/screen` | POST | AI/deterministic screening against approved rubric |
+| `/api/recruiting/candidates/{id}/contact-approval` | POST | Record James-gated contact approval |
+| `/api/recruiting/candidates/{id}/decision` | POST | Record James-only decision |
+| `/api/recruiting/roles/{id}/shortlist` | GET | Generate advisory shortlist packet |
+| `/api/recruiting/roles/{id}/launch-packet` | GET | Generate role post, rubric, sourcing, outreach, interview plan |
+| `/api/recruiting/candidates/{id}/evidence-map` | GET | Generate candidate evidence, inference, risk, unknowns, and next questions |
+| `/api/recruiting/audit-log` | GET | View approval and decision audit log |
+
+### Gate Rules
+
+- Role must be approved by James before candidate screening.
+- Candidate contact approval records channel, message, sender, and timing.
+- The hub records contact approval; it does not send outreach.
+- Final decisions require `actor: "james"`.
+- Screening scores are advisory and cannot mark a candidate hired.
+- Candidate contact approval requires `consent_status` of `candidate_submitted`, `james_authorized`, or `contacted`.
+- Candidate materials reject obvious secrets and highly sensitive identifiers such as private keys, password/API-key fields, and SSN-shaped values.
+- Launch packets and evidence maps are advisory review artifacts; they do not authorize contact or hiring.
+
+### Review Inbox States
+
+The candidate inbox uses explicit states so James sees what needs attention first:
+
+- `new`
+- `needs_screening`
+- `screened`
+- `needs_james_review`
+- `contact_approved`
+- `interviewing`
+- `decision_needed`
+- `archived`
+
+Final decision states are also allowed: `advance`, `hold`, `pass`, `offer`, and `hired`.
+
+The review queue prioritizes candidates that need James review or decisions above passive/archive states.
+
+### Human Context Steward Intake Fields
+
+The candidate intake form captures role-specific context:
+
+- Background
+- Why this role
+- Discretion example
+- AI collaboration example
+- Writing/context sample
+- Availability
+- Compensation expectations
+
+### Human Context Steward Launch Packet
+
+Use the dashboard `Launch Packet` button or call:
+
+```bash
+curl -H "X-Admin-Key: $RECRUITING_HUB_ADMIN_KEY" \
+  http://localhost:8008/api/recruiting/roles/human-context-steward/launch-packet
+```
+
+The generated packet includes:
+
+- Public role post
+- Private scoring rubric
+- Sourcing queries
+- Outreach drafts
+- Interview plan
+- Decision packet template
+
+Candidate evidence maps separate known evidence, AI inferences, risks, unknowns, and next questions so screening does not pretend to know more than the candidate materials support.
+
+### Admin Access
+
+Set an admin key before exposing the service beyond localhost:
+
+```bash
+export RECRUITING_HUB_ADMIN_KEY="use-a-long-random-value"
+```
+
+Browser users can sign in at `/recruiting/login`. API callers can pass the same key with either:
+
+```bash
+curl -H "X-Admin-Key: $RECRUITING_HUB_ADMIN_KEY" http://localhost:8008/api/recruiting/roles
+```
+
+or:
+
+```bash
+curl -H "Authorization: Bearer $RECRUITING_HUB_ADMIN_KEY" http://localhost:8008/api/recruiting/roles
+```
+
+When no admin key is configured, the hub allows localhost development access and blocks non-local access.
+
+### Privacy Boundary
+
+Store only role-relevant candidate materials, consent/source state, and operational notes. Do not store secrets, private medical/legal/financial details, intimate relationship context, or sensitive third-party context in the recruiting hub.
+
+### CORS
+
+By default, CORS is limited to:
+
+- `http://localhost:8008`
+- `http://127.0.0.1:8008`
+
+Override only when needed:
+
+```bash
+export CORS_ALLOW_ORIGINS="https://your-admin-domain.example"
+```
+
 ## Configuration
 
 ### Enable AI Screening
