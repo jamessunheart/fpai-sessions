@@ -94,6 +94,75 @@ for e in entries:
         print(f'[{ts}] {t.upper()}: {text}')
 ")
 
+BUILD_CAPTURE_JSON="[]"
+if [[ "${FPAI_BUILD_LOOP_DISABLE:-0}" != "1" ]]; then
+  BUILD_CAPTURE_JSON=$(PYTHONPATH="/Users/jamessunheart/FPAI_Cockpit:${PYTHONPATH:-}" \
+    INBOX="$INBOX" LAST_ID="$LAST_ID" SEND_DIGEST="$SEND_DIGEST" python3 - <<'PY' 2>/dev/null || echo "[]"
+import json
+import os
+from pathlib import Path
+
+from tools.decisions import send_tg_digest
+from tools.queue import build_intent_router
+
+inbox = Path(os.environ["INBOX"])
+last_id = int(os.environ["LAST_ID"])
+captured = []
+if inbox.exists():
+    for line in inbox.read_text(encoding="utf-8", errors="ignore").splitlines():
+        if not line.strip():
+            continue
+        try:
+            msg = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        update_id = int(msg.get("update_id", 0) or 0)
+        if update_id <= last_id:
+            continue
+        path = build_intent_router.capture(msg)
+        if not path:
+            continue
+        slug = build_intent_router.slug_from_path(path)
+        captured.append({"update_id": update_id, "slug": slug, "path": str(path)})
+        send_tg_digest.send_to_telegram(
+            f"got it — queued `{slug}` for build. —ember",
+            send_tg_digest.load_creds(),
+        )
+print(json.dumps(captured))
+PY
+)
+  NEW_ENTRIES=$(BUILD_CAPTURE_JSON="$BUILD_CAPTURE_JSON" python3 -c "
+import json
+import os
+from pathlib import Path
+
+captured = {int(item.get('update_id', 0)) for item in json.loads(os.environ.get('BUILD_CAPTURE_JSON') or '[]')}
+p = Path('$INBOX')
+entries = []
+for line in p.read_text().splitlines():
+    if not line.strip():
+        continue
+    try:
+        e = json.loads(line)
+        if e.get('update_id', 0) > $LAST_ID and int(e.get('update_id', 0) or 0) not in captured:
+            entries.append(e)
+    except Exception:
+        pass
+
+for e in entries:
+    t = e.get('type', '?')
+    text = e.get('text', '(no text)')
+    ts = e.get('received_at', '')[:19]
+    dur = e.get('duration_s', '')
+    if t == 'voice':
+        print(f'[{ts}] VOICE NOTE ({dur}s): {text}')
+    elif t == 'text':
+        print(f'[{ts}] TEXT: {text}')
+    else:
+        print(f'[{ts}] {t.upper()}: {text}')
+")
+fi
+
 # === Smart-loop context (intent queue + rolling history) ===
 # Use single-quoted python -c with env-var passing to avoid bash interpreting Python f-strings
 

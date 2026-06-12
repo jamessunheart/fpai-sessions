@@ -75,6 +75,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-12 · SPEC_voice-to-intent-bridge + SPEC_builder-loop-close · branch `feat/headless-build`
+
+- **Status:** done / awaiting diff review
+- **Files changed:** `tools/__init__.py`; `tools/queue/build_intent_router.py`; `tools/queue/test_build_intent_router.py`; `tools/queue/build_loop_watcher.py`; `tools/queue/test_build_loop_watcher.py`; `tools/build_loop/run_codex.sh`; `tools/decisions/ember_check_in.sh`; `tools/decisions/ember_responder_prompt.md`; `tools/decisions/daily_sync.py`; `core/BUILD/specs/.gitkeep`; `docs/codex/HANDOFF.md`
+- **Summary:** Built the Telegram voice/text `build:` bridge and Rung 4 watcher. `build_intent_router.capture(message)` now writes idempotent `intent-<YYYYMMDD>-<hex>-<slug>.md` files with `status: open`, source metadata, raw message text, and cleaned description; text and voice transcription paths are covered. `ember_check_in.sh` captures `build:` messages before the normal responder, sends `got it — queued <slug> for build. —ember`, and skips those messages in the LLM prompt. `build_loop_watcher.watch_once()` scans open intent files, writes generated specs under `core/BUILD/specs/`, runs `run_codex.sh --spec`, writes reviews, transitions status to `review-pending` or `build-failed`, appends proof, and sends the merge/reject TG notification while preserving James's merge gate. `daily_sync.py` calls the watcher after the capture tick under `FPAI_BUILD_LOOP_DISABLE=1`.
+- **Tests:** `python3 -m pytest tools/queue/test_build_intent_router.py -v` (6 passed); `python3 -m pytest tools/queue/test_build_loop_watcher.py -v` (4 passed); `python3 -m pytest tools/queue/test_build_intent_router.py tools/queue/test_build_loop_watcher.py -v` (10 passed); `python3 -m py_compile tools/queue/build_intent_router.py tools/queue/build_loop_watcher.py tools/decisions/daily_sync.py`; `bash -n tools/build_loop/run_codex.sh tools/decisions/ember_check_in.sh`; `python3 tools/queue/build_loop_watcher.py --dry-run` (`No open intents.`); `tools/build_loop/run_codex.sh --spec docs/codex/specs/SPEC_voice-to-intent-bridge.md --dry-run`; scoped `git diff --check`.
+- **Risks:** Live Telegram capture/notification was not exercised from the real bot in this run; tests use fixtures and injected senders. `daily_sync.py` can now launch the full build loop when open intents exist, so keep `FPAI_BUILD_LOOP_DISABLE=1` available as the kill switch. The watcher updates intent frontmatter as required by the spec even though the file list called intents read-only elsewhere.
+- **Rollback:** revert the files above; remove `core/BUILD/specs/` if no generated specs are needed; reset any future intent status manually from `review-pending` or `build-failed` back to `open` if reprocessing is desired. No merge, push, deploy, money movement, or secret access was performed.
+- **Intent solved:** voice/text `build:` now flows to an intent file; Rung 4 can draft, build, review, notify, and stop at James's merge/reject gate.
+- **Downstream intent unlocked:** James can speak `build: <hub or tool>` to queue builder work, and the daily/responder ticks can carry it through to a review packet.
+- **Questions for Ember/James:** send one real `build: test intent` to @sunheartbrain_bot when ready to verify the live TG confirmation and first real Rung 4 pickup.
+
 ### 2026-06-10 · SPEC_comms-hub-rung4 · branch `feat/headless-build`
 
 - **Status:** done / awaiting diff review

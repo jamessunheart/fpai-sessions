@@ -22,6 +22,10 @@ try:
     from tools.queue import build as human_edge_queue
 except Exception:
     human_edge_queue = None
+try:
+    from tools.queue import build_loop_watcher
+except Exception:
+    build_loop_watcher = None
 
 VAULT = Path(os.environ.get(
     "FPAI_VAULT",
@@ -1147,10 +1151,19 @@ def main():
     # it only RECORDS James's own exact gate-verbs; execution stays Reserved-Class)
     verbs_ok = _guarded("tools/queue/verb_router.py")
     # build-intent lane (Ember-as-builder): captures "build: ..." Telegram messages
-    # into core/BUILD/intents/ for Ember to spec → build → review. Capture only.
-    build_intent_ok = _guarded("tools/queue/build_intent_router.py")
+    # into core/BUILD/intents/ for Ember to spec -> build -> review.
+    if os.environ.get("FPAI_BUILD_LOOP_DISABLE") == "1":
+        build_intent_ok = False
+        build_loop_ok = False
+    else:
+        build_intent_ok = _guarded("tools/queue/build_intent_router.py")
+        try:
+            build_loop_watcher.watch_once() if build_loop_watcher else []
+            build_loop_ok = build_loop_watcher is not None
+        except Exception:
+            build_loop_ok = False
     tasks = my_tasks(doc)
-    print(f"daily_sync v9 → {note.name}: refreshed {stamp_full} {place or ''} · open={ndec} · decided_now={len(decided_now)} · my_tasks={len(tasks)} · streak={nships} · home_stamp={int(home_refreshed)} · home_next={int(home_next)} · home_decide={int(home_decide)} · index={int(index_ok)} · fresh={int(fresh_ok)} · scout={int(scout_ok)} · build_intent={int(build_intent_ok)}")
+    print(f"daily_sync v9 → {note.name}: refreshed {stamp_full} {place or ''} · open={ndec} · decided_now={len(decided_now)} · my_tasks={len(tasks)} · streak={nships} · home_stamp={int(home_refreshed)} · home_next={int(home_next)} · home_decide={int(home_decide)} · index={int(index_ok)} · fresh={int(fresh_ok)} · scout={int(scout_ok)} · build_intent={int(build_intent_ok)} · build_loop={int(build_loop_ok)}")
 
 if __name__ == "__main__":
     main()
