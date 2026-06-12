@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="WhiteRock Ministry - Financial Sovereignty & Community Support Through Private Membership. CORA vitality credits, community blessings, and 508(c)(1)(A) compliant services.">
+    <title>WhiteRock Ministry - Financial Sovereignty & Community Blessings</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e3a5f;
+            --primary-light: #2c5282;
+            --accent: #c9a962;
+            --accent-light: #dcc88e;
+            --success: #10b981;
+            --bg-light: #f8f6f3;
+            --text-dark: #1a1a2e;
+            --text-muted: #4a5568;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif; 
+            line-height: 1.7; 
+            color: var(--text-dark);
+            background: var(--bg-light);
+        }
+        
+        h1, h2, h3, h4 {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        
+        /* Navigation */
+        .nav {
+            background: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        
+        .nav-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--primary);
+        }
+        
+        .nav-brand-icon { font-size: 1.5rem; }
+        .nav-brand-text { 
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem; 
+            font-weight: 600; 
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        
+        .nav-links a:hover { color: var(--primary); }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover { background: var(--primary-light); }
+        
+        .btn-accent {
+            background: var(--accent);
+            color: var(--primary);
+        }
+        
+        .btn-accent:hover { background: var(--accent-light); }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 100px 24px 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+        
+        .hero-content {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        /* Sections */
+        .section {
+            padding: 80px 24px;
+        }
+        
+        .section-alt {
+            background: white;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .section-title p {
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+        
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+        }
+        
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+        
+        .feature-card h3 {
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+            font-size: 1.25rem;
+        }
+        
+        .feature-card p {
+            color: var(--text-muted);
+        }
+        
+        /* System Diagram */
+        .diagram-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.08);
+        }
+        
+        .diagram-svg {
+            width: 100%;
+            height: auto;
+        }
+        
+        /* How It Works */
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .step {
+            text-align: center;
+            padding: 1.5rem;
+        }
+        
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 auto 1.25rem;
+            font-family: 'Cormorant Garamond', serif;
+        }
+        
+        .step h3 {
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+        }
+        
+        .step p {
+            color: var(--text-muted);
+        }
+        
+        /* CORA Tiers */
+        .tiers-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+        
+        @media (max-width: 900px) {
+            .tiers-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        
+        @media (max-width: 500px) {
+            .tiers-grid { grid-template-columns: 1fr; }
+        }
+        
+        .tier-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 2px solid transparent;
+            transition: border-color 0.2s;
+        }
+        
+        .tier-card:hover {
+            border-color: var(--accent);
+        }
+        
+        .tier-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .tier-card h3 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .tier-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .tier-threshold {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #e5e7eb;
+            font-size: 0.85rem;
+            color: var(--accent);
+            font-weight: 600;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 80px 24px;
+            text-align: center;
+        }
+        
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .cta-section p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Footer */
+        footer {
+            background: #0f172a;
+            color: white;
+            padding: 60px 24px 40px;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+        
+        @media (max-width: 768px) {
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+        }
+        
+        @media (max-width: 500px) {
+            .footer-grid { grid-template-columns: 1fr; }
+        }
+        
+        .footer-brand h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .footer-brand p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        .footer-links h4 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+        
+        .footer-links a {
+            display: block;
+            color: #94a3b8;
+            text-decoration: none;
+            margin-bottom: 0.5rem;
+            transition: color 0.2s;
+        }
+        
+        .footer-links a:hover { color: white; }
+        
+        .footer-bottom {
+            border-top: 1px solid #1e293b;
+            padding-top: 2rem;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+        
+        .footer-bottom p {
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.25rem; }
+            .nav-links { display: none; }
+            .section-title h2 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container nav-inner">
+            <a href="/" class="nav-brand">
+                <span class="nav-brand-icon">🙏</span>
+                <span class="nav-brand-text">WhiteRock Ministry</span>
+            </a>
+            <div class="nav-links">
+                <a href="#journey">Your Journey</a>
+                <a href="#blessings">Blessings</a>
+                <a href="#cora">CORA System</a>
+                <a href="/portal" class="btn btn-primary">Member Portal</a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Financial Sovereignty & Community Support</h1>
+            <p>WhiteRock Ministry is a 508(c)(1)(A) Private Membership Association providing trust structure guidance, community blessings, and the CORA vitality system — all under full legal compliance.</p>
+            <div class="hero-buttons">
+                <a href="/portal" class="btn btn-accent">🙏 Start Your Journey</a>
+                <a href="#journey" class="btn btn-outline" style="border-color: white; color: white;">How It Works</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- YOUR JOURNEY Section -->
+    <section class="section section-alt" id="journey">
+        <div class="container">
+            <div class="section-title">
+                <h2>Your Journey to Community Support</h2>
+                <p>Follow these steps to become an eligible member who can receive community blessings</p>
+            </div>
+            
+            <div style="max-width: 900px; margin: 0 auto;">
+                <!-- Journey Timeline -->
+                <div style="display: flex; flex-direction: column; gap: 0;">
+                    
+                    <!-- Step 1 -->
+                    <div style="display: flex; gap: 2rem; align-items: flex-start; position: relative;">
+                        <div style="width: 80px; flex-shrink: 0; text-align: center;">
+                            <div style="width: 60px; height: 60px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; font-family: 'Cormorant Garamond', serif; margin: 0 auto;">1</div>
+                            <div style="width: 4px; height: 60px; background: linear-gradient(to bottom, var(--primary), var(--accent)); margin: 0 auto;"></div>
+                        </div>
+                        <div style="flex: 1; padding-bottom: 2rem;">
+                            <h3 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.4rem;">Register & Complete Profile</h3>
+                            <p style="color: var(--text-muted); margin-bottom: 1rem;">Create your WhiteRock membership account with your full information.</p>
+                            <div style="background: #f0fdf4; padding: 1rem; border-radius: 8px; border-left: 4px solid var(--success);">
+                                <strong style="color: #166534;">✓ What you'll do:</strong>
+                                <span style="color: #166534;"> Email, name, address → Profile complete</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 2 -->
+                    <div style="display: flex; gap: 2rem; align-items: flex-start; position: relative;">
+                        <div style="width: 80px; flex-shrink: 0; text-align: center;">
+                            <div style="width: 60px; height: 60px; background: var(--accent); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; font-family: 'Cormorant Garamond', serif; margin: 0 auto;">2</div>
+                            <div style="width: 4px; height: 60px; background: linear-gradient(to bottom, var(--accent), var(--primary)); margin: 0 auto;"></div>
+                        </div>
+                        <div style="flex: 1; padding-bottom: 2rem;">
+                            <h3 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.4rem;">Sign the 508(c)(1)(A) Disclosure</h3>
+                            <p style="color: var(--text-muted); margin-bottom: 1rem;">Read and acknowledge the charitable gift disclosure — required for legal compliance.</p>
+                            <div style="background: #fef3c7; padding: 1rem; border-radius: 8px; border-left: 4px solid var(--accent);">
+                                <strong style="color: #92400e;">⚠️ Important:</strong>
+                                <span style="color: #92400e;"> You must scroll to the bottom AND check the box. This protects both you and the ministry.</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 3 -->
+                    <div style="display: flex; gap: 2rem; align-items: flex-start; position: relative;">
+                        <div style="width: 80px; flex-shrink: 0; text-align: center;">
+                            <div style="width: 60px; height: 60px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; font-family: 'Cormorant Garamond', serif; margin: 0 auto;">3</div>
+                            <div style="width: 4px; height: 60px; background: linear-gradient(to bottom, var(--primary), var(--accent)); margin: 0 auto;"></div>
+                        </div>
+                        <div style="flex: 1; padding-bottom: 2rem;">
+                            <h3 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.4rem;">Submit Tithes & Earn CORA</h3>
+                            <p style="color: var(--text-muted); margin-bottom: 1rem;">Make sacred contributions to support the community. You'll earn CORA vitality credits at milestones.</p>
+                            <div style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #e5e7eb;">
+                                <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+                                    <div><span style="color: var(--accent); font-weight: 600;">💝 Tithe</span> → Earn CORA</div>
+                                    <div><span style="color: var(--accent); font-weight: 600;">🤝 Service</span> → Earn CORA</div>
+                                    <div><span style="color: var(--accent); font-weight: 600;">✨ Engage</span> → Stay Active</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 4 - The Wait -->
+                    <div style="display: flex; gap: 2rem; align-items: flex-start; position: relative;">
+                        <div style="width: 80px; flex-shrink: 0; text-align: center;">
+                            <div style="width: 60px; height: 60px; background: #e0e7ff; color: #3730a3; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; font-family: 'Cormorant Garamond', serif; margin: 0 auto; border: 3px dashed #818cf8;">30</div>
+                            <div style="width: 4px; height: 60px; background: linear-gradient(to bottom, #818cf8, var(--success)); margin: 0 auto;"></div>
+                        </div>
+                        <div style="flex: 1; padding-bottom: 2rem;">
+                            <h3 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.4rem;">Wait 30 Days as a Member</h3>
+                            <p style="color: var(--text-muted); margin-bottom: 1rem;">New members must be part of the community for at least 30 days before requesting blessings.</p>
+                            <div style="background: #ede9fe; padding: 1rem; border-radius: 8px; border-left: 4px solid #8b5cf6;">
+                                <strong style="color: #5b21b6;">⏳ Why?</strong>
+                                <span style="color: #5b21b6;"> This ensures commitment to the community and prevents abuse of the blessing system.</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 5 - Request Blessing -->
+                    <div style="display: flex; gap: 2rem; align-items: flex-start;">
+                        <div style="width: 80px; flex-shrink: 0; text-align: center;">
+                            <div style="width: 70px; height: 70px; background: linear-gradient(135deg, var(--success), #059669); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; margin: 0 auto; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);">🙏</div>
+                        </div>
+                        <div style="flex: 1;">
+                            <h3 style="color: var(--success); margin-bottom: 0.5rem; font-size: 1.4rem;">Request Community Blessing!</h3>
+                            <p style="color: var(--text-muted); margin-bottom: 1rem;">When you meet all eligibility requirements, the "Request Blessing" option appears in your dashboard.</p>
+                            <div style="background: #dcfce7; padding: 1.25rem; border-radius: 8px; border: 2px solid var(--success);">
+                                <strong style="color: #166534; display: block; margin-bottom: 0.5rem;">✓ Eligibility Checklist:</strong>
+                                <div style="color: #166534; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.5rem;">
+                                    <div>☑️ Profile complete</div>
+                                    <div>☑️ Disclosure signed</div>
+                                    <div>☑️ Member 30+ days</div>
+                                    <div>☑️ Community capacity not paused</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                <!-- CTA -->
+                <div style="text-align: center; margin-top: 3rem;">
+                    <a href="/portal" class="btn btn-accent" style="font-size: 1.1rem; padding: 1rem 2rem;">🙏 Start Your Journey — Register Now</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="section" id="blessings">
+        <div class="container">
+            <div class="section-title">
+                <h2>Types of Community Blessings</h2>
+                <p>Discretionary support for community members in need — paid directly to vendors, not members.</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🏠</div>
+                    <h3>Housing Support</h3>
+                    <p>Rent assistance and housing-related blessings paid directly to landlords and vendors.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🏥</div>
+                    <h3>Medical Assistance</h3>
+                    <p>Help with medical expenses, paid directly to healthcare providers.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Utilities Support</h3>
+                    <p>Assistance with electricity, water, and essential services.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎓</div>
+                    <h3>Education Aid</h3>
+                    <p>Support for educational expenses and skill development.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- System Diagram -->
+    <section class="section section-alt" id="how-it-works">
+        <div class="container">
+            <div class="section-title">
+                <h2>How the Blessings System Works</h2>
+                <p>A transparent, compliant process from request to disbursement</p>
+            </div>
+            
+            <div class="diagram-container">
+                <svg class="diagram-svg" viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Background -->
+                    <defs>
+                        <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#f8f6f3"/>
+                            <stop offset="100%" style="stop-color:#fff"/>
+                        </linearGradient>
+                        <linearGradient id="primaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#1e3a5f"/>
+                            <stop offset="100%" style="stop-color:#2c5282"/>
+                        </linearGradient>
+                        <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#c9a962"/>
+                            <stop offset="100%" style="stop-color:#dcc88e"/>
+                        </linearGradient>
+                        <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.1"/>
+                        </filter>
+                    </defs>
+                    
+                    <!-- Title -->
+                    <text x="400" y="35" text-anchor="middle" font-family="Cormorant Garamond, Georgia" font-size="24" font-weight="600" fill="#1e3a5f">WhiteRock Blessings Engine Flow</text>
+                    
+                    <!-- Member Box -->
+                    <g transform="translate(50, 80)">
+                        <rect width="140" height="100" rx="12" fill="url(#primaryGrad)" filter="url(#shadow)"/>
+                        <text x="70" y="40" text-anchor="middle" fill="white" font-size="28">👤</text>
+                        <text x="70" y="70" text-anchor="middle" fill="white" font-family="DM Sans" font-weight="600" font-size="14">MEMBER</text>
+                        <text x="70" y="88" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="11">Submits Request</text>
+                    </g>
+                    
+                    <!-- Arrow 1 -->
+                    <path d="M195 130 L270 130" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arrowhead)"/>
+                    <defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1e3a5f"/></marker></defs>
+                    
+                    <!-- Request Box -->
+                    <g transform="translate(280, 80)">
+                        <rect width="160" height="100" rx="12" fill="white" stroke="#e5e7eb" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="80" y="40" text-anchor="middle" font-size="28">📋</text>
+                        <text x="80" y="65" text-anchor="middle" fill="#1e3a5f" font-family="DM Sans" font-weight="600" font-size="13">BLESSING REQUEST</text>
+                        <text x="80" y="82" text-anchor="middle" fill="#64748b" font-size="10">Category • Amount</text>
+                        <text x="80" y="95" text-anchor="middle" fill="#64748b" font-size="10">Vendor Info</text>
+                    </g>
+                    
+                    <!-- Arrow 2 -->
+                    <path d="M445 130 L520 130" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arrowhead)"/>
+                    
+                    <!-- Committee Box -->
+                    <g transform="translate(530, 80)">
+                        <rect width="160" height="100" rx="12" fill="url(#goldGrad)" filter="url(#shadow)"/>
+                        <text x="80" y="40" text-anchor="middle" font-size="28">⚖️</text>
+                        <text x="80" y="65" text-anchor="middle" fill="#1e3a5f" font-family="DM Sans" font-weight="600" font-size="13">COMMITTEE REVIEW</text>
+                        <text x="80" y="82" text-anchor="middle" fill="#1e3a5f" font-size="10">Compliance Check</text>
+                        <text x="80" y="95" text-anchor="middle" fill="#1e3a5f" font-size="10">✓ Approval Required</text>
+                    </g>
+                    
+                    <!-- State Machine Box -->
+                    <g transform="translate(200, 220)">
+                        <rect width="400" height="120" rx="16" fill="white" stroke="#1e3a5f" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="200" y="30" text-anchor="middle" fill="#1e3a5f" font-family="Cormorant Garamond" font-weight="600" font-size="16">State Machine</text>
+                        
+                        <!-- States -->
+                        <g transform="translate(30, 50)">
+                            <rect width="60" height="28" rx="4" fill="#fef3c7"/>
+                            <text x="30" y="19" text-anchor="middle" fill="#92400e" font-size="10" font-weight="500">Pending</text>
+                        </g>
+                        <text x="105" y="69" fill="#64748b">→</text>
+                        <g transform="translate(115, 50)">
+                            <rect width="60" height="28" rx="4" fill="#dbeafe"/>
+                            <text x="30" y="19" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="500">Review</text>
+                        </g>
+                        <text x="190" y="69" fill="#64748b">→</text>
+                        <g transform="translate(200, 50)">
+                            <rect width="70" height="28" rx="4" fill="#dcfce7"/>
+                            <text x="35" y="19" text-anchor="middle" fill="#166534" font-size="10" font-weight="500">Approved</text>
+                        </g>
+                        <text x="285" y="69" fill="#64748b">→</text>
+                        <g transform="translate(295, 50)">
+                            <rect width="70" height="28" rx="4" fill="#e0e7ff"/>
+                            <text x="35" y="19" text-anchor="middle" fill="#3730a3" font-size="10" font-weight="500">Disbursed</text>
+                        </g>
+                        
+                        <text x="200" y="105" text-anchor="middle" fill="#64748b" font-size="10">All transitions logged • Compliance flag required for approval</text>
+                    </g>
+                    
+                    <!-- Vendor Payment -->
+                    <g transform="translate(50, 380)">
+                        <rect width="180" height="90" rx="12" fill="#dcfce7" filter="url(#shadow)"/>
+                        <text x="90" y="35" text-anchor="middle" font-size="24">🏪</text>
+                        <text x="90" y="58" text-anchor="middle" fill="#166534" font-family="DM Sans" font-weight="600" font-size="13">VENDOR DIRECT</text>
+                        <text x="90" y="75" text-anchor="middle" fill="#166534" font-size="10">Landlord • Hospital • Utility</text>
+                    </g>
+                    
+                    <!-- Arrow to vendor -->
+                    <path d="M400 340 L400 380 L235 380" stroke="#10b981" stroke-width="2" marker-end="url(#arrowhead2)" stroke-dasharray="5,3"/>
+                    <defs><marker id="arrowhead2" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#10b981"/></marker></defs>
+                    <text x="320" y="365" fill="#10b981" font-size="10">Payment to Vendor</text>
+                    
+                    <!-- CORA System -->
+                    <g transform="translate(300, 380)">
+                        <rect width="200" height="90" rx="12" fill="url(#goldGrad)" filter="url(#shadow)"/>
+                        <text x="100" y="35" text-anchor="middle" font-size="24">✨</text>
+                        <text x="100" y="58" text-anchor="middle" fill="#1e3a5f" font-family="DM Sans" font-weight="600" font-size="13">CORA VITALITY SYSTEM</text>
+                        <text x="100" y="75" text-anchor="middle" fill="#1e3a5f" font-size="10">Non-transferable • Decay after 12mo</text>
+                    </g>
+                    
+                    <!-- Arrow from member to CORA -->
+                    <path d="M120 180 L120 420 L295 420" stroke="#c9a962" stroke-width="2" marker-end="url(#arrowhead3)"/>
+                    <defs><marker id="arrowhead3" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#c9a962"/></marker></defs>
+                    <text x="175" y="300" fill="#c9a962" font-size="10" transform="rotate(-90, 130, 300)">Earns CORA</text>
+                    
+                    <!-- Audit Trail -->
+                    <g transform="translate(560, 380)">
+                        <rect width="180" height="90" rx="12" fill="#f1f5f9" stroke="#94a3b8" stroke-dasharray="4,2" filter="url(#shadow)"/>
+                        <text x="90" y="35" text-anchor="middle" font-size="24">🔒</text>
+                        <text x="90" y="58" text-anchor="middle" fill="#475569" font-family="DM Sans" font-weight="600" font-size="13">AUDIT TRAIL</text>
+                        <text x="90" y="75" text-anchor="middle" fill="#64748b" font-size="10">508(c)(1)(A) Compliance</text>
+                    </g>
+                    
+                    <!-- Dotted lines to audit -->
+                    <path d="M610 180 L710 180 L710 380" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,2"/>
+                    <path d="M600 340 L650 380" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,2"/>
+                    
+                    <!-- Legend -->
+                    <g transform="translate(620, 240)">
+                        <text x="0" y="0" fill="#64748b" font-size="11" font-weight="600">TRUST FIREWALL</text>
+                        <rect x="0" y="10" width="120" height="40" rx="6" fill="#fee2e2" stroke="#ef4444" stroke-dasharray="3,2"/>
+                        <text x="60" y="35" text-anchor="middle" fill="#991b1b" font-size="10">❌ No Treasury Links</text>
+                    </g>
+                </svg>
+            </div>
+            
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Submit Request</h3>
+                    <p>Eligible members submit blessing requests with category, amount, and vendor details.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Committee Review</h3>
+                    <p>Distribution Committee reviews with full member context. Compliance flag required for approval.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Vendor Payment</h3>
+                    <p>Blessings paid directly to vendors (landlords, hospitals, utilities) — not to members.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Full Audit Trail</h3>
+                    <p>Every action logged for 508(c)(1)(A) compliance verification.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CORA System Section -->
+    <section class="section" id="cora">
+        <div class="container">
+            <div class="section-title">
+                <h2>CORA Vitality System</h2>
+                <p>Non-transferable credits representing community engagement and standing — not monetary value.</p>
+            </div>
+            
+            <div class="tiers-grid">
+                <div class="tier-card">
+                    <div class="tier-icon">🌱</div>
+                    <h3>Seedling</h3>
+                    <p>New member beginning their journey</p>
+                    <div class="tier-threshold">0+ CORA • Cap: 1,000</div>
+                </div>
+                <div class="tier-card">
+                    <div class="tier-icon">🌿</div>
+                    <h3>Sprout</h3>
+                    <p>Active participant in community</p>
+                    <div class="tier-threshold">500+ CORA • Cap: 2,500</div>
+                </div>
+                <div class="tier-card">
+                    <div class="tier-icon">🌟</div>
+                    <h3>Steward</h3>
+                    <p>Committed member with voting rights</p>
+                    <div class="tier-threshold">2,000+ CORA • Cap: 5,000</div>
+                </div>
+                <div class="tier-card">
+                    <div class="tier-icon">👑</div>
+                    <h3>Elder</h3>
+                    <p>Senior member, committee eligible</p>
+                    <div class="tier-threshold">5,000+ CORA • Cap: 10,000</div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 3rem; padding: 2rem; background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                <h3 style="color: var(--primary); margin-bottom: 1rem;">How to Earn CORA</h3>
+                <div style="display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; color: var(--text-muted);">
+                    <div>💝 <strong>Tithes</strong> — Contributions at milestones</div>
+                    <div>🤝 <strong>Service</strong> — Verified community hours</div>
+                    <div>✨ <strong>Engagement</strong> — Admin recognition</div>
+                </div>
+                <p style="margin-top: 1.5rem; color: var(--text-muted); font-size: 0.9rem;">
+                    <strong>Decay:</strong> 10% monthly after 12 months inactivity • <strong>Warning:</strong> Email 30 days before first decay
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Join the WhiteRock Community</h2>
+            <p>Access the Member Portal to manage your profile, submit tithes, track CORA, and request community blessings.</p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="/portal" class="btn btn-accent">🙏 Member Portal</a>
+                <a href="/docs" class="btn btn-outline" style="border-color: white; color: white;">📚 API Documentation</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <h3>🙏 WhiteRock Ministry</h3>
+                    <p>508(c)(1)(A) Private Membership Association providing community support through the CORA vitality system and discretionary blessings distribution.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Platform</h4>
+                    <a href="/portal">Member Portal</a>
+                    <a href="/admin">Admin Dashboard</a>
+                    <a href="/docs">API Documentation</a>
+                    <a href="/health">System Status</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Resources</h4>
+                    <a href="#blessings">Blessings System</a>
+                    <a href="#cora">CORA Tiers</a>
+                    <a href="#how-it-works">How It Works</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Compliance</h4>
+                    <a href="#">508(c)(1)(A) Info</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p><strong>Important Disclaimers:</strong></p>
+                <p>Blessings are discretionary gifts, not entitlements. CORA represents community vitality, not monetary value.</p>
+                <p>All contributions are irrevocable charitable gifts. This system has ZERO connection to any treasury/trading systems.</p>
+                <p style="margin-top: 1rem;">© 2026 WhiteRock Ministry. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
+

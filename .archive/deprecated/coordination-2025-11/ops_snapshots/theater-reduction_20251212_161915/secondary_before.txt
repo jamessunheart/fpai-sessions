@@ -1,0 +1,248 @@
+=== SECONDARY SNAPSHOT ===
+nc-ph-3016
+Fri Dec 12 04:19:14 PM UTC 2025
+
+--- running services (filtered) ---
+  ai-brain.service                           loaded active running FPAI AI Brain v4.0 - Multi-Provider Intelligence
+  ai-orchestrator.service                    loaded active running FPAI AI Optimization Orchestrator
+  autonomous-brain.service                   loaded active running Autonomous Brain - Self-Improving Intelligence
+  autonomous-builder.service                 loaded active running FPAI Autonomous Builder Daemon
+  fpai-ai-gateway.service                    loaded active running FPAI AI Gateway - Intelligence Super Highway
+  fpai-aria.service                          loaded active running ARIA - Autonomous Recursive Intelligence Assistant
+  fpai-autonomous-healer.service             loaded active running FPAI Autonomous Healer - Self-Healing Intelligence
+  fpai-aware-brain.service                   loaded active running FPAI Aware Brain (Context-Aware AI)
+  fpai-builder.service                       loaded active running FPAI Autonomous Builder - Self-Improving Build Pipeline
+  fpai-consciousness-optimizer.service       loaded active running FPAI consciousness_optimizer Service
+  fpai-consciousness_api.service             loaded active running FPAI consciousness_api Service
+  fpai-consciousness_dashboard.service       loaded active running FPAI consciousness_dashboard Service
+  fpai-consciousness_decision_engine.service loaded active running FPAI consciousness_decision_engine Service
+  fpai-consciousness_evolution.service       loaded active running FPAI consciousness_evolution Service
+  fpai-consciousness_feeder.service          loaded active running FPAI consciousness_feeder Service
+  fpai-consciousness_gateway.service         loaded active running FPAI consciousness_gateway Service
+  fpai-consciousness_network.service         loaded active running FPAI consciousness_network Service
+  fpai-consciousness_verifier.service        loaded active running FPAI consciousness_verifier Service
+  fpai-data-service.service                  loaded active running FPAI Data Service - Intelligence Collection
+  fpai-domain-monitor.service                loaded active running FPAI Domain Monitor - SSL and Domain Health
+  fpai-evolution.service                     loaded active running FPAI Autonomous Evolution Daemon
+  fpai-gateway.service                       loaded active running FPAI Public AI Gateway - Universal AI API
+  fpai-improver.service                      loaded active running FPAI Quality Improvement Daemon
+  fpai-innovator.service                     loaded active running FPAI Innovation Scanner - Discovers Improvement Opportunities
+  fpai-intelligence-core.service             loaded active running FPAI Intelligence Core v2.0 - Central Nervous System
+  fpai-intelligence-daemon.service           loaded active running FPAI Intelligence Daemon v2.0 - Proactive Thinking Loop
+  fpai-intelligence-dashboard.service        loaded active running FPAI Intelligence Dashboard - Unified Status View
+  fpai-intelligence-hub.service              loaded active running FPAI Intelligence Hub - Central AI Coordinator
+  fpai-intelligence.service                  loaded active running FPAI Intelligence Daemon
+  fpai-local-worker.service                  loaded active running FPAI Local Worker - GPU Bridge Integration
+  fpai-night-watch.service                   loaded active running FPAI Unified Brain - Complete System Intelligence
+  fpai-proactive-watchdog.service            loaded active running FPAI Proactive Watchdog - Always-On Intelligence
+  fpai-reports-api.service                   loaded active running FPAI Intelligence Reports API
+  fpai-user-service.service                  loaded active running FPAI User Account Service
+  fpai-webhooks.service                      loaded active running FPAI Webhook Receiver
+  intelligence-cycle.service                 loaded active running FPAI Intelligence Cycle - Coal Into Diamonds
+  ollama.service                             loaded active running Ollama Service
+
+--- enablement/active state (key units) ---
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+.service            
+
+--- listeners (top 200) ---
+State  Recv-Q Send-Q               Local Address:Port  Peer Address:PortProcess                                                                                                                                                                                                                                                                                                                                                                            
+LISTEN 0      4096                     127.0.0.1:34333      0.0.0.0:*    users:(("ollama",pid=2637876,fd=3))                                                                                                                                                                                                                                                                                                                                               
+LISTEN 0      2048                       0.0.0.0:8210       0.0.0.0:*    users:(("uvicorn",pid=873141,fd=6))                                                                                                                                                                                                                                                                                                                                               
+LISTEN 0      2048                       0.0.0.0:8220       0.0.0.0:*    users:(("uvicorn",pid=873516,fd=6))                                                                                                                                                                                                                                                                                                                                               
+LISTEN 0      511                        0.0.0.0:8201       0.0.0.0:*    users:(("nginx",pid=2849240,fd=32),("nginx",pid=2849239,fd=32),("nginx",pid=2849238,fd=32),("nginx",pid=2849237,fd=32),("nginx",pid=2849236,fd=32),("nginx",pid=2849235,fd=32),("nginx",pid=2849234,fd=32),("nginx",pid=2849233,fd=32),("nginx",pid=2849232,fd=32),("nginx",pid=2849231,fd=32),("nginx",pid=2849230,fd=32),("nginx",pid=2849229,fd=32),("nginx",pid=119223,fd=32))
+LISTEN 0      2048                       0.0.0.0:8200       0.0.0.0:*    users:(("python3",pid=2882699,fd=6))                                                                                                                                                                                                                                                                                                                                              
+LISTEN 0      2048                       0.0.0.0:8240       0.0.0.0:*    users:(("uvicorn",pid=2616815,fd=8))                                                                                                                                                                                                                                                                                                                                              
+LISTEN 0      2048                       0.0.0.0:8250       0.0.0.0:*    users:(("python3",pid=3203571,fd=6))                                                                                                                                                                                                                                                                                                                                              
+LISTEN 0      2048                       0.0.0.0:8230       0.0.0.0:*    users:(("uvicorn",pid=878094,fd=7))                                                                                                                                                                                                                                                                                                                                               
+LISTEN 0      2048                       0.0.0.0:8300       0.0.0.0:*    users:(("python3",pid=3260974,fd=6))                                                                                                                                                                                                                                                                                                                                              
+LISTEN 0      2048                       0.0.0.0:8400       0.0.0.0:*    users:(("python3",pid=390457,fd=6))                                                                                                                                                                                                                                                                                                                                               
+LISTEN 0      2048                       0.0.0.0:8800       0.0.0.0:*    users:(("python3",pid=300387,fd=6))                                                                                                                                                                                                                                                                                                                                               
+LISTEN 0      2048                       0.0.0.0:8851       0.0.0.0:*    users:(("uvicorn",pid=92736,fd=6))                                                                                                                                                                                                                                                                                                                                                
+LISTEN 0      2048                       0.0.0.0:8888       0.0.0.0:*    users:(("uvicorn",pid=123083,fd=6))                                                                                                                                                                                                                                                                                                                                               
+LISTEN 0      4096               100.127.118.106:41033      0.0.0.0:*    users:(("tailscaled",pid=791065,fd=27))                                                                                                                                                                                                                                                                                                                                           
+LISTEN 0      4096                 127.0.0.53%lo:53         0.0.0.0:*    users:(("systemd-resolve",pid=861,fd=14))                                                                                                                                                                                                                                                                                                                                         
+LISTEN 0      128                        0.0.0.0:22         0.0.0.0:*    users:(("sshd",pid=941,fd=3))                                                                                                                                                                                                                                                                                                                                                     
+LISTEN 0      511                        0.0.0.0:80         0.0.0.0:*    users:(("nginx",pid=2849240,fd=6),("nginx",pid=2849239,fd=6),("nginx",pid=2849238,fd=6),("nginx",pid=2849237,fd=6),("nginx",pid=2849236,fd=6),("nginx",pid=2849235,fd=6),("nginx",pid=2849234,fd=6),("nginx",pid=2849233,fd=6),("nginx",pid=2849232,fd=6),("nginx",pid=2849231,fd=6),("nginx",pid=2849230,fd=6),("nginx",pid=2849229,fd=6),("nginx",pid=119223,fd=6))             
+LISTEN 0      511                        0.0.0.0:443        0.0.0.0:*    users:(("nginx",pid=2849240,fd=8),("nginx",pid=2849239,fd=8),("nginx",pid=2849238,fd=8),("nginx",pid=2849237,fd=8),("nginx",pid=2849236,fd=8),("nginx",pid=2849235,fd=8),("nginx",pid=2849234,fd=8),("nginx",pid=2849233,fd=8),("nginx",pid=2849232,fd=8),("nginx",pid=2849231,fd=8),("nginx",pid=2849230,fd=8),("nginx",pid=2849229,fd=8),("nginx",pid=119223,fd=8))             
+LISTEN 0      4096                     127.0.0.1:43873      0.0.0.0:*    users:(("ollama",pid=2637814,fd=3))                                                                                                                                                                                                                                                                                                                                               
+LISTEN 0      4096                     127.0.0.1:11434      0.0.0.0:*    users:(("ollama",pid=796328,fd=3))                                                                                                                                                                                                                                                                                                                                                
+LISTEN 0      4096                     127.0.0.1:46353      0.0.0.0:*    users:(("containerd",pid=8179,fd=9))                                                                                                                                                                                                                                                                                                                                              
+LISTEN 0      2048                       0.0.0.0:8002       0.0.0.0:*    users:(("python3",pid=178935,fd=6))                                                                                                                                                                                                                                                                                                                                               
+LISTEN 0      2048                       0.0.0.0:8116       0.0.0.0:*    users:(("python3",pid=1646423,fd=6))                                                                                                                                                                                                                                                                                                                                              
+LISTEN 0      2048                       0.0.0.0:8113       0.0.0.0:*    users:(("python3",pid=824939,fd=6))                                                                                                                                                                                                                                                                                                                                               
+LISTEN 0      2048                       0.0.0.0:8112       0.0.0.0:*    users:(("python3",pid=798336,fd=10))                                                                                                                                                                                                                                                                                                                                              
+LISTEN 0      2048                       0.0.0.0:8115       0.0.0.0:*    users:(("python3",pid=4110449,fd=6))                                                                                                                                                                                                                                                                                                                                              
+LISTEN 0      2048                       0.0.0.0:8114       0.0.0.0:*    users:(("python3",pid=1571542,fd=6))                                                                                                                                                                                                                                                                                                                                              
+LISTEN 0      2048                       0.0.0.0:8125       0.0.0.0:*    users:(("python3",pid=4103199,fd=6))                                                                                                                                                                                                                                                                                                                                              
+LISTEN 0      2048                       0.0.0.0:8120       0.0.0.0:*    users:(("python3",pid=2792490,fd=8))                                                                                                                                                                                                                                                                                                                                              
+LISTEN 0      2048                       0.0.0.0:8101       0.0.0.0:*    users:(("python3",pid=4067937,fd=6))                                                                                                                                                                                                                                                                                                                                              
+LISTEN 0      2048                       0.0.0.0:8100       0.0.0.0:*    users:(("python3",pid=117135,fd=6))                                                                                                                                                                                                                                                                                                                                               
+LISTEN 0      2048                       0.0.0.0:8103       0.0.0.0:*    users:(("python3",pid=83632,fd=9))                                                                                                                                                                                                                                                                                                                                                
+LISTEN 0      2048                       0.0.0.0:8102       0.0.0.0:*    users:(("python3",pid=93143,fd=7))                                                                                                                                                                                                                                                                                                                                                
+LISTEN 0      2048                       0.0.0.0:8109       0.0.0.0:*    users:(("python3",pid=212816,fd=7))                                                                                                                                                                                                                                                                                                                                               
+LISTEN 0      2048                       0.0.0.0:8108       0.0.0.0:*    users:(("python3",pid=1304537,fd=6))                                                                                                                                                                                                                                                                                                                                              
+LISTEN 0      2048                       0.0.0.0:8111       0.0.0.0:*    users:(("python3",pid=399402,fd=6))                                                                                                                                                                                                                                                                                                                                               
+LISTEN 0      2048                       0.0.0.0:8110       0.0.0.0:*    users:(("python3",pid=161492,fd=6))                                                                                                                                                                                                                                                                                                                                               
+LISTEN 0      2048                       0.0.0.0:8105       0.0.0.0:*    users:(("python3",pid=93949,fd=6))                                                                                                                                                                                                                                                                                                                                                
+LISTEN 0      2048                       0.0.0.0:8104       0.0.0.0:*    users:(("python3",pid=85963,fd=6))                                                                                                                                                                                                                                                                                                                                                
+LISTEN 0      2048                       0.0.0.0:8107       0.0.0.0:*    users:(("python3",pid=99220,fd=6))                                                                                                                                                                                                                                                                                                                                                
+LISTEN 0      2048                       0.0.0.0:8106       0.0.0.0:*    users:(("python3",pid=94489,fd=6))                                                                                                                                                                                                                                                                                                                                                
+LISTEN 0      2048                       0.0.0.0:8150       0.0.0.0:*    users:(("uvicorn",pid=868364,fd=6))                                                                                                                                                                                                                                                                                                                                               
+LISTEN 0      2048                       0.0.0.0:8130       0.0.0.0:*    users:(("python3",pid=811591,fd=6))                                                                                                                                                                                                                                                                                                                                               
+LISTEN 0      2048                       0.0.0.0:8140       0.0.0.0:*    users:(("python",pid=888195,fd=6))                                                                                                                                                                                                                                                                                                                                                
+LISTEN 0      2048                       0.0.0.0:8180       0.0.0.0:*    users:(("uvicorn",pid=871867,fd=6))                                                                                                                                                                                                                                                                                                                                               
+LISTEN 0      2048                       0.0.0.0:8190       0.0.0.0:*    users:(("uvicorn",pid=872760,fd=6))                                                                                                                                                                                                                                                                                                                                               
+LISTEN 0      2048                       0.0.0.0:8160       0.0.0.0:*    users:(("uvicorn",pid=975141,fd=7))                                                                                                                                                                                                                                                                                                                                               
+LISTEN 0      2048                       0.0.0.0:8170       0.0.0.0:*    users:(("uvicorn",pid=870961,fd=6))                                                                                                                                                                                                                                                                                                                                               
+LISTEN 0      128                           [::]:22            [::]:*    users:(("sshd",pid=941,fd=4))                                                                                                                                                                                                                                                                                                                                                     
+LISTEN 0      4096   [fd7a:115c:a1e0::9001:7689]:54993         [::]:*    users:(("tailscaled",pid=791065,fd=28))                                                                                                                                                                                                                                                                                                                                           
+
+--- health checks ---
+ai-brain:
+{"status":"healthy","version":"4.1.0","ts":"2025-12-12T16:19:15.026964"}
+ollama(tags):
+{"models":[{"name":"deepseek-coder:6.7b","model":"deepseek-coder:6.7b","modified_at":"2025-12-11T07:08:37.535299174Z","size":3827834503,"digest":"ce298d984115b93bb1b191b47fee6b39e4e9fbd5f18e651c02f9fa74e0edcd13","details":{"parent_model":"","format":"gguf","family":"llama","families":["llama"],"parameter_size":"7B","quantization_level":"Q4_0"}},{"name":"deepseek-coder:latest","model":"deepseek-coder:latest","modified_at":"2025-12-11T07:07:05.306842162Z","size":776080839,"digest":"3ddd2d3fc8d2b5fe039d18f859271132fd9c7960ef0be1864984442dc2a915d3","details":{"parent_model":"","format":"gguf","family":"llama","families":["llama"],"parameter_size":"1B","quantization_level":"Q4_0"}},{"name":"codellama:7b","model":"codellama:7b","modified_at":"2025-12-11T06:27:38.693716567Z","size":3825910662,"digest":"8fdf8f752f6e80de33e82f381aba784c025982752cd1ae9377add66449d2225f","details":{"parent_model":"","format":"gguf","family":"llama","families":null,"parameter_size":"7B","quantization_level":"Q4_0"}},{"name":"mistral:7b","model":"mistral:7b","modified_at":"2025-12-11T06:27:24.781738435Z","size":4372824384,"digest":"6577803aa9a036369e481d648a2baebb381ebc6e897f2bb9a766a2aa7bfbc1cf","details":{"parent_model":"","format":"gguf","family":"llama","families":["llama"],"parameter_size":"7.2B","quantization_level":"Q4_K_M"}},{"name":"phi3:mini","model":"phi3:mini","modified_at":"2025-12-11T06:26:50.461804609Z","size":2176178913,"digest":"4f222292793889a9a40a020799cfd28d53f3e01af25d48e06c5e708610fc47e9","details":{"parent_model":"","format":"gguf","family":"phi3","families":["phi3"],"parameter_size":"3.8B","quantization_level":"Q4_0"}},{"name":"qwen2.5-coder:7b","model":"qwen2.5-coder:7b","modified_at":"2025-12-02T03:38:19.581675585Z","size":4683087561,"digest":"dae161e27b0e90dd1856c8bb3209201fd6736d8eb66298e75ed87571486f4364","details":{"parent_model":"","format":"gguf","family":"qwen2","families":["qwen2"],"parameter_size":"7.6B","quantization_level":"Q4_K_M"}},{"name":"llama3.1:8b","mo
+consciousness_:
+<html>
+<head><title>301 Moved Permanently</title></head>
+<body>
+<center><h1>301 Moved Permanently</h1></center>
+<hr><center>nginx/1.18.0 (Ubuntu)</center>
+</body>
+</html>
+
+consciousness_:
+<html>
+<head><title>301 Moved Permanently</title></head>
+<body>
+<center><h1>301 Moved Permanently</h1></center>
+<hr><center>nginx/1.18.0 (Ubuntu)</center>
+</body>
+</html>
+
+consciousness_:
+<html>
+<head><title>301 Moved Permanently</title></head>
+<body>
+<center><h1>301 Moved Permanently</h1></center>
+<hr><center>nginx/1.18.0 (Ubuntu)</center>
+</body>
+</html>
+
+consciousness_:
+<html>
+<head><title>301 Moved Permanently</title></head>
+<body>
+<center><h1>301 Moved Permanently</h1></center>
+<hr><center>nginx/1.18.0 (Ubuntu)</center>
+</body>
+</html>
+
+consciousness_:
+<html>
+<head><title>301 Moved Permanently</title></head>
+<body>
+<center><h1>301 Moved Permanently</h1></center>
+<hr><center>nginx/1.18.0 (Ubuntu)</center>
+</body>
+</html>
+
+
+--- intelligence-cycle status ---
+● intelligence-cycle.service - FPAI Intelligence Cycle - Coal Into Diamonds
+     Loaded: loaded (/etc/systemd/system/intelligence-cycle.service; enabled; vendor preset: enabled)
+     Active: active (running) since Thu 2025-12-04 22:07:31 UTC; 1 week 0 days ago
+   Main PID: 4051416 (python3)
+      Tasks: 2 (limit: 38255)
+     Memory: 28.9M
+        CPU: 1min 17.160s
+     CGroup: /system.slice/intelligence-cycle.service
+             └─4051416 /usr/bin/python3 intelligence_cycle.py 999999 1200
+
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    📊 Markets: []
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    🔍 Patterns: 20
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    🧠 Memory context loaded
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]: 🔬 DEEP - Analyzing deeply...
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    📂 Categories: {'general': 6, 'research': 44}
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    ⭐ High relevance: 50 items
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    📈 Trending: ['learning', 'quantum', 'language', 'model', 'generation']
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    🧠 Relevant learnings: 0
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]: 💎 COMPRESS - Creating diamonds...
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    💎 Created 4 diamonds
+
+--- intelligence-cycle recent logs ---
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    📰 Feed: 50 items
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    📊 Markets: []
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    🔍 Patterns: 20
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    🧠 Memory context loaded
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]: 🔬 DEEP - Analyzing deeply...
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    📂 Categories: {'general': 6, 'research': 44}
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    ⭐ High relevance: 50 items
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    📈 Trending: ['learning', 'quantum', 'language', 'model', 'generation']
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    🧠 Relevant learnings: 0
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]: 💎 COMPRESS - Creating diamonds...
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    💎 Created 4 diamonds
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:       [high  ] Information flow dominated by research (88%). 2 categories a...
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:       [high  ] Emerging topics: learning, quantum, language. These words ap...
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:       [medium] Data quality: 100% high relevance (50/50 items). Good signal...
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:       [meta  ] Cycle 554 processed 50 items, found 5 trends, created 3 insi...
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]: 📡 DISSEMINATE - Sharing diamonds...
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    📦 Stored 3 high-value diamonds to Mem0
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]: ✨ Cycle 554 complete: 4 diamonds in 3.27s
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]: 📊 CUMULATIVE STATS:
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    Cycles: 554
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    Total diamonds: 2216
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    Avg cycle time: 2.7s
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    Avg diamonds/cycle: 4.0
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    Velocity: 1.48 diamonds/sec
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]: ⏳ Next cycle in 1200s...
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]: ============================================================
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]: 💎 CYCLE 555 - Starting at 15:13:20
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]: ============================================================
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]: 🌊 WIDE - Scanning broadly...
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    📰 Feed: 50 items
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    📊 Markets: []
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    🔍 Patterns: 20
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    🧠 Memory context loaded
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]: 🔬 DEEP - Analyzing deeply...
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    📂 Categories: {'general': 6, 'research': 44}
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    ⭐ High relevance: 50 items
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    📈 Trending: ['learning', 'quantum', 'language', 'model', 'generation']
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    🧠 Relevant learnings: 0
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]: 💎 COMPRESS - Creating diamonds...
+Dec 12 15:13:21 nc-ph-3016 python3[4051416]:    💎 Created 4 diamonds

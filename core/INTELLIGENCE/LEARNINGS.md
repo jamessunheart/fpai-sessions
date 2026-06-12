@@ -565,7 +565,7 @@ pkill -9 -f revenue_tracker
 
 4. **CRITICAL - Invalidated API key in ALL 18 files:**
 ```bash
-sed -i 's/1bad9920ce02d7e73e1e33a05de73e01038b1975c2c4ed2f3a13b944d52dd906/DISABLED_KEY_GPU_ACQUISITION_STOPPED/g' [18 files]
+sed -i 's/<VASTAI_API_KEY>/DISABLED_KEY_GPU_ACQUISITION_STOPPED/g' [18 files]
 ```
 
 5. **Verification:** 2-minute test with 4 checks, all returned 0 instances
@@ -634,3 +634,103 @@ sed -i 's/REAL_API_KEY/DISABLED/g' /all/files/with/key.py
 1. Stop the processes
 2. Disable the services  
 3. **ALWAYS invalidate the credentials in the source code**
+
+---
+
+## 2025-12-19: WhaleTrack Intelligence System v2.0
+
+**Session:** Builder Session
+**Work:** Upgraded trading intelligence from static rules to adaptive learning system
+
+**The Problem:**
+- Signal weights were hardcoded (50% liquidity, 20% funding, etc.)
+- Same parameters used in all market conditions
+- Predictions logged but didn't improve future predictions
+- AI prompts were generic, not context-aware
+- No cross-asset correlation analysis
+
+**Solution - 7 New/Enhanced Components:**
+
+1. **Outcome Feedback Loop** (`prediction_tracker.py`)
+   - SignalSnapshot captures all signals at prediction time
+   - Per-signal accuracy tracking by regime
+   - Automatically updates on prediction resolution
+
+2. **Adaptive Signal Weights** (`adaptive_weights.py`)
+   - Dynamically adjusts weights based on accuracy
+   - Signals with >60% accuracy get boosted
+   - Signals with <45% accuracy get reduced
+   - Exponential smoothing for gradual transitions
+
+3. **Market Regime Detection** (`regime_detector.py`)
+   - Detects: trending, ranging, volatile, breakout
+   - Uses ADX, ATR percentile, BB width, MA alignment
+   - Provides trading parameter adjustments
+
+4. **Regime-Aware Strategies** (`strategy_registry.py`)
+   - Strategy configs auto-adjust per regime
+   - Trending: Lower confidence ok, wider targets
+   - Volatile: Higher confidence needed, smaller positions
+
+5. **Context-Aware AI** (`fpai_brain.py`)
+   - Regime-specific system prompts
+   - Enhanced market context with derivatives data
+   - Recent trade history included
+
+6. **Cross-Asset Intelligence** (`correlation_intelligence.py`)
+   - BTC dominance signal (rising = bearish for alts)
+   - BTC direction alignment
+   - Sector performance tracking
+
+7. **Time-to-Target Estimation** (`stable_magnets.py`)
+   - Estimates hours to reach magnet
+   - Adjusts for regime speed
+   - Confidence decay over time
+
+**Key Learnings:**
+
+1. **Feedback loops are essential for intelligence**
+   - Static weights can't adapt to changing markets
+   - Track what signals predict correctly, then boost them
+   - Use exponential smoothing to avoid over-correction
+
+2. **Regime awareness prevents false signals**
+   - Same confidence in ranging vs trending has different meanings
+   - Adjust parameters per regime, not one-size-fits-all
+   - AI models need regime context in prompts
+
+3. **Cross-asset correlation adds edge**
+   - BTC leads the market
+   - Don't go long alts when BTC.D rising
+   - Sector rotation patterns matter
+
+4. **Time estimates set expectations**
+   - Users want to know WHEN, not just WHERE
+   - Confidence should decay over time (uncertainty grows)
+   - Regime affects speed (trending = faster)
+
+**Pattern - Intelligence Feedback Loop:**
+```python
+# BEFORE: Static weights, no learning
+combined_signal = 0.50 * liq + 0.20 * funding + ...  # Never changes
+
+# AFTER: Adaptive weights from accuracy
+for signal in signals:
+    accuracy = get_signal_accuracy(signal, regime)
+    weights[signal] = base_weight * (0.5 + accuracy / 0.5)
+```
+
+**Impact:**
+- System now learns from every trade
+- Parameters adapt to market conditions
+- AI has full context for better predictions
+- Cross-asset analysis prevents bad alt trades
+- Time estimates improve user experience
+
+**Application Rate:** 100% - Apply adaptive learning to any prediction system
+
+**Files Created:**
+- `backend/core/adaptive_weights.py`
+- `backend/core/regime_detector.py`
+- `backend/core/correlation_intelligence.py`
+- `INTELLIGENCE_SYSTEM_v2.md` (documentation)

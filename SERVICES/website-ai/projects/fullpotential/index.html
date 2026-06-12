@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🎯 Full Potential Growth HQ | $30k/mo Mission</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #faf8f5;
+      --bg-card: #ffffff;
+      --bg-hover: #f5f3f0;
+      --bg-input: #fdfcfb;
+      --accent-gold: #d4a853;
+      --accent-green: #3d8b40;
+      --accent-sage: #7da87d;
+      --accent-earth: #8b7355;
+      --accent-sky: #5ba3c6;
+      --accent-rose: #c97878;
+      --text-primary: #2d2a26;
+      --text-secondary: #5c5954;
+      --text-muted: #8a857d;
+      --border: #e8e4de;
+      --border-focus: #d4a853;
+      --shadow-soft: 0 2px 8px rgba(45, 42, 38, 0.06);
+      --shadow-hover: 0 8px 24px rgba(45, 42, 38, 0.1);
+      --gradient-gold: linear-gradient(135deg, #d4a853, #e6c47a);
+      --gradient-sage: linear-gradient(135deg, #7da87d, #a3c9a3);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* Subtle background pattern */
+    .bg-pattern {
+      position: fixed;
+      inset: 0;
+      background-image: 
+        radial-gradient(circle at 20% 30%, rgba(212, 168, 83, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(125, 168, 125, 0.03) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      padding: 1rem 2rem;
+      background: rgba(250, 248, 245, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .logo-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--gradient-gold);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .logo-text {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--text-primary);
+    }
+
+    .logo-subtitle {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: rgba(61, 139, 64, 0.1);
+      border-radius: 100px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--accent-green);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent-green);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.9); }
+    }
+
+    .team-avatars {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid var(--bg-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .avatar:hover { transform: scale(1.1); }
+    .avatar.james { background: var(--gradient-gold); color: white; }
+    .avatar.ai { background: var(--gradient-sage); color: white; }
+
+    /* Main Layout */
+    main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 2rem;
+    }
+
+    @media (max-width: 1100px) {
+      main { grid-template-columns: 1fr; }
+    }
+
+    /* Goal Hero */
+    .goal-hero {
+      background: linear-gradient(135deg, #ffffff, #fdfcfa);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .goal-hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(212, 168, 83, 0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .goal-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent-gold);
+      margin-bottom: 1rem;
+    }
+
+    .goal-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--text-primary), var(--accent-earth));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .goal-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+    }
+
+    .goal-metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    @media (max-width: 700px) {
+      .goal-metrics { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .metric {
+      background: var(--bg-hover);
+      border-radius: 16px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .metric-value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .metric-value.gold { color: var(--accent-gold); }
+    .metric-value.green { color: var(--accent-green); }
+    .metric-value.sky { color: var(--accent-sky); }
+
+    .metric-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 0.25rem;
+    }
+
+    /* Progress Bar */
+    .progress-section {
+      margin-top: 1.5rem;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+
+    .progress-label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .progress-value {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent-gold);
+    }
+
+    .progress-bar {
+      height: 12px;
+      background: var(--bg-hover);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--gradient-gold);
+      border-radius: 100px;
+      transition: width 1s ease;
+      position: relative;
+    }
+
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 20px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4));
+      animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-soft);
+      transition: all 0.3s;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-hover);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    .card-icon.gold { background: rgba(212, 168, 83, 0.15); }
+    .card-icon.green { background: rgba(61, 139, 64, 0.15); }
+    .card-icon.sage { background: rgba(125, 168, 125, 0.15); }
+    .card-icon.earth { background: rgba(139, 115, 85, 0.15); }
+    .card-icon.sky { background: rgba(91, 163, 198, 0.15); }
+    .card-icon.rose { background: rgba(201, 120, 120, 0.15); }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    /* AI Brain Panel */
+    .ai-brain {
+      background: linear-gradient(135deg, rgba(125, 168, 125, 0.08), rgba(212, 168, 83, 0.05));
+      border: 1px solid rgba(125, 168, 125, 0.2);
+      border-radius: 20px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .ai-brain-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .ai-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--gradient-sage);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+    }
+
+    .ai-name {
+      font-weight: 600;
+      color: var(--accent-green);
+    }
+
+    .ai-status {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .ai-messages {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-bottom: 1rem;
+    }
+
+    .ai-message {
+      padding: 1rem;
+      background: var(--bg-card);
+      border-radius: 12px;
+      margin-bottom: 0.75rem;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .ai-message.user {
+      background: rgba(212, 168, 83, 0.1);
+      border-left: 3px solid var(--accent-gold);
+    }
+
+    .ai-message strong {
+      color: var(--accent-green);
+    }
+
+    .ai-input-group {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .ai-input {
+      flex: 1;
+      padding: 0.875rem 1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      transition: all 0.3s;
+    }
+
+    .ai-input:focus {
+      outline: none;
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 0 3px rgba(212, 168, 83, 0.1);
+    }
+
+    .ai-submit {
+      padding: 0.875rem 1.5rem;
+      background: var(--gradient-sage);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .ai-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(125, 168, 125, 0.3);
+    }
+
+    .ai-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Quick Inputs */
+    .quick-inputs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .quick-input {
+      padding: 0.5rem 1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .quick-input:hover {
+      background: var(--bg-hover);
+      border-color: var(--accent-gold);
+      color: var(--text-primary);
+    }
+
+    /* Sprint Tasks */
+    .sprint-tasks {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .task {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: var(--bg-hover);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .task:hover {
+      background: var(--border);
+    }
+
+    .task.completed {
+      opacity: 0.6;
+    }
+
+    .task-check {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.3s;
+      font-size: 0.8rem;
+    }
+
+    .task.completed .task-check {
+      background: var(--accent-green);
+      border-color: var(--accent-green);
+      color: white;
+    }
+
+    .task.active .task-check {
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 0 3px rgba(212, 168, 83, 0.2);
+    }
+
+    .task-content {
+      flex: 1;
+    }
+
+    .task-title {
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+
+    .task-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .task-owner {
+      padding: 0.25rem 0.5rem;
+      background: rgba(212, 168, 83, 0.1);
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--accent-earth);
+    }
+
+    /* Funnel Visualization */
+    .funnel {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .funnel-step {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem 1rem;
+      background: var(--bg-hover);
+      border-radius: 10px;
+    }
+
+    .funnel-bar {
+      height: 8px;
+      border-radius: 4px;
+      background: var(--accent-gold);
+      transition: width 0.5s ease;
+    }
+
+    .funnel-label {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      min-width: 120px;
+    }
+
+    .funnel-value {
+      font-weight: 600;
+      font-size: 0.85rem;
+      min-width: 60px;
+      text-align: right;
+    }
+
+    /* Activity Feed */
+    .activity-feed {
+      max-height: 350px;
+      overflow-y: auto;
+    }
+
+    .activity-item {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+
+    .activity-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .activity-avatar.james { background: var(--gradient-gold); color: white; }
+    .activity-avatar.ai { background: var(--gradient-sage); color: white; }
+
+    .activity-content {
+      flex: 1;
+    }
+
+    .activity-text {
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .activity-time {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Ad Campaign Section */
+    .ad-section {
+      margin-top: 1rem;
+    }
+
+    .ad-platform {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: var(--bg-hover);
+      border-radius: 12px;
+      margin-bottom: 0.75rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .ad-platform:hover {
+      background: var(--border);
+    }
+
+    .platform-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    .platform-icon.meta { background: #1877f2; color: white; }
+    .platform-icon.linkedin { background: #0a66c2; color: white; }
+    .platform-icon.google { background: #ea4335; color: white; }
+
+    .platform-info { flex: 1; }
+    .platform-name { font-weight: 600; }
+    .platform-budget { font-size: 0.8rem; color: var(--text-muted); }
+    .platform-status {
+      padding: 0.25rem 0.75rem;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    .platform-status.ready { background: rgba(61, 139, 64, 0.1); color: var(--accent-green); }
+    .platform-status.draft { background: rgba(212, 168, 83, 0.1); color: var(--accent-gold); }
+
+    /* Revenue Tracker */
+    .revenue-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .revenue-card {
+      text-align: center;
+      padding: 1rem;
+      background: var(--bg-hover);
+      border-radius: 12px;
+    }
+
+    .revenue-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .revenue-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+  </style>
+</head>
+<body>
+
+<div class="bg-pattern"></div>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">🎯</div>
+    <div>
+      <div class="logo-text">Full Potential Growth</div>
+      <div class="logo-subtitle">$30k/month Mission</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="status-badge">
+      <span class="status-dot"></span>
+      Sprint Active
+    </div>
+    <div class="team-avatars">
+      <div class="avatar james" title="James">J</div>
+      <div class="avatar ai" title="AI Partner">🤖</div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="main-content">
+
+    <!-- Goal Hero -->
+    <div class="goal-hero">
+      <div class="goal-label">
+        <span>🎯</span> ACTIVE FINANCIAL GOAL
+      </div>
+      <h1 class="goal-title">$30,000/month Revenue</h1>
+      <p class="goal-subtitle">Full Potential Partnership - Goal Realization System</p>
+      
+      <div class="goal-metrics">
+        <div class="metric">
+          <div class="metric-value gold" id="metric-revenue">$0</div>
+          <div class="metric-label">Current MRR</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value green" id="metric-clients">0</div>
+          <div class="metric-label">Active Clients</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value sky" id="metric-pipeline">0</div>
+          <div class="metric-label">In Pipeline</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value" id="metric-calls">0</div>
+          <div class="metric-label">Discovery Calls</div>
+        </div>
+      </div>
+      
+      <div class="progress-section">
+        <div class="progress-header">
+          <span class="progress-label">Progress to $30k/mo</span>
+          <span class="progress-value" id="progress-percent">0%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-bar" style="width: 0%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 30-Day Sprint -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title-group">
+          <div class="card-icon gold">⚡</div>
+          <span class="card-title">30-Day Sprint Tasks</span>
+        </div>
+        <span style="font-size: 0.85rem; color: var(--text-muted);" id="sprint-progress">0/10 Complete</span>
+      </div>
+      
+      <div class="sprint-tasks" id="sprint-tasks">
+        <div class="task active" data-id="t1" onclick="toggleTask(this)">
+          <div class="task-check">✓</div>
+          <div class="task-content">
+            <div class="task-title">Set up Calendly for discovery calls</div>
+            <div class="task-meta">Create calendly.com/fullpotential/discovery</div>
+          </div>
+          <span class="task-owner">James</span>
+        </div>
+        <div class="task" data-id="t2" onclick="toggleTask(this)">
+          <div class="task-check">✓</div>
+          <div class="task-content">
+            <div class="task-title">Create Full Potential Partnership offer page</div>
+            <div class="task-meta">Clear value prop, pricing, testimonials</div>
+          </div>
+          <span class="task-owner">AI + James</span>
+        </div>
+        <div class="task" data-id="t3" onclick="toggleTask(this)">
+          <div class="task-check">✓</div>
+          <div class="task-content">
+            <div class="task-title">Wire Stripe payment link ($2,500/mo)</div>
+            <div class="task-meta">Recurring subscription setup</div>
+          </div>
+          <span class="task-owner">James</span>
+        </div>
+        <div class="task" data-id="t4" onclick="toggleTask(this)">
+          <div class="task-check">✓</div>
+          <div class="task-content">
+            <div class="task-title">Update intake form → route high-budget to calendar</div>
+            <div class="task-meta">$2,500+ → Discovery call CTA</div>
+          </div>
+          <span class="task-owner">AI</span>
+        </div>
+        <div class="task" data-id="t5" onclick="toggleTask(this)">
+          <div class="task-check">✓</div>
+          <div class="task-content">
+            <div class="task-title">Draft 3 LinkedIn posts</div>
+            <div class="task-meta">Authenticity + offer visibility</div>
+          </div>
+          <span class="task-owner">AI + James</span>
+        </div>
+        <div class="task" data-id="t6" onclick="toggleTask(this)">
+          <div class="task-check">✓</div>
+          <div class="task-content">
+            <div class="task-title">Identify 50 warm DM targets</div>
+            <div class="task-meta">Past connections, ideal clients</div>
+          </div>
+          <span class="task-owner">James</span>
+        </div>
+        <div class="task" data-id="t7" onclick="toggleTask(this)">
+          <div class="task-check">✓</div>
+          <div class="task-content">
+            <div class="task-title">Send 5-10 DMs per day</div>
+            <div class="task-meta">Week 1: 50 conversations started</div>
+          </div>
+          <span class="task-owner">James</span>
+        </div>
+        <div class="task" data-id="t8" onclick="toggleTask(this)">
+          <div class="task-check">✓</div>
+          <div class="task-content">
+            <div class="task-title">Book first 5 discovery calls</div>
+            <div class="task-meta">Target: End of Week 2</div>
+          </div>
+          <span class="task-owner">James</span>
+        </div>
+        <div class="task" data-id="t9" onclick="toggleTask(this)">
+          <div class="task-check">✓</div>
+          <div class="task-content">
+            <div class="task-title">Close first client</div>
+            <div class="task-meta">🎉 First $2,500 MRR!</div>
+          </div>
+          <span class="task-owner">James</span>
+        </div>
+        <div class="task" data-id="t10" onclick="toggleTask(this)">
+          <div class="task-check">✓</div>
+          <div class="task-content">
+            <div class="task-title">Optimize based on learnings</div>
+            <div class="task-meta">What worked? Double down.</div>
+          </div>
+          <span class="task-owner">AI + James</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Funnel Visualization -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title-group">
+          <div class="card-icon sky">📊</div>
+          <span class="card-title">Conversion Funnel</span>
+        </div>
+      </div>
+      
+      <div class="funnel">
+        <div class="funnel-step">
+          <span class="funnel-label">Traffic</span>
+          <div style="flex: 1;"><div class="funnel-bar" id="funnel-traffic" style="width: 0%; background: var(--accent-sky);"></div></div>
+          <span class="funnel-value" id="funnel-traffic-val">0</span>
+        </div>
+        <div class="funnel-step">
+          <span class="funnel-label">Intake Forms</span>
+          <div style="flex: 1;"><div class="funnel-bar" id="funnel-intake" style="width: 0%; background: var(--accent-sage);"></div></div>
+          <span class="funnel-value" id="funnel-intake-val">0</span>
+        </div>
+        <div class="funnel-step">
+          <span class="funnel-label">Discovery Calls</span>
+          <div style="flex: 1;"><div class="funnel-bar" id="funnel-calls" style="width: 0%; background: var(--accent-gold);"></div></div>
+          <span class="funnel-value" id="funnel-calls-val">0</span>
+        </div>
+        <div class="funnel-step">
+          <span class="funnel-label">Clients</span>
+          <div style="flex: 1;"><div class="funnel-bar" id="funnel-clients" style="width: 0%; background: var(--accent-green);"></div></div>
+          <span class="funnel-value" id="funnel-clients-val">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ad Campaigns -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title-group">
+          <div class="card-icon rose">📣</div>
+          <span class="card-title">Ad Campaigns (Phase 2)</span>
+        </div>
+      </div>
+      
+      <div class="ad-section">
+        <div class="ad-platform" onclick="viewAdDetails('meta')">
+          <div class="platform-icon meta">f</div>
+          <div class="platform-info">
+            <div class="platform-name">Meta (Facebook/Instagram)</div>
+            <div class="platform-budget">Budget: $1,500/mo • Target: Entrepreneurs 32-55</div>
+          </div>
+          <span class="platform-status draft">Draft</span>
+        </div>
+        <div class="ad-platform" onclick="viewAdDetails('linkedin')">
+          <div class="platform-icon linkedin">in</div>
+          <div class="platform-info">
+            <div class="platform-name">LinkedIn</div>
+            <div class="platform-budget">Budget: $800/mo • Target: Founders, Execs</div>
+          </div>
+          <span class="platform-status draft">Draft</span>
+        </div>
+        <div class="ad-platform" onclick="viewAdDetails('google')">
+          <div class="platform-icon google">G</div>
+          <div class="platform-info">
+            <div class="platform-name">Google Search</div>
+            <div class="platform-budget">Budget: $500/mo • High-intent keywords</div>
+          </div>
+          <span class="platform-status draft">Draft</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Sidebar -->
+  <aside>
+
+    <!-- AI Brain Panel -->
+    <div class="ai-brain">
+      <div class="ai-brain-header">
+        <div class="ai-avatar">🧠</div>
+        <div>
+          <div class="ai-name">Project Brain</div>
+          <div class="ai-status">Tracking progress & ready to help</div>
+        </div>
+      </div>
+      
+      <div class="ai-messages" id="ai-messages">
+        <div class="ai-message">
+          👋 <strong>Hey James!</strong> I'm tracking your progress toward $30k/mo. Your next highest-impact action is setting up Calendly. Once that's live, we can start booking discovery calls. What would you like to work on?
+        </div>
+      </div>
+      
+      <div class="ai-input-group">
+        <input type="text" class="ai-input" id="ai-input" placeholder="Ask anything or log an update..." onkeypress="if(event.key==='Enter')sendToBrain()">
+        <button class="ai-submit" onclick="sendToBrain()" id="ai-submit">Send</button>
+      </div>
+      
+      <div class="quick-inputs">
+        <span class="quick-input" onclick="quickInput('I just set up Calendly')">✅ Calendly done</span>
+        <span class="quick-input" onclick="quickInput('I booked a discovery call')">📞 Booked call</span>
+        <span class="quick-input" onclick="quickInput('I closed a client!')">🎉 Closed client!</span>
+        <span class="quick-input" onclick="quickInput('What should I focus on today?')">🎯 Today's focus?</span>
+        <span class="quick-input" onclick="quickInput('Generate a LinkedIn post')">✍️ Draft post</span>
+      </div>
+    </div>
+
+    <!-- Revenue Tracker -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title-group">
+          <div class="card-icon green">💰</div>
+          <span class="card-title">Revenue Tracker</span>
+        </div>
+      </div>
+      
+      <div class="revenue-grid">
+        <div class="revenue-card">
+          <div class="revenue-value" style="color: var(--accent-gold);" id="rev-current">$0</div>
+          <div class="revenue-label">This Month</div>
+        </div>
+        <div class="revenue-card">
+          <div class="revenue-value" style="color: var(--accent-green);" id="rev-target">$30k</div>
+          <div class="revenue-label">Target</div>
+        </div>
+        <div class="revenue-card">
+          <div class="revenue-value" style="color: var(--accent-sky);" id="rev-gap">$30k</div>
+          <div class="revenue-label">Gap</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Activity Feed -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title-group">
+          <div class="card-icon earth">📋</div>
+          <span class="card-title">Activity Log</span>
+        </div>
+      </div>
+      
+      <div class="activity-feed" id="activity-feed">
+        <div class="activity-item">
+          <div class="activity-avatar ai">🤖</div>
+          <div class="activity-content">
+            <div class="activity-text"><strong>AI</strong> created project growth hub</div>
+            <div class="activity-time">Just now</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-avatar james">J</div>
+          <div class="activity-content">
+            <div class="activity-text"><strong>James</strong> set $30k/mo goal</div>
+            <div class="activity-time">Today</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-avatar ai">🤖</div>
+          <div class="activity-content">
+            <div class="activity-text"><strong>AI</strong> designed ad campaign strategy</div>
+            <div class="activity-time">Today</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title-group">
+          <div class="card-icon sage">🔗</div>
+          <span class="card-title">Quick Links</span>
+        </div>
+      </div>
+      
+      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <a href="https://fullpotential.com" target="_blank" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: var(--bg-hover); border-radius: 10px; text-decoration: none; color: inherit; transition: all 0.3s;">
+          <span>🌐</span>
+          <span>FullPotential.com</span>
+        </a>
+        <a href="https://fullpotential.com/intake-v3" target="_blank" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: var(--bg-hover); border-radius: 10px; text-decoration: none; color: inherit; transition: all 0.3s;">
+          <span>📝</span>
+          <span>Intake Form</span>
+        </a>
+        <a href="#" onclick="alert('Set up your Calendly first!')" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: var(--bg-hover); border-radius: 10px; text-decoration: none; color: inherit; transition: all 0.3s;">
+          <span>📅</span>
+          <span>Discovery Calendar</span>
+        </a>
+        <a href="https://dashboard.stripe.com" target="_blank" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: var(--bg-hover); border-radius: 10px; text-decoration: none; color: inherit; transition: all 0.3s;">
+          <span>💳</span>
+          <span>Stripe Dashboard</span>
+        </a>
+      </div>
+    </div>
+
+  </aside>
+</main>
+
+<script>
+// State
+let state = {
+  revenue: 0,
+  clients: 0,
+  pipeline: 0,
+  calls: 0,
+  funnel: {
+    traffic: 0,
+    intake: 0,
+    calls: 0,
+    clients: 0
+  },
+  completedTasks: [],
+  activities: [],
+  messages: []
+};
+
+// Load state
+function loadState() {
+  const saved = localStorage.getItem('fullpotential_growth_state');
+  if (saved) {
+    state = { ...state, ...JSON.parse(saved) };
+  }
+  updateUI();
+}
+
+// Save state
+function saveState() {
+  localStorage.setItem('fullpotential_growth_state', JSON.stringify(state));
+  updateUI();
+}
+
+// Update UI
+function updateUI() {
+  // Update metrics
+  document.getElementById('metric-revenue').textContent = '$' + state.revenue.toLocaleString();
+  document.getElementById('metric-clients').textContent = state.clients;
+  document.getElementById('metric-pipeline').textContent = state.pipeline;
+  document.getElementById('metric-calls').textContent = state.calls;
+  
+  // Update progress
+  const progress = Math.min((state.revenue / 30000) * 100, 100);
+  document.getElementById('progress-percent').textContent = Math.round(progress) + '%';
+  document.getElementById('progress-bar').style.width = progress + '%';
+  
+  // Update revenue tracker
+  document.getElementById('rev-current').textContent = '$' + (state.revenue / 1000).toFixed(1) + 'k';
+  document.getElementById('rev-gap').textContent = '$' + Math.max(0, (30000 - state.revenue) / 1000).toFixed(1) + 'k';
+  
+  // Update tasks
+  const tasks = document.querySelectorAll('.task');
+  let completed = 0;
+  tasks.forEach(t => {
+    const id = t.dataset.id;
+    if (state.completedTasks.includes(id)) {
+      t.classList.add('completed');
+      t.classList.remove('active');
+      completed++;
+    }
+  });
+  
+  // Find next active task
+  const nextTask = document.querySelector('.task:not(.completed)');
+  if (nextTask) {
+    nextTask.classList.add('active');
+  }
+  
+  document.getElementById('sprint-progress').textContent = completed + '/10 Complete';
+  
+  // Update funnel
+  const maxTraffic = Math.max(state.funnel.traffic, 100);
+  document.getElementById('funnel-traffic').style.width = (state.funnel.traffic / maxTraffic * 100) + '%';
+  document.getElementById('funnel-intake').style.width = (state.funnel.intake / maxTraffic * 100) + '%';
+  document.getElementById('funnel-calls').style.width = (state.funnel.calls / maxTraffic * 100) + '%';
+  document.getElementById('funnel-clients').style.width = (state.funnel.clients / maxTraffic * 100) + '%';
+  
+  document.getElementById('funnel-traffic-val').textContent = state.funnel.traffic;
+  document.getElementById('funnel-intake-val').textContent = state.funnel.intake;
+  document.getElementById('funnel-calls-val').textContent = state.funnel.calls;
+  document.getElementById('funnel-clients-val').textContent = state.funnel.clients;
+}
+
+// Toggle task
+function toggleTask(el) {
+  const id = el.dataset.id;
+  if (state.completedTasks.includes(id)) return;
+  
+  state.completedTasks.push(id);
+  addActivity('james', 'completed: ' + el.querySelector('.task-title').textContent);
+  
+  // Auto-update metrics based on task
+  if (id === 't9') { // First client closed
+    state.clients++;
+    state.revenue += 2500;
+    state.funnel.clients++;
+    addAIMessage("🎉 <strong>AMAZING!</strong> First client closed! You're at $2,500 MRR now. That's 8.3% toward your goal. The hardest part is DONE. Now let's replicate this process!");
+  } else if (id === 't8') { // Booked 5 calls
+    state.calls += 5;
+    state.funnel.calls += 5;
+    addAIMessage("📞 5 discovery calls booked! Based on typical conversion rates, this could mean 1-2 new clients. Make sure your offer is crystal clear and focus on understanding their goals deeply.");
+  }
+  
+  saveState();
+}
+
+// Send to brain
+async function sendToBrain() {
+  const input = document.getElementById('ai-input');
+  const message = input.value.trim();
+  if (!message) return;
+  
+  // Add user message
+  const messagesContainer = document.getElementById('ai-messages');
+  messagesContainer.innerHTML += `<div class="ai-message user">💬 ${message}</div>`;
+  
+  input.value = '';
+  document.getElementById('ai-submit').disabled = true;
+  
+  // Process message
+  await processUserMessage(message);
+  
+  document.getElementById('ai-submit').disabled = false;
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+// Process user message
+async function processUserMessage(message) {
+  const lower = message.toLowerCase();
+  
+  // Detect intent and respond
+  if (lower.includes('calendly') && (lower.includes('done') || lower.includes('set up'))) {
+    state.completedTasks.push('t1');
+    addAIMessage("✅ Calendly is live! Great work. Now your intake form can route high-value leads directly to your calendar. Next up: Let's make sure your offer page is compelling. Want me to draft some copy?");
+    addActivity('james', 'set up Calendly');
+  }
+  else if (lower.includes('booked') && lower.includes('call')) {
+    state.calls++;
+    state.pipeline++;
+    state.funnel.calls++;
+    addAIMessage(`📅 Discovery call booked! You now have ${state.calls} call(s) scheduled. Before the call, remember: listen first, understand their goal deeply, and only then explain how you can help.`);
+    addActivity('james', 'booked a discovery call');
+  }
+  else if (lower.includes('closed') && lower.includes('client')) {
+    state.clients++;
+    state.revenue += 2500;
+    state.pipeline = Math.max(0, state.pipeline - 1);
+    state.funnel.clients++;
+    addAIMessage(`🎉 <strong>CLIENT CLOSED!</strong> You're now at $${state.revenue.toLocaleString()}/mo MRR with ${state.clients} client(s). That's ${Math.round(state.revenue/30000*100)}% to goal! Every client gets easier from here. What did you learn from this sale?`);
+    addActivity('james', 'CLOSED A CLIENT! 🎉');
+  }
+  else if (lower.includes('focus') || lower.includes('today')) {
+    const nextTask = document.querySelector('.task:not(.completed)');
+    const taskTitle = nextTask ? nextTask.querySelector('.task-title').textContent : 'All tasks complete!';
+    addAIMessage(`🎯 <strong>Today's focus:</strong> ${taskTitle}\n\nThis is the highest-leverage action right now. Complete this before moving to anything else. Need help with it?`);
+  }
+  else if (lower.includes('linkedin') && lower.includes('post')) {
+    addAIMessage(`✍️ Here's a LinkedIn post draft:\n\n<em>"Most people have goals. Few have systems.\n\nI've spent years studying what separates people who achieve their goals from those who don't.\n\nIt's not willpower. It's not motivation.\n\nIt's having the right support at the right time.\n\nThat's why I built Full Potential — a partnership where I help ambitious people design and walk their path.\n\nIf you're stuck between where you are and where you know you could be, let's talk.\n\n→ Link in comments"</em>\n\nWant me to adjust the tone or angle?`);
+  }
+  else if (lower.includes('revenue') || lower.includes('mrr') || lower.includes('how much')) {
+    addAIMessage(`💰 <strong>Revenue Status:</strong>\n• Current MRR: $${state.revenue.toLocaleString()}\n• Clients: ${state.clients}\n• Target: $30,000/mo\n• Gap: $${(30000 - state.revenue).toLocaleString()}\n• Progress: ${Math.round(state.revenue/30000*100)}%\n\nTo hit $30k, you need ${Math.ceil((30000 - state.revenue) / 2500)} more clients at $2,500/mo.`);
+  }
+  else {
+    // Generic helpful response
+    addAIMessage(`I heard you: "${message}"\n\nHere's what I suggest:\n1. Update your progress on the tasks above\n2. Use the quick inputs below to log wins\n3. Ask me specific questions like "What should I focus on today?" or "Generate a LinkedIn post"\n\nWhat would help most right now?`);
+  }
+  
+  saveState();
+}
+
+// Add AI message
+function addAIMessage(message) {
+  const messagesContainer = document.getElementById('ai-messages');
+  messagesContainer.innerHTML += `<div class="ai-message">${message}</div>`;
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+// Quick input
+function quickInput(text) {
+  document.getElementById('ai-input').value = text;
+  sendToBrain();
+}
+
+// Add activity
+function addActivity(user, action) {
+  const feed = document.getElementById('activity-feed');
+  const item = document.createElement('div');
+  item.className = 'activity-item';
+  item.innerHTML = `
+    <div class="activity-avatar ${user}">${user === 'ai' ? '🤖' : 'J'}</div>
+    <div class="activity-content">
+      <div class="activity-text"><strong>${user === 'ai' ? 'AI' : 'James'}</strong> ${action}</div>
+      <div class="activity-time">Just now</div>
+    </div>
+  `;
+  feed.insertBefore(item, feed.firstChild);
+}
+
+// View ad details
+function viewAdDetails(platform) {
+  const details = {
+    meta: "Meta Ads Strategy:\n\n• Targeting: Entrepreneurs 32-55, $100k+ household\n• Interests: Tony Robbins, personal development, meditation\n• Budget: $50/day = $1,500/mo\n• Expected: 100 leads → 20 calls → 5 clients\n\nAd Copy:\n\"What would it mean to actually achieve your biggest goal?\nNot someday. This year.\nMost people have the goal... but not the system.\n[Start Your Journey →]\"",
+    linkedin: "LinkedIn Ads Strategy:\n\n• Targeting: Founders, CEOs, Directors\n• Industries: Tech, Professional Services, Finance\n• Budget: $27/day = $800/mo\n• Expected: 27 leads → 9 calls → 3 clients\n\nAd Copy:\n\"I spent years building businesses while ignoring what I actually wanted.\nSuccess metrics were up. Fulfillment was down.\nThen I asked a different question...\n[Take the Assessment →]\"",
+    google: "Google Ads Strategy:\n\n• Keywords: 'life coach', 'goal achievement', 'personal development'\n• Budget: $17/day = $500/mo\n• High intent traffic\n• Expected: 15 leads → 5 calls → 2 clients"
+  };
+  
+  alert(details[platform]);
+}
+
+// Initialize
+loadState();
+</script>
+
+</body>
+</html>
+

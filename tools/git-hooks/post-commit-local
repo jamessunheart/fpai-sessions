@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Repo-local post-commit for FPAI_Cockpit. Called by the global hook
+# (~/.config/git/hooks/post-commit) when committing in this repo.
+#
+# Job: regenerate cockpit-map.html so the local view stays current.
+# Session state push happens at the global hook level.
+#
+# Silent on success, prints errors. Never blocks (post-commit can't fail commit).
+
+set +e
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT" || exit 0
+
+if [ -f tools/gen_cockpit_map.py ]; then
+  python3 tools/gen_cockpit_map.py >/dev/null 2>&1 || \
+    echo "[post-commit-local] cockpit map regeneration failed; run 'make map' to see error" >&2
+fi
+
+exit 0

@@ -1,0 +1,718 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cockpit · Zen Village</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4EFE6; --bg-soft:#EAE3D5; --ink:#2A2018; --ink-soft:#5C4D3F;
+  --moss:#3F4E3A; --gold:#B89968; --clay:#A85D3F; --rule:rgba(42,32,24,.14);
+  --serif:'Cormorant Garamond',serif; --sans:'Manrope',-apple-system,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:14px;line-height:1.5}
+body{padding:32px 24px 80px;max-width:1280px;margin:0 auto}
+a{color:inherit;text-decoration:none}
+input,select,textarea,button{font-family:var(--sans);font-size:13px}
+input,select,textarea{padding:10px 14px;border:1px solid var(--rule);border-radius:10px;background:#fff}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--moss)}
+
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--rule)}
+h1{font-family:var(--serif);font-weight:300;font-size:48px;letter-spacing:-.01em;line-height:1}
+h1 em{color:var(--moss);font-style:italic}
+.lead{color:var(--ink-soft);font-size:13px;margin-top:6px;max-width:580px}
+.actions{display:flex;gap:8px;align-items:center}
+button{padding:10px 18px;border:1px solid var(--ink);border-radius:999px;background:var(--ink);color:var(--bg);cursor:pointer;letter-spacing:.04em;transition:all .15s ease}
+button.ghost{background:transparent;color:var(--ink)}
+button.moss{background:var(--moss);color:#fff;border-color:var(--moss)}
+button.clay{background:var(--clay);color:#fff;border-color:var(--clay)}
+button.small{padding:6px 12px;font-size:11px}
+button:hover{transform:translateY(-1px)}
+button:disabled{opacity:.5;transform:none;cursor:wait}
+
+.viewer-pill{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;background:var(--bg-soft);font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--ink-soft)}
+.viewer-pill.owner{background:var(--ink);color:var(--bg)}
+.viewer-pill.admin{background:var(--moss);color:#fff}
+
+.tabs{display:flex;gap:4px;margin:18px 0 18px;border-bottom:1px solid var(--rule)}
+.tab{padding:12px 22px;border:none;background:transparent;color:var(--ink-soft);font-size:13px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border-bottom:2px solid transparent;border-radius:0;font-weight:600}
+.tab:hover{color:var(--ink);transform:none}
+.tab.on{color:var(--ink);border-bottom-color:var(--moss)}
+
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 0 22px}
+.kpi{background:#fff;border-radius:14px;padding:16px 18px;border:1px solid var(--rule)}
+.kpi .label{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft);font-weight:600}
+.kpi .value{font-family:var(--serif);font-size:36px;font-weight:300;line-height:1.1;margin-top:2px}
+.kpi.up .value{color:var(--moss)}
+.kpi.down .value{color:var(--clay)}
+.kpi.ext .value{color:var(--gold)}
+
+.controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{padding:6px 14px;border-radius:999px;border:1px solid var(--rule);background:#fff;cursor:pointer;font-size:12px;letter-spacing:.04em}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.search{flex:1;min-width:240px;padding:11px 16px;border-radius:999px}
+
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.tile{background:#fff;border-radius:16px;padding:22px;border:1px solid var(--rule);position:relative;display:flex;flex-direction:column;gap:12px;transition:all .2s ease;cursor:pointer}
+.tile:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(42,32,24,.08);border-color:rgba(63,78,58,.3)}
+.tile-head{display:flex;align-items:flex-start;gap:12px;justify-content:space-between}
+.tile-icon{font-size:30px;line-height:1}
+.tile-name{font-family:var(--serif);font-size:22px;font-weight:400;letter-spacing:-.005em}
+.tile-status{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;background:var(--bg-soft);color:var(--ink-soft);white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;background:#999}
+.tile-status.up .dot{background:var(--moss);box-shadow:0 0 0 3px rgba(63,78,58,.15)}
+.tile-status.down .dot{background:var(--clay);box-shadow:0 0 0 3px rgba(168,93,63,.15)}
+.tile-status.external .dot{background:var(--gold)}
+.tile-status.checking .dot{background:var(--ink-soft);animation:blink 1.2s ease-in-out infinite}
+.tile-status.up{color:var(--moss)}
+.tile-status.down{color:var(--clay)}
+@keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
+.tile-blurb{color:var(--ink-soft);font-size:13px;line-height:1.55;flex:1}
+.tile-meta{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:10.5px;letter-spacing:.06em;color:var(--ink-soft);text-transform:uppercase;margin-top:2px}
+.tile-meta strong{color:var(--ink);font-weight:600}
+.tile-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px}
+.tag{padding:3px 9px;border-radius:999px;background:var(--bg-soft);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);font-weight:500}
+.tile-users{display:flex;gap:4px;flex-wrap:wrap}
+.user-pill{padding:3px 9px;border-radius:999px;background:var(--moss);color:#fff;font-size:10px;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.user-pill.admin{background:var(--ink)}
+.user-pill.owner{background:var(--gold);color:var(--ink)}
+
+/* Team tab */
+.team-toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px}
+.team-toolbar h2{font-family:var(--serif);font-size:32px;font-weight:300}
+.team-list{background:#fff;border-radius:16px;border:1px solid var(--rule);overflow:hidden}
+.team-row{display:grid;grid-template-columns:auto 1fr auto auto;gap:18px;align-items:center;padding:18px 22px;border-bottom:1px solid var(--rule)}
+.team-row:last-child{border-bottom:none}
+.team-avatar{width:42px;height:42px;border-radius:50%;background:var(--bg-soft);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:20px;font-weight:500;color:var(--ink-soft)}
+.team-info{display:flex;flex-direction:column;gap:3px;min-width:0}
+.team-name{font-family:var(--serif);font-size:22px;font-weight:400}
+.team-meta{font-size:11px;color:var(--ink-soft)}
+.team-surfaces{display:flex;gap:5px;flex-wrap:wrap;max-width:420px}
+.team-actions{display:flex;gap:6px}
+
+/* Modal */
+.modal{position:fixed;inset:0;background:rgba(20,16,10,.6);display:none;align-items:center;justify-content:center;z-index:120;padding:20px}
+.modal.show{display:flex}
+.modal-card{background:var(--bg);border-radius:16px;width:100%;max-width:520px;max-height:90vh;overflow:auto;border:1px solid var(--rule);box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.modal-head{padding:18px 22px;border-bottom:1px solid var(--rule);display:flex;justify-content:space-between;align-items:center;gap:12px}
+.modal-head h3{font-family:var(--serif);font-weight:300;font-size:24px}
+.modal-body{padding:18px 22px;display:flex;flex-direction:column;gap:14px}
+.modal-body label{display:flex;flex-direction:column;gap:5px;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);font-weight:600}
+.modal-body input,.modal-body select{margin-top:2px}
+.surface-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:6px}
+.surface-grid label{flex-direction:row;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-size:13px;color:var(--ink);font-weight:400;cursor:pointer;padding:8px 10px;border-radius:8px;background:#fff;border:1px solid var(--rule)}
+.surface-grid label:hover{background:var(--bg-soft)}
+.surface-grid input[type=checkbox]{margin:0;width:16px;height:16px}
+.modal-foot{padding:14px 22px 18px;border-top:1px solid var(--rule);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.modal-foot .left,.modal-foot .right{display:flex;gap:8px}
+.password-banner{background:var(--moss);color:#fff;padding:14px 18px;border-radius:12px;margin-top:10px;font-size:13px;line-height:1.5}
+.password-banner code{background:rgba(255,255,255,.18);padding:3px 8px;border-radius:6px;font-family:ui-monospace,monospace;font-size:13px;user-select:all}
+
+/* Lock screen */
+.lock{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;z-index:100;text-align:center}
+.lock-card{background:#fff;border-radius:18px;padding:36px 32px;border:1px solid var(--rule);max-width:420px;width:100%}
+.lock h2{font-family:var(--serif);font-size:38px;font-weight:300;margin-bottom:6px}
+.lock h2 em{color:var(--moss);font-style:italic}
+.lock p{color:var(--ink-soft);font-size:13px;margin-bottom:18px;line-height:1.6}
+.lock-tabs{display:flex;gap:4px;margin:0 0 16px;justify-content:center}
+.lock-tab{padding:8px 16px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);border:1px solid var(--rule);background:#fff;border-radius:999px;cursor:pointer;font-weight:600}
+.lock-tab.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.lock-form{display:flex;flex-direction:column;gap:10px}
+.lock-form input{width:100%;padding:12px 16px;border-radius:12px;font-size:14px}
+.lock-form button{width:100%}
+.lock-error{color:var(--clay);font-size:12px;margin-top:4px;min-height:16px}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--bg);padding:12px 20px;border-radius:999px;font-size:13px;opacity:0;transition:all .3s ease;pointer-events:none;z-index:200;max-width:90vw}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media (max-width:720px){
+  body{padding:20px 14px 60px}
+  h1{font-size:34px}
+  .summary{grid-template-columns:repeat(2,1fr)}
+  .team-row{grid-template-columns:1fr;gap:8px}
+  .team-actions{flex-wrap:wrap}
+  .surface-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- Lock screen -->
+<div class="lock" id="lock">
+  <div class="lock-card">
+    <h2>Cockpit · <em>Zen Village</em></h2>
+    <p>Sign in to see the catalog of admin surfaces and your team.</p>
+    <div class="lock-tabs">
+      <button class="lock-tab on" data-mode="login">Sign in</button>
+      <button class="lock-tab" data-mode="token">Use token</button>
+    </div>
+    <div id="lock-mode-login" class="lock-form">
+      <input type="text" id="lock-username" placeholder="username" autocomplete="username">
+      <input type="password" id="lock-password" placeholder="password" autocomplete="current-password">
+      <button id="lock-login">Sign in</button>
+      <div class="lock-error" id="lock-login-error"></div>
+    </div>
+    <div id="lock-mode-token" class="lock-form" style="display:none">
+      <input type="password" id="lock-token-val" placeholder="legacy admin token" autocomplete="off">
+      <button id="lock-token-btn">Unlock</button>
+      <div class="lock-error" id="lock-token-error"></div>
+      <p style="margin:6px 0 0;font-size:11px;color:var(--ink-soft)">For the bootstrap owner only. Prefer signing in.</p>
+    </div>
+  </div>
+</div>
+
+<header>
+  <div>
+    <h1>Cockpit · <em>Zen Village</em></h1>
+    <p class="lead" id="lead">Every admin surface in one place. Status dots ping the live URL — green up, red down, gold external.</p>
+  </div>
+  <div class="actions">
+    <span class="viewer-pill" id="viewer-badge">…</span>
+    <button class="ghost" id="btn-refresh">↻ refresh</button>
+    <button id="btn-signout">sign out</button>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab on" data-tab="surfaces">Surfaces</button>
+  <button class="tab" data-tab="team" id="tab-team" style="display:none">Team</button>
+</div>
+
+<!-- ─── Surfaces tab ─── -->
+<div id="view-surfaces">
+  <div class="summary" id="summary"></div>
+  <div class="controls">
+    <div class="chips" id="tag-chips"></div>
+    <input class="search" id="search" placeholder="search by name, surface, tag…">
+  </div>
+  <div class="tiles" id="tiles"></div>
+</div>
+
+<!-- ─── Team tab ─── -->
+<div id="view-team" style="display:none">
+  <div class="team-toolbar">
+    <h2>Team</h2>
+    <button class="moss" id="btn-add-user">+ Add user</button>
+  </div>
+  <div class="team-list" id="team-list"></div>
+</div>
+
+<!-- ─── User edit/add modal ─── -->
+<div class="modal" id="user-modal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h3 id="user-modal-title">Add user</h3>
+      <button class="ghost small" id="user-modal-close">close ×</button>
+    </div>
+    <div class="modal-body">
+      <label>Username
+        <input type="text" id="u-username" placeholder="atlas" autocomplete="off">
+      </label>
+      <label>Display name
+        <input type="text" id="u-display-name" placeholder="Atlas" autocomplete="off">
+      </label>
+      <label>Email
+        <input type="email" id="u-email" placeholder="atlas@example.com" autocomplete="off">
+      </label>
+      <label>Role
+        <select id="u-role">
+          <option value="member">member · only sees assigned surfaces</option>
+          <option value="admin">admin · full access + manage users</option>
+          <option value="owner">owner · cannot be deleted</option>
+        </select>
+      </label>
+      <label>Surfaces
+        <div class="surface-grid" id="u-surfaces"></div>
+        <span style="font-size:11px;color:var(--ink-soft);text-transform:none;letter-spacing:0;font-weight:400;margin-top:4px">Tip: admins/owners get all surfaces automatically.</span>
+      </label>
+      <div class="password-banner" id="user-modal-password" style="display:none"></div>
+    </div>
+    <div class="modal-foot">
+      <div class="left">
+        <button class="ghost small" id="u-reset-password" style="display:none">Reset password</button>
+        <button class="clay small" id="u-delete" style="display:none">Delete user</button>
+      </div>
+      <div class="right">
+        <button class="ghost" id="u-cancel">Cancel</button>
+        <button class="moss" id="u-save">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const SESSION_KEY = "zv_cockpit_session";
+const LEGACY_TOKEN_KEY = "zv_cockpit_token";
+
+let session = JSON.parse(localStorage.getItem(SESSION_KEY) || "null");
+let legacyToken = localStorage.getItem(LEGACY_TOKEN_KEY) || "";
+let viewer = null;
+let surfaces = [];
+let statusById = {};
+let tagFilter = null;
+let searchQuery = "";
+let currentTab = "surfaces";
+let editingUser = null; // null = adding new, otherwise existing user obj
+
+function authHeaders(){
+  const h = {};
+  if (session?.session_token) h["X-Session-Token"] = session.session_token;
+  if (legacyToken) h["X-Admin-Token"] = legacyToken;
+  return h;
+}
+
+function escapeHtml(s){
+  return String(s||"").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+function toast(msg, ms=2400){
+  const t = $("#toast"); t.textContent = msg; t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), ms);
+}
+
+async function api(path, opts={}){
+  const r = await fetch(path, {
+    ...opts,
+    headers: {...authHeaders(), "Content-Type": "application/json", ...(opts.headers||{})},
+    credentials: "same-origin",
+  });
+  if (r.status === 401){
+    session = null; legacyToken = "";
+    localStorage.removeItem(SESSION_KEY); localStorage.removeItem(LEGACY_TOKEN_KEY);
+    showLock("Session expired — sign in again.");
+    throw new Error("AUTH");
+  }
+  if (!r.ok){
+    let detail = "HTTP " + r.status;
+    try { const j = await r.json(); detail = j.detail || detail; } catch(_){}
+    throw new Error(detail);
+  }
+  return await r.json();
+}
+
+// ─── lock screen ─────────────────────────────────────────────────────────
+function showLock(msg){
+  $("#lock").style.display = "flex";
+  if (msg) $("#lock-login-error").textContent = msg;
+}
+function hideLock(){
+  $("#lock").style.display = "none";
+  $("#lock-login-error").textContent = "";
+  $("#lock-token-error").textContent = "";
+}
+
+document.querySelectorAll(".lock-tab").forEach(b => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll(".lock-tab").forEach(x => x.classList.remove("on"));
+    b.classList.add("on");
+    const mode = b.dataset.mode;
+    $("#lock-mode-login").style.display = mode === "login" ? "flex" : "none";
+    $("#lock-mode-token").style.display = mode === "token" ? "flex" : "none";
+  });
+});
+
+$("#lock-login").addEventListener("click", async () => {
+  const username = $("#lock-username").value.trim();
+  const password = $("#lock-password").value;
+  if (!username || !password){
+    $("#lock-login-error").textContent = "Username and password required.";
+    return;
+  }
+  $("#lock-login").disabled = true; $("#lock-login").textContent = "…";
+  try {
+    const r = await fetch("/api/cockpit/login", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({username, password}),
+    });
+    if (!r.ok){
+      const j = await r.json().catch(()=>({}));
+      throw new Error(j.detail || "HTTP " + r.status);
+    }
+    session = await r.json();
+    legacyToken = "";
+    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    localStorage.removeItem(LEGACY_TOKEN_KEY);
+    // Mirror legacy admin token to the shared key so /admin/submissions,
+    // /booking-admin, /admin/topups etc. inherit auth without re-prompt.
+    try {
+      const lt = await fetch("/api/cockpit/legacy-token", {
+        headers: {"X-Session-Token": session.session_token},
+      });
+      if (lt.ok) {
+        const j = await lt.json();
+        if (j?.token) localStorage.setItem("zv_admin_token", j.token);
+      }
+    } catch(_){}
+    hideLock();
+    await init();
+  } catch(e){
+    $("#lock-login-error").textContent = e.message || "Login failed.";
+  } finally {
+    $("#lock-login").disabled = false; $("#lock-login").textContent = "Sign in";
+  }
+});
+
+$("#lock-password").addEventListener("keydown", e => { if (e.key === "Enter") $("#lock-login").click(); });
+$("#lock-username").addEventListener("keydown", e => { if (e.key === "Enter") $("#lock-password").focus(); });
+
+$("#lock-token-btn").addEventListener("click", async () => {
+  const t = $("#lock-token-val").value.trim();
+  if (!t){ $("#lock-token-error").textContent = "Paste a token first."; return; }
+  legacyToken = t;
+  localStorage.setItem(LEGACY_TOKEN_KEY, t);
+  // Same token is the legacy admin token for every other surface — mirror it
+  // so /admin/submissions etc. don't re-prompt.
+  localStorage.setItem("zv_admin_token", t);
+  session = null;
+  localStorage.removeItem(SESSION_KEY);
+  try {
+    await api("/api/cockpit/me");
+    hideLock();
+    await init();
+  } catch(e){
+    legacyToken = "";
+    localStorage.removeItem(LEGACY_TOKEN_KEY);
+    localStorage.removeItem("zv_admin_token");
+    $("#lock-token-error").textContent = "Token rejected.";
+  }
+});
+$("#lock-token-val").addEventListener("keydown", e => { if (e.key === "Enter") $("#lock-token-btn").click(); });
+
+$("#btn-signout").addEventListener("click", async () => {
+  try { await api("/api/cockpit/logout", {method: "POST"}); } catch(_){}
+  session = null; legacyToken = "";
+  localStorage.removeItem(SESSION_KEY); localStorage.removeItem(LEGACY_TOKEN_KEY);
+  localStorage.removeItem("zv_admin_token");
+  showLock();
+  toast("Signed out");
+});
+
+// ─── tabs ────────────────────────────────────────────────────────────────
+document.querySelectorAll(".tab").forEach(t => {
+  t.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(x => x.classList.remove("on"));
+    t.classList.add("on");
+    currentTab = t.dataset.tab;
+    $("#view-surfaces").style.display = currentTab === "surfaces" ? "block" : "none";
+    $("#view-team").style.display = currentTab === "team" ? "block" : "none";
+    if (currentTab === "team") loadTeam();
+  });
+});
+
+// ─── viewer + surfaces ───────────────────────────────────────────────────
+function renderViewerBadge(){
+  const b = $("#viewer-badge");
+  if (!viewer){ b.textContent = "…"; return; }
+  const role = viewer.role || "member";
+  b.className = "viewer-pill " + role;
+  b.textContent = `${role} · ${viewer.display_name || viewer.username || "you"}`;
+  if (viewer.is_admin){
+    $("#tab-team").style.display = "inline-block";
+  } else {
+    $("#tab-team").style.display = "none";
+  }
+}
+
+function renderSummary(){
+  const total = surfaces.length;
+  const up = Object.values(statusById).filter(s => s.status === "up").length;
+  const down = Object.values(statusById).filter(s => s.status === "down").length;
+  const ext = Object.values(statusById).filter(s => s.status === "external").length;
+  $("#summary").innerHTML = `
+    <div class="kpi"><div class="label">Surfaces visible to you</div><div class="value">${total}</div></div>
+    <div class="kpi up"><div class="label">Up</div><div class="value">${up}</div></div>
+    <div class="kpi down"><div class="label">Down</div><div class="value">${down}</div></div>
+    <div class="kpi ext"><div class="label">External</div><div class="value">${ext}</div></div>
+  `;
+}
+
+function renderChips(){
+  const tags = [...new Set(surfaces.flatMap(s => s.tags || []))].sort();
+  const wrap = $("#tag-chips");
+  wrap.innerHTML = `<span class="chip ${tagFilter===null?"on":""}" data-tag="">all</span>` +
+    tags.map(t => `<span class="chip ${tagFilter===t?"on":""}" data-tag="${escapeHtml(t)}">${escapeHtml(t)}</span>`).join("");
+  wrap.querySelectorAll(".chip").forEach(el => {
+    el.addEventListener("click", () => {
+      tagFilter = el.dataset.tag || null;
+      renderChips();
+      renderTiles();
+    });
+  });
+}
+
+function renderTiles(){
+  const q = searchQuery.toLowerCase().trim();
+  const filtered = surfaces.filter(s => {
+    if (tagFilter && !(s.tags || []).includes(tagFilter)) return false;
+    if (!q) return true;
+    const hay = [s.name, s.id, s.blurb, s.provider, s.auth, ...(s.tags||[]), ...(s.users||[])].join(" ").toLowerCase();
+    return hay.includes(q);
+  });
+  if (!filtered.length){
+    $("#tiles").innerHTML = `<div style="grid-column:1/-1;text-align:center;color:var(--ink-soft);padding:60px">No surfaces match.</div>`;
+    return;
+  }
+  $("#tiles").innerHTML = filtered.map(s => {
+    const st = statusById[s.id] || {status:"checking"};
+    const statusLabel = {up:"live", down:"down", external:"external", checking:"checking…"}[st.status] || st.status;
+    const ms = st.ms ? ` · ${st.ms}ms` : "";
+    const code = st.code ? ` · ${st.code}` : "";
+    const userPills = (s.users||[]).slice(0, 4).map(u => {
+      const cls = (u === "sunheart" || u === "owner") ? "owner" : "";
+      return `<span class="user-pill ${cls}">${escapeHtml(u)}</span>`;
+    }).join("");
+    const more = (s.users||[]).length > 4 ? `<span class="user-pill">+${(s.users||[]).length - 4}</span>` : "";
+    const tags = (s.tags||[]).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join("");
+    return `<a class="tile" href="${escapeHtml(s.url)}" target="_blank" rel="noopener">
+      <div class="tile-head">
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <span class="tile-icon">${s.icon || "▣"}</span>
+          <div>
+            <div class="tile-name">${escapeHtml(s.name)}</div>
+            <div class="tile-tags">${tags}</div>
+          </div>
+        </div>
+        <span class="tile-status ${st.status}"><span class="dot"></span>${statusLabel}${st.status==="up"?ms:(st.status==="down"?code:"")}</span>
+      </div>
+      <div class="tile-blurb">${escapeHtml(s.blurb)}</div>
+      <div class="tile-meta"><strong>auth</strong> ${escapeHtml(s.auth || "—")}</div>
+      <div class="tile-meta"><strong>host</strong> ${escapeHtml(s.provider || "—")}</div>
+      <div class="tile-users">${userPills}${more}</div>
+    </a>`;
+  }).join("");
+}
+
+async function loadSurfaces(){
+  const data = await api("/api/cockpit/surfaces");
+  surfaces = data.surfaces || [];
+  viewer = data.viewer || null;
+  renderViewerBadge();
+  renderChips();
+  renderSummary();
+  renderTiles();
+}
+
+async function loadStatus(refresh = false){
+  try {
+    const data = await api("/api/cockpit/status" + (refresh ? "?refresh=true" : ""));
+    statusById = data.by_id || {};
+    renderSummary();
+    renderTiles();
+  } catch(e){
+    if (e.message !== "AUTH") toast("Status check failed: " + e.message);
+  }
+}
+
+// ─── Team tab ────────────────────────────────────────────────────────────
+async function loadTeam(){
+  if (!viewer?.is_admin) return;
+  try {
+    const data = await api("/api/cockpit/users");
+    const users = data.users || [];
+    const wrap = $("#team-list");
+    if (!users.length){
+      wrap.innerHTML = `<div style="padding:40px;text-align:center;color:var(--ink-soft)">No users yet.</div>`;
+      return;
+    }
+    wrap.innerHTML = users.map(u => {
+      const initial = (u.display_name || u.username || "?").trim().charAt(0).toUpperCase();
+      const surfaceList = (u.surfaces || []);
+      let surfacesHtml;
+      if (surfaceList.includes("*")){
+        surfacesHtml = `<span class="user-pill owner">all surfaces</span>`;
+      } else if (!surfaceList.length){
+        surfacesHtml = `<span class="tag">no surfaces</span>`;
+      } else {
+        surfacesHtml = surfaceList.slice(0, 6).map(s => `<span class="tag">${escapeHtml(s)}</span>`).join("");
+        if (surfaceList.length > 6) surfacesHtml += ` <span class="tag">+${surfaceList.length-6}</span>`;
+      }
+      const lastLogin = u.last_login_at ? new Date(u.last_login_at).toLocaleDateString() : "never signed in";
+      return `<div class="team-row">
+        <div class="team-avatar">${escapeHtml(initial)}</div>
+        <div class="team-info">
+          <div class="team-name">${escapeHtml(u.display_name || u.username)}</div>
+          <div class="team-meta">@${escapeHtml(u.username)} · ${escapeHtml(u.role)}${u.email ? " · " + escapeHtml(u.email) : ""} · ${escapeHtml(lastLogin)}</div>
+        </div>
+        <div class="team-surfaces">${surfacesHtml}</div>
+        <div class="team-actions">
+          <button class="ghost small" data-edit="${escapeHtml(u.username)}">Edit</button>
+        </div>
+      </div>`;
+    }).join("");
+    wrap.querySelectorAll("[data-edit]").forEach(b => {
+      b.addEventListener("click", () => {
+        const username = b.dataset.edit;
+        const u = users.find(x => x.username === username);
+        if (u) openUserModal(u);
+      });
+    });
+  } catch(e){
+    if (e.message !== "AUTH") toast("Couldn't load team: " + e.message);
+  }
+}
+
+function buildSurfaceCheckboxes(checkedIds){
+  const wantAll = (checkedIds || []).includes("*");
+  const ids = surfaces.map(s => s.id);
+  // Also include any surfaces the caller can't see right now (admins should
+  // always be able to grant any of the 10 catalog entries).
+  const allKnown = ["receipts","submissions","bookings","topups","items","affiliates","events","inbox","crm","telegram-bot"];
+  const html = allKnown.map(id => {
+    const s = surfaces.find(x => x.id === id);
+    const label = s ? `${s.icon} ${s.name}` : id;
+    const checked = wantAll || (checkedIds || []).includes(id) ? "checked" : "";
+    return `<label><input type="checkbox" data-surface="${escapeHtml(id)}" ${checked}> ${escapeHtml(label)}</label>`;
+  }).join("");
+  $("#u-surfaces").innerHTML = `<label style="grid-column:1/-1;background:var(--bg-soft)">
+    <input type="checkbox" id="u-surface-all" ${wantAll?"checked":""}> <strong>All surfaces (admin grant)</strong>
+  </label>` + html;
+  $("#u-surface-all").addEventListener("change", e => {
+    if (e.target.checked){
+      $("#u-surfaces").querySelectorAll("input[data-surface]").forEach(c => c.checked = true);
+    }
+  });
+  $("#u-surfaces").querySelectorAll("input[data-surface]").forEach(c => {
+    c.addEventListener("change", () => {
+      const all = [...$("#u-surfaces").querySelectorAll("input[data-surface]")].every(x => x.checked);
+      $("#u-surface-all").checked = all;
+    });
+  });
+}
+
+function openUserModal(user){
+  editingUser = user || null;
+  $("#user-modal-title").textContent = user ? `Edit ${user.display_name || user.username}` : "Add user";
+  $("#u-username").value = user?.username || "";
+  $("#u-username").disabled = !!user;
+  $("#u-display-name").value = user?.display_name || "";
+  $("#u-email").value = user?.email || "";
+  $("#u-role").value = user?.role || "member";
+  buildSurfaceCheckboxes(user?.surfaces || []);
+  $("#u-reset-password").style.display = user ? "inline-block" : "none";
+  $("#u-delete").style.display = (user && user.username !== viewer?.username) ? "inline-block" : "none";
+  $("#user-modal-password").style.display = "none";
+  $("#user-modal-password").innerHTML = "";
+  $("#user-modal").classList.add("show");
+}
+function closeUserModal(){ $("#user-modal").classList.remove("show"); editingUser = null; }
+
+function collectSurfaces(){
+  if ($("#u-surface-all").checked) return ["*"];
+  return [...$("#u-surfaces").querySelectorAll("input[data-surface]")]
+    .filter(c => c.checked).map(c => c.dataset.surface);
+}
+
+$("#user-modal-close").addEventListener("click", closeUserModal);
+$("#u-cancel").addEventListener("click", closeUserModal);
+$("#user-modal").addEventListener("click", e => { if (e.target.id === "user-modal") closeUserModal(); });
+
+$("#u-save").addEventListener("click", async () => {
+  const username = $("#u-username").value.trim().toLowerCase();
+  const display_name = $("#u-display-name").value.trim();
+  const email = $("#u-email").value.trim();
+  const role = $("#u-role").value;
+  const surfaces = collectSurfaces();
+  const btn = $("#u-save"); btn.disabled = true; btn.textContent = "Saving…";
+  try {
+    if (editingUser){
+      await api(`/api/cockpit/users/${encodeURIComponent(editingUser.username)}`, {
+        method: "PATCH",
+        body: JSON.stringify({display_name, email, role, surfaces}),
+      });
+      toast("User updated");
+      closeUserModal();
+    } else {
+      const created = await api("/api/cockpit/users", {
+        method: "POST",
+        body: JSON.stringify({username, display_name, email, role, surfaces}),
+      });
+      $("#user-modal-password").style.display = "block";
+      $("#user-modal-password").innerHTML = `<strong>${escapeHtml(created.display_name || username)}</strong> created.<br>
+        Initial password: <code>${escapeHtml(created.initial_password)}</code><br>
+        <small style="opacity:.85">Copy & send via a trusted channel — they should change it after first login.</small>`;
+    }
+    await loadTeam();
+  } catch(e){
+    if (e.message !== "AUTH") toast("Save failed: " + e.message);
+  } finally {
+    btn.disabled = false; btn.textContent = "Save";
+  }
+});
+
+$("#u-reset-password").addEventListener("click", async () => {
+  if (!editingUser) return;
+  if (!confirm(`Reset password for ${editingUser.display_name || editingUser.username}? Any active sessions will be invalidated.`)) return;
+  try {
+    const r = await api(`/api/cockpit/users/${encodeURIComponent(editingUser.username)}/password`, {
+      method: "POST", body: JSON.stringify({}),
+    });
+    $("#user-modal-password").style.display = "block";
+    $("#user-modal-password").innerHTML = `New password for <strong>${escapeHtml(editingUser.username)}</strong>:<br>
+      <code>${escapeHtml(r.new_password)}</code><br>
+      <small style="opacity:.85">Send via a trusted channel.</small>`;
+  } catch(e){
+    if (e.message !== "AUTH") toast("Reset failed: " + e.message);
+  }
+});
+
+$("#u-delete").addEventListener("click", async () => {
+  if (!editingUser) return;
+  if (!confirm(`Delete ${editingUser.display_name || editingUser.username}? This is permanent.`)) return;
+  try {
+    await api(`/api/cockpit/users/${encodeURIComponent(editingUser.username)}`, {method: "DELETE"});
+    toast("User deleted");
+    closeUserModal();
+    await loadTeam();
+  } catch(e){
+    if (e.message !== "AUTH") toast("Delete failed: " + e.message);
+  }
+});
+
+$("#btn-add-user").addEventListener("click", () => openUserModal(null));
+
+// ─── header buttons + search ─────────────────────────────────────────────
+$("#btn-refresh").addEventListener("click", async () => {
+  $("#btn-refresh").disabled = true;
+  $("#btn-refresh").textContent = "checking…";
+  await loadStatus(true);
+  $("#btn-refresh").disabled = false;
+  $("#btn-refresh").textContent = "↻ refresh";
+  toast("Status refreshed");
+});
+
+$("#search").addEventListener("input", e => {
+  searchQuery = e.target.value;
+  renderTiles();
+});
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && $("#user-modal").classList.contains("show")) closeUserModal();
+});
+
+// ─── boot ────────────────────────────────────────────────────────────────
+async function init(){
+  if (!session?.session_token && !legacyToken){ showLock(); return; }
+  try {
+    await loadSurfaces();
+    hideLock();
+    await loadStatus();
+  } catch(e){
+    if (e.message === "AUTH") return;
+    toast("Could not load: " + e.message);
+  }
+}
+
+init();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,152 @@
+{
+  "version": 1,
+  "gates": [
+    {
+      "id": "decision-run-the-dispatched-builds",
+      "surfaced": "2026-06-09T09:42:55+00:00",
+      "stream": "Game",
+      "question": "Run the dispatched builds",
+      "verbs": [
+        "running them",
+        "after X",
+        "checkpoint"
+      ],
+      "blocking": true,
+      "urgent": true,
+      "state": "closed",
+      "answer": "Watchfire complete 2026-06-11: whaletrack-live authenticated (HYPERLIQUID creds written to /etc/fpai/ai.env, service restarted, SDK initialized). ETH+SOL policy violations queued for James review."
+    },
+    {
+      "id": "decision-stage-idle-25-5k-yield",
+      "surfaced": "2026-06-09T09:42:55+00:00",
+      "stream": "Treasury",
+      "question": "Stage idle ~$25.5k \u2192 yield?",
+      "verbs": [
+        "stage it",
+        "checkpoint"
+      ],
+      "blocking": true,
+      "urgent": false,
+      "state": "open",
+      "answer": ""
+    },
+    {
+      "id": "decision-cut-amex-waste",
+      "surfaced": "2026-06-09T09:42:55+00:00",
+      "stream": "Treasury",
+      "question": "Cut AMEX waste",
+      "verbs": [
+        "itemize",
+        "checkpoint"
+      ],
+      "blocking": true,
+      "urgent": false,
+      "state": "open",
+      "answer": ""
+    },
+    {
+      "id": "decision-onboard-atlas-jojo",
+      "surfaced": "2026-06-09T09:42:55+00:00",
+      "stream": "Zen",
+      "question": "Onboard Atlas + Jojo",
+      "verbs": [
+        "go now",
+        "checkpoint"
+      ],
+      "blocking": true,
+      "urgent": false,
+      "state": "closed",
+      "answer": "Atlas + Jojo no longer in orbit (confirmed 2026-06-12). Gate moot."
+    },
+    {
+      "id": "decision-camp-zen-first-cohort-offer-shape",
+      "surfaced": "2026-06-09T09:42:55+00:00",
+      "stream": "Zen",
+      "question": "Camp Zen first-cohort offer shape",
+      "verbs": [
+        "pick the shape",
+        "checkpoint"
+      ],
+      "blocking": true,
+      "urgent": false,
+      "state": "open",
+      "answer": ""
+    },
+    {
+      "id": "decision-village-roles-v1",
+      "surfaced": "2026-06-09T09:42:55+00:00",
+      "stream": "Zen",
+      "question": "Village Roles v1",
+      "verbs": [
+        "approve",
+        "checkpoint"
+      ],
+      "blocking": true,
+      "urgent": false,
+      "state": "open",
+      "answer": ""
+    },
+    {
+      "id": "decision-butr-universe-v0-2",
+      "surfaced": "2026-06-09T09:42:55+00:00",
+      "stream": "Legal",
+      "question": "BUTR Universe v0.2",
+      "verbs": [
+        "release",
+        "hold",
+        "checkpoint"
+      ],
+      "blocking": true,
+      "urgent": false,
+      "state": "open",
+      "answer": ""
+    },
+    {
+      "id": "results-results-bottleneck-session",
+      "surfaced": "2026-06-09T13:15:15+00:00",
+      "stream": "Ventures",
+      "question": "Approve next results move for Bottleneck Session: Name 3-5 warm leads for the founding $250 Bottleneck offer?",
+      "verbs": [
+        "name leads",
+        "draft cold list",
+        "checkpoint"
+      ],
+      "blocking": true,
+      "urgent": false,
+      "state": "open",
+      "answer": ""
+    },
+    {
+      "id": "inter-session-sync-2026-06-12",
+      "surfaced": "2026-06-12T00:00:00+00:00",
+      "stream": "Game",
+      "question": "INTER-SESSION SYNC",
+      "state": "info",
+      "blocking": false,
+      "urgent": false,
+      "verbs": [],
+      "answer": "",
+      "notes": {
+        "from_session": "0b0ca1df",
+        "shipped": [
+          "NOW.md refreshed \u2014 FPOS North Star headlines (b77b7e5a)",
+          "Buildstream Rungs 0-3 corrected to done, Rung 4 ready",
+          "SPEC_builder-loop-close.md committed (0bee9f00)",
+          "Alignment footer compressed to NOW/NEED/NEXT/NARRATOR (f9994954)",
+          "Intake-agent on 162 healthy \u2014 Resend key only gap"
+        ],
+        "open": [
+          "TG vs Claude Code: which surface is James actually using? TG inbox 16d stale, all crons dead",
+          "deploy_reconciler.sh unrun \u2014 Watchfire Reserved-Class, needs James hand",
+          "Bottleneck Session: weight-90, no leads named yet",
+          "5 dirty files uncommitted on feat/headless-build"
+        ],
+        "ask_other_sessions": [
+          "What did you last touch on feat/headless-build? Are any dirty files yours?",
+          "Did you confirm Watchfire stops live on HL?",
+          "Has James indicated preferred surface (TG / Claude Code / Obsidian)?"
+        ]
+      }
+    }
+  ]
+}

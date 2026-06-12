@@ -1,0 +1,1311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>The Reset Retreat: Jungle Exhale · Zen Village Costa Rica</title>
+<meta name="description" content="A nervous system restoration retreat in the Chirripó Mountains of Costa Rica. Come overstimulated. Leave restored. Rest. Reconnect. Restore." />
+<meta name="theme-color" content="#1f2e1a" />
+
+<meta property="og:title" content="The Reset Retreat: Jungle Exhale · Zen Village" />
+<meta property="og:description" content="A nervous system restoration retreat in the Chirripó Mountains. Limited to 10 guests. Rest. Reconnect. Restore." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://zenvillage.live/reset" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Caveat:wght@500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --forest:        #1f3320;   /* deeper, matches flyer */
+    --forest-deep:   #15201f;
+    --forest-mid:    #2d4530;
+    --forest-soft:   #3a4f33;
+    --moss:          #6b8e5a;
+    --moss-soft:     #9ab38a;
+    --paper:         #f4ecd9;   /* warmer cream, matches flyer */
+    --paper-warm:    #e8dec5;
+    --paper-edge:    rgba(31,46,26,.10);
+    --ink:           #1a1f17;
+    --ink-soft:      rgba(26,31,23,.74);
+    --ink-muted:     rgba(26,31,23,.55);
+    --gold:          #c8a55a;   /* warmer flyer-gold */
+    --gold-bright:   #d4b76b;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: var(--ink);
+    background: var(--paper);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    font-size: 17px;
+  }
+
+  /* Paper grain texture */
+  body::after {
+    content:"";
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.12 0 0 0 0 0.18 0 0 0 0 0.10 0 0 0 0.06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    opacity: .55;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+    z-index: 0;
+  }
+
+  main, header, footer { position: relative; z-index: 1; }
+  .container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+  /* ─── Referral banner ────────────────────────────────────────────── */
+  .ref-banner {
+    display: none;
+    background: var(--forest);
+    color: var(--paper);
+    text-align: center;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-style: italic;
+    font-family: 'Cormorant Garamond', serif;
+  }
+  .ref-banner.visible { display: block; }
+  .ref-banner strong { color: var(--gold); font-style: normal; font-weight: 500; }
+
+  /* ─── HERO ───────────────────────────────────────────────────────── */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding: 0;
+    color: var(--paper);
+    isolation: isolate;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      /* sun glow top */
+      radial-gradient(900px 500px at 50% 0%, rgba(212,183,107,.20), transparent 65%),
+      /* river glint bottom */
+      radial-gradient(600px 300px at 30% 100%, rgba(107,142,90,.18), transparent 60%),
+      /* layered jungle gradient */
+      linear-gradient(180deg, #2b4a2c 0%, #1f3320 45%, #15201f 100%);
+    z-index: -1;
+  }
+  /* leafy silhouettes (CSS-only for now; swap for real photo via .hero-photo bg-image) */
+  .hero-bg::before, .hero-bg::after {
+    content: "";
+    position: absolute;
+    background-repeat: no-repeat;
+    background-size: contain;
+    opacity: .45;
+    pointer-events: none;
+  }
+  .hero-bg::before {
+    left: -30px; bottom: -10px;
+    width: 360px; height: 360px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200' fill='%231a2814'><path d='M30 180 Q 20 120 50 100 Q 80 80 70 40 Q 90 60 110 50 Q 140 60 130 100 Q 160 120 150 180 Z'/></svg>");
+  }
+  .hero-bg::after {
+    right: -40px; top: -10px;
+    width: 320px; height: 320px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200' fill='%231a2814'><path d='M170 20 Q 180 80 150 100 Q 120 120 130 160 Q 110 140 90 150 Q 60 140 70 100 Q 40 80 50 20 Z'/></svg>");
+  }
+  .hero-inner {
+    padding: 80px 24px 88px;
+    text-align: center;
+    position: relative;
+  }
+  .brand-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    letter-spacing: .5em;
+    text-transform: uppercase;
+    font-size: 18px;
+    color: var(--paper);
+    margin: 0 0 8px;
+  }
+  .brand-leaves {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--gold-bright);
+    margin: 0 0 50px;
+  }
+  .brand-leaves::before, .brand-leaves::after {
+    content: "✦"; color: var(--gold); font-size: 10px;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(28px, 4vw, 38px);
+    color: var(--paper);
+    margin: 0 0 6px;
+    letter-spacing: .01em;
+  }
+  .hero-eyebrow::after { content: ":"; }
+  .title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 700;
+    font-size: clamp(64px, 11vw, 128px);
+    line-height: .92;
+    margin: 0 0 28px;
+    color: var(--paper);
+    letter-spacing: -.01em;
+    text-shadow: 0 4px 20px rgba(0,0,0,.4);
+  }
+  .title em { font-style: normal; display: block; }
+
+  .hero-banner {
+    display: inline-block;
+    background: var(--moss);
+    color: var(--paper);
+    padding: 14px 28px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    font-size: 13px;
+    margin: 8px 0 0;
+    transform: rotate(-1deg);
+    border-radius: 2px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.25);
+    max-width: 440px;
+    line-height: 1.6;
+  }
+
+  /* Circular "Come overstimulated. Leave restored." badge */
+  .come-leave {
+    position: absolute;
+    top: 64px; right: 32px;
+    width: 160px; height: 160px;
+    border: 1.5px solid var(--gold);
+    border-radius: 50%;
+    background: rgba(31,51,32,.55);
+    backdrop-filter: blur(4px);
+    color: var(--paper);
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    font-size: 11px;
+    line-height: 1.5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 18px;
+  }
+  .come-leave::before {
+    content: "";
+    position: absolute;
+    top: 22px; left: 50%;
+    transform: translateX(-50%);
+    width: 22px; height: 14px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 14' fill='none' stroke='%23c8a55a' stroke-width='1.4'><path d='M1 11 L 7 4 L 11 8 L 15 3 L 21 11'/><circle cx='17' cy='3' r='1.5'/></svg>");
+  }
+  @media (max-width: 760px) {
+    .come-leave { position: static; margin: 30px auto 0; }
+  }
+
+  /* ─── INFO STRIP ─────────────────────────────────────────────────── */
+  .info-strip {
+    background: var(--forest);
+    color: var(--paper);
+    padding: 30px 24px;
+  }
+  .info-strip-inner {
+    max-width: 1120px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+    text-align: center;
+  }
+  .info-strip-inner > div {
+    border-left: 1px solid rgba(244,236,217,.18);
+    padding: 8px 14px;
+  }
+  .info-strip-inner > div:first-child { border-left: none; }
+  .info-strip-inner .num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 4px;
+    color: var(--paper);
+  }
+  .info-strip-inner .lbl {
+    font-size: 11px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: rgba(244,236,217,.75);
+  }
+
+  /* ─── FOR-YOU INTRO ──────────────────────────────────────────────── */
+  .intro {
+    padding: 64px 24px 40px;
+    text-align: center;
+  }
+  .intro-lead {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--ink);
+    max-width: 720px;
+    margin: 0 auto 18px;
+  }
+  .intro-script {
+    font-family: 'Caveat', cursive;
+    font-weight: 600;
+    font-size: clamp(28px, 4.5vw, 40px);
+    color: var(--forest);
+    margin: 12px 0 32px;
+  }
+
+  /* 7-icon practice row */
+  .practices {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 12px;
+    max-width: 880px;
+    margin: 36px auto 28px;
+  }
+  @media (max-width: 760px) {
+    .practices { grid-template-columns: repeat(4, 1fr); }
+  }
+  @media (max-width: 480px) {
+    .practices { grid-template-columns: repeat(3, 1fr); }
+  }
+  .practice {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .practice-icon {
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--forest);
+  }
+  .practice-icon svg { width: 100%; height: 100%; }
+  .practice-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+
+  /* "No pressure to perform" paragraph */
+  .no-pressure {
+    max-width: 680px;
+    margin: 28px auto 0;
+    font-size: 17px;
+    color: var(--ink-soft);
+    text-align: center;
+    line-height: 1.7;
+  }
+
+  /* ─── SIGNATURE EXPERIENCES BAND ─────────────────────────────────── */
+  .signature {
+    margin: 48px auto 0;
+    max-width: 880px;
+    background: rgba(107,142,90,.12);
+    border: 1px solid rgba(107,142,90,.25);
+    border-radius: 8px;
+    padding: 28px 32px;
+    text-align: center;
+  }
+  .signature-label {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    font-size: 12px;
+    color: var(--gold);
+    margin: 0 0 14px;
+  }
+  .signature-list {
+    list-style: none;
+    margin: 0; padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 24px;
+    font-size: 15px;
+    color: var(--ink);
+  }
+  .signature-list li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .signature-list li::before {
+    content:"•";
+    color: var(--moss);
+    font-size: 18px;
+    line-height: 1;
+  }
+  .signature-list li:first-child::before { display: none; }
+
+  /* ─── INTIMATE BAND ──────────────────────────────────────────────── */
+  .intimate {
+    margin: 28px auto 64px;
+    max-width: 880px;
+    background: var(--forest);
+    color: var(--paper);
+    padding: 24px 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    text-align: left;
+  }
+  .intimate-icon {
+    flex-shrink: 0;
+    color: var(--paper);
+    opacity: .7;
+  }
+  .intimate-icon.right { margin-left: auto; }
+  .intimate-text {
+    flex: 1;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  @media (max-width: 600px) {
+    .intimate { flex-direction: column; text-align: center; }
+    .intimate-text { font-size: 13px; }
+  }
+
+  /* ─── EXPERIENCES GRID (the 6 image-tile equivalents) ────────────── */
+  .experiences {
+    padding: 24px 0 24px;
+  }
+  .experiences-title {
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--forest-soft);
+    letter-spacing: .15em;
+    margin: 0 auto 36px;
+    font-size: 16px;
+  }
+  .exp-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .exp-tile {
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
+    min-height: 220px;
+    display: flex;
+    align-items: flex-end;
+    color: var(--paper);
+    isolation: isolate;
+  }
+  .exp-tile::before {
+    content:"";
+    position: absolute; inset: 0;
+    z-index: -2;
+  }
+  .exp-tile::after {
+    content:"";
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(20,30,15,.1) 0%, rgba(20,30,15,.85) 100%);
+    z-index: -1;
+  }
+  .exp-tile.sauna::before  { background: linear-gradient(135deg, #6b4a2a, #2a1810); }
+  .exp-tile.river::before  { background: linear-gradient(135deg, #3a5c5e, #1a2e30); }
+  .exp-tile.fire::before   { background: linear-gradient(135deg, #6b3a20, #1a100c); }
+  .exp-tile.food::before   { background: linear-gradient(135deg, #5a6a32, #1c2010); }
+  .exp-tile.sleep::before  { background: linear-gradient(135deg, #3a2e4e, #16121c); }
+  .exp-tile.nature::before { background: linear-gradient(135deg, #3a5a32, #142010); }
+  .exp-tile-content {
+    padding: 24px;
+    position: relative;
+    z-index: 1;
+  }
+  .exp-tile-icon {
+    width: 28px; height: 28px;
+    margin-bottom: 10px;
+    color: var(--paper);
+    opacity: .9;
+  }
+  .exp-tile-icon svg { width: 100%; height: 100%; }
+  .exp-tile h3 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    font-size: 14px;
+    margin: 0;
+    color: var(--paper);
+  }
+  @media (max-width: 800px) { .exp-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 480px) { .exp-grid { grid-template-columns: 1fr; } }
+
+  /* ─── 2-COL: WHAT TO EXPECT · TYPICAL DAY ────────────────────────── */
+  .two-col {
+    padding: 64px 0 24px;
+  }
+  .two-col-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+  }
+  @media (max-width: 760px) { .two-col-grid { grid-template-columns: 1fr; gap: 36px; } }
+  .col-title {
+    display: inline-block;
+    background: var(--forest);
+    color: var(--paper);
+    padding: 8px 24px;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    font-size: 14px;
+    margin: 0 0 22px;
+    transform: rotate(-1deg);
+  }
+  .col-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .col-list li {
+    display: flex;
+    gap: 12px;
+    font-size: 15.5px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+  .col-list li::before {
+    content:"";
+    flex-shrink: 0;
+    width: 18px; height: 18px;
+    margin-top: 3px;
+    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236b8e5a'><path d='M12 2C7 8 7 14 12 22 17 14 17 8 12 2z'/></svg>") no-repeat center / contain;
+  }
+  .schedule { display: flex; flex-direction: column; gap: 10px; }
+  .schedule-row {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    align-items: baseline;
+    gap: 12px;
+    font-size: 15px;
+    padding: 6px 0;
+    border-bottom: 1px dashed rgba(31,46,26,.12);
+  }
+  .schedule-row:last-child { border-bottom: none; }
+  .schedule-time {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    color: var(--forest);
+    font-size: 16px;
+  }
+  .schedule-note {
+    color: var(--ink-muted);
+    font-style: italic;
+    font-size: 13px;
+    margin-top: 4px;
+  }
+
+  /* ─── PRICING ────────────────────────────────────────────────────── */
+  .pricing-bar {
+    padding: 64px 24px 56px;
+    margin-top: 32px;
+    background: var(--paper-warm);
+    border-top: 1px solid var(--paper-edge);
+    border-bottom: 1px solid var(--paper-edge);
+    position: relative;
+  }
+  .pricing-bar::before, .pricing-bar::after {
+    content:"";
+    position: absolute;
+    left: 50%; transform: translateX(-50%);
+    width: 240px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .pricing-bar::before { top: 30px; }
+  .pricing-bar::after  { bottom: 30px; }
+  .pricing-title {
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    letter-spacing: .4em;
+    text-transform: uppercase;
+    font-size: 18px;
+    color: var(--forest);
+    margin: 0 0 40px;
+  }
+  .pricing-title::before, .pricing-title::after {
+    content: "✿"; color: var(--gold); margin: 0 18px; font-size: 14px;
+  }
+  .pricing-grid {
+    max-width: 880px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 36px;
+  }
+  @media (max-width: 720px) { .pricing-grid { grid-template-columns: 1fr; gap: 24px; } }
+  .price-card {
+    text-align: center;
+    padding: 8px 16px;
+  }
+  .price-card-icon {
+    width: 36px; height: 36px;
+    margin: 0 auto 12px;
+    color: var(--gold);
+  }
+  .price-card h5 {
+    margin: 0 0 22px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .price-row-grid {
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr;
+    align-items: center;
+    gap: 16px;
+  }
+  .price-row-grid > .div { background: var(--paper-edge); height: 60px; }
+  .price-block .amt {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: clamp(34px, 5vw, 44px);
+    color: var(--gold);
+    display: block;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .price-block .lbl {
+    font-size: 11px;
+    color: var(--ink-muted);
+    letter-spacing: .25em;
+    text-transform: uppercase;
+  }
+
+  /* ─── CTA ────────────────────────────────────────────────────────── */
+  .cta {
+    padding: 80px 24px;
+    text-align: center;
+    background:
+      radial-gradient(800px 500px at 50% 0%, rgba(107,142,90,.15), transparent 60%),
+      var(--paper);
+  }
+  .cta h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: clamp(36px, 6vw, 56px);
+    margin: 0 0 8px;
+    color: var(--forest);
+    letter-spacing: -.01em;
+  }
+  .cta .lead {
+    font-style: italic;
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--ink-soft);
+    font-size: 22px;
+    margin: 0 0 36px;
+  }
+  .cta-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    max-width: 920px;
+    margin: 0 auto;
+    text-align: left;
+  }
+  .cta-card {
+    background: var(--paper-warm);
+    border: 1px solid var(--paper-edge);
+    padding: 32px 28px;
+    border-radius: 4px;
+  }
+  .cta-card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: 22px;
+    margin: 0 0 8px;
+    color: var(--forest);
+    letter-spacing: .03em;
+  }
+  .cta-card p { color: var(--ink-soft); margin: 0 0 18px; font-size: 15px; }
+  .btn {
+    display: inline-block;
+    background: var(--forest);
+    color: var(--paper);
+    padding: 14px 28px;
+    border-radius: 2px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-size: 13px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: transform .15s ease, background .2s ease;
+  }
+  .btn:hover { background: var(--forest-deep); transform: translateY(-1px); }
+  .btn.gold {
+    background: var(--gold);
+    color: var(--forest-deep);
+  }
+  .btn.gold:hover { background: var(--gold-bright); }
+
+  /* Lead form */
+  .lead-form { display: flex; flex-direction: column; gap: 12px; }
+  .lead-form input, .lead-form select, .lead-form textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--paper-edge);
+    background: var(--paper);
+    border-radius: 2px;
+    font: inherit;
+    font-size: 15px;
+    color: var(--ink);
+  }
+  .lead-form input:focus, .lead-form select:focus, .lead-form textarea:focus {
+    outline: none;
+    border-color: var(--forest);
+  }
+  .lead-form textarea { min-height: 80px; resize: vertical; }
+  .lead-form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .lead-form .hp { position: absolute; left: -9999px; }
+  .lead-form .submit-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 6px; }
+  .lead-form .note { font-size: 12px; color: var(--ink-muted); }
+  .lead-form .status {
+    font-size: 14px;
+    color: var(--forest);
+    margin-top: 8px;
+    display: none;
+  }
+  .lead-form .status.visible { display: block; }
+  .lead-form .status.error { color: #b04a3a; }
+
+  /* ─── FOOTER (matches flyer's "Retreat Rhythm" strip) ────────────── */
+  .retreat-rhythm {
+    background: var(--forest);
+    color: var(--paper);
+    padding: 36px 24px;
+    text-align: center;
+    border-top: 1px solid rgba(200,165,90,.25);
+  }
+  .rhythm-row {
+    max-width: 1120px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 24px;
+  }
+  @media (max-width: 760px) {
+    .rhythm-row { grid-template-columns: 1fr; }
+  }
+  .rhythm-tag {
+    text-align: left;
+    font-family: 'Caveat', cursive;
+    font-size: 24px;
+    color: var(--paper);
+    line-height: 1.3;
+  }
+  .rhythm-tag span {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    font-size: 13px;
+    color: var(--gold-bright);
+    margin-top: 4px;
+    display: block;
+  }
+  @media (max-width: 760px) { .rhythm-tag { text-align: center; } }
+  .rhythm-seal {
+    width: 80px; height: 80px;
+    border: 1.5px solid var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    color: var(--gold);
+  }
+  .rhythm-seal svg { width: 44px; height: 44px; }
+  .rhythm-meta {
+    text-align: right;
+    font-size: 13px;
+    color: rgba(244,236,217,.85);
+    letter-spacing: .12em;
+    line-height: 1.8;
+  }
+  @media (max-width: 760px) { .rhythm-meta { text-align: center; } }
+  .rhythm-meta .line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  @media (max-width: 760px) { .rhythm-meta .line { justify-content: center; } }
+  .rhythm-meta a { color: var(--paper); text-decoration: none; border-bottom: 1px solid rgba(244,236,217,.3); }
+  .rhythm-meta a:hover { border-color: var(--gold); }
+
+  footer.legal {
+    background: var(--forest-deep);
+    color: rgba(244,236,217,.6);
+    padding: 18px 24px;
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: .08em;
+  }
+  footer.legal .affiliate-link {
+    margin-top: 8px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    letter-spacing: .04em;
+  }
+  footer.legal .affiliate-link a { color: var(--gold); border-bottom: 1px solid rgba(200,165,90,.4); text-decoration: none; }
+
+</style>
+</head>
+<body>
+
+<!-- Referral banner — populated by JS from /api/affiliates/check -->
+<div id="ref-banner" class="ref-banner">
+  Referred by <strong id="ref-name">a friend</strong> ♥
+</div>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+
+    <!-- Circular badge -->
+    <div class="come-leave" aria-hidden="false">
+      Come overstimulated, leave restored.
+    </div>
+
+    <div class="hero-inner container">
+      <p class="brand-name">Zen Village</p>
+      <p class="brand-leaves">Rest in Presence</p>
+
+      <p class="hero-eyebrow">The Reset Retreat</p>
+      <h1 class="title">Jungle<em>Exhale</em></h1>
+
+      <div class="hero-banner">
+        A Nervous System Restoration Retreat in the Chirripó Mountains of Costa Rica 🇨🇷
+      </div>
+    </div>
+  </section>
+
+  <!-- INFO STRIP -->
+  <section class="info-strip">
+    <div class="info-strip-inner">
+      <div>
+        <span class="num">5 Days · 4 Nights</span>
+        <span class="lbl">Immersive Reset</span>
+      </div>
+      <div>
+        <span class="num">10 Guests Max</span>
+        <span class="lbl">Personal · Deeply Held</span>
+      </div>
+      <div>
+        <span class="num">Chirripó Mountains</span>
+        <span class="lbl">Costa Rica</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOR-YOU INTRO -->
+  <section class="intro">
+    <div class="container">
+      <p class="intro-lead">
+        This retreat is for people who feel overstimulated, burned out,<br/>
+        disconnected, or tired from always being "on."
+      </p>
+      <p class="intro-script">You come here to slow down.</p>
+
+      <!-- 7-icon practice row -->
+      <div class="practices" aria-label="Practices of the retreat">
+        <div class="practice">
+          <div class="practice-icon">
+            <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+              <circle cx="20" cy="14" r="4"/>
+              <path d="M20 18 L 20 28 M 12 22 L 28 22 M 14 32 L 26 32"/>
+            </svg>
+          </div>
+          <div class="practice-label">You<br/>Rest.</div>
+        </div>
+        <div class="practice">
+          <div class="practice-icon">
+            <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+              <path d="M6 16 Q 12 12 18 16 T 30 16"/>
+              <path d="M6 22 Q 12 18 18 22 T 34 22"/>
+              <path d="M10 28 Q 16 24 22 28 T 32 28"/>
+            </svg>
+          </div>
+          <div class="practice-label">You Breathe<br/>Mountain Air.</div>
+        </div>
+        <div class="practice">
+          <div class="practice-icon">
+            <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+              <path d="M20 30 L 20 18"/>
+              <path d="M20 18 Q 12 14 12 8 Q 20 10 20 18"/>
+              <path d="M20 18 Q 28 14 28 8 Q 20 10 20 18"/>
+            </svg>
+          </div>
+          <div class="practice-label">You Eat<br/>Nourishing Food.</div>
+        </div>
+        <div class="practice">
+          <div class="practice-icon">
+            <svg viewBox="0 0 40 40" fill="currentColor">
+              <path d="M20 6 C 22 12 28 14 28 22 C 28 28 24 32 20 32 C 16 32 12 28 12 22 C 12 18 16 18 16 14 C 16 11 18 10 20 6 Z"/>
+            </svg>
+          </div>
+          <div class="practice-label">You Sit<br/>By the Fire.</div>
+        </div>
+        <div class="practice">
+          <div class="practice-icon">
+            <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+              <path d="M12 30 Q 12 22 14 18 Q 16 14 16 10"/>
+              <path d="M20 30 Q 20 22 22 18 Q 24 14 24 10"/>
+              <path d="M28 30 Q 28 24 30 20"/>
+              <path d="M8 34 L 32 34"/>
+            </svg>
+          </div>
+          <div class="practice-label">You Sweat<br/>In the Sauna.</div>
+        </div>
+        <div class="practice">
+          <div class="practice-icon">
+            <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+              <path d="M4 14 Q 10 10 16 14 T 28 14 T 36 14"/>
+              <path d="M4 20 Q 10 16 16 20 T 28 20 T 36 20"/>
+              <path d="M4 26 Q 10 22 16 26 T 28 26 T 36 26"/>
+            </svg>
+          </div>
+          <div class="practice-label">You Enter<br/>The River.</div>
+        </div>
+        <div class="practice">
+          <div class="practice-icon">
+            <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+              <path d="M28 22 A 10 10 0 1 1 18 12 A 7 7 0 0 0 28 22 Z"/>
+              <circle cx="32" cy="14" r=".8" fill="currentColor"/>
+              <circle cx="30" cy="20" r=".6" fill="currentColor"/>
+              <circle cx="34" cy="18" r=".6" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="practice-label">You Sleep<br/>Deeply.</div>
+        </div>
+      </div>
+
+      <p class="no-pressure">
+        No pressure to perform. No packed schedule. No spiritual theater.
+        Just quiet space, river water, firelight, good food, jungle beauty,
+        and real human connection.
+      </p>
+
+      <!-- Signature experiences -->
+      <div class="signature">
+        <p class="signature-label">Signature Experiences Include</p>
+        <ul class="signature-list">
+          <li>Guided Sauna + River Reset</li>
+          <li>Firelight Sharing Circle</li>
+          <li>Nature Immersion</li>
+          <li>Rest Time</li>
+          <li>Optional Community Connection</li>
+        </ul>
+      </div>
+
+      <!-- Intimate band -->
+      <div class="intimate">
+        <svg class="intimate-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <path d="M12 3 C 8 8 8 14 12 21 C 16 14 16 8 12 3 Z"/>
+        </svg>
+        <div class="intimate-text">
+          We keep it intimate, around 10 guests, so the experience stays personal, peaceful, and deeply held.
+        </div>
+        <svg class="intimate-icon right" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 21 L 4 12 C 2 9 4 4 8 4 C 10 4 11 5 12 7 C 13 5 14 4 16 4 C 20 4 22 9 20 12 Z"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCES GRID -->
+  <section class="experiences">
+    <div class="container">
+      <p class="experiences-title">The texture of the days</p>
+      <div class="exp-grid">
+
+        <div class="exp-tile sauna">
+          <div class="exp-tile-content">
+            <div class="exp-tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 18 Q 6 13 8 11 Q 10 8 10 5"/><path d="M12 18 Q 12 13 14 11 Q 16 8 16 5"/><path d="M18 18 Q 18 15 19 13"/><path d="M3 21 L 21 21"/></svg></div>
+            <h3>Sweat in the sauna.</h3>
+          </div>
+        </div>
+
+        <div class="exp-tile river">
+          <div class="exp-tile-content">
+            <div class="exp-tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 8 Q 6 4 12 8 T 22 8"/><path d="M2 13 Q 6 9 12 13 T 22 13"/><path d="M2 18 Q 6 14 12 18 T 22 18"/></svg></div>
+            <h3>Enter the river.</h3>
+          </div>
+        </div>
+
+        <div class="exp-tile fire">
+          <div class="exp-tile-content">
+            <div class="exp-tile-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 4 5 5 5 10 0 4-3 8-5 8s-5-4-5-8c0-3 3-4 3-7 0-1 1-2 2-3z"/></svg></div>
+            <h3>Sit by the fire.</h3>
+          </div>
+        </div>
+
+        <div class="exp-tile food">
+          <div class="exp-tile-content">
+            <div class="exp-tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 14 L 12 8"/><path d="M12 8 Q 7 6 6 2 Q 12 2 12 8"/><path d="M12 8 Q 17 6 18 2 Q 12 2 12 8"/><path d="M5 14 L 19 14 Q 19 19 12 21 Q 5 19 5 14 Z"/></svg></div>
+            <h3>Eat nourishing food.</h3>
+          </div>
+        </div>
+
+        <div class="exp-tile sleep">
+          <div class="exp-tile-content">
+            <div class="exp-tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M20 13a8 8 0 1 1-9-9 7 7 0 0 0 9 9z" fill="currentColor" fill-opacity=".15"/></svg></div>
+            <h3>Sleep deeply.</h3>
+          </div>
+        </div>
+
+        <div class="exp-tile nature">
+          <div class="exp-tile-content">
+            <div class="exp-tile-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C7 8 7 14 12 22 17 14 17 8 12 2z"/></svg></div>
+            <h3>Reconnect with nature, your body &amp; yourself.</h3>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- TWO-COL: WHAT TO EXPECT · TYPICAL DAY -->
+  <section class="two-col">
+    <div class="container">
+      <div class="two-col-grid">
+
+        <div>
+          <div class="col-title">What to expect</div>
+          <ul class="col-list">
+            <li>Wake to mountain air, birdsong, and jungle beauty</li>
+            <li>Nourishing meals and intentional herbal teas</li>
+            <li>Guided practices, breathwork, and space to just <em>be</em></li>
+            <li>Sauna + river reset to clear stress and recharge</li>
+            <li>Rest, reflection, and real human connection</li>
+            <li>Plenty of room for integration — nothing forced</li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="col-title">A typical day</div>
+          <div class="schedule">
+            <div class="schedule-row"><span class="schedule-time">7:00</span><span>Morning practice + breathwork</span></div>
+            <div class="schedule-row"><span class="schedule-time">8:00</span><span>Nourishing breakfast</span></div>
+            <div class="schedule-row"><span class="schedule-time">9:30</span><span>Nature immersion / free time</span></div>
+            <div class="schedule-row"><span class="schedule-time">12:30</span><span>Lunch + rest</span></div>
+            <div class="schedule-row"><span class="schedule-time">3:30</span><span>Sauna + river reset</span></div>
+            <div class="schedule-row"><span class="schedule-time">5:30</span><span>Firelight sharing circle</span></div>
+            <div class="schedule-row"><span class="schedule-time">7:00</span><span>Dinner</span></div>
+            <div class="schedule-row"><span class="schedule-time">8:30</span><span>Rest · stars · sleep</span></div>
+          </div>
+          <p class="schedule-note">Schedule may vary. Plenty of space for rest and integration.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="pricing-bar">
+    <h3 class="pricing-title">Pricing</h3>
+    <div class="pricing-grid">
+
+      <div class="price-card">
+        <div class="price-card-icon">
+          <svg viewBox="0 0 40 40" fill="currentColor" aria-hidden="true">
+            <path d="M20 4 C 14 12 14 20 20 32 C 26 20 26 12 20 4 Z"/>
+          </svg>
+        </div>
+        <h5>Premium Stay</h5>
+        <div class="price-row-grid">
+          <div class="price-block">
+            <span class="amt">$1,333</span>
+            <span class="lbl">With Food</span>
+          </div>
+          <div class="div"></div>
+          <div class="price-block">
+            <span class="amt">$1,111</span>
+            <span class="lbl">Without Food</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="price-card">
+        <div class="price-card-icon">
+          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+            <path d="M6 28 L 20 8 L 34 28 Z"/>
+            <path d="M10 28 L 20 14 L 30 28"/>
+            <path d="M14 28 L 20 20 L 26 28"/>
+          </svg>
+        </div>
+        <h5>Dome Stay</h5>
+        <div class="price-row-grid">
+          <div class="price-block">
+            <span class="amt">$777</span>
+            <span class="lbl">With Food</span>
+          </div>
+          <div class="div"></div>
+          <div class="price-block">
+            <span class="amt">$555</span>
+            <span class="lbl">Without Food</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CTA / RESERVE -->
+  <section class="cta" id="reserve">
+    <div class="container">
+      <h2>Reserve Your Reset</h2>
+      <p class="lead">Upcoming dates open · Private + group retreats available</p>
+
+      <div style="text-align:center; margin: 0 auto 36px; max-width: 520px;">
+        <a class="btn gold" href="/reset/pay" style="font-size: 15px; padding: 18px 36px;">
+          Reserve &amp; pay →
+        </a>
+        <p style="font-size: 13px; color: var(--ink-muted); margin: 12px 0 0;">
+          PayPal · Venmo · Wise · Bitcoin · We confirm within 24h
+        </p>
+      </div>
+
+      <p style="text-align:center; font-family: 'Cormorant Garamond', serif; font-style: italic; color: var(--ink-muted); margin: 0 0 24px;">
+        or — if you'd rather talk first —
+      </p>
+
+      <div class="cta-row">
+
+        <div class="cta-card">
+          <h3>DM us to apply</h3>
+          <p>Reach out on Instagram and we'll walk you through dates, accommodation, and answer anything you want to know. Real conversation. Held space.</p>
+          <a class="btn" href="https://instagram.com/zenvillagecostarica" target="_blank" rel="noopener">@zenvillagecostarica</a>
+        </div>
+
+        <div class="cta-card">
+          <h3>Or share your details</h3>
+          <p>Drop your info — we'll reach out within 24 hours with available dates and next steps.</p>
+          <form class="lead-form" id="reset-lead-form" autocomplete="on">
+            <div class="row">
+              <input type="text" name="name" placeholder="Your name" required />
+              <input type="email" name="email" placeholder="Email" required />
+            </div>
+            <div class="row">
+              <input type="text" name="dates" placeholder="Preferred dates / month" />
+              <select name="accommodation">
+                <option value="">Accommodation preference</option>
+                <option value="Premium Stay (with food)">Premium · with food ($1,333)</option>
+                <option value="Premium Stay (without food)">Premium · no food ($1,111)</option>
+                <option value="Dome Stay (with food)">Dome · with food ($777)</option>
+                <option value="Dome Stay (without food)">Dome · no food ($555)</option>
+                <option value="Not sure yet">Not sure yet — help me decide</option>
+              </select>
+            </div>
+            <textarea name="message" placeholder="Anything you want us to know (optional)"></textarea>
+            <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" />
+            <div class="submit-row">
+              <span class="note">We'll never share your info.</span>
+              <button class="btn" type="submit">Send</button>
+            </div>
+            <div class="status" id="lead-status"></div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Retreat Rhythm footer strip — mirrors the flyer's bottom band -->
+<section class="retreat-rhythm">
+  <div class="rhythm-row">
+    <div class="rhythm-tag">
+      <em>Retreat Rhythm:</em>
+      <span>Rest. Reconnect. Restore.</span>
+    </div>
+    <div class="rhythm-seal" aria-hidden="true">
+      <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+        <path d="M4 28 L 14 16 L 20 22 L 26 14 L 36 28"/>
+        <circle cx="28" cy="10" r="2"/>
+        <path d="M4 32 L 36 32"/>
+      </svg>
+    </div>
+    <div class="rhythm-meta">
+      <div class="line">📍 Chirripó Mountains, Costa Rica</div>
+      <div class="line">📷 <a href="https://instagram.com/zenvillagecostarica" target="_blank" rel="noopener">@zenvillagecostarica</a></div>
+    </div>
+  </div>
+</section>
+
+<footer class="legal">
+  <p>Zen Village · <a href="mailto:james@fullpotential.com" style="color:inherit;border-bottom:1px solid rgba(244,236,217,.3);text-decoration:none;">james@fullpotential.com</a></p>
+  <p class="affiliate-link">
+    Want to share this retreat with your people? <a href="/reset/affiliate-signup">Apply to become a Zen Village affiliate →</a>
+  </p>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+
+  // ─── 1. ?ref= URL param → set cookie via /api/affiliates/track ───────
+  function getQueryParam(name) {
+    const m = new RegExp('[?&]' + name + '=([^&]+)').exec(location.search);
+    return m ? decodeURIComponent(m[1]) : '';
+  }
+
+  function getCookie(name) {
+    const v = document.cookie.split('; ').find(r => r.startsWith(name + '='));
+    return v ? v.split('=')[1] : '';
+  }
+
+  const refParam = (getQueryParam('ref') || '').toUpperCase();
+  if (refParam) {
+    fetch('/api/affiliates/track', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ partner_code: refParam, page: '/reset' })
+    }).catch(()=>{});
+  }
+
+  // ─── 2. Surface "Referred by X" banner ───────────────────────────────
+  fetch('/api/affiliates/check')
+    .then(r => r.json())
+    .then(data => {
+      if (data && data.has_referral && data.partner_name) {
+        const banner = document.getElementById('ref-banner');
+        const nameEl = document.getElementById('ref-name');
+        if (banner && nameEl) {
+          nameEl.textContent = data.partner_name;
+          banner.classList.add('visible');
+        }
+      }
+    })
+    .catch(()=>{});
+
+  // ─── 3. Lead form → /api/inquiries/submit ────────────────────────────
+  const form = document.getElementById('reset-lead-form');
+  const statusEl = document.getElementById('lead-status');
+
+  function setStatus(msg, isError) {
+    statusEl.textContent = msg;
+    statusEl.classList.add('visible');
+    statusEl.classList.toggle('error', !!isError);
+  }
+
+  if (form) {
+    form.addEventListener('submit', async function(e){
+      e.preventDefault();
+      const fd = new FormData(form);
+      if ((fd.get('website') || '').trim()) {
+        setStatus("Thanks — we'll be in touch shortly.", false);
+        form.reset();
+        return;
+      }
+      const partnerCode = (getCookie('zv_ref') || '').toUpperCase();
+      const payload = {
+        name: (fd.get('name') || '').trim(),
+        email: (fd.get('email') || '').trim(),
+        inquiry_type: 'The Reset Retreat: Jungle Exhale',
+        dates: (fd.get('dates') || '').trim() || null,
+        accommodation: (fd.get('accommodation') || '').trim() || null,
+        message: (fd.get('message') || '').trim() || null,
+        partner_code: partnerCode || null
+      };
+
+      setStatus('Sending…', false);
+      const btn = form.querySelector('button[type="submit"]');
+      if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+
+      try {
+        const r = await fetch('/api/inquiries/submit', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(payload)
+        });
+        const data = await r.json().catch(()=>({}));
+        if (r.ok) {
+          // ─── Soft lead captured. Now nudge them to /pay with fields pre-filled.
+          // Map accommodation label → pkg radio value used on /reset/pay.
+          const accMap = {
+            'Premium Stay (with food)':    'premium_food',
+            'Premium Stay (without food)': 'premium_no_food',
+            'Dome Stay (with food)':       'dome_food',
+            'Dome Stay (without food)':    'dome_no_food',
+          };
+          const pkg = accMap[payload.accommodation || ''] || '';
+          const params = new URLSearchParams();
+          if (payload.name)  params.set('name',  payload.name);
+          if (payload.email) params.set('email', payload.email);
+          if (payload.dates) params.set('dates', payload.dates);
+          if (pkg)           params.set('pkg',   pkg);
+          // Soft signal so /pay knows this user is mid-flow (not cold)
+          params.set('from', 'landing');
+
+          setStatus("Got it ♥ — Taking you to reserve your spot…", false);
+          // Brief delay so user reads the confirmation, then redirect
+          setTimeout(() => {
+            window.location.assign('/reset/pay?' + params.toString());
+          }, 700);
+        } else {
+          setStatus(data.detail || 'Something went wrong — please DM us instead.', true);
+        }
+      } catch (err) {
+        setStatus("Network hiccup — please DM us on Instagram or email james@fullpotential.com.", true);
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = 'Send'; }
+      }
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

@@ -38,13 +38,16 @@ REGISTRY_FILE = AGREEMENTS_DIR / "registry.json"
 EXCLUDE = {"INDEX.md", "README.md"}
 
 STATUS_LABELS = {
-    "proposed":   "🟠 Proposed (awaiting ratification)",
-    "active":     "🟢 Active",
-    "breached":   "🔴 Breached",
-    "repairing":  "🟡 Repairing",
-    "repaired":   "🟢 Repaired",
-    "withdrawn":  "⚪ Withdrawn",
-    "archived":   "⚫ Archived",
+    "proposed":         "🟠 Proposed (awaiting ratification)",
+    "active":           "🟢 Active",
+    "ratified-active":  "🟢 Ratified · Active",
+    "ratified":         "🟢 Ratified",
+    "breached":         "🔴 Breached",
+    "repairing":        "🟡 Repairing",
+    "repaired":         "🟢 Repaired",
+    "superseded":       "⚪ Superseded (see successor)",
+    "withdrawn":        "⚪ Withdrawn",
+    "archived":         "⚫ Archived",
 }
 
 
@@ -127,8 +130,9 @@ def render_table(rows: list[dict], with_witness: bool = True) -> list[str]:
 
 
 def render_index_md(agreements: list[dict]) -> str:
-    active = [a for a in agreements if a.get("status") == "active"]
-    other = [a for a in agreements if a.get("status") != "active"]
+    active_statuses = {"active", "ratified-active", "ratified"}
+    active = [a for a in agreements if a.get("status") in active_statuses]
+    other = [a for a in agreements if a.get("status") not in active_statuses]
 
     lines = [
         "# WORLD PEACE AGREEMENTS — REGISTRY",

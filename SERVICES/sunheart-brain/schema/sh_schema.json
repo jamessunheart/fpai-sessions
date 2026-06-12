@@ -3,7 +3,7 @@
     "name": "Sunheart Brain workspace schema",
     "version": "0.1",
     "workspace": "Sunheart Brain",
-    "description": "Canonical spec for the 5 Sunheart Brain databases. Used by build_schema.py to create/verify the AppFlowy workspace state at brain.sunheart.com."
+    "description": "Canonical spec for the 7 Sunheart Brain databases. Used by build_schema.py to create/verify the AppFlowy workspace state at brain.sunheart.com."
   },
   "databases": [
     {
@@ -142,6 +142,35 @@
         {"name": "Last 7 Days", "type": "grid", "sort": [{"field": "When", "order": "desc"}], "limit": 500},
         {"name": "Blocked Only", "type": "grid", "filter": {"Blocked?": true}},
         {"name": "By Agent", "type": "grid", "group_by": "Agent"}
+      ]
+    },
+    {
+      "name": "07 · Curator Queue",
+      "slug": "curator_queue",
+      "purpose": "Proposals from the brain-curator (AI-to-AI optimizer). High-confidence safe ops auto-apply and land here as ✅ Applied for audit. Everything else sits as 🟡 Proposed until you flip Status to ✅ Approved — the next curator run executes it.",
+      "fields": [
+        {"name": "Proposal", "type": "text", "required": true, "note": "One-line summary of the proposed change"},
+        {"name": "Type", "type": "single_select", "options": ["merge-concept", "link-concept", "promote-tier", "demote-tier", "add-tag", "merge-tag", "archive-note", "archive-concept", "summarize-conversation", "split-note", "rename-concept", "other"]},
+        {"name": "Status", "type": "single_select", "options": ["🟡 Proposed", "✅ Approved", "✅ Applied", "❌ Rejected", "⚫ Expired"]},
+        {"name": "Confidence", "type": "single_select", "options": ["🟢 High (>0.9)", "🟡 Medium (0.7-0.9)", "🔴 Low (<0.7)"]},
+        {"name": "Proposed By", "type": "single_select", "options": ["dedup", "summarize", "cluster-tag", "triage", "digest", "taxonomy", "archive", "manual"]},
+        {"name": "AI Reasoning", "type": "long_text", "note": "Why the AI thinks this change is correct; includes model name + prompt hash"},
+        {"name": "Target Notes", "type": "relation", "relates_to": "01 · Notes"},
+        {"name": "Target Concepts", "type": "relation", "relates_to": "02 · Concepts"},
+        {"name": "Diff", "type": "long_text", "note": "JSON payload describing the exact change (idempotent replay)"},
+        {"name": "Proposed At", "type": "date", "auto_on_create": true},
+        {"name": "Decided At", "type": "date"},
+        {"name": "Decided By", "type": "text", "note": "user email, or 'auto' for auto-applied high-confidence ops"},
+        {"name": "Reverted?", "type": "checkbox"},
+        {"name": "Run ID", "type": "text", "note": "Groups all proposals from one curator run"}
+      ],
+      "views": [
+        {"name": "Needs Review", "type": "grid", "filter": {"Status": "🟡 Proposed"}, "sort": [{"field": "Proposed At", "order": "desc"}]},
+        {"name": "Ready to Apply", "type": "grid", "filter": {"Status": "✅ Approved"}, "sort": [{"field": "Decided At", "order": "asc"}]},
+        {"name": "Recently Applied", "type": "grid", "filter": {"Status": "✅ Applied"}, "sort": [{"field": "Decided At", "order": "desc"}], "limit": 100},
+        {"name": "By Type", "type": "grid", "group_by": "Type"},
+        {"name": "By Confidence", "type": "grid", "group_by": "Confidence"},
+        {"name": "Rejected", "type": "grid", "filter": {"Status": "❌ Rejected"}}
       ]
     }
   ],

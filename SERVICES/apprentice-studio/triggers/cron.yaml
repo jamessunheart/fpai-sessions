@@ -1,0 +1,51 @@
+# Apprentice Studio — proactive trigger cadence
+#
+# These crons are wired up inside main.py via APScheduler. This file documents
+# the cadence so a human can read it without tracing through code.
+
+timezone: America/Denver  # override with APPRENTICE_STUDIO_TZ env var
+
+triggers:
+  - id: daily_pulse
+    cron: "0 7 * * *"
+    description: |
+      Every morning at 7am, all 8 agents heartbeat. The director aggregates,
+      updates STATE/PROGRAM.md decisions, and surfaces blocks.
+
+  - id: weekly_review
+    cron: "0 8 * * 1"
+    description: |
+      Monday 8am, full program review with metrics + drafts. Output is written
+      to ARTIFACTS/weekly-reviews/YYYY-MM-DD.md and (when configured) sent to
+      Telegram via aria-bridge.
+
+  - id: apprentice_coach_pulse
+    cron: "0 9 * * *"
+    enabled_when: "cohort_1_active"
+    description: |
+      Once cohort 1 begins, Aria Coach runs a daily check-in with each apprentice
+      at 9am their local time. Aggregated themes (no transcripts) feed into the
+      weekly review.
+
+  - id: builder_pulse
+    cron: "0 11 * * 1-5"
+    enabled_when: "cohort_1_active"
+    description: |
+      Weekday 11am during the build sprint, Builder Mentor runs co-build pulses
+      on each apprentice's project — review code, suggest moves, flag stuck.
+
+  - id: ship_or_pivot_check
+    cron: "0 9 * * 1"
+    enabled_when: "cohort_1_active_week_8"
+    description: |
+      Week 8 Monday: enforce the "ship by week 8 or pivot" rule. Flag every
+      project that has not shipped to a real user. Director escalates to human
+      with recommendations.
+
+# Escalation policy — applied to every cycle
+escalation:
+  block_threshold_hours: 24
+  channel: telegram_owner   # via aria-bridge
+  fallback: program_md      # if telegram unavailable, write to PROGRAM.md
+  external_messages: false  # never send external messages without explicit approval
+  spend_authority: false    # agents never spend money

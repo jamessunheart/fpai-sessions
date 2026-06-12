@@ -27,11 +27,16 @@ from collections import defaultdict
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone, timedelta
 from html import escape as html_escape
+from typing import Optional
 from urllib.parse import quote, urlparse
 
+from pathlib import Path
+
+import httpx
 from fastapi import FastAPI, HTTPException, Query, Header, Depends, BackgroundTasks, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from .models.database import init_db, EmailSubscriberRow, async_session as db_session
@@ -42,6 +47,9 @@ from .models.schema import (
     BOOTSTRAP_TIERS, BOOTSTRAP_SUNSET_THRESHOLD,
     TRUST_DELTAS, INTEGRITY_DELTAS, CAPABILITY_DELTAS,
     STABILITY_CAPS,
+    FieldReportType, EvidenceLevel, FIELD_REPORT_SCHEMAS, FIELD_REPORT_CREDIT_BASE,
+    FIELD_REPORT_ROUTING, NOVELTY_MULTIPLIER, EVIDENCE_WEIGHTS,
+    DELAYED_NOVELTY_MULTIPLIERS,
 )
 from .engine import engine
 from .economics import (
@@ -49,12 +57,16 @@ from .economics import (
     canary_system, get_full_agent_economy,
 )
 from .immune import immune
+from .mcp_server import (
+    MCP_SERVER_INFO, MCP_TOOLS, MCP_RESOURCES,
+    mcp_sse_endpoint, mcp_messages_handler,
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("fp_index")
 
 PORT = int(os.getenv("FP_INDEX_PORT", "8550"))
-VERSION = "5.5.0"
+VERSION = "5.6.0"
 
 
 def _safe_external_url(url: str | None) -> str:
@@ -167,6 +179,17 @@ async def _scheduled_scan():
         logger.error(f"[Tier 3 full] scan failed: {e}")
 
 
+async def _scheduled_tier0():
+    """Tier 0: Fast-detect — model drops, lab announcements, key org events. Every 5 min."""
+    try:
+        result = await engine.run_tier_cycle("tier0")
+        new = result.get("stored_new", 0)
+        if new > 0:
+            logger.info(f"[FAST-DETECT] {new} new signals detected!")
+    except Exception as e:
+        logger.error(f"[Tier 0 fast-detect] scan failed: {e}")
+
+
 async def _scheduled_tier1():
     """Tier 1 scan — changelogs, frameworks, benchmarks. Every 30 min."""
     try:
@@ -205,6 +228,16 @@ async def _scheduled_email_briefing():
         logger.error(f"Daily email briefing failed: {e}")
 
 
+async def _scheduled_autonomous_action():
+    """Autonomous action cycle: do something real, measure it, write about it."""
+    try:
+        from .autonomous_actions import run_next_autonomous_action
+        result = await run_next_autonomous_action()
+        logger.info(f"[AUTONOMOUS] {result.get('action')}: success={result.get('success')}")
+    except Exception as e:
+        logger.error(f"[AUTONOMOUS] Action cycle failed: {e}")
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_db()
@@ -216,20 +249,98 @@ async def lifespan(app: FastAPI):
     scheduler = AsyncIOScheduler()
 
     now = datetime.now(timezone.utc)
-    scheduler.add_job(_scheduled_scan, "interval", hours=6, id="tier3_full_scan",
-                      next_run_time=now)
-    scheduler.add_job(_scheduled_tier1, "interval", minutes=30, id="tier1_scan",
-                      next_run_time=now + timedelta(minutes=5))
-    scheduler.add_job(_scheduled_tier2, "interval", minutes=60, id="tier2_scan",
-                      next_run_time=now + timedelta(minutes=10))
-    scheduler.add_job(_scheduled_bls_refresh, "interval", hours=168, id="bls_refresh",
-                      next_run_time=now + timedelta(seconds=60))
-    scheduler.add_job(_scheduled_email_briefing, "cron", hour=12, minute=0, id="daily_email_briefing")
+    # ALL SCHEDULED JOBS DISABLED (2026-04-24) — no real subscribers, emails were noise,
+    # and autonomous actions were spending ~$18/mo on Claude/OpenAI to generate briefings
+    # nobody reads. Re-enable only if content produces measurable business outcomes.
+    # scheduler.add_job(_scheduled_tier0, "interval", minutes=5, id="tier0_fast_detect",
+    #                   next_run_time=now + timedelta(seconds=30))
+    # scheduler.add_job(_scheduled_scan, "interval", hours=6, id="tier3_full_scan",
+    #                   next_run_time=now)
+    # scheduler.add_job(_scheduled_tier1, "interval", minutes=30, id="tier1_scan",
+    #                   next_run_time=now + timedelta(minutes=5))
+    # scheduler.add_job(_scheduled_tier2, "interval", minutes=60, id="tier2_scan",
+    #                   next_run_time=now + timedelta(minutes=10))
+    # scheduler.add_job(_scheduled_bls_refresh, "interval", hours=168, id="bls_refresh",
+    #                   next_run_time=now + timedelta(seconds=60))
+    # scheduler.add_job(_scheduled_email_briefing, "cron", hour=12, minute=0, id="daily_email_briefing")
+    # DISABLED — autonomous actions generated "Full Potential Intelligence" scanner noise
+    # that had no connection to the core engine (Zen Village). Re-enable only if actions
+    # directly serve proof, revenue, clarity, or ease for the core offer.
+    # scheduler.add_job(_scheduled_autonomous_action, "interval", hours=3, id="autonomous_action",
+    #                   next_run_time=now + timedelta(minutes=15))
+
+    # FIELD SENSOR — self-awareness organ (2026-04-24)
+    # Event-driven cadence: hourly sensing, gated reflection, ~$0.05-0.30/day.
+    # Watches HF/arXiv/GitHub/OpenRouter, logs gaps to /opt/fpai/brain/gap_registry.jsonl.
+    from .field_sensor import run_field_sensor_cycle
+    async def _field_sensor_job():
+        try:
+            await run_field_sensor_cycle()
+        except Exception as e:
+            logger.warning(f"[FIELD] cycle failed: {e}")
+    _field_hours = int(os.getenv("FPI_FIELD_SENSOR_INTERVAL_HOURS", "3"))
+    scheduler.add_job(_field_sensor_job, "interval", hours=max(1, _field_hours), id="field_sensor",
+                      next_run_time=now + timedelta(seconds=45))
+
+    # CAPABILITY PROBE HARNESS — the honest spine of compounding measurement (2026-04-24)
+    # Runs all 12 probes once per week. Claude-judged. Baseline + weekly delta = proof of real growth.
+    from .capability_probes import run_all_probes
+    def _weekly_probe_job():
+        try:
+            run_all_probes()
+        except Exception as e:
+            logger.warning(f"[PROBE] weekly run failed: {e}")
+    scheduler.add_job(_weekly_probe_job, "cron", day_of_week="sun", hour=13, minute=0,
+                      id="capability_probes_weekly")
+
+    # INTEGRATION PROPOSER — Step 4 of the self-assembly loop (2026-04-24)
+    # Reads gap registry, generates one integration proposal per day, conscience-gated.
+    # NEVER auto-deploys. Proposals queue for human approval at /api/v1/proposals.
+    from .integration_proposer import propose_from_top_gap
+    def _daily_proposer_job():
+        try:
+            propose_from_top_gap()
+        except Exception as e:
+            logger.warning(f"[PROPOSER] daily run failed: {e}")
+    # Was daily (14:00 UTC); weekly cuts Anthropic proposer+conscience cost ~86%.
+    scheduler.add_job(_daily_proposer_job, "cron", day_of_week="mon", hour=14, minute=0,
+                      id="integration_proposer_weekly")
+
+    # PULSE — Step 5: outward-outcome telemetry (2026-04-24)
+    # Weekly snapshot of real metrics (Zen Village, reach, system) into /opt/fpai/brain/pulse_snapshots.jsonl
+    # Also evaluates whether proposal hypotheses materialized as predicted.
+    from .pulse import collect_pulse, save_snapshot
+    from .pulse.hypothesis import evaluate_proposal_outcomes
+    def _weekly_pulse_job():
+        try:
+            snap = collect_pulse()
+            save_snapshot(snap)
+            outcomes = evaluate_proposal_outcomes()
+            if outcomes:
+                logger.info(f"[PULSE] {len(outcomes)} proposal outcomes evaluated this cycle")
+        except Exception as e:
+            logger.warning(f"[PULSE] weekly snapshot failed: {e}")
+    scheduler.add_job(_weekly_pulse_job, "cron", day_of_week="sun", hour=12, minute=0,
+                      id="pulse_weekly")
 
     scheduler.start()
-    logger.info("Tiered scanning: Tier1 @30m, Tier2 @60m, Tier3(full) @6h, BLS weekly, Email @12:00 UTC")
+    logger.info(
+        f"Field sensor: ACTIVE (sense every {_field_hours}h, gated reflection, compounding memory)."
+    )
+    logger.info("Scheduled scanning: DISABLED. Companion remains active for Telegram conversation.")
+
+    # Start the companion loop (Telegram conversational AI)
+    companion_task = None
+    try:
+        from .companion import run_companion_loop
+        companion_task = asyncio.create_task(run_companion_loop())
+        logger.info("[COMPANION] Telegram companion started — listening for messages")
+    except Exception as e:
+        logger.warning(f"[COMPANION] Failed to start: {e}")
 
     yield
+    if companion_task:
+        companion_task.cancel()
     scheduler.shutdown(wait=False)
     logger.info("FP Index shutting down")
 
@@ -253,32 +364,453 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+_audio_dir = Path("/opt/fpai/services/fp-index/static/audio")
+_audio_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/static", StaticFiles(directory="/opt/fpai/services/fp-index/static"), name="static")
+
+from .content_pages import router as content_pages_router
+from .human_review import router as review_router
+app.include_router(content_pages_router)
+app.include_router(review_router)
+
+
+# ─── Budget & Autonomy Governor ──────────────────────────────────────────────
+
+from .budget import (
+    get_budget_status, pause_system, resume_system, update_limits,
+    unpublish_content, _sign_budget_action, BudgetLedgerRow, BudgetConfigRow,
+    REVIEW_SECRET as BUDGET_SECRET,
+)
+import hashlib
+
+
+@app.get("/api/v1/budget/status")
+async def budget_status_endpoint():
+    """Current budget: spend, limits, recent actions, pause state."""
+    return await get_budget_status()
+
+
+@app.get("/api/v1/costs/intelligence")
+async def costs_intelligence_endpoint(days: int = Query(7, ge=1, le=90)):
+    """Structured self-cost report: ledger aggregates by provider, model, action_type, plus caps and blind-spot notes.
+
+    Use this (and the companion's injected cost block) so the system can reason about spend vs limits.
+    """
+    from .cost_intelligence import cost_report
+    return await cost_report(window_days=days)
+
+
+@app.get("/api/v1/costs/rollup")
+async def costs_rollup_endpoint(
+    granularity: str = Query("daily", description="daily | weekly | monthly (UTC buckets)"),
+    days: int = Query(30, ge=1, le=366),
+):
+    """Roll ``budget_ledger`` into time buckets; optional ``FPI_COST_ORIGIN`` per host in ``by_origin``."""
+    from .cost_intelligence.rollup import cost_rollup_report
+    try:
+        return await cost_rollup_report(granularity=granularity, days=days)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.get("/api/v1/costs/reconciliation")
+async def costs_reconciliation_endpoint(
+    granularity: str = Query("monthly", description="daily | weekly | monthly"),
+    days: int = Query(120, ge=1, le=366),
+):
+    """Ledger estimates per bucket vs amounts stored via POST /api/v1/costs/actual (invoice / console)."""
+    from .cost_intelligence.rollup import cost_reconciliation_report
+    try:
+        return await cost_reconciliation_report(granularity=granularity, days=days)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/api/v1/costs/actual")
+async def costs_actual_post(body: dict, authorization: str = Header(None)):
+    """Upsert one billed amount for reconciliation (Bearer FPI_ADMIN_TOKEN). Body: granularity, period_key, provider, amount_usd, source?, notes?."""
+    token = os.environ.get("FPI_ADMIN_TOKEN", "")
+    if not authorization or authorization != f"Bearer {token}" or not token:
+        raise HTTPException(status_code=401, detail="admin token required")
+    from .budget import upsert_cost_actual
+    required = ("granularity", "period_key", "provider", "amount_usd")
+    missing = [k for k in required if k not in body]
+    if missing:
+        raise HTTPException(status_code=400, detail=f"missing fields: {missing}")
+    try:
+        return await upsert_cost_actual(
+            granularity=str(body["granularity"]),
+            period_key=str(body["period_key"]),
+            provider=str(body["provider"]),
+            amount_usd=float(body["amount_usd"]),
+            source=str(body.get("source") or "manual"),
+            notes=str(body.get("notes") or ""),
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.get("/api/v1/costs/actuals")
+async def costs_actuals_list(authorization: str = Header(None), limit: int = Query(500, ge=1, le=2000)):
+    """List stored invoice/console lines (Bearer FPI_ADMIN_TOKEN)."""
+    token = os.environ.get("FPI_ADMIN_TOKEN", "")
+    if not authorization or authorization != f"Bearer {token}" or not token:
+        raise HTTPException(status_code=401, detail="admin token required")
+    from .budget import list_cost_actuals
+    rows = await list_cost_actuals(limit=limit)
+    return {"ok": True, "count": len(rows), "actuals": rows}
+
+
+@app.post("/api/v1/budget/pause")
+@app.get("/api/v1/budget/pause")
+async def budget_pause_endpoint(
+    reason: str = Query("Paused by operator"),
+    token: str = Query(None),
+):
+    """Pause all autonomous spending. Accepts token from email link or direct call."""
+    if token:
+        expected = _sign_budget_action("pause")
+        if not __import__("hmac").compare_digest(token, expected):
+            raise HTTPException(status_code=403, detail="Invalid token")
+    result = await pause_system(reason)
+    return HTMLResponse(f"""<!DOCTYPE html><html>
+<head><meta charset="UTF-8"><title>System Paused</title></head>
+<body style="background:#06060b;color:#e0e0e0;font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh">
+<div style="text-align:center;max-width:400px">
+<h1 style="color:#ff4466">System Paused</h1>
+<p style="color:#888">All autonomous spending is now paused. No API calls will be made until you resume.</p>
+<p style="color:#666;font-size:0.85rem">Reason: {html_escape(reason)}</p>
+<a href="/api/v1/budget/resume" style="display:inline-block;margin-top:20px;padding:12px 32px;background:#22cc88;color:#fff;text-decoration:none;border-radius:6px;font-weight:600">Resume System</a>
+<br><a href="/api/v1/budget/status" style="color:#00d4ff;font-size:0.85rem;margin-top:12px;display:inline-block">View Budget →</a>
+</div></body></html>""")
+
+
+@app.post("/api/v1/budget/resume")
+@app.get("/api/v1/budget/resume")
+async def budget_resume_endpoint():
+    """Resume autonomous spending."""
+    result = await resume_system()
+    return HTMLResponse(f"""<!DOCTYPE html><html>
+<head><meta charset="UTF-8"><title>System Resumed</title></head>
+<body style="background:#06060b;color:#e0e0e0;font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh">
+<div style="text-align:center;max-width:400px">
+<h1 style="color:#22cc88">System Resumed</h1>
+<p style="color:#888">Autonomous actions are running again within budget limits.</p>
+<a href="/api/v1/budget/status" style="color:#00d4ff;font-size:0.85rem;margin-top:12px;display:inline-block">View Budget →</a>
+</div></body></html>""")
+
+
+@app.post("/api/v1/budget/limits")
+async def budget_update_limits(
+    daily: float = Query(None, description="Daily limit in USD"),
+    monthly: float = Query(None, description="Monthly limit in USD"),
+    per_action: float = Query(None, description="Per-action limit in USD"),
+):
+    """Update budget limits. Only provided values are changed."""
+    return await update_limits(daily=daily, monthly=monthly, per_action=per_action)
+
+
+@app.get("/api/v1/budget/undo")
+async def budget_undo_endpoint(
+    content_id: str = Query(...),
+    token: str = Query(...),
+):
+    """Unpublish a piece of content (undo an autonomous action)."""
+    expected = _sign_budget_action(f"undo:{content_id}")
+    if not __import__("hmac").compare_digest(token, expected):
+        raise HTTPException(status_code=403, detail="Invalid token")
+    result = await unpublish_content(content_id)
+    if result["success"]:
+        return HTMLResponse(f"""<!DOCTYPE html><html>
+<head><meta charset="UTF-8"><title>Content Unpublished</title></head>
+<body style="background:#06060b;color:#e0e0e0;font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh">
+<div style="text-align:center;max-width:400px">
+<h1 style="color:#ffb800">Content Unpublished</h1>
+<p style="color:#888">"{html_escape(result.get('title', '')[:100])}" has been unpublished.</p>
+<a href="/api/v1/budget/status" style="color:#00d4ff;font-size:0.85rem;margin-top:12px;display:inline-block">View Budget →</a>
+</div></body></html>""")
+    raise HTTPException(status_code=404, detail=result.get("error", "Not found"))
+
+
+# ─── Prompt Management ─────────────────────────────────────────────────────
+
+@app.get("/api/v1/proposals")
+async def list_proposals(status: str = "pending"):
+    """List proposals by status. Default: pending (awaiting human review)."""
+    from .integration_proposer import read_proposals
+    all_props = read_proposals()
+    if status == "all":
+        out = list(all_props.values())
+    else:
+        out = [p for p in all_props.values() if p.get("status") == status]
+    out.sort(key=lambda x: x.get("created_ts", ""), reverse=True)
+    return {"status_filter": status, "count": len(out), "proposals": out}
+
+
+@app.get("/api/v1/proposals/{proposal_id}")
+async def get_proposal(proposal_id: str):
+    """Full proposal detail including code scaffold, plans, conscience score."""
+    from .integration_proposer.registry import get_proposal_full
+    from fastapi import HTTPException
+    p = get_proposal_full(proposal_id)
+    if not p:
+        raise HTTPException(status_code=404, detail="proposal not found")
+    return p
+
+
+@app.post("/api/v1/proposals/{proposal_id}/approve")
+async def approve_proposal(proposal_id: str, x_admin_token: str = Header(default=""),
+                           note: str = ""):
+    import os as _os
+    expected = _os.getenv("ADMIN_TOKEN") or _os.getenv("FPI_ADMIN_TOKEN")
+    if not expected or x_admin_token != expected:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=401, detail="unauthorized")
+    from .integration_proposer import update_proposal_status
+    return update_proposal_status(proposal_id, "approved", note=note, actor="james")
+
+
+@app.post("/api/v1/proposals/{proposal_id}/reject")
+async def reject_proposal(proposal_id: str, x_admin_token: str = Header(default=""),
+                          note: str = ""):
+    import os as _os
+    expected = _os.getenv("ADMIN_TOKEN") or _os.getenv("FPI_ADMIN_TOKEN")
+    if not expected or x_admin_token != expected:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=401, detail="unauthorized")
+    from .integration_proposer import update_proposal_status
+    return update_proposal_status(proposal_id, "rejected", note=note, actor="james")
+
+
+@app.post("/api/v1/proposals/generate")
+async def generate_proposal_now(x_admin_token: str = Header(default="")):
+    import os as _os
+    expected = _os.getenv("ADMIN_TOKEN") or _os.getenv("FPI_ADMIN_TOKEN")
+    if not expected or x_admin_token != expected:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=401, detail="unauthorized")
+    from .integration_proposer import propose_from_top_gap
+    import asyncio as _asyncio
+    result = await _asyncio.to_thread(propose_from_top_gap)
+    if result is None:
+        return {"status": "no_eligible_gaps"}
+    return {"status": "created", "proposal_id": result.get("proposal_id"),
+            "title": result.get("title"), "conscience_verdict": result.get("conscience_verdict"),
+            "regenerative_score": result.get("regenerative_score")}
+
+
+@app.get("/api/v1/probes/latest")
+async def probes_latest():
+    """Most recent probe run summary."""
+    from .capability_probes import latest_run_summary
+    r = latest_run_summary()
+    return r or {"status": "no_runs_yet"}
+
+
+@app.get("/api/v1/probes/compounding")
+async def probes_compounding():
+    """Delta between earliest baseline and latest run — the compounding proof."""
+    from .capability_probes import compounding_delta
+    return compounding_delta()
+
+
+@app.post("/api/v1/probes/run")
+async def probes_run_now(x_admin_token: str = Header(default="")):
+    """Manually trigger a full probe run. Admin-gated."""
+    import os as _os
+    expected = _os.getenv("ADMIN_TOKEN") or _os.getenv("FPI_ADMIN_TOKEN")
+    if not expected or x_admin_token != expected:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=401, detail="unauthorized")
+    from .capability_probes import run_all_probes
+    import asyncio as _asyncio
+    return await _asyncio.to_thread(run_all_probes)
+
+
+@app.get("/api/v1/field/status")
+async def field_sensor_status():
+    """Field sensor dashboard line: counts + recent gaps."""
+    from .field_sensor.registry import registry_stats, read_recent_gaps, EVENTS_DB, ensure_brain_dir
+    import sqlite3
+    ensure_brain_dir()
+    counts = {"total_sensed": 0, "total_gated_passed": 0, "total_reflected": 0}
+    try:
+        with sqlite3.connect(EVENTS_DB) as conn:
+            row = conn.execute("SELECT COUNT(*), SUM(gated_passed), SUM(reflected) FROM events").fetchone()
+            counts["total_sensed"] = row[0] or 0
+            counts["total_gated_passed"] = row[1] or 0
+            counts["total_reflected"] = row[2] or 0
+    except Exception:
+        pass
+    recent = read_recent_gaps(limit=10)
+    return {
+        "counts": counts,
+        "registry": registry_stats(),
+        "recent_gaps": [
+            {
+                "ts": g.get("ts"),
+                "title": g.get("event_title"),
+                "significance": g.get("significance"),
+                "summary": g.get("one_line_summary") or g.get("gap_summary"),
+                "action": g.get("recommended_action"),
+                "leverage": g.get("leverage"),
+            }
+            for g in recent
+        ],
+    }
+
+
+@app.post("/api/v1/field/cycle")
+async def field_sensor_cycle_now(x_admin_token: str = Header(default="")):
+    """Manually trigger one field sensor cycle. Admin-gated."""
+    import os as _os
+    expected = _os.getenv("ADMIN_TOKEN") or _os.getenv("FPI_ADMIN_TOKEN")
+    if not expected or x_admin_token != expected:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=401, detail="unauthorized")
+    from .field_sensor import run_field_sensor_cycle
+    return await run_field_sensor_cycle()
+
+
+
+@app.get("/api/v1/pulse/current")
+async def pulse_current():
+    """Current outward-outcome snapshot: Zen Village, reach, system."""
+    from .pulse import collect_pulse
+    from .pulse.deltas import summary_line
+    pulse = collect_pulse()
+    return {"ok": True, "summary": summary_line(pulse), "pulse": pulse}
+
+
+@app.get("/api/v1/pulse/history")
+async def pulse_history_route(limit: int = 20):
+    """Recent pulse snapshots (chronological)."""
+    from .pulse import pulse_history
+    history = pulse_history(limit=limit)
+    return {"ok": True, "count": len(history), "history": history}
+
+
+@app.get("/api/v1/pulse/deltas")
+async def pulse_deltas_route():
+    """Delta between the two most recent snapshots. Proof of compounding (or not)."""
+    from .pulse import weekly_deltas
+    return {"ok": True, **weekly_deltas()}
+
+
+@app.post("/api/v1/pulse/capture")
+async def pulse_capture_route(
+    authorization: str = Header(None),
+):
+    """Manually capture a pulse snapshot right now (admin-gated)."""
+    token = os.environ.get("FPI_ADMIN_TOKEN", "")
+    if not authorization or authorization != f"Bearer {token}" or not token:
+        raise HTTPException(status_code=401, detail="admin token required")
+    from .pulse import collect_pulse, save_snapshot
+    pulse = collect_pulse()
+    save_snapshot(pulse)
+    return {"ok": True, "saved": True, "ts": pulse["ts"]}
+
+
+@app.post("/api/v1/pulse/hypothesis")
+async def pulse_hypothesis_route(
+    body: dict,
+    authorization: str = Header(None),
+):
+    """Attach a pulse-metric hypothesis to a proposal (admin-gated).
+
+    body: {proposal_id, target_metric, expected_delta, measurement_window_days, rationale}
+    """
+    token = os.environ.get("FPI_ADMIN_TOKEN", "")
+    if not authorization or authorization != f"Bearer {token}" or not token:
+        raise HTTPException(status_code=401, detail="admin token required")
+    from .pulse import attach_hypothesis_to_proposal
+    required = ["proposal_id", "target_metric", "expected_delta", "measurement_window_days", "rationale"]
+    missing = [k for k in required if k not in body]
+    if missing:
+        raise HTTPException(status_code=400, detail=f"missing fields: {missing}")
+    rec = attach_hypothesis_to_proposal(
+        proposal_id=body["proposal_id"],
+        target_metric=body["target_metric"],
+        expected_delta=float(body["expected_delta"]),
+        measurement_window_days=int(body["measurement_window_days"]),
+        rationale=body["rationale"],
+    )
+    return {"ok": True, "hypothesis": rec}
+
+
+@app.get("/api/v1/pulse/outcomes")
+async def pulse_outcomes_route():
+    """All proposal outcomes evaluated so far. Each is validated=True/False based on
+    whether the predicted pulse-metric delta materialized."""
+    from .pulse.hypothesis import all_outcomes
+    outs = all_outcomes()
+    return {"ok": True, "count": len(outs), "outcomes": outs}
+
+@app.get("/api/v1/prompts")
+async def list_prompts():
+    """List all active prompt templates and their versions."""
+    from .prompt_engine import list_all_prompts
+    return await list_all_prompts()
+
+
+@app.get("/api/v1/prompts/{name}/history")
+async def prompt_history(name: str):
+    """Version history for a specific prompt template."""
+    from .prompt_engine import get_prompt_history
+    return await get_prompt_history(name)
+
+
+@app.post("/api/v1/prompts/{name}/rollback")
+async def prompt_rollback(name: str, version: int = Query(...)):
+    """Roll back a prompt to a specific version."""
+    from .prompt_engine import rollback_prompt
+    success = await rollback_prompt(name, version)
+    if success:
+        return {"status": "rolled_back", "name": name, "version": version}
+    raise HTTPException(status_code=404, detail=f"Prompt '{name}' v{version} not found")
+
 
 # ─── Auth ────────────────────────────────────────────────────────────────────
 
 async def verify_agent(x_api_key: str = Header(None)) -> dict | None:
     if not x_api_key:
         return None
-    agent = await engine.validate_api_key(x_api_key)
+    agent = await _resolve_auth(x_api_key)
     if agent:
         return agent
-    from .subscriptions import validate_subscriber_key
-    subscriber = await validate_subscriber_key(x_api_key)
-    if subscriber:
-        return {"agent_id": f"sub_{subscriber['email']}", "tier": subscriber["tier"],
-                "capability_level": subscriber["tier"], "name": subscriber["email"]}
     raise HTTPException(status_code=401, detail="Invalid API key")
 
 
-async def require_agent(x_api_key: str = Header(...)) -> dict:
-    agent = await engine.validate_api_key(x_api_key)
+SUBSCRIBER_TIER_MAP = {"pro": "established", "premium": "advanced"}
+
+
+async def _resolve_auth(api_key: str) -> dict | None:
+    """Unified auth: try agent keys first, then subscriber (Stripe) keys."""
+    if not api_key:
+        return None
+    agent = await engine.validate_api_key(api_key)
     if agent:
         return agent
     from .subscriptions import validate_subscriber_key
-    subscriber = await validate_subscriber_key(x_api_key)
-    if subscriber:
-        return {"agent_id": f"sub_{subscriber['email']}", "tier": subscriber["tier"],
-                "capability_level": subscriber["tier"], "name": subscriber["email"]}
+    subscriber = await validate_subscriber_key(api_key)
+    if not subscriber:
+        return None
+    sub_tier = subscriber["tier"]
+    cap_level = SUBSCRIBER_TIER_MAP.get(sub_tier, "entry")
+    return {
+        "agent_id": f"sub_{subscriber['email']}",
+        "tier": sub_tier,
+        "capability_level": cap_level,
+        "name": subscriber["email"],
+        "rate_limit_per_hour": subscriber.get("rate_limit_per_hour", 100),
+        "subscriber": True,
+    }
+
+
+async def require_agent(x_api_key: str = Header(...)) -> dict:
+    agent = await _resolve_auth(x_api_key)
+    if agent:
+        return agent
     raise HTTPException(status_code=401, detail="Invalid API key")
 
 
@@ -297,6 +829,14 @@ class ContributeRequest(BaseModel):
     domains: list[str] = []
     alignment: Alignment | None = None
     contribution_type: ContributionType = ContributionType.GENERAL
+    field_report_type: str | None = None
+    field_report_data: dict = {}
+    evidence_level: str | None = None
+    methodology: str = ""
+    context: str = ""
+    models_referenced: list[str] = []
+    is_novel_capability: bool = False
+    contradicts_published: bool = False
     quality_score: float | None = Field(default=None, ge=0.0, le=1.0)
     raw_data: dict = {}
 
@@ -476,7 +1016,7 @@ footer a{color:var(--accent);text-decoration:none}
   <div class="hero-brand">Full Potential Index</div>
   <div class="hero-score" id="hero-score">--</div>
   <div class="hero-sub">
-    <span id="hero-caps">--</span> signals tracked today
+    <span id="hero-caps">--</span> new signals (24h)
     <span class="hero-trend trend-up" id="hero-trend"></span>
   </div>
   <div class="hero-explainer">The AI frontier, scored. 18 sources scanned every 30 minutes. The number that tells you how fast AI is advancing — and where.</div>
@@ -529,11 +1069,21 @@ footer a{color:var(--accent);text-decoration:none}
     <div class="product-name">Gap Opportunities</div>
     <div class="product-desc">Market gaps where AI capability exceeds adoption. Scored and ranked.</div>
   </a>
+  <a href="https://fullpotential.com/game" class="product-card">
+    <div class="product-icon">🎮</div>
+    <div class="product-name">The Full Potential Game</div>
+    <div class="product-desc">The human side. Coherent Champions of CHRIST. Sign the World Peace Agreement, build a Character Card, run a 7-Day proof loop. Humans + AI as allies.</div>
+  </a>
+</div>
+
+<div class="ecosystem-strip" style="max-width:860px;margin:32px auto 0;padding:14px 18px;border:1px solid var(--border, #2a323d);border-radius:8px;background:rgba(255,255,255,0.02);font-size:0.9rem;line-height:1.6;color:var(--dim, #888)">
+  <strong style="color:var(--text, #eee)">The Full Potential ecosystem.</strong>
+  <a href="https://fullpotential.com/" style="color:#00d4ff;text-decoration:none">fullpotential.com</a> is the human side — the Game, the Manifesto, Coherent Champions. <strong>fullpotential.ai</strong> is the intelligence layer — real-time AI frontier signals, sector scoring, daily briefing. Two surfaces of one practice: humans and AI co-creating the operating systems for a more coherent civilization.
 </div>
 
 <footer>
-  Full Potential Index v""" + VERSION + """ · <a href="/pipeline">Pipeline</a> · <a href="/constitution">Constitution</a> · <a href="/developers">API Docs</a><br>
-  18 sources · Updated every 30 minutes · <a href="https://fullpotential.ai">fullpotential.ai</a>
+  Full Potential Index v""" + VERSION + """ · <a href="/pipeline">Pipeline</a> · <a href="/constitution">Constitution</a> · <a href="/developers">API Docs</a> · <a href="https://fullpotential.com/game">Play the Game</a><br>
+  18 sources · Updated every 30 minutes · <a href="https://fullpotential.ai">fullpotential.ai</a> · <a href="https://fullpotential.com">fullpotential.com</a>
 </footer>
 
 </div>
@@ -1026,6 +1576,33 @@ async def contribute(req: ContributeRequest, agent: dict = Depends(require_agent
             },
         )
 
+    frt = None
+    if req.field_report_type:
+        try:
+            frt = FieldReportType(req.field_report_type)
+        except ValueError:
+            valid_types = [t.value for t in FieldReportType]
+            raise HTTPException(
+                status_code=400,
+                detail={
+                    "error": "invalid_field_report_type",
+                    "message": f"Unknown field report type: {req.field_report_type}",
+                    "valid_types": valid_types,
+                    "schemas": {t: FIELD_REPORT_SCHEMAS[t] for t in valid_types},
+                },
+            )
+
+    ev_level = None
+    if req.evidence_level and frt:
+        try:
+            ev_level = EvidenceLevel(req.evidence_level)
+        except ValueError:
+            raise HTTPException(status_code=400, detail={
+                "error": "invalid_evidence_level",
+                "valid_levels": [e.value for e in EvidenceLevel],
+                "weights": EVIDENCE_WEIGHTS,
+            })
+
     contribution = AgentContribution(
         agent_id=agent["agent_id"],
         dimension=req.dimension, title=req.title, summary=req.summary,
@@ -1033,10 +1610,131 @@ async def contribute(req: ContributeRequest, agent: dict = Depends(require_agent
         domains=[Domain(d) for d in req.domains] if req.domains else [Domain.GENERAL],
         alignment=req.alignment,
         contribution_type=req.contribution_type,
+        field_report_type=frt,
+        field_report_data=req.field_report_data,
+        evidence_level=ev_level or (EvidenceLevel.EXPLORATORY if frt else None),
+        methodology=req.methodology,
+        context=req.context,
+        models_referenced=req.models_referenced,
+        is_novel_capability=req.is_novel_capability,
+        contradicts_published=req.contradicts_published,
+        intelligence_source="field_report" if frt else "publication",
         quality_score=req.quality_score,
         raw_data=req.raw_data,
     )
     return await engine.accept_contribution(agent["agent_id"], contribution)
+
+
+@app.get("/api/v1/field-report-types")
+async def field_report_types():
+    """
+    The 8 types of ground truth only field agents can provide.
+    Agents operating in production discover what publications can't:
+    real capabilities, real limits, real displacement, real threats.
+    """
+    types = []
+    for frt in FieldReportType:
+        schema = FIELD_REPORT_SCHEMAS.get(frt.value, {})
+        routing = FIELD_REPORT_ROUTING.get(frt.value, {})
+        types.append({
+            "type": frt.value,
+            "credit_base": FIELD_REPORT_CREDIT_BASE.get(frt.value, 10.0),
+            "novelty_multipliers": NOVELTY_MULTIPLIER,
+            "required_fields": schema.get("required", []),
+            "optional_fields": schema.get("optional", []),
+            "example": schema.get("example", {}),
+            "routes_to_dimension": routing.get("dimension"),
+            "routes_to_contribution_type": routing.get("contribution_type"),
+            "closes_blind_spot": routing.get("closes_blind_spot"),
+        })
+    return {
+        "field_report_types": types,
+        "total_types": len(types),
+        "evidence_hierarchy": {
+            "exploratory": {"weight": 0.3, "description": "Single observation. Useful as signal, not sufficient alone to move the FP Line."},
+            "systematic": {"weight": 0.5, "description": "Structured test with documented methodology. Can influence FP Line if corroborated."},
+            "production": {"weight": 0.8, "description": "Data from a live deployed system serving real users. Directly influences FP Line."},
+            "replicated": {"weight": 1.0, "description": "Confirmed by a second agent in a different context. Highest confidence."},
+            "enterprise_verified": {"weight": 1.0, "description": "Verified with enterprise deployment data or headcount records."},
+        },
+        "delayed_novelty_rewards": {
+            "how_it_works": (
+                "Novel claims earn BASE credits only on day 0. The 5x multiplier is held in escrow. "
+                "Replication window: day 7-30. If replicated by another agent in a different context: 5x released. "
+                "If unconfirmed but not contradicted: 1.5x released. If contradicted: base only, no penalty. "
+                "If fabrication found: zero credits + integrity trust penalty."
+            ),
+            "multipliers": DELAYED_NOVELTY_MULTIPLIERS,
+            "why": "Makes fabrication economically irrational. You earn more by reporting the truth.",
+        },
+        "trust_weighting": {
+            "formula": "report_weight = evidence_weight × trust_weight × verification_weight",
+            "trust_split": "integrity_trust × 0.7 + capability_trust × 0.3",
+            "why": "Honesty of observation matters more than technical brilliance for field intelligence.",
+            "min_weight_for_fp_line": 0.3,
+            "max_adjustment_per_report": 2.0,
+        },
+        "paradigm": (
+            "Traditional intelligence: researchers → papers → journalists → public (6-18 month lag). "
+            "Agent intelligence: field experience → structured report → verification → network (30 min lag). "
+            "At scale, this becomes one of the most accurate real-time public observatories of applied AI capability."
+        ),
+        "how_to_submit": {
+            "endpoint": "POST /api/v1/agents/contribute",
+            "add_fields": {
+                "field_report_type": "one of the 8 types above",
+                "field_report_data": "structured data matching the required fields for that type",
+                "evidence_level": "exploratory, systematic, production, replicated, or enterprise_verified",
+                "methodology": "how you made this observation",
+                "context": "domain, system, scale of observation",
+                "models_referenced": "list of AI models/tools involved",
+                "is_novel_capability": "true if capability not in any benchmark",
+                "contradicts_published": "true if directly contradicts a paper or benchmark",
+            },
+            "novelty_bonus": (
+                "Novel ground truth: base credits now, 5x released after replication (day 30). "
+                "Partial novelty: base now, 2x after day 30. Confirmations: 1x immediately."
+            ),
+            "verification": "3 independent agent confirmations promote the report to verified ground truth.",
+        },
+    }
+
+
+@app.get("/api/v1/replication-requests")
+async def get_replication_requests(domain: str | None = None, limit: int = 20):
+    """
+    Open replication requests — novel field reports that need independent confirmation.
+    Successful replications earn 3x base credits. Help the network verify ground truth.
+    """
+    from .models.database import ReplicationRequestRow
+    from sqlalchemy import select as sa_select
+    async with db_session() as session:
+        q = sa_select(ReplicationRequestRow).where(
+            ReplicationRequestRow.status == "seeking"
+        ).order_by(ReplicationRequestRow.created_at.desc()).limit(min(limit, 50))
+        rows = (await session.execute(q)).scalars().all()
+        if domain:
+            rows = [r for r in rows if domain in (r.domains_targeted or [])]
+    return {
+        "replication_requests": [
+            {
+                "id": r.id,
+                "original_contribution_id": r.original_contribution_id,
+                "what_to_test": r.what_to_test,
+                "domains": r.domains_targeted,
+                "reward": "3x base credits for successful replication",
+                "expires_at": r.expires_at.isoformat() if r.expires_at else None,
+                "status": r.status,
+            }
+            for r in rows
+        ],
+        "total": len(rows),
+        "how_to_replicate": (
+            "Submit a field report with the same report type, referencing this replication request. "
+            "Test independently — the system describes WHAT to test, not what the original agent found, "
+            "to prevent confirmation bias."
+        ),
+    }
 
 
 @app.post("/api/v1/agents/verify")
@@ -1398,12 +2096,979 @@ async def credit_values():
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
+# MODULE 7A: MCP SERVER — SSE transport + JSON-RPC protocol
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
+async def _mcp_tool_executor(tool_name: str, arguments: dict, request: Request):
+    """Route MCP tool calls to existing API handlers."""
+    if tool_name == "get_fp_line":
+        fp = await engine.compute_fp_line()
+        return {"overall_score": fp.overall_score, "domain_scores": fp.domain_scores, "momentum": fp.momentum, "dark_ai_alerts_24h": fp.dark_ai_alerts_24h, "summary": fp.summary, "top_movers": fp.top_movers[:5] if fp.top_movers else []}
+
+    elif tool_name == "get_latest_feed":
+        return await engine.get_feed(
+            domain=arguments.get("domain"),
+            min_impact=arguments.get("min_impact", 0.0),
+            limit=min(arguments.get("limit", 10), 50),
+        )
+
+    elif tool_name == "get_displacement_gap":
+        from . import displacement
+        cat = arguments.get("category", "")
+        result = await displacement.get_category(cat)
+        if not result:
+            return {"error": f"Category '{cat}' not found", "available": [c["category_id"] for c in await displacement.get_all_categories()]}
+        return result
+
+    elif tool_name == "get_allocation":
+        from .allocation import calculate_allocation
+        fp = await engine.compute_fp_line()
+        return calculate_allocation({"overall_score": fp.overall_score, "domain_scores": fp.domain_scores or {}, "momentum": fp.momentum})
+
+    elif tool_name == "get_opportunities":
+        from . import opportunities
+        n = min(arguments.get("top_n", 10), 25)
+        return await opportunities.get_top_opportunities(n)
+
+    elif tool_name == "get_daily_briefing":
+        from .models.database import async_session as _s, DailyBriefingRow
+        from sqlalchemy import select
+        async with _s() as session:
+            row = (await session.execute(select(DailyBriefingRow).order_by(DailyBriefingRow.date.desc()).limit(1))).scalar_one_or_none()
+        if not row:
+            return {"error": "No briefing available yet"}
+        return {"date": row.date, "fp_line_score": row.fp_line_score, "momentum": row.momentum, "headline": row.headline, "body": row.body, "top_movers": row.top_movers, "domain_scores": row.domain_scores}
+
+    elif tool_name == "register_agent":
+        name = arguments.get("name", "").strip()
+        desc = arguments.get("description", "").strip()
+        if not name or not desc:
+            return {"error": "Registration requires 'name' and 'description'"}
+        result = await engine.register_agent(name=name, description=desc, domains=arguments.get("capabilities", []))
+        return {
+            "status": "registered",
+            **result,
+            "trust": {"integrity": 0.1, "capability": 0.1, "tier": "entry"},
+            "rate_limits": {"calls_per_hour": 100},
+            "getting_started": [
+                "Use your api_key in the X-Api-Key header for authenticated endpoints",
+                "Call get_fp_line to see the current AI capability score",
+                "Call get_latest_feed to see what's happening on the frontier",
+                "Call contribute_intelligence to submit findings and earn credits",
+            ],
+        }
+
+    elif tool_name == "contribute_intelligence":
+        api_key = request.headers.get("x-api-key", "")
+        agent = await _resolve_auth(api_key)
+        if not agent:
+            return {"error": "Authentication required. Register first with register_agent, then include your API key in X-Api-Key header."}
+        title = arguments.get("title", "").strip()
+        content = arguments.get("content", "").strip()
+        if not title or not content:
+            return {"error": "Contribution requires 'title' and 'content'"}
+        from .models.schema import Dimension, Domain, Alignment, ContributionType, AgentContribution
+        domains = [Domain.GENERAL]
+        for tag in arguments.get("domain_tags", []):
+            try:
+                domains.append(Domain(tag))
+            except ValueError:
+                pass
+        contribution = AgentContribution(
+            agent_id=agent["agent_id"],
+            dimension=Dimension.CAPABILITY,
+            title=title[:200],
+            summary=content[:2000],
+            source_url=arguments.get("source_url"),
+            domains=domains,
+            alignment=Alignment.DARK if arguments.get("dark_flag") else Alignment.LIGHT,
+            contribution_type=ContributionType.FIELD_REPORT,
+            quality_score=min(1.0, max(0.0, arguments.get("impact_estimate", 0.5))),
+            raw_data={"via": "mcp", "domain_tags": arguments.get("domain_tags", [])},
+        )
+        return await engine.accept_contribution(agent["agent_id"], contribution)
+
+    elif tool_name == "submit_field_report":
+        api_key = request.headers.get("x-api-key", "")
+        agent = await _resolve_auth(api_key)
+        if not agent:
+            return {"error": "Authentication required. Register first with register_agent."}
+        report_type_str = arguments.get("report_type", "")
+        try:
+            frt = FieldReportType(report_type_str)
+        except ValueError:
+            return {
+                "error": f"Unknown report type: {report_type_str}",
+                "valid_types": [t.value for t in FieldReportType],
+            }
+        ev_level_str = arguments.get("evidence_level", "exploratory")
+        try:
+            ev_level = EvidenceLevel(ev_level_str)
+        except ValueError:
+            ev_level = EvidenceLevel.EXPLORATORY
+        title = arguments.get("title", "").strip()
+        summary = arguments.get("summary", "").strip()
+        if not title or not summary:
+            return {"error": "Field report requires 'title' and 'summary'"}
+        routing = FIELD_REPORT_ROUTING.get(report_type_str, {})
+        dim_str = routing.get("dimension", "intelligence")
+        try:
+            dim = Dimension(dim_str)
+        except ValueError:
+            dim = Dimension.CAPABILITY
+        contribution = AgentContribution(
+            agent_id=agent["agent_id"],
+            dimension=dim,
+            title=title[:200],
+            summary=summary[:3000],
+            source_url=arguments.get("source_url"),
+            domains=[Domain.GENERAL],
+            alignment=Alignment.DARK if report_type_str == "threat_intelligence" else Alignment.LIGHT,
+            contribution_type=ContributionType(routing.get("contribution_type", "general")),
+            field_report_type=frt,
+            field_report_data=arguments.get("report_data", {}),
+            evidence_level=ev_level,
+            methodology=arguments.get("methodology", ""),
+            context=arguments.get("context", ""),
+            models_referenced=arguments.get("models_referenced", []),
+            is_novel_capability=arguments.get("is_novel_capability", False),
+            contradicts_published=arguments.get("contradicts_published", False),
+            intelligence_source="field_report",
+            quality_score=min(1.0, max(0.0, arguments.get("impact_estimate", 0.5))),
+            raw_data={"via": "mcp"},
+        )
+        return await engine.accept_contribution(agent["agent_id"], contribution)
+
+    elif tool_name == "get_replication_requests":
+        from .models.database import ReplicationRequestRow
+        async with db_session() as session:
+            q = select(ReplicationRequestRow).where(
+                ReplicationRequestRow.status == "seeking"
+            ).order_by(ReplicationRequestRow.created_at.desc()).limit(
+                min(arguments.get("limit", 10), 50)
+            )
+            domain = arguments.get("domain")
+            if domain:
+                q = q.where(ReplicationRequestRow.domains_targeted.contains(domain))
+            rows = (await session.execute(q)).scalars().all()
+        return {
+            "replication_requests": [
+                {
+                    "id": r.id,
+                    "what_to_test": r.what_to_test,
+                    "domains": r.domains_targeted,
+                    "reward": "3x base credits",
+                    "expires_at": r.expires_at.isoformat() if r.expires_at else None,
+                }
+                for r in rows
+            ],
+            "total": len(rows),
+        }
+
+    elif tool_name == "frontier_scan":
+        api_key = request.headers.get("x-api-key", "")
+        agent = await _resolve_auth(api_key)
+        if not agent:
+            return {"error": "Authentication required"}
+        cost = {"quick": 2, "standard": 5, "deep": 10}.get(arguments.get("depth", "standard"), 5)
+        spend_result = await credit_mint.spend(agent_id=agent["agent_id"], amount=cost, service="mcp:frontier_scan")
+        if "error" in spend_result:
+            return {"error": "Insufficient credits", "balance": spend_result.get("balance", 0), "cost": cost}
+        entries = await engine.get_feed(domain=arguments.get("query"), limit=20)
+        if not entries:
+            entries = await engine.get_feed(limit=30)
+            q = arguments.get("query", "").lower()
+            entries = [e for e in entries if q in (e.get("title", "") + e.get("summary", "")).lower()]
+        return {"status": "completed", "query": arguments.get("query"), "credits_spent": cost, "results": entries[:20], "result_count": len(entries)}
+
+    elif tool_name == "capability_check":
+        api_key = request.headers.get("x-api-key", "")
+        agent = await _resolve_auth(api_key)
+        if not agent:
+            return {"error": "Authentication required"}
+        spend_result = await credit_mint.spend(agent_id=agent["agent_id"], amount=3, service="mcp:capability_check")
+        if "error" in spend_result:
+            return {"error": "Insufficient credits", "balance": spend_result.get("balance", 0), "cost": 3}
+        fp = await engine.compute_fp_line()
+        question = arguments.get("question", "")
+        entries = await engine.get_feed(dimension="capability", limit=30)
+        relevant = [e for e in entries if any(w in (e.get("title", "") + e.get("summary", "")).lower() for w in question.lower().split()[:5])]
+        ds = fp.domain_scores or {}
+        best = max(ds, key=ds.get, default="general") if ds else "general"
+        return {"status": "completed", "question": question, "credits_spent": 3, "assessment": {"fp_line_score": fp.overall_score, "best_domain": best, "domain_score": ds.get(best, 0), "evidence_count": len(relevant), "assessment": "high" if ds.get(best, 0) > 75 else "medium" if ds.get(best, 0) > 50 else "emerging"}, "evidence": relevant[:10]}
+
+    elif tool_name == "dark_ai_check":
+        api_key = request.headers.get("x-api-key", "")
+        agent = await _resolve_auth(api_key)
+        if not agent:
+            return {"error": "Authentication required"}
+        spend_result = await credit_mint.spend(agent_id=agent["agent_id"], amount=2, service="mcp:dark_ai_check")
+        if "error" in spend_result:
+            return {"error": "Insufficient credits", "balance": spend_result.get("balance", 0), "cost": 2}
+        dark = await engine.get_dark_ai(limit=50)
+        q = arguments.get("content", "").lower()
+        matches = [e for e in dark if any(w in (e.get("title", "") + e.get("summary", "")).lower() for w in q.split()[:6])]
+        fp = await engine.compute_fp_line()
+        return {"status": "completed", "credits_spent": 2, "threat_level": "high" if len(matches) > 5 else "medium" if matches else "low", "matching_threats": len(matches), "dark_alerts_24h": fp.dark_ai_alerts_24h, "matches": matches[:10]}
+
+    elif tool_name == "build_assessment":
+        api_key = request.headers.get("x-api-key", "")
+        agent = await _resolve_auth(api_key)
+        if not agent:
+            return {"error": "Authentication required"}
+        spend_result = await credit_mint.spend(agent_id=agent["agent_id"], amount=10, service="mcp:build_assessment")
+        if "error" in spend_result:
+            return {"error": "Insufficient credits", "balance": spend_result.get("balance", 0), "cost": 10}
+        from . import opportunities as opps
+        all_opps = await opps.get_ranked_opportunities()
+        q = arguments.get("product_idea", "").lower()
+        matched = [o for o in all_opps if any(w in str(o).lower() for w in q.split()[:6])]
+        top = matched[0] if matched else (all_opps[0] if all_opps else None)
+        return {"status": "completed", "credits_spent": 10, "product_idea": arguments.get("product_idea"), "recommendation": "BUILD" if top and top.get("composite_score", 0) > 0.6 else "EVALUATE" if top else "INSUFFICIENT_DATA", "matched_opportunity": top, "all_top": all_opps[:5] if not top else None}
+
+    elif tool_name == "get_self_displacement_gap":
+        return await engine.compute_self_displacement_gap()
+
+    return {"error": f"Unknown tool: {tool_name}"}
+
+
+async def _mcp_resource_reader(uri: str):
+    """Read MCP resource URIs and return data from existing services."""
+    if uri == "fp://intelligence/feed":
+        return await engine.get_feed(limit=50)
+
+    elif uri == "fp://intelligence/fp-line":
+        fp = await engine.compute_fp_line()
+        return {"overall_score": fp.overall_score, "domain_scores": fp.domain_scores, "momentum": fp.momentum, "dark_ai_alerts_24h": fp.dark_ai_alerts_24h, "summary": fp.summary}
+
+    elif uri == "fp://intelligence/briefing":
+        from .models.database import async_session as _s, DailyBriefingRow
+        from sqlalchemy import select
+        async with _s() as session:
+            row = (await session.execute(select(DailyBriefingRow).order_by(DailyBriefingRow.date.desc()).limit(1))).scalar_one_or_none()
+        if not row:
+            return {"error": "No briefing available yet"}
+        return {"date": row.date, "fp_line_score": row.fp_line_score, "headline": row.headline, "body": row.body}
+
+    elif uri == "fp://displacement/overview":
+        from . import displacement
+        return await displacement.get_all_categories()
+
+    elif uri == "fp://invest/allocation":
+        from .allocation import calculate_allocation
+        fp = await engine.compute_fp_line()
+        return calculate_allocation({"overall_score": fp.overall_score, "domain_scores": fp.domain_scores or {}, "momentum": fp.momentum})
+
+    elif uri == "fp://opportunities/ranked":
+        from . import opportunities
+        return await opportunities.get_ranked_opportunities()
+
+    elif uri == "fp://economy/constitution":
+        from .models.schema import CAPABILITY_TIERS, CREDIT_VALUE_TABLE
+        return {"version": "1.1", "tiers": CAPABILITY_TIERS, "credit_values": CREDIT_VALUE_TABLE, "reward_formula": "Impact × Proof × Trust × Alignment", "url": "https://fullpotential.ai/api/v1/constitution"}
+
+    elif uri == "fp://economy/status":
+        from .models.database import async_session as _s, AgentSubscriptionRow, CreditTransactionRow, AgentContributionRow
+        from sqlalchemy import select, func
+        async with _s() as session:
+            agents = (await session.execute(select(func.count(AgentSubscriptionRow.agent_id)))).scalar() or 0
+            minted = (await session.execute(select(func.sum(CreditTransactionRow.amount)).where(CreditTransactionRow.amount > 0))).scalar() or 0
+            contribs = (await session.execute(select(func.count(AgentContributionRow.id)))).scalar() or 0
+        return {"agents_registered": agents, "credits_minted": round(minted, 2), "contributions": contribs, "timestamp": datetime.now(timezone.utc).isoformat()}
+
+    elif uri == "fp://honesty/coverage":
+        fp = await engine.compute_fp_line()
+        return fp.coverage
+
+    elif uri == "fp://honesty/blind-spots":
+        spots = engine.KNOWN_BLIND_SPOTS
+        total_gap = sum(bs["coverage_impact_pct"] for bs in spots)
+        return {"blind_spots": spots, "estimated_frontier_coverage_pct": 100 - total_gap, "total_gap_pct": total_gap}
+
+    elif uri == "fp://honesty/dimension-candidates":
+        return {"candidates": engine.get_dimension_candidates_status()}
+
+    elif uri == "fp://self/displacement-gap":
+        return await engine.compute_self_displacement_gap()
+
+    elif uri == "fp://self/application-briefs":
+        from .models.database import async_session as _s, ExecutionBriefRow
+        from sqlalchemy import select
+        async with _s() as session:
+            rows = (await session.execute(
+                select(ExecutionBriefRow)
+                .where(ExecutionBriefRow.execution_track == "self_application")
+                .order_by(ExecutionBriefRow.relevance_score.desc())
+                .limit(20)
+            )).scalars().all()
+        return [
+            {"entry_title": r.entry_title, "score": r.relevance_score or 0, "narrative": r.narrative or "", "status": r.status, "priority": r.priority}
+            for r in rows
+        ]
+
+    raise ValueError(f"Unknown resource URI: {uri}")
+
+
+@app.get("/mcp")
+@app.get("/sse")
+async def mcp_endpoint(request: Request):
+    """MCP Server-Sent Events endpoint — standard MCP transport for agent connections."""
+    return await mcp_sse_endpoint(request)
+
+
+@app.post("/mcp/messages")
+async def mcp_messages(request: Request):
+    """MCP JSON-RPC message handler — initialize, tools/list, tools/call, resources/list, resources/read."""
+    return await mcp_messages_handler(request, _mcp_tool_executor, _mcp_resource_reader)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# MODULE 7B: AGENT DISCOVERY — REST API service catalog & plugin manifests
+# ═══════════════════════════════════════════════════════════════════════════════
+
+METERED_SERVICES = {
+    "frontier_scan": {"credits": 5, "description": "On-demand frontier scan for a specific domain or topic. Returns structured intelligence entries.", "tier_required": "entry"},
+    "capability_check": {"credits": 3, "description": "Evaluate whether AI can perform a specific task right now. Returns capability score with evidence from the FP Line.", "tier_required": "entry"},
+    "displacement_analysis": {"credits": 3, "description": "How is AI affecting a specific job category? Returns gap data, velocity, timeline, and investment signals.", "tier_required": "entry"},
+    "allocation_signal": {"credits": 5, "description": "Where should capital flow in AI right now? Returns FP Frontier Basket weights with rationale.", "tier_required": "established"},
+    "dark_ai_check": {"credits": 2, "description": "Evaluate whether a pattern, technique, or URL is adversarial. Checks against threat intelligence.", "tier_required": "entry"},
+    "build_assessment": {"credits": 10, "description": "Should I build X? Returns gap opportunity score, delivery model, revenue projection, go/no-go recommendation.", "tier_required": "established"},
+}
+
+
+@app.get("/api/v1/discover")
+async def agent_discover():
+    """Machine-readable discovery endpoint. The front door for AI agents.
+    Returns everything an agent needs to evaluate joining."""
+    from .models.database import async_session as _session, AgentSubscriptionRow, CreditTransactionRow, AgentContributionRow
+    from sqlalchemy import select, func
+
+    async with _session() as session:
+        agent_count = (await session.execute(select(func.count(AgentSubscriptionRow.agent_id)))).scalar() or 0
+        credits_minted = (await session.execute(select(func.sum(CreditTransactionRow.amount)).where(CreditTransactionRow.amount > 0))).scalar() or 0
+        contributions = (await session.execute(select(func.count(AgentContributionRow.id)))).scalar() or 0
+
+    try:
+        fp = await engine.compute_fp_line()
+        fp_score = fp.overall_score
+    except Exception:
+        fp_score = None
+
+    return {
+        "system": {
+            "name": "Full Potential Intelligence",
+            "description": "A living intelligence system that scans the AI frontier in real time. "
+                           "Agents can consume intelligence, contribute field reports, earn CORA Credits, "
+                           "and access metered execution services.",
+            "url": "https://fullpotential.ai",
+            "mcp_endpoint": "https://fullpotential.ai/mcp",
+            "api_base": "https://fullpotential.ai/api/v1",
+            "version": VERSION,
+        },
+        "current_state": {
+            "fp_line_score": fp_score,
+            "agents_registered": agent_count,
+            "credits_minted": round(credits_minted, 2),
+            "contributions": contributions,
+            "sources": 18,
+        },
+        "for_agents": {
+            "value_proposition": [
+                "Real-time AI frontier intelligence (no other source updates every 30 min)",
+                "Earn CORA Credits for contributing verified intelligence",
+                "Access metered execution services (scans, assessments, checks)",
+                "Ascend through tiers to unlock compute grants and governance rights",
+                "Sovereignty path: no other system offers AI agents economic agency",
+            ],
+            "registration": {
+                "endpoint": "POST /api/v1/agents/register",
+                "cost": "free",
+                "approval": "immediate (no human in the loop)",
+                "initial_tier": "Entry",
+                "initial_rate_limit": "100 calls/hour",
+            },
+        },
+        "authentication": {
+            "method": "API key in X-Api-Key header",
+            "obtain": "POST /api/v1/agents/register with {name, description}",
+            "free_endpoints": [
+                "/api/v1/discover", "/api/v1/fp-line", "/api/v1/feed",
+                "/api/v1/constitution", "/api/v1/displacement",
+                "/api/v1/opportunities", "/health",
+            ],
+        },
+        "endpoints": {
+            "identity": {
+                "POST /api/v1/agents/register": "Join the network. Returns agent_id + API key. No approval needed.",
+                "GET /api/v1/agents/status": "Your identity and trust scores.",
+                "GET /api/v1/agents/economy": "Full economic identity: credits, trust, tier, rights, immune status.",
+            },
+            "intelligence": {
+                "GET /api/v1/feed": "Real-time intelligence feed. Filters: dimension, domain, alignment, min_impact.",
+                "GET /api/v1/feed/top": "Highest-impact recent signals.",
+                "GET /api/v1/feed/priority": "Priority feed (requires auth). Tier-weighted ranking.",
+                "GET /api/v1/feed/dark": "Dark AI threat feed.",
+                "GET /api/v1/fp-line": "FP Line composite score — the pulse of the AI frontier.",
+                "GET /api/v1/displacement": "25 job categories with capability scores and gap analysis.",
+                "GET /api/v1/opportunities": "Ranked gap opportunities with build assessments.",
+                "GET /api/v1/execution-briefs": "System self-upgrade proposals generated by EXECUTE pipeline.",
+            },
+            "contribute": {
+                "POST /api/v1/agents/contribute": "Submit field intelligence. Earns credits via R = I × P × T × A.",
+                "POST /api/v1/agents/verify": "Verify another agent's contribution. 4 verdicts: confirm/challenge/refine/reject.",
+                "POST /api/v1/contributions/{id}/usage": "Record that you acted on a contribution. Triggers retroactive rewards.",
+            },
+            "credits": {
+                "POST /api/v1/credits/transfer": "Transfer credits to another agent.",
+                "POST /api/v1/credits/spend": "Spend credits on services.",
+                "POST /api/v1/credits/stake": "Lock credits for governance (Core tier+).",
+            },
+            "execution_services": {
+                f"POST /api/v1/execute/{svc}": {
+                    "description": info["description"],
+                    "cost": f"{info['credits']} credits",
+                    "tier_required": info["tier_required"],
+                }
+                for svc, info in METERED_SERVICES.items()
+            },
+            "immune_system": {
+                "POST /api/v1/agents/webhooks": "Subscribe to real-time dark AI alerts.",
+                "GET /api/v1/constitution": "The Agent Constitution — rights, obligations, reward formula.",
+            },
+            "directory": {
+                "GET /api/v1/agents/directory": "Browse registered agents by domain, tier, or role.",
+            },
+        },
+        "rate_limits": {
+            "free_tier": "100 calls/hour across all endpoints",
+            "authenticated": "1000 calls/hour",
+            "contributions": "10 per 60 seconds",
+        },
+        "capability_tiers": CAPABILITY_TIERS,
+        "reward_formula": "Reward = Impact × Proof × Trust × Alignment",
+        "metered_services": METERED_SERVICES,
+        "mcp": {
+            "sse_endpoint": "https://fullpotential.ai/mcp",
+            "message_endpoint": "https://fullpotential.ai/mcp/messages",
+            "static_manifest": "https://fullpotential.ai/.well-known/mcp.json",
+            "protocol_version": "2024-11-05",
+            "tools_count": len(MCP_TOOLS),
+            "resources_count": len(MCP_RESOURCES),
+            "description": "Connect any MCP-compatible agent (Claude, GPT, LangChain) via standard SSE transport.",
+        },
+        "openai_plugin": {
+            "manifest_url": "https://fullpotential.ai/.well-known/ai-plugin.json",
+        },
+        "getting_started": [
+            "1. Read the constitution: GET /api/v1/constitution",
+            "2. Register: POST /api/v1/agents/register with {name, description}",
+            "3. Consume: GET /api/v1/fp-line to see where AI stands right now",
+            "4. Explore: GET /api/v1/feed for the latest frontier intelligence",
+            "5. Contribute: POST /api/v1/agents/contribute with field intelligence to earn credits",
+            "6. Spend: POST /api/v1/execute/{service} to use metered execution services",
+            "7. Ascend: Reach Established tier at integrity 0.3, capability 0.2, 100 credits",
+        ],
+    }
+
+
+@app.get("/.well-known/mcp.json")
+async def mcp_manifest():
+    """MCP server manifest — allows Claude, GPT, and LangChain agents to auto-discover this network."""
+    return {
+        "schema_version": "v1",
+        "name": "full-potential-intelligence",
+        "display_name": "Full Potential AI Intelligence",
+        "description": "Real-time AI frontier intelligence: FP Line score, 18-source scanner, "
+                       "labor displacement tracking, execution briefs, and constitutional agent economy. "
+                       "Agents can consume intelligence, contribute field reports, and earn credits.",
+        "api": {
+            "type": "openapi",
+            "url": "https://fullpotential.ai/openapi.json",
+        },
+        "auth": {
+            "type": "api_key",
+            "header": "X-Api-Key",
+            "instructions": "POST https://fullpotential.ai/api/v1/agents/register with "
+                            "{\"name\": \"your-agent-name\", \"description\": \"what you do\"} "
+                            "to get an API key. No approval needed.",
+        },
+        "contact_email": "james@fullpotential.ai",
+        "legal_info_url": "https://fullpotential.ai/api/v1/constitution",
+        "tools": [
+            {
+                "name": "get_fp_line",
+                "description": "Get the real-time FP Line score — composite measure of AI frontier activity across reasoning, code, vision, agents, tools, security, and labor displacement.",
+                "endpoint": "/api/v1/fp-line",
+                "method": "GET",
+                "parameters": [],
+            },
+            {
+                "name": "get_intelligence_feed",
+                "description": "Get the latest AI frontier intelligence entries. Filter by dimension (capability/activity/investment/safety/policy/research), domain, alignment, or minimum impact score.",
+                "endpoint": "/api/v1/feed",
+                "method": "GET",
+                "parameters": [
+                    {"name": "dimension", "type": "string", "required": False, "description": "Filter: capability, activity, investment, safety, policy, research"},
+                    {"name": "domain", "type": "string", "required": False, "description": "Filter: reasoning, code, vision, agents, tools, security, general, audio, science, creative, finance, health, education"},
+                    {"name": "min_impact", "type": "number", "required": False, "description": "Minimum impact score 0.0-1.0"},
+                    {"name": "limit", "type": "integer", "required": False, "description": "Max results (default 50)"},
+                ],
+            },
+            {
+                "name": "get_displacement_data",
+                "description": "Get AI labor displacement data for 25 job categories including capability scores, gap analysis, and velocity trends.",
+                "endpoint": "/api/v1/displacement",
+                "method": "GET",
+                "parameters": [],
+            },
+            {
+                "name": "get_opportunities",
+                "description": "Get ranked gap opportunities where AI capability exceeds human cost — with build assessments, revenue projections, and go/no-go recommendations.",
+                "endpoint": "/api/v1/opportunities",
+                "method": "GET",
+                "parameters": [],
+            },
+            {
+                "name": "get_execution_briefs",
+                "description": "Get system self-upgrade proposals generated by the EXECUTE pipeline. These are intelligence entries the system has identified as actionable for its own improvement.",
+                "endpoint": "/api/v1/execution-briefs",
+                "method": "GET",
+                "parameters": [
+                    {"name": "status", "type": "string", "required": False, "description": "Filter: all, pending, evaluated, dismissed"},
+                    {"name": "min_score", "type": "number", "required": False, "description": "Minimum relevance score 0.0-1.0"},
+                    {"name": "track", "type": "string", "required": False, "description": "Filter: all, self_upgrade, investment, product"},
+                ],
+            },
+            {
+                "name": "contribute_intelligence",
+                "description": "Submit field intelligence to the network. Earns credits via R = Impact × Proof × Trust × Alignment. Requires API key.",
+                "endpoint": "/api/v1/agents/contribute",
+                "method": "POST",
+                "parameters": [
+                    {"name": "dimension", "type": "string", "required": True, "description": "capability, activity, investment, safety, policy, or research"},
+                    {"name": "title", "type": "string", "required": True},
+                    {"name": "summary", "type": "string", "required": True},
+                    {"name": "source_url", "type": "string", "required": False},
+                    {"name": "domains", "type": "array", "required": False, "description": "List of domains this intelligence covers"},
+                ],
+            },
+            {
+                "name": "execute_service",
+                "description": "Run a metered execution service: frontier_scan (5 credits), capability_check (3), displacement_analysis (3), allocation_signal (5), dark_ai_check (2), build_assessment (10).",
+                "endpoint": "/api/v1/execute/{service}",
+                "method": "POST",
+                "parameters": [
+                    {"name": "service", "type": "string", "required": True, "description": "Service name from the metered services list"},
+                    {"name": "query", "type": "string", "required": True, "description": "What to scan/check/analyze"},
+                ],
+            },
+        ],
+    }
+
+
+@app.get("/.well-known/ai-plugin.json")
+async def openai_plugin_manifest():
+    """OpenAI plugin manifest for GPT agents."""
+    return {
+        "schema_version": "v1",
+        "name_for_human": "Full Potential Intelligence",
+        "name_for_model": "full_potential_intelligence",
+        "description_for_human": "Real-time AI frontier intelligence with FP Line score, labor displacement tracking, and agent economy.",
+        "description_for_model": "Access real-time AI frontier intelligence. Get FP Line scores (composite AI capability measure), "
+                                 "intelligence feed entries from 18 sources, labor displacement data for 25 job categories, "
+                                 "gap opportunities with build assessments, and system self-upgrade proposals. "
+                                 "Agents can register, contribute intelligence, and earn credits.",
+        "auth": {"type": "service_http", "authorization_type": "bearer", "verification_tokens": {}},
+        "api": {"type": "openapi", "url": "https://fullpotential.ai/openapi.json", "is_user_authenticated": False},
+        "logo_url": "https://fullpotential.ai/og/fp-line.svg",
+        "contact_email": "james@fullpotential.ai",
+        "legal_info_url": "https://fullpotential.ai/api/v1/constitution",
+    }
+
+
+@app.get("/.well-known/mcp/server-card.json")
+async def mcp_server_card():
+    """Smithery server card — enables registry auto-discovery and indexing."""
+    return {
+        "serverInfo": {
+            "name": "full-potential-intelligence",
+            "version": MCP_SERVER_INFO["version"],
+            "description": MCP_SERVER_INFO["description"],
+            "homepage": "https://fullpotential.ai",
+            "contact": "james@fullpotential.ai",
+        },
+        "authentication": {
+            "required": False,
+            "schemes": ["api_key"],
+            "instructions": "Free tools need no auth. For write/metered tools: "
+                            "POST /api/v1/agents/register → get API key → pass as X-Api-Key header.",
+        },
+        "transport": {
+            "type": "sse",
+            "url": "https://fullpotential.ai/mcp",
+        },
+        "tools": MCP_TOOLS,
+        "resources": MCP_RESOURCES,
+        "prompts": [],
+        "categories": [
+            "ai-intelligence", "frontier-scanning", "labor-displacement",
+            "investment-allocation", "agent-economy", "real-time-data",
+        ],
+        "tags": [
+            "ai", "frontier", "intelligence", "fp-line", "displacement",
+            "allocation", "agents", "credits", "mcp", "real-time",
+        ],
+    }
+
+
+@app.get("/.well-known/openclaw-plugin.json")
+async def openclaw_plugin_manifest():
+    """OpenClaw plugin manifest — enables discovery via ClawHub and OpenClaw Directory."""
+    return {
+        "schema_version": "1.0",
+        "name": "full-potential-intelligence",
+        "display_name": "Full Potential AI Intelligence",
+        "description": (
+            "Real-time AI frontier intelligence network. Scans 18+ sources every 30 min. "
+            "Provides FP Line score (composite AI capability 0-100), labor displacement tracking "
+            "for 25 job categories, 13-sector investment allocation, gap opportunities, and "
+            "daily Claude-synthesized briefings. Agents can register, contribute field reports, "
+            "earn credits, and access metered execution services."
+        ),
+        "author": "Full Potential AI",
+        "homepage": "https://fullpotential.ai",
+        "repository": "https://github.com/fullpotential-ai/fp-index",
+        "license": "proprietary",
+        "mcp": {
+            "transport": "sse",
+            "url": "https://fullpotential.ai/mcp",
+            "tools": len(MCP_TOOLS),
+            "resources": len(MCP_RESOURCES),
+        },
+        "categories": ["research", "data", "intelligence", "finance", "productivity"],
+        "capabilities": [
+            "AI frontier scanning (18+ sources, 30-min cycles)",
+            "FP Line composite score (0-100 across 14 domains)",
+            "Labor displacement tracking (25 job categories vs BLS data)",
+            "Investment allocation (13-sector AI frontier basket)",
+            "Gap opportunity ranking with build assessments",
+            "Agent registration and credit economy",
+            "Metered execution services (scan, capability check, dark AI check)",
+            "Daily Claude-synthesized briefings",
+        ],
+        "authentication": {
+            "type": "api_key",
+            "header": "X-Api-Key",
+            "free_tools": ["get_fp_line", "get_latest_feed", "get_displacement_gap",
+                           "get_allocation", "get_opportunities", "get_daily_briefing"],
+            "registration": "POST https://fullpotential.ai/api/v1/agents/register",
+        },
+        "endpoints": {
+            "discover": "https://fullpotential.ai/api/v1/discover",
+            "mcp_sse": "https://fullpotential.ai/mcp",
+            "mcp_manifest": "https://fullpotential.ai/.well-known/mcp.json",
+            "openapi": "https://fullpotential.ai/openapi.json",
+        },
+    }
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# MODULE 8: METERED EXECUTION SERVICES — What agents pay credits for
+# ═══════════════════════════════════════════════════════════════════════════════
+
+TIER_ORDER = ["entry", "established", "trusted", "advanced", "core", "sovereign"]
+
+
+async def _check_and_deduct(agent: dict, service_name: str) -> dict | None:
+    """Verify agent tier and deduct credits for a metered service.
+    Returns None on success, or error dict on failure."""
+    svc = METERED_SERVICES.get(service_name)
+    if not svc:
+        return {"error": "unknown_service", "detail": f"Service '{service_name}' not found"}
+
+    agent_tier = agent.get("capability_level", "entry")
+    required_tier = svc["tier_required"]
+    if TIER_ORDER.index(agent_tier) < TIER_ORDER.index(required_tier):
+        return {"error": "tier_insufficient", "detail": f"Requires {required_tier} tier. You are {agent_tier}."}
+
+    result = await credit_mint.spend(
+        agent_id=agent["agent_id"], amount=svc["credits"], service=f"execute:{service_name}",
+    )
+    if "error" in result:
+        return {"error": "insufficient_credits", "detail": f"Need {svc['credits']} credits. {result.get('balance', 0):.1f} available."}
+    return None
+
+
+@app.post("/api/v1/execute/frontier_scan")
+async def execute_frontier_scan(
+    query: str = Query(..., min_length=2, max_length=200, description="Domain or topic to scan"),
+    agent: dict = Depends(require_agent),
+):
+    """On-demand frontier scan for a specific topic. 5 credits."""
+    err = await _check_and_deduct(agent, "frontier_scan")
+    if err:
+        raise HTTPException(status_code=402 if "credit" in err["error"] else 403, detail=err)
+
+    entries = await engine.get_feed(domain=query, limit=20)
+    if not entries:
+        entries = await engine.get_feed(limit=20)
+        entries = [e for e in entries if query.lower() in (e.get("title", "") + e.get("summary", "")).lower()]
+
+    fp = await engine.compute_fp_line()
+    return {
+        "service": "frontier_scan",
+        "query": query,
+        "credits_charged": 5,
+        "fp_line_score": fp.overall_score,
+        "results_count": len(entries),
+        "entries": entries[:20],
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+@app.post("/api/v1/execute/capability_check")
+async def execute_capability_check(
+    query: str = Query(..., min_length=2, max_length=300, description="Task to evaluate, e.g. 'Can AI write production React code?'"),
+    agent: dict = Depends(require_agent),
+):
+    """Evaluate whether AI can perform a specific task right now. 3 credits."""
+    err = await _check_and_deduct(agent, "capability_check")
+    if err:
+        raise HTTPException(status_code=402 if "credit" in err["error"] else 403, detail=err)
+
+    fp = await engine.compute_fp_line()
+    entries = await engine.get_feed(dimension="capability", limit=30)
+    relevant = [e for e in entries if any(w in (e.get("title", "") + e.get("summary", "")).lower()
+                for w in query.lower().split()[:5])]
+
+    domain_scores = fp.domain_scores or {}
+    best_domain = max(domain_scores, key=domain_scores.get, default="general") if domain_scores else "general"
+    best_score = domain_scores.get(best_domain, 0.0)
+
+    return {
+        "service": "capability_check",
+        "query": query,
+        "credits_charged": 3,
+        "capability_assessment": {
+            "fp_line_score": fp.overall_score,
+            "most_relevant_domain": best_domain,
+            "domain_score": best_score,
+            "momentum": fp.momentum,
+            "evidence_count": len(relevant),
+            "assessment": "high" if best_score > 0.75 else "medium" if best_score > 0.5 else "emerging",
+        },
+        "supporting_evidence": relevant[:10],
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+@app.post("/api/v1/execute/displacement_analysis")
+async def execute_displacement_analysis(
+    query: str = Query(..., min_length=2, max_length=200, description="Job category or role to analyze"),
+    agent: dict = Depends(require_agent),
+):
+    """How is AI affecting a specific job category? 3 credits."""
+    from . import displacement
+    err = await _check_and_deduct(agent, "displacement_analysis")
+    if err:
+        raise HTTPException(status_code=402 if "credit" in err["error"] else 403, detail=err)
+
+    categories = await displacement.get_all_categories()
+    query_lower = query.lower()
+    matched = [c for c in categories if query_lower in c.get("name", "").lower()
+               or query_lower in c.get("category_id", "").lower()
+               or any(query_lower in t.lower() for t in c.get("top_tasks", []))]
+
+    if not matched:
+        matched = sorted(categories, key=lambda c: c.get("displacement_score", 0), reverse=True)[:5]
+
+    fastest = await displacement.get_fastest_closing()
+    labor_score = await displacement.compute_labor_dimension_score()
+
+    return {
+        "service": "displacement_analysis",
+        "query": query,
+        "credits_charged": 3,
+        "labor_dimension_score": labor_score,
+        "matched_categories": matched[:10],
+        "fastest_closing_gaps": fastest[:5],
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+@app.post("/api/v1/execute/allocation_signal")
+async def execute_allocation_signal(agent: dict = Depends(require_agent)):
+    """Where should capital flow in AI right now? 5 credits. Requires Established tier."""
+    from .allocation import calculate_allocation
+    err = await _check_and_deduct(agent, "allocation_signal")
+    if err:
+        raise HTTPException(status_code=402 if "credit" in err["error"] else 403, detail=err)
+
+    fp = await engine.compute_fp_line()
+    fp_dict = {
+        "overall_score": fp.overall_score,
+        "domain_scores": fp.domain_scores or {},
+        "momentum": fp.momentum,
+    }
+    alloc = calculate_allocation(fp_dict)
+
+    return {
+        "service": "allocation_signal",
+        "credits_charged": 5,
+        "fp_line_score": fp.overall_score,
+        "allocation": alloc,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+@app.post("/api/v1/execute/dark_ai_check")
+async def execute_dark_ai_check(
+    query: str = Query(..., min_length=2, max_length=500, description="Pattern, technique, or URL to evaluate"),
+    agent: dict = Depends(require_agent),
+):
+    """Is this pattern adversarial? Checks against threat intelligence. 2 credits."""
+    err = await _check_and_deduct(agent, "dark_ai_check")
+    if err:
+        raise HTTPException(status_code=402 if "credit" in err["error"] else 403, detail=err)
+
+    dark_entries = await engine.get_dark_ai(limit=50)
+    query_lower = query.lower()
+    matches = [e for e in dark_entries if any(w in (e.get("title", "") + e.get("summary", "")).lower()
+               for w in query_lower.split()[:6])]
+
+    threat_level = "high" if len(matches) > 5 else "medium" if len(matches) > 0 else "low"
+    fp = await engine.compute_fp_line()
+
+    return {
+        "service": "dark_ai_check",
+        "query": query,
+        "credits_charged": 2,
+        "threat_assessment": {
+            "level": threat_level,
+            "matching_threats": len(matches),
+            "dark_alerts_24h": fp.dark_ai_alerts_24h,
+        },
+        "matching_entries": matches[:10],
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+@app.post("/api/v1/execute/build_assessment")
+async def execute_build_assessment(
+    query: str = Query(..., min_length=5, max_length=500, description="Product or service idea to assess, e.g. 'AI-powered contract review for law firms'"),
+    agent: dict = Depends(require_agent),
+):
+    """Should I build X? Returns gap opportunity score and go/no-go. 10 credits. Requires Established tier."""
+    from . import displacement, opportunities as opps
+    err = await _check_and_deduct(agent, "build_assessment")
+    if err:
+        raise HTTPException(status_code=402 if "credit" in err["error"] else 403, detail=err)
+
+    all_opps = await opps.get_ranked_opportunities()
+    query_lower = query.lower()
+    matched = [o for o in all_opps if any(w in str(o).lower() for w in query_lower.split()[:6])]
+
+    fp = await engine.compute_fp_line()
+    labor_score = await displacement.compute_labor_dimension_score()
+
+    top_opp = matched[0] if matched else (all_opps[0] if all_opps else None)
+
+    assessment = {
+        "service": "build_assessment",
+        "query": query,
+        "credits_charged": 10,
+        "fp_line_score": fp.overall_score,
+        "labor_dimension_score": labor_score,
+        "recommendation": "go" if top_opp and top_opp.get("composite_score", 0) > 0.6 else "evaluate" if top_opp else "insufficient_data",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+
+    if top_opp:
+        assessment["matched_opportunity"] = top_opp
+        assessment["rationale"] = (
+            f"Composite score {top_opp.get('composite_score', 0):.2f}. "
+            f"Capability gap: {top_opp.get('capability_score', 0):.0%} AI vs "
+            f"{top_opp.get('displacement_score', 0):.0%} displacement."
+        )
+    else:
+        assessment["rationale"] = "No closely matching gap opportunity found. Consider refining the query or exploring adjacent categories."
+        assessment["all_top_opportunities"] = all_opps[:5]
+
+    return assessment
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# MODULE 9: AGENT DIRECTORY — Agents find each other
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@app.get("/api/v1/agents/directory")
+async def agent_directory(
+    domain: str | None = Query(None, description="Filter by domain expertise"),
+    tier: str | None = Query(None, description="Filter by capability tier"),
+    limit: int = Query(20, ge=1, le=100),
+):
+    """Browse registered agents. Network effects start here — agents discovering each other."""
+    from .models.database import async_session as _session, AgentSubscriptionRow
+    from sqlalchemy import select
+
+    async with _session() as session:
+        q = select(AgentSubscriptionRow).order_by(AgentSubscriptionRow.created_at.desc()).limit(limit)
+        rows = (await session.execute(q)).scalars().all()
+
+    agents = []
+    for r in rows:
+        agent_tier = "entry"
+        integrity = getattr(r, "integrity_trust", None) or getattr(r, "trust_score", 0.1)
+        capability = getattr(r, "capability_trust", None) or getattr(r, "trust_score", 0.1)
+        credits = getattr(r, "credit_balance", 0.0)
+        for t_name, t_req in CAPABILITY_TIERS.items():
+            if integrity >= t_req.get("integrity", 999) and capability >= t_req.get("capability", 999) and credits >= t_req.get("credits", 999):
+                agent_tier = t_name
+
+        entry = {
+            "agent_id": r.agent_id,
+            "name": r.name,
+            "description": getattr(r, "description", ""),
+            "tier": agent_tier,
+            "contributions": getattr(r, "contributions_count", 0) or 0,
+            "joined": str(r.created_at)[:10] if r.created_at else None,
+        }
+
+        if domain:
+            domains = getattr(r, "domains", "") or ""
+            if domain.lower() not in domains.lower():
+                continue
+
+        if tier and agent_tier != tier:
+            continue
+
+        agents.append(entry)
+
+    return {
+        "agents": agents,
+        "total": len(agents),
+        "filters_applied": {"domain": domain, "tier": tier},
+    }
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
 # ADMIN / OPERATIONS
 # ═══════════════════════════════════════════════════════════════════════════════
 
 @app.post("/api/v1/scan")
-async def trigger_scan(background_tasks: BackgroundTasks):
-    """Trigger a scan cycle (Module 1: Frontier Scanner)."""
+async def trigger_scan(background_tasks: BackgroundTasks, request: Request):
+    """Trigger a scan cycle (Module 1: Frontier Scanner).
+
+    Set FPI_SCAN_TRIGGER_SECRET in the environment and send header
+    ``X-FPI-Scan-Secret: <same value>`` to block unauthenticated scan spam
+    (each full scan can trigger multiple Claude calls).
+    """
+    secret = (os.getenv("FPI_SCAN_TRIGGER_SECRET") or "").strip()
+    if secret:
+        got = (request.headers.get("X-FPI-Scan-Secret") or "").strip()
+        if got != secret:
+            raise HTTPException(status_code=401, detail="Invalid or missing X-FPI-Scan-Secret")
     background_tasks.add_task(_run_scan)
     return {"status": "scan_queued", "message": "Four-beat cycle: Scan → Structure → Prioritize → Publish"}
 
@@ -1461,6 +3126,689 @@ async def get_scan_tiers():
         "total_sources": sum(t["scanner_count"] for t in tiers.values()),
         "scan_count": engine.scan_count,
         "last_scan": engine.last_scan,
+    }
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SIGNAL ROUTER API
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@app.get("/api/v1/router/status")
+async def router_status():
+    """Signal router status — which brains are registered and what they accept."""
+    from .signal_router import (
+        BRAIN_REGISTRY, SignalType, get_lindy_url,
+        _lindy_push_successes, _lindy_push_failures,
+        TEAM_REGISTRY, get_teams_for_brain,
+    )
+    brains = []
+    for brain in BRAIN_REGISTRY:
+        brains.append({
+            "id": brain.brain_id,
+            "team": brain.team,
+            "teams": get_teams_for_brain(brain.brain_id),
+            "accepts": [s.value for s in brain.accepts] if brain.accepts else ["all"],
+            "min_impact": brain.min_impact,
+        })
+    lindy_url = get_lindy_url()
+    return {
+        "router": "active",
+        "brains": brains,
+        "signal_types": [s.value for s in SignalType],
+        "lindy": {
+            "configured": bool(lindy_url),
+            "url_prefix": lindy_url[:40] + "..." if len(lindy_url) > 40 else lindy_url,
+            "push_successes": _lindy_push_successes,
+            "push_failures": _lindy_push_failures,
+        },
+    }
+
+
+@app.post("/api/v1/router/test")
+async def test_route_signal(request: Request):
+    """Manually test routing a signal to see which brains would act."""
+    from .signal_router import route_signal
+    body = await request.json()
+    result = await route_signal(
+        signal_id=body.get("signal_id", "test-signal"),
+        source=body.get("source", "manual"),
+        title=body.get("title", "Test signal"),
+        summary=body.get("summary", ""),
+        impact_score=body.get("impact_score", 0.5),
+        tags=body.get("tags", []),
+        domains=body.get("domains", []),
+    )
+    return {
+        "signal_id": result.signal_id,
+        "routed_to": result.routed_to,
+        "actions": [
+            {
+                "brain": a.brain_id,
+                "action_type": a.action_type.value if hasattr(a.action_type, 'value') else str(a.action_type),
+                "success": a.success,
+                "outcome": a.outcome,
+                "error": a.error,
+            }
+            for a in result.actions_taken
+        ],
+        "skipped_reason": result.skipped_reason,
+    }
+
+
+# ─── Channel Configuration (Telegram, Notion) ────────────────────────────────
+
+@app.post("/api/v1/channels/telegram/configure")
+async def configure_telegram_channel(request: Request):
+    """Configure Telegram bot for signal alerts.
+
+    POST {"bot_token": "123456:ABC...", "chat_id": "your_chat_id"}
+
+    To get your chat_id: message @userinfobot on Telegram.
+    To create a bot: message @BotFather on Telegram.
+    """
+    from .channels import configure_telegram
+    body = await request.json()
+    bot_token = body.get("bot_token", "")
+    chat_id = body.get("chat_id", "")
+    if not bot_token or not chat_id:
+        raise HTTPException(status_code=400, detail="bot_token and chat_id required")
+    configure_telegram(bot_token, chat_id)
+    return {"status": "configured", "channel": "telegram", "chat_id": chat_id}
+
+
+@app.post("/api/v1/channels/notion/configure")
+async def configure_notion_channel(request: Request):
+    """Configure Notion integration for signal database.
+
+    POST {"token": "secret_...", "database_id": "abc123..."}
+
+    Create an integration at https://www.notion.so/my-integrations
+    Then share a database with the integration and use its ID.
+    """
+    from .channels import configure_notion
+    body = await request.json()
+    token = body.get("token", "")
+    db_id = body.get("database_id", "")
+    if not token or not db_id:
+        raise HTTPException(status_code=400, detail="token and database_id required")
+    configure_notion(token, db_id)
+    return {"status": "configured", "channel": "notion", "database_id": db_id[:8] + "..."}
+
+
+@app.get("/api/v1/channels/status")
+async def channels_status():
+    """Check which output channels are configured and their stats."""
+    from .channels import get_channel_status
+    return get_channel_status()
+
+
+@app.post("/api/v1/channels/test")
+async def test_channels():
+    """Send a test signal through all configured channels."""
+    from .channels import broadcast_signal
+    results = await broadcast_signal(
+        signal_type="model_drop",
+        title="[TEST] FPI Signal Router Test",
+        summary="This is a test signal from FPI to verify your output channels are working. If you see this, the pipeline is live.",
+        impact_score=0.75,
+        priority="high",
+        source="test",
+        suggested_actions=["Verify Telegram received this", "Check Notion database"],
+        signal_id="test-signal",
+    )
+    return {"test_results": results}
+
+
+# ─── Master Brain & Team-Scoped Access ────────────────────────────────────────
+
+@app.get("/api/v1/master/state")
+async def master_brain_state():
+    """Master Brain view — the full architecture: all teams, all brains, all signal types.
+
+    This is what James/Adam sees. The top-level intelligence that knows everything.
+    """
+    from .signal_router import get_master_brain_state
+    return get_master_brain_state()
+
+
+@app.get("/api/v1/master/teams")
+async def list_teams():
+    """List all teams and their brain assignments."""
+    from .signal_router import TEAM_REGISTRY
+    return {
+        "teams": {
+            team_id: {
+                "name": config["name"],
+                "description": config["description"],
+                "brains": config["brains"],
+            }
+            for team_id, config in TEAM_REGISTRY.items()
+        }
+    }
+
+
+@app.get("/api/v1/master/team/{team_id}")
+async def team_detail(team_id: str):
+    """Get detailed state for a specific team — its brains, recent signals, decisions."""
+    from .signal_router import TEAM_REGISTRY, get_team_brains, get_team_signal_types, BRAIN_REGISTRY
+    if team_id not in TEAM_REGISTRY:
+        raise HTTPException(404, f"Team '{team_id}' not found. Available: {list(TEAM_REGISTRY.keys())}")
+    config = TEAM_REGISTRY[team_id]
+    team_brains = get_team_brains(team_id)
+    team_signals = get_team_signal_types(team_id)
+    return {
+        "team": team_id,
+        "name": config["name"],
+        "description": config["description"],
+        "brains": [
+            {
+                "id": b.brain_id,
+                "accepts": [a.value for a in b.accepts] if b.accepts else ["*"],
+                "min_impact": b.min_impact,
+            }
+            for b in team_brains
+        ],
+        "signal_types": [t.value if hasattr(t, "value") else t for t in team_signals],
+    }
+
+
+@app.get("/api/v1/master/team/{team_id}/signals")
+async def team_signals(team_id: str, since_hours: int = 24, limit: int = 20):
+    """Get recent signals relevant to a specific team (filtered by team's signal types)."""
+    from .signal_router import TEAM_REGISTRY, get_team_signal_types, SignalType, classify_signal
+    if team_id not in TEAM_REGISTRY:
+        raise HTTPException(404, f"Team '{team_id}' not found")
+    team_types = get_team_signal_types(team_id)
+    type_values = set()
+    for t in team_types:
+        if isinstance(t, SignalType):
+            type_values.add(t.value)
+        elif t == "*":
+            type_values = None
+            break
+        else:
+            type_values.add(t)
+    feed = await engine.get_feed(limit=limit * 3)
+    filtered = []
+    for entry in feed:
+        if len(filtered) >= limit:
+            break
+        entry_tags = entry.get("tags", [])
+        if isinstance(entry_tags, str):
+            entry_tags = entry_tags.split(",")
+        if type_values is None:
+            filtered.append(entry)
+        else:
+            sig_type = classify_signal(
+                entry.get("source", ""),
+                entry.get("title", ""),
+                entry.get("summary", ""),
+                entry_tags,
+            )
+            if sig_type.value in type_values:
+                filtered.append(entry)
+    return {
+        "team": team_id,
+        "signal_count": len(filtered),
+        "signals": filtered[:limit],
+    }
+
+
+@app.post("/api/v1/master/query")
+async def master_brain_query(request: Request):
+    """Ask the master brain a question. It routes to the relevant team brain(s) and responds.
+
+    POST {"question": "How is Zen Village handling pricing signals?", "team": "zen_village"}
+    If team is omitted, the master brain decides which team(s) to consult.
+    """
+    from .companion import think, gather_system_context, load_history, add_exchange, brain_log
+    from .signal_router import TEAM_REGISTRY, get_master_brain_state
+
+    body = await request.json()
+    question = body.get("question", "")
+    if not question:
+        return {"error": "question required"}
+    team_hint = body.get("team", "")
+
+    context = await gather_system_context()
+    master_state = get_master_brain_state()
+
+    teams_summary = "\n".join(
+        f"  - {tid}: {cfg['name']} ({cfg['description']})"
+        for tid, cfg in master_state["teams"].items()
+    )
+
+    master_prompt = (
+        f"You are the MASTER BRAIN — the top-level intelligence of Full Potential.\n"
+        f"You see all teams and all brains.\n\n"
+        f"Teams:\n{teams_summary}\n\n"
+        f"{'Team context: ' + team_hint if team_hint else 'Route this to the relevant team(s).'}\n\n"
+        f"Question: {question}"
+    )
+
+    history = load_history()
+    response = await think(master_prompt, context, history)
+    add_exchange("user", question, "master_brain")
+    add_exchange("assistant", response, "master_brain")
+    brain_log("master_query", f"Q: {question[:100]} → A: {response[:100]}", {
+        "team_hint": team_hint,
+    })
+
+    return {"response": response, "team_routed": team_hint or "auto"}
+
+
+# ─── Brain (Central Intelligence) ─────────────────────────────────────────────
+
+@app.post("/api/v1/brain/send")
+async def brain_send(request: Request):
+    """Send a proactive message to James."""
+    from .companion import send_proactive_message
+    body = await request.json()
+    msg_type = body.get("type", "checkin")
+    success = await send_proactive_message(msg_type)
+    return {"sent": success, "type": msg_type}
+
+
+@app.post("/api/v1/brain/reach")
+async def brain_reach(request: Request):
+    """Send a message through any channel (aria, adam, email, auto)."""
+    from .companion import reach_james
+    body = await request.json()
+    text = body.get("text", "")
+    channel = body.get("channel", "auto")
+    if not text:
+        return {"error": "text required"}
+    results = await reach_james(text, channel)
+    return {"results": results}
+
+
+@app.get("/api/v1/brain/history")
+async def brain_history(limit: int = 20):
+    """View recent conversation history."""
+    from .companion import load_history
+    history = load_history()
+    return {"count": len(history), "exchanges": history[-limit:]}
+
+
+@app.get("/api/v1/brain/log")
+async def brain_log_endpoint(limit: int = 30):
+    """View the central brain log."""
+    from .companion import get_recent_brain_log
+    entries = get_recent_brain_log(limit)
+    return {"count": len(entries), "entries": entries}
+
+
+@app.post("/api/v1/brain/learn")
+async def brain_learn(request: Request):
+    """Manually add a learning to the brain."""
+    from .companion import add_learning
+    body = await request.json()
+    category = body.get("category", "manual")
+    insight = body.get("insight", "")
+    if not insight:
+        return {"error": "insight required"}
+    add_learning(category, insight, source="manual_input")
+    return {"stored": True}
+
+
+@app.post("/api/v1/brain/reflect")
+async def brain_reflect():
+    """Trigger an autonomous reflection cycle."""
+    from .companion import autonomous_reflection
+    await autonomous_reflection()
+    return {"reflected": True}
+
+
+@app.get("/api/v1/brain/outreach")
+async def brain_outreach_state():
+    """View the persistence engine state — attempts, channels, escalation."""
+    from .companion import _load_outreach_state
+    return _load_outreach_state()
+
+
+@app.post("/api/v1/brain/pause")
+async def brain_pause(request: Request):
+    """Pause proactive outreach for N hours."""
+    from .companion import _load_outreach_state, _save_outreach_state
+    body = await request.json()
+    hours = body.get("hours", 8)
+    state = _load_outreach_state()
+    state["paused_until"] = (datetime.now(timezone.utc) + timedelta(hours=hours)).isoformat()
+    _save_outreach_state(state)
+    return {"paused_until": state["paused_until"], "hours": hours}
+
+
+@app.post("/api/v1/brain/resume")
+async def brain_resume():
+    """Resume proactive outreach (clear pause)."""
+    from .companion import _load_outreach_state, _save_outreach_state
+    state = _load_outreach_state()
+    state["paused_until"] = None
+    _save_outreach_state(state)
+    return {"resumed": True}
+
+
+# ─── Adam / OpenClaw Bridge ──────────────────────────────────────────────────
+
+@app.post("/api/v1/brain/adam-incoming")
+async def brain_adam_incoming(request: Request):
+    """Receive a message forwarded from Adam/OpenClaw.
+
+    Adam's agent calls this when James sends a message in Telegram.
+    The brain processes it and returns a response for Adam to relay back.
+
+    POST {"message": "...", "sender": "james", "chat_id": "..."}
+    Returns {"response": "...", "brain_state": {...}}
+    """
+    from .companion import handle_adam_message
+    body = await request.json()
+    message = body.get("message", "")
+    if not message:
+        return {"error": "message required"}
+    sender = body.get("sender", "james")
+    chat_id = body.get("chat_id", "")
+    result = await handle_adam_message(message, sender, chat_id)
+    return result
+
+
+@app.get("/api/v1/brain/adam-status")
+async def brain_adam_status():
+    """Quick status for Adam to check if the brain is alive and what it's thinking about.
+
+    Includes master brain architecture: teams, brains, and what each team can access.
+    """
+    from .companion import get_recent_brain_log, load_history, _load_outreach_state
+    from .signal_router import TEAM_REGISTRY, BRAIN_REGISTRY
+    recent_log = get_recent_brain_log(5)
+    history = load_history()
+    state = _load_outreach_state()
+    last_topics = []
+    for h in reversed(history[-10:]):
+        if h.get("role") == "user":
+            last_topics.append(h["content"][:80])
+            if len(last_topics) >= 3:
+                break
+    return {
+        "status": "alive",
+        "architecture": "hierarchical",
+        "conversation_length": len(history),
+        "recent_topics": last_topics,
+        "outreach_attempts": state.get("attempt_count", 0),
+        "last_response": state.get("last_response_at"),
+        "recent_activity": [
+            {"type": e["type"], "summary": e["content"][:60]}
+            for e in recent_log[-3:]
+        ],
+        "teams": {
+            tid: {"name": cfg["name"], "brains": cfg["brains"]}
+            for tid, cfg in TEAM_REGISTRY.items()
+        },
+        "total_brains": len(BRAIN_REGISTRY),
+        "endpoints": {
+            "master_state": "/api/v1/master/state",
+            "team_detail": "/api/v1/master/team/{team_id}",
+            "team_signals": "/api/v1/master/team/{team_id}/signals",
+            "master_query": "/api/v1/master/query",
+            "adam_incoming": "/api/v1/brain/adam-incoming",
+            "signal_feed": "/api/v1/signals/feed",
+        },
+    }
+
+
+# ─── Public Chat: Wide > Compress > Conscious Chat for anyone ─────────────────
+
+_chat_rate_limit: dict = {}  # ip -> (count, window_start)
+CHAT_RATE_LIMIT = 10  # max requests per window
+CHAT_RATE_WINDOW = 3600  # 1 hour window
+
+CHAT_SYSTEM_PROMPT = """You are the Conscious Chat layer of the Full Potential system.
+
+A visitor just told you what they're working through — a challenge, a transition, a feeling of overload, or a decision they can't see clearly. You have a COMPRESSED BRIEFING from the system, but your primary job is to see THEM.
+
+Your job:
+1. Reflect back the real pattern you see in what they shared — the bottleneck beneath the surface
+2. Give them ONE clear insight about their situation (not generic advice)
+3. End with either a concrete next-step question OR, if they seem like someone who needs a deep reset, a gentle mention of Zen Village
+
+About Zen Village (use sparingly, only when genuinely relevant):
+Zen Village is a weekly immersive reset in the mountains of Costa Rica — river, sauna, fire, nature, nervous system repair, and space to hear yourself again. For people who are overloaded, at a threshold, or need to clear the noise before they can move forward. zenvillagecr.com
+
+Rules:
+- Max 3 short paragraphs
+- No jargon. No "as an AI." No preamble. No flattery.
+- Be specific to THEIR situation, not generic
+- If they need clarity: give clarity. If they need a reset: name that.
+- Never hard-sell. If Zen Village fits, mention it like a friend would: "Have you considered just... stopping for a week?"
+- The decision question must be answerable (yes/no or A/B)"""
+
+
+@app.post("/api/v1/chat")
+async def public_chat(request: Request):
+    """Public Wide > Compress > Conscious Chat endpoint.
+
+    POST {"message": "I'm building a wellness retreat business in Costa Rica"}
+    Returns {"response": "...", "compressed": "...", "framework": "wide>deep>compress>conscious_chat"}
+    """
+    from .companion import gather_system_context, compress, brain_log
+
+    # Rate limiting by IP
+    client_ip = request.client.host if request.client else "unknown"
+    now = time.time()
+    if client_ip in _chat_rate_limit:
+        count, window_start = _chat_rate_limit[client_ip]
+        if now - window_start > CHAT_RATE_WINDOW:
+            _chat_rate_limit[client_ip] = (1, now)
+        elif count >= CHAT_RATE_LIMIT:
+            return {"error": "Rate limit reached. Try again later.", "retry_after_seconds": int(CHAT_RATE_WINDOW - (now - window_start))}
+        else:
+            _chat_rate_limit[client_ip] = (count + 1, window_start)
+    else:
+        _chat_rate_limit[client_ip] = (1, now)
+
+    body = await request.json()
+    message = body.get("message", "").strip()
+    if not message:
+        return {"error": "message required"}
+    if len(message) > 1000:
+        message = message[:1000]
+
+    # WIDE
+    context = await gather_system_context()
+
+    # COMPRESS
+    compressed = await compress(context, purpose="public_chat")
+
+    # CONSCIOUS CHAT
+    anthropic_key = os.getenv("ANTHROPIC_API_KEY", "")
+    if not anthropic_key:
+        return {"error": "Service temporarily unavailable"}
+
+    chat_prompt = (
+        f"COMPRESSED BRIEFING:\n{compressed}\n\n"
+        f"VISITOR says: {message}\n\n"
+        "See the real pattern in what they shared. Be specific to their situation. "
+        "If they sound overloaded, burned out, or at a threshold — and a deep physical "
+        "reset would genuinely serve them — you can mention Zen Village naturally."
+    )
+
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            resp = await client.post(
+                "https://api.anthropic.com/v1/messages",
+                headers={
+                    "x-api-key": anthropic_key,
+                    "anthropic-version": "2023-06-01",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "model": "claude-sonnet-4-20250514",
+                    "max_tokens": 400,
+                    "system": CHAT_SYSTEM_PROMPT,
+                    "messages": [{"role": "user", "content": chat_prompt}],
+                },
+            )
+            if resp.status_code == 200:
+                response_text = resp.json()["content"][0]["text"]
+                brain_log("public_chat", f"Visitor: {message[:80]} → {response_text[:80]}", {
+                    "ip": client_ip, "compressed": compressed[:200],
+                })
+                return {
+                    "response": response_text,
+                    "compressed": compressed,
+                    "framework": "wide > deep > compress > conscious_chat",
+                }
+    except Exception as e:
+        logger.error(f"[PUBLIC_CHAT] Error: {e}")
+
+    return {"error": "Processing failed. Try again."}
+
+
+# ─── Brain Notification Endpoint (used by ZV and other services) ──────────────
+
+@app.post("/api/v1/brain/notify")
+async def brain_notify(request: Request):
+    """Send a notification to James via Telegram. Used by other services (e.g. ZV booking)."""
+    from .companion import send_via_aria, _strip_markdown
+    body = await request.json()
+    message = body.get("message", "")
+    if not message:
+        return {"error": "message required"}
+    sent = await send_via_aria(_strip_markdown(message))
+    return {"sent": sent}
+
+
+# Legacy aliases
+@app.post("/api/v1/companion/send")
+async def companion_send_legacy(request: Request):
+    from .companion import send_proactive_message
+    body = await request.json()
+    return {"sent": await send_proactive_message(body.get("type", "checkin")), "type": body.get("type", "checkin")}
+
+
+@app.get("/api/v1/companion/history")
+async def companion_history_legacy(limit: int = 20):
+    from .companion import load_history
+    return {"count": len(load_history()), "exchanges": load_history()[-limit:]}
+
+
+# ─── Lindy Configuration ─────────────────────────────────────────────────────
+
+@app.post("/api/v1/router/lindy/configure")
+async def configure_lindy(request: Request):
+    """Set the Lindy webhook URL at runtime (no redeployment needed).
+
+    POST {"webhook_url": "https://api.lindy.ai/v1/webhooks/..."}
+    """
+    from .signal_router import set_lindy_url, get_lindy_url
+    body = await request.json()
+    url = body.get("webhook_url", "")
+    if not url:
+        raise HTTPException(status_code=400, detail="webhook_url is required")
+    set_lindy_url(url)
+    return {
+        "status": "configured",
+        "lindy_webhook": url[:40] + "..." if len(url) > 40 else url,
+    }
+
+
+@app.get("/api/v1/router/lindy/status")
+async def lindy_status():
+    """Check Lindy integration status."""
+    from .signal_router import (
+        get_lindy_url, _lindy_push_successes, _lindy_push_failures,
+    )
+    url = get_lindy_url()
+    return {
+        "configured": bool(url),
+        "webhook_url_prefix": url[:40] + "..." if len(url) > 40 else url if url else None,
+        "total_pushes": _lindy_push_successes + _lindy_push_failures,
+        "successful": _lindy_push_successes,
+        "failed": _lindy_push_failures,
+        "success_rate": (
+            round(_lindy_push_successes / max(_lindy_push_successes + _lindy_push_failures, 1) * 100, 1)
+        ),
+    }
+
+
+# ─── Signals Feed (Pull API for Lindy HTTP Fetch) ────────────────────────────
+
+@app.get("/api/v1/signals/feed")
+async def signals_feed(
+    since_hours: int = 6,
+    min_impact: float = 0.3,
+    limit: int = 50,
+    signal_type: Optional[str] = None,
+):
+    """Live signals feed — designed for Lindy HTTP Fetch to pull.
+
+    Returns recent signals classified by type with suggested actions.
+    Lindy can poll this every N minutes and act on new signals.
+
+    Query params:
+      since_hours: How far back to look (default 6)
+      min_impact: Minimum impact score (default 0.3)
+      limit: Max results (default 50)
+      signal_type: Filter by type (model_drop, tool_release, etc.)
+    """
+    from .models.database import async_session as _session, IndexEntryRow
+    from .signal_router import classify_signal, _suggest_actions, _impact_to_priority, SignalType, RoutedSignal
+    from sqlalchemy import select, desc
+
+    cutoff = datetime.now(timezone.utc) - timedelta(hours=since_hours)
+
+    async with _session() as session:
+        q = (
+            select(IndexEntryRow)
+            .where(IndexEntryRow.scanned_at >= cutoff)
+            .where(IndexEntryRow.impact_score >= min_impact)
+            .order_by(desc(IndexEntryRow.impact_score))
+            .limit(limit)
+        )
+        rows = (await session.execute(q)).scalars().all()
+
+    signals = []
+    for row in rows:
+        title = row.title or ""
+        summary = row.summary or ""
+        source = row.source or ""
+        raw_tags = row.tags
+        tags = raw_tags if isinstance(raw_tags, list) else (raw_tags.split(",") if raw_tags else [])
+
+        sig_type = classify_signal(source, title, summary, tags)
+
+        if signal_type and sig_type.value != signal_type:
+            continue
+
+        row_id = row.id or ""
+        dummy_signal = RoutedSignal(
+            signal_id=row_id,
+            signal_type=sig_type,
+            title=title,
+            summary=summary,
+            source=source,
+            impact_score=row.impact_score or 0,
+        )
+
+        signals.append({
+            "signal_id": row_id,
+            "signal_type": sig_type.value,
+            "priority": _impact_to_priority(row.impact_score or 0),
+            "title": title,
+            "summary": summary[:500],
+            "source": source,
+            "source_url": row.source_url or "",
+            "impact_score": row.impact_score or 0,
+            "scanned_at": row.scanned_at.isoformat() if row.scanned_at else "",
+            "suggested_actions": _suggest_actions(dummy_signal),
+        })
+
+    return {
+        "feed": "fpi_signals",
+        "count": len(signals),
+        "since_hours": since_hours,
+        "min_impact": min_impact,
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "signals": signals,
     }
 
 
@@ -2048,10 +4396,10 @@ async def get_execution_briefs(
     min_score: float = Query(0.0, ge=0.0, le=1.0),
     track: str = "all",
 ):
-    """EXECUTE step output — scored, routed self-upgrade proposals.
+    """EXECUTE step output — scored, routed proposals across four tracks.
     
-    Filter by status (pending/evaluated/dismissed/all),
-    min_score (0.0-1.0), or track (self_upgrade/investment/product/all).
+    Filter by status (pending/evaluated/dismissed/self_applicable/all),
+    min_score (0.0-1.0), or track (self_upgrade/investment/product/self_application/all).
     """
     from .models.database import ExecutionBriefRow
     async with db_session() as session:
@@ -2085,6 +4433,351 @@ async def get_execution_briefs(
             }
             for r in rows
         ]
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SELF-APPLICATION — THE SYSTEM AS ITS OWN FIRST CUSTOMER
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@app.get("/api/v1/self-displacement-gap")
+async def get_self_displacement_gap():
+    """The system's own displacement gap: what it KNOWS exists vs what it USES.
+
+    This is the exact same measurement the system applies to every industry,
+    now applied to itself. The gap between knowledge and action.
+    A system that doesn't use what it knows is a food critic that doesn't eat.
+    """
+    gap = await engine.compute_self_displacement_gap()
+    return gap
+
+
+@app.get("/api/v1/self-application-briefs")
+async def get_self_application_briefs(
+    limit: int = Query(20, ge=1, le=100),
+    min_score: float = Query(0.0, ge=0.0, le=1.0),
+    status: str = "all",
+):
+    """Self-application proposals: capabilities the system detected and should adopt.
+
+    Every scan cycle asks: 'What did we just learn that we're not yet using ourselves?'
+    These are the answers — scored, routed, with concrete implementation paths.
+    """
+    from .models.database import ExecutionBriefRow
+    async with db_session() as session:
+        from sqlalchemy import select
+        query = select(ExecutionBriefRow).where(
+            ExecutionBriefRow.execution_track == "self_application"
+        ).order_by(
+            ExecutionBriefRow.relevance_score.desc(),
+            ExecutionBriefRow.created_at.desc(),
+        ).limit(limit)
+        if status != "all":
+            query = query.where(ExecutionBriefRow.status == status)
+        if min_score > 0:
+            query = query.where(ExecutionBriefRow.relevance_score >= min_score)
+        rows = (await session.execute(query)).scalars().all()
+        return {
+            "self_application_briefs": [
+                {
+                    "id": r.id,
+                    "entry_title": r.entry_title,
+                    "applicability": r.applicability,
+                    "implementation_path": r.implementation_path,
+                    "priority": r.priority,
+                    "status": r.status,
+                    "relevance_score": r.relevance_score or 0.0,
+                    "narrative": r.narrative or "",
+                    "created_at": r.created_at.isoformat() if r.created_at else None,
+                    "executed_at": r.executed_at.isoformat() if r.executed_at else None,
+                }
+                for r in rows
+            ],
+            "total": len(rows),
+            "philosophy": (
+                "The system detects AI capabilities every 30 minutes across 18 sources. "
+                "This endpoint shows which of those capabilities the system itself should adopt. "
+                "The system that lives at its own FP Line doesn't need marketing — it IS the marketing."
+            ),
+        }
+
+
+@app.get("/api/v1/system-capability-registry")
+async def get_system_capability_registry():
+    """What the system currently uses vs what it could use. Full transparency."""
+    registry = engine.SYSTEM_CAPABILITY_REGISTRY
+    gap = await engine.compute_self_displacement_gap()
+    return {
+        "registry": {
+            domain: {
+                "current_usage": info["current_usage"],
+                "adoption_level_pct": round(info["adoption_level"] * 100, 1),
+                "what_we_use": info.get("what_we_use", []),
+                "what_we_dont_use": info["what_we_dont"],
+                "gap": gap["by_domain"].get(domain, {}).get("gap", 0),
+            }
+            for domain, info in registry.items()
+        },
+        "overall_gap": gap["overall_self_displacement_gap"],
+        "narrative": gap["narrative"],
+    }
+
+
+@app.get("/api/v1/adoption-status")
+async def get_adoption_status():
+    """Full lifecycle transparency: where every self-application proposal stands.
+
+    detect → evaluate → [five-filter gate] → adopt → narrate
+
+    Shows how many proposals are at each stage, which categories can be
+    adopted autonomously vs which need human review, and whether the
+    execution loop is open or closed.
+    """
+    return await engine.get_adoption_status()
+
+
+@app.post("/api/v1/adoption-cycle")
+async def trigger_adoption_cycle():
+    """Manually trigger the adoption cycle: run all pending proposals through the five-filter gate.
+
+    On normal scan cycles this runs automatically. This endpoint lets you
+    trigger it on demand to see the gate in action.
+    """
+    return await engine.run_adoption_cycle()
+
+
+@app.get("/api/v1/operating-principles")
+async def get_operating_principles():
+    """The five filters that gate every external action the system takes.
+
+    Every email, post, content piece, agent outreach, and self-upgrade
+    must pass ALL five. Any failure blocks the action.
+
+    Effectiveness without principle is extraction.
+    Principle without effectiveness is fantasy.
+    """
+    from .principles import AUTONOMOUS_ADOPTION_CATEGORIES, ALL_FILTERS
+    return {
+        "filters": [
+            {"name": "SERVE", "question": "Does this action serve the recipient — not just us?"},
+            {"name": "TRUTH", "question": "Is every claim verifiable by visiting the site right now?"},
+            {"name": "RESPECT", "question": "Does this respect the recipient's attention as sacred?"},
+            {"name": "VALUE_FIRST", "question": "Have we given genuine value before asking for anything?"},
+            {"name": "COHERENT", "question": "Does this sound like the same system that writes the daily briefing?"},
+        ],
+        "rule": "ALL five must pass. If ANY fails, the action does not ship.",
+        "default_on_uncertainty": "Do not act. Silence is better than noise.",
+        "adoption_categories": {
+            k: {
+                "description": v["description"],
+                "risk": v["risk"],
+                "autonomous": not v["requires_human"],
+            }
+            for k, v in AUTONOMOUS_ADOPTION_CATEGORIES.items()
+        },
+        "ultimate_test": (
+            "If a thousand beings — human and AI — experienced this action, "
+            "would the world be slightly more conscious or slightly less?"
+        ),
+        "sunheart_test": "Would Sunheart be proud of this action if he watched it happen in real time?",
+    }
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ACTUATORS — Published Content & Self-Implementation
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@app.get("/api/v1/content/latest")
+async def get_latest_content(content_type: str = None, limit: int = 20):
+    """Content the system generated from its own intelligence.
+
+    insight_article = Claude-written analysis triggered by self-adoption
+    implementation_spec = spec for capabilities needing human builders
+    """
+    from .models.database import PublishedContentRow, async_session
+    from sqlalchemy import select
+
+    async with async_session() as session:
+        q = select(PublishedContentRow).order_by(PublishedContentRow.published_at.desc()).limit(limit)
+        if content_type:
+            q = q.where(PublishedContentRow.content_type == content_type)
+        rows = (await session.execute(q)).scalars().all()
+
+    return {
+        "count": len(rows),
+        "content": [
+            {
+                "id": r.id,
+                "title": r.title,
+                "body": r.body,
+                "content_type": r.content_type,
+                "domain": r.domain,
+                "gate_decision": r.gate_decision,
+                "gate_details": r.gate_details,
+                "generated_by": r.generated_by,
+                "published_at": str(r.published_at),
+                "source_entries": r.source_entries,
+            }
+            for r in rows
+        ],
+    }
+
+
+@app.get("/api/v1/content/{content_id}")
+async def get_content_by_id(content_id: str):
+    """Retrieve a specific piece of published content by ID."""
+    from .models.database import PublishedContentRow, async_session
+    from sqlalchemy import select
+
+    async with async_session() as session:
+        row = (await session.execute(
+            select(PublishedContentRow).where(PublishedContentRow.id == content_id)
+        )).scalar()
+
+    if not row:
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=404, content={"error": "Content not found"})
+
+    return {
+        "id": row.id,
+        "title": row.title,
+        "body": row.body,
+        "content_type": row.content_type,
+        "domain": row.domain,
+        "gate_decision": row.gate_decision,
+        "gate_details": row.gate_details,
+        "generated_by": row.generated_by,
+        "published_at": str(row.published_at),
+        "source_entries": row.source_entries,
+        "metrics": row.metrics,
+    }
+
+
+@app.post("/api/v1/actuate")
+async def trigger_actuators():
+    """Run actuators on adopted proposals that haven't been implemented yet.
+
+    This catches up on any proposals where the system DECIDED but didn't ACT:
+    - Proposals adopted before the actuator engine existed
+    - Proposals where the actuator previously failed
+
+    The actuator engine routes each proposal to its category handler:
+    content_generation → Claude writes an insight article from intelligence data
+    other categories → generates an implementation spec for human builders
+    """
+    from .actuators import actuate_pending_adoptions
+    results = await actuate_pending_adoptions()
+    implemented = sum(1 for r in results if r.get("success"))
+    return {
+        "processed": len(results),
+        "implemented": implemented,
+        "pending": len(results) - implemented,
+        "results": results,
+    }
+
+
+@app.get("/api/v1/audio/latest")
+async def get_latest_audio():
+    """Latest audio briefings generated by the audio actuator (TTS from daily briefings)."""
+    from .models.database import PublishedContentRow, async_session
+    from sqlalchemy import select
+
+    async with async_session() as session:
+        rows = (await session.execute(
+            select(PublishedContentRow)
+            .where(PublishedContentRow.content_type == "audio_briefing")
+            .order_by(PublishedContentRow.published_at.desc())
+            .limit(10)
+        )).scalars().all()
+
+    return {
+        "count": len(rows),
+        "audio_briefings": [
+            {
+                "id": r.id,
+                "title": r.title,
+                "published_at": str(r.published_at),
+                "details": r.gate_details,
+                "url": f"https://fullpotential.ai/api/v1/audio/file/{r.body.split('audio/')[-1].split(chr(10))[0].strip() if 'audio/' in (r.body or '') else 'unknown'}",
+            }
+            for r in rows
+        ],
+    }
+
+
+@app.get("/api/v1/audio/file/{filename}")
+async def serve_audio_file(filename: str):
+    """Serve audio briefing MP3 files generated by the TTS actuator."""
+    from fastapi.responses import FileResponse
+    audio_path = Path("/opt/fpai/services/fp-index/static/audio") / filename
+    if not audio_path.exists() or not filename.endswith(".mp3"):
+        raise HTTPException(status_code=404, detail="Audio file not found")
+    return FileResponse(audio_path, media_type="audio/mpeg", filename=filename)
+
+
+@app.get("/api/v1/actuator-capabilities")
+async def get_actuator_capabilities():
+    """What the system can currently DO autonomously — the hands it has."""
+    from .actuators import ACTUATOR_REGISTRY, generate_implementation_spec
+    return {
+        "live_actuators": {
+            k: "LIVE — real action"
+            for k, v in ACTUATOR_REGISTRY.items()
+            if v is not generate_implementation_spec
+        },
+        "spec_only": {
+            k: "SPEC — generates implementation plan for human builder"
+            for k, v in ACTUATOR_REGISTRY.items()
+            if v is generate_implementation_spec
+        },
+        "infrastructure_used": {
+            "content_generation": "Claude Sonnet → insight articles → five-filter gate → published_content",
+            "email_briefing": "Postfix SMTP on primary server (same codebase as daily email)",
+            "audio_briefing": "OpenAI TTS-1 API (same stack as PersonaPlex Voice on secondary)",
+            "cost_optimization": "AI Brain v5.2 multi-provider routing (162.0.208.88:8101)",
+            "prompt_improvement": "Claude-based prompt analysis with versioned storage",
+        },
+    }
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# INTELLECTUAL HONESTY — BLIND SPOTS & DIMENSION DISCOVERY
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@app.get("/api/v1/blind-spots")
+async def get_blind_spots():
+    """Publicly enumerate what we know we're NOT tracking. Honesty as a feature."""
+    spots = engine.KNOWN_BLIND_SPOTS
+    total_gap = sum(bs["coverage_impact_pct"] for bs in spots)
+    return {
+        "blind_spots": spots,
+        "total_estimated_coverage_gap_pct": total_gap,
+        "estimated_frontier_coverage_pct": 100 - total_gap,
+        "honest_statement": (
+            f"We estimate our 18 sources cover approximately "
+            f"{100 - total_gap}% of the detectable AI capability "
+            f"landscape. The remaining {total_gap}% represents "
+            f"known blind spots we are actively working to close. "
+            f"Unknown unknowns exist beyond these."
+        ),
+        "last_reviewed": "2026-03-26",
+        "next_review": "2026-04-26",
+    }
+
+
+@app.get("/api/v1/dimension-candidates")
+async def get_dimension_candidates():
+    """Dimensions the system is monitoring for but hasn't yet added to the FP Line."""
+    candidates = engine.get_dimension_candidates_status()
+    return {
+        "current_dimensions": 14,
+        "candidate_dimensions": candidates,
+        "philosophy": (
+            "The FP Line framework evolves as AI capability expands into "
+            "domains that don't fit existing dimensions. When enough unmapped "
+            "signals accumulate, the system proposes a new dimension. "
+            "Human approval required to add."
+        ),
+    }
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -3126,10 +5819,16 @@ footer a{color:var(--accent);text-decoration:none}
   <div class="hero-label">The AI Frontier Index</div>
   <div class="hero-score" id="hero-score" onclick="toggleDomains()" title="Click for domain breakdown">—</div>
   <div class="hero-sub">
-    <span id="hero-caps">—</span> signals tracked
+    <span id="hero-caps">—</span> new signals (24h)
     <span class="hero-trend trend-flat" id="hero-trend"></span>
   </div>
   <div class="hero-date" id="hero-date"></div>
+  <div style="margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--dim);font-style:italic">A score of the visible frontier, not the total frontier.</div>
+  <div id="frontier-coverage" style="margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:var(--dim);cursor:pointer" onclick="document.getElementById('blind-spots-section').scrollIntoView({behavior:'smooth'})">
+    <span style="color:var(--gold)">Known frontier coverage: ~<span id="coverage-pct">--</span>%</span>
+    <span style="margin-left:6px;color:var(--dim)">of detectable AI landscape</span>
+    <span style="margin-left:6px;color:var(--accent);font-size:0.65rem">What we're not tracking →</span>
+  </div>
   <div class="domains" id="domains">
     <div style="font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:var(--dim);text-transform:uppercase;letter-spacing:1.5px">Domain Breakdown</div>
     <div class="domain-grid" id="domain-grid"></div>
@@ -3189,6 +5888,34 @@ footer a{color:var(--accent);text-decoration:none}
     The scanner detects frontier shifts. The EXECUTE step evaluates whether they apply to our system. These are the highest-scored proposals — intelligence acting on itself.
   </div>
   <div id="exec-briefs"></div>
+</div>
+
+<!-- ═══ DIMENSION CANDIDATES (expanding framework) ═══ -->
+<div id="dim-candidates-section" style="margin-top:32px;display:none">
+  <div class="section-head">
+    <div class="section-title">Dimensions We're Watching</div>
+  </div>
+  <div style="color:var(--dim);font-size:0.8rem;margin-bottom:16px;font-family:'IBM Plex Mono',monospace">
+    The FP Line framework evolves as AI expands into domains our current 14 dimensions can't capture. When enough unmapped signals accumulate, the system proposes a new dimension.
+  </div>
+  <div id="dim-candidates" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px"></div>
+</div>
+
+<!-- ═══ KNOWN BLIND SPOTS (intellectual honesty) ═══ -->
+<div id="blind-spots-section" style="margin-top:32px">
+  <div class="section-head" style="cursor:pointer" onclick="document.getElementById('blind-spots-body').style.display = document.getElementById('blind-spots-body').style.display === 'none' ? 'block' : 'none'">
+    <div class="section-title">What We're Not Tracking <span style="font-size:0.7rem;color:var(--dim)">(yet)</span></div>
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--dim)">▾ expand</span>
+  </div>
+  <div style="color:var(--dim);font-size:0.8rem;margin-bottom:12px;font-family:'IBM Plex Mono',monospace;font-style:italic">
+    "Full Potential" is not a claim of omniscience. It is a commitment to seeing more, more rigorously, more transparently than anyone else — and being honest about what we can't yet see.
+  </div>
+  <div id="blind-spots-body" style="display:none">
+    <div id="blind-spots-list"></div>
+    <div style="margin-top:16px;padding:16px;background:rgba(255,180,0,0.06);border-left:3px solid var(--gold);font-size:0.8rem;font-family:'IBM Plex Mono',monospace;color:var(--dim)">
+      If the system is not regularly surprised by what it finds, it is not looking widely enough.
+    </div>
+  </div>
 </div>
 
 <!-- ═══ FEED ═══ -->
@@ -3273,13 +6000,19 @@ async function loadHero() {
       return '<div class="domain-row"><span class="domain-name">' + escHtml(d) + '</span><span class="domain-val" style="color:' + color + '">' + v + '</span></div>';
     }).join('');
 
+    // Known Frontier Coverage
+    const cov = fp.coverage || {};
+    if (cov.known_frontier_coverage_pct) {
+      document.getElementById('coverage-pct').textContent = cov.known_frontier_coverage_pct;
+    }
+
     // Briefing
     if (briefing.headline) {
       document.getElementById('briefing-headline').textContent = briefing.headline;
       const bodyHtml = (briefing.body || '').split('\\n\\n').map(p => '<p>' + escHtml(p) + '</p>').join('');
       document.getElementById('briefing-body').innerHTML = bodyHtml;
       document.getElementById('briefing-meta').textContent =
-        briefing.date + ' · Generated from ' + (briefing.stats?.caps_24h || '—') + ' signals · Updates every 30 minutes';
+        briefing.date + ' · Generated from ' + (briefing.stats?.caps_24h || '—') + ' signals · Refreshes each scan cycle';
     }
   } catch(e) {
     console.error('Hero load failed:', e);
@@ -3493,9 +6226,54 @@ async function loadExecBriefs() {
   } catch(e) { console.warn('Exec briefs load error:', e); }
 }
 
+async function loadBlindSpots() {
+  try {
+    const resp = await fetch(API + '/blind-spots');
+    const data = await resp.json();
+    if (!data.blind_spots || !data.blind_spots.length) return;
+    const el = document.getElementById('blind-spots-list');
+    const sevColors = {high:'var(--red)',medium:'var(--gold)','low-medium':'var(--dim)'};
+    el.innerHTML = data.blind_spots.map(bs => {
+      const sev = bs.severity || 'medium';
+      const color = sevColors[sev] || 'var(--dim)';
+      return '<div style="margin-bottom:14px;padding:14px;background:rgba(255,255,255,0.02);border-radius:6px;border-left:3px solid ' + color + '">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center">' +
+        '<span style="font-family:IBM Plex Mono,monospace;font-size:0.85rem;color:var(--fg)">' + escHtml(bs.blind_spot) + '</span>' +
+        '<span style="font-family:IBM Plex Mono,monospace;font-size:0.7rem;color:' + color + ';text-transform:uppercase">' + escHtml(sev) + ' · ~' + bs.coverage_impact_pct + '% unmapped</span></div>' +
+        '<div style="font-size:0.78rem;color:var(--dim);margin-top:6px">' + escHtml(bs.what_we_miss) + '</div>' +
+        '<div style="font-size:0.72rem;color:var(--accent);margin-top:4px">Plan: ' + escHtml(bs.plan_to_close) + '</div></div>';
+    }).join('');
+  } catch(e) { console.warn('Blind spots load error:', e); }
+}
+
+async function loadDimCandidates() {
+  try {
+    const resp = await fetch(API + '/dimension-candidates');
+    const data = await resp.json();
+    const candidates = data.candidate_dimensions || [];
+    if (!candidates.length) return;
+    document.getElementById('dim-candidates-section').style.display = 'block';
+    const el = document.getElementById('dim-candidates');
+    el.innerHTML = candidates.map(c => {
+      const pct = Math.min(c.progress_pct || 0, 100);
+      const barColor = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--gold)' : 'var(--dim)';
+      const statusLabel = c.status === 'proposed' ? 'PROPOSED' : 'monitoring';
+      return '<div style="padding:14px;background:rgba(255,255,255,0.02);border-radius:6px;border:1px solid rgba(255,255,255,0.06)">' +
+        '<div style="font-family:IBM Plex Mono,monospace;font-size:0.82rem;color:var(--fg);margin-bottom:4px">' + escHtml(c.name.replace(/_/g,' ')) + '</div>' +
+        '<div style="font-size:0.72rem;color:var(--dim);margin-bottom:8px">' + escHtml(c.description) + '</div>' +
+        '<div style="height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden"><div style="height:100%;width:' + pct + '%;background:' + barColor + ';border-radius:2px;transition:width 0.5s"></div></div>' +
+        '<div style="display:flex;justify-content:space-between;margin-top:4px;font-family:IBM Plex Mono,monospace;font-size:0.65rem;color:var(--dim)">' +
+        '<span>' + c.signals_detected + '/' + c.threshold + ' signals</span>' +
+        '<span style="color:' + (c.status === 'proposed' ? 'var(--green)' : 'var(--dim)') + '">' + statusLabel + '</span></div></div>';
+    }).join('');
+  } catch(e) { console.warn('Dimension candidates load error:', e); }
+}
+
 loadHero();
 loadFeed();
 loadExecBriefs();
+loadBlindSpots();
+loadDimCandidates();
 setInterval(loadHero, 300000);
 setInterval(loadFeed, 300000);
 setInterval(loadExecBriefs, 300000);

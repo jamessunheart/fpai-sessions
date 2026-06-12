@@ -1,0 +1,82 @@
+{
+  "weeks": [
+    {
+      "dates": "April 21–25",
+      "start_date": "2026-04-21",
+      "theme": "Open Intention",
+      "slug": "open-intention",
+      "emoji": "🌿",
+      "tagline": "You + the mountain. No agenda needed.",
+      "spots_total": 8,
+      "spots_remaining": 8,
+      "status": "open",
+      "life_areas": ["All 7 Areas"],
+      "whatsapp_prefill": "I'm interested in the Open Intention retreat, April 21-25"
+    },
+    {
+      "dates": "May 5–9",
+      "start_date": "2026-05-05",
+      "theme": "Founder Reset",
+      "slug": "founder-reset",
+      "emoji": "🚀",
+      "tagline": "Clarity for builders running on fumes.",
+      "spots_total": 8,
+      "spots_remaining": 8,
+      "status": "open",
+      "life_areas": ["Financial", "Mental", "Emotional"],
+      "whatsapp_prefill": "I'm interested in the Founder Reset retreat, May 5-9"
+    },
+    {
+      "dates": "May 12–16",
+      "start_date": "2026-05-12",
+      "theme": "Digital Detox",
+      "slug": "digital-detox",
+      "emoji": "📵",
+      "tagline": "Phones in a box. Analog living. Nervous system reset.",
+      "spots_total": 8,
+      "spots_remaining": 8,
+      "status": "open",
+      "life_areas": ["Mental", "Environment"],
+      "whatsapp_prefill": "I'm interested in the Digital Detox retreat, May 12-16"
+    },
+    {
+      "dates": "May 19–23",
+      "start_date": "2026-05-19",
+      "theme": "Healing & Body",
+      "slug": "healing-body",
+      "emoji": "💚",
+      "tagline": "Deep somatic and bodywork immersion.",
+      "spots_total": 8,
+      "spots_remaining": 8,
+      "status": "open",
+      "life_areas": ["Physical", "Emotional"],
+      "whatsapp_prefill": "I'm interested in the Healing & Body retreat, May 19-23"
+    },
+    {
+      "dates": "May 26–30",
+      "start_date": "2026-05-26",
+      "theme": "Couples Coherence",
+      "slug": "couples-coherence",
+      "emoji": "🤝",
+      "tagline": "Realign with your partner in the jungle.",
+      "spots_total": 6,
+      "spots_remaining": 6,
+      "status": "open",
+      "life_areas": ["Social", "Emotional"],
+      "whatsapp_prefill": "I'm interested in the Couples Coherence retreat, May 26-30"
+    },
+    {
+      "dates": "June 2–6",
+      "start_date": "2026-06-02",
+      "theme": "Financial Clarity",
+      "slug": "financial-clarity",
+      "emoji": "💰",
+      "tagline": "Your money story meets mountain air.",
+      "spots_total": 8,
+      "spots_remaining": 8,
+      "status": "open",
+      "life_areas": ["Financial", "Mental"],
+      "whatsapp_prefill": "I'm interested in the Financial Clarity retreat, June 2-6"
+    }
+  ]
+}

@@ -54,7 +54,9 @@ class _AF:
     token: str | None = None
     db_ids: dict[str, str] = field(default_factory=dict)
     fields_by_db: dict[str, dict[str, dict]] = field(default_factory=dict)
-    http: httpx.AsyncClient = field(default_factory=lambda: httpx.AsyncClient(timeout=30))
+    # AppFlowy can be slow under heavy ingest bursts; use a larger timeout to
+    # avoid surfacing transient upstream slowness as 500s to the ingest client.
+    http: httpx.AsyncClient = field(default_factory=lambda: httpx.AsyncClient(timeout=180))
 
     async def login(self):
         r = await self.http.post(
@@ -170,6 +172,9 @@ class _AF:
 
 
 _af: _AF | None = None
+# Process-local cache for conversation external_id -> row_id.
+# This avoids repeated AppFlowy table scans during bulk ingest.
+_conv_cache_by_external_id: dict[str, str] = {}
 
 
 async def get_af() -> _AF:
@@ -247,7 +252,7 @@ async def _auth(request: Request):
     return await authenticate(creds)
 
 
-@router.post("/add_note", response_model=AddNoteResp)
+@router.post("/add_note", response_model=AddNoteResp, include_in_schema=False)
 async def add_note(req: AddNoteReq, request: Request):
     from app import require_scope, audit
     agent = await _auth(request)
@@ -267,8 +272,25 @@ async def add_note(req: AddNoteReq, request: Request):
 
     af = await get_af()
 
-    # Idempotent by (source, source_id).
-    existing = await af.find_row_by_source_id("notes", "Source ID", req.source_id)
+    # Idempotency check uses brain_index.note_chunks ONLY (indexed on
+    # (source, source_id)). The previous AppFlowy-side scan was O(N) per
+    # request and made bulk ingests quadratic. If a Notes row was orphaned by
+    # a past failed run (created but never embedded), it will be re-created
+    # here — acceptable trade-off vs. ~300x ingest speedup. Orphans can be
+    # cleaned later by a maintenance job.
+    existing = None
+    try:
+        async with request.app.state.conn.cursor() as cur:
+            await cur.execute(
+                "SELECT note_row_id FROM brain_index.note_chunks "
+                " WHERE source = %s AND source_id = %s LIMIT 1",
+                (req.source, req.source_id),
+            )
+            row = await cur.fetchone()
+            if row:
+                existing = row[0]
+    except Exception as e:
+        log.warning("note_chunks dedup probe failed: %s", e)
     created = False
     if not existing:
         cells: dict[str, Any] = {
@@ -319,14 +341,37 @@ async def add_note(req: AddNoteReq, request: Request):
     return AddNoteResp(note_row_id=existing or "", created=created, embedded=embedded)
 
 
-@router.post("/ensure_conversation", response_model=EnsureConvResp)
+# Process-local cache: external_id → row_id. Avoids re-scanning the
+# Conversations table on every message of the same conversation.
+_CONV_CACHE: dict[str, str] = {}
+
+
+@router.post("/ensure_conversation", response_model=EnsureConvResp, include_in_schema=False)
 async def ensure_conversation(req: EnsureConvReq, request: Request):
     from app import require_scope
     agent = await _auth(request)
     require_scope(agent, "ingest")
+    cache_key = f"{req.source}:{req.external_id}"
+    if cache_key in _CONV_CACHE:
+        return EnsureConvResp(conversation_row_id=_CONV_CACHE[cache_key], created=False)
+    # Fast path: already resolved in this process.
+    if req.external_id in _conv_cache_by_external_id:
+        row_id = _conv_cache_by_external_id[req.external_id]
+        _CONV_CACHE[cache_key] = row_id
+        return EnsureConvResp(conversation_row_id=row_id, created=False)
+
     af = await get_af()
-    existing = await af.find_row_by_source_id("conversations", "External ID", req.external_id)
+
+    # Slow lookup can time out on large tables; keep it best-effort only.
+    existing = None
+    try:
+        existing = await af.find_row_by_source_id("conversations", "External ID", req.external_id)
+    except Exception as e:
+        log.warning("ensure_conversation lookup timeout/failure for %s: %s", req.external_id, e)
+
     if existing:
+        _CONV_CACHE[cache_key] = existing
+        _conv_cache_by_external_id[req.external_id] = existing
         return EnsureConvResp(conversation_row_id=existing, created=False)
     cells: dict[str, Any] = {
         "Title": req.title,
@@ -337,4 +382,7 @@ async def ensure_conversation(req: EnsureConvReq, request: Request):
     if req.started_at:
         cells["Started At"] = req.started_at
     row_id = await af.add_row("conversations", cells)
+    if row_id:
+        _CONV_CACHE[cache_key] = row_id
+        _conv_cache_by_external_id[req.external_id] = row_id
     return EnsureConvResp(conversation_row_id=row_id, created=True)

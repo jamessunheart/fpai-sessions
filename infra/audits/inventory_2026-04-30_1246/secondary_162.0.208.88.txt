@@ -1,0 +1,212 @@
+=== IDENTITY ===
+nc-ph-3016
+NAME="Ubuntu"
+VERSION="22.04.5 LTS (Jammy Jellyfish)"
+5.15.0-161-generic
+
+=== UPTIME ===
+ 18:46:14 up 152 days, 21:59,  0 users,  load average: 0.66, 0.79, 0.77
+
+=== RAM ===
+               total        used        free      shared  buff/cache   available
+Mem:            31Gi       8.7Gi       8.6Gi       135Mi        13Gi        22Gi
+Swap:          8.0Gi       3.8Gi       4.2Gi
+
+=== DISK (physical) ===
+/dev/md0p2      437G  106G  310G  26% /
+/dev/md0p1      2.0G  256M  1.6G  14% /boot
+
+=== TOP 10 PROCESSES BY MEM ===
+USER             %CPU%  %MEM% COMMAND
+root              3.6%  14.9% appflowy_cloud
+root              2.3%   1.9% openclaw-gateway
+root              0.0%   0.7% /lib/systemd/systemd-journald
+1000              0.1%   0.5% node
+root              0.2%   0.4% appflowy_cloud
+root              0.0%   0.4% [celeryd:
+root              0.0%   0.3% granian
+root              0.1%   0.3% [celeryd:
+root              0.6%   0.3% minio
+ollama            0.0%   0.2% /usr/local/bin/ollama
+
+=== ACTIVE SYSTEMD SERVICES (running) ===
+ai-brain.service
+aria-server-monitor.service
+brain-mesh-gateway.service
+concierge-agent-console.service
+concierge-client-dashboard.service
+containerd.service
+cron.service
+dbus.service
+docker.service
+fpai-ai-gateway.service
+fpai-lead-capture.service
+fpai-voice-caller.service
+getty@tty1.service
+gpu-bridge.service
+gpu-dashboard.service
+infra-metrics.service
+intake-agent.service
+irqbalance.service
+kai-bridge.service
+mdmonitor.service
+memory-bus.service
+ModemManager.service
+multipathd.service
+networkd-dispatcher.service
+nginx.service
+ollama.service
+packagekit.service
+polkit.service
+reasoning-engine.service
+revenue-tracker.service
+rsyslog.service
+security-watch.service
+sh-brain-index.service
+sh-brain-tgbot.service
+sh-mcp-http.service
+snap.cups.cups-browsed.service
+snap.cups.cupsd.service
+snapd.service
+ssh.service
+streasury-bot.service
+systemd-journald.service
+systemd-logind.service
+systemd-networkd.service
+systemd-resolved.service
+systemd-timesyncd.service
+systemd-udevd.service
+tailscaled.service
+thermald.service
+udisks2.service
+unattended-upgrades.service
+upower.service
+user@0.service
+zv-mcp-http.service
+zv-telegram-bot.service
+
+=== LISTENING PORTS ===
+127.0.0.1:18180 users:(("docker-proxy",pid=1781549,fd=7))
+127.0.0.1:18280 users:(("docker-proxy",pid=1934852,fd=7))
+127.0.0.1:18080 users:(("docker-proxy",pid=1698823,fd=7))
+0.0.0.0:8201 users:(("nginx",pid=3150900,fd=11),("nginx",pid=3150898,fd=11),("nginx",pid=3150897,fd=11),("nginx",pid=3150896,fd=11),("nginx",pid=3150895,fd=11),("nginx",pid=3150894,fd=11),("nginx",pid=3150892,fd=11),("nginx",pid=3150891,fd=11),("nginx",pid=3150889,fd=11),("nginx",pid=3150888,fd=11),("nginx",pid=3150887,fd=11),("nginx",pid=3150885,fd=11),("nginx",pid=3150855,fd=11))
+0.0.0.0:8250 users:(("python",pid=1373430,fd=6))
+127.0.0.1:18792 users:(("openclaw-gatewa",pid=3098155,fd=29))
+0.0.0.0:8400 users:(("python3",pid=1691411,fd=6))
+0.0.0.0:8402 users:(("python3",pid=1373433,fd=6))
+127.0.0.1:18789 users:(("openclaw-gatewa",pid=3098155,fd=22))
+127.0.0.1:18443 users:(("docker-proxy",pid=1698832,fd=7))
+0.0.0.0:8620 users:(("python",pid=2749045,fd=7))
+0.0.0.0:8790 users:(("python3",pid=673388,fd=3))
+0.0.0.0:8902 users:(("nginx",pid=3150900,fd=8),("nginx",pid=3150898,fd=8),("nginx",pid=3150897,fd=8),("nginx",pid=3150896,fd=8),("nginx",pid=3150895,fd=8),("nginx",pid=3150894,fd=8),("nginx",pid=3150892,fd=8),("nginx",pid=3150891,fd=8),("nginx",pid=3150889,fd=8),("nginx",pid=3150888,fd=8),("nginx",pid=3150887,fd=8),("nginx",pid=3150885,fd=8),("nginx",pid=3150855,fd=8))
+127.0.0.1:3334 users:(("openclaw-gatewa",pid=3098155,fd=33))
+127.0.0.1:3101 users:(("next-server
+127.0.0.1:3100 users:(("next-server
+100.127.118.106:41033 users:(("tailscaled",pid=3222200,fd=21))
+127.0.0.1:5678 users:(("docker-proxy",pid=821556,fd=7))
+127.0.0.1:8701 users:(("python",pid=1050968,fd=15))
+127.0.0.1:8700 users:(("uvicorn",pid=3360950,fd=17))
+127.0.0.1:8192 users:(("python3",pid=1832967,fd=3))
+127.0.0.1:8195 users:(("python3",pid=1832527,fd=6))
+127.0.0.1:25432 users:(("docker-proxy",pid=1994258,fd=7))
+127.0.0.1:8860 users:(("uvicorn",pid=1952029,fd=6))
+127.0.0.53%lo:53 users:(("systemd-resolve",pid=2662299,fd=14))
+0.0.0.0:22 users:(("sshd",pid=1992608,fd=3))
+0.0.0.0:80 users:(("nginx",pid=3150900,fd=6),("nginx",pid=3150898,fd=6),("nginx",pid=3150897,fd=6),("nginx",pid=3150896,fd=6),("nginx",pid=3150895,fd=6),("nginx",pid=3150894,fd=6),("nginx",pid=3150892,fd=6),("nginx",pid=3150891,fd=6),("nginx",pid=3150889,fd=6),("nginx",pid=3150888,fd=6),("nginx",pid=3150887,fd=6),("nginx",pid=3150885,fd=6),("nginx",pid=3150855,fd=6))
+0.0.0.0:443 users:(("nginx",pid=3150900,fd=7),("nginx",pid=3150898,fd=7),("nginx",pid=3150897,fd=7),("nginx",pid=3150896,fd=7),("nginx",pid=3150895,fd=7),("nginx",pid=3150894,fd=7),("nginx",pid=3150892,fd=7),("nginx",pid=3150891,fd=7),("nginx",pid=3150889,fd=7),("nginx",pid=3150888,fd=7),("nginx",pid=3150887,fd=7),("nginx",pid=3150885,fd=7),("nginx",pid=3150855,fd=7))
+0.0.0.0:631 users:(("cupsd",pid=1642399,fd=9))
+127.0.0.1:28091 users:(("uvicorn",pid=2129836,fd=15))
+127.0.0.1:28090 users:(("uvicorn",pid=3867799,fd=14))
+127.0.0.1:28080 users:(("docker-proxy",pid=2008921,fd=7))
+127.0.0.1:46353 users:(("containerd",pid=8179,fd=9))
+0.0.0.0:8101 users:(("python3",pid=1373378,fd=6))
+0.0.0.0:8130 users:(("python3",pid=1373374,fd=6))
+0.0.0.0:8140 users:(("python",pid=888195,fd=6))
+0.0.0.0:8191 users:(("python3",pid=1874811,fd=3))
+*:11434 users:(("ollama",pid=3583508,fd=3))
+[::1]:18789 users:(("openclaw-gatewa",pid=3098155,fd=25))
+[::]:22 users:(("sshd",pid=1992608,fd=4))
+[::]:80 users:(("nginx",pid=3150900,fd=9),("nginx",pid=3150898,fd=9),("nginx",pid=3150897,fd=9),("nginx",pid=3150896,fd=9),("nginx",pid=3150895,fd=9),("nginx",pid=3150894,fd=9),("nginx",pid=3150892,fd=9),("nginx",pid=3150891,fd=9),("nginx",pid=3150889,fd=9),("nginx",pid=3150888,fd=9),("nginx",pid=3150887,fd=9),("nginx",pid=3150885,fd=9),("nginx",pid=3150855,fd=9))
+[::]:443 users:(("nginx",pid=3150900,fd=10),("nginx",pid=3150898,fd=10),("nginx",pid=3150897,fd=10),("nginx",pid=3150896,fd=10),("nginx",pid=3150895,fd=10),("nginx",pid=3150894,fd=10),("nginx",pid=3150892,fd=10),("nginx",pid=3150891,fd=10),("nginx",pid=3150889,fd=10),("nginx",pid=3150888,fd=10),("nginx",pid=3150887,fd=10),("nginx",pid=3150885,fd=10),("nginx",pid=3150855,fd=10))
+[::]:631 users:(("cupsd",pid=1642399,fd=10))
+[fd7a:115c:a1e0::9001:7689]:54993 users:(("tailscaled",pid=3222200,fd=22))
+
+=== DOCKER ===
+appflowy-cloud-appflowy_web-1 | appflowyinc/appflowy_web:latest | Up 5 days
+appflowy-cloud-appflowy_worker-1 | appflowyinc/appflowy_worker:latest | Up 5 days
+appflowy-cloud-admin_frontend-1 | appflowyinc/admin_frontend:latest | Up 5 days
+appflowy-cloud-appflowy_cloud-1 | appflowyinc/appflowy_cloud:latest | Up 5 days (healthy)
+appflowy-cloud-gotrue-1 | appflowyinc/gotrue:latest | Up 5 days (healthy)
+appflowy-cloud-appflowy_search-1 | appflowyinc/appflowy_search:latest | Up 5 days
+appflowy-cloud-postgres-1 | pgvector/pgvector:pg16 | Up 5 days (healthy)
+appflowy-cloud-minio-1 | minio/minio | Up 5 days (healthy)
+appflowy-cloud-redis-1 | redis | Up 5 days
+appflowy-cloud-nginx-1 | nginx | Up 5 days
+sh-brain-nginx | nginx | Up 5 days
+sh-brain-admin | appflowyinc/admin_frontend:latest | Up 5 days
+sh-brain-cloud | appflowyinc/appflowy_cloud:latest | Up 44 hours (healthy)
+sh-brain-worker | appflowyinc/appflowy_worker:latest | Up 5 days
+sh-brain-gotrue | appflowyinc/gotrue:latest | Up 5 days (healthy)
+sh-brain-postgres | pgvector/pgvector:pg16 | Up 5 days (healthy)
+sh-brain-minio | minio/minio | Up 5 days (healthy)
+sh-brain-web | appflowyinc/appflowy_web:latest | Up 5 days
+sh-brain-redis | redis | Up 5 days
+firefly-app-1 | fireflyiii/core:latest | Up 5 days (healthy)
+firefly-db-1 | mariadb:lts | Up 5 days
+firefly-cron-1 | alpine | Up 5 days
+paperless-webserver-1 | ghcr.io/paperless-ngx/paperless-ngx:latest | Up 5 days (healthy)
+paperless-db-1 | postgres:16 | Up 5 days
+paperless-broker-1 | redis:7 | Up 5 days
+n8n | n8nio/n8n:latest | Up 6 days
+
+=== NGINX server_name LIST ===
+server_name _;
+server_name triad.fullpotential.ai 162.0.208.88;
+
+=== APACHE / CPANEL VHOSTS ===
+
+=== ROOT CRON ===
+
+0 7 * * * cd /opt/fpai/chief-of-staff && python3 daily_briefing.py >> /var/log/fpai-briefing.log 2>&1
+0 8 * * * /opt/fpai/openclaw/workspace/tools/daily-zv-check.sh >> /opt/fpai/logs/adam_daily_value.log 2>&1
+15 3 * * * /usr/local/bin/zv-backup.sh >/dev/null 2>&1
+*/2 * * * * /usr/local/bin/zv-resend-flip.sh
+30 15 * * * /opt/fpai/openclaw/workspace/tools/find-opportunities.sh >> /opt/fpai/logs/adam_daily_value.log 2>&1
+45 3 * * * /usr/local/bin/zv-cert-renew.sh >/dev/null 2>&1
+59 23 * * * /opt/fpai/openclaw/workspace/tools/adam-daily-log.sh >> /opt/fpai/logs/adam_daily_value.log 2>&1
+*/5 * * * * /opt/fpai/scripts/monitor-primary.sh
+*/15 * * * * /opt/fpai/openclaw/workspace/tools/security-sentinel.sh >/dev/null 2>&1
+15 9 * * * /opt/fpai/openclaw/workspace/infrastructure/tools/brain-mesh-policy-expiry-alert.sh >> /opt/fpai/logs/adam_daily_value.log 2>&1
+
+=== /etc/cron.d ===
+certbot
+e2scrub_all
+fpai-budget-monitor
+fpai-health-check
+
+=== ERRORS LAST 24H (count) ===
+311
+
+=== TOP 5 ERROR SOURCES LAST 24H ===
+     31 sshd[1992608]:
+      6 sshd[3721997]:
+      6 sshd[3688791]:
+      6 sshd[3605337]:
+      6 sshd[3563743]:
+
+=== UFW / FIREWALL ===
+Status: active
+
+     To                         Action      From
+     --                         ------      ----
+[ 1] 22/tcp                     ALLOW IN    Anywhere                   # SSH
+[ 2] 80/tcp                     ALLOW IN    Anywhere                   # HTTP
+[ 3] 443/tcp                    ALLOW IN    Anywhere                   # HTTPS
+[ 4] Anywhere on tailscale0     ALLOW IN    Anywhere                  
+[ 5] 8770/tcp                   ALLOW IN    Anywhere                  
+[ 6] 22/tcp (v6)                ALLOW IN    Anywhere (v6)              # SSH
+[ 7] 80/tcp (v6)                ALLOW IN    Anywhere (v6)              # HTTP
+[ 8] 443/tcp (v6)               ALLOW IN    Anywhere (v6)              # HTTPS
+[ 9] Anywhere (v6) on tailscale0 ALLOW IN    Anywhere (v6)             
+[10] 8770/tcp (v6)              ALLOW IN    Anywhere (v6)             
+

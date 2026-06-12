@@ -1,9 +1,0 @@
-{
-  "claimed_by": "session-1763926653",
-  "claimed_at": "2025-11-23T20:20:28Z",
-  "resource_type": "builder",
-  "resource_name": "standardization",
-  "duration_hours": 4,
-  "expires_at": "2025-11-24T00:20:28Z",
-  "allow_coordination": true
-}

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects | Full Potential</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/projects/static/styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <a href="https://fullpotential.ai" class="logo">
+                    <span class="logo-icon">⚡</span>
+                    <span class="logo-text">FULL POTENTIAL</span>
+                </a>
+                <span class="header-divider">/</span>
+                <span class="header-title">Projects</span>
+            </div>
+            <div class="header-right">
+                <button class="btn-brain" onclick="toggleBrainChat()">
+                    <span>🧠</span> Ask Brain
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Hero Section -->
+            <section class="hero">
+                <div class="hero-content">
+                    <h1 class="hero-title">Project Command Center</h1>
+                    <p class="hero-subtitle">All projects. One brain. Unified intelligence.</p>
+                </div>
+                <div class="hero-stats" id="hero-stats">
+                    <div class="stat">
+                        <span class="stat-value" id="total-projects">-</span>
+                        <span class="stat-label">Projects</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="active-projects">-</span>
+                        <span class="stat-label">Active</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="total-learnings">-</span>
+                        <span class="stat-label">Learnings</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Projects Grid -->
+            <section class="projects-section">
+                <div class="section-header">
+                    <h2>Active Projects</h2>
+                    <button class="btn-secondary" onclick="showNewProjectModal()">
+                        <span>+</span> New Project
+                    </button>
+                </div>
+                <div class="projects-grid" id="projects-grid">
+                    <div class="loading">Loading projects...</div>
+                </div>
+            </section>
+
+            <!-- Two Column Layout -->
+            <div class="two-col">
+                <!-- Memory/Learnings Section -->
+                <section class="memory-section">
+                    <div class="section-header">
+                        <h2>🧠 Project Memory</h2>
+                        <button class="btn-secondary" onclick="showAddLearningModal()">
+                            <span>+</span> Add Learning
+                        </button>
+                    </div>
+                    <div class="memory-list" id="memory-list">
+                        <div class="loading">Loading learnings...</div>
+                    </div>
+                </section>
+
+                <!-- Activity Feed -->
+                <section class="activity-section">
+                    <div class="section-header">
+                        <h2>📡 Global Activity</h2>
+                    </div>
+                    <div class="activity-list" id="activity-list">
+                        <div class="loading">Loading activity...</div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Brain Chat Panel -->
+        <div class="brain-panel hidden" id="brain-panel">
+            <div class="brain-header">
+                <div class="brain-title">
+                    <span>🧠</span> Meta Brain
+                </div>
+                <button class="brain-close" onclick="toggleBrainChat()">×</button>
+            </div>
+            <div class="brain-messages" id="brain-messages">
+                <div class="brain-message ai">
+                    I'm the Meta Brain - I see all projects and can help you:
+                    <ul>
+                        <li>Understand status across projects</li>
+                        <li>Find patterns and insights</li>
+                        <li>Prioritize what to focus on</li>
+                        <li>Share learnings between projects</li>
+                    </ul>
+                    What would you like to know?
+                </div>
+            </div>
+            <form class="brain-input" onsubmit="sendBrainMessage(event)">
+                <input type="text" id="brain-input" placeholder="Ask about your projects..." autocomplete="off">
+                <button type="submit">→</button>
+            </form>
+        </div>
+
+        <!-- New Project Modal -->
+        <div class="modal hidden" id="new-project-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Create New Project</h3>
+                    <button class="modal-close" onclick="closeModal('new-project-modal')">×</button>
+                </div>
+                <form onsubmit="createProject(event)">
+                    <div class="form-group">
+                        <label>Project ID</label>
+                        <input type="text" name="id" placeholder="e.g., my-project" required pattern="[a-z0-9-]+">
+                        <small>Lowercase letters, numbers, and dashes only</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Project Name</label>
+                        <input type="text" name="name" placeholder="e.g., My Awesome Project" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea name="description" placeholder="What is this project about?"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Icon</label>
+                            <input type="text" name="icon" value="📁" maxlength="2">
+                        </div>
+                        <div class="form-group">
+                            <label>Color</label>
+                            <input type="color" name="color" value="#8b5cf6">
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn-secondary" onclick="closeModal('new-project-modal')">Cancel</button>
+                        <button type="submit" class="btn-primary">Create Project</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Add Learning Modal -->
+        <div class="modal hidden" id="add-learning-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Add Learning</h3>
+                    <button class="modal-close" onclick="closeModal('add-learning-modal')">×</button>
+                </div>
+                <form onsubmit="addLearning(event)">
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select name="category" required>
+                            <option value="process">Process</option>
+                            <option value="sourcing">Sourcing</option>
+                            <option value="communication">Communication</option>
+                            <option value="technical">Technical</option>
+                            <option value="insight">Insight</option>
+                            <option value="mistake">Mistake to Avoid</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Project (optional)</label>
+                        <select name="project_id" id="learning-project-select">
+                            <option value="">Global (applies to all)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>What did you learn?</label>
+                        <textarea name="learning" placeholder="e.g., 'Always ask for timeline before discussing price'" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Context (optional)</label>
+                        <input type="text" name="context" placeholder="Where/when did this come up?">
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn-secondary" onclick="closeModal('add-learning-modal')">Cancel</button>
+                        <button type="submit" class="btn-primary">Save Learning</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/projects/static/app.js"></script>
+</body>
+</html>
+

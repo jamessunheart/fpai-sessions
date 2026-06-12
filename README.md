@@ -2,6 +2,20 @@
 
 A **Model Context Protocol (MCP) server** providing real-time AI frontier intelligence. Scans 27+ sources every 30-60 minutes, tracks AI capability across 7 dimensions, and exposes 16 MCP tools + 13 resources for any MCP-compatible agent.
 
+---
+
+## 📖 Navigation & Guides
+
+**New to this codebase?** Start here:
+- **[QUICK_START.md](QUICK_START.md)** - Quick reference for common tasks
+- **[STRUCTURE.md](STRUCTURE.md)** - Full directory structure & organization
+- **[.ai-agent-guide.md](.ai-agent-guide.md)** - Guide for AI agents (Claude, Cursor)
+- **[SERVICES/INDEX.md](SERVICES/INDEX.md)** - Service registry (261 services)
+
+**Reorganized 2026-04-29:** See [MIGRATION_LOG.md](MIGRATION_LOG.md) for what moved where.
+
+---
+
 ## MCP Server Quick Start
 
 ```

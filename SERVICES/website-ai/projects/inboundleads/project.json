@@ -1,0 +1,254 @@
+{
+  "project": {
+    "id": "inbound-leads-ph-callcenter",
+    "name": "Philippines Call Center Lead Generation",
+    "status": "active",
+    "created": "2026-01-21",
+    "updated": "2026-01-21",
+    "url": "https://fullpotential.ai/projects/inboundleads/"
+  },
+  "company": {
+    "name": null,
+    "ceo_name": null,
+    "ceo_email": null,
+    "location": null,
+    "agent_capacity": null,
+    "specializations": [],
+    "pricing_structure": null,
+    "differentiators": null,
+    "case_studies": []
+  },
+  "commission_structure": {
+    "option_a_recurring": {
+      "type": "recurring",
+      "percentage": "10-15%",
+      "duration_months": 12,
+      "description": "Percentage of monthly contract value for 12 months"
+    },
+    "option_b_upfront": {
+      "type": "upfront",
+      "amount_range": "$2,000 - $5,000",
+      "paid_after_days": 60,
+      "description": "One-time payment per closed deal"
+    },
+    "option_c_hybrid": {
+      "type": "hybrid",
+      "upfront_amount": "$1,500",
+      "recurring_percentage": "5%",
+      "duration_months": 12,
+      "description": "Combination of upfront and recurring"
+    },
+    "selected_option": null,
+    "minimum_contract_value": null,
+    "payment_terms": null
+  },
+  "target_audience": {
+    "primary_segments": [
+      {
+        "name": "E-commerce Companies",
+        "examples": "Shopify merchants, Amazon sellers",
+        "priority": "high",
+        "pain_points": ["High ticket volume", "24/7 coverage needs", "Seasonal spikes"]
+      },
+      {
+        "name": "SaaS Companies",
+        "examples": "Series A/B startups",
+        "priority": "high",
+        "pain_points": ["Fast growth", "Technical support needs", "Global coverage"]
+      },
+      {
+        "name": "Healthcare Providers",
+        "examples": "Telehealth, patient services",
+        "priority": "medium",
+        "pain_points": ["HIPAA compliance", "Patient experience", "After-hours support"]
+      },
+      {
+        "name": "Financial Services",
+        "examples": "Fintech, lending companies",
+        "priority": "medium",
+        "pain_points": ["Compliance requirements", "High-touch service", "Trust building"]
+      },
+      {
+        "name": "Subscription Boxes",
+        "examples": "DTC brands",
+        "priority": "medium",
+        "pain_points": ["Churn reduction", "Order management", "Returns handling"]
+      }
+    ],
+    "buying_signals": [
+      "Job postings for Customer Support Manager or Head of CX",
+      "Recent funding rounds (Series A/B)",
+      "Negative reviews mentioning slow support on G2/Trustpilot",
+      "Visible scaling activity (hiring, new products)"
+    ]
+  },
+  "lead_channels": [
+    {
+      "name": "SEO/Content Marketing",
+      "effort": "high",
+      "cost": "low",
+      "lead_quality": 5,
+      "status": "not_started"
+    },
+    {
+      "name": "Referral Partners",
+      "effort": "medium",
+      "cost": "medium",
+      "lead_quality": 5,
+      "status": "not_started"
+    },
+    {
+      "name": "Clutch.co Profile",
+      "effort": "low",
+      "cost": "medium",
+      "lead_quality": 5,
+      "status": "not_started"
+    },
+    {
+      "name": "LinkedIn Organic",
+      "effort": "medium",
+      "cost": "free",
+      "lead_quality": 4,
+      "status": "not_started"
+    },
+    {
+      "name": "Google Ads",
+      "effort": "low",
+      "cost": "high",
+      "lead_quality": 4,
+      "status": "not_started"
+    }
+  ],
+  "referral_partners": {
+    "tier_1_partners": [
+      {
+        "type": "Fractional COOs / Ops Consultants",
+        "why_they_refer": "Clients ask how to scale support",
+        "where_to_find": ["LinkedIn", "Pavilion", "COO communities"]
+      },
+      {
+        "type": "E-commerce Agencies",
+        "why_they_refer": "Clients need support as they grow",
+        "where_to_find": ["Shopify Partner Directory", "Klaviyo partners"]
+      },
+      {
+        "type": "Helpdesk Software Reps",
+        "why_they_refer": "Want happy customers using their software",
+        "where_to_find": ["LinkedIn", "Software partner programs"]
+      },
+      {
+        "type": "Business Coaches (Scaling Stage)",
+        "why_they_refer": "Clients hit the 'I can't do it all' wall",
+        "where_to_find": ["Instagram", "Podcast guests"]
+      }
+    ],
+    "tier_2_partners": [
+      "HR consultants / recruiters",
+      "Virtual assistant agencies",
+      "CX consultants / CSAT optimization firms",
+      "Podcast hosts in e-commerce/SaaS space"
+    ],
+    "recruited_partners": [],
+    "outreach_script": "Hey [Name], I noticed you work with [e-commerce brands / scaling startups / etc.]. Quick question — do your clients ever complain about customer support being a bottleneck?\n\nWe run a Philippines-based CS operation and have a partner program that pays 10-15% recurring for introductions. No selling required — just warm intros.\n\nWorth a 15-min chat to see if there's fit?",
+    "intro_template": "Hey [Client], meet [Your Name] — they run a Philippines call center that's saved several of my clients 40-60% on support costs while improving response times. Given what you mentioned about [pain point], might be worth a quick chat. I'll let you two take it from here."
+  },
+  "content_strategy": {
+    "target_keywords": [
+      {"keyword": "outsource customer service Philippines", "cpc_range": "$15-25", "intent": "very_high"},
+      {"keyword": "BPO Philippines pricing", "cpc_range": "$10-20", "intent": "very_high"},
+      {"keyword": "hire call center agents Philippines", "cpc_range": "$10-18", "intent": "very_high"},
+      {"keyword": "customer support outsourcing cost", "cpc_range": "$12-22", "intent": "high"},
+      {"keyword": "24/7 customer service solution", "cpc_range": "$8-15", "intent": "high"}
+    ],
+    "content_pillars": [
+      {"title": "ROI Calculator", "description": "Calculate Your Savings: In-house vs Outsourced", "status": "not_started", "priority": 1},
+      {"title": "Comparison Article", "description": "In-house vs Philippines Outsourcing: Real Cost Calculator", "status": "not_started", "priority": 2},
+      {"title": "Pricing Transparency Page", "description": "What Does Philippines Call Center Support Actually Cost?", "status": "not_started", "priority": 3},
+      {"title": "Vendor Comparison Template", "description": "Free download lead magnet", "status": "not_started", "priority": 4},
+      {"title": "Case Studies (3+)", "description": "Industry-specific success stories with metrics", "status": "not_started", "priority": 5}
+    ]
+  },
+  "execution_phases": [
+    {
+      "phase": 0,
+      "name": "Strategy",
+      "description": "Define channels, targets, commission structure",
+      "status": "complete",
+      "tasks": ["Create strategy document", "Define target audience", "Design commission structure"]
+    },
+    {
+      "phase": 1,
+      "name": "Foundation",
+      "description": "Clutch profile, website, basic content",
+      "status": "not_started",
+      "tasks": [
+        "Create Clutch.co profile",
+        "Collect 5+ reviews",
+        "Set up partner landing page",
+        "Create partner toolkit (one-pager, email templates)"
+      ]
+    },
+    {
+      "phase": 2,
+      "name": "Partner Recruitment",
+      "description": "Outreach to potential partners",
+      "status": "not_started",
+      "tasks": [
+        "Identify 50 target partners",
+        "Send outreach messages",
+        "Schedule intro calls",
+        "Onboard first 5-10 partners"
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "Content Engine",
+      "description": "SEO articles, case studies, lead magnets",
+      "status": "not_started",
+      "tasks": [
+        "Build ROI calculator",
+        "Write 3 pillar articles",
+        "Create pricing page",
+        "Develop 3 case studies"
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "Paid Amplification",
+      "description": "Google Ads, LinkedIn retargeting",
+      "status": "not_started",
+      "tasks": [
+        "Set up Google Ads campaigns",
+        "Install retargeting pixels",
+        "Create LinkedIn ad campaigns",
+        "Optimize based on data"
+      ]
+    }
+  ],
+  "metrics": {
+    "partners_recruited": 0,
+    "leads_generated": 0,
+    "deals_closed": 0,
+    "revenue_generated": 0,
+    "commission_paid": 0
+  },
+  "notes": [],
+  "assistant_instructions": {
+    "overview": "Execute the Philippines Call Center lead generation strategy",
+    "prerequisites": [
+      "Review this entire project document",
+      "Wait for CEO details to be finalized",
+      "Understand commission structure"
+    ],
+    "execution_order": [
+      "Phase 1: Foundation (Clutch, partner page, toolkit)",
+      "Phase 2: Partner Recruitment (50 outreach, onboard 5-10)",
+      "Phase 3: Content Engine (ROI calc, articles, case studies)",
+      "Phase 4: Paid Amplification (Google Ads, LinkedIn)"
+    ],
+    "reporting": "Update this page with progress, blockers, and results weekly",
+    "key_metrics_to_track": ["Leads generated", "Partners recruited", "Conversion rates", "Revenue"]
+  }
+}
+
+

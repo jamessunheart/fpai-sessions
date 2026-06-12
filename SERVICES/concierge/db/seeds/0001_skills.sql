@@ -1,0 +1,21 @@
+-- Baseline skill taxonomy
+INSERT INTO skills (key, name, category, description) VALUES
+  ('voice_general',            'General Voice',            'channel',   'Standard inbound voice handling')
+, ('voice_booking',            'Voice Booking',            'vertical',  'Appointment scheduling by phone')
+, ('voice_estimate',           'Estimate Quote',           'vertical',  'Rough service estimate over phone')
+, ('voice_overflow',           'Overflow Answering',       'channel',   'After-hours / overflow call handling')
+, ('sms_general',              'General SMS',              'channel',   'SMS reply handling')
+, ('chat_general',             'General Chat',             'channel',   'Web chat handling')
+, ('vertical_hvac',            'HVAC',                     'vertical',  'HVAC domain knowledge')
+, ('vertical_plumbing',        'Plumbing',                 'vertical',  'Plumbing domain knowledge')
+, ('vertical_electrical',      'Electrical',               'vertical',  'Electrical domain knowledge')
+, ('vertical_home_services',   'Home Services — General',  'vertical',  'Cross-trade home services')
+, ('vertical_legal_intake',    'Legal Intake',             'vertical',  'Personal injury / intake screening')
+, ('vertical_medical_intake',  'Medical Intake',           'vertical',  'Non-clinical intake + scheduling')
+, ('language_spanish',         'Spanish',                  'language',  'Spanish fluency')
+, ('language_english',         'English',                  'language',  'English fluency')
+, ('compliance_tcpa',          'TCPA Compliance',          'compliance','Outbound TCPA awareness')
+, ('compliance_hipaa',         'HIPAA Awareness',          'compliance','PHI-safe handling')
+, ('outbound_dialer',          'Outbound Dialer',          'channel',   'Outbound cadence + objection handling')
+, ('supervisor_live',          'Live Supervisor',          'channel',   'Real-time escalation handling')
+ON CONFLICT (key) DO NOTHING;

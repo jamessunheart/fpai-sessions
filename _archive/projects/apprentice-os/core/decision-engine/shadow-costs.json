@@ -1,0 +1,92 @@
+{
+  "definitions": {
+    "stress_accumulation": {
+      "id": "stress_accumulation",
+      "description": "Compound pressure on steward nervous system",
+      "measurement": "self_report + interaction_pattern_analysis + decision_quality_delta",
+      "sources": {
+        "self_report": "apprentice_metrics.stress_level (manual input)",
+        "interaction_pattern": "computed from events table (response gaps, tone shifts)",
+        "decision_quality": "computed from override_count / decision_count ratio"
+      },
+      "computation": {
+        "formula": "(self_report * 0.4) + (interaction_pattern_score * 0.3) + (decision_quality_delta * 0.3)",
+        "interaction_pattern_score": "COUNT(response_gaps > 24h) * 10 + COUNT(override_events) * 5",
+        "decision_quality_delta": "(baseline_decision_quality - current_decision_quality) * 100"
+      },
+      "thresholds": {
+        "warning": 60,
+        "critical": 80
+      },
+      "unit": "percentage (0-100)"
+    },
+    "trust_decay": {
+      "id": "trust_decay",
+      "description": "Erosion of relational capital through misalignment",
+      "measurement": "response_latency + collaboration_friction + explicit_feedback",
+      "sources": {
+        "response_latency": "events table (time between request and action)",
+        "collaboration_friction": "count of clarification loops in conversation",
+        "explicit_feedback": "apprentice_metrics.trust_score (manual input)"
+      },
+      "computation": {
+        "formula": "(latency_score * 0.25) + (friction_score * 0.35) + (feedback_delta * 0.4)",
+        "latency_score": "AVG(response_time) / expected_response_time * 100",
+        "friction_score": "COUNT(clarification_events) / COUNT(total_interactions) * 100",
+        "feedback_delta": "previous_trust_score - current_trust_score"
+      },
+      "thresholds": {
+        "warning": -10,
+        "critical": -25
+      },
+      "unit": "delta (negative = decay)"
+    },
+    "optionality_loss": {
+      "id": "optionality_loss",
+      "description": "Closing future paths through commitments",
+      "measurement": "reversibility_score + lock_in_count",
+      "sources": {
+        "reversibility_score": "system_state commitments assessed for reversibility (1-5 scale)",
+        "lock_in_count": "count of irreversible decisions in last 30 days"
+      },
+      "computation": {
+        "formula": "(5 - AVG(reversibility_scores)) * 20 + (lock_in_count * 10)",
+        "reversibility_assessment": "Each commitment rated 1 (irreversible) to 5 (easily reversible)",
+        "lock_in_examples": ["multi-year contracts", "permanent hires", "burned bridges"]
+      },
+      "thresholds": {
+        "warning": 30,
+        "critical": 50
+      },
+      "unit": "score (0-100, higher = more loss)"
+    },
+    "complexity_creep": {
+      "id": "complexity_creep",
+      "description": "Incremental additions exceeding coherence capacity",
+      "measurement": "entity_count + connection_density + rule_count",
+      "sources": {
+        "entity_count": "COUNT(*) from apprentices + assistants + modules",
+        "connection_density": "COUNT(*) from relationships / entity_count",
+        "rule_count": "COUNT of rules in rules.yaml"
+      },
+      "computation": {
+        "formula": "current_complexity / baseline_complexity",
+        "current_complexity": "entity_count * (1 + connection_density) * log(rule_count)",
+        "baseline_complexity": "computed at system initialization or last reset"
+      },
+      "thresholds": {
+        "warning": 1.2,
+        "critical": 1.5
+      },
+      "unit": "ratio (1.0 = baseline)"
+    }
+  },
+  "meta": {
+    "computation_interval_minutes": 60,
+    "storage_table": "shadow_cost_snapshots",
+    "alert_on_threshold": true,
+    "surface_in_recommendations": true
+  }
+}
+
+

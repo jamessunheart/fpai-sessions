@@ -1,0 +1,10 @@
+[Unit]
+Description=Triage Personal-tier notes daily
+
+[Timer]
+OnCalendar=*-*-* 03:00:00 America/Denver
+Unit=brain-curator@triage.service
+Persistent=true
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>The Coherent Store · Full Potential Game</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<meta content="The Coherent Store. Credit-accepting offers ranked first — by design. Anyone can list. The marketplace where the field flows." name="description"/>
+<meta content="#0a1428" name="theme-color"/>
+<meta content="website" property="og:type"/>
+<meta content="The Coherent Store · Full Potential Game" property="og:title"/>
+<meta content="A marketplace where credit-accepting offers get more visibility than dollar-only ones — incentivizing circulation by design." property="og:description"/>
+<meta content="https://fullpotential.com/game/store/" property="og:url"/>
+<style>
+:root {
+  --bg: #0a1428;
+  --bg-deep: #060d1c;
+  --surface: #14213d;
+  --surface-2: #1d2c4d;
+  --border: #2c3d63;
+  --text: #f5ead8;
+  --text-bright: #fff7e8;
+  --muted: #8fa1c2;
+  --accent: #e8b974;
+  --accent-bright: #f5d089;
+  --accent-soft: rgba(232, 185, 116, 0.12);
+  --good: #84d488;
+  --tier-0: #84d488;
+  --tier-1: #e8b974;
+  --tier-2: #8fa1c2;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+  background:
+    radial-gradient(ellipse 1200px 600px at 50% -100px, rgba(232, 185, 116, 0.06), transparent 70%),
+    radial-gradient(ellipse 800px 400px at 100% 100%, rgba(124, 196, 168, 0.04), transparent 60%),
+    var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 15px;
+  min-height: 100vh;
+}
+.serif { font-family: "Cormorant Garamond", Georgia, serif; }
+a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; transition: border 0.15s; }
+a:hover { border-bottom-color: var(--accent); }
+
+.wrap { max-width: 920px; margin: 0 auto; padding: 60px 24px 120px; }
+
+nav.topbar {
+  border-bottom: 1px solid var(--border);
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  background: rgba(6, 13, 28, 0.6);
+  backdrop-filter: blur(8px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+nav.topbar .brand { color: var(--accent); font-weight: 600; letter-spacing: 0.5px; }
+nav.topbar .links a { margin-left: 24px; color: var(--muted); border: none; }
+nav.topbar .links a:hover { color: var(--text-bright); }
+
+.hero { text-align: center; padding: 80px 0 50px; }
+.hero .label {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 24px;
+  padding: 6px 14px;
+  border: 1px solid var(--accent);
+  border-radius: 100px;
+}
+.hero h1 {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(38px, 6vw, 60px);
+  font-weight: 500;
+  line-height: 1.1;
+  margin: 0 0 20px;
+  color: var(--text-bright);
+}
+.hero .sub {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(18px, 2.4vw, 22px);
+  font-weight: 400;
+  color: var(--muted);
+  max-width: 640px;
+  margin: 0 auto;
+  font-style: italic;
+}
+
+.section { margin: 60px 0; }
+.section h2 {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 28px;
+  font-weight: 500;
+  margin: 0 0 16px;
+  color: var(--text-bright);
+}
+
+.tiers {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin: 28px 0 24px;
+}
+@media (max-width: 720px) { .tiers { grid-template-columns: 1fr; } }
+.tier-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+.tier-card .icon { font-size: 28px; line-height: 1; margin-bottom: 8px; }
+.tier-card .name { font-family: "Cormorant Garamond", serif; font-size: 22px; font-weight: 600; color: var(--text-bright); margin-bottom: 4px; }
+.tier-card.t0 .name { color: var(--tier-0); }
+.tier-card.t1 .name { color: var(--tier-1); }
+.tier-card.t2 .name { color: var(--tier-2); }
+.tier-card .gist { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+.callout {
+  border-left: 3px solid var(--accent);
+  padding: 14px 20px;
+  background: var(--accent-soft);
+  margin: 24px 0;
+  border-radius: 0 8px 8px 0;
+}
+.callout strong { color: var(--text-bright); }
+
+.tier-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 32px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.tier-header .glyph { font-size: 18px; }
+.tier-header .name {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 22px;
+  font-weight: 600;
+}
+.tier-header.t0 .name { color: var(--tier-0); }
+.tier-header.t1 .name { color: var(--tier-1); }
+.tier-header.t2 .name { color: var(--tier-2); }
+.tier-header .meta { font-size: 12px; color: var(--muted); margin-left: auto; }
+
+.offers { display: grid; gap: 12px; }
+.offer {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 22px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 18px;
+  align-items: center;
+  transition: all 0.2s ease-out;
+}
+.offer:hover { border-color: var(--accent); transform: translateY(-1px); }
+.offer .body { min-width: 0; }
+.offer .title { font-size: 16px; font-weight: 600; color: var(--text-bright); margin-bottom: 4px; }
+.offer .meta { font-size: 12px; color: var(--muted); }
+.offer .meta a { color: var(--muted); border-bottom: 1px dotted var(--border); }
+.offer .meta a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+.offer .price-block { text-align: right; min-width: 130px; }
+.offer .price-credits {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--accent-bright);
+  line-height: 1;
+}
+.offer .price-credits-suffix { color: var(--muted); font-size: 13px; font-family: inherit; font-weight: 600; margin-left: 2px; }
+.offer .price-usd { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.offer .inv { font-size: 11px; color: var(--good); margin-top: 4px; letter-spacing: 0.3px; }
+.offer .actions { display: flex; gap: 8px; margin-top: 8px; justify-content: flex-end; }
+.btn-buy, .btn-link {
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  border-radius: 6px;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  text-transform: uppercase;
+}
+.btn-buy { background: var(--accent); color: var(--bg); }
+.btn-buy:hover { background: var(--accent-bright); }
+.btn-link { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+.btn-link:hover { background: var(--accent-soft); }
+.offer-empty {
+  color: var(--muted);
+  font-style: italic;
+  padding: 24px;
+  text-align: center;
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+}
+
+.list-form-card {
+  background: var(--surface);
+  border: 1px solid var(--accent);
+  border-radius: 14px;
+  padding: 28px;
+  margin: 32px 0;
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.form-row.single { grid-template-columns: 1fr; }
+@media (max-width: 640px) { .form-row { grid-template-columns: 1fr; } }
+label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.3px; text-transform: uppercase; font-weight: 600; }
+input, textarea, select {
+  width: 100%;
+  padding: 11px 14px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+}
+textarea { min-height: 80px; resize: vertical; }
+input:focus, textarea:focus, select:focus { outline: none; border-color: var(--accent); }
+.honeypot { position: absolute; left: -9999px; }
+.btn-primary {
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  padding: 13px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 6px;
+  font-family: inherit;
+}
+.btn-primary:hover { background: var(--accent-bright); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.status { padding: 14px; border-radius: 8px; margin-top: 14px; font-size: 14px; display: none; }
+.status.success { background: rgba(132, 212, 136, 0.1); border: 1px solid var(--good); color: var(--good); display: block; }
+.status.error { background: rgba(229, 135, 135, 0.1); border: 1px solid #e58787; color: #e58787; display: block; }
+
+footer { margin-top: 90px; padding-top: 30px; border-top: 1px solid var(--border); color: var(--muted); font-size: 12px; text-align: center; }
+footer a { color: var(--muted); border: none; }
+footer a:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="brand">FULL POTENTIAL · STORE</div>
+  <div class="links">
+    <a href="/game/">← Game</a>
+    <a href="#offers">Offers</a>
+    <a href="#list-yours">List yours</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<section class="hero">
+  <span class="label">The Coherent Store · v1.0</span>
+  <h1 class="serif">A marketplace where credit-accepting offers rise.</h1>
+  <p class="sub">Anyone can list. The ranking algorithm pushes credit-friendly offers above dollar-only ones — by design. The Game's economy circulates, by structure.</p>
+</section>
+
+<section class="section">
+  <h2 class="serif">How ranking works</h2>
+  <p>Every offer is in one of three tiers. Within a tier, recency breaks ties. The math is published; the architecture is the incentive.</p>
+  <div class="tiers">
+    <div class="tier-card t0">
+      <div class="icon">💎</div>
+      <div class="name">Credit-only</div>
+      <div class="gist">Top tier. Offer accepts only credits — full alignment with the field's currency. Highest visibility.</div>
+    </div>
+    <div class="tier-card t1">
+      <div class="icon">⚖️</div>
+      <div class="name">Hybrid</div>
+      <div class="gist">Middle tier. Offer accepts credits + USD. Ranked within tier by <em>credit share</em> — what fraction of the price is paid in credits.</div>
+    </div>
+    <div class="tier-card t2">
+      <div class="icon">💵</div>
+      <div class="name">USD-only</div>
+      <div class="gist">Bottom tier. Offer is dollar-only. Listed but ranked last — credits are the field's currency.</div>
+    </div>
+  </div>
+  <div class="callout">
+    <strong>The architecture is the incentive.</strong> Merchants who accept credits get more visibility. Players who earn credits have more to spend. The circulation is structural, not promised.
+  </div>
+</section>
+
+<section class="section" id="offers">
+  <h2 class="serif">Live offers</h2>
+  <div id="store-list">
+    <div class="offer-empty">Loading…</div>
+  </div>
+</section>
+
+<section class="section" id="list-yours">
+  <h2 class="serif">List something</h2>
+  <p>Anyone with a Champion handle can list. Credits-only offers get top-tier visibility — the field rewards merchants who accept its currency.</p>
+
+  <div class="list-form-card">
+    <form id="post-form" onsubmit="return submitOffer(event)">
+      <div class="form-row">
+        <div>
+          <label for="owner_handle">Your handle</label>
+          <input id="owner_handle" name="owner_handle" required maxlength="60" placeholder="jamessunheart"/>
+        </div>
+        <div>
+          <label for="tags">Tags (comma-separated)</label>
+          <input id="tags" name="tags" maxlength="200" placeholder="coaching, retreat, music"/>
+        </div>
+      </div>
+      <div class="form-row single">
+        <div>
+          <label for="title">Title</label>
+          <input id="title" name="title" required maxlength="120" placeholder="What are you offering?"/>
+        </div>
+      </div>
+      <div class="form-row single">
+        <div>
+          <label for="description">Description</label>
+          <textarea id="description" name="description" maxlength="2000" placeholder="A few sentences explaining what this is and what someone gets."></textarea>
+        </div>
+      </div>
+      <div class="form-row">
+        <div>
+          <label for="price_credits">Price in credits</label>
+          <input id="price_credits" name="price_credits" type="number" min="0" max="1000000" step="1" placeholder="e.g. 100"/>
+        </div>
+        <div>
+          <label for="price_usd">Price in USD (optional)</label>
+          <input id="price_usd" name="price_usd" type="number" min="0" max="1000000" step="0.01" placeholder="e.g. 50.00"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div>
+          <label for="inventory">Inventory (blank = unlimited)</label>
+          <input id="inventory" name="inventory" type="number" min="1" max="100000" step="1" placeholder="optional"/>
+        </div>
+        <div>
+          <label for="url">Link (optional)</label>
+          <input id="url" name="url" maxlength="500" placeholder="https://..."/>
+        </div>
+      </div>
+      <input type="text" name="company" class="honeypot" tabindex="-1" autocomplete="off"/>
+      <button type="submit" class="btn-primary" id="post-btn">Post offer</button>
+      <div id="post-status" class="status"></div>
+    </form>
+  </div>
+
+  <div class="callout">
+    <strong>Tip:</strong> A credit-only offer ranks above hybrid above USD-only. If you want visibility, accept credits. The field's currency is earned through gameplay (file proofs, witness others, pair Mirrors, recruit affiliates).
+  </div>
+</section>
+
+<footer>
+  <p>The Coherent Store · CORA Nation · v1.0 · Loop 33</p>
+  <p><a href="/game/">Full Potential Game</a> · <a href="/game/mirror/">Mirror Loop</a> · <a href="/">fullpotential.com</a></p>
+</footer>
+
+</div>
+
+<script>
+function fmt(n) {
+  if (typeof n !== 'number') return '';
+  if (n >= 1000) return n.toLocaleString();
+  return String(n);
+}
+
+function escHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+const TIER_LABELS = {
+  0: { glyph: '💎', name: 'Credit-only', cls: 't0' },
+  1: { glyph: '⚖️', name: 'Hybrid', cls: 't1' },
+  2: { glyph: '💵', name: 'USD-only', cls: 't2' }
+};
+
+function renderOffer(o) {
+  const pc = o.price_credits;
+  const pu = o.price_usd;
+  let priceHtml = '';
+  if (pc != null && pc > 0) {
+    priceHtml = `<div class="price-credits">${fmt(pc)}<span class="price-credits-suffix">c</span></div>`;
+    if (pu != null && pu > 0) priceHtml += `<div class="price-usd">+ $${fmt(pu)}</div>`;
+  } else if (pu != null && pu > 0) {
+    priceHtml = `<div class="price-credits" style="color: var(--tier-2);">$${fmt(pu)}</div>`;
+  }
+  let invHtml = '';
+  if (o.inventory != null) {
+    const left = o.inventory - (o.sold || 0);
+    invHtml = `<div class="inv">${left}/${o.inventory} left</div>`;
+  }
+  const url = o.url ? escHtml(o.url) : '';
+  const linkBtn = url ? `<a class="btn-link" href="${url}" target="_blank" rel="noopener">View</a>` : '';
+  const buyBtn = (pc != null && pc > 0) ? `<a class="btn-buy" href="https://t.me/fullpotentialgamebot?start=buy_${encodeURIComponent(o.offer_id)}" target="_blank" rel="noopener">Buy ${fmt(pc)}c</a>` : '';
+  const tagsHtml = o.tags ? ` · <span style="color: var(--muted);">${escHtml(o.tags)}</span>` : '';
+  return `<div class="offer">
+    <div class="body">
+      <div class="title">${escHtml(o.title)}</div>
+      <div class="meta">@${escHtml(o.owner_handle)} · listed ${escHtml(o.date_listed)}${tagsHtml}</div>
+    </div>
+    <div class="price-block">
+      ${priceHtml}
+      ${invHtml}
+      <div class="actions">${linkBtn}${buyBtn}</div>
+    </div>
+  </div>`;
+}
+
+async function loadStore() {
+  const el = document.getElementById('store-list');
+  try {
+    const r = await fetch('/api/champion/store/list?limit=50');
+    if (!r.ok) throw new Error('list failed');
+    const d = await r.json();
+    const offers = d.offers || [];
+    if (!offers.length) {
+      el.innerHTML = '<div class="offer-empty">No active offers yet — be the first to list.</div>';
+      return;
+    }
+    // Group by tier
+    const byTier = { 0: [], 1: [], 2: [] };
+    offers.forEach(o => { (byTier[o.tier] = byTier[o.tier] || []).push(o); });
+    let html = '';
+    [0, 1, 2].forEach(tier => {
+      const list = byTier[tier] || [];
+      if (!list.length) return;
+      const t = TIER_LABELS[tier];
+      html += `<div class="tier-header ${t.cls}"><span class="glyph">${t.glyph}</span><span class="name">${t.name}</span><span class="meta">${list.length} offer${list.length === 1 ? '' : 's'}</span></div>`;
+      html += '<div class="offers">' + list.map(renderOffer).join('') + '</div>';
+    });
+    el.innerHTML = html;
+  } catch (e) {
+    el.innerHTML = '<div class="offer-empty">Could not load offers — try again in a moment.</div>';
+  }
+}
+
+async function submitOffer(e) {
+  e.preventDefault();
+  const f = document.getElementById('post-form');
+  const status = document.getElementById('post-status');
+  const btn = document.getElementById('post-btn');
+  status.className = 'status';
+  status.textContent = '';
+  const pc = f.price_credits.value ? Number(f.price_credits.value) : null;
+  const pu = f.price_usd.value ? Number(f.price_usd.value) : null;
+  if ((pc == null || pc === 0) && (pu == null || pu === 0)) {
+    status.className = 'status error';
+    status.textContent = 'Enter a price in credits, USD, or both.';
+    return false;
+  }
+  const data = {
+    owner_handle: f.owner_handle.value.trim(),
+    title: f.title.value.trim(),
+    description: f.description.value.trim() || null,
+    price_credits: pc,
+    price_usd: pu,
+    url: f.url.value.trim() || null,
+    tags: f.tags.value.trim() || null,
+    inventory: f.inventory.value ? Number(f.inventory.value) : null,
+    company: f.company.value
+  };
+  btn.disabled = true;
+  btn.textContent = 'Posting…';
+  try {
+    const r = await fetch('/api/champion/store/post', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    });
+    const j = await r.json();
+    if (r.ok && j.ok) {
+      status.className = 'status success';
+      const tierName = TIER_LABELS[j.tier]?.name || 'listed';
+      status.textContent = `✓ Posted (${tierName}, credit share ${j.credit_share}). Loading offer list…`;
+      btn.textContent = 'Posted ✓';
+      f.reset();
+      loadStore();
+    } else {
+      status.className = 'status error';
+      status.textContent = j.detail || 'Post failed.';
+      btn.disabled = false;
+      btn.textContent = 'Post offer';
+    }
+  } catch (err) {
+    status.className = 'status error';
+    status.textContent = 'Network error: ' + err.message;
+    btn.disabled = false;
+    btn.textContent = 'Post offer';
+  }
+  return false;
+}
+
+loadStore();
+</script>
+
+</body>
+</html>

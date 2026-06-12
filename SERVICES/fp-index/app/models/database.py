@@ -124,11 +124,30 @@ class AgentContributionRow(Base):
     quality_score = Column(Float)
     fingerprint = Column(String(64), default="")
 
+    # Field report system
+    field_report_type = Column(String(40), nullable=True, index=True)
+    field_report_data = Column(JSON, default={})
+    evidence_level = Column(String(30), nullable=True)
+    methodology = Column(Text, default="")
+    context = Column(Text, default="")
+    models_referenced = Column(JSON, default=[])
+    is_novel_capability = Column(Boolean, default=False)
+    contradicts_published = Column(Boolean, default=False)
+    intelligence_source = Column(String(20), default="publication")
+    novelty_level = Column(String(20), default="unknown")
+    novelty_multiplier = Column(Float, default=1.0)
+    novelty_reward_status = Column(String(30), default="pending")
+    novelty_escrow_credits = Column(Float, default=0.0)
+    replication_window_ends = Column(String(30), nullable=True)
+    report_weight = Column(Float, default=0.0)
+
     # Contribution lifecycle (Spec Module 3)
     state = Column(String(20), default="submitted", index=True)
     credits_earned = Column(Float, default=0.0)
     verified = Column(Boolean, default=False)
     verification_count = Column(Integer, default=0)
+    confirmations = Column(Integer, default=0)
+    challenges = Column(Integer, default=0)
 
     # v2 Upgrade 2: Canary flag
     is_canary = Column(Boolean, default=False)
@@ -160,6 +179,24 @@ class AgentContributionRow(Base):
     retroactive_status = Column(String(20), nullable=True)
 
     submitted_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), index=True)
+
+
+class ReplicationRequestRow(Base):
+    __tablename__ = "replication_requests"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    original_contribution_id = Column(Integer, nullable=False, index=True)
+    original_agent_id = Column(String(64), nullable=False)
+    what_to_test = Column(Text, nullable=False)
+    domains_targeted = Column(JSON, default=[])
+    status = Column(String(20), default="seeking")
+    replication_contribution_id = Column(Integer, nullable=True)
+    replicator_agent_id = Column(String(64), nullable=True)
+    alignment_result = Column(String(20), nullable=True)
+    alignment_confidence = Column(Float, nullable=True)
+    expires_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    resolved_at = Column(DateTime, nullable=True)
 
 
 class VerificationVoteRow(Base):
@@ -412,6 +449,59 @@ class AllocationHistoryRow(Base):
     rebalance_actions = Column(JSON, default=[])
 
 
+# ─── Module 9: Actuator Output — Published Content ────────────────────────────
+
+class PublishedContentRow(Base):
+    """Content the system generated through its actuator engine.
+
+    insight_article = Claude-written article from intelligence data
+    implementation_spec = spec for capabilities needing human implementation
+    """
+    __tablename__ = "published_content"
+
+    id = Column(String(64), primary_key=True)
+    title = Column(String(500), nullable=False)
+    body = Column(Text, nullable=False)
+    content_type = Column(String(30), default="insight_article", index=True)
+    domain = Column(String(30), default="general")
+    source_proposal_id = Column(Integer, nullable=True)
+    source_entries = Column(JSON, default=[])
+    gate_decision = Column(String(20), default="passed")
+    gate_details = Column(JSON, default={})
+    generated_by = Column(String(50), default="actuator")
+    published_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), index=True)
+    metrics = Column(JSON, default={})
+    view_count = Column(Integer, default=0)
+
+
+class PageViewRow(Base):
+    """Lightweight pageview tracking — the system needs to see its own reach."""
+    __tablename__ = "page_views"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    path = Column(String(500), nullable=False, index=True)
+    content_id = Column(String(64), nullable=True, index=True)
+    ip_hash = Column(String(16), default="")
+    referrer = Column(String(500), default="")
+    user_agent = Column(String(200), default="")
+    timestamp = Column(DateTime, default=lambda: datetime.now(timezone.utc), index=True)
+
+
+class PromptTemplateRow(Base):
+    """Versioned prompt templates — the system improves its own prompts."""
+    __tablename__ = "prompt_templates"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(100), nullable=False, index=True)
+    version = Column(Integer, nullable=False, default=1)
+    template = Column(Text, nullable=False)
+    is_active = Column(Boolean, default=True)
+    improvement_reason = Column(Text, default="")
+    source_content_id = Column(String(64), nullable=True)
+    performance_score = Column(Float, default=0.0)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+
 # ─── Database Engine ─────────────────────────────────────────────────────────
 
 db_engine = create_async_engine(DATABASE_URL, echo=False)
@@ -419,6 +509,7 @@ async_session = async_sessionmaker(db_engine, class_=AsyncSession, expire_on_com
 
 
 async def init_db():
+    from ..budget import BudgetLedgerRow, BudgetConfigRow, CostActualRow  # noqa: F401
     async with db_engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     await _upgrade_schema()
@@ -430,6 +521,8 @@ async def _upgrade_schema():
         ("execution_briefs", "relevance_score", "REAL DEFAULT 0.0"),
         ("execution_briefs", "execution_track", "VARCHAR(30) DEFAULT 'self_upgrade'"),
         ("execution_briefs", "narrative", "TEXT DEFAULT ''"),
+        ("published_content", "view_count", "INTEGER DEFAULT 0"),
+        ("budget_ledger", "origin", "VARCHAR(64) DEFAULT ''"),
     ]
     async with db_engine.begin() as conn:
         for table, col, col_type in _migrations:

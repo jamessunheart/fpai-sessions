@@ -667,6 +667,462 @@ async def autopilot_nurture(request: dict):
 
 
 # =============================================================================
+# SPARKET: INSPIRED SERVICE PLATFORM
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# WISDOM ENGINE (Pillar 2: GUIDE)
+# -----------------------------------------------------------------------------
+
+@app.post("/api/v1/sparket/wisdom/converse")
+async def sparket_wisdom_converse(request: dict):
+    """Have a wisdom conversation with AI that adapts to context."""
+    from .sparket import get_wisdom_engine, WisdomMode
+    from .sparket.wisdom import ConversationContext
+    
+    engine = get_wisdom_engine()
+    
+    message = request.get("message")
+    if not message:
+        raise HTTPException(400, "message is required")
+    
+    # Build context if provided
+    context = None
+    if request.get("context"):
+        ctx = request["context"]
+        context = ConversationContext(
+            person_id=ctx.get("person_id", "anonymous"),
+            journey_stage=ctx.get("journey_stage", "seeker"),
+            emotional_state=ctx.get("emotional_state"),
+        )
+    
+    # Get mode
+    mode = WisdomMode.AUTO
+    if request.get("mode"):
+        try:
+            mode = WisdomMode(request["mode"])
+        except ValueError:
+            pass
+    
+    response = await engine.converse(message, context, mode)
+    
+    return {
+        "content": response.content,
+        "mode": response.mode.value,
+        "detected_emotion": response.detected_emotion,
+        "is_breakthrough": response.is_breakthrough,
+        "follow_up": response.follow_up_suggestion,
+    }
+
+
+# -----------------------------------------------------------------------------
+# MATCH ENGINE (Pillar 1: MATCH)
+# -----------------------------------------------------------------------------
+
+@app.post("/api/v1/sparket/match/understand")
+async def sparket_match_understand(request: dict):
+    """Understand someone's true needs."""
+    from .sparket import get_match_engine
+    
+    engine = get_match_engine()
+    
+    person_data = request.get("person_data", {})
+    conversation = request.get("conversation", "")
+    
+    if not conversation:
+        raise HTTPException(400, "conversation is required")
+    
+    need = await engine.understand_need(person_data, conversation)
+    
+    return {
+        "primary_need": need.primary_need.value,
+        "secondary_needs": [n.value for n in need.secondary_needs],
+        "stated_need": need.stated_need,
+        "underlying_need": need.underlying_need,
+        "urgency": need.urgency,
+        "ai_understanding": need.ai_understanding,
+    }
+
+
+@app.post("/api/v1/sparket/match/find")
+async def sparket_match_find(request: dict):
+    """Find matches for someone's needs."""
+    from .sparket import get_match_engine
+    from .sparket.match import NeedProfile, NeedCategory
+    
+    engine = get_match_engine()
+    
+    # Build need profile from request
+    need_data = request.get("need_profile", {})
+    need = NeedProfile(
+        person_id=need_data.get("person_id", "anonymous"),
+        primary_need=NeedCategory(need_data.get("primary_need", "guidance")),
+        stated_need=need_data.get("stated_need", ""),
+        context=request.get("person_data", {}),
+    )
+    
+    result = await engine.find_matches(need, limit=request.get("limit", 3))
+    
+    return {
+        "matches": [
+            {
+                "id": m.id,
+                "name": m.name,
+                "type": m.match_type.value,
+                "score": m.match_score,
+                "why": m.why_matched,
+                "next_step": m.next_step,
+            }
+            for m in result.matches
+        ],
+        "summary": result.ai_summary,
+    }
+
+
+# -----------------------------------------------------------------------------
+# COMMUNITY HUB (Pillar 3: GATHER)
+# -----------------------------------------------------------------------------
+
+@app.get("/api/v1/sparket/community/list")
+async def sparket_community_list():
+    """List all communities."""
+    from .sparket import get_community_hub
+    
+    hub = get_community_hub()
+    return {"communities": hub.list_communities()}
+
+
+@app.post("/api/v1/sparket/community/find-tribe")
+async def sparket_find_tribe(request: dict):
+    """Find the right community for someone."""
+    from .sparket import get_community_hub
+    
+    hub = get_community_hub()
+    person_data = request.get("person_data", {})
+    
+    matches = await hub.find_tribe(person_data, limit=request.get("limit", 3))
+    
+    return {
+        "tribe_matches": [
+            {
+                "community_id": m.community.id,
+                "name": m.community.name,
+                "purpose": m.community.purpose,
+                "type": m.community.community_type.value,
+                "score": m.match_score,
+                "why": m.why_matched,
+                "potential_connections": m.potential_connections,
+            }
+            for m in matches
+        ]
+    }
+
+
+@app.post("/api/v1/sparket/community/join")
+async def sparket_community_join(request: dict):
+    """Join a community."""
+    from .sparket import get_community_hub
+    
+    hub = get_community_hub()
+    
+    community_id = request.get("community_id")
+    person_data = request.get("person_data", {})
+    
+    if not community_id:
+        raise HTTPException(400, "community_id is required")
+    
+    result = await hub.join_community(community_id, person_data)
+    return result
+
+
+# -----------------------------------------------------------------------------
+# CONTENT STUDIO (Pillar 4: INSPIRE)
+# -----------------------------------------------------------------------------
+
+@app.post("/api/v1/sparket/content/sense")
+async def sparket_content_sense(request: dict):
+    """Sense what content is needed."""
+    from .sparket import get_content_studio
+    
+    studio = get_content_studio()
+    
+    signals = request.get("community_signals", [])
+    sense = await studio.sense_what_needed(signals)
+    
+    return {
+        "suggested_format": sense.suggested_format.value,
+        "suggested_tone": sense.suggested_tone.value,
+        "topic": sense.topic_suggestion,
+        "why_now": sense.why_now,
+        "confidence": sense.confidence,
+    }
+
+
+@app.post("/api/v1/sparket/content/create")
+async def sparket_content_create(request: dict):
+    """Create inspired content."""
+    from .sparket import get_content_studio
+    from .sparket.content import ContentFormat, ContentTone, ContentPlatform
+    
+    studio = get_content_studio()
+    
+    topic = request.get("topic")
+    if not topic:
+        raise HTTPException(400, "topic is required")
+    
+    format_type = ContentFormat(request.get("format", "insight"))
+    tone = ContentTone(request.get("tone", "mentor"))
+    platform = ContentPlatform(request.get("platform", "universal"))
+    
+    content = await studio.create_transmission(topic, format_type, tone, platform)
+    
+    return {
+        "id": content.id,
+        "title": content.title,
+        "body": content.body,
+        "format": content.format.value,
+        "tone": content.tone.value,
+        "platform": content.platform.value,
+        "status": content.status,
+    }
+
+
+# -----------------------------------------------------------------------------
+# AMPLIFY ENGINE (Pillar 6: AMPLIFY - The Attention Cascade)
+# -----------------------------------------------------------------------------
+
+@app.get("/api/v1/sparket/amplify/dashboard")
+async def sparket_amplify_dashboard():
+    """Get the Amplify dashboard with all tier metrics."""
+    from .sparket import get_amplify_engine
+    
+    engine = get_amplify_engine()
+    return engine.get_amplify_dashboard()
+
+
+@app.get("/api/v1/sparket/amplify/free-tier/status")
+async def sparket_amplify_free_tier():
+    """Get free tier status."""
+    from .sparket import get_amplify_engine
+    
+    engine = get_amplify_engine()
+    return await engine.run_free_tier()
+
+
+@app.post("/api/v1/sparket/amplify/identify-resonance")
+async def sparket_identify_resonance(request: dict):
+    """Identify what content is resonating."""
+    from .sparket import get_amplify_engine
+    
+    engine = get_amplify_engine()
+    min_rate = request.get("min_engagement_rate", 5.0)
+    
+    resonating = await engine.identify_resonance(min_rate)
+    
+    return {
+        "resonating_content": [
+            {
+                "content_id": p.content_id,
+                "resonance_score": p.resonance_score,
+                "engagement_rate": p.engagement_rate,
+                "conversion_rate": p.conversion_rate,
+            }
+            for p in resonating
+        ]
+    }
+
+
+@app.post("/api/v1/sparket/amplify/design-test")
+async def sparket_design_test(request: dict):
+    """Design a small paid test."""
+    from .sparket import get_amplify_engine
+    from .sparket.amplify import ChannelType
+    
+    engine = get_amplify_engine()
+    
+    content_id = request.get("content_id", "test_content")
+    channel = ChannelType(request.get("channel", "paid_social"))
+    budget = request.get("budget", 50.0)
+    
+    test = await engine.design_small_test(content_id, channel, budget)
+    
+    return {
+        "test_id": test.id,
+        "content_id": test.content_id,
+        "channel": test.channel.value,
+        "budget": test.budget,
+        "variants": len(test.variants),
+        "status": test.status.value,
+    }
+
+
+@app.post("/api/v1/sparket/amplify/scale")
+async def sparket_scale_winner(request: dict):
+    """Scale a winning test."""
+    from .sparket import get_amplify_engine
+    
+    engine = get_amplify_engine()
+    
+    test_id = request.get("test_id")
+    if not test_id:
+        raise HTTPException(400, "test_id is required")
+    
+    scale_factor = request.get("scale_factor", 2.0)
+    
+    result = await engine.scale_winner(test_id, scale_factor)
+    return result
+
+
+@app.get("/api/v1/sparket/amplify/credit-savings")
+async def sparket_credit_savings():
+    """Get UC offset tracking."""
+    from .sparket import get_amplify_engine
+    
+    engine = get_amplify_engine()
+    return engine.get_credit_savings()
+
+
+# -----------------------------------------------------------------------------
+# TESTING FRAMEWORK
+# -----------------------------------------------------------------------------
+
+@app.post("/api/v1/sparket/testing/generate-variants")
+async def sparket_generate_variants(request: dict):
+    """Generate test variants using AI."""
+    from .sparket import get_testing_framework
+    
+    framework = get_testing_framework()
+    
+    base_content = request.get("base_content", "")
+    if not base_content:
+        raise HTTPException(400, "base_content is required")
+    
+    variation_types = request.get("variation_types", ["headline", "cta"])
+    
+    variants = await framework.generate_variants(base_content, variation_types)
+    
+    return {
+        "variants": [
+            {
+                "id": v.id,
+                "name": v.name,
+                "type": v.variation_type,
+                "content": v.content,
+                "hypothesis": v.hypothesis,
+            }
+            for v in variants
+        ]
+    }
+
+
+# -----------------------------------------------------------------------------
+# CREDITS INTEGRATION
+# -----------------------------------------------------------------------------
+
+@app.post("/api/v1/sparket/credits/calculate-offset")
+async def sparket_calculate_offset(request: dict):
+    """Calculate a UC/cash offset split."""
+    from .sparket import get_credits_integration
+    
+    credits = get_credits_integration()
+    
+    total_value = request.get("total_value", 0.0)
+    uc_percentage = request.get("uc_percentage", 0.7)
+    
+    return credits.calculate_offset(total_value, uc_percentage)
+
+
+@app.post("/api/v1/sparket/credits/influencer-deal")
+async def sparket_influencer_deal(request: dict):
+    """Create an influencer deal with UC offset."""
+    from .sparket import get_credits_integration
+    
+    credits = get_credits_integration()
+    
+    deal = await credits.create_influencer_deal(
+        influencer_id=request.get("influencer_id", ""),
+        influencer_name=request.get("influencer_name", ""),
+        total_value=request.get("total_value", 0.0),
+        uc_percentage=request.get("uc_percentage", 0.7),
+        campaign_details=request.get("campaign_details"),
+    )
+    
+    return deal
+
+
+@app.get("/api/v1/sparket/credits/savings-report")
+async def sparket_savings_report():
+    """Get credit savings report."""
+    from .sparket import get_credits_integration
+    
+    credits = get_credits_integration()
+    return credits.get_savings_report()
+
+
+# -----------------------------------------------------------------------------
+# IMPACT DASHBOARD
+# -----------------------------------------------------------------------------
+
+@app.get("/api/v1/sparket/impact/dashboard")
+async def sparket_impact_dashboard():
+    """Get the main impact dashboard."""
+    from .sparket import get_impact_tracker
+    
+    tracker = get_impact_tracker()
+    return await tracker.get_impact_dashboard()
+
+
+@app.post("/api/v1/sparket/impact/record")
+async def sparket_record_impact(request: dict):
+    """Record an impact event."""
+    from .sparket import get_impact_tracker
+    from .sparket.impact import ImpactType, ImpactDepth
+    
+    tracker = get_impact_tracker()
+    
+    person_id = request.get("person_id", "anonymous")
+    impact_type = ImpactType(request.get("impact_type", "life_touched"))
+    depth = ImpactDepth(request.get("depth", "touch"))
+    description = request.get("description", "")
+    source = request.get("source", "manual")
+    
+    event = await tracker.record_impact(
+        person_id=person_id,
+        impact_type=impact_type,
+        depth=depth,
+        description=description,
+        source=source,
+        metadata=request.get("metadata"),
+    )
+    
+    return {
+        "id": event.id,
+        "person_id": event.person_id,
+        "type": event.impact_type.value,
+        "depth": event.depth.value,
+        "recorded": True,
+    }
+
+
+@app.get("/api/v1/sparket/impact/report")
+async def sparket_impact_report(timeframe: str = "all"):
+    """Generate a comprehensive impact report."""
+    from .sparket import get_impact_tracker
+    
+    tracker = get_impact_tracker()
+    return await tracker.get_impact_report(timeframe)
+
+
+@app.get("/api/v1/sparket/impact/community-health")
+async def sparket_community_health():
+    """Get community health metrics."""
+    from .sparket import get_impact_tracker
+    
+    tracker = get_impact_tracker()
+    return await tracker.get_community_health()
+
+
+# =============================================================================
 # ROOT
 # =============================================================================
 
@@ -680,6 +1136,26 @@ async def root():
         "docs": "/docs",
         "health": "/health",
         "capabilities": "/capabilities",
+        "sparket": {
+            "description": "SPARKET: Inspired Service Platform",
+            "pillars": [
+                "MATCH - Connect people with what they need",
+                "GUIDE - AI-powered transformation (Wisdom Engine)",
+                "GATHER - Community building",
+                "INSPIRE - Content that transforms",
+                "CIRCULATE - Resource flow balance",
+                "AMPLIFY - Intelligent exposure cascade",
+            ],
+            "endpoints": {
+                "wisdom": "/api/v1/sparket/wisdom/converse",
+                "match": "/api/v1/sparket/match/find",
+                "community": "/api/v1/sparket/community/list",
+                "content": "/api/v1/sparket/content/create",
+                "amplify": "/api/v1/sparket/amplify/dashboard",
+                "impact": "/api/v1/sparket/impact/dashboard",
+            },
+            "manifesto": "We don't market. We serve. We don't sell. We match. We don't convert. We transform.",
+        },
     }
 
 

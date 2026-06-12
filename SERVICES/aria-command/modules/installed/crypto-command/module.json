@@ -1,0 +1,11 @@
+{
+  "name": "crypto-command",
+  "version": "1.0.0",
+  "description": "Get real-time cryptocurrency prices from CoinGecko",
+  "author": "Aria (Example Module)",
+  "command": "/crypto",
+  "type": "telegram_command",
+  "entry": "handler.py"
+}
+
+

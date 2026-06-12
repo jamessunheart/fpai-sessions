@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FP SafeLink | Secure Secret Sharing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Space Grotesk', sans-serif; background: #0a0a0f; color: #fff; }
+        .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .gradient-text { background-clip: text; -webkit-background-clip: text; color: transparent; background-image: linear-gradient(to right, #facc15, #a855f7); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Nav -->
+    <nav class="p-6 flex justify-between items-center">
+        <div class="flex items-center gap-2 font-bold text-xl">
+            <span>🔒</span>
+            <span class="gradient-text">FP SafeLink</span>
+        </div>
+        <a href="https://fullpotential.ai" class="text-sm text-gray-400 hover:text-white transition">FullPotential.ai ↗</a>
+    </nav>
+
+    <!-- Main -->
+    <main class="flex-grow flex items-center justify-center p-4" x-data="safelink()">
+        <div class="w-full max-w-2xl">
+            
+            <!-- Hero -->
+            <div class="text-center mb-10">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4 text-white">Share Secrets Securely.</h1>
+                <p class="text-gray-400 text-lg">End-to-end encrypted. Ephemeral. Zero knowledge.</p>
+            </div>
+
+            <!-- App Card -->
+            <div class="glass rounded-2xl p-1 md:p-8 border-t border-white/10 shadow-2xl shadow-purple-900/20 relative overflow-hidden">
+                
+                <!-- Step 1: Create -->
+                <div x-show="step === 'create'" class="p-6 md:p-0">
+                    <textarea 
+                        x-model="secret" 
+                        placeholder="Paste your password, API key, or private note here..." 
+                        class="w-full h-40 bg-black/40 border border-white/10 rounded-xl p-4 text-white font-mono text-sm focus:border-purple-500 outline-none transition mb-6"
+                    ></textarea>
+                    
+                    <div class="flex flex-col md:flex-row gap-4 justify-between items-center mb-6">
+                        <div class="flex gap-4 text-sm text-gray-400">
+                            <label class="flex items-center gap-2 cursor-pointer hover:text-white">
+                                <div class="w-4 h-4 rounded-full border border-purple-500 bg-purple-500"></div>
+                                <span>Burn after 1 view</span>
+                            </label>
+                            <label class="flex items-center gap-2 opacity-50 cursor-not-allowed" title="Premium Feature">
+                                <div class="w-4 h-4 rounded-full border border-gray-600"></div>
+                                <span>Password Protect</span>
+                            </label>
+                        </div>
+                        <div class="text-xs text-gray-500">24h Expiry</div>
+                    </div>
+
+                    <button 
+                        @click="generateLink()" 
+                        :disabled="!secret || loading"
+                        class="w-full bg-gradient-to-r from-yellow-600 to-purple-600 hover:from-yellow-500 hover:to-purple-500 text-white font-bold py-4 rounded-xl text-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <span x-show="!loading">Generate Secure Link</span>
+                        <span x-show="loading" class="animate-pulse">Encrypting...</span>
+                    </button>
+                </div>
+
+                <!-- Step 2: Success -->
+                <div x-show="step === 'success'" class="p-6 md:p-0 text-center">
+                    <div class="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl">
+                        ✅
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-2">Link Ready</h2>
+                    <p class="text-gray-400 mb-6 text-sm">Share this link. It will self-destruct after one view.</p>
+                    
+                    <div class="bg-black/50 border border-green-500/30 rounded-xl p-4 mb-6 flex items-center justify-between gap-4">
+                        <div class="font-mono text-green-400 truncate text-sm select-all" x-text="shareUrl"></div>
+                        <button @click="copyLink()" class="text-xs bg-white/10 hover:bg-white/20 px-3 py-2 rounded text-white whitespace-nowrap transition">
+                            <span x-show="!copied">Copy</span>
+                            <span x-show="copied" class="text-green-400">Copied!</span>
+                        </button>
+                    </div>
+
+                    <button @click="reset()" class="text-gray-500 hover:text-white text-sm underline">Create another</button>
+                </div>
+
+                <!-- Promo Footer (Always Visible) -->
+                <div class="mt-8 pt-6 border-t border-white/5 flex justify-between items-center">
+                    <div class="text-xs text-gray-500">
+                        <span class="text-purple-400">Free Tier</span> • 3 Links/Day
+                    </div>
+                    <a href="https://fullpotential.ai/join" class="text-xs text-white hover:text-purple-300 flex items-center gap-1">
+                        Unlock Enterprise Features <span class="text-lg">→</span>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="p-6 text-center text-gray-600 text-xs">
+        &copy; 2025 Full Potential AI. All rights reserved.
+    </footer>
+
+    <script>
+        function safelink() {
+            return {
+                step: 'create',
+                secret: '',
+                loading: false,
+                shareUrl: '',
+                copied: false,
+
+                async generateLink() {
+                    if (!this.secret) return;
+                    this.loading = true;
+                    
+                    try {
+                        const res = await fetch('/api/public/safelink', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ content: this.secret })
+                        });
+                        
+                        if (res.ok) {
+                            const data = await res.json();
+                            this.shareUrl = data.share_url;
+                            this.step = 'success';
+                        } else {
+                            alert("Limit reached or error. Try again later.");
+                        }
+                    } catch (e) {
+                        alert("Network error.");
+                    }
+                    this.loading = false;
+                },
+
+                copyLink() {
+                    navigator.clipboard.writeText(this.shareUrl);
+                    this.copied = true;
+                    setTimeout(() => this.copied = false, 2000);
+                },
+
+                reset() {
+                    this.secret = '';
+                    this.step = 'create';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

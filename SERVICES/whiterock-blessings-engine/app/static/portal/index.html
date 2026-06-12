@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhiteRock Member Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e3a5f;
+            --primary-light: #2c5282;
+            --accent: #c9a962;
+            --accent-light: #dcc88e;
+            --bg-light: #f8f6f3;
+            --bg-cream: #faf9f7;
+            --text-primary: #1a1a2e;
+            --text-secondary: #4a5568;
+            --success: #2d6a4f;
+            --warning: #b45309;
+            --error: #991b1b;
+            --cora-gold: #d4af37;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg-cream) 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+        }
+        
+        h1, h2, h3, h4 {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+        }
+        
+        /* Navigation */
+        .nav {
+            background: var(--primary);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .nav-brand-icon {
+            font-size: 1.75rem;
+        }
+        
+        .nav-brand-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+        
+        .nav-link:hover {
+            color: white;
+        }
+        
+        .nav-link.active {
+            color: var(--accent);
+        }
+        
+        .btn-logout {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-logout:hover {
+            background: var(--accent);
+            color: var(--primary);
+        }
+        
+        /* Main Content */
+        .main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Login Page */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 100px);
+        }
+        
+        .login-card {
+            background: white;
+            padding: 3rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 420px;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .login-header h1 {
+            color: var(--primary);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .login-header p {
+            color: var(--text-secondary);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1);
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            width: 100%;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-light);
+        }
+        
+        .btn-secondary {
+            background: var(--accent);
+            color: var(--primary);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--accent-light);
+        }
+        
+        /* Dashboard */
+        .dashboard-header {
+            margin-bottom: 2rem;
+        }
+        
+        .dashboard-header h1 {
+            font-size: 2.25rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .dashboard-header p {
+            color: var(--text-secondary);
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .stat-card-icon.cora {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+        }
+        
+        .stat-card-icon.tier {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+        }
+        
+        .stat-card-icon.service {
+            background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+        }
+        
+        .stat-card-icon.capacity {
+            background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+        }
+        
+        .stat-card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1;
+        }
+        
+        .stat-card-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+        
+        .stat-card-meta {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #f1f5f9;
+        }
+        
+        /* CORA Ring */
+        .cora-ring {
+            position: relative;
+            width: 140px;
+            height: 140px;
+        }
+        
+        .cora-ring svg {
+            transform: rotate(-90deg);
+        }
+        
+        .cora-ring-bg {
+            fill: none;
+            stroke: #e2e8f0;
+            stroke-width: 8;
+        }
+        
+        .cora-ring-progress {
+            fill: none;
+            stroke: var(--cora-gold);
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+        
+        .cora-ring-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        
+        .cora-ring-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .cora-ring-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Activity Feed */
+        .activity-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .activity-section h2 {
+            font-size: 1.25rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .activity-list {
+            list-style: none;
+        }
+        
+        .activity-item {
+            display: flex;
+            gap: 1rem;
+            padding: 0.875rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        
+        .activity-icon.tithe { background: #dcfce7; }
+        .activity-icon.service { background: #dbeafe; }
+        .activity-icon.cora { background: #fef3c7; }
+        .activity-icon.blessing { background: #e0e7ff; }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+        
+        .activity-date {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Capacity Badge */
+        .capacity-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        
+        .capacity-badge.high {
+            background: #dcfce7;
+            color: var(--success);
+        }
+        
+        .capacity-badge.medium {
+            background: #fef3c7;
+            color: var(--warning);
+        }
+        
+        .capacity-badge.low {
+            background: #fecaca;
+            color: var(--error);
+        }
+        
+        .capacity-badge.paused {
+            background: #e2e8f0;
+            color: var(--text-secondary);
+        }
+        
+        /* Quick Actions */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .action-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        
+        .action-card:hover {
+            border-color: var(--primary-light);
+            transform: translateY(-2px);
+        }
+        
+        .action-card-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .action-card-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .action-card-desc {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Hidden */
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--error); }
+        .toast.warning { background: var(--warning); }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* Loading */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #e2e8f0;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                gap: 0.75rem;
+            }
+            
+            .main {
+                padding: 1rem;
+            }
+            
+            .dashboard-header h1 {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <a href="#" class="nav-brand">
+            <span class="nav-brand-icon">🙏</span>
+            <span class="nav-brand-text">WhiteRock</span>
+        </a>
+        <div class="nav-links" id="nav-links">
+            <a href="#dashboard" class="nav-link active" data-page="dashboard">Dashboard</a>
+            <a href="#tithe" class="nav-link" data-page="tithe">Tithe</a>
+            <a href="#blessings" class="nav-link" data-page="blessings">Blessings</a>
+            <button class="btn-logout" id="btn-logout">Logout</button>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Login Page -->
+        <div id="page-login" class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <h1>Welcome Back</h1>
+                    <p>Sign in to your WhiteRock account</p>
+                </div>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email</label>
+                        <input type="email" id="email" class="form-input" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="password">Password</label>
+                        <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Sign In</button>
+                </form>
+                <p style="text-align: center; margin-top: 1.5rem; color: var(--text-secondary);">
+                    New to WhiteRock? <a href="#register" style="color: var(--primary);">Create an account</a>
+                </p>
+            </div>
+        </div>
+        
+        <!-- Dashboard Page -->
+        <div id="page-dashboard" class="hidden">
+            <div class="dashboard-header">
+                <h1>Welcome, <span id="member-name">Member</span></h1>
+                <p>Member since <span id="member-since">-</span> • <span id="member-tier">Seedling</span> tier</p>
+            </div>
+            
+            <div class="dashboard-grid">
+                <!-- CORA Balance -->
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-card-value" id="cora-balance">0</div>
+                            <div class="stat-card-label">CORA Credits</div>
+                        </div>
+                        <div class="cora-ring">
+                            <svg width="140" height="140">
+                                <circle class="cora-ring-bg" cx="70" cy="70" r="60"/>
+                                <circle class="cora-ring-progress" id="cora-progress" cx="70" cy="70" r="60"
+                                    stroke-dasharray="377" stroke-dashoffset="377"/>
+                            </svg>
+                            <div class="cora-ring-text">
+                                <div class="cora-ring-value" id="cora-percent">0%</div>
+                                <div class="cora-ring-label">of cap</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card-meta">
+                        Cap: <span id="cora-cap">1,000</span> • Next tier: <span id="next-tier-threshold">500</span>
+                    </div>
+                </div>
+                
+                <!-- Tier Status -->
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-card-icon tier">🌱</div>
+                    </div>
+                    <div class="stat-card-value" id="tier-name">Seedling</div>
+                    <div class="stat-card-label">Membership Tier</div>
+                    <div class="stat-card-meta">
+                        Active since <span id="tier-since">-</span>
+                    </div>
+                </div>
+                
+                <!-- Community Capacity -->
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-card-icon capacity">💫</div>
+                    </div>
+                    <div>
+                        <span class="capacity-badge high" id="capacity-badge">
+                            <span>●</span> High
+                        </span>
+                    </div>
+                    <div class="stat-card-label" style="margin-top: 0.75rem;">Community Capacity</div>
+                    <div class="stat-card-meta">
+                        Blessing requests: <span id="capacity-status">Available</span>
+                    </div>
+                </div>
+                
+                <!-- Service Hours -->
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-card-icon service">⏱️</div>
+                    </div>
+                    <div class="stat-card-value" id="service-hours">0</div>
+                    <div class="stat-card-label">Service Hours</div>
+                    <div class="stat-card-meta">
+                        This quarter • <span id="service-verified">0</span> verified
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <h2 style="margin-bottom: 1rem; color: var(--primary);">Quick Actions</h2>
+            <div class="actions-grid">
+                <a href="#tithe" class="action-card" data-page="tithe">
+                    <div class="action-card-icon">💝</div>
+                    <div class="action-card-title">Submit Tithe</div>
+                    <div class="action-card-desc">Make a sacred contribution</div>
+                </a>
+                <a href="#service" class="action-card" data-page="service">
+                    <div class="action-card-icon">🤝</div>
+                    <div class="action-card-title">Log Service</div>
+                    <div class="action-card-desc">Record community service</div>
+                </a>
+                <a href="#blessings" class="action-card" data-page="blessings" id="blessing-action">
+                    <div class="action-card-icon">🙏</div>
+                    <div class="action-card-title">Request Blessing</div>
+                    <div class="action-card-desc">Get community support</div>
+                </a>
+            </div>
+            
+            <!-- Recent Activity -->
+            <div class="activity-section" style="margin-top: 2rem;">
+                <h2>Recent Activity</h2>
+                <ul class="activity-list" id="activity-list">
+                    <li class="activity-item">
+                        <div class="activity-icon tithe">💝</div>
+                        <div class="activity-content">
+                            <div class="activity-title">Loading activities...</div>
+                            <div class="activity-date">-</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </main>
+    
+    <script>
+        // WhiteRock Member Portal JavaScript
+        const API_BASE = '/api';
+        let accessToken = localStorage.getItem('accessToken');
+        let refreshToken = localStorage.getItem('refreshToken');
+        let currentMember = null;
+        
+        // API Helper
+        async function api(endpoint, options = {}) {
+            const headers = {
+                'Content-Type': 'application/json',
+                ...(options.headers || {})
+            };
+            
+            if (accessToken) {
+                headers['Authorization'] = `Bearer ${accessToken}`;
+            }
+            
+            const response = await fetch(`${API_BASE}${endpoint}`, {
+                ...options,
+                headers
+            });
+            
+            if (response.status === 401 && refreshToken) {
+                // Try to refresh token
+                const refreshed = await refreshAccessToken();
+                if (refreshed) {
+                    headers['Authorization'] = `Bearer ${accessToken}`;
+                    return fetch(`${API_BASE}${endpoint}`, { ...options, headers });
+                }
+            }
+            
+            return response;
+        }
+        
+        async function refreshAccessToken() {
+            try {
+                const response = await fetch(`${API_BASE}/members/refresh`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ refresh_token: refreshToken })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    accessToken = data.access_token;
+                    refreshToken = data.refresh_token;
+                    localStorage.setItem('accessToken', accessToken);
+                    localStorage.setItem('refreshToken', refreshToken);
+                    return true;
+                }
+            } catch (e) {
+                console.error('Token refresh failed:', e);
+            }
+            
+            // Refresh failed, logout
+            logout();
+            return false;
+        }
+        
+        // Auth
+        async function login(email, password) {
+            try {
+                const response = await fetch(`${API_BASE}/members/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    accessToken = data.access_token;
+                    refreshToken = data.refresh_token;
+                    localStorage.setItem('accessToken', accessToken);
+                    localStorage.setItem('refreshToken', refreshToken);
+                    await loadDashboard();
+                    showPage('dashboard');
+                    showToast('Welcome back! 🙏', 'success');
+                } else {
+                    const error = await response.json();
+                    showToast(error.detail || 'Login failed', 'error');
+                }
+            } catch (e) {
+                showToast('Connection error', 'error');
+            }
+        }
+        
+        function logout() {
+            accessToken = null;
+            refreshToken = null;
+            currentMember = null;
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            showPage('login');
+        }
+        
+        // Dashboard
+        async function loadDashboard() {
+            try {
+                const response = await api('/members/me');
+                if (response.ok) {
+                    currentMember = await response.json();
+                    updateDashboard(currentMember);
+                } else {
+                    logout();
+                }
+            } catch (e) {
+                console.error('Failed to load dashboard:', e);
+            }
+        }
+        
+        function updateDashboard(member) {
+            // Update member info
+            document.getElementById('member-name').textContent = member.full_name.split(' ')[0];
+            document.getElementById('member-since').textContent = new Date(member.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+            document.getElementById('member-tier').textContent = capitalizeFirst(member.membership_tier);
+            
+            // Update CORA
+            document.getElementById('cora-balance').textContent = member.cora_balance.toLocaleString();
+            document.getElementById('cora-cap').textContent = member.cora_cap.toLocaleString();
+            
+            const coraPercent = Math.round((member.cora_balance / member.cora_cap) * 100);
+            document.getElementById('cora-percent').textContent = `${coraPercent}%`;
+            
+            // Update CORA ring
+            const circumference = 2 * Math.PI * 60;
+            const offset = circumference - (coraPercent / 100) * circumference;
+            document.getElementById('cora-progress').style.strokeDashoffset = offset;
+            
+            // Update tier
+            document.getElementById('tier-name').textContent = capitalizeFirst(member.membership_tier);
+            
+            const tierIcons = { seedling: '🌱', sprout: '🌿', steward: '🌟', elder: '👑' };
+            const tierIcon = document.querySelector('.stat-card-icon.tier');
+            if (tierIcon) tierIcon.textContent = tierIcons[member.membership_tier] || '🌱';
+            
+            // Update activity
+            if (member.recent_activity && member.recent_activity.length > 0) {
+                const activityList = document.getElementById('activity-list');
+                activityList.innerHTML = member.recent_activity.slice(0, 5).map(activity => `
+                    <li class="activity-item">
+                        <div class="activity-icon ${activity.type}">${getActivityIcon(activity.type)}</div>
+                        <div class="activity-content">
+                            <div class="activity-title">${activity.description}</div>
+                            <div class="activity-date">${formatDate(activity.date)}</div>
+                        </div>
+                    </li>
+                `).join('');
+            }
+            
+            // Check blessing eligibility
+            if (!member.can_request_blessing) {
+                const blessingAction = document.getElementById('blessing-action');
+                if (blessingAction) {
+                    blessingAction.style.opacity = '0.5';
+                    blessingAction.style.pointerEvents = 'none';
+                }
+            }
+        }
+        
+        // Helpers
+        function capitalizeFirst(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+        
+        function getActivityIcon(type) {
+            const icons = { tithe: '💝', service: '🤝', cora: '✨', blessing: '🙏' };
+            return icons[type] || '📝';
+        }
+        
+        function formatDate(dateStr) {
+            return new Date(dateStr).toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit'
+            });
+        }
+        
+        function showPage(page) {
+            document.querySelectorAll('[id^="page-"]').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`page-${page}`).classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            document.querySelector(`.nav-link[data-page="${page}"]`)?.classList.add('active');
+            
+            // Show/hide nav links
+            const navLinks = document.getElementById('nav-links');
+            if (page === 'login') {
+                navLinks.style.display = 'none';
+            } else {
+                navLinks.style.display = 'flex';
+            }
+        }
+        
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => toast.remove(), 3000);
+        }
+        
+        // Event Listeners
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            await login(email, password);
+        });
+        
+        document.getElementById('btn-logout').addEventListener('click', logout);
+        
+        document.querySelectorAll('[data-page]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const page = e.currentTarget.dataset.page;
+                if (page === 'dashboard' && accessToken) {
+                    loadDashboard();
+                }
+                showPage(page);
+            });
+        });
+        
+        // Initialize
+        if (accessToken) {
+            loadDashboard().then(() => showPage('dashboard'));
+        } else {
+            showPage('login');
+        }
+    </script>
+</body>
+</html>
+
+
+

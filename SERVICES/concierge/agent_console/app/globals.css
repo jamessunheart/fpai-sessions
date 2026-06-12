@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: dark; }
+
+html, body { height: 100%; background: #0b0f17; color: #e5e7eb; }
+
+.kbd {
+  @apply px-1.5 py-0.5 rounded border border-white/10 bg-white/5 text-[11px] text-white/70;
+}

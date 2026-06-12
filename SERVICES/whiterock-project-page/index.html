@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WhiteRock Ministry | CORA Blessings Engine</title>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #0d1117;
+      --bg-card: #161b22;
+      --bg-elevated: #21262d;
+      --accent-gold: #d4a855;
+      --accent-gold-soft: rgba(212, 168, 85, 0.15);
+      --accent-emerald: #3fb950;
+      --accent-blue: #58a6ff;
+      --accent-purple: #bc8cff;
+      --accent-rose: #f85149;
+      --text-primary: #f0f6fc;
+      --text-secondary: #8b949e;
+      --text-muted: #6e7681;
+      --border: #30363d;
+      --border-hover: #484f58;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    .page-bg {
+      position: fixed;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse at top, rgba(212, 168, 85, 0.05) 0%, transparent 50%),
+        radial-gradient(ellipse at bottom right, rgba(63, 185, 80, 0.03) 0%, transparent 50%),
+        var(--bg-deep);
+      z-index: -1;
+    }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      padding: 1rem 2rem;
+      background: rgba(13, 17, 23, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: 'Crimson Pro', serif;
+      font-weight: 600;
+      font-size: 1.25rem;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--accent-gold), #8b6914);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--accent-gold); }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: rgba(63, 185, 80, 0.12);
+      border: 1px solid rgba(63, 185, 80, 0.25);
+      border-radius: 100px;
+      font-size: 0.85rem;
+      color: var(--accent-emerald);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent-emerald);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.1); }
+    }
+
+    /* Hero */
+    .hero {
+      padding: 4rem 2rem;
+      text-align: center;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      font-family: 'Crimson Pro', serif;
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--accent-gold) 0%, #f0d78c 50%, var(--accent-gold) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero .subtitle {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-stat {
+      text-align: center;
+    }
+
+    .hero-stat .value {
+      font-family: 'Crimson Pro', serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--accent-gold);
+    }
+
+    .hero-stat .label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Main Content */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Section */
+    .section {
+      margin-bottom: 3rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-header h2 {
+      font-family: 'Crimson Pro', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .section-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--accent-gold-soft);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    /* Cards Grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: all 0.2s;
+    }
+
+    .card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+
+    .card-icon.gold { background: var(--accent-gold-soft); }
+    .card-icon.emerald { background: rgba(63, 185, 80, 0.12); }
+    .card-icon.blue { background: rgba(88, 166, 255, 0.12); }
+    .card-icon.purple { background: rgba(188, 140, 255, 0.12); }
+
+    .card h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .card p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Code Block */
+    .code-block {
+      background: var(--bg-deep);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+    }
+
+    .code-block code {
+      color: var(--text-secondary);
+    }
+
+    .code-block .comment { color: var(--text-muted); }
+    .code-block .key { color: var(--accent-blue); }
+    .code-block .value { color: var(--accent-emerald); }
+    .code-block .string { color: var(--accent-gold); }
+
+    /* Tech Stack */
+    .tech-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .tech-tag {
+      padding: 0.35rem 0.75rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    /* Task List */
+    .task-list {
+      list-style: none;
+    }
+
+    .task-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .task-list li:last-child { border-bottom: none; }
+
+    .task-status {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .task-status.done {
+      background: rgba(63, 185, 80, 0.15);
+      color: var(--accent-emerald);
+    }
+
+    .task-status.pending {
+      background: rgba(212, 168, 85, 0.15);
+      color: var(--accent-gold);
+    }
+
+    .task-status.todo {
+      background: var(--bg-elevated);
+      color: var(--text-muted);
+    }
+
+    .task-content h4 {
+      font-size: 0.95rem;
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+
+    .task-content p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    /* Endpoints Table */
+    .endpoints-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .endpoints-table th,
+    .endpoints-table td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .endpoints-table th {
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .method {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .method.get { background: rgba(88, 166, 255, 0.15); color: var(--accent-blue); }
+    .method.post { background: rgba(63, 185, 80, 0.15); color: var(--accent-emerald); }
+    .method.put { background: rgba(212, 168, 85, 0.15); color: var(--accent-gold); }
+    .method.delete { background: rgba(248, 81, 73, 0.15); color: var(--accent-rose); }
+
+    .endpoint-path {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--text-primary);
+    }
+
+    /* CTA Section */
+    .cta-section {
+      background: linear-gradient(135deg, rgba(212, 168, 85, 0.08) 0%, rgba(63, 185, 80, 0.05) 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 3rem;
+      text-align: center;
+      margin-top: 3rem;
+    }
+
+    .cta-section h2 {
+      font-family: 'Crimson Pro', serif;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .cta-section p {
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+
+    .cta-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--accent-gold);
+      color: var(--bg-deep);
+    }
+
+    .btn-primary:hover {
+      background: #e6b85e;
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent-gold);
+      color: var(--accent-gold);
+    }
+
+    /* Footer */
+    footer {
+      padding: 2rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+      margin-top: 4rem;
+    }
+
+    footer a {
+      color: var(--accent-gold);
+      text-decoration: none;
+    }
+
+    /* Architecture Diagram */
+    .architecture-diagram {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 2rem 0;
+      overflow-x: auto;
+    }
+
+    .arch-flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      min-width: 800px;
+    }
+
+    .arch-node {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      text-align: center;
+      min-width: 120px;
+    }
+
+    .arch-node.highlight {
+      border-color: var(--accent-gold);
+      background: var(--accent-gold-soft);
+    }
+
+    .arch-node .icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .arch-node .name { font-weight: 600; font-size: 0.9rem; }
+    .arch-node .tech { font-size: 0.75rem; color: var(--text-muted); }
+
+    .arch-arrow {
+      color: var(--text-muted);
+      font-size: 1.5rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2rem; }
+      .hero-stats { gap: 1.5rem; }
+      header { padding: 1rem; }
+      .nav-links { display: none; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .arch-flow { min-width: auto; flex-direction: column; }
+      .arch-arrow { transform: rotate(90deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-bg"></div>
+
+  <header>
+    <a href="/" class="logo">
+      <div class="logo-icon">⛪</div>
+      <span>WhiteRock Ministry</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#overview">Overview</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#api">API</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="https://whiterock.us" target="_blank">Live Site →</a>
+    </nav>
+    <div class="status-badge">
+      <span class="status-dot"></span>
+      Live & Running
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1>CORA Blessings Engine</h1>
+    <p class="subtitle">
+      A faith-based community support platform powered by CORA (Community Vitality Credits) — 
+      enabling transparent, accountable mutual aid within the WhiteRock Ministry.
+    </p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="value">v2.1</div>
+        <div class="label">Version</div>
+      </div>
+      <div class="hero-stat">
+        <div class="value">99%</div>
+        <div class="label">Uptime</div>
+      </div>
+      <div class="hero-stat">
+        <div class="value">FastAPI</div>
+        <div class="label">Framework</div>
+      </div>
+      <div class="hero-stat">
+        <div class="value">PostgreSQL</div>
+        <div class="label">Database</div>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <!-- Overview Section -->
+    <section id="overview" class="section">
+      <div class="section-header">
+        <div class="section-icon">📋</div>
+        <h2>Project Overview</h2>
+      </div>
+      
+      <div class="cards-grid">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon gold">⭐</div>
+            <h3>CORA Credits System</h3>
+          </div>
+          <p>Non-transferable vitality credits earned through tithing and service. Credits have natural decay to encourage ongoing engagement.</p>
+          <div class="code-block">
+            <code>
+              <span class="comment"># CORA Earning Rates</span><br>
+              <span class="key">tithe</span>: <span class="value">1 CORA per $10</span><br>
+              <span class="key">service</span>: <span class="value">5 CORA per hour</span><br>
+              <span class="key">decay</span>: <span class="value">2% weekly after 30 days</span>
+            </code>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon emerald">🙏</div>
+            <h3>Blessing Requests</h3>
+          </div>
+          <p>Full state machine workflow for community assistance requests: draft → pending → review → approved → disbursed → closed.</p>
+          <div class="code-block">
+            <code>
+              <span class="comment"># Blessing States</span><br>
+              <span class="string">"draft"</span> → <span class="string">"pending"</span> → <span class="string">"committee_review"</span><br>
+              → <span class="string">"approved"</span> → <span class="string">"disbursed"</span> → <span class="string">"closed"</span>
+            </code>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon blue">🏛️</div>
+            <h3>Membership Tiers</h3>
+          </div>
+          <p>Four-tier system based on CORA levels: Seeker (0-99), Steward (100-499), Elder (500-999), Pillar (1000+).</p>
+          <div class="code-block">
+            <code>
+              <span class="key">Seeker</span>: <span class="value">Basic access</span><br>
+              <span class="key">Steward</span>: <span class="value">Request blessings</span><br>
+              <span class="key">Elder</span>: <span class="value">Committee voting</span><br>
+              <span class="key">Pillar</span>: <span class="value">Full governance</span>
+            </code>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon purple">📊</div>
+            <h3>Compliance & Audit</h3>
+          </div>
+          <p>Full audit logging, 7-year retention policy, IRS-ready export capabilities, and comprehensive reporting.</p>
+          <div class="tech-stack">
+            <span class="tech-tag">Audit Logs</span>
+            <span class="tech-tag">Compliance Reports</span>
+            <span class="tech-tag">CSV/JSON Export</span>
+            <span class="tech-tag">GDPR Ready</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section id="architecture" class="section">
+      <div class="section-header">
+        <div class="section-icon">🏗️</div>
+        <h2>System Architecture</h2>
+      </div>
+
+      <div class="architecture-diagram">
+        <div class="arch-flow">
+          <div class="arch-node">
+            <div class="icon">🌐</div>
+            <div class="name">Nginx</div>
+            <div class="tech">Reverse Proxy</div>
+          </div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node highlight">
+            <div class="icon">⚡</div>
+            <div class="name">FastAPI</div>
+            <div class="tech">Port 8020</div>
+          </div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node">
+            <div class="icon">🐘</div>
+            <div class="name">PostgreSQL</div>
+            <div class="tech">Database</div>
+          </div>
+        </div>
+        <br><br>
+        <div class="arch-flow">
+          <div class="arch-node">
+            <div class="icon">🔄</div>
+            <div class="name">Celery</div>
+            <div class="tech">Background Tasks</div>
+          </div>
+          <div class="arch-arrow">↔</div>
+          <div class="arch-node">
+            <div class="icon">🧠</div>
+            <div class="name">Redis</div>
+            <div class="tech">Cache & Queue</div>
+          </div>
+          <div class="arch-arrow">↔</div>
+          <div class="arch-node">
+            <div class="icon">📧</div>
+            <div class="name">SendGrid</div>
+            <div class="tech">Email Service</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cards-grid">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon blue">📦</div>
+            <h3>Tech Stack</h3>
+          </div>
+          <div class="tech-stack">
+            <span class="tech-tag">Python 3.11+</span>
+            <span class="tech-tag">FastAPI</span>
+            <span class="tech-tag">SQLAlchemy (Async)</span>
+            <span class="tech-tag">PostgreSQL 14</span>
+            <span class="tech-tag">Redis</span>
+            <span class="tech-tag">Celery</span>
+            <span class="tech-tag">Pydantic</span>
+            <span class="tech-tag">JWT Auth</span>
+            <span class="tech-tag">Stripe</span>
+            <span class="tech-tag">SendGrid</span>
+            <span class="tech-tag">Prometheus</span>
+            <span class="tech-tag">structlog</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon emerald">📁</div>
+            <h3>Repository Structure</h3>
+          </div>
+          <div class="code-block">
+            <code>
+              <span class="key">SERVICES/whiterock-blessings-engine/</span><br>
+              ├── <span class="string">app/</span> <span class="comment"># FastAPI application</span><br>
+              │   ├── routes/   <span class="comment"># API endpoints</span><br>
+              │   ├── services/ <span class="comment"># Business logic</span><br>
+              │   ├── models.py <span class="comment"># SQLAlchemy models</span><br>
+              │   └── schemas.py <span class="comment"># Pydantic schemas</span><br>
+              ├── <span class="string">worker/</span> <span class="comment"># Celery tasks</span><br>
+              ├── <span class="string">migrations/</span> <span class="comment"># DB migrations</span><br>
+              └── <span class="string">deploy.sh</span> <span class="comment"># Deployment script</span>
+            </code>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- API Section -->
+    <section id="api" class="section">
+      <div class="section-header">
+        <div class="section-icon">🔌</div>
+        <h2>API Endpoints</h2>
+      </div>
+
+      <div class="card">
+        <table class="endpoints-table">
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>Endpoint</th>
+              <th>Description</th>
+              <th>Auth</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="method post">POST</span></td>
+              <td class="endpoint-path">/members/register</td>
+              <td>Register new member</td>
+              <td>Public</td>
+            </tr>
+            <tr>
+              <td><span class="method post">POST</span></td>
+              <td class="endpoint-path">/members/login</td>
+              <td>Authenticate member</td>
+              <td>Public</td>
+            </tr>
+            <tr>
+              <td><span class="method get">GET</span></td>
+              <td class="endpoint-path">/members/me</td>
+              <td>Get member profile</td>
+              <td>Bearer</td>
+            </tr>
+            <tr>
+              <td><span class="method post">POST</span></td>
+              <td class="endpoint-path">/tithes/</td>
+              <td>Submit tithe payment</td>
+              <td>Bearer</td>
+            </tr>
+            <tr>
+              <td><span class="method get">GET</span></td>
+              <td class="endpoint-path">/cora/balance</td>
+              <td>Get CORA balance</td>
+              <td>Bearer</td>
+            </tr>
+            <tr>
+              <td><span class="method post">POST</span></td>
+              <td class="endpoint-path">/blessings/request</td>
+              <td>Submit blessing request</td>
+              <td>Bearer</td>
+            </tr>
+            <tr>
+              <td><span class="method get">GET</span></td>
+              <td class="endpoint-path">/blessings/pending</td>
+              <td>View pending requests</td>
+              <td>Elder+</td>
+            </tr>
+            <tr>
+              <td><span class="method post">POST</span></td>
+              <td class="endpoint-path">/blessings/{id}/transition</td>
+              <td>Transition blessing state</td>
+              <td>Elder+</td>
+            </tr>
+            <tr>
+              <td><span class="method get">GET</span></td>
+              <td class="endpoint-path">/capacity</td>
+              <td>Community blessing capacity</td>
+              <td>Bearer</td>
+            </tr>
+            <tr>
+              <td><span class="method get">GET</span></td>
+              <td class="endpoint-path">/audit/logs</td>
+              <td>Query audit logs</td>
+              <td>Admin</td>
+            </tr>
+            <tr>
+              <td><span class="method get">GET</span></td>
+              <td class="endpoint-path">/metrics</td>
+              <td>Prometheus metrics</td>
+              <td>Admin</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="margin-top: 1rem; color: var(--text-muted); font-size: 0.85rem;">
+          📚 Full interactive documentation: <a href="https://whiterock.us/docs" target="_blank" style="color: var(--accent-gold);">whiterock.us/docs</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- Roadmap Section -->
+    <section id="roadmap" class="section">
+      <div class="section-header">
+        <div class="section-icon">🗺️</div>
+        <h2>Roadmap & Next Steps</h2>
+      </div>
+
+      <div class="cards-grid">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon emerald">✅</div>
+            <h3>Completed (v2.1)</h3>
+          </div>
+          <ul class="task-list">
+            <li>
+              <span class="task-status done">✓</span>
+              <div class="task-content">
+                <h4>Core API & Database</h4>
+                <p>Members, tithes, CORA, blessings models</p>
+              </div>
+            </li>
+            <li>
+              <span class="task-status done">✓</span>
+              <div class="task-content">
+                <h4>JWT Authentication</h4>
+                <p>Login, refresh tokens, role-based access</p>
+              </div>
+            </li>
+            <li>
+              <span class="task-status done">✓</span>
+              <div class="task-content">
+                <h4>Blessing State Machine</h4>
+                <p>Full workflow with audit trail</p>
+              </div>
+            </li>
+            <li>
+              <span class="task-status done">✓</span>
+              <div class="task-content">
+                <h4>Performance Optimizations</h4>
+                <p>N+1 fixes, caching, rate limiting</p>
+              </div>
+            </li>
+            <li>
+              <span class="task-status done">✓</span>
+              <div class="task-content">
+                <h4>Production Deployment</h4>
+                <p>Live at whiterock.us with SSL</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon gold">🔜</div>
+            <h3>Next Up (v2.2)</h3>
+          </div>
+          <ul class="task-list">
+            <li>
+              <span class="task-status pending">○</span>
+              <div class="task-content">
+                <h4>Member Portal UI</h4>
+                <p>React dashboard for members</p>
+              </div>
+            </li>
+            <li>
+              <span class="task-status pending">○</span>
+              <div class="task-content">
+                <h4>Admin Dashboard</h4>
+                <p>Committee management interface</p>
+              </div>
+            </li>
+            <li>
+              <span class="task-status pending">○</span>
+              <div class="task-content">
+                <h4>Stripe Integration</h4>
+                <p>Real payment processing for tithes</p>
+              </div>
+            </li>
+            <li>
+              <span class="task-status pending">○</span>
+              <div class="task-content">
+                <h4>Email Notifications</h4>
+                <p>SendGrid integration for alerts</p>
+              </div>
+            </li>
+            <li>
+              <span class="task-status pending">○</span>
+              <div class="task-content">
+                <h4>Service Hours Tracking</h4>
+                <p>Log and verify volunteer hours</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon purple">🔮</div>
+            <h3>Future (v3.0)</h3>
+          </div>
+          <ul class="task-list">
+            <li>
+              <span class="task-status todo">○</span>
+              <div class="task-content">
+                <h4>Mobile App</h4>
+                <p>React Native for iOS/Android</p>
+              </div>
+            </li>
+            <li>
+              <span class="task-status todo">○</span>
+              <div class="task-content">
+                <h4>Multi-Church Support</h4>
+                <p>White-label for other ministries</p>
+              </div>
+            </li>
+            <li>
+              <span class="task-status todo">○</span>
+              <div class="task-content">
+                <h4>Advanced Analytics</h4>
+                <p>Community health dashboards</p>
+              </div>
+            </li>
+            <li>
+              <span class="task-status todo">○</span>
+              <div class="task-content">
+                <h4>AI-Assisted Review</h4>
+                <p>Blessing request triage</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Getting Started -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-icon">🚀</div>
+        <h2>Getting Started</h2>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom: 1rem;">Local Development</h3>
+        <div class="code-block">
+          <code>
+            <span class="comment"># Clone and setup</span><br>
+            git clone [repo] && cd SERVICES/whiterock-blessings-engine<br>
+            python -m venv venv && source venv/bin/activate<br>
+            pip install -r requirements.txt<br><br>
+            <span class="comment"># Configure environment</span><br>
+            cp .env.example .env<br>
+            <span class="comment"># Edit .env with your database URL, secrets, etc.</span><br><br>
+            <span class="comment"># Run database migrations</span><br>
+            psql -U postgres -c "CREATE DATABASE whiterock"<br>
+            psql -U postgres -d whiterock -f migrations/001_initial_schema.sql<br>
+            psql -U postgres -d whiterock -f migrations/002_performance_indexes.sql<br><br>
+            <span class="comment"># Start the server</span><br>
+            uvicorn app.main:app --reload --port 8020<br><br>
+            <span class="comment"># Start Celery worker (separate terminal)</span><br>
+            celery -A worker.celery_app worker --loglevel=info
+          </code>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 1.5rem;">
+        <h3 style="margin-bottom: 1rem;">Server Deployment</h3>
+        <div class="code-block">
+          <code>
+            <span class="comment"># Deploy to production (from local machine)</span><br>
+            cd SERVICES/whiterock-blessings-engine<br>
+            ./deploy.sh<br><br>
+            <span class="comment"># Production URLs</span><br>
+            <span class="key">Website</span>: <span class="string">https://whiterock.us</span><br>
+            <span class="key">API Docs</span>: <span class="string">https://whiterock.us/docs</span><br>
+            <span class="key">Health</span>: <span class="string">https://whiterock.us/health</span><br>
+            <span class="key">Metrics</span>: <span class="string">https://whiterock.us/metrics</span><br><br>
+            <span class="comment"># Server location</span><br>
+            <span class="key">Server</span>: <span class="value">198.54.123.234</span> (Primary)<br>
+            <span class="key">Path</span>: <span class="value">/opt/fpai/whiterock-blessings-engine</span><br>
+            <span class="key">Port</span>: <span class="value">8020</span>
+          </code>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <h2>Ready to Contribute?</h2>
+      <p>
+        This project is part of the Full Potential ecosystem. We welcome contributors 
+        who want to help build technology that serves faith communities.
+      </p>
+      <div class="cta-buttons">
+        <a href="https://whiterock.us/docs" class="btn btn-primary" target="_blank">
+          📚 API Documentation
+        </a>
+        <a href="https://whiterock.us" class="btn btn-secondary" target="_blank">
+          🌐 Visit Live Site
+        </a>
+        <a href="mailto:james@fullpotential.ai" class="btn btn-secondary">
+          ✉️ Contact James
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>
+      WhiteRock Ministry · CORA Blessings Engine v2.1.0<br>
+      Part of <a href="https://fullpotential.ai">Full Potential AI</a> · Built with 🙏 and FastAPI
+    </p>
+  </footer>
+</body>
+</html>
+

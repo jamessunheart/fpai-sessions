@@ -1,0 +1,20 @@
+[Unit]
+Description=Zen Village Brain — Telegram bot (admin DM, worker check-ins, Pulse digests)
+After=network-online.target zen-village.service
+Wants=network-online.target
+Requires=zen-village.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/fpai/apps/zen-village
+EnvironmentFile=/etc/zen-village/telegram-notify.env
+Environment=ZV_API_BASE=http://127.0.0.1:8770
+ExecStart=/usr/bin/python3 -u /opt/fpai/apps/zen-village/bot.py
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

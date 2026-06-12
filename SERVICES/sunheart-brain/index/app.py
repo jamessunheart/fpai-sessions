@@ -289,6 +289,7 @@ app = FastAPI(
     description="Semantic index + dedup for Sunheart Brain. Backs the MCP server and exposes an OpenAPI surface for GPT Custom Connectors.",
     version="0.1.0",
     lifespan=lifespan,
+    servers=[{"url": "https://brain.sunheart.com/index", "description": "Production"}],
 )
 
 from ingest_routes import router as ingest_router
@@ -344,7 +345,7 @@ class DedupRequest(BaseModel):
 # Routes
 # ---------------------------------------------------------------------------
 
-@app.get("/healthz")
+@app.get("/healthz", include_in_schema=False)
 async def healthz() -> dict:
     tokens = _load_tokens()
     return {
@@ -358,7 +359,7 @@ async def healthz() -> dict:
     }
 
 
-@app.post("/embed", response_model=EmbedResponse)
+@app.post("/embed", response_model=EmbedResponse, include_in_schema=False)
 async def embed_route(req: EmbedRequest, request: Request, agent: AgentInfo = Depends(authenticate)) -> EmbedResponse:
     # /embed leaks nothing by itself, but guard against OpenAI routing for non-personal-cleared agents.
     prefer = req.prefer
@@ -368,7 +369,7 @@ async def embed_route(req: EmbedRequest, request: Request, agent: AgentInfo = De
     return EmbedResponse(model=model, dim=len(vectors[0]) if vectors else 0, vectors=vectors)
 
 
-@app.post("/upsert")
+@app.post("/upsert", include_in_schema=False)
 async def upsert_note(req: UpsertNoteRequest, request: Request, agent: AgentInfo = Depends(authenticate)) -> dict:
     require_scope(agent, "ingest")
     """Embed the note's content (chunked if needed) and upsert into note_chunks.
@@ -469,7 +470,7 @@ async def search(req: SearchRequest, request: Request, agent: AgentInfo = Depend
     return hits
 
 
-@app.post("/dedup")
+@app.post("/dedup", include_in_schema=False)
 async def dedup(req: DedupRequest, request: Request, agent: AgentInfo = Depends(authenticate)) -> dict:
     require_scope(agent, "ingest")
     """Find near-duplicate chunks above the threshold, propose concept merges.

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin · Top-ups · Zen Village</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@300..700&family=Manrope:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F4ECDC;--bg-soft:#ECE1CB;--ink:#1F1A14;--ink-soft:#4A3F32;--moss:#3A4A2E;--clay:#B8553A;--gold:#C8924B;--rule:#2A2018;--serif:'Fraunces',Georgia,serif;--sans:'Manrope',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.5}
+.page{max-width:1200px;margin:0 auto;padding:32px 24px}
+h1{font-family:var(--serif);font-weight:300;font-size:36px;margin-bottom:6px}
+h1 em{font-style:italic;color:var(--moss)}
+.lead{color:var(--ink-soft);margin-bottom:24px}
+.token-row{display:flex;gap:10px;margin-bottom:20px;align-items:center}
+.token-row input{flex:1;padding:10px 14px;border:1px solid var(--rule);border-radius:8px;background:transparent;font-family:var(--sans)}
+button{font-family:var(--sans);font-weight:600;padding:10px 18px;border:1px solid var(--rule);background:var(--ink);color:var(--bg);border-radius:999px;cursor:pointer;font-size:13px}
+button.ghost{background:transparent;color:var(--ink)}
+button.clay{background:var(--clay);border-color:var(--clay)}
+button:disabled{opacity:.5;cursor:not-allowed}
+.tabs{display:flex;gap:8px;margin-bottom:18px}
+.tabs button{font-size:12px;padding:6px 14px}
+.tabs button.active{background:var(--moss);border-color:var(--moss)}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;border:1px solid rgba(42,32,24,.18)}
+th,td{text-align:left;padding:12px 14px;border-bottom:1px solid rgba(42,32,24,.1);font-size:13px}
+th{background:var(--bg-soft);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft)}
+tr:last-child td{border-bottom:none}
+.status{font-size:10px;padding:2px 8px;border-radius:999px;letter-spacing:.1em;text-transform:uppercase;font-weight:700}
+.status.pending{background:var(--gold);color:#fff}
+.status.confirmed{background:var(--moss);color:#fff}
+.status.cancelled{background:var(--clay);color:#fff}
+.actions{display:flex;gap:6px}
+.actions button{font-size:11px;padding:6px 12px}
+.empty{text-align:center;padding:40px;color:var(--ink-soft)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 22px;border-radius:999px;font-size:13px;opacity:0;transition:opacity .2s;z-index:99}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Admin · <em>Top-ups</em></h1>
+  <p class="lead">Confirm or cancel pending Zen Wallet top-ups. Confirming credits the user's wallet and fires the affiliate commission.</p>
+
+  <div class="token-row">
+    <input id="token" type="password" placeholder="X-Admin-Token" autocomplete="off">
+    <button id="save-token" class="ghost">Save token</button>
+  </div>
+
+  <div class="tabs">
+    <button class="active" data-status="pending">Pending</button>
+    <button data-status="confirmed">Confirmed</button>
+    <button data-status="cancelled">Cancelled</button>
+    <button data-status="all">All</button>
+  </div>
+
+  <div id="table-wrap">
+    <table id="topups-table">
+      <thead>
+        <tr><th>Created</th><th>Email</th><th>Rail</th><th>Amount</th><th>Bonus</th><th>Total ZC</th><th>Ref</th><th>Partner</th><th>Status</th><th></th></tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <div class="empty" id="empty" style="display:none">No top-ups in this view.</div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = (id)=>document.getElementById(id);
+const tk = () => localStorage.getItem('zv_admin_token') || '';
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+function escapeHtml(s){return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+let currentStatus = 'pending';
+
+$('save-token').addEventListener('click', () => {
+  const v = $('token').value.trim();
+  if (v){ localStorage.setItem('zv_admin_token', v); toast('Token saved'); load(); }
+});
+
+$('token').value = tk();
+
+document.querySelectorAll('.tabs button').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.tabs button').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    currentStatus = b.dataset.status;
+    load();
+  });
+});
+
+async function load(){
+  const r = await fetch(`/api/wallet/topups?status=${encodeURIComponent(currentStatus)}&limit=200`, {
+    headers: {'X-Admin-Token': tk()}
+  });
+  if (!r.ok){ toast('Auth or server error: '+r.status); return; }
+  const d = await r.json();
+  const rows = (d.topups || []);
+  if (!rows.length){ $('rows').innerHTML=''; $('empty').style.display='block'; return; }
+  $('empty').style.display='none';
+  $('rows').innerHTML = rows.map(t => `
+    <tr>
+      <td>${(t.created_at || '').slice(0,16).replace('T',' ')}</td>
+      <td>${escapeHtml(t.email)}</td>
+      <td>${escapeHtml(t.rail_name)}</td>
+      <td>$${(+t.amount_usd).toFixed(2)}</td>
+      <td>+${(+t.bonus_zc).toFixed(2)}</td>
+      <td><strong>${(+t.total_zc).toFixed(2)}</strong></td>
+      <td><code>${t.ref}</code></td>
+      <td>${escapeHtml(t.partner_code || '—')}</td>
+      <td><span class="status ${t.status}">${t.status}</span></td>
+      <td class="actions">
+        ${t.status === 'pending' ? `
+          <button data-act="confirm" data-ref="${t.ref}">Confirm</button>
+          <button class="ghost" data-act="cancel" data-ref="${t.ref}">Cancel</button>` : ''}
+      </td>
+    </tr>
+  `).join('');
+
+  document.querySelectorAll('button[data-act]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const ref = btn.dataset.ref;
+      const act = btn.dataset.act;
+      btn.disabled = true;
+      try {
+        const r = await fetch(`/api/wallet/topups/${ref}/${act}`, {
+          method:'POST',
+          headers:{'X-Admin-Token': tk(), 'Content-Type':'application/json'},
+          body: act === 'confirm' ? '{}' : ''
+        });
+        const d = await r.json();
+        if (r.ok){ toast(`Top-up ${act}ed`); load(); }
+        else toast(d.detail || 'Failed');
+      } catch(e){ toast('Network error'); }
+      finally { btn.disabled = false; }
+    });
+  });
+}
+load();
+</script>
+</body>
+</html>

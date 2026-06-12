@@ -1,0 +1,11 @@
+{
+  "name": "quote-command",
+  "version": "1.0.0",
+  "description": "Returns an inspiring quote to brighten your day",
+  "author": "Aria (Sample Module)",
+  "command": "/quote",
+  "type": "telegram_command",
+  "entry": "handler.py"
+}
+
+

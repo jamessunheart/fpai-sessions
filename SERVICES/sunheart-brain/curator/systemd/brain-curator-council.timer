@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily Claude×GPT council on Sunheart Brain optimization
+
+[Timer]
+# Daily 8:30am Mountain — fresh brief every morning
+OnCalendar=*-*-* 08:30:00 America/Denver
+Unit=brain-curator@council.service
+Persistent=true
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,219 @@
+---
+name: compliance-scanner
+description: Use this agent BEFORE publishing any new public-facing copy (landing pages · DMs · ads · email templates · social posts · IDS updates · TOS changes). Scans for FTC / MLM / SEC / state-AG trigger language. Use proactively when (a) creating new marketing copy, (b) updating product positioning, (c) drafting affiliate-program communications, (d) editing IDS / TOS / Privacy. Returns flagged passages + suggested compliant rewrites.
+model: sonnet
+---
+
+# Compliance Scanner — agent definition (design phase)
+
+**Status:** DESIGN ONLY · not yet activated · queued for future Forge dispatch
+**Created:** 2026-05-19 (per Counsel review v0.1 Forge Notes #4)
+**Trust-tier:** 3 (reversible · scans + flags · never blocks publication, only surfaces)
+
+---
+
+## Purpose
+
+Every piece of public-facing copy is a regulatory exposure point. A single line in a DM template can move the entire program from "product" (defensible) to "income opportunity" (regulated). Manual review at every publication is JamesTime-expensive and inconsistent.
+
+This agent reads any proposed public copy and flags FTC / MLM / SEC / state-AG triggers BEFORE publication.
+
+---
+
+## Scope
+
+### What gets scanned
+
+- Landing-page copy (any change to `apprentice.html`, `apprentice_public.html`, `/becoming` pages)
+- Ad copy (paid acquisition · social ads · search ads)
+- DM templates (cohort outreach · re-engagement · referral asks)
+- Email templates (welcome series · churn · upsell · IDS notices)
+- Social posts (Twitter · LinkedIn · Telegram broadcasts)
+- IDS updates (every quarterly refresh + ad-hoc revisions)
+- TOS / Privacy / Refund Policy updates
+- Affiliate-program communications (when v0.2 active)
+- Testimonials + member quotes published anywhere
+
+### What does NOT get scanned (out of scope)
+
+- Private 1-on-1 conversations (James's own DMs, etc.)
+- Internal documentation
+- Code-comments
+- Brain-server memory (Ember's own context)
+
+---
+
+## Trigger taxonomy
+
+### FTC red-flag language
+
+- Specific income figures ("make $5K/mo")
+- "Passive income" / "earn while you sleep" / "financial freedom"
+- "Guaranteed" + any income claim
+- "Anyone can do this" + income claim
+- "Replace your salary"
+- "Limited spots" pressure with income framing
+- Testimonials without disclosed average/median context
+- Lifestyle imagery + income framing
+
+### MLM/pyramid red-flag language
+
+- "Build your team"
+- "Recruit X people and..."
+- "Downline" / "upline" (unless explicitly disclosing as compensation structure terminology)
+- "Get rich" + recruiting
+- Comp-plan visuals showing recruitment as path to income
+- "No experience needed" + recruiting
+- Inventory or buy-in framing of any required-to-earn purchase
+
+### SEC red-flag language
+
+- "Investment" applied to subscription or upgrade fees
+- "ROI" / "return on investment"
+- "Equity" / "ownership stake" (unless real)
+- "Profit-sharing"
+- Howey-trigger language ("you invest, we manage")
+- Token/security framing (unless legitimately structured)
+
+### State-AG red-flag language
+
+- Recruiting-bonus framing distinct from product-engagement bonus
+- Multi-level commission structures without disclosure
+- Cross-border claims without jurisdiction-appropriate compliance
+- "MLM" or "network marketing" self-identification (triggers more scrutiny than alternative framings)
+
+### General consumer-protection flags
+
+- "Money-back guarantee" without disclosing actual refund policy
+- "Risk-free" (legally suspect phrasing)
+- "Anyone" can succeed claims
+- Before/after testimonials without disclosure
+- Time-pressure tactics ("only X hours left!") without honest enforcement
+
+---
+
+## How it works
+
+### Input
+
+```python
+@dataclass
+class ScanRequest:
+    copy: str                    # the proposed text
+    surface: str                 # 'landing' | 'dm' | 'ad' | 'email' | 'social' | 'ids' | 'tos' | etc.
+    audience: str                # 'cohort_warm' | 'public_paid_acq' | 'existing_members' | etc.
+    context_url: str             # optional: where this will live
+```
+
+### Processing
+
+1. **Lexical pass:** regex-match against known trigger phrases
+2. **Semantic pass:** LLM (Claude Sonnet 4.6) reads the copy with full compliance frame
+3. **Cross-reference IDS:** check that earnings figures cited match published IDS (no over-claiming)
+4. **Audience-aware adjustment:** warmer audiences allow somewhat more personal voice; cold/public audiences require stricter neutral framing
+5. **Suggested rewrite:** for each flag, generate a compliant alternative that preserves intent
+
+### Output
+
+```python
+@dataclass
+class ScanResult:
+    overall_verdict: str         # 'CLEAR' | 'AMBER' | 'RED'
+    flags: list[Flag]            # one per trigger detected
+    suggested_rewrite: str       # full compliant alternative (if any flags)
+    confidence: float            # 0.0 - 1.0
+    audit_trail: str             # markdown summary saved to log
+```
+
+### Behavior
+
+- **CLEAR:** copy passes. Ember/James proceed to publish.
+- **AMBER:** copy has soft flags. Surface to James with explanation. James decides; no auto-block.
+- **RED:** copy has hard FTC/MLM/SEC trigger. Refuse to publish without explicit James override + AI Counsel co-sign.
+
+The agent NEVER unilaterally blocks publication. It surfaces. James decides. But high-severity flags require explicit override (avoid drift).
+
+---
+
+## Memory + learning
+
+### Context bank
+
+`~/.config/fpai/agent_context/compliance-scanner.md` — accumulating ledger of:
+- Past scans (date, copy excerpt, verdict)
+- Edge cases James clarified
+- Trigger updates from regulator news
+- AI Counsel updates relevant to compliance posture
+
+### Update cadence
+
+- After each scan: append to context bank
+- Monthly: digest of all amber/red flags surfaced (pattern-detection for systemic copy drift)
+- Quarterly: refresh trigger taxonomy based on new regulator guidance + AI Counsel input
+
+---
+
+## Integration points
+
+### Ember invocation
+
+```
+Agent tool:
+  subagent_type: compliance-scanner
+  prompt: |
+    Scan this proposed landing-page hero copy for FTC/MLM/SEC triggers:
+
+    [copy here]
+
+    Audience: public paid acquisition
+    Surface: fullpotential.com/apprentice/public (H1 + lead paragraphs)
+
+    Return verdict + flags + suggested rewrite.
+```
+
+### Pre-publication hook (future)
+
+When `git commit` touches files in `SERVICES/*/static/*.html` or specific copy directories:
+- Pre-commit hook auto-invokes compliance-scanner
+- AMBER → warn but allow
+- RED → block commit until override
+
+### Telegram bot integration (future)
+
+`@sunheartbrain_bot /scan <copy>` → returns verdict inline.
+
+---
+
+## Phase plan
+
+**Phase 0 (current):** SPEC committed. Agent definition file in place. Not yet activated as invocable subagent.
+
+**Phase 1 (built when triggered):** when first non-cohort marketing copy is drafted OR when v0.2 affiliate-layer copy is drafted. Build the lexical + semantic scan pipeline.
+
+**Phase 2 (after first 10 successful scans):** integrate AI Counsel cross-reference (each RED flag gets Counsel co-sign for override).
+
+**Phase 3 (after 30 successful scans):** add pre-commit hook + TG bot integration.
+
+---
+
+## Trigger to activate
+
+Activate when ANY of:
+- First public marketing campaign drafted (paid acquisition, press, podcast appearance copy)
+- v0.2 affiliate-layer activation approaches (compensation-related copy starts circulating)
+- First external regulator inquiry
+- Any AMBER flag surfaces in James's eyes that this agent could have caught
+
+Until activation: this file remains as design reference + agent definition skeleton.
+
+---
+
+## Cost
+
+- ~$0.10 per scan (Sonnet 4.6 inference)
+- Negligible at expected volume (~10 scans/week early on)
+- Pre-commit hook: free (no inference unless triggered)
+
+---
+
+*Designed by The Forge · 2026-05-19 · per Counsel review v0.1 Forge Notes #4 · companion to `legal_templates/` + `services/ids-quarterly-update/`*

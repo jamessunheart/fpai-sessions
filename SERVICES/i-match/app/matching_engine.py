@@ -186,10 +186,10 @@ Service Type: {provider.service_type}
 Specialties: {json.dumps(provider.specialties)}
 Experience: {provider.years_experience} years
 Description: {provider.description}
-Location: {provider.location_city}, {provider.location_state}
+Location: {provider.location_city or 'N/A'}, {provider.location_state or 'N/A'}
 Serves Remote: {provider.serves_remote}
-Pricing: {provider.pricing_model} - ${provider.price_range_low:,.0f} to ${provider.price_range_high:,.0f}
-Performance: {provider.successful_matches}/{provider.total_matches} successful matches, {provider.avg_rating or 0:.1f}/5.0 rating
+Pricing: {provider.pricing_model or 'Contact for pricing'} - ${provider.price_range_low or 0:,.0f} to ${provider.price_range_high or 0:,.0f}
+Performance: {provider.successful_matches or 0}/{provider.total_matches or 0} successful matches, {provider.avg_rating or 0:.1f}/5.0 rating
 
 **TASK:**
 Analyze the compatibility between this customer and provider across these dimensions:

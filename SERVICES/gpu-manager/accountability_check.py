@@ -23,7 +23,7 @@ from datetime import datetime
 # Bypass SSL verification (for simplicity)
 ssl._create_default_https_context = ssl._create_unverified_context
 
-API_KEY = os.environ.get("VASTAI_API_KEY", "1bad9920ce02d7e73e1e33a05de73e01038b1975c2c4ed2f3a13b944d52dd906")
+API_KEY = os.environ.get("VASTAI_API_KEY", "")  # scrubbed 2026-05-18 — service ARCHIVED
 
 
 def get_instances():

@@ -1,0 +1,11 @@
+tenant:     uvicorn tenant_api.main:app --port 8820 --reload
+handoff:    uvicorn handoff_broker.main:app --port 8821 --reload
+voice:      uvicorn voice_router.main:app --port 8822 --reload
+outbound:   uvicorn outbound_engine.main:app --port 8823 --reload
+compliance: uvicorn compliance_gate.main:app --port 8824 --reload
+skills:     uvicorn skills_mesh.main:app --port 8825 --reload
+ingest:     python -m workers.knowledge_ingest
+training:   python -m workers.auto_training
+qa:         python -m workers.ai_qa
+nerve:      python -m workers.nerve_center_forwarder
+sequencer:  python -m workers.touch_sequencer

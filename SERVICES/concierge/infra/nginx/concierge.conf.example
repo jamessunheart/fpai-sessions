@@ -1,0 +1,44 @@
+# nginx reverse proxy example for Concierge services.
+# Install at /etc/nginx/sites-available/concierge.conf after filling in the
+# domain + SSL paths, then `ln -s` to sites-enabled and `nginx -t && reload`.
+
+upstream concierge_tenant     { server 127.0.0.1:8820; }
+upstream concierge_handoff    { server 127.0.0.1:8821; }
+upstream concierge_voice      { server 127.0.0.1:8822; }
+upstream concierge_outbound   { server 127.0.0.1:8823; }
+upstream concierge_compliance { server 127.0.0.1:8824; }
+upstream concierge_skills     { server 127.0.0.1:8825; }
+
+server {
+    listen 443 ssl http2;
+    server_name concierge.fullpotential.ai;
+
+    ssl_certificate     /etc/letsencrypt/live/concierge.fullpotential.ai/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/concierge.fullpotential.ai/privkey.pem;
+
+    # Twilio webhooks hit here
+    location /twilio/ { proxy_pass http://concierge_voice; include /etc/nginx/proxy_params; }
+    location /media   { proxy_pass http://concierge_voice; include /etc/nginx/proxy_params;
+                        proxy_http_version 1.1;
+                        proxy_set_header Upgrade $http_upgrade;
+                        proxy_set_header Connection "Upgrade"; }
+
+    location /tenants/    { proxy_pass http://concierge_tenant;     include /etc/nginx/proxy_params; }
+    location /features    { proxy_pass http://concierge_tenant;     include /etc/nginx/proxy_params; }
+    location /escalations { proxy_pass http://concierge_handoff;    include /etc/nginx/proxy_params; }
+    location /agents/     { proxy_pass http://concierge_handoff;    include /etc/nginx/proxy_params;
+                            proxy_http_version 1.1;
+                            proxy_set_header Upgrade $http_upgrade;
+                            proxy_set_header Connection "Upgrade"; }
+    location /campaigns   { proxy_pass http://concierge_outbound;   include /etc/nginx/proxy_params; }
+    location /preflight   { proxy_pass http://concierge_compliance; include /etc/nginx/proxy_params; }
+    location /match       { proxy_pass http://concierge_skills;     include /etc/nginx/proxy_params; }
+    location /ratings     { proxy_pass http://concierge_skills;     include /etc/nginx/proxy_params; }
+    location /earnings    { proxy_pass http://concierge_skills;     include /etc/nginx/proxy_params; }
+}
+
+server {
+    listen 80;
+    server_name concierge.fullpotential.ai;
+    return 301 https://$host$request_uri;
+}

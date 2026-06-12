@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhiteRock Admin Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e3a5f;
+            --primary-light: #2c5282;
+            --accent: #c9a962;
+            --accent-light: #dcc88e;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-hover: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #3b82f6;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+        
+        h1, h2, h3, h4 {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+        }
+        
+        /* Layout */
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--bg-card);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #334155;
+        }
+        
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #334155;
+        }
+        
+        .sidebar-brand-icon { font-size: 1.75rem; }
+        .sidebar-brand-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .nav-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .nav-section-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+            margin-bottom: 0.25rem;
+        }
+        
+        .nav-link:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+        
+        .nav-link.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .nav-link-badge {
+            margin-left: auto;
+            background: var(--error);
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.125rem 0.5rem;
+            border-radius: 10px;
+        }
+        
+        /* Main Content */
+        .main {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #334155;
+        }
+        
+        .stat-card-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+        
+        .stat-card-icon.blue { background: rgba(59, 130, 246, 0.2); }
+        .stat-card-icon.green { background: rgba(16, 185, 129, 0.2); }
+        .stat-card-icon.gold { background: rgba(245, 158, 11, 0.2); }
+        .stat-card-icon.purple { background: rgba(139, 92, 246, 0.2); }
+        
+        .stat-card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-card-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        /* Tables */
+        .table-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid #334155;
+            overflow: hidden;
+        }
+        
+        .table-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .table-header h2 {
+            font-size: 1.25rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid #334155;
+        }
+        
+        th {
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        tr:hover {
+            background: var(--bg-hover);
+        }
+        
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .badge-pending { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+        .badge-review { background: rgba(59, 130, 246, 0.2); color: var(--info); }
+        .badge-approved { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .badge-denied { background: rgba(239, 68, 68, 0.2); color: var(--error); }
+        
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.625rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-light);
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: var(--error);
+            color: white;
+        }
+        
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid #334155;
+        }
+        
+        .btn-ghost:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+        
+        /* Capacity Indicator */
+        .capacity-indicator {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .capacity-bar {
+            flex: 1;
+            height: 8px;
+            background: #334155;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .capacity-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+        
+        .capacity-fill.high { background: var(--success); width: 90%; }
+        .capacity-fill.medium { background: var(--warning); width: 60%; }
+        .capacity-fill.low { background: var(--error); width: 30%; }
+        
+        /* Modal */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        
+        .modal {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid #334155;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-header h2 {
+            font-size: 1.5rem;
+        }
+        
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg-dark);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+        
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .form-checkbox input {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .hidden { display: none !important; }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 200;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--error); }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* Responsive */
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <span class="sidebar-brand-icon">⚡</span>
+                <span class="sidebar-brand-text">Admin Panel</span>
+            </div>
+            
+            <nav>
+                <div class="nav-section">
+                    <div class="nav-section-title">Overview</div>
+                    <a href="#" class="nav-link active" data-page="dashboard">
+                        <span>📊</span> Dashboard
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Blessings</div>
+                    <a href="#" class="nav-link" data-page="pending">
+                        <span>📋</span> Pending Review
+                        <span class="nav-link-badge" id="pending-count">0</span>
+                    </a>
+                    <a href="#" class="nav-link" data-page="history">
+                        <span>📜</span> History
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Members</div>
+                    <a href="#" class="nav-link" data-page="members">
+                        <span>👥</span> All Members
+                    </a>
+                    <a href="#" class="nav-link" data-page="cora">
+                        <span>✨</span> CORA Management
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Reports</div>
+                    <a href="#" class="nav-link" data-page="reports">
+                        <span>📈</span> Analytics
+                    </a>
+                    <a href="#" class="nav-link" data-page="audit">
+                        <span>🔒</span> Audit Log
+                    </a>
+                </div>
+            </nav>
+            
+            <div style="margin-top: auto; padding-top: 1rem; border-top: 1px solid #334155;">
+                <a href="/portal" class="nav-link">
+                    <span>↩️</span> Member Portal
+                </a>
+                <button class="nav-link" id="btn-logout" style="width: 100%; border: none; background: transparent; cursor: pointer; text-align: left;">
+                    <span>🚪</span> Logout
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Dashboard Page -->
+            <div id="page-dashboard">
+                <div class="header">
+                    <div>
+                        <h1>Dashboard</h1>
+                        <p style="color: var(--text-secondary);">Welcome back, Committee Member</p>
+                    </div>
+                    <div class="header-actions">
+                        <div class="capacity-indicator" style="width: 200px;">
+                            <span style="font-size: 0.875rem;">Capacity</span>
+                            <div class="capacity-bar">
+                                <div class="capacity-fill high" id="capacity-bar"></div>
+                            </div>
+                            <span id="capacity-level" style="font-weight: 600; color: var(--success);">High</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-card-icon blue">👥</div>
+                        </div>
+                        <div class="stat-card-value" id="stat-members">--</div>
+                        <div class="stat-card-label">Active Members</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-card-icon gold">📋</div>
+                        </div>
+                        <div class="stat-card-value" id="stat-pending">--</div>
+                        <div class="stat-card-label">Pending Requests</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-card-icon green">✨</div>
+                        </div>
+                        <div class="stat-card-value" id="stat-cora">--</div>
+                        <div class="stat-card-label">CORA in Circulation</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-card-icon purple">💰</div>
+                        </div>
+                        <div class="stat-card-value" id="stat-disbursed">--</div>
+                        <div class="stat-card-label">Disbursed YTD</div>
+                    </div>
+                </div>
+                
+                <!-- Pending Blessings Table -->
+                <div class="table-card">
+                    <div class="table-header">
+                        <h2>Pending Review</h2>
+                        <button class="btn btn-ghost" onclick="loadPendingBlessings()">
+                            🔄 Refresh
+                        </button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Member</th>
+                                <th>Category</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pending-table">
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                                    Loading...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Pending Page (full view) -->
+            <div id="page-pending" class="hidden">
+                <div class="header">
+                    <h1>Pending Blessing Requests</h1>
+                </div>
+                <div class="table-card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Member</th>
+                                <th>Category</th>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th>Vendor</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pending-table-full">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Review Modal -->
+    <div id="review-modal" class="modal-backdrop hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Review Blessing Request</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            
+            <div id="modal-content">
+                <div class="form-group">
+                    <label class="form-label">Member Info</label>
+                    <p id="modal-member-info" style="color: var(--text-secondary);">-</p>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Request Details</label>
+                    <p id="modal-request-details" style="color: var(--text-secondary);">-</p>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="modal-decision">Decision</label>
+                    <select id="modal-decision" class="form-select">
+                        <option value="">Select action...</option>
+                        <option value="committee_review">Move to Committee Review</option>
+                        <option value="info_requested">Request More Info</option>
+                        <option value="approved">Approve</option>
+                        <option value="denied">Deny</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="modal-amount-group" class="hidden">
+                    <label class="form-label" for="modal-amount">Approved Amount ($)</label>
+                    <input type="number" id="modal-amount" class="form-input" step="0.01">
+                </div>
+                
+                <div class="form-group" id="modal-reason-group" class="hidden">
+                    <label class="form-label" for="modal-reason">Denial Reason</label>
+                    <textarea id="modal-reason" class="form-textarea" placeholder="Reason shown to member..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="modal-notes">Internal Notes</label>
+                    <textarea id="modal-notes" class="form-textarea" placeholder="Committee-only notes..."></textarea>
+                </div>
+                
+                <div class="form-checkbox" id="compliance-checkbox" class="hidden">
+                    <input type="checkbox" id="modal-compliance">
+                    <label for="modal-compliance">I confirm this request meets compliance requirements</label>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+                    <button class="btn btn-primary" id="modal-submit" onclick="submitDecision()">Submit Decision</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = '/api';
+        let accessToken = localStorage.getItem('accessToken');
+        let currentBlessingId = null;
+        
+        // API Helper
+        async function api(endpoint, options = {}) {
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`,
+                ...(options.headers || {})
+            };
+            
+            return fetch(`${API_BASE}${endpoint}`, { ...options, headers });
+        }
+        
+        // Load Dashboard Data
+        async function loadDashboard() {
+            try {
+                // Load stats from /state endpoint
+                const stateRes = await api('/state');
+                if (stateRes.ok) {
+                    const state = await stateRes.json();
+                    document.getElementById('stat-members').textContent = state.total_members?.toLocaleString() || '--';
+                    document.getElementById('stat-pending').textContent = state.active_blessing_requests || '--';
+                    document.getElementById('stat-cora').textContent = state.cora_in_circulation?.toLocaleString() || '--';
+                    
+                    // Update capacity
+                    const capacityBar = document.getElementById('capacity-bar');
+                    const capacityLevel = document.getElementById('capacity-level');
+                    const level = state.capacity_level || 'high';
+                    capacityBar.className = `capacity-fill ${level}`;
+                    capacityLevel.textContent = level.charAt(0).toUpperCase() + level.slice(1);
+                    capacityLevel.style.color = level === 'high' ? 'var(--success)' : 
+                                                 level === 'medium' ? 'var(--warning)' : 'var(--error)';
+                }
+                
+                // Load pending blessings
+                await loadPendingBlessings();
+            } catch (e) {
+                console.error('Failed to load dashboard:', e);
+            }
+        }
+        
+        async function loadPendingBlessings() {
+            try {
+                const res = await api('/blessings/pending');
+                if (res.ok) {
+                    const data = await res.json();
+                    const requests = data.requests || [];
+                    
+                    // Update badge count
+                    document.getElementById('pending-count').textContent = requests.length;
+                    
+                    // Update table
+                    const tbody = document.getElementById('pending-table');
+                    const tbodyFull = document.getElementById('pending-table-full');
+                    
+                    if (requests.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                            No pending requests
+                        </td></tr>`;
+                        return;
+                    }
+                    
+                    const rows = requests.slice(0, 5).map(req => `
+                        <tr>
+                            <td>#${req.id}</td>
+                            <td>
+                                <div style="font-weight: 500;">${req.member_summary?.name || 'Unknown'}</div>
+                                <div style="font-size: 0.75rem; color: var(--text-secondary);">
+                                    ${req.member_summary?.tier || '-'} • ${req.member_summary?.tenure_months || 0} mo
+                                </div>
+                            </td>
+                            <td>${capitalize(req.category)}</td>
+                            <td>$${((req.amount_requested_cents || 0) / 100).toFixed(2)}</td>
+                            <td><span class="badge badge-${getStatusClass(req.status)}">${formatStatus(req.status)}</span></td>
+                            <td>
+                                <button class="btn btn-primary" onclick="openReview(${req.id})">Review</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                    
+                    tbody.innerHTML = rows;
+                    if (tbodyFull) tbodyFull.innerHTML = rows;
+                }
+            } catch (e) {
+                console.error('Failed to load pending:', e);
+            }
+        }
+        
+        function openReview(blessingId) {
+            currentBlessingId = blessingId;
+            document.getElementById('review-modal').classList.remove('hidden');
+            
+            // Reset form
+            document.getElementById('modal-decision').value = '';
+            document.getElementById('modal-amount').value = '';
+            document.getElementById('modal-reason').value = '';
+            document.getElementById('modal-notes').value = '';
+            document.getElementById('modal-compliance').checked = false;
+            
+            hideElement('modal-amount-group');
+            hideElement('modal-reason-group');
+            hideElement('compliance-checkbox');
+        }
+        
+        function closeModal() {
+            document.getElementById('review-modal').classList.add('hidden');
+            currentBlessingId = null;
+        }
+        
+        document.getElementById('modal-decision').addEventListener('change', function() {
+            const decision = this.value;
+            
+            if (decision === 'approved') {
+                showElement('modal-amount-group');
+                showElement('compliance-checkbox');
+                hideElement('modal-reason-group');
+            } else if (decision === 'denied') {
+                showElement('modal-reason-group');
+                hideElement('modal-amount-group');
+                hideElement('compliance-checkbox');
+            } else {
+                hideElement('modal-amount-group');
+                hideElement('modal-reason-group');
+                hideElement('compliance-checkbox');
+            }
+        });
+        
+        async function submitDecision() {
+            const decision = document.getElementById('modal-decision').value;
+            if (!decision) {
+                showToast('Please select a decision', 'error');
+                return;
+            }
+            
+            const body = {
+                new_status: decision,
+                internal_notes: document.getElementById('modal-notes').value
+            };
+            
+            if (decision === 'approved') {
+                if (!document.getElementById('modal-compliance').checked) {
+                    showToast('Compliance confirmation required', 'error');
+                    return;
+                }
+                body.compliance_flag = true;
+                body.amount_approved_cents = Math.round(parseFloat(document.getElementById('modal-amount').value || 0) * 100);
+            }
+            
+            if (decision === 'denied') {
+                body.denial_reason = document.getElementById('modal-reason').value;
+                if (!body.denial_reason) {
+                    showToast('Denial reason required', 'error');
+                    return;
+                }
+            }
+            
+            try {
+                const res = await api(`/blessings/${currentBlessingId}/transition`, {
+                    method: 'PUT',
+                    body: JSON.stringify(body)
+                });
+                
+                if (res.ok) {
+                    showToast('Decision submitted successfully', 'success');
+                    closeModal();
+                    await loadPendingBlessings();
+                } else {
+                    const error = await res.json();
+                    showToast(error.detail || 'Failed to submit', 'error');
+                }
+            } catch (e) {
+                showToast('Connection error', 'error');
+            }
+        }
+        
+        // Helpers
+        function capitalize(str) {
+            return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
+        }
+        
+        function formatStatus(status) {
+            const labels = {
+                pending: 'Pending',
+                committee_review: 'In Review',
+                info_requested: 'Info Requested',
+                approved: 'Approved',
+                denied: 'Denied'
+            };
+            return labels[status] || status;
+        }
+        
+        function getStatusClass(status) {
+            const classes = {
+                pending: 'pending',
+                committee_review: 'review',
+                info_requested: 'pending',
+                approved: 'approved',
+                denied: 'denied'
+            };
+            return classes[status] || 'pending';
+        }
+        
+        function showElement(id) {
+            document.getElementById(id)?.classList.remove('hidden');
+        }
+        
+        function hideElement(id) {
+            document.getElementById(id)?.classList.add('hidden');
+        }
+        
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+        
+        // Navigation
+        document.querySelectorAll('[data-page]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const page = e.currentTarget.dataset.page;
+                
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                e.currentTarget.classList.add('active');
+                
+                document.querySelectorAll('[id^="page-"]').forEach(p => p.classList.add('hidden'));
+                const pageEl = document.getElementById(`page-${page}`);
+                if (pageEl) pageEl.classList.remove('hidden');
+            });
+        });
+        
+        document.getElementById('btn-logout').addEventListener('click', () => {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            window.location.href = '/portal';
+        });
+        
+        // Check auth and load dashboard
+        if (!accessToken) {
+            window.location.href = '/portal';
+        } else {
+            loadDashboard();
+        }
+    </script>
+</body>
+</html>
+
+
+
