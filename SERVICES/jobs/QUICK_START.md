@@ -205,6 +205,12 @@ Set an admin key before exposing the service beyond localhost:
 export RECRUITING_HUB_ADMIN_KEY="use-a-long-random-value"
 ```
 
+For HTTPS deployments, require secure admin cookies:
+
+```bash
+export RECRUITING_HUB_COOKIE_SECURE=true
+```
+
 Browser users can sign in at `/recruiting/login`. API callers can pass the same key with either:
 
 ```bash
