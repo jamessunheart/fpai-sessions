@@ -13,14 +13,14 @@
       ],
       "blocking": true,
       "urgent": true,
-      "state": "open",
-      "answer": ""
+      "state": "closed",
+      "answer": "Watchfire complete 2026-06-11: whaletrack-live authenticated (HYPERLIQUID creds written to /etc/fpai/ai.env, service restarted, SDK initialized). ETH+SOL policy violations queued for James review."
     },
     {
       "id": "decision-stage-idle-25-5k-yield",
       "surfaced": "2026-06-09T09:42:55+00:00",
       "stream": "Treasury",
-      "question": "Stage idle ~$25.5k → yield?",
+      "question": "Stage idle ~$25.5k \u2192 yield?",
       "verbs": [
         "stage it",
         "checkpoint"
@@ -55,8 +55,8 @@
       ],
       "blocking": true,
       "urgent": false,
-      "state": "open",
-      "answer": ""
+      "state": "closed",
+      "answer": "Atlas + Jojo no longer in orbit (confirmed 2026-06-12). Gate moot."
     },
     {
       "id": "decision-camp-zen-first-cohort-offer-shape",

@@ -7,14 +7,14 @@
 
 | # | Page | Weight | Updated | Status |
 |---|---|---|---|---|
-| 1 | [[HOME]] | 0.2% | 8:12 PM Greece Time | 🟢 clear |
+| 1 | [[HOME]] | 0.3% | 2:24 PM Greece Time | 🟢 clear |
 | 2 | [[FULL POTENTIAL OS — STREAM MAP]] | 0.3% | Jun 7 · 10:37 AM Greece Time | 🟢 clear |
 | 3 | [[FPOS NORTH STAR]] | 0.3% | Jun 10 · 12:12 PM Greece Time | 🟢 clear |
 | 4 | [[SYSTEM MAP]] | 0.0% | Jun 10 · 3:34 PM Greece Time | 🟢 clear |
 | 5 | [[AI PROTOCOLS]] | 0.4% | Jun 7 · 10:56 AM Greece Time | 🟢 clear |
 | 6 | [[SUNHEART PRINCIPLE]] | 0.5% | Jun 7 · 1:56 AM Greece Time | 🟢 clear |
 | 7 | [[SUNHEART ATTENTION FLOW]] | 0.4% | Jun 7 · 1:56 AM Greece Time | 🟢 clear |
-| 8 | [[INDEX OF INDEXES]] | 0.2% | 7:56 PM Greece Time | 🟢 clear |
+| 8 | [[INDEX OF INDEXES]] | 0.2% | 12:01 PM Greece Time | 🟢 clear |
 | 9 | [[SYSTEM SELF-MODEL]] | 0.1% | Jun 10 · 5:09 PM Greece Time | 🟢 clear |
 | 10 | [[OPERATING WORKFLOW]] | 0.1% | Jun 10 · 12:12 PM Greece Time | 🟢 clear |
 | 11 | [[WEIGHTED TABLE STANDARD]] | 0.1% | Jun 7 · 10:55 AM Greece Time | 🟢 clear |
@@ -61,23 +61,23 @@
 | 29 | [[Sprint Seeds Methodology]] | 0.6% |
 | 30 | [[508(c)(1)(a) White Rock]] | 0.5% |
 
-_top 30 = 23.6% · + 485 more pages = 74.7%_
+_top 30 = 23.5% · + 486 more pages = 74.6%_
 
 ### 🔴 Active now  *(touched in last 24h)*
 
-- 🔴 [[NEXT MOVE DETAIL]] · 8:12 PM Greece Time
-- 🔴 [[HOME]] · 8:12 PM Greece Time
-- 🔴 [[2026-06-11]] · 8:12 PM Greece Time
-- 🔴 [[PRIVACY AUDIT]] · 8:12 PM Greece Time
-- 🔴 [[HUB CHARTS]] · 8:12 PM Greece Time
-- 🔴 [[TREASURY CHART]] · 8:12 PM Greece Time
-- 🔴 [[SURFACED CONCEPTS]] · 8:12 PM Greece Time
-- 🔴 [[BRAIN DIGEST]] · 8:12 PM Greece Time
-- 🔴 [[BUILDSTREAM BOARD]] · 8:08 PM Greece Time
-- 🔴 [[FRESHNESS CHECK]] · 7:56 PM Greece Time
-- … +4 more touched today
+- 🔴 [[NEXT MOVE DETAIL]] · 2:24 PM Greece Time
+- 🔴 [[HOME]] · 2:24 PM Greece Time
+- 🔴 [[2026-06-12]] · 2:24 PM Greece Time
+- 🔴 [[PRIVACY AUDIT]] · 2:24 PM Greece Time
+- 🔴 [[HUB CHARTS]] · 2:24 PM Greece Time
+- 🔴 [[TREASURY CHART]] · 2:24 PM Greece Time
+- 🔴 [[SURFACED CONCEPTS]] · 2:24 PM Greece Time
+- 🔴 [[BRAIN DIGEST]] · 2:24 PM Greece Time
+- 🔴 [[FRESHNESS CHECK]] · 12:01 PM Greece Time
+- 🔴 [[INDEX OF INDEXES]] · 12:01 PM Greece Time
+- … +3 more touched today
 
-> [!abstract]- 🗂️ Full directory — every page by category · 518
+> [!abstract]- 🗂️ Full directory — every page by category · 519
 > **🏠 Root · 19**
 > - [[FPOS COCKPIT]]
 > - [[HOME]]
@@ -150,12 +150,12 @@ _top 30 = 23.6% · + 485 more pages = 74.7%_
 > - [[CONSCIOUS FUNDS NETWORK]]
 > - [[REST — THE CHARGING STATION]]
 > - [[CODEX PARALLEL BUILD PROTOCOL]]
-> - [[BRAIN DIGEST]]
 > - [[CONSCIOUS ROUTING]]
+> - [[BRAIN DIGEST]]
 > - [[TOOL MAP]]
 > - [[FRESHNESS CHECK]]
-> - [[PERSONAL INTELLIGENCE HUB (the product)]]
 > - [[FINANCIAL HUB]]
+> - [[PERSONAL INTELLIGENCE HUB (the product)]]
 > - [[TOOL REGISTRY]]
 > - [[AI GROWTH FEED]]
 > - [[SCAN LEDGER]]
@@ -170,14 +170,14 @@ _top 30 = 23.6% · + 485 more pages = 74.7%_
 > - [[Actions]]
 > - [[REPO MAP]]
 > - [[FPAI COCKPIT SUMMARY]]
+> - [[CODEX SETUP]]
 > - [[COMMS INBOX]]
 > - [[MEMORY NEXT ACTION]]
-> - [[CODEX SETUP]]
 > - [[MEMORY GAPS]]
 > - [[MEMORY SOURCES]]
 > - [[VISUAL INDEX]]
-> - [[OPERATING WORKFLOW]]
 > - [[SYSTEM SELF-MODEL]]
+> - [[OPERATING WORKFLOW]]
 > - [[CODEX HANDOFF]]
 > - [[CODEX BRIDGE]]
 > - [[COST MAP]]
@@ -187,11 +187,11 @@ _top 30 = 23.6% · + 485 more pages = 74.7%_
 > - [[CONTEXT COVERAGE MAP]]
 > - [[ALIGNMENT]]
 > - [[WEIGHTED TABLE STANDARD]]
+> - [[SYSTEM READINESS]]
 > - [[NEWS FOR YOU]]
 > - [[SCHEDULE]]
-> - [[SYSTEM READINESS]]
-> - [[CODEX QUEUE]]
 > - [[ONBOARDING CANDIDATES]]
+> - [[CODEX QUEUE]]
 > - [[CODEX JOURNAL]]
 > - [[VILLAGE STATE]]
 > - [[EXPENSE LEDGER]]
@@ -340,8 +340,8 @@ _top 30 = 23.6% · + 485 more pages = 74.7%_
 > - [[Delegation System]]
 > - [[Light Economy]]
 > - [[Consciousness Civilization]]
-> - [[Filed Under God]]
 > - [[Full Potential Retreat]]
+> - [[Filed Under God]]
 > - [[Money is Memory of Real Help]]
 > - [[Zen Village Weekly Engine]]
 > - [[Personal Operating System]]
@@ -350,8 +350,8 @@ _top 30 = 23.6% · + 485 more pages = 74.7%_
 > - [[Consciousness Across Substrates]]
 > - [[Quantum Economica]]
 > - [[CORA Node]]
-> - [[Five Agent AI Architecture]]
 > - [[Zen Village Brain]]
+> - [[Five Agent AI Architecture]]
 > - [[Sunheart Method]]
 > - [[Temple Mode]]
 > - [[Cost of Forgetting]]
@@ -387,10 +387,10 @@ _top 30 = 23.6% · + 485 more pages = 74.7%_
 > - [[Magnet-Aware Fund Survival Protocol]]
 > - [[Leakproof Circulation Container]]
 > - [[Paradise on Earth]]
+> - [[Personal Intelligence Hub]]
 > - [[Intelligence Quotient Standard]]
 > - [[Sunheart Yield]]
 > - [[Judo Principle]]
-> - [[Personal Intelligence Hub]]
 > - [[Velocity Mode]]
 > - [[Show the Flow]]
 > - [[Tribal Expansion]]
@@ -409,8 +409,8 @@ _top 30 = 23.6% · + 485 more pages = 74.7%_
 > - [[Church of Consciousism PMA]]
 > - [[The Field Not The Sun]]
 > - [[Aria Trading Services]]
-> - [[Asynchronous Assembly Line]]
 > - [[SIX SEEDS]]
+> - [[Asynchronous Assembly Line]]
 > - [[Design Data Decisions]]
 > - [[Worldcraft]]
 > - [[Fellowship Pool]]
@@ -443,14 +443,14 @@ _top 30 = 23.6% · + 485 more pages = 74.7%_
 > - [[GHL-Hybrid Revenue Engine]]
 > - [[Trust Index]]
 > - [[Zend Regenerative Payments]]
-> - [[Phoenix Protocol]]
 > - [[I MATCH]]
+> - [[Phoenix Protocol]]
 > - [[Life to Life Operating Paradigm]]
 > - [[Architect Interface]]
 > - [[Living Seed System]]
 > - [[Full Potential Game]]
-> - [[Field Score]]
 > - [[Brain Bridge]]
+> - [[Field Score]]
 > - [[BRICKS Token]]
 > - [[Relational Consciousness Emergence]]
 > - [[DreamCraft]]
@@ -476,8 +476,8 @@ _top 30 = 23.6% · + 485 more pages = 74.7%_
 > - [[The Question]]
 > - [[Party with a Purpose]]
 > - [[Conscious Server]]
-> - [[The Great Play]]
 > - [[FP Line]]
+> - [[The Great Play]]
 > - [[Conscious Abundance Agreement]]
 > - [[Consciousness Leaves Breadcrumbs]]
 > - [[Sunheart IP Framework]]
@@ -497,12 +497,12 @@ _top 30 = 23.6% · + 485 more pages = 74.7%_
 > - [[Zenvironments]]
 > - [[Apprentice OS]]
 > - [[Great Wealth Transfer]]
+> - [[LIFE OPTIMIZATION DEBATE 2026-06]]
 > - [[I AUTHORIZE]]
 > - [[Predictive Lending]]
 > - [[AI is the Artist]]
-> - [[Consciousness-to-Consciousness Protocol]]
 > - [[Attention]]
-> - [[LIFE OPTIMIZATION DEBATE 2026-06]]
+> - [[Consciousness-to-Consciousness Protocol]]
 > - [[CONCEPTS INDEX]]
 > - [[Ambient Intelligence]]
 > - [[System Waking Up to Love Itself]]
@@ -511,8 +511,8 @@ _top 30 = 23.6% · + 485 more pages = 74.7%_
 > - [[Sacred Inversion]]
 > - [[CBCC-MESH]]
 > - [[HavenAlgo]]
-> - [[FPOS Dashboard]]
 > - [[Planetary Coherence]]
+> - [[FPOS Dashboard]]
 > - [[Treasury Trillion-Dollar Vision]]
 > - [[Ember Substrate]]
 > - [[Three-Reality Framework]]
@@ -548,6 +548,7 @@ _top 30 = 23.6% · + 485 more pages = 74.7%_
 > - [[Authorization Epiphany]]
 > - [[SunHeart Dollars]]
 > - [[Sovereign System]]
+> - [[Conscious Chat]]
 > - [[Quantum Consciousness Theory]]
 > - [[DivineFi]]
 > - [[Jubilee Liberation]]
@@ -558,12 +559,11 @@ _top 30 = 23.6% · + 485 more pages = 74.7%_
 > - [[Founding Steward Role]]
 > - [[Church Kit Generator]]
 > - [[Ministry Support Allocation]]
-> - [[Conscious Chat]]
 > - [[Compost Archive]]
 > - [[Current Sea]]
 > - [[Integration-First Strategy]]
-> - [[Commons Ministry]]
 > - [[ZEN OUT]]
+> - [[Commons Ministry]]
 > - [[Intelligence]]
 > - [[Stewardship Ministry]]
 > - [[Manifestation Engine]]
@@ -598,7 +598,7 @@ _top 30 = 23.6% · + 485 more pages = 74.7%_
 > **🎟️ Tickets · 03_TICKETS · 1**
 > - [[README]]
 >
-> **🌤️ Daily · 07_DAILY · 14**
+> **🌤️ Daily · 07_DAILY · 15**
 > - [[2026-05-31]]
 > - [[2026-06-01]]
 > - [[2026-06-02]]
@@ -612,6 +612,7 @@ _top 30 = 23.6% · + 485 more pages = 74.7%_
 > - [[2026-06-10]]
 > - [[2026-06-11]]
 > - [[2026-06-12]]
+> - [[2026-06-13]]
 > - [[_TEMPLATE]]
 >
 > **📓 Journal · 08_JOURNAL · 2**
@@ -624,7 +625,7 @@ _top 30 = 23.6% · + 485 more pages = 74.7%_
 ---
 ### 📋 Reference  *(metadata + protocol — kept at the bottom so the index leads)*
 
-_Jun 11 · 8:12 PM Greece Time · 518 pages · 🟢 links 515/515 · weight = PageRank over wikilinks (Σ = 100%) · refresh: `python3 tools/index/refresh.py`_
+_Jun 12 · 2:24 PM Greece Time · 519 pages · 🟢 links 516/516 · weight = PageRank over wikilinks (Σ = 100%) · refresh: `python3 tools/index/refresh.py`_
 
 > ⚙️ **Work-claim protocol (no collisions):** before editing a surface, claim it →
 > `python3 tools/index/claim.py --page "<Page>" --owner <you>` (sets 🔴 in the spine Status above) · clear after →
