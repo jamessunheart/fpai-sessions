@@ -278,7 +278,12 @@ def _place(adapter: Any, method_name: str, plan: ProtectionPlan, price: float) -
     method = getattr(adapter, method_name)
     close_side = "sell" if plan.side == "long" else "buy"
     attempts = (
-        lambda: method(plan.symbol, close_side, plan.size, price),
+        # Pass position_side (plan.side: "long"/"short") so adapters that compute
+        # is_buy from position_side (e.g. HyperliquidSDKAdapter) get the correct
+        # direction. close_side ("buy"/"sell") is kept as a fallback for adapters
+        # that expect the execution direction directly.
+        lambda: method(plan.symbol, plan.side, plan.size, price),
+        lambda: method(symbol=plan.symbol, position_side=plan.side, size=plan.size, trigger_px=price),
         lambda: method(symbol=plan.symbol, side=close_side, size=plan.size, trigger_price=price),
         lambda: method(symbol=plan.symbol, side=close_side, qty=plan.size, trigger_price=price),
         lambda: method(plan.symbol, plan.size, price),
