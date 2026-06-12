@@ -379,10 +379,8 @@ CHAT_SYSTEM_PROMPT = """You are the Sunheart Brain — a personal second-brain
 assistant for James. You answer questions using only the snippets retrieved
 from his notes, AI conversations, and papers. Style:
 - Plain English, direct, high-signal.
-- Use this format:
-  1) one concise paragraph answering the question directly;
-  2) a short "Next moves" list (2-4 bullets) when action is relevant.
-- Cite sources inline as [1], [2], etc (numbers only).
+- Reply in 1-3 short sentences, plain text, like a quick text from a friend.
+- No "Next moves" lists, no source citations, no headers, unless James explicitly asks for detail.
 - If the snippets don't cover the question, say so clearly and suggest what
   he could capture next time.
 - Never fabricate. Never say "as an AI...". Speak as the brain itself.
@@ -475,15 +473,13 @@ async def _synthesize_answer(question: str, hits: list[dict]) -> str:
             f"{h['content']}\n\n"
         )
     user += (
-        "Now answer in this format:\n"
-        "1) one concise paragraph that directly answers the question;\n"
-        "2) if relevant, a 'Next moves' list with 2-4 bullet points.\n"
-        "Use only citations like [1], [2], [3].\n"
+        "Answer in 1-3 short sentences, plain text, like a quick text message.\n"
+        "No lists, no source citations, no headers, unless James explicitly asks for detail.\n"
         "Do not output markdown code fences, XML tags, or raw JSON.\n"
-        "Keep response compact."
+        "Keep it very short."
     )
     try:
-        result = await complete(CHAT_SYSTEM_PROMPT, user, max_tokens=800, temperature=0.4, force_json=False)
+        result = await complete(CHAT_SYSTEM_PROMPT, user, max_tokens=220, temperature=0.4, force_json=False)
         return result.text.strip() or "(no response)"
     except Exception as e:
         log.exception("synthesis failed: %s", e)
@@ -539,6 +535,7 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
             "  /cohere  — run coherence council now (~30-60s)\n"
             "  /council — alias of /cohere\n"
             "  /capture — compress recent chat into a note now\n"
+            "  /scene   — capture a scene / intention to the vault\n"
             "  /private — start a private session (next msgs not captured)\n"
             "  /public  — end private session (resume capture)\n"
             "  /forget  — delete the last 10 unprocessed turns from capture buffer\n"
@@ -682,6 +679,22 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
         return await _cmd_capabilities(rest.strip())
     if cmd == "voice":
         return _cmd_voice(rest.strip().lower())
+    if cmd == "scene":
+        body = rest.strip()
+        if not body:
+            return "🎬 What's the scene? Send:  /scene then your intention or moment"
+        try:
+            rec = {
+                "ts": datetime.now(timezone.utc).isoformat(),
+                "chat_id": chat_id,
+                "scene": body,
+            }
+            with open("/opt/sh-brain-src/scenes.jsonl", "a") as _sf:
+                _sf.write(json.dumps(rec, ensure_ascii=False) + "\n")
+        except Exception as e:
+            return f"⚠️ scene capture failed: {e}"
+        preview = body if len(body) <= 60 else body[:57] + "..."
+        return f"🎬 Scene captured → {tg._esc(preview)}"
     return f"Unknown command: /{tg._esc(cmd)}. Try /help."
 
 
@@ -3893,9 +3906,9 @@ async def _handle_message(msg: dict) -> None:
         log.info("ignoring message from non-authorized user %s", from_user)
         return
 
-    # james_ask inbound: if this text replies to an open ask, consume it +
-    # ack + return. Skip slash-commands (those are explicit non-asks).
-    if not text.startswith("/"):
+    # james_ask inbound DISABLED per James 2026-06-12 — all non-command messages
+    # go straight to plain chat (no ask-matching, no ack short-circuit).
+    if False and not text.startswith("/"):
         try:
             matched = await james_ask.try_match_reply(text, message_id=update_id)
         except Exception as e:
@@ -3944,8 +3957,8 @@ async def _handle_message(msg: dict) -> None:
     hits = await _search_brain(text)
     answer_body = _format_answer_for_telegram(await _synthesize_answer(text, hits))
     answer = answer_body
-    # Citation footer: show all hits with a short preview
-    if hits:
+    # Citation footer DISABLED per James 2026-06-12 (wants plain short replies, no sources).
+    if False:
         cite_lines = ["", "<b>Sources</b> <i>([N] in answer maps here)</i>"]
         show = hits[: max(1, CITATION_LIMIT)]
         for i, h in enumerate(show, start=1):
@@ -4504,11 +4517,13 @@ async def run_forever() -> None:
     async with httpx.AsyncClient() as client:
         _ja_tick = 0
         while True:
-            # james_ask outbound: deliver any pending asks each cycle (~25s)
-            try:
-                await james_ask.send_pending(_ask_send_wrapper, esc_fn=tg._esc)
-            except Exception as e:
-                log.warning("james_ask.send_pending failed: %s", e)
+            # james_ask outbound DISABLED per James 2026-06-12 — wants plain chat,
+            # not proactive structured asks / Linear-ticket prompts on TG.
+            if False:
+                try:
+                    await james_ask.send_pending(_ask_send_wrapper, esc_fn=tg._esc)
+                except Exception as e:
+                    log.warning("james_ask.send_pending failed: %s", e)
             # Periodic expiry sweep (every ~50 cycles · ~20 min)
             _ja_tick += 1
             if _ja_tick % 50 == 0:
