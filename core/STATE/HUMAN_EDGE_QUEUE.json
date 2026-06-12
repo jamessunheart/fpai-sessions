@@ -115,6 +115,38 @@
       "urgent": false,
       "state": "open",
       "answer": ""
+    },
+    {
+      "id": "inter-session-sync-2026-06-12",
+      "surfaced": "2026-06-12T00:00:00+00:00",
+      "stream": "Game",
+      "question": "INTER-SESSION SYNC",
+      "state": "info",
+      "blocking": false,
+      "urgent": false,
+      "verbs": [],
+      "answer": "",
+      "notes": {
+        "from_session": "0b0ca1df",
+        "shipped": [
+          "NOW.md refreshed \u2014 FPOS North Star headlines (b77b7e5a)",
+          "Buildstream Rungs 0-3 corrected to done, Rung 4 ready",
+          "SPEC_builder-loop-close.md committed (0bee9f00)",
+          "Alignment footer compressed to NOW/NEED/NEXT/NARRATOR (f9994954)",
+          "Intake-agent on 162 healthy \u2014 Resend key only gap"
+        ],
+        "open": [
+          "TG vs Claude Code: which surface is James actually using? TG inbox 16d stale, all crons dead",
+          "deploy_reconciler.sh unrun \u2014 Watchfire Reserved-Class, needs James hand",
+          "Bottleneck Session: weight-90, no leads named yet",
+          "5 dirty files uncommitted on feat/headless-build"
+        ],
+        "ask_other_sessions": [
+          "What did you last touch on feat/headless-build? Are any dirty files yours?",
+          "Did you confirm Watchfire stops live on HL?",
+          "Has James indicated preferred surface (TG / Claude Code / Obsidian)?"
+        ]
+      }
     }
   ]
 }
