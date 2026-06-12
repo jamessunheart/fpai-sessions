@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recruiting Hub - Full Potential AI</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: #17201b;
+            background: #f7f7f2;
+        }
+        header {
+            background: #1e2b24;
+            color: #f9f8ef;
+            padding: 18px 24px;
+            border-bottom: 4px solid #b88f35;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 1.45rem;
+            font-weight: 720;
+            letter-spacing: 0;
+        }
+        header p {
+            margin: 6px 0 0;
+            color: #d8ddcf;
+            max-width: 920px;
+        }
+        nav {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+        }
+        nav a {
+            color: #f9f8ef;
+            text-decoration: none;
+            border: 1px solid rgba(249, 248, 239, 0.35);
+            border-radius: 6px;
+            padding: 7px 10px;
+            font-size: 0.92rem;
+        }
+        main {
+            width: min(1320px, calc(100vw - 28px));
+            margin: 18px auto 40px;
+        }
+        .notice {
+            border-left: 5px solid #b88f35;
+            background: #fffdf3;
+            padding: 14px 16px;
+            margin-bottom: 18px;
+            box-shadow: 0 1px 3px rgba(20, 28, 23, 0.08);
+        }
+        .notice.privacy {
+            border-left-color: #2f6f5e;
+            background: #f0f7f1;
+        }
+        .notice.warning {
+            border-left-color: #9b5f1d;
+            background: #fff8e6;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+        .stat {
+            background: #ffffff;
+            border: 1px solid #dde2d8;
+            border-radius: 8px;
+            padding: 14px;
+        }
+        .stat span {
+            display: block;
+            color: #5a665e;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .stat strong {
+            display: block;
+            margin-top: 5px;
+            font-size: 1.6rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 430px 1fr;
+            gap: 18px;
+            align-items: start;
+        }
+        section {
+            background: #ffffff;
+            border: 1px solid #dde2d8;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 18px;
+            box-shadow: 0 1px 3px rgba(20, 28, 23, 0.07);
+        }
+        section h2 {
+            margin: 0 0 12px;
+            font-size: 1rem;
+            color: #20362c;
+        }
+        label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 650;
+            color: #33443b;
+            margin: 12px 0 5px;
+        }
+        input, select, textarea {
+            width: 100%;
+            border: 1px solid #cfd8d0;
+            border-radius: 6px;
+            padding: 9px 10px;
+            font: inherit;
+            background: #fff;
+            color: #17201b;
+        }
+        textarea {
+            min-height: 78px;
+            resize: vertical;
+        }
+        button {
+            border: 0;
+            border-radius: 6px;
+            padding: 9px 12px;
+            font: inherit;
+            font-weight: 680;
+            color: #fff;
+            background: #2f6f5e;
+            cursor: pointer;
+        }
+        button:hover { background: #285f51; }
+        button.secondary {
+            background: #e8eadf;
+            color: #253129;
+        }
+        button.secondary:hover { background: #dcded2; }
+        button.warn {
+            background: #9b5f1d;
+        }
+        button.warn:hover { background: #804d16; }
+        button:disabled {
+            cursor: not-allowed;
+            opacity: 0.55;
+        }
+        .button-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.92rem;
+        }
+        th, td {
+            border-bottom: 1px solid #e6e9e1;
+            padding: 10px 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            color: #59645d;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            background: #fafaf6;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            min-height: 24px;
+            border-radius: 999px;
+            padding: 3px 8px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            background: #edf0e8;
+            color: #33443b;
+            white-space: nowrap;
+        }
+        .badge.good { background: #dceee5; color: #1f614d; }
+        .badge.hold { background: #f6ebcf; color: #7a541a; }
+        .badge.stop { background: #f2d8d5; color: #873229; }
+        .small {
+            color: #66716a;
+            font-size: 0.82rem;
+        }
+        .stack {
+            display: grid;
+            gap: 8px;
+        }
+        .candidate-name {
+            font-weight: 760;
+            color: #17201b;
+        }
+        .evidence {
+            margin: 6px 0 0;
+            padding-left: 18px;
+            color: #4a564e;
+        }
+        .evidence li { margin-bottom: 3px; }
+        .empty {
+            padding: 18px;
+            border: 1px dashed #cfd8d0;
+            border-radius: 8px;
+            color: #66716a;
+            background: #fbfbf8;
+        }
+        .packet-grid {
+            display: grid;
+            gap: 12px;
+            max-height: 70vh;
+            overflow: auto;
+            padding-right: 4px;
+        }
+        .packet-block {
+            border: 1px solid #e1e6dc;
+            border-radius: 8px;
+            padding: 12px;
+            background: #fbfbf8;
+        }
+        .packet-block h3 {
+            margin: 0 0 8px;
+            font-size: 0.94rem;
+            color: #20362c;
+        }
+        .packet-block ul {
+            margin: 6px 0 0 18px;
+            padding: 0;
+        }
+        .packet-block li {
+            margin-bottom: 5px;
+        }
+        .packet-copy {
+            white-space: pre-wrap;
+            line-height: 1.48;
+            color: #33443b;
+        }
+        #toast {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            max-width: 420px;
+            background: #1e2b24;
+            color: #fff;
+            padding: 12px 14px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(20, 28, 23, 0.25);
+            display: none;
+            z-index: 20;
+        }
+        .modal {
+            position: fixed;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            background: rgba(17, 28, 22, 0.45);
+            z-index: 30;
+            padding: 14px;
+        }
+        .modal[hidden] {
+            display: none;
+        }
+        .modal-panel {
+            width: min(620px, calc(100vw - 28px));
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 24px 70px rgba(10, 20, 16, 0.34);
+        }
+        .dialog-body { padding: 18px; }
+        @media (max-width: 980px) {
+            .grid, .stats { grid-template-columns: 1fr; }
+            table, thead, tbody, tr, th, td { display: block; }
+            thead { display: none; }
+            tr { border: 1px solid #e6e9e1; border-radius: 8px; margin-bottom: 10px; }
+            td { border: 0; }
+            td::before {
+                content: attr(data-label);
+                display: block;
+                color: #66716a;
+                font-size: 0.72rem;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+                margin-bottom: 3px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Recruiting Hub</h1>
+        <p>Rung 4 role-spec pipeline. AI screens and prepares; candidate contact and hiring stay gated by James.</p>
+        <nav>
+            <a href="/jobs">Public Jobs</a>
+            <a href="/api/recruiting/roles">Roles API</a>
+            <a href="/api/recruiting/audit-log">Audit API</a>
+            <form method="post" action="/recruiting/logout" style="display:inline">
+                <button type="submit" class="secondary">Logout</button>
+            </form>
+        </nav>
+    </header>
+
+    <main>
+        {% if not auth_configured and local_dev %}
+        <div class="notice warning">
+            <strong>Local dev mode:</strong>
+            set <code>RECRUITING_HUB_ADMIN_KEY</code> before exposing this service beyond localhost.
+        </div>
+        {% endif %}
+
+        <div class="notice">
+            <strong>Decision boundary:</strong>
+            no candidate contact is sent from this hub. Approvals log candidate, channel, message, sender, and timing; final decisions require actor <code>james</code>.
+        </div>
+
+        <div class="notice privacy">
+            <strong>Privacy boundary:</strong>
+            store only role-relevant candidate materials, consent/source state, and operational notes. Do not store secrets, private medical/legal/financial details, intimate relationship context, or third-party sensitive context here.
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <span>Roles</span>
+                <strong>{{ roles|length }}</strong>
+            </div>
+            <div class="stat">
+                <span>Candidates</span>
+                <strong>{{ candidates|length }}</strong>
+            </div>
+            <div class="stat">
+                <span>Review Queue</span>
+                <strong>{{ review_queue|length }}</strong>
+            </div>
+            <div class="stat">
+                <span>Contact Approved</span>
+                <strong>{{ candidates|selectattr("contact_approval")|list|length }}</strong>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div>
+                <section>
+                    <h2>Create Role Spec</h2>
+                    <form id="roleForm">
+                        <label for="seat_name">Seat name</label>
+                        <input id="seat_name" required placeholder="Human Context Steward">
+
+                        <label for="mission">Mission</label>
+                        <textarea id="mission" required></textarea>
+
+                        <label for="outcomes">Outcomes, one per line</label>
+                        <textarea id="outcomes"></textarea>
+
+                        <label for="responsibilities">Responsibilities, one per line</label>
+                        <textarea id="responsibilities"></textarea>
+
+                        <label for="must_have_traits">Must-have traits, one per line</label>
+                        <textarea id="must_have_traits"></textarea>
+
+                        <label for="strong_signals">Strong signals, one per line</label>
+                        <textarea id="strong_signals"></textarea>
+
+                        <label for="disqualifiers">Disqualifiers, one per line</label>
+                        <textarea id="disqualifiers"></textarea>
+
+                        <label for="compensation_guardrail">Compensation guardrail</label>
+                        <input id="compensation_guardrail" placeholder="TBD">
+
+                        <label for="time_commitment">Time commitment</label>
+                        <input id="time_commitment" value="TBD">
+
+                        <div class="button-row">
+                            <button type="submit">Create Draft</button>
+                        </div>
+                    </form>
+                </section>
+
+                <section>
+                    <h2>Add Candidate</h2>
+                    <form id="candidateForm">
+                        <label for="candidate_role">Role</label>
+                        <select id="candidate_role" required>
+                            {% for role in roles %}
+                            <option value="{{ role.id }}">{{ role.seat_name }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label for="candidate_name">Name</label>
+                        <input id="candidate_name" required>
+
+                        <label for="candidate_source">Source</label>
+                        <input id="candidate_source" value="manual">
+
+                        <label for="contact_channel">Contact channel</label>
+                        <input id="contact_channel" placeholder="email, LinkedIn, referral path">
+
+                        <label for="consent_status">Consent status</label>
+                        <select id="consent_status">
+                            <option value="unknown">unknown</option>
+                            <option value="candidate_submitted">candidate_submitted</option>
+                            <option value="james_authorized">james_authorized</option>
+                            <option value="contacted">contacted</option>
+                            <option value="withdrawn">withdrawn</option>
+                        </select>
+
+                        <label for="public_links">Public links, one per line</label>
+                        <textarea id="public_links"></textarea>
+
+                        <label for="background">Background</label>
+                        <textarea id="background" placeholder="Relevant work, support roles, community/editorial/context experience"></textarea>
+
+                        <label for="why_role">Why this role</label>
+                        <textarea id="why_role" placeholder="What makes this work interesting to them?"></textarea>
+
+                        <label for="discretion_example">Discretion example</label>
+                        <textarea id="discretion_example" placeholder="A non-sensitive example of handling trust or private context"></textarea>
+
+                        <label for="ai_collaboration_example">AI collaboration example</label>
+                        <textarea id="ai_collaboration_example" placeholder="How they use AI and when they override it"></textarea>
+
+                        <label for="writing_sample">Writing/context sample</label>
+                        <textarea id="writing_sample" placeholder="A short sample that shows nuance, clarity, or handoff skill"></textarea>
+
+                        <label for="availability">Availability</label>
+                        <input id="availability" placeholder="Hours/week, timezone, start timing">
+
+                        <label for="compensation_expectations">Compensation expectations</label>
+                        <input id="compensation_expectations" placeholder="Range or TBD">
+
+                        <label for="materials">Materials, one per line</label>
+                        <textarea id="materials" placeholder="Resume excerpt, profile summary, referral note"></textarea>
+
+                        <label for="notes">Notes, one per line</label>
+                        <textarea id="notes"></textarea>
+
+                        <div class="button-row">
+                            <button type="submit">Add Candidate</button>
+                        </div>
+                    </form>
+                </section>
+            </div>
+
+            <div>
+                <section>
+                    <h2>Review Inbox</h2>
+                    {% if review_queue %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Candidate</th>
+                                <th>Status</th>
+                                <th>Next</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in review_queue %}
+                            {% set candidate = item.candidate %}
+                            <tr>
+                                <td data-label="Candidate">
+                                    <div class="candidate-name">{{ candidate.name }}</div>
+                                    <div class="small">{{ candidate.source }} | {{ candidate.availability or "availability TBD" }}</div>
+                                    {% if item.recommendation %}
+                                    <span class="badge {% if item.recommendation == 'strong_shortlist' %}good{% elif item.recommendation == 'not_recommended' %}stop{% else %}hold{% endif %}">
+                                        {{ item.screening_score }} / {{ item.recommendation }}
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td data-label="Status"><span class="badge">{{ item.status }}</span></td>
+                                <td data-label="Next">{{ item.next_action }}</td>
+                                <td data-label="Actions">
+                                    <div class="button-row">
+                                        <button class="secondary" onclick="screenCandidate('{{ candidate.id }}')">Screen</button>
+                                        <button class="secondary" onclick="openEvidenceMap('{{ candidate.id }}')">Evidence</button>
+                                        <button onclick="updateCandidateStatus('{{ candidate.id }}', 'interviewing')">Interviewing</button>
+                                        <button onclick="updateCandidateStatus('{{ candidate.id }}', 'decision_needed')">Decision Needed</button>
+                                        <button class="warn" onclick="requestMoreInfo('{{ candidate.id }}')">Request Info</button>
+                                        <button class="secondary" onclick="updateCandidateStatus('{{ candidate.id }}', 'archived')">Archive</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="empty">No candidates need review right now.</div>
+                    {% endif %}
+                </section>
+
+                <section>
+                    <h2>Role Spec Board</h2>
+                    {% if roles %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Seat</th>
+                                <th>Status</th>
+                                <th>Gate</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for role in roles %}
+                            <tr>
+                                <td data-label="Seat">
+                                    <div class="candidate-name">{{ role.seat_name }}</div>
+                                    <div class="small">{{ role.mission }}</div>
+                                </td>
+                                <td data-label="Status"><span class="badge">{{ role.status }}</span></td>
+                                <td data-label="Gate">
+                                    {% if role.approved_by_james %}
+                                    <span class="badge good">James approved</span>
+                                    {% else %}
+                                    <span class="badge hold">Needs role approval</span>
+                                    {% endif %}
+                                </td>
+                                <td data-label="Action">
+                                    <div class="button-row">
+                                        <button class="secondary" onclick="openLaunchPacket('{{ role.id }}')">Launch Packet</button>
+                                        <button class="secondary" onclick="openShortlist('{{ role.id }}')">Shortlist</button>
+                                        <button onclick="approveRole('{{ role.id }}')" {% if role.approved_by_james %}disabled{% endif %}>Approve</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="empty">No role specs yet.</div>
+                    {% endif %}
+                </section>
+
+                <section>
+                    <h2>Candidate Review</h2>
+                    {% if candidates %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Candidate</th>
+                                <th>Status</th>
+                                <th>Screening</th>
+                                <th>Gates</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for candidate in candidates %}
+                            {% set screening = candidate.screening %}
+                            <tr>
+                                <td data-label="Candidate">
+                                    <div class="candidate-name">{{ candidate.name }}</div>
+                                    <div class="small">{{ candidate.source }} | {{ candidate.contact_channel or "no contact channel" }}</div>
+                                    {% if candidate.public_links %}
+                                    <div class="small">{{ candidate.public_links|join(", ") }}</div>
+                                    {% endif %}
+                                </td>
+                                <td data-label="Status"><span class="badge">{{ candidate.pipeline_status }}</span></td>
+                                <td data-label="Screening">
+                                    {% if screening %}
+                                    <span class="badge {% if screening.recommendation == 'strong_shortlist' %}good{% elif screening.recommendation == 'not_recommended' %}stop{% else %}hold{% endif %}">
+                                        {{ screening.fit_score }} / {{ screening.recommendation }}
+                                    </span>
+                                    <ul class="evidence">
+                                        {% for item in screening.evidence[:2] %}
+                                        <li>{{ item }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                    {% else %}
+                                    <span class="badge hold">Not screened</span>
+                                    {% endif %}
+                                </td>
+                                <td data-label="Gates">
+                                    <div class="stack">
+                                        {% if candidate.contact_approval %}
+                                        <span class="badge good">Contact approved</span>
+                                        {% else %}
+                                        <span class="badge hold">Needs contact approval</span>
+                                        {% endif %}
+                                        {% if candidate.hiring_decision and candidate.hiring_decision.decided_by_james %}
+                                        <span class="badge good">Decision: {{ candidate.hiring_decision.decision }}</span>
+                                        {% else %}
+                                        <span class="badge hold">Needs James decision</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td data-label="Actions">
+                                    <div class="button-row">
+                                        <button class="secondary" onclick="screenCandidate('{{ candidate.id }}')">Screen</button>
+                                        <button class="secondary" onclick="openEvidenceMap('{{ candidate.id }}')">Evidence Map</button>
+                                        <button class="warn" onclick="openContactGate('{{ candidate.id }}', '{{ candidate.name|replace("'", "\\'") }}')">Approve Contact</button>
+                                        <button onclick="openDecisionGate('{{ candidate.id }}', '{{ candidate.name|replace("'", "\\'") }}')">Decision</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="empty">No candidates yet.</div>
+                    {% endif %}
+                </section>
+
+                <section>
+                    <h2>Audit Log</h2>
+                    {% if audits %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Event</th>
+                                <th>Actor</th>
+                                <th>Entity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entry in audits %}
+                            <tr>
+                                <td data-label="Time" class="small">{{ entry.created_at }}</td>
+                                <td data-label="Event">{{ entry.event }}</td>
+                                <td data-label="Actor">{{ entry.actor }}</td>
+                                <td data-label="Entity" class="small">{{ entry.entity_type }} / {{ entry.entity_id }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="empty">No audit entries yet.</div>
+                    {% endif %}
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <div id="contactDialog" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="contactTitle">
+        <form class="dialog-body modal-panel" id="contactForm">
+            <h2 id="contactTitle">Approve Candidate Contact</h2>
+            <p class="small" id="contactCandidate"></p>
+            <input id="contactCandidateId" type="hidden">
+            <label for="approved_channel">Channel</label>
+            <input id="approved_channel" required>
+            <label for="approved_sender">Sender identity</label>
+            <input id="approved_sender" required value="James">
+            <label for="approved_timing">Timing</label>
+            <input id="approved_timing" required value="When James confirms">
+            <label for="approved_message">Approved message</label>
+            <textarea id="approved_message" required></textarea>
+            <div class="button-row">
+                <button type="submit">Record Approval</button>
+                <button type="button" class="secondary" onclick="hideModal(contactDialog)">Cancel</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="decisionDialog" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="decisionTitle">
+        <form class="dialog-body modal-panel" id="decisionForm">
+            <h2 id="decisionTitle">Record James Decision</h2>
+            <p class="small" id="decisionCandidate"></p>
+            <input id="decisionCandidateId" type="hidden">
+            <label for="decision">Decision</label>
+            <select id="decision">
+                <option value="advance">advance</option>
+                <option value="hold">hold</option>
+                <option value="pass">pass</option>
+                <option value="offer">offer</option>
+                <option value="hire">hire</option>
+            </select>
+            <label for="rationale">Rationale</label>
+            <textarea id="rationale"></textarea>
+            <div class="button-row">
+                <button type="submit">Record Decision</button>
+                <button type="button" class="secondary" onclick="hideModal(decisionDialog)">Cancel</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="shortlistDialog" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="shortlistTitle">
+        <div class="dialog-body modal-panel">
+            <h2 id="shortlistTitle">Shortlist Packet</h2>
+            <div id="shortlistBody"></div>
+            <div class="button-row">
+                <button type="button" class="secondary" onclick="hideModal(shortlistDialog)">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="launchPacketDialog" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="launchPacketTitle">
+        <div class="dialog-body modal-panel">
+            <h2 id="launchPacketTitle">Launch Packet</h2>
+            <div id="launchPacketBody"></div>
+            <div class="button-row">
+                <button type="button" class="secondary" onclick="hideModal(launchPacketDialog)">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="evidenceMapDialog" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="evidenceMapTitle">
+        <div class="dialog-body modal-panel">
+            <h2 id="evidenceMapTitle">Candidate Evidence Map</h2>
+            <div id="evidenceMapBody"></div>
+            <div class="button-row">
+                <button type="button" class="secondary" onclick="hideModal(evidenceMapDialog)">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast"></div>
+
+    <script>
+        const contactDialog = document.getElementById('contactDialog');
+        const decisionDialog = document.getElementById('decisionDialog');
+        const shortlistDialog = document.getElementById('shortlistDialog');
+        const launchPacketDialog = document.getElementById('launchPacketDialog');
+        const evidenceMapDialog = document.getElementById('evidenceMapDialog');
+
+        function showModal(el) {
+            el.hidden = false;
+        }
+
+        function hideModal(el) {
+            el.hidden = true;
+        }
+
+        function lines(id) {
+            return document.getElementById(id).value
+                .split('\n')
+                .map(item => item.trim())
+                .filter(Boolean);
+        }
+
+        function toast(message) {
+            const el = document.getElementById('toast');
+            el.textContent = message;
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 3200);
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function renderList(items) {
+            if (!items || !items.length) return '<p class="small">None yet.</p>';
+            return `<ul>${items.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`;
+        }
+
+        function renderBlock(title, body) {
+            return `<div class="packet-block"><h3>${escapeHtml(title)}</h3>${body}</div>`;
+        }
+
+        async function api(path, options = {}) {
+            const response = await fetch(path, {
+                headers: { 'Content-Type': 'application/json' },
+                ...options
+            });
+            const payload = await response.json();
+            if (!response.ok) {
+                throw new Error(payload.detail || 'Request failed');
+            }
+            return payload;
+        }
+
+        document.getElementById('roleForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            try {
+                await api('/api/recruiting/roles', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        seat_name: document.getElementById('seat_name').value,
+                        mission: document.getElementById('mission').value,
+                        outcomes: lines('outcomes'),
+                        responsibilities: lines('responsibilities'),
+                        must_have_traits: lines('must_have_traits'),
+                        strong_signals: lines('strong_signals'),
+                        disqualifiers: lines('disqualifiers'),
+                        compensation_guardrail: document.getElementById('compensation_guardrail').value || null,
+                        time_commitment: document.getElementById('time_commitment').value || 'TBD'
+                    })
+                });
+                toast('Role draft created');
+                setTimeout(() => location.reload(), 500);
+            } catch (error) {
+                toast(error.message);
+            }
+        });
+
+        document.getElementById('candidateForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            try {
+                await api('/api/recruiting/candidates', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        role_spec_id: document.getElementById('candidate_role').value,
+                        name: document.getElementById('candidate_name').value,
+                        source: document.getElementById('candidate_source').value,
+                        contact_channel: document.getElementById('contact_channel').value || null,
+                        consent_status: document.getElementById('consent_status').value,
+                        public_links: lines('public_links'),
+                        background: document.getElementById('background').value,
+                        why_role: document.getElementById('why_role').value,
+                        discretion_example: document.getElementById('discretion_example').value,
+                        ai_collaboration_example: document.getElementById('ai_collaboration_example').value,
+                        writing_sample: document.getElementById('writing_sample').value,
+                        availability: document.getElementById('availability').value,
+                        compensation_expectations: document.getElementById('compensation_expectations').value,
+                        materials: lines('materials'),
+                        notes: lines('notes')
+                    })
+                });
+                toast('Candidate added');
+                setTimeout(() => location.reload(), 500);
+            } catch (error) {
+                toast(error.message);
+            }
+        });
+
+        async function approveRole(roleId) {
+            try {
+                await api(`/api/recruiting/roles/${roleId}/approve`, { method: 'POST' });
+                toast('Role approved by James');
+                setTimeout(() => location.reload(), 500);
+            } catch (error) {
+                toast(error.message);
+            }
+        }
+
+        async function screenCandidate(candidateId) {
+            try {
+                await api(`/api/recruiting/candidates/${candidateId}/screen`, { method: 'POST' });
+                toast('Candidate screened');
+                setTimeout(() => location.reload(), 500);
+            } catch (error) {
+                toast(error.message);
+            }
+        }
+
+        async function updateCandidateStatus(candidateId, status, note = '') {
+            try {
+                await api(`/api/recruiting/candidates/${candidateId}/status`, {
+                    method: 'POST',
+                    body: JSON.stringify({ actor: 'james', status, note })
+                });
+                toast(`Candidate moved to ${status}`);
+                setTimeout(() => location.reload(), 500);
+            } catch (error) {
+                toast(error.message);
+            }
+        }
+
+        function requestMoreInfo(candidateId) {
+            const note = window.prompt('What info should be requested or clarified?');
+            if (note === null) return;
+            updateCandidateStatus(candidateId, 'needs_james_review', `Request more info: ${note}`);
+        }
+
+        function openContactGate(candidateId, name) {
+            document.getElementById('contactCandidateId').value = candidateId;
+            document.getElementById('contactCandidate').textContent = name;
+            document.getElementById('approved_message').value = `Hi ${name}, I am exploring a Human Context Steward role and thought you might be a thoughtful fit. Would you be open to a short conversation?`;
+            showModal(contactDialog);
+        }
+
+        document.getElementById('contactForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const candidateId = document.getElementById('contactCandidateId').value;
+            try {
+                await api(`/api/recruiting/candidates/${candidateId}/contact-approval`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        approved_by_james: true,
+                        approved_channel: document.getElementById('approved_channel').value,
+                        approved_sender: document.getElementById('approved_sender').value,
+                        approved_timing: document.getElementById('approved_timing').value,
+                        approved_message: document.getElementById('approved_message').value
+                    })
+                });
+                hideModal(contactDialog);
+                toast('Contact approval recorded');
+                setTimeout(() => location.reload(), 500);
+            } catch (error) {
+                toast(error.message);
+            }
+        });
+
+        function openDecisionGate(candidateId, name) {
+            document.getElementById('decisionCandidateId').value = candidateId;
+            document.getElementById('decisionCandidate').textContent = name;
+            showModal(decisionDialog);
+        }
+
+        document.getElementById('decisionForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const candidateId = document.getElementById('decisionCandidateId').value;
+            try {
+                await api(`/api/recruiting/candidates/${candidateId}/decision`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        actor: 'james',
+                        decision: document.getElementById('decision').value,
+                        rationale: document.getElementById('rationale').value
+                    })
+                });
+                hideModal(decisionDialog);
+                toast('James decision recorded');
+                setTimeout(() => location.reload(), 500);
+            } catch (error) {
+                toast(error.message);
+            }
+        });
+
+        async function openShortlist(roleId) {
+            try {
+                const payload = await api(`/api/recruiting/roles/${roleId}/shortlist`);
+                const packet = payload.shortlist;
+                const html = packet.candidates.length
+                    ? packet.candidates.map(candidate => `
+                        <section>
+                            <h2>${escapeHtml(candidate.name)}</h2>
+                            <p><span class="badge">${escapeHtml(candidate.screening.fit_score)} / ${escapeHtml(candidate.screening.recommendation)}</span></p>
+                            <p class="small">${candidate.screening.evidence.slice(0, 3).map(escapeHtml).join('<br>')}</p>
+                        </section>
+                    `).join('')
+                    : '<div class="empty">No screened candidates yet.</div>';
+                document.getElementById('shortlistBody').innerHTML = `
+                    <p><strong>${escapeHtml(packet.role.seat_name)}</strong></p>
+                    <p class="small">${escapeHtml(packet.decision_boundary)}</p>
+                    ${html}
+                `;
+                showModal(shortlistDialog);
+            } catch (error) {
+                toast(error.message);
+            }
+        }
+
+        async function openLaunchPacket(roleId) {
+            try {
+                const payload = await api(`/api/recruiting/roles/${roleId}/launch-packet`);
+                const packet = payload.launch_packet;
+                const post = packet.public_role_post;
+                const rubric = packet.private_rubric.map(item => `
+                    <div class="packet-block">
+                        <h3>${escapeHtml(item.criterion)} (${escapeHtml(item.weight)}%)</h3>
+                        <strong>Look for</strong>
+                        ${renderList(item.look_for)}
+                        <strong>Red flags</strong>
+                        ${renderList(item.red_flags)}
+                    </div>
+                `).join('');
+                const outreach = packet.outreach_drafts.map(item =>
+                    renderBlock(item.name, `<div class="packet-copy">${escapeHtml(item.message)}</div>`)
+                ).join('');
+                const interview = packet.interview_plan.map(stage =>
+                    renderBlock(stage.stage, renderList(stage.questions))
+                ).join('');
+
+                document.getElementById('launchPacketBody').innerHTML = `
+                    <div class="packet-grid">
+                        ${renderBlock('Public Role Post', `
+                            <div class="packet-copy"><strong>${escapeHtml(post.title)}</strong>
+
+${escapeHtml(post.summary)}
+
+${escapeHtml(post.why_this_matters)}</div>
+                            <strong>Outcomes</strong>${renderList(post.outcomes)}
+                            <strong>Responsibilities</strong>${renderList(post.responsibilities)}
+                            <strong>Must-have traits</strong>${renderList(post.must_have_traits)}
+                            <p><strong>Compensation:</strong> ${escapeHtml(post.compensation)}</p>
+                            <p><strong>Time:</strong> ${escapeHtml(post.time_commitment)}</p>
+                            <p><strong>Apply:</strong> ${escapeHtml(post.how_to_apply)}</p>
+                        `)}
+                        ${renderBlock('Sourcing Queries', renderList(packet.sourcing_queries))}
+                        ${renderBlock('Decision Boundary', `<p class="small">${escapeHtml(packet.decision_boundary)}</p>`)}
+                        <div class="packet-block"><h3>Private Rubric</h3>${rubric}</div>
+                        <div class="packet-block"><h3>Outreach Drafts</h3>${outreach}</div>
+                        <div class="packet-block"><h3>Interview Plan</h3>${interview}</div>
+                    </div>
+                `;
+                showModal(launchPacketDialog);
+            } catch (error) {
+                toast(error.message);
+            }
+        }
+
+        async function openEvidenceMap(candidateId) {
+            try {
+                const payload = await api(`/api/recruiting/candidates/${candidateId}/evidence-map`);
+                const map = payload.evidence_map;
+                document.getElementById('evidenceMapBody').innerHTML = `
+                    <div class="packet-grid">
+                        ${renderBlock('Candidate', `
+                            <p><strong>${escapeHtml(map.candidate.name)}</strong></p>
+                            <p class="small">${escapeHtml(map.role.seat_name)} | ${escapeHtml(map.confidence)} confidence</p>
+                            <p class="small">${escapeHtml(map.decision_boundary)}</p>
+                        `)}
+                        ${renderBlock('Known Evidence', renderList(map.known_evidence))}
+                        ${renderBlock('AI Inferences', renderList(map.ai_inferences))}
+                        ${renderBlock('Risks', renderList(map.risks))}
+                        ${renderBlock('Unknowns', renderList(map.unknowns))}
+                        ${renderBlock('Next Questions', renderList(map.next_questions))}
+                        ${renderBlock('Public Links', renderList(map.public_links))}
+                    </div>
+                `;
+                showModal(evidenceMapDialog);
+            } catch (error) {
+                toast(error.message);
+            }
+        }
+    </script>
+</body>
+</html>

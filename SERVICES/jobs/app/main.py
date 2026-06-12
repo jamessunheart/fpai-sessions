@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from pathlib import Path
 import logging
+import os
 import time
 from datetime import datetime
 from app.udc_models import (
@@ -35,10 +36,19 @@ app = FastAPI(
     version="1.0.0"
 )
 
+cors_origins = [
+    origin.strip()
+    for origin in os.getenv(
+        "CORS_ALLOW_ORIGINS",
+        "http://localhost:8008,http://127.0.0.1:8008",
+    ).split(",")
+    if origin.strip()
+]
+
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -53,10 +63,11 @@ app.mount("/static", StaticFiles(directory=str(static_path)), name="static")
 templates = Jinja2Templates(directory=str(templates_path))
 
 # Import routers
-from app.routers import jobs_api, jobs_web
+from app.routers import jobs_api, jobs_web, recruiting_hub
 
 app.include_router(jobs_api.router, tags=["Jobs API"])
 app.include_router(jobs_web.router, tags=["Jobs Web"])
+app.include_router(recruiting_hub.router, tags=["Recruiting Hub"])
 
 # Track startup time for uptime calculation
 start_time = time.time()
@@ -85,6 +96,9 @@ async def capabilities():
         features=[
             "job_board",
             "ai_screening",
+            "gated_recruiting_hub",
+            "role_spec_pipeline",
+            "human_context_steward_seat",
             "ai_interviews",
             "labor_coordination",
             "milestone_verification",

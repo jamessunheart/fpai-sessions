@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recruiting Hub Login</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: #17201b;
+            background: #f7f7f2;
+            padding: 18px;
+        }
+        .panel {
+            width: min(440px, 100%);
+            background: #fff;
+            border: 1px solid #dde2d8;
+            border-radius: 8px;
+            padding: 22px;
+            box-shadow: 0 14px 40px rgba(20, 28, 23, 0.12);
+        }
+        h1 {
+            margin: 0 0 8px;
+            font-size: 1.35rem;
+            color: #20362c;
+        }
+        p {
+            margin: 0 0 16px;
+            color: #5a665e;
+            line-height: 1.5;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #33443b;
+        }
+        input {
+            width: 100%;
+            border: 1px solid #cfd8d0;
+            border-radius: 6px;
+            padding: 10px;
+            font: inherit;
+        }
+        button, a.button {
+            display: inline-block;
+            margin-top: 14px;
+            border: 0;
+            border-radius: 6px;
+            padding: 10px 12px;
+            font: inherit;
+            font-weight: 700;
+            color: #fff;
+            background: #2f6f5e;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .warning {
+            border-left: 5px solid #9b5f1d;
+            background: #fff8e6;
+            padding: 12px;
+            margin: 14px 0;
+            color: #55390f;
+        }
+        .error {
+            border-left: 5px solid #9a3328;
+            background: #f8e4e1;
+            padding: 12px;
+            margin: 14px 0;
+            color: #70271f;
+        }
+        code {
+            background: #edf0e8;
+            border-radius: 4px;
+            padding: 2px 4px;
+        }
+    </style>
+</head>
+<body>
+    <main class="panel">
+        <h1>Recruiting Hub Login</h1>
+        <p>This hub contains candidate context, approvals, and hiring decisions. Access is intentionally gated.</p>
+
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+
+        {% if not auth_configured and local_dev %}
+        <div class="warning">
+            Local development access is open because <code>RECRUITING_HUB_ADMIN_KEY</code> is not set.
+            Set it before exposing this service beyond localhost.
+        </div>
+        <a class="button" href="/recruiting">Enter Local Hub</a>
+        {% else %}
+        <form method="post" action="/recruiting/login">
+            <label for="admin_key">Admin key</label>
+            <input id="admin_key" name="admin_key" type="password" required autocomplete="current-password">
+            <button type="submit">Enter Hub</button>
+        </form>
+        {% endif %}
+    </main>
+</body>
+</html>
