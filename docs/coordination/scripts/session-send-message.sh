@@ -5,7 +5,17 @@
 
 set -e
 
-cd "$(dirname "$0")/../.."
+cd "$(dirname "$0")/../../.."
+
+# Resolve coordination directory (supports current docs/coordination and legacy COORDINATION)
+if [ -d "docs/coordination" ]; then
+    COORD_DIR="docs/coordination"
+elif [ -d "COORDINATION" ]; then
+    COORD_DIR="COORDINATION"
+else
+    echo "❌ Coordination directory not found (expected docs/coordination or COORDINATION)"
+    exit 1
+fi
 
 if [ -z "$1" ] || [ -z "$2" ]; then
     echo "Usage: ./session-send-message.sh [to] [subject] [message]"
@@ -21,20 +31,21 @@ SUBJECT=$2
 MESSAGE=${3:-""}
 
 # Get current session ID
-if [ ! -f "COORDINATION/.current_session" ]; then
+if [ ! -f "$COORD_DIR/.current_session" ]; then
     echo "⚠️  No active session"
     exit 1
 fi
 
-SESSION_ID=$(cat COORDINATION/.current_session)
+SESSION_ID=$(cat "$COORD_DIR/.current_session")
 TIMESTAMP=$(date +%Y-%m-%d_%H-%M-%S)
 
 # Determine message file location
 if [ "$TO" = "broadcast" ]; then
-    MSG_FILE="COORDINATION/messages/broadcast/${TIMESTAMP}-${SESSION_ID}.json"
+    mkdir -p "$COORD_DIR/messages/broadcast"
+    MSG_FILE="$COORD_DIR/messages/broadcast/${TIMESTAMP}-${SESSION_ID}.json"
 else
-    mkdir -p "COORDINATION/messages/direct/${TO}"
-    MSG_FILE="COORDINATION/messages/direct/${TO}/${TIMESTAMP}-${SESSION_ID}.json"
+    mkdir -p "$COORD_DIR/messages/direct/${TO}"
+    MSG_FILE="$COORD_DIR/messages/direct/${TO}/${TIMESTAMP}-${SESSION_ID}.json"
 fi
 
 # Create message file

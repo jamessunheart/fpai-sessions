@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zen Village Wallet</title>
+<link rel="manifest" href="/wallet/static/manifest.json">
+<style>
+  :root {
+    --cream: #faf6ee; --gold: #b88a47; --sage: #6b8a5e;
+    --ink: #1a1814; --muted: #7a7060; --line: #e6dec8;
+  }
+  * { box-sizing: border-box; }
+  body { font-family: 'JetBrains Mono', 'Fira Code', monospace; background: var(--cream);
+         color: var(--ink); margin: 0; padding: 1rem; line-height: 1.5; max-width: 720px; margin: 0 auto; }
+  h1 { font-family: Georgia, serif; color: var(--gold); margin: 0.4rem 0; }
+  h2 { font-family: Georgia, serif; color: var(--sage); margin-top: 1.6rem; }
+  .card { background: white; border: 1px solid var(--line); border-radius: 8px;
+          padding: 1rem; margin: 0.8rem 0; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .balance { font-size: 2.2rem; color: var(--gold); font-weight: bold; }
+  .floor { color: var(--muted); }
+  input, button { font-family: inherit; font-size: 1rem; padding: 0.6rem;
+                  border: 1px solid var(--line); border-radius: 4px; background: white; }
+  button { background: var(--gold); color: white; border: none; cursor: pointer; }
+  button:hover { background: #a87a3a; }
+  .row { display: flex; gap: 0.6rem; margin: 0.6rem 0; }
+  .row > * { flex: 1; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  td, th { padding: 0.4rem; border-bottom: 1px solid var(--line); text-align: left; }
+  .pos { color: var(--sage); }
+  .neg { color: #b85647; }
+  .pill { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 999px;
+          font-size: 0.8rem; background: var(--line); color: var(--ink); }
+  .pill.approved { background: #d9eccc; color: #345a25; }
+  .pill.pending  { background: #f4e9c4; color: #6b521a; }
+  .pill.rejected { background: #f0d3cd; color: #7a3325; }
+  small.muted { color: var(--muted); }
+</style>
+</head>
+<body>
+
+<h1>🏯 Zen Village Wallet</h1>
+<p><small class="muted">v0.1 · WhatsApp-first · PWA mirror</small></p>
+
+<div class="card">
+  <div class="row">
+    <input id="phone" placeholder="Your phone (E.164, e.g. 5215512345678)">
+    <button onclick="load()">Load</button>
+  </div>
+  <small class="muted">Saved locally; use the same phone you DM the bot from.</small>
+</div>
+
+<div id="content"></div>
+
+<script>
+const ADMIN_TOKEN = ""; // intentionally empty for participant view
+const $ = (sel) => document.querySelector(sel);
+
+function api(path, opts={}) {
+  return fetch(path, opts).then(r => r.ok ? r.json() : Promise.reject(r));
+}
+
+async function load() {
+  const phone = $("#phone").value.trim().replace(/^\+/, "").replace(/\s/g, "");
+  if (!phone) return;
+  localStorage.setItem("zv_phone", phone);
+  const c = $("#content");
+  c.innerHTML = "<p>Loading…</p>";
+  try {
+    const [bal, inv, redemptions, seal] = await Promise.all([
+      api(`/wallet/balance/${phone}`).catch(() => null),
+      api(`/wallet/invoice/${phone}`).catch(() => null),
+      api(`/wallet/redemptions`),
+      api(`/wallet/seal/${phone}`).catch(() => null),
+    ]);
+    c.innerHTML = render(bal, inv, redemptions, seal);
+  } catch (e) {
+    c.innerHTML = `<p style="color:#b85647">Error: ${e.statusText || e}</p>`;
+  }
+}
+
+function render(bal, inv, redemptions, seal) {
+  let html = "";
+  // Balance
+  if (bal) {
+    html += `<div class="card">
+      <h2>CORA Balance</h2>
+      <div class="balance">${bal.balance ?? 0}</div>
+      <small class="muted">Lifetime earned ${bal.lifetime_earned ?? 0} · spent ${bal.lifetime_spent ?? 0} · honor entries ${bal.honor_entries ?? 0}</small>
+    </div>`;
+  }
+  // Invoice
+  if (inv) {
+    const tc = inv.trust_curve_pct;
+    html += `<div class="card">
+      <h2>Active Invoice</h2>
+      <p><b>Tier:</b> ${inv.tier} · <b>Week starting:</b> ${inv.week_start}</p>
+      <p>Value: $${(inv.value_stack_cents/100).toFixed(2)} · Floor: <span class="floor">$${(inv.floor_cents/100).toFixed(2)}</span> · Trust curve: ${tc}%</p>
+      <ol>
+        <li><b>P1:</b> ${esc(inv.p1)}</li>
+        <li><b>P2:</b> ${esc(inv.p2)}</li>
+        <li><b>P3:</b> ${esc(inv.p3)}</li>
+      </ol>
+      <small class="muted">Submit proof via WhatsApp: <code>proof p1 ...</code></small>
+    </div>`;
+  } else {
+    html += `<div class="card"><h2>Active Invoice</h2><p><small class="muted">No invoice this week yet.</small></p></div>`;
+  }
+  // Recent activity
+  if (bal && bal.recent && bal.recent.length) {
+    html += `<div class="card">
+      <h2>Recent CORA Activity</h2>
+      <table><tr><th>Δ</th><th>Reason</th><th>When</th></tr>
+        ${bal.recent.map(r => `<tr>
+          <td class="${r.delta > 0 ? 'pos' : 'neg'}">${r.delta > 0 ? '+' : ''}${r.delta}</td>
+          <td>${esc(r.reason)}</td>
+          <td><small class="muted">${esc((r.ts || "").slice(0, 16))}</small></td>
+        </tr>`).join("")}
+      </table>
+    </div>`;
+  }
+  // Last seal
+  if (seal) {
+    html += `<div class="card">
+      <h2>Last Sunday Seal</h2>
+      <p>Hours: ${seal.hours_logged} · P1: ${seal.p1_status} · P2: ${seal.p2_status} · P3: ${seal.p3_status}</p>
+      <p>Final due: $${(seal.final_due_cents/100).toFixed(2)} · CORA earned: ${seal.cora_capped} (raw ${seal.cora_earned_raw} · honor ${seal.honor_entries})</p>
+      <pre style="white-space:pre-wrap;background:#f7f1e0;padding:0.8rem;border-radius:4px;">${esc(seal.narrative || "")}</pre>
+    </div>`;
+  }
+  // Redemptions menu
+  html += `<div class="card">
+    <h2>Redemption Menu</h2>
+    <table><tr><th>Item</th><th>Cost</th><th>Cadence</th></tr>
+      ${Object.entries(redemptions).map(([k, v]) => `<tr>
+        <td>${k}</td><td>${v.cost} CORA</td><td><small class="muted">${v.cadence} · ${v.cap}/period</small></td>
+      </tr>`).join("")}
+    </table>
+    <small class="muted">Request via WhatsApp: <code>redeem coconut</code></small>
+  </div>`;
+  return html;
+}
+
+function esc(s) { return (s || "").toString().replace(/[<>&]/g, c => ({"<":"&lt;",">":"&gt;","&":"&amp;"}[c])); }
+
+const saved = localStorage.getItem("zv_phone");
+if (saved) { $("#phone").value = saved; load(); }
+</script>
+
+</body>
+</html>

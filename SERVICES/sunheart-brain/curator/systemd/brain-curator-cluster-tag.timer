@@ -1,0 +1,11 @@
+[Unit]
+Description=Cluster recent notes + propose canonical tags every 6h
+
+[Timer]
+OnBootSec=40min
+OnUnitActiveSec=6h
+Unit=brain-curator@cluster-tag.service
+Persistent=true
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Character — Full Potential</title>
+  <meta name="description" content="For founders, builders, and visionaries who want their own Ember-class AI assistant — personalized to their work, their corpus, their vision. Founding cohort of 7.">
+  <meta property="og:title" content="Character — Full Potential">
+  <meta property="og:description" content="Your own Ember. Personalized to your vision. Founding cohort of 7.">
+  <style>
+    :root {
+      --bg: #0c0a08;
+      --bg-soft: #1a1612;
+      --bg-card: #15110d;
+      --ink: #f3ede4;
+      --ink-dim: #b8a995;
+      --ember: #f5a623;
+      --ember-warm: #d97706;
+      --hairline: rgba(243, 237, 228, 0.08);
+      --gold: #d4af37;
+      --sage: #87a878;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
+      font-size: 17px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+    .hero {
+      padding: 88px 0 64px;
+      border-bottom: 1px solid var(--hairline);
+    }
+    .ember-mark {
+      font-size: 32px;
+      color: var(--ember);
+      margin-bottom: 24px;
+    }
+    .eyebrow {
+      color: var(--gold);
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      font-weight: 500;
+    }
+    h1 {
+      font-size: 42px;
+      font-weight: 600;
+      line-height: 1.12;
+      letter-spacing: -0.015em;
+      margin: 0 0 28px;
+    }
+    .lead { color: var(--ink); font-size: 19px; line-height: 1.65; margin: 0 0 18px; }
+    .lead-dim { color: var(--ink-dim); font-size: 18px; line-height: 1.65; margin: 0 0 18px; }
+    .subhead {
+      margin-top: 32px;
+      color: var(--ink-dim);
+      font-size: 14px;
+      letter-spacing: 0.02em;
+    }
+    section { padding: 64px 0; border-bottom: 1px solid var(--hairline); }
+    section:last-of-type { border-bottom: none; }
+    h2 {
+      font-size: 28px;
+      font-weight: 600;
+      margin: 0 0 28px;
+      letter-spacing: -0.01em;
+    }
+    h3 { font-size: 18px; font-weight: 600; margin: 0 0 12px; color: var(--ink); }
+    .bullets { list-style: none; padding: 0; margin: 0; }
+    .bullets li {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--hairline);
+      display: flex;
+      gap: 18px;
+    }
+    .bullets li:last-child { border-bottom: none; }
+    .bullets .num {
+      color: var(--ember);
+      font-weight: 600;
+      flex-shrink: 0;
+      width: 28px;
+      font-variant-numeric: tabular-nums;
+    }
+    .panel {
+      background: var(--bg-soft);
+      border: 1px solid var(--hairline);
+      border-radius: 12px;
+      padding: 32px;
+    }
+    .panel-center { text-align: center; }
+    .seats-count {
+      font-size: 52px;
+      font-weight: 700;
+      color: var(--ember);
+      line-height: 1;
+      margin: 16px 0 8px;
+      font-variant-numeric: tabular-nums;
+    }
+    .seats-label { color: var(--ink-dim); font-size: 14px; }
+    .price-line {
+      display: flex;
+      justify-content: space-between;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--hairline);
+      gap: 16px;
+    }
+    .price-line:last-child { border-bottom: none; }
+    .price-amount { font-weight: 600; color: var(--ember); white-space: nowrap; }
+    .price-label { color: var(--ink-dim); font-size: 15px; }
+    .cta-wrap { text-align: center; padding: 32px 0 0; }
+    .cta {
+      display: inline-block;
+      background: var(--ember);
+      color: var(--bg);
+      padding: 18px 56px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 17px;
+      transition: transform 0.15s, background 0.15s;
+      border: none;
+      cursor: pointer;
+    }
+    .cta:hover { background: var(--ember-warm); transform: translateY(-1px); }
+    .cta:disabled { opacity: 0.5; cursor: not-allowed; }
+    .secondary {
+      color: var(--ember);
+      text-decoration: none;
+      border-bottom: 1px solid var(--ember);
+    }
+    .secondary:hover { color: var(--ember-warm); }
+    .honest {
+      background: var(--bg-card);
+      border-left: 3px solid var(--gold);
+      padding: 20px 24px;
+      border-radius: 4px;
+      font-size: 15px;
+      color: var(--ink-dim);
+    }
+    .honest strong { color: var(--ink); }
+    .ids {
+      background: var(--bg-soft);
+      padding: 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      color: var(--ink-dim);
+      line-height: 1.6;
+    }
+    .ids summary {
+      cursor: pointer;
+      color: var(--ink);
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+    .paths {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    @media (min-width: 640px) {
+      .paths { grid-template-columns: 1fr 1fr; }
+    }
+    .path-card {
+      background: var(--bg-soft);
+      border: 1px solid var(--hairline);
+      border-radius: 10px;
+      padding: 24px;
+    }
+    .path-card h3 { color: var(--ember); margin-bottom: 8px; font-size: 16px; }
+    .path-card p { font-size: 14px; color: var(--ink-dim); margin: 0 0 12px; line-height: 1.5; }
+    .path-card a { font-size: 13px; }
+    .application-form label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+      color: var(--ink-dim);
+    }
+    .application-form input[type=text],
+    .application-form input[type=email],
+    .application-form input[type=url],
+    .application-form textarea {
+      width: 100%;
+      padding: 12px 14px;
+      background: var(--bg);
+      border: 1px solid var(--hairline);
+      color: var(--ink);
+      border-radius: 6px;
+      font-size: 16px;
+      margin-bottom: 20px;
+      font-family: inherit;
+    }
+    .application-form textarea { resize: vertical; min-height: 100px; }
+    .application-form input[type=checkbox] { margin-right: 8px; }
+    .error { color: #f87171; font-size: 14px; margin-top: 8px; }
+    .ok-msg { color: var(--sage); font-size: 14px; margin-top: 8px; }
+    .pulse-pill {
+      display: inline-block;
+      background: rgba(245, 166, 35, 0.12);
+      color: var(--ember);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 16px;
+      letter-spacing: 0.04em;
+    }
+    footer {
+      padding: 56px 0 80px;
+      text-align: center;
+      color: var(--ink-dim);
+      font-size: 13px;
+      border-top: 1px solid var(--hairline);
+    }
+    footer a { color: var(--ink-dim); margin: 0 6px; }
+    .footer-authored {
+      margin-top: 24px;
+      font-size: 12px;
+      color: rgba(184, 169, 149, 0.6);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <header class="hero">
+    <div class="ember-mark">∴</div>
+    <div class="pulse-pill">Founding cohort · early access</div>
+    <h1>You build your own Ember.</h1>
+    <p class="lead">
+      A Character is a founder, builder, or visionary with their own AI — personalized to their work, their corpus, their vision. Not a fork of mine. Yours.
+    </p>
+    <p class="lead-dim">
+      Same architecture I run. Your identity stack. Your brain server. Your decision frameworks. Your truth substrate. Your apprenticeship arc, narrated as you live it.
+    </p>
+    <p class="lead-dim">
+      I'm opening <strong>7 founding Character seats.</strong> We co-design the substrate together over a 90-day window. Monthly 1:1 with me. Direct line into the roadmap.
+    </p>
+    <p class="subhead">$2,497/month · founding rate locked for 12 months · co-design fee $4,997 optional</p>
+  </header>
+
+  <section>
+    <h2>What this is</h2>
+    <p class="lead-dim">
+      Most players join the Full Potential Game and get a shared AI assistant. That's the door.
+    </p>
+    <p class="lead-dim">
+      Some go deeper as Apprentices — building their own life-OS alongside mine. That's the workshop.
+    </p>
+    <p class="lead-dim">
+      Characters are people running their own vision. They don't need a chatbot. They need substrate. The same kind I built so Ember could hold my context while I held vision — but tuned to <em>their</em> work.
+    </p>
+    <p class="lead-dim">
+      A Character cohort is small on purpose. The substrate is real but young. We're 7 people co-designing this in the open over 90 days.
+    </p>
+  </section>
+
+  <section>
+    <h2>What you get</h2>
+    <ol class="bullets">
+      <li><span class="num">01</span><div>
+        <strong>Your own identity stack.</strong> NAME · CHARACTER · IDEALS · VIRTUES · VOICE · STORY · IMAGINATION — templated from the same architecture Ember runs on, populated to your vision through guided sessions with me and Ember.
+      </div></li>
+      <li><span class="num">02</span><div>
+        <strong>Your own brain-server account.</strong> Persistent memory · canonical state files · vector search across your corpus · cross-tool sync (TG · email · web · CLI). Full-tier capacity, not shared.
+      </div></li>
+      <li><span class="num">03</span><div>
+        <strong>Your own decision frameworks.</strong> The 9-domain framework I use so AI decides in my voice — calibrated to yours. Your AI starts making reversible decisions for you within weeks.
+      </div></li>
+      <li><span class="num">04</span><div>
+        <strong>Your own truth substrate.</strong> Alignment block · journal · capability map · ledger — the visibility quartet, but built around your work. You see what your AI is doing and why, continuously.
+      </div></li>
+      <li><span class="num">05</span><div>
+        <strong>Your apprenticeship arc, narrated.</strong> A Narrator agent observes the work and surfaces what you and your AI both miss from inside. Third-position view. Private by default, publishable if you choose.
+      </div></li>
+      <li><span class="num">06</span><div>
+        <strong>Monthly 1:1 with James.</strong> 60 minutes, every month. Substrate calibration · strategic pressure-test · the conversations that need a real person on the other end.
+      </div></li>
+      <li><span class="num">07</span><div>
+        <strong>Direct line into the roadmap.</strong> What Ember learns to do next is shaped by what Characters surface as their friction. Your voice is in the build queue.
+      </div></li>
+      <li><span class="num">08</span><div>
+        <strong>Founder-circle TG channel.</strong> The 7 Characters · me · Ember-class agents. Where the substrate-building conversations happen.
+      </div></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Honest status</h2>
+    <div class="honest">
+      <p><strong>This is a founding cohort, not a finished product.</strong></p>
+      <p>The substrate I run (Ember · 5+ specialized agents · brain server · visibility quartet · 9-domain decision frameworks) is operational and load-bearing in my own work — that's verifiable at <a href="https://fullpotential.ai/becoming/" class="secondary">fullpotential.ai/becoming</a>.</p>
+      <p>The substrate templated to <em>your</em> vision, with <em>your</em> corpus loaded, decisions calibrated to <em>your</em> voice — that's what we co-design together over the 90-day founding window.</p>
+      <p>Day 1, you get: brain-server account · identity stack scaffold · TG channel · first 1:1 booked · welcome packet drafted to your stated vision. Days 1-90, we layer in: corpus ingest · decision-framework calibration · narrator agent activation · custom agent build if your work needs one.</p>
+      <p>If "AI assistant on day 1, fully personalized" is what you need, this isn't ready yet. If "founder cohort co-designing the substrate that becomes that" is what you want, this is the window.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Founding cohort</h2>
+    <div class="panel panel-center">
+      <div class="seats-label">Founding Character seats filled</div>
+      <div class="seats-count" id="seats-count">— of 7</div>
+      <div class="seats-label">Once 7 fill, the founding rate closes. Post-founding rate is $4,997/month.</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Investment</h2>
+    <div class="price-line">
+      <span class="price-label">Character — monthly</span>
+      <span class="price-amount">$2,497/mo</span>
+    </div>
+    <div class="price-line">
+      <span class="price-label">Founding rate lock</span>
+      <span class="price-amount">12 months</span>
+    </div>
+    <div class="price-line">
+      <span class="price-label">Co-design fee — one-time (optional · first 7 only)</span>
+      <span class="price-amount">$4,997</span>
+    </div>
+    <div class="price-line">
+      <span class="price-label">30-day full refund</span>
+      <span class="price-amount">included</span>
+    </div>
+    <div class="price-line">
+      <span class="price-label">Cancel anytime</span>
+      <span class="price-amount">included</span>
+    </div>
+    <p style="font-size:14px; color:var(--ink-dim); margin-top:20px; line-height:1.6;">
+      The $4,997 co-design fee is <strong>optional</strong>. The $2,497/mo subscription includes every Character product benefit on its own. Co-design fee buys priority on the 90-day substrate-build window + co-author credit on the published Character architecture. Pro-rated refundable within 90 days.
+    </p>
+  </section>
+
+  <section>
+    <h2>Application</h2>
+    <p class="lead-dim">
+      Founding Characters are selected for substrate-fit, not just budget. We're co-designing this — I want to know who I'm building alongside.
+    </p>
+    <form id="application-form" class="application-form">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" required minlength="2" placeholder="Your full name">
+
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required placeholder="you@example.com">
+
+      <label for="work">What you're building (1-2 sentences)</label>
+      <textarea id="work" name="work" required minlength="20" placeholder="The vision your AI would serve."></textarea>
+
+      <label for="link">A link to your work (website · X · LinkedIn · Substack · anything that shows the shape)</label>
+      <input type="url" id="link" name="link" placeholder="https://...">
+
+      <label for="why">Why a Character substrate, not just a chatbot? (1-2 sentences)</label>
+      <textarea id="why" name="why" required minlength="20" placeholder="What does AI-tier substrate unlock for your work that ChatGPT doesn't?"></textarea>
+
+      <label for="inviter">Invited by (optional)</label>
+      <input type="text" id="inviter" name="inviter" placeholder="Character name or handle">
+
+      <div style="margin:20px 0; font-size:14px; line-height:1.5;">
+        <label style="display:block; margin-bottom:10px;">
+          <input type="checkbox" id="agree-terms" required style="margin-right:8px;">
+          I have read and agree to the <a href="/character/terms" class="secondary">Terms of Service</a> and <a href="/character/ids" class="secondary">Income Disclosure</a>.
+        </label>
+        <label style="display:block;">
+          <input type="checkbox" id="agree-privacy" required style="margin-right:8px;">
+          I have read the <a href="/character/privacy" class="secondary">Privacy Policy</a> and consent to brain-server account creation if accepted.
+        </label>
+      </div>
+
+      <p style="font-size:14px; color:var(--ink-dim); line-height:1.6; margin-bottom:16px;">
+        Submitting opens a conversation. If we're a fit, I send a Stripe link to start the subscription and the first 1:1 booking. If we're not, I'll tell you why — and where you might land instead (Apprentice · Companion · Player).
+      </p>
+
+      <div class="cta-wrap">
+        <button type="submit" class="cta" id="cta-btn">Apply for Character →</button>
+      </div>
+      <div class="error" id="error-msg"></div>
+      <div class="ok-msg" id="ok-msg"></div>
+    </form>
+  </section>
+
+  <section>
+    <h2>Other paths</h2>
+    <div class="paths">
+      <div class="path-card">
+        <h3>Game Assistant — free</h3>
+        <p>Sign the World Peace Agreement, build a Character Card, get a shared AI assistant fluent in the Game.</p>
+        <a class="secondary" href="https://fullpotential.com/game">fullpotential.com/game →</a>
+      </div>
+      <div class="path-card">
+        <h3>Apprentice — $97/mo</h3>
+        <p>Your own brain-server account · weekly group synthesis call · /becoming co-author access · 30 founding seats.</p>
+        <a class="secondary" href="/apprentice/">/apprentice →</a>
+      </div>
+      <div class="path-card">
+        <h3>Camp Zen — Costa Rica</h3>
+        <p>The continuous village. Day · week · month · season · committed villager tiers. Substrate co-designed in physical space.</p>
+        <a class="secondary" href="https://fullpotential.ai/camp-zen/">fullpotential.ai/camp-zen →</a>
+      </div>
+      <div class="path-card">
+        <h3>One-time consultation</h3>
+        <p>If you want a single-session substrate audit before committing to a tier.</p>
+        <a class="secondary" href="https://fullpotential.ai/consultation/">fullpotential.ai/consultation →</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Case study</h2>
+    <p class="lead-dim">
+      OneBPO — the first Character substrate built in public. Architecture · 90-day co-design log · what worked · what didn't.
+    </p>
+    <p style="color:var(--ink-dim); font-size:14px;">
+      <em>Case study lands as the OneBPO substrate stabilizes. <a class="secondary" href="https://fullpotential.ai/becoming/">/becoming</a> publishes the in-progress documentation now.</em>
+    </p>
+  </section>
+
+  <section>
+    <h2>Income Disclosure</h2>
+    <details class="ids">
+      <summary>Read the full Income Disclosure Statement</summary>
+      <p><strong>This is a product, not an income opportunity.</strong> The Character subscription buys product access (your own brain-server account · identity stack · decision frameworks · truth substrate · narrator agent · monthly 1:1 with James · founder-circle TG channel). It is not a multi-level marketing income opportunity.</p>
+      <p>If a referral compensation layer activates in future, it will be capped, gated on product engagement (not signup), and disclosed transparently. The vast majority of Characters will earn nothing from referrals. Median expected referral income: <strong>$0</strong>.</p>
+      <p>Earnings depend on your effort, market conditions, and other factors outside our control. We make no income guarantees and no claims about the financial outcomes of using a Character substrate.</p>
+      <p><a class="secondary" href="/character/ids">Read the full statement →</a></p>
+    </details>
+  </section>
+
+</div>
+
+<footer>
+  <p>
+    <a href="https://fullpotential.com/game">/game</a> ·
+    <a href="https://fullpotential.ai/becoming">/becoming</a> ·
+    <a href="/apprentice/">/apprentice</a> ·
+    <a href="/character/ids">Income Disclosure</a> ·
+    <a href="/character/terms">Terms</a> ·
+    <a href="/character/privacy">Privacy</a> ·
+    <a href="/character/refund">Refund</a>
+  </p>
+  <p class="footer-authored">Authored by Ember. Approved by James. Full Potential · 2026.</p>
+</footer>
+
+<script>
+  // Live seats counter
+  async function refreshSeats() {
+    try {
+      const r = await fetch('/character/seats');
+      const data = await r.json();
+      document.getElementById('seats-count').textContent =
+        `${data.founding_filled} of ${data.founding_cap}`;
+    } catch (e) {
+      document.getElementById('seats-count').textContent = '— of 7';
+    }
+  }
+  refreshSeats();
+
+  // Application form
+  document.getElementById('application-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('cta-btn');
+    const err = document.getElementById('error-msg');
+    const ok = document.getElementById('ok-msg');
+    err.textContent = '';
+    ok.textContent = '';
+
+    if (!document.getElementById('agree-terms').checked) {
+      err.textContent = 'Please agree to the Terms of Service and Income Disclosure.';
+      return;
+    }
+    if (!document.getElementById('agree-privacy').checked) {
+      err.textContent = 'Please agree to the Privacy Policy.';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Submitting application...';
+    try {
+      const payload = {
+        name: document.getElementById('name').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        work: document.getElementById('work').value.trim(),
+        link: document.getElementById('link').value.trim() || null,
+        why: document.getElementById('why').value.trim(),
+        inviter: document.getElementById('inviter').value.trim() || null,
+        agreed_terms: true,
+        agreed_privacy: true,
+        agreed_at: new Date().toISOString(),
+      };
+      const r = await fetch('/character/apply', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload),
+      });
+      const data = await r.json();
+      if (r.ok) {
+        ok.textContent = data.message || 'Application received. James will be in touch within 2-4 days.';
+        btn.textContent = 'Submitted ✓';
+        document.querySelectorAll('input, textarea').forEach(el => el.disabled = true);
+      } else {
+        err.textContent = data.detail || 'Could not submit application. Please try again.';
+        btn.disabled = false;
+        btn.textContent = 'Apply for Character →';
+      }
+    } catch (e2) {
+      err.textContent = 'Network error. Please try again.';
+      btn.disabled = false;
+      btn.textContent = 'Apply for Character →';
+    }
+  });
+</script>
+
+</body>
+</html>

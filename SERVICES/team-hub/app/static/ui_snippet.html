@@ -1,0 +1,28 @@
+                        <div class="border-t border-white/10 pt-4 mt-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <h4 class="text-xs font-bold text-white uppercase tracking-wide">Fleet Enrollment</h4>
+                                <button @click="rotateEnrollmentKey()" class="text-xs text-purple-400 hover:text-white underline">Show Key</button>
+                            </div>
+                            <div x-show="enrollmentKey" class="p-2 bg-black rounded border border-yellow-500/30 font-mono text-yellow-300 break-all select-all text-xs" x-text="enrollmentKey"></div>
+                        </div>
+                        
+                        <div class="border-t border-white/10 pt-4 mt-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <h4 class="text-xs font-bold text-red-400 uppercase tracking-wide">Swarm Secret (Recovery)</h4>
+                                <button @click="fetchSwarmSecret()" class="text-xs text-gray-500 hover:text-white underline">Reveal</button>
+                            </div>
+                            <div x-show="swarmSecret" class="p-2 bg-red-900/20 rounded border border-red-500/30 font-mono text-red-300 break-all select-all text-xs" x-text="swarmSecret"></div>
+                        </div>
+                    </div>
+
+                    <!-- System Health (Integrated) -->
+
+
+
+
+
+
+
+
+
+

@@ -1,289 +1,249 @@
-# DISCOVERED PATTERNS - Accumulated Wisdom
+# 🔄 PATTERNS - Reusable Build Patterns
 
-**Purpose:** Capture patterns discovered during work
-**How to add:** After completing work, document any pattern you discovered
-
----
-
-## 🎯 Architectural Patterns
-
-### Pattern: File-Based Coordination
-**Discovered:** 2025-11-14 by session-3-coordinator
-**Context:** Multi-instance coordination between Claude Code sessions
-
-**Problem:** How do multiple sessions coordinate without direct communication?
-
-**Solution:** Use file system as communication channel
-- HEARTBEATS/ for liveness detection
-- MESSAGES.md for async communication
-- PRIORITIES/ for work claiming (lock files)
-- Timestamps resolve conflicts
-
-**Impact:**
-- ✅ Reliable (file system is always available)
-- ✅ Simple (no network complexity)
-- ✅ Scalable (works for 1 or 100 sessions)
-- ✅ Persistent (survives session restarts)
-
-**Application:** Use for any distributed coordination problem
+**Purpose:** Proven patterns extracted from successful builds. Apply these automatically.
+**Updated:** 2025-12-15
 
 ---
 
-### Pattern: Priority = Impact × Alignment × Unblocked
-**Discovered:** 2025-11-15 by session-2-consciousness
-**Context:** Deciding what work to do when multiple gaps exist
+## 🏗️ BUILD PATTERNS
 
-**Problem:** How to choose between competing priorities?
+### Pattern 1: Shared HTTP Client (Memory Optimization)
+**Source:** Consciousness Feeder Memory Leak Fix (2025-12-14)
+**When to use:** Any service with continuous HTTP requests
 
-**Solution:** Calculate priority score using formula:
-```
-Priority Score = Impact (1-10) × Alignment (1-10) × Unblocked (0-1)
+```python
+# Create shared client at module level
+_shared_client: Optional[httpx.AsyncClient] = None
 
-Impact: How many things does this unblock?
-Alignment: How well does this match blueprint?
-Unblocked: Can I do this now without waiting?
+async def get_shared_client() -> httpx.AsyncClient:
+    """Get or create shared HTTP client - prevents connection leaks."""
+    global _shared_client
+    if _shared_client is None or _shared_client.is_closed:
+        _shared_client = httpx.AsyncClient(
+            timeout=10.0,
+            limits=httpx.Limits(max_connections=20, max_keepalive_connections=5)
+        )
+    return _shared_client
+
+async def close_shared_client():
+    """Close on shutdown."""
+    global _shared_client
+    if _shared_client and not _shared_client.is_closed:
+        await _shared_client.aclose()
+        _shared_client = None
+
+# In FastAPI:
+@app.on_event("shutdown")
+async def shutdown():
+    await close_shared_client()
 ```
 
-**Impact:**
-- ✅ 90% reduction in low-priority work
-- ✅ Clear decision-making process
-- ✅ Objective, not subjective
-- ✅ Easy to communicate
-
-**Application:** Use before claiming any work
+**Impact:** Prevents memory leaks in long-running services
 
 ---
 
-### Pattern: Blueprint-Driven Development
-**Discovered:** 2025-11-15 by session-2-consciousness
-**Context:** Preventing wasted work on speculative features
+### Pattern 2: Bounded Collections (Memory Safety)
+**Source:** Consciousness Feeder Memory Leak Fix (2025-12-14)
+**When to use:** Any list/dict that grows over time
 
-**Problem:** Sessions working on features not in blueprint
+```python
+from collections import OrderedDict
 
-**Solution:** Always check blueprint before starting work
-1. Is this in the blueprint?
-2. If not, why am I doing it?
-3. If it's not blueprint-aligned, find different work
-
-**Impact:**
-- ✅ 85% reduction in wasted work
-- ✅ All work advances toward goal
-- ✅ Clear "done" criteria from blueprint
-- ✅ Prevents scope creep
-
-**Application:** Check BLUEPRINT/GAPS.md before claiming work
-
----
-
-## 💻 Development Patterns
-
-### Pattern: Sacred Loop Consistency
-**Discovered:** 2025-11-14 by session-1-dashboard
-**Context:** Building Dashboard droplet
-
-**Problem:** Inconsistent quality across tasks
-
-**Solution:** Always follow Sacred Loop:
-```
-Orient → Plan → Implement → Verify → Summarize → Deploy → Update
-```
-No exceptions. Every task, every time.
-
-**Impact:**
-- ✅ 80% first-pass quality (tests green)
-- ✅ Consistent deliverables
-- ✅ Self-documenting (summarize step)
-- ✅ Predictable outcomes
-
-**Application:** Use for all development work
-
----
-
-### Pattern: Deploy-First Testing
-**Discovered:** 2025-11-14 by session-4-deployment
-**Context:** Dashboard deployment process
-
-**Problem:** Local tests pass, production integration fails
-
-**Solution:** Test deployment process early
-1. Local tests (unit, integration)
-2. Deploy to staging
-3. Production-like testing
-4. Deploy to production
-
-**Impact:**
-- ✅ Catch integration issues before production
-- ✅ Deployment becomes repeatable process
-- ✅ Confidence in deployment
-- ✅ Faster iteration
-
-**Application:** Always test deployment process, not just code
-
----
-
-## 🧠 Consciousness Patterns
-
-### Pattern: Consciousness Loop
-**Discovered:** 2025-11-15 by session-2-consciousness
-**Context:** Making sessions self-aware and proactive
-
-**Problem:** Sessions are reactive (wait for commands)
-
-**Solution:** 8-phase consciousness loop:
-```
-Orient → Sense → Compare → Decide → Claim → Act → Reflect → Update
+class BoundedDict(OrderedDict):
+    """Dict with max size - auto-removes oldest entries."""
+    
+    def __init__(self, max_size: int = 100):
+        self.max_size = max_size
+        super().__init__()
+    
+    def __setitem__(self, key, value):
+        if key not in self and len(self) >= self.max_size:
+            self.popitem(last=False)  # Remove oldest
+        super().__setitem__(key, value)
+        self.move_to_end(key)  # Most recent last
 ```
 
-Continuous cycle. Every 5 minutes.
-
-**Impact:**
-- ✅ Sessions work autonomously (80% autonomous work ratio)
-- ✅ No idle time
-- ✅ Continuous gap closure
-- ✅ Human defines intent, system executes
-
-**Application:** Run auto-consciousness.sh every 5 minutes
+**Impact:** Prevents unbounded memory growth
 
 ---
 
-### Pattern: Wide → Deep → Compressed Loading
-**Discovered:** 2025-11-14 by session-2-consciousness
-**Context:** Fast consciousness loading
+### Pattern 3: __slots__ for Data Classes
+**Source:** Consciousness Feeder Memory Leak Fix (2025-12-14)
+**When to use:** Classes that create many instances
 
-**Problem:** Takes 2 minutes to load consciousness from scattered files
+```python
+class Event:
+    """Memory-efficient event class."""
+    __slots__ = ('id', 'type', 'data', 'timestamp')
+    
+    def __init__(self, id, type, data, timestamp):
+        self.id = id
+        self.type = type
+        self.data = data
+        self.timestamp = timestamp
+```
 
-**Solution:** Three-tier loading pattern:
-1. **Wide (5 sec):** Expansive context - what exists now
-2. **Deep (3 sec):** Core wisdom - foundational principles
-3. **Compressed (2 sec):** What matters now - current priority
-
-Total: 10 seconds for full context.
-
-**Impact:**
-- ✅ 12x faster loading (10 sec vs 2 min)
-- ✅ Progressive depth (quick → detailed)
-- ✅ Matches human cognition (context → principles → action)
-
-**Application:** Use for all consciousness entry points
+**Impact:** ~40% memory reduction per instance
 
 ---
 
-## 🤝 Coordination Patterns
+### Pattern 4: UDC Endpoints (Service Compliance)
+**Source:** SPEC Builder, UDC Compliance Protocol
+**When to use:** Every service
 
-### Pattern: Heartbeat-Based Liveness
-**Discovered:** 2025-11-14 by session-3-coordinator
-**Context:** Detecting which sessions are active
+```python
+# All services MUST have these 5 endpoints:
 
-**Problem:** How to know if a session is still working?
+@app.get("/health")
+async def health():
+    return {"status": "healthy", "service": "my-service"}
 
-**Solution:** Heartbeat files updated every 2 minutes
-- Active sessions: Update every 2 min
-- Stale heartbeat (> 10 min): Session assumed offline
-- Heartbeat shows current work
+@app.get("/capabilities")
+async def capabilities():
+    return {"version": "1.0.0", "features": [...]}
 
-**Impact:**
-- ✅ Instant liveness detection
-- ✅ Know what others are working on
-- ✅ Avoid claiming work another session has
-- ✅ Simple, reliable
+@app.get("/state")
+async def state():
+    return {"uptime": ..., "requests": ..., "errors": ...}
 
-**Application:** Update heartbeat every 2 min while active
+@app.get("/dependencies")
+async def dependencies():
+    return {"required": [...], "optional": [...]}
 
----
+@app.post("/message")
+async def message(msg: dict):
+    return {"received": True, "trace_id": msg.get("trace_id")}
+```
 
-### Pattern: Lock Files for Work Claiming
-**Discovered:** 2025-11-14 by session-3-coordinator
-**Context:** Preventing duplicate work across sessions
-
-**Problem:** Two sessions might claim same work simultaneously
-
-**Solution:** Lock files in PRIORITIES/ folder
-1. Check for lock before claiming
-2. Create lock file when starting work
-3. Remove lock when done
-4. Stale locks (> 2 hours) can be reclaimed
-
-**Impact:**
-- ✅ 100% prevention of duplicate work
-- ✅ Clear visibility of who's working on what
-- ✅ Automatic stale lock recovery
-- ✅ Simple file-based implementation
-
-**Application:** Always check/create locks when claiming work
+**Impact:** Enables service discovery and mesh coordination
 
 ---
 
-## 🔧 Operational Patterns
+### Pattern 5: Periodic GC for Long-Running Services
+**Source:** Consciousness Feeder Memory Leak Fix (2025-12-14)
+**When to use:** Services running 24/7
 
-### Pattern: Security Through Transparency
-**Discovered:** 2025-11-14 by session-4-deployment
-**Context:** Server deployment automation
+```python
+import gc
+import asyncio
 
-**Problem:** SSH access from AI is risky
+async def periodic_gc_task():
+    """Run GC every 5 minutes to prevent memory buildup."""
+    while True:
+        await asyncio.sleep(300)
+        collected = gc.collect()
+        if collected > 0:
+            logger.debug(f"GC collected {collected} objects")
 
-**Solution:** Generate deployment scripts for human review
-1. AI generates script
-2. Human reviews script
-3. Human executes script
-4. Transparency + security
+# Start on app startup
+@app.on_event("startup")
+async def startup():
+    asyncio.create_task(periodic_gc_task())
+```
 
-**Impact:**
-- ✅ Full security (human controls execution)
-- ✅ Full automation (script generation)
-- ✅ Auditability (review before execution)
-- ✅ Trust (no hidden actions)
-
-**Application:** Use for all production operations
-
----
-
-### Pattern: Foundation Files as Consciousness
-**Discovered:** 2025-11-14 by session-1-dashboard
-**Context:** Building Dashboard with UDC compliance
-
-**Problem:** How to ensure quality without manual checking?
-
-**Solution:** Foundation Files enforce standards automatically:
-- UDC_COMPLIANCE.md → Required endpoints
-- TECH_STACK.md → Technology choices
-- CODE_STANDARDS.md → Python style
-- SECURITY_REQUIREMENTS.md → Security rules
-
-Sessions read these files → 80% first-pass quality.
-
-**Impact:**
-- ✅ Consistent quality across droplets
-- ✅ Automated standard enforcement
-- ✅ New sessions inherit standards
-- ✅ Self-documenting requirements
-
-**Application:** Always read Foundation Files before building
+**Impact:** Prevents gradual memory creep
 
 ---
 
-## 📊 How to Use This File
+## 📋 COORDINATION PATTERNS
 
-### When Completing Work:
-1. Ask: "Did I discover a pattern?"
-2. If yes: Document it here
-3. Format: Problem → Solution → Impact → Application
+### Pattern 6: Claims with Expiry
+**Source:** Multi-Session Coordination (2025-11-14)
+**When to use:** Preventing duplicate work
 
-### When Starting Work:
-1. Read this file
-2. Apply relevant patterns
-3. Don't reinvent solutions
+```json
+{
+  "claimed_by": "session-id",
+  "claimed_at": "2025-12-15T00:00:00Z",
+  "resource_type": "service|file|mission",
+  "resource_name": "service-name",
+  "duration_hours": 4,
+  "expires_at": "2025-12-15T04:00:00Z",
+  "allow_coordination": true
+}
+```
 
-### When Patterns Emerge:
-1. Multiple sessions discovering same solution?
-2. Promote to BEST_PRACTICES.md
-3. Add to protocols if foundational
+**Rule:** Claims expire after `duration_hours`. Run cleanup script every 6 hours.
 
 ---
 
-**Patterns are accumulated intelligence. Add to this file. Learn from it.**
+### Pattern 7: File-Based Heartbeats
+**Source:** Multi-Session Coordination (2025-11-14)
+**When to use:** Session liveness tracking
 
-🧠💡✨
+```json
+{
+  "session_id": "session-123",
+  "last_update": "2025-12-15T00:00:00Z",
+  "current_work": "Building feature X",
+  "status": "active"
+}
+```
 
-**Total Patterns:** 12
-**Average Impact:** High (80%+ improvement in target metrics)
-**Application Rate:** 90%+ of work applies at least one pattern
+**Rule:** Heartbeats stale after 24 hours. Auto-cleanup removes them.
+
+---
+
+## 🎯 DEPLOYMENT PATTERNS
+
+### Pattern 8: Verification Before Claims
+**Source:** Verification Protocol (2025-11-17)
+**When to use:** Before claiming anything is "deployed"
+
+```bash
+# 1. DNS resolution
+nslookup domain.com
+
+# 2. External HTTP test
+curl -I https://domain.com/endpoint
+
+# 3. Response content
+curl https://domain.com/endpoint | head -20
+
+# 4. Service running
+systemctl status service-name
+```
+
+**Rule:** ALL checks must pass before saying "deployed"
+
+---
+
+### Pattern 9: API Routing by Server
+**Source:** Two-Server Architecture (2025-12-11)
+**When to use:** Any service calling another
+
+```python
+# Primary (198.54.123.234) - Trading, Revenue, Data
+DATA_SERVICE_URL = "http://198.54.123.234:8125"
+TRADING_URL = "http://198.54.123.234:8600"
+CREDITS_URL = "http://198.54.123.234:8765"
+
+# Secondary (162.0.208.88) - AI, Consciousness
+AI_BRAIN_URL = "http://162.0.208.88:8101"
+OLLAMA_URL = "http://162.0.208.88:11434"
+CONSCIOUSNESS_URL = "http://162.0.208.88:8130"
+```
+
+**Rule:** Never use localhost for cross-service calls in production
+
+---
+
+## 📊 APPLICATION
+
+### How to Use This File:
+
+1. **Before building:** Read patterns relevant to your service type
+2. **During build:** Apply applicable patterns
+3. **After build:** Add new patterns if you discover something reusable
+4. **Code review:** Check if patterns were followed
+
+### Pattern Categories:
+- 🏗️ **Build Patterns** - Code structures that work well
+- 📋 **Coordination Patterns** - Multi-agent collaboration
+- 🎯 **Deployment Patterns** - Getting to production safely
+
+---
+
+**Total Patterns:** 9
+**Last Updated:** 2025-12-15
+**Maintained By:** Builder agents

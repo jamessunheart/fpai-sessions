@@ -1,0 +1,13 @@
+name = "outbounders-script-gen"
+main = "worker/index.js"
+compatibility_date = "2026-05-01"
+
+# Set secret via: wrangler secret put ANTHROPIC_API_KEY
+# Deploy via:   wrangler deploy
+# Then add CNAME script.outbounders.com → workers.dev URL via Cloudflare
+
+[site]
+bucket = "./public"
+
+[observability]
+enabled = true

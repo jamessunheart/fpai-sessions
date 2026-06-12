@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  ad-portal-api:
+    build: .
+    container_name: ad-portal-api
+    ports:
+      - "8800:8800"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://adportal:${DB_PASSWORD}@db:5432/ad_portal
+      - META_APP_ID=${META_APP_ID}
+      - META_APP_SECRET=${META_APP_SECRET}
+      - META_ACCESS_TOKEN=${META_ACCESS_TOKEN}
+      - META_AD_ACCOUNT_ID=${META_AD_ACCOUNT_ID}
+      - META_PIXEL_ID=${META_PIXEL_ID}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - UC_GATEWAY_URL=http://198.54.123.234:8765
+      - AI_BRAIN_URL=http://162.0.208.88:8101
+    depends_on:
+      - db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8800/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  ad-portal-frontend:
+    build: ./frontend
+    container_name: ad-portal-frontend
+    ports:
+      - "8801:80"
+    depends_on:
+      - ad-portal-api
+    restart: unless-stopped
+
+  db:
+    image: postgres:15-alpine
+    container_name: ad-portal-db
+    environment:
+      - POSTGRES_DB=ad_portal
+      - POSTGRES_USER=adportal
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+

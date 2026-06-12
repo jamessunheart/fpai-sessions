@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Veto Inbox · James</title>
+<style>
+  :root {
+    --bg: #fbf7ee;       /* cream */
+    --ink: #2a261f;
+    --gold: #b88a2c;
+    --sage: #6f8b6e;
+    --rust: #b85c2c;
+    --muted: #8a8377;
+    --card: #fff;
+    --hi-bg: #fff4d6;
+    --line: rgba(0,0,0,.08);
+    --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1a16;
+      --ink: #f0eadd;
+      --gold: #d9a93e;
+      --sage: #95b894;
+      --rust: #d97a48;
+      --muted: #a5a194;
+      --card: #2a261f;
+      --hi-bg: #3a2f1a;
+      --line: rgba(255,255,255,.10);
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { background: var(--bg); color: var(--ink); margin: 0; padding: 0;
+    font-family: 'Bricolage Grotesque', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased; line-height: 1.4; }
+  header { padding: 20px 18px 6px; border-bottom: 1px solid var(--line); }
+  h1 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
+  .sub { color: var(--muted); font-size: 13px; margin-top: 4px; }
+  .stats-bar { display: flex; gap: 16px; padding: 10px 18px; flex-wrap: wrap; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .stats-bar strong { color: var(--gold); font-size: 15px; }
+  .ctrl { padding: 10px 18px; display: flex; gap: 8px; flex-wrap: wrap; border-bottom: 1px solid var(--line); }
+  .ctrl button, .ctrl input {
+    background: var(--card); border: 1px solid var(--line); border-radius: 6px;
+    padding: 6px 12px; font-family: inherit; font-size: 13px; cursor: pointer; color: var(--ink);
+  }
+  .ctrl button.active { background: var(--gold); color: #fff; border-color: var(--gold); }
+  .ctrl input { flex: 1; min-width: 180px; cursor: text; }
+  main { padding: 14px 18px 80px; }
+  .item {
+    background: var(--card); border: 1px solid var(--line); border-radius: 8px;
+    padding: 12px 14px; margin: 0 0 10px;
+  }
+  .item.high { background: var(--hi-bg); border-color: var(--gold); }
+  .item-head { display: flex; gap: 10px; align-items: center; font-family: var(--mono); font-size: 11px; color: var(--muted); margin-bottom: 4px; flex-wrap: wrap; }
+  .item-id { color: var(--gold); font-weight: 600; }
+  .pill { padding: 1px 7px; border-radius: 10px; background: var(--line); font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .pill.lev-high { background: var(--gold); color: #fff; }
+  .pill.lev-med  { background: var(--sage); color: #fff; }
+  .pill.urg-high { background: var(--rust); color: #fff; }
+  .pill.cat { background: var(--ink); color: var(--bg); }
+  .pill.wip { background: var(--rust); color: #fff; }
+  .desc { font-size: 14px; line-height: 1.5; margin: 4px 0; }
+  .meta { color: var(--muted); font-size: 12px; font-family: var(--mono); }
+  .item-actions { margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .item-actions code {
+    background: var(--bg); border: 1px solid var(--line); border-radius: 4px;
+    padding: 2px 6px; font-size: 11px; font-family: var(--mono);
+    cursor: copy;
+  }
+  .empty { padding: 40px 0; text-align: center; color: var(--muted); }
+  .section-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin: 24px 0 10px; font-weight: 600; }
+  details { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--line); }
+  details summary { cursor: pointer; color: var(--muted); font-size: 13px; }
+  footer { padding: 12px 18px; color: var(--muted); font-size: 11px; text-align: center; border-top: 1px solid var(--line); font-family: var(--mono); }
+  .gen-at { color: var(--muted); font-family: var(--mono); font-size: 11px; }
+  .stale { color: var(--rust); font-weight: 600; }
+</style>
+</head>
+<body>
+<header>
+  <h1>📥 Veto Inbox</h1>
+  <div class="sub">Single source of truth for all pending James-irreducible decisions. v0.1</div>
+</header>
+
+<div class="stats-bar" id="stats-bar">
+  <span>Pending: <strong id="stat-pending">—</strong></span>
+  <span>WIP: <strong id="stat-wip">—</strong></span>
+  <span>High-lev: <strong id="stat-high">—</strong></span>
+  <span>Total time: <strong id="stat-time">—</strong> min</span>
+  <span class="gen-at" id="gen-at">…</span>
+</div>
+
+<div class="ctrl">
+  <button data-cat="all" class="active">All</button>
+  <button data-cat="high">High-lev</button>
+  <button data-cat="yield">Yield</button>
+  <button data-cat="village">Village</button>
+  <button data-cat="champion">Champion</button>
+  <button data-cat="voice">Voice</button>
+  <button data-cat="strategic">Strategic</button>
+  <button data-cat="ops">Ops</button>
+  <button data-cat="bridge">Bridge</button>
+  <input id="search" placeholder="Filter…">
+</div>
+
+<main>
+  <div class="section-title">Active</div>
+  <div id="items"></div>
+
+  <details>
+    <summary>Recently resolved (last 20)</summary>
+    <div id="resolved" style="margin-top: 12px"></div>
+  </details>
+</main>
+
+<footer>
+  Producer: <code>inbox_add.sh</code> · CLI: <code>veto_inbox.py</code> · Refresh: <code>refresh_pwa.sh</code><br>
+  <span>Phoenix-disciplined · queue.jsonl is canonical · this PWA is a view-layer</span>
+</footer>
+
+<script>
+const DATA_URL = 'inbox.json';
+
+function escapeHtml(s) {
+  return (s || '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+  }[c]));
+}
+
+let STATE = { all: [], resolved: [], filter: 'all', q: '' };
+
+function render() {
+  const root = document.getElementById('items');
+  const items = STATE.all.filter(it => {
+    if (STATE.filter === 'high') return it.leverage === 'high';
+    if (STATE.filter !== 'all' && it.category !== STATE.filter) return false;
+    if (STATE.q) {
+      const q = STATE.q.toLowerCase();
+      const blob = (it.description + ' ' + it.category + ' ' + (it.notes || '')).toLowerCase();
+      if (!blob.includes(q)) return false;
+    }
+    return true;
+  });
+
+  if (!items.length) {
+    root.innerHTML = '<div class="empty">No matching items.</div>';
+  } else {
+    root.innerHTML = items.map(it => {
+      const isHi = it.leverage === 'high';
+      return `
+        <div class="item ${isHi ? 'high' : ''}">
+          <div class="item-head">
+            <span class="item-id">[${escapeHtml(it.id)}]</span>
+            <span class="pill cat">${escapeHtml(it.category)}</span>
+            <span class="pill lev-${escapeHtml(it.leverage)}">lev: ${escapeHtml(it.leverage)}</span>
+            <span class="pill urg-${escapeHtml(it.urgency)}">urg: ${escapeHtml(it.urgency)}</span>
+            <span>~${it.time_cost_min}m</span>
+            ${it.status === 'in_progress' ? '<span class="pill wip">WIP</span>' : ''}
+          </div>
+          <div class="desc">${escapeHtml(it.description)}</div>
+          ${it.notes ? `<div class="meta">${escapeHtml(it.notes)}</div>` : ''}
+          ${it.context_link ? `<div class="meta">→ <a href="${escapeHtml(it.context_link)}">${escapeHtml(it.context_link)}</a></div>` : ''}
+          <div class="item-actions">
+            <code class="copy" onclick="copyCmd(this)">/inbox show ${escapeHtml(it.id)}</code>
+            <code class="copy" onclick="copyCmd(this)">/inbox resolve ${escapeHtml(it.id)}</code>
+            <code class="copy" onclick="copyCmd(this)">/inbox progress ${escapeHtml(it.id)}</code>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Resolved
+  const rroot = document.getElementById('resolved');
+  if (!STATE.resolved.length) {
+    rroot.innerHTML = '<div class="empty">No resolved items yet.</div>';
+  } else {
+    rroot.innerHTML = STATE.resolved.map(it => {
+      const emoji = it.status === 'resolved' ? '✓' : it.status === 'vetoed' ? '✗' : '·';
+      return `
+        <div class="item" style="opacity: 0.6">
+          <div class="item-head">
+            <span>${emoji}</span>
+            <span class="item-id">[${escapeHtml(it.id)}]</span>
+            <span class="pill cat">${escapeHtml(it.category)}</span>
+            <span>${escapeHtml(it.resolved_at || it.created_at || '')}</span>
+          </div>
+          <div class="desc">${escapeHtml(it.description)}</div>
+          ${it.notes ? `<div class="meta">${escapeHtml(it.notes.split('\n').pop())}</div>` : ''}
+        </div>
+      `;
+    }).join('');
+  }
+}
+
+function copyCmd(el) {
+  navigator.clipboard?.writeText(el.textContent);
+  const orig = el.textContent;
+  el.textContent = '✓ copied';
+  setTimeout(() => { el.textContent = orig; }, 900);
+}
+
+async function load() {
+  try {
+    const r = await fetch(DATA_URL + '?_=' + Date.now(), { cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const data = await r.json();
+    STATE.all = data.active || [];
+    STATE.resolved = data.recent_resolved || [];
+
+    document.getElementById('stat-pending').textContent =
+      STATE.all.filter(it => it.status === 'pending').length;
+    document.getElementById('stat-wip').textContent =
+      STATE.all.filter(it => it.status === 'in_progress').length;
+    document.getElementById('stat-high').textContent =
+      STATE.all.filter(it => it.leverage === 'high').length;
+    document.getElementById('stat-time').textContent =
+      STATE.all.reduce((s, it) => s + (it.time_cost_min || 0), 0);
+
+    const gen = data.generated_at || '';
+    const ageMin = gen ? Math.round((Date.now() - new Date(gen).getTime()) / 60000) : null;
+    const stale = ageMin != null && ageMin > 30;
+    const el = document.getElementById('gen-at');
+    el.textContent = `data: ${gen}${ageMin != null ? ` (${ageMin}m ago)` : ''}`;
+    el.className = 'gen-at' + (stale ? ' stale' : '');
+
+    render();
+  } catch (e) {
+    document.getElementById('items').innerHTML =
+      `<div class="empty">⚠️ Could not load inbox.json: ${escapeHtml(e.message)}<br><br>` +
+      `Run on Mac: <code>/Users/jamessunheart/FPAI_Cockpit/infra/scripts/refresh_pwa.sh</code></div>`;
+  }
+}
+
+document.querySelectorAll('.ctrl button').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.ctrl button').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    STATE.filter = b.dataset.cat;
+    render();
+  });
+});
+document.getElementById('search').addEventListener('input', e => {
+  STATE.q = e.target.value;
+  render();
+});
+
+load();
+// Auto-refresh every 30s if tab is visible
+setInterval(() => { if (!document.hidden) load(); }, 30000);
+</script>
+</body>
+</html>

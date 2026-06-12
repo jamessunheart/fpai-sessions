@@ -1,0 +1,93 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Assistant Schema",
+  "description": "Configuration specification for Apprentice OS assistants",
+  "type": "object",
+  "required": ["id", "name", "type", "created_by"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique assistant identifier"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable assistant name"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["ai", "automation", "hybrid"],
+      "description": "Type of assistant"
+    },
+    "created_by": {
+      "type": "string",
+      "description": "ID of apprentice who created this assistant"
+    },
+    "description": {
+      "type": "string",
+      "description": "What this assistant does"
+    },
+    "capabilities": {
+      "type": "array",
+      "description": "What this assistant can do",
+      "items": {
+        "type": "string"
+      }
+    },
+    "modules_installed": {
+      "type": "array",
+      "description": "Modules this assistant has access to",
+      "items": {
+        "type": "object",
+        "properties": {
+          "module_id": { "type": "string" },
+          "version": { "type": "string" },
+          "installed_at": { "type": "string", "format": "date-time" }
+        }
+      }
+    },
+    "connections": {
+      "type": "array",
+      "description": "Other assistants this one can communicate with",
+      "items": {
+        "type": "object",
+        "properties": {
+          "assistant_id": { "type": "string" },
+          "connection_type": { "type": "string", "enum": ["bidirectional", "send_only", "receive_only"] },
+          "trust_level": { "type": "number", "minimum": 0, "maximum": 100 }
+        }
+      }
+    },
+    "memory": {
+      "type": "object",
+      "properties": {
+        "warm_memory_enabled": { "type": "boolean", "default": true },
+        "cold_memory_enabled": { "type": "boolean", "default": true },
+        "memory_entity_id": { "type": "string" }
+      }
+    },
+    "governance": {
+      "type": "object",
+      "properties": {
+        "respects_three_nevers": { "type": "boolean", "default": true },
+        "checks_priority_stack": { "type": "boolean", "default": true },
+        "autonomous_actions_allowed": { "type": "array", "items": { "type": "string" } },
+        "requires_approval_for": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "paused", "deprecated"],
+      "default": "active"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}
+
+

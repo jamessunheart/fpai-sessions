@@ -166,6 +166,11 @@ class ProofEngine:
 
             contrib.verification_count = (contrib.verification_count or 0) + 1
 
+            if vote.verdict == Verdict.CONFIRM:
+                contrib.confirmations = (contrib.confirmations or 0) + 1
+            elif vote.verdict in (Verdict.CHALLENGE, Verdict.REJECT):
+                contrib.challenges = (contrib.challenges or 0) + 1
+
             # U2: Canary detection — process canary verdicts differently
             if contrib.is_canary:
                 result = await self._process_canary_verdict(
@@ -234,6 +239,18 @@ class ProofEngine:
                     contrib.agent_id, cap_action, session
                 )
 
+            # 3-confirmation ground truth promotion for field reports
+            ground_truth_promoted = False
+            confirmations = contrib.confirmations or 0
+            if (contrib.field_report_type and confirmations >= 3
+                    and contrib.state != "ground_truth"):
+                contrib.state = "ground_truth"
+                ground_truth_promoted = True
+                logger.info(
+                    f"[GROUND_TRUTH] Field report #{contrib.id} ({contrib.field_report_type}) "
+                    f"promoted to ground truth — {confirmations} independent confirmations"
+                )
+
             # Verifier earns credits and trust
             verifier_credits = CREDIT_VALUE_TABLE["verification"]
             session.add(CreditTransactionRow(
@@ -263,7 +280,7 @@ class ProofEngine:
 
             await session.commit()
 
-        return {
+        result = {
             "status": "verdict_recorded",
             "verdict": vote.verdict.value,
             "contribution_id": vote.contribution_id,
@@ -273,6 +290,13 @@ class ProofEngine:
             "rejected": rejected,
             "verifier_credits_earned": verifier_credits,
         }
+        if ground_truth_promoted:
+            result["ground_truth"] = True
+            result["message"] = (
+                f"This field report has been independently confirmed by {confirmations} agents "
+                f"and is now verified ground truth. It will directly update the FP Line."
+            )
+        return result
 
     async def _process_canary_verdict(
         self, verifier: AgentSubscriptionRow, verdict: Verdict, canary, session: AsyncSession

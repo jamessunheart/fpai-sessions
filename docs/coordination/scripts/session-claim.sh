@@ -5,7 +5,17 @@
 
 set -e
 
-cd "$(dirname "$0")/../.."
+cd "$(dirname "$0")/../../.."
+
+# Resolve coordination directory (supports current docs/coordination and legacy COORDINATION)
+if [ -d "docs/coordination" ]; then
+    COORD_DIR="docs/coordination"
+elif [ -d "COORDINATION" ]; then
+    COORD_DIR="COORDINATION"
+else
+    echo "❌ Coordination directory not found (expected docs/coordination or COORDINATION)"
+    exit 1
+fi
 
 if [ -z "$1" ] || [ -z "$2" ]; then
     echo "Usage: ./session-claim.sh [resource_type] [resource_name] [duration_hours]"
@@ -22,13 +32,14 @@ RESOURCE_NAME=$2
 DURATION_HOURS=${3:-4}  # Default 4 hours
 
 # Get current session ID
-if [ ! -f "COORDINATION/.current_session" ]; then
+if [ ! -f "$COORD_DIR/.current_session" ]; then
     echo "⚠️  No active session. Run ./COORDINATION/scripts/session-start.sh first"
     exit 1
 fi
 
-SESSION_ID=$(cat COORDINATION/.current_session)
-CLAIM_FILE="COORDINATION/claims/${RESOURCE_TYPE}-${RESOURCE_NAME}.claim"
+SESSION_ID=$(cat "$COORD_DIR/.current_session")
+mkdir -p "$COORD_DIR/claims"
+CLAIM_FILE="$COORD_DIR/claims/${RESOURCE_TYPE}-${RESOURCE_NAME}.claim"
 
 # Check if already claimed
 if [ -f "$CLAIM_FILE" ]; then
@@ -36,19 +47,34 @@ if [ -f "$CLAIM_FILE" ]; then
     EXPIRES_AT=$(python3 -c "import json; print(json.load(open('$CLAIM_FILE')).get('expires_at', ''))")
 
     if [ "$CLAIMED_BY" = "$SESSION_ID" ]; then
-        echo "✅ Already claimed by you ($SESSION_ID)"
-        echo "   Claim file: $CLAIM_FILE"
-        exit 0
+        IS_EXPIRED=$(python3 -c "import json,sys; from datetime import datetime,timezone; p=sys.argv[1]; d=json.load(open(p)); exp=(d.get('expires_at') or '').strip(); exp_dt=(datetime.fromisoformat(exp.replace('Z','+00:00')) if exp else None); print('true' if (exp_dt and datetime.now(timezone.utc) > exp_dt) else 'false')" "$CLAIM_FILE" 2>/dev/null || echo "false")
+
+        if [ "$IS_EXPIRED" = "true" ]; then
+            echo "🧹 Your existing claim for $RESOURCE_TYPE/$RESOURCE_NAME has expired ($EXPIRES_AT) — renewing."
+            rm -f "$CLAIM_FILE"
+        else
+            echo "✅ Already claimed by you ($SESSION_ID)"
+            echo "   Claim file: $CLAIM_FILE"
+            exit 0
+        fi
     else
-        echo "⚠️  Already claimed by: $CLAIMED_BY"
-        echo "   Expires: $EXPIRES_AT"
-        echo "   Claim file: $CLAIM_FILE"
-        echo ""
-        echo "Options:"
-        echo "  1. Wait for claim to expire"
-        echo "  2. Coordinate with $CLAIMED_BY (send message)"
-        echo "  3. Pick different work"
-        exit 1
+        # If claim is expired, treat it as stale and release it automatically
+        IS_EXPIRED=$(python3 -c "import json,sys; from datetime import datetime,timezone; p=sys.argv[1]; d=json.load(open(p)); exp=(d.get('expires_at') or '').strip(); exp_dt=(datetime.fromisoformat(exp.replace('Z','+00:00')) if exp else None); print('true' if (exp_dt and datetime.now(timezone.utc) > exp_dt) else 'false')" "$CLAIM_FILE" 2>/dev/null || echo "false")
+
+        if [ "$IS_EXPIRED" = "true" ]; then
+            echo "🧹 Found expired claim for $RESOURCE_TYPE/$RESOURCE_NAME (was $CLAIMED_BY, expired $EXPIRES_AT) — releasing stale claim."
+            rm -f "$CLAIM_FILE"
+        else
+            echo "⚠️  Already claimed by: $CLAIMED_BY"
+            echo "   Expires: $EXPIRES_AT"
+            echo "   Claim file: $CLAIM_FILE"
+            echo ""
+            echo "Options:"
+            echo "  1. Wait for claim to expire"
+            echo "  2. Coordinate with $CLAIMED_BY (send message)"
+            echo "  3. Pick different work"
+            exit 1
+        fi
     fi
 fi
 
@@ -75,10 +101,10 @@ cat > "$CLAIM_FILE" <<EOF
 EOF
 
 # Send heartbeat
-COORDINATION/scripts/session-heartbeat.sh "claimed" "$RESOURCE_TYPE/$RESOURCE_NAME" "CLAIMED"
+"$COORD_DIR/scripts/session-heartbeat.sh" "claimed" "$RESOURCE_TYPE/$RESOURCE_NAME" "CLAIMED"
 
 # Send broadcast
-COORDINATION/scripts/session-send-message.sh broadcast "Work claimed" "$SESSION_ID claimed $RESOURCE_TYPE: $RESOURCE_NAME"
+"$COORD_DIR/scripts/session-send-message.sh" broadcast "Work claimed" "$SESSION_ID claimed $RESOURCE_TYPE: $RESOURCE_NAME"
 
 echo "✅ Claimed: $RESOURCE_TYPE/$RESOURCE_NAME"
 echo "   By: $SESSION_ID"

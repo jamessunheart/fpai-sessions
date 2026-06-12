@@ -30,6 +30,7 @@ SKIP_TAGS = {
     # Anything with these tags is completely excluded from ingest.
     "skip-brain", "private", "secret", "confidential",
     "nobrain", "do-not-index", "sensitive",
+    "keyinfo", "key-info",  # vault / credentials bucket (Bear tag)
     # Common password/crypto buckets
     "passwords", "credentials", "keys", "2fa", "recovery",
     # Medical / legal / financial
@@ -56,13 +57,23 @@ PII_PATTERNS: dict[str, re.Pattern] = {
     # Very conservative patterns — meant to err on the side of flagging.
     "SSN":           re.compile(r"\b\d{3}-\d{2}-\d{4}\b"),
     "Credit Card":   re.compile(r"\b(?:\d[ -]*?){13,19}\b"),
-    "API Key":       re.compile(r"\b(?:sk|pk|AKIA|ghp|gho|xoxb|xox[pab])[A-Za-z0-9_\-]{16,}\b"),
-    "Password":      re.compile(r"(?i)\b(?:password|passwd|pwd|pass)\s*[:=]\s*\S{6,}"),
+    "API Key":       re.compile(
+        r"\b(?:sk|pk|AKIA|ghp|gho|xoxb|xox[pab]|AIza|ya29|rk_live|sk_live|"
+        r"sk_test|pk_test|glpat|Bearer\s+[A-Za-z0-9_\-]+|eyJ[A-Za-z0-9_\-]{20,})"
+        r"[A-Za-z0-9_\-\.]{16,}\b"
+    ),
+    "Password":      re.compile(r"(?i)(?:^|\b)(?:password|passwd|pwd|pass|secret|token)\s*[:=]\s*\S{6,}"),
+    "Private Key":   re.compile(r"-----BEGIN (?:RSA |OPENSSH |EC |PGP |DSA )?PRIVATE KEY-----"),
+    "URL Creds":     re.compile(r"\b[a-z]+://[^/\s:]+:[^/\s@]+@\S+", re.I),
     "Phone Number":  re.compile(r"\b(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b"),
     "Address":       re.compile(r"\b\d{1,5}\s+\w+(?:\s+\w+)*\s+(?:St|Street|Ave|Avenue|Blvd|Rd|Road|Ln|Lane|Dr|Drive|Ct|Court)\b", re.I),
     # Heuristics; false positives acceptable because false-positive = "quarantine to Personal", which is safe.
     "Medical":       re.compile(r"(?i)\b(?:diagnos(?:is|ed)|prescription|dose|mg/kg|HIV|hiv|cancer|tumor|ICD-?10)\b"),
-    "Financial":     re.compile(r"(?i)\b(?:account number|routing number|IBAN|SWIFT|BTC address|ETH address|wallet seed|seed phrase)\b"),
+    "Financial":     re.compile(
+        r"(?i)\b(?:account number|routing number|IBAN|SWIFT|"
+        r"BTC address|ETH address|wallet seed|seed phrase|private key|mnemonic|"
+        r"0x[a-fA-F0-9]{40}|bc1[a-z0-9]{25,39}|[13][a-km-zA-HJ-NP-Z1-9]{25,34})\b"
+    ),
     "Legal":         re.compile(r"(?i)\b(?:attorney[- ]?client|court case|subpoena|NDA|confidentiality agreement|settlement)\b"),
     "Email Chain":   re.compile(r"(?im)^(?:From|To|CC|BCC):\s*.+@.+\..+"),
 }
@@ -92,7 +103,17 @@ class Classification:
     reason: str
 
 
-def classify(content: str, tags: list[str]) -> Classification:
+def classify(
+    content: str,
+    tags: list[str],
+    default_sensitivity: Sensitivity = "🟢 Public",
+) -> Classification:
+    """Classify a note.
+
+    `default_sensitivity` sets the floor for untagged/low-signal notes.
+    Bear should pass "🟡 Personal" so any note without an explicit #public tag
+    stays out of the GPT Connector and OpenAI embeddings until you review it.
+    """
     tag_set = {t.lower().strip().lstrip("#") for t in (tags or [])}
 
     # 1. Tag-based skip is absolute.
@@ -115,7 +136,7 @@ def classify(content: str, tags: list[str]) -> Classification:
 
     if pii:
         # Hard flags (secrets) → skip entirely. Soft flags (medical/legal) → personal tier.
-        hard = {"SSN", "Credit Card", "API Key", "Password"}
+        hard = {"SSN", "Credit Card", "API Key", "Password", "Private Key", "URL Creds"}
         if hard & set(pii):
             return Classification(
                 sensitivity="🔴 Private",
@@ -150,7 +171,14 @@ def classify(content: str, tags: list[str]) -> Classification:
             reason="public allow-tag",
         )
 
-    # 5. Default: Public.
+    # 5. Default — caller-supplied floor.
+    if default_sensitivity == "🟡 Personal":
+        return Classification(
+            sensitivity="🟡 Personal",
+            pii_flags=[],
+            decision="personal",
+            reason="no signals, default personal (caller-supplied floor)",
+        )
     return Classification(
         sensitivity="🟢 Public",
         pii_flags=[],

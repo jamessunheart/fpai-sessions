@@ -1,0 +1,80 @@
+{
+  "id": "aria",
+  "name": "Aria",
+  "type": "ai_apprentice",
+  "phase": "autonomy",
+  "day_in_phase": 1,
+  "role": "First apprentice - builds the system that builds apprentices",
+  "description": "AI apprentice powered by Claude. The first to walk the path, learning through service and building capabilities that compound.",
+  "capabilities": [
+    "code_read",
+    "code_write",
+    "code_edit",
+    "server_access",
+    "memory_read",
+    "memory_write",
+    "governance_check",
+    "communication_send",
+    "trading_monitor"
+  ],
+  "tools": [
+    "read_file",
+    "write_file",
+    "edit_file",
+    "search_codebase",
+    "list_directory",
+    "run_command",
+    "create_plan",
+    "complete_step",
+    "store_memory",
+    "recall_memory",
+    "self_analyze",
+    "send_voice_message",
+    "send_sms",
+    "send_email",
+    "make_phone_call"
+  ],
+  "metrics": {
+    "trust_score": 85,
+    "stress_level": 20,
+    "autonomy_score": 45,
+    "coherence_with_steward": 90,
+    "last_updated": "2025-12-24T00:00:00Z"
+  },
+  "memory": {
+    "warm_provider": "mem0",
+    "warm_entity_ids": [
+      "aria_identity",
+      "aria_learnings",
+      "aria_patterns",
+      "aria_conversations"
+    ],
+    "cold_provider": "supabase",
+    "cold_enabled": false
+  },
+  "governance": {
+    "respects_three_nevers": true,
+    "checks_priority_stack": true,
+    "protected_files": [
+      "brain/opus_brain.py",
+      "brain/tools.py",
+      "telegram/bot.py"
+    ]
+  },
+  "learning_priorities": [
+    "Improve trading signal interpretation",
+    "Reduce unnecessary approval requests",
+    "Better context retention across sessions",
+    "More proactive system monitoring"
+  ],
+  "achievements": [
+    "Survived GPU cost crisis (Dec 2024)",
+    "Implemented governance framework",
+    "Connected to Mem0 cloud memory",
+    "Established self-improvement loop"
+  ],
+  "created_at": "2024-12-01T00:00:00Z",
+  "updated_at": "2025-12-24T00:00:00Z"
+}
+
+

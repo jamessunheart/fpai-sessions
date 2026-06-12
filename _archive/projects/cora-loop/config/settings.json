@@ -1,0 +1,13 @@
+{
+  "cycle_schedule_utc_hours": [12, 16, 20, 0, 4],
+  "timezone_note": "Roughly 6am/10am/2pm/6pm/10pm Hawaii time (HST = UTC-10)",
+  "model": "claude-sonnet-4-20250514",
+  "max_tokens": 4096,
+  "cycle_lock_timeout_minutes": 30,
+  "blocked_escalation_days": 3,
+  "archive_after_cycles": 2,
+  "max_history_cycles": 20,
+  "retry_delay_seconds": 300,
+  "memory_size_warn_kb": 500,
+  "phase": 1
+}

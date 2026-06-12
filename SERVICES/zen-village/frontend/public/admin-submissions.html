@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Submissions Cockpit · Zen Village</title>
+<style>
+  :root{
+    --bg:#0e1014; --panel:#161a21; --line:#262b35; --muted:#9aa0aa;
+    --text:#eef0f3; --accent:#f6c177; --good:#7bd88f; --warn:#ffb86b;
+    --danger:#ff8a8a; --row-hover:#1a1f29; --kpi-bg:#13171f;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font:14px/1.5 -apple-system,BlinkMacSystemFont,Segoe UI,Inter,system-ui,sans-serif;background:var(--bg);color:var(--text)}
+  header{padding:18px 24px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  header h1{margin:0;font-size:18px;font-weight:600;letter-spacing:-.2px}
+  header .right{margin-left:auto;display:flex;gap:8px}
+  header button{background:transparent;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:6px 12px;cursor:pointer;font-size:12px}
+  header button:hover{border-color:var(--accent);color:var(--text)}
+
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;padding:18px 24px;border-bottom:1px solid var(--line)}
+  .kpi{background:var(--kpi-bg);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+  .kpi .label{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+  .kpi .num{font-size:26px;font-weight:600;letter-spacing:-.5px}
+  .kpi .sub{color:var(--muted);font-size:12px;margin-top:4px}
+  .kpi.warn .num{color:var(--warn)}
+  .kpi.danger .num{color:var(--danger)}
+  .kpi.good .num{color:var(--good)}
+
+  .filters{padding:12px 24px;border-bottom:1px solid var(--line);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .filters button, .filters select, .filters input{
+    background:var(--panel);color:var(--text);border:1px solid var(--line);
+    border-radius:6px;padding:6px 12px;font-size:13px;cursor:pointer;font-family:inherit
+  }
+  .filters input{min-width:240px}
+  .filters button.active{background:var(--accent);color:#1a1308;border-color:var(--accent);font-weight:600}
+  .filters button:hover{border-color:var(--accent)}
+  .filters .spacer{flex:1}
+
+  .row-list{padding:0}
+  .card{display:grid;grid-template-columns:90px 1fr auto;gap:14px;padding:14px 24px;border-bottom:1px solid var(--line);align-items:start}
+  .card:hover{background:var(--row-hover)}
+  .card.slipping{border-left:3px solid var(--danger)}
+  .card.fresh{border-left:3px solid var(--good)}
+  .card.contacted{opacity:.7}
+  .card.closed{opacity:.45}
+  .when{color:var(--muted);font-size:12px}
+  .when b{display:block;color:var(--text);font-size:13px}
+  .body{min-width:0}
+  .body .top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px}
+  .body .name{font-size:15px;font-weight:600}
+  .body .meta{color:var(--muted);font-size:13px;margin-bottom:6px}
+  .body .meta a{color:#9ec5ff;text-decoration:none}
+  .body .meta a:hover{text-decoration:underline}
+  .body .msg{color:var(--muted);font-size:13px;line-height:1.5;max-height:60px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+  .body details{margin-top:8px}
+  .body details summary{cursor:pointer;font-size:11px;color:var(--muted);padding:2px 0}
+  .body details pre{background:#0a0c10;border:1px solid var(--line);border-radius:6px;padding:10px;font-size:11px;overflow:auto;max-height:280px;margin-top:6px}
+
+  .badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:10.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+  .badge.inquiry{background:#1d3a5c;color:#9ec5ff}
+  .badge.application{background:#3b2d6b;color:#cdb8ff}
+  .badge.booking{background:#1a4030;color:#9eddb4}
+  .badge.lane{background:#252a36;color:var(--accent)}
+  .badge.status-new{background:#3b2d2d;color:var(--warn)}
+  .badge.status-contacted{background:#1d3a30;color:var(--good)}
+  .badge.status-closed{background:#222a36;color:var(--muted)}
+
+  .actions{display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+  .actions button{background:transparent;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;white-space:nowrap;font-family:inherit}
+  .actions button:hover{border-color:var(--accent);color:var(--text)}
+  .actions button.primary{background:var(--accent);color:#1a1308;border-color:var(--accent);font-weight:600}
+
+  .empty{padding:80px 24px;text-align:center;color:var(--muted)}
+  .empty .big{font-size:24px;margin-bottom:8px}
+
+  .login{max-width:420px;margin:120px auto;padding:32px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+  .login h2{margin-top:0}
+  .login input{width:100%;padding:10px;background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:8px;margin-bottom:12px}
+  .login button{width:100%;padding:10px;background:var(--accent);color:#1a1308;border:0;border-radius:8px;font-weight:600;cursor:pointer}
+  .err{color:var(--danger);font-size:13px;margin:8px 0}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#222a36;color:var(--text);padding:10px 18px;border-radius:8px;font-size:13px;border:1px solid var(--line);box-shadow:0 8px 32px rgba(0,0,0,.4);opacity:0;transition:opacity .25s;pointer-events:none}
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const TOKEN_KEY = "zv_admin_token";
+const $app = document.getElementById("app");
+const $toast = document.getElementById("toast");
+
+const STATE = { kind:"all", lane:"", status:"", q:"", include_test:false };
+let CURRENT = { rows:[], stats:null };
+
+function getToken(){ return localStorage.getItem(TOKEN_KEY) || ""; }
+function setToken(t){ localStorage.setItem(TOKEN_KEY, t); }
+function clearToken(){ localStorage.removeItem(TOKEN_KEY); }
+
+// Cockpit session token (set by /cockpit login). Lets a scoped member who's
+// been granted the `submissions` surface in authenticate WITHOUT ever holding
+// the master admin token — the API resolves the session + checks the grant.
+function getSessionToken(){
+  try {
+    const raw = localStorage.getItem("zv_cockpit_session");
+    if (!raw) return "";
+    const s = JSON.parse(raw);
+    return (s && s.session_token) ? s.session_token : "";
+  } catch (_) { return ""; }
+}
+function haveCreds(){ return !!(getToken() || getSessionToken()); }
+
+function showToast(text){
+  $toast.textContent = text;
+  $toast.classList.add("show");
+  clearTimeout($toast._t);
+  $toast._t = setTimeout(() => $toast.classList.remove("show"), 1800);
+}
+
+function escape(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c])); }
+
+function fmtAge(s){
+  if (!s) return "—";
+  const d = new Date(s);
+  if (isNaN(d)) return s;
+  const diff = (Date.now() - d.getTime()) / 1000;
+  if (diff < 60)    return "just now";
+  if (diff < 3600)  return Math.floor(diff/60)   + "m";
+  if (diff < 86400) return Math.floor(diff/3600) + "h";
+  if (diff < 86400*7) return Math.floor(diff/86400) + "d";
+  return d.toLocaleDateString();
+}
+
+function ageHours(s){
+  if (!s) return 99999;
+  const d = new Date(s);
+  if (isNaN(d)) return 99999;
+  return (Date.now() - d.getTime()) / 3600000;
+}
+
+async function api(path, opts){
+  const r = await fetch(path, {
+    method: (opts && opts.method) || "GET",
+    headers: {
+      "x-admin-token": getToken(),
+      "x-session-token": getSessionToken(),
+      "Content-Type": "application/json",
+    },
+    body: opts && opts.body ? JSON.stringify(opts.body) : undefined,
+  });
+  if (r.status === 401) { clearToken(); throw new Error("invalid token"); }
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  return r.json();
+}
+
+function renderLogin(err){
+  $app.innerHTML = `
+    <div class="login">
+      <h2>Cockpit sign-in</h2>
+      <p style="color:var(--muted);font-size:13px;margin-top:0">Paste your <code>ZV_AFFILIATES_ADMIN_TOKEN</code> to view all website submissions.</p>
+      <input id="t" type="password" placeholder="admin token" autofocus />
+      ${err ? `<div class="err">${err}</div>` : ""}
+      <button id="go">unlock</button>
+      <p style="color:var(--muted);font-size:12px;margin:14px 0 0;text-align:center">
+        Have a Cockpit login? <a href="/cockpit" style="color:#9ec5ff">Sign in there →</a>
+      </p>
+    </div>`;
+  document.getElementById("go").onclick = () => {
+    const t = document.getElementById("t").value.trim();
+    if (!t) return; setToken(t); boot();
+  };
+  document.getElementById("t").addEventListener("keydown", e => { if (e.key === "Enter") document.getElementById("go").click(); });
+}
+
+function applyFilters(rows){
+  let out = rows;
+  if (STATE.kind !== "all")   out = out.filter(r => r.kind === STATE.kind);
+  if (STATE.status)           out = out.filter(r => (r.track_status||"new") === STATE.status);
+  if (STATE.lane)             out = out.filter(r => (r.lane||"").toLowerCase() === STATE.lane.toLowerCase());
+  if (STATE.q) {
+    const q = STATE.q.toLowerCase();
+    out = out.filter(r => JSON.stringify(r).toLowerCase().includes(q));
+  }
+  return out;
+}
+
+function renderKPIs(s){
+  const slip = (s.by_status?.slipping_count || 0);
+  const new_ = (s.by_status?.new || 0);
+  const w = s.windows || {};
+  return `
+    <div class="kpis">
+      <div class="kpi ${slip > 0 ? 'danger' : ''}">
+        <div class="label">Slipping (new &gt; 48h)</div>
+        <div class="num">${slip}</div>
+        <div class="sub">${slip > 0 ? '⚠ reach out today' : 'all under 48h ✓'}</div>
+      </div>
+      <div class="kpi warn">
+        <div class="label">Open / new</div>
+        <div class="num">${new_}</div>
+        <div class="sub">${(s.by_status?.contacted || 0)} contacted · ${(s.by_status?.closed || 0)} closed</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Last 24h</div>
+        <div class="num">${w.last_24h ?? 0}</div>
+        <div class="sub">submissions</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Last 7 days</div>
+        <div class="num">${w.last_7d ?? 0}</div>
+        <div class="sub">${w.last_30d ?? 0} in 30d</div>
+      </div>
+      <div class="kpi good">
+        <div class="label">Total real</div>
+        <div class="num">${s.totals?.all ?? 0}</div>
+        <div class="sub">${s.totals?.inquiries ?? 0} inq · ${s.totals?.applications ?? 0} apps</div>
+      </div>
+    </div>`;
+}
+
+function renderRow(r){
+  const age = ageHours(r.submitted_at);
+  const ageClass = age < 24 ? "fresh" : (r.track_status === "new" && age > 48 ? "slipping" : "");
+  const stClass = "status-" + (r.track_status || "new");
+  const meta = [];
+  if (r.email) meta.push(`✉ <a href="mailto:${escape(r.email)}">${escape(r.email)}</a>`);
+  if (r.phone) meta.push(`☎ ${escape(r.phone)}`);
+  if (r.country) meta.push(`📍 ${escape(r.country)}`);
+  if (r.source) meta.push(`📡 ${escape(r.source)}`);
+  if (r.partner_code && !(r.source || '').includes('ref=')) meta.push(`🤝 ${escape(r.partner_code)}`);
+
+  return `
+    <div class="card ${ageClass} ${r.track_status || ""}" data-key="${escape(r._key)}">
+      <div class="when">
+        <b>${fmtAge(r.submitted_at)}</b>
+        <span>${(r.submitted_at || "").slice(0,10)}</span>
+      </div>
+      <div class="body">
+        <div class="top">
+          <span class="badge ${r.kind}">${r.kind}</span>
+          ${r.lane ? `<span class="badge lane">${escape(r.lane)}</span>` : ""}
+          <span class="badge ${stClass}">${r.track_status || "new"}</span>
+          <span class="name">${escape(r.name || "—")}</span>
+        </div>
+        <div class="meta">${meta.join(" · ")}</div>
+        ${r.message ? `<div class="msg">${escape(r.message)}</div>` : ""}
+        ${r.dates ? `<div class="meta" style="margin-top:6px">📅 ${escape(r.dates)} ${r.guests ? '· 👥 ' + escape(r.guests) : ''} ${r.accommodation ? '· 🏠 ' + escape(r.accommodation) : ''}</div>` : ""}
+        <details><summary>view all fields</summary><pre>${escape(JSON.stringify(r.raw || r, null, 2))}</pre></details>
+      </div>
+      <div class="actions">
+        <button class="primary" onclick="copyText('${escape(r.email)}')">copy email</button>
+        <button onclick="openMail('${escape(r.email)}', '${escape(r.name)}', '${escape(r.lane)}')">email</button>
+        ${r.track_status !== "contacted" ? `<button onclick="setStatus('${escape(r._key)}', 'contacted')">✓ contacted</button>` : ""}
+        ${r.track_status !== "closed" ? `<button onclick="setStatus('${escape(r._key)}', 'closed')">archive</button>` : `<button onclick="setStatus('${escape(r._key)}', 'new')">reopen</button>`}
+      </div>
+    </div>`;
+}
+
+window.copyText = (e) => { navigator.clipboard.writeText(e); showToast("copied " + e); };
+window.openMail = (email, name, lane) => {
+  const subj = encodeURIComponent(`Re: your ${lane || ""} application to Zen Village`);
+  const body = encodeURIComponent(`Hi ${name || "there"},\n\nThanks for reaching out — I read your submission. `);
+  window.location.href = `mailto:${email}?subject=${subj}&body=${body}`;
+};
+window.setStatus = async (key, status) => {
+  try {
+    await api("/api/admin/submissions/status", { method: "POST", body: { key, status } });
+    showToast("marked " + status);
+    boot();
+  } catch (e) { showToast("error: " + e.message); }
+};
+
+async function tryCockpitBridge(){
+  // If user signed into /cockpit, inherit credentials transparently — no
+  // second prompt for villagers. Two paths exist:
+  //   (a) username/password login → zv_cockpit_session (call /api/cockpit/legacy-token)
+  //   (b) "Use token" tab        → zv_cockpit_token (already the legacy token; adopt directly)
+  try {
+    // (b) — direct token reuse, no API hop required.
+    const directToken = localStorage.getItem("zv_cockpit_token");
+    if (directToken) {
+      setToken(directToken);
+      return true;
+    }
+    // (a) — session-token → legacy-token swap.
+    const raw = localStorage.getItem("zv_cockpit_session");
+    if (!raw) return false;
+    const session = JSON.parse(raw);
+    if (!session?.session_token) return false;
+    const r = await fetch("/api/cockpit/legacy-token", {
+      headers: { "X-Session-Token": session.session_token },
+    });
+    if (!r.ok) return false;
+    const j = await r.json();
+    if (!j.token) return false;
+    setToken(j.token);
+    return true;
+  } catch (_) { return false; }
+}
+
+async function boot(){
+  if (!haveCreds()) {
+    const bridged = await tryCockpitBridge();
+    if (!bridged) return renderLogin();
+  }
+
+  let stats, data;
+  try {
+    const params = STATE.include_test ? "?include_test=1" : "";
+    [stats, data] = await Promise.all([
+      api("/api/admin/submissions/stats" + params),
+      api("/api/admin/submissions" + (params ? params + "&limit=1000" : "?limit=1000")),
+    ]);
+  } catch (e) {
+    // If the stashed legacy token went stale, try the cockpit bridge once before falling back to login.
+    if (!getToken() && !getSessionToken()) {
+      const bridged = await tryCockpitBridge();
+      if (bridged) { return boot(); }
+    }
+    return renderLogin(e.message);
+  }
+
+  CURRENT = { rows: data.submissions || [], stats };
+  const lanes = data.lanes || [];
+  const filtered = applyFilters(CURRENT.rows);
+
+  $app.innerHTML = `
+    <header>
+      <h1>📥 Submissions Cockpit</h1>
+      <div class="right">
+        <button onclick="toggleTest()">${STATE.include_test ? "✓ showing test" : "show test rows"}</button>
+        <button onclick="boot()">↻ refresh</button>
+        <button onclick="signOut()">sign out</button>
+      </div>
+    </header>
+    ${renderKPIs(stats)}
+    <div class="filters">
+      <button data-kind="all">all</button>
+      <button data-kind="inquiry">inquiries</button>
+      <button data-kind="application">applications</button>
+      <span style="width:1px;height:20px;background:var(--line);margin:0 6px"></span>
+      <button data-status="">any status</button>
+      <button data-status="new">new</button>
+      <button data-status="contacted">contacted</button>
+      <button data-status="closed">closed</button>
+      <span style="width:1px;height:20px;background:var(--line);margin:0 6px"></span>
+      <select id="laneSel">
+        <option value="">all lanes</option>
+        ${lanes.map(l => `<option value="${escape(l)}">${escape(l)}</option>`).join("")}
+      </select>
+      <input id="q" placeholder="search name, email, message…" />
+      <span class="spacer"></span>
+      <span style="color:var(--muted);font-size:12px">${filtered.length} of ${CURRENT.rows.length}</span>
+    </div>
+    <div class="row-list" id="rows"></div>`;
+
+  $app.querySelectorAll("[data-kind]").forEach(b => {
+    if (b.dataset.kind === STATE.kind) b.classList.add("active");
+    b.onclick = () => { STATE.kind = b.dataset.kind; boot(); };
+  });
+  $app.querySelectorAll("[data-status]").forEach(b => {
+    if ((b.dataset.status || "") === STATE.status) b.classList.add("active");
+    b.onclick = () => { STATE.status = b.dataset.status; boot(); };
+  });
+  document.getElementById("laneSel").value = STATE.lane;
+  document.getElementById("laneSel").onchange = (e) => { STATE.lane = e.target.value; boot(); };
+  const $q = document.getElementById("q");
+  $q.value = STATE.q;
+  $q.oninput = (e) => {
+    STATE.q = e.target.value;
+    document.getElementById("rows").innerHTML = renderRowList(applyFilters(CURRENT.rows));
+  };
+  document.getElementById("rows").innerHTML = renderRowList(filtered);
+}
+
+function renderRowList(rows){
+  if (!rows.length) {
+    return `<div class="empty"><div class="big">📭</div>nothing matches these filters</div>`;
+  }
+  return rows.map(renderRow).join("");
+}
+
+window.toggleTest = () => { STATE.include_test = !STATE.include_test; boot(); };
+window.signOut = () => { clearToken(); boot(); };
+
+boot();
+</script>
+</body>
+</html>

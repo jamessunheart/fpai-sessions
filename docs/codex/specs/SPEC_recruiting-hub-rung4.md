@@ -1,346 +1,117 @@
-# Recruiting Hub Rung 4: Role-Spec Pipeline
+# SPEC_recruiting-hub-rung4
+
+*Rung 4 · recruiting hub. The substrate sources, screens, and stages human candidates;
+James only sees finalists. First target: the Human Context Steward seat (unhired since
+2026-05-09). Sunheart Rule applied to hiring itself — AI does everything up to the
+irreducibly-James acts (final conversation · hire decision · trust). Owner: Codex (build) ·
+Ember (review). Publishes to James via `core/COMMS/outbox/` (see SPEC_comms-hub-james-interface).*
+
+## Source / why
+
+James, 2026-06-12: *"spec the recruiting hub."* The roster names roles the substrate needs
+but can't fill itself: Human Context Steward (`core/STATE/roster/HUMAN_CONTEXT_STEWARD_SPEC.md`,
+🔴 unhired, candidate Alice noted) and future hires (Phase 2 onboarding per NOW.md). Today
+recruiting = James remembering to think about it. The hub turns each open role into a
+pipeline the substrate advances autonomously: role spec → sourcing drafts → screening →
+ranked shortlist → James gate.
+
+This is the strongest single-point-of-failure reducer in the FPOS North Star: every filled
+seat moves context-holding off James.
+
+Buildstream intent: `rung4-hubs`.
+
+## Scope decisions (decided — don't re-litigate)
+
+- **V1 is pipeline + screening + staging. NO autonomous outreach.** Every message to a
+  candidate is Reserved-Class (`public_outbound_send`) → human-edge gate → James blesses.
+- **First role:** Human Context Steward. The pipeline must be role-generic (a new role =
+  one new YAML file), but v1 ships with HCS loaded.
+- **Candidate data is sensitive:** names/contacts live in `~/.config/fpai/recruiting/`
+  (outside repo). The repo holds role specs, pipeline code, and anonymized status only.
+
+## The three declarations
+
+- **Milestone (DoD):** `python3 tools/recruiting/hub.py --status` shows each open role with
+  its pipeline: candidates per stage (sourced → screened → shortlist → gated → hired/passed).
+  Given a role YAML + candidate fixtures, the hub scores candidates against the role spec,
+  produces a ranked shortlist with per-candidate rationale, drafts (never sends) outreach,
+  and enqueues a yellow-priority comms message: *"HCS shortlist ready — 3 candidates,
+  top match 87%. Review?"* Demonstrated end-to-end on fixtures.
+- **Dependency:** `core/STATE/roster/HUMAN_CONTEXT_STEWARD_SPEC.md` ✅ · Reserved-Class
+  boundary (`tools/reserved/`) ✅ · comms outbox (SPEC_comms-hub-james-interface — soft
+  dependency: fall back to writing `core/RECRUITING/NOTIFY.md` if outbox absent).
+  Forks from `feat/headless-build`.
+- **Landing target:** `feat/headless-build`. Never `main` without explicit review.
+
+## Definition of Done
+
+1. **`core/RECRUITING/roles/hcs.yaml`** — role spec as data: title · mission one-liner ·
+   owns[] · must-haves[] · nice-to-haves[] · disqualifiers[] · comp band · trial-task
+   description · sourcing channels[]. Generated from the existing HCS markdown spec;
+   the markdown stays canonical for humans, the YAML is the machine view.
+
+2. **`tools/recruiting/hub.py`**:
+   - `status()` — pipeline pane per role.
+   - `screen(role, candidate) -> ScreenResult` — scores a candidate file
+     (`~/.config/fpai/recruiting/candidates/<id>.md`: resume text · notes · source)
+     against the role YAML: must-have coverage · disqualifier check · 0-100 fit score ·
+     3-line rationale. Pure function over the two inputs; no network.
+   - `shortlist(role) -> list` — ranks screened candidates, writes anonymized
+     `core/RECRUITING/<role>/SHORTLIST.md` (candidate ids + scores + rationale, NO
+     names/contacts), enqueues the comms notification.
+   - `draft_outreach(role, candidate_id)` — writes a draft to
+     `core/RECRUITING/<role>/drafts/<id>.md` + a Reserved-Class human-edge gate
+     ("Send to candidate <id>? approve / edit / skip"). **Never sends.**
+   - `advance(candidate_id, stage)` / `pass(candidate_id, reason)` — stage transitions,
+     append-only history per candidate.
+
+3. **Trial-task lane** — `core/RECRUITING/<role>/trial/` holds the trial-task brief
+   (from role YAML) + per-candidate submission notes + an Ember evaluation template.
+   The hub stages the brief with the outreach draft; sending it is the same gated act.
+
+4. **Sourcing drafts (not sends)** — `tools/recruiting/sourcing.py` renders a job post
+   per role from the YAML (one general + one per channel in `sourcing_channels`), staged
+   to `core/RECRUITING/<role>/posts/`. Posting anywhere public is Reserved-Class →
+   gate. Run drafts through the compliance-scanner agent before staging is complete.
+
+5. **Tests** — `tools/recruiting/test_hub.py`, fixture candidates (synthetic, no real
+   PII in repo): disqualifier rejects · must-have scoring · shortlist ordering ·
+   stage transitions append-only · outreach draft creates a gate and sends nothing ·
+   anonymization (no fixture "name"/"email" strings appear in any `core/RECRUITING/` output).
+
+## Files
+
+- **Files ALLOWED:** `tools/recruiting/**` (new) · `core/RECRUITING/**` (new — anonymized
+  only) · `~/.config/fpai/recruiting/**` (candidate PII store, created at runtime, never
+  committed) · read-only: `core/STATE/roster/**`, `tools/reserved/`, comms outbox enqueue.
+- **Files FORBIDDEN:** any PII in repo paths · live sends / posting APIs · payroll or
+  money movement · `core/STATE/roster/*.md` edits (role canon stays human-edited) ·
+  identity stack · unrelated refactors.
+
+## Safety
+
+- 🔴 **No candidate ever contacted without James's blessing.** All outreach/posting is
+  Reserved-Class gated. V1 ships with zero send credentials wired.
+- 🔴 **PII boundary:** names/contacts/resumes only under `~/.config/fpai/recruiting/`;
+  repo artifacts use candidate ids. Leak-scan in tests enforces it.
+- 🔴 **Hire decision is irreducibly James.** The hub ranks and recommends; it cannot mark
+  `hired` without a James-confirmed gate token.
+- 🔵 Kill-switch: `FPAI_RECRUITING_DISABLE=1` → hub is read-only status.
+- Rollback: `git revert <commit>` · `rm -rf core/RECRUITING/` · PII store untouched.
+
+## Tests
 
-**Created:** 2026-06-12
-**Status:** Draft
-**Owner:** James
-**First Seat:** Human Context Steward
-**Security Level:** Restricted
+- `python3 -m pytest tools/recruiting/test_hub.py -v`
+- `python3 tools/recruiting/hub.py --status` renders the pipeline pane.
+- Leak-scan: `grep -ri "<fixture-name>" core/RECRUITING/` returns nothing.
 
----
+## Rollback
 
-## Purpose
+- `git revert <this-commit>` · delete `core/RECRUITING/` · candidate store under
+  `~/.config/fpai/recruiting/` is preserved (it's the durable asset).
 
-Build a recruiting hub that turns role intent into a tight hiring pipeline: role spec, sourcing brief, AI screening, shortlist, gated outreach, interview packet, and final human decision.
+## Close-out
 
-The first production role is the **Human Context Steward**: a trusted human operator who helps preserve nuance, continuity, and relational context across AI-assisted workflows.
-
----
-
-## Core Principle
-
-AI may gather, structure, compare, and recommend. It does not autonomously contact candidates, negotiate, reject, hire, or create obligations.
-
-Every candidate contact is gated by James. The final hire decision stays irreducibly James.
-
----
-
-## Rung 4 Scope
-
-### In Scope
-
-- Convert rough hiring intent into a reusable role spec.
-- Generate a sourcing profile and search query pack.
-- Ingest candidate materials from approved sources.
-- Score candidates against explicit criteria.
-- Produce a ranked shortlist with evidence, caveats, and open questions.
-- Draft candidate contact messages for review.
-- Prepare interview plans, reference checks, and decision packets.
-- Track candidate state through the gated pipeline.
-
-### Out of Scope
-
-- Autonomous candidate outreach.
-- Automated rejection messages.
-- Automated offer letters or compensation commitments.
-- Hiring decisions made by model score alone.
-- Collection of sensitive personal data beyond what the candidate voluntarily provides or what is explicitly approved.
-
----
-
-## Human Context Steward Seat
-
-### Mission
-
-The Human Context Steward protects the living context around James, FPAI, collaborators, candidates, projects, and decisions. They help the system remember what matters without flattening people into tasks.
-
-### Outcomes
-
-- James gets clearer continuity across active work, relationships, and decisions.
-- Candidate and collaborator context is handled with discretion.
-- AI-generated summaries are checked for tone, missing nuance, and false certainty.
-- The system improves its memory hygiene without becoming invasive.
-
-### Responsibilities
-
-- Maintain concise context briefs for active people, projects, and decisions.
-- Review AI summaries for accuracy, consent boundaries, and relational tone.
-- Flag sensitive context that should not be broadly distributed to agents.
-- Help prepare high-context handoffs before meetings, calls, hiring decisions, and negotiations.
-- Keep candidate-facing communication warm, honest, and appropriately scoped.
-
-### Must-Have Traits
-
-- High discretion and trustworthiness.
-- Excellent written judgment.
-- Comfort working beside AI without outsourcing human judgment.
-- Ability to preserve nuance under time pressure.
-- Strong boundary sense around privacy, consent, and sensitive context.
-
-### Strong Signals
-
-- Background in executive assistance, people ops, recruiting coordination, therapy-adjacent operations, community stewardship, editorial work, chief-of-staff support, or founder support.
-- Writes clearly without sounding corporate.
-- Can summarize complex human situations without becoming reductive.
-- Notices when an AI answer is plausible but socially wrong.
-
-### Disqualifiers
-
-- Treats candidate or collaborator context as raw data to exploit.
-- Over-indexes on automation at the expense of consent.
-- Cannot keep confidential information compartmentalized.
-- Uses AI outputs without review.
-- Pushes decisions past James without explicit authorization.
-
----
-
-## Pipeline
-
-### 1. Role Intake
-
-Inputs:
-
-- Seat name.
-- Mission.
-- Outcomes.
-- Responsibilities.
-- Required trust level.
-- Access level.
-- Compensation range or budget guardrail.
-- Time commitment.
-- Working style constraints.
-- Known dealbreakers.
-
-Output:
-
-- `RoleSpec` with explicit scoring criteria and human-only decision points.
-
-### 2. Role Spec Generation
-
-The hub generates:
-
-- Public-facing role post.
-- Internal scoring rubric.
-- Candidate sourcing brief.
-- Interview question bank.
-- Red flag checklist.
-- Candidate communication drafts.
-
-James must approve the role spec before sourcing begins.
-
-### 3. Candidate Intake
-
-Allowed sources:
-
-- Direct referrals.
-- Candidates James explicitly names.
-- Applications submitted through an approved form.
-- Public profiles from approved platforms.
-- Existing network lists that James explicitly authorizes for this role.
-
-Captured fields:
-
-- Name.
-- Contact channel, if already available and approved.
-- Source.
-- Public links.
-- Submitted materials.
-- Notes.
-- Consent status.
-- Pipeline status.
-
-### 4. AI Screening
-
-AI screens candidates only against the approved rubric.
-
-Outputs:
-
-- Fit score.
-- Evidence for fit.
-- Risks and unknowns.
-- Suggested interview focus.
-- Bias and confidence notes.
-- Recommendation: `strong_shortlist`, `possible`, `hold`, or `not_recommended`.
-
-Screening must include citations to candidate-provided or public material when possible. Unverified inferences must be labeled as inference.
-
-### 5. Shortlist Review
-
-The hub produces a shortlist packet:
-
-- Top candidates.
-- Why each candidate is included.
-- What is known.
-- What is unknown.
-- Suggested first contact.
-- Suggested interview sequence.
-- Specific risks for James to inspect.
-
-James chooses which candidates may be contacted.
-
-### 6. Contact Gate
-
-No contact is sent until James explicitly approves:
-
-- Candidate.
-- Channel.
-- Message.
-- Sender identity.
-- Timing.
-
-Approved contact may be sent manually by James or by an assistant acting under explicit instruction.
-
-### 7. Interview Support
-
-The hub prepares:
-
-- Candidate brief.
-- Interview agenda.
-- Questions tied to the rubric.
-- Follow-up probes.
-- Evaluation form.
-- Post-interview synthesis template.
-
-AI may summarize interview notes. James owns interpretation and next-step decisions.
-
-### 8. Decision Packet
-
-The final packet includes:
-
-- Role criteria.
-- Candidate evidence.
-- Interview notes.
-- Reference notes, if any.
-- Compensation and availability fit.
-- Risks.
-- Open questions.
-- AI recommendation with confidence.
-- Human decision field.
-
-The final decision field can only be set by James.
-
----
-
-## Data Model
-
-```python
-class RoleSpec:
-    id: str
-    seat_name: str
-    rung: int
-    mission: str
-    outcomes: list[str]
-    responsibilities: list[str]
-    must_have_traits: list[str]
-    strong_signals: list[str]
-    disqualifiers: list[str]
-    access_level: str
-    compensation_guardrail: str | None
-    status: str  # draft, approved, sourcing, interviewing, filled, paused
-    approved_by_james: bool
-
-class Candidate:
-    id: str
-    role_spec_id: str
-    name: str
-    source: str
-    contact_channel: str | None
-    consent_status: str  # unknown, candidate_submitted, james_authorized, contacted, withdrawn
-    public_links: list[str]
-    materials: list[str]
-    pipeline_status: str  # sourced, screened, shortlisted, contact_approved, contacted, interviewing, offer_ready, hired, archived
-    notes: list[str]
-
-class ScreeningResult:
-    candidate_id: str
-    role_spec_id: str
-    fit_score: float
-    recommendation: str  # strong_shortlist, possible, hold, not_recommended
-    evidence: list[str]
-    risks: list[str]
-    unknowns: list[str]
-    bias_notes: list[str]
-    confidence: str
-
-class ContactApproval:
-    candidate_id: str
-    approved_by_james: bool
-    approved_channel: str | None
-    approved_message: str | None
-    approved_sender: str | None
-    approved_at: str | None
-
-class HiringDecision:
-    candidate_id: str
-    decided_by_james: bool
-    decision: str  # no_decision, advance, hold, pass, offer, hire
-    rationale: str
-    decided_at: str | None
-```
-
----
-
-## Required Views
-
-### Role Spec Board
-
-- Draft roles.
-- Approved roles.
-- Active sourcing.
-- Interviewing.
-- Filled or paused.
-
-### Candidate Review
-
-- Candidate list grouped by role.
-- Score and recommendation.
-- Evidence summary.
-- Risks.
-- Unknowns.
-- Contact approval state.
-
-### Shortlist Packet
-
-- Compact view for James.
-- Shows only candidates ready for human review.
-- Makes gates visually obvious: `Needs Role Approval`, `Needs Contact Approval`, `Needs Decision`.
-
-### Decision Console
-
-- Final candidate packet.
-- Human notes.
-- Decision options.
-- Explicit confirmation that AI recommendation is advisory.
-
----
-
-## Guardrails
-
-- AI recommendations are advisory metadata, not decisions.
-- Candidate contact requires explicit approval every time.
-- Rejections are drafted only after James approves the decision and message.
-- Sensitive notes must be compartmentalized by role and access level.
-- The system must preserve uncertainty instead of converting unknowns into fake confidence.
-- The hub must log every approval, contact, status change, and final decision.
-
----
-
-## Acceptance Criteria
-
-- [ ] A Human Context Steward role spec can be created from rough intake.
-- [ ] James can approve or edit the role spec before sourcing starts.
-- [ ] Candidates can be added without triggering contact.
-- [ ] AI can screen candidates and produce evidence-based shortlist packets.
-- [ ] Contact actions are blocked until James approves candidate, message, channel, sender, and timing.
-- [ ] Interview packets can be generated from the approved rubric.
-- [ ] Final hiring decision can only be recorded as James's decision.
-- [ ] Audit log shows role approval, candidate screening, contact approvals, and decision events.
-
----
-
-## Open Questions
-
-- What compensation range should be attached to the Human Context Steward seat?
-- Is this initially part-time, fractional, trial project, or full-time?
-- Which candidate sources are approved for the first pass?
-- Should the first contact come directly from James or from an assistant under James's name?
-- What information should be considered too sensitive for the recruiting hub to store?
+Update `docs/codex/HANDOFF.md`: files changed · tests green · fixture end-to-end proof.
+Downstream intent unlocked: HCS pipeline live → first non-AI context holder → James's
+physical-world bottleneck starts dissolving; same rails serve every Phase 2 hire.

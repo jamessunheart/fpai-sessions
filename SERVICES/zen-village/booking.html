@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Your Stay | Zen Village Costa Rica</title>
+    <meta name="description" content="Book your stay at Zen Village Costa Rica. Pay with PayPal, Venmo, Bitcoin, Solana, or USDT. Riverside cabins from $65/night.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --zen-forest-deep: #1a2e1a;
+            --zen-forest: #2d4a2d;
+            --zen-moss: #4a6741;
+            --zen-sage: #7d9a6f;
+            --zen-mist: #c4d4b8;
+            --zen-cloud: #f0f4ec;
+            --zen-cream: #faf9f5;
+            --zen-river-deep: #2c4a5a;
+            --zen-river: #4a7c8a;
+            --zen-river-light: #7fb3c4;
+            --zen-gold: #c4a35a;
+            --zen-sunset: #d4956a;
+            --zen-sand: #d4c4a8;
+            --font-display: 'Cormorant Garamond', Georgia, serif;
+            --font-body: 'Outfit', -apple-system, sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--zen-cream);
+            color: var(--zen-forest-deep);
+            line-height: 1.6;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background: var(--zen-forest-deep);
+            color: var(--zen-cream);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .top-bar a { color: var(--zen-cream); text-decoration: none; }
+        .top-bar .logo {
+            font-family: var(--font-display);
+            font-size: 1.6rem;
+            font-weight: 400;
+        }
+        .top-bar nav { display: flex; gap: 2rem; align-items: center; }
+        .top-bar nav a { font-size: 0.95rem; opacity: 0.85; transition: opacity 0.3s; }
+        .top-bar nav a:hover { opacity: 1; }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, var(--zen-forest-deep) 0%, var(--zen-forest) 50%, var(--zen-river-deep) 100%);
+            padding: 4rem 2rem 3rem;
+            text-align: center;
+            color: var(--zen-cream);
+        }
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.2rem, 5vw, 3.2rem);
+            font-weight: 400;
+            margin-bottom: 0.75rem;
+        }
+        .hero p { font-size: 1.15rem; opacity: 0.9; max-width: 600px; margin: 0 auto; }
+
+        /* Main Container */
+        .container { max-width: 1200px; margin: 0 auto; padding: 3rem 2rem; }
+
+        /* Steps */
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        .step {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            background: white;
+            border-radius: 16px;
+            border: 1px solid var(--zen-mist);
+            position: relative;
+        }
+        .step-num {
+            width: 40px; height: 40px;
+            background: var(--zen-gold);
+            color: var(--zen-forest-deep);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 600;
+            margin: 0 auto 0.75rem;
+        }
+        .step h3 { font-size: 1rem; margin-bottom: 0.4rem; color: var(--zen-forest-deep); }
+        .step p { font-size: 0.85rem; color: var(--zen-moss); }
+
+        /* Two Column Layout */
+        .booking-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        /* Form */
+        .form-card {
+            background: white;
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+            border: 1px solid var(--zen-mist);
+        }
+        .form-card h2 {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+        }
+        .form-card > p {
+            color: var(--zen-moss);
+            margin-bottom: 2rem;
+        }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.4rem;
+            font-size: 0.95rem;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--zen-mist);
+            border-radius: 10px;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            background: var(--zen-cream);
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--zen-gold);
+        }
+        .form-group textarea { min-height: 100px; resize: vertical; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--zen-gold);
+            color: var(--zen-forest-deep);
+            border: none;
+            border-radius: 12px;
+            font-family: var(--font-body);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 0.5rem;
+        }
+        .submit-btn:hover { background: var(--zen-sunset); transform: translateY(-2px); }
+
+        /* Payment Sidebar */
+        .payment-sidebar { position: sticky; top: 2rem; }
+        .payment-card {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+            border: 1px solid var(--zen-mist);
+            margin-bottom: 1.5rem;
+        }
+        .payment-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 400;
+            margin-bottom: 1.25rem;
+            color: var(--zen-forest-deep);
+        }
+
+        .pay-method {
+            padding: 1rem;
+            border: 2px solid var(--zen-cloud);
+            border-radius: 14px;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .pay-method:hover { border-color: var(--zen-mist); }
+        .pay-method.selected { border-color: var(--zen-gold); background: #fffdf5; }
+        .pay-method-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .pay-method-icon { font-size: 1.4rem; }
+        .pay-method-name { font-weight: 500; font-size: 1rem; }
+        .pay-method-tag {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 20px;
+            background: var(--zen-cloud);
+            color: var(--zen-moss);
+            margin-left: auto;
+        }
+        .pay-method-detail {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--zen-cloud);
+            display: none;
+        }
+        .pay-method.selected .pay-method-detail { display: block; }
+        .pay-address {
+            background: var(--zen-cloud);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            word-break: break-all;
+            user-select: all;
+            cursor: text;
+            color: var(--zen-forest-deep);
+            font-weight: 500;
+            position: relative;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--zen-gold);
+            border: none;
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            font-family: var(--font-body);
+            color: var(--zen-forest-deep);
+            font-weight: 500;
+        }
+        .copy-btn:hover { background: var(--zen-sunset); }
+        .pay-method-note {
+            font-size: 0.82rem;
+            color: var(--zen-moss);
+            margin-top: 0.5rem;
+        }
+
+        /* Deposit Note */
+        .deposit-note {
+            background: linear-gradient(135deg, #f0f4ec, #e8eee0);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--zen-mist);
+        }
+        .deposit-note h4 { color: var(--zen-forest-deep); margin-bottom: 0.5rem; font-size: 1rem; }
+        .deposit-note p { color: var(--zen-moss); font-size: 0.9rem; line-height: 1.7; }
+
+        /* Success State */
+        .success-screen {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+            border: 1px solid var(--zen-mist);
+        }
+        .success-screen.active { display: block; }
+        .success-icon { font-size: 4rem; margin-bottom: 1rem; }
+        .success-screen h2 {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .success-screen > p { color: var(--zen-moss); margin-bottom: 2rem; }
+        .success-payment-box {
+            background: var(--zen-cloud);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: left;
+            margin: 0 auto 2rem;
+            max-width: 500px;
+            border: 1px solid var(--zen-mist);
+        }
+        .success-payment-box h3 { margin-bottom: 1rem; font-size: 1.1rem; }
+        .success-address {
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            word-break: break-all;
+            font-weight: 600;
+            user-select: all;
+            cursor: pointer;
+            border: 1px solid var(--zen-mist);
+            margin-bottom: 0.75rem;
+            transition: all 0.3s;
+        }
+        .success-address:hover { border-color: var(--zen-gold); }
+        .success-note {
+            font-size: 0.85rem;
+            color: var(--zen-moss);
+            font-style: italic;
+        }
+
+        /* Accommodations Quick Ref */
+        .accom-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .accom-mini {
+            background: var(--zen-cloud);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+        }
+        .accom-mini-icon { font-size: 1.3rem; margin-bottom: 0.3rem; }
+        .accom-mini-name { font-weight: 500; font-size: 0.85rem; }
+        .accom-mini-price { color: var(--zen-gold); font-weight: 600; font-size: 0.95rem; }
+
+        /* Footer */
+        .book-footer {
+            background: var(--zen-forest-deep);
+            color: var(--zen-cream);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+        .book-footer a { color: var(--zen-gold); text-decoration: none; }
+
+        /* WhatsApp */
+        .wa-float {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px; height: 60px;
+            background: #25D366;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+            text-decoration: none;
+            box-shadow: 0 4px 20px rgba(37,211,102,0.4);
+            z-index: 999;
+            transition: transform 0.3s;
+        }
+        .wa-float:hover { transform: scale(1.1); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .steps { grid-template-columns: repeat(2, 1fr); }
+            .booking-grid { grid-template-columns: 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+            .payment-sidebar { position: static; }
+            .accom-grid { grid-template-columns: repeat(2, 1fr); }
+            .top-bar { flex-direction: column; gap: 1rem; }
+            .top-bar nav { gap: 1rem; flex-wrap: wrap; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <a href="/" class="logo">Zen Village</a>
+        <nav>
+            <a href="/#accommodations">Accommodations</a>
+            <a href="/retreats">Retreats</a>
+            <a href="/#faq">FAQ</a>
+            <a href="https://wa.me/50670945764">WhatsApp</a>
+        </nav>
+    </div>
+
+    <div class="hero">
+        <h1>Book Your Paradise Escape</h1>
+        <p>Select your dates, choose how you'd like to pay, and we'll confirm your reservation within 24 hours.</p>
+    </div>
+
+    <div class="container">
+
+        <!-- Steps -->
+        <div class="steps">
+            <div class="step">
+                <div class="step-num">1</div>
+                <h3>Choose Your Stay</h3>
+                <p>Pick accommodation &amp; dates</p>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <h3>Submit Request</h3>
+                <p>We confirm in 24 hours</p>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <h3>Send 50% Deposit</h3>
+                <p>Via your preferred method</p>
+            </div>
+            <div class="step">
+                <div class="step-num">4</div>
+                <h3>You're Booked!</h3>
+                <p>Pay the rest on arrival</p>
+            </div>
+        </div>
+
+        <!-- Booking Grid -->
+        <div class="booking-grid" id="booking-form-area">
+
+            <!-- Left: Form -->
+            <div class="form-card">
+                <h2>Your Details</h2>
+                <p>Fill out the form and we'll get back to you with availability and pricing.</p>
+
+                <form id="book-form">
+                    <div class="form-group">
+                        <label>What type of booking?</label>
+                        <select name="inquiry_type" id="bk-type">
+                            <option value="Stay">Individual Stay</option>
+                            <option value="Day Pass">River &amp; Sauna Day Pass</option>
+                            <option value="Full Property Retreat">Full Property Retreat</option>
+                            <option value="Work Exchange">Work Exchange</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Full Name *</label>
+                            <input type="text" name="name" required placeholder="Your name">
+                        </div>
+                        <div class="form-group">
+                            <label>Email *</label>
+                            <input type="email" name="email" required placeholder="you@email.com">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Phone / WhatsApp</label>
+                            <input type="tel" name="phone" placeholder="+1 555 123 4567">
+                        </div>
+                        <div class="form-group">
+                            <label>Number of Guests</label>
+                            <select name="guests">
+                                <option value="1">1 guest</option>
+                                <option value="2" selected>2 guests</option>
+                                <option value="3-4">3-4 guests</option>
+                                <option value="5-8">5-8 guests</option>
+                                <option value="9+">9+ (group/retreat)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Check-in Date</label>
+                            <input type="date" name="checkin" id="bk-checkin">
+                        </div>
+                        <div class="form-group">
+                            <label>Check-out Date</label>
+                            <input type="date" name="checkout" id="bk-checkout">
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="accom-select-group">
+                        <label>Preferred Accommodation</label>
+                        <select name="accommodation" id="bk-accom">
+                            <option value="">No preference / Surprise me</option>
+                            <option value="Riverlight Cabin">Riverlight Cabin — $65/night</option>
+                            <option value="Zen Casa (3BR)">Zen Casa (3 Bedroom) — $195/night</option>
+                            <option value="River House">River House — $85/night</option>
+                            <option value="Jungle Platform">Jungle Platform — $45/night</option>
+                            <option value="Astro Alpha">Astro Alpha Glamping — $55/night</option>
+                            <option value="Astro Sol">Astro Sol Glamping — $55/night</option>
+                            <option value="Cloud Cabin (Hilltop)">Cloud Cabin (Hilltop, 4x4 required) — $75/night</option>
+                            <option value="Summit Cabin (Hilltop)">Summit Cabin (Hilltop, 4x4 required) — $75/night</option>
+                            <option value="Full Property">Full Property Rental — from $450/night</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Preferred Payment Method</label>
+                        <select name="payment_method" id="bk-payment">
+                            <option value="paypal">PayPal</option>
+                            <option value="venmo">Venmo</option>
+                            <option value="btc">Bitcoin (BTC)</option>
+                            <option value="sol">Solana (SOL)</option>
+                            <option value="usdt_eth">USDT (Ethereum)</option>
+                            <option value="bank_transfer">Bank Transfer</option>
+                            <option value="other">Other / Discuss with us</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Anything else we should know?</label>
+                        <textarea name="message" placeholder="Special requests, dietary needs, arrival time, questions..."></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Submit Booking Request</button>
+                    <p style="text-align:center; font-size:0.85rem; color:#7d9a6f; margin-top:0.75rem;">We respond within 24 hours. No payment needed until we confirm.</p>
+                </form>
+            </div>
+
+            <!-- Right: Payment Info -->
+            <div class="payment-sidebar">
+                <div class="payment-card">
+                    <h3>Payment Methods</h3>
+
+                    <div class="pay-method selected" onclick="selectPayMethod(this, 'paypal')">
+                        <div class="pay-method-header">
+                            <span class="pay-method-icon">🅿️</span>
+                            <span class="pay-method-name">PayPal</span>
+                            <span class="pay-method-tag">Most Popular</span>
+                        </div>
+                        <div class="pay-method-detail">
+                            <div class="pay-address">
+                                james@fullpotential.com
+                                <button class="copy-btn" onclick="event.stopPropagation(); copyAddr('james@fullpotential.com', this)">Copy</button>
+                            </div>
+                            <p class="pay-method-note">Include your name + dates in the payment note.</p>
+                        </div>
+                    </div>
+
+                    <div class="pay-method" onclick="selectPayMethod(this, 'venmo')">
+                        <div class="pay-method-header">
+                            <span class="pay-method-icon">💳</span>
+                            <span class="pay-method-name">Venmo</span>
+                        </div>
+                        <div class="pay-method-detail">
+                            <div class="pay-address">
+                                @James-Stinson-65
+                                <button class="copy-btn" onclick="event.stopPropagation(); copyAddr('@James-Stinson-65', this)">Copy</button>
+                            </div>
+                            <p class="pay-method-note">Include your name + dates in the payment note.</p>
+                        </div>
+                    </div>
+
+                    <div class="pay-method" onclick="selectPayMethod(this, 'btc')">
+                        <div class="pay-method-header">
+                            <span class="pay-method-icon">₿</span>
+                            <span class="pay-method-name">Bitcoin</span>
+                            <span class="pay-method-tag">Crypto</span>
+                        </div>
+                        <div class="pay-method-detail">
+                            <div class="pay-address">
+                                13tXYGWCZWgPoZ8WZXi7vTt2kwax2ekpz7
+                                <button class="copy-btn" onclick="event.stopPropagation(); copyAddr('13tXYGWCZWgPoZ8WZXi7vTt2kwax2ekpz7', this)">Copy</button>
+                            </div>
+                            <p class="pay-method-note">Send BTC equivalent of USD amount. Share tx hash with us.</p>
+                        </div>
+                    </div>
+
+                    <div class="pay-method" onclick="selectPayMethod(this, 'sol')">
+                        <div class="pay-method-header">
+                            <span class="pay-method-icon">◎</span>
+                            <span class="pay-method-name">Solana (SOL)</span>
+                            <span class="pay-method-tag">Crypto</span>
+                        </div>
+                        <div class="pay-method-detail">
+                            <div class="pay-address">
+                                9YfypYoQZPj5L33tFTR5Ek4LgJUTSyx8JskGehyP6tsb
+                                <button class="copy-btn" onclick="event.stopPropagation(); copyAddr('9YfypYoQZPj5L33tFTR5Ek4LgJUTSyx8JskGehyP6tsb', this)">Copy</button>
+                            </div>
+                            <p class="pay-method-note">Send SOL equivalent of USD amount. Share tx hash with us.</p>
+                        </div>
+                    </div>
+
+                    <div class="pay-method" onclick="selectPayMethod(this, 'usdt_eth')">
+                        <div class="pay-method-header">
+                            <span class="pay-method-icon">💠</span>
+                            <span class="pay-method-name">USDT (Ethereum)</span>
+                            <span class="pay-method-tag">Stablecoin</span>
+                        </div>
+                        <div class="pay-method-detail">
+                            <div class="pay-address">
+                                0x2718e06abefa37947c7ea63c8746e4f14777aacb
+                                <button class="copy-btn" onclick="event.stopPropagation(); copyAddr('0x2718e06abefa37947c7ea63c8746e4f14777aacb', this)">Copy</button>
+                            </div>
+                            <p class="pay-method-note">USDT on Ethereum network only. 1 USDT = $1 USD.</p>
+                        </div>
+                    </div>
+
+                    <div class="pay-method" onclick="selectPayMethod(this, 'bank_transfer')">
+                        <div class="pay-method-header">
+                            <span class="pay-method-icon">🏦</span>
+                            <span class="pay-method-name">Bank Transfer</span>
+                        </div>
+                        <div class="pay-method-detail">
+                            <p class="pay-method-note">Bank details will be provided after we confirm your reservation. Best for extended stays and retreats.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Deposit -->
+                <div class="deposit-note">
+                    <h4>💡 How Deposits Work</h4>
+                    <p>A <strong>50% deposit</strong> secures your reservation. The remaining balance is due on arrival (cash, card, or any method above).</p>
+                    <p style="margin-top:0.5rem;">For <strong>full property retreats</strong>, we can arrange custom payment schedules for your group.</p>
+                </div>
+
+                <!-- Quick Pricing -->
+                <div class="payment-card" style="margin-top:1.5rem;">
+                    <h3>Quick Pricing</h3>
+                    <div class="accom-grid">
+                        <div class="accom-mini">
+                            <div class="accom-mini-icon">🏡</div>
+                            <div class="accom-mini-name">Riverlight</div>
+                            <div class="accom-mini-price">$65/nt</div>
+                        </div>
+                        <div class="accom-mini">
+                            <div class="accom-mini-icon">🏠</div>
+                            <div class="accom-mini-name">Zen Casa</div>
+                            <div class="accom-mini-price">$195/nt</div>
+                        </div>
+                        <div class="accom-mini">
+                            <div class="accom-mini-icon">🏠</div>
+                            <div class="accom-mini-name">River House</div>
+                            <div class="accom-mini-price">$85/nt</div>
+                        </div>
+                        <div class="accom-mini">
+                            <div class="accom-mini-icon">🌿</div>
+                            <div class="accom-mini-name">Jungle Plat.</div>
+                            <div class="accom-mini-price">$45/nt</div>
+                        </div>
+                        <div class="accom-mini">
+                            <div class="accom-mini-icon">⛺</div>
+                            <div class="accom-mini-name">Glamping</div>
+                            <div class="accom-mini-price">$55/nt</div>
+                        </div>
+                        <div class="accom-mini">
+                            <div class="accom-mini-icon">⛰️</div>
+                            <div class="accom-mini-name">Hilltop</div>
+                            <div class="accom-mini-price">$75/nt</div>
+                        </div>
+                    </div>
+                    <p style="font-size:0.8rem; color:#7d9a6f; margin-top:1rem; text-align:center;">Weekly &amp; monthly discounts available. Full property from $450/night.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Screen (hidden by default) -->
+        <div class="success-screen" id="success-screen">
+            <div class="success-icon">🌿</div>
+            <h2>Booking Request Received!</h2>
+            <p>We'll confirm availability and your total within 24 hours.</p>
+            <div class="success-payment-box" id="success-payment-info"></div>
+            <p style="font-size:0.9rem; color:#7d9a6f;">
+                Questions? WhatsApp us at <a href="https://wa.me/50670945764" style="color:#c4a35a; font-weight:600;">+506 7094 5764</a>
+            </p>
+            <div style="margin-top:2rem; display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+                <a href="/" style="padding:0.8rem 2rem; background:var(--zen-cloud); border-radius:10px; text-decoration:none; color:var(--zen-forest-deep); font-weight:500;">← Back to Home</a>
+                <a href="/book" style="padding:0.8rem 2rem; background:var(--zen-gold); border-radius:10px; text-decoration:none; color:var(--zen-forest-deep); font-weight:500;">Book Another Stay</a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="book-footer">
+        <p>Zen Village Costa Rica · San Gerardo de Rivas, Chirripó · <a href="https://wa.me/50670945764">+506 7094 5764</a> · <a href="/">zenvillagecr.com</a></p>
+    </div>
+
+    <a href="https://wa.me/50670945764" class="wa-float" target="_blank" title="Chat on WhatsApp">💬</a>
+
+    <script>
+        const paymentData = {
+            paypal: { icon: "🅿️", title: "PayPal", address: "james@fullpotential.com", note: "Include your name and booking dates in the PayPal payment note." },
+            venmo: { icon: "💳", title: "Venmo", address: "@James-Stinson-65", note: "Include your name and booking dates in the Venmo payment note." },
+            btc: { icon: "₿", title: "Bitcoin (BTC)", address: "13tXYGWCZWgPoZ8WZXi7vTt2kwax2ekpz7", note: "Send the BTC equivalent of your USD deposit. Share the transaction hash with us." },
+            sol: { icon: "◎", title: "Solana (SOL)", address: "9YfypYoQZPj5L33tFTR5Ek4LgJUTSyx8JskGehyP6tsb", note: "Send the SOL equivalent of your USD deposit. Share the transaction hash with us." },
+            usdt_eth: { icon: "💠", title: "USDT (Ethereum)", address: "0x2718e06abefa37947c7ea63c8746e4f14777aacb", note: "Send USDT on the Ethereum network. 1 USDT = $1 USD." },
+            bank_transfer: { icon: "🏦", title: "Bank Transfer", address: "Details sent after confirmation", note: "We'll email you the bank details once your reservation is confirmed." },
+            other: { icon: "💬", title: "TBD", address: "We'll discuss", note: "We'll reach out within 24 hours to arrange payment." }
+        };
+
+        let selectedPayment = 'paypal';
+
+        function selectPayMethod(el, method) {
+            document.querySelectorAll('.pay-method').forEach(m => m.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedPayment = method;
+            document.getElementById('bk-payment').value = method;
+        }
+
+        function copyAddr(text, btn) {
+            navigator.clipboard.writeText(text).then(() => {
+                const orig = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.style.background = '#4a7c8a';
+                btn.style.color = 'white';
+                setTimeout(() => { btn.textContent = orig; btn.style.background = ''; btn.style.color = ''; }, 2000);
+            });
+        }
+
+        // Sync payment dropdown with sidebar
+        document.getElementById('bk-payment').addEventListener('change', function() {
+            const method = this.value;
+            document.querySelectorAll('.pay-method').forEach(m => {
+                m.classList.remove('selected');
+                if (m.getAttribute('onclick') && m.getAttribute('onclick').includes("'" + method + "'")) {
+                    m.classList.add('selected');
+                }
+            });
+            selectedPayment = method;
+        });
+
+        // Set min date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('bk-checkin').setAttribute('min', today);
+        document.getElementById('bk-checkout').setAttribute('min', today);
+        document.getElementById('bk-checkin').addEventListener('change', function() {
+            document.getElementById('bk-checkout').setAttribute('min', this.value);
+        });
+
+        // Form submission
+        document.getElementById('book-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const form = this;
+            const fd = new FormData(form);
+            const checkin = fd.get('checkin') || '';
+            const checkout = fd.get('checkout') || '';
+            const dates = (checkin && checkout) ? `${checkin} to ${checkout}` : (checkin || checkout || 'Flexible');
+
+            const data = {
+                name: fd.get('name'),
+                email: fd.get('email'),
+                inquiry_type: fd.get('inquiry_type'),
+                dates: dates,
+                guests: fd.get('guests'),
+                accommodation: fd.get('accommodation'),
+                message: fd.get('message') || '',
+                phone: fd.get('phone') || '',
+                payment_method: fd.get('payment_method') || selectedPayment,
+            };
+
+            const btn = form.querySelector('.submit-btn');
+            btn.textContent = 'Sending...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/api/inquiries/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    showSuccess(data.payment_method);
+                } else {
+                    window.location.href = `mailto:james@fullpotential.com?subject=${encodeURIComponent('Zen Village Booking: ' + data.name)}&body=${encodeURIComponent(JSON.stringify(data, null, 2))}`;
+                    showSuccess(data.payment_method);
+                }
+            } catch (err) {
+                window.location.href = `mailto:james@fullpotential.com?subject=${encodeURIComponent('Zen Village Booking: ' + data.name)}&body=${encodeURIComponent(JSON.stringify(data, null, 2))}`;
+                showSuccess(data.payment_method);
+            }
+        });
+
+        function showSuccess(method) {
+            const info = paymentData[method] || paymentData.other;
+            document.getElementById('booking-form-area').style.display = 'none';
+            const successEl = document.getElementById('success-screen');
+            successEl.classList.add('active');
+
+            document.getElementById('success-payment-info').innerHTML = `
+                <h3>${info.icon} Pay via ${info.title}</h3>
+                <div class="success-address" onclick="navigator.clipboard.writeText('${info.address}').then(()=>{this.style.borderColor='#c4a35a'; this.innerHTML='${info.address}<br><small style=color:#4a7c8a>Copied!</small>';})">
+                    ${info.address}<br><small style="color:#7d9a6f;">Click to copy</small>
+                </div>
+                <p class="success-note">${info.note}</p>
+                <p class="success-note" style="margin-top:0.75rem;">⏳ <strong>Wait for our confirmation email</strong> before sending payment. We'll confirm availability, your total, and the exact deposit amount.</p>
+            `;
+
+            successEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    </script>
+</body>
+</html>

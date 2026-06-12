@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zen Pass Admin — Guest Management</title>
+<style>
+:root {
+  --bg: #faf9f5; --fg: #1a2e1a; --accent: #4a7c59; --accent2: #8fbc8f;
+  --card: #f0f4ec; --border: #d4ddd0; --error: #c0392b; --gold: #c9a84c;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--fg); }
+.header { background: var(--fg); color: var(--bg); padding: 1rem 1.5rem; display:flex; justify-content:space-between; align-items:center; }
+.header h1 { font-size: 1.2rem; font-weight: 600; }
+.header a { color: var(--accent2); text-decoration:none; font-size: 0.85rem; }
+.stats { display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem; padding: 1rem 1.5rem; }
+.stat { background: white; border-radius: 10px; padding: 1rem; text-align:center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.stat .num { font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+.stat .label { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.25rem; }
+.stat.revenue .num { color: var(--gold); }
+.section { padding: 1rem 1.5rem; }
+.section h2 { font-size: 1rem; font-weight: 600; margin-bottom: 0.75rem; display:flex; justify-content:space-between; align-items:center; }
+.guest-list { display:flex; flex-direction:column; gap: 0.5rem; }
+.guest {
+  background: white; border-radius: 10px; padding: 0.8rem 1rem;
+  display:flex; justify-content:space-between; align-items:center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05); cursor:pointer; transition: all 0.15s;
+}
+.guest:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.1); }
+.guest-info { flex:1; }
+.guest-info .name { font-weight: 600; font-size: 0.95rem; }
+.guest-info .meta { font-size: 0.8rem; color: #888; margin-top: 0.15rem; }
+.guest-actions { display:flex; gap: 0.4rem; align-items:center; }
+.badge { padding: 0.2rem 0.5rem; border-radius: 12px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; }
+.badge-paid { background: #e8f5e9; color: #2e7d32; }
+.badge-pending { background: #fff8e1; color: #f57f17; }
+.badge-checkedin { background: #e3f2fd; color: #1565c0; }
+.action-btn {
+  padding: 0.3rem 0.6rem; border: 1px solid var(--border); border-radius: 6px;
+  background: white; cursor:pointer; font-size: 0.75rem; transition: all 0.15s;
+}
+.action-btn:hover { background: var(--card); }
+.action-btn.confirm { border-color: #2e7d32; color: #2e7d32; }
+.action-btn.checkin { border-color: #1565c0; color: #1565c0; }
+.login-section { max-width: 360px; margin: 4rem auto; text-align:center; padding: 2rem; }
+.login-section input { width:100%; padding: 0.8rem; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; margin-bottom: 1rem; text-align:center; }
+.login-section button { width:100%; padding: 0.8rem; background: var(--accent); color:white; border:none; border-radius: 8px; font-size: 1rem; cursor:pointer; }
+.event-qr { text-align:center; margin: 1rem 0; }
+.event-qr img { width: 120px; height: 120px; border-radius: 8px; }
+.event-qr p { font-size: 0.75rem; color: #888; margin-top: 0.25rem; }
+.modal-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:100; justify-content:center; align-items:center; }
+.modal-overlay.open { display:flex; }
+.modal { background:white; border-radius:12px; padding:1.5rem; width:90%; max-width:400px; }
+.modal h3 { margin-bottom:1rem; }
+.modal input { width:100%; padding:0.6rem; border:1px solid var(--border); border-radius:6px; margin-bottom:0.75rem; font-size:0.95rem; }
+.modal .btns { display:flex; gap:0.5rem; }
+.modal .btns button { flex:1; padding:0.6rem; border:none; border-radius:6px; cursor:pointer; font-size:0.9rem; }
+.modal .btns .cancel { background:#eee; }
+.modal .btns .ok { background:var(--accent); color:white; }
+.empty { text-align:center; padding: 2rem; color: #999; }
+.refresh-btn { background:none; border:1px solid var(--border); border-radius:6px; padding:0.3rem 0.7rem; cursor:pointer; font-size:0.8rem; }
+</style>
+</head>
+<body>
+
+<div id="login-view">
+  <div class="login-section">
+    <h2>Zen Pass Admin</h2>
+    <p style="margin-bottom:1.5rem; color:#888;">Enter admin key to manage guests</p>
+    <input type="password" id="admin-key" placeholder="Admin key" onkeydown="if(event.key==='Enter')login()">
+    <button onclick="login()">Enter</button>
+  </div>
+</div>
+
+<div id="admin-view" style="display:none;">
+  <div class="header">
+    <h1>Zen Pass Admin</h1>
+    <a href="/pass" target="_blank">Event Page</a>
+  </div>
+
+  <div class="stats" id="stats">
+    <div class="stat"><div class="num" id="s-guests">-</div><div class="label">Guests</div></div>
+    <div class="stat"><div class="num" id="s-checkedin">-</div><div class="label">Checked In</div></div>
+    <div class="stat"><div class="num" id="s-pending">-</div><div class="label">Pending</div></div>
+    <div class="stat revenue"><div class="num" id="s-revenue">-</div><div class="label">Revenue</div></div>
+  </div>
+
+  <div class="event-qr">
+    <img src="/api/pass/event-qr/default" alt="Event QR">
+    <p>Share or print this QR code</p>
+  </div>
+
+  <div class="section">
+    <h2>Guest List <button class="refresh-btn" onclick="loadGuests()">Refresh</button></h2>
+    <div class="guest-list" id="guest-list">
+      <div class="empty">Loading...</div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal">
+    <h3>Confirm Payment</h3>
+    <input type="number" id="confirm-amount" placeholder="Amount ($)">
+    <select id="confirm-method" style="width:100%;padding:0.6rem;border:1px solid #d4ddd0;border-radius:6px;margin-bottom:0.75rem;font-size:0.95rem;">
+      <option value="venmo">Venmo</option>
+      <option value="paypal">PayPal</option>
+      <option value="cash">Cash</option>
+      <option value="btc">Bitcoin</option>
+      <option value="other">Other</option>
+    </select>
+    <div class="btns">
+      <button class="cancel" onclick="closeModal()">Cancel</button>
+      <button class="ok" onclick="confirmPayment()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let adminKey = localStorage.getItem('zenpass_admin_key') || '';
+let confirmPassId = '';
+
+function login() {
+  adminKey = document.getElementById('admin-key').value.trim();
+  if (!adminKey) return;
+  localStorage.setItem('zenpass_admin_key', adminKey);
+  document.getElementById('login-view').style.display = 'none';
+  document.getElementById('admin-view').style.display = 'block';
+  loadGuests();
+}
+
+if (adminKey) {
+  document.getElementById('login-view').style.display = 'none';
+  document.getElementById('admin-view').style.display = 'block';
+  loadGuests();
+}
+
+async function loadGuests() {
+  try {
+    const r = await fetch(`/api/pass/admin/guests?admin_key=${adminKey}`);
+    if (r.status === 403) { localStorage.removeItem('zenpass_admin_key'); location.reload(); return; }
+    const data = await r.json();
+
+    document.getElementById('s-guests').textContent = data.stats.total_guests;
+    document.getElementById('s-checkedin').textContent = data.stats.checked_in;
+    document.getElementById('s-pending').textContent = data.stats.pending_payment;
+    document.getElementById('s-revenue').textContent = '$' + data.stats.total_revenue.toFixed(0);
+
+    const list = document.getElementById('guest-list');
+    if (data.guests.length === 0) {
+      list.innerHTML = '<div class="empty">No guests yet. Share the event QR to get started.</div>';
+      return;
+    }
+
+    list.innerHTML = data.guests.map(g => {
+      const status = g.checked_in ? 'checkedin' : g.payment_status === 'paid' ? 'paid' : 'pending';
+      const statusLabel = g.checked_in ? 'Checked In' : g.payment_status === 'paid' ? 'Paid' : 'Pending';
+      const actions = [];
+
+      if (g.payment_status !== 'paid') {
+        actions.push(`<button class="action-btn confirm" onclick="openConfirm('${g.id}', ${g.amount_paid || 0})">Confirm $</button>`);
+      }
+      if (!g.checked_in) {
+        actions.push(`<button class="action-btn checkin" onclick="checkinGuest('${g.id}')">Check In</button>`);
+      }
+
+      return `<div class="guest">
+        <div class="guest-info">
+          <div class="name">${g.name}</div>
+          <div class="meta">${g.email} · ${g.payment_method || '?'} · $${(g.amount_paid || 0).toFixed(0)}</div>
+        </div>
+        <div class="guest-actions">
+          <span class="badge badge-${status}">${statusLabel}</span>
+          ${actions.join('')}
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) { console.error(e); }
+}
+
+function openConfirm(passId, currentAmount) {
+  confirmPassId = passId;
+  document.getElementById('confirm-amount').value = '';
+  document.getElementById('confirm-modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('confirm-modal').classList.remove('open');
+}
+
+async function confirmPayment() {
+  const amount = parseFloat(document.getElementById('confirm-amount').value);
+  const method = document.getElementById('confirm-method').value;
+  if (!amount || amount <= 0) { alert('Enter an amount'); return; }
+
+  await fetch('/api/pass/confirm-payment', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ pass_id: confirmPassId, amount, method, admin_key: adminKey })
+  });
+  closeModal();
+  loadGuests();
+}
+
+async function checkinGuest(passId) {
+  await fetch(`/api/pass/${passId}/checkin?admin_key=${adminKey}`, { method: 'POST' });
+  loadGuests();
+}
+</script>
+</body>
+</html>

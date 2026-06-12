@@ -1,5 +1,7 @@
 # COHERENT CHAMPIONS OF CHRIST
 
+![Coherent Champions of CHRIST — A Declaration for the Age of Intelligence](./assets/coherent-champions-poster.png)
+
 **Manifesto v1.0**
 **Founder:** James Sunheart
 **Adopted:** 2026-05-07
@@ -210,6 +212,10 @@ Your daily choices.
 *World peace begins wherever coherence becomes embodied.*
 
 We are Coherent Champions of CHRIST.
+
+**TOGETHER, WE CAN BUILD A FUTURE WORTH INHERITING.**
+
+*Coherence · Healing · Regeneration · Intelligence · Service · Truth.*
 
 ---
 

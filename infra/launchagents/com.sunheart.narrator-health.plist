@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.sunheart.narrator-health</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/jamessunheart/FPAI_Cockpit/infra/scripts/narrator_health.sh</string>
+    </array>
+    <!-- 18:00 UTC = 12:00 CR (UTC-6, no DST in Costa Rica) -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>18</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+    <key>StandardOutPath</key>
+    <string>/Users/jamessunheart/.config/fpai/narrator/health.stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/jamessunheart/.config/fpai/narrator/health.stderr.log</string>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/Users/jamessunheart/.local/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin</string>
+        <key>HOME</key>
+        <string>/Users/jamessunheart</string>
+    </dict>
+    <key>RunAtLoad</key>
+    <false/>
+</dict>
+</plist>

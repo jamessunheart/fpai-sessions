@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Full Potential | What Will You Create?</title>
+  <meta name="description" content="Achieve your most meaningful goals with AI guidance and human support. Your growth benefits you and the world." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-cream: #FDFBF7;
+      --bg-warm: #F9F6F0;
+      --bg-soft: #F3EDE4;
+      --bg-card: #FFFFFF;
+      
+      --green-deep: #2D5A3D;
+      --green-forest: #3D7A4F;
+      --green-fresh: #4A9D5B;
+      --green-soft: #E8F5E9;
+      
+      --gold-warm: #C4A052;
+      --gold-soft: #F5E6C8;
+      
+      --rose-warm: #C17B7B;
+      --rose-soft: #FCE8E8;
+      
+      --sky-soft: #E3F2FD;
+      --purple-soft: #F3E5F5;
+      --amber-soft: #FFF8E1;
+      
+      --text-deep: #1A2E1A;
+      --text-main: #2D3B2D;
+      --text-soft: #5A6B5A;
+      --text-muted: #8A9A8A;
+      
+      --border-soft: rgba(45, 90, 61, 0.1);
+      --border-hover: rgba(45, 90, 61, 0.2);
+      --shadow-soft: 0 2px 20px rgba(45, 90, 61, 0.08);
+      --shadow-card: 0 4px 30px rgba(45, 90, 61, 0.1);
+      --shadow-hover: 0 8px 40px rgba(45, 90, 61, 0.15);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg-cream);
+      color: var(--text-main);
+      line-height: 1.7;
+    }
+
+    .page-bg {
+      position: fixed;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse at top left, rgba(232, 245, 233, 0.6) 0%, transparent 50%),
+        radial-gradient(ellipse at bottom right, rgba(245, 230, 200, 0.5) 0%, transparent 50%),
+        radial-gradient(ellipse at center, rgba(255, 255, 255, 0.9) 0%, transparent 70%),
+        var(--bg-cream);
+      z-index: -1;
+    }
+
+    /* ===== WEEKLY CALL BANNER ===== */
+    .weekly-call-banner {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(135deg, var(--green-deep), var(--green-forest));
+      color: white;
+      padding: 0.65rem 1rem;
+      z-index: 110;
+      text-align: center;
+    }
+
+    .banner-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .banner-live {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .banner-dot {
+      width: 8px;
+      height: 8px;
+      background: #4ADE80;
+      border-radius: 50%;
+      animation: pulse-dot 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.2); }
+    }
+
+    .banner-text {
+      font-size: 0.9rem;
+      opacity: 0.95;
+    }
+
+    .banner-cta {
+      background: white;
+      color: var(--green-deep);
+      padding: 0.4rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .banner-cta:hover {
+      background: var(--green-soft);
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 768px) {
+      .banner-text { display: none; }
+      .banner-content { gap: 1rem; }
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      position: fixed;
+      top: 40px;
+      left: 0;
+      right: 0;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(253, 251, 247, 0.9);
+      backdrop-filter: blur(10px);
+      z-index: 100;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 1.25rem;
+      color: var(--green-deep);
+      text-decoration: none;
+    }
+
+    .logo-icon { font-size: 1.5rem; }
+
+    nav {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    nav a {
+      color: var(--text-soft);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    nav a:hover { color: var(--green-forest); }
+
+    .nav-cta {
+      background: linear-gradient(135deg, var(--green-forest), var(--green-deep));
+      color: white !important;
+      padding: 0.625rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+
+    .nav-cta:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(45, 90, 61, 0.3);
+    }
+
+    .mobile-menu { display: none; }
+
+    /* ===== HERO ===== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 10rem 2rem 4rem;
+    }
+
+    .hero-content {
+      max-width: 800px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--green-soft);
+      color: var(--green-deep);
+      padding: 0.5rem 1rem;
+      border-radius: 100px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+    }
+
+    .hero-title {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 500;
+      color: var(--text-deep);
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-title .highlight {
+      background: linear-gradient(135deg, var(--green-forest), var(--green-fresh));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-subtitle {
+      font-size: 1.25rem;
+      color: var(--text-soft);
+      max-width: 600px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.7;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      text-decoration: none;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--green-forest), var(--green-deep));
+      color: white;
+      box-shadow: 0 4px 15px rgba(45, 90, 61, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(45, 90, 61, 0.4);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1.5px solid var(--border-soft);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-soft);
+      border-color: var(--border-hover);
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      animation: bounce 2s infinite;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(10px); }
+    }
+
+    /* ===== GOAL AREAS ===== */
+    .goals-section {
+      padding: 6rem 2rem;
+      background: linear-gradient(180deg, transparent, var(--bg-warm));
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto 4rem;
+    }
+
+    .section-tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      color: var(--green-forest);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 1rem;
+      padding: 0.375rem 1rem;
+      background: var(--green-soft);
+      border-radius: 100px;
+    }
+
+    .section-title {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(2rem, 4vw, 2.75rem);
+      font-weight: 500;
+      color: var(--text-deep);
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+
+    .section-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-soft);
+    }
+
+    .goal-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .goal-card {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-soft);
+      border-radius: 24px;
+      padding: 2rem;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .goal-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--card-accent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .goal-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--border-hover);
+    }
+
+    .goal-card:hover::before { opacity: 1; }
+
+    .goal-card[data-area="wealth"] { --card-accent: var(--gold-warm); }
+    .goal-card[data-area="health"] { --card-accent: var(--green-forest); }
+    .goal-card[data-area="happiness"] { --card-accent: #FFB300; }
+    .goal-card[data-area="purpose"] { --card-accent: #9C27B0; }
+    .goal-card[data-area="connection"] { --card-accent: var(--rose-warm); }
+
+    .goal-card-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .goal-card-title {
+      font-family: 'Fraunces', serif;
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--text-deep);
+      margin-bottom: 0.5rem;
+    }
+
+    .goal-card-desc {
+      color: var(--text-soft);
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+
+    .goal-card-examples {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .goal-example {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.75rem;
+      background: var(--bg-soft);
+      border-radius: 100px;
+      color: var(--text-soft);
+    }
+
+    /* ===== HOW IT WORKS ===== */
+    .how-section {
+      padding: 6rem 2rem;
+    }
+
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 768px) {
+      .how-grid { grid-template-columns: 1fr; }
+    }
+
+    .how-step {
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .how-step-num {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, var(--green-soft), var(--bg-card));
+      border: 2px solid var(--green-forest);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-family: 'Fraunces', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--green-deep);
+    }
+
+    .how-step-title {
+      font-family: 'Fraunces', serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-deep);
+      margin-bottom: 0.75rem;
+    }
+
+    .how-step-desc {
+      color: var(--text-soft);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* ===== ALIGNMENT ===== */
+    .alignment-section {
+      padding: 6rem 2rem;
+      background: linear-gradient(135deg, var(--purple-soft) 0%, var(--sky-soft) 50%, var(--green-soft) 100%);
+    }
+
+    .alignment-content {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .alignment-icon {
+      font-size: 4rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .alignment-title {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: 500;
+      color: var(--text-deep);
+      margin-bottom: 1.5rem;
+      line-height: 1.3;
+    }
+
+    .alignment-text {
+      font-size: 1.15rem;
+      color: var(--text-main);
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+
+    .alignment-quote {
+      font-family: 'Fraunces', serif;
+      font-size: 1.5rem;
+      font-style: italic;
+      color: var(--green-deep);
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 16px;
+      border-left: 4px solid var(--green-forest);
+    }
+
+    /* ===== SUPPORT TIERS ===== */
+    .support-section {
+      padding: 6rem 2rem;
+    }
+
+    .tiers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .tier-card {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-soft);
+      border-radius: 24px;
+      padding: 2rem;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .tier-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .tier-card.featured {
+      border-color: var(--green-forest);
+      background: linear-gradient(135deg, var(--green-soft), var(--bg-card));
+    }
+
+    .tier-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.375rem 0.75rem;
+      border-radius: 100px;
+      margin-bottom: 1rem;
+    }
+
+    .tier-card:nth-child(1) .tier-badge { background: var(--green-soft); color: var(--green-deep); }
+    .tier-card:nth-child(2) .tier-badge { background: var(--gold-soft); color: var(--gold-warm); }
+    .tier-card:nth-child(3) .tier-badge { background: var(--purple-soft); color: #9C27B0; }
+
+    .tier-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+
+    .tier-name {
+      font-family: 'Fraunces', serif;
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--text-deep);
+      margin-bottom: 0.5rem;
+    }
+
+    .tier-price {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .tier-desc {
+      color: var(--text-soft);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .tier-features {
+      list-style: none;
+    }
+
+    .tier-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--text-main);
+      margin-bottom: 0.5rem;
+    }
+
+    .tier-features li::before {
+      content: '✓';
+      color: var(--green-forest);
+      font-weight: 600;
+    }
+
+    /* ===== ECOSYSTEM ===== */
+    .ecosystem-section {
+      padding: 6rem 2rem;
+      background: var(--bg-warm);
+    }
+
+    .ecosystem-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .ecosystem-card {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-soft);
+      border-radius: 16px;
+      padding: 1.5rem;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .ecosystem-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-card);
+      border-color: var(--border-hover);
+    }
+
+    .ecosystem-icon {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .ecosystem-name {
+      font-family: 'Fraunces', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-deep);
+      margin-bottom: 0.25rem;
+    }
+
+    .ecosystem-desc {
+      font-size: 0.85rem;
+      color: var(--text-soft);
+    }
+
+    /* ===== FINAL CTA ===== */
+    .final-cta {
+      padding: 8rem 2rem;
+      text-align: center;
+      background: linear-gradient(180deg, var(--bg-cream), var(--green-soft));
+    }
+
+    .final-cta-content {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .final-cta-title {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 500;
+      color: var(--text-deep);
+      margin-bottom: 1rem;
+    }
+
+    .final-cta-text {
+      font-size: 1.15rem;
+      color: var(--text-soft);
+      margin-bottom: 2rem;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--text-deep);
+      color: rgba(255, 255, 255, 0.7);
+      padding: 4rem 2rem 2rem;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 2rem;
+      max-width: 1000px;
+      margin: 0 auto 3rem;
+    }
+
+    .footer-col h4 {
+      color: white;
+      font-family: 'Fraunces', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .footer-col a {
+      display: block;
+      color: rgba(255, 255, 255, 0.6);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+      transition: color 0.3s;
+    }
+
+    .footer-col a:hover { color: white; }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      nav { display: none; }
+      .mobile-menu {
+        display: block;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--text-main);
+      }
+      
+      header { top: 36px; }
+      .hero { padding: 8rem 1.5rem 3rem; }
+      .hero-cta { flex-direction: column; }
+      .hero-cta .btn { width: 100%; }
+      
+      .goals-section,
+      .how-section,
+      .alignment-section,
+      .support-section,
+      .ecosystem-section {
+        padding: 4rem 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-bg"></div>
+
+  <!-- Weekly Call Banner -->
+  <div class="weekly-call-banner">
+    <div class="banner-content">
+      <div class="banner-live">
+        <span class="banner-dot"></span>
+        <span>First Call Free</span>
+      </div>
+      <div class="banner-text">
+        100 spots · Live every Thursday · No credit card required
+      </div>
+      <a href="/call" class="banner-cta">Join This Week →</a>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <a href="/" class="logo">
+      <span class="logo-icon">🌱</span>
+      <span>Full Potential</span>
+    </a>
+    <nav>
+      <a href="#goals">Life Areas</a>
+      <a href="#how">How It Works</a>
+      <a href="#support">Support</a>
+      <a href="/call" class="nav-cta">Try Free Call</a>
+    </nav>
+    <button class="mobile-menu">☰</button>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span>🌍</span>
+        <span>Your growth benefits everyone</span>
+      </div>
+      
+      <h1 class="hero-title">
+        What would it mean to<br>
+        <span class="highlight">achieve your biggest goal?</span>
+      </h1>
+      
+      <p class="hero-subtitle">
+        You bring the goal. We bring AI guidance, human wisdom, and unwavering support. 
+        Together, we make it real—and your success ripples outward.
+      </p>
+      
+      <div class="hero-cta">
+        <a href="/call" class="btn btn-primary">Try Your First Free Call →</a>
+        <a href="#goals" class="btn btn-secondary">Explore Life Areas</a>
+      </div>
+    </div>
+    <div class="scroll-hint">↓</div>
+  </section>
+
+  <!-- Goal Areas -->
+  <section class="goals-section" id="goals">
+    <div class="section-header">
+      <div class="section-tag">Where Is Life Calling You?</div>
+      <h2 class="section-title">Five paths to your full potential</h2>
+      <p class="section-subtitle">
+        Every meaningful transformation starts with a clear direction. Which area is calling you right now?
+      </p>
+    </div>
+
+    <div class="goal-cards">
+      <a href="/call" class="goal-card" data-area="wealth">
+        <div class="goal-card-icon">💰</div>
+        <h3 class="goal-card-title">Wealth & Abundance</h3>
+        <p class="goal-card-desc">
+          Financial freedom isn't just about money—it's about having the resources to live and give fully.
+        </p>
+        <div class="goal-card-examples">
+          <span class="goal-example">$10K/month</span>
+          <span class="goal-example">Debt-free</span>
+          <span class="goal-example">Passive income</span>
+        </div>
+      </a>
+
+      <a href="/call" class="goal-card" data-area="health">
+        <div class="goal-card-icon">🌿</div>
+        <h3 class="goal-card-title">Health & Vitality</h3>
+        <p class="goal-card-desc">
+          Your body is the vehicle for everything else. Energy, strength, and clarity make all other goals possible.
+        </p>
+        <div class="goal-card-examples">
+          <span class="goal-example">Transform body</span>
+          <span class="goal-example">Boundless energy</span>
+          <span class="goal-example">Mental clarity</span>
+        </div>
+      </a>
+
+      <a href="/call" class="goal-card" data-area="happiness">
+        <div class="goal-card-icon">✨</div>
+        <h3 class="goal-card-title">Joy & Fulfillment</h3>
+        <p class="goal-card-desc">
+          Success means nothing without happiness. Find genuine contentment, not just achievement.
+        </p>
+        <div class="goal-card-examples">
+          <span class="goal-example">Inner peace</span>
+          <span class="goal-example">Work-life balance</span>
+          <span class="goal-example">Daily gratitude</span>
+        </div>
+      </a>
+
+      <a href="/call" class="goal-card" data-area="purpose">
+        <div class="goal-card-icon">🎯</div>
+        <h3 class="goal-card-title">Purpose & Impact</h3>
+        <p class="goal-card-desc">
+          Discover what you're truly meant to do. Align your work with your calling and create lasting impact.
+        </p>
+        <div class="goal-card-examples">
+          <span class="goal-example">Find calling</span>
+          <span class="goal-example">Career change</span>
+          <span class="goal-example">Make a difference</span>
+        </div>
+      </a>
+
+      <a href="/call" class="goal-card" data-area="connection">
+        <div class="goal-card-icon">💝</div>
+        <h3 class="goal-card-title">Love & Connection</h3>
+        <p class="goal-card-desc">
+          We're wired for belonging. Deepen relationships, find your partner, or build your community.
+        </p>
+        <div class="goal-card-examples">
+          <span class="goal-example">Find partner</span>
+          <span class="goal-example">Deeper bonds</span>
+          <span class="goal-example">Community</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-section" id="how">
+    <div class="section-header">
+      <div class="section-tag">Your Journey</div>
+      <h2 class="section-title">How transformation happens</h2>
+      <p class="section-subtitle">
+        Not a transaction. A relationship.
+      </p>
+    </div>
+
+    <div class="how-grid">
+      <div class="how-step">
+        <div class="how-step-num">1</div>
+        <h3 class="how-step-title">Try a Free Call</h3>
+        <p class="how-step-desc">
+          Your first weekly call is free. Show up, get clarity, and see if this is right for you. No commitment.
+        </p>
+      </div>
+
+      <div class="how-step">
+        <div class="how-step-num">2</div>
+        <h3 class="how-step-title">Choose Your Path</h3>
+        <p class="how-step-desc">
+          If you want to continue, join our weekly group or work 1-on-1. Get matched with AI guidance and human coaches.
+        </p>
+      </div>
+
+      <div class="how-step">
+        <div class="how-step-num">3</div>
+        <h3 class="how-step-title">Transform Together</h3>
+        <p class="how-step-desc">
+          Daily support, accountability, and wisdom. We're with you through every phase until you achieve—and beyond.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Alignment -->
+  <section class="alignment-section">
+    <div class="alignment-content">
+      <div class="alignment-icon">🌍</div>
+      <h2 class="alignment-title">Your success is the world's success</h2>
+      <p class="alignment-text">
+        We believe the most powerful goals are those that benefit both yourself and others. 
+        When you become healthier, wealthier, happier, and more purposeful—everyone around you benefits too.
+        <br><br>
+        That's why we ask: <em>"When you achieve this, who else wins?"</em>
+        <br><br>
+        This isn't just feel-good philosophy. It's how we design your journey to be sustainable, 
+        meaningful, and aligned with what actually creates lasting fulfillment.
+      </p>
+      <div class="alignment-quote">
+        "A rising tide lifts all boats."
+      </div>
+    </div>
+  </section>
+
+  <!-- Support Tiers -->
+  <section class="support-section" id="support">
+    <div class="section-header">
+      <div class="section-tag">Levels of Support</div>
+      <h2 class="section-title">Choose your level of commitment</h2>
+      <p class="section-subtitle">
+        Start free. Continue with the support that fits you.
+      </p>
+    </div>
+
+    <div class="tiers-grid">
+      <div class="tier-card featured">
+        <div class="tier-badge">Start Here</div>
+        <div class="tier-icon">🎁</div>
+        <h3 class="tier-name">First Free Call</h3>
+        <div class="tier-price">Free · No commitment</div>
+        <p class="tier-desc">
+          Join our live weekly call and experience the transformation firsthand. Your first time is always free.
+        </p>
+        <ul class="tier-features">
+          <li>Live group session</li>
+          <li>Q&A with host</li>
+          <li>AI demo</li>
+          <li>Leave with a next step</li>
+        </ul>
+      </div>
+
+      <div class="tier-card">
+        <div class="tier-badge">Ongoing Support</div>
+        <div class="tier-icon">👥</div>
+        <h3 class="tier-name">Weekly Group</h3>
+        <div class="tier-price">From $97/month</div>
+        <p class="tier-desc">
+          Continue attending weekly calls, plus AI companion, community, and accountability partners.
+        </p>
+        <ul class="tier-features">
+          <li>Weekly call access</li>
+          <li>AI companion (Aria)</li>
+          <li>Private community</li>
+          <li>Progress tracking</li>
+          <li>Accountability partners</li>
+        </ul>
+      </div>
+
+      <div class="tier-card">
+        <div class="tier-badge">Accelerate</div>
+        <div class="tier-icon">🚀</div>
+        <h3 class="tier-name">1-on-1 Coaching</h3>
+        <div class="tier-price">From $500/month</div>
+        <p class="tier-desc">
+          Personal coaching, custom strategy, and direct access for those ready to accelerate.
+        </p>
+        <ul class="tier-features">
+          <li>Everything in Group</li>
+          <li>1-on-1 coaching calls</li>
+          <li>Custom strategy</li>
+          <li>Direct founder access</li>
+          <li>Expert network</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ecosystem -->
+  <section class="ecosystem-section">
+    <div class="section-header">
+      <div class="section-tag">The Ecosystem</div>
+      <h2 class="section-title">Tools that power your journey</h2>
+    </div>
+
+    <div class="ecosystem-grid">
+      <a href="https://fullpotential.ai" class="ecosystem-card">
+        <div class="ecosystem-icon">🧠</div>
+        <div class="ecosystem-name">Full Potential AI</div>
+        <div class="ecosystem-desc">Conscious AI guiding your growth</div>
+      </a>
+
+      <a href="/whiterock/" class="ecosystem-card">
+        <div class="ecosystem-icon">🏔️</div>
+        <div class="ecosystem-name">WhiteRock</div>
+        <div class="ecosystem-desc">Member-owned regenerative community</div>
+      </a>
+
+      <a href="https://whaletracklive.com" class="ecosystem-card">
+        <div class="ecosystem-icon">🐋</div>
+        <div class="ecosystem-name">WhaleTrack</div>
+        <div class="ecosystem-desc">Community treasury growth</div>
+      </a>
+
+      <a href="/research" class="ecosystem-card">
+        <div class="ecosystem-icon">📚</div>
+        <div class="ecosystem-name">Research Library</div>
+        <div class="ecosystem-desc">300+ papers on human potential</div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final-cta">
+    <div class="final-cta-content">
+      <h2 class="final-cta-title">Try your first call free</h2>
+      <p class="final-cta-text">
+        100 spots every Thursday. No credit card. No commitment. Just show up and see.
+      </p>
+      <a href="/call" class="btn btn-primary btn-large">
+        Save My Spot →
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>Begin</h4>
+        <a href="/call">Free Weekly Call</a>
+        <a href="/intake-v3">Start Your Journey</a>
+        <a href="#goals">Explore Goals</a>
+        <a href="/provider-apply">Become a Guide</a>
+      </div>
+      <div class="footer-col">
+        <h4>Community</h4>
+        <a href="/whiterock/">WhiteRock</a>
+        <a href="/whiterock/agreement.html">Membership Agreement</a>
+        <a href="https://fullpotential.ai">Full Potential AI</a>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <a href="/research">Research Library</a>
+        <a href="/submit-receipt">Submit Receipt</a>
+        <a href="https://github.com/fullpotential">GitHub</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      Full Potential · A WhiteRock PMA Community · Your growth benefits everyone
+    </div>
+  </footer>
+
+</body>
+</html>
+
+
+
+
+
+
+

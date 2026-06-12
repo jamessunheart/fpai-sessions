@@ -1,0 +1,125 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
+from app.config import load_settings  # noqa: E402
+from app.main import dispatch_inbox, drain_outbox, poll_inbox, run_tick  # noqa: E402
+from app.models import MessageInput  # noqa: E402
+from app.store import JsonlStore  # noqa: E402
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(prog="comms-hub")
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    send = sub.add_parser("send")
+    send.add_argument("--from", dest="source", default="system", choices=["terminal", "obsidian", "telegram", "system", "builder"])
+    send.add_argument("--to", dest="audience", default="james", choices=["james", "system", "builder", "all"])
+    send.add_argument("--priority", default="normal", choices=["low", "normal", "high", "urgent"])
+    send.add_argument("--topic", default="coordination")
+    send.add_argument("--body", required=True)
+    send.add_argument("--route", action="append", choices=["terminal", "obsidian", "telegram", "voice", "inbox"], default=[])
+
+    inbox = sub.add_parser("inbox")
+    inbox.add_argument("--limit", type=int, default=20)
+
+    receive = sub.add_parser("receive")
+    receive.add_argument("--from", dest="source", default="terminal", choices=["terminal", "obsidian", "telegram", "system", "builder"])
+    receive.add_argument("--to", dest="audience", default="system", choices=["james", "system", "builder", "all"])
+    receive.add_argument("--priority", default="normal", choices=["low", "normal", "high", "urgent"])
+    receive.add_argument("--topic", default="coordination")
+    receive.add_argument("--body", required=True)
+    receive.add_argument("--builder-id", default=None)
+
+    drain = sub.add_parser("drain")
+    drain.add_argument("--dry-run", action="store_true")
+
+    sub.add_parser("dispatch")
+    sub.add_parser("poll")
+    sub.add_parser("tick")
+    sub.add_parser("health")
+    sub.add_parser("state")
+    return parser
+
+
+def main() -> int:
+    args = build_parser().parse_args()
+    settings = load_settings()
+    store = JsonlStore(settings.var_dir)
+
+    if args.command == "send":
+        record = store.append_outbox(MessageInput(
+            source=args.source,
+            audience=args.audience,
+            priority=args.priority,
+            topic=args.topic,
+            body=args.body,
+            route=args.route,
+        ))
+        print(json.dumps({"queued": True, "message_id": record.id}, indent=2))
+        return 0
+
+    if args.command == "inbox":
+        records = store.inbox()[-args.limit:]
+        print(json.dumps([record.model_dump() for record in records], indent=2))
+        return 0
+
+    if args.command == "receive":
+        metadata = {}
+        if args.builder_id:
+            metadata["builder_id"] = args.builder_id
+        record = store.append_inbox(MessageInput(
+            source=args.source,
+            audience=args.audience,
+            priority=args.priority,
+            topic=args.topic,
+            body=args.body,
+            metadata=metadata,
+        ))
+        print(json.dumps({"received": True, "message_id": record.id}, indent=2))
+        return 0
+
+    if args.command == "drain":
+        result = drain_outbox(settings, store)
+        print(json.dumps(result, indent=2))
+        return 0
+
+    if args.command == "dispatch":
+        result = dispatch_inbox(settings, store)
+        print(json.dumps(result, indent=2))
+        return 0
+
+    if args.command == "poll":
+        print(json.dumps(poll_inbox(settings, store), indent=2))
+        return 0
+
+    if args.command == "tick":
+        print(json.dumps(run_tick(settings, store), indent=2))
+        return 0
+
+    if args.command == "health":
+        print(json.dumps({
+            "status": "healthy" if settings.enabled else "degraded",
+            "service": settings.service_name,
+            "version": settings.version,
+            "dry_run": settings.dry_run,
+            "runtime_paused": store.runtime_paused(),
+        }, indent=2))
+        return 0
+
+    if args.command == "state":
+        print(json.dumps(store.load_state(), indent=2))
+        return 0
+
+    return 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

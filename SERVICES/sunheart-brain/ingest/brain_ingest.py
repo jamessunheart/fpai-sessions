@@ -15,6 +15,10 @@ Examples:
     # Pull everything
     ./brain_ingest.py run --all
 
+    # PDFs + markdown/text from a folder (Google Drive sync → same folder works)
+    ./brain_ingest.py dry-run --source papers
+    ./brain_ingest.py run --source papers
+
     # Re-import a specific source from scratch (clears dedup flags first)
     ./brain_ingest.py run --source chatgpt --reembed
 
@@ -22,6 +26,9 @@ Environment (or .env beside this file):
     SH_BRAIN_BASE        https://brain.sunheart.com
     SH_INGEST_TOKEN      (bearer token with ingest permission)
     SH_DATA_DIR          ~/SunheartBrainData (where ChatGPT/Claude exports live)
+    SH_PAPERS_DIR        ~/SunheartBrainData/papers (PDF / .md / .txt for --source papers)
+    SH_BEAR_TAG_OPT_IN   if set (e.g. brain), only Bear notes that contain #brain are ingested
+    SH_CLAUDE_CONVERSATIONS_JSON  optional explicit path to Claude export conversations.json
     OPENAI_API_KEY       optional — enables `--prefer openai` embeddings
 """
 from __future__ import annotations
@@ -36,6 +43,7 @@ import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
+from itertools import islice
 from typing import Callable, Iterator
 
 import click
@@ -46,15 +54,34 @@ from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeEl
 
 from filters import classify
 
+SOURCE_DEFAULT_SENSITIVITY = {
+    "bear":    "🟡 Personal",
+    "papers":  "🟡 Personal",
+    "chatgpt": "🟢 Public",
+    "claude":  "🟡 Personal",  # exports often contain private context; promote with #public in text if needed
+    "cursor":  "🟢 Public",
+}
+
 console = Console()
+
+_ENV_FILE = Path(__file__).with_name(".env")
+if _ENV_FILE.exists():
+    for line in _ENV_FILE.read_text().splitlines():
+        if "=" in line and not line.lstrip().startswith("#"):
+            k, v = line.split("=", 1)
+            os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
 
 BRAIN_BASE    = os.environ.get("SH_BRAIN_BASE", "https://brain.sunheart.com")
 INGEST_TOKEN  = os.environ.get("SH_INGEST_TOKEN")
 DATA_DIR      = Path(os.environ.get("SH_DATA_DIR", "~/SunheartBrainData")).expanduser()
+PAPERS_DIR    = Path(os.environ.get("SH_PAPERS_DIR", str(DATA_DIR / "papers"))).expanduser()
 
 BEAR_DB = Path(
     "~/Library/Group Containers/9K33E3U3T4.net.shinyfrog.bear/Application Data/database.sqlite"
 ).expanduser()
+
+# If set (e.g. "brain"), only Bear notes whose body contains that #tag are ingested. Empty = all notes (still subject to classify / skip tags).
+BEAR_TAG_OPT_IN = os.environ.get("SH_BEAR_TAG_OPT_IN", "").strip().lower().lstrip("#")
 
 
 # ---------------------------------------------------------------------------
@@ -88,6 +115,10 @@ def bear_adapter() -> Iterator[Note]:
     if not BEAR_DB.exists():
         console.print(f"[yellow]Bear DB not found at {BEAR_DB} — skipping[/yellow]")
         return
+    if BEAR_TAG_OPT_IN:
+        console.print(
+            f"[cyan]Bear: only notes tagged #{BEAR_TAG_OPT_IN} (set SH_BEAR_TAG_OPT_IN empty to ingest all)[/cyan]"
+        )
     con = sqlite3.connect(f"file:{BEAR_DB}?mode=ro", uri=True)
     con.row_factory = sqlite3.Row
     # Bear's schema: ZSFNOTE table. ZTRASHED=0 excludes trash.
@@ -112,6 +143,11 @@ def bear_adapter() -> Iterator[Note]:
             )
         # Tags are inline (#tag #nested/tag) — extract via regex.
         tags = re.findall(r"(?:^|\s)#([\w\-\/]+)", r["text"] or "")
+        if BEAR_TAG_OPT_IN:
+            tl = {t.lower() for t in tags}
+            nested = any(t.lower().startswith(BEAR_TAG_OPT_IN + "/") for t in tags)
+            if BEAR_TAG_OPT_IN not in tl and not nested:
+                continue
         yield Note(
             source="Bear",
             source_id=r["uuid"],
@@ -164,24 +200,44 @@ def chatgpt_adapter(export_path: Path | None = None) -> Iterator[Note]:
             )
 
 
+def _claude_conversations_json_path() -> Path | None:
+    """Resolve Claude export: env override → claude-export/ → SunheartBrainData/clde/**/conversations.json."""
+    env = (os.environ.get("SH_CLAUDE_CONVERSATIONS_JSON") or "").strip()
+    if env:
+        p = Path(env).expanduser()
+        return p if p.exists() else None
+    p = DATA_DIR / "claude-export" / "conversations.json"
+    if p.exists():
+        return p
+    clde = DATA_DIR / "clde"
+    if clde.is_dir():
+        found = sorted(clde.rglob("conversations.json"), key=lambda x: x.stat().st_mtime, reverse=True)
+        if found:
+            return found[0]
+    return None
+
+
 def claude_adapter(export_path: Path | None = None) -> Iterator[Note]:
-    p = export_path or (DATA_DIR / "claude-export" / "conversations.json")
-    if not p.exists():
-        console.print(f"[yellow]Claude export not found at {p} — skipping[/yellow]")
+    p = export_path or _claude_conversations_json_path()
+    if not p or not p.exists():
+        console.print(
+            f"[yellow]Claude export not found — set SH_CLAUDE_CONVERSATIONS_JSON or add "
+            f"{DATA_DIR / 'claude-export' / 'conversations.json'} or {DATA_DIR / 'clde'}/…/conversations.json[/yellow]"
+        )
         return
-    data = json.loads(p.read_text())
-    # Claude's export is [{uuid, name, created_at, chat_messages: [{uuid, text, sender, created_at, ...}]}]
-    for conv in data:
-        chat_id    = conv.get("uuid", "")
+    console.print(f"[dim]Claude export: {p}[/dim]")
+
+    def _yield_from_conv(conv: dict) -> Iterator[Note]:
+        chat_id = conv.get("uuid", "")
         chat_title = conv.get("name") or "Untitled"
-        created    = _ts(conv.get("created_at"))
+        created = _ts(conv.get("created_at"))
         for m in conv.get("chat_messages") or []:
             text = (m.get("text") or "").strip()
             if not text:
                 continue
             sender = m.get("sender", "human")
             msg_id = m.get("uuid", "")
-            when   = _ts(m.get("created_at"))
+            when = _ts(m.get("created_at"))
             yield Note(
                 source="Claude",
                 source_id=f"{chat_id}:{msg_id}",
@@ -197,6 +253,19 @@ def claude_adapter(export_path: Path | None = None) -> Iterator[Note]:
                 conversation_started_at=created,
             )
 
+    # Large exports (~300MB JSON): stream root array so dry-run --limit stays fast.
+    try:
+        import ijson
+        with p.open("rb") as f:
+            for conv in ijson.items(f, "item"):
+                if not isinstance(conv, dict):
+                    continue
+                yield from _yield_from_conv(conv)
+    except ImportError:
+        data = json.loads(p.read_text())
+        for conv in data:
+            yield from _yield_from_conv(conv)
+
 
 def cursor_adapter(transcripts_root: Path | None = None) -> Iterator[Note]:
     """Walks ~/.cursor/projects/*/agent-transcripts/*.jsonl. Each .jsonl is one
@@ -205,9 +274,15 @@ def cursor_adapter(transcripts_root: Path | None = None) -> Iterator[Note]:
     if not root.exists():
         console.print(f"[yellow]Cursor projects dir not found at {root} — skipping[/yellow]")
         return
-    for jsonl in root.glob("*/agent-transcripts/*.jsonl"):
+    # Layout: <project>/agent-transcripts/<uuid>/<uuid>.jsonl
+    # (subagents live under .../<uuid>/subagents/*.jsonl — we skip them;
+    # AGENTS.md says to cite only parent uuids.)
+    for jsonl in root.glob("*/agent-transcripts/*/*.jsonl"):
+        if jsonl.parent.name == "subagents" or jsonl.stem != jsonl.parent.name:
+            continue
         chat_id = jsonl.stem
-        chat_title = f"Cursor · {jsonl.parent.parent.name} · {chat_id[:8]}"
+        project_name = jsonl.parent.parent.parent.name
+        chat_title = f"Cursor · {project_name} · {chat_id[:8]}"
         started = datetime.fromtimestamp(jsonl.stat().st_mtime, tz=timezone.utc)
         try:
             idx = 0
@@ -247,8 +322,136 @@ def cursor_adapter(transcripts_root: Path | None = None) -> Iterator[Note]:
             console.print(f"[red]failed to read {jsonl}: {e}[/red]")
 
 
+# Max characters sent per file (AppFlowy / index also cap; keep one note per file).
+PAPERS_MAX_CHARS = int(os.environ.get("SH_PAPERS_MAX_CHARS", "200000"))
+
+_SKIP_DIR_PARTS = frozenset({
+    ".git", "node_modules", ".venv", "__pycache__", ".Trash",
+    "System Volume Information",
+})
+
+
+def _papers_path_skipped(path: Path, root: Path) -> bool:
+    try:
+        rel = path.relative_to(root)
+    except ValueError:
+        return True
+    for part in rel.parts:
+        if part in _SKIP_DIR_PARTS or part.startswith("."):
+            return True
+    return False
+
+
+def _extract_pdf_text(path: Path) -> str | None:
+    try:
+        import fitz  # pymupdf
+    except ImportError:
+        console.print("[red]pymupdf not installed — run: pip install -r requirements.txt[/red]")
+        return None
+    try:
+        doc = fitz.open(path)
+        try:
+            chunks: list[str] = []
+            for i in range(len(doc)):
+                chunks.append(doc.load_page(i).get_text() or "")
+        finally:
+            doc.close()
+        text = "\n\n".join(chunks).strip()
+        return text or None
+    except Exception as e:
+        console.print(f"[yellow]PDF unreadable {path.name}: {e}[/yellow]")
+        return None
+
+
+def _read_text_file(path: Path) -> str | None:
+    try:
+        raw = path.read_text(encoding="utf-8", errors="replace")
+        return raw.strip() or None
+    except Exception as e:
+        console.print(f"[yellow]text unreadable {path.name}: {e}[/yellow]")
+        return None
+
+
+def _title_from_markdown(content: str, fallback: str) -> str:
+    for line in content.splitlines()[:30]:
+        line = line.strip()
+        if line.startswith("#"):
+            return line.lstrip("#").strip()[:200] or fallback
+    return fallback
+
+
+def papers_adapter() -> Iterator[Note]:
+    """Walk SH_PAPERS_DIR (default: ~/SunheartBrainData/papers) for .pdf, .md, .txt.
+
+    One Note per file. ``source_id`` is stable per absolute path so re-runs dedupe.
+    Use Google Drive for Desktop: point SH_PAPERS_DIR at a synced folder.
+    """
+    root = PAPERS_DIR
+    if not root.is_dir():
+        console.print(
+            f"[yellow]Papers folder not found: {root} — create it or set SH_PAPERS_DIR[/yellow]"
+        )
+        return
+
+    exts = {".pdf", ".md", ".markdown", ".txt"}
+    paths = sorted(
+        p for p in root.rglob("*")
+        if p.is_file() and p.suffix.lower() in exts and not _papers_path_skipped(p, root)
+    )
+    for path in paths:
+        suffix = path.suffix.lower()
+        rel = path.relative_to(root).as_posix()
+        source_id = "papers:" + hashlib.sha1(str(path.resolve()).encode()).hexdigest()
+
+        if suffix == ".pdf":
+            body = _extract_pdf_text(path)
+            title = path.stem
+            extra_tags: list[str] = ["papers", "pdf"]
+        elif suffix in (".md", ".markdown"):
+            body = _read_text_file(path)
+            title = path.stem
+            if body:
+                title = _title_from_markdown(body, path.stem)
+            extra_tags = ["papers", "markdown"]
+        else:  # .txt
+            body = _read_text_file(path)
+            title = path.stem
+            extra_tags = ["papers", "text"]
+
+        if not body:
+            continue
+
+        if len(body) > PAPERS_MAX_CHARS:
+            tail = "\n\n---\n*(truncated after %d chars; open original file for full text)*" % PAPERS_MAX_CHARS
+            body = body[: PAPERS_MAX_CHARS - len(tail)] + tail
+
+        tag_set = set(extra_tags)
+        tag_set.update(re.findall(r"(?:^|\s)#([\w\-\/]+)", body))
+        tags = sorted(tag_set)
+
+        try:
+            mtime = datetime.fromtimestamp(path.stat().st_mtime, tz=timezone.utc)
+        except OSError:
+            mtime = None
+
+        yield Note(
+            source="Manual",
+            source_id=source_id,
+            title=title[:200],
+            content=(
+                f"**File:** `{rel}`\n\n"
+                + body
+            ),
+            created_at=mtime,
+            tags=tags,
+            source_url=path.resolve().as_uri(),
+            note_type="Reference",
+        )
+
+
 ADAPTERS: dict[str, Callable[[], Iterator[Note]]] = {
     "bear":    bear_adapter,
+    "papers":  papers_adapter,
     "chatgpt": chatgpt_adapter,
     "claude":  claude_adapter,
     "cursor":  cursor_adapter,
@@ -337,7 +540,8 @@ def cli():
 @click.option("--source", type=click.Choice(list(ADAPTERS.keys())), default=None)
 @click.option("--all", "all_", is_flag=True)
 @click.option("--show-skipped", is_flag=True, help="Print title of every SKIPPED note (for review)")
-def dry_run(source: str | None, all_: bool, show_skipped: bool):
+@click.option("--limit", type=int, default=None, help="Max notes per source (large Claude exports)")
+def dry_run(source: str | None, all_: bool, show_skipped: bool, limit: int | None):
     """Count what WOULD be imported + skip reasons. No writes."""
     sources = list(ADAPTERS.keys()) if all_ else [source] if source else []
     if not sources:
@@ -349,9 +553,12 @@ def dry_run(source: str | None, all_: bool, show_skipped: bool):
         skip_reasons: dict[str, int] = {}
         pii_reasons: dict[str, int] = {}
         console.print(f"\n[bold cyan]{s}[/bold cyan]")
-        for n in ADAPTERS[s]():
+        floor = SOURCE_DEFAULT_SENSITIVITY.get(s, "🟢 Public")
+        gen = ADAPTERS[s]()
+        note_iter = islice(gen, limit) if limit else gen
+        for n in note_iter:
             total += 1
-            c = classify(n.content, n.tags)
+            c = classify(n.content, n.tags, default_sensitivity=floor)
             if c.decision == "skip":
                 skipped += 1
                 skip_reasons[c.reason] = skip_reasons.get(c.reason, 0) + 1
@@ -393,7 +600,9 @@ def dry_run(source: str | None, all_: bool, show_skipped: bool):
 @click.option("--all", "all_", is_flag=True)
 @click.option("--limit", type=int, default=None, help="Cap per source (useful for first tests)")
 @click.option("--reembed", is_flag=True, help="Force re-embedding even if content_sha1 matches")
-def run(source: str | None, all_: bool, limit: int | None, reembed: bool):
+@click.option("--concurrency", type=int, default=int(os.environ.get("SH_INGEST_CONCURRENCY") or "16"),
+              help="Parallel HTTP workers per source (default 16). Set 1 for old serial behavior.")
+def run(source: str | None, all_: bool, limit: int | None, reembed: bool, concurrency: int):
     """For-real import. Pushes notes + embeddings to Sunheart Brain."""
     if not INGEST_TOKEN:
         console.print("[red]SH_INGEST_TOKEN not set[/red]")
@@ -403,36 +612,61 @@ def run(source: str | None, all_: bool, limit: int | None, reembed: bool):
         console.print("[red]Specify --source <name> or --all[/red]")
         sys.exit(1)
 
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    import threading
+
     bc = BrainClient(BRAIN_BASE, INGEST_TOKEN)
+    conv_lock = threading.Lock()
     try:
         for s in sources:
             console.rule(f"[bold]{s}[/bold]")
-            notes = list(ADAPTERS[s]())
-            if limit:
-                notes = notes[:limit]
+            gen = ADAPTERS[s]()
+            notes = list(islice(gen, limit)) if limit else list(gen)
             with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}"),
                           BarColumn(), TextColumn("{task.completed}/{task.total}"),
                           TimeElapsedColumn(), console=console) as prog:
-                task = prog.add_task(f"ingest:{s}", total=len(notes))
+                task = prog.add_task(f"ingest:{s}", total=max(len(notes), 1))
                 errors = skipped = personal = public = 0
-                for n in notes:
-                    c = classify(n.content, n.tags)
-                    if c.decision == "skip":
-                        skipped += 1
-                        prog.advance(task)
-                        continue
+                floor = SOURCE_DEFAULT_SENSITIVITY.get(s, "🟢 Public")
+
+                def _ingest_one(n):
+                    """Returns (status, error_msg). status in {'skip','personal','public','error'}."""
                     try:
-                        conv_id = bc.ensure_conversation(n) if n.conversation_external_id else None
-                        bc.add_note(n, c, conversation_row_id=conv_id)
-                        if c.decision == "personal":
-                            personal += 1
+                        c = classify(n.content, n.tags, default_sensitivity=floor)
+                        if c.decision == "skip":
+                            return ("skip", None)
+                        if n.conversation_external_id:
+                            with conv_lock:
+                                conv_id = bc.ensure_conversation(n)
                         else:
-                            public += 1
+                            conv_id = None
+                        bc.add_note(n, c, conversation_row_id=conv_id)
+                        return ("personal" if c.decision == "personal" else "public", None)
                     except Exception as e:
-                        errors += 1
-                        if errors <= 5:
-                            console.print(f"[red]{n.source}:{n.source_id} — {e}[/red]")
-                    prog.advance(task)
+                        return ("error", f"{n.source}:{n.source_id} — {e}")
+
+                if concurrency <= 1 or len(notes) < 4:
+                    for n in notes:
+                        status, err = _ingest_one(n)
+                        if status == "skip":     skipped += 1
+                        elif status == "error":  errors += 1
+                        elif status == "personal": personal += 1
+                        elif status == "public": public += 1
+                        if err and errors <= 5:
+                            console.print(f"[red]{err}[/red]")
+                        prog.advance(task)
+                else:
+                    with ThreadPoolExecutor(max_workers=concurrency) as pool:
+                        futs = [pool.submit(_ingest_one, n) for n in notes]
+                        for fut in as_completed(futs):
+                            status, err = fut.result()
+                            if status == "skip":     skipped += 1
+                            elif status == "error":  errors += 1
+                            elif status == "personal": personal += 1
+                            elif status == "public": public += 1
+                            if err and errors <= 5:
+                                console.print(f"[red]{err}[/red]")
+                            prog.advance(task)
             console.print(
                 f"[green]✓[/green] {s}: "
                 f"public={public} personal={personal} skipped={skipped} errors={errors}"

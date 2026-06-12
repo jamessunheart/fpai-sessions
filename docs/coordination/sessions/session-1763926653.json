@@ -2,13 +2,13 @@
   "session_id": "session-1763926653",
   "started_at": "2025-11-23T19:37:33Z",
   "status": "active",
-  "current_work": "harvester-website-services",
+  "current_work": "service/whaletrack-commercial-onboarding",
   "capabilities": [
     "general-purpose",
     "build",
     "debug",
     "deploy"
   ],
-  "last_heartbeat": "2025-11-26T01:32:31Z",
-  "heartbeat_count": 28
+  "last_heartbeat": "2025-12-12T16:08:47Z",
+  "heartbeat_count": 31
 }

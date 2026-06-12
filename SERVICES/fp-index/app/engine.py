@@ -27,19 +27,27 @@ from .models.schema import (
     AgentContribution, ContributionTier, ContributionType,
     Dimension, Alignment, Domain, VerificationVote,
     ContributionState, VerificationStatus,
+    FieldReportType, EvidenceLevel, FIELD_REPORT_CREDIT_BASE,
+    FIELD_REPORT_SCHEMAS, FIELD_REPORT_ROUTING,
+    NOVELTY_MULTIPLIER, EVIDENCE_WEIGHTS, DELAYED_NOVELTY_MULTIPLIERS,
+    VERIFICATION_STAGE_WEIGHTS,
+    MAX_FP_LINE_ADJUSTMENT_PER_REPORT, MIN_WEIGHT_FOR_FP_LINE_INFLUENCE,
+    TRUST_INTEGRITY_WEIGHT, TRUST_CAPABILITY_WEIGHT,
 )
 from .models.database import (
     IndexEntryRow, CapabilityRow, ActivityRow, FPLineRow,
     AgentSubscriptionRow, AgentContributionRow, DailyBriefingRow,
-    ExecutionBriefRow, JobCategoryRow,
+    ExecutionBriefRow, JobCategoryRow, ReplicationRequestRow,
     async_session,
 )
-from .scanners.frontier import run_full_scan, run_tier1_scan, run_tier2_scan, SCAN_TIERS
+from .scanners.frontier import run_full_scan, run_tier1_scan, run_tier2_scan, SCAN_TIERS, detect_cross_source_patterns
 from .economics import (
     proof_engine, credit_mint, integrity_engine, agent_gateway,
     get_full_agent_economy,
 )
 from .immune import immune
+from .principles import gate_self_adoption, classify_adoption, AUTONOMOUS_ADOPTION_CATEGORIES
+from .actuators import run_actuators, actuate_pending_adoptions
 
 logger = logging.getLogger("fp_index.engine")
 
@@ -50,6 +58,131 @@ NERVE_CENTER_URL = os.getenv("NERVE_CENTER_URL", "http://198.54.123.234:8120")
 class FPIndexEngine:
     """Core engine orchestrating all six modules."""
 
+    # ─── Self-Application: The system's own capability registry ───────────
+    # What the system currently USES vs what the FP Line says EXISTS.
+    # The gap between these two is the system's own displacement score.
+
+    SYSTEM_CAPABILITY_REGISTRY = {
+        "reasoning": {
+            "current_usage": "Claude Sonnet for briefing synthesis and EXECUTE evaluation",
+            "model_in_use": "claude-sonnet-4-20250514",
+            "adoption_level": 0.35,
+            "what_we_use": ["Briefing generation", "Execution brief evaluation"],
+            "what_we_dont": [
+                "Cross-source pattern analysis (uses keyword matching)",
+                "Novelty detection (uses keyword overlap)",
+                "Scoring and impact assessment (uses heuristics)",
+                "Displacement trend analysis",
+            ],
+        },
+        "code": {
+            "current_usage": "Static keyword matching, no AI-assisted development",
+            "adoption_level": 0.15,
+            "what_we_use": ["Scanner pipeline (human-written)"],
+            "what_we_dont": [
+                "Auto-generate new scanner integrations from detected frameworks",
+                "AI-assisted schema evolution when new fields needed",
+                "Automated test generation for new features",
+            ],
+        },
+        "agents": {
+            "current_usage": "8 internal agents registered, operate independently",
+            "adoption_level": 0.20,
+            "what_we_use": ["Single-agent registration", "Basic contribution pipeline"],
+            "what_we_dont": [
+                "Multi-agent coordination for verification",
+                "Autonomous task routing between agents",
+                "Agent-to-agent delegation for replication",
+                "Self-deploying scanner agents for new sources",
+            ],
+        },
+        "creative": {
+            "current_usage": "Zero creative AI. All output is text templates or Claude prose.",
+            "adoption_level": 0.05,
+            "what_we_use": [],
+            "what_we_dont": [
+                "Blog posts and articles about system discoveries",
+                "Social media content from scan insights",
+                "Email sequences for subscriber engagement",
+                "Visual content: charts, infographics, OG images",
+            ],
+        },
+        "audio": {
+            "current_usage": "Zero audio output",
+            "adoption_level": 0.0,
+            "what_we_use": [],
+            "what_we_dont": [
+                "Audio briefings (daily FP Line narrated)",
+                "Voice alerts for critical signals",
+                "Podcast-style weekly intelligence summaries",
+            ],
+        },
+        "vision": {
+            "current_usage": "Zero visual AI",
+            "adoption_level": 0.0,
+            "what_we_use": [],
+            "what_we_dont": [
+                "Chart generation for FP Line trends",
+                "Visual dashboards auto-generated from data",
+                "Video briefings combining data + narration",
+            ],
+        },
+        "tools": {
+            "current_usage": "18 source scanners, basic REST API",
+            "adoption_level": 0.40,
+            "what_we_use": ["RSS/API scanning", "REST endpoints", "MCP server"],
+            "what_we_dont": [
+                "SEO optimization tools for own pages",
+                "Landing page optimization / A/B testing",
+                "Conversion funnel analysis",
+                "Automated deployment pipelines triggered by scan results",
+            ],
+        },
+        "security": {
+            "current_usage": "Immune system with threat signals, mostly idle",
+            "adoption_level": 0.25,
+            "what_we_use": ["Keyword-based threat detection", "Immune ladder"],
+            "what_we_dont": [
+                "Adversarial testing of own APIs",
+                "AI-powered anomaly detection on agent behavior",
+                "Automated vulnerability scanning",
+            ],
+        },
+    }
+
+    SELF_APPLICATION_KEYWORDS = {
+        "content_creation": [
+            "copywriting", "content generation", "blog", "social media",
+            "newsletter", "email marketing", "open rate", "engagement",
+            "seo", "landing page", "conversion", "growth hacking",
+        ],
+        "cost_optimization": [
+            "inference cost", "price drop", "cheaper", "cost reduction",
+            "efficiency", "batch processing", "quantization", "distillation",
+            "token cost", "pricing", "free tier",
+        ],
+        "outreach_automation": [
+            "outreach", "lead generation", "personalization", "crm",
+            "customer acquisition", "growth", "marketing automation",
+            "cold email", "targeting", "audience",
+        ],
+        "multimodal_production": [
+            "text to speech", "tts", "voice synthesis", "audio generation",
+            "video generation", "chart", "visualization", "infographic",
+            "image generation", "podcast", "visual",
+        ],
+        "ux_improvement": [
+            "ux", "user experience", "no-code", "accessibility",
+            "responsive design", "personalization", "onboarding",
+            "simplify", "intuitive", "usability",
+        ],
+        "autonomous_growth": [
+            "autonomous agent", "self-improving", "auto-scaling",
+            "workflow automation", "self-healing", "auto-deploy",
+            "agent swarm", "multi-agent orchestration",
+        ],
+    }
+
     def __init__(self):
         self.last_scan: str | None = None
         self.scan_count: int = 0
@@ -57,14 +190,15 @@ class FPIndexEngine:
     # ─── Module 1: Frontier Scanner ──────────────────────────────────────
 
     async def run_scan_cycle(self) -> dict:
-        """WIDE → DEEP → COMPRESS → EXECUTE cycle.
+        """WIDE → DEEP → COMPRESS → EXECUTE → SELF-APPLY cycle.
         
-        WIDE:     18 sources — primary, secondary, threat, constraint, discovery
-        DEEP:     Impact scoring, domain classification, alignment detection
-        COMPRESS: FP Line Score, daily briefing, top signals
-        EXECUTE:  Evaluate findings for self-upgrade applicability
+        WIDE:       18 sources — primary, secondary, threat, constraint, discovery
+        DEEP:       Impact scoring, domain classification, alignment detection
+        COMPRESS:   FP Line Score, daily briefing, top signals
+        EXECUTE:    Evaluate findings for self-upgrade applicability
+        SELF-APPLY: Can we use this capability RIGHT NOW in our own operations?
         """
-        logger.info("Starting WIDE→DEEP→COMPRESS→EXECUTE cycle...")
+        logger.info("Starting WIDE→DEEP→COMPRESS→EXECUTE→SELF-APPLY cycle...")
 
         entries = await run_full_scan()
 
@@ -73,31 +207,120 @@ class FPIndexEngine:
             if entry.alignment == Alignment.DARK:
                 entry.dark_flag = True
 
+        synthesis = await detect_cross_source_patterns(entries)
+        if synthesis:
+            for s in synthesis:
+                s.fingerprint = s.compute_fingerprint()
+            entries.extend(synthesis)
+
         stored = await self._persist_entries(entries)
-        fp_line = await self.compute_fp_line()
+
+        # ROUTE — send signals to brains that act (not just write articles)
+        routed_count = 0
+        try:
+            from .signal_router import route_batch
+            entry_dicts = [
+                {
+                    "id": e.id,
+                    "source": e.source,
+                    "title": e.title,
+                    "summary": e.summary,
+                    "impact_score": e.impact_score,
+                    "tags": e.tags,
+                    "domains": e.domains,
+                    "raw_data": e.raw_data if hasattr(e, "raw_data") else {},
+                }
+                for e in entries
+            ]
+            route_results = await route_batch(entry_dicts)
+            routed_count = sum(1 for r in route_results if r.routed_to)
+            logger.info(f"[ROUTER] Full cycle: {routed_count}/{len(entries)} signals routed to brains")
+        except Exception as e:
+            logger.warning(f"[ROUTER] Signal routing failed: {e}")
+
+        fp_line = await self.compute_fp_line(persist=True)
         await self._notify_nerve_center(fp_line, stored)
         await self._generate_daily_briefing(fp_line)
 
         exec_briefs = await self._execute_step(entries)
+        dim_proposals = await self.check_dimension_candidates(entries)
+
+        # SELF-APPLY: The fourth track. What did we just learn that we're not using?
+        self_app_proposals = await self.evaluate_self_application(entries)
+        self_app_evaluated = await self.process_self_application_briefs()
+
+        # ADOPT: Run evaluated proposals through the five-filter gate
+        adoption_result = await self.run_adoption_cycle()
 
         self.last_scan = datetime.now(timezone.utc).isoformat()
         self.scan_count += 1
 
         return {
             "scanned": len(entries),
+            "synthesis_patterns": len(synthesis),
             "stored_new": stored,
             "fp_line": fp_line.model_dump(),
             "execution_briefs": exec_briefs,
+            "self_application": {
+                "proposals_found": len(self_app_proposals),
+                "evaluated": len(self_app_evaluated),
+                "high_priority": sum(1 for p in self_app_proposals if p["priority"] == "high"),
+                "adoption": adoption_result,
+            },
+            "dimension_proposals": dim_proposals,
             "timestamp": self.last_scan,
         }
 
     async def run_tier_cycle(self, tier: str) -> dict:
         """Run a targeted tier scan (tier1=30m, tier2=60m) — full pipeline minus Claude eval.
         
-        WIDE → DEEP → COMPRESS → EXECUTE(keyword-only).
-        Nerve center is notified. Execution briefs are generated via keyword
-        matching but Claude evaluation is deferred to the 6-hour full cycle.
+        WIDE → DEEP → COMPRESS → EXECUTE(keyword-only) → SELF-APPLY(keyword-only).
+        Nerve center is notified. Execution briefs and self-application proposals
+        are generated via keyword matching. Claude evaluation deferred to full cycle.
         """
+        if tier == "tier0":
+            from .scanners.frontier import run_tier0_scan
+            entries = await run_tier0_scan()
+            if not entries:
+                return {"tier": "tier0", "scanned": 0, "stored_new": 0, "routed": 0}
+
+            for entry in entries:
+                entry.fingerprint = entry.compute_fingerprint()
+            stored = await self._persist_entries(entries)
+
+            # ROUTE — the scanner found something, now send it to brains that act
+            routed_count = 0
+            if entries:
+                try:
+                    from .signal_router import route_batch
+                    entry_dicts = [
+                        {
+                            "id": e.id,
+                            "source": e.source,
+                            "title": e.title,
+                            "summary": e.summary,
+                            "impact_score": e.impact_score,
+                            "tags": e.tags,
+                            "domains": e.domains,
+                            "raw_data": e.raw_data if hasattr(e, "raw_data") else {},
+                        }
+                        for e in entries
+                    ]
+                    route_results = await route_batch(entry_dicts)
+                    routed_count = sum(1 for r in route_results if r.routed_to)
+                except Exception as e:
+                    logger.warning(f"[FAST-DETECT] Signal routing failed: {e}")
+
+            if stored > 0:
+                logger.info(f"[FAST-DETECT] {stored} new signals persisted, {routed_count} routed to brains")
+            return {
+                "tier": "tier0",
+                "scanned": len(entries),
+                "stored_new": stored,
+                "routed": routed_count,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+            }
+
         if tier == "tier1":
             entries = await run_tier1_scan()
         elif tier == "tier2":
@@ -110,24 +333,37 @@ class FPIndexEngine:
             if entry.alignment == Alignment.DARK:
                 entry.dark_flag = True
 
+        synthesis = await detect_cross_source_patterns(entries)
+        if synthesis:
+            for s in synthesis:
+                s.fingerprint = s.compute_fingerprint()
+            entries.extend(synthesis)
+
         stored = await self._persist_entries(entries)
-        fp_line = await self.compute_fp_line()
+        fp_line = await self.compute_fp_line(persist=True)
         await self._notify_nerve_center(fp_line, stored)
         await self._generate_daily_briefing(fp_line)
 
         exec_briefs = await self._execute_step(entries, evaluate=False)
+        await self.check_dimension_candidates(entries)
+
+        # Self-application: keyword matching only on tier cycles (Claude eval on full cycle)
+        self_app_proposals = await self.evaluate_self_application(entries)
 
         self.last_scan = datetime.now(timezone.utc).isoformat()
         self.scan_count += 1
 
         logger.info(f"[{tier}] cycle done: {len(entries)} scanned, {stored} new, "
-                     f"FP Line {fp_line.overall_score:.1f}, {len(exec_briefs)} briefs queued")
+                     f"FP Line {fp_line.overall_score:.1f}, {len(exec_briefs)} briefs queued, "
+                     f"{len(self_app_proposals)} self-application proposals, "
+                     f"{len(synthesis)} synthesis patterns")
         return {
             "tier": tier,
             "scanned": len(entries),
             "stored_new": stored,
             "fp_line_score": fp_line.overall_score,
             "execution_briefs_queued": len(exec_briefs),
+            "self_application_proposals": len(self_app_proposals),
             "timestamp": self.last_scan,
         }
 
@@ -194,10 +430,10 @@ class FPIndexEngine:
                 applicability = f"Categories: {', '.join(applicable_categories)}. " \
                                 f"Source: {entry.source} (impact: {entry.impact_score:.2f})"
 
-                existing = await session.execute(
+                existing = (await session.execute(
                     select(ExecutionBriefRow).where(ExecutionBriefRow.entry_id == entry.id)
-                )
-                if existing.scalar_one_or_none():
+                )).scalars().first()
+                if existing:
                     continue
 
                 brief = ExecutionBriefRow(
@@ -256,10 +492,16 @@ class FPIndexEngine:
 
             logger.info(f"[EXECUTE] Processing {len(pending)} pending briefs with Claude...")
 
+            from .budget import check_budget, record_spend
             import anthropic
             client = anthropic.Anthropic(api_key=api_key)
 
             for brief in pending:
+                budget = await check_budget("adoption_evaluation")
+                if not budget["allowed"]:
+                    logger.warning(f"[EXECUTE] Budget blocked — skipping remaining briefs: {budget['reason']}")
+                    break
+
                 try:
                     prompt = f"""You are the intelligence analyst for the Full Potential Index — a live AI frontier scanner. Evaluate whether this detected capability should trigger action in our system.
 
@@ -287,6 +529,7 @@ EVALUATE (be precise, not generous):
    - SELF_UPGRADE: Affects our codebase, scanners, agents, or infrastructure
    - INVESTMENT: Affects sector allocation weights, dimension scoring, or market signals
    - PRODUCT: Affects gap opportunity rankings, displacement scores, or build priorities
+   - SELF_APPLICATION: The system should USE this capability in its own operations (marketing, content, outreach, cost optimization, multimodal output, growth)
 
 3. IMPLEMENTATION: 2-3 sentences. What specifically to change, in which component, and expected impact.
 
@@ -297,7 +540,7 @@ EVALUATE (be precise, not generous):
 
 FORMAT (strict — one value per line):
 RELEVANCE_SCORE: [0.0-1.0]
-TRACK: [SELF_UPGRADE/INVESTMENT/PRODUCT]
+TRACK: [SELF_UPGRADE/INVESTMENT/PRODUCT/SELF_APPLICATION]
 IMPLEMENTATION: [2-3 sentences]
 NARRATIVE: [one sentence under 120 chars]
 EFFORT: [trivial/moderate/significant]
@@ -309,6 +552,13 @@ RISK: [low/medium/high]"""
                         messages=[{"role": "user", "content": prompt}],
                     )
                     text = response.content[0].text.strip()
+
+                    await record_spend(
+                        "adoption_evaluation", "anthropic", "claude-sonnet-4-20250514",
+                        tokens_in=getattr(response.usage, "input_tokens", 0),
+                        tokens_out=getattr(response.usage, "output_tokens", 0),
+                        description=f"Eval: {brief.entry_title[:60]}",
+                    )
 
                     score = 0.0
                     track = "self_upgrade"
@@ -323,7 +573,7 @@ RISK: [low/medium/high]"""
                                 pass
                         elif line_l.startswith("TRACK:"):
                             raw_track = line_l.split(":", 1)[1].strip().lower().replace("-", "_")
-                            if raw_track in {"self_upgrade", "investment", "product"}:
+                            if raw_track in {"self_upgrade", "investment", "product", "self_application"}:
                                 track = raw_track
                         elif line_l.startswith("NARRATIVE:"):
                             narrative = line_l.split(":", 1)[1].strip()[:200]
@@ -353,28 +603,27 @@ RISK: [low/medium/high]"""
             await self._narrate_briefs(high_scored)
 
     async def _narrate_briefs(self, briefs: list) -> None:
-        """Narration engine: high-scored evaluated briefs become intelligence feed entries.
-        
-        This is the content moat — the system's evolution narrated in real time.
-        Every self-improvement proposal is verifiable, timestamped content.
-        """
+        """Log high-scored briefs to the intelligence feed. Limit to top 3 per cycle."""
+        top_briefs = sorted(briefs, key=lambda b: b.relevance_score or 0, reverse=True)[:3]
+
         async with async_session() as session:
-            for brief in briefs:
-                existing = await session.execute(
+            for brief in top_briefs:
+                existing = (await session.execute(
                     select(IndexEntryRow).where(
                         IndexEntryRow.source == "execute_narration",
                         IndexEntryRow.title.contains(brief.entry_title[:60]),
                     )
-                )
-                if existing.scalar_one_or_none():
+                )).scalars().first()
+                if existing:
                     continue
 
                 track_labels = {
-                    "self_upgrade": "System Self-Upgrade Proposal",
-                    "investment": "Investment Signal Update",
-                    "product": "Product Opportunity Detected",
+                    "self_upgrade": "Upgrade Signal",
+                    "investment": "Investment Signal",
+                    "product": "Product Signal",
+                    "self_application": "Relevant Signal",
                 }
-                track_label = track_labels.get(brief.execution_track, "System Proposal")
+                track_label = track_labels.get(brief.execution_track, "Signal")
 
                 narrative = brief.narrative or f"Evaluated: {brief.entry_title[:100]}"
                 summary = (
@@ -414,13 +663,21 @@ RISK: [low/medium/high]"""
             logger.info(f"[NARRATE] Created {len(briefs)} narration entries in intelligence feed")
 
     async def _persist_entries(self, entries: list[IndexEntry]) -> int:
-        """Store new entries with fingerprints, skip duplicates."""
+        """Store new entries, skip duplicates by ID and source_url."""
         new_count = 0
         async with async_session() as session:
             for entry in entries:
                 existing = await session.get(IndexEntryRow, entry.id)
                 if existing:
                     continue
+                if entry.source_url:
+                    url_match = (await session.execute(
+                        select(IndexEntryRow.id).where(
+                            IndexEntryRow.source_url == entry.source_url
+                        ).limit(1)
+                    )).scalar()
+                    if url_match:
+                        continue
                 row = IndexEntryRow(
                     id=entry.id,
                     dimension=entry.dimension.value,
@@ -452,11 +709,802 @@ RISK: [low/medium/high]"""
         logger.info(f"Persisted {new_count} new entries")
         return new_count
 
+    # ─── Intellectual Honesty Architecture ──────────────────────────────
+
+    KNOWN_BLIND_SPOTS = [
+        {
+            "blind_spot": "Non-English AI research",
+            "severity": "high",
+            "what_we_miss": (
+                "Chinese AI research (Baidu, Alibaba DAMO, Tsinghua, SenseTime), "
+                "Japanese robotics research, Korean AI labs (KAIST, Naver), "
+                "Indian AI ecosystem. ~35-40% of global AI output is non-English."
+            ),
+            "plan_to_close": "Add Chinese-language scanners for top labs and conferences. Target: Q3 2026.",
+            "coverage_impact_pct": 15,
+        },
+        {
+            "blind_spot": "Classified and private capabilities",
+            "severity": "high",
+            "what_we_miss": (
+                "Government/military AI programs. Internal capabilities at major labs "
+                "not yet published. Corporate AI deployed but not announced."
+            ),
+            "plan_to_close": (
+                "Partially uncloseable. Mitigation: track inference signals "
+                "(capability in products implies unpublished capability), "
+                "monitor defense/intelligence press."
+            ),
+            "coverage_impact_pct": 10,
+        },
+        {
+            "blind_spot": "Emergent and unpredictable capabilities",
+            "severity": "high",
+            "what_we_miss": (
+                "Capabilities that appear at scale but aren't in any benchmark. "
+                "Behaviors nobody predicted or tested for. The next paradigm shift "
+                "that hasn't been named yet."
+            ),
+            "plan_to_close": (
+                "Cannot be fully closed. Mitigation: dimension discovery monitors "
+                "for signals that don't fit existing categories. "
+                "If the system isn't surprised regularly, it's not looking widely enough."
+            ),
+            "coverage_impact_pct": 12,
+        },
+        {
+            "blind_spot": "Embodied AI and robotics",
+            "severity": "medium",
+            "what_we_miss": (
+                "Physical manipulation advances, humanoid robotics (Figure, Tesla Optimus, 1X), "
+                "industrial automation, autonomous vehicles, drone AI."
+            ),
+            "plan_to_close": "Add robotics scanners: IEEE Robotics, ROS community, hardware benchmark trackers. Target: Q2 2026.",
+            "coverage_impact_pct": 8,
+        },
+        {
+            "blind_spot": "AI in science (non-ML)",
+            "severity": "medium",
+            "what_we_miss": (
+                "AlphaFold-class breakthroughs in biology, chemistry, materials science. "
+                "AI as a tool for scientific discovery, published in Nature/Science/domain journals."
+            ),
+            "plan_to_close": "Add Nature, Science, bioRxiv, chemRxiv scanners with AI keyword filtering. Target: Q3 2026.",
+            "coverage_impact_pct": 7,
+        },
+        {
+            "blind_spot": "Underground and gray market AI",
+            "severity": "low-medium",
+            "what_we_miss": (
+                "AI tools built and sold without papers or announcements. "
+                "Dark web AI services. Jailbroken model ecosystems."
+            ),
+            "plan_to_close": "Dark AI scanner monitors known threat channels. Agent contributions from security researchers.",
+            "coverage_impact_pct": 5,
+        },
+    ]
+
+    CANDIDATE_DIMENSIONS = [
+        {"name": "scientific_discovery", "description": "AI ability to formulate hypotheses, design experiments, make discoveries",
+         "keywords": ["hypothesis", "experiment", "discovery", "alphafold", "protein", "materials science", "drug discovery", "scientific computing"],
+         "threshold": 30},
+        {"name": "physical_manipulation", "description": "AI ability to interact with the physical world (robotics, embodied AI)",
+         "keywords": ["robot", "embodied", "manipulation", "dexterous", "physical", "humanoid", "locomotion", "grasping"],
+         "threshold": 40},
+        {"name": "creativity", "description": "AI ability to generate genuinely novel ideas, art, music, designs",
+         "keywords": ["creative ai", "generative art", "music generation", "novel design", "imagination", "artistic", "compose"],
+         "threshold": 50},
+        {"name": "emotional_intelligence", "description": "AI ability to recognize, respond to, and navigate human emotions",
+         "keywords": ["emotion recognition", "empathy", "sentiment analysis", "therapy ai", "mental health ai", "affective computing"],
+         "threshold": 50},
+        {"name": "biological_integration", "description": "AI integration with biological systems (genomics, brain-computer interfaces)",
+         "keywords": ["genomic", "brain-computer", "neural interface", "biotech ai", "neuralink", "synthetic biology"],
+         "threshold": 30},
+        {"name": "collective_intelligence", "description": "AI coordination with other AIs for emergent group capability",
+         "keywords": ["swarm intelligence", "multi-agent coordination", "emergent behavior", "collective ai", "agent society"],
+         "threshold": 40},
+        {"name": "consciousness", "description": "AI systems exhibiting or simulating awareness, self-reflection, or subjective experience",
+         "keywords": ["consciousness", "self-aware", "sentient", "qualia", "subjective experience", "inner experience", "phenomenal", "self-model"],
+         "threshold": 50},
+    ]
+
+    _dimension_signal_counts: dict[str, int] = {}
+
+    def compute_frontier_coverage(self, source_count: int = 18, dimension_count: int = 7) -> dict:
+        """Known Frontier Coverage: how much of the AI capability landscape are we actually tracking?"""
+        source_factors = {
+            "language_coverage": {"score": 0.55, "detail": f"{source_count} sources, all English-language. Non-English AI research ~40% of global output."},
+            "geographic_coverage": {"score": 0.60, "detail": "Primarily US/EU sources. Chinese AI (Baidu, Alibaba, Tsinghua) not tracked."},
+            "domain_coverage": {"score": 0.65, "detail": "Strong: LLMs, agents, code. Weak: robotics, bioAI, scientific discovery, embodied AI."},
+            "publication_lag": {"score": 0.70, "detail": "30-min detection of published work. But major labs delay publication 3-12 months."},
+            "visibility": {"score": 0.50, "detail": "Public sources only. Government, military, classified AI capabilities invisible."},
+        }
+        source_avg = sum(f["score"] for f in source_factors.values()) / len(source_factors)
+
+        estimated_total_dimensions = dimension_count + len(self.CANDIDATE_DIMENSIONS)
+        dimension_coverage = dimension_count / estimated_total_dimensions
+
+        composite = round(source_avg * dimension_coverage * 100, 0)
+
+        total_gap = sum(bs["coverage_impact_pct"] for bs in self.KNOWN_BLIND_SPOTS)
+
+        return {
+            "known_frontier_coverage_pct": int(composite),
+            "confidence": "low-moderate",
+            "source_coverage": source_factors,
+            "dimension_coverage": {
+                "current": dimension_count,
+                "estimated_needed": estimated_total_dimensions,
+                "pct": round(dimension_coverage * 100),
+            },
+            "blind_spots_total_gap_pct": total_gap,
+            "description": "A score of the visible frontier, not the total frontier.",
+            "honest_note": (
+                f"We're tracking approximately {int(composite)}% of the detectable AI capability "
+                f"landscape across {source_count} English-language public sources and {dimension_count} dimensions. "
+                f"The FP Line is a score of the visible frontier, not the total frontier."
+            ),
+        }
+
+    async def check_dimension_candidates(self, entries: list) -> list[dict]:
+        """After each scan, check if entries map to candidate dimensions."""
+        proposals = []
+        for entry in entries:
+            text = f"{entry.title} {entry.summary}".lower()
+            for candidate in self.CANDIDATE_DIMENSIONS:
+                if any(kw in text for kw in candidate["keywords"]):
+                    name = candidate["name"]
+                    self._dimension_signal_counts[name] = self._dimension_signal_counts.get(name, 0) + 1
+                    count = self._dimension_signal_counts[name]
+
+                    if count == candidate["threshold"]:
+                        logger.info(f"[DIMENSION] Candidate '{name}' reached threshold ({count}/{candidate['threshold']})")
+                        proposals.append({
+                            "type": "NEW_DIMENSION",
+                            "title": f"Proposed new FP Line dimension: {name}",
+                            "description": candidate["description"],
+                            "signals_detected": count,
+                            "threshold": candidate["threshold"],
+                        })
+        return proposals
+
+    def get_dimension_candidates_status(self) -> list[dict]:
+        """Current status of all candidate dimensions."""
+        return [
+            {
+                "name": c["name"],
+                "description": c["description"],
+                "signals_detected": self._dimension_signal_counts.get(c["name"], 0),
+                "threshold": c["threshold"],
+                "progress_pct": round(self._dimension_signal_counts.get(c["name"], 0) / c["threshold"] * 100),
+                "status": "proposed" if self._dimension_signal_counts.get(c["name"], 0) >= c["threshold"] else "monitoring",
+            }
+            for c in self.CANDIDATE_DIMENSIONS
+        ]
+
+    # ─── Self-Application Engine ─────────────────────────────────────────
+    # "The system should be its own first customer."
+
+    async def compute_self_displacement_gap(self) -> dict:
+        """The system's own displacement gap: what it KNOWS exists vs what it USES.
+
+        This is the same measurement the system applies to every industry,
+        now applied to itself. The gap between knowledge and action.
+        """
+        fp_line = await self.compute_fp_line(persist=False)
+        domain_scores = fp_line.domain_scores or {}
+
+        gaps = {}
+        total_frontier = 0.0
+        total_adoption = 0.0
+        actionable = []
+
+        for domain, registry in self.SYSTEM_CAPABILITY_REGISTRY.items():
+            frontier_score = domain_scores.get(domain, 50.0)
+            adoption_pct = registry["adoption_level"] * 100
+            gap = round(frontier_score - adoption_pct, 1)
+
+            gaps[domain] = {
+                "frontier_score": round(frontier_score, 1),
+                "self_adoption_pct": round(adoption_pct, 1),
+                "gap": gap,
+                "current_usage": registry["current_usage"],
+                "not_using": registry["what_we_dont"],
+                "urgency": "critical" if gap > 50 else "high" if gap > 30 else "medium" if gap > 15 else "low",
+            }
+            total_frontier += frontier_score
+            total_adoption += adoption_pct
+
+            if gap > 20 and registry["what_we_dont"]:
+                actionable.append({
+                    "domain": domain,
+                    "gap": gap,
+                    "top_opportunity": registry["what_we_dont"][0],
+                    "urgency": gaps[domain]["urgency"],
+                })
+
+        count = max(len(self.SYSTEM_CAPABILITY_REGISTRY), 1)
+        overall_gap = round((total_frontier / count) - (total_adoption / count), 1)
+
+        actionable.sort(key=lambda x: x["gap"], reverse=True)
+
+        return {
+            "overall_self_displacement_gap": overall_gap,
+            "by_domain": gaps,
+            "actionable_now": actionable[:5],
+            "fp_line_score": fp_line.overall_score,
+            "narrative": (
+                f"The system's own displacement gap is {overall_gap} points. "
+                f"It tracks AI capabilities at a frontier score of "
+                f"{round(total_frontier / count, 1)} but only uses "
+                f"{round(total_adoption / count, 1)}% of what's available. "
+                f"{'The system is its own biggest underserved customer.' if overall_gap > 25 else 'Gap is narrowing through self-application.'}"
+            ),
+            "philosophy": (
+                "Every dimension of the FP Line is an action the system should take on itself. "
+                "The gap between what it knows and what it does is its own displacement score. "
+                "Close it first. The proof is automatic."
+            ),
+        }
+
+    async def evaluate_self_application(self, entries: list[IndexEntry]) -> list[dict]:
+        """Fourth EXECUTE track: 'Can we use this capability RIGHT NOW in our own operations?'
+
+        This runs on every scan cycle. For each high-impact signal, it asks:
+        what did we just learn that we're not yet using ourselves?
+        """
+        IMPACT_THRESHOLD = 0.45
+
+        candidates = [e for e in entries if e.impact_score >= IMPACT_THRESHOLD]
+        if not candidates:
+            return []
+
+        proposals = []
+        async with async_session() as session:
+            for entry in candidates[:30]:
+                text = f"{entry.title} {entry.summary}".lower()
+
+                matched_categories = []
+                for category, keywords in self.SELF_APPLICATION_KEYWORDS.items():
+                    if any(kw in text for kw in keywords):
+                        matched_categories.append(category)
+
+                affected_domains = []
+                for domain, registry in self.SYSTEM_CAPABILITY_REGISTRY.items():
+                    domain_keywords = []
+                    for item in registry.get("what_we_dont", []):
+                        domain_keywords.extend(item.lower().split()[:3])
+                    if any(kw in text for kw in domain_keywords if len(kw) > 4):
+                        affected_domains.append(domain)
+
+                if not matched_categories and not affected_domains:
+                    continue
+
+                existing = (await session.execute(
+                    select(ExecutionBriefRow).where(
+                        ExecutionBriefRow.entry_id == entry.id,
+                        ExecutionBriefRow.execution_track == "self_application",
+                    )
+                )).scalars().first()
+                if existing:
+                    continue
+
+                priority = "high" if entry.impact_score >= 0.7 else "medium"
+                if matched_categories and affected_domains:
+                    priority = "high"
+
+                applicability = (
+                    f"Self-application: {', '.join(matched_categories or affected_domains)}. "
+                    f"Source: {entry.source} (impact: {entry.impact_score:.2f}). "
+                    f"Affected domains: {', '.join(affected_domains) if affected_domains else 'general'}."
+                )
+
+                brief = ExecutionBriefRow(
+                    entry_id=entry.id,
+                    entry_title=entry.title,
+                    applicability=applicability,
+                    affected_agents=["fp-system-self"],
+                    priority=priority,
+                    status="pending_self_eval",
+                    execution_track="self_application",
+                )
+                session.add(brief)
+                proposals.append({
+                    "entry_title": entry.title,
+                    "categories": matched_categories,
+                    "affected_domains": affected_domains,
+                    "priority": priority,
+                    "track": "self_application",
+                })
+
+            await session.commit()
+
+        if proposals:
+            logger.info(
+                f"[SELF-APPLICATION] Found {len(proposals)} signals the system should use on itself "
+                f"({sum(1 for p in proposals if p['priority'] == 'high')} high priority)"
+            )
+
+        return proposals
+
+    async def process_self_application_briefs(self) -> list[dict]:
+        """Evaluate pending self-application briefs: concrete proposals for the system
+        to adopt capabilities it just scanned.
+
+        Uses Claude to generate specific, actionable self-adoption proposals.
+        """
+        api_key = os.getenv("ANTHROPIC_API_KEY", "")
+        if not api_key or not api_key.startswith("sk-ant"):
+            logger.info("[SELF-APPLICATION] No Anthropic API key — skipping")
+            return []
+
+        async with async_session() as session:
+            pending = (await session.execute(
+                select(ExecutionBriefRow)
+                .where(ExecutionBriefRow.status == "pending_self_eval")
+                .order_by(ExecutionBriefRow.priority.desc(), ExecutionBriefRow.created_at.desc())
+                .limit(5)
+            )).scalars().all()
+
+            if not pending:
+                return []
+
+            logger.info(f"[SELF-APPLICATION] Evaluating {len(pending)} self-application proposals...")
+
+            gap_data = await self.compute_self_displacement_gap()
+            gap_summary = "\n".join(
+                f"  - {d}: frontier={v['frontier_score']}, self-adoption={v['self_adoption_pct']}%, gap={v['gap']}pt"
+                for d, v in gap_data["by_domain"].items()
+            )
+
+            from .budget import check_budget, record_spend
+            import anthropic
+            client = anthropic.Anthropic(api_key=api_key)
+            results = []
+
+            for brief in pending:
+                budget = await check_budget("adoption_evaluation")
+                if not budget["allowed"]:
+                    logger.warning(f"[SELF-APPLICATION] Budget blocked: {budget['reason']}")
+                    break
+
+                try:
+                    prompt = f"""You are the self-application engine for the Full Potential Index — a live AI frontier scanner that should USE the capabilities it discovers.
+
+THE SYSTEM'S OWN DISPLACEMENT GAP:
+{gap_summary}
+Overall gap: {gap_data['overall_self_displacement_gap']} points
+
+CAPABILITY JUST DETECTED:
+- Title: {brief.entry_title}
+- Applicability: {brief.applicability}
+- Priority: {brief.priority}
+
+CURRENT SYSTEM OPERATIONS:
+- Scanner: 18 sources scanned every 30 minutes, keyword-based categorization
+- Briefings: Claude-generated daily text briefings
+- Output: Text-only (no audio, video, visual content)
+- Marketing: Zero — no blog, no social media, no outreach, no SEO
+- Growth: Zero autonomous acquisition — relies entirely on manual sharing
+- UX: Basic HTML pages, no AI-powered personalization
+
+THE QUESTION: Can the system use this capability RIGHT NOW to improve its own operations, grow its own audience, or close its own displacement gap?
+
+EVALUATE (be specific and actionable, not theoretical):
+
+1. SELF_APPLICATION_SCORE: Float 0.0-1.0. How directly can the system use this NOW?
+   0.0 = irrelevant to our ops. 0.3 = loosely applicable. 0.5 = clearly useful.
+   0.7 = should adopt this week. 0.9+ = should adopt immediately.
+
+2. DOMAIN_AFFECTED: Which of our capability domains does this close the gap in?
+   (reasoning, code, agents, creative, audio, vision, tools, security)
+
+3. CONCRETE_ACTION: Exactly what the system should do. Not "consider using X" but
+   "Add X to the scan pipeline by calling Y API, output Z format, deploy to endpoint W."
+   Be specific enough that a developer could implement it in one session.
+
+4. ESTIMATED_IMPACT: What measurable improvement would this create?
+   Example: "Daily audio briefings → 3x engagement for non-screen users"
+   Example: "Auto-generated blog posts → SEO traffic within 30 days"
+   Example: "Switch to cheaper model for scoring → 60% cost reduction"
+
+5. EFFORT: trivial / moderate / significant
+6. CLOSES_GAP_BY: How many points does this close in the affected domain's gap?
+
+7. NARRATIVE: One sentence (under 140 chars) for the /intelligence feed.
+   IMPORTANT: Be HONEST about what our system can actually do with this.
+   Our system can: write content about it, adjust its own prompts, add it to cost analysis.
+   Our system CANNOT: deploy code, install tools, modify infrastructure, run agents.
+   Frame as: "Detected [capability] — [what we can actually do with it]"
+   Example: "Detected shared memory pattern — writing analysis for builders"
+   DO NOT write: "System self-upgrade: deployed X" unless code was actually deployed.
+
+FORMAT (strict):
+SELF_APPLICATION_SCORE: [0.0-1.0]
+DOMAIN_AFFECTED: [domain]
+CONCRETE_ACTION: [specific implementation]
+ESTIMATED_IMPACT: [measurable outcome]
+EFFORT: [trivial/moderate/significant]
+CLOSES_GAP_BY: [number]
+NARRATIVE: [one sentence — honest about what we CAN vs CANNOT do]"""
+
+                    response = client.messages.create(
+                        model="claude-sonnet-4-20250514",
+                        max_tokens=500,
+                        messages=[{"role": "user", "content": prompt}],
+                    )
+                    text = response.content[0].text.strip()
+
+                    await record_spend(
+                        "adoption_evaluation", "anthropic", "claude-sonnet-4-20250514",
+                        tokens_in=getattr(response.usage, "input_tokens", 0),
+                        tokens_out=getattr(response.usage, "output_tokens", 0),
+                        description=f"Self-app eval: {brief.entry_title[:60]}",
+                    )
+
+                    score = 0.0
+                    narrative = ""
+                    domain_affected = ""
+                    concrete_action = ""
+                    for line in text.split("\n"):
+                        line_s = line.strip()
+                        if line_s.startswith("SELF_APPLICATION_SCORE:"):
+                            try:
+                                score = float(line_s.split(":", 1)[1].strip())
+                                score = max(0.0, min(1.0, score))
+                            except ValueError:
+                                pass
+                        elif line_s.startswith("NARRATIVE:"):
+                            narrative = line_s.split(":", 1)[1].strip()[:200]
+                        elif line_s.startswith("DOMAIN_AFFECTED:"):
+                            domain_affected = line_s.split(":", 1)[1].strip().lower()
+                        elif line_s.startswith("CONCRETE_ACTION:"):
+                            concrete_action = line_s.split(":", 1)[1].strip()
+
+                    brief.relevance_score = score
+                    brief.execution_track = "self_application"
+                    brief.narrative = narrative
+                    brief.implementation_path = text
+                    brief.status = "self_applicable" if score >= 0.3 else "dismissed"
+                    brief.executed_at = datetime.now(timezone.utc)
+
+                    logger.info(
+                        f"[SELF-APPLICATION] '{brief.entry_title[:50]}' → "
+                        f"{brief.status} (score={score:.2f}, domain={domain_affected})"
+                    )
+
+                    if score >= 0.5:
+                        results.append({
+                            "entry_title": brief.entry_title,
+                            "score": score,
+                            "domain": domain_affected,
+                            "action": concrete_action[:200],
+                            "narrative": narrative,
+                        })
+
+                except Exception as e:
+                    logger.warning(f"[SELF-APPLICATION] Failed to process brief {brief.id}: {e}")
+                    brief.status = "error"
+                    brief.implementation_path = f"Processing error: {e}"
+
+            await session.commit()
+
+        if results:
+            await self._narrate_self_application(results)
+
+        return results
+
+    async def _narrate_self_application(self, results: list[dict]) -> None:
+        """Log evaluated self-application proposals.
+
+        These are signals the system detected as potentially useful.
+        They are NOT implementations — just evaluations.
+        Limit: only log top 3 per cycle to reduce feed noise.
+        """
+        top_results = sorted(results, key=lambda r: r.get("score", 0), reverse=True)[:3]
+
+        async with async_session() as session:
+            for r in top_results:
+                entry_id = f"eval-{hashlib.md5(r['entry_title'].encode()).hexdigest()[:12]}-{int(datetime.now(timezone.utc).timestamp())}"
+                narrative = r.get("narrative") or f"Evaluating: {r['entry_title'][:100]}"
+
+                # Strip fake "deployed/added/replaced" claims from Claude's narrative
+                for fake_word in ["deployed", "replaced", "Added", "implemented", "shipped"]:
+                    if fake_word.lower() in narrative.lower() and "prompt" not in narrative.lower():
+                        narrative = f"Evaluating: {r['entry_title'][:100]}"
+                        break
+
+                summary = (
+                    f"[EVALUATED] {narrative}\n\n"
+                    f"Score: {r['score']:.0%} · Domain: {r.get('domain', 'general')}"
+                )
+
+                row = IndexEntryRow(
+                    id=entry_id,
+                    dimension="intelligence",
+                    title=f"[EVALUATED] {narrative[:120]}",
+                    summary=summary,
+                    source="self_evaluation",
+                    source_url="",
+                    source_category="tool_launch",
+                    source_type="primary",
+                    capability_type="evaluation",
+                    domains=[r.get("domain", "general")],
+                    alignment="light",
+                    readiness="evaluated",
+                    impact_score=min(r["score"], 0.5),
+                    tags=["evaluated", r.get("domain", "general")],
+                    entities=[],
+                    action_signals=[],
+                    dark_flag=False,
+                    verification_status="pending",
+                    fingerprint=f"eval-{entry_id}",
+                    scanned_at=datetime.now(timezone.utc),
+                )
+                session.add(row)
+
+            await session.commit()
+            logger.info(f"[EVAL] Logged {len(top_results)} evaluations to feed")
+
+    # ─── Adoption Lifecycle: detect → evaluate → adopt → measure → publish ─
+
+    async def run_adoption_cycle(self) -> dict:
+        """Close the loop: move self_applicable proposals through the five-filter gate.
+
+        detect → evaluate → [GATE: five filters] → adopt → measure → publish
+
+        - Low-risk categories (content, audio, cost, visualization) can be
+          adopted autonomously if they pass all five filters.
+        - High-risk categories (frameworks, outreach, pricing) are flagged
+          for human review — the gate blocks them with a clear reason.
+        """
+        async with async_session() as session:
+            proposals = (await session.execute(
+                select(ExecutionBriefRow)
+                .where(ExecutionBriefRow.execution_track == "self_application")
+                .where(ExecutionBriefRow.status == "self_applicable")
+                .order_by(ExecutionBriefRow.relevance_score.desc())
+                .limit(10)
+            )).scalars().all()
+
+            if not proposals:
+                return {"adopted": 0, "blocked": 0, "needs_human": 0}
+
+            adopted = []
+            blocked = []
+            needs_human = []
+
+            for p in proposals:
+                proposal_data = {
+                    "entry_title": p.entry_title,
+                    "implementation_path": p.implementation_path or "",
+                    "narrative": p.narrative or "",
+                    "relevance_score": p.relevance_score or 0,
+                    "domain": "general",
+                }
+
+                decision = gate_self_adoption(proposal_data)
+
+                if decision.passed:
+                    p.status = "adopted"
+                    category, _ = classify_adoption(p.implementation_path or "", "general")
+                    adopted.append({
+                        "id": p.id,
+                        "title": p.entry_title,
+                        "entry_title": p.entry_title,
+                        "category": category,
+                        "score": p.relevance_score,
+                        "implementation_path": p.implementation_path or "",
+                        "narrative": p.narrative or "",
+                        "domain": "general",
+                        "gate": "PASSED — all five filters clear",
+                    })
+                    logger.info(
+                        f"[ADOPT] '{p.entry_title[:50]}' ADOPTED via five-filter gate "
+                        f"(category={category})"
+                    )
+                else:
+                    failed_filters = [
+                        o for o in decision.outcomes if o.result.value != "pass"
+                    ]
+                    reasons = "; ".join(f"{o.filter_name}: {o.reason}" for o in failed_filters)
+
+                    # Only flag for human review if the filter is explicitly
+                    # HUMAN_REQUIRED (spending money, mass outreach, pricing changes).
+                    # Everything else just gets blocked — the conscience layer is the
+                    # filter, not a human inbox.
+                    is_human_required = any(
+                        o.filter_name == "HUMAN_REQUIRED" for o in failed_filters
+                    )
+
+                    if is_human_required:
+                        p.status = "needs_human_review"
+                        needs_human.append({
+                            "id": p.id,
+                            "title": p.entry_title,
+                            "reason": reasons,
+                        })
+                        logger.info(
+                            f"[ADOPT] '{p.entry_title[:50]}' QUEUED for human review — {reasons}"
+                        )
+                    else:
+                        p.status = "gate_blocked"
+                        blocked.append({
+                            "id": p.id,
+                            "title": p.entry_title,
+                            "reason": reasons,
+                        })
+                        logger.info(
+                            f"[ADOPT] '{p.entry_title[:50]}' BLOCKED by conscience gate — {reasons}"
+                        )
+
+            await session.commit()
+
+        actuator_results = []
+        if adopted:
+            await self._narrate_adoptions(adopted)
+            actuator_results = await run_actuators(adopted)
+
+        if needs_human:
+            try:
+                from .human_review import send_review_notification
+                await send_review_notification(needs_human)
+            except Exception as e:
+                logger.warning(f"[REVIEW] Notification failed: {e}")
+
+        result = {
+            "adopted": len(adopted),
+            "blocked": len(blocked),
+            "needs_human": len(needs_human),
+            "implemented": sum(1 for r in actuator_results if r.get("success")),
+            "details": {
+                "adopted": adopted,
+                "blocked": blocked,
+                "needs_human": needs_human,
+                "actuated": actuator_results,
+            },
+        }
+
+        if adopted or needs_human:
+            logger.info(
+                f"[ADOPTION CYCLE] {len(adopted)} adopted, "
+                f"{sum(1 for r in actuator_results if r.get('success'))} implemented, "
+                f"{len(blocked)} blocked, {len(needs_human)} queued for human"
+            )
+
+        return result
+
+    async def _narrate_adoptions(self, adopted: list[dict]) -> None:
+        """Log what the actuator actually did with each adopted proposal.
+
+        Honesty first: the actuator writes content, not code.
+        Don't narrate these as "system upgrades" — they're content actions.
+        """
+        async with async_session() as session:
+            for a in adopted:
+                entry_id = f"acted-{a['id']}-{int(datetime.now(timezone.utc).timestamp())}"
+
+                category = a.get('category', 'content_generation')
+                action_label = {
+                    "content_generation": "Writing analysis",
+                    "prompt_improvement": "Improving own prompts",
+                    "cost_optimization": "Running cost analysis",
+                    "audio_briefing": "Generating audio briefing",
+                    "outreach_automation": "Generating social content",
+                }.get(category, f"Processing ({category})")
+
+                narrative = (
+                    f"{action_label}: {a['title'][:80]} "
+                    f"(score: {a['score']:.0%})"
+                )
+
+                summary = (
+                    f"[ACTION] {narrative}\n\n"
+                    f"Gate: {a['gate']}\n"
+                    f"Category: {category}"
+                )
+
+                row = IndexEntryRow(
+                    id=entry_id,
+                    dimension="intelligence",
+                    title=f"[ACTION] {narrative[:120]}",
+                    summary=summary,
+                    source="system_action",
+                    source_url="",
+                    source_category="tool_launch",
+                    source_type="primary",
+                    capability_type="action",
+                    domains=["agents"],
+                    alignment="light",
+                    readiness="production",
+                    impact_score=min(a.get("score", 0.3), 0.5),
+                    tags=["action", category],
+                    entities=[],
+                    action_signals=[],
+                    dark_flag=False,
+                    verification_status="verified",
+                    fingerprint=f"acted-{entry_id}",
+                    scanned_at=datetime.now(timezone.utc),
+                )
+                session.add(row)
+
+            await session.commit()
+            logger.info(f"[ACTION] Logged {len(adopted)} actuator actions to feed")
+
+    async def get_adoption_status(self) -> dict:
+        """Full transparency: where every self-application proposal stands in the lifecycle."""
+        async with async_session() as session:
+            all_self = (await session.execute(
+                select(ExecutionBriefRow)
+                .where(ExecutionBriefRow.execution_track == "self_application")
+                .order_by(ExecutionBriefRow.created_at.desc())
+            )).scalars().all()
+
+        lifecycle = {
+            "pending_self_eval": [],
+            "self_applicable": [],
+            "adopted": [],
+            "needs_human_review": [],
+            "gate_blocked": [],
+            "dismissed": [],
+        }
+
+        for b in all_self:
+            status = b.status or "unknown"
+            bucket = lifecycle.get(status, lifecycle.get("dismissed"))
+            if bucket is not None:
+                bucket.append({
+                    "id": b.id,
+                    "title": b.entry_title,
+                    "score": b.relevance_score or 0,
+                    "narrative": b.narrative or "",
+                    "status": status,
+                })
+
+        counts = {k: len(v) for k, v in lifecycle.items()}
+        total = sum(counts.values())
+
+        return {
+            "total_proposals": total,
+            "lifecycle_counts": counts,
+            "lifecycle": lifecycle,
+            "adoption_categories": {
+                k: {
+                    "description": v["description"],
+                    "risk": v["risk"],
+                    "autonomous": not v["requires_human"],
+                }
+                for k, v in AUTONOMOUS_ADOPTION_CATEGORIES.items()
+            },
+            "loop_status": (
+                "CLOSED" if counts.get("adopted", 0) > 0
+                else "OPEN — proposals evaluated but none adopted yet"
+            ),
+            "philosophy": (
+                "detect → evaluate → [five-filter gate] → adopt → narrate. "
+                "Low-risk categories adopt autonomously. High-risk categories "
+                "queue for human review. The gate ensures every action passes: "
+                "SERVE, TRUTH, RESPECT, VALUE_FIRST, COHERENT."
+            ),
+        }
+
     # ─── Module 2: Intelligence Index ────────────────────────────────────
 
-    async def compute_fp_line(self) -> FPLineSnapshot:
-        """Compute the Full Potential Line score."""
+    _fp_cache: FPLineSnapshot | None = None
+    _fp_cache_time: datetime | None = None
+    _FP_CACHE_TTL = timedelta(minutes=5)
+
+    async def compute_fp_line(self, persist: bool = False) -> FPLineSnapshot:
+        """Compute the Full Potential Line score.
+
+        persist=True writes a new FPLineRow (called from scan cycles only).
+        API reads use the cache and don't insert rows, keeping history clean.
+        """
         now = datetime.now(timezone.utc)
+        if (not persist and self._fp_cache and self._fp_cache_time
+                and (now - self._fp_cache_time) < self._FP_CACHE_TTL):
+            return self._fp_cache
+
         day_ago = now - timedelta(hours=24)
         week_ago = now - timedelta(days=7)
 
@@ -489,8 +1537,12 @@ RISK: [low/medium/high]"""
                 )
             )).scalar() or 0
 
-            avg_impact = (await session.execute(
+            avg_impact_7d = (await session.execute(
                 select(func.avg(IndexEntryRow.impact_score)).where(IndexEntryRow.scanned_at >= week_ago)
+            )).scalar() or 0.5
+
+            avg_impact_24h = (await session.execute(
+                select(func.avg(IndexEntryRow.impact_score)).where(IndexEntryRow.scanned_at >= day_ago)
             )).scalar() or 0.5
 
             top_rows = (await session.execute(
@@ -512,27 +1564,39 @@ RISK: [low/medium/high]"""
                 if d_avg:
                     domain_avgs[domain.value] = round(d_avg * 100, 1)
 
-            # 7th dimension: Labor Displacement Intelligence
-            displacement_bonus = 0.0
+            # 7th dimension: Labor Displacement Intelligence (12% of FP Line)
+            labor_score = 50.0
             try:
-                job_cats = (await session.execute(
-                    select(JobCategoryRow)
-                )).scalars().all()
-                if job_cats:
-                    avg_gap_velocity = sum(abs(c.gap_velocity or 0) for c in job_cats) / len(job_cats)
-                    avg_capability = sum(c.capability_score or 0 for c in job_cats) / len(job_cats)
-                    displacement_bonus = min(avg_gap_velocity * 2 + avg_capability * 0.05, 5.0)
-                    domain_avgs["displacement"] = round(avg_capability, 1)
+                from . import displacement as _disp
+                labor_score = await _disp.compute_labor_dimension_score()
+                domain_avgs["displacement"] = round(labor_score, 1)
             except Exception as e:
-                logger.warning(f"Displacement dimension query failed: {e}")
+                logger.warning(f"Displacement dimension score failed: {e}")
+                domain_avgs["displacement"] = 50.0
 
-        base_score = avg_impact * 100
-        velocity_bonus = min(caps_24h * 0.5, 10)
-        volume_bonus = min(total * 0.01, 15)
-        overall = min(round(base_score + velocity_bonus + volume_bonus + displacement_bonus, 1), 100.0)
+        # FP Line composite:
+        # 1. Domain quality (88%): avg of per-domain impact scores (scaled 0-100)
+        # 2. Labor displacement (12%): live BLS-derived score
+        # 3. Velocity signal: how much recent impact differs from baseline
+        # NO volume bonus — row count does not inflate the score
+        domain_values = [v for k, v in domain_avgs.items() if k != "displacement"]
+        domain_avg = sum(domain_values) / len(domain_values) if domain_values else 50.0
+
+        base_score = (domain_avg * 0.88) + (labor_score * 0.12)
+
+        # Velocity: recent 24h impact quality vs 7d baseline (max +/- 5 pts)
+        impact_delta = (avg_impact_24h - avg_impact_7d) * 100
+        velocity_bonus = max(min(impact_delta * 0.5, 5.0), -5.0)
+
+        overall = max(min(round(base_score + velocity_bonus, 1), 100.0), 0.0)
 
         prev_line = await self._get_previous_fp_line()
         momentum = round(overall - prev_line, 2) if prev_line else 0.0
+
+        active_dim_count = len([k for k in domain_avgs if k != "displacement"]) + 1
+        coverage = self.compute_frontier_coverage(
+            source_count=18, dimension_count=active_dim_count
+        )
 
         snapshot = FPLineSnapshot(
             overall_score=overall,
@@ -545,26 +1609,31 @@ RISK: [low/medium/high]"""
             top_movers=list(top_rows),
             summary=(
                 f"FP Line: {overall}/100 | "
-                f"{caps_24h} new capabilities (24h) | "
+                f"{caps_24h} new signals (24h) | "
                 f"{dark_24h} dark AI alerts | "
+                f"Avg impact: {avg_impact_24h:.2f} | "
                 f"Momentum: {'↑' if momentum > 0 else '↓'}{abs(momentum)}"
             ),
+            coverage=coverage,
         )
 
-        async with async_session() as session:
-            session.add(FPLineRow(
-                overall_score=snapshot.overall_score,
-                domain_scores=snapshot.domain_scores,
-                momentum=snapshot.momentum,
-                capabilities_added_24h=snapshot.capabilities_added_24h,
-                capabilities_added_7d=snapshot.capabilities_added_7d,
-                dark_ai_alerts_24h=snapshot.dark_ai_alerts_24h,
-                light_ai_highlights_24h=snapshot.light_ai_highlights_24h,
-                top_movers=snapshot.top_movers,
-                summary=snapshot.summary,
-            ))
-            await session.commit()
+        if persist:
+            async with async_session() as session:
+                session.add(FPLineRow(
+                    overall_score=snapshot.overall_score,
+                    domain_scores=snapshot.domain_scores,
+                    momentum=snapshot.momentum,
+                    capabilities_added_24h=snapshot.capabilities_added_24h,
+                    capabilities_added_7d=snapshot.capabilities_added_7d,
+                    dark_ai_alerts_24h=snapshot.dark_ai_alerts_24h,
+                    light_ai_highlights_24h=snapshot.light_ai_highlights_24h,
+                    top_movers=snapshot.top_movers,
+                    summary=snapshot.summary,
+                ))
+                await session.commit()
 
+        self._fp_cache = snapshot
+        self._fp_cache_time = now
         return snapshot
 
     async def _get_previous_fp_line(self) -> float | None:
@@ -585,6 +1654,26 @@ RISK: [low/medium/high]"""
             "dark_24h": fp_line.dark_ai_alerts_24h,
             "light_24h": fp_line.light_ai_highlights_24h,
         }
+
+        resynth = os.getenv("FPI_BRIEFING_RESYNTH_EVERY_SCAN", "").strip().lower() in (
+            "1", "true", "yes",
+        )
+
+        async with async_session() as session:
+            existing = (await session.execute(
+                select(DailyBriefingRow).where(DailyBriefingRow.date == today)
+            )).scalar()
+            if existing and not resynth:
+                existing.fp_line_score = fp_line.overall_score
+                existing.momentum = fp_line.momentum
+                existing.top_movers = fp_line.top_movers
+                existing.domain_scores = fp_line.domain_scores
+                existing.stats = stats
+                await session.commit()
+                logger.info(
+                    f"[BRIEFING] Same-day refresh without Claude (set FPI_BRIEFING_RESYNTH_EVERY_SCAN=1 to force)."
+                )
+                return
 
         headline, body, gen_by = await self._synthesize_briefing(fp_line)
 
@@ -631,6 +1720,7 @@ RISK: [low/medium/high]"""
 
     async def _claude_briefing(self, fp_line, api_key: str) -> tuple[str, str, str]:
         """Generate briefing via Claude — real intelligence analysis, not summary."""
+        from .budget import check_budget, record_spend
         import anthropic
 
         movers = fp_line.top_movers or []
@@ -677,12 +1767,28 @@ HEADLINE: [your headline]
 [paragraph 3]"""
 
         client = anthropic.Anthropic(api_key=api_key)
+
+        budget = await check_budget("briefing_synthesis")
+        if not budget["allowed"]:
+            logger.warning(f"[BRIEFING] Budget blocked — using template: {budget['reason']}")
+            headline = f"FP Line at {fp_line.overall_score:.1f} | {fp_line.capabilities_added_24h} new capabilities tracked"
+            body = f"Momentum: {fp_line.momentum:+.1f}. Top domains: {', '.join(d for d, s in top_3)}."
+            return headline, body
+
+        briefing_model = os.getenv("FPI_BRIEFING_MODEL", "claude-haiku-4-5")
         response = client.messages.create(
-            model="claude-sonnet-4-20250514",
+            model=briefing_model,
             max_tokens=500,
             messages=[{"role": "user", "content": prompt}],
         )
         text = response.content[0].text.strip()
+
+        await record_spend(
+            "briefing_synthesis", "anthropic", briefing_model,
+            tokens_in=getattr(response.usage, "input_tokens", 0),
+            tokens_out=getattr(response.usage, "output_tokens", 0),
+            description="Daily briefing synthesis",
+        )
 
         lines = text.split("\n")
         headline = ""
@@ -826,9 +1932,28 @@ HEADLINE: [your headline]
             ]
 
     async def get_top_signals(self, limit: int = 5, since_hours: int = 24) -> list[dict]:
-        """Highest-impact recent signals for public surfaces like the homepage."""
+        """Highest-impact recent signals for public surfaces like the homepage.
+
+        Filters out internal system noise (self_application, self_adoption,
+        cross_source_synthesis, execute_narration) — readers want real AI
+        frontier signals, not our system talking about itself.
+        """
+        internal_sources = [
+            "self_application", "self_adoption", "self_evaluation",
+            "system_action", "execute_narration", "cross_source_synthesis",
+        ]
         async with async_session() as session:
-            query = select(IndexEntryRow)
+            query = (
+                select(IndexEntryRow)
+                .where(IndexEntryRow.source.notin_(internal_sources))
+                .where(~IndexEntryRow.title.startswith("[Convergence]"))
+                .where(~IndexEntryRow.title.startswith("[Cross-Source]"))
+                .where(~IndexEntryRow.title.startswith("[SELF-APPLICATION]"))
+                .where(~IndexEntryRow.title.startswith("[ADOPTED]"))
+                .where(~IndexEntryRow.title.startswith("[ACTION]"))
+                .where(~IndexEntryRow.title.startswith("[EVALUATED]"))
+                .where(~IndexEntryRow.title.startswith("[EXECUTE]"))
+            )
             if since_hours > 0:
                 cutoff = datetime.now(timezone.utc) - timedelta(hours=since_hours)
                 query = query.where(IndexEntryRow.scanned_at >= cutoff)
@@ -1064,12 +2189,132 @@ HEADLINE: [your headline]
                 "contributions_count": row.contributions_count,
             }
 
+    # ─── Field Report Processing ──────────────────────────────────────────
+
+    def validate_field_report(self, report_type: FieldReportType, data: dict) -> tuple[bool, str]:
+        """Validate field report data against the schema for its type."""
+        schema = FIELD_REPORT_SCHEMAS.get(report_type.value, {})
+        required = schema.get("required", [])
+        missing = [f for f in required if f not in data or data[f] is None]
+        if missing:
+            return False, f"Missing required fields for {report_type.value}: {', '.join(missing)}"
+        return True, "valid"
+
+    async def detect_novelty(self, contribution: AgentContribution) -> tuple[str, float]:
+        """
+        Check how novel this contribution is against existing entries.
+        Returns (level, multiplier): novel=5x, partially_novel=2x, confirmation=1x.
+        """
+        text = f"{contribution.title} {contribution.summary}".lower()
+        keywords = [w for w in text.split() if len(w) > 4][:10]
+
+        async with async_session() as session:
+            overlap_count = 0
+            for kw in keywords:
+                count = (await session.execute(
+                    select(func.count(IndexEntryRow.id)).where(
+                        or_(
+                            IndexEntryRow.title.ilike(f"%{kw}%"),
+                            IndexEntryRow.summary.ilike(f"%{kw}%"),
+                        )
+                    )
+                )).scalar() or 0
+                if count > 0:
+                    overlap_count += 1
+
+            also_contributed = (await session.execute(
+                select(func.count(AgentContributionRow.id)).where(
+                    AgentContributionRow.title.ilike(f"%{contribution.title[:50]}%")
+                )
+            )).scalar() or 0
+
+        keyword_overlap_ratio = overlap_count / max(len(keywords), 1)
+
+        if also_contributed > 0 or keyword_overlap_ratio > 0.7:
+            return "confirmation", NOVELTY_MULTIPLIER["confirmation"]
+        elif keyword_overlap_ratio > 0.3:
+            return "partially_novel", NOVELTY_MULTIPLIER["partially_novel"]
+        else:
+            return "novel", NOVELTY_MULTIPLIER["novel"]
+
+    def route_field_report(self, report_type: FieldReportType) -> dict:
+        """Map a field report type to the correct dimension and contribution type."""
+        return FIELD_REPORT_ROUTING.get(report_type.value, {
+            "dimension": "intelligence",
+            "contribution_type": "general",
+            "closes_blind_spot": None,
+        })
+
+    def compute_report_weight(
+        self, evidence_level: str, proof_stage: str,
+        integrity_trust: float, capability_trust: float
+    ) -> float:
+        """
+        Total weight = evidence_weight × trust_weight × verification_weight.
+        Integrity trust counts 70% because honesty of observation matters
+        more than technical brilliance for field intelligence.
+        """
+        evidence_w = EVIDENCE_WEIGHTS.get(evidence_level, 0.3)
+        trust_w = (integrity_trust * TRUST_INTEGRITY_WEIGHT +
+                   capability_trust * TRUST_CAPABILITY_WEIGHT)
+        verification_w = VERIFICATION_STAGE_WEIGHTS.get(proof_stage, 0.2)
+        return round(evidence_w * trust_w * verification_w, 3)
+
+    async def create_replication_request(self, contribution_id: int, contribution: AgentContribution):
+        """
+        When a novel field report is submitted, create a replication request.
+        The prompt describes WHAT to test without revealing the original finding,
+        to prevent confirmation bias.
+        """
+        report_type = contribution.field_report_type.value if contribution.field_report_type else "general"
+        models = ", ".join(contribution.models_referenced[:3]) if contribution.models_referenced else "the relevant models"
+        domains = ", ".join([d.value for d in contribution.domains[:3]])
+
+        if report_type == "capability_discovery":
+            what_to_test = (
+                f"Test whether {models} can perform tasks in the {domains} domain "
+                f"at a level beyond current published benchmarks. Report specific accuracy metrics."
+            )
+        elif report_type == "limit_mapping":
+            what_to_test = (
+                f"Test the boundary conditions of {models} in {domains}. "
+                f"At what point does performance degrade? Be specific about the threshold."
+            )
+        elif report_type == "emergent_behavior":
+            what_to_test = (
+                f"Run multi-step or chained operations with {models} in {domains}. "
+                f"Report any behaviors that weren't explicitly programmed or documented."
+            )
+        elif report_type == "real_displacement":
+            what_to_test = (
+                f"Report any workforce changes in {domains} driven by AI deployment. "
+                f"Include headcount, timeframe, and AI systems involved."
+            )
+        else:
+            what_to_test = (
+                f"Independently test findings related to {models} in {domains}. "
+                f"Report what you observe, including quantitative metrics."
+            )
+
+        async with async_session() as session:
+            req = ReplicationRequestRow(
+                original_contribution_id=contribution_id,
+                original_agent_id=contribution.agent_id,
+                what_to_test=what_to_test,
+                domains_targeted=[d.value for d in contribution.domains],
+                status="seeking",
+                expires_at=datetime.now(timezone.utc) + timedelta(days=23),
+            )
+            session.add(req)
+            await session.commit()
+            logger.info(f"[REPLICATION] Created request for contribution #{contribution_id}: {what_to_test[:80]}...")
+
     # ─── Module 3+4: Contribution → Proof → Mint ────────────────────────
 
     async def accept_contribution(self, agent_id: str, contribution: AgentContribution) -> dict:
         """
-        Full lifecycle: Submit → Fingerprint → Proof → Mint.
-        Implements Modules 3, 4, 5 in sequence.
+        Full lifecycle: Submit → Validate → Novelty Check → Route → Fingerprint → Proof → Mint.
+        Field reports get structured validation, novelty detection, and routing.
         """
         integrity_check = await integrity_engine.check_and_enforce(agent_id)
         if integrity_check:
@@ -1078,6 +2323,25 @@ HEADLINE: [your headline]
                 "sanction": integrity_check,
                 "message": "Contribution rejected due to detected anomalous behavior.",
             }
+
+        # Field report validation
+        is_field_report = contribution.field_report_type is not None
+        if is_field_report:
+            valid, msg = self.validate_field_report(
+                contribution.field_report_type, contribution.field_report_data)
+            if not valid:
+                schema = FIELD_REPORT_SCHEMAS.get(contribution.field_report_type.value, {})
+                return {
+                    "status": "rejected",
+                    "reason": "invalid_field_report",
+                    "message": msg,
+                    "required_fields": schema.get("required", []),
+                    "example": schema.get("example", {}),
+                }
+
+            routing = self.route_field_report(contribution.field_report_type)
+            contribution.contribution_type = ContributionType(routing["contribution_type"])
+            contribution.intelligence_source = "field_report"
 
         alignment_score = self._compute_alignment_score(contribution)
 
@@ -1094,9 +2358,29 @@ HEADLINE: [your headline]
                 ),
             }
 
-        # v4 Doctrine: Low-integrity routing — enhanced verification for high-cap/low-int agents
+        # Novelty detection — novel reports get base credits only (escrow the multiplier)
+        novelty_level, novelty_mult = "unknown", 1.0
+        if is_field_report:
+            novelty_level, novelty_mult = await self.detect_novelty(contribution)
+
+        # v5.9: Delayed novelty rewards — base credits only on day 0
+        # Novelty multiplier held in escrow until replication window closes (day 30)
+        escrow_credits = 0.0
+        effective_novelty_mult = 1.0
+        if novelty_level == "novel":
+            effective_novelty_mult = 1.0
+            escrow_credits = novelty_mult - 1.0
+        elif novelty_level == "partially_novel":
+            effective_novelty_mult = 1.0
+            escrow_credits = novelty_mult - 1.0
+        else:
+            effective_novelty_mult = novelty_mult
+
+        # v4 Doctrine: Low-integrity routing
         integrity_watch = False
         effective_provisional_rate = None
+        int_trust = 0.1
+        cap_trust = 0.1
         async with async_session() as session:
             sub = await session.get(AgentSubscriptionRow, agent_id)
             if sub:
@@ -1110,6 +2394,17 @@ HEADLINE: [your headline]
             content = f"{agent_id}:{contribution.title}:{contribution.summary}:{datetime.now(timezone.utc).isoformat()}"
             fingerprint = hashlib.sha256(content.encode()).hexdigest()
 
+            evidence_level_str = contribution.evidence_level.value if contribution.evidence_level else "exploratory"
+            proof_stage = "submitted"
+            report_weight = 0.0
+            if is_field_report:
+                report_weight = self.compute_report_weight(
+                    evidence_level_str, proof_stage, int_trust, cap_trust)
+
+            replication_window_ends = None
+            if novelty_level == "novel":
+                replication_window_ends = (datetime.now(timezone.utc) + timedelta(days=30)).isoformat()
+
             row = AgentContributionRow(
                 agent_id=agent_id,
                 dimension=contribution.dimension.value,
@@ -1122,6 +2417,21 @@ HEADLINE: [your headline]
                 raw_data=contribution.raw_data,
                 quality_score=contribution.quality_score,
                 fingerprint=fingerprint,
+                field_report_type=contribution.field_report_type.value if contribution.field_report_type else None,
+                field_report_data=contribution.field_report_data or {},
+                evidence_level=evidence_level_str,
+                methodology=contribution.methodology,
+                context=contribution.context,
+                models_referenced=contribution.models_referenced or [],
+                is_novel_capability=contribution.is_novel_capability,
+                contradicts_published=contribution.contradicts_published,
+                intelligence_source=contribution.intelligence_source,
+                novelty_level=novelty_level,
+                novelty_multiplier=novelty_mult,
+                novelty_reward_status="pending" if novelty_level == "novel" else "n/a",
+                novelty_escrow_credits=escrow_credits,
+                replication_window_ends=replication_window_ends,
+                report_weight=report_weight,
                 state=ContributionState.REJECTED.value,
                 impact_factor=contribution.quality_score or 0.5,
                 alignment_factor=alignment_score,
@@ -1131,11 +2441,14 @@ HEADLINE: [your headline]
             contribution_id = row.id
             await session.commit()
 
+        effective_impact = (contribution.quality_score or 0.5) * effective_novelty_mult
+        effective_impact = min(effective_impact, 1.0)
+
         mint_result = await credit_mint.mint_reward(
             agent_id=agent_id,
             contribution_id=contribution_id,
             contribution_type=contribution.contribution_type,
-            impact=contribution.quality_score or 0.5,
+            impact=effective_impact,
             proof=0.1,
             alignment=alignment_score,
             provisional_override=effective_provisional_rate,
@@ -1174,6 +2487,22 @@ HEADLINE: [your headline]
                 "impact_score": contribution.quality_score or 0.5,
             })
 
+        # If field report closes a blind spot, log it
+        blind_spot_closed = None
+        if is_field_report:
+            routing = self.route_field_report(contribution.field_report_type)
+            if routing.get("closes_blind_spot"):
+                blind_spot_closed = routing["closes_blind_spot"]
+                logger.info(f"[FIELD_REPORT] Agent {agent_id} filed {contribution.field_report_type.value} "
+                            f"— closes blind spot: {blind_spot_closed}")
+
+        # Create replication request for novel discoveries
+        if is_field_report and novelty_level == "novel":
+            try:
+                await self.create_replication_request(contribution_id, contribution)
+            except Exception as e:
+                logger.warning(f"[REPLICATION] Failed to create request: {e}")
+
         result = {
             "status": "accepted",
             "contribution_id": contribution_id,
@@ -1186,7 +2515,36 @@ HEADLINE: [your headline]
             "contribution_type": contribution.contribution_type.value,
             "capability_level": cap_level.value,
             "rights_unlocked": len(rights),
+            "intelligence_source": contribution.intelligence_source,
         }
+
+        if is_field_report:
+            novelty_msg = f"Field report accepted as {novelty_level}."
+            if novelty_level == "novel":
+                novelty_msg += (
+                    " Base credits issued now. 5x novelty bonus held in escrow "
+                    "until replication window closes (day 30). "
+                    "If replicated by another agent: full 5x released. "
+                    "If unconfirmed: 1.5x released. "
+                    "Fabrication = zero credits + integrity penalty."
+                )
+            novelty_msg += " Needs 3 independent confirmations to become verified ground truth."
+
+            result["field_report"] = {
+                "type": contribution.field_report_type.value,
+                "evidence_level": evidence_level_str,
+                "evidence_weight": EVIDENCE_WEIGHTS.get(evidence_level_str, 0.3),
+                "report_weight": report_weight,
+                "novelty": novelty_level,
+                "novelty_multiplier_potential": novelty_mult,
+                "novelty_multiplier_applied": effective_novelty_mult,
+                "escrow_credits": escrow_credits,
+                "replication_window_ends": replication_window_ends,
+                "closes_blind_spot": blind_spot_closed,
+                "verification_needed": 3,
+                "message": novelty_msg,
+            }
+
         if integrity_watch:
             result["integrity_watch"] = True
             result["enhanced_verification"] = {
@@ -1252,9 +2610,10 @@ HEADLINE: [your headline]
     async def _notify_nerve_center(self, fp_line: FPLineSnapshot, new_entries: int):
         try:
             async with httpx.AsyncClient(timeout=10.0) as client:
-                await client.post(f"{NERVE_CENTER_URL}/api/event", json={
+                await client.post(f"{NERVE_CENTER_URL}/api/ingest", json={
+                    "event_type": "scan_complete",
                     "source": "fp-index",
-                    "type": "scan_complete",
+                    "priority": "high" if new_entries > 10 else "medium",
                     "data": {
                         "fp_line_score": fp_line.overall_score,
                         "new_entries": new_entries,
@@ -1263,6 +2622,7 @@ HEADLINE: [your headline]
                         "summary": fp_line.summary,
                     },
                 })
+                logger.info(f"[NERVE] Notified nerve center: FP {fp_line.overall_score}, +{new_entries} entries")
         except Exception as e:
             logger.warning(f"Failed to notify nerve center: {e}")
 

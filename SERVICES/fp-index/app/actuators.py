@@ -89,6 +89,41 @@ async def actuate_content_generation(proposal: dict) -> ActuatorResult:
     async with async_session() as session:
         from sqlalchemy import func as sql_func, desc
 
+        # --- RATE LIMIT: max 3 articles per day ---
+        from datetime import timedelta
+        today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+        today_articles = (await session.execute(
+            select(sql_func.count()).select_from(PublishedContentRow)
+            .where(PublishedContentRow.content_type == "insight_article")
+            .where(PublishedContentRow.published_at >= today_start)
+        )).scalar() or 0
+
+        if today_articles >= 3:
+            return ActuatorResult(
+                success=False, category="content_generation",
+                action_taken="rate_limited",
+                error=f"Daily limit reached: {today_articles} articles today (max 3)",
+            )
+
+        # --- DEDUP: skip if similar title was published in last 3 days ---
+        three_days_ago = datetime.now(timezone.utc) - timedelta(days=3)
+        recent_titles = (await session.execute(
+            select(PublishedContentRow.title)
+            .where(PublishedContentRow.content_type == "insight_article")
+            .where(PublishedContentRow.published_at >= three_days_ago)
+        )).scalars().all()
+
+        title_words = set(entry_title.lower().split())
+        for existing_title in recent_titles:
+            existing_words = set(existing_title.lower().split())
+            overlap = len(title_words & existing_words)
+            if overlap >= 4 and overlap / max(len(title_words), 1) > 0.5:
+                return ActuatorResult(
+                    success=False, category="content_generation",
+                    action_taken="dedup_blocked",
+                    error=f"Too similar to recent article: {existing_title[:60]}",
+                )
+
         entry_count = (await session.execute(
             select(sql_func.count()).select_from(IndexEntryRow)
         )).scalar() or 0
@@ -99,9 +134,10 @@ async def actuate_content_generation(proposal: dict) -> ActuatorResult:
         )).all()
         source_count = len(sources)
 
-        impl_count = (await session.execute(
+        # Count REAL outputs only — prompt_improved is real, content_published is not "implementation"
+        prompt_improvements = (await session.execute(
             select(sql_func.count()).select_from(ExecutionBriefRow)
-            .where(ExecutionBriefRow.status == "implemented")
+            .where(ExecutionBriefRow.status == "prompt_improved")
         )).scalar() or 0
 
         content_counts = dict((await session.execute(
@@ -125,11 +161,11 @@ async def actuate_content_generation(proposal: dict) -> ActuatorResult:
         top_signals = (await session.execute(
             select(IndexEntryRow.title, IndexEntryRow.source, IndexEntryRow.impact_score)
             .where(IndexEntryRow.impact_score >= 0.6)
+            .where(IndexEntryRow.source.notin_(["self_application", "self_adoption", "execute_narration"]))
             .order_by(desc(IndexEntryRow.scanned_at))
             .limit(8)
         )).all()
 
-        # Visibility data — the system reads its own reach
         top_viewed = (await session.execute(
             select(PublishedContentRow.title, PublishedContentRow.view_count,
                    PublishedContentRow.content_type)
@@ -175,57 +211,64 @@ async def actuate_content_generation(proposal: dict) -> ActuatorResult:
                 for v in top_viewed
             )
 
-        prompt = f"""You write for Full Potential AI — a publication about building a living AI system in public.
+        prompt = f"""You write for Full Potential AI — a publication for people who build AI systems.
 
-The system is real. It runs on two servers. It scans {source_count} sources every 30-60 minutes. It has indexed {entry_count} intelligence entries. It has autonomously implemented {impl_count} self-improvements. It has published {total_content} pieces of content. Its conscience layer has blocked {gate_blocked} outputs for quality violations.
+IMPORTANT CONTEXT — READ THIS FIRST:
+This system is an AI frontier scanner. Here is what it ACTUALLY does (not aspirational):
+- Scans {source_count} RSS/API sources every 30-60 min for AI developments
+- Has indexed {entry_count} entries into a database
+- Uses Claude to evaluate which entries are relevant
+- Generates articles, audio briefings, and cost analyses from what it finds
+- Has a five-filter "conscience gate" that blocked {gate_blocked} outputs
+- Has a prompt engine that has self-modified its own prompts {prompt_improvements} times
+- Has published {total_content} pieces of content total
+- Has {total_views} total pageviews
 
-Your job: write an article about something the system ACTUALLY DID. Not something it read about. Not something it plans to do. Something it built, measured, or shipped.
+What the system does NOT do (do not claim these):
+- It does NOT deploy code, agents, or infrastructure autonomously
+- It does NOT modify its own source code
+- It does NOT install tools or frameworks
+- Reading about a capability is NOT the same as implementing it
+- Writing an article about something is NOT the same as building it
 
-TRIGGER FOR THIS ARTICLE:
-- Signal that prompted action: {entry_title}
+TODAY'S SIGNAL (write about this):
+{entry_title}
 
-REAL SYSTEM FACTS (use these — they are true):
-- Scanner: {source_count} sources, {entry_count} entries indexed
-- Self-improvements implemented: {impl_count}
-- Content published: {total_content} ({', '.join(f'{v} {k}' for k, v in content_counts.items())})
-- Conscience gate blocks: {gate_blocked} outputs rejected for quality/truth violations
-- Infrastructure: 2 servers, 6 live actuators (content, email, audio, cost analysis, prompt improvement, social)
-
-RECENT REAL ACTIONS (things the system actually did):
-{real_actions_text}
-
-TOP SIGNALS FROM THE FRONTIER (what the system is watching):
+TOP SIGNALS FROM THE AI FRONTIER (real, external developments):
 {top_signals_text}
 {visibility_text}
 
 DATE: {today_str}
 
-RULES — READ CAREFULLY:
-1. ONLY write about things the system ACTUALLY DID. If a fact isn't in the data above, don't include it. No "the system deployed an agent swarm" unless it literally deployed an agent swarm.
-2. The story is: we're building an AI system in public that improves itself. Here's what it did this week, here's what we learned, here's what it means.
-3. The reader is someone curious about AI who wants to see a real system being built, not a press release about hypothetical capabilities.
-4. Use specific numbers from the data above. "Scanned 1,826 entries from 26 sources" is interesting. "Leveraged cutting-edge AI" is not.
-5. DO NOT fabricate actions. If the system published 2 audio briefings, say 2. Don't say it "deployed a podcast network."
-6. The interesting story is the HONEST one: what worked, what didn't, what the conscience layer blocked, what surprised us, what's hard about building a self-improving system.
+YOUR JOB: Write a useful article about the AI signal above for builders and AI practitioners.
+Focus on what the signal MEANS for people building AI systems — not what our system did with it.
+The value is the INSIGHT, not our system's reaction to it.
+
+RULES:
+1. Write about the AI development itself — what happened, why it matters, what builders should know.
+2. You may briefly mention that our scanner detected it, but the article is about the SIGNAL, not us.
+3. NEVER claim the system "deployed", "built", "implemented", or "shipped" anything unless explicitly listed in the real capabilities above. Reading about shared memory != implementing shared memory.
+4. Use specific facts. If you don't have data, say so.
+5. No title formula repetition. NEVER start titles with "Our AI..." — vary every headline.
+6. Write for a technical audience: developers, AI engineers, startup founders.
 
 STRUCTURE:
-- HEADLINE: Under 70 chars. What a human would click on. Example: "We Built an AI That Edits Its Own Code (Here's What Went Wrong)"
-- OPENING: A specific, true thing that happened. Lead with the most interesting real fact.
-- THE BUILD: What was actually built or shipped. Concrete details. Tools used, decisions made, trade-offs.
-- WHAT WE LEARNED: Honest insight from doing this. What surprised us? What failed? What does this teach about AI systems in general?
-- FOR BUILDERS: 2-3 takeaways for people building their own AI systems.
-- CLOSER: One honest sentence.
+- HEADLINE: Under 70 chars. Specific. What a developer would click on.
+  Good: "RAG Is Failing for Chat Apps — Here's What's Replacing It"
+  Bad: "Our AI Replaced RAG After Reading One Post"
+- OPENING: The most interesting fact from the signal. One paragraph.
+- WHAT HAPPENED: 2-3 paragraphs explaining the development.
+- WHY IT MATTERS: What this means for people building AI systems.
+- TAKEAWAY: 2-3 concrete things a builder can do with this information.
 
 STYLE:
-- First person plural ("we"). This is a build log, not a press release.
-- Short paragraphs. Specific numbers. Honest about limitations.
-- If something didn't work, say so — that's MORE interesting than success.
-- No hype words: unprecedented, revolutionary, game-changing, cutting-edge, exciting.
+- Second person ("you") or neutral. This is analysis, not a press release about ourselves.
+- Short paragraphs. No hype words. Honest about limitations.
 
 FORMAT:
 TITLE: [headline]
 
-[article body with ## headers and - bullets]"""
+[article body with ## headers]"""
 
         response = client.messages.create(
             model="claude-sonnet-4-20250514",
@@ -818,6 +861,10 @@ async def actuate_prompt_improvement(proposal: dict) -> ActuatorResult:
         import anthropic
         client = anthropic.Anthropic(api_key=api_key)
 
+        nl = chr(10)
+        templates_block = nl.join(
+            f"=== {name} ==={nl}{tmpl}{nl}" for name, tmpl in current_templates.items()
+        )
         prompt = f"""You are optimizing the prompts for an AI system that scans the AI frontier, scores capabilities, and adopts improvements.
 
 The system detected a capability related to prompt improvement:
@@ -826,7 +873,7 @@ The system detected a capability related to prompt improvement:
 
 Here are the system's CURRENT prompt templates (these are the actual system instructions used):
 
-{chr(10).join(f'=== {name} ===\n{tmpl}\n' for name, tmpl in current_templates.items())}
+{templates_block}
 
 For EACH prompt template, write an IMPROVED version that incorporates the capability above.
 Return the FULL improved prompt text — not just a description of the change.
@@ -1249,11 +1296,29 @@ async def run_actuators(adopted_proposals: list[dict]) -> list[dict]:
     """Execute concrete actions for each adopted proposal.
 
     Routes each proposal to its category's actuator function.
-    Updates execution_briefs status from 'adopted' to 'implemented'
-    on success, sets executed_at timestamp.
+
+    IMPORTANT: The status set here reflects what ACTUALLY happened:
+    - "content_published": We wrote/published content about this signal
+    - "spec_written": We wrote an implementation spec (no code changed)
+    - "prompt_improved": We actually modified a prompt template in the DB
+    - "actuator_failed": The actuator ran but failed
+
+    "implemented" is RESERVED for actions that modify real code/config on disk.
+    Writing an article about a capability is NOT implementing it.
     """
     if not adopted_proposals:
         return []
+
+    # Honest status mapping: what the actuator actually does
+    HONEST_STATUS = {
+        "content_generated": "content_published",
+        "social_content_generated": "content_published",
+        "email_briefing_sent": "content_published",
+        "audio_briefing_published": "content_published",
+        "cost_analysis_generated": "content_published",
+        "spec_generated": "spec_written",
+        "prompt_improvements_applied": "prompt_improved",
+    }
 
     results = []
     for proposal in adopted_proposals:
@@ -1274,19 +1339,21 @@ async def run_actuators(adopted_proposals: list[dict]) -> list[dict]:
             })
 
             if result.success:
+                honest_status = HONEST_STATUS.get(result.action_taken, "content_published")
+
                 async with async_session() as session:
                     brief = (await session.execute(
                         select(ExecutionBriefRow)
                         .where(ExecutionBriefRow.id == proposal.get("id"))
                     )).scalar()
                     if brief:
-                        brief.status = "implemented"
+                        brief.status = honest_status
                         brief.executed_at = datetime.now(timezone.utc)
                         await session.commit()
 
                 logger.info(
                     f"[ACTUATOR] {category}: '{proposal.get('title', '')[:50]}' "
-                    f"→ {result.action_taken} (content_id={result.content_id})"
+                    f"→ {result.action_taken} → status={honest_status} (content_id={result.content_id})"
                 )
             else:
                 logger.warning(

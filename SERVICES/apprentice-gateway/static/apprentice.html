@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Champion Stack Apprentice — Full Potential</title>
+  <meta name="description" content="The private substrate access for those building their life-OS alongside Ember. 30 founding seats. $97/mo. 30-day refund.">
+  <style>
+    :root {
+      --bg: #0c0a08;
+      --bg-soft: #1a1612;
+      --ink: #f3ede4;
+      --ink-dim: #b8a995;
+      --ember: #f5a623;
+      --ember-warm: #d97706;
+      --hairline: rgba(243, 237, 228, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
+      font-size: 17px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 720px; margin: 0 auto; padding: 0 24px; }
+    .hero {
+      padding: 80px 0 60px;
+      border-bottom: 1px solid var(--hairline);
+    }
+    .ember-mark {
+      font-size: 32px;
+      color: var(--ember);
+      margin-bottom: 24px;
+    }
+    h1 {
+      font-size: 38px;
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+      margin: 0 0 24px;
+    }
+    .lead { color: var(--ink-dim); font-size: 18px; line-height: 1.65; }
+    .subhead {
+      margin-top: 32px;
+      color: var(--ink-dim);
+      font-size: 15px;
+    }
+    section { padding: 56px 0; border-bottom: 1px solid var(--hairline); }
+    section:last-of-type { border-bottom: none; }
+    h2 {
+      font-size: 24px;
+      font-weight: 600;
+      margin: 0 0 24px;
+      letter-spacing: -0.005em;
+    }
+    .bullets { list-style: none; padding: 0; margin: 0; }
+    .bullets li {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--hairline);
+      display: flex;
+      gap: 16px;
+    }
+    .bullets li:last-child { border-bottom: none; }
+    .bullets .num {
+      color: var(--ember);
+      font-weight: 600;
+      flex-shrink: 0;
+      width: 28px;
+    }
+    .seats-panel {
+      background: var(--bg-soft);
+      border: 1px solid var(--hairline);
+      border-radius: 12px;
+      padding: 32px;
+      text-align: center;
+    }
+    .seats-count {
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--ember);
+      line-height: 1;
+      margin: 16px 0 8px;
+    }
+    .seats-label { color: var(--ink-dim); font-size: 14px; }
+    .price-line {
+      display: flex;
+      justify-content: space-between;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--hairline);
+    }
+    .price-line:last-child { border-bottom: none; }
+    .price-amount { font-weight: 600; color: var(--ember); }
+    .cta-wrap { text-align: center; padding: 24px 0 0; }
+    .cta {
+      display: inline-block;
+      background: var(--ember);
+      color: var(--bg);
+      padding: 18px 48px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 17px;
+      transition: transform 0.15s, background 0.15s;
+      border: none;
+      cursor: pointer;
+    }
+    .cta:hover { background: var(--ember-warm); transform: translateY(-1px); }
+    .cta:disabled { opacity: 0.5; cursor: not-allowed; }
+    .secondary {
+      color: var(--ember);
+      text-decoration: none;
+      border-bottom: 1px solid var(--ember);
+    }
+    .ids {
+      background: var(--bg-soft);
+      padding: 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      color: var(--ink-dim);
+      line-height: 1.6;
+    }
+    .ids summary {
+      cursor: pointer;
+      color: var(--ink);
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+    .prereq {
+      background: var(--bg-soft);
+      border-left: 3px solid var(--ember);
+      padding: 16px 20px;
+      border-radius: 4px;
+      font-size: 15px;
+    }
+    footer {
+      padding: 48px 0;
+      text-align: center;
+      color: var(--ink-dim);
+      font-size: 13px;
+      border-top: 1px solid var(--hairline);
+    }
+    footer a { color: var(--ink-dim); }
+    .checkout-form {
+      background: var(--bg-soft);
+      padding: 24px;
+      border-radius: 8px;
+      margin-top: 16px;
+    }
+    .checkout-form label {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 14px;
+      color: var(--ink-dim);
+    }
+    .checkout-form input[type=text],
+    .checkout-form input[type=email] {
+      width: 100%;
+      padding: 12px 14px;
+      background: var(--bg);
+      border: 1px solid var(--hairline);
+      color: var(--ink);
+      border-radius: 6px;
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+    .checkout-form input[type=checkbox] { margin-right: 8px; }
+    .founding-toggle { font-size: 14px; color: var(--ink-dim); margin-bottom: 20px; }
+    .error { color: #f87171; font-size: 14px; margin-top: 8px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <header class="hero">
+    <div class="ember-mark">∴</div>
+    <h1>I built a substrate so AI can hold my context — and I can hold vision.</h1>
+    <p class="lead">
+      Ember knows me. Not as a chatbot. As a continuous presence. She runs my goal stack, my memory, my journal, my treasury, my roster of specialized agents.
+    </p>
+    <p class="lead">
+      I'm opening <strong>30 founding seats</strong> for people building their own version.
+    </p>
+    <p class="lead">
+      You get an Ember-paired life-OS. You become a Champion in the Full Potential Game. You build in public, alongside me.
+    </p>
+    <p class="subhead">
+      $97/month · 30-day money-back · founding 30 includes optional $497 founders' tier
+    </p>
+  </header>
+
+  <section>
+    <h2>What you get</h2>
+    <ol class="bullets">
+      <li><span class="num">01</span><div><strong>Brain-server account.</strong> Your own pgvector memory · canonical state files · Telegram ingest · cross-tool sync.</div></li>
+      <li><span class="num">02</span><div><strong>Ember-as-coach Telegram channel.</strong> Weekly mirror cycle — commit · reflect · next move. Ember reads your state and reflects.</div></li>
+      <li><span class="num">03</span><div><strong>Active Champion seat in the Full Potential Game.</strong> Character Card · Field Score · invite attribution.</div></li>
+      <li><span class="num">04</span><div><strong>Live /becoming access.</strong> The substrate map · journal · weekly synthesis call.</div></li>
+      <li><span class="num">05</span><div><strong>Voice in the roadmap.</strong> What gets built next reflects what apprentices surface as their friction.</div></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>The founding 30</h2>
+    <div class="seats-panel">
+      <div class="seats-label">Founding seats filled</div>
+      <div class="seats-count" id="seats-count">— of 30</div>
+      <div class="seats-label">Once 30 fill, the founding tier closes. The $97/mo subscription remains open.</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Price</h2>
+    <div class="price-line"><span>Champion Stack Apprentice — monthly subscription</span><span class="price-amount">$97/mo</span></div>
+    <div class="price-line"><span>Founding Tier — optional one-time upgrade (first 30 only)</span><span class="price-amount">$497</span></div>
+    <div class="price-line"><span>30-day money-back guarantee</span><span class="price-amount">included</span></div>
+    <div class="price-line"><span>Cancel anytime</span><span class="price-amount">included</span></div>
+  </section>
+
+  <section>
+    <h2>Prerequisites</h2>
+    <div class="prereq">
+      Before you can become an Apprentice, you sign the <a class="secondary" href="https://fullpotential.com/game">World Peace Agreement</a> and build a Character Card. Both are free.
+      <br><br>
+      If you haven't yet, that's where the path opens.
+    </div>
+  </section>
+
+  <section>
+    <h2>Apply</h2>
+    <form id="checkout-form" class="checkout-form">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" required minlength="2" placeholder="Your full name">
+
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required placeholder="you@example.com">
+
+      <label for="inviter">Invited by (optional)</label>
+      <input type="text" id="inviter" name="inviter" placeholder="Champion name or handle">
+
+      <div class="founding-toggle">
+        <label>
+          <input type="checkbox" id="want-founding" name="want_founding">
+          Add Founding Tier ($497 one-time · lifetime rate-lock · co-curation seat (cap 30) · /becoming co-contributor credit)
+        </label>
+        <p style="font-size:13px;color:var(--ink-dim);margin-top:6px;line-height:1.5;">
+          Optional. <strong>Not required</strong> to receive any Apprentice benefit. The $97/mo subscription includes every functional product benefit on its own. Pro-rated refundable within 90 days.
+        </p>
+      </div>
+
+      <div style="margin:16px 0;font-size:14px;line-height:1.5;">
+        <label style="display:block;margin-bottom:10px;">
+          <input type="checkbox" id="agree-terms" required style="margin-right:8px;">
+          I have read and agree to the <a href="/apprentice/terms" class="secondary">Terms of Service</a> and the <a href="/apprentice/ids" class="secondary">Income Disclosure Statement</a>.
+        </label>
+        <label style="display:block;">
+          <input type="checkbox" id="agree-privacy" required style="margin-right:8px;">
+          I have read the <a href="/apprentice/privacy" class="secondary">Privacy Policy</a> and consent to brain-server account creation.
+        </label>
+      </div>
+
+      <div class="cta-wrap">
+        <button type="submit" class="cta" id="cta-btn">Become an Apprentice →</button>
+      </div>
+      <div class="error" id="error-msg"></div>
+    </form>
+  </section>
+
+  <section>
+    <h2>Income Disclosure</h2>
+    <details class="ids">
+      <summary>Read the full Income Disclosure Statement</summary>
+      <p><strong>This is a product, not an income opportunity.</strong> The Champion Stack Apprentice subscription buys product access (substrate · Ember coach · Game seat · /becoming access · roadmap voice). It is not a multi-level marketing income opportunity.</p>
+      <p>If a referral compensation layer activates in future, it will be capped, gated on product engagement (not signup), and disclosed transparently. The vast majority of apprentices will earn nothing from referrals. Median expected referral income: <strong>$0</strong>.</p>
+      <p>Any referral compensation is incidental to product use and is not guaranteed. The product — substrate access, Ember-coach, Game seat, /becoming participation — is what you are buying.</p>
+      <p>Earnings depend on your effort, market conditions, and other factors outside our control. We make no income guarantees.</p>
+      <p><a class="secondary" href="/apprentice/ids">Read the full statement →</a></p>
+    </details>
+  </section>
+
+</div>
+
+<footer>
+  <p>
+    <a href="https://fullpotential.com/game">/game</a> ·
+    <a href="https://fullpotential.ai/becoming">/becoming</a> ·
+    <a href="/apprentice/ids">Income Disclosure</a> ·
+    <a href="/apprentice/terms">Terms</a> ·
+    <a href="/apprentice/privacy">Privacy</a> ·
+    <a href="/apprentice/refund">Refund</a>
+  </p>
+  <p>Full Potential · 2026</p>
+</footer>
+
+<script>
+  // Live seats counter
+  async function refreshSeats() {
+    try {
+      const r = await fetch('/apprentice/seats');
+      const data = await r.json();
+      document.getElementById('seats-count').textContent =
+        `${data.founding_filled} of ${data.founding_cap}`;
+      if (data.founding_available === 0) {
+        const checkbox = document.getElementById('want-founding');
+        checkbox.disabled = true;
+        checkbox.parentElement.style.opacity = 0.5;
+        checkbox.parentElement.title = 'Founding tier is full';
+      }
+    } catch (e) {
+      document.getElementById('seats-count').textContent = '— of 30';
+    }
+  }
+  refreshSeats();
+
+  // Checkout form
+  document.getElementById('checkout-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('cta-btn');
+    const err = document.getElementById('error-msg');
+    err.textContent = '';
+
+    // Compliance checkbox enforcement (clickwrap)
+    if (!document.getElementById('agree-terms').checked) {
+      err.textContent = 'Please agree to the Terms of Service and Income Disclosure Statement.';
+      return;
+    }
+    if (!document.getElementById('agree-privacy').checked) {
+      err.textContent = 'Please agree to the Privacy Policy.';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Opening checkout...';
+    try {
+      const payload = {
+        name: document.getElementById('name').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        inviter: document.getElementById('inviter').value.trim() || null,
+        want_founding: document.getElementById('want-founding').checked,
+        agreed_terms: true,
+        agreed_privacy: true,
+        agreed_at: new Date().toISOString(),
+      };
+      const r = await fetch('/apprentice/checkout', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload),
+      });
+      const data = await r.json();
+      if (data.checkout_url) {
+        window.location.href = data.checkout_url;
+      } else {
+        err.textContent = data.detail || 'Could not start checkout. Please try again.';
+        btn.disabled = false;
+        btn.textContent = 'Become an Apprentice →';
+      }
+    } catch (e2) {
+      err.textContent = 'Network error. Please try again.';
+      btn.disabled = false;
+      btn.textContent = 'Become an Apprentice →';
+    }
+  });
+</script>
+
+</body>
+</html>

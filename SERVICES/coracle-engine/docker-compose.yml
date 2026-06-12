@@ -1,0 +1,74 @@
+# Coracle Prediction Engine - Docker Compose
+version: '3.8'
+
+services:
+  coracle-engine:
+    build: .
+    container_name: coracle-engine
+    ports:
+      - "8650:8650"
+    environment:
+      - CORACLE_PORT=8650
+      - WHALETRACK_URL=http://host.docker.internal:8600
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres:5432/coracle
+      - REDIS_URL=redis://redis:6379
+      # Optional external APIs
+      - GLASSNODE_API_KEY=${GLASSNODE_API_KEY:-}
+      - DERIBIT_API_KEY=${DERIBIT_API_KEY:-}
+      - COIN_GLASS_API_KEY=${COIN_GLASS_API_KEY:-}
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+    networks:
+      - coracle-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8650/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  postgres:
+    image: timescale/timescaledb:latest-pg14
+    container_name: coracle-postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=coracle
+    volumes:
+      - coracle-pg-data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"  # Different port to avoid conflict
+    networks:
+      - coracle-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: coracle-redis
+    ports:
+      - "6380:6379"  # Different port to avoid conflict
+    volumes:
+      - coracle-redis-data:/data
+    networks:
+      - coracle-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  coracle-network:
+    driver: bridge
+
+volumes:
+  coracle-pg-data:
+  coracle-redis-data:
+
+

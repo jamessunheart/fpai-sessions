@@ -1,0 +1,11 @@
+{
+  "name": "gratitude-command",
+  "version": "1.0.0",
+  "description": "Log daily gratitudes and reflect on what you're thankful for",
+  "author": "Aria (Example Module)",
+  "command": "/gratitude",
+  "type": "telegram_command",
+  "entry": "handler.py"
+}
+
+

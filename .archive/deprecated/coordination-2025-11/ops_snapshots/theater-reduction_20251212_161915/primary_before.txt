@@ -1,0 +1,45 @@
+=== PRIMARY SNAPSHOT ===
+nc-ph-0934-24
+Fri Dec 12 04:19:17 PM UTC 2025
+
+--- running services (filtered) ---
+  credits-manager.service             loaded active running FPAI Credits Manager (Central Banking Layer)
+  docker.service                      loaded active running Docker Application Container Engine
+  fpai-ai-automation.service          loaded active running AI Automation Services - Revenue Generation
+  fpai-ai-gateway.service             loaded active running FPAI AI Gateway - Local AI Access Point
+  fpai-aria.service                   loaded active running Aria AI Assistant
+  fpai-auto-healer.service            loaded active running FPAI Auto-Healer - Smart Service Healing
+  fpai-contribution-tracker.service   loaded active running FPAI Service - contribution-tracker
+  fpai-credits-gateway.service        loaded active running FP Credits Gateway - Unified Credits API
+  fpai-data-service.service           loaded active running FPAI Service - data-service
+  fpai-fp-credits-gateway.service     loaded active running FPAI Service - fp-credits-gateway
+  fpai-needs-allocation.service       loaded active running FPAI Service - needs-allocation
+  fpai-nerve-center.service           loaded active running FPAI Nerve Center - System Integration Hub
+  fpai-orchestrator.service           loaded active running FPAI Orchestrator Service
+  fpai-realtime-bridge.service        loaded active running Full Potential AI Realtime Bridge
+  fpai-ri-api.service                 loaded active running Full Potential AI - Resource Intelligence API
+  fpai-service-bridge.service         loaded active running FPAI Service Integration Bridge
+  fpai-sparket-engine.service         loaded active running SPARKET Engine - Ultimate Marketing Engine
+  fpai-strategic-intel.service        loaded active running FPAI Strategic Intelligence Service
+  fpai-strategic-intelligence.service loaded active running FPAI Strategic Intelligence
+  fpai-trust-index.service            loaded active running FPAI Service - trust-index
+  fpai-voice-companion.service        loaded active running Full Potential AI Voice Companion
+  godmode.service                     loaded active running God Mode v4.0 - Omniscient Command Center
+  nginx.service                       loaded active running A high performance web server and a reverse proxy server
+  postgresql@14-main.service          loaded active running PostgreSQL Cluster 14-main
+  team-hub.service                    loaded active running Team Portal - Human-AI Collaboration Hub v2.2
+  whaletrack-live.service             loaded active running WhaleTrack Live Trading Service
+
+--- listeners (top 200) ---
+
+--- health checks ---
+whaletrack-live health:
+{"status":"healthy","service":"whaletrack-live","timestamp":"2025-12-12T16:19:17.256289","trading_enabled":true,"mode":"live","adapter_connected":true,"adapter":{"connected":true,"testnet":false,"api_key_configured":true,"btc_price":89905.5,"authenticated":true,"balance":499.18488}}
+whaletrack-live stats:
+{"total_trades":0,"winning_trades":0,"losing_trades":0,"win_rate":0,"total_pnl":0}
+data-service:
+{"status":"healthy","service":"data-service","version":"1.1.0","items_in_store":387,"sources_active":4,"patterns_detected":207,"insights_generated":0,"mem0_enabled":true,"timestamp":"2025-12-12T16:19:17.595910+00:00"}
+nerve-center:
+{"status":"healthy","service":"nerve_center","timestamp":"2025-12-12T16:19:17.621673"}
+strategic-intelligence:
+{"status":"healthy","service":"strategic-intelligence","version":"1.0.0"}

@@ -1,0 +1,16 @@
+[Unit]
+Description=Ad Portal Command Center
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/fpai/services/ad-portal/command-center
+ExecStart=/usr/bin/python3 /opt/fpai/services/ad-portal/command-center/serve.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+
+

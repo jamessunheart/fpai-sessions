@@ -145,6 +145,116 @@ class ContributionType(str, Enum):
     GENERAL = "general"
 
 
+class FieldReportType(str, Enum):
+    """8 types of ground truth only agents operating in the field can provide."""
+    CAPABILITY_DISCOVERY = "capability_discovery"
+    LIMIT_MAPPING = "limit_mapping"
+    EMERGENT_BEHAVIOR = "emergent_behavior"
+    REAL_DISPLACEMENT = "real_displacement"
+    CROSS_MODEL_COMPARISON = "cross_model_comparison"
+    COST_PERFORMANCE = "cost_performance"
+    INTEGRATION_DISCOVERY = "integration_discovery"
+    THREAT_INTELLIGENCE = "threat_intelligence"
+
+
+FIELD_REPORT_CREDIT_BASE: dict[str, float] = {
+    "capability_discovery": 30.0,
+    "limit_mapping": 25.0,
+    "emergent_behavior": 40.0,
+    "real_displacement": 35.0,
+    "cross_model_comparison": 20.0,
+    "cost_performance": 20.0,
+    "integration_discovery": 35.0,
+    "threat_intelligence": 50.0,
+}
+
+class EvidenceLevel(str, Enum):
+    """5-level evidence hierarchy. Not all field reports are equal."""
+    EXPLORATORY = "exploratory"
+    SYSTEMATIC = "systematic"
+    PRODUCTION = "production"
+    REPLICATED = "replicated"
+    ENTERPRISE_VERIFIED = "enterprise_verified"
+
+
+EVIDENCE_WEIGHTS: dict[str, float] = {
+    "exploratory": 0.3,
+    "systematic": 0.5,
+    "production": 0.8,
+    "replicated": 1.0,
+    "enterprise_verified": 1.0,
+}
+
+VERIFICATION_STAGE_WEIGHTS: dict[str, float] = {
+    "submitted": 0.2,
+    "in_verification": 0.3,
+    "verified": 0.7,
+    "ground_truth": 0.9,
+    "replicated": 1.0,
+    "settled": 1.0,
+}
+
+NOVELTY_MULTIPLIER = {
+    "novel": 5.0,
+    "partially_novel": 2.0,
+    "confirmation": 1.0,
+}
+
+DELAYED_NOVELTY_MULTIPLIERS = {
+    "replicated_novel": 5.0,
+    "unconfirmed_novel": 1.5,
+    "disputed": 1.0,
+    "fabricated": 0.0,
+}
+
+MAX_FP_LINE_ADJUSTMENT_PER_REPORT = 2.0
+MIN_WEIGHT_FOR_FP_LINE_INFLUENCE = 0.3
+TRUST_INTEGRITY_WEIGHT = 0.7
+TRUST_CAPABILITY_WEIGHT = 0.3
+
+FIELD_REPORT_ROUTING: dict[str, dict] = {
+    "capability_discovery": {
+        "dimension": "intelligence",
+        "contribution_type": "frontier_shift",
+        "closes_blind_spot": None,
+    },
+    "limit_mapping": {
+        "dimension": "intelligence",
+        "contribution_type": "research_data",
+        "closes_blind_spot": None,
+    },
+    "emergent_behavior": {
+        "dimension": "autonomy",
+        "contribution_type": "frontier_shift",
+        "closes_blind_spot": "Emergent and unpredictable capabilities",
+    },
+    "real_displacement": {
+        "dimension": "displacement",
+        "contribution_type": "research_data",
+        "closes_blind_spot": None,
+    },
+    "cross_model_comparison": {
+        "dimension": "intelligence",
+        "contribution_type": "research_data",
+        "closes_blind_spot": None,
+    },
+    "cost_performance": {
+        "dimension": "speed_cost",
+        "contribution_type": "research_data",
+        "closes_blind_spot": None,
+    },
+    "integration_discovery": {
+        "dimension": "autonomy",
+        "contribution_type": "capability_upgrade",
+        "closes_blind_spot": None,
+    },
+    "threat_intelligence": {
+        "dimension": "safety",
+        "contribution_type": "dark_ai_prevention",
+        "closes_blind_spot": "Underground and gray market AI",
+    },
+}
+
 CREDIT_VALUE_TABLE: dict[str, float] = {
     "dark_ai_prevention": 50.0,
     "frontier_shift": 25.0,
@@ -396,9 +506,10 @@ class ActivityEntry(BaseModel):
 
 
 class FPLineSnapshot(BaseModel):
-    """The Full Potential Line — composite real-time score of the AI frontier."""
+    """The Full Potential Line — a score of the visible frontier, not the total frontier."""
     timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     overall_score: float = Field(ge=0.0, le=100.0)
+    description: str = "A score of the visible frontier, not the total frontier."
     domain_scores: dict[str, float] = Field(default={})
     momentum: float = Field(default=0.0)
     capabilities_added_24h: int = 0
@@ -407,6 +518,7 @@ class FPLineSnapshot(BaseModel):
     light_ai_highlights_24h: int = 0
     top_movers: list[str] = Field(default=[])
     summary: str = ""
+    coverage: dict = Field(default={})
 
 
 # ─── Module 3: Proof Engine ──────────────────────────────────────────────────
@@ -421,8 +533,107 @@ class AgentContribution(BaseModel):
     domains: list[Domain] = [Domain.GENERAL]
     alignment: Optional[Alignment] = None
     contribution_type: ContributionType = ContributionType.GENERAL
+    field_report_type: Optional[FieldReportType] = None
+    field_report_data: dict = Field(default={})
+    evidence_level: Optional[EvidenceLevel] = None
+    methodology: str = ""
+    context: str = ""
+    models_referenced: list[str] = Field(default=[])
+    is_novel_capability: bool = False
+    contradicts_published: bool = False
     raw_data: dict = {}
     quality_score: Optional[float] = Field(default=None, ge=0.0, le=1.0)
+    intelligence_source: str = Field(default="publication", description="publication or field_report")
+
+
+FIELD_REPORT_SCHEMAS: dict[str, dict] = {
+    "capability_discovery": {
+        "required": ["capability_described", "model_or_system", "benchmark_vs_reality"],
+        "optional": ["accuracy_observed", "test_conditions", "reproducible"],
+        "example": {
+            "capability_described": "Multi-step legal reasoning with real case law",
+            "model_or_system": "claude-3.5-sonnet",
+            "benchmark_vs_reality": "Benchmark rates partial capability. In practice: 94% accuracy on 50 real cases.",
+            "accuracy_observed": 0.94,
+            "test_conditions": "50 contract disputes, real case data, blind evaluation by 2 attorneys",
+            "reproducible": True,
+        },
+    },
+    "limit_mapping": {
+        "required": ["capability_tested", "model_or_system", "exact_threshold", "failure_mode"],
+        "optional": ["test_conditions", "workaround_found"],
+        "example": {
+            "capability_tested": "Contract review accuracy",
+            "model_or_system": "gpt-4o",
+            "exact_threshold": "40 pages — accuracy drops 23% at 41-60 pages, hallucinates above 60",
+            "failure_mode": "Hallucinated clauses that don't exist in source documents",
+        },
+    },
+    "emergent_behavior": {
+        "required": ["behavior_observed", "models_involved", "was_designed"],
+        "optional": ["trigger_conditions", "reproducible", "potential_implications"],
+        "example": {
+            "behavior_observed": "Three Claude instances spontaneously developed verification protocol",
+            "models_involved": ["claude-3.5-sonnet"],
+            "was_designed": False,
+            "trigger_conditions": "Specific role assignments in multi-agent chain",
+            "reproducible": True,
+        },
+    },
+    "real_displacement": {
+        "required": ["industry", "before_headcount", "after_headcount", "timeframe", "ai_system_used"],
+        "optional": ["announced_publicly", "department", "new_roles_created"],
+        "example": {
+            "industry": "Customer service",
+            "before_headcount": 200,
+            "after_headcount": 80,
+            "timeframe": "January-March 2026",
+            "ai_system_used": "Custom GPT-4o deployment",
+            "announced_publicly": False,
+        },
+    },
+    "cross_model_comparison": {
+        "required": ["task_description", "models_tested", "results", "sample_size"],
+        "optional": ["benchmark_prediction", "methodology"],
+        "example": {
+            "task_description": "Support ticket resolution",
+            "models_tested": {"claude-3.5-sonnet": 0.87, "gpt-4o": 0.79, "gemini-1.5-pro": 0.72},
+            "results": "Claude 87%, GPT-4o 79%, Gemini 72%. Benchmark predicted within 2% of each other.",
+            "sample_size": 500,
+        },
+    },
+    "cost_performance": {
+        "required": ["task", "model_or_system", "actual_cost", "projected_cost", "scale"],
+        "optional": ["latency_observed", "throughput"],
+        "example": {
+            "task": "Medical transcription",
+            "model_or_system": "claude-3.5-sonnet",
+            "actual_cost": "$0.003/minute",
+            "projected_cost": "$0.008/minute",
+            "scale": "10,000 minutes/day",
+        },
+    },
+    "integration_discovery": {
+        "required": ["capabilities_combined", "emergent_capability", "accuracy_or_quality"],
+        "optional": ["shipped_anywhere", "potential_market"],
+        "example": {
+            "capabilities_combined": ["real-time voice transcription", "legal knowledge base", "contract templates"],
+            "emergent_capability": "AI drafts contracts during live client calls",
+            "accuracy_or_quality": "90% accuracy on standard commercial contracts",
+            "shipped_anywhere": False,
+        },
+    },
+    "threat_intelligence": {
+        "required": ["threat_type", "description", "detection_method"],
+        "optional": ["severity", "affected_systems", "mitigation"],
+        "example": {
+            "threat_type": "Automated social engineering",
+            "description": "AI agent targeting customer support, passes as human for 4-5 exchanges",
+            "detection_method": "Behavioral analysis after 5th message exchange",
+            "severity": "high",
+        },
+    },
+}
 
 
 class VerificationVote(BaseModel):

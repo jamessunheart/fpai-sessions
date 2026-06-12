@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pay — Zen Village</title>
+<style>
+:root { --bg: #faf9f5; --fg: #1a2e1a; --accent: #4a7c59; --card: #f0f4ec; --border: #d4ddd0; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'Georgia', serif; background: var(--bg); color: var(--fg); min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding: 2rem; }
+.item-card { background: white; border-radius: 16px; padding: 2rem; max-width: 400px; width:100%; text-align:center; box-shadow: 0 8px 40px rgba(26,46,26,0.12); }
+.item-card h2 { font-size: 1.4rem; font-weight: 400; margin-bottom: 0.5rem; }
+.item-card .price { font-size: 2rem; font-weight: 700; color: var(--accent); margin: 1rem 0; }
+.item-card .desc { color: #666; font-size: 0.9rem; line-height: 1.5; margin-bottom: 1.5rem; }
+.item-card input { width:100%; padding: 0.8rem; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; margin-bottom: 0.75rem; text-align:center; font-family:inherit; }
+.item-card button { width:100%; padding: 0.9rem; background: var(--accent); color:white; border:none; border-radius: 8px; font-size: 1.05rem; cursor:pointer; font-family:inherit; }
+.item-card button:disabled { background: #999; cursor:not-allowed; }
+.result { margin-top: 1rem; padding: 1rem; background: var(--card); border-radius: 8px; font-size: 0.95rem; }
+.result.success { color: #2e7d32; }
+.result.error { color: #c0392b; }
+.loading { color:#888; }
+</style>
+</head>
+<body>
+<div class="item-card" id="card">
+  <div class="loading" id="loading">Loading item...</div>
+  <div id="content" style="display:none;">
+    <h2 id="item-name"></h2>
+    <div class="desc" id="item-desc"></div>
+    <div class="price" id="item-price"></div>
+    <input type="text" id="pass-id" placeholder="Enter your Zen Pass ID">
+    <button onclick="purchase()" id="buy-btn">Pay with Credits</button>
+    <div class="result" id="result" style="display:none;"></div>
+  </div>
+</div>
+<script>
+const itemId = window.location.pathname.split('/').pop();
+
+async function loadItem() {
+  try {
+    const r = await fetch('/api/pass/items/' + itemId);
+    if (!r.ok) throw new Error('Not found');
+    const item = await r.json();
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('content').style.display = 'block';
+    document.getElementById('item-name').textContent = item.name;
+    document.getElementById('item-desc').textContent = item.description || '';
+    document.getElementById('item-price').textContent = '$' + item.price_credits.toFixed(2);
+  } catch(e) {
+    document.getElementById('loading').textContent = 'Item not found.';
+  }
+}
+
+async function purchase() {
+  const passId = document.getElementById('pass-id').value.trim().toUpperCase();
+  if (!passId) { alert('Enter your Zen Pass ID'); return; }
+  const btn = document.getElementById('buy-btn');
+  btn.disabled = true; btn.textContent = 'Processing...';
+  try {
+    const r = await fetch('/api/pass/purchase', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ pass_id: passId, item_id: itemId })
+    });
+    const data = await r.json();
+    const res = document.getElementById('result');
+    if (r.ok) {
+      res.className = 'result success'; res.textContent = 'Paid! ' + data.item + ' — $' + data.charged;
+    } else {
+      res.className = 'result error'; res.textContent = data.detail || 'Payment failed';
+    }
+    res.style.display = 'block';
+  } catch(e) { alert('Error processing payment'); }
+  btn.disabled = false; btn.textContent = 'Pay with Credits';
+}
+
+loadItem();
+</script>
+</body>
+</html>

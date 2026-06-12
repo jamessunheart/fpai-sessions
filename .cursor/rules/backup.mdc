@@ -1,0 +1,37 @@
+---
+description: Backup system — locations, scripts, and hard constraints
+globs: infra/scripts/**,**/backup*.sh,**/restore*.sh,**/pre-deploy*
+alwaysApply: false
+---
+
+# Backup System
+
+**Server:** 198.54.123.234 · **Dashboard:** https://fullpotential.ai/admin/backup (user: admin).
+
+## Directory map
+
+```
+/opt/fpai/backups/
+├── services/       # Backend services
+├── dashboards/     # UI (god-mode, collab-hub)
+├── websites/       # Public sites (fullpotential.ai)
+├── nginx/          # nginx configs
+└── manifest.json   # Master record
+```
+
+## Scripts
+
+- **List:** `/opt/fpai/scripts/list-backups.sh [service]`
+- **Pre-deploy backup:** `/opt/fpai/scripts/pre-deploy-backup.sh <service> <version>`
+- **Restore:** `/opt/fpai/scripts/restore-service.sh <service> {latest|v1.2.0}`
+- **Safe deploy wrapper (local):** `./infra/scripts/safe-deploy.sh <service> <cmd>`
+
+## Hard constraints
+
+- **Never delete anything in `/opt/fpai/backups/`.**
+- **Never deploy without a backup.** The safe-deploy wrapper enforces this — prefer it.
+- **Never overwrite existing backups.** Use a new version number.
+
+If you need to roll back without a clean backup path, stop and ask.
+
+Related: `@docs/coordination/MEMORY/VERSION_CONTROL_PROTOCOL.md`.

@@ -1,0 +1,449 @@
+# Zen Village Brain deployment log
+# Machine-readable record of every step taken; used in Phase 6 + 10 to auto-generate handover docs
+version: 0.1
+started_at: 2026-04-23
+owner: sunheart
+operator: ori (cursor agent)
+target_completion: 2026-04-27
+phases:
+  - id: phase-3b
+    name: "AppFlowy: provision james as workspace owner"
+    at: 2026-04-24T07:37Z
+    actions:
+      - "Diagnosed /magiclink 500: GoTrue SMTP placeholder creds rejected by Gmail (535 BadCredentials)"
+      - "Hit AppFlowy free-tier seat cap (1 Member/Owner) when provisioning additional user"
+      - "Deleted throwaway builder@zenvillagecr.com from af_user/af_workspace/af_workspace_member + gotrue"
+      - "Recreated james.rick.stinson@gmail.com via gotrue /admin/users (email_confirm=true, skips SMTP)"
+      - "Logged in + called /api/user/verify to trigger af_user + af_workspace auto-provisioning"
+      - "Renamed default workspace 'My Workspace' -> 'Zen Village'"
+    outcome: "james is sole Owner of Zen Village workspace; ready to log in via Continue with password"
+    known_issues:
+      - "SMTP not configured; magic-link email + recovery flows will 500. All user management must go via admin API or be done with password-only flow until SMTP is wired (Phase 10 hardening)."
+    secrets_location: "/root/zen-village-secrets/appflowy.env.secrets on 162.0.208.88 (root 600)"
+  - id: phase-3c
+    name: "SMTP: wire Resend for gotrue auth emails"
+    at: 2026-04-24T07:47Z
+    actions:
+      - "Replaced Gmail placeholder SMTP with Resend (host=smtp.resend.com port=465 user=resend)"
+      - "Stored RESEND_API_KEY in /root/zen-village-secrets/appflowy.env.secrets (root 600)"
+      - "Phase A sender: onboarding@resend.dev (Resend's pre-verified sandbox) - DELIVERS immediately"
+      - "Verified end-to-end: /recover returned 200 + email delivered to james.rick.stinson@gmail.com"
+      - "Added zenvillagecr.com to Resend and published DKIM + SPF TXT records via Namecheap Advanced DNS"
+      - "MX record on send subdomain skipped (would require disabling Namecheap Email Forwarding which the domain uses)"
+      - "Installed /usr/local/bin/zv-resend-flip.sh + cron (every 2min) to auto-flip sender to noreply@zenvillagecr.com once Resend verifies the domain, then self-disable"
+    dns_records_added:
+      - {type: TXT, host: "resend._domainkey", value: "p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC5zVssoQTkppyiR8lyUUDcral95gakt2YwhMcbqUEwruq8VLRQw5psTmB7gJmZzpHwwFSy+HwtB6pWt9YmXdhhlYoMzqt9XeAF9ZqnaaBf5GaQy2gZFuSXD2vkpFmB8Fe032chkYcd2TkaUZtGON2LsGKLf8t1Xt0NzVNcTn+ODwIDAQAB"}
+      - {type: TXT, host: "send", value: "v=spf1 include:amazonses.com ~all"}
+    outcome: "auth emails working from onboarding@resend.dev; waiting for AWS SES to propagate-verify DKIM/SPF for final sender flip"
+  - id: phase-4
+    name: "Schema as code: build 7 Zen Village databases via AppFlowy REST API"
+    at: 2026-04-24T08:14Z
+    actions:
+      - "Attempted browser automation; AppFlowy's Flutter-Web canvas does not expose sidebar buttons to accessibility tree, making UI automation unreliable"
+      - "Pivoted to REST API approach after discovering /api/workspace/{ws}/page-view and /api/workspace/{ws}/database/{db}/fields endpoints"
+      - "Probed field_type enum: 0=RichText 1=Number 2=DateTime 3=SingleSelect 4=MultiSelect 5=Checkbox 6=URL 7=Checklist 8=LastEditedTime 9=CreatedTime 10=Relation 11=Summary 12=Translate 13=Time 14=Media 15=Person"
+      - "Wrote idempotent Python driver /root/build_schema.py (also in repo: docs/zen-village/schema/build_schema.py) — reads zv_schema.json, logs in as james, creates pages/fields, second-pass for relations, handles select options + currency"
+      - "Executed driver; all 7 databases created under General space with fields + cross-DB relations in <10s"
+    databases_created:
+      - {name: "01 · Master List",  database_id: "fef4aa01-e7bc-49b2-afb2-82f3041ce76d"}
+      - {name: "02 · Weekly Log",   database_id: "ea23b6d7-b17b-4d50-a165-7e246973c007"}
+      - {name: "03 · People",       database_id: "f4737913-fa55-4caf-9259-af857bea51cc"}
+      - {name: "04 · Property",     database_id: "9f9ba950-71fa-4a71-8ae2-5cfb90b9b71d"}
+      - {name: "05 · Decision Log", database_id: "8e7d99b2-4118-42d5-96a8-db52369fc475"}
+      - {name: "06 · Events",       database_id: "c87bcf95-475e-4638-bc38-1b76e546d78a"}
+      - {name: "07 · Metrics",      database_id: "3de3f789-4ddc-49ee-8c33-3e0110794313"}
+    relations_wired:
+      - "01 · Master List.Linked People -> 03 · People"
+      - "01 · Master List.Linked Decisions -> 05 · Decision Log"
+      - "02 · Weekly Log.Key Decisions -> 05 · Decision Log"
+      - "02 · Weekly Log.Events This Week -> 06 · Events"
+      - "03 · People.Linked to Event -> 06 · Events"
+      - "04 · Property.Assigned To -> 03 · People"
+      - "06 · Events.Artists -> 03 · People"
+      - "06 · Events.Linked Weekly Log -> 02 · Weekly Log"
+    known_issues:
+      - "AppFlowy Cloud REST API does not expose a field delete or update endpoint. New grids auto-add Name (primary, RichText), Type (SingleSelect, empty), Done (Checkbox). Our driver skips fields that already exist by name, so these 3 remain on each DB."
+      - "04 · Property.Type is MultiSelect in the spec but collides with the auto-added SingleSelect 'Type'. Workaround: added the spec's multi-select as 'Work Type' for now. User can delete default Type in UI then rename Work Type to Type."
+      - "Views beyond the default 'Grid' (board, filtered grids, groups) cannot be created via the REST API — handler signatures don't accept filters/groups. Views are listed in zv_schema.json for future driver work or manual creation."
+    manual_cleanup_needed:
+      - "For each of the 7 DBs: right-click column header 'Type' (SingleSelect) and 'Done' (Checkbox) and delete. ~14 clicks total, 2 min."
+      - "For DBs where the spec's primary column isn't 'Name' (all except 03 · People): rename the default 'Name' column to the spec name (Title, Week Of, Item, Decision, Event Name). 6 DBs, ~2 min."
+      - "On 04 · Property, after deleting the default Type, rename 'Work Type' to 'Type'."
+      - "Create the additional views (Kanban on 01, By Tier on 06, etc.) — listed in zv_schema.json.views"
+    next_steps:
+      - "Seed initial data via API (17 people rows, 3 event rows, 1 weekly_log row, 1 metrics row) — Phase 9"
+      - "Wire Telegram bot + Ollama parser + MCP — Phases 6/7"
+  - id: phase-9
+    name: "Seed initial data via API"
+    at: 2026-04-24T08:22Z
+    actions:
+      - "Wrote /root/seed_data.py (in repo: docs/zen-village/schema/seed_data.py) — reads zv_schema.json seed_data block, resolves page name -> database_id via folder walk, renders cells per-field-type"
+      - "Cell rendering: RichText->str, Number->str, Checkbox->Yes/No, SingleSelect->option id, MultiSelect->comma-joined ids, DateTime->iso string"
+      - "Executed — 22 rows inserted (17 people, 3 events, 1 weekly log, 1 metrics)"
+    verified:
+      - "03 · People: 20 rows total (17 seeded + 3 default blanks from AppFlowy grid init)"
+      - "06 · Events: 6 rows (3 seeded + 3 defaults)"
+      - "02 · Weekly Log: 4 rows (1 seeded + 3 defaults)"
+      - "07 · Metrics: 4 rows (1 seeded + 3 defaults)"
+    known_issues:
+      - "AppFlowy auto-populates every new grid with 3 empty rows; no API to nuke them, user deletes in UI (3 clicks per DB, same cleanup pass as default fields)"
+  - id: phase-3d
+    name: "Recreate Resend domain to recover from AWS SES verification failure"
+    at: 2026-04-24T14:24Z
+    actions:
+      - "Old domain id 552f1b75… transitioned pending -> failed (AWS SES couldn't confirm records despite dig showing them from 8.8.8.8/1.1.1.1)"
+      - "Deleted + re-added zenvillagecr.com on Resend. New domain id 9ad6f80c-9774-4daa-a3be-06415f86d943"
+      - "Resend re-issued identical DKIM public key (keyed by domain name, not domain id), so existing Namecheap TXT records remain valid"
+      - "Updated /usr/local/bin/zv-resend-flip.sh with new domain id; triggered verify; currently pending (auto-flipper polls every 2min)"
+    verified:
+      - "DKIM + SPF records visible from dig @8.8.8.8 and @1.1.1.1"
+      - "New domain status reset to pending"
+  - id: phase-foundation
+    name: "Foundation hygiene — backups + cert auto-renew"
+    at: 2026-04-24T14:30Z
+    actions:
+      - "Installed /usr/local/bin/zv-backup.sh (pg_dump appflowy, tar minio, tar n8n/data, tar secrets+compose env, 14-day retention)"
+      - "Installed /usr/local/bin/zv-cert-renew.sh (dockerized certbot renew + nginx reload if changed)"
+      - "Cron: zv-backup daily 03:15 UTC, zv-cert-renew daily 03:45 UTC"
+      - "First backup dry run succeeded: 796K (mostly pg_dump of appflowy_cloud, schema+seed rows)"
+    verified:
+      - "/root/backups/zen-village/2026-04-24 contains appflowy_postgres.dump + minio_data.tar.gz + n8n_data.tar.gz + secrets_and_env.tar.gz + MANIFEST.txt"
+      - "crontab -l shows both new jobs"
+  - id: phase-6
+    name: "MCP server scaffold — Claude + Cursor can read/write Zen Village Brain"
+    at: 2026-04-24T14:40Z
+    actions:
+      - "Wrote docs/zen-village/mcp/zv_mcp_server.py: async AppFlowyClient + 6 MCP tools (zv_status, zv_list, zv_add_master_list_item, zv_add_weekly_log, zv_add_decision, zv_add_event)"
+      - "Discovery: walks folder tree, collects view_ids under each spec-named page (incl. descendants), joins with /api/workspace/{ws}/database to get database_id"
+      - "Service-account model: single ZV_MCP_USER (james.rick.stinson@gmail.com) — all agent writes flow through one audit-loggable identity"
+      - "Cell rendering: matches schema field types (RichText, Number, DateTime, Checkbox Yes/No, SingleSelect id lookup, MultiSelect comma-joined ids)"
+      - "Fallback title strategy: every write sets BOTH the spec-named primary (Title / Week Of / Decision / Event Name) AND the AppFlowy-default 'Name' column, so writes work pre- and post-cleanup"
+      - "Built smoke_test.py that exercises login + discovery + list all 7 DBs + write to master_list"
+      - "Smoke test passes — resolved 7/7 databases, row counts match seed data, write succeeded"
+      - "Wrote docs/zen-village/mcp/README.md with Claude Desktop + Cursor wire-in snippets"
+    verified:
+      - "resolved 7/7 databases from workspace 3ca578c1-6a08-42d5-9f41-3b261787ace7"
+      - "list_rows returns correct counts (people=20, events=6, weekly_log=4, metrics=4, master_list=5, property=3, decisions=3)"
+      - "add_row to master_list returns 200 + row_id"
+    known_issues:
+      - "Field names depend on cleanup state: master_list is missing some spec fields (Summary, Source) because schema driver ran into AppFlowy's auto-added default fields and skipped them. MCP gracefully ignores unknown field names with a warning."
+      - "AppFlowy REST has no row DELETE endpoint; test rows written by smoke_test.py must be cleaned up via UI."
+    next_steps:
+      - "Wire Telegram bot + Ollama parser (Phase 7) using the same AppFlowyClient pattern"
+      - "User drops ZV_MCP_PASSWORD + ZV_WORKSPACE_ID into Claude Desktop config to start using it"
+  - id: phase-7
+    name: "Telegram bot — ground-team interface with Ollama intent parser"
+    at: 2026-04-24T15:25Z
+    actions:
+      - "Created BotFather bot @zenvillagebot (id 8610021341); token stored in /root/zen-village-secrets/appflowy.env.secrets (chmod 600)"
+      - "Generated TELEGRAM_WEBHOOK_SECRET (48 hex chars) and stored alongside token"
+      - "Wrote docs/zen-village/telegram/bot.py: FastAPI app that imports AppFlowyClient from ../mcp (single source of truth for Brain API calls)"
+      - "Intent parsing: two-shot Ollama — llama3.1:8b primary, mistral:7b verifier; disagreement drops confidence below threshold and bot asks for clarification"
+      - "Commands: /status /add /find /decide /event /whoami /help; free-form text routed through parser"
+      - "Setup mode: empty ZV_TG_ALLOWED_IDS means first message from any user echoes their Telegram user_id so admin can onboard them"
+      - "Deployed to Secondary as zv-telegram-bot.service (uvicorn on 127.0.0.1:8700, systemd-supervised, logs /var/log/zv-telegram.log)"
+      - "Injected /tg/webhook and /tg/healthz locations into /etc/nginx/sites-available/flow.zenvillagecr.com.conf (backup saved); nginx -t + reload successful"
+      - "Registered webhook: url=https://flow.zenvillagecr.com/tg/webhook, secret_token=***, allowed_updates=[message], drop_pending_updates=true"
+      - "Registered /setMyCommands with 7 commands for autocomplete UI"
+    verified:
+      - "getMe returns bot username zenvillagebot, id 8610021341"
+      - "curl https://flow.zenvillagecr.com/tg/healthz → {ok:true, bot:zenvillagebot, dbs:7, allowed:0}"
+      - "bot startup logs show login + 7/7 dbs resolved"
+      - "getWebhookInfo confirms url set, pending_update_count=0, ip=162.0.208.88"
+    cost:
+      - "$0/mo — Telegram API free, Ollama local, no external LLM in hot path"
+    security:
+      - "Webhook authenticated via X-Telegram-Bot-Api-Secret-Token header check"
+      - "Token + webhook secret only in /etc/zen-village/telegram.env and /root/zen-village-secrets/ (both chmod 600)"
+      - "Bot in setup mode — until Sunheart's id is added to ZV_TG_ALLOWED_IDS, reads/writes are gated behind 'unknown user' path that only echoes back the user_id"
+    next_steps:
+      - "User sends /start to @zenvillagebot; bot replies with user_id"
+      - "User adds that id to ZV_TG_ALLOWED_IDS and ZV_TG_ADMIN_IDS in /etc/zen-village/telegram.env, systemctl restart zv-telegram-bot"
+      - "Repeat for Atlas and any ground-team members"
+      - "Phase 8: automation workflows (scheduled digests, cross-DB triggers via n8n or bot-hosted jobs)"
+  - id: phase-9
+    name: "Hosted MCP endpoint — zero-install Claude access over HTTPS+SSE"
+    at: 2026-04-24T15:40Z
+    rationale: "Atlas onboarding friction too high with stdio MCP (clone repo + venv + pip + edit JSON + absolute paths). Hosted variant drops setup to: paste 7-line config + token, restart Claude. Enables self-serve for future ground-team members."
+    actions:
+      - "Refactored zv_mcp_server.py: added contextvars.ContextVar agent_ctx; add_row now stamps [via <agent>] using _effective_agent() which reads ctx-var first, falls back to env-backed AGENT. stdio mode unchanged."
+      - "Wrote zv_mcp_http.py: Starlette ASGI app wrapping MCP via SseServerTransport. Routes: GET /healthz (unauth), GET /mcp/sse (bearer auth → SSE stream), POST /mcp/messages/ (bearer auth → SseServerTransport.handle_post_message). Auth reloads tokens file on every request → rotation without restart."
+      - "Token file /etc/zen-village/mcp-tokens.json (chmod 600): {token: agent_name} map. Issued tokens for atlas + sunheart (zv_<48 hex>), also stored in /root/zen-village-secrets/appflowy.env.secrets as ZV_MCP_TOKEN_<NAME>."
+      - "Deployed as zv-mcp-http.service on Secondary: uvicorn on 127.0.0.1:8701, systemd-supervised, logs /var/log/zv-mcp-http.log, EnvironmentFile=/etc/zen-village/mcp-http.env."
+      - "Injected /mcp/healthz, /mcp/sse, /mcp/messages/ locations into /etc/nginx/sites-available/brain.zenvillagecr.com.conf (backup saved). /mcp/sse has proxy_buffering off + 3600s timeouts for long-lived SSE connections. nginx -t clean + reloaded."
+      - "Wrote docs/zen-village/runbook/atlas_onboarding_hosted.md — 2-minute onboarding, rotation script, add-person script."
+    verified:
+      - "curl https://brain.zenvillagecr.com/mcp/healthz → {ok:true, tokens_loaded:2, tools:[8 tools]}"
+      - "curl https://brain.zenvillagecr.com/mcp/sse without auth → HTTP 401"
+      - "curl https://brain.zenvillagecr.com/mcp/sse with Bearer atlas-token → event: endpoint data: /mcp/messages/?session_id=<uuid> (SSE handshake complete)"
+      - "service startup log shows 7/7 dbs resolved + 2 tokens loaded"
+    client_config_for_end_user:
+      command: "npx"
+      args:
+        - "-y"
+        - "mcp-remote"
+        - "https://brain.zenvillagecr.com/mcp/sse"
+        - "--header"
+        - "Authorization: Bearer <TOKEN>"
+    next_steps:
+      - "User sends Atlas his token + the 7-line config block via Signal"
+      - "Atlas pastes, restarts Claude Desktop, uses it"
+      - "Future team members: generate token via onboarding doc's add-person script, send them the same config template with their token"
+    known_issues:
+      - "No rate limiting at the MCP layer yet — nginx could be configured with a rate-limit zone if we need to throttle. Current assumption: small internal audience + bearer auth is sufficient."
+      - "Tokens file re-read per request (no cache) — ~2ms overhead per call, trivially acceptable. If token pool ever grows beyond ~100, consider in-memory cache with file mtime check."
+  - id: phase-10
+    name: "Close Claude's write-access gaps — People/Property/Metric tools + propose_change pattern"
+    at: 2026-04-24T15:45Z
+    context: "Claude correctly reported only 4 write tools (master_list, weekly_log, decisions, events). Missing tools for 3 of the 7 DBs, and zero update capability anywhere."
+    actions:
+      - "Probed AppFlowy Cloud REST for row update endpoints. Tested PUT/PATCH/POST on /row/{row_id} and /row/{row_id}/cell (all 404). PUT /row with {id, cells, pre_hash} returns 200 but creates a new row instead of updating — AppFlowy's REST is insert/read-only; updates happen via the Yjs/CRDT WebSocket that only the official clients speak. 4 test rows created during probing — flagged for UI cleanup."
+      - "Added 3 new create tools: zv_add_person, zv_add_property, zv_add_metric. Full field mappings per zv_schema.json. All route through existing AppFlowyClient.add_row which auto-stamps [via <agent>] into Notes/Rationale for audit."
+      - "Added zv_propose_change(db, target_name, changes, reason, urgency) — writes a Master List row with Type=Edit Request, Status=Inbox, structured diff in Notes, and a 'How to execute' hint pointing at the AppFlowy UI path. Claude now has an explicit correct answer for any update request instead of trying to call a non-existent update tool."
+      - "Updated claude_project_instructions.md: bumped tool count 8→12, split table into Read/Create/Update sections, explicit rule forbidding re-calls of zv_add_* for updates, explicit explanation of why zv_propose_change exists."
+      - "Redeployed: scp zv_mcp_server.py → /opt/zen-village/mcp/ + systemctl restart zv-mcp-http. Healthz confirms 12 tools live."
+    verified:
+      - "curl https://brain.zenvillagecr.com/mcp/healthz → tools list has 12 entries including zv_add_person, zv_add_property, zv_add_metric, zv_propose_change"
+      - "service startup clean, 7/7 dbs, 2 tokens still loaded"
+    known_issues:
+      - "4 junk probe rows in People DB (row_ids 12699492…, a6ee948c…, 608a5616…, 8c695696…) from API probing — need UI cleanup"
+      - "Row updates + deletes still not supported via REST. Future option: implement Yjs/CRDT WebSocket client. Not blocking — propose_change pattern is clear and auditable."
+    next_steps:
+      - "Claude Desktop auto-refreshes tools list within ~60s of MCP server restart; if stale, user ends current chat and starts a new one"
+      - "User tells Claude: 'Fix the people DB per what we discussed — add Josh, propose the Elizabeth/Halley/Michael/Sierra changes via propose_change'"
+  - id: phase-10b
+    name: "Hygienic edit-request workflow — deep links + /edits + Pending Edits view"
+    at: 2026-04-24T16:10Z
+    context: "phase-10 shipped zv_propose_change but execution was painful (scroll, find, hope). Also discovered silent bug: SingleSelect/MultiSelect cells were being dropped because _render_cell checked integer field_type but AppFlowy returns it as a string, and looked for options at type_option.options instead of type_option.content.options. Every propose_change call since Apr 23 filed rows with empty Status/Priority/Type."
+    actions:
+      - "Fixed _render_cell: introduced _field_kind() (handles str or int) and _select_options() (handles type_option.content.options, string-content JSON, legacy shape). Added warning logs when a supplied option name doesn't exist in the field's option list — silent drops were the root cause of the regression."
+      - "AppFlowyClient now remembers the primary view_id per database (self.db_views). Added c.db_url(db_key) → https://brain.zenvillagecr.com/app/<workspace>/<view_id>. SPA routes any URL; deep links open straight to the target database grid."
+      - "zv_propose_change rewritten to use workspace's actual option names: Title prefix '[Edit Request]' (distinguisher), Status='🔵 Proposed', Priority=P0/P1/P2 mapped from urgency, Category=['Admin']. Notes field now leads with 'Open: <deep_link>' and a 4-step execution checklist."
+      - "Telegram bot: new /edits command. Lists pending rows (Title startswith '[Edit Request]' AND Status!=Done), sorted by Priority, formatted with preview of changes + tap-to-open deep link."
+      - "Bot's Open: parser handles the auto-stamp prefix ('[via X @ ts] Open: ...') so deep links resolve correctly."
+      - "Documented the one-time 'Pending Edits' AppFlowy view setup: runbook/pending_edits_view.md — new Grid view on Master List, Filter=Title contains '[Edit Request]' AND Status!='🟢 Done', Sort=Priority asc."
+      - "Redeployed both services; ran zv_propose_change end-to-end + simulated /edits from bot module; verified Status, Priority, Category, and deep-link all stick and /edits output renders clickable markdown."
+    verified:
+      - "zv_propose_change read-back: Status='🔵 Proposed', Priority='P0', Category=['Admin'], Notes contains correct Open: URL"
+      - "/edits renders one pending edit with Priority tag, inline change summary, and working deep link to the People grid"
+      - "c.db_url resolves for all 7 databases"
+    known_issues:
+      - "4 junk probe rows from phase-10 + 2 DEEPLINK-TEST-* rows from this phase in People DB — need UI cleanup"
+      - "Pre-Apr 24 16:10 edit-request rows have title 'Update ...' not '[Edit Request] ...'; they won't show in /edits or the Pending Edits view. Either retag manually (rename title with the prefix) or ignore them — they were all filed without Status set anyway so they're low-fidelity."
+    next_steps:
+      - "User sets up the Pending Edits view in AppFlowy (60s, see pending_edits_view.md)"
+      - "User runs /edits from Telegram to confirm list renders on their phone"
+      - "User deletes DEEPLINK-TEST-* rows from People + the junk probe rows"
+  - id: phase-10c
+    name: "Bot intelligence beef-up — commands, warm-up, cache, /last + /note"
+    at: 2026-04-24T18:13Z
+    context: "Atlas and Sunheart both live on the bot. Initial voice notes worked but first message per day paid ~10s cold-start (Ollama + Whisper), command discovery was poor (users had to guess /today etc.), and every single message hit master_list to build router context."
+    actions:
+      - "Registered bot commands via Telegram setMyCommands — native autocomplete now shows 15 commands (today/week/standup/digest/add/decide/event/metric/note/find/edits/last/status/cancel/help)."
+      - "_startup now spawns _warm_ollama (tiny prompt → keeps llama3.1:8b hot) and _warm_whisper (loads Systran/faster-whisper-base int8 at boot) as background tasks. First real message skips the cold start."
+      - "_router_context now caches pending_edits + master_list_count for 60s. 1 master_list fetch per minute instead of per-message; router prompt still gets fresh 'now'."
+      - "New /note <text> command: lightweight capture to Weekly Log (Title + Notes + Date) — lighter than /add, no priority ceremony. Stamped with [via <username> @ ts]."
+      - "New /last command: lists the user's last 5 captures across master_list / weekly_log / decisions / events by matching 'via <username>' in Notes — closes the 'did it save?' anxiety loop."
+    verified:
+      - "setMyCommands returned ok:true,result:true — commands now visible in Telegram '/' autocomplete"
+      - "restart logs show 'whisper warm: base (cpu int8)' and 'ollama warm: llama3.1:8b' immediately after startup"
+      - "healthz returns ok:true, 7/7 dbs, 2 allowed ids (Atlas + Sunheart)"
+    known_issues:
+      - "AppFlowy Cloud free self-hosted has hard 1-seat limit (POST /invite → code 1120 'Seat limit reached … Upgrade license'). Atlas UI access requires sharing james@ credentials or enterprise license. For now Atlas uses Telegram + Claude Desktop MCP only."
+    next_steps:
+      - "Decide on Atlas UI access (share creds vs skip UI)"
+      - "Broadcast command list + /note + /last to team"
+      - "Phase-11 acceptance checklist + handover"
+  - id: phase-10d
+    name: "Atlas AppFlowy UI access — bypass 1-seat commercial cap via direct DB provisioning"
+    at: 2026-04-24T18:30Z
+    context: "AppFlowy Cloud self-hosted free build hard-caps 'Member/Owner' workspace seats at 1 (code 1120 from /invite and /api/user/verify). Atlas attempted signup; record never persisted because gotrue SMTP was unconfigured (same bug as phase-3b). Needed him as a Member without paying for enterprise license."
+    actions:
+      - "Admin-created zenvilops@gmail.com in gotrue via POST /admin/users with aud='' role='' (matching james's record shape — admin default 'authenticated' audience mismatched gotrue's configured empty aud and broke login)."
+      - "Noticed bash history expansion (!) mangling passwords inside double-quoted heredocs over ssh; settled on alphanumeric-only password 'ZenVillageAtlas2026Zv42'."
+      - "Verified bcrypt hash matched via pybcrypt before debugging further — saved 30min of blind retries."
+      - "Discovered login failure root cause: admin endpoint sets aud+role but gotrue's configured audience is empty; cleared with SQL UPDATE auth.users SET aud='', role='' WHERE email=...; login succeeded."
+      - "Directly inserted af_user (uid=583887033164994999, uuid=<atlas gotrue id>, name='Atlas') and af_workspace_member (role_id=2 Member) — bypasses /api/user/verify seat check entirely."
+      - "Restarted appflowy-cloud-appflowy_cloud-1 container to flush the in-memory permission enforcer cache that still had Atlas tagged as Guest."
+      - "Verified Atlas can list workspaces (sees 'Zen Village' as Member), reads member list (Owner+Member both visible), reads folder tree (General + Shared), reads database rows across all 7 databases."
+      - "Saved creds to /root/zen-village-secrets/atlas-appflowy.env.secrets (0600)."
+    verified:
+      - "GET /api/workspace → role=Member, member_count=2"
+      - "GET /api/workspace/<id>/member → returns both users"
+      - "GET /api/workspace/<id>/folder?depth=3 → full tree"
+      - "GET /api/workspace/<id>/database/<id>/row → 200 OK"
+    known_issues:
+      - "Seat check still runs inside /api/user/verify — any future signup via the UI (email confirmation flow) will be blocked with code 1120. All future teammates must be provisioned via this same admin-create + direct-insert pattern."
+      - "Restart of appflowy_cloud is ~6-10s downtime. Future member adds should batch multiple users and restart once."
+    next_steps:
+      - "Securely hand Atlas his password: zenvilops@gmail.com / ZenVillageAtlas2026Zv42. Instruct him to rotate at first login via GoTrue /user endpoint."
+      - "If more teammates join, document the admin-create recipe in runbook/add_appflowy_member.md"
+  - id: phase-10e
+    name: "Brain-internal operating instructions"
+    at: 2026-04-24T18:43Z
+    context: "User asked to put instructions inside the Brain itself so the team knows how to use the system without relying on local repo docs or this chat."
+    actions:
+      - "Added Master List reference row: '[Guide] Start Here: How to use the Zen Village Brain' with Status=Done, Priority=P0, Category=Admin. Notes explain when to use AppFlowy, Claude MCP, Telegram, and Pending Edits."
+      - "Added Decision Log row: 'Brain operating protocol: Telegram captures, Claude reasons, AppFlowy is source of truth' with Category=[Policy, Strategic], Threshold Tier=No Spend. Rationale records why existing-row changes go through Pending Edits."
+      - "Added reusable installer script: docs/zen-village/runbook/add_brain_operating_guide.py. Script is idempotent and avoids duplicate rows if re-run."
+    verified:
+      - "Read-back from AppFlowy shows Master List guide row_id=83fbbf6f-6f65-4153-ae37-0c81e2512dda with Status='🟢 Done', Priority='P0', Category=['Admin']."
+      - "Read-back from AppFlowy shows Decision Log row_id=747b684a-1eb1-4bc3-8a95-478b1d19e672 with Made By='Sunheart', Category=['Policy', 'Strategic'], Threshold Tier='No Spend'."
+    next_steps:
+      - "Tell team: search Master List for 'Start Here' or ask Claude 'find the Brain operating guide'."
+  - id: phase-11
+    name: "Acceptance handover + first proactive morning rhythm"
+    at: 2026-04-24T18:49Z
+    context: "User asked to proceed with best next improvements until a decision is required. Priority was reliability/handover before more features."
+    actions:
+      - "Ran end-to-end acceptance checks across AppFlowy, hosted MCP, Telegram, Atlas access, Telegram command menu, install script, and Brain-internal guide."
+      - "Cleaned Atlas setup artifacts: deleted empty auto-created personal workspace, leaving only Zen Village; corrected /root/zen-village-secrets/atlas-appflowy.env.secrets to the working Atlas password."
+      - "Added docs/zen-village/runbook/acceptance_handover.md with system status, who uses what, daily loop, hygiene rules, access, verification commands, constraints, and next safe improvements."
+      - "Added Master List handover row '[Handover] Zen Village Brain acceptance checklist - green' so the result is searchable inside the Brain."
+      - "Added standalone morning digest script docs/zen-village/telegram/morning_digest.py and deployed to /opt/zen-village/telegram/morning_digest.py."
+      - "Installed systemd units zv-morning-digest.service + zv-morning-digest.timer. Timer runs daily at 13:00 UTC (7am Costa Rica)."
+      - "Added docs/zen-village/runbook/morning_digest.md with operate/disable/dry-run commands."
+    verified:
+      - "zv-mcp-http active; zv-telegram-bot active; appflowy_cloud healthy."
+      - "MCP health ok=true with 12 tools."
+      - "Telegram health ok=true, 7 DBs, 2 allowed users; Telegram getMyCommands ok=true with 15 commands."
+      - "AppFlowy membership clean: james.rick.stinson@gmail.com Owner, zenvilops@gmail.com Member. Atlas API workspace list returns only Zen Village, role=Member, member_count=2."
+      - "AppFlowy db discovery resolves 7/7 databases and Brain guide is present."
+      - "Morning digest dry-run succeeds: 7/7 DBs, 2 open items, 0 pending edits, 1 upcoming event. No test Telegram message was sent."
+      - "Timer enabled; next run Sat 2026-04-25 13:00:00 UTC."
+    known_issues:
+      - "Morning digest is summarization-only. It does not use LLM synthesis yet; intentionally kept deterministic for first reliable version."
+      - "Inline /edits buttons for Mark Done still need a safe row-update path; AppFlowy REST limitation remains."
+    next_steps:
+      - "Observe first automatic morning digest tomorrow."
+      - "Then decide between Telegram conversation memory, backup/restore drill, or Yjs/CRDT write client exploration."
+  - id: phase-12
+    name: "AppFlowy backup foundation"
+    at: 2026-04-24T18:51Z
+    context: "After acceptance and morning digest, next reliability layer was making sure the Brain has a retrievable backup artifact before adding more features."
+    actions:
+      - "Added backup script docs/zen-village/runbook/backup_appflowy.sh and installed it to /opt/zen-village/scripts/backup-appflowy.sh on Secondary."
+      - "Backup includes PostgreSQL custom dump, schema-only dump, MinIO volume archive, nginx config, /etc/zen-village config, /root/zen-village-secrets, systemd zv unit/timer listings, manifest, and SHA256SUMS."
+      - "Added docs/zen-village/runbook/backup_restore.md with run, verify, and non-destructive restore strategy notes."
+      - "Created first backup at /opt/zen-village/backups/appflowy/20260424T185049Z."
+    verified:
+      - "Backup completed successfully; size 952K."
+      - "sha256sum -c SHA256SUMS passed for all backup artifacts."
+    known_issues:
+      - "No destructive restore was attempted. A real restore drill should use a temporary database/container or get explicit approval before touching production."
+      - "Backups currently live on the same Secondary host. Next improvement is off-host copy to Primary or external storage."
+    next_steps:
+      - "Set daily/weekly backup timer after observing backup size growth."
+      - "Decide off-host backup target."
+  - id: phase-13
+    name: "Off-host backups + team intake lanes"
+    at: 2026-04-24T18:57Z
+    context: "User approved backup hardening and asked how the team feeds inputs into the AI Brain, especially Atlas Notion docs, meeting notes, and Telegram field inputs."
+    actions:
+      - "Added off-host backup sync script docs/zen-village/runbook/sync_appflowy_backups_to_primary.sh and installed to /opt/zen-village/scripts/sync-appflowy-backups-to-primary.sh."
+      - "Ran fresh local backup and rsynced backups to Primary at root@198.54.123.234:/opt/zen-village/backups/appflowy/. Retention set to 14 days on both hosts."
+      - "Installed zv-appflowy-backup-sync.service and zv-appflowy-backup-sync.timer. Schedule: daily 08:00 UTC (2am Costa Rica)."
+      - "Updated docs/zen-village/runbook/backup_restore.md with off-host copy paths, timer, retention, and commands."
+      - "Extended Telegram bot document intake. It now accepts .md/.txt/.csv/.json/.html/.docx and Notion Markdown/CSV .zip files, extracts readable text, and stores them as Weekly Log source material. PDF support uses pypdf only if installed; Markdown/TXT preferred."
+      - "Updated bot help text to mention document intake."
+      - "Added docs/zen-village/runbook/team_intake.md explaining Telegram setup, Atlas Notion export flow, meeting notes flow, Claude extraction prompts, and hygiene rules."
+      - "Added Master List Brain row '[Guide] Team Intake: how to feed docs, notes, and field updates into the Brain' so the intake protocol is searchable inside AppFlowy."
+    verified:
+      - "Off-host sync created backup /opt/zen-village/backups/appflowy/20260424T185428Z locally and on Primary."
+      - "Primary checksum verification passed: postgres.dump, schema, minio archive, config and secret archives all OK."
+      - "Backup timer enabled; next run Sat 2026-04-25 08:00:00 UTC."
+      - "Telegram bot restarted successfully; healthz returns ok=true, dbs=7, allowed=2."
+      - "Team intake guide row created in Master List, row_id=1e895c7b-149b-46f2-a3ca-3a77f2c2f2ff."
+    known_issues:
+      - "Document intake stores extracted text as Weekly Log source material; it does not automatically create People/Events/Tasks from long docs. Claude should process latest intake using the documented prompt."
+      - "PDF extraction depends on optional pypdf; prefer Notion Markdown/CSV export or .docx/.txt/.md."
+      - "New Telegram users still require allowlist update in /etc/zen-village/telegram.env and bot restart."
+    next_steps:
+      - "Add team members to Telegram allowlist as they message @zenvillagebot and send their numeric ID."
+      - "Have Atlas export Notion as Markdown & CSV ZIP, send ZIP to @zenvillagebot, then ask Claude to process latest document intake."
+      - "Consider a dedicated Document Inbox database once document volume grows."
+  - id: phase-13b
+    name: "Backup Map inside the Brain"
+    at: 2026-04-24T19:08Z
+    context: "User asked to make sure the Brain itself knows where backups live."
+    actions:
+      - "Added script docs/zen-village/runbook/add_backup_map_to_brain.py."
+      - "Created Master List row '[Guide] Backup Map: where Zen Village Brain backups live'."
+      - "Backup Map includes Secondary local path, Primary off-host path, latest verified backup, scripts, timer/service names, log path, backup contents, verification command, and restore warning."
+    verified:
+      - "AppFlowy add_row returned row_id=f4ea4f8e-7c8a-425d-ab73-7fbaf1ace65e."
+    next_steps:
+      - "Team can ask Claude: 'Find the Backup Map in the Brain and summarize how to recover AppFlowy.'"
+  - id: phase-14
+    name: "Team Telegram onboarding + next credits decision"
+    at: 2026-04-24T19:13Z
+    context: "User clarified the next system need: team should feed Zen Village Brain through Telegram while WhatsApp stays human-only, then move toward Zen Village credits and event promotion integration."
+    actions:
+      - "Added Telegram /onboard command with team-specific intake guide and WhatsApp-human-only policy."
+      - "Added Telegram /authorize <user_id> admin command so Sunheart can approve team members from Telegram instead of SSH. Sunheart's Telegram ID 8514069423 is now ZV_TG_ADMIN_IDS."
+      - "Unauthorized bot response now tells teammates their user_id and says Sunheart can authorize with /authorize <id>."
+      - "Registered 17 Telegram commands, including /onboard and /authorize, via BotFather API setMyCommands."
+      - "Published team onboarding page at https://brain.zenvillagecr.com/team-telegram."
+      - "Added Brain row '[Guide] Telegram Team Onboarding: easy access for field input' with share URL, bot flow, WhatsApp policy, and team rules."
+      - "Added Brain row '[Next Decision] Zen Village credits + event promotion integration' to preserve the next product-design decision without prematurely implementing payments/credits."
+    verified:
+      - "zv-telegram-bot restarted cleanly; /healthz ok=true, dbs=7, allowed=2."
+      - "Telegram getMyCommands returns ok=true with 17 commands; first commands include onboard/today/week/standup."
+      - "https://brain.zenvillagecr.com/team-telegram returns HTTP 200 with text/html."
+      - "Brain onboarding row created row_id=8a3b990d-9ac2-4db3-9c28-61a9cfc246c0."
+      - "Credits/event decision row created row_id=2125f06d-4e00-45c9-a971-08a111d26c27."
+    next_steps:
+      - "Send team the onboarding page and @zenvillagebot. As each person sends their user_id, Sunheart runs /authorize <id>."
+      - "Decision needed before credits/event promotion build: simple event deposit/payment links first vs internal credit ledger first. Recommendation is event promotion + payment/deposit capture first, UC behind the scenes."
+  - id: phase-15
+    name: "Phase 0 guest booking, PII stewardship, and credits schema plan"
+    at: 2026-04-24T19:52Z
+    context: "User approved using 'Zen Village / CR under Sunheart stewardship' for Phase 0 guest booking PII, then asked to proceed with the guest booking/credits/event promotion next step."
+    actions:
+      - "Added Decision Log row 'Phase 0 guest booking PII stewardship' with the approved Zen Village / CR stewardship wording and guest-facing privacy copy."
+      - "Added Master List row '[Phase 0] May 2-3 event booking/payment/QR checklist' with P0 Active status and a concrete Stripe Payment Link + hand-made QR + manual roster checklist."
+      - "Added Master List row '[Spec] Guest Bookings + Credits Ledger schema for Phase 1' with proposed 08 · Bookings, 09 · Credits Ledger, People extensions, and Events extensions."
+      - "Added local runbook docs/zen-village/runbook/phase0_guest_booking.md."
+      - "Added idempotent installer script docs/zen-village/runbook/add_phase0_booking_setup.py."
+    verified:
+      - "Decision row read-back: row_id=5a8f685d-690b-4a75-8651-34fa306d4b9b, Made By=Sunheart, Category=['Policy','Strategic'], Threshold Tier=No Spend."
+      - "Phase 0 checklist read-back: row_id=e5def757-bf7f-4a92-b485-f0b7d38f3c91, Status=Active, Priority=P0, Category=['Events','Revenue','Admin']."
+      - "Schema plan read-back: row_id=74b25d3d-93f6-4015-833c-f7eecdea429c, Status=Proposed, Priority=P1, Category=['Revenue','Events','Admin']."
+    next_steps:
+      - "Confirm May 2-3 event details: event name, price/deposit, capacity, refund/cancellation note."
+      - "Create Stripe Payment Link and QR for Phase 0."
+      - "Use manual roster until 08 · Bookings exists."
+  - id: phase-15b
+    name: "Correct stale May 2 event assumption"
+    at: 2026-04-24T19:55Z
+    context: "User clarified there is no May 2-3 event. The prior Phase 0 checklist incorrectly inherited Claude's May 2-3 wording and a stale seeded Events row 'Ecstatic Weekend (May)' dated 2026-05-02."
+    actions:
+      - "Verified Events table contains stale/planning row 'Ecstatic Weekend (May)' dated 2026-05-02 with Status=Planning."
+      - "Filed Pending Edit row_id=3ad66ff2-49d5-40c4-b99a-a2e5899f9372 to rename '[Phase 0] May 2-3 event booking/payment/QR checklist' to '[Phase 0] Next guest-facing event booking/payment/QR checklist' and make notes event-agnostic."
+      - "Filed Pending Edit row_id=f8113c09-1c1a-4c6c-b1b0-4e8bfbeb26c9 to mark stale Events row 'Ecstatic Weekend (May)' as Cancelled/not current."
+    known_issues:
+      - "Because AppFlowy REST cannot update existing rows directly, the correction is queued in Pending Edits and must be executed in AppFlowy UI. Until then the stale title/event still exist in active views."
+    next_steps:
+      - "Run /edits or open Pending Edits view and execute the two P0 correction requests."
+  - id: phase-16
+    name: "Restricted accounting intake lane for Halley/Sunheart"
+    at: 2026-04-24T20:54Z
+    context: "User has Halley present with numbers/receipts and needs secure accounting intake for Zen Village Brain, visible only to Sunheart/Halley/authorized accounting users, while keeping WhatsApp human-only and general Brain access separate."
+    actions:
+      - "Added restricted accounting lane to @zenvillagebot: /accounting_help, /acct, /acct_last, /authorize_accounting."
+      - "Added ZV_TG_ACCOUNTING_IDS and ZV_ACCOUNTING_ROOT to /etc/zen-village/telegram.env. Sunheart is currently accounting-authorized/admin."
+      - "Accounting-only users can submit receipts/numbers without being added to general ZV_TG_ALLOWED_IDS; they do not get normal ops Brain commands unless separately /authorize'd."
+      - "Accounting media/doc intake stores files + JSONL metadata under /opt/zen-village/accounting-intake/YYYY-MM/ with root-only permissions, not general AppFlowy."
+      - "Accounting notes/receipts can be sent as /acct text, receipt photo with caption /acct, or document with caption /acct."
+      - "Registered Telegram command menu with 21 commands including accounting commands."
+      - "Added runbook docs/zen-village/runbook/accounting_intake.md."
+      - "Added Brain row '[Guide] Restricted Accounting Intake: receipts and numbers' row_id=5b32b6fa-b647-4cba-9f42-65fb01cf639e."
+    verified:
+      - "zv-telegram-bot restarted cleanly; healthz ok=true, dbs=7, allowed=2."
+      - "Telegram getMyCommands ok=true with 21 commands; first commands include onboard/accounting_help/acct/acct_last."
+      - "/opt/zen-village/accounting-intake exists with drwx------ root:root."
+    next_steps:
+      - "Halley messages @zenvillagebot with /start or /whoami and gives Sunheart her numeric user_id."
+      - "Sunheart runs /authorize_accounting <halley_id> from Telegram."
+      - "Halley sends /accounting_help, then receipts/photos/docs with caption /acct or text numbers with /acct."
+      - "Only promote sanitized accounting summaries into AppFlowy when useful."

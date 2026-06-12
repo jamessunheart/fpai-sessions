@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply · Volunteer · Zen Village</title>
+    <meta name="description" content="Volunteer for events, retreats, and gatherings at Zen Village — short-term help welcome.">
+    <link rel="stylesheet" href="/apply-shared.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>apply · volunteers</h1>
+    <p class="page-subtitle">Show up for the gathering. Bring your hands. Be part of the field.</p>
+
+    <div class="prose">
+        <p>We welcome volunteers for events, retreats, ceremonies, and weekend gatherings — including <a href="https://zenvillage.live/peace">World Peace Gathering</a>. This is for people who want to contribute their time around specific moments, not necessarily live on the land long-term.</p>
+        <p>If you'd rather <strong>live here and trade skills for stay</strong> (2+ weeks, on-site housing, full residency), apply for the <a href="/apply/work-exchange">Work Exchange</a> lane instead.</p>
+    </div>
+
+    <hr class="section-rule">
+
+    <div class="prose">
+        <h2>What we need help with</h2>
+        <ul>
+            <li><strong>Kitchen & Food</strong> — prep, cooking, serving, cleanup, nutrition planning</li>
+            <li><strong>Land & Garden</strong> — planting, weeding, harvesting, composting, trail work</li>
+            <li><strong>Build & Maintenance</strong> — carpentry, repairs, painting, construction projects</li>
+            <li><strong>Hospitality</strong> — guest check-in, housekeeping, hosting, airport coordination</li>
+            <li><strong>Fire & Sauna</strong> — tending the fire, sauna preparation, hot tub maintenance</li>
+            <li><strong>Events</strong> — setup, breakdown, run-of-show support during retreats & gatherings</li>
+            <li><strong>Stewardship</strong> — keeping spaces beautiful, energy clear, flow coherent</li>
+        </ul>
+    </div>
+
+    <hr class="section-rule">
+
+    <div class="prose">
+        <h2>What we ask for</h2>
+        <ul>
+            <li>A minimum stay of <strong>2 weeks</strong> (longer preferred)</li>
+            <li>20–25 hours of contribution per week, 5 days a week</li>
+            <li>Respect for shared space, the land, and the community</li>
+            <li>Willingness to step into what's needed — not just what you prefer</li>
+            <li>Good energy. Genuine presence. Humility with your hands.</li>
+        </ul>
+    </div>
+
+    <hr class="section-rule">
+
+    <form class="apply-form" id="apply-form" data-lane="volunteer">
+
+        <div class="form-group-section">Basics</div>
+
+        <div class="form-group">
+            <label for="name">your name</label>
+            <input type="text" id="name" name="name" required autocomplete="name">
+        </div>
+
+        <div class="form-group">
+            <label for="email">email</label>
+            <input type="email" id="email" name="email" required autocomplete="email">
+        </div>
+
+        <div class="form-group">
+            <label for="phone">phone / whatsapp</label>
+            <input type="tel" id="phone" name="phone" autocomplete="tel">
+        </div>
+
+        <div class="form-group">
+            <label for="location">where are you coming from</label>
+            <input type="text" id="location" name="location">
+        </div>
+
+        <div class="form-group">
+            <label for="age">age</label>
+            <input type="text" id="age" name="age">
+        </div>
+
+        <div class="form-group">
+            <label for="social">instagram / website / social (optional)</label>
+            <input type="text" id="social" name="social">
+        </div>
+
+        <div class="form-group-section">Skills & Contribution</div>
+
+        <div class="form-group">
+            <label>where can you contribute? <span class="label-note">select all that apply</span></label>
+            <div class="checkbox-group">
+                <label><input type="checkbox" name="skill_areas" value="Kitchen / Cooking"> Kitchen / Cooking</label>
+                <label><input type="checkbox" name="skill_areas" value="Land / Garden / Permaculture"> Land / Garden / Permaculture</label>
+                <label><input type="checkbox" name="skill_areas" value="Build / Carpentry"> Build / Carpentry</label>
+                <label><input type="checkbox" name="skill_areas" value="Maintenance / Repairs"> Maintenance / Repairs</label>
+                <label><input type="checkbox" name="skill_areas" value="Cleaning / Housekeeping"> Cleaning / Housekeeping</label>
+                <label><input type="checkbox" name="skill_areas" value="Hospitality / Guest Hosting"> Hospitality / Guest Hosting</label>
+                <label><input type="checkbox" name="skill_areas" value="Fire tending / Sauna"> Fire Tending / Sauna</label>
+                <label><input type="checkbox" name="skill_areas" value="Event support"> Event Support (setup, breakdown)</label>
+                <label><input type="checkbox" name="skill_areas" value="Photography / Video"> Photography / Video</label>
+                <label><input type="checkbox" name="skill_areas" value="Social media / writing"> Social Media / Writing</label>
+                <label><input type="checkbox" name="skill_areas" value="Admin / Coordination"> Admin / Coordination</label>
+                <label><input type="checkbox" name="skill_areas" value="Wellness support"> Wellness Support (bodywork, yoga, etc.)</label>
+                <label><input type="checkbox" name="skill_areas" value="Other"> Other (tell us below)</label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="specific_skills">specific skills or training — tell us what you're actually good at.</label>
+            <textarea id="specific_skills" name="specific_skills" rows="4" placeholder="Professional chef? Permaculture certified? Licensed bodyworker? Built tiny houses? Whatever you bring — be specific."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="physical_work">how's your body with physical work? — comfort with manual labor, heat, outdoor conditions</label>
+            <textarea id="physical_work" name="physical_work" rows="3"></textarea>
+        </div>
+
+        <div class="form-group-section">Timing & Commitment</div>
+
+        <div class="form-group">
+            <label for="start_date">when do you want to arrive?</label>
+            <input type="text" id="start_date" name="start_date" placeholder="e.g. mid-May 2026, flexible after June">
+        </div>
+
+        <div class="form-group">
+            <label for="duration">how long do you want to stay?</label>
+            <input type="text" id="duration" name="duration" placeholder="2 weeks minimum · e.g. 1 month, 3 months, a season">
+        </div>
+
+        <div class="form-group">
+            <label>type of exchange you're looking for <span class="label-note">select all that apply</span></label>
+            <div class="checkbox-group">
+                <label><input type="checkbox" name="exchange_type" value="Short-term work exchange (2-4 weeks)"> Short-term work exchange (2–4 weeks)</label>
+                <label><input type="checkbox" name="exchange_type" value="Extended work exchange (1-3 months)"> Extended work exchange (1–3 months)</label>
+                <label><input type="checkbox" name="exchange_type" value="Seasonal residency (3-6 months)"> Seasonal residency (3–6 months)</label>
+                <label><input type="checkbox" name="exchange_type" value="Long-term stewardship"> Long-term stewardship / potential team role</label>
+                <label><input type="checkbox" name="exchange_type" value="Skills-for-stay (specialized)"> Skills-for-stay (specialized trade — build, chef, etc.)</label>
+            </div>
+        </div>
+
+        <div class="form-group-section">About You</div>
+
+        <div class="form-group">
+            <label for="why_interested">why do you want to come to zen village? — what's drawing you here?</label>
+            <textarea id="why_interested" name="why_interested" rows="4"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="past_experience">have you volunteered, WWOOFed, or done work exchange before? — tell us about it.</label>
+            <textarea id="past_experience" name="past_experience" rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="communal_living">communal living experience — how are you with shared spaces, shared meals, shared energy?</label>
+            <textarea id="communal_living" name="communal_living" rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="what_seeking">what do you want to get out of this?</label>
+            <textarea id="what_seeking" name="what_seeking" rows="3"></textarea>
+        </div>
+
+        <div class="form-group-section">Practical</div>
+
+        <div class="form-group">
+            <label for="dietary">dietary needs / restrictions</label>
+            <input type="text" id="dietary" name="dietary" placeholder="vegetarian, vegan, gluten-free, allergies, etc.">
+        </div>
+
+        <div class="form-group">
+            <label for="health">anything we should know about your health? — injuries, conditions, mental health, sobriety, etc.</label>
+            <textarea id="health" name="health" rows="3" placeholder="We ask because we want to set you up to thrive. This stays confidential."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="languages">languages you speak</label>
+            <input type="text" id="languages" name="languages" placeholder="English, Spanish, etc.">
+        </div>
+
+        <div class="form-group">
+            <label>driver's license / can you drive? <span class="label-note">useful for grocery runs, airport pickups</span></label>
+            <div class="checkbox-group">
+                <label><input type="checkbox" name="can_drive" value="Yes - manual"> Yes — comfortable with manual transmission</label>
+                <label><input type="checkbox" name="can_drive" value="Yes - automatic only"> Yes — automatic only</label>
+                <label><input type="checkbox" name="can_drive" value="No"> No</label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="references">references — anyone we can talk to about your character or past work? (optional)</label>
+            <textarea id="references" name="references" rows="3" placeholder="Name, role, contact info."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="anything_else">anything else you'd like us to know?</label>
+            <textarea id="anything_else" name="anything_else" rows="3"></textarea>
+        </div>
+
+        <p class="final-note">Good volunteers become extended family here. The land remembers the hands that tended it.</p>
+
+        <button type="submit" id="submit-btn">submit application</button>
+        <p class="form-note">We read every application. If there's a fit, we'll reach out within a week.</p>
+    </form>
+
+    <div class="form-success" id="success">
+        <h2>Received with gratitude.</h2>
+        <p>Thank you for being willing to show up with your hands and your heart. We'll read this with care and be in touch within a week if there's a fit.</p>
+    </div>
+
+    <div class="back">
+        <a href="/apply">← Other application lanes</a>
+    </div>
+
+</div>
+
+<script src="/apply-submit.js"></script>
+
+</body>
+</html>

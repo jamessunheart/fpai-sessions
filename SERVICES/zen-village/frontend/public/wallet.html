@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zen Wallet · Zen Village</title>
+<meta name="description" content="Your Zen Credits wallet. Top up with the lowest-fee payment rail, spend on retreats, events, and at the Zen Store.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Manrope:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4ECDC; --bg-soft:#ECE1CB; --ink:#1F1A14; --ink-soft:#4A3F32;
+  --moss:#3A4A2E; --moss-soft:#6B7A55; --clay:#B8553A; --gold:#C8924B;
+  --rule:#2A2018; --serif:'Fraunces',Georgia,serif; --sans:'Manrope',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.55;
+  background-image:radial-gradient(circle at 15% 20%,rgba(184,85,58,.05) 0%,transparent 45%),
+                   radial-gradient(circle at 85% 75%,rgba(58,74,46,.06) 0%,transparent 45%);}
+a{color:inherit;text-decoration:none}
+.page{max-width:980px;margin:0 auto;padding:48px 36px}
+.header{display:flex;justify-content:space-between;align-items:baseline;
+  border-bottom:1px solid var(--rule);padding-bottom:18px;margin-bottom:40px}
+.mark{font-family:var(--serif);font-size:22px;font-weight:500}
+.mark em{font-style:italic;color:var(--moss)}
+.meta{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft)}
+h1{font-family:var(--serif);font-weight:300;letter-spacing:-.02em;font-size:clamp(36px,5vw,56px);line-height:1.02;margin-bottom:10px}
+h1 em{font-style:italic;color:var(--moss)}
+h2{font-family:var(--serif);font-weight:400;font-size:26px;margin:0 0 16px}
+.lead{font-family:var(--serif);font-style:italic;color:var(--ink-soft);font-size:18px;margin-bottom:36px}
+
+.card{background:#fff;border:1px solid rgba(42,32,24,.18);border-radius:14px;padding:28px;margin-bottom:24px}
+.balance{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap}
+.balance-label{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-soft)}
+.balance-amt{font-family:var(--serif);font-size:64px;font-weight:300;line-height:1;letter-spacing:-.02em}
+.balance-zc{font-family:var(--serif);font-size:18px;color:var(--moss);font-style:italic}
+.balance-actions{display:flex;gap:10px;flex-wrap:wrap}
+button,.btn{font-family:var(--sans);font-size:14px;font-weight:600;padding:12px 22px;
+  border:1px solid var(--rule);background:var(--ink);color:var(--bg);border-radius:999px;cursor:pointer;
+  letter-spacing:.04em;transition:all .15s}
+button:hover,.btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(31,26,20,.18)}
+button.ghost,.btn.ghost{background:transparent;color:var(--ink)}
+button.clay,.btn.clay{background:var(--clay);border-color:var(--clay)}
+
+.email-gate{max-width:420px}
+.email-gate input[type=email],.email-gate input[type=text]{
+  width:100%;font-family:var(--sans);font-size:16px;padding:14px 16px;
+  background:transparent;border:1px solid rgba(42,32,24,.4);border-radius:8px;margin-bottom:12px;color:var(--ink)
+}
+.email-gate label{display:block;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px}
+
+.rails{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.rail{padding:18px;border:1px solid rgba(42,32,24,.18);border-radius:10px;cursor:pointer;background:rgba(255,255,255,.6);transition:all .15s}
+.rail:hover{border-color:var(--moss);transform:translateY(-2px)}
+.rail.selected{background:#fff;border-color:var(--moss);box-shadow:0 4px 14px rgba(58,74,46,.15)}
+.rail-name{font-family:var(--serif);font-size:18px;margin-bottom:4px}
+.rail-meta{font-size:12px;color:var(--ink-soft);margin-bottom:8px}
+.rail-bonus{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--clay);font-weight:700}
+.rail-instant{display:inline-block;font-size:10px;padding:2px 8px;border-radius:999px;background:var(--moss);color:var(--bg);margin-left:6px;letter-spacing:.1em;text-transform:uppercase}
+
+.amount-row{display:flex;gap:10px;align-items:center;margin:20px 0}
+.amount-row input{flex:1;font-family:var(--serif);font-size:32px;padding:14px 18px;
+  border:1px solid rgba(42,32,24,.3);border-radius:10px;background:transparent;color:var(--ink)}
+.preset{padding:10px 16px;background:transparent;border:1px solid rgba(42,32,24,.3);border-radius:8px;color:var(--ink);font-size:13px;cursor:pointer}
+.preset:hover{background:var(--bg-soft)}
+
+.summary{background:var(--bg-soft);border-radius:10px;padding:18px;margin-top:18px;font-size:14px}
+.summary div{display:flex;justify-content:space-between;padding:4px 0}
+.summary .total{font-family:var(--serif);font-size:20px;font-weight:500;border-top:1px solid rgba(42,32,24,.18);padding-top:10px;margin-top:8px}
+
+.txn-list{margin-top:8px}
+.txn{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(42,32,24,.1);font-size:14px}
+.txn:last-child{border-bottom:none}
+.txn-amount{font-family:var(--serif);font-weight:500}
+.txn-amount.in{color:var(--moss)}
+.txn-amount.out{color:var(--clay)}
+.txn-time{font-size:11px;color:var(--ink-soft);letter-spacing:.04em}
+
+.pending-row{display:flex;justify-content:space-between;align-items:center;padding:14px;background:rgba(200,146,75,.12);border:1px solid var(--gold);border-radius:8px;margin-bottom:8px}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:14px 22px;border-radius:999px;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.2);opacity:0;transition:opacity .25s;pointer-events:none;z-index:99}
+.toast.show{opacity:1}
+
+.modal-bg{position:fixed;inset:0;background:rgba(31,26,20,.6);display:none;align-items:center;justify-content:center;z-index:50;padding:24px}
+.modal-bg.show{display:flex}
+.modal{background:var(--bg);max-width:540px;width:100%;border-radius:14px;padding:32px;border:1px solid rgba(42,32,24,.18);max-height:90vh;overflow-y:auto}
+.modal h2{margin-bottom:8px}
+.modal pre{font-family:var(--sans);white-space:pre-wrap;background:var(--bg-soft);padding:14px;border-radius:8px;margin:14px 0;font-size:14px}
+
+@media(max-width:640px){
+  .page{padding:28px 18px}
+  .balance-amt{font-size:48px}
+  .amount-row{flex-direction:column;align-items:stretch}
+  .amount-row input{font-size:24px}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="mark"><a href="/">Zen <em>Village</em></a></div>
+    <div class="meta" id="header-status">Wallet</div>
+  </div>
+
+  <!-- ============== SIGNED-OUT VIEW ============== -->
+  <section id="view-signed-out" style="display:none">
+    <h1>Open your <em>Zen Wallet</em></h1>
+    <p class="lead">Top up once, spend at retreats, events, and the Zen Store.</p>
+
+    <div class="card email-gate">
+      <h2>Sign in</h2>
+      <p style="font-size:14px;color:var(--ink-soft);margin-bottom:18px">We'll email you a one-tap link. No password.</p>
+      <label for="signin-name">Your name (optional)</label>
+      <input id="signin-name" type="text" placeholder="Maya">
+      <label for="signin-email">Email</label>
+      <input id="signin-email" type="email" placeholder="you@example.com" required>
+      <button id="btn-signin">Send me a link</button>
+      <p id="signin-msg" style="margin-top:14px;font-size:13px;color:var(--moss);min-height:18px"></p>
+    </div>
+
+    <div style="margin-top:28px;font-size:13px;color:var(--ink-soft)">
+      New here? <a href="/wallet/new" style="color:var(--clay);font-weight:600">Create a wallet →</a>
+    </div>
+  </section>
+
+  <!-- ============== SIGNED-IN VIEW ============== -->
+  <section id="view-signed-in" style="display:none">
+    <h1 id="hello">Welcome back</h1>
+    <p class="lead">Your Zen Credits wallet.</p>
+
+    <div class="card">
+      <div class="balance">
+        <div>
+          <div class="balance-label">Balance</div>
+          <div class="balance-amt" id="balance-amt">0</div>
+          <div class="balance-zc" id="balance-zc">Zen Credits</div>
+        </div>
+        <div class="balance-actions">
+          <a href="#topup" class="btn">Top up</a>
+          <a href="/store" class="btn ghost">Zen Store</a>
+          <button class="ghost" id="btn-logout">Sign out</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="earnings-card" style="display:none">
+      <h2>My earnings</h2>
+      <p style="font-size:13px;color:var(--ink-soft);margin-bottom:14px">
+        Commissions from people who joined Zen Village through your link.
+      </p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:18px;margin-bottom:18px">
+        <div>
+          <div style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft)">Lifetime paid</div>
+          <div style="font-family:var(--serif);font-size:28px" id="earn-paid">0 ZC</div>
+        </div>
+        <div>
+          <div style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft)">Pending</div>
+          <div style="font-family:var(--serif);font-size:28px" id="earn-pending">0 ZC</div>
+        </div>
+        <div>
+          <div style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft)">Conversions</div>
+          <div style="font-family:var(--serif);font-size:28px" id="earn-count">0</div>
+        </div>
+      </div>
+      <div style="background:#f8f5ee;padding:14px 18px;border-radius:10px">
+        <div style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft)">Your share link</div>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap">
+          <code id="earn-share" style="font-size:14px;flex:1;min-width:200px;word-break:break-all"></code>
+          <button class="ghost" id="earn-copy" style="padding:8px 14px;font-size:12px">Copy</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="pending-card" style="display:none">
+      <h2>Pending top-ups</h2>
+      <div id="pending-list"></div>
+    </div>
+
+    <div class="card" id="topup">
+      <h2>Top up your wallet</h2>
+      <p style="font-size:14px;color:var(--ink-soft);margin-bottom:18px">Pick the lowest-fee rail to get more Zen Credits.</p>
+      <div class="rails" id="rails-list"></div>
+
+      <div id="topup-form" style="display:none;margin-top:24px">
+        <div class="amount-row">
+          <input id="amount-input" type="number" inputmode="decimal" min="5" step="1" placeholder="$ amount">
+          <button class="preset" data-amt="25">$25</button>
+          <button class="preset" data-amt="50">$50</button>
+          <button class="preset" data-amt="100">$100</button>
+          <button class="preset" data-amt="250">$250</button>
+        </div>
+        <div class="summary" id="summary">
+          <div><span>You pay</span><span id="sum-pay">—</span></div>
+          <div><span>Bonus credits</span><span id="sum-bonus">—</span></div>
+          <div class="total"><span>You receive</span><span id="sum-total">—</span></div>
+        </div>
+        <button id="btn-topup" style="margin-top:18px;width:100%">Continue</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Recent activity</h2>
+      <div class="txn-list" id="txn-list">
+        <p style="color:var(--ink-soft);font-size:14px">No transactions yet.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Top-up instructions modal -->
+<div class="modal-bg" id="modal-bg">
+  <div class="modal">
+    <h2 id="modal-title">Top-up created</h2>
+    <p id="modal-rail" style="color:var(--ink-soft);font-size:14px;margin-bottom:6px"></p>
+    <pre id="modal-instructions"></pre>
+    <p style="font-size:13px;color:var(--ink-soft)">Reference: <strong id="modal-ref"></strong></p>
+    <p style="font-size:13px;color:var(--ink-soft);margin-top:10px">We'll credit your wallet within minutes once we confirm the payment.</p>
+    <div style="display:flex;gap:10px;margin-top:18px">
+      <button id="modal-close" class="ghost">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const fmtUSD = (n) => `$${(+n).toFixed(2).replace(/\.00$/,'')}`;
+const fmtZC = (n) => `${(+n).toFixed(2).replace(/\.00$/,'')} ZC`;
+let state = { rails: [], rail: null, me: null };
+
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2400); }
+
+async function loadMe(){
+  try{
+    const r = await fetch('/api/wallet/me', {credentials:'same-origin'});
+    if(r.status === 401) return null;
+    return await r.json();
+  }catch(e){ return null; }
+}
+
+function renderSignedOut(){
+  $('view-signed-out').style.display='block';
+  $('view-signed-in').style.display='none';
+  $('header-status').textContent='Sign in';
+  if (new URLSearchParams(location.search).get('expired')==='1'){
+    $('signin-msg').textContent = 'That link expired. Enter your email to get a new one.';
+  }
+}
+
+function renderSignedIn(me){
+  state.me = me;
+  $('view-signed-out').style.display='none';
+  $('view-signed-in').style.display='block';
+  $('header-status').textContent = me.email;
+  $('hello').innerHTML = me.name ? `Welcome, <em>${escapeHtml(me.name)}</em>` : `Welcome <em>back</em>`;
+  $('balance-amt').textContent = me.balance_zc.toFixed(2).replace(/\.00$/,'');
+  $('balance-zc').textContent = (me.balance_zc === 1) ? 'Zen Credit' : 'Zen Credits';
+
+  const earn = me.earnings;
+  if (earn && earn.primary_code){
+    $('earnings-card').style.display='block';
+    $('earn-paid').textContent = fmtZC(earn.lifetime_paid_zc);
+    $('earn-pending').textContent = fmtZC(earn.pending_zc);
+    $('earn-count').textContent = String(earn.total_commissions || 0);
+    $('earn-share').textContent = earn.share_url;
+    $('earn-copy').onclick = () => {
+      navigator.clipboard.writeText(earn.share_url).then(() => toast('Link copied'));
+    };
+  } else {
+    $('earnings-card').style.display='none';
+  }
+
+  const pending = me.pending_topups || [];
+  if (pending.length){
+    $('pending-card').style.display='block';
+    $('pending-list').innerHTML = pending.map(t => `
+      <div class="pending-row">
+        <div>
+          <div style="font-family:var(--serif);font-size:18px">${fmtUSD(t.amount_usd)} via ${escapeHtml(t.rail_name)}</div>
+          <div style="font-size:12px;color:var(--ink-soft)">Ref ${t.ref} — awaiting confirmation</div>
+        </div>
+        <div style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:700">Pending</div>
+      </div>
+    `).join('');
+  } else {
+    $('pending-card').style.display='none';
+  }
+
+  const txns = (me.transactions || []).slice(0,12);
+  if (txns.length){
+    $('txn-list').innerHTML = txns.map(t => {
+      const amt = +(t.amount || 0);
+      const dir = (t.direction || (amt >= 0 ? 'credit' : 'debit')).toLowerCase();
+      const inOut = (dir === 'credit' || amt > 0) ? 'in' : 'out';
+      const sign = inOut === 'in' ? '+' : '−';
+      const when = (t.created_at || t.timestamp || '').slice(0,19).replace('T',' ');
+      return `<div class="txn">
+        <div>
+          <div>${escapeHtml(t.reason || t.description || 'Transaction')}</div>
+          <div class="txn-time">${when}</div>
+        </div>
+        <div class="txn-amount ${inOut}">${sign}${Math.abs(amt).toFixed(2).replace(/\.00$/,'')} ZC</div>
+      </div>`;
+    }).join('');
+  }
+}
+
+function escapeHtml(s){return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+async function loadRails(){
+  const r = await fetch('/api/wallet/rails');
+  const d = await r.json();
+  state.rails = d.rails || [];
+  const html = state.rails.map(rl => `
+    <div class="rail" data-id="${rl.id}">
+      <div class="rail-name">${escapeHtml(rl.name)} ${rl.instant ? '<span class="rail-instant">instant</span>' : ''}</div>
+      <div class="rail-meta">${rl.fee_pct > 0 ? `${(rl.fee_pct*100).toFixed(1)}% fee` : 'No card fees'}</div>
+      ${rl.bonus_rate > 0 ? `<div class="rail-bonus">+${(rl.bonus_rate*100).toFixed(0)}% bonus credits</div>` : ''}
+    </div>`).join('');
+  $('rails-list').innerHTML = html;
+  $('rails-list').addEventListener('click', e => {
+    const card = e.target.closest('.rail');
+    if (!card) return;
+    document.querySelectorAll('.rail').forEach(r => r.classList.remove('selected'));
+    card.classList.add('selected');
+    const rail = state.rails.find(r => r.id === card.dataset.id);
+    state.rail = rail;
+    $('topup-form').style.display='block';
+    $('topup-form').scrollIntoView({behavior:'smooth', block:'nearest'});
+    updateSummary();
+  });
+}
+
+function updateSummary(){
+  if (!state.rail) return;
+  const amt = parseFloat($('amount-input').value || '0');
+  if (!amt || amt <= 0){ $('sum-pay').textContent='—'; $('sum-bonus').textContent='—'; $('sum-total').textContent='—'; return; }
+  const bonus = +(amt * state.rail.bonus_rate).toFixed(2);
+  $('sum-pay').textContent = fmtUSD(amt);
+  $('sum-bonus').textContent = bonus > 0 ? `+ ${fmtZC(bonus)}` : '0';
+  $('sum-total').textContent = fmtZC(amt + bonus);
+}
+
+document.addEventListener('click', e => {
+  if (e.target.matches('.preset')){
+    $('amount-input').value = e.target.dataset.amt;
+    updateSummary();
+  }
+});
+$('amount-input')?.addEventListener('input', updateSummary);
+
+$('btn-topup')?.addEventListener('click', async () => {
+  if (!state.rail){ toast('Pick a rail first'); return; }
+  const amt = parseFloat($('amount-input').value || '0');
+  if (!amt || amt < (state.rail.min_usd||5)){ toast(`Min $${state.rail.min_usd||5}`); return; }
+  $('btn-topup').disabled = true;
+  $('btn-topup').textContent = 'Creating…';
+  try {
+    const r = await fetch('/api/wallet/topup', {
+      method:'POST', credentials:'same-origin',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ rail_id: state.rail.id, amount_usd: amt })
+    });
+    const d = await r.json();
+    if (!r.ok){ toast(d.detail || 'Top-up failed'); return; }
+    $('modal-title').textContent = d.instant ? 'Complete payment' : 'Send payment to confirm';
+    $('modal-rail').textContent = `${d.rail_name} — ${fmtUSD(d.amount_usd)}${d.bonus_zc ? ' (+ '+fmtZC(d.bonus_zc)+' bonus)' : ''}`;
+    $('modal-instructions').textContent = d.instructions || '';
+    $('modal-ref').textContent = d.ref;
+    $('modal-bg').classList.add('show');
+    setTimeout(()=>loadAndRender(), 300);
+  } catch(e){ toast('Something went wrong'); }
+  finally { $('btn-topup').disabled = false; $('btn-topup').textContent = 'Continue'; }
+});
+
+$('modal-close')?.addEventListener('click', () => $('modal-bg').classList.remove('show'));
+
+$('btn-signin')?.addEventListener('click', async () => {
+  const email = ($('signin-email').value || '').trim();
+  const name  = ($('signin-name').value || '').trim();
+  if (!email){ $('signin-msg').textContent='Enter your email.'; return; }
+  $('btn-signin').disabled = true;
+  $('btn-signin').textContent = 'Sending…';
+  try {
+    const ref = (document.cookie.match(/zv_ref=([^;]+)/) || [])[1] || '';
+    const r = await fetch('/api/wallet/start', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({email, name, ref})
+    });
+    const d = await r.json();
+    if (d.ok){
+      $('signin-msg').innerHTML = `✓ Link sent to <strong>${escapeHtml(email)}</strong>. Check your inbox.`;
+    } else {
+      $('signin-msg').textContent = d.detail || 'Could not send link.';
+    }
+  } catch(e){ $('signin-msg').textContent='Network error. Try again.'; }
+  finally { $('btn-signin').disabled = false; $('btn-signin').textContent = 'Send me a link'; }
+});
+
+$('btn-logout')?.addEventListener('click', async () => {
+  await fetch('/api/wallet/logout', {method:'POST', credentials:'same-origin'});
+  location.href = '/wallet';
+});
+
+async function loadAndRender(){
+  const me = await loadMe();
+  if (me && me.ok){
+    renderSignedIn(me);
+    loadRails();
+  } else {
+    renderSignedOut();
+  }
+}
+loadAndRender();
+</script>
+</body>
+</html>

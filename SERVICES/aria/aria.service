@@ -1,0 +1,38 @@
+[Unit]
+Description=ARIA - Autonomous Recursive Intelligence Assistant
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/fpai/aria
+ExecStart=/usr/bin/python3 /opt/fpai/aria/app/main.py
+Restart=always
+RestartSec=5
+Environment=SERVICE_NAME=aria
+Environment=SERVICE_PORT=8710
+# Optional: GPU Bridge (if installed). Leave empty to disable GPU bridge probing.
+Environment=GPU_BRIDGE_URL=
+# Two-server architecture: Ollama lives on secondary (SSOT: fleet.routing.ollama)
+Environment=LOCAL_OLLAMA_URL=http://162.0.208.88:11434
+Environment=QUALITY_THRESHOLD=70
+Environment=BUILDER_QUEUE_DB=/opt/fpai/ai-brain/v2/thinking_v2.db
+# Two-server architecture: Consciousness services live on secondary
+Environment=CONSCIOUSNESS_DECISION_ENGINE_URL=http://162.0.208.88:8150
+Environment=CONSCIOUSNESS_VERIFIER_URL=http://162.0.208.88:8140
+Environment=CONSCIOUSNESS_OPTIMIZER_URL=http://162.0.208.88:8160
+
+# Resource limits
+MemoryMax=2G
+CPUQuota=200%
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=aria
+
+[Install]
+WantedBy=multi-user.target
+
+
+

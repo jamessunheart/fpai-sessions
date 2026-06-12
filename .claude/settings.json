@@ -1,0 +1,88 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/ember-wake.sh"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/preflight-inject.sh"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/check-collision.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash|Read|Edit|Write|MultiEdit|Grep|Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/check-canonical-reads.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/log-edit.sh"
+          },
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/stream-substrate-writes.sh"
+          },
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/dashboard-rebuild.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/check-settle-checkpoint.sh"
+          },
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/cost-tally.sh"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/auto-settle.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

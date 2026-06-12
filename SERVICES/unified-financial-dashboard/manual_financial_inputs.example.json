@@ -1,0 +1,8 @@
+{
+  "schema": "manual_financial_inputs.v1",
+  "updated_at": "2026-06-12T00:00:00Z",
+  "updated_by": "human",
+  "cash_on_hand_usd": null,
+  "monthly_burn_usd": null,
+  "notes": "Redacted non-secret values only. No account numbers, credentials, wallet secrets, payment-provider tokens, or private identifiers."
+}

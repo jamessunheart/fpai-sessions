@@ -1,0 +1,154 @@
+{
+  "project": "Ad Portal MVP",
+  "version": "1.0",
+  "last_updated": "2026-01-21",
+  "ai_director": "Claude (via James)",
+  "current_phase": "Setup & Deployment",
+  "progress": {
+    "code_complete": 100,
+    "deployed": 0,
+    "integrations": 0,
+    "live_campaigns": 0
+  },
+  "phases": [
+    {
+      "id": 1,
+      "name": "Server Deployment",
+      "status": "pending",
+      "tasks": [
+        {
+          "id": "1.1",
+          "title": "Deploy Ad Portal Backend to Primary Server",
+          "priority": "critical",
+          "estimated_time": "30 min",
+          "status": "pending",
+          "description": "Deploy the FastAPI backend to 198.54.123.234 on port 8800",
+          "success_criteria": "Health endpoint returns healthy status",
+          "blocked_by": [],
+          "commands": [
+            "ssh root@198.54.123.234",
+            "mkdir -p /opt/fpai/services/ad-portal",
+            "rsync -avz SERVICES/ad-portal/ root@198.54.123.234:/opt/fpai/services/ad-portal/",
+            "systemctl start ad-portal",
+            "curl http://localhost:8800/health"
+          ]
+        },
+        {
+          "id": "1.2",
+          "title": "Set Up PostgreSQL Database",
+          "priority": "high",
+          "estimated_time": "15 min",
+          "status": "pending",
+          "description": "Create the ad_portal database and configure connection",
+          "success_criteria": "Service starts without database errors",
+          "blocked_by": ["1.1"]
+        },
+        {
+          "id": "1.3",
+          "title": "Configure Nginx Routing",
+          "priority": "medium",
+          "estimated_time": "20 min",
+          "status": "pending",
+          "description": "Set up Nginx to route traffic to Ad Portal at a clean URL",
+          "success_criteria": "https://ads.fullpotential.ai/health returns healthy",
+          "blocked_by": ["1.1"]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Meta Ads Integration",
+      "status": "pending",
+      "tasks": [
+        {
+          "id": "2.1",
+          "title": "Create Meta Business App & Get API Access",
+          "priority": "critical",
+          "estimated_time": "45 min",
+          "status": "pending",
+          "description": "Set up a Meta Developer App with Marketing API access",
+          "success_criteria": "Can list campaigns via API",
+          "blocked_by": ["1.1"],
+          "credentials_needed": [
+            "META_APP_ID",
+            "META_APP_SECRET",
+            "META_ACCESS_TOKEN",
+            "META_AD_ACCOUNT_ID"
+          ]
+        },
+        {
+          "id": "2.2",
+          "title": "Create Meta Pixel for Conversion Tracking",
+          "priority": "high",
+          "estimated_time": "20 min",
+          "status": "pending",
+          "description": "Set up a Meta Pixel to track conversions from ads",
+          "success_criteria": "Pixel ID is configured in service",
+          "blocked_by": ["2.1"],
+          "credentials_needed": ["META_PIXEL_ID"]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Stripe Payment Integration",
+      "status": "pending",
+      "tasks": [
+        {
+          "id": "3.1",
+          "title": "Configure Stripe Webhook",
+          "priority": "high",
+          "estimated_time": "15 min",
+          "status": "pending",
+          "description": "Set up Stripe webhook to receive payment notifications",
+          "success_criteria": "Webhook shows Pending in Stripe dashboard",
+          "blocked_by": ["1.1", "1.3"],
+          "credentials_needed": ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Launch First Campaign",
+      "status": "pending",
+      "tasks": [
+        {
+          "id": "4.1",
+          "title": "Create First Coaching Offer & Campaign",
+          "priority": "critical",
+          "estimated_time": "30 min",
+          "status": "pending",
+          "description": "Set up the first coaching offer and launch a test campaign",
+          "success_criteria": "Campaign shows active status, impressions start flowing",
+          "blocked_by": ["2.1", "2.2", "3.1"]
+        }
+      ]
+    }
+  ],
+  "env_variables_needed": {
+    "database": ["DATABASE_URL"],
+    "meta_ads": [
+      "META_APP_ID",
+      "META_APP_SECRET",
+      "META_ACCESS_TOKEN",
+      "META_AD_ACCOUNT_ID",
+      "META_PIXEL_ID"
+    ],
+    "stripe": ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"],
+    "already_configured": ["UC_GATEWAY_URL", "AI_BRAIN_URL"]
+  },
+  "server_info": {
+    "primary": "198.54.123.234",
+    "service_port": 8800,
+    "frontend_port": 8801,
+    "service_path": "/opt/fpai/services/ad-portal"
+  },
+  "links": {
+    "api_docs": "http://198.54.123.234:8800/docs",
+    "meta_developers": "https://developers.facebook.com",
+    "stripe_dashboard": "https://dashboard.stripe.com",
+    "spec": "SERVICES/ad-portal/SPEC.md"
+  }
+}
+
+
