@@ -9,6 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from app.adapters import telegram  # noqa: E402
 from app.config import load_settings  # noqa: E402
 from app.main import dispatch_inbox, drain_outbox, poll_inbox, run_tick  # noqa: E402
 from app.models import MessageInput  # noqa: E402
@@ -44,6 +45,7 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("dispatch")
     sub.add_parser("poll")
     sub.add_parser("tick")
+    sub.add_parser("tg-status")
     sub.add_parser("health")
     sub.add_parser("state")
     return parser
@@ -102,6 +104,10 @@ def main() -> int:
 
     if args.command == "tick":
         print(json.dumps(run_tick(settings, store), indent=2))
+        return 0
+
+    if args.command == "tg-status":
+        print(json.dumps(telegram.adapter_state(settings), indent=2))
         return 0
 
     if args.command == "health":

@@ -13,6 +13,7 @@ def test_no_token_means_disabled_state_not_crash(tmp_path):
 
     assert state["enabled"] is True
     assert state["token_present"] is False
+    assert state["will_call_get_updates"] is False
 
 
 def test_allowlist_rejects_unknown_chat_id(tmp_path):
@@ -129,6 +130,7 @@ def test_poll_updates_fetches_from_telegram_api_when_updates_not_injected(tmp_pa
         var_dir=tmp_path,
         tg_enabled=True,
         tg_poll_enabled=True,
+        tg_live_poll_confirmed=True,
         telegram_bot_token="123456789:notarealtoken",
         telegram_allowed_chat_ids={"42"},
     )
@@ -139,3 +141,27 @@ def test_poll_updates_fetches_from_telegram_api_when_updates_not_injected(tmp_pa
     assert len(records) == 1
     assert records[0].body == "/status"
     assert store.load_state()["telegram_last_update_id"] == 8
+
+
+def test_live_poll_requires_explicit_confirm(tmp_path, monkeypatch):
+    calls = []
+
+    def fake_request(settings, method, payload):
+        calls.append((method, payload))
+        return {"ok": True, "result": []}
+
+    monkeypatch.setattr(telegram, "telegram_api_request", fake_request)
+    settings = Settings(
+        var_dir=tmp_path,
+        tg_enabled=True,
+        tg_poll_enabled=True,
+        tg_live_poll_confirmed=False,
+        telegram_bot_token="123456789:notarealtoken",
+        telegram_allowed_chat_ids={"42"},
+    )
+
+    records = telegram.poll_updates(settings, JsonlStore(tmp_path))
+
+    assert records == []
+    assert calls == []
+    assert telegram.adapter_state(settings)["will_call_get_updates"] is False

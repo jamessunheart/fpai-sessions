@@ -10,6 +10,7 @@ echo "comms_hub_diagnostics=1"
 echo "tick_script_exists=$([[ -f "$tick_script" ]] && echo yes || echo no)"
 echo "telegram_enabled=${COMMS_HUB_TG_ENABLED:-0}"
 echo "telegram_poll_enabled=${COMMS_HUB_TG_POLL_ENABLED:-0}"
+echo "telegram_live_poll_confirm=${COMMS_HUB_TG_LIVE_POLL_CONFIRM:-0}"
 echo "telegram_send_enabled=${COMMS_HUB_TG_SEND_ENABLED:-0}"
 echo "telegram_token_present=$([[ -n "${TELEGRAM_BOT_TOKEN:-}" ]] && echo yes || echo no)"
 echo "telegram_allowed_chat_ids_present=$([[ -n "${COMMS_HUB_TG_ALLOWED_CHAT_IDS:-}" ]] && echo yes || echo no)"
@@ -31,4 +32,3 @@ else
 fi
 
 echo "suggested_tick=COMMS_HUB_DRY_RUN=1 $tick_script"
-

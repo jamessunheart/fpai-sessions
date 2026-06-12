@@ -334,6 +334,7 @@ All kill switches must be checked at runtime before polling, routing, sending, w
 - `COMMS_HUB_OUTBOX_DRAIN_ENABLED=0`: disable outbox delivery.
 - `COMMS_HUB_TG_ENABLED=0`: disable Telegram adapter.
 - `COMMS_HUB_TG_POLL_ENABLED=0`: disable Telegram polling only.
+- `COMMS_HUB_TG_LIVE_POLL_CONFIRM=0`: prevent live Telegram `getUpdates` calls even when polling is otherwise configured.
 - `COMMS_HUB_TG_SEND_ENABLED=0`: disable Telegram sends only.
 - `COMMS_HUB_OBSIDIAN_ENABLED=0`: disable Obsidian writes.
 - `COMMS_HUB_VOICE_ENABLED=0`: disable all voice handling.
@@ -348,6 +349,7 @@ COMMS_HUB_ENABLED=1
 COMMS_HUB_DRY_RUN=1
 COMMS_HUB_OUTBOX_DRAIN_ENABLED=0
 COMMS_HUB_TG_ENABLED=0
+COMMS_HUB_TG_LIVE_POLL_CONFIRM=0
 COMMS_HUB_OBSIDIAN_ENABLED=0
 COMMS_HUB_VOICE_ENABLED=0
 COMMS_HUB_BUILDER_BRIDGE_ENABLED=0
@@ -527,7 +529,7 @@ Pass criteria:
 ### Step 4: Telegram Dry Poll
 
 ```bash
-COMMS_HUB_TG_ENABLED=1 COMMS_HUB_TG_POLL_ENABLED=1 COMMS_HUB_DRY_RUN=1 scripts/comms-hub poll
+COMMS_HUB_TG_ENABLED=1 COMMS_HUB_TG_POLL_ENABLED=1 COMMS_HUB_TG_LIVE_POLL_CONFIRM=1 COMMS_HUB_DRY_RUN=1 scripts/comms-hub poll
 ```
 
 Pass criteria:

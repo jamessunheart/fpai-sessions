@@ -38,6 +38,7 @@ class Settings:
     outbox_drain_enabled: bool = field(default_factory=lambda: env_bool("COMMS_HUB_OUTBOX_DRAIN_ENABLED", False))
     tg_enabled: bool = field(default_factory=lambda: env_bool("COMMS_HUB_TG_ENABLED", False))
     tg_poll_enabled: bool = field(default_factory=lambda: env_bool("COMMS_HUB_TG_POLL_ENABLED", False))
+    tg_live_poll_confirmed: bool = field(default_factory=lambda: env_bool("COMMS_HUB_TG_LIVE_POLL_CONFIRM", False))
     tg_send_enabled: bool = field(default_factory=lambda: env_bool("COMMS_HUB_TG_SEND_ENABLED", False))
     obsidian_enabled: bool = field(default_factory=lambda: env_bool("COMMS_HUB_OBSIDIAN_ENABLED", False))
     voice_enabled: bool = field(default_factory=lambda: env_bool("COMMS_HUB_VOICE_ENABLED", False))
