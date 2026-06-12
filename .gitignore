@@ -16,6 +16,7 @@ fullpotential_ai/fullpotential_core/docs/papers/
 # System Artifacts
 *.log
 /opt/fpai/
+/var/financial-hub/
 *.DS_Store
 *.pyc
 __pycache__/
