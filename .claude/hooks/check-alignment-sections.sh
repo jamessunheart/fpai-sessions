@@ -26,13 +26,11 @@ echo "$LAST_TEXT" | grep -q "─── ALIGNMENT ───" || exit 0
 BLOCK=$(echo "$LAST_TEXT" | awk '/─── ALIGNMENT ───/{f=1;next} f && /─────────────────/{exit} f')
 [ -z "$BLOCK" ] && exit 0
 
-# Compressed footer (2026-06-12): NOW + NEED + NEXT required; GOALS and OPEN
-# BLOCKERS are optional (expand only when changed or James needs the backlog).
-# NARRATOR · is checked by the separate check-narrator-presence.sh hook.
+# Ultra-compressed footer (2026-06-12 James): NEXT + WHY only required.
+# NOW, NARRATOR, GOALS, OPEN BLOCKERS all removed — logged elsewhere.
 MISSING=()
-echo "$BLOCK" | grep -qiE '(^|[[:space:]·])NOW([[:space:]·]|$)'  || MISSING+=("NOW")
-echo "$BLOCK" | grep -qiE '(^|[[:space:]·])NEED([[:space:]·]|$)' || MISSING+=("NEED")
 echo "$BLOCK" | grep -qiE '(^|[[:space:]·])NEXT([[:space:]·]|$)' || MISSING+=("NEXT")
+echo "$BLOCK" | grep -qiE '(^|[[:space:]·])WHY([[:space:]·]|$)'  || MISSING+=("WHY")
 
 [ ${#MISSING[@]} -eq 0 ] && exit 0
 
@@ -42,8 +40,7 @@ echo "$BLOCK" | grep -qiE '(^|[[:space:]·])NEXT([[:space:]·]|$)' || MISSING+=(
   echo "Header is present but these required sections are missing:"
   for m in "${MISSING[@]}"; do echo "  • $m"; done
   echo ""
-  echo "Required (compressed default): NOW → NEED → NEXT → NARRATOR · → closing border"
-  echo "Optional: GOALS / OPEN BLOCKERS — expand only when changed or James needs backlog."
+  echo "Required (ultra-compressed): NEXT → WHY → closing border"
   echo ""
   echo "Self-correct on next reply: add missing sections."
   echo "Override (one-shot): EMBER_PREFLIGHT_DISABLE_SECTIONS=1"
