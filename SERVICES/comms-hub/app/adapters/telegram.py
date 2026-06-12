@@ -14,9 +14,11 @@ def adapter_state(settings: Settings) -> dict[str, Any]:
     return {
         "enabled": settings.tg_enabled,
         "poll_enabled": settings.tg_poll_enabled,
+        "live_poll_confirmed": settings.tg_live_poll_confirmed,
         "send_enabled": settings.tg_send_enabled,
         "token_present": bool(settings.telegram_bot_token),
         "allowed_chat_ids_count": len(settings.telegram_allowed_chat_ids),
+        "will_call_get_updates": will_call_get_updates(settings),
     }
 
 
@@ -89,7 +91,7 @@ def poll_updates(settings: Settings, store: JsonlStore, updates: list[dict[str, 
     if not (settings.enabled and settings.tg_enabled and settings.tg_poll_enabled):
         return []
     if updates is None:
-        if not settings.telegram_bot_token:
+        if not will_call_get_updates(settings):
             return []
         state = store.load_state()
         last_update_id = int(state.get("telegram_last_update_id", 0) or 0)
@@ -101,6 +103,16 @@ def poll_updates(settings: Settings, store: JsonlStore, updates: list[dict[str, 
         if record is not None:
             records.append(record)
     return records
+
+
+def will_call_get_updates(settings: Settings) -> bool:
+    return bool(
+        settings.enabled
+        and settings.tg_enabled
+        and settings.tg_poll_enabled
+        and settings.tg_live_poll_confirmed
+        and settings.telegram_bot_token
+    )
 
 
 def telegram_api_request(settings: Settings, method: str, payload: dict[str, Any]) -> dict[str, Any]:

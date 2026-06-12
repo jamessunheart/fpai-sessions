@@ -34,6 +34,14 @@ Use one heartbeat for automation:
 COMMS_HUB_DRY_RUN=1 scripts/comms-hub tick
 ```
 
+Check Telegram safety before enabling live polling:
+
+```bash
+scripts/comms-hub tg-status
+```
+
+Real `getUpdates` calls require `COMMS_HUB_TG_LIVE_POLL_CONFIRM=1` in addition to the token and poll flags.
+
 ## Runtime Files
 
 Runtime state lives in `var/` and is ignored by git:

@@ -33,6 +33,7 @@ def test_send_inbox_drain_and_health_commands(tmp_path):
     drained = run_cli(tmp_path, "drain", "--dry-run")
     dispatched = run_cli(tmp_path, "dispatch")
     ticked = run_cli(tmp_path, "tick")
+    tg_status = run_cli(tmp_path, "tg-status")
     inbox = run_cli(tmp_path, "inbox", "--limit", "20")
 
     assert sent["queued"] is True
@@ -42,4 +43,5 @@ def test_send_inbox_drain_and_health_commands(tmp_path):
     assert dispatched["dispatched"] is True
     assert ticked["tick"] is True
     assert ticked["poll"]["polled"] is True
+    assert tg_status["will_call_get_updates"] is False
     assert len(inbox) == 1

@@ -66,6 +66,7 @@ def create_app(settings: Settings | None = None, store: JsonlStore | None = None
             "last_outbox_drain_at": raw.get("last_outbox_drain_at"),
             "telegram_last_update_id": raw.get("telegram_last_update_id"),
             "telegram_inbox_stale": stale,
+            "telegram": telegram.adapter_state(settings),
         }
 
     @app.post("/outbox/publish")
