@@ -20,6 +20,10 @@
 #
 # Codified in: feedback_reply_alignment_footer.md, identity/VOICE.md.
 
+# 2026-06-12 James: alignment footer removed from visible output.
+# State logs to background file instead. Hook disabled.
+exit 0
+
 set -u
 
 INPUT=$(cat)

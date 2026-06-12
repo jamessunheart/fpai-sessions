@@ -4,6 +4,9 @@
 # this one checks every required section is present in order.
 # Per-hook disable: EMBER_PREFLIGHT_DISABLE_SECTIONS=1
 # Master disable:   EMBER_PREFLIGHT_DISABLE=1
+# 2026-06-12 James: footer removed from visible output. Disabled.
+exit 0
+
 set -u
 [ "${EMBER_PREFLIGHT_DISABLE:-0}" = "1" ] && exit 0
 [ "${EMBER_PREFLIGHT_DISABLE_SECTIONS:-0}" = "1" ] && exit 0
