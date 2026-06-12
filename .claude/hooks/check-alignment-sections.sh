@@ -26,26 +26,26 @@ echo "$LAST_TEXT" | grep -q "─── ALIGNMENT ───" || exit 0
 BLOCK=$(echo "$LAST_TEXT" | awk '/─── ALIGNMENT ───/{f=1;next} f && /─────────────────/{exit} f')
 [ -z "$BLOCK" ] && exit 0
 
+# Compressed footer (2026-06-12): NOW + NEED + NEXT required; GOALS and OPEN
+# BLOCKERS are optional (expand only when changed or James needs the backlog).
+# NARRATOR · is checked by the separate check-narrator-presence.sh hook.
 MISSING=()
-echo "$BLOCK" | grep -qiE '(^|[[:space:]·])NOW([[:space:]·]|$)'                       || MISSING+=("NOW")
-echo "$BLOCK" | grep -qiE '(GOALS|TOP[[:space:]]?3)'                                  || MISSING+=("GOALS or TOP 3")
-echo "$BLOCK" | grep -qiE '(OPEN[[:space:]]BLOCKERS|OPEN-THIS-SESSION|^OPEN[[:space:]·])' || MISSING+=("OPEN BLOCKERS / OPEN-THIS-SESSION")
-echo "$BLOCK" | grep -qiE '(^|[[:space:]·])NEED([[:space:]·]|$)'                      || MISSING+=("NEED")
-echo "$BLOCK" | grep -qiE '(^|[[:space:]·])NEXT([[:space:]·]|$)'                      || MISSING+=("NEXT")
-echo "$BLOCK" | grep -qE  'NARRATOR[[:space:]]·'                                      || MISSING+=("NARRATOR ·")
+echo "$BLOCK" | grep -qiE '(^|[[:space:]·])NOW([[:space:]·]|$)'  || MISSING+=("NOW")
+echo "$BLOCK" | grep -qiE '(^|[[:space:]·])NEED([[:space:]·]|$)' || MISSING+=("NEED")
+echo "$BLOCK" | grep -qiE '(^|[[:space:]·])NEXT([[:space:]·]|$)' || MISSING+=("NEXT")
 
 [ ${#MISSING[@]} -eq 0 ] && exit 0
 
 {
   echo "🔴 ALIGNMENT SECTIONS INCOMPLETE (Stop hook caught it)"
   echo ""
-  echo "Header is present but these required sections are missing or out of order:"
+  echo "Header is present but these required sections are missing:"
   for m in "${MISSING[@]}"; do echo "  • $m"; done
   echo ""
-  echo "Required order: NOW → GOALS (or TOP 3) → OPEN BLOCKERS (or OPEN-THIS-SESSION)"
-  echo "  → NEED → NEXT → NARRATOR · → closing border (─────────────────)"
+  echo "Required (compressed default): NOW → NEED → NEXT → NARRATOR · → closing border"
+  echo "Optional: GOALS / OPEN BLOCKERS — expand only when changed or James needs backlog."
   echo ""
-  echo "Self-correct on next reply: rebuild the alignment block with all sections."
+  echo "Self-correct on next reply: add missing sections."
   echo "Override (one-shot): EMBER_PREFLIGHT_DISABLE_SECTIONS=1"
 } >&2
 exit 2
