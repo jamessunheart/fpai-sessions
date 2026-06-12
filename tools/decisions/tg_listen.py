@@ -23,6 +23,7 @@ Per-message types handled:
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 import time
@@ -30,9 +31,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 HOME = Path.home()
-CREDS_FILE = HOME / ".config" / "fpai" / "tg_brain" / "creds.cache"
+# Env-overridable so a second instance (e.g. the builder bot) can poll a
+# different bot into its own inbox without colliding with the brain bot.
+CREDS_FILE = Path(os.environ.get("FPAI_TG_CREDS",
+                                 HOME / ".config" / "fpai" / "tg_brain" / "creds.cache"))
 OPENAI_KEY_FILE = HOME / ".config" / "fpai" / "openai" / "api.token"
-INBOX_DIR = HOME / ".config" / "fpai" / "tg_inbox"
+INBOX_DIR = Path(os.environ.get("FPAI_TG_INBOX_DIR",
+                                HOME / ".config" / "fpai" / "tg_inbox"))
 INBOX_FILE = INBOX_DIR / "messages.jsonl"
 AUDIO_DIR = INBOX_DIR / "audio"
 STATE_FILE = INBOX_DIR / "last_update_id.txt"
