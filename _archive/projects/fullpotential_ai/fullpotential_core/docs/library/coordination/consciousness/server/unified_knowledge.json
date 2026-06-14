@@ -1,0 +1,29 @@
+{
+  "dns_automation": [
+    {
+      "timestamp": "2025-11-15T13:40:56.342350",
+      "category": "dns_automation",
+      "learning": "Namecheap credentials stored in coordination vault at NAMECHEAP_API_USER and NAMECHEAP_API_KEY",
+      "impact": "high",
+      "applied_count": 0
+    }
+  ],
+  "deployment": [
+    {
+      "timestamp": "2025-11-15T13:40:56.475607",
+      "category": "deployment",
+      "learning": "missions.fullpotential.com configured with missions/gamification branding for church alignment",
+      "impact": "high",
+      "applied_count": 0
+    }
+  ],
+  "automation": [
+    {
+      "timestamp": "2025-11-15T13:40:56.564470",
+      "category": "automation",
+      "learning": "Auto-SSL monitor running on server (PID 356341) - detects DNS and configures HTTPS automatically",
+      "impact": "high",
+      "applied_count": 0
+    }
+  ]
+}

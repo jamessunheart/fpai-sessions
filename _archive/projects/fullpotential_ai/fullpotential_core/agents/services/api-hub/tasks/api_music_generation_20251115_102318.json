@@ -1,0 +1,20 @@
+{
+  "task_id": "api_music_generation_20251115_102318",
+  "created": "2025-11-15T10:23:18.218705",
+  "status": "pending",
+  "priority": "high",
+  "estimated_time": "10-15 minutes",
+  "payment": "$20",
+  "api_name": "Soundraw",
+  "capability": "music_generation",
+  "instructions": "\n# Task: Sign Up for Soundraw API\n\n## Overview\n**Service:** Soundraw by Soundraw\n**Purpose:** Add background music to content\n**Free Tier:** Yes\n**Pricing:** Free tier, $16.99/month pro\n**Estimated Time:** 10-15 minutes\n**Payment:** $20 upon completion\n\n---\n\n## Credentials Provided\n\nYou will use these credentials to sign up:\n\n**Email:** PROVIDED_BY_USER\n**Phone:** PROVIDED_BY_USER\n**Company Name:** White Rock Ministry\n\n---\n\n## Step-by-Step Instructions\n\n### Step 1: Go to Signup Page\nNavigate to: **https://soundraw.io/**\n\n### Step 2: Create Account\n- Click \"Sign Up\" or \"Get Started\"\n- Use the email provided above\n- Create a strong password (save it!)\n- Complete any verification (check email, phone, etc.)\n\n### Step 3: Complete Profile\n- Company/Organization: White Rock Ministry\n- Use Case: Content creation and marketing\n- Industry: Financial Services / Education\n\n### Step 4: Navigate to API Section\n- Look for \"API\", \"Developer\", \"API Keys\", or \"Integrations\"\n- Usually in Settings or Dashboard\n\n### Step 5: Generate API Key\n- Click \"Generate API Key\" or \"Create New Key\"\n- Copy the FULL API key (starts with something like \"sk-\" or similar)\n- **IMPORTANT:** Save this immediately - some services only show it once!\n\n### Step 6: Submit Results\nGo to: **http://198.54.123.234:8020/api-submit**\n\nEnter:\n- API Service: Soundraw\n- API Key: [paste the full key]\n- Your Name: [your name]\n- Notes: Any issues or important info\n\n---\n\n## Important Notes\n\n- \u2705 Use the credentials provided (email/phone)\n- \u2705 Keep password secure - save it somewhere safe\n- \u2705 Copy API key IMMEDIATELY when shown\n- \u2705 Some services only show API key once\n- \u26a0\ufe0f No credit card needed\n- \u26a0\ufe0f If you encounter CAPTCHA, solve it normally\n- \u26a0\ufe0f If verification email required, check the provided email inbox\n\n---\n\n## Expected Result\n\nYou should receive an API key that looks like:\n- Format: Usually starts with `sk-`, `api_`, or similar\n- Length: Usually 30-60 characters\n- Example: `sk-abc123def456...` (yours will be different)\n\n---\n\n## Troubleshooting\n\n**Can't receive verification email?**\n- Check spam folder\n- Contact us for alternative email\n\n**Account creation fails?**\n- Try different username\n- Contact us if persistent issues\n\n**Can't find API key section?**\n- Look for \"Developer\", \"API\", \"Integration\" in menu\n- Contact us with screenshot if stuck\n\n---\n\n## Payment\n\nOnce you submit the API key and we verify it works:\n- $20 payment via PayPal or Venmo\n- Usually verified within 1 hour\n\n---\n\n## Questions?\n\nContact: [SUPPORT_EMAIL]\nOr submit with notes and we'll help!\n",
+  "deliverables": [
+    "API Key (full string)",
+    "Account password (encrypted)",
+    "Any special instructions or notes"
+  ],
+  "verification": {
+    "test_endpoint": null,
+    "expected_response": "success"
+  }
+}

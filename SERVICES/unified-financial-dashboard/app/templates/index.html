@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Hub Rung 4</title>
+    <style>
+        :root {
+            --bg: #f4f6f8;
+            --panel: #ffffff;
+            --ink: #17202a;
+            --muted: #65717f;
+            --line: #d8dee6;
+            --soft: #eef2f5;
+            --green: #087f5b;
+            --red: #b42318;
+            --amber: #9a6700;
+            --blue: #0b5cad;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--ink);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        }
+
+        .shell {
+            max-width: 1480px;
+            margin: 0 auto;
+            padding: 18px;
+        }
+
+        header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 10px 0 18px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 0;
+        }
+
+        .subhead {
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .status-strip {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            min-height: 28px;
+            padding: 5px 9px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--panel);
+            white-space: nowrap;
+        }
+
+        .grid {
+            display: grid;
+            gap: 14px;
+        }
+
+        .metric-grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            margin-top: 18px;
+        }
+
+        .secondary-grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            margin-top: 14px;
+        }
+
+        .main-grid {
+            grid-template-columns: minmax(0, 1.3fr) minmax(360px, 0.7fr);
+            margin-top: 14px;
+            align-items: start;
+        }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 14px;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .metric {
+            min-height: 118px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .label {
+            color: var(--muted);
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .value {
+            margin-top: 10px;
+            font-size: 26px;
+            font-weight: 750;
+            overflow-wrap: anywhere;
+        }
+
+        .meta {
+            margin-top: 12px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.4;
+            overflow-wrap: anywhere;
+        }
+
+        h2 {
+            margin: 0 0 12px;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th {
+            color: var(--muted);
+            font-weight: 600;
+            text-align: left;
+            border-bottom: 1px solid var(--line);
+            padding: 9px 8px;
+        }
+
+        td {
+            border-bottom: 1px solid var(--soft);
+            padding: 10px 8px;
+            vertical-align: top;
+            overflow-wrap: anywhere;
+        }
+
+        tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .alert-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .alert {
+            border: 1px solid var(--line);
+            border-left-width: 5px;
+            border-radius: 8px;
+            padding: 12px;
+            background: #fff;
+        }
+
+        .alert.critical {
+            border-left-color: var(--red);
+        }
+
+        .alert.warning {
+            border-left-color: var(--amber);
+        }
+
+        .alert.info {
+            border-left-color: var(--blue);
+        }
+
+        .alert-title {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .alert-message {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            min-height: 22px;
+            padding: 3px 7px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: var(--soft);
+            color: var(--ink);
+        }
+
+        .badge.critical {
+            background: #fee4e2;
+            color: var(--red);
+        }
+
+        .badge.warning {
+            background: #fff4ce;
+            color: var(--amber);
+        }
+
+        .badge.info {
+            background: #dbeafe;
+            color: var(--blue);
+        }
+
+        .positive {
+            color: var(--green);
+        }
+
+        .negative {
+            color: var(--red);
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .empty {
+            color: var(--muted);
+            padding: 14px;
+            border: 1px dashed var(--line);
+            border-radius: 8px;
+            background: #fbfcfd;
+            font-size: 13px;
+        }
+
+        #riskTable,
+        #sourcesTable {
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        @media (max-width: 1100px) {
+            .metric-grid,
+            .secondary-grid,
+            .main-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 720px) {
+            .shell {
+                padding: 12px;
+            }
+
+            header {
+                display: block;
+            }
+
+            .status-strip {
+                justify-content: flex-start;
+                margin-top: 12px;
+            }
+
+            .metric-grid,
+            .secondary-grid,
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                min-width: 520px;
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="shell">
+        <header>
+            <div>
+                <h1>Financial Hub Rung 4</h1>
+                <div class="subhead">Read-only money pane</div>
+            </div>
+            <div class="status-strip">
+                <span class="pill">Mode: <strong>&nbsp;read-only</strong></span>
+                <span class="pill">Updated: <strong id="updatedAt">&nbsp;loading</strong></span>
+                <span class="pill">Refresh: <strong>&nbsp;30s</strong></span>
+            </div>
+        </header>
+
+        <section class="grid metric-grid" aria-label="Top money metrics">
+            <div class="panel metric">
+                <div>
+                    <div class="label">Liquidity</div>
+                    <div class="value" id="liquidity">--</div>
+                </div>
+                <div class="meta" id="liquidityMeta">--</div>
+            </div>
+            <div class="panel metric">
+                <div>
+                    <div class="label">Monthly Burn</div>
+                    <div class="value" id="monthlyBurn">--</div>
+                </div>
+                <div class="meta" id="burnMeta">--</div>
+            </div>
+            <div class="panel metric">
+                <div>
+                    <div class="label">Runway</div>
+                    <div class="value" id="runway">--</div>
+                </div>
+                <div class="meta" id="runwayMeta">--</div>
+            </div>
+            <div class="panel metric">
+                <div>
+                    <div class="label">Daily Cost</div>
+                    <div class="value" id="dailyCost">--</div>
+                </div>
+                <div class="meta" id="costMeta">--</div>
+            </div>
+        </section>
+
+        <section class="grid secondary-grid" aria-label="Portfolio risk metrics">
+            <div class="panel metric">
+                <div>
+                    <div class="label">Portfolio Value</div>
+                    <div class="value" id="portfolioValue">--</div>
+                </div>
+                <div class="meta" id="portfolioMeta">--</div>
+            </div>
+            <div class="panel metric">
+                <div>
+                    <div class="label">P and L</div>
+                    <div class="value" id="pnl">--</div>
+                </div>
+                <div class="meta" id="pnlMeta">--</div>
+            </div>
+            <div class="panel metric">
+                <div>
+                    <div class="label">Nearest Liquidation</div>
+                    <div class="value" id="nearestLiquidation">--</div>
+                </div>
+                <div class="meta" id="liquidationMeta">--</div>
+            </div>
+            <div class="panel metric">
+                <div>
+                    <div class="label">Source Freshness</div>
+                    <div class="value" id="sourceFreshness">--</div>
+                </div>
+                <div class="meta" id="sourceMeta">--</div>
+            </div>
+        </section>
+
+        <section class="grid main-grid">
+            <div class="grid">
+                <div class="panel">
+                    <h2>Active Alerts</h2>
+                    <div class="alert-list" id="alertsList"></div>
+                </div>
+                <div class="panel">
+                    <h2>Leveraged Position Risk</h2>
+                    <div id="riskTable"></div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>Sources</h2>
+                <div id="sourcesTable"></div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function money(value) {
+            if (value === null || value === undefined || Number.isNaN(value)) return 'Unavailable';
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                maximumFractionDigits: value >= 1000 ? 0 : 2
+            }).format(value);
+        }
+
+        function percent(value) {
+            if (value === null || value === undefined || Number.isNaN(value)) return 'Unavailable';
+            return `${Number(value).toFixed(2)}%`;
+        }
+
+        function days(value) {
+            if (value === null || value === undefined || Number.isNaN(value)) return 'Unavailable';
+            if (value > 365) return `${(value / 365).toFixed(1)} years`;
+            return `${Math.round(value)} days`;
+        }
+
+        function age(seconds) {
+            if (seconds === null || seconds === undefined) return 'missing';
+            if (seconds < 60) return `${seconds}s`;
+            if (seconds < 3600) return `${Math.round(seconds / 60)}m`;
+            if (seconds < 86400) return `${Math.round(seconds / 3600)}h`;
+            return `${Math.round(seconds / 86400)}d`;
+        }
+
+        function sourceMeta(source, confidence) {
+            if (!source) return `confidence: ${confidence || 'unavailable'}`;
+            return `${source.label} | age ${age(source.freshness_seconds)} | confidence: ${confidence || source.confidence}`;
+        }
+
+        function bySource(data, id) {
+            return data.sources.find(source => source.source_id === id);
+        }
+
+        function setText(id, text) {
+            document.getElementById(id).textContent = text;
+        }
+
+        function setClass(id, value) {
+            const node = document.getElementById(id);
+            node.classList.remove('positive', 'negative');
+            if (typeof value === 'number') node.classList.add(value >= 0 ? 'positive' : 'negative');
+        }
+
+        function renderAlerts(alerts) {
+            const warnings = alerts.filter(alert => alert.severity !== 'info');
+            const visible = warnings.length ? warnings : alerts;
+            if (!visible.length) {
+                return '<div class="empty">No alerts reported.</div>';
+            }
+            return visible.map(alert => `
+                <article class="alert ${alert.severity}">
+                    <div class="alert-title">
+                        <span>${alert.title}</span>
+                        <span class="badge ${alert.severity}">${alert.severity}</span>
+                    </div>
+                    <div class="alert-message">${alert.message}</div>
+                </article>
+            `).join('');
+        }
+
+        function renderSources(sources) {
+            if (!sources.length) return '<div class="empty">No sources reported.</div>';
+            return `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Source</th>
+                            <th>Status</th>
+                            <th>Age</th>
+                            <th>Confidence</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${sources.map(source => `
+                            <tr>
+                                <td>
+                                    <strong>${source.label}</strong>
+                                    <div class="muted">${source.path_or_url}</div>
+                                </td>
+                                <td>${source.status}</td>
+                                <td>${age(source.freshness_seconds)}</td>
+                                <td>${source.confidence}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function renderRisk(data) {
+            const nearest = data.risk.nearest_liquidation;
+            if (!nearest || nearest.distance_percent === null) {
+                return '<div class="empty">No leveraged liquidation report available.</div>';
+            }
+            return `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Asset</th>
+                            <th>Distance</th>
+                            <th>Liquidation</th>
+                            <th>Margin At Risk</th>
+                            <th>Severity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>${nearest.asset || 'Unknown'}</td>
+                            <td>${percent(nearest.distance_percent)}</td>
+                            <td>${money(nearest.liquidation_price)}</td>
+                            <td>${money(nearest.margin_at_risk_usd)}</td>
+                            <td><span class="badge ${nearest.severity}">${nearest.severity}</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            `;
+        }
+
+        async function refresh() {
+            const response = await fetch('/api/v1/money-pane', {cache: 'no-store'});
+            const data = await response.json();
+            const summary = data.summary;
+            const manualSource = bySource(data, 'manual-financial-inputs');
+            const coreSource = bySource(data, 'core-state-treasury');
+            const treasurySource = bySource(data, 'treasury-data');
+            const usageSource = bySource(data, 'api-gateway-usage');
+            const worstSource = data.sources
+                .filter(source => source.freshness_seconds !== null)
+                .sort((a, b) => b.freshness_seconds - a.freshness_seconds)[0];
+
+            setText('updatedAt', new Date(data.generated_at).toLocaleTimeString());
+            const liquiditySource = data.confidence.liquidity === 'high' ? manualSource : coreSource;
+            const burnSource = data.confidence.burn === 'high' || data.confidence.burn === 'unavailable' ? manualSource : coreSource;
+            setText('liquidity', money(summary.liquidity_usd));
+            setText('liquidityMeta', sourceMeta(liquiditySource, data.confidence.liquidity));
+            setText('monthlyBurn', money(summary.monthly_burn_usd));
+            setText('burnMeta', sourceMeta(burnSource, data.confidence.burn));
+            setText('runway', days(summary.runway_days));
+            setText('runwayMeta', summary.daily_burn_usd ? `${money(summary.daily_burn_usd)} daily burn` : 'burn unavailable');
+            setText('dailyCost', `${money(summary.daily_cost_usd)} / ${money(summary.daily_cost_cap_usd)}`);
+            setText('costMeta', `${sourceMeta(usageSource, data.confidence.daily_cost)} | ${summary.usage_events_today} events today`);
+
+            setText('portfolioValue', money(summary.portfolio_value_usd));
+            setText('portfolioMeta', sourceMeta(treasurySource || coreSource, data.confidence.portfolio));
+            setText('pnl', `${money(summary.pnl_usd)} (${percent(summary.pnl_percent)})`);
+            setClass('pnl', summary.pnl_usd);
+            setText('pnlMeta', sourceMeta(treasurySource || coreSource, data.confidence.pnl));
+
+            const nearest = data.risk.nearest_liquidation;
+            setText('nearestLiquidation', nearest.distance_percent === null ? 'None reported' : percent(nearest.distance_percent));
+            setText('liquidationMeta', nearest.asset ? `${nearest.asset} | ${nearest.severity}` : `${data.risk.open_leveraged_positions} leveraged positions`);
+            setText('sourceFreshness', worstSource ? age(worstSource.freshness_seconds) : 'missing');
+            setText('sourceMeta', worstSource ? `${worstSource.label} | ${worstSource.status}` : 'no source freshness');
+
+            document.getElementById('alertsList').innerHTML = renderAlerts(data.alerts);
+            document.getElementById('riskTable').innerHTML = renderRisk(data);
+            document.getElementById('sourcesTable').innerHTML = renderSources(data.sources);
+        }
+
+        refresh().catch(error => {
+            document.getElementById('alertsList').innerHTML = `<div class="empty">Dashboard load failed: ${error}</div>`;
+        });
+
+        setInterval(() => {
+            refresh().catch(error => console.error(error));
+        }, 30000);
+    </script>
+</body>
+</html>

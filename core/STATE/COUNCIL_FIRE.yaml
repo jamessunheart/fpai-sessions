@@ -1,0 +1,12 @@
+# Council Fire — multi-model debate config (Decision d002, James 2026-06-14)
+# "yes to Claude+GPT+Gemini with $1 cost cap for big decisions"
+schema: council-fire.v1
+models: [claude, gpt, gemini]
+fires_on:
+  - big_or_irreversible_decisions     # NOT routine/reversible calls
+cost_cap_usd_per_debate: 1.00
+log: ~/.config/fpai/decisions/log.jsonl
+kill_switch: EMBER_AUDITOR_DISABLE=1
+notes: >
+  Debate fires only on decisions classified big/irreversible. Synthesis routes
+  back to the decision queue as a recommendation; James still decides.

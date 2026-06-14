@@ -1,0 +1,20 @@
+nohup: ignoring input
+INFO:     Started server process [5311]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     134.199.211.76:52062 - "GET /health HTTP/1.1" 200 OK
+🆕 Register → drop16.fullpotential.ai
+INFO:     134.199.211.76:52064 - "POST /registry/register HTTP/1.1" 200 OK
+💓 Heartbeat → drop16.fullpotential.ai
+INFO:     134.199.211.76:52072 - "POST /registry/heartbeat HTTP/1.1" 200 OK
+🆕 Register → drop13.fullpotential.ai
+INFO:     134.199.211.76:52084 - "POST /registry/register HTTP/1.1" 200 OK
+💓 Heartbeat → drop13.fullpotential.ai
+INFO:     134.199.211.76:52096 - "POST /registry/heartbeat HTTP/1.1" 200 OK
+INFO:     134.199.211.76:52108 - "GET /getAll HTTP/1.1" 200 OK
+INFO:     75.9.73.160:50908 - "GET / HTTP/1.1" 404 Not Found
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [5311]

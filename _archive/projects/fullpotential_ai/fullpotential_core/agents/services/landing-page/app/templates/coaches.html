@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coach Directory - Find Your Perfect Coach | Full Potential AI</title>
+    <meta name="description" content="Connect with conscious coaches who can guide your transformation in life, business, health, and spirituality.">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .coach-hero {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .coach-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .coach-hero p {
+            font-size: 1.2rem;
+            color: #a0a0a0;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .coaches-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2.5rem;
+            padding: 3rem 0;
+        }
+
+        .coach-card {
+            background: #1a1a2e;
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid #2a2a3e;
+            transition: transform 0.3s, border-color 0.3s;
+            text-align: center;
+        }
+
+        .coach-card:hover {
+            transform: translateY(-5px);
+            border-color: #667eea;
+        }
+
+        .coach-card.featured {
+            border: 2px solid #667eea;
+        }
+
+        .coach-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            object-fit: cover;
+            border: 3px solid #667eea;
+        }
+
+        .coach-name {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .coach-specialty {
+            color: #667eea;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .coach-bio {
+            color: #a0a0a0;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .coach-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .coach-category-tag {
+            background: #2a2a3e;
+            color: #a0a0a0;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .coach-rate {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+
+        .coach-cta {
+            display: inline-block;
+            padding: 0.75rem 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .coach-cta:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .nav {
+            padding: 1rem 2rem;
+            background: #0f0f1e;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: #a0a0a0;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #667eea;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .become-coach-cta {
+            background: #16213e;
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            margin: 3rem auto;
+            max-width: 600px;
+        }
+
+        .become-coach-cta h3 {
+            color: white;
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .become-coach-cta p {
+            color: #a0a0a0;
+            margin-bottom: 1.5rem;
+        }
+
+        .become-coach-btn {
+            display: inline-block;
+            padding: 0.75rem 2rem;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <a href="/" class="nav-logo">⚡ Full Potential AI</a>
+        <div class="nav-links">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/offers" class="nav-link">Shop</a>
+            <a href="/coaches" class="nav-link" style="color: #667eea;">Coaches</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <div class="coach-hero">
+        <div class="container">
+            <h1>Find Your Perfect Coach</h1>
+            <p>Connect with conscious coaches who can guide your transformation in life, business, health, and spirituality. All coaches are personally vetted for their expertise and values alignment.</p>
+        </div>
+    </div>
+
+    <!-- Coaches Grid -->
+    <div class="container">
+        <div class="coaches-grid">
+            {% for coach in coaches %}
+            <div class="coach-card {% if coach.featured %}featured{% endif %}">
+                <img src="{{ coach.image_url }}" alt="{{ coach.name }}" class="coach-image">
+                <h3 class="coach-name">{{ coach.name }}</h3>
+                <div class="coach-specialty">{{ coach.specialty }}</div>
+                <p class="coach-bio">{{ coach.bio }}</p>
+                <div class="coach-categories">
+                    {% for category in coach.categories %}
+                    <span class="coach-category-tag">{{ category }}</span>
+                    {% endfor %}
+                </div>
+                <div class="coach-rate">{{ coach.rate }}</div>
+                <a href="{{ coach.booking_url }}" class="coach-cta">Book Session →</a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Become a Coach CTA -->
+        <div class="become-coach-cta">
+            <h3>Are You a Coach?</h3>
+            <p>Join our conscious coach directory and connect with clients who value transformation and authentic growth.</p>
+            <a href="mailto:coaches@fullpotential.com?subject=Join Coach Directory" class="become-coach-btn">Apply to Join →</a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="background: #0f0f1e; padding: 3rem 2rem; margin-top: 4rem; text-align: center; color: #a0a0a0;">
+        <div class="container">
+            <p style="margin-bottom: 1rem;">⚡ Full Potential AI - Connecting You With Conscious Coaches</p>
+            <p style="font-size: 0.9rem;">Featured coach placements are $50-200/month. We may earn a commission on bookings.</p>
+            <p style="font-size: 0.85rem; margin-top: 1rem;">&copy; {{ year }} Full Potential AI. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

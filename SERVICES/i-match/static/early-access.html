@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I MATCH Early Access - $1</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 60px 40px;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .price {
+            font-size: 72px;
+            font-weight: 800;
+            color: #667eea;
+            margin: 30px 0;
+        }
+        .tagline {
+            font-size: 24px;
+            color: #666;
+            margin-bottom: 40px;
+        }
+        .benefits {
+            text-align: left;
+            margin: 40px 0;
+            padding: 0 20px;
+        }
+        .benefit {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            font-size: 18px;
+            color: #333;
+        }
+        .benefit::before {
+            content: "✓";
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+        .cta-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 20px 60px;
+            font-size: 24px;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 30px 0;
+        }
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        .cta-button:active {
+            transform: translateY(0);
+        }
+        .limited {
+            color: #ff6b6b;
+            font-weight: 600;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .powered {
+            margin-top: 40px;
+            color: #999;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>I MATCH</h1>
+        <div class="tagline">AI-Powered Professional Matching</div>
+
+        <div class="price">$1</div>
+
+        <div class="benefits">
+            <div class="benefit">Early access to AI matching platform</div>
+            <div class="benefit">Founding member status</div>
+            <div class="benefit">Lifetime 50% discount on all matches</div>
+            <div class="benefit">Help shape the future of AI matching</div>
+            <div class="benefit">Priority support from our team</div>
+        </div>
+
+        <button class="cta-button" onclick="checkout()">
+            Get Early Access for $1
+        </button>
+
+        <div class="limited">⚡ Limited to first 100 founding members</div>
+
+        <div class="powered">
+            Secure payment powered by Stripe • Full Potential AI
+        </div>
+    </div>
+
+    <script>
+        const stripe = Stripe('pk_live_51JMFNnARpIMdAlRWXQN0YVRbpPGNUFxZdNIr8uJMYGvZp1mhqaKZ8JOcxCkWlO7Tr1Q5j7ECKFMEvdBt6BmcNJhm00DlJbBV2f');
+
+        async function checkout() {
+            const response = await fetch('/api/create-checkout-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    priceId: 'price_early_access',
+                    quantity: 1
+                })
+            });
+
+            const session = await response.json();
+
+            // Redirect to Stripe Checkout
+            const result = await stripe.redirectToCheckout({
+                sessionId: session.id
+            });
+
+            if (result.error) {
+                alert(result.error.message);
+            }
+        }
+    </script>
+</body>
+</html>

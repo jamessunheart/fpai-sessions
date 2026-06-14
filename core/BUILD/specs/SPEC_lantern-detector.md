@@ -1,0 +1,25 @@
+# SPEC_lantern-detector
+
+See clearly — scan the system for anomalies and report them. The Lantern (the genuine gap in the constellation). SAFE-AUTO (read-only scan + report, self-contained).
+
+## Build
+**`tools/lantern/scan.sh`** — a read-only anomaly scan. Run all checks, print a report grouped by check with a severity tag (🔴/🟡), and a final `N anomalies` line. Always exit 0 (it's a report). Checks:
+1. **Stale SSOTs** — if `~/.claude/projects/-Users-jamessunheart-FPAI-Cockpit/memory/SYSTEM_MAP.md` exists, extract its `## ⚠ STALE SSOTs` section (lines starting `- 🔴`). If absent, skip gracefully.
+2. **Stuck builds** — `core/BUILD/REGISTRY.json` entries whose `status` is neither `merged` nor `cancelled` and whose `updated_at`/age looks older than ~1 day (best-effort; use `jq` if present).
+3. **Stuck specs** — specs in `core/BUILD/specs/*.md` with no matching `core/BUILD/results/<id>.result.md` (pending), and flag any whose spec file is >1 day old.
+4. **Failed results** — `core/BUILD/results/*.md` containing `FAIL` or `codex exited non-zero`.
+Each section prints its findings or "✓ clear".
+
+## Done / Proof
+`bash tools/lantern/scan.sh` runs, prints a section per check, ends with the anomaly count, exits 0.
+
+## Files
+- **ALLOWED:** `tools/lantern/scan.sh` (new) · `tools/lantern/test_scan.sh` (new)
+- **FORBIDDEN:** any prod server · secrets · `main` · `SERVICES/` · editing existing files
+
+## Tests
+- **`tools/lantern/test_scan.sh`** — assert `scan.sh` exits 0 and its output contains each check's header. Print `RESULT: N passed, M failed`; exit non-zero on failure.
+
+## Safety / Rollback
+- Read-only. Reversible: delete the two new files.
+- Tagged SAFE-AUTO.

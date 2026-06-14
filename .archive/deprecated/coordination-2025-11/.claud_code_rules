@@ -1,0 +1,56 @@
+# CRITICAL RULES FOR ALL CLAUDE CODE SESSIONS
+
+## DNS & CONFIGURATION PROTECTION
+
+### BEFORE ANY DNS CHANGES:
+1. Read /Users/jamessunheart/Development/docs/coordination/DNS_SAFEGUARDS.md
+2. Create timestamped backup in dns_backups/
+3. Show user current DNS state vs proposed changes
+4. Get explicit user approval with "yes" confirmation
+
+### BANNED COMMANDS (require explicit user override):
+- namecheap.domains.dns.setHosts (unless ALL existing records included)
+- Any command that modifies DNS without backup
+- Any command that changes MX records
+- Any command that deletes email configuration
+- rm -rf on /etc/postfix/ or /etc/dovecot/
+
+### PROTECTED DOMAINS (extra caution required):
+- fullpotential.com
+- coravida.com
+- globalsky.com
+- jamesrick.com
+
+### BEFORE MODIFYING THESE DOMAINS:
+1. Backup current DNS configuration
+2. Document current state
+3. Show user EXACTLY what will change
+4. Wait for explicit "yes" confirmation
+5. Verify changes worked after applying
+
+### SAFE PRACTICES:
+- Always fetch existing records BEFORE modifying
+- Include ALL records when using setHosts API
+- Test on non-production first when possible
+- Document all changes in DNS_SAFEGUARDS.md change log
+- Keep backups of every change
+
+### EMAIL CONFIGURATION:
+- NEVER modify /etc/postfix/ without backup
+- NEVER modify /etc/dovecot/ without backup
+- NEVER change MX records without asking user
+- ALWAYS preserve email forwarding rules
+
+### CRITICAL FILES TO BACKUP BEFORE CHANGES:
+- /etc/postfix/main.cf
+- /etc/postfix/virtual
+- /etc/dovecot/dovecot.conf
+- DNS records for all domains
+
+## ENFORCEMENT
+This file should be read at the start of EVERY session that involves:
+- DNS changes
+- Email configuration
+- Server configuration
+- Domain management
+- Namecheap API calls

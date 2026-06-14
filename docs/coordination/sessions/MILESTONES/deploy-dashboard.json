@@ -1,0 +1,85 @@
+{
+  "milestone_id": "deploy-dashboard",
+  "title": "Deploy Dashboard to Server",
+  "priority": "HIGH",
+  "owner": "available",
+  "status": "pending",
+  "progress": 0,
+  "created_at": "2025-11-15 00:20:00 UTC",
+  "updated_at": "2025-11-15 00:20:00 UTC",
+  "context": {
+    "why": "Dashboard droplet is complete and ready - need it live for system visualization",
+    "timeline": "30-60 minutes",
+    "related_files": [
+      "dashboard/",
+      "fpai-ops/deploy-to-server.sh",
+      "dashboard/deploy.sh",
+      "dashboard/package.json"
+    ],
+    "dependencies": [
+      "Registry live on port 8000",
+      "Orchestrator live on port 8001",
+      "Server access (198.54.123.234)",
+      "GitHub repository synced"
+    ],
+    "success_criteria": "Dashboard live on server showing real-time system state with UDC endpoints responding"
+  },
+  "steps": [
+    {
+      "step": 1,
+      "description": "Review deployment script (fpai-ops/deploy-to-server.sh)",
+      "status": "pending",
+      "notes": "Verify script exists and has correct configuration for dashboard"
+    },
+    {
+      "step": 2,
+      "description": "Test dashboard locally",
+      "status": "pending",
+      "notes": "Run npm test, verify all tests passing, check Docker build"
+    },
+    {
+      "step": 3,
+      "description": "Deploy dashboard to server using deploy-to-server.sh",
+      "status": "pending",
+      "notes": "Run: ./fpai-ops/deploy-to-server.sh dashboard/"
+    },
+    {
+      "step": 4,
+      "description": "Configure dashboard port (8002) on server",
+      "status": "pending",
+      "notes": "Verify port 8002 is open and dashboard is accessible"
+    },
+    {
+      "step": 5,
+      "description": "Verify UDC endpoints are responding",
+      "status": "pending",
+      "notes": "Test: /health, /capabilities, /state, /dependencies, /message"
+    },
+    {
+      "step": 6,
+      "description": "Integrate with live Registry and Orchestrator",
+      "status": "pending",
+      "notes": "Dashboard should show real-time data from both services"
+    },
+    {
+      "step": 7,
+      "description": "Update health monitor to include dashboard",
+      "status": "pending",
+      "notes": "Edit fpai-ops/server-health-monitor.sh to check port 8002"
+    },
+    {
+      "step": 8,
+      "description": "Verify real-time system visualization",
+      "status": "pending",
+      "notes": "Dashboard should auto-update every 30 seconds"
+    }
+  ],
+  "next_session_should": [
+    "Start from step 1: Review the deployment script",
+    "Claim this milestone before starting work",
+    "Update progress after each step",
+    "Add handoff notes if context runs low"
+  ],
+  "blockers": [],
+  "handoff_notes": "All prerequisites are met. Dashboard code is complete in dashboard/ directory. Just needs deployment and verification."
+}

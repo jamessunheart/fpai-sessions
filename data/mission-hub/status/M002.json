@@ -1,0 +1,16 @@
+{
+  "mission_id": "M002",
+  "status": "claimed",
+  "history": [
+    {
+      "status": "claimed",
+      "timestamp": "2025-11-27T04:36:18.367786",
+      "updated_by": "Abhishek Yaligar",
+      "notes": "Claimed by Abhishek Yaligar",
+      "repo_url": null,
+      "score": null
+    }
+  ],
+  "last_updated": "2025-11-27T04:36:18.367769",
+  "last_updated_by": "Abhishek Yaligar"
+}

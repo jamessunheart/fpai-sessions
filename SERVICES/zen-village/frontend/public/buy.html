@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buy · Zen Village</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Manrope:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F4ECDC;--bg-soft:#ECE1CB;--ink:#1F1A14;--ink-soft:#4A3F32;--moss:#3A4A2E;--clay:#B8553A;--gold:#C8924B;--rule:#2A2018;--serif:'Fraunces',Georgia,serif;--sans:'Manrope',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.55;
+  background-image:radial-gradient(circle at 15% 20%,rgba(184,85,58,.05) 0%,transparent 45%),radial-gradient(circle at 85% 75%,rgba(58,74,46,.06) 0%,transparent 45%)}
+a{color:inherit;text-decoration:none}
+.page{max-width:560px;margin:0 auto;padding:36px 24px}
+.brand{font-family:var(--serif);font-size:18px;text-align:center;margin-bottom:32px}
+.brand em{font-style:italic;color:var(--moss)}
+.card{background:#fff;border:1px solid rgba(42,32,24,.18);border-radius:14px;padding:32px}
+.emoji{font-size:48px;text-align:center;margin-bottom:8px}
+.name{font-family:var(--serif);font-size:32px;text-align:center;font-weight:300;letter-spacing:-.02em;margin-bottom:8px}
+.desc{font-size:14px;color:var(--ink-soft);text-align:center;margin-bottom:24px}
+.price-row{display:flex;justify-content:space-between;padding:14px 0;border-top:1px solid rgba(42,32,24,.18);border-bottom:1px solid rgba(42,32,24,.18);margin-bottom:20px}
+.price-amt{font-family:var(--serif);font-size:24px;font-weight:500;color:var(--moss)}
+.qty{display:flex;align-items:center;gap:14px;justify-content:center;margin-bottom:20px}
+.qty button{width:40px;height:40px;border-radius:50%;border:1px solid var(--rule);background:transparent;font-size:20px;cursor:pointer}
+.qty input{width:60px;text-align:center;font-family:var(--serif);font-size:24px;border:none;background:transparent;color:var(--ink)}
+.balance-info{background:var(--bg-soft);border-radius:10px;padding:14px;font-size:14px;margin-bottom:20px}
+.balance-info .row{display:flex;justify-content:space-between;padding:3px 0}
+.balance-info .row.total{font-family:var(--serif);font-size:18px;font-weight:500;border-top:1px solid rgba(42,32,24,.18);padding-top:8px;margin-top:6px}
+button.cta{width:100%;font-family:var(--sans);font-weight:600;font-size:14px;padding:16px;background:var(--ink);color:var(--bg);border:none;border-radius:999px;cursor:pointer;letter-spacing:.04em}
+button.cta:disabled{opacity:.5;cursor:not-allowed}
+.notice{text-align:center;padding:20px;background:rgba(184,85,58,.08);border:1px solid var(--clay);border-radius:10px;margin-bottom:20px}
+.notice a{color:var(--clay);font-weight:700}
+.success{display:none;text-align:center;padding:24px;background:rgba(58,74,46,.1);border:1px solid var(--moss);border-radius:12px}
+.success.show{display:block}
+.success h2{font-family:var(--serif);font-size:24px;color:var(--moss);margin-bottom:8px}
+.error{color:var(--clay);font-size:14px;margin-top:14px;min-height:20px}
+.back{display:block;text-align:center;margin-top:20px;font-size:13px;color:var(--ink-soft)}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="brand"><a href="/">Zen <em>Village</em></a></div>
+
+  <div id="loading" class="card" style="text-align:center;padding:48px">
+    <p style="color:var(--ink-soft)">Loading…</p>
+  </div>
+
+  <div id="missing" class="card" style="display:none;text-align:center">
+    <p>No item selected.</p>
+    <a href="/store" class="back">→ Browse Zen Store</a>
+  </div>
+
+  <div id="buy-card" class="card" style="display:none">
+    <div class="emoji" id="emoji"></div>
+    <div class="name" id="name"></div>
+    <div class="desc" id="desc"></div>
+    <div class="price-row">
+      <span style="color:var(--ink-soft)">Price</span>
+      <span class="price-amt" id="price"></span>
+    </div>
+
+    <div class="qty">
+      <button id="qty-down" type="button">−</button>
+      <input id="qty" type="number" min="1" max="20" value="1">
+      <button id="qty-up" type="button">+</button>
+    </div>
+
+    <div id="auth-zone"></div>
+
+    <div id="success" class="success">
+      <h2>✓ Order placed</h2>
+      <p style="color:var(--ink-soft);font-size:14px;margin-bottom:8px"><span id="success-msg"></span></p>
+      <p style="font-size:13px;color:var(--ink-soft)">New balance: <strong id="success-balance"></strong></p>
+      <a href="/store" class="back">→ Back to store</a>
+    </div>
+
+    <div class="error" id="error"></div>
+  </div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const fmtZC = (n) => `${(+n).toFixed(2).replace(/\.00$/,'')} ZC`;
+function escapeHtml(s){return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+const itemId = new URLSearchParams(location.search).get('item') || '';
+let item = null, me = null;
+
+async function load(){
+  if (!itemId){ $('loading').style.display='none'; $('missing').style.display='block'; return; }
+  try {
+    const [it, mr] = await Promise.all([
+      fetch(`/api/wallet/items/${encodeURIComponent(itemId)}`).then(r => r.json()),
+      fetch('/api/wallet/me', {credentials:'same-origin'}).then(r => r.ok ? r.json() : null).catch(()=>null),
+    ]);
+    if (!it.ok){ $('loading').innerHTML = '<p>Item not found.</p>'; return; }
+    item = it; me = mr;
+    render();
+  } catch(e){ $('loading').innerHTML = '<p>Could not load item.</p>'; }
+}
+
+function render(){
+  $('loading').style.display='none';
+  $('buy-card').style.display='block';
+  $('emoji').textContent = item.emoji || '';
+  $('name').textContent = item.name;
+  $('desc').textContent = item.description || '';
+  updatePrice();
+  renderAuthZone();
+}
+
+function updatePrice(){
+  const qty = parseInt($('qty').value) || 1;
+  const total = +(item.price_zc * qty).toFixed(2);
+  $('price').textContent = fmtZC(item.price_zc);
+  if (me && me.ok){
+    const balance = me.balance_zc;
+    const after = balance - total;
+    $('auth-zone').innerHTML = `
+      <div class="balance-info">
+        <div class="row"><span>Your balance</span><span>${fmtZC(balance)}</span></div>
+        <div class="row"><span>This order</span><span>− ${fmtZC(total)}</span></div>
+        <div class="row total"><span>After</span><span>${fmtZC(after)}</span></div>
+      </div>
+      ${after < 0
+        ? `<div class="notice">Need ${fmtZC(-after)} more. <a href="/wallet#topup">Top up your wallet →</a></div>
+           <button class="cta" disabled>Insufficient credits</button>`
+        : `<button class="cta" id="confirm-buy">Confirm purchase · ${fmtZC(total)}</button>`}
+    `;
+    if (after >= 0){
+      $('confirm-buy').addEventListener('click', confirmBuy);
+    }
+  } else {
+    $('auth-zone').innerHTML = `
+      <div class="notice">
+        <p style="margin-bottom:10px">Sign in to pay with Zen Credits.</p>
+        <a href="/wallet?next=${encodeURIComponent(location.pathname + location.search)}">Open your Wallet →</a>
+      </div>
+      <button class="cta" disabled>Sign in to buy</button>
+    `;
+  }
+}
+
+function renderAuthZone(){ updatePrice(); }
+
+$('qty-down')?.addEventListener('click', () => { const v = parseInt($('qty').value)||1; $('qty').value = Math.max(1, v-1); updatePrice(); });
+$('qty-up')?.addEventListener('click', () => { const v = parseInt($('qty').value)||1; $('qty').value = Math.min(20, v+1); updatePrice(); });
+$('qty')?.addEventListener('input', updatePrice);
+
+async function confirmBuy(){
+  $('error').textContent = '';
+  const qty = parseInt($('qty').value) || 1;
+  $('confirm-buy').disabled = true;
+  $('confirm-buy').textContent = 'Processing…';
+  try {
+    const r = await fetch('/api/wallet/purchase', {
+      method:'POST', credentials:'same-origin',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ item_id: itemId, quantity: qty }),
+    });
+    const d = await r.json();
+    if (!r.ok){ $('error').textContent = d.detail || 'Purchase failed'; return; }
+    $('buy-card').querySelectorAll('.emoji,.name,.desc,.price-row,.qty,#auth-zone').forEach(el => el.style.display='none');
+    $('success').classList.add('show');
+    $('success-msg').textContent = `${d.item}${d.quantity > 1 ? ' ×' + d.quantity : ''} — ${fmtZC(d.charged_zc)}`;
+    $('success-balance').textContent = fmtZC(d.balance_zc);
+  } catch(e){ $('error').textContent = 'Network error.'; }
+  finally {
+    if ($('confirm-buy')){ $('confirm-buy').disabled = false; }
+  }
+}
+
+load();
+</script>
+</body>
+</html>

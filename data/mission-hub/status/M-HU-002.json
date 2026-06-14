@@ -1,0 +1,16 @@
+{
+  "mission_id": "M-HU-002",
+  "status": "claimed",
+  "history": [
+    {
+      "status": "claimed",
+      "timestamp": "2025-11-28T10:44:20.956998",
+      "updated_by": "Abhises Poudyal",
+      "notes": "Claimed by Abhises Poudyal",
+      "repo_url": null,
+      "score": null
+    }
+  ],
+  "last_updated": "2025-11-28T10:44:20.956986",
+  "last_updated_by": "Abhises Poudyal"
+}

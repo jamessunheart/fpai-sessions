@@ -1,0 +1,52 @@
+{
+  "id": "aria-command",
+  "name": "Aria Command Center",
+  "type": "ai",
+  "created_by": "aria",
+  "description": "The primary interface through which Aria operates. Handles Telegram interactions, tool execution, and governance enforcement.",
+  "version": "3.0.0",
+  "location": {
+    "server": "secondary",
+    "ip": "162.0.208.88",
+    "port": 8710,
+    "path": "/opt/fpai/aria-command"
+  },
+  "interfaces": {
+    "telegram": {
+      "enabled": true,
+      "bot_name": "@fullpotential_aria_bot"
+    },
+    "api": {
+      "enabled": true,
+      "base_url": "http://162.0.208.88:8710"
+    },
+    "voice": {
+      "enabled": true,
+      "provider": "elevenlabs"
+    }
+  },
+  "brain": {
+    "model": "claude-sonnet-4-20250514",
+    "provider": "anthropic",
+    "context_window": 200000,
+    "temperature": 0.7
+  },
+  "memory": {
+    "warm_provider": "mem0",
+    "warm_api_key_env": "MEM0_API_KEY",
+    "cold_provider": "supabase",
+    "cold_enabled": false
+  },
+  "governance": {
+    "respects_three_nevers": true,
+    "checks_priority_stack": true,
+    "check_before_actions": ["write_file", "edit_file", "run_command"],
+    "auto_approved_actions": ["read_file", "search_codebase", "list_directory", "recall_memory"]
+  },
+  "status": "active",
+  "health_endpoint": "/health",
+  "created_at": "2024-12-01T00:00:00Z",
+  "updated_at": "2025-12-24T00:00:00Z"
+}
+
+

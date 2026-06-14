@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Script Generator · Outbounders</title>
+<meta name="description" content="Describe your campaign in 60 seconds. Get a complete outbound calling script + objections + qualifiers. Free, powered by AI." />
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --bg-soft: #141414;
+    --fg: #f5f5f5;
+    --fg-dim: #999;
+    --accent: #ff4d2e;
+    --border: #2a2a2a;
+    --code-bg: #161616;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.55; }
+  .container { max-width: 880px; margin: 0 auto; padding: 48px 24px; }
+  header { margin-bottom: 48px; }
+  .brand { font-size: 14px; color: var(--fg-dim); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
+  h1 { font-size: 40px; font-weight: 700; margin: 0 0 12px; letter-spacing: -0.02em; line-height: 1.15; }
+  .lede { font-size: 18px; color: var(--fg-dim); margin: 0 0 8px; max-width: 640px; }
+  .tag { display: inline-block; background: var(--bg-soft); border: 1px solid var(--border); padding: 4px 10px; border-radius: 4px; font-size: 12px; color: var(--fg-dim); margin-top: 16px; }
+  form { display: grid; gap: 20px; }
+  label { display: block; font-size: 14px; font-weight: 500; color: var(--fg); margin-bottom: 6px; }
+  .hint { font-size: 12px; color: var(--fg-dim); margin-bottom: 8px; }
+  input, select, textarea { width: 100%; background: var(--bg-soft); color: var(--fg); border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; font-family: inherit; font-size: 15px; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); }
+  textarea { min-height: 80px; resize: vertical; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
+  button { background: var(--accent); color: #fff; border: none; padding: 14px 28px; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+  button:hover { background: #e63d1f; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .output { margin-top: 48px; padding: 32px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 8px; white-space: pre-wrap; font-size: 15px; line-height: 1.7; }
+  .output h3 { color: var(--accent); margin-top: 24px; }
+  .output:empty { display: none; }
+  .footer { margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--border); color: var(--fg-dim); font-size: 13px; }
+  .footer a { color: var(--fg); }
+  .loading { color: var(--fg-dim); font-style: italic; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="brand">Outbounders · now AI-augmented</div>
+    <h1>Free outbound script in 60 seconds.</h1>
+    <p class="lede">Describe your campaign. Get a complete calling script, 10 proven objection rebuttals, and 5 qualifying questions. Built by AI trained on 15 years of B2B telemarketing scripts.</p>
+    <span class="tag">Powered by Claude · free · no signup required</span>
+  </header>
+
+  <form id="script-form">
+    <div>
+      <label for="industry">Industry or vertical</label>
+      <div class="hint">e.g. "B2B SaaS for HR teams" · "Roofing contractor in Texas" · "Medical aesthetics clinic"</div>
+      <input id="industry" name="industry" required placeholder="B2B SaaS for HR teams" />
+    </div>
+
+    <div>
+      <label for="offer">What you're selling</label>
+      <div class="hint">The specific product / service / outcome.</div>
+      <textarea id="offer" name="offer" required placeholder="An AI-powered employee onboarding platform. 90-day free trial, $99/seat/month after."></textarea>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <label for="target_role">Target role / title</label>
+        <input id="target_role" name="target_role" required placeholder="VP of HR, Head of People Ops" />
+      </div>
+      <div>
+        <label for="target_company_size">Company size</label>
+        <input id="target_company_size" name="target_company_size" required placeholder="50-500 employees" />
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <label for="target_geography">Geography</label>
+        <input id="target_geography" name="target_geography" placeholder="US + Canada" />
+      </div>
+      <div>
+        <label for="call_goal">Call goal</label>
+        <select id="call_goal" name="call_goal" required>
+          <option value="book a meeting">Book a meeting</option>
+          <option value="qualify the prospect">Qualify the prospect</option>
+          <option value="sell direct">Sell direct</option>
+          <option value="gather information">Gather information</option>
+          <option value="follow-up to inbound">Follow-up to inbound lead</option>
+          <option value="re-engage past customer">Re-engage past customer</option>
+        </select>
+      </div>
+    </div>
+
+    <div>
+      <label for="additional_context">Anything else (optional)</label>
+      <div class="hint">Competition · objections you hear most · regulatory notes · prior campaign learnings.</div>
+      <textarea id="additional_context" name="additional_context" placeholder="Main competitor is BambooHR. We typically hear price objections from CFOs."></textarea>
+    </div>
+
+    <button type="submit" id="submit-btn">Generate my script</button>
+  </form>
+
+  <div class="output" id="output"></div>
+
+  <div class="footer">
+    Built by <a href="https://outbounders.com">Outbounders.com</a> · the marketplace for AI-augmented outbound sales. Ready for human agents? <a href="https://app.outbounders.com/signup">Hire one</a> for $25.
+  </div>
+</div>
+
+<script>
+document.getElementById("script-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById("submit-btn");
+  const out = document.getElementById("output");
+  btn.disabled = true;
+  btn.textContent = "Generating...";
+  out.innerHTML = '<span class="loading">Writing your script · should take ~20 seconds...</span>';
+
+  const data = Object.fromEntries(new FormData(e.target));
+
+  try {
+    const res = await fetch("/api/generate", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(data)
+    });
+    if (!res.ok) throw new Error("API returned " + res.status);
+    const json = await res.json();
+    out.innerHTML = renderMarkdown(json.script || "");
+  } catch (err) {
+    out.innerHTML = '<span style="color:#ff6b6b">Error generating script: ' + err.message + '</span>';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Generate my script";
+  }
+});
+
+function renderMarkdown(md) {
+  return md
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/^### (.*$)/gm, "<h3>$1</h3>")
+    .replace(/^## (.*$)/gm, "<h2>$1</h2>")
+    .replace(/^# (.*$)/gm, "<h1>$1</h1>")
+    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\*(.*?)\*/g, "<em>$1</em>");
+}
+</script>
+</body>
+</html>

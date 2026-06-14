@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Full Potential AI</title>
+  <style>
+    :root {
+      --bg: radial-gradient(circle at top, #0f172a, #020617);
+      --panel: rgba(15,23,42,0.88);
+      --border: rgba(255,255,255,0.12);
+      --text: #cbd5f5;
+      --accent: #fbbf24;
+      --blue: #38bdf8;
+    }
+    body {
+      font-family: 'Space Grotesk', 'Inter', Arial, sans-serif;
+      background: var(--bg);
+      color: #f8fafc;
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1.5rem;
+    }
+    .panel {
+      max-width: 720px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3rem;
+      background: var(--panel);
+      box-shadow: 0 35px 80px rgba(2,6,23,0.65);
+    }
+    h1 {
+      font-size: 2.7rem;
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.05em;
+    }
+    p {
+      font-size: 1.1rem;
+      line-height: 1.7;
+      color: var(--text);
+    }
+    strong { color: var(--accent); }
+    em { color: var(--blue); }
+    ul {
+      margin: 1.5rem 0;
+      padding-left: 1.2rem;
+      color: var(--text);
+      line-height: 1.5;
+    }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .links {
+      display: grid;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .links a {
+      display: block;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.9rem 1rem;
+      background: rgba(8,12,24,0.7);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.5rem;
+    }
+    th, td {
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding: 0.75rem;
+      text-align: left;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+    th {
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.8rem;
+      color: #f8fafc;
+    }
+    .priority-p0 { color: #f87171; font-weight: 600; }
+    .priority-p1 { color: #fb923c; font-weight: 600; }
+    .priority-default { color: var(--text); }
+  </style>
+</head>
+<body>
+  <div class="panel">
+    <h1>Full Potential AI</h1>
+    <p>The Operating System for Paradise Economics.</p>
+    <p><strong>Researching:</strong> AI Consciousness · Autonomous Coordination · Regenerative Finance.</p>
+    <p><em>Status:</em> System Active · Town Crier + Nexus aligned to the Constitution.</p>
+
+    <ul>
+      <li><strong>We create</strong> regenerative feedback loops instead of extractive funnels.</li>
+      <li><strong>We liberate</strong> the Architect and mission runners through autonomous tooling.</li>
+      <li><strong>We elevate</strong> awareness — every deployment must expand consciousness.</li>
+    </ul>
+
+    <div class="links">
+      <a href="/services/" rel="noopener">
+        🛰 Autonomous Services Map — browse WhaleTrack, God Mode, and Strategic Intelligence.
+      </a>
+      <a href="https://github.com/jamessunheart/fpai-sessions/blob/main/fullpotential_core/core/knowledge/CONSTITUTION.md" target="_blank" rel="noopener">
+        🕊 Full Potential Constitution — guiding principles for every mission.
+      </a>
+      <a href="research.html" target="_blank" rel="noopener">
+        📚 Research Library — 300+ research PDFs including the 180-page legal blueprint for regenerative orgs.
+      </a>
+      <a href="https://github.com/jamessunheart/fpai-sessions/tree/main/fullpotential_core/docs/papers/%F0%9F%93%98180pgChurch_Legal_Resource.pdf" target="_blank" rel="noopener">
+        ⚖️ Church & Civic Legal Toolkit — reference for compliant regenerative structures.
+      </a>
+    </div>
+
+    <section id="mission-board">
+      <h2 style="margin-top:2.5rem;">Live Mission Board</h2>
+      <p style="color:var(--text);">The Nervous System publishes every mission here. Filter by priority directly in the UI.</p>
+      <div id="mission-table-wrapper">Loading mission feed…</div>
+    </section>
+  </div>
+  <script>
+    const wrapper = document.getElementById('mission-table-wrapper');
+    fetch('/docs/status/missions.json')
+      .then(resp => resp.json())
+      .then(payload => renderTable(payload.missions || []))
+      .catch(() => {
+        wrapper.textContent = 'Unable to load mission feed. Check Town Crier logs.';
+      });
+
+    function renderTable(missions) {
+      if (!missions.length) {
+        wrapper.textContent = 'No missions detected.';
+        return;
+      }
+      const rows = missions
+        .filter(m => m.status === 'OPEN')
+        .map(m => {
+          const priorityClass = m.priority
+            ? `priority-${m.priority.toLowerCase()}`
+            : 'priority-default';
+          const owner = m.owner || 'UNASSIGNED';
+          return `
+            <tr>
+              <td>${m.id}</td>
+              <td>${m.title}</td>
+              <td class="${priorityClass}">${m.priority || '-'}</td>
+              <td>${owner}</td>
+              <td>${m.principle || '-'}</td>
+            </tr>
+          `;
+        })
+        .join('');
+      wrapper.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Mission</th>
+              <th>Priority</th>
+              <th>Owner</th>
+              <th>Principle</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Matched - I MATCH</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 48px;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .form-header h1 {
+            color: #667eea;
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+        }
+
+        .form-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 40px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-group label i {
+            color: #667eea;
+            margin-right: 8px;
+            width: 20px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 32px 24px;
+            }
+            .form-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="form-header">
+            <h1>Find Your Match</h1>
+            <p>Let AI find the perfect provider for you</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress"></div>
+        </div>
+
+        <form id="matchForm">
+            <div class="form-group">
+                <label><i class="fas fa-user"></i> Full Name</label>
+                <input type="text" name="name" required placeholder="John Doe">
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-envelope"></i> Email Address</label>
+                <input type="email" name="email" required placeholder="john@example.com">
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-phone"></i> Phone Number</label>
+                <input type="tel" name="phone" placeholder="+1 (555) 123-4567">
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-briefcase"></i> What service do you need?</label>
+                <select name="service_type" required>
+                    <option value="">Select a service...</option>
+                    <option value="financial_advisor">Financial Advisor</option>
+                    <option value="realtor">Real Estate Agent</option>
+                    <option value="business_consultant">Business Consultant</option>
+                    <option value="legal">Legal Services</option>
+                    <option value="marketing">Marketing Services</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-comment-dots"></i> Describe what you're looking for</label>
+                <textarea name="needs_description" required placeholder="Tell us about your needs, goals, and what makes the perfect match for you..."></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-magic"></i> Find My Matches
+            </button>
+        </form>
+
+        <a href="/match" class="back-link">← Back to Home</a>
+    </div>
+
+    <script>
+        const form = document.getElementById('matchForm');
+        const progress = document.getElementById('progress');
+        const inputs = form.querySelectorAll('input, select, textarea');
+        
+        // Update progress bar
+        function updateProgress() {
+            let filled = 0;
+            inputs.forEach(input => {
+                if (input.value.trim() !== '') filled++;
+            });
+            const percent = (filled / inputs.length) * 100;
+            progress.style.width = percent + '%';
+        }
+        
+        inputs.forEach(input => {
+            input.addEventListener('input', updateProgress);
+            input.addEventListener('change', updateProgress);
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btn = form.querySelector('.submit-btn');
+            btn.textContent = 'Finding your perfect matches...';
+            btn.disabled = true;
+            
+            // Here you would submit to your API
+            const formData = {
+                name: form.name.value,
+                email: form.email.value,
+                phone: form.phone.value,
+                service_type: form.service_type.value,
+                needs_description: form.needs_description.value
+            };
+            
+            try {
+                const response = await fetch('/customers/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (response.ok) {
+                    btn.textContent = '✓ Success! Check your email';
+                    btn.style.background = '#10b981';
+                    form.reset();
+                    setTimeout(() => {
+                        btn.textContent = 'Find My Matches';
+                        btn.disabled = false;
+                        btn.style.background = '';
+                        updateProgress();
+                    }, 3000);
+                } else {
+                    throw new Error('Submission failed');
+                }
+            } catch (error) {
+                btn.textContent = 'Error - Try Again';
+                btn.style.background = '#ef4444';
+                setTimeout(() => {
+                    btn.textContent = 'Find My Matches';
+                    btn.disabled = false;
+                    btn.style.background = '';
+                }, 2000);
+            }
+        });
+    </script>
+</body>
+</html>

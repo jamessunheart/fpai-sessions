@@ -1,0 +1,160 @@
+.voice-input-btn {
+    position: absolute !important;
+    right: 50px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    background: #4CAF50 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 50% !important;
+    width: 36px !important;
+    height: 36px !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+    transition: all 0.2s ease !important;
+    z-index: 9999 !important;
+    padding: 0 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    margin: 0 !important;
+    flex-shrink: 0 !important;
+    pointer-events: auto !important;
+    /* Prevent React from hiding it */
+    display: flex !important;
+    position: absolute !important;
+}
+.voice-input-btn:hover {
+    background: #45a049;
+    transform: translateY(-50%) scale(1.1);
+}
+.voice-input-btn.recording {
+    background: #f44336;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 2px 8px rgba(244, 67, 54, 0.4); }
+    50% { box-shadow: 0 2px 20px rgba(244, 67, 54, 0.8); }
+}
+.voice-btn-text {
+    display: none !important;
+}
+.voice-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 10000;
+    font-size: 14px;
+    max-width: 300px;
+    animation: slideIn 0.3s ease;
+}
+.voice-notification.error {
+    background: #f44336;
+}
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+/* Ensure input container can hold button */
+form, .input-container, [class*="input"], [class*="Input"] {
+    position: relative !important;
+}
+
+/* Make sure button doesn't interfere with send button */
+.voice-input-btn {
+    pointer-events: auto !important;
+}
+
+/* Ensure button is inside input area but not blocking send */
+textarea, input[type="text"] {
+    padding-right: 50px !important;
+}
+
+/* Make sure send button is still clickable and enabled */
+button[type="submit"], button[aria-label*="send"], button[aria-label*="Send"],
+button:has(svg[viewBox*="24"]):has(path[d*="M12"]) {
+    z-index: 20 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+}
+
+/* Ensure send button is not disabled when input has value */
+textarea:not(:placeholder-shown) + button,
+input[type="text"]:not(:placeholder-shown) + button,
+form:has(textarea:not(:placeholder-shown)) button[type="submit"],
+form:has(input[type="text"]:not(:placeholder-shown)) button[type="submit"] {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+}
+
+/* Force enable send button when input has value */
+textarea:not(:empty) ~ button,
+textarea[value]:not([value=""]) ~ button,
+form:has(textarea:not(:empty)) button[type="submit"],
+form:has(textarea[value]:not([value=""])) button[type="submit"] {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    background-color: inherit !important;
+}
+
+/* Override disabled state for send button - force enable when input has value */
+button[type="submit"]:disabled,
+button[aria-label*="send" i]:disabled,
+button[aria-label*="Send" i]:disabled {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    filter: none !important;
+    background-color: inherit !important;
+}
+
+/* Force enable send button when input has ANY value (including from voice input) */
+form:has(textarea:not(:empty)) button[type="submit"],
+form:has(textarea[value]:not([value=""])) button[type="submit"],
+form:has(textarea:not(:placeholder-shown)) button[type="submit"] {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    filter: none !important;
+    background-color: inherit !important;
+    /* Remove disabled attribute via CSS (if possible) */
+}
+
+/* Force enable ANY button near an input with value */
+textarea:not(:empty) ~ button,
+textarea[value]:not([value=""]) ~ button,
+textarea:not(:placeholder-shown) ~ button {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    filter: none !important;
+}
+
+/* When input has text, force enable send button */
+textarea:not(:placeholder-shown) ~ button[type="submit"],
+textarea:not(:empty) ~ button[type="submit"],
+form:has(textarea:not(:placeholder-shown)) button[type="submit"],
+form:has(textarea:not(:empty)) button[type="submit"] {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    background-color: inherit !important;
+}
+
+/* Force enable send button when input has value (voice input) */
+textarea[value]:not([value=""]) ~ button,
+textarea:not(:empty) ~ button[type="submit"] {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    filter: none !important;
+}

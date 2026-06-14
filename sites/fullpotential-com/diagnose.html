@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diagnose · Full Potential</title>
+  <meta name="description" content="Seven areas of life. Each one either circulating or stuck. Map where you are honestly, then choose your next step — including a direct path to work with Sunheart." />
+  <meta name="theme-color" content="#e8b974" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://fullpotential.com/diagnose" />
+  <meta property="og:title" content="Diagnose your circulation — Full Potential" />
+  <meta property="og:description" content="Seven areas. Honest map. Real next step. The diagnostic that doesn't fabricate a story." />
+  <meta property="og:image" content="https://fullpotential.com/game/core/INTENT/assets/full-potential-framework-poster.png" />
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◯</text></svg>" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap" />
+
+  <style>
+    :root {
+      --bg: #0a1428;
+      --bg-deep: #060d1c;
+      --surface: #14213d;
+      --surface-2: #1d2c4d;
+      --border: #2c3d63;
+      --text: #f5ead8;
+      --text-bright: #fff7e8;
+      --muted: #8fa1c2;
+      --accent: #e8b974;
+      --accent-bright: #f5d089;
+      --good: #84d488;
+      --warn: #e8c479;
+      --bad: #e58787;
+      --p2: #7cc4a8;
+      --circulating: #84d488;
+      --mixed: #e8c479;
+      --stuck: #e58787;
+      --serif: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+      --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--sans);
+      background:
+        radial-gradient(ellipse 1200px 600px at 50% -100px, rgba(232, 185, 116, 0.08), transparent 70%),
+        radial-gradient(ellipse 800px 400px at 0% 50%, rgba(124, 196, 168, 0.04), transparent 60%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      font-size: 15px;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .horizon-glow {
+      position: fixed; top: 0; left: 0; right: 0; height: 240px;
+      background: radial-gradient(ellipse 800px 240px at 50% 0%, rgba(232, 185, 116, 0.10), transparent 70%);
+      pointer-events: none; z-index: -1;
+    }
+    .starfield { position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.4; }
+    .star { fill: var(--accent-bright); animation: twinkle 5s ease-in-out infinite; }
+    @keyframes twinkle { 0%, 100% { opacity: 0.15; } 50% { opacity: 0.5; } }
+
+    .container { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+
+    nav {
+      padding: 24px 0;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .nav-mark {
+      font-family: var(--serif); font-size: 1.4rem; font-weight: 600;
+      letter-spacing: -0.3px; text-decoration: none;
+      background: linear-gradient(135deg, var(--text-bright) 0%, var(--accent-bright) 100%);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .nav-mark .circle { display: inline-block; margin-right: 6px; opacity: 0.7; }
+    .nav-links { display: flex; gap: 22px; list-style: none; flex-wrap: wrap; }
+    .nav-links a {
+      font-size: 0.85rem; font-weight: 500; color: var(--muted);
+      text-decoration: none; letter-spacing: 0.02em; transition: color 0.18s;
+    }
+    .nav-links a:hover { color: var(--accent-bright); }
+    .nav-links a.cta {
+      color: var(--bg); background: linear-gradient(135deg, var(--accent), var(--accent-bright));
+      padding: 6px 14px; border-radius: 999px; font-weight: 700;
+    }
+
+    /* Hero */
+    .hero { padding: 60px 0 40px; text-align: center; }
+    .hero-eyebrow {
+      font-size: 11px; letter-spacing: 2px; color: var(--accent);
+      text-transform: uppercase; font-weight: 700; margin-bottom: 14px;
+    }
+    .hero h1 {
+      font-family: var(--serif);
+      font-size: clamp(34px, 5.5vw, 54px);
+      font-weight: 500; line-height: 1.1; letter-spacing: -0.5px;
+      margin-bottom: 18px;
+      background: linear-gradient(135deg, var(--text-bright) 0%, var(--accent-bright) 100%);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero-sub {
+      font-family: var(--serif); font-size: 19px; font-style: italic;
+      color: var(--text); max-width: 640px; margin: 0 auto;
+      line-height: 1.55; opacity: 0.92;
+    }
+
+    /* Section base */
+    section { padding: 50px 0; }
+    .section-eyebrow {
+      font-size: 11px; letter-spacing: 2px; color: var(--accent);
+      text-transform: uppercase; font-weight: 700; margin-bottom: 12px; text-align: center;
+    }
+    .section-h {
+      font-family: var(--serif); font-size: clamp(26px, 3.5vw, 34px);
+      font-weight: 500; letter-spacing: -0.3px; text-align: center;
+      margin-bottom: 14px; color: var(--text-bright);
+    }
+    .section-lead {
+      font-family: var(--serif); font-size: 17px; font-style: italic;
+      color: var(--muted); max-width: 600px; margin: 0 auto 30px;
+      text-align: center; line-height: 1.6;
+    }
+
+    /* Seven areas — interactive self-assessment */
+    .seven {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 12px; max-width: 760px; margin: 0 auto;
+    }
+    .area {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 16px; cursor: pointer;
+      transition: all 0.18s; user-select: none;
+    }
+    .area:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .area-name { font-family: var(--serif); font-size: 22px; font-weight: 600; color: var(--text-bright); margin-bottom: 4px; }
+    .area-q { font-size: 12px; color: var(--muted); font-style: italic; line-height: 1.5; margin-bottom: 12px; }
+    .area-states { display: flex; gap: 4px; }
+    .area-state {
+      flex: 1; padding: 8px; text-align: center;
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 4px; font-size: 11px; color: var(--muted);
+      transition: all 0.15s; cursor: pointer;
+    }
+    .area-state:hover { background: var(--bg); }
+    .area-state.selected[data-state="circulating"] { background: var(--circulating); color: #062013; border-color: var(--circulating); font-weight: 700; }
+    .area-state.selected[data-state="mixed"]       { background: var(--mixed); color: #2a1d05; border-color: var(--mixed); font-weight: 700; }
+    .area-state.selected[data-state="stuck"]       { background: var(--stuck); color: #2a0606; border-color: var(--stuck); font-weight: 700; }
+
+    /* Map summary */
+    .map-summary {
+      max-width: 760px; margin: 30px auto 0;
+      padding: 20px 24px; background: var(--surface);
+      border: 1px solid var(--border); border-left: 3px solid var(--accent);
+      border-radius: 8px; display: none;
+    }
+    .map-summary.show { display: block; animation: fadeIn 0.4s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .map-eyebrow { font-size: 10px; letter-spacing: 1.5px; color: var(--accent); font-weight: 700; margin-bottom: 6px; }
+    .map-line { font-family: var(--serif); font-style: italic; font-size: 17px; color: var(--text); margin-bottom: 14px; line-height: 1.6; }
+    .map-counts { display: flex; gap: 16px; font-size: 13px; }
+    .map-counts span strong { font-family: ui-monospace, "SF Mono", Menlo, monospace; margin-right: 4px; font-weight: 700; }
+    .map-counts .c-circ strong { color: var(--circulating); }
+    .map-counts .c-mix strong { color: var(--mixed); }
+    .map-counts .c-stk strong { color: var(--stuck); }
+
+    /* From here / next step */
+    .next-steps {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px; max-width: 880px; margin: 0 auto;
+    }
+    .step-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 22px; transition: all 0.18s;
+    }
+    .step-card:hover { transform: translateY(-2px); border-color: var(--accent); }
+    .step-card.featured {
+      background: linear-gradient(135deg, rgba(232, 185, 116, 0.10), rgba(124, 196, 168, 0.04));
+      border: 1px solid var(--accent);
+    }
+    .step-icon { font-size: 24px; line-height: 1; margin-bottom: 10px; }
+    .step-card h4 {
+      font-family: var(--serif); font-size: 22px; font-weight: 600;
+      color: var(--text-bright); margin-bottom: 6px;
+    }
+    .step-card .step-tag {
+      font-size: 10px; letter-spacing: 1px; color: var(--accent);
+      text-transform: uppercase; font-weight: 700; margin-bottom: 10px;
+    }
+    .step-card p { color: var(--muted); font-size: 13px; line-height: 1.6; margin-bottom: 12px; }
+    .step-card a, .step-btn {
+      display: inline-block; color: var(--accent-bright); font-weight: 600;
+      font-size: 14px; text-decoration: none; cursor: pointer;
+      background: none; border: none; padding: 0; font-family: inherit;
+    }
+    .step-card a:hover, .step-btn:hover { text-decoration: underline; }
+
+    /* Lead form */
+    .lead-form {
+      max-width: 720px; margin: 30px auto 0;
+      background: linear-gradient(135deg, rgba(232, 185, 116, 0.06), rgba(124, 196, 168, 0.03));
+      border: 1px solid var(--accent); border-radius: 14px;
+      padding: 28px 30px;
+      display: none;
+    }
+    .lead-form.show { display: block; animation: fadeIn 0.4s ease-out; }
+    .lead-form h3 {
+      font-family: var(--serif); font-size: 26px; font-weight: 600;
+      color: var(--text-bright); margin-bottom: 6px;
+    }
+    .lead-form .lf-sub {
+      font-family: var(--serif); font-style: italic; color: var(--muted);
+      font-size: 15px; margin-bottom: 22px; line-height: 1.6;
+    }
+    .lf-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px 14px;
+    }
+    @media (max-width: 600px) { .lf-grid { grid-template-columns: 1fr; } }
+    .lf-grid label { display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+    .lf-grid label.full { grid-column: 1 / -1; }
+    .lf-grid input, .lf-grid textarea, .lf-grid select {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 4px; padding: 10px 12px;
+      color: var(--text); font-size: 14px; font-family: inherit;
+      text-transform: none; letter-spacing: normal; font-weight: 400;
+    }
+    .lf-grid input:focus, .lf-grid textarea:focus, .lf-grid select:focus {
+      outline: none; border-color: var(--accent);
+    }
+    .lf-actions { margin-top: 18px; display: flex; gap: 10px; flex-wrap: wrap; }
+    .lf-submit {
+      background: linear-gradient(135deg, var(--accent), var(--accent-bright));
+      color: #1c1305; padding: 12px 26px; border-radius: 8px;
+      border: none; font-weight: 700; font-size: 15px;
+      cursor: pointer; font-family: inherit;
+      transition: all 0.18s;
+    }
+    .lf-submit:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(232,185,116,0.3); }
+    .lf-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+    .lf-cancel {
+      background: var(--surface-2); color: var(--muted); padding: 12px 22px;
+      border-radius: 8px; border: 1px solid var(--border);
+      cursor: pointer; font-family: inherit; font-size: 14px;
+    }
+    .lf-confirm {
+      display: none;
+      padding: 26px; text-align: center;
+      background: linear-gradient(135deg, rgba(132, 212, 136, 0.10), rgba(232, 185, 116, 0.04));
+      border-radius: 10px; border: 1px solid var(--good);
+      animation: fadeIn 0.5s ease-out;
+    }
+    .lf-confirm.show { display: block; }
+    .lf-confirm h4 { font-family: var(--serif); color: var(--good); font-size: 22px; margin-bottom: 8px; }
+    .lf-confirm p { color: var(--text); font-size: 14px; margin-bottom: 6px; }
+
+    /* Footer */
+    footer {
+      padding: 50px 0 80px; text-align: center; color: var(--muted);
+      font-size: 13px; border-top: 1px solid var(--border); margin-top: 40px;
+    }
+    footer a { color: var(--accent); text-decoration: none; margin: 0 8px; }
+    footer a:hover { color: var(--accent-bright); text-decoration: underline; }
+    .footer-tagline {
+      font-family: var(--serif); font-style: italic; font-size: 16px;
+      color: var(--text); margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="horizon-glow"></div>
+  <svg class="starfield" id="starfield" preserveAspectRatio="xMidYMid slice"></svg>
+
+  <div class="container">
+    <nav>
+      <a href="/" class="nav-mark"><span class="circle">◯</span>Full Potential</a>
+      <ul class="nav-links">
+        <li><a href="/diagnose">Diagnose</a></li>
+        <li><a href="/call">Weekly Call</a></li>
+        <li><a href="/peace">Peace</a></li>
+        <li><a href="https://fullpotential.ai">Intelligence</a></li>
+        <li><a href="/game" class="cta">🎮 Play the Game</a></li>
+      </ul>
+    </nav>
+
+    <section class="hero">
+      <div class="hero-eyebrow">SEVEN AREAS · ONE HONEST MAP</div>
+      <h1>Diagnose your circulation.</h1>
+      <p class="hero-sub">
+        Each area of life either circulates or it doesn't. The map is yours — no email, no pitch, no fabricated story. Mark where you actually are. Then pick a next step that fits.
+      </p>
+    </section>
+
+    <section>
+      <div class="section-eyebrow">SELF-ASSESSMENT · 90 SECONDS</div>
+      <h2 class="section-h">Tap each area honestly.</h2>
+      <p class="section-lead">
+        Three states: circulating · mixed · stuck. There's no right answer. Honesty is the only thing that makes this useful.
+      </p>
+      <div class="seven" id="seven">
+        <div class="area" data-area="body">
+          <div class="area-name">Body</div>
+          <div class="area-q">Is energy moving, or being managed?</div>
+          <div class="area-states">
+            <div class="area-state" data-state="circulating">circulating</div>
+            <div class="area-state" data-state="mixed">mixed</div>
+            <div class="area-state" data-state="stuck">stuck</div>
+          </div>
+        </div>
+        <div class="area" data-area="mind">
+          <div class="area-name">Mind</div>
+          <div class="area-q">Is attention clear, or scattered?</div>
+          <div class="area-states">
+            <div class="area-state" data-state="circulating">circulating</div>
+            <div class="area-state" data-state="mixed">mixed</div>
+            <div class="area-state" data-state="stuck">stuck</div>
+          </div>
+        </div>
+        <div class="area" data-area="relationships">
+          <div class="area-name">Relationships</div>
+          <div class="area-q">Is connection nourishing, or draining?</div>
+          <div class="area-states">
+            <div class="area-state" data-state="circulating">circulating</div>
+            <div class="area-state" data-state="mixed">mixed</div>
+            <div class="area-state" data-state="stuck">stuck</div>
+          </div>
+        </div>
+        <div class="area" data-area="work">
+          <div class="area-name">Work</div>
+          <div class="area-q">Is contribution aligned, or forced?</div>
+          <div class="area-states">
+            <div class="area-state" data-state="circulating">circulating</div>
+            <div class="area-state" data-state="mixed">mixed</div>
+            <div class="area-state" data-state="stuck">stuck</div>
+          </div>
+        </div>
+        <div class="area" data-area="money">
+          <div class="area-name">Money</div>
+          <div class="area-q">Is it circulating, or constricting?</div>
+          <div class="area-states">
+            <div class="area-state" data-state="circulating">circulating</div>
+            <div class="area-state" data-state="mixed">mixed</div>
+            <div class="area-state" data-state="stuck">stuck</div>
+          </div>
+        </div>
+        <div class="area" data-area="purpose">
+          <div class="area-name">Purpose</div>
+          <div class="area-q">Is direction felt, or fabricated?</div>
+          <div class="area-states">
+            <div class="area-state" data-state="circulating">circulating</div>
+            <div class="area-state" data-state="mixed">mixed</div>
+            <div class="area-state" data-state="stuck">stuck</div>
+          </div>
+        </div>
+        <div class="area" data-area="environment">
+          <div class="area-name">Environment</div>
+          <div class="area-q">Does the space support, or suppress?</div>
+          <div class="area-states">
+            <div class="area-state" data-state="circulating">circulating</div>
+            <div class="area-state" data-state="mixed">mixed</div>
+            <div class="area-state" data-state="stuck">stuck</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="map-summary" id="mapSummary">
+        <div class="map-eyebrow">YOUR MAP</div>
+        <p class="map-line" id="mapLine"></p>
+        <div class="map-counts">
+          <span class="c-circ"><strong id="cCirc">0</strong>circulating</span>
+          <span class="c-mix"><strong id="cMix">0</strong>mixed</span>
+          <span class="c-stk"><strong id="cStk">0</strong>stuck</span>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-eyebrow">FROM HERE</div>
+      <h2 class="section-h">Pick a next step that fits.</h2>
+      <p class="section-lead">
+        Free options on the left, deeper work on the right. None require what you don't have.
+      </p>
+      <div class="next-steps">
+        <div class="step-card">
+          <div class="step-icon">📞</div>
+          <div class="step-tag">FREE · LIVE · WEEKLY</div>
+          <h4>The Weekly Call</h4>
+          <p>
+            Free. Live. Every Thursday. Bring your bottleneck, leave with one clear next step. Your first call is open.
+          </p>
+          <a href="/call">Join the call →</a>
+        </div>
+        <div class="step-card featured">
+          <div class="step-icon">📍</div>
+          <div class="step-tag">DIRECT · ONE-ON-ONE</div>
+          <h4>Work with Sunheart</h4>
+          <p>
+            A diagnostic session — one conversation that maps where you are and what's actually blocking circulation. Precise, direct. No pitch follows.
+          </p>
+          <button class="step-btn" id="openLeadForm">Begin a session →</button>
+        </div>
+        <div class="step-card">
+          <div class="step-icon">📚</div>
+          <div class="step-tag">STRUCTURED · COHORT</div>
+          <h4>Coherence Course</h4>
+          <p>
+            With Nicolette Luna. A structured path through the seven areas — lived practice, not theory. Two formats.
+          </p>
+          <a href="#learn">Learn more →</a>
+        </div>
+        <div class="step-card">
+          <div class="step-icon">🏕</div>
+          <div class="step-tag">EMBODIED · RESIDENTIAL</div>
+          <h4>Zen Village Immersion</h4>
+          <p>
+            Costa Rican mountains. Residential immersion. The framework lived as a body, not read as ideas.
+          </p>
+          <a href="https://zenvillagecr.com/inquire">Inquire →</a>
+        </div>
+        <div class="step-card">
+          <div class="step-icon">🎮</div>
+          <div class="step-tag">COLLECTIVE · GAME</div>
+          <h4>Play the Game</h4>
+          <p>
+            Sign the World Peace Agreement, build a Character Card, run a 7-Day proof loop. The personal practice has a collective layer.
+          </p>
+          <a href="/game">Open the Game →</a>
+        </div>
+      </div>
+
+      <!-- Lead form (hidden until "Begin a session" click) -->
+      <div class="lead-form" id="leadForm">
+        <h3>Sit with Sunheart</h3>
+        <p class="lf-sub">
+          One conversation. One honest map. Tell me what's stuck — I'll come back to you within 48 hours.
+        </p>
+        <input type="text" id="leadHoneypot" name="company" style="position:absolute;left:-9999px;" tabindex="-1" autocomplete="off" />
+        <div class="lf-grid">
+          <label class="full"><span>Your name *</span><input type="text" id="leadName" placeholder="What I should call you" /></label>
+          <label><span>Email *</span><input type="email" id="leadEmail" placeholder="you@example.com" /></label>
+          <label><span>Phone (optional)</span><input type="tel" id="leadPhone" placeholder="+1 ..." /></label>
+          <label>
+            <span>Preferred contact</span>
+            <select id="leadContact">
+              <option value="email">Email</option>
+              <option value="phone">Phone</option>
+              <option value="whatsapp">WhatsApp</option>
+              <option value="telegram">Telegram</option>
+              <option value="signal">Signal</option>
+            </select>
+          </label>
+          <label>
+            <span>Timezone (optional)</span>
+            <input type="text" id="leadTz" placeholder="e.g. PT, ET, CET" />
+          </label>
+          <label class="full"><span>What's the bottleneck? Where's circulation stuck? *</span><textarea id="leadBottleneck" rows="5" placeholder="Plain language. Be honest. Three sentences is enough."></textarea></label>
+          <label>
+            <span>Interested in</span>
+            <select id="leadInterest">
+              <option value="session">A diagnostic session</option>
+              <option value="course">The Coherence course</option>
+              <option value="weekly_call">Weekly call</option>
+              <option value="retreat">Zen Village retreat</option>
+              <option value="game">Playing the Game</option>
+              <option value="unsure">Honestly, not sure yet</option>
+            </select>
+          </label>
+        </div>
+        <div class="lf-actions">
+          <button type="button" class="lf-submit" id="leadSubmit">Send to Sunheart →</button>
+          <button type="button" class="lf-cancel" id="leadCancel">Cancel</button>
+        </div>
+        <div class="lf-confirm" id="leadConfirm">
+          <h4>Sent.</h4>
+          <p id="leadConfirmMsg"></p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p class="footer-tagline">No system that extracts can return you to yourself.</p>
+      <p>
+        <a href="/">Home</a> ·
+        <a href="/game">Game</a> ·
+        <a href="/call">Call</a> ·
+        <a href="https://fullpotential.ai">Intelligence</a> ·
+        <a href="/peace">Peace</a> ·
+        <a href="mailto:james@fullpotential.com">Contact</a>
+      </p>
+      <p style="margin-top:14px;opacity:0.6;font-size:12px;">
+        Full Potential · Coherent Champions of CHRIST · CORA Nation
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    // Starfield
+    (function(){
+      const svg = document.getElementById('starfield');
+      if (!svg) return;
+      const w = window.innerWidth;
+      const h = Math.max(window.innerHeight, document.documentElement.scrollHeight);
+      svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+      svg.setAttribute('width', w); svg.setAttribute('height', h);
+      const count = Math.min(120, Math.floor((w * h) / 16000));
+      let stars = '';
+      for (let i = 0; i < count; i++) {
+        const x = Math.random()*w, y = Math.random()*h;
+        const r = Math.random()*1.3 + 0.3, delay = Math.random()*5;
+        stars += `<circle class="star" cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${r.toFixed(1)}" style="animation-delay:${delay.toFixed(1)}s" />`;
+      }
+      svg.innerHTML = stars;
+    })();
+
+    // Self-assessment interaction
+    const sevenAreas = {};
+    document.querySelectorAll('.area-state').forEach(el => {
+      el.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        const area = el.closest('.area').dataset.area;
+        const state = el.dataset.state;
+        // Clear other selections in this area
+        el.parentElement.querySelectorAll('.area-state').forEach(s => s.classList.remove('selected'));
+        el.classList.add('selected');
+        sevenAreas[area] = state;
+        updateMap();
+      });
+    });
+
+    function updateMap() {
+      const total = Object.keys(sevenAreas).length;
+      if (total === 0) {
+        document.getElementById('mapSummary').classList.remove('show');
+        return;
+      }
+      const counts = { circulating: 0, mixed: 0, stuck: 0 };
+      for (const k in sevenAreas) counts[sevenAreas[k]]++;
+      document.getElementById('cCirc').textContent = counts.circulating;
+      document.getElementById('cMix').textContent = counts.mixed;
+      document.getElementById('cStk').textContent = counts.stuck;
+      const line = mapLine(counts, total);
+      document.getElementById('mapLine').textContent = line;
+      document.getElementById('mapSummary').classList.add('show');
+    }
+    function mapLine(c, total) {
+      if (total < 7) return `${total} of 7 areas marked. Continue when you're ready — the more honest the map, the more useful the next step.`;
+      if (c.circulating >= 5) return "Most of life is circulating. The work might be sustaining what's already alive — and bringing one stuck area into rhythm with the others.";
+      if (c.stuck >= 4) return "Most areas read as stuck. That's information, not a verdict. Real change usually starts with one specific repair, not a general overhaul.";
+      if (c.mixed >= 4) return "Most areas read as mixed — partial flow, partial drag. The diagnostic next step is finding what's pulling the system toward stuck vs toward circulating.";
+      return "A real map. Some flow, some friction. The work is precision: which specific bottleneck, addressed first, would unlock the next layer?";
+    }
+
+    // Lead form interactions
+    const leadForm = document.getElementById('leadForm');
+    document.getElementById('openLeadForm')?.addEventListener('click', () => {
+      leadForm.classList.add('show');
+      leadForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setTimeout(() => document.getElementById('leadName')?.focus(), 400);
+    });
+    document.getElementById('leadCancel')?.addEventListener('click', () => {
+      leadForm.classList.remove('show');
+    });
+    document.getElementById('leadSubmit')?.addEventListener('click', async () => {
+      const name = (document.getElementById('leadName').value || '').trim();
+      const email = (document.getElementById('leadEmail').value || '').trim();
+      const bottleneck = (document.getElementById('leadBottleneck').value || '').trim();
+      const phone = (document.getElementById('leadPhone').value || '').trim();
+      const timezone = (document.getElementById('leadTz').value || '').trim();
+      const preferred_contact = document.getElementById('leadContact').value || '';
+      const interest = document.getElementById('leadInterest').value || '';
+      const honeypot = (document.getElementById('leadHoneypot').value || '').trim();
+
+      if (!name) { alert('Please enter your name.'); return; }
+      if (!email || !email.includes('@')) { alert('Please enter a valid email.'); return; }
+      if (bottleneck.length < 5) { alert('Please describe what\\'s stuck — even a few words.'); return; }
+
+      const btn = document.getElementById('leadSubmit');
+      btn.disabled = true; btn.textContent = 'Sending...';
+
+      try {
+        const res = await fetch('/api/champion/lead/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name, email, bottleneck, phone, timezone, preferred_contact, interest,
+            seven_areas: Object.keys(sevenAreas).length > 0 ? sevenAreas : null,
+            company: honeypot,
+          }),
+        });
+        const d = await res.json();
+        if (!res.ok || !d.ok) throw new Error(d.detail || d.message || ('HTTP ' + res.status));
+        // Show confirm, hide form fields
+        document.querySelector('.lf-grid').style.display = 'none';
+        document.querySelector('.lf-actions').style.display = 'none';
+        document.getElementById('leadConfirmMsg').textContent = d.message || 'Sunheart will be in touch within 48 hours.';
+        document.getElementById('leadConfirm').classList.add('show');
+      } catch (e) {
+        btn.disabled = false; btn.textContent = 'Send to Sunheart →';
+        alert('Could not send: ' + e.message);
+      }
+    });
+  </script>
+</body>
+</html>

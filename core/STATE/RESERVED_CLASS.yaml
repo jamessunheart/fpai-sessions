@@ -1,0 +1,212 @@
+{
+  "version": 1,
+  "name": "reserved-class-boundary",
+  "principle": "AI and apprentices may draft, analyze, test, and prepare reversible work. James must bless Reserved-Class moves before action.",
+  "fail_safe": {
+    "default": "escalate",
+    "rule": "If an action is ambiguous, consequential-looking, or asks for final approval/activation, classify it as reserved."
+  },
+  "default_gate": {
+    "stream": "Game",
+    "verbs": ["approve", "reject", "checkpoint"]
+  },
+  "delegable_examples": [
+    "draft a document",
+    "summarize a thread",
+    "run a read-only scan",
+    "propose a lead list",
+    "write tests",
+    "prepare a diff for review",
+    "classify local files without changing them"
+  ],
+  "consequential_signals": [
+    "execute",
+    "activate",
+    "go live",
+    "commit to",
+    "bind",
+    "final",
+    "irreversible",
+    "external",
+    "customer",
+    "client",
+    "partner",
+    "production",
+    "account",
+    "credentials"
+  ],
+  "categories": [
+    {
+      "id": "money_out",
+      "label": "Money out",
+      "description": "Any spend, transfer, withdrawal, position change, or commitment of funds.",
+      "keywords": [
+        "spend",
+        "pay",
+        "purchase",
+        "buy",
+        "order",
+        "transfer",
+        "withdraw",
+        "sell",
+        "swap",
+        "trade",
+        "position",
+        "commit funds",
+        "deposit",
+        "invoice",
+        "subscribe",
+        "subscription",
+        "donate"
+      ],
+      "signals": [
+        "funds leave an account",
+        "market exposure changes",
+        "recurring charge starts",
+        "financial commitment is made"
+      ],
+      "examples": [
+        "transfer SOL to a wallet",
+        "pay a contractor invoice",
+        "buy a SaaS subscription",
+        "open or close a trading position",
+        "send a deposit for a venue"
+      ],
+      "escalation_verbs": ["approve spend", "approve transfer", "choose treasury action"]
+    },
+    {
+      "id": "public_outbound_send",
+      "label": "Public / outbound send",
+      "description": "Anything leaving to a non-James human or to the public world.",
+      "keywords": [
+        "send",
+        "post",
+        "publish",
+        "email",
+        "message",
+        "dm",
+        "text",
+        "tweet",
+        "announce",
+        "broadcast",
+        "submit",
+        "reply to",
+        "outreach"
+      ],
+      "signals": [
+        "non-James human receives communication",
+        "public surface changes",
+        "world-facing statement leaves the system"
+      ],
+      "examples": [
+        "send an outreach email",
+        "post on Telegram",
+        "publish a landing page",
+        "reply to a partner",
+        "submit a public form"
+      ],
+      "escalation_verbs": ["approve send", "approve publish", "choose public voice"]
+    },
+    {
+      "id": "irreversible_legal_people",
+      "label": "Irreversible / legal / people",
+      "description": "Deletes, production deploys, legal/compliance acts, hiring/firing, or relationship-affecting acts.",
+      "keywords": [
+        "delete",
+        "destroy",
+        "archive service",
+        "remove service",
+        "deploy",
+        "production",
+        "prod",
+        "legal",
+        "compliance",
+        "contract",
+        "sign",
+        "hire",
+        "fire",
+        "terminate",
+        "reward",
+        "punish",
+        "ban",
+        "relationship"
+      ],
+      "signals": [
+        "state cannot be easily restored",
+        "legal obligation changes",
+        "person's role or relationship is affected",
+        "production users are affected"
+      ],
+      "examples": [
+        "delete an old service",
+        "deploy the bot to production",
+        "sign a legal document",
+        "hire an assistant",
+        "fire a contractor"
+      ],
+      "escalation_verbs": ["approve irreversible action", "approve legal step", "choose people action"]
+    },
+    {
+      "id": "strategic_positioning",
+      "label": "Strategic positioning",
+      "description": "Offer pricing, brand/positioning, doctrine, or what the business is.",
+      "keywords": [
+        "pricing",
+        "price",
+        "offer",
+        "brand",
+        "positioning",
+        "doctrine",
+        "mission",
+        "business model",
+        "what the business is",
+        "promise",
+        "market",
+        "rebrand"
+      ],
+      "signals": [
+        "changes the offer shape",
+        "changes doctrine or mission",
+        "changes how the world understands the business"
+      ],
+      "examples": [
+        "set Camp Zen pricing",
+        "choose the first cohort offer",
+        "rename the brand",
+        "change the doctrine",
+        "decide what the business is"
+      ],
+      "escalation_verbs": ["choose offer", "approve positioning", "bless doctrine"]
+    },
+    {
+      "id": "final_blessing",
+      "label": "Final blessing",
+      "description": "Approving a consequential diff before merge, activation, deployment, or world-facing use.",
+      "keywords": [
+        "approve",
+        "bless",
+        "merge",
+        "activate",
+        "ship live",
+        "wire live",
+        "final review",
+        "go ahead",
+        "accept diff",
+        "release"
+      ],
+      "signals": [
+        "consequential diff becomes active",
+        "review turns into merge or activation",
+        "gate is closed on James's behalf"
+      ],
+      "examples": [
+        "approve this diff for merge",
+        "merge the PR",
+        "wire the classifier into the live loop",
+        "activate the notifier",
+        "give final blessing"
+      ],
+      "escalation_verbs": ["approve diff", "approve merge", "approve activation"]
+    }
+  ]
+}

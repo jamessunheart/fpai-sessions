@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coherent Retreat · Zen Village · Costa Rica</title>
+<meta name="description" content="A weekly immersive reset in the Chirripó highlands — $2,000 / week, 7 days included. Mon-Fri deep work, Saturday community celebration, Sunday zen out. Stay 1, 2, or 3 weeks.">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Coherent Retreat — Zen Village Costa Rica">
+<meta property="og:description" content="Rolling weekly reset. 7, 14, or 21 days. River, fire, ceremony, deep work, integration. Leave clearer.">
+<meta property="og:url" content="https://zenvillagecr.com/coherent">
+<meta property="og:image" content="https://zenvillagecr.com/images/og-coherent.jpg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Manrope:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F4ECDC;
+  --bg-soft: #ECE1CB;
+  --ink: #1F1A14;
+  --ink-soft: #4A3F32;
+  --moss: #3A4A2E;
+  --moss-soft: #6B7A55;
+  --clay: #B8553A;
+  --gold: #C8924B;
+  --rule: #2A2018;
+  --serif: 'Fraunces', Georgia, serif;
+  --sans: 'Manrope', system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.55;
+  font-weight: 400;
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(184, 85, 58, 0.05) 0%, transparent 45%),
+    radial-gradient(circle at 85% 75%, rgba(58, 74, 46, 0.06) 0%, transparent 45%),
+    radial-gradient(circle at 50% 100%, rgba(200, 146, 75, 0.04) 0%, transparent 50%);
+}
+a { color: inherit; text-decoration: none; }
+.page { max-width: 1180px; margin: 0 auto; padding: 56px 56px 0; }
+.page-bottom { max-width: 1180px; margin: 0 auto; padding: 32px 56px 56px; }
+
+.header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  border-bottom: 1px solid var(--rule); padding-bottom: 20px; margin-bottom: 56px;
+}
+.mark { font-family: var(--serif); font-size: 22px; font-weight: 500; letter-spacing: -0.01em; }
+.mark em { font-style: italic; font-weight: 400; color: var(--moss); }
+.mark a:hover { color: var(--clay); }
+.meta { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-soft); }
+
+.section-label {
+  display: inline-block; font-size: 10px; letter-spacing: 0.28em;
+  text-transform: uppercase; color: var(--clay); font-weight: 700;
+}
+
+/* HERO */
+.hero {
+  display: grid; grid-template-columns: 1.5fr 1fr; gap: 64px;
+  margin-bottom: 64px; align-items: end;
+}
+.hero h1 {
+  font-family: var(--serif); font-size: clamp(48px, 7vw, 96px);
+  line-height: 0.96; font-weight: 300; letter-spacing: -0.025em;
+  margin-top: 14px;
+}
+.hero h1 em { font-style: italic; font-weight: 400; color: var(--moss); }
+.hero-meta {
+  font-family: var(--serif); font-style: italic; font-size: 18px;
+  line-height: 1.45; color: var(--ink-soft); font-weight: 300; padding-bottom: 8px;
+}
+.hero-meta::before {
+  content: ''; display: block; width: 40px; height: 1px;
+  background: var(--clay); margin-bottom: 18px;
+}
+.hero-cta-row { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 28px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 26px; font-family: var(--sans);
+  font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
+  font-weight: 600; cursor: pointer; border: 0;
+  transition: background 0.18s ease, transform 0.15s ease;
+}
+.btn-primary { background: var(--moss); color: var(--bg); }
+.btn-primary:hover { background: var(--ink); }
+.btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--rule); }
+.btn-ghost:hover { background: var(--bg-soft); }
+
+/* WHO */
+.who { margin-bottom: 72px; padding-bottom: 48px; border-bottom: 1px solid rgba(42,32,24,0.18); }
+.who h2 {
+  font-family: var(--serif); font-size: 36px; font-weight: 400;
+  letter-spacing: -0.015em; margin: 10px 0 30px; line-height: 1.05;
+}
+.who h2 em { font-style: italic; color: var(--moss); }
+.who-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+.who-item { border-top: 1px solid var(--ink); padding-top: 16px; }
+.who-item h3 { font-family: var(--serif); font-size: 18px; font-weight: 500; margin-bottom: 6px; }
+.who-item p { font-size: 14px; line-height: 1.55; color: var(--ink-soft); }
+
+/* RHYTHM */
+.rhythm { margin-bottom: 72px; }
+.rhythm-header {
+  display: flex; justify-content: space-between; align-items: end;
+  border-bottom: 1px solid var(--rule); padding-bottom: 16px; margin-bottom: 28px;
+  flex-wrap: wrap; gap: 16px;
+}
+.rhythm-header h2 { font-family: var(--serif); font-size: 36px; font-weight: 400; letter-spacing: -0.015em; }
+.rhythm-note { font-family: var(--serif); font-style: italic; font-size: 13px; color: var(--ink-soft); }
+.rhythm-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.rhythm-card {
+  background: var(--bg-soft); padding: 24px 22px;
+  display: flex; flex-direction: column; gap: 10px;
+  border-left: 2px solid var(--moss);
+}
+.rhythm-card-day {
+  font-family: var(--serif); font-style: italic; font-size: 13px;
+  color: var(--clay); letter-spacing: 0.05em;
+}
+.rhythm-card h3 { font-family: var(--serif); font-size: 20px; font-weight: 500; line-height: 1.2; }
+.rhythm-card ul { list-style: none; font-size: 13.5px; line-height: 1.7; color: var(--ink-soft); }
+.rhythm-card ul li::before { content: '·  '; color: var(--gold); }
+
+/* OPTIONS */
+.options { margin-bottom: 72px; }
+.options-header {
+  display: flex; justify-content: space-between; align-items: end;
+  border-bottom: 1px solid var(--rule); padding-bottom: 16px; margin-bottom: 28px;
+  flex-wrap: wrap; gap: 16px;
+}
+.options-header h2 { font-family: var(--serif); font-size: 36px; font-weight: 400; letter-spacing: -0.015em; }
+.options-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.option-card {
+  background: var(--bg-soft); padding: 32px 28px 28px;
+  display: flex; flex-direction: column; gap: 14px;
+  position: relative;
+}
+.option-card.featured { background: var(--moss); color: var(--bg); }
+.option-card.featured h3, .option-card.featured .option-len { color: var(--bg); }
+.option-card.featured .option-desc { color: rgba(244, 236, 220, 0.85); }
+.option-card.featured .option-tag { background: var(--gold); color: var(--ink); }
+.option-tag {
+  position: absolute; top: 16px; right: 16px;
+  background: var(--clay); color: var(--bg); padding: 4px 10px;
+  font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700;
+}
+.option-len {
+  font-family: var(--serif); font-size: 56px; font-weight: 400;
+  color: var(--moss); letter-spacing: -0.02em; line-height: 1;
+}
+.option-card h3 {
+  font-family: var(--serif); font-size: 22px; font-weight: 500;
+  letter-spacing: -0.005em;
+}
+.option-desc { font-size: 14px; line-height: 1.55; color: var(--ink-soft); }
+
+/* INCLUDED */
+.included { margin-bottom: 72px; padding-bottom: 48px; border-bottom: 1px solid rgba(42,32,24,0.18); }
+.included h2 {
+  font-family: var(--serif); font-size: 36px; font-weight: 400;
+  letter-spacing: -0.015em; margin-bottom: 30px;
+}
+.included-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 36px 56px; }
+.included-col h3 {
+  font-family: var(--serif); font-size: 16px; font-weight: 500;
+  color: var(--moss); margin-bottom: 12px; padding-bottom: 8px;
+  border-bottom: 1px solid rgba(58, 74, 46, 0.3);
+}
+.included-col ul { list-style: none; }
+.included-col li {
+  font-size: 14px; padding: 6px 0;
+  color: var(--ink-soft); line-height: 1.55;
+}
+.included-col li strong { color: var(--ink); font-weight: 600; }
+
+/* CONTRIBUTION */
+.tiers { margin-bottom: 72px; }
+.tiers-header {
+  display: flex; justify-content: space-between; align-items: end;
+  border-bottom: 1px solid var(--rule); padding-bottom: 16px; margin-bottom: 28px;
+  flex-wrap: wrap; gap: 16px;
+}
+.tiers-header h2 { font-family: var(--serif); font-size: 36px; font-weight: 400; letter-spacing: -0.015em; }
+.tiers-note { font-family: var(--serif); font-style: italic; font-size: 13px; color: var(--ink-soft); max-width: 36ch; }
+.tier-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.tier-card {
+  background: var(--bg-soft); padding: 22px 20px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.tier-amt {
+  font-family: var(--serif); font-size: 36px; font-weight: 400;
+  color: var(--moss); letter-spacing: -0.02em; line-height: 1;
+}
+.tier-label { font-family: var(--serif); font-size: 16px; font-weight: 500; margin-top: 4px; }
+.tier-desc { font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; }
+
+/* INQUIRY FORM */
+.inquiry { margin-bottom: 56px; display: grid; grid-template-columns: 1fr 1.3fr; gap: 56px; align-items: start; }
+.inquiry-side h2 {
+  font-family: var(--serif); font-size: 36px; font-weight: 400;
+  letter-spacing: -0.015em; margin: 10px 0 18px; line-height: 1.05;
+}
+.inquiry-side h2 em { font-style: italic; color: var(--moss); }
+.inquiry-side p { font-size: 14.5px; line-height: 1.6; color: var(--ink-soft); margin-bottom: 14px; max-width: 38ch; }
+.form-card { background: var(--bg-soft); padding: 32px 32px 28px; }
+.field { margin-bottom: 16px; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+label {
+  display: block; font-size: 10px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--ink-soft); font-weight: 700; margin-bottom: 6px;
+}
+input, select, textarea {
+  width: 100%; padding: 11px 12px;
+  border: 1px solid rgba(42, 32, 24, 0.22); background: var(--bg);
+  color: var(--ink); font-family: var(--sans); font-size: 14px; border-radius: 0;
+  transition: border-color 0.18s ease;
+}
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--moss); }
+textarea { resize: vertical; min-height: 90px; }
+.honeypot { position: absolute; left: -9999px; opacity: 0; height: 0; width: 0; }
+.form-submit {
+  margin-top: 8px; width: 100%; border: 0;
+  background: var(--moss); color: var(--bg); padding: 14px;
+  font-family: var(--sans); font-size: 12px; letter-spacing: 0.18em;
+  text-transform: uppercase; font-weight: 600; cursor: pointer;
+  transition: background 0.18s ease;
+}
+.form-submit:hover { background: var(--ink); }
+.form-submit:disabled { opacity: 0.5; cursor: wait; }
+.form-error { font-size: 13px; color: var(--clay); margin-top: 10px; }
+
+.success {
+  background: var(--moss); color: var(--bg);
+  padding: 40px 36px; margin-bottom: 56px; display: none;
+}
+.success.show { display: block; }
+.success-label {
+  font-size: 10px; letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--gold); font-weight: 700; margin-bottom: 16px;
+}
+.success h2 {
+  font-family: var(--serif); font-size: clamp(28px, 3vw, 38px);
+  font-weight: 300; font-style: italic; line-height: 1.15;
+  letter-spacing: -0.015em; margin-bottom: 16px;
+}
+.success p { font-size: 15px; opacity: 0.85; line-height: 1.55; }
+
+.footer {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding-top: 24px; border-top: 1px solid var(--rule);
+  font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--ink-soft); flex-wrap: wrap; gap: 16px;
+}
+.footer-tag {
+  font-family: var(--serif); font-style: italic; font-size: 14px;
+  letter-spacing: 0; text-transform: none; color: var(--moss);
+}
+
+@media (max-width: 1000px) {
+  .hero { grid-template-columns: 1fr; gap: 28px; }
+  .who-grid { grid-template-columns: repeat(2, 1fr); }
+  .rhythm-grid, .options-grid { grid-template-columns: 1fr; }
+  .tier-grid { grid-template-columns: repeat(2, 1fr); }
+  .inquiry { grid-template-columns: 1fr; gap: 36px; }
+  .included-grid { grid-template-columns: 1fr; gap: 28px; }
+}
+@media (max-width: 720px) {
+  .page, .page-bottom { padding-left: 24px; padding-right: 24px; }
+  .page { padding-top: 32px; }
+  .who-grid { grid-template-columns: 1fr; }
+  .field-row { grid-template-columns: 1fr; }
+  .form-card { padding: 24px 22px; }
+  .success { padding: 32px 24px; }
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+<header class="header">
+  <div class="mark"><a href="/">Zen <em>Village</em></a></div>
+  <div class="meta">Coherent Retreat · Chirripó, Costa Rica</div>
+</header>
+
+<section class="hero">
+  <div>
+    <span class="section-label">Rolling Weekly Retreat</span>
+    <h1>Come <em>clear</em>.<br>Leave <em>coherent.</em></h1>
+  </div>
+  <div class="hero-meta">
+    $2,000 per week · 7 days included · Mon&ndash;Fri is the focused work, Saturday is community celebration, Sunday is zen out. Stay one week, two, or three. Arrive any Sunday.
+    <div class="hero-cta-row">
+      <a href="#inquire" class="btn btn-primary">Begin application</a>
+      <a href="#rhythm" class="btn btn-ghost">See the rhythm</a>
+    </div>
+  </div>
+</section>
+
+<section class="who">
+  <span class="section-label">Who This Is For</span>
+  <h2>Built for people <em>tired of noise.</em></h2>
+  <div class="who-grid">
+    <div class="who-item">
+      <h3>Founders</h3>
+      <p>Building something real, but starving the part of you that built it. Time to refill.</p>
+    </div>
+    <div class="who-item">
+      <h3>Creators</h3>
+      <p>Making the next thing while losing yourself to the algorithm. Re-find your signal.</p>
+    </div>
+    <div class="who-item">
+      <h3>Couples</h3>
+      <p>Long-haul relationships need the kind of space ordinary travel doesn't provide.</p>
+    </div>
+    <div class="who-item">
+      <h3>High-capacity humans</h3>
+      <p>You hold a lot for a lot of people. Be held back. Be fed. Be quiet for a moment.</p>
+    </div>
+  </div>
+</section>
+
+<section class="rhythm" id="rhythm">
+  <div class="rhythm-header">
+    <div>
+      <span class="section-label">Daily Rhythm</span>
+      <h2>One week. Five textures.</h2>
+    </div>
+    <div class="rhythm-note">Repeats every week · You join the cycle on Sunday</div>
+  </div>
+  <div class="rhythm-grid">
+    <div class="rhythm-card">
+      <span class="rhythm-card-day">— Mon &middot; Tue &middot; Wed &middot; Thu &middot; Fri</span>
+      <h3>The focused container</h3>
+      <ul>
+        <li>Morning movement &amp; meditation</li>
+        <li>1:1 coaching, somatic work, integration</li>
+        <li>Group breathwork, ceremony, council</li>
+        <li>Plant-forward meals from the land</li>
+        <li>River, sauna, hot tub, fire, stars</li>
+      </ul>
+    </div>
+    <div class="rhythm-card">
+      <span class="rhythm-card-day">— Saturday</span>
+      <h3>Community celebration</h3>
+      <ul>
+        <li>"Raise the field" gathering with locals + visiting community</li>
+        <li>Live music, ceremony, ecstatic dance</li>
+        <li>Open kitchen &amp; long table dinner</li>
+        <li>Free day inside the week &mdash; no scheduled work</li>
+        <li>Built-in invitation for friends + family to join</li>
+      </ul>
+    </div>
+    <div class="rhythm-card">
+      <span class="rhythm-card-day">— Sunday</span>
+      <h3>Zen out &amp; integrate</h3>
+      <ul>
+        <li>Slow morning, river, sauna, hammock</li>
+        <li>Optional 1:1 harvest session</li>
+        <li>Sunset council &mdash; what arrived, what stays</li>
+        <li>Soft transition: depart, or roll into next week</li>
+        <li>Free day &mdash; no agenda, just space</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="options">
+  <div class="options-header">
+    <div>
+      <span class="section-label">Length Options</span>
+      <h2>How long do you have?</h2>
+    </div>
+    <div class="rhythm-note">Stay longer, go deeper · Arrival every Sunday</div>
+  </div>
+  <div class="options-grid">
+    <div class="option-card">
+      <span class="option-len">7</span>
+      <h3>One week &middot; Reset</h3>
+      <p class="option-desc">A full cycle of the rhythm. Enough to land, soften, and start hearing yourself again. The minimum dose.</p>
+    </div>
+    <div class="option-card featured">
+      <span class="option-tag">Most chosen</span>
+      <span class="option-len">14</span>
+      <h3>Two weeks &middot; Coherence</h3>
+      <p class="option-desc">A second cycle changes everything. The first week resets. The second week integrates and reshapes how you hold yourself afterward. <strong>12% off the weekly rate.</strong></p>
+    </div>
+    <div class="option-card">
+      <span class="option-len">21</span>
+      <h3>Three weeks &middot; Transformation</h3>
+      <p class="option-desc">A full season change for your nervous system. By the third week, the new pattern is yours. People come back rewired. <strong>20% off the weekly rate.</strong></p>
+    </div>
+  </div>
+</section>
+
+<section class="included">
+  <span class="section-label">What's Included</span>
+  <h2>Everything you need to <em>land</em>.</h2>
+  <div class="included-grid">
+    <div class="included-col">
+      <h3>Place &amp; Body</h3>
+      <ul>
+        <li><strong>Private dwelling</strong> on 45 acres in the Chirripó highlands</li>
+        <li><strong>Three meals a day</strong> — plant-forward, made on site</li>
+        <li><strong>Daily access</strong> to sauna, river, hot tub, trails</li>
+        <li><strong>Quiet, beauty, space</strong> — and zero forced agenda</li>
+      </ul>
+    </div>
+    <div class="included-col">
+      <h3>Practice &amp; Field</h3>
+      <ul>
+        <li><strong>Morning containers</strong> — meditation, movement, breathwork</li>
+        <li><strong>Group ceremony</strong> — fire circles, council, optional plant medicine spaces</li>
+        <li><strong>1:1 sessions</strong> with visiting practitioners as available</li>
+        <li><strong>Integration coaching</strong> — entry, mid-arc, exit</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="tiers">
+  <div class="tiers-header">
+    <div>
+      <span class="section-label">Pricing</span>
+      <h2>$2,000 a week. All seven days.</h2>
+    </div>
+    <div class="tiers-note">One number. Mon-Fri focused work, Saturday community celebration, Sunday zen out &mdash; all included. Stay longer, integrate deeper, save per week.</div>
+  </div>
+  <div class="tier-grid">
+    <div class="tier-card">
+      <span class="tier-amt">$2,000</span>
+      <span class="tier-label">1 week &middot; Reset</span>
+      <span class="tier-desc">$285 / day, all 7 days included. Private dwelling, 3 meals/day, daily containers, 1:1 sessions, river / sauna / fire.</span>
+    </div>
+    <div class="tier-card">
+      <span class="tier-amt">$3,500</span>
+      <span class="tier-label">2 weeks &middot; Coherence</span>
+      <span class="tier-desc">Most chosen. $1,750 / week &mdash; 12% off. Two full cycles. The week that integrates.</span>
+    </div>
+    <div class="tier-card">
+      <span class="tier-amt">$4,800</span>
+      <span class="tier-label">3 weeks &middot; Transformation</span>
+      <span class="tier-desc">$1,600 / week &mdash; 20% off. A full season change. People leave rewired.</span>
+    </div>
+    <div class="tier-card">
+      <span class="tier-amt">Bespoke</span>
+      <span class="tier-label">Couples &middot; Founders</span>
+      <span class="tier-desc">Private container, longer arc, or partner-facilitated work. Tell us what you need.</span>
+    </div>
+  </div>
+  <p style="font-family:var(--serif);font-style:italic;font-size:13px;color:var(--ink-soft);max-width:680px;margin:18px auto 0;text-align:center;line-height:1.6;">
+    The World Peace Gathering and similar gatherings are separate tickets &mdash; but retreaters in residence join free as part of the field.
+    Genuine financial hardship? Reach out. We hold a small number of work-trade and reduced-fee places per cycle.
+  </p>
+</section>
+
+<section class="inquiry" id="inquire">
+  <div class="inquiry-side">
+    <span class="section-label">Begin</span>
+    <h2>Tell us a little. <em>We'll meet you on a call.</em></h2>
+    <p>Every retreat is hand-fitted. We read every inquiry and respond personally within 48 hours.</p>
+    <p>If it's a good fit, we'll set up a short call to talk through arrival, intentions, and the right length for you.</p>
+  </div>
+
+  <form class="form-card" id="coherent-form" novalidate>
+    <div class="field-row">
+      <div class="field">
+        <label for="name">Your name</label>
+        <input id="name" name="name" type="text" required autocomplete="name">
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required autocomplete="email">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="phone">Phone / WhatsApp</label>
+        <input id="phone" name="phone" type="tel" autocomplete="tel">
+      </div>
+      <div class="field">
+        <label for="length">Which length feels right?</label>
+        <select id="length" name="length">
+          <option value="">Not sure yet</option>
+          <option value="1 week ($2,000)">1 week &middot; Reset &mdash; $2,000</option>
+          <option value="2 weeks ($3,500)">2 weeks &middot; Coherence &mdash; $3,500</option>
+          <option value="3 weeks ($4,800)">3 weeks &middot; Transformation &mdash; $4,800</option>
+          <option value="Bespoke / couples / founders">Bespoke / couples / founders</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label for="dates">When do you want to arrive?</label>
+      <input id="dates" name="dates" type="text" placeholder="e.g. mid-June, flexible after July 1">
+    </div>
+    <div class="field">
+      <label for="message">What's drawing you here?</label>
+      <textarea id="message" name="message" rows="4" placeholder="A line or a paragraph — whatever feels true."></textarea>
+    </div>
+    <input class="honeypot" id="website" name="website" type="text" tabindex="-1" autocomplete="off">
+    <button type="submit" class="form-submit" id="submit-btn">Begin application</button>
+    <div class="form-error" id="form-error" style="display:none"></div>
+  </form>
+</section>
+
+<section class="success" id="success">
+  <div class="success-label">Received with care</div>
+  <h2>We'll be in touch <em>within 48 hours.</em></h2>
+  <p>If you'd like to keep exploring while you wait, you can <a href="/host" style="color:var(--gold);border-bottom:1px solid rgba(200,146,75,0.4);">read about hosting a retreat</a>, <a href="/events" style="color:var(--gold);border-bottom:1px solid rgba(200,146,75,0.4);">see upcoming events</a>, or <a href="/" style="color:var(--gold);border-bottom:1px solid rgba(200,146,75,0.4);">return to the village</a>.</p>
+</section>
+
+</div>
+
+<div class="page-bottom">
+<footer class="footer">
+  <span><a href="/">← Zen Village</a></span>
+  <span class="footer-tag">River. Forest. Reset. Coherence.</span>
+  <span><a href="https://wa.me/50670945764">WhatsApp us</a></span>
+</footer>
+</div>
+
+<script>
+function getCookie(name) {
+  const m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+  return m ? decodeURIComponent(m[1]) : '';
+}
+const $ = (s) => document.querySelector(s);
+
+$('#coherent-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = $('#submit-btn');
+  const errBox = $('#form-error');
+  errBox.style.display = 'none';
+  const f = e.target;
+  if (f.website.value) return; // honeypot
+  const lengthVal = f.length.value;
+  const dates = f.dates.value.trim();
+  const messageBits = [];
+  if (lengthVal) messageBits.push('Length interest: ' + lengthVal);
+  if (f.message.value.trim()) messageBits.push(f.message.value.trim());
+  const data = {
+    name: f.name.value.trim(),
+    email: f.email.value.trim(),
+    phone: f.phone.value.trim(),
+    inquiry_type: 'Coherent Retreat',
+    dates: dates,
+    message: messageBits.join('\n\n'),
+    partner_code: getCookie('zv_ref') || ''
+  };
+  if (!data.name || !data.email) {
+    errBox.textContent = 'Please add your name and email.';
+    errBox.style.display = 'block';
+    return;
+  }
+  btn.disabled = true; btn.textContent = 'Sending…';
+  try {
+    const r = await fetch('/api/inquiries/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const json = await r.json();
+    if (!r.ok || json.success === false) throw new Error(json.detail || json.message || 'Could not submit');
+    document.getElementById('inquire').style.display = 'none';
+    document.getElementById('success').classList.add('show');
+    document.getElementById('success').scrollIntoView({ behavior: 'smooth' });
+  } catch(err) {
+    btn.disabled = false; btn.textContent = 'Begin application';
+    errBox.textContent = err.message + '. Or WhatsApp us at +506 7094 5764.';
+    errBox.style.display = 'block';
+  }
+});
+</script>
+
+</body>
+</html>

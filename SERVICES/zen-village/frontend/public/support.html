@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Support the Field · Zen Village</title>
+<meta name="description" content="Support Zen Village without attending. Donate cash or crypto, or grant Zen Credits to keep the river, fire, and field alive for those who need it most.">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Support Zen Village">
+<meta property="og:description" content="Keep the river, the fire, and the field alive. Donate without attending — cash, crypto, or Zen Credits granted to those who need them most.">
+<meta property="og:url" content="https://zenvillagecr.com/support">
+<meta property="og:image" content="https://zenvillagecr.com/images/og-support.jpg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Manrope:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F4ECDC;
+  --bg-soft: #ECE1CB;
+  --ink: #1F1A14;
+  --ink-soft: #4A3F32;
+  --moss: #3A4A2E;
+  --moss-soft: #6B7A55;
+  --clay: #B8553A;
+  --gold: #C8924B;
+  --rule: #2A2018;
+  --serif: 'Fraunces', Georgia, serif;
+  --sans: 'Manrope', system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.55;
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(184, 85, 58, 0.05) 0%, transparent 45%),
+    radial-gradient(circle at 85% 75%, rgba(58, 74, 46, 0.06) 0%, transparent 45%);
+}
+a { color: inherit; text-decoration: none; }
+.page { max-width: 1100px; margin: 0 auto; padding: 56px 56px 0; }
+.page-bottom { max-width: 1100px; margin: 0 auto; padding: 32px 56px 56px; }
+
+.header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  border-bottom: 1px solid var(--rule); padding-bottom: 20px; margin-bottom: 56px;
+}
+.mark { font-family: var(--serif); font-size: 22px; font-weight: 500; }
+.mark em { font-style: italic; font-weight: 400; color: var(--moss); }
+.meta { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-soft); }
+
+.section-label {
+  display: inline-block; font-size: 10px; letter-spacing: 0.28em;
+  text-transform: uppercase; color: var(--clay); font-weight: 700;
+}
+
+.hero { display: grid; grid-template-columns: 1.4fr 1fr; gap: 64px; margin-bottom: 56px; align-items: end; }
+.hero h1 {
+  font-family: var(--serif); font-size: clamp(48px, 6vw, 80px);
+  line-height: 0.96; font-weight: 300; letter-spacing: -0.025em; margin-top: 14px;
+}
+.hero h1 em { font-style: italic; font-weight: 400; color: var(--moss); }
+.hero-meta {
+  font-family: var(--serif); font-style: italic; font-size: 18px;
+  line-height: 1.45; color: var(--ink-soft); font-weight: 300; padding-bottom: 8px;
+}
+.hero-meta::before {
+  content: ''; display: block; width: 40px; height: 1px;
+  background: var(--clay); margin-bottom: 18px;
+}
+
+/* WHY */
+.why { margin-bottom: 64px; padding-bottom: 48px; border-bottom: 1px solid rgba(42,32,24,0.18); }
+.why h2 {
+  font-family: var(--serif); font-size: 36px; font-weight: 400;
+  letter-spacing: -0.015em; margin: 10px 0 24px; line-height: 1.05;
+}
+.why h2 em { font-style: italic; color: var(--moss); }
+.why p {
+  font-size: 16px; line-height: 1.65; color: var(--ink-soft);
+  max-width: 64ch; margin-bottom: 14px;
+}
+.why p strong { color: var(--ink); font-weight: 600; }
+
+/* TIERS */
+.tiers { margin-bottom: 56px; }
+.tiers-header {
+  display: flex; justify-content: space-between; align-items: end;
+  border-bottom: 1px solid var(--rule); padding-bottom: 16px; margin-bottom: 28px;
+  flex-wrap: wrap; gap: 16px;
+}
+.tiers-header h2 { font-family: var(--serif); font-size: 36px; font-weight: 400; letter-spacing: -0.015em; }
+.tiers-note { font-family: var(--serif); font-style: italic; font-size: 13px; color: var(--ink-soft); }
+.tier-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.tier-card {
+  background: var(--bg-soft); padding: 26px 22px;
+  display: flex; flex-direction: column; gap: 8px;
+  cursor: pointer; transition: transform 0.18s ease, background 0.18s ease;
+  border: 2px solid transparent;
+}
+.tier-card:hover { transform: translateY(-3px); background: var(--bg); border-color: var(--moss-soft); }
+.tier-card.selected { background: var(--moss); color: var(--bg); border-color: var(--gold); }
+.tier-card.selected .tier-amt { color: var(--gold); }
+.tier-card.selected .tier-desc { color: rgba(244, 236, 220, 0.85); }
+.tier-amt {
+  font-family: var(--serif); font-size: 42px; font-weight: 400;
+  color: var(--moss); letter-spacing: -0.02em; line-height: 1;
+}
+.tier-label {
+  font-family: var(--serif); font-size: 17px; font-weight: 500; margin-top: 4px;
+}
+.tier-desc { font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+
+/* METHODS */
+.methods { margin-bottom: 56px; }
+.methods-header {
+  display: flex; justify-content: space-between; align-items: end;
+  border-bottom: 1px solid var(--rule); padding-bottom: 16px; margin-bottom: 28px;
+}
+.methods-header h2 { font-family: var(--serif); font-size: 36px; font-weight: 400; letter-spacing: -0.015em; }
+.methods-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.method-card {
+  background: var(--bg-soft); padding: 22px 20px;
+  display: flex; flex-direction: column; gap: 6px;
+  border-left: 2px solid var(--moss);
+}
+.method-card h3 {
+  font-family: var(--serif); font-size: 17px; font-weight: 500;
+  margin-bottom: 4px;
+}
+.method-card .addr {
+  font-family: 'Manrope', monospace; font-size: 12px;
+  color: var(--ink-soft); overflow-wrap: anywhere; line-height: 1.5;
+  background: var(--bg); padding: 8px 10px; margin-top: 6px;
+  border: 1px dashed rgba(42,32,24,0.2);
+}
+.method-card .addr-label {
+  font-size: 10px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--clay); font-weight: 700;
+  margin-top: 8px;
+}
+.copy-btn {
+  margin-top: 8px; align-self: flex-start;
+  background: var(--moss); color: var(--bg); border: 0;
+  padding: 6px 12px; font-size: 10px; letter-spacing: 0.18em;
+  text-transform: uppercase; font-weight: 600; cursor: pointer;
+  transition: background 0.18s ease;
+}
+.copy-btn:hover { background: var(--ink); }
+.copy-btn.copied { background: var(--clay); }
+
+/* CONFIRM FORM */
+.confirm { margin-bottom: 56px; display: grid; grid-template-columns: 1fr 1.3fr; gap: 56px; align-items: start; }
+.confirm-side h2 {
+  font-family: var(--serif); font-size: 36px; font-weight: 400;
+  letter-spacing: -0.015em; margin: 10px 0 18px; line-height: 1.05;
+}
+.confirm-side h2 em { font-style: italic; color: var(--moss); }
+.confirm-side p { font-size: 14.5px; line-height: 1.6; color: var(--ink-soft); margin-bottom: 14px; max-width: 38ch; }
+.form-card { background: var(--bg-soft); padding: 32px 32px 28px; }
+.field { margin-bottom: 16px; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+label {
+  display: block; font-size: 10px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--ink-soft); font-weight: 700; margin-bottom: 6px;
+}
+input, select, textarea {
+  width: 100%; padding: 11px 12px;
+  border: 1px solid rgba(42, 32, 24, 0.22); background: var(--bg);
+  color: var(--ink); font-family: var(--sans); font-size: 14px; border-radius: 0;
+}
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--moss); }
+textarea { resize: vertical; min-height: 80px; }
+.honeypot { position: absolute; left: -9999px; opacity: 0; height: 0; width: 0; }
+.form-submit {
+  margin-top: 8px; width: 100%; border: 0;
+  background: var(--moss); color: var(--bg); padding: 14px;
+  font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
+  font-weight: 600; cursor: pointer; transition: background 0.18s ease;
+}
+.form-submit:hover { background: var(--ink); }
+.form-submit:disabled { opacity: 0.5; cursor: wait; }
+.form-error { font-size: 13px; color: var(--clay); margin-top: 10px; }
+.form-help { font-size: 12px; color: var(--ink-soft); margin-top: 8px; font-style: italic; font-family: var(--serif); }
+
+.success {
+  background: var(--moss); color: var(--bg);
+  padding: 40px 36px; margin-bottom: 56px; display: none;
+}
+.success.show { display: block; }
+.success-label {
+  font-size: 10px; letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--gold); font-weight: 700; margin-bottom: 16px;
+}
+.success h2 {
+  font-family: var(--serif); font-size: clamp(28px, 3vw, 38px);
+  font-weight: 300; font-style: italic; line-height: 1.15;
+  margin-bottom: 16px;
+}
+.success p { font-size: 15px; opacity: 0.9; line-height: 1.55; }
+
+.footer {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding-top: 24px; border-top: 1px solid var(--rule);
+  font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--ink-soft); flex-wrap: wrap; gap: 16px;
+}
+.footer-tag {
+  font-family: var(--serif); font-style: italic; font-size: 14px;
+  letter-spacing: 0; text-transform: none; color: var(--moss);
+}
+
+@media (max-width: 1000px) {
+  .hero { grid-template-columns: 1fr; gap: 24px; }
+  .tier-grid { grid-template-columns: repeat(2, 1fr); }
+  .methods-grid { grid-template-columns: 1fr; }
+  .confirm { grid-template-columns: 1fr; gap: 36px; }
+}
+@media (max-width: 600px) {
+  .page, .page-bottom { padding-left: 24px; padding-right: 24px; }
+  .page { padding-top: 32px; }
+  .tier-grid { grid-template-columns: 1fr; }
+  .field-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+<header class="header">
+  <div class="mark"><a href="/">Zen <em>Village</em></a></div>
+  <div class="meta">Support · Chirripó, Costa Rica</div>
+</header>
+
+<section class="hero">
+  <div>
+    <span class="section-label">Donate Without Attending</span>
+    <h1>Keep the <em>field</em> alive.</h1>
+  </div>
+  <div class="hero-meta">
+    Some people support Zen Village without ever stepping foot here. They keep the river running, the fire burning, and the door open for someone who couldn't otherwise come. This is for them.
+  </div>
+</section>
+
+<section class="why">
+  <span class="section-label">Why It Matters</span>
+  <h2>Where your <em>support</em> lands.</h2>
+  <p><strong>Land stewardship.</strong> 45 acres of regenerative care: trails, food forest, river edges, sauna, the gathering hall. The fire keeps burning because someone tended it.</p>
+  <p><strong>Scholarships &amp; Zen Credits.</strong> Every donation seeds Zen Credits granted to people who can't otherwise attend retreats and gatherings. You quietly bring someone to the river.</p>
+  <p><strong>The work itself.</strong> Open-source rituals, integration tools, recordings, and Coherent Retreat curriculum that other communities can borrow. We share what works.</p>
+  <p><strong>The ones holding it.</strong> Practitioners, fire-keepers, kitchen, the village team — paid as humans, not gigs.</p>
+</section>
+
+<section class="tiers">
+  <div class="tiers-header">
+    <div>
+      <span class="section-label">Suggested Contribution</span>
+      <h2>Pick what feels true.</h2>
+    </div>
+    <div class="tiers-note">Any amount welcome · Pick a tier or write your own</div>
+  </div>
+  <div class="tier-grid" id="tier-grid">
+    <div class="tier-card" data-amount="25"><span class="tier-amt">$25</span><span class="tier-label">Heart</span><span class="tier-desc">A meal at the table. A small thanks. A hand on the field.</span></div>
+    <div class="tier-card" data-amount="100"><span class="tier-amt">$100</span><span class="tier-label">Gratitude</span><span class="tier-desc">A day of stewardship. One person on a scholarship hour.</span></div>
+    <div class="tier-card" data-amount="500"><span class="tier-amt">$500</span><span class="tier-label">Joy</span><span class="tier-desc">A ceremony seeded. Multiple Zen Credits granted to those who need it.</span></div>
+    <div class="tier-card" data-amount="2500"><span class="tier-amt">$2.5k+</span><span class="tier-label">Abundance</span><span class="tier-desc">A whole gathering held. A scholarship retreat for one person.</span></div>
+  </div>
+</section>
+
+<section class="methods">
+  <div class="methods-header">
+    <div>
+      <span class="section-label">How to Send</span>
+      <h2>Pick your channel</h2>
+    </div>
+  </div>
+  <div class="methods-grid">
+    <div class="method-card">
+      <h3>PayPal · Venmo</h3>
+      <span class="addr-label">PayPal</span>
+      <div class="addr">james@fullpotential.com</div>
+      <button class="copy-btn" data-copy="james@fullpotential.com">Copy</button>
+      <span class="addr-label">Venmo</span>
+      <div class="addr">@James-Stinson-65</div>
+      <button class="copy-btn" data-copy="@James-Stinson-65">Copy</button>
+    </div>
+    <div class="method-card">
+      <h3>Crypto</h3>
+      <span class="addr-label">Bitcoin (BTC)</span>
+      <div class="addr">13tXYGWCZWgPoZ8WZXi7vTt2kwax2ekpz7</div>
+      <button class="copy-btn" data-copy="13tXYGWCZWgPoZ8WZXi7vTt2kwax2ekpz7">Copy</button>
+      <span class="addr-label">Solana (SOL)</span>
+      <div class="addr">9YfypYoQZPj5L33tFTR5Ek4LgJUTSyx8JskGehyP6tsb</div>
+      <button class="copy-btn" data-copy="9YfypYoQZPj5L33tFTR5Ek4LgJUTSyx8JskGehyP6tsb">Copy</button>
+      <span class="addr-label">USDT (Ethereum)</span>
+      <div class="addr">0x2718e06abefa37947c7ea63c8746e4f14777aacb</div>
+      <button class="copy-btn" data-copy="0x2718e06abefa37947c7ea63c8746e4f14777aacb">Copy</button>
+    </div>
+    <div class="method-card">
+      <h3>Bank · Other</h3>
+      <span class="addr-label">Wire / SWIFT</span>
+      <div class="addr">Reach out — we'll send details for your country.</div>
+      <span class="addr-label">In person</span>
+      <div class="addr">Bring it when you visit. Cash, food, materials, time — all welcome.</div>
+      <span class="addr-label">WhatsApp</span>
+      <div class="addr">+506 7094 5764</div>
+      <button class="copy-btn" data-copy="+50670945764">Copy</button>
+    </div>
+  </div>
+</section>
+
+<section class="confirm" id="confirm">
+  <div class="confirm-side">
+    <span class="section-label">Tell us so we can thank you</span>
+    <h2>Optional but <em>appreciated.</em></h2>
+    <p>Send through any channel above, then drop us a note here so we can thank you, mark the contribution, and (if you want) issue Zen Credits or grant them on someone else's behalf.</p>
+    <p>You don't need to confirm anything to donate — but it makes our gratitude real and your gift visible.</p>
+  </div>
+
+  <form class="form-card" id="support-form" novalidate>
+    <div class="field-row">
+      <div class="field">
+        <label for="name">Your name</label>
+        <input id="name" name="name" type="text" required autocomplete="name">
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required autocomplete="email">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="amount">Amount sent (USD)</label>
+        <input id="amount" name="amount" type="text" placeholder="e.g. $100" inputmode="decimal">
+      </div>
+      <div class="field">
+        <label for="payment_method">How you sent</label>
+        <select id="payment_method" name="payment_method">
+          <option value="">Select…</option>
+          <option value="paypal">PayPal</option>
+          <option value="venmo">Venmo</option>
+          <option value="btc">Bitcoin</option>
+          <option value="sol">Solana</option>
+          <option value="usdt_eth">USDT</option>
+          <option value="bank_transfer">Bank transfer</option>
+          <option value="other">Other / cash</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label for="grant_to">Grant Zen Credits to someone else? (optional)</label>
+      <input id="grant_to" name="grant_to" type="text" placeholder="Their email or name — we'll route it">
+    </div>
+    <div class="field">
+      <label for="message">A note (optional)</label>
+      <textarea id="message" name="message" rows="3" placeholder="What this is in support of, how you'd like to be acknowledged, or just hello."></textarea>
+    </div>
+    <input class="honeypot" id="website" name="website" type="text" tabindex="-1" autocomplete="off">
+    <button type="submit" class="form-submit" id="submit-btn">Send confirmation</button>
+    <p class="form-help">We'll write back within a few days with a personal thanks.</p>
+    <div class="form-error" id="form-error" style="display:none"></div>
+  </form>
+</section>
+
+<section class="success" id="success">
+  <div class="success-label">Received with gratitude</div>
+  <h2>Thank you, <em>truly.</em></h2>
+  <p>Your note is in. We'll match it to your transfer and write back personally within a few days. The field is held by people like you.</p>
+</section>
+
+</div>
+
+<div class="page-bottom">
+<footer class="footer">
+  <span><a href="/">← Zen Village</a></span>
+  <span class="footer-tag">River. Fire. Field. Held by you.</span>
+  <span><a href="/coherent">Come on retreat →</a></span>
+</footer>
+</div>
+
+<script>
+function getCookie(name) {
+  const m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+  return m ? decodeURIComponent(m[1]) : '';
+}
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => document.querySelectorAll(s);
+
+(function () {
+  try {
+    var ref = getCookie('zv_ref');
+    if (!ref) {
+      var url = new URL(window.location.href);
+      ref = (url.searchParams.get('ref') || '').trim();
+    }
+    if (!ref) return;
+    document.querySelectorAll('a').forEach(function (a) {
+      var href = a.getAttribute('href');
+      if (!href) return;
+      try {
+        var u = new URL(href, window.location.origin);
+        if (u.host === window.location.host && !u.searchParams.has('ref')) {
+          u.searchParams.set('ref', ref);
+          a.setAttribute('href', u.pathname + u.search + (u.hash || ''));
+        }
+      } catch (e) {}
+    });
+  } catch (e) {}
+})();
+
+let selectedAmount = '';
+$$('.tier-card').forEach(card => {
+  card.addEventListener('click', () => {
+    $$('.tier-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    selectedAmount = card.dataset.amount;
+    $('#amount').value = '$' + selectedAmount;
+  });
+});
+
+$$('.copy-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    navigator.clipboard.writeText(btn.dataset.copy).then(() => {
+      const orig = btn.textContent;
+      btn.classList.add('copied');
+      btn.textContent = 'Copied';
+      setTimeout(() => { btn.classList.remove('copied'); btn.textContent = orig; }, 1600);
+    });
+  });
+});
+
+$('#support-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = $('#submit-btn');
+  const errBox = $('#form-error');
+  errBox.style.display = 'none';
+  const f = e.target;
+  if (f.website.value) return;
+  const messageBits = [];
+  if (f.amount.value.trim()) messageBits.push('Amount: ' + f.amount.value.trim());
+  if (f.grant_to.value.trim()) messageBits.push('Grant credits to: ' + f.grant_to.value.trim());
+  if (f.message.value.trim()) messageBits.push(f.message.value.trim());
+  const data = {
+    name: f.name.value.trim(),
+    email: f.email.value.trim(),
+    inquiry_type: 'Support',
+    payment_method: f.payment_method.value,
+    message: messageBits.join('\n\n'),
+    partner_code: getCookie('zv_ref') || ''
+  };
+  if (!data.name || !data.email) {
+    errBox.textContent = 'Please add your name and email so we can thank you.';
+    errBox.style.display = 'block';
+    return;
+  }
+  btn.disabled = true; btn.textContent = 'Sending…';
+  try {
+    const r = await fetch('/api/inquiries/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const json = await r.json();
+    if (!r.ok || json.success === false) throw new Error(json.detail || json.message || 'Could not submit');
+    document.getElementById('confirm').style.display = 'none';
+    document.getElementById('success').classList.add('show');
+    document.getElementById('success').scrollIntoView({ behavior: 'smooth' });
+  } catch(err) {
+    btn.disabled = false; btn.textContent = 'Send confirmation';
+    errBox.textContent = err.message + '. Or WhatsApp us at +506 7094 5764.';
+    errBox.style.display = 'block';
+  }
+});
+</script>
+
+</body>
+</html>

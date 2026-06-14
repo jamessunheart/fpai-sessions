@@ -1,0 +1,25 @@
+# FastAPI
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# Pydantic
+pydantic==2.5.0
+pydantic-settings==2.1.0
+
+# Database
+sqlalchemy==2.0.23
+asyncpg==0.29.0
+
+# Redis (for caching)
+redis==5.0.1
+# aioredis==2.0.1 (optional alternative)
+
+# HTTP client for service integration
+httpx==0.25.2
+
+# Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+
+# Utilities
+python-dotenv==1.0.0

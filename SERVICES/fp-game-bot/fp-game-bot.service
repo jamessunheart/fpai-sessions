@@ -1,0 +1,16 @@
+[Unit]
+Description=Full Potential Game — @fullpotentialgamebot Telegram worker
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/fpai/services/fp-game-bot
+EnvironmentFile=/etc/fp-game-bot/fp-game-bot.env
+ExecStart=/opt/fpai/services/fp-game-bot/.venv/bin/python main.py
+Restart=on-failure
+RestartSec=5
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target

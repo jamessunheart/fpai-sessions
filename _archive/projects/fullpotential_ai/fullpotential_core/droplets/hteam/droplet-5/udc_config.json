@@ -1,0 +1,23 @@
+{
+  "droplet": {
+    "id": 5,
+    "name": "Full Potential Dashboard",
+    "steward": "Haythem",
+    "version": "1.0.0"
+  },
+  "registry_v2": {
+    "url": "https://registry-v2.fullpotential.ai",
+    "auto_register": true,
+    "purpose": "JWT authentication and droplet discovery"
+  },
+  "orchestrator": {
+    "url": "https://orchestrator.fullpotential.ai",
+    "heartbeat_interval": 60,
+    "purpose": "Health monitoring and coordination"
+  },
+  "security": {
+    "jwt_issuer": "registry-v2.fullpotential.ai",
+    "jwt_audience": "fullpotential.droplets",
+    "require_auth": true
+  }
+}

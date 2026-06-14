@@ -1,0 +1,11 @@
+# Instrument Rack — model routing (Decision d002 → d003, James 2026-06-14)
+# "yes to default model routing"
+schema: instrument-rack.v1
+routes:
+  hard_reasoning:   { model: claude-opus-4-8,  also: [claude-fable-5], why: "deep/novel reasoning, architecture, long-horizon" }
+  routine:          { model: claude-sonnet-4-6, why: "everyday chat, drafting, summarization" }
+  builds:           { engine: codex,            why: "code generation in isolated worktrees ($0 marginal, ChatGPT Max plan)" }
+  cheap_classify:   { model: claude-haiku-4-5,  why: "classification, routing, cheap high-volume calls" }
+defaults:
+  fallback: claude-sonnet-4-6
+overridable: true   # James keeps veto; edit this file to adjust

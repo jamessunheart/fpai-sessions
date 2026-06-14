@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apprentice Onboarding – Full Potential AI</title>
+  <style>
+    :root {
+      --bg: radial-gradient(circle at top, #0f172a, #020617 70%);
+      --panel: rgba(15, 23, 42, 0.92);
+      --panel-elevated: rgba(15, 23, 42, 0.97);
+      --border: rgba(255, 255, 255, 0.12);
+      --border-strong: rgba(255, 255, 255, 0.24);
+      --text: #cbd5f5;
+      --text-muted: #94a3b8;
+      --accent: #fbbf24;
+      --blue: #38bdf8;
+      --green: #22c55e;
+      --purple: #a78bfa;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Space Grotesk', 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: #f8fafc;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 3rem 1.5rem;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    
+    /* Header */
+    .hero {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--blue);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+    .status-pill::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+      letter-spacing: 0.02em;
+      line-height: 1.1;
+    }
+    h1 .highlight {
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .lead {
+      font-size: 1.25rem;
+      color: var(--text);
+      max-width: 700px;
+      margin: 0 auto 2.5rem;
+    }
+    
+    /* CTA Buttons */
+    .cta-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.9rem 1.8rem;
+      border-radius: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      font-size: 1.05rem;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+      color: white;
+      box-shadow: 0 4px 20px rgba(14, 165, 233, 0.3);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(14, 165, 233, 0.4);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--blue);
+      border: 1px solid var(--border-strong);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.35);
+    }
+    
+    /* Timeline */
+    .timeline {
+      position: relative;
+      margin: 4rem 0;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 40px;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg, var(--blue), var(--purple));
+      opacity: 0.3;
+    }
+    .timeline-item {
+      position: relative;
+      padding-left: 100px;
+      margin-bottom: 3rem;
+    }
+    .timeline-number {
+      position: absolute;
+      left: 16px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.3rem;
+      box-shadow: 0 4px 15px rgba(14, 165, 233, 0.4);
+    }
+    .timeline-card {
+      background: var(--panel-elevated);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 10px 40px rgba(2, 6, 23, 0.5);
+    }
+    .timeline-card h2 {
+      font-size: 1.8rem;
+      margin-bottom: 0.75rem;
+      color: var(--accent);
+    }
+    .timeline-card h3 {
+      font-size: 1.2rem;
+      margin: 1.5rem 0 0.75rem;
+      color: var(--blue);
+    }
+    .timeline-card p {
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+    .timeline-card ul {
+      list-style: none;
+      margin: 0.75rem 0;
+    }
+    .timeline-card li {
+      padding: 0.5rem 0 0.5rem 1.8rem;
+      position: relative;
+      color: var(--text);
+    }
+    .timeline-card li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--blue);
+      font-weight: 700;
+    }
+    
+    /* Stats Bar */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin: 3rem 0;
+    }
+    .stat-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.25rem;
+    }
+    .stat-label {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    /* Requirements */
+    .requirements {
+      background: var(--panel-elevated);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2.5rem;
+      margin: 3rem 0;
+    }
+    .requirements h2 {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      color: var(--accent);
+    }
+    .req-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+    .req-item {
+      display: flex;
+      gap: 1rem;
+      align-items: start;
+    }
+    .req-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(56, 189, 248, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .req-content h4 {
+      color: var(--blue);
+      margin-bottom: 0.25rem;
+    }
+    .req-content p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+    
+    /* Footer CTA */
+    .footer-cta {
+      text-align: center;
+      margin: 5rem 0 2rem;
+      padding: 3rem;
+      background: var(--panel-elevated);
+      border: 1px solid var(--border-strong);
+      border-radius: 24px;
+      box-shadow: 0 15px 50px rgba(14, 165, 233, 0.15);
+    }
+    .footer-cta h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    .footer-cta p {
+      font-size: 1.15rem;
+      color: var(--text);
+      margin-bottom: 2rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    /* Back Link */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--blue);
+      text-decoration: none;
+      margin-bottom: 2rem;
+      font-weight: 500;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      h1 { font-size: 2.5rem; }
+      .timeline::before { left: 25px; }
+      .timeline-number {
+        left: 0;
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+      }
+      .timeline-item { padding-left: 70px; }
+      .stats { grid-template-columns: 1fr; }
+    }
+    
+    code {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 0.15rem 0.5rem;
+      border-radius: 6px;
+      font-family: 'Monaco', 'Courier New', monospace;
+      font-size: 0.9em;
+      color: var(--accent);
+    }
+    
+    a { color: var(--blue); }
+    a:hover { text-decoration: underline; }
+    
+    strong { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-link">← Back to Home</a>
+    
+    <div class="hero">
+      <div class="status-pill">Apprentice Program · Open</div>
+      <h1>Build the Future with <span class="highlight">AI & Code</span></h1>
+      <p class="lead">
+        Learn to ship production services in 2–3 hours using AI. 
+        No experience? No problem. Follow the path, claim missions, get paid.
+      </p>
+      <div class="cta-group">
+        <a href="https://github.com/fullpotential-ai/starter-kit" class="btn btn-primary" target="_blank" rel="noopener">
+          📖 View Starter Kit
+        </a>
+        <a href="/missions" class="btn btn-secondary">
+          🎯 Browse Missions
+        </a>
+        <a href="/services/harvester" class="btn btn-secondary">
+          📤 Submit Your Work
+        </a>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-number">2–3h</div>
+        <div class="stat-label">Per Service</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">$40+</div>
+        <div class="stat-label">Per Mission</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">100%</div>
+        <div class="stat-label">Remote</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">AI-First</div>
+        <div class="stat-label">Build Method</div>
+      </div>
+    </div>
+
+    <div class="timeline">
+      <!-- STEP 1 -->
+      <div class="timeline-item">
+        <div class="timeline-number">1</div>
+        <div class="timeline-card">
+          <h2>📚 Training – Learn the Flow</h2>
+          <p><strong>Time:</strong> 2–3 hours | <strong>Goal:</strong> Ship your first working service</p>
+          
+          <h3>Start with the Starter Kit</h3>
+          <p>
+            Open the 
+            <a href="https://github.com/fullpotential-ai/starter-kit" target="_blank" rel="noopener">starter-kit repository</a>
+            and read <code>START_HERE.md</code>. It walks you through:
+          </p>
+          <ul>
+            <li>Copying the FastAPI template</li>
+            <li>Setting up your environment (Python, Docker, AI tools)</li>
+            <li>Using AI assistants (Gemini, Cursor, Claude, ChatGPT)</li>
+            <li>The 3–5 hour mission → production timeline</li>
+          </ul>
+
+          <h3>Core Standards (Optional Deep Dive)</h3>
+          <p>Want to understand the system architecture? Read these in the starter kit:</p>
+          <ul>
+            <li><code>docs/UDC_COMPLIANCE.md</code> – 5 required endpoints every service must implement</li>
+            <li><code>docs/SERVICE_STANDARDS.md</code> – Coding standards and best practices</li>
+            <li><code>docs/TECH_STACK.md</code> – Allowed technologies (Python, FastAPI, Docker)</li>
+            <li><code>docs/SECURITY_REQUIREMENTS.md</code> – Security rules and patterns</li>
+          </ul>
+
+          <h3>Quick Reference</h3>
+          <p>
+            See <code>AGGRESSIVE_TIMELINE.md</code> for an hour-by-hour breakdown of how to ship fast.
+          </p>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="timeline-item">
+        <div class="timeline-number">2</div>
+        <div class="timeline-card">
+          <h2>🎯 Missions – Pick Your Spec</h2>
+          <p><strong>Goal:</strong> Choose a real service to build</p>
+          
+          <p>
+            Visit <a href="/missions" target="_blank">fullpotential.ai/missions</a> to browse available missions.
+          </p>
+
+          <h3>What You Get</h3>
+          <ul>
+            <li><strong>Clear objective</strong> – What the service should do</li>
+            <li><strong>Functional requirements</strong> – Features and UDC endpoints</li>
+            <li><strong>AI prompts</strong> – Pre-written prompts to paste into your AI assistant</li>
+            <li><strong>Success criteria</strong> – How to know when you're done</li>
+            <li><strong>Testing expectations</strong> – What tests to write</li>
+          </ul>
+
+          <h3>Claim Your Mission</h3>
+          <p>
+            When you find one you're ready to work on, claim it through the missions portal. 
+            Each mission comes with a compensation amount (typically $40–$300 depending on complexity).
+          </p>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="timeline-item">
+        <div class="timeline-number">3</div>
+        <div class="timeline-card">
+          <h2>⚡ Build – Use AI + Template</h2>
+          <p><strong>Target:</strong> 2–3 hours of focused work per mission</p>
+          
+          <h3>The Flow</h3>
+          <ul>
+            <li>Clone the starter kit (read-only reference)</li>
+            <li>Copy <code>templates/python-fastapi</code> into <strong>your own public repo</strong></li>
+            <li>Follow <code>START_HERE.md</code> step-by-step</li>
+            <li>Use the AI prompts from your <code>MISSION_SPEC</code></li>
+            <li>Run <code>pytest</code> and test all endpoints</li>
+            <li>Update <code>README.md</code> and <code>HANDOFF.md</code></li>
+          </ul>
+
+          <h3>AI Tools You Can Use</h3>
+          <ul>
+            <li><strong>Gemini</strong> (free) – Fast code generation, great for beginners</li>
+            <li><strong>Cursor</strong> ($20/mo or free tier) – Integrated IDE + AI</li>
+            <li><strong>Claude</strong> ($20/mo) – Deep reasoning and architectural help</li>
+            <li><strong>ChatGPT</strong> (free or $20/mo) – General coding support</li>
+          </ul>
+          <p><em>Recommended free stack:</em> Build with Gemini → Review with free ChatGPT or Claude</p>
+
+          <h3>Quality Checklist</h3>
+          <p>Before submitting, ensure:</p>
+          <ul>
+            <li>All 5 UDC endpoints implemented (<code>/health</code>, <code>/capabilities</code>, <code>/state</code>, <code>/dependencies</code>, <code>/message</code>)</li>
+            <li>Tests written and passing (<code>pytest</code> shows green)</li>
+            <li>README updated with setup and usage instructions</li>
+            <li>HANDOFF.md explains what was built and how to deploy</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="timeline-item">
+        <div class="timeline-number">4</div>
+        <div class="timeline-card">
+          <h2>📤 Submit – Use the Harvester</h2>
+          <p><strong>Goal:</strong> Submit your repo for verification and deployment</p>
+          
+          <p>
+            When your mission is ready, go to: 
+            <a href="/services/harvester" target="_blank">fullpotential.ai/services/harvester</a>
+          </p>
+
+          <h3>Submission Form</h3>
+          <ul>
+            <li>Select your mission from the dropdown</li>
+            <li>Set status to <strong>📤 Submitting Code</strong> or <strong>✅ Completed!</strong></li>
+            <li>Paste your <strong>GitHub repo URL</strong> (your service repo, not the starter-kit)</li>
+            <li>Add notes (tests run, known limitations, questions)</li>
+          </ul>
+
+          <h3>What Happens Next</h3>
+          <p>A Verifier agent will:</p>
+          <ul>
+            <li>Clone your repository</li>
+            <li>Run your test suite (<code>pytest</code>)</li>
+            <li>Check UDC compliance (all 5 endpoints present and working)</li>
+            <li>Verify security requirements</li>
+            <li>Approve, request revisions, or reject with detailed feedback</li>
+          </ul>
+
+          <h3>If Approved</h3>
+          <p>
+            Your service is deployed into the Full Potential AI network and associated rewards are processed. 
+            You'll receive deployment confirmation and payment within 24 hours.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="requirements">
+      <h2>📋 What You Need to Get Started</h2>
+      <div class="req-grid">
+        <div class="req-item">
+          <div class="req-icon">🐙</div>
+          <div class="req-content">
+            <h4>GitHub Account</h4>
+            <p>Free account to host your service repos</p>
+          </div>
+        </div>
+        <div class="req-item">
+          <div class="req-icon">🐍</div>
+          <div class="req-content">
+            <h4>Python Basics</h4>
+            <p>Or willingness to learn with AI assistance</p>
+          </div>
+        </div>
+        <div class="req-item">
+          <div class="req-icon">🤖</div>
+          <div class="req-content">
+            <h4>AI Tool Access</h4>
+            <p>At least one: Gemini, Cursor, Claude, or ChatGPT</p>
+          </div>
+        </div>
+        <div class="req-item">
+          <div class="req-icon">🐳</div>
+          <div class="req-content">
+            <h4>Docker (Optional)</h4>
+            <p>Helpful but not required for local testing</p>
+          </div>
+        </div>
+        <div class="req-item">
+          <div class="req-icon">📖</div>
+          <div class="req-content">
+            <h4>Follow Specs</h4>
+            <p>Ability to read detailed specs and ask for help</p>
+          </div>
+        </div>
+        <div class="req-item">
+          <div class="req-icon">⏱️</div>
+          <div class="req-content">
+            <h4>2–3 Hours</h4>
+            <p>Focused time per mission to ship quality work</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="requirements">
+      <h2>💡 What You Get</h2>
+      <div class="req-grid">
+        <div class="req-item">
+          <div class="req-icon">🚀</div>
+          <div class="req-content">
+            <h4>Real Production Services</h4>
+            <p>Your code deployed into the Full Potential AI mesh</p>
+          </div>
+        </div>
+        <div class="req-item">
+          <div class="req-icon">🧠</div>
+          <div class="req-content">
+            <h4>AI Development Skills</h4>
+            <p>Master AI-assisted coding workflows</p>
+          </div>
+        </div>
+        <div class="req-item">
+          <div class="req-icon">💰</div>
+          <div class="req-content">
+            <h4>Mission Compensation</h4>
+            <p>$40–$300 per service depending on complexity</p>
+          </div>
+        </div>
+        <div class="req-item">
+          <div class="req-icon">📊</div>
+          <div class="req-content">
+            <h4>Portfolio Projects</h4>
+            <p>Demonstrable distributed systems experience</p>
+          </div>
+        </div>
+        <div class="req-item">
+          <div class="req-icon">🌐</div>
+          <div class="req-content">
+            <h4>Cutting-Edge System</h4>
+            <p>Exposure to autonomous AI coordination architecture</p>
+          </div>
+        </div>
+        <div class="req-item">
+          <div class="req-icon">⚡</div>
+          <div class="req-content">
+            <h4>Fast Feedback Loop</h4>
+            <p>Learn, build, deploy, repeat – all in hours</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-cta">
+      <h2>Ready to Start?</h2>
+      <p>
+        Jump into training, claim a mission, and ship your first service today. 
+        The entire flow from zero to deployed takes 2–3 hours with AI assistance.
+      </p>
+      <div class="cta-group">
+        <a href="https://github.com/fullpotential-ai/starter-kit" class="btn btn-primary" target="_blank" rel="noopener">
+          📖 View Starter Kit
+        </a>
+        <a href="/missions" class="btn btn-secondary">
+          🎯 Browse Missions
+        </a>
+        <a href="/services/harvester" class="btn btn-secondary">
+          📤 Submit Code
+        </a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+

@@ -1,0 +1,138 @@
+{
+  "default_preset": "entrepreneurs",
+  "presets": {
+    "entrepreneurs": {
+      "geo_locations": {"countries": ["US", "CA", "GB", "AU"]},
+      "age_min": 25,
+      "age_max": 55,
+      "genders": [0],
+      "flexible_spec": [
+        {
+          "interests": [
+            {"id": "6003139266461", "name": "Entrepreneurship"},
+            {"id": "6003384248805", "name": "Small business"},
+            {"id": "6003271228498", "name": "Personal development"},
+            {"id": "6003020834693", "name": "Leadership"},
+            {"id": "6003349442552", "name": "High performance"}
+          ]
+        }
+      ],
+      "publisher_platforms": ["facebook", "instagram"],
+      "facebook_positions": ["feed", "video_feeds"],
+      "instagram_positions": ["stream", "explore"]
+    },
+    "creators": {
+      "geo_locations": {"countries": ["US", "CA", "GB", "AU"]},
+      "age_min": 22,
+      "age_max": 50,
+      "genders": [0],
+      "flexible_spec": [
+        {
+          "interests": [
+            {"id": "6003397425735", "name": "Content creation"},
+            {"id": "6003107902433", "name": "Creativity"},
+            {"id": "6003249471195", "name": "Social media marketing"},
+            {"id": "6003139266461", "name": "Entrepreneurship"},
+            {"id": "6003020834693", "name": "Self-improvement"}
+          ]
+        }
+      ],
+      "publisher_platforms": ["facebook", "instagram"],
+      "facebook_positions": ["feed", "video_feeds"],
+      "instagram_positions": ["stream", "explore"]
+    },
+    "highperformers": {
+      "geo_locations": {"countries": ["US", "CA", "GB", "AU"]},
+      "age_min": 28,
+      "age_max": 55,
+      "genders": [0],
+      "flexible_spec": [
+        {
+          "interests": [
+            {"id": "6003020834693", "name": "Self-improvement"},
+            {"id": "6003384248805", "name": "Coaching"},
+            {"id": "6003139266461", "name": "Entrepreneurship"},
+            {"id": "6003020834693", "name": "Leadership"},
+            {"id": "6003349442552", "name": "Mindfulness"}
+          ]
+        }
+      ],
+      "publisher_platforms": ["facebook", "instagram"],
+      "facebook_positions": ["feed", "video_feeds"],
+      "instagram_positions": ["stream", "explore"]
+    },
+    "spiritual": {
+      "geo_locations": {"countries": ["US", "CA", "GB", "AU"]},
+      "age_min": 25,
+      "age_max": 60,
+      "genders": [0],
+      "flexible_spec": [
+        {
+          "interests": [
+            {"id": "6003349442552", "name": "Mindfulness"},
+            {"id": "6003017718045", "name": "Meditation"},
+            {"id": "6003020834693", "name": "Spirituality"},
+            {"id": "6003020834693", "name": "Self-improvement"},
+            {"id": "6003384248805", "name": "Coaching"}
+          ]
+        }
+      ],
+      "publisher_platforms": ["facebook", "instagram"],
+      "facebook_positions": ["feed", "video_feeds"],
+      "instagram_positions": ["stream", "explore"]
+    },
+    "broad": {
+      "geo_locations": {"countries": ["US", "CA", "GB", "AU"]},
+      "age_min": 25,
+      "age_max": 55,
+      "genders": [0],
+      "flexible_spec": [
+        {
+          "interests": [
+            {"id": "6003020834693", "name": "Self-improvement"},
+            {"id": "6003139266461", "name": "Entrepreneurship"},
+            {"id": "6003384248805", "name": "Coaching"},
+            {"id": "6003397425735", "name": "Motivation"}
+          ]
+        }
+      ],
+      "publisher_platforms": ["facebook"],
+      "facebook_positions": ["feed"],
+      "instagram_positions": ["stream"]
+    }
+  },
+  "ad_creatives": {
+    "default": "ad3",
+    "variants": {
+      "ad3": {
+        "headline": "Something's still missing.",
+        "body": "High performer. Objectively successful. Still feels like something's missing. Take this 2-minute assessment and discover what's beneath the surface.",
+        "link": "https://fullpotential.ai/score",
+        "cta": "LEARN_MORE"
+      },
+      "ad1": {
+        "headline": "What's Your Full Potential Score?",
+        "body": "Most people operate at 40-60% of their capacity. 9 dimensions. 2 minutes. One score that reveals where you're thriving and where you're leaving potential on the table.",
+        "link": "https://fullpotential.ai/score",
+        "cta": "LEARN_MORE"
+      },
+      "ad2": {
+        "headline": "Are You Living at Full Potential?",
+        "body": "Entrepreneurs and creators: this free assessment reveals the architecture beneath your performance. Your Full Potential Score awaits.",
+        "link": "https://fullpotential.ai/score",
+        "cta": "LEARN_MORE"
+      }
+    }
+  },
+  "budget_alerts": {
+    "thresholds": [50, 20],
+    "notify_telegram": true
+  },
+  "optimization": {
+    "strategy": "cpl_based",
+    "min_days_data": 3,
+    "min_spend_to_judge": 5.0,
+    "pause_if_cpl_multiplier": 2.0,
+    "notes": "If ad set CPL is 2x higher than best performer after 3 days of data, pause it"
+  }
+}

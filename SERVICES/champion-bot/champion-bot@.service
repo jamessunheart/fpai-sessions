@@ -1,0 +1,16 @@
+[Unit]
+Description=Champion Bot — generic Telegram worker (instance: %i)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/fpai/services/champion-bot
+EnvironmentFile=/etc/champion-bot/%i.env
+ExecStart=/opt/fpai/services/champion-bot/.venv/bin/python main.py
+Restart=on-failure
+RestartSec=5
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target

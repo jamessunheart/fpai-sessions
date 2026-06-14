@@ -1,0 +1,273 @@
+{
+  "info": {
+    "name": "UDC Endpoints - Dashboard Droplet #5",
+    "description": "Universal Droplet Contract compliant endpoints for Full Potential Dashboard",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "jwtToken",
+      "value": "test-token",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Core UDC Endpoints",
+      "item": [
+        {
+          "name": "GET Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "health"]
+            }
+          }
+        },
+        {
+          "name": "GET Capabilities",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/capabilities",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "capabilities"]
+            }
+          }
+        },
+        {
+          "name": "GET State",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/state",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "state"]
+            }
+          }
+        },
+        {
+          "name": "GET Dependencies",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/dependencies",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "dependencies"]
+            }
+          }
+        },
+        {
+          "name": "POST Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"trace_id\": \"{{$guid}}\",\n  \"source\": \"test-client\",\n  \"target\": \"5\",\n  \"message_type\": \"status\",\n  \"payload\": {\n    \"test\": true,\n    \"message\": \"Hello from Postman\"\n  },\n  \"timestamp\": \"{{$isoTimestamp}}\",\n  \"signature\": \"test-signature\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/message",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "message"]
+            }
+          }
+        },
+        {
+          "name": "POST Send",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"target\": \"registry\",\n  \"message_type\": \"status\",\n  \"payload\": {\n    \"status\": \"active\",\n    \"from\": \"dashboard\"\n  },\n  \"priority\": \"normal\",\n  \"retry_count\": 3\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/send",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "send"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Extended UDC Endpoints",
+      "item": [
+        {
+          "name": "GET Version",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/version",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "version"]
+            }
+          }
+        },
+        {
+          "name": "POST Reload Config",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"config_path\": \"/path/to/config.json\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/reload-config",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reload-config"]
+            }
+          }
+        },
+        {
+          "name": "POST Shutdown",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"delay_seconds\": 10,\n  \"reason\": \"maintenance\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/shutdown",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "shutdown"]
+            }
+          }
+        },
+        {
+          "name": "POST Emergency Stop",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/emergency-stop",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "emergency-stop"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Error Testing",
+      "item": [
+        {
+          "name": "Unauthorized Request",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/state",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "state"]
+            }
+          }
+        },
+        {
+          "name": "Invalid Message Format",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"invalid\": \"missing required fields\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/message",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "message"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

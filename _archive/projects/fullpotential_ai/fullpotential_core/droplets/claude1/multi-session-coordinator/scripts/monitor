@@ -1,0 +1,65 @@
+#!/bin/bash
+
+# Master Monitoring Command - Choose your view
+
+cat << 'EOF'
+
+╔══════════════════════════════════════════════════════════════════════╗
+║  🤖 CLAUDE CODE MULTI-SESSION MONITORING                             ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+Choose a monitoring mode:
+
+  1) 📊 LIVE DASHBOARD        - Real-time auto-updating dashboard
+                                (sessions, server, files, git, resources)
+                                Updates every 5 seconds
+
+  2) 🔍 PROCESS DETAILS       - Detailed view of each Claude instance
+                                (PIDs, terminals, CPU, memory, activity)
+
+  3) ⚡ QUICK OVERVIEW        - One-screen snapshot of current state
+                                (fast, no auto-refresh)
+
+  4) 🤝 SESSION STATUS        - Session coordination details
+                                (heartbeats, claims, messages)
+
+  5) 💬 CHECK MESSAGES        - View messages from other sessions
+
+  6) 📋 STATUS BOARD          - Human-readable markdown status
+
+  q) Quit
+
+EOF
+
+read -p "Select (1-6 or q): " choice
+
+case $choice in
+    1)
+        echo "Launching live dashboard... (Press Ctrl+C to exit)"
+        sleep 1
+        exec "$(dirname "$0")/live-monitor.sh"
+        ;;
+    2)
+        exec "$(dirname "$0")/detailed-process-monitor.sh"
+        ;;
+    3)
+        exec "$(dirname "$0")/quick-overview.sh"
+        ;;
+    4)
+        exec "$(dirname "$0")/session-status.sh"
+        ;;
+    5)
+        exec "$(dirname "$0")/session-check-messages.sh"
+        ;;
+    6)
+        cat "$(dirname "$0")/../STATUS_BOARD.md"
+        ;;
+    q|Q)
+        echo "Goodbye!"
+        exit 0
+        ;;
+    *)
+        echo "Invalid choice"
+        exit 1
+        ;;
+esac

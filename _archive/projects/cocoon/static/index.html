@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COCOON Command Center</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/projects/cocoon/static/styles.css?v=2">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <span class="logo-icon">🥚</span>
+                    <span class="logo-text">COCOON</span>
+                </div>
+                <span class="header-subtitle">Command Center</span>
+            </div>
+            <div class="header-center">
+                <div class="online-status">
+                    <span class="online-label">Online:</span>
+                    <span id="active-assistants" class="active-list">No one online</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <span class="phase-badge" id="current-phase">Research</span>
+                <div class="assistant-info" onclick="changeAssistant()" title="Click to change">
+                    <span class="assistant-label">Working as:</span>
+                    <span id="assistant-badge" class="assistant-badge" style="display:none;">Guest</span>
+                </div>
+                <div class="time-tracker">
+                    <button id="clock-btn" class="clock-btn" onclick="toggleClock()">
+                        <span class="clock-icon">⏱</span>
+                        <span id="clock-text">Clock In</span>
+                    </button>
+                    <span id="elapsed-time" class="elapsed-time"></span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Quick Start Banner -->
+            <section class="quick-start">
+                <div class="quick-start-content">
+                    <div class="quick-start-badge">🚀 START HERE</div>
+                    <h1 class="quick-start-mission">Get the first cocoon built and into use as fast as possible.</h1>
+                    <div class="quick-start-action">
+                        <strong>Right now:</strong> Find 5 Miami fabricators + 2-3 China contacts → Add them to the tracker below
+                    </div>
+                </div>
+                <div class="quick-start-filter">
+                    <div class="filter-box">
+                        <div class="filter-question">"Does this get a real prototype built faster?"</div>
+                        <div class="filter-answers">
+                            <span class="filter-yes">✅ Yes → Do it</span>
+                            <span class="filter-no">❌ No → Ask James first</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- NEXT 3 STEPS - Crystal Clear Actions -->
+            <section class="next-steps-hero">
+                <h2 class="next-steps-title">🚀 YOUR NEXT 3 STEPS</h2>
+                <p class="next-steps-subtitle">Do these in order. Don't overthink. Just execute.</p>
+                
+                <div class="steps-container">
+                    <div class="step-card step-1">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h3>Find Miami Fabricators</h3>
+                            <p class="step-instruction">Click this link right now:</p>
+                            <a href="https://www.google.com/search?q=scenic+fabrication+shop+Miami+custom+builds" target="_blank" class="step-action-btn">
+                                🔍 Search "Scenic Fabrication Miami" →
+                            </a>
+                            <p class="step-detail">Look for shops with warehouses that build custom objects. Find 1-2 promising ones, then come back.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step-card step-2">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h3>Add to Tracker</h3>
+                            <p class="step-instruction">For each one you found:</p>
+                            <button onclick="openAddBuilder(); scrollToSection('builder-tracker');" class="step-action-btn">
+                                ➕ Click Here to Add Builder
+                            </button>
+                            <p class="step-detail">Fill in: Name, Website/Email, select "Miami". That's it.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step-card step-3">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h3>Repeat Until 5 Miami + 2 China</h3>
+                            <p class="step-instruction">Use more search links below:</p>
+                            <div class="step-mini-links">
+                                <a href="https://www.google.com/search?q=event+prop+builders+Miami" target="_blank">Event Props →</a>
+                                <a href="https://www.google.com/search?q=custom+inflatables+manufacturer+Miami" target="_blank">Inflatables →</a>
+                                <a href="https://www.google.com/search?q=marine+upholstery+canvas+shop+Miami" target="_blank">Marine/Canvas →</a>
+                                <a href="https://www.alibaba.com/trade/search?SearchText=inflatable+dome+tent" target="_blank">Alibaba →</a>
+                            </div>
+                            <p class="step-detail">Goal: 5 Miami fabricators + 2-3 China contacts in the tracker.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="steps-progress">
+                    <span class="progress-label">Progress:</span>
+                    <span class="progress-count"><span id="miami-progress">0</span>/5 Miami</span>
+                    <span class="progress-divider">•</span>
+                    <span class="progress-count"><span id="china-progress">0</span>/3 China</span>
+                </div>
+            </section>
+
+            <!-- Visual Reference -->
+            <section class="visual-reference">
+                <div class="visual-content">
+                    <div class="visual-image">
+                        <img src="/projects/cocoon/static/cocoon-reference.png" alt="Cocoon prototype reference - inflatable arch covering person lying down with warm interior lighting" onerror="this.parentElement.classList.add('no-image');">
+                    </div>
+                    <div class="visual-description">
+                        <h2>🎯 What We're Building</h2>
+                        <p class="visual-intro">A one-person recovery cocoon. Think: soft inflatable dome that goes over someone lying on a mat.</p>
+                        <ul class="visual-specs">
+                            <li><strong>Shape:</strong> Half-cylinder / tunnel arch — open at foot end</li>
+                            <li><strong>Structure:</strong> Inflatable chambers OR soft fabric over frame</li>
+                            <li><strong>Exterior:</strong> Light gray/white durable fabric</li>
+                            <li><strong>Interior:</strong> Warm cream/beige lining with segmented panels</li>
+                            <li><strong>Lighting:</strong> LED strips along interior seams — warm amber glow</li>
+                            <li><strong>Base:</strong> Cushioned mat (person lies directly on it)</li>
+                            <li><strong>Size:</strong> ~7ft long × 3ft wide × 3ft tall at peak</li>
+                            <li><strong>Entry:</strong> Feet-end stays open (no door/zipper needed)</li>
+                        </ul>
+                        <div class="visual-note">
+                            <strong>📸 When fabricators ask "what does it look like?"</strong><br>
+                            Show them this page or describe: "An inflatable arch/tunnel that goes over someone lying down, with warm LED lighting inside. Like a personal relaxation pod."
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Today's Focus -->
+                <section class="card focus-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="card-icon">🎯</span>
+                            Today's Focus
+                        </h2>
+                        <span id="current-day" class="day-badge">Week 1, Day 1</span>
+                    </div>
+                    <div class="card-body">
+                        <ul id="today-tasks" class="task-list">
+                            <!-- Tasks populated by JS -->
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Metrics -->
+                <section class="card metrics-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="card-icon">📊</span>
+                            Metrics
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="progress-section">
+                            <div class="progress-label">
+                                <span>Week Progress</span>
+                                <span id="progress-percent">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="metrics-grid">
+                            <div class="metric">
+                                <span class="metric-value" id="metric-contacted">0/0</span>
+                                <span class="metric-label">Contacted</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-value" id="metric-replied">0</span>
+                                <span class="metric-label">Replied</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-value" id="metric-calls">0</span>
+                                <span class="metric-label">Calls Scheduled</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-value" id="metric-hours">0m</span>
+                                <span class="metric-label">Task Time</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Find Builders - Research Hub -->
+                <section id="find-builders" class="card finder-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="card-icon">🔍</span>
+                            Find Builders
+                        </h2>
+                        <span class="card-note">Click links → Find builders → Add to tracker</span>
+                    </div>
+                    <div class="card-body">
+                        <!-- Miami Searches -->
+                        <div class="finder-section">
+                            <h3 class="finder-title">🌴 Miami Fabricators (Need 5)</h3>
+                            <p class="finder-instruction">Click each link, find 1-2 good options, add to tracker below.</p>
+                            <div class="search-links">
+                                <a href="https://www.google.com/search?q=scenic+fabrication+Miami+FL" target="_blank" class="search-link">
+                                    <span class="link-icon">🎭</span>
+                                    <span class="link-text">Scenic Fabrication Miami</span>
+                                    <span class="link-arrow">→</span>
+                                </a>
+                                <a href="https://www.google.com/search?q=event+prop+builders+Miami" target="_blank" class="search-link">
+                                    <span class="link-icon">🎪</span>
+                                    <span class="link-text">Event Prop Builders Miami</span>
+                                    <span class="link-arrow">→</span>
+                                </a>
+                                <a href="https://www.google.com/search?q=custom+inflatable+manufacturer+Miami+Florida" target="_blank" class="search-link">
+                                    <span class="link-icon">🎈</span>
+                                    <span class="link-text">Custom Inflatables Miami</span>
+                                    <span class="link-arrow">→</span>
+                                </a>
+                                <a href="https://www.google.com/search?q=marine+canvas+upholstery+shop+Miami" target="_blank" class="search-link">
+                                    <span class="link-icon">⛵</span>
+                                    <span class="link-text">Marine Canvas / Upholstery Miami</span>
+                                    <span class="link-arrow">→</span>
+                                </a>
+                                <a href="https://www.google.com/search?q=art+installation+fabricator+Miami" target="_blank" class="search-link">
+                                    <span class="link-icon">🎨</span>
+                                    <span class="link-text">Art Installation Fabricators Miami</span>
+                                    <span class="link-arrow">→</span>
+                                </a>
+                                <a href="https://www.google.com/search?q=soft+goods+manufacturer+Miami+custom" target="_blank" class="search-link">
+                                    <span class="link-icon">🧵</span>
+                                    <span class="link-text">Soft Goods Manufacturers Miami</span>
+                                    <span class="link-arrow">→</span>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- China Searches -->
+                        <div class="finder-section">
+                            <h3 class="finder-title">🌏 China Sourcing (Need 2-3)</h3>
+                            <p class="finder-instruction">Search Alibaba, find manufacturers, message them.</p>
+                            <div class="search-links">
+                                <a href="https://www.alibaba.com/trade/search?SearchText=inflatable+dome+tent+manufacturer" target="_blank" class="search-link">
+                                    <span class="link-icon">🏭</span>
+                                    <span class="link-text">Alibaba: Inflatable Dome Tents</span>
+                                    <span class="link-arrow">→</span>
+                                </a>
+                                <a href="https://www.alibaba.com/trade/search?SearchText=custom+soft+enclosure+fabric" target="_blank" class="search-link">
+                                    <span class="link-icon">🏭</span>
+                                    <span class="link-text">Alibaba: Soft Fabric Enclosures</span>
+                                    <span class="link-arrow">→</span>
+                                </a>
+                                <a href="https://www.alibaba.com/trade/search?SearchText=LED+light+therapy+pod+manufacturer" target="_blank" class="search-link">
+                                    <span class="link-icon">🏭</span>
+                                    <span class="link-text">Alibaba: LED Therapy Pods</span>
+                                    <span class="link-arrow">→</span>
+                                </a>
+                                <a href="https://www.google.com/search?q=China+sourcing+agent+product+development" target="_blank" class="search-link">
+                                    <span class="link-icon">🤝</span>
+                                    <span class="link-text">Google: China Sourcing Agents</span>
+                                    <span class="link-arrow">→</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- What to Look For -->
+                        <div class="finder-checklist">
+                            <h4>✅ When you find a potential builder, check:</h4>
+                            <ul>
+                                <li>Do they have a portfolio of custom builds?</li>
+                                <li>Can you find contact info (email/phone/form)?</li>
+                                <li>Are they based in Miami (or ship from China)?</li>
+                                <li>Do they seem like they handle one-off prototypes?</li>
+                            </ul>
+                            <p class="finder-note">If YES to 2+ → Add to tracker and send outreach message.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Builder Tracker -->
+                <section id="builder-tracker" class="card tracker-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="card-icon">🏗️</span>
+                            Builder Tracker
+                        </h2>
+                        <button class="add-btn" onclick="openAddBuilder()">+ Add Builder</button>
+                    </div>
+                    <div class="card-body">
+                        <div class="tracker-tabs">
+                            <button class="tracker-tab active" data-location="Miami" onclick="switchTrackerTab('Miami')">
+                                Miami <span id="miami-count" class="tab-count">0</span>
+                            </button>
+                            <button class="tracker-tab" data-location="China" onclick="switchTrackerTab('China')">
+                                China <span id="china-count" class="tab-count">0</span>
+                            </button>
+                        </div>
+                        <div class="tracker-table-wrapper">
+                            <table class="tracker-table">
+                                <thead>
+                                    <tr>
+                                        <th>Builder</th>
+                                        <th>Status</th>
+                                        <th>Cost</th>
+                                        <th>Timeline</th>
+                                        <th>Notes</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tracker-body">
+                                    <!-- Rows populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Outreach Messages -->
+                <section class="card outreach-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="card-icon">📨</span>
+                            Outreach Messages
+                        </h2>
+                        <span class="card-note">Copy verbatim — do not edit</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="outreach-buttons">
+                            <button class="outreach-btn" onclick="copyMessage('miami')">
+                                <span class="btn-icon">🌴</span>
+                                Miami Outreach
+                            </button>
+                            <button class="outreach-btn" onclick="copyMessage('china')">
+                                <span class="btn-icon">🌏</span>
+                                China Outreach
+                            </button>
+                            <button class="outreach-btn" onclick="copyMessage('followup')">
+                                <span class="btn-icon">🔄</span>
+                                Follow-up
+                            </button>
+                            <button class="outreach-btn" onclick="copyMessage('schedule')">
+                                <span class="btn-icon">📅</span>
+                                Schedule Call
+                            </button>
+                        </div>
+                        <div id="message-preview" class="message-preview hidden">
+                            <div class="preview-header">
+                                <span id="preview-title">Message</span>
+                                <button class="copy-btn" onclick="copyToClipboard()">Copy to Clipboard</button>
+                            </div>
+                            <pre id="preview-content" class="preview-content"></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Weekly Report -->
+                <section class="card report-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="card-icon">📝</span>
+                            Weekly Report
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <form id="report-form" class="report-form" onsubmit="submitReport(event)">
+                            <div class="form-group">
+                                <label>What moved forward?</label>
+                                <textarea name="moved_forward" rows="2" placeholder="2-3 bullet points..." required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>What's blocked? (if anything)</label>
+                                <textarea name="blocked" rows="2" placeholder="Leave empty if nothing blocked..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>What needs a decision? (if anything)</label>
+                                <textarea name="needs_decision" rows="2" placeholder="Leave empty if no decisions needed..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Your recommendation</label>
+                                <textarea name="recommendation" rows="2" placeholder="2-3 sentences max..." required></textarea>
+                            </div>
+                            <button type="submit" class="submit-btn">Submit Week 1 Report</button>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- Reference Section -->
+                <section id="reference-section" class="card reference-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="card-icon">📚</span>
+                            Reference
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="reference-items">
+                            <!-- SOP - Mission & Boundaries -->
+                            <details id="sop-section" class="reference-item sop-highlight" open>
+                                <summary>📋 Your SOP (Mission & Boundaries)</summary>
+                                <div class="reference-content sop-content">
+                                    <div class="sop-mission">
+                                        <strong>YOUR SINGLE MISSION:</strong>
+                                        <p>Help get the first cocoon built and into use as fast as possible. That's it. Nothing else.</p>
+                                    </div>
+                                    <div class="sop-filter">
+                                        <strong>DECISION FILTER (Use Before Every Action):</strong>
+                                        <p class="filter-quote">"Does this get a real prototype built faster?"</p>
+                                        <ul>
+                                            <li>✅ <strong>Yes</strong> → Proceed</li>
+                                            <li>❌ <strong>No</strong> → Escalate to James</li>
+                                        </ul>
+                                        <p><em>Do not optimize. Do not redesign. Do not ideate.</em></p>
+                                    </div>
+                                    <div class="sop-rules">
+                                        <strong>FINAL RULE:</strong>
+                                        <p>Speed and clarity matter more than perfection. Your job is to move the real world, not refine ideas.</p>
+                                    </div>
+                                </div>
+                            </details>
+                            
+                            <details class="reference-item">
+                                <summary>What is a Cocoon?</summary>
+                                <div class="reference-content">
+                                    <p>A one-person recovery cocoon is:</p>
+                                    <ul>
+                                        <li>A physical enclosure that goes over a person lying on a mat</li>
+                                        <li>Creates a calm, enclosed environment for a 12-minute reset session</li>
+                                        <li>May be inflatable, soft-fabric framed, or modular sections (head/torso/feet)</li>
+                                    </ul>
+                                    <p><strong>Inside:</strong></p>
+                                    <ul>
+                                        <li>Low, diffused LED lighting (red/amber/warm tones)</li>
+                                        <li>Off-the-shelf components only</li>
+                                        <li>Optional sound/vibration via existing devices (e.g., Woojer mat)</li>
+                                        <li>No screens, no complex controls</li>
+                                    </ul>
+                                </div>
+                            </details>
+                            <details class="reference-item">
+                                <summary>What This is NOT</summary>
+                                <div class="reference-content">
+                                    <ul>
+                                        <li>❌ Not medical equipment</li>
+                                        <li>❌ Not therapy</li>
+                                        <li>❌ Not diagnostic</li>
+                                        <li>❌ Not treatment</li>
+                                        <li>❌ Not regulated health tech</li>
+                                    </ul>
+                                    <p><strong>Always describe as:</strong> wellness infrastructure for relaxation and nervous-system calming.</p>
+                                    <p><strong>Never use:</strong> medical or therapeutic language.</p>
+                                </div>
+                            </details>
+                            <details class="reference-item">
+                                <summary>What "Local Fabricator" Means</summary>
+                                <div class="reference-content">
+                                    <p>You're looking for Miami builders who:</p>
+                                    <ul>
+                                        <li>Work out of warehouses</li>
+                                        <li>Physically build custom objects</li>
+                                        <li>Do art installations, scenic builds, soft structures, inflatables</li>
+                                        <li>Can make one-off prototypes quickly</li>
+                                    </ul>
+                                    <p><strong>Examples:</strong> Scenic/event fabrication shops, art installation builders, upholstery or marine canvas shops, inflatable or soft-goods fabricators</p>
+                                    <p><strong>NOT:</strong> product designers, agencies, startups, factories</p>
+                                </div>
+                            </details>
+                            <details class="reference-item">
+                                <summary>What to Escalate</summary>
+                                <div class="reference-content">
+                                    <p>Escalate to James when:</p>
+                                    <ul>
+                                        <li>Someone asks to change the product</li>
+                                        <li>You're unsure if something speeds up the prototype</li>
+                                        <li>A decision involves money beyond quotes</li>
+                                        <li>Someone wants to discuss strategy or vision</li>
+                                        <li>You need to commit to anything binding</li>
+                                    </ul>
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="toast hidden"></div>
+
+        <!-- Add Builder Modal -->
+        <div id="builder-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modal-title">Add Builder</h3>
+                    <button class="modal-close" onclick="closeModal()">&times;</button>
+                </div>
+                <form id="builder-form" onsubmit="saveBuilder(event)">
+                    <input type="hidden" id="builder-id" name="id">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Builder Name *</label>
+                            <input type="text" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Location *</label>
+                            <select name="location" required>
+                                <option value="Miami">Miami</option>
+                                <option value="China">China</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Type *</label>
+                            <select name="type" required>
+                                <option value="Local fabricator">Local fabricator</option>
+                                <option value="Sourcing agent">Sourcing agent</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select name="status">
+                                <option value="Not contacted">Not contacted</option>
+                                <option value="Contacted">Contacted</option>
+                                <option value="Replied">Replied</option>
+                                <option value="Call scheduled">Call scheduled</option>
+                                <option value="Quoted">Quoted</option>
+                                <option value="Selected">Selected</option>
+                                <option value="Declined">Declined</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Info</label>
+                        <input type="text" name="contact" placeholder="Email, phone, website...">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Cost Range</label>
+                            <input type="text" name="cost_range" placeholder="e.g., $2,000-4,000">
+                        </div>
+                        <div class="form-group">
+                            <label>Timeline</label>
+                            <input type="text" name="timeline" placeholder="e.g., 2-3 weeks">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Materials Suggested</label>
+                        <input type="text" name="materials" placeholder="e.g., Marine vinyl, aluminum frame">
+                    </div>
+                    <div class="form-group">
+                        <label>Notes / Gut Feel</label>
+                        <textarea name="notes" rows="2" placeholder="Your impressions..."></textarea>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+                        <button type="submit" class="btn-primary">Save Builder</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Time Entry Modal -->
+        <div id="time-entry-modal" class="modal hidden">
+            <div class="modal-content modal-small">
+                <div class="modal-header">
+                    <h3>⏱ Log Time Spent</h3>
+                    <button class="modal-close" onclick="closeTimeModal()">&times;</button>
+                </div>
+                <form onsubmit="saveTaskTime(event)">
+                    <input type="hidden" id="time-task-id">
+                    <div class="time-input-group">
+                        <div class="time-field">
+                            <label>Hours</label>
+                            <input type="number" id="time-hours" min="0" max="24" placeholder="0">
+                        </div>
+                        <span class="time-separator">:</span>
+                        <div class="time-field">
+                            <label>Minutes</label>
+                            <input type="number" id="time-minutes" min="0" max="59" placeholder="0">
+                        </div>
+                    </div>
+                    <p class="time-hint">How long did this task take?</p>
+                    <div class="modal-actions">
+                        <button type="button" class="btn-secondary" onclick="closeTimeModal()">Skip</button>
+                        <button type="submit" class="btn-primary">Save Time</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Assistant Registration Modal -->
+        <div id="assistant-modal" class="modal hidden">
+            <div class="modal-content modal-small">
+                <div class="modal-header modal-header-welcome">
+                    <h3>👋 Welcome to COCOON</h3>
+                </div>
+                <form onsubmit="registerAssistant(event)">
+                    <p class="welcome-text">Before you start, please tell us who you are. This helps James track progress.</p>
+                    <div class="form-group">
+                        <label>Your Name *</label>
+                        <input type="text" id="assistant-name-input" placeholder="e.g., Sarah" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email (optional)</label>
+                        <input type="email" id="assistant-email-input" placeholder="For updates">
+                    </div>
+                    <div class="modal-actions">
+                        <button type="submit" class="btn-primary btn-full">Start Working →</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Activity Feed Sidebar -->
+        <aside id="activity-sidebar" class="activity-sidebar">
+            <div class="sidebar-header">
+                <h3>📡 Live Activity</h3>
+            </div>
+            <div id="activity-feed" class="activity-feed">
+                <div class="activity-empty">Loading...</div>
+            </div>
+        </aside>
+
+        <!-- AI Chat Widget -->
+        <div id="chat-widget" class="chat-widget">
+            <button class="chat-toggle" onclick="toggleChat()">
+                <span class="chat-toggle-icon">🧠</span>
+                <span class="chat-toggle-text">Ask AI</span>
+            </button>
+            <div class="chat-panel hidden" id="chat-panel">
+                <div class="chat-header">
+                    <div class="chat-header-info">
+                        <span class="chat-ai-icon">🧠</span>
+                        <div>
+                            <span class="chat-ai-name">COCOON AI</span>
+                            <span class="chat-ai-status">Knows everything about this project</span>
+                        </div>
+                    </div>
+                    <button class="chat-close" onclick="toggleChat()">×</button>
+                </div>
+                <div class="chat-messages" id="chat-messages">
+                    <div class="chat-message ai">
+                        <div class="chat-bubble">
+                            Hey! I'm the COCOON project AI. I know all the context - builders, tasks, progress. Ask me anything about the project or what to do next!
+                        </div>
+                    </div>
+                </div>
+                <form class="chat-input-form" onsubmit="sendChatMessage(event)">
+                    <input type="text" id="chat-input" class="chat-input" placeholder="Ask anything about the project..." autocomplete="off">
+                    <button type="submit" class="chat-send">
+                        <span>→</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/projects/cocoon/static/app.js"></script>
+</body>
+</html>
+

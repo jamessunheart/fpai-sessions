@@ -1,0 +1,6 @@
+{
+  "name": "test-hetzner-check",
+  "region": "hel1",
+  "size": "cx23",
+  "image": "ubuntu-24.04"
+}

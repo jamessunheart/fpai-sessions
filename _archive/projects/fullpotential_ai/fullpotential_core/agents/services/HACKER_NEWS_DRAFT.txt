@@ -1,0 +1,35 @@
+Title: Show HN: Testing if AI can match financial advisors better than Google
+
+Text:
+I built an AI matching system to test if Claude can understand compatibility well enough to match people with financial advisors.
+
+Background: My dad's a CFP. Generic lead-gen services send him terrible matches. Meanwhile clients struggle to find advisors who get their specific situation (tech RSUs, early retirement, etc).
+
+The experiment:
+- Customer describes needs via form
+- AI analyzes 100+ advisor profiles
+- Matches based on specialization + values + communication style
+- Free for customers (advisors pay only if they engage)
+
+Current status:
+- Zero customers (literally just launched)
+- Infrastructure works
+- Genuinely don't know if AI matching is better than Google
+
+Testing: http://198.54.123.234:8401
+
+(Yes it's an IP - testing matching before polishing domain)
+
+What I want to learn:
+1. Can AI judge compatibility well enough?
+2. Will people trust AI for something this important?
+3. Is this actually useful or just noise?
+
+Honest feedback welcome. Will report back in 30 days with results.
+
+Tech: Claude API, FastAPI, SQLite, simple matching algorithm based on needs analysis.
+
+
+URL: http://198.54.123.234:8401
+
+Submit at: https://news.ycombinator.com/submit

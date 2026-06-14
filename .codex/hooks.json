@@ -1,0 +1,90 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "'/Users/jamessunheart/FPAI_Cockpit/.codex/hooks/check-collision.sh'"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash|Read|Edit|Write|MultiEdit|Grep|Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "'/Users/jamessunheart/FPAI_Cockpit/.codex/hooks/check-canonical-reads.sh'"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "'/Users/jamessunheart/FPAI_Cockpit/.codex/hooks/log-edit.sh'"
+          },
+          {
+            "type": "command",
+            "command": "'/Users/jamessunheart/FPAI_Cockpit/.codex/hooks/stream-substrate-writes.sh'"
+          },
+          {
+            "type": "command",
+            "command": "'/Users/jamessunheart/FPAI_Cockpit/.codex/hooks/dashboard-rebuild.sh'"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "'/Users/jamessunheart/FPAI_Cockpit/.codex/hooks/ember-wake.sh'"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "'/Users/jamessunheart/FPAI_Cockpit/.codex/hooks/preflight-inject.sh'"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "'/Users/jamessunheart/FPAI_Cockpit/.codex/hooks/check-alignment-footer.sh'"
+          },
+          {
+            "type": "command",
+            "command": "'/Users/jamessunheart/FPAI_Cockpit/.codex/hooks/check-alignment-sections.sh'"
+          },
+          {
+            "type": "command",
+            "command": "'/Users/jamessunheart/FPAI_Cockpit/.codex/hooks/check-caveman-discipline.sh'"
+          },
+          {
+            "type": "command",
+            "command": "'/Users/jamessunheart/FPAI_Cockpit/.codex/hooks/check-narrator-presence.sh'"
+          },
+          {
+            "type": "command",
+            "command": "'/Users/jamessunheart/FPAI_Cockpit/.codex/hooks/check-settle-checkpoint.sh'"
+          }
+        ]
+      }
+    ]
+  }
+}

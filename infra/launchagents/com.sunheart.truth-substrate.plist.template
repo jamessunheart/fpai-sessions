@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  com.sunheart.truth-substrate.plist · Phase 2 activation hook
+  Per [[project-truth-substrate-architecture]] · the 3-agent truth substrate.
+
+  WHAT IT DOES:
+    Every 2h, runs `truth_substrate_run.sh` which:
+      1. TRUE Narrator pass on substantive sessions modified in last 6h
+      2. Privacy Narrator classification on each new TRUE log
+      3. The Publisher STAGE-ONLY pass on Tier 3 staged content
+    Logs to ~/.config/fpai/truth_substrate/run.log
+    State to ~/.config/fpai/truth_substrate/state.tsv
+
+  INSTALL (manual · run from terminal):
+    cp /Users/jamessunheart/FPAI_Cockpit/infra/launchagents/com.sunheart.truth-substrate.plist.template \
+       ~/Library/LaunchAgents/com.sunheart.truth-substrate.plist
+    launchctl load ~/Library/LaunchAgents/com.sunheart.truth-substrate.plist
+    launchctl start com.sunheart.truth-substrate
+
+  UNINSTALL:
+    launchctl unload ~/Library/LaunchAgents/com.sunheart.truth-substrate.plist
+    rm ~/Library/LaunchAgents/com.sunheart.truth-substrate.plist
+
+  Reversibility: launchctl unload disables fully · run.log preserves audit · chmod -x truth_substrate_run.sh disables script
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.sunheart.truth-substrate</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>-c</string>
+        <string>/Users/jamessunheart/FPAI_Cockpit/infra/scripts/truth_substrate_run.sh >> /Users/jamessunheart/.config/fpai/truth_substrate/launchd.out 2>> /Users/jamessunheart/.config/fpai/truth_substrate/launchd.err</string>
+    </array>
+    <key>StartInterval</key>
+    <integer>7200</integer>
+    <key>RunAtLoad</key>
+    <false/>
+    <key>StandardOutPath</key>
+    <string>/Users/jamessunheart/.config/fpai/truth_substrate/launchd.stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/jamessunheart/.config/fpai/truth_substrate/launchd.stderr.log</string>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/Users/jamessunheart/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+        <key>HOME</key>
+        <string>/Users/jamessunheart</string>
+    </dict>
+</dict>
+</plist>

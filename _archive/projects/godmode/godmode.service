@@ -1,0 +1,13 @@
+[Unit]
+Description=God Mode Web UI
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/root/godmode
+ExecStart=/usr/bin/python3 -m uvicorn server:app --host 0.0.0.0 --port 8300
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+

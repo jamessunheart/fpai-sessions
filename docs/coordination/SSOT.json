@@ -1,0 +1,344 @@
+{
+  "last_update": "2025-12-15T00:00:00Z",
+  "system_status": "green",
+  "strategic_directive": "YIELD (Revenue First) + EFFICIENCY",
+  "fleet": {
+    "nodes": [
+      {
+        "name": "Mothership",
+        "ip": "198.54.123.234",
+        "role": "Web Routing, Trading, Revenue, Data",
+        "status": "online",
+        "load": "optimized",
+        "ram": "7.7GB",
+        "services": {
+          "critical": [
+            "whaletrack-magnet:8600",
+            "fpai-credits-gateway:8765",
+            "fpai-fp-credits-gateway",
+            "fpai-data-service:8125",
+            "fpai-nerve-center:8120",
+            "fpai-orchestrator",
+            "fpai-strategic-intelligence:8500",
+            "nginx",
+            "postgresql"
+          ],
+          "zend_stack": [
+            "zend-wallet:8580 (UC credits + send/invite + AI draft)",
+            "zend-payments:8581 (PaymentIntent + ZendLink + Stripe/Solana)",
+            "zend-clerk:8582 (POS Telegram bot)"
+          ],
+          "stopped_and_masked": [
+            "fpai-aria (MASKED - use secondary:8710)",
+            "fpai-sparket-engine (MASKED - use secondary:8711)",
+            "fpai-ai-automation (MASKED - use secondary:8750)",
+            "fpai-ai-gateway (MASKED - use secondary)",
+            "fpai-strategic-intel (duplicate removed)"
+          ],
+          "stopped_on_purpose": [
+            "fpai-ai-brain (use secondary:8101)",
+            "fpai-ai-chat",
+            "fpai-consciousness-optimizer (use secondary)",
+            "fpai-consciousness_evolution (use secondary)",
+            "fpai-consciousness_verifier (use secondary)",
+            "fpai-intelligence-core (use secondary)",
+            "fpai-analytics",
+            "fpai-flywheel",
+            "fpai-backup-dashboard",
+            "fpai-legal-guardian",
+            "fpai-member-mining",
+            "fpai-proactive-alerter",
+            "fpai-ri-loop",
+            "fpai-resource-intelligence"
+          ],
+          "demo_active": [
+            "fpai-voice-companion:8705"
+          ]
+        },
+        "notes": "Dec 14 2025: Major optimization - migrated 4 services to secondary, killed orphaned daemons, freed ~2GB RAM. Services now MASKED to prevent auto-restart."
+      },
+      {
+        "name": "Brain",
+        "ip": "162.0.208.88",
+        "role": "AI Inference, Consciousness, Intelligence Processing",
+        "status": "online",
+        "load": "available",
+        "ram": "31GB",
+        "services": {
+          "ai": [
+            "ai-brain:8101",
+            "ollama:11434"
+          ],
+          "consciousness": [
+            "fpai-consciousness_feeder:8130",
+            "fpai-consciousness_verifier:8140",
+            "fpai-consciousness_decision_engine:8150",
+            "fpai-consciousness_optimizer:8160",
+            "fpai-consciousness_dashboard:8170",
+            "fpai-consciousness_evolution",
+            "fpai-consciousness_api",
+            "fpai-consciousness_gateway",
+            "fpai-consciousness_network"
+          ],
+          "intelligence": [
+            "fpai-intelligence-core",
+            "fpai-intelligence-daemon",
+            "fpai-intelligence-hub",
+            "fpai-intelligence-dashboard",
+            "fpai-evolution",
+            "fpai-aware-brain",
+            "fpai-autonomous-healer"
+          ],
+          "migrated_from_primary": [
+            "fpai-aria:8710 (Dec 14 2025 - NGINX updated)",
+            "fpai-sparket-engine:8711 (Dec 14 2025 - NGINX updated)",
+            "fpai-ai-automation:8750 (Dec 14 2025)",
+            "fpai-ai-gateway (Dec 14 2025)"
+          ],
+          "stopped_services": [
+            "fpai-consciousness_feeder (MEMORY LEAK FIXED 2025-12-14 - ready to restart)"
+          ],
+          "ollama_models": [
+            "codellama:7b",
+            "mistral:7b",
+            "phi3:mini",
+            "qwen2.5-coder:7b",
+            "llama3.1:8b",
+            "llama3.2:3b"
+          ]
+        },
+        "notes": "Dec 14 2025: consciousness_feeder MEMORY LEAK FIXED - ready to restart. Fix includes: shared HTTP client, bounded data structures, periodic GC. Expected RAM: <500MB instead of 15GB."
+      },
+      {
+        "name": "Legacy-Node-72",
+        "ip": "209.74.93.72",
+        "role": "Legacy Web / Static Assets",
+        "status": "online",
+        "load": "light",
+        "stack": "Apache",
+        "services": ["image-hosting", "legacy-web"],
+        "notes": "cPanel-based hosting. May have additional capacity for static content."
+      }
+    ],
+    "gpu_cloud": {
+      "vast_ai": {
+        "status": "DISABLED - ALL INSTANCES DESTROYED 2025-12-15",
+        "purpose": "WAS: Dynamic GPU fleet for AI inference - NOW: Using local Ollama",
+        "management": {
+          "NEW_gpu_manager": "SERVICES/gpu-manager/ (v2.0 - unified, safe)",
+          "OLD_gpu_watchdog": "SERVICES/gpu_watchdog.py (DEPRECATED)",
+          "OLD_gpu_hunter": "/opt/fpai/ai-brain/v2/gpu_hunter_daemon.py (DISABLED)"
+        },
+        "lesson_learned": "Two competing systems caused $57/day runaway costs. New unified manager has hard circuit breakers.",
+        "fleet": {
+          "target_count": 20,
+          "current_count": "varies based on budget",
+          "gpu_types": "RTX 3070 (8GB VRAM)",
+          "cost_per_gpu": "$0.022/hr (~$0.52/day)"
+        },
+        "budget": {
+          "daily_limit": "$20/day",
+          "scaling_policy": "approval_required",
+          "notes": "If utilization is high, watchdog requests approval before scaling up"
+        },
+        "cost_thresholds": {
+          "cheap_gpu_max": "$0.06/hr",
+          "expensive_gpu_min": "$0.15/hr"
+        },
+        "behavior": {
+          "keep_cheap_gpus": true,
+          "auto_release_expensive_when_idle": true,
+          "scale_up_requires_approval": true
+        }
+      },
+      "runpod": {
+        "status": "configured_not_active",
+        "purpose": "Backup GPU provider",
+        "notes": "API key configured but returns 404. May need verification or is dormant.",
+        "api_endpoint": "https://api.runpod.io/graphql"
+      }
+    },
+    "routing": {
+      "ai_inference": "http://162.0.208.88:8101",
+      "ollama": "http://162.0.208.88:11434",
+      "gpu_bridge": "http://162.0.208.88:8400",
+      "data_service": "http://198.54.123.234:8125",
+      "trading": "http://198.54.123.234:8600",
+      "nerve_center": "http://198.54.123.234:8120"
+    }
+  },
+  "services": {
+    "active_revenue_engines": [
+      {
+        "name": "fp-credits-gateway",
+        "port": 8765,
+        "server": "primary",
+        "status": "live",
+        "url": "https://fullpotential.ai/services/credits/purchase",
+        "revenue_model": "The Cash Register"
+      },
+      {
+        "name": "ai-automation",
+        "port": 8750,
+        "server": "primary",
+        "status": "live",
+        "revenue_model": "$120k MRR Potential"
+      },
+      {
+        "name": "whaletrack-magnet",
+        "port": 8600,
+        "server": "primary",
+        "status": "live",
+        "revenue_model": "Trading Bot"
+      }
+    ],
+    "commons_ministry": [
+      {
+        "name": "trust-index",
+        "port": 8560,
+        "server": "primary",
+        "status": "ready",
+        "role": "Trust Index Calculator"
+      },
+      {
+        "name": "contribution-tracker",
+        "port": 8570,
+        "server": "primary",
+        "status": "ready",
+        "role": "TRUST Token Issuer"
+      },
+      {
+        "name": "needs-allocation",
+        "port": 8565,
+        "server": "primary",
+        "status": "ready",
+        "role": "Needs Distribution Engine"
+      },
+      {
+        "name": "zend-wallet",
+        "port": 8580,
+        "server": "primary",
+        "status": "live",
+        "role": "ZEND UC Credits Wallet (internal ease layer)"
+      },
+      {
+        "name": "zend-payments",
+        "port": 8581,
+        "server": "primary",
+        "status": "ready",
+        "role": "ZEND External Settlement (Stripe/Solana)"
+      },
+      {
+        "name": "zend-clerk",
+        "port": 8582,
+        "server": "primary",
+        "status": "ready",
+        "role": "ZEND POS Telegram Bot (Ministry of Flow)"
+      }
+    ],
+    "core_infrastructure": [
+      {
+        "name": "ai-brain",
+        "port": 8101,
+        "server": "secondary",
+        "status": "live",
+        "role": "Central AI Inference Hub"
+      },
+      {
+        "name": "data-service",
+        "port": 8125,
+        "server": "primary",
+        "status": "live",
+        "role": "Data Intelligence Engine"
+      },
+      {
+        "name": "nerve-center",
+        "port": 8120,
+        "server": "primary",
+        "status": "live",
+        "role": "System Integration Hub"
+      },
+      {
+        "name": "strategic-intelligence",
+        "port": 8500,
+        "server": "primary",
+        "status": "live",
+        "role": "Strategic Decision Making"
+      }
+    ]
+  },
+  "protocols": {
+    "tokens_strategy": {
+      "path": "docs/protocols/TOKENS_STRATEGY.md",
+      "quick_ref": "docs/protocols/TOKENS_QUICK_REFERENCE.md",
+      "version": "1.0.0"
+    },
+    "zend_regenerative": {
+      "path": "docs/protocols/ZEND_REGENERATIVE_SPEC.md",
+      "version": "2.0.0",
+      "description": "Partner-first payments, Commons integration, Trust Index"
+    },
+    "zend_uc_credits": {
+      "path": "docs/protocols/ZEND_UC_CREDITS_SPEC.md",
+      "version": "1.0"
+    },
+    "universal_credits": {
+      "path": "docs/protocols/UNIVERSAL_CREDITS_PROTOCOL.md",
+      "version": "1.3"
+    },
+    "service_registry": {
+      "path": "docs/coordination/SERVICE_REGISTRY.md",
+      "description": "Complete list of all services and their locations"
+    }
+  },
+  "resource_monitoring": {
+    "script": "/opt/fpai/scripts/resource-monitor.sh",
+    "frequency": "every 15 minutes",
+    "thresholds": {
+      "ram_alert": "85%",
+      "swap_alert": "70%",
+      "load_alert": 7
+    },
+    "auto_actions": [
+      "Clear cache if RAM > 85%",
+      "Restart critical services if down"
+    ]
+  },
+  "ssot_tools": {
+    "description": "Tools for maintaining SSOT accuracy (created Dec 14, 2025)",
+    "health_check": {
+      "script": "docs/coordination/scripts/refresh-system-status.sh",
+      "output": "docs/coordination/SYSTEM_STATUS.md",
+      "purpose": "Query both servers for real-time status"
+    },
+    "claims_cleanup": {
+      "script": "docs/coordination/scripts/cleanup-stale-claims.sh",
+      "purpose": "Archive or delete coordination claims older than 3 days"
+    },
+    "key_files": {
+      "now_md": "core/STATE/NOW.md",
+      "ssot_json": "docs/coordination/SSOT.json",
+      "system_status": "docs/coordination/SYSTEM_STATUS.md",
+      "service_registry": "docs/coordination/SERVICE_REGISTRY.md"
+    },
+    "stale_data_identified": [
+      "docs/coordination/SYSTEM_MAP.md (Nov 15 - 1 month stale)",
+      "docs/coordination/consciousness/server/*.json (Nov 15 - 1 month stale)",
+      "core/INTELLIGENCE/SITUATION_REPORT.md (Nov 23 - 3 weeks stale)"
+    ]
+  },
+  "coordination_health": {
+    "total_claims": 35,
+    "stale_claims_over_3_days": 19,
+    "heartbeat_files": 1,
+    "message_files": 390,
+    "last_audit": "2025-12-14T20:00:00Z"
+  },
+  "metadata": {
+    "description": "Single Source of Truth for FPAI Empire",
+    "maintained_by": "cursor-agents",
+    "version": "3.1",
+    "last_optimization": "2025-12-14",
+    "optimization_notes": "Added SSOT health tools, identified stale data, created cleanup scripts"
+  }
+}

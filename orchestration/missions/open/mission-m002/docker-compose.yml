@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  mission-control:
+    build: .
+    container_name: mission_control_backend
+    restart: unless-stopped
+    ports:
+      - "8010:8000"
+    environment:
+      - ENVIRONMENT=production
+      - SERVICE_NAME=mission-control-backend
+      - VERSION=0.1.0
+      # In a real setup, these would come from a secure .env file
+      # - DATABASE_URL=postgresql+asyncpg://user:pass@db:5432/mission_control
+    volumes:
+      # Mount a volume for SQLite persistence if not using Postgres
+      - ./data:/app/data
+    networks:
+      - fpai-network
+
+networks:
+  fpai-network:
+    driver: bridge
+

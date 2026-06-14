@@ -1,0 +1,182 @@
+udc_version: 1.0
+last_updated: 2025-11-13
+description: >
+  Universal Droplet Contract (UDC) defines the standard API, authentication, and
+  message schema for communication between all registered droplets in the FullPotential mesh.
+  Each droplet must expose identical endpoints and JSON response formats.
+
+core_endpoints:
+  - path: /health
+    method: GET
+    purpose: Health, metadata, and proof of integrity.
+    response:
+      id: int
+      name: string
+      steward: string
+      status: [active, inactive, error]
+      endpoint: url
+      proof: sha256 string
+      cost_usd: float
+      yield_usd: float
+      updated_at: ISO8601 datetime
+    verified_response:
+      {
+        "id": 5,
+        "name": "Full Potential Dashboard",
+        "steward": "Haythem",
+        "status": "active",
+        "endpoint": "https://dashboard.fullpotential.ai",
+        "proof": "d30991365005c02fb508fcc2a394ad58cb6016e70cd98fc1c86feecc0d9b0004",
+        "cost_usd": 0.05,
+        "yield_usd": 0,
+        "updated_at": "2025-11-13T02:15:59.490Z"
+      }
+
+  - path: /capabilities
+    method: GET
+    purpose: Lists supported features and dependencies.
+    response:
+      version: string
+      features: list[string]
+      dependencies: list[string]
+      metadata:
+        build_date: ISO8601 datetime
+        commit_hash: string
+    verified_response:
+      {
+        "version": "1.0.0",
+        "features": [
+          "real_time_monitoring",
+          "dashboard_visualization",
+          "sprint_management",
+          "system_health_monitoring",
+          "multi_cloud_integration"
+        ],
+        "dependencies": ["registry", "orchestrator", "multi_cloud_manager"],
+        "metadata": {
+          "build_date": "2025-11-12",
+          "commit_hash": "latest"
+        }
+      }
+
+  - path: /state
+    method: GET
+    purpose: Returns current runtime metrics.
+    response:
+      cpu_percent: float
+      memory_mb: int
+      uptime_seconds: int
+      requests_total: int
+      requests_per_minute: int
+      errors_last_hour: int
+      last_restart: ISO8601 datetime
+    verified_response:
+      {
+        "cpu_percent": 100,
+        "memory_mb": 17,
+        "uptime_seconds": 9,
+        "requests_total": 4,
+        "requests_per_minute": 27,
+        "errors_last_hour": 0,
+        "last_restart": "2025-11-13T02:15:54.130Z"
+      }
+
+  - path: /dependencies
+    method: GET
+    purpose: Show linked droplets and connection status.
+    response:
+      required:
+        - { id: int, name: string, status: connected|disconnected }
+      optional:
+        - { id: int, name: string, status: available|missing }
+    verified_response:
+      {
+        "required": [
+          { "id": 1, "name": "Registry", "status": "connected" },
+          { "id": 10, "name": "Orchestrator", "status": "connected" }
+        ],
+        "optional": [
+          { "id": 2, "name": "Airtable Connector", "status": "available" },
+          { "id": 4, "name": "Multi-Cloud Manager", "status": "available" }
+        ],
+        "missing": []
+      }
+
+  - path: /message
+    method: POST
+    purpose: Cross-droplet message relay.
+    request:
+      trace_id: uuid
+      source: droplet_id
+      target: droplet_id
+      message_type: status|event|command|query
+      payload: object
+      timestamp: ISO8601 datetime
+      signature: jwt_token
+    response:
+      received: bool
+      trace_id: uuid
+      processed_at: ISO8601 datetime
+      result: success|queued|error
+    example_request:
+      {
+        "trace_id": "550e8400-e29b-41d4-a716-446655440000",
+        "source": 10,
+        "target": 5,
+        "message_type": "event",
+        "payload": {
+          "action": "test",
+          "data": "hello from orchestrator"
+        },
+        "timestamp": "2025-11-13T02:00:00Z",
+        "signature": "jwt_token_here"
+      }
+
+auth:
+  type: JWT
+  header: "Authorization: Bearer <token>"
+  claims:
+    droplet_id: int
+    steward: string
+    permissions: [read, write]
+    exp: unix timestamp
+    iat: unix timestamp
+
+response_standards:
+  success:
+    status: success
+    data: {}
+    timestamp: ISO8601 datetime
+  error:
+    status: error
+    error:
+      code: string
+      message: string
+      details: object
+    timestamp: ISO8601 datetime
+  error_codes:
+    - INVALID_REQUEST
+    - UNAUTHORIZED
+    - FORBIDDEN
+    - NOT_FOUND
+    - RATE_LIMITED
+    - INTERNAL_ERROR
+    - DEPENDENCY_UNAVAILABLE
+
+compliance_checklist:
+  - /health valid JSON schema ✅
+  - /capabilities implemented ✅
+  - /state metrics accurate ✅
+  - /dependencies implemented ✅
+  - /message implemented ✅
+  - JWT required except for /health ✅
+  - Errors standardized ✅
+  - All responses timestamped ✅
+  - Enum casing enforced ✅
+
+verification_status:
+  droplet_id: 5
+  droplet_name: "Full Potential Dashboard"
+  verified_date: "2025-11-13T02:16:00Z"
+  all_endpoints_tested: true
+  udc_compliant: true

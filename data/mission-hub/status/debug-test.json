@@ -1,0 +1,24 @@
+{
+  "mission_id": "debug-test",
+  "status": "blocked",
+  "history": [
+    {
+      "status": "submitted",
+      "timestamp": "2025-11-27T17:25:51.168327",
+      "updated_by": "DebugTest",
+      "notes": "Code submission via Harvester",
+      "repo_url": "https://github.com/octocat/Hello-World",
+      "score": null
+    },
+    {
+      "status": "blocked",
+      "timestamp": "2025-11-27T17:25:51.825221",
+      "updated_by": "DebugTest",
+      "notes": "Code submission via Harvester",
+      "repo_url": "https://github.com/octocat/Hello-World",
+      "score": 0
+    }
+  ],
+  "last_updated": "2025-11-27T17:25:51.825215",
+  "last_updated_by": "DebugTest"
+}

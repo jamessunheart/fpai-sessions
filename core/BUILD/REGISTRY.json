@@ -1,0 +1,58 @@
+{
+  "schema": "build-registry.v1",
+  "updated_at": "2026-06-14T09:26:48Z",
+  "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
+  "active_builds": [
+    {
+      "id": "build-20260614-cartographer-auto-refresh",
+      "slug": "cartographer-auto-refresh",
+      "branch": "build/SPEC_cartographer-auto-refresh",
+      "base_branch": "feat/headless-build",
+      "session": "codex via run_codex.sh (2026-06-14)",
+      "status": "merged",
+      "spec": "core/BUILD/specs/SPEC_cartographer-auto-refresh.md",
+      "tests_passed": true,
+      "notes": "recursive loop first lap \u2014 Codex built + self-tested 2/2"
+    },
+    {
+      "id": "SPEC_build-queue-status",
+      "slug": "SPEC_build-queue-status",
+      "branch": "build/SPEC_build-queue-status",
+      "base_branch": "feat/headless-build",
+      "session": "orchestrator",
+      "status": "merged",
+      "spec": "/Users/jamessunheart/FPAI_Cockpit/core/BUILD/specs/SPEC_build-queue-status.md",
+      "tests_passed": null
+    },
+    {
+      "id": "SPEC_lantern-detector",
+      "slug": "SPEC_lantern-detector",
+      "branch": "build/SPEC_lantern-detector",
+      "base_branch": "feat/headless-build",
+      "session": "orchestrator",
+      "status": "merged",
+      "spec": "/Users/jamessunheart/FPAI_Cockpit/core/BUILD/specs/SPEC_lantern-detector.md",
+      "tests_passed": null
+    },
+    {
+      "id": "SPEC_mirror-digest",
+      "slug": "SPEC_mirror-digest",
+      "branch": "build/SPEC_mirror-digest",
+      "base_branch": "feat/headless-build",
+      "session": "orchestrator",
+      "status": "merged",
+      "spec": "/Users/jamessunheart/FPAI_Cockpit/core/BUILD/specs/SPEC_mirror-digest.md",
+      "tests_passed": null
+    },
+    {
+      "id": "SPEC_proof-river",
+      "slug": "SPEC_proof-river",
+      "branch": "build/SPEC_proof-river",
+      "base_branch": "feat/headless-build",
+      "session": "orchestrator",
+      "status": "merged",
+      "spec": "/Users/jamessunheart/FPAI_Cockpit/core/BUILD/specs/SPEC_proof-river.md",
+      "tests_passed": null
+    }
+  ]
+}

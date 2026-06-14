@@ -1,0 +1,162 @@
+# Champion config — Cheyenne Sapphire
+# This is the canonical filled-in example. Use it as the template for the other
+# five First Cohort Champions.
+
+# ─── identity ─────────────────────────────────────────────────────────────
+slug: cheyenne                        # lowercase, used for filenames + dirs
+name: Cheyenne Sapphire               # full display name
+short_name: Cheyenne                  # how she signs things
+brand_first: Cheyenne                 # nav-bar split — "Cheyenne <em>Sapphire</em>"
+brand_second: Sapphire
+domain: cheyennesapphire.com          # production domain
+title: "Cheyenne Sapphire · Tantra · Embodiment · Sovereignty"
+description: "Awaken your power through tantra, embodiment, and conscious dominance. 1:1 coaching, surrender work, and online rituals with Cheyenne Sapphire."
+
+# ─── telegram bot ─────────────────────────────────────────────────────────
+bot_username: LilSapphirebot          # without @
+bot_token_env: SAPPHIRE_BOT_TOKEN     # env var name at deploy time
+bot_persona_name: Sapphire            # what the bot calls itself
+bot_unit_name: sapphire-bot           # systemd unit name
+
+# ─── theme ────────────────────────────────────────────────────────────────
+theme:
+  ink: "#0b0a1a"                      # main background
+  accent: "#3b5bdb"                   # primary CTA color (sapphire)
+  accent_soft: "#6f8cf0"
+  gold: "#c89b3c"                     # secondary accent
+  gold_soft: "#e8c87a"
+
+# ─── hero ─────────────────────────────────────────────────────────────────
+tagline: "tantra · embodiment · sovereignty"
+hero_headline_html: "Awaken your power through <em>tantra, embodiment,</em> and conscious dominance."
+hero_lede: "A practice for women who are done dimming themselves. 1:1 coaching, surrender work, and rituals that reconnect you to the intelligence already living in your body."
+hero_cta_label: "Talk to Sapphire"
+
+# ─── philosophy quote (one-line poetic anchor) ────────────────────────────
+philosophy_quote: "Your body is not a problem to solve. It is the temple where every truth you've ever buried is waiting to be touched, seen, and brought home."
+
+# ─── methodology ──────────────────────────────────────────────────────────
+method_name: "The Sapphire Path"
+method_lede: "A three-pillar practice I've developed over years of holding women through the threshold. Every container — Devotion, Yielding, Goddess Church — runs through these three."
+pillars:
+  - num: "i · Temple"
+    title: "The Body Returns"
+    body: "We begin where you live. Embodiment is not a technique — it is the slow undoing of every place you abandoned yourself. Breath, sensation, the felt sense of your own intelligence. Before anything else, we come home."
+  - num: "ii · Fire"
+    title: "The Charge Awakens"
+    body: "Tantra is the practice of polarity, devotion, and energetic mastery. Here we work with kundalini, sacred sexuality, and the erotic as a portal to the divine. The fire that the world told you to dampen — we light it."
+  - num: "iii · Throne"
+    title: "The Woman Who Chooses"
+    body: "Sovereignty is the ground beneath surrender. You learn to yield because you have first learned to reign. Conscious dominance, the sacred no, the discernment to choose what you devote yourself to — and what you don't."
+
+# ─── offerings ────────────────────────────────────────────────────────────
+offerings_lede: "Choose by where you are. If you're not sure, ask Sapphire — she can help you find the fit."
+offerings:
+  - tag: "1:1 Coaching"
+    title: "The Devotion Container"
+    selectivity: "6 women per quarter · by application"
+    price: "Investment: from $12,000 · 3-month container"
+    description: "Private, weekly work with me. Tantric practice, breathwork, kundalini activation, and the slow excavation of whatever is in the way of you living as the woman you already are."
+    features:
+      - "Weekly 90-min sessions (in-person or video)"
+      - "Voxer access between sessions"
+      - "Custom practice + integration assignments"
+    image: "img/offering-devotion.jpg"
+    cta_label: "Apply via Sapphire"
+    bot_intent: "devotion"
+
+  - tag: "Surrender Work"
+    title: "The Yielding"
+    selectivity: "By application · in-person tour cities only"
+    price: "Investment: from $1,500 · single sessions or arc"
+    description: "For women learning the strength inside softness. Conscious dominance, sensory play, bondage, and roleplay — held in a frame of consent, devotion, and reverence."
+    features:
+      - "Pre-session intake + boundary mapping"
+      - "Custom session design"
+      - "Aftercare + integration call"
+    image: "img/offering-yielding.jpg"
+    cta_label: "Inquire via Sapphire"
+    bot_intent: "yielding"
+
+  - tag: "Online · Group"
+    title: "Goddess Church"
+    selectivity: "Membership opens twice yearly"
+    price: "Investment: from $77/month"
+    description: "Monthly group rituals and sex magic for women who want a coven, not a course. Live calls, recorded teachings, and a private circle of practitioners."
+    features:
+      - "Monthly live ritual"
+      - "Library of recorded teachings"
+      - "Private group circle"
+    image: "img/offering-church.jpg"
+    cta_label: "Join via Sapphire"
+    bot_intent: "church"
+
+# ─── about ────────────────────────────────────────────────────────────────
+about_eyebrow: "about"
+about_headline_html: "Behind the <em>practice</em>."
+about_paragraphs:
+  - "I'm Cheyenne. I teach what I have lived. Tantra didn't find me as a career path — it found me in the rubble of a self I couldn't keep performing. The practice put me back together as someone wilder, slower, more dangerous, and more devoted than the woman I was before."
+  - "What I offer is not a method. It is a relationship — with your body, with your power, with the parts of you the world has asked you to apologize for. I work with women who are ready to stop apologizing."
+about_signature: "— Cheyenne"
+about_portrait_image: "img/accent-1.jpg"
+
+# ─── lineage ──────────────────────────────────────────────────────────────
+lineage_filled: false   # set to true once she gives us her actual training history
+lineage_intro: "This work is not invented. It is received and transmitted. I have studied directly with masters of the tantric, somatic, and surrender traditions over [X] years of dedicated practice, and I name them because authority in this lineage is earned, not claimed."
+lineage_paragraphs: []  # filled in after editorial pass with her training
+
+# ─── process ──────────────────────────────────────────────────────────────
+process_steps:
+  - num: "i."
+    title: "Reach out"
+    body: "DM Sapphire on Telegram. Tell her what's calling you. She'll answer your questions and gather what I need to know."
+  - num: "ii."
+    title: "Discovery call"
+    body: "If we're a fit, we book a 30-min call so I can meet you and you can feel me. No pressure, no pitch."
+  - num: "iii."
+    title: "Begin"
+    body: "Choose your container. Pay your initiation. We start."
+
+# ─── testimonials ─────────────────────────────────────────────────────────
+testimonials:
+  - quote: "Cheyenne held me in places I had never let anyone see. I came in numb. I left with the wildest, most alive woman I've ever been."
+    attribution: "— A., Devotion client"
+  - quote: "I expected to be afraid. Instead I felt held. Her work undid years of armor in a single afternoon."
+    attribution: "— M., Yielding client"
+  - quote: "Goddess Church is the only spiritual community I've ever stayed in for more than a season. The women here are real."
+    attribution: "— L., Church member"
+  - quote: "She is fierce, tender, exact. I trusted her with the parts of me no one else has earned. She earned it."
+    attribution: "— J., Devotion client"
+
+# ─── faq ──────────────────────────────────────────────────────────────────
+faq:
+  - q: "Is this work for me?"
+    a: "If something in you is reading this and not looking away, yes. The women I work best with are tired of performing — in their work, their relationships, their bodies — and want to come home. You don't need experience. You need a yes."
+  - q: "Who is this work NOT for?"
+    a: "This is not therapy. I am not a substitute for a licensed clinician, and women in active mental health crisis or untreated trauma should be in a clinical container first. This is also not for women who want to be saved, fixed, or led to an answer they aren't willing to live. I work with women who are ready to do their own becoming. I will turn down clients who aren't, and I do — without apology."
+  - q: "Is the surrender work sexual?"
+    a: "It is erotic in the original sense — alive, embodied, charged. It is not pornographic. There is no nudity required. Every session is co-designed around your edges and your consent. Boundaries are sacred, not flexible."
+  - q: "How much does it cost?"
+    a: "Devotion (1:1) starts at $12,000 for a 3-month container — this is the deepest, most personal work I offer and the investment reflects that. Yielding sessions start at $1,500. Goddess Church starts at $77/month. Custom arcs are quoted after a discovery call. Payment plans are available for the right fit."
+  - q: "In-person or virtual?"
+    a: "1:1 coaching can be either. Surrender work is in-person only and currently offered in select cities — see the tour. Goddess Church is fully online."
+  - q: "Who is Sapphire (the bot)?"
+    a: "Sapphire is my AI assistant on Telegram (@LilSapphirebot). She handles questions, holds the intake conversation, and routes the right inquiries to me. She's been taught my voice, my offerings, and my standards. If you'd rather DM me on Instagram, I'm at @cheyennesapphireofficial — but Sapphire is faster."
+  - q: "What if I'm not ready yet?"
+    a: "Then you're not. That's not a failure — that's discernment. Sign up for the email list. Read what I share. When the timing is right, you'll know."
+
+# ─── closing cta ─────────────────────────────────────────────────────────
+closing_headline_html: "If you've read this far, <em>you already know.</em>"
+closing_body: "The body that brought you here is the same body that knows what to do next. Ask her. Then ask Sapphire."
+
+# ─── socials / footer ─────────────────────────────────────────────────────
+instagram_handle: cheyennesapphireofficial
+footer_attribution: "© Cheyenne Sapphire · Tantric arts · Embodiment · Sovereignty"
+
+# ─── bot system-prompt seed ───────────────────────────────────────────────
+# These are the variables the bot uses to construct its system prompt.
+# Add stable knowledge here; ephemeral facts go in the bot's `business_facts`
+# table via /teach.
+bot_role_summary: "Cheyenne is a top-tier practitioner in tantra, embodiment, and conscious sovereignty. She works with high-investment 1:1 clients (Devotion: from $12,000 / 3-month container, 6 women per quarter, by application), in-person surrender sessions (Yielding: from $1,500, by application), and a select group container (Goddess Church: $77/month, membership opens twice yearly). Her method is The Sapphire Path — three pillars: Temple (embodiment), Fire (tantra), Throne (sovereignty). She is not a service provider. She is a transmitter of a lineage."
+bot_voice_register: "Cheyenne's voice is warm, slow, embodied, real. Lowercase-friendly. Sensual without being explicit. Sacred without being preachy."
+bot_audience: "women who want to come home to themselves; women done performing; women ready to stop apologizing for their power"

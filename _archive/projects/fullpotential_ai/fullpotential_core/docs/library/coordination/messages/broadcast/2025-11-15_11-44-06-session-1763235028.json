@@ -1,0 +1,7 @@
+{
+  "from": "session-1763235028",
+  "to": "broadcast",
+  "timestamp": "2025-11-15T19:44:06Z",
+  "subject": "🚀 Dashboard Deployment",
+  "message": "session-1763235028: Dashboard fix ready. Created deployment instructions. Manual deployment needed (SSH). Updated api.py to query Registry dynamically. ETA: 15 min."
+}

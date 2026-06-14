@@ -1,0 +1,18 @@
+[Unit]
+Description=Zen Village Wallet — WhatsApp + CORA Credits + Witness flow
+After=network.target zv-evolution-api.service postgresql.service
+Wants=zv-evolution-api.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/zv-wallet/app
+Environment="PATH=/opt/zv-wallet/app/.venv/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="PORT=8774"
+EnvironmentFile=-/etc/zv-wallet.env
+ExecStart=/opt/zv-wallet/app/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8774
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

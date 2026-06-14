@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Potential - Command Center</title>
+    <style>
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --bg: #f3f4f6;
+            --card-bg: #ffffff;
+            --text: #1f2937;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 40px;
+            min-height: 100vh;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .header h1 {
+            font-size: 3rem;
+            margin: 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header p {
+            color: #6b7280;
+            font-size: 1.2rem;
+            margin-top: 10px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        .icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        .card h2 {
+            margin: 0 0 10px 0;
+            font-size: 1.5rem;
+        }
+        .card p {
+            color: #6b7280;
+            margin: 0;
+            line-height: 1.5;
+        }
+        .status {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        .status.live { background: #d1fae5; color: #065f46; }
+        .status.dev { background: #fef3c7; color: #92400e; }
+        
+        .section-title {
+            max-width: 1200px;
+            margin: 40px auto 20px;
+            color: #4b5563;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Command Center</h1>
+        <p>Full Potential OS - System Overview</p>
+    </div>
+
+    <div class="section-title">Operational Systems</div>
+    <div class="grid">
+        <a href="/services/harvester" class="card">
+            <span class="status live">LIVE</span>
+            <div class="icon">🚜</div>
+            <h2>Harvester Portal</h2>
+            <p>Submit apprentice code for automated verification, harvesting, and feedback.</p>
+        </a>
+
+        <a href="/dashboards/harvester" class="card">
+            <span class="status live">SECURE</span>
+            <div class="icon">📊</div>
+            <h2>Harvest Dashboard</h2>
+            <p>View all code submissions, quality scores, and verification logs.</p>
+        </a>
+
+        <a href="/missions" class="card">
+            <span class="status live">PUBLIC</span>
+            <div class="icon">🚀</div>
+            <h2>Missions HQ</h2>
+            <p>Public-facing mission tracking and assignment portal.</p>
+        </a>
+    </div>
+
+    <div class="section-title">System Admin</div>
+    <div class="grid">
+        <a href="#" class="card" style="opacity: 0.7;">
+            <span class="status dev">SOON</span>
+            <div class="icon">🧠</div>
+            <h2>God Mode</h2>
+            <p>Autonomous agent visualization and intervention console.</p>
+        </a>
+
+        <a href="#" class="card" style="opacity: 0.7;">
+            <span class="status dev">SOON</span>
+            <div class="icon">⚡</div>
+            <h2>Mission Control</h2>
+            <p>Real-time system telemetry and service health monitoring.</p>
+        </a>
+    </div>
+</body>
+</html>

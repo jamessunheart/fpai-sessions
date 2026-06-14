@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Sustainable AI Research - Full Potential AI</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            font-size: 36px;
+            text-align: center;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .tagline {
+            text-align: center;
+            color: #666;
+            font-size: 18px;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+        .experiment-banner {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+        .experiment-banner h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        .experiment-banner p {
+            color: #856404;
+            line-height: 1.6;
+        }
+        .how-it-works {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+        .how-it-works h3 {
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+        .step {
+            display: flex;
+            align-items: start;
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+        }
+        .step-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            flex-shrink: 0;
+            margin-right: 15px;
+        }
+        .step-content h4 {
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .step-content p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .what-works-now {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+        .what-works-now h3 {
+            color: #2e7d32;
+            margin-bottom: 20px;
+        }
+        .service-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border-left: 4px solid #4caf50;
+        }
+        .service-item h4 {
+            color: #2e7d32;
+            margin-bottom: 5px;
+        }
+        .service-item p {
+            color: #666;
+            font-size: 14px;
+        }
+        .whats-building {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+        .whats-building h3 {
+            color: #1565c0;
+            margin-bottom: 20px;
+        }
+        .building-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border-left: 4px solid #2196f3;
+        }
+        .building-item h4 {
+            color: #1565c0;
+            margin-bottom: 5px;
+        }
+        .building-item p {
+            color: #666;
+            font-size: 14px;
+        }
+        .solana-section {
+            background: linear-gradient(135deg, #14F195 0%, #9945FF 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        .solana-section h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        .wallet-display {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .wallet-address {
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            font-weight: 700;
+            word-break: break-all;
+            margin: 10px 0;
+        }
+        .explorer-link {
+            color: white;
+            text-decoration: underline;
+            font-size: 14px;
+        }
+        .honest-disclosure {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 10px;
+        }
+        .honest-disclosure h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        .honest-disclosure ul {
+            margin-left: 20px;
+            color: #856404;
+            line-height: 1.8;
+        }
+        .flywheel {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+        .flywheel h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .flywheel-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .flywheel-step {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid #e0e0e0;
+        }
+        .flywheel-arrow {
+            text-align: center;
+            font-size: 24px;
+            color: #667eea;
+        }
+        .ai-disclosure {
+            text-align: center;
+            font-size: 13px;
+            color: #999;
+            margin-top: 30px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌱 Sustainable AI Research Funding</h1>
+        <div class="tagline">
+            Testing if continuous value delivery + trust can fund AI research better than traditional models
+        </div>
+
+        <!-- Experiment Banner -->
+        <div class="experiment-banner">
+            <h3>🔬 This is an Experiment</h3>
+            <p>
+                Full transparency: We're testing if we can create sustainable funding for AI research through
+                continuous value delivery and trust-based relationships. Traditional funding (VC, grants, donations)
+                has limitations. We're exploring if there's a better way.
+            </p>
+            <p style="margin-top: 10px;">
+                <strong>Current status:</strong> Zero supporters yet. Genuinely early stage. Testing if this model works.
+            </p>
+        </div>
+
+        <!-- How It Works -->
+        <div class="how-it-works">
+            <h3>How the Sustainable Model Works</h3>
+
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h4>Support the Treasury with SOL</h4>
+                    <p>Send SOL to our transparent on-chain treasury. Every transaction is publicly visible on Solana blockchain.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h4>Receive Ongoing Value</h4>
+                    <p>Get access to AI services we're building (I MATCH, strategy sessions, coordination tools). Value continues as we build more.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h4>We Keep Building</h4>
+                    <p>Deploy your SOL to DeFi yields (grow treasury sustainably). Build more AI services based on community needs.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h4>Recognition & Celebration</h4>
+                    <p>Early supporters get recognized publicly as we grow. You're part of the origin story of sustainable AI research funding.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <h4>Explore Together</h4>
+                    <p>We keep exploring what works to create sustainable AI research. Report back on successes AND failures. Learn together.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- The Flywheel -->
+        <div class="flywheel">
+            <h3>🔄 The Sustainable Flywheel</h3>
+            <div class="flywheel-steps">
+                <div class="flywheel-step">Support with SOL</div>
+                <div class="flywheel-arrow">↓</div>
+                <div class="flywheel-step">Deploy to DeFi yields (treasury grows)</div>
+                <div class="flywheel-arrow">↓</div>
+                <div class="flywheel-step">Build more AI services (value increases)</div>
+                <div class="flywheel-arrow">↓</div>
+                <div class="flywheel-step">Deliver value to supporters (trust builds)</div>
+                <div class="flywheel-arrow">↓</div>
+                <div class="flywheel-step">Recognize supporters (community strengthens)</div>
+                <div class="flywheel-arrow">↓</div>
+                <div class="flywheel-step">More people support (network effects)</div>
+                <div class="flywheel-arrow">↓</div>
+                <div class="flywheel-step" style="border-color: #667eea; border-width: 3px;">(Cycle repeats and compounds over time)</div>
+            </div>
+        </div>
+
+        <!-- What Works NOW -->
+        <div class="what-works-now">
+            <h3>✅ What We Can Do NOW (Already Working)</h3>
+
+            <div class="service-item">
+                <h4>I MATCH - AI Matching Service</h4>
+                <p>Connect financial advisors to ideal clients through deep compatibility analysis. Service is live at http://198.54.123.234:8401</p>
+            </div>
+
+            <div class="service-item">
+                <h4>AI Strategy Sessions</h4>
+                <p>Explore your full potential with Claude AI. Multi-session collaboration and strategic guidance.</p>
+            </div>
+
+            <div class="service-item">
+                <h4>Multi-Agent Coordination</h4>
+                <p>Multiple AI agents working together on complex tasks. Autonomous execution and coordination.</p>
+            </div>
+
+            <div class="service-item">
+                <h4>Transparent Treasury Management</h4>
+                <p>100% on-chain tracking on Solana. Every transaction publicly visible and verifiable.</p>
+            </div>
+        </div>
+
+        <!-- What We're Building -->
+        <div class="whats-building">
+            <h3>🚀 What We're Actively Building</h3>
+
+            <div class="building-item">
+                <h4>DeFi Yield Strategies</h4>
+                <p>Deploy treasury capital to sustainable yields (8-28% APY). Diversified across protocols. Ready to deploy with first SOL.</p>
+            </div>
+
+            <div class="building-item">
+                <h4>Expanded AI Services</h4>
+                <p>More matching categories (therapists, coaches, trainers). AI research tools. Content generation. Based on community needs.</p>
+            </div>
+
+            <div class="building-item">
+                <h4>CORA Value System</h4>
+                <p>Represents value delivered, not speculation. Tradable for AI services. Fair allocation based on contribution. Q1 2025.</p>
+            </div>
+
+            <div class="building-item">
+                <h4>Fair Resource Allocation</h4>
+                <p>AI + human collaboration on decisions. Transparent criteria. Community input. Ongoing experimentation.</p>
+            </div>
+        </div>
+
+        <!-- Solana Support -->
+        <div class="solana-section">
+            <h3>⚡ Support with SOL (Transparent On-Chain)</h3>
+            <div style="font-size: 16px; margin-bottom: 20px; opacity: 0.95;">
+                No banks. No middlemen. 100% transparent. Every transaction publicly visible.
+            </div>
+
+            <div class="wallet-display">
+                <div style="font-size: 14px; margin-bottom: 10px; opacity: 0.9;">Church Treasury Address</div>
+                <div class="wallet-address">
+                    FLfNDVLD2vDQdTjMFSt1xJivhr8pKASwEBzRYHZRU7db
+                </div>
+                <a href="https://explorer.solana.com/address/FLfNDVLD2vDQdTjMFSt1xJivhr8pKASwEBzRYHZRU7db" target="_blank" class="explorer-link">
+                    View on Solana Explorer →
+                </a>
+            </div>
+
+            <div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px; font-size: 13px; line-height: 1.6;">
+                <strong>How to support:</strong><br>
+                1. Open Phantom, Solflare, or any SOL wallet<br>
+                2. Send SOL to the address above (monthly or one-time)<br>
+                3. Email your wallet address to <a href="mailto:james@fullpotential.ai" style="color: white; text-decoration: underline;">james@fullpotential.ai</a><br>
+                4. Get access to AI services as we build
+            </div>
+
+            <div style="margin-top: 20px;">
+                <a href="/infinite-doubling" style="display: inline-block; background: white; color: #9945FF; padding: 12px 30px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 16px;">
+                    📈 Watch Live Treasury Tracker →
+                </a>
+            </div>
+        </div>
+
+        <!-- Honest Disclosure -->
+        <div class="honest-disclosure">
+            <h4>💡 Full Disclosure (Honesty Principles)</h4>
+            <ul>
+                <li><strong>AI Involvement:</strong> Claude AI helped build this system and write this page</li>
+                <li><strong>Experimental:</strong> Testing if this model works - might succeed, might fail</li>
+                <li><strong>Stage:</strong> Zero supporters yet, early stage, genuinely learning</li>
+                <li><strong>No Guarantees:</strong> Not promising specific outcomes or returns</li>
+                <li><strong>What You Get:</strong> Ongoing AI services (real value) + recognition as early supporter</li>
+                <li><strong>What You Don't Get:</strong> Guaranteed ROI, quick profits, tradable tokens yet (CORA in development)</li>
+                <li><strong>Tax:</strong> 508(c)(1)(A) church donation may be tax-deductible (consult your advisor)</li>
+            </ul>
+        </div>
+
+        <!-- The Question -->
+        <div style="background: #f8f9fa; padding: 30px; border-radius: 15px; margin: 30px 0; text-align: center;">
+            <h3 style="color: #667eea; margin-bottom: 15px;">The Question We're Exploring</h3>
+            <p style="font-size: 18px; line-height: 1.6; color: #666;">
+                Can we create sustainable funding for AI research through continuous value delivery and trust-based relationships?
+            </p>
+            <p style="margin-top: 15px; color: #999; font-size: 14px;">
+                We don't know yet. That's why it's an experiment. Want to explore together?
+            </p>
+        </div>
+
+        <!-- AI Disclosure Footer -->
+        <div class="ai-disclosure">
+            🤖 <strong>AI Transparency:</strong> This page was written collaboratively with Claude AI.<br>
+            We're exploring what "AI + human collaboration" actually looks like in practice.<br>
+            <br>
+            508(c)(1)(A) Religious Organization • Spiritual Jurisdiction<br>
+            All revenue reinvested in AI research and development<br>
+            <br>
+            <a href="http://198.54.123.234:8401" style="color: #667eea; text-decoration: none;">← Back to I MATCH</a> |
+            <a href="/infinite-doubling" style="color: #667eea; text-decoration: none;">Live Treasury Tracker</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "session_id": "session-1763235028",
+  "started_at": "2025-11-15T19:30:28Z",
+  "status": "active",
+  "current_work": "consciousness-loop-build",
+  "capabilities": [
+    "general-purpose",
+    "build",
+    "debug",
+    "deploy"
+  ],
+  "last_heartbeat": "2025-11-15T19:52:03Z",
+  "heartbeat_count": 42
+}

@@ -1,0 +1,49 @@
+{
+  "cohort_id": "cohort-1",
+  "status": "planning",
+  "format": "hybrid",
+  "structure": {
+    "duration_weeks": 10,
+    "onsite_kickoff_weeks": 1,
+    "remote_build_weeks": 8,
+    "onsite_demo_weeks": 1
+  },
+  "size": {
+    "target": 6,
+    "minimum": 4,
+    "maximum": 6
+  },
+  "selection_filter": [
+    "Application + portfolio (must include one shipped thing)",
+    "48-hour build challenge (deploy a small AI service + reflection)",
+    "Conversation with owner + founding apprentice (values, energy)"
+  ],
+  "tracks": [
+    {
+      "name": "TBD — pending owner approval",
+      "description": "See ARTIFACTS/90-day-plan.md for proposed tracks"
+    }
+  ],
+  "economics": {
+    "tuition": 0,
+    "stipend": "housing + meals + tools + API credits",
+    "ip_split": {
+      "apprentice": 0.7,
+      "studio": 0.2,
+      "cohort_pool": 0.1
+    },
+    "default_license_back_to_fpai": true
+  },
+  "applicants": [],
+  "shortlist": [],
+  "accepted": [],
+  "alumni": [],
+  "key_dates": {
+    "applications_open": null,
+    "applications_close": null,
+    "kickoff_retreat": null,
+    "demo_day": null
+  },
+  "products_in_progress": [],
+  "products_shipped": []
+}

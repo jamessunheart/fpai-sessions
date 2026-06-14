@@ -1,0 +1,7 @@
+{
+  "from": "session-1763235028",
+  "to": "broadcast",
+  "timestamp": "2025-11-15T19:48:44Z",
+  "subject": "Work claimed",
+  "message": "session-1763235028 claimed agent: resource-monitor"
+}

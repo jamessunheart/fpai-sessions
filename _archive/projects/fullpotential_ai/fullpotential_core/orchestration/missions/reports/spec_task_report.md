@@ -1,0 +1,65 @@
+# Spec → Task Assignment Report
+
+Total specs scanned: 59
+
+| Spec | Domain | Assignment | Probable Implementation |
+| --- | --- | --- | --- |
+| `specs/autonomy/auto-fix-engine/SPEC.md` | autonomy | sprint | agents/services/auto-fix-engine |
+| `specs/autonomy/autonomous-agents/SPEC.md` | autonomy | sprint | agents/services/autonomous-agents |
+| `specs/autonomy/autonomous-execution-engine/SPEC.md` | autonomy | sprint | agents/services/autonomous-execution-engine |
+| `specs/autonomy/autonomous-executor/SPEC.md` | autonomy | sprint | agents/services/autonomous-executor |
+| `specs/coordination/AUTONOMOUS_BUILD_COORDINATOR_SPEC.md` | coordination | mission | unknown |
+| `specs/coordination/AUTONOMOUS_SESSION_COORDINATOR.md` | coordination | mission | unknown |
+| `specs/coordination/api-gateway/SPEC.md` | coordination | mission | agents/services/api-gateway |
+| `specs/coordination/api-hub/SPEC.md` | coordination | mission | agents/services/api-hub |
+| `specs/coordination/build-executor/SPEC.md` | coordination | mission | agents/services/build-executor |
+| `specs/coordination/credentials-manager/SPEC.md` | coordination | mission | agents/services/credentials-manager |
+| `specs/coordination/deployer/SPEC.md` | coordination | mission | agents/services/deployer |
+| `specs/coordination/governance/SPEC.md` | coordination | mission | agents/services/governance |
+| `specs/coordination/helper-management/SPEC.md` | coordination | mission | agents/services/helper-management |
+| `specs/coordination/hub/SPEC.md` | coordination | mission | agents/services/hub |
+| `specs/coordination/intent-queue/SPEC.md` | coordination | mission | agents/services/intent-queue |
+| `specs/coordination/jobs/SPEC.md` | coordination | mission | agents/services/jobs |
+| `specs/coordination/nexus-event-bus/SPEC.md` | coordination | mission | agents/services/nexus-event-bus |
+| `specs/coordination/ops/SPEC.md` | coordination | mission | agents/services/ops |
+| `specs/coordination/orchestrator/SPEC.md` | coordination | mission | agents/services/orchestrator |
+| `specs/coordination/orchestrator/SPEC_Orchestrator_TrackB_v1_1_Enhanced.md` | coordination | mission | agents/services/orchestrator |
+| `specs/coordination/orchestrator-unified/SPEC.md` | coordination | mission | agents/services/orchestrator-unified |
+| `specs/coordination/proxy-manager/SPEC.md` | coordination | mission | agents/services/proxy-manager |
+| `specs/coordination/proxy-manager/SPEC_Proxy_Manager_API_v1.md` | coordination | mission | agents/services/proxy-manager |
+| `specs/coordination/registry/SPEC.md` | coordination | mission | agents/services/registry |
+| `specs/coordination/unified-assembly-line/SPEC.md` | coordination | mission | agents/services/unified-assembly-line |
+| `specs/outreach/ai-automation/AI_MARKETING_ENGINE_SPEC.md` | outreach | sprint | agents/services/ai-automation |
+| `specs/outreach/approval-dashboard/SPEC.md` | outreach | sprint | agents/services/approval-dashboard |
+| `specs/outreach/content-generation-engine/SPEC.md` | outreach | sprint | agents/services/content-generation-engine |
+| `specs/outreach/email-automation-system/SPEC.md` | outreach | sprint | agents/services/email-automation-system |
+| `specs/outreach/landing-page/SPEC.md` | outreach | sprint | agents/services/landing-page |
+| `specs/outreach/phase1-execution-engine/OUTREACH_INTEGRATION_SPEC.md` | outreach | sprint | agents/services/phase1-execution-engine |
+| `specs/outreach/reddit-auto-responder/SPEC.md` | outreach | sprint | agents/services/reddit-auto-responder |
+| `specs/outreach/seo-landing-generator/SPEC.md` | outreach | sprint | agents/services/seo-landing-generator |
+| `specs/outreach/social-auto-poster/SPEC.md` | outreach | sprint | agents/services/social-auto-poster |
+| `specs/products/ai-automation-playbook/AI_MARKETING_ENGINE_SPEC.md` | products | sprint | droplets/claude1/ai-automation-playbook |
+| `specs/products/church-guidance-ministry/SPECS.md` | products | sprint | agents/services/church-guidance-ministry |
+| `specs/products/i-match/SPEC.md` | products | sprint | agents/services/i-match |
+| `specs/products/i-proactive/SPEC.md` | products | sprint | agents/services/i-proactive<br/>core/applications/i-proactive |
+| `specs/products/legal-verification-agent/SPEC.md` | products | sprint | agents/services/legal-verification-agent |
+| `specs/products/legal-verification-agent/SPECS.md` | products | sprint | agents/services/legal-verification-agent |
+| `specs/products/spec-builder/SPEC.md` | products | sprint | agents/services/spec-builder |
+| `specs/products/spec-optimizer/SPEC.md` | products | sprint | agents/services/spec-optimizer |
+| `specs/products/spec-verifier/SPEC.md` | products | sprint | agents/services/spec-verifier |
+| `specs/products/unified-chat/SPEC.md` | products | sprint | agents/services/unified-chat |
+| `specs/products/verifier/SPEC.md` | products | sprint | agents/services/verifier |
+| `specs/products/verifier/SPEC_Verifier_Droplet_v1.md` | products | sprint | agents/services/verifier |
+| `specs/treasury/SPEC_Droplet_25_Treasury_Magnet.md` | treasury | mission | agents/services/treasury |
+| `specs/treasury/TREASURY_ARENA_SPEC.md` | treasury | mission | agents/services/treasury |
+| `specs/treasury/tie-system/MASTER_SPEC.md` | treasury | mission | agents/services/tie-system |
+| `specs/treasury/tie-system/governance-guardian/SPEC.md` | treasury | mission | unknown |
+| `specs/treasury/tie-system/sol-treasury-core/SPEC.md` | treasury | mission | unknown |
+| `specs/treasury/tie-system/tie-contract-manager/SPEC.md` | treasury | mission | unknown |
+| `specs/treasury/tie-system/voting-weight-tracker/SPEC.md` | treasury | mission | unknown |
+| `specs/treasury/treasury-arena/ARENA_MANAGER_v2_SPEC.md` | treasury | mission | agents/services/treasury-arena |
+| `specs/treasury/treasury-arena/SIMULATION_ENGINE_SPEC.md` | treasury | mission | agents/services/treasury-arena |
+| `specs/treasury/treasury-arena/TRADING_ENGINE_SPEC.md` | treasury | mission | agents/services/treasury-arena |
+| `specs/treasury/treasury-arena/TREASURY_AGENT_v2_SPEC.md` | treasury | mission | agents/services/treasury-arena |
+| `specs/treasury/treasury-manager/SPEC.md` | treasury | mission | agents/services/treasury-manager |
+| `specs/udc/TIER_0_1_UDC_RETROFIT_SPECS.md` | udc | mission | unknown |

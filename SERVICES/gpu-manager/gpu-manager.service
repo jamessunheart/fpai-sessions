@@ -1,0 +1,23 @@
+[Unit]
+Description=GPU Manager v2.0 - Unified Safe GPU Scaling
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/fpai/gpu-manager
+Environment="VASTAI_API_KEY="
+Environment="GPU_MANAGER_ENABLED=true"
+Environment="GPU_MANAGER_MODE=monitor_only"
+Environment="GPU_DAILY_BUDGET=20"
+Environment="GPU_MAX_COUNT=10"
+ExecStart=/usr/bin/python3 main.py
+Restart=on-failure
+RestartSec=30
+
+# Safety: Don't restart too aggressively
+StartLimitIntervalSec=300
+StartLimitBurst=3
+
+[Install]
+WantedBy=multi-user.target
+

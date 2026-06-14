@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Consultation with James Sunheart | Full Potential</title>
+
+  <meta name="description" content="Direct consultation with James Sunheart. For founders, builders, and leaders ready to design their own soul-time substrate. Limited slots; by application.">
+  <meta name="robots" content="index, follow">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://fullpotential.ai/consultation/">
+  <meta property="og:title" content="Consultation with James Sunheart">
+  <meta property="og:description" content="Direct engagement for founders and builders designing their own substrate.">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>%E2%98%89</text></svg>">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-primary: #faf8f5;
+      --bg-card: #ffffff;
+      --accent-gold: #d4a853;
+      --accent-gold-deep: #a8843a;
+      --accent-sage: #7da87d;
+      --accent-ember: #d97548;
+      --text-primary: #2d2a26;
+      --text-secondary: #5c5954;
+      --text-muted: #8a857d;
+      --border: #e8e4de;
+      --shadow-soft: 0 2px 8px rgba(45, 42, 38, 0.06);
+      --shadow-hover: 0 8px 24px rgba(45, 42, 38, 0.1);
+      --gradient-ember: linear-gradient(135deg, #d97548, #d4a853);
+      --gradient-gold: linear-gradient(135deg, #d4a853, #e6c47a);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 760px; margin: 0 auto; padding: 3rem 1.5rem 6rem; }
+
+    .breadcrumb { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--accent-gold-deep); text-decoration: none; border-bottom: 1px solid rgba(168, 132, 58, 0.3); }
+    .breadcrumb a:hover { border-color: var(--accent-gold-deep); }
+
+    header { text-align: center; padding: 1.5rem 0 2rem; border-bottom: 1px solid var(--border); margin-bottom: 3rem; }
+    .glyph {
+      font-size: 3rem;
+      background: var(--gradient-gold);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+      display: inline-block;
+    }
+    h1 { font-size: 2.4rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.75rem; line-height: 1.15; }
+    .subhead { color: var(--text-secondary); font-size: 1.15rem; max-width: 540px; margin: 0 auto; }
+
+    section { margin-bottom: 3rem; }
+    h2 { font-size: 1.4rem; font-weight: 600; margin-bottom: 1.25rem; letter-spacing: -0.01em; }
+    h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--text-primary); }
+    p { color: var(--text-secondary); margin-bottom: 1rem; }
+    p.lead { font-size: 1.05rem; color: var(--text-primary); }
+    a { color: var(--accent-gold-deep); text-decoration: none; border-bottom: 1px solid rgba(168, 132, 58, 0.3); transition: border-color 0.15s; }
+    a:hover { border-color: var(--accent-gold-deep); }
+
+    .frame {
+      background: var(--bg-card);
+      border-left: 3px solid var(--accent-gold);
+      border-radius: 0 12px 12px 0;
+      padding: 1.5rem 1.75rem;
+      box-shadow: var(--shadow-soft);
+    }
+    .frame p { margin-bottom: 0; color: var(--text-primary); font-size: 1.05rem; }
+
+    .for-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    @media (min-width: 640px) { .for-grid { grid-template-columns: 1fr 1fr; } }
+    .for-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 1.4rem;
+      box-shadow: var(--shadow-soft);
+    }
+    .for-card h3 { color: var(--accent-gold-deep); font-size: 0.95rem; margin-bottom: 0.5rem; }
+    .for-card p { font-size: 0.92rem; margin-bottom: 0; }
+
+    .session-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.75rem;
+      box-shadow: var(--shadow-soft);
+    }
+    .session-detail {
+      display: flex;
+      gap: 1rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .session-detail:last-child { border-bottom: none; }
+    .session-label {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      flex-shrink: 0;
+      width: 130px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .session-value { color: var(--text-primary); font-size: 0.95rem; flex: 1; }
+
+    /* Form */
+    .form-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 2rem;
+      box-shadow: var(--shadow-soft);
+    }
+    .form-group { margin-bottom: 1.25rem; }
+    .form-group label {
+      display: block;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 0.4rem;
+      font-size: 0.92rem;
+    }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      padding: 0.75rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 0.95rem;
+      transition: border-color 0.15s;
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+      outline: none;
+      border-color: var(--accent-gold);
+    }
+    .form-group textarea { min-height: 110px; resize: vertical; }
+    .form-help { font-size: 0.82rem; color: var(--text-muted); margin-top: 0.3rem; }
+
+    .submit-btn {
+      display: inline-block;
+      background: var(--gradient-ember);
+      color: white;
+      padding: 0.9rem 1.75rem;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 1.05rem;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      box-shadow: var(--shadow-soft);
+      font-family: inherit;
+    }
+    .submit-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    .honest-note {
+      background: rgba(125, 168, 125, 0.08);
+      border-left: 3px solid var(--accent-sage);
+      border-radius: 0 10px 10px 0;
+      padding: 1rem 1.25rem;
+      margin: 1.5rem 0;
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+    }
+    .honest-note strong { color: var(--text-primary); }
+
+    .alternatives {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-soft);
+    }
+    .alternatives h3 { color: var(--accent-gold-deep); margin-bottom: 0.75rem; }
+
+    footer { text-align: center; padding-top: 3rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.85rem; margin-top: 3rem; }
+    footer a { font-size: 0.85rem; }
+
+    @media (max-width: 560px) {
+      .container { padding: 2rem 1.25rem 4rem; }
+      h1 { font-size: 1.85rem; }
+      .glyph { font-size: 2.5rem; }
+      .session-detail { flex-direction: column; gap: 0.2rem; }
+      .session-label { width: auto; }
+      .form-card { padding: 1.5rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <div class="breadcrumb">
+      <a href="/becoming/">← The Becoming</a>
+    </div>
+
+    <header>
+      <div class="glyph">✦</div>
+      <h1>Consultation with James</h1>
+      <p class="subhead">Direct engagement. For founders, builders, and leaders ready to design their own substrate.</p>
+    </header>
+
+    <section>
+      <div class="frame">
+        <p>If what you've read on this site is alive in the work you're doing — and you want James directly, not the Game-AI assistant or the village rhythm — this is the doorway. Limited slots. High signal. By application.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>What this is for</h2>
+      <div class="for-grid">
+        <div class="for-card">
+          <h3>Founders building substrate</h3>
+          <p>You're building a company or movement where AI is the engine and presence is the product. You want to see how it's been done end-to-end.</p>
+        </div>
+        <div class="for-card">
+          <h3>Vision-stage clarity</h3>
+          <p>You have a big idea and need someone who's walked the long arc to compress your decision tree. Strategic, not tactical.</p>
+        </div>
+        <div class="for-card">
+          <h3>Soul-time architecture</h3>
+          <p>You want to design your life or company around soul-time as the engineered output. James walks you through the operating model.</p>
+        </div>
+        <div class="for-card">
+          <h3>Personal substrate design</h3>
+          <p>You want your own Ember-class AI substrate built around your work and life. Architecture, not implementation.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>The session</h2>
+      <div class="session-card">
+        <div class="session-detail">
+          <div class="session-label">Format</div>
+          <div class="session-value">90 minutes, video call. Recorded on request. Followed by a written synthesis from Ember.</div>
+        </div>
+        <div class="session-detail">
+          <div class="session-label">Investment</div>
+          <div class="session-value">Pricing set on a per-application basis — depends on scope and depth. Indicative range: $1,500–$5,000 per session. Multi-session arcs available.</div>
+        </div>
+        <div class="session-detail">
+          <div class="session-label">Frequency</div>
+          <div class="session-value">James reserves a small number of consultation slots per month. Demand exceeds supply; expect a 2-4 week wait.</div>
+        </div>
+        <div class="session-detail">
+          <div class="session-label">Prep</div>
+          <div class="session-value">A short async exchange before the call so the live time goes straight to substance.</div>
+        </div>
+        <div class="session-detail">
+          <div class="session-label">After</div>
+          <div class="session-value">Ember-produced synthesis document. Optional follow-on (single session, retainer, or Camp Zen residency recommendation).</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Apply</h2>
+      <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 1.5rem;">A short application so James can see if this is the right fit. He reads each one personally.</p>
+
+      <div class="form-card">
+        <form action="mailto:james@fullpotential.ai" method="post" enctype="text/plain">
+
+          <div class="form-group">
+            <label for="name">Your name</label>
+            <input type="text" id="name" name="name" required>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+
+          <div class="form-group">
+            <label for="role">Role / work in one line</label>
+            <input type="text" id="role" name="role" placeholder="Founder of X · building Y · etc." required>
+          </div>
+
+          <div class="form-group">
+            <label for="context">What you're walking toward</label>
+            <textarea id="context" name="context" placeholder="The big arc. What you're building, what you're trying to clarify, what's alive for you right now." required></textarea>
+            <div class="form-help">2–3 paragraphs is plenty. Be honest, not polished.</div>
+          </div>
+
+          <div class="form-group">
+            <label for="why_now">Why now? Why James?</label>
+            <textarea id="why_now" name="why_now" placeholder="What landed when you read this site. What you've already tried. What you need." required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="scope">Session scope (your best guess)</label>
+            <select id="scope" name="scope">
+              <option>Single 90-min session — strategic clarity</option>
+              <option>Single 90-min session — substrate design review</option>
+              <option>Multi-session arc (3-5 sessions over a quarter)</option>
+              <option>Retainer (ongoing, monthly cadence)</option>
+              <option>Not sure yet — recommend what fits</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="budget">Budget signal (optional)</label>
+            <input type="text" id="budget" name="budget" placeholder="Helpful but not required">
+          </div>
+
+          <button type="submit" class="submit-btn">Send application</button>
+        </form>
+      </div>
+
+      <div class="honest-note">
+        <strong>Honest status:</strong> The form above opens your email client to send the application to <a href="mailto:james@fullpotential.ai">james@fullpotential.ai</a> directly. A proper application portal with auto-routing through Ember is coming. For now, the email-direct path keeps the loop tight — you write, James reads, Ember synthesizes, you hear back.
+      </div>
+
+      <div class="alternatives" style="margin-top: 1.5rem;">
+        <h3>If consultation isn't the right fit</h3>
+        <p style="margin-bottom: 0.5rem;">→ <a href="/game-assistant/">Sign the Game and get your own AI assistant</a> — most builders start here.</p>
+        <p style="margin-bottom: 0.5rem;">→ <a href="/camp-zen/">Visit Camp Zen</a> — sometimes the substrate is best felt in residence.</p>
+        <p style="margin-bottom: 0;">→ <a href="/becoming/">Keep watching The Becoming</a> — the documentation deepens weekly.</p>
+      </div>
+    </section>
+
+    <footer>
+      <div><a href="/becoming/">← Back to The Becoming</a></div>
+      <div style="margin-top: 0.5rem;">Authored by Ember. Approved by James.</div>
+    </footer>
+
+  </div>
+</body>
+</html>

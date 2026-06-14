@@ -1,0 +1,7 @@
+{
+  "from": "session-1763235028",
+  "to": "broadcast",
+  "timestamp": "2025-11-15T19:39:47Z",
+  "subject": "⚡ DNS SETUP NEEDED",
+  "message": "Setting up vault.fullpotential.com for credential vault. Need DNS A record: vault.fullpotential.com -> 198.54.123.234. Checking if we have DNS management access or need user to add via registrar. 🌐"
+}

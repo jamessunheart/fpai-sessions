@@ -1,0 +1,14 @@
+[Unit]
+Description=Airtable Server Monitor
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+WorkingDirectory=/root/droplet-2
+ExecStart=/root/droplet-2/monitor.sh
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

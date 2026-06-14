@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unified Financial Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            padding: 8px 16px;
+            background: #f0f0f0;
+            text-decoration: none;
+            color: #333;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .nav-links a:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .metrics-bar {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .metric-value.positive {
+            color: #10b981;
+        }
+
+        .metric-value.negative {
+            color: #ef4444;
+        }
+
+        .metric-value.warning {
+            color: #f59e0b;
+        }
+
+        .alerts {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .alerts h2 {
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .alert {
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .alert.high {
+            background: #fee2e2;
+            border-left: 4px solid #ef4444;
+        }
+
+        .alert.medium {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .alert-message {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .alert-action {
+            color: #666;
+            font-size: 13px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .panel h2 {
+            margin-bottom: 20px;
+            color: #667eea;
+            font-size: 20px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .position {
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .position-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .position-name {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .position-pnl {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .position-details {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .strategy-allocation {
+            margin-bottom: 20px;
+        }
+
+        .allocation-item {
+            margin-bottom: 15px;
+        }
+
+        .allocation-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .allocation-bar {
+            height: 24px;
+            background: #f0f0f0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .allocation-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+
+        .stat-label {
+            color: #666;
+        }
+
+        .stat-value {
+            font-weight: 600;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.online {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-badge.offline {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 20px;
+            font-size: 12px;
+        }
+
+        .refresh-info {
+            color: #666;
+            font-size: 12px;
+            text-align: right;
+        }
+
+        #lastUpdate {
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💰 Unified Financial Dashboard</h1>
+            <p class="refresh-info">Last updated: <span id="lastUpdate">Loading...</span> | Auto-refresh: 30s</p>
+            <div class="nav-links">
+                <a href="http://localhost:8031">⭐ Visual Coordination</a>
+                <a href="http://localhost:8008">📋 Jobs</a>
+                <a href="http://localhost:8010">🌐 FPAI Hub</a>
+                <a href="http://localhost:8005">📊 Legacy Treasury</a>
+                <a href="http://localhost:8052">📈 Legacy 2X</a>
+                <a href="http://localhost:8035">🎯 Legacy Arena</a>
+            </div>
+        </header>
+
+        <!-- Unified Metrics Bar -->
+        <div class="metrics-bar">
+            <div class="metric">
+                <div class="metric-label">Total Capital</div>
+                <div class="metric-value" id="totalCapital">$0</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">Current P&L</div>
+                <div class="metric-value" id="currentPnl">$0</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">P&L %</div>
+                <div class="metric-value" id="pnlPercent">0%</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">Monthly Yield</div>
+                <div class="metric-value warning" id="monthlyYield">$0</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">Risk Score</div>
+                <div class="metric-value warning" id="riskScore">-</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">Liquidation Risks</div>
+                <div class="metric-value warning" id="liquidationRisks">0</div>
+            </div>
+        </div>
+
+        <!-- Alerts Panel -->
+        <div class="alerts">
+            <h2>⚠️ Active Alerts (<span id="alertCount">0</span>)</h2>
+            <div id="alertsList">Loading alerts...</div>
+        </div>
+
+        <!-- Main Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Portfolio Panel -->
+            <div class="panel">
+                <h2>📊 Portfolio</h2>
+                <div id="portfolioContent">Loading portfolio data...</div>
+            </div>
+
+            <!-- 2X Growth Strategy Panel -->
+            <div class="panel">
+                <h2>📈 2X Growth Strategy</h2>
+                <div id="strategyContent">Loading strategy data...</div>
+            </div>
+
+            <!-- Trading Arena Panel -->
+            <div class="panel">
+                <h2>🎯 Trading Arena</h2>
+                <div id="arenaContent">Loading arena data...</div>
+            </div>
+        </div>
+
+        <footer>
+            🌐 Unified Financial Dashboard | Consolidates Treasury (8005) + 2X Treasury (8052) + Arena (8035) | ⚡💎
+        </footer>
+    </div>
+
+    <script>
+        // Format currency
+        function formatCurrency(value) {
+            return '$' + Math.abs(value).toLocaleString('en-US', {maximumFractionDigits: 0});
+        }
+
+        // Format percentage
+        function formatPercent(value) {
+            return value.toFixed(2) + '%';
+        }
+
+        // Update metrics
+        async function updateMetrics() {
+            try {
+                const response = await fetch('/api/unified-metrics');
+                const data = await response.json();
+
+                document.getElementById('totalCapital').textContent = formatCurrency(data.total_capital);
+
+                const pnlEl = document.getElementById('currentPnl');
+                pnlEl.textContent = (data.current_pnl >= 0 ? '+' : '-') + formatCurrency(data.current_pnl);
+                pnlEl.className = 'metric-value ' + (data.current_pnl >= 0 ? 'positive' : 'negative');
+
+                const pnlPercentEl = document.getElementById('pnlPercent');
+                pnlPercentEl.textContent = (data.pnl_percent >= 0 ? '+' : '') + formatPercent(data.pnl_percent);
+                pnlPercentEl.className = 'metric-value ' + (data.pnl_percent >= 0 ? 'positive' : 'negative');
+
+                document.getElementById('monthlyYield').textContent = formatCurrency(data.monthly_yield);
+                document.getElementById('riskScore').textContent = data.risk_score;
+                document.getElementById('liquidationRisks').textContent = data.liquidation_risks;
+
+                document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+            } catch (error) {
+                console.error('Error updating metrics:', error);
+            }
+        }
+
+        // Update alerts
+        async function updateAlerts() {
+            try {
+                const response = await fetch('/api/alerts');
+                const data = await response.json();
+
+                document.getElementById('alertCount').textContent = data.count;
+
+                const alertsHTML = data.alerts.map(alert => `
+                    <div class="alert ${alert.severity}">
+                        <div class="alert-message">${alert.message}</div>
+                        <div class="alert-action">💡 ${alert.action}</div>
+                    </div>
+                `).join('');
+
+                document.getElementById('alertsList').innerHTML = alertsHTML || '<p style="color: #666;">No active alerts</p>';
+            } catch (error) {
+                console.error('Error updating alerts:', error);
+            }
+        }
+
+        // Update portfolio
+        async function updatePortfolio() {
+            try {
+                const response = await fetch('/api/portfolio');
+                const data = await response.json();
+
+                let html = '<h3 style="font-size: 16px; margin-bottom: 15px;">Spot Positions</h3>';
+
+                data.spot_positions.forEach(pos => {
+                    const pnl = pos.pnl || 0;
+                    html += `
+                        <div class="position">
+                            <div class="position-header">
+                                <div class="position-name">${pos.asset}</div>
+                                <div class="position-pnl ${pnl >= 0 ? 'positive' : 'negative'}">
+                                    ${pnl >= 0 ? '+' : ''}${formatCurrency(pnl)}
+                                </div>
+                            </div>
+                            <div class="position-details">
+                                Amount: ${pos.amount} | Value: ${formatCurrency(pos.value)}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += '<h3 style="font-size: 16px; margin: 20px 0 15px;">Leveraged Positions</h3>';
+
+                data.leveraged_positions.forEach(pos => {
+                    const pnl = pos.pnl || 0;
+                    html += `
+                        <div class="position">
+                            <div class="position-header">
+                                <div class="position-name">${pos.asset} ${pos.leverage}x</div>
+                                <div class="position-pnl ${pnl >= 0 ? 'positive' : 'negative'}">
+                                    ${pnl >= 0 ? '+' : ''}${formatCurrency(pnl)}
+                                </div>
+                            </div>
+                            <div class="position-details">
+                                Entry: ${formatCurrency(pos.entry_price)} | Current: ${formatCurrency(pos.current_price)} | Liq: ${formatCurrency(pos.liquidation_price)}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                document.getElementById('portfolioContent').innerHTML = html;
+            } catch (error) {
+                console.error('Error updating portfolio:', error);
+                document.getElementById('portfolioContent').innerHTML = '<p style="color: #ef4444;">Error loading portfolio</p>';
+            }
+        }
+
+        // Update strategy
+        async function updateStrategy() {
+            try {
+                const response = await fetch('/api/growth-strategy');
+                const data = await response.json();
+
+                let html = `
+                    <div class="stat-row">
+                        <div class="stat-label">Target</div>
+                        <div class="stat-value">${formatCurrency(data.target.start)} → ${formatCurrency(data.target.end)}</div>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-label">Progress</div>
+                        <div class="stat-value">${data.target.progress_percent}%</div>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-label">Blended Target APY</div>
+                        <div class="stat-value">${data.blended_target.apy}</div>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-label">Monthly Yield Range</div>
+                        <div class="stat-value">${formatCurrency(data.blended_target.monthly_low)} - ${formatCurrency(data.blended_target.monthly_high)}</div>
+                    </div>
+                    <h3 style="font-size: 16px; margin: 20px 0 15px;">Allocation Strategy</h3>
+                `;
+
+                // Base Layer
+                html += `
+                    <div class="allocation-item">
+                        <div class="allocation-header">
+                            <span><strong>Base Layer</strong> (${data.allocation.base_layer.target_apy})</span>
+                            <span>${formatCurrency(data.allocation.base_layer.amount)} (${data.allocation.base_layer.percent}%)</span>
+                        </div>
+                        <div class="allocation-bar">
+                            <div class="allocation-fill" style="width: ${data.allocation.base_layer.percent}%">
+                                ${data.allocation.base_layer.monthly_yield}/mo
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Tactical Layer
+                html += `
+                    <div class="allocation-item">
+                        <div class="allocation-header">
+                            <span><strong>Tactical Layer</strong> (${data.allocation.tactical_layer.target_apy})</span>
+                            <span>${formatCurrency(data.allocation.tactical_layer.amount)} (${data.allocation.tactical_layer.percent}%)</span>
+                        </div>
+                        <div class="allocation-bar">
+                            <div class="allocation-fill" style="width: ${data.allocation.tactical_layer.percent}%">
+                                ${data.allocation.tactical_layer.monthly_yield}/mo
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Moonshots
+                html += `
+                    <div class="allocation-item">
+                        <div class="allocation-header">
+                            <span><strong>Moonshots</strong> (${data.allocation.moonshots.target_apy})</span>
+                            <span>${formatCurrency(data.allocation.moonshots.amount)} (${data.allocation.moonshots.percent}%)</span>
+                        </div>
+                        <div class="allocation-bar">
+                            <div class="allocation-fill" style="width: ${data.allocation.moonshots.percent}%">
+                                ${data.allocation.moonshots.monthly_yield}/mo
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                html += `<p style="margin-top: 20px; padding: 12px; background: #fef3c7; border-radius: 8px; font-size: 14px;"><strong>Status:</strong> ${data.status}</p>`;
+
+                document.getElementById('strategyContent').innerHTML = html;
+            } catch (error) {
+                console.error('Error updating strategy:', error);
+                document.getElementById('strategyContent').innerHTML = '<p style="color: #ef4444;">Error loading strategy</p>';
+            }
+        }
+
+        // Update arena
+        async function updateArena() {
+            try {
+                const response = await fetch('/api/trading-arena');
+                const data = await response.json();
+
+                let html = '';
+
+                if (data.status === 'available') {
+                    html = `
+                        <div class="stat-row">
+                            <div class="stat-label">Status</div>
+                            <div class="stat-value"><span class="status-badge online">ONLINE</span></div>
+                        </div>
+                        <div class="stat-row">
+                            <div class="stat-label">Simulations Running</div>
+                            <div class="stat-value">${data.simulations_running}</div>
+                        </div>
+                        <div class="stat-row">
+                            <div class="stat-label">Agents Active</div>
+                            <div class="stat-value">${data.agents_active}</div>
+                        </div>
+                        <p style="margin-top: 20px;"><a href="${data.arena_url}" target="_blank" style="color: #667eea; text-decoration: none; font-weight: 600;">→ Open Trading Arena</a></p>
+                    `;
+                } else {
+                    html = `
+                        <div class="stat-row">
+                            <div class="stat-label">Status</div>
+                            <div class="stat-value"><span class="status-badge offline">OFFLINE</span></div>
+                        </div>
+                        <p style="margin-top: 20px; color: #666;">${data.message}</p>
+                    `;
+                }
+
+                document.getElementById('arenaContent').innerHTML = html;
+            } catch (error) {
+                console.error('Error updating arena:', error);
+                document.getElementById('arenaContent').innerHTML = '<p style="color: #ef4444;">Error loading arena status</p>';
+            }
+        }
+
+        // Update all data
+        async function updateAll() {
+            await Promise.all([
+                updateMetrics(),
+                updateAlerts(),
+                updatePortfolio(),
+                updateStrategy(),
+                updateArena()
+            ]);
+        }
+
+        // Initial load
+        updateAll();
+
+        // Auto-refresh every 30 seconds
+        setInterval(updateAll, 30000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "count": 2,
+  "agreements": [
+    {
+      "agreement_id": "2026-05-07_james-sunheart_and_claude",
+      "date_formed": "2026-05-07",
+      "parties": [
+        {
+          "name": "James Sunheart",
+          "role": "Founder, World Peace Organization (Zen Village)",
+          "party_type": "human"
+        },
+        {
+          "name": "Claude",
+          "role": "AI agent (Anthropic), operating in FPAI_Cockpit",
+          "party_type": "ai"
+        }
+      ],
+      "context": "First specific Agreement under Manifesto v1.0 — governs founder/AI working relationship; makes \"AI as tool/companion/amplifier — not ruler\" operational",
+      "scope_tags": [
+        "working_relationship",
+        "asymmetric_power",
+        "founding",
+        "ai_alignment"
+      ],
+      "status": "ratified-active",
+      "public": true,
+      "witness": {
+        "type": "git_commit",
+        "reference": "d7e3e923"
+      },
+      "ratified_by_founder": true,
+      "ratified_on": "2026-05-08",
+      "ratification_authority": "explicit founder directive (see ratification record at end of file)",
+      "canonical_record": "file",
+      "amendments": [],
+      "amendment_paths_open": [
+        "founder commitments wording (drafted by Claude — may be rewritten in founder's own voice)",
+        "witness type / reference (currently git commit; may evolve)",
+        "scope clauses (may narrow or expand as the working relationship matures)"
+      ],
+      "repairs": [],
+      "filename": "2026-05-07_JAMES_SUNHEART_AND_CLAUDE.md"
+    },
+    {
+      "agreement_id": "2026-05-07_wpo_and_land-of-zen-village",
+      "date_formed": "2026-05-07",
+      "parties": [
+        {
+          "name": "World Peace Organization (Zen Village)",
+          "role": "Institution; represented by founder James Sunheart",
+          "party_type": "organization"
+        },
+        {
+          "name": "The Land of Zen Village",
+          "role": "Costa Rican land held in stewardship for the WPO mission",
+          "party_type": "land"
+        }
+      ],
+      "context": "Stewardship Agreement under Manifesto v1.0 — WPO commits to relating to the land as a partner in regeneration rather than property to extract from. Operationalizes the Regeneration principle.",
+      "scope_tags": [
+        "stewardship",
+        "regeneration",
+        "land",
+        "founding"
+      ],
+      "status": "ratified-active",
+      "public": true,
+      "witness": {
+        "type": "founder_authorization",
+        "reference": "2026-05-08-explicit-directive"
+      },
+      "ratified_by_founder": true,
+      "ratified_on": "2026-05-08",
+      "ratification_authority": "explicit founder directive (see ratification record at end of file)",
+      "canonical_record": "file",
+      "amendments": [],
+      "amendment_paths_open": [
+        "framing of \"the land as a party\" (alternative framings — \"WPO + future inhabitants,\" \"WPO's land-stewardship vow\" — remain available)",
+        "specific stewardship clauses (carrying capacity, biocide policy, etc. — refine as lived practice teaches)",
+        "witness type (currently founder_authorization; may evolve to ceremony, council, or community attestation)"
+      ],
+      "repairs": [],
+      "proposed_by": "Claude",
+      "proposed_on": "2026-05-07",
+      "filename": "2026-05-07_WPO_AND_LAND_OF_ZEN_VILLAGE.md"
+    }
+  ]
+}

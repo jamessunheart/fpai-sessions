@@ -1,0 +1,14 @@
+# PROTECTED PATHS — the audit-and-improve layer (James 2026-06-14).
+# Autonomous builds (Codex bridge, recursive_improver, queue-builder) may NEVER
+# modify anything matching these prefixes. merge_gate REJECTS + escalates to James
+# any build branch that touches them. The watchdog must not be editable by what it
+# watches. Changes here are HUMAN-DIRECTED ONLY (James + Ember, never auto).
+tools/merge/
+tools/decisions/
+tools/recursive_improver.py
+.claude/hooks/
+core/BUILD/PROTECTED_PATHS.txt
+docs/codex/SESSION_CONTRACT.md
+core/STATE/policies/
+core/STATE/COUNCIL_FIRE.yaml
+core/STATE/INSTRUMENT_RACK.yaml

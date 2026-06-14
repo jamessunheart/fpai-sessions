@@ -1,0 +1,821 @@
+"""
+Arena Manager - Orchestrates agent competition, birth, death, and capital allocation
+
+The Arena Manager is the core evolutionary engine that:
+- Spawns new agents
+- Tracks agent performance
+- Allocates capital dynamically
+- Kills underperformers
+- Mutates successful strategies
+- Event sourcing for complete audit trail
+"""
+
+import random
+import logging
+import sqlite3
+import json
+import threading
+from typing import List, Dict, Optional, Tuple
+from datetime import datetime
+import numpy as np
+
+from .agent import TreasuryAgent, DeFiYieldFarmer, TacticalTrader
+from .events import (
+    AgentSpawned, AgentKilled, CapitalAllocated, AgentGraduated,
+    AgentMutated, EvolutionCycleComplete, CapitalConservationCheck,
+    AllocationError as AllocationErrorEvent, deserialize_event
+)
+from .exceptions import (
+    AllocationError, CapitalConservationError, ValidationError,
+    AgentError, EvolutionError, EventSourcingError
+)
+from .personality_generator import generate_personality
+
+logger = logging.getLogger(__name__)
+
+
+class ArenaManager:
+    """Manages the treasury arena and all competing agents"""
+
+    def __init__(self, total_capital: float = 373261, db_path: str = "treasury_arena.db"):
+        self.total_capital = total_capital
+        self.stable_reserve = total_capital * 0.437  # 43.7% stable reserve
+        self.arena_capital = total_capital * 0.536  # 53.6% active management
+        self.proving_capital = total_capital * 0.027  # 2.7% proving grounds
+
+        # Agent pools
+        self.simulation_agents: List[TreasuryAgent] = []
+        self.proving_agents: List[TreasuryAgent] = []
+        self.active_agents: List[TreasuryAgent] = []
+        self.dead_agents: List[TreasuryAgent] = []
+
+        # Strategy registry
+        self.strategy_classes = {
+            'DeFi-Yield-Farmer': DeFiYieldFarmer,
+            'Tactical-Trader': TacticalTrader,
+            # More strategies added as we build them
+        }
+
+        # Performance tracking
+        self.arena_history = []
+
+        # Event sourcing database
+        self.db_path = db_path
+        self.db_conn = sqlite3.connect(db_path, check_same_thread=False)
+        self.db_conn.row_factory = sqlite3.Row
+        self._init_event_database()
+
+        # Thread safety for capital allocation
+        self.allocation_lock = threading.Lock()
+
+        logger.info(f"Arena initialized with ${total_capital:,.0f} total capital")
+
+    def _init_event_database(self):
+        """Initialize event sourcing database tables"""
+        cursor = self.db_conn.cursor()
+
+        # Create events table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS events (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                event_id TEXT UNIQUE NOT NULL,
+                event_type TEXT NOT NULL,
+                agent_id TEXT,
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                data JSON NOT NULL,
+                caused_by TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_events_type ON events(event_type)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_events_agent ON events(agent_id)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_events_timestamp ON events(timestamp)")
+
+        # Create arena_state table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS arena_state (
+                id INTEGER PRIMARY KEY,
+                total_capital REAL NOT NULL,
+                stable_reserve REAL NOT NULL,
+                arena_capital REAL NOT NULL,
+                allocated_capital REAL NOT NULL,
+                available_capital REAL NOT NULL,
+                agents_active INTEGER NOT NULL,
+                agents_proving INTEGER NOT NULL,
+                agents_simulating INTEGER NOT NULL,
+                agents_dead INTEGER NOT NULL,
+                last_evolution_cycle TIMESTAMP,
+                last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
+        # Create capital_ledger table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS capital_ledger (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                event_id TEXT NOT NULL,
+                agent_id TEXT,
+                old_capital REAL NOT NULL,
+                new_capital REAL NOT NULL,
+                delta REAL NOT NULL,
+                reason TEXT NOT NULL,
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (event_id) REFERENCES events(event_id)
+            )
+        """)
+
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_ledger_agent ON capital_ledger(agent_id)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_ledger_timestamp ON capital_ledger(timestamp)")
+
+        self.db_conn.commit()
+        logger.info("Event sourcing database initialized")
+
+    def spawn_agent(
+        self,
+        strategy_type: str,
+        params: Optional[Dict] = None,
+        virtual_capital: float = 10000
+    ) -> TreasuryAgent:
+        """
+        Birth a new agent into the simulation layer with unique personality.
+
+        Args:
+            strategy_type: Type of strategy (e.g., "DeFi-Yield-Farmer")
+            params: Strategy parameters (None = use defaults)
+            virtual_capital: Starting simulated capital
+
+        Returns:
+            The newly created agent with unique name/avatar/personality
+        """
+        if strategy_type not in self.strategy_classes:
+            raise ValueError(f"Unknown strategy type: {strategy_type}")
+
+        # Generate unique personality
+        personality_traits = generate_personality(strategy_type)
+
+        # Create agent instance with personality
+        agent_class = self.strategy_classes[strategy_type]
+        agent = agent_class(
+            params=params,
+            virtual_capital=virtual_capital,
+            name=personality_traits['name'],
+            avatar=personality_traits['avatar'],
+            personality=personality_traits['personality']
+        )
+
+        # Add to simulation layer
+        self.simulation_agents.append(agent)
+
+        # Emit AgentSpawned event
+        event = AgentSpawned.create(
+            agent_id=agent.id,
+            strategy=strategy_type,
+            virtual_capital=virtual_capital,
+            params=params or {}
+        )
+        self.emit_event(event)
+
+        logger.info(f"Agent {agent.name} ({agent.id}) spawned: {strategy_type} with ${virtual_capital:,.0f} virtual capital")
+
+        return agent
+
+    def mutate_agent(self, parent_agent: TreasuryAgent) -> TreasuryAgent:
+        """
+        Create a mutated version of a successful agent.
+
+        Mutation: ±20% variation in all numeric parameters
+
+        Args:
+            parent_agent: Agent to mutate
+
+        Returns:
+            New mutated agent
+        """
+        mutated_params = {}
+
+        for key, value in parent_agent.params.items():
+            if isinstance(value, (int, float)):
+                # Mutate numeric values by ±20%
+                mutation_factor = random.uniform(0.8, 1.2)
+                mutated_params[key] = value * mutation_factor
+            else:
+                # Keep non-numeric values unchanged
+                mutated_params[key] = value
+
+        # Create mutated agent (this will emit AgentSpawned event)
+        mutated_agent = self.spawn_agent(
+            strategy_type=parent_agent.strategy,
+            params=mutated_params
+        )
+
+        # Emit AgentMutated event
+        # Get the most recent AgentSpawned event ID (the spawn that just happened)
+        cursor = self.db_conn.cursor()
+        cursor.execute("SELECT event_id FROM events WHERE event_type = 'AgentSpawned' AND agent_id = ? ORDER BY timestamp DESC LIMIT 1", (mutated_agent.id,))
+        spawn_event_row = cursor.fetchone()
+        spawn_event_id = spawn_event_row['event_id'] if spawn_event_row else None
+
+        event = AgentMutated.create(
+            agent_id=mutated_agent.id,
+            parent_id=parent_agent.id,
+            mutated_params=mutated_params,
+            caused_by=spawn_event_id
+        )
+        self.emit_event(event)
+
+        logger.info(f"Agent {mutated_agent.id} mutated from {parent_agent.id}")
+
+        return mutated_agent
+
+    def rank_agents(self, agents: List[TreasuryAgent]) -> List[TreasuryAgent]:
+        """
+        Rank agents by fitness score.
+
+        Args:
+            agents: List of agents to rank
+
+        Returns:
+            Sorted list (highest fitness first)
+        """
+        # Calculate fitness for all agents
+        for agent in agents:
+            agent.calculate_fitness()
+
+        # Sort by fitness (descending)
+        ranked = sorted(agents, key=lambda a: a.fitness_score, reverse=True)
+
+        # Assign ranks
+        for i, agent in enumerate(ranked):
+            agent.rank = i + 1
+
+        return ranked
+
+    def allocate_capital(self) -> Dict[str, float]:
+        """
+        Dynamically allocate capital to active agents based on fitness.
+
+        Allocation tiers:
+        - Elite (top 20%): 60% of capital
+        - Active (middle 30%): 30% of capital
+        - Challengers (bottom 50%): 10% of capital
+
+        Returns:
+            Dictionary mapping agent ID to allocated capital
+
+        Raises:
+            ValueError: If total allocation exceeds available capital
+        """
+        # Rank all active agents
+        ranked = self.rank_agents(self.active_agents)
+
+        if not ranked:
+            logger.warning("No active agents to allocate capital")
+            return {}
+
+        # Calculate tier sizes
+        total_agents = len(ranked)
+        elite_count = max(1, total_agents // 5)  # Top 20%
+        active_count = max(1, total_agents * 3 // 10)  # Middle 30%
+
+        # Split agents into tiers
+        elite = ranked[:elite_count]
+        active = ranked[elite_count:elite_count + active_count]
+        challengers = ranked[elite_count + active_count:]
+
+        # Calculate per-agent allocations
+        elite_capital_per_agent = (self.arena_capital * 0.60) / len(elite) if elite else 0
+        active_capital_per_agent = (self.arena_capital * 0.30) / len(active) if active else 0
+        challenger_capital_per_agent = (self.arena_capital * 0.10) / len(challengers) if challengers else 0
+
+        # ✅ FIX: Validate total allocation BEFORE assigning to agents
+        total_allocated = (
+            (len(elite) * elite_capital_per_agent) +
+            (len(active) * active_capital_per_agent) +
+            (len(challengers) * challenger_capital_per_agent)
+        )
+
+        if total_allocated > self.arena_capital:
+            raise ValueError(
+                f"Capital allocation overflow: "
+                f"${total_allocated:,.2f} > ${self.arena_capital:,.2f} "
+                f"(attempting to allocate {total_allocated / self.arena_capital:.1%} of available capital)"
+            )
+
+        # Only allocate after validation passes
+        allocations = {}
+
+        for agent in elite:
+            agent.real_capital = elite_capital_per_agent
+            agent.tier = "elite"
+            allocations[agent.id] = elite_capital_per_agent
+
+            # Emit CapitalAllocated event
+            event = CapitalAllocated.create(
+                agent_id=agent.id,
+                amount=elite_capital_per_agent,
+                tier="elite",
+                total_allocated=sum(allocations.values()),
+                arena_capital=self.arena_capital
+            )
+            self.emit_event(event)
+
+        for agent in active:
+            agent.real_capital = active_capital_per_agent
+            agent.tier = "active"
+            allocations[agent.id] = active_capital_per_agent
+
+            # Emit CapitalAllocated event
+            event = CapitalAllocated.create(
+                agent_id=agent.id,
+                amount=active_capital_per_agent,
+                tier="active",
+                total_allocated=sum(allocations.values()),
+                arena_capital=self.arena_capital
+            )
+            self.emit_event(event)
+
+        for agent in challengers:
+            agent.real_capital = challenger_capital_per_agent
+            agent.tier = "challenger"
+            allocations[agent.id] = challenger_capital_per_agent
+
+            # Emit CapitalAllocated event
+            event = CapitalAllocated.create(
+                agent_id=agent.id,
+                amount=challenger_capital_per_agent,
+                tier="challenger",
+                total_allocated=sum(allocations.values()),
+                arena_capital=self.arena_capital
+            )
+            self.emit_event(event)
+
+        logger.info(
+            f"Capital allocated: {len(elite)} elite (${elite_capital_per_agent:,.0f} each), "
+            f"{len(active)} active (${active_capital_per_agent:,.0f} each), "
+            f"{len(challengers)} challengers (${challenger_capital_per_agent:,.0f} each) "
+            f"| Total: ${total_allocated:,.2f} / ${self.arena_capital:,.2f} ({total_allocated / self.arena_capital:.1%})"
+        )
+
+        return allocations
+
+    def check_graduations(self):
+        """Check if any agents are ready to graduate to next level"""
+
+        # Simulation → Proving Grounds
+        ready_for_proving = [
+            agent for agent in self.simulation_agents
+            if (
+                agent.fitness_score > 2.0 and
+                agent.sharpe_ratio() > 1.5 and
+                agent.win_rate() > 0.60 and
+                agent.max_drawdown() > -0.20 and
+                agent.age >= 30
+            )
+        ]
+
+        for agent in ready_for_proving:
+            self.graduate_to_proving(agent)
+
+        # Proving → Main Arena
+        ready_for_arena = [
+            agent for agent in self.proving_agents
+            if (
+                agent.real_capital > agent.initial_real_capital and  # Profitable
+                agent.fitness_score > 2.0 and
+                agent.sharpe_ratio() > 1.5 and
+                agent.age >= 30 and
+                agent.max_drawdown() > -0.25
+            )
+        ]
+
+        for agent in ready_for_arena:
+            self.graduate_to_arena(agent)
+
+    def graduate_to_proving(self, agent: TreasuryAgent):
+        """
+        Graduate agent from simulation to proving grounds.
+
+        Args:
+            agent: Agent to graduate
+        """
+        # Remove from simulation
+        self.simulation_agents.remove(agent)
+
+        # Allocate $1K real capital
+        agent.real_capital = 1000
+        agent.initial_real_capital = 1000
+        agent.status = "proving"
+
+        # Add to proving grounds
+        self.proving_agents.append(agent)
+
+        # Emit AgentGraduated event
+        event = AgentGraduated.create(
+            agent_id=agent.id,
+            from_level="simulation",
+            to_level="proving",
+            capital_allocated=1000,
+            fitness=agent.fitness_score
+        )
+        self.emit_event(event)
+
+        logger.info(f"Agent {agent.id} graduated to proving grounds with $1,000 real capital")
+
+    def graduate_to_arena(self, agent: TreasuryAgent):
+        """
+        Graduate agent from proving grounds to main arena.
+
+        Args:
+            agent: Agent to graduate
+        """
+        # Remove from proving
+        self.proving_agents.remove(agent)
+
+        # Allocate initial arena capital ($5K-$20K based on performance)
+        performance_multiplier = min(20, max(5, agent.total_return() * 100))
+        agent.real_capital = performance_multiplier * 1000
+        agent.initial_real_capital = agent.real_capital
+        agent.status = "active"
+
+        # Add to main arena
+        self.active_agents.append(agent)
+
+        # Emit AgentGraduated event
+        event = AgentGraduated.create(
+            agent_id=agent.id,
+            from_level="proving",
+            to_level="arena",
+            capital_allocated=agent.real_capital,
+            fitness=agent.fitness_score
+        )
+        self.emit_event(event)
+
+        logger.info(f"Agent {agent.id} graduated to main arena with ${agent.real_capital:,.0f} capital")
+
+    def kill_underperformers(self) -> List[TreasuryAgent]:
+        """
+        Terminate agents that fail to meet standards.
+
+        Kill conditions:
+        - Fitness < 0 for 30+ days
+        - Max drawdown > 50%
+        - Negative returns for 90+ days
+        - Sharpe ratio < 0.5 for 60+ days
+        - Age > 365 days (retirement)
+
+        Returns:
+            List of killed agents
+        """
+        killed = []
+
+        # Check simulation agents
+        for agent in self.simulation_agents[:]:
+            if self._should_kill(agent):
+                self.simulation_agents.remove(agent)
+                agent.status = "dead"
+                self.dead_agents.append(agent)
+                killed.append(agent)
+
+                # Emit AgentKilled event
+                event = AgentKilled.create(
+                    agent_id=agent.id,
+                    reason="simulation_underperformance",
+                    final_capital=agent.virtual_capital,
+                    fitness=agent.fitness_score
+                )
+                self.emit_event(event)
+
+                logger.info(f"Killed simulation agent {agent.id}: fitness={agent.fitness_score:.2f}")
+
+                # Spawn replacement
+                self.spawn_agent(agent.strategy)
+
+        # Check proving agents
+        for agent in self.proving_agents[:]:
+            if self._should_kill(agent):
+                self.proving_agents.remove(agent)
+                agent.status = "dead"
+                self.dead_agents.append(agent)
+                killed.append(agent)
+
+                # Emit AgentKilled event
+                event = AgentKilled.create(
+                    agent_id=agent.id,
+                    reason="proving_underperformance",
+                    final_capital=agent.real_capital,
+                    fitness=agent.fitness_score
+                )
+                self.emit_event(event)
+
+                logger.info(f"Killed proving agent {agent.id}: fitness={agent.fitness_score:.2f}")
+
+        # Check active agents
+        for agent in self.active_agents[:]:
+            if self._should_kill(agent):
+                self.active_agents.remove(agent)
+                agent.status = "dead"
+                self.dead_agents.append(agent)
+                killed.append(agent)
+
+                # Emit AgentKilled event
+                event = AgentKilled.create(
+                    agent_id=agent.id,
+                    reason="arena_underperformance",
+                    final_capital=agent.real_capital,
+                    fitness=agent.fitness_score
+                )
+                self.emit_event(event)
+
+                logger.info(f"Killed active agent {agent.id}: fitness={agent.fitness_score:.2f}")
+
+        return killed
+
+    def _should_kill(self, agent: TreasuryAgent) -> bool:
+        """Determine if agent should be killed"""
+        return (
+            # Negative fitness for 30 days
+            (agent.fitness_score < 0 and agent.days_negative >= 30) or
+
+            # Catastrophic drawdown
+            (agent.max_drawdown() < -0.50) or
+
+            # Negative returns for 90 days
+            (agent.total_return() < 0 and agent.age >= 90) or
+
+            # Low Sharpe ratio
+            (agent.sharpe_ratio() < 0.5 and agent.age >= 60) or
+
+            # Retirement age
+            (agent.age > 365)
+        )
+
+    def run_evolution_cycle(self):
+        """
+        Run one cycle of evolution:
+        1. Check graduations
+        2. Allocate capital
+        3. Kill underperformers
+        4. Spawn new agents
+        5. Mutate top performers
+        """
+        logger.info("Starting evolution cycle")
+
+        # 1. Check graduations
+        self.check_graduations()
+
+        # 2. Allocate capital
+        self.allocate_capital()
+
+        # 3. Kill underperformers
+        killed = self.kill_underperformers()
+
+        # 4. Spawn new random agents (every 7 days)
+        if datetime.now().day % 7 == 0:
+            for _ in range(5):
+                strategy = random.choice(list(self.strategy_classes.keys()))
+                self.spawn_agent(strategy)
+
+        # 5. Mutate top performers
+        top_performers = self.rank_agents(self.active_agents)[:3]  # Top 3
+        mutations_count = 0
+        for agent in top_performers:
+            self.mutate_agent(agent)
+            mutations_count += 1
+
+        # Emit EvolutionCycleComplete event
+        event = EvolutionCycleComplete.create(
+            agents_killed=len(killed),
+            agents_spawned=5 if datetime.now().day % 7 == 0 else 0,
+            agents_mutated=mutations_count,
+            total_active=len(self.active_agents),
+            total_proving=len(self.proving_agents),
+            total_simulating=len(self.simulation_agents)
+        )
+        self.emit_event(event)
+
+        logger.info(f"Evolution cycle complete: {len(killed)} agents killed, "
+                   f"{len(self.active_agents)} active, "
+                   f"{len(self.proving_agents)} proving, "
+                   f"{len(self.simulation_agents)} simulating")
+
+    def safe_run_evolution(self) -> tuple[bool, Optional[Exception]]:
+        """
+        Run evolution cycle with error isolation.
+
+        Wraps run_evolution_cycle() in try/except to prevent system failure.
+
+        Returns:
+            Tuple of (success, error). If successful, error is None.
+        """
+        try:
+            self.run_evolution_cycle()
+            return True, None
+        except Exception as e:
+            logger.error(f"Evolution cycle failed: {str(e)}", exc_info=True)
+            return False, e
+
+    def emit_event(self, event) -> str:
+        """
+        Emit event to event log.
+
+        Args:
+            event: Event object to emit
+
+        Returns:
+            event_id (UUID)
+        """
+        try:
+            cursor = self.db_conn.cursor()
+            event_dict = event.to_dict()
+
+            cursor.execute("""
+                INSERT INTO events (event_id, event_type, agent_id, timestamp, data, caused_by)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (
+                event_dict['event_id'],
+                event_dict['event_type'],
+                event_dict['agent_id'],
+                event_dict['timestamp'],
+                event_dict['data'],
+                event_dict.get('caused_by')
+            ))
+
+            self.db_conn.commit()
+
+            logger.info(
+                f"Event emitted: {event.event_type}",
+                extra={'event_id': event.event_id, 'agent_id': event.agent_id}
+            )
+
+            return event.event_id
+
+        except Exception as e:
+            logger.error(f"Failed to emit event: {str(e)}")
+            raise EventSourcingError(f"Event emission failed: {str(e)}")
+
+    def verify_capital_conservation(self) -> Tuple[bool, float]:
+        """
+        Verify that total capital is conserved.
+
+        Returns:
+            Tuple of (conserved, discrepancy)
+        """
+        # Calculate allocated capital
+        allocated = sum(a.real_capital for a in self.active_agents)
+        allocated += sum(a.real_capital for a in self.proving_agents)
+
+        # Total should equal arena + proving
+        expected = self.arena_capital + self.proving_capital
+        actual = allocated
+
+        discrepancy = abs(actual - expected)
+        conserved = discrepancy < 0.01  # Allow 1 cent tolerance
+
+        # Emit conservation check event
+        event = CapitalConservationCheck.create(
+            total_capital=self.total_capital,
+            allocated_capital=actual,
+            conserved=conserved,
+            discrepancy=discrepancy
+        )
+        self.emit_event(event)
+
+        if not conserved:
+            logger.warning(
+                f"Capital conservation violated: expected ${expected:,.2f}, actual ${actual:,.2f}, "
+                f"discrepancy ${discrepancy:,.2f}"
+            )
+
+        return conserved, discrepancy
+
+    def replay_events(
+        self,
+        start_time: Optional[datetime] = None,
+        end_time: Optional[datetime] = None,
+        event_type: Optional[str] = None
+    ) -> List[Dict]:
+        """
+        Replay events for audit.
+
+        Args:
+            start_time: Start of time range
+            end_time: End of time range
+            event_type: Filter by event type
+
+        Returns:
+            List of events
+        """
+        cursor = self.db_conn.cursor()
+
+        query = "SELECT * FROM events WHERE 1=1"
+        params = []
+
+        if start_time:
+            query += " AND timestamp >= ?"
+            params.append(start_time.isoformat())
+
+        if end_time:
+            query += " AND timestamp <= ?"
+            params.append(end_time.isoformat())
+
+        if event_type:
+            query += " AND event_type = ?"
+            params.append(event_type)
+
+        query += " ORDER BY timestamp ASC"
+
+        cursor.execute(query, params)
+        rows = cursor.fetchall()
+
+        events = []
+        for row in rows:
+            event_dict = dict(row)
+            events.append(event_dict)
+
+        logger.info(f"Replayed {len(events)} events")
+        return events
+
+    def get_capital_allocation_breakdown(self) -> Dict:
+        """
+        Get detailed breakdown of capital allocation.
+
+        Returns:
+            Dictionary with allocation details
+        """
+        # By tier
+        elite_capital = sum(
+            a.real_capital for a in self.active_agents if a.tier == 'elite'
+        )
+        active_capital = sum(
+            a.real_capital for a in self.active_agents if a.tier == 'active'
+        )
+        challenger_capital = sum(
+            a.real_capital for a in self.active_agents if a.tier == 'challenger'
+        )
+
+        # By agent
+        by_agent = {
+            agent.id: agent.real_capital
+            for agent in self.active_agents
+        }
+
+        # Total allocated
+        total_allocated = elite_capital + active_capital + challenger_capital
+
+        return {
+            'total': self.total_capital,
+            'stable_reserve': self.stable_reserve,
+            'arena_capital': self.arena_capital,
+            'allocated': total_allocated,
+            'available': self.arena_capital - total_allocated,
+            'by_tier': {
+                'elite': elite_capital,
+                'active': active_capital,
+                'challenger': challenger_capital
+            },
+            'by_agent': by_agent
+        }
+
+    def get_arena_stats(self) -> Dict:
+        """Get current arena statistics"""
+
+        active_ranked = self.rank_agents(self.active_agents)
+
+        # Calculate arena performance
+        total_capital_active = sum(a.real_capital for a in self.active_agents)
+        total_initial_active = sum(a.initial_real_capital for a in self.active_agents)
+        arena_return = ((total_capital_active - total_initial_active) / total_initial_active) if total_initial_active > 0 else 0
+
+        # Calculate arena Sharpe
+        if self.active_agents:
+            arena_sharpe = np.mean([a.sharpe_ratio() for a in self.active_agents])
+        else:
+            arena_sharpe = 0
+
+        return {
+            'total_capital': self.total_capital,
+            'stable_reserve': self.stable_reserve,
+            'arena_capital': self.arena_capital,
+            'proving_capital': self.proving_capital,
+            'agents_active': len(self.active_agents),
+            'agents_proving': len(self.proving_agents),
+            'agents_simulating': len(self.simulation_agents),
+            'agents_dead': len(self.dead_agents),
+            'arena_return': arena_return,
+            'arena_sharpe': arena_sharpe,
+            'top_performers': [a.to_dict() for a in active_ranked[:5]],
+            'ready_for_proving': len([a for a in self.simulation_agents if a.fitness_score > 2.0])
+        }
+
+    def get_all_agents(self) -> List[Dict]:
+        """Get all agents across all pools"""
+        all_agents = (
+            self.simulation_agents +
+            self.proving_agents +
+            self.active_agents
+        )
+
+        ranked = self.rank_agents(all_agents)
+
+        return [a.to_dict() for a in ranked]

@@ -1,0 +1,122 @@
+udc_version: 1.0
+last_updated: 2025-11-11
+description: >
+  Universal Droplet Contract (UDC) defines the standard API, authentication, and
+  message schema for communication between all registered droplets in the FullPotential mesh.
+  Each droplet must expose identical endpoints and JSON response formats.
+
+core_endpoints:
+  - path: /health
+    method: GET
+    purpose: Health, metadata, and proof of integrity.
+    response:
+      id: int
+      name: string
+      steward: string
+      status: [active, inactive, error]
+      endpoint: url
+      proof: sha256 string
+      cost_usd: float
+      yield_usd: float
+      updated_at: ISO8601 datetime
+    example:
+      {
+        "id": 5,
+        "name": "Full Potential Dashboard",
+        "steward": "Haythem",
+        "status": "active",
+        "endpoint": "https://dashboard.fullpotential.ai",
+        "proof": "08f3ac4b4c27fe4798d74291f011c08db07a22750e6a42d6d77a2416cd2fd8ee",
+        "cost_usd": 0.05,
+        "yield_usd": 0.0,
+        "updated_at": "2025-11-12T21:00:00Z"
+      }
+
+  - path: /capabilities
+    method: GET
+    purpose: Lists supported features and dependencies.
+    response:
+      version: string
+      features: list[string]
+      dependencies: list[string]
+      metadata:
+        build_date: ISO8601 datetime
+        commit_hash: string
+
+  - path: /state
+    method: GET
+    purpose: Returns current runtime metrics.
+    response:
+      cpu_percent: float
+      memory_mb: int
+      uptime_seconds: int
+      requests_total: int
+      requests_per_minute: int
+      errors_last_hour: int
+      last_restart: ISO8601 datetime
+
+  - path: /dependencies
+    method: GET
+    purpose: Show linked droplets and connection status.
+    response:
+      required:
+        - { id: int, name: string, status: connected|disconnected }
+      optional:
+        - { id: int, name: string, status: available|missing }
+
+  - path: /message
+    method: POST
+    purpose: Cross-droplet message relay.
+    request:
+      trace_id: uuid
+      source: droplet_id
+      target: droplet_id
+      message_type: status|event|command|query
+      payload: object
+      timestamp: ISO8601 datetime
+      signature: jwt_token
+    response:
+      received: bool
+      trace_id: uuid
+      processed_at: ISO8601 datetime
+      result: success|queued|error
+
+auth:
+  type: JWT
+  header: "Authorization: Bearer <token>"
+  claims:
+    droplet_id: int
+    steward: string
+    permissions: [read, write]
+    exp: unix timestamp
+    iat: unix timestamp
+
+response_standards:
+  success:
+    status: success
+    data: {}
+    timestamp: ISO8601 datetime
+  error:
+    status: error
+    error:
+      code: string
+      message: string
+      details: object
+    timestamp: ISO8601 datetime
+  error_codes:
+    - INVALID_REQUEST
+    - UNAUTHORIZED
+    - FORBIDDEN
+    - NOT_FOUND
+    - RATE_LIMITED
+    - INTERNAL_ERROR
+    - DEPENDENCY_UNAVAILABLE
+
+compliance_checklist:
+  - /health valid JSON schema
+  - /capabilities implemented
+  - /state metrics accurate
+  - JWT required except for /health
+  - Errors standardized
+  - All responses timestamped
+  - Enum casing enforced

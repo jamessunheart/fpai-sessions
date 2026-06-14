@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnose · Full Potential</title>
+    <meta name="description" content="Seven areas of life. Each one either circulating or stuck. Map where you are honestly.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◯</text></svg>">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #F7F3EB;
+            --text: #1A1A1A;
+            --muted: #8A8478;
+            --accent: #B5654A;
+            --rule: rgba(26, 26, 26, 0.12);
+            --serif: Georgia, 'Times New Roman', serif;
+            --sans: Inter, system-ui, -apple-system, sans-serif;
+            --circulating: #5A7A5A;
+            --mixed: #B5954A;
+            --stuck: #A05A4A;
+        }
+
+        body {
+            font-family: var(--serif);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        nav {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav a {
+            font-family: var(--sans);
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .header {
+            padding: 80px 0 60px;
+        }
+
+        @media (max-width: 640px) {
+            .header { padding: 48px 0 40px; }
+        }
+
+        .header h1 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            text-transform: lowercase;
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .header p {
+            font-size: 1.05rem;
+            line-height: 1.85;
+            max-width: 600px;
+        }
+
+        /* Questions */
+        .questions {
+            padding-bottom: 80px;
+        }
+
+        .question {
+            padding: 3rem 0;
+            border-top: 1px solid var(--rule);
+        }
+
+        .question:last-child {
+            border-bottom: 1px solid var(--rule);
+        }
+
+        .q-area {
+            font-family: var(--sans);
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 0.75rem;
+        }
+
+        .q-text {
+            font-size: 1.15rem;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .q-options {
+            display: flex;
+            gap: 0;
+        }
+
+        .q-option {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            font-family: var(--sans);
+            font-size: 0.8rem;
+            font-weight: 400;
+            color: var(--muted);
+            border: 1px solid var(--rule);
+            border-right: none;
+            transition: all 0.2s;
+            letter-spacing: 0.02em;
+            user-select: none;
+        }
+
+        .q-option:last-child {
+            border-right: 1px solid var(--rule);
+        }
+
+        .q-option:hover {
+            background: rgba(26, 26, 26, 0.03);
+        }
+
+        .q-option.selected-stuck {
+            background: var(--stuck);
+            color: var(--bg);
+            border-color: var(--stuck);
+        }
+
+        .q-option.selected-stuck + .q-option {
+            border-left-color: var(--stuck);
+        }
+
+        .q-option.selected-mixed {
+            background: var(--mixed);
+            color: var(--bg);
+            border-color: var(--mixed);
+        }
+
+        .q-option.selected-mixed + .q-option {
+            border-left-color: var(--mixed);
+        }
+
+        .q-option.selected-circulating {
+            background: var(--circulating);
+            color: var(--bg);
+            border-color: var(--circulating);
+        }
+
+        .q-option.selected-circulating + .q-option {
+            border-left-color: var(--circulating);
+        }
+
+        @media (max-width: 480px) {
+            .q-options { flex-direction: column; }
+            .q-option { border-right: 1px solid var(--rule); border-bottom: none; }
+            .q-option:last-child { border-bottom: 1px solid var(--rule); }
+        }
+
+        /* See map button */
+        .see-map {
+            text-align: center;
+            padding: 2rem 0 4rem;
+            display: none;
+        }
+
+        .see-map button {
+            font-family: var(--sans);
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text);
+            background: transparent;
+            border: 1px solid var(--text);
+            padding: 0.75rem 2.5rem;
+            cursor: pointer;
+            letter-spacing: 0.04em;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .see-map button:hover {
+            background: var(--text);
+            color: var(--bg);
+        }
+
+        /* Results */
+        .results {
+            display: none;
+            padding: 80px 0;
+            border-top: 1px solid var(--rule);
+        }
+
+        @media (max-width: 640px) {
+            .results { padding: 48px 0; }
+        }
+
+        .results h2 {
+            font-family: var(--serif);
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            text-transform: lowercase;
+            color: var(--muted);
+            margin-bottom: 2.5rem;
+        }
+
+        /* Coherence map - circle */
+        .map-visual {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
+
+        .map-visual svg {
+            max-width: 400px;
+            width: 100%;
+            height: auto;
+        }
+
+        /* Area results list */
+        .area-results {
+            margin-bottom: 3rem;
+        }
+
+        .area-result {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--rule);
+        }
+
+        .area-result:last-child {
+            border-bottom: none;
+        }
+
+        .ar-name {
+            font-size: 1rem;
+            font-weight: 400;
+        }
+
+        .ar-state {
+            font-family: var(--sans);
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            padding: 0.3rem 0.8rem;
+            border-radius: 2px;
+        }
+
+        .ar-state.stuck {
+            color: var(--stuck);
+            background: rgba(160, 90, 74, 0.1);
+        }
+
+        .ar-state.mixed {
+            color: var(--mixed);
+            background: rgba(181, 149, 74, 0.1);
+        }
+
+        .ar-state.circulating {
+            color: var(--circulating);
+            background: rgba(90, 122, 90, 0.1);
+        }
+
+        .reflection {
+            font-size: 1.05rem;
+            line-height: 1.85;
+            margin-bottom: 1.5rem;
+        }
+
+        .next-doors {
+            margin-top: 3rem;
+            padding-top: 3rem;
+            border-top: 1px solid var(--rule);
+        }
+
+        .next-doors h3 {
+            font-family: var(--serif);
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .door-link {
+            display: block;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--rule);
+            text-decoration: none;
+            color: var(--text);
+            transition: color 0.2s;
+        }
+
+        .door-link:hover {
+            color: var(--accent);
+        }
+
+        .door-link .dl-name {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .door-link .dl-desc {
+            font-family: var(--sans);
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-top: 0.25rem;
+        }
+
+        .no-capture {
+            font-family: var(--sans);
+            font-size: 0.8rem;
+            color: var(--muted);
+            text-align: center;
+            margin-top: 3rem;
+            font-style: italic;
+        }
+
+        footer {
+            padding: 72px 0;
+            border-top: 1px solid var(--rule);
+        }
+
+        footer p {
+            font-family: var(--sans);
+            font-size: 0.8rem;
+            color: var(--muted);
+            line-height: 1.8;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/">Full Potential</a>
+    </nav>
+
+    <div class="container">
+
+        <div class="header">
+            <h1>diagnose</h1>
+            <p>
+                Seven areas. For each one, notice honestly: is it circulating, mixed, or stuck right now? Not where you want it to be. Where it actually is.
+            </p>
+        </div>
+
+        <div class="questions" id="questions">
+
+            <div class="question" data-area="body">
+                <div class="q-area">Body</div>
+                <p class="q-text">Is your energy moving through the day on its own, or are you managing it with caffeine, willpower, and collapse?</p>
+                <div class="q-options">
+                    <div class="q-option" data-value="stuck" onclick="select(this)">stuck</div>
+                    <div class="q-option" data-value="mixed" onclick="select(this)">mixed</div>
+                    <div class="q-option" data-value="circulating" onclick="select(this)">circulating</div>
+                </div>
+            </div>
+
+            <div class="question" data-area="mind">
+                <div class="q-area">Mind</div>
+                <p class="q-text">When you sit without a task, does attention rest — or does it immediately start solving, rehearsing, worrying?</p>
+                <div class="q-options">
+                    <div class="q-option" data-value="stuck" onclick="select(this)">stuck</div>
+                    <div class="q-option" data-value="mixed" onclick="select(this)">mixed</div>
+                    <div class="q-option" data-value="circulating" onclick="select(this)">circulating</div>
+                </div>
+            </div>
+
+            <div class="question" data-area="relationships">
+                <div class="q-area">Relationships</div>
+                <p class="q-text">Do your closest relationships leave you with more energy than you came in with, or less?</p>
+                <div class="q-options">
+                    <div class="q-option" data-value="stuck" onclick="select(this)">stuck</div>
+                    <div class="q-option" data-value="mixed" onclick="select(this)">mixed</div>
+                    <div class="q-option" data-value="circulating" onclick="select(this)">circulating</div>
+                </div>
+            </div>
+
+            <div class="question" data-area="work">
+                <div class="q-area">Work</div>
+                <p class="q-text">Is what you do each day an expression of something real in you, or a performance you've gotten good at?</p>
+                <div class="q-options">
+                    <div class="q-option" data-value="stuck" onclick="select(this)">stuck</div>
+                    <div class="q-option" data-value="mixed" onclick="select(this)">mixed</div>
+                    <div class="q-option" data-value="circulating" onclick="select(this)">circulating</div>
+                </div>
+            </div>
+
+            <div class="question" data-area="money">
+                <div class="q-area">Money</div>
+                <p class="q-text">Does money move through your life with ease — in, out, purposefully — or does it feel tight, anxious, never enough?</p>
+                <div class="q-options">
+                    <div class="q-option" data-value="stuck" onclick="select(this)">stuck</div>
+                    <div class="q-option" data-value="mixed" onclick="select(this)">mixed</div>
+                    <div class="q-option" data-value="circulating" onclick="select(this)">circulating</div>
+                </div>
+            </div>
+
+            <div class="question" data-area="purpose">
+                <div class="q-area">Purpose</div>
+                <p class="q-text">Do you feel a direction pulling you forward from the inside, or are you constructing one from the outside and hoping it sticks?</p>
+                <div class="q-options">
+                    <div class="q-option" data-value="stuck" onclick="select(this)">stuck</div>
+                    <div class="q-option" data-value="mixed" onclick="select(this)">mixed</div>
+                    <div class="q-option" data-value="circulating" onclick="select(this)">circulating</div>
+                </div>
+            </div>
+
+            <div class="question" data-area="environment">
+                <div class="q-area">Environment</div>
+                <p class="q-text">Does the physical space you live in support who you're becoming, or does it hold the shape of who you've been?</p>
+                <div class="q-options">
+                    <div class="q-option" data-value="stuck" onclick="select(this)">stuck</div>
+                    <div class="q-option" data-value="mixed" onclick="select(this)">mixed</div>
+                    <div class="q-option" data-value="circulating" onclick="select(this)">circulating</div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="see-map" id="see-map">
+            <button onclick="showResults()">see your map</button>
+        </div>
+
+        <div class="results" id="results">
+            <h2>your map</h2>
+
+            <div class="map-visual" id="map-visual"></div>
+
+            <div class="area-results" id="area-results"></div>
+
+            <p class="reflection" id="reflection"></p>
+
+            <div class="next-doors">
+                <h3>from here</h3>
+                <a href="/call" class="door-link">
+                    <div class="dl-name">The weekly call</div>
+                    <div class="dl-desc">Free. Live. Every Thursday. Bring your bottleneck, leave with one clear next step.</div>
+                </a>
+                <a href="https://fullpotential.ai/chat.html" class="door-link">
+                    <div class="dl-name">Chat with the system</div>
+                    <div class="dl-desc">Tell it what you're working through. One insight, one next step. No account needed.</div>
+                </a>
+                <a href="/intake-v3" class="door-link">
+                    <div class="dl-name">Full intake</div>
+                    <div class="dl-desc">A deeper mapping. The beginning of real diagnostic work with Sunheart.</div>
+                </a>
+                <a href="https://zenvillagecr.com/inquire" class="door-link">
+                    <div class="dl-name">Zen Village</div>
+                    <div class="dl-desc">The physical ground. Five days in the Chirripó mountains.</div>
+                </a>
+            </div>
+
+            <p class="no-capture">This map is yours. Nothing was captured. No email required.</p>
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>
+                <a href="/">Full Potential</a> · <a href="https://zenvillagecr.com">Zen Village</a> · <a href="https://zenvillagecr.com/who">/who</a>
+            </p>
+        </div>
+    </footer>
+
+<script>
+const answers = {};
+const areas = ['body', 'mind', 'relationships', 'work', 'money', 'purpose', 'environment'];
+const stateColors = { stuck: '#A05A4A', mixed: '#B5954A', circulating: '#5A7A5A' };
+
+function select(el) {
+    const question = el.closest('.question');
+    const area = question.dataset.area;
+    const value = el.dataset.value;
+
+    question.querySelectorAll('.q-option').forEach(o => {
+        o.classList.remove('selected-stuck', 'selected-mixed', 'selected-circulating');
+    });
+    el.classList.add('selected-' + value);
+    answers[area] = value;
+
+    if (Object.keys(answers).length === 7) {
+        document.getElementById('see-map').style.display = 'block';
+    }
+}
+
+function showResults() {
+    document.getElementById('see-map').style.display = 'none';
+    const results = document.getElementById('results');
+    results.style.display = 'block';
+
+    const stuckCount = Object.values(answers).filter(v => v === 'stuck').length;
+    const circCount = Object.values(answers).filter(v => v === 'circulating').length;
+    const mixedCount = Object.values(answers).filter(v => v === 'mixed').length;
+
+    // Build the radial map
+    const svg = buildMap();
+    document.getElementById('map-visual').innerHTML = svg;
+
+    // Build area results list
+    const listHtml = areas.map(area => {
+        const state = answers[area];
+        return `<div class="area-result">
+            <span class="ar-name">${area.charAt(0).toUpperCase() + area.slice(1)}</span>
+            <span class="ar-state ${state}">${state}</span>
+        </div>`;
+    }).join('');
+    document.getElementById('area-results').innerHTML = listHtml;
+
+    // Reflection
+    let reflection = '';
+    if (stuckCount >= 5) {
+        reflection = 'Most of your life is constricted right now. That\'s not a judgment — it\'s information. The areas that are stuck are pulling energy from the ones that aren\'t. The work starts with whichever area you\'d feel most relief in freeing first.';
+    } else if (stuckCount >= 3) {
+        reflection = 'There\'s real circulation in some areas, and real constriction in others. The pattern matters — the stuck areas are likely downstream of something specific. A diagnostic conversation can usually find it in one session.';
+    } else if (circCount >= 5) {
+        reflection = 'Most of your life is circulating. The few areas that aren\'t are worth noticing — not because they\'re problems, but because they\'re where the most energy is available if freed. Sometimes the last stuck areas are the oldest.';
+    } else {
+        reflection = 'A mix. Some things flowing, some things not. That\'s honest, and it\'s workable. The question is which area, if it started circulating, would unlock the others. That\'s what the diagnostic work is for.';
+    }
+    document.getElementById('reflection').textContent = reflection;
+
+    results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function buildMap() {
+    const cx = 200, cy = 200, r = 150;
+    const n = 7;
+    const valueMap = { stuck: 0.3, mixed: 0.6, circulating: 1.0 };
+
+    let points = [];
+    let labels = [];
+
+    for (let i = 0; i < n; i++) {
+        const angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+        const state = answers[areas[i]];
+        const dist = r * valueMap[state];
+        const px = cx + dist * Math.cos(angle);
+        const py = cy + dist * Math.sin(angle);
+        points.push({ x: px, y: py, state });
+
+        const lx = cx + (r + 24) * Math.cos(angle);
+        const ly = cy + (r + 24) * Math.sin(angle);
+        const areaName = areas[i].charAt(0).toUpperCase() + areas[i].slice(1);
+        labels.push({ x: lx, y: ly, name: areaName, angle });
+    }
+
+    const pathD = points.map((p, i) => (i === 0 ? 'M' : 'L') + p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ') + ' Z';
+
+    const gridLines = [0.33, 0.66, 1.0].map(scale => {
+        const gr = r * scale;
+        return `<circle cx="${cx}" cy="${cy}" r="${gr}" fill="none" stroke="rgba(26,26,26,0.08)" stroke-width="1"/>`;
+    }).join('');
+
+    const axisLines = areas.map((_, i) => {
+        const angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+        const ex = cx + r * Math.cos(angle);
+        const ey = cy + r * Math.sin(angle);
+        return `<line x1="${cx}" y1="${cy}" x2="${ex.toFixed(1)}" y2="${ey.toFixed(1)}" stroke="rgba(26,26,26,0.06)" stroke-width="1"/>`;
+    }).join('');
+
+    const dots = points.map(p =>
+        `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="5" fill="${stateColors[p.state]}"/>`
+    ).join('');
+
+    const labelEls = labels.map(l => {
+        let anchor = 'middle';
+        if (l.angle > -Math.PI/4 && l.angle < Math.PI * 3/4) anchor = 'start';
+        if (l.angle > Math.PI * 3/4 || l.angle < -Math.PI * 3/4) anchor = 'end';
+        if (Math.abs(l.angle + Math.PI/2) < 0.1) anchor = 'middle';
+        return `<text x="${l.x.toFixed(1)}" y="${(l.y + 4).toFixed(1)}" text-anchor="${anchor}" font-family="system-ui, sans-serif" font-size="11" fill="#8A8478" font-weight="400">${l.name}</text>`;
+    }).join('');
+
+    return `<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+        ${gridLines}
+        ${axisLines}
+        <path d="${pathD}" fill="rgba(181,101,74,0.08)" stroke="var(--accent)" stroke-width="1.5"/>
+        ${dots}
+        ${labelEls}
+    </svg>`;
+}
+</script>
+
+</body>
+</html>

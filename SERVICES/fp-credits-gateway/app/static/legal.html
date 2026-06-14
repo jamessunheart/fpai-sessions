@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal Structure | Full Potential AI</title>
+    <meta name="description" content="Full Potential legal entity structure and conscious circulation flow.">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        // Quick pre-check - redirect immediately if no token (don't wait for DOM)
+        (function() {
+            const token = localStorage.getItem('team_portal_token') || localStorage.getItem('fp_token');
+            if (!token) {
+                const returnUrl = encodeURIComponent(window.location.href);
+                window.location.replace('/dashboards/team/?login=1&return=' + returnUrl);
+            }
+        })();
+    </script>
+    <style>
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --cyan: #60a5fa;
+            --purple: #a855f7;
+            --pink: #ec4899;
+            --gold: #fbbf24;
+            --green: #22c55e;
+            --red: #ef4444;
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --gradient-main: linear-gradient(135deg, #60a5fa 0%, #a855f7 50%, #ec4899 100%);
+            --gradient-icon: linear-gradient(135deg, #60a5fa, #a855f7, #ec4899);
+            --tier1-color: #a855f7;
+            --tier2-color: #60a5fa;
+            --tier3-color: #22c55e;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .bg-glow {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(96, 165, 250, 0.15), transparent),
+                radial-gradient(ellipse 60% 40% at 100% 50%, rgba(168, 85, 247, 0.1), transparent),
+                radial-gradient(ellipse 50% 30% at 0% 80%, rgba(236, 72, 153, 0.08), transparent);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        header {
+            padding: 1.25rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--gradient-icon);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 20px rgba(96, 165, 250, 0.3);
+        }
+
+        .logo-text {
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: white;
+            letter-spacing: 0.02em;
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        nav a:hover { color: white; }
+        nav a.active { color: var(--cyan); }
+
+        .user-info {
+            color: var(--gold);
+            font-size: 0.85rem;
+            padding: 0.35rem 0.75rem;
+            background: rgba(251, 191, 36, 0.15);
+            border-radius: 6px;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .logout-btn {
+            color: var(--text-muted) !important;
+            font-size: 0.8rem;
+        }
+
+        .logout-btn:hover {
+            color: var(--red) !important;
+        }
+
+        /* Auth overlay for loading state */
+        .auth-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .auth-overlay.hidden {
+            display: none;
+        }
+
+        .auth-loading {
+            text-align: center;
+        }
+
+        .auth-loading .spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: var(--cyan);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Main Content */
+        main {
+            padding-top: 120px;
+            padding-bottom: 4rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Tier Labels */
+        .tier-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .tier-1 { background: rgba(168, 85, 247, 0.2); color: var(--tier1-color); border: 1px solid rgba(168, 85, 247, 0.3); }
+        .tier-2 { background: rgba(96, 165, 250, 0.2); color: var(--tier2-color); border: 1px solid rgba(96, 165, 250, 0.3); }
+        .tier-3 { background: rgba(34, 197, 94, 0.2); color: var(--tier3-color); border: 1px solid rgba(34, 197, 94, 0.3); }
+
+        /* Structure Section */
+        .structure-section {
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        /* Entity Cards */
+        .tier-container {
+            margin-bottom: 2rem;
+        }
+
+        .tier-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .tier-header h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .entities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .entity-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .entity-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+
+        .entity-card.tier-1-card::before { background: var(--tier1-color); }
+        .entity-card.tier-2-card::before { background: var(--tier2-color); }
+        .entity-card.tier-3-card::before { background: var(--tier3-color); }
+
+        .entity-card:hover {
+            border-color: rgba(255,255,255,0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .entity-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .entity-card.tier-1-card .entity-icon { background: rgba(168, 85, 247, 0.2); }
+        .entity-card.tier-2-card .entity-icon { background: rgba(96, 165, 250, 0.2); }
+        .entity-card.tier-3-card .entity-icon { background: rgba(34, 197, 94, 0.2); }
+
+        .entity-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .entity-type {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+
+        .entity-purpose {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .entity-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .detail-tag {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            color: var(--text-secondary);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+        }
+
+        .status-active { background: rgba(34, 197, 94, 0.2); color: var(--green); }
+        .status-pending { background: rgba(251, 191, 36, 0.2); color: var(--gold); }
+        .status-planned { background: rgba(96, 165, 250, 0.2); color: var(--cyan); }
+
+        /* Flow Diagram */
+        .flow-section {
+            margin-bottom: 4rem;
+        }
+
+        .flow-diagram {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .flow-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .flow-node {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            text-align: center;
+            min-width: 180px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .flow-node:hover {
+            border-color: rgba(255,255,255,0.2);
+            transform: scale(1.02);
+        }
+
+        .flow-node.tier-1-node { border-left: 3px solid var(--tier1-color); }
+        .flow-node.tier-2-node { border-left: 3px solid var(--tier2-color); }
+        .flow-node.tier-3-node { border-left: 3px solid var(--tier3-color); }
+
+        .flow-node-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .flow-node-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .flow-arrow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.5rem 0;
+        }
+
+        .flow-arrow-line {
+            width: 2px;
+            height: 30px;
+            background: linear-gradient(to bottom, var(--cyan), var(--purple));
+        }
+
+        .flow-arrow-head {
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 8px solid var(--purple);
+        }
+
+        .flow-arrow-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+            text-align: center;
+        }
+
+        .flow-nodes-row {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Revenue Flow */
+        .revenue-flow {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.5rem;
+            align-items: center;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(34, 197, 94, 0.05);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            border-radius: 12px;
+        }
+
+        .revenue-step {
+            text-align: center;
+        }
+
+        .revenue-step-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .revenue-step-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .revenue-arrow {
+            text-align: center;
+            color: var(--green);
+            font-size: 1.25rem;
+        }
+
+        /* Protection Layers */
+        .protection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .protection-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 1.25rem;
+        }
+
+        .protection-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .protection-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .protection-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Stripe Section */
+        .stripe-section {
+            background: linear-gradient(135deg, rgba(96, 165, 250, 0.1), rgba(168, 85, 247, 0.1));
+            border: 1px solid rgba(96, 165, 250, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .stripe-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stripe-logo {
+            font-size: 2rem;
+        }
+
+        .stripe-info h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .stripe-info p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .stripe-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .stripe-flow-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            min-width: 140px;
+        }
+
+        .stripe-flow-item-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stripe-flow-item-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .stripe-flow-arrow {
+            font-size: 1.25rem;
+            color: var(--cyan);
+        }
+
+        /* Documents Table */
+        .docs-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .docs-table th,
+        .docs-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .docs-table th {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .docs-table td {
+            font-size: 0.9rem;
+        }
+
+        .docs-table tr:hover {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .doc-name {
+            font-weight: 500;
+        }
+
+        .doc-path {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid rgba(255,255,255,0.08);
+            padding: 2rem 0;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: var(--cyan);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container { padding: 0 1rem; }
+            .page-header h1 { font-size: 1.75rem; }
+            nav { display: none; }
+            .revenue-flow { grid-template-columns: 1fr; }
+            .revenue-arrow { transform: rotate(90deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="/" class="logo">
+                    <div class="logo-icon">⚖️</div>
+                    <span class="logo-text">FULL POTENTIAL</span>
+                </a>
+                <nav>
+                    <a href="/">Home</a>
+                    <a href="/services/credits/">Credits</a>
+                    <a href="/legal" class="active">Legal</a>
+                    <a href="/services/">Services</a>
+                    <span class="user-info" id="userInfo">🔒 Private</span>
+                    <a href="#" onclick="logout()" class="logout-btn">Logout</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1>⚖️ Legal Structure</h1>
+                <p>Three-tier conscious circulation framework for tax optimization, asset protection, and mission alignment.</p>
+            </div>
+
+            <!-- Visual Flow Diagram -->
+            <section class="flow-section">
+                <h2 class="section-title">🔄 Entity Flow & Conscious Circulation</h2>
+                <div class="flow-diagram">
+                    <!-- Tier 1: Spiritual Domain -->
+                    <div class="flow-row">
+                        <span class="tier-label tier-1">Tier 1 • Spiritual Domain</span>
+                    </div>
+                    <div class="flow-nodes-row">
+                        <div class="flow-node tier-1-node">
+                            <div class="flow-node-title">🕊️ Church of Consciousness</div>
+                            <div class="flow-node-subtitle">508(c)(1)(a) Tax-Exempt</div>
+                        </div>
+                    </div>
+                    <div class="flow-arrow" style="padding: 0.25rem 0;">
+                        <div class="flow-arrow-line" style="height: 15px;"></div>
+                        <div class="flow-arrow-head"></div>
+                    </div>
+                    <div class="flow-nodes-row">
+                        <div class="flow-node tier-1-node" style="border-color: rgba(251, 191, 36, 0.4);">
+                            <div class="flow-node-title">⛪ White Rock</div>
+                            <div class="flow-node-subtitle">PMA • Financial Firewall</div>
+                        </div>
+                    </div>
+                    <div class="flow-arrow" style="padding: 0.25rem 0;">
+                        <div class="flow-arrow-line" style="height: 15px;"></div>
+                        <div class="flow-arrow-head"></div>
+                    </div>
+                    <div class="flow-nodes-row">
+                        <div class="flow-node tier-1-node" style="min-width: 140px; padding: 0.75rem;">
+                            <div class="flow-node-title" style="font-size: 0.85rem;">🌐 Cora Nation</div>
+                            <div class="flow-node-subtitle">Ministry • Circulation</div>
+                        </div>
+                        <div class="flow-node tier-1-node" style="min-width: 140px; padding: 0.75rem;">
+                            <div class="flow-node-title" style="font-size: 0.85rem;">🎨 FI-Art</div>
+                            <div class="flow-node-subtitle">Ministry • Sacred Art</div>
+                        </div>
+                    </div>
+
+                    <!-- Arrow Down -->
+                    <div class="flow-arrow">
+                        <div class="flow-arrow-line"></div>
+                        <div class="flow-arrow-head"></div>
+                        <div class="flow-arrow-label">Beneficiary of Trust</div>
+                    </div>
+
+                    <!-- Tier 2: Asset Holding -->
+                    <div class="flow-row">
+                        <span class="tier-label tier-2">Tier 2 • Asset Holding</span>
+                    </div>
+                    <div class="flow-row">
+                        <div class="flow-node tier-2-node">
+                            <div class="flow-node-title">🔒 Sunheart Private Trust</div>
+                            <div class="flow-node-subtitle">Holds IP • Owns Companies</div>
+                        </div>
+                    </div>
+
+                    <!-- Arrow Down -->
+                    <div class="flow-arrow">
+                        <div class="flow-arrow-line"></div>
+                        <div class="flow-arrow-head"></div>
+                        <div class="flow-arrow-label">Owns 100%</div>
+                    </div>
+
+                    <!-- Tier 3: Operating Companies -->
+                    <div class="flow-row">
+                        <span class="tier-label tier-3">Tier 3 • Operating Companies</span>
+                    </div>
+                    <div class="flow-nodes-row">
+                        <div class="flow-node tier-3-node">
+                            <div class="flow-node-title">💳 Sunheart Ventures LLC</div>
+                            <div class="flow-node-subtitle">Stripe • UC Credits • AI</div>
+                        </div>
+                        <div class="flow-node tier-3-node">
+                            <div class="flow-node-title">🚀 Full Potential LLC</div>
+                            <div class="flow-node-subtitle">AI Platform • Services</div>
+                        </div>
+                    </div>
+                    <div class="flow-nodes-row" style="margin-top: 0.5rem;">
+                        <div class="flow-node tier-3-node" style="min-width: 140px; padding: 0.75rem;">
+                            <div class="flow-node-title" style="font-size: 0.85rem;">🎨 FI-Art LLC</div>
+                            <div class="flow-node-subtitle">$FI • NFT</div>
+                        </div>
+                        <div class="flow-node tier-3-node" style="min-width: 140px; padding: 0.75rem;">
+                            <div class="flow-node-title" style="font-size: 0.85rem;">🌿 Coravida LLC</div>
+                            <div class="flow-node-subtitle">Wellness</div>
+                        </div>
+                        <div class="flow-node tier-3-node" style="min-width: 140px; padding: 0.75rem;">
+                            <div class="flow-node-title" style="font-size: 0.85rem;">🌍 GSO LLC</div>
+                            <div class="flow-node-subtitle">Global Ops</div>
+                        </div>
+                    </div>
+
+                    <!-- Revenue Flow -->
+                    <div class="revenue-flow">
+                        <div class="revenue-step">
+                            <div class="revenue-step-icon">👤</div>
+                            <div class="revenue-step-label">Customer Pays</div>
+                        </div>
+                        <div class="revenue-arrow">→</div>
+                        <div class="revenue-step">
+                            <div class="revenue-step-icon">🏢</div>
+                            <div class="revenue-step-label">LLC Revenue</div>
+                        </div>
+                        <div class="revenue-arrow">→</div>
+                        <div class="revenue-step">
+                            <div class="revenue-step-icon">🔒</div>
+                            <div class="revenue-step-label">Trust Profits</div>
+                        </div>
+                        <div class="revenue-arrow">→</div>
+                        <div class="revenue-step">
+                            <div class="revenue-step-icon">🕊️</div>
+                            <div class="revenue-step-label">Church Distribution</div>
+                        </div>
+                        <div class="revenue-arrow">→</div>
+                        <div class="revenue-step">
+                            <div class="revenue-step-icon">🌍</div>
+                            <div class="revenue-step-label">Mission & Community</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stripe Payment Flow -->
+            <section class="stripe-section">
+                <div class="stripe-header">
+                    <div class="stripe-logo">💳</div>
+                    <div class="stripe-info">
+                        <h3>Payment Processing (Stripe)</h3>
+                        <p>UC Credits purchased via Stripe → Sunheart Ventures LLC</p>
+                    </div>
+                </div>
+                <div class="stripe-flow">
+                    <div class="stripe-flow-item">
+                        <div class="stripe-flow-item-icon">💵</div>
+                        <div class="stripe-flow-item-label">Customer pays $100</div>
+                    </div>
+                    <div class="stripe-flow-arrow">→</div>
+                    <div class="stripe-flow-item">
+                        <div class="stripe-flow-item-icon">💳</div>
+                        <div class="stripe-flow-item-label">Stripe (2.9% + $0.30)</div>
+                    </div>
+                    <div class="stripe-flow-arrow">→</div>
+                    <div class="stripe-flow-item">
+                        <div class="stripe-flow-item-icon">🏦</div>
+                        <div class="stripe-flow-item-label">Sunheart Ventures LLC</div>
+                    </div>
+                    <div class="stripe-flow-arrow">→</div>
+                    <div class="stripe-flow-item">
+                        <div class="stripe-flow-item-icon">🪙</div>
+                        <div class="stripe-flow-item-label">100 UC Credited</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Entity Details by Tier -->
+            <section class="structure-section">
+                <h2 class="section-title">🏛️ Entity Details</h2>
+
+                <!-- Tier 1 -->
+                <div class="tier-container">
+                    <div class="tier-header">
+                        <span class="tier-label tier-1">Tier 1</span>
+                        <h3>Spiritual Domain</h3>
+                    </div>
+                    <div class="entities-grid">
+                        <div class="entity-card tier-1-card">
+                            <div class="entity-icon">🕊️</div>
+                            <div class="entity-name">Church of Consciousness</div>
+                            <div class="entity-type">508(c)(1)(a) Tax-Exempt Church</div>
+                            <div class="entity-purpose">Mission-driven religious organization focused on conscious circulation of resources for human flourishing. Receives distributions from Trust.</div>
+                            <div class="entity-details">
+                                <span class="detail-tag">Auto Tax-Exempt</span>
+                                <span class="detail-tag">No 990 Filing</span>
+                                <span class="detail-tag">Donations Deductible</span>
+                                <span class="status-badge status-pending">⏳ Pending Declaration</span>
+                            </div>
+                        </div>
+                        <div class="entity-card tier-1-card" style="border-color: rgba(251, 191, 36, 0.3);">
+                            <div class="entity-icon" style="background: rgba(251, 191, 36, 0.2);">⛪</div>
+                            <div class="entity-name">White Rock</div>
+                            <div class="entity-type">Private Membership Association (PMA) • Financial Firewall</div>
+                            <div class="entity-purpose">First PMA layer providing financial firewall protection. Church guidance, spiritual coaching, trust formation, and member support. Creates separation between Church and commercial operations.</div>
+                            <div class="entity-details">
+                                <span class="detail-tag">whiterock.us</span>
+                                <span class="detail-tag">PMA</span>
+                                <span class="detail-tag">Financial Firewall</span>
+                                <span class="status-badge status-active">✓ Active</span>
+                            </div>
+                        </div>
+                        <div class="entity-card tier-1-card">
+                            <div class="entity-icon">🌐</div>
+                            <div class="entity-name">Cora Nation</div>
+                            <div class="entity-type">Ministry of Church of Consciousness</div>
+                            <div class="entity-purpose">Ministry focused on circulation mathematics and conscious resource flow. Operates under White Rock PMA. Community of consciousness-focused individuals practicing abundance principles.</div>
+                            <div class="entity-details">
+                                <span class="detail-tag">Ministry</span>
+                                <span class="detail-tag">Circulation Math</span>
+                                <span class="detail-tag">Under White Rock</span>
+                                <span class="status-badge status-active">✓ Active</span>
+                            </div>
+                        </div>
+                        <div class="entity-card tier-1-card">
+                            <div class="entity-icon">🎨</div>
+                            <div class="entity-name">FI-Art Ministry</div>
+                            <div class="entity-type">Ministry Arm</div>
+                            <div class="entity-purpose">Sacred art creation and conscious circulation of creative resources through the $FI Token ecosystem.</div>
+                            <div class="entity-details">
+                                <span class="detail-tag">fi-art.org</span>
+                                <span class="status-badge status-planned">🔜 Planned</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tier 2 -->
+                <div class="tier-container">
+                    <div class="tier-header">
+                        <span class="tier-label tier-2">Tier 2</span>
+                        <h3>Asset Holding</h3>
+                    </div>
+                    <div class="entities-grid">
+                        <div class="entity-card tier-2-card">
+                            <div class="entity-icon">🔒</div>
+                            <div class="entity-name">Sunheart Private Trust</div>
+                            <div class="entity-type">Private Irrevocable Trust</div>
+                            <div class="entity-purpose">Holds all intellectual property (FPAI, $FI, platforms). Owns 100% of all operating companies. Distributes profits to Church of Consciousness as beneficiary.</div>
+                            <div class="entity-details">
+                                <span class="detail-tag">IP Protection</span>
+                                <span class="detail-tag">Asset Shield</span>
+                                <span class="detail-tag">Privacy</span>
+                                <span class="status-badge status-pending">⏳ Pending Formation</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tier 3 -->
+                <div class="tier-container">
+                    <div class="tier-header">
+                        <span class="tier-label tier-3">Tier 3</span>
+                        <h3>Operating Companies</h3>
+                    </div>
+                    <div class="entities-grid">
+                        <div class="entity-card tier-3-card">
+                            <div class="entity-icon">💳</div>
+                            <div class="entity-name">Sunheart Ventures LLC</div>
+                            <div class="entity-type">Limited Liability Company</div>
+                            <div class="entity-purpose">Primary operating company for payment processing (Stripe), UC Credits, AI services, Treasury optimization, and general platform operations.</div>
+                            <div class="entity-details">
+                                <span class="detail-tag">Stripe Payments</span>
+                                <span class="detail-tag">UC Credits</span>
+                                <span class="detail-tag">AI Services</span>
+                                <span class="status-badge status-active">✓ Active</span>
+                            </div>
+                        </div>
+                        <div class="entity-card tier-3-card">
+                            <div class="entity-icon">🎨</div>
+                            <div class="entity-name">FI-Art LLC</div>
+                            <div class="entity-type">Limited Liability Company</div>
+                            <div class="entity-purpose">Operates FI-Art.org marketplace, $FI Token operations, NFT minting and trading, artist onboarding.</div>
+                            <div class="entity-details">
+                                <span class="detail-tag">$FI Token</span>
+                                <span class="detail-tag">NFT Platform</span>
+                                <span class="status-badge status-planned">🔜 To Form</span>
+                            </div>
+                        </div>
+                        <div class="entity-card tier-3-card">
+                            <div class="entity-icon">🚀</div>
+                            <div class="entity-name">Full Potential LLC</div>
+                            <div class="entity-type">Limited Liability Company</div>
+                            <div class="entity-purpose">Core brand operations, AI services, platform development, and ecosystem coordination.</div>
+                            <div class="entity-details">
+                                <span class="detail-tag">fullpotential.ai</span>
+                                <span class="detail-tag">AI Platform</span>
+                                <span class="status-badge status-active">✓ Active</span>
+                            </div>
+                        </div>
+                        <div class="entity-card tier-3-card">
+                            <div class="entity-icon">🌿</div>
+                            <div class="entity-name">Coravida LLC</div>
+                            <div class="entity-type">Limited Liability Company</div>
+                            <div class="entity-purpose">Wellness, lifestyle, and regenerative living services. Community-focused conscious living initiatives.</div>
+                            <div class="entity-details">
+                                <span class="detail-tag">coravida.com</span>
+                                <span class="detail-tag">Wellness</span>
+                                <span class="status-badge status-active">✓ Active</span>
+                            </div>
+                        </div>
+                        <div class="entity-card tier-3-card">
+                            <div class="entity-icon">🌍</div>
+                            <div class="entity-name">GSO LLC</div>
+                            <div class="entity-type">Limited Liability Company</div>
+                            <div class="entity-purpose">Global Sky Organization - international operations, global initiatives, and cross-border coordination.</div>
+                            <div class="entity-details">
+                                <span class="detail-tag">globalsky.com</span>
+                                <span class="detail-tag">Global Ops</span>
+                                <span class="status-badge status-active">✓ Active</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Protection Layers -->
+            <section class="structure-section">
+                <h2 class="section-title">🛡️ Protection Layers</h2>
+                <div class="protection-grid">
+                    <div class="protection-card">
+                        <div class="protection-icon">📜</div>
+                        <div class="protection-title">First Amendment</div>
+                        <div class="protection-desc">508(c)(1)(a) church status provides constitutional protection for religious activities. Courts apply ecclesiastical abstention doctrine.</div>
+                    </div>
+                    <div class="protection-card">
+                        <div class="protection-icon">🤝</div>
+                        <div class="protection-title">Private Contract Law</div>
+                        <div class="protection-desc">PMA operates outside public commerce. Members explicitly waive certain regulatory protections. Internal dispute resolution via arbitration.</div>
+                    </div>
+                    <div class="protection-card">
+                        <div class="protection-icon">🔐</div>
+                        <div class="protection-title">Trust Asset Protection</div>
+                        <div class="protection-desc">IP and assets held in Trust are protected from operating company liabilities. Clean separation of concerns.</div>
+                    </div>
+                    <div class="protection-card">
+                        <div class="protection-icon">🏢</div>
+                        <div class="protection-title">LLC Limited Liability</div>
+                        <div class="protection-desc">Operating companies contained liability. Personal assets and Trust assets protected from business claims.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Legal Documents -->
+            <section class="structure-section">
+                <h2 class="section-title">📄 Legal Documents</h2>
+                <div style="background: var(--bg-card); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; overflow: hidden;">
+                    <table class="docs-table">
+                        <thead>
+                            <tr>
+                                <th>Document</th>
+                                <th>Status</th>
+                                <th>Path</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="doc-name">Cora Nation PMA Agreement</div>
+                                </td>
+                                <td><span class="status-badge status-active">✓ Complete</span></td>
+                                <td><span class="doc-path">docs/legal/pma/CORA_NATION_PMA_AGREEMENT.md</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="doc-name">FI-Art Terms of Service</div>
+                                </td>
+                                <td><span class="status-badge status-active">✓ Complete</span></td>
+                                <td><span class="doc-path">FI-Art/legal/TERMS_OF_SERVICE.md</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="doc-name">Organizational Structure</div>
+                                </td>
+                                <td><span class="status-badge status-active">✓ Complete</span></td>
+                                <td><span class="doc-path">docs/legal/church/ORGANIZATIONAL_STRUCTURE.md</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="doc-name">Sunheart Trust Overview</div>
+                                </td>
+                                <td><span class="status-badge status-pending">⏳ Draft</span></td>
+                                <td><span class="doc-path">docs/legal/trust/SUNHEART_TRUST_OVERVIEW.md</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="doc-name">FI-Art Legal Structure</div>
+                                </td>
+                                <td><span class="status-badge status-pending">⏳ Draft</span></td>
+                                <td><span class="doc-path">FI-Art/legal/FI_ART_LEGAL_STRUCTURE.md</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="doc-name">Universal Credits Protocol</div>
+                                </td>
+                                <td><span class="status-badge status-active">✓ Canonical</span></td>
+                                <td><span class="doc-path">docs/protocols/UNIVERSAL_CREDITS_PROTOCOL.md</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="doc-name">Treasury Arena Compliance</div>
+                                </td>
+                                <td><span class="status-badge status-active">✓ Complete</span></td>
+                                <td><span class="doc-path">SERVICES/treasury-arena/LEGAL_COMPLIANCE_FRAMEWORK.md</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="doc-name">FPAI Token Legal Setup</div>
+                                </td>
+                                <td><span class="status-badge status-active">✓ Complete</span></td>
+                                <td><span class="doc-path">SERVICES/legal/LEGAL_SETUP_GUIDE.md</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Key Positions -->
+            <section class="structure-section">
+                <h2 class="section-title">⚖️ Key Legal Positions</h2>
+                <div class="entities-grid">
+                    <div class="entity-card" style="border-left: 3px solid var(--green);">
+                        <div class="entity-icon" style="background: rgba(34, 197, 94, 0.2);">✅</div>
+                        <div class="entity-name">Tokens are NOT Securities</div>
+                        <div class="entity-purpose">$FI, UC, FPAI are internal utility tokens for PMA members. No profit promises. Religious/educational purpose. Active participation required.</div>
+                    </div>
+                    <div class="entity-card" style="border-left: 3px solid var(--green);">
+                        <div class="entity-icon" style="background: rgba(34, 197, 94, 0.2);">✅</div>
+                        <div class="entity-name">FP Credits are NOT Money</div>
+                        <div class="entity-purpose">UC is a service credit, not currency. One-way (can't redeem for cash except via FI Token). No money transmission.</div>
+                    </div>
+                    <div class="entity-card" style="border-left: 3px solid var(--green);">
+                        <div class="entity-icon" style="background: rgba(34, 197, 94, 0.2);">✅</div>
+                        <div class="entity-name">PMA = Private Commerce</div>
+                        <div class="entity-purpose">All transactions occur between Cora Nation PMA members under private contract, not in public commerce. Regulatory exemptions apply.</div>
+                    </div>
+                    <div class="entity-card" style="border-left: 3px solid var(--green);">
+                        <div class="entity-icon" style="background: rgba(34, 197, 94, 0.2);">✅</div>
+                        <div class="entity-name">Religious Activity Protected</div>
+                        <div class="entity-purpose">Ministry activities (sacred art, spiritual coaching, abundance teaching) are protected religious exercise under First Amendment.</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Full Potential Legal Structure • Last Updated: <span id="lastUpdated"></span></p>
+            <p style="margin-top: 0.5rem;">
+                <a href="/services/credits/">Credits Gateway</a> • 
+                <a href="/">Home</a> • 
+                <a href="/services/">Services</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Auth Loading Overlay -->
+    <div class="auth-overlay" id="authOverlay">
+        <div class="auth-loading">
+            <div class="spinner"></div>
+            <p>Verifying access...</p>
+        </div>
+    </div>
+
+    <script>
+        // Set last updated date
+        document.getElementById('lastUpdated').textContent = new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        // Decode JWT token to get user info
+        function parseJwt(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (e) {
+                return null;
+            }
+        }
+
+        // Initialize user info
+        function initAuth() {
+            const token = localStorage.getItem('team_portal_token') || localStorage.getItem('fp_token');
+            const overlay = document.getElementById('authOverlay');
+            
+            if (!token) {
+                // Redirect to Team Hub login
+                const returnUrl = encodeURIComponent(window.location.href);
+                window.location.href = '/dashboards/team/?login=1&return=' + returnUrl;
+                return;
+            }
+
+            // Decode token to get user info
+            const payload = parseJwt(token);
+            if (payload) {
+                const userInfo = document.getElementById('userInfo');
+                const email = payload.email || 'Authenticated';
+                const role = payload.role || 'member';
+                const roleIcon = role === 'owner' ? '👑' : role === 'admin' ? '⚡' : '👤';
+                userInfo.textContent = `${roleIcon} ${email.split('@')[0]}`;
+                
+                // Check if token is expired
+                if (payload.exp && payload.exp * 1000 < Date.now()) {
+                    logout();
+                    return;
+                }
+            }
+
+            // Hide loading overlay
+            overlay.classList.add('hidden');
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('team_portal_token');
+            localStorage.removeItem('fp_token');
+            window.location.href = '/dashboards/team/';
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initAuth);
+    </script>
+</body>
+</html>
+

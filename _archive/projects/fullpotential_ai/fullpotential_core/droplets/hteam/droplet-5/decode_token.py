@@ -1,0 +1,14 @@
+import jwt
+import datetime
+
+token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJyZWdpc3RyeS5mdWxscG90ZW50aWFsLmFpIiwic3ViIjoiZHJvcDUuZnVsbHBvdGVudGlhbC5haSIsImF1ZCI6ImZ1bGxwb3RlbnRpYWwuZHJvcGxldHMiLCJpYXQiOjE3NjMyNTM3ODUsImV4cCI6MTc2MzM0MDE4NSwicm9sZSI6ImRyb3BsZXQiLCJzY29wZSI6WyJyZWdpc3RyeTpoZWFydGJlYXQiLCJyZWdpc3RyeTpyZWdpc3RlciJdfQ.tOYCyKzyw19pCzTOi8p2ZOSHrjeVGyTuNWKD2Yd6_xZttS9k2DNWkblYRb2XC5Q2a5nQOGROLR_vtiW5nGV_taK6iU0COatd2UJunI6JtFk4JAvk1ppAzyoSK_pjQI-da694SYJ9Xf4O5bGZKt4Y8EYyDzkt_DJiewCK4ZdxLeMnItrLHOqZevCdIr74CxztwYSETsi3p5ZVZCCdOh1sI9yKTE67uUlCJ6Kr_lNJmsbhzUxrT4kTti_bND6Z50DdKHPURqKKzd0HcpcCr1mjhkR8pKl-lXzYfUe3vrPpYwuQgIFwEnojutElEsE0V27jtwGmy1hvHb_rg4pXfQZ0dqkVpSb1SSDkH8VJn1ZmKgl-Phc8HLNDtmw7p2BOdZN87erh0S7tda7zR0R0AARSrrt-22T8IziSroH-dxLi0PYugHlN8fcSf-Wf0ipZRmLuI2B9ABwrmtH22F9590ijEibIHTcUW5H4iLJXd650OAK5iVXqPgsyqLLnZb4gcUpVLDuJ-yKrLzojZZjYddrbX3w29ktgXS-HiRaWv-cRrokSS-QImOH4DctV-rMmwxnkhktoEtC--bIpM8PeGF4bjKB3IfXlN6uh6y5dtDqwrbyrh-PnpIZTXTUoJS3xckOqMZUYKac-JFFOceTX2jJ_1MWn0NSil8zSjlF23vH3-FM"
+
+# Decode without verification to see the payload
+decoded = jwt.decode(token, options={"verify_signature": False})
+
+print("Token payload:")
+print(decoded)
+print("\nIssued at (iat):", datetime.datetime.fromtimestamp(decoded['iat']))
+print("Expires at (exp):", datetime.datetime.fromtimestamp(decoded['exp']))
+print("Current time:", datetime.datetime.now())
+print("\nTime until expiration:", datetime.datetime.fromtimestamp(decoded['exp']) - datetime.datetime.now())

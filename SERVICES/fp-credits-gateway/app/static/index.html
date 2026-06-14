@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FP Credits | Full Potential AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a24;
+            --accent-gold: #ffd700;
+            --accent-green: #10b981;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-coral: #f97316;
+            --text-primary: #f0f0f0;
+            --text-secondary: #a0a0a0;
+            --border-color: #2a2a3a;
+            --glow-gold: rgba(255, 215, 0, 0.3);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Animated background */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(255, 215, 0, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(16, 185, 129, 0.03) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            margin-bottom: 3rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-coral));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 0 20px var(--glow-gold);
+        }
+        
+        .logo-text {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-coral));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--accent-gold);
+        }
+        
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, var(--text-primary), var(--accent-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            line-height: 1.6;
+        }
+        
+        /* Balance Cards */
+        .balance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+        
+        .balance-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            animation: fadeInUp 0.8s ease-out;
+            animation-fill-mode: both;
+        }
+        
+        .balance-card:nth-child(1) { animation-delay: 0.1s; }
+        .balance-card:nth-child(2) { animation-delay: 0.2s; }
+        .balance-card:nth-child(3) { animation-delay: 0.3s; }
+        
+        .balance-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+        
+        .balance-card.fp::before {
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-coral));
+        }
+        
+        .balance-card.cora::before {
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+        }
+        
+        .balance-card.usd::before {
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+        }
+        
+        .balance-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .balance-card.fp .balance-icon {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(249, 115, 22, 0.2));
+        }
+        
+        .balance-card.cora .balance-icon {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(59, 130, 246, 0.2));
+        }
+        
+        .balance-card.usd .balance-icon {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+        }
+        
+        .balance-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .balance-amount {
+            font-family: 'Space Mono', monospace;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .balance-card.fp .balance-amount {
+            color: var(--accent-gold);
+        }
+        
+        .balance-card.cora .balance-amount {
+            color: var(--accent-green);
+        }
+        
+        .balance-card.usd .balance-amount {
+            color: var(--accent-blue);
+        }
+        
+        /* Features Grid */
+        .features {
+            margin: 4rem 0;
+        }
+        
+        .features h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: border-color 0.3s;
+        }
+        
+        .feature-card:hover {
+            border-color: var(--accent-gold);
+        }
+        
+        .feature-card h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        /* Code Block */
+        .code-section {
+            margin: 4rem 0;
+        }
+        
+        .code-section h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .code-block {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .code-header {
+            background: var(--bg-card);
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .code-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .code-dot.red { background: #ff5f56; }
+        .code-dot.yellow { background: #ffbd2e; }
+        .code-dot.green { background: #27ca40; }
+        
+        .code-content {
+            padding: 1.5rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+        
+        .code-content .comment { color: #6a737d; }
+        .code-content .keyword { color: #f97583; }
+        .code-content .string { color: #9ecbff; }
+        .code-content .function { color: #b392f0; }
+        .code-content .number { color: #79b8ff; }
+        
+        /* Exchange Rates */
+        .rates {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .rates h3 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.25rem;
+        }
+        
+        .rates-grid {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+        }
+        
+        .rate-item {
+            text-align: center;
+        }
+        
+        .rate-value {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+        }
+        
+        .rate-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+        
+        /* CTA Button */
+        .cta-section {
+            text-align: center;
+            padding: 4rem 0;
+        }
+        
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-coral));
+            color: #000;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px var(--glow-gold);
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        
+        footer a {
+            color: var(--accent-gold);
+            text-decoration: none;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .balance-amount {
+                font-size: 2rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+    
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">💎</div>
+                <span class="logo-text">FP Credits</span>
+            </div>
+            <nav class="nav-links">
+                <a href="/services/credits/purchase" style="background: linear-gradient(135deg, #ffd700, #f97316); color: #000; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600;">Get Credits</a>
+                <a href="/services/credits/docs">API Docs</a>
+                <a href="https://fullpotential.ai/services">Services</a>
+                <a href="https://github.com/fullpotentialai">GitHub</a>
+            </nav>
+        </header>
+        
+        <section class="hero">
+            <h1>The Currency of Potential</h1>
+            <p>A unified credits system powering the entire Full Potential ecosystem. Earn, spend, and exchange credits across all services seamlessly.</p>
+        </section>
+        
+        <section class="balance-grid">
+            <div class="balance-card fp">
+                <div class="balance-icon">⚡</div>
+                <div class="balance-label">FP Credits</div>
+                <div class="balance-amount" id="fp-balance">0.00</div>
+            </div>
+            <div class="balance-card cora">
+                <div class="balance-icon">🌴</div>
+                <div class="balance-label">Cora Credits</div>
+                <div class="balance-amount" id="cora-balance">0.00</div>
+            </div>
+            <div class="balance-card usd">
+                <div class="balance-icon">💵</div>
+                <div class="balance-label">USD Value</div>
+                <div class="balance-amount" id="usd-balance">$0.00</div>
+            </div>
+        </section>
+        
+        <!-- AI Brain Status Card -->
+        <section class="ai-brain-card" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(59, 130, 246, 0.1) 50%, var(--bg-card) 100%); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 16px; padding: 2rem; margin: 2rem 0; display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
+            <div style="flex: 0 0 auto;">
+                <div style="width: 64px; height: 64px; background: linear-gradient(135deg, #8b5cf6, #3b82f6); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 2rem; box-shadow: 0 0 30px rgba(139, 92, 246, 0.4);">🧠</div>
+            </div>
+            <div style="flex: 1; min-width: 200px;">
+                <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    AI Brain 
+                    <span id="ai-status" style="display: inline-flex; align-items: center; gap: 0.25rem; background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600;">
+                        <span style="width: 6px; height: 6px; background: #10b981; border-radius: 50%; animation: pulse 2s infinite;"></span>
+                        Connected
+                    </span>
+                </h3>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">Multi-model AI gateway: Claude Opus 4.5, GPT-5.1, Gemini 3.0 Pro</p>
+                <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.85rem;">
+                    <span style="color: var(--text-secondary);">Cost: <span style="color: var(--accent-purple); font-weight: 600;">~0.10 FPC/query</span></span>
+                    <span style="color: var(--text-secondary);">Models: <span style="color: var(--accent-blue); font-weight: 600;">3</span></span>
+                </div>
+            </div>
+            <div style="flex: 0 0 auto;">
+                <a href="/services/credits/purchase" style="display: inline-flex; align-items: center; gap: 0.5rem; background: linear-gradient(135deg, #8b5cf6, #3b82f6); color: #fff; padding: 0.75rem 1.5rem; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: transform 0.3s, box-shadow 0.3s;">
+                    ⚡ Get Credits
+                </a>
+            </div>
+        </section>
+
+        <section class="rates">
+            <h3>💱 Exchange Rates</h3>
+            <div class="rates-grid">
+                <div class="rate-item">
+                    <div class="rate-value">1 FPC = $1</div>
+                    <div class="rate-label">FP Credits to USD</div>
+                </div>
+                <div class="rate-item">
+                    <div class="rate-value">1 FPC = 1 CC</div>
+                    <div class="rate-label">FP Credits to Cora</div>
+                </div>
+                <div class="rate-item">
+                    <div class="rate-value">1 FPC = 1 SKY</div>
+                    <div class="rate-label">FP Credits to Sky</div>
+                </div>
+                <div class="rate-item">
+                    <div class="rate-value">1 FPC = 1 FI</div>
+                    <div class="rate-label">FP Credits to FI Token</div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="features">
+            <h2>Why FP Credits?</h2>
+            <div class="features-grid">
+                <div class="feature-card" style="border-color: rgba(139, 92, 246, 0.3); background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, var(--bg-card) 100%);">
+                    <h3>🧠 AI Brain Access</h3>
+                    <p>Direct access to Claude, GPT, and Gemini through a unified API. Pay per query with transparent pricing.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔌 Easy Integration</h3>
+                    <p>Python SDK and REST API make it simple for any service to plug in. Just a few lines of code to start.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔐 Secure by Design</h3>
+                    <p>API key authentication, rate limiting, and complete audit trails. Every transaction is tracked.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>⚡ Real-time Updates</h3>
+                    <p>WebSocket connections for instant balance updates. Your UI stays in sync without polling.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🌍 Multi-Currency</h3>
+                    <p>FP Credits, Cora Credits, Sky Credits, FI Tokens, and USD. Exchange seamlessly.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📊 Full Transparency</h3>
+                    <p>Complete transaction history, balance tracking, and analytics. Know exactly where credits flow.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="code-section">
+            <h2>Quick Start</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-dot red"></span>
+                    <span class="code-dot yellow"></span>
+                    <span class="code-dot green"></span>
+                    <span style="margin-left: 1rem; color: var(--text-secondary);">example.py</span>
+                </div>
+                <div class="code-content">
+<span class="keyword">from</span> fp_credits <span class="keyword">import</span> FPCredits
+
+<span class="comment"># Initialize with your API key</span>
+credits = FPCredits(api_key=<span class="string">"fps_your_key_here"</span>)
+
+<span class="comment"># Check a user's balance</span>
+balance = credits.<span class="function">get_balance</span>(<span class="string">"user:123"</span>)
+<span class="keyword">print</span>(f<span class="string">"FP Credits: {balance.fp_credits}"</span>)
+
+<span class="comment"># Charge for service usage</span>
+credits.<span class="function">charge</span>(<span class="string">"user:123"</span>, <span class="number">10.0</span>, <span class="string">"AI Chat Session"</span>)
+
+<span class="comment"># Award credits for referral</span>
+credits.<span class="function">credit</span>(<span class="string">"user:123"</span>, <span class="number">25.0</span>, <span class="string">"Referral bonus"</span>)
+
+<span class="comment"># Exchange FP Credits to Cora Credits</span>
+credits.<span class="function">fp_to_cora</span>(<span class="string">"user:123"</span>, <span class="number">10.0</span>)  <span class="comment"># Gets 100 Cora Credits</span>
+                </div>
+            </div>
+        </section>
+        
+        <section class="cta-section">
+            <a href="/docs" class="cta-button">
+                📖 View API Documentation
+            </a>
+        </section>
+        
+        <footer>
+            <p>Built with ⚡ by <a href="https://fullpotential.ai">Full Potential AI</a> · Backed by <a href="https://coranation.org">Cora Nation</a></p>
+        </footer>
+    </div>
+    
+    <script>
+        // Animate balance numbers on load
+        function animateValue(id, start, end, duration) {
+            const obj = document.getElementById(id);
+            const range = end - start;
+            const startTime = performance.now();
+            
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                const current = start + (range * easeOut);
+                
+                if (id === 'usd-balance') {
+                    obj.textContent = '$' + current.toFixed(2);
+                } else {
+                    obj.textContent = current.toFixed(2);
+                }
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            
+            requestAnimationFrame(update);
+        }
+        
+        // Demo animation
+        setTimeout(() => {
+            animateValue('fp-balance', 0, 1250.00, 1500);
+            animateValue('cora-balance', 0, 12500.00, 1500);
+            animateValue('usd-balance', 0, 1250.00, 1500);
+        }, 500);
+        
+        // Check AI Brain status
+        async function checkAIBrainStatus() {
+            const statusEl = document.getElementById('ai-status');
+            try {
+                const response = await fetch('/services/credits/api/ai/status');
+                const data = await response.json();
+                
+                if (data.connected) {
+                    statusEl.innerHTML = `
+                        <span style="width: 6px; height: 6px; background: #10b981; border-radius: 50%; animation: pulse 2s infinite;"></span>
+                        Connected
+                    `;
+                    statusEl.style.background = 'rgba(16, 185, 129, 0.2)';
+                    statusEl.style.color = '#10b981';
+                } else {
+                    statusEl.innerHTML = `
+                        <span style="width: 6px; height: 6px; background: #f59e0b; border-radius: 50%;"></span>
+                        Reconnecting...
+                    `;
+                    statusEl.style.background = 'rgba(245, 158, 11, 0.2)';
+                    statusEl.style.color = '#f59e0b';
+                }
+            } catch (e) {
+                statusEl.innerHTML = `
+                    <span style="width: 6px; height: 6px; background: #ef4444; border-radius: 50%;"></span>
+                    Offline
+                `;
+                statusEl.style.background = 'rgba(239, 68, 68, 0.2)';
+                statusEl.style.color = '#ef4444';
+            }
+        }
+        
+        // Check status on load and every 30 seconds
+        checkAIBrainStatus();
+        setInterval(checkAIBrainStatus, 30000);
+    </script>
+</body>
+</html>
+
+

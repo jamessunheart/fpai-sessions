@@ -1,0 +1,40 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-11-25T17:16:42.609326Z",
+  "layers": {
+    "consciousness": {
+      "path": "core/STATE",
+      "components": [
+        "NOW.md",
+        "SSOT.json"
+      ],
+      "status": "active"
+    },
+    "infrastructure": {
+      "path": "infra",
+      "components": [
+        "scripts",
+        "docker"
+      ],
+      "status": "stable"
+    },
+    "services": {
+      "path": "SERVICES",
+      "dynamic": true,
+      "discovery_source": "core/coordination/SSOT.json"
+    },
+    "interfaces": {
+      "path": "apps",
+      "components": [
+        "dashboard",
+        "cli"
+      ],
+      "status": "development"
+    }
+  },
+  "integration_points": {
+    "registry": "http://localhost:8000",
+    "orchestrator": "http://localhost:8001",
+    "verifier": "http://localhost:8200"
+  }
+}

@@ -1,0 +1,97 @@
+# Chat Orchestrator Droplet 12 - Docker Compose Configuration
+# Per TECH_STACK.md deployment standards
+
+version: '3.8'
+
+services:
+  chat-orchestrator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chat-orchestrator-12
+    ports:
+      - "8012:8012"
+    environment:
+      # AI Configuration
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      
+      # Droplet Configuration
+      - DROPLET_ID=12
+      - DROPLET_NAME=Chat Orchestrator
+      - DROPLET_STEWARD=Zainab
+      - DROPLET_URL=http://chat-orchestrator:8012
+      
+      # Registry Configuration
+      - REGISTRY_URL=${REGISTRY_URL:-http://registry:8010}
+      - JWT_KEY=${JWT_KEY}
+      - DROPLET_SECRET=${DROPLET_SECRET}
+      
+      # JWT Configuration
+      - JWT_ALGORITHM=RS256
+      - JWT_ISSUER=registry.fullpotential.ai
+      - JWT_AUDIENCE=fullpotential.droplets
+      
+      # Orchestrator Configuration
+      - ORCHESTRATOR_URL=${ORCHESTRATOR_URL:-http://orchestrator:8010}
+      
+      # Server Configuration
+      - PORT=8012
+      - HOST=0.0.0.0
+      - WORKERS=4
+      
+      # Environment
+      - ENVIRONMENT=${ENVIRONMENT:-production}
+      - DEBUG=${DEBUG:-false}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      
+      # Session Configuration
+      - SESSION_MAX_HISTORY=10
+      - SESSION_TIMEOUT_MINUTES=30
+      
+      # API Timeouts
+      - ORCHESTRATOR_TIMEOUT=5
+      - REGISTRY_TIMEOUT=10
+      - GEMINI_TIMEOUT=30
+      
+      # Rate Limiting
+      - RATE_LIMIT_CHAT=100
+      - RATE_LIMIT_WEBSOCKET=200
+      - RATE_LIMIT_PROCESS=50
+    
+    volumes:
+      # Data directory for fallback data
+      - ./data:/app/data
+    
+    networks:
+      - droplet-mesh
+    
+    restart: unless-stopped
+    
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8012/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+
+networks:
+  droplet-mesh:
+    external: true
+    # Create external network first:
+    # docker network create droplet-mesh

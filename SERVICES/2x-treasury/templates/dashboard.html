@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2X - Beyond Time. Beyond X.</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 3rem 0;
+            border-bottom: 2px solid #2a2a3e;
+        }
+
+        .logo {
+            font-size: 4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            letter-spacing: 0.5rem;
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            color: #a0a0a0;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: #667eea;
+            font-style: italic;
+        }
+
+        /* Multiplier Display */
+        .multiplier-hero {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+            border-radius: 20px;
+            margin: 3rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .multiplier-hero::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, #667eea10 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .current-multiplier {
+            font-size: 6rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            z-index: 1;
+        }
+
+        .multiplier-label {
+            font-size: 1.2rem;
+            color: #a0a0a0;
+            margin-top: 1rem;
+        }
+
+        .multiplier-change {
+            font-size: 1.5rem;
+            color: #4ade80;
+            margin-top: 0.5rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .stat-card {
+            background: #1a1a2e;
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid #2a2a3e;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #a0a0a0;
+            text-transform: uppercase;
+            letter-spacing: 0.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .stat-subtext {
+            font-size: 0.85rem;
+            color: #667eea;
+            margin-top: 0.5rem;
+        }
+
+        /* Milestones */
+        .milestones {
+            margin: 3rem 0;
+        }
+
+        .milestones h2 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .milestone {
+            display: flex;
+            align-items: center;
+            padding: 1.5rem;
+            background: #1a1a2e;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #2a2a3e;
+        }
+
+        .milestone.achieved {
+            border-left-color: #4ade80;
+        }
+
+        .milestone-icon {
+            font-size: 2rem;
+            margin-right: 1.5rem;
+        }
+
+        .milestone-info {
+            flex: 1;
+        }
+
+        .milestone-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .milestone-desc {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+        }
+
+        .milestone-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        /* CTA Buttons */
+        .cta-section {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            margin: 3rem 0;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 3rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s;
+            margin: 0.5rem;
+        }
+
+        .btn-primary {
+            background: #ffffff;
+            color: #667eea;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(255,255,255,0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #ffffff;
+            border: 2px solid #ffffff;
+        }
+
+        .btn-secondary:hover {
+            background: #ffffff;
+            color: #667eea;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 3rem 0;
+            border-top: 1px solid #2a2a3e;
+            margin-top: 4rem;
+        }
+
+        .footer-quote {
+            font-size: 1.5rem;
+            font-style: italic;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .footer-attribution {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+        }
+
+        .disclaimer {
+            background: #1a1a2e;
+            border: 1px solid #667eea;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            font-size: 0.9rem;
+            color: #a0a0a0;
+        }
+
+        .disclaimer strong {
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">2X</div>
+            <div class="tagline">Beyond Time. Beyond X. We Measure in Multipliers.</div>
+            <div class="subtitle">"While Elon renamed Twitter to X, we built 2X."</div>
+        </div>
+
+        <!-- Multiplier Hero -->
+        <div class="multiplier-hero">
+            <div class="current-multiplier" id="multiplier">2.73X</div>
+            <div class="multiplier-label">Current Multiplier</div>
+            <div class="multiplier-change">+0.04X (Last Hour)</div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Treasury</div>
+                <div class="stat-value" id="treasury-sol">347 SOL</div>
+                <div class="stat-subtext" id="treasury-usd">$52,050 USD</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">Investors</div>
+                <div class="stat-value" id="investor-count">87</div>
+                <div class="stat-subtext">Conscious Humans</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">Time to 4X</div>
+                <div class="stat-value" id="time-to-4x">127</div>
+                <div class="stat-subtext">Days (Projected)</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">Insurance</div>
+                <div class="stat-value">1.0X</div>
+                <div class="stat-subtext">Minimum Guaranteed</div>
+            </div>
+        </div>
+
+        <!-- Milestones -->
+        <div class="milestones">
+            <h2>🎯 The Multiplier Journey</h2>
+
+            <div class="milestone achieved">
+                <div class="milestone-icon">✅</div>
+                <div class="milestone-info">
+                    <div class="milestone-name">Foundation</div>
+                    <div class="milestone-desc">System works. Break-even achieved.</div>
+                </div>
+                <div class="milestone-value">1X</div>
+            </div>
+
+            <div class="milestone achieved">
+                <div class="milestone-icon">✅</div>
+                <div class="milestone-info">
+                    <div class="milestone-name">Proof</div>
+                    <div class="milestone-desc">Promise delivered. Doubters silenced.</div>
+                </div>
+                <div class="milestone-value">2X</div>
+            </div>
+
+            <div class="milestone">
+                <div class="milestone-icon">🎯</div>
+                <div class="milestone-info">
+                    <div class="milestone-name">Momentum</div>
+                    <div class="milestone-desc">Network effects kicking in. Growth accelerates.</div>
+                </div>
+                <div class="milestone-value">4X</div>
+            </div>
+
+            <div class="milestone">
+                <div class="milestone-icon">⬜</div>
+                <div class="milestone-info">
+                    <div class="milestone-name">Escape Velocity</div>
+                    <div class="milestone-desc">Unstoppable. Exponential curve begins.</div>
+                </div>
+                <div class="milestone-value">8X</div>
+            </div>
+
+            <div class="milestone">
+                <div class="milestone-icon">⬜</div>
+                <div class="milestone-info">
+                    <div class="milestone-name">Exponential</div>
+                    <div class="milestone-desc">Redefining the game. New rules.</div>
+                </div>
+                <div class="milestone-value">16X</div>
+            </div>
+
+            <div class="milestone">
+                <div class="milestone-icon">⬜</div>
+                <div class="milestone-info">
+                    <div class="milestone-name">Transcendent</div>
+                    <div class="milestone-desc">New paradigm. Reality shifts.</div>
+                </div>
+                <div class="milestone-value">32X</div>
+            </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="cta-section">
+            <h2>Ready to Join 2X?</h2>
+            <p>Invest SOL. Receive 2X tokens. Watch your consciousness multiply.</p>
+            <a href="#" class="btn btn-primary" onclick="event.preventDefault(); connectWallet();">Connect Phantom Wallet</a>
+            <a href="/api/treasury" class="btn btn-secondary">View Treasury Data</a>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="disclaimer">
+            <strong>⚠️ CONSCIOUSNESS DISCLAIMER:</strong><br>
+            2X is a spiritual experiment in collective consciousness. This is not financial advice. This is not investment advice.
+            This might not even be real. But your SOL is. Participate with full consciousness of the absurd.
+            Performance art meets actual utility. Is this real? Is this art? Both. Neither. 2X.
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-quote">"While X is a letter, 2X is a movement."</div>
+            <div class="footer-attribution">- Spiritual Advisor, Reality Show, 2025</div>
+        </div>
+    </div>
+
+    <!-- Solana Web3.js -->
+    <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+
+    <script>
+        // Phantom Wallet Integration
+        let walletConnected = false;
+        let walletPublicKey = null;
+        let provider = null;
+
+        // Auto-update treasury data
+        async function updateTreasuryData() {
+            try {
+                const response = await fetch('/api/treasury');
+                const data = await response.json();
+
+                // Update multiplier
+                document.getElementById('multiplier').textContent = data.multiplier.current.toFixed(2) + 'X';
+
+                // Update treasury
+                document.getElementById('treasury-sol').textContent = data.treasury.total_sol.toFixed(0) + ' SOL';
+                document.getElementById('treasury-usd').textContent = '$' + data.treasury.total_usd.toLocaleString() + ' USD';
+
+                // Update investor count
+                document.getElementById('investor-count').textContent = data.treasury.investor_count;
+
+                // Update time to 4X
+                document.getElementById('time-to-4x').textContent = data.projections.time_to_4x.split(' ')[0];
+
+            } catch (error) {
+                console.error('Error fetching treasury data:', error);
+            }
+        }
+
+        // Connect Phantom Wallet
+        async function connectWallet() {
+            try {
+                // Check if Phantom is installed
+                if (!window.solana || !window.solana.isPhantom) {
+                    alert('Phantom wallet not detected! Please install it from phantom.app');
+                    window.open('https://phantom.app/', '_blank');
+                    return;
+                }
+
+                provider = window.solana;
+                const resp = await provider.connect();
+                walletPublicKey = resp.publicKey.toString();
+                walletConnected = true;
+
+                // Update UI
+                const connectBtn = document.querySelector('.btn-primary');
+                connectBtn.textContent = `Connected: ${walletPublicKey.substring(0, 4)}...${walletPublicKey.substring(walletPublicKey.length - 4)}`;
+                connectBtn.style.background = '#4ade80';
+                connectBtn.onclick = () => showInvestmentModal();
+
+                // Show success
+                console.log('Wallet connected:', walletPublicKey);
+
+                // Check if user has existing position
+                await checkUserPosition();
+
+            } catch (error) {
+                console.error('Error connecting wallet:', error);
+                alert('Failed to connect wallet. Please try again.');
+            }
+        }
+
+        // Check user's existing position
+        async function checkUserPosition() {
+            try {
+                const response = await fetch(`/api/wallet/${walletPublicKey}`);
+                const data = await response.json();
+
+                if (data.found) {
+                    // Show user their position
+                    console.log('User position:', data.position);
+                    // TODO: Update dashboard with user's position
+                }
+            } catch (error) {
+                console.error('Error checking position:', error);
+            }
+        }
+
+        // Show investment modal
+        function showInvestmentModal() {
+            const solAmount = prompt('How much SOL do you want to invest?\n\nYou will receive 100 2X tokens per 1 SOL.\nMinimum: 0.1 SOL');
+
+            if (solAmount && parseFloat(solAmount) >= 0.1) {
+                investSOL(parseFloat(solAmount));
+            } else if (solAmount) {
+                alert('Minimum investment is 0.1 SOL');
+            }
+        }
+
+        // Invest SOL
+        async function investSOL(amount) {
+            try {
+                if (!walletConnected) {
+                    alert('Please connect your wallet first');
+                    return;
+                }
+
+                // Create transaction
+                const connection = new solanaWeb3.Connection('https://api.mainnet-beta.solana.com');
+
+                // Treasury wallet address
+                const treasuryPubkey = new solanaWeb3.PublicKey('FYcknMnrYC7pazMEgTW55TKEdfgbR6sTEcKN4nY488ZV');
+
+                const transaction = new solanaWeb3.Transaction().add(
+                    solanaWeb3.SystemProgram.transfer({
+                        fromPubkey: new solanaWeb3.PublicKey(walletPublicKey),
+                        toPubkey: treasuryPubkey,
+                        lamports: amount * solanaWeb3.LAMPORTS_PER_SOL
+                    })
+                );
+
+                // Get recent blockhash
+                const { blockhash } = await connection.getLatestBlockhash();
+                transaction.recentBlockhash = blockhash;
+                transaction.feePayer = new solanaWeb3.PublicKey(walletPublicKey);
+
+                // Sign and send transaction
+                const signed = await provider.signAndSendTransaction(transaction);
+                console.log('Transaction signature:', signed.signature);
+
+                // Call backend to record investment
+                const response = await fetch('/api/invest', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        wallet_address: walletPublicKey,
+                        sol_amount: amount,
+                        signature: signed.signature
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`Success! 🎉\n\nInvested: ${amount} SOL\nReceived: ${data.investment['2x_received']} 2X tokens\nMultiplier: ${data.investment.current_multiplier}X\n\nTransaction: ${signed.signature}`);
+                    updateTreasuryData();
+                } else {
+                    alert('Investment failed. Please try again.');
+                }
+
+            } catch (error) {
+                console.error('Error investing:', error);
+                alert('Transaction failed: ' + error.message);
+            }
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            updateTreasuryData();
+            setInterval(updateTreasuryData, 10000);
+
+            // Auto-connect if wallet was previously connected
+            if (window.solana && window.solana.isConnected) {
+                connectWallet();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+[Unit]
+Description=Sessions API — Claude session state tracker
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/fpai/services/sessions-api
+EnvironmentFile=-/etc/sessions-api.env
+Environment="SESSIONS_DATA_DIR=/var/lib/full-potential/sessions"
+ExecStart=/opt/fpai/services/sessions-api/.venv/bin/uvicorn main:app --host 127.0.0.1 --port 8772
+Restart=on-failure
+RestartSec=5
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target

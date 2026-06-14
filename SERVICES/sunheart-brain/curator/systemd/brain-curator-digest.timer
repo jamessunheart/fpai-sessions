@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily brain digest report
+
+[Timer]
+OnCalendar=*-*-* 07:00:00 America/Denver
+Unit=brain-curator@digest.service
+Persistent=true
+
+[Install]
+WantedBy=timers.target

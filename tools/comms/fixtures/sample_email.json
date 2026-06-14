@@ -1,0 +1,26 @@
+[
+  {
+    "id": "sample-need-reply",
+    "from": "founder@example.com",
+    "subject": "Interested in the bottleneck session",
+    "body": "Can you send me details about the 90 minute bottleneck session?"
+  },
+  {
+    "id": "sample-fyi",
+    "from": "ops@example.com",
+    "subject": "Weekly update",
+    "body": "Sharing the weekly update. No reply needed."
+  },
+  {
+    "id": "sample-action",
+    "from": "assistant@example.com",
+    "subject": "Action needed: confirm schedule",
+    "body": "Please confirm the schedule by Friday."
+  },
+  {
+    "id": "sample-spam",
+    "from": "spam@example.com",
+    "subject": "Limited time offer",
+    "body": "Buy our SEO services. Unsubscribe here."
+  }
+]

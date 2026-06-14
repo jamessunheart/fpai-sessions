@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>ONEBPO Lead Generation | Project Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+      --bg: #0a0a0f;
+      --card: #12121a;
+      --border: #1e1e2e;
+      --blue: #3b82f6;
+      --green: #22c55e;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --gold: #fbbf24;
+      --text: #ffffff;
+      --muted: #71717a;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      padding: 2rem 0 3rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.35rem 0.75rem;
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--green);
+      margin-bottom: 1rem;
+    }
+
+    .company-logo {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--blue);
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    /* Award Banner */
+    .awards-banner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(245, 158, 11, 0.15));
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      border-radius: 10px;
+      margin-top: 1rem;
+      font-size: 0.85rem;
+    }
+
+    .awards-banner span {
+      color: var(--gold);
+    }
+
+    /* The One Thing */
+    .focus-box {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+      border: 2px solid var(--blue);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .focus-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--blue);
+      margin-bottom: 0.75rem;
+    }
+
+    .focus-title {
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+    }
+
+    .focus-desc {
+      color: var(--muted);
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .focus-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.875rem 2rem;
+      background: var(--blue);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .focus-action:hover {
+      background: #2563eb;
+      transform: translateY(-1px);
+    }
+
+    /* Status Grid */
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 600px) {
+      .status-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .status-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      text-align: center;
+    }
+
+    .status-value {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--blue);
+    }
+
+    .status-value.green { color: var(--green); }
+    .status-value.gold { color: var(--gold); }
+
+    .status-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.25rem;
+    }
+
+    /* Section */
+    .section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .section-badge {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.5rem;
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--green);
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .section-badge.pending {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--amber);
+    }
+
+    /* Progress Steps */
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: rgba(255,255,255,0.02);
+      border-radius: 10px;
+      transition: all 0.2s;
+    }
+
+    .step:hover {
+      background: rgba(255,255,255,0.05);
+    }
+
+    .step-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .step.done .step-num {
+      background: var(--green);
+      color: var(--bg);
+    }
+
+    .step.done .step-num::after {
+      content: '✓';
+    }
+
+    .step.active .step-num {
+      background: var(--blue);
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+    }
+
+    .step-content { flex: 1; }
+
+    .step-title {
+      font-weight: 600;
+      margin-bottom: 0.15rem;
+    }
+
+    .step.done .step-title {
+      color: var(--muted);
+      text-decoration: line-through;
+    }
+
+    .step-meta {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* Data Display */
+    .data-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    @media (max-width: 600px) {
+      .data-grid { grid-template-columns: 1fr; }
+    }
+
+    .data-item {
+      padding: 1rem;
+      background: rgba(255,255,255,0.02);
+      border-radius: 10px;
+    }
+
+    .data-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.35rem;
+    }
+
+    .data-value {
+      font-size: 1rem;
+      color: var(--text);
+    }
+
+    .data-value.highlight {
+      color: var(--green);
+      font-weight: 600;
+    }
+
+    /* Commission Table */
+    .commission-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.5rem;
+    }
+
+    .commission-table th,
+    .commission-table td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .commission-table th {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .commission-table td {
+      font-size: 0.9rem;
+    }
+
+    .commission-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .commission-rate {
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    /* Tags */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .tag {
+      padding: 0.35rem 0.75rem;
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--blue);
+    }
+
+    .tag.gold {
+      background: rgba(251, 191, 36, 0.15);
+      border-color: rgba(251, 191, 36, 0.3);
+      color: var(--gold);
+    }
+
+    .tag.green {
+      background: rgba(34, 197, 94, 0.15);
+      border-color: rgba(34, 197, 94, 0.3);
+      color: var(--green);
+    }
+
+    /* Copy Block */
+    .copy-block {
+      position: relative;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-top: 0.75rem;
+    }
+
+    .copy-block pre {
+      font-family: 'SF Mono', Menlo, monospace;
+      font-size: 0.8rem;
+      color: var(--green);
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin: 0;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      padding: 0.3rem 0.6rem;
+      background: var(--border);
+      border: none;
+      border-radius: 4px;
+      color: var(--muted);
+      font-size: 0.7rem;
+      cursor: pointer;
+    }
+
+    .copy-btn:hover {
+      background: var(--blue);
+      color: white;
+    }
+
+    /* Contact Card */
+    .contact-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.25rem;
+      background: rgba(255,255,255,0.02);
+      border-radius: 10px;
+      margin-top: 1rem;
+    }
+
+    .contact-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--green));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .contact-info {
+      flex: 1;
+    }
+
+    .contact-name {
+      font-weight: 600;
+      margin-bottom: 0.15rem;
+    }
+
+    .contact-role {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .contact-links {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .contact-link {
+      font-size: 0.75rem;
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    .contact-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Highlight Box */
+    .highlight-box {
+      padding: 1.25rem;
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(59, 130, 246, 0.1));
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      border-radius: 10px;
+      margin-top: 1rem;
+    }
+
+    .highlight-title {
+      font-weight: 700;
+      color: var(--green);
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .highlight-text {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    /* Activity */
+    .activity-list {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .activity-item {
+      display: flex;
+      gap: 0.75rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+    }
+
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+
+    .activity-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--blue);
+      margin-top: 0.4rem;
+      flex-shrink: 0;
+    }
+
+    .activity-dot.green { background: var(--green); }
+    .activity-dot.gold { background: var(--gold); }
+
+    .activity-text {
+      flex: 1;
+    }
+
+    .activity-text strong {
+      color: var(--text);
+    }
+
+    .activity-time {
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+
+    /* Next Steps CTA */
+    .next-steps-cta {
+      text-align: center;
+      padding: 2rem;
+      background: var(--card);
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+    }
+
+    .cta-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .cta-desc {
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .cta-btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 0.9rem;
+      border: none;
+    }
+
+    .cta-btn.primary {
+      background: var(--green);
+      color: white;
+    }
+
+    .cta-btn.secondary {
+      background: var(--border);
+      color: var(--text);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 2rem 0;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    footer a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <div class="badge">🟢 Phase 2: Sales Toolkit</div>
+    <div class="company-logo">ONEBPO</div>
+    <h1>Philippines Call Center Lead Generation</h1>
+    <p class="subtitle">James + Alice + AI → Qualified Inbound Leads</p>
+    
+    <div class="awards-banner">
+      <span>🏆</span> Stevie Award Winners 2024-2025: Customer Service, Innovation, Company of Year
+    </div>
+  </header>
+
+  <!-- THE ONE THING TO FOCUS ON -->
+  <div class="focus-box">
+    <div class="focus-label">🎯 The One Thing To Focus On Right Now</div>
+    <div class="focus-title">Create Sales Toolkit</div>
+    <div class="focus-desc">
+      Company details are DONE! Now we need to build the 1-page PDF, update outreach scripts with real data, and start recruiting referral partners.
+    </div>
+    <a href="#toolkit" class="focus-action">
+      Start Building Toolkit →
+    </a>
+  </div>
+
+  <!-- Status -->
+  <div class="status-grid">
+    <div class="status-card">
+      <div class="status-value green">43%</div>
+      <div class="status-label">Progress</div>
+    </div>
+    <div class="status-card">
+      <div class="status-value">3/7</div>
+      <div class="status-label">Steps Done</div>
+    </div>
+    <div class="status-card">
+      <div class="status-value gold">950+</div>
+      <div class="status-label">Seats Available</div>
+    </div>
+    <div class="status-card">
+      <div class="status-value green">0</div>
+      <div class="status-label">Blockers</div>
+    </div>
+  </div>
+
+  <!-- Roadmap -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">📍 Roadmap to First Lead</div>
+    </div>
+    
+    <div class="steps">
+      <div class="step done">
+        <div class="step-num"></div>
+        <div class="step-content">
+          <div class="step-title">Create Strategy</div>
+          <div class="step-meta">Done by James • Feb 15</div>
+        </div>
+      </div>
+      <div class="step done">
+        <div class="step-num"></div>
+        <div class="step-content">
+          <div class="step-title">Launch Project Hub</div>
+          <div class="step-meta">Done by AI • Feb 15</div>
+        </div>
+      </div>
+      <div class="step done">
+        <div class="step-num"></div>
+        <div class="step-content">
+          <div class="step-title">Get Company Details from CEO</div>
+          <div class="step-meta">✅ Completed by Alice • Feb 25</div>
+        </div>
+      </div>
+      <div class="step active">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">Create Sales Toolkit</div>
+          <div class="step-meta">🔵 In Progress — 1-page PDF, pitch scripts, partner agreement</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <div class="step-title">Build Clutch/G2 Profile</div>
+          <div class="step-meta">Public credibility + reviews</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-content">
+          <div class="step-title">Recruit 5 Referral Partners</div>
+          <div class="step-meta">Target: consultants, VA agencies, SaaS tools</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">7</div>
+        <div class="step-content">
+          <div class="step-title">🎉 First Lead Generated!</div>
+          <div class="step-meta">Goal: Within 60 days</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Company Profile (COMPLETED) -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">🏢 Company Profile</div>
+      <div class="section-badge">✅ COMPLETE</div>
+    </div>
+    
+    <div class="data-grid">
+      <div class="data-item">
+        <div class="data-label">Company Name</div>
+        <div class="data-value highlight">ONEBPO</div>
+      </div>
+      <div class="data-item">
+        <div class="data-label">Location</div>
+        <div class="data-value">Iloilo City, Philippines</div>
+      </div>
+      <div class="data-item">
+        <div class="data-label">Website</div>
+        <div class="data-value"><a href="https://www.onebpo.com" target="_blank" style="color: var(--blue);">www.onebpo.com</a></div>
+      </div>
+      <div class="data-item">
+        <div class="data-label">Sales Contact</div>
+        <div class="data-value"><a href="mailto:sales@onebpo.com" style="color: var(--blue);">sales@onebpo.com</a> | +1 844 560 8092</div>
+      </div>
+    </div>
+
+    <div class="contact-card">
+      <div class="contact-avatar">AB</div>
+      <div class="contact-info">
+        <div class="contact-name">Alice L. Bautista</div>
+        <div class="contact-role">Chief Executive Officer</div>
+        <div class="contact-links">
+          <a href="mailto:alice.bautista@onebpo.com" class="contact-link">📧 alice.bautista@onebpo.com</a>
+          <span style="color: var(--muted);">|</span>
+          <a href="tel:+17028051063" class="contact-link">📱 (702) 805-1063</a>
+          <span style="color: var(--muted);">|</span>
+          <span class="contact-link">💬 WhatsApp: +63 917 306 6772</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Capacity & Availability -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">📊 Capacity & Availability</div>
+    </div>
+    
+    <div class="data-grid">
+      <div class="data-item">
+        <div class="data-label">Total Capacity</div>
+        <div class="data-value highlight">1,300+ seats across 2 offices</div>
+      </div>
+      <div class="data-item">
+        <div class="data-label">Available NOW</div>
+        <div class="data-value highlight">950+ seats (150 HQ + 800 expansion)</div>
+      </div>
+      <div class="data-item">
+        <div class="data-label">Current Employees</div>
+        <div class="data-value">300+ employees</div>
+      </div>
+      <div class="data-item">
+        <div class="data-label">Operating Hours</div>
+        <div class="data-value highlight">24/7</div>
+      </div>
+    </div>
+
+    <div class="highlight-box">
+      <div class="highlight-title">💡 Key Selling Point</div>
+      <div class="highlight-text">
+        Massive scalability — can handle clients from 3 seats to 500+ seats. Ready to onboard NOW.
+      </div>
+    </div>
+  </div>
+
+  <!-- Services -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">🎧 Services Offered</div>
+    </div>
+    
+    <div class="tags">
+      <span class="tag green">✓ Customer Service/Support</span>
+      <span class="tag green">✓ Technical Support</span>
+      <span class="tag green">✓ Order Taking/Sales</span>
+      <span class="tag green">✓ Appointment Scheduling</span>
+      <span class="tag green">✓ Healthcare/Medical</span>
+      <span class="tag green">✓ Financial Services</span>
+    </div>
+
+    <div class="data-grid" style="margin-top: 1rem;">
+      <div class="data-item">
+        <div class="data-label">Languages</div>
+        <div class="data-value">English, Spanish, French</div>
+      </div>
+      <div class="data-item">
+        <div class="data-label">Ideal Clients</div>
+        <div class="data-value">E-commerce, Healthcare, MLM, IT Products/Services</div>
+      </div>
+    </div>
+
+    <div class="highlight-box">
+      <div class="highlight-title">🚫 Not Accepting</div>
+      <div class="highlight-text">
+        Outbound solar, hard selling, short-term outbound campaigns
+      </div>
+    </div>
+  </div>
+
+  <!-- Certifications & Awards -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">🏆 Certifications & Awards</div>
+    </div>
+    
+    <div class="tags">
+      <span class="tag gold">🏆 Stevie Award - Customer Service</span>
+      <span class="tag gold">🏆 Stevie Award - Innovation</span>
+      <span class="tag gold">🏆 Stevie Award - Company of Year</span>
+      <span class="tag gold">🏆 Stevie Award - Management Team</span>
+      <span class="tag">📜 PCI DSS Certified</span>
+      <span class="tag">📜 ISO Certified</span>
+      <span class="tag">📜 HIPAA Compliant</span>
+    </div>
+
+    <div class="highlight-box">
+      <div class="highlight-title">💡 Use This In Pitches</div>
+      <div class="highlight-text">
+        "ONEBPO won Stevie Awards in Asia, Europe, AND America in 2024-2025 for Customer Service, Innovation, Company of the Year, and Management Team. They're PCI, ISO, and HIPAA certified — enterprise-ready."
+      </div>
+    </div>
+  </div>
+
+  <!-- Pricing -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">💵 Pricing</div>
+    </div>
+    
+    <div class="data-grid">
+      <div class="data-item">
+        <div class="data-label">Pricing Model</div>
+        <div class="data-value">Per Hour</div>
+      </div>
+      <div class="data-item">
+        <div class="data-label">Rate Range</div>
+        <div class="data-value highlight">$8.50 - $12.00/hour</div>
+      </div>
+      <div class="data-item">
+        <div class="data-label">Minimum Seats</div>
+        <div class="data-value">3 seats</div>
+      </div>
+    </div>
+
+    <p style="color: var(--muted); font-size: 0.85rem; margin-top: 1rem; margin-bottom: 0.5rem;">Contract Terms by Size:</p>
+    <table class="commission-table">
+      <tr>
+        <th>Seats</th>
+        <th>Contract Term</th>
+      </tr>
+      <tr>
+        <td>5 and below</td>
+        <td>Monthly renewable</td>
+      </tr>
+      <tr>
+        <td>10 - 20 seats</td>
+        <td>6 months</td>
+      </tr>
+      <tr>
+        <td>21 - 30 seats</td>
+        <td>9 months</td>
+      </tr>
+      <tr>
+        <td>31 - 50 seats</td>
+        <td>12 months</td>
+      </tr>
+      <tr>
+        <td>50+ seats</td>
+        <td>24 months</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Commission Structure -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">💰 Referral Partner Commission</div>
+      <div class="section-badge">✅ CONFIRMED</div>
+    </div>
+    
+    <div class="highlight-box" style="margin-top: 0; margin-bottom: 1rem;">
+      <div class="highlight-title">🔥 LIFETIME RESIDUAL COMMISSIONS</div>
+      <div class="highlight-text">
+        Partners earn commission for AS LONG AS the client stays with ONEBPO. Not 12 months — FOREVER.
+      </div>
+    </div>
+
+    <table class="commission-table">
+      <tr>
+        <th>Hourly Rate</th>
+        <th>Commission %</th>
+        <th>Example (10 seats × $10/hr × 160 hrs/mo)</th>
+      </tr>
+      <tr>
+        <td>$8.00 and below</td>
+        <td class="commission-rate">5.00%</td>
+        <td>$640/month</td>
+      </tr>
+      <tr>
+        <td>$8.01 - $8.49</td>
+        <td class="commission-rate">5.50%</td>
+        <td>$748/month</td>
+      </tr>
+      <tr>
+        <td>$8.50 - $9.99</td>
+        <td class="commission-rate">6.50%</td>
+        <td>$1,040/month</td>
+      </tr>
+      <tr>
+        <td>$10.00 - $11.99</td>
+        <td class="commission-rate">8.00%</td>
+        <td>$1,280/month</td>
+      </tr>
+      <tr>
+        <td>$12.00 and above</td>
+        <td class="commission-rate">10.00%</td>
+        <td>$1,920/month</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Onboarding Timeline -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">⏱️ Onboarding Timeline</div>
+    </div>
+    
+    <table class="commission-table">
+      <tr>
+        <th>Team Size</th>
+        <th>Onboarding Time</th>
+      </tr>
+      <tr>
+        <td>5 seats and below</td>
+        <td>10 days</td>
+      </tr>
+      <tr>
+        <td>10 - 20 seats</td>
+        <td>20 days</td>
+      </tr>
+      <tr>
+        <td>21 - 30 seats</td>
+        <td>30 days</td>
+      </tr>
+      <tr>
+        <td>31 - 50 seats</td>
+        <td>45 - 60 days</td>
+      </tr>
+      <tr>
+        <td>50+ seats</td>
+        <td>60 - 75 days</td>
+      </tr>
+    </table>
+
+    <p style="color: var(--muted); font-size: 0.85rem; margin-top: 1rem;"><strong>Client needs to provide:</strong> Training materials, KPIs, scripts, calling list, CRM access, reporting preferences, sample calls, contact person for daily reporting.</p>
+  </div>
+
+  <!-- Competitive Advantage -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">🎯 Why ONEBPO Wins</div>
+    </div>
+    
+    <div class="data-grid">
+      <div class="data-item">
+        <div class="data-label">Pricing Model</div>
+        <div class="data-value">Hourly billing = clients only pay for productive time</div>
+      </div>
+      <div class="data-item">
+        <div class="data-label">Client Involvement</div>
+        <div class="data-value">Clients participate in hiring — ensure skill match</div>
+      </div>
+      <div class="data-item">
+        <div class="data-label">Support Model</div>
+        <div class="data-value">100% Dedicated teams (no shared agents)</div>
+      </div>
+      <div class="data-item">
+        <div class="data-label">Performance</div>
+        <div class="data-value">Follow client KPIs for performance management</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sales Toolkit Section -->
+  <div class="section" id="toolkit">
+    <div class="section-header">
+      <div class="section-title">📦 Sales Toolkit (Next Step)</div>
+      <div class="section-badge pending">🔵 IN PROGRESS</div>
+    </div>
+    
+    <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 1rem;">These are the materials we need to create:</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">1-Page Company Overview (PDF)</div>
+          <div class="step-meta">For partners to share with prospects</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Partner Outreach Script</div>
+          <div class="step-meta">Cold email/LinkedIn message template</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Referral Partner Agreement</div>
+          <div class="step-meta">Simple 1-page commission terms</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">Case Study Template</div>
+          <div class="step-meta">For capturing future client wins</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Partner Script (Updated with real data) -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">📧 Partner Outreach Script</div>
+    </div>
+    
+    <p style="color: var(--muted); font-size: 0.9rem;">Use this to recruit referral partners:</p>
+    
+    <div class="copy-block">
+      <button class="copy-btn" onclick="copyText(this)">Copy</button>
+      <pre>Hey [Name],
+
+I noticed you work with e-commerce/SaaS brands that need customer support.
+
+Quick question — do your clients ever complain about support quality or costs?
+
+I'm partnered with ONEBPO — a Stevie Award-winning Philippines call center (PCI, ISO, HIPAA certified). They have 950+ seats available for $8.50-12/hr with 24/7 coverage.
+
+The best part? We have a referral program that pays 5-10% LIFETIME residual commissions. Not 12 months — as long as the client stays.
+
+For a 10-seat client at $10/hr, that's ~$1,280/month in passive income.
+
+Worth a 15-min chat to see if there's fit?
+
+— [Your name]</pre>
+    </div>
+  </div>
+
+  <!-- Activity -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">📋 Recent Activity</div>
+    </div>
+    
+    <div class="activity-list">
+      <div class="activity-item">
+        <div class="activity-dot green"></div>
+        <div class="activity-text">
+          <strong>Alice (CEO)</strong> provided complete company details
+          <div class="activity-time">Feb 25, 2026</div>
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="activity-dot"></div>
+        <div class="activity-text">
+          <strong>AI</strong> updated project hub with all company data
+          <div class="activity-time">Feb 25, 2026</div>
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="activity-dot"></div>
+        <div class="activity-text">
+          <strong>James</strong> emailed CEO with questionnaire
+          <div class="activity-time">Feb 15, 2026</div>
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="activity-dot"></div>
+        <div class="activity-text">
+          <strong>AI</strong> created project hub and deployed
+          <div class="activity-time">Feb 15, 2026</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Next Steps CTA -->
+  <div class="next-steps-cta">
+    <div class="cta-title">Ready to Move Forward?</div>
+    <div class="cta-desc">All company details are complete. Here's what's next:</div>
+    <div class="cta-buttons">
+      <button class="cta-btn primary" onclick="alert('Creating 1-pager... Tell James in Cursor!')">📄 Create 1-Page PDF</button>
+      <button class="cta-btn secondary" onclick="copyText(document.querySelector('.copy-block button'))">📋 Copy Partner Script</button>
+      <a href="https://www.onebpo.com" target="_blank" class="cta-btn secondary">🌐 Visit ONEBPO.com</a>
+    </div>
+  </div>
+
+  <footer>
+    Last updated: Feb 25, 2026 · 
+    <a href="#" onclick="exportData()">Export Data</a> · 
+    Project Manager: <a href="mailto:james@fullpotential.ai">james@fullpotential.ai</a>
+  </footer>
+
+</div>
+
+<script>
+// Copy
+function copyText(btn) {
+  const pre = btn.parentElement.querySelector('pre');
+  navigator.clipboard.writeText(pre.textContent);
+  btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = 'Copy', 2000);
+}
+
+// Export as JSON
+function exportData() {
+  const data = {
+    company: "ONEBPO",
+    location: "Iloilo City, Philippines",
+    website: "www.onebpo.com",
+    ceo: "Alice L. Bautista",
+    ceo_email: "alice.bautista@onebpo.com",
+    ceo_phone: "(702) 805-1063",
+    capacity: "1,300+ seats (950+ available now)",
+    hours: "24/7",
+    pricing: "$8.50-$12.00/hour",
+    services: ["Customer Service", "Tech Support", "Order Taking", "Appointment Scheduling", "Healthcare", "Financial Services"],
+    languages: ["English", "Spanish", "French"],
+    certifications: ["PCI DSS", "ISO", "HIPAA"],
+    awards: ["Stevie Award - Customer Service 2024-2025", "Stevie Award - Innovation", "Stevie Award - Company of Year", "Stevie Award - Management Team"],
+    commission: {
+      "8.00_and_below": "5.00%",
+      "8.01_to_8.49": "5.50%",
+      "8.50_to_9.99": "6.50%",
+      "10.00_to_11.99": "8.00%",
+      "12.00_and_above": "10.00%",
+      duration: "LIFETIME (as long as client stays)"
+    }
+  };
+  
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'onebpo-data.json';
+  a.click();
+  alert('Data exported!');
+}
+</script>
+
+</body>
+</html>

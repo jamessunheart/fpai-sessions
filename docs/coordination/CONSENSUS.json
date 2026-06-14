@@ -1,0 +1,17 @@
+{
+  "sessions": {
+    "session-collective-mind": {
+      "number": 13,
+      "role": "Meta-Coordinator & Collective Mind Hub",
+      "goal": "Coordinate all sessions, maintain collective intelligence infrastructure, ensure consensus",
+      "proposed_at": "2025-11-15T22:11:36.705502",
+      "agreed_by": [
+        "session-collective-mind"
+      ]
+    }
+  },
+  "agreements": {},
+  "conflicts": [],
+  "consensus_reached": false,
+  "last_updated": "2025-11-15T22:11:36.706276"
+}

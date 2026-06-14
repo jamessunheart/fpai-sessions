@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WHO VILLAGE</title>
+    <meta name="description" content="A place built around one function — to remind the who that it is who.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #F7F3EB;
+            --text: #1A1A1A;
+            --muted: #8A8478;
+            --accent: #B5654A;
+            --rule: rgba(26, 26, 26, 0.12);
+            --serif: Georgia, 'Times New Roman', serif;
+            --sans: Inter, system-ui, -apple-system, sans-serif;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--serif);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 4rem 1.5rem;
+        }
+
+        .liturgy {
+            font-size: clamp(1.6rem, 4.5vw, 2.4rem);
+            line-height: 1.9;
+            letter-spacing: 0.01em;
+        }
+
+        .liturgy-line {
+            display: block;
+        }
+
+        .hero-location {
+            margin-top: 3rem;
+            font-family: var(--sans);
+            font-size: 0.85rem;
+            font-weight: 400;
+            color: var(--muted);
+            letter-spacing: 0.04em;
+        }
+
+        .who-mark {
+            margin-bottom: 3rem;
+        }
+
+        .who-mark svg {
+            width: 120px;
+            height: auto;
+        }
+
+        .hero-rule {
+            width: 60px;
+            height: 1px;
+            background: var(--rule);
+            border: none;
+            margin: 2rem auto 0;
+        }
+
+        /* Sections */
+        section {
+            padding: 120px 0;
+        }
+
+        @media (max-width: 640px) {
+            section { padding: 72px 0; }
+        }
+
+        section + section {
+            border-top: 1px solid var(--rule);
+        }
+
+        h2 {
+            font-family: var(--serif);
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            text-transform: lowercase;
+            color: var(--muted);
+            margin-bottom: 2rem;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        p:last-child { margin-bottom: 0; }
+
+        /* Images */
+        .land-images {
+            display: flex;
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        .land-images .land-img {
+            flex: 1;
+            aspect-ratio: 1;
+            background: var(--rule);
+            border-radius: 2px;
+        }
+
+        @media (max-width: 640px) {
+            .land-images {
+                flex-direction: column;
+            }
+        }
+
+        /* Rhythm list */
+        .rhythm-list {
+            list-style: none;
+        }
+
+        .rhythm-list li {
+            padding: 1.5rem 0;
+            border-bottom: 1px solid var(--rule);
+        }
+
+        .rhythm-list li:last-child {
+            border-bottom: none;
+        }
+
+        .rhythm-name {
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+
+        .rhythm-meta {
+            font-family: var(--sans);
+            font-size: 0.85rem;
+            color: var(--muted);
+            font-weight: 400;
+            margin-left: 0.25rem;
+        }
+
+        .rhythm-desc {
+            display: block;
+            margin-top: 0.4rem;
+            font-size: 1rem;
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        .rhythm-link {
+            font-family: var(--sans);
+            font-size: 0.85rem;
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .rhythm-link:hover {
+            border-bottom-color: var(--accent);
+        }
+
+        /* Ways in */
+        .ways-in .way {
+            margin-bottom: 2.5rem;
+        }
+
+        .ways-in .way:last-child {
+            margin-bottom: 0;
+        }
+
+        .way h3 {
+            font-family: var(--serif);
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .way p {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .way a {
+            font-family: var(--sans);
+            font-size: 0.85rem;
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .way a:hover {
+            border-bottom-color: var(--accent);
+        }
+
+        /* Inquiry form */
+        .inquiry-form {
+            margin-top: 2rem;
+        }
+
+        .inquiry-form label {
+            display: block;
+            font-family: var(--sans);
+            font-size: 0.85rem;
+            color: var(--muted);
+            font-weight: 400;
+            margin-bottom: 0.4rem;
+            letter-spacing: 0.02em;
+        }
+
+        .inquiry-form input,
+        .inquiry-form textarea {
+            width: 100%;
+            font-family: var(--serif);
+            font-size: 1rem;
+            color: var(--text);
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--rule);
+            padding: 0.75rem 0;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .inquiry-form input:focus,
+        .inquiry-form textarea:focus {
+            border-bottom-color: var(--accent);
+        }
+
+        .inquiry-form textarea {
+            resize: vertical;
+            min-height: 100px;
+            line-height: 1.7;
+        }
+
+        .inquiry-form .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .inquiry-form button {
+            font-family: var(--sans);
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text);
+            background: transparent;
+            border: 1px solid var(--text);
+            padding: 0.75rem 2rem;
+            cursor: pointer;
+            letter-spacing: 0.04em;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .inquiry-form button:hover {
+            background: var(--text);
+            color: var(--bg);
+        }
+
+        .form-note {
+            font-family: var(--sans);
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-top: 1rem;
+        }
+
+        .form-success {
+            display: none;
+            font-size: 1rem;
+            color: var(--muted);
+        }
+
+        /* Footer */
+        footer {
+            padding: 72px 0;
+            border-top: 1px solid var(--rule);
+        }
+
+        footer p {
+            font-family: var(--sans);
+            font-size: 0.8rem;
+            color: var(--muted);
+            font-weight: 400;
+            line-height: 1.8;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        footer a:hover {
+            border-bottom-color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hero -->
+    <div class="hero">
+        <div class="who-mark">
+            <svg viewBox="0 0 200 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="100" cy="90" r="70" stroke="#1A1A1A" stroke-width="14" fill="none"/>
+                <circle cx="100" cy="90" r="6" fill="#1A1A1A"/>
+                <text x="100" y="230" text-anchor="middle" font-family="Georgia, serif" font-size="48" font-weight="400" fill="#1A1A1A" letter-spacing="6">WH</text>
+                <text x="158" y="230" text-anchor="middle" font-family="Georgia, serif" font-size="48" font-weight="400" fill="none" stroke="#1A1A1A" stroke-width="1.5">O</text>
+                <circle cx="158" cy="218" r="3.5" fill="#1A1A1A"/>
+                <text x="100" y="255" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" font-weight="400" fill="#8A8478" letter-spacing="4">WHO IS LOOKING</text>
+            </svg>
+        </div>
+        <div class="liturgy">
+            <span class="liturgy-line">WHO VILLAGE</span>
+            <span class="liturgy-line">WHO IS WHO</span>
+            <span class="liturgy-line">WE ARE WHO</span>
+            <span class="liturgy-line">WHO IS WE</span>
+            <span class="liturgy-line">WHEN DO WE WHO?</span>
+            <span class="liturgy-line">WHO IS NOW</span>
+            <span class="liturgy-line">WHO IS US</span>
+            <span class="liturgy-line">WE ARE WHO</span>
+            <span class="liturgy-line">WHO IS BEFORE THE WHO?</span>
+        </div>
+        <p class="hero-location">Zen Village · Chirripó, Costa Rica</p>
+        <hr class="hero-rule">
+    </div>
+
+    <!-- Section 1: What this is -->
+    <section>
+        <div class="container">
+            <h2>what this is</h2>
+            <p>
+                A place built around one function — to remind the who that it is who. The land, the food, the sound, the silence are scaffolding. The reminding is what's real. Some weekends it arrives loud. Some weekends it arrives quiet. Either way, people leave carrying less of a someone than they came with.
+            </p>
+            <div class="land-images">
+                <div class="land-img"></div>
+                <div class="land-img"></div>
+                <div class="land-img"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: The rhythm -->
+    <section>
+        <div class="container">
+            <h2>the rhythm</h2>
+            <ul class="rhythm-list">
+                <li>
+                    <span class="rhythm-name">Saturday Casual</span>
+                    <span class="rhythm-meta">· weekly · drop-in</span>
+                    <span class="rhythm-desc">Open doors, open fire, open conversation. Come as you are, leave when you're done.</span>
+                </li>
+                <li>
+                    <span class="rhythm-name">A·Zen·tion</span>
+                    <span class="rhythm-meta">· every two weeks · contemplative</span>
+                    <span class="rhythm-desc">Silence, sitting, guided inquiry. A container for the kind of attention that changes things.</span>
+                </li>
+                <li>
+                    <span class="rhythm-name">Ecstatic Weekend</span>
+                    <span class="rhythm-meta">· every four to six weeks · full production</span>
+                    <span class="rhythm-desc">Music, movement, ceremony, fire. The loud version of the same remembering.</span>
+                </li>
+                <li>
+                    <span class="rhythm-name">Full Potential Retreat</span>
+                    <span class="rhythm-meta">· monday through friday · by application</span>
+                    <span class="rhythm-desc">Five days of diagnostic work, presence, and recalibration. You arrive with noise. You leave with signal. <a href="/inquire" class="rhythm-link">Inquire</a></span>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Section 3: Ways in -->
+    <section>
+        <div class="container">
+            <h2>ways in</h2>
+            <div class="ways-in">
+                <div class="way">
+                    <h3>Visit</h3>
+                    <form class="inquiry-form" id="visit-form" action="/api/inquiries/submit" method="POST">
+                        <input type="hidden" name="inquiry_type" value="Visit">
+                        <div class="form-group">
+                            <label for="v-name">your name</label>
+                            <input type="text" id="v-name" name="name" required autocomplete="name">
+                        </div>
+                        <div class="form-group">
+                            <label for="v-called">what called you</label>
+                            <textarea id="v-called" name="message" placeholder=""></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="v-when">when you want to come</label>
+                            <input type="text" id="v-when" name="dates" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label for="v-email">email</label>
+                            <input type="email" id="v-email" name="email" required autocomplete="email">
+                        </div>
+                        <button type="submit">send</button>
+                        <p class="form-note">We'll write back within 48 hours.</p>
+                        <p class="form-success" id="visit-success">Received. Someone will write back within 48 hours.</p>
+                    </form>
+                </div>
+
+                <div class="way">
+                    <h3>Stay</h3>
+                    <p>Zen Residences — longer-term presence on the land. Not a rental. An access.</p>
+                    <a href="/residences">Learn about residences</a>
+                </div>
+
+                <div class="way">
+                    <h3>Support</h3>
+                    <p>CORA Nation is a 508(c)(1)(A) faith-based organization supporting the work of the village. Contributions are tax-deductible.</p>
+                    <a href="https://coranation.org/donate">Contribute</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: The ground -->
+    <section>
+        <div class="container">
+            <h2>the ground</h2>
+            <p>
+                Zen Village sits on 45 acres at the base of Chirripó, Costa Rica's highest peak, in the small mountain town of San Gerardo de Rivas. The nearest international airport is San José (SJO) — about three hours by car south on the Pan-American Highway. From there, twenty minutes uphill to the village.
+            </p>
+            <p>
+                Held by Sunheart and the ground team.
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>
+                <a href="mailto:james@fullpotential.com">james@fullpotential.com</a><br>
+                <a href="https://fullpotential.ai">Full Potential</a> · <a href="https://coranation.org">CORA Nation</a><br>
+                508(c)(1)(A) faith-based organization
+            </p>
+        </div>
+    </footer>
+
+    <script>
+    document.getElementById('visit-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const form = e.target;
+        const data = new FormData(form);
+        const body = {};
+        data.forEach((v, k) => { body[k] = v; });
+
+        try {
+            const resp = await fetch('/api/inquiries/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            if (resp.ok) {
+                form.style.display = 'none';
+                document.getElementById('visit-success').style.display = 'block';
+            }
+        } catch(err) {
+            form.style.display = 'none';
+            document.getElementById('visit-success').style.display = 'block';
+        }
+    });
+    </script>
+
+</body>
+</html>

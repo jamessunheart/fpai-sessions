@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  registry:
+    build: ../apps/registry
+    container_name: fpai-registry
+    ports:
+      - "8000:8000"
+    environment:
+      - LOG_LEVEL=INFO
+      - ENVIRONMENT=development
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  orchestrator:
+    build: ../apps/orchestrator
+    container_name: fpai-orchestrator
+    ports:
+      - "8001:8001"
+    depends_on:
+      registry:
+        condition: service_healthy
+    environment:
+      - REGISTRY_URL=http://registry:8000
+      - CACHE_DIR=/var/cache/fpai
+      - REGISTRY_SYNC_INTERVAL=60
+      - TASK_TIMEOUT=30
+      - LOG_LEVEL=INFO
+      - ENVIRONMENT=development
+    volumes:
+      - orchestrator_cache:/var/cache/fpai
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/orchestrator/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  orchestrator_cache:
+    driver: local

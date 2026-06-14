@@ -1,0 +1,16 @@
+{
+  "mission_id": "M003",
+  "status": "claimed",
+  "history": [
+    {
+      "status": "claimed",
+      "timestamp": "2025-11-26T23:21:45.021972",
+      "updated_by": "Ananda",
+      "notes": "Claimed by Ananda",
+      "repo_url": null,
+      "score": null
+    }
+  ],
+  "last_updated": "2025-11-26T23:21:45.021966",
+  "last_updated_by": "Ananda"
+}

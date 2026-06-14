@@ -1,0 +1,31 @@
+# Aria Command Center Dependencies
+# ARIA SOVEREIGN - Beyond Cursor
+
+# Web framework
+fastapi>=0.104.0
+uvicorn>=0.24.0
+
+# HTTP client
+httpx>=0.25.0
+
+# SSH for remote execution
+asyncssh>=2.14.0
+
+# Environment
+python-dotenv>=1.0.0
+
+# Data validation
+pydantic>=2.5.0
+
+# Scheduling
+schedule>=1.2.0
+
+# Image generation for code rendering
+Pillow>=10.0.0
+
+# Syntax highlighting
+Pygments>=2.16.0
+
+# System monitoring
+psutil>=5.9.0
+

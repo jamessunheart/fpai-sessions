@@ -1,0 +1,11 @@
+{
+  "name": "affirmation-command",
+  "version": "1.0.0",
+  "description": "Daily affirmations aligned with Full Potential principles",
+  "author": "Aria (Example Module)",
+  "command": "/affirm",
+  "type": "telegram_command",
+  "entry": "handler.py"
+}
+
+

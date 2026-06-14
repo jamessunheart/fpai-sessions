@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Full Potential — Personal Practice. Collective Game.</title>
+  <meta name="description" content="A framework for restoring your own circulation — and the Game where Coherent Champions of CHRIST and AI allies build a more coherent civilization. Two surfaces. One practice." />
+  <meta name="theme-color" content="#e8b974" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://fullpotential.com/" />
+  <meta property="og:title" content="Full Potential — Personal Practice. Collective Game." />
+  <meta property="og:description" content="Reality is already a game. Diagnose your circulation. Sign the World Peace Agreement. Run a 7-Day proof loop. Humans + AI as allies." />
+  <meta property="og:image" content="https://fullpotential.com/game/core/INTENT/assets/full-potential-framework-poster.png" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Full Potential — Personal Practice. Collective Game." />
+  <meta name="twitter:description" content="A framework for restoring your own circulation — and the Game where humans and AI build a more coherent civilization." />
+  <meta name="twitter:image" content="https://fullpotential.com/game/core/INTENT/assets/full-potential-framework-poster.png" />
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◯</text></svg>" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap" />
+
+  <style>
+    :root {
+      --bg: #0a1428;
+      --bg-deep: #060d1c;
+      --surface: #14213d;
+      --surface-2: #1d2c4d;
+      --border: #2c3d63;
+      --text: #f5ead8;
+      --text-bright: #fff7e8;
+      --muted: #8fa1c2;
+      --accent: #e8b974;
+      --accent-bright: #f5d089;
+      --accent-soft: rgba(232, 185, 116, 0.12);
+      --good: #84d488;
+      --p2: #7cc4a8;
+      --p1: #e57b7b;
+      --infra: #7cb8e0;
+      --unknown: #b89cd5;
+      --serif: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+      --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--sans);
+      background:
+        radial-gradient(ellipse 1200px 600px at 50% -100px, rgba(232, 185, 116, 0.08), transparent 70%),
+        radial-gradient(ellipse 800px 400px at 100% 0%, rgba(124, 196, 168, 0.04), transparent 60%),
+        radial-gradient(ellipse 600px 600px at 0% 100%, rgba(184, 156, 213, 0.04), transparent 60%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      font-size: 15px;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .horizon-glow {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 240px;
+      background: radial-gradient(ellipse 800px 240px at 50% 0%, rgba(232, 185, 116, 0.10), transparent 70%);
+      pointer-events: none;
+      z-index: -1;
+    }
+    .starfield {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.5;
+    }
+    .star {
+      fill: var(--accent-bright);
+      animation: twinkle 5s ease-in-out infinite;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.15; }
+      50% { opacity: 0.5; }
+    }
+
+    .container { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+
+    /* Nav */
+    nav {
+      padding: 24px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .nav-mark {
+      font-family: var(--serif);
+      font-size: 1.4rem;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+      color: var(--text-bright);
+      text-decoration: none;
+      background: linear-gradient(135deg, var(--text-bright) 0%, var(--accent-bright) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .nav-mark .circle { display: inline-block; margin-right: 6px; opacity: 0.7; }
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+      flex-wrap: wrap;
+    }
+    .nav-links a {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      transition: color 0.18s;
+    }
+    .nav-links a:hover { color: var(--accent-bright); }
+    .nav-links a.cta {
+      color: var(--bg);
+      background: linear-gradient(135deg, var(--accent), var(--accent-bright));
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+    .nav-links a.cta:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(232,185,116,0.3); }
+
+    /* Hero */
+    .hero {
+      padding: 80px 0 60px;
+      text-align: center;
+    }
+    .hero-eyebrow {
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--accent);
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .hero h1 {
+      font-family: var(--serif);
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 500;
+      line-height: 1.1;
+      letter-spacing: -1px;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, var(--text-bright) 0%, var(--accent-bright) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-sub {
+      font-family: var(--serif);
+      font-size: clamp(18px, 2.5vw, 24px);
+      color: var(--text);
+      max-width: 720px;
+      margin: 0 auto 40px;
+      font-style: italic;
+      line-height: 1.5;
+      opacity: 0.92;
+    }
+    .hero-ctas {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+    .cta-primary, .cta-secondary {
+      padding: 14px 28px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 15px;
+      transition: all 0.18s ease-out;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .cta-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-bright));
+      color: #1c1305;
+      box-shadow: 0 4px 16px rgba(232, 185, 116, 0.25);
+    }
+    .cta-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232, 185, 116, 0.4); }
+    .cta-secondary {
+      background: var(--surface-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .cta-secondary:hover { border-color: var(--accent); color: var(--accent-bright); }
+
+    /* Field State strip — pulls from /api/champion/stats */
+    .field-state-strip {
+      max-width: 980px;
+      margin: 0 auto 60px;
+      padding: 14px 22px;
+      background: linear-gradient(135deg, rgba(232, 185, 116, 0.04), rgba(124, 196, 168, 0.04));
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--accent);
+      border-radius: 10px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 18px;
+      align-items: center;
+    }
+    .fs-label {
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      color: var(--accent-bright);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .fs-label::before {
+      content: "";
+      display: inline-block;
+      width: 7px; height: 7px;
+      background: var(--good);
+      border-radius: 50%;
+      margin-right: 8px;
+      animation: pulse-dot 1.6s ease-in-out infinite;
+      box-shadow: 0 0 0 0 rgba(132, 212, 136, 0.7);
+    }
+    @keyframes pulse-dot {
+      0% { box-shadow: 0 0 0 0 rgba(132, 212, 136, 0.7); }
+      50% { box-shadow: 0 0 0 8px rgba(132, 212, 136, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(132, 212, 136, 0); }
+    }
+    .fs-metrics {
+      display: flex;
+      gap: 22px;
+      flex-wrap: wrap;
+      font-size: 13px;
+    }
+    .fs-metric strong {
+      color: var(--accent-bright);
+      font-weight: 700;
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      margin-right: 4px;
+    }
+    .fs-metric { color: var(--muted); }
+    .fs-cta {
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .fs-cta:hover { color: var(--accent-bright); text-decoration: underline; }
+    @media (max-width: 700px) {
+      .field-state-strip { grid-template-columns: 1fr; text-align: center; }
+      .fs-metrics { justify-content: center; }
+    }
+
+    /* Section base */
+    section { padding: 60px 0; }
+    .section-eyebrow {
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--accent);
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .section-h {
+      font-family: var(--serif);
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 500;
+      letter-spacing: -0.5px;
+      text-align: center;
+      margin-bottom: 16px;
+      color: var(--text-bright);
+    }
+    .section-lead {
+      font-family: var(--serif);
+      font-size: 18px;
+      font-style: italic;
+      color: var(--muted);
+      max-width: 640px;
+      margin: 0 auto 40px;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    /* Two paths */
+    .paths {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      max-width: 980px;
+      margin: 0 auto;
+    }
+    @media (max-width: 800px) { .paths { grid-template-columns: 1fr; } }
+    .path-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+      transition: all 0.2s ease-out;
+    }
+    .path-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+    }
+    .path-card.personal { border-top: 3px solid var(--p2); }
+    .path-card.collective { border-top: 3px solid var(--accent); }
+    .path-icon { font-size: 32px; line-height: 1; margin-bottom: 12px; }
+    .path-card h3 {
+      font-family: var(--serif);
+      font-size: 26px;
+      font-weight: 600;
+      color: var(--text-bright);
+      margin-bottom: 8px;
+    }
+    .path-card .path-tag {
+      font-size: 11px;
+      letter-spacing: 1px;
+      color: var(--accent);
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .path-card.personal .path-tag { color: var(--p2); }
+    .path-card p { color: var(--text); margin-bottom: 16px; }
+    .path-list {
+      list-style: none;
+      margin-bottom: 20px;
+    }
+    .path-list li {
+      padding: 6px 0;
+      color: var(--muted);
+      font-size: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .path-list li:last-child { border-bottom: 0; }
+    .path-list strong { color: var(--text-bright); margin-right: 6px; }
+    .path-link {
+      display: inline-block;
+      margin-top: 8px;
+      color: var(--accent-bright);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .path-link:hover { color: var(--accent); text-decoration: underline; }
+
+    /* CHRIST pillars strip */
+    .christ-section {
+      background: linear-gradient(180deg, transparent, rgba(232, 185, 116, 0.04), transparent);
+      padding: 80px 0;
+    }
+    .christ-pillars {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+      max-width: 880px;
+      margin: 0 auto;
+    }
+    @media (max-width: 700px) { .christ-pillars { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 420px) { .christ-pillars { grid-template-columns: 1fr; } }
+    .pillar {
+      text-align: center;
+      padding: 18px 12px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .pillar-letter {
+      font-family: var(--serif);
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--accent-bright);
+      line-height: 1;
+    }
+    .pillar-name {
+      font-size: 12px;
+      color: var(--text);
+      margin-top: 6px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .christ-byline {
+      font-family: var(--serif);
+      font-size: 18px;
+      font-style: italic;
+      text-align: center;
+      color: var(--muted);
+      max-width: 640px;
+      margin: 32px auto 0;
+      line-height: 1.6;
+    }
+
+    /* Existing services preserved (work / call / learn) */
+    .services {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      max-width: 980px;
+      margin: 0 auto;
+    }
+    .service-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+    }
+    .service-card h4 {
+      font-family: var(--serif);
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-bright);
+      margin-bottom: 8px;
+    }
+    .service-card p { color: var(--muted); font-size: 13px; margin-bottom: 12px; line-height: 1.6; }
+    .service-card a {
+      display: inline-block;
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .service-card a:hover { color: var(--accent-bright); }
+
+    /* About */
+    .about-section .container { max-width: 720px; }
+    .about-section p {
+      font-family: var(--serif);
+      font-size: 18px;
+      line-height: 1.7;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+    .about-section em { color: var(--accent-bright); font-style: italic; }
+    .ecosystem-links {
+      margin-top: 20px;
+      padding: 18px;
+      background: var(--surface-2);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+    .ecosystem-links a {
+      color: var(--accent-bright);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .ecosystem-links a:hover { text-decoration: underline; }
+
+    /* Footer */
+    footer {
+      padding: 50px 0 80px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      border-top: 1px solid var(--border);
+      margin-top: 40px;
+    }
+    footer a { color: var(--accent); text-decoration: none; margin: 0 8px; }
+    footer a:hover { color: var(--accent-bright); text-decoration: underline; }
+    .footer-tagline {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 16px;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="horizon-glow"></div>
+  <svg class="starfield" id="starfield" preserveAspectRatio="xMidYMid slice"></svg>
+
+  <div class="container">
+    <nav>
+      <a href="/" class="nav-mark"><span class="circle">◯</span>Full Potential</a>
+      <ul class="nav-links">
+        <li><a href="/diagnose">Diagnose</a></li>
+        <li><a href="/call">Weekly Call</a></li>
+        <li><a href="#learn">Learn</a></li>
+        <li><a href="/peace">Peace</a></li>
+        <li><a href="https://fullpotential.ai">Intelligence</a></li>
+        <li><a href="/game" class="cta">🎮 Play the Game</a></li>
+      </ul>
+    </nav>
+
+    <section class="hero">
+      <div class="hero-eyebrow">PERSONAL PRACTICE · COLLECTIVE GAME</div>
+      <h1>Reality is already a game.<br>Start playing yours.</h1>
+      <p class="hero-sub">
+        Most systems extract. This one circulates. Diagnose where life is coherent and where it isn't — then either restore it on your own or join the larger Game where humans and AI co-create the operating systems for a more coherent civilization.
+      </p>
+      <div class="hero-ctas">
+        <a href="/game" class="cta-primary">🎮 Open the Game →</a>
+        <a href="/diagnose" class="cta-secondary">📍 Diagnose your life</a>
+      </div>
+    </section>
+
+    <div class="field-state-strip">
+      <div class="fs-label">FIELD STATE</div>
+      <div class="fs-metrics" id="fsMetrics">
+        <span class="fs-metric"><strong id="fsChampions">—</strong>Champions</span>
+        <span class="fs-metric"><strong id="fsProofs">—</strong>Proofs filed</span>
+        <span class="fs-metric"><strong id="fsScore">—</strong>Field Score</span>
+        <span class="fs-metric"><strong id="fsGrowth">—</strong>this week</span>
+      </div>
+      <a href="/game" class="fs-cta">See the live Game →</a>
+    </div>
+
+    <!-- Two Paths -->
+    <section>
+      <div class="section-eyebrow">TWO PATHS · ONE PRACTICE</div>
+      <h2 class="section-h">Restore your circulation. Play the larger Game.</h2>
+      <p class="section-lead">
+        The personal work and the collective game both run at the same time. Pick what calls. Both are real. Both are alive.
+      </p>
+      <div class="paths">
+        <div class="path-card personal">
+          <div class="path-icon">📍</div>
+          <div class="path-tag">PERSONAL</div>
+          <h3>Diagnose your life</h3>
+          <p>
+            Seven areas — body, mind, relationships, work, money, purpose, environment. The diagnostic maps where you are honestly, so the work has somewhere real to begin. Not therapy. Closer to a reading.
+          </p>
+          <ul class="path-list">
+            <li><strong>Begin →</strong> Free intake (no email required to see results)</li>
+            <li><strong>Sit with Sunheart →</strong> A diagnostic session, one conversation</li>
+            <li><strong>Weekly Call →</strong> Free. Live. Every Thursday.</li>
+            <li><strong>Coherence course →</strong> Structured path through the seven areas</li>
+          </ul>
+          <a href="/diagnose" class="path-link">Begin the diagnostic →</a>
+        </div>
+        <div class="path-card collective">
+          <div class="path-icon">🎮</div>
+          <div class="path-tag">COLLECTIVE</div>
+          <h3>Play the Game</h3>
+          <p>
+            A proof-based operating system for human potential. Coherent Champions of CHRIST sign the World Peace Agreement, build a Character Card, run a 7-Day proof loop, and earn Field Score through witnessed reality — not vanity metrics.
+          </p>
+          <ul class="path-list">
+            <li><strong>Read →</strong> Manifesto v1.0 (5 minutes)</li>
+            <li><strong>Sign →</strong> World Peace Agreement (1 minute)</li>
+            <li><strong>Build →</strong> Character Card via AI Port-In (5 minutes)</li>
+            <li><strong>Play →</strong> 7-Day First Game (your proof)</li>
+          </ul>
+          <a href="/game" class="path-link">Open the Game →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHRIST values -->
+    <section class="christ-section">
+      <div class="section-eyebrow">THE VALUES THE GAME RUNS ON</div>
+      <h2 class="section-h">CHRIST</h2>
+      <div class="christ-pillars">
+        <div class="pillar"><div class="pillar-letter">C</div><div class="pillar-name">Coherence</div></div>
+        <div class="pillar"><div class="pillar-letter">H</div><div class="pillar-name">Healing</div></div>
+        <div class="pillar"><div class="pillar-letter">R</div><div class="pillar-name">Regeneration</div></div>
+        <div class="pillar"><div class="pillar-letter">I</div><div class="pillar-name">Intelligence</div></div>
+        <div class="pillar"><div class="pillar-letter">S</div><div class="pillar-name">Service</div></div>
+        <div class="pillar"><div class="pillar-letter">T</div><div class="pillar-name">Truth</div></div>
+      </div>
+      <p class="christ-byline">
+        "This is not a religion of superiority. It is a practice of becoming trustworthy with power."
+      </p>
+    </section>
+
+    <!-- Services -->
+    <section id="learn">
+      <div class="section-eyebrow">DEEPER WORK</div>
+      <h2 class="section-h">If you want to go further.</h2>
+      <p class="section-lead">
+        The diagnostic is a starting point. These are the rooms behind it.
+      </p>
+      <div class="services">
+        <div class="service-card">
+          <h4>The Weekly Call</h4>
+          <p>Free. Live. Every Thursday. Come with your bottleneck, leave with one clear next step. Your first call is open.</p>
+          <a href="/call">Join the call →</a>
+        </div>
+        <div class="service-card">
+          <h4>Work with Sunheart</h4>
+          <p>A diagnostic session — one conversation that maps where you are and what's blocking circulation. Precise, direct, no pitch.</p>
+          <a href="#work">Begin a session →</a>
+        </div>
+        <div class="service-card">
+          <h4>Coherence Course</h4>
+          <p>Taught with Nicolette Luna. A structured path through the seven areas — not theory, lived practice. Two formats.</p>
+          <a href="#learn">Learn more →</a>
+        </div>
+        <div class="service-card">
+          <h4>Zen Village Immersion</h4>
+          <p>Costa Rican mountains. Residential immersion. The framework lived as a body, not read as ideas.</p>
+          <a href="https://zenvillagecr.com/inquire">Inquire →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section class="about-section">
+      <div class="container">
+        <div class="section-eyebrow">ABOUT</div>
+        <h2 class="section-h">Where the work comes from.</h2>
+        <p>
+          Full Potential is the work of <em>Sunheart</em> — diagnostician, builder, and steward of Zen Village in the Chirripó mountains of Costa Rica. The framework emerged from two decades of pattern recognition across consciousness, economics, and embodiment: what makes people coherent, what fragments them, and what it takes to restore circulation when life has gotten stuck.
+        </p>
+        <p>
+          The system is supported by <em>CORA Nation</em>, a 508(c)(1)(A) faith-based organization. The AI infrastructure — diagnostic tools, companion agents, the intelligence layer at fullpotential.ai — is built in collaboration with the agents themselves. The work is regenerative, not extractive. Nothing here harvests attention.
+        </p>
+        <div class="ecosystem-links">
+          <a href="https://zenvillagecr.com">Zen Village</a> is the physical ground.<br />
+          <a href="https://coranation.org">CORA Nation</a> is the organizational vessel.<br />
+          <a href="/game">The Game</a> is the proof-based OS.<br />
+          <a href="https://fullpotential.ai">fullpotential.ai</a> is the intelligence layer.<br />
+          <a href="/peace">Peace</a> is the social protocol.
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p class="footer-tagline">Together, we can build a future worth inheriting.</p>
+      <p>
+        <a href="/game">Game</a> ·
+        <a href="/diagnose">Diagnose</a> ·
+        <a href="/call">Call</a> ·
+        <a href="https://fullpotential.ai">Intelligence</a> ·
+        <a href="/peace">Peace</a> ·
+        <a href="mailto:james@fullpotential.com">Contact</a>
+      </p>
+      <p style="margin-top:16px;opacity:0.6;font-size:12px;">
+        Full Potential · Coherent Champions of CHRIST · CORA Nation
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    // Starfield
+    (function(){
+      const svg = document.getElementById('starfield');
+      if (!svg) return;
+      const w = window.innerWidth;
+      const h = Math.max(window.innerHeight, document.documentElement.scrollHeight);
+      svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+      svg.setAttribute('width', w);
+      svg.setAttribute('height', h);
+      const count = Math.min(140, Math.floor((w * h) / 14000));
+      let stars = '';
+      for (let i = 0; i < count; i++) {
+        const x = Math.random() * w;
+        const y = Math.random() * h;
+        const r = Math.random() * 1.3 + 0.3;
+        const delay = Math.random() * 5;
+        stars += `<circle class="star" cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${r.toFixed(1)}" style="animation-delay:${delay.toFixed(1)}s" />`;
+      }
+      svg.innerHTML = stars;
+    })();
+
+    // Field State — pulls from the Game's API
+    async function loadFieldState() {
+      try {
+        const res = await fetch('https://fullpotential.com/api/champion/stats', { cache: 'no-store' });
+        if (!res.ok) return;
+        const d = await res.json();
+        const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+        set('fsChampions', d.champions?.total ?? 0);
+        set('fsProofs', d.proofs?.total ?? 0);
+        set('fsScore', d.field_score_sum ?? 0);
+        set('fsGrowth', '+' + (d.growth_this_week?.total ?? 0));
+      } catch (e) {}
+    }
+    loadFieldState();
+    setInterval(loadFieldState, 60000);
+  </script>
+</body>
+</html>

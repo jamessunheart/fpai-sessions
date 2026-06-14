@@ -1,0 +1,19 @@
+POST THIS TO: https://www.reddit.com/r/fatFIRE/submit
+
+TITLE:
+Built an AI to find your perfect financial advisor (free for customers)
+
+BODY:
+I got burned by a generic financial advisor who didn't understand tech compensation.
+
+So I built an AI matching system that analyzes 100+ advisors to find the perfect fit based on:
+• Your specific needs (RSUs, ISOs, tax optimization, etc.)
+• Values alignment (fee-only vs commission, philosophy) 
+• Communication style
+• Specialization
+
+Free for customers. Advisors pay us only if you engage.
+
+Testing with 50 people this week. Comment or DM if interested.
+
+http://198.54.123.234:8401/

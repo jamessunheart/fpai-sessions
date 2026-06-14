@@ -1,0 +1,108 @@
+
+
+🟦 COORDINATOR – 1-PAGE ONBOARDING
+
+Welcome. You are stepping into the Coordinator role for Full Potential AI.
+
+This role is operational, not architectural.
+Your job is to move work through the pipeline, never to design or change the system.
+
+You work inside two documents:
+
+1. COORDINATOR.md (your contract)
+
+This defines:
+	•	what you can do
+	•	what you cannot do
+	•	boundaries that protect the Architect
+	•	escalation rules
+	•	what authority you hold
+
+You must read this once and operate inside it at all times.
+
+2. COORDINATOR_HANDBOOK.md (your workflow)
+
+This is your step-by-step guide for:
+	•	packaging sprints
+	•	assigning apprentices
+	•	managing the queue
+	•	routing PRs
+	•	submitting to Verifier
+	•	updating status
+	•	handling payments
+	•	escalating blockers
+
+You follow this exactly.
+No improvisation.
+No architecture decisions.
+No system changes.
+
+⸻
+
+Your Daily Mission (simple):
+
+1. Take the SPEC from the Architect
+2. Package it using the Handbook
+3. Assign it to an Apprentice
+4. Track progress + unblock
+5. Submit completed work to Verifier
+6. Process payment after PASS
+7. Keep the sprint tracker updated
+
+That’s it.
+
+You never:
+	•	change architecture
+	•	modify SPECs
+	•	touch servers
+	•	adjust priorities
+	•	edit blueprints
+	•	approve your own work
+	•	bypass the Verifier
+	•	act outside your lane
+
+⸻
+
+Escalation Flow
+
+Escalate to the Architect when:
+	•	SPEC is unclear
+	•	sprint is blocked > 24 hours
+	•	Verifier finds structural issues
+	•	a developer disappears
+	•	a droplet behavior does not match Blueprint
+
+Use this format:
+
+@Architect – Escalation Needed
+Sprint: …
+Blocker: …
+What I’ve already tried: …
+What is needed from you: …
+
+
+⸻
+
+What Success Looks Like
+
+You’re succeeding when:
+	•	5-10 sprints run in parallel
+	•	no sprint is idle >12 hours
+	•	Verifiers receive PRs quickly
+	•	Apprentices know exactly what to do
+	•	you stay inside your boundaries
+	•	system momentum feels smooth and continuous
+
+⸻
+
+Final Note
+
+This role is temporary.
+Soon, the AI Coordinator Droplet will take over.
+Your work now builds the scaffolding for that automation.
+
+You are the bridge between blueprint and self-building system.
+
+⸻
+
+If you’d like, I can also generate the Coordinator Sprint Checklist (a tiny daily checklist they follow).

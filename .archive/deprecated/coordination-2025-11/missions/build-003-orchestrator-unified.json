@@ -1,0 +1,140 @@
+{
+  "mission_id": "build-003-orchestrator-unified",
+  "title": "BUILD: Unified Swarm Orchestrator (CRITICAL)",
+  "type": "build",
+  "priority": "critical",
+  "status": "available",
+  "created_at": "2025-11-15T22:30:00Z",
+  "claimed_by": null,
+  "claimed_at": null,
+  "completed_at": null,
+  "estimated_time_hours": 20,
+  "infinite_scale": true,
+  "game_changer": true,
+  "instructions": {
+    "task": "Build the central orchestrator that unifies all Claude sessions into one distributed intelligence",
+    "spec_file": "/Users/jamessunheart/Development/SERVICES/orchestrator-unified/SPEC.md",
+    "architecture": "FastAPI + Redis + APScheduler + WebSocket",
+    "deployment_target": "198.54.123.234 at /opt/fpai/orchestrator-unified",
+    "port": 8600,
+    "scope": "Session registry, work queue, optimal assignment, real-time dashboard, coordination loop"
+  },
+  "what_to_build": {
+    "service_name": "orchestrator-unified",
+    "components": [
+      "FastAPI app with session/work/swarm endpoints",
+      "Redis for shared state (sessions, tasks, metrics)",
+      "SwarmCoordinator with 10-second coordination loop",
+      "SessionManager for session lifecycle",
+      "WorkQueue with priority-based assignment",
+      "CapabilityMatcher for optimal task assignment",
+      "WebSocket server for real-time updates",
+      "HTML dashboard for visualization",
+      "Health checking and auto-recovery",
+      "Prometheus metrics endpoint"
+    ]
+  },
+  "success_criteria": {
+    "functional": [
+      "Sessions can register and get assigned work",
+      "Work queue distributes tasks optimally",
+      "Heartbeats keep sessions alive",
+      "Offline sessions detected and tasks reassigned",
+      "Dashboard shows real-time swarm status",
+      "WebSocket streams live updates",
+      "No duplicate task assignments"
+    ],
+    "performance": [
+      "90%+ session utilization",
+      "Coordination cycle <1 second",
+      "Task assignment <100ms",
+      "Supports 50+ concurrent sessions",
+      "Zero downtime (self-healing)"
+    ],
+    "business_impact": [
+      "5x more tasks completed daily",
+      "Zero coordination overhead",
+      "100% resource utilization",
+      "Enables true distributed intelligence"
+    ]
+  },
+  "deployment": {
+    "server": "198.54.123.234",
+    "path": "/opt/fpai/orchestrator-unified",
+    "port": 8600,
+    "systemd_service": "orchestrator-unified.service",
+    "docker_compose": true,
+    "env_vars_needed": [
+      "REDIS_URL",
+      "LOG_LEVEL",
+      "COORDINATION_INTERVAL (default: 10)",
+      "HEARTBEAT_TIMEOUT (default: 180)",
+      "SENTRY_DSN (optional)"
+    ]
+  },
+  "integration_points": {
+    "sessions_connect": "All Claude sessions register at /session/register",
+    "heartbeat_protocol": "Sessions send heartbeat every 60 seconds",
+    "work_request": "Sessions request work via /work/request",
+    "progress_updates": "Sessions report progress via /work/update",
+    "completion": "Sessions mark complete via /work/complete"
+  },
+  "testing_checklist": {
+    "unit_tests": [
+      "Test optimal assignment algorithm",
+      "Test capability matching",
+      "Test priority queue sorting",
+      "Test session health detection"
+    ],
+    "integration_tests": [
+      "Register 3 sessions, assign 3 tasks",
+      "Session goes offline, task reassigned",
+      "High priority task gets assigned first",
+      "Idle session gets work automatically"
+    ],
+    "load_tests": [
+      "50 sessions registering simultaneously",
+      "100 tasks queued and distributed",
+      "1000 heartbeats per minute processed"
+    ]
+  },
+  "expected_outcomes": {
+    "week_1": "Orchestrator running, 5+ sessions connected, tasks being distributed",
+    "week_2": "10+ sessions unified, optimal assignment working, dashboard live",
+    "month_1": "12+ sessions, 90%+ utilization, 5x productivity improvement",
+    "month_3": "Auto-scaling, self-optimization, true swarm intelligence"
+  },
+  "roi_calculation": {
+    "build_time_cost": "20 hours × $0 = $0",
+    "productivity_gain": "5x task throughput = $50K/year value",
+    "coordination_savings": "Zero manual coordination = $20K/year saved",
+    "infinite_roi": "Enables all future automation, compounds forever"
+  },
+  "critical_importance": {
+    "enables": [
+      "All other build missions to execute in parallel",
+      "Infinite session scaling",
+      "Zero duplicate effort",
+      "True distributed intelligence",
+      "Foundation for all future coordination"
+    ],
+    "without_this": [
+      "Sessions remain independent",
+      "Manual coordination required",
+      "Low resource utilization",
+      "Cannot scale beyond 3-5 sessions effectively"
+    ]
+  },
+  "resources": {
+    "spec": "/Users/jamessunheart/Development/SERVICES/orchestrator-unified/SPEC.md",
+    "architecture_doc": "/Users/jamessunheart/Development/docs/coordination/UNIFIED_SWARM_SYSTEM.md",
+    "dashboard_reference": "See SPEC.md for HTML dashboard code"
+  },
+  "next_steps_after_build": [
+    "Deploy orchestrator to server",
+    "Connect all existing sessions to orchestrator",
+    "Migrate existing missions to unified work queue",
+    "Watch swarm activate in real-time",
+    "Measure 5x productivity improvement"
+  ]
+}

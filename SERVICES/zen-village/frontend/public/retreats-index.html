@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offerings · Zen Village</title>
+<meta name="description" content="Four ways into Zen Village — come on retreat, stay in a private room, host your own retreat, or attend an event.">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Offerings — Zen Village Costa Rica">
+<meta property="og:description" content="Reset retreat, room stay, host your retreat, attend an event. One field.">
+<meta property="og:url" content="https://zenvillagecr.com/retreats">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Manrope:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F4ECDC;
+  --bg-soft: #ECE1CB;
+  --ink: #1F1A14;
+  --ink-soft: #4A3F32;
+  --moss: #3A4A2E;
+  --clay: #B8553A;
+  --gold: #C8924B;
+  --rule: #2A2018;
+  --serif: 'Fraunces', Georgia, serif;
+  --sans: 'Manrope', system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.55;
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(184, 85, 58, 0.05) 0%, transparent 45%),
+    radial-gradient(circle at 85% 75%, rgba(58, 74, 46, 0.06) 0%, transparent 45%);
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+}
+a { color: inherit; text-decoration: none; }
+.page { max-width: 1180px; margin: 0 auto; padding: 56px 56px 32px; flex: 1; width: 100%; }
+.page-bottom { max-width: 1180px; margin: 0 auto; padding: 0 56px 40px; width: 100%; }
+
+.header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  border-bottom: 1px solid var(--rule); padding-bottom: 20px; margin-bottom: 64px;
+}
+.mark { font-family: var(--serif); font-size: 22px; font-weight: 500; }
+.mark em { font-style: italic; font-weight: 400; color: var(--moss); }
+.meta { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-soft); }
+
+.hero { text-align: center; max-width: 760px; margin: 0 auto 64px; }
+.section-label {
+  display: inline-block; font-size: 10px; letter-spacing: 0.28em;
+  text-transform: uppercase; color: var(--clay); font-weight: 700;
+  margin-bottom: 14px;
+}
+.hero h1 {
+  font-family: var(--serif); font-size: clamp(48px, 7vw, 80px);
+  line-height: 1.0; font-weight: 300; letter-spacing: -0.025em;
+}
+.hero h1 em { font-style: italic; font-weight: 400; color: var(--moss); }
+.hero p {
+  font-family: var(--serif); font-style: italic; font-size: 18px;
+  color: var(--ink-soft); font-weight: 300; max-width: 52ch;
+  margin: 22px auto 0; line-height: 1.5;
+}
+
+.choices { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.choice {
+  background: var(--bg-soft);
+  padding: 40px 36px;
+  display: flex; flex-direction: column; gap: 16px;
+  position: relative;
+  border: 1px solid rgba(42, 32, 24, 0.18);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  text-decoration: none; color: var(--ink);
+  min-height: 320px;
+}
+.choice:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 50px rgba(31, 26, 20, 0.12);
+  border-color: var(--moss);
+}
+.choice-num {
+  font-family: var(--serif); font-style: italic; font-size: 14px;
+  color: var(--clay); letter-spacing: 0.06em;
+}
+.choice h2 {
+  font-family: var(--serif); font-size: clamp(30px, 3.4vw, 44px);
+  font-weight: 300; line-height: 1.05; letter-spacing: -0.02em;
+}
+.choice h2 em { font-style: italic; color: var(--moss); }
+.choice .lede {
+  font-size: 16px; line-height: 1.6; color: var(--ink-soft);
+  max-width: 38ch;
+}
+.choice ul {
+  list-style: none; margin-top: 10px;
+  font-size: 14px; line-height: 1.8; color: var(--ink-soft);
+}
+.choice ul li::before { content: '·  '; color: var(--gold); }
+.choice-cta {
+  margin-top: auto;
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--moss); font-weight: 700;
+  padding-top: 18px;
+  border-top: 1px solid rgba(58, 74, 46, 0.3);
+}
+.choice-cta svg { width: 14px; height: 14px; transition: transform 0.2s; }
+.choice:hover .choice-cta { color: var(--clay); }
+.choice:hover .choice-cta svg { transform: translateX(4px); }
+
+.choice.dark {
+  background: var(--moss); color: var(--bg); border-color: var(--moss);
+}
+.choice.dark h2 { color: var(--bg); }
+.choice.dark h2 em { color: var(--gold); }
+.choice.dark .lede, .choice.dark ul { color: rgba(244, 236, 220, 0.85); }
+.choice.dark .choice-num { color: var(--gold); }
+.choice.dark .choice-cta { color: var(--gold); border-color: rgba(200, 146, 75, 0.4); }
+.choice.dark:hover .choice-cta { color: var(--bg); }
+
+.note {
+  text-align: center; margin: 56px auto 0; max-width: 60ch;
+  font-family: var(--serif); font-style: italic; font-size: 15px;
+  color: var(--ink-soft);
+}
+.note a {
+  color: var(--moss); border-bottom: 1px solid rgba(58, 74, 46, 0.4);
+}
+.note a:hover { color: var(--clay); border-color: var(--clay); }
+
+.footer {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding-top: 24px; border-top: 1px solid var(--rule);
+  font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--ink-soft); flex-wrap: wrap; gap: 16px;
+}
+.footer-tag {
+  font-family: var(--serif); font-style: italic; font-size: 14px;
+  letter-spacing: 0; text-transform: none; color: var(--moss);
+}
+
+@media (max-width: 900px) {
+  .choices { grid-template-columns: 1fr; gap: 18px; }
+  .choice { padding: 36px 28px; min-height: 0; }
+}
+@media (max-width: 600px) {
+  .page, .page-bottom { padding-left: 24px; padding-right: 24px; }
+  .page { padding-top: 32px; }
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+<header class="header">
+  <div class="mark"><a href="/">Zen <em>Village</em></a></div>
+  <div class="meta">Retreats · Chirripó, Costa Rica</div>
+</header>
+
+<section class="hero">
+  <span class="section-label">Four doors. One field.</span>
+  <h1>How are you arriving<br>at the <em>village</em>?</h1>
+  <p>All four lead to the same 45 acres in the Chirripó highlands — but the rhythm of each is different. Pick the one that fits where you are right now.</p>
+</section>
+
+<div class="choices">
+
+  <a href="/coherent" class="choice dark">
+    <span class="choice-num">— 01</span>
+    <h2>Reset <em>retreat</em></h2>
+    <p class="lede">Our rolling Coherent / FP Retreat. Reset your nervous system across 7, 14, or 21 days of guided rhythm.</p>
+    <ul>
+      <li>Daily containers, river, sauna, fire</li>
+      <li>1:1 sessions, group ceremony</li>
+      <li>$2,000 / week · arrive any Sunday</li>
+    </ul>
+    <span class="choice-cta">Begin guest application <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+  </a>
+
+  <a href="/book" class="choice">
+    <span class="choice-num">— 02</span>
+    <h2>Room <em>stay</em></h2>
+    <p class="lede">Visit on your own terms. Book a private dwelling for a few nights to a few weeks — no container, no schedule.</p>
+    <ul>
+      <li>Nine dwellings · solo, couple, family</li>
+      <li>Nightly to monthly rates</li>
+      <li>Use the river, kitchen, paths</li>
+    </ul>
+    <span class="choice-cta">Check availability <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+  </a>
+
+  <a href="/host" class="choice">
+    <span class="choice-num">— 03</span>
+    <h2>Host your <em>retreat</em></h2>
+    <p class="lede">Use Zen Village as the container for your offering. Audience attached. Co-produce, host, or buy out the venue.</p>
+    <ul>
+      <li>Up to 30 guests, 9 dwellings</li>
+      <li>Kitchen, dance hall, ceremony spaces</li>
+      <li>Co-marketing · three pricing models</li>
+    </ul>
+    <span class="choice-cta">See host packages <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+  </a>
+
+  <a href="/events" class="choice">
+    <span class="choice-num">— 04</span>
+    <h2>Attend an <em>event</em></h2>
+    <p class="lede">World Peace Gathering, ecstatic dances, plant-medicine circles — gatherings open to the wider field.</p>
+    <ul>
+      <li>One-day to weekend formats</li>
+      <li>RSVP and pay online</li>
+      <li>Locals welcome · ride-share posts</li>
+    </ul>
+    <span class="choice-cta">See what's on <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+  </a>
+
+</div>
+
+<p class="note">Looking for the <em>other</em> way in? <a href="/apply">Live on the land</a> — practitioner, artist, creator, work-exchange. Or <a href="/support">support the field</a> without attending.</p>
+
+</div>
+
+<div class="page-bottom">
+<footer class="footer">
+  <span><a href="/">← Zen Village</a></span>
+  <span class="footer-tag">River. Forest. Field. Yours, one way or the other.</span>
+  <span><a href="https://wa.me/50670945764">WhatsApp us</a></span>
+</footer>
+</div>
+
+<script>
+function getCookie(name) {
+  const m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+  return m ? decodeURIComponent(m[1]) : '';
+}
+(function () {
+  try {
+    var ref = getCookie('zv_ref');
+    if (!ref) {
+      var url = new URL(window.location.href);
+      ref = (url.searchParams.get('ref') || '').trim();
+    }
+    if (!ref) return;
+    document.querySelectorAll('a').forEach(function (a) {
+      var href = a.getAttribute('href');
+      if (!href) return;
+      try {
+        var u = new URL(href, window.location.origin);
+        if (u.host === window.location.host && !u.searchParams.has('ref')) {
+          u.searchParams.set('ref', ref);
+          a.setAttribute('href', u.pathname + u.search + (u.hash || ''));
+        }
+      } catch (e) {}
+    });
+  } catch (e) {}
+})();
+</script>
+
+</body>
+</html>

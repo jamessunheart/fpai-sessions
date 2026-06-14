@@ -1,0 +1,18 @@
+[
+  {
+    "action_type": "upwork_job",
+    "description": "Created Upwork job posting: UPWORK_JOB_missing_api_credentials_20251116_014712.md",
+    "estimated_cost": 0.0,
+    "expected_impact": "Fill gap: missing_api_credentials",
+    "created_at": "2025-11-16T01:47:12.676371",
+    "status": "pending"
+  },
+  {
+    "action_type": "upwork_job",
+    "description": "Created Upwork job posting: UPWORK_JOB_no_content_marketing_20251116_014712.md",
+    "estimated_cost": 300.0,
+    "expected_impact": "Fill gap: no_content_marketing",
+    "created_at": "2025-11-16T01:47:12.676675",
+    "status": "pending"
+  }
+]

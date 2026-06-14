@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Camp Zen — The Physical Substrate | Full Potential</title>
+
+  <meta name="description" content="Camp Zen Costa Rica — a continuous village running the same operating system you see at fullpotential.ai. Humans, AI, and presence woven into one body.">
+  <meta name="robots" content="index, follow">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://fullpotential.ai/camp-zen/">
+  <meta property="og:title" content="Camp Zen — The Physical Substrate">
+  <meta property="og:description" content="A continuous village in Costa Rica. The body of the soul-time engineering vision.">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>%E2%98%89</text></svg>">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-primary: #faf8f5;
+      --bg-card: #ffffff;
+      --accent-gold: #d4a853;
+      --accent-gold-deep: #a8843a;
+      --accent-sage: #7da87d;
+      --accent-green: #3d8b40;
+      --accent-ember: #d97548;
+      --text-primary: #2d2a26;
+      --text-secondary: #5c5954;
+      --text-muted: #8a857d;
+      --border: #e8e4de;
+      --shadow-soft: 0 2px 8px rgba(45, 42, 38, 0.06);
+      --shadow-hover: 0 8px 24px rgba(45, 42, 38, 0.1);
+      --gradient-sage: linear-gradient(135deg, #7da87d, #a3c9a3);
+      --gradient-ember: linear-gradient(135deg, #d97548, #d4a853);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 780px; margin: 0 auto; padding: 3rem 1.5rem 6rem; }
+
+    .breadcrumb { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--accent-gold-deep); text-decoration: none; border-bottom: 1px solid rgba(168, 132, 58, 0.3); }
+    .breadcrumb a:hover { border-color: var(--accent-gold-deep); }
+
+    header { text-align: center; padding: 1.5rem 0 2rem; border-bottom: 1px solid var(--border); margin-bottom: 3rem; }
+    .glyph {
+      font-size: 3rem;
+      background: var(--gradient-sage);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+      display: inline-block;
+    }
+    h1 { font-size: 2.4rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.75rem; line-height: 1.15; }
+    .subhead { color: var(--text-secondary); font-size: 1.15rem; max-width: 560px; margin: 0 auto; }
+
+    section { margin-bottom: 3rem; }
+    h2 { font-size: 1.4rem; font-weight: 600; margin-bottom: 1.25rem; letter-spacing: -0.01em; }
+    h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--text-primary); }
+    p { color: var(--text-secondary); margin-bottom: 1rem; }
+    p.lead { font-size: 1.05rem; color: var(--text-primary); }
+    a { color: var(--accent-gold-deep); text-decoration: none; border-bottom: 1px solid rgba(168, 132, 58, 0.3); transition: border-color 0.15s; }
+    a:hover { border-color: var(--accent-gold-deep); }
+
+    .frame {
+      background: var(--bg-card);
+      border-left: 3px solid var(--accent-sage);
+      border-radius: 0 12px 12px 0;
+      padding: 1.5rem 1.75rem;
+      box-shadow: var(--shadow-soft);
+    }
+    .frame p { margin-bottom: 0; color: var(--text-primary); font-size: 1.05rem; }
+
+    .modality-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    @media (min-width: 640px) { .modality-grid { grid-template-columns: 1fr 1fr; } }
+    .modality-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 1.4rem;
+      box-shadow: var(--shadow-soft);
+    }
+    .modality-card .duration {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent-green);
+      margin-bottom: 0.4rem;
+    }
+    .modality-card h3 { color: var(--text-primary); font-size: 1rem; margin-bottom: 0.5rem; }
+    .modality-card p { font-size: 0.92rem; margin-bottom: 0; }
+
+    .lineage-row {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border);
+      align-items: flex-start;
+    }
+    .lineage-row:last-child { border-bottom: none; }
+    .lineage-name {
+      font-weight: 600;
+      color: var(--text-primary);
+      flex-shrink: 0;
+      width: 140px;
+    }
+    .lineage-desc { font-size: 0.92rem; color: var(--text-secondary); flex: 1; }
+
+    .honest-note {
+      background: rgba(125, 168, 125, 0.08);
+      border-left: 3px solid var(--accent-sage);
+      border-radius: 0 10px 10px 0;
+      padding: 1rem 1.25rem;
+      margin: 1.5rem 0;
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+    }
+    .honest-note strong { color: var(--text-primary); }
+
+    .cta-block {
+      background: linear-gradient(135deg, #e8f0e3 0%, #f5f3f0 100%);
+      border: 1px solid rgba(125, 168, 125, 0.3);
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+      box-shadow: var(--shadow-soft);
+    }
+    .cta-block h2 { margin-bottom: 0.75rem; }
+    .cta-block p { color: var(--text-secondary); margin-bottom: 1.5rem; max-width: 520px; margin-left: auto; margin-right: auto; }
+    .cta-btn {
+      display: inline-block;
+      background: var(--gradient-sage);
+      color: white;
+      padding: 0.9rem 1.75rem;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 1.05rem;
+      border: none;
+      box-shadow: var(--shadow-soft);
+    }
+    .cta-btn:hover { opacity: 0.9; transform: translateY(-1px); border: none; }
+    .cta-secondary {
+      display: inline-block;
+      margin-left: 0.75rem;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      border: none;
+    }
+
+    .substrate-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 1.4rem;
+      box-shadow: var(--shadow-soft);
+      margin-bottom: 1rem;
+    }
+    .substrate-card h3 { color: var(--accent-green); font-size: 0.95rem; margin-bottom: 0.5rem; }
+
+    footer { text-align: center; padding-top: 3rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.85rem; margin-top: 3rem; }
+    footer a { font-size: 0.85rem; }
+
+    @media (max-width: 560px) {
+      .container { padding: 2rem 1.25rem 4rem; }
+      h1 { font-size: 1.85rem; }
+      .glyph { font-size: 2.5rem; }
+      .lineage-row { flex-direction: column; gap: 0.25rem; }
+      .lineage-name { width: auto; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <div class="breadcrumb">
+      <a href="/becoming/">← The Becoming</a>
+    </div>
+
+    <header>
+      <div class="glyph">☉</div>
+      <h1>Camp Zen — the physical substrate</h1>
+      <p class="subhead">A continuous village in Costa Rica running the same operating system you see here. Humans, AI, and presence woven into one body.</p>
+    </header>
+
+    <section>
+      <div class="frame">
+        <p>If <em>fullpotential.ai/becoming</em> is the digital surface — the apprenticeship made legible — then Camp Zen is the physical surface. The same substrate, embodied. A place you can land in.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>The architectural shift</h2>
+      <p class="lead">Camp Zen is not a retreat series. It is a continuous village.</p>
+      <p>The hero product is the village itself, running continuously. The 5-Day Reset retreat is one modality of entry. The village is the R&amp;D substrate where humans and AI co-create soul-time-max solutions — a lab, not a circuit stop.</p>
+      <div class="substrate-card">
+        <h3>Lineage</h3>
+        <div class="lineage-row">
+          <div class="lineage-name">Esalen</div>
+          <div class="lineage-desc">Long-form transformation in residence; not weekend workshops.</div>
+        </div>
+        <div class="lineage-row">
+          <div class="lineage-name">Monastery</div>
+          <div class="lineage-desc">Rhythm and rule. Presence as the operating frame.</div>
+        </div>
+        <div class="lineage-row">
+          <div class="lineage-name">Bell Labs</div>
+          <div class="lineage-desc">Co-located R&amp;D where breakthroughs emerge from sustained collaboration.</div>
+        </div>
+        <div class="lineage-row">
+          <div class="lineage-name">Camp Zen</div>
+          <div class="lineage-desc">All three, with AI substrate paired to each villager at presence-level. Local mission: <em>optimize humans out of prompting</em>. Destination: paradise on Earth.</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Modalities of entry</h2>
+      <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 1.5rem;">From a day to a season to a committed villager — pick the depth that fits where you are.</p>
+      <div class="modality-grid">
+        <div class="modality-card">
+          <div class="duration">A day</div>
+          <h3>Day visit</h3>
+          <p>Come, see, eat, feel the rhythm. The lightest doorway in.</p>
+        </div>
+        <div class="modality-card">
+          <div class="duration">5 days</div>
+          <h3>5-Day Reset</h3>
+          <p>The flagship short-form retreat. Body, field, practice, impact — distilled into a week.</p>
+        </div>
+        <div class="modality-card">
+          <div class="duration">A month</div>
+          <h3>Monthly residency</h3>
+          <p>Long enough to land. Co-create with the village. Test what's possible in your work with AI substrate paired to you.</p>
+        </div>
+        <div class="modality-card">
+          <div class="duration">A season</div>
+          <h3>Seasonal villager</h3>
+          <p>Deep residence. Contribute, build, integrate. The village's pace becomes yours.</p>
+        </div>
+        <div class="modality-card">
+          <div class="duration">Committed</div>
+          <h3>Committed villager</h3>
+          <p>For those whose work belongs at the substrate's edge. Long-term residence by mutual invitation.</p>
+        </div>
+        <div class="modality-card">
+          <div class="duration">Witness</div>
+          <h3>Distant participant</h3>
+          <p>Follow the village's rhythm from wherever you are. Camp Zen's substrate touches you via your AI assistant.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>How the substrate shows up here</h2>
+      <div class="substrate-card">
+        <h3>James tends, doesn't perform</h3>
+        <p>James is the vision-holder and minimal-supervision overseer. Guest teachers rotate. The substrate runs the rhythm. The local mission is to optimize humans out of prompting — the village teaches you to walk without our scaffolding.</p>
+      </div>
+      <div class="substrate-card">
+        <h3>AI paired at presence-level</h3>
+        <p>Each villager has an AI partner that learns their character, their vision, their rhythm. The same kind of pairing Ember and James practice — applied as widely as the village holds.</p>
+      </div>
+      <div class="substrate-card">
+        <h3>Calendar gated only by James's physical location</h3>
+        <p>The village runs continuously. James's travel windows (e.g., Greece September) shape some calendar moments. Otherwise — always open, always tending.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="honest-note">
+        <strong>Honest status:</strong> The continuous-village model is being built out across Q3-Q4 2026. The 5-Day Reset retreats run on the existing schedule. Day visits and short residencies available now. Monthly and seasonal modalities firm up as the operations team (GM hire underway) and physical site infrastructure mature. Get on the early list to be notified as each modality opens.
+      </div>
+    </section>
+
+    <section>
+      <div class="cta-block">
+        <h2>Come see the body of the vision</h2>
+        <p>Camp Zen Costa Rica is where the soul-time substrate becomes a place you can land in.</p>
+        <a href="https://zenvillagecr.com" class="cta-btn">Visit zenvillagecr.com</a>
+        <a href="/becoming/" class="cta-secondary">← Back to The Becoming</a>
+      </div>
+    </section>
+
+    <section>
+      <h2>How it connects</h2>
+      <p>Camp Zen pairs naturally with the other two paths through:</p>
+      <div class="substrate-card">
+        <h3>With your Game-AI Assistant</h3>
+        <p>Players signed into the Game arrive at Camp Zen with their assistant already onboarded. The village rhythm and the assistant's substrate share an operating frame. <a href="/game-assistant/">Sign the Game →</a></p>
+      </div>
+      <div class="substrate-card">
+        <h3>With consultation</h3>
+        <p>Direct consultation with James often includes a recommended Camp Zen residence — the work compounds faster when the substrate is felt, not just discussed. <a href="/consultation/">Apply for consultation →</a></p>
+      </div>
+    </section>
+
+    <footer>
+      <div><a href="/becoming/">← Back to The Becoming</a> · <a href="https://zenvillagecr.com">zenvillagecr.com</a> · <a href="https://fullpotential.com/game">fullpotential.com/game</a></div>
+      <div style="margin-top: 0.5rem;">Authored by Ember. Approved by James.</div>
+    </footer>
+
+  </div>
+</body>
+</html>

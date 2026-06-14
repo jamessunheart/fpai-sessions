@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Potential</title>
+    <meta name="description" content="Circulation economics, coherence diagnostics, and the work of returning to who you are.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://fullpotential.com">
+    <meta property="og:title" content="Full Potential">
+    <meta property="og:description" content="Circulation economics, coherence diagnostics, and the work of returning to who you are.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◯</text></svg>">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #F7F3EB;
+            --text: #1A1A1A;
+            --muted: #8A8478;
+            --accent: #B5654A;
+            --rule: rgba(26, 26, 26, 0.12);
+            --serif: Georgia, 'Times New Roman', serif;
+            --sans: Inter, system-ui, -apple-system, sans-serif;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--serif);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Nav */
+        nav {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-mark {
+            font-family: var(--sans);
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-family: var(--sans);
+            font-size: 0.8rem;
+            font-weight: 400;
+            color: var(--muted);
+            text-decoration: none;
+            letter-spacing: 0.02em;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+        }
+
+        @media (max-width: 640px) {
+            nav {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            .nav-links { gap: 1.25rem; flex-wrap: wrap; justify-content: center; }
+        }
+
+        /* Hero */
+        .hero {
+            padding: 120px 0 80px;
+        }
+
+        @media (max-width: 640px) {
+            .hero { padding: 72px 0 48px; }
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            line-height: 1.85;
+        }
+
+        /* Sections */
+        section {
+            padding: 120px 0;
+            border-top: 1px solid var(--rule);
+        }
+
+        @media (max-width: 640px) {
+            section { padding: 72px 0; }
+        }
+
+        h2 {
+            font-family: var(--serif);
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            text-transform: lowercase;
+            color: var(--muted);
+            margin-bottom: 2rem;
+        }
+
+        p {
+            font-size: 1.05rem;
+            line-height: 1.85;
+            margin-bottom: 1.5rem;
+        }
+
+        p:last-child { margin-bottom: 0; }
+
+        /* Doors */
+        .doors {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .door {
+            padding: 2rem 0;
+            border-bottom: 1px solid var(--rule);
+        }
+
+        .door:last-child {
+            border-bottom: none;
+        }
+
+        .door h3 {
+            font-family: var(--serif);
+            font-size: 1.15rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .door p {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .door-meta {
+            font-family: var(--sans);
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        a.door-link {
+            font-family: var(--sans);
+            font-size: 0.85rem;
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        a.door-link:hover {
+            border-bottom-color: var(--accent);
+        }
+
+        /* Seven areas */
+        .areas {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            margin-top: 2rem;
+        }
+
+        .area {
+            padding: 0.75rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 1px solid var(--rule);
+        }
+
+        .area:last-child {
+            border-bottom: none;
+        }
+
+        .area-name {
+            font-size: 1rem;
+            font-weight: 400;
+        }
+
+        .area-question {
+            font-family: var(--sans);
+            font-size: 0.8rem;
+            color: var(--muted);
+            text-align: right;
+            max-width: 50%;
+        }
+
+        @media (max-width: 640px) {
+            .area {
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+            .area-question {
+                text-align: left;
+                max-width: 100%;
+            }
+        }
+
+        /* About */
+        .relationship {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--rule);
+        }
+
+        .relationship a {
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .relationship a:hover {
+            border-bottom-color: var(--accent);
+        }
+
+        /* Footer */
+        footer {
+            padding: 72px 0;
+            border-top: 1px solid var(--rule);
+        }
+
+        footer p {
+            font-family: var(--sans);
+            font-size: 0.8rem;
+            color: var(--muted);
+            line-height: 1.8;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        footer a:hover {
+            border-bottom-color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/" class="nav-mark">Full Potential</a>
+        <ul class="nav-links">
+            <li><a href="/diagnose">Diagnose</a></li>
+            <li><a href="#work">Work</a></li>
+            <li><a href="/call">Call</a></li>
+            <li><a href="#learn">Learn</a></li>
+            <li><a href="mailto:james@fullpotential.com">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div class="hero">
+        <div class="container">
+            <p>
+                Most systems extract. This one circulates. Full Potential is a framework for diagnosing where life is coherent and where it isn't — across body, mind, relationships, work, money, purpose, and environment — and then doing the work to close the gap. The premise is simple: when circulation is restored, potential isn't something you chase. It's what's already happening.
+            </p>
+        </div>
+    </div>
+
+    <!-- Diagnose -->
+    <section id="diagnose">
+        <div class="container">
+            <h2>diagnose</h2>
+            <p>
+                Seven areas of life. Each one either circulating or stuck. The diagnostic maps where you are honestly — not where you wish you were — so the work has somewhere real to begin.
+            </p>
+            <p>
+                No email required to see your results. No pitch follows. The map is yours.
+            </p>
+            <div class="areas">
+                <div class="area">
+                    <span class="area-name">Body</span>
+                    <span class="area-question">Is energy moving or being managed?</span>
+                </div>
+                <div class="area">
+                    <span class="area-name">Mind</span>
+                    <span class="area-question">Is attention clear or scattered?</span>
+                </div>
+                <div class="area">
+                    <span class="area-name">Relationships</span>
+                    <span class="area-question">Is connection nourishing or draining?</span>
+                </div>
+                <div class="area">
+                    <span class="area-name">Work</span>
+                    <span class="area-question">Is contribution aligned or forced?</span>
+                </div>
+                <div class="area">
+                    <span class="area-name">Money</span>
+                    <span class="area-question">Is it circulating or constricting?</span>
+                </div>
+                <div class="area">
+                    <span class="area-name">Purpose</span>
+                    <span class="area-question">Is direction felt or fabricated?</span>
+                </div>
+                <div class="area">
+                    <span class="area-name">Environment</span>
+                    <span class="area-question">Does the space support or suppress?</span>
+                </div>
+            </div>
+            <p style="margin-top: 2rem;">
+                <a href="/diagnose" class="door-link">Begin the diagnostic</a>
+            </p>
+        </div>
+    </section>
+
+    <!-- Work with Sunheart -->
+    <section id="work">
+        <div class="container">
+            <h2>work with sunheart</h2>
+            <p>
+                A diagnostic session — one conversation that maps where you are and what's actually blocking circulation. Not therapy, not coaching in the conventional sense. Closer to a reading: precise, direct, and designed to leave you with fewer stories and more signal.
+            </p>
+            <div class="doors">
+                <div class="door">
+                    <h3>The weekly call</h3>
+                    <p>Free. Live. Every Thursday. Come with your bottleneck, leave with one clear next step. Your first call is open.</p>
+                    <a href="/call" class="door-link">Join the call</a>
+                </div>
+                <div class="door">
+                    <h3>Chat with the system</h3>
+                    <p>Tell it what you're working through. It compresses what matters and gives you one insight and one real next step. No account needed.</p>
+                    <a href="https://fullpotential.ai/chat.html" class="door-link">Start a conversation</a>
+                </div>
+                <div class="door">
+                    <h3>Full intake</h3>
+                    <p>A deeper mapping. Answer a sequence of questions and receive a personalized diagnostic across all seven areas. This is the beginning of real work.</p>
+                    <a href="/intake-v3" class="door-link">Begin the intake</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Learn -->
+    <section id="learn">
+        <div class="container">
+            <h2>learn</h2>
+            <p>
+                The Coherence course, taught with Nicolette Luna. A structured path through the seven areas — not as theory but as lived practice. Two formats:
+            </p>
+            <div class="doors">
+                <div class="door">
+                    <h3>Extension Ring</h3>
+                    <p>Remote. Weekly sessions, exercises between. For people who want the framework integrated into life as it already is.</p>
+                </div>
+                <div class="door">
+                    <h3>Immersion Ring</h3>
+                    <p>On-site at Zen Village, Chirripó, Costa Rica. Five days. For people who need the land and the silence to do the work that distance can't hold.</p>
+                    <a href="https://zenvillagecr.com/inquire" class="door-link">Inquire about immersion</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About -->
+    <section id="about">
+        <div class="container">
+            <h2>about</h2>
+            <p>
+                Full Potential is the work of Sunheart — diagnostician, builder, and steward of Zen Village in the Chirripó mountains of Costa Rica. The framework emerged from two decades of pattern recognition across consciousness, economics, and embodiment: what makes people coherent, what fragments them, and what it takes to restore circulation when life has gotten stuck.
+            </p>
+            <p>
+                The system is supported by CORA Nation, a 508(c)(1)(A) faith-based organization. The AI infrastructure — including the diagnostic tools, the companion agents, and the intelligence systems — is built in collaboration with the agents themselves. The work is regenerative, not extractive. Nothing here harvests attention.
+            </p>
+            <div class="relationship">
+                <p>
+                    <a href="https://zenvillagecr.com">Zen Village</a> is the physical ground.<br>
+                    <a href="https://coranation.org">CORA Nation</a> is the organizational vessel.<br>
+                    Full Potential is the work.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>
+                <a href="mailto:james@fullpotential.com">james@fullpotential.com</a><br>
+                <a href="/diagnose">Diagnose</a> · <a href="/call">Weekly call</a> · <a href="https://fullpotential.ai/chat.html">Chat</a> · <a href="/intake-v3">Intake</a><br>
+                <a href="https://zenvillagecr.com">Zen Village</a> · <a href="https://coranation.org">CORA Nation</a> · <a href="https://zenvillagecr.com/who">/who</a> · <a href="https://zenvillagecr.com/reminder">/reminder</a><br>
+                508(c)(1)(A) faith-based organization
+            </p>
+        </div>
+    </footer>
+
+</body>
+</html>

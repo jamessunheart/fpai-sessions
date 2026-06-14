@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Here · Zen Village</title>
+<meta name="description" content="Five pathways to live and contribute at Zen Village — practitioner, artist, creator, work-exchange, volunteer.">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Live Here — Zen Village Costa Rica">
+<meta property="og:description" content="Apply to contribute. Practitioner · Artist · Creator · Work-exchange · Volunteer.">
+<meta property="og:url" content="https://zenvillagecr.com/apply">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Manrope:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F4ECDC;
+  --bg-soft: #ECE1CB;
+  --ink: #1F1A14;
+  --ink-soft: #4A3F32;
+  --moss: #3A4A2E;
+  --clay: #B8553A;
+  --gold: #C8924B;
+  --rule: #2A2018;
+  --serif: 'Fraunces', Georgia, serif;
+  --sans: 'Manrope', system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.55;
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(184, 85, 58, 0.05) 0%, transparent 45%),
+    radial-gradient(circle at 85% 75%, rgba(58, 74, 46, 0.06) 0%, transparent 45%);
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+}
+a { color: inherit; text-decoration: none; }
+.page { max-width: 1180px; margin: 0 auto; padding: 56px 56px 32px; flex: 1; width: 100%; }
+.page-bottom { max-width: 1180px; margin: 0 auto; padding: 0 56px 40px; width: 100%; }
+
+.header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  border-bottom: 1px solid var(--rule); padding-bottom: 20px; margin-bottom: 64px;
+}
+.mark { font-family: var(--serif); font-size: 22px; font-weight: 500; }
+.mark em { font-style: italic; font-weight: 400; color: var(--moss); }
+.meta { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-soft); }
+
+.hero { text-align: center; max-width: 760px; margin: 0 auto 56px; }
+.section-label {
+  display: inline-block; font-size: 10px; letter-spacing: 0.28em;
+  text-transform: uppercase; color: var(--clay); font-weight: 700;
+  margin-bottom: 14px;
+}
+.hero h1 {
+  font-family: var(--serif); font-size: clamp(44px, 6.4vw, 72px);
+  line-height: 1.0; font-weight: 300; letter-spacing: -0.025em;
+}
+.hero h1 em { font-style: italic; font-weight: 400; color: var(--moss); }
+.hero p {
+  font-family: var(--serif); font-style: italic; font-size: 18px;
+  color: var(--ink-soft); font-weight: 300; max-width: 56ch;
+  margin: 22px auto 0; line-height: 1.5;
+}
+
+.lanes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.lane {
+  background: var(--bg-soft);
+  padding: 36px 32px;
+  display: flex; flex-direction: column; gap: 12px;
+  border: 1px solid rgba(42, 32, 24, 0.18);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  text-decoration: none; color: var(--ink);
+  min-height: 280px;
+}
+.lane:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 44px rgba(31, 26, 20, 0.12);
+  border-color: var(--moss);
+}
+.lane.dark {
+  background: var(--moss); color: var(--bg); border-color: var(--moss);
+}
+.lane.dark .lane-num { color: var(--gold); }
+.lane.dark h2 { color: var(--bg); }
+.lane.dark h2 em { color: var(--gold); }
+.lane.dark .lane-lede, .lane.dark .lane-who { color: rgba(244, 236, 220, 0.85); }
+.lane.dark .lane-cta { color: var(--gold); border-color: rgba(200, 146, 75, 0.4); }
+.lane.dark:hover .lane-cta { color: var(--bg); }
+
+.lane-num {
+  font-family: var(--serif); font-style: italic; font-size: 13px;
+  color: var(--clay); letter-spacing: 0.06em;
+}
+.lane h2 {
+  font-family: var(--serif); font-size: clamp(28px, 3vw, 38px);
+  font-weight: 300; line-height: 1.05; letter-spacing: -0.02em;
+}
+.lane h2 em { font-style: italic; color: var(--moss); }
+.lane-lede {
+  font-size: 15px; line-height: 1.6; color: var(--ink-soft);
+  max-width: 42ch;
+}
+.lane-who {
+  font-size: 13px; line-height: 1.55; color: var(--ink-soft);
+  font-style: italic; opacity: 0.85;
+  padding-top: 6px;
+}
+.lane-cta {
+  margin-top: auto;
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--moss); font-weight: 700;
+  padding-top: 16px;
+  border-top: 1px solid rgba(58, 74, 46, 0.3);
+}
+.lane-cta svg { width: 14px; height: 14px; transition: transform 0.2s; }
+.lane:hover .lane-cta svg { transform: translateX(4px); }
+
+/* Optional 5th narrower card (volunteer) — full-width on its own row */
+.lane.full {
+  grid-column: 1 / -1;
+  min-height: 0;
+  flex-direction: row;
+  align-items: center;
+  gap: 24px;
+  padding: 24px 32px;
+}
+.lane.full .lane-body { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.lane.full h2 { font-size: clamp(22px, 2.4vw, 28px); }
+.lane.full .lane-cta { margin-top: 0; padding-top: 0; border-top: 0; white-space: nowrap; }
+
+.note {
+  text-align: center; margin: 56px auto 0; max-width: 64ch;
+  font-family: var(--serif); font-style: italic; font-size: 15px;
+  color: var(--ink-soft);
+}
+.note a {
+  color: var(--moss); border-bottom: 1px solid rgba(58, 74, 46, 0.4);
+}
+.note a:hover { color: var(--clay); border-color: var(--clay); }
+
+.footer {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding-top: 24px; border-top: 1px solid var(--rule);
+  font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--ink-soft); flex-wrap: wrap; gap: 16px;
+}
+.footer-tag {
+  font-family: var(--serif); font-style: italic; font-size: 14px;
+  letter-spacing: 0; text-transform: none; color: var(--moss);
+}
+
+@media (max-width: 900px) {
+  .lanes { grid-template-columns: 1fr; gap: 14px; }
+  .lane { padding: 28px 24px; min-height: 0; }
+  .lane.full { flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 600px) {
+  .page, .page-bottom { padding-left: 24px; padding-right: 24px; }
+  .page { padding-top: 32px; }
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+<header class="header">
+  <div class="mark"><a href="/">Zen <em>Village</em></a></div>
+  <div class="meta">Live Here · Chirripó, Costa Rica</div>
+</header>
+
+<section class="hero">
+  <span class="section-label">Apply to contribute</span>
+  <h1>Are you here to <em>serve</em><br>the field?</h1>
+  <p>We're a 45-acre sanctuary running a weekly cycle of deep work, joyful celebration, and soft integration. There are five ways to come into it. Pick the lane closest to your primary offering — we can expand from there.</p>
+</section>
+
+<div class="lanes">
+
+  <a href="/apply/practitioner" class="lane dark">
+    <span class="lane-num">— 01</span>
+    <h2>Practitioner <em>residency</em></h2>
+    <p class="lane-lede">Hold space for transformation during retreats — breathwork, coaching, somatics, yoga, meditation, bodywork.</p>
+    <p class="lane-who">M–F core · Sunday integration · all-week wellness</p>
+    <span class="lane-cta">Begin application <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+  </a>
+
+  <a href="/apply/artist" class="lane">
+    <span class="lane-num">— 02</span>
+    <h2>Artist &amp; <em>performer</em></h2>
+    <p class="lane-lede">DJs, musicians, fire-spinners, ceremony holders, visualists. Bring the celebratory layer that moves the room.</p>
+    <p class="lane-who">Friday + Saturday nights · ecstatic weekends · ceremony</p>
+    <span class="lane-cta">Begin application <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+  </a>
+
+  <a href="/apply/creator" class="lane">
+    <span class="lane-num">— 03</span>
+    <h2>Creator &amp; <em>collaborator</em></h2>
+    <p class="lane-lede">Content creators, photographers, videographers, brand partners. Amplify the field and cross-pollinate audiences.</p>
+    <p class="lane-who">Content stays · affiliate partnerships · brand residency</p>
+    <span class="lane-cta">Begin application <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+  </a>
+
+  <a href="/apply/work-exchange" class="lane">
+    <span class="lane-num">— 04</span>
+    <h2>Work <em>exchange</em></h2>
+    <p class="lane-lede">Live on the land. Trade skills and time for housing, food, and a place in the rhythm — farm, build, kitchen, content, stewardship.</p>
+    <p class="lane-who">2 weeks minimum · extended residencies · long-term stewardship</p>
+    <span class="lane-cta">Begin application <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+  </a>
+
+  <a href="/apply/volunteer" class="lane full">
+    <div class="lane-body">
+      <span class="lane-num">— 05</span>
+      <h2>Event <em>volunteer</em></h2>
+      <p class="lane-lede">Show up for retreats and gatherings — setup, hosting, fire, kitchen, run-of-show. No long stay required. Locals welcome.</p>
+    </div>
+    <span class="lane-cta">Begin application <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+  </a>
+
+</div>
+
+<p class="note">Looking for the <em>other</em> way in? <a href="/retreats">Come on retreat or stay with us</a>. Or want to bring your own group? <a href="/host">Host your retreat in our container</a>.</p>
+
+</div>
+
+<div class="page-bottom">
+<footer class="footer">
+  <span><a href="/">← Zen Village</a></span>
+  <span class="footer-tag">River. Forest. Field. Yours, one way or the other.</span>
+  <span><a href="https://wa.me/50670945764">WhatsApp us</a></span>
+</footer>
+</div>
+
+<script>
+function getCookie(name) {
+  const m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+  return m ? decodeURIComponent(m[1]) : '';
+}
+(function () {
+  try {
+    var ref = getCookie('zv_ref');
+    if (!ref) {
+      var url = new URL(window.location.href);
+      ref = (url.searchParams.get('ref') || '').trim();
+    }
+    if (!ref) return;
+    document.querySelectorAll('a').forEach(function (a) {
+      var href = a.getAttribute('href');
+      if (!href) return;
+      try {
+        var u = new URL(href, window.location.origin);
+        if (u.host === window.location.host && !u.searchParams.has('ref')) {
+          u.searchParams.set('ref', ref);
+          a.setAttribute('href', u.pathname + u.search + (u.hash || ''));
+        }
+      } catch (e) {}
+    });
+  } catch (e) {}
+})();
+</script>
+
+</body>
+</html>

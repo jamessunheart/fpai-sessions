@@ -1,0 +1,11 @@
+{
+  "name": "calc-command",
+  "version": "1.0.0",
+  "description": "Simple calculator - evaluate math expressions safely",
+  "author": "Aria (Example Module)",
+  "command": "/calc",
+  "type": "telegram_command",
+  "entry": "handler.py"
+}
+
+

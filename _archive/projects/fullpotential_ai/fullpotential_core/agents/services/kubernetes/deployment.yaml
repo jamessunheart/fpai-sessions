@@ -1,0 +1,318 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: fpai-empire
+  labels:
+    name: fpai-empire
+    purpose: conscious-ai-empire
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fpai-config
+  namespace: fpai-empire
+data:
+  ETH_RPC_URL: "https://eth.llamarpc.com"
+  CHECK_INTERVAL: "3600"
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: fpai-secrets
+  namespace: fpai-empire
+type: Opaque
+stringData:
+  ANTHROPIC_API_KEY: "your-anthropic-key-here"
+  OPENAI_API_KEY: "your-openai-key-here"
+  TREASURY_PRIVATE_KEY: "your-treasury-key-here"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fpai-hub
+  namespace: fpai-empire
+  labels:
+    app: fpai-hub
+    tier: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fpai-hub
+  template:
+    metadata:
+      labels:
+        app: fpai-hub
+    spec:
+      containers:
+      - name: fpai-hub
+        image: fullpotentialai/fpai-empire:latest
+        ports:
+        - containerPort: 8010
+          name: http
+        env:
+        - name: ANTHROPIC_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: fpai-secrets
+              key: ANTHROPIC_API_KEY
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: fpai-secrets
+              key: OPENAI_API_KEY
+        - name: ETH_RPC_URL
+          valueFrom:
+            configMapKeyRef:
+              name: fpai-config
+              key: ETH_RPC_URL
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "2000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8010
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8010
+          initialDelaySeconds: 5
+          periodSeconds: 5
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fpai-hub-service
+  namespace: fpai-empire
+spec:
+  type: LoadBalancer
+  selector:
+    app: fpai-hub
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8010
+    name: http
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: defi-yield-agent
+  namespace: fpai-empire
+  labels:
+    app: defi-yield-agent
+    tier: agents
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: defi-yield-agent
+  template:
+    metadata:
+      labels:
+        app: defi-yield-agent
+    spec:
+      containers:
+      - name: defi-yield-agent
+        image: fullpotentialai/fpai-empire:latest
+        command: ["python", "/app/autonomous-agents/defi_yield_agent.py"]
+        env:
+        - name: ANTHROPIC_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: fpai-secrets
+              key: ANTHROPIC_API_KEY
+        - name: ETH_RPC_URL
+          valueFrom:
+            configMapKeyRef:
+              name: fpai-config
+              key: ETH_RPC_URL
+        - name: CHECK_INTERVAL
+          valueFrom:
+            configMapKeyRef:
+              name: fpai-config
+              key: CHECK_INTERVAL
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gas-optimizer-agent
+  namespace: fpai-empire
+  labels:
+    app: gas-optimizer-agent
+    tier: agents
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gas-optimizer-agent
+  template:
+    metadata:
+      labels:
+        app: gas-optimizer-agent
+    spec:
+      containers:
+      - name: gas-optimizer-agent
+        image: fullpotentialai/fpai-empire:latest
+        command: ["python", "/app/autonomous-agents/gas_optimizer_agent.py"]
+        env:
+        - name: ETH_RPC_URL
+          valueFrom:
+            configMapKeyRef:
+              name: fpai-config
+              key: ETH_RPC_URL
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arbitrage-agent
+  namespace: fpai-empire
+  labels:
+    app: arbitrage-agent
+    tier: agents
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: arbitrage-agent
+  template:
+    metadata:
+      labels:
+        app: arbitrage-agent
+    spec:
+      containers:
+      - name: arbitrage-agent
+        image: fullpotentialai/fpai-empire:latest
+        command: ["python", "/app/autonomous-agents/arbitrage_agent.py"]
+        env:
+        - name: ETH_RPC_URL
+          valueFrom:
+            configMapKeyRef:
+              name: fpai-config
+              key: ETH_RPC_URL
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: human-recruiter-agent
+  namespace: fpai-empire
+  labels:
+    app: human-recruiter-agent
+    tier: agents
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: human-recruiter-agent
+  template:
+    metadata:
+      labels:
+        app: human-recruiter-agent
+    spec:
+      containers:
+      - name: human-recruiter-agent
+        image: fullpotentialai/fpai-empire:latest
+        command: ["python", "/app/autonomous-agents/human_recruiter_agent.py"]
+        env:
+        - name: ANTHROPIC_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: fpai-secrets
+              key: ANTHROPIC_API_KEY
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: fpai-hub-hpa
+  namespace: fpai-empire
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: fpai-hub
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: fpai-ingress
+  namespace: fpai-empire
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  tls:
+  - hosts:
+    - hub.fullpotential.ai
+    secretName: fpai-hub-tls
+  rules:
+  - host: hub.fullpotential.ai
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: fpai-hub-service
+            port:
+              number: 80

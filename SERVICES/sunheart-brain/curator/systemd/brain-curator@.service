@@ -1,0 +1,15 @@
+[Unit]
+Description=Sunheart Brain Curator — %i
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/sh-brain/curator.env
+WorkingDirectory=/opt/sh-brain-src
+ExecStart=/opt/sh-brain-src/.venv/bin/python -m curator %i
+StandardOutput=journal
+StandardError=journal
+TimeoutStartSec=15min
+Nice=10
+IOSchedulingClass=idle

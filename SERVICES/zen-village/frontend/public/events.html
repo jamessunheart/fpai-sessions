@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Events · Zen Village · Costa Rica</title>
+<meta name="description" content="Upcoming gatherings, ceremonies, and retreats at Zen Village. World Peace Gathering, ecstatic dance, fire circles, and seasonal events.">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Events at Zen Village">
+<meta property="og:description" content="Upcoming gatherings — World Peace Gathering, ceremonies, ecstatic dance, fire circles. RSVP now.">
+<meta property="og:url" content="https://zenvillagecr.com/events">
+<meta property="og:image" content="https://zenvillagecr.com/images/og-events.jpg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Manrope:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F4ECDC;
+  --bg-soft: #ECE1CB;
+  --ink: #1F1A14;
+  --ink-soft: #4A3F32;
+  --moss: #3A4A2E;
+  --moss-soft: #6B7A55;
+  --clay: #B8553A;
+  --gold: #C8924B;
+  --rule: #2A2018;
+  --serif: 'Fraunces', Georgia, serif;
+  --sans: 'Manrope', system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.55;
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(184, 85, 58, 0.05) 0%, transparent 45%),
+    radial-gradient(circle at 85% 75%, rgba(58, 74, 46, 0.06) 0%, transparent 45%);
+}
+a { color: inherit; text-decoration: none; }
+.page { max-width: 1100px; margin: 0 auto; padding: 56px 56px 0; }
+.page-bottom { max-width: 1100px; margin: 0 auto; padding: 32px 56px 56px; }
+
+.header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  border-bottom: 1px solid var(--rule); padding-bottom: 20px; margin-bottom: 56px;
+}
+.mark { font-family: var(--serif); font-size: 22px; font-weight: 500; }
+.mark em { font-style: italic; font-weight: 400; color: var(--moss); }
+.meta { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-soft); }
+
+.section-label {
+  display: inline-block; font-size: 10px; letter-spacing: 0.28em;
+  text-transform: uppercase; color: var(--clay); font-weight: 700;
+}
+
+.hero { margin-bottom: 56px; }
+.hero h1 {
+  font-family: var(--serif); font-size: clamp(48px, 6vw, 80px);
+  line-height: 0.96; font-weight: 300; letter-spacing: -0.025em;
+  margin-top: 14px; max-width: 14ch;
+}
+.hero h1 em { font-style: italic; font-weight: 400; color: var(--moss); }
+.hero p {
+  font-family: var(--serif); font-style: italic; font-size: 18px;
+  color: var(--ink-soft); font-weight: 300; max-width: 56ch; margin-top: 18px;
+}
+
+/* PINNED FEATURE EVENT */
+.pinned {
+  background: var(--moss); color: var(--bg);
+  padding: 40px 44px; margin-bottom: 48px;
+  position: relative;
+  display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px;
+  align-items: center;
+}
+.pinned-tag {
+  position: absolute; top: 18px; right: 22px;
+  font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--gold); font-weight: 700;
+}
+.pinned h2 {
+  font-family: var(--serif); font-size: clamp(32px, 4vw, 48px);
+  font-weight: 300; line-height: 1.05; margin-bottom: 12px;
+}
+.pinned h2 em { font-style: italic; color: var(--gold); font-weight: 400; }
+.pinned-when {
+  font-family: var(--serif); font-style: italic; font-size: 16px;
+  color: var(--gold); margin-bottom: 14px;
+}
+.pinned p { font-size: 15px; line-height: 1.6; opacity: 0.9; }
+.pinned-cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 22px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 24px; font-size: 11px; letter-spacing: 0.2em;
+  text-transform: uppercase; font-weight: 600; cursor: pointer; border: 0;
+  transition: background 0.18s ease;
+}
+.btn-gold { background: var(--gold); color: var(--ink); }
+.btn-gold:hover { background: var(--bg); }
+.btn-ghost-light {
+  background: transparent; color: var(--bg);
+  border: 1px solid rgba(244, 236, 220, 0.3);
+}
+.btn-ghost-light:hover { background: rgba(244, 236, 220, 0.08); }
+.pinned-side {
+  background: rgba(244, 236, 220, 0.08);
+  border: 1px solid rgba(244, 236, 220, 0.18);
+  padding: 24px;
+}
+.pinned-side h3 {
+  font-family: var(--serif); font-size: 15px; font-weight: 500;
+  color: var(--gold); margin-bottom: 12px;
+  letter-spacing: 0.04em; text-transform: uppercase;
+}
+.pinned-side ul { list-style: none; }
+.pinned-side li {
+  padding: 5px 0; font-size: 13.5px; line-height: 1.5;
+  color: rgba(244, 236, 220, 0.88);
+}
+.pinned-side li::before { content: '◉  '; color: var(--gold); }
+
+/* UPCOMING LIST */
+.upcoming { margin-bottom: 56px; }
+.upcoming-header {
+  display: flex; justify-content: space-between; align-items: end;
+  border-bottom: 1px solid var(--rule); padding-bottom: 16px; margin-bottom: 28px;
+  flex-wrap: wrap; gap: 16px;
+}
+.upcoming-header h2 { font-family: var(--serif); font-size: 36px; font-weight: 400; letter-spacing: -0.015em; }
+.upcoming-note { font-family: var(--serif); font-style: italic; font-size: 13px; color: var(--ink-soft); }
+
+.event-list { display: flex; flex-direction: column; gap: 0; }
+.event-row {
+  display: grid; grid-template-columns: 110px 1fr auto;
+  gap: 28px; align-items: center;
+  padding: 22px 0;
+  border-bottom: 1px solid rgba(42, 32, 24, 0.18);
+  transition: background 0.18s ease;
+}
+.event-row:hover { background: rgba(42, 32, 24, 0.02); }
+.event-date {
+  font-family: var(--serif); font-size: 16px; line-height: 1.2;
+  color: var(--moss); font-weight: 500;
+}
+.event-date span {
+  display: block; font-size: 28px; font-style: italic;
+  color: var(--clay); font-weight: 400; letter-spacing: -0.02em;
+}
+.event-body h3 {
+  font-family: var(--serif); font-size: 22px; font-weight: 500;
+  letter-spacing: -0.01em; margin-bottom: 4px;
+}
+.event-body p { font-size: 14px; color: var(--ink-soft); line-height: 1.5; }
+.event-status {
+  font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+  font-weight: 700; padding: 6px 12px;
+  background: var(--moss); color: var(--bg);
+}
+.event-status.full { background: var(--clay); }
+.event-status.soon { background: var(--gold); color: var(--ink); }
+.event-cta {
+  font-family: var(--sans); font-size: 11px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--moss); font-weight: 600;
+  border-bottom: 1px solid rgba(58, 74, 46, 0.4);
+  padding-bottom: 1px;
+}
+.event-cta:hover { color: var(--clay); border-color: var(--clay); }
+
+.empty-state {
+  background: var(--bg-soft); padding: 36px 32px;
+  font-family: var(--serif); font-style: italic; font-size: 16px;
+  color: var(--ink-soft); text-align: center;
+}
+
+/* CTA BOTTOM */
+.field-cta {
+  background: var(--bg-soft); padding: 48px 44px;
+  margin-bottom: 40px;
+  display: grid; grid-template-columns: 2fr 1fr; gap: 36px;
+  align-items: center;
+}
+.field-cta h2 {
+  font-family: var(--serif); font-size: 32px; font-weight: 400;
+  letter-spacing: -0.015em; line-height: 1.1; margin-bottom: 10px;
+}
+.field-cta h2 em { font-style: italic; color: var(--moss); }
+.field-cta p { font-size: 14.5px; color: var(--ink-soft); line-height: 1.6; }
+.field-cta-actions { display: flex; flex-direction: column; gap: 10px; }
+.btn-primary { background: var(--moss); color: var(--bg); }
+.btn-primary:hover { background: var(--ink); }
+.btn-clay { background: var(--clay); color: var(--bg); }
+.btn-clay:hover { background: var(--ink); }
+
+.footer {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding-top: 24px; border-top: 1px solid var(--rule);
+  font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--ink-soft); flex-wrap: wrap; gap: 16px;
+}
+.footer-tag {
+  font-family: var(--serif); font-style: italic; font-size: 14px;
+  letter-spacing: 0; text-transform: none; color: var(--moss);
+}
+
+@media (max-width: 900px) {
+  .pinned { grid-template-columns: 1fr; gap: 24px; padding: 32px 28px; }
+  .field-cta { grid-template-columns: 1fr; }
+  .event-row { grid-template-columns: 90px 1fr; gap: 16px; }
+  .event-row .event-status, .event-row .event-cta { grid-column: 2; justify-self: start; margin-top: 6px; }
+}
+@media (max-width: 600px) {
+  .page, .page-bottom { padding-left: 24px; padding-right: 24px; }
+  .page { padding-top: 32px; }
+  .pinned { padding: 28px 22px; }
+  .event-row { grid-template-columns: 1fr; gap: 8px; padding: 18px 0; }
+  .event-date { font-size: 14px; }
+  .event-date span { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+<header class="header">
+  <div class="mark"><a href="/">Zen <em>Village</em></a></div>
+  <div class="meta">Events · Chirripó, Costa Rica</div>
+</header>
+
+<section class="hero">
+  <span class="section-label">Upcoming Gatherings</span>
+  <h1>Events that <em>raise the field.</em></h1>
+  <p>From the World Peace Gathering to seasonal ceremonies, ecstatic dances, and fire circles — these are the moments where the village comes alive. Pick yours below.</p>
+</section>
+
+<!-- PINNED FEATURE EVENT -->
+<section class="pinned">
+  <span class="pinned-tag">Featured · May 31, 2026</span>
+  <div>
+    <h2>World Peace <em>Gathering</em></h2>
+    <div class="pinned-when">Sunday May 31 · 11:00am onwards</div>
+    <p>A living prototype of the New Earth. 11am ceremonial cacao + world peace visualisation. 11:30am ecstatic dance journey. 1pm communal lunch + river swims, sauna and more. Come together, raise the vibration, live the future now.</p>
+    <p style="margin-top:10px;opacity:0.75;font-size:14px;">In collaboration with <strong>Reign Dance Movement</strong>. Dance for World Peace.</p>
+    <div class="pinned-cta-row">
+      <a href="https://zenvillage.live/peace" class="btn btn-gold">RSVP — reserve your spot</a>
+    </div>
+  </div>
+  <div class="pinned-side">
+    <h3>What's inside</h3>
+    <ul>
+      <li>Ceremonial cacao</li>
+      <li>World peace visualisation</li>
+      <li>Ecstatic dance journey</li>
+      <li>Communal lunch + potluck</li>
+      <li>River swims · sauna</li>
+      <li>Open heart · presence</li>
+    </ul>
+  </div>
+</section>
+
+<!-- UPCOMING LIST (auto-pulls from API; falls back to static) -->
+<section class="upcoming">
+  <div class="upcoming-header">
+    <div>
+      <span class="section-label">All Upcoming</span>
+      <h2>Coming up at the village</h2>
+    </div>
+    <div class="upcoming-note">Updated as new gatherings post · subscribe via WhatsApp for first-look</div>
+  </div>
+  <div class="event-list" id="event-list">
+    <!-- World Peace Gathering (always shown if API returns nothing) -->
+    <div class="event-row" data-event="world-peace-gathering">
+      <div class="event-date">May<span>31</span></div>
+      <div class="event-body">
+        <h3>World Peace Gathering</h3>
+        <p>A living prototype of the New Earth. Cacao, visualisation, ecstatic dance, communal lunch + river. In collaboration with Reign Dance Movement.</p>
+      </div>
+      <a href="https://zenvillage.live/peace" class="event-cta">RSVP →</a>
+    </div>
+  </div>
+  <div class="empty-state" id="empty-state" style="display:none;">
+    More events posting soon. Want to be told first? <a href="https://wa.me/50670945764" style="border-bottom:1px solid var(--moss);">WhatsApp us</a>.
+  </div>
+</section>
+
+<!-- BOTTOM CTA -->
+<section class="field-cta">
+  <div>
+    <h2>Want to <em>host</em> an event here?</h2>
+    <p>The land holds 45 acres of river, forest, fire pits, sauna, dance floor, and gathering halls. We co-host or rent the venue out. Audience attached.</p>
+  </div>
+  <div class="field-cta-actions">
+    <a href="/host" class="btn btn-primary">Host with us</a>
+    <a href="/support" class="btn btn-clay">Support a gathering</a>
+  </div>
+</section>
+
+</div>
+
+<div class="page-bottom">
+<footer class="footer">
+  <span><a href="/">← Zen Village</a></span>
+  <span class="footer-tag">Real gatherings. Real arrivals. Real care.</span>
+  <span><a href="/coherent">Come on retreat →</a></span>
+</footer>
+</div>
+
+<script>
+function getCookie(name) {
+  const m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+  return m ? decodeURIComponent(m[1]) : '';
+}
+
+// Append ?ref= to internal links if zv_ref cookie is set
+(function () {
+  try {
+    var ref = getCookie('zv_ref');
+    if (!ref) {
+      var url = new URL(window.location.href);
+      ref = (url.searchParams.get('ref') || '').trim();
+    }
+    if (!ref) return;
+    document.querySelectorAll('a').forEach(function (a) {
+      var href = a.getAttribute('href');
+      if (!href) return;
+      try {
+        var u = new URL(href, window.location.origin);
+        if (u.host === window.location.host && !u.searchParams.has('ref')) {
+          u.searchParams.set('ref', ref);
+          a.setAttribute('href', u.pathname + u.search + (u.hash || ''));
+        }
+      } catch (e) {}
+    });
+  } catch (e) {}
+})();
+
+// Auto-pull events from API if available
+async function loadEvents() {
+  try {
+    const r = await fetch('/api/pass/event?list=1');
+    if (!r.ok) return;
+    const data = await r.json();
+    const events = (data && data.events) || [];
+    if (!events.length) return;
+    const list = document.getElementById('event-list');
+    list.innerHTML = '';
+    let pinnedFound = false;
+    events.forEach(ev => {
+      if (ev.id === 'default' || ev.active === 0) return;
+      pinnedFound = pinnedFound || (ev.id === 'world-peace-weekend' || ev.id === 'world-peace-gathering-2026-05-31');
+      const dateBits = parseDate(ev.date);
+      const slug = ev.id || 'default';
+      const passUrl = '/pass?event=' + encodeURIComponent(slug);
+      const row = document.createElement('div');
+      row.className = 'event-row';
+      row.innerHTML =
+        '<div class="event-date">' + dateBits.month + '<span>' + dateBits.day + '</span></div>' +
+        '<div class="event-body">' +
+          '<h3>' + escapeHtml(ev.name || 'Upcoming gathering') + '</h3>' +
+          '<p>' + escapeHtml(ev.description || '') + '</p>' +
+        '</div>' +
+        '<a href="' + passUrl + '" class="event-cta">RSVP →</a>';
+      list.appendChild(row);
+    });
+    if (!list.children.length) {
+      document.getElementById('empty-state').style.display = 'block';
+    }
+  } catch (e) {
+    // API unavailable — static fallback already rendered, do nothing
+  }
+}
+function parseDate(s) {
+  if (!s) return { month: 'Soon', day: '' };
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const d = new Date(s);
+  if (!isNaN(d.getTime())) return { month: months[d.getMonth()], day: String(d.getDate()) };
+  return { month: 'Soon', day: '' };
+}
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+loadEvents();
+</script>
+
+</body>
+</html>

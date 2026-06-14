@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Host a Retreat at Zen Village · Chirripó, Costa Rica</title>
+<meta name="description" content="A 45-acre retreat venue in the Chirripó highlands with an audience attached. Co-produce, host, or buy out — find your fit.">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Host a Retreat at Zen Village">
+<meta property="og:description" content="An audience-attached venue in the Chirripó highlands. Plug into a field, not just walls.">
+<meta property="og:url" content="https://zenvillagecr.com/host">
+<meta property="og:image" content="https://zenvillagecr.com/images/og-host.jpg">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Manrope:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F4ECDC;
+  --bg-soft: #ECE1CB;
+  --ink: #1F1A14;
+  --ink-soft: #4A3F32;
+  --moss: #3A4A2E;
+  --moss-soft: #6B7A55;
+  --clay: #B8553A;
+  --gold: #C8924B;
+  --rule: #2A2018;
+  --serif: 'Fraunces', Georgia, serif;
+  --sans: 'Manrope', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.5;
+  font-weight: 400;
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(184, 85, 58, 0.05) 0%, transparent 45%),
+    radial-gradient(circle at 85% 75%, rgba(58, 74, 46, 0.06) 0%, transparent 45%),
+    radial-gradient(circle at 50% 100%, rgba(200, 146, 75, 0.04) 0%, transparent 50%);
+}
+
+a { color: inherit; text-decoration: none; }
+
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 56px 56px 0;
+}
+
+.page-bottom {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 56px 56px;
+}
+
+/* HEADER */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 20px;
+  margin-bottom: 56px;
+}
+
+.mark {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 500;
+  font-variation-settings: "opsz" 144;
+  letter-spacing: -0.01em;
+}
+
+.mark em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--moss);
+}
+
+.mark a:hover { color: var(--clay); }
+
+.meta {
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* HERO */
+.hero {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 64px;
+  margin-bottom: 72px;
+  align-items: end;
+}
+
+.hero h1 {
+  font-family: var(--serif);
+  font-size: clamp(48px, 6.4vw, 84px);
+  line-height: 0.94;
+  font-weight: 300;
+  font-variation-settings: "opsz" 144;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+}
+
+.hero h1 em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--moss);
+}
+
+.hero-meta {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 18px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  font-weight: 300;
+  padding-bottom: 8px;
+}
+
+.hero-meta::before {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 1px;
+  background: var(--clay);
+  margin-bottom: 18px;
+}
+
+.hero-cta {
+  margin-top: 22px;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-block;
+  font-family: var(--sans);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 12px 22px;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--bg);
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.btn:hover { background: var(--moss); border-color: var(--moss); }
+
+.btn.ghost {
+  background: transparent;
+  color: var(--ink);
+}
+.btn.ghost:hover { background: var(--ink); color: var(--bg); }
+
+/* STORY */
+.story {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 48px;
+  margin-bottom: 72px;
+  padding-bottom: 56px;
+  border-bottom: 1px solid rgba(42, 32, 24, 0.18);
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--clay);
+  font-weight: 700;
+}
+
+.story-body {
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--ink);
+  max-width: 60ch;
+}
+
+.story-body p + p { margin-top: 14px; }
+
+.story-body strong {
+  font-weight: 600;
+  color: var(--moss);
+}
+
+/* ADVANTAGE */
+.advantage { margin-bottom: 72px; }
+.advantage-header { margin-bottom: 36px; }
+
+.advantage-header h2 {
+  font-family: var(--serif);
+  font-size: 36px;
+  font-weight: 400;
+  font-variation-settings: "opsz" 144;
+  letter-spacing: -0.015em;
+  margin-top: 10px;
+  line-height: 1.05;
+}
+
+.advantage-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+}
+
+.advantage-item {
+  border-top: 1px solid var(--ink);
+  padding-top: 18px;
+}
+
+.advantage-num {
+  font-family: var(--serif);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--clay);
+  margin-bottom: 8px;
+  font-variation-settings: "opsz" 9;
+  letter-spacing: 0.05em;
+}
+
+.advantage-item h3 {
+  font-family: var(--serif);
+  font-size: 19px;
+  font-weight: 500;
+  line-height: 1.2;
+  margin-bottom: 8px;
+  color: var(--ink);
+  letter-spacing: -0.005em;
+}
+
+.advantage-item p {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+/* TIERS */
+.tiers { margin-bottom: 72px; }
+
+.tiers-header {
+  margin-bottom: 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 16px;
+  gap: 24px;
+}
+
+.tiers-header h2 {
+  font-family: var(--serif);
+  font-size: 36px;
+  font-weight: 400;
+  margin-top: 10px;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+}
+
+.tiers-note {
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--ink-soft);
+  font-style: italic;
+  font-family: var(--serif);
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.tier-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+.tier {
+  background: var(--bg-soft);
+  padding: 26px 22px 24px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: 1px;
+  box-shadow: 0 1px 0 rgba(42, 32, 24, 0.08);
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.tier:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(42, 32, 24, 0.12);
+}
+
+.tier.featured {
+  background: var(--moss);
+  color: var(--bg);
+}
+
+.tier-badge {
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--clay);
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.tier.featured .tier-badge { color: var(--gold); }
+
+.tier h3 {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.05;
+  margin-bottom: 6px;
+  letter-spacing: -0.015em;
+}
+
+.tier-tag {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-bottom: 18px;
+  font-weight: 300;
+  line-height: 1.3;
+}
+
+.tier.featured .tier-tag { color: rgba(244, 236, 220, 0.72); }
+
+.tier-fit {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  margin-bottom: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(42, 32, 24, 0.15);
+}
+
+.tier.featured .tier-fit {
+  color: rgba(244, 236, 220, 0.78);
+  border-bottom-color: rgba(244, 236, 220, 0.18);
+}
+
+.tier-includes {
+  font-size: 12.5px;
+  line-height: 1.5;
+  list-style: none;
+  margin-bottom: 22px;
+}
+
+.tier-includes li {
+  padding-left: 14px;
+  position: relative;
+  margin-bottom: 7px;
+}
+
+.tier-includes li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 7px;
+  height: 1px;
+  background: var(--clay);
+}
+
+.tier.featured .tier-includes li::before { background: var(--gold); }
+
+.tier-economics {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid rgba(42, 32, 24, 0.15);
+}
+
+.tier.featured .tier-economics { border-top-color: rgba(244, 236, 220, 0.18); }
+
+.tier-economics-label {
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.tier.featured .tier-economics-label { color: rgba(244, 236, 220, 0.6); }
+
+.tier-economics-value {
+  font-family: var(--serif);
+  font-size: 15.5px;
+  line-height: 1.3;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+
+/* QUALIFYING QUESTION */
+.qualify {
+  background: var(--ink);
+  color: var(--bg);
+  padding: 64px 56px;
+  position: relative;
+  overflow: hidden;
+}
+
+.qualify::before {
+  content: '"';
+  position: absolute;
+  font-family: var(--serif);
+  font-size: 360px;
+  line-height: 0.7;
+  color: var(--clay);
+  opacity: 0.16;
+  top: 20px;
+  left: 32px;
+  font-style: italic;
+  font-weight: 300;
+  pointer-events: none;
+}
+
+.qualify-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.qualify-label {
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 700;
+  margin-bottom: 22px;
+}
+
+.qualify-q {
+  font-family: var(--serif);
+  font-size: clamp(26px, 3.2vw, 40px);
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.22;
+  letter-spacing: -0.015em;
+  max-width: 26ch;
+  color: var(--bg);
+}
+
+.qualify-q em {
+  font-style: normal;
+  color: var(--gold);
+  font-weight: 500;
+}
+
+.qualify-cta {
+  margin-top: 32px;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.btn.on-dark {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--ink);
+}
+.btn.on-dark:hover { background: var(--bg); border-color: var(--bg); }
+.btn.on-dark.ghost {
+  background: transparent;
+  color: var(--bg);
+  border-color: var(--bg);
+}
+.btn.on-dark.ghost:hover { background: var(--bg); color: var(--ink); }
+
+/* INQUIRY FORM */
+.inquiry {
+  margin-top: 72px;
+  margin-bottom: 56px;
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 56px;
+  align-items: start;
+}
+
+.inquiry-side h2 {
+  font-family: var(--serif);
+  font-size: 36px;
+  font-weight: 400;
+  font-variation-settings: "opsz" 144;
+  letter-spacing: -0.015em;
+  margin-top: 10px;
+  margin-bottom: 18px;
+  line-height: 1.05;
+}
+
+.inquiry-side p {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin-bottom: 18px;
+  max-width: 38ch;
+}
+
+.contact-list {
+  list-style: none;
+  font-size: 13px;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(42, 32, 24, 0.18);
+}
+
+.contact-list li {
+  margin-bottom: 10px;
+  color: var(--ink-soft);
+}
+
+.contact-list strong {
+  font-family: var(--serif);
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: -0.005em;
+  display: block;
+  font-size: 14px;
+  margin-bottom: 1px;
+}
+
+.contact-list a:hover { color: var(--clay); }
+
+.inquiry-form {
+  background: var(--bg-soft);
+  padding: 32px 32px 28px;
+}
+
+.field { margin-bottom: 16px; }
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+label {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid rgba(42, 32, 24, 0.22);
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 14px;
+  border-radius: 0;
+  transition: border-color 0.18s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--moss);
+}
+
+textarea { resize: vertical; min-height: 90px; }
+
+.form-submit {
+  margin-top: 8px;
+  width: 100%;
+  border: 0;
+  background: var(--moss);
+  color: var(--bg);
+  padding: 14px;
+  font-family: var(--sans);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s ease;
+}
+
+.form-submit:hover { background: var(--ink); }
+.form-submit:disabled { opacity: 0.5; cursor: wait; }
+
+.form-success {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 17px;
+  color: var(--moss);
+  text-align: center;
+  padding: 40px 12px;
+  line-height: 1.45;
+}
+
+.form-error {
+  font-size: 13px;
+  color: var(--clay);
+  margin-top: 10px;
+}
+
+/* FOOTER */
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-top: 24px;
+  border-top: 1px solid var(--rule);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.footer-tag {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--moss);
+}
+
+@media (max-width: 1000px) {
+  .advantage-grid, .tier-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .inquiry { grid-template-columns: 1fr; gap: 36px; }
+}
+
+@media (max-width: 720px) {
+  .page, .page-bottom { padding-left: 24px; padding-right: 24px; }
+  .page { padding-top: 32px; }
+  .hero, .story { grid-template-columns: 1fr; gap: 28px; }
+  .advantage-grid, .tier-grid { grid-template-columns: 1fr; gap: 16px; }
+  .qualify { padding: 48px 24px; }
+  .qualify::before { font-size: 220px; left: 12px; top: 30px; }
+  .tiers-header { flex-direction: column; align-items: flex-start; }
+  .tiers-note { text-align: left; }
+  .field-row { grid-template-columns: 1fr; }
+  .inquiry-form { padding: 24px 22px; }
+}
+
+@media print {
+  body { background: white; background-image: none; }
+  .qualify, .tier.featured {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .page, .page-bottom { padding: 24px 32px; }
+  .hero-cta, .qualify-cta, .inquiry { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+<header class="header">
+  <div class="mark"><a href="/">Zen <em>Village</em></a></div>
+  <div class="meta">Host Partnership · Chirripó, Costa Rica</div>
+</header>
+
+<section class="hero">
+  <div>
+    <h1>From incoherence<br>to <em>coherence.</em></h1>
+    <div class="hero-cta">
+      <a class="btn" href="#start">Start the conversation</a>
+      <a class="btn ghost" href="#tiers">See the four tiers</a>
+    </div>
+  </div>
+  <div class="hero-meta">
+    Forty-five acres in the Chirripó highlands. A retreat venue with an audience attached, a ceremony already running, and a story that travels with your event.
+  </div>
+</section>
+
+<section class="story">
+  <div><span class="section-label">The Land</span></div>
+  <div class="story-body">
+    <p>Zen Village isn't a rental property. It's a living container — ecstatic dance Saturdays, ceremony, the Saturday-night to Sunday-morning bridge, and a community of stewards already on the ground.</p>
+    <p>When you host with us, you're not booking walls. You're <strong>plugging into a field</strong> — a network of facilitators, a returning audience from our weekend programming, and a community we market your retreat to alongside our own.</p>
+  </div>
+</section>
+
+<section class="advantage">
+  <div class="advantage-header">
+    <span class="section-label">Why Hosts Choose Us</span>
+    <h2>The audience-attached venue.</h2>
+  </div>
+
+  <div class="advantage-grid">
+    <div class="advantage-item">
+      <div class="advantage-num">— 01</div>
+      <h3>Built-in Reach</h3>
+      <p>Cross-promotion to our list, our broader network, and the regulars who return for our weekend programming. We help fill the room.</p>
+    </div>
+
+    <div class="advantage-item">
+      <div class="advantage-num">— 02</div>
+      <h3>The Container</h3>
+      <p>Ecstatic dance, ceremony, and the Saturday-night to Sunday-morning bridge — woven into your schedule, not bolted on.</p>
+    </div>
+
+    <div class="advantage-item">
+      <div class="advantage-num">— 03</div>
+      <h3>Myth Engine</h3>
+      <p>Story-driven framing that lifts perceived value and pricing. A measurable 20–25% revenue lift over a generic venue.</p>
+    </div>
+
+    <div class="advantage-item">
+      <div class="advantage-num">— 04</div>
+      <h3>Soft Landing</h3>
+      <p>Optional Unplug &amp; Play extension — guests stay an extra day or two to integrate. Higher per-guest revenue, deeper transformation.</p>
+    </div>
+  </div>
+</section>
+
+<section class="tiers" id="tiers">
+  <div class="tiers-header">
+    <div>
+      <span class="section-label">Four Ways to Host</span>
+      <h2>Find your fit.</h2>
+    </div>
+    <div class="tiers-note">All tiers include lodging,<br>meals &amp; ground logistics</div>
+  </div>
+
+  <div class="tier-grid">
+
+    <article class="tier" data-tier="Co-Produced Retreat">
+      <div class="tier-badge">Tier 01</div>
+      <h3>Co-Produced<br>Retreat</h3>
+      <div class="tier-tag">Deepest alignment, deepest partnership</div>
+      <p class="tier-fit">For hosts whose work resonates with Coherence — consciousness, embodiment, regenerative practice.</p>
+      <ul class="tier-includes">
+        <li>Full ceremony &amp; ecstatic dance production</li>
+        <li>Myth Engine framing &amp; co-marketing</li>
+        <li>Cross-promotion to our list</li>
+        <li>On-site facilitation support</li>
+      </ul>
+      <div class="tier-economics">
+        <div class="tier-economics-label">Economics</div>
+        <div class="tier-economics-value">Low base + revenue split, host-favored</div>
+      </div>
+    </article>
+
+    <article class="tier featured" data-tier="Hosted Retreat">
+      <div class="tier-badge">Tier 02 · Most Common</div>
+      <h3>Hosted<br>Retreat</h3>
+      <div class="tier-tag">Bring your audience — we run the rest</div>
+      <p class="tier-fit">Established facilitators with their own following who want a turnkey venue inside an aligned container.</p>
+      <ul class="tier-includes">
+        <li>Lodging, meals &amp; ground logistics</li>
+        <li>Optional ecstatic dance / ceremony add-ons</li>
+        <li>Listing in our retreat calendar</li>
+        <li>Site stewards available throughout</li>
+      </ul>
+      <div class="tier-economics">
+        <div class="tier-economics-label">Economics</div>
+        <div class="tier-economics-value">Per-person floor + share above threshold, host-favored</div>
+      </div>
+    </article>
+
+    <article class="tier" data-tier="Full Venue Buyout">
+      <div class="tier-badge">Tier 03</div>
+      <h3>Full Venue<br>Buyout</h3>
+      <div class="tier-tag">Total creative control</div>
+      <p class="tier-fit">Hosts who want the land, the kitchen, and the keys — and to run their own program their way.</p>
+      <ul class="tier-includes">
+        <li>Exclusive use of all 45 acres</li>
+        <li>Full kitchen &amp; lodging access</li>
+        <li>Optional ceremony / dance à la carte</li>
+        <li>You keep 100% of program revenue</li>
+      </ul>
+      <div class="tier-economics">
+        <div class="tier-economics-label">Economics</div>
+        <div class="tier-economics-value">Flat day-rate · No revenue share</div>
+      </div>
+    </article>
+
+    <article class="tier" data-tier="Anchor Host Program">
+      <div class="tier-badge">Tier 04</div>
+      <h3>Anchor Host<br>Program</h3>
+      <div class="tier-tag">Recurring partnership</div>
+      <p class="tier-fit">Facilitators who commit to three or more retreats per year and want to grow with us as a co-marketing partner.</p>
+      <ul class="tier-includes">
+        <li>Preferred dates &amp; reduced base</li>
+        <li>Marketing co-investment</li>
+        <li>Featured profile across our channels</li>
+        <li>First access to new programming</li>
+      </ul>
+      <div class="tier-economics">
+        <div class="tier-economics-label">Economics</div>
+        <div class="tier-economics-value">Customized, built around your annual rhythm</div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+</div>
+
+<section class="qualify">
+  <div class="qualify-inner">
+    <div class="qualify-label">The Conversation Starter</div>
+    <p class="qualify-q">How many people do you typically bring — and do you want Zen Village to be a <em>backdrop</em>, a <em>partner</em>, or a <em>co-producer?</em></p>
+    <div class="qualify-cta">
+      <a class="btn on-dark" href="#start">Tell us about your retreat</a>
+      <a class="btn on-dark ghost" href="mailto:halley@zenvillagecr.com?subject=Hosting%20at%20Zen%20Village">Email Halley</a>
+    </div>
+  </div>
+</section>
+
+<div class="page-bottom">
+
+<section class="inquiry" id="start">
+  <div class="inquiry-side">
+    <span class="section-label">Start Here</span>
+    <h2>Tell us<br>about your retreat.</h2>
+    <p>Five fields, two minutes. Halley reads every one — typically replies within 48 hours with a clarifying question or a date hold.</p>
+    <ul class="contact-list">
+      <li><strong>Halley · Host Partnerships</strong>
+        <a href="mailto:halley@zenvillagecr.com">halley@zenvillagecr.com</a></li>
+      <li><strong>Voice or text</strong>
+        <a href="https://wa.me/50688889999">WhatsApp +506 8888-9999</a></li>
+      <li><strong>Visit before booking</strong>
+        Site walks available most weekends</li>
+    </ul>
+  </div>
+
+  <form class="inquiry-form" id="host-form" novalidate>
+    <div class="field-row">
+      <div class="field">
+        <label for="name">Your name</label>
+        <input id="name" name="name" type="text" required>
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="phone">Phone / WhatsApp (optional)</label>
+        <input id="phone" name="phone" type="tel">
+      </div>
+      <div class="field">
+        <label for="guests">Typical group size</label>
+        <select id="guests" name="guests">
+          <option value="">Select…</option>
+          <option>Under 10</option>
+          <option>10–20</option>
+          <option>20–40</option>
+          <option>40–60</option>
+          <option>60+</option>
+          <option>Not sure yet</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="tier">Tier of interest</label>
+        <select id="tier" name="tier">
+          <option value="">Select…</option>
+          <option>Tier 01 — Co-Produced Retreat</option>
+          <option>Tier 02 — Hosted Retreat</option>
+          <option>Tier 03 — Full Venue Buyout</option>
+          <option>Tier 04 — Anchor Host Program</option>
+          <option>Not sure — let's explore</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="dates">Target dates / season</label>
+        <input id="dates" name="dates" type="text" placeholder="e.g. Late Feb 2027">
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="message">What is your retreat about?</label>
+      <textarea id="message" name="message" rows="4" placeholder="A few sentences on the work, your audience, and what you hope to create here."></textarea>
+    </div>
+
+    <button type="submit" class="form-submit" id="submit-btn">Send to Halley</button>
+    <div class="form-error" id="form-error" style="display:none"></div>
+  </form>
+</section>
+
+<footer class="footer">
+  <span>Zen Village · Chirripó, Costa Rica</span>
+  <span class="footer-tag">A retreat venue with a soul.</span>
+  <span><a href="mailto:halley@zenvillagecr.com">Halley · Host Partnerships</a></span>
+</footer>
+</div>
+
+<script>
+// Make tier cards clickable — scroll to form + pre-fill tier
+document.querySelectorAll('.tier').forEach(card => {
+  card.addEventListener('click', () => {
+    const tier = card.dataset.tier;
+    if (tier) {
+      const sel = document.getElementById('tier');
+      const match = Array.from(sel.options).find(o => o.text.includes(tier));
+      if (match) sel.value = match.value;
+    }
+    document.getElementById('start').scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
+// Read partner_code from cookie (?ref=… auto-set by site middleware)
+function getCookie(name) {
+  const m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+  return m ? decodeURIComponent(m[1]) : '';
+}
+
+// Form submission → /api/inquiries/submit
+document.getElementById('host-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('submit-btn');
+  const errBox = document.getElementById('form-error');
+  errBox.style.display = 'none';
+  const f = e.target;
+  const data = {
+    name: f.name.value.trim(),
+    email: f.email.value.trim(),
+    phone: f.phone.value.trim(),
+    inquiry_type: 'Retreat',
+    accommodation: f.tier.value || 'Host Partnership',
+    dates: f.dates.value.trim(),
+    guests: f.guests.value,
+    message:
+      `[Host inquiry from /host page]\n` +
+      `Tier: ${f.tier.value || '(not specified)'}\n` +
+      `Group size: ${f.guests.value || '(not specified)'}\n\n` +
+      (f.message.value.trim() || '(no description provided)'),
+    partner_code: getCookie('zv_ref') || '',
+  };
+  if (!data.name || !data.email) {
+    errBox.textContent = 'Please add your name and email.';
+    errBox.style.display = 'block';
+    return;
+  }
+  btn.disabled = true; btn.textContent = 'Sending…';
+  try {
+    const r = await fetch('/api/inquiries/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (!r.ok) throw new Error((await r.json()).detail || 'Submission failed');
+    f.outerHTML = `
+      <div class="form-success">
+        Thank you. Halley will reach out within 48 hours —<br>
+        usually with a question, sometimes with a date hold.
+      </div>`;
+  } catch (err) {
+    btn.disabled = false; btn.textContent = 'Send to Halley';
+    errBox.textContent = err.message + '. Or email halley@zenvillagecr.com directly.';
+    errBox.style.display = 'block';
+  }
+});
+</script>
+
+</body>
+</html>

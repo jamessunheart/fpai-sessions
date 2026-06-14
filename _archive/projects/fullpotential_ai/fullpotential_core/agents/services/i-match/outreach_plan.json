@@ -1,0 +1,46 @@
+{
+  "day_1": {
+    "autonomous": [
+      "Generate 20 personalized LinkedIn messages",
+      "Create 2 Reddit posts (r/fatFIRE + r/financialindependence)",
+      "Set up monitoring dashboard"
+    ],
+    "human_required": [
+      "Send 20 LinkedIn connection requests (15 min)",
+      "Post 2 Reddit posts (15 min)"
+    ]
+  },
+  "day_2_3": {
+    "autonomous": [
+      "Monitor form submissions",
+      "Track provider/customer signups",
+      "Generate AI matches for submitted customers"
+    ],
+    "human_required": [
+      "Respond to Reddit comments (30 min/day)",
+      "Follow up with LinkedIn connections (30 min/day)"
+    ]
+  },
+  "day_4_5": {
+    "autonomous": [
+      "Generate email introductions",
+      "Track email open rates",
+      "Flag high-engagement leads"
+    ],
+    "human_required": [
+      "Review and send introduction emails (1 hour/day)",
+      "Respond to provider/customer questions (1 hour/day)"
+    ]
+  },
+  "day_6_7": {
+    "autonomous": [
+      "Track engagement confirmations",
+      "Calculate commission revenue",
+      "Generate weekly report"
+    ],
+    "human_required": [
+      "Sales calls with hot leads (2-3 hours/day)",
+      "Close deals and confirm engagements (1 hour/day)"
+    ]
+  }
+}

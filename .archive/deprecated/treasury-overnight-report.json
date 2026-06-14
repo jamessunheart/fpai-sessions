@@ -1,0 +1,32 @@
+{
+  "timestamp": "2025-11-17T00:42:04.563147",
+  "capital": 373000,
+  "scenarios": {
+    "conservative": {
+      "allocation": {
+        "PT-sUSDe (28.5% APY)": 50000,
+        "USDC Aave (5% APY)": 323000
+      },
+      "apy": 0.072,
+      "name": "Conservative"
+    },
+    "moderate": {
+      "allocation": {
+        "PT-sUSDe (28.5% APY)": 150000,
+        "BTC Covered Calls (20% APY)": 100000,
+        "USDC Aave (5% APY)": 123000
+      },
+      "apy": 0.165,
+      "name": "Moderate"
+    },
+    "aggressive": {
+      "allocation": {
+        "PT-sUSDe (28.5% APY)": 200000,
+        "BTC Covered Calls (20% APY)": 100000,
+        "DeFi Yield (35% APY)": 73000
+      },
+      "apy": 0.245,
+      "name": "Aggressive"
+    }
+  }
+}

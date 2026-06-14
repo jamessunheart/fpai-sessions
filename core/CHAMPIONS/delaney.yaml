@@ -1,0 +1,147 @@
+# Champion config TEMPLATE
+# Copy this to <name>.yaml and fill in everything marked TODO.
+# Reference cheyenne.yaml for a fully-completed example.
+
+# ─── identity ─────────────────────────────────────────────────────────────
+slug: delaney          # used for filenames + URL paths
+name: TODO Full Name                   # display name
+short_name: TODO                       # how they sign things
+brand_first: Delaney                      # nav-bar — "First <em>Second</em>"
+brand_second: TODO
+domain: TODO.com                       # production domain (existing or planned)
+title: "TODO · One-line positioning"
+description: "TODO · meta description, ~160 chars max"
+
+# ─── telegram bot ─────────────────────────────────────────────────────────
+bot_username: TODO_bot                 # without @, must be globally unique on Telegram
+bot_token_env: TODO_BOT_TOKEN          # env var name we'll set at deploy time
+bot_persona_name: TODO                 # what the bot calls itself in chat
+bot_unit_name: TODO-bot                # systemd unit name (lowercase + hyphens)
+
+# ─── theme ────────────────────────────────────────────────────────────────
+theme:
+  ink: "#0b0a1a"                       # main background
+  accent: "#TODO"                      # primary CTA color
+  accent_soft: "#TODO"
+  gold: "#c89b3c"                      # secondary accent (kept default; change if branded)
+  gold_soft: "#e8c87a"
+
+# ─── hero ─────────────────────────────────────────────────────────────────
+tagline: "todo · todo · todo"
+hero_headline_html: "TODO punchy headline with <em>emphasis</em> on the resonant words."
+hero_lede: "TODO 1-2 sentence supporting hook. Names the audience. Names what's offered. No marketing voice."
+hero_cta_label: "Talk to TODO"
+
+# ─── philosophy quote (one-line poetic anchor) ────────────────────────────
+philosophy_quote: "TODO — one resonant sentence that frames the entire practice. Reads like a koan."
+
+# ─── methodology ──────────────────────────────────────────────────────────
+method_name: "The TODO Method"
+method_lede: "TODO — one paragraph naming the framework, who developed it, and what makes it theirs."
+pillars:
+  - num: "i · TODO"
+    title: "TODO"
+    body: "TODO — 2-3 sentences."
+  - num: "ii · TODO"
+    title: "TODO"
+    body: "TODO"
+  - num: "iii · TODO"
+    title: "TODO"
+    body: "TODO"
+
+# ─── offerings (3 typical; 1-4 is fine) ───────────────────────────────────
+offerings_lede: "TODO — one sentence framing the choice."
+offerings:
+  - tag: "TODO category"
+    title: "TODO offering name"
+    selectivity: "TODO scarcity statement (e.g., '6 per quarter · by application')"
+    price: "Investment: from $TODO · TODO duration"
+    description: "TODO — 2-3 sentences."
+    features:
+      - "TODO bullet"
+      - "TODO bullet"
+      - "TODO bullet"
+    image: "img/offering-1.jpg"
+    cta_label: "Apply via TODO"
+    bot_intent: "todo"
+
+  - tag: "TODO category"
+    title: "TODO offering name"
+    selectivity: "TODO"
+    price: "Investment: from $TODO"
+    description: "TODO"
+    features: ["TODO", "TODO", "TODO"]
+    image: "img/offering-2.jpg"
+    cta_label: "Inquire via TODO"
+    bot_intent: "todo"
+
+  - tag: "TODO category"
+    title: "TODO offering name"
+    selectivity: "TODO"
+    price: "Investment: from $TODO"
+    description: "TODO"
+    features: ["TODO", "TODO", "TODO"]
+    image: "img/offering-3.jpg"
+    cta_label: "Join via TODO"
+    bot_intent: "todo"
+
+# ─── about ────────────────────────────────────────────────────────────────
+about_eyebrow: "about"
+about_headline_html: "TODO <em>headline</em>."
+about_paragraphs:
+  - "TODO — first paragraph. First-person. Names what they have lived through that earned them this work."
+  - "TODO — second paragraph. Names what they offer differently from peers."
+about_signature: "— TODO"
+about_portrait_image: "img/accent-1.jpg"
+
+# ─── lineage ──────────────────────────────────────────────────────────────
+lineage_filled: false                  # flip to true when real lineage is filled in
+lineage_intro: "TODO — one paragraph framing why lineage matters in their tradition."
+lineage_paragraphs: []                 # list of strings; each is one paragraph naming teachers/years
+
+# ─── process ──────────────────────────────────────────────────────────────
+process_steps:
+  - num: "i."
+    title: "Reach out"
+    body: "DM TODO on Telegram. Tell them what's calling you."
+  - num: "ii."
+    title: "Discovery call"
+    body: "If you're a fit, we book a 30-min call."
+  - num: "iii."
+    title: "Begin"
+    body: "Choose your container. Begin the work."
+
+# ─── testimonials ─────────────────────────────────────────────────────────
+testimonials:
+  - quote: "TODO — real testimonial."
+    attribution: "— X., container name"
+  - quote: "TODO"
+    attribution: "— Y., container name"
+
+# ─── faq ──────────────────────────────────────────────────────────────────
+faq:
+  - q: "Is this work for me?"
+    a: "TODO — describe ideal client."
+  - q: "Who is this work NOT for?"
+    a: "TODO — name the no. Name disqualifying conditions."
+  - q: "How much does it cost?"
+    a: "TODO — state investment levels confidently."
+  - q: "In-person or virtual?"
+    a: "TODO."
+  - q: "Who is TODO (the bot)?"
+    a: "TODO — explain the AI assistant."
+  - q: "What if I'm not ready yet?"
+    a: "TODO — give them a graceful no, point to the email list."
+
+# ─── closing cta ─────────────────────────────────────────────────────────
+closing_headline_html: "TODO closing line with <em>emphasis</em>."
+closing_body: "TODO — one sentence that lands."
+
+# ─── socials / footer ─────────────────────────────────────────────────────
+instagram_handle: TODO_handle
+footer_attribution: "© TODO · TODO"
+
+# ─── bot system-prompt seed ───────────────────────────────────────────────
+bot_role_summary: "TODO — one paragraph: who they are, their tier, their offerings + pricing, their method."
+bot_voice_register: "TODO — describe their voice: warm? clinical? playful? Matters for how the bot writes."
+bot_audience: "TODO — who they serve."

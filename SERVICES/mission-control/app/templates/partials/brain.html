@@ -1,0 +1,21 @@
+<div hx-swap-oob="innerHTML:#brain-status">{{ status }}</div>
+
+{% if priorities %}
+    <div class="space-y-3">
+        {% for p in priorities %}
+        <div class="bg-slate-800 p-3 rounded border-l-4 border-blue-500 hover:bg-slate-700 transition">
+            <div class="flex justify-between items-start">
+                <h3 class="font-bold text-sm">{{ p.name }}</h3>
+                <span class="text-xs font-mono text-blue-400">{{ p.score }} pts</span>
+            </div>
+            <p class="text-xs text-slate-400 mt-1">{{ p.desc }}</p>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="text-center text-slate-500 mt-10">
+        <p>No active strategies.</p>
+        <p class="text-xs mt-2">Brain is idle.</p>
+    </div>
+{% endif %}
+

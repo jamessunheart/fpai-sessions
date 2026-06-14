@@ -1,0 +1,22 @@
+services:
+  dashboard:
+    build:
+      context: .
+      args:
+        - GITHUB_TOKEN=${GITHUB_TOKEN}
+        - GITHUB_ORG=${GITHUB_ORG}
+        - OPENAI_API_KEY=${OPENAI_API_KEY}
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=https://drop2.fullpotential.ai
+      - ADMIN_EMAIL=admin@fullpotential.ai
+      - ADMIN_PASSWORD_HASH=25a15c8b859ee929522774185e9591a65cd51ee032434a497f8da2d070b79206
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - GITHUB_ORG=${GITHUB_ORG}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - REGISTRY_URL=${REGISTRY_URL}
+      - REGISTRY_API_KEY=${REGISTRY_API_KEY}
+      - DROPLET_ID=${DROPLET_ID}
+    restart: unless-stopped

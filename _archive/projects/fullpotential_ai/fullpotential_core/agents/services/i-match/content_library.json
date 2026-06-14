@@ -1,0 +1,84 @@
+{
+  "reddit_posts": [
+    {
+      "id": 1,
+      "template": "educational_guide",
+      "topic": "Retirement Planning",
+      "subreddit": "r/FinancialPlanning",
+      "title": "Everything You Need to Know About Retirement Planning (Financial Advisor Perspective)",
+      "status": "ready_to_post"
+    },
+    {
+      "id": 2,
+      "template": "ama_style",
+      "topic": "Investment Strategy",
+      "subreddit": "r/investing",
+      "title": "Everything You Need to Know About Investment Strategy (Financial Advisor Perspective)",
+      "status": "ready_to_post"
+    },
+    {
+      "id": 3,
+      "template": "case_study",
+      "topic": "Tax Optimization",
+      "subreddit": "r/personalfinance",
+      "title": "Everything You Need to Know About Tax Optimization (Financial Advisor Perspective)",
+      "status": "ready_to_post"
+    },
+    {
+      "id": 4,
+      "template": "comparison_guide",
+      "topic": "Estate Planning",
+      "subreddit": "r/FinancialPlanning",
+      "title": "Everything You Need to Know About Estate Planning (Financial Advisor Perspective)",
+      "status": "ready_to_post"
+    },
+    {
+      "id": 5,
+      "template": "educational_guide",
+      "topic": "401k Rollovers",
+      "subreddit": "r/personalfinance",
+      "title": "Everything You Need to Know About 401k Rollovers (Financial Advisor Perspective)",
+      "status": "ready_to_post"
+    },
+    {
+      "id": 6,
+      "template": "ama_style",
+      "topic": "Roth Conversions",
+      "subreddit": "r/financialindependence",
+      "title": "Everything You Need to Know About Roth Conversions (Financial Advisor Perspective)",
+      "status": "ready_to_post"
+    },
+    {
+      "id": 7,
+      "template": "case_study",
+      "topic": "College Savings",
+      "subreddit": "r/personalfinance",
+      "title": "Everything You Need to Know About College Savings (Financial Advisor Perspective)",
+      "status": "ready_to_post"
+    },
+    {
+      "id": 8,
+      "template": "comparison_guide",
+      "topic": "Insurance Planning",
+      "subreddit": "r/FinancialPlanning",
+      "title": "Everything You Need to Know About Insurance Planning (Financial Advisor Perspective)",
+      "status": "ready_to_post"
+    },
+    {
+      "id": 9,
+      "template": "educational_guide",
+      "topic": "Business Exit Planning",
+      "subreddit": "r/Entrepreneur",
+      "title": "Everything You Need to Know About Business Exit Planning (Financial Advisor Perspective)",
+      "status": "ready_to_post"
+    },
+    {
+      "id": 10,
+      "template": "ama_style",
+      "topic": "Wealth Transfer",
+      "subreddit": "r/fatFIRE",
+      "title": "Everything You Need to Know About Wealth Transfer (Financial Advisor Perspective)",
+      "status": "ready_to_post"
+    }
+  ]
+}

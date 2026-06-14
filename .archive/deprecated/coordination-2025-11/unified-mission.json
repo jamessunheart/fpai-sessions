@@ -1,0 +1,34 @@
+{
+  "mission_statement": "Generate $2,500 in Month 1 revenue through coordinated client acquisition",
+  "primary_objective": "CLIENT_ACQUISITION",
+  "target_date": "2025-12-15",
+  "success_metrics": {
+    "revenue": 2500,
+    "clients": 15,
+    "matches": 50,
+    "discovery_calls": 50
+  },
+  "session_roles": {
+    "acquisition_team": [
+      "session-1763229251"
+    ],
+    "content_creation": [],
+    "technical_support": [
+      "REGISTRY",
+      "session-1763235028"
+    ],
+    "monitoring": [
+      "session-1763236365",
+      "session-1763233940",
+      "session-1763234893"
+    ],
+    "coordination": [
+      "session-1763234877",
+      "session-1763234703",
+      "session-1763234782"
+    ]
+  },
+  "daily_objectives": [],
+  "created_at": "2025-11-15T13:42:46.649536",
+  "status": "active"
+}

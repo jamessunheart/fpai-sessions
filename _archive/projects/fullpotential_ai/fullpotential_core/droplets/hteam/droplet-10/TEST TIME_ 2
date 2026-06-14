@@ -1,0 +1,12 @@
+QUICK START:
+1. Extract: tar -xzf droplet-10-upgrade-v2.0.tar.gz
+2. Setup: cp .env.example .env
+3. Edit .env:
+   - Set ANTHROPIC_API_KEY (required!)
+   - Set DROPLET_URL (your public URL)
+   - Set DATABASE_URL (or use Docker default)
+4. Launch: docker-compose up -d
+5. Verify: curl http://localhost:8000/health
+6. Dashboard: http://localhost:3000
+
+WHAT'S WORKING (Phase 1):

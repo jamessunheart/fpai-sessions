@@ -1,0 +1,1 @@
+Ensure that all code is well-structured, consistent, and easy to understand to keep the project maintainable. Use clear naming conventions, organize files by feature, and reuse shared components and styles to reduce duplication and make future updates simple and efficient.

@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Admin | Zen Village</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --forest-deep: #1a2e1a;
+            --forest: #2d4a2d;
+            --moss: #4a6741;
+            --sage: #7d9a6f;
+            --mist: #c4d4b8;
+            --cloud: #f0f4ec;
+            --cream: #faf9f5;
+            --gold: #c4a35a;
+            --sunset: #d4956a;
+            --river: #4a7c8a;
+            --red: #dc3545;
+            --font-d: 'Cormorant Garamond', Georgia, serif;
+            --font-b: 'Outfit', -apple-system, sans-serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: var(--font-b); background: var(--cream); color: var(--forest-deep); }
+
+        .topbar {
+            background: var(--forest-deep);
+            color: var(--cream);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .topbar h1 { font-family: var(--font-d); font-size: 1.5rem; font-weight: 400; }
+        .topbar a { color: var(--gold); text-decoration: none; font-size: 0.85rem; }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 1.5rem;
+            max-width: 1400px;
+            margin: 1.5rem auto;
+            padding: 0 1.5rem;
+        }
+        @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--mist);
+            margin-bottom: 1.5rem;
+        }
+        .card h2 {
+            font-family: var(--font-d);
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--cloud);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .tab {
+            padding: 0.5rem 1.25rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            background: var(--cloud);
+            border: 1px solid var(--mist);
+            transition: all 0.2s;
+        }
+        .tab.active { background: var(--forest); color: white; border-color: var(--forest); }
+        .tab:hover:not(.active) { background: var(--mist); }
+
+        /* Calendar */
+        .fc .fc-toolbar-title { font-family: var(--font-d) !important; font-size: 1.2rem !important; }
+        .fc .fc-button { background: var(--forest) !important; border-color: var(--forest) !important; font-size: 0.8rem !important; }
+        .fc .fc-button:hover { background: var(--forest-deep) !important; }
+        .fc .fc-day-today { background: rgba(196,163,90,0.1) !important; }
+        .fc-event { font-size: 0.7rem !important; border-radius: 4px !important; padding: 1px 4px !important; }
+
+        /* Booking table */
+        .tbl { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        .tbl th { text-align: left; padding: 0.6rem 0.5rem; border-bottom: 2px solid var(--mist); color: var(--moss); font-weight: 500; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .tbl td { padding: 0.6rem 0.5rem; border-bottom: 1px solid var(--cloud); vertical-align: middle; }
+        .tbl tr:hover td { background: rgba(196,163,90,0.04); }
+
+        .badge {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .badge.pending { background: #fff3cd; color: #856404; }
+        .badge.confirmed { background: #d4edda; color: #155724; }
+        .badge.cancelled { background: #f8d7da; color: #721c24; }
+        .badge.inquiry { background: #cce5ff; color: #004085; }
+        .badge.paid { background: #d4edda; color: #155724; }
+        .badge.partial { background: #fff3cd; color: #856404; }
+
+        /* Forms */
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; font-weight: 500; margin-bottom: 0.3rem; font-size: 0.85rem; color: var(--forest); }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--mist); border-radius: 8px;
+            font-family: var(--font-b); font-size: 0.85rem; background: white;
+        }
+        .form-group input:focus, .form-group select:focus { border-color: var(--gold); outline: none; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+
+        .btn {
+            padding: 0.6rem 1.25rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: var(--font-b);
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .btn-primary { background: var(--forest); color: white; }
+        .btn-primary:hover { background: var(--forest-deep); }
+        .btn-gold { background: var(--gold); color: var(--forest-deep); }
+        .btn-gold:hover { background: var(--sunset); }
+        .btn-danger { background: var(--red); color: white; }
+        .btn-danger:hover { background: #c82333; }
+        .btn-sm { padding: 0.3rem 0.6rem; font-size: 0.75rem; }
+
+        .actions { display: flex; gap: 0.4rem; }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid var(--mist);
+        }
+        .stat-card .num { font-size: 1.8rem; font-weight: 600; color: var(--forest); }
+        .stat-card .lbl { font-size: 0.75rem; color: var(--moss); margin-top: 0.25rem; }
+        @media (max-width: 600px) { .stats { grid-template-columns: 1fr 1fr; } }
+
+        .empty { text-align: center; padding: 2rem; color: var(--moss); font-style: italic; }
+
+        .filter-bar {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .filter-bar select, .filter-bar input {
+            padding: 0.4rem 0.6rem;
+            border: 1px solid var(--mist);
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-family: var(--font-b);
+        }
+
+        .badge.checked_in { background: #e8daef; color: #6f42c1; }
+        .badge.checked_out { background: #e2e3e5; color: #383d41; }
+
+        /* Revenue section */
+        .rev-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem; }
+        .rev-card {
+            background: var(--cloud);
+            border-radius: 12px;
+            padding: 1rem;
+            border: 1px solid var(--mist);
+        }
+        .rev-card .prop-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem; }
+        .rev-card .rev-row { display: flex; justify-content: space-between; font-size: 0.8rem; padding: 0.2rem 0; }
+        .rev-card .rev-row.total { border-top: 1px solid var(--mist); margin-top: 0.3rem; padding-top: 0.4rem; font-weight: 600; }
+        .rev-paid { color: #155724; }
+        .rev-owed { color: #dc3545; }
+        .rev-partial { color: #856404; }
+
+        .outstanding-list { margin-top: 1rem; }
+        .outstanding-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--mist);
+        }
+        .outstanding-item .guest-info { flex: 1; }
+        .outstanding-item .guest-info strong { display: block; font-size: 0.9rem; }
+        .outstanding-item .guest-info small { color: var(--moss); font-size: 0.75rem; }
+        .outstanding-item .amount { font-weight: 600; font-size: 1.1rem; color: var(--red); margin: 0 1rem; }
+
+        /* Modal overlay */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            width: 90%;
+            max-width: 440px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal h3 { font-family: var(--font-d); font-size: 1.3rem; margin-bottom: 1rem; }
+        .modal .close-btn {
+            float: right;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--moss);
+        }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <h1>Zen Village Booking Admin</h1>
+        <div>
+            <a href="/">Public Site</a>
+            &nbsp;&middot;&nbsp;
+            <a href="/booking">Booking Page</a>
+            &nbsp;&middot;&nbsp;
+            <a href="/docs">API Docs</a>
+        </div>
+    </div>
+
+    <div style="max-width:1400px; margin:1.5rem auto; padding:0 1.5rem;">
+        <div class="stats" id="stats" style="grid-template-columns: repeat(6, 1fr);">
+            <div class="stat-card"><div class="num" id="stat-total">-</div><div class="lbl">Active Bookings</div></div>
+            <div class="stat-card"><div class="num" id="stat-confirmed">-</div><div class="lbl">Confirmed</div></div>
+            <div class="stat-card"><div class="num" id="stat-checkedin">-</div><div class="lbl">Checked In</div></div>
+            <div class="stat-card"><div class="num" id="stat-revenue">-</div><div class="lbl">Total Revenue</div></div>
+            <div class="stat-card"><div class="num rev-paid" id="stat-paid">-</div><div class="lbl">Collected</div></div>
+            <div class="stat-card"><div class="num rev-owed" id="stat-owed">-</div><div class="lbl">Outstanding</div></div>
+        </div>
+    </div>
+
+    <div class="layout">
+        <div class="main-col">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('calendar')">Calendar</div>
+                <div class="tab" onclick="switchTab('table')">Bookings List</div>
+                <div class="tab" onclick="switchTab('revenue')">Revenue</div>
+            </div>
+
+            <div id="tab-calendar" class="card">
+                <h2>Booking Calendar</h2>
+                <div class="filter-bar">
+                    <select id="cal-filter" onchange="refreshCalendar()">
+                        <option value="">All Properties</option>
+                    </select>
+                </div>
+                <div id="admin-calendar"></div>
+            </div>
+
+            <div id="tab-table" class="card" style="display:none;">
+                <h2>All Bookings</h2>
+                <div class="filter-bar">
+                    <select id="tbl-status" onchange="loadBookings()">
+                        <option value="">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="cancelled">Cancelled</option>
+                        <option value="inquiry">Inquiry</option>
+                    </select>
+                    <select id="tbl-property" onchange="loadBookings()">
+                        <option value="">All Properties</option>
+                    </select>
+                </div>
+                <div id="bookings-table-wrap">
+                    <p class="empty">Loading...</p>
+                </div>
+            </div>
+            <div id="tab-revenue" class="card" style="display:none;">
+                <h2>Revenue by Property</h2>
+                <div id="rev-grid" class="rev-grid"></div>
+
+                <h2 style="margin-top:1.5rem;">Outstanding Payments</h2>
+                <p style="font-size:0.8rem; color:var(--moss); margin-bottom:0.5rem;">Guests with unpaid or partially paid bookings</p>
+                <div id="outstanding-list" class="outstanding-list"></div>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <div class="card">
+                <h2>Quick Add Booking</h2>
+                <form id="add-form" onsubmit="return addBooking(event)">
+                    <div class="form-group">
+                        <label>Property</label>
+                        <select name="structure_id" id="add-prop" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Guest Name</label>
+                        <input type="text" name="guest_name" required placeholder="Guest name">
+                    </div>
+                    <div class="form-group">
+                        <label>Guest Email</label>
+                        <input type="email" name="guest_email" required placeholder="email@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Guest Phone</label>
+                        <input type="tel" name="guest_phone" placeholder="+506 ...">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Check-in</label>
+                            <input type="date" name="check_in" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Check-out</label>
+                            <input type="date" name="check_out" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Source</label>
+                            <select name="source">
+                                <option value="direct">Direct</option>
+                                <option value="partner">Partner</option>
+                                <option value="airbnb">Airbnb</option>
+                                <option value="vrbo">VRBO</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Partner Code</label>
+                            <input type="text" name="partner_code" placeholder="Optional">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea name="special_requests" rows="2" placeholder="Special requests, notes..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%;">Create Booking</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>Block Dates</h2>
+                <form id="block-form" onsubmit="return blockDates(event)">
+                    <div class="form-group">
+                        <label>Property</label>
+                        <select name="structure_id" id="block-prop" required></select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>From</label>
+                            <input type="date" name="start_date" required>
+                        </div>
+                        <div class="form-group">
+                            <label>To</label>
+                            <input type="date" name="end_date" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Reason</label>
+                        <input type="text" name="reason" placeholder="Maintenance, personal use...">
+                    </div>
+                    <button type="submit" class="btn btn-gold" style="width:100%;">Block Dates</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="pay-modal">
+        <div class="modal">
+            <button class="close-btn" onclick="closePayModal()">&times;</button>
+            <h3>Record Payment</h3>
+            <div id="pay-modal-guest" style="font-weight:500; margin-bottom:0.5rem;"></div>
+            <div id="pay-modal-amount" style="font-size:0.85rem; color:var(--moss); margin-bottom:1rem;"></div>
+            <form onsubmit="return submitPayment(event)">
+                <input type="hidden" id="pay-booking-id">
+                <div class="form-group">
+                    <label>Payment Status</label>
+                    <select id="pay-status" required>
+                        <option value="paid">Paid in Full</option>
+                        <option value="partial">Partial Payment</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Payment Method</label>
+                    <select id="pay-method">
+                        <option value="paypal">PayPal</option>
+                        <option value="venmo">Venmo</option>
+                        <option value="cash">Cash</option>
+                        <option value="bank_transfer">Bank Transfer</option>
+                        <option value="crypto">Crypto</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Notes (amount received, transaction ID, etc.)</label>
+                    <textarea id="pay-notes" rows="3" placeholder="e.g. $150 received via PayPal on Mar 26, txn #ABC123"></textarea>
+                </div>
+                <button type="submit" class="btn btn-gold" style="width:100%;">Confirm Payment</button>
+            </form>
+        </div>
+    </div>
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+<script>
+const API = '/api/bookings';
+let accommodations = [];
+let allBookings = [];
+let calendar = null;
+
+const COLORS = {
+    pending: '#f0ad4e',
+    confirmed: '#28a745',
+    cancelled: '#dc3545',
+    inquiry: '#17a2b8',
+    checked_in: '#6f42c1',
+    checked_out: '#6c757d',
+};
+
+async function init() {
+    const res = await fetch(API + '/accommodations');
+    const data = await res.json();
+    accommodations = data.accommodations || [];
+
+    ['add-prop', 'block-prop', 'cal-filter', 'tbl-property'].forEach(function(id) {
+        const sel = document.getElementById(id);
+        if (!sel) return;
+        const isFilter = id === 'cal-filter' || id === 'tbl-property';
+        if (!isFilter) sel.innerHTML = '';
+        accommodations.forEach(function(a) {
+            const opt = document.createElement('option');
+            opt.value = a.id;
+            opt.textContent = a.name;
+            sel.appendChild(opt);
+        });
+    });
+
+    await loadBookings();
+    initCalendar();
+}
+
+async function loadBookings() {
+    const status = document.getElementById('tbl-status').value;
+    const prop = document.getElementById('tbl-property').value;
+    let url = API + '/?limit=500';
+    if (status) url += '&status=' + status;
+    if (prop) url += '&structure_id=' + prop;
+
+    const res = await fetch(url);
+    const data = await res.json();
+    allBookings = data.bookings || [];
+
+    updateStats();
+    renderTable();
+    if (calendar) refreshCalendar();
+}
+
+function activeBookings() {
+    return allBookings.filter(function(b) { return b.status !== 'cancelled'; });
+}
+
+function updateStats() {
+    var active = activeBookings();
+    document.getElementById('stat-total').textContent = active.length;
+    document.getElementById('stat-confirmed').textContent = active.filter(function(b) { return b.status === 'confirmed'; }).length;
+    document.getElementById('stat-checkedin').textContent = active.filter(function(b) { return b.status === 'checked_in'; }).length;
+
+    var totalRev = 0, paid = 0, owed = 0;
+    active.forEach(function(b) {
+        totalRev += (b.total_amount || 0);
+        if (b.payment_status === 'paid') paid += (b.total_amount || 0);
+        else if (b.payment_status === 'partial') { paid += (b.total_amount || 0) * 0.5; owed += (b.total_amount || 0) * 0.5; }
+        else owed += (b.total_amount || 0);
+    });
+
+    document.getElementById('stat-revenue').textContent = '$' + totalRev.toLocaleString();
+    document.getElementById('stat-paid').textContent = '$' + Math.round(paid).toLocaleString();
+    document.getElementById('stat-owed').textContent = '$' + Math.round(owed).toLocaleString();
+}
+
+function renderTable() {
+    const wrap = document.getElementById('bookings-table-wrap');
+    if (allBookings.length === 0) {
+        wrap.innerHTML = '<p class="empty">No bookings yet. Use Quick Add to create one, or bookings will appear here when guests book via the website.</p>';
+        return;
+    }
+    const accMap = {};
+    accommodations.forEach(function(a) { accMap[a.id] = a.name; });
+
+    let html = '<table class="tbl"><thead><tr><th>Guest</th><th>Property</th><th>Dates</th><th>Rate</th><th>Total</th><th>Status</th><th>Payment</th><th>Notes</th><th>Actions</th></tr></thead><tbody>';
+    allBookings.forEach(function(b) {
+        var noteSnip = (b.notes || '').substring(0, 60);
+        if ((b.notes || '').length > 60) noteSnip += '...';
+        html += '<tr>' +
+            '<td><strong>' + b.guest_name + '</strong><br><span style="font-size:0.75rem;color:#7d9a6f;">' + (b.guest_phone || b.guest_email) + '</span></td>' +
+            '<td>' + (accMap[b.structure_id] || b.structure_id) + '</td>' +
+            '<td style="font-size:0.8rem;white-space:nowrap;">' + b.check_in + '<br>' + b.check_out + '<br><span style="color:var(--moss);">' + b.nights + ' nights</span></td>' +
+            '<td>$' + b.nightly_rate + '/nt</td>' +
+            '<td><strong>$' + (b.total_amount || 0).toLocaleString() + '</strong></td>' +
+            '<td><span class="badge ' + b.status + '">' + b.status.replace('_', ' ') + '</span></td>' +
+            '<td><span class="badge ' + b.payment_status + '">' + b.payment_status + '</span></td>' +
+            '<td style="font-size:0.75rem; max-width:150px; color:var(--moss);">' + noteSnip + '</td>' +
+            '<td class="actions" style="flex-wrap:wrap;">' +
+                (b.status === 'pending' ? '<button class="btn btn-sm btn-primary" onclick="updateBooking(\'' + b.id + '\',{status:\'confirmed\'})">Confirm</button>' : '') +
+                (b.status === 'confirmed' ? '<button class="btn btn-sm btn-primary" onclick="updateBooking(\'' + b.id + '\',{status:\'checked_in\'})">Check In</button>' : '') +
+                (b.status === 'checked_in' ? '<button class="btn btn-sm" style="background:var(--moss);color:white;" onclick="updateBooking(\'' + b.id + '\',{status:\'checked_out\'})">Check Out</button>' : '') +
+                (b.payment_status !== 'paid' && b.status !== 'cancelled' ? '<button class="btn btn-sm btn-gold" onclick="openPayModal(\'' + b.id + '\')">Payment</button>' : '') +
+                (b.status !== 'cancelled' ? '<button class="btn btn-sm btn-danger" onclick="if(confirm(\'Cancel this booking?\'))updateBooking(\'' + b.id + '\',{status:\'cancelled\'})">Cancel</button>' : '') +
+            '</td></tr>';
+    });
+    html += '</tbody></table>';
+    wrap.innerHTML = html;
+}
+
+function initCalendar() {
+    const el = document.getElementById('admin-calendar');
+    calendar = new FullCalendar.Calendar(el, {
+        initialView: 'dayGridMonth',
+        headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,dayGridWeek' },
+        height: 'auto',
+        events: getCalendarEvents(),
+        eventClick: function(info) {
+            alert('Booking: ' + info.event.title + '\n' + info.event.extendedProps.guest + '\nStatus: ' + info.event.extendedProps.status);
+        }
+    });
+    calendar.render();
+}
+
+function getCalendarEvents() {
+    const accMap = {};
+    accommodations.forEach(function(a) { accMap[a.id] = a.name; });
+    const filterProp = document.getElementById('cal-filter').value;
+
+    return allBookings
+        .filter(function(b) { return b.status !== 'cancelled' && (!filterProp || b.structure_id === filterProp); })
+        .map(function(b) {
+            return {
+                title: (accMap[b.structure_id] || b.structure_id) + ' - ' + b.guest_name,
+                start: b.check_in,
+                end: b.check_out,
+                color: COLORS[b.status] || '#6c757d',
+                extendedProps: { guest: b.guest_name, status: b.status }
+            };
+        });
+}
+
+function refreshCalendar() {
+    if (!calendar) return;
+    calendar.removeAllEvents();
+    getCalendarEvents().forEach(function(e) { calendar.addEvent(e); });
+}
+
+function switchTab(tab) {
+    document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+    ['calendar', 'table', 'revenue'].forEach(function(t) {
+        var el = document.getElementById('tab-' + t);
+        if (el) el.style.display = tab === t ? 'block' : 'none';
+    });
+    event.target.classList.add('active');
+    if (tab === 'table') renderTable();
+    if (tab === 'revenue') renderRevenue();
+    if (tab === 'calendar' && calendar) { calendar.updateSize(); refreshCalendar(); }
+}
+
+function renderRevenue() {
+    var active = activeBookings();
+    var accMap = {};
+    accommodations.forEach(function(a) { accMap[a.id] = a.name; });
+
+    var byProp = {};
+    active.forEach(function(b) {
+        var pid = b.structure_id;
+        if (!byProp[pid]) byProp[pid] = { name: accMap[pid] || pid, total: 0, paid: 0, owed: 0, partial: 0, bookings: 0, nights: 0 };
+        var p = byProp[pid];
+        p.bookings++;
+        p.nights += b.nights;
+        p.total += (b.total_amount || 0);
+        if (b.payment_status === 'paid') p.paid += (b.total_amount || 0);
+        else if (b.payment_status === 'partial') { p.partial += (b.total_amount || 0); }
+        else p.owed += (b.total_amount || 0);
+    });
+
+    var grid = document.getElementById('rev-grid');
+    var html = '';
+    Object.keys(byProp).forEach(function(pid) {
+        var p = byProp[pid];
+        html += '<div class="rev-card">' +
+            '<div class="prop-name">' + p.name + '</div>' +
+            '<div class="rev-row"><span>Bookings</span><span>' + p.bookings + '</span></div>' +
+            '<div class="rev-row"><span>Total Nights</span><span>' + p.nights + '</span></div>' +
+            '<div class="rev-row"><span class="rev-paid">Paid</span><span class="rev-paid">$' + p.paid.toLocaleString() + '</span></div>' +
+            (p.partial > 0 ? '<div class="rev-row"><span class="rev-partial">Partial</span><span class="rev-partial">$' + p.partial.toLocaleString() + '</span></div>' : '') +
+            (p.owed > 0 ? '<div class="rev-row"><span class="rev-owed">Outstanding</span><span class="rev-owed">$' + p.owed.toLocaleString() + '</span></div>' : '') +
+            '<div class="rev-row total"><span>Total Revenue</span><span>$' + p.total.toLocaleString() + '</span></div>' +
+            '</div>';
+    });
+    grid.innerHTML = html || '<p class="empty">No revenue data yet.</p>';
+
+    var outstanding = active.filter(function(b) { return b.payment_status !== 'paid'; });
+    var oList = document.getElementById('outstanding-list');
+    if (outstanding.length === 0) {
+        oList.innerHTML = '<p class="empty" style="padding:1rem;">All payments collected!</p>';
+        return;
+    }
+    var oHtml = '';
+    outstanding.forEach(function(b) {
+        oHtml += '<div class="outstanding-item">' +
+            '<div class="guest-info"><strong>' + b.guest_name + '</strong><small>' + (accMap[b.structure_id] || b.structure_id) + ' &middot; ' + b.check_in + ' to ' + b.check_out + '</small></div>' +
+            '<div class="amount">$' + (b.total_amount || 0).toLocaleString() + '</div>' +
+            '<span class="badge ' + b.payment_status + '">' + b.payment_status + '</span>' +
+            '&nbsp;<button class="btn btn-sm btn-gold" onclick="openPayModal(\'' + b.id + '\')">Record Payment</button>' +
+            '</div>';
+    });
+    oList.innerHTML = oHtml;
+}
+
+function openPayModal(bookingId) {
+    var b = allBookings.find(function(x) { return x.id === bookingId; });
+    if (!b) return;
+    var accMap = {};
+    accommodations.forEach(function(a) { accMap[a.id] = a.name; });
+
+    document.getElementById('pay-booking-id').value = bookingId;
+    document.getElementById('pay-modal-guest').textContent = b.guest_name + ' \u2014 ' + (accMap[b.structure_id] || b.structure_id);
+    document.getElementById('pay-modal-amount').textContent = b.check_in + ' to ' + b.check_out + ' \u00b7 ' + b.nights + ' nights \u00b7 $' + (b.total_amount || 0) + ' total';
+    document.getElementById('pay-notes').value = '';
+    document.getElementById('pay-modal').classList.add('active');
+}
+
+function closePayModal() {
+    document.getElementById('pay-modal').classList.remove('active');
+}
+
+async function submitPayment(e) {
+    e.preventDefault();
+    var bookingId = document.getElementById('pay-booking-id').value;
+    var status = document.getElementById('pay-status').value;
+    var method = document.getElementById('pay-method').value;
+    var notes = document.getElementById('pay-notes').value;
+
+    var now = new Date().toISOString().split('T')[0];
+    var noteText = '[' + now + '] Payment ' + status + ' via ' + method;
+    if (notes) noteText += ': ' + notes;
+
+    var b = allBookings.find(function(x) { return x.id === bookingId; });
+    var existingNotes = b ? (b.notes || '') : '';
+    if (existingNotes) noteText = existingNotes + '\n' + noteText;
+
+    await updateBooking(bookingId, { payment_status: status, notes: noteText });
+    closePayModal();
+}
+
+async function addBooking(e) {
+    e.preventDefault();
+    const form = e.target;
+    const fd = new FormData(form);
+    const body = {
+        structure_id: fd.get('structure_id'),
+        guest_name: fd.get('guest_name'),
+        guest_email: fd.get('guest_email'),
+        guest_phone: fd.get('guest_phone') || '',
+        check_in: fd.get('check_in'),
+        check_out: fd.get('check_out'),
+        source: fd.get('source'),
+        partner_code: fd.get('partner_code') || null,
+        special_requests: fd.get('special_requests') || '',
+        discount_percent: 0,
+    };
+
+    try {
+        const res = await fetch(API + '/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+        if (res.ok) {
+            form.reset();
+            await loadBookings();
+            alert('Booking created!');
+        } else {
+            const err = await res.json();
+            alert('Error: ' + (err.detail || 'Failed to create booking'));
+        }
+    } catch (err) {
+        alert('Network error: ' + err.message);
+    }
+    return false;
+}
+
+async function blockDates(e) {
+    e.preventDefault();
+    const form = e.target;
+    const fd = new FormData(form);
+    const body = {
+        structure_id: fd.get('structure_id'),
+        start_date: fd.get('start_date'),
+        end_date: fd.get('end_date'),
+        reason: fd.get('reason') || '',
+    };
+
+    try {
+        const res = await fetch(API + '/blocked', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+        if (res.ok) {
+            form.reset();
+            alert('Dates blocked!');
+        } else {
+            const err = await res.json();
+            alert('Error: ' + (err.detail || 'Failed'));
+        }
+    } catch (err) {
+        alert('Network error: ' + err.message);
+    }
+    return false;
+}
+
+async function updateBooking(id, updates) {
+    try {
+        const res = await fetch(API + '/' + id, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updates)
+        });
+        if (res.ok) {
+            await loadBookings();
+        } else {
+            alert('Failed to update booking');
+        }
+    } catch (err) {
+        alert('Network error: ' + err.message);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Zen Pass</title>
+<style>
+:root {
+  --bg: #faf9f5; --fg: #1a2e1a; --accent: #4a7c59; --accent2: #8fbc8f;
+  --card: #f0f4ec; --border: #d4ddd0; --gold: #c9a84c;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'Georgia', serif; background: var(--bg); color: var(--fg); min-height:100vh; display:flex; flex-direction:column; align-items:center; }
+.pass-card {
+  width: 90%; max-width: 400px; margin: 2rem auto; background: white;
+  border-radius: 16px; overflow: hidden;
+  box-shadow: 0 8px 40px rgba(26,46,26,0.12);
+}
+.pass-header {
+  background: linear-gradient(135deg, #1a2e1a 0%, #2d4a2d 100%);
+  color: var(--bg); padding: 1.5rem; text-align:center;
+}
+.pass-header h1 { font-size: 1.6rem; font-weight: 400; letter-spacing: 0.08em; }
+.pass-header .subtitle { font-size: 0.8rem; opacity: 0.7; margin-top: 0.3rem; text-transform: uppercase; letter-spacing: 0.1em; }
+.pass-qr { text-align:center; padding: 1.5rem; background: white; }
+.pass-qr img { width: 160px; height: 160px; border-radius: 8px; }
+.pass-details { padding: 0 1.5rem 1.5rem; }
+.pass-row { display:flex; justify-content:space-between; padding: 0.6rem 0; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
+.pass-row:last-child { border-bottom: none; }
+.pass-row .label { color: #777; }
+.pass-row .value { font-weight: 600; }
+.status-badge {
+  display:inline-block; padding: 0.25rem 0.75rem; border-radius: 20px;
+  font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+}
+.status-paid { background: #e8f5e9; color: #2e7d32; }
+.status-pending { background: #fff8e1; color: #f57f17; }
+.status-checkedin { background: #e3f2fd; color: #1565c0; }
+.pass-footer { text-align:center; padding: 1rem 1.5rem 1.5rem; }
+.pass-footer p { font-size: 0.75rem; color: #999; }
+.pass-id { font-family: monospace; font-size: 1.1rem; letter-spacing: 0.15em; color: var(--accent); margin-top: 0.5rem; }
+.topup-section { width: 90%; max-width: 400px; margin: 0 auto 2rem; text-align:center; }
+.topup-section a {
+  display:inline-block; padding: 0.7rem 1.5rem; border: 2px solid var(--accent);
+  color: var(--accent); text-decoration:none; border-radius: 8px; font-size: 0.95rem;
+  transition: all 0.2s;
+}
+.topup-section a:hover { background: var(--accent); color: white; }
+.loading { text-align:center; padding: 4rem 2rem; }
+.loading p { font-size: 1.1rem; color: #888; }
+.paid-banner {
+  background: #e8f5e9; padding: 1rem; text-align:center; font-size: 0.95rem;
+  color: #2e7d32; display:none;
+}
+</style>
+</head>
+<body>
+
+<div class="paid-banner" id="paid-banner">Payment received. Your Zen Pass is confirmed.</div>
+
+<div class="loading" id="loading"><p>Loading your Zen Pass...</p></div>
+
+<div class="pass-card" id="pass-card" style="display:none;">
+  <div class="pass-header">
+    <h1>ZEN PASS</h1>
+    <div class="subtitle">Zen Village Costa Rica</div>
+  </div>
+  <div class="pass-qr">
+    <img id="qr-img" src="" alt="Your QR Code">
+  </div>
+  <div class="pass-details">
+    <div class="pass-row"><span class="label">Name</span><span class="value" id="p-name"></span></div>
+    <div class="pass-row"><span class="label">Status</span><span class="value" id="p-status"></span></div>
+    <div class="pass-row"><span class="label">Amount</span><span class="value" id="p-amount"></span></div>
+    <div class="pass-row" id="checkin-row" style="display:none;"><span class="label">Checked In</span><span class="value" id="p-checkin"></span></div>
+  </div>
+  <div class="pass-footer">
+    <div class="pass-id" id="p-id"></div>
+    <p>Show this pass at arrival for check-in</p>
+  </div>
+</div>
+
+<div class="topup-section" id="topup-section" style="display:none;">
+  <a href="/pass">Add Credits to Your Pass</a>
+</div>
+
+<script>
+const passId = window.location.pathname.split('/').pop();
+const params = new URLSearchParams(window.location.search);
+
+if (params.get('paid') === '1') {
+  document.getElementById('paid-banner').style.display = 'block';
+}
+
+async function loadPass() {
+  try {
+    const r = await fetch('/api/pass/' + passId);
+    if (!r.ok) throw new Error('Not found');
+    const p = await r.json();
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('pass-card').style.display = 'block';
+    document.getElementById('topup-section').style.display = 'block';
+
+    document.getElementById('qr-img').src = p.qr_url;
+    document.getElementById('p-name').textContent = p.name;
+    document.getElementById('p-id').textContent = p.id;
+    document.getElementById('p-amount').textContent = '$' + (p.amount_paid || 0).toFixed(2);
+
+    const statusEl = document.getElementById('p-status');
+    if (p.checked_in) {
+      statusEl.innerHTML = '<span class="status-badge status-checkedin">Checked In</span>';
+      document.getElementById('checkin-row').style.display = 'flex';
+      document.getElementById('p-checkin').textContent = new Date(p.checked_in_at).toLocaleString();
+    } else if (p.payment_status === 'paid') {
+      statusEl.innerHTML = '<span class="status-badge status-paid">Confirmed</span>';
+    } else {
+      statusEl.innerHTML = '<span class="status-badge status-pending">Pending</span>';
+    }
+
+    document.title = 'Zen Pass — ' + p.name;
+  } catch(e) {
+    document.getElementById('loading').innerHTML = '<p>Pass not found. <a href="/pass">Get a new pass</a></p>';
+  }
+}
+
+loadPass();
+</script>
+</body>
+</html>

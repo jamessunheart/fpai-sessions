@@ -1,0 +1,19 @@
+[Unit]
+Description=Sunheart Brain — Telegram approval bot (long-poller for @Adamclaw_bot callbacks)
+After=network-online.target sh-brain-index.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/sh-brain-src
+EnvironmentFile=/etc/sh-brain/curator.env
+ExecStart=/opt/sh-brain-src/.venv/bin/python -m curator tgbot
+Restart=always
+RestartSec=5
+# Keep state across restarts
+StateDirectory=sh-brain
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,22 @@
+# SPEC_proof-river
+
+Auto-log every merged build to a proof ledger so "what shipped" is always visible — the Proof River (return reality). SAFE-AUTO (local repo, append-only log, self-contained — no edits to existing files).
+
+## Build
+1. **`tools/proof/log_proof.sh`** — default mode `--sync`: read `core/BUILD/REGISTRY.json`, and for every `active_builds` entry with `status: "merged"` that is NOT already in `core/BUILD/PROOF_LOG.md`, append a one-line proof entry: `- YYYY-MM-DD · <id> · <branch> · merged · spec:<spec>`. Create `PROOF_LOG.md` (with a `# Proof Log` header) if absent. Idempotent — running twice adds nothing new (match on `<id>`). Use `jq` if available; degrade gracefully (print a notice, exit 0) if `jq` or the registry is missing.
+2. No other modes required. No edits to any existing file — this is a standalone reconciler.
+
+## Done / Proof
+- `bash tools/proof/log_proof.sh` appends merged builds to `core/BUILD/PROOF_LOG.md` (creating it if needed) and prints how many it logged.
+- A second immediate run logs 0 new (no duplicates).
+
+## Files
+- **ALLOWED:** `tools/proof/log_proof.sh` (new) · `core/BUILD/PROOF_LOG.md` (create/append) · `tools/proof/test_log_proof.sh` (new)
+- **FORBIDDEN:** any prod server (162/198/209) · secrets · `main` branch · `SERVICES/` · editing any other existing file
+
+## Tests
+- **`tools/proof/test_log_proof.sh`** — point the script at a temp REGISTRY (`REGISTRY=...` env or copy) with one `merged` entry; assert one line is appended; assert a second run appends none. Print `RESULT: N passed, M failed`; exit non-zero on failure. (If the script can't be redirected to a temp registry, add a small `PROOF_REGISTRY` env override to it — that counts as part of this spec's new file, not an edit to an existing one.)
+
+## Safety / Rollback
+- Append-only, read-only on the registry. Reversible: delete the script + the log.
+- Tagged SAFE-AUTO.

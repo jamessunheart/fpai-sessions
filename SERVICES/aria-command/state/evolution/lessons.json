@@ -1,0 +1,79 @@
+{
+  "config_port_mismatch": {
+    "id": "config_port_mismatch",
+    "issue_pattern": "(port|8600|8601|connection refused)",
+    "root_cause": "Port mismatch between config and actual service",
+    "fix_type": "config",
+    "fix_details": "Check actual service port and update URL config to match",
+    "success_count": 5,
+    "failure_count": 0,
+    "first_seen": "2025-12-27T14:42:58.293187",
+    "last_seen": ""
+  },
+  "missing_api_key": {
+    "id": "missing_api_key",
+    "issue_pattern": "(missing|not set|API.?KEY|invalid.*key)",
+    "root_cause": "Required API key not in environment",
+    "fix_type": "config",
+    "fix_details": "Check if key exists in other services, propagate if found",
+    "success_count": 3,
+    "failure_count": 0,
+    "first_seen": "2025-12-27T14:42:58.293835",
+    "last_seen": ""
+  },
+  "health_not_functional": {
+    "id": "health_not_functional",
+    "issue_pattern": "(health.*pass.*but|functional.*fail|false.*positive)",
+    "root_cause": "Health endpoint doesn't verify actual functionality",
+    "fix_type": "verification",
+    "fix_details": "Add functional endpoint checks beyond /health",
+    "success_count": 4,
+    "failure_count": 0,
+    "first_seen": "2025-12-27T14:42:58.294361",
+    "last_seen": ""
+  },
+  "accumulated_state": {
+    "id": "accumulated_state",
+    "issue_pattern": "(recurring|accumulated|old.*issue|stale)",
+    "root_cause": "State not cleaned up over time",
+    "fix_type": "behavior",
+    "fix_details": "Implement decay/cleanup for old state data",
+    "success_count": 2,
+    "failure_count": 0,
+    "first_seen": "2025-12-27T14:42:58.294914",
+    "last_seen": ""
+  },
+  "alert_spam": {
+    "id": "alert_spam",
+    "issue_pattern": "(too many alert|spam|repeated alert)",
+    "root_cause": "Missing or insufficient alert throttling",
+    "fix_type": "alert",
+    "fix_details": "Add cooldown, threshold, and smart suppression",
+    "success_count": 5,
+    "failure_count": 0,
+    "first_seen": "2025-12-27T14:42:58.295371",
+    "last_seen": ""
+  },
+  "self_reference_loop": {
+    "id": "self_reference_loop",
+    "issue_pattern": "(check.*itself|recursive|loop|self.*check)",
+    "root_cause": "Service checking its own status creates loops",
+    "fix_type": "verification",
+    "fix_details": "Remove or externalize self-referential checks",
+    "success_count": 2,
+    "failure_count": 0,
+    "first_seen": "2025-12-27T14:42:58.295829",
+    "last_seen": ""
+  },
+  "runaway_resources": {
+    "id": "runaway_resources",
+    "issue_pattern": "(GPU|cost|runaway|auto.*rent|budget)",
+    "root_cause": "Autonomous resource acquisition without limits",
+    "fix_type": "behavior",
+    "fix_details": "Add budget limits, circuit breakers, and approval gates",
+    "success_count": 3,
+    "failure_count": 0,
+    "first_seen": "2025-12-27T14:42:58.296294",
+    "last_seen": ""
+  }
+}

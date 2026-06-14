@@ -1,0 +1,53 @@
+---
+description: Web deployment verification — never claim "done" without testing live PUBLIC URLs (not 127.0.0.1)
+globs: nginx/**,**/*.conf,**/sites-*/**,infra/nginx/**,**/web*/**,**/public/**,**/main_lite.py,**/app/zen_pass.py,**/peace*.html
+alwaysApply: false
+---
+
+# Web Deployment Verification
+
+**Never declare a web deployment complete without verification.** Failure to verify = process violation.
+
+## Critical rule (added 2026-05-04 after the silent-301 incident)
+
+**Smoke tests MUST hit the public canonical URL, not `http://127.0.0.1:PORT`.**
+
+Localhost requests bypass nginx, HSTS, redirects, and CDN — exactly the layers most likely to be misconfigured. A 200 from `127.0.0.1:8770/peace` does not prove `https://zenvillagecr.com/peace` works for users. The 2026-05-04 World Peace Weekend bug was a stale nginx 301 rewrite that hid the new flow from the public for 2 days while every localhost test passed.
+
+## Before saying "deployed"
+
+1. Hit every changed/added route through the **public URL** with both `-I` (status) and a body sniff:
+   ```bash
+   for url in https://domain.com/ https://domain.com/peace https://domain.com/api/pass/rails; do
+     code=$(curl -s -o /dev/null -w "%{http_code}" "$url")
+     redir=$(curl -s -o /dev/null -w "%{redirect_url}" "$url")
+     echo "$code  $url${redir:+  → $redir}"
+   done
+   ```
+2. If any URL returns **301/302**, inspect the destination:
+   - Is it the intended target (canonical-domain redirect, www→apex, http→https)?
+   - Or is it a stale rewrite to a legacy domain (the failure mode that bit us)?
+3. Run the regression test if one exists for the affected page:
+   ```bash
+   /opt/fpai/tests/test_public_url_peace.sh   # /peace flow
+   ```
+4. Present the result explicitly. Example:
+   ```
+   Verified working from public internet:
+     GET  https://zenvillagecr.com/peace                   → 200 (contains expected tiers)
+     GET  https://zenvillagecr.com/api/pass/rails          → 200 (6 rails)
+     GET  https://zenvillagecr.com/api/pass/quick-checkout → 302 → checkout.stripe.com  ✓
+   ```
+
+If any URL is wrong (302 to legacy, 404, body missing expected content), fix it before reporting completion.
+
+## When you change nginx
+
+Always run on the server:
+```bash
+nginx -t && systemctl reload nginx
+```
+Then re-run the public-URL smoke loop above. Editing nginx without testing through the public URL = same bug class.
+
+Related: `@docs/coordination/MEMORY/WEB_DEPLOYMENT_PROTOCOL.md`,
+`/opt/fpai/learnings.json` entry dated 2026-05-04.

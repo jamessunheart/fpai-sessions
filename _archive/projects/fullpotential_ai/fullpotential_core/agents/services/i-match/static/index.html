@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I MATCH - AI Matching Experiment for Financial Advisors</title>
+    <meta name="description" content="Testing if AI can match financial advisors to clients better than Google. Honest experiment. Early stage. Free to try. Claude AI-powered matching.">
+
+    <!-- SEO Enhancement - Session #15 Activation Catalyst -->
+    <meta name="keywords" content="AI financial advisor matching, find financial advisor, AI compatibility matching, financial planning, wealth management">
+    <meta name="author" content="Full Potential AI">
+    <link rel="canonical" href="http://198.54.123.234:8401" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://198.54.123.234:8401">
+    <meta property="og:title" content="I MATCH - AI Financial Advisor Matching Experiment">
+    <meta property="og:description" content="Testing if AI can understand compatibility and match you to financial advisors better than Google. Honest experiment. Free to try.">
+    <meta property="og:image" content="http://198.54.123.234:8401/static/og-image.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="http://198.54.123.234:8401">
+    <meta property="twitter:title" content="I MATCH - AI Financial Advisor Matching Experiment">
+    <meta property="twitter:description" content="Testing if AI can understand compatibility and match you to financial advisors better than Google.">
+    <meta property="twitter:image" content="http://198.54.123.234:8401/static/og-image.png">
+
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "name": "I MATCH - AI Financial Advisor Matching",
+      "description": "AI-powered matching service connecting clients to compatible financial advisors",
+      "provider": {
+        "@type": "Organization",
+        "name": "Full Potential AI"
+      },
+      "serviceType": "Financial Advisor Matching",
+      "areaServed": "United States",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD",
+        "description": "Free for clients - advisors pay commission only on successful matches"
+      }
+    }
+    </script>
+
+    <!-- Simple Analytics - Privacy-first tracking -->
+    <script>
+    // Simple page view tracking
+    if (typeof window !== 'undefined') {
+        const trackPageView = () => {
+            try {
+                fetch('/api/analytics/pageview', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        page: window.location.pathname,
+                        referrer: document.referrer,
+                        timestamp: new Date().toISOString()
+                    })
+                }).catch(() => {});  // Silent fail if analytics endpoint not ready
+            } catch(e) {}
+        };
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', trackPageView);
+        } else {
+            trackPageView();
+        }
+    }
+    </script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .experiment-badge {
+            background: #fff3cd;
+            color: #856404;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            border-bottom: 2px solid #ffc107;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .hero .subtitle {
+            font-size: 20px;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+
+        .hero .honest-pitch {
+            max-width: 700px;
+            margin: 0 auto 30px;
+            font-size: 16px;
+            line-height: 1.8;
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 16px 35px;
+            font-size: 18px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+            margin: 10px;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .cta-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        .section-title {
+            font-size: 32px;
+            margin-bottom: 30px;
+            color: #2d3748;
+            text-align: center;
+        }
+
+        .what-testing {
+            background: #f8f9fa;
+        }
+
+        .testing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .testing-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .testing-card h3 {
+            color: #667eea;
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+
+        .testing-card p {
+            color: #666;
+            line-height: 1.7;
+        }
+
+        .current-status {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 8px;
+        }
+
+        .current-status h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .current-status ul {
+            color: #856404;
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+
+        .how-it-works {
+            background: white;
+        }
+
+        .steps {
+            display: grid;
+            gap: 20px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .step {
+            display: flex;
+            align-items: start;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            flex-shrink: 0;
+            margin-right: 15px;
+        }
+
+        .step-content h4 {
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .step-content p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .honest-disclosure {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 8px;
+        }
+
+        .honest-disclosure h4 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
+
+        .honest-disclosure ul {
+            color: #2e7d32;
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+
+        .question-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 50px 20px;
+            text-align: center;
+        }
+
+        .question-section h3 {
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .question-section p {
+            font-size: 18px;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            opacity: 0.95;
+        }
+
+        .ai-footer {
+            text-align: center;
+            padding: 30px 20px;
+            background: #f8f9fa;
+            color: #666;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+    </style>
+</head>
+<body>
+    <!-- Experiment Badge -->
+    <div class="experiment-badge">
+        🔬 <strong>Experimental:</strong> Testing if AI can match people to financial advisors better than Google. Early stage. Might work, might not.
+    </div>
+
+    <!-- Hero -->
+    <section class="hero">
+        <h1>I MATCH</h1>
+        <div class="subtitle">AI Matching Experiment for Financial Advisors</div>
+
+        <div class="honest-pitch">
+            <strong>Full transparency:</strong> I built this with Claude AI to test if deep compatibility matching works better than traditional lead gen. Currently zero customers (literally just launched). Testing if AI can actually understand what you need and match you to advisors who think the same way. Might be brilliant, might be naive. Let's find out together.
+        </div>
+
+        <div>
+            <a href="#get-matched" class="cta-button">Try the AI Matching (Free)</a>
+            <a href="contributors.html" class="cta-button" style="background: #28a745; color: white;">💎 Help Launch & Earn 10-20%</a>
+            <a href="#how-it-works" class="cta-button cta-secondary">See How It Works</a>
+        </div>
+    </section>
+
+    <!-- What We're Testing -->
+    <section class="what-testing">
+        <div class="container">
+            <h2 class="section-title">What We're Testing</h2>
+
+            <div class="testing-grid">
+                <div class="testing-card">
+                    <h3>🤔 The Hypothesis</h3>
+                    <p>
+                        Can AI understand compatibility (values, philosophy, communication style) well enough to make better matches than just Googling "financial advisor near me"?
+                    </p>
+                </div>
+
+                <div class="testing-card">
+                    <h3>🎯 The Approach</h3>
+                    <p>
+                        Deep AI analysis of your goals, values, personality, and risk tolerance. Then match to advisors with compatible philosophy and approach. Theory: Better fit = easier conversation, better advice.
+                    </p>
+                </div>
+
+                <div class="testing-card">
+                    <h3>💡 Why This Might Work</h3>
+                    <p>
+                        Most lead gen is spray-and-pray. We're betting that AI can read between the lines—understand what you actually need versus what you say you need—and find the right human match.
+                    </p>
+                </div>
+            </div>
+
+            <div class="current-status">
+                <h4>📊 Current Status (Honest Update)</h4>
+                <ul>
+                    <li><strong>Service:</strong> Live and working at http://198.54.123.234:8401</li>
+                    <li><strong>Customers:</strong> Zero (launching now)</li>
+                    <li><strong>Advisors:</strong> Recruiting first 10-20 San Francisco advisors</li>
+                    <li><strong>Matches Made:</strong> Testing with real people starting this week</li>
+                    <li><strong>Success Rate:</strong> Unknown (that's what we're testing!)</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <h2 class="section-title">How the AI Matching Works</h2>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Tell Us What You Need (5 min)</h4>
+                        <p>AI asks about your financial goals, values, risk tolerance, communication preferences. We go deeper than typical intake forms.</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>AI Analyzes Compatibility</h4>
+                        <p>Claude AI (yes, that's the AI we use—full transparency) analyzes your profile against advisors' philosophies, specialties, and approaches.</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Get Your Top Matches (Free)</h4>
+                        <p>We send you 1-3 advisors we think are the best fit for YOU specifically. With explanation of why we matched you.</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Talk to Them (Your Choice)</h4>
+                        <p>Reach out if you want. No pressure. Totally free for you. Advisors only pay commission if you become their client.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="honest-disclosure">
+                <h4>💡 What You Should Know (Honesty Principles)</h4>
+                <ul>
+                    <li><strong>AI Disclosure:</strong> Claude AI built this system and does the matching</li>
+                    <li><strong>Free for Customers:</strong> You pay nothing. Advisors pay 20% commission only when you become their client.</li>
+                    <li><strong>No Guarantees:</strong> We think the match will be better, but we're testing this hypothesis</li>
+                    <li><strong>Early Stage:</strong> You'd be among the first testers. That means honest feedback is super valuable to us.</li>
+                    <li><strong>Data Privacy:</strong> Your data used only for matching, never sold</li>
+                    <li><strong>Might Not Work:</strong> This is an experiment. If it doesn't add value, we'll learn and pivot.</li>
+                </ul>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="#get-matched" class="cta-button">Try AI Matching (5 minutes, free)</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Question -->
+    <section class="question-section">
+        <div class="container">
+            <h3>The Bigger Question We're Exploring</h3>
+            <p>
+                Can AI actually understand human compatibility well enough to make meaningful matches? Or is this just tech hype applied to financial advice?
+            </p>
+            <p>
+                No idea. Let's find out together.
+            </p>
+            <p style="font-size: 14px; margin-top: 20px;">
+                Worth 5 minutes to test the concept? Worst case: You learn what doesn't work. Best case: You find an advisor who actually gets you.
+            </p>
+            <a href="#get-matched" class="cta-button">Start the Experiment →</a>
+        </div>
+    </section>
+
+    <!-- Email Capture - Added by Session #15 for lead generation -->
+    <section class="container" style="background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); padding: 40px 20px; border-radius: 12px; margin: 60px auto;">
+        <div style="max-width: 600px; margin: 0 auto; text-align: center;">
+            <h3 style="font-size: 24px; margin-bottom: 15px; color: #333;">📧 Not Ready to Match Yet?</h3>
+            <p style="margin-bottom: 25px; color: #666; line-height: 1.6;">
+                Get our free guide: <strong>"5 Questions to Ask Before Choosing a Financial Advisor"</strong><br>
+                <span style="font-size: 14px;">(Plus updates as we learn what works in AI matching)</span>
+            </p>
+            <form id="email-capture-form" style="display: flex; gap: 10px; max-width: 500px; margin: 0 auto; flex-wrap: wrap; justify-content: center;">
+                <input
+                    type="email"
+                    id="capture-email"
+                    placeholder="your@email.com"
+                    required
+                    style="flex: 1; min-width: 250px; padding: 14px 20px; border: 2px solid #667eea; border-radius: 8px; font-size: 16px;"
+                />
+                <button
+                    type="submit"
+                    style="padding: 14px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 16px;"
+                >
+                    Get Free Guide →
+                </button>
+            </form>
+            <p style="margin-top: 15px; font-size: 12px; color: #999;">
+                No spam. Unsubscribe anytime. We'll share honest updates about the experiment.
+            </p>
+            <div id="email-success" style="display: none; margin-top: 20px; padding: 15px; background: #e8f5e9; color: #2e7d32; border-radius: 8px; font-weight: 500;">
+                ✅ Thanks! Check your email for the guide.
+            </div>
+        </div>
+    </section>
+
+    <script>
+    // Email capture handler - Session #15 lead generation
+    document.getElementById('email-capture-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('capture-email').value;
+        try {
+            const response = await fetch('/api/lead/capture', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    email,
+                    source: 'landing_page',
+                    interest: 'guide',
+                    timestamp: new Date().toISOString()
+                })
+            });
+            if (response.ok) {
+                document.getElementById('email-capture-form').style.display = 'none';
+                document.getElementById('email-success').style.display = 'block';
+            } else {
+                // Silent fail - don't block user experience
+                document.getElementById('email-success').innerHTML = '⚠️ Something went wrong. Try emailing james@fullpotential.ai directly.';
+                document.getElementById('email-success').style.display = 'block';
+                document.getElementById('email-success').style.background = '#fff3cd';
+                document.getElementById('email-success').style.color = '#856404';
+            }
+        } catch(e) {
+            // Silent fail
+        }
+    });
+    </script>
+
+    <!-- Get Matched Form -->
+    <section class="container" id="get-matched">
+        <h2 class="section-title">Get Matched to Your Ideal Financial Advisor</h2>
+
+        <div style="max-width: 600px; margin: 0 auto; background: #f8f9fa; padding: 40px; border-radius: 12px; text-align: center;">
+            <p style="margin-bottom: 20px; color: #666;">
+                Ready to test if AI matching works? Fill out the intake form and we'll analyze your profile.
+            </p>
+            <a href="/api/customer/intake" class="cta-button">Start Intake Form →</a>
+            <p style="margin-top: 15px; font-size: 13px; color: #999;">
+                Takes 5 minutes • Completely free • No commitment
+            </p>
+        </div>
+    </section>
+
+    <!-- AI Footer -->
+    <footer class="ai-footer">
+        🤖 <strong>AI Transparency:</strong> This website was built with Claude AI. We're exploring what "AI + human collaboration" looks like in practice.<br>
+        The matching algorithm uses Claude AI. The intake forms were designed by humans and AI together.<br>
+        <br>
+        Built as part of Full Potential AI - Testing sustainable AI research funding through value delivery.<br>
+        <a href="/support" style="color: #667eea;">Support the Experiment</a> |
+        <a href="mailto:james@fullpotential.ai" style="color: #667eea;">Contact</a>
+    </footer>
+</body>
+</html>

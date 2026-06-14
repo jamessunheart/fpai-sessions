@@ -1,0 +1,54 @@
+# FPAI Cockpit Project Memory
+
+## Purpose
+FPAI_Cockpit is the main local project for Full Potential AI / OS work.
+
+## Current priorities
+- Preserve project files and avoid destructive cleanup.
+- Keep AI-first execution, routing, memory, and voice systems coherent.
+- Watch large folders: voice/models, .git, backups, .claude/worktrees, node_modules.
+
+## Mission snapshot
+
+*SSOT: `core/STATE/NOW.md` (founder intent wins over other state files). Refresh after major priority shifts.*
+
+| Strand | Current |
+|--------|---------|
+| **30-day founder goal** | First paid Camp Zen / Zen Village revenue — **Bottleneck Session** ($500–1,500), 14-day launch |
+| **P1 product** | **Full Potential Game** — https://fullpotential.com/game; substrate shipped; gate is **distribution**, not features |
+| **Operating mode** | James **vision-hold**; AI Context Steward + AI Roster execute. Decision filter: **proof · revenue · clarity · ease** (30-day horizon) |
+| **Repo role** | Game source substrate, canonical state (`core/STATE/*`), loops/proofs, brain/Telegram wiring |
+
+## Next best action
+
+Default unless James redirects:
+
+1. **Bottleneck Session — Day 1:** finalize offer, price, assets (`~/.claude/memory-global/reference_bottleneck_session.md`)
+2. **Day 2–3:** landing page, outreach script; then warm outreach (10/day)
+
+Before claiming a new loop: `git log` + `core/INTENT/AGREEMENTS/proofs/` (parallel sessions renumber).
+
+**Alternates:** brain MCP ingest fix (post-`/quit`) · ship `/treasurer` per `core/STATE/roster/TREASURER_TELEGRAM_SPEC.md` · send Human Context Steward spec to Alice.
+
+## Do not delete
+
+| Asset | Rule |
+|-------|------|
+| **`~/FPAI_Cockpit`** | Whole repo — only with explicit confirmation |
+| **`~/FPAI_Cockpit/voice/models`** | Only if models confirmed replaceable |
+| **Founder / AI state SSOT** | `core/STATE/NOW.md`, `AI_GOALS.md`, `JAMES_CANONICAL.md`, `AI_CHARTER.md`, `AI_ROSTER.md` |
+| **Agent orientation + hot files** | `CLAUDE.md`, `INVITE_TEMPLATES.md`, `FULL_POTENTIAL_GAME.md` (`.claude/hot-files.txt`) |
+| **Loop proofs** | `core/INTENT/AGREEMENTS/proofs/` |
+| **Identity + memory** | `~/.claude/projects/.../memory/identity/`, per-project `memory/`, `~/.claude/memory-global/` |
+| **`.git`** | History — no blind “cleanup” |
+| **Server `209.74.93.72`** | Outbounders.com — not eliminable (cost audit) |
+
+**Inspect-first (large):** `voice/models`, backups, `.claude/worktrees`, `node_modules`.
+
+**Safe to deprioritize (not SSOT):** frozen deployed cruft per NOW.md — cocoon, godmode, projects-dashboard, whaletrack-magnetic-trader, streasury-bot; bias toward delete/stop, not toward canonical or live Game/brain paths.
+
+## Cleanup history
+
+- **Deleted:** `~/.cursor/worktrees/FPAI_Cockpit` — 57GB duplicate/non-git Cursor worktree.
+- **Deleted:** Cursor `globalStorage/state.vscdb.backup` — 24GB backup database.
+- **Do not recreate as disposable junk** without checking size and git status first.

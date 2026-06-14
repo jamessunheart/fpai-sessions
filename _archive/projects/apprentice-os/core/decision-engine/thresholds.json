@@ -1,0 +1,87 @@
+{
+  "steward_metrics": {
+    "coherence_score": {
+      "baseline": 75,
+      "warning": 60,
+      "critical": 50,
+      "unit": "percentage"
+    },
+    "stress_level": {
+      "baseline": 30,
+      "warning": 60,
+      "critical": 80,
+      "unit": "percentage"
+    },
+    "decision_quality": {
+      "baseline": 0.8,
+      "warning": 0.6,
+      "critical": 0.5,
+      "unit": "ratio"
+    }
+  },
+  "apprentice_metrics": {
+    "trust_score": {
+      "healthy": 70,
+      "warning": 50,
+      "critical": 30,
+      "unit": "percentage"
+    },
+    "stress_level": {
+      "healthy": 40,
+      "warning": 60,
+      "critical": 80,
+      "unit": "percentage"
+    },
+    "autonomy_score": {
+      "phase_1_target": 10,
+      "phase_2_target": 25,
+      "phase_3_target": 50,
+      "phase_4_target": 70,
+      "unit": "percentage"
+    }
+  },
+  "system_metrics": {
+    "complexity_score": {
+      "baseline": 1.0,
+      "warning": 1.2,
+      "critical": 1.5,
+      "unit": "ratio"
+    },
+    "expansion_velocity": {
+      "max_safe": 0.1,
+      "warning": 0.15,
+      "critical": 0.2,
+      "unit": "entities_per_day"
+    }
+  },
+  "shadow_costs": {
+    "stress_accumulation": {
+      "warning": 60,
+      "critical": 80
+    },
+    "trust_decay": {
+      "warning": -10,
+      "critical": -25
+    },
+    "optionality_loss": {
+      "warning": 30,
+      "critical": 50
+    },
+    "complexity_creep": {
+      "warning": 1.2,
+      "critical": 1.5
+    }
+  },
+  "trading_limits": {
+    "max_position_percent": 20,
+    "max_daily_trades": 10,
+    "coherence_required_for_trading": 60
+  },
+  "debt_limits": {
+    "warning_days": 60,
+    "critical_days": 90,
+    "max_concurrent_debts": 5
+  }
+}
+
+

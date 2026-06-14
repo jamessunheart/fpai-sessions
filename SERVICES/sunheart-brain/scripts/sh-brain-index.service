@@ -1,0 +1,19 @@
+[Unit]
+Description=Sunheart Brain — semantic index (pgvector wrapper, FastAPI)
+After=network.target docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/sh-brain/index
+EnvironmentFile=/etc/sh-brain/index.env
+ExecStart=/opt/sh-brain/index/.venv/bin/uvicorn app:app \
+    --host 127.0.0.1 --port 28090 --log-level info
+Restart=on-failure
+RestartSec=3
+StandardOutput=append:/var/log/sh-brain-index.log
+StandardError=append:/var/log/sh-brain-index.log
+
+[Install]
+WantedBy=multi-user.target

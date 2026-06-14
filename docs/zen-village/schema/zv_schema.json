@@ -1,0 +1,205 @@
+{
+  "_meta": {
+    "name": "Zen Village workspace schema",
+    "version": "1.0",
+    "source": "Build_Brief.md §4",
+    "workspace": "Zen Village",
+    "description": "Canonical spec for all 7 Zen Village databases + Operating System reference docs. Used by build_schema.py to create/verify AppFlowy workspace state."
+  },
+  "operating_system_pages": [
+    "Ops Manual",
+    "Sunheart Rule",
+    "Alignment Litmus Test",
+    "Decision Rights Table",
+    "Write Protocol",
+    "Team Map",
+    "Stack Architecture"
+  ],
+  "databases": [
+    {
+      "name": "01 · Master List",
+      "slug": "master_list",
+      "fields": [
+        {"name": "Title", "type": "text", "required": true},
+        {"name": "Owner", "type": "single_select", "options": ["Sunheart", "Atlas", "Halley", "Elizabeth", "Michael", "Sierra", "Jiji", "Unassigned"]},
+        {"name": "Status", "type": "single_select", "options": ["🔵 Proposed", "🟡 Active", "🟢 Done", "🔴 Blocked", "⚫ Dropped"]},
+        {"name": "Priority", "type": "single_select", "options": ["P0", "P1", "P2"]},
+        {"name": "Category", "type": "multi_select", "options": ["Property", "Events", "Retreats", "Revenue", "Team", "Vendor", "Guest", "Admin"]},
+        {"name": "Created", "type": "date", "auto_on_create": true},
+        {"name": "Due", "type": "date"},
+        {"name": "Notes", "type": "long_text"},
+        {"name": "Linked People", "type": "relation", "relates_to": "03 · People"},
+        {"name": "Linked Decisions", "type": "relation", "relates_to": "05 · Decision Log"}
+      ],
+      "views": [
+        {"name": "This Week", "type": "grid", "filter": {"Priority": "P0", "Status": "🟡 Active"}},
+        {"name": "By Owner", "type": "grid", "group_by": "Owner"},
+        {"name": "Kanban", "type": "board", "group_by": "Status"},
+        {"name": "Blocked", "type": "grid", "filter": {"Status": "🔴 Blocked"}}
+      ]
+    },
+    {
+      "name": "02 · Weekly Log",
+      "slug": "weekly_log",
+      "fields": [
+        {"name": "Week Of", "type": "date", "required": true, "note": "Monday of week"},
+        {"name": "Week Number", "type": "number", "note": "Manual, sequential from founding"},
+        {"name": "Summary", "type": "long_text"},
+        {"name": "Key Decisions", "type": "relation", "relates_to": "05 · Decision Log"},
+        {"name": "Events This Week", "type": "relation", "relates_to": "06 · Events"},
+        {"name": "Stories Captured", "type": "long_text"},
+        {"name": "Ops Pings Count", "type": "number"},
+        {"name": "Daily Burn Avg", "type": "number", "format": "currency"},
+        {"name": "Litmus Score", "type": "single_select", "options": ["✅ Both", "⚠️ One", "❌ Neither"]},
+        {"name": "What Sunheart Needs to Know", "type": "long_text"},
+        {"name": "Next Week's Focus", "type": "long_text"}
+      ],
+      "views": [
+        {"name": "Recent", "type": "grid", "sort": [{"field": "Week Of", "order": "desc"}], "limit": 4},
+        {"name": "All-time", "type": "grid", "sort": [{"field": "Week Of", "order": "desc"}]}
+      ]
+    },
+    {
+      "name": "03 · People",
+      "slug": "people",
+      "fields": [
+        {"name": "Name", "type": "text", "required": true},
+        {"name": "Role", "type": "multi_select", "options": ["Ground Team", "Guest", "Vendor", "Artist", "Community", "Partner", "Agent"]},
+        {"name": "Status", "type": "single_select", "options": ["🟢 Active", "🟡 Warm", "🔵 Prospective", "⚫ Inactive", "🔴 Declined/Out"]},
+        {"name": "Contact", "type": "text"},
+        {"name": "First Contact", "type": "date"},
+        {"name": "Last Touch", "type": "date"},
+        {"name": "Next Action", "type": "text"},
+        {"name": "Notes", "type": "long_text"},
+        {"name": "Trust Level", "type": "single_select", "options": ["Core", "Trusted", "Trial", "New", "Unknown"]},
+        {"name": "Linked to Event", "type": "relation", "relates_to": "06 · Events"}
+      ],
+      "views": [
+        {"name": "Ground Team", "type": "grid", "filter": {"Role_contains": "Ground Team"}},
+        {"name": "Artists", "type": "grid", "filter": {"Role_contains": "Artist"}},
+        {"name": "Warm Prospects", "type": "grid", "filter": {"Status": "🟡 Warm"}},
+        {"name": "Out", "type": "grid", "filter": {"Status": "🔴 Declined/Out"}}
+      ]
+    },
+    {
+      "name": "04 · Property",
+      "slug": "property",
+      "fields": [
+        {"name": "Item", "type": "text", "required": true},
+        {"name": "Location", "type": "single_select", "options": ["Main House", "Casita", "Grounds", "Pool", "Kitchen", "Shared Spaces", "Road/Access", "Other"]},
+        {"name": "Type", "type": "multi_select", "options": ["Repair", "Improvement", "Cleaning", "Aesthetic", "Safety", "Guest-Ready"]},
+        {"name": "Status", "type": "single_select", "options": ["🔵 Noted", "🟡 Scheduled", "🟢 Done", "🔴 Blocked"]},
+        {"name": "Priority", "type": "single_select", "options": ["Urgent", "High", "Medium", "Low"]},
+        {"name": "Assigned To", "type": "relation", "relates_to": "03 · People"},
+        {"name": "Vendor Needed", "type": "text"},
+        {"name": "Estimated Cost", "type": "number", "format": "currency"},
+        {"name": "Actual Cost", "type": "number", "format": "currency"},
+        {"name": "Before Photo", "type": "file_attachment"},
+        {"name": "After Photo", "type": "file_attachment"},
+        {"name": "Notes", "type": "long_text"}
+      ],
+      "views": [
+        {"name": "This Week", "type": "grid", "filter_or": [{"Status": "🟡 Scheduled"}, {"Priority": "Urgent"}]},
+        {"name": "Guest-Ready Checklist", "type": "grid", "filter": {"Type_contains": "Guest-Ready"}},
+        {"name": "Backlog", "type": "grid", "filter": {"Status": "🔵 Noted"}},
+        {"name": "Completed This Month", "type": "grid", "filter": {"Status": "🟢 Done"}, "note": "scope to current month in UI"}
+      ]
+    },
+    {
+      "name": "05 · Decision Log",
+      "slug": "decision_log",
+      "fields": [
+        {"name": "Decision", "type": "text", "required": true},
+        {"name": "Date", "type": "date", "auto_on_create": true},
+        {"name": "Made By", "type": "single_select", "options": ["Atlas", "Sunheart", "Co-decided"]},
+        {"name": "Amount", "type": "number", "format": "currency"},
+        {"name": "Category", "type": "multi_select", "options": ["Spend", "Hire/Fire", "Vendor", "Artist", "Event", "Policy", "Strategic"]},
+        {"name": "Threshold Tier", "type": "single_select", "options": ["Under $100", "$100–$500", "Above $500", "No Spend"]},
+        {"name": "Rationale", "type": "long_text"},
+        {"name": "Outcome", "type": "long_text"},
+        {"name": "Reversed?", "type": "checkbox"}
+      ],
+      "views": [
+        {"name": "Recent", "type": "grid", "sort": [{"field": "Date", "order": "desc"}]},
+        {"name": "This Month's Spends", "type": "grid", "filter": {"Amount_not_empty": true}, "note": "current month filter in UI"},
+        {"name": "Needs Sunheart Approval", "type": "grid", "filter": {"Threshold Tier": "$100–$500", "Made By": "Atlas"}},
+        {"name": "Reversed Decisions", "type": "grid", "filter": {"Reversed?": true}}
+      ]
+    },
+    {
+      "name": "06 · Events",
+      "slug": "events",
+      "fields": [
+        {"name": "Event Name", "type": "text", "required": true},
+        {"name": "Tier", "type": "single_select", "options": ["Saturday Casual", "A*Zen*tion", "Ecstatic Weekend", "Retreat", "Special"]},
+        {"name": "Date", "type": "date", "required": true},
+        {"name": "Status", "type": "single_select", "options": ["🔵 Concept", "🟡 Planning", "🟠 Promoted", "🟢 Executed", "🔴 Cancelled"]},
+        {"name": "Artists", "type": "relation", "relates_to": "03 · People"},
+        {"name": "Attendees Expected", "type": "number"},
+        {"name": "Attendees Actual", "type": "number"},
+        {"name": "Revenue", "type": "number", "format": "currency"},
+        {"name": "Costs", "type": "number", "format": "currency"},
+        {"name": "Luma Link", "type": "url"},
+        {"name": "Litmus Score", "type": "single_select", "options": ["✅ Both", "⚠️ One", "❌ Neither"]},
+        {"name": "Debrief Notes", "type": "long_text"},
+        {"name": "Lessons Learned", "type": "long_text"},
+        {"name": "Linked Weekly Log", "type": "relation", "relates_to": "02 · Weekly Log"}
+      ],
+      "views": [
+        {"name": "Upcoming", "type": "grid", "filter": {"Date_gte": "today"}, "sort": [{"field": "Date", "order": "asc"}]},
+        {"name": "Past", "type": "grid", "filter": {"Date_lt": "today"}, "sort": [{"field": "Date", "order": "desc"}]},
+        {"name": "By Tier", "type": "grid", "group_by": "Tier"},
+        {"name": "Litmus Failures", "type": "grid", "filter": {"Litmus Score_not": "✅ Both"}}
+      ]
+    },
+    {
+      "name": "07 · Metrics",
+      "slug": "metrics",
+      "fields": [
+        {"name": "Week Of", "type": "date", "required": true},
+        {"name": "Ops Pings to Sunheart", "type": "number"},
+        {"name": "Daily Burn", "type": "number", "format": "currency"},
+        {"name": "Event Rhythm On-Track", "type": "checkbox"},
+        {"name": "Stories Captured", "type": "number"},
+        {"name": "Latest Event Litmus", "type": "single_select", "options": ["✅", "⚠️", "❌"]},
+        {"name": "Notes", "type": "text"}
+      ],
+      "views": [
+        {"name": "Last 12 Weeks", "type": "grid", "sort": [{"field": "Week Of", "order": "desc"}], "limit": 12},
+        {"name": "Dashboard", "type": "card", "note": "current week prominent"}
+      ]
+    }
+  ],
+  "seed_data": {
+    "people": [
+      {"Name": "Sunheart", "Role": ["Partner"], "Status": "🟢 Active", "Trust Level": "Core"},
+      {"Name": "Atlas", "Role": ["Ground Team", "Partner"], "Status": "🟢 Active", "Trust Level": "Core"},
+      {"Name": "Halley", "Role": ["Ground Team"], "Status": "🟢 Active", "Trust Level": "Trusted"},
+      {"Name": "Elizabeth", "Role": ["Ground Team"], "Status": "🟢 Active", "Trust Level": "Trusted"},
+      {"Name": "Michael", "Role": ["Ground Team"], "Status": "🟢 Active", "Trust Level": "Trial"},
+      {"Name": "Sierra", "Role": ["Ground Team"], "Status": "🟢 Active", "Trust Level": "Trusted"},
+      {"Name": "Jiji", "Role": ["Agent"], "Status": "🟢 Active", "Trust Level": "Trusted"},
+      {"Name": "Jesse Buck (Chocolate Groove)", "Role": ["Artist"], "Status": "🟢 Active", "Trust Level": "Trusted"},
+      {"Name": "JMSTK (Jimmy)", "Role": ["Artist"], "Status": "🟢 Active", "Trust Level": "Trusted"},
+      {"Name": "Maheena", "Role": ["Artist"], "Status": "🟡 Warm", "Trust Level": "Trusted"},
+      {"Name": "Wiggles (Jacob Lill)", "Role": ["Partner"], "Status": "🔵 Prospective", "Trust Level": "New"},
+      {"Name": "Alice", "Role": ["Partner"], "Status": "🟢 Active", "Trust Level": "Core"},
+      {"Name": "Nicolette Luna", "Role": ["Partner"], "Status": "🟡 Warm", "Trust Level": "Trusted"},
+      {"Name": "Charm", "Role": ["Community"], "Status": "🔴 Declined/Out", "Trust Level": "Unknown"},
+      {"Name": "Isa", "Role": ["Community"], "Status": "🔴 Declined/Out", "Trust Level": "Unknown"},
+      {"Name": "Damian", "Role": ["Community"], "Status": "🔴 Declined/Out", "Trust Level": "Unknown"},
+      {"Name": "Dani", "Role": ["Community"], "Status": "🔴 Declined/Out", "Trust Level": "Unknown"}
+    ],
+    "events": [
+      {"Event Name": "Ecstatic Weekend (first)", "Tier": "Ecstatic Weekend", "Date": "2026-04-05", "Status": "🟢 Executed"},
+      {"Event Name": "Ecstatic Weekend (second)", "Tier": "Ecstatic Weekend", "Date": "2026-04-18", "Status": "🟢 Executed"},
+      {"Event Name": "Ecstatic Weekend (May)", "Tier": "Ecstatic Weekend", "Date": "2026-05-02", "Status": "🟡 Planning"}
+    ],
+    "weekly_log": [
+      {"Week Of": "2026-04-20", "Week Number": 1, "Summary": "Founding week. Zen Village Brain deployed; Atlas begins populating during Hour-One."}
+    ],
+    "metrics": [
+      {"Week Of": "2026-04-20", "Daily Burn": -133, "Notes": "Baseline metrics row; Atlas fills Ops Pings + Litmus post-Hour-One."}
+    ]
+  }
+}

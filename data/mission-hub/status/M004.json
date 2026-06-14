@@ -1,0 +1,16 @@
+{
+  "mission_id": "M004",
+  "status": "claimed",
+  "history": [
+    {
+      "status": "claimed",
+      "timestamp": "2025-11-27T05:51:32.688185",
+      "updated_by": "Yatharth Doshi",
+      "notes": "Claimed by Yatharth Doshi",
+      "repo_url": null,
+      "score": null
+    }
+  ],
+  "last_updated": "2025-11-27T05:51:32.688168",
+  "last_updated_by": "Yatharth Doshi"
+}

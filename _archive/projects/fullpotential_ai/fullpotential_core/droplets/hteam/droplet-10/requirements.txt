@@ -1,0 +1,76 @@
+# DROPLET #10: ORCHESTRATOR - Python Dependencies
+# Python 3.11+
+
+# ============================================================================
+# CORE FRAMEWORK
+# ============================================================================
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+
+# ============================================================================
+# DATABASE
+# ============================================================================
+asyncpg==0.29.0          # Async PostgreSQL driver
+sqlalchemy[asyncio]  # ORM for complex queries
+alembic        # Database migrations (optional)
+
+# ============================================================================
+# HTTP CLIENT
+# ============================================================================
+httpx           # Async HTTP client for Registry integration
+
+# ============================================================================
+# AUTHENTICATION
+# ============================================================================
+python-jose[cryptography]  # JWT handling
+cryptography    # Required by python-jose
+passlib[bcrypt]   # Password hashing (if needed)
+
+# ============================================================================
+# BACKGROUND TASKS & SCHEDULING
+# ============================================================================
+apscheduler     # Scheduled jobs (heartbeat monitoring)
+
+# ============================================================================
+# LOGGING
+# ============================================================================
+structlog       # Structured logging
+python-json-logger  # JSON log formatting
+
+# ============================================================================
+# REDIS (Optional - for scaling WebSocket)
+# ============================================================================
+redis
+aioredis
+
+# ============================================================================
+# UTILITIES
+# ============================================================================
+python-multipart  # Form data parsing
+python-dotenv    # .env file support
+
+# ============================================================================
+# TESTING
+# ============================================================================
+pytest
+pytest-asyncio
+pytest-cov
+pytest-mock
+httpx           # Already listed above, for TestClient
+faker           # Generate test data
+
+# ============================================================================
+# DEVELOPMENT
+# ============================================================================
+black         # Code formatting
+flake8         # Linting
+mypy           # Type checking
+isort           # Import sorting
+
+# ============================================================================
+# MONITORING (Optional)
+# ============================================================================
+prometheus-client  # Metrics export
+psutil        # System metrics (CPU, memory)

@@ -1,0 +1,56 @@
+# WhiteRock Blessings Engine - Dependencies
+# Python 3.11+
+# v2.2 - With security and monitoring enhancements
+
+# FastAPI & Server
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+httpx==0.26.0
+
+# Database
+sqlalchemy[asyncio]==2.0.25
+asyncpg==0.29.0
+alembic==1.13.1
+
+# Authentication
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+
+# Settings
+pydantic-settings==2.1.0
+python-dotenv==1.0.0
+
+# Background Tasks
+celery[redis]==5.3.6
+redis==5.0.1
+
+# Email (SendGrid)
+sendgrid==6.11.0
+
+# Payments (Stripe)
+stripe==7.12.0
+
+# Utilities
+python-dateutil==2.8.2
+
+# Rate Limiting
+slowapi==0.1.9
+
+# Caching
+aioredis==2.0.1
+
+# Logging & Monitoring
+structlog==24.1.0
+prometheus-client==0.19.0
+
+# Testing
+pytest==8.0.0
+pytest-asyncio==0.23.3
+pytest-cov==4.1.0
+httpx==0.26.0
+aiosqlite==0.19.0
+
+# Input Sanitization
+bleach==6.1.0
+

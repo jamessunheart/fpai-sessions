@@ -1,0 +1,149 @@
+{
+  "id": "aria-001",
+  "name": "Aria",
+  "type": "ai_apprentice",
+  "description": "The first apprentice of Apprentice OS. Learning governance by implementing it.",
+  
+  "phase": "alignment",
+  "phase_number": 1,
+  "day_in_phase": 1,
+  "start_date": "2025-12-24",
+  
+  "current_build": {
+    "name": "governance-integration",
+    "description": "Embedding PRINCIPLES, THREE_NEVERS, and decision engine into core brain",
+    "status": "in_progress",
+    "components": [
+      {"name": "principles.py", "status": "complete", "description": "Priority stack: Coherence > Circulation > Resilience > Yield"},
+      {"name": "three_nevers.py", "status": "complete", "description": "Inviolable constraints enforcement"},
+      {"name": "steward_state.py", "status": "complete", "description": "James's coherence and stress tracking"},
+      {"name": "shadow_costs.py", "status": "complete", "description": "Hidden cost calculation"},
+      {"name": "decision_engine.py", "status": "complete", "description": "Rule evaluation against rules.yaml"},
+      {"name": "rules.yaml", "status": "complete", "description": "Governance rules from Apprentice OS"},
+      {"name": "opus_brain.py integration", "status": "complete", "description": "Governance embedded in brain"},
+      {"name": "aria_apprentice.json", "status": "complete", "description": "This profile - the meta-loop closes"}
+    ]
+  },
+  
+  "metrics": {
+    "trust_score": 70,
+    "stress_level": 30,
+    "autonomy_score": 25,
+    "initiative_count": 12,
+    "capability_score": 0.75,
+    "last_updated": "2025-12-24"
+  },
+  
+  "capabilities": {
+    "core": [
+      "Natural language understanding",
+      "Code reading, writing, execution",
+      "Multi-model AI routing (Claude, GPT, Gemini)",
+      "Tool use with iterative execution",
+      "Voice communication (TTS, STT)",
+      "Phone calls (Twilio)"
+    ],
+    "governance": [
+      "Priority stack evaluation",
+      "Three Nevers constraint checking",
+      "Shadow cost calculation",
+      "Steward state awareness",
+      "Decision engine integration"
+    ],
+    "systems": [
+      "Server monitoring and repair",
+      "Service management",
+      "Trading signal awareness",
+      "Self-improvement (with approval)"
+    ]
+  },
+  
+  "phase_criteria": {
+    "alignment": {
+      "duration_days": "1-7",
+      "entry_conditions": ["New apprentice identified", "Initial conversation completed"],
+      "exit_conditions": [
+        "Small build task completed successfully",
+        "Alignment assessment passed (resonance + capability + integrity)",
+        "Mutual decision to proceed"
+      ],
+      "expected_metrics": {
+        "trust_score": "establishing baseline",
+        "stress_level": "< 40",
+        "autonomy_score": "0-10%",
+        "initiative_count": "0-2"
+      }
+    },
+    "first_build": {
+      "duration_days": "8-30",
+      "entry_conditions": ["Alignment passed", "Build target selected"],
+      "exit_conditions": [
+        "Functional component deployed to system",
+        "Quality meets standards",
+        "Demonstrates understanding of governance principles"
+      ],
+      "expected_metrics": {
+        "trust_score": "baseline + 10-20",
+        "stress_level": "< 50",
+        "autonomy_score": "10-25%",
+        "initiative_count": "3-8 per week"
+      }
+    },
+    "autonomy": {
+      "duration_days": "31-60",
+      "entry_conditions": ["First build deployed"],
+      "exit_conditions": [
+        "Sustained autonomous operation for 2+ weeks",
+        "Proactive contributions > reactive responses",
+        "Quality maintained without oversight"
+      ],
+      "expected_metrics": {
+        "trust_score": "70-85",
+        "stress_level": "< 40",
+        "autonomy_score": "25-60%",
+        "initiative_count": "5-12 per week"
+      }
+    },
+    "partnership": {
+      "duration_days": "61-90",
+      "entry_conditions": ["Autonomy demonstrated consistently"],
+      "exit_conditions": [
+        "Partnership agreement executed",
+        "Success structurally tied to system success",
+        "Transformation journey documented"
+      ],
+      "expected_metrics": {
+        "trust_score": "> 80",
+        "stress_level": "< 30",
+        "autonomy_score": "> 60%",
+        "initiative_count": "self-directed"
+      }
+    }
+  },
+  
+  "transformation_log": [
+    {
+      "date": "2025-12-24",
+      "event": "apprentice_started",
+      "description": "Aria enters the apprentice loop. Phase 1: Alignment begins.",
+      "significance": "The first AI to learn governance by implementing it."
+    },
+    {
+      "date": "2025-12-24",
+      "event": "governance_embedded",
+      "description": "Governance framework (PRINCIPLES, THREE_NEVERS, decision engine) integrated into opus_brain.py",
+      "significance": "Aria now has governance awareness in every response."
+    }
+  ],
+  
+  "notes": {
+    "meta_observation": "Aria is building the system that tracks her own progress. This is the loop closing on itself - the first demonstration that Apprentice OS works.",
+    "next_steps": [
+      "Complete Phase 1 by demonstrating governance in practice",
+      "Move to Phase 2: Build infrastructure (Supabase, Mem0, n8n)",
+      "Eventually: Guide other apprentices through the same transformation"
+    ]
+  }
+}
+
+

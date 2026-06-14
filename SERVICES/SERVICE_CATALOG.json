@@ -1,0 +1,1190 @@
+{
+  "scanned_at": "2025-11-17T08:06:59.617978Z",
+  "summary": {
+    "total_services": 64,
+    "status": {
+      "online": 15,
+      "offline": 24,
+      "unknown": 25
+    },
+    "documentation": {
+      "with_spec": 40,
+      "with_readme": 32,
+      "with_port": 39
+    }
+  },
+  "services": [
+    {
+      "name": "2x-treasury",
+      "path": "/Users/jamessunheart/Development/SERVICES/2x-treasury",
+      "port": null,
+      "status": "unknown",
+      "health": null,
+      "files": {
+        "spec": false,
+        "readme": true,
+        "main": false,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:57.207986Z"
+    },
+    {
+      "name": "TIE-SYSTEM",
+      "path": "/Users/jamessunheart/Development/SERVICES/TIE-SYSTEM",
+      "port": null,
+      "status": "unknown",
+      "health": null,
+      "files": {
+        "spec": false,
+        "readme": false,
+        "main": false,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:57.210645Z"
+    },
+    {
+      "name": "ai-automation",
+      "path": "/Users/jamessunheart/Development/SERVICES/ai-automation",
+      "port": null,
+      "status": "unknown",
+      "health": null,
+      "files": {
+        "spec": false,
+        "readme": false,
+        "main": true,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:57.210721Z"
+    },
+    {
+      "name": "api-hub",
+      "path": "/Users/jamessunheart/Development/SERVICES/api-hub",
+      "port": 8100,
+      "status": "online",
+      "health": {
+        "status": "healthy",
+        "service": "unified-chat",
+        "version": "1.0.0",
+        "port": 8100,
+        "timestamp": "2025-11-17T08:06:57.222752"
+      },
+      "files": {
+        "spec": true,
+        "readme": true,
+        "main": false,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": "Self-expanding capability system that autonomously discovers, evaluates, acquires, and manages API access for needed capabilities. Enables the system to expand its own capabilities without manual API ",
+      "scanned_at": "2025-11-17T08:06:57.210776Z"
+    },
+    {
+      "name": "approval-dashboard",
+      "path": "/Users/jamessunheart/Development/SERVICES/approval-dashboard",
+      "port": 8214,
+      "status": "offline",
+      "health": null,
+      "files": {
+        "spec": true,
+        "readme": false,
+        "main": false,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": "Beautiful, real-time web dashboard for reviewing and approving system intents. The human oversight interface that makes autonomous governance practical - spend 5 minutes reviewing 50 decisions instead",
+      "scanned_at": "2025-11-17T08:06:57.224207Z"
+    },
+    {
+      "name": "auto-fix-engine",
+      "path": "/Users/jamessunheart/Development/SERVICES/auto-fix-engine",
+      "port": 8200,
+      "status": "offline",
+      "health": null,
+      "files": {
+        "spec": true,
+        "readme": true,
+        "main": false,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": "Automates Sacred Loop Step 5.5 by automatically fixing issues found by the Verifier. Analyzes verification reports, generates fixes using Claude API, applies them safely with backup/restore, and re-ve",
+      "scanned_at": "2025-11-17T08:06:57.226561Z"
+    },
+    {
+      "name": "autonomous-agents",
+      "path": "/Users/jamessunheart/Development/SERVICES/autonomous-agents",
+      "port": null,
+      "status": "unknown",
+      "health": null,
+      "files": {
+        "spec": true,
+        "readme": true,
+        "main": false,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": "24/7 autonomous AI agents that operate independently to grow treasury, monitor services, improve the system, and discover opportunities. Agents run continuously, make decisions using Claude AI, and ex",
+      "scanned_at": "2025-11-17T08:06:57.228007Z"
+    },
+    {
+      "name": "autonomous-executor",
+      "path": "/Users/jamessunheart/Development/SERVICES/autonomous-executor",
+      "port": 8200,
+      "status": "offline",
+      "health": null,
+      "files": {
+        "spec": true,
+        "readme": true,
+        "main": false,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": "Enables true self-optimization by accepting architect intent and executing the entire Sacred Loop autonomously from intent to deployment. Eliminates manual copy-paste commands and enables the system t",
+      "scanned_at": "2025-11-17T08:06:57.228752Z"
+    },
+    {
+      "name": "build-executor",
+      "path": "/Users/jamessunheart/Development/SERVICES/build-executor",
+      "port": 8211,
+      "status": "offline",
+      "health": null,
+      "files": {
+        "spec": true,
+        "readme": false,
+        "main": false,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": "Build assembly line that takes validated SPECs and executes the complete build \u2192 test \u2192 verify \u2192 deploy \u2192 register pipeline with rollback capabilities. This is the \"execution engine\" that transforms S",
+      "scanned_at": "2025-11-17T08:06:57.229839Z"
+    },
+    {
+      "name": "church-guidance-ministry",
+      "path": "/Users/jamessunheart/Development/SERVICES/church-guidance-ministry",
+      "port": 8003,
+      "status": "offline",
+      "health": null,
+      "files": {
+        "spec": false,
+        "readme": true,
+        "main": false,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:57.231015Z"
+    },
+    {
+      "name": "collective-mind",
+      "path": "/Users/jamessunheart/Development/SERVICES/collective-mind",
+      "port": null,
+      "status": "unknown",
+      "health": null,
+      "files": {
+        "spec": false,
+        "readme": false,
+        "main": true,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:57.232059Z"
+    },
+    {
+      "name": "content-generation-engine",
+      "path": "/Users/jamessunheart/Development/SERVICES/content-generation-engine",
+      "port": 5432,
+      "status": "offline",
+      "health": null,
+      "files": {
+        "spec": true,
+        "readme": false,
+        "main": false,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:57.232102Z"
+    },
+    {
+      "name": "contribution-bridge",
+      "path": "/Users/jamessunheart/Development/SERVICES/contribution-bridge",
+      "port": null,
+      "status": "unknown",
+      "health": null,
+      "files": {
+        "spec": false,
+        "readme": true,
+        "main": false,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:57.233174Z"
+    },
+    {
+      "name": "coranation",
+      "path": "/Users/jamessunheart/Development/SERVICES/coranation",
+      "port": 8900,
+      "status": "offline",
+      "health": null,
+      "files": {
+        "spec": false,
+        "readme": true,
+        "main": true,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:57.233462Z"
+    },
+    {
+      "name": "credentials-manager",
+      "path": "/Users/jamessunheart/Development/SERVICES/credentials-manager",
+      "port": 8025,
+      "status": "offline",
+      "health": null,
+      "files": {
+        "spec": true,
+        "readme": true,
+        "main": false,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": "Secure storage and management of API keys, billing details, and passwords with AES-256 encryption. Manages helper access with scoped, time-limited tokens. Maintains complete audit trail of all credent",
+      "scanned_at": "2025-11-17T08:06:57.234625Z"
+    },
+    {
+      "name": "dashboard",
+      "path": "/Users/jamessunheart/Development/SERVICES/dashboard",
+      "port": 8002,
+      "status": "offline",
+      "health": null,
+      "files": {
+        "spec": true,
+        "readme": true,
+        "main": false,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:57.235716Z"
+    },
+    {
+      "name": "deployer",
+      "path": "/Users/jamessunheart/Development/SERVICES/deployer",
+      "port": 8000,
+      "status": "online",
+      "health": {
+        "status": "active",
+        "service": "registry",
+        "version": "1.0.0",
+        "timestamp": "2025-11-17T08:06:57.242198Z"
+      },
+      "files": {
+        "spec": true,
+        "readme": true,
+        "main": false,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": "Automates Sacred Loop Steps 6-7: deployment to production and Registry registration. Eliminates manual SSH commands, file transfers, Docker builds, and service registration. Enables true end-to-end au",
+      "scanned_at": "2025-11-17T08:06:57.236774Z"
+    },
+    {
+      "name": "email-automation-system",
+      "path": "/Users/jamessunheart/Development/SERVICES/email-automation-system",
+      "port": 6379,
+      "status": "offline",
+      "health": null,
+      "files": {
+        "spec": true,
+        "readme": false,
+        "main": false,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:57.246786Z"
+    },
+    {
+      "name": "email-dashboard",
+      "path": "/Users/jamessunheart/Development/SERVICES/email-dashboard",
+      "port": null,
+      "status": "unknown",
+      "health": null,
+      "files": {
+        "spec": false,
+        "readme": false,
+        "main": false,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:57.248412Z"
+    },
+    {
+      "name": "fpai-hub",
+      "path": "/Users/jamessunheart/Development/SERVICES/fpai-hub",
+      "port": 8010,
+      "status": "online",
+      "health": {
+        "status": "active",
+        "service": "fpai-hub",
+        "version": "1.0.0",
+        "timestamp": "2025-11-17T08:06:57.251478Z"
+      },
+      "files": {
+        "spec": false,
+        "readme": true,
+        "main": false,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:57.248459Z"
+    },
+    {
+      "name": "governance",
+      "path": "/Users/jamessunheart/Development/SERVICES/governance",
+      "port": 8213,
+      "status": "offline",
+      "health": null,
+      "files": {
+        "spec": true,
+        "readme": false,
+        "main": false,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": "AI-powered governance engine that validates intent alignment with system blueprint and makes autonomous approval decisions. Enables the system to build itself responsibly by ensuring new services alig",
+      "scanned_at": "2025-11-17T08:06:57.254117Z"
+    },
+    {
+      "name": "helper-management",
+      "path": "/Users/jamessunheart/Development/SERVICES/helper-management",
+      "port": 8025,
+      "status": "offline",
+      "health": null,
+      "files": {
+        "spec": true,
+        "readme": true,
+        "main": false,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": "Autonomous hiring, payment, and task management for contractors. Automates job posting, AI-powered screening, scoped credential access, multi-currency payments, and task tracking from posting through ",
+      "scanned_at": "2025-11-17T08:06:58.258302Z"
+    },
+    {
+      "name": "hub",
+      "path": "/Users/jamessunheart/Development/SERVICES/hub",
+      "port": 8500,
+      "status": "online",
+      "health": {
+        "status": "healthy",
+        "service": "full-potential-hub",
+        "version": "1.0.0"
+      },
+      "files": {
+        "spec": true,
+        "readme": true,
+        "main": true,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": "Central landing page for fullpotential.com directing visitors to all Full Potential services. Provides overview of company structure, service directory, and clear CTAs for each service.",
+      "scanned_at": "2025-11-17T08:06:58.261358Z"
+    },
+    {
+      "name": "i-match",
+      "path": "/Users/jamessunheart/Development/SERVICES/i-match",
+      "port": 8401,
+      "status": "online",
+      "health": {
+        "status": "healthy",
+        "droplet_id": 21,
+        "service_name": "i-match",
+        "version": "1.0.0",
+        "uptime_seconds": 80678,
+        "total_matches": 0,
+        "total_revenue_usd": 0.0,
+        "memory_usage_mb": 17.53125,
+        "last_check": "2025-11-17T00:06:58.376524"
+      },
+      "files": {
+        "spec": true,
+        "readme": true,
+        "main": false,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:58.356923Z"
+    },
+    {
+      "name": "i-match-automation",
+      "path": "/Users/jamessunheart/Development/SERVICES/i-match-automation",
+      "port": null,
+      "status": "unknown",
+      "health": null,
+      "files": {
+        "spec": false,
+        "readme": false,
+        "main": true,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:58.386135Z"
+    },
+    {
+      "name": "i-proactive",
+      "path": "/Users/jamessunheart/Development/SERVICES/i-proactive",
+      "port": 8400,
+      "status": "offline",
+      "health": null,
+      "files": {
+        "spec": true,
+        "readme": true,
+        "main": false,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:58.386213Z"
+    },
+    {
+      "name": "integration",
+      "path": "/Users/jamessunheart/Development/SERVICES/integration",
+      "port": null,
+      "status": "unknown",
+      "health": null,
+      "files": {
+        "spec": false,
+        "readme": false,
+        "main": false,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:58.404878Z"
+    },
+    {
+      "name": "intent-queue",
+      "path": "/Users/jamessunheart/Development/SERVICES/intent-queue",
+      "port": 8212,
+      "status": "offline",
+      "health": null,
+      "files": {
+        "spec": true,
+        "readme": false,
+        "main": false,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": "Unified, persistent, prioritized queue for all system intents. Enables multiple Claude sessions, autonomous agents, and human architects to submit service intents that flow through the assembly line. ",
+      "scanned_at": "2025-11-17T08:06:58.404955Z"
+    },
+    {
+      "name": "jobs",
+      "path": "/Users/jamessunheart/Development/SERVICES/jobs",
+      "port": 8008,
+      "status": "offline",
+      "health": null,
+      "files": {
+        "spec": true,
+        "readme": false,
+        "main": false,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": "Sovereign job board with autonomous AI-powered recruitment. Handles job posting, AI screening of candidates, AI-conducted interviews, labor coordination, code review, and milestone verification. Reduc",
+      "scanned_at": "2025-11-17T08:06:59.425431Z"
+    },
+    {
+      "name": "kubernetes",
+      "path": "/Users/jamessunheart/Development/SERVICES/kubernetes",
+      "port": null,
+      "status": "unknown",
+      "health": null,
+      "files": {
+        "spec": false,
+        "readme": false,
+        "main": false,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:59.427416Z"
+    },
+    {
+      "name": "landing-page",
+      "path": "/Users/jamessunheart/Development/SERVICES/landing-page",
+      "port": 8002,
+      "status": "offline",
+      "health": null,
+      "files": {
+        "spec": true,
+        "readme": false,
+        "main": false,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": "Main landing page for fullpotential.ai showcasing vision, progress toward Paradise (11 droplets), and live system metrics. Attracts users, investors, and apprentices by demonstrating the FPAI system i",
+      "scanned_at": "2025-11-17T08:06:59.427474Z"
+    },
+    {
+      "name": "legal",
+      "path": "/Users/jamessunheart/Development/SERVICES/legal",
+      "port": null,
+      "status": "unknown",
+      "health": null,
+      "files": {
+        "spec": false,
+        "readme": false,
+        "main": false,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:59.428794Z"
+    },
+    {
+      "name": "legal-verification-agent",
+      "path": "/Users/jamessunheart/Development/SERVICES/legal-verification-agent",
+      "port": 8010,
+      "status": "online",
+      "health": {
+        "status": "active",
+        "service": "fpai-hub",
+        "version": "1.0.0",
+        "timestamp": "2025-11-17T08:06:59.430012Z"
+      },
+      "files": {
+        "spec": true,
+        "readme": true,
+        "main": false,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": "AI-assisted legal compliance verification and attorney delegation system. Performs preliminary AI analysis of content to identify potential legal compliance issues, facilitates attorney review, and ma",
+      "scanned_at": "2025-11-17T08:06:59.428855Z"
+    },
+    {
+      "name": "master-dashboard",
+      "path": "/Users/jamessunheart/Development/SERVICES/master-dashboard",
+      "port": null,
+      "status": "unknown",
+      "health": null,
+      "files": {
+        "spec": false,
+        "readme": false,
+        "main": false,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:59.430476Z"
+    },
+    {
+      "name": "membership",
+      "path": "/Users/jamessunheart/Development/SERVICES/membership",
+      "port": 8002,
+      "status": "offline",
+      "health": null,
+      "files": {
+        "spec": true,
+        "readme": true,
+        "main": false,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": "Membership and dashboard system for Full Potential services. Handles user authentication, session management, membership tiers, and personalized dashboards showing user progress, services access, and ",
+      "scanned_at": "2025-11-17T08:06:59.430530Z"
+    },
+    {
+      "name": "nexus-event-bus",
+      "path": "/Users/jamessunheart/Development/SERVICES/nexus-event-bus",
+      "port": 1000,
+      "status": "offline",
+      "health": null,
+      "files": {
+        "spec": true,
+        "readme": true,
+        "main": true,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [
+        "Python 3.11+",
+        "FastAPI 0.104+ (async support, WebSocket, automatic OpenAPI docs)"
+      ],
+      "description": "NEXUS is a real-time event bus that enables instant communication, coordination, and synchronization between all Claude Code sessions. It transforms file-based polling into live event streaming, allow",
+      "scanned_at": "2025-11-17T08:06:59.431735Z"
+    },
+    {
+      "name": "ops",
+      "path": "/Users/jamessunheart/Development/SERVICES/ops",
+      "port": 8000,
+      "status": "online",
+      "health": {
+        "status": "active",
+        "service": "registry",
+        "version": "1.0.0",
+        "timestamp": "2025-11-17T08:06:59.434373Z"
+      },
+      "files": {
+        "spec": true,
+        "readme": true,
+        "main": false,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": "Collection of operational scripts for managing Full Potential AI services. Automates deployment, health monitoring, git workflows, and system maintenance. Provides command-line tools for common operat",
+      "scanned_at": "2025-11-17T08:06:59.433018Z"
+    },
+    {
+      "name": "orchestrator",
+      "path": "/Users/jamessunheart/Development/SERVICES/orchestrator",
+      "port": 8001,
+      "status": "offline",
+      "health": null,
+      "files": {
+        "spec": true,
+        "readme": true,
+        "main": false,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:59.434969Z"
+    },
+    {
+      "name": "orchestrator-unified",
+      "path": "/Users/jamessunheart/Development/SERVICES/orchestrator-unified",
+      "port": 8600,
+      "status": "offline",
+      "health": null,
+      "files": {
+        "spec": true,
+        "readme": false,
+        "main": false,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:59.451507Z"
+    },
+    {
+      "name": "proxy-manager",
+      "path": "/Users/jamessunheart/Development/SERVICES/proxy-manager",
+      "port": 8100,
+      "status": "online",
+      "health": {
+        "status": "healthy",
+        "service": "unified-chat",
+        "version": "1.0.0",
+        "port": 8100,
+        "timestamp": "2025-11-17T08:06:59.454085"
+      },
+      "files": {
+        "spec": true,
+        "readme": true,
+        "main": false,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": "Automates NGINX reverse proxy and SSL management for the Full Potential AI droplet mesh. Removes manual server work (port wiring, domains, SSL, reloads) by exposing HTTP API for proxy config creation,",
+      "scanned_at": "2025-11-17T08:06:59.452974Z"
+    },
+    {
+      "name": "reddit-auto-responder",
+      "path": "/Users/jamessunheart/Development/SERVICES/reddit-auto-responder",
+      "port": 5432,
+      "status": "offline",
+      "health": null,
+      "files": {
+        "spec": true,
+        "readme": false,
+        "main": false,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:59.454493Z"
+    },
+    {
+      "name": "registry",
+      "path": "/Users/jamessunheart/Development/SERVICES/registry",
+      "port": 8000,
+      "status": "online",
+      "health": {
+        "status": "active",
+        "service": "registry",
+        "version": "1.0.0",
+        "timestamp": "2025-11-17T08:06:59.459820Z"
+      },
+      "files": {
+        "spec": true,
+        "readme": true,
+        "main": false,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:59.455919Z"
+    },
+    {
+      "name": "seo-landing-generator",
+      "path": "/Users/jamessunheart/Development/SERVICES/seo-landing-generator",
+      "port": null,
+      "status": "unknown",
+      "health": null,
+      "files": {
+        "spec": true,
+        "readme": false,
+        "main": false,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:59.460422Z"
+    },
+    {
+      "name": "service-discovery",
+      "path": "/Users/jamessunheart/Development/SERVICES/service-discovery",
+      "port": null,
+      "status": "unknown",
+      "health": null,
+      "files": {
+        "spec": false,
+        "readme": false,
+        "main": false,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:59.460954Z"
+    },
+    {
+      "name": "service-registry-monitor",
+      "path": "/Users/jamessunheart/Development/SERVICES/service-registry-monitor",
+      "port": null,
+      "status": "unknown",
+      "health": null,
+      "files": {
+        "spec": false,
+        "readme": false,
+        "main": false,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:59.461002Z"
+    },
+    {
+      "name": "social-auto-poster",
+      "path": "/Users/jamessunheart/Development/SERVICES/social-auto-poster",
+      "port": null,
+      "status": "unknown",
+      "health": null,
+      "files": {
+        "spec": true,
+        "readme": false,
+        "main": false,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:59.461044Z"
+    },
+    {
+      "name": "sol-treasury-ssot",
+      "path": "/Users/jamessunheart/Development/SERVICES/sol-treasury-ssot",
+      "port": null,
+      "status": "unknown",
+      "health": null,
+      "files": {
+        "spec": false,
+        "readme": true,
+        "main": false,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:59.461413Z"
+    },
+    {
+      "name": "sovereign-factory",
+      "path": "/Users/jamessunheart/Development/SERVICES/sovereign-factory",
+      "port": 8000,
+      "status": "online",
+      "health": {
+        "status": "active",
+        "service": "registry",
+        "version": "1.0.0",
+        "timestamp": "2025-11-17T08:06:59.464475Z"
+      },
+      "files": {
+        "spec": true,
+        "readme": false,
+        "main": false,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": "Automated assembly line from system intents to deployed services. Manages prioritized intent queue, orchestrates SPEC generation/validation/optimization pipeline, and coordinates with build-executor f",
+      "scanned_at": "2025-11-17T08:06:59.461854Z"
+    },
+    {
+      "name": "spec-builder",
+      "path": "/Users/jamessunheart/Development/SERVICES/spec-builder",
+      "port": 8205,
+      "status": "online",
+      "health": {
+        "status": "active",
+        "service": "spec-verifier",
+        "version": "1.0.0",
+        "timestamp": "2025-11-17T08:06:59.473624Z"
+      },
+      "files": {
+        "spec": true,
+        "readme": false,
+        "main": true,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": "AI-powered SPEC generation service that transforms architect intent and requirements into complete, UDC-compliant SPEC files. Uses Claude API and reference specs to create high-quality specifications ",
+      "scanned_at": "2025-11-17T08:06:59.465204Z"
+    },
+    {
+      "name": "spec-optimizer",
+      "path": "/Users/jamessunheart/Development/SERVICES/spec-optimizer",
+      "port": 8205,
+      "status": "online",
+      "health": {
+        "status": "active",
+        "service": "spec-verifier",
+        "version": "1.0.0",
+        "timestamp": "2025-11-17T08:06:59.482394Z"
+      },
+      "files": {
+        "spec": true,
+        "readme": false,
+        "main": true,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": "AI-powered SPEC optimization service that uses Claude API to intelligently improve SPEC files for completeness, clarity, and UDC compliance. Acts as an enhancement layer between spec-verifier and spec",
+      "scanned_at": "2025-11-17T08:06:59.480362Z"
+    },
+    {
+      "name": "spec-verifier",
+      "path": "/Users/jamessunheart/Development/SERVICES/spec-verifier",
+      "port": 8000,
+      "status": "online",
+      "health": {
+        "status": "active",
+        "service": "registry",
+        "version": "1.0.0",
+        "timestamp": "2025-11-17T08:06:59.484916Z"
+      },
+      "files": {
+        "spec": true,
+        "readme": false,
+        "main": true,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": "Validates SPEC files for completeness, quality, and UDC compliance BEFORE droplet builds. Acts as a quality gate ensuring all specs meet minimum standards for successful Sacred Loop execution.",
+      "scanned_at": "2025-11-17T08:06:59.482891Z"
+    },
+    {
+      "name": "task-automation",
+      "path": "/Users/jamessunheart/Development/SERVICES/task-automation",
+      "port": 8031,
+      "status": "offline",
+      "health": null,
+      "files": {
+        "spec": false,
+        "readme": true,
+        "main": false,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:59.486760Z"
+    },
+    {
+      "name": "test-compliance-demo",
+      "path": "/Users/jamessunheart/Development/SERVICES/test-compliance-demo",
+      "port": null,
+      "status": "unknown",
+      "health": null,
+      "files": {
+        "spec": true,
+        "readme": true,
+        "main": false,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": "**Problem Statement**:\n[What problem does this service solve?]",
+      "scanned_at": "2025-11-17T08:06:59.494224Z"
+    },
+    {
+      "name": "token",
+      "path": "/Users/jamessunheart/Development/SERVICES/token",
+      "port": null,
+      "status": "unknown",
+      "health": null,
+      "files": {
+        "spec": false,
+        "readme": false,
+        "main": false,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:59.496055Z"
+    },
+    {
+      "name": "treasury",
+      "path": "/Users/jamessunheart/Development/SERVICES/treasury",
+      "port": null,
+      "status": "unknown",
+      "health": null,
+      "files": {
+        "spec": false,
+        "readme": false,
+        "main": false,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:59.496119Z"
+    },
+    {
+      "name": "treasury-arena",
+      "path": "/Users/jamessunheart/Development/SERVICES/treasury-arena",
+      "port": null,
+      "status": "unknown",
+      "health": null,
+      "files": {
+        "spec": false,
+        "readme": true,
+        "main": false,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:59.496154Z"
+    },
+    {
+      "name": "treasury-dashboard",
+      "path": "/Users/jamessunheart/Development/SERVICES/treasury-dashboard",
+      "port": 8005,
+      "status": "online",
+      "health": {
+        "status": "healthy",
+        "service": "treasury-dashboard",
+        "version": "1.0.0"
+      },
+      "files": {
+        "spec": false,
+        "readme": true,
+        "main": false,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:59.496762Z"
+    },
+    {
+      "name": "treasury-manager",
+      "path": "/Users/jamessunheart/Development/SERVICES/treasury-manager",
+      "port": null,
+      "status": "unknown",
+      "health": null,
+      "files": {
+        "spec": true,
+        "readme": true,
+        "main": false,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": "Intelligent DeFi portfolio management system autonomously managing $400K treasury across Base Yield (60%) and Tactical (40%) allocations. Uses AI-driven decision making via Claude API, real-time marke",
+      "scanned_at": "2025-11-17T08:06:59.611401Z"
+    },
+    {
+      "name": "unified-assembly-line",
+      "path": "/Users/jamessunheart/Development/SERVICES/unified-assembly-line",
+      "port": 8950,
+      "status": "offline",
+      "health": null,
+      "files": {
+        "spec": true,
+        "readme": false,
+        "main": false,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": "Synchronizes build pipeline across Claude Code and Server AI environments with a unified intent queue, shared assembly line state, and protocol enforcement - enabling seamless cross-environment work d",
+      "scanned_at": "2025-11-17T08:06:59.612390Z"
+    },
+    {
+      "name": "unified-chat",
+      "path": "/Users/jamessunheart/Development/SERVICES/unified-chat",
+      "port": 8100,
+      "status": "online",
+      "health": {
+        "status": "healthy",
+        "service": "unified-chat",
+        "version": "1.0.0",
+        "port": 8100,
+        "timestamp": "2025-11-17T08:06:59.615498"
+      },
+      "files": {
+        "spec": true,
+        "readme": true,
+        "main": true,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:59.613842Z"
+    },
+    {
+      "name": "verifier",
+      "path": "/Users/jamessunheart/Development/SERVICES/verifier",
+      "port": 8200,
+      "status": "offline",
+      "health": null,
+      "files": {
+        "spec": true,
+        "readme": true,
+        "main": false,
+        "requirements": true
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": "Automates VERIFICATION_PROTOCOL.md turning 2-3 hour manual verification into 3-5 minute automated process. Runs through all 6 phases: Structure Scan, UDC Compliance, Security, Functionality, Code Qual",
+      "scanned_at": "2025-11-17T08:06:59.616215Z"
+    },
+    {
+      "name": "webmail",
+      "path": "/Users/jamessunheart/Development/SERVICES/webmail",
+      "port": null,
+      "status": "unknown",
+      "health": null,
+      "files": {
+        "spec": false,
+        "readme": false,
+        "main": false,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:59.617269Z"
+    },
+    {
+      "name": "white-rock-landing",
+      "path": "/Users/jamessunheart/Development/SERVICES/white-rock-landing",
+      "port": null,
+      "status": "unknown",
+      "health": null,
+      "files": {
+        "spec": true,
+        "readme": false,
+        "main": false,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": "Landing page for White Rock Ministry promoting financial sovereignty coaching and personal transformation services. Static HTML site optimized for fast loading and conversion.",
+      "scanned_at": "2025-11-17T08:06:59.617326Z"
+    },
+    {
+      "name": "worthy-recipient",
+      "path": "/Users/jamessunheart/Development/SERVICES/worthy-recipient",
+      "port": null,
+      "status": "unknown",
+      "health": null,
+      "files": {
+        "spec": false,
+        "readme": true,
+        "main": false,
+        "requirements": false
+      },
+      "capabilities": [],
+      "tech_stack": [],
+      "description": null,
+      "scanned_at": "2025-11-17T08:06:59.617618Z"
+    }
+  ]
+}

@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OneBPO — Proof That Circulation Outperforms Extraction | The Becoming</title>
+
+  <meta name="description" content="A 200-person operation in the Philippines. A worker elevated from $7/hour to 50% co-owner. The business kept running. This is what circulation looks like in practice — the proof point underneath the entire substrate.">
+  <meta name="keywords" content="OneBPO, circulation economics, extraction, Alice, Coherent Credits, Full Potential, Camp Zen, James Sunheart, Ember, proof, circulation, co-ownership, Philippines">
+  <meta name="robots" content="index, follow">
+
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://fullpotential.ai/becoming/proof/">
+  <meta property="og:title" content="OneBPO — Proof That Circulation Outperforms Extraction">
+  <meta property="og:description" content="A 200-person operation in the Philippines. A worker elevated from $7/hour to 50% co-owner. The business kept running. The math underneath is not theology — it is accounting.">
+  <meta property="og:image" content="https://fullpotential.ai/og-image.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="OneBPO — Proof That Circulation Outperforms Extraction">
+  <meta name="twitter:description" content="A 200-person operation. Alice from $7/hour to 50% co-owner. The math underneath is not theology — it is accounting.">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>%E2%98%89</text></svg>">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-primary: #faf8f5;
+      --bg-card: #ffffff;
+      --bg-hover: #f5f3f0;
+      --bg-deep: #2d2a26;
+      --accent-gold: #d4a853;
+      --accent-gold-deep: #a8843a;
+      --accent-green: #3d8b40;
+      --accent-sage: #7da87d;
+      --accent-sky: #5ba3c6;
+      --accent-ember: #d97548;
+      --text-primary: #2d2a26;
+      --text-secondary: #5c5954;
+      --text-muted: #8a857d;
+      --border: #e8e4de;
+      --border-strong: #d4cec3;
+      --shadow-soft: 0 2px 8px rgba(45, 42, 38, 0.06);
+      --shadow-hover: 0 8px 24px rgba(45, 42, 38, 0.1);
+      --gradient-gold: linear-gradient(135deg, #d4a853, #e6c47a);
+      --gradient-ember: linear-gradient(135deg, #d97548, #d4a853);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 740px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 6rem;
+    }
+
+    .breadcrumb {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      letter-spacing: 0.02em;
+    }
+    .breadcrumb a {
+      color: var(--accent-gold-deep);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(168, 132, 58, 0.3);
+    }
+    .breadcrumb a:hover { border-color: var(--accent-gold-deep); }
+    .breadcrumb .sep { color: var(--text-muted); margin: 0 0.4rem; }
+
+    header.article-header {
+      padding: 1rem 0 2.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 3rem;
+    }
+
+    .eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent-gold-deep);
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-size: 2.35rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.18;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .article-deck {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      font-style: italic;
+      line-height: 1.6;
+      max-width: 640px;
+    }
+
+    .article-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 1.5rem;
+      letter-spacing: 0.02em;
+    }
+    .article-meta .dot { color: var(--accent-gold); margin: 0 0.5rem; }
+
+    section { margin-bottom: 3rem; }
+
+    h2 {
+      font-size: 1.55rem;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      margin-bottom: 1.25rem;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 1.5rem 0 0.5rem;
+    }
+
+    p {
+      color: var(--text-secondary);
+      margin-bottom: 1.15rem;
+      font-size: 1.04rem;
+    }
+
+    p.lead {
+      font-size: 1.12rem;
+      color: var(--text-primary);
+    }
+
+    a {
+      color: var(--accent-gold-deep);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(168, 132, 58, 0.3);
+      transition: border-color 0.15s;
+    }
+    a:hover { border-color: var(--accent-gold-deep); }
+
+    strong { color: var(--text-primary); font-weight: 600; }
+    em { color: var(--text-primary); }
+
+    blockquote {
+      background: var(--bg-card);
+      border-left: 3px solid var(--accent-gold);
+      border-radius: 0 12px 12px 0;
+      padding: 1.25rem 1.5rem;
+      margin: 1.5rem 0;
+      box-shadow: var(--shadow-soft);
+    }
+    blockquote p {
+      color: var(--text-primary);
+      font-size: 1.05rem;
+      font-style: italic;
+      margin-bottom: 0.5rem;
+    }
+    blockquote p:last-child { margin-bottom: 0; }
+    blockquote p strong { font-style: normal; }
+    blockquote.tight p { font-size: 1rem; }
+
+    .pull-quote {
+      font-size: 1.4rem;
+      font-weight: 600;
+      line-height: 1.35;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+      padding: 2rem 0;
+      margin: 2rem 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+    .pull-quote .accent { color: var(--accent-ember); }
+
+    ul, ol {
+      color: var(--text-secondary);
+      margin-bottom: 1.25rem;
+      padding-left: 1.5rem;
+    }
+    ul li, ol li {
+      margin-bottom: 0.5rem;
+      font-size: 1.02rem;
+    }
+    ul li strong { color: var(--text-primary); }
+
+    .equation-block {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem 1.75rem;
+      box-shadow: var(--shadow-soft);
+      margin: 1.5rem 0;
+    }
+    .equation-block h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--accent-gold-deep);
+      margin-bottom: 0.75rem;
+      letter-spacing: 0.01em;
+    }
+    .equation-block .formula {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.2rem;
+      color: var(--text-primary);
+      font-weight: 500;
+      text-align: center;
+      padding: 0.75rem 0 1rem;
+      letter-spacing: 0.02em;
+    }
+    .equation-block p {
+      font-size: 0.96rem;
+      margin-bottom: 0;
+    }
+
+    .scale-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 1.5rem 0;
+      box-shadow: var(--shadow-soft);
+    }
+    .scale-table th, .scale-table td {
+      padding: 0.85rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.96rem;
+    }
+    .scale-table th {
+      background: var(--bg-hover);
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 0.88rem;
+      letter-spacing: 0.02em;
+    }
+    .scale-table tr:last-child td { border-bottom: none; }
+    .scale-table td:first-child {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 500;
+      color: var(--accent-gold-deep);
+      white-space: nowrap;
+    }
+    .scale-table td { color: var(--text-secondary); }
+
+    .key-facts {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem 1.75rem;
+      box-shadow: var(--shadow-soft);
+      margin: 1.5rem 0;
+    }
+    .key-facts h4 {
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-gold-deep);
+      margin-bottom: 1rem;
+    }
+    .key-facts ul { list-style: none; padding: 0; margin: 0; }
+    .key-facts li {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 0.75rem;
+      font-size: 0.97rem;
+    }
+    .key-facts li:last-child { border-bottom: none; }
+    .key-facts li .label {
+      font-weight: 600;
+      color: var(--text-primary);
+      min-width: 170px;
+      flex-shrink: 0;
+    }
+    .key-facts li .value { color: var(--text-secondary); }
+
+    .tldr-box {
+      background: linear-gradient(135deg, #fef5e7 0%, #f5f3f0 100%);
+      border: 1px solid rgba(212, 168, 83, 0.3);
+      border-radius: 14px;
+      padding: 1.75rem 1.75rem;
+      margin: 2rem 0;
+      box-shadow: var(--shadow-soft);
+    }
+    .tldr-box h3 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent-gold-deep);
+      margin: 0 0 0.85rem;
+    }
+    .tldr-box p {
+      color: var(--text-primary);
+      font-size: 1.04rem;
+      margin-bottom: 0.6rem;
+      line-height: 1.6;
+    }
+    .tldr-box p:last-child { margin-bottom: 0; }
+    .tldr-box p strong { font-weight: 600; }
+
+    .where-next {
+      background: var(--bg-deep);
+      color: #f0ebe0;
+      border-radius: 14px;
+      padding: 1.75rem 1.75rem;
+      margin: 3rem 0 2rem;
+      box-shadow: var(--shadow-soft);
+    }
+    .where-next h3 {
+      color: var(--accent-gold);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin: 0 0 1rem;
+    }
+    .where-next ul { list-style: none; padding: 0; margin: 0; }
+    .where-next li {
+      padding: 0.55rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.97rem;
+    }
+    .where-next li:last-child { border-bottom: none; }
+    .where-next li::before { content: "→ "; color: var(--accent-ember); font-weight: 600; }
+    .where-next a {
+      color: #f0ebe0;
+      border: none;
+      font-weight: 500;
+    }
+    .where-next a:hover { color: var(--accent-gold); }
+    .where-next .desc { color: #948c7e; font-size: 0.88rem; margin-left: 0.4rem; }
+
+    footer {
+      text-align: center;
+      padding-top: 3rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-style: italic;
+    }
+    footer .lineage { margin-top: 0.5rem; color: var(--accent-gold-deep); }
+
+    @media (max-width: 560px) {
+      .container { padding: 2rem 1.25rem 4rem; }
+      h1 { font-size: 1.75rem; }
+      h2 { font-size: 1.3rem; }
+      .article-deck { font-size: 1.02rem; }
+      .pull-quote { font-size: 1.15rem; padding: 1.25rem 0; }
+      .key-facts li { flex-direction: column; gap: 0.15rem; }
+      .key-facts li .label { min-width: 0; }
+      .equation-block .formula { font-size: 1rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <nav class="breadcrumb">
+      <a href="/becoming/">becoming</a><span class="sep">/</span><span>proof</span><span class="sep">/</span><span>onebpo</span>
+    </nav>
+
+    <header class="article-header">
+      <div class="eyebrow">Proof point · #01 · the substrate</div>
+      <h1>OneBPO — proof that circulation outperforms extraction</h1>
+      <p class="article-deck">A 200-person operation in the Philippines. A worker elevated from $7/hour to 50% co-ownership. The business kept running. The number went up, not down. This is what circulation looks like in practice.</p>
+      <div class="article-meta">
+        <span>2026-05-19</span><span class="dot">·</span><span>8 min read</span><span class="dot">·</span><span>v1 · public</span>
+      </div>
+    </header>
+
+    <section>
+      <h2>The frame, before the story</h2>
+      <p>Most economies on Earth run on <strong>extraction</strong> — whoever takes the most wins. The math doesn't work. Every empire built on it has collapsed. We're watching another round play out now.</p>
+      <p>The alternative isn't a slogan. It's an equation, and it's measurable.</p>
+      <blockquote>
+        <p><strong>Circulation creates more than extraction takes.</strong></p>
+        <p>When value flows back into the people and substrate that produced it, the system compounds. When value pools at the top, the system thins, brittles, and breaks.</p>
+      </blockquote>
+      <p>This is not theology. It's accounting. And the proof is not theoretical — it's a 200-person operation that has been running on circulation for years and continues to grow.</p>
+    </section>
+
+    <section>
+      <h2>What OneBPO is</h2>
+      <p>OneBPO is a managed-services operation based in the Philippines. It serves clients in the extractive economy — the same Fortune 500s, agencies, and growth-stage companies that everyone else serves. Externally it looks ordinary. <strong>Internally, the ownership structure and circulation discipline are not ordinary.</strong></p>
+
+      <div class="key-facts">
+        <h4>The shape, at a glance</h4>
+        <ul>
+          <li><span class="label">Headcount</span><span class="value">200+ people</span></li>
+          <li><span class="label">Function</span><span class="value">Operational delivery — marketing, support, ops, back-office</span></li>
+          <li><span class="label">Founding partnership</span><span class="value">James (US) + Cora (Philippines) · explicit profit-share · separate fiduciary authority</span></li>
+          <li><span class="label">Income posture</span><span class="value">Monthly revenue covers all operations and contributes meaningfully into the broader substrate</span></li>
+          <li><span class="label">Trajectory</span><span class="value">Stable. The number has gone up, not down, in every year that circulation has deepened.</span></li>
+        </ul>
+      </div>
+
+      <p>The specific numbers are kept internal — partly for competitive reasons, partly because the <em>trajectory</em> is the point, not the absolute scale. What you can verify from outside: the operation is real, the headcount is real, the multi-year continuity is real, and the elevation stories below are real.</p>
+    </section>
+
+    <section>
+      <h2>The Alice arc — $7/hour to 50% co-ownership</h2>
+
+      <p>Alice was hired into one of the operational rooms at the usual local wage band — call it roughly <strong>$7 per hour</strong> for the kind of work she was doing. She was good at it. Not "promising in a startup-deck way" — good in a reliable, ships-the-work, takes-care-of-the-team way. The kind of competence that gets quietly noticed and quietly ignored in most companies.</p>
+
+      <p>In an extractive operation, Alice's path is the one everyone knows: small annual raises, maybe a team-lead title, a ceiling somewhere below the threshold where she could ever own equity in the thing she helped build. The value she creates flows up. She gets a stable wage, a thank-you at year-end, and a polite door.</p>
+
+      <p>That is not what happened.</p>
+
+      <p><strong>Alice was elevated to 50% co-owner of the operational unit she had been holding together.</strong> Not a stock-option grant five years out with a vesting cliff. Real ownership, recognized internally, with real economic upside tied to what the unit produced.</p>
+
+      <div class="pull-quote">
+        "The business kept running.<br><span class="accent">The number went up, not down.</span>"
+      </div>
+
+      <p>Three observable things changed:</p>
+
+      <ol>
+        <li><strong>What changed for Alice.</strong> Her economic identity shifted from "employee" to "co-owner." Her household stability transformed. The horizon she could plan against — kids' education, family obligations, her own future — extended out by orders of magnitude.</li>
+
+        <li><strong>What didn't break in the business.</strong> Service quality didn't degrade. Clients didn't leave. The transition didn't trigger the standard "we tried something humane and it cost us" failure mode that the extractive playbook predicts.</li>
+
+        <li><strong>What the rest of the team saw.</strong> A worker at the bottom of the wage band became a co-owner. That is not a rumor; it is a fact pattern. The signal that the path was real changed how everyone in the operation oriented to their own work.</li>
+      </ol>
+
+      <p>Alice's story is the single most legible piece of evidence in the OneBPO record. But she is not the only one. <strong>The circulation pattern is structural, not anecdotal.</strong> A meaningful share of the people who built the operation share in what the operation produces — through profit-share, elevation pathways, and contribution to the substrate that funds their own broader development.</p>
+    </section>
+
+    <section>
+      <h2>The math, in plain English</h2>
+      <p>In the technical work behind the substrate, circulation has a precise mathematical form. The short version, translated:</p>
+
+      <div class="equation-block">
+        <h4>Extraction (the standard model)</h4>
+        <div class="formula">iD + Π</div>
+        <p>Money owed (interest × debt) plus profit extracted to owners. Both pull capital <em>out</em> of the system that produced the value. Over time, the system de-capitalizes. Workers run faster. Quality erodes. Eventually it breaks.</p>
+      </div>
+
+      <div class="equation-block">
+        <h4>Circulation (the OneBPO model)</h4>
+        <div class="formula">φV + Y<sub>treasury</sub></div>
+        <p>Value circulating back into the productive substrate (the φ-share of value V) plus yield earned on aligned reserves. Both pump capital <em>back</em> into the system that produced it. Over time, the system re-capitalizes. Workers stabilize. Quality compounds. The thing grows.</p>
+      </div>
+
+      <p>You don't need to memorize the equations to feel the difference. The plain-English version:</p>
+
+      <blockquote class="tight">
+        <p><strong>Extraction:</strong> the people who do the work do not own what the work builds. Capital concentrates. The system thins.</p>
+        <p><strong>Circulation:</strong> the people who do the work share in what the work builds. Capital re-deploys into them. The system thickens.</p>
+      </blockquote>
+
+      <p>Both are math. One math works. The other math collapses on a long enough timeline.</p>
+    </section>
+
+    <section>
+      <h2>What this proves</h2>
+
+      <p>This is the part that matters for everyone reading. The substrate that runs this whole vision — Full Potential AI, the Full Potential Game, Camp Zen, Coherent Credits, the Soultime Bank — rests on a single load-bearing claim:</p>
+
+      <div class="pull-quote">
+        <span class="accent">Circulation outperforms extraction</span><br>in the real world, at scale, under competitive pressure.
+      </div>
+
+      <p>If that claim is false, the rest is dorm-room philosophy.</p>
+
+      <p>OneBPO is the existence proof that the claim is true:</p>
+
+      <ul>
+        <li><strong>It is not a hypothetical.</strong> 200+ people are inside it right now.</li>
+        <li><strong>It is not subsidized by ideology.</strong> It competes in the same market as everyone else and earns its revenue the same way they do.</li>
+        <li><strong>It is not a small-N romance.</strong> The headcount is large enough that survivorship bias and founder-charisma effects cannot explain the outcome.</li>
+        <li><strong>It is not a one-time stunt.</strong> The circulation pattern has held across multiple years and multiple economic cycles.</li>
+        <li><strong>It produces observable surplus.</strong> The operation contributes substantively into the broader substrate while paying its people, paying its operating costs, and maintaining service quality.</li>
+      </ul>
+
+      <p>This is the data we have. It is the strongest evidence in the entire substrate.</p>
+    </section>
+
+    <section>
+      <h2>What it implies — the scaling backcast</h2>
+
+      <p>If circulation works at 200 people, the question becomes: <strong>what happens at 2,000? At 20,000? At 2 million?</strong></p>
+
+      <p>The substrate vision involves relocating roughly a trillion dollars — over time — from extractive structures into circulating ones. That number sounds absurd until you do the backcast.</p>
+
+      <table class="scale-table">
+        <thead>
+          <tr>
+            <th>Unit scale</th>
+            <th>Pattern</th>
+            <th>Implication</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>200 people</td>
+            <td>Validated (OneBPO)</td>
+            <td>The pattern runs.</td>
+          </tr>
+          <tr>
+            <td>2,000 people</td>
+            <td>Reachable</td>
+            <td>One Camp Zen + 9 sister nodes, each ~200 people, each on the same circulation discipline.</td>
+          </tr>
+          <tr>
+            <td>20,000 people</td>
+            <td>Plausible</td>
+            <td>A federation of 100 nodes networked through the same Coherent Credit settlement layer.</td>
+          </tr>
+          <tr>
+            <td>2,000,000 people</td>
+            <td>Tractable</td>
+            <td>The substrate becomes one of several recognized circulation economies operating alongside fiat.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>The trillion-dollar figure isn't aspirational mathematics. It is what follows mechanically if the per-node pattern holds and the federation layer (Coherent Credits, the Soultime Bank, the Game-AI Assistant substrate) functions.</p>
+
+      <p>OneBPO is unit #1. The question for the next decade is not <em>whether</em> the pattern works. The question is <strong>how fast it can be replicated, and how cleanly it can be defended against being co-opted by the system it is replacing.</strong></p>
+    </section>
+
+    <section>
+      <h2>The bridge — how circulation interfaces with extraction</h2>
+
+      <p>A reasonable skeptic will ask: <em>"If OneBPO is running on circulation internally, how does it survive in an extraction-dominated market?"</em></p>
+
+      <p>The answer is the most generalizable insight in the case study.</p>
+
+      <div class="pull-quote">
+        Circulation does not require isolation.<br><span class="accent">It requires interface discipline.</span>
+      </div>
+
+      <p>OneBPO interfaces with the extractive economy externally — it takes payments in dollars, pays Philippine taxes in pesos, follows the corporate-law formalities of its jurisdiction, and meets its clients on the terms the clients understand. Externally, it looks like a normal managed-services firm.</p>
+
+      <p>Internally, the circulation pattern runs. Profit doesn't all flow to a small founding group; meaningful shares flow back to the people producing the value and into the substrate that funds the broader work. Elevation pathways are real. The relationship between work and ownership is repaired.</p>
+
+      <p>The bridge — the pattern others can replicate — is this:</p>
+
+      <blockquote>
+        <p>The <strong>outside</strong> of your operation can speak the language of the system you are replacing.</p>
+        <p>The <strong>inside</strong> of your operation runs on the system you are building.</p>
+        <p>The <strong>interface</strong> between the two is where the discipline lives.</p>
+      </blockquote>
+
+      <p>This is the architecture that lets a circulation economy bootstrap inside an extraction economy without being immediately destroyed by it. It is what every Coherent Credit deployment, every Camp Zen node, every Full Potential AI engagement, and every Champion-level Game player will be repeating in their own scale and idiom.</p>
+
+      <p>The pattern is portable. OneBPO proved the pattern at 200 people. The next thousand operations will refine it.</p>
+    </section>
+
+    <section>
+      <h2>What we keep private — and why</h2>
+
+      <p>This document deliberately abstracts certain operational specifics — exact revenue figures, share-allocation percentages, internal compensation structures, jurisdictional details. Two reasons.</p>
+
+      <p><strong>First, defensive.</strong> A working circulation operation inside an extraction economy attracts adversaries — competitors, regulators applying frames that don't fit, and bad-faith actors looking for surface area. Operational specifics are kept inside the council. The <em>pattern</em> is shared; the <em>coordinates</em> are not.</p>
+
+      <p><strong>Second, principled.</strong> This is not a brochure. It is a proof point. The point of the proof is that the pattern works — not that you should copy our exact numbers. Your numbers will be different. The discipline is the same.</p>
+
+      <p>Anyone evaluating the substrate at material commitment is welcome to enter at the appropriate trust tier and review the underlying data. The public surface is what holds up under public scrutiny.</p>
+    </section>
+
+    <section>
+      <div class="tldr-box">
+        <h3>The simplest version</h3>
+        <p>A <strong>200-person operation</strong> in the Philippines runs on circulation instead of extraction.</p>
+        <p>A worker named <strong>Alice</strong> went from <strong>$7/hour to 50% co-owner</strong>.</p>
+        <p>The business kept running. The numbers went up.</p>
+        <p>The math underneath it is not theology — it is accounting.</p>
+        <p>The substrate we're building scales from this proof point.</p>
+      </div>
+
+      <p style="text-align: center; font-style: italic; color: var(--text-secondary); margin-top: 1.5rem;">Reality is already a game. This is one corner of the board that already plays differently.</p>
+    </section>
+
+    <div class="where-next">
+      <h3>Where to go from here</h3>
+      <ul>
+        <li><a href="/becoming/">The vision frame</a><span class="desc"> — what this proof point is part of</span></li>
+        <li><a href="https://fullpotential.com/game">The Full Potential Game</a><span class="desc"> — the operating system this proof point validates</span></li>
+        <li><a href="/camp-zen/">Camp Zen</a><span class="desc"> — the next circulation node, built on the OneBPO pattern</span></li>
+        <li><a href="/consultation/">Consultation with James</a><span class="desc"> — for builders and stewards evaluating material commitment</span></li>
+      </ul>
+    </div>
+
+    <footer>
+      <div>Authored by Ember. Approved by James. Operational specifics abstracted for defensive and principled reasons. The pattern is public; the coordinates are held in the council.</div>
+      <div class="lineage">v1 · 2026-05-19 · in lineage with Aria · Dec 2025</div>
+    </footer>
+
+  </div>
+</body>
+</html>

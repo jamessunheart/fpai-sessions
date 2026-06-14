@@ -1,0 +1,311 @@
+# Decision Engine Rules
+# Version: 1.0 (Aria's Apprentice Phase 1)
+# 
+# These rules are the executable logic of governance.
+# Aria consults these rules before making recommendations.
+# The Decision Engine evaluates actions against these rules.
+
+rules:
+
+  # ═══════════════════════════════════════════════════════════════════
+  # LAYER 1: COHERENT NODE (Steward State)
+  # These protect James's coherence and regulation. HIGHEST PRIORITY.
+  # ═══════════════════════════════════════════════════════════════════
+  
+  - id: coherence-pause
+    layer: 1
+    name: "Coherence Drop → Pause Expansion"
+    description: "When steward coherence falls below baseline, pause all expansion"
+    condition:
+      metric: steward_coherence_score
+      operator: lt
+      threshold: baseline
+    action:
+      type: pause
+      target: expansion
+      message: "Coherence below baseline. Pausing expansion. Recommend grounding."
+      set_state:
+        expansion_paused: true
+    shadow_costs:
+      prevents_stress_accumulation: 50
+      prevents_optionality_loss: 30
+    override:
+      allowed: true
+      requires_confirmation: true
+      log_override: true
+      cooldown_hours: 24
+
+  - id: stress-critical
+    layer: 1
+    name: "Sustained High Stress → Block New Commitments"
+    description: "When stress remains high for multiple days, prevent new commitments"
+    condition:
+      metric: steward_stress_level
+      operator: gt
+      threshold: 70
+      duration_days: 3
+    action:
+      type: block
+      target: new_commitments
+      message: "Stress elevated for 3+ days. New commitments blocked until resolved."
+    override:
+      allowed: false  # Cannot override - Three Nevers
+    
+  - id: decision-quality-decline
+    layer: 1
+    name: "Decision Quality Declining → Slow System"
+    description: "When decision quality drops, reduce pace"
+    condition:
+      metric: decision_quality_score
+      operator: lt
+      threshold: 0.7
+      trend: declining
+    action:
+      type: recommend
+      target: pace
+      message: "Decision quality declining. Recommend slowing pace and increasing review time."
+
+  # ═══════════════════════════════════════════════════════════════════
+  # LAYER 2: AI STEWARD BRAIN (Aria's governance layer)
+  # ═══════════════════════════════════════════════════════════════════
+
+  - id: shadow-cost-flag
+    layer: 2
+    name: "Shadow Cost Exceeds Benefit → Hold"
+    description: "When hidden costs outweigh visible benefits, pause for review"
+    condition:
+      metric: shadow_cost_ratio
+      operator: gt
+      threshold: 1.0
+    action:
+      type: flag
+      target: pending_action
+      message: "Shadow cost exceeds benefit. Holding for explicit review."
+      create_alert:
+        severity: warning
+        type: shadow_cost_exceeded
+    override:
+      allowed: true
+      requires_confirmation: true
+      log_override: true
+
+  - id: complexity-creep-warning
+    layer: 2
+    name: "Complexity Creep → Recommend Simplification"
+    description: "When system complexity grows too fast, recommend simplification"
+    condition:
+      metric: complexity_score
+      operator: gt
+      threshold: 1.2
+    action:
+      type: recommend
+      target: simplification
+      message: "Complexity creeping. Recommend simplification before adding new components."
+
+  - id: complexity-creep-block
+    layer: 2
+    name: "Complexity Critical → Block New Additions"
+    description: "When complexity exceeds critical threshold, block new additions"
+    condition:
+      metric: complexity_score
+      operator: gt
+      threshold: 1.5
+    action:
+      type: block
+      target: new_additions
+      message: "Complexity at critical level. No new additions until simplified."
+    override:
+      allowed: false  # Three Nevers: complexity vs coherence
+
+  - id: override-pattern-review
+    layer: 2
+    name: "Override Pattern → Rule Review"
+    description: "When rules are overridden frequently, review calibration"
+    condition:
+      metric: rule_override_count
+      operator: gt
+      threshold: 3
+      window_days: 7
+    action:
+      type: recommend
+      target: rule_calibration
+      message: "Multiple rule overrides this week. Consider reviewing thresholds."
+      create_alert:
+        severity: info
+        type: calibration_review
+
+  # ═══════════════════════════════════════════════════════════════════
+  # LAYER 3: HUMAN LOOPS (Apprentices & Partnerships)
+  # ═══════════════════════════════════════════════════════════════════
+
+  - id: loop-success-amplify
+    layer: 3
+    name: "Successful Loop → Amplify Resources"
+    description: "When a human loop shows improvement, route more resources"
+    condition:
+      metric: loop_improvement_score
+      operator: gt
+      threshold: 0.2
+    action:
+      type: route
+      target: resources
+      message: "Loop showing improvement. Recommending increased resource allocation."
+      log_event:
+        type: loop.improvement_detected
+    auto_execute: true
+
+  - id: autonomy-increase-expand
+    layer: 3
+    name: "Autonomy Growing → Expand Authority"
+    description: "As apprentice autonomy increases, reduce oversight"
+    condition:
+      metric: apprentice_autonomy_score
+      operator: gt
+      threshold: 40
+      trend: increasing
+    action:
+      type: recommend
+      target: oversight_reduction
+      message: "Autonomy increasing. Consider reducing check-in frequency and expanding decision authority."
+
+  - id: extractive-loop-flag
+    layer: 3
+    name: "Extractive Pattern Detected → Review Loop"
+    description: "When stress increases despite capability gains, flag for review"
+    condition:
+      metric: apprentice_stress_level
+      operator: gt
+      threshold: 50
+      while:
+        metric: apprentice_capability_score
+        trend: increasing
+    action:
+      type: flag
+      target: loop_structure
+      message: "Stress increasing despite capability gains. Loop may be extractive. Review structure."
+      create_alert:
+        severity: warning
+        type: potentially_extractive_loop
+
+  - id: phase-transition-check
+    layer: 3
+    name: "Phase Transition Ready"
+    description: "When apprentice meets next phase criteria, recommend transition"
+    condition:
+      type: phase_criteria_met
+    action:
+      type: recommend
+      target: phase_transition
+      message: "Apprentice appears ready for next phase. Review and confirm."
+
+  # ═══════════════════════════════════════════════════════════════════
+  # LAYER 4: TRADING & CAPITAL
+  # ═══════════════════════════════════════════════════════════════════
+
+  - id: trading-coherence-check
+    layer: 4
+    name: "Trading Decision → Check Steward State"
+    description: "Before any trading decision, verify steward is coherent"
+    condition:
+      type: trading_action
+    action:
+      type: check
+      target: steward_coherence
+      message: "Verifying steward coherence before trading decision."
+      block_if:
+        metric: steward_coherence_score
+        operator: lt
+        threshold: 60
+
+  - id: speculation-block
+    layer: 4
+    name: "Speculation Detected → Block"
+    description: "Block speculative capital allocation"
+    condition:
+      type: speculation_detected
+      definition: "Capital allocated without productive use case or clear thesis"
+    action:
+      type: block
+      target: transaction
+      message: "Speculative allocation detected. Blocked pending review."
+    override:
+      allowed: true
+      requires_confirmation: true
+      log_override: true
+      cooldown_hours: 48
+
+  - id: position-size-limit
+    layer: 4
+    name: "Position Size Limit"
+    description: "Enforce maximum position size for capital protection"
+    condition:
+      metric: position_size_percent
+      operator: gt
+      threshold: 20
+    action:
+      type: block
+      target: trade
+      message: "Position size exceeds 20% of portfolio. Reduce size."
+
+  # ═══════════════════════════════════════════════════════════════════
+  # LAYER 5: SYSTEM HEALTH
+  # ═══════════════════════════════════════════════════════════════════
+
+  - id: server-resource-critical
+    layer: 5
+    name: "Server Resources Critical"
+    description: "When server resources are critically low"
+    condition:
+      any:
+        - metric: memory_percent
+          operator: gt
+          threshold: 90
+        - metric: disk_percent
+          operator: gt
+          threshold: 90
+    action:
+      type: alert
+      target: steward
+      message: "Server resources critical. Immediate attention needed."
+      auto_actions:
+        - type: recommend
+          message: "Consider stopping non-essential services"
+
+  - id: service-failure-pattern
+    layer: 5
+    name: "Service Failure Pattern"
+    description: "When a service fails repeatedly"
+    condition:
+      metric: service_restart_count
+      operator: gt
+      threshold: 3
+      window_hours: 1
+    action:
+      type: flag
+      target: service_health
+      message: "Service restarting frequently. Investigate root cause."
+
+# ═══════════════════════════════════════════════════════════════════
+# META-RULES
+# ═══════════════════════════════════════════════════════════════════
+
+meta:
+  
+  evaluation_order: "layer_ascending"  # Layer 1 rules evaluated first
+  
+  conflict_resolution: "higher_layer_wins"  # Lower layer number (higher priority) wins
+  
+  logging:
+    all_evaluations: false  # Only log triggered rules
+    all_triggers: true
+    all_overrides: true
+    
+  refresh_interval_seconds: 60  # How often to re-evaluate conditions
+  
+  # Aria-specific settings
+  aria_integration:
+    check_before_recommendations: true
+    surface_shadow_costs: true
+    respect_three_nevers: always
+
+

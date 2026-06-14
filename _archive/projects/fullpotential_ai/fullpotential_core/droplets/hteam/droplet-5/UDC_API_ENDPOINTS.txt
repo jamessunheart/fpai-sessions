@@ -1,0 +1,79 @@
+# Droplet 5 - UDC API Endpoints
+# Dashboard: https://dashboard.fullpotential.ai
+
+# ========== CORE ENDPOINTS (REQUIRED) ==========
+
+# Health Check - Get droplet status and info
+curl https://dashboard.fullpotential.ai/api/health
+
+# System State - Get real-time CPU, memory, uptime metrics
+curl https://dashboard.fullpotential.ai/api/state
+
+# Capabilities - Get features and dependencies
+curl https://dashboard.fullpotential.ai/api/capabilities
+
+# Dependencies - List connected droplets
+curl https://dashboard.fullpotential.ai/api/dependencies
+
+# Message API - Receive UDC messages from other droplets
+curl -X POST https://dashboard.fullpotential.ai/api/message \
+  -H 'Authorization: Bearer test-token-123' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "trace_id": "550e8400-e29b-41d4-a716-446655440000",
+  "source": 10,
+  "target": 5,
+  "message_type": "event",
+  "payload": {
+    "action": "test",
+    "data": "hello from orchestrator"
+  },
+  "timestamp": "2025-11-12T21:00:00Z",
+  "signature": "test-token-123"
+}'
+
+# Send API - Send messages to other droplets
+curl -X POST https://dashboard.fullpotential.ai/api/send \
+  -H 'Authorization: Bearer test-token-123' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "target": 10,
+  "message_type": "event",
+  "payload": {
+    "action": "test",
+    "data": "hello from dashboard"
+  },
+  "priority": "normal",
+  "retry_count": 3
+}'
+
+# ========== EXTENDED ENDPOINTS (UDC-X) ==========
+
+# Version - Build and deployment info
+curl https://dashboard.fullpotential.ai/api/version
+
+# Reload Config - Reload configuration without restart
+curl -X POST https://dashboard.fullpotential.ai/api/reload-config \
+  -H 'Authorization: Bearer test-token-123' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "config_path": "/app/udc_config.json"
+}'
+
+# Shutdown - Graceful shutdown with cleanup
+curl -X POST https://dashboard.fullpotential.ai/api/shutdown \
+  -H 'Authorization: Bearer test-token-123' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "delay_seconds": 10,
+  "reason": "maintenance"
+}'
+
+# Emergency Stop - Immediate stop (emergency only)
+curl -X POST https://dashboard.fullpotential.ai/api/emergency-stop \
+  -H 'Authorization: Bearer test-token-123'
+
+# ========== TESTING & MONITORING ==========
+
+# Test Heartbeat - Manually trigger heartbeat to Orchestrator
+curl https://dashboard.fullpotential.ai/api/test-heartbeat

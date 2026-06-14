@@ -1,0 +1,51 @@
+{
+  "servers": [
+    {
+      "server_id": "server_198_54_123_234",
+      "name": "Primary Production Server",
+      "ip_address": "198.54.123.234",
+      "description": "Current primary server - 8 CPU cores, 8GB RAM",
+      "resource_port": 8160,
+      "gpu_available": false,
+      "gpu_count": 0,
+      "priority": 1
+    }
+  ],
+  "gpu_servers": [
+    {
+      "server_id": "gpu_server_1",
+      "name": "GPU Server 1",
+      "ip_address": "ADD_YOUR_GPU_SERVER_IP_HERE",
+      "description": "GPU server for AI workloads",
+      "resource_port": 8160,
+      "gpu_available": true,
+      "gpu_count": 1,
+      "gpu_names": ["NVIDIA A100", "NVIDIA RTX 4090"],
+      "gpu_cost_per_hour_usd": 0.50,
+      "priority": 2
+    }
+  ],
+  "discovery": {
+    "auto_discover": true,
+    "check_interval_seconds": 300,
+    "resource_endpoints": [
+      "/resources",
+      "/health"
+    ]
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

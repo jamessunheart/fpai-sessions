@@ -1,0 +1,47 @@
+{
+  "tvl": 405230.50,
+  "pnl_24h": 1250.00,
+  "pnl_percent": 0.31,
+  "cash": 120000.00,
+  "allocation": {
+    "stable": 60,
+    "blue_chip": 30,
+    "moonshot": 10
+  },
+  "positions": [
+    {
+      "id": "pos_001",
+      "asset": "ETH",
+      "protocol": "Aave V3",
+      "size_usd": 50000,
+      "apy": 0.042,
+      "risk": "LOW"
+    },
+    {
+      "id": "pos_002",
+      "asset": "USDC",
+      "protocol": "Curve 3pool",
+      "size_usd": 200000,
+      "apy": 0.125,
+      "risk": "LOW"
+    },
+    {
+      "id": "pos_003",
+      "asset": "PENDLE",
+      "protocol": "Pendle Finance",
+      "size_usd": 15000,
+      "apy": 0.45,
+      "risk": "MED"
+    }
+  ],
+  "magnet_engine": {
+    "status": "STANDBY",
+    "leverage": 1.0,
+    "target_leverage": 1.8,
+    "magnet_strength": 72.5,
+    "distance": 0.04,
+    "conflict": 0.12,
+    "volatility": 1.1,
+    "message": "Waiting for API Keys to Engage Live Mode"
+  }
+}

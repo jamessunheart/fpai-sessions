@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Full Potential AI</title>
+  <style>
+    :root {
+      --bg: radial-gradient(circle at top, #0f172a, #020617);
+      --panel: rgba(15,23,42,0.88);
+      --border: rgba(255,255,255,0.12);
+      --text: #cbd5f5;
+      --accent: #fbbf24;
+      --blue: #38bdf8;
+    }
+    body {
+      font-family: 'Space Grotesk', 'Inter', Arial, sans-serif;
+      background: var(--bg);
+      color: #f8fafc;
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .panel {
+      max-width: 600px;
+      text-align: center;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3rem;
+      background: var(--panel);
+      box-shadow: 0 35px 80px rgba(2,6,23,0.65);
+    }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      letter-spacing: 0.05em;
+    }
+    p {
+      font-size: 1.2rem;
+      line-height: 1.7;
+      color: var(--text);
+      margin-bottom: 3rem;
+    }
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    .btn {
+      display: block;
+      padding: 1.2rem 2rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 12px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .btn-primary {
+      background: var(--blue);
+      color: #0f172a;
+    }
+    .btn-secondary {
+      background: rgba(56, 189, 248, 0.1);
+      color: var(--blue);
+      border: 2px solid var(--blue);
+    }
+  </style>
+</head>
+<body>
+  <div class="panel">
+    <h1>Full Potential AI</h1>
+    <p>The Operating System for Paradise Economics</p>
+    
+    <div class="buttons">
+      <a href="/research/" class="btn btn-primary">
+        📚 Research Library
+      </a>
+      <a href="/docs/status/missions.json" class="btn btn-secondary">
+        🎯 Live Missions
+      </a>
+    </div>
+  </div>
+</body>
+</html>
+
+
+
+
+
+

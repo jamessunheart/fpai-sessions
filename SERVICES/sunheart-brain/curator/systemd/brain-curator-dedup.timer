@@ -1,0 +1,11 @@
+[Unit]
+Description=Run curator dedup pass hourly
+
+[Timer]
+OnBootSec=10min
+OnUnitActiveSec=1h
+Unit=brain-curator@dedup.service
+Persistent=true
+
+[Install]
+WantedBy=timers.target

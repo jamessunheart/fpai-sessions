@@ -1,0 +1,21 @@
+POST THIS TO: https://www.reddit.com/r/financialindependence/submit
+
+TITLE:
+Free AI matching to find financial advisor who gets FIRE
+
+BODY:
+Finding a financial advisor who understands FIRE is hard.
+
+Most push expensive products or don't get the early retirement mindset.
+
+I built an AI that matches you with advisors based on:
+• FIRE specialization
+• Fee-only requirement
+• Tax optimization focus
+• Your specific situation (income, savings rate, timeline)
+
+Free service (advisors pay if you engage). Testing with 50 people.
+
+Want in? Comment or DM.
+
+http://198.54.123.234:8401/

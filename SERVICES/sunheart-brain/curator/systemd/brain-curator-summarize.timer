@@ -1,0 +1,11 @@
+[Unit]
+Description=Summarize new conversations every 6h
+
+[Timer]
+OnBootSec=20min
+OnUnitActiveSec=6h
+Unit=brain-curator@summarize.service
+Persistent=true
+
+[Install]
+WantedBy=timers.target

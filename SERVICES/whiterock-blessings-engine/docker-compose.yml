@@ -1,0 +1,112 @@
+# WhiteRock Blessings Engine - Docker Compose
+# Production deployment configuration
+
+version: '3.8'
+
+services:
+  # Main API Application
+  app:
+    build: .
+    container_name: whiterock-blessings-api
+    ports:
+      - "8020:8020"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:${POSTGRES_PASSWORD:-whiterock}@db:5432/whiterock
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - JWT_SECRET=${JWT_SECRET:-change-me-in-production}
+      - STRIPE_API_KEY=${STRIPE_API_KEY:-}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET:-}
+      - SENDGRID_API_KEY=${SENDGRID_API_KEY:-}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8020/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - whiterock-network
+
+  # Celery Worker (Background Tasks)
+  worker:
+    build: .
+    container_name: whiterock-blessings-worker
+    command: celery -A worker.celery_app worker --loglevel=info
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:${POSTGRES_PASSWORD:-whiterock}@db:5432/whiterock
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - SENDGRID_API_KEY=${SENDGRID_API_KEY:-}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - whiterock-network
+
+  # Celery Beat (Scheduler)
+  beat:
+    build: .
+    container_name: whiterock-blessings-beat
+    command: celery -A worker.celery_app beat --loglevel=info
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:${POSTGRES_PASSWORD:-whiterock}@db:5432/whiterock
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      - worker
+    restart: unless-stopped
+    networks:
+      - whiterock-network
+
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: whiterock-blessings-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-whiterock}
+      - POSTGRES_DB=whiterock
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - whiterock-network
+
+  # Redis (Message Broker)
+  redis:
+    image: redis:7-alpine
+    container_name: whiterock-blessings-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - whiterock-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  whiterock-network:
+    driver: bridge
+
+
+

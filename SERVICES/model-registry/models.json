@@ -1,0 +1,190 @@
+{
+  "version": "2025-12-02",
+  "last_updated": "2025-12-02T00:00:00Z",
+  "auto_update": true,
+  "update_check_url": "https://fullpotential.ai/api/models/latest",
+  
+  "local_models": {
+    "llama4:maverick": {
+      "name": "Llama 4 Maverick",
+      "provider": "meta",
+      "released": "2025-04-05",
+      "parameters": "17B active (MoE)",
+      "context_window": 1000000,
+      "role": "proposer",
+      "capabilities": ["text", "image", "multilingual"],
+      "cost_per_1m_tokens": 0,
+      "ollama_available": true,
+      "notes": "Multimodal, 12 languages"
+    },
+    "llama4:scout": {
+      "name": "Llama 4 Scout",
+      "provider": "meta",
+      "released": "2025-04-05",
+      "parameters": "17B active (MoE)",
+      "context_window": 10000000,
+      "role": "long_context",
+      "capabilities": ["text", "image", "multilingual"],
+      "cost_per_1m_tokens": 0,
+      "ollama_available": true,
+      "notes": "10M context window - largest available"
+    },
+    "qwen3:max": {
+      "name": "Qwen3-Max",
+      "provider": "alibaba",
+      "released": "2025-09-05",
+      "parameters": "large",
+      "context_window": 128000,
+      "role": "critic",
+      "capabilities": ["text", "code", "reasoning"],
+      "cost_per_1m_tokens": 0,
+      "ollama_available": true,
+      "notes": "Outperforms GPT-4o, DeepSeek-V3, Llama-3.1-405B"
+    },
+    "deepseek-r1": {
+      "name": "DeepSeek-R1",
+      "provider": "deepseek",
+      "released": "2025-01-01",
+      "parameters": "large",
+      "context_window": 128000,
+      "role": "coder",
+      "capabilities": ["text", "code", "reasoning"],
+      "cost_per_1m_tokens": 0,
+      "ollama_available": true,
+      "notes": "Coding specialist - use with caution for sensitive content"
+    },
+    "fara:7b": {
+      "name": "Fara-7B",
+      "provider": "microsoft",
+      "released": "2025-11-28",
+      "parameters": "7B",
+      "context_window": 32000,
+      "role": "agent",
+      "capabilities": ["computer_use", "browser_automation"],
+      "cost_per_1m_tokens": 0,
+      "ollama_available": true,
+      "notes": "Computer use agent - outperforms GPT-4o on agentic tasks"
+    }
+  },
+  
+  "external_models": {
+    "tier2": {
+      "gemini-3.0-pro": {
+        "name": "Gemini 3.0 Pro",
+        "provider": "google",
+        "released": "2025-11-18",
+        "api_model_id": "gemini-3.0-pro",
+        "context_window": 1000000,
+        "cost_per_1m_input": 2.0,
+        "cost_per_1m_output": 12.0,
+        "capabilities": ["text", "image", "audio", "video"],
+        "notes": "Best value for periodic wisdom checks"
+      }
+    },
+    "tier3": {
+      "claude-opus-4.5": {
+        "name": "Claude Opus 4.5",
+        "provider": "anthropic",
+        "released": "2025-11-27",
+        "api_model_id": "claude-opus-4-5-20251127",
+        "context_window": 200000,
+        "cost_per_1m_input": 5.0,
+        "cost_per_1m_output": 25.0,
+        "capabilities": ["text", "code", "reasoning", "workflows"],
+        "notes": "Best for coding and multi-step workflows"
+      },
+      "gpt-5.1": {
+        "name": "GPT-5.1",
+        "provider": "openai",
+        "released": "2025-11-12",
+        "api_model_id": "gpt-5.1",
+        "context_window": 128000,
+        "cost_per_1m_input": 5.0,
+        "cost_per_1m_output": 15.0,
+        "capabilities": ["text", "reasoning", "conversational"],
+        "notes": "Enhanced conversational, customizable personalities"
+      },
+      "gemini-3.0-deep-think": {
+        "name": "Gemini 3.0 Deep Think",
+        "provider": "google",
+        "released": "2025-11-18",
+        "api_model_id": "gemini-3.0-deep-think",
+        "context_window": 1000000,
+        "cost_per_1m_input": 3.0,
+        "cost_per_1m_output": 15.0,
+        "capabilities": ["text", "complex_reasoning"],
+        "notes": "Beat GPT-5 Pro on Humanity's Last Exam (41% vs 31.64%)"
+      },
+      "grok-4": {
+        "name": "Grok 4",
+        "provider": "xai",
+        "released": "2025-07-09",
+        "api_model_id": "grok-4",
+        "context_window": 256000,
+        "cost_per_1m_input": 5.0,
+        "cost_per_1m_output": 15.0,
+        "capabilities": ["text", "realtime_data", "x_twitter"],
+        "notes": "Real-time X/Twitter data access, uncensored"
+      }
+    }
+  },
+  
+  "deprecated_models": {
+    "claude-3-opus-20240229": {"replacement": "claude-opus-4.5", "deprecated_date": "2025-11-27"},
+    "claude-3-sonnet-20240229": {"replacement": "claude-sonnet-4", "deprecated_date": "2025-11-27"},
+    "gpt-4": {"replacement": "gpt-5.1", "deprecated_date": "2025-08-07"},
+    "gpt-4-turbo-preview": {"replacement": "gpt-5.1", "deprecated_date": "2025-08-07"},
+    "gemini-pro": {"replacement": "gemini-3.0-pro", "deprecated_date": "2025-11-18"},
+    "llama3.1:8b": {"replacement": "llama4:maverick", "deprecated_date": "2025-04-05"},
+    "qwen2.5-coder:7b": {"replacement": "qwen3:max", "deprecated_date": "2025-09-05"}
+  },
+  
+  "tier_config": {
+    "tier1": {
+      "name": "Local GPU Debate",
+      "usage_percent": 90,
+      "models": ["llama4:maverick", "qwen3:max", "deepseek-r1"],
+      "roles": {
+        "proposer": "llama4:maverick",
+        "critic": "qwen3:max", 
+        "arbiter": "deepseek-r1"
+      }
+    },
+    "tier2": {
+      "name": "External Wisdom Check",
+      "usage_percent": 9,
+      "trigger": "every_10_debates",
+      "models": ["gemini-3.0-pro"],
+      "purpose": "Review local consensus for blind spots"
+    },
+    "tier3": {
+      "name": "Oracle Council",
+      "usage_percent": 1,
+      "trigger": "weekly_or_major_decisions",
+      "models": ["claude-opus-4.5", "gpt-5.1", "gemini-3.0-deep-think"],
+      "voting": "majority_wins",
+      "purpose": "Strategic decisions, architecture changes, pivots"
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

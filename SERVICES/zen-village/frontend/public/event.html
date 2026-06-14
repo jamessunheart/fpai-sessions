@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zen Pass — Zen Village Costa Rica</title>
+<meta name="description" content="Get your Zen Pass. Pay with card, Venmo, PayPal, or crypto. Your digital key to Zen Village experiences.">
+<style>
+:root {
+  --bg: #faf9f5; --fg: #1a2e1a; --accent: #4a7c59; --accent2: #8fbc8f;
+  --card: #f0f4ec; --border: #d4ddd0; --error: #c0392b; --gold: #c9a84c;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'Georgia', serif; background: var(--bg); color: var(--fg); min-height:100vh; }
+.hero { background: linear-gradient(135deg, #1a2e1a 0%, #2d4a2d 100%); color: var(--bg); text-align:center; padding: 3rem 1.5rem 2rem; }
+.hero h1 { font-size: 2.2rem; font-weight: 400; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+.hero p { font-size: 1rem; opacity: 0.85; max-width: 500px; margin: 0 auto; line-height: 1.6; }
+.qr-section { text-align:center; padding: 2rem 1.5rem; }
+.qr-section img { width: 180px; height: 180px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+.qr-section p { margin-top: 0.75rem; font-size: 0.85rem; color: #666; }
+.form-section { max-width: 480px; margin: 0 auto; padding: 1.5rem; }
+.form-section h2 { font-size: 1.3rem; font-weight: 400; margin-bottom: 1.5rem; text-align:center; }
+.field { margin-bottom: 1rem; }
+.field label { display:block; font-size: 0.85rem; color: #555; margin-bottom: 0.3rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.field input, .field select { width:100%; padding: 0.8rem; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; font-family: inherit; background: white; }
+.field input:focus, .field select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(74,124,89,0.15); }
+.payment-methods { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem; }
+.pm-option { padding: 0.8rem; border: 2px solid var(--border); border-radius: 8px; text-align:center; cursor:pointer; transition: all 0.2s; font-size: 0.9rem; background: white; }
+.pm-option.selected { border-color: var(--accent); background: var(--card); }
+.pm-option:hover { border-color: var(--accent2); }
+.pm-info { background: var(--card); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; font-size: 0.9rem; line-height: 1.5; display:none; }
+.pm-info.visible { display:block; }
+.pm-info code { background: white; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; user-select:all; }
+.btn { width:100%; padding: 1rem; border:none; border-radius: 8px; font-size: 1.1rem; font-family:inherit; cursor:pointer; transition:all 0.2s; }
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:hover { background: #3d6b4c; }
+.btn-primary:disabled { background: #999; cursor: not-allowed; }
+.result { background: var(--card); border-radius: 12px; padding: 1.5rem; margin: 1.5rem auto; max-width: 480px; text-align:center; display:none; }
+.result h3 { color: var(--accent); margin-bottom: 0.5rem; }
+.result .pass-link { display:inline-block; margin-top: 1rem; padding: 0.7rem 1.5rem; background: var(--accent); color:white; text-decoration:none; border-radius: 8px; }
+.footer { text-align:center; padding: 2rem 1.5rem; font-size: 0.8rem; color: #888; }
+.event-details { max-width: 480px; margin: 0 auto; padding: 0 1.5rem; }
+.event-details .detail { display:flex; justify-content:space-between; padding: 0.6rem 0; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
+.event-details .detail:last-child { border-bottom: none; }
+.event-details .detail span:last-child { font-weight: 600; }
+.amount-presets { display:flex; gap: 0.5rem; margin-bottom: 0.5rem; }
+.amount-presets button { flex:1; padding: 0.6rem; border: 2px solid var(--border); border-radius: 8px; background:white; cursor:pointer; font-size: 0.95rem; font-family:inherit; transition:all 0.2s; }
+.amount-presets button.selected { border-color: var(--accent); background: var(--card); font-weight:600; }
+.amount-presets button:hover { border-color: var(--accent2); }
+@media (max-width: 400px) {
+  .hero h1 { font-size: 1.8rem; }
+  .payment-methods { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>Zen Pass</h1>
+  <p id="event-description">Your digital key to Zen Village experiences.</p>
+</div>
+
+<div class="qr-section">
+  <img src="/api/pass/event-qr/default" alt="Scan to get your Zen Pass">
+  <p>Scan to get your pass — or fill out the form below</p>
+</div>
+
+<div class="event-details" id="event-details" style="display:none;">
+  <div class="detail"><span>Event</span><span id="evt-name"></span></div>
+  <div class="detail" id="evt-date-row" style="display:none;"><span>Date</span><span id="evt-date"></span></div>
+  <div class="detail"><span>Location</span><span>Chirripó, Costa Rica</span></div>
+  <div class="detail" id="evt-price-row" style="display:none;"><span>Price</span><span id="evt-price"></span></div>
+</div>
+
+<div class="form-section" id="form-section">
+  <h2>Get Your Zen Pass</h2>
+
+  <div class="field">
+    <label>Name</label>
+    <input type="text" id="name" placeholder="Your full name" required>
+  </div>
+  <div class="field">
+    <label>Email</label>
+    <input type="email" id="email" placeholder="you@example.com" required>
+  </div>
+  <div class="field">
+    <label>Phone (optional)</label>
+    <input type="tel" id="phone" placeholder="+1 555 123 4567">
+  </div>
+
+  <div class="field">
+    <label>Amount (USD)</label>
+    <div class="amount-presets" id="presets"></div>
+    <input type="number" id="amount" placeholder="0" min="0" step="1">
+  </div>
+
+  <div class="field">
+    <label>Payment Method</label>
+    <div class="payment-methods" id="payment-methods">
+      <div class="pm-option selected" data-method="stripe">Card</div>
+      <div class="pm-option" data-method="venmo">Venmo</div>
+      <div class="pm-option" data-method="paypal">PayPal</div>
+      <div class="pm-option" data-method="cash">Cash</div>
+    </div>
+  </div>
+
+  <div class="pm-info" id="pm-info"></div>
+
+  <button class="btn btn-primary" id="submit-btn" onclick="submitPass()">Get Zen Pass</button>
+</div>
+
+<div class="result" id="result">
+  <h3>Your Zen Pass is Ready</h3>
+  <p id="result-msg"></p>
+  <a class="pass-link" id="result-link" href="#">View Your Pass</a>
+</div>
+
+<div class="footer">
+  <p>Zen Village Costa Rica &middot; zenvillagecr.com</p>
+</div>
+
+<script>
+let selectedMethod = 'stripe';
+let eventPrice = 0;
+
+document.querySelectorAll('.pm-option').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('.pm-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedMethod = el.dataset.method;
+    updatePmInfo();
+  });
+});
+
+function updatePmInfo() {
+  const info = document.getElementById('pm-info');
+  const methods = {
+    venmo: 'Send to <code>@James-Stinson-65</code> on Venmo. Include your name or pass ID in the note.',
+    paypal: 'Send to <code>james@fullpotential.com</code> on PayPal. Include your name or pass ID in the note.',
+    cash: 'Pay cash when you arrive. Your pass will be marked as pending until then.',
+    stripe: ''
+  };
+  const text = methods[selectedMethod] || '';
+  info.innerHTML = text;
+  info.classList.toggle('visible', !!text);
+}
+
+async function loadEvent() {
+  try {
+    const r = await fetch('/api/pass/event?event_id=default');
+    const evt = await r.json();
+    document.getElementById('evt-name').textContent = evt.name || 'Zen Village Experience';
+    document.getElementById('event-description').textContent = evt.description || 'Your digital key to Zen Village experiences.';
+    document.getElementById('event-details').style.display = 'block';
+    if (evt.date) {
+      document.getElementById('evt-date').textContent = evt.date;
+      document.getElementById('evt-date-row').style.display = 'flex';
+    }
+    if (evt.price_usd > 0) {
+      eventPrice = evt.price_usd;
+      document.getElementById('evt-price').textContent = '$' + evt.price_usd;
+      document.getElementById('evt-price-row').style.display = 'flex';
+      document.getElementById('amount').value = evt.price_usd;
+    }
+    const presets = document.getElementById('presets');
+    const amounts = evt.price_usd > 0 ? [evt.price_usd] : [25, 50, 100, 200];
+    amounts.forEach(a => {
+      const btn = document.createElement('button');
+      btn.textContent = '$' + a;
+      btn.onclick = () => {
+        document.getElementById('amount').value = a;
+        document.querySelectorAll('.amount-presets button').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+      };
+      presets.appendChild(btn);
+    });
+  } catch(e) { console.log('Event load error', e); }
+}
+
+async function submitPass() {
+  const name = document.getElementById('name').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const amount = parseFloat(document.getElementById('amount').value) || 0;
+
+  if (!name || !email) { alert('Please enter your name and email.'); return; }
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true; btn.textContent = 'Creating...';
+
+  try {
+    const r = await fetch('/api/pass/create', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ name, email, phone, payment_method: selectedMethod, amount, event_id: 'default' })
+    });
+    const data = await r.json();
+
+    if (data.checkout_url) {
+      window.location.href = data.checkout_url;
+      return;
+    }
+
+    document.getElementById('form-section').style.display = 'none';
+    document.getElementById('result').style.display = 'block';
+
+    let msg = `Pass created for ${name}.`;
+    if (data.payment_info && data.payment_info.address) {
+      msg += ` Send $${amount} to ${data.payment_info.address} with reference ${data.payment_info.reference}.`;
+    } else if (selectedMethod === 'cash') {
+      msg += ' Pay cash when you arrive.';
+    }
+    document.getElementById('result-msg').textContent = msg;
+    document.getElementById('result-link').href = data.pass_url;
+  } catch(e) {
+    alert('Error creating pass. Please try again.');
+  }
+  btn.disabled = false; btn.textContent = 'Get Zen Pass';
+}
+
+loadEvent();
+</script>
+</body>
+</html>

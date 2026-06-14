@@ -1,0 +1,445 @@
+{
+	"info": {
+		"_postman_id": "udc-droplet-tests",
+		"name": "UDC Droplet Tests",
+		"description": "Complete test suite for UDC-compliant droplets",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8002",
+			"type": "string"
+		},
+		{
+			"key": "jwt_token",
+			"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJyZWdpc3RyeS5mdWxscG90ZW50aWFsLmFpIiwic3ViIjoiNDIiLCJhdWQiOiJmdWxscG90ZW50aWFsLmRyb3BsZXRzIiwiaWF0IjoxNzYzNDI5ODEyLCJleHAiOjE3NjM1MTYyMTIsInJvbGUiOiJkcm9wbGV0Iiwic2NvcGUiOlsicmVnaXN0cnk6aGVhcnRiZWF0IiwicmVnaXN0cnk6cmVnaXN0ZXIiXX0.pWB3Y7bxjXYzzbVmyIByxlBeMa_pnX8JgnKHrLebq3LMoHZ2VQXcpR9wOPJi25imEFVrZr6Qoo3Cxro_YBNI8LeVAcLZEdX1pHWoVIDU3YeezFBJKT9TIQvNV_NEUGgI2DezdjMxKIzfNiaWWpnh4yvTLzLC6TqzC4R3tz3rJGi98kMFj4-YTG0N337WCkh2jaRuflzA6ps9nvaI31TgZ3y1EbzT8QQO4UMngj4piP-S48AQ3r-L1lsMxl_RxzKtQKq7F46oKx9QfKj4ngen80P9IEP8nIAB7LWjXVXhEKU4JlIgce7QKyFezut5hZao1c5UncpZBIMGxGcHQdV7S8egHquoiebwOQ6gKI0Vx9uyshz8btrgsVLCaSgG8kNI2KcW5s0Om8jGvmJ5NIuGI_3luusFznonVAbKILdzA1jYo2EMX4Oxqjkm_pfYTLonTV4wnQyZm8er6W0z_LI9IvM-BkqKJpO2CDESG65wbvPLl5hsRK0xxN2KhfWOEXGt_VHRjRMZvhWlAnSwgYvnjyRsSiU2Hpw4fhG_WFF9pPDjtmqRbRkTahECU-bJBFv7YKMbnVeYgo0HBBvIlJCKg8dHXNWDhyZ3phLOGkbqY-vh4QIAOk0ZSd6vNYFgAGPc0upgOLiM46L6Bahz3RJ6V_G5m9E2zQqeYFayOB1QMGw",
+			"type": "string"
+		},
+		{
+			"key": "trace_id",
+			"value": "550e8400-e29b-41d4-a716-446655440000",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Core UDC Endpoints",
+			"item": [
+				{
+					"name": "GET Health (Public)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/health",
+							"host": ["{{baseUrl}}"],
+							"path": ["health"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Version",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/version",
+							"host": ["{{baseUrl}}"],
+							"path": ["version"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Capabilities",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/capabilities",
+							"host": ["{{baseUrl}}"],
+							"path": ["capabilities"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET State",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/state",
+							"host": ["{{baseUrl}}"],
+							"path": ["state"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Dependencies",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dependencies",
+							"host": ["{{baseUrl}}"],
+							"path": ["dependencies"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Messaging Endpoints",
+			"item": [
+				{
+					"name": "POST Send Message",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"target\": 1,\n  \"message_type\": \"event\",\n  \"payload\": {\n    \"action\": \"ping\",\n    \"from\": \"droplet0\"\n  },\n  \"priority\": \"normal\",\n  \"retry_count\": 3\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/send",
+							"host": ["{{baseUrl}}"],
+							"path": ["send"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Receive Message - Event",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"trace_id\": \"{{trace_id}}\",\n  \"source\": 1,\n  \"target\": 42,\n  \"message_type\": \"event\",\n  \"payload\": {\n    \"action\": \"hello\",\n    \"data\": \"world\"\n  },\n  \"timestamp\": \"2025-11-18T00:30:00Z\",\n  \"signature\": \"{{jwt_token}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/message",
+							"host": ["{{baseUrl}}"],
+							"path": ["message"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Receive Message - Status",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"trace_id\": \"550e8400-e29b-41d4-a716-446655440001\",\n  \"source\": 1,\n  \"target\": 42,\n  \"message_type\": \"status\",\n  \"payload\": {\n    \"health\": \"active\"\n  },\n  \"timestamp\": \"2025-11-18T00:30:00Z\",\n  \"signature\": \"{{jwt_token}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/message",
+							"host": ["{{baseUrl}}"],
+							"path": ["message"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Receive Message - Command",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"trace_id\": \"550e8400-e29b-41d4-a716-446655440002\",\n  \"source\": 1,\n  \"target\": 42,\n  \"message_type\": \"command\",\n  \"payload\": {\n    \"action\": \"restart\"\n  },\n  \"timestamp\": \"2025-11-18T00:30:00Z\",\n  \"signature\": \"{{jwt_token}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/message",
+							"host": ["{{baseUrl}}"],
+							"path": ["message"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Receive Message - Query",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"trace_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n  \"source\": 1,\n  \"target\": 42,\n  \"message_type\": \"query\",\n  \"payload\": {\n    \"request\": \"get_metrics\"\n  },\n  \"timestamp\": \"2025-11-18T00:30:00Z\",\n  \"signature\": \"{{jwt_token}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/message",
+							"host": ["{{baseUrl}}"],
+							"path": ["message"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Management Endpoints",
+			"item": [
+				{
+					"name": "POST Reload Config",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"config_path\": \"/config/droplet.json\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/reload-config",
+							"host": ["{{baseUrl}}"],
+							"path": ["reload-config"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Shutdown",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"delay_seconds\": 10,\n  \"reason\": \"maintenance\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/shutdown",
+							"host": ["{{baseUrl}}"],
+							"path": ["shutdown"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Emergency Stop",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/emergency-stop",
+							"host": ["{{baseUrl}}"],
+							"path": ["emergency-stop"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Error Testing",
+			"item": [
+				{
+					"name": "Missing JWT Token (401)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"trace_id\": \"{{trace_id}}\",\n  \"source\": 1,\n  \"target\": 42,\n  \"message_type\": \"event\",\n  \"payload\": {},\n  \"timestamp\": \"2025-11-18T00:30:00Z\",\n  \"signature\": \"\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/message",
+							"host": ["{{baseUrl}}"],
+							"path": ["message"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid JWT Format (401)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "invalid-token"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"trace_id\": \"{{trace_id}}\",\n  \"source\": 1,\n  \"target\": 42,\n  \"message_type\": \"event\",\n  \"payload\": {},\n  \"timestamp\": \"2025-11-18T00:30:00Z\",\n  \"signature\": \"\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/message",
+							"host": ["{{baseUrl}}"],
+							"path": ["message"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Missing Required Field (422)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"source\": 1,\n  \"target\": 42,\n  \"message_type\": \"event\",\n  \"payload\": {},\n  \"timestamp\": \"2025-11-18T00:30:00Z\",\n  \"signature\": \"\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/message",
+							"host": ["{{baseUrl}}"],
+							"path": ["message"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid Message Type (422)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"trace_id\": \"{{trace_id}}\",\n  \"source\": 1,\n  \"target\": 42,\n  \"message_type\": \"invalid_type\",\n  \"payload\": {},\n  \"timestamp\": \"2025-11-18T00:30:00Z\",\n  \"signature\": \"\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/message",
+							"host": ["{{baseUrl}}"],
+							"path": ["message"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Non-existent Endpoint (404)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/nonexistent",
+							"host": ["{{baseUrl}}"],
+							"path": ["nonexistent"]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

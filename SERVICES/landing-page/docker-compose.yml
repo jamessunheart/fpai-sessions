@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  landing:
+    build: .
+    container_name: fpai-landing
+    ports:
+      - "8005:80"
+    environment:
+      - DASHBOARD_API=http://198.54.123.234:8002/api
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

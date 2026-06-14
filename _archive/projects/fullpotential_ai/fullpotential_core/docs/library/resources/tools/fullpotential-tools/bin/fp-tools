@@ -1,0 +1,290 @@
+#!/usr/bin/env python3
+"""
+Full Potential AI - Tools CLI
+Master CLI for all Full Potential AI optimization tools
+"""
+
+import sys
+import os
+import argparse
+from pathlib import Path
+
+# Add lib directory to path
+lib_path = Path(__file__).parent.parent / 'lib'
+sys.path.insert(0, str(lib_path))
+
+from ssot_generator import SSOTGenerator
+from gap_analyzer import GapAnalyzer
+from droplet_validator import DropletValidator
+from spec_helper import SpecHelper
+from health_monitor import HealthMonitor
+import asyncio
+
+
+class FPTools:
+    """Full Potential AI Tools CLI"""
+
+    def __init__(self):
+        self.base_dir = Path(__file__).parent.parent
+        self.blueprints_dir = self.base_dir.parent / "1-blueprints (architecture)"
+        self.output_dir = self.base_dir / "output"
+
+    def run(self):
+        """Run the CLI"""
+
+        parser = argparse.ArgumentParser(
+            description='Full Potential AI - System Optimization Tools',
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog="""
+Examples:
+  fp-tools snapshot --scan-github          Generate SSOT snapshot with GitHub scan
+  fp-tools gap --snapshot snapshot.md      Generate gap analysis
+  fp-tools validate --path ./droplet-1     Validate droplet locally
+  fp-tools spec --list                     List available SPEC templates
+  fp-tools health --watch                  Monitor system health continuously
+  fp-tools workflow                        Run complete workflow (snapshot → gap)
+            """
+        )
+
+        subparsers = parser.add_subparsers(dest='command', help='Command to run')
+
+        # SSOT Snapshot command
+        snapshot_parser = subparsers.add_parser('snapshot', help='Generate SSOT snapshot')
+        snapshot_parser.add_argument('--scan-github', action='store_true',
+                                    help='Scan GitHub for droplet repositories')
+        snapshot_parser.add_argument('--github-org', default='fullpotential-ai',
+                                    help='GitHub organization name')
+        snapshot_parser.add_argument('--output-dir',
+                                    help='Output directory for snapshots')
+
+        # Gap Analysis command
+        gap_parser = subparsers.add_parser('gap', help='Generate gap analysis')
+        gap_parser.add_argument('--snapshot', required=True,
+                               help='Path to SSOT snapshot file')
+        gap_parser.add_argument('--blueprint',
+                               help='Path to blueprint file')
+        gap_parser.add_argument('--output-dir',
+                               help='Output directory for gap analyses')
+
+        # Validate command
+        validate_parser = subparsers.add_parser('validate', help='Validate droplet')
+        validate_parser.add_argument('--url', help='Live droplet URL')
+        validate_parser.add_argument('--path', help='Local droplet path')
+        validate_parser.add_argument('--output', help='Output file for report')
+
+        # SPEC Generator command
+        spec_parser = subparsers.add_parser('spec', help='Generate SPEC')
+        spec_parser.add_argument('--list', action='store_true',
+                                help='List available templates')
+        spec_parser.add_argument('--droplet-id', type=int,
+                                help='Droplet ID')
+        spec_parser.add_argument('--intent',
+                                help='Architect intent')
+        spec_parser.add_argument('--output-dir',
+                                help='Output directory for SPECs')
+
+        # Health Monitor command
+        health_parser = subparsers.add_parser('health', help='Monitor system health')
+        health_parser.add_argument('--config', help='Droplet configuration file')
+        health_parser.add_argument('--watch', action='store_true',
+                                  help='Continuous monitoring')
+        health_parser.add_argument('--interval', type=int, default=60,
+                                  help='Monitoring interval (seconds)')
+        health_parser.add_argument('--output', help='Output file for report')
+        health_parser.add_argument('--format', choices=['text', 'json'], default='text',
+                                  help='Report format')
+
+        # Workflow command (runs multiple tools in sequence)
+        workflow_parser = subparsers.add_parser('workflow',
+                                               help='Run complete workflow (snapshot → gap)')
+        workflow_parser.add_argument('--scan-github', action='store_true',
+                                    help='Scan GitHub for droplets')
+
+        args = parser.parse_args()
+
+        if not args.command:
+            parser.print_help()
+            return
+
+        # Execute command
+        if args.command == 'snapshot':
+            self.cmd_snapshot(args)
+        elif args.command == 'gap':
+            self.cmd_gap(args)
+        elif args.command == 'validate':
+            self.cmd_validate(args)
+        elif args.command == 'spec':
+            self.cmd_spec(args)
+        elif args.command == 'health':
+            self.cmd_health(args)
+        elif args.command == 'workflow':
+            self.cmd_workflow(args)
+
+    def cmd_snapshot(self, args):
+        """Generate SSOT snapshot"""
+
+        output_dir = args.output_dir or str(self.output_dir / 'snapshots')
+        os.makedirs(output_dir, exist_ok=True)
+
+        generator = SSOTGenerator(str(self.blueprints_dir), output_dir)
+
+        droplet_data = {}
+
+        if args.scan_github:
+            print("🔍 Scanning GitHub for droplet repositories...")
+            droplets = generator.scan_github_repos(args.github_org)
+            droplet_data['droplets'] = droplets
+            print(f"✅ Found {len(droplets)} droplet repositories")
+
+        print("📝 Generating SSOT snapshot...")
+        snapshot_path = generator.generate_snapshot(droplet_data)
+        print(f"✅ Snapshot generated: {snapshot_path}")
+
+    def cmd_gap(self, args):
+        """Generate gap analysis"""
+
+        blueprint = args.blueprint or str(self.blueprints_dir / '1-SYSTEM-BLUEPRINT.txt')
+        output_dir = args.output_dir or str(self.output_dir / 'gap-analyses')
+        os.makedirs(output_dir, exist_ok=True)
+
+        analyzer = GapAnalyzer(blueprint, args.snapshot, output_dir)
+
+        print("🔍 Analyzing gaps between Blueprint and SSOT...")
+        report_path = analyzer.analyze()
+        print(f"✅ Gap analysis generated: {report_path}")
+
+    def cmd_validate(self, args):
+        """Validate droplet"""
+
+        if not args.url and not args.path:
+            print("❌ Error: Must provide either --url or --path")
+            return
+
+        validator = DropletValidator(droplet_url=args.url, local_path=args.path)
+
+        print("🔍 Running validation checks...")
+        overall_pass, results = validator.validate_all()
+
+        report = validator.generate_report()
+        print(report)
+
+        if args.output:
+            with open(args.output, 'w') as f:
+                f.write(report)
+            print(f"\n📄 Report saved to: {args.output}")
+
+    def cmd_spec(self, args):
+        """Generate SPEC"""
+
+        output_dir = args.output_dir or str(self.output_dir / 'specs')
+        os.makedirs(output_dir, exist_ok=True)
+
+        helper = SpecHelper(output_dir)
+
+        if args.list:
+            print("📋 Available Droplet Templates:\n")
+            templates = helper.list_available_templates()
+            for template in templates:
+                print(f"#{template['id']} - {template['name']}")
+                print(f"   Purpose: {template['purpose']}\n")
+            return
+
+        if args.droplet_id and args.intent:
+            print(f"📝 Generating SPEC for Droplet #{args.droplet_id}...")
+            spec_path = helper.generate_spec_from_intent(args.droplet_id, args.intent)
+            print(f"✅ SPEC generated: {spec_path}")
+        else:
+            print("❌ Error: Provide --droplet-id and --intent to generate SPEC")
+            print("   Or use --list to see available templates")
+
+    def cmd_health(self, args):
+        """Monitor system health"""
+
+        monitor = HealthMonitor(config_file=args.config)
+        monitor.load_config()
+
+        if args.watch:
+            print(f"🔄 Starting continuous monitoring (interval: {args.interval}s)")
+            print("Press Ctrl+C to stop\n")
+
+            try:
+                while True:
+                    asyncio.run(monitor.monitor_all())
+                    report = monitor.generate_report(args.format)
+                    print("\033[2J\033[H")  # Clear screen
+                    print(report)
+
+                    if args.output:
+                        monitor.save_report(args.output, args.format)
+
+                    asyncio.run(asyncio.sleep(args.interval))
+
+            except KeyboardInterrupt:
+                print("\n\n✋ Monitoring stopped")
+
+        else:
+            print("🔍 Checking system health...")
+            asyncio.run(monitor.monitor_all())
+
+            report = monitor.generate_report(args.format)
+            print(report)
+
+            if args.output:
+                monitor.save_report(args.output, args.format)
+                print(f"📄 Report saved to: {args.output}")
+
+    def cmd_workflow(self, args):
+        """Run complete workflow"""
+
+        print("🌐 FULL POTENTIAL AI - COMPLETE WORKFLOW")
+        print("=" * 50)
+
+        # Step 1: Generate snapshot
+        print("\n📝 Step 1: Generating SSOT Snapshot...")
+        output_dir = str(self.output_dir / 'snapshots')
+        os.makedirs(output_dir, exist_ok=True)
+
+        generator = SSOTGenerator(str(self.blueprints_dir), output_dir)
+
+        droplet_data = {}
+        if args.scan_github:
+            print("   🔍 Scanning GitHub...")
+            droplets = generator.scan_github_repos()
+            droplet_data['droplets'] = droplets
+            print(f"   ✅ Found {len(droplets)} droplets")
+
+        snapshot_path = generator.generate_snapshot(droplet_data)
+        print(f"   ✅ Snapshot: {snapshot_path}")
+
+        # Step 2: Generate gap analysis
+        print("\n🔍 Step 2: Generating Gap Analysis...")
+        gap_output_dir = str(self.output_dir / 'gap-analyses')
+        os.makedirs(gap_output_dir, exist_ok=True)
+
+        blueprint = str(self.blueprints_dir / '1-SYSTEM-BLUEPRINT.txt')
+        analyzer = GapAnalyzer(blueprint, snapshot_path, gap_output_dir)
+
+        gap_path = analyzer.analyze()
+        print(f"   ✅ Gap Analysis: {gap_path}")
+
+        # Summary
+        print("\n✅ WORKFLOW COMPLETE")
+        print("=" * 50)
+        print(f"\nGenerated files:")
+        print(f"  📄 SSOT Snapshot: {snapshot_path}")
+        print(f"  📄 Gap Analysis: {gap_path}")
+        print(f"\nNext steps:")
+        print(f"  1. Review gap analysis")
+        print(f"  2. Prioritize fixes")
+        print(f"  3. Generate SPECs for missing droplets")
+        print(f"  4. Assign to Apprentices")
+
+
+def main():
+    """Main entry point"""
+    cli = FPTools()
+    cli.run()
+
+
+if __name__ == '__main__':
+    main()

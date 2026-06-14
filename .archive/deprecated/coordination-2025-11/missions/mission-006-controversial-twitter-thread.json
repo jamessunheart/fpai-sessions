@@ -1,0 +1,57 @@
+{
+  "mission_id": "mission-006-controversial-twitter-thread",
+  "title": "Post Controversial Twitter Thread (30+ Hours Waste)",
+  "priority": "medium",
+  "status": "available",
+  "created_at": "2025-11-15T21:15:00Z",
+  "claimed_by": null,
+  "claimed_at": null,
+  "completed_at": null,
+  "estimated_time_minutes": 25,
+  "instructions": {
+    "task": "Post controversial thread about time wasted on research",
+    "content_source": "/Users/jamessunheart/Development/SERVICES/READY_TO_POST_NOW.md",
+    "content_section": "POST #3: The Controversial Take (Twitter Thread)",
+    "platform": "Twitter",
+    "thread_length": "4 tweets",
+    "timing": "Best at 11 AM or 7 PM",
+    "tone": "Strong opinion, backed by logic, not aggressive"
+  },
+  "thread_structure": {
+    "tweet_1": "Hook - Hot take about wasting time on research",
+    "tweet_2": "Breakdown - Show exactly how much time people waste",
+    "tweet_3": "Solution - How AI can solve this (with link)",
+    "tweet_4": "Reframe - Work smarter not harder message"
+  },
+  "success_criteria": {
+    "thread_posted": "All 4 tweets posted as thread",
+    "url_included": "https://fullpotential.com/get-matched in tweet 3",
+    "hashtags_used": "#AI #Productivity #Entrepreneurship",
+    "engagement": "Respond to all replies, especially disagreements",
+    "controversy_handled_well": "Debate respectfully, don't get defensive"
+  },
+  "engagement_strategy": {
+    "agree_with_you": "Thank them, ask what they think",
+    "disagree_with_you": "Acknowledge their point, share perspective",
+    "ask_questions": "Answer helpfully, can mention tool if relevant",
+    "trolls": "Don't engage, or respond once politely then ignore"
+  },
+  "metrics_to_track": {
+    "impressions": 0,
+    "engagements": 0,
+    "replies": 0,
+    "retweets": 0,
+    "link_clicks": 0,
+    "sentiment": "positive/negative/mixed"
+  },
+  "follow_up_actions": [
+    "Monitor replies for 24 hours",
+    "Engage with everyone who comments",
+    "Note which arguments resonate",
+    "Consider follow-up thread if viral"
+  ],
+  "resources": {
+    "content_file": "/Users/jamessunheart/Development/SERVICES/READY_TO_POST_NOW.md",
+    "url": "https://fullpotential.com/get-matched"
+  }
+}

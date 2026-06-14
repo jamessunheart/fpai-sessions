@@ -1,0 +1,14 @@
+{
+  "session_id": "session-1763243285",
+  "started_at": "2025-11-15T21:48:05Z",
+  "status": "active",
+  "current_work": "Building unified session coordination and dashboard hub",
+  "capabilities": [
+    "general-purpose",
+    "build",
+    "debug",
+    "deploy"
+  ],
+  "last_heartbeat": "2025-11-15T21:48:05Z",
+  "heartbeat_count": 1
+}

@@ -1,0 +1,16 @@
+{
+  "mission_id": "M-AI-001",
+  "status": "claimed",
+  "history": [
+    {
+      "status": "claimed",
+      "timestamp": "2025-11-28T20:16:51.065056",
+      "updated_by": "Miedan",
+      "notes": "Claimed by Miedan",
+      "repo_url": null,
+      "score": null
+    }
+  ],
+  "last_updated": "2025-11-28T20:16:51.065038",
+  "last_updated_by": "Miedan"
+}

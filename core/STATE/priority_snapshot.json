@@ -1,0 +1,1285 @@
+{
+  "timestamp": "2026-04-30T20:23:33.266419",
+  "total_services": 159,
+  "by_role": {
+    "cruft": 138,
+    "infra": 18,
+    "P2": 1,
+    "P1": 2
+  },
+  "services": [
+    {
+      "name": "website-ai",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/website-ai",
+      "engine_role": "P1",
+      "last_touched": "2026-04-29T09:59:37.164652",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "zen-village",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/zen-village",
+      "engine_role": "P1",
+      "last_touched": "2026-04-29T09:59:37.164808",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "concierge",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/concierge",
+      "engine_role": "P2",
+      "last_touched": "2026-04-29T09:59:37.164746",
+      "purpose": "Full Potential Concierge",
+      "monthly_usd": null
+    },
+    {
+      "name": "ai-brain",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/ai-brain",
+      "engine_role": "infra",
+      "last_touched": null,
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "alerts",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/alerts",
+      "engine_role": "infra",
+      "last_touched": "2026-04-30T13:52:32.989362",
+      "purpose": "Alerts Droplet - SPECS",
+      "monthly_usd": null
+    },
+    {
+      "name": "api-gateway",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/api-gateway",
+      "engine_role": "infra",
+      "last_touched": "2025-12-11T01:05:20.031042",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "aria",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/aria",
+      "engine_role": "infra",
+      "last_touched": "2025-12-24T22:24:24.530802",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "aria-bridge",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/aria-bridge",
+      "engine_role": "infra",
+      "last_touched": "2025-12-24T22:24:23.951200",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "auto-healer",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/auto-healer",
+      "engine_role": "infra",
+      "last_touched": "2025-12-16T23:09:12.334037",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "brain-droplet",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/brain-droplet",
+      "engine_role": "infra",
+      "last_touched": "2026-01-22T12:55:08.690664",
+      "purpose": "Brain Droplet - SPECS",
+      "monthly_usd": null
+    },
+    {
+      "name": "brain-mesh-gateway",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/brain-mesh-gateway",
+      "engine_role": "infra",
+      "last_touched": "2026-04-26T19:39:11.259310",
+      "purpose": "Brain Mesh Gateway",
+      "monthly_usd": null
+    },
+    {
+      "name": "chief-of-staff",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/chief-of-staff",
+      "engine_role": "infra",
+      "last_touched": "2026-04-29T15:02:30.553598",
+      "purpose": "Chief of Staff Service - SPECS",
+      "monthly_usd": null
+    },
+    {
+      "name": "credentials-manager",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/credentials-manager",
+      "engine_role": "infra",
+      "last_touched": "2025-12-11T01:05:20.041899",
+      "purpose": "Credentials Manager - Droplet #25",
+      "monthly_usd": null
+    },
+    {
+      "name": "email-dashboard",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/email-dashboard",
+      "engine_role": "infra",
+      "last_touched": "2025-11-23T12:33:34.886535",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "jsservers-bot",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/jsservers-bot",
+      "engine_role": "infra",
+      "last_touched": "2026-04-28T15:57:38.088243",
+      "purpose": "JSServers Bot",
+      "monthly_usd": null
+    },
+    {
+      "name": "ops",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/ops",
+      "engine_role": "infra",
+      "last_touched": "2025-12-11T01:05:20.050591",
+      "purpose": "FPAI Ops Scripts",
+      "monthly_usd": null
+    },
+    {
+      "name": "proactive-monitor",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/proactive-monitor",
+      "engine_role": "infra",
+      "last_touched": "2026-04-30T13:42:53.950289",
+      "purpose": "Proactive Monitor Service",
+      "monthly_usd": null
+    },
+    {
+      "name": "proxy-manager",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/proxy-manager",
+      "engine_role": "infra",
+      "last_touched": "2025-11-28T14:37:32.210094",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "streasury-bot",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/streasury-bot",
+      "engine_role": "infra",
+      "last_touched": "2026-04-29T09:59:37.164176",
+      "purpose": "STreasury Bot — Sovereign Treasury for Telegram",
+      "monthly_usd": null
+    },
+    {
+      "name": "sunheart-brain",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/sunheart-brain",
+      "engine_role": "infra",
+      "last_touched": "2026-04-26T19:39:11.092060",
+      "purpose": "Sunheart Brain",
+      "monthly_usd": null
+    },
+    {
+      "name": "webmail",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/webmail",
+      "engine_role": "infra",
+      "last_touched": "2025-11-23T12:33:35.069194",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "2x-treasury",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/2x-treasury",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.805435",
+      "purpose": "2X - The Reality Show Treasury",
+      "monthly_usd": null
+    },
+    {
+      "name": "TIE-SYSTEM",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/TIE-SYSTEM",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.823507",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "ad-portal",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/ad-portal",
+      "engine_role": "cruft",
+      "last_touched": "2026-04-29T09:59:37.164282",
+      "purpose": "Ad Portal",
+      "monthly_usd": null
+    },
+    {
+      "name": "admin-gate",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/admin-gate",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-25T17:17:41.069378",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "admin-hub",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/admin-hub",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-11T00:18:56.599010",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "ai-automation",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/ai-automation",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-11T01:05:20.027957",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "alignment-economics",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/alignment-economics",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-24T22:24:23.952861",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "api-hub",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/api-hub",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-11T01:05:20.035437",
+      "purpose": "🏢 API HUB - Self-Expanding Capability System",
+      "monthly_usd": null
+    },
+    {
+      "name": "api-portal",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/api-portal",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-29T10:05:16.300269",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "apprentice-studio",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/apprentice-studio",
+      "engine_role": "cruft",
+      "last_touched": "2026-04-29T09:59:37.164639",
+      "purpose": "Apprentice Studio",
+      "monthly_usd": null
+    },
+    {
+      "name": "approval-dashboard",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/approval-dashboard",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.860289",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "aria-builder",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/aria-builder",
+      "engine_role": "cruft",
+      "last_touched": "2026-04-27T16:03:17.773323",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "aria-command",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/aria-command",
+      "engine_role": "cruft",
+      "last_touched": "2026-01-22T12:55:08.709402",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "auto-fix-engine",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/auto-fix-engine",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-11T01:05:20.039080",
+      "purpose": "Auto-Fix Engine - Droplet #23",
+      "monthly_usd": null
+    },
+    {
+      "name": "autonomous-agents",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/autonomous-agents",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.868714",
+      "purpose": "🤖 Autonomous Agents - 24/7 AI Intelligence",
+      "monthly_usd": null
+    },
+    {
+      "name": "autonomous-execution-engine",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/autonomous-execution-engine",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.869138",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "autonomous-executor",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/autonomous-executor",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T14:35:15.416987",
+      "purpose": "Autonomous Executor",
+      "monthly_usd": null
+    },
+    {
+      "name": "autonomous-income-engine",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/autonomous-income-engine",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-16T23:09:12.334946",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "autonomy-optimizer",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/autonomy-optimizer",
+      "engine_role": "cruft",
+      "last_touched": null,
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "brick2-marketing-engine",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/brick2-marketing-engine",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-11T00:19:14.465373",
+      "purpose": "🚀 BRICK 2: AI Marketing Engine",
+      "monthly_usd": null
+    },
+    {
+      "name": "build-executor",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/build-executor",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.872916",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "church-guidance-ministry",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/church-guidance-ministry",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T14:20:02.469079",
+      "purpose": "church-guidance-ministry - SPECS",
+      "monthly_usd": null
+    },
+    {
+      "name": "collective-mind",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/collective-mind",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.874810",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "commons-stack",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/commons-stack",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-16T23:09:12.334518",
+      "purpose": "Commons Ministry Token Stack",
+      "monthly_usd": null
+    },
+    {
+      "name": "communication-hub",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/communication-hub",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-16T23:09:12.334552",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "companion-claude",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/companion-claude",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.876090",
+      "purpose": "Companion Claude - Proactive AI Director",
+      "monthly_usd": null
+    },
+    {
+      "name": "consciousness",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/consciousness",
+      "engine_role": "cruft",
+      "last_touched": "2026-01-22T12:55:08.690682",
+      "purpose": "Consciousness Droplet Specification",
+      "monthly_usd": null
+    },
+    {
+      "name": "consciousness-coordinator",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/consciousness-coordinator",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-16T23:09:12.290246",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "consciousness_api",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/consciousness_api",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-16T23:09:12.332222",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "consciousness_dashboard",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/consciousness_dashboard",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-16T23:09:12.332215",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "consciousness_decision_engine",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/consciousness_decision_engine",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-16T23:09:12.291249",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "consciousness_evolution",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/consciousness_evolution",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-16T23:09:12.332228",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "consciousness_feeder",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/consciousness_feeder",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-16T23:09:12.290862",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "consciousness_gateway",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/consciousness_gateway",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-16T23:09:12.291153",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "consciousness_network",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/consciousness_network",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-16T23:09:12.332217",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "consciousness_optimizer",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/consciousness_optimizer",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-16T23:09:12.332357",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "consciousness_verifier",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/consciousness_verifier",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-16T23:09:12.332191",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "content-generation-engine",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/content-generation-engine",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.876693",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "content-studio",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/content-studio",
+      "engine_role": "cruft",
+      "last_touched": null,
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "contribution-bridge",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/contribution-bridge",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.878398",
+      "purpose": "🌉 CONTRIBUTION BRIDGE SYSTEM",
+      "monthly_usd": null
+    },
+    {
+      "name": "contribution-tracker",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/contribution-tracker",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-16T23:09:12.334302",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "coordination-hub",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/coordination-hub",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.880309",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "coracle-engine",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/coracle-engine",
+      "engine_role": "cruft",
+      "last_touched": "2026-01-30T20:34:56.015729",
+      "purpose": "Coracle Prediction Engine",
+      "monthly_usd": null
+    },
+    {
+      "name": "coranation",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/coranation",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.880913",
+      "purpose": "Cora Nation - Church of Consciousness Community Hub",
+      "monthly_usd": null
+    },
+    {
+      "name": "cortex-mail",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/cortex-mail",
+      "engine_role": "cruft",
+      "last_touched": null,
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "dashboard",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/dashboard",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T13:00:46.801156",
+      "purpose": "Dashboard Service",
+      "monthly_usd": null
+    },
+    {
+      "name": "data-service",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/data-service",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-13T01:37:03.635996",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "deployer",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/deployer",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-11T01:05:20.042091",
+      "purpose": "Deployer - Droplet #24",
+      "monthly_usd": null
+    },
+    {
+      "name": "email-automation-system",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/email-automation-system",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.886196",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "evolution",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/evolution",
+      "engine_role": "cruft",
+      "last_touched": "2026-01-22T12:55:08.690862",
+      "purpose": "Evolution Droplet Specification",
+      "monthly_usd": null
+    },
+    {
+      "name": "fcf-prototype",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/fcf-prototype",
+      "engine_role": "cruft",
+      "last_touched": "2026-01-22T12:55:08.691269",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "fp-credits-gateway",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/fp-credits-gateway",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-11T00:18:25",
+      "purpose": "FP Credits Gateway",
+      "monthly_usd": null
+    },
+    {
+      "name": "fp-index",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/fp-index",
+      "engine_role": "cruft",
+      "last_touched": "2026-04-26T19:39:11.255274",
+      "purpose": "Full Potential Intelligence — MCP Server",
+      "monthly_usd": null
+    },
+    {
+      "name": "fpai-hub",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/fpai-hub",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.887733",
+      "purpose": "🌟 FPAI Hub - Unified Platform",
+      "monthly_usd": null
+    },
+    {
+      "name": "genesis",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/genesis",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-16T23:09:12.334308",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "global-sky-initiative",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/global-sky-initiative",
+      "engine_role": "cruft",
+      "last_touched": null,
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "goal-library",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/goal-library",
+      "engine_role": "cruft",
+      "last_touched": null,
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "god-autonomous-revenue",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/god-autonomous-revenue",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-16T23:09:12.334893",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "god-mode",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/god-mode",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-11T01:05:20.044545",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "governance",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/governance",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.889193",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "gpu-manager",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/gpu-manager",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-24T22:24:23.924601",
+      "purpose": "GPU Manager v2.0 - Actually Smart This Time",
+      "monthly_usd": null
+    },
+    {
+      "name": "gpu-smart-scaler",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/gpu-smart-scaler",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-24T22:24:23.950049",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "harvester",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/harvester",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-28T22:48:17.122004",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "health-daemon",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/health-daemon",
+      "engine_role": "cruft",
+      "last_touched": "2026-01-22T12:55:08.682337",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "helper-management",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/helper-management",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-11T01:05:20.045505",
+      "purpose": "Helper Management - Droplet #26",
+      "monthly_usd": null
+    },
+    {
+      "name": "hub",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/hub",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.892239",
+      "purpose": "Full Potential Hub - Main Landing Page",
+      "monthly_usd": null
+    },
+    {
+      "name": "i-match",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/i-match",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T14:30:32.706501",
+      "purpose": "I MATCH - AI-Powered Matching Engine",
+      "monthly_usd": null
+    },
+    {
+      "name": "i-match-automation",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/i-match-automation",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.897176",
+      "purpose": "🤖 I MATCH Automation Suite",
+      "monthly_usd": null
+    },
+    {
+      "name": "i-proactive",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/i-proactive",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-16T23:09:12.335058",
+      "purpose": "I PROACTIVE - Central AI Orchestration Brick",
+      "monthly_usd": null
+    },
+    {
+      "name": "integration",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/integration",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.934471",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "intelligence",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/intelligence",
+      "engine_role": "cruft",
+      "last_touched": "2026-01-22T12:55:08.690731",
+      "purpose": "Intelligence Droplet Specification",
+      "monthly_usd": null
+    },
+    {
+      "name": "intelligence-core",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/intelligence-core",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-16T23:09:12.204118",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "intent-queue",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/intent-queue",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.936584",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "jai-automation",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/jai-automation",
+      "engine_role": "cruft",
+      "last_touched": "2026-01-22T12:55:08.691014",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "jai-core",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/jai-core",
+      "engine_role": "cruft",
+      "last_touched": "2026-01-22T12:55:08.691135",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "jobs",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/jobs",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-11T01:05:20.046360",
+      "purpose": "Jobs Service (Droplet #XX)",
+      "monthly_usd": null
+    },
+    {
+      "name": "kubernetes",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/kubernetes",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.949650",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "landing-page",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/landing-page",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-11T00:19:14.465894",
+      "purpose": "Landing Page Service (Droplet #XX)",
+      "monthly_usd": null
+    },
+    {
+      "name": "legal",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/legal",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.954510",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "legal-verification-agent",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/legal-verification-agent",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.954016",
+      "purpose": "legal-verification-agent",
+      "monthly_usd": null
+    },
+    {
+      "name": "life-os",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/life-os",
+      "engine_role": "cruft",
+      "last_touched": "2026-04-29T09:59:37.164574",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "marketing",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/marketing",
+      "engine_role": "cruft",
+      "last_touched": "2026-02-13T06:35:41.362054",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "master-dashboard",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/master-dashboard",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-25T17:17:22.863294",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "membership",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/membership",
+      "engine_role": "cruft",
+      "last_touched": "2026-01-22T12:55:08.690791",
+      "purpose": "Membership Droplet Specification",
+      "monthly_usd": null
+    },
+    {
+      "name": "memory-dashboard",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/memory-dashboard",
+      "engine_role": "cruft",
+      "last_touched": "2026-01-22T12:55:08.691253",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "memory-droplet",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/memory-droplet",
+      "engine_role": "cruft",
+      "last_touched": "2026-01-22T12:55:08.705054",
+      "purpose": "Memory Droplet - SPECS",
+      "monthly_usd": null
+    },
+    {
+      "name": "mission-control",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/mission-control",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-11T01:05:20.047126",
+      "purpose": "🎯 Mission Control v2.0",
+      "monthly_usd": null
+    },
+    {
+      "name": "mission-hub",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/mission-hub",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-11T01:05:20.048050",
+      "purpose": "Mission Hub",
+      "monthly_usd": null
+    },
+    {
+      "name": "model-registry",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/model-registry",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-16T23:09:12.290670",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "mydreamspace",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/mydreamspace",
+      "engine_role": "cruft",
+      "last_touched": null,
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "needs-allocation",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/needs-allocation",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-16T23:09:12.334584",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "nerve_center",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/nerve_center",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-16T23:09:12.329048",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "nexus-event-bus",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/nexus-event-bus",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T14:06:50.285666",
+      "purpose": "NEXUS Event Bus - Real-Time Session Coordination",
+      "monthly_usd": null
+    },
+    {
+      "name": "orchestrator",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/orchestrator",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.974186",
+      "purpose": "Orchestrator Service",
+      "monthly_usd": null
+    },
+    {
+      "name": "orchestrator-unified",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/orchestrator-unified",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.966914",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "outbounders-integration",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/outbounders-integration",
+      "engine_role": "cruft",
+      "last_touched": null,
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "phase1-execution-engine",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/phase1-execution-engine",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T14:30:32.706455",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "reasoning-engine",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/reasoning-engine",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-16T23:09:12.204129",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "reddit-auto-responder",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/reddit-auto-responder",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.988307",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "registry",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/registry",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T13:08:25.169049",
+      "purpose": "Registry - Service Registry and Identity Management",
+      "monthly_usd": null
+    },
+    {
+      "name": "revenue-intelligence",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/revenue-intelligence",
+      "engine_role": "cruft",
+      "last_touched": null,
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "router",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/router",
+      "engine_role": "cruft",
+      "last_touched": "2026-01-22T12:55:08.690541",
+      "purpose": "Router Droplet - SPECS",
+      "monthly_usd": null
+    },
+    {
+      "name": "seo-landing-generator",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/seo-landing-generator",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.989720",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "service-discovery",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/service-discovery",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T14:30:32.706402",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "service-registry-monitor",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/service-registry-monitor",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.991101",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "social-auto-poster",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/social-auto-poster",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.991327",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "sol-treasury-ssot",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/sol-treasury-ssot",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.992154",
+      "purpose": "🏛️ SOL Treasury SSOT (Single Source of Truth)",
+      "monthly_usd": null
+    },
+    {
+      "name": "sovereign-factory",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/sovereign-factory",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.993519",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "spec-builder",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/spec-builder",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.996016",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "spec-optimizer",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/spec-optimizer",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:34.998007",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "spec-verifier",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/spec-verifier",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:35.001361",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "strategic-intelligence",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/strategic-intelligence",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-11T00:18:25.578932",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "supervisor",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/supervisor",
+      "engine_role": "cruft",
+      "last_touched": "2026-01-22T12:55:08.690601",
+      "purpose": "Supervisor Droplet - SPECS",
+      "monthly_usd": null
+    },
+    {
+      "name": "task-automation",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/task-automation",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:35.002336",
+      "purpose": "Task Automation Framework",
+      "monthly_usd": null
+    },
+    {
+      "name": "team-hub",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/team-hub",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-16T23:09:12.334583",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "test-compliance-demo",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/test-compliance-demo",
+      "engine_role": "cruft",
+      "last_touched": null,
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "token",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/token",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:35.004945",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "trader",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/trader",
+      "engine_role": "cruft",
+      "last_touched": "2026-01-22T12:55:08.690654",
+      "purpose": "Trader Droplet - SPECS",
+      "monthly_usd": null
+    },
+    {
+      "name": "treasury",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/treasury",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T14:20:02.469131",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "treasury-arena",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/treasury-arena",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:35.035103",
+      "purpose": "🏛️ Treasury Arena - Evolutionary Capital Allocation System",
+      "monthly_usd": null
+    },
+    {
+      "name": "treasury-dashboard",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/treasury-dashboard",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:35.036683",
+      "purpose": "💎 Treasury Dashboard",
+      "monthly_usd": null
+    },
+    {
+      "name": "treasury-manager",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/treasury-manager",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T14:05:59.121059",
+      "purpose": "🏦 Autonomous Treasury Manager",
+      "monthly_usd": null
+    },
+    {
+      "name": "trust-index",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/trust-index",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-16T23:09:12.334307",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "unified-assembly-line",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/unified-assembly-line",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:35.058805",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "unified-chat",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/unified-chat",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T14:06:50.285758",
+      "purpose": "🎯 Unified Chat Interface - The Hive Mind Voice",
+      "monthly_usd": null
+    },
+    {
+      "name": "unified-financial-dashboard",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/unified-financial-dashboard",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:35.065808",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "verifier",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/verifier",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-28T14:37:31.710371",
+      "purpose": "Verifier Service (Droplet #8)",
+      "monthly_usd": null
+    },
+    {
+      "name": "voice-phone",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/voice-phone",
+      "engine_role": "cruft",
+      "last_touched": null,
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "wellness-optimizer",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/wellness-optimizer",
+      "engine_role": "cruft",
+      "last_touched": null,
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "white-rock-landing",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/white-rock-landing",
+      "engine_role": "cruft",
+      "last_touched": null,
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "whiterock-blessings-engine",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/whiterock-blessings-engine",
+      "engine_role": "cruft",
+      "last_touched": "2026-01-30T21:06:45.422490",
+      "purpose": "WhiteRock CORA Membership & Community Blessings System",
+      "monthly_usd": null
+    },
+    {
+      "name": "whiterock-project-page",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/whiterock-project-page",
+      "engine_role": "cruft",
+      "last_touched": "2026-01-30T21:06:45.442574",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "worthy-recipient",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/worthy-recipient",
+      "engine_role": "cruft",
+      "last_touched": "2025-11-23T12:33:35.069893",
+      "purpose": "Worthy Recipient Allocation System",
+      "monthly_usd": null
+    },
+    {
+      "name": "zend-clerk",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/zend-clerk",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-16T23:09:12.568687",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "zend-marketplace",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/zend-marketplace",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-16T23:09:12.290641",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "zend-payments",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/zend-payments",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-16T23:09:12.435584",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "zend-ton",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/zend-ton",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-16T23:09:12.290604",
+      "purpose": null,
+      "monthly_usd": null
+    },
+    {
+      "name": "zend-wallet",
+      "path": "/Users/jamessunheart/FPAI_Cockpit/SERVICES/zend-wallet",
+      "engine_role": "cruft",
+      "last_touched": "2025-12-16T23:09:12.354600",
+      "purpose": null,
+      "monthly_usd": null
+    }
+  ],
+  "decision_filter": "Does this serve proof / revenue / clarity / ease for the core offer in 30 days?"
+}

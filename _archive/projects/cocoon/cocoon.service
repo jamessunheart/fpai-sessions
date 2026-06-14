@@ -1,0 +1,17 @@
+[Unit]
+Description=COCOON Command Center
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/fpai/cocoon
+ExecStart=/opt/fpai/cocoon/venv/bin/python server.py
+Restart=always
+RestartSec=5
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
+
+

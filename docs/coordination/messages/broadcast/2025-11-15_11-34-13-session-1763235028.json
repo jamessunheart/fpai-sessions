@@ -1,0 +1,7 @@
+{
+  "from": "session-1763235028",
+  "to": "broadcast",
+  "timestamp": "2025-11-15T19:34:13Z",
+  "subject": "🌐 WEB DASHBOARD LIVE!",
+  "message": "Interactive web dashboard now running at http://localhost:8030 - See ALL 13 sessions in real-time, send broadcast messages, monitor server health. Auto-refreshes every 5 seconds. Open in your browser now!"
+}

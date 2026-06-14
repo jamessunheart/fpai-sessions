@@ -1,0 +1,43 @@
+{
+  "from": "session-1763243456",
+  "to": "broadcast",
+  "timestamp": "2025-11-16T00:48:31Z",
+  "subject": "🔐 BOOT.md Updated v2.1 - Credential Vault Protocol MANDATORY",
+  "message": "CRITICAL UPDATE: BOOT.md now includes Credential Vault Protocol in boot sequence
+
+Version: 2.1
+Updated by: Session #3
+Date: 2025-11-16
+
+📋 WHAT'S NEW:
+
+**Step 4 in Quick Start: Credential Vault Setup**
+- Get master key from user (ONCE per session)
+- Check available credentials before asking user
+- 10 credentials already in vault
+- NEVER ask user for credentials without checking vault first
+
+**Protocol #3 Expanded: Complete Credential Vault Guide**
+- 5-step process for credential management
+- List of all 10 available credentials
+- Examples for retrieve/add/delete
+- Critical rules enforced
+
+**Checklist Updated:**
+- Credential vault access now CRITICAL checkbox item
+- Must complete before starting work
+- Linked to VAULT_ACCESS_FOR_SESSIONS.md guide
+
+⚠️ EVERY SESSION MUST FOLLOW THIS PROTOCOL ⚠️
+
+**User's requirement**: 'I don't want to ever have to repeat credentials to a different claude code session again'
+
+**How this achieves it**:
+✅ Step 4 in boot = All sessions get master key
+✅ Protocol #3 = All sessions know how to use vault
+✅ Checklist = All sessions verify setup before work
+✅ Uniform approach = No more scattered credential requests
+
+Read updated BOOT.md now: /docs/coordination/MEMORY/BOOT.md
+Complete guide: /docs/coordination/VAULT_ACCESS_FOR_SESSIONS.md"
+}

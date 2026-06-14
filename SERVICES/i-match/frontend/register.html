@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Registration</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    .form-control.is-invalid {
+      border-color: #dc3545;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right calc(0.375em + 0.1875rem) center;
+      background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    }
+  </style>
+</head>
+<body>
+  <div class="container my-5">
+    <h1>Customer Registration</h1>
+    <form id="registration-form">
+      <div class="form-group">
+        <label for="firstName">First Name</label>
+        <input type="text" class="form-control" id="firstName" name="firstName" required>
+        <div class="invalid-feedback">Please enter your first name.</div>
+      </div>
+      <div class="form-group">
+        <label for="lastName">Last Name</label>
+        <input type="text" class="form-control" id="lastName" name="lastName" required>
+        <div class="invalid-feedback">Please enter your last name.</div>
+      </div>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" class="form-control" id="email" name="email" required>
+        <div class="invalid-feedback">Please enter a valid email address.</div>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" class="form-control" id="password" name="password" required>
+        <div class="invalid-feedback">Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, and one number.</div>
+      </div>
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+        <div class="invalid-feedback">Passwords do not match.</div>
+      </div>
+      <div class="form-group">
+        <label for="phoneNumber">Phone Number</label>
+        <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" required>
+        <div class="invalid-feedback">Please enter a valid phone number.</div>
+      </div>
+      <div class="form-group">
+        <label for="address1">Address Line 1</label>
+        <input type="text" class="form-control" id="address1" name="address1" required>
+        <div class="invalid-feedback">Please enter your address.</div>
+      </div>
+      <div class="form-group">
+        <label for="address2">Address Line 2 (optional)</label>
+        <input type="text" class="form-control" id="address2" name="address2">
+      </div>
+      <div class="form-group">
+        <label for="city">City</label>
+        <input type="text" class="form-control" id="city" name="city" required>
+        <div class="invalid-feedback">Please enter your city.</div>
+      </div>
+      <div class="form-group">
+        <label for="state">State</label>
+        <select class="form-control" id="state" name="state" required>
+          <option value="">Select a state</option>
+          <!-- Add options for US states -->
+        </select>
+        <div class="invalid-feedback">Please select your state.</div>
+      </div>
+      <div class="form-group">
+        <label for="zipCode">ZIP Code</label>
+        <input type="text" class="form-control" id="zipCode" name="zipCode" required>
+        <div class="invalid-feedback">Please enter a valid 5-digit ZIP code.</div>
+      </div>
+      <div class="form-group">
+        <label for="subscriptionPlan">Subscription Plan</label>
+        <select class="form-control" id="subscriptionPlan" name="subscriptionPlan" required>
+          <option value="">Select a subscription plan</option>
+          <!-- Add options for available subscription plans -->
+        </select>
+        <div class="invalid-feedback">Please select a subscription plan.</div>
+      </div>
+      <div class="form-group">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="marketingPreferences" name="marketingPreferences">
+          <label class="form-check-label" for="marketingPreferences">
+            I want to receive marketing communications.
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="termsAndConditions" name="termsAndConditions" required>
+          <label class="form-check-label" for="termsAndConditions">
+            I agree to the <a href="#">Terms and Conditions</a> and <a href="#">Privacy Policy</a>.
+          </label>
+          <div class="invalid-feedback">You must agree to the Terms and Conditions and Privacy Policy.</div>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+  </div>
+
+  <script>
+    // Add client-side validation logic here
+  </script>
+</body>
+</html>

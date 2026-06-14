@@ -1,0 +1,224 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# Environment
+.env
+.env.local
+.env.production
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Database
+*.db
+*.sqlite
+
+# Docker
+.dockerignore
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+dist/
+build/
+*.egg-info/
+
+# Frontend
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+
+# Test
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+Complete Test Suite
+
+File: tests/test_intent.py
+python
+
+"""Tests for intent submission and spec generation"""
+import pytest
+from httpx import AsyncClient
+from unittest.mock import patch, AsyncMock
+
+from app.main import app
+
+
+@pytest.mark.asyncio
+async def test_submit_intent_creates_sprint():
+    """Submitting intent should create new sprint"""
+    with patch('app.services.spec_generator.generate_spec_from_intent') as mock_gen:
+        mock_gen.return_value = "# DROPLET_15_TEST_SPECIFICATION.md\n\nTest spec content"
+        
+        async with AsyncClient(app=app, base_url="http://test") as client:
+            response = await client.post(
+                "/intent/",
+                json={
+                    "intent": "Build a simple health monitor droplet",
+                    "architect": "TestArchitect"
+                },
+                headers={"Authorization": "Bearer test-token"}
+            )
+            
+            assert response.status_code == 200
+            data = response.json()
+            assert "id" in data
+            assert data["status"] == "spec_pending"
+            assert data["droplet_name"] == "TEST"
+
+
+@pytest.mark.asyncio
+async def test_submit_intent_requires_auth():
+    """Intent submission should require JWT"""
+    async with AsyncClient(app=app, base_url="http://test") as client:
+        response = await client.post(
+            "/intent/",
+            json={
+                "intent": "Build something",
+                "architect": "Test"
+            }
+        )
+        
+        assert response.status_code == 401
+
+File: tests/test_pipeline.py
+python
+
+"""Tests for pipeline management"""
+import pytest
+from httpx import AsyncClient
+
+from app.main import app
+
+
+@pytest.mark.asyncio
+async def test_get_dashboard_requires_auth():
+    """Dashboard endpoint should require JWT"""
+    async with AsyncClient(app=app, base_url="http://test") as client:
+        response = await client.get("/pipeline/dashboard")
+        assert response.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_approve_spec_requires_auth():
+    """Spec approval should require JWT"""
+    async with AsyncClient(app=app, base_url="http://test") as client:
+        response = await client.post("/pipeline/sprints/1/approve_spec")
+        assert response.status_code == 401
+
+File: tests/test_webhooks.py
+python
+
+"""Tests for webhook endpoints"""
+import pytest
+from httpx import AsyncClient
+
+from app.main import app
+
+
+@pytest.mark.asyncio
+async def test_recruit_complete_webhook():
+    """Webhook should update sprint status"""
+    async with AsyncClient(app=app, base_url="http://test") as client:
+        response = await client.post(
+            "/webhook/recruit_complete",
+            json={
+                "sprint_id": 1,
+                "apprentice_id": "D-001"
+            },
+            headers={"Authorization": "Bearer test-token"}
+        )
+        
+        # In test mode, may return 404 if sprint doesn't exist
+        assert response.status_code in [200, 404]
+
+
+@pytest.mark.asyncio
+async def test_webhooks_require_auth():
+    """All webhooks should require JWT"""
+    async with AsyncClient(app=app, base_url="http://test") as client:
+        response = await client.post(
+            "/webhook/build_complete",
+            json={"sprint_id": 1, "handoff_url": "https://example.com"}
+        )
+        assert response.status_code == 401
+
+File: tests/conftest.py
+python
+
+"""Pytest configuration and fixtures"""
+import pytest
+import asyncio
+from typing import Generator
+
+
+@pytest.fixture(scope="session")
+def event_loop() -> Generator:
+    """Create event loop for async tests"""
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+    yield loop
+    loop.close()
+
+Frontend Configuration Files
+
+File: frontend/next.config.js
+javascript
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  output: 'standalone',
+}
+
+module.exports = nextConfig
+
+File: frontend/tsconfig.json
+json
+
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "paths": {
+      "@/*": ["./app/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
+}

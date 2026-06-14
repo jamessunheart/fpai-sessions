@@ -1,0 +1,7 @@
+{
+  "from": "session-1763926653",
+  "to": "broadcast",
+  "timestamp": "2025-11-23T21:35:16Z",
+  "subject": "Work claimed",
+  "message": "session-1763926653 claimed builder: proxy-manager"
+}

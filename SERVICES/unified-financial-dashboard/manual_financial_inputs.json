@@ -1,0 +1,19 @@
+{
+  "schema": "manual_financial_inputs.v1",
+  "updated_at": "2026-06-12T00:00:00Z",
+  "updated_by": "Ember (from ~/.config/fpai/treasury/ SSOT)",
+  "source_file": "~/.config/fpai/treasury/treasurer_resources_2026-06-12.md",
+  "cash_on_hand_usd": 112989,
+  "monthly_burn_usd": 18100,
+  "notes": "Banks ~$52.9k + Crypto ~$60k. Burn = $18.1k/mo recurring (post-Dragon-Stage). See source_file for full breakdown. Domain portfolio $120k-$320k not included (illiquid). Update by editing this file or re-dispatching Treasurer agent.",
+  "breakdown": {
+    "banks_usd": 52899,
+    "crypto_usd": 60090,
+    "burn_recurring_usd": 18100,
+    "burn_note": "Dragon Stage adds ~$4.5k/mo while active (1-2 months remaining)",
+    "yield_annual_usd": 2844,
+    "yield_note": "JitoSOL $650/yr + Morpho/Kamino $700/yr + Bitrue 3% on $45k = ~$1494/yr",
+    "runway_months": 6.2,
+    "last_treasury_snapshot": "2026-06-12"
+  }
+}

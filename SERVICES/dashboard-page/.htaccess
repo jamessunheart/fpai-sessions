@@ -1,0 +1,6 @@
+# Static surface · auth gating handled at nginx layer (location /dashboard with auth_basic)
+# Headers reinforcement (nginx serves these too via add_header; double-belt for safety)
+Header always set X-Robots-Tag "noindex, nofollow"
+Header always set Cache-Control "no-store, no-cache, must-revalidate"
+Header always set X-Frame-Options "DENY"
+Header always set Referrer-Policy "no-referrer"

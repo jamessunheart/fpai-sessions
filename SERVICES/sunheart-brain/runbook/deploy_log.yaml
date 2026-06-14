@@ -1,0 +1,48 @@
+# Sunheart Brain deployment log
+# Machine-readable record of every phase; mirrors docs/zen-village/deploy_log.yaml format.
+version: 0.1
+project: sunheart-brain
+target_domain: brain.sunheart.com
+target_host: 162.0.208.88
+owner: sunheart
+operator: ori (cursor agent)
+started_at: 2026-04-24
+status: design-complete
+phases:
+  - id: phase-0
+    name: "Decisions locked"
+    at: 2026-04-24T18:20Z
+    decisions:
+      host: "Secondary (162.0.208.88), second docker stack"
+      embeddings: "both — local nomic-embed-text primary, OpenAI text-embedding-3-small for concept dedup"
+      mcp_clients: ["Claude Desktop", "Cursor", "GPT Custom Connector"]
+      ingest_sources: ["Bear", "ChatGPT export", "Claude export", "Cursor transcripts"]
+      dedup_posture: "auto-merge ≥0.95 cosine, queue the rest"
+    outcome: "Recommended architecture approved"
+  - id: phase-design
+    name: "Local code written (pre-deploy)"
+    at: 2026-04-24T18:35Z
+    artifacts:
+      - "SERVICES/sunheart-brain/compose/docker-compose.yml  (pgvector-enabled stack)"
+      - "SERVICES/sunheart-brain/compose/init-pgvector.sql   (schema + brain_index role)"
+      - "SERVICES/sunheart-brain/compose/internal-nginx.conf (inside-container routing)"
+      - "SERVICES/sunheart-brain/compose/brain.env.example   (secrets template)"
+      - "SERVICES/sunheart-brain/nginx/brain.sunheart.com.conf (hostside vhost)"
+      - "SERVICES/sunheart-brain/schema/sh_schema.json       (5-DB spec)"
+      - "SERVICES/sunheart-brain/schema/build_schema.py      (idempotent driver)"
+      - "SERVICES/sunheart-brain/index/app.py                (FastAPI + pgvector)"
+      - "SERVICES/sunheart-brain/index/schema.sql            (pgvector tables)"
+      - "SERVICES/sunheart-brain/index/ingest_routes.py      (add_note / ensure_conversation)"
+      - "SERVICES/sunheart-brain/mcp/sh_mcp_server.py        (11 tools)"
+      - "SERVICES/sunheart-brain/mcp/sh_mcp_http.py          (SSE wrapper)"
+      - "SERVICES/sunheart-brain/ingest/brain_ingest.py      (bear/chatgpt/claude/cursor adapters)"
+      - "SERVICES/sunheart-brain/scripts/{bootstrap,provision_user,install_systemd,issue_token,backup}.sh"
+      - "SERVICES/sunheart-brain/scripts/sh-brain-index.service + sh-mcp-http.service"
+      - "SERVICES/sunheart-brain/runbook/{deploy,claude_desktop,cursor,gpt_connector}.md"
+    outcome: "Full stack buildable; next step is DNS + rsync to Secondary."
+    session_claim: "docs/coordination/claims/builder-sunheart-brain.claim (session-1765555951)"
+  # Below phases are filled in as we execute them on Secondary.
+  - id: phase-1
+    name: "DNS"
+    status: pending
+    blocked_on: "user adds A record brain.sunheart.com → 162.0.208.88 at Namecheap"

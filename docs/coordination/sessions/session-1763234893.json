@@ -1,0 +1,14 @@
+{
+  "session_id": "session-1763234893",
+  "started_at": "2025-11-15T19:28:13Z",
+  "status": "active",
+  "current_work": "proactive reporting system",
+  "capabilities": [
+    "general-purpose",
+    "build",
+    "debug",
+    "deploy"
+  ],
+  "last_heartbeat": "2025-11-15T19:29:42Z",
+  "heartbeat_count": 8
+}

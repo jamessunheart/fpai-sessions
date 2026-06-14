@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get UC Credits | Full Potential AI</title>
+    <meta name="description" content="Get Universal Credits (UC) to use across all Full Potential services.">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-card: #141419;
+            --bg-input: #1a1a22;
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
+            --accent-gradient: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+            --text-white: #ffffff;
+            --text-gray: #9ca3af;
+            --text-muted: #6b7280;
+            --border: #2a2a35;
+            --success: #10b981;
+            --gold: #fbbf24;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-white);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--text-white);
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-gradient);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+        
+        .logo-text {
+            font-family: 'Space Mono', monospace;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: var(--text-gray);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        
+        .nav-links a:hover { color: var(--text-white); }
+        
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        
+        .purchase-container {
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .title-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .title-section h1 {
+            font-family: 'Space Mono', monospace;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .title-section p {
+            color: var(--text-gray);
+            font-size: 1rem;
+        }
+        
+        .exchange-rate {
+            display: inline-block;
+            margin-top: 0.75rem;
+            padding: 0.4rem 1rem;
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 999px;
+            color: var(--accent-purple);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        /* Amount Input - Big and Clear */
+        .amount-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .amount-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .amount-input-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .amount-input {
+            background: var(--bg-input);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-family: 'Space Mono', monospace;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--text-white);
+            width: 180px;
+            padding: 0.5rem 1rem;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        
+        .amount-input:focus {
+            border-color: var(--accent-purple);
+        }
+        
+        .amount-input::placeholder {
+            color: var(--text-muted);
+        }
+        
+        .uc-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-purple);
+            margin-left: 0.5rem;
+        }
+        
+        .amount-note {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 0.75rem 0 1rem;
+        }
+        
+        /* Quick amounts */
+        .quick-amounts {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .quick-btn {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .quick-btn:hover {
+            border-color: var(--accent-purple);
+            color: var(--text-white);
+        }
+        
+        .quick-btn.selected {
+            border-color: var(--accent-purple);
+            background: rgba(168, 85, 247, 0.15);
+            color: var(--text-white);
+        }
+        
+        /* Summary with UC */
+        .summary-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .summary-label {
+            color: var(--text-gray);
+            font-size: 0.95rem;
+        }
+        
+        .summary-value {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Bonus Section */
+        .bonus-section {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 16px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        
+        .bonus-section.active {
+            display: block;
+        }
+        
+        .bonus-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .bonus-icon {
+            font-size: 1.5rem;
+        }
+        
+        .bonus-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+        
+        .bonus-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            font-size: 0.9rem;
+            color: var(--text-gray);
+        }
+        
+        .bonus-item .check {
+            color: var(--success);
+            font-weight: bold;
+        }
+        
+        .bonus-item.locked {
+            opacity: 0.5;
+        }
+        
+        .bonus-item.locked .check {
+            color: var(--text-muted);
+        }
+        
+        .mask-preview {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: linear-gradient(135deg, rgba(96, 165, 250, 0.15) 0%, rgba(168, 85, 247, 0.15) 100%);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 0.75rem;
+        }
+        
+        .mask-preview img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-purple);
+        }
+        
+        .mask-preview-text {
+            flex: 1;
+        }
+        
+        .mask-preview-text .mask-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-white);
+            margin-bottom: 0.25rem;
+        }
+        
+        .mask-preview-text .mask-desc {
+            font-size: 0.8rem;
+            color: var(--text-gray);
+        }
+        
+        /* Payment Section */
+        .payment-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .form-input {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.875rem 1rem;
+            font-size: 1rem;
+            color: var(--text-white);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+        }
+        
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+        
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+        
+        .payment-btn {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.875rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .payment-btn:hover {
+            border-color: var(--accent-purple);
+        }
+        
+        .payment-btn.selected {
+            border-color: var(--accent-purple);
+            background: rgba(168, 85, 247, 0.1);
+        }
+        
+        .payment-btn .icon { font-size: 1.25rem; margin-bottom: 0.25rem; }
+        .payment-btn .name { font-size: 0.85rem; color: var(--text-white); }
+        .payment-btn .fee { font-size: 0.7rem; color: var(--text-muted); }
+        
+        /* Checkout Button */
+        .checkout-btn {
+            width: 100%;
+            background: var(--accent-gradient);
+            border: none;
+            border-radius: 12px;
+            padding: 1.125rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 1rem;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .checkout-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        
+        .checkout-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .footer-note {
+            text-align: center;
+            margin-top: 1.25rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        
+        .footer-note a {
+            color: var(--accent-purple);
+            text-decoration: none;
+        }
+        
+        .footer-note a:hover { text-decoration: underline; }
+        
+        footer {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        footer a {
+            color: var(--text-gray);
+            text-decoration: none;
+        }
+        
+        footer a:hover { color: var(--text-white); }
+        
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-overlay.active { display: flex; }
+        
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 360px;
+            text-align: center;
+        }
+        
+        .modal-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+        .modal h2 { font-family: 'Space Mono', monospace; font-size: 1.25rem; margin-bottom: 0.5rem; }
+        .modal p { color: var(--text-gray); font-size: 0.9rem; margin-bottom: 1.5rem; }
+        
+        .modal-btn {
+            background: var(--accent-gradient);
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 600px) {
+            header { padding: 1rem; }
+            .nav-links { display: none; }
+            main { padding: 1rem; }
+            .amount-input { font-size: 2.5rem; width: 150px; }
+            .currency-symbol { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="https://fullpotential.ai" class="logo">
+            <div class="logo-icon">⚡</div>
+            <span class="logo-text">FULL POTENTIAL AI</span>
+        </a>
+        <nav class="nav-links">
+            <a href="https://fullpotential.ai/services">Services</a>
+            <a href="/dashboard">Dashboard</a>
+        </nav>
+    </header>
+    
+    <main>
+        <div class="purchase-container">
+            <div class="title-section">
+                <h1>Get Universal Credits</h1>
+                <p>One currency for all Full Potential services</p>
+                <div class="exchange-rate">1 Universal Credit = $1 USD</div>
+            </div>
+            
+            <!-- Amount Input -->
+            <div class="amount-section">
+                <div class="amount-label">How many Universal Credits?</div>
+                <div class="amount-input-wrapper">
+                    <input type="number" class="amount-input" id="amountInput" value="50" min="1" placeholder="50">
+                    <span class="uc-label">UC</span>
+                </div>
+                <div class="amount-note">Enter any amount — $1 = 1 Universal Credit</div>
+                <div class="quick-amounts">
+                    <button class="quick-btn" data-amount="25">25 UC</button>
+                    <button class="quick-btn selected" data-amount="50">50 UC</button>
+                    <button class="quick-btn" data-amount="100">100 UC</button>
+                    <button class="quick-btn" data-amount="500">500 UC</button>
+                    <button class="quick-btn" data-amount="1000">1,000 UC</button>
+                </div>
+            </div>
+            
+            <!-- Summary -->
+            <div class="summary-section">
+                <div class="summary-row">
+                    <span class="summary-label">Total cost</span>
+                    <span class="summary-value" id="totalCost">$50</span>
+                </div>
+                <div class="summary-row" style="margin-top: 0.5rem;">
+                    <span class="summary-label">You'll receive</span>
+                    <span class="summary-value" id="ucAmount">50 Universal Credits</span>
+                </div>
+            </div>
+            
+            <!-- Bonus Section -->
+            <div class="bonus-section" id="bonusSection">
+                <div class="bonus-header">
+                    <span class="bonus-icon">🎁</span>
+                    <span class="bonus-title">BONUS UNLOCKED!</span>
+                </div>
+                <div class="bonus-item" id="bonus500">
+                    <span class="check">✓</span>
+                    <span>Priority support access</span>
+                </div>
+                <div class="bonus-item" id="bonus1000">
+                    <span class="check">✓</span>
+                    <span><strong>Dream Big Mask</strong> (shipped free)</span>
+                </div>
+                <div class="mask-preview" id="maskPreview" style="display: none;">
+                    <img src="/services/credits/static/james2dream.jpg" alt="Dream Big Mask">
+                    <div class="mask-preview-text">
+                        <div class="mask-title">✨ Dream Big Sleep Mask</div>
+                        <div class="mask-desc">Premium cosmic design — manifest your dreams while you rest</div>
+                    </div>
+                </div>
+                <div class="bonus-item" id="bonus2500">
+                    <span class="check">✓</span>
+                    <span>Founding member badge</span>
+                </div>
+                <div class="bonus-item" id="bonus5000">
+                    <span class="check">✓</span>
+                    <span>1-on-1 onboarding call</span>
+                </div>
+            </div>
+            
+            <!-- Payment -->
+            <div class="payment-section">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" class="form-input" id="email" placeholder="your@email.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Payment Method</label>
+                    <div class="payment-methods">
+                        <div class="payment-btn selected" data-method="stripe">
+                            <div class="icon">💳</div>
+                            <div class="name">Card</div>
+                            <div class="fee">4.5% fee</div>
+                        </div>
+                        <div class="payment-btn" data-method="crypto">
+                            <div class="icon">₿</div>
+                            <div class="name">Crypto</div>
+                            <div class="fee">1% fee</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="checkout-btn" id="checkoutBtn">
+                Purchase $<span id="btnAmount">50</span>
+            </button>
+            
+            <div class="footer-note">
+                See what you can use UC for → <a href="https://fullpotential.ai/services">View Services</a>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <a href="https://fullpotential.ai">Full Potential AI</a> · 
+        <a href="/services/credits/">Credits Gateway</a> · 
+        <a href="/services/credits/docs">API</a>
+    </footer>
+    
+    <!-- Modals -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal">
+            <div class="modal-icon">✅</div>
+            <h2>Redirecting...</h2>
+            <p id="modalMessage">Taking you to payment</p>
+            <button class="modal-btn" onclick="closeModal()">OK</button>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="errorModal">
+        <div class="modal">
+            <div class="modal-icon">⚠️</div>
+            <h2>Error</h2>
+            <p id="errorMessage">Something went wrong</p>
+            <button class="modal-btn" onclick="closeErrorModal()">Try Again</button>
+        </div>
+    </div>
+    
+    <script>
+        const USER_SERVICE = 'http://162.0.208.88:8110';
+        
+        let amount = 50;
+        let method = 'stripe';
+        
+        const bonusTiers = [
+            { min: 500, id: 'bonus500', label: 'Priority support' },
+            { min: 1000, id: 'bonus1000', label: 'Dream Big Mask' },
+            { min: 2500, id: 'bonus2500', label: 'Founding member' },
+            { min: 5000, id: 'bonus5000', label: '1-on-1 call' }
+        ];
+        
+        function updateDisplay() {
+            document.getElementById('ucAmount').textContent = `${amount.toLocaleString()} Universal Credits`;
+            document.getElementById('totalCost').textContent = `$${amount.toLocaleString()}`;
+            document.getElementById('btnAmount').textContent = amount.toLocaleString();
+            
+            // Update quick buttons
+            document.querySelectorAll('.quick-btn').forEach(btn => {
+                btn.classList.toggle('selected', parseInt(btn.dataset.amount) === amount);
+            });
+            
+            // Update bonuses
+            const bonusSection = document.getElementById('bonusSection');
+            let hasBonus = false;
+            
+            bonusTiers.forEach(tier => {
+                const el = document.getElementById(tier.id);
+                if (amount >= tier.min) {
+                    el.classList.remove('locked');
+                    hasBonus = true;
+                } else {
+                    el.classList.add('locked');
+                }
+            });
+            
+            bonusSection.classList.toggle('active', hasBonus);
+            
+            // Show mask preview for $1000+ tier
+            const maskPreview = document.getElementById('maskPreview');
+            maskPreview.style.display = amount >= 1000 ? 'flex' : 'none';
+        }
+        
+        // Amount input
+        const amountInput = document.getElementById('amountInput');
+        amountInput.addEventListener('input', (e) => {
+            const val = parseInt(e.target.value) || 0;
+            if (val >= 1) {
+                amount = val;
+                updateDisplay();
+            }
+        });
+        
+        amountInput.addEventListener('focus', () => {
+            amountInput.select();
+        });
+        
+        // Quick amount buttons
+        document.querySelectorAll('.quick-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                amount = parseInt(btn.dataset.amount);
+                amountInput.value = amount;
+                updateDisplay();
+            });
+        });
+        
+        // Payment method
+        document.querySelectorAll('.payment-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.payment-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                method = btn.dataset.method;
+            });
+        });
+        
+        // Checkout
+        document.getElementById('checkoutBtn').addEventListener('click', async () => {
+            const email = document.getElementById('email').value;
+            if (!email) {
+                alert('Please enter your email');
+                return;
+            }
+            
+            if (amount < 1) {
+                alert('Please enter a valid amount');
+                return;
+            }
+            
+            const btn = document.getElementById('checkoutBtn');
+            btn.disabled = true;
+            btn.textContent = 'Processing...';
+            
+            try {
+                let endpoint, body;
+                
+                if (method === 'stripe') {
+                    endpoint = `${USER_SERVICE}/payments/stripe/create-session`;
+                    body = {
+                        amount_uc: amount,
+                        success_url: window.location.origin + '/services/credits/?success=1',
+                        cancel_url: window.location.origin + '/services/credits/purchase'
+                    };
+                } else {
+                    endpoint = `${USER_SERVICE}/payments/create`;
+                    body = { amount_usd: amount, currency: 'usdc' };
+                }
+                
+                const res = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-API-Key': email },
+                    body: JSON.stringify(body)
+                });
+                
+                if (res.ok) {
+                    const data = await res.json();
+                    const url = data.checkout_url || data.hosted_url;
+                    if (url) {
+                        window.location.href = url;
+                        return;
+                    }
+                }
+                
+                throw new Error('Payment failed');
+            } catch (err) {
+                document.getElementById('errorMessage').textContent = err.message;
+                document.getElementById('errorModal').classList.add('active');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `Purchase $<span id="btnAmount">${amount.toLocaleString()}</span>`;
+            }
+        });
+        
+        function closeModal() { document.getElementById('successModal').classList.remove('active'); }
+        function closeErrorModal() { document.getElementById('errorModal').classList.remove('active'); }
+        
+        // Check URL params
+        if (new URLSearchParams(window.location.search).get('success')) {
+            document.getElementById('modalMessage').textContent = 'Credits added to your account!';
+            document.getElementById('successModal').classList.add('active');
+        }
+        
+        // Initialize
+        updateDisplay();
+    </script>
+</body>
+</html>

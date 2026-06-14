@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Mission Control Dashboard</title>
+    <style>
+      body { font-family: system-ui, sans-serif; margin: 0; background: #0b1221; color: #f5f5f5; }
+      header { padding: 1rem 2rem; background: #111a33; display: flex; justify-content: space-between; align-items: center; }
+      main { padding: 1.5rem 2rem; }
+      #status { display: flex; gap: 2rem; flex-wrap: wrap; margin-bottom: 2rem; }
+      .card { background: #151f3b; border-radius: 8px; padding: 1rem; min-width: 220px; box-shadow: 0 5px 12px rgba(0,0,0,0.25); }
+      .events { max-height: 60vh; overflow-y: auto; background: #10182e; border-radius: 8px; padding: 1rem; }
+      .event { border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0.5rem 0; }
+      .event:last-child { border-bottom: none; }
+      .event-type { font-weight: 600; }
+      .muted { color: #8892b0; font-size: 0.875rem; }
+      code { font-family: "SFMono-Regular", Consolas, monospace; font-size: 0.8rem; color: #9dd6ff; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Mission Control Dashboard</h1>
+      <span id="connection">Connecting…</span>
+    </header>
+    <main>
+      <section id="overview" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-bottom: 2rem;"></section>
+      <section id="status"></section>
+      <section class="events" id="events"></section>
+    </main>
+    <script>
+      const overviewEl = document.getElementById("overview");
+      const statusEl = document.getElementById("status");
+      const eventsEl = document.getElementById("events");
+      const connectionEl = document.getElementById("connection");
+
+      function upsertMissionCard(event) {
+        if (!event.payload || !event.payload.mission_id) {
+          return;
+        }
+        const missionId = event.payload.mission_id;
+        let card = document.querySelector(`[data-mission="${missionId}"]`);
+        if (!card) {
+          card = document.createElement("div");
+          card.className = "card";
+          card.dataset.mission = missionId;
+          statusEl.appendChild(card);
+        }
+        card.innerHTML = `
+          <h3>${missionId}</h3>
+          <p>Status: <strong>${event.payload.status || event.event_type}</strong></p>
+          <p class="muted">${new Date(event.timestamp).toLocaleTimeString()}</p>
+        `;
+      }
+
+      function prependEvent(event) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "event";
+        wrapper.innerHTML = `
+          <div class="event-type">${event.event_type} — <span class="muted">${event.source}</span></div>
+          <div class="muted">${new Date(event.timestamp).toLocaleTimeString()}</div>
+          <code>${JSON.stringify(event.payload)}</code>
+        `;
+        eventsEl.prepend(wrapper);
+        while (eventsEl.children.length > 100) {
+          eventsEl.removeChild(eventsEl.lastChild);
+        }
+      }
+
+      async function loadOverview() {
+        try {
+          const res = await fetch("/state/overview");
+          if (!res.ok) {
+            throw new Error(`HTTP ${res.status}`);
+          }
+          const data = await res.json();
+          renderOverview(data);
+        } catch (err) {
+          console.warn("Failed to load overview", err);
+        }
+      }
+
+      function renderOverview(data) {
+        overviewEl.innerHTML = "";
+
+        if (data.current_priority) {
+          const cp = data.current_priority;
+          const card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML = `
+            <h2>Current Priority</h2>
+            <p><strong>${cp.title || "Unknown"}</strong></p>
+            ${cp.status ? `<p>Status: ${cp.status}</p>` : ""}
+            ${cp.timeline ? `<p>Timeline: ${cp.timeline}</p>` : ""}
+            ${cp.owner ? `<p>Owner: ${cp.owner}</p>` : ""}
+            ${cp.next_action ? `<p><strong>Next:</strong> ${cp.next_action}</p>` : ""}
+          `;
+          overviewEl.appendChild(card);
+        }
+
+        if (data.assembly_line) {
+          const stages = data.assembly_line;
+          const card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML = `
+            <h2>Assembly Line</h2>
+            <ul class="muted" style="list-style:none; padding-left:0; margin:0;">
+              ${["traffic", "storefront", "checkout", "fulfillment", "retention"]
+                .filter((k) => stages[k])
+                .map((k) => {
+                  const s = stages[k];
+                  const label = k.charAt(0).toUpperCase() + k.slice(1);
+                  const status = s.status || "Unknown";
+                  const extra = s.action || s.url || "";
+                  return `<li style="margin-bottom:0.25rem;"><strong>${label}:</strong> ${status}${extra ? ` — ${extra}` : ""}</li>`;
+                })
+                .join("")}
+            </ul>
+          `;
+          overviewEl.appendChild(card);
+        }
+
+        if (data.live_services && data.live_services.services && data.live_services.services.length) {
+          const ls = data.live_services;
+          const card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML = `
+            <h2>Live Services</h2>
+            ${ls.server ? `<p class="muted">Server: ${ls.server}</p>` : ""}
+            <ul class="muted" style="list-style:none; padding-left:0; margin:0;">
+              ${ls.services
+                .map((line) => `<li style="margin-bottom:0.25rem;">${line}</li>`)
+                .join("")}
+            </ul>
+            ${ls.last_verified ? `<p class="muted" style="margin-top:0.5rem;">Last Verified: ${ls.last_verified}</p>` : ""}
+          `;
+          overviewEl.appendChild(card);
+        }
+
+        if (data.coordination && (data.coordination.active_sessions || data.coordination.active_claims)) {
+          const c = data.coordination;
+          const card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML = `
+            <h2>Coordination</h2>
+            ${typeof c.active_sessions !== "undefined" ? `<p>Active Sessions: <strong>${c.active_sessions}</strong></p>` : ""}
+            ${typeof c.active_claims !== "undefined" ? `<p>Active Claims: <strong>${c.active_claims}</strong></p>` : ""}
+            ${
+              c.mission_claims && c.mission_claims.length
+                ? `<p class="muted">Mission Claims: ${c.mission_claims.join(", ")}</p>`
+                : ""
+            }
+            ${c.last_updated ? `<p class="muted" style="margin-top:0.5rem;">Last Updated: ${c.last_updated}</p>` : ""}
+          `;
+          overviewEl.appendChild(card);
+        }
+      }
+
+      function connect() {
+        const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+        const socket = new WebSocket(`${protocol}://${window.location.host}/ws/telemetry`);
+        socket.onopen = () => (connectionEl.textContent = "Live");
+        socket.onclose = () => {
+          connectionEl.textContent = "Disconnected. Retrying…";
+          setTimeout(connect, 2000);
+        };
+        socket.onmessage = (event) => {
+          const payload = JSON.parse(event.data);
+          prependEvent(payload);
+          upsertMissionCard(payload);
+        };
+      }
+
+      loadOverview();
+      connect();
+    </script>
+  </body>
+</html>
+

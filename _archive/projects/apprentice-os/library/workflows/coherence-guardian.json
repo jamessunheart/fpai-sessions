@@ -1,0 +1,89 @@
+{
+  "name": "Coherence Guardian Workflow",
+  "description": "Monitors steward coherence and pauses expansion if it drops below baseline.",
+  "nodes": [
+    {
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "parameters": {
+        "path": "coherence-alert",
+        "httpMethod": "POST"
+      }
+    },
+    {
+      "name": "Check Below Baseline",
+      "type": "n8n-nodes-base.if",
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.delta }}",
+              "operation": "smaller",
+              "value2": 0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Update System State",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": {
+        "method": "POST",
+        "url": "{{ $env.SUPABASE_URL }}/rest/v1/system_state",
+        "headers": {
+          "apikey": "{{ $env.SUPABASE_KEY }}",
+          "Content-Type": "application/json",
+          "Prefer": "resolution=merge-duplicates"
+        },
+        "body": {
+          "key": "expansion_paused",
+          "value": true
+        }
+      }
+    },
+    {
+      "name": "Log Event",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": {
+        "method": "POST",
+        "url": "{{ $env.SUPABASE_URL }}/rest/v1/events",
+        "headers": {
+          "apikey": "{{ $env.SUPABASE_KEY }}",
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "event_type": "system.pause",
+          "payload": {
+            "reason": "coherence_below_baseline",
+            "coherence": "={{ $json.current }}",
+            "baseline": "={{ $json.baseline }}"
+          }
+        }
+      }
+    },
+    {
+      "name": "Alert Steward",
+      "type": "n8n-nodes-base.telegram",
+      "parameters": {
+        "chatId": "{{ $env.TELEGRAM_CHAT_ID }}",
+        "text": "⚠️ COHERENCE ALERT\n\nYour coherence ({{ $json.current }}) dropped below baseline ({{ $json.baseline }}).\n\nExpansion has been PAUSED.\n\nTake time to ground before new commitments."
+      }
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [["Check Below Baseline"]]
+    },
+    "Check Below Baseline": {
+      "main": [["Update System State", "Log Event", "Alert Steward"], []]
+    }
+  },
+  "settings": {
+    "saveManualExecutions": true
+  },
+  "tags": ["governance", "coherence", "critical"],
+  "notes": "This workflow enforces the coherence-pause rule from rules.yaml"
+}
+
+

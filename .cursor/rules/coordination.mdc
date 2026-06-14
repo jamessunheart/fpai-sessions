@@ -1,0 +1,36 @@
+---
+description: Multi-session coordination — claim before working, heartbeat while working, broadcast when deciding
+globs: docs/coordination/**
+alwaysApply: false
+---
+
+# Multi-Session Coordination
+
+Multiple agent sessions run in parallel. Without coordination they step on each other. The claim/heartbeat/broadcast scripts are the seatbelt.
+
+## Before any significant work
+
+1. Check what's active:
+   ```bash
+   ls docs/coordination/sessions/ACTIVE/
+   ls docs/coordination/claims/
+   ```
+2. Claim your session:
+   ```bash
+   docs/coordination/scripts/session-claim.sh <type> <name>
+   ```
+3. Heartbeat on progress (keeps your claim fresh, signals liveness):
+   ```bash
+   docs/coordination/scripts/session-heartbeat.sh <action> <target> <phase>
+   ```
+4. Broadcast decisions that affect others:
+   ```bash
+   docs/coordination/scripts/session-send-message.sh broadcast <subject> <message>
+   ```
+
+## When you see a conflicting claim
+
+- Do not proceed silently. Either wait, coordinate via broadcast, or pick a non-overlapping slice.
+- Stale claims (no heartbeat for a long time) can be reclaimed — broadcast first.
+
+Related: `@docs/coordination/SESSION_STATUS_BOARD.md`, `@docs/coordination/MULTI_SESSION_COORDINATION.md`.

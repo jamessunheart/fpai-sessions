@@ -1,0 +1,14 @@
+[Unit]
+Description=FPAI security permission watcher (inotify → sentinel --quick)
+After=network-online.target local-fs.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStartPre=/usr/bin/touch /run/security-watch.lock
+ExecStart=/opt/fpai/openclaw/workspace/tools/security-watch.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

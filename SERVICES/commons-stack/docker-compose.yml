@@ -1,0 +1,120 @@
+version: '3.8'
+
+# Commons Ministry Token Stack Services
+# Reference: docs/protocols/TOKENS_STRATEGY.md v1.0.0
+
+services:
+  # Trust Index Service - Calculates Trust Index for policy decisions
+  trust-index:
+    build: ../trust-index
+    container_name: fpai-trust-index
+    ports:
+      - "8560:8560"
+    environment:
+      - TRUST_INDEX_REDIS_URL=redis://redis:6379/1
+      - TRUST_INDEX_CREDITS_GATEWAY_URL=http://fp-credits-gateway:8765
+      - TRUST_INDEX_CONTRIBUTION_TRACKER_URL=http://contribution-tracker:8570
+    depends_on:
+      - redis
+    networks:
+      - commons-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8560/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Contribution Tracker - Tracks contributions, issues TRUST tokens
+  contribution-tracker:
+    build: ../contribution-tracker
+    container_name: fpai-contribution-tracker
+    ports:
+      - "8570:8570"
+    environment:
+      - CONTRIB_DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres:5432/fpai
+      - CONTRIB_REDIS_URL=redis://redis:6379/0
+      - CONTRIB_CREDITS_GATEWAY_URL=http://fp-credits-gateway:8765
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - commons-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8570/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Needs Allocation Engine - Distributes ministry benefits
+  needs-allocation:
+    build: ../needs-allocation
+    container_name: fpai-needs-allocation
+    ports:
+      - "8565:8565"
+    environment:
+      - NEEDS_DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres:5432/fpai
+      - NEEDS_REDIS_URL=redis://redis:6379/2
+      - NEEDS_TRUST_INDEX_URL=http://trust-index:8560
+      - NEEDS_CONTRIBUTION_TRACKER_URL=http://contribution-tracker:8570
+      - NEEDS_CREDITS_GATEWAY_URL=http://fp-credits-gateway:8765
+    depends_on:
+      - postgres
+      - redis
+      - trust-index
+      - contribution-tracker
+    networks:
+      - commons-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8565/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis for caching and session storage
+  redis:
+    image: redis:7-alpine
+    container_name: fpai-commons-redis
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - commons-network
+    restart: unless-stopped
+
+  # PostgreSQL for persistence
+  postgres:
+    image: postgres:15-alpine
+    container_name: fpai-commons-postgres
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=fpai
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - commons-network
+    restart: unless-stopped
+
+networks:
+  commons-network:
+    driver: bridge
+
+volumes:
+  redis_data:
+  postgres_data:
+
+
+
+
+
+
+
+
+
+

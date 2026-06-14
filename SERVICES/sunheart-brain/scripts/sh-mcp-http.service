@@ -1,0 +1,19 @@
+[Unit]
+Description=Sunheart Brain — MCP HTTPS+SSE server
+After=network.target sh-brain-index.service
+Wants=sh-brain-index.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/sh-brain/mcp
+EnvironmentFile=/etc/sh-brain/mcp-http.env
+ExecStart=/opt/sh-brain/mcp/.venv/bin/uvicorn sh_mcp_http:app \
+    --host 127.0.0.1 --port 28091 --log-level info
+Restart=on-failure
+RestartSec=3
+StandardOutput=append:/var/log/sh-mcp-http.log
+StandardError=append:/var/log/sh-mcp-http.log
+
+[Install]
+WantedBy=multi-user.target

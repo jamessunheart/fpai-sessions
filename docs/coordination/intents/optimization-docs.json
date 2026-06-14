@@ -1,0 +1,10 @@
+{
+  "architect_intent": "Review and optimize all system documentation and specifications. Ensure they reflect the current 'Self-Optimizing Assembly Line' architecture. specific targets: README.md, @TECH_STACK.md, and service specs.",
+  "droplet_name": "documentation",
+  "approval_mode": "auto",
+  "auto_deploy": true,
+  "generated_by": "Strategic Intelligence Service",
+  "score": 50,
+  "created_at": "2025-11-23T20:00:00Z"
+}
+

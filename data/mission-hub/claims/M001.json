@@ -1,0 +1,8 @@
+{
+  "mission_id": "M001",
+  "contributor_id": "d7119c1b35a2",
+  "contributor_name": "Aderajew Yeshiwendm",
+  "claimed_at": "2025-11-27T05:30:22.145941",
+  "expected_completion": null,
+  "notes": "I need the following sensitive and system-related resources.\n\nCredentials (Required for secrets.vault.json)\nPlease provide the following credentials securely:\n\nBinance Testnet API Key\n\nBinance Testnet Secret Key\n\nRedis Connection String/URL (Used by the Magnet system)\n\n\ud83d\udcbb System and Access Requirements\nI also need the following access and confirmation to execute the setup steps:\n\nCodebase Access: Access to the project's repository to locate and work with infra/secrets.vault.example.json and orchestration/tools/inject_vault.py.\n\nExecution Access: SSH credentials or secure access instructions for the staging environment (the droplet hosting the files) to run the inject_vault.py script and confirm the final /opt/fpai/env/magnet.env file permissions.\n\nDependency Status: Confirmation that the Registry and Orchestrator services are currently live, as Magnet is dependent on them."
+}

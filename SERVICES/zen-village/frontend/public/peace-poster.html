@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>World Peace Gathering · Poster · Zen Village</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#faf9f5;--ink:#2a2018;--ink-soft:#7a6f63;--moss:#3a5a3a;--moss-deep:#1a2e1a;--gold:#c4a35a;--paper:#fff;--clay:#a8693a}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#ece6d8;color:var(--ink);font-family:'Outfit',sans-serif;-webkit-font-smoothing:antialiased}
+.controls{max-width:840px;margin:18px auto;padding:14px 22px;background:#fff;border-radius:10px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;box-shadow:0 2px 12px rgba(0,0,0,.05)}
+.controls label{font-size:12px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.18em;font-weight:600}
+.controls input{border:1px solid #d4ccba;background:#fff;padding:8px 12px;border-radius:6px;font-size:14px;font-family:Outfit;outline:none;width:140px}
+.controls input:focus{border-color:var(--moss)}
+.controls button{background:var(--moss-deep);color:#faf9f5;border:none;padding:9px 18px;border-radius:6px;font-family:Outfit;font-size:14px;font-weight:500;cursor:pointer;letter-spacing:.04em}
+.controls button:hover{background:var(--moss)}
+.controls .url{color:var(--ink-soft);font-size:13px;font-family:monospace;flex:1;text-align:right;min-width:200px}
+
+.poster{max-width:840px;margin:0 auto 60px;background:var(--bg);padding:60px 56px 50px;position:relative;overflow:hidden;box-shadow:0 4px 30px rgba(0,0,0,.08);border-radius:6px}
+.poster::before{content:"";position:absolute;top:-80px;left:-80px;width:380px;height:380px;background:radial-gradient(circle at center,rgba(196,163,90,.18),transparent 70%);pointer-events:none}
+.poster::after{content:"";position:absolute;bottom:-80px;right:-100px;width:320px;height:320px;background:radial-gradient(circle at center,rgba(58,90,58,.12),transparent 70%);pointer-events:none}
+
+.kicker{font-size:12px;letter-spacing:.34em;text-transform:uppercase;color:var(--clay);font-weight:600;margin-bottom:18px;position:relative}
+.title{font-family:'Cormorant Garamond',serif;font-size:84px;line-height:.95;font-weight:400;letter-spacing:-.02em;color:var(--moss-deep);margin-bottom:14px;position:relative}
+.title em{font-style:italic;color:var(--gold)}
+.when{font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--moss);font-weight:400;font-style:italic;margin-bottom:6px;position:relative}
+.where{font-size:14px;color:var(--ink-soft);letter-spacing:.16em;text-transform:uppercase;margin-bottom:38px;position:relative}
+
+.split{display:grid;grid-template-columns:1.1fr .9fr;gap:50px;align-items:center;position:relative}
+.tiers{display:flex;flex-direction:column;gap:14px}
+.tier{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid rgba(42,32,24,.10)}
+.tier:last-child{border-bottom:none}
+.tier .em{font-size:24px}
+.tier .label{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--moss-deep)}
+.tier .desc{font-size:12px;color:var(--ink-soft);line-height:1.4;margin-top:1px}
+.tier .amt{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--ink);font-weight:400;text-align:right}
+
+.qr-card{background:var(--paper);border-radius:14px;padding:26px 22px 18px;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.08)}
+.qr-card .scan{font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--clay);font-weight:600;margin-bottom:14px}
+.qr-card img{display:block;margin:0 auto 14px;width:100%;max-width:230px;height:auto}
+.qr-card .url{font-family:'Cormorant Garamond',serif;font-size:21px;color:var(--moss-deep);font-weight:500;letter-spacing:.01em}
+.qr-card .ref{font-size:11px;color:var(--ink-soft);letter-spacing:.18em;text-transform:uppercase;margin-top:6px}
+
+.pull{font-family:'Cormorant Garamond',serif;font-size:22px;font-style:italic;color:var(--moss);margin-top:36px;text-align:center;line-height:1.4;position:relative}
+.foot{margin-top:30px;text-align:center;font-size:12px;color:var(--ink-soft);letter-spacing:.18em;text-transform:uppercase;position:relative}
+.foot strong{color:var(--moss-deep);font-weight:600}
+
+@media(max-width:760px){
+  .poster{padding:36px 28px}
+  .title{font-size:54px}
+  .when{font-size:22px}
+  .split{grid-template-columns:1fr;gap:28px}
+}
+
+@media print {
+  .controls{display:none}
+  body{background:#fff}
+  .poster{box-shadow:none;margin:0;border-radius:0;padding:40px}
+}
+</style>
+</head>
+<body>
+
+<div class="controls">
+  <label for="ref-input">Partner ref:</label>
+  <input id="ref-input" placeholder="ATLAS (optional)" autocomplete="off">
+  <button onclick="updateQR()">Update QR</button>
+  <button onclick="window.print()">Print / Save PDF</button>
+  <a class="url" id="link-display" href="https://zenvillagecr.com/peace" target="_blank">zenvillagecr.com/peace</a>
+</div>
+
+<div class="poster">
+  <div class="kicker">Featured · May 2 + 3 · 2026</div>
+  <h1 class="title">World Peace<br><em>Weekend</em></h1>
+  <div class="when">Saturday + Sunday — together as one</div>
+  <div class="where">Zen Village · Chirripó, Costa Rica</div>
+
+  <div class="split">
+    <div class="tiers">
+      <div class="tier">
+        <div class="em">🤍</div>
+        <div>
+          <div class="label">Heart</div>
+          <div class="desc">We don't want money to limit your presence.</div>
+        </div>
+        <div class="amt">$0</div>
+      </div>
+      <div class="tier">
+        <div class="em">🌿</div>
+        <div>
+          <div class="label">Gratitude</div>
+          <div class="desc">Supports food + materials + overnight stay.</div>
+        </div>
+        <div class="amt">$25</div>
+      </div>
+      <div class="tier">
+        <div class="em">✨</div>
+        <div>
+          <div class="label">Joy</div>
+          <div class="desc">Supports the gathering + facilitators · Sat + Sun.</div>
+        </div>
+        <div class="amt">$50</div>
+      </div>
+      <div class="tier">
+        <div class="em">🌅</div>
+        <div>
+          <div class="label">Abundance</div>
+          <div class="desc">Supports you + someone who didn't have the means.</div>
+        </div>
+        <div class="amt">$100+</div>
+      </div>
+    </div>
+
+    <div class="qr-card">
+      <div class="scan">Scan to RSVP</div>
+      <img id="qr-img" src="/peace/qr.png?size=14" alt="QR code to zenvillagecr.com/peace">
+      <div class="url" id="poster-url">zenvillagecr.com/peace</div>
+      <div class="ref" id="poster-ref" style="display:none"></div>
+    </div>
+  </div>
+
+  <div class="pull">All four are sacred. Choose what feels right.</div>
+
+  <div class="foot">
+    <strong>Co-held with Reign Dance Movement</strong> · Cacao · Council · Dance · Fire · Integration
+  </div>
+</div>
+
+<script>
+function updateQR(){
+  const ref = (document.getElementById('ref-input').value || '').toUpperCase().replace(/[^A-Z0-9_-]/g,'').slice(0,40);
+  const img = document.getElementById('qr-img');
+  const url = document.getElementById('poster-url');
+  const refEl = document.getElementById('poster-ref');
+  const link = document.getElementById('link-display');
+  const cacheBust = Date.now();
+  if (ref){
+    img.src = `/peace/qr.png?size=14&ref=${ref}&_=${cacheBust}`;
+    url.textContent = 'zenvillagecr.com/peace';
+    refEl.textContent = '· via ' + ref;
+    refEl.style.display = 'block';
+    link.href = `https://zenvillagecr.com/peace?ref=${ref}`;
+    link.textContent = `zenvillagecr.com/peace?ref=${ref}`;
+  } else {
+    img.src = `/peace/qr.png?size=14&_=${cacheBust}`;
+    url.textContent = 'zenvillagecr.com/peace';
+    refEl.style.display = 'none';
+    link.href = 'https://zenvillagecr.com/peace';
+    link.textContent = 'zenvillagecr.com/peace';
+  }
+}
+// Pre-fill from ?ref=
+const initRef = new URLSearchParams(location.search).get('ref');
+if (initRef){
+  document.getElementById('ref-input').value = initRef.toUpperCase();
+  updateQR();
+}
+</script>
+
+</body>
+</html>

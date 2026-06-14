@@ -1,0 +1,46 @@
+[
+  {
+    "gap_type": "insufficient_prospects",
+    "severity": 9,
+    "current_state": "0 prospects in pipeline",
+    "target_state": "1,000+ prospects for sustainable outreach",
+    "solution": "Deploy Research AI to find 100 prospects/day OR hire LinkedIn researcher",
+    "recruitment_type": "ai_agent",
+    "estimated_cost": "$0.10/prospect AI OR $300/mo human",
+    "estimated_time": "1 week to build AI agent",
+    "priority": 5
+  },
+  {
+    "gap_type": "missing_api_credentials",
+    "severity": 10,
+    "current_state": "Missing: apollo_api_key, instantly_api_key, hubspot_token",
+    "target_state": "All API credentials configured",
+    "solution": "Hire API setup specialist via Upwork",
+    "recruitment_type": "human_upwork",
+    "estimated_cost": "Test sprint basis",
+    "estimated_time": "24-48 hours",
+    "priority": 5
+  },
+  {
+    "gap_type": "slow_response_time",
+    "severity": 7,
+    "current_state": "6.0 hour avg response time",
+    "target_state": "< 2 hour response time for hot leads",
+    "solution": "Deploy Conversation AI for auto-responses",
+    "recruitment_type": "ai_agent",
+    "estimated_cost": "$50/mo API costs",
+    "estimated_time": "2-3 days to build",
+    "priority": 4
+  },
+  {
+    "gap_type": "no_content_marketing",
+    "severity": 6,
+    "current_state": "0 blog posts/month",
+    "target_state": "12+ blog posts/month for SEO growth",
+    "solution": "Hire content writer OR deploy Content AI",
+    "recruitment_type": "human_upwork",
+    "estimated_cost": "$300/mo human OR $50/mo AI",
+    "estimated_time": "1 week to hire",
+    "priority": 3
+  }
+]

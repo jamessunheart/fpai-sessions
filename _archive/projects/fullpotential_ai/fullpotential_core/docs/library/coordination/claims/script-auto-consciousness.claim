@@ -1,0 +1,9 @@
+{
+  "claimed_by": "session-1763235028",
+  "claimed_at": "2025-11-15T19:47:46Z",
+  "resource_type": "script",
+  "resource_name": "auto-consciousness",
+  "duration_hours": 3,
+  "expires_at": "2025-11-15T22:47:46Z",
+  "allow_coordination": true
+}

@@ -1,0 +1,9 @@
+{
+  "claimed_by": "session-1763234782",
+  "claimed_at": "2025-11-15T19:27:11Z",
+  "resource_type": "service",
+  "resource_name": "i-match",
+  "duration_hours": 2,
+  "expires_at": "2025-11-15T21:27:11Z",
+  "allow_coordination": true
+}

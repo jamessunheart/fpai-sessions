@@ -1,0 +1,33 @@
+---
+description: Deployment protocol — never SSH directly, always use deploy-to-server.sh, always back up first
+globs: infra/**,**/deploy*.sh,**/*.service,**/systemd/**
+alwaysApply: false
+---
+
+# Deployment Protocol
+
+## Hard rules
+
+- **Never SSH directly to servers.** Always go through `infra/scripts/deploy-to-server.sh`.
+- **Never deploy without a pre-deploy backup.** Either call `/opt/fpai/scripts/pre-deploy-backup.sh <service> <version>` first, or use the safe wrapper `./infra/scripts/safe-deploy.sh <service> <cmd>` which does it for you.
+- **Never skip web verification.** After any deploy that touches a public URL, run `./docs/coordination/scripts/verify-web-deployment.sh <domain> [pages...]` and present the 200-OK results. "Failure to verify = process violation."
+
+## Standard deploy flow
+
+1. `/opt/fpai/scripts/list-backups.sh <service>` — confirm a backup path exists.
+2. `./infra/scripts/safe-deploy.sh <service> <deploy-command>` — backs up then deploys.
+3. Verify: `pytest` (if applicable), `curl http://<host>:<port>/health`.
+4. For web services: `./docs/coordination/scripts/verify-web-deployment.sh <domain>`.
+5. If anything fails: `/opt/fpai/scripts/restore-service.sh <service> latest`.
+
+## Which server?
+
+- **Primary (198.54.123.234):** web, trading, revenue, data.
+- **Secondary (162.0.208.88):** AI, consciousness, intelligence.
+- Full port map: `@docs/coordination/SERVICE_REGISTRY.md`.
+
+## Version naming
+
+`v<MAJOR>.<MINOR>.<PATCH>`. PATCH = bug fix. MINOR = new feature. MAJOR = breaking.
+
+Related: `@docs/coordination/MEMORY/VERSION_CONTROL_PROTOCOL.md`, `@docs/coordination/MEMORY/WEB_DEPLOYMENT_PROTOCOL.md`.

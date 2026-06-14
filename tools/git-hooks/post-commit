@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# Post-commit substrate hook.
+# Runs on every git commit. Two jobs:
+#   1. Regenerate cockpit-map.html (so local view stays current)
+#   2. Push session state to the Sessions API (so /projects stays current
+#      and terminal title reflects what just happened)
+#
+# Silent on success, prints errors. Never blocks (post-commit can't fail commit).
+
+set +e
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT" || exit 0
+
+# Job 1: regenerate cockpit map
+if [ -f tools/gen_cockpit_map.py ]; then
+  python3 tools/gen_cockpit_map.py >/dev/null 2>&1 || \
+    echo "[post-commit] cockpit map regeneration failed; run 'make map' to see error" >&2
+fi
+
+# Job 2: push session state — uses last commit message as quest,
+# silently no-ops if session_state.py or token unavailable.
+if [ -f tools/session_state.py ] && [ -f "$HOME/.config/sessions-api.token" ]; then
+  COMMIT_SUBJECT="$(git log -1 --pretty=format:%s 2>/dev/null | head -c 200)"
+  COMMIT_HASH="$(git log -1 --pretty=format:%h 2>/dev/null)"
+  python3 tools/session_state.py update \
+    --quest "${COMMIT_SUBJECT}" \
+    --status "active" \
+    --highlight "commit ${COMMIT_HASH}: ${COMMIT_SUBJECT}" \
+    >/dev/null 2>&1 || true
+fi
+
+exit 0

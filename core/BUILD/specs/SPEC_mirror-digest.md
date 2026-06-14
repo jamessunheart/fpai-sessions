@@ -1,0 +1,25 @@
+# SPEC_mirror-digest
+
+The Mirror — a standing "what shipped / what failed / what's next" digest, surfaceable to James's one chat. SAFE-AUTO (read-only summary + optional notify, self-contained).
+
+## Build
+**`tools/mirror/digest.sh`** — read-only, builds a short 3-section digest and prints it:
+1. **Shipped** — `core/BUILD/REGISTRY.json` entries with `status: "merged"` (most recent ~5; use `jq` if present, degrade gracefully).
+2. **In flight** — entries with `status` of `building` or `done`.
+3. **Next** — count of pending specs (`core/BUILD/specs/*.md` with no result) + whether `core/BUILD/improvement_proposals/` has a latest file (name it).
+If invoked with `--notify` AND `tools/build_loop/notify_telegram.sh` exists and is executable, pipe the digest text to it (so it reaches James's one chat). Without `--notify`, just print. Never fail if notify is unavailable.
+
+## Done / Proof
+- `bash tools/mirror/digest.sh` prints the three sections, exit 0.
+- `bash tools/mirror/digest.sh --notify` additionally invokes `notify_telegram.sh` (which itself is graceful if creds are absent).
+
+## Files
+- **ALLOWED:** `tools/mirror/digest.sh` (new) · `tools/mirror/test_digest.sh` (new)
+- **FORBIDDEN:** any prod server · secrets · `main` · `SERVICES/` · editing existing files (call `notify_telegram.sh`, don't modify it)
+
+## Tests
+- **`tools/mirror/test_digest.sh`** — assert `digest.sh` (no args) exits 0 and output contains the three section headers. Print `RESULT: N passed, M failed`; exit non-zero on failure.
+
+## Safety / Rollback
+- Read-only summary; the notify path reuses the existing graceful notifier. Reversible: delete the two new files.
+- Tagged SAFE-AUTO.

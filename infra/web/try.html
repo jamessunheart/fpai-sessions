@@ -1,0 +1,2344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Infrastructure Access | Full Potential AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --card: #12121a;
+            --border: rgba(255,255,255,0.08);
+            --text: #e4e4e7;
+            --muted: #71717a;
+            --accent: #00f5d4;
+            --purple: #7c3aed;
+            --pink: #ec4899;
+            --orange: #f97316;
+            --blue: #3b82f6;
+            --green: #10b981;
+            --yellow: #eab308;
+            --gold: #fbbf24;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: "Space Grotesk", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .bg-effects {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: 
+                radial-gradient(ellipse at 20% 0%, rgba(124,58,237,0.15), transparent 50%),
+                radial-gradient(ellipse at 80% 100%, rgba(0,245,212,0.1), transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(236,72,153,0.05), transparent 70%);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        /* Infrastructure Banner */
+        .infra-banner {
+            background: linear-gradient(90deg, rgba(0,245,212,0.1), rgba(124,58,237,0.1));
+            border-bottom: 1px solid var(--border);
+            padding: 12px 0;
+        }
+        
+        .infra-stats {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 24px;
+        }
+        
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: var(--muted);
+        }
+        
+        .stat-divider {
+            color: var(--border);
+        }
+        
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 60px 24px 60px;
+        }
+        
+        /* Thesis Box */
+        .thesis-box {
+            background: linear-gradient(135deg, rgba(251,191,36,0.1), rgba(0,245,212,0.05));
+            border: 1px solid rgba(251,191,36,0.3);
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 600px;
+            margin: 32px auto 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            text-align: left;
+        }
+        
+        .thesis-icon {
+            font-size: 32px;
+            flex-shrink: 0;
+        }
+        
+        .thesis-content h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: var(--gold);
+        }
+        
+        .thesis-content p {
+            font-size: 15px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+        
+        .thesis-content strong {
+            color: var(--accent);
+        }
+        
+        /* Two Paths */
+        .two-paths {
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            gap: 24px;
+            max-width: 800px;
+            margin: 32px auto;
+        }
+        
+        .path-card {
+            flex: 1;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: left;
+            transition: all 0.3s ease;
+        }
+        
+        .path-card:hover {
+            transform: translateY(-4px);
+        }
+        
+        .path-card.users {
+            border-color: rgba(0,245,212,0.3);
+        }
+        
+        .path-card.users:hover {
+            border-color: var(--accent);
+            box-shadow: 0 8px 32px rgba(0,245,212,0.2);
+        }
+        
+        .path-card.builders {
+            border-color: rgba(124,58,237,0.3);
+        }
+        
+        .path-card.builders:hover {
+            border-color: var(--purple);
+            box-shadow: 0 8px 32px rgba(124,58,237,0.2);
+        }
+        
+        .path-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+        
+        .path-card h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+        
+        .path-card > p {
+            font-size: 14px;
+            color: var(--muted);
+            margin-bottom: 16px;
+        }
+        
+        .path-card ul {
+            list-style: none;
+            margin-bottom: 16px;
+        }
+        
+        .path-card li {
+            font-size: 14px;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .path-card li:last-child {
+            border-bottom: none;
+        }
+        
+        .path-for {
+            display: block;
+            font-size: 12px;
+            color: var(--muted);
+            font-style: italic;
+            margin-top: 8px;
+        }
+        
+        .path-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .path-divider span {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--muted);
+        }
+        
+        @media (max-width: 700px) {
+            .two-paths {
+                flex-direction: column;
+            }
+            .path-divider span {
+                margin: 8px 0;
+            }
+        }
+        
+        /* Infrastructure Grid */
+        .infra-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin: 24px 0;
+        }
+        
+        .infra-item {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .infra-item:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+        
+        .infra-icon {
+            display: block;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        
+        .infra-name {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .infra-desc {
+            display: block;
+            font-size: 12px;
+            color: var(--muted);
+        }
+        
+        .infra-note {
+            text-align: center;
+            font-size: 14px;
+            color: var(--muted);
+            padding: 16px;
+            background: rgba(0,245,212,0.05);
+            border-radius: 8px;
+        }
+        
+        .infra-note strong {
+            color: var(--accent);
+        }
+        
+        /* Stack Sections */
+        .stack-section {
+            margin-bottom: 16px;
+        }
+        
+        .stack-label {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+        
+        .services-label {
+            background: rgba(0,245,212,0.15);
+            color: var(--accent);
+        }
+        
+        .infra-label {
+            background: rgba(124,58,237,0.15);
+            color: var(--purple);
+        }
+        
+        .stack-divider {
+            text-align: center;
+            margin: 16px 0;
+        }
+        
+        .stack-divider span {
+            font-size: 12px;
+            color: var(--muted);
+            background: var(--card);
+            padding: 4px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--purple), var(--pink));
+            color: white;
+            padding: 8px 20px;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        h1 {
+            font-size: clamp(36px, 6vw, 64px);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 24px;
+        }
+        
+        h1 span {
+            background: linear-gradient(135deg, var(--accent), #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 20px;
+            color: var(--muted);
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+        
+        /* The Deal */
+        .deal-banner {
+            background: linear-gradient(135deg, rgba(124,58,237,0.2), rgba(0,245,212,0.1));
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            max-width: 700px;
+            margin: 0 auto 60px;
+            text-align: left;
+        }
+        
+        .deal-banner h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .deal-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        
+        .deal-column h3 {
+            font-size: 16px;
+            color: var(--accent);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .deal-column ul {
+            list-style: none;
+        }
+        
+        .deal-column li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+        }
+        
+        .deal-column li .icon { font-size: 18px; }
+        
+        @media (max-width: 600px) {
+            .deal-columns { grid-template-columns: 1fr; }
+        }
+        
+        /* Membership Card */
+        .membership-section {
+            padding: 40px 0 60px;
+        }
+        
+        .membership-card {
+            background: linear-gradient(135deg, rgba(251,191,36,0.15), rgba(124,58,237,0.2));
+            border: 2px solid var(--gold);
+            border-radius: 32px;
+            padding: 48px;
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .membership-card::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(251,191,36,0.1), transparent 50%);
+            animation: shimmer 10s linear infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .membership-card > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .membership-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .membership-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            color: var(--bg);
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+        }
+        
+        .membership-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .membership-title .star { color: var(--gold); }
+        
+        .membership-subtitle {
+            color: var(--muted);
+            font-size: 18px;
+        }
+        
+        .membership-price {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .price-big {
+            font-size: 56px;
+            font-weight: 700;
+            color: var(--gold);
+        }
+        
+        .price-period {
+            font-size: 20px;
+            color: var(--muted);
+        }
+        
+        .membership-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .membership-perk {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+        }
+        
+        .membership-perk .perk-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+        
+        .membership-perk .perk-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .membership-perk .perk-desc {
+            font-size: 14px;
+            color: var(--muted);
+        }
+        
+        .costa-rica-banner {
+            background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(59,130,246,0.2));
+            border: 1px solid var(--green);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .costa-rica-banner h4 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: var(--green);
+        }
+        
+        .costa-rica-banner p {
+            color: var(--muted);
+            font-size: 15px;
+        }
+        
+        .credit-examples {
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .credit-examples h4 {
+            text-align: center;
+            margin-bottom: 8px;
+            font-size: 16px;
+            color: var(--accent);
+        }
+        
+        .credit-note {
+            text-align: center;
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 16px;
+        }
+        
+        .credit-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+        
+        .credit-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .credit-item .service { color: var(--muted); }
+        .credit-item .cost { color: var(--accent); font-weight: 600; }
+        
+        .membership-cta {
+            text-align: center;
+        }
+        
+        .membership-btn {
+            display: inline-block;
+            padding: 20px 48px;
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            color: var(--bg);
+            border: none;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .membership-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 32px rgba(251,191,36,0.4);
+        }
+        
+        .membership-note {
+            margin-top: 16px;
+            font-size: 14px;
+            color: var(--muted);
+        }
+        
+        /* Section Divider */
+        .section-divider {
+            text-align: center;
+            padding: 40px 0;
+        }
+        
+        .divider-text {
+            color: var(--muted);
+            font-size: 16px;
+            position: relative;
+            display: inline-block;
+            padding: 0 24px;
+        }
+        
+        .divider-text::before,
+        .divider-text::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 60px;
+            height: 1px;
+            background: var(--border);
+        }
+        
+        .divider-text::before { right: 100%; }
+        .divider-text::after { left: 100%; }
+        
+        /* Products Grid */
+        .products-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .products-header h2 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        
+        .products-header p {
+            color: var(--muted);
+        }
+        
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 24px;
+            padding-bottom: 60px;
+        }
+        
+        .product-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 32px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255,255,255,0.15);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .product-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--card-accent, var(--accent));
+        }
+        
+        .product-card.phone { --card-accent: var(--purple); }
+        .product-card.whale { --card-accent: var(--blue); }
+        .product-card.dashboard { --card-accent: var(--accent); }
+        .product-card.wellness { --card-accent: var(--green); }
+        .product-card.ai { --card-accent: var(--orange); }
+        .product-card.community { --card-accent: var(--pink); }
+        
+        .product-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .product-card.phone .product-icon { background: rgba(124,58,237,0.2); }
+        .product-card.whale .product-icon { background: rgba(59,130,246,0.2); }
+        .product-card.dashboard .product-icon { background: rgba(0,245,212,0.2); }
+        .product-card.wellness .product-icon { background: rgba(16,185,129,0.2); }
+        .product-card.ai .product-icon { background: rgba(249,115,22,0.2); }
+        .product-card.community .product-icon { background: rgba(236,72,153,0.2); }
+        
+        .product-name {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .product-desc {
+            color: var(--muted);
+            font-size: 15px;
+            margin-bottom: 20px;
+            min-height: 48px;
+        }
+        
+        .product-features {
+            list-style: none;
+            margin-bottom: 24px;
+        }
+        
+        .product-features li {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .product-features li:last-child { border-bottom: none; }
+        .product-features .check { color: var(--accent); }
+        
+        .trial-box {
+            background: rgba(0,245,212,0.1);
+            border: 1px solid rgba(0,245,212,0.2);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .trial-box .free { 
+            font-size: 24px; 
+            font-weight: 700; 
+            color: var(--accent);
+        }
+        
+        .trial-box .detail { 
+            font-size: 13px; 
+            color: var(--muted);
+        }
+        
+        .price-after {
+            text-align: center;
+            font-size: 14px;
+            color: var(--muted);
+            margin-bottom: 20px;
+        }
+        
+        .price-after strong {
+            color: var(--text);
+            font-size: 18px;
+        }
+        
+        .try-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--card-accent, var(--accent)), var(--purple));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+        }
+        
+        .try-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 24px rgba(0,245,212,0.3);
+        }
+        
+        /* Feedback Loop Section */
+        .feedback-section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 48px;
+            margin: 40px auto;
+            max-width: 800px;
+            text-align: center;
+        }
+        
+        .feedback-section h2 {
+            font-size: 28px;
+            margin-bottom: 16px;
+        }
+        
+        .feedback-section .subtitle {
+            margin-bottom: 32px;
+        }
+        
+        .loop-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+        }
+        
+        .loop-step {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 24px;
+            text-align: center;
+        }
+        
+        .loop-step .icon { font-size: 24px; margin-bottom: 8px; }
+        .loop-step .label { font-size: 14px; font-weight: 500; }
+        
+        .loop-arrow { font-size: 24px; color: var(--accent); }
+        
+        @media (max-width: 768px) {
+            .loop-visual { flex-direction: column; }
+            .loop-arrow { transform: rotate(90deg); }
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            text-align: center;
+            padding: 60px 24px 100px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .cta-section h2 {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+        
+        .cta-section p {
+            color: var(--muted);
+            margin-bottom: 32px;
+        }
+        
+        .contact-options {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .contact-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 32px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .contact-btn:hover {
+            border-color: var(--accent);
+            background: rgba(0,245,212,0.1);
+        }
+        
+        .contact-btn.primary {
+            background: var(--accent);
+            color: var(--bg);
+            border-color: var(--accent);
+        }
+        
+        .contact-btn.primary:hover {
+            background: #00dfc4;
+        }
+        
+        /* Trust */
+        .trust {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            padding: 40px 0;
+            flex-wrap: wrap;
+        }
+        
+        .trust-item {
+            text-align: center;
+        }
+        
+        .trust-item .number {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        
+        .trust-item .label {
+            font-size: 13px;
+            color: var(--muted);
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 14px;
+        }
+        
+        footer a { color: var(--accent); text-decoration: none; }
+        
+        @media (max-width: 768px) {
+            .products { grid-template-columns: 1fr; }
+            .trust { gap: 24px; }
+            .membership-card { padding: 32px 24px; }
+            .membership-title { font-size: 28px; }
+            .price-big { font-size: 42px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-effects"></div>
+    
+    <!-- Infrastructure Banner -->
+    <section class="infra-banner">
+        <div class="container">
+            <div class="infra-stats">
+                <div class="stat">
+                    <span class="stat-number">61</span>
+                    <span class="stat-label">GPUs</span>
+                </div>
+                <div class="stat-divider">|</div>
+                <div class="stat">
+                    <span class="stat-number">6+</span>
+                    <span class="stat-label">Services</span>
+                </div>
+                <div class="stat-divider">|</div>
+                <div class="stat">
+                    <span class="stat-number">90%</span>
+                    <span class="stat-label">Cheaper</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="hero">
+        <div class="container">
+            <div class="badge">🏗️ Infrastructure + Services</div>
+            <h1><span>Full Stack AI</span> Access</h1>
+            <p class="subtitle">
+                Use our ready-made AI services OR build your own on our infrastructure.
+                Same credits. Same membership. Your choice.
+            </p>
+            
+            <!-- Two Paths -->
+            <div class="two-paths">
+                <div class="path-card users">
+                    <div class="path-icon">✨</div>
+                    <h3>Use Services</h3>
+                    <p>Ready-made AI tools that just work</p>
+                    <ul>
+                        <li>🐋 Whale Track (Trading)</li>
+                        <li>📞 AI Phone Assistant</li>
+                        <li>🧘 Wellness Coach</li>
+                        <li>🖥️ Command Dashboard</li>
+                    </ul>
+                    <span class="path-for">For: Users who want results</span>
+                </div>
+                <div class="path-divider">
+                    <span>OR</span>
+                </div>
+                <div class="path-card builders">
+                    <div class="path-icon">🔧</div>
+                    <h3>Build Your Own</h3>
+                    <p>Raw infrastructure to create anything</p>
+                    <ul>
+                        <li>🎮 61 GPU Fleet</li>
+                        <li>🧠 AI Models (Llama, Mistral)</li>
+                        <li>📡 OpenAI-Compatible API</li>
+                        <li>🔧 Fine-tuning Access</li>
+                    </ul>
+                    <span class="path-for">For: Builders who want to create</span>
+                </div>
+            </div>
+            
+            <!-- The Thesis -->
+            <div class="thesis-box">
+                <div class="thesis-icon">💎</div>
+                <div class="thesis-content">
+                    <h3>Why Both Layers Matter</h3>
+                    <p>Use our services to get <strong>instant value</strong>. Access our infrastructure to <strong>build anything</strong>. 
+                    Our services prove the infrastructure works. The infrastructure powers unlimited possibilities.</p>
+                </div>
+            </div>
+            
+            <!-- Full Stack Overview -->
+            <div class="deal-banner">
+                <h2>🏗️ The Full Stack</h2>
+                
+                <div class="stack-section">
+                    <h4 class="stack-label services-label">Layer 2: Ready-to-Use Services</h4>
+                    <div class="infra-grid">
+                        <div class="infra-item">
+                            <span class="infra-icon">🐋</span>
+                            <span class="infra-name">Whale Track</span>
+                            <span class="infra-desc">Trading signals & liquidation alerts</span>
+                        </div>
+                        <div class="infra-item">
+                            <span class="infra-icon">📞</span>
+                            <span class="infra-name">AI Phone</span>
+                            <span class="infra-desc">24/7 voice assistant</span>
+                        </div>
+                        <div class="infra-item">
+                            <span class="infra-icon">🧘</span>
+                            <span class="infra-name">Wellness Coach</span>
+                            <span class="infra-desc">Daily check-ins & guidance</span>
+                        </div>
+                        <div class="infra-item">
+                            <span class="infra-icon">🖥️</span>
+                            <span class="infra-name">Dashboard</span>
+                            <span class="infra-desc">Command center + AI chat</span>
+                        </div>
+                        <div class="infra-item">
+                            <span class="infra-icon">👥</span>
+                            <span class="infra-name">Community</span>
+                            <span class="infra-desc">Weekly calls & resources</span>
+                        </div>
+                        <div class="infra-item">
+                            <span class="infra-icon">🌴</span>
+                            <span class="infra-name">Zen Village</span>
+                            <span class="infra-desc">Costa Rica retreat</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stack-divider">
+                    <span>Powered by ↓</span>
+                </div>
+                
+                <div class="stack-section">
+                    <h4 class="stack-label infra-label">Layer 1: Raw Infrastructure</h4>
+                    <div class="infra-grid">
+                        <div class="infra-item">
+                            <span class="infra-icon">🎮</span>
+                            <span class="infra-name">61 GPU Fleet</span>
+                            <span class="infra-desc">RTX 5080s & more</span>
+                        </div>
+                        <div class="infra-item">
+                            <span class="infra-icon">🧠</span>
+                            <span class="infra-name">AI Models</span>
+                            <span class="infra-desc">Llama, Mistral, Qwen</span>
+                        </div>
+                        <div class="infra-item">
+                            <span class="infra-icon">📡</span>
+                            <span class="infra-name">OpenAI API</span>
+                            <span class="infra-desc">Drop-in compatible</span>
+                        </div>
+                        <div class="infra-item">
+                            <span class="infra-icon">📊</span>
+                            <span class="infra-name">Data Feeds</span>
+                            <span class="infra-desc">Real-time market data</span>
+                        </div>
+                        <div class="infra-item">
+                            <span class="infra-icon">🔧</span>
+                            <span class="infra-name">Fine-Tuning</span>
+                            <span class="infra-desc">Train custom models</span>
+                        </div>
+                        <div class="infra-item">
+                            <span class="infra-icon">🤖</span>
+                            <span class="infra-name">Agent Hosting</span>
+                            <span class="infra-desc">24/7 AI agents</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="infra-note">
+                    <strong>Same credits work on both layers.</strong> Use services OR build your own. Your choice.
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Earn Credits Section -->
+    <section class="earn-section">
+        <div class="container">
+            <div class="earn-card">
+                <h2>💰 Earn Credits, Don't Just Spend Them</h2>
+                <p class="earn-subtitle">The more you engage, the more you earn. Some members earn back their entire membership!</p>
+                
+                <div class="earn-grid">
+                    <div class="earn-category">
+                        <h3>🚀 Launch Bonuses <span class="limited">First 100</span></h3>
+                        <ul>
+                            <li><span class="credits">+50</span> Founding member signup bonus</li>
+                            <li><span class="credits">+25</span> Write a testimonial</li>
+                            <li><span class="credits">+50</span> Record a video testimonial</li>
+                            <li><span class="credits">+10</span> Submit detailed feedback</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="earn-category referral-highlight">
+                        <h3>🎁 Referral Rewards</h3>
+                        <ul>
+                            <li><span class="credits">+5</span> Friend starts free trial</li>
+                            <li><span class="credits">+15</span> Friend → Explorer ($19)</li>
+                            <li><span class="credits">+25</span> Friend → Builder ($39)</li>
+                            <li><span class="credits">+50</span> Friend → Founder ($99)</li>
+                            <li><span class="credits">+25</span> Friend stays 3+ months</li>
+                            <li><span class="credits">+100</span> Top referrer monthly</li>
+                        </ul>
+                        <div class="revenue-share">
+                            <span>👑 Founders: <strong>10% recurring</strong> on referrals!</span>
+                        </div>
+                    </div>
+                    
+                    <div class="earn-category">
+                        <h3>🤝 Engagement</h3>
+                        <ul>
+                            <li><span class="credits">+5</span> Attend weekly call</li>
+                            <li><span class="credits">+5</span> Share a win</li>
+                            <li><span class="credits">+10</span> Help another member</li>
+                            <li><span class="credits">+50</span> Create a guide/resource</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- New Friend Bonus -->
+                <div class="friend-bonus-section">
+                    <h4>🎉 Your Friend Gets Bonus Credits Too!</h4>
+                    <div class="friend-bonus-grid">
+                        <div class="bonus-item">
+                            <span class="tier-label">Free Trial</span>
+                            <span class="bonus-amount">+10 credits</span>
+                        </div>
+                        <div class="bonus-item">
+                            <span class="tier-label">Explorer</span>
+                            <span class="bonus-amount">+25 credits</span>
+                        </div>
+                        <div class="bonus-item">
+                            <span class="tier-label">Builder</span>
+                            <span class="bonus-amount">+50 credits</span>
+                        </div>
+                        <div class="bonus-item">
+                            <span class="tier-label">Founder</span>
+                            <span class="bonus-amount">+100 credits</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="earn-math">
+                    <div class="math-example">
+                        <span class="math-title">Example: Active Builder Who Refers 3 Friends</span>
+                        <span class="math-calc">$39/mo membership → 150 credits</span>
+                        <span class="math-calc">+ 3 friends become Builders → +75 credits</span>
+                        <span class="math-calc">+ 3 friends stay 3 months → +75 credits</span>
+                        <span class="math-calc">+ 4 weekly calls → +20 credits</span>
+                        <span class="math-calc">+ 1 video testimonial → +50 credits</span>
+                        <span class="math-result">= 370 credits (~$370 value!) from $39 🚀</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <style>
+        .flywheel-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 24px;
+        }
+        
+        .flywheel-step {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            text-align: center;
+            min-width: 120px;
+        }
+        
+        .flywheel-step.highlight {
+            border-color: var(--accent);
+            background: rgba(0,245,212,0.1);
+        }
+        
+        .step-icon { display: block; font-size: 28px; margin-bottom: 8px; }
+        .step-label { display: block; font-size: 14px; font-weight: 600; }
+        .step-detail { display: block; font-size: 11px; color: var(--muted); margin-top: 4px; }
+        
+        .flywheel-arrow { font-size: 20px; color: var(--accent); }
+        
+        @media (max-width: 768px) {
+            .flywheel-visual { flex-direction: column; }
+            .flywheel-arrow { transform: rotate(90deg); }
+        }
+        
+        .earn-section {
+            padding: 40px 0;
+        }
+        
+        .earn-card {
+            background: linear-gradient(135deg, rgba(251,191,36,0.1), rgba(16,185,129,0.1));
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 48px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .earn-card h2 {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        
+        .earn-subtitle {
+            text-align: center;
+            color: var(--muted);
+            margin-bottom: 32px;
+        }
+        
+        .earn-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .earn-category {
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            padding: 24px;
+        }
+        
+        .earn-category h3 {
+            font-size: 18px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .limited {
+            font-size: 10px;
+            background: var(--pink);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 100px;
+            text-transform: uppercase;
+        }
+        
+        .earn-category ul {
+            list-style: none;
+        }
+        
+        .earn-category li {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .earn-category li:last-child { border-bottom: none; }
+        
+        .credits {
+            background: var(--accent);
+            color: var(--bg);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 13px;
+            min-width: 50px;
+            text-align: center;
+        }
+        
+        .earn-math {
+            background: rgba(0,0,0,0.4);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+        }
+        
+        .math-example {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .math-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--accent);
+        }
+        
+        .math-calc {
+            font-size: 14px;
+            color: var(--muted);
+        }
+        
+        .math-result {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-top: 8px;
+        }
+        
+        .earn-category.referral-highlight {
+            border: 1px solid var(--gold);
+            background: rgba(251,191,36,0.1);
+        }
+        
+        .revenue-share {
+            margin-top: 12px;
+            padding: 10px;
+            background: rgba(251,191,36,0.2);
+            border-radius: 8px;
+            text-align: center;
+            font-size: 13px;
+        }
+        
+        .revenue-share strong {
+            color: var(--gold);
+        }
+        
+        .friend-bonus-section {
+            background: rgba(0,245,212,0.1);
+            border: 1px solid rgba(0,245,212,0.3);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        
+        .friend-bonus-section h4 {
+            margin-bottom: 16px;
+            font-size: 18px;
+        }
+        
+        .friend-bonus-grid {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .bonus-item {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 16px 24px;
+            text-align: center;
+            min-width: 100px;
+        }
+        
+        .tier-label {
+            display: block;
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+        
+        .bonus-amount {
+            display: block;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        
+        @media (max-width: 768px) {
+            .earn-card { padding: 24px; }
+        }
+    </style>
+    
+    <!-- Membership Section - Tiered Pricing -->
+    <section class="membership-section">
+        <div class="container">
+            <div class="membership-header-main">
+                <h2 class="section-title">⚡ Infrastructure Access Tiers</h2>
+                <p class="section-subtitle">Choose your level of compute access + human connection</p>
+            </div>
+            
+            <div class="pricing-tiers">
+                <!-- Explorer Tier -->
+                <div class="tier-card explorer">
+                    <div class="tier-header">
+                        <span class="tier-name">🔭 Explorer</span>
+                        <span class="tier-best-for">Perfect for trying things out</span>
+                    </div>
+                    <div class="tier-price">
+                        <span class="price-amount">$19</span>
+                        <span class="price-period">/month</span>
+                    </div>
+                    <ul class="tier-features">
+                        <li>✓ 50 credits/month</li>
+                        <li>✓ All AI services access</li>
+                        <li>✓ Community access</li>
+                        <li>✓ 1 raffle entry/month</li>
+                        <li>✓ Can earn +50 credits/mo</li>
+                        <li class="muted">— No live calls</li>
+                    </ul>
+                    <a href="#contact" class="tier-btn">Start Exploring →</a>
+                </div>
+                
+                <!-- Builder Tier (Most Popular) -->
+                <div class="tier-card builder featured">
+                    <div class="popular-badge">🚀 Most Popular</div>
+                    <div class="tier-header">
+                        <span class="tier-name">🛠️ Builder</span>
+                        <span class="tier-best-for">For creators building something</span>
+                    </div>
+                    <div class="tier-price">
+                        <span class="price-amount">$39</span>
+                        <span class="price-period">/month</span>
+                    </div>
+                    <ul class="tier-features">
+                        <li>✓ <strong>150 credits/month</strong></li>
+                        <li>✓ All AI services + early access</li>
+                        <li>✓ Weekly live calls with James</li>
+                        <li>✓ <strong>3 raffle entries/month</strong></li>
+                        <li>✓ Referral rewards unlocked</li>
+                        <li>✓ <strong>Can earn +100 credits/mo</strong></li>
+                    </ul>
+                    <a href="#contact" class="tier-btn primary">Become a Builder →</a>
+                </div>
+                
+                <!-- Founder Tier -->
+                <div class="tier-card founder">
+                    <div class="tier-header">
+                        <span class="tier-name">👑 Founder</span>
+                        <span class="tier-best-for">For serious players</span>
+                    </div>
+                    <div class="tier-price">
+                        <span class="price-amount">$99</span>
+                        <span class="price-period">/month</span>
+                    </div>
+                    <ul class="tier-features">
+                        <li>✓ <strong>500 credits/month</strong></li>
+                        <li>✓ 1-on-1 onboarding with James</li>
+                        <li>✓ Priority feature requests</li>
+                        <li>✓ <strong>10 raffle entries/month</strong></li>
+                        <li>✓ 10% revenue share on referrals</li>
+                        <li>✓ <strong>Can earn +200 credits/mo</strong></li>
+                    </ul>
+                    <a href="#contact" class="tier-btn gold-btn">Become a Founder →</a>
+                </div>
+            </div>
+            
+            <!-- Annual Deal -->
+            <div class="annual-deal">
+                <div class="annual-badge">💰 Save $389</div>
+                <div class="annual-content">
+                    <h4>Annual Founder: $799/year</h4>
+                    <p>6,000 credits upfront • Lifetime founding member • Guaranteed retreat spot • 15% revenue share</p>
+                </div>
+                <a href="#contact" class="annual-btn">Lock In Founder Status →</a>
+            </div>
+            
+            <!-- Or try free first -->
+            <div class="try-free-banner">
+                <p>Not ready to commit? <strong>Try everything free first!</strong> Scroll down to sample any service.</p>
+            </div>
+            
+            <!-- Costa Rica Raffle -->
+            <div class="costa-rica-banner">
+                <h4>🌴 Win a FREE Retreat in Costa Rica!</h4>
+                <p>Every member gets raffle entries based on their tier. Quarterly drawing—more entries = better odds!</p>
+            </div>
+            
+            <!-- Compute Credit Examples -->
+            <div class="credit-examples">
+                <h4>💡 What Can You Do With Compute Credits?</h4>
+                <p class="credit-note">1 credit = $1 of infrastructure value. Use anywhere.</p>
+                <div class="credit-list">
+                    <div class="credit-item">
+                        <span class="service">🧠 AI API requests</span>
+                        <span class="cost">0.03 credits/req</span>
+                    </div>
+                    <div class="credit-item">
+                        <span class="service">📞 Voice calls</span>
+                        <span class="cost">1 credit/call</span>
+                    </div>
+                    <div class="credit-item">
+                        <span class="service">🐋 Data feeds</span>
+                        <span class="cost">2 credits/day</span>
+                    </div>
+                    <div class="credit-item">
+                        <span class="service">🎮 GPU hours</span>
+                        <span class="cost">4 credits/hr</span>
+                    </div>
+                    <div class="credit-item">
+                        <span class="service">🔧 Fine-tuning</span>
+                        <span class="cost">100+ credits</span>
+                    </div>
+                    <div class="credit-item">
+                        <span class="service">🌴 Retreat</span>
+                        <span class="cost">2,500 credits</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <style>
+        .membership-header-main {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .section-subtitle {
+            color: var(--muted);
+            font-size: 18px;
+        }
+        
+        .pricing-tiers {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            max-width: 1000px;
+            margin: 0 auto 32px;
+        }
+        
+        .tier-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 32px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .tier-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255,255,255,0.15);
+        }
+        
+        .tier-card.featured {
+            border: 2px solid var(--purple);
+            background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(0,245,212,0.05));
+            transform: scale(1.05);
+        }
+        
+        .tier-card.featured:hover {
+            transform: scale(1.07);
+        }
+        
+        .popular-badge {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--purple), var(--pink));
+            color: white;
+            padding: 6px 20px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        
+        .tier-header {
+            margin-bottom: 16px;
+        }
+        
+        .tier-name {
+            display: block;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .tier-best-for {
+            font-size: 14px;
+            color: var(--muted);
+        }
+        
+        .tier-price {
+            margin-bottom: 24px;
+        }
+        
+        .tier-price .price-amount {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        
+        .tier-card.featured .tier-price .price-amount {
+            color: var(--purple);
+        }
+        
+        .tier-price .price-period {
+            font-size: 18px;
+            color: var(--muted);
+        }
+        
+        .tier-features {
+            list-style: none;
+            margin-bottom: 24px;
+        }
+        
+        .tier-features li {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 15px;
+        }
+        
+        .tier-features li:last-child {
+            border-bottom: none;
+        }
+        
+        .tier-features li.muted {
+            color: var(--muted);
+        }
+        
+        .tier-features li strong {
+            color: var(--accent);
+        }
+        
+        .tier-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .tier-btn:hover {
+            background: rgba(255,255,255,0.05);
+            border-color: var(--accent);
+        }
+        
+        .tier-btn.primary {
+            background: linear-gradient(135deg, var(--purple), var(--pink));
+            border: none;
+            color: white;
+        }
+        
+        .tier-btn.primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 24px rgba(124,58,237,0.4);
+        }
+        
+        .tier-btn.gold-btn {
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            border: none;
+            color: var(--bg);
+        }
+        
+        .tier-btn.gold-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 24px rgba(251,191,36,0.4);
+        }
+        
+        .try-free-banner {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0,245,212,0.1);
+            border: 1px dashed var(--accent);
+            border-radius: 12px;
+            margin-top: 24px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .try-free-banner p {
+            color: var(--muted);
+            font-size: 15px;
+        }
+        
+        .try-free-banner strong {
+            color: var(--accent);
+        }
+        
+        .annual-deal {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            background: linear-gradient(135deg, rgba(251,191,36,0.15), rgba(249,115,22,0.1));
+            border: 1px solid var(--gold);
+            border-radius: 16px;
+            padding: 24px 32px;
+            max-width: 700px;
+            margin: 0 auto 32px;
+        }
+        
+        .annual-badge {
+            background: var(--gold);
+            color: var(--bg);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+        
+        .annual-content h4 {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+        
+        .annual-content p {
+            font-size: 14px;
+            color: var(--muted);
+        }
+        
+        .annual-btn {
+            padding: 12px 24px;
+            background: var(--gold);
+            color: var(--bg);
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .annual-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(251,191,36,0.4);
+        }
+        
+        @media (max-width: 900px) {
+            .tier-card.featured {
+                transform: scale(1);
+            }
+            .tier-card.featured:hover {
+                transform: translateY(-4px);
+            }
+            .annual-deal {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+    
+    <!-- Divider -->
+    <div class="section-divider">
+        <span class="divider-text">or try individual services free</span>
+    </div>
+    
+    <!-- Products Section -->
+    <section class="container">
+        <div class="products-header">
+            <h2>Infrastructure Components</h2>
+            <p>Access any piece of the stack. Try free, pay with credits.</p>
+        </div>
+        
+        <div class="products">
+            
+            <!-- Voice Phone -->
+            <div class="product-card phone">
+                <div class="product-icon">📞</div>
+                <h3 class="product-name">AI Phone Assistant</h3>
+                <p class="product-desc">Never miss a business call again. AI answers 24/7 in a natural voice.</p>
+                <ul class="product-features">
+                    <li><span class="check">✓</span> Answers calls when you can't</li>
+                    <li><span class="check">✓</span> Natural, professional voice</li>
+                    <li><span class="check">✓</span> Takes detailed messages</li>
+                    <li><span class="check">✓</span> Forwards urgent calls to you</li>
+                </ul>
+                <div class="trial-box">
+                    <div class="free">25 Calls Free</div>
+                    <div class="detail">~$1.50 value, on us</div>
+                </div>
+                <div class="price-after">Then <strong>$99/mo</strong> or <strong>1 credit/call</strong></div>
+                <a href="#contact" class="try-btn">Try Phone Assistant →</a>
+            </div>
+            
+            <!-- Whale Track -->
+            <div class="product-card whale">
+                <div class="product-icon">🐋</div>
+                <h3 class="product-name">Whale Track</h3>
+                <p class="product-desc">See where smart money flows. Liquidity sweeps, OI changes, whale movements.</p>
+                <ul class="product-features">
+                    <li><span class="check">✓</span> Liquidity sweep detection</li>
+                    <li><span class="check">✓</span> Open interest tracking</li>
+                    <li><span class="check">✓</span> Funding rate alerts</li>
+                    <li><span class="check">✓</span> Multi-timeframe analysis</li>
+                </ul>
+                <div class="trial-box">
+                    <div class="free">7 Days Free</div>
+                    <div class="detail">Full access, no limits</div>
+                </div>
+                <div class="price-after">Then <strong>$49/mo</strong> or <strong>2 credits/day</strong></div>
+                <a href="#contact" class="try-btn">Try Whale Track →</a>
+            </div>
+            
+            <!-- God Mode -->
+            <div class="product-card dashboard">
+                <div class="product-icon">🖥️</div>
+                <h3 class="product-name">Command Dashboard</h3>
+                <p class="product-desc">Monitor all your services in one beautiful, real-time interface.</p>
+                <ul class="product-features">
+                    <li><span class="check">✓</span> Real-time health monitoring</li>
+                    <li><span class="check">✓</span> Docker container status</li>
+                    <li><span class="check">✓</span> Service logs streaming</li>
+                    <li><span class="check">✓</span> AI chat assistant built-in</li>
+                </ul>
+                <div class="trial-box">
+                    <div class="free">14 Days Free</div>
+                    <div class="detail">Full dashboard access</div>
+                </div>
+                <div class="price-after">Then <strong>$49/mo</strong> or <strong>2 credits/day</strong></div>
+                <a href="#contact" class="try-btn">Try Dashboard →</a>
+            </div>
+            
+            <!-- Wellness -->
+            <div class="product-card wellness">
+                <div class="product-icon">🧘</div>
+                <h3 class="product-name">Wellness Coach</h3>
+                <p class="product-desc">AI-powered daily check-ins, breathing exercises, and personalized wisdom.</p>
+                <ul class="product-features">
+                    <li><span class="check">✓</span> Daily wellness check-ins</li>
+                    <li><span class="check">✓</span> Personalized insights</li>
+                    <li><span class="check">✓</span> Breathing exercises</li>
+                    <li><span class="check">✓</span> Progress tracking</li>
+                </ul>
+                <div class="trial-box">
+                    <div class="free">30 Days Free</div>
+                    <div class="detail">Full coaching experience</div>
+                </div>
+                <div class="price-after">Then <strong>$19/mo</strong> or <strong>0.5 credits/session</strong></div>
+                <a href="#contact" class="try-btn">Try Wellness Coach →</a>
+            </div>
+            
+            <!-- AI API -->
+            <div class="product-card ai">
+                <div class="product-icon">🧠</div>
+                <h3 class="product-name">AI API Access</h3>
+                <p class="product-desc">Multi-model AI API. GPT-4, Claude, Llama—one endpoint, one price.</p>
+                <ul class="product-features">
+                    <li><span class="check">✓</span> Multiple AI models</li>
+                    <li><span class="check">✓</span> OpenAI-compatible format</li>
+                    <li><span class="check">✓</span> Streaming responses</li>
+                    <li><span class="check">✓</span> No rate limits on trial</li>
+                </ul>
+                <div class="trial-box">
+                    <div class="free">1,000 Requests Free</div>
+                    <div class="detail">Any model, any size</div>
+                </div>
+                <div class="price-after">Then <strong>$29/mo</strong> or <strong>0.03 credits/request</strong></div>
+                <a href="#contact" class="try-btn">Try AI API →</a>
+            </div>
+            
+            <!-- Community -->
+            <div class="product-card community">
+                <div class="product-icon">👥</div>
+                <h3 class="product-name">Builder Community</h3>
+                <p class="product-desc">Connect with other builders. Share wins, get feedback, grow together.</p>
+                <ul class="product-features">
+                    <li><span class="check">✓</span> Private community access</li>
+                    <li><span class="check">✓</span> Weekly builder calls</li>
+                    <li><span class="check">✓</span> Resource library</li>
+                    <li><span class="check">✓</span> Direct founder access</li>
+                </ul>
+                <div class="trial-box">
+                    <div class="free">30 Days Free</div>
+                    <div class="detail">Full community access</div>
+                </div>
+                <div class="price-after">Then <strong>$9/mo</strong> — <strong>FREE with membership!</strong></div>
+                <a href="#contact" class="try-btn">Join Community →</a>
+            </div>
+            
+        </div>
+    </section>
+    
+    <!-- Zen Village Retreat Section -->
+    <section class="container" style="padding: 60px 0;">
+        <div class="retreat-card">
+            <div class="retreat-image">
+                <div class="retreat-badge">🌴 Premium Experience</div>
+            </div>
+            <div class="retreat-content">
+                <h2 class="retreat-title">Zen Village Retreat</h2>
+                <p class="retreat-subtitle">with James Sunheart in Costa Rica</p>
+                
+                <p class="retreat-desc">
+                    Escape to the jungle. Reset your nervous system. Connect with like-minded builders.
+                    A transformational experience at Zen Village—owned and hosted by the founder of Full Potential AI.
+                </p>
+                
+                <div class="retreat-features">
+                    <div class="retreat-feature">
+                        <span class="feature-icon">🏡</span>
+                        <span>Private jungle villa accommodation</span>
+                    </div>
+                    <div class="retreat-feature">
+                        <span class="feature-icon">🧘</span>
+                        <span>Daily meditation & breathwork</span>
+                    </div>
+                    <div class="retreat-feature">
+                        <span class="feature-icon">💻</span>
+                        <span>Build sessions with AI tools</span>
+                    </div>
+                    <div class="retreat-feature">
+                        <span class="feature-icon">🌿</span>
+                        <span>Nature immersion & digital detox</span>
+                    </div>
+                    <div class="retreat-feature">
+                        <span class="feature-icon">🤝</span>
+                        <span>1-on-1 time with James</span>
+                    </div>
+                    <div class="retreat-feature">
+                        <span class="feature-icon">🍃</span>
+                        <span>Plant-based meals included</span>
+                    </div>
+                </div>
+                
+                <div class="retreat-pricing">
+                    <div class="retreat-price-option">
+                        <div class="price-label">Pay with USD</div>
+                        <div class="price-amount">$2,500</div>
+                        <div class="price-detail">5-day retreat</div>
+                    </div>
+                    <div class="retreat-price-divider">or</div>
+                    <div class="retreat-price-option credits">
+                        <div class="price-label">Pay with Credits</div>
+                        <div class="price-amount">2,500 credits</div>
+                        <div class="price-detail">Save up as a member!</div>
+                    </div>
+                    <div class="retreat-price-divider">or</div>
+                    <div class="retreat-price-option raffle">
+                        <div class="price-label">Win it FREE</div>
+                        <div class="price-amount">🎟️ Raffle</div>
+                        <div class="price-detail">Members enter monthly</div>
+                    </div>
+                </div>
+                
+                <div class="retreat-cta">
+                    <a href="#contact" class="retreat-btn">Inquire About Retreat →</a>
+                    <p class="retreat-note">Next retreat dates announced to members first</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <style>
+        .retreat-card {
+            background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(59,130,246,0.1));
+            border: 2px solid var(--green);
+            border-radius: 32px;
+            overflow: hidden;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .retreat-image {
+            height: 200px;
+            background: linear-gradient(135deg, #065f46, #0d9488, #14b8a6);
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-end;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .retreat-image::before {
+            content: "🌴🏡🌿";
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 48px;
+            letter-spacing: 20px;
+        }
+        
+        .retreat-badge {
+            background: var(--gold);
+            color: var(--bg);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        
+        .retreat-content {
+            padding: 40px;
+        }
+        
+        .retreat-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .retreat-subtitle {
+            color: var(--green);
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        
+        .retreat-desc {
+            color: var(--muted);
+            font-size: 16px;
+            line-height: 1.7;
+            margin-bottom: 24px;
+        }
+        
+        .retreat-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+        
+        .retreat-feature {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+        }
+        
+        .feature-icon {
+            font-size: 20px;
+        }
+        
+        .retreat-pricing {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+            padding: 24px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+        }
+        
+        .retreat-price-option {
+            text-align: center;
+            padding: 16px 24px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            min-width: 150px;
+        }
+        
+        .retreat-price-option.credits {
+            border: 1px solid var(--gold);
+        }
+        
+        .retreat-price-option.raffle {
+            border: 1px solid var(--green);
+            background: rgba(16,185,129,0.1);
+        }
+        
+        .price-label {
+            font-size: 12px;
+            color: var(--muted);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        
+        .price-amount {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        
+        .retreat-price-option.credits .price-amount {
+            color: var(--gold);
+        }
+        
+        .retreat-price-option.raffle .price-amount {
+            color: var(--green);
+        }
+        
+        .price-detail {
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+        
+        .retreat-price-divider {
+            color: var(--muted);
+            font-size: 14px;
+        }
+        
+        .retreat-cta {
+            text-align: center;
+        }
+        
+        .retreat-btn {
+            display: inline-block;
+            padding: 18px 40px;
+            background: linear-gradient(135deg, var(--green), #0d9488);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .retreat-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 32px rgba(16,185,129,0.4);
+        }
+        
+        .retreat-note {
+            margin-top: 12px;
+            font-size: 14px;
+            color: var(--muted);
+        }
+        
+        @media (max-width: 600px) {
+            .retreat-content { padding: 24px; }
+            .retreat-pricing { flex-direction: column; }
+            .retreat-price-divider { display: none; }
+        }
+    </style>
+    
+    <!-- The Journey Section -->
+    <section class="container">
+        <div class="feedback-section">
+            <h2>🚀 Your Journey</h2>
+            <p class="subtitle">From free trial to Costa Rica retreat—watch value compound.</p>
+            
+            <div class="journey-visual">
+                <div class="journey-step">
+                    <div class="journey-number">1</div>
+                    <div class="journey-icon">🎁</div>
+                    <div class="journey-title">Try Free</div>
+                    <div class="journey-desc">Sample any service, give feedback</div>
+                </div>
+                <div class="journey-arrow">→</div>
+                <div class="journey-step">
+                    <div class="journey-number">2</div>
+                    <div class="journey-icon">🔭</div>
+                    <div class="journey-title">Explorer</div>
+                    <div class="journey-desc">$19/mo, start building</div>
+                </div>
+                <div class="journey-arrow">→</div>
+                <div class="journey-step highlight">
+                    <div class="journey-number">3</div>
+                    <div class="journey-icon">🛠️</div>
+                    <div class="journey-title">Builder</div>
+                    <div class="journey-desc">$39/mo, earn credits, invite friends</div>
+                </div>
+                <div class="journey-arrow">→</div>
+                <div class="journey-step gold">
+                    <div class="journey-number">4</div>
+                    <div class="journey-icon">👑</div>
+                    <div class="journey-title">Founder</div>
+                    <div class="journey-desc">Revenue share + retreat guaranteed</div>
+                </div>
+            </div>
+            
+            <div class="journey-benefits">
+                <div class="benefit-item">
+                    <span class="benefit-icon">📈</span>
+                    <span>Value compounds: Same price, more tools every month</span>
+                </div>
+                <div class="benefit-item">
+                    <span class="benefit-icon">💰</span>
+                    <span>Earn credits back: Testimonials, referrals, engagement</span>
+                </div>
+                <div class="benefit-item">
+                    <span class="benefit-icon">🌴</span>
+                    <span>Founders: 15% revenue share + guaranteed retreat spot</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <style>
+        .journey-visual {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+        }
+        
+        .journey-step {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            min-width: 140px;
+            position: relative;
+        }
+        
+        .journey-step.highlight {
+            border-color: var(--purple);
+            background: rgba(124,58,237,0.1);
+        }
+        
+        .journey-step.gold {
+            border-color: var(--gold);
+            background: rgba(251,191,36,0.1);
+        }
+        
+        .journey-number {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: var(--bg);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .journey-step.highlight .journey-number { background: var(--purple); color: white; }
+        .journey-step.gold .journey-number { background: var(--gold); }
+        
+        .journey-icon { font-size: 28px; margin-bottom: 8px; }
+        .journey-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+        .journey-desc { font-size: 12px; color: var(--muted); }
+        
+        .journey-arrow { 
+            font-size: 20px; 
+            color: var(--accent); 
+            align-self: center;
+            margin-top: 20px;
+        }
+        
+        .journey-benefits {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .benefit-icon { font-size: 20px; }
+        
+        @media (max-width: 768px) {
+            .journey-visual { flex-direction: column; align-items: center; }
+            .journey-arrow { transform: rotate(90deg); margin: 8px 0; }
+            .journey-step { width: 100%; max-width: 280px; }
+        }
+    </style>
+    
+    <section class="trust">
+        <div class="trust-item">
+            <div class="number">61</div>
+            <div class="label">GPU Fleet</div>
+        </div>
+        <div class="trust-item">
+            <div class="number">90%</div>
+            <div class="label">Cheaper Than Enterprise</div>
+        </div>
+        <div class="trust-item">
+            <div class="number">$0</div>
+            <div class="label">To Start</div>
+        </div>
+        <div class="trust-item">
+            <div class="number">🌴</div>
+            <div class="label">Retreat Raffle</div>
+        </div>
+    </section>
+    
+    <section class="cta-section" id="contact">
+        <div class="container">
+            <h2>Ready to access the infrastructure?</h2>
+            <p>Start free, upgrade when you see the value. The picks and shovels are waiting.</p>
+            <div class="contact-options">
+                <a href="mailto:james@fullpotential.ai?subject=I%20want%20to%20join%20the%20Full%20Potential%20Club!&body=Hi%20James!%0A%0AI%27m%20interested%20in:%0A%0AMEMBERSHIP:%0A%5B%20%5D%20Explorer%20(%2419/mo%20-%2050%20credits)%0A%5B%20%5D%20Builder%20(%2439/mo%20-%20150%20credits)%20%E2%86%90%20Most%20Popular%0A%5B%20%5D%20Founder%20(%2499/mo%20-%20500%20credits)%0A%5B%20%5D%20Annual%20Founder%20(%24799/yr%20-%20Best%20Value)%0A%5B%20%5D%20Just%20want%20to%20try%20free%20first%0A%0ASERVICES%20I%27M%20MOST%20EXCITED%20ABOUT:%0A%5B%20%5D%20AI%20Phone%20Assistant%0A%5B%20%5D%20Whale%20Track%20(Trading)%0A%5B%20%5D%20Wellness%20Coach%0A%5B%20%5D%20AI%20API%20Access%0A%5B%20%5D%20Command%20Dashboard%0A%5B%20%5D%20Costa%20Rica%20Retreat%0A%0AMy%20name:%0AHow%20I%20heard%20about%20you:" class="contact-btn primary">
+                    ✉️ Email James
+                </a>
+                <a href="https://twitter.com/messages/compose?text=Hey!%20I%20saw%20fullpotential.ai/try%20and%20want%20to%20try..." class="contact-btn">
+                    𝕏 DM on Twitter
+                </a>
+                <a href="https://cal.com/fullpotential" class="contact-btn">
+                    📅 Book a Call
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <p>Built with 🫀 by <a href="https://fullpotential.ai">Full Potential AI</a></p>
+        <p style="margin-top: 8px;">Questions? james@fullpotential.ai</p>
+    </footer>
+
+</body>
+</html>

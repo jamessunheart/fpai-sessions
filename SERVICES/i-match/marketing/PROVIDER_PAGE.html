@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Advisors - I MATCH</title>
+    <meta name="description" content="Get high-quality, AI-matched leads. No upfront cost. Pay only 20% when you close. Better matches = higher conversion rates.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        .hero p {
+            font-size: 24px;
+            margin-bottom: 40px;
+            opacity: 0.95;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: white;
+            color: #38a169;
+            padding: 18px 40px;
+            font-size: 20px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .value-prop {
+            padding: 80px 20px;
+            background: white;
+        }
+        
+        .value-prop h2 {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 60px;
+            color: #2d3748;
+        }
+        
+        .benefits {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .benefit {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 12px;
+        }
+        
+        .benefit-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+        
+        .benefit h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #2d3748;
+        }
+        
+        .benefit p {
+            color: #4a5568;
+            font-size: 16px;
+        }
+        
+        .how-it-works {
+            padding: 80px 20px;
+            background: #f8f9fa;
+        }
+        
+        .how-it-works h2 {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 60px;
+            color: #2d3748;
+        }
+        
+        .steps {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .step {
+            background: white;
+            padding: 30px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            border-left: 5px solid #48bb78;
+        }
+        
+        .step h3 {
+            font-size: 22px;
+            margin-bottom: 10px;
+            color: #2d3748;
+        }
+        
+        .pricing {
+            padding: 80px 20px;
+            background: white;
+            text-align: center;
+        }
+        
+        .pricing h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #2d3748;
+        }
+        
+        .pricing-card {
+            max-width: 600px;
+            margin: 40px auto;
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            padding: 60px 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .pricing-number {
+            font-size: 72px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .pricing-details {
+            font-size: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .pricing-features {
+            text-align: left;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .pricing-feature {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .comparison {
+            padding: 80px 20px;
+            background: #f8f9fa;
+        }
+        
+        .comparison h2 {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 60px;
+            color: #2d3748;
+        }
+        
+        .comparison-table {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .comparison-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .comparison-table th {
+            background: #2d3748;
+            color: white;
+            padding: 20px;
+            text-align: left;
+        }
+        
+        .comparison-table td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .comparison-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .checkmark {
+            color: #48bb78;
+            font-size: 20px;
+        }
+        
+        .xmark {
+            color: #e53e3e;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero -->
+    <section class="hero">
+        <h1>Get AI-Matched Leads That Actually Close</h1>
+        <p>No upfront cost. Pay only 20% when you win the client.</p>
+        <a href="#sign-up" class="cta-button">Join Our Network →</a>
+        <p style="margin-top: 20px; font-size: 16px; opacity: 0.9;">
+            ✓ Performance-Based &nbsp;&nbsp; ✓ Better Quality Leads &nbsp;&nbsp; ✓ Higher Conversion
+        </p>
+    </section>
+
+    <!-- Value Proposition -->
+    <section class="value-prop">
+        <h2>Why Financial Advisors Love I MATCH</h2>
+        <div class="benefits">
+            <div class="benefit">
+                <div class="benefit-icon">🎯</div>
+                <h3>Perfect-Fit Leads</h3>
+                <p>Our AI matches based on your exact specialties. No more "retirement planning" leads when you focus on business owners.</p>
+            </div>
+            
+            <div class="benefit">
+                <div class="benefit-icon">💰</div>
+                <h3>Performance-Based</h3>
+                <p>$0 upfront. $0 monthly fees. Pay 20% only when you close. Much better than $5K per lead services.</p>
+            </div>
+            
+            <div class="benefit">
+                <div class="benefit-icon">📈</div>
+                <h3>Higher Close Rates</h3>
+                <p>90%+ match scores = clients already know you're the right fit. Less selling, more serving.</p>
+            </div>
+            
+            <div class="benefit">
+                <div class="benefit-icon">⚡</div>
+                <h3>Fast & Easy</h3>
+                <p>5-minute profile setup. We do the marketing. You get warm intros via email. Just close deals.</p>
+            </div>
+            
+            <div class="benefit">
+                <div class="benefit-icon">🔥</div>
+                <h3>High-Quality Clients</h3>
+                <p>We target high-net-worth individuals and tech executives. $20K+ average deal size.</p>
+            </div>
+            
+            <div class="benefit">
+                <div class="benefit-icon">🤝</div>
+                <h3>Zero Competition</h3>
+                <p>Clients see only 3 matches. If you're in the top 3, you have a real shot. Not competing with 50 advisors.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works">
+        <h2>How It Works</h2>
+        <div class="steps">
+            <div class="step">
+                <h3>1. Create Your Profile (5 minutes)</h3>
+                <p>Tell us your specialties, certifications, ideal clients, and pricing. Be specific - this helps our AI match you perfectly.</p>
+            </div>
+            
+            <div class="step">
+                <h3>2. We Find Your Perfect Clients</h3>
+                <p>Our AI analyzes every customer application and scores compatibility with your profile. You only see 90%+ matches.</p>
+            </div>
+            
+            <div class="step">
+                <h3>3. Get Warm Introductions</h3>
+                <p>When you're a top-3 match, we email you the client's profile and needs. They're expecting your outreach within 24 hours.</p>
+            </div>
+            
+            <div class="step">
+                <h3>4. Close the Deal</h3>
+                <p>Schedule your intro call, propose your services, and close the engagement. You're the expert - we just made the connection.</p>
+            </div>
+            
+            <div class="step">
+                <h3>5. Pay 20% Commission</h3>
+                <p>Invoice sent after engagement confirmed. Net-30 payment terms. Only pay for what you close.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="pricing">
+        <h2>Simple, Performance-Based Pricing</h2>
+        <div class="pricing-card">
+            <div class="pricing-number">20%</div>
+            <div class="pricing-details">of engagement value, paid only when you close</div>
+            
+            <div class="pricing-features">
+                <div class="pricing-feature">✓ Unlimited lead introductions</div>
+                <div class="pricing-feature">✓ AI matching to your specialties</div>
+                <div class="pricing-feature">✓ Warm introductions (not cold leads)</div>
+                <div class="pricing-feature">✓ High-net-worth clientele</div>
+                <div class="pricing-feature">✓ Net-30 payment terms</div>
+                <div class="pricing-feature">✓ No upfront cost</div>
+                <div class="pricing-feature">✓ No monthly fees</div>
+                <div class="pricing-feature">✓ Cancel anytime</div>
+            </div>
+        </div>
+        
+        <p style="font-size: 18px; color: #4a5568; margin-top: 40px;">
+            <strong>Example:</strong> Client pays you $25K retainer → You pay us $5K (20%)<br>
+            You keep $20K. We handle all the marketing.
+        </p>
+    </section>
+
+    <!-- Comparison -->
+    <section class="comparison">
+        <h2>How We Compare</h2>
+        <div class="comparison-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>I MATCH</th>
+                        <th>Traditional Lead Gen</th>
+                        <th>Paid Directories</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Upfront Cost</strong></td>
+                        <td><span class="checkmark">✓</span> $0</td>
+                        <td><span class="xmark">✗</span> $500-$5,000</td>
+                        <td><span class="xmark">✗</span> $5,000/year</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Monthly Fees</strong></td>
+                        <td><span class="checkmark">✓</span> $0</td>
+                        <td><span class="xmark">✗</span> $500-$2,000</td>
+                        <td><span class="checkmark">✓</span> $0 (annual only)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Lead Quality</strong></td>
+                        <td><span class="checkmark">✓</span> AI-matched (90%+)</td>
+                        <td><span class="xmark">✗</span> Generic demographics</td>
+                        <td><span class="xmark">✗</span> Self-selected</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Warm Introduction</strong></td>
+                        <td><span class="checkmark">✓</span> Yes</td>
+                        <td><span class="xmark">✗</span> Cold contact info</td>
+                        <td><span class="xmark">✗</span> Client reaches out (maybe)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Competition</strong></td>
+                        <td><span class="checkmark">✓</span> 1 of 3 matches</td>
+                        <td><span class="xmark">✗</span> 10+ advisors get same lead</td>
+                        <td><span class="xmark">✗</span> 100+ advisors listed</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Performance-Based</strong></td>
+                        <td><span class="checkmark">✓</span> Pay only when you close</td>
+                        <td><span class="xmark">✗</span> Pay per lead (close or not)</td>
+                        <td><span class="xmark">✗</span> Pay regardless</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Client Quality</strong></td>
+                        <td><span class="checkmark">✓</span> High-net-worth focused</td>
+                        <td>Mixed</td>
+                        <td>Self-selected</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section style="padding: 80px 20px; background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); color: white; text-align: center;">
+        <h2 style="font-size: 42px; margin-bottom: 20px;">Ready to Get Better Leads?</h2>
+        <p style="font-size: 20px; margin-bottom: 40px; opacity: 0.95;">
+            Join our network of certified financial advisors. Setup takes 5 minutes.
+        </p>
+        <a href="#sign-up" class="cta-button">Create Your Profile →</a>
+        
+        <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 8px; margin-top: 40px; max-width: 600px; margin-left: auto; margin-right: auto;">
+            <strong>Launching This Week:</strong><br>
+            First 20 advisors get priority placement in our matching algorithm.
+        </div>
+    </section>
+
+    <!-- Sign-Up Form -->
+    <section id="sign-up" style="padding: 80px 20px; background: white;">
+        <div style="max-width: 600px; margin: 0 auto;">
+            <h2 style="text-align: center; font-size: 32px; margin-bottom: 40px; color: #2d3748;">
+                Join Our Network
+            </h2>
+            
+            <form id="provider-form" style="background: #f8f9fa; padding: 40px; border-radius: 12px;">
+                <div style="margin-bottom: 25px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2d3748;">
+                        Full Name *
+                    </label>
+                    <input type="text" name="name" required 
+                           style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 16px;">
+                </div>
+                
+                <div style="margin-bottom: 25px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2d3748;">
+                        Email *
+                    </label>
+                    <input type="email" name="email" required 
+                           style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 16px;">
+                </div>
+                
+                <div style="margin-bottom: 25px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2d3748;">
+                        Company/Firm Name *
+                    </label>
+                    <input type="text" name="company" required 
+                           style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 16px;">
+                </div>
+                
+                <div style="margin-bottom: 25px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2d3748;">
+                        Certifications *
+                    </label>
+                    <input type="text" name="certifications" required 
+                           placeholder="CFP, CPA, CFA, etc."
+                           style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 16px;">
+                </div>
+                
+                <div style="margin-bottom: 25px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2d3748;">
+                        Years of Experience *
+                    </label>
+                    <input type="number" name="years" required min="1"
+                           style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 16px;">
+                </div>
+                
+                <div style="margin-bottom: 25px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2d3748;">
+                        Specialties *
+                    </label>
+                    <textarea name="specialties" required rows="3"
+                              placeholder="Example: Tech executive compensation (RSUs, ISOs), tax optimization, estate planning for high-net-worth individuals"
+                              style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 16px;"></textarea>
+                </div>
+                
+                <div style="margin-bottom: 25px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2d3748;">
+                        Typical Retainer Range *
+                    </label>
+                    <select name="pricing" required
+                            style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 16px;">
+                        <option value="">Select range...</option>
+                        <option value="40000-100000">$40K-$100K+ (ultra high-net-worth)</option>
+                        <option value="20000-40000">$20K-$40K (high-net-worth)</option>
+                        <option value="10000-20000">$10K-$20K (standard)</option>
+                        <option value="5000-10000">$5K-$10K (entry)</option>
+                    </select>
+                </div>
+                
+                <div style="margin-bottom: 25px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2d3748;">
+                        Location (City, State) *
+                    </label>
+                    <input type="text" name="location" required 
+                           placeholder="San Francisco, CA"
+                           style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 16px;">
+                </div>
+                
+                <div style="margin-bottom: 25px;">
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" name="remote" value="yes" style="margin-right: 10px; width: 20px; height: 20px;">
+                        <span style="font-weight: 600; color: #2d3748;">I serve clients remotely (not just local)</span>
+                    </label>
+                </div>
+                
+                <div style="margin-bottom: 30px;">
+                    <label style="display: flex; align-items: start; cursor: pointer;">
+                        <input type="checkbox" name="terms" required style="margin-right: 10px; margin-top: 4px; width: 20px; height: 20px;">
+                        <span style="font-size: 14px; color: #4a5568;">
+                            I agree to pay 20% commission on closed engagements (Net-30 payment terms). No upfront cost.
+                        </span>
+                    </label>
+                </div>
+                
+                <button type="submit" 
+                        style="width: 100%; background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); color: white; padding: 16px; border: none; border-radius: 8px; font-size: 18px; font-weight: 600; cursor: pointer;">
+                    Join the Network →
+                </button>
+                
+                <p style="margin-top: 20px; text-align: center; color: #718096; font-size: 14px;">
+                    We'll review your application within 24 hours.<br>
+                    Questions? Email advisors@fullpotential.com
+                </p>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="padding: 40px 20px; background: #2d3748; color: white; text-align: center;">
+        <p>&copy; 2025 I MATCH - Full Potential AI</p>
+        <p style="margin-top: 10px; font-size: 14px; opacity: 0.8;">
+            For Advisors | Privacy Policy | Terms of Service
+        </p>
+    </footer>
+
+    <script>
+        document.getElementById('provider-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const certifications = formData.get('certifications').split(',').map(c => c.trim());
+            const specialties = formData.get('specialties').split(',').map(s => s.trim());
+            const pricing = formData.get('pricing').split('-');
+            
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                company: formData.get('company'),
+                service_type: 'financial_advisor',
+                certifications: certifications,
+                specialties: specialties,
+                years_experience: parseInt(formData.get('years')),
+                price_range_low: parseInt(pricing[0]),
+                price_range_high: parseInt(pricing[1]),
+                location_city: formData.get('location').split(',')[0].trim(),
+                location_state: formData.get('location').split(',')[1]?.trim() || '',
+                serves_remote: formData.get('remote') === 'yes',
+                commission_percent: 20.0
+            };
+            
+            try {
+                const response = await fetch('http://198.54.123.234:8401/providers/create', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    alert('Success! We\'ll review your application and be in touch within 24 hours.');
+                    e.target.reset();
+                } else {
+                    alert('Error submitting form. Please email us directly at advisors@fullpotential.com');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>

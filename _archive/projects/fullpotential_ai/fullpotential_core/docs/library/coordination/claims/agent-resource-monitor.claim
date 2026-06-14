@@ -1,0 +1,9 @@
+{
+  "claimed_by": "session-1763235028",
+  "claimed_at": "2025-11-15T19:48:41Z",
+  "resource_type": "agent",
+  "resource_name": "resource-monitor",
+  "duration_hours": 3,
+  "expires_at": "2025-11-15T22:48:41Z",
+  "allow_coordination": true
+}

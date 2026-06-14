@@ -1,0 +1,16 @@
+[Unit]
+Description=Sapphire Bot — @LilSapphirebot Telegram worker for Cheyenne Sapphire
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/fpai/services/sapphire-bot
+EnvironmentFile=/etc/sapphire-bot/sapphire-bot.env
+ExecStart=/opt/fpai/services/sapphire-bot/.venv/bin/python main.py
+Restart=on-failure
+RestartSec=5
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target

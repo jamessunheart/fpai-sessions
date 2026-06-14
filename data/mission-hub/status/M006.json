@@ -1,0 +1,16 @@
+{
+  "mission_id": "M006",
+  "status": "claimed",
+  "history": [
+    {
+      "status": "claimed",
+      "timestamp": "2025-11-27T11:52:42.403879",
+      "updated_by": "Muzammil Saleem",
+      "notes": "Claimed by Muzammil Saleem",
+      "repo_url": null,
+      "score": null
+    }
+  ],
+  "last_updated": "2025-11-27T11:52:42.403862",
+  "last_updated_by": "Muzammil Saleem"
+}

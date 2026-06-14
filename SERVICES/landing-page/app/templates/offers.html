@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conscious Marketplace - Curated Offers | Full Potential AI</title>
+    <meta name="description" content="Discover conscious products, services, and tools that align with your values. Curated with love for your transformation.">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .marketplace-hero {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .marketplace-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .marketplace-hero p {
+            font-size: 1.2rem;
+            color: #a0a0a0;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .offers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            padding: 3rem 0;
+        }
+
+        .offer-card {
+            background: #1a1a2e;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #2a2a3e;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .offer-card:hover {
+            transform: translateY(-5px);
+            border-color: #667eea;
+        }
+
+        .offer-card.featured {
+            border: 2px solid #667eea;
+            position: relative;
+        }
+
+        .offer-card.featured::before {
+            content: "⭐ FEATURED";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            z-index: 1;
+        }
+
+        .offer-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: #16213e;
+        }
+
+        .offer-content {
+            padding: 1.5rem;
+        }
+
+        .offer-category {
+            color: #667eea;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .offer-name {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: white;
+        }
+
+        .offer-description {
+            color: #a0a0a0;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .offer-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #2a2a3e;
+        }
+
+        .offer-price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .offer-commission {
+            text-align: right;
+        }
+
+        .offer-commission-label {
+            font-size: 0.75rem;
+            color: #a0a0a0;
+            display: block;
+        }
+
+        .offer-commission-amount {
+            font-size: 0.9rem;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .offer-cta {
+            display: block;
+            text-align: center;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .offer-cta:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .nav {
+            padding: 1rem 2rem;
+            background: #0f0f1e;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: #a0a0a0;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #667eea;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <a href="/" class="nav-logo">⚡ Full Potential AI</a>
+        <div class="nav-links">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/offers" class="nav-link" style="color: #667eea;">Shop</a>
+            <a href="/coaches" class="nav-link">Coaches</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <div class="marketplace-hero">
+        <div class="container">
+            <h1>Conscious Marketplace</h1>
+            <p>Discover products, services, and tools that align with your values. Every offer is personally vetted and recommended for your transformation journey.</p>
+        </div>
+    </div>
+
+    <!-- Offers Grid -->
+    <div class="container">
+        <div class="offers-grid">
+            {% for offer in offers %}
+            <div class="offer-card {% if offer.featured %}featured{% endif %}">
+                <img src="{{ offer.image_url }}" alt="{{ offer.name }}" class="offer-image">
+                <div class="offer-content">
+                    <div class="offer-category">{{ offer.category }}</div>
+                    <h3 class="offer-name">{{ offer.name }}</h3>
+                    <p class="offer-description">{{ offer.description }}</p>
+                    <div class="offer-meta">
+                        <div class="offer-price">{{ offer.price }}</div>
+                        <div class="offer-commission">
+                            <span class="offer-commission-label">We earn</span>
+                            <span class="offer-commission-amount">{{ offer.commission_amount }}</span>
+                        </div>
+                    </div>
+                    <a href="{{ offer.affiliate_url }}" class="offer-cta" target="_blank">Learn More →</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="background: #0f0f1e; padding: 3rem 2rem; margin-top: 4rem; text-align: center; color: #a0a0a0;">
+        <div class="container">
+            <p style="margin-bottom: 1rem;">⚡ Full Potential AI - Building Paradise Through Conscious Commerce</p>
+            <p style="font-size: 0.9rem;">We may earn a commission when you purchase through our links. This helps us continue to curate the best conscious products and services.</p>
+            <p style="font-size: 0.85rem; margin-top: 1rem;">&copy; {{ year }} Full Potential AI. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

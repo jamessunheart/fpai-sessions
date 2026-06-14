@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🚀 Projects | Full Potential</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #faf8f5;
+      --bg-card: #ffffff;
+      --bg-hover: #f5f3f0;
+      --accent-gold: #d4a853;
+      --accent-green: #3d8b40;
+      --accent-sage: #7da87d;
+      --accent-sky: #5ba3c6;
+      --text-primary: #2d2a26;
+      --text-secondary: #5c5954;
+      --text-muted: #8a857d;
+      --border: #e8e4de;
+      --shadow-soft: 0 2px 8px rgba(45, 42, 38, 0.06);
+      --shadow-hover: 0 8px 24px rgba(45, 42, 38, 0.1);
+      --gradient-gold: linear-gradient(135deg, #d4a853, #e6c47a);
+      --gradient-sage: linear-gradient(135deg, #7da87d, #a3c9a3);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    header {
+      padding: 2rem;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .logo-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--gradient-gold);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .project-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.5rem;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.3s;
+      display: block;
+    }
+
+    .project-card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-4px);
+      border-color: var(--accent-gold);
+    }
+
+    .project-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .project-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .project-icon.gold { background: rgba(212, 168, 83, 0.15); }
+    .project-icon.sky { background: rgba(91, 163, 198, 0.15); }
+    .project-icon.sage { background: rgba(125, 168, 125, 0.15); }
+
+    .project-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .project-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      color: var(--accent-green);
+      font-weight: 500;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent-green);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .project-desc {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+    }
+
+    .project-meta {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .project-meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .create-project {
+      background: var(--bg-hover);
+      border: 2px dashed var(--border);
+      border-radius: 20px;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      color: var(--text-muted);
+    }
+
+    .create-project:hover {
+      background: var(--bg-card);
+      border-color: var(--accent-gold);
+      color: var(--text-primary);
+    }
+
+    .create-icon {
+      font-size: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">🚀</div>
+    <span class="logo-text">Projects Hub</span>
+  </div>
+  <p class="subtitle">Living project pages with AI-powered collaboration</p>
+</header>
+
+<main>
+  <div class="projects-grid">
+    
+    <a href="/projects/fullpotential/" class="project-card">
+      <div class="project-header">
+        <div class="project-icon gold">🎯</div>
+        <div>
+          <div class="project-title">Full Potential $30k/mo</div>
+          <div class="project-status">
+            <span class="status-dot"></span>
+            Sprint Active
+          </div>
+        </div>
+      </div>
+      <p class="project-desc">Mission to reach $30,000/month recurring revenue through the Full Potential Partnership offer.</p>
+      <div class="project-meta">
+        <span>👤 James + AI</span>
+        <span>📅 Started Jan 29</span>
+      </div>
+    </a>
+
+    <a href="/projects/inboundleads/" class="project-card">
+      <div class="project-header">
+        <div class="project-icon sky">📞</div>
+        <div>
+          <div class="project-title">Inbound Leads</div>
+          <div class="project-status">
+            <span class="status-dot"></span>
+            Active
+          </div>
+        </div>
+      </div>
+      <p class="project-desc">Philippines Call Center lead generation strategy with partner recruitment.</p>
+      <div class="project-meta">
+        <span>👤 James + Alice</span>
+        <span>📅 Started Jan 21</span>
+      </div>
+    </a>
+
+    <a href="javascript:alert('Coming soon! Ask AI to create a new project.')" class="create-project">
+      <span class="create-icon">➕</span>
+      <span>Create New Project</span>
+    </a>
+
+  </div>
+</main>
+
+</body>
+</html>
+

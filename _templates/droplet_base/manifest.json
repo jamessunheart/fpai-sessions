@@ -1,0 +1,9 @@
+{
+  "name": "droplet-name",
+  "version": "0.1.0",
+  "description": "Description of this droplet",
+  "type": "service",
+  "inputs": [],
+  "outputs": [],
+  "owner": "Builder"
+}

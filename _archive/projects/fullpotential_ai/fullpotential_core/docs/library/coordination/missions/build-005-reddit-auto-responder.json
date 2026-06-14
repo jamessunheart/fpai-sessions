@@ -1,0 +1,171 @@
+{
+  "mission_id": "build-005-reddit-auto-responder",
+  "title": "BUILD: Reddit Auto-Responder (MEDIUM)",
+  "type": "build",
+  "priority": "medium",
+  "status": "available",
+  "created_at": "2025-11-15T23:10:00Z",
+  "claimed_by": null,
+  "claimed_at": null,
+  "completed_at": null,
+  "estimated_time_hours": 10,
+  "infinite_scale": true,
+  "instructions": {
+    "task": "Build bot that monitors Reddit 24/7, provides value-first comments, generates passive leads without spam",
+    "spec_file": "/Users/jamessunheart/Development/agents/services/reddit-auto-responder/SPEC.md",
+    "architecture": "FastAPI + PRAW (Reddit API) + GPT-4 + PostgreSQL + APScheduler",
+    "deployment_target": "198.54.123.234 at /opt/fpai/reddit-auto-responder",
+    "port": 8800,
+    "scope": "Subreddit monitor, opportunity scorer, response generator, rate limiter, performance tracker"
+  },
+  "what_to_build": {
+    "service_name": "reddit-auto-responder",
+    "components": [
+      "FastAPI app with admin dashboard",
+      "PRAW integration (Reddit API)",
+      "Real-time subreddit stream monitor",
+      "Opportunity scoring algorithm",
+      "GPT-4 response generator (value-first, non-spammy)",
+      "Response quality validator",
+      "Rate limiter (prevent spam flags)",
+      "Human review queue for medium-confidence posts",
+      "Karma tracker",
+      "DM monitor",
+      "Shadowban detector"
+    ]
+  },
+  "success_criteria": {
+    "functional": [
+      "Monitor 20+ subreddits 24/7",
+      "Generate helpful, value-first responses",
+      "Post 20-30 comments per week",
+      "Zero spam flags or bans",
+      "Track karma and DM conversions",
+      "Human review queue for medium-confidence posts"
+    ],
+    "quality": [
+      "Average karma >5 per comment",
+      "<5% deleted/downvoted comments",
+      ">50% mention Full Potential AI naturally",
+      "Zero 'stop spamming' complaints",
+      "Comments sound genuinely helpful (not AI-generated)"
+    ],
+    "business_impact": [
+      "5+ qualified leads/month from Reddit by Month 3",
+      "10+ qualified leads/month by Month 6",
+      "1+ customer/month from Reddit by Month 6",
+      "$2,500+/month revenue from Reddit by Month 12",
+      "Positive brand perception (upvotes > downvotes)"
+    ]
+  },
+  "deployment": {
+    "server": "198.54.123.234",
+    "path": "/opt/fpai/reddit-auto-responder",
+    "port": 8800,
+    "systemd_service": "reddit-auto-responder.service",
+    "docker_compose": true,
+    "env_vars_needed": [
+      "DATABASE_URL",
+      "REDDIT_CLIENT_ID",
+      "REDDIT_CLIENT_SECRET",
+      "REDDIT_USERNAME",
+      "REDDIT_PASSWORD",
+      "OPENAI_API_KEY",
+      "SLACK_WEBHOOK_URL (for DM notifications)",
+      "SENTRY_DSN"
+    ]
+  },
+  "integration_points": {
+    "i_match_api": "Convert Reddit DMs to customers in database",
+    "email_automation": "Trigger 'reddit_lead_nurture' sequence for DM converts",
+    "slack": "Notify team of DMs and high-performing comments"
+  },
+  "target_subreddits": [
+    "r/pastors (45K members)",
+    "r/Christianity (380K members)",
+    "r/nonprofit (25K members)",
+    "r/smallbusiness (1.8M members)",
+    "r/Entrepreneur (3.2M members)",
+    "r/consulting (35K members)",
+    "r/youthministry (5K members)",
+    "...and 13 more (see spec)"
+  ],
+  "anti_spam_safeguards": {
+    "rate_limits": [
+      "Max 5 comments per hour",
+      "Max 30 comments per day",
+      "Min 10 minutes between comments"
+    ],
+    "quality_checks": [
+      "Response must be 100-300 words",
+      "Must provide actionable advice",
+      "Full Potential AI mentioned max 1 time",
+      "No direct links to fullpotential.com",
+      "Addresses question (>60% relevance)",
+      "Sounds human (no AI tells)"
+    ],
+    "shadowban_detection": [
+      "Daily check if recent comments visible",
+      "Alert if possible shadowban detected"
+    ]
+  },
+  "expected_outcomes": {
+    "month_1": "60 comments, avg 3 karma, 5 DMs, 1-2 leads",
+    "month_3": "200 comments, avg 5 karma, 20 DMs, 5-10 leads, 1 customer",
+    "month_6": "400 comments, avg 7 karma, 50 DMs, 10-15 leads, 2-3 customers",
+    "month_12": "800 comments, avg 10 karma, 100 DMs, 20-30 leads, 5-10 customers, $12.5K-25K revenue"
+  },
+  "roi_calculation": {
+    "build_time_cost": "10 hours × $0 = $0",
+    "year_1_revenue": "5-10 customers × $2,500 = $12.5K-25K",
+    "ongoing_value": "Old comments continue working, karma = social proof",
+    "roi": "250-500x (10 hours → $25K/year)",
+    "infinite_value": "Comments work forever, reputation compounds"
+  },
+  "critical_importance": {
+    "value_first_strategy": "NOT 'check out our service' → THIS: 'Here's genuine help + oh by the way...'",
+    "example_good_comment": "Provide 3 actionable tips, mention FPAI naturally if relevant, offer to discuss further",
+    "zero_spam_tolerance": "Being banned from Reddit = massive loss, must be genuinely helpful",
+    "thought_leadership": "Position as helpful expert, not salesperson"
+  },
+  "resources": {
+    "spec": "/Users/jamessunheart/Development/agents/services/reddit-auto-responder/SPEC.md",
+    "architecture_doc": "/Users/jamessunheart/Development/agents/services/INFINITE_SCALE_ARCHITECTURE.md",
+    "reddit_api_docs": "https://praw.readthedocs.io/"
+  },
+  "testing_checklist": {
+    "monitoring": [
+      "Verify subreddit stream works",
+      "Test keyword matching",
+      "Verify opportunity scoring algorithm"
+    ],
+    "generation": [
+      "Generate 10 test responses",
+      "Validate quality checks work",
+      "Ensure responses sound human",
+      "Check FPAI mentions are natural"
+    ],
+    "posting": [
+      "Test posting to test subreddit",
+      "Verify rate limiter prevents spam",
+      "Check karma tracking works",
+      "Test DM monitoring"
+    ],
+    "safeguards": [
+      "Verify all rate limits enforce",
+      "Test shadowban detection",
+      "Ensure review queue works"
+    ]
+  },
+  "next_steps_after_build": [
+    "Deploy to server",
+    "Configure Reddit API credentials (new dedicated account)",
+    "Start monitoring in 'review mode' (no auto-post)",
+    "Review first 20 suggested responses manually",
+    "Tune GPT-4 prompts for quality",
+    "Enable auto-post for high-confidence (>0.8)",
+    "Monitor karma and DM conversions",
+    "Adjust based on community feedback",
+    "Watch passive leads roll in"
+  ]
+}

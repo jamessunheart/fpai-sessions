@@ -1,0 +1,11 @@
+{
+  "auth": {
+    "user_password": "CHANGE_THIS_TO_YOUR_PASSWORD",
+    "session_api_key": "CHANGE_THIS_TO_YOUR_API_KEY",
+    "require_auth": true
+  },
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8100
+  }
+}

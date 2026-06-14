@@ -1,0 +1,27 @@
+{
+  "total_tasks": 4,
+  "total_payment": 80,
+  "estimated_time": "30-60 minutes total",
+  "tasks": [
+    {
+      "service": "Stable Diffusion",
+      "capability": "image_generation",
+      "free_tier": "Yes"
+    },
+    {
+      "service": "D-ID",
+      "capability": "video_generation",
+      "free_tier": "Yes"
+    },
+    {
+      "service": "ElevenLabs",
+      "capability": "voice_generation",
+      "free_tier": "Yes"
+    },
+    {
+      "service": "Soundraw",
+      "capability": "music_generation",
+      "free_tier": "Yes"
+    }
+  ]
+}

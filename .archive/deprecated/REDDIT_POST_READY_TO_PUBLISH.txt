@@ -1,0 +1,25 @@
+TITLE:
+Tested: Can AI match me to a financial advisor better than Google?
+
+BODY:
+I just tried an experiment: AI-powered financial advisor matching.
+
+Background: My dad's a CFP. I grew up around this industry. Always thought finding an advisor was more like dating than hiring.
+
+The problem: Google gives you the same results everyone else gets. Doesn't understand compatibility.
+
+The experiment: I MATCH - AI that asks about your values, communication style, and goals, then matches you to advisors based on actual compatibility (not just AUM or certifications).
+
+Status: Super early. Might work, might not. Free to try.
+
+What I learned: The AI picked up on things I didn't know I cared about (like "I want someone who challenges my assumptions" vs "I want someone who validates my decisions").
+
+Link: http://198.54.123.234:8401
+
+Curious if others have tried AI matching for professional services. Does compatibility even matter for financial advice?
+
+---
+POST TO: https://www.reddit.com/r/fatFIRE/submit
+TIME: 2 minutes
+EXPECTED REACH: 5,000-10,000 people in 24 hours
+EXPECTED OUTCOME: First customers + first recruiters → exponential loop starts

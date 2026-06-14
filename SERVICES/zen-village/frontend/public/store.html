@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zen Store · Zen Village</title>
+<meta name="description" content="Tea, sound baths, dinners, retreat add-ons. Pay with Zen Credits.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Manrope:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F4ECDC;--bg-soft:#ECE1CB;--ink:#1F1A14;--ink-soft:#4A3F32;--moss:#3A4A2E;--clay:#B8553A;--gold:#C8924B;--rule:#2A2018;--serif:'Fraunces',Georgia,serif;--sans:'Manrope',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.55;
+  background-image:radial-gradient(circle at 15% 20%,rgba(184,85,58,.05) 0%,transparent 45%),radial-gradient(circle at 85% 75%,rgba(58,74,46,.06) 0%,transparent 45%)}
+a{color:inherit;text-decoration:none}
+.page{max-width:1100px;margin:0 auto;padding:48px 36px}
+.header{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--rule);padding-bottom:18px;margin-bottom:40px;gap:14px;flex-wrap:wrap}
+.mark{font-family:var(--serif);font-size:22px;font-weight:500}
+.mark em{font-style:italic;color:var(--moss)}
+.balance-pill{font-size:13px;padding:8px 16px;border:1px solid var(--rule);border-radius:999px;background:var(--bg-soft)}
+.balance-pill strong{font-family:var(--serif);font-weight:500}
+h1{font-family:var(--serif);font-weight:300;letter-spacing:-.02em;font-size:clamp(40px,5vw,64px);line-height:1.02;margin-bottom:10px}
+h1 em{font-style:italic;color:var(--moss)}
+.lead{font-family:var(--serif);font-style:italic;color:var(--ink-soft);font-size:18px;margin-bottom:36px}
+.cat{margin-bottom:48px}
+.cat h2{font-family:var(--serif);font-weight:400;font-size:28px;margin-bottom:18px;border-bottom:1px solid rgba(42,32,24,.18);padding-bottom:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px}
+.item{background:#fff;border:1px solid rgba(42,32,24,.18);border-radius:12px;padding:20px;cursor:pointer;transition:all .15s;display:flex;flex-direction:column}
+.item:hover{transform:translateY(-2px);border-color:var(--moss);box-shadow:0 6px 18px rgba(58,74,46,.1)}
+.item-emoji{font-size:32px;margin-bottom:8px}
+.item-name{font-family:var(--serif);font-size:20px;margin-bottom:4px}
+.item-desc{font-size:13px;color:var(--ink-soft);margin-bottom:14px;flex:1}
+.item-price{font-family:var(--serif);font-size:20px;font-weight:500;color:var(--moss)}
+.item-price small{font-size:12px;color:var(--ink-soft);font-weight:400;font-family:var(--sans)}
+.item-stock{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--clay);font-weight:700;margin-top:6px}
+.empty{text-align:center;padding:60px 20px;color:var(--ink-soft)}
+.empty h3{font-family:var(--serif);font-size:24px;margin-bottom:8px}
+.cta{display:inline-block;padding:12px 22px;background:var(--ink);color:var(--bg);border-radius:999px;font-size:14px;font-weight:600;letter-spacing:.04em;margin-top:14px}
+@media(max-width:640px){.page{padding:28px 18px}.grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div class="mark"><a href="/">Zen <em>Village</em></a></div>
+    <div id="auth-state"><a href="/wallet" class="balance-pill">Sign in to your Wallet →</a></div>
+  </div>
+
+  <h1>Zen <em>Store</em></h1>
+  <p class="lead">Pay with Zen Credits. Top up once at the lowest fee — spend everywhere.</p>
+
+  <div id="store"></div>
+
+  <div class="empty" id="empty" style="display:none">
+    <h3>The store is opening soon</h3>
+    <p>Items will appear here. In the meantime, you can <a href="/wallet" style="color:var(--clay);font-weight:600">create your wallet</a>.</p>
+  </div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const fmtZC = (n) => `${(+n).toFixed(2).replace(/\.00$/,'')} ZC`;
+
+async function loadAuth(){
+  try {
+    const r = await fetch('/api/wallet/me', {credentials:'same-origin'});
+    if (r.ok){
+      const me = await r.json();
+      $('auth-state').innerHTML = `<a href="/wallet" class="balance-pill">${escapeHtml(me.email)} · <strong>${fmtZC(me.balance_zc)}</strong></a>`;
+    }
+  } catch(e){}
+}
+
+function escapeHtml(s){return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+async function loadStore(){
+  const r = await fetch('/api/wallet/items?event_id=default');
+  const d = await r.json();
+  const items = d.items || [];
+  if (!items.length){ $('empty').style.display='block'; return; }
+
+  const byCat = {};
+  for (const it of items){
+    const c = it.category || 'general';
+    (byCat[c] = byCat[c] || []).push(it);
+  }
+  const order = Object.keys(byCat).sort();
+  const html = order.map(cat => {
+    const heading = cat.charAt(0).toUpperCase() + cat.slice(1);
+    const cards = byCat[cat].map(it => `
+      <a class="item" href="/buy?item=${encodeURIComponent(it.id)}">
+        ${it.emoji ? `<div class="item-emoji">${escapeHtml(it.emoji)}</div>` : ''}
+        <div class="item-name">${escapeHtml(it.name)}</div>
+        ${it.description ? `<div class="item-desc">${escapeHtml(it.description)}</div>` : '<div class="item-desc"></div>'}
+        <div class="item-price">${fmtZC(it.price_zc)} <small>≈ $${(+it.price_zc).toFixed(2).replace(/\.00$/,'')}</small></div>
+        ${(typeof it.stock === 'number' && it.stock >= 0 && it.stock <= 5) ? `<div class="item-stock">Only ${it.stock} left</div>` : ''}
+      </a>
+    `).join('');
+    return `<div class="cat"><h2>${escapeHtml(heading)}</h2><div class="grid">${cards}</div></div>`;
+  }).join('');
+  $('store').innerHTML = html;
+}
+
+loadAuth(); loadStore();
+</script>
+</body>
+</html>

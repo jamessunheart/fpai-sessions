@@ -1,0 +1,48 @@
+# Large legacy trees that remain archived outside of version control
+fullpotential_ai/fullpotential_claude1/
+fullpotential_ai/fullpotential_hteam1/
+fullpotential_ai/phase4-worktree/
+
+# Knowledge Library (Heavy Assets)
+core/knowledge/library/
+core/knowledge/papers.zip
+fullpotential_core/docs/papers/
+fullpotential_ai/fullpotential_core/core/knowledge/library/
+fullpotential_ai/fullpotential_core/core/knowledge/papers.zip
+fullpotential_ai/fullpotential_core/docs/papers/
+*.pdf
+*.docx
+
+# System Artifacts
+*.log
+/opt/fpai/
+/var/financial-hub/
+*.DS_Store
+*.pyc
+__pycache__/
+
+**/node_modules/
+.next/
+**/.next/
+out/
+**/out/
+.next/
+**/.next/
+out/
+**/out/
+.env
+**/.env
+
+# Cursor local exports (may contain paths / noise)
+.cursor/cursor-yolo-command-allowlist-export.json
+SERVICES/concierge/.env
+
+# Generated cockpit map (regenerate with `make map`)
+cockpit-map.html
+
+# Public deploy build (regenerate with `make public` / `make deploy-game`)
+dist/
+
+# Per-session collision-prevention state (see .claude/hooks/README.md)
+.claude/sessions/
+.claude/worktrees/

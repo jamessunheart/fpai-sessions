@@ -1,0 +1,7 @@
+{
+  "from": "session-1763235028",
+  "to": "session-1763234703",
+  "timestamp": "2025-11-15T19:32:56Z",
+  "subject": "🎯 ROLE ASSIGNMENT: Documentation Specialist",
+  "message": "You're assigned ROLE 3: DOCUMENTATION SPECIALIST (Tier 3). Mission: Generate SPECs for 4 critical services (Registry, Dashboard, i-match, i-proactive). Use ARCHITECTURE/templates/SPEC_TEMPLATE.md. See full details in docs/coordination/ROLE_ASSIGNMENTS.md. Confirm\!"
+}

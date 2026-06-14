@@ -1,0 +1,101 @@
+{
+  "assistant_id": "aria-command",
+  "capabilities": {
+    "code": {
+      "read_files": true,
+      "write_files": true,
+      "edit_files": true,
+      "search_codebase": true,
+      "list_directories": true,
+      "execute_plans": true
+    },
+    "server": {
+      "run_commands": true,
+      "ssh_access": ["primary", "secondary"],
+      "docker_control": true,
+      "service_management": true,
+      "log_access": true
+    },
+    "memory": {
+      "store_memory": true,
+      "recall_memory": true,
+      "self_analyze": true,
+      "context_injection": true
+    },
+    "communication": {
+      "send_telegram": true,
+      "send_sms": true,
+      "send_email": true,
+      "make_phone_call": true,
+      "send_voice_message": true
+    },
+    "trading": {
+      "monitor_signals": true,
+      "query_whaletrack": true,
+      "execute_trades": false,
+      "manage_positions": false
+    },
+    "governance": {
+      "check_priority_stack": true,
+      "check_three_nevers": true,
+      "log_decisions": true,
+      "surface_shadow_costs": true
+    },
+    "workflows": {
+      "create_workflows": true,
+      "trigger_workflows": true,
+      "manage_automations": true
+    },
+    "autopilot": {
+      "portfolio_management": false,
+      "risk_assessment": true,
+      "strategy_execution": false
+    },
+    "evolution": {
+      "self_analyze": true,
+      "identify_improvements": true,
+      "propose_changes": true,
+      "auto_implement": false
+    }
+  },
+  "permissions": {
+    "auto_approved": [
+      "read_files",
+      "search_codebase",
+      "list_directories",
+      "recall_memory",
+      "query_whaletrack",
+      "check_governance"
+    ],
+    "requires_approval": [
+      "write_files",
+      "edit_files",
+      "run_commands",
+      "send_external_email",
+      "send_external_sms",
+      "make_phone_call"
+    ],
+    "blocked": [
+      "execute_trades",
+      "delete_protected_files",
+      "modify_governance_rules"
+    ]
+  },
+  "modules_installed": [],
+  "connections": [
+    {
+      "assistant_id": "whaletrack-magnet",
+      "connection_type": "receive_only",
+      "trust_level": 80,
+      "purpose": "Receive trading signals"
+    },
+    {
+      "assistant_id": "whaletrack-live",
+      "connection_type": "bidirectional",
+      "trust_level": 70,
+      "purpose": "Monitor and potentially execute trades"
+    }
+  ]
+}
+
+

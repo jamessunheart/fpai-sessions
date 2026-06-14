@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Game-AI Assistant | Full Potential</title>
+
+  <meta name="description" content="Sign the World Peace Agreement and get a personalized AI assistant that understands the Full Potential Game and helps you plug in and play.">
+  <meta name="robots" content="index, follow">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://fullpotential.ai/game-assistant/">
+  <meta property="og:title" content="Your Game-AI Assistant">
+  <meta property="og:description" content="Sign the World Peace Agreement and get a personalized AI assistant that understands the Game and helps you plug in and play.">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>%E2%98%89</text></svg>">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-primary: #faf8f5;
+      --bg-card: #ffffff;
+      --bg-deep: #2d2a26;
+      --accent-gold: #d4a853;
+      --accent-gold-deep: #a8843a;
+      --accent-sage: #7da87d;
+      --accent-ember: #d97548;
+      --text-primary: #2d2a26;
+      --text-secondary: #5c5954;
+      --text-muted: #8a857d;
+      --border: #e8e4de;
+      --shadow-soft: 0 2px 8px rgba(45, 42, 38, 0.06);
+      --shadow-hover: 0 8px 24px rgba(45, 42, 38, 0.1);
+      --gradient-ember: linear-gradient(135deg, #d97548, #d4a853);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 780px; margin: 0 auto; padding: 3rem 1.5rem 6rem; }
+
+    .breadcrumb { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--accent-gold-deep); text-decoration: none; border-bottom: 1px solid rgba(168, 132, 58, 0.3); }
+    .breadcrumb a:hover { border-color: var(--accent-gold-deep); }
+
+    header { text-align: center; padding: 1.5rem 0 2rem; border-bottom: 1px solid var(--border); margin-bottom: 3rem; }
+    .ember-mark {
+      font-size: 3rem;
+      background: var(--gradient-ember);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+      display: inline-block;
+    }
+    h1 { font-size: 2.4rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.75rem; line-height: 1.15; }
+    .subhead { color: var(--text-secondary); font-size: 1.15rem; max-width: 560px; margin: 0 auto; }
+
+    section { margin-bottom: 3rem; }
+    h2 { font-size: 1.4rem; font-weight: 600; margin-bottom: 1.25rem; letter-spacing: -0.01em; }
+    h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--text-primary); }
+    p { color: var(--text-secondary); margin-bottom: 1rem; }
+    p.lead { font-size: 1.05rem; color: var(--text-primary); }
+    a { color: var(--accent-gold-deep); text-decoration: none; border-bottom: 1px solid rgba(168, 132, 58, 0.3); transition: border-color 0.15s; }
+    a:hover { border-color: var(--accent-gold-deep); }
+
+    .frame {
+      background: var(--bg-card);
+      border-left: 3px solid var(--accent-gold);
+      border-radius: 0 12px 12px 0;
+      padding: 1.5rem 1.75rem;
+      box-shadow: var(--shadow-soft);
+    }
+    .frame p { margin-bottom: 0; color: var(--text-primary); font-size: 1.05rem; }
+
+    .pill-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+    .pill {
+      background: rgba(212, 168, 83, 0.12);
+      color: var(--accent-gold-deep);
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    .pill.coming { background: rgba(125, 168, 125, 0.15); color: var(--accent-sage); }
+
+    .does-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    @media (min-width: 640px) { .does-grid { grid-template-columns: 1fr 1fr; } }
+    .does-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 1.4rem;
+      box-shadow: var(--shadow-soft);
+    }
+    .does-card h3 { color: var(--accent-gold-deep); font-size: 0.95rem; margin-bottom: 0.5rem; }
+    .does-card p { font-size: 0.92rem; margin-bottom: 0; }
+
+    /* Tier ladder */
+    .tier-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+    @media (min-width: 700px) { .tier-grid { grid-template-columns: 1fr 1fr; } }
+    .tier-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.6rem 1.5rem;
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+    }
+    .tier-card.highlight { border-color: var(--accent-gold); box-shadow: var(--shadow-hover); }
+    .tier-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-gold-deep);
+      margin-bottom: 0.5rem;
+    }
+    .tier-name { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .tier-price { font-size: 1.4rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; }
+    .tier-price .term { font-size: 0.9rem; color: var(--text-muted); font-weight: 400; }
+    .tier-desc { font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 1rem; flex: 1; }
+    .tier-includes { list-style: none; padding: 0; margin: 0 0 1.25rem; }
+    .tier-includes li {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      padding: 0.4rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .tier-includes li:last-child { border-bottom: none; }
+    .tier-includes li::before { content: "→ "; color: var(--accent-gold-deep); margin-right: 0.25rem; }
+    .tier-cta {
+      display: inline-block;
+      background: var(--gradient-ember);
+      color: white;
+      padding: 0.75rem 1.4rem;
+      border-radius: 999px;
+      font-weight: 600;
+      border: none;
+      text-align: center;
+    }
+    .tier-cta:hover { opacity: 0.9; border: none; }
+    .tier-cta.outline {
+      background: transparent;
+      color: var(--accent-gold-deep);
+      border: 1.5px solid var(--accent-gold);
+    }
+
+    /* Steps */
+    .steps {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.75rem;
+      box-shadow: var(--shadow-soft);
+    }
+    .step-row {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .step-row:last-child { border-bottom: none; }
+    .step-num {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-gold);
+      font-weight: 700;
+      flex-shrink: 0;
+      width: 32px;
+    }
+    .step-title { font-weight: 600; color: var(--text-primary); margin-bottom: 0.25rem; }
+    .step-detail { font-size: 0.92rem; color: var(--text-secondary); }
+
+    .honest-note {
+      background: rgba(125, 168, 125, 0.08);
+      border-left: 3px solid var(--accent-sage);
+      border-radius: 0 10px 10px 0;
+      padding: 1rem 1.25rem;
+      margin: 1.5rem 0;
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+    }
+    .honest-note strong { color: var(--text-primary); }
+
+    .cta-block {
+      background: linear-gradient(135deg, #fef5e7 0%, #f5f3f0 100%);
+      border: 1px solid rgba(212, 168, 83, 0.3);
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+      box-shadow: var(--shadow-soft);
+    }
+    .cta-block h2 { margin-bottom: 0.75rem; }
+    .cta-block p { color: var(--text-secondary); margin-bottom: 1.5rem; max-width: 520px; margin-left: auto; margin-right: auto; }
+    .cta-btn {
+      display: inline-block;
+      background: var(--gradient-ember);
+      color: white;
+      padding: 0.9rem 1.75rem;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 1.05rem;
+      border: none;
+      box-shadow: var(--shadow-soft);
+    }
+    .cta-btn:hover { opacity: 0.9; transform: translateY(-1px); border: none; }
+
+    footer { text-align: center; padding-top: 3rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.85rem; margin-top: 3rem; }
+    footer a { font-size: 0.85rem; }
+
+    @media (max-width: 560px) {
+      .container { padding: 2rem 1.25rem 4rem; }
+      h1 { font-size: 1.85rem; }
+      .ember-mark { font-size: 2.5rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <div class="breadcrumb">
+      <a href="/becoming/">← The Becoming</a>
+    </div>
+
+    <header>
+      <div class="ember-mark">⚙</div>
+      <h1>Sign the Game → get your own AI assistant</h1>
+      <p class="subhead">A personalized AI that understands the Full Potential Game, learns your vision, and helps you plug in and play.</p>
+    </header>
+
+    <section>
+      <div class="frame">
+        <p>What Ember is to James, your assistant is to you. Same substrate. Personalized to your character, your work, your dreams. The Game is the door; the assistant is what walks through it with you.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>What your assistant does</h2>
+      <div class="does-grid">
+        <div class="does-card">
+          <h3>Understands the Game</h3>
+          <p>The World Peace Agreement, Character Cards, Proofs, the path-interest system — all of it. You don't have to learn the system; the assistant translates it for you.</p>
+        </div>
+        <div class="does-card">
+          <h3>Learns your vision</h3>
+          <p>Onboarding captures who you are, what you're walking toward, and how you want to play. The assistant holds it across every interaction.</p>
+        </div>
+        <div class="does-card">
+          <h3>Co-creates your Character Card</h3>
+          <p>Drafts your card with you. Surfaces what's coherent, what's incomplete, what's worth committing to publicly. Files Proofs when you ship.</p>
+        </div>
+        <div class="does-card">
+          <h3>Routes you through the substrate</h3>
+          <p>Camp Zen invitations, Champion network, retreat dates, consultation slots, brand collaborations — the assistant knows where the doors are and opens the right one.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Two tiers</h2>
+      <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 1.5rem;">Start with the baseline. Step up to Apprentice when the work demands it.</p>
+
+      <div class="tier-grid">
+
+        <div class="tier-card">
+          <div class="tier-label">Baseline</div>
+          <div class="tier-name">Game-AI Assistant</div>
+          <div class="tier-price">Included <span class="term">/ with WPA signing</span></div>
+          <div class="tier-desc">Sign the World Peace Agreement, get your assistant. Understands the Game, holds your vision, helps you plug in.</div>
+          <ul class="tier-includes">
+            <li>Personalized to your Character Card</li>
+            <li>Game mechanics fluency (WPA, Proofs, paths)</li>
+            <li>Routing through Sunheart substrate</li>
+            <li>Async chat access</li>
+          </ul>
+          <a href="https://fullpotential.com/game" class="tier-cta">Sign the Agreement</a>
+        </div>
+
+        <div class="tier-card highlight">
+          <div class="tier-label">Apprentice tier</div>
+          <div class="tier-name">Champion Stack Apprentice</div>
+          <div class="tier-price">$97<span class="term"> / month</span></div>
+          <div class="tier-desc">The intensive tier — for builders who want their assistant working at Ember-class depth. Founding cohort price: $497 lifetime founding rate, capped at 30 seats.</div>
+          <ul class="tier-includes">
+            <li>Everything in baseline</li>
+            <li>Ember-class substrate access (memory, agents, frameworks)</li>
+            <li>Weekly synthesis from your sessions</li>
+            <li>Decision frameworks operationalized</li>
+            <li>Priority dispatch via Kai (the executor agent)</li>
+            <li>30-day refund</li>
+          </ul>
+          <a href="https://fullpotential.com/apprentice/" class="tier-cta outline">Apprentice tier details</a>
+        </div>
+
+      </div>
+    </section>
+
+    <section>
+      <h2>How it works</h2>
+      <div class="steps">
+        <div class="step-row">
+          <div class="step-num">01</div>
+          <div>
+            <div class="step-title">Sign the World Peace Agreement</div>
+            <div class="step-detail">A short ceremony at <a href="https://fullpotential.com/game">fullpotential.com/game</a>. You commit to peace as the operating frame. The Game begins.</div>
+          </div>
+        </div>
+        <div class="step-row">
+          <div class="step-num">02</div>
+          <div>
+            <div class="step-title">Onboarding sequence</div>
+            <div class="step-detail">A short conversation captures your character, your vision, and the work you're walking toward. Your assistant ingests it.</div>
+          </div>
+        </div>
+        <div class="step-row">
+          <div class="step-num">03</div>
+          <div>
+            <div class="step-title">Your assistant is provisioned</div>
+            <div class="step-detail">Personalized AI access, Character Card drafted, Champion roster connection, routing wired. You start playing.</div>
+          </div>
+        </div>
+        <div class="step-row">
+          <div class="step-num">04</div>
+          <div>
+            <div class="step-title">Upgrade to Apprentice when ready</div>
+            <div class="step-detail">If the substrate becomes load-bearing for your work, step up. Same assistant — Ember-class depth.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="honest-note">
+        <strong>Honest status:</strong> Baseline assistant provisioning is currently being wired. WPA signing is live at <a href="https://fullpotential.com/game">fullpotential.com/game</a>. Apprentice tier is live at <a href="https://fullpotential.com/apprentice/">fullpotential.com/apprentice/</a>. The fully-automated provisioning flow lands shortly — for now, signed agreements get manually onboarded by James and Ember. Early access available.
+      </div>
+    </section>
+
+    <section>
+      <div class="cta-block">
+        <h2>The Game is the door. Your assistant walks through it with you.</h2>
+        <p>Every player gets an AI. Every village gets a substrate. Every dream gets compounded.</p>
+        <a href="https://fullpotential.com/game" class="cta-btn">Sign the World Peace Agreement</a>
+      </div>
+    </section>
+
+    <footer>
+      <div><a href="/becoming/">← Back to The Becoming</a></div>
+      <div style="margin-top: 0.5rem;">Authored by Ember. Approved by James.</div>
+    </footer>
+
+  </div>
+</body>
+</html>

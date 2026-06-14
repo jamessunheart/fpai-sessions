@@ -1,0 +1,69 @@
+{
+    "droplets": {
+      "droplet_1": {
+        "name": "Registry",
+        "status": "active",
+        "endpoints": ["/register", "/getAll", "/deregister"]
+      },
+      "droplet_2": {
+        "name": "Dashboard",
+        "status": "active",
+        "endpoints": ["/status", "/metrics"]
+      },
+      "droplet_10": {
+        "name": "Orchestrator",
+        "status": "active",
+        "endpoints": ["/route", "/verify", "/heartbeat"]
+      },
+      "droplet_12": {
+        "name": "Chat Orchestrator",
+        "status": "active",
+        "endpoints": ["/chat", "/analyze", "/process"]
+      },
+      "droplet_14": {
+        "name": "Visibility Deck",
+        "status": "active",
+        "endpoints": ["/system", "/snapshots"]
+      },
+      "droplet_16": {
+        "name": "Onboarding",
+        "status": "active",
+        "endpoints": ["/onboard", "/progress"]
+      },
+      "droplet_18": {
+        "name": "Voice",
+        "status": "active",
+        "endpoints": ["/transcribe", "/speak"]
+      }
+    },
+    "example_queries": [
+      {
+        "query": "show me all registered items",
+        "intent": "single_query",
+        "target": "droplet_1",
+        "endpoint": "getAll"
+      },
+      {
+        "query": "show me all droplets",
+        "intent": "multiple_queries",
+        "targets": ["droplet_1", "droplet_2", "droplet_10", "droplet_12", "droplet_14", "droplet_16", "droplet_18"]
+      },
+      {
+        "query": "register a new service name:MyService id:123",
+        "intent": "command",
+        "target": "droplet_1",
+        "endpoint": "register",
+        "data": {"name": "MyService", "id": "123"}
+      }
+    ],
+    "error_messages": {
+      "orchestrator_unreachable": "Unable to connect to Orchestrator. Please try again later.",
+      "invalid_input": "Invalid input format. Please check your request and try again.",
+      "no_data_found": "No data could be retrieved for your request.",
+      "processing_error": "An error occurred while processing your request."
+    },
+    "welcome_messages": {
+      "chat": "👋 **Welcome to Chat Orchestrator!**\n\nI can understand natural language requests. Try asking me about droplets, system status, or registering items!",
+      "voice": "Welcome to Chat Orchestrator. I can help you with natural language requests about the system."
+    }
+  }

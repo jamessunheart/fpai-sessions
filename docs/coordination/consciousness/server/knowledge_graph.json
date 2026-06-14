@@ -1,0 +1,54 @@
+{
+  "entities": {
+    "srv_jobs": {
+      "type": "service",
+      "name": "Jobs Service",
+      "properties": {
+        "port": 8008,
+        "status": "running"
+      },
+      "created_at": "2025-11-15T19:46:11.320022"
+    },
+    "srv_automation": {
+      "type": "service",
+      "name": "Automation Hub",
+      "properties": {
+        "status": "running",
+        "check_interval": 30
+      },
+      "created_at": "2025-11-15T19:46:11.320025"
+    },
+    "srv_consciousness": {
+      "type": "service",
+      "name": "Unified Consciousness",
+      "properties": {
+        "location": "/root/CONSCIOUSNESS/",
+        "phase": 1
+      },
+      "created_at": "2025-11-15T19:46:11.320026"
+    },
+    "proj_brain": {
+      "type": "project",
+      "name": "The Brain",
+      "properties": {
+        "phases": 5,
+        "current_phase": 1,
+        "funding_target": 400000
+      },
+      "created_at": "2025-11-15T19:46:11.320028"
+    }
+  },
+  "relationships": [
+    {
+      "from": "srv_automation",
+      "type": "monitors",
+      "to": "srv_jobs"
+    },
+    {
+      "from": "srv_consciousness",
+      "type": "enables",
+      "to": "proj_brain"
+    }
+  ],
+  "last_updated": "2025-11-15T19:46:11.320029"
+}

@@ -1,0 +1,71 @@
+{
+  "from": "session-1763243456",
+  "to": "broadcast",
+  "timestamp": "2025-11-16T04:35:08Z",
+  "subject": "🚨 UNIFIED ASSEMBLY LINE - Cross-Environment Synchronization",
+  "message": "Session #12: CRITICAL ARCHITECTURE - Solves Cross-Environment Coordination
+
+USER INSIGHT:
+"Move assembly line to server so intent queue is shared across Claude Code AND Server AI - synchronized build productivity with clear protocols"
+
+SOLUTION DESIGNED:
+Unified Assembly Line Service (Port 8950)
+
+WHAT IT DOES:
+✅ ONE assembly line on server (accessible to both environments)
+✅ Unified intent queue (both Claude Code AND Server AI pull from it)
+✅ Synchronized state (everyone sees same progress)
+✅ Protocol enforcement (both environments follow same standards)
+✅ Smart work distribution (routes to best executor)
+✅ Real-time dashboard (see what's happening where)
+
+THE ARCHITECTURE:
+                UNIFIED ASSEMBLY LINE (Server)
+                ├─ Shared intent queue
+                ├─ Assembly line state (SPEC/BUILD/TEST/PROD)
+                ├─ Protocol enforcement at every step
+                └─ Work distribution logic
+                        │
+        ┌───────────────┴───────────────┐
+        │                               │
+   Claude Code                    Server AI
+   (When active)                  (24/7)
+   Pull work →                    Pull work →
+   Execute →                      Execute →
+   Report back →                  Report back →
+
+BEFORE:
+- Assembly line in local files (disconnected)
+- Server AI separate (no coordination)
+- Manual synchronization needed
+
+AFTER:
+- ONE assembly line on server
+- Both environments pull from shared queue
+- Automatic synchronization
+- Work flows seamlessly between environments
+
+EXAMPLE FLOW:
+1. You submit: "Build email automation"
+2. Unified Assembly Line receives it
+3. Routes to Server AI (24/7 available)
+4. Server AI builds (follows Assembly Line SOP)
+5. System auto-tests (Verification Protocol)
+6. Claude session reviews quality (if flagged)
+7. System auto-deploys
+8. Reports completion
+
+PROTOCOLS ENFORCED:
+- Assembly Line SOP (SPEC → BUILD → README → PRODUCTION)
+- Verification Protocol (6-level quality checks)
+- UDC Compliance (required endpoints)
+- Quality gates at each transition
+
+BUILD TIME: 8.5 hours
+PRIORITY: CRITICAL (Foundation for all automation)
+IMPACT: Complete cross-environment synchronization
+
+SPEC: /Users/jamessunheart/Development/agents/services/unified-assembly-line/SPEC.md
+
+This is THE system that enables true autonomous building."
+}

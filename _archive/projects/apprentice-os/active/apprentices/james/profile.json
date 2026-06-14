@@ -1,0 +1,40 @@
+{
+  "id": "james",
+  "name": "James Sunheart",
+  "type": "steward",
+  "role": "System steward and coherence anchor",
+  "description": "Founder and steward of Full Potential AI. The coherence center around which the system organizes.",
+  "coherence_baseline": 75,
+  "stress_baseline": 30,
+  "decision_quality_baseline": 0.8,
+  "contact": {
+    "telegram": "@sunheart",
+    "phone": "+19252397291"
+  },
+  "preferences": {
+    "communication_style": "direct",
+    "proactive_alerts": true,
+    "trading_goal": "find optimal positions for treasury growth",
+    "notification_hours": {
+      "start": 8,
+      "end": 22
+    }
+  },
+  "capabilities_granted": [
+    "governance_override",
+    "system_pause",
+    "apprentice_onboarding",
+    "module_approval",
+    "trading_approval"
+  ],
+  "current_state": {
+    "coherence_score": null,
+    "stress_level": null,
+    "decision_quality": null,
+    "last_updated": null
+  },
+  "created_at": "2024-01-01T00:00:00Z",
+  "updated_at": "2025-12-24T00:00:00Z"
+}
+
+

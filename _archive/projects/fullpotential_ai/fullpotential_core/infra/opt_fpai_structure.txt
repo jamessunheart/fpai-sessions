@@ -1,0 +1,12 @@
+/opt/fpai/
+├── agents/
+│   └── services/
+├── core/
+│   └── applications/
+├── droplets/
+│   ├── claude1/
+│   └── hteam/
+├── orchestration/
+├── infra/
+├── docs/
+└── env/

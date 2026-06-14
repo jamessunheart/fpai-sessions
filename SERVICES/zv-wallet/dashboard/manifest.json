@@ -1,0 +1,9 @@
+{
+  "name": "Zen Village Wallet",
+  "short_name": "ZV Wallet",
+  "start_url": "/wallet/",
+  "display": "standalone",
+  "background_color": "#faf6ee",
+  "theme_color": "#b88a47",
+  "icons": []
+}

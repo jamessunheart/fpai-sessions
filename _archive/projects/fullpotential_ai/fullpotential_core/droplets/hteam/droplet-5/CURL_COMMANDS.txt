@@ -1,0 +1,82 @@
+===========================================
+DROPLET 2 - COPY & PASTE CURL COMMANDS
+===========================================
+
+HOW TO USE IN POSTMAN:
+1. Open Postman
+2. Click "Import" button (top left)
+3. Select "Raw text" tab
+4. Copy and paste any cURL command below
+5. Click "Import"
+6. Click "Send" to test
+
+===========================================
+
+1. SUBMIT HEARTBEAT (MAIN ENDPOINT FOR NEXUS)
+----------------------------------------------
+curl -X POST https://drop2.fullpotential.ai/heartbeats -H "Content-Type: application/json" -d '{"Cell_ID":"droplet_13","CPU_Usage":45.2,"RAM_Usage":512,"Status":"active"}'
+
+
+2. GET ALL HEARTBEATS
+----------------------------------------------
+curl -X GET https://drop2.fullpotential.ai/heartbeats -H "Content-Type: application/json"
+
+
+3. GET ALL SPRINTS
+----------------------------------------------
+curl -X GET https://drop2.fullpotential.ai/sprints -H "Content-Type: application/json"
+
+
+4. CREATE SPRINT
+----------------------------------------------
+curl -X POST https://drop2.fullpotential.ai/sprints -H "Content-Type: application/json" -d '{"Sprint_ID":"sprint_test_001","Name":"Test Sprint","Dev_Name":"Haythem","Status":"Active","Time_Spent_hr":2.0,"Notes":"Testing API"}'
+
+
+5. UPDATE SPRINT (replace recABC123 with real ID)
+----------------------------------------------
+curl -X PUT https://drop2.fullpotential.ai/sprints/recABC123 -H "Content-Type: application/json" -d '{"Status":"Done","Time_Spent_hr":8.5,"Proof_URL":"https://github.com/proof"}'
+
+
+6. DELETE SPRINT (replace recABC123 with real ID)
+----------------------------------------------
+curl -X DELETE https://drop2.fullpotential.ai/sprints/recABC123 -H "Content-Type: application/json"
+
+
+7. GET ALL CELLS
+----------------------------------------------
+curl -X GET https://drop2.fullpotential.ai/cells -H "Content-Type: application/json"
+
+
+8. GET ALL PROOFS
+----------------------------------------------
+curl -X GET https://drop2.fullpotential.ai/proof -H "Content-Type: application/json"
+
+
+9. GENERATE DAILY DIGEST
+----------------------------------------------
+curl -X POST https://drop2.fullpotential.ai/daily-digest -H "Content-Type: application/json" -d '{}'
+
+
+===========================================
+TEST DIFFERENT DROPLETS
+===========================================
+
+DROPLET 1 (Registry - Liban):
+curl -X POST https://drop2.fullpotential.ai/heartbeats -H "Content-Type: application/json" -d '{"Cell_ID":"droplet_1","CPU_Usage":35.0,"RAM_Usage":256,"Status":"active"}'
+
+DROPLET 10 (Orchestrator - Tnsae):
+curl -X POST https://drop2.fullpotential.ai/heartbeats -H "Content-Type: application/json" -d '{"Cell_ID":"droplet_10","CPU_Usage":52.3,"RAM_Usage":768,"Status":"active"}'
+
+DROPLET 13 (Nexus - Suresh):
+curl -X POST https://drop2.fullpotential.ai/heartbeats -H "Content-Type: application/json" -d '{"Cell_ID":"droplet_13","CPU_Usage":45.2,"RAM_Usage":512,"Status":"active"}'
+
+
+===========================================
+NOTES
+===========================================
+- DO NOT include "Timestamp" field - Airtable auto-generates it
+- Replace record IDs (recABC123) with actual IDs from GET responses
+- Status values: "active", "inactive", "error"
+- CPU_Usage: 0-100 (percentage)
+- RAM_Usage: in MB
+- Airtable will automatically add createdTime to each record

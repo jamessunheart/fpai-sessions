@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mission Control | Full Potential AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #020617;
+      --card-bg: rgba(30, 41, 59, 0.5);
+      --border: rgba(255,255,255,0.1);
+      --text: #cbd5f5;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      
+      --p0: #ef4444;
+      --p1: #f97316;
+      --p2: #eab308;
+      
+      --status-open: #64748b;
+      --status-claimed: #3b82f6;
+      --status-progress: #f59e0b;
+      --status-submitted: #8b5cf6;
+      --status-completed: #10b981;
+      --status-blocked: #ef4444;
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #020617 60%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem 1.5rem;
+    }
+
+    .container { max-width: 1400px; margin: 0 auto; }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.5rem;
+      letter-spacing: -0.02em;
+      background: linear-gradient(90deg, #fff, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-top: 0.5rem;
+    }
+
+    .stats {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      min-width: 140px;
+      backdrop-filter: blur(10px);
+    }
+    
+    .stat-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+    
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      font-family: 'Space Grotesk';
+    }
+
+    .mission-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: transform 0.2s, border-color 0.2s;
+      backdrop-filter: blur(10px);
+      position: relative;
+      cursor: pointer;
+    }
+    
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .mission-id {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      letter-spacing: 0.05em;
+    }
+
+    .badges {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    .badge-p0 { background: rgba(239, 68, 68, 0.15); color: var(--p0); border: 1px solid rgba(239, 68, 68, 0.3); }
+    .badge-p1 { background: rgba(249, 115, 22, 0.15); color: var(--p1); border: 1px solid rgba(249, 115, 22, 0.3); }
+    .badge-p2 { background: rgba(234, 179, 8, 0.15); color: var(--p2); border: 1px solid rgba(234, 179, 8, 0.3); }
+    
+    /* Status badges */
+    .status-open { background: rgba(100, 116, 139, 0.15); color: var(--status-open); }
+    .status-claimed { background: rgba(59, 130, 246, 0.15); color: var(--status-claimed); }
+    .status-in_progress { background: rgba(245, 158, 11, 0.15); color: var(--status-progress); }
+    .status-submitted { background: rgba(139, 92, 246, 0.15); color: var(--status-submitted); }
+    .status-completed { background: rgba(16, 185, 129, 0.15); color: var(--status-completed); }
+    .status-blocked { background: rgba(239, 68, 68, 0.15); color: var(--status-blocked); }
+    
+    h2 {
+      font-size: 1.25rem;
+      margin-bottom: 0.75rem;
+      line-height: 1.4;
+      font-weight: 600;
+    }
+
+    .claimer {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(59, 130, 246, 0.1);
+      padding: 0.375rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .impact {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .timestamp {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .view-btn {
+      background: var(--accent);
+      color: #0f172a;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .view-btn:hover {
+      background: #7dd3fc;
+      transform: translateY(-1px);
+    }
+
+    .back-link {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1>Mission Control</h1>
+        <div class="subtitle">Live operational tracking • Real-time status updates</div>
+      </div>
+      <a href="/" class="back-link">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        Return to Base
+      </a>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-label">Total Missions</div>
+        <div class="stat-value">{{ missions|length }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Open</div>
+        <div class="stat-value">{{ missions|selectattr('live_status.status', 'equalto', 'open')|list|length }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">In Progress</div>
+        <div class="stat-value">{{ (missions|selectattr('live_status.status', 'equalto', 'claimed')|list|length) + (missions|selectattr('live_status.status', 'equalto', 'in_progress')|list|length) }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Completed</div>
+        <div class="stat-value">{{ missions|selectattr('live_status.status', 'equalto', 'completed')|list|length }}</div>
+      </div>
+    </div>
+    
+    <div class="mission-grid">
+      {% for mission in missions %}
+      <div class="card" onclick="window.location='/missions/mission/{{ mission.id }}'">
+        <div class="card-header">
+          <span class="mission-id">{{ mission.id }}</span>
+          <div class="badges">
+            {% set priority = mission.priority.split(' ')[0] if mission.priority else 'P2' %}
+            {% if 'P0' in priority %}
+            <span class="badge badge-p0">{{ priority }}</span>
+            {% elif 'P1' in priority %}
+            <span class="badge badge-p1">{{ priority }}</span>
+            {% else %}
+            <span class="badge badge-p2">{{ priority }}</span>
+            {% endif %}
+            
+            <span class="badge status-{{ mission.live_status.status }}">
+              {{ mission.live_status.status|upper|replace('_', ' ') }}
+            </span>
+          </div>
+        </div>
+        
+        <h2>{{ mission.title.replace('Mission: ', '').replace('(' + mission.id + ')', '') }}</h2>
+        
+        {% if mission.claim_info %}
+        <div class="claimer">
+          👤 {{ mission.claim_info.claimer_name }}
+        </div>
+        {% endif %}
+        
+        <p class="impact">
+          {{ mission.regenerative_impact[:150] }}{% if mission.regenerative_impact|length > 150 %}...{% endif %}
+        </p>
+        
+        <div class="footer">
+          <div class="timestamp">
+            {% if mission.live_status.last_updated %}
+            Updated {{ mission.live_status.last_updated[:10] }}
+            {% else %}
+            Status: Awaiting claim
+            {% endif %}
+          </div>
+          <button class="view-btn">VIEW DETAILS →</button>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <script>
+    // Auto-refresh every 30 seconds to show live updates
+    setTimeout(() => location.reload(), 30000);
+  </script>
+</body>
+</html>
+

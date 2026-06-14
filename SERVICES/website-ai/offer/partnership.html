@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Full Potential Partnership | Goal Realization System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-warm: #faf8f5;
+      --bg-card: #ffffff;
+      --bg-dark: #1a1714;
+      --accent-gold: #d4a853;
+      --accent-gold-light: #f5e6c8;
+      --accent-green: #3d8b40;
+      --accent-sage: #7da87d;
+      --text-primary: #2d2a26;
+      --text-secondary: #5c5954;
+      --text-muted: #8a857d;
+      --text-light: #f5f3f0;
+      --border: #e8e4de;
+      --shadow-soft: 0 2px 8px rgba(45, 42, 38, 0.08);
+      --shadow-hover: 0 12px 32px rgba(45, 42, 38, 0.12);
+      --gradient-gold: linear-gradient(135deg, #d4a853, #e6c47a);
+      --gradient-warm: linear-gradient(180deg, #faf8f5 0%, #f5f0e8 100%);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-warm);
+      color: var(--text-primary);
+      line-height: 1.7;
+    }
+
+    h1, h2, h3, h4, h5 {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      line-height: 1.2;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: var(--bg-dark);
+      color: var(--text-light);
+      padding: 4rem 2rem 5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 30% 20%, rgba(212, 168, 83, 0.15) 0%, transparent 50%),
+                  radial-gradient(ellipse at 70% 80%, rgba(125, 168, 125, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(212, 168, 83, 0.2);
+      border: 1px solid rgba(212, 168, 83, 0.3);
+      padding: 0.5rem 1rem;
+      border-radius: 100px;
+      font-size: 0.85rem;
+      color: var(--accent-gold);
+      margin-bottom: 1.5rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #ffffff, #f5e6c8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 1.25rem;
+      color: rgba(255, 255, 255, 0.8);
+      max-width: 700px;
+      margin: 0 auto 2rem;
+    }
+
+    /* Urgency Banner */
+    .urgency-banner {
+      background: linear-gradient(90deg, #c9393e, #d4515a);
+      color: white;
+      padding: 1rem 2rem;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .countdown {
+      display: inline-flex;
+      gap: 1rem;
+      margin-left: 1rem;
+    }
+
+    .countdown-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .countdown-number {
+      font-size: 1.5rem;
+      font-weight: 700;
+      font-family: 'Bricolage Grotesque', sans-serif;
+    }
+
+    .countdown-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      opacity: 0.8;
+    }
+
+    /* Value Stack */
+    .value-stack {
+      max-width: 1000px;
+      margin: -3rem auto 0;
+      padding: 0 2rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    .value-card {
+      background: var(--bg-card);
+      border-radius: 24px;
+      padding: 2.5rem;
+      box-shadow: var(--shadow-hover);
+      border: 1px solid var(--border);
+    }
+
+    .value-item {
+      display: flex;
+      gap: 1.5rem;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .value-item:last-child {
+      border-bottom: none;
+    }
+
+    .value-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .value-icon.gold { background: rgba(212, 168, 83, 0.15); }
+    .value-icon.green { background: rgba(61, 139, 64, 0.15); }
+    .value-icon.sage { background: rgba(125, 168, 125, 0.15); }
+    .value-icon.sky { background: rgba(91, 163, 198, 0.15); }
+
+    .value-content { flex: 1; }
+
+    .value-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent-gold);
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .value-title {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .value-desc {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    .value-price {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-align: right;
+    }
+
+    /* Total & CTA */
+    .total-section {
+      background: linear-gradient(135deg, rgba(212, 168, 83, 0.1), rgba(125, 168, 125, 0.05));
+      border-radius: 16px;
+      padding: 2rem;
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    .total-crossed {
+      font-size: 1.5rem;
+      color: var(--text-muted);
+      text-decoration: line-through;
+      margin-bottom: 0.5rem;
+    }
+
+    .total-actual {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .total-period {
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+    }
+
+    .cta-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      padding: 1.25rem 3rem;
+      background: var(--gradient-gold);
+      border: none;
+      border-radius: 14px;
+      color: var(--bg-dark);
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(212, 168, 83, 0.4);
+    }
+
+    .guarantee-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* Section */
+    section {
+      padding: 5rem 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--accent-gold);
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Pain Points */
+    .pain-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .pain-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+    }
+
+    .pain-card .pain-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .pain-card h4 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .pain-card p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    /* Vision List */
+    .vision-list {
+      margin-top: 2rem;
+    }
+
+    .vision-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1rem 0;
+    }
+
+    .vision-check {
+      width: 28px;
+      height: 28px;
+      background: var(--accent-gold-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-gold);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .vision-text {
+      font-size: 1.1rem;
+    }
+
+    /* 3 Steps */
+    .steps-section {
+      background: var(--bg-dark);
+      color: var(--text-light);
+      padding: 5rem 2rem;
+    }
+
+    .steps-content {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    @media (max-width: 800px) {
+      .steps-grid { grid-template-columns: 1fr; }
+    }
+
+    .step-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .step-number {
+      width: 48px;
+      height: 48px;
+      background: var(--gradient-gold);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--bg-dark);
+      margin: 0 auto 1.5rem;
+    }
+
+    .step-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--accent-gold);
+      margin-bottom: 0.5rem;
+    }
+
+    .step-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    .step-desc {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.95rem;
+    }
+
+    /* Testimonials */
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .testimonial-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2rem;
+    }
+
+    .testimonial-quote {
+      font-size: 1.1rem;
+      font-style: italic;
+      margin-bottom: 1.5rem;
+      color: var(--text-secondary);
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .testimonial-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--gradient-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      color: var(--bg-dark);
+    }
+
+    .testimonial-name {
+      font-weight: 600;
+    }
+
+    .testimonial-result {
+      font-size: 0.85rem;
+      color: var(--accent-green);
+    }
+
+    /* Difference Section */
+    .difference-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 700px) {
+      .difference-grid { grid-template-columns: 1fr; }
+    }
+
+    .difference-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2rem;
+    }
+
+    .difference-card.highlight {
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 0 3px rgba(212, 168, 83, 0.1);
+    }
+
+    .difference-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    .difference-card:not(.highlight) .difference-label {
+      color: var(--text-muted);
+    }
+
+    .difference-card.highlight .difference-label {
+      color: var(--accent-gold);
+    }
+
+    .difference-list {
+      list-style: none;
+    }
+
+    .difference-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.5rem 0;
+      font-size: 0.95rem;
+    }
+
+    .difference-list li::before {
+      content: '✗';
+      color: #c97878;
+      font-weight: 700;
+    }
+
+    .difference-card.highlight .difference-list li::before {
+      content: '✓';
+      color: var(--accent-green);
+    }
+
+    /* FAQ */
+    .faq-list {
+      margin-top: 2rem;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .faq-question {
+      padding: 1.5rem 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .faq-question::after {
+      content: '+';
+      font-size: 1.5rem;
+      color: var(--accent-gold);
+    }
+
+    .faq-answer {
+      padding-bottom: 1.5rem;
+      color: var(--text-secondary);
+      display: none;
+    }
+
+    .faq-item.open .faq-answer {
+      display: block;
+    }
+
+    .faq-item.open .faq-question::after {
+      content: '−';
+    }
+
+    /* Final CTA */
+    .final-cta {
+      background: var(--bg-dark);
+      color: var(--text-light);
+      padding: 5rem 2rem;
+      text-align: center;
+    }
+
+    .final-cta-content {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .final-cta h2 {
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      margin-bottom: 1rem;
+    }
+
+    .final-cta p {
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+    }
+
+    /* Footer */
+    footer {
+      padding: 2rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Urgency Banner -->
+<div class="urgency-banner">
+  🔥 Limited Availability: Only accepting 5 new partners this month
+  <span class="countdown" id="countdown">
+    <span class="countdown-item">
+      <span class="countdown-number" id="days">03</span>
+      <span class="countdown-label">Days</span>
+    </span>
+    <span class="countdown-item">
+      <span class="countdown-number" id="hours">14</span>
+      <span class="countdown-label">Hours</span>
+    </span>
+    <span class="countdown-item">
+      <span class="countdown-number" id="mins">22</span>
+      <span class="countdown-label">Mins</span>
+    </span>
+  </span>
+</div>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span>🎯</span>
+      <span>Goal Realization Partnership</span>
+    </div>
+    <h1>What If You Actually Achieved Your Most Important Goal?</h1>
+    <p class="hero-subtitle">
+      Not someday. Not "I'm working on it." Actually achieved it—with AI guidance, human wisdom, and a system designed around YOUR specific goal.
+    </p>
+  </div>
+</section>
+
+<!-- Value Stack -->
+<div class="value-stack">
+  <div class="value-card">
+    
+    <div class="value-item">
+      <div class="value-icon gold">📞</div>
+      <div class="value-content">
+        <div class="value-label">Clarity & Strategy</div>
+        <div class="value-title">Weekly 1:1 Strategy Calls (4/month)</div>
+        <div class="value-desc">Deep-dive sessions to map your path, remove obstacles, and adjust strategy in real-time. Not generic advice—specific to YOUR goal.</div>
+      </div>
+      <div class="value-price">$800</div>
+    </div>
+    
+    <div class="value-item">
+      <div class="value-icon green">🤖</div>
+      <div class="value-content">
+        <div class="value-label">Daily Momentum</div>
+        <div class="value-title">AI Check-ins & Accountability System</div>
+        <div class="value-desc">Your personal AI companion checks in daily, adapts to your rhythm, nudges when you drift, and celebrates when you win. Available 24/7.</div>
+      </div>
+      <div class="value-price">$300</div>
+    </div>
+    
+    <div class="value-item">
+      <div class="value-icon sage">🗺️</div>
+      <div class="value-content">
+        <div class="value-label">Custom Roadmap</div>
+        <div class="value-title">Personalized Goal Blueprint & Milestones</div>
+        <div class="value-desc">We don't give you a generic template. We build YOUR map—with milestones designed for your life, your pace, your obstacles.</div>
+      </div>
+      <div class="value-price">$500</div>
+    </div>
+    
+    <div class="value-item">
+      <div class="value-icon sky">🛠️</div>
+      <div class="value-content">
+        <div class="value-label">Tools & Access</div>
+        <div class="value-title">Full Potential Dashboard & AI Tools</div>
+        <div class="value-desc">Access our goal tracking system, AI optimization engine, and progress visualization—see exactly where you stand and what's next.</div>
+      </div>
+      <div class="value-price">$200</div>
+    </div>
+    
+    <div class="value-item">
+      <div class="value-icon gold">🚨</div>
+      <div class="value-content">
+        <div class="value-label">Bonus</div>
+        <div class="value-title">Emergency Support for Obstacles</div>
+        <div class="value-desc">Life happens. When you hit a wall, you get direct access to troubleshoot and get back on track—not next week, now.</div>
+      </div>
+      <div class="value-price">$200</div>
+    </div>
+    
+    <div class="value-item">
+      <div class="value-icon green">🌍</div>
+      <div class="value-content">
+        <div class="value-label">Mission Impact</div>
+        <div class="value-title">Alignment with Greater Good</div>
+        <div class="value-desc">Every goal we help you achieve is designed to benefit not just you—but the people and world around you. Your growth creates ripples.</div>
+      </div>
+      <div class="value-price">Priceless</div>
+    </div>
+    
+    <div class="total-section">
+      <div class="total-crossed">Total Value: $2,000+/month</div>
+      <div class="total-actual">$2,500/month</div>
+      <div class="total-period">3-month partnership commitment</div>
+      <a href="https://calendly.com/fullpotential/discovery" class="cta-button">
+        Apply for Partnership →
+      </a>
+      <div class="guarantee-badge">
+        <span>🛡️</span>
+        <span>30-day satisfaction guarantee</span>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<!-- Pain Points Section -->
+<section>
+  <div class="section-label">The Voice Inside That Says...</div>
+  <h2 class="section-title">Sound Familiar?</h2>
+  
+  <div class="pain-grid">
+    <div class="pain-card">
+      <div class="pain-icon">😔</div>
+      <h4>"I've tried coaches before. Nothing stuck."</h4>
+      <p>Because they gave you advice without a system. We give you both—plus AI that keeps you on track between sessions.</p>
+    </div>
+    <div class="pain-card">
+      <div class="pain-icon">🤷</div>
+      <h4>"I don't even know what I really want."</h4>
+      <p>That's why we start with clarity, not action. The first step is discovering what actually matters to you.</p>
+    </div>
+    <div class="pain-card">
+      <div class="pain-icon">⏰</div>
+      <h4>"I'm too busy for another program."</h4>
+      <p>This isn't a program. It's a partnership that fits into your life—daily AI check-ins take 2 minutes.</p>
+    </div>
+    <div class="pain-card">
+      <div class="pain-icon">💸</div>
+      <h4>"I can't justify spending money on myself."</h4>
+      <p>What's the cost of staying exactly where you are for another year? Another five years?</p>
+    </div>
+  </div>
+</section>
+
+<!-- Vision Section -->
+<section>
+  <div class="section-label">Imagine Your Life Transformed</div>
+  <h2 class="section-title">What Does Goal Realization Actually Feel Like?</h2>
+  
+  <div class="vision-list">
+    <div class="vision-item">
+      <div class="vision-check">✓</div>
+      <div class="vision-text"><strong>Waking up knowing exactly what to focus on</strong>—no more decision fatigue or spinning wheels.</div>
+    </div>
+    <div class="vision-item">
+      <div class="vision-check">✓</div>
+      <div class="vision-text"><strong>Money flowing from work that feels like purpose</strong>—not trading time for dollars but creating real value.</div>
+    </div>
+    <div class="vision-item">
+      <div class="vision-check">✓</div>
+      <div class="vision-text"><strong>Relationships deepening</strong> because you're fully present, not distracted by unfulfilled potential.</div>
+    </div>
+    <div class="vision-item">
+      <div class="vision-check">✓</div>
+      <div class="vision-text"><strong>Health becoming effortless</strong>—energy that sustains you, not depletes you.</div>
+    </div>
+    <div class="vision-item">
+      <div class="vision-check">✓</div>
+      <div class="vision-text"><strong>Looking in the mirror and recognizing the person</strong> you always knew you could be.</div>
+    </div>
+    <div class="vision-item">
+      <div class="vision-check">✓</div>
+      <div class="vision-text"><strong>Contributing to something bigger than yourself</strong>—your growth benefiting everyone around you.</div>
+    </div>
+  </div>
+  
+  <div style="text-align: center; margin-top: 3rem;">
+    <a href="https://calendly.com/fullpotential/discovery" class="cta-button">
+      Yes, I Want This →
+    </a>
+  </div>
+</section>
+
+<!-- 3 Steps Section -->
+<section class="steps-section">
+  <div class="steps-content">
+    <div class="section-label" style="color: var(--accent-gold);">The Full Potential Method</div>
+    <h2 class="section-title">3 Steps to Goal Realization</h2>
+    
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <div class="step-label">Clarity</div>
+        <h3 class="step-title">Define Your Real Goal</h3>
+        <p class="step-desc">Not the surface goal. The REAL one. We dig deep to find what actually matters—and make sure it's aligned with who you want to become.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <div class="step-label">Partnership</div>
+        <h3 class="step-title">AI + Human Support</h3>
+        <p class="step-desc">Daily AI check-ins keep momentum. Weekly calls provide strategy. You're never alone on the path—and the system adapts to YOU.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <div class="step-label">Realization</div>
+        <h3 class="step-title">Goal Achieved + What's Next</h3>
+        <p class="step-desc">Celebrate the win. Integrate the growth. Then choose your next goal—because you've become someone who achieves what they set out to do.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- What Makes This Different -->
+<section>
+  <div class="section-label">Why This Works When Others Haven't</div>
+  <h2 class="section-title">The Full Potential Difference</h2>
+  
+  <div class="difference-grid">
+    <div class="difference-card">
+      <div class="difference-label">Traditional Coaching</div>
+      <ul class="difference-list">
+        <li>Generic advice that doesn't fit your life</li>
+        <li>Weekly call, then you're on your own</li>
+        <li>No system between sessions</li>
+        <li>One-size-fits-all methodology</li>
+        <li>Motivation fades after the session</li>
+        <li>Focus on you in isolation</li>
+      </ul>
+    </div>
+    <div class="difference-card highlight">
+      <div class="difference-label">Full Potential Partnership</div>
+      <ul class="difference-list">
+        <li>Custom roadmap built for YOUR goal</li>
+        <li>Daily AI support + weekly human wisdom</li>
+        <li>Complete system that keeps you on track</li>
+        <li>Adapts to your pace and style</li>
+        <li>Momentum maintained 24/7</li>
+        <li>Aligned with greater good</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials (Placeholder) -->
+<section style="background: var(--bg-card); margin: 0; max-width: 100%; padding: 5rem 2rem;">
+  <div style="max-width: 1000px; margin: 0 auto;">
+    <div class="section-label">Real Transformations</div>
+    <h2 class="section-title">What Partners Are Saying</h2>
+    
+    <div class="testimonial-grid">
+      <div class="testimonial-card">
+        <div class="testimonial-quote">"I finally understand what I actually want—and I have a clear path to get there. The AI check-ins are like having a coach in my pocket."</div>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">S</div>
+          <div>
+            <div class="testimonial-name">Sarah M.</div>
+            <div class="testimonial-result">Launched her business in 60 days</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-quote">"The difference is the system. I've done coaching before—this is the first time the transformation actually stuck."</div>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">M</div>
+          <div>
+            <div class="testimonial-name">Marcus T.</div>
+            <div class="testimonial-result">Doubled income, better work-life balance</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-quote">"What surprised me was the alignment piece. My goal isn't just about me anymore—it's about what I can contribute."</div>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">A</div>
+          <div>
+            <div class="testimonial-name">Alex R.</div>
+            <div class="testimonial-result">Found purpose after career transition</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <p style="text-align: center; margin-top: 2rem; font-size: 0.85rem; color: var(--text-muted);">*Results may vary. Your commitment determines your outcome.</p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section>
+  <div class="section-label">Questions?</div>
+  <h2 class="section-title">Frequently Asked Questions</h2>
+  
+  <div class="faq-list">
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">What kind of goals can I work on?</div>
+      <div class="faq-answer">Any meaningful goal: financial (income, business, investments), health (weight, energy, habits), relationship (communication, boundaries), career (transition, promotion, purpose), or personal (confidence, creativity, skills). The key is that it matters to YOU.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">How much time does this take per day?</div>
+      <div class="faq-answer">The AI check-in takes about 2 minutes. Weekly calls are 60 minutes. Beyond that, you're taking action on YOUR goal—which you'd be doing anyway. This makes that time more effective, not more time-consuming.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">What if I don't know what my goal is?</div>
+      <div class="faq-answer">That's exactly what the discovery call is for. We'll help you uncover what actually matters—not the goal you think you "should" have, but the one that lights you up.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">What's the 30-day guarantee?</div>
+      <div class="faq-answer">If after 30 days you don't feel this partnership is exactly what you need, we'll refund your first month completely. No questions, no hard feelings. We only want partners who are genuinely transforming.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">Why is there an application process?</div>
+      <div class="faq-answer">We can only deeply serve a limited number of partners at a time. The discovery call ensures we're a good fit for each other—that your goal is something we can genuinely help with, and that you're ready to commit.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">What makes the AI different from ChatGPT?</div>
+      <div class="faq-answer">Our AI knows YOUR goal, YOUR obstacles, YOUR patterns. It's trained on what works for transformation—not just information. And it's connected to your human coach, so insights flow both ways.</div>
+    </div>
+  </div>
+</section>
+
+<!-- Final CTA -->
+<section class="final-cta">
+  <div class="final-cta-content">
+    <h2>Time Has a Way of Slipping Through Our Fingers</h2>
+    <p>What if you look back in 5 years and realize you're in exactly the same place? You don't have to tolerate the same old results when there's more inside you waiting to be unleashed.</p>
+    <p>This is your moment to step off the sidelines. To stop waiting for "someday" and write a new story starting today.</p>
+    <a href="https://calendly.com/fullpotential/discovery" class="cta-button" style="margin-top: 1rem;">
+      Apply for Partnership →
+    </a>
+    <div class="guarantee-badge" style="color: rgba(255,255,255,0.6);">
+      <span>🛡️</span>
+      <span>30-day satisfaction guarantee • Limited spots available</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Full Potential. Your growth benefits everyone.</p>
+  <p style="margin-top: 0.5rem;"><a href="/whiterock/agreement.html" style="color: var(--text-muted);">Membership Agreement</a> • <a href="#" style="color: var(--text-muted);">Privacy Policy</a></p>
+</footer>
+
+<script>
+// Countdown Timer
+function updateCountdown() {
+  // Set end date to 3 days from now
+  const end = new Date();
+  end.setDate(end.getDate() + 3);
+  end.setHours(23, 59, 59, 999);
+  
+  const now = new Date();
+  const diff = end - now;
+  
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  
+  document.getElementById('days').textContent = String(days).padStart(2, '0');
+  document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+  document.getElementById('mins').textContent = String(mins).padStart(2, '0');
+}
+
+setInterval(updateCountdown, 60000);
+updateCountdown();
+
+// FAQ Toggle
+function toggleFaq(el) {
+  el.parentElement.classList.toggle('open');
+}
+</script>
+
+</body>
+</html>
+
