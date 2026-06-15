@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-  "updated_at": "2026-06-15T17:13:00Z",
+  "updated_at": "2026-06-15T19:12:34Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+    {
+      "id": "SPEC_d018_live-system-status-injector",
+      "slug": "SPEC_d018_live-system-status-injector",
+      "branch": "build/SPEC_d018_live-system-status-injector",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d018_live-system-status-injector.md",
+      "tests_passed": true,
+      "notes": "Live system status injector built: bounded owner-chat context now includes build queue state, active build requests, last merge outcome, and local server health. Focused unittest, py_compile, prompt smoke, and diff check passed."
+    },
     {
       "id": "SPEC_d014_correction-capture-close-d010-p",
       "slug": "SPEC_d014_correction-capture-close-d010-p",

@@ -6,9 +6,11 @@ It is reversible with SH_BUILD_CONTEXT_DISABLE=1 and bounded by row/char limits.
 """
 from __future__ import annotations
 
+import importlib.util
 import json
 import os
 import re
+import sys
 from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any
@@ -27,10 +29,17 @@ class BuildContext:
     focus: list[str]
     active_loops: list[str]
     open_intents: list[str]
+    system_status: list[str] | None = None
     corrections: list[str] | None = None
 
     def is_empty(self) -> bool:
-        return not (self.focus or self.active_loops or self.open_intents or self.corrections)
+        return not (
+            self.focus
+            or self.active_loops
+            or self.open_intents
+            or self.system_status
+            or self.corrections
+        )
 
 
 async def build_context_system_suffix(
@@ -61,10 +70,14 @@ async def load_build_context(
 ) -> BuildContext:
     """Prefer Supabase when configured; otherwise use repo-local mirrors."""
     supabase = await _load_supabase_context(max_items=max_items)
+    context: BuildContext
     if supabase and not supabase.is_empty():
-        return await _with_recent_corrections(supabase, conversation_id=conversation_id)
+        context = supabase
+    else:
+        context = _load_repo_context(repo_root, max_items=max_items)
+    context = _with_live_system_status(context, repo_root=repo_root, max_items=max_items)
     return await _with_recent_corrections(
-        _load_repo_context(repo_root, max_items=max_items),
+        context,
         conversation_id=conversation_id,
     )
 
@@ -75,6 +88,9 @@ def render_build_context(context: BuildContext, *, max_chars: int = DEFAULT_MAX_
         f"Source: {context.source}",
         "Use this only to avoid live amnesia about what James is building. Do not treat it as approval to write, spend, deploy, send outreach, or change doctrine.",
     ]
+    if context.system_status:
+        lines.append("Live system status:")
+        lines.extend(f"- {item}" for item in context.system_status)
     if context.focus:
         lines.append("Focus:")
         lines.extend(f"- {item}" for item in context.focus)
@@ -101,13 +117,50 @@ async def _with_recent_corrections(
     try:
         from .corrections import recent_corrections, render_corrections_block
     except ImportError:
-        from corrections import recent_corrections, render_corrections_block
+        try:
+            from corrections import recent_corrections, render_corrections_block
+        except ImportError:
+            return context
 
     pairs = await recent_corrections(conversation_id=conversation_id, limit=10)
     block = render_corrections_block(pairs)
     if not block:
         return context
     return replace(context, corrections=block.splitlines())
+
+
+def _with_live_system_status(
+    context: BuildContext,
+    *,
+    repo_root: Path,
+    max_items: int,
+) -> BuildContext:
+    if os.environ.get("SH_LIVE_SYSTEM_STATUS_DISABLE", "").strip() == "1":
+        return context
+    try:
+        try:
+            from .live_system_status import collect_status, render_status_lines
+        except ImportError:
+            try:
+                from live_system_status import collect_status, render_status_lines
+            except ImportError:
+                module_path = Path(__file__).with_name("live_system_status.py")
+                spec = importlib.util.spec_from_file_location("live_system_status", module_path)
+                if not spec or not spec.loader:
+                    return context
+                module = importlib.util.module_from_spec(spec)
+                sys.modules["live_system_status"] = module
+                spec.loader.exec_module(module)
+                collect_status = module.collect_status
+                render_status_lines = module.render_status_lines
+
+        snapshot = collect_status(repo_root, max_items=max_items)
+        lines = render_status_lines(snapshot, max_items=max_items)
+    except Exception:
+        return context
+    if not lines:
+        return context
+    return replace(context, system_status=lines)
 
 
 async def _load_supabase_context(*, max_items: int) -> BuildContext | None:

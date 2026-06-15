@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-15 · SPEC_d018_live-system-status-injector · branch `build/SPEC_d018_live-system-status-injector`
+
+- **Status:** done / awaiting independent review + merge review
+- **Files changed:** `SERVICES/sunheart-brain/curator/live_system_status.py`; `SERVICES/sunheart-brain/curator/build_context.py`; `SERVICES/sunheart-brain/curator/test_live_system_status.py`; `SERVICES/sunheart-brain/curator/test_build_context.py`; `core/BUILD/REGISTRY.json`; `core/BUILD/specs/SPEC_d018_live-system-status-injector.md`; `core/BUILD/results/SPEC_d018_live-system-status-injector.result.md`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a read-only live system status injector to the existing bounded owner-chat context path. Every `build_context_system_suffix()` call now prepends a `Live system status` block with build queue counts, active build requests, last merge outcome, and local host health evidence (host id, repo readability, load, disk, optional ops-ledger failures). The block remains advisory and does not grant merge/deploy/spend/send authority.
+- **Tests:** `python3 -B -m unittest SERVICES/sunheart-brain/curator/test_live_system_status.py SERVICES/sunheart-brain/curator/test_build_context.py SERVICES/sunheart-brain/curator/test_tgbot_correction_wiring.py` (9 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile SERVICES/sunheart-brain/curator/live_system_status.py SERVICES/sunheart-brain/curator/build_context.py SERVICES/sunheart-brain/curator/test_live_system_status.py SERVICES/sunheart-brain/curator/test_build_context.py`; `git diff --check -- SERVICES/sunheart-brain/curator/live_system_status.py SERVICES/sunheart-brain/curator/build_context.py SERVICES/sunheart-brain/curator/test_live_system_status.py SERVICES/sunheart-brain/curator/test_build_context.py core/BUILD/REGISTRY.json`; direct prompt smoke rendered `Live system status` first inside the bounded suffix.
+- **Risks:** This branch did not SSH to server 162, install a unit, restart the bot, or verify production systemd state. Health is shallow and non-invasive by design; queue truth depends on registry/results/reviews mirrors staying current. Disable just the new block with `SH_LIVE_SYSTEM_STATUS_DISABLE=1`.
+- **Rollback:** revert the changed files; or set `SH_LIVE_SYSTEM_STATUS_DISABLE=1` in the bot environment to remove the status block while preserving the older build-context/correction injection.
+- **Intent solved:** Ember owner-chat context can see current Buildstream/server status at prompt assembly time without James carrying terminal state manually.
+- **Downstream intent unlocked:** Ember can route the next merge/review/status move from live context on conversation open, then server-162 deployment can be handled as a separate Ember/ops step if needed.
+- **Questions for Ember/James:** after merge, deploy/restart the server-162 Telegram/Ember chat process if the live host does not auto-refresh from this branch; optionally set `FPAI_SERVER_ID=162` and `OPS_LEDGER=/opt/fpai-build/ops_ledger.jsonl` in the runtime env for clearer host labeling.
+
 ### 2026-06-15 · SPEC_d014_correction-capture-close-d010-p · branch `build/SPEC_d014_correction-capture-close-d010-p`
 
 - **Status:** done / awaiting diff review

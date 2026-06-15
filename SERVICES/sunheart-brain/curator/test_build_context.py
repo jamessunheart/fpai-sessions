@@ -61,6 +61,8 @@ class BuildContextTest(unittest.TestCase):
         self.assertIn("CURRENT BUILD CONTEXT", suffix)
         self.assertIn("SPEC_d011", suffix)
         self.assertIn("rung4-hubs", suffix)
+        self.assertIn("Live system status:", suffix)
+        self.assertIn("Build queue:", suffix)
         self.assertIn("advisory", suffix)
 
     def test_disable_env_returns_empty_suffix(self) -> None:
