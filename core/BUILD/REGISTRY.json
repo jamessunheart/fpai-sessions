@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-  "updated_at": "2026-06-14T09:26:48Z",
+  "updated_at": "2026-06-15T00:10:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+    {
+      "id": "SPEC_d010_self-evolution-l1-preference-dat",
+      "slug": "SPEC_d010_self-evolution-l1-preference-dat",
+      "branch": "build/SPEC_d010_self-evolution-l1-preference-dat",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d010_self-evolution-l1-preference-dat.md",
+      "tests_passed": true,
+      "notes": "Self-evolution L1 preference dataset + eval judge built; focused unittest, py_compile, diff check, and /tmp CLI smoke passed; advisory/shadow only; no model training or prod wiring."
+    },
     {
       "id": "build-20260614-cartographer-auto-refresh",
       "slug": "cartographer-auto-refresh",
