@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-  "updated_at": "2026-06-15T00:10:00Z",
+  "updated_at": "2026-06-15T00:40:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+    {
+      "id": "SPEC_d016_spark-shadow-scorecard-correctio",
+      "slug": "SPEC_d016_spark-shadow-scorecard-correctio",
+      "branch": "build/SPEC_d016_spark-shadow-scorecard-correctio",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d016_spark-shadow-scorecard-correctio.md",
+      "tests_passed": true,
+      "notes": "SPARK shadow scorecard + correction loop built; 24 focused tests, py_compile, CLI smokes, and diff check passed; shadow-only, no live reroute."
+    },
     {
       "id": "SPEC_d010_self-evolution-l1-preference-dat",
       "slug": "SPEC_d010_self-evolution-l1-preference-dat",

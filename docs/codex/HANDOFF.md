@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-15 · SPEC_d016_spark-shadow-scorecard-correctio · branch `build/SPEC_d016_spark-shadow-scorecard-correctio`
+
+- **Status:** done / awaiting diff review
+- **Files changed:** `tools/router/instrument_rack.py`; `tools/router/test_instrument_rack.py`; `tools/router/SPARK_GRADUATION.md`; `core/BUILD/REGISTRY.json`; `core/BUILD/specs/SPEC_d016_spark-shadow-scorecard-correctio.md`; `docs/codex/HANDOFF.md`
+- **Summary:** Extended the Instrument Rack into the SPARK shadow scorecard. Deterministic rules still run first; trivial decision/status and any stakes path skip llama for latency/safety. Fuzzy-middle messages can take a bounded `llama3.1:8b` Ollama read on host `162`, with failure logged closed. Every ledger row now uses `loop=spark` and records `deterministic_hit`, `llama_read`, `confidence`, `stakes`, `would_route`, `latency_ms`, `actual_outcome: null`, and the full intent frame (`surface_words`, `real_verb`, `object`, `stakes`, `lane`, `owner`, `next_action`, `proof_needed`). Added a `correct` CLI path that appends SPARK route corrections into the d010-compatible preference dataset. Documented the manual-only graduation rule; no live reroute or auto-promotion was added.
+- **Tests:** `python3 -B tools/router/test_instrument_rack.py` (11 tests OK); `python3 -B -m unittest tools.router.test_instrument_rack tools.router.test_route tools.learn.test_capture_corrections` (24 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/router/instrument_rack.py tools/router/test_instrument_rack.py tools/learn/capture_corrections.py`; `python3 -B tools/router/instrument_rack.py --no-log --json 'status please'`; `python3 -B tools/router/instrument_rack.py correct --dataset /tmp/fpai-spark-correction.jsonl --message 'publish it' --rejected-route route:auto --preferred-route route:james --correction 'public send needs James review'`; `git diff --check -- tools/router/instrument_rack.py tools/router/test_instrument_rack.py tools/router/SPARK_GRADUATION.md core/BUILD/REGISTRY.json core/BUILD/specs/SPEC_d016_spark-shadow-scorecard-correctio.md`
+- **Risks:** The llama read depends on Ollama availability at `162` and degrades to a closed scorecard read when unavailable; no network success was required in this sandbox. Intent-frame extraction remains intentionally thin and heuristic unless the fuzzy-middle llama read returns valid compact JSON. Default ledger remains repo-local `core/STATE/router_truth_ledger.jsonl`; this run wrote only temp/demo ledgers.
+- **Rollback:** revert `tools/router/instrument_rack.py` and `tools/router/test_instrument_rack.py`; delete `tools/router/SPARK_GRADUATION.md`; remove the d016 row from `core/BUILD/REGISTRY.json`; remove `core/BUILD/specs/SPEC_d016_spark-shadow-scorecard-correctio.md` and this HANDOFF entry. No live router wiring, prod write, memory write, send, deploy, money movement, secret, push, merge, or PR was performed.
+- **Intent solved:** SPARK can now measure whether the front door would route honestly before gaining live authority.
+- **Downstream intent unlocked:** Ember/James can review accumulated SPARK scorecard and correction evidence before deciding whether any low-risk deterministic lane deserves a separate live-reroute spec.
+- **Questions for Ember/James:** confirm the canonical long-term ops truth ledger path before any non-demo default ledger writes are used by live intake.
+
 ### 2026-06-15 · SPEC_d013_intelligence-economy-l1-instrume · branch `build/SPEC_d013_intelligence-economy-l1-instrume`
 
 - **Status:** done / awaiting diff review
