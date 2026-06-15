@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-15 · SPEC_d015_intelligence-economy-l2-cost-tru · branch `build/SPEC_d015_intelligence-economy-l2-cost-tru`
+
+- **Status:** done / awaiting diff review
+- **Files changed:** `tools/cost/__init__.py`; `tools/cost/fixed_cost_manifest.jsonl`; `tools/cost/cost_manifest.py`; `tools/cost/test_cost_manifest.py`; `tools/build_loop/morning_digest.sh`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the Intelligence Economy L2 Cost Truth Ledger. The manifest is a manually verified JSONL fixed-cost registry with infra totaling `$805/mo` across 3 server estimate rows plus Claude Max and ChatGPT Max flat subscriptions, all marked as James-verified estimates rather than live billing. `tools/cost/cost_manifest.py` reads that manifest plus the existing metered tracker ledger format, amortizes fixed costs to daily/month-to-date, projects monthly burn, and emits one digest line with `today-metered`, `monthly-fixed-accrual`, `projected-monthly-burn`, `stale-source-flag`, and `drift>10%`. It does not call billing APIs and does not attribute per-loop costs because loops are flat-rate.
+- **Tests:** `python3 -B tools/cost/test_cost_manifest.py` (3 tests OK, RESULT line emitted); `python3 -B -m unittest tools.cost.test_cost_manifest` (3 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/cost/cost_manifest.py tools/cost/test_cost_manifest.py tools/cost/__init__.py`; `bash -n tools/build_loop/morning_digest.sh`; `python3 -B tools/cost/cost_manifest.py --metered-ledger /tmp/fpai-cost-missing-ledger.jsonl --today 2026-06-15` (printed one digest line); `tools/build_loop/morning_digest.sh` (printed one digest line); `python3 -m json.tool core/BUILD/REGISTRY.json`; `git diff --check -- tools/cost tools/build_loop/morning_digest.sh core/BUILD/REGISTRY.json`
+- **Risks:** Fixed figures are intentionally estimates, not live billing truth; stale-source and drift flags are the guardrails that force re-verification. Because no tracked `morning_digest.sh` existed in this worktree, this run added `tools/build_loop/morning_digest.sh` as the repo-local digest entrypoint rather than editing a production service script.
+- **Rollback:** delete `tools/cost/__init__.py`, `tools/cost/fixed_cost_manifest.jsonl`, `tools/cost/cost_manifest.py`, `tools/cost/test_cost_manifest.py`, and `tools/build_loop/morning_digest.sh`; remove the d015 row from `core/BUILD/REGISTRY.json`; remove this HANDOFF note. No prod service, credential, billing API, deploy, money movement, push, merge, or PR was touched.
+- **Intent solved:** the loop now has a local cost truth line that combines metered spend with fixed flat-rate burn without pretending flat-rate loops have per-loop cost.
+- **Downstream intent unlocked:** Ember/James can review the morning cost line for stale estimates or metered drift before increasing autonomous loop authority.
+- **Questions for Ember/James:** confirm whether the production morning digest script lives outside this repo; if so, mirror the single `tools/build_loop/morning_digest.sh` line into that service after review.
+
 ### 2026-06-15 · SPEC_d013_intelligence-economy-l1-instrume · branch `build/SPEC_d013_intelligence-economy-l1-instrume`
 
 - **Status:** done / awaiting diff review
