@@ -479,7 +479,14 @@ async def _synthesize_answer(question: str, hits: list[dict]) -> str:
         "Keep it very short."
     )
     try:
-        result = await complete(CHAT_SYSTEM_PROMPT, user, max_tokens=220, temperature=0.4, force_json=False)
+        from .build_context import build_context_system_suffix
+        system_prompt = CHAT_SYSTEM_PROMPT + await build_context_system_suffix()
+    except Exception as e:
+        log.warning("build-context injection skipped: %s", e)
+        system_prompt = CHAT_SYSTEM_PROMPT
+
+    try:
+        result = await complete(system_prompt, user, max_tokens=220, temperature=0.4, force_json=False)
         return result.text.strip() or "(no response)"
     except Exception as e:
         log.exception("synthesis failed: %s", e)
