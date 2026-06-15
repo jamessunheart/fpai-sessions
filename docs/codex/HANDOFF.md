@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-15 · SPEC_d013_intelligence-economy-l1-instrume · branch `build/SPEC_d013_intelligence-economy-l1-instrume`
+
+- **Status:** done / awaiting diff review
+- **Files changed:** `tools/router/instrument_rack.py`; `tools/router/test_instrument_rack.py`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the Instrument Rack v1 shadow router. It classifies One-Chat messages with deterministic rules first, chooses the max-risk tier across matched axes (`T0` through `T5`), over-escalates stakes flags, and appends append-only JSONL rows with `loop=router`, message class, tier, reason, estimated tier cost, and `shadow_mode=true`. It does not reroute live traffic or wire into production.
+- **Tests:** `python3 -B tools/router/test_instrument_rack.py` (7 tests OK, RESULT line emitted); `python3 -B -m unittest tools.router.test_instrument_rack tools.router.test_route` (17 tests OK); `python3 -B tools/router/instrument_rack.py --ledger /tmp/fpai-instrument-rack-demo.jsonl 'send money to the treasury wallet'` (classified `treasury` / `T5` and wrote only temp ledger); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/router/instrument_rack.py tools/router/test_instrument_rack.py`; `git diff --check -- tools/router/instrument_rack.py tools/router/test_instrument_rack.py core/BUILD/REGISTRY.json`
+- **Risks:** Regex classification is intentionally conservative and may over-escalate. The default ledger path is repo-local `core/STATE/router_truth_ledger.jsonl`, but no live default ledger row was written in this run; the demo wrote to `/tmp`.
+- **Rollback:** delete `tools/router/instrument_rack.py` and `tools/router/test_instrument_rack.py`; remove the d013 row from `core/BUILD/REGISTRY.json`; remove this HANDOFF note. No live router wiring, prod write, money movement, outreach send, deploy, secret, push, merge, or PR was performed.
+- **Intent solved:** One-Chat messages can now be shadow-scored against the Intelligence Economy tier ladder before trusting live model routing.
+- **Downstream intent unlocked:** Ember/James can review shadow ledger evidence for down-misclassification risk before any future spec wires the Instrument Rack into live routing.
+- **Questions for Ember/James:** confirm the canonical long-term ops truth ledger path before enabling any live default ledger writes outside review/demo runs.
+
 ### 2026-06-10 · SPEC_comms-hub-rung4 · branch `feat/headless-build`
 
 - **Status:** done / awaiting diff review

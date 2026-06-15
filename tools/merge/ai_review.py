@@ -64,11 +64,6 @@ def main():
     if len(diff) > 60000:
         diff = diff[:60000] + "\n\n...[diff truncated at 60k chars — flag for manual review]..."
 
-    key = _key()
-    if not key:
-        open(rev,"w").write(f"# Review {branch}\n\n⚠️ No ANTHROPIC_API_KEY — could not run AI review. Manual review required.\n")
-        print(f"REQUEST_CHANGES: {branch} (no API key — manual review required)"); sys.exit(1)
-
     sys_prompt = (
         "You are an independent senior code reviewer. The code was written by a DIFFERENT AI (Codex). "
         "Review the diff skeptically for: bugs, security issues, scope creep beyond the spec, anything "
@@ -76,15 +71,13 @@ def main():
         "main branch, and any silent guardrail bypass. Be strict: when in doubt, REQUEST_CHANGES. "
         "Respond ONLY with JSON: {\"verdict\":\"APPROVE\"|\"REQUEST_CHANGES\",\"risk\":\"low\"|\"med\"|\"high\","
         "\"summary\":\"one line\",\"findings\":[\"...\"]}")
-    body = json.dumps({"model":"claude-opus-4-8","max_tokens":1500,
-                       "messages":[{"role":"user","content":f"Review this diff (branch {branch} vs {BASE}):\n\n{diff}"}],
-                       "system":sys_prompt}).encode()
+    # $0 marginal: review via `claude -p` (Claude Max flat-rate), not the metered API.
+    CLAUDE = os.path.expanduser("~/.local/bin/claude")
+    prompt = sys_prompt + f"\n\nReview this diff (branch {branch} vs {BASE}):\n\n{diff}\n\nRespond with ONLY the JSON object."
     try:
-        req = urllib.request.Request("https://api.anthropic.com/v1/messages", data=body,
-            headers={"x-api-key":key,"anthropic-version":"2023-06-01","content-type":"application/json"})
-        with urllib.request.urlopen(req, timeout=180, context=_SSL) as r:
-            resp = json.load(r)
-        text = "".join(b.get("text","") for b in resp.get("content",[]) if b.get("type")=="text").strip()
+        rr = subprocess.run([CLAUDE, "-p", prompt], stdin=subprocess.DEVNULL,
+                            capture_output=True, text=True, timeout=220)
+        text = rr.stdout.strip()
         text = text[text.find("{"): text.rfind("}")+1] if "{" in text else text
         v = json.loads(text)
     except Exception as e:
