@@ -9,7 +9,7 @@ from __future__ import annotations
 import json
 import os
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any
 
@@ -27,9 +27,10 @@ class BuildContext:
     focus: list[str]
     active_loops: list[str]
     open_intents: list[str]
+    corrections: list[str] | None = None
 
     def is_empty(self) -> bool:
-        return not (self.focus or self.active_loops or self.open_intents)
+        return not (self.focus or self.active_loops or self.open_intents or self.corrections)
 
 
 async def build_context_system_suffix(
@@ -37,22 +38,35 @@ async def build_context_system_suffix(
     repo_root: Path | str = REPO_ROOT,
     max_items: int = DEFAULT_MAX_ITEMS,
     max_chars: int = DEFAULT_MAX_CHARS,
+    conversation_id: str | None = None,
 ) -> str:
     """Return a system-prompt suffix. Empty string means no injection."""
     if os.environ.get("SH_BUILD_CONTEXT_DISABLE", "").strip() == "1":
         return ""
-    context = await load_build_context(repo_root=Path(repo_root), max_items=max_items)
+    context = await load_build_context(
+        repo_root=Path(repo_root),
+        max_items=max_items,
+        conversation_id=conversation_id,
+    )
     if context.is_empty():
         return ""
     return "\n\n" + render_build_context(context, max_chars=max_chars)
 
 
-async def load_build_context(*, repo_root: Path, max_items: int = DEFAULT_MAX_ITEMS) -> BuildContext:
+async def load_build_context(
+    *,
+    repo_root: Path,
+    max_items: int = DEFAULT_MAX_ITEMS,
+    conversation_id: str | None = None,
+) -> BuildContext:
     """Prefer Supabase when configured; otherwise use repo-local mirrors."""
     supabase = await _load_supabase_context(max_items=max_items)
     if supabase and not supabase.is_empty():
-        return supabase
-    return _load_repo_context(repo_root, max_items=max_items)
+        return await _with_recent_corrections(supabase, conversation_id=conversation_id)
+    return await _with_recent_corrections(
+        _load_repo_context(repo_root, max_items=max_items),
+        conversation_id=conversation_id,
+    )
 
 
 def render_build_context(context: BuildContext, *, max_chars: int = DEFAULT_MAX_CHARS) -> str:
@@ -70,10 +84,30 @@ def render_build_context(context: BuildContext, *, max_chars: int = DEFAULT_MAX_
     if context.open_intents:
         lines.append("Open decisions/intents:")
         lines.extend(f"- {item}" for item in context.open_intents)
+    if context.corrections:
+        lines.append("Corrections:")
+        lines.extend(context.corrections)
     rendered = "\n".join(lines)
     if len(rendered) <= max_chars:
         return rendered
     return rendered[: max(0, max_chars - 20)].rsplit("\n", 1)[0] + "\n- ... bounded"
+
+
+async def _with_recent_corrections(
+    context: BuildContext,
+    *,
+    conversation_id: str | None,
+) -> BuildContext:
+    try:
+        from .corrections import recent_corrections, render_corrections_block
+    except ImportError:
+        from corrections import recent_corrections, render_corrections_block
+
+    pairs = await recent_corrections(conversation_id=conversation_id, limit=10)
+    block = render_corrections_block(pairs)
+    if not block:
+        return context
+    return replace(context, corrections=block.splitlines())
 
 
 async def _load_supabase_context(*, max_items: int) -> BuildContext | None:
@@ -213,4 +247,3 @@ def _clip_markdown(text: str) -> str:
 
 def _clean(text: str) -> str:
     return " ".join(text.split())[:240]
-

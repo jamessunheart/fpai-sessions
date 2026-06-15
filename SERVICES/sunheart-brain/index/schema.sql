@@ -121,3 +121,19 @@ CREATE TABLE IF NOT EXISTS tg_messages (
 
 CREATE INDEX IF NOT EXISTS tg_messages_chat_idx       ON tg_messages (chat_id, at DESC);
 CREATE INDEX IF NOT EXISTS tg_messages_unprocessed_idx ON tg_messages (chat_id, at) WHERE processed_at IS NULL AND NOT private_flag;
+
+-- Correction memory loop.
+-- Each row captures James correcting the previous bot turn. The Telegram bot
+-- injects the most recent correction pairs into future prompts so failures
+-- become visible immediately instead of waiting for hourly compression.
+CREATE TABLE IF NOT EXISTS corrections (
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    conversation_id     TEXT NOT NULL,
+    bot_turn_id         UUID REFERENCES tg_messages(id) ON DELETE SET NULL,
+    original_response   TEXT NOT NULL,
+    james_correction    TEXT NOT NULL,
+    captured_at         TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS corrections_conversation_idx
+    ON corrections (conversation_id, captured_at DESC);

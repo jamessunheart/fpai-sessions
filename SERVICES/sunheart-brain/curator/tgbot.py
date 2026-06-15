@@ -458,7 +458,7 @@ async def _search_brain(question: str, k: int = SEARCH_TOP_K) -> list[dict]:
             ]
 
 
-async def _synthesize_answer(question: str, hits: list[dict]) -> str:
+async def _synthesize_answer(question: str, hits: list[dict], *, conversation_id: str | None = None) -> str:
     """Hand the chunks to Claude/GPT and get a natural answer."""
     if not hits:
         return ("I couldn't find anything in your brain about that. "
@@ -480,7 +480,7 @@ async def _synthesize_answer(question: str, hits: list[dict]) -> str:
     )
     try:
         from .build_context import build_context_system_suffix
-        system_prompt = CHAT_SYSTEM_PROMPT + await build_context_system_suffix()
+        system_prompt = CHAT_SYSTEM_PROMPT + await build_context_system_suffix(conversation_id=conversation_id)
     except Exception as e:
         log.warning("build-context injection skipped: %s", e)
         system_prompt = CHAT_SYSTEM_PROMPT
@@ -3957,12 +3957,18 @@ async def _handle_message(msg: dict) -> None:
                     log.warning("voice-out (cmd) failed: %s", e)
         return
 
-    # Plain text path — log inbound, answer, log outbound.
+    # Plain text path — capture corrections, log inbound, answer, log outbound.
+    try:
+        from .corrections import capture_if_correction
+
+        await capture_if_correction(conversation_id=str(chat_id), james_message=text)
+    except Exception as e:
+        log.warning("correction capture skipped: %s", e)
     await _log_tg_message(str(chat_id), "user", text, update_id=update_id)
 
     log.info("chat: %s", text[:120])
     hits = await _search_brain(text)
-    answer_body = _format_answer_for_telegram(await _synthesize_answer(text, hits))
+    answer_body = _format_answer_for_telegram(await _synthesize_answer(text, hits, conversation_id=str(chat_id)))
     answer = answer_body
     # Citation footer DISABLED per James 2026-06-12 (wants plain short replies, no sources).
     if False:

@@ -16,6 +16,13 @@ build_context = importlib.util.module_from_spec(SPEC)
 sys.modules["build_context"] = build_context
 SPEC.loader.exec_module(build_context)
 
+CORRECTIONS_PATH = Path(__file__).with_name("corrections.py")
+CORRECTIONS_SPEC = importlib.util.spec_from_file_location("corrections", CORRECTIONS_PATH)
+assert CORRECTIONS_SPEC and CORRECTIONS_SPEC.loader
+corrections = importlib.util.module_from_spec(CORRECTIONS_SPEC)
+sys.modules["corrections"] = corrections
+CORRECTIONS_SPEC.loader.exec_module(corrections)
+
 
 class BuildContextTest(unittest.TestCase):
     def make_repo(self) -> Path:
@@ -74,6 +81,30 @@ class BuildContextTest(unittest.TestCase):
 
         self.assertLessEqual(len(rendered), 240)
         self.assertIn("bounded", rendered)
+
+    def test_recent_corrections_are_injected(self) -> None:
+        pair = corrections.CorrectionPair(
+            conversation_id="123",
+            bot_turn_id="bot-1",
+            original_response="You never told me your birthday.",
+            james_correction="You forgot, I said my birthday is June 4.",
+        )
+
+        async def fake_recent_corrections(*, conversation_id=None, limit=10):
+            self.assertEqual(conversation_id, "123")
+            return [pair]
+
+        with patch.object(corrections, "recent_corrections", fake_recent_corrections):
+            suffix = asyncio.run(
+                build_context.build_context_system_suffix(
+                    repo_root=self.make_repo(),
+                    conversation_id="123",
+                    max_chars=1600,
+                )
+            )
+
+        self.assertIn("Corrections:", suffix)
+        self.assertIn("You forgot, I said my birthday is June 4.", suffix)
 
 
 if __name__ == "__main__":

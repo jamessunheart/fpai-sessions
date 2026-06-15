@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-15 · SPEC_d014_correction-capture-close-d010-p · branch `build/SPEC_d014_correction-capture-close-d010-p`
+
+- **Status:** done / awaiting diff review
+- **Files changed:** `SERVICES/sunheart-brain/curator/corrections.py`; `SERVICES/sunheart-brain/curator/test_corrections.py`; `SERVICES/sunheart-brain/curator/test_tgbot_correction_wiring.py`; `SERVICES/sunheart-brain/curator/build_context.py`; `SERVICES/sunheart-brain/curator/test_build_context.py`; `SERVICES/sunheart-brain/curator/tgbot.py`; `SERVICES/sunheart-brain/index/schema.sql`; `core/BUILD/REGISTRY.json`; `core/BUILD/specs/SPEC_d014_correction-capture-close-d010-p.md`; `docs/codex/HANDOFF.md`
+- **Summary:** Closed the d010 correction loop for the Sunheart Brain Telegram path. Added a `brain_index.corrections` table, a correction detector for explicit "you forgot / you said" and negation-restatement messages, best-effort writes to local brain DB plus optional Supabase REST `corrections`, and context injection of the last 10 correction pairs into each owner chat answer. The Telegram middleware captures corrections before logging the new user turn, so the original response is the immediately previous bot reply.
+- **Tests:** `python3 -B -m unittest SERVICES/sunheart-brain/curator/test_corrections.py SERVICES/sunheart-brain/curator/test_build_context.py SERVICES/sunheart-brain/curator/test_tgbot_correction_wiring.py` (11 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile SERVICES/sunheart-brain/curator/corrections.py SERVICES/sunheart-brain/curator/build_context.py SERVICES/sunheart-brain/curator/tgbot.py SERVICES/sunheart-brain/curator/test_corrections.py SERVICES/sunheart-brain/curator/test_build_context.py SERVICES/sunheart-brain/curator/test_tgbot_correction_wiring.py`; `git diff --check -- SERVICES/sunheart-brain/curator/corrections.py SERVICES/sunheart-brain/curator/build_context.py SERVICES/sunheart-brain/curator/tgbot.py SERVICES/sunheart-brain/curator/test_corrections.py SERVICES/sunheart-brain/curator/test_build_context.py SERVICES/sunheart-brain/curator/test_tgbot_correction_wiring.py SERVICES/sunheart-brain/index/schema.sql core/BUILD/REGISTRY.json`
+- **Risks:** Live Supabase log audit was not run in this sandbox because production credentials/network are unavailable; the pass gate is code-level and test-level only. Correction detection is intentionally conservative and may miss subtle corrections. Writes are best-effort and fail closed so chat still answers if the table or Supabase endpoint is unavailable.
+- **Rollback:** revert `SERVICES/sunheart-brain/curator/corrections.py`, its tests, the `build_context.py`/`tgbot.py` wiring, the `corrections` DDL in `SERVICES/sunheart-brain/index/schema.sql`, and this registry/HANDOFF entry. Drop `brain_index.corrections` only if it has not accumulated useful production rows.
+- **Intent solved:** James can correct an amnesia failure once and have that failure-memory available to the very next bot turn.
+- **Downstream intent unlocked:** Ember can run one live Telegram correction cycle and verify the bot recalls the previously amnesia-inducing topic without waiting for hourly conversation compression.
+- **Questions for Ember/James:** run the live Supabase/brain DB log audit on the host after merge: confirm every owner bot turn logs a context-injection attempt and confirm one correction row appears after an explicit correction message.
+
 ### 2026-06-15 · SPEC_d013_intelligence-economy-l1-instrume · branch `build/SPEC_d013_intelligence-economy-l1-instrume`
 
 - **Status:** done / awaiting diff review
