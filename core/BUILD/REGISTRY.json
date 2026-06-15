@@ -1,6 +1,6 @@
 {
   "schema": "build-registry.v1",
-  "updated_at": "2026-06-14T09:26:48Z",
+  "updated_at": "2026-06-15T00:00:01Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
     {
@@ -53,6 +53,17 @@
       "status": "merged",
       "spec": "/Users/jamessunheart/FPAI_Cockpit/core/BUILD/specs/SPEC_proof-river.md",
       "tests_passed": null
+    },
+    {
+      "id": "SPEC_d011_intent-injector-correction-capt",
+      "slug": "SPEC_d011_intent-injector-correction-capt",
+      "branch": "build/SPEC_d011_intent-injector-correction-capt",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d011_intent-injector-correction-capt.md",
+      "tests_passed": true,
+      "notes": "Intent injector + correction capture pipeline. Focused tests passed. Advisory, reversible, bounded. Local commit blocked by read-only git index in sandbox; do not push or merge."
     }
   ]
 }

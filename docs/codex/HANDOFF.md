@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-15 · SPEC_d011_intent-injector-correction-capt · branch `build/SPEC_d011_intent-injector-correction-capt`
+
+- **Status:** done / awaiting diff review; local commit blocked by read-only git index in this sandbox
+- **Files changed:** `core/BUILD/REGISTRY.json`; `core/BUILD/specs/SPEC_d011_intent-injector-correction-capt.md`; `tools/learn/__init__.py`; `tools/learn/capture_corrections.py`; `tools/learn/test_capture_corrections.py`; `SERVICES/sunheart-brain/curator/build_context.py`; `SERVICES/sunheart-brain/curator/test_build_context.py`; `SERVICES/sunheart-brain/curator/tgbot.py`; `docs/codex/HANDOFF.md`
+- **Summary:** Added an append-only correction capture CLI that writes d010-compatible `(rejected, preferred)` JSONL rows to the preference dataset, with deterministic ids and default dedupe. Added a bounded build-context injector for the owner chat bot: each synthesis call can append an advisory system-prompt block from Supabase when configured (`FPAI_SUPABASE_URL` + key + table) or from repo mirrors as fallback (NOW focus, build registry active loops, ready/building buildstream intents). The injector is reversible with `SH_BUILD_CONTEXT_DISABLE=1`, bounded by item/char/time limits, and fails back to the existing prompt without blocking chat.
+- **Tests:** `python3 -B -m unittest tools.learn.test_capture_corrections` (3 tests OK); `python3 -B SERVICES/sunheart-brain/curator/test_build_context.py` (3 tests OK); `PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/learn/capture_corrections.py tools/learn/test_capture_corrections.py SERVICES/sunheart-brain/curator/build_context.py SERVICES/sunheart-brain/curator/test_build_context.py SERVICES/sunheart-brain/curator/tgbot.py`; `python3 -B tools/learn/capture_corrections.py --dry-run --prompt 'bot forgot active build' --rejected 'What are we building?' --preferred 'We are on d011: intent injector plus correction capture.'`; `git diff --check`
+- **Risks:** Supabase live schema/table names are env-driven because no secret or live DB access was used in this repo run; without those env vars the bot uses repo mirrors. The context block is advisory and may be stale if repo mirrors are stale. The correction capture tool records explicit pairs only; no model training or d010 merge was performed here. The session contract's local commit and commit-based `tools/merge/ai_review.py` step could not run because `.git/worktrees/SPEC_d011_intent-injector-correction-capt/index.lock` is on a read-only filesystem in this sandbox.
+- **Rollback:** remove `tools/learn/`; remove `SERVICES/sunheart-brain/curator/build_context.py` and its test; revert the small `tgbot.py` prompt-injection call; remove the d011 registry/spec/handoff entries. Set `SH_BUILD_CONTEXT_DISABLE=1` for immediate runtime rollback without code changes.
+- **Intent solved:** live chat now has a bounded path to know the current build context, and James's corrections can be captured as preference pairs instead of disappearing into chat history.
+- **Downstream intent unlocked:** d010's preference dataset can ingest explicit James corrections, and Ember can configure Supabase-backed intent pinning for every bot chat without granting the bot new authority.
+- **Questions for Ember/James:** provide the live Supabase table/view name and key env (`FPAI_SUPABASE_URL`, `FPAI_SUPABASE_KEY`, optional `FPAI_BUILD_CONTEXT_TABLE`) if the repo fallback should be replaced by the intended weighted-intents query.
+
 ### 2026-06-10 · SPEC_comms-hub-rung4 · branch `feat/headless-build`
 
 - **Status:** done / awaiting diff review
