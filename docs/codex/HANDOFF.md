@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-16 · SPEC_d038_content-bank-v0-1-truth-asset-sc · branch `build/SPEC_d038_content-bank-v0-1-truth-asset-sc`
+
+- **Status:** done / awaiting James review + merge review
+- **Files changed:** `docs/content_bank/`; `tools/beacon/`; `core/BUILD/REGISTRY.json`; `core/BUILD/specs/SPEC_d038_content-bank-v0-1-truth-asset-sc.md`; `core/BUILD/results/SPEC_d038_content-bank-v0-1-truth-asset-sc.result.md`; `docs/codex/HANDOFF.md`
+- **Summary:** Added Content Bank v0.1: seven draft-tagged truth assets, `SEED_CAMPAIGNS.md` with Campaigns A/B/C, `tools/beacon/seed_content_bank.py` with `CONTENT_BANK_DISABLE=1`, missing-file-only writes, ops-ledger row, and best-effort TG notification; `variant_generator.py` now loads content-bank source material for Campaign A/B/C; `throttle.py` flags CORA farming when `cora_earned/proofs_created > 10`.
+- **Tests:** `python3 -B -m unittest tools.beacon.test_content_bank` (9 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/beacon/seed_content_bank.py tools/beacon/variant_generator.py tools/beacon/throttle.py tools/beacon/test_content_bank.py`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `git diff --check -- docs/content_bank tools/beacon core/BUILD/REGISTRY.json core/BUILD/specs/SPEC_d038_content-bank-v0-1-truth-asset-sc.md`
+- **Independent review:** completed by subagent. It found registry status still `building` and an edited-draft overwrite edge. Both were fixed: registry now marks d038 `done`, and the seed script skips any existing content-bank file, draft-tagged or not.
+- **Risks:** The content bank is draft copy only and must not be published before James edits/approves it. Fi-Art and CORA phrasing remains sensitive despite containment language. Live `claude -p`, real ops-ledger append, and Telegram notification were not exercised in this sandbox.
+- **Rollback:** remove `docs/content_bank/`, `tools/beacon/`, and `core/BUILD/results/SPEC_d038_content-bank-v0-1-truth-asset-sc.result.md`; remove the d038 row from `core/BUILD/REGISTRY.json`; remove this HANDOFF note.
+- **Intent solved:** Beacon now has canonical truth-source assets to remix instead of generating growth copy from zero.
+- **Downstream intent unlocked:** d037 Beacon Growth Engine can run organic-first variant tests from reviewed source assets, with CORA reward farming throttled when earns outrun proofs.
+- **Questions for Ember/James:** review/edit the seven drafts before any public use; populate Beacon links after d037 campaigns are created; keep Campaign A organic-only until 5 organic chat-starts and chat-start rate above 30% of clicks are tracked.
+
 ### 2026-06-16 · SPEC_d035_cora-v0-2-monetary-policy-earn-r · branch `build/SPEC_d035_cora-v0-2-monetary-policy-earn-r`
 
 - **Status:** done / awaiting James review + merge review

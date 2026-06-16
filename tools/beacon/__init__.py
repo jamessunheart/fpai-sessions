@@ -1,0 +1,2 @@
+"""Beacon content-bank helpers."""
+
