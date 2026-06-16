@@ -82,6 +82,20 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-16 · SPEC_d052_cora-nation-public-story-feed-v · branch `build/SPEC_d052_cora-nation-public-story-feed-v`
+
+- **Status:** done / awaiting James review + merge review
+- **Files changed:** `tools/visual/visual_digest.py`; `tools/visual/test_visual_digest.py`; `core/BUILD/REGISTRY.json`; `core/BUILD/specs/SPEC_d052_cora-nation-public-story-feed-v.md`; `core/BUILD/results/SPEC_d052_cora-nation-public-story-feed-v.result.md`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the Cora Nation public story-feed target to d026 without changing the private One Chat PNG digest. When `VISUAL_DIGEST_PUBLIC_CHANNEL_ID`, `CORA_PUBLIC_CHANNEL_ID`, or `TELEGRAM_PUBLIC_CHANNEL_ID` is configured, the digest run now posts a curated text-only public summary after the private digest. The public summary uses a reduced context only: proof count, build counts, aggregate service pulse, safe top-three fragments, and a safe next visible move.
+- **Privacy filter:** public text rejects credential-adjacent language and correction-log content, redacts money figures and wallet/address-like tokens, strips raw decision/spec ids, validates the final message before send, and fails closed if unsafe content survives.
+- **Tests:** `python3 -B -m unittest tools.visual.test_visual_digest` (10 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/visual/visual_digest.py tools/visual/test_visual_digest.py`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `git diff --check -- tools/visual/visual_digest.py tools/visual/test_visual_digest.py core/BUILD/REGISTRY.json core/BUILD/specs/SPEC_d052_cora-nation-public-story-feed-v.md core/BUILD/results/SPEC_d052_cora-nation-public-story-feed-v.result.md docs/codex/HANDOFF.md`
+- **Independent review:** completed by subagent. It found two blockers: `--no-send` could still public-post when public env vars were present, and dynamic public text was not escaped for Telegram HTML mode. Both were fixed and covered by regression tests.
+- **Risks:** This sandbox did not create a Telegram channel, modify a channel bio, make the bot an admin, or send a live public post. Those are public/external actions for James/Ember. First live post still needs manual review before the channel is treated as live.
+- **Rollback:** set `VISUAL_DIGEST_PUBLIC_DISABLE=1` to disable only the public target, or revert the d052 code/tests/result/spec/registry/handoff changes.
+- **Intent solved:** the existing visual digest now has a guarded public story-feed output path instead of only a private One Chat digest.
+- **Downstream intent unlocked:** Ember/James can create the public channel, wire the reviewed env vars, and run one manually reviewed first-post proof with zero sensitive content visible.
+- **Questions for Ember/James:** create the public Telegram channel; add the bot as channel admin; set `VISUAL_DIGEST_PUBLIC_CHANNEL_ID` or `CORA_PUBLIC_CHANNEL_ID`; set `ONE_CHAT_BOT_LINK`/`VISUAL_DIGEST_BOT_LINK`; pin the One Chat bot link in the channel bio as the "get this for your life" door; run one live digest and manually review the first public post.
+
 ### 2026-06-16 · SPEC_d049_system-smoke-tests-prove-pipelin · branch `build/SPEC_d049_system-smoke-tests-prove-pipelin`
 
 - **Status:** done / awaiting James review + merge review

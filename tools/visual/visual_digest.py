@@ -9,10 +9,12 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import html
 import inspect
 import json
 import logging
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -33,6 +35,8 @@ DEFAULT_RESULTS_DIR = REPO_ROOT / "core" / "BUILD" / "results"
 DEFAULT_ALIGNMENT = REPO_ROOT / "core" / "STATE" / "identity" / "ALIGNMENT.md"
 ATHENS = ZoneInfo("Europe/Athens")
 PROOF_EVENTS = {"merged", "deployed"}
+PUBLIC_CHANNEL_ENV = ("VISUAL_DIGEST_PUBLIC_CHANNEL_ID", "CORA_PUBLIC_CHANNEL_ID", "TELEGRAM_PUBLIC_CHANNEL_ID")
+BOT_LINK_ENV = ("VISUAL_DIGEST_BOT_LINK", "ONE_CHAT_BOT_LINK", "PUBLIC_STORY_BOT_LINK")
 KEY_SERVICES = [
     "fpai-build-loop",
     "fpai-council",
@@ -44,6 +48,20 @@ KEY_SERVICES = [
 
 log = logging.getLogger("visual_digest")
 
+RAW_DECISION_ID_RE = re.compile(r"\b(?:d\d{2,}|decision[_ -]?id|SPEC_d\d+[A-Za-z0-9_-]*)\b", re.IGNORECASE)
+CREDENTIAL_RE = re.compile(
+    r"(?i)\b("
+    r"api[_ -]?key|auth[_ -]?token|bot[_ -]?token|bearer|credential|database_url|db_url|"
+    r"password|passwd|secret|private[_ -]?key|session[_ -]?cookie|telegram_bot_token"
+    r")\b"
+)
+CORRECTION_RE = re.compile(r"(?i)\b(correction|corrections|you forgot|you said)\b")
+MONEY_RE = re.compile(
+    r"(?i)([$€£]\s?\d[\d,]*(?:\.\d+)?|\b\d[\d,]*(?:\.\d+)?\s?(?:usd|usdc|eur|gbp|sol|btc|eth)\b)"
+)
+WALLET_RE = re.compile(r"\b(?:0x[a-fA-F0-9]{24,}|[1-9A-HJ-NP-Za-km-z]{32,44})\b")
+URL_RE = re.compile(r"https?://[^\s<>()]+")
+
 
 @dataclass(frozen=True)
 class DigestResult:
@@ -52,6 +70,7 @@ class DigestResult:
     rendered: bool
     sent: bool
     logged: bool
+    public_sent: bool = False
     skipped: bool = False
 
 
@@ -238,6 +257,113 @@ def next_move(build_state: dict[str, Any], decisions: dict[str, Any], health: li
     return "Hold the loop steady and wait for the next real signal."
 
 
+def _first_env(names: Iterable[str]) -> str | None:
+    for name in names:
+        value = os.environ.get(name)
+        if value and value.strip():
+            return value.strip()
+    return None
+
+
+def is_public_sensitive(text: str) -> bool:
+    """Reject strings that should not appear on the public story feed."""
+    return bool(CREDENTIAL_RE.search(text) or CORRECTION_RE.search(text))
+
+
+def sanitize_public_text(text: Any) -> str | None:
+    """Return a public-safe text fragment, or None if the fragment is unsafe."""
+    clean = " ".join(str(text or "").split())
+    if not clean or is_public_sensitive(clean):
+        return None
+    clean = MONEY_RE.sub("[private figure]", clean)
+    clean = WALLET_RE.sub("[private address]", clean)
+    clean = URL_RE.sub("[private link]", clean)
+    clean = RAW_DECISION_ID_RE.sub("the next routed decision", clean)
+    return html.escape(clean[:180].strip(), quote=True)
+
+
+def public_bot_link() -> str | None:
+    link = _first_env(BOT_LINK_ENV)
+    if not link:
+        return None
+    clean = " ".join(link.split())
+    if is_public_sensitive(clean):
+        return None
+    lowered = clean.lower()
+    if not (lowered.startswith("https://t.me/") or lowered.startswith("http://t.me/") or lowered.startswith("t.me/") or clean.startswith("@")):
+        return None
+    return html.escape(clean[:120], quote=True)
+
+
+def public_digest_context(context: dict[str, Any]) -> dict[str, Any]:
+    """Reduce the private visual digest context to a public-safe summary shape."""
+    health = list(context.get("server_health") or [])
+    ok_count = sum(1 for svc in health if svc.get("ok"))
+    service_count = len(health)
+    top_three: list[str] = []
+    for item in context.get("top_three") or []:
+        safe = sanitize_public_text(item)
+        if safe:
+            top_three.append(safe)
+        if len(top_three) >= 3:
+            break
+    if not top_three:
+        top_three = [
+            "Free observation first.",
+            "Visible proof over private claims.",
+            "A working life system should show its fruits.",
+        ]
+    build_state = context.get("build_state") or {}
+    next_public = sanitize_public_text(context.get("next_move")) or "The loop is holding the next clean move."
+    return {
+        "date": sanitize_public_text(context.get("date")) or "Today",
+        "proof_today": int(context.get("proof_today") or 0),
+        "active_builds": len(build_state.get("currently_building") or []),
+        "queued_count": int(build_state.get("queued_count") or 0),
+        "services_green": ok_count,
+        "services_watched": service_count,
+        "top_three": top_three,
+        "next_move": next_public,
+        "bot_link": public_bot_link(),
+    }
+
+
+def render_public_summary(context: dict[str, Any]) -> str:
+    public = public_digest_context(context)
+    lines = [
+        "<b>Cora Nation story feed</b>",
+        f"{public['date']}",
+        "",
+        "A public glimpse of the Full Potential OS loop:",
+        f"Proof events today: {public['proof_today']}",
+        f"Builds moving: {public['active_builds']} active / {public['queued_count']} queued",
+        f"System pulse: {public['services_green']} of {public['services_watched']} watched services green",
+        "",
+        "<b>What the system is practicing</b>",
+    ]
+    lines.extend(f"- {item}" for item in public["top_three"])
+    lines.extend(["", f"<b>Next visible move</b>: {public['next_move']}"])
+    if public.get("bot_link"):
+        lines.extend(["", f"Get this for your life: {public['bot_link']}"])
+    return "\n".join(lines)
+
+
+def validate_public_summary(text: str) -> None:
+    leaks = []
+    if CREDENTIAL_RE.search(text):
+        leaks.append("credential-adjacent content")
+    if CORRECTION_RE.search(text):
+        leaks.append("correction log content")
+    if RAW_DECISION_ID_RE.search(text):
+        leaks.append("raw decision id")
+    if MONEY_RE.search(text):
+        leaks.append("treasury figure")
+    if WALLET_RE.search(text):
+        leaks.append("wallet/address-like token")
+    if leaks:
+        raise ValueError(f"public digest failed privacy filter: {', '.join(sorted(set(leaks)))}")
+
+
 def build_context(
     *,
     now: datetime | None = None,
@@ -350,6 +476,18 @@ async def send_to_telegram(png_path: Path, send_func: Callable[..., Any] | None 
     return bool(result)
 
 
+async def send_public_story(text: str, *, channel_id: str, send_func: Callable[..., Any] | None = None) -> bool:
+    validate_public_summary(text)
+    sender = send_func or _default_text_sender()
+    if not sender:
+        log.warning("Telegram text sender unavailable; skipped public story feed send")
+        return False
+    result = sender(text, chat_id=channel_id)
+    if inspect.isawaitable(result):
+        result = await result
+    return bool(result)
+
+
 def _default_sender() -> Callable[..., Any] | None:
     telegram = _load_curator_telegram()
     if not telegram:
@@ -362,6 +500,18 @@ def _default_sender() -> Callable[..., Any] | None:
         return lambda path: _send_photo_direct(path, token=token, chat_id=chat_id)
     if hasattr(telegram, "send"):
         return getattr(telegram, "send")
+    return None
+
+
+def _default_text_sender() -> Callable[..., Any] | None:
+    telegram = _load_curator_telegram()
+    if telegram and hasattr(telegram, "send"):
+        token = getattr(telegram, "BOT_TOKEN", None) or os.environ.get("TELEGRAM_BOT_TOKEN")
+        if token:
+            return lambda text, *, chat_id: _send_text_direct(text, token=token, chat_id=chat_id)
+    token = os.environ.get("TELEGRAM_BOT_TOKEN")
+    if token:
+        return lambda text, *, chat_id: _send_text_direct(text, token=token, chat_id=chat_id)
     return None
 
 
@@ -397,6 +547,33 @@ async def _send_photo_direct(path: str, *, token: str, chat_id: str) -> bool:
         return False
 
 
+async def _send_text_direct(text: str, *, token: str, chat_id: str) -> bool:
+    try:
+        import httpx
+    except ImportError:
+        log.warning("httpx unavailable; skipped Telegram message send")
+        return False
+    url = f"https://api.telegram.org/bot{token}/sendMessage"
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            response = await client.post(
+                url,
+                json={
+                    "chat_id": chat_id,
+                    "text": text,
+                    "parse_mode": "HTML",
+                    "disable_web_page_preview": False,
+                },
+            )
+        if response.status_code != 200:
+            log.warning("Telegram public story send failed %s: %s", response.status_code, response.text[:300])
+            return False
+        return True
+    except Exception as exc:
+        log.warning("Telegram public story send error: %s", exc)
+        return False
+
+
 def log_visual_digest(path: Path, ledger: Path = DEFAULT_OPS_LEDGER) -> None:
     ledger.parent.mkdir(parents=True, exist_ok=True)
     row = {
@@ -411,12 +588,29 @@ def log_visual_digest(path: Path, ledger: Path = DEFAULT_OPS_LEDGER) -> None:
         handle.write(json.dumps(row, sort_keys=True) + "\n")
 
 
+def log_public_story_digest(*, sent: bool, ledger: Path = DEFAULT_OPS_LEDGER) -> None:
+    ledger.parent.mkdir(parents=True, exist_ok=True)
+    row = {
+        "ts": utc_now().strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "type": "public_story_digest",
+        "event": "public_story_digest",
+        "loop": "visual_digest",
+        "sent": bool(sent),
+        "cost": "$0",
+    }
+    with ledger.open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps(row, sort_keys=True) + "\n")
+
+
 async def run(
     *,
     output_root: Path = DEFAULT_OUTPUT_ROOT,
     ops_ledger: Path = DEFAULT_OPS_LEDGER,
     render_func: Callable[[str, Path], bool] = render_html_to_png,
     send_func: Callable[..., Any] | None = None,
+    public_send_func: Callable[..., Any] | None = None,
+    public_channel_id: str | None = None,
+    public_enabled: bool = True,
     write_html: bool = False,
 ) -> DigestResult:
     if os.environ.get("VISUAL_DIGEST_DISABLE") == "1":
@@ -433,8 +627,14 @@ async def run(
     if not rendered:
         return DigestResult(None, html_path, False, False, False)
     sent = await send_to_telegram(png_path, send_func)
+    public_sent = False
+    public_target = public_channel_id or (_first_env(PUBLIC_CHANNEL_ENV) if public_enabled else None)
+    if public_enabled and public_target and os.environ.get("VISUAL_DIGEST_PUBLIC_DISABLE") != "1":
+        public_text = render_public_summary(context)
+        public_sent = await send_public_story(public_text, channel_id=public_target, send_func=public_send_func)
+        log_public_story_digest(sent=public_sent, ledger=ops_ledger)
     log_visual_digest(png_path, ops_ledger)
-    return DigestResult(png_path, html_path, True, sent, True)
+    return DigestResult(png_path, html_path, True, sent, True, public_sent=public_sent)
 
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
@@ -442,7 +642,9 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--output-root", default=str(DEFAULT_OUTPUT_ROOT))
     parser.add_argument("--ops-ledger", default=str(DEFAULT_OPS_LEDGER))
     parser.add_argument("--write-html", action="store_true")
-    parser.add_argument("--no-send", action="store_true", help="Render and log without Telegram send.")
+    parser.add_argument("--no-send", action="store_true", help="Render and log without Telegram sends.")
+    parser.add_argument("--public-channel-id", default=None, help="Optional public Telegram channel id/handle for the curated Cora Nation story summary.")
+    parser.add_argument("--no-public", action="store_true", help="Do not send the curated public story summary.")
     return parser.parse_args(argv)
 
 
@@ -450,11 +652,14 @@ def main(argv: list[str] | None = None) -> int:
     logging.basicConfig(level=os.environ.get("LOG_LEVEL", "INFO"))
     args = parse_args(argv or sys.argv[1:])
     send_func = (lambda _path: True) if args.no_send else None
+    public_channel_id = None if args.no_public or args.no_send else args.public_channel_id
     result = asyncio.run(
         run(
             output_root=Path(args.output_root),
             ops_ledger=Path(args.ops_ledger),
             send_func=send_func,
+            public_channel_id=public_channel_id,
+            public_enabled=not args.no_public and not args.no_send,
             write_html=args.write_html,
         )
     )
@@ -464,7 +669,7 @@ def main(argv: list[str] | None = None) -> int:
     if not result.rendered:
         print("visual digest render skipped; no headless renderer available")
         return 0
-    print(json.dumps({"png": str(result.png_path), "sent": result.sent, "logged": result.logged}, sort_keys=True))
+    print(json.dumps({"png": str(result.png_path), "sent": result.sent, "public_sent": result.public_sent, "logged": result.logged}, sort_keys=True))
     return 0
 
 

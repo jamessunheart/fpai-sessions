@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-  "updated_at": "2026-06-16T21:34:31Z",
+  "updated_at": "2026-06-16T21:52:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+    {
+      "id": "SPEC_d052_cora-nation-public-story-feed-v",
+      "slug": "SPEC_d052_cora-nation-public-story-feed-v",
+      "branch": "build/SPEC_d052_cora-nation-public-story-feed-v",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d052_cora-nation-public-story-feed-v.md",
+      "tests_passed": true,
+      "notes": "d052 public Cora Nation story-feed target built: d026 now has an optional curated text-only public summary target with privacy filter, raw decision/spec id stripping, credential/correction rejection, treasury figure and wallet redaction, public kill switch, CLI flags, ledger row, and focused tests. No live Telegram channel creation or public posting in sandbox."
+    },
     {
       "id": "SPEC_d049_system-smoke-tests-prove-pipelin",
       "slug": "SPEC_d049_system-smoke-tests-prove-pipelin",
