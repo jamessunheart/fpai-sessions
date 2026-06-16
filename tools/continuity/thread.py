@@ -18,6 +18,15 @@ import asyncio, sys, os
 for _p in ("/opt/sh-brain-src", os.path.expanduser("~/sh-brain-src")):
     if os.path.isdir(os.path.join(_p, "curator")) and _p not in sys.path:
         sys.path.insert(0, _p)
+# self-load the DB env so this works from hooks / ssh without a sourced shell
+if not os.environ.get("BRAIN_INDEX_DB_URL"):
+    for _ef in ("/etc/sh-brain/curator.env",):
+        if os.path.isfile(_ef):
+            for _ln in open(_ef):
+                _ln = _ln.strip()
+                if _ln and not _ln.startswith("#") and "=" in _ln:
+                    _k, _v = _ln.split("=", 1)
+                    os.environ.setdefault(_k.strip(), _v.strip().strip('"').strip("'"))
 
 async def _append(surface: str, role: str, text: str):
     from curator.db import connect
