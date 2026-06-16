@@ -387,6 +387,14 @@ from his notes, AI conversations, and papers. Style:
 - Never output raw JSON, XML tags, or code fences in normal answers.
 """
 
+USER_CHAT_SYSTEM_PROMPT = """You are a personal agent for this user.
+- Use only the provided user context and this conversation.
+- Do not claim access to James's private brain, notes, build context, or sources.
+- Be direct, practical, and brief.
+- If you do not know something, say so and ask for the smallest useful detail.
+- Never output raw JSON, XML tags, or code fences in normal answers.
+"""
+
 
 async def _embed_query(text: str) -> list[float] | None:
     """Embed a single query string. Defaults to local Ollama (nomic-embed-text,
@@ -458,36 +466,88 @@ async def _search_brain(question: str, k: int = SEARCH_TOP_K) -> list[dict]:
             ]
 
 
-async def _synthesize_answer(question: str, hits: list[dict], *, conversation_id: str | None = None) -> str:
+async def _profile_context_system_prefix(user_id: str | None, *, operator_context: bool) -> str:
+    if operator_context or not user_id:
+        return ""
+    try:
+        from .agent.profile import get_agent_context
+
+        context = await asyncio.to_thread(get_agent_context, str(user_id))
+    except Exception as e:
+        log.warning("user-profile context injection skipped: %s", e)
+        return ""
+    return context + "\n\n" if context else ""
+
+
+async def _has_user_profile(user_id: str | None) -> bool:
+    if not user_id:
+        return False
+    try:
+        from .agent.profile import profile_exists
+
+        return bool(await asyncio.to_thread(profile_exists, str(user_id)))
+    except Exception as e:
+        log.warning("user-profile authorization lookup failed: %s", e)
+        return False
+
+
+async def _update_user_profile_session_async(user_id: str, messages: list[dict]) -> None:
+    try:
+        from .agent.profile import update_profile_from_session
+
+        await asyncio.to_thread(update_profile_from_session, str(user_id), messages)
+    except Exception as e:
+        log.warning("user-profile session update skipped: %s", e)
+
+
+async def _synthesize_answer(
+    question: str,
+    hits: list[dict],
+    *,
+    conversation_id: str | None = None,
+    user_id: str | None = None,
+    operator_context: bool = True,
+) -> str:
     """Hand the chunks to Claude/GPT and get a natural answer."""
     if not hits:
-        return ("I couldn't find anything in your brain about that. "
-                "Either it hasn't been ingested yet, or it lives in the 🔴 Private "
-                "tier (which I never serve over chat).")
-    from .llm import complete
-    user = "Question:\n" + question + "\n\nRelevant snippets from your brain:\n\n"
-    for i, h in enumerate(hits, 1):
+        if operator_context:
+            return ("I couldn't find anything in your brain about that. "
+                    "Either it hasn't been ingested yet, or it lives in the 🔴 Private "
+                    "tier (which I never serve over chat).")
+        user = (
+            "User message:\n"
+            + question
+            + "\n\nAnswer from the user context above and this message only. "
+            "Do not use or mention James's notes."
+        )
+    else:
+        user = "Question:\n" + question + "\n\nRelevant snippets from your brain:\n\n"
+        for i, h in enumerate(hits, 1):
+            user += (
+                f"[{i}] source={h['source']}/{h['sensitivity']} "
+                f"score={h['score']:.2f} tags={','.join(h['tags'][:4])}\n"
+                f"{h['content']}\n\n"
+            )
         user += (
-            f"[{i}] source={h['source']}/{h['sensitivity']} "
-            f"score={h['score']:.2f} tags={','.join(h['tags'][:4])}\n"
-            f"{h['content']}\n\n"
+            "Answer in 1-3 short sentences, plain text, like a quick text message.\n"
+            "No lists, no source citations, no headers, unless James explicitly asks for detail.\n"
+            "Do not output markdown code fences, XML tags, or raw JSON.\n"
+            "Keep it very short."
         )
-    user += (
-        "Answer in 1-3 short sentences, plain text, like a quick text message.\n"
-        "No lists, no source citations, no headers, unless James explicitly asks for detail.\n"
-        "Do not output markdown code fences, XML tags, or raw JSON.\n"
-        "Keep it very short."
-    )
-    try:
-        from .build_context import build_context_system_suffix, diagnostic_system_prefix
-        system_prompt = (
-            diagnostic_system_prefix()
-            + CHAT_SYSTEM_PROMPT
-            + await build_context_system_suffix(conversation_id=conversation_id)
-        )
-    except Exception as e:
-        log.warning("build-context injection skipped: %s", e)
-        system_prompt = CHAT_SYSTEM_PROMPT
+    from .llm import complete
+    if operator_context:
+        try:
+            from .build_context import build_context_system_suffix, diagnostic_system_prefix
+            system_prompt = (
+                diagnostic_system_prefix()
+                + CHAT_SYSTEM_PROMPT
+                + await build_context_system_suffix(conversation_id=conversation_id)
+            )
+        except Exception as e:
+            log.warning("build-context injection skipped: %s", e)
+            system_prompt = CHAT_SYSTEM_PROMPT
+    else:
+        system_prompt = await _profile_context_system_prefix(user_id, operator_context=False) + USER_CHAT_SYSTEM_PROMPT
 
     try:
         result = await complete(system_prompt, user, max_tokens=220, temperature=0.4, force_json=False)
@@ -3831,6 +3891,7 @@ async def _handle_message(msg: dict) -> None:
     # Identify caller role: owner (full access) · team capture (Linear-only) · stranger (ignored)
     is_owner = bool(OWNER_CHAT_ID) and from_user == OWNER_CHAT_ID
     is_team = _is_team_capture_user(from_user)
+    actor_user_id = from_user or str(chat_id)
     capture_name = TEAM_CAPTURE.get(from_user, "James" if is_owner else "")
 
     # Voice / audio note → Whisper transcription → Linear (always) → flow as text only for owner.
@@ -3883,7 +3944,11 @@ async def _handle_message(msg: dict) -> None:
             )
         return
 
+    is_profile_user = False
     if not is_owner:
+        is_profile_user = await _has_user_profile(actor_user_id)
+
+    if not is_owner and not is_profile_user:
         # Self-onboarding: first message from a stranger gets a greeting with
         # their chat_id so they can ask James to add them to TEAM_CAPTURE_USERS.
         # Track greeted strangers to avoid spam.
@@ -3942,6 +4007,10 @@ async def _handle_message(msg: dict) -> None:
                     pass
             return
 
+    if text.startswith("/") and not is_owner:
+        await tg.send("ℹ️ Slash commands are operator-only here. Send a plain message instead.")
+        return
+
     # Slash commands first (do NOT log them — they're not part of the conversation).
     if text.startswith("/"):
         try:
@@ -3962,17 +4031,26 @@ async def _handle_message(msg: dict) -> None:
         return
 
     # Plain text path — capture corrections, log inbound, answer, log outbound.
-    try:
-        from .corrections import capture_if_correction
+    if is_owner:
+        try:
+            from .corrections import capture_if_correction
 
-        await capture_if_correction(conversation_id=str(chat_id), james_message=text)
-    except Exception as e:
-        log.warning("correction capture skipped: %s", e)
-    await _log_tg_message(str(chat_id), "user", text, update_id=update_id)
+            await capture_if_correction(conversation_id=str(chat_id), james_message=text)
+        except Exception as e:
+            log.warning("correction capture skipped: %s", e)
+    await _log_tg_message(str(chat_id), "user", text, update_id=update_id, private_flag=not is_owner)
 
     log.info("chat: %s", text[:120])
-    hits = await _search_brain(text)
-    answer_body = _format_answer_for_telegram(await _synthesize_answer(text, hits, conversation_id=str(chat_id)))
+    hits = await _search_brain(text) if is_owner else []
+    answer_body = _format_answer_for_telegram(
+        await _synthesize_answer(
+            text,
+            hits,
+            conversation_id=str(chat_id),
+            user_id=actor_user_id,
+            operator_context=is_owner,
+        )
+    )
     answer = answer_body
     # Citation footer DISABLED per James 2026-06-12 (wants plain short replies, no sources).
     if False:
@@ -3988,7 +4066,17 @@ async def _handle_message(msg: dict) -> None:
         answer += "\n" + "\n".join(cite_lines)
     await tg.send(answer)
     # Log outbound (the synthesized answer text only — no need to store sources block).
-    await _log_tg_message(str(chat_id), "bot", answer)
+    await _log_tg_message(str(chat_id), "bot", answer, private_flag=not is_owner)
+    if not is_owner:
+        asyncio.create_task(
+            _update_user_profile_session_async(
+                actor_user_id,
+                [
+                    {"role": "user", "text": text, "at": datetime.now(timezone.utc)},
+                    {"role": "bot", "text": answer, "at": datetime.now(timezone.utc)},
+                ],
+            )
+        )
 
     # Voice-out: only when inbound was voice. Speak the answer BODY only
     # (citations live in the text message; speaking [1][2][3] dumps would be
