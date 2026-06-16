@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-  "updated_at": "2026-06-16T13:50:00Z",
+  "updated_at": "2026-06-16T16:48:12Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+    {
+      "id": "SPEC_d033_postgres-durability-daily-backup",
+      "slug": "SPEC_d033_postgres-durability-daily-backup",
+      "branch": "build/SPEC_d033_postgres-durability-daily-backup",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d033_postgres-durability-daily-backup.md",
+      "tests_passed": true,
+      "notes": "d033 Postgres durability built: daily brain_index pg_dump archive to /opt/fpai-backup, 7-backup local retention, SSH/rclone offsite copy, ops-ledger complete/failed/verified/warning events, immediate Telegram failure alert, weekly pg_restore --list verification, recovery playbook, systemd service/timer artifacts, health-check freshness gate, morning-digest backup status artifact, visual digest backup card, and focused tests."
+    },
     {
       "id": "SPEC_d031_council-self-diagnostic-dialogue",
       "slug": "SPEC_d031_council-self-diagnostic-dialogue",

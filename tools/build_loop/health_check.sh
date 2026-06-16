@@ -36,4 +36,27 @@ stuck=$(find /opt/fpai-build/worktrees -maxdepth 1 -mindepth 1 -type d -mtime +1
 use=$(df / | tail -1 | awk '{print $5}' | tr -d '%')
 [ "${use:-0}" -gt 85 ] && fail "disk ${use}% full on 162" "Ember: free disk on 162"
 
+# 7. brain_index backup freshness
+BACKUP_DIR="${BACKUP_DIR:-/opt/fpai-backup}"
+latest_backup=$(find "$BACKUP_DIR" -maxdepth 1 -type f -name 'brain_*.sql.gz' -printf '%T@ %p\n' 2>/dev/null | sort -rn | awk 'NR==1 {print $2}')
+if [ -z "${latest_backup:-}" ]; then
+  fail "brain backup missing or stale — last backup > 26h ago" "Ember: systemctl start fpai-brain-backup.service"
+else
+  backup_age_hours=$(python3 - "$latest_backup" <<'PY'
+import os
+import sys
+import time
+path = sys.argv[1]
+print((time.time() - os.path.getmtime(path)) / 3600)
+PY
+)
+  if python3 - "$backup_age_hours" <<'PY'
+import sys
+raise SystemExit(0 if float(sys.argv[1]) > 26 else 1)
+PY
+  then
+    fail "brain backup missing or stale — last backup > 26h ago" "Ember: inspect fpai-brain-backup.timer and run verify_backup.sh"
+  fi
+fi
+
 echo "health check done $(date -u +%H:%M)Z"

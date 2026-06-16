@@ -32,6 +32,12 @@ FIXTURE_CONTEXT = {
     ],
     "proof_today": 3,
     "event_count": 9,
+    "backup_status": {
+        "icon": "green",
+        "label": "backup complete + offsite",
+        "detail": "/opt/fpai-backup/brain_2026-06-16_03-00.sql.gz",
+        "failure_count": 0,
+    },
     "next_move": "Check service health: fpai-morning-digest",
 }
 
@@ -42,6 +48,7 @@ class VisualDigestTest(unittest.TestCase):
         self.assertIn("FPOS Daily Pulse", html)
         self.assertIn("Open Decisions", html)
         self.assertIn("Server Health", html)
+        self.assertIn("Brain Backup", html)
         self.assertIn("Check service health", html)
 
     def test_ops_ledger_reader_handles_empty_file(self) -> None:

@@ -1,0 +1,38 @@
+# SPEC_d033_postgres-durability-daily-backup Result
+
+- Status: done / awaiting independent review + merge review
+- Branch: `build/SPEC_d033_postgres-durability-daily-backup`
+- Files changed:
+  - `tools/infra/__init__.py`
+  - `tools/infra/backup_brain.sh`
+  - `tools/infra/verify_backup.sh`
+  - `tools/infra/backup_status.py`
+  - `tools/infra/RECOVERY_PLAYBOOK.md`
+  - `tools/infra/systemd/fpai-brain-backup.service`
+  - `tools/infra/systemd/fpai-brain-backup.timer`
+  - `tools/infra/systemd/fpai-brain-backup-verify.service`
+  - `tools/infra/systemd/fpai-brain-backup-verify.timer`
+  - `tools/infra/test_backup.py`
+  - `tools/build_loop/health_check.sh`
+  - `tools/visual/visual_digest.py`
+  - `tools/visual/templates/daily_pulse.html`
+  - `tools/visual/test_visual_digest.py`
+  - `core/BUILD/cron/SPEC_d033_fpai_morning_digest_backup_status.conf`
+  - `core/BUILD/REGISTRY.json`
+  - `core/BUILD/specs/SPEC_d033_postgres-durability-daily-backup.md`
+  - `core/BUILD/results/SPEC_d033_postgres-durability-daily-backup.result.md`
+  - `docs/codex/HANDOFF.md`
+- Summary: Added daily `brain_index` backup with `BACKUP_DISABLE=1`, archive creation under `/opt/fpai-backup`, local retention capped at 7 dumps, offsite copy through `BACKUP_SSH_HOST`/`BACKUP_SSH_PATH` or `RCLONE_REMOTE`, ops-ledger events for success/failure/warning/verification, and immediate Telegram failure alerts. Added weekly verification that finds the latest backup, checks gzip integrity, runs `pg_restore --list`, enforces age and size thresholds, and logs `backup_verified`. Added systemd service/timer artifacts, a recovery playbook, backup freshness in `health_check.sh`, a morning-digest drop-in artifact, and a visual digest backup card backed by ops-ledger status.
+- Tests:
+  - `python3 -B -m unittest tools.infra.test_backup` (7 tests OK)
+  - `python3 -B -m unittest tools.visual.test_visual_digest` (4 tests OK)
+  - `python3 -B -m unittest tools.infra.test_backup tools.visual.test_visual_digest` (11 tests OK)
+  - `bash -n tools/infra/backup_brain.sh tools/infra/verify_backup.sh tools/build_loop/health_check.sh`
+  - `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/infra/backup_status.py tools/infra/test_backup.py tools/visual/visual_digest.py tools/visual/test_visual_digest.py`
+  - `git diff --check`
+- Independent review: attempted local Claude CLI review over the working diff plus untracked d033 files. It failed with `API Error: Unable to connect to API (ConnectionRefused)`. A review note was written to `core/BUILD/reviews/build-SPEC_d033_postgres-durability-daily-backup.md`; manual independent review is still required before merge.
+- Risks: The sandbox used fake `pg_dump`, `pg_restore`, `scp`, and service binaries; no live Postgres dump, real offsite copy, installed systemd timer, or real Telegram alert was exercised. The backup uses PostgreSQL custom archive format via `pg_dump -Fc` and gzip-wrapping at the requested `.sql.gz` path because `pg_restore --list` cannot verify plain SQL dumps. Host install still needs Ember/James to copy unit/drop-in artifacts into `/etc/systemd/system` and enable timers.
+- Rollback: Revert the changed files. If installed on the host, disable/remove `fpai-brain-backup.timer`, `fpai-brain-backup-verify.timer`, their services, and `/etc/systemd/system/fpai-morning-digest.service.d/brain-backup-status.conf`, then run `systemctl daemon-reload`. Runtime kill switch is `BACKUP_DISABLE=1`.
+- Intent solved: `brain_index` now has a repo-reviewed daily backup, retention, offsite-copy path, verification path, alert path, and recovery instructions instead of being a single-server data-loss risk.
+- Downstream intent unlocked: Ember can install the reviewed units on `162`, configure one offsite destination, and run a live restore-proof without James carrying database durability manually.
+- Questions for Ember/James: After merge, configure either `BACKUP_SSH_HOST` + `BACKUP_SSH_PATH` or `RCLONE_REMOTE` in `~/.config/fpai/backup_destinations.env`, install/enable the timers, run one live `systemctl start fpai-brain-backup.service`, then run `systemctl start fpai-brain-backup-verify.service` and confirm `ops_ledger` contains `backup_complete` with `offsite=true` plus `backup_verified` with `valid=true`.

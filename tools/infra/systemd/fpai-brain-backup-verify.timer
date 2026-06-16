@@ -1,0 +1,10 @@
+[Unit]
+Description=Verify FPAI brain_index backup weekly
+
+[Timer]
+OnCalendar=Mon *-*-* 04:00:00 UTC
+Unit=fpai-brain-backup-verify.service
+Persistent=true
+
+[Install]
+WantedBy=timers.target

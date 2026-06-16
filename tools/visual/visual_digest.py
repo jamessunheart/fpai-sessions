@@ -23,6 +23,8 @@ from pathlib import Path
 from typing import Any, Callable, Iterable
 from zoneinfo import ZoneInfo
 
+from tools.infra.backup_status import backup_status
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_OPS_LEDGER = Path(os.environ.get("OPS_LEDGER", "/opt/fpai-build/ops_ledger.jsonl"))
 DEFAULT_OUTPUT_ROOT = Path(os.environ.get("VISUAL_DIGEST_OUTPUT_ROOT", "/opt/fpai-build/visuals"))
@@ -106,6 +108,16 @@ def load_ops_state(path: Path = DEFAULT_OPS_LEDGER, *, now: datetime | None = No
         by_type[event_type] = by_type.get(event_type, 0) + 1
     proof_count = sum(1 for row in rows if str(row.get("type") or row.get("event")) in PROOF_EVENTS)
     return {"events": rows, "event_count": len(rows), "by_type": by_type, "proof_count": proof_count}
+
+
+def load_backup_state(path: Path = DEFAULT_OPS_LEDGER, *, now: datetime | None = None) -> dict[str, Any]:
+    state = backup_status(path, now=now, hours=24)
+    return {
+        "icon": state["icon"],
+        "label": state["label"],
+        "detail": state["detail"],
+        "failure_count": state["failure_count"],
+    }
 
 
 def load_top_three(path: Path = DEFAULT_ALIGNMENT) -> list[str]:
@@ -250,6 +262,7 @@ def build_context(
     current_utc = now or utc_now()
     athens = current_utc.astimezone(ATHENS)
     ops = load_ops_state(ops_ledger, now=current_utc)
+    backup = load_backup_state(ops_ledger, now=current_utc)
     decisions = load_open_decisions()
     build = load_build_state(registry_path, specs_dir, results_dir)
     health = load_server_health()
@@ -262,6 +275,7 @@ def build_context(
         "server_health": health,
         "proof_today": ops["proof_count"],
         "event_count": ops["event_count"],
+        "backup_status": backup,
         "next_move": next_move(build, decisions, health),
     }
 

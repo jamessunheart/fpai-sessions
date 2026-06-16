@@ -1,0 +1,15 @@
+[Unit]
+Description=FPAI brain_index daily backup
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/sh-brain/curator.env
+WorkingDirectory=/opt/fpai-build/FPAI_Cockpit
+ExecStart=/opt/fpai-build/FPAI_Cockpit/tools/infra/backup_brain.sh
+StandardOutput=journal
+StandardError=journal
+TimeoutStartSec=30min
+Nice=10
+IOSchedulingClass=idle
