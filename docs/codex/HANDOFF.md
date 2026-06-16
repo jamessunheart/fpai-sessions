@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-16 · SPEC_d055_subscription-dependency-map · branch `build/SPEC_d055_subscription-dependency-map`
+
+- **Status:** done / awaiting independent review + merge review
+- **Files changed:** `docs/codex/SUBSCRIPTION_DEPENDENCY_MAP.md`; `tools/build_loop/test_subscription_dependency_map.py`; `core/BUILD/specs/SPEC_d055_subscription-dependency-map.md`; `core/BUILD/results/SPEC_d055_subscription-dependency-map.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Audited repo-side build-loop subscription dependencies and documented the Claude Max vs ChatGPT Max split. ChatGPT Max/Codex is the branch-producing build executor lane (`run_codex.sh`, orchestrator build phase, Instrument Rack build route), including the nonzero-`codex exec` hazard where a failure result file can still exist. Claude Max/Claude CLI is the independent reviewer, self-audit proposer, post-build blueprint updater, horizon/message composer, content-draft enhancer, and Ember/context-steward lane. The map records hard failures vs graceful degradations for each subscription being pulled and distinguishes Claude Max CLI from metered Anthropic API usage.
+- **Tests:** `python3 -B -m unittest tools.build_loop.test_subscription_dependency_map` (4 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/test_subscription_dependency_map.py`; `python3 -m json.tool core/BUILD/REGISTRY.json`
+- **Independent review:** configured Claude CLI review failed in this sandbox with `API Error: Unable to connect to API (FailedToOpenSocket)`. Fallback independent-agent review first returned `REQUEST_CHANGES` for missing `run_codex.sh` failure semantics, missing `curator/blueprints/manager.py` blueprint-refresh dependency, and weak call-site coverage. Those findings were fixed; final fallback review result is recorded in `core/BUILD/results/SPEC_d055_subscription-dependency-map.result.md`.
+- **Risks:** Repo evidence audit only; it does not verify live subscription/account state or vault-only workflows. Independent Claude review may need to run on the live host if this sandbox lacks Claude CLI/auth.
+- **Rollback:** revert the d055 files and remove the d055 entry from `core/BUILD/REGISTRY.json`.
+- **Intent solved:** James/Ember can see every repo-side build-loop step that depends on Claude Max vs ChatGPT Max and what fails when either subscription is removed.
+- **Downstream intent unlocked:** route the first local-model replacement spec for a command-compatible local build executor, then an independent local reviewer.
+- **Questions for Ember/James:** after review, decide whether the next spec should target the P0 local build executor replacement or the P0 independent reviewer replacement first; the audit recommends build executor first if ChatGPT Max is at risk, reviewer first if Claude Max is at risk.
+
 ### 2026-06-16 · SPEC_d054_probe-agent-proactive-outreach-s · branch `build/SPEC_d054_probe-agent-proactive-outreach-s`
 
 - **Status:** done / awaiting James review + merge review
