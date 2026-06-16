@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-16 · SPEC_d059_server-162-redundancy-and-failov · branch `build/SPEC_d059_server-162-redundancy-and-failov`
+
+- **Status:** done / independently reviewed / awaiting merge review
+- **Files changed:** `docs/codex/SERVER_162_REDUNDANCY_FAILOVER.md`; `tools/build_loop/test_server_162_failover_plan.py`; `core/BUILD/specs/SPEC_d059_server-162-redundancy-and-failov.md`; `core/BUILD/results/SPEC_d059_server-162-redundancy-and-failov.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the server 162 redundancy and failover plan. It maps the Brain/secondary stack, sh-brain/AppFlowy/Postgres/MinIO, STreasury, Outbounders sync allowlist, Firefly/Paperless/n8n, Ollama/AI Brain/GPU bridge, build/proof timers, and cross-server monitoring. It also inventories direct `162.0.208.88` defaults across active code/config/scripts/docs, defines recovery objectives, phased redeployment, proof checks, rollback, and open gaps.
+- **Tests:** `python3 -B -m unittest tools.build_loop.test_server_162_failover_plan` (6 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/test_server_162_failover_plan.py`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `git diff --check -- docs/codex/SERVER_162_REDUNDANCY_FAILOVER.md tools/build_loop/test_server_162_failover_plan.py core/BUILD/REGISTRY.json core/BUILD/specs/SPEC_d059_server-162-redundancy-and-failov.md`
+- **Independent review:** completed by subagent. It first found two blockers: hardcoded-IP inventory was incomplete and closeout was not merge-ready. Re-review found additional active tooling omissions in decision/merge/memory/legal-critic paths. Fixed by expanding the inventory to include the missed active paths and broader direct-IP classes, strengthening the regression test, adding the result artifact, adding this HANDOFF entry, and marking the registry done after tests. Final re-review reported no remaining blockers.
+- **Risks:** This is repo-only evidence plus the 2026-04-30 read-only inventory. It did not SSH to server 162, query live DNS, inspect live backups, restore volumes, deploy, restart services, touch secrets, or mutate production. Ember must run a live heartbeat and backup/restore proof before treating the plan as current operational truth.
+- **Rollback:** remove `docs/codex/SERVER_162_REDUNDANCY_FAILOVER.md`, `tools/build_loop/test_server_162_failover_plan.py`, and `core/BUILD/results/SPEC_d059_server-162-redundancy-and-failov.result.md`; remove the d059 registry row and this HANDOFF entry.
+- **Intent solved:** server 162 now has a dependency map, hardcoded-IP inventory, and failover sequence instead of remaining an implicit single point of failure.
+- **Downstream intent unlocked:** James/Ember can approve a narrow live heartbeat, alias migration, and backup-restore drill without asking Codex to rediscover the stack.
+- **Questions for Ember/James:** from a writable/live host, create/commit the required branch if merge gate needs `codex/d059-server-162-redundancy-failover`; then route the P0 alias-migration spec and a live backup-restore drill. This sandbox could not create the branch because shared Git metadata was read-only.
+
 ### 2026-06-16 · SPEC_d058_lock-lantern-mirror-ledger-as-st · branch `build/SPEC_d058_lock-lantern-mirror-ledger-as-st`
 
 - **Status:** done / independently reviewed / awaiting merge review
