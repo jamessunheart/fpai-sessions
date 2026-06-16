@@ -5,7 +5,10 @@ metrics so it's cheap and always runs.
 from __future__ import annotations
 
 import logging
+import os
+import sys
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
 
 from ..appflowy import AppFlowy
@@ -13,6 +16,21 @@ from ..db import connect
 from ..proposals import Proposal, ProposalWriter
 
 log = logging.getLogger("curator.digest")
+
+
+def horizon_signal_lines() -> list[str]:
+    repo = Path(os.environ.get("FPAI_CODEX_REPO", "/opt/fpai-build/FPAI_Cockpit"))
+    if str(repo) not in sys.path:
+        sys.path.insert(0, str(repo))
+    try:
+        from tools.horizon.scanner import recent_horizon_signal_lines
+    except Exception:
+        return []
+    ledger = Path(os.environ.get("OPS_LEDGER", "/opt/fpai-build/ops_ledger.jsonl"))
+    try:
+        return recent_horizon_signal_lines(ledger)
+    except Exception:
+        return []
 
 
 async def run(run_id: str) -> dict[str, Any]:
@@ -72,19 +90,25 @@ async def run(run_id: str) -> dict[str, Any]:
             "top_agents": [{"agent": a, "calls": n} for a, n in agents],
         },
     }
+    scanner_flags = horizon_signal_lines()
+    if scanner_flags:
+        report["last_24h"]["horizon_scanner_flags"] = scanner_flags
 
     summary = (
         f"+{sum(by_sens.values())} chunks · "
         f"{merges_24h} auto-merges · "
         f"{blocked_24h} blocked queries"
     )
+    proposal_text = f"Daily digest · {summary}"
+    if scanner_flags:
+        proposal_text += "\n\n⚡ Scanner flagged:\n" + "\n".join(f"- {line}" for line in scanner_flags)
     log.info("digest: %s", summary)
 
     async with AppFlowy() as af:
         writer = ProposalWriter(af)
         await writer.write(
             Proposal(
-                proposal=f"Daily digest · {summary}",
+                proposal=proposal_text,
                 type="other",
                 confidence_score=1.0,
                 proposed_by="digest",

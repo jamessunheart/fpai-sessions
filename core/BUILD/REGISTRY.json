@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-  "updated_at": "2026-06-16T21:07:18Z",
+  "updated_at": "2026-06-16T22:05:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+    {
+      "id": "SPEC_d051_horizon-scanner-agent",
+      "slug": "SPEC_d051_horizon-scanner-agent",
+      "branch": "build/SPEC_d051_horizon-scanner-agent",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d051_horizon-scanner-agent.md",
+      "tests_passed": true,
+      "notes": "d051 Horizon Scanner Agent built: scans life/buildstream/interaction streams, emits at most one predictive TG signal, logs every non-disabled scan to ops_ledger, adds morning digest visibility for signal=yes rows, includes review-only systemd timer/service artifacts, and passed independent review after fixes."
+    },
     {
       "id": "SPEC_d047_intent-protocol-extractor-v0-1",
       "slug": "SPEC_d047_intent-protocol-extractor-v0-1",
