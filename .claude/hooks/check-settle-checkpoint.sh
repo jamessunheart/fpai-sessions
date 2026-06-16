@@ -56,7 +56,7 @@ fi
 
 # Check for today's episodic memory file
 TODAY=$(date +%Y-%m-%d)
-SESSIONS_DIR="$HOME/.claude/projects/-Users-jamessunheart-FPAI-Cockpit/memory/identity/sessions"
+SESSIONS_DIR="$HOME/.claude/projects/-opt-fpai-build-FPAI-Cockpit/memory/identity/sessions"
 
 # Pass if any sessions/{today}_*.md exists
 if compgen -G "$SESSIONS_DIR/${TODAY}_*.md" > /dev/null 2>&1; then
