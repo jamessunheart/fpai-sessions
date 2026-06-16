@@ -82,6 +82,20 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-16 · SPEC_d035_cora-v0-2-monetary-policy-earn-r · branch `build/SPEC_d035_cora-v0-2-monetary-policy-earn-r`
+
+- **Status:** done / awaiting James review + merge review
+- **Files changed:** `docs/policy/CORA_POLICY_v0.2.md`; `docs/policy/test_cora_policy.py`; `core/BUILD/REGISTRY.json`; `core/BUILD/specs/SPEC_d035_cora-v0-2-monetary-policy-earn-r.md`; `core/BUILD/results/SPEC_d035_cora-v0-2-monetary-policy-earn-r.result.md`; `docs/codex/HANDOFF.md`
+- **Summary:** Drafted the review-only CORA v0.2 closed-loop rewards credit policy. It defines CORA as non-cash, non-investment, non-transferable attention credit; proposes provisional earn amounts and spend/burn costs; lists backing assets; defines daily/event/circulation caps and review triggers; includes all seven required legal containment items; sets inactivity decay and Hermes notices; and keeps a non-empty gap log for James/compliance decisions before launch. No CORA feature references or product wiring were added.
+- **Tests:** `python3 -B -m unittest docs.policy.test_cora_policy` (3 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile docs/policy/test_cora_policy.py`; `git diff --check -- docs/policy/CORA_POLICY_v0.2.md docs/policy/test_cora_policy.py core/BUILD/REGISTRY.json core/BUILD/specs/SPEC_d035_cora-v0-2-monetary-policy-earn-r.md`
+- **Independent review:** completed. No content/spec blockers found: all 8 sections present, all 7 legal containment items present, gap log non-empty, tests appropriate, and no product wiring/prohibited action added. Review blocker was commit state only.
+- **Commit status:** blocked in this sandbox. `git commit -m "Add CORA v0.2 policy draft"` failed because Git could not create `/opt/fpai-build/FPAI_Cockpit/.git/worktrees/SPEC_d035_cora-v0-2-monetary-policy-earn-r/index.lock`: read-only file system. Ember must commit from a writable Git context before merge.
+- **Risks:** Amounts, caps, and prices are provisional policy drafts, not launch-approved economics. Compliance/legal review and launch capacity modeling remain open in the gap log. Branch changes are working-tree changes until committed by Ember/writable Git context.
+- **Rollback:** remove `docs/policy/CORA_POLICY_v0.2.md`, `docs/policy/test_cora_policy.py`, and `core/BUILD/results/SPEC_d035_cora-v0-2-monetary-policy-earn-r.result.md`; remove the d035 row from `core/BUILD/REGISTRY.json`; remove this HANDOFF note if the branch is abandoned.
+- **Intent solved:** CORA now has a complete reviewable v0.2 closed-loop policy draft before onboarding, Fi-Art, marketplace, or retention features reference the credit.
+- **Downstream intent unlocked:** James and compliance can review concrete earn, burn, cap, decay, and containment rules before CORA becomes visible or product-bound.
+- **Questions for Ember/James:** approve/revise earn amounts; approve/revise redemption pricing; decide whether CORA is visible immediately or hidden until policy finalization; complete compliance/legal review before launch.
+
 ### 2026-06-16 · SPEC_d031_council-self-diagnostic-dialogue · branch `build/SPEC_d031_council-self-diagnostic-dialogue`
 
 - **Status:** done / awaiting independent review + merge review
