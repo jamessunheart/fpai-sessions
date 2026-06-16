@@ -13,6 +13,11 @@ import os, sys, json, subprocess, ssl, urllib.request, pathlib
 HOME = os.path.expanduser("~")
 ROOT = subprocess.run(["git","rev-parse","--show-toplevel"], capture_output=True, text=True).stdout.strip() or "."
 BASE = "feat/headless-build"
+sys.path.insert(0, ROOT)
+try:
+    from curator.tool_mastery.loader import inject_mastery
+except Exception:
+    def inject_mastery(prompt, tool_name): return prompt
 try:
     import certifi; _SSL = ssl.create_default_context(cafile=certifi.where())
 except Exception:
@@ -74,6 +79,7 @@ def main():
     # $0 marginal: review via `claude -p` (Claude Max flat-rate), not the metered API.
     CLAUDE = os.path.expanduser("~/.local/bin/claude")
     prompt = sys_prompt + f"\n\nReview this diff (branch {branch} vs {BASE}):\n\n{diff}\n\nRespond with ONLY the JSON object."
+    prompt = inject_mastery(prompt, "claude_review")
     try:
         rr = subprocess.run([CLAUDE, "-p", prompt], stdin=subprocess.DEVNULL,
                             capture_output=True, text=True, timeout=220)

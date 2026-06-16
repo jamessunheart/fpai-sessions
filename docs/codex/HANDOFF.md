@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-16 · SPEC_d046_tool-mastery-system-deep-learn-e · branch `build/SPEC_d046_tool-mastery-system-deep-learn-e`
+
+- **Status:** done / awaiting independent review + merge review
+- **Files changed:** `docs/tool_mastery/`; `curator/tool_mastery/`; `tools/merge/ai_review.py`; `tools/council/debate.py`; `tools/build_loop/health_check.sh`; `core/BUILD/REGISTRY.json`; `core/BUILD/specs/SPEC_d046_tool-mastery-system-deep-learn-e.md`; `core/BUILD/results/SPEC_d046_tool-mastery-system-deep-learn-e.result.md`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the Tool Mastery substrate: seeded mastery cards for Claude/Fable 5, Codex, Claude review, Stripe, Brevo, Hermes, Ollama, and Cal.com; compact extraction of optimal-use and anti-pattern sections; prompt injection with `TOOL_MASTERY_DISABLE=1`; `learn_tool()`/`refresh_all()` with `[AUTO-GENERATED]` overwrite discipline; and `python -m curator.tool_mastery learn ...`. Wired `claude_review` mastery into `tools/merge/ai_review.py`, `claude_fable5` mastery into `tools/council/debate.py`, and a model-update hook into `tools/build_loop/health_check.sh` that relearns `claude_fable5` from Anthropic release notes when `CURATOR_ANTHROPIC_MODEL` changes.
+- **Tests:** `python3 -B -m unittest curator.tool_mastery.test_loader` (8 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile curator/__init__.py curator/tool_mastery/__init__.py curator/tool_mastery/loader.py curator/tool_mastery/learn.py curator/tool_mastery/__main__.py curator/tool_mastery/test_loader.py tools/merge/ai_review.py tools/council/debate.py`; `bash -n tools/build_loop/health_check.sh`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `git diff --check -- curator docs/tool_mastery tools/merge/ai_review.py tools/council/debate.py tools/build_loop/health_check.sh core/BUILD/REGISTRY.json core/BUILD/specs/SPEC_d046_tool-mastery-system-deep-learn-e.md`
+- **Independent review:** completed by subagent. It found the model-update refresh initially called broad `refresh-all`, could mark failed refreshes handled, and could re-learn from stale card text. Fixed: health check now calls the `claude_fable5` learner against release notes, only records the new model after success or explicit human-edited-card skip, and `refresh_all()` prefers the recorded source URL.
+- **Risks:** Live `claude -p --effort high` learning was not exercised in this sandbox. Seed cards are reviewable starting cards, not authoritative vendor documentation snapshots. `curator/capabilities/executor.py` was not present in this checkout, so send_email/book_calendar injection remains a follow-up on the branch where d044 exists.
+- **Rollback:** remove `docs/tool_mastery/`, `curator/tool_mastery/`, and the d046 result file; revert the injection lines in `tools/merge/ai_review.py` and `tools/council/debate.py`; remove the model-refresh block from `tools/build_loop/health_check.sh`; remove the d046 registry/HANDOFF entries.
+- **Intent solved:** Integrated tools now have a repo-local mastery layer that injects concrete use patterns and anti-patterns at call time.
+- **Downstream intent unlocked:** Future tool integrations can create/refresh mastery cards through the CLI and wire calls to `inject_mastery()` so tool use improves without re-briefing James.
+- **Questions for Ember/James:** after the branch with `curator/capabilities/executor.py` is present, wire `send_email -> brevo` and `book_calendar -> cal_com` there.
+
 ### 2026-06-16 · SPEC_d038_content-bank-v0-1-truth-asset-sc · branch `build/SPEC_d038_content-bank-v0-1-truth-asset-sc`
 
 - **Status:** done / awaiting James review + merge review

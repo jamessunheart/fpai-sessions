@@ -20,6 +20,13 @@ HOST = os.environ.get("BRAIN_HOST", "root@162.0.208.88")
 SERVER_MODE = os.path.isdir("/opt/sh-brain-src/curator")
 REPO = "/opt/fpai-build/FPAI_Cockpit" if SERVER_MODE else HOME + "/FPAI_Cockpit"
 CLAUDE = os.path.expanduser("~/.local/bin/claude")
+LOCAL_REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+sys.path.insert(0, LOCAL_REPO)
+sys.path.insert(0, REPO)
+try:
+    from curator.tool_mastery.loader import inject_mastery
+except Exception:
+    def inject_mastery(prompt, tool_name): return prompt
 CFG = HOME + "/.config/fpai/council"; os.makedirs(CFG, exist_ok=True)
 DAILY_CAP = float(os.environ.get("COUNCIL_DAILY_USD", "3.0"))
 ENV = ('ENVFILE=$(systemctl show sh-brain-tgbot -p EnvironmentFiles 2>/dev/null | '
@@ -139,6 +146,7 @@ try:
 except Exception:
     pass
 prompt = SYS + _focus + "\n\nDECISION QUEUE:\n" + queue + "\n\nRECENT INTENTS (chats):\n" + chats + "\n\nRespond with ONLY the JSON object."
+prompt = inject_mastery(prompt, "claude_fable5")
 try:
     import subprocess as _sp
     r = _sp.run([CLAUDE, "-p", prompt], stdin=_sp.DEVNULL, capture_output=True, text=True, timeout=150)

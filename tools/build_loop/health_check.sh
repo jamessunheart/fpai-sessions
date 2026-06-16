@@ -36,4 +36,29 @@ stuck=$(find /opt/fpai-build/worktrees -maxdepth 1 -mindepth 1 -type d -mtime +1
 use=$(df / | tail -1 | awk '{print $5}' | tr -d '%')
 [ "${use:-0}" -gt 85 ] && fail "disk ${use}% full on 162" "Ember: free disk on 162"
 
+# 7. model update -> refresh any auto-generated tool mastery cards
+model="${CURATOR_ANTHROPIC_MODEL:-}"
+state=/opt/fpai-build/.curator_anthropic_model
+repo=/opt/fpai-build/FPAI_Cockpit
+anthropic_release_notes_url="${ANTHROPIC_RELEASE_NOTES_URL:-https://docs.anthropic.com/en/release-notes/overview}"
+if [ -n "$model" ]; then
+  prev=""
+  [ -f "$state" ] && prev="$(cat "$state" 2>/dev/null || true)"
+  if [ "$model" != "$prev" ]; then
+    if [ -d "$repo" ]; then
+      card="$repo/docs/tool_mastery/claude_fable5.md"
+      if [ ! -f "$card" ] || grep -q '\[AUTO-GENERATED\]' "$card"; then
+        if (cd "$repo" && python3 -m curator.tool_mastery learn claude_fable5 "$anthropic_release_notes_url" --force >/tmp/fpai-tool-mastery-refresh.log 2>&1); then
+          printf '%s\n' "$model" > "$state" 2>/dev/null || true
+        else
+          fail "tool mastery refresh failed after CURATOR_ANTHROPIC_MODEL changed to $model" "Ember: inspect /tmp/fpai-tool-mastery-refresh.log"
+        fi
+      else
+        fail "claude_fable5 mastery card is human-edited; skipped auto-refresh for model $model" "Ember: review docs/tool_mastery/claude_fable5.md against Anthropic release notes"
+        printf '%s\n' "$model" > "$state" 2>/dev/null || true
+      fi
+    fi
+  fi
+fi
+
 echo "health check done $(date -u +%H:%M)Z"
