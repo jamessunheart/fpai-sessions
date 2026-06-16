@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-  "updated_at": "2026-06-15T19:12:34Z",
+  "updated_at": "2026-06-16T11:22:01Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+    {
+      "id": "SPEC_d022_continuous-learning-controller",
+      "slug": "SPEC_d022_continuous-learning-controller",
+      "branch": "build/SPEC_d022_continuous-learning-controller",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d022_continuous-learning-controller.md",
+      "tests_passed": true,
+      "notes": "d022 preference seed exporter built: exports unexported brain_index.corrections rows to /opt/fpai-build/data/preference_pairs.jsonl, stamps preference_pair_exported, logs ops-ledger row count, enforces d021 watermark gate, and provides the nightly 02:00 UTC cron artifact without live install."
+    },
     {
       "id": "SPEC_d018_live-system-status-injector",
       "slug": "SPEC_d018_live-system-status-injector",

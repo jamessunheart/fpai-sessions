@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-16 · SPEC_d022_continuous-learning-controller · branch `build/SPEC_d022_continuous-learning-controller`
+
+- **Status:** done / awaiting diff review + merge review
+- **Files changed:** `tools/learn/seed_preference_pairs.py`; `tools/learn/test_seed_preference_pairs.py`; `scripts/seed_preference_pairs.sh`; `core/BUILD/cron/SPEC_d022_preference_seed.cron`; `core/BUILD/REGISTRY.json`; `core/BUILD/specs/SPEC_d022_continuous-learning-controller.md`; `core/BUILD/results/SPEC_d022_continuous-learning-controller.result.md`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the d022 preference seed exporter. It reads unexported `brain_index.corrections` rows after the d021 `preference_pair_exported` watermark exists, appends `{"prompt", "chosen", "rejected"}` JSONL rows to `/opt/fpai-build/data/preference_pairs.jsonl`, stamps exported correction rows, logs the exported row count to the ops ledger, and exposes a reviewed nightly 02:00 UTC cron artifact plus `/opt/fpai-build/scripts/seed_preference_pairs.sh` wrapper. It supports both the d022 column names and the current d014 correction column names after the d021 watermark lands.
+- **Tests:** `python3 -B -m unittest tools.learn.test_seed_preference_pairs tools.learn.test_capture_corrections tools.learn.test_learn` (11 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/learn/seed_preference_pairs.py tools/learn/test_seed_preference_pairs.py`; `bash -n scripts/seed_preference_pairs.sh`; `git diff --check -- tools/learn/seed_preference_pairs.py tools/learn/test_seed_preference_pairs.py scripts/seed_preference_pairs.sh core/BUILD/cron/SPEC_d022_preference_seed.cron core/BUILD/REGISTRY.json core/BUILD/specs/SPEC_d022_continuous-learning-controller.md`
+- **Risks:** This sandbox did not SSH to server 162, verify the live d021 git hook/test memory write, run against the production DB, install `/opt/fpai-build/scripts/seed_preference_pairs.sh`, or install cron. The exporter fails closed if `preference_pair_exported` is missing, so it will not silently duplicate exports before d021 is live.
+- **Rollback:** revert the changed files; if Ember later installs the server wrapper, remove `/opt/fpai-build/scripts/seed_preference_pairs.sh` and delete the cron line `0 2 * * * /opt/fpai-build/scripts/seed_preference_pairs.sh`.
+- **Intent solved:** captured live corrections now have a first durable preference-pair seed artifact instead of staying only as prompt memory.
+- **Downstream intent unlocked:** after d021 is live, Ember/ops can turn on a nightly measured correction-to-preference seed loop and use the JSONL count as the first continuous-learning controller proof signal.
+- **Questions for Ember/James:** after merge and d021 live verification, copy/install `scripts/seed_preference_pairs.sh` to `/opt/fpai-build/scripts/seed_preference_pairs.sh`, install the reviewed cron line, and run one live proof: file exists, `wc -l /opt/fpai-build/data/preference_pairs.jsonl` is greater than 0, and no unexported correction rows older than 24h remain.
+
 ### 2026-06-15 · SPEC_d018_live-system-status-injector · branch `build/SPEC_d018_live-system-status-injector`
 
 - **Status:** done / awaiting independent review + merge review

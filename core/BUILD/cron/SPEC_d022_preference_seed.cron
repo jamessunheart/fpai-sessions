@@ -1,0 +1,9 @@
+# d022 preference seed export, installed on server 162 after d021 is verified live.
+# This file is a reviewed cron artifact, not an installed production crontab.
+#
+# Proof condition:
+#   /opt/fpai-build/data/preference_pairs.jsonl exists
+#   wc -l /opt/fpai-build/data/preference_pairs.jsonl > 0
+#   no brain_index.corrections rows with preference_pair_exported IS NULL older than 24h
+
+0 2 * * * /opt/fpai-build/scripts/seed_preference_pairs.sh
