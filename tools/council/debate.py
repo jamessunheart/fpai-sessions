@@ -25,7 +25,9 @@ DAILY_CAP = float(os.environ.get("COUNCIL_DAILY_USD", "3.0"))
 ENV = ('ENVFILE=$(systemctl show sh-brain-tgbot -p EnvironmentFiles 2>/dev/null | '
        'sed -E "s/EnvironmentFiles=//; s/ .*//"); cd /opt/sh-brain-src && set -a; . "$ENVFILE" 2>/dev/null; set +a;')
 sys.path.insert(0, REPO + "/tools/cost")
+sys.path.insert(0, REPO)
 import track
+from tools.intelligence.model_router import call_model
 try:
     from .self_diagnostic import is_decision_queue_empty, run_diagnostic_dialogue, trigger_from_files
 except Exception:
@@ -140,18 +142,16 @@ except Exception:
     pass
 prompt = SYS + _focus + "\n\nDECISION QUEUE:\n" + queue + "\n\nRECENT INTENTS (chats):\n" + chats + "\n\nRespond with ONLY the JSON object."
 try:
-    import subprocess as _sp
-    r = _sp.run([CLAUDE, "-p", prompt], stdin=_sp.DEVNULL, capture_output=True, text=True, timeout=150)
-    txt = r.stdout.strip()
+    routed = call_model(prompt, task_type="council")
+    txt = routed["response"].strip()
     d = json.loads(txt[txt.find("{"):txt.rfind("}")+1])
-    # claude -p = Claude Max flat-rate -> $0 marginal real spend (no metered API call)
 except Exception as e:
-    print("debate error:", e, "| raw:", (r.stdout[:200] if "r" in dir() else "")); sys.exit(1)
+    print("debate error:", e); sys.exit(1)
 
 # record we processed this signal (so we don't re-debate the same state)
 open(CFG + "/last_hash","w").write(sig_hash)
 total_today, _ = track.today("council")
-print(f"debated via claude -p (Claude Max flat-rate, $0 marginal). real metered today: ${total_today:.4f}")
+print(f"debated via {routed.get('provider','model-router')} T{routed.get('tier','?')}. real metered today: ${total_today:.4f}")
 
 if not d.get("propose") or len((d.get("build_spec") or "")) < 15:
     _ops("nothing", "council debated, chose to build nothing this round")

@@ -131,24 +131,18 @@ Be decisive. Limit total response to 500 words. The recommendation MUST be one o
 # === Model adapters ===
 def call_claude(prompt: str, model_alias: str = "opus") -> tuple[str | None, dict]:
     """Invoke claude CLI. Returns (text, usage_dict)."""
-    cmd = [str(CLAUDE_BIN), "--model", model_alias, "-p", "--output-format", "json", prompt]
     try:
-        r = subprocess.run(cmd, capture_output=True, text=True, timeout=180)
-    except subprocess.TimeoutExpired:
-        return None, {"error": "timeout"}
-    if r.returncode != 0:
-        return None, {"error": r.stderr[:300] or "non-zero exit"}
-    try:
-        data = json.loads(r.stdout)
-        text = data.get("result", "")
-        usage = data.get("usage", {})
-        return text, {
-            "tokens_in": usage.get("input_tokens", 0),
-            "tokens_out": usage.get("output_tokens", 0),
-            "cost_usd": data.get("total_cost_usd", 0),
+        sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+        from tools.intelligence.model_router import call_model
+
+        routed = call_model(prompt, task_type="decision")
+        return routed["response"], {
+            "provider": routed["provider"],
+            "tier": routed["tier"],
+            "cost_usd": routed["cost_estimate"],
         }
-    except json.JSONDecodeError:
-        return r.stdout, {}
+    except Exception as exc:
+        return None, {"error": str(exc)[:300]}
 
 
 def call_qwen(prompt: str) -> tuple[str | None, dict]:

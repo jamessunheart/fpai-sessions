@@ -469,20 +469,14 @@ def validate_specs(items: list[Any]) -> list[dict[str, Any]]:
 
 
 def run_claude_prompt(prompt: str, timeout: int = 120) -> str:
-    claude = shutil.which("claude")
-    if not claude:
-        raise RuntimeError("claude CLI not found")
-    result = subprocess.run(
-        [claude, "-p", prompt],
-        check=False,
-        text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        timeout=timeout,
-    )
-    if result.returncode != 0:
-        raise RuntimeError(result.stderr.strip() or f"claude exited {result.returncode}")
-    return result.stdout
+    try:
+        from tools.intelligence.model_router import call_model
+    except Exception:
+        import sys
+
+        sys.path.insert(0, str(REPO_ROOT))
+        from tools.intelligence.model_router import call_model
+    return call_model(prompt, task_type="council")["response"]
 
 
 def queue_build(spec: dict[str, Any]) -> bool:

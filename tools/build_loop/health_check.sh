@@ -21,7 +21,27 @@ if journalctl -u fpai-build-loop.service -u fpai-council.service --since '6 hour
 fi
 
 # 3. codex present (the build engine)
-command -v codex >/dev/null 2>&1 || fail "codex CLI missing on 162" "Ember: reinstall codex"
+command -v codex >/dev/null 2>&1 || fail "codex CLI missing on 162" "Ember: model-router will fall back; reinstall codex for T0 build"
+
+# 3b. model-provider health probe (logs provider_health to ops ledger)
+if cd /opt/fpai-build/FPAI_Cockpit 2>/dev/null; then
+  mh=$(python3 -m tools.intelligence.provider_health 2>/dev/null || true)
+  if [ -n "$mh" ]; then
+    any=$(python3 - "$mh" <<'PY'
+import json, sys
+try:
+    data = json.loads(sys.argv[1])
+except Exception:
+    print("0")
+else:
+    print("1" if any(bool(data.get(k)) for k in ("claude", "codex", "ollama")) else "0")
+PY
+)
+    [ "$any" = "1" ] || fail "all local model providers unavailable: $mh" "Ember: check claude/codex auth and ollama service"
+  else
+    fail "model provider health probe failed to run" "Ember: verify tools/intelligence/provider_health.py"
+  fi
+fi
 
 # 4. the loops' timers active
 for tm in fpai-build-loop fpai-council fpai-morning-digest; do

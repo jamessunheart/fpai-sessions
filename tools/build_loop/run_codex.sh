@@ -24,13 +24,11 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-if ! command -v codex >/dev/null 2>&1; then
-  echo "ERROR: codex CLI not on PATH. Install: npm i -g @openai/codex"
-  echo "Auth is already present (~/.codex/auth.json, chatgpt mode) — no login needed."
-  exit 1
+if command -v codex >/dev/null 2>&1; then
+  echo "codex: $(command -v codex)  ($(codex --version 2>/dev/null | head -1))"
+else
+  echo "codex CLI not on PATH; model-router fallback will try T0 claude, T1 ollama, then capped T2"
 fi
-
-echo "codex: $(command -v codex)  ($(codex --version 2>/dev/null | head -1))"
 echo "target repo: $TARGET"
 
 WT_BASE="$HOME/.fpai-build-worktrees"
@@ -62,7 +60,7 @@ for spec in "$SPECS"/*.md; do
     echo "isolated worktree: $BUILD_DIR (branch build/$id)"
   fi
   if [ "$DRY" = "1" ]; then
-    echo "(dry-run) would run: codex exec --cd '$BUILD_DIR' < '$spec'  →  $out"
+    echo "(dry-run) would run: codex exec --cd '$BUILD_DIR' < '$spec' with model-router fallback  →  $out"
     continue
   fi
   # Headless build. --full-auto lets Codex edit files + run commands in the target repo.
@@ -72,7 +70,20 @@ for spec in "$SPECS"/*.md; do
     echo "_ran: $(date -u +%Y-%m-%dT%H:%M:%SZ) · target: ${TARGET}_"
     echo
     echo '```'
-    codex exec --cd "$BUILD_DIR" --full-auto - < "$spec" 2>&1 || echo "[codex exited non-zero]"
+    if command -v codex >/dev/null 2>&1 && codex exec --cd "$BUILD_DIR" --full-auto - < "$spec" 2>&1; then
+      :
+    else
+      echo "[codex unavailable or exited non-zero — falling back through model-router]"
+      MODEL_PROMPT="$(mktemp "/tmp/model-router-build-${id}.XXXXXX")"
+      {
+        cat "$spec"
+        echo
+        echo "Codex T0 is unavailable. Produce a conservative implementation plan or patch guidance for this build in repo $BUILD_DIR. Do not spend above the configured daily cap."
+      } > "$MODEL_PROMPT"
+      (cd "$BUILD_DIR" && python3 -m tools.intelligence.model_router --task-type build --prompt-file "$MODEL_PROMPT") 2>&1 \
+        || echo "[model-router build fallback exited non-zero]"
+      rm -f "$MODEL_PROMPT"
+    fi
     echo '```'
   } | tee "$out"
   echo "→ wrote $out"

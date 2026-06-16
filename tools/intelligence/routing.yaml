@@ -1,0 +1,37 @@
+build:
+  - codex
+  - claude
+  - ollama
+  - anthropic-api
+  - openai-api
+  - gemini-api
+review:
+  - claude
+  - ollama
+  - openai-api
+  - anthropic-api
+  - gemini-api
+council:
+  - claude
+  - ollama
+  - gemini-api
+  - anthropic-api
+  - openai-api
+synthesis:
+  - claude
+  - ollama
+  - openai-api
+  - anthropic-api
+  - gemini-api
+audit:
+  - claude
+  - ollama
+  - openai-api
+  - anthropic-api
+  - gemini-api
+decision:
+  - claude
+  - ollama
+  - openai-api
+  - anthropic-api
+  - gemini-api

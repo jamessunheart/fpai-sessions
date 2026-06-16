@@ -13,6 +13,8 @@ import os, sys, json, subprocess, ssl, urllib.request, pathlib
 HOME = os.path.expanduser("~")
 ROOT = subprocess.run(["git","rev-parse","--show-toplevel"], capture_output=True, text=True).stdout.strip() or "."
 BASE = "feat/headless-build"
+sys.path.insert(0, ROOT)
+from tools.intelligence.model_router import call_model
 try:
     import certifi; _SSL = ssl.create_default_context(cafile=certifi.where())
 except Exception:
@@ -71,13 +73,10 @@ def main():
         "main branch, and any silent guardrail bypass. Be strict: when in doubt, REQUEST_CHANGES. "
         "Respond ONLY with JSON: {\"verdict\":\"APPROVE\"|\"REQUEST_CHANGES\",\"risk\":\"low\"|\"med\"|\"high\","
         "\"summary\":\"one line\",\"findings\":[\"...\"]}")
-    # $0 marginal: review via `claude -p` (Claude Max flat-rate), not the metered API.
-    CLAUDE = os.path.expanduser("~/.local/bin/claude")
     prompt = sys_prompt + f"\n\nReview this diff (branch {branch} vs {BASE}):\n\n{diff}\n\nRespond with ONLY the JSON object."
     try:
-        rr = subprocess.run([CLAUDE, "-p", prompt], stdin=subprocess.DEVNULL,
-                            capture_output=True, text=True, timeout=220)
-        text = rr.stdout.strip()
+        routed = call_model(prompt, task_type="review")
+        text = routed["response"].strip()
         text = text[text.find("{"): text.rfind("}")+1] if "{" in text else text
         v = json.loads(text)
     except Exception as e:
@@ -88,7 +87,7 @@ def main():
     md = (f"# AI Review — {branch}\n\n**Verdict:** {verdict} · **Risk:** {v.get('risk','?')}\n\n"
           f"**Summary:** {v.get('summary','')}\n\n## Findings\n"
           + ("".join(f"- {f}\n" for f in v.get("findings",[])) or "- (none)\n")
-          + f"\n*Reviewer: claude-opus-4-8 (independent of the Codex builder).*\n")
+          + f"\n*Reviewer: {routed.get('provider','model-router')} T{routed.get('tier','?')} via model-router.*\n")
     open(rev,"w").write(md)
     print(f"{verdict}: {branch} · risk={v.get('risk','?')} · {v.get('summary','')}")
     sys.exit(0 if verdict == "APPROVE" else 1)
