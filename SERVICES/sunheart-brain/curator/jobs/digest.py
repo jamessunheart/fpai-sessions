@@ -4,10 +4,9 @@ metrics so it's cheap and always runs.
 """
 from __future__ import annotations
 
-import json
 import logging
 import os
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -17,70 +16,25 @@ from ..proposals import Proposal, ProposalWriter
 
 log = logging.getLogger("curator.digest")
 
-DEFAULT_OPS_LEDGER = Path(os.environ.get("OPS_LEDGER", "/opt/fpai-build/ops_ledger.jsonl"))
 
-
-def smoke_health_summary(*, ops_ledger: Path = DEFAULT_OPS_LEDGER, now: datetime | None = None) -> dict[str, Any]:
-    now = now or datetime.now(timezone.utc)
-    cutoff = now - timedelta(hours=24)
-    rows: list[dict[str, Any]] = []
-    spec_gaps: list[dict[str, Any]] = []
-    if not ops_ledger.exists():
-        return {
-            "status": "unknown",
-            "summary": "smoke tests have not written to ops_ledger",
-            "runs": 0,
-            "warnings": 0,
-            "failures": 0,
-            "details": [],
-            "spec_compliance_gaps": [],
-        }
-    for line in ops_ledger.read_text(encoding="utf-8", errors="replace").splitlines():
-        try:
-            row = json.loads(line)
-        except Exception:
-            continue
-        try:
-            ts = datetime.strptime(row.get("ts", ""), "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
-        except Exception:
-            continue
-        if ts < cutoff:
-            continue
-        if row.get("loop") == "smoke_test" and row.get("event") == "smoke_test":
-            rows.append(row)
-        if row.get("loop") == "spec_checker" and row.get("event") == "spec_gap":
-            spec_gaps.append(row)
-    warnings = sum(int(r.get("warnings") or 0) for r in rows)
-    failures = sum(int(r.get("failures") or 0) for r in rows)
-    details = [str(r.get("detail", "")) for r in rows if r.get("status") == "FAIL" or int(r.get("failures") or 0) > 0]
-    skipped = rows and rows[-1].get("status") == "SKIP"
-    if failures:
-        icon = "🔴"
-        summary = f"{icon} {failures} failures: {'; '.join(details[:3])}"
-        status = "fail"
-    elif skipped:
-        summary = "🟡 smoke tests skipped by kill switch"
-        status = "skip"
-    elif warnings:
-        icon = "🟡"
-        summary = f"{icon} {warnings} warnings"
-        status = "warn"
-    elif rows:
-        icon = "🟢"
-        summary = f"{icon} All 7 checks passed"
-        status = "pass"
-    else:
-        summary = "🟡 no smoke test runs in last 24h"
-        status = "warn"
-    return {
-        "status": status,
-        "summary": summary,
-        "runs": len(rows),
-        "warnings": warnings,
-        "failures": failures,
-        "details": details[:5],
-        "spec_compliance_gaps": spec_gaps[:10],
-    }
+def horizon_signal_lines() -> list[str]:
+    repo = Path(os.environ.get("FPAI_CODEX_REPO", "/opt/fpai-build/FPAI_Cockpit"))
+    scanner_path = repo / "tools" / "horizon" / "scanner.py"
+    try:
+        import importlib.util as _ilu
+        _spec = _ilu.spec_from_file_location("fpai_horizon_scanner", scanner_path)
+        _mod = _ilu.module_from_spec(_spec) if _spec and _spec.loader else None
+        if not _mod:
+            return []
+        _spec.loader.exec_module(_mod)
+        recent_horizon_signal_lines = _mod.recent_horizon_signal_lines
+    except Exception:
+        return []
+    ledger = Path(os.environ.get("OPS_LEDGER", "/opt/fpai-build/ops_ledger.jsonl"))
+    try:
+        return recent_horizon_signal_lines(ledger)
+    except Exception:
+        return []
 
 
 async def run(run_id: str) -> dict[str, Any]:
@@ -139,22 +93,26 @@ async def run(run_id: str) -> dict[str, Any]:
             "blocked_queries": blocked_24h,
             "top_agents": [{"agent": a, "calls": n} for a, n in agents],
         },
-        "system_health": smoke_health_summary(),
     }
+    scanner_flags = horizon_signal_lines()
+    if scanner_flags:
+        report["last_24h"]["horizon_scanner_flags"] = scanner_flags
 
     summary = (
         f"+{sum(by_sens.values())} chunks · "
         f"{merges_24h} auto-merges · "
-        f"{blocked_24h} blocked queries · "
-        f"SYSTEM HEALTH: {report['system_health']['summary']}"
+        f"{blocked_24h} blocked queries"
     )
+    proposal_text = f"Daily digest · {summary}"
+    if scanner_flags:
+        proposal_text += "\n\n⚡ Scanner flagged:\n" + "\n".join(f"- {line}" for line in scanner_flags)
     log.info("digest: %s", summary)
 
     async with AppFlowy() as af:
         writer = ProposalWriter(af)
         await writer.write(
             Proposal(
-                proposal=f"Daily digest · {summary}",
+                proposal=proposal_text,
                 type="other",
                 confidence_score=1.0,
                 proposed_by="digest",

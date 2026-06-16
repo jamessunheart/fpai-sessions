@@ -1,0 +1,11 @@
+[Unit]
+Description=FPAI Horizon Scanner
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/sh-brain/curator.env
+WorkingDirectory=/opt/fpai-build/FPAI_Cockpit
+ExecStart=/usr/bin/env python3 /opt/fpai-build/FPAI_Cockpit/tools/horizon/scanner.py
+

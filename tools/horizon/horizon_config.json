@@ -1,0 +1,9 @@
+{
+  "energy_low_days_threshold": 3,
+  "build_stall_repeat_threshold": 2,
+  "revert_streak_threshold": 3,
+  "topic_recurrence_threshold": 3,
+  "silence_hours_threshold": 24,
+  "active_hours_utc": [6, 20]
+}
+
