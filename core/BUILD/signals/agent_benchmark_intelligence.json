@@ -1,0 +1,160 @@
+{
+  "generated_at": "2026-06-16T23:29:09Z",
+  "guardrails": [
+    "advisory-only",
+    "no default network access",
+    "no model downloads",
+    "no training",
+    "no production routing",
+    "no spend without explicit provider fixture/command and cost cap"
+  ],
+  "lantern": {
+    "dimension_weights": {
+      "code_quality": 0.2318,
+      "critique_depth": 0.2913,
+      "learning_speed": 0.1641,
+      "reasoning": 0.3128
+    },
+    "external_findings": [
+      {
+        "dimensions": {
+          "code_quality": 0.9,
+          "critique_depth": 0.0,
+          "learning_speed": 0.0,
+          "reasoning": 0.55
+        },
+        "evidence": [
+          "live fetch failed for SWE-bench: <urlopen error [Errno -3] Temporary failure in name resolution>",
+          "live fetch failed for LiveBench: <urlopen error [Errno -3] Temporary failure in name resolution>",
+          "live fetch failed for AgentBench: <urlopen error [Errno -3] Temporary failure in name resolution>",
+          "live fetch failed for HELM: <urlopen error [Errno -3] Temporary failure in name resolution>"
+        ],
+        "finding_id": "finding-dedb65f4bae65fa0",
+        "recommended_use": "Weight internal builder placement toward tests passed, rollback clarity, and small patch blast radius.",
+        "source": "seed:SWE-bench style repo repair",
+        "summary": "Repository-grounded coding benchmarks emphasize real issue resolution, tests, and patch quality.",
+        "url": "https://www.swebench.com/"
+      },
+      {
+        "dimensions": {
+          "code_quality": 0.0,
+          "critique_depth": 0.52,
+          "learning_speed": 0.0,
+          "reasoning": 0.78
+        },
+        "evidence": [
+          "live fetch failed for SWE-bench: <urlopen error [Errno -3] Temporary failure in name resolution>",
+          "live fetch failed for LiveBench: <urlopen error [Errno -3] Temporary failure in name resolution>",
+          "live fetch failed for AgentBench: <urlopen error [Errno -3] Temporary failure in name resolution>",
+          "live fetch failed for HELM: <urlopen error [Errno -3] Temporary failure in name resolution>"
+        ],
+        "finding_id": "finding-0762e3352cd3a3ae",
+        "recommended_use": "Prefer agents that leave evidence, guardrails, and next-step proof in result files.",
+        "source": "seed:AgentBench style task suites",
+        "summary": "Agent eval frameworks score multi-step tool use, planning, and evidence-grounded completion.",
+        "url": "https://github.com/THUDM/AgentBench"
+      },
+      {
+        "dimensions": {
+          "code_quality": 0.0,
+          "critique_depth": 0.46,
+          "learning_speed": 0.6,
+          "reasoning": 0.72
+        },
+        "evidence": [
+          "live fetch failed for SWE-bench: <urlopen error [Errno -3] Temporary failure in name resolution>",
+          "live fetch failed for LiveBench: <urlopen error [Errno -3] Temporary failure in name resolution>",
+          "live fetch failed for AgentBench: <urlopen error [Errno -3] Temporary failure in name resolution>",
+          "live fetch failed for HELM: <urlopen error [Errno -3] Temporary failure in name resolution>"
+        ],
+        "finding_id": "finding-81261b7d60a6905f",
+        "recommended_use": "Keep the scoring ledger time-series based and decay old placement confidence.",
+        "source": "seed:LiveBench / contamination-resistant evals",
+        "summary": "Fresh evals reduce stale leaderboard confidence and reward recency-aware measurement.",
+        "url": "https://livebench.ai/"
+      },
+      {
+        "dimensions": {
+          "code_quality": 0.36,
+          "critique_depth": 0.86,
+          "learning_speed": 0.0,
+          "reasoning": 0.0
+        },
+        "evidence": [
+          "live fetch failed for SWE-bench: <urlopen error [Errno -3] Temporary failure in name resolution>",
+          "live fetch failed for LiveBench: <urlopen error [Errno -3] Temporary failure in name resolution>",
+          "live fetch failed for AgentBench: <urlopen error [Errno -3] Temporary failure in name resolution>",
+          "live fetch failed for HELM: <urlopen error [Errno -3] Temporary failure in name resolution>"
+        ],
+        "finding_id": "finding-c4ca24c24f80d707",
+        "recommended_use": "Score independent reviewers by actionable findings and fixed blockers, not approval volume alone.",
+        "source": "seed:LLM-as-judge rubric practice",
+        "summary": "Reviewer quality depends on explicit rubrics, concrete evidence, and finding fixes before approval.",
+        "url": "repo-local"
+      }
+    ]
+  },
+  "ledger": {
+    "append_mode": "one row per agent per run",
+    "recommended_path": "core/BUILD/signals/agent_scoring_ledger.jsonl",
+    "schema": "agent-scoring-ledger.v1"
+  },
+  "mirror": {
+    "agents": [
+      {
+        "agent_id": "codex-builder",
+        "dimensions": {
+          "code_quality": 0.792,
+          "critique_depth": 0.494,
+          "learning_speed": 0.56,
+          "reasoning": 0.6696
+        },
+        "evidence_count": 25,
+        "placement": {
+          "agent": "codex-builder",
+          "authority": "advisory-only",
+          "gate": "Placement recommendations cannot change routing, spend, training, deployment, or outreach without James/Ember review.",
+          "role": "specialist_with_review",
+          "strongest_dimension": "code_quality",
+          "weakest_dimension": "critique_depth"
+        },
+        "recent_sources": [
+          "build-20260614-cartographer-auto-refresh",
+          "SPEC_build-queue-status",
+          "SPEC_lantern-detector",
+          "SPEC_mirror-digest",
+          "SPEC_proof-river"
+        ],
+        "weighted_score": 0.6288
+      },
+      {
+        "agent_id": "independent-reviewer",
+        "dimensions": {
+          "code_quality": 0.4946,
+          "critique_depth": 0.4661,
+          "learning_speed": 0.4848,
+          "reasoning": 0.4796
+        },
+        "evidence_count": 7,
+        "placement": {
+          "agent": "independent-reviewer",
+          "authority": "advisory-only",
+          "gate": "Placement recommendations cannot change routing, spend, training, deployment, or outreach without James/Ember review.",
+          "role": "shadow_only",
+          "strongest_dimension": "code_quality",
+          "weakest_dimension": "critique_depth"
+        },
+        "recent_sources": [
+          "core/BUILD/reviews/build-SPEC_d008_server-loop-clean-proof.md",
+          "core/BUILD/reviews/build-SPEC_d010_self-evolution-l1-preference-dat.md",
+          "core/BUILD/reviews/build-SPEC_d011_intent-injector-correction-capt.md",
+          "core/BUILD/reviews/build-SPEC_d013_intelligence-economy-l1-instrume.md",
+          "core/BUILD/reviews/world-scout-activation.review.md"
+        ],
+        "weighted_score": 0.48
+      }
+    ],
+    "internal_evidence_count": 32
+  },
+  "schema": "agent-benchmark-intelligence.v1"
+}

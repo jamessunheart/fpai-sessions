@@ -1,0 +1,8 @@
+[Unit]
+Description=FPAI Agent Benchmarking Intelligence report
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/fpai-build/FPAI_Cockpit
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/env python3 -B -m tools.agent_benchmark_intelligence.engine --live-public-sources --append-ledger

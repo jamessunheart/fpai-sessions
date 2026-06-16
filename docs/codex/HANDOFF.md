@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-16 · SPEC_d057_agent-benchmarking-intelligence · branch `build/SPEC_d057_agent-benchmarking-intelligence`
+
+- **Status:** done / independently reviewed / awaiting merge review
+- **Files changed:** `tools/agent_benchmark_intelligence/__init__.py`; `tools/agent_benchmark_intelligence/engine.py`; `tools/agent_benchmark_intelligence/test_engine.py`; `docs/codex/AGENT_BENCHMARK_INTELLIGENCE.md`; `core/BUILD/cron/fpai-agent-benchmark-intelligence.service`; `core/BUILD/cron/fpai-agent-benchmark-intelligence.timer`; `core/BUILD/signals/agent_benchmark_intelligence.json`; `core/BUILD/signals/agent_scoring_ledger.jsonl`; `core/BUILD/specs/SPEC_d057_agent-benchmarking-intelligence.md`; `core/BUILD/results/SPEC_d057_agent-benchmarking-intelligence.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the d057 Agent Benchmarking Intelligence layer. Lantern now supports fixed-source public benchmark/eval scanning, fixture ingestion, and explicit JSON provider ingestion. Mirror scores repo-local build/result/review evidence across code quality, critique depth, learning speed, and reasoning. The shared `agent-scoring-ledger.v1` JSONL ledger records advisory agent placement recommendations over time with gates against automatic routing, spend, training, deployment, or outreach.
+- **Tests:** `python3 -B -m unittest tools.agent_benchmark_intelligence.test_engine` (8 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/agent_benchmark_intelligence/engine.py tools/agent_benchmark_intelligence/test_engine.py`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `python3 -m json.tool core/BUILD/signals/agent_benchmark_intelligence.json`; `git diff --check`; CLI smoke with `--live-public-sources --append-ledger` to `/tmp`.
+- **Independent review:** completed by subagent. Initial findings were registry/result still marked building, timer using only seed findings, and provider command using `shell=True`. Fixed by marking done, adding `--live-public-sources` to the timer, adding fixed-URL public source scanning with fallback warning evidence, surfacing partial live-source failures, switching provider execution to `shlex.split` + `shell=False`, and adding tests for live fixed URLs plus fallback behavior. Final re-review reported no remaining blockers.
+- **Risks:** Sandbox DNS could not reach the public benchmark pages, so the checked-in initial signal report uses seed findings with explicit live-fetch warning evidence. Live host should produce real fixed-source findings if outbound network is available. Scores are heuristic and advisory; they must not auto-change model routing or authority.
+- **Rollback:** revert the changed files and remove the d057 registry entry. If Ember installs the timer later, disable/remove `fpai-agent-benchmark-intelligence.timer` and `fpai-agent-benchmark-intelligence.service`, then run `systemctl daemon-reload`.
+- **Intent solved:** agent/model placement now has a current external-benchmark-aware and internal-evidence-based scoring ledger instead of relying on generic model reputation.
+- **Downstream intent unlocked:** Ember/James can review agent capability trends and route the next model-placement or local-model replacement spec from measured Codex builder vs reviewer evidence.
+- **Questions for Ember/James:** after merge, install the review-only timer only if the host is allowed to make fixed public benchmark fetches; otherwise keep the fixture/provider path and review the first live-host ledger row before making any placement decision.
+
 ### 2026-06-17 · SPEC_d056_open-model-benchmark-cooperative · branch `build/SPEC_d056_open-model-benchmark-cooperative`
 
 - **Status:** done / awaiting live independent review + merge review

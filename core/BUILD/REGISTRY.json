@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-  "updated_at": "2026-06-17T00:09:00Z",
+  "updated_at": "2026-06-17T00:36:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+    {
+      "id": "SPEC_d057_agent-benchmarking-intelligence",
+      "slug": "SPEC_d057_agent-benchmarking-intelligence",
+      "branch": "build/SPEC_d057_agent-benchmarking-intelligence",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d057_agent-benchmarking-intelligence.md",
+      "tests_passed": true,
+      "notes": "d057 complete: added advisory agent benchmarking intelligence layer with fixed-source public benchmark scan, fixture/provider external findings intake, inward build/review evidence scoring, shared agent scoring ledger JSONL, placement recommendations, docs, review-only timer, and focused tests. No broad web search, model downloads, training, production routing, spend, push, or merge."
+    },
     {
       "id": "SPEC_d056_open-model-benchmark-cooperative",
       "slug": "SPEC_d056_open-model-benchmark-cooperative",
