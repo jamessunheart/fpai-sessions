@@ -31,6 +31,7 @@ import logging
 import os
 import re
 import sys
+import time
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -78,6 +79,8 @@ def _is_team_capture_user(uid: str) -> bool:
 # In-memory privacy mode: when active, neither inbound nor outbound messages are
 # logged to brain_index.tg_messages. Toggle with /private and /public.
 _PRIVATE_MODE: dict[str, bool] = {}
+_CAPABILITY_PENDING: dict[str, dict] = {}
+_CAPABILITY_CONFIRM_TIMEOUT_S = int(os.environ.get("CAPABILITY_CONFIRM_TIMEOUT_SECONDS", "900"))
 
 
 async def _log_tg_message(chat_id: str, role: str, text: str,
@@ -258,6 +261,19 @@ async def _handle_callback(cb: dict) -> None:
     if OWNER_CHAT_ID and from_user != OWNER_CHAT_ID:
         log.warning("ignoring callback from non-owner user %s", from_user)
         await tg.answer_callback(cb_id, "Not authorized.", alert=True)
+        return
+
+    if data.startswith("cap_undo:"):
+        audit_id = data.split(":", 1)[1]
+        await tg.answer_callback(cb_id, "Reversing…")
+        try:
+            from .capabilities import reverse_capability_action
+
+            result = await reverse_capability_action(audit_id, user_id=from_user or OWNER_CHAT_ID)
+            await tg.send(tg._esc(str(result.output)))
+        except Exception as e:
+            log.warning("capability undo failed: %s", e)
+            await tg.send(f"⚠️ Capability undo failed: {tg._esc(str(e))}")
         return
 
     if data.startswith("b:"):
@@ -497,7 +513,7 @@ async def _synthesize_answer(question: str, hits: list[dict], *, conversation_id
         return f"⚠️ Brain synthesis hit an error: {e}"
 
 
-async def _handle_command(text: str, chat_id: int) -> str | None:
+async def _handle_command(text: str, chat_id: int, user_id: str | None = None) -> str | None:
     """Return a reply string for slash commands, or None to fall through to chat."""
     cmd, _, rest = text.lstrip("/").partition(" ")
     cmd = cmd.lower()
@@ -538,6 +554,7 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
             "  /roi       — yesterday's brain ROI ledger (cost vs engagement)\n"
             "  /opportunities — run today's proactive scan now (silent if nothing)\n"
             "  /capabilities [category] — what this system can do (and when it shipped)\n"
+            "  /undo     — reverse the last reversible calendar capability action\n"
             "  /voice [on|off]  — toggle voice replies (default ON · voice-in always replies in voice)\n"
             "  /more      — same as /signals more (expanded view: liquidity, costs, etc.)\n"
             "  /log       — recent AI activity timeline\n"
@@ -688,6 +705,8 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
         return None
     if cmd == "capabilities":
         return await _cmd_capabilities(rest.strip())
+    if cmd == "undo":
+        return await _cmd_undo_capabilities(user_id or str(chat_id))
     if cmd == "voice":
         return _cmd_voice(rest.strip().lower())
     if cmd == "scene":
@@ -3820,6 +3839,292 @@ async def _send_voice_reply(text: str) -> bool:
     return await tg.send_audio(audio, filename=fname, mime=mime)
 
 
+class _TelegramCapabilityAgent:
+    def __init__(self, user_id: str):
+        self.user_id = user_id
+        self._allowed = _load_capability_grants(user_id)
+
+    def can(self, capability: str) -> bool:
+        return capability in self._allowed
+
+
+def _load_capability_grants(user_id: str) -> set[str]:
+    path = os.environ.get("CAPABILITY_GRANTS_PATH")
+    if path:
+        try:
+            payload = json.loads(Path(path).read_text(encoding="utf-8"))
+            grants = payload.get(str(user_id)) or payload.get("default") or []
+            if isinstance(grants, dict):
+                grants = [key for key, value in grants.items() if value]
+            return {str(item).strip() for item in grants if str(item).strip()}
+        except Exception as e:
+            log.warning("capability grants load failed: %s", e)
+            return {"search_web"}
+    raw = os.environ.get("OWNER_CAPABILITIES")
+    if raw:
+        return {item.strip() for item in raw.split(",") if item.strip()}
+    return {"search_web"}
+
+
+def _detect_capability_intent(text: str) -> str | None:
+    lowered = text.lower()
+    patterns = (
+        ("send_email", ("send an email", "email them", "email him", "email her", "reach out to")),
+        ("book_calendar", ("schedule", "put on my calendar", "book a time")),
+        ("search_web", ("look up", "search for", "what is", "find me")),
+    )
+    for capability, tokens in patterns:
+        if any(token in lowered for token in tokens):
+            return capability
+    return None
+
+
+def _capability_proposal(capability: str) -> str:
+    if capability == "search_web":
+        return "I can search for that. Want me to? Reply yes or no."
+    if capability == "send_email":
+        return "I can draft and send that email for you. Want me to draft it? Reply yes or no."
+    if capability == "book_calendar":
+        return "I can add that to your calendar. Want me to draft the event? Reply yes or no."
+    return "I can help with that capability. Want me to continue? Reply yes or no."
+
+
+def _yes_no(text: str) -> bool | None:
+    lowered = text.strip().lower()
+    if lowered in {"yes", "y", "yeah", "yep", "send it", "do it", "confirm", "confirmed", "add it"}:
+        return True
+    if lowered in {"no", "n", "nope", "cancel", "stop", "don't", "do not"}:
+        return False
+    return None
+
+
+async def _handle_capability_turn(chat_id: int, user_id: str, text: str) -> bool:
+    key = str(chat_id)
+    pending = _CAPABILITY_PENDING.get(key)
+    decision = _yes_no(text)
+    if pending:
+        if time.time() - float(pending.get("created_at", 0)) > _CAPABILITY_CONFIRM_TIMEOUT_S:
+            _CAPABILITY_PENDING.pop(key, None)
+            await _log_capability_cancelled(
+                user_id,
+                pending["capability"],
+                _pending_params_for_log(pending),
+                "timeout",
+            )
+            await tg.send("That capability confirmation expired. Start again if you still want it.")
+            return True
+        if decision is False:
+            _CAPABILITY_PENDING.pop(key, None)
+            await _log_capability_cancelled(
+                user_id,
+                pending["capability"],
+                _pending_params_for_log(pending),
+                "user_cancelled",
+            )
+            await tg.send("Cancelled.")
+            return True
+        if decision is None:
+            return False
+        capability = pending["capability"]
+        if pending["stage"] == "proposal":
+            params = _extract_capability_params(capability, pending["text"])
+            if not params:
+                _CAPABILITY_PENDING.pop(key, None)
+                await tg.send(_missing_params_message(capability))
+                return True
+            if capability in {"send_email", "book_calendar"}:
+                _CAPABILITY_PENDING[key] = {
+                    "capability": capability,
+                    "stage": "confirm",
+                    "params": params,
+                    "created_at": time.time(),
+                }
+                await tg.send(_confirmation_message(capability, params))
+                return True
+            params["confirmed"] = True
+            result = await _execute_tg_capability(user_id, capability, params)
+            _CAPABILITY_PENDING.pop(key, None)
+            await tg.send(_format_capability_result(capability, result))
+            return True
+        if pending["stage"] == "confirm":
+            params = dict(pending["params"])
+            params["confirmed"] = True
+            result = await _execute_tg_capability(user_id, capability, params)
+            _CAPABILITY_PENDING.pop(key, None)
+            await tg.send(_format_capability_result(capability, result))
+            return True
+
+    capability = _detect_capability_intent(text)
+    if not capability:
+        return False
+    _CAPABILITY_PENDING[key] = {
+        "capability": capability,
+        "stage": "proposal",
+        "text": text,
+        "created_at": time.time(),
+    }
+    await tg.send(_capability_proposal(capability))
+    return True
+
+
+async def _execute_tg_capability(user_id: str, capability: str, params: dict):
+    from .capabilities import PermissionDenied, execute_capability
+
+    try:
+        return await execute_capability(_TelegramCapabilityAgent(user_id), capability, params)
+    except PermissionDenied:
+        class _Denied:
+            success = False
+            output = f"Capability not granted: {capability}"
+            action_taken = False
+            reversible = False
+            audit_id = None
+
+        return _Denied()
+
+
+def _pending_params_for_log(pending: dict) -> dict:
+    if isinstance(pending.get("params"), dict):
+        return dict(pending["params"])
+    capability = pending.get("capability") or ""
+    text = pending.get("text") or ""
+    parsed = _extract_capability_params(capability, text) if capability and text else None
+    return parsed or {"text": text}
+
+
+async def _log_capability_cancelled(user_id: str, capability: str, params: dict, reason: str) -> None:
+    try:
+        from .capabilities.executor import CapabilityAuditStore
+
+        await CapabilityAuditStore().log(
+            user_id=user_id,
+            capability=capability,
+            params=params,
+            result={"status": "cancelled", "reason": reason},
+            success=False,
+            reversible=capability == "book_calendar",
+        )
+    except Exception as e:
+        log.warning("capability cancellation audit failed: %s", e)
+
+
+def _extract_capability_params(capability: str, text: str) -> dict | None:
+    if capability == "search_web":
+        query = _strip_capability_phrase(
+            text,
+            ("look up", "search for", "what is", "find me"),
+        )
+        return {"query": query or text.strip()}
+    if capability == "send_email":
+        email_match = re.search(r"[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}", text)
+        if not email_match:
+            return None
+        subject = _field_value(text, "subject") or "Quick note"
+        body = _field_value(text, "body") or _field_value(text, "message")
+        if not body:
+            body_match = re.search(r"\b(?:saying|that)\b\s+(.+)$", text, re.IGNORECASE | re.DOTALL)
+            body = body_match.group(1).strip() if body_match else ""
+        if not body:
+            return None
+        return {"to": email_match.group(0), "subject": subject, "body": body}
+    if capability == "book_calendar":
+        date_match = re.search(r"\b(20\d{2}-\d{2}-\d{2})\b", text)
+        time_match = re.search(r"\b([01]?\d|2[0-3]):([0-5]\d)\b", text)
+        if not (date_match and time_match):
+            return None
+        duration_match = re.search(r"\b(\d{1,3})\s*(?:min|mins|minutes)\b", text, re.IGNORECASE)
+        title = _field_value(text, "title") or re.sub(
+            r"\b(20\d{2}-\d{2}-\d{2})\b|\b([01]?\d|2[0-3]):([0-5]\d)\b",
+            "",
+            text,
+        ).strip(" .,-")
+        title = _strip_capability_phrase(title, ("schedule", "put on my calendar", "book a time")) or "Calendar event"
+        return {
+            "title": title[:120],
+            "date": date_match.group(1),
+            "time": time_match.group(0),
+            "duration": int(duration_match.group(1)) if duration_match else 30,
+        }
+    return None
+
+
+def _strip_capability_phrase(text: str, phrases: tuple[str, ...]) -> str:
+    cleaned = text.strip()
+    for phrase in phrases:
+        cleaned = re.sub(rf"^\s*{re.escape(phrase)}\s+", "", cleaned, flags=re.IGNORECASE)
+    return cleaned.strip(" ?.!")
+
+
+def _field_value(text: str, field: str) -> str:
+    match = re.search(
+        rf"\b{re.escape(field)}\s*:\s*(.+?)(?=\s+\w+\s*:|$)",
+        text,
+        re.IGNORECASE | re.DOTALL,
+    )
+    return match.group(1).strip() if match else ""
+
+
+def _missing_params_message(capability: str) -> str:
+    if capability == "send_email":
+        return "I need an email address and body. Example: email them at a@example.com subject: Hi body: Checking in."
+    if capability == "book_calendar":
+        return "I need a date and time. Example: schedule title: Check-in 2026-06-17 09:00 30 minutes."
+    return "I need a search query."
+
+
+def _confirmation_message(capability: str, params: dict) -> str:
+    if capability == "send_email":
+        return (
+            "<b>Email draft</b>\n"
+            f"To: <code>{tg._esc(params['to'])}</code>\n"
+            f"Subject: <b>{tg._esc(params['subject'])}</b>\n\n"
+            f"{tg._esc(params['body'])}\n\n"
+            "Send this? Reply yes or no."
+        )
+    if capability == "book_calendar":
+        return (
+            "<b>Calendar event</b>\n"
+            f"Title: <b>{tg._esc(params['title'])}</b>\n"
+            f"When: <code>{tg._esc(params['date'])} {tg._esc(params['time'])}</code>\n"
+            f"Duration: <code>{params['duration']} minutes</code>\n\n"
+            "Add this to your calendar? Reply yes or no."
+        )
+    return "Confirm this action? Reply yes or no."
+
+
+def _format_capability_result(capability: str, result) -> str:
+    if capability == "search_web" and result.success:
+        rows = result.output or []
+        lines = ["<b>Search results</b>"]
+        for item in rows[:3]:
+            lines.append(
+                f"· <b>{tg._esc(str(item.get('title', 'Result')))}</b>\n"
+                f"  {tg._esc(str(item.get('snippet', ''))[:220])}\n"
+                f"  {tg._esc(str(item.get('url', '')))}"
+            )
+        return "\n".join(lines)
+    return tg._esc(str(result.output))
+
+
+async def _cmd_undo_capabilities(user_id: str) -> str | None:
+    from .capabilities.executor import CapabilityAuditStore
+
+    store = CapabilityAuditStore()
+    rows = await store.last_reversible_actions(str(user_id), limit=3)
+    if not rows:
+        return "No reversible capability actions found."
+    lines = ["<b>Reversible actions</b>"]
+    keyboard: list[list[dict]] = []
+    for row in rows:
+        result = row.get("result") or {}
+        params = row.get("params") or {}
+        label = result.get("title") or params.get("title") or row["capability"]
+        lines.append(f"· <code>{row['id']}</code> {tg._esc(str(label))}")
+        keyboard.append([{"text": f"Undo {row['id']}", "callback_data": f"cap_undo:{row['id']}"}])
+    await tg.send("\n".join(lines), reply_markup={"inline_keyboard": keyboard})
+    return None
+
+
 async def _handle_message(msg: dict) -> None:
     chat = msg.get("chat") or {}
     chat_id = chat.get("id")
@@ -3945,7 +4250,7 @@ async def _handle_message(msg: dict) -> None:
     # Slash commands first (do NOT log them — they're not part of the conversation).
     if text.startswith("/"):
         try:
-            reply = await _handle_command(text, chat_id)
+            reply = await _handle_command(text, chat_id, from_user or str(chat_id))
         except Exception as e:
             log.exception("command failed: %s", e)
             reply = f"⚠️ command error: {e}"
@@ -3959,6 +4264,14 @@ async def _handle_message(msg: dict) -> None:
                     await _send_voice_reply(reply)
                 except Exception as e:
                     log.warning("voice-out (cmd) failed: %s", e)
+        return
+
+    try:
+        if await _handle_capability_turn(chat_id, from_user or str(chat_id), text):
+            return
+    except Exception as e:
+        log.exception("capability handler failed: %s", e)
+        await tg.send(f"⚠️ capability error: {tg._esc(str(e))}")
         return
 
     # Plain text path — capture corrections, log inbound, answer, log outbound.
