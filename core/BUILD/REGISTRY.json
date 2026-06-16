@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-  "updated_at": "2026-06-16T12:09:36Z",
+  "updated_at": "2026-06-16T12:51:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+    {
+      "id": "SPEC_d028_decision-agent-v0-1-confidence-s",
+      "slug": "SPEC_d028_decision-agent-v0-1-confidence-s",
+      "branch": "build/SPEC_d028_decision-agent-v0-1-confidence-s",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d028_decision-agent-v0-1-confidence-s.md",
+      "tests_passed": true,
+      "notes": "d028 Decision Agent v0.1 built and independent-review fixes applied: deployed curator claude -p confidence scorer plus tools wrapper, reversible/reserved risk gates, schema-aware curator auto-answer path with score persistence + ops-ledger logging + fallback to normal TG card on agent error, Telegram override command writing weight=2.0 corrections, idempotent schema migration, and focused tests. Full curator discovery still has one unrelated pre-existing build_context correction-suffix failure."
+    },
     {
       "id": "SPEC_d026_visual-digest-agent-v0-1-daily-p",
       "slug": "SPEC_d026_visual-digest-agent-v0-1-daily-p",

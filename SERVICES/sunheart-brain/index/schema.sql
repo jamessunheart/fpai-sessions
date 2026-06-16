@@ -132,8 +132,23 @@ CREATE TABLE IF NOT EXISTS corrections (
     bot_turn_id         UUID REFERENCES tg_messages(id) ON DELETE SET NULL,
     original_response   TEXT NOT NULL,
     james_correction    TEXT NOT NULL,
+    weight              FLOAT NOT NULL DEFAULT 1.0,
     captured_at         TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS corrections_conversation_idx
     ON corrections (conversation_id, captured_at DESC);
+
+DO $$ BEGIN
+    BEGIN
+        ALTER TABLE corrections ADD COLUMN weight FLOAT NOT NULL DEFAULT 1.0;
+    EXCEPTION WHEN duplicate_column THEN NULL; END;
+END $$;
+
+-- Decision Agent v0.1 score columns. The decisions table is owned by the live
+-- decision loop; these ALTERs are intentionally idempotent and safe to run
+-- after the table exists.
+ALTER TABLE IF EXISTS decisions
+    ADD COLUMN IF NOT EXISTS agent_score FLOAT,
+    ADD COLUMN IF NOT EXISTS agent_answer TEXT,
+    ADD COLUMN IF NOT EXISTS agent_why TEXT;
