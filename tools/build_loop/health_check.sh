@@ -36,4 +36,16 @@ stuck=$(find /opt/fpai-build/worktrees -maxdepth 1 -mindepth 1 -type d -mtime +1
 use=$(df / | tail -1 | awk '{print $5}' | tr -d '%')
 [ "${use:-0}" -gt 85 ] && fail "disk ${use}% full on 162" "Ember: free disk on 162"
 
+# 7. bot chat model still valid (catches API model DEPRECATION → 404, the 2026-06-15 failure mode)
+BENV=$(systemctl show sh-brain-tgbot -p EnvironmentFiles 2>/dev/null | sed -E 's/EnvironmentFiles=//; s/ .*//')
+if [ -n "$BENV" ] && [ -f "$BENV" ]; then
+  set -a; . "$BENV" 2>/dev/null; set +a
+  if [ -n "${CURATOR_ANTHROPIC_MODEL:-}" ] && [ -n "${ANTHROPIC_API_KEY:-}" ]; then
+    mc=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 https://api.anthropic.com/v1/messages \
+      -H "x-api-key: $ANTHROPIC_API_KEY" -H 'anthropic-version: 2023-06-01' -H 'content-type: application/json' \
+      -d "{\"model\":\"$CURATOR_ANTHROPIC_MODEL\",\"max_tokens\":1,\"messages\":[{\"role\":\"user\",\"content\":\"hi\"}]}")
+    [ "$mc" = 200 ] || fail "bot chat model '$CURATOR_ANTHROPIC_MODEL' returns HTTP $mc (deprecated/invalid?)" "Ember: set CURATOR_ANTHROPIC_MODEL in /etc/sh-brain/curator.env to a current model"
+  fi
+fi
+
 echo "health check done $(date -u +%H:%M)Z"
