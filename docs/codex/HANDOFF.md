@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-16 · SPEC_d021_memory-rag-bridge-via-git-post · branch `build/SPEC_d021_memory-rag-bridge-via-git-post`
+
+- **Status:** done / awaiting independent review + merge review
+- **Files changed:** `SERVICES/sunheart-brain/index/ingest_routes.py`; `SERVICES/sunheart-brain/index/schema.sql`; `SERVICES/sunheart-brain/ingest/memory_git_bridge.py`; `SERVICES/sunheart-brain/ingest/hooks/memory-post-commit`; `SERVICES/sunheart-brain/ingest/test_memory_git_bridge.py`; `SERVICES/sunheart-brain/runbook/deploy.md`; `core/BUILD/REGISTRY.json`; `core/BUILD/specs/SPEC_d021_memory-rag-bridge-via-git-post.md`; `core/BUILD/results/SPEC_d021_memory-rag-bridge-via-git-post.result.md`; `docs/codex/HANDOFF.md`
+- **Summary:** Built the memory-git to RAG bridge. The hook helper reads the just-created commit's changed files, keeps only non-secret `.md` paths, applies the existing ingest privacy classifier, and posts each note to a new authenticated `/index/ingest/memory_git_note` endpoint. The endpoint reuses the existing `embed()` pipeline and upserts `brain_index.note_chunks` with `source='memory-git'`, `source_path='memory-git/<relative-path>'`, `commit_sha`, and `updated_at`.
+- **Tests:** `python3 -B -m unittest SERVICES/sunheart-brain/ingest/test_memory_git_bridge.py` (4 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile SERVICES/sunheart-brain/ingest/memory_git_bridge.py SERVICES/sunheart-brain/ingest/test_memory_git_bridge.py SERVICES/sunheart-brain/index/ingest_routes.py`; focused `git diff --check` over changed files (OK).
+- **Risks:** This sandbox did not SSH to server 162, install `/opt/fpai-build/memory/.git/hooks/post-commit`, restart brain-index, or perform the production phone-Ember proof. The hook requires `SH_INGEST_TOKEN` in the runtime environment and the deployed bridge path at `SH_MEMORY_GIT_BRIDGE` or `/opt/sh-brain-src/ingest/memory_git_bridge.py`.
+- **Rollback:** remove the live memory repo hook and run `DELETE FROM brain_index.note_chunks WHERE source_path LIKE 'memory-git/%';`; revert the changed repo files.
+- **Intent solved:** Git-backed flat-file memory can now feed the semantic RAG index after commits without manual re-ingest.
+- **Downstream intent unlocked:** Phone/SSH memory edits can become queryable by Ember after one post-commit cycle, closing the SSOT-to-RAG island once deployed on server 162.
+- **Questions for Ember/James:** after merge, deploy the hook on 162, ensure `SH_INGEST_TOKEN` is available to the hook process, restart/reload brain-index if needed for the new route/schema, then run the specified live proof: commit a new `.md` via phone-Ember SSH and ask the bot a question only that file answers.
+
 ### 2026-06-15 · SPEC_d018_live-system-status-injector · branch `build/SPEC_d018_live-system-status-injector`
 
 - **Status:** done / awaiting independent review + merge review

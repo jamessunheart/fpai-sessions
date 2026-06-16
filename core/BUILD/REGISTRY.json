@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-  "updated_at": "2026-06-15T19:12:34Z",
+  "updated_at": "2026-06-16T00:05:25Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+    {
+      "id": "SPEC_d021_memory-rag-bridge-via-git-post",
+      "slug": "SPEC_d021_memory-rag-bridge-via-git-post",
+      "branch": "build/SPEC_d021_memory-rag-bridge-via-git-post",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d021_memory-rag-bridge-via-git-post.md",
+      "tests_passed": true,
+      "notes": "Memory git post-commit RAG bridge built: hook/helper reads committed markdown changes, filters secrets, and reuses brain-index embedding/upsert path for note_chunks. Focused unittest, py_compile, and diff check passed; live server-162 hook install/RAG proof remains for Ember ops after merge."
+    },
     {
       "id": "SPEC_d018_live-system-status-injector",
       "slug": "SPEC_d018_live-system-status-injector",
