@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-  "updated_at": "2026-06-16T14:45:00Z",
+  "updated_at": "2026-06-16T21:07:18Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+    {
+      "id": "SPEC_d047_intent-protocol-extractor-v0-1",
+      "slug": "SPEC_d047_intent-protocol-extractor-v0-1",
+      "branch": "build/SPEC_d047_intent-protocol-extractor-v0-1",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d047_intent-protocol-extractor-v0-1.md",
+      "tests_passed": true,
+      "notes": "d047 intent protocol extractor built: scans 7d tg_messages plus memory/episodic files, calls Claude for explicit James-stated rules, writes new memory/protocols Markdown files with protocol frontmatter, skips existing slugs, can commit to the memory repo, and includes a daily cron review artifact."
+    },
     {
       "id": "SPEC_d038_content-bank-v0-1-truth-asset-sc",
       "slug": "SPEC_d038_content-bank-v0-1-truth-asset-sc",
