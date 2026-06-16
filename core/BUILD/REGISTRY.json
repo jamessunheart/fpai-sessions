@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-  "updated_at": "2026-06-16T23:48:00Z",
+  "updated_at": "2026-06-17T00:09:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+    {
+      "id": "SPEC_d056_open-model-benchmark-cooperative",
+      "slug": "SPEC_d056_open-model-benchmark-cooperative",
+      "branch": "build/SPEC_d056_open-model-benchmark-cooperative",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d056_open-model-benchmark-cooperative.md",
+      "tests_passed": true,
+      "notes": "d056 complete: added advisory open-model benchmark scaffold for Qwen, Mistral, Llama, and Gemma with deterministic corpus task generation, offline response scoring, learning-gain metrics, optional local Ollama runner, cooperative builder/reviewer cross-check assignments, docs, and focused tests. No model downloads, training, live API calls by default, production routing, spend, push, or merge. Independent Claude review attempt hung/no-output in sandbox; rerun on live host before merge if required."
+    },
     {
       "id": "SPEC_d055_subscription-dependency-map",
       "slug": "SPEC_d055_subscription-dependency-map",

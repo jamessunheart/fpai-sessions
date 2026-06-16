@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-17 · SPEC_d056_open-model-benchmark-cooperative · branch `build/SPEC_d056_open-model-benchmark-cooperative`
+
+- **Status:** done / awaiting live independent review + merge review
+- **Files changed:** `tools/open_model_benchmark/__init__.py`; `tools/open_model_benchmark/benchmark.py`; `tools/open_model_benchmark/test_benchmark.py`; `docs/codex/OPEN_MODEL_BENCHMARK.md`; `tools/learn/README.md`; `core/BUILD/specs/SPEC_d056_open-model-benchmark-cooperative.md`; `core/BUILD/results/SPEC_d056_open-model-benchmark-cooperative.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the advisory open-model benchmark scaffold for Qwen, Mistral, Llama, and Gemma on James's repo-local corpus. It builds deterministic corpus tasks across baseline/one-shot/two-shot rounds, scores supplied response JSONL for accuracy, learning gain, latency, evidence, and calibration, and emits advisory builder/reviewer/specialist role assignments plus cross-check pairings. An opt-in `--run-ollama` path exists for already-installed local models only; default mode performs no model calls.
+- **Tests:** `python3 -B -m unittest tools.open_model_benchmark.test_benchmark` (4 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/open_model_benchmark/benchmark.py tools/open_model_benchmark/test_benchmark.py`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `python3 -B -m tools.open_model_benchmark.benchmark --max-sources 3 --output /tmp/d056-open-model-benchmark.json` (schema `open-model-benchmark.v1`, 9 tasks, model targets `gemma`, `llama`, `mistral`, `qwen`)
+- **Independent review:** direct Claude CLI review over the working diff was attempted in this restricted sandbox, but returned `API Error: Unable to connect to API (FailedToOpenSocket)`. Because this sandbox has uncommitted edits and non-writable shared git metadata, `tools/merge/ai_review.py <branch>` would not review the working diff correctly here. Rerun independent review from the writable/live host before merge if the merge gate requires it.
+- **Risks:** This is a scaffold/offline scorer, not proof that the live host has the candidate models installed. Corpus tasks are deterministic proxies for learning speed; real model selection requires running the task pack against actual Qwen/Mistral/Llama/Gemma outputs. Optional Ollama execution may fail closed if `ollama` or model tags are absent.
+- **Rollback:** revert the changed files and remove the d056 entry from `core/BUILD/REGISTRY.json`.
+- **Intent solved:** open-model replacement work now has a concrete corpus-grounded benchmark and cooperative role scaffold instead of relying on generic provider/model claims.
+- **Downstream intent unlocked:** Ember/James can run one live local-model benchmark pass, compare builder vs reviewer specialization, and route the first command-compatible local model replacement spec using measured corpus performance.
+- **Questions for Ember/James:** run the independent reviewer from a writable/live host, then run a live benchmark pass only after confirming candidate models are already installed or explicitly approving any installation/download path.
+
 ### 2026-06-16 · SPEC_d055_subscription-dependency-map · branch `build/SPEC_d055_subscription-dependency-map`
 
 - **Status:** done / awaiting independent review + merge review
