@@ -227,6 +227,7 @@ PY
       if git merge --no-ff "$branch" -m "merge(auto): $id [orchestrator · gated]" -q 2>/tmp/orch_merge_$id.out; then
         python3 -c "import json;p='core/BUILD/REGISTRY.json';d=json.load(open(p));[b.__setitem__('status','merged') for b in d['active_builds'] if b['branch']=='$branch'];json.dump(d,open(p,'w'),indent=2)"
         increment_merged_since_audit
+        python3 "$ROOT/curator/blueprints/manager.py" update-after-build "$id" "$branch" >/dev/null 2>&1 || true
         git worktree remove "$wt" --force >/dev/null 2>&1; git branch -d "$branch" >/dev/null 2>&1
         echo "✅ MERGED: $id"; merged=$((merged+1))
       else

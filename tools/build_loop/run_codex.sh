@@ -65,6 +65,22 @@ for spec in "$SPECS"/*.md; do
     echo "(dry-run) would run: codex exec --cd '$BUILD_DIR' < '$spec'  →  $out"
     continue
   fi
+  SPEC_INPUT="$spec"
+  SPEC_TMP=""
+  if [ "${BLUEPRINTS_DISABLE:-0}" != "1" ]; then
+    MODULE="$(python3 "$REPO_ROOT/curator/blueprints/manager.py" detect "$id" "$(sed -n '1,160p' "$spec")" 2>/dev/null || true)"
+    if [ -n "$MODULE" ]; then
+      BLUEPRINT="$(python3 "$REPO_ROOT/curator/blueprints/manager.py" get "$MODULE" 2>/dev/null || true)"
+      if [ -n "$BLUEPRINT" ]; then
+        SPEC_TMP="$(mktemp "${TMPDIR:-/tmp}/fpai-blueprint-spec.XXXXXX.md")"
+        {
+          printf '## Existing module blueprint (build against this standard)\n%s\n\n' "$BLUEPRINT"
+          cat "$spec"
+        } > "$SPEC_TMP"
+        SPEC_INPUT="$SPEC_TMP"
+      fi
+    fi
+  fi
   # Headless build. --full-auto lets Codex edit files + run commands in the target repo.
   # Output (its summary + actions) is tee'd to the result file = the Proof River.
   {
@@ -72,9 +88,10 @@ for spec in "$SPECS"/*.md; do
     echo "_ran: $(date -u +%Y-%m-%dT%H:%M:%SZ) · target: ${TARGET}_"
     echo
     echo '```'
-    codex exec --cd "$BUILD_DIR" --full-auto - < "$spec" 2>&1 || echo "[codex exited non-zero]"
+    codex exec --cd "$BUILD_DIR" --full-auto - < "$SPEC_INPUT" 2>&1 || echo "[codex exited non-zero]"
     echo '```'
   } | tee "$out"
+  [ -n "$SPEC_TMP" ] && rm -f "$SPEC_TMP"
   echo "→ wrote $out"
 done
 

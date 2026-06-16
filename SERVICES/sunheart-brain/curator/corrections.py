@@ -9,7 +9,10 @@ from __future__ import annotations
 import logging
 import os
 import re
+import sys
+import importlib.util
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 import httpx
@@ -32,6 +35,27 @@ _NEGATION_RESTATEMENT = re.compile(
     r"\b(?:it is|it's|its|i am|i'm|we are|we're|the answer is|actually|instead|rather)\b",
     re.IGNORECASE | re.DOTALL,
 )
+
+_REPO_ROOT = Path(os.environ.get("FPAI_REPO", "/opt/fpai-build/FPAI_Cockpit"))
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
+try:
+    from curator.blueprints.manager import detect_module_from_text, update_blueprint_after_correction
+except Exception:
+    _manager_path = _REPO_ROOT / "curator" / "blueprints" / "manager.py"
+    try:
+        _spec = importlib.util.spec_from_file_location("fpai_blueprint_manager", _manager_path)
+        _manager = importlib.util.module_from_spec(_spec) if _spec and _spec.loader else None
+        if _manager and _spec and _spec.loader:
+            _spec.loader.exec_module(_manager)
+            detect_module_from_text = _manager.detect_module_from_text
+            update_blueprint_after_correction = _manager.update_blueprint_after_correction
+        else:
+            detect_module_from_text = None
+            update_blueprint_after_correction = None
+    except Exception:
+        detect_module_from_text = None
+        update_blueprint_after_correction = None
 
 
 @dataclass(frozen=True)
@@ -91,8 +115,19 @@ async def capture_if_correction(
         james_correction=james_message[:8000],
     )
     await write_correction(pair)
+    _update_blueprint_gap(james_message, context=bot_turn.text)
     log.info("captured correction conversation=%s bot_turn=%s reason=%s", conversation_id, bot_turn.id, signal.reason)
     return pair
+
+
+def _update_blueprint_gap(correction_text: str, *, context: str = "") -> None:
+    if os.environ.get("BLUEPRINTS_DISABLE") == "1" or not update_blueprint_after_correction:
+        return
+    try:
+        module = detect_module_from_text(f"{context}\n{correction_text}") if detect_module_from_text else ""
+        update_blueprint_after_correction(module or "ember", correction_text)
+    except Exception as e:
+        log.warning("blueprint correction update failed: %s", e)
 
 
 async def fetch_previous_bot_turn(conversation_id: str) -> BotTurn | None:
