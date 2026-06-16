@@ -6,7 +6,6 @@ from __future__ import annotations
 
 import logging
 import os
-import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -20,10 +19,15 @@ log = logging.getLogger("curator.digest")
 
 def horizon_signal_lines() -> list[str]:
     repo = Path(os.environ.get("FPAI_CODEX_REPO", "/opt/fpai-build/FPAI_Cockpit"))
-    if str(repo) not in sys.path:
-        sys.path.insert(0, str(repo))
+    scanner_path = repo / "tools" / "horizon" / "scanner.py"
     try:
-        from tools.horizon.scanner import recent_horizon_signal_lines
+        import importlib.util as _ilu
+        _spec = _ilu.spec_from_file_location("fpai_horizon_scanner", scanner_path)
+        _mod = _ilu.module_from_spec(_spec) if _spec and _spec.loader else None
+        if not _mod:
+            return []
+        _spec.loader.exec_module(_mod)
+        recent_horizon_signal_lines = _mod.recent_horizon_signal_lines
     except Exception:
         return []
     ledger = Path(os.environ.get("OPS_LEDGER", "/opt/fpai-build/ops_ledger.jsonl"))
