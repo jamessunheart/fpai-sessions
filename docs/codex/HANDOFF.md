@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-16 · SPEC_d045_life-data-intake-v0-1 · branch `build/SPEC_d045_life-data-intake-v0-1`
+
+- **Status:** done / awaiting James review + merge review
+- **Files changed:** `tools/life_data/`; `docs/codex/LIFE_DATA_INTAKE.md`; `core/BUILD/REGISTRY.json`; `core/BUILD/specs/SPEC_d045_life-data-intake-v0-1.md`; `core/BUILD/results/SPEC_d045_life-data-intake-v0-1.result.md`; `core/BUILD/reviews/build-SPEC_d045_life-data-intake-v0-1.md`; `docs/codex/HANDOFF.md`
+- **Summary:** Added Life Data Intake v0.1: a fixture/local-export-first personal signal pipeline for financial accounts, calendar, and communications. It normalizes records into a shared shape, redacts emails/phones, hashes account/message/event IDs, tags useful signals, writes full JSONL outside the repo by default at `/tmp/fpai-life-data/intake.jsonl`, refuses repo-local full-record writes unless explicitly overridden, and emits a safe aggregate report at `docs/codex/LIFE_DATA_INTAKE.md`. V0.1 does not call live providers, read secrets, send messages, write calendar events, or move money.
+- **Tests:** `python3 -B -m unittest tools.life_data.test_intake` (6 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/life_data/intake.py tools/life_data/test_intake.py`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `python3 -m json.tool tools/life_data/fixtures/financial.json`; `python3 -m json.tool tools/life_data/fixtures/calendar.json`; `python3 -m json.tool tools/life_data/fixtures/communications.json`; JSONL parse check for `/tmp/fpai-life-data/intake.jsonl`; `git diff --check`
+- **Independent review:** completed by subagent. Initial review found a high PII leak blocker from repo-local full-record output; fixed by moving full JSONL outside repo, refusing repo paths by default, deleting the repo JSONL artifact, and reducing the Markdown report to aggregate/signal metadata. Re-review found no remaining code/safety blockers and no live external provider/API call path.
+- **Risks:** This is an offline scaffold, not a live connector. Real financial/calendar/comms ingestion still needs a separate approved adapter/export job and James-owned credential handling. `/tmp/fpai-life-data/intake.jsonl` is sensitive private local state and should not be committed or mirrored.
+- **Rollback:** delete `tools/life_data/`, `docs/codex/LIFE_DATA_INTAKE.md`, `core/BUILD/results/SPEC_d045_life-data-intake-v0-1.result.md`, and `core/BUILD/reviews/build-SPEC_d045_life-data-intake-v0-1.md`; remove the d045 row from `core/BUILD/REGISTRY.json`; remove this HANDOFF note; remove `/tmp/fpai-life-data/intake.jsonl` if desired.
+- **Intent solved:** FPOS now has one safe, test-covered intake lane for finance/calendar/comms exports, without secrets or live side effects.
+- **Downstream intent unlocked:** James/Ember can approve scoped provider adapters or local export jobs to feed real personal signal into the normalized life-data lane, then route those signals into optimization surfaces.
+- **Questions for Ember/James:** decide which first real source should feed the lane (bank export/Plaid-like adapter, calendar export, or comms export) and where private full-record state should live long-term outside git.
+
 ### 2026-06-16 · SPEC_d038_content-bank-v0-1-truth-asset-sc · branch `build/SPEC_d038_content-bank-v0-1-truth-asset-sc`
 
 - **Status:** done / awaiting James review + merge review
