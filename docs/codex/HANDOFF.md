@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-16 · SPEC_d036_user-onboarding-flow-v0-1-beacon · branch `build/SPEC_d036_user-onboarding-flow-v0-1-beacon`
+
+- **Status:** done / awaiting independent review + merge review
+- **Files changed:** `curator/onboarding/flow.py`; `curator/onboarding/test_flow.py`; `tools/db/migrate_add_agent_passports.py`; `core/BUILD/specs/SPEC_d036_user-onboarding-flow-v0-1-beacon.md`; `core/BUILD/REGISTRY.json`; `core/BUILD/results/SPEC_d036_user-onboarding-flow-v0-1-beacon.result.md`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the d036 onboarding flow. The new flow loads beacon context, emits the Spark three-question opening, extracts Agent Passport fields from natural answers, routes to exactly one next step, gates first CORA earn on `CORA_POLICY_LIVE=1`, writes Agent Passport/user-channel/thread/beacon-conversion records when Hermes writes are enabled, and keeps production writes disabled unless `HERMES_DISABLE=0`. Added a SQLite store for focused tests/dev and a lazy Postgres store for `brain_index` with an idempotent migration for `agent_passports`, `beacons`, `user_channels`, and `thread`.
+- **Tests:** `python3 -B -m unittest curator.onboarding.test_flow` (6 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile curator/onboarding/flow.py curator/onboarding/test_flow.py tools/db/migrate_add_agent_passports.py`; `git diff --check -- curator/onboarding/flow.py curator/onboarding/test_flow.py tools/db/migrate_add_agent_passports.py core/BUILD/REGISTRY.json core/BUILD/specs/SPEC_d036_user-onboarding-flow-v0-1-beacon.md`
+- **Independent review:** not completed in this sandbox yet. The repo review helper expects a committed branch diff vs `feat/headless-build`; this managed worktree currently has new files untracked, and prior sessions on this host could not create the shared Git index lock. Manual/Ember review is still required before merge.
+- **Risks:** Live Hermes wiring was not added by this spec, and the live Postgres path was not exercised against production credentials. The routing and extraction logic are deterministic v0.1 heuristics and should be reviewed after real onboarding transcripts. The migration creates/extends `brain_index.thread` and `user_channels`; verify compatibility with the live schema before applying.
+- **Rollback:** remove `curator/onboarding/flow.py`, `curator/onboarding/test_flow.py`, `tools/db/migrate_add_agent_passports.py`, and `core/BUILD/results/SPEC_d036_user-onboarding-flow-v0-1-beacon.result.md`; remove the d036 registry entry and this HANDOFF note. If the migration was applied live, drop the new onboarding tables/columns only after confirming no useful production onboarding rows exist.
+- **Intent solved:** a first-touch Hermes user can now move from beacon attribution into remembered Agent Passport context with one routed next step and a silent CORA policy gate.
+- **Downstream intent unlocked:** Hermes can wire first-message users into One-Chat onboarding and then measure which beacons produce converted, remembered users.
+- **Questions for Ember/James:** run the independent review from a writable Git context; after merge, decide the exact Hermes gateway handoff shape for collecting the three natural answers across turns.
+
 ### 2026-06-16 · SPEC_d035_cora-v0-2-monetary-policy-earn-r · branch `build/SPEC_d035_cora-v0-2-monetary-policy-earn-r`
 
 - **Status:** done / awaiting James review + merge review

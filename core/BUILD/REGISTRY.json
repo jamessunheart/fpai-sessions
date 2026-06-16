@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
     {
+      "id": "SPEC_d036_user-onboarding-flow-v0-1-beacon",
+      "slug": "SPEC_d036_user-onboarding-flow-v0-1-beacon",
+      "branch": "build/SPEC_d036_user-onboarding-flow-v0-1-beacon",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d036_user-onboarding-flow-v0-1-beacon.md",
+      "tests_passed": true,
+      "notes": "d036 onboarding flow built: beacon-aware opening, three-question Agent Passport extraction, exactly-one next-step routing, CORA_POLICY_LIVE first-earn gate, disabled-by-default Hermes writes, SQLite test store, lazy Postgres brain_index store, idempotent agent_passports/beacons migration, and focused tests."
+    },
+    {
       "id": "SPEC_d035_cora-v0-2-monetary-policy-earn-r",
       "slug": "SPEC_d035_cora-v0-2-monetary-policy-earn-r",
       "branch": "build/SPEC_d035_cora-v0-2-monetary-policy-earn-r",
