@@ -42,9 +42,18 @@ async def _recent(n: int = 20) -> str:
     async with connect() as c:
         cur = c.cursor()
         # unified: the thread table + the bot's tg_messages, normalized + merged by time
+        # thread table filtered: exclude system prompts that leaked in via claude -p hook
         await cur.execute(f"""
             SELECT at, surface, role, text FROM (
                 SELECT at, surface, role, text FROM brain_index.thread
+                 WHERE length(text) <= 600
+                   AND text NOT LIKE 'Goal: identify the single highest%%'
+                   AND text NOT LIKE 'Branch build/%%'
+                   AND text NOT LIKE '[Module blueprints%%'
+                   AND text NOT LIKE 'You are an independent%%'
+                   AND text NOT LIKE 'DECISION QUEUE:%%'
+                   AND text NOT LIKE 'Diff to review:%%'
+                   AND NOT (text LIKE '{{%%' AND role = 'james')
                 UNION ALL
                 SELECT at, 'telegram' AS surface,
                        CASE WHEN role='bot' THEN 'ember' ELSE 'james' END AS role, text
