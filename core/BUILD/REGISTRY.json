@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-  "updated_at": "2026-06-16T11:22:01Z",
+  "updated_at": "2026-06-16T11:45:52Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+    {
+      "id": "SPEC_d023_continuous-learning-controller-l",
+      "slug": "SPEC_d023_continuous-learning-controller-l",
+      "branch": "build/SPEC_d023_continuous-learning-controller-l",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d023_continuous-learning-controller-l.md",
+      "tests_passed": true,
+      "notes": "d023 session feedback preference seed built: captures registry build/merge outcomes, independent review approvals/vetoes, and explicit conversation ratings into deterministic session-feedback-seed.v1 JSONL. Focused tests, py_compile, dry-run, and /tmp smoke passed; advisory only with no training/prod wiring."
+    },
     {
       "id": "SPEC_d022_continuous-learning-controller",
       "slug": "SPEC_d022_continuous-learning-controller",

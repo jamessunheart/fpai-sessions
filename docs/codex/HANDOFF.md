@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-16 · SPEC_d023_continuous-learning-controller-l · branch `build/SPEC_d023_continuous-learning-controller-l`
+
+- **Status:** done / awaiting independent review + merge review
+- **Files changed:** `tools/learn/session_feedback_seed.py`; `tools/learn/test_session_feedback_seed.py`; `tools/learn/README.md`; `core/BUILD/REGISTRY.json`; `core/BUILD/specs/SPEC_d023_continuous-learning-controller-l.md`; `core/BUILD/results/SPEC_d023_continuous-learning-controller-l.result.md`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the d023 session-level feedback preference seed. It reads repo-local build registry rows, independent AI review markdown, and optional `core/BUILD/feedback*.jsonl` rows, then writes deterministic `session-feedback-seed.v1` JSONL with stable ids, signal type, session id, outcome, score, prompt, chosen/rejected preference text, source, and metadata. It captures build outcomes, merge outcomes, review approvals, vetoes, and explicit conversation ratings as advisory learning evidence only.
+- **Tests:** `python3 -B -m unittest tools.learn.test_session_feedback_seed tools.learn.test_seed_preference_pairs tools.learn.test_learn` (14 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/learn/session_feedback_seed.py tools/learn/test_session_feedback_seed.py`; `python3 -B tools/learn/session_feedback_seed.py --dry-run` (10 rows); `python3 -B tools/learn/session_feedback_seed.py --output /tmp/fpai-d023-session-feedback.jsonl` (wrote 10 rows; signal counts `merge_outcome=5`, `review_outcome=4`, `veto=1`)
+- **Independent review:** separate AI review found two code issues before commit: signed `rating: 1` normalization and self-reported `done` rows being treated as positive learning evidence. Both were fixed and covered by regression tests. The reviewer also noted the branch still needed a local commit before merge review.
+- **Risks:** Repo-local capture only. This did not SSH to server 162, install a cron, read production chat ratings, train a model, wire a judge into routing, or create a live feedback ingestion service. Conversation ratings require a future surface to write explicit local JSONL rows.
+- **Rollback:** revert the changed files; delete any generated seed file such as `/tmp/fpai-d023-session-feedback.jsonl` or `tools/learn/runs/session_feedback_seed.jsonl` if an operator later writes one in-repo.
+- **Intent solved:** session-level feedback now has a first structured preference seed artifact instead of living only in scattered registry/review/chat notes.
+- **Downstream intent unlocked:** the continuous-learning controller can start measuring James preference evidence across completed sessions, veto boundaries, and conversation ratings before any model training or live policy changes are considered.
+- **Questions for Ember/James:** after merge, decide which James-facing chat/review surface should append explicit `conversation_rating` and `veto` JSONL rows into `core/BUILD/feedback*.jsonl`; keep that as a separate reviewed build so this seed remains capture-only.
+
 ### 2026-06-16 · SPEC_d022_continuous-learning-controller · branch `build/SPEC_d022_continuous-learning-controller`
 
 - **Status:** done / awaiting diff review + merge review

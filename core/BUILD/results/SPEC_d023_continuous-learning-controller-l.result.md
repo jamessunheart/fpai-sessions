@@ -1,0 +1,24 @@
+# SPEC_d023_continuous-learning-controller-l Result
+
+- Status: done / awaiting independent review + merge
+- Branch: `build/SPEC_d023_continuous-learning-controller-l`
+- Files changed:
+  - `tools/learn/session_feedback_seed.py`
+  - `tools/learn/test_session_feedback_seed.py`
+  - `tools/learn/README.md`
+  - `core/BUILD/REGISTRY.json`
+  - `core/BUILD/specs/SPEC_d023_continuous-learning-controller-l.md`
+  - `core/BUILD/results/SPEC_d023_continuous-learning-controller-l.result.md`
+  - `docs/codex/HANDOFF.md`
+- Summary: Added the d023 session-level preference seed. It reads repo-local build registry rows, independent AI review markdown, and optional `core/BUILD/feedback*.jsonl` rows, then emits deterministic `session-feedback-seed.v1` JSONL with stable ids, signal type, session id, outcome, score, prompt, chosen/rejected preference text, source, and metadata. It captures build outcomes, merge outcomes, review approvals, vetoes, and explicit conversation ratings without training, routing, deploying, or granting authority.
+- Tests:
+  - `python3 -B -m unittest tools.learn.test_session_feedback_seed tools.learn.test_seed_preference_pairs tools.learn.test_learn`
+  - `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/learn/session_feedback_seed.py tools/learn/test_session_feedback_seed.py`
+  - `python3 -B tools/learn/session_feedback_seed.py --dry-run`
+  - `python3 -B tools/learn/session_feedback_seed.py --output /tmp/fpai-d023-session-feedback.jsonl`
+- Smoke proof: repo dry-run found 10 rows; `/tmp` smoke wrote 10 rows with signal counts `merge_outcome=5`, `review_outcome=4`, `veto=1`.
+- Independent review: separate AI review found two code issues before commit: signed `rating: 1` normalization and self-reported `done` rows being treated as positive learning evidence. Both were fixed and covered by regression tests. The reviewer also noted the branch still needed a local commit before merge review.
+- Risks: This branch only reads repo-local mirrors and optional local feedback JSONL. It did not SSH to server 162, install a cron, read production chat ratings, train a model, wire a judge into routing, or create a live feedback ingestion service. Conversation ratings will appear only when a future surface writes explicit JSONL rows matching the documented shape.
+- Rollback: Revert the changed files. Delete any generated seed file such as `/tmp/fpai-d023-session-feedback.jsonl` or `tools/learn/runs/session_feedback_seed.jsonl` if an operator later writes one in-repo.
+- Intent solved: session-level feedback now has a first structured preference seed artifact instead of living only in scattered registry/review/chat notes.
+- Downstream intent unlocked: the continuous-learning controller can start measuring James preference evidence across completed sessions, veto boundaries, and conversation ratings before any model training or live policy changes are considered.
