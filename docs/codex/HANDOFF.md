@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-16 · SPEC_d030_d029-output-diagnostic-question · branch `build/SPEC_d030_d029-output-diagnostic-question`
+
+- **Status:** done / closed as superseded by d031
+- **Files changed:** `core/BUILD/REGISTRY.json`; `core/BUILD/specs/SPEC_d030_d029-output-diagnostic-question.md`; `core/BUILD/results/SPEC_d030_d029-output-diagnostic-question.result.md`; `docs/codex/HANDOFF.md`
+- **Summary:** Did not implement the d029 output-path toggle. The generated d030 spec's answered decision explicitly says "d031 supersedes this" and to "Close d030 as covered by d031." This branch records that closeout so d031 remains the single owner for the full Telegram diagnostic dialogue, James reply parsing, and spec generation from his words.
+- **Tests:** `python3 -B -m unittest tools.build_loop.test_self_audit`; `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/self_audit.py tools/build_loop/test_self_audit.py`; `bash -n tools/build_loop/build_orchestrator.sh`
+- **Risks:** d031 is not present in this checkout, so this branch cannot prove the replacement behavior. It only prevents a conflicting partial d030 implementation.
+- **Rollback:** remove `core/BUILD/results/SPEC_d030_d029-output-diagnostic-question.result.md`, remove the d030 registry entry, and remove this HANDOFF note if James/Ember decides d030 should be built independently.
+- **Intent solved:** d030 no longer competes with the superseding diagnostic-dialogue build.
+- **Downstream intent unlocked:** d031 can own the complete Telegram question/reply/spec-generation path without inheriting a partial d029 toggle.
+- **Questions for Ember/James:** confirm d031 is queued or available on the live host before merging this closeout.
+
 ### 2026-06-16 · SPEC_d029_idle-triggered-self-audit-empty · branch `build/SPEC_d029_idle-triggered-self-audit-empty`
 
 - **Status:** done / awaiting independent review + merge review
