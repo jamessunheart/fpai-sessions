@@ -137,3 +137,63 @@ CREATE TABLE IF NOT EXISTS corrections (
 
 CREATE INDEX IF NOT EXISTS corrections_conversation_idx
     ON corrections (conversation_id, captured_at DESC);
+
+-- Beacon Growth Engine.
+-- Campaigns and content variants stay draft/review-gated until James approves.
+CREATE TABLE IF NOT EXISTS beacon_campaigns (
+    id serial PRIMARY KEY,
+    campaign_id text UNIQUE,
+    channel text,
+    creative_type text,
+    cta text,
+    audience text,
+    beacon_url text,
+    beacon_qr_path text,
+    status text DEFAULT 'draft',
+    cost_budget_usd numeric DEFAULT 0,
+    cost_spent_usd numeric DEFAULT 0,
+    clicks int DEFAULT 0,
+    chat_starts int DEFAULT 0,
+    passports_created int DEFAULT 0,
+    cora_earned int DEFAULT 0,
+    first_actions int DEFAULT 0,
+    proofs_created int DEFAULT 0,
+    paid_conversions int DEFAULT 0,
+    cost_per_proof numeric GENERATED ALWAYS AS (
+        CASE WHEN proofs_created > 0 THEN cost_spent_usd / proofs_created ELSE NULL END
+    ) STORED,
+    james_approved_at timestamp,
+    created_at timestamp DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS beacon_variants (
+    id serial PRIMARY KEY,
+    campaign_id text REFERENCES beacon_campaigns(campaign_id),
+    variant_label text,
+    content_type text,
+    headline text,
+    body text,
+    cta_text text,
+    intent_lane text,
+    tone_score numeric,
+    alignment_score numeric,
+    clicks int DEFAULT 0,
+    chat_starts int DEFAULT 0,
+    proofs int DEFAULT 0,
+    james_approved_at timestamp,
+    published_at timestamp
+);
+
+CREATE INDEX IF NOT EXISTS beacon_campaigns_status_idx ON beacon_campaigns(status);
+CREATE INDEX IF NOT EXISTS beacon_variants_campaign_idx ON beacon_variants(campaign_id);
+
+CREATE TABLE IF NOT EXISTS beacon_events (
+    id serial PRIMARY KEY,
+    campaign_id text REFERENCES beacon_campaigns(campaign_id),
+    variant_label text,
+    event_type text,
+    at timestamp DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS beacon_events_at_idx ON beacon_events(at DESC);
+CREATE INDEX IF NOT EXISTS beacon_events_campaign_idx ON beacon_events(campaign_id, at DESC);

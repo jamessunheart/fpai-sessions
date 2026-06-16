@@ -626,7 +626,7 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
         try:
             run_id = uuid.uuid4().hex[:12]
             stats = await d.run(run_id)
-            return (
+            reply = (
                 f"📊 <b>Brain digest</b>\n"
                 f"  total chunks: <b>{stats['totals']['chunks']}</b>\n"
                 f"  total concepts: <b>{stats['totals']['concepts']}</b>\n"
@@ -634,6 +634,19 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
                 f"  auto-merges (24h): {stats['last_24h']['auto_merges']}\n"
                 f"  blocked queries (24h): {stats['last_24h']['blocked_queries']}"
             )
+            beacon = stats.get("beacon_growth")
+            if beacon:
+                best = beacon.get("best") or {}
+                reply += (
+                    "\n\n<b>BEACON GROWTH</b>\n"
+                    f"  active: <b>{beacon.get('active_campaigns', 0)}</b> · "
+                    f"clicks: <b>{beacon.get('clicks_24h', 0)}</b> · "
+                    f"chats: <b>{beacon.get('chat_starts_24h', 0)}</b> · "
+                    f"proofs: <b>{beacon.get('proofs_24h', 0)}</b>\n"
+                    f"  best: <code>{tg._esc(str(best.get('campaign_id') or 'none yet'))}</code>\n"
+                    f"  ready for James: <b>{beacon.get('ready_for_james', 0)}</b> variants"
+                )
+            return reply
         except Exception as e:
             return f"⚠️ digest failed: {e}"
     if cmd == "search":
@@ -3959,6 +3972,18 @@ async def _handle_message(msg: dict) -> None:
                     await _send_voice_reply(reply)
                 except Exception as e:
                     log.warning("voice-out (cmd) failed: %s", e)
+        return
+
+    # Beacon campaign approval: bCAMPAIGN:A / :B / :C / :all.
+    try:
+        from .beacon.campaign import approve_from_text
+
+        beacon_reply = approve_from_text(text)
+    except Exception as e:
+        log.warning("beacon approval skipped: %s", e)
+        beacon_reply = None
+    if beacon_reply:
+        await tg.send(tg._esc(beacon_reply))
         return
 
     # Plain text path — capture corrections, log inbound, answer, log outbound.

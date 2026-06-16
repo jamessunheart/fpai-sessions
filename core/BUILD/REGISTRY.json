@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-  "updated_at": "2026-06-16T14:12:00Z",
+  "updated_at": "2026-06-16T15:15:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+    {
+      "id": "SPEC_d037_beacon-growth-engine-v0-1-campai",
+      "slug": "SPEC_d037_beacon-growth-engine-v0-1-campai",
+      "branch": "build/SPEC_d037_beacon-growth-engine-v0-1-campai",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d037_beacon-growth-engine-v0-1-campai.md",
+      "tests_passed": true,
+      "notes": "d037 Beacon Growth Engine v0.1 built: campaign/variant/event schema, draft campaign creation with QR route, voice-aware variant generation, Telegram approval intercept, attribution counters, proof feedback ops logging, advisory pacing policy, first campaign seed, and daily brief Beacon Growth section. Focused tests, py_compile, diff check, and independent review re-check passed."
+    },
     {
       "id": "SPEC_d035_cora-v0-2-monetary-policy-earn-r",
       "slug": "SPEC_d035_cora-v0-2-monetary-policy-earn-r",
