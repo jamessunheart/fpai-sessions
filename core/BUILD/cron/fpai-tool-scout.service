@@ -1,0 +1,9 @@
+[Unit]
+Description=FPAI Tool Scout
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/fpai-build/FPAI_Cockpit
+Environment=FPAI_SURFACE=auto-loop
+ExecStart=/usr/bin/python3 -m tools.scout.tool_scout --live --json

@@ -1,0 +1,11 @@
+[Unit]
+Description=Run FPAI Tool Scout daily
+
+[Timer]
+OnCalendar=*-*-* 06:10:00 UTC
+Persistent=true
+Unit=fpai-tool-scout.service
+
+[Install]
+WantedBy=timers.target
+

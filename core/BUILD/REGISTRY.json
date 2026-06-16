@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
     {
+      "id": "SPEC_d053_blueprint-weakness-auditor-tool",
+      "slug": "SPEC_d053_blueprint-weakness-auditor-tool",
+      "branch": "build/SPEC_d053_blueprint-weakness-auditor-tool",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d053_blueprint-weakness-auditor-tool.md",
+      "tests_passed": true,
+      "notes": "d053 built: added Blueprint Weakness Auditor and Tool Scout agents with review-gated signal reports/proposals, mocked live GitHub collector tests, and review-only systemd timers. No installs, live sends, deploys, secrets, spend, push, or merge."
+    },
+    {
       "id": "SPEC_d052_cora-nation-public-story-feed-v",
       "slug": "SPEC_d052_cora-nation-public-story-feed-v",
       "branch": "build/SPEC_d052_cora-nation-public-story-feed-v",
