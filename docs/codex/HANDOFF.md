@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-16 · SPEC_d027_self-knowing-loop-outcome-report · branch `build/SPEC_d027_self-knowing-loop-outcome-report`
+
+- **Status:** done / awaiting independent review + merge review
+- **Files changed:** `server_build_loop.sh`; `tools/decisions/bridge_to_codex.sh`; `tools/build_loop/ops_log.py`; `tools/build_loop/health_check.sh`; `SERVICES/sunheart-brain/curator/decisions.py`; `tools/db/__init__.py`; `tools/db/migrate_add_canary.py`; `tools/build_loop/test_self_knowing_loop.py`; `core/BUILD/REGISTRY.json`; `core/BUILD/specs/SPEC_d027_self-knowing-loop-outcome-report.md`; `core/BUILD/results/SPEC_d027_self-knowing-loop-outcome-report.result.md`; `docs/codex/HANDOFF.md`
+- **Summary:** Added d027 self-knowing loop checks. The answered-decision build bridge now appends one structured `ops_ledger` row per run with `event=loop_run`, `found`, `built`, `skipped`, and `reason`; root `server_build_loop.sh` is a compatibility wrapper to that instrumented path. `health_check.sh` now checks real non-canary pending decisions against the last successful `loop_run` and fails if pending work has not produced a build for more than two hours. Added `curator.decisions` with canary-aware `pending_builds()`, plus the idempotent `is_canary`/`d000` migration.
+- **Tests:** `python3 -B -m unittest tools.build_loop.test_self_knowing_loop` (4 tests OK); `python3 -B -m unittest tools.build_loop.test_self_knowing_loop tools.queue.test_build_loop_watcher tools.learn.test_seed_preference_pairs` (8 tests OK); `bash -n server_build_loop.sh tools/build_loop/health_check.sh tools/decisions/bridge_to_codex.sh`; `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/ops_log.py tools/build_loop/test_self_knowing_loop.py tools/db/migrate_add_canary.py tools/db/__init__.py SERVICES/sunheart-brain/curator/decisions.py`; `git diff --check -- server_build_loop.sh tools/build_loop/health_check.sh tools/build_loop/ops_log.py tools/decisions/bridge_to_codex.sh SERVICES/sunheart-brain/curator/decisions.py tools/db tools/build_loop/test_self_knowing_loop.py core/BUILD/REGISTRY.json core/BUILD/specs/SPEC_d027_self-knowing-loop-outcome-report.md`
+- **Risks:** This sandbox did not connect to the live `brain_index` DB, run the migration on 162, or install/change systemd. The DB health monitor skips when no DSN is present; on the live host `BRAIN_INDEX_DB_URL` should be present. The new `curator.decisions` module assumes the live decisions table has the existing build-loop columns referenced by the bridge.
+- **Rollback:** revert the branch. If the migration has already run live, the additive `is_canary` column can remain inert; delete only the canary row with `DELETE FROM brain_index.decisions WHERE id = 'd000'` if needed.
+- **Intent solved:** the loop now records whether it found and built real work, not just whether a timer ran.
+- **Downstream intent unlocked:** health checks and the morning digest can flag “pending decisions exist but no successful build has happened,” making the buildstream self-checking enough for the next self-standing proof pass.
+- **Questions for Ember/James:** after merge, run `python3 tools/db/migrate_add_canary.py` inside the live server/build venv with `BRAIN_INDEX_DB_URL`, then run one live `health_check.sh` and one dry/normal bridge pass to confirm `ops_ledger` receives `event=loop_run` and the canary row is excluded from `pending-builds`.
+
 ### 2026-06-16 · SPEC_d026_visual-digest-agent-v0-1-daily-p · branch `build/SPEC_d026_visual-digest-agent-v0-1-daily-p`
 
 - **Status:** done / awaiting independent review + merge review

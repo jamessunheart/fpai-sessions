@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-  "updated_at": "2026-06-16T12:09:36Z",
+  "updated_at": "2026-06-16T12:22:17Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+    {
+      "id": "SPEC_d027_self-knowing-loop-outcome-report",
+      "slug": "SPEC_d027_self-knowing-loop-outcome-report",
+      "branch": "build/SPEC_d027_self-knowing-loop-outcome-report",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d027_self-knowing-loop-outcome-report.md",
+      "tests_passed": true,
+      "notes": "d027 self-knowing loop built: answered-decision bridge logs loop_run outcome rows, health_check checks expected build rate and canary/query mismatch, curator.decisions excludes is_canary rows, and idempotent canary migration/test coverage is present."
+    },
     {
       "id": "SPEC_d026_visual-digest-agent-v0-1-daily-p",
       "slug": "SPEC_d026_visual-digest-agent-v0-1-daily-p",

@@ -14,7 +14,28 @@ DRY=0; [ "${1:-}" = "--dry-run" ] && DRY=1
 HOST="${BRAIN_HOST:-root@162.0.208.88}"
 WT_BASE="$HOME/.fpai-build-worktrees"
 NOTIFY="tools/build_loop/notify_telegram.sh"
-[ -f "$HOME/.config/fpai/decisions/.bridge_disabled" ] && { echo "bridge disabled"; exit 0; }
+OL="tools/build_loop/ops_log.py"
+loop_found=0
+loop_built=0
+loop_skipped=0
+loop_reason="no work"
+
+log_loop_run() {
+  loop_skipped=$((loop_found - loop_built))
+  [ "$loop_skipped" -lt 0 ] && loop_skipped=0
+  if [ "$loop_reason" = "built" ] && [ "$loop_built" -eq 0 ]; then
+    loop_reason="no work"
+  fi
+  python3 "$OL" build_loop loop_run "$loop_reason" '$0' '' '' \
+    "found=$loop_found" "built=$loop_built" "skipped=$loop_skipped" "reason=$loop_reason" 2>/dev/null || true
+}
+trap log_loop_run EXIT
+
+if [ -f "$HOME/.config/fpai/decisions/.bridge_disabled" ]; then
+  loop_reason="disabled"
+  echo "bridge disabled"
+  exit 0
+fi
 
 REMOTE='ENVFILE=$(systemctl show sh-brain-tgbot -p EnvironmentFiles 2>/dev/null | sed -E "s/EnvironmentFiles=//; s/ .*//"); cd /opt/sh-brain-src && set -a; . "$ENVFILE" 2>/dev/null; set +a; ./.venv/bin/python -m curator.decisions pending-builds'
 PENDING=$(ssh -o BatchMode=yes -o ConnectTimeout=20 "$HOST" "$REMOTE" 2>/dev/null | grep -E '^\{')
@@ -57,14 +78,16 @@ PY
     'ENVFILE=$(systemctl show sh-brain-tgbot -p EnvironmentFiles 2>/dev/null | sed -E "s/EnvironmentFiles=//; s/ .*//"); cd /opt/sh-brain-src && set -a; . "$ENVFILE" 2>/dev/null; set +a; ./.venv/bin/python -m curator.decisions mark-built '"$DID" >/dev/null 2>&1
   IDS+=("$SPECID")
 done <<< "$PENDING"
+loop_found=${#IDS[@]}
 
 echo "specs written: ${#IDS[@]}"
-if [ "$DRY" = "1" ]; then echo "(dry-run — Codex NOT dispatched)"; exit 0; fi
+if [ "$DRY" = "1" ]; then loop_reason="disabled"; echo "(dry-run — Codex NOT dispatched)"; exit 0; fi
 [ ${#IDS[@]} -eq 0 ] && exit 0
 
 # Dispatch to Codex (builds in isolated worktrees on build/<id> branches).
 echo "dispatching to Codex…"
 bash tools/build_loop/run_codex.sh || echo "run_codex returned non-zero (check core/BUILD/results)"
+loop_reason="built"
 
 # For each decision-spec built this run: commit the worktree (Codex sandbox can't write
 # git), run the INDEPENDENT AI review (+ protected-zone block), surface the verdict.
@@ -87,6 +110,7 @@ for SPECID in "${IDS[@]}"; do
   if [ "$RC" = "0" ]; then BSTATUS=built; elif [ "$RC" = "2" ]; then BSTATUS=rejected; else BSTATUS=changes; fi
   ssh -o BatchMode=yes -o ConnectTimeout=15 "$HOST" \
     'ENVFILE=$(systemctl show sh-brain-tgbot -p EnvironmentFiles 2>/dev/null | sed -E "s/EnvironmentFiles=//; s/ .*//"); cd /opt/sh-brain-src && set -a; . "$ENVFILE" 2>/dev/null; set +a; ./.venv/bin/python -m curator.decisions set-build-result '"$DID $BR $BSTATUS" >/dev/null 2>&1 || true
+  loop_built=$((loop_built+1))
   [ -x "$NOTIFY" ] || continue
   if [ "$RC" = "0" ]; then
     "$NOTIFY" "✅ Built + AI-APPROVED · [$DID] $SPECID
