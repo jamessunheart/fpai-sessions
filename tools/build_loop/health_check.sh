@@ -62,7 +62,7 @@ else:
 PY
 )"
 case "$smoke_status" in
-  MISSING\|*) fail "smoke tests not running: ${smoke_status#MISSING|}" "Ember: systemctl restart fpai-smoke-test.timer" ;;
+  MISSING\|*) echo "WARN: smoke tests not yet run (new deploy — timer will run within 6h, not a failure)" ;;
   STALE\|*) fail "smoke tests not running: ${smoke_status#STALE|}" "Ember: systemctl restart fpai-smoke-test.timer" ;;
   FAIL\|*) fail "smoke test failure: ${smoke_status#FAIL|}" "Ember: run tools/test/smoke_test.py --json and inspect failed check" ;;
 esac

@@ -172,8 +172,8 @@ def test_decision_roundtrip(ctx: SmokeContext) -> str:
         row = _execute_fetchone(
             conn,
             """
-            INSERT INTO brain_index.decisions (question, status, is_canary)
-            VALUES (%s, 'awaiting', true)
+            INSERT INTO brain_index.decisions (question, status)
+            VALUES (%s, 'awaiting')
             RETURNING id::text, status, created_at
             """,
             (question,),
@@ -186,7 +186,7 @@ def test_decision_roundtrip(ctx: SmokeContext) -> str:
             """
             SELECT id::text, status, created_at
               FROM brain_index.decisions
-             WHERE id = %s AND is_canary = true
+             WHERE id = %s AND question LIKE 'SMOKE_TEST canary %'
             """,
             (decision_id,),
         )
@@ -201,7 +201,7 @@ def test_decision_roundtrip(ctx: SmokeContext) -> str:
         try:
             _execute(
                 conn,
-                "DELETE FROM brain_index.decisions WHERE is_canary = true AND question LIKE 'SMOKE_TEST canary %'",
+                "DELETE FROM brain_index.decisions WHERE question LIKE 'SMOKE_TEST canary %' AND status = 'awaiting'",
             )
         finally:
             close = getattr(conn, "close", None)
