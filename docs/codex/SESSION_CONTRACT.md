@@ -20,6 +20,16 @@ CODEX BUILD CONTRACT — read before writing any code.
 
 5. NEVER: push to main · open PRs to main · force-push · touch secrets ·
    auto-deploy. Ember handles all pushes, PR creation, and merges.
+
+6. CROSS-PACKAGE IMPORTS: when importing from FPAI_Cockpit code into
+   SERVICES/sunheart-brain/ code, NEVER use sys.path.insert() or sys.path.append().
+   This causes curator package shadowing and breaks the live bot. Always use:
+     import importlib.util as _ilu
+     _spec = _ilu.spec_from_file_location("unique_name", Path("/opt/fpai-build/FPAI_Cockpit/path/to/module.py"))
+     _mod = _ilu.module_from_spec(_spec)
+     _spec.loader.exec_module(_mod)
+     fn = _mod.function_name
+   This pattern loads by explicit file path with no global path side-effects.
 ```
 
 ## Why this exists
