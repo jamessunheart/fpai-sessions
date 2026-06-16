@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-16 · SPEC_d058_lock-lantern-mirror-ledger-as-st · branch `build/SPEC_d058_lock-lantern-mirror-ledger-as-st`
+
+- **Status:** done / independently reviewed / awaiting merge review
+- **Files changed:** `docs/codex/LANTERN_MIRROR_LEDGER_PRINCIPLE.md`; `tools/agent_benchmark_intelligence/test_lantern_mirror_ledger_principle.py`; `core/BUILD/specs/SPEC_d058_lock-lantern-mirror-ledger-as-st.md`; `core/BUILD/results/SPEC_d058_lock-lantern-mirror-ledger-as-st.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Locked the Lantern -> Mirror -> shared scoring ledger architecture as a standing design principle for agent/model evaluation. Lantern looks outward at external AI benchmarking and field knowledge, Mirror scores FPAI agents inward from repo-local evidence, and the shared ledger preserves advisory time-series role-placement memory. The principle explicitly bars automatic routing authority changes, training/fine-tuning, model installs/downloads, spend, deployment, outreach, or wider permissions.
+- **Tests:** `python3 -B -m unittest tools.agent_benchmark_intelligence.test_lantern_mirror_ledger_principle` (4 tests OK); `python3 -B -m unittest tools.agent_benchmark_intelligence.test_engine tools.agent_benchmark_intelligence.test_lantern_mirror_ledger_principle` (12 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/agent_benchmark_intelligence/test_lantern_mirror_ledger_principle.py`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `python3 -m json.tool core/BUILD/signals/agent_benchmark_intelligence.json`; `git diff --check`
+- **Independent review:** completed by subagent. It found no content blockers in the principle doc and confirmed the advisory boundaries. Initial closeout hygiene findings were fixed: registry now marks d058 done, result/handoff proof exists, and registry timestamp is monotonic relative to the prior file value.
+- **Risks:** This is a principle/proof lock, not new runtime scoring behavior. Future placement changes still need separate approved specs before any live authority changes. If d057 artifact paths are renamed, update the principle and regression test in the same change.
+- **Rollback:** remove `docs/codex/LANTERN_MIRROR_LEDGER_PRINCIPLE.md`, `tools/agent_benchmark_intelligence/test_lantern_mirror_ledger_principle.py`, and `core/BUILD/results/SPEC_d058_lock-lantern-mirror-ledger-as-st.result.md`; remove the d058 registry row and this HANDOFF entry.
+- **Intent solved:** Lantern -> Mirror -> shared scoring ledger is now a locked standing design principle instead of an implicit implementation pattern.
+- **Downstream intent unlocked:** future model-placement, local-model replacement, and agent-routing specs can use a stable advisory evaluation doctrine before any approved authority change.
+- **Questions for Ember/James:** after merge, mirror the principle into the vault memory surface if desired; no runtime timer or service install is required for d058 itself.
+
 ### 2026-06-16 · SPEC_d057_agent-benchmarking-intelligence · branch `build/SPEC_d057_agent-benchmarking-intelligence`
 
 - **Status:** done / independently reviewed / awaiting merge review
