@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
     {
+      "id": "SPEC_d025_user-os-blueprint-minimum-viable",
+      "slug": "SPEC_d025_user-os-blueprint-minimum-viable",
+      "branch": "build/SPEC_d025_user-os-blueprint-minimum-viable",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d025_user-os-blueprint-minimum-viable.md",
+      "tests_passed": true,
+      "notes": "d025 USER_OS_BLUEPRINT built: added the minimum viable second-user install guide, review-only brain_index replication_insight.v1 SQL artifact, and focused tests asserting all required sections, non-empty gap log, parseable journey hooks, parseable Agent Passport schema, and append mechanism declaration."
+    },
+    {
       "id": "SPEC_d023_continuous-learning-controller-l",
       "slug": "SPEC_d023_continuous-learning-controller-l",
       "branch": "build/SPEC_d023_continuous-learning-controller-l",
