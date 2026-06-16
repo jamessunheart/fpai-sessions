@@ -150,6 +150,21 @@ class HorizonScannerTest(unittest.TestCase):
             )
             self.assertIn("proposal_drought", {s.kind for s in result.signals})
 
+    def test_probe_sessions_detect_drop_rate_and_quality_decline(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            probes = [
+                {"initiated_at": (NOW - timedelta(hours=i)).isoformat(), "engaged": i == 0, "completed_spark": False, "quality_score": 0.2}
+                for i in range(5)
+            ]
+            result = self.run_with(
+                root,
+                streams={"life_events": [], "decisions": [], "thread": [{"at": NOW.isoformat(), "text": "hello"}], "tg_messages": [], "probe_sessions": probes},
+            )
+            kinds = {s.kind for s in result.signals}
+            self.assertIn("probe_drop_rate_spike", kinds)
+            self.assertIn("probe_quality_declining", kinds)
+
     def test_default_send_telegram_false_when_notifier_skips(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

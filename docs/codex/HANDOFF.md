@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-16 · SPEC_d054_probe-agent-proactive-outreach-s · branch `build/SPEC_d054_probe-agent-proactive-outreach-s`
+
+- **Status:** done / awaiting James review + merge review
+- **Files changed:** `tools/probe/`; `SERVICES/sunheart-brain/curator/hermes/`; `tools/horizon/scanner.py`; `tools/horizon/test_scanner.py`; `SERVICES/sunheart-brain/curator/jobs/digest.py`; `core/BUILD/cron/fpai-probe.service`; `core/BUILD/cron/fpai-probe.timer`; `core/BUILD/specs/SPEC_d054_probe-agent-proactive-outreach-s.md`; `core/BUILD/results/SPEC_d054_probe-agent-proactive-outreach-s.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the Probe Agent subsystem: `brain_index` schema artifact for `probe_pool`/`probe_sessions`, self-regulating `rate_governor`, guarded `agent`, minimal Hermes Telegram adapter, pre-send persistence/contact guard, outcome sync from `tg_messages` before rate decisions, 24h quiet-session quality evaluation, horizon probe signals, morning digest probe section, and review-only systemd service/timer. The cycle fails closed on `PROBE_DISABLE=1`, `.probe_disabled`, DB/dependency gaps, recent smoke failures, high correction frequency, low completion, missing Hermes/token, or unsupported platform.
+- **Tests:** `python3 -B -m unittest tools.probe.test_probe tools.horizon.test_scanner` (23 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/probe/agent.py tools/probe/rate_governor.py tools/probe/signals.py tools/probe/test_probe.py tools/horizon/scanner.py tools/horizon/test_scanner.py SERVICES/sunheart-brain/curator/jobs/digest.py SERVICES/sunheart-brain/curator/hermes/gateway.py SERVICES/sunheart-brain/curator/hermes/__init__.py`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `git diff --check`; `PROBE_DISABLE=1 python3 -B tools/probe/agent.py --json --sync-outcomes --evaluate-due --ops-ledger /tmp/d054-probe-disabled.jsonl`; `python3 -B tools/probe/rate_governor.py --json --ops-ledger /tmp/d054-probe-rate.jsonl`; direct unsupported-platform `default_send` smoke returned `False`.
+- **Independent review:** completed by subagent. It first found blockers in send-before-persistence, stale outcome data before rate decisions, missing Hermes path, and missing horizon/digest wiring. All were fixed. Final review reported no blockers.
+- **Risks:** Live DB schema was not installed in this sandbox; systemd artifacts are review-only until Ember installs them; first live proof must verify `probe_pool.handle` matches the Telegram identifier captured in `brain_index.tg_messages`; Telegram may require chat IDs or prior user interaction for direct sends rather than arbitrary usernames.
+- **Rollback:** revert the changed files. If installed later, disable/remove `fpai-probe.timer` and `fpai-probe.service`, run `systemctl daemon-reload`, and use `PROBE_DISABLE=1` or `/opt/fpai-build/.probe_disabled` for immediate runtime pause.
+- **Intent solved:** outbound probe growth now has a self-regulating, signal-governed repo implementation instead of an arbitrary cap or blind manual send loop.
+- **Downstream intent unlocked:** Ember/James can install schema/timer, manually seed `brain_index.probe_pool`, and run one reviewed live proof where outreach rate adapts to smoke health, completion, corrections, and conversation quality.
+- **Questions for Ember/James:** after merge, apply `tools/probe/schema.sql` to the live `brain_index` DB, verify Hermes can send to the chosen Telegram identifiers, seed warm `probe_pool` rows manually, then run one disabled proof and one tiny enabled proof with `OPS_LEDGER` set.
+
 ### 2026-06-16 · SPEC_d053_blueprint-weakness-auditor-tool · branch `build/SPEC_d053_blueprint-weakness-auditor-tool`
 
 - **Status:** done / awaiting James review + merge review

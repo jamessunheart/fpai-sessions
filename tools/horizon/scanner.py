@@ -132,7 +132,7 @@ def _query_table(conn: Any, table: str, *, since: datetime, limit: int = 500) ->
     columns = _table_columns(conn, table)
     if not columns:
         return []
-    time_col = next((c for c in ("at", "created_at", "updated_at", "timestamp", "ts") if c in columns), None)
+    time_col = next((c for c in ("at", "created_at", "updated_at", "initiated_at", "timestamp", "ts") if c in columns), None)
     sql = f'SELECT to_jsonb(t) FROM brain_index."{table}" AS t'
     params: tuple[Any, ...] = ()
     if time_col:
@@ -148,21 +148,21 @@ def _query_table(conn: Any, table: str, *, since: datetime, limit: int = 500) ->
 def read_brain_index_streams(*, since: datetime) -> dict[str, list[dict[str, Any]]]:
     dsn = dsn_from_env()
     if not dsn:
-        return {"life_events": [], "decisions": [], "thread": [], "tg_messages": []}
+        return {"life_events": [], "decisions": [], "thread": [], "tg_messages": [], "probe_sessions": []}
     try:
         import psycopg  # type: ignore
     except ImportError:
-        return {"life_events": [], "decisions": [], "thread": [], "tg_messages": []}
+        return {"life_events": [], "decisions": [], "thread": [], "tg_messages": [], "probe_sessions": []}
     out: dict[str, list[dict[str, Any]]] = {}
     try:
         with psycopg.connect(dsn, connect_timeout=3) as conn:
-            for table in ("life_events", "decisions", "thread", "tg_messages"):
+            for table in ("life_events", "decisions", "thread", "tg_messages", "probe_sessions"):
                 try:
                     out[table] = _query_table(conn, table, since=since)
                 except Exception:
                     out[table] = []
     except Exception:
-        return {"life_events": [], "decisions": [], "thread": [], "tg_messages": []}
+        return {"life_events": [], "decisions": [], "thread": [], "tg_messages": [], "probe_sessions": []}
     return out
 
 
@@ -452,6 +452,48 @@ def analyze_interactions(
     return signals
 
 
+def analyze_probe_sessions(rows: Iterable[dict[str, Any]]) -> list[Signal]:
+    sessions = list(rows)
+    signals: list[Signal] = []
+    if not sessions:
+        return signals
+    total = len(sessions)
+    engaged = sum(1 for row in sessions if bool(row.get("engaged")))
+    completed = sum(1 for row in sessions if bool(row.get("completed_spark")) or bool(row.get("completed_onboarding")))
+    qualities = [
+        float(row["quality_score"])
+        for row in sessions
+        if row.get("quality_score") is not None
+    ]
+    if total >= 5 and engaged / max(total, 1) < 0.30:
+        signals.append(Signal(
+            "probe_drop_rate_spike",
+            f"Probe engagement is low: {engaged}/{total} engaged",
+            "Outbound should pause or narrow before adding more people.",
+            severity=5,
+            evidence={"total": total, "engaged": engaged},
+        ))
+    if total >= 5 and completed / max(total, 1) < 0.30:
+        signals.append(Signal(
+            "probe_completion_low",
+            f"Probe completion is low: {completed}/{total} completed",
+            "Spark routing may be losing people before a meaningful exchange.",
+            severity=4,
+            evidence={"total": total, "completed": completed},
+        ))
+    if qualities:
+        avg = sum(qualities) / len(qualities)
+        if len(qualities) >= 3 and avg < 0.50:
+            signals.append(Signal(
+                "probe_quality_declining",
+                f"Probe quality score is declining: avg {avg:.2f}",
+                "Conversation routing quality should be repaired before the next scale-up.",
+                severity=5,
+                evidence={"avg_quality": round(avg, 3), "scored": len(qualities)},
+            ))
+    return signals
+
+
 def cross_correlate(signals: Iterable[Signal]) -> list[Signal]:
     by_kind = {s.kind: s for s in signals}
     out: list[Signal] = []
@@ -611,6 +653,7 @@ def run_scan(
         analyze_life_events(stream_data.get("life_events") or [], config)
         + analyze_buildstream(stream_data.get("decisions") or [], rows_for_ops, reg, config)
         + analyze_interactions(all_interactions, config, now=current, source_available=interaction_source_available)
+        + analyze_probe_sessions(stream_data.get("probe_sessions") or [])
     )
     all_signals = tuple(cross_correlate(base_signals) + base_signals)
     selected = select_signal(all_signals)

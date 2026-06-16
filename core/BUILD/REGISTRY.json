@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-  "updated_at": "2026-06-16T21:52:00Z",
+  "updated_at": "2026-06-16T23:02:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+    {
+      "id": "SPEC_d054_probe-agent-proactive-outreach-s",
+      "slug": "SPEC_d054_probe-agent-proactive-outreach-s",
+      "branch": "build/SPEC_d054_probe-agent-proactive-outreach-s",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d054_probe-agent-proactive-outreach-s.md",
+      "tests_passed": true,
+      "notes": "d054 built: Probe Agent with self-regulating outreach rate governor, schema artifact for probe_pool/probe_sessions, minimal Hermes Telegram adapter, pre-send persistence/contact guard, tg_messages outcome sync before rate decisions, quality evaluation after 24h silence, horizon scanner probe signals, morning digest probe section, review-only systemd timer, and focused tests. No live sends, installs, prod deploys, secrets, push, or merge."
+    },
     {
       "id": "SPEC_d053_blueprint-weakness-auditor-tool",
       "slug": "SPEC_d053_blueprint-weakness-auditor-tool",

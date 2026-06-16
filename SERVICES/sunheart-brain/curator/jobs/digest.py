@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import logging
 import os
+import json
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -35,6 +36,23 @@ def horizon_signal_lines() -> list[str]:
         return recent_horizon_signal_lines(ledger)
     except Exception:
         return []
+
+
+def latest_probe_rate_line() -> str:
+    ledger = Path(os.environ.get("OPS_LEDGER", "/opt/fpai-build/ops_ledger.jsonl"))
+    if not ledger.exists():
+        return "Rate next cycle: n/a (no probe_rate row)"
+    latest: dict[str, Any] | None = None
+    for raw in ledger.read_text(encoding="utf-8", errors="replace").splitlines():
+        try:
+            row = json.loads(raw)
+        except json.JSONDecodeError:
+            continue
+        if str(row.get("event") or row.get("type")) == "probe_rate":
+            latest = row
+    if not latest:
+        return "Rate next cycle: n/a (no probe_rate row)"
+    return f"Rate next cycle: {latest.get('count', 'n/a')} ({latest.get('reason', 'unknown')})"
 
 
 async def run(run_id: str) -> dict[str, Any]:
@@ -84,6 +102,31 @@ async def run(run_id: str) -> dict[str, Any]:
             )
             (blocked_24h,) = await cur.fetchone()
 
+            probe_report: dict[str, Any] = {"available": False}
+            try:
+                await cur.execute(
+                    """
+                    SELECT
+                        COUNT(*) FILTER (WHERE notes LIKE '%send_status=sent%')::int,
+                        COUNT(*) FILTER (WHERE notes LIKE '%send_status=sent%' AND engaged IS TRUE)::int,
+                        COUNT(*) FILTER (WHERE notes LIKE '%send_status=sent%' AND completed_spark IS TRUE)::int,
+                        AVG(quality_score) FILTER (WHERE notes LIKE '%send_status=sent%')
+                      FROM brain_index.probe_sessions
+                     WHERE initiated_at > NOW() - INTERVAL '24 hours'
+                    """
+                )
+                sent, engaged, completed_spark, avg_quality = await cur.fetchone()
+                probe_report = {
+                    "available": True,
+                    "sent": int(sent or 0),
+                    "engaged": int(engaged or 0),
+                    "completed_spark": int(completed_spark or 0),
+                    "avg_quality": float(avg_quality) if avg_quality is not None else None,
+                    "rate_line": latest_probe_rate_line(),
+                }
+            except Exception as exc:
+                probe_report = {"available": False, "reason": str(exc)[:160]}
+
     report = {
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "totals": {"chunks": total_chunks, "concepts": total_concepts},
@@ -92,6 +135,7 @@ async def run(run_id: str) -> dict[str, Any]:
             "auto_merges": merges_24h,
             "blocked_queries": blocked_24h,
             "top_agents": [{"agent": a, "calls": n} for a, n in agents],
+            "probe": probe_report,
         },
     }
     scanner_flags = horizon_signal_lines()
@@ -106,6 +150,14 @@ async def run(run_id: str) -> dict[str, Any]:
     proposal_text = f"Daily digest · {summary}"
     if scanner_flags:
         proposal_text += "\n\n⚡ Scanner flagged:\n" + "\n".join(f"- {line}" for line in scanner_flags)
+    if probe_report.get("available"):
+        quality = "n/a" if probe_report.get("avg_quality") is None else f"{probe_report['avg_quality']:.1f}"
+        proposal_text += (
+            "\n\nProbe section\n"
+            f"Probes sent yesterday: {probe_report['sent']} | Engaged: {probe_report['engaged']} | "
+            f"Completed Spark: {probe_report['completed_spark']} | Avg quality: {quality}\n"
+            f"{probe_report['rate_line']}"
+        )
     log.info("digest: %s", summary)
 
     async with AppFlowy() as af:
