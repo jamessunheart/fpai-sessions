@@ -80,6 +80,121 @@ def _is_team_capture_user(uid: str) -> bool:
 _PRIVATE_MODE: dict[str, bool] = {}
 
 
+def _multiuser_disabled() -> bool:
+    return os.environ.get("MULTIUSER_DISABLE", "").strip().lower() in ("1", "true", "yes", "on")
+
+
+async def _resolve_user_id(from_user: str, chat_id: int | str | None, *, is_owner: bool) -> str:
+    """Resolve Telegram identity to a tenant user_id.
+
+    d034's user_channels bridge is not present in every checkout, so the query
+    is best-effort and falls back to a stable Telegram-derived tenant id.
+    """
+    if _multiuser_disabled() or is_owner:
+        return "james"
+    if chat_id:
+        try:
+            from .db import connect
+
+            async with connect() as conn:
+                async with conn.cursor() as cur:
+                    await cur.execute(
+                        """
+                        SELECT user_id
+                          FROM brain_index.user_channels
+                         WHERE chat_id = %s
+                         LIMIT 1
+                        """,
+                        (str(chat_id),),
+                    )
+                    row = await cur.fetchone()
+                    if row and row[0]:
+                        return str(row[0])
+        except Exception as e:
+            log.debug("user_channels lookup skipped: %s", e)
+    if os.environ.get("MULTIUSER_OPEN_ONBOARDING", "").strip().lower() in ("1", "true", "yes", "on"):
+        return f"tg_{from_user or chat_id}"
+    return ""
+
+
+async def _log_user_thread(user_id: str, role: str, text: str) -> None:
+    """Persist a tenant turn outside tg_messages so James capture never sweeps it."""
+    if not user_id or not text:
+        return
+    try:
+        from .db import connect
+
+        async with connect() as conn:
+            async with conn.cursor() as cur:
+                await cur.execute(
+                    """
+                    INSERT INTO brain_index.thread (user_id, surface, role, text)
+                    VALUES (%s, %s, %s, %s)
+                    """,
+                    (user_id, "telegram", role[:16], text[:8000]),
+                )
+    except Exception as e:
+        log.warning("tenant thread log failed user_id=%s role=%s: %s", user_id, role, e)
+
+
+async def _load_or_create_user_agent(user_id: str, channel: str, beacon_id: str, display_name: str | None = None):
+    from .agent.user_agent import UserAgent, UserNotOnboarded
+
+    try:
+        return await UserAgent.load(user_id)
+    except UserNotOnboarded:
+        return await UserAgent.create(
+            user_id=user_id,
+            channel=channel,
+            beacon_id=beacon_id,
+            display_name=display_name,
+        )
+
+
+async def _check_tenant_limit_or_reply(user_agent, chat_id: int | str) -> bool:
+    from .agent.user_agent import RateLimitExceeded
+
+    try:
+        await user_agent.record_message_or_raise()
+        return True
+    except RateLimitExceeded:
+        await tg.send(
+            "You've used your daily free messages. Reply /upgrade to unlock more — or come back tomorrow.",
+            chat_id=chat_id,
+        )
+        return False
+
+
+async def _synthesize_tenant_answer(question: str, user_agent) -> str:
+    from .llm import complete
+
+    context = await user_agent.get_context(last_n=20)
+    turns = []
+    for row in context:
+        role = row.get("role") or "user"
+        text = (row.get("text") or "").strip()
+        if text:
+            turns.append(f"{role}: {text[:1200]}")
+    user = (
+        "User message:\n"
+        + question
+        + "\n\nRecent tenant-local conversation only:\n"
+        + ("\n".join(turns[-20:]) if turns else "(no prior tenant context)")
+    )
+    system_prompt = (
+        "You are a private Full Potential assistant for this user. "
+        "Use only the tenant-local conversation context supplied here. "
+        "Do not claim access to James's notes, decisions, memories, or operator context. "
+        "Reply in 1-3 short, useful sentences."
+    )
+    try:
+        result = await complete(system_prompt, user, max_tokens=220, temperature=0.4, force_json=False)
+        return result.text.strip() or "(no response)"
+    except Exception as e:
+        log.exception("tenant synthesis failed: %s", e)
+        return f"⚠️ Tenant answer hit an error: {e}"
+
+
 async def _log_tg_message(chat_id: str, role: str, text: str,
                            update_id: int | None = None,
                            private_flag: bool = False) -> None:
@@ -505,7 +620,8 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
         return (
             "<b>Sunheart Brain</b>\n"
             "Send any question — I'll search your brain and answer with sources.\n"
-            "Conversations are auto-captured + compressed into your brain hourly.\n\n"
+            "Conversations are auto-captured + compressed into your brain hourly.\n"
+            "Privacy: https://fullpotential.com/privacy\n\n"
             "<b>Commands</b>\n"
             "  /now       — current priority + status from NOW.md (cross-terminal coordination)\n"
             "  /vision    — unifying vision: 30-day goal + ONE Thing + AI alignment\n"
@@ -3832,6 +3948,7 @@ async def _handle_message(msg: dict) -> None:
     is_owner = bool(OWNER_CHAT_ID) and from_user == OWNER_CHAT_ID
     is_team = _is_team_capture_user(from_user)
     capture_name = TEAM_CAPTURE.get(from_user, "James" if is_owner else "")
+    user_id = await _resolve_user_id(from_user, chat_id, is_owner=is_owner)
 
     # Voice / audio note → Whisper transcription → Linear (always) → flow as text only for owner.
     if not text and chat_id:
@@ -3883,7 +4000,7 @@ async def _handle_message(msg: dict) -> None:
             )
         return
 
-    if not is_owner:
+    if not is_owner and _multiuser_disabled():
         # Self-onboarding: first message from a stranger gets a greeting with
         # their chat_id so they can ask James to add them to TEAM_CAPTURE_USERS.
         # Track greeted strangers to avoid spam.
@@ -3915,6 +4032,51 @@ async def _handle_message(msg: dict) -> None:
             except Exception as e:
                 log.warning("stranger greeting failed: %s", e)
         log.info("ignoring message from non-authorized user %s", from_user)
+        return
+
+    if not is_owner:
+        if not user_id:
+            await tg.send(
+                "This assistant is not open for direct onboarding yet. "
+                "Start through Hermes or ask James for access.",
+                chat_id=chat_id,
+            )
+            log.info("ignoring unmapped tenant user %s", from_user)
+            return
+        display_name = (msg.get("from") or {}).get("first_name") or None
+        user_agent = await _load_or_create_user_agent(
+            user_id=user_id,
+            channel="telegram",
+            beacon_id=str(chat_id),
+            display_name=display_name,
+        )
+        if text.startswith("/"):
+            cmd = text.lstrip("/").split(None, 1)[0].lower()
+            if cmd in ("start", "help"):
+                await tg.send(
+                    "<b>Full Potential assistant</b>\n"
+                    "Your agent has its own isolated memory and settings.\n"
+                    "Privacy: https://fullpotential.com/privacy",
+                    chat_id=chat_id,
+                )
+                return
+            if cmd == "upgrade":
+                await tg.send(
+                    "Upgrade flow is not connected yet. Your current tier is "
+                    f"<b>{tg._esc(user_agent.tier)}</b>.",
+                    chat_id=chat_id,
+                )
+                return
+            await tg.send("That command is not available for tenant agents yet.", chat_id=chat_id)
+            return
+
+        if not await _check_tenant_limit_or_reply(user_agent, chat_id):
+            return
+        await _log_user_thread(user_id, "user", text)
+        log.info("tenant chat user_id=%s: %s", user_id, text[:120])
+        answer_body = _format_answer_for_telegram(await _synthesize_tenant_answer(text, user_agent))
+        await tg.send(answer_body, chat_id=chat_id)
+        await _log_user_thread(user_id, "bot", answer_body)
         return
 
     # james_ask inbound DISABLED per James 2026-06-12 — all non-command messages

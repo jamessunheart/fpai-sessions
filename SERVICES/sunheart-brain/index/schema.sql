@@ -122,6 +122,38 @@ CREATE TABLE IF NOT EXISTS tg_messages (
 CREATE INDEX IF NOT EXISTS tg_messages_chat_idx       ON tg_messages (chat_id, at DESC);
 CREATE INDEX IF NOT EXISTS tg_messages_unprocessed_idx ON tg_messages (chat_id, at) WHERE processed_at IS NULL AND NOT private_flag;
 
+-- Cross-surface conversation thread. User-facing paths must filter by user_id.
+CREATE TABLE IF NOT EXISTS thread (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    at timestamptz NOT NULL DEFAULT now(),
+    user_id text DEFAULT 'james',
+    surface text NOT NULL,
+    role text NOT NULL,
+    text text NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_thread_user_id ON thread(user_id);
+
+-- Per-user isolated agent records.
+CREATE TABLE IF NOT EXISTS user_agents (
+    user_id text PRIMARY KEY,
+    display_name text,
+    tier text DEFAULT 'free',
+    system_prompt_override text,
+    memory_namespace text UNIQUE,
+    capability_grants jsonb DEFAULT '{}'::jsonb,
+    consent_log jsonb DEFAULT '[]'::jsonb,
+    stripe_customer_id text,
+    subscription_status text DEFAULT 'none',
+    cora_balance int DEFAULT 0,
+    proof_count int DEFAULT 0,
+    session_count int DEFAULT 0,
+    last_seen timestamp,
+    created_at timestamp DEFAULT now(),
+    data_region text DEFAULT 'eu',
+    deletion_requested_at timestamp
+);
+
 -- Correction memory loop.
 -- Each row captures James correcting the previous bot turn. The Telegram bot
 -- injects the most recent correction pairs into future prompts so failures

@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-  "updated_at": "2026-06-16T14:45:00Z",
+  "updated_at": "2026-06-16T15:35:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+    {
+      "id": "SPEC_d039_user-agent-namespacing-v0-1-per",
+      "slug": "SPEC_d039_user-agent-namespacing-v0-1-per",
+      "branch": "build/SPEC_d039_user-agent-namespacing-v0-1-per",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d039_user-agent-namespacing-v0-1-per.md",
+      "tests_passed": true,
+      "notes": "d039 user agent namespacing complete: user_agents migration/schema, per-user UserAgent model/store, capability registry, operator boundary helper, tenant thread isolation, Telegram tenant onboarding/rate-limit wiring, MULTIUSER_DISABLE kill switch, and focused isolation tests."
+    },
     {
       "id": "SPEC_d038_content-bank-v0-1-truth-asset-sc",
       "slug": "SPEC_d038_content-bank-v0-1-truth-asset-sc",

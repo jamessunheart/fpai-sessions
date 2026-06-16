@@ -44,16 +44,23 @@ def _esc(s: str) -> str:
     )
 
 
-async def send(text: str, *, parse_mode: str = "HTML", reply_markup: dict | None = None) -> bool:
+async def send(
+    text: str,
+    *,
+    parse_mode: str = "HTML",
+    reply_markup: dict | None = None,
+    chat_id: int | str | None = None,
+) -> bool:
     """Send a message. `text` is expected to already be HTML-safe (use _esc on
     user-supplied substrings; <b>, <i>, <a href="...">…</a>, <code> are fine).
     `reply_markup` accepts a Telegram inline keyboard dict.
     """
-    if not enabled():
+    target_chat_id = str(chat_id) if chat_id is not None else CHAT_ID
+    if not (BOT_TOKEN and target_chat_id):
         return False
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
     payload: dict = {
-        "chat_id": CHAT_ID,
+        "chat_id": target_chat_id,
         "text": text,
         "parse_mode": parse_mode,
         "disable_web_page_preview": True,

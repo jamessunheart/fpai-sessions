@@ -33,8 +33,8 @@ async def _append(surface: str, role: str, text: str):
     async with connect() as c:
         cur = c.cursor()
         await cur.execute(
-            "INSERT INTO brain_index.thread (surface, role, text) VALUES (%s,%s,%s)",
-            (surface[:16], role[:16], (text or "")[:8000]))
+            "INSERT INTO brain_index.thread (user_id, surface, role, text) VALUES (%s,%s,%s,%s)",
+            ("james", surface[:16], role[:16], (text or "")[:8000]))
 
 async def _recent(n: int = 20) -> str:
     from curator.db import connect
@@ -44,7 +44,9 @@ async def _recent(n: int = 20) -> str:
         # unified: the thread table + the bot's tg_messages, normalized + merged by time
         await cur.execute(f"""
             SELECT at, surface, role, text FROM (
-                SELECT at, surface, role, text FROM brain_index.thread
+                SELECT at, surface, role, text
+                  FROM brain_index.thread
+                 WHERE user_id = 'james'
                 UNION ALL
                 SELECT at, 'telegram' AS surface,
                        CASE WHEN role='bot' THEN 'ember' ELSE 'james' END AS role, text
