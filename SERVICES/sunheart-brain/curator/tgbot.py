@@ -479,8 +479,12 @@ async def _synthesize_answer(question: str, hits: list[dict], *, conversation_id
         "Keep it very short."
     )
     try:
-        from .build_context import build_context_system_suffix
-        system_prompt = CHAT_SYSTEM_PROMPT + await build_context_system_suffix(conversation_id=conversation_id)
+        from .build_context import build_context_system_suffix, diagnostic_system_prefix
+        system_prompt = (
+            diagnostic_system_prefix()
+            + CHAT_SYSTEM_PROMPT
+            + await build_context_system_suffix(conversation_id=conversation_id)
+        )
     except Exception as e:
         log.warning("build-context injection skipped: %s", e)
         system_prompt = CHAT_SYSTEM_PROMPT

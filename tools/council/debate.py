@@ -27,6 +27,13 @@ ENV = ('ENVFILE=$(systemctl show sh-brain-tgbot -p EnvironmentFiles 2>/dev/null 
 sys.path.insert(0, REPO + "/tools/cost")
 import track
 try:
+    from .self_diagnostic import is_decision_queue_empty, run_diagnostic_dialogue, trigger_from_files
+except Exception:
+    try:
+        from self_diagnostic import is_decision_queue_empty, run_diagnostic_dialogue, trigger_from_files
+    except Exception:
+        is_decision_queue_empty = run_diagnostic_dialogue = trigger_from_files = None
+try:
     import certifi; SSLCTX = ssl.create_default_context(cafile=certifi.where())
 except Exception:
     SSLCTX = ssl.create_default_context()
@@ -91,6 +98,17 @@ if spent >= DAILY_CAP:
 queue = run_curator("./.venv/bin/python -m curator.decisions list")
 if "awaiting" in queue:
     print("a decision already awaits James"); sys.exit(0)
+
+if trigger_from_files and run_diagnostic_dialogue and is_decision_queue_empty:
+    try:
+        diag_decision = trigger_from_files(queue_empty=is_decision_queue_empty(queue))
+        if diag_decision.should_run:
+            specs = run_diagnostic_dialogue()
+            print(f"self-diagnostic ran ({diag_decision.trigger}); queued {len(specs)} improvements")
+            sys.exit(0)
+    except Exception as e:
+        _ops("diagnostic_error", f"self-diagnostic skipped after error: {e}")
+        print("self-diagnostic error; continuing normal debate:", e)
 
 chats = run_curator("./.venv/bin/python -m curator.decisions recent-chats 30").strip()
 signal = (queue + "\n" + chats)

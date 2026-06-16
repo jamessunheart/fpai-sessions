@@ -108,6 +108,30 @@ class BuildContextTest(unittest.TestCase):
         self.assertIn("Corrections:", suffix)
         self.assertIn("You forgot, I said my birthday is June 4.", suffix)
 
+    def test_active_diagnostic_context_is_bounded_and_prefixed(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            context_path = Path(tmp) / "diagnostic.json"
+            context_path.write_text(
+                json.dumps(
+                    {
+                        "audit_id": "diag-test",
+                        "expires_at": "2099-01-01T00:00:00Z",
+                        "prompt_prefix": "Answer honestly from your experience.",
+                        "last_50_tg_messages": [{"role": "user", "text": "What did you miss?"}],
+                        "not_now_decisions": [{"id": "d1", "question": "Build this now?"}],
+                        "rejected_builds": [{"id": "SPEC_x", "notes": "Rejected for missing test."}],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            prefix = build_context.diagnostic_system_prefix(context_path)
+            rendered = build_context.render_active_diagnostic_context(path=context_path, max_chars=900)
+
+        self.assertIn("Answer honestly from your experience.", prefix)
+        self.assertIn("ACTIVE COUNCIL SELF-DIAGNOSTIC CONTEXT", rendered)
+        self.assertIn("Rejected for missing test.", rendered)
+
 
 if __name__ == "__main__":
     unittest.main()

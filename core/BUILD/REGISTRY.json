@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-  "updated_at": "2026-06-16T13:18:00Z",
+  "updated_at": "2026-06-16T13:50:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+    {
+      "id": "SPEC_d031_council-self-diagnostic-dialogue",
+      "slug": "SPEC_d031_council-self-diagnostic-dialogue",
+      "branch": "build/SPEC_d031_council-self-diagnostic-dialogue",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d031_council-self-diagnostic-dialogue.md",
+      "tests_passed": true,
+      "notes": "d031 council self-diagnostic built: Telegram audit question flow, bot/James tg_messages collection, James redirect weighting, Claude JSON synthesis, dec queue-build wrapper, ops-ledger logging, 48h cooldown trigger, debate hook, diagnostic bot prompt context, and focused tests."
+    },
     {
       "id": "SPEC_d030_d029-output-diagnostic-question",
       "slug": "SPEC_d030_d029-output-diagnostic-question",

@@ -12,6 +12,7 @@ import os
 import re
 import sys
 from dataclasses import dataclass, replace
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -20,6 +21,9 @@ import httpx
 REPO_ROOT = Path(os.environ.get("FPAI_REPO_ROOT", Path(__file__).resolve().parents[3]))
 DEFAULT_MAX_ITEMS = int(os.environ.get("SH_BUILD_CONTEXT_MAX_ITEMS", "6"))
 DEFAULT_MAX_CHARS = int(os.environ.get("SH_BUILD_CONTEXT_MAX_CHARS", "1800"))
+DEFAULT_DIAGNOSTIC_CONTEXT_FILE = Path(
+    os.environ.get("SELF_DIAGNOSTIC_CONTEXT_FILE", "/opt/fpai-build/.self_diagnostic_context.json")
+)
 SUPABASE_TIMEOUT_SECONDS = float(os.environ.get("SH_BUILD_CONTEXT_TIMEOUT_SECONDS", "2.0"))
 
 
@@ -57,9 +61,87 @@ async def build_context_system_suffix(
         max_items=max_items,
         conversation_id=conversation_id,
     )
+    diagnostic = render_active_diagnostic_context(max_chars=max_chars)
     if context.is_empty():
+        return "\n\n" + diagnostic if diagnostic else ""
+    suffix = render_build_context(context, max_chars=max_chars)
+    if diagnostic:
+        suffix = diagnostic + "\n\n" + suffix
+    return "\n\n" + suffix
+
+
+def diagnostic_system_prefix(path: Path | str = DEFAULT_DIAGNOSTIC_CONTEXT_FILE) -> str:
+    """Return the short-lived diagnostic interview instruction, if active."""
+    context = load_active_diagnostic_context(Path(path))
+    if not context:
         return ""
-    return "\n\n" + render_build_context(context, max_chars=max_chars)
+    prefix = str(context.get("prompt_prefix") or "").strip()
+    return prefix + "\n\n" if prefix else ""
+
+
+def render_active_diagnostic_context(
+    *,
+    path: Path | str = DEFAULT_DIAGNOSTIC_CONTEXT_FILE,
+    max_chars: int = DEFAULT_MAX_CHARS,
+) -> str:
+    context = load_active_diagnostic_context(Path(path))
+    if not context:
+        return ""
+    lines = [
+        "--- ACTIVE COUNCIL SELF-DIAGNOSTIC CONTEXT ---",
+        f"Audit: {context.get('audit_id', '')}",
+        "Use this context to answer the council's diagnostic questions honestly from your recent operating experience.",
+    ]
+    recent = context.get("last_50_tg_messages") or []
+    if recent:
+        lines.append("Recent Telegram turns:")
+        for item in recent[:12]:
+            if isinstance(item, dict):
+                lines.append(f"- {item.get('role', '?')}: {_clip_markdown(str(item.get('text') or ''))}")
+    not_now = context.get("not_now_decisions") or []
+    if not_now:
+        lines.append("Decisions James answered not now:")
+        for item in not_now[:8]:
+            if isinstance(item, dict):
+                lines.append(f"- {item.get('id', '')}: {_clip_markdown(str(item.get('question') or ''))}")
+    rejected = context.get("rejected_builds") or []
+    if rejected:
+        lines.append("Rejected builds:")
+        for item in rejected[:8]:
+            if isinstance(item, dict):
+                lines.append(f"- {item.get('id', '')}: {_clip_markdown(str(item.get('notes') or item.get('branch') or ''))}")
+    rendered = "\n".join(lines)
+    if len(rendered) <= max_chars:
+        return rendered
+    return rendered[: max(0, max_chars - 20)].rsplit("\n", 1)[0] + "\n- ... bounded"
+
+
+def load_active_diagnostic_context(path: Path = DEFAULT_DIAGNOSTIC_CONTEXT_FILE) -> dict[str, Any] | None:
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+    if not isinstance(data, dict):
+        return None
+    expires_at = _parse_time(str(data.get("expires_at") or ""))
+    if expires_at and expires_at < datetime.now(timezone.utc):
+        return None
+    return data
+
+
+def _parse_time(value: str) -> datetime | None:
+    raw = value.strip()
+    if not raw:
+        return None
+    if raw.endswith("Z"):
+        raw = raw[:-1] + "+00:00"
+    try:
+        parsed = datetime.fromisoformat(raw)
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
 
 
 async def load_build_context(
