@@ -236,6 +236,7 @@ PY
         git add core/BUILD/REGISTRY.json core/BUILD/diffs tools/test/expected_outputs.json >/dev/null 2>&1 || true
         git diff --cached --quiet 2>/dev/null || git commit -q -m "chore(build): record smoke expectations for $id" || true
         increment_merged_since_audit
+        python3 "$ROOT/curator/blueprints/manager.py" update-after-build "$id" "$branch" >/dev/null 2>&1 || true
         git worktree remove "$wt" --force >/dev/null 2>&1; git branch -d "$branch" >/dev/null 2>&1
         echo "✅ MERGED: $id"; merged=$((merged+1))
       else

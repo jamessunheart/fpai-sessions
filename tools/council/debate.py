@@ -25,7 +25,12 @@ DAILY_CAP = float(os.environ.get("COUNCIL_DAILY_USD", "3.0"))
 ENV = ('ENVFILE=$(systemctl show sh-brain-tgbot -p EnvironmentFiles 2>/dev/null | '
        'sed -E "s/EnvironmentFiles=//; s/ .*//"); cd /opt/sh-brain-src && set -a; . "$ENVFILE" 2>/dev/null; set +a;')
 sys.path.insert(0, REPO + "/tools/cost")
+sys.path.insert(0, REPO)
 import track
+try:
+    from curator.blueprints.manager import build_blueprint_context
+except Exception:
+    build_blueprint_context = None
 try:
     from .self_diagnostic import is_decision_queue_empty, run_diagnostic_dialogue, trigger_from_files
 except Exception:
@@ -139,6 +144,18 @@ try:
 except Exception:
     pass
 prompt = SYS + _focus + "\n\nDECISION QUEUE:\n" + queue + "\n\nRECENT INTENTS (chats):\n" + chats + "\n\nRespond with ONLY the JSON object."
+if build_blueprint_context and os.environ.get("BLUEPRINTS_DISABLE") != "1":
+    try:
+        blueprint_context = build_blueprint_context(queue, chats, _focus, include_council=True)
+        if blueprint_context:
+            prompt = (
+                "[Module blueprints — what already exists + quality standards]\n"
+                + blueprint_context
+                + "\n\n"
+                + prompt
+            )
+    except Exception:
+        pass
 try:
     import subprocess as _sp
     r = _sp.run([CLAUDE, "-p", prompt], stdin=_sp.DEVNULL, capture_output=True, text=True, timeout=150)
