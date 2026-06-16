@@ -62,9 +62,32 @@ async def _recent(n: int = 20) -> str:
         lines.append(f"[{surface}] {who}: {(text or '').strip()[:600]}")
     return "\n".join(lines)
 
+async def _state() -> str:
+    """Compact CURRENT live system-state (so a surface boots with live truth, not just conversation)."""
+    import subprocess
+    try:
+        loop = subprocess.run(["systemctl", "is-active", "fpai-build-loop.timer"],
+                              capture_output=True, text=True, timeout=5).stdout.strip() or "unknown"
+    except Exception:
+        loop = "unknown"
+    bits = [f"build loop {loop} (server 162, laptop-free, $0)"]
+    try:
+        from curator.db import connect
+        async with connect() as c:
+            cur = c.cursor()
+            await cur.execute("select id,left(question,56) from brain_index.decisions where status='answered' and needs_build=true and coalesce(spec_written,false)=false order by id desc limit 1")
+            r = await cur.fetchone(); bits.append(f"queued-next: {r[0]}:{r[1].strip()}" if r else "queued-next: none")
+            await cur.execute("select id,left(question,56) from brain_index.decisions where build_status='built' order by id desc limit 1")
+            r = await cur.fetchone(); bits.append(f"last-built: {r[0]}:{r[1].strip()}" if r else "last-built: none")
+    except Exception:
+        pass
+    return "CURRENT LIVE SYSTEM STATE (now — report as truth, not the older thread below): " + " · ".join(bits)
+
 def main(argv):
     if not argv:
         print(__doc__); return 1
+    if argv[0] == "state":
+        print(asyncio.run(_state())); return 0
     if argv[0] == "append" and len(argv) >= 4:
         text = sys.stdin.read() if argv[3] == "-" else " ".join(argv[3:])  # "-" = read text from stdin (safe for hooks)
         text = (text or "").strip()
