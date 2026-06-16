@@ -1,0 +1,11 @@
+# SPEC_d034_hermes-channel-gateway-v0-1-plug Result
+
+- Status: done / awaiting merge review
+- Branch: `build/SPEC_d034_hermes-channel-gateway-v0-1-plug`
+- Summary: Added Hermes as an additive channel gateway under `curator.hermes`: normalized message/response dataclasses, adapter base class, Telegram adapter wrapper, web adapter stub, gateway identity resolution/logging, `HERMES_DISABLE=1` kill switch, authenticated `/hermes/web/message` FastAPI endpoint, and idempotent `brain_index.user_channels` migration/schema.
+- Tests: `python3 -B -m unittest tools.hermes.test_gateway` (6 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile ...` for touched Hermes/index/migration/test modules; `python3 -B -m json.tool core/BUILD/REGISTRY.json`; `python3 -B tools/db/migrate_add_user_channels.py --dry-run`; `git diff --check`.
+- Not run: live DB migration, live Telegram send, live web endpoint request, and live Spark/Ember pipeline response. `python3 -B -c 'import app'` from the index dir was blocked because this sandbox Python lacks `psycopg`, an existing service dependency. Independent `claude -p` review was attempted but hung without output in the restricted sandbox.
+- Risks: `/hermes/web/message` uses the existing index bearer-token auth and requires `personal` scope, but the live endpoint still needs venv/service validation. Default web processing imports the existing `curator.tgbot` search/synthesis path, so live proof depends on the same bot env, DB, embedding, and LLM availability as current Telegram chat. Telegram adapter outbound intentionally delegates to existing `curator.telegram.send()` and does not replace `tgbot.py`.
+- Rollback: remove `SERVICES/sunheart-brain/curator/hermes/`, `SERVICES/sunheart-brain/index/hermes_routes.py`, the router include in `SERVICES/sunheart-brain/index/app.py`, the `user_channels` DDL in `SERVICES/sunheart-brain/index/schema.sql`, `tools/db/migrate_add_user_channels.py`, `tools/hermes/test_gateway.py`, this result file, and the registry entry.
+- Intent solved: Telegram is now the first adapter behind a channel-agnostic gateway rather than the whole messaging system.
+- Downstream intent unlocked: web, SMS, WhatsApp, and Instagram adapters can plug into the same normalized message/identity/pipeline contract without rebuilding the brain.

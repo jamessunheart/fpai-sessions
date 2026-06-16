@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-  "updated_at": "2026-06-16T13:50:00Z",
+  "updated_at": "2026-06-16T17:12:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+    {
+      "id": "SPEC_d034_hermes-channel-gateway-v0-1-plug",
+      "slug": "SPEC_d034_hermes-channel-gateway-v0-1-plug",
+      "branch": "build/SPEC_d034_hermes-channel-gateway-v0-1-plug",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d034_hermes-channel-gateway-v0-1-plug.md",
+      "tests_passed": true,
+      "notes": "Hermes channel gateway v0.1 built: channel-agnostic schema, adapter interface, Telegram adapter wrapper, web adapter stub, user_channels migration/schema, authenticated FastAPI web endpoint, Postgres-backed identity/logging defaults, kill switch, and focused gateway tests."
+    },
     {
       "id": "SPEC_d031_council-self-diagnostic-dialogue",
       "slug": "SPEC_d031_council-self-diagnostic-dialogue",
