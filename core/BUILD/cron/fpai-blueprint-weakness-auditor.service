@@ -1,0 +1,10 @@
+[Unit]
+Description=FPAI Blueprint Weakness Auditor
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/fpai-build/FPAI_Cockpit
+Environment=FPAI_SURFACE=auto-loop
+ExecStart=/usr/bin/python3 -m tools.blueprint_auditor.auditor --json
+
