@@ -1,0 +1,13 @@
+# d047 intent protocol extractor, reviewed for server 162 install.
+# This file is a reviewed cron artifact, not an installed production crontab.
+#
+# Intended runtime script path after Ember deploys/links the repo artifact:
+#   /opt/fpai/build/scripts/extract_intent_protocols.py
+#
+# Proof condition after first run:
+#   memory/protocols/concentrate-harder-not-build-more.md exists
+#   memory/protocols/intent-should-update-protocols.md exists
+#   memory/protocols/case-study-first-then-template.md exists
+#   each file has frontmatter type=protocol, source=intent-extractor, date
+
+17 3 * * * cd /opt/fpai-build/FPAI_Cockpit && /usr/bin/env python3 -B /opt/fpai/build/scripts/extract_intent_protocols.py --commit --require-proof
