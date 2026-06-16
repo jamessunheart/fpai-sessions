@@ -37,25 +37,20 @@ _NEGATION_RESTATEMENT = re.compile(
 )
 
 _REPO_ROOT = Path(os.environ.get("FPAI_REPO", "/opt/fpai-build/FPAI_Cockpit"))
-if str(_REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(_REPO_ROOT))
+_manager_path = _REPO_ROOT / "curator" / "blueprints" / "manager.py"
 try:
-    from curator.blueprints.manager import detect_module_from_text, update_blueprint_after_correction
-except Exception:
-    _manager_path = _REPO_ROOT / "curator" / "blueprints" / "manager.py"
-    try:
-        _spec = importlib.util.spec_from_file_location("fpai_blueprint_manager", _manager_path)
-        _manager = importlib.util.module_from_spec(_spec) if _spec and _spec.loader else None
-        if _manager and _spec and _spec.loader:
-            _spec.loader.exec_module(_manager)
-            detect_module_from_text = _manager.detect_module_from_text
-            update_blueprint_after_correction = _manager.update_blueprint_after_correction
-        else:
-            detect_module_from_text = None
-            update_blueprint_after_correction = None
-    except Exception:
+    _spec = importlib.util.spec_from_file_location("fpai_blueprint_manager", _manager_path)
+    _manager = importlib.util.module_from_spec(_spec) if _spec and _spec.loader else None
+    if _manager and _spec and _spec.loader:
+        _spec.loader.exec_module(_manager)
+        detect_module_from_text = _manager.detect_module_from_text
+        update_blueprint_after_correction = _manager.update_blueprint_after_correction
+    else:
         detect_module_from_text = None
         update_blueprint_after_correction = None
+except Exception:
+    detect_module_from_text = None
+    update_blueprint_after_correction = None
 
 
 @dataclass(frozen=True)
