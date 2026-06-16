@@ -1,0 +1,25 @@
+{
+  "d034": [
+    "curator/hermes/__init__.py",
+    "curator/hermes/gateway.py"
+  ],
+  "d035": [
+    "docs/policy/CORA_POLICY_v0.2.md"
+  ],
+  "d036": [
+    "curator/onboarding/flow.py"
+  ],
+  "d039": [
+    "curator/agent/user_agent.py"
+  ],
+  "d049": [
+    "core/BUILD/systemd/fpai-smoke-test.service",
+    "core/BUILD/systemd/fpai-smoke-test.timer",
+    "core/BUILD/systemd/fpai-spec-check.service",
+    "core/BUILD/systemd/fpai-spec-check.timer",
+    "tools/test/smoke_test.py",
+    "tools/test/expected_outputs.json",
+    "tools/test/update_expected_outputs.py",
+    "tools/test/spec_checker.py"
+  ]
+}

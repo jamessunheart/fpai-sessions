@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-  "updated_at": "2026-06-16T21:07:18Z",
+  "updated_at": "2026-06-16T21:34:31Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+    {
+      "id": "SPEC_d049_system-smoke-tests-prove-pipelin",
+      "slug": "SPEC_d049_system-smoke-tests-prove-pipelin",
+      "branch": "build/SPEC_d049_system-smoke-tests-prove-pipelin",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d049_system-smoke-tests-prove-pipelin.md",
+      "tests_passed": true,
+      "notes": "d049 system smoke tests built: 7 live smoke checks with canary cleanup, TG roundtrip, tg_messages continuity, build-loop liveness, curator import chain, ops-ledger roundtrip, and expected-output gap check; 6h/weekly reviewed systemd artifacts; health_check/digest wiring; expected-output merge updater; weekly spec checker with persisted merge diffs and DB build_spec preference."
+    },
     {
       "id": "SPEC_d047_intent-protocol-extractor-v0-1",
       "slug": "SPEC_d047_intent-protocol-extractor-v0-1",

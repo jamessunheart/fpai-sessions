@@ -1,0 +1,11 @@
+[Unit]
+Description=Run FPAI live system smoke tests every 6 hours
+
+[Timer]
+OnCalendar=*-*-* 00/6:00:00 UTC
+Persistent=true
+Unit=fpai-smoke-test.service
+
+[Install]
+WantedBy=timers.target
+

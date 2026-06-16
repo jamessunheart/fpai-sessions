@@ -1,0 +1,10 @@
+[Unit]
+Description=FPAI weekly spec compliance checker
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/sh-brain/curator.env
+WorkingDirectory=/opt/fpai-build/FPAI_Cockpit
+ExecStart=/usr/bin/env python3 /opt/fpai-build/FPAI_Cockpit/tools/test/spec_checker.py --recent --limit 5

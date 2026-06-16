@@ -224,8 +224,17 @@ PY
   # gate
   if bash "$ROOT/tools/merge/merge_gate.sh" "$branch" >/tmp/orch_gate_$id.out 2>&1; then
     if [ "$AUTO_MERGE" = "1" ]; then
+      expected_diff="/tmp/fpai_expected_outputs_${id}.name_status"
+      full_diff="/tmp/fpai_expected_outputs_${id}.diff"
+      git diff --name-status "$(git merge-base "$BASE" "$branch")" "$branch" >"$expected_diff" 2>/dev/null || true
+      git diff "$(git merge-base "$BASE" "$branch")" "$branch" >"$full_diff" 2>/dev/null || true
       if git merge --no-ff "$branch" -m "merge(auto): $id [orchestrator · gated]" -q 2>/tmp/orch_merge_$id.out; then
         python3 -c "import json;p='core/BUILD/REGISTRY.json';d=json.load(open(p));[b.__setitem__('status','merged') for b in d['active_builds'] if b['branch']=='$branch'];json.dump(d,open(p,'w'),indent=2)"
+        mkdir -p "$ROOT/core/BUILD/diffs"
+        cp "$full_diff" "$ROOT/core/BUILD/diffs/$id.diff" 2>/dev/null || true
+        python3 "$ROOT/tools/test/update_expected_outputs.py" "$id" "$branch" --diff-file "$expected_diff" >/dev/null 2>&1 || true
+        git add core/BUILD/REGISTRY.json core/BUILD/diffs tools/test/expected_outputs.json >/dev/null 2>&1 || true
+        git diff --cached --quiet 2>/dev/null || git commit -q -m "chore(build): record smoke expectations for $id" || true
         increment_merged_since_audit
         git worktree remove "$wt" --force >/dev/null 2>&1; git branch -d "$branch" >/dev/null 2>&1
         echo "✅ MERGED: $id"; merged=$((merged+1))

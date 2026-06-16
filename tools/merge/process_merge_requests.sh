@@ -36,7 +36,16 @@ $REVIEW" >/dev/null 2>&1 || true
   # Merge into feat/headless-build only. NEVER main.
   git checkout "$BASE" >/dev/null 2>&1 || { mark "$DID" fail; continue; }
   git pull --ff-only >/dev/null 2>&1 || true
+  expected_diff="/tmp/fpai_expected_outputs_${DID}.name_status"
+  full_diff="/tmp/fpai_expected_outputs_${DID}.diff"
+  git diff --name-status "$(git merge-base "$BASE" "$BR")" "$BR" >"$expected_diff" 2>/dev/null || true
+  git diff "$(git merge-base "$BASE" "$BR")" "$BR" >"$full_diff" 2>/dev/null || true
   if git merge --no-ff -m "merge($DID): $BR — James-approved from phone, AI-reviewed" "$BR" >/dev/null 2>&1; then
+    mkdir -p core/BUILD/diffs
+    cp "$full_diff" "core/BUILD/diffs/$DID.diff" 2>/dev/null || true
+    python3 tools/test/update_expected_outputs.py "$DID" "$BR" --diff-file "$expected_diff" >/dev/null 2>&1 || true
+    git add core/BUILD/diffs tools/test/expected_outputs.json >/dev/null 2>&1 || true
+    git diff --cached --quiet 2>/dev/null || git commit -q -m "chore(build): record smoke expectations for $DID" || true
     mark "$DID" ok
     [ -x "$NOTIFY" ] && "$NOTIFY" "🔀 Merged [$DID] → $BASE ✅
 $BR is in. (main still needs the terminal + Ember's audit.)" >/dev/null 2>&1 || true

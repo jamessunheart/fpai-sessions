@@ -28,6 +28,45 @@ for tm in fpai-build-loop fpai-council fpai-morning-digest; do
   [ "$(systemctl is-active "$tm".timer 2>/dev/null)" = active ] || fail "$tm.timer not active" "Ember: systemctl restart $tm.timer"
 done
 
+# 4b. scheduled behavioral smoke tests are current and clean
+smoke_status="$(python3 - <<'PY' 2>/dev/null || true
+import datetime as dt, json, os, pathlib
+ledger = pathlib.Path(os.environ.get("OPS_LEDGER", "/opt/fpai-build/ops_ledger.jsonl"))
+rows = []
+if ledger.exists():
+    for line in ledger.read_text(encoding="utf-8", errors="replace").splitlines():
+        try:
+            row = json.loads(line)
+        except Exception:
+            continue
+        if row.get("loop") == "smoke_test" and row.get("event") in ("smoke_test", "smoke_skipped"):
+            rows.append(row)
+if not rows:
+    print("MISSING|no smoke test result in ops ledger")
+    raise SystemExit
+last = rows[-1]
+try:
+    ts = dt.datetime.strptime(last.get("ts", ""), "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=dt.timezone.utc)
+except Exception:
+    print("MISSING|last smoke test timestamp unreadable")
+    raise SystemExit
+age_h = (dt.datetime.now(dt.timezone.utc) - ts).total_seconds() / 3600.0
+if age_h > 8:
+    print(f"STALE|last smoke test {age_h:.1f}h ago")
+elif last.get("status") == "SKIP":
+    print("OK|smoke tests intentionally disabled")
+elif last.get("status") == "FAIL" or int(last.get("failures") or 0) > 0:
+    print("FAIL|" + str(last.get("detail") or "smoke test failure"))
+else:
+    print("OK|")
+PY
+)"
+case "$smoke_status" in
+  MISSING\|*) fail "smoke tests not running: ${smoke_status#MISSING|}" "Ember: systemctl restart fpai-smoke-test.timer" ;;
+  STALE\|*) fail "smoke tests not running: ${smoke_status#STALE|}" "Ember: systemctl restart fpai-smoke-test.timer" ;;
+  FAIL\|*) fail "smoke test failure: ${smoke_status#FAIL|}" "Ember: run tools/test/smoke_test.py --json and inspect failed check" ;;
+esac
+
 # 5. stuck/accumulating build worktrees (>24h old = likely unmerged/stuck)
 stuck=$(find /opt/fpai-build/worktrees -maxdepth 1 -mindepth 1 -type d -mtime +1 2>/dev/null | wc -l | tr -d ' ')
 [ "${stuck:-0}" -gt 4 ] && fail "$stuck build worktrees >24h old (stuck/unmerged)" "Ember: run reap_worktrees.sh --apply"
