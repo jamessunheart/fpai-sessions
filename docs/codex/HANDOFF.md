@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-16 · SPEC_d048_living-architecture-doc-auto-gen · branch `build/SPEC_d048_living-architecture-doc-auto-gen`
+
+- **Status:** done / awaiting James review + merge review
+- **Files changed:** `docs/ARCHITECTURE.md`; `tools/docs/`; `tools/merge/process_merge_requests.sh`; `tools/build_loop/build_orchestrator.sh`; `core/BUILD/REGISTRY.json`; `core/BUILD/specs/SPEC_d048_living-architecture-doc-auto-gen.md`; `core/BUILD/results/SPEC_d048_living-architecture-doc-auto-gen.result.md`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the living architecture SSOT and generator. `tools/docs/generate_architecture.py` renders all 9 required sections, reads `core/BUILD/REGISTRY.json` for function status, reads live `brain_index.decisions` when DB env is available, snapshots systemd services when available, logs `architecture_generated` with `sections=9`, and honors `ARCHITECTURE_DISABLE=1`. Post-merge regeneration is wired best-effort into the existing merge processor and build orchestrator.
+- **Tests:** `python3 -B -m unittest tools.docs.test_generate_architecture` (7 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/docs/generate_architecture.py tools/docs/test_generate_architecture.py`; `bash -n tools/merge/process_merge_requests.sh tools/build_loop/build_orchestrator.sh`; `python3 -m json.tool core/BUILD/REGISTRY.json`
+- **Risks:** This sandbox had no live `brain_index` credentials or server-162 `systemctl`, so live queue and service rows render honest unavailable placeholders until generated on server 162. The requested root `server_build_loop.sh` file is not present in this checkout; the hook was added to the actual merge paths in this repo.
+- **Rollback:** revert the changed files; or set `ARCHITECTURE_DISABLE=1` to skip regeneration while preserving merged code.
+- **Intent solved:** FPOS now has a single shareable architecture document that GPT, Obsidian, and GitHub can read/render.
+- **Downstream intent unlocked:** every merge can refresh the architecture SSOT automatically so James and future AI sessions do not reconstruct system shape from scattered files.
+- **Questions for Ember/James:** after merge on server 162, run `python3 tools/docs/generate_architecture.py` once with live DB env loaded and confirm `docs/ARCHITECTURE.md` shows real `needs_build=true` queue rows and systemd service statuses.
+
 ### 2026-06-16 · SPEC_d038_content-bank-v0-1-truth-asset-sc · branch `build/SPEC_d038_content-bank-v0-1-truth-asset-sc`
 
 - **Status:** done / awaiting James review + merge review

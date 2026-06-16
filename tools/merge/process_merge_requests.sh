@@ -19,6 +19,12 @@ mark() {  # did  ok|fail
   ssh -o BatchMode=yes -o ConnectTimeout=15 "$HOST" "$REMOTE_ENV ./.venv/bin/python -m curator.decisions mark-merged $1 $2" >/dev/null 2>&1 || true
 }
 
+regenerate_architecture_doc() {
+  python3 "$REPO/tools/docs/generate_architecture.py" >/dev/null 2>&1 || true
+  git -C "$REPO" add docs/ARCHITECTURE.md >/dev/null 2>&1 || true
+  git -C "$REPO" commit -q -m 'docs(architecture): auto-regenerate after merge' >/dev/null 2>&1 || true
+}
+
 while IFS= read -r line; do
   [ -z "$line" ] && continue
   DID=$(printf '%s' "$line" | python3 -c 'import sys,json;print(json.load(sys.stdin)["id"])')
@@ -38,6 +44,7 @@ $REVIEW" >/dev/null 2>&1 || true
   git pull --ff-only >/dev/null 2>&1 || true
   if git merge --no-ff -m "merge($DID): $BR — James-approved from phone, AI-reviewed" "$BR" >/dev/null 2>&1; then
     mark "$DID" ok
+    regenerate_architecture_doc
     [ -x "$NOTIFY" ] && "$NOTIFY" "🔀 Merged [$DID] → $BASE ✅
 $BR is in. (main still needs the terminal + Ember's audit.)" >/dev/null 2>&1 || true
   else
