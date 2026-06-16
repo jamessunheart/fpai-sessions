@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FPOS Daily Pulse</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0d1117;
+      --panel: #161b22;
+      --panel-2: #1f2937;
+      --text: #f0f6fc;
+      --muted: #9da7b3;
+      --line: #30363d;
+      --green: #3fb950;
+      --red: #f85149;
+      --amber: #d29922;
+      --blue: #58a6ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+    .page {
+      width: 1200px;
+      min-height: 1600px;
+      padding: 54px;
+      background: var(--bg);
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      gap: 32px;
+      align-items: flex-start;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--line);
+    }
+    h1 {
+      margin: 0;
+      font-size: 58px;
+      line-height: 1.02;
+      font-weight: 760;
+    }
+    .time {
+      color: var(--muted);
+      font-size: 24px;
+      line-height: 1.3;
+      text-align: right;
+      white-space: nowrap;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      margin-top: 28px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 28px;
+      min-height: 236px;
+    }
+    .wide { grid-column: 1 / -1; }
+    .section-title {
+      margin: 0 0 20px;
+      color: var(--blue);
+      text-transform: uppercase;
+      font-size: 20px;
+      font-weight: 760;
+      letter-spacing: 0;
+    }
+    .metric {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .metric .number {
+      font-size: 52px;
+      font-weight: 780;
+      line-height: 1;
+    }
+    .metric .label {
+      color: var(--muted);
+      font-size: 24px;
+    }
+    ol, ul {
+      margin: 0;
+      padding-left: 28px;
+    }
+    li {
+      margin: 12px 0;
+      font-size: 25px;
+      line-height: 1.32;
+    }
+    .empty {
+      color: var(--muted);
+      font-size: 25px;
+      line-height: 1.35;
+    }
+    .rows {
+      display: grid;
+      gap: 12px;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      min-height: 42px;
+      font-size: 24px;
+      line-height: 1.25;
+    }
+    .row-name {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+    .pill {
+      flex: none;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--panel-2);
+      color: var(--muted);
+      font-size: 18px;
+      font-weight: 680;
+      text-transform: uppercase;
+    }
+    .dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      flex: none;
+      background: var(--red);
+      box-shadow: 0 0 0 4px rgba(248, 81, 73, .12);
+    }
+    .dot.ok {
+      background: var(--green);
+      box-shadow: 0 0 0 4px rgba(63, 185, 80, .12);
+    }
+    .dot.unknown {
+      background: var(--amber);
+      box-shadow: 0 0 0 4px rgba(210, 153, 34, .12);
+    }
+    .next {
+      font-size: 34px;
+      line-height: 1.22;
+      font-weight: 720;
+    }
+    .small {
+      color: var(--muted);
+      font-size: 20px;
+      margin-top: 16px;
+      line-height: 1.35;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <div>
+        <h1>FPOS Daily Pulse</h1>
+        <div class="small">Visual digest generated from live system state.</div>
+      </div>
+      <div class="time">
+        <div>{{ date }}</div>
+        <div>{{ generated_at }}</div>
+      </div>
+    </header>
+
+    <section class="grid">
+      <article class="card wide">
+        <h2 class="section-title">Top 3</h2>
+        <ol>
+          {% for item in top_three %}
+          <li>{{ item }}</li>
+          {% endfor %}
+        </ol>
+      </article>
+
+      <article class="card">
+        <h2 class="section-title">Open Decisions</h2>
+        <div class="metric">
+          <div class="number">{{ open_decisions.count }}</div>
+          <div class="label">awaiting</div>
+        </div>
+        {% if open_decisions["items"] %}
+        <div class="rows">
+          {% for item in open_decisions["items"] %}
+          <div class="row">
+            <span class="row-name">{{ item.title }}</span>
+            <span class="pill">{{ item.status }}</span>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty">No open decisions found in brain_index.decisions.</div>
+        {% endif %}
+      </article>
+
+      <article class="card">
+        <h2 class="section-title">Proof Today</h2>
+        <div class="metric">
+          <div class="number">{{ proof_today }}</div>
+          <div class="label">merged or deployed</div>
+        </div>
+        <div class="small">{{ event_count }} ops-ledger events read from the last 24 hours.</div>
+      </article>
+
+      <article class="card wide">
+        <h2 class="section-title">Build State</h2>
+        <div class="grid" style="grid-template-columns: 1fr 1fr 1fr; gap: 18px; margin-top: 0;">
+          <div>
+            <div class="pill">Currently building</div>
+            {% if build_state.currently_building %}
+            <ul>
+              {% for item in build_state.currently_building %}
+              <li>{{ item.id }}</li>
+              {% endfor %}
+            </ul>
+            {% else %}
+            <div class="empty">None registered.</div>
+            {% endif %}
+          </div>
+          <div>
+            <div class="pill">Recently merged</div>
+            {% if build_state.recently_merged %}
+            <ul>
+              {% for item in build_state.recently_merged %}
+              <li>{{ item.id }}</li>
+              {% endfor %}
+            </ul>
+            {% else %}
+            <div class="empty">No merged registry rows.</div>
+            {% endif %}
+          </div>
+          <div>
+            <div class="pill">Queued</div>
+            {% if build_state.queued %}
+            <ul>
+              {% for item in build_state.queued[:5] %}
+              <li>{{ item.id }}</li>
+              {% endfor %}
+            </ul>
+            {% else %}
+            <div class="empty">No queued specs.</div>
+            {% endif %}
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2 class="section-title">Server Health</h2>
+        <div class="rows">
+          {% for svc in server_health %}
+          <div class="row">
+            <span class="dot {% if svc.ok %}ok{% elif svc.state == 'unknown' %}unknown{% endif %}"></span>
+            <span class="row-name">{{ svc.name }}</span>
+            <span class="pill">{{ svc.state }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </article>
+
+      <article class="card">
+        <h2 class="section-title">Next Move</h2>
+        <div class="next">{{ next_move }}</div>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

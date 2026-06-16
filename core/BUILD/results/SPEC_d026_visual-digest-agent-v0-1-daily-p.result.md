@@ -1,0 +1,25 @@
+# SPEC_d026_visual-digest-agent-v0-1-daily-p Result
+
+- Status: done / awaiting independent review + merge
+- Branch: `build/SPEC_d026_visual-digest-agent-v0-1-daily-p`
+- Files changed:
+  - `tools/visual/__init__.py`
+  - `tools/visual/visual_digest.py`
+  - `tools/visual/templates/daily_pulse.html`
+  - `tools/visual/test_visual_digest.py`
+  - `core/BUILD/cron/SPEC_d026_fpai_morning_digest_visual_post.conf`
+  - `core/BUILD/REGISTRY.json`
+  - `core/BUILD/specs/SPEC_d026_visual-digest-agent-v0-1-daily-p.md`
+  - `core/BUILD/results/SPEC_d026_visual-digest-agent-v0-1-daily-p.result.md`
+  - `docs/codex/HANDOFF.md`
+- Summary: Added the deterministic visual digest agent. It reads the last 24h ops ledger, best-effort `brain_index.decisions`, build registry/spec/result state, and key `systemctl is-active` service checks; renders the Jinja2 daily pulse HTML template; exports a PNG through headless Chromium with `wkhtmltoimage` fallback when available; saves under `/opt/fpai-build/visuals/YYYY-MM-DD/daily_pulse_HH-MM.png`; sends the PNG through the existing curator Telegram channel/direct sendPhoto path; and appends an ops-ledger row with `type=visual_digest` and the saved path. The kill switch is `VISUAL_DIGEST_DISABLE=1`.
+- Morning digest hook: added review-only systemd drop-in artifact `core/BUILD/cron/SPEC_d026_fpai_morning_digest_visual_post.conf` for `/etc/systemd/system/fpai-morning-digest.service.d/visual-digest.conf`, using `ExecStartPost` so the existing digest script is not rewritten. This build did not install it.
+- Tests:
+  - `python3 -B -m unittest tools.visual.test_visual_digest` — 4 tests OK.
+  - `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/visual/visual_digest.py tools/visual/test_visual_digest.py` — OK.
+  - `git diff --check -- tools/visual core/BUILD/REGISTRY.json core/BUILD/cron/SPEC_d026_fpai_morning_digest_visual_post.conf core/BUILD/specs/SPEC_d026_visual-digest-agent-v0-1-daily-p.md` — OK.
+  - `python3 -B -m tools.visual.visual_digest --output-root /tmp/fpai-visuals --ops-ledger /tmp/fpai-visual-ops.jsonl --no-send --write-html` — exited cleanly; sandbox Chromium is a snap binary and could not open `/run/snapd/lock/.lock` in this restricted filesystem, so render was skipped without crashing.
+- Risks: The sandbox did not send a real Telegram photo, connect to the live `brain_index` database, install the morning-digest drop-in, or prove a real Chromium render because snap Chromium is blocked by the sandbox. On the live host, if neither Chromium nor `wkhtmltoimage` can render, the CLI logs a warning and exits 0 without appending an artifact row.
+- Rollback: Revert the changed files. If Ember later installs the drop-in, remove `/etc/systemd/system/fpai-morning-digest.service.d/visual-digest.conf` and run `systemctl daemon-reload`. Runtime kill switch: set `VISUAL_DIGEST_DISABLE=1`.
+- Intent solved: the morning digest now has a deterministic visual pulse artifact path that can summarize live build, decision, proof, and service state as an inspectable PNG.
+- Downstream intent unlocked: Ember can append a visual post-digest step to `fpai-morning-digest` after review, giving James a scannable daily state surface without making him inspect registry rows or terminal output.

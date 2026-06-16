@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-  "updated_at": "2026-06-16T11:45:52Z",
+  "updated_at": "2026-06-16T12:09:36Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+    {
+      "id": "SPEC_d026_visual-digest-agent-v0-1-daily-p",
+      "slug": "SPEC_d026_visual-digest-agent-v0-1-daily-p",
+      "branch": "build/SPEC_d026_visual-digest-agent-v0-1-daily-p",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d026_visual-digest-agent-v0-1-daily-p.md",
+      "tests_passed": true,
+      "notes": "d026 visual digest built: deterministic daily pulse HTML-to-PNG, Telegram photo send path, ops-ledger artifact row, kill switch, review-only fpai-morning-digest ExecStartPost drop-in, and focused tests. Sandbox Chromium snap could not render, but CLI skipped cleanly."
+    },
     {
       "id": "SPEC_d025_user-os-blueprint-minimum-viable",
       "slug": "SPEC_d025_user-os-blueprint-minimum-viable",
