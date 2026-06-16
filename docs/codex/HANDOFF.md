@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-16 · SPEC_d029_idle-triggered-self-audit-empty · branch `build/SPEC_d029_idle-triggered-self-audit-empty`
+
+- **Status:** done / awaiting independent review + merge review
+- **Files changed:** `tools/build_loop/self_audit.py`; `tools/build_loop/test_self_audit.py`; `tools/build_loop/build_orchestrator.sh`; `core/BUILD/REGISTRY.json`; `core/BUILD/specs/SPEC_d029_idle-triggered-self-audit-empty.md`; `core/BUILD/results/SPEC_d029_idle-triggered-self-audit-empty.result.md`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the d029 idle-triggered self-audit path. `tools/build_loop/self_audit.py` collects local ops-ledger, review, optional brain_index, architecture-gap, and systemctl evidence; calls `claude -p` with a specific systemic-gap audit prompt; validates strict JSON; filters forbidden money/identity/prod-irreversible/delete/secret/outreach classes; caps output at 3 specs; and returns the ranked list without queueing directly. `build_orchestrator.sh` now triggers it after queue processing when the queue is empty and audit age permits, or after 10 auto-merges, then queues returned specs through `dec queue-build`, logs `event=self_audit`, sends Telegram, and resets the merge counter.
+- **Tests:** `python3 -B -m unittest tools.build_loop.test_self_audit` (6 tests OK); `python3 -B -m unittest tools.build_loop.test_self_audit tools.queue.test_build tools.queue.test_build_loop_watcher` (10 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/self_audit.py tools/build_loop/test_self_audit.py`; `bash -n tools/build_loop/build_orchestrator.sh`
+- **Risks:** Live `claude -p`, host `dec queue-build`, real ops-ledger append, and Telegram send were not exercised in this sandbox. If `dec` is absent on the host, generated specs are logged but not queued. The 24h audit cap means the 2h idle signal only causes a run when no audit has run in the last day.
+- **Rollback:** revert the changed files; remove `/opt/fpai-build/.last_audit_date`, `/opt/fpai-build/.merged_since_audit`, and `/tmp/audit_specs.json` if a later live run creates them; immediate runtime kill switch is `SELF_AUDIT_DISABLE=1`.
+- **Intent solved:** empty build-queue time now has a bounded self-improvement proposal path instead of becoming silent idle.
+- **Downstream intent unlocked:** the autonomous build loop can turn recurring failures, review patterns, corrections, and degraded services into review-gated improvement specs while preserving James/Ember authority.
+- **Questions for Ember/James:** after merge, verify the host has the expected `dec queue-build` command and run one live proof with `SELF_AUDIT_OUTPUT=/tmp/audit_specs.json`: audit JSON is valid, queued count matches decisions DB additions, ops ledger gets one `self_audit` row, Telegram includes the audit id, and `.merged_since_audit` resets to `0`.
+
 ### 2026-06-16 · SPEC_d026_visual-digest-agent-v0-1-daily-p · branch `build/SPEC_d026_visual-digest-agent-v0-1-daily-p`
 
 - **Status:** done / awaiting independent review + merge review

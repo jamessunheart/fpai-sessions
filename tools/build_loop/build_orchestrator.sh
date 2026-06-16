@@ -29,8 +29,127 @@ RESULTS="$ROOT/core/BUILD/results"
 WT_BASE="$HOME/.fpai-build-worktrees"
 BASE="feat/headless-build"
 AUTO_MERGE="${BUILD_AUTO_MERGE:-0}"
+LAST_AUDIT_FILE="${SELF_AUDIT_LAST_FILE:-/opt/fpai-build/.last_audit_date}"
+MERGED_COUNTER_FILE="${SELF_AUDIT_MERGED_COUNTER:-/opt/fpai-build/.merged_since_audit}"
+SELF_AUDIT_OUT="${SELF_AUDIT_OUTPUT:-/tmp/audit_specs.json}"
 
 echo "═══ build orchestrator ═══ (auto_merge=$AUTO_MERGE, base=$BASE)"
+
+build_queue_empty() {
+  shopt -s nullglob
+  for spec in "$SPECS"/*.md; do
+    id="$(basename "$spec" .md)"
+    [ -f "$RESULTS/$id.result.md" ] || { shopt -u nullglob; return 1; }
+  done
+  shopt -u nullglob
+  return 0
+}
+
+increment_merged_since_audit() {
+  mkdir -p "$(dirname "$MERGED_COUNTER_FILE")" 2>/dev/null || true
+  python3 - "$MERGED_COUNTER_FILE" <<'PY' || true
+import pathlib, sys
+path = pathlib.Path(sys.argv[1])
+try:
+    current = int(path.read_text(encoding="utf-8").strip() or "0")
+except Exception:
+    current = 0
+path.write_text(str(max(0, current) + 1) + "\n", encoding="utf-8")
+PY
+}
+
+queue_self_audit_specs() {
+  python3 - "$SELF_AUDIT_OUT" <<'PY'
+import json, shutil, subprocess, sys
+path = sys.argv[1]
+try:
+    specs = json.load(open(path, encoding="utf-8"))
+except Exception:
+    specs = []
+queued = 0
+if specs and shutil.which("dec"):
+    for item in specs:
+        title = str(item.get("title", "")).strip()
+        spec = str(item.get("spec", "")).strip()
+        if not title or not spec:
+            continue
+        result = subprocess.run(
+            ["dec", "queue-build", title, spec],
+            check=False,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        if result.returncode == 0:
+            queued += 1
+elif specs:
+    print("dec command not found; self-audit specs generated but not queued", file=sys.stderr)
+print(queued)
+PY
+}
+
+log_self_audit_event() {
+  trigger="$1"; generated="$2"; queued="$3"; audit_id="$4"
+  python3 - "$trigger" "$generated" "$queued" "$audit_id" "$SELF_AUDIT_OUT" <<'PY' || true
+import datetime as dt, json, os, pathlib, sys
+trigger, generated, queued, audit_id, artifact = sys.argv[1:6]
+ledger = pathlib.Path(os.environ.get("OPS_LEDGER", "/opt/fpai-build/ops_ledger.jsonl"))
+row = {
+    "ts": dt.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+    "loop": "build_orchestrator",
+    "event": "self_audit",
+    "detail": f"self-audit generated {generated} specs; queued {queued}",
+    "cost": "$0",
+    "artifact": artifact,
+    "next": "review queued self-audit improvement specs",
+    "surface": os.environ.get("FPAI_SURFACE", "auto-loop"),
+    "specs_generated": int(generated),
+    "specs_queued": int(queued),
+    "trigger": trigger,
+    "audit_id": audit_id,
+}
+ledger.parent.mkdir(parents=True, exist_ok=True)
+with ledger.open("a", encoding="utf-8") as handle:
+    handle.write(json.dumps(row, sort_keys=True) + "\n")
+PY
+}
+
+run_self_audit_if_due() {
+  [ "${SELF_AUDIT_DISABLE:-0}" = "1" ] && return 0
+  queue_empty=0
+  build_queue_empty && queue_empty=1
+  trigger="$(
+    python3 "$ROOT/tools/build_loop/self_audit.py" \
+      --trigger-name \
+      --queue-empty "$queue_empty" \
+      --last-audit-file "$LAST_AUDIT_FILE" \
+      --merged-counter-file "$MERGED_COUNTER_FILE" 2>/dev/null || true
+  )"
+  [ -z "$trigger" ] && return 0
+
+  audit_id="audit-$(date -u +%Y%m%d%H%M%S)"
+  mkdir -p "$(dirname "$LAST_AUDIT_FILE")" 2>/dev/null || true
+  date -u +"%Y-%m-%d-%H" > "$LAST_AUDIT_FILE" 2>/dev/null || true
+  if ! python3 "$ROOT/tools/build_loop/self_audit.py" --output "$SELF_AUDIT_OUT"; then
+    echo "⚠️  self-audit failed; continuing build loop"
+    return 0
+  fi
+
+  generated="$(
+    python3 - "$SELF_AUDIT_OUT" <<'PY'
+import json, sys
+try:
+    data = json.load(open(sys.argv[1], encoding="utf-8"))
+except Exception:
+    data = []
+print(len(data) if isinstance(data, list) else 0)
+PY
+  )"
+  queued="$(queue_self_audit_specs 2>/tmp/self_audit_queue.err || echo 0)"
+  [ -s /tmp/self_audit_queue.err ] && sed 's/^/⚠️  /' /tmp/self_audit_queue.err
+  log_self_audit_event "$trigger" "$generated" "$queued" "$audit_id"
+  echo "0" > "$MERGED_COUNTER_FILE" 2>/dev/null || true
+  "$ROOT/tools/build_loop/notify_telegram.sh" "System self-audit complete: $queued improvement specs queued [$audit_id]" >/dev/null 2>&1 || true
+}
 
 # 1. PRIORITIZE: which specs are auto-buildable? SAFE-AUTO and not NEEDS-JAMES,
 #    and not already built (no result file). NEEDS-JAMES specs are surfaced, never auto-built.
@@ -71,7 +190,11 @@ for spec in "$SPECS"/*.md; do
   [ -f "$RESULTS/$iid.result.md" ] || continue
   grep -q "SAFE-AUTO" "$spec" && ! grep -q "NEEDS-JAMES" "$spec" && INTEGRATE+=("$iid")
 done
-[ "${#INTEGRATE[@]}" -eq 0 ] && { echo "═══ done: nothing to integrate ═══"; exit 0; }
+if [ "${#INTEGRATE[@]}" -eq 0 ]; then
+  echo "═══ done: nothing to integrate ═══"
+  run_self_audit_if_due
+  exit 0
+fi
 for id in "${INTEGRATE[@]}"; do
   branch="build/$id"; wt="$WT_BASE/$id"
   git rev-parse --verify "$branch" >/dev/null 2>&1 || continue
@@ -103,6 +226,7 @@ PY
     if [ "$AUTO_MERGE" = "1" ]; then
       if git merge --no-ff "$branch" -m "merge(auto): $id [orchestrator · gated]" -q 2>/tmp/orch_merge_$id.out; then
         python3 -c "import json;p='core/BUILD/REGISTRY.json';d=json.load(open(p));[b.__setitem__('status','merged') for b in d['active_builds'] if b['branch']=='$branch'];json.dump(d,open(p,'w'),indent=2)"
+        increment_merged_since_audit
         git worktree remove "$wt" --force >/dev/null 2>&1; git branch -d "$branch" >/dev/null 2>&1
         echo "✅ MERGED: $id"; merged=$((merged+1))
       else
@@ -117,6 +241,7 @@ PY
 done
 
 echo "═══ done: built=$built merged=$merged surfaced=$surfaced failed=$failed ═══"
+run_self_audit_if_due
 
 # Surface the result to James's ONE chat (Telegram), if anything happened.
 if [ $((built + merged + surfaced + failed)) -gt 0 ]; then

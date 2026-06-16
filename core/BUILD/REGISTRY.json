@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-  "updated_at": "2026-06-16T12:09:36Z",
+  "updated_at": "2026-06-16T12:58:31Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+    {
+      "id": "SPEC_d029_idle-triggered-self-audit-empty",
+      "slug": "SPEC_d029_idle-triggered-self-audit-empty",
+      "branch": "build/SPEC_d029_idle-triggered-self-audit-empty",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d029_idle-triggered-self-audit-empty.md",
+      "tests_passed": true,
+      "notes": "d029 idle-triggered self-audit built: local ops/review/brain/gap/service context collector, strict Claude JSON proposal validation, kill switch, trigger helpers, orchestrator hook, merge counter, ops-ledger/TG logging, and focused tests."
+    },
     {
       "id": "SPEC_d026_visual-digest-agent-v0-1-daily-p",
       "slug": "SPEC_d026_visual-digest-agent-v0-1-daily-p",
