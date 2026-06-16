@@ -539,6 +539,9 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
             "  /opportunities — run today's proactive scan now (silent if nothing)\n"
             "  /capabilities [category] — what this system can do (and when it shipped)\n"
             "  /voice [on|off]  — toggle voice replies (default ON · voice-in always replies in voice)\n"
+            "  /upgrade [basic|pro] — open Stripe Checkout for a paid tier\n"
+            "  /billing  — manage your subscription, card, or cancellation in Stripe\n"
+            "  /tier     — show your current tier, limits, and unlocked capabilities\n"
             "  /more      — same as /signals more (expanded view: liquidity, costs, etc.)\n"
             "  /log       — recent AI activity timeline\n"
             "  /pending — list pending queue items with approve buttons\n"
@@ -690,6 +693,12 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
         return await _cmd_capabilities(rest.strip())
     if cmd == "voice":
         return _cmd_voice(rest.strip().lower())
+    if cmd == "upgrade":
+        return await _cmd_upgrade(chat_id, rest.strip().lower())
+    if cmd == "billing":
+        return await _cmd_billing(chat_id)
+    if cmd == "tier":
+        return await _cmd_tier(chat_id)
     if cmd == "scene":
         body = rest.strip()
         if not body:
@@ -707,6 +716,87 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
         preview = body if len(body) <= 60 else body[:57] + "..."
         return f"🎬 Scene captured → {tg._esc(preview)}"
     return f"Unknown command: /{tg._esc(cmd)}. Try /help."
+
+
+async def _cmd_upgrade(chat_id: int, arg: str) -> str:
+    """Create a Stripe Checkout URL for the owner.
+
+    Default is Basic because the first paid gate should be a door, not a hard
+    upsell to the highest tier.
+    """
+    tier = arg if arg in ("basic", "pro") else "basic"
+    try:
+        from .billing.stripe_handler import upgrade_reply
+        return tg._esc(await asyncio.to_thread(upgrade_reply, str(chat_id), tier))
+    except Exception as e:
+        log.warning("upgrade checkout failed: %s", e)
+        return (
+            "Billing is not ready on this host yet. The free tier still works; "
+            "James needs to finish Stripe price/env setup before checkout opens."
+        )
+
+
+async def _cmd_billing(chat_id: int) -> str:
+    try:
+        from .billing.stripe_handler import get_portal_url
+        url = await asyncio.to_thread(get_portal_url, str(chat_id))
+    except Exception as e:
+        log.warning("billing portal failed: %s", e)
+        return (
+            "Billing portal is not linked for this account yet. Use /upgrade first "
+            "after James has approved Stripe products and price IDs."
+        )
+    return f"Manage your subscription here: {tg._esc(url)}"
+
+
+async def _cmd_tier(chat_id: int) -> str:
+    try:
+        from .billing.stripe_handler import get_user_tier
+        view = await asyncio.to_thread(get_user_tier, str(chat_id))
+    except Exception as e:
+        log.warning("tier lookup failed: %s", e)
+        return "You're on Free: 10 messages/day and search_web. Basic opens 100/day + email + calendar."
+    limit = "unlimited messages/day" if view.daily_messages is None else f"{view.daily_messages} messages/day"
+    caps = ", ".join(view.capabilities)
+    return (
+        f"Current tier: <b>{tg._esc(view.tier.capitalize())}</b> "
+        f"({tg._esc(view.status)})\n"
+        f"Access: {tg._esc(limit)} · {tg._esc(caps)}"
+    )
+
+
+async def _billing_message_gate(chat_id: int | str) -> str | None:
+    """Return an upgrade prompt when the current user has hit today's tier cap."""
+    try:
+        from .billing.stripe_handler import get_user_tier, upgrade_prompt_for_limit
+        view = await asyncio.to_thread(get_user_tier, str(chat_id))
+    except Exception as e:
+        log.warning("billing message gate skipped: %s", e)
+        return None
+    if view.daily_messages is None:
+        return None
+    try:
+        from .db import connect
+        async with connect() as conn:
+            async with conn.cursor() as cur:
+                await cur.execute(
+                    """
+                    SELECT COUNT(*)
+                      FROM brain_index.tg_messages
+                     WHERE chat_id = %s
+                       AND role = 'user'
+                       AND at >= date_trunc('day', NOW())
+                    """,
+                    (str(chat_id),),
+                )
+                row = await cur.fetchone()
+                used_today = int(row[0] or 0) if row else 0
+    except Exception as e:
+        log.warning("billing message count skipped: %s", e)
+        return None
+    if used_today >= view.daily_messages:
+        return upgrade_prompt_for_limit()
+    return None
 
 
 def _cmd_voice(arg: str) -> str:
@@ -3961,7 +4051,12 @@ async def _handle_message(msg: dict) -> None:
                     log.warning("voice-out (cmd) failed: %s", e)
         return
 
-    # Plain text path — capture corrections, log inbound, answer, log outbound.
+    # Plain text path — enforce tier message caps, capture corrections, log inbound, answer, log outbound.
+    gate_prompt = await _billing_message_gate(chat_id)
+    if gate_prompt:
+        await tg.send(gate_prompt)
+        return
+
     try:
         from .corrections import capture_if_correction
 

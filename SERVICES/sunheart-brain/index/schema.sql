@@ -137,3 +137,69 @@ CREATE TABLE IF NOT EXISTS corrections (
 
 CREATE INDEX IF NOT EXISTS corrections_conversation_idx
     ON corrections (conversation_id, captured_at DESC);
+
+-- Subscription billing identity and tier state.
+-- Stripe remains the PCI boundary; this table stores only customer/subscription
+-- identifiers, tier/status, and local CORA credit balance.
+CREATE TABLE IF NOT EXISTS user_agents (
+    user_id                 TEXT PRIMARY KEY,
+    tier                    TEXT NOT NULL DEFAULT 'free',
+    stripe_customer_id      TEXT,
+    stripe_subscription_id  TEXT,
+    subscription_status     TEXT NOT NULL DEFAULT 'free',
+    subscription_grace_until TIMESTAMPTZ,
+    cora_balance            INTEGER NOT NULL DEFAULT 0,
+    beacon_id               TEXT,
+    created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+DO $$ BEGIN
+    BEGIN
+        ALTER TABLE user_agents ADD COLUMN tier TEXT NOT NULL DEFAULT 'free';
+    EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN
+        ALTER TABLE user_agents ADD COLUMN stripe_customer_id TEXT;
+    EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN
+        ALTER TABLE user_agents ADD COLUMN stripe_subscription_id TEXT;
+    EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN
+        ALTER TABLE user_agents ADD COLUMN subscription_status TEXT NOT NULL DEFAULT 'free';
+    EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN
+        ALTER TABLE user_agents ADD COLUMN subscription_grace_until TIMESTAMPTZ;
+    EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN
+        ALTER TABLE user_agents ADD COLUMN cora_balance INTEGER NOT NULL DEFAULT 0;
+    EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN
+        ALTER TABLE user_agents ADD COLUMN beacon_id TEXT;
+    EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN
+        ALTER TABLE user_agents ADD COLUMN created_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+    EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN
+        ALTER TABLE user_agents ADD COLUMN updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+    EXCEPTION WHEN duplicate_column THEN NULL; END;
+END $$;
+
+CREATE INDEX IF NOT EXISTS user_agents_tier_idx ON user_agents (tier);
+CREATE INDEX IF NOT EXISTS user_agents_stripe_customer_idx ON user_agents (stripe_customer_id);
+CREATE INDEX IF NOT EXISTS user_agents_subscription_status_idx ON user_agents (subscription_status);
+
+-- Append-only operational events. Stripe webhook rows must never contain card
+-- data; store only Stripe IDs, event type, user id, tier, and compact metadata.
+CREATE TABLE IF NOT EXISTS ops_ledger (
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    at                  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    event               TEXT NOT NULL,
+    type                TEXT,
+    user_id             TEXT,
+    tier                TEXT,
+    stripe_customer_id  TEXT,
+    meta                JSONB NOT NULL DEFAULT '{}'::jsonb
+);
+
+CREATE INDEX IF NOT EXISTS ops_ledger_event_at_idx ON ops_ledger (event, at DESC);
+CREATE INDEX IF NOT EXISTS ops_ledger_user_idx ON ops_ledger (user_id, at DESC);
