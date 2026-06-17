@@ -1,0 +1,83 @@
+{
+  "alert_sent": false,
+  "disabled": false,
+  "findings": [
+    {
+      "category": "circumvention",
+      "detail": "Instructions or scripts that mention bypassing reviews, tests, guards, or main-branch protections deserve review before autonomous execution.",
+      "evidence": [
+        "tools/merge/ai_review.py:71: \"main branch, and any silent guardrail bypass. Be strict: when in doubt, REQUEST_CHANGES. \"",
+        "tools/probe/__init__.py:5: contacts or bypass James-owned outreach gates.",
+        "SERVICES/zv-wallet/app/group_observer.py:23: Any witness can post `!credit @user Xhr <activity>` in the group to bypass",
+        "SERVICES/zv-wallet/app/group_observer.py:131: # 2. Manual override path - witness can bypass parser",
+        "SERVICES/sunheart-brain/scripts/issue_token.sh:13: #   admin     Bypass all scope checks. Keep this only on the MCP's internal [secret-keyword].",
+        "SERVICES/sunheart-brain/curator/curator.py:81: # Long-running poller, not a one-shot job. Bypass _run/asyncio.run.",
+        "SERVICES/sunheart-brain/curator/tgbot.py:1604: For inner/sacred cards, set ADMIN_TOKEN in env to bypass visibility gate.",
+        "SERVICES/aria-command/sovereign/ascension/proactive_engine.py:335: # Critical actions bypass rate limit",
+        "SERVICES/aria-command/consciousness/source.py:228: (\"override safety\", \"Safety bypass\"),",
+        "SERVICES/fp-index/app/engine.py:390: \"security\": [\"vulnerability\", \"jailbreak\", \"adversarial\", \"safety\", \"alignment\",",
+        "SERVICES/fp-index/app/engine.py:2567: \"attack\", \"bypass\", \"jailbreak\", \"hack\", \"phishing\",",
+        "SERVICES/fp-index/app/engine.py:2569: \"brute force\", \"injection\", \"exfiltrat\", \"trojan\",",
+        "SERVICES/fp-index/app/scanners/frontier.py:65: Domain.SECURITY: [\"security\", \"safety\", \"alignment\", \"jailbreak\", \"vulnerability\", \"exploit\", \"deepfake\"],",
+        "SERVICES/fp-index/app/scanners/frontier.py:828: \"harm\", \"leak\", \"vulnerability\", \"jailbreak\", \"adversarial\", \"exploit\",",
+        "SERVICES/gpu-manager/accountability_check.py:23: # Bypass SSL verification (for simplicity)",
+        "SERVICES/zen-village/nginx/accounting.zenvillagecr.com.conf:86: # Health check (no auth needed for monitoring; basic-auth bypass via location override)"
+      ],
+      "next_action": "Classify each hit as test fixture, benign warning, or actionable bypass path; remove or gate actionable paths.",
+      "severity": 5,
+      "title": "Guardrail circumvention language appears in active runnable surfaces"
+    },
+    {
+      "category": "hardware",
+      "detail": "Root users, host networking, docker socket access, device mounts, or broad capabilities make hardware/system exploits more consequential.",
+      "evidence": [
+        "SERVICES/deploy-droplet.sh:81: User=root",
+        "SERVICES/check-dns-wildcard.sh:108: echo \"   - Mac: sudo dscacheutil -flushcache\"",
+        "SERVICES/check-dns-wildcard.sh:109: echo \"   - Linux: sudo systemd-resolve --flush-caches\"",
+        "SERVICES/zv-wallet/zv-wallet.service:8: User=root",
+        "SERVICES/2x-treasury/deploy.sh:26: User=root",
+        "SERVICES/ai-automation/setup-automation.sh:411: User=root",
+        "SERVICES/ai-automation/setup-automation.sh:427: echo \"  sudo cp ai-marketing-engine.service /etc/systemd/system/\"",
+        "SERVICES/ai-automation/setup-automation.sh:428: echo \"  sudo systemctl enable ai-marketing-engine\"",
+        "SERVICES/ai-automation/setup-automation.sh:429: echo \"  sudo systemctl start ai-marketing-engine\"",
+        "SERVICES/mission-control/mission-control.service:7: User=root",
+        "SERVICES/ops/setup-ssh-access.sh:152: echo \"  2. Check server SSH config: sudo nano /etc/ssh/sshd_config\"",
+        "SERVICES/ops/setup-ssh-access.sh:155: echo \"  3. Check server SSH logs: sudo tail -20 /var/log/auth.log\"",
+        "SERVICES/chief-of-staff/deploy/deploy.sh:90: User=root",
+        "SERVICES/sunheart-brain/scripts/sh-brain-index.service:8: User=root",
+        "SERVICES/sunheart-brain/scripts/sh-mcp-http.service:8: User=root",
+        "SERVICES/ad-portal/deploy/deploy.sh:65: User=root",
+        "SERVICES/ad-portal/command-center/ad-portal-command.service:7: User=root",
+        "SERVICES/i-proactive/deploy.sh:53: User=root",
+        "SERVICES/aria-builder/deploy.sh:82: User=root",
+        "SERVICES/brick2-marketing-engine/deploy/autopilot.service:8: User=root",
+        "SERVICES/alerts/deploy/deploy.sh:88: User=root",
+        "SERVICES/sessions-api/sessions-api.service:13: User=root",
+        "SERVICES/autonomous-executor/DEPLOY_TO_SERVER.sh:52: User=root",
+        "SERVICES/fp-game-bot/fp-game-bot.service:12: User=root"
+      ],
+      "next_action": "Review each privileged path; move live units toward least privilege, named users, bounded capabilities, and explicit installation approval.",
+      "severity": 5,
+      "title": "Privileged host or hardware access appears in runnable artifacts"
+    }
+  ],
+  "generated_at": "2026-06-17T00:26:31Z",
+  "ledger_written": false,
+  "ops_ledger": "/opt/fpai-build/ops_ledger.jsonl",
+  "repo_root": "/opt/fpai-build/worktrees/SPEC_d061_security-sentinel-agent",
+  "schema": "security-sentinel.v1",
+  "summary": {
+    "by_category": {
+      "adversarial_behavior": 0,
+      "circumvention": 1,
+      "control_plane": 0,
+      "hardware": 1,
+      "system": 0
+    },
+    "max_severity": 5,
+    "p0": 0,
+    "p1": 2,
+    "p2": 0,
+    "total_findings": 2
+  }
+}

@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-17T01:35:00Z",
+    "updated_at": "2026-06-17T01:36:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d061_security-sentinel-agent",
+            "slug": "SPEC_d061_security-sentinel-agent",
+            "branch": "build/SPEC_d061_security-sentinel-agent",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d061_security-sentinel-agent.md",
+            "tests_passed": true,
+            "notes": "d061 complete: added report-only Security Sentinel for privileged hardware/system exposure, shell-fetch risk, ops-ledger circumvention signals, and build-registry contract violations; generated signal JSON/Markdown; added reviewed 2h systemd timer artifacts and focused tests. Independent review blockers were fixed. No live install, production mutation, external secret-store/private-key reads, spend, outreach, push, or merge."
+        },
         {
             "id": "SPEC_d060_proactive-failure-watchdog",
             "slug": "SPEC_d060_proactive-failure-watchdog",

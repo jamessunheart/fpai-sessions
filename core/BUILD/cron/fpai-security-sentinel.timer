@@ -1,0 +1,11 @@
+[Unit]
+Description=Run FPAI Security Sentinel every 2 hours
+
+[Timer]
+OnCalendar=*-*-* 00/2:37:00 UTC
+Persistent=true
+Unit=fpai-security-sentinel.service
+
+[Install]
+WantedBy=timers.target
+

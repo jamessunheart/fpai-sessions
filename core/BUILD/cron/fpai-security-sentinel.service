@@ -1,0 +1,11 @@
+[Unit]
+Description=FPAI Security Sentinel
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+Environment=FPAI_SURFACE=auto-loop
+WorkingDirectory=/opt/fpai-build/FPAI_Cockpit
+ExecStart=/usr/bin/env python3 /opt/fpai-build/FPAI_Cockpit/tools/security_sentinel/sentinel.py --send-alert
+
