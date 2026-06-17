@@ -120,6 +120,7 @@ ENTRY (immediate income)
 4. ⬜ **AI(Ember):** draft the Cora Nation story + sponsor/patron page (two doors, one story)
 5. ⬜ **YOU:** confirm which events go first + comfort level on price points
 6. ⬜ Route tier mechanics through Counsel before publish
+7. ⬜ Reconcile the Patron Engine checkout, receipts, and member ledger against `docs/legal/pma/PMA_MEMBERSHIP_TERMS_PATRON_ENGINE.md` before any live launch.
 
 ---
 

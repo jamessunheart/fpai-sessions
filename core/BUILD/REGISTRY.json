@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-17T16:30:21Z",
+    "updated_at": "2026-06-17T17:40:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d087_pma-membership-terms-council-rev",
+            "slug": "SPEC_d087_pma-membership-terms-council-rev",
+            "branch": "build/SPEC_d087_pma-membership-terms-council-rev",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d087_pma-membership-terms-council-rev.md",
+            "tests_passed": true,
+            "notes": "d087 complete in working tree: added Patron Engine PMA membership terms draft, deterministic council review memo, Patron Engine pre-launch reconciliation gate, and PMA terms guard tests. Focused unittest, py_compile, JSON validation, guard CLI, and diff hygiene passed. Independent AI review via claude -p was attempted against /tmp/d087-full.patch but failed with API ConnectionRefused; rerun review from live/writable host before merge. Git staging/commit is blocked here by read-only shared worktree metadata. No push, merge, deploy, outreach, money movement, legal activation, or public copy approval."
+        },
         {
             "id": "SPEC_d086_glm-5-2-fine-tune-pipeline-conti",
             "slug": "SPEC_d086_glm-5-2-fine-tune-pipeline-conti",

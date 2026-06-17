@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-17 · SPEC_d087_pma-membership-terms-council-rev · branch `build/SPEC_d087_pma-membership-terms-council-rev`
+
+- **Status:** done in working tree / council-reviewed / independent AI review blocked in sandbox / awaiting merge review
+- **Files changed:** `docs/legal/pma/PMA_MEMBERSHIP_TERMS_PATRON_ENGINE.md`; `core/BUILD/reviews/SPEC_d087_pma-membership-terms-council-rev.council.md`; `tools/legal/__init__.py`; `tools/legal/pma_terms_guard.py`; `tools/legal/test_pma_terms_guard.py`; `core/STATE/PATRON_ENGINE.md`; `core/BUILD/specs/SPEC_d087_pma-membership-terms-council-rev.md`; `core/BUILD/results/SPEC_d087_pma-membership-terms-council-rev.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a Patron Engine PMA membership terms draft with private association framing, access-vs-gift separation, standing utility rule, member rights/duties, patronage ledger flow, payment/refund/withdrawal boundaries, Brand LLC separation, communications rules, and explicit no-equity/no-return/no-securities clauses. Added a deterministic council review memo with Pragmatist, Legal Skeptic, Member Advocate, and Stewardship lenses plus counsel questions. Added a pre-launch Patron Engine gate requiring checkout, receipts, and member ledger reconciliation against the terms.
+- **Tests:** `python3 -B -m unittest tools.legal.test_pma_terms_guard` (3 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/legal/__init__.py tools/legal/pma_terms_guard.py tools/legal/test_pma_terms_guard.py`; `python3 -m tools.legal.pma_terms_guard`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d087-registry.json`; `git diff --check` over tracked changes plus `git diff --check --no-index` over new files.
+- **Independent review:** attempted direct `claude -p --effort high` review against `/tmp/d087-full.patch`; blocked by `API Error: Unable to connect to API (ConnectionRefused)`. Normal `tools/merge/ai_review.py` could not review the complete branch because `git add` failed on read-only shared worktree metadata, so untracked new files are invisible to branch diff until Ember stages/commits from a writable Git context.
+- **Risks:** Draft contract language only. This is not legal advice, counsel sign-off, public copy approval, signature-ready terms, tax treatment approval, checkout activation, or Patron Engine launch approval. Donation/tax-deductibility treatment, governing law/signing entity, refund terms by offering type, tier names, receipts, checkout copy, and ledger fields still need counsel/James review.
+- **Rollback:** revert the d087 files listed above and remove the registry/result/handoff entries. No live checkout, receipt, ledger, deployment, outreach, money movement, push, or merge occurred.
+- **Intent solved:** Patron Engine now has a concrete PMA membership terms draft that separates present utility from gifts and encodes member rights, patronage flow, and no-equity/no-return boundaries before live launch.
+- **Downstream intent unlocked:** Ember/counsel can reconcile checkout, receipts, member ledger fields, and patron page copy against a specific terms artifact instead of drafting compliance boundaries during launch.
+- **Questions for Ember/James:** rerun independent AI review after staging/committing from a writable Git context; send the draft to qualified counsel; confirm signing entity/governing law; decide first Patron Engine access items and refund/cancellation rules; do not publish or activate checkout until counsel and James approve the final terms.
+
 ### 2026-06-17 · SPEC_d086_glm-5-2-fine-tune-pipeline-conti · branch `build/SPEC_d086_glm-5-2-fine-tune-pipeline-conti`
 
 - **Status:** done in working tree / independently AI-reviewed / awaiting merge review
