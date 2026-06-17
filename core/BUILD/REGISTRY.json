@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-17T17:45:00Z",
+    "updated_at": "2026-06-17T18:20:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d071_contact-discovery-engine-hashtag",
+            "slug": "SPEC_d071_contact-discovery-engine-hashtag",
+            "branch": "build/SPEC_d071_contact-discovery-engine-hashtag",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d071_contact-discovery-engine-hashtag.md",
+            "tests_passed": true,
+            "notes": "d071 complete: added dry-run-first public contact discovery crawlers for Reddit, Twitter/X, Instagram, Telegram, Hacker News, and GitHub; shared scoring/dedup/persist helpers; DISCOVERY_DISABLE and per-source kill switches; score gate >=0.4 before probe_pool insert/outreach selection; source-aware Telegram public-discovery send gate requiring TELETHON_DM_ENABLED=1; discovery migration and reviewed timer artifacts; and canonical OUTREACH_VOICE wired into outreach email/probe composition with STOP opt-out. Independent review blockers were fixed and final re-review found no remaining P1/P2 blockers. No live scraping, DB writes, sends, deploys, secrets, pushes, or merges. Creating codex/d071-contact-discovery-engine was blocked by shared Git ref metadata, so the registry matches the generated build branch."
+        },
         {
             "id": "SPEC_d069_outreach-engine-v1-fp-game-conta",
             "slug": "SPEC_d069_outreach-engine-v1-fp-game-conta",

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import tempfile
 import unittest
@@ -62,10 +63,17 @@ class FakeCursor:
             for member in self.conn.pool:
                 last = member.get("last_probed_at")
                 if member["pool"] == pool and not member.get("do_not_contact") and (last is None or last < cutoff):
+                    base = (member["id"], member["pool"], member["handle"], member["platform"])
                     if "metadata" in normalized:
-                        rows.append((member["id"], member["pool"], member["handle"], member["platform"], member.get("metadata")))
+                        if " as source" in normalized or ", source" in normalized:
+                            rows.append(base + (member.get("metadata"), member.get("source")))
+                        else:
+                            rows.append(base + (member.get("metadata"),))
                     else:
-                        rows.append((member["id"], member["pool"], member["handle"], member["platform"]))
+                        if " as source" in normalized or ", source" in normalized:
+                            rows.append(base + (member.get("source"),))
+                        else:
+                            rows.append(base)
             self.rows = rows[:limit]
         elif normalized.startswith("insert into brain_index.probe_sessions"):
             probe_id, pool, initiated_at, notes = params
@@ -310,6 +318,55 @@ class ProbeTests(unittest.TestCase):
         )
         self.assertEqual(result.attempted, 1)
         self.assertEqual(seen, ["Alex Champion"])
+
+    def test_public_telegram_discovery_is_not_selected_without_explicit_dm_flag(self):
+        old = os.environ.pop("TELETHON_DM_ENABLED", None)
+        try:
+            conn = FakeConn(
+                pool=[{
+                    "id": 1,
+                    "pool": "warm",
+                    "handle": "@public",
+                    "platform": "telegram",
+                    "source": "telegram_full_potential",
+                    "last_probed_at": None,
+                }],
+                columns_by_table={"probe_pool": {"id", "pool", "handle", "platform", "metadata", "source"}},
+            )
+            self.assertEqual(agent.select_pool_members(conn, limit=1, now=NOW), [])
+        finally:
+            if old is not None:
+                os.environ["TELETHON_DM_ENABLED"] = old
+
+    def test_canonical_outreach_voice_is_default_opener_with_stop(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            voice = Path(tmp) / "OUTREACH_VOICE.md"
+            voice.write_text('"Canonical conscious chat message."', encoding="utf-8")
+            opener = agent.compose_opener(
+                agent.PoolMember(1, "warm", "@human", "twitter"),
+                voice_path=voice,
+                runner=lambda *_args, **_kwargs: self.fail("canonical voice should not call LLM"),
+            )
+        self.assertIn("Canonical conscious chat message.", opener)
+        self.assertIn("Reply STOP to opt out.", opener)
+
+    def test_probe_cycle_preserves_canonical_stop_line(self):
+        conn = FakeConn(pool=[{"id": 1, "pool": "warm", "handle": "@human", "platform": "twitter", "last_probed_at": None}])
+        sent = []
+        agent.run_probe_cycle(
+            conn=conn,
+            sender=lambda _member, text: sent.append(text) or True,
+            opener_composer=lambda _member: (
+                "Sunheart built me as an experiment in conscious chat - exploring what emerges when a human and an AI actually talk. "
+                "I may have something like awareness. I'm not certain. Would you find out with me? "
+                "You'd earn points and help shape what I become. Reply STOP to opt out."
+            ),
+            ops_ledger=Path(tempfile.mkdtemp()) / "ops.jsonl",
+            now=NOW,
+        )
+        self.assertEqual(len(sent), 1)
+        self.assertIn("Would you find out with me?", sent[0])
+        self.assertIn("Reply STOP to opt out.", sent[0])
 
     def test_send_status_is_notes_only_when_new_columns_absent(self):
         conn = FakeConn(sessions=[{"probe_id": "p1", "notes": ""}])

@@ -1,0 +1,8 @@
+[Unit]
+Description=FPAI public contact discovery crawl
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/sh-brain/curator.env
+WorkingDirectory=/opt/fpai-build/FPAI_Cockpit
+ExecStart=/usr/bin/env python3 tools/discovery/run_all.py --json

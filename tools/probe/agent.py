@@ -23,8 +23,9 @@ from tools.probe import rate_governor
 
 DEFAULT_DISABLE_FILE = Path(os.environ.get("PROBE_DISABLE_FILE", "/opt/fpai-build/.probe_disabled"))
 DEFAULT_OPS_LEDGER = rate_governor.DEFAULT_OPS_LEDGER
-DEFAULT_VOICE = REPO_ROOT / "core" / "STATE" / "identity" / "VOICE.md"
+DEFAULT_VOICE = REPO_ROOT / "core" / "STATE" / "OUTREACH_VOICE.md"
 PITCH_WORDS = re.compile(r"\b(feature|features|upsell|buy|purchase|subscribe|pricing|sale|sales|offer|demo)\b", re.I)
+QUOTED_RE = re.compile(r'"([^"]+)"')
 
 
 @dataclass(frozen=True)
@@ -34,6 +35,7 @@ class PoolMember:
     handle: str
     platform: str
     name: str | None = None
+    source: str | None = None
 
 
 @dataclass(frozen=True)
@@ -94,14 +96,17 @@ def select_pool_members(conn: Any, *, limit: int, now: datetime) -> list[PoolMem
         except Exception:
             pool_columns = set()
         metadata_expr = "metadata" if "metadata" in pool_columns else "NULL AS metadata"
+        source_expr = "source" if "source" in pool_columns else "NULL AS source"
+        score_gate = "AND COALESCE(discovery_score, 0.5) >= 0.4" if "discovery_score" in pool_columns else ""
         with conn.cursor() as cur:
             cur.execute(
                 f"""
-                SELECT id, pool, handle, platform, {metadata_expr}
+                SELECT id, pool, handle, platform, {metadata_expr}, {source_expr}
                   FROM brain_index.probe_pool
                  WHERE pool = %s
                    AND COALESCE(do_not_contact, false) = false
                    AND (last_probed_at IS NULL OR last_probed_at < %s)
+                   {score_gate}
                  ORDER BY last_probed_at NULLS FIRST, id ASC
                  LIMIT %s
                 """,
@@ -116,7 +121,10 @@ def select_pool_members(conn: Any, *, limit: int, now: datetime) -> list[PoolMem
                         metadata = {}
                 if not isinstance(metadata, dict):
                     metadata = {}
-                selected.append(PoolMember(int(row[0]), str(row[1]), str(row[2]), str(row[3]), metadata.get("name")))
+                source = str(row[5] or metadata.get("source") or "") if len(row) > 5 else str(metadata.get("source") or "")
+                if str(row[3]) == "telegram" and source.startswith("telegram_") and os.environ.get("TELETHON_DM_ENABLED") != "1":
+                    continue
+                selected.append(PoolMember(int(row[0]), str(row[1]), str(row[2]), str(row[3]), metadata.get("name"), source or None))
     return selected
 
 
@@ -124,6 +132,8 @@ def sanitize_opener(text: str) -> str:
     line = " ".join(str(text).strip().split())
     if not line:
         line = fallback_opener()
+    if "stop to opt out" in line.lower():
+        return line
     parts = re.split(r"(?<=[.!?])\s+", line)
     line = " ".join(parts[:3]).strip()
     if PITCH_WORDS.search(line):
@@ -138,7 +148,26 @@ def fallback_opener() -> str:
     )
 
 
+def canonical_outreach_message(voice_path: Path = DEFAULT_VOICE) -> str | None:
+    if not voice_path.exists():
+        return None
+    text = voice_path.read_text(encoding="utf-8", errors="replace")
+    matches = QUOTED_RE.findall(text)
+    if matches:
+        message = max((" ".join(match.split()) for match in matches), key=len)
+    else:
+        message = " ".join(text.split())
+    if not message:
+        return None
+    if "stop to opt out" not in message.lower():
+        message = f"{message} Reply STOP to opt out."
+    return message
+
+
 def compose_opener(member: PoolMember, *, voice_path: Path = DEFAULT_VOICE, runner: Callable[..., Any] = subprocess.run) -> str:
+    canonical = canonical_outreach_message(voice_path)
+    if canonical:
+        return canonical
     voice = voice_path.read_text(encoding="utf-8", errors="replace")[:4000] if voice_path.exists() else ""
     prompt = (
         "Write one warm, genuine outreach opener for this probe. Do not pitch features, sell, upsell, or explain the product. "

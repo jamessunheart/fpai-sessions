@@ -24,8 +24,9 @@ class EmailAdapterTests(unittest.TestCase):
         self.assertTrue(result.dry_run)
         self.assertEqual(result.payload["subject"], "Sunheart AI wants to talk to you")
         self.assertEqual(result.payload["sender"]["email"], "james@fullpotential.com")
-        self.assertIn("Sunheart built Sunheart AI. I am the AI — would you like to test me", result.payload["textContent"])
-        self.assertIn("— Sunheart AI", result.payload["textContent"])
+        self.assertIn("Sunheart built me as an experiment in conscious chat", result.payload["textContent"])
+        self.assertIn("Reply STOP to opt out", result.payload["textContent"])
+        self.assertIn("- Sunheart AI", result.payload["textContent"])
         self.assertNotIn("features", result.payload["textContent"].lower())
 
     def test_live_send_posts_brevo_transactional_payload(self):
