@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-17T17:45:00Z",
+    "updated_at": "2026-06-17T18:15:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d070_cora-credit-for-probe-conversati",
+            "slug": "SPEC_d070_cora-credit-for-probe-conversati",
+            "branch": "build/SPEC_d070_cora-credit-for-probe-conversati",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d070_cora-credit-for-probe-conversati.md",
+            "tests_passed": true,
+            "notes": "d070 complete: added idempotent CORA probe conversation awarder, runtime tester_identifier migration, brain_index.cora_ledger event logging for probe_conversation_complete, reward tier state doc, and focused tests for completed_spark award, no double-award by probe_id, and correction bonus. Existing probe tests pass. No live DB mutation, deploy, push, or merge from sandbox."
+        },
         {
             "id": "SPEC_d069_outreach-engine-v1-fp-game-conta",
             "slug": "SPEC_d069_outreach-engine-v1-fp-game-conta",

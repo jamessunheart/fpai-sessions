@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-17 · SPEC_d070_cora-credit-for-probe-conversati · branch `build/SPEC_d070_cora-credit-for-probe-conversati`
+
+- **Status:** done / awaiting live independent review + merge review
+- **Files changed:** `tools/probe/award_cora.py`; `tools/probe/test_award_cora.py`; `core/STATE/CORA_PROBE_REWARDS.md`; `core/BUILD/specs/SPEC_d070_cora-credit-for-probe-conversati.md`; `core/BUILD/results/SPEC_d070_cora-credit-for-probe-conversati.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added an idempotent CORA probe awarder. It applies the requested `probe_sessions.tester_identifier` migration, creates/logs to `brain_index.cora_ledger`, awards `probe_conversation_complete` once per `probe_id`, gives 10 credits for a meaningful probe conversation, +5 for a specific gap/correction report, and +10 for `corrections_triggered > 0`. Because the current probe schema has no `message_count`, it uses `message_count` when present and falls back to existing `drop_off_message` from `refresh_session_outcomes()`.
+- **Tests:** `python3 -B -m unittest tools.probe.test_award_cora` (3 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/probe/award_cora.py tools/probe/test_award_cora.py`; `python3 -B -m unittest tools.probe.test_award_cora tools.probe.test_probe` (17 tests OK); `python3 -m json.tool core/BUILD/REGISTRY.json`; `git diff --check`
+- **Independent review:** not completed in this sandbox. `tools/merge/ai_review.py build/SPEC_d070_cora-credit-for-probe-conversati` returned an empty-diff approval because this environment has an uncommitted working diff and the review tool compares committed branch refs only. Treat that as invalid review evidence; rerun independent review after committing from a writable Git context.
+- **Risks:** Live DB migration was not applied here. Existing probe rows need `tester_identifier` or handle/email in notes to receive credits. The awarder introduces `brain_index.cora_ledger` because d035 is policy-only in this repo. The daily timer was not edited; Ember should wire `tools/probe/award_cora.py` after live dry-run/review.
+- **Rollback:** revert the listed files. If run live, stop invoking the awarder and remove/ignore `probe_conversation_complete` rows in `brain_index.cora_ledger`; the additive `tester_identifier` column can remain unless no dependent code uses it.
+- **Intent solved:** probe testers now have a concrete CORA credit event tied to meaningful AI testing contribution.
+- **Downstream intent unlocked:** Ember can commit, independently review, apply the live DB migration, and wire the awarder into the daily probe timer after the rate-governed probe cycle.
+- **Questions for Ember/James:** confirm whether `corrections_triggered > 0` is the durable James-validated correction signal or whether a later schema should split "triggered" from "validated".
+
 ### 2026-06-17 · SPEC_d069_outreach-engine-v1-fp-game-conta · branch `build/SPEC_d069_outreach-engine-v1-fp-game-conta`
 
 - **Status:** done / independently AI-reviewed / awaiting merge review
