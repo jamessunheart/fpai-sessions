@@ -34,6 +34,26 @@ class AutoMergeDocOnlyTest(unittest.TestCase):
         (self.root / "core/BUILD").mkdir(parents=True)
         (self.root / "docs").mkdir()
         (self.root / "tools").mkdir()
+        (self.root / "tools/merge").mkdir(parents=True)
+        (self.root / "tools/merge/pre_merge_snapshot.sh").write_text(
+            textwrap.dedent(
+                """\
+                #!/usr/bin/env bash
+                set -eu
+                BASE="${1:-feat/headless-build}"
+                PREFIX="${MERGE_SNAPSHOT_PREFIX:-fpai/pre-merge/}"
+                SHA="$(git rev-parse "$BASE")"
+                EXISTING="$(git tag --points-at "$SHA" --list "${PREFIX}[0-9][0-9][0-9][0-9]" | sort -V | tail -1 || true)"
+                if [ -n "$EXISTING" ]; then echo "$EXISTING"; exit 0; fi
+                LATEST="$(git tag --list "${PREFIX}[0-9][0-9][0-9][0-9]" | sort -V | tail -1 || true)"
+                if [ -n "$LATEST" ]; then NUM="${LATEST##*/}"; NEXT=$((10#$NUM + 1)); else NEXT=1; fi
+                TAG="$(printf '%s%04d' "$PREFIX" "$NEXT")"
+                git tag "$TAG" "$SHA"
+                echo "$TAG"
+                """
+            )
+        )
+        (self.root / "tools/merge/pre_merge_snapshot.sh").chmod(0o755)
         (self.root / "docs/start.md").write_text("# start\n")
         self.registry = self.root / "core/BUILD/REGISTRY.json"
         self.registry.write_text(json.dumps({"active_builds": []}))
@@ -137,6 +157,8 @@ class AutoMergeDocOnlyTest(unittest.TestCase):
         log = git(self.root, "log", "--oneline", "--max-count=1").stdout
         self.assertIn("auto-merge doc-only AI-approved branch", log)
         self.assertTrue((self.root / "docs/guide.md").exists())
+        tags = git(self.root, "tag", "--list", "fpai/pre-merge/*").stdout.splitlines()
+        self.assertEqual(["fpai/pre-merge/0001"], tags)
 
     def test_execute_blocks_if_review_command_fails(self) -> None:
         fd, failing_name = tempfile.mkstemp(prefix="fail_review_", suffix=".py")

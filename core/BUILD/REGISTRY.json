@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-17T18:48:00Z",
+    "updated_at": "2026-06-17T19:40:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d075_versioned-merge-with-rollback",
+            "slug": "SPEC_d075_versioned-merge-with-rollback",
+            "branch": "build/SPEC_d075_versioned-merge-with-rollback",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d075_versioned-merge-with-rollback.md",
+            "tests_passed": true,
+            "notes": "d075 complete: added numbered local pre-merge rollback snapshot tags via tools/merge/pre_merge_snapshot.sh and wired the snapshot fail-closed into merge_gate, process_merge_requests, and the doc-only resolver. Manual gate instructions no longer pull after snapshot; phone merge path fails closed on pull or snapshot failure; review/snapshot bypass env hooks were removed after independent review findings. Final independent re-review found no remaining P1/P2 blockers. This intentionally touches protected tools/merge code and needs human-directed merge review; no live merge, push, tag push, deploy, secrets, money movement, or outreach."
+        },
         {
             "id": "SPEC_d074_human-coach-matching-cora-credit",
             "slug": "SPEC_d074_human-coach-matching-cora-credit",

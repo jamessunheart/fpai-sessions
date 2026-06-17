@@ -12,6 +12,7 @@ BRANCH="${1:-}"
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 REG="${MERGE_GATE_REGISTRY:-$ROOT/core/BUILD/REGISTRY.json}"
 BASE="feat/headless-build"
+SNAPSHOT_SCRIPT="$ROOT/tools/merge/pre_merge_snapshot.sh"
 
 # 1. Never gate main.
 if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "master" ]; then
@@ -74,9 +75,25 @@ else
   echo "⚠️  ai_review.py missing — AI review skipped. MANUAL review required before any merge."
 fi
 
+SNAPSHOT_TAG=""
+if [ ! -x "$SNAPSHOT_SCRIPT" ]; then
+  echo "FAIL: rollback snapshot helper missing or not executable: $SNAPSHOT_SCRIPT"; exit 1
+fi
+SNAPSHOT_OUT="$("$SNAPSHOT_SCRIPT" "$BASE" 2>&1)"; SNAPSHOT_RC=$?
+if [ "$SNAPSHOT_RC" != "0" ]; then
+  echo "$SNAPSHOT_OUT"
+  echo "FAIL: could not create rollback snapshot before merge."; exit 1
+fi
+SNAPSHOT_TAG="$(printf '%s' "$SNAPSHOT_OUT" | tail -1)"
+echo "Rollback snapshot: $SNAPSHOT_TAG -> $(git -C "$ROOT" rev-parse "$SNAPSHOT_TAG^{}")"
+
 echo "PASS: $BRANCH registered 'done', tests $TEST_RESULT, base $BASE, independently AI-reviewed."
 echo ""
 echo "To merge (Ember confirms — the gate does NOT do this; James keeps veto):"
-echo "  git checkout $BASE && git pull && git merge --no-ff $BRANCH"
+if [ -n "$SNAPSHOT_TAG" ]; then
+echo "  # rollback if needed: git checkout $BASE && git reset --hard $SNAPSHOT_TAG"
+fi
+echo "  # If $BASE must be pulled first, pull it and rerun this gate so the snapshot remains exact."
+echo "  git checkout $BASE && git merge --no-ff $BRANCH"
 echo "  then set this branch's status to 'merged' in $(basename "$REG")."
 exit 0

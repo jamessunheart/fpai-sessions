@@ -9,6 +9,7 @@ REPO="$HOME/FPAI_Cockpit"; cd "$REPO"
 HOST="${BRAIN_HOST:-root@162.0.208.88}"
 BASE="${MERGE_BASE:-feat/headless-build}"
 NOTIFY="${NOTIFY_SCRIPT:-tools/build_loop/notify_telegram.sh}"
+SNAPSHOT_SCRIPT="tools/merge/pre_merge_snapshot.sh"
 [ -f "$HOME/.config/fpai/decisions/.bridge_disabled" ] && { echo "disabled"; exit 0; }
 
 REMOTE_ENV='ENVFILE=$(systemctl show sh-brain-tgbot -p EnvironmentFiles 2>/dev/null | sed -E "s/EnvironmentFiles=//; s/ .*//"); cd /opt/sh-brain-src && set -a; . "$ENVFILE" 2>/dev/null; set +a;'
@@ -35,11 +36,22 @@ $REVIEW" >/dev/null 2>&1 || true
   fi
   # Merge into feat/headless-build only. NEVER main.
   git checkout "$BASE" >/dev/null 2>&1 || { mark "$DID" fail; continue; }
-  git pull --ff-only >/dev/null 2>&1 || true
+  if ! git pull --ff-only >/dev/null 2>&1; then
+    mark "$DID" fail
+    [ -x "$NOTIFY" ] && "$NOTIFY" "⚠️ Merge [$DID] held — could not fast-forward $BASE before snapshot/merge." >/dev/null 2>&1 || true
+    continue
+  fi
+  SNAPSHOT=$("$SNAPSHOT_SCRIPT" "$BASE" 2>&1); SNAPSHOT_RC=$?
+  if [ "$SNAPSHOT_RC" != "0" ]; then
+    mark "$DID" fail
+    [ -x "$NOTIFY" ] && "$NOTIFY" "⚠️ Merge [$DID] held — rollback snapshot failed before merge.
+$SNAPSHOT" >/dev/null 2>&1 || true
+    continue
+  fi
   if git merge --no-ff -m "merge($DID): $BR — James-approved from phone, AI-reviewed" "$BR" >/dev/null 2>&1; then
     mark "$DID" ok
     [ -x "$NOTIFY" ] && "$NOTIFY" "🔀 Merged [$DID] → $BASE ✅
-$BR is in. (main still needs the terminal + Ember's audit.)" >/dev/null 2>&1 || true
+$BR is in. Rollback snapshot: $SNAPSHOT. (main still needs the terminal + Ember's audit.)" >/dev/null 2>&1 || true
   else
     git merge --abort >/dev/null 2>&1 || true
     mark "$DID" fail

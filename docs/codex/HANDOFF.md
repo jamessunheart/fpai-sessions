@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-17 · SPEC_d075_versioned-merge-with-rollback · branch `build/SPEC_d075_versioned-merge-with-rollback`
+
+- **Status:** done / independently AI-reviewed / protected-path human merge review required
+- **Files changed:** `tools/merge/pre_merge_snapshot.sh`; `tools/merge/test_pre_merge_snapshot.sh`; `tools/merge/merge_gate.sh`; `tools/merge/test_merge_gate.sh`; `tools/merge/process_merge_requests.sh`; `tools/autobuild/doc_only_merge_resolver.py`; `tools/autobuild/test_doc_only_merge_resolver.py`; `core/BUILD/specs/SPEC_d075_versioned-merge-with-rollback.md`; `core/BUILD/results/SPEC_d075_versioned-merge-with-rollback.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added numbered local pre-merge rollback snapshots. `tools/merge/pre_merge_snapshot.sh` tags the current merge base as `fpai/pre-merge/0001`, `0002`, etc., reuses an existing tag for the same base SHA, refuses `main`/`master`, and verifies the tag target. The manual merge gate, phone merge processor, and doc-only auto-merge resolver now fail closed unless a snapshot exists immediately before merge. The manual gate no longer prints `git pull` after snapshot creation; if Ember needs to pull first, it now says to pull and rerun the gate so the snapshot remains exact.
+- **Tests:** `bash tools/merge/test_pre_merge_snapshot.sh` (4 passed); `bash tools/merge/test_merge_gate.sh` (5 passed); `python3 -B -m unittest tools.autobuild.test_doc_only_merge_resolver` (10 tests OK); `bash -n tools/merge/pre_merge_snapshot.sh tools/merge/merge_gate.sh tools/merge/process_merge_requests.sh tools/merge/test_pre_merge_snapshot.sh tools/merge/test_merge_gate.sh`; `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/autobuild/doc_only_merge_resolver.py tools/autobuild/test_doc_only_merge_resolver.py`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `git diff --check`
+- **Independent review:** completed by subagent. Initial review found blockers in review bypass env handling, stale-base phone merges after failed `git pull`, and snapshot-skip env handling. Fixes removed the review/snapshot bypass env hooks, made the phone merge path fail closed on pull failure, and expanded the regression test to grep both merge scripts for bypass hooks. Final blocker-only re-review found no remaining P1/P2 blockers. The standard `tools/merge/ai_review.py` protected-zone check is still expected to block/escalate because this approved spec necessarily changes `tools/merge/`.
+- **Risks:** This touches the protected merge layer by design, so Ember/James should treat it as human-directed infrastructure work, not an auto-merge candidate. Tags are local to the merge host unless explicitly pushed later. No live merge, push, deploy, tag push, secret, money movement, or outreach action was performed in this sandbox.
+- **Rollback:** revert the listed files and remove the d075 registry/result/handoff entries. If unwanted local test tags exist on a host, remove them with `git tag -d <tag>`.
+- **Intent solved:** approved merge paths now snapshot the current `feat/headless-build` state with a numbered rollback tag before merging.
+- **Downstream intent unlocked:** Ember can merge reviewed branches with a last-known-good local Git ref available for fast rollback.
+- **Questions for Ember/James:** because this modifies `tools/merge/`, perform human-directed protected-path review before merge; the normal merge gate should not auto-approve this branch.
+
 ### 2026-06-17 · SPEC_d074_human-coach-matching-cora-credit · branch `build/SPEC_d074_human-coach-matching-cora-credit`
 
 - **Status:** done / independently AI-reviewed / awaiting merge review

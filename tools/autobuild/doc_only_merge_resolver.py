@@ -23,6 +23,7 @@ from pathlib import Path
 from typing import Iterable, Sequence
 
 DEFAULT_BASE = "feat/headless-build"
+DEFAULT_SNAPSHOT_SCRIPT = Path("tools/merge/pre_merge_snapshot.sh")
 DOC_SUFFIXES = {".md", ".markdown", ".rst", ".txt", ".adoc"}
 METADATA_PATHS = {
     "core/BUILD/REGISTRY.json",
@@ -193,6 +194,19 @@ def review_command_ok(root: Path, command: Sequence[str], branch: str) -> tuple[
 
 def merge_branch(root: Path, base: str, branch_ref_name: str, build_id: str) -> None:
     run_git(root, ["checkout", base])
+    snapshot_script = root / DEFAULT_SNAPSHOT_SCRIPT
+    if not snapshot_script.exists():
+        raise ResolverError(f"rollback snapshot helper missing: {snapshot_script}")
+    snapshot = subprocess.run(
+        [str(snapshot_script), base],
+        cwd=root,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if snapshot.returncode != 0:
+        detail = (snapshot.stderr or snapshot.stdout).strip()
+        raise ResolverError(f"rollback snapshot failed before merge: {detail}")
     message = f"merge({build_id}): auto-merge doc-only AI-approved branch"
     try:
         run_git(root, ["merge", "--no-ff", "-m", message, branch_ref_name])
