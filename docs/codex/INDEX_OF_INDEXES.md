@@ -695,13 +695,13 @@ Vault path: `/Users/jamessunheart/Library/Mobile Documents/iCloud~md~obsidian/Do
 
 ## 2. GitHub / Repo Index
 
-Repo path: `/Users/jamessunheart/FPAI_Cockpit`
+Repo path: `/opt/fpai-build/FPAI_Cockpit` (build server 162) · mirror: `/Users/jamessunheart/FPAI_Cockpit` (laptop)
 
 | Stream layer | Repo file | Role | Owner lane | Last observed / updated | Work state |
 |---|---|---|---|---|---|
 | Orientation | `AGENTS.md` | First repo-local instructions for Codex. | Codex/Ember | 2026-06-06 15:31 MDT | IDLE |
 | Orientation | `docs/codex/README.md` | Codex working brief and surface protocol. | Codex/Ember | 2026-06-06 15:37 MDT | IDLE |
-| Map of maps | `docs/codex/INDEX_OF_INDEXES.md` | This file; index, timestamps, active work claims. | Codex/Ember | 2026-06-06 15:52 MDT | IDLE |
+| Map of maps | `docs/codex/INDEX_OF_INDEXES.md` | This file; index, timestamps, active work claims. | Codex/Ember | 2026-06-17 Athens | IDLE |
 | Doctrine mirror | `docs/codex/AI_PROTOCOLS.md` | Repo mirror of Layer 3 doctrine. | Codex mirror; Ember canonical | 2026-06-06 15:37 MDT | IDLE |
 | Intent sequence | `docs/codex/INTENT_BUILDSTREAM.md` | Repo mirror of sequential buildstream. | Codex mirror; Ember canonical | 2026-06-06 15:37 MDT | IDLE |
 | Coordination | `docs/codex/HANDOFF.md` | Shared board and run summaries. | Ember owns where-we-are; Codex owns run lane | 2026-06-06 15:37 MDT | IDLE |
@@ -711,6 +711,34 @@ Repo path: `/Users/jamessunheart/FPAI_Cockpit`
 | Service map | `docs/codex/SERVICE_REGISTRY.md` | Read-only service map; no cleanup action. | Codex | 2026-06-05 11:06 MDT; generated 2026-06-05 17:06 UTC | IDLE |
 | Host registry | `docs/codex/HOST_REGISTRY.md` | Safe host/server truth levels and heartbeat gaps. | Codex/Ember | 2026-06-06 16:13 MDT | IDLE |
 | Specs | `docs/codex/specs/` | Approved build specs. | Ember routes; Codex builds | mixed | IDLE |
+
+### 2a. Core State Files (canonical AI operating layer)
+
+These files in `core/STATE/` are the authoritative operating layer for AI sessions. If vault and these disagree, these win for AI; vault wins for James-facing context.
+
+| Purpose | File | Role | Last updated | Status |
+|---|---|---|---|---|
+| Founder priorities | `core/STATE/NOW.md` | Current phase, decision filter, what's live/deprecated. Build queue d069–d076. | 2026-06-17 | 🟢 current |
+| AI working goals | `core/STATE/AI_GOALS.md` | G0–G4 goals (outreach engine → per-agent benchmarks → coach market → network economy) + handoff notes. | 2026-06-17 | 🟢 current |
+| Mission + targets | `core/STATE/NORTH_STAR.md` | **Dual sovereignty**: technical (benchmark targets) + economic (CORA, off-ramp minimization, NVS). Council weight directive. | 2026-06-17 | 🟢 current |
+| Council weight | `core/STATE/COUNCIL_FOCUS.md` | North Star weight directive + unified memory directive for debate council. | 2026-06-17 | 🟢 current |
+| Who James is | `core/STATE/JAMES_CANONICAL.md` | Identity, priorities, constants, feedback rules. | 2026-06-12 | 🟢 current |
+| Operating rules | `core/STATE/AI_CHARTER.md` | 8 practices + Conversation Protocol + Signal Clarity colors. | — | 🟢 current |
+| AI roster | `core/STATE/AI_ROSTER.md` | Specialized AI lineup + Context Steward pairing. | — | 🟢 current |
+| Outreach voice | `core/STATE/OUTREACH_VOICE.md` | Canonical probe outreach message. Full potential framing + conscious chat frame. | d072 builds | 🟡 queued |
+| Public/private protocol | `core/STATE/PUBLIC_PRIVATE_PROTOCOL.md` | Structural partition: what public agents access. Canary test (7 questions). | d066 builds | 🟡 queued |
+| Network economy | `core/STATE/NETWORK_ECONOMY.md` | Multi-currency ledger, 7 roles (Seeker→Anchor), currency optimizer, off-ramp rules. | d076 builds | 🟡 queued |
+| Coach economy | `core/STATE/COACH_ECONOMY.md` | CORA credits for coaches; fiat tier unlocks at 20+ active coaches. | d074 builds | 🟡 queued |
+| Per-agent benchmarks | `core/benchmarks/` | One file per of the 9 agents. Day-0 baseline + weekly delta. Self-detects weakness, auto-queues improvement. | d073 builds | 🟡 queued |
+
+### 2b. Build infrastructure (laptop-free loop, server 162)
+
+| Purpose | File / path | Role | Notes |
+|---|---|---|---|
+| Build queue | `core/BUILD/queue/` | Each `dNNN_*.md` is a queued spec; Codex builds autonomously on 162. | Build loop runs every 10 min via systemd timer. |
+| Build reviews | `core/BUILD/reviews/` | AI review per build. APPROVE = fast-forward auto-merge; BLOCKED = surface to James. | CONSECUTIVE_REVERTS_MAX=3 kill switch. |
+| Ops truth ledger | `/opt/fpai-build/ops_ledger.jsonl` (server 162) | Measured reality: build outcomes, reversals, AI-verdicts. | `ops_log.py --summary` for weekly view. |
+| Council debate | `tools/council/debate.py` | 3-lens debate fires on new intents → proposes next build → TG. | Cites `NORTH_STAR.md` + `COUNCIL_FOCUS.md`; $0 via `claude -p`. |
 
 ## 3. Live Servers / Services Index
 
