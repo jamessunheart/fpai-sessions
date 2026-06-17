@@ -1,0 +1,10 @@
+{
+  "findings": [],
+  "generated_at": "2026-06-17T00:32:48Z",
+  "schema": "ai-pairing-guard.v1",
+  "summary": {
+    "findings": 0,
+    "max_severity": 0,
+    "pairings_scanned": 0
+  }
+}

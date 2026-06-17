@@ -26,6 +26,7 @@ Env (reads /etc/sh-brain/curator.env):
 from __future__ import annotations
 
 import asyncio
+import importlib.util as _ilu
 import json
 import logging
 import os
@@ -74,6 +75,115 @@ for _pair in _TEAM_RAW.split(","):
 def _is_team_capture_user(uid: str) -> bool:
     """Non-owner human authorized to drop captures (capture-only · no commands · no brain search)."""
     return bool(uid) and uid in TEAM_CAPTURE
+
+
+def _load_pairing_guard():
+    """Load repo-local pairing guard without mutating sys.path.
+
+    This follows the SESSION_CONTRACT cross-package rule: SERVICES code must not
+    add the cockpit repo to global import paths.
+    """
+    guard_path = Path(__file__).resolve().parents[3] / "tools" / "identity_pairing" / "guard.py"
+    spec = _ilu.spec_from_file_location("fpai_identity_pairing_guard", guard_path)
+    guard = _ilu.module_from_spec(spec) if spec and spec.loader else None
+    if guard is None or spec is None or spec.loader is None:
+        raise RuntimeError("identity pairing guard could not be loaded")
+    sys.modules[spec.name] = guard
+    spec.loader.exec_module(guard)
+    return guard
+
+
+async def _record_pairing_event(decision, observed, *, pairing_id: str | None = None) -> None:
+    try:
+        from .db import connect
+        async with connect() as conn:
+            async with conn.cursor() as cur:
+                await cur.execute(
+                    """
+                    INSERT INTO brain_index.ai_pairing_security_events
+                        (ai_agent, subject_id, provider, provider_user_id, chat_id,
+                         action, severity, reasons, pairing_id, observed_username)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    """,
+                    (
+                        decision.ai_agent or "sunheart-brain",
+                        decision.subject_id or None,
+                        observed.provider,
+                        observed.provider_user_id,
+                        observed.chat_id,
+                        decision.action,
+                        decision.severity,
+                        list(decision.reasons),
+                        pairing_id,
+                        observed.username or None,
+                    ),
+                )
+    except Exception as e:
+        log.warning("pairing event write failed: %s", e)
+
+
+async def _verify_ai_pairing(update: dict, *, ai_agent: str = "sunheart-brain"):
+    """Return None when pairing enforcement is off, else a PairingDecision."""
+    if os.environ.get("AI_PAIRING_ENFORCE", "").strip().lower() not in {"1", "true", "yes"}:
+        return None
+    guard = _load_pairing_guard()
+    observed = guard.ObservedIdentity.from_telegram(update)
+    pairing = None
+    pairing_id = None
+    try:
+        from .db import connect
+        async with connect() as conn:
+            async with conn.cursor() as cur:
+                await cur.execute(
+                    """
+                    SELECT id, subject_id, ai_agent, provider, provider_user_id,
+                           chat_id, username, identity_fingerprint, status,
+                           verified_at, assurance_level, risk_flags
+                      FROM brain_index.ai_user_pairings
+                     WHERE ai_agent = %s
+                       AND provider = %s
+                       AND provider_user_id = %s
+                     ORDER BY verified_at DESC NULLS LAST, created_at DESC
+                     LIMIT 1
+                    """,
+                    (ai_agent, observed.provider, observed.provider_user_id),
+                )
+                row = await cur.fetchone()
+                if row:
+                    pairing_id = str(row[0])
+                    pairing = guard.pairing_from_row({
+                        "subject_id": row[1],
+                        "ai_agent": row[2],
+                        "provider": row[3],
+                        "provider_user_id": row[4],
+                        "chat_id": row[5],
+                        "username": row[6],
+                        "identity_fingerprint": row[7],
+                        "status": row[8],
+                        "verified_at": row[9],
+                        "assurance_level": row[10],
+                        "risk_flags": row[11] or [],
+                    })
+    except Exception as e:
+        log.warning("pairing lookup failed: %s", e)
+    decision = guard.evaluate_pairing(
+        pairing,
+        observed,
+        ai_agent=ai_agent,
+        fingerprint_secret=guard.fingerprint_secret(),
+    )
+    await _record_pairing_event(decision, observed, pairing_id=pairing_id)
+    return decision
+
+
+def _pairing_denied_text(decision) -> str:
+    reasons = ", ".join(decision.reasons[:4]) if decision.reasons else "unverified"
+    return (
+        "🔐 <b>Pairing verification required.</b>\n"
+        f"Action: <code>{tg._esc(decision.action)}</code>\n"
+        f"Reason: <code>{tg._esc(reasons)}</code>\n\n"
+        "Ask James/Ember to verify this account before this AI surface accepts commands."
+    )
 
 # In-memory privacy mode: when active, neither inbound nor outbound messages are
 # logged to brain_index.tg_messages. Toggle with /private and /public.
@@ -258,6 +368,20 @@ async def _handle_callback(cb: dict) -> None:
     if OWNER_CHAT_ID and from_user != OWNER_CHAT_ID:
         log.warning("ignoring callback from non-owner user %s", from_user)
         await tg.answer_callback(cb_id, "Not authorized.", alert=True)
+        return
+    try:
+        fake_update = {
+            "from": cb.get("from") or {},
+            "chat": ((cb.get("message") or {}).get("chat") or {}),
+        }
+        pairing_decision = await _verify_ai_pairing(fake_update)
+        if pairing_decision is not None and not pairing_decision.allowed:
+            log.warning("blocking callback from unverified pairing %s", pairing_decision.reasons)
+            await tg.answer_callback(cb_id, "Pairing verification required.", alert=True)
+            return
+    except Exception as e:
+        log.warning("pairing callback gate failed: %s", e)
+        await tg.answer_callback(cb_id, "Pairing verification unavailable.", alert=True)
         return
 
     if data.startswith("b:"):
@@ -3832,6 +3956,24 @@ async def _handle_message(msg: dict) -> None:
     is_owner = bool(OWNER_CHAT_ID) and from_user == OWNER_CHAT_ID
     is_team = _is_team_capture_user(from_user)
     capture_name = TEAM_CAPTURE.get(from_user, "James" if is_owner else "")
+
+    if is_owner or is_team:
+        try:
+            pairing_decision = await _verify_ai_pairing(msg)
+        except Exception as e:
+            log.warning("pairing message gate failed: %s", e)
+            if os.environ.get("AI_PAIRING_ENFORCE", "").strip().lower() in {"1", "true", "yes"}:
+                await tg.send(
+                    "🔐 <b>Pairing verification unavailable.</b>\n"
+                    "This AI surface is in verified-pairing enforcement mode, "
+                    "so commands are blocked until the guard can verify this account."
+                )
+                return
+            pairing_decision = None
+        if pairing_decision is not None and not pairing_decision.allowed:
+            log.warning("blocking message from unverified pairing %s", pairing_decision.reasons)
+            await tg.send(_pairing_denied_text(pairing_decision))
+            return
 
     # Voice / audio note → Whisper transcription → Linear (always) → flow as text only for owner.
     if not text and chat_id:

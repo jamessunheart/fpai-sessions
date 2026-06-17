@@ -82,6 +82,21 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-17 · SPEC_d062_ai-pairing-account-security-bind · branch `build/SPEC_d062_ai-pairing-account-security-bind`
+
+- **Status:** done / independently reviewed / awaiting merge review
+- **Files changed:** `SERVICES/sunheart-brain/curator/tgbot.py`; `SERVICES/sunheart-brain/index/schema.sql`; `tools/identity_pairing/__init__.py`; `tools/identity_pairing/guard.py`; `tools/identity_pairing/test_guard.py`; `docs/codex/AI_PAIRING_ACCOUNT_SECURITY.md`; `core/BUILD/signals/ai_pairing_security.json`; `core/BUILD/signals/ai_pairing_security.md`; `core/BUILD/specs/SPEC_d062_ai-pairing-account-security-bind.md`; `core/BUILD/results/SPEC_d062_ai-pairing-account-security-bind.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added d062 AI pairing account security. The build adds `brain_index.ai_user_pairings` and `brain_index.ai_pairing_security_events`, a tested `tools.identity_pairing.guard` module, optional `sh-brain-tgbot` verified-pairing enforcement behind `AI_PAIRING_ENFORCE=1`, fail-closed owner/team message and callback gates, report-only anomaly detection for multi-subject provider/chat bindings, docs, and an initial empty signal report.
+- **Initial signal:** `core/BUILD/signals/ai_pairing_security.md` reports 0 findings because no live pairing rows are available in this sandbox.
+- **Tests:** `python3 -B -m unittest tools.identity_pairing.test_guard` (7 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/identity_pairing/guard.py tools/identity_pairing/test_guard.py SERVICES/sunheart-brain/curator/tgbot.py`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `python3 -m json.tool core/BUILD/signals/ai_pairing_security.json`
+- **Independent review:** completed by subagent. It found one P1 blocker: owner/team messages could fail open if `AI_PAIRING_ENFORCE=1` and the guard errored. Fixed by making message handling fail closed in enforcement mode. Blocker-only re-review reported no remaining blockers.
+- **Commit status:** blocked in this sandbox unless Ember commits from a writable Git metadata context. This worktree is on `build/SPEC_d062_ai-pairing-account-security-bind`, which descends from `feat/headless-build`; branch creation/commit may hit the same read-only shared Git metadata limitation as d060/d061.
+- **Risks:** Live pairings were not seeded; enforcement should not be enabled until Ember inserts the verified James row and runs one live proof. This is an AI-surface binding/drift guard, not provider-side MFA, device attestation, or account recovery. The sandbox did not send Telegram, mutate live accounts, deploy, touch secrets, spend, push, or merge.
+- **Rollback:** unset `AI_PAIRING_ENFORCE` for immediate compatibility mode. To revert fully, remove the d062 guard/docs/signals/result/spec artifacts, revert `tgbot.py`, schema, registry, and this HANDOFF entry. If the schema was applied live, export or preserve `ai_pairing_security_events` before dropping the d062 tables.
+- **Intent solved:** AI-facing user pairings can now be bound to verified identity rows instead of relying only on static chat-id allowlists, with auditable account-takeover drift events.
+- **Downstream intent unlocked:** Ember can seed verified live pairings, enable enforcement for the Telegram brain bot, and route follow-up hardening for other AI surfaces without letting hijacked or drifted accounts silently inherit AI privileges.
+- **Questions for Ember/James:** after merge, seed the verified `sunheart-brain`/Telegram pairing for James, optionally add `AI_PAIRING_FINGERPRINT_SECRET`, run one live proof with `AI_PAIRING_ENFORCE=1`, then review `brain_index.ai_pairing_security_events` before leaving enforcement on.
+
 ### 2026-06-17 · SPEC_d061_security-sentinel-agent · branch `build/SPEC_d061_security-sentinel-agent`
 
 - **Status:** done / independently reviewed / awaiting merge review

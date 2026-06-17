@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-17T01:36:00Z",
+    "updated_at": "2026-06-17T00:35:48Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d062_ai-pairing-account-security-bind",
+            "slug": "SPEC_d062_ai-pairing-account-security-bind",
+            "branch": "build/SPEC_d062_ai-pairing-account-security-bind",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d062_ai-pairing-account-security-bind.md",
+            "tests_passed": true,
+            "notes": "d062 complete: added verified AI/user pairing guard, brain_index pairing/security-event schema, optional Telegram enforcement with fail-closed owner/team gates when AI_PAIRING_ENFORCE=1, report-only anomaly scanner, docs, signal report, and focused tests. Independent review blocker fixed. No live account mutation, sends, deploys, secrets, push, or merge."
+        },
         {
             "id": "SPEC_d061_security-sentinel-agent",
             "slug": "SPEC_d061_security-sentinel-agent",

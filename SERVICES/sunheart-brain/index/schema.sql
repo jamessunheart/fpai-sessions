@@ -137,3 +137,64 @@ CREATE TABLE IF NOT EXISTS corrections (
 
 CREATE INDEX IF NOT EXISTS corrections_conversation_idx
     ON corrections (conversation_id, captured_at DESC);
+
+-- Verified AI/user pairings.
+-- These rows bind an AI surface (for example the Telegram brain bot) to one
+-- verified human subject and provider account. Runtime callers should fail
+-- closed when AI_PAIRING_ENFORCE=1 and no active row matches the observed
+-- provider user id + chat id + optional identity fingerprint.
+CREATE TABLE IF NOT EXISTS ai_user_pairings (
+    id                   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    subject_id           TEXT NOT NULL,          -- stable human/account subject, e.g. "james"
+    ai_agent             TEXT NOT NULL,          -- surface/agent using the binding
+    provider             TEXT NOT NULL,          -- telegram | appflowy | email | ...
+    provider_user_id     TEXT NOT NULL,
+    chat_id              TEXT,
+    username             TEXT,
+    identity_fingerprint TEXT,                   -- HMAC over provider identity; not a secret
+    verification_method  TEXT NOT NULL DEFAULT 'manual',
+    assurance_level      INTEGER NOT NULL DEFAULT 1,
+    status               TEXT NOT NULL DEFAULT 'pending',
+    risk_flags           TEXT[] NOT NULL DEFAULT '{}',
+    verified_at          TIMESTAMPTZ,
+    last_seen_at         TIMESTAMPTZ,
+    created_at           TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at           TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    metadata             JSONB NOT NULL DEFAULT '{}'::jsonb,
+    UNIQUE (ai_agent, provider, provider_user_id),
+    UNIQUE (ai_agent, provider, chat_id)
+);
+
+CREATE INDEX IF NOT EXISTS ai_user_pairings_subject_idx
+    ON ai_user_pairings (subject_id, ai_agent, status);
+CREATE INDEX IF NOT EXISTS ai_user_pairings_provider_idx
+    ON ai_user_pairings (provider, provider_user_id, status);
+CREATE INDEX IF NOT EXISTS ai_user_pairings_status_idx
+    ON ai_user_pairings (status) WHERE status <> 'verified';
+
+-- Account takeover / pairing drift audit trail. This table is append-only from
+-- runtime guards and report-only scanners; it is not an enforcement queue by
+-- itself.
+CREATE TABLE IF NOT EXISTS ai_pairing_security_events (
+    id                   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    at                   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    ai_agent             TEXT NOT NULL,
+    subject_id           TEXT,
+    provider             TEXT NOT NULL,
+    provider_user_id     TEXT,
+    chat_id              TEXT,
+    action               TEXT NOT NULL,          -- allow | challenge | block | report
+    severity             INTEGER NOT NULL DEFAULT 0,
+    reasons              TEXT[] NOT NULL DEFAULT '{}',
+    pairing_id           UUID REFERENCES ai_user_pairings(id) ON DELETE SET NULL,
+    observed_username    TEXT,
+    metadata             JSONB NOT NULL DEFAULT '{}'::jsonb
+);
+
+CREATE INDEX IF NOT EXISTS ai_pairing_security_events_at_idx
+    ON ai_pairing_security_events (at DESC);
+CREATE INDEX IF NOT EXISTS ai_pairing_security_events_subject_idx
+    ON ai_pairing_security_events (subject_id, at DESC);
+CREATE INDEX IF NOT EXISTS ai_pairing_security_events_block_idx
+    ON ai_pairing_security_events (action, severity, at DESC)
+    WHERE action IN ('challenge', 'block');
