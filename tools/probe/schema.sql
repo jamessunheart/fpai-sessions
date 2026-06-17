@@ -63,3 +63,20 @@ CREATE INDEX IF NOT EXISTS probe_sessions_recent_idx
 CREATE INDEX IF NOT EXISTS probe_sessions_quality_idx
     ON brain_index.probe_sessions (quality_score)
     WHERE quality_score IS NOT NULL;
+
+CREATE TABLE IF NOT EXISTS brain_index.probe_reply_queue (
+    id SERIAL PRIMARY KEY,
+    probe_session_id INT NOT NULL,
+    from_email TEXT NOT NULL,
+    subject TEXT,
+    body TEXT,
+    message_id TEXT,
+    in_reply_to TEXT,
+    status TEXT NOT NULL DEFAULT 'pending',
+    queued_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    sent_at TIMESTAMPTZ
+);
+
+CREATE INDEX IF NOT EXISTS probe_reply_queue_pending_idx
+    ON brain_index.probe_reply_queue (status, queued_at)
+    WHERE status = 'pending';

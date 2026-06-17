@@ -1,0 +1,11 @@
+[Unit]
+Description=FPAI Probe Agent Telegram CTA follow-up cycle
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/sh-brain/curator.env
+Environment=PYTHONPATH=/opt/fpai-build/FPAI_Cockpit
+WorkingDirectory=/opt/fpai-build/FPAI_Cockpit
+ExecStart=/usr/bin/env python3 /opt/fpai-build/FPAI_Cockpit/tools/probe/followup.py --json

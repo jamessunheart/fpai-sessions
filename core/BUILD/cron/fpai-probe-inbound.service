@@ -1,0 +1,13 @@
+[Unit]
+Description=FPAI Probe inbound email reply webhook
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/sh-brain/curator.env
+Environment=PYTHONPATH=/opt/fpai-build/FPAI_Cockpit
+WorkingDirectory=/opt/fpai-build/FPAI_Cockpit
+ExecStart=/usr/bin/env python3 -m uvicorn tools.probe.inbound_webhook:app --host 127.0.0.1 --port 8771
+Restart=on-failure
+RestartSec=5

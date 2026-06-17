@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-17T21:20:00Z",
+    "updated_at": "2026-06-17T12:36:01Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d083_reply-loop-closer-telegram-cta-f",
+            "slug": "SPEC_d083_reply-loop-closer-telegram-cta-f",
+            "branch": "build/SPEC_d083_reply-loop-closer-telegram-cta-f",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d083_reply-loop-closer-telegram-cta-f.md",
+            "tests_passed": true,
+            "notes": "d083 complete: added a dry-run/live-gated Telegram CTA follow-up runner for silent email probe_sessions after 3 days, guarded inbound FastAPI webhook for probe replies, server-209 email pipe deploy artifact, systemd/nginx artifacts, schema-backed probe_reply_queue, and focused tests. Live follow-up sends claim before Brevo to avoid duplicate overlapping sends and mark tg_cta_sent only after successful Brevo send. Inbound pipe fails closed unless PROBE_PIPE_ENABLED=1 and PROBE_PIPE_TOKEN matches. No live server 209 write, timer install, deploy, secrets, push, merge, or unapproved outreach performed."
+        },
         {
             "id": "SPEC_d081_becoming-engine-v1-per-person-jo",
             "slug": "SPEC_d081_becoming-engine-v1-per-person-jo",
