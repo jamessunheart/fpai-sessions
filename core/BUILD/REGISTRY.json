@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-17T18:48:00Z",
+    "updated_at": "2026-06-17T19:35:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d076_network-economy-substrate-ai-bui",
+            "slug": "SPEC_d076_network-economy-substrate-ai-bui",
+            "branch": "build/SPEC_d076_network-economy-substrate-ai-bui",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d076_network-economy-substrate-ai-bui.md",
+            "tests_passed": true,
+            "notes": "d076 complete: added side-effect-free network economy substrate with DB-shaped multi-currency value ledger rows, internal-first currency optimizer, private Network Value Score, off-ramp retention/extraction tracker, proactive role-gap recruiter signals, focused tests, and NETWORK_ECONOMY state constitution. No SQL migration application, live DB writes, treasury mutation, wallet transaction, credit minting, outreach send, deploy, push, or merge. Independent AI review was not run in this uncommitted sandbox."
+        },
         {
             "id": "SPEC_d074_human-coach-matching-cora-credit",
             "slug": "SPEC_d074_human-coach-matching-cora-credit",
