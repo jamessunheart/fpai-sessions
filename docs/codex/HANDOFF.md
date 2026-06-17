@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-17 · SPEC_d069_outreach-engine-v1-fp-game-conta · branch `build/SPEC_d069_outreach-engine-v1-fp-game-conta`
+
+- **Status:** done / independently AI-reviewed / awaiting merge review
+- **Files changed:** `tools/hermes/__init__.py`; `tools/hermes/email_adapter.py`; `tools/hermes/email_reply_parser.py`; `tools/hermes/test_email_adapter.py`; `tools/hermes/test_reply_parser.py`; `tools/outreach/__init__.py`; `tools/outreach/fp_champions_puller.py`; `tools/outreach/test_fp_champions_puller.py`; `tools/probe/agent.py`; `tools/probe/schema.sql`; `tools/probe/test_probe.py`; `core/BUILD/cron/fpai-probe.service`; `core/BUILD/specs/SPEC_d069_outreach-engine-v1-fp-game-conta.md`; `core/BUILD/results/SPEC_d069_outreach-engine-v1-fp-game-conta.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added FP Game Champions contact pull into `brain_index.probe_pool`, a dry-run-first Brevo email adapter using the approved Sunheart AI copy, IMAP reply parsing for YES/sure/ok/interested engagement, and email support in the existing d054 probe cycle. The daily probe service now pulls Champion contacts before running the rate-governed cycle. Live sends remain blocked unless `OUTREACH_LIVE=1`, `DRY_RUN` is not `1`, `BREVO_API_KEY` is set, and both kill switches are clear.
+- **Tests:** `python3 -B -m unittest tools.hermes.test_email_adapter tools.hermes.test_reply_parser tools.outreach.test_fp_champions_puller tools.probe.test_probe` (26 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile ...`; `PROBE_DISABLE=1 python3 -B tools/outreach/fp_champions_puller.py --json`; `PROBE_DISABLE=1 python3 -B tools/probe/agent.py --pull-fp-champions --json --ops-ledger /tmp/d069-probe-disabled.jsonl`; `OUTREACH_EMAIL_DISABLE=1 python3 -B tools/hermes/email_reply_parser.py --json`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `git diff --check`
+- **Independent review:** completed by subagents. Initial review found P2 blockers in reply matching, old-schema compatibility, dry-run cooldown/history pollution, and Champion name preservation. Re-reviews found remaining old-schema issues in reply parsing and puller inserts. All were fixed; final narrow re-review found no remaining code blockers.
+- **Risks:** The live DB migration was not applied in this sandbox. Old-schema fallback can import email handles but cannot preserve `source`/metadata until `tools/probe/schema.sql` is applied. IMAP polling needs live credentials and is CLI-ready but not installed as a separate timer here. No live API calls, email sends, secrets, deploys, pushes, or merges were performed.
+- **Rollback:** revert the d069 files listed above. Immediate runtime rollback is `PROBE_DISABLE=1` or `OUTREACH_EMAIL_DISABLE=1`; if Ember installs the service change, remove `--pull-fp-champions` or disable `fpai-probe.timer`.
+- **Intent solved:** FP Game Champion outreach now has an autonomous, rate-governed, dry-run-first repo path instead of James collecting contacts or sending emails manually.
+- **Downstream intent unlocked:** Ember can apply the schema migration, verify the Champion API and Brevo/IMAP env on the live host, run disabled/dry-run proofs, then bless a tiny reviewed `OUTREACH_LIVE=1` batch under the probe governor.
+- **Questions for Ember/James:** before any live send, apply `tools/probe/schema.sql`, verify the Champion API payload, run the disabled/dry-run commands on the live host, set Brevo/IMAP env vars, and explicitly bless the first tiny live proof batch.
+
 ### 2026-06-17 · SPEC_d068_auto-merge-resolver-for-doc-only · branch `build/SPEC_d068_auto-merge-resolver-for-doc-only`
 
 - **Status:** done / independently AI-reviewed / awaiting merge review

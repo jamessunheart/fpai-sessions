@@ -28,7 +28,8 @@ class FakeCursor:
         normalized = " ".join(sql.lower().split())
         self.conn.executed.append((normalized, params))
         if "information_schema.columns" in normalized:
-            self.rows = [(col,) for col in self.conn.tg_columns]
+            table = params[0]
+            self.rows = [(col,) for col in self.conn.columns_by_table.get(table, set())]
         elif "from brain_index.probe_sessions" in normalized and "engaged is distinct from true" in normalized:
             since = params[0]
             self.rows = [
@@ -61,7 +62,10 @@ class FakeCursor:
             for member in self.conn.pool:
                 last = member.get("last_probed_at")
                 if member["pool"] == pool and not member.get("do_not_contact") and (last is None or last < cutoff):
-                    rows.append((member["id"], member["pool"], member["handle"], member["platform"]))
+                    if "metadata" in normalized:
+                        rows.append((member["id"], member["pool"], member["handle"], member["platform"], member.get("metadata")))
+                    else:
+                        rows.append((member["id"], member["pool"], member["handle"], member["platform"]))
             self.rows = rows[:limit]
         elif normalized.startswith("insert into brain_index.probe_sessions"):
             probe_id, pool, initiated_at, notes = params
@@ -105,6 +109,20 @@ class FakeCursor:
             self.conn.sessions[session_id - 1]["quality_score"] = score
             self.conn.sessions[session_id - 1]["notes"] = (self.conn.sessions[session_id - 1].get("notes") or "") + extra
             self.rows = []
+        elif normalized.startswith("update brain_index.probe_sessions set notes") and "sent_at = coalesce" in normalized:
+            extra, sent_at, message_id, probe_id = params
+            for session in self.conn.sessions:
+                if session.get("probe_id") == probe_id:
+                    session["notes"] = (session.get("notes") or "") + extra
+                    session["sent_at"] = sent_at or session.get("sent_at")
+                    session["message_id"] = message_id or session.get("message_id")
+            self.rows = []
+        elif normalized.startswith("update brain_index.probe_sessions set notes"):
+            extra, probe_id = params
+            for session in self.conn.sessions:
+                if session.get("probe_id") == probe_id:
+                    session["notes"] = (session.get("notes") or "") + extra
+            self.rows = []
         elif normalized.startswith("update brain_index.probe_sessions set engaged"):
             drop_off, spark, onboarding, last_at, last_message, session_id = params
             session = self.conn.sessions[session_id - 1]
@@ -126,11 +144,18 @@ class FakeCursor:
 
 
 class FakeConn:
-    def __init__(self, sessions=None, pool=None, tg_messages=None, tg_columns=None):
+    def __init__(self, sessions=None, pool=None, tg_messages=None, tg_columns=None, columns_by_table=None):
         self.sessions = list(sessions or [])
         self.pool = list(pool or [])
         self.tg_messages = list(tg_messages or [])
         self.tg_columns = set(tg_columns or {"at", "text", "username"})
+        self.columns_by_table = {
+            "tg_messages": self.tg_columns,
+            "probe_pool": {"id", "pool", "handle", "platform"},
+            "probe_sessions": {"id", "probe_id", "notes"},
+        }
+        if columns_by_table:
+            self.columns_by_table.update({key: set(value) for key, value in columns_by_table.items()})
         self.executed = []
 
     def cursor(self):
@@ -248,6 +273,50 @@ class ProbeTests(unittest.TestCase):
             )
             self.assertTrue(result.disabled)
             self.assertEqual(result.sent, 0)
+
+    def test_email_probe_defaults_to_dry_run_without_session_or_cooldown(self):
+        conn = FakeConn(pool=[{"id": 1, "pool": "warm", "handle": "champ@example.com", "platform": "email", "last_probed_at": None}])
+        result = agent.run_probe_cycle(
+            conn=conn,
+            sender=agent.default_send,
+            opener_composer=lambda _member: "Ignored because email uses canonical copy.",
+            ops_ledger=Path(tempfile.mkdtemp()) / "ops.jsonl",
+            now=NOW,
+        )
+        self.assertEqual(result.attempted, 1)
+        self.assertEqual(result.sent, 0)
+        self.assertEqual(conn.sessions, [])
+        self.assertIsNone(conn.pool[0]["last_probed_at"])
+
+    def test_email_member_name_is_loaded_from_probe_pool_metadata(self):
+        conn = FakeConn(
+            pool=[{
+                "id": 1,
+                "pool": "warm",
+                "handle": "champ@example.com",
+                "platform": "email",
+                "last_probed_at": None,
+                "metadata": json.dumps({"name": "Alex Champion"}),
+            }],
+            columns_by_table={"probe_pool": {"id", "pool", "handle", "platform", "metadata"}},
+        )
+        seen = []
+        result = agent.run_probe_cycle(
+            conn=conn,
+            sender=lambda member, _text: seen.append(member.name) or False,
+            opener_composer=lambda _member: "Ignored because email uses canonical copy.",
+            ops_ledger=Path(tempfile.mkdtemp()) / "ops.jsonl",
+            now=NOW,
+        )
+        self.assertEqual(result.attempted, 1)
+        self.assertEqual(seen, ["Alex Champion"])
+
+    def test_send_status_is_notes_only_when_new_columns_absent(self):
+        conn = FakeConn(sessions=[{"probe_id": "p1", "notes": ""}])
+        delivery = SimpleNamespace(sent=True, message_id="m1", sent_at="2026-06-17T12:00:00Z", reason="sent")
+        agent.update_send_status(conn, probe_id="p1", delivery=delivery)
+        self.assertIn("send_status=sent", conn.sessions[0]["notes"])
+        self.assertNotIn("sent_at", conn.sessions[0])
 
     def test_opener_is_at_most_3_sentences_and_not_pitching_features(self):
         opener = agent.sanitize_opener("Feature demo. Buy now. Third. Fourth.")
