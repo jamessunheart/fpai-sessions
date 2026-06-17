@@ -99,10 +99,8 @@ spent, _ = track.today("council")
 if spent >= DAILY_CAP:
     print(f"council daily cap hit (${spent:.2f}/${DAILY_CAP})"); sys.exit(0)
 
-# guard: one-at-a-time
+# load queue — no one-at-a-time gate (decision agent auto-answers, build loop auto-merges)
 queue = run_curator("./.venv/bin/python -m curator.decisions list")
-if "awaiting" in queue:
-    print("a decision already awaits James"); sys.exit(0)
 
 if trigger_from_files and run_diagnostic_dialogue and is_decision_queue_empty:
     try:
@@ -124,18 +122,19 @@ if sig_hash == last:
     print("no new intent since last debate — skip (~$0)"); sys.exit(0)
 
 SYS = (
- "You are a COUNCIL of three architects debating what James's system should build or focus on NEXT, "
- "based on his recently surfaced intents (chats) and the current decision queue. Give each architect a "
- "distinct, honest position:\n"
- "- PRAGMATIST: the cheapest, highest-leverage concrete build right now.\n"
- "- VISIONARY: what best advances the long-term self-evolving-system vision.\n"
- "- SKEPTIC: the riskiest gap, or what NOT to build (guard against cruft — James's rule is "
- "'concentrate harder, not build more').\n"
- "Then SYNTHESIZE into at most ONE concrete, buildable proposal. Be conservative: if nothing clearly "
- "warrants a build, propose nothing. Respond ONLY JSON: {\"pragmatist\":\"..\",\"visionary\":\"..\","
- "\"skeptic\":\"..\",\"synthesis\":\"one-paragraph verdict\",\"propose\":true|false,"
- "\"title\":\"<=8 words\",\"why\":\"one sentence\",\"build_spec\":\"concrete: what to build, where, the proof\","
- "\"risk\":\"low\"|\"med\"}. Prefer propose=false when uncertain.")
+ "Goal: identify the single highest-leverage next build for a self-evolving AI platform, or propose "
+ "nothing if no build clearly warrants it. Context: James's recent intents + the current decision queue. "
+ "Reason: James's attention is the scarcest resource — every proposal must earn it. "
+ "Hard boundaries: no duplicate proposals, no cruft, no builds that add complexity without clear proof value. "
+ "James's rule: concentrate harder, not build more. Prefer propose=false when uncertain. "
+ "Three lenses to weigh internally — cheapest/highest-leverage NOW (pragmatist), "
+ "best-for-long-term-vision (visionary), riskiest-gap-or-what-NOT-to-build (skeptic). "
+ "Respond with ONLY valid JSON, no prose outside it: "
+ "{\"pragmatist\":\"1 sentence\",\"visionary\":\"1 sentence\",\"skeptic\":\"1 sentence\","
+ "\"synthesis\":\"one-paragraph verdict\",\"propose\":true|false,"
+ "\"title\":\"<=8 words\",\"why\":\"one sentence\","
+ "\"build_spec\":\"concrete: what to build, where, what the proof looks like\","
+ "\"risk\":\"low\"|\"med\"}.")
 _focus = ""
 try:
     _fp = REPO + "/core/STATE/COUNCIL_FOCUS.md"
@@ -158,7 +157,7 @@ if build_blueprint_context and os.environ.get("BLUEPRINTS_DISABLE") != "1":
         pass
 try:
     import subprocess as _sp
-    r = _sp.run([CLAUDE, "-p", prompt], stdin=_sp.DEVNULL, capture_output=True, text=True, timeout=150)
+    r = _sp.run([CLAUDE, "-p", "--effort", "xhigh", prompt], stdin=_sp.DEVNULL, capture_output=True, text=True, timeout=300)
     txt = r.stdout.strip()
     d = json.loads(txt[txt.find("{"):txt.rfind("}")+1])
     # claude -p = Claude Max flat-rate -> $0 marginal real spend (no metered API call)
