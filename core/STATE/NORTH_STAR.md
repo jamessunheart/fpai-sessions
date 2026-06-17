@@ -1,6 +1,12 @@
 # North Star
 
-**Last updated:** 2026-06-17 — expanded to dual sovereignty (technical + economic). James session.
+**Last updated:** 2026-06-17 — GLM-5.2 added as T3 reference model + June 12 proof point. James session.
+
+## Real-world proof (June 12, 2026)
+
+US export-control order forced Anthropic to kill Fable 5 and Mythos 5 for all users — closed models, rented access, no recourse. Next day: Z-AI drops GLM-5.2, MIT license, weights on HuggingFace, #2 on Code Arena (1,595 Elo) behind only the model just killed. Cost: $1.40/$4.40 per million tokens vs Opus 4.8 at $5/$25.
+
+The lesson is not "use Chinese models." The lesson: **you don't own what you rent.** Owning the weights removes the rug. Running them yourself removes the second rug. That's the two-layer sovereignty this system is built toward. June 12 made the argument publicly, in real time, for everyone watching.
 
 ## Mission
 
@@ -35,6 +41,28 @@ Off-ramp to fiat exists but the system never recommends it when an internal path
 - `extraction_rate` — fees paid to external payment rails (minimize week-over-week)
 - `network_value_score` — per-member give/take ratio (contributors earn higher capabilities)
 - `off_ramp_minimization` — trend toward internal economy sufficiency
+
+## Intelligence ladder (T0 → T5)
+
+Cheapest sufficient carrier first. Escalate only by uncertainty/risk/value.
+
+| Tier | Model | Use | Cost | Sovereignty |
+|---|---|---|---|---|
+| T0 | Rules / memory | Routing, kill-switches, known patterns | $0 | Full |
+| T1 | Local inference (future) | High-volume, low-stakes tasks once GPU available | $0 | Full — own weights + compute |
+| T2 | **GLM-5.2** (API now / local target) | Council debate Pragmatist lens, pre-profiling, drafts, fast review | $1.40/$4.40 per M tokens | Weights owned (MIT) — API callable now, local deployable |
+| T3 | claude -p / codex (flat-rate) | Build loop, heavy review, complex specs | $0 marginal (subscription) | None — closed, rug-pullable |
+| T4 | Council (multi-model) | Architecture decisions, hard tradeoffs | T2+T3 cost | Mixed |
+| T5 | James | Irreducibly human judgment | Attention | Irreducible |
+
+**GLM-5.2 as T2 reference model:**
+- MIT license — download weights, fine-tune on our corpus, run locally when GPU available
+- #2 Code Arena (1,595 Elo) — capable enough for most non-agentic tasks
+- Fine-tune target for continuous learning controller (our correction data + merge outcomes → domain-specific model)
+- Caveat: Opus doubles it on long agentic work — keep Opus/claude-p for build loop heavy lifting
+
+**Fine-tune path (opens now):**
+GLM-5.2 (MIT) + our `brain_index.corrections` + merge-outcome signals = a model that knows James's taste and our system's domain. This is the continuous learning controller's target. First fine-tune run gates on: d073 (per-agent benchmarks) producing a clean quality signal, then d056/d057 generating the training corpus.
 
 ## Winning Targets
 
