@@ -1,10 +1,21 @@
 {
   "schema": "build-registry.v1",
-  "updated_at": "2026-06-17T01:05:00Z",
+    "updated_at": "2026-06-17T01:35:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
-  "active_builds": [
-    {
-      "id": "SPEC_d059_server-162-redundancy-and-failov",
+    "active_builds": [
+        {
+            "id": "SPEC_d060_proactive-failure-watchdog",
+            "slug": "SPEC_d060_proactive-failure-watchdog",
+            "branch": "build/SPEC_d060_proactive-failure-watchdog",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d060_proactive-failure-watchdog.md",
+            "tests_passed": true,
+            "notes": "d060 complete: added a report-only proactive failure watchdog for server, memory, revenue, agents, and dependencies; generated signal JSON/Markdown; added reviewed 4h systemd timer artifacts and focused tests. Independent review blockers were fixed. No live install, production mutation, secrets, spend, outreach, push, or merge."
+        },
+        {
+            "id": "SPEC_d059_server-162-redundancy-and-failov",
       "slug": "SPEC_d059_server-162-redundancy-and-failov",
       "branch": "build/SPEC_d059_server-162-redundancy-and-failov",
       "base_branch": "feat/headless-build",
