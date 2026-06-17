@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-17T12:36:01Z",
+    "updated_at": "2026-06-17T16:30:21Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d086_glm-5-2-fine-tune-pipeline-conti",
+            "slug": "SPEC_d086_glm-5-2-fine-tune-pipeline-conti",
+            "branch": "build/SPEC_d086_glm-5-2-fine-tune-pipeline-conti",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d086_glm-5-2-fine-tune-pipeline-conti.md",
+            "tests_passed": true,
+            "notes": "d086 complete: added gated GLM-5.2 learning dataset builder, fine-tune runner scaffold, benchmark tracker doc, and focused tests. Dataset export refuses fewer than 50 corrections/examples, defaults generated private JSONL outside the repo, formats correction rows as DPO chat pairs, approved merge outcomes/probe quality as SFT rows, and joins live correction rows back to prior user context when available. Fine-tune runner requires dataset size/correction gates, d073 benchmark scores, FINETUNE_APPROVED=1, HAS_GPU=1, and --execute; it still reports ready_requires_execute/will_train=false instead of training by default. Independent AI review found initial P2s; fixes landed; final blocker-only re-review found no remaining P1/P2 blockers. No training, GPU job, deploy, secrets, push, or merge."
+        },
         {
             "id": "SPEC_d083_reply-loop-closer-telegram-cta-f",
             "slug": "SPEC_d083_reply-loop-closer-telegram-cta-f",
