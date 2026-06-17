@@ -10,6 +10,11 @@ A self-standing personal-AI operating system that **builds, measures, and rememb
 laptop-free, at ~$0 marginal cost — driven by James through **one Telegram chat**, evolving toward
 a tailored model that genuinely learns from their conversations.
 
+**Canonical framings (3-AI convergence — Claude · GPT · Ember, 2026-06-17):**
+- **"James sets direction. The system builds, proves, and reverts safely."** (the core loop)
+- **"The Becoming Engine turns attention into transformation, then transformation into contribution."** (the human path — §11.5)
+- **"The proof is stronger when the map tells the truth."** (build-state honesty: 🟢 live · 🟡 partial · ⚪ planned, never inflated)
+
 ## The Functions (Beacon outer-layer + 8 core nervous system)
 Flow: *attention becomes intent · intent becomes action · action returns proof · proof becomes memory · memory becomes intelligence · intelligence protects attention · the system evolves.*
 Public-acquisition chain: **Beacon attracts → Spark understands → Ember remembers → Hermes routes → Council thinks → Forge builds → Steward manages value → Ledger proves → Loop improves.**
