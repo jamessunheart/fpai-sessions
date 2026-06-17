@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-17 · SPEC_d067_auto-merge-resolver-for-doc-onl · branch `build/SPEC_d067_auto-merge-resolver-for-doc-onl`
+
+- **Status:** done / awaiting independent AI review + merge review
+- **Files changed:** `tools/forge/auto_merge.sh`; `tools/forge/test_auto_merge.sh`; `tools/build_loop/build_orchestrator.sh`; `core/BUILD/specs/SPEC_d067_auto-merge-resolver-for-doc-onl.md`; `core/BUILD/results/SPEC_d067_auto-merge-resolver-for-doc-onl.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a conservative doc-only auto-merge resolver. `tools/forge/auto_merge.sh` requires registry `status=done`, AI approval, and `risk=low`; checks `origin/main...branch`; blocks `.py`, `.sh`, `.sql`, and `.env` paths; runs `git merge --no-edit` only for eligible doc-only branches; logs merged/held outcomes to the ops ledger; and notifies James with the merge prompt when a code file, conflict, missing approval, or non-low risk holds the merge. The build orchestrator now records independent-review verdict/risk metadata back into the registry and delegates opt-in `BUILD_AUTO_MERGE=1` to the resolver instead of merging directly.
+- **Tests:** `bash tools/forge/test_auto_merge.sh` (5 passed); `bash -n tools/forge/auto_merge.sh tools/forge/test_auto_merge.sh tools/build_loop/build_orchestrator.sh`; `python3 -m json.tool core/BUILD/REGISTRY.json`
+- **Risks:** The resolver can perform a future local merge when `BUILD_AUTO_MERGE=1` and the registry/review/doc-only gates all pass. It is intentionally narrow and fails closed to James/Ember for code-like files, conflicts, non-low risk, missing refs, missing approval, or dirty target checkout. This Codex run did not push or merge.
+- **Rollback:** unset/keep `BUILD_AUTO_MERGE=0` for immediate runtime rollback. Full rollback is to revert the d067 files and remove the registry/handoff/result entries.
+- **Intent solved:** doc-only AI-approved branches no longer require James to type the merge command when the branch is low-risk and clean.
+- **Downstream intent unlocked:** the build loop can prove d063-style doc-only branches landing automatically with an ops-ledger auto-merge event, while code/conflict cases still route to James.
+- **Questions for Ember/James:** after merge, run the resolver on a known doc-only approved branch such as d063 from the live host with fresh `origin/main`; confirm the ops ledger contains the `auto_merge merged` event and that Telegram only fires for held cases.
+
 ### 2026-06-17 · SPEC_d066_public-private-data-lane-protoco · branch `build/SPEC_d066_public-private-data-lane-protoco`
 
 - **Status:** done / independently AI-reviewed / awaiting merge review

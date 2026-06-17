@@ -1,76 +1,89 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-17T15:10:00Z",
+  "updated_at": "2026-06-17T15:30:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
-    "active_builds": [
-        {
-            "id": "SPEC_d066_public-private-data-lane-protoco",
-            "slug": "SPEC_d066_public-private-data-lane-protoco",
-            "branch": "build/SPEC_d066_public-private-data-lane-protoco",
-            "base_branch": "feat/headless-build",
-            "session": "codex",
-            "status": "done",
-            "spec": "core/BUILD/specs/SPEC_d066_public-private-data-lane-protoco.md",
-            "tests_passed": true,
-            "notes": "d066 complete: added public/private lane protocol, public context pack with public-safe blueprint summaries and public_ok-only decisions, canary probe that checks context and exercises the Telegram public responder, public_ok SQL migration, and Telegram mode gate limiting full brain context to James private chat. Live public replies require PUBLIC_MODE_CONFIRMED=1 after canary pass; PUBLIC_MODE_DISABLE=1 forces private-only posture. Independent AI review blockers were fixed and re-review found no remaining P1/P2 blockers. No sends, deploys, secrets, spend, push, or merge."
-        },
-        {
-            "id": "SPEC_d065_public-private-data-boundary-pol",
-            "slug": "SPEC_d065_public-private-data-boundary-pol",
-            "branch": "build/SPEC_d065_public-private-data-boundary-pol",
-            "base_branch": "feat/headless-build",
-            "session": "codex",
-            "status": "done",
-            "spec": "core/BUILD/specs/SPEC_d065_public-private-data-boundary-pol.md",
-            "tests_passed": true,
-            "notes": "d065 complete: added canonical public/private data boundary policy, reusable classifier/router/sanitizer, regressions for mixed public/private conversations, default-private unmatched text, credentials, phone numbers, redacted money/wallet/internal IDs, and wired the visual digest public story feed to the shared policy. Independent AI review blockers were fixed and re-review approved. Branch creation/commit as codex/d065-public-private-data-boundary-policy was blocked by read-only shared Git metadata; current generated branch descends from feat/headless-build. No sends, deploys, secrets, spend, push, or merge."
-        },
-        {
-            "id": "SPEC_d063_north-star-mission-doc-sovereig",
-            "slug": "SPEC_d063_north-star-mission-doc-sovereig",
-            "branch": "build/SPEC_d063_north-star-mission-doc-sovereig",
-            "base_branch": "feat/headless-build",
-            "session": "codex",
-            "status": "done",
-            "spec": "core/BUILD/specs/SPEC_d063_north-star-mission-doc-sovereig.md",
-            "tests_passed": true,
-            "notes": "d063 complete: added core/STATE/NORTH_STAR.md with sovereign benchmark mission, target IDs, and proof path; wired COUNCIL_FOCUS to cite it as primary weight directive alongside unified memory; added d057 report north_star mapping and regression tests. Independent AI review finding on sovereign_run criteria fixed. No deploys, secrets, spend, push, or merge."
-        },
-        {
-            "id": "SPEC_d062_ai-pairing-account-security-bind",
-            "slug": "SPEC_d062_ai-pairing-account-security-bind",
-            "branch": "build/SPEC_d062_ai-pairing-account-security-bind",
-            "base_branch": "feat/headless-build",
-            "session": "codex",
-            "status": "done",
-            "spec": "core/BUILD/specs/SPEC_d062_ai-pairing-account-security-bind.md",
-            "tests_passed": true,
-            "notes": "d062 complete: added verified AI/user pairing guard, brain_index pairing/security-event schema, optional Telegram enforcement with fail-closed owner/team gates when AI_PAIRING_ENFORCE=1, report-only anomaly scanner, docs, signal report, and focused tests. Independent review blocker fixed. No live account mutation, sends, deploys, secrets, push, or merge."
-        },
-        {
-            "id": "SPEC_d061_security-sentinel-agent",
-            "slug": "SPEC_d061_security-sentinel-agent",
-            "branch": "build/SPEC_d061_security-sentinel-agent",
-            "base_branch": "feat/headless-build",
-            "session": "codex",
-            "status": "done",
-            "spec": "core/BUILD/specs/SPEC_d061_security-sentinel-agent.md",
-            "tests_passed": true,
-            "notes": "d061 complete: added report-only Security Sentinel for privileged hardware/system exposure, shell-fetch risk, ops-ledger circumvention signals, and build-registry contract violations; generated signal JSON/Markdown; added reviewed 2h systemd timer artifacts and focused tests. Independent review blockers were fixed. No live install, production mutation, external secret-store/private-key reads, spend, outreach, push, or merge."
-        },
-        {
-            "id": "SPEC_d060_proactive-failure-watchdog",
-            "slug": "SPEC_d060_proactive-failure-watchdog",
-            "branch": "build/SPEC_d060_proactive-failure-watchdog",
-            "base_branch": "feat/headless-build",
-            "session": "codex",
-            "status": "done",
-            "spec": "core/BUILD/specs/SPEC_d060_proactive-failure-watchdog.md",
-            "tests_passed": true,
-            "notes": "d060 complete: added a report-only proactive failure watchdog for server, memory, revenue, agents, and dependencies; generated signal JSON/Markdown; added reviewed 4h systemd timer artifacts and focused tests. Independent review blockers were fixed. No live install, production mutation, secrets, spend, outreach, push, or merge."
-        },
-        {
-            "id": "SPEC_d059_server-162-redundancy-and-failov",
+  "active_builds": [
+    {
+      "id": "SPEC_d067_auto-merge-resolver-for-doc-onl",
+      "slug": "SPEC_d067_auto-merge-resolver-for-doc-onl",
+      "branch": "build/SPEC_d067_auto-merge-resolver-for-doc-onl",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d067_auto-merge-resolver-for-doc-onl.md",
+      "tests_passed": true,
+      "risk": "low",
+      "ai_approved": false,
+      "notes": "d067 complete: added tools/forge/auto_merge.sh for doc-only auto-merge eligibility after independent AI review, with registry-required AI approval and risk=low, code-file diff blocker for .py/.sh/.sql/.env, merge exit handling, ops-ledger logging, and Telegram manual-merge prompt on holds. Wired build_orchestrator post-review auto-merge path through the resolver. No push or merge performed."
+    },
+    {
+      "id": "SPEC_d066_public-private-data-lane-protoco",
+      "slug": "SPEC_d066_public-private-data-lane-protoco",
+      "branch": "build/SPEC_d066_public-private-data-lane-protoco",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d066_public-private-data-lane-protoco.md",
+      "tests_passed": true,
+      "notes": "d066 complete: added public/private lane protocol, public context pack with public-safe blueprint summaries and public_ok-only decisions, canary probe that checks context and exercises the Telegram public responder, public_ok SQL migration, and Telegram mode gate limiting full brain context to James private chat. Live public replies require PUBLIC_MODE_CONFIRMED=1 after canary pass; PUBLIC_MODE_DISABLE=1 forces private-only posture. Independent AI review blockers were fixed and re-review found no remaining P1/P2 blockers. No sends, deploys, secrets, spend, push, or merge."
+    },
+    {
+      "id": "SPEC_d065_public-private-data-boundary-pol",
+      "slug": "SPEC_d065_public-private-data-boundary-pol",
+      "branch": "build/SPEC_d065_public-private-data-boundary-pol",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d065_public-private-data-boundary-pol.md",
+      "tests_passed": true,
+      "notes": "d065 complete: added canonical public/private data boundary policy, reusable classifier/router/sanitizer, regressions for mixed public/private conversations, default-private unmatched text, credentials, phone numbers, redacted money/wallet/internal IDs, and wired the visual digest public story feed to the shared policy. Independent AI review blockers were fixed and re-review approved. Branch creation/commit as codex/d065-public-private-data-boundary-policy was blocked by read-only shared Git metadata; current generated branch descends from feat/headless-build. No sends, deploys, secrets, spend, push, or merge."
+    },
+    {
+      "id": "SPEC_d063_north-star-mission-doc-sovereig",
+      "slug": "SPEC_d063_north-star-mission-doc-sovereig",
+      "branch": "build/SPEC_d063_north-star-mission-doc-sovereig",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d063_north-star-mission-doc-sovereig.md",
+      "tests_passed": true,
+      "notes": "d063 complete: added core/STATE/NORTH_STAR.md with sovereign benchmark mission, target IDs, and proof path; wired COUNCIL_FOCUS to cite it as primary weight directive alongside unified memory; added d057 report north_star mapping and regression tests. Independent AI review finding on sovereign_run criteria fixed. No deploys, secrets, spend, push, or merge."
+    },
+    {
+      "id": "SPEC_d062_ai-pairing-account-security-bind",
+      "slug": "SPEC_d062_ai-pairing-account-security-bind",
+      "branch": "build/SPEC_d062_ai-pairing-account-security-bind",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d062_ai-pairing-account-security-bind.md",
+      "tests_passed": true,
+      "notes": "d062 complete: added verified AI/user pairing guard, brain_index pairing/security-event schema, optional Telegram enforcement with fail-closed owner/team gates when AI_PAIRING_ENFORCE=1, report-only anomaly scanner, docs, signal report, and focused tests. Independent review blocker fixed. No live account mutation, sends, deploys, secrets, push, or merge."
+    },
+    {
+      "id": "SPEC_d061_security-sentinel-agent",
+      "slug": "SPEC_d061_security-sentinel-agent",
+      "branch": "build/SPEC_d061_security-sentinel-agent",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d061_security-sentinel-agent.md",
+      "tests_passed": true,
+      "notes": "d061 complete: added report-only Security Sentinel for privileged hardware/system exposure, shell-fetch risk, ops-ledger circumvention signals, and build-registry contract violations; generated signal JSON/Markdown; added reviewed 2h systemd timer artifacts and focused tests. Independent review blockers were fixed. No live install, production mutation, external secret-store/private-key reads, spend, outreach, push, or merge."
+    },
+    {
+      "id": "SPEC_d060_proactive-failure-watchdog",
+      "slug": "SPEC_d060_proactive-failure-watchdog",
+      "branch": "build/SPEC_d060_proactive-failure-watchdog",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d060_proactive-failure-watchdog.md",
+      "tests_passed": true,
+      "notes": "d060 complete: added a report-only proactive failure watchdog for server, memory, revenue, agents, and dependencies; generated signal JSON/Markdown; added reviewed 4h systemd timer artifacts and focused tests. Independent review blockers were fixed. No live install, production mutation, secrets, spend, outreach, push, or merge."
+    },
+    {
+      "id": "SPEC_d059_server-162-redundancy-and-failov",
       "slug": "SPEC_d059_server-162-redundancy-and-failov",
       "branch": "build/SPEC_d059_server-162-redundancy-and-failov",
       "base_branch": "feat/headless-build",

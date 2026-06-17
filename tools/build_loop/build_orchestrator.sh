@@ -17,8 +17,9 @@
 # Kill switch:   BUILD_ORCHESTRATOR_DISABLE=1
 # Default:       BUILD_AUTO_MERGE=0 — build + gate, then SURFACE 'ready to merge'.
 #                A human reviews the diff and merges (the gate can't verify code is correct).
-# Full hands-off (opt-in, eyes-open): BUILD_AUTO_MERGE=1 auto-merges SAFE-AUTO gate-passed
-#                builds to feat/headless-build. Only enable once you trust the loop.
+# Full hands-off (opt-in, eyes-open): BUILD_AUTO_MERGE=1 runs tools/forge/auto_merge.sh
+#                after the independent review. That resolver only merges doc-only,
+#                AI-approved, risk=low branches; everything else is surfaced.
 set -u
 [ "${BUILD_ORCHESTRATOR_DISABLE:-0}" = "1" ] && { echo "orchestrator disabled (BUILD_ORCHESTRATOR_DISABLE=1)"; exit 0; }
 
@@ -32,6 +33,8 @@ AUTO_MERGE="${BUILD_AUTO_MERGE:-0}"
 LAST_AUDIT_FILE="${SELF_AUDIT_LAST_FILE:-/opt/fpai-build/.last_audit_date}"
 MERGED_COUNTER_FILE="${SELF_AUDIT_MERGED_COUNTER:-/opt/fpai-build/.merged_since_audit}"
 SELF_AUDIT_OUT="${SELF_AUDIT_OUTPUT:-/tmp/audit_specs.json}"
+AUTO_MERGE_TARGET="${BUILD_AUTO_MERGE_TARGET:-main}"
+AUTO_MERGE_COMPARE="${BUILD_AUTO_MERGE_COMPARE:-origin/main}"
 
 echo "═══ build orchestrator ═══ (auto_merge=$AUTO_MERGE, base=$BASE)"
 
@@ -110,6 +113,40 @@ row = {
 ledger.parent.mkdir(parents=True, exist_ok=True)
 with ledger.open("a", encoding="utf-8") as handle:
     handle.write(json.dumps(row, sort_keys=True) + "\n")
+PY
+}
+
+mark_ai_review_approved() {
+  branch="$1"
+  python3 - "$branch" <<'PY' || true
+import datetime as dt
+import json
+import re
+import sys
+from pathlib import Path
+
+branch = sys.argv[1]
+registry = Path("core/BUILD/REGISTRY.json")
+review = Path("core/BUILD/reviews") / (branch.replace("/", "-") + ".md")
+if not registry.exists():
+    raise SystemExit
+data = json.loads(registry.read_text(encoding="utf-8"))
+text = review.read_text(encoding="utf-8", errors="ignore") if review.exists() else ""
+verdict = "APPROVE" if re.search(r"Verdict:\*\*\s+APPROVE|^APPROVE:", text, re.I | re.M) else ""
+risk_match = re.search(r"Risk:\*\*\s+([a-z]+)|risk=([a-z]+)", text, re.I)
+risk = (risk_match.group(1) or risk_match.group(2)).lower() if risk_match else ""
+for item in data.get("active_builds", []):
+    if item.get("branch") == branch:
+        item["ai_approved"] = verdict == "APPROVE"
+        item["ai_review"] = {
+            "verdict": verdict or "UNKNOWN",
+            "risk": risk or "unknown",
+            "source": str(review),
+        }
+        if risk:
+            item["risk"] = risk
+data["updated_at"] = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+registry.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
 PY
 }
 
@@ -223,24 +260,18 @@ PY
 
   # gate
   if bash "$ROOT/tools/merge/merge_gate.sh" "$branch" >/tmp/orch_gate_$id.out 2>&1; then
+    mark_ai_review_approved "$branch"
     if [ "$AUTO_MERGE" = "1" ]; then
-      expected_diff="/tmp/fpai_expected_outputs_${id}.name_status"
-      full_diff="/tmp/fpai_expected_outputs_${id}.diff"
-      git diff --name-status "$(git merge-base "$BASE" "$branch")" "$branch" >"$expected_diff" 2>/dev/null || true
-      git diff "$(git merge-base "$BASE" "$branch")" "$branch" >"$full_diff" 2>/dev/null || true
-      if git merge --no-ff "$branch" -m "merge(auto): $id [orchestrator · gated]" -q 2>/tmp/orch_merge_$id.out; then
-        python3 -c "import json;p='core/BUILD/REGISTRY.json';d=json.load(open(p));[b.__setitem__('status','merged') for b in d['active_builds'] if b['branch']=='$branch'];json.dump(d,open(p,'w'),indent=2)"
-        mkdir -p "$ROOT/core/BUILD/diffs"
-        cp "$full_diff" "$ROOT/core/BUILD/diffs/$id.diff" 2>/dev/null || true
-        python3 "$ROOT/tools/test/update_expected_outputs.py" "$id" "$branch" --diff-file "$expected_diff" >/dev/null 2>&1 || true
-        git add core/BUILD/REGISTRY.json core/BUILD/diffs tools/test/expected_outputs.json >/dev/null 2>&1 || true
-        git diff --cached --quiet 2>/dev/null || git commit -q -m "chore(build): record smoke expectations for $id" || true
+      if AUTO_MERGE_TARGET="$AUTO_MERGE_TARGET" AUTO_MERGE_COMPARE="$AUTO_MERGE_COMPARE" \
+        bash "$ROOT/tools/forge/auto_merge.sh" "$branch" >"/tmp/orch_auto_merge_$id.out" 2>&1; then
         increment_merged_since_audit
         python3 "$ROOT/curator/blueprints/manager.py" update-after-build "$id" "$branch" >/dev/null 2>&1 || true
         git worktree remove "$wt" --force >/dev/null 2>&1; git branch -d "$branch" >/dev/null 2>&1
-        echo "✅ MERGED: $id"; merged=$((merged+1))
+        echo "✅ AUTO-MERGED: $id"; merged=$((merged+1))
       else
-        echo "⚠️  MERGE CONFLICT: $id (surfaced — manual merge)"; surfaced=$((surfaced+1))
+        echo "⚠️  AUTO-MERGE HELD: $id (surfaced — manual merge)"
+        sed 's/^/    /' "/tmp/orch_auto_merge_$id.out" 2>/dev/null || true
+        surfaced=$((surfaced+1)); READY="$READY $id"
       fi
     else
       echo "✓ READY (gate passed): $id → git merge --no-ff $branch"; surfaced=$((surfaced+1)); READY="$READY $id"
