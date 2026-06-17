@@ -246,7 +246,21 @@ PY
       echo "✓ READY (gate passed): $id → git merge --no-ff $branch"; surfaced=$((surfaced+1)); READY="$READY $id"
     fi
   else
-    echo "✗ GATE FAILED: $id"; sed 's/^/    /' /tmp/orch_gate_$id.out; failed=$((failed+1))
+    echo "✗ GATE FAILED: $id"; sed 's/^/    /' /tmp/orch_gate_$id.out
+    if [ -d "$wt" ]; then
+      echo "  auto-reverting failed build branch to $BASE"
+      python3 "$ROOT/tools/autobuild/auto_revert.py" \
+        --repo-root "$wt" \
+        --known-good "$BASE" \
+        --report-dir "$ROOT/core/BUILD/reports/auto_revert" \
+        --execute \
+        --allow-dirty \
+        --fail-after-revert \
+        --ops-ledger "${OPS_LEDGER:-/opt/fpai-build/ops_ledger.jsonl}" \
+        -- bash "$ROOT/tools/merge/merge_gate.sh" "$branch" >/tmp/orch_revert_$id.out 2>&1 || true
+      sed 's/^/    /' /tmp/orch_revert_$id.out
+    fi
+    failed=$((failed+1))
   fi
 done
 

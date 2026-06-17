@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-17 · SPEC_d077_auto-revert-on-break · branch `build/SPEC_d077_auto-revert-on-break`
+
+- **Status:** done / independently AI-reviewed / awaiting merge review
+- **Files changed:** `tools/autobuild/auto_revert.py`; `tools/autobuild/test_auto_revert.py`; `tools/build_loop/build_orchestrator.sh`; `core/BUILD/specs/SPEC_d077_auto-revert-on-break.md`; `core/BUILD/results/SPEC_d077_auto-revert-on-break.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a repo-local auto-revert guard for failed build verification. It runs an explicit check command, blocks protected branches, refuses dirty worktrees unless explicitly allowed for isolated build worktrees, preserves failed heads under `refs/fpai-auto-revert/<report-id>`, writes failed diff plus JSON/Markdown reports, resets to the known-good ref on failed verification, and verifies post-reset HEAD/clean state before reporting `reverted`. The build orchestrator now calls it only after merge-gate failure, targeting the isolated `$wt` worktree with `--repo-root "$wt"` and resetting that failed build branch to `feat/headless-build` while still counting the build as failed.
+- **Tests:** `python3 -B -m unittest tools.autobuild.test_auto_revert tools.autobuild.test_doc_only_merge_resolver` (22 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/autobuild/auto_revert.py tools/autobuild/test_auto_revert.py`; `bash -n tools/build_loop/build_orchestrator.sh`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d077-registry.json`; `git diff --check`
+- **Independent review:** completed by subagent. Initial review found blockers in orchestrator worktree targeting, failed-head preservation, and post-reset verification; fixes landed. Second review found report-ID collision risk; fixed with microsecond/PID/UUID IDs and uniqueness regression. Final blocker-only re-review found no remaining P1/P2 blockers.
+- **Risks:** `--allow-dirty` enables `git clean -fd` after `git reset --hard`; it is intended only for isolated generated build worktrees. The orchestrator passes `--repo-root "$wt"` to keep destructive cleanup out of the main checkout. No push, merge, deploy, secrets access, outreach send, money movement, timer install, or live service mutation was performed.
+- **Rollback:** revert `tools/autobuild/auto_revert.py`, `tools/autobuild/test_auto_revert.py`, and the d077 block in `tools/build_loop/build_orchestrator.sh`; remove `core/BUILD/results/SPEC_d077_auto-revert-on-break.result.md`, the d077 registry row, and this handoff entry. Generated runtime reports can be deleted from `core/BUILD/reports/auto_revert/`; preserved failed refs can be removed with `git update-ref -d refs/fpai-auto-revert/<report-id>` after review.
+- **Intent solved:** failed build-loop checks now trigger a local rollback path instead of leaving failed generated branches as silent broken state.
+- **Downstream intent unlocked:** the autonomous build loop can surface concrete failed-build reports to James/Ember while restoring isolated build worktrees to the last known good base, making later self-healing and rebuild specs safer.
+- **Questions for Ember/James:** after merge, run one controlled failure in a disposable build worktree to confirm report visibility in the live loop before relying on it for unattended recovery.
+
 ### 2026-06-17 · SPEC_d076_network-economy-substrate-ai-bui · branch `build/SPEC_d076_network-economy-substrate-ai-bui`
 
 - **Status:** done / awaiting merge review

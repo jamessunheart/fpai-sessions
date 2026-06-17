@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-17T19:35:00Z",
+    "updated_at": "2026-06-17T20:10:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d077_auto-revert-on-break",
+            "slug": "SPEC_d077_auto-revert-on-break",
+            "branch": "build/SPEC_d077_auto-revert-on-break",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d077_auto-revert-on-break.md",
+            "tests_passed": true,
+            "notes": "d077 complete: added repo-local auto-revert guard plus orchestrator failure-path wiring. Failed gate/check runs in the isolated build worktree, preserves the failed head under refs/fpai-auto-revert/<report-id>, writes failed diff plus JSON/Markdown reports, verifies post-reset HEAD/clean state, and can log to the ops ledger. Independent AI review blockers were fixed; final re-review found no remaining P1/P2 blockers. No push, merge, deploy, secrets, outreach, or live service mutation."
+        },
         {
             "id": "SPEC_d076_network-economy-substrate-ai-bui",
             "slug": "SPEC_d076_network-economy-substrate-ai-bui",
