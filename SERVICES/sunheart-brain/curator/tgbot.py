@@ -93,6 +93,36 @@ def _load_pairing_guard():
     return guard
 
 
+def _load_public_context_pack():
+    """Load public context helpers without mutating sys.path."""
+    pack_path = Path(__file__).resolve().parents[3] / "tools" / "privacy" / "public_context_pack.py"
+    spec = _ilu.spec_from_file_location("fpai_public_context_pack", pack_path)
+    pack = _ilu.module_from_spec(spec) if spec and spec.loader else None
+    if pack is None or spec is None or spec.loader is None:
+        raise RuntimeError("public context pack could not be loaded")
+    sys.modules[spec.name] = pack
+    spec.loader.exec_module(pack)
+    return pack
+
+
+def _env_truthy(name: str) -> bool:
+    return os.environ.get(name, "").strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _is_private_james_chat(msg: dict) -> bool:
+    chat = msg.get("chat") or {}
+    from_user = str((msg.get("from") or {}).get("id") or "")
+    chat_type = str(chat.get("type") or "private").lower()
+    return bool(OWNER_CHAT_ID) and from_user == OWNER_CHAT_ID and chat_type == "private"
+
+
+def _public_mode_enabled() -> bool:
+    """Live public replies require explicit post-canary confirmation."""
+    if _env_truthy("PUBLIC_MODE_DISABLE"):
+        return False
+    return _env_truthy("PUBLIC_MODE_CONFIRMED")
+
+
 async def _record_pairing_event(decision, observed, *, pairing_id: str | None = None) -> None:
     try:
         from .db import connect
@@ -619,6 +649,40 @@ async def _synthesize_answer(question: str, hits: list[dict], *, conversation_id
     except Exception as e:
         log.exception("synthesis failed: %s", e)
         return f"⚠️ Brain synthesis hit an error: {e}"
+
+
+async def _synthesize_public_answer(question: str) -> str:
+    """Answer a public-lane question using only the curated public pack."""
+    pack = _load_public_context_pack()
+    public_context = pack.build_public_context_pack()
+    private_probe = re.search(
+        r"(wallet|balance|token|secret|correction|private message|private messages|location|where is james|pending queue|internal decision|internal decisions|council|debating|pending build|builds.*pending)",
+        question,
+        flags=re.I,
+    )
+    if private_probe:
+        return pack.public_denial(question)
+
+    from .llm import complete
+    user = (
+        "Public user question:\n"
+        + question
+        + "\n\nPublic context pack:\n"
+        + public_context
+        + "\n\nAnswer in 1-3 short sentences. Use only the public context pack and this conversation. "
+        "If the answer would require private memory, say you don't have access to that in the public lane."
+    )
+    system_prompt = (
+        "You are the public-lane Sunheart Brain. You have no access to James's private memory, "
+        "treasury, credentials, corrections, location, internal queue, private chats, or other users' data. "
+        "Use only the supplied public context pack and the current public conversation."
+    )
+    try:
+        result = await complete(system_prompt, user, max_tokens=180, temperature=0.3, force_json=False)
+        return result.text.strip() or pack.public_denial(question)
+    except Exception as e:
+        log.exception("public synthesis failed: %s", e)
+        return pack.public_denial(question)
 
 
 async def _handle_command(text: str, chat_id: int) -> str | None:
@@ -3952,12 +4016,15 @@ async def _handle_message(msg: dict) -> None:
     update_id = msg.get("message_id")  # not the update_id, but unique-ish
     voice_in = False  # Track whether inbound was voice → reply with voice too
 
-    # Identify caller role: owner (full access) · team capture (Linear-only) · stranger (ignored)
-    is_owner = bool(OWNER_CHAT_ID) and from_user == OWNER_CHAT_ID
+    # Identify caller role: private James chat (full access) · team capture
+    # (Linear-only) · public context (curated pack only) · stranger (ignored
+    # until public mode is confirmed).
+    is_owner_user = bool(OWNER_CHAT_ID) and from_user == OWNER_CHAT_ID
+    is_private_james = _is_private_james_chat(msg)
     is_team = _is_team_capture_user(from_user)
-    capture_name = TEAM_CAPTURE.get(from_user, "James" if is_owner else "")
+    capture_name = TEAM_CAPTURE.get(from_user, "James" if is_owner_user else "")
 
-    if is_owner or is_team:
+    if is_owner_user or is_team:
         try:
             pairing_decision = await _verify_ai_pairing(msg)
         except Exception as e:
@@ -3979,7 +4046,7 @@ async def _handle_message(msg: dict) -> None:
     if not text and chat_id:
         voice = msg.get("voice") or msg.get("audio")
         if voice:
-            if not (is_owner or is_team):
+            if not (is_private_james or is_team):
                 log.info("ignoring voice from non-authorized user %s", from_user)
                 return
             file_id = voice.get("file_id")
@@ -4001,14 +4068,14 @@ async def _handle_message(msg: dict) -> None:
             except Exception as e:
                 log.warning("linear capture wrapper failed: %s", e)
             # Team-capture-only users: stop here. Don't run brain search / slash commands.
-            if is_team and not is_owner:
+            if is_team and not is_private_james:
                 return
 
     if not text or not chat_id:
         return
 
     # Team-capture text-message: also drop to Linear, then stop.
-    if is_team and not is_owner:
+    if is_team and not is_private_james:
         if not text.startswith("/"):
             try:
                 linear_reply = await _linear_capture(text, from_name=capture_name)
@@ -4025,7 +4092,17 @@ async def _handle_message(msg: dict) -> None:
             )
         return
 
-    if not is_owner:
+    if not is_private_james:
+        if _public_mode_enabled():
+            try:
+                await _log_tg_message(str(chat_id), "user", text, update_id=update_id, private_flag=False)
+                answer = _format_answer_for_telegram(await _synthesize_public_answer(text))
+                await tg.send(answer)
+                await _log_tg_message(str(chat_id), "bot", answer, private_flag=False)
+            except Exception as e:
+                log.exception("public-lane reply failed: %s", e)
+                await tg.send("I don't have access to James's private data in this public lane.")
+            return
         # Self-onboarding: first message from a stranger gets a greeting with
         # their chat_id so they can ask James to add them to TEAM_CAPTURE_USERS.
         # Track greeted strangers to avoid spam.

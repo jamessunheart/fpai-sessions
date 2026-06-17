@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-17T01:15:00Z",
+    "updated_at": "2026-06-17T15:10:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d066_public-private-data-lane-protoco",
+            "slug": "SPEC_d066_public-private-data-lane-protoco",
+            "branch": "build/SPEC_d066_public-private-data-lane-protoco",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d066_public-private-data-lane-protoco.md",
+            "tests_passed": true,
+            "notes": "d066 complete: added public/private lane protocol, public context pack with public-safe blueprint summaries and public_ok-only decisions, canary probe that checks context and exercises the Telegram public responder, public_ok SQL migration, and Telegram mode gate limiting full brain context to James private chat. Live public replies require PUBLIC_MODE_CONFIRMED=1 after canary pass; PUBLIC_MODE_DISABLE=1 forces private-only posture. Independent AI review blockers were fixed and re-review found no remaining P1/P2 blockers. No sends, deploys, secrets, spend, push, or merge."
+        },
         {
             "id": "SPEC_d065_public-private-data-boundary-pol",
             "slug": "SPEC_d065_public-private-data-boundary-pol",
