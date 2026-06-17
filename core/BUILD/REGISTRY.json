@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-17T18:45:00Z",
+    "updated_at": "2026-06-17T18:47:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d073_per-agent-recursive-benchmarks-e",
+            "slug": "SPEC_d073_per-agent-recursive-benchmarks-e",
+            "branch": "build/SPEC_d073_per-agent-recursive-benchmarks-e",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d073_per-agent-recursive-benchmarks-e.md",
+            "tests_passed": true,
+            "notes": "d073 complete: added per-agent recursive benchmark scorers for Beacon, Spark, Ember, Hermes, Council, Forge, Steward, and Loop; daily error-isolated runner with score JSONL, Day 0 baseline, ops-ledger benchmark_run rows, optional bounded brain_index snapshot, live proposal env gates in reviewed timer artifact, proposal rate limiting, recent correction/revert context, docs, and focused tests. Independent review P2 findings were fixed. No live DB writes, Claude calls, queue writes, timer installs, push, or merge in sandbox."
+        },
         {
             "id": "SPEC_d072_update-outreach-voice-offer-fram",
             "slug": "SPEC_d072_update-outreach-voice-offer-fram",
