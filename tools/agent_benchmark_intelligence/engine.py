@@ -30,8 +30,15 @@ DEFAULT_LEDGER = REPO_ROOT / "core" / "BUILD" / "signals" / "agent_scoring_ledge
 DEFAULT_REGISTRY = REPO_ROOT / "core" / "BUILD" / "REGISTRY.json"
 DEFAULT_RESULTS_DIR = REPO_ROOT / "core" / "BUILD" / "results"
 DEFAULT_REVIEWS_DIR = REPO_ROOT / "core" / "BUILD" / "reviews"
+DEFAULT_NORTH_STAR = REPO_ROOT / "core" / "STATE" / "NORTH_STAR.md"
 MAX_PROVIDER_COST_USD = 0.75
 LIVE_TIMEOUT_SECONDS = 8
+NORTH_STAR_TARGET_IDS = (
+    "cost_per_task_vs_gpt4o_api",
+    "latency_p95_ms",
+    "hardware_cost_per_1k_tasks",
+    "sovereign_run",
+)
 
 DIMENSIONS = ("code_quality", "critique_depth", "learning_speed", "reasoning")
 
@@ -399,11 +406,48 @@ def recommend_placement(agent_id: str, dimensions: dict[str, float], overall: fl
     }
 
 
+def load_north_star_targets(path: Path = DEFAULT_NORTH_STAR) -> dict[str, Any]:
+    """Load the sovereign benchmark target map for report consumers.
+
+    The Markdown remains the human-authored directive. This function exposes the
+    stable target IDs to d057 JSON without trying to parse policy prose.
+    """
+    if not path.exists():
+        return {
+            "source": str(path.relative_to(REPO_ROOT) if path.is_relative_to(REPO_ROOT) else path),
+            "status": "missing",
+            "target_ids": list(NORTH_STAR_TARGET_IDS),
+            "criteria": {},
+        }
+    text = path.read_text(encoding="utf-8", errors="replace")
+    criteria = {
+        target_id: clean(_line_containing(text, target_id))
+        for target_id in NORTH_STAR_TARGET_IDS
+    }
+    return {
+        "source": str(path.relative_to(REPO_ROOT) if path.is_relative_to(REPO_ROOT) else path),
+        "status": "loaded",
+        "mission": "outperform well-funded AI players on capital and hardware efficiency in sovereign environments",
+        "target_ids": list(NORTH_STAR_TARGET_IDS),
+        "criteria": criteria,
+        "proof_path": "d057 Agent Benchmarking Intelligence produces the numbers; NORTH_STAR.md defines what counts as winning.",
+        "gate": "North Star relevance requires task count, accepted-task count, cost basis, p95 latency basis, hardware-cost basis, sovereign classification, and comparison baseline.",
+    }
+
+
+def _line_containing(text: str, needle: str) -> str:
+    for line in text.splitlines():
+        if needle in line:
+            return line.strip(" |")
+    return ""
+
+
 def build_report(
     *,
     external_findings: list[ExternalFinding],
     internal_evidence: list[AgentEvidence],
     now: str | None = None,
+    north_star: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     weights = benchmark_dimension_weights(external_findings)
     agents = aggregate_agent_scores(internal_evidence, external_findings)
@@ -418,6 +462,7 @@ def build_report(
             "no production routing",
             "no spend without explicit provider fixture/command and cost cap",
         ],
+        "north_star": north_star if north_star is not None else load_north_star_targets(),
         "lantern": {
             "external_findings": [finding.to_json() for finding in external_findings],
             "dimension_weights": weights,

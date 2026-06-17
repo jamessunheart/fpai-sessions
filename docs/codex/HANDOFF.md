@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-17 · SPEC_d063_north-star-mission-doc-sovereig · branch `build/SPEC_d063_north-star-mission-doc-sovereig`
+
+- **Status:** done / independently AI-reviewed / awaiting merge review
+- **Files changed:** `core/STATE/NORTH_STAR.md`; `core/STATE/COUNCIL_FOCUS.md`; `tools/agent_benchmark_intelligence/engine.py`; `tools/agent_benchmark_intelligence/test_north_star.py`; `docs/codex/AGENT_BENCHMARK_INTELLIGENCE.md`; `core/BUILD/specs/SPEC_d063_north-star-mission-doc-sovereig.md`; `core/BUILD/results/SPEC_d063_north-star-mission-doc-sovereig.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the sovereign North Star mission doc and wired it into council focus as a primary weight directive alongside the unified memory directive. d057 Agent Benchmarking Intelligence reports now include a `north_star` block mapping output to `cost_per_task_vs_gpt4o_api`, `latency_p95_ms`, `hardware_cost_per_1k_tasks`, and `sovereign_run`.
+- **Tests:** `python3 -B -m unittest tools.agent_benchmark_intelligence.test_north_star tools.agent_benchmark_intelligence.test_engine` (11 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/agent_benchmark_intelligence/engine.py tools/agent_benchmark_intelligence/test_north_star.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d063-registry.json`; `python3 -B -m tools.agent_benchmark_intelligence.engine --output /tmp/d063-agent-benchmark.json --json`; `git diff --check`
+- **Independent review:** completed by subagent. It flagged the expected pre-closeout registry status and a real weakness where `sovereign_run` mapped only to a bullet, not criteria. Fixed by adding `sovereign_run` to the North Star target table and strengthening the regression to require external-API, open-model, and operator-controlled criteria in d057 JSON.
+- **Risks:** This defines target/proof mapping only. It does not produce live benchmark numbers, run local models, install/download models, buy hardware, change routing authority, deploy, spend, call external APIs, push, or merge.
+- **Rollback:** revert the d063 files listed above and remove this handoff entry plus the d063 registry row.
+- **Intent solved:** Tonight's North Star now exists as repo-readable state with stable target IDs instead of chat-only context.
+- **Downstream intent unlocked:** next council debate JSON can cite `NORTH_STAR.md`, and d057 benchmark output can map measured runs to the defined sovereign efficiency targets.
+- **Questions for Ember/James:** after merge, run the next council debate and confirm its JSON cites `NORTH_STAR.md`; run or schedule a d057 benchmark pass that fills the target values with real task, cost, latency, hardware, and sovereign/non-sovereign baseline evidence.
+
 ### 2026-06-17 · SPEC_d062_ai-pairing-account-security-bind · branch `build/SPEC_d062_ai-pairing-account-security-bind`
 
 - **Status:** done / independently reviewed / awaiting merge review
