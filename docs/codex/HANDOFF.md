@@ -82,6 +82,20 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-17 · SPEC_d065_public-private-data-boundary-pol · branch `build/SPEC_d065_public-private-data-boundary-pol`
+
+- **Status:** done / independently AI-reviewed / awaiting merge review
+- **Files changed:** `core/STATE/PUBLIC_PRIVATE_DATA_BOUNDARY.json`; `tools/public_private_boundary/__init__.py`; `tools/public_private_boundary/boundary.py`; `tools/public_private_boundary/test_boundary.py`; `docs/codex/PUBLIC_PRIVATE_DATA_BOUNDARY.md`; `tools/visual/visual_digest.py`; `core/BUILD/specs/SPEC_d065_public-private-data-boundary-pol.md`; `core/BUILD/results/SPEC_d065_public-private-data-boundary-pol.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the d065 public/private data boundary policy and enforcement helper. Mixed conversations now route as `split`: sanitized public fragments can continue, while personal state/location/schedule, relationships, legal/treasury/people strategy, correction logs, credentials, phone numbers, raw IDs, and default-private unmatched material stay private. The existing visual digest public story feed now uses the shared boundary module for public summary sanitization and validation.
+- **Tests:** `python3 -B -m unittest tools.public_private_boundary.test_boundary tools.visual.test_visual_digest` (18 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/public_private_boundary/__init__.py tools/public_private_boundary/boundary.py tools/public_private_boundary/test_boundary.py tools/visual/visual_digest.py tools/visual/test_visual_digest.py`; `python3 -m json.tool core/STATE/PUBLIC_PRIVATE_DATA_BOUNDARY.json`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `python3 -B -m tools.public_private_boundary.boundary --route --json ...`; `git diff --check`
+- **Independent review:** completed by subagent. Initial review found two blockers: unmatched text failed open as public despite `default_lane: private`, and phone numbers were not treated as sensitive identifiers. Both were fixed with regressions. Blocker-only re-review approved with no remaining functional/privacy blockers.
+- **Commit status:** blocked in this sandbox. `git switch -c codex/d065-public-private-data-boundary-policy feat/headless-build` failed because Git could not create `/opt/fpai-build/FPAI_Cockpit/.git/worktrees/SPEC_d065_public-private-data-boundary-pol/index.lock`: read-only file system. Current branch is `build/SPEC_d065_public-private-data-boundary-pol` and descends from `feat/headless-build`.
+- **Risks:** The classifier is intentionally conservative and pattern-based; ambiguous text defaults private until an approved public signal is encoded. This build did not send public posts, deploy, touch secrets, move money, call external APIs, push, or merge.
+- **Rollback:** revert the d065 files listed above. Immediate wired-surface rollback is to revert `tools/visual/visual_digest.py` to restore its previous local public-summary filtering.
+- **Intent solved:** public-lane and private-lane data categories are encoded in repo state with reusable enforcement instead of implicit per-surface regexes.
+- **Downstream intent unlocked:** future public outputs can extract shareable signal from mixed private conversations through the shared boundary module without leaking personal or sensitive context.
+- **Questions for Ember/James:** after merge, apply this helper to the next public-bound surface before any live public send; add approved public-signal phrases to `PUBLIC_PRIVATE_DATA_BOUNDARY.json` only after review if the conservative default blocks desired copy.
+
 ### 2026-06-17 · SPEC_d063_north-star-mission-doc-sovereig · branch `build/SPEC_d063_north-star-mission-doc-sovereig`
 
 - **Status:** done / independently AI-reviewed / awaiting merge review

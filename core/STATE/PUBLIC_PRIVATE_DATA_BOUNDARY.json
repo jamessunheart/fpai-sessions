@@ -1,0 +1,123 @@
+{
+  "schema": "public-private-data-boundary.v1",
+  "updated_at": "2026-06-17",
+  "default_lane": "private",
+  "lanes": {
+    "public": {
+      "description": "Approved public-shareable content that can leave private systems after validation.",
+      "routing": "May be published, summarized, or reused in public copy only after the public validator passes.",
+      "examples": [
+        "published product names and public offers",
+        "aggregate proof counts and non-identifying system status",
+        "approved public story-feed language",
+        "general lessons with no private names, locations, accounts, or raw IDs"
+      ]
+    },
+    "internal": {
+      "description": "Repo/buildstream operational context that is not secret but should not be broadcast raw.",
+      "routing": "Keep inside repo/buildstream surfaces; public output must summarize without raw IDs, paths, or operational detail.",
+      "examples": [
+        "spec IDs, branch names, test commands, local file paths",
+        "build-loop status and pending merge state",
+        "non-secret service names and health checks"
+      ]
+    },
+    "private": {
+      "description": "Personal, relational, financial, legal, strategic, or operational context that belongs in the private lane.",
+      "routing": "Use only for private reasoning, handoff, and routing. Do not publish; extract only non-identifying public lessons.",
+      "examples": [
+        "James's state, location, schedule, personal history, health, relationships, and private conversations",
+        "treasury balances, runway, revenue, donation, trading, wallet, bank, or account details",
+        "legal/entity strategy, counsel critiques, people decisions, unreleased strategy, and private ops notes"
+      ]
+    },
+    "sensitive": {
+      "description": "Secrets, credentials, exploit paths, authentication artifacts, or highly identifying data.",
+      "routing": "Never send to public lane. Redact from logs and summaries. Escalate if exposure is suspected.",
+      "examples": [
+        "API keys, bot tokens, passwords, private keys, seed phrases, session cookies",
+        "database URLs, bearer tokens, private attachment URLs, IP addresses tied to access",
+        "raw email/phone/address-like identifiers in shareable drafts"
+      ]
+    }
+  },
+  "categories": [
+    {
+      "id": "credential_or_secret",
+      "lane": "sensitive",
+      "public_action": "block",
+      "patterns": [
+        "\\b(api[_ -]?key|auth[_ -]?token|bot[_ -]?token|bearer|credential|database_url|db_url|password|passwd|secret|private[_ -]?key|seed phrase|mnemonic|session[_ -]?cookie|telegram_bot_token)\\b",
+        "\\bsk-[A-Za-z0-9_-]{8,}\\b",
+        "\\b(?:\\+?1[-.\\s]?)?(?:\\(?\\d{3}\\)?[-.\\s]?)\\d{3}[-.\\s]?\\d{4}\\b"
+      ]
+    },
+    {
+      "id": "personal_state_or_location",
+      "lane": "private",
+      "public_action": "hold_private",
+      "patterns": [
+        "\\b(no sleep|sleep-deprived|depleted|overloaded|health|therapy|medical|doctor|where james is|james is at|going next|location|hotel|home address|traveling|airport|flight|calendar|schedule)\\b"
+      ]
+    },
+    {
+      "id": "relationship_or_people",
+      "lane": "private",
+      "public_action": "hold_private",
+      "patterns": [
+        "\\b(cheyenne|private channel|family|relationship|partner|hire|fire|candidate|member context|sacred-witness|personal conversation)\\b"
+      ]
+    },
+    {
+      "id": "money_treasury_or_account",
+      "lane": "private",
+      "public_action": "redact_or_hold",
+      "patterns": [
+        "[$\u20ac\u00a3]\\s?\\d[\\d,]*(?:\\.\\d+)?",
+        "\\b\\d[\\d,]*(?:\\.\\d+)?\\s?(usd|usdc|eur|gbp|sol|btc|eth)\\b",
+        "\\b(treasury|runway|wallet|bank account|private trust|seed round|trading position|liquidation|invoice|payment routing|capital allocation)\\b",
+        "\\b(?:0x[a-fA-F0-9]{24,}|[1-9A-HJ-NP-Za-km-z]{32,44})\\b"
+      ]
+    },
+    {
+      "id": "legal_strategy",
+      "lane": "private",
+      "public_action": "hold_private",
+      "patterns": [
+        "\\b(counsel critique|legal strategy|trust deed|attorney|privileged|liability|irs|fbar|fatca|formation memo|private membership association)\\b"
+      ]
+    },
+    {
+      "id": "raw_internal_routing",
+      "lane": "internal",
+      "public_action": "summarize_without_ids",
+      "patterns": [
+        "\\b(?:d\\d{2,}|decision[_ -]?id|SPEC_d\\d+[A-Za-z0-9_-]*|build/SPEC_[A-Za-z0-9_-]+|codex/[A-Za-z0-9_-]+)\\b",
+        "\\b(core/BUILD|docs/codex|SERVICES/|tools/)\\b"
+      ]
+    },
+    {
+      "id": "correction_or_private_memory",
+      "lane": "private",
+      "public_action": "hold_private",
+      "patterns": [
+        "\\b(correction log|corrections|you forgot|you said|private memory|vault-only|obsidian remembers)\\b"
+      ]
+    },
+    {
+      "id": "public_signal",
+      "lane": "public",
+      "public_action": "allow",
+      "patterns": [
+        "\\b(public story|public glimpse|published|approved public|Cora Nation story feed|Full Potential OS loop|visible proof|public offer|bottleneck session|free observation|working life system)\\b",
+        "\\[(private figure|private address|private link|private contact)\\]"
+      ]
+    }
+  ],
+  "mixed_conversation_rule": {
+    "route": "split",
+    "public_lane": "only sanitized fragments classified public after internal/private/sensitive material is removed or generalized",
+    "private_lane": "retain full personal/sensitive context for private reasoning and handoff",
+    "fail_closed": "if sanitized public text still matches internal/private/sensitive categories, block publication"
+  }
+}

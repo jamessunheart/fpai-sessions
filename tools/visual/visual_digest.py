@@ -25,6 +25,8 @@ from pathlib import Path
 from typing import Any, Callable, Iterable
 from zoneinfo import ZoneInfo
 
+from tools.public_private_boundary import boundary as data_boundary
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_OPS_LEDGER = Path(os.environ.get("OPS_LEDGER", "/opt/fpai-build/ops_ledger.jsonl"))
 DEFAULT_OUTPUT_ROOT = Path(os.environ.get("VISUAL_DIGEST_OUTPUT_ROOT", "/opt/fpai-build/visuals"))
@@ -267,19 +269,15 @@ def _first_env(names: Iterable[str]) -> str | None:
 
 def is_public_sensitive(text: str) -> bool:
     """Reject strings that should not appear on the public story feed."""
-    return bool(CREDENTIAL_RE.search(text) or CORRECTION_RE.search(text))
+    return data_boundary.classify_text(text).lane in {"private", "sensitive"}
 
 
 def sanitize_public_text(text: Any) -> str | None:
     """Return a public-safe text fragment, or None if the fragment is unsafe."""
-    clean = " ".join(str(text or "").split())
-    if not clean or is_public_sensitive(clean):
+    clean = data_boundary.sanitize_public_text(text, escape=True)
+    if clean is None:
         return None
-    clean = MONEY_RE.sub("[private figure]", clean)
-    clean = WALLET_RE.sub("[private address]", clean)
-    clean = URL_RE.sub("[private link]", clean)
-    clean = RAW_DECISION_ID_RE.sub("the next routed decision", clean)
-    return html.escape(clean[:180].strip(), quote=True)
+    return clean[:180].strip()
 
 
 def public_bot_link() -> str | None:
@@ -287,7 +285,7 @@ def public_bot_link() -> str | None:
     if not link:
         return None
     clean = " ".join(link.split())
-    if is_public_sensitive(clean):
+    if data_boundary.classify_text(clean).lane == "sensitive":
         return None
     lowered = clean.lower()
     if not (lowered.startswith("https://t.me/") or lowered.startswith("http://t.me/") or lowered.startswith("t.me/") or clean.startswith("@")):
@@ -349,19 +347,10 @@ def render_public_summary(context: dict[str, Any]) -> str:
 
 
 def validate_public_summary(text: str) -> None:
-    leaks = []
-    if CREDENTIAL_RE.search(text):
-        leaks.append("credential-adjacent content")
-    if CORRECTION_RE.search(text):
-        leaks.append("correction log content")
-    if RAW_DECISION_ID_RE.search(text):
-        leaks.append("raw decision id")
-    if MONEY_RE.search(text):
-        leaks.append("treasury figure")
-    if WALLET_RE.search(text):
-        leaks.append("wallet/address-like token")
-    if leaks:
-        raise ValueError(f"public digest failed privacy filter: {', '.join(sorted(set(leaks)))}")
+    try:
+        data_boundary.validate_public_text(text)
+    except ValueError as exc:
+        raise ValueError(f"public digest failed privacy filter: {exc}") from exc
 
 
 def build_context(

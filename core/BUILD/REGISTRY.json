@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-17T00:35:48Z",
+    "updated_at": "2026-06-17T01:15:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d065_public-private-data-boundary-pol",
+            "slug": "SPEC_d065_public-private-data-boundary-pol",
+            "branch": "build/SPEC_d065_public-private-data-boundary-pol",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d065_public-private-data-boundary-pol.md",
+            "tests_passed": true,
+            "notes": "d065 complete: added canonical public/private data boundary policy, reusable classifier/router/sanitizer, regressions for mixed public/private conversations, default-private unmatched text, credentials, phone numbers, redacted money/wallet/internal IDs, and wired the visual digest public story feed to the shared policy. Independent AI review blockers were fixed and re-review approved. Branch creation/commit as codex/d065-public-private-data-boundary-policy was blocked by read-only shared Git metadata; current generated branch descends from feat/headless-build. No sends, deploys, secrets, spend, push, or merge."
+        },
         {
             "id": "SPEC_d063_north-star-mission-doc-sovereig",
             "slug": "SPEC_d063_north-star-mission-doc-sovereig",
