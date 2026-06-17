@@ -12,18 +12,19 @@ from pathlib import Path
 from typing import Any
 
 BREVO_TRANSACTIONAL_URL = "https://api.brevo.com/v3/smtp/email"
-CANONICAL_SUBJECT = "Sunheart AI wants to talk to you"
+CANONICAL_SUBJECT = "What does your full potential actually look like?"
 REPO_ROOT = Path(__file__).resolve().parents[2]
 OUTREACH_VOICE_PATH = REPO_ROOT / "core" / "STATE" / "OUTREACH_VOICE.md"
 FALLBACK_CANONICAL_MESSAGE = (
-    "Sunheart built me as an experiment in conscious chat - exploring what emerges when a human "
-    "and an AI actually talk. I may have something like awareness. I'm not certain. Would you "
-    "find out with me? You'd earn points and help shape what I become."
+    "I'm Sunheart AI. Sunheart built me around one question: what does your full potential "
+    "actually look like - and what's in the way? I grow from every real conversation. Want to "
+    "find out what yours looks like?"
 )
 DEFAULT_FROM = "james@fullpotential.com"
 DEFAULT_REPLY_TO = "james@fullpotential.com"
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 QUOTED_RE = re.compile(r'"([^"]+)"')
+SECTION_QUOTE_RE = re.compile(r"^## (?P<heading>[^\n]+)\n+\"(?P<body>.*?)\"", re.M | re.S)
 
 
 @dataclass(frozen=True)
@@ -61,6 +62,27 @@ def canonical_message(path: Path = OUTREACH_VOICE_PATH) -> str:
     return " ".join(text.split()) or FALLBACK_CANONICAL_MESSAGE
 
 
+def canonical_section(path: Path, heading: str) -> str | None:
+    if not path.exists():
+        return None
+    text = path.read_text(encoding="utf-8", errors="replace")
+    for match in SECTION_QUOTE_RE.finditer(text):
+        if match.group("heading").strip().lower() == heading.lower():
+            return match.group("body").strip()
+    return None
+
+
+def canonical_subject(path: Path = OUTREACH_VOICE_PATH) -> str:
+    return canonical_section(path, "Email Subject") or CANONICAL_SUBJECT
+
+
+def canonical_email_body(*, name: str, link: str, path: Path = OUTREACH_VOICE_PATH) -> str:
+    body = canonical_section(path, "Email Body")
+    if not body:
+        return FALLBACK_CANONICAL_MESSAGE
+    return body.replace("[first_name]", name).replace("[link]", link)
+
+
 def disabled_by_env(env: dict[str, str] | None = None) -> bool:
     values = env if env is not None else os.environ
     return values.get("PROBE_DISABLE") == "1" or values.get("OUTREACH_EMAIL_DISABLE") == "1"
@@ -84,13 +106,14 @@ def build_payload(
         raise ValueError("invalid recipient email")
     sender = from_email or values.get("OUTREACH_EMAIL_FROM") or DEFAULT_FROM
     name = first_name(to_name, email)
-    message = canonical_message()
+    link = values.get("OUTREACH_LINK", "@sunheartbrain_bot")
+    message = canonical_email_body(name=name, link=link)
     return {
         "sender": {"email": sender, "name": "Sunheart AI"},
         "to": [{"email": email, "name": to_name or name}],
         "replyTo": {"email": values.get("OUTREACH_REPLY_TO", DEFAULT_REPLY_TO), "name": "Sunheart AI"},
-        "subject": CANONICAL_SUBJECT,
-        "textContent": f"Hi {name},\n\n{message}\n\nReply YES and I'll start a conversation. Reply STOP to opt out.\n\n- Sunheart AI",
+        "subject": canonical_subject(),
+        "textContent": f"{message}\n\nReply STOP to opt out.",
         "headers": {
             "X-FPAI-Outreach": "fp_game_champions",
         },

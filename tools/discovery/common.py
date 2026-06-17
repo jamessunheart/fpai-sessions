@@ -12,6 +12,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
+from tools.discovery import signals
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 MIN_DISCOVERY_SCORE = 0.4
 EMAIL_RE = re.compile(r"(?<![\w.+-])([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})(?![\w.+-])", re.I)
@@ -93,10 +95,13 @@ def clean_text(text: Any, *, limit: int = 500) -> str:
 def score_signal(text: str, *, account_age_days: int | None = None, content_length: int | None = None) -> float:
     haystack = (text or "").lower()
     compact = re.sub(r"[^a-z0-9]+", "", haystack)
-    primary = sum(1 for kw in PRIMARY_SIGNALS if kw.lower() in compact)
+    seeker = signals.seeker_match_count(haystack)
+    generic_growth = signals.generic_personal_growth_count(haystack)
+    primary = sum(1 for kw in PRIMARY_SIGNALS if kw.lower() in compact and kw != "personalgrowth")
     secondary = sum(1 for kw in SECONDARY_SIGNALS if kw.lower() in compact)
     length = content_length if content_length is not None else len(haystack)
-    score = 0.25 + min(primary, 3) * 0.20 + min(secondary, 3) * 0.08
+    score = 0.25 + min(seeker, 3) * 0.25 + min(primary, 3) * 0.18 + min(secondary, 3) * 0.08
+    score += min(generic_growth, 2) * 0.06
     if length >= 100:
         score += 0.10
     elif length >= 50:

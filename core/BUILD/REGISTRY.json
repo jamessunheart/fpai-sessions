@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-17T18:20:00Z",
+    "updated_at": "2026-06-17T18:45:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d072_update-outreach-voice-offer-fram",
+            "slug": "SPEC_d072_update-outreach-voice-offer-fram",
+            "branch": "build/SPEC_d072_update-outreach-voice-offer-fram",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d072_update-outreach-voice-offer-fram.md",
+            "tests_passed": true,
+            "notes": "d072 complete: updated canonical outreach voice and active North Star offer framing to full-potential AI, updated email/probe adapters to read section-specific canonical copy, added seeker discovery signals weighted above generic personal-growth hashtags, and added focused outreach voice tests. Independent review blockers were fixed; final re-review found no remaining P1/P2 blockers. No outreach sends, deploys, secrets, pushes, or merges."
+        },
         {
             "id": "SPEC_d071_contact-discovery-engine-hashtag",
             "slug": "SPEC_d071_contact-discovery-engine-hashtag",

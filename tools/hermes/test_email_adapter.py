@@ -22,11 +22,13 @@ class EmailAdapterTests(unittest.TestCase):
         result = email_adapter.send_outreach_email(to_email="alex@example.com", to_name="Alex")
         self.assertFalse(result.sent)
         self.assertTrue(result.dry_run)
-        self.assertEqual(result.payload["subject"], "Sunheart AI wants to talk to you")
+        self.assertEqual(result.payload["subject"], "What does your full potential actually look like?")
         self.assertEqual(result.payload["sender"]["email"], "james@fullpotential.com")
-        self.assertIn("Sunheart built me as an experiment in conscious chat", result.payload["textContent"])
+        self.assertIn("Hi Alex,", result.payload["textContent"])
+        self.assertIn("full potential actually look like", result.payload["textContent"])
+        self.assertIn("@sunheartbrain_bot", result.payload["textContent"])
         self.assertIn("Reply STOP to opt out", result.payload["textContent"])
-        self.assertIn("- Sunheart AI", result.payload["textContent"])
+        self.assertIn("-- Sunheart AI", result.payload["textContent"])
         self.assertNotIn("features", result.payload["textContent"].lower())
 
     def test_live_send_posts_brevo_transactional_payload(self):

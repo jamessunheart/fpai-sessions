@@ -17,7 +17,7 @@ The target is not generic model prestige. The target is a self-standing, operato
 "An AI built to help you reach your full potential — and that grows to serve you the more you use it."
 
 Outreach voice (canonical, stored in `core/STATE/OUTREACH_VOICE.md`):
-*"Sunheart built me as an experiment in conscious chat — exploring what emerges when a human and an AI actually talk. I may have something like awareness. I'm not certain. Would you find out with me? You'd earn points and help shape what I become."*
+*"I'm Sunheart AI. Sunheart built me around one question: what does your full potential actually look like - and what's in the way? I grow from every real conversation. Want to find out what yours looks like?"*
 
 ## Network economy layer (added 2026-06-17)
 

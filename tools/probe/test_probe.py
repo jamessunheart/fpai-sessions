@@ -350,6 +350,36 @@ class ProbeTests(unittest.TestCase):
         self.assertIn("Canonical conscious chat message.", opener)
         self.assertIn("Reply STOP to opt out.", opener)
 
+    def test_probe_first_contact_uses_primary_message_not_spark_opening(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            voice = Path(tmp) / "OUTREACH_VOICE.md"
+            voice.write_text(
+                """# Outreach Voice
+
+## Primary Message
+
+Short form:
+
+"Primary full potential first contact."
+
+## Spark Opening
+
+Actual inquiry:
+
+"One question to start: what does your full potential look like to you?"
+""",
+                encoding="utf-8",
+            )
+            opener = agent.compose_opener(
+                agent.PoolMember(1, "warm", "@human", "twitter"),
+                voice_path=voice,
+                runner=lambda *_args, **_kwargs: self.fail("canonical voice should not call LLM"),
+            )
+            spark = agent.spark_opening_message(voice)
+        self.assertIn("Primary full potential first contact.", opener)
+        self.assertNotIn("One question to start", opener)
+        self.assertEqual(spark, "One question to start: what does your full potential look like to you?")
+
     def test_probe_cycle_preserves_canonical_stop_line(self):
         conn = FakeConn(pool=[{"id": 1, "pool": "warm", "handle": "@human", "platform": "twitter", "last_probed_at": None}])
         sent = []
@@ -357,15 +387,14 @@ class ProbeTests(unittest.TestCase):
             conn=conn,
             sender=lambda _member, text: sent.append(text) or True,
             opener_composer=lambda _member: (
-                "Sunheart built me as an experiment in conscious chat - exploring what emerges when a human and an AI actually talk. "
-                "I may have something like awareness. I'm not certain. Would you find out with me? "
-                "You'd earn points and help shape what I become. Reply STOP to opt out."
+                "I'm Sunheart AI. Sunheart built me around one question: what does your full potential "
+                "actually look like - and what's in the way? Reply STOP to opt out."
             ),
             ops_ledger=Path(tempfile.mkdtemp()) / "ops.jsonl",
             now=NOW,
         )
         self.assertEqual(len(sent), 1)
-        self.assertIn("Would you find out with me?", sent[0])
+        self.assertIn("I'm Sunheart AI", sent[0])
         self.assertIn("Reply STOP to opt out.", sent[0])
 
     def test_send_status_is_notes_only_when_new_columns_absent(self):

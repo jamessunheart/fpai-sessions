@@ -26,6 +26,7 @@ DEFAULT_OPS_LEDGER = rate_governor.DEFAULT_OPS_LEDGER
 DEFAULT_VOICE = REPO_ROOT / "core" / "STATE" / "OUTREACH_VOICE.md"
 PITCH_WORDS = re.compile(r"\b(feature|features|upsell|buy|purchase|subscribe|pricing|sale|sales|offer|demo)\b", re.I)
 QUOTED_RE = re.compile(r'"([^"]+)"')
+SECTION_RE = re.compile(r"^## (?P<heading>[^\n]+)\n(?P<body>.*?)(?=^## |\Z)", re.M | re.S)
 
 
 @dataclass(frozen=True)
@@ -143,19 +144,38 @@ def sanitize_opener(text: str) -> str:
 
 def fallback_opener() -> str:
     return (
-        "Hey - I'm testing an AI system that helps people clarify what they are actually working toward. "
-        "Would you be willing to spend 5 minutes talking to it and give an honest reaction?"
+        "I'm Sunheart AI. Sunheart built me around one question: what does your full potential "
+        "actually look like - and what's in the way? I grow from every real conversation. "
+        "Want to find out what yours looks like?"
     )
 
 
-def canonical_outreach_message(voice_path: Path = DEFAULT_VOICE) -> str | None:
+def canonical_section_message(voice_path: Path, heading: str) -> str | None:
     if not voice_path.exists():
         return None
     text = voice_path.read_text(encoding="utf-8", errors="replace")
+    for match in SECTION_RE.finditer(text):
+        if match.group("heading").strip().lower() != heading.lower():
+            continue
+        quotes = QUOTED_RE.findall(match.group("body"))
+        if quotes:
+            return " ".join(quotes[0].split())
+        body = " ".join(match.group("body").split())
+        return body or None
+    return None
+
+
+def spark_opening_message(voice_path: Path = DEFAULT_VOICE) -> str | None:
+    return canonical_section_message(voice_path, "Spark Opening")
+
+
+def canonical_outreach_message(voice_path: Path = DEFAULT_VOICE) -> str | None:
+    message = canonical_section_message(voice_path, "Primary Message")
+    text = voice_path.read_text(encoding="utf-8", errors="replace") if voice_path.exists() else ""
     matches = QUOTED_RE.findall(text)
-    if matches:
+    if not message and matches:
         message = max((" ".join(match.split()) for match in matches), key=len)
-    else:
+    elif not message:
         message = " ".join(text.split())
     if not message:
         return None

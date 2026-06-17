@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-17 · SPEC_d072_update-outreach-voice-offer-fram · branch `build/SPEC_d072_update-outreach-voice-offer-fram`
+
+- **Status:** done / independently AI-reviewed / awaiting merge review
+- **Files changed:** `core/STATE/OUTREACH_VOICE.md`; `core/STATE/NORTH_STAR.md`; `tools/discovery/signals.py`; `tools/discovery/common.py`; `tools/discovery/test_outreach_voice.py`; `tools/hermes/email_adapter.py`; `tools/hermes/test_email_adapter.py`; `tools/probe/agent.py`; `tools/probe/test_probe.py`; `core/BUILD/specs/SPEC_d072_update-outreach-voice-offer-fram.md`; `core/BUILD/results/SPEC_d072_update-outreach-voice-offer-fram.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Reframed canonical outreach from "test an AI / earn points" to "Sunheart AI helps you reach your full potential and grows to serve your specific path." Email sends now use the canonical email subject/body sections with `[first_name]` and `[link]` substitution. Probe first contact uses the primary short-form message, while the Spark opening remains available as the actual inquiry. Discovery scoring now includes seeker-language signals weighted above generic personal-growth hashtags.
+- **Tests:** `python3 -B -m unittest tools.discovery.test_outreach_voice tools.discovery.test_discovery tools.hermes.test_email_adapter tools.probe.test_probe` (34 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/discovery/signals.py tools/discovery/common.py tools/discovery/test_outreach_voice.py tools/hermes/email_adapter.py tools/hermes/test_email_adapter.py tools/probe/agent.py tools/probe/test_probe.py`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `git diff --check`
+- **Independent review:** completed by subagent. Initial review found P2 blockers in registry closeout, stale North Star framing, and probe first-contact selection. Fixes landed; final blocker-only re-review found no remaining P1/P2 blockers.
+- **Risks:** This changes templates and dry-run/default composition only; no live outreach sends, deploys, secrets, pushes, or merges were performed. Live email should set/confirm `OUTREACH_LINK` before any blessed send batch.
+- **Rollback:** revert the listed files and remove the d072 registry/result/handoff entries. Runtime rollback remains `PROBE_DISABLE=1`, `OUTREACH_EMAIL_DISABLE=1`, `DISCOVERY_DISABLE=1`, and `DRY_RUN=1`.
+- **Intent solved:** outreach now names the real offer as a full-potential AI that grows to serve the person specifically, not an AI test with points.
+- **Downstream intent unlocked:** d071 discovery and d069/d054 outreach can feed seekers into a coherent first-contact and Spark inquiry flow without James manually correcting the offer frame.
+- **Questions for Ember/James:** set or confirm the live `OUTREACH_LINK` target before any blessed live email batch.
+
 ### 2026-06-17 · SPEC_d071_contact-discovery-engine-hashtag · branch `build/SPEC_d071_contact-discovery-engine-hashtag`
 
 - **Status:** done / independently AI-reviewed / awaiting merge review
