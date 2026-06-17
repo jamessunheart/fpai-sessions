@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Auto-merge resolver for AI-approved doc-only build branches.
+"""Auto-merge resolver for AI-approved low-risk build branches.
 
 The resolver is intentionally narrow:
 - source of truth is core/BUILD/REGISTRY.json;
 - candidate branches must be status=done and tests_passed=true;
-- every changed path must be documentation or build-loop review metadata;
+- every changed path must match either the doc-only policy or the explicit
+  autobuild safety tooling policy;
 - an independent AI review command must approve immediately before merge;
 - dry-run is the default. Passing --execute performs the local merge only.
 
@@ -37,6 +38,12 @@ DOC_PREFIXES = (
     "docs/",
     "core/STATE/",
 )
+SAFETY_BUILD_PREFIXES = (
+    "tools/autobuild/",
+)
+SAFETY_BUILD_PATHS = {
+    "tools/build_loop/build_orchestrator.sh",
+}
 NEVER_AUTO_PREFIXES = (
     ".github/",
     ".ssh/",
@@ -83,6 +90,7 @@ class CandidateResult:
     action: str
     reason: str
     changed_files: list[str]
+    policy: str = "none"
 
     def as_dict(self) -> dict[str, object]:
         return {
@@ -92,6 +100,7 @@ class CandidateResult:
             "action": self.action,
             "reason": self.reason,
             "changed_files": self.changed_files,
+            "policy": self.policy,
         }
 
 
@@ -169,8 +178,37 @@ def is_doc_only_path(path: str) -> bool:
     return False
 
 
-def non_doc_paths(paths: Iterable[str]) -> list[str]:
-    return [path for path in paths if not is_doc_only_path(path)]
+def is_safety_build_path(path: str, build_id: str) -> bool:
+    if path in METADATA_PATHS:
+        return True
+    if path in NEVER_AUTO_NAMES:
+        return False
+    if path in SAFETY_BUILD_PATHS:
+        return True
+    if path.startswith(NEVER_AUTO_PREFIXES) and not path.startswith(SAFETY_BUILD_PREFIXES):
+        return False
+    if path.startswith(SAFETY_BUILD_PREFIXES):
+        return Path(path).suffix.lower() in {".py", ".sh", ".md", ".txt"}
+    if path.startswith("core/BUILD/results/"):
+        return Path(path).suffix.lower() in {".md", ".json", ".jsonl"}
+    if path == f"core/BUILD/specs/{build_id}.md":
+        return True
+    if path == "docs/codex/HANDOFF.md":
+        return True
+    return False
+
+
+def classify_policy(paths: Iterable[str], build_id: str) -> tuple[str, list[str]]:
+    path_list = list(paths)
+    doc_blocked = [path for path in path_list if not is_doc_only_path(path)]
+    if not doc_blocked:
+        return "doc-only", []
+
+    safety_blocked = [path for path in path_list if not is_safety_build_path(path, build_id)]
+    if not safety_blocked:
+        return "safety-build", []
+
+    return "blocked", safety_blocked
 
 
 def worktree_clean(root: Path) -> bool:
@@ -193,7 +231,7 @@ def review_command_ok(root: Path, command: Sequence[str], branch: str) -> tuple[
 
 def merge_branch(root: Path, base: str, branch_ref_name: str, build_id: str) -> None:
     run_git(root, ["checkout", base])
-    message = f"merge({build_id}): auto-merge doc-only AI-approved branch"
+    message = f"merge({build_id}): auto-merge AI-approved low-risk branch"
     try:
         run_git(root, ["merge", "--no-ff", "-m", message, branch_ref_name])
     except ResolverError:
@@ -240,20 +278,21 @@ def resolve(
             continue
 
         paths = changed_files(root, base, ref)
-        blocked_paths = non_doc_paths(paths)
+        policy, blocked_paths = classify_policy(paths, entry.build_id)
         if blocked_paths:
             results.append(
                 CandidateResult(
                     entry,
                     "block",
-                    "non-doc paths: " + ", ".join(blocked_paths),
+                    "paths outside auto-merge policy: " + ", ".join(blocked_paths),
                     paths,
+                    policy,
                 )
             )
             continue
 
         if not execute:
-            results.append(CandidateResult(entry, "would_merge", "doc-only candidate", paths))
+            results.append(CandidateResult(entry, "would_merge", f"{policy} candidate", paths, policy))
             continue
 
         approved, review_output = review_command_ok(root, review_command, ref)
@@ -265,7 +304,7 @@ def resolve(
             continue
 
         merge_branch(root, base, ref, entry.build_id)
-        results.append(CandidateResult(entry, "merged", "doc-only and independently AI-approved", paths))
+        results.append(CandidateResult(entry, "merged", f"{policy} and independently AI-approved", paths, policy))
 
     return results
 
@@ -309,7 +348,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(json.dumps([result.as_dict() for result in results], indent=2, sort_keys=True))
     else:
         mode = "execute" if args.execute else "dry-run"
-        print(f"auto-merge doc-only resolver ({mode})")
+        print(f"auto-merge low-risk resolver ({mode})")
         if not results:
             print("no eligible registry entries")
         for result in results:

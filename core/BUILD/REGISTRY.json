@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-17T20:10:00Z",
+    "updated_at": "2026-06-17T20:45:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d078_auto-merge-safe-builds-including",
+            "slug": "SPEC_d078_auto-merge-safe-builds-including",
+            "branch": "build/SPEC_d078_auto-merge-safe-builds-including",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d078_auto-merge-safe-builds-including.md",
+            "tests_passed": true,
+            "notes": "d078 complete: extended the guarded auto-merge resolver from doc-only to explicit low-risk policies. Existing doc-only behavior remains; new safety-build policy narrowly allows autobuild safety tooling such as d077 auto-revert after registry done/tests_passed, clean execute worktree, non-main base, and fresh independent review approval. General tools, services, cron/systemd, workflows, Docker, secrets, and unrelated build specs remain blocked. No push, merge, deploy, secrets, outreach, or live service mutation."
+        },
         {
             "id": "SPEC_d077_auto-revert-on-break",
             "slug": "SPEC_d077_auto-revert-on-break",
