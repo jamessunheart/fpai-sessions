@@ -33,6 +33,7 @@ class PoolMember:
     pool: str
     handle: str
     platform: str
+    name: str | None = None
 
 
 @dataclass(frozen=True)
@@ -88,10 +89,15 @@ def select_pool_members(conn: Any, *, limit: int, now: datetime) -> list[PoolMem
         remaining = limit - len(selected)
         if remaining <= 0:
             break
+        try:
+            pool_columns = _table_columns(conn, "probe_pool")
+        except Exception:
+            pool_columns = set()
+        metadata_expr = "metadata" if "metadata" in pool_columns else "NULL AS metadata"
         with conn.cursor() as cur:
             cur.execute(
-                """
-                SELECT id, pool, handle, platform
+                f"""
+                SELECT id, pool, handle, platform, {metadata_expr}
                   FROM brain_index.probe_pool
                  WHERE pool = %s
                    AND COALESCE(do_not_contact, false) = false
@@ -101,7 +107,16 @@ def select_pool_members(conn: Any, *, limit: int, now: datetime) -> list[PoolMem
                 """,
                 (pool, cutoff, remaining),
             )
-            selected.extend(PoolMember(int(r[0]), str(r[1]), str(r[2]), str(r[3])) for r in cur.fetchall())
+            for row in cur.fetchall():
+                metadata = row[4] if len(row) > 4 else None
+                if isinstance(metadata, str):
+                    try:
+                        metadata = json.loads(metadata)
+                    except json.JSONDecodeError:
+                        metadata = {}
+                if not isinstance(metadata, dict):
+                    metadata = {}
+                selected.append(PoolMember(int(row[0]), str(row[1]), str(row[2]), str(row[3]), metadata.get("name")))
     return selected
 
 
@@ -163,6 +178,7 @@ def record_probe_session(conn: Any, *, probe_id: str, member: PoolMember, opener
                     "pool_member_id": member.id,
                     "platform": member.platform,
                     "handle": member.handle,
+                    "name": member.name,
                     "opener": opener,
                     "send_status": "pending",
                 }),
@@ -175,17 +191,66 @@ def mark_probed(conn: Any, *, member: PoolMember, now: datetime) -> None:
         cur.execute("UPDATE brain_index.probe_pool SET last_probed_at = %s WHERE id = %s", (now, member.id))
 
 
-def update_send_status(conn: Any, *, probe_id: str, sent: bool) -> None:
-    status = "sent" if sent else "send_failed"
+def _delivery_sent(delivery: Any) -> bool:
+    if isinstance(delivery, bool):
+        return delivery
+    return bool(getattr(delivery, "sent", False))
+
+
+def _delivery_notes(delivery: Any) -> dict[str, Any]:
+    if isinstance(delivery, bool):
+        return {}
+    notes: dict[str, Any] = {}
+    for key in ("reason", "message_id", "sent_at", "dry_run", "disabled"):
+        if hasattr(delivery, key):
+            value = getattr(delivery, key)
+            if value is not None:
+                notes[key] = value
+    return notes
+
+
+def update_send_status(conn: Any, *, probe_id: str, delivery: Any) -> None:
+    sent = _delivery_sent(delivery)
+    meta = _delivery_notes(delivery)
+    if sent:
+        status = "sent"
+    elif meta.get("dry_run"):
+        status = "dry_run"
+    elif meta.get("disabled"):
+        status = "disabled"
+    else:
+        status = "send_failed"
+    extra = "\nsend_status=" + status
+    if meta:
+        extra += "\ndelivery=" + json.dumps(meta, sort_keys=True)
+    try:
+        session_columns = _table_columns(conn, "probe_sessions")
+    except Exception:
+        session_columns = set()
+    if {"sent_at", "message_id"}.issubset(session_columns):
+        sql = """
+            UPDATE brain_index.probe_sessions
+               SET notes = COALESCE(notes, '') || %s,
+                   sent_at = COALESCE(%s, sent_at),
+                   message_id = COALESCE(%s, message_id)
+             WHERE probe_id = %s
+            """
+        params = (extra, meta.get("sent_at"), meta.get("message_id"), probe_id)
+    else:
+        sql = "UPDATE brain_index.probe_sessions SET notes = COALESCE(notes, '') || %s WHERE probe_id = %s"
+        params = (extra, probe_id)
     with conn.cursor() as cur:
-        cur.execute(
-            "UPDATE brain_index.probe_sessions SET notes = COALESCE(notes, '') || %s WHERE probe_id = %s",
-            ("\nsend_status=" + status, probe_id),
-        )
+        cur.execute(sql, params)
 
 
-def default_send(member: PoolMember, opener: str) -> bool:
+def default_send(member: PoolMember, opener: str) -> Any:
     """Send through Hermes if installed; otherwise fail closed."""
+    if member.platform == "email":
+        try:
+            from tools.hermes.email_adapter import send_member_email
+        except Exception:
+            return False
+        return send_member_email(member.handle, opener, name=member.name)
     gateway_path = REPO_ROOT / "SERVICES" / "sunheart-brain" / "curator" / "hermes" / "gateway.py"
     try:
         spec = _ilu.spec_from_file_location("fpai_probe_hermes_gateway", gateway_path)
@@ -233,12 +298,20 @@ def run_probe_cycle(
         composer = opener_composer or compose_opener
         for member in members:
             opener = sanitize_opener(composer(member))
+            if member.platform == "email":
+                try:
+                    from tools.hermes.email_adapter import disabled_by_env, is_live_enabled
+                except Exception:
+                    continue
+                if disabled_by_env() or not is_live_enabled():
+                    sender(member, opener)
+                    continue
             probe_id = f"probe_{current.strftime('%Y%m%dT%H%M%SZ')}_{member.id}_{uuid.uuid4().hex[:8]}"
             record_probe_session(db, probe_id=probe_id, member=member, opener=opener, now=current)
             mark_probed(db, member=member, now=current)
-            was_sent = sender(member, opener)
-            update_send_status(db, probe_id=probe_id, sent=was_sent)
-            if was_sent:
+            delivery = sender(member, opener)
+            update_send_status(db, probe_id=probe_id, delivery=delivery)
+            if _delivery_sent(delivery):
                 sent += 1
         return ProbeRunResult(False, decision.count, len(members), sent, decision.reason)
     finally:
@@ -416,6 +489,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run one probe outreach cycle.")
     parser.add_argument("--ops-ledger", type=Path, default=DEFAULT_OPS_LEDGER)
     parser.add_argument("--disable-file", type=Path, default=DEFAULT_DISABLE_FILE)
+    parser.add_argument("--pull-fp-champions", action="store_true", help="pull FP Game Champions into probe_pool before sending")
     parser.add_argument("--evaluate-due", action="store_true", help="also evaluate sessions silent for 24h")
     parser.add_argument("--sync-outcomes", action="store_true", help="sync probe outcomes from brain_index.tg_messages before evaluation")
     parser.add_argument("--json", action="store_true")
@@ -433,6 +507,14 @@ def main(argv: list[str] | None = None) -> int:
         else:
             print("probe: disabled")
         return 0
+    pulled = None
+    if args.pull_fp_champions:
+        try:
+            from tools.outreach.fp_champions_puller import pull_into_probe_pool
+
+            pulled = pull_into_probe_pool()
+        except Exception as exc:
+            pulled = {"fetched": 0, "inserted": 0, "error": exc.__class__.__name__}
     result = run_probe_cycle(ops_ledger=args.ops_ledger, disable_file=args.disable_file)
     evaluated = 0
     if args.evaluate_due and not result.disabled and result.reason != "db_unavailable":
@@ -446,6 +528,8 @@ def main(argv: list[str] | None = None) -> int:
     if args.json:
         data = result.__dict__.copy()
         data["evaluated"] = evaluated
+        if pulled is not None:
+            data["fp_champions_pull"] = pulled
         print(json.dumps(data, sort_keys=True))
     else:
         print(f"probe: sent={result.sent} attempted={result.attempted} rate={result.rate} reason={result.reason}")

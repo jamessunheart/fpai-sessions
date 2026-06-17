@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-17T16:35:00Z",
+    "updated_at": "2026-06-17T17:45:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d069_outreach-engine-v1-fp-game-conta",
+            "slug": "SPEC_d069_outreach-engine-v1-fp-game-conta",
+            "branch": "build/SPEC_d069_outreach-engine-v1-fp-game-conta",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d069_outreach-engine-v1-fp-game-conta.md",
+            "tests_passed": true,
+            "notes": "d069 complete: added FP Game Champions puller, dry-run-first Brevo email adapter with canonical Sunheart AI copy, IMAP reply parser, email integration into the d054 probe cycle, schema migration columns for source/metadata/sent_at/message_id, daily probe service pull flag, and focused tests. Independent AI review found blockers in reply matching, old-schema compatibility, dry-run cooldown pollution, and name preservation; fixes landed and final re-review found no remaining code blockers. No live sends, secrets, deploys, pushes, or merges."
+        },
         {
             "id": "SPEC_d068_auto-merge-resolver-for-doc-only",
             "slug": "SPEC_d068_auto-merge-resolver-for-doc-only",

@@ -6,9 +6,17 @@ CREATE TABLE IF NOT EXISTS brain_index.probe_pool (
     handle TEXT NOT NULL,
     platform TEXT NOT NULL CHECK (platform IN ('telegram', 'email', 'twitter', 'discord')),
     added_by TEXT NOT NULL CHECK (added_by IN ('james', 'system')),
+    source TEXT,
+    metadata JSONB,
     last_probed_at TIMESTAMPTZ,
     do_not_contact BOOLEAN DEFAULT false
 );
+
+ALTER TABLE brain_index.probe_pool
+    ADD COLUMN IF NOT EXISTS source TEXT;
+
+ALTER TABLE brain_index.probe_pool
+    ADD COLUMN IF NOT EXISTS metadata JSONB;
 
 CREATE TABLE IF NOT EXISTS brain_index.probe_sessions (
     id SERIAL PRIMARY KEY,
@@ -23,8 +31,16 @@ CREATE TABLE IF NOT EXISTS brain_index.probe_sessions (
     quality_score FLOAT CHECK (quality_score IS NULL OR (quality_score >= 0.0 AND quality_score <= 1.0)),
     corrections_triggered INT NOT NULL DEFAULT 0,
     last_message TEXT,
+    sent_at TIMESTAMPTZ,
+    message_id TEXT,
     notes TEXT
 );
+
+ALTER TABLE brain_index.probe_sessions
+    ADD COLUMN IF NOT EXISTS sent_at TIMESTAMPTZ;
+
+ALTER TABLE brain_index.probe_sessions
+    ADD COLUMN IF NOT EXISTS message_id TEXT;
 
 CREATE INDEX IF NOT EXISTS probe_pool_contact_idx
     ON brain_index.probe_pool (pool, do_not_contact, last_probed_at);
