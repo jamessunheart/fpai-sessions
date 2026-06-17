@@ -138,6 +138,30 @@ CREATE TABLE IF NOT EXISTS corrections (
 CREATE INDEX IF NOT EXISTS corrections_conversation_idx
     ON corrections (conversation_id, captured_at DESC);
 
+-- Becoming Engine v1 SEE model.
+-- Advisory per-person journey state for One Chat. This lets the bot see a
+-- person's current becoming stage and next nurture action without sending
+-- proactive messages or blocking the answer path.
+CREATE TABLE IF NOT EXISTS becoming (
+    person_id              TEXT PRIMARY KEY,
+    identity_contact       JSONB NOT NULL DEFAULT '{}'::jsonb,
+    source                 TEXT NOT NULL DEFAULT 'unknown',
+    stage                  TEXT NOT NULL DEFAULT 'spark',
+    stated_intent          TEXT NOT NULL DEFAULT '',
+    proofs                 JSONB NOT NULL DEFAULT '{}'::jsonb,
+    current_blocker        TEXT NOT NULL DEFAULT '',
+    cora_balance           NUMERIC,
+    last_touch             TIMESTAMPTZ,
+    next_nurture_action    TEXT NOT NULL DEFAULT '',
+    updated_at             TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CHECK (stage IN ('spark', 'awaken', 'activate', 'build', 'contribute', 'coach'))
+);
+
+CREATE INDEX IF NOT EXISTS becoming_stage_idx
+    ON becoming (stage, updated_at DESC);
+CREATE INDEX IF NOT EXISTS becoming_source_idx
+    ON becoming (source, updated_at DESC);
+
 -- Verified AI/user pairings.
 -- These rows bind an AI surface (for example the Telegram brain bot) to one
 -- verified human subject and provider account. Runtime callers should fail

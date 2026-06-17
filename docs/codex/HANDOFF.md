@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-17 · SPEC_d081_becoming-engine-v1-per-person-jo · branch `build/SPEC_d081_becoming-engine-v1-per-person-jo`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `SERVICES/sunheart-brain/curator/becoming.py`; `SERVICES/sunheart-brain/curator/test_becoming.py`; `SERVICES/sunheart-brain/curator/build_context.py`; `SERVICES/sunheart-brain/curator/tgbot.py`; `SERVICES/sunheart-brain/curator/test_build_context.py`; `SERVICES/sunheart-brain/curator/test_tgbot_correction_wiring.py`; `SERVICES/sunheart-brain/curator/test_bot_mode_gate.py`; `SERVICES/sunheart-brain/index/schema.sql`; `migrations/add_becoming_table.sql`; `core/BUILD/specs/SPEC_d081_becoming-engine-v1-per-person-jo.md`; `core/BUILD/results/SPEC_d081_becoming-engine-v1-per-person-jo.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added Becoming Engine v1 SEE model. `brain_index.becoming` stores per-person identity/contact, source, stage (`spark|awaken|activate|build|contribute|coach`), stated intent, proof signals, current blocker, CORA balance, last touch, next nurture action, and timestamps. Telegram owner and confirmed public-lane conversations now best-effort update becoming state before answer generation; private chat build context and public-lane answers can receive a bounded same-person becoming-state block. All behavior is advisory, reversible, non-blocking, and non-sending.
+- **Tests:** `python3 -B -m unittest discover -s SERVICES/sunheart-brain/curator -p 'test_becoming.py'`; `python3 -B -m unittest discover -s SERVICES/sunheart-brain/curator -p 'test_build_context.py'`; `python3 -B -m unittest discover -s SERVICES/sunheart-brain/curator -p 'test_tgbot_correction_wiring.py'`; `python3 -B -m unittest discover -s SERVICES/sunheart-brain/curator -p 'test_bot_mode_gate.py'`; `python3 -B -m unittest discover -s SERVICES/sunheart-brain/curator -p 'test_*.py'` (25 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile ...`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d081-registry.json`; `git diff --check`
+- **Risks:** Stage inference is deterministic/heuristic and should be treated as v1 advisory state, not diagnosis. The migration was not applied live in this sandbox, so live persistence needs Ember/server application. Public-lane becoming context is same-person only, but should remain under the existing public/private canary posture before expanding public mode.
+- **Rollback:** revert the d081 files listed above. Runtime prompt rollback is `SH_BECOMING_CONTEXT_DISABLE=1`; persistence rollback is to leave the migration unapplied or drop `brain_index.becoming` after exporting wanted rows.
+- **Intent solved:** One Chat can now SEE a person's becoming stage, intent, blocker, proof signals, and next nurture action while answering.
+- **Downstream intent unlocked:** v2 proactive nurture can be specified against an existing advisory state model without adding sends or outreach behavior to v1.
+- **Questions for Ember/James:** after merge, apply `migrations/add_becoming_table.sql` or the updated `SERVICES/sunheart-brain/index/schema.sql` on the brain-index host, then watch logs for `becoming capture skipped` before considering any v2 nurture-loop spec.
+
 ### 2026-06-17 · SPEC_d080_contact-pre-profiler-research-pu · branch `build/SPEC_d080_contact-pre-profiler-research-pu`
 
 - **Status:** done in working tree / independently AI-reviewed / commit blocked by read-only shared Git metadata

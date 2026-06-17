@@ -62,12 +62,16 @@ async def build_context_system_suffix(
         conversation_id=conversation_id,
     )
     diagnostic = render_active_diagnostic_context(max_chars=max_chars)
-    if context.is_empty():
-        return "\n\n" + diagnostic if diagnostic else ""
-    suffix = render_build_context(context, max_chars=max_chars)
+    becoming = await _render_becoming_context(conversation_id=conversation_id, max_chars=max_chars)
+    parts: list[str] = []
+    if not context.is_empty():
+        parts.append(render_build_context(context, max_chars=max_chars))
+    if becoming:
+        parts.append(becoming)
+    suffix = "\n\n".join(parts)
     if diagnostic:
-        suffix = diagnostic + "\n\n" + suffix
-    return "\n\n" + suffix
+        suffix = diagnostic + ("\n\n" + suffix if suffix else "")
+    return "\n\n" + suffix if suffix else ""
 
 
 def diagnostic_system_prefix(path: Path | str = DEFAULT_DIAGNOSTIC_CONTEXT_FILE) -> str:
@@ -170,6 +174,9 @@ def render_build_context(context: BuildContext, *, max_chars: int = DEFAULT_MAX_
         f"Source: {context.source}",
         "Use this only to avoid live amnesia about what James is building. Do not treat it as approval to write, spend, deploy, send outreach, or change doctrine.",
     ]
+    if context.corrections:
+        lines.append("Corrections:")
+        lines.extend(context.corrections)
     if context.system_status:
         lines.append("Live system status:")
         lines.extend(f"- {item}" for item in context.system_status)
@@ -182,13 +189,27 @@ def render_build_context(context: BuildContext, *, max_chars: int = DEFAULT_MAX_
     if context.open_intents:
         lines.append("Open decisions/intents:")
         lines.extend(f"- {item}" for item in context.open_intents)
-    if context.corrections:
-        lines.append("Corrections:")
-        lines.extend(context.corrections)
     rendered = "\n".join(lines)
     if len(rendered) <= max_chars:
         return rendered
     return rendered[: max(0, max_chars - 20)].rsplit("\n", 1)[0] + "\n- ... bounded"
+
+
+async def _render_becoming_context(
+    *,
+    conversation_id: str | None,
+    max_chars: int = DEFAULT_MAX_CHARS,
+) -> str:
+    if not conversation_id or os.environ.get("SH_BECOMING_CONTEXT_DISABLE", "").strip() == "1":
+        return ""
+    try:
+        try:
+            from .becoming import render_becoming_context
+        except ImportError:
+            from becoming import render_becoming_context
+        return await render_becoming_context(str(conversation_id), max_chars=min(900, max_chars))
+    except Exception:
+        return ""
 
 
 async def _with_recent_corrections(

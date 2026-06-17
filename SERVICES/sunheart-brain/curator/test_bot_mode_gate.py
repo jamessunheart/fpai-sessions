@@ -48,7 +48,7 @@ class BotModeGateTest(unittest.TestCase):
     def test_public_branch_precedes_full_brain_search(self) -> None:
         source = Path(tgbot.__file__).read_text(encoding="utf-8")
 
-        public_idx = source.index("_synthesize_public_answer(text)")
+        public_idx = source.index("_synthesize_public_answer(text, conversation_id=str(chat_id))")
         search_idx = source.index("hits = await _search_brain(text)")
 
         self.assertLess(public_idx, search_idx)

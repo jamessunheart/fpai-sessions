@@ -244,6 +244,34 @@ async def _log_tg_message(chat_id: str, role: str, text: str,
         log.warning("tg_messages log failed (role=%s): %s", role, e)
 
 
+async def _capture_becoming_from_message(
+    *,
+    chat_id: int | str,
+    from_user: str,
+    text: str,
+    msg: dict,
+) -> None:
+    """Best-effort becoming-state capture; never blocks chat answers."""
+    try:
+        from .becoming import capture_becoming_exchange
+
+        identity_contact = {
+            "telegram_chat_id": str(chat_id),
+            "telegram_user_id": from_user,
+            "username": (msg.get("from") or {}).get("username") or "",
+            "first_name": (msg.get("from") or {}).get("first_name") or "",
+            "last_name": (msg.get("from") or {}).get("last_name") or "",
+        }
+        await capture_becoming_exchange(
+            person_id=str(chat_id),
+            user_message=text,
+            source="telegram",
+            identity_contact=identity_contact,
+        )
+    except Exception as e:
+        log.warning("becoming capture skipped: %s", e)
+
+
 def _load_offset() -> int:
     try:
         return int(OFFSET_FILE.read_text().strip()) if OFFSET_FILE.exists() else 0
@@ -651,7 +679,7 @@ async def _synthesize_answer(question: str, hits: list[dict], *, conversation_id
         return f"⚠️ Brain synthesis hit an error: {e}"
 
 
-async def _synthesize_public_answer(question: str) -> str:
+async def _synthesize_public_answer(question: str, *, conversation_id: str | None = None) -> str:
     """Answer a public-lane question using only the curated public pack."""
     pack = _load_public_context_pack()
     public_context = pack.build_public_context_pack()
@@ -662,6 +690,14 @@ async def _synthesize_public_answer(question: str) -> str:
     )
     if private_probe:
         return pack.public_denial(question)
+    becoming_context = ""
+    if conversation_id:
+        try:
+            from .becoming import render_becoming_context
+
+            becoming_context = await render_becoming_context(str(conversation_id), max_chars=700)
+        except Exception as e:
+            log.warning("public becoming context skipped: %s", e)
 
     from .llm import complete
     user = (
@@ -669,7 +705,9 @@ async def _synthesize_public_answer(question: str) -> str:
         + question
         + "\n\nPublic context pack:\n"
         + public_context
+        + ("\n\nSame-person becoming context:\n" + becoming_context if becoming_context else "")
         + "\n\nAnswer in 1-3 short sentences. Use only the public context pack and this conversation. "
+        "You may also use the same-person becoming context if supplied. "
         "If the answer would require private memory, say you don't have access to that in the public lane."
     )
     system_prompt = (
@@ -4096,7 +4134,13 @@ async def _handle_message(msg: dict) -> None:
         if _public_mode_enabled():
             try:
                 await _log_tg_message(str(chat_id), "user", text, update_id=update_id, private_flag=False)
-                answer = _format_answer_for_telegram(await _synthesize_public_answer(text))
+                await _capture_becoming_from_message(
+                    chat_id=chat_id,
+                    from_user=from_user,
+                    text=text,
+                    msg=msg,
+                )
+                answer = _format_answer_for_telegram(await _synthesize_public_answer(text, conversation_id=str(chat_id)))
                 await tg.send(answer)
                 await _log_tg_message(str(chat_id), "bot", answer, private_flag=False)
             except Exception as e:
@@ -4187,6 +4231,7 @@ async def _handle_message(msg: dict) -> None:
         await capture_if_correction(conversation_id=str(chat_id), james_message=text)
     except Exception as e:
         log.warning("correction capture skipped: %s", e)
+    await _capture_becoming_from_message(chat_id=chat_id, from_user=from_user, text=text, msg=msg)
     await _log_tg_message(str(chat_id), "user", text, update_id=update_id)
 
     log.info("chat: %s", text[:120])

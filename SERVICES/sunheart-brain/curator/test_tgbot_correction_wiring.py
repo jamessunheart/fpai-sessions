@@ -18,6 +18,12 @@ class TelegramCorrectionWiringTest(unittest.TestCase):
 
         self.assertLess(capture_idx, log_idx)
 
+    def test_becoming_capture_runs_before_inbound_log(self) -> None:
+        capture_idx = self.source.index("capture_becoming_exchange(")
+        log_idx = self.source.index('await _log_tg_message(str(chat_id), "user", text, update_id=update_id)')
+
+        self.assertLess(capture_idx, log_idx)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
         {
+            "id": "SPEC_d081_becoming-engine-v1-per-person-jo",
+            "slug": "SPEC_d081_becoming-engine-v1-per-person-jo",
+            "branch": "build/SPEC_d081_becoming-engine-v1-per-person-jo",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d081_becoming-engine-v1-per-person-jo.md",
+            "tests_passed": true,
+            "notes": "d081 complete: added Becoming Engine v1 SEE model with brain_index.becoming schema/migration, deterministic advisory per-person stage/intent/blocker/proof inference, bounded becoming-state prompt injection for One Chat, and best-effort Telegram capture for private owner and confirmed public-lane conversations. No proactive auto-messaging, sends, deploys, secrets, push, or merge."
+        },
+        {
             "id": "SPEC_d080_contact-pre-profiler-research-pu",
             "slug": "SPEC_d080_contact-pre-profiler-research-pu",
             "branch": "build/SPEC_d080_contact-pre-profiler-research-pu",

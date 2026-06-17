@@ -17,10 +17,10 @@ sys.modules["build_context"] = build_context
 SPEC.loader.exec_module(build_context)
 
 CORRECTIONS_PATH = Path(__file__).with_name("corrections.py")
-CORRECTIONS_SPEC = importlib.util.spec_from_file_location("corrections", CORRECTIONS_PATH)
+CORRECTIONS_SPEC = importlib.util.spec_from_file_location("build_context_test_corrections", CORRECTIONS_PATH)
 assert CORRECTIONS_SPEC and CORRECTIONS_SPEC.loader
 corrections = importlib.util.module_from_spec(CORRECTIONS_SPEC)
-sys.modules["corrections"] = corrections
+sys.modules["build_context_test_corrections"] = corrections
 CORRECTIONS_SPEC.loader.exec_module(corrections)
 
 
@@ -96,7 +96,9 @@ class BuildContextTest(unittest.TestCase):
             self.assertEqual(conversation_id, "123")
             return [pair]
 
-        with patch.object(corrections, "recent_corrections", fake_recent_corrections):
+        with patch.object(corrections, "recent_corrections", fake_recent_corrections), patch.dict(
+            "sys.modules", {"corrections": corrections}
+        ):
             suffix = asyncio.run(
                 build_context.build_context_system_suffix(
                     repo_root=self.make_repo(),
@@ -107,6 +109,26 @@ class BuildContextTest(unittest.TestCase):
 
         self.assertIn("Corrections:", suffix)
         self.assertIn("You forgot, I said my birthday is June 4.", suffix)
+
+    def test_becoming_context_is_injected_for_conversation(self) -> None:
+        async def fake_render_becoming_context(person_id, *, max_chars=900):
+            self.assertEqual(person_id, "123")
+            return "--- BECOMING STATE (advisory, per-person) ---\nStage: activate"
+
+        import types
+
+        module = types.SimpleNamespace(render_becoming_context=fake_render_becoming_context)
+        with patch.dict("sys.modules", {"becoming": module}):
+            suffix = asyncio.run(
+                build_context.build_context_system_suffix(
+                    repo_root=self.make_repo(),
+                    conversation_id="123",
+                    max_chars=1800,
+                )
+            )
+
+        self.assertIn("BECOMING STATE", suffix)
+        self.assertIn("Stage: activate", suffix)
 
     def test_active_diagnostic_context_is_bounded_and_prefixed(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
