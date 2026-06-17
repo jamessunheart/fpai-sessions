@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-17T18:47:00Z",
+    "updated_at": "2026-06-17T18:48:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d074_human-coach-matching-cora-credit",
+            "slug": "SPEC_d074_human-coach-matching-cora-credit",
+            "branch": "build/SPEC_d074_human-coach-matching-cora-credit",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d074_human-coach-matching-cora-credit.md",
+            "tests_passed": true,
+            "notes": "d074 complete: added offline human coach identification, active coach matching, CORA credit accounting, fiat phase gating, session tracking, learning-signal shaping, coach economy state doc, and focused fixture tests. Independent AI review found no implementation blockers; closeout registry state was fixed. No live DB writes, outreach sends, fiat payout/conversion execution, deploys, secrets, pushes, or merges."
+        },
         {
             "id": "SPEC_d073_per-agent-recursive-benchmarks-e",
             "slug": "SPEC_d073_per-agent-recursive-benchmarks-e",

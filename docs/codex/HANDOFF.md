@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-17 · SPEC_d074_human-coach-matching-cora-credit · branch `build/SPEC_d074_human-coach-matching-cora-credit`
+
+- **Status:** done / independently AI-reviewed / awaiting merge review
+- **Files changed:** `tools/coach/__init__.py`; `tools/coach/identifier.py`; `tools/coach/matcher.py`; `tools/coach/session_tracker.py`; `tools/coach/credit_ledger.py`; `tools/coach/test_coach.py`; `core/STATE/COACH_ECONOMY.md`; `core/BUILD/specs/SPEC_d074_human-coach-matching-cora-credit.md`; `core/BUILD/results/SPEC_d074_human-coach-matching-cora-credit.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a repo-side human coach matching and CORA credit economy scaffold. The new coach package identifies pending coaches from high-quality probe conversations, matches stuck seekers to active coaches by blocker specialty and quality threshold, tracks completed sessions, awards CORA credits idempotently, gates fiat conversion until 20 active coaches, and emits correction-shaped learning signals. The state doc records credit tiers, DB table shape, fiat phase gates, and no-live-effect boundaries.
+- **Tests:** `python3 -B -m unittest tools.coach.test_coach` (6 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/coach/__init__.py tools/coach/identifier.py tools/coach/matcher.py tools/coach/session_tracker.py tools/coach/credit_ledger.py tools/coach/test_coach.py`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `git diff --check`
+- **Independent review:** completed by subagent. It found no P1 implementation blockers and verified fixture-only tests/no live DB behavior, active/tag/quality matching, pending `active=false` coach identification at `quality_score >= 0.7`, idempotent credits, fiat gate behavior, and no live outreach/money/deploy/secret behavior. Initial closeout findings were registry status and uncommitted files; registry status is fixed here, and commit may depend on writable Git metadata in this sandbox.
+- **Risks:** This is scaffold code only. It does not apply SQL migrations, write live `brain_index` rows, send invitations, schedule sessions, move fiat, convert credits, deploy, push, or merge. Optional Claude tag extraction is fallback-only and not exercised by tests.
+- **Rollback:** remove `tools/coach/`, `core/STATE/COACH_ECONOMY.md`, `core/BUILD/results/SPEC_d074_human-coach-matching-cora-credit.result.md`, the d074 spec artifact, the d074 registry row, and this handoff entry. No live DB or service rollback is needed.
+- **Intent solved:** conversations that exceed the AI's useful limit now have a repo-side scaffold for identifying human coach candidates, matching them to stuck seekers, tracking sessions, awarding credits, and producing learning signals.
+- **Downstream intent unlocked:** future approved live specs can add migrations and gated adapters so Spark/probe flows safely route stuck seekers to human coaches and learn from successful coached interventions.
+- **Questions for Ember/James:** from a writable/live host, decide whether the next approved build should add the SQL migration and opt-in invitation adapter; fiat conversion remains a James Reserved Class gate.
+
 ### 2026-06-17 · SPEC_d073_per-agent-recursive-benchmarks-e · branch `build/SPEC_d073_per-agent-recursive-benchmarks-e`
 
 - **Status:** done / independently reviewed / awaiting merge review
