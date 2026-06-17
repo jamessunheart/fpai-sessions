@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-17 · SPEC_d068_auto-merge-resolver-for-doc-only · branch `build/SPEC_d068_auto-merge-resolver-for-doc-only`
+
+- **Status:** done / independently AI-reviewed / awaiting merge review
+- **Files changed:** `tools/autobuild/doc_only_merge_resolver.py`; `tools/autobuild/test_doc_only_merge_resolver.py`; `core/BUILD/specs/SPEC_d068_auto-merge-resolver-for-doc-only.md`; `core/BUILD/results/SPEC_d068_auto-merge-resolver-for-doc-only.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a guarded doc-only auto-merge resolver in the non-protected autobuild lane. It scans `core/BUILD/REGISTRY.json` for `done` builds with `tests_passed=true`, dry-runs by default, and with `--execute` locally merges only doc-only branches into `feat/headless-build` after an immediate independent AI review command approves. It rejects `main`/`master`, requires a clean worktree, skips missing/already-merged branches, aborts failed merges, and never pushes, deploys, or opens PRs. The doc-only allowlist excludes code/runtime paths plus build intake surfaces (`core/BUILD/specs/`, `core/BUILD/intents/`).
+- **Tests:** `python3 -B -m unittest tools.autobuild.test_doc_only_merge_resolver` (10 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/autobuild/doc_only_merge_resolver.py tools/autobuild/test_doc_only_merge_resolver.py`; `bash -n tools/merge/process_merge_requests.sh`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `git diff --check`; `python3 tools/autobuild/doc_only_merge_resolver.py --json` real-registry dry run with no merge executed.
+- **Independent review:** completed by subagent. Initial review found blockers: `--base main` was possible, failed merge conflicts could leave the repo conflicted, `tools/merge/` is protected, and `core/BUILD/specs/`/`core/BUILD/intents/` were too broad for doc-only. Fixed all four by moving to `tools/autobuild/`, reverting `process_merge_requests.sh`, rejecting protected bases, aborting failed merges, and narrowing the allowlist. Blocker-only re-review found no remaining P1/P2 blockers.
+- **Risks:** This branch does not install or wire a live timer/service. Ember/server must explicitly decide where to invoke `tools/autobuild/doc_only_merge_resolver.py --execute`. If the configured independent review command cannot run, the resolver blocks rather than merges. Build specs/intents remain intentionally excluded from doc-only auto-merge.
+- **Rollback:** revert the two `tools/autobuild/` files and remove the d068 result/registry/handoff entries. If Ember wires invocation later, disable that invocation or remove `--execute`.
+- **Intent solved:** AI-approved doc-only branches can be resolved by a guarded repo tool instead of requiring James to run shell merge commands.
+- **Downstream intent unlocked:** Ember/server can wire low-risk documentation completion merges into the build loop while code/runtime branches stay on the normal review/merge path.
+- **Questions for Ember/James:** choose the invocation point for `python3 tools/autobuild/doc_only_merge_resolver.py --execute` after this branch is merged; keep it disabled for branches that touch code, specs/intents, services, cron/systemd, secrets, or any non-doc path.
+
 ### 2026-06-17 · SPEC_d066_public-private-data-lane-protoco · branch `build/SPEC_d066_public-private-data-lane-protoco`
 
 - **Status:** done / independently AI-reviewed / awaiting merge review

@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-17T15:10:00Z",
+    "updated_at": "2026-06-17T16:35:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d068_auto-merge-resolver-for-doc-only",
+            "slug": "SPEC_d068_auto-merge-resolver-for-doc-only",
+            "branch": "build/SPEC_d068_auto-merge-resolver-for-doc-only",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d068_auto-merge-resolver-for-doc-only.md",
+            "tests_passed": true,
+            "notes": "d068 complete: added tools/autobuild/doc_only_merge_resolver.py and focused tests. Resolver dry-runs by default; with --execute it only merges registry-done/tests-passed/doc-only branches into feat/headless-build after an immediate independent AI review command approves. It rejects main/master targets, requires a clean worktree, aborts failed merges, blocks code/runtime paths and build intake specs/intents, and never pushes/deploys/opens PRs. Independent subagent review blockers were fixed and re-review found no remaining P1/P2 blockers."
+        },
         {
             "id": "SPEC_d066_public-private-data-lane-protoco",
             "slug": "SPEC_d066_public-private-data-lane-protoco",
