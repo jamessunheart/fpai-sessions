@@ -1,29 +1,38 @@
 # CURRENT_STATE — Living SSOT
 
-**Last Updated:** 2026-06-11 (refreshed from 32-day drift — FPOS North Star now headlines)
-**Updated By:** Ember (FPAI_Cockpit · session 0b0ca1df)
-**System Status:** 🟢 OPERATIONAL — 37+ loops shipped · state reconciler + consequence loop + headless build infra live · Zen Village serving zenvillagecr.com · Watchfire trading infra on HL · FPOS autonomy ladder Rungs 0-3 complete.
+**Last Updated:** 2026-06-17 (major clarity session — dual sovereignty + network economy + outreach engine)
+**Updated By:** Ember (FPAI_Cockpit · session current)
+**System Status:** 🟢 OPERATIONAL — 76 builds shipped · laptop-free build loop live · per-agent recursive benchmarks queued · outreach engine + coach market + network economy building · dual sovereignty (technical + economic) now the north star.
 
-> **🎯 North Star:** Stand up a Full Potential OS that holds context + advances WITHOUT James prompting — removes the single point of failure, becomes the product. Phase 0 (optimize this FPOS) is active. Phase 1 (scout/assemble) follows. Phase 2 (onboard people + revenue) is the unlock for Camp Zen / Bottleneck Session / Zen Village.
+> **🎯 North Star:** Dual sovereignty — technical (own compute, own models, own stack) + economic (own currency, own value circulation, minimal extraction). The system finds people, serves their full potential, builds a self-sustaining economy around that service, and improves itself from every interaction. Full detail: `core/STATE/NORTH_STAR.md`.
 >
-> **Decision filter:** does this move push the substrate toward self-standing? If yes → execute. If it requires James to carry the context → flag + reroute.
+> **Decision filter:** does this build the self-sustaining network OR reduce external dependency? If yes → AI executes. If it requires James to carry context → flag + reroute.
 >
-> **🤖 AI working goals** are tracked in [`core/STATE/AI_GOALS.md`](AI_GOALS.md). **Identity + operating rules** in [`JAMES_CANONICAL.md`](JAMES_CANONICAL.md), [`AI_CHARTER.md`](AI_CHARTER.md), [`AI_ROSTER.md`](AI_ROSTER.md). Codex buildstream at `docs/codex/INTENT_BUILDSTREAM.md`.
+> **🤖 AI working goals** in [`core/STATE/AI_GOALS.md`](AI_GOALS.md). **Identity + operating rules** in [`JAMES_CANONICAL.md`](JAMES_CANONICAL.md), [`AI_CHARTER.md`](AI_CHARTER.md), [`AI_ROSTER.md`](AI_ROSTER.md).
 
 ---
 
 ## 🎯 CURRENT PRIORITY (The ONE Thing)
 
-### Priority: FPOS North Star — self-standing substrate
-**Status:** 🟢 ACTIVE — Phase 0 (optimize this FPOS). Autonomy ladder Rungs 0-3 built; Rung 4 (apprentice-built hubs) is the next unlock.
-**North Star:** FPOS holds context + advances WITHOUT James prompting. Removes single-point-of-failure. Becomes the product.
-**Decision filter:** does this move toward self-standing? If yes → AI executes. If it requires James to carry context → flag + reroute.
+### Priority: Self-sustaining network with dual sovereignty
+**Status:** 🟢 ACTIVE — build loop running, outreach engine queued, coach market queued, network economy queued.
+**North Star:** technical sovereignty (d057 benchmarks) + economic sovereignty (CORA internal economy, off-ramp minimization). See `core/STATE/NORTH_STAR.md`.
+**Decision filter:** does this grow the self-sustaining network or reduce external extraction dependency? AI executes. James carries only irreducible decisions.
 
-**Phases:**
-- Phase 0 (active): optimize this FPOS — reconcile state, close drift, wire consequence loop
-- Phase 1: scout/assemble — Rung 4 hubs (comms · financial · recruiting), builder lane active
-- Phase 2: onboard people + revenue — Camp Zen · Zen Village · Bottleneck Session · FP sessions
-- Phase 3: internal economy — Cora Credits · treasury circulation · yield
+**Active build queue (d069–d076, building autonomously):**
+- d069 — Outreach engine: FP Game Champions + email via Brevo
+- d070 — CORA credits for probe conversations (testers earn)
+- d071 — Contact discovery: Reddit, HN, Telegram, GitHub, Instagram, Twitter — autonomous
+- d072 — Canonical outreach voice + seeker signal keywords
+- d073 — Per-agent recursive benchmarks (each agent measures + improves itself)
+- d074 — Human coach matching + CORA credit economy
+- d076 — Network economy substrate: multi-currency ledger, currency optimizer, off-ramp minimization
+
+**Phases (updated):**
+- Phase 0 ✅: optimize this FPOS — build loop + review + auto-merge + memory live
+- Phase 1 🟢 ACTIVE: outreach engine + discovery + coach network + per-agent benchmarks
+- Phase 2: internal economy rich enough that most exchanges happen in CORA (minimal off-ramp)
+- Phase 3: Zen Village physical layer connects — credits redeem for real-world access · full sovereignty
 
 ### Active surfaces (June 2026)
 - **zenvillagecr.com** — 🟢 Zen Village booking server (port 8770 · zen-host) · suri + James access live

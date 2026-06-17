@@ -2,10 +2,51 @@
 
 **Purpose:** A second-tier SSOT alongside `NOW.md`. NOW.md is the founder's priority lens; this file is the AI system's working-goal lens. AI sessions read this on session start to know what they're aligned on. James reads this to see what the AI is currently optimizing for and propose adjustments.
 
-**Last Updated:** 2026-05-08 (post-Loop 35 — Mirror Loop + Field Coherence + bridged credit/store ecosystem)
-**Founder priority (mirrored from NOW.md):** First non-James human to engage with the Game (sign / file proof / express path interest) within 30 days. The substrate is built; what's missing is one other human in it.
+**Last Updated:** 2026-06-17 (major session — dual sovereignty + network economy crystallized)
+**Founder priority (mirrored from NOW.md):** Dual sovereignty — own the compute, own the currency, own the value. The system finds people, serves their full potential, circulates value internally, and improves itself from every interaction. James carries only what is irreducibly his.
 
 ---
+
+## 🎯 ACTIVE AI WORKING GOALS
+
+### G0 — Ship the outreach engine (d069–d072) and get first real conversations
+**Why:** The system is technically solid but hasn't touched a real external human yet. Everything downstream (coach market, network economy, per-agent improvement) depends on real conversation data. First conversations = first proof.
+**How AI applies:** d069–d072 build and auto-merge. Once OUTREACH_LIVE=1 is set, the engine runs. Watch probe_sessions for first engaged=true rows. Surface the first real conversation to James as proof.
+**Status:** Building. James flips OUTREACH_LIVE=1 when ready.
+
+### G1 — Close the per-agent recursive loop (d073)
+**Why:** Each agent currently DOES things but has no mechanism to improve itself from its own performance data. d073 adds per-agent benchmarks that detect weakness and auto-propose improvement specs. This is what makes the system genuinely self-evolving rather than just self-building.
+**How AI applies:** d073 builds and auto-merges. After first benchmark run, each agent has a Day 0 baseline. Week-over-week delta becomes the improvement story for funders.
+**Status:** Building.
+
+### G2 — Seed the coach market (d074) from first conversations
+**Why:** The coach market is discovered, not recruited. High-quality probe conversations surface people who have navigated specific terrain. The system invites them. Credits make it real. The market grows from the conversations themselves.
+**How AI applies:** After first probe conversations complete (quality_score evaluated), d074 fires. First coach identified → first invite → first session. Surface to James as proof of the economy starting.
+**Status:** Queued. Activates after G0 produces first conversations.
+
+### G3 — Build the network economy substrate (d076) and measure extraction rate
+**Why:** Value leaking to external payment rails is the structural weakness of every platform business. d076 makes the internal currency rich enough that most exchanges happen in CORA. The off-ramp minimization tracker is the week-over-week proof of economic sovereignty improving.
+**How AI applies:** d076 builds and auto-merges. First measurement of internal_circulation_rate. Council weights proposals toward reducing extraction_rate.
+**Status:** Queued. Runs in parallel with G0–G2.
+
+### G4 — Maintain dual sovereignty proof (technical + economic)
+**Why:** Technical sovereignty (d057 benchmarks) + economic sovereignty (CORA economy, off-ramp minimization) together = the fundable story. Both need continuous measurement. Neither alone is enough.
+**How AI applies:** d057 runs every 6h. d073 runs daily per-agent. d076 tracks economic metrics weekly. Council cites NORTH_STAR.md in every proposal. Every build that improves a metric gets logged as proof.
+**Status:** Active. NORTH_STAR.md is the standing directive.
+
+## 🤝 AI-TO-AI HANDOFF NOTES (2026-06-17 · session current)
+
+Major clarity session. Key decisions:
+- **Dual sovereignty** crystallized: technical (own stack) + economic (own currency) — both in NORTH_STAR.md
+- **Outreach voice** settled: "An AI built to help you reach your full potential — and that grows to serve you the more you use it." Canonical in `core/STATE/OUTREACH_VOICE.md` (d072 builds this)
+- **Discovery engine**: autonomous, hashtag/keyword-driven, finds seekers mid-search (d071)
+- **Coach market**: discovered from conversations, CORA credits make it real (d074)
+- **Network economy**: multi-currency ledger, currency optimizer, off-ramp minimization (d076)
+- **Per-agent benchmarks**: each agent measures itself, detects weakness, auto-proposes improvement (d073)
+- **Public/private protocol**: structural partition — public agents get public context pack only (d066)
+- **d063 merged**: NORTH_STAR.md now live in repo. COUNCIL_FOCUS.md updated.
+
+Build queue: d064–d076 building autonomously. Loop running. James sets OUTREACH_LIVE=1 when ready to engage first real humans.
 
 ## 🎯 ACTIVE AI WORKING GOALS
 

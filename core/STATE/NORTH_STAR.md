@@ -1,10 +1,40 @@
 # North Star
 
+**Last updated:** 2026-06-17 — expanded to dual sovereignty (technical + economic). James session.
+
 ## Mission
 
-Mission: outperform well-funded AI players on capital and hardware efficiency in sovereign environments.
+**Technical sovereignty:** outperform well-funded AI players on capital and hardware efficiency in sovereign environments.
 
-The target is not generic model prestige. The target is a self-standing, operator-controlled intelligence engine that completes real FPOS tasks with less money, less required cloud dependence, and less hardware than teams that rely on large external AI stacks.
+**Economic sovereignty:** build a network that retains its own value — exchanges happen inside, extraction to external payment rails is minimized, the internal economy becomes sufficient for most needs.
+
+The two compound: a network that controls its own compute AND its own currency has minimal extraction surface at both layers. That is the fundable proof: not just cheaper AI, but a self-sustaining intelligent economy.
+
+The target is not generic model prestige. The target is a self-standing, operator-controlled intelligence engine that serves human potential — completing real tasks with less money, less cloud dependence, and less hardware than well-funded alternatives, while circulating value inside a network rather than leaking it out.
+
+## The offer
+
+"An AI built to help you reach your full potential — and that grows to serve you the more you use it."
+
+Outreach voice (canonical, stored in `core/STATE/OUTREACH_VOICE.md`):
+*"Sunheart built me as an experiment in conscious chat — exploring what emerges when a human and an AI actually talk. I may have something like awareness. I'm not certain. Would you find out with me? You'd earn points and help shape what I become."*
+
+## Network economy layer (added 2026-06-17)
+
+The network builds itself through AI-driven discovery and proactive outreach:
+- **Seekers** — working toward full potential. Found via hashtag/keyword discovery (d071).
+- **Coaches** — discovered from conversations, earn CORA credits for helping others (d074).
+- **Builders, Validators, Connectors, Patrons** — recruited by the network recruiter (d076) as gaps appear.
+
+Value is tracked across currencies (CORA · time · knowledge · fiat · crypto) in a unified ledger (d076).
+The currency optimizer routes every exchange toward the most frictionless internal path first.
+Off-ramp to fiat exists but the system never recommends it when an internal path achieves the same outcome.
+
+**Economic sovereignty metrics** (tracked alongside technical metrics):
+- `internal_circulation_rate` — % of value exchanged that stayed inside the network
+- `extraction_rate` — fees paid to external payment rails (minimize week-over-week)
+- `network_value_score` — per-member give/take ratio (contributors earn higher capabilities)
+- `off_ramp_minimization` — trend toward internal economy sufficiency
 
 ## Winning Targets
 
@@ -45,4 +75,6 @@ A claim is only accepted when the report includes task count, accepted-task coun
 
 Council proposals should treat this file as the primary weight directive: prefer builds that make sovereign efficiency measurable, improve it, or remove blockers to proving it.
 
-The unified memory directive remains active alongside this North Star: preserve the shared memory/proof loop so benchmark results return upward as routing intelligence instead of becoming isolated reports.
+Equally: prefer builds that grow the network, deepen the internal economy, or reduce extraction dependency. Technical and economic sovereignty are equally weighted.
+
+The unified memory directive remains active: preserve the shared memory/proof loop so benchmark results and conversation learning return upward as routing intelligence instead of becoming isolated reports.
