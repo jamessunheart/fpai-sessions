@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
         {
+            "id": "SPEC_d085_glm-5-2-as-council-pragmatist-le",
+            "slug": "SPEC_d085_glm-5-2-as-council-pragmatist-le",
+            "branch": "build/SPEC_d085_glm-5-2-as-council-pragmatist-le",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d085_glm-5-2-as-council-pragmatist-le.md",
+            "tests_passed": true,
+            "notes": "d085 complete: added GLM-5.2 as the council Pragmatist lens when GLM_API_KEY or GLM_LOCAL_URL is configured and GLM_COUNCIL_DISABLE is not set, with Claude fallback, per-lens model logging, GLM ops-ledger metered cost rows, and a pre-call $5/day GLM cap reservation using bounded max_tokens. Visionary/Skeptic remain claude -p. Independent review P2 cap finding fixed; no remaining P1/P2 blockers except this registry closeout before status update. No live GLM/Claude calls, deploy, secrets, push, or merge."
+        },
+        {
             "id": "SPEC_d083_reply-loop-closer-telegram-cta-f",
             "slug": "SPEC_d083_reply-loop-closer-telegram-cta-f",
             "branch": "build/SPEC_d083_reply-loop-closer-telegram-cta-f",

@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-17 · SPEC_d085_glm-5-2-as-council-pragmatist-le · branch `build/SPEC_d085_glm-5-2-as-council-pragmatist-le`
+
+- **Status:** done / independently AI-reviewed / awaiting merge review
+- **Files changed:** `tools/council/debate.py`; `tools/council/glm_client.py`; `tools/council/test_council.py`; `tools/council/test_glm_client.py`; `core/BUILD/specs/SPEC_d085_glm-5-2-as-council-pragmatist-le.md`; `core/BUILD/results/SPEC_d085_glm-5-2-as-council-pragmatist-le.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Replaced the council's single Claude call for all three personas with per-lens routing. Pragmatist uses GLM-5.2 through `GLM_API_KEY`/Z-AI or `GLM_LOCAL_URL` when configured, `GLM_COUNCIL_DISABLE` is clear, and the separate `$5/day` GLM cap reservation allows the call. Visionary and Skeptic remain `claude -p`. Pragmatist falls back to `claude -p` when GLM is unconfigured, unavailable, disabled, or over cap. GLM usage writes metered ops-ledger rows with `model`, `tokens_in`, `tokens_out`, and `cost_usd`; debate output logs model use per lens for d073 benchmark comparison.
+- **Tests:** `python3 -B -m unittest discover -s tools/council -p 'test_*.py'` (12 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/council/debate.py tools/council/glm_client.py tools/council/test_council.py tools/council/test_glm_client.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d085-registry.json`; `git diff --check`
+- **Independent review:** initial P2 findings fixed. The GLM cap now reserves estimated input cost plus bounded `GLM_MAX_TOKENS` before calling GLM; registry was closed to `done`/`tests_passed=true`. Re-review found no new P1/P2 blockers after the cap fix.
+- **Risks:** No live GLM/Claude/Codex calls, deploy, secrets, push, or merge were performed. `GLM_MAX_TOKENS` defaults to `1200` so the cap reservation has a concrete bound. The generated branch is not a descendant of local `feat/headless-build`; Ember should verify/rebase/cherry-pick onto `feat/headless-build` before merge if the merge gate requires strict ancestry.
+- **Rollback:** set `GLM_COUNCIL_DISABLE=1` for immediate all-Claude behavior, or revert the listed files and remove the d085 registry/result/handoff entries.
+- **Intent solved:** council Pragmatist can now run as a distinct cost-optimized GLM lens instead of another Claude persona.
+- **Downstream intent unlocked:** d073 council-agent benchmarks can compare GLM Pragmatist proposal quality/cost against Claude fallback using per-lens model logs and GLM ops-ledger rows.
+- **Questions for Ember/James:** after merge/rebase, run one disabled/dry-run council proof on 162, then only if desired configure `GLM_API_KEY` or `GLM_LOCAL_URL` for a bounded Pragmatist-only GLM trial.
+
 ### 2026-06-17 · SPEC_d083_reply-loop-closer-telegram-cta-f · branch `build/SPEC_d083_reply-loop-closer-telegram-cta-f`
 
 - **Status:** done in working tree / awaiting merge review
