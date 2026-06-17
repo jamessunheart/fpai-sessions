@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-17T20:45:00Z",
+    "updated_at": "2026-06-17T21:40:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d079_whatsapp-channel-adapter-hermes",
+            "slug": "SPEC_d079_whatsapp-channel-adapter-hermes",
+            "branch": "build/SPEC_d079_whatsapp-channel-adapter-hermes",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d079_whatsapp-channel-adapter-hermes.md",
+            "tests_passed": true,
+            "notes": "d079 complete in working tree: added guarded Meta WhatsApp Cloud API sender, webhook parsing/signature verification, optional FastAPI receiver at /webhooks/whatsapp, inbound contact_pool/probe_pool/probe_session routing, contact CSV/manual loader, private contact-pool protocol, SQL migration, and focused tests. WHATSAPP_LIVE=0 remains dry-run/receive-only by default; template sends require WHATSAPP_LIVE=1 and enforce an owner-only timestamp-only 10/hour local rate ledger until business verification. Independent AI review blockers were fixed and final re-review found no remaining blocker findings. Local git add/commit is blocked by read-only shared Git metadata in this sandbox. No live sends, secrets, deploys, pushes, or merges."
+        },
         {
             "id": "SPEC_d078_auto-merge-safe-builds-including",
             "slug": "SPEC_d078_auto-merge-safe-builds-including",
