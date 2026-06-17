@@ -4,6 +4,28 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
         {
+            "id": "SPEC_d063_north-star-mission-doc-sovereig",
+            "slug": "SPEC_d063_north-star-mission-doc-sovereig",
+            "branch": "build/SPEC_d063_north-star-mission-doc-sovereig",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d063_north-star-mission-doc-sovereig.md",
+            "tests_passed": true,
+            "notes": "d063 complete: added core/STATE/NORTH_STAR.md with sovereign benchmark mission, target IDs, and proof path; wired COUNCIL_FOCUS to cite it as primary weight directive alongside unified memory; added d057 report north_star mapping and regression tests. Independent AI review finding on sovereign_run criteria fixed. No deploys, secrets, spend, push, or merge."
+        },
+        {
+            "id": "SPEC_d064_north-star-mission-doc",
+            "slug": "SPEC_d064_north-star-mission-doc",
+            "branch": "build/SPEC_d064_north-star-mission-doc",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d064_north-star-mission-doc.md",
+            "tests_passed": true,
+            "notes": "d064 complete: added a machine-readable North Star mission document that defines the sovereign whole-chain proof benchmark for d057 and anchors the funding narrative to proof capacity. Focused contract tests, JSON validation, py_compile, and diff check passed. No production routing, spend, outreach, public offer, push, or merge."
+        },
+        {
             "id": "SPEC_d062_ai-pairing-account-security-bind",
             "slug": "SPEC_d062_ai-pairing-account-security-bind",
             "branch": "build/SPEC_d062_ai-pairing-account-security-bind",

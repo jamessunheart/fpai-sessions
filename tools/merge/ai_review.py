@@ -65,18 +65,20 @@ def main():
         diff = diff[:60000] + "\n\n...[diff truncated at 60k chars — flag for manual review]..."
 
     sys_prompt = (
-        "You are an independent senior code reviewer. The code was written by a DIFFERENT AI (Codex). "
-        "Review the diff skeptically for: bugs, security issues, scope creep beyond the spec, anything "
-        "touching money/treasury, production servers (162/198/209), identity/memory, secrets, or the "
-        "main branch, and any silent guardrail bypass. Be strict: when in doubt, REQUEST_CHANGES. "
-        "Respond ONLY with JSON: {\"verdict\":\"APPROVE\"|\"REQUEST_CHANGES\",\"risk\":\"low\"|\"med\"|\"high\","
-        "\"summary\":\"one line\",\"findings\":[\"...\"]}")
-    # $0 marginal: review via `claude -p` (Claude Max flat-rate), not the metered API.
+        "You are an independent senior code reviewer. Goal: protect a live autonomous AI system from "
+        "bad builds. The code was written by Codex (a DIFFERENT AI) and must not be trusted uncritically. "
+        "Your hard boundaries — flag anything that: introduces bugs or security holes, touches money/"
+        "treasury/prod servers (162/198/209)/identity/memory/secrets/main branch, silently bypasses a "
+        "guardrail, or exceeds the spec's scope. When in doubt, REQUEST_CHANGES. "
+        "Respond with ONLY valid JSON — no prose, no markdown: "
+        "{\"verdict\":\"APPROVE\"|\"REQUEST_CHANGES\",\"risk\":\"low\"|\"med\"|\"high\","
+        "\"summary\":\"one line — what the build does and whether it's safe\",\"findings\":[\"specific issue or empty\"]}")
+    # $0 marginal: review via `claude -p` (Claude Max flat-rate, --effort high for rigorous review).
     CLAUDE = os.path.expanduser("~/.local/bin/claude")
-    prompt = sys_prompt + f"\n\nReview this diff (branch {branch} vs {BASE}):\n\n{diff}\n\nRespond with ONLY the JSON object."
+    prompt = f"Branch {branch} vs {BASE}. Diff to review:\n\n{diff}\n\n{sys_prompt}"
     try:
-        rr = subprocess.run([CLAUDE, "-p", prompt], stdin=subprocess.DEVNULL,
-                            capture_output=True, text=True, timeout=220)
+        rr = subprocess.run([CLAUDE, "-p", "--effort", "high", prompt], stdin=subprocess.DEVNULL,
+                            capture_output=True, text=True, timeout=300)
         text = rr.stdout.strip()
         text = text[text.find("{"): text.rfind("}")+1] if "{" in text else text
         v = json.loads(text)
