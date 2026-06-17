@@ -1,0 +1,26 @@
+# SPEC_d080_contact-pre-profiler-research-pu Result
+
+- Status: done
+- Branch: `build/SPEC_d080_contact-pre-profiler-research-pu`
+- Files changed:
+  - `tools/outreach/pre_profiler.py`
+  - `tools/outreach/profile_store.py`
+  - `tools/outreach/contact_seed_api.py`
+  - `tools/outreach/test_pre_profiler.py`
+  - `migrations/add_contact_profiles_table.sql`
+  - `core/STATE/CONTACT_POOL.md`
+  - `core/BUILD/specs/SPEC_d080_contact-pre-profiler-research-pu.md`
+  - `core/BUILD/REGISTRY.json`
+  - `docs/codex/HANDOFF.md`
+- Summary: Added a public-source-only contact pre-profiler that accepts contact pool records, fetches public URL hints through a respectful 5/min limiter, supports injectable public search results, synthesizes private summaries, filters sensitive health/family/financial lines, rejects generic resonance points, uses James notes as highest-confidence context, drafts tailored first-contact copy, and stores `brain_index.contact_profiles` rows. Added a standalone FastAPI-compatible `/api/contacts/seed` router helper for later mounting; it seeds, profiles, returns the draft, and does not send.
+- Tests:
+  - `python3 -B -m unittest tools.outreach.test_pre_profiler tools.outreach.test_fp_champions_puller tools.hermes.test_email_adapter tools.probe.test_probe` (32 tests OK)
+  - `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/outreach/pre_profiler.py tools/outreach/profile_store.py tools/outreach/contact_seed_api.py tools/outreach/test_pre_profiler.py`
+  - `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d080-registry.json`
+  - `git diff --check`
+- Independent review: initial review found SSRF/public-source blockers in URL validation. Fixes added numeric IPv4-host rejection, DNS-result validation requiring `ip.is_global`, CGNAT/non-global rejection, disabled default redirects, and regressions. Final blocker-only re-review found no remaining P1/P2 blockers.
+- Commit status: blocked in this sandbox. `git commit -m "feat(outreach): add contact pre-profiler"` failed because Git could not create `/opt/fpai-build/FPAI_Cockpit/.git/worktrees/SPEC_d080_contact-pre-profiler-research-pu/index.lock`: read-only file system. Changes are complete in the working tree.
+- Risks: The standalone seed API router is not mounted into a live service in this new-files-only build. Default search is intentionally no-op; live public search must be wired with an approved public-source search adapter. Heuristic summarization is deterministic and conservative, not a full LLM synthesis pass.
+- Rollback: remove the new d080 files, remove the d080 registry row/result file, and remove the d080 handoff entry. If the SQL migration has been applied live, drop `brain_index.contact_profiles` after preserving any desired private profile records; drop `brain_index.contact_pool` only if no other contact flow uses it.
+- Intent solved: first outreach can now be backed by a private pre-contact profile instead of generic copy.
+- Downstream intent unlocked: outreach and probe agents can be wired to read pre-contact profile context before sending or starting the first conversation, while James still approves consequential/live sends.

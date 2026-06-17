@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-17T20:45:00Z",
+    "updated_at": "2026-06-17T21:20:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d080_contact-pre-profiler-research-pu",
+            "slug": "SPEC_d080_contact-pre-profiler-research-pu",
+            "branch": "build/SPEC_d080_contact-pre-profiler-research-pu",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d080_contact-pre-profiler-research-pu.md",
+            "tests_passed": true,
+            "notes": "d080 complete: added a public-source-only contact pre-profiler, profile persistence helpers, standalone seed-contact API router helper, contact_profiles/contact_pool migration, private contact-pool state doc, and focused tests. The profiler incorporates James notes as highest-confidence context, filters sensitive health/family/financial lines, rejects generic resonance points, drafts tailored non-sending outreach copy, and stores PRIVATE-tier contact_profiles rows. No live sends, deploys, secrets, paid databases, login-gated scraping, broad scans, push, or merge."
+        },
         {
             "id": "SPEC_d078_auto-merge-safe-builds-including",
             "slug": "SPEC_d078_auto-merge-safe-builds-including",
