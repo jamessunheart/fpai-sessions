@@ -63,6 +63,35 @@
 
 _top 30 = 23.5% · + 486 more pages = 74.6%_
 
+### 🖥️ GitHub / Repo — core STATE files
+
+**Repo:** `/opt/fpai-build/FPAI_Cockpit` (server 162) · laptop = mirror · branch: `feat/headless-build`
+
+#### 2a — Resource & Infrastructure
+
+| File | Status | Updated | Description |
+|---|---|---|---|
+| `core/STATE/RESOURCE_INVENTORY.md` | 🟢 current | 2026-06-17 | **Full resource audit** — servers, Ollama models, credentials, running apps, gaps |
+| `core/STATE/NORTH_STAR.md` | 🟢 current | 2026-06-17 | Mission + Intelligence Ladder T0-T5 + GLM-5.2 sovereignty proof |
+| `core/STATE/SYSTEM_ARCHITECTURE.md` | 🟢 current | 2026-06-16 | Whole-system architecture map |
+| `core/STATE/AI_ROSTER.md` | 🟢 current | 2026-06-16 | Specialized AI roster (Ember, Kai, Treasurer, etc.) |
+| `core/STATE/AI_CHARTER.md` | 🟢 current | 2026-06-16 | Operating rules: 8 practices + Conversation Protocol + Signal Clarity |
+| `core/STATE/NOW.md` | 🟢 current | 2026-06-17 | Founder priorities — SSOT for current intent |
+| `core/STATE/AI_GOALS.md` | 🟢 current | 2026-06-17 | AI working goals G0-G4 + handoff notes |
+| `core/STATE/JAMES_CANONICAL.md` | 🟢 current | 2026-06-16 | Who James is — identity, priorities, constants |
+
+#### 2b — Build Infrastructure
+
+| File | Status | Updated | Description |
+|---|---|---|---|
+| `tools/probe/imap_poller.py` | 🟢 live | 2026-06-17 | IMAP poller — sunheartai@fullpotential.ai, every 2min |
+| `tools/probe/schema.sql` | 🟢 live | 2026-06-17 | probe_pool + probe_sessions + probe_reply_queue |
+| `tools/probe/followup.py` | 🟢 live | 2026-06-17 | Telegram CTA follow-up after 3-day silence |
+| `tools/probe/inbound_webhook.py` | 🟢 live | 2026-06-17 | Reply handler → DB → queue |
+| `core/INTENT/SPECS/` | 🟢 live | rolling | Build specs d001–d089 — source for build loop |
+| `tools/council/debate.py` | 🟢 live | 2026-06-14 | 3-lens council debate ($0 via claude -p) |
+| `tools/build_loop/health_check.sh` | 🟢 live | 2026-06-17 | Build loop health check |
+
 ### 🔴 Active now  *(touched in last 24h)*
 
 - 🔴 [[NEXT MOVE DETAIL]] · 2:24 PM Greece Time
