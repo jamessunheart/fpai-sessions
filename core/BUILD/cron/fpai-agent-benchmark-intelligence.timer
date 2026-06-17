@@ -1,10 +1,9 @@
 [Unit]
-Description=Run FPAI Agent Benchmarking Intelligence every 6 hours
+Description=Run FPAI per-agent recursive benchmarks daily
 
 [Timer]
-OnCalendar=*-*-* 00/6:20:00
+OnCalendar=*-*-* 06:00:00 UTC
 Persistent=true
 
 [Install]
 WantedBy=timers.target
-
