@@ -1,5 +1,15 @@
 # STANDING COUNCIL FOCUS — the unified, secure, multi-device memory system (set by James 2026-06-16)
 
+## Primary weight directive
+
+Read `core/STATE/NORTH_STAR.md` before proposing the next build. Weight council debate toward the North Star: outperform well-funded AI players on capital and hardware efficiency in sovereign environments.
+
+Concrete proof targets: `cost_per_task_vs_gpt4o_api` · `latency_p95_ms` · `hardware_cost_per_1k_tasks` · `sovereign_run`
+
+Council JSON should cite `NORTH_STAR.md` whenever a proposed build claims to improve sovereign efficiency, benchmark proof, local/open-model capability, or the build-to-live loop.
+
+---
+
 James just went **laptop-free**: he now drives Ember from THREE surfaces, and this exposes a memory-coherence + security problem the council must solve. **Weight every proposal toward designing the best, most secure unified memory for one-Ember-many-bodies.**
 
 ## How everything works now (the full picture)
