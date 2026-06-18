@@ -1,0 +1,15 @@
+{
+  "generated_at": "2026-06-18T20:05:00Z",
+  "metric": {
+    "alert_sent": false,
+    "current_ok": false,
+    "latest_title": "",
+    "ok": false,
+    "reason": "latest lookup failed: No module named 'psycopg'",
+    "reliability": 0.08333333333333333,
+    "successes": 1,
+    "threshold": 0.95,
+    "total": 12
+  },
+  "schema": "awareness-reliability.v1"
+}

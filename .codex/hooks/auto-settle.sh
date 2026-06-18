@@ -218,6 +218,14 @@ echo "$NOW_ISO" > "$VERIFY_DIR/last.txt" 2>/dev/null
 echo "$EPISODIC_PATH" > "$VERIFY_DIR/last-path.txt" 2>/dev/null
 
 # ── Background mirror sync (detached, doesn't block close) ───────────
+
+# d101 consciousness observer (detached, private, never blocks settle)
+CONSCIOUSNESS_OBSERVER="$REPO_ROOT/tools/consciousness/run_observer.sh"
+if [ -x "$CONSCIOUSNESS_OBSERVER" ]; then
+  ( nohup bash "$CONSCIOUSNESS_OBSERVER" "$EPISODIC_PATH" "$SESSION_ID" > "$LOG_DIR/${SESSION_ID}.consciousness.log" 2>&1 & ) >/dev/null 2>&1
+  log "consciousness_observer_dispatched"
+fi
+
 SYNC_SCRIPT="$REPO_ROOT/tools/sync_identity_to_repo.sh"
 if [ -x "$SYNC_SCRIPT" ]; then
   ( nohup bash "$SYNC_SCRIPT" > "$LOG_DIR/${SESSION_ID}.sync.log" 2>&1 & ) >/dev/null 2>&1
