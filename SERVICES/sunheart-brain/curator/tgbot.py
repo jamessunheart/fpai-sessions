@@ -40,6 +40,7 @@ import httpx
 
 from . import telegram as tg
 from . import james_ask
+from . import voice_pipeline
 from .appflowy import AppFlowy
 from .proposals import SAFE_AUTO_APPLY
 
@@ -963,11 +964,12 @@ def _cmd_voice(arg: str) -> str:
         try:
             if _VOICE_DISABLE_LOCK.exists():
                 _VOICE_DISABLE_LOCK.unlink()
+            deps = voice_pipeline.dependency_status()
+            local_state = "ready" if deps.local_ready else "missing " + ", ".join(deps.missing())
             return ("🔊 <b>Voice replies: ON</b>\n"
                     f"Voice messages will be answered with voice + text.\n"
-                    f"Model: <code>{tg._esc(_TTS_MODEL)}</code> · "
-                    f"Voice: <code>{tg._esc(_TTS_VOICE)}</code> · "
-                    f"Format: <code>{tg._esc(_TTS_FORMAT)}</code>")
+                    f"Provider: <code>{tg._esc(os.environ.get('SH_TGBOT_VOICE_PROVIDER', 'local'))}</code> · "
+                    f"Local: <code>{tg._esc(local_state)}</code>")
         except Exception as e:
             return f"⚠️ Could not enable voice: {tg._esc(str(e))}"
     if arg in ("off", "disable", "disabled", "mute"):
@@ -990,12 +992,14 @@ def _cmd_voice(arg: str) -> str:
             why = " <i>(env EMBER_TGBOT_VOICE_DISABLE)</i>"
         elif _VOICE_DISABLE_LOCK.exists():
             why = f" <i>(lockfile {tg._esc(str(_VOICE_DISABLE_LOCK))})</i>"
+    deps = voice_pipeline.dependency_status()
+    local_state = "ready" if deps.local_ready else "missing " + ", ".join(deps.missing())
     return (
         f"🎙️ <b>Voice status:</b> {state}{why}\n"
-        f"Model: <code>{tg._esc(_TTS_MODEL)}</code> · "
-        f"Voice: <code>{tg._esc(_TTS_VOICE)}</code> · "
+        f"Provider: <code>{tg._esc(os.environ.get('SH_TGBOT_VOICE_PROVIDER', 'local'))}</code> · "
+        f"Local: <code>{tg._esc(local_state)}</code> · "
         f"Max chars: <code>{_TTS_MAX_CHARS}</code> · "
-        f"Format: <code>{tg._esc(_TTS_FORMAT)}</code>\n"
+        f"Fallback format: <code>{tg._esc(_TTS_FORMAT)}</code>\n"
         "Toggle: <code>/voice on</code> · <code>/voice off</code>\n"
         "<i>Voice replies fire only when the inbound message was voice.</i>"
     )
@@ -3908,14 +3912,13 @@ async def _linear_capture(transcript: str, from_name: str = "James") -> str | No
     return None
 
 
-async def _transcribe_voice(file_id: str) -> str | None:
-    """Telegram voice file_id → OpenAI Whisper transcript. None on failure."""
-    openai_key = os.environ.get("OPENAI_API_KEY")
-    if not openai_key or not tg.BOT_TOKEN:
-        log.warning("voice: OPENAI_API_KEY or TELEGRAM_BOT_TOKEN missing")
+async def _download_telegram_voice(file_id: str) -> bytes | None:
+    """Telegram voice file_id -> raw audio bytes."""
+    if not tg.BOT_TOKEN:
+        log.warning("voice: TELEGRAM_BOT_TOKEN missing")
         return None
     try:
-        async with httpx.AsyncClient(timeout=90) as client:
+        async with httpx.AsyncClient(timeout=45) as client:
             r = await client.get(
                 f"https://api.telegram.org/bot{tg.BOT_TOKEN}/getFile",
                 params={"file_id": file_id},
@@ -3926,7 +3929,32 @@ async def _transcribe_voice(file_id: str) -> str | None:
                 f"https://api.telegram.org/file/bot{tg.BOT_TOKEN}/{file_path}"
             )
             r.raise_for_status()
-            audio_bytes = r.content
+            return r.content
+    except Exception as e:
+        log.exception("voice download failed: %s", e)
+        return None
+
+
+async def _transcribe_voice(file_id: str) -> str | None:
+    """Telegram voice file_id -> transcript. Local faster-whisper first."""
+    audio_bytes = await _download_telegram_voice(file_id)
+    if not audio_bytes:
+        return None
+    if voice_pipeline.local_voice_enabled():
+        transcript = await voice_pipeline.transcribe(audio_bytes, suffix=".ogg")
+        if transcript:
+            return transcript
+        if voice_pipeline.local_voice_strict():
+            log.warning("voice: local STT failed and strict local mode is enabled")
+            return None
+
+    # Legacy fallback keeps the live bot useful while 162 installs local models.
+    openai_key = os.environ.get("OPENAI_API_KEY")
+    if not openai_key:
+        log.warning("voice: local STT unavailable and OPENAI_API_KEY missing")
+        return None
+    try:
+        async with httpx.AsyncClient(timeout=90) as client:
             r = await client.post(
                 "https://api.openai.com/v1/audio/transcriptions",
                 headers={"Authorization": f"Bearer {openai_key}"},
@@ -3952,8 +3980,8 @@ _VOICE_DISABLE_LOCK = Path(
         "/var/lib/sh-brain/voice_disable.lock",
     )
 )
-_TTS_MODEL = os.environ.get("SH_TGBOT_TTS_MODEL", "tts-1")  # tts-1 (fast/cheap) or tts-1-hd
-_TTS_VOICE = os.environ.get("SH_TGBOT_TTS_VOICE", "nova")    # alloy/echo/fable/onyx/nova/shimmer
+_TTS_MODEL = os.environ.get("SH_TGBOT_TTS_MODEL", "tts-1")  # legacy OpenAI fallback
+_TTS_VOICE = os.environ.get("SH_TGBOT_TTS_VOICE", "nova")    # legacy OpenAI fallback
 _TTS_MAX_CHARS = int(os.environ.get("SH_TGBOT_TTS_MAX_CHARS", "1200"))
 _TTS_FORMAT = os.environ.get("SH_TGBOT_TTS_FORMAT", "opus")  # opus = OGG/Opus, native TG voice
 _HTML_TAG_RE = re.compile(r"<[^>]+>")
@@ -4000,17 +4028,25 @@ def _strip_for_tts(html_text: str) -> str:
 
 
 async def _synthesize_tts(text: str) -> tuple[bytes, str, str] | None:
-    """text → audio bytes via OpenAI TTS. Returns (bytes, mime, ext) or None.
+    """text -> audio bytes. Local Kokoro first, OpenAI fallback if allowed.
 
     Format defaults to OGG/Opus so Telegram renders the native voice bubble.
     MP3 fallback is available for environments where Opus encoding is off.
     """
-    openai_key = os.environ.get("OPENAI_API_KEY")
-    if not openai_key:
-        log.warning("voice-out: OPENAI_API_KEY missing")
-        return None
     speak = _strip_for_tts(text)
     if not speak or len(speak) < 2:
+        return None
+    if voice_pipeline.local_voice_enabled():
+        synth = await voice_pipeline.synthesize(speak)
+        if synth:
+            return synth
+        if voice_pipeline.local_voice_strict():
+            log.warning("voice-out: local TTS failed and strict local mode is enabled")
+            return None
+
+    openai_key = os.environ.get("OPENAI_API_KEY")
+    if not openai_key:
+        log.warning("voice-out: local TTS unavailable and OPENAI_API_KEY missing")
         return None
     fmt = _TTS_FORMAT
     if fmt not in ("opus", "mp3", "aac", "flac", "wav", "pcm"):
