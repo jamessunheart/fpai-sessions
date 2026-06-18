@@ -95,6 +95,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - **Downstream intent unlocked:** d111 awareness reliability can measure bot answers against HOT_STATE as the current ground-truth surface.
 - **Questions for Ember/James:** after merge, install/enable the reviewed timers on the live host, run one manual `python3 -m tools.hot_memory.run_all && python3 -m tools.hot_memory.synthesize`, then point the bot at `~/.config/fpai/hot_memory/HOT_STATE.md` and confirm the d111 probe uses HOT_STATE as its comparison surface.
 
+### 2026-06-18 · SPEC_d100_fpos-frontier-node-public-contri · branch `build/SPEC_d100_fpos-frontier-node-public-contri`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `tools/forge/`; `core/STATE/FRONTIER_LOG.md`; `core/STATE/FRONTIER_LOG.public.md`; `core/STATE/UPSTREAM_CONTRIBUTIONS.md`; `benchmarks/`; `fpos-template/`; `core/BUILD/specs/SPEC_d100_fpos-frontier-node-public-contri.md`; `core/BUILD/results/SPEC_d100_fpos-frontier-node-public-contri.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the d100 public contribution layer as additive repo infrastructure. Forge now has dry-run-first helpers for security-gated public FRONTIER_LOG export, optional GitHub release publication only with `--execute` and `FRONTIER_PUBLISH_APPROVED=1`, upstream contribution tracking from `CONTRIBUTE:` lines with council-gated PR drafts, and public benchmark leaderboard generation with a >=3 data-point publication gate. Seeded sanitized frontier/upstream state docs, public benchmark docs/results, and a canonical non-personal `fpos-template/`.
+- **Tests:** `python3 -B -m unittest tools.forge.test_frontier_node tools.benchmarks.test_benchmarks` (13 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/forge/__init__.py tools/forge/security_gate.py tools/forge/publish_frontier_log.py tools/forge/track_upstream.py tools/forge/public_benchmarks.py tools/forge/test_frontier_node.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d100-registry.json`; `python3 -m tools.forge.publish_frontier_log --json`; `python3 -m tools.forge.public_benchmarks --json`; `python3 -m tools.forge.track_upstream --input core/STATE/FRONTIER_LOG.md --json`; `git diff --check`
+- **Risks:** The security gate is conservative and pattern-based, so human review is still required before public release. No live `gh release create`, upstream PR submission, template-repo creation, push, merge, deploy, outreach, secret access, or money movement was performed. The seeded leaderboard publishes no agents until the >=3 data-point gate is satisfied by the source ledger.
+- **Rollback:** revert the d100 files listed above. Since no live publication, external PR, service install, deploy, or push occurred, rollback is repo-only.
+- **Intent solved:** FPOS has a public-node contribution layer that turns frontier scans, benchmarks, template patterns, and upstream gaps into sanitized draft artifacts.
+- **Downstream intent unlocked:** Forge can run weekly public-node proofs, and James/Ember can explicitly choose when to publish a release, create the template repo, or submit upstream PRs from already sanitized drafts.
+- **Questions for Ember/James:** after merge, review `core/STATE/FRONTIER_LOG.public.md`; if approved, run `FRONTIER_PUBLISH_APPROVED=1 python3 -m tools.forge.publish_frontier_log --execute` from a host with `gh` auth. Separately choose whether/when to create the standalone public `fpos-template` repo and submit any upstream PR drafts.
+
 ### 2026-06-18 · SPEC_d111_awareness-reliability-metric-con · branch `build/SPEC_d111_awareness-reliability-metric-con`
 
 - **Status:** done in working tree / awaiting merge review
