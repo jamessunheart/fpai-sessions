@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-18T21:58:30Z",
+    "updated_at": "2026-06-18T22:11:52Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_4ed5e6f8-d5d4-4908-ac26-55e51348cd25_fix-decision-agent-debate-py-bot",
+            "slug": "SPEC_4ed5e6f8-d5d4-4908-ac26-55e51348cd25_fix-decision-agent-debate-py-bot",
+            "branch": "build/SPEC_4ed5e6f8-d5d4-4908-ac26-55e51348cd25_fix-decision-agent-debate-py-bot",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_4ed5e6f8-d5d4-4908-ac26-55e51348cd25_fix-decision-agent-debate-py-bot.md",
+            "tests_passed": true,
+            "notes": "Complete in working tree: hardened tools/council/debate.py voice execution so Claude JSON failures, Codex/GPT second-lab failures, and GLM/Pragmatist failures are explicit and ops-ledger visible. Added tests for wrapped JSON parsing, CLI non-zero error reporting, and auxiliary voice error isolation. Focused council tests, py_compile, registry JSON validation, and diff hygiene passed. No live council run, deploy, push, merge, outreach, secrets, or money movement."
+        },
         {
             "id": "SPEC_d117_post-merge-liveness-probe-auto-d",
             "slug": "SPEC_d117_post-merge-liveness-probe-auto-d",

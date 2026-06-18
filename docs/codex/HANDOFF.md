@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-18 · SPEC_4ed5e6f8-d5d4-4908-ac26-55e51348cd25_fix-decision-agent-debate-py-bot · branch `build/SPEC_4ed5e6f8-d5d4-4908-ac26-55e51348cd25_fix-decision-agent-debate-py-bot`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `tools/council/debate.py`; `tools/council/test_debate.py`; `core/BUILD/specs/SPEC_4ed5e6f8-d5d4-4908-ac26-55e51348cd25_fix-decision-agent-debate-py-bot.md`; `core/BUILD/results/SPEC_4ed5e6f8-d5d4-4908-ac26-55e51348cd25_fix-decision-agent-debate-py-bot.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Hardened the council decision-agent voice wrappers. Claude JSON execution now resolves the CLI from `PATH`/`CLAUDE_BIN`, checks non-zero exits, reports stderr/stdout, and parses wrapped JSON. Codex/GPT second-lab voice now resolves `codex` from `PATH`/`CODEX_BIN`, checks non-zero exits, logs `gpt_voice_error`, and stays best-effort. GLM/Pragmatist failures now log `pragmatist_voice_error` instead of disappearing silently.
+- **Tests:** `python3 -B -m unittest tools.council.test_debate`; `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/council/debate.py tools/council/test_debate.py`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `git diff --check`
+- **Risks:** No live council run was executed because it depends on live Claude/Codex auth, server env, and the decisions database. Malformed Claude JSON still stops the debate round, but now logs a concrete `debate_error`.
+- **Rollback:** revert the listed files. Runtime bypass remains `touch ~/.config/fpai/council/.disabled`.
+- **Intent solved:** decision-agent council runs no longer lose both voices silently or fail without actionable CLI/error detail.
+- **Downstream intent unlocked:** the autonomous loop can route the next repair from ops-ledger evidence instead of repeatedly retrying an opaque broken council run.
+- **Questions for Ember/James:** after merge on server 162, let one normal council cycle run and confirm any unavailable auxiliary voice writes `gpt_voice_error` or `pragmatist_voice_error`, while an unavailable main Claude call writes `debate_error` with the actual CLI/JSON failure.
+
 ### 2026-06-18 · SPEC_d117_post-merge-liveness-probe-auto-d · branch `build/SPEC_d117_post-merge-liveness-probe-auto-d`
 
 - **Status:** done in working tree / awaiting merge review

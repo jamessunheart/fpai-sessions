@@ -1,4 +1,5 @@
 import unittest
+import subprocess
 import tempfile
 from pathlib import Path
 from unittest import mock
@@ -36,6 +37,58 @@ class CouncilDebateTest(unittest.TestCase):
 
         self.assertIn("SOVEREIGN PRAGMATIST LENS", prompt)
         self.assertIn("Use RunPod GLM.", prompt)
+
+    def test_run_claude_json_parses_wrapped_json(self):
+        def runner(args, **kwargs):
+            self.assertEqual(args[0], "/usr/bin/claude")
+            return subprocess.CompletedProcess(
+                args,
+                0,
+                'thinking...\n{"propose": false, "title": "No build"}\n',
+                "",
+            )
+
+        with mock.patch.object(debate.shutil, "which", return_value="/usr/bin/claude"):
+            payload, result = debate.run_claude_json("prompt", runner=runner)
+
+        self.assertFalse(payload["propose"])
+        self.assertEqual(result.returncode, 0)
+
+    def test_run_claude_json_reports_cli_failure(self):
+        def runner(args, **kwargs):
+            return subprocess.CompletedProcess(args, 1, "", "auth failed")
+
+        with mock.patch.object(debate.shutil, "which", return_value="/usr/bin/claude"):
+            with self.assertRaisesRegex(RuntimeError, "auth failed"):
+                debate.run_claude_json("prompt", runner=runner)
+
+    def test_gpt_voice_logs_and_skips_cli_failure(self):
+        ops = []
+
+        def runner(args, **kwargs):
+            self.assertEqual(args[0], "/usr/bin/codex")
+            return subprocess.CompletedProcess(args, 2, "", "codex auth missing")
+
+        with mock.patch.object(debate.shutil, "which", return_value="/usr/bin/codex"):
+            with mock.patch.object(debate, "_ops", lambda event, detail, nxt="": ops.append((event, detail))):
+                voice = debate.gpt_voice("queue", runner=runner)
+
+        self.assertEqual(voice, "")
+        self.assertEqual(ops[0][0], "gpt_voice_error")
+        self.assertIn("codex auth missing", ops[0][1])
+
+    def test_pragmatist_voice_logs_and_skips_glm_failure(self):
+        ops = []
+
+        def failing_glm(*_args, **_kwargs):
+            raise RuntimeError("glm unavailable")
+
+        with mock.patch.object(debate, "_ops", lambda event, detail, nxt="": ops.append((event, detail))):
+            voice = debate.pragmatist_voice("queue", glm_caller=failing_glm)
+
+        self.assertEqual(voice, "")
+        self.assertEqual(ops[0][0], "pragmatist_voice_error")
+        self.assertIn("glm unavailable", ops[0][1])
 
     def test_build_prompt_includes_platform_critic_lens(self):
         with mock.patch.dict("os.environ", {}, clear=False):

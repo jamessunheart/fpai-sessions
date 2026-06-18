@@ -12,7 +12,7 @@ Honest: only Claude is available now → lenses are personas of one model (Sonne
 OPENAI_API_KEY / GEMINI_API_KEY to make them truly separate voices.
   Kill: touch ~/.config/fpai/council/.disabled
 """
-import os, sys, json, ssl, hashlib, subprocess, urllib.request
+import os, sys, json, ssl, hashlib, shutil, subprocess, urllib.request
 from pathlib import Path
 HOME = os.path.expanduser("~")
 HOST = os.environ.get("BRAIN_HOST", "root@162.0.208.88")
@@ -20,7 +20,8 @@ HOST = os.environ.get("BRAIN_HOST", "root@162.0.208.88")
 # (server-side, laptop-free). On the laptop, curator is reached over SSH + repo is ~/FPAI_Cockpit.
 SERVER_MODE = os.path.isdir("/opt/sh-brain-src/curator")
 REPO = "/opt/fpai-build/FPAI_Cockpit" if SERVER_MODE else HOME + "/FPAI_Cockpit"
-CLAUDE = os.path.expanduser("~/.local/bin/claude")
+CLAUDE = os.environ.get("CLAUDE_BIN", os.path.expanduser("~/.local/bin/claude"))
+CODEX = os.environ.get("CODEX_BIN", os.path.expanduser("~/.local/bin/codex"))
 CFG = HOME + "/.config/fpai/council"; os.makedirs(CFG, exist_ok=True)
 DAILY_CAP = float(os.environ.get("COUNCIL_DAILY_USD", "3.0"))
 ENV = ('ENVFILE=$(systemctl show sh-brain-tgbot -p EnvironmentFiles 2>/dev/null | '
@@ -93,23 +94,46 @@ def _ops(event, detail, nxt=""):
         pass
 
 
-def gpt_voice(intents):
+def _resolve_cli(name, configured_path):
+    return shutil.which(name) or configured_path
+
+
+def _json_object_from_text(text):
+    start = text.find("{")
+    end = text.rfind("}")
+    if start < 0 or end < start:
+        raise ValueError("response did not contain a JSON object")
+    return json.loads(text[start : end + 1])
+
+
+def _completed_process_error(label, result):
+    stderr = (result.stderr or "").strip()
+    stdout = (result.stdout or "").strip()
+    detail = stderr or stdout or f"{label} exited {result.returncode}"
+    return RuntimeError(detail[:1000])
+
+
+def gpt_voice(intents, runner=None):
     """A TRUE second-lab voice via the codex CLI (ChatGPT Max, $0 marginal). Best-effort —
     if codex is slow/unavailable, the debate proceeds Claude-only."""
     try:
-        CODEX = os.path.expanduser("~/.local/bin/codex")
+        codex = _resolve_cli("codex", CODEX)
         q = ("In 1-2 sentences only, no code and no file changes: given these intents + queue, what is the "
              "single highest-leverage thing this autonomous build system should build NEXT, and why? "
              "Be concrete and conservative.\n\n" + intents[:2500])
-        r = subprocess.run([CODEX, "exec", "--cd", REPO, "--sandbox", "read-only",
-                            "--skip-git-repo-check", "-"], input=q, capture_output=True, text=True, timeout=150)
+        run = runner or subprocess.run
+        r = run([codex, "exec", "--cd", REPO, "--sandbox", "read-only",
+                 "--skip-git-repo-check", "-"], input=q, capture_output=True, text=True, timeout=150)
+        if r.returncode != 0:
+            raise _completed_process_error("codex", r)
         out = [l.strip() for l in r.stdout.splitlines() if l.strip()]
         def noise(l):
             return (l.startswith("hook:") or l.lower() == "tokens used" or l.replace(",", "").isdigit()
                     or l.startswith("EXIT=") or l.startswith("warning:") or l.startswith("[") or l.startswith("codex"))
         clean = [l for l in out if not noise(l)]
         return clean[-1][:280] if clean else ""
-    except Exception:
+    except Exception as exc:
+        _ops("gpt_voice_error", str(exc)[:200])
         return ""
 
 def _platform_bias_context():
@@ -190,7 +214,8 @@ def pragmatist_voice(signal, glm_caller=None):
     ]
     try:
         return glm_caller(messages, max_tokens=180, temperature=0.2).strip()[:600]
-    except Exception:
+    except Exception as exc:
+        _ops("pragmatist_voice_error", str(exc)[:200])
         return ""
 
 
@@ -276,11 +301,14 @@ def build_prompt(queue, chats, focus, pragmatist=""):
     return prompt
 
 
-def run_claude_json(prompt):
-    import subprocess as _sp
-    r = _sp.run([CLAUDE, "-p", "--effort", "xhigh", prompt], stdin=_sp.DEVNULL, capture_output=True, text=True, timeout=300)
+def run_claude_json(prompt, runner=None):
+    claude = _resolve_cli("claude", CLAUDE)
+    run = runner or subprocess.run
+    r = run([claude, "-p", "--effort", "xhigh", prompt], stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=300)
+    if r.returncode != 0:
+        raise _completed_process_error("claude", r)
     txt = r.stdout.strip()
-    return json.loads(txt[txt.find("{"):txt.rfind("}")+1]), r
+    return _json_object_from_text(txt), r
 
 
 def main():
@@ -319,6 +347,7 @@ def main():
         d, r = run_claude_json(prompt)
         # claude -p = Claude Max flat-rate -> $0 marginal real spend (no metered API call)
     except Exception as e:
+        _ops("debate_error", str(e)[:200])
         print("debate error:", e, "| raw:", (r.stdout[:200] if "r" in dir() else "")); return 1
     if consciousness_loop and os.environ.get("CONSCIOUSNESS_LOOP_DISABLE") != "1":
         try:
