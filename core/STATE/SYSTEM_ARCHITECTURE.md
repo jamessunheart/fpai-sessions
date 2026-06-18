@@ -1,6 +1,6 @@
 # Full Potential OS (FPOS / "Ember") — System Architecture
 
-**Canonical system self-description. Last updated: 2026-06-15 (auto-merge + open-model learning genesis).** Read by humans, by
+**Canonical system self-description. Last updated: 2026-06-18 (consciousness stack + hot memory + command center reframe).** Read by humans, by
 Ember at boot (linked from the boot capsule), and mirrored into the bot's self-knowledge so the chat
 system knows itself. Pairs with `AI_CHARTER.md` (operating canon), `docs/codex/INTENT_BUILDSTREAM.md`
 (the buildstream), memory `[[reference-laptop-free-build-runner]]` · `[[reference-fpos-product-economics]]`.
@@ -31,7 +31,7 @@ Public-acquisition chain: **Beacon attracts → Spark understands → Ember reme
 | 7 | 🛡 **LEDGER** | proof — what happened, did it work | 🟢 live | ops truth ledger + receipts |
 | 8 | ∞ **LOOP** | evolution — learn + improve | 🟡 building | self-evolution ladder (judge d010) · **corrections capture LIVE** in the bot (`brain_index.corrections`, genesis 2026-06-15) = the open model's first real training signal · `[[reference-open-model-learning-genesis]]` |
 
-**Build state (v2.0 "Honest Map" self-assessment):** ~**40% LIVE** (the OS spine — One Chat · Ember · Forge · Council · Ledger · server 162) · ~**35% PARTIAL** (Spark *shadow, not yet live-routing* · Hermes single-channel · Council scale · Steward treasury · Loop learning) · ~**25% PLANNED** (Beacon · CORA · Fi-Art · Camp Zen full · Prosperity). Beacon is both the cold *entry* (top of chain) AND where the loop re-attracts (Loop improves → Beacon draws more) — the cycle closes. The honesty of this map — naming what is NOT built — is itself a feature.
+**Build state (v2.1 "Honest Map" — 2026-06-18):** ~**45% LIVE** (the OS spine — One Chat · Ember · Forge · Council · Ledger · server 162) · ~**35% PARTIAL** (Spark *shadow, not yet live-routing* · Hermes single-channel · Council scale · Steward treasury · Loop learning) · ~**25% PLANNED** (Beacon · CORA · Fi-Art · Camp Zen full · Prosperity). Beacon is both the cold *entry* (top of chain) AND where the loop re-attracts (Loop improves → Beacon draws more) — the cycle closes. The honesty of this map — naming what is NOT built — is itself a feature.
 
 ## 1. The Human
 **James** — vision + decisions + approvals. Required actions only: answer decisions, **veto/reverse**,
@@ -198,3 +198,54 @@ d073 per-agent-benchmark baseline · d074 human-coach matching · d076 network-e
 (multi-currency ledger) · d079 WhatsApp adapter (Hermes multi-channel). Productization hard truth still
 holds: subscription = single-tenant; tenants run on metered API + model-tiering; the self-modifying build
 loop stays operator-only; trust-boundary isolation is the #1 risk (see `[[reference-fpos-product-economics]]`).
+
+## 13. Consciousness Stack (built 2026-06-18 — d101–d109, merged, activation pending)
+Nine modules that move the system from "builds things" toward "knows itself":
+- **d101** Consciousness observer loop — runs after each session, writes observations to MODEL_DNA + 4th council lens (Awareness: "improving toward meaning or approval?")
+- **d102** Self-portrait / know thyself — synthesizes stated vs. observed self from corrections + ops_ledger + decisions + thread. Gap + trajectory named weekly.
+- **d103** Coherence optimizer — reads identity stack + NOW + spec queue + council outputs. Asks: does the whole system speak with one voice? Weekly score + incoherence points routed to council.
+- **d104** Attention engine — relevance-triggered surfacing via pgvector. Replaces scheduled checks: coherence check fires when conflict detected, not weekly.
+- **d105** Bandwidth ledger — measures recovered capacity. T1 escalation rate week-over-week = fundable proof of efficiency gains.
+- **d106** Prompt efficiency loop — GEPA variants, test compression, adopt winner if quality ≥ baseline.
+- **d107** GEPA library wire — real MIT library (ICLR 2026 Oral, arXiv 2507.19457). Reflection = claude -p ($0), evals = Ollama ($0). 35× fewer rollouts than MIPROv2.
+- **d108** Qwen3-30B-A3B benchmark — 30B quality at ~3B compute. Fits server 162 CPU-only (~18-19GB Q4). Free T1 quality lift if RAM check passes.
+- **d109** Platform Bias Registry — 5th council lens (Platform Critic). Calibration: "If Anthropic/OpenAI didn't exist, what would sovereign-first answer be?" Living document, council extends each cycle.
+
+**Status:** All merged 2026-06-18. Activation pending — d116 (retroactive liveness audit) will surface exact activation state.
+
+## 14. Hot Memory + Awareness (built + activated 2026-06-18)
+**Problem solved:** Claude Code sessions make decisions that were invisible to the Telegram bot. Bot awareness score was ~5% (0/8 correct on live probe). Now:
+- **HOT_STATE.md** — 5 domain scanners (spec · identity · ops · decision · signal) each compress their domain → synthesis agent produces one ~3000-char cited document every 30 min. Bot reads it on every chat if <30 min fresh.
+- **brain_index.session_insights** — at SETTLE, every Claude Code session writes significant decisions here. Bot reads this layer.
+- **Awareness probe** — runs every 2h + after every write. Alerts <95% to TG within 5 min.
+- **Score trajectory:** ~5% → PASS on probe (2026-06-18 17:12) → 95%+ within 24h as history accumulates.
+
+## 15. FPOS as Command Center (reframe — GPT + James, 2026-06-18)
+FPOS is not "another build." It is the place where every signal lands, gets named, and becomes a decision, a routed task, or a discarded distraction.
+
+**James's 7 live streams:**
+1. Body / health / energy
+2. Travel / Egypt
+3. Cheyenne offer / client revenue
+4. Treasury / crypto / risk ← **most chaotic now** (snapshot dead since May 18, Firefly III unwired)
+5. FPOS / Ember / build system ← only stream currently flowing into the OS
+6. Relationships / logistics
+7. Vision / downloads / future architecture
+
+**The 5-part morning answer FPOS should give:**
+```
+STATE      James energy/clarity/NS-capacity today (1-10)
+DECISIONS  what waits on James only (life + build)
+ROUTES     what Ember/Codex/Cheyenne/contractor handles
+PROOF      what actually moved (sent · booked · closed · shipped · restored)
+NEXT MOVE  one clean action given current state
+```
+
+**Gap:** Only stream 5 flows into the OS today. Streams 1–4, 6–7 have no inbox. Financial SSOT is the first priority to wire (treasury snapshot + Firefly III as burn ledger + 5-line daily digest block).
+
+## 16. Merged ≠ Live (the defining gap — 2026-06-18)
+The build machine produces faster than the activation layer runs. ~114 decisions seeded; ~92 merged; unknown how many actually running. Four closes in progress:
+- **d113** — auto-seeds orphaned SPEC files (specs visible to build loop automatically)
+- **d114** — revision agent (flagged builds fix themselves, max 2 attempts)
+- **d115** — post-merge liveness probe (every merge checked against expected artifact)
+- **d116** — retroactive audit of d001–d092 → surfaces dead builds → queues activation specs automatically
