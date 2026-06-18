@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
         {
+            "id": "SPEC_d096_forge-frontier-scan-cadence-secu",
+            "slug": "SPEC_d096_forge-frontier-scan-cadence-secu",
+            "branch": "build/SPEC_d096_forge-frontier-scan-cadence-secu",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d096_forge-frontier-scan-cadence-secu.md",
+            "tests_passed": true,
+            "notes": "d096 complete in working tree: added opt-in Forge daily/weekly frontier scan commands, shared public-only parser/rendering helpers, security-gated FRONTIER_LOG and weekly report writes, Telegram notification only for public-safe threshold findings, reviewed Athens-time systemd timer artifacts, and an idempotent post-merge activation script. Focused unittest, py_compile, activation shell syntax, registry JSON, disabled-mode smoke checks, systemd calendar validation, and diff hygiene passed. No live external scan, Telegram send, service install, deploy, push, merge, secret access, outreach, or money movement."
+        },
+        {
             "id": "SPEC_d095_adopt-gepa-dittofeed-vllm-router",
             "slug": "SPEC_d095_adopt-gepa-dittofeed-vllm-router",
             "branch": "build/SPEC_d095_adopt-gepa-dittofeed-vllm-router",

@@ -1,0 +1,10 @@
+[Unit]
+Description=Run FPAI Forge weekly frontier scan on Monday at 06:00 Athens
+
+[Timer]
+OnCalendar=Mon *-*-* 06:00:00 Europe/Athens
+Persistent=true
+Unit=fpai-forge-weekly.service
+
+[Install]
+WantedBy=timers.target

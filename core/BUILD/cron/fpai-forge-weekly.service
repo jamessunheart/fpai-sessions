@@ -1,0 +1,11 @@
+[Unit]
+Description=FPAI Forge weekly frontier scan
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+Environment=FPAI_SURFACE=auto-loop
+Environment=FORGE_SCAN_ENABLED=1
+WorkingDirectory=/opt/fpai-build/FPAI_Cockpit
+ExecStart=/usr/bin/env python3 -m tools.forge.weekly_scan --json

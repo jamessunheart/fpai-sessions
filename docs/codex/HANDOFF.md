@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-18 · SPEC_d096_forge-frontier-scan-cadence-secu · branch `build/SPEC_d096_forge-frontier-scan-cadence-secu`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `tools/forge/frontier_scan.py`; `tools/forge/daily_scan.py`; `tools/forge/weekly_scan.py`; `tools/forge/test_frontier_scan.py`; `core/BUILD/cron/fpai-forge-daily.service`; `core/BUILD/cron/fpai-forge-daily.timer`; `core/BUILD/cron/fpai-forge-weekly.service`; `core/BUILD/cron/fpai-forge-weekly.timer`; `core/BUILD/activate/SPEC_d096_forge-frontier-scan-cadence-secu.sh`; `core/BUILD/specs/SPEC_d096_forge-frontier-scan-cadence-secu.md`; `core/BUILD/results/SPEC_d096_forge-frontier-scan-cadence-secu.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added opt-in daily and weekly Forge frontier scan commands. Both use public-only prompts, `claude -p` by default, 3-minute/20-minute timeouts, structured finding parsing, existing Forge security-gate checks before writing, and Telegram notification only for public-safe threshold findings. Added reviewed systemd timer/service artifacts for 07:00 Athens daily and Monday 06:00 Athens weekly scans, plus an idempotent post-merge activation script. Scans remain disabled unless `FORGE_SCAN_ENABLED=1`.
+- **Tests:** `python3 -B -m unittest tools.forge.test_frontier_scan tools.forge.test_frontier_node` (16 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile ...`; `bash -n core/BUILD/activate/SPEC_d096_forge-frontier-scan-cadence-secu.sh`; registry JSON validation; disabled-mode smoke checks for daily/weekly scan CLIs; `systemd-analyze calendar '*-*-* 07:00:00 Europe/Athens' 'Mon *-*-* 06:00:00 Europe/Athens'`; `git diff --check`
+- **Commit:** attempted local `git add -A && git commit`; blocked because Git could not create `/opt/fpai-build/FPAI_Cockpit/.git/worktrees/SPEC_d096_forge-frontier-scan-cadence-secu/index.lock` on the read-only shared Git metadata.
+- **Risks:** This proves repo-side scan behavior, parser/write/security gates, disabled-mode safety, and timer cadence only. It does not prove seven live daily scans or a live weekly scan because no external Claude/WebSearch scan, Telegram send, service install, deploy, push, merge, secret access, outreach, or money movement occurred.
+- **Rollback:** revert the listed d096 files. If activation later runs, disable/remove `fpai-forge-daily.timer`, `fpai-forge-daily.service`, `fpai-forge-weekly.timer`, and `fpai-forge-weekly.service`, then run `systemctl daemon-reload`.
+- **Intent solved:** Forge frontier scans now have a scheduled, opt-in cadence and a permanent public/private write gate instead of ad hoc manual scanning.
+- **Downstream intent unlocked:** Ember can enable the reviewed timers on the live host, observe seven daily scan rows plus one weekly report, and promote only public-safe ADOPT/WATCH findings into future specs.
+- **Questions for Ember/James:** after merge, decide whether to let the activation script install the timers immediately. Live proof target is seven consecutive daily scans with no private-data warnings plus one weekly report containing at least one ADOPT or WATCH item.
+
 ### 2026-06-18 · SPEC_d095_adopt-gepa-dittofeed-vllm-router · branch `build/SPEC_d095_adopt-gepa-dittofeed-vllm-router`
 
 - **Status:** done in working tree / awaiting merge review
