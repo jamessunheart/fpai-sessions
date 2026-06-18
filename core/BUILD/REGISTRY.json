@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-18T20:15:00Z",
+    "updated_at": "2026-06-18T21:25:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d105_bandwidth-ledger-measures-recove",
+            "slug": "SPEC_d105_bandwidth-ledger-measures-recove",
+            "branch": "build/SPEC_d105_bandwidth-ledger-measures-recove",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d105_bandwidth-ledger-measures-recove.md",
+            "tests_passed": true,
+            "notes": "d105 complete in working tree: added a private bandwidth ledger with best-effort routing decision logging, optional explicit brain_index.routing_log DB writes, repo JSONL fallback, weekly T1 completion/recovered-capacity report generation, router instrumentation, digest surfacing from the generated state file, schema artifact, and reviewed weekly timer artifacts. Generated initial BANDWIDTH_LEDGER report with NO_DATA status because no live routing ledger rows exist yet. Focused bandwidth/router tests, py_compile, timer syntax, report smoke, registry/signal JSON validation, and diff hygiene passed. No live DB migration, timer install, digest send, deploy, push, merge, outreach, secrets, or money movement."
+        },
         {
             "id": "SPEC_d104_attention-engine-relevance-trigg",
             "slug": "SPEC_d104_attention-engine-relevance-trigg",

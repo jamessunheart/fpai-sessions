@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-18 · SPEC_d105_bandwidth-ledger-measures-recove · branch `build/SPEC_d105_bandwidth-ledger-measures-recove`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `tools/bandwidth/`; `tools/router/route.py`; `SERVICES/sunheart-brain/curator/jobs/digest.py`; `core/STATE/BANDWIDTH_LEDGER.md`; `core/BUILD/signals/bandwidth_ledger.json`; `core/BUILD/signals/bandwidth_ledger.md`; `core/BUILD/cron/fpai-bandwidth-ledger.service`; `core/BUILD/cron/fpai-bandwidth-ledger.timer`; `core/BUILD/specs/SPEC_d105_bandwidth-ledger-measures-recove.md`; `core/BUILD/results/SPEC_d105_bandwidth-ledger-measures-recove.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a private bandwidth ledger for recovered capacity and week-over-week T1 routing completion rate. Routing decisions now log best-effort from `tools/router/route.py` into a repo JSONL fallback, with optional explicit `brain_index.routing_log` writes only when `BANDWIDTH_LEDGER_DB_WRITE=1` plus a DSN are configured. Weekly report generation writes JSON/Markdown/state artifacts, estimates recovered T3-equivalent decisions/minutes, and names current leak task types. Digest can surface the generated state file when present. The first generated report is `NO_DATA` because no live routing ledger history exists on this branch; no trend was fabricated.
+- **Tests:** `python3 -B -m unittest tools.bandwidth.test_routing_log tools.bandwidth.test_weekly_report` (6 OK); `python3 -B -m unittest tools.router.test_route` (10 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile ...`; `bash -n core/BUILD/cron/fpai-bandwidth-ledger.service core/BUILD/cron/fpai-bandwidth-ledger.timer`; `python3 -m tools.bandwidth.weekly_report`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `python3 -m json.tool core/BUILD/signals/bandwidth_ledger.json`; `git diff --check`
+- **Risks:** Live `brain_index.routing_log` migration was not applied; `tools/bandwidth/schema.sql` is a reviewed artifact. First report remains `NO_DATA` until real routing rows accumulate. The recovered-capacity estimate defaults to 20 minutes per T1-completed routing decision and should be recalibrated when real operator-time evidence exists. Timer/digest live activation was not installed or sent.
+- **Rollback:** revert the listed d105 files. If installed later, disable/remove `fpai-bandwidth-ledger.timer` and `fpai-bandwidth-ledger.service`. If schema is applied live and full rollback is needed, export wanted rows first and drop `brain_index.routing_log`.
+- **Intent solved:** routing bandwidth now has a deterministic private measurement spine instead of relying on intuition about whether work is graduating to T1.
+- **Downstream intent unlocked:** after merge and activation, the build loop can compare week-over-week T1 completion rate and recovered T3-equivalent capacity before deciding which repeated task classes should graduate to cheap local routing next.
+- **Questions for Ember/James:** after merge, apply `tools/bandwidth/schema.sql` to `brain_index`, optionally enable `fpai-bandwidth-ledger.timer`, and let one week of router rows accumulate before judging improvement.
+
 ### 2026-06-18 · SPEC_d104_attention-engine-relevance-trigg · branch `build/SPEC_d104_attention-engine-relevance-trigg`
 
 - **Status:** done in working tree / awaiting merge review

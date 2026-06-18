@@ -73,6 +73,29 @@ def consciousness_observer_lines() -> list[str]:
     return [line for line in str(section or "").splitlines() if line.strip()]
 
 
+def bandwidth_ledger_lines() -> list[str]:
+    repo = Path(os.environ.get("FPAI_CODEX_REPO", "/opt/fpai-build/FPAI_Cockpit"))
+    report_path = repo / "core" / "STATE" / "BANDWIDTH_LEDGER.md"
+    if not report_path.exists():
+        return []
+    try:
+        text = report_path.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return []
+    useful: list[str] = []
+    capture = False
+    for raw in text.splitlines():
+        line = raw.strip()
+        if line == "## Recovered This Week":
+            capture = True
+            continue
+        if capture and line.startswith("## "):
+            break
+        if capture and line.startswith("- "):
+            useful.append(line)
+    return useful[:4]
+
+
 async def run(run_id: str) -> dict[str, Any]:
     async with connect() as conn:
         async with conn.cursor() as cur:
@@ -162,6 +185,9 @@ async def run(run_id: str) -> dict[str, Any]:
     consciousness_lines = consciousness_observer_lines()
     if consciousness_lines:
         report["last_24h"]["consciousness_observer"] = consciousness_lines
+    bandwidth_lines = bandwidth_ledger_lines()
+    if bandwidth_lines:
+        report["last_24h"]["bandwidth_ledger"] = bandwidth_lines
 
     summary = (
         f"+{sum(by_sens.values())} chunks · "
@@ -173,6 +199,8 @@ async def run(run_id: str) -> dict[str, Any]:
         proposal_text += "\n\n⚡ Scanner flagged:\n" + "\n".join(f"- {line}" for line in scanner_flags)
     if consciousness_lines:
         proposal_text += "\n\n" + "\n".join(consciousness_lines)
+    if bandwidth_lines:
+        proposal_text += "\n\nBandwidth Ledger\n" + "\n".join(bandwidth_lines)
     if probe_report.get("available"):
         quality = "n/a" if probe_report.get("avg_quality") is None else f"{probe_report['avg_quality']:.1f}"
         proposal_text += (

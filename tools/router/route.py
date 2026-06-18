@@ -313,6 +313,36 @@ def conscious_routing_fields(intent: Intent, action: str, detail: str) -> dict[s
     }
 
 
+def _log_bandwidth(repo: Path, intent: Intent, action: str, *, dry_run: bool) -> str:
+    try:
+        from tools.bandwidth.routing_log import log_routing_decision
+    except Exception as exc:
+        return f"bandwidth ledger unavailable: {type(exc).__name__}: {exc}"
+    if action in {"draft-spec", "route-build"}:
+        tier_used = "T1"
+        outcome = "completed"
+    elif action in {"escalate", "request-bless"}:
+        tier_used = "T3"
+        outcome = "escalated"
+    else:
+        tier_used = "T1"
+        outcome = "no_op"
+    if dry_run:
+        return f"bandwidth ledger would log {tier_used}/{outcome}"
+    result = log_routing_decision(
+        task_type=intent.ident,
+        tier_used=tier_used,
+        tier_intended="T1",
+        outcome=outcome,
+        source="tools.router.route",
+        metadata={"route": intent.route or "unset", "action": action, "status": intent.status},
+        ledger_path=repo / "core" / "BUILD" / "signals" / "routing_log.jsonl",
+    )
+    if result.get("logged"):
+        return f"bandwidth ledger logged {tier_used}/{outcome}"
+    return f"bandwidth ledger skipped: {result.get('reason', 'unknown')}"
+
+
 def handoff_entry(intent: Intent, action: str, detail: str) -> str:
     stamp = dt.datetime.now().astimezone().strftime("%Y-%m-%d %H:%M %Z")
     route_lane = intent.route or "unset"
@@ -381,6 +411,7 @@ def route_once(
     if chosen.gated:
         detail = f"James/Ember gate required because {chosen.gate_reason}"
         action = "escalate"
+        skipped.append(_log_bandwidth(repo, chosen, action, dry_run=dry_run))
         if append:
             wrote.append(append_handoff(repo, handoff_entry(chosen, action, detail), dry_run))
         return RouteResult(chosen, action, None, detail, wrote, skipped)
@@ -394,6 +425,7 @@ def route_once(
             detail = f"intent `{chosen.ident}` is ready, routed to `{route_lane}`; needs that builder"
         else:
             detail = f"intent `{chosen.ident}` is ready but route is `{route_lane}`; add `route:auto` to allow unattended action"
+        skipped.append(_log_bandwidth(repo, chosen, action, dry_run=dry_run))
         if append:
             wrote.append(append_handoff(repo, handoff_entry(chosen, action, detail), dry_run))
         return RouteResult(chosen, action, None, detail, wrote, skipped)
@@ -409,6 +441,7 @@ def route_once(
             skipped.append(f"cost guard: {run_cost_guard(skip_cost_guard)}")
             path.write_text(build_spec_draft(chosen, slug), encoding="utf-8")
             wrote.append(f"wrote {path}")
+        skipped.append(_log_bandwidth(repo, chosen, action, dry_run=dry_run))
         if append:
             wrote.append(append_handoff(repo, handoff_entry(chosen, action, detail), dry_run))
         return RouteResult(chosen, action, path, detail, wrote, skipped)
@@ -416,12 +449,14 @@ def route_once(
     if not spec_is_blessed(path):
         action = "request-bless"
         detail = f"spec exists but is not blessed: {path.relative_to(repo)}"
+        skipped.append(_log_bandwidth(repo, chosen, action, dry_run=dry_run))
         if append:
             wrote.append(append_handoff(repo, handoff_entry(chosen, action, detail), dry_run))
         return RouteResult(chosen, action, path, detail, wrote, skipped)
 
     action = "route-build"
     detail = f"spec is blessed; Codex should build on the branch named in {path.relative_to(repo)}"
+    skipped.append(_log_bandwidth(repo, chosen, action, dry_run=dry_run))
     if append:
         wrote.append(append_handoff(repo, handoff_entry(chosen, action, detail), dry_run))
     return RouteResult(chosen, action, path, detail, wrote, skipped)

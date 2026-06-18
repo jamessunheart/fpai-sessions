@@ -1,0 +1,11 @@
+[Unit]
+Description=FPAI weekly bandwidth ledger
+Documentation=file:/opt/fpai-build/FPAI_Cockpit/core/STATE/BANDWIDTH_LEDGER.md
+
+[Service]
+Type=oneshot
+Environment=FPAI_SURFACE=auto-loop
+Environment=FPAI_REPO_ROOT=/opt/fpai-build/FPAI_Cockpit
+WorkingDirectory=/opt/fpai-build/FPAI_Cockpit
+ExecStart=/usr/bin/env python3 /opt/fpai-build/FPAI_Cockpit/tools/bandwidth/weekly_report.py
+

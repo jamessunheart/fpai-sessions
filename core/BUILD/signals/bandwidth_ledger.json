@@ -1,0 +1,17 @@
+{
+  "current_t1_rate_pct": 0.0,
+  "current_week": "2026-W25",
+  "generated_at": "2026-06-18T19:46:52Z",
+  "leak_task_types": [],
+  "previous_t1_rate_pct": null,
+  "previous_week": null,
+  "recommendations": [
+    "Start logging routing decisions through tools.bandwidth.routing_log before judging the trend."
+  ],
+  "recovered_decisions": 0,
+  "recovered_minutes": 0,
+  "schema": "bandwidth-ledger.v1",
+  "status": "NO_DATA",
+  "t1_rate_delta_pct": null,
+  "weekly": []
+}
