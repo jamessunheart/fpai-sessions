@@ -109,6 +109,56 @@ EOF
   fi
 }
 
+queue_liveness_followup() {
+  local log_file="$1"
+  SPECID="$SPECID" DID="$DID" BR="$BR" LIVENESS_LOG_FILE="$log_file" "$PY" - <<'PY' | dec seed >/dev/null 2>&1 || true
+import json
+import os
+
+specid = os.environ.get("SPECID", "")
+did = os.environ.get("DID", "")
+branch = os.environ.get("BR", "")
+log_file = os.environ.get("LIVENESS_LOG_FILE", "")
+print(json.dumps({
+    "question": f"Liveness failed after auto-merge for {specid}",
+    "build_spec": (
+        f"Investigate and repair the post-merge liveness failure for {specid} "
+        f"(decision {did}, branch {branch}). Start from the liveness log at {log_file}. "
+        "Keep the fix scoped, reversible, tested, and do not deploy, push, merge, "
+        "touch secrets, send outreach, or move money."
+    ),
+    "proof_expected": f"Liveness check for {specid} passes after the repair and ops_ledger records liveness:pass.",
+}))
+PY
+}
+
+run_liveness_probe() {
+  local check="$1"
+  local log_file status
+  if [ -z "$(printf '%s' "$check" | tr -d '[:space:]')" ]; then
+    return 0
+  fi
+  if [ "${LIVENESS_PROBE_DISABLE:-0}" = "1" ]; then
+    python3 "$REPO/tools/build_loop/ops_log.py" liveness "liveness:skipped" "$SPECID disabled by LIVENESS_PROBE_DISABLE=1" "\$0" "$BR" "" 2>/dev/null || true
+    return 0
+  fi
+  mkdir -p /opt/fpai-build/logs
+  log_file="/opt/fpai-build/logs/$SPECID.liveness.log"
+  (
+    cd "$REPO" || exit 1
+    export DID SPECID BR REPO WT BASE
+    timeout "${LIVENESS_PROBE_TIMEOUT:-120}" bash -lc "$check"
+  ) >"$log_file" 2>&1
+  status=$?
+  if [ "$status" = 0 ]; then
+    python3 "$REPO/tools/build_loop/ops_log.py" liveness "liveness:pass" "$SPECID live" "\$0" "$BR" "" 2>/dev/null || true
+    return 0
+  fi
+  python3 "$REPO/tools/build_loop/ops_log.py" liveness "liveness:fail" "$SPECID rc=$status log=$log_file" "\$0" "$BR" "Auto-queued follow-up repair spec for $DID" 2>/dev/null || true
+  queue_liveness_followup "$log_file"
+  return 0
+}
+
 "$PY" "$REPO/tools/build_loop/seed_orphaned_specs.py" --repo "$REPO" || true
 
 PENDING=$(dec pending-builds | grep -E '^\{' || true)
@@ -122,6 +172,7 @@ while IFS= read -r line; do
 
   DID=$(printf '%s' "$line"  | "$PY" -c 'import sys,json;print(json.load(sys.stdin)["id"])')
   SLUG=$(printf '%s' "$line" | "$PY" -c 'import sys,json,re;print(re.sub(r"[^a-z0-9]+","-",json.load(sys.stdin)["question"].lower())[:32].strip("-"))')
+  LIVENESS_CHECK=$(printf '%s' "$line" | "$PY" -c 'import sys,json;print(json.load(sys.stdin).get("liveness_check") or "")')
   SPECID="SPEC_${DID}_${SLUG}"; BR="build/$SPECID"; WT="$WT_BASE/$SPECID"
   echo "── building $SPECID (decision $DID) ──"
 
@@ -249,6 +300,7 @@ Register in core/BUILD/REGISTRY.json. Tests required. Do NOT push or merge.
       bash "$ACTIVATE_SCRIPT" 2>&1 | head -20 || echo "activate script exited non-zero — check $ACTIVATE_SCRIPT"
       python3 "$REPO/tools/build_loop/ops_log.py" merge activated "$SPECID (activate.sh ran)" "\$0" "$BR" "" 2>/dev/null || true
     fi
+    run_liveness_probe "$LIVENESS_CHECK"
 
     if [ "$RC" = 0 ]; then
       # APPROVE + merged — brief TG confirmation (informational, not a decision ask)

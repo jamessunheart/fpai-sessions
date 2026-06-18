@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-18T21:28:27Z",
+    "updated_at": "2026-06-18T21:36:21Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d115_seed-d115-post-merge-liveness-pr",
+            "slug": "SPEC_d115_seed-d115-post-merge-liveness-pr",
+            "branch": "build/SPEC_d115_seed-d115-post-merge-liveness-pr",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d115_seed-d115-post-merge-liveness-pr.md",
+            "tests_passed": true,
+            "notes": "d115 complete in working tree: added optional brain_index.decisions.liveness_check support, threaded it through curator.decisions pending-builds with an idempotent column ensure and safe fallback, ran post-merge liveness probes from server_build_loop.sh after activation scripts, logged liveness:pass/liveness:fail to ops_ledger, queued follow-up repair specs on failure, surfaced liveness fails through HOT_STATE signal scanner, and seeded SPEC_d116_retroactive-liveness-audit-d001-d092. Focused shell/static/unit tests, py_compile, registry JSON validation, and diff hygiene passed. No live server build-loop merge, live liveness command, live DB migration, deploy, push, merge, outreach, secrets, or money movement."
+        },
         {
             "id": "SPEC_d114_revision-agent-flagged-build-aut",
             "slug": "SPEC_d114_revision-agent-flagged-build-aut",

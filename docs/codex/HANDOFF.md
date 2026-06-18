@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-18 · SPEC_d115_seed-d115-post-merge-liveness-pr · branch `build/SPEC_d115_seed-d115-post-merge-liveness-pr`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `SERVICES/sunheart-brain/index/schema.sql`; `SERVICES/sunheart-brain/curator/decisions.py`; `tools/build_loop/server_build_loop.sh`; `tools/build_loop/test_liveness_probe.py`; `tools/hot_memory/scanners/signal_scanner.py`; `tools/hot_memory/test_signal_scanner.py`; `core/BUILD/specs/SPEC_d115_seed-d115-post-merge-liveness-pr.md`; `core/BUILD/specs/SPEC_d116_retroactive-liveness-audit-d001-d092.md`; `core/BUILD/results/SPEC_d115_seed-d115-post-merge-liveness-pr.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added optional `brain_index.decisions.liveness_check` support and threaded it through `curator.decisions pending-builds`. After auto-merge, the server build loop now runs a present liveness command after activation scripts, logs `liveness:pass` or `liveness:fail` to ops_ledger, writes failing probe logs under `/opt/fpai-build/logs/`, and queues a follow-up repair spec on failure. Runtime kill switch: `LIVENESS_PROBE_DISABLE=1`; timeout override: `LIVENESS_PROBE_TIMEOUT`. HOT_STATE signal scanning now promotes recent `liveness:fail` rows. Seeded `SPEC_d116_retroactive-liveness-audit-d001-d092.md` for the old d001-d092 merged-vs-live audit.
+- **Tests:** `bash -n tools/build_loop/server_build_loop.sh`; `python3 -B -m unittest tools.build_loop.test_liveness_probe tools.build_loop.test_revision_agent`; `python3 -B -m unittest tools.hot_memory.test_signal_scanner tools.hot_memory.test_hot_memory`; `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile SERVICES/sunheart-brain/curator/decisions.py tools/hot_memory/scanners/signal_scanner.py tools/build_loop/test_liveness_probe.py tools/hot_memory/test_signal_scanner.py`; `python3 -B -m unittest tools.build_loop.test_seed_orphaned_specs tools.build_loop.test_liveness_probe tools.build_loop.test_revision_agent tools.hot_memory.test_signal_scanner tools.hot_memory.test_hot_memory`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `git diff --check`
+- **Risks:** Live server build-loop execution, a real liveness command, and live Postgres migration were not run in this sandbox. If the live DB user cannot run the idempotent `ALTER TABLE`, `pending-builds` falls back safely but probes stay absent until Ember applies the schema. Operator-provided `liveness_check` commands must remain scoped, non-secret, and non-destructive.
+- **Rollback:** revert the listed files. Runtime-only rollback is `LIVENESS_PROBE_DISABLE=1`.
+- **Intent solved:** future auto-merged builds can prove merged means live with an explicit post-merge check.
+- **Downstream intent unlocked:** d116 can audit d001-d092 for retroactive live/not-live state and queue focused repairs for stale merges.
+- **Questions for Ember/James:** after merge on server 162, add one harmless liveness_check to a test decision and confirm ops_ledger records `liveness:pass`; then flip it to a failing command and confirm `liveness:fail` appears in HOT_STATE and a follow-up spec is queued.
+
 ### 2026-06-18 · SPEC_d114_revision-agent-flagged-build-aut · branch `build/SPEC_d114_revision-agent-flagged-build-aut`
 
 - **Status:** done in working tree / awaiting merge review

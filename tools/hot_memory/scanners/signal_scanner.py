@@ -6,14 +6,15 @@ import argparse
 import os
 from pathlib import Path
 
-from tools.hot_memory.common import DEFAULT_HOT_DIR, REPO_ROOT, compact_facts, fact, file_date, write_scan
+from tools.hot_memory.common import DEFAULT_HOT_DIR, DEFAULT_OPS_LEDGER, REPO_ROOT, compact_facts, fact, file_date, read_jsonl_tail, write_scan
 
 DEFAULT_DB_URL = os.environ.get("BRAIN_INDEX_DB_URL", os.environ.get("DATABASE_URL", ""))
 
 
-def collect(repo_root: Path = REPO_ROOT, db_url: str = DEFAULT_DB_URL):
+def collect(repo_root: Path = REPO_ROOT, db_url: str = DEFAULT_DB_URL, ops_ledger: Path = DEFAULT_OPS_LEDGER):
     facts = []
     facts.extend(_feedback_files(repo_root))
+    facts.extend(_liveness_failures(ops_ledger))
     if db_url:
         facts.extend(_db_correction_counts(db_url))
     return compact_facts(facts, limit=10)
@@ -49,17 +50,29 @@ def _db_correction_counts(db_url: str):
     return [fact(f"{count} bot correction signals recorded in the last 7 days", "brain_index.corrections", str(last_ts), weight=7, category="signal")]
 
 
+def _liveness_failures(ops_ledger: Path):
+    rows = read_jsonl_tail(ops_ledger, limit=200)
+    failures = [row for row in rows if str(row.get("event") or "") == "liveness:fail"]
+    facts = []
+    for row in failures[-5:]:
+        detail = str(row.get("detail") or "post-merge liveness failed")
+        ts = str(row.get("ts") or file_date(ops_ledger))
+        source = str(row.get("artifact") or ops_ledger)
+        facts.append(fact(f"Post-merge liveness failure: {detail}", source, ts, weight=9, category="signal"))
+    return facts
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo-root", type=Path, default=REPO_ROOT)
     parser.add_argument("--db-url", default=DEFAULT_DB_URL)
+    parser.add_argument("--ops-ledger", type=Path, default=DEFAULT_OPS_LEDGER)
     parser.add_argument("--hot-dir", type=Path, default=DEFAULT_HOT_DIR)
     args = parser.parse_args(argv)
-    payload = write_scan("signal", collect(args.repo_root, args.db_url), hot_dir=args.hot_dir)
+    payload = write_scan("signal", collect(args.repo_root, args.db_url, args.ops_ledger), hot_dir=args.hot_dir)
     print(payload["changed"])
     return 0
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

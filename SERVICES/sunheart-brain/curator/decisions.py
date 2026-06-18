@@ -30,6 +30,17 @@ def emit_rows(sql: str, params: tuple[Any, ...] = ()) -> int:
     return 0
 
 
+def ensure_liveness_column() -> bool:
+    try:
+        with connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute("ALTER TABLE IF EXISTS brain_index.decisions ADD COLUMN IF NOT EXISTS liveness_check TEXT")
+        return True
+    except Exception as exc:
+        print(f"warning: liveness_check column not ensured: {exc}", file=sys.stderr)
+        return False
+
+
 def pending_merges() -> int:
     return emit_rows(
         """
@@ -43,9 +54,10 @@ def pending_merges() -> int:
 
 
 def pending_builds() -> int:
+    liveness_expr = "liveness_check" if ensure_liveness_column() else "NULL::text AS liveness_check"
     return emit_rows(
-        """
-        SELECT id::text AS id, question, answer, build_spec, proof_expected
+        f"""
+        SELECT id::text AS id, question, answer, build_spec, proof_expected, {liveness_expr}
           FROM brain_index.decisions
          WHERE status = 'answered'
            AND COALESCE(needs_build, false) = true
@@ -113,6 +125,7 @@ def seed() -> int:
         raise SystemExit("seed requires question/title")
     with connect() as conn:
         with conn.cursor() as cur:
+            ensure_liveness_column()
             cur.execute(
                 """
                 INSERT INTO brain_index.decisions
@@ -138,6 +151,7 @@ def recommend() -> int:
     question = f"{title}\n\n{why}".strip()
     with connect() as conn:
         with conn.cursor() as cur:
+            ensure_liveness_column()
             cur.execute(
                 """
                 INSERT INTO brain_index.decisions
@@ -193,13 +207,15 @@ def recent_chats(limit: int) -> int:
 def main(argv: list[str] | None = None) -> int:
     args = list(argv if argv is not None else sys.argv[1:])
     if not args:
-        print("usage: curator.decisions pending-merges|pending-builds|mark-merged|mark-built|set-build-result|seed|surface|list|recent-chats|recommend", file=sys.stderr)
+        print("usage: curator.decisions pending-merges|pending-builds|mark-merged|mark-built|set-build-result|ensure-liveness-column|seed|surface|list|recent-chats|recommend", file=sys.stderr)
         return 2
     cmd = args[0]
     if cmd == "pending-merges":
         return pending_merges()
     if cmd == "pending-builds":
         return pending_builds()
+    if cmd == "ensure-liveness-column":
+        return 0 if ensure_liveness_column() else 1
     if cmd == "mark-merged" and len(args) >= 3:
         return mark_merged(args[1], args[2])
     if cmd == "mark-built" and len(args) >= 2:

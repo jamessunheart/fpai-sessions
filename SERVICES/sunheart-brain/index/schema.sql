@@ -167,6 +167,12 @@ CREATE INDEX IF NOT EXISTS session_insights_active_idx
     ON session_insights (weight DESC, ts DESC)
     WHERE expires_at IS NULL;
 
+-- Build-loop post-merge liveness probes.
+-- Optional shell command attached to a decision row; after auto-merge the
+-- server build loop runs it and logs liveness:pass/fail to ops_ledger.
+ALTER TABLE IF EXISTS decisions
+    ADD COLUMN IF NOT EXISTS liveness_check TEXT;
+
 -- Relevance-triggered attention surfacing.
 -- Rows are append-only proof that a current query caused pgvector memory to
 -- surface. This replaces reminder-style scheduled checks with query-time
