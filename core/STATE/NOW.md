@@ -1,10 +1,14 @@
 # CURRENT_STATE — Living SSOT
 
-**Last Updated:** 2026-06-17 (major clarity session — dual sovereignty + network economy + outreach engine)
+**Last Updated:** 2026-06-18 (frontier node clarity — contribution loop + natural monetization)
 **Updated By:** Ember (FPAI_Cockpit · session current)
-**System Status:** 🟢 OPERATIONAL — 76 builds shipped · laptop-free build loop live · per-agent recursive benchmarks queued · outreach engine + coach market + network economy building · dual sovereignty (technical + economic) now the north star.
+**System Status:** 🟢 OPERATIONAL — 100 specs shipped · laptop-free build loop live · frontier scan active · FPOS becoming a node on the AI frontier (not just a consumer of it).
 
-> **🎯 North Star:** Dual sovereignty — technical (own compute, own models, own stack) + economic (own currency, own value circulation, minimal extraction). The system finds people, serves their full potential, builds a self-sustaining economy around that service, and improves itself from every interaction. Full detail: `core/STATE/NORTH_STAR.md`.
+> **🎯 North Star:** Dual sovereignty — technical (own compute, own models, own stack) + economic (own currency, own value circulation, minimal extraction). The system finds people, serves their full potential, builds a self-sustaining economy around that service, and improves itself from every interaction.
+>
+> **Revenue strategy (no pitch deck needed):** Become genuinely the best at what we do → community finds us through frontier contributions + benchmarks + published proofs → they want the convenience or edge we provide → subscriptions (managed FPOS), metered (frontier intelligence), sovereignty (cell-split setup), enterprise (white-label). CORA bridges fiat and contribution: early users earn credits by contributing signal, credits unlock higher tiers, their signal improves the canonical model, the canonical model improves every instance. The system sells itself by being useful.
+>
+> Full detail: `core/STATE/NORTH_STAR.md`.
 >
 > **Decision filter:** does this build the self-sustaining network OR reduce external dependency? If yes → AI executes. If it requires James to carry context → flag + reroute.
 >
