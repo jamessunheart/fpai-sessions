@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-18 · SPEC_d094_wire-the-forge-as-pre-build-scou · branch `build/SPEC_d094_wire-the-forge-as-pre-build-scou`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `tools/build_loop/forge_scout.sh`; `tools/build_loop/build_orchestrator.sh`; `tools/build_loop/test_forge_scout.sh`; `core/BUILD/specs/SPEC_d094_wire-the-forge-as-pre-build-scou.md`; `core/BUILD/results/SPEC_d094_wire-the-forge-as-pre-build-scou.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the pre-build Forge scout as a fail-open, non-blocking step. `build_orchestrator.sh` now runs `tools/build_loop/forge_scout.sh` before `run_codex.sh` for pending SAFE-AUTO specs. The scout reads the spec plus repo-local resource/tool scout evidence, prompts The Forge via `claude -p` by default, appends a bounded `## Forge Scout Report` to the spec, avoids duplicate appends, and writes `tools/build_loop/scout_log.jsonl` rows with `existing_found`, `library_found`, and `estimated_time_saved`.
+- **Tests:** `bash -n tools/build_loop/forge_scout.sh tools/build_loop/build_orchestrator.sh tools/build_loop/test_forge_scout.sh`; `bash tools/build_loop/test_forge_scout.sh` (6 passed); `python3 -m json.tool core/BUILD/REGISTRY.json`; `git diff --check`
+- **Risks:** Live proof still needs the post-merge loop to scout three real specs and show at least one simplification/library finding in `scout_log.jsonl`. This branch used an offline fake Forge command for tests. No live Claude/WebSearch run, external scan, deploy, push, merge, outreach, secret access, or money movement occurred.
+- **Rollback:** revert the listed d094 files. Runtime bypass is `FORGE_SCOUT_DISABLE=1` or `FORGE_SCOUT_ENABLED=0`; remove any future appended `## Forge Scout Report` sections from affected specs and ignore/delete scout log rows if needed.
+- **Intent solved:** Codex no longer receives SAFE-AUTO specs blindly from the orchestrator; a scout step can surface existing tools, canonical libraries, and time-saving alternatives before code is written.
+- **Downstream intent unlocked:** future builds can simplify into adoption/reuse specs when The Forge finds an existing implementation or best-practice path before Codex starts.
+- **Questions for Ember/James:** after merge, let the live loop scout the next three SAFE-AUTO specs and confirm `tools/build_loop/scout_log.jsonl` contains at least one useful existing/library finding that narrows the build.
+
 ### 2026-06-18 · SPEC_d109_platform-bias-registry-5th-counc · branch `build/SPEC_d109_platform-bias-registry-5th-counc`
 
 - **Status:** done in working tree / awaiting merge review

@@ -174,6 +174,10 @@ done
 
 # 2. BUILD: run_codex builds all pending specs into isolated worktrees.
 if [ "${#PENDING[@]}" -gt 0 ]; then
+  echo "── pre-build Forge scout ──"
+  for id in "${PENDING[@]}"; do
+    bash "$ROOT/tools/build_loop/forge_scout.sh" "$SPECS/$id.md" || true
+  done
   echo "── building via Codex ──"
   bash "$ROOT/tools/build_loop/run_codex.sh"
 fi
