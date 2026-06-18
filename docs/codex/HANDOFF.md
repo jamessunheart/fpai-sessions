@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-18 · SPEC_d091_resource-inventory-system-knows · branch `build/SPEC_d091_resource-inventory-system-knows`
+
+- **Status:** done in working tree / independent AI review blocked in sandbox / awaiting merge review
+- **Files changed:** `tools/inventory/__init__.py`; `tools/inventory/scan_resources.py`; `tools/inventory/test_scan_resources.py`; `core/STATE/AVAILABLE_RESOURCES.md`; `core/BUILD/cron/fpai-resource-inventory.service`; `core/BUILD/cron/fpai-resource-inventory.timer`; `tools/council/debate.py`; `tools/council/test_debate.py`; `core/BUILD/specs/SPEC_d091_resource-inventory-system-knows.md`; `core/BUILD/results/SPEC_d091_resource-inventory-system-knows.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a local resource inventory scanner that writes `core/STATE/AVAILABLE_RESOURCES.md` with requested CLI availability, installed pip packages, non-secret configured API/env variable names with values omitted, and script-shaped files under `/opt/fpai`. Added weekly `fpai-resource-inventory` systemd timer artifacts. Council debate now loads `AVAILABLE_RESOURCES.md` next to `COUNCIL_FOCUS.md`, and focused tests prove a future proposal prompt can reference an available inventory tool such as `git`.
+- **Tests:** `python3 -m tools.inventory.scan_resources`; `python3 -B -m unittest tools.inventory.test_scan_resources tools.council.test_debate` (8 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/inventory/__init__.py tools/inventory/scan_resources.py tools/inventory/test_scan_resources.py tools/council/debate.py tools/council/test_debate.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d091-registry.json`
+- **Independent review:** attempted `claude -p --effort high` against `/tmp/d091-full.patch`, including untracked files. It produced no output after roughly 90 seconds and was terminated; no independent review verdict is available in this sandbox.
+- **Risks:** No live timer install, production deploy, external API call, secret read, push, or merge was performed. Inventory records names/paths only; env values are never written and secret-shaped env var names are omitted.
+- **Rollback:** revert the d091 files listed above. If installed later, disable/remove `fpai-resource-inventory.timer` and `fpai-resource-inventory.service`.
+- **Intent solved:** council and forge can now see the server's already-installed tools before proposing builds.
+- **Downstream intent unlocked:** future council proposals can reuse existing CLIs/libraries/APIs/scripts instead of recommending blind duplicate integrations.
+- **Questions for Ember/James:** rerun independent AI review from a live/writable host if required before merge; after merge, install/enable the reviewed weekly timer artifact and run one council cycle to confirm the surfaced proposal references at least one resource from `core/STATE/AVAILABLE_RESOURCES.md`.
+
 ### 2026-06-17 · SPEC_d088_glm-5-2-sovereign-inference-runp · branch `build/SPEC_d088_glm-5-2-sovereign-inference-runp`
 
 - **Status:** done in working tree / independent AI review blocked in sandbox / awaiting merge review

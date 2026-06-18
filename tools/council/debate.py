@@ -140,7 +140,19 @@ def _focus_text():
     try:
         fp = REPO + "/core/STATE/COUNCIL_FOCUS.md"
         if os.path.exists(fp):
-            return "\n\nSTANDING FOCUS — weight every proposal toward this (set by James):\n" + open(fp).read().strip()
+            with open(fp) as handle:
+                return "\n\nSTANDING FOCUS — weight every proposal toward this (set by James):\n" + handle.read().strip()
+    except Exception:
+        pass
+    return ""
+
+
+def _resources_text():
+    try:
+        fp = REPO + "/core/STATE/AVAILABLE_RESOURCES.md"
+        if os.path.exists(fp):
+            with open(fp) as handle:
+                return "\n\nAVAILABLE RESOURCES — prefer proposals that use already-installed tools when relevant:\n" + handle.read().strip()
     except Exception:
         pass
     return ""
@@ -208,7 +220,7 @@ def main():
     if sig_hash == last:
         print("no new intent since last debate — skip (~$0)"); return 0
 
-    prompt = build_prompt(queue, chats, _focus_text(), pragmatist=pragmatist_voice(signal))
+    prompt = build_prompt(queue, chats, _focus_text() + _resources_text(), pragmatist=pragmatist_voice(signal))
     try:
         d, r = run_claude_json(prompt)
         # claude -p = Claude Max flat-rate -> $0 marginal real spend (no metered API call)
