@@ -34,3 +34,7 @@ The reviewed systemd artifact enables `BENCHMARKS_PROPOSE_LIVE=1` and `BENCHMARK
 ## Proposal Safety
 
 `tools/benchmarks/improvement_proposer.py` is rate-limited to two queued specs per agent per week. In tests it accepts mocked `claude_runner` and `queue_build` callables. In normal sandbox/default use it does not call Claude unless `BENCHMARKS_PROPOSE_LIVE=1`, and it does not call `curator.decisions.queue_build()` unless `BENCHMARKS_QUEUE_LIVE=1`.
+
+## Prompt Efficiency
+
+`tools/prompt_efficiency/gepa_loop.py` tests GEPA-style prompt variants against synthetic fixture cases in `prompt_efficiency_cases.json`. A variant is written to `prompt_efficiency_adoptions.json` only when quality is greater than or equal to baseline and average token count is lower. Current reports land in `core/BUILD/signals/prompt_efficiency.*` and `core/STATE/PROMPT_EFFICIENCY.md`.

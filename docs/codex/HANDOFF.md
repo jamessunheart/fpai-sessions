@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-18 · SPEC_d106_prompt-efficiency-loop-gepa-vari · branch `build/SPEC_d106_prompt-efficiency-loop-gepa-vari`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `tools/prompt_efficiency/`; `tools/benchmarks/improvement_proposer.py`; `core/benchmarks/README.md`; `core/benchmarks/prompt_efficiency_cases.json`; `core/benchmarks/prompt_efficiency_adoptions.json`; `core/STATE/PROMPT_EFFICIENCY.md`; `core/BUILD/signals/prompt_efficiency.json`; `core/BUILD/signals/prompt_efficiency.md`; `core/BUILD/specs/SPEC_d106_prompt-efficiency-loop-gepa-vari.md`; `core/BUILD/results/SPEC_d106_prompt-efficiency-loop-gepa-vari.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a deterministic prompt-efficiency GEPA loop that tests compressed prompt variants against baseline fixture quality before adoption. The first run adopted `compressed_guarded` for `benchmark_improvement_spec`: quality stayed at `1.0` versus baseline `1.0`, average prompt size dropped from `108.5` to `91.5` tokens, and aggressive variants were rejected for missing required safety/resource/context terms. `tools/benchmarks/improvement_proposer.py` now renders through the adoption manifest with a baseline fallback.
+- **Tests:** `python3 -B -m unittest tools.prompt_efficiency.test_gepa_loop tools.benchmarks.test_benchmarks` (9 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile ...`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `python3 -m json.tool core/benchmarks/prompt_efficiency_cases.json`; `python3 -m json.tool core/benchmarks/prompt_efficiency_adoptions.json`; `python3 -m json.tool core/BUILD/signals/prompt_efficiency.json`; `python3 -B -m tools.prompt_efficiency.gepa_loop --report-json /tmp/d106-prompt-efficiency.json --report-md /tmp/d106-prompt-efficiency.md --state-md /tmp/d106-prompt-efficiency-state.md --adoptions /tmp/d106-prompt-efficiency-adoptions.json`; `git diff --check`
+- **Risks:** Quality scoring is deterministic fixture contract coverage, not live model-eval judgment. Only the benchmark improvement-spec prompt is wired in this build. No live benchmark queue, Claude call, deploy, push, merge, external API call, secret access, outreach, or money movement occurred.
+- **Rollback:** revert the listed d106 files. Runtime-only rollback is to remove the `benchmark_improvement_spec` entry from `core/benchmarks/prompt_efficiency_adoptions.json`, which makes the renderer fall back to `baseline`.
+- **Intent solved:** prompt compression now has a tested adopt-only-if-quality-holds loop instead of manual prompt shrinking.
+- **Downstream intent unlocked:** future benchmark/proposal prompts can be added to the same GEPA fixture loop, reducing prompt cost and context load only when quality remains at or above baseline.
+- **Questions for Ember/James:** after merge, let one normal benchmark-improvement proposal render through the adopted variant and inspect whether the drafted spec remains as usable as the baseline prompt.
+
 ### 2026-06-18 · SPEC_d105_bandwidth-ledger-measures-recove · branch `build/SPEC_d105_bandwidth-ledger-measures-recove`
 
 - **Status:** done in working tree / awaiting merge review

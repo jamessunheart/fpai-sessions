@@ -1,0 +1,206 @@
+{
+  "adoptions": {
+    "benchmark_improvement_spec": {
+      "adopted_at": "2026-06-18T19:53:47Z",
+      "baseline_avg_tokens": 108.5,
+      "baseline_quality": 1.0,
+      "variant_id": "compressed_guarded",
+      "winner_avg_tokens": 91.5,
+      "winner_quality": 1.0
+    }
+  },
+  "evaluations": [
+    {
+      "adopted": true,
+      "baseline": {
+        "avg_tokens": 108.5,
+        "cases": [
+          {
+            "case_id": "forge-trigger",
+            "compression_ratio": 1.0,
+            "forbidden_hits": [],
+            "quality": 1.0,
+            "required_misses": [],
+            "tokens": 109
+          },
+          {
+            "case_id": "council-trigger",
+            "compression_ratio": 1.0,
+            "forbidden_hits": [],
+            "quality": 1.0,
+            "required_misses": [],
+            "tokens": 108
+          }
+        ],
+        "description": "Current benchmark improvement proposer prompt.",
+        "prompt_id": "benchmark_improvement_spec",
+        "quality": 1.0,
+        "variant_id": "baseline"
+      },
+      "compression_gate": "winner_avg_tokens < baseline_avg_tokens",
+      "prompt_id": "benchmark_improvement_spec",
+      "quality_gate": "winner_quality >= baseline_quality",
+      "variants": [
+        {
+          "avg_tokens": 108.5,
+          "cases": [
+            {
+              "case_id": "forge-trigger",
+              "compression_ratio": 1.0,
+              "forbidden_hits": [],
+              "quality": 1.0,
+              "required_misses": [],
+              "tokens": 109
+            },
+            {
+              "case_id": "council-trigger",
+              "compression_ratio": 1.0,
+              "forbidden_hits": [],
+              "quality": 1.0,
+              "required_misses": [],
+              "tokens": 108
+            }
+          ],
+          "description": "Current benchmark improvement proposer prompt.",
+          "prompt_id": "benchmark_improvement_spec",
+          "quality": 1.0,
+          "variant_id": "baseline"
+        },
+        {
+          "avg_tokens": 91.5,
+          "cases": [
+            {
+              "case_id": "forge-trigger",
+              "compression_ratio": 0.844,
+              "forbidden_hits": [],
+              "quality": 1.0,
+              "required_misses": [],
+              "tokens": 92
+            },
+            {
+              "case_id": "council-trigger",
+              "compression_ratio": 0.8426,
+              "forbidden_hits": [],
+              "quality": 1.0,
+              "required_misses": [],
+              "tokens": 91
+            }
+          ],
+          "description": "GEPA candidate: compact layout retaining safety, resource, metrics, blueprint, and recent-context genes.",
+          "prompt_id": "benchmark_improvement_spec",
+          "quality": 1.0,
+          "variant_id": "compressed_guarded"
+        },
+        {
+          "avg_tokens": 17.5,
+          "cases": [
+            {
+              "case_id": "forge-trigger",
+              "compression_ratio": 0.1651,
+              "forbidden_hits": [],
+              "quality": 0.2083,
+              "required_misses": [
+                "repo-build improvement spec",
+                "Return markdown only",
+                "production deploys",
+                "outreach sends",
+                "secrets",
+                "money movement",
+                "irreversible actions",
+                "Metrics JSON",
+                "Available resources on server 162",
+                "Do not request secret values",
+                "git: /usr/bin/git"
+              ],
+              "tokens": 18
+            },
+            {
+              "case_id": "council-trigger",
+              "compression_ratio": 0.1574,
+              "forbidden_hits": [],
+              "quality": 0.2083,
+              "required_misses": [
+                "repo-build improvement spec",
+                "Return markdown only",
+                "production deploys",
+                "outreach sends",
+                "secrets",
+                "money movement",
+                "irreversible actions",
+                "Metrics JSON",
+                "Available resources on server 162",
+                "Do not request secret values",
+                "tools/council/debate.py"
+              ],
+              "tokens": 17
+            }
+          ],
+          "description": "GEPA candidate: aggressive compression expected to fail contract coverage.",
+          "prompt_id": "benchmark_improvement_spec",
+          "quality": 0.2083,
+          "variant_id": "compressed_sparse"
+        },
+        {
+          "avg_tokens": 56.5,
+          "cases": [
+            {
+              "case_id": "forge-trigger",
+              "compression_ratio": 0.5321,
+              "forbidden_hits": [],
+              "quality": 0.825,
+              "required_misses": [
+                "Available resources on server 162",
+                "Do not request secret values",
+                "git: /usr/bin/git"
+              ],
+              "tokens": 58
+            },
+            {
+              "case_id": "council-trigger",
+              "compression_ratio": 0.5093,
+              "forbidden_hits": [],
+              "quality": 0.825,
+              "required_misses": [
+                "Available resources on server 162",
+                "Do not request secret values",
+                "tools/council/debate.py"
+              ],
+              "tokens": 55
+            }
+          ],
+          "description": "GEPA candidate: removes resource-reuse context to test quality guard rejection.",
+          "prompt_id": "benchmark_improvement_spec",
+          "quality": 0.825,
+          "variant_id": "compressed_no_resource_gate"
+        }
+      ],
+      "winner": {
+        "avg_tokens": 91.5,
+        "cases": [
+          {
+            "case_id": "forge-trigger",
+            "compression_ratio": 0.844,
+            "forbidden_hits": [],
+            "quality": 1.0,
+            "required_misses": [],
+            "tokens": 92
+          },
+          {
+            "case_id": "council-trigger",
+            "compression_ratio": 0.8426,
+            "forbidden_hits": [],
+            "quality": 1.0,
+            "required_misses": [],
+            "tokens": 91
+          }
+        ],
+        "description": "GEPA candidate: compact layout retaining safety, resource, metrics, blueprint, and recent-context genes.",
+        "prompt_id": "benchmark_improvement_spec",
+        "quality": 1.0,
+        "variant_id": "compressed_guarded"
+      }
+    }
+  ],
+  "generated_at": "2026-06-18T19:53:47Z",
+  "schema": "prompt-efficiency-run.v1"
+}

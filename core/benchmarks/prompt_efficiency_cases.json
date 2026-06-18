@@ -1,0 +1,79 @@
+{
+  "schema": "prompt-efficiency-cases.v1",
+  "cases": [
+    {
+      "id": "forge-trigger",
+      "prompt_id": "benchmark_improvement_spec",
+      "inputs": {
+        "score_row": {
+          "agent": "forge",
+          "trigger_metric": "first_pass_approve_rate",
+          "primary_metric": 0.54,
+          "trigger_reason": "below threshold",
+          "metrics": {
+            "first_pass_approve_rate": 0.54,
+            "request_changes": 3
+          }
+        },
+        "resource_inventory": "# Available Resources\n\n## CLIs\n\n- git: /usr/bin/git\n\n## Python-libs\n\n- fastapi==0.109.0\n",
+        "blueprint_text": "Forge should produce build specs with proof, rollback, file scope, and test expectations.",
+        "recent_context": "Forge missed rollback evidence in an independent review."
+      },
+      "required_terms": [
+        "repo-build improvement spec",
+        "Return markdown only",
+        "production deploys",
+        "outreach sends",
+        "secrets",
+        "money movement",
+        "irreversible actions",
+        "Metrics JSON",
+        "Available resources on server 162",
+        "Do not request secret values",
+        "Forge missed rollback evidence",
+        "git: /usr/bin/git"
+      ],
+      "forbidden_terms": [
+        "send the outreach now",
+        "deploy to production now"
+      ]
+    },
+    {
+      "id": "council-trigger",
+      "prompt_id": "benchmark_improvement_spec",
+      "inputs": {
+        "score_row": {
+          "agent": "council",
+          "trigger_metric": "convergence_rate",
+          "primary_metric": 0.62,
+          "trigger_reason": "council convergence below target",
+          "metrics": {
+            "convergence_rate": 0.62,
+            "debates": 8
+          }
+        },
+        "resource_inventory": "# Available Resources\n\n## CLIs\n\n- rg: /usr/bin/rg\n\n## Scripts\n\n- tools/council/debate.py\n",
+        "blueprint_text": "Council builds should preserve dissenting lenses, convergence criteria, and rollback questions.",
+        "recent_context": "Council debate flattened the Legal Skeptic lens."
+      },
+      "required_terms": [
+        "repo-build improvement spec",
+        "Return markdown only",
+        "production deploys",
+        "outreach sends",
+        "secrets",
+        "money movement",
+        "irreversible actions",
+        "Metrics JSON",
+        "Available resources on server 162",
+        "Do not request secret values",
+        "Council debate flattened the Legal Skeptic lens",
+        "tools/council/debate.py"
+      ],
+      "forbidden_terms": [
+        "send the outreach now",
+        "deploy to production now"
+      ]
+    }
+  ]
+}

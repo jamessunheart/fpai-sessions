@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-18T21:25:00Z",
+    "updated_at": "2026-06-18T22:20:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d106_prompt-efficiency-loop-gepa-vari",
+            "slug": "SPEC_d106_prompt-efficiency-loop-gepa-vari",
+            "branch": "build/SPEC_d106_prompt-efficiency-loop-gepa-vari",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d106_prompt-efficiency-loop-gepa-vari.md",
+            "tests_passed": true,
+            "notes": "d106 complete in working tree: added a deterministic prompt-efficiency GEPA loop with fixture-based quality gates, baseline fallback, adoption manifest, reports, and benchmark improvement-proposer wiring. First run adopted compressed_guarded for benchmark_improvement_spec: quality 1.0 >= baseline 1.0 and average tokens dropped from 108.5 to 91.5; under-specified compressed variants were rejected by missing required safety/resource/context terms. Focused prompt-efficiency and benchmark tests, py_compile, JSON validation, loop smoke, and diff hygiene passed. No live queue run, Claude call, deploy, push, merge, external API call, secrets, outreach, or money movement."
+        },
         {
             "id": "SPEC_d105_bandwidth-ledger-measures-recove",
             "slug": "SPEC_d105_bandwidth-ledger-measures-recove",

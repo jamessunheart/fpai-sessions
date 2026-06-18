@@ -12,6 +12,7 @@ from typing import Any, Callable
 from tools.benchmarks import DEFAULT_OPS_LEDGER, DEFAULT_SCORE_LEDGER, REPO_ROOT, append_jsonl, read_jsonl
 from tools.inventory.scan_resources import DEFAULT_OUTPUT as DEFAULT_RESOURCE_INVENTORY
 from tools.inventory.scan_resources import read_inventory_context
+from tools.prompt_efficiency.gepa_loop import PROMPT_ID_BENCHMARK_IMPROVEMENT, render_prompt
 
 DEFAULT_PROPOSAL_LOG = REPO_ROOT / "core" / "benchmarks" / "improvement_proposals.jsonl"
 MAX_SPECS_PER_AGENT_WEEK = 2
@@ -44,24 +45,14 @@ def build_prompt(
     recent_context: str = "",
     resource_inventory: str = "",
 ) -> str:
-    agent = score_row.get("agent")
-    metric = score_row.get("trigger_metric")
-    value = score_row.get("primary_metric")
-    reason = score_row.get("trigger_reason") or "metric trigger fired"
-    return (
-        "Draft one concise repo-build improvement spec for the FPAI agent below.\n"
-        "Return markdown only. Do not request production deploys, outreach sends, secrets, money movement, or irreversible actions.\n\n"
-        f"Agent: {agent}\n"
-        f"Triggered metric: {metric}\n"
-        f"Current value: {value}\n"
-        f"Reason: {reason}\n"
-        f"Metrics JSON: {json.dumps(score_row.get('metrics') or {}, sort_keys=True)}\n\n"
-        "Available resources on server 162:\n"
-        f"{resource_inventory[:24000]}\n\n"
-        "Use those existing CLIs, Python libraries, configured API names, or local scripts when relevant. "
-        "Do not request secret values or duplicate installed tools.\n\n"
-        f"Blueprint:\n{blueprint_text[:4000]}\n\n"
-        f"Recent related context:\n{recent_context[:2000]}\n"
+    return render_prompt(
+        PROMPT_ID_BENCHMARK_IMPROVEMENT,
+        {
+            "score_row": score_row,
+            "blueprint_text": blueprint_text,
+            "recent_context": recent_context,
+            "resource_inventory": resource_inventory,
+        },
     )
 
 
