@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-18 · SPEC_d095_adopt-gepa-dittofeed-vllm-router · branch `build/SPEC_d095_adopt-gepa-dittofeed-vllm-router`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `tools/adoption/__init__.py`; `tools/adoption/frontier_adoption.py`; `tools/adoption/test_frontier_adoption.py`; `core/STATE/FRONTIER_ADOPTIONS.md`; `core/BUILD/signals/frontier_adoptions.json`; `core/BUILD/specs/SPEC_d095_adopt-gepa-dittofeed-vllm-router.md`; `core/BUILD/results/SPEC_d095_adopt-gepa-dittofeed-vllm-router.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Converted the d095 Forge frontier scan into safe shadow-mode adoption artifacts. GEPA is recorded as covered by d106/d107 rather than duplicated. Dittofeed now has an anonymized becoming/probe journey config and sample event export that hashes user ids and excludes names, emails, phones, raw notes, raw conversations, corrections, and credentials. LiteLLM + vLLM Semantic Router now has a config artifact and 10 deterministic routing fixtures covering local, public, private, blocked, and James-gated cases before any replacement of existing router paths.
+- **Tests:** `python3 -B -m unittest tools.adoption.test_frontier_adoption`; `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/adoption/__init__.py tools/adoption/frontier_adoption.py tools/adoption/test_frontier_adoption.py`; `python3 -m json.tool core/BUILD/signals/frontier_adoptions.json`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `git diff --check`
+- **Risks:** This proves repo-side adoption readiness only. It does not prove a live Dittofeed send or live LiteLLM proxy call; those require reviewed service wiring, credentials, and activation outside this sandbox. The LiteLLM `claude_review` entry is intentionally a non-secret artifact requiring an approved API path or bridge.
+- **Rollback:** revert the listed d095 files. Nothing was deployed or activated, so rollback is repo-only; existing probe follow-up, GEPA d106/d107, and router paths remain untouched.
+- **Intent solved:** Forge frontier findings now have a concrete shadow-mode adoption state, privacy gate, proof gate, and rollback path instead of loose recommendations.
+- **Downstream intent unlocked:** Ember can review one Dittofeed shadow journey and one LiteLLM/vLLM-router 10-decision eval before any live activation or replacement.
+- **Questions for Ember/James:** after merge, decide whether to run a reviewed Dittofeed shadow container on 162 and whether to test a real LiteLLM proxy against installed Ollama plus an approved Claude path; do not activate sends or replace router code until those proofs pass.
+
 ### 2026-06-18 · SPEC_d094_wire-the-forge-as-pre-build-scou · branch `build/SPEC_d094_wire-the-forge-as-pre-build-scou`
 
 - **Status:** done in working tree / awaiting merge review

@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-18T23:45:00Z",
+    "updated_at": "2026-06-18T23:59:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d095_adopt-gepa-dittofeed-vllm-router",
+            "slug": "SPEC_d095_adopt-gepa-dittofeed-vllm-router",
+            "branch": "build/SPEC_d095_adopt-gepa-dittofeed-vllm-router",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d095_adopt-gepa-dittofeed-vllm-router.md",
+            "tests_passed": true,
+            "notes": "d095 complete in working tree: added additive shadow-mode adoption artifacts for the Forge frontier scan. GEPA is recorded as covered by d106/d107; Dittofeed has anonymized journey/event export rules with PII/private-layer guard; LiteLLM plus vLLM Semantic Router has a config artifact and 10 deterministic routing fixtures before any replacement. Focused unittest, py_compile, signal/registry JSON validation, and diff hygiene passed. No deploy, send, package install, service start, secret access, external API call with effect, push, merge, or money movement."
+        },
         {
             "id": "SPEC_d094_wire-the-forge-as-pre-build-scou",
             "slug": "SPEC_d094_wire-the-forge-as-pre-build-scou",
