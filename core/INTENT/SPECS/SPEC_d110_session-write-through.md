@@ -95,11 +95,22 @@ After d110:
 - Every James directive → bot knows with high weight
 - One unified read: `brain_index.session_insights` ordered by weight + recency
 
+## Write-then-verify (paired with d111)
+
+Every write immediately triggers a d111 probe on the specific insight written:
+```bash
+python3 write_session_insights.py --insights "$INSIGHTS" \
+  && python3 tools/awareness/verify_awareness.py --probe-latest
+```
+
+If verify fails → Telegram alert within 5 min. Write is not considered complete until bot can answer correctly about it. This closes the loop: write → confirm → alert if broken.
+
 ## Gates
 - Non-blocking: write failures log to ops_ledger, never halt session
-- No personal data in session_insights (private-tier content stays in memory files)
-- Max 20 insights per session (bounded — prevents runaway writes)
-- Weight >= 8 requires explicit James directive or major architectural change (not self-assigned)
+- Verify is non-blocking: failure alerts but does not roll back the write
+- No personal data in session_insights (private-tier stays in memory files)
+- Max 20 insights per session (bounded)
+- Weight >= 8 requires explicit James directive or major architectural change
 
 ## Proof
 - brain_index.session_insights table exists with data from 3+ sessions
