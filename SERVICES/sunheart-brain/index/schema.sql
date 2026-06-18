@@ -213,6 +213,61 @@ CREATE INDEX IF NOT EXISTS becoming_stage_idx
 CREATE INDEX IF NOT EXISTS becoming_source_idx
     ON becoming (source, updated_at DESC);
 
+-- Cognee graph memory layer.
+-- Additive relationship tissue over existing brain_index rows. These tables do
+-- not replace note_chunks/probe_pool/becoming/corrections; they store graph
+-- nodes and edges derived from those tables so relationship traversal can be
+-- queried and rehydrated across sessions.
+CREATE TABLE IF NOT EXISTS graph_memory_nodes (
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    node_type       TEXT NOT NULL,
+    node_key        TEXT NOT NULL,
+    label           TEXT NOT NULL,
+    properties      JSONB NOT NULL DEFAULT '{}'::jsonb,
+    source_table    TEXT,
+    source_id       TEXT,
+    backend         TEXT NOT NULL DEFAULT 'postgres',
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE (node_type, node_key)
+);
+
+CREATE TABLE IF NOT EXISTS graph_memory_edges (
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    from_node_id    UUID NOT NULL REFERENCES graph_memory_nodes(id) ON DELETE CASCADE,
+    to_node_id      UUID NOT NULL REFERENCES graph_memory_nodes(id) ON DELETE CASCADE,
+    relation        TEXT NOT NULL,
+    evidence        JSONB NOT NULL DEFAULT '{}'::jsonb,
+    source_table    TEXT,
+    source_id       TEXT,
+    backend         TEXT NOT NULL DEFAULT 'postgres',
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE (from_node_id, to_node_id, relation)
+);
+
+CREATE TABLE IF NOT EXISTS graph_memory_runs (
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    ran_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    backend         TEXT NOT NULL DEFAULT 'postgres',
+    contacts_seen   INTEGER NOT NULL DEFAULT 0,
+    nodes_written   INTEGER NOT NULL DEFAULT 0,
+    edges_written   INTEGER NOT NULL DEFAULT 0,
+    query_proof     JSONB NOT NULL DEFAULT '{}'::jsonb,
+    notes           TEXT
+);
+
+CREATE INDEX IF NOT EXISTS graph_memory_nodes_type_key_idx
+    ON graph_memory_nodes (node_type, node_key);
+CREATE INDEX IF NOT EXISTS graph_memory_nodes_label_idx
+    ON graph_memory_nodes (LOWER(label));
+CREATE INDEX IF NOT EXISTS graph_memory_edges_relation_idx
+    ON graph_memory_edges (relation);
+CREATE INDEX IF NOT EXISTS graph_memory_edges_from_idx
+    ON graph_memory_edges (from_node_id, relation);
+CREATE INDEX IF NOT EXISTS graph_memory_edges_to_idx
+    ON graph_memory_edges (to_node_id, relation);
+
 -- Verified AI/user pairings.
 -- These rows bind an AI surface (for example the Telegram brain bot) to one
 -- verified human subject and provider account. Runtime callers should fail

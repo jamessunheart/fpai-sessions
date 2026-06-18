@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-18 · SPEC_d098_cognee-graph-memory-layer · branch `build/SPEC_d098_cognee-graph-memory-layer`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `SERVICES/sunheart-brain/index/schema.sql`; `SERVICES/sunheart-brain/curator/graph_memory.py`; `SERVICES/sunheart-brain/curator/test_graph_memory.py`; `core/BUILD/specs/SPEC_d098_cognee-graph-memory-layer.md`; `core/BUILD/results/SPEC_d098_cognee-graph-memory-layer.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added an additive Cognee-compatible graph memory layer over existing `brain_index` facts. New `graph_memory_nodes`, `graph_memory_edges`, and `graph_memory_runs` tables store person/topic/becoming-stage/correction graph records without replacing `note_chunks`, `probe_pool`, `becoming`, or `corrections`. Added a curator sync/query module that reads a 10-contact `probe_pool` proof slice, joins available becoming stages, extracts shared interests such as `regenerative cities`, writes idempotent graph records, and records query proof. Runtime defaults to Postgres graph tables; `COGNEE_GRAPH_BACKEND=cognee` tags the same normalized records for Cognee-backed operation when Cognee is installed.
+- **Tests:** `python3 -B -m unittest SERVICES/sunheart-brain/curator/test_graph_memory.py` (4 OK); `python3 -B -m unittest SERVICES/sunheart-brain/curator/test_becoming.py SERVICES/sunheart-brain/curator/test_graph_memory.py` (7 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile SERVICES/sunheart-brain/curator/graph_memory.py SERVICES/sunheart-brain/curator/test_graph_memory.py`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `git diff --check`
+- **Commit:** attempted local `git add ... && git commit`; blocked because Git could not create `/opt/fpai-build/FPAI_Cockpit/.git/worktrees/SPEC_d098_cognee-graph-memory-layer/index.lock` on the read-only shared Git metadata.
+- **Risks:** Live Cognee package installation and live DB sync were not run in sandbox. `probe_pool` metadata is semi-structured, so topic extraction may need tuning after observing real rows. The graph layer is advisory memory traversal only; it does not send outreach, approve actions, diagnose people, or replace existing memory tables.
+- **Rollback:** revert the listed files. If schema has already applied live and a full rollback is required, export any wanted proof rows first, then drop `brain_index.graph_memory_edges`, `brain_index.graph_memory_nodes`, and `brain_index.graph_memory_runs`.
+- **Intent solved:** `brain_index` now has additive graph tissue so contacts, becoming stages, interests, proofs, and corrections can be traversed as relationships rather than isolated rows.
+- **Downstream intent unlocked:** Ember can run one live d098 proof on server 162: sync 10 real `probe_pool` contacts, query “who is connected to regenerative cities?”, confirm Josh plus related contacts return, and confirm the query remains available after a fresh process/session.
+- **Questions for Ember/James:** after merge, install/verify Cognee v1.1.3 only if the live host should use the Cognee package path immediately. Otherwise run the Postgres-backed graph sync first as the reversible proof slice, then decide whether Cognee should own future graph execution.
+
 ### 2026-06-18 · SPEC_d097_pipecat-voice-pipeline-telegram · branch `build/SPEC_d097_pipecat-voice-pipeline-telegram`
 
 - **Status:** done in working tree / awaiting merge review

@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
         {
+            "id": "SPEC_d098_cognee-graph-memory-layer",
+            "slug": "SPEC_d098_cognee-graph-memory-layer",
+            "branch": "build/SPEC_d098_cognee-graph-memory-layer",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d098_cognee-graph-memory-layer.md",
+            "tests_passed": true,
+            "notes": "d098 complete in working tree: added additive graph_memory_nodes/edges/runs tables over brain_index, plus a Cognee-compatible curator graph sync/query module that indexes 10 probe_pool contacts, joins becoming stages, extracts shared interests like regenerative cities, records query proof, and preserves relationships across a serialize/reload boundary in tests. Focused graph/becoming tests, py_compile, registry JSON validation, and diff hygiene passed. No live Cognee install, live DB sync, deploy, push, merge, outreach, secrets, or money movement."
+        },
+        {
             "id": "SPEC_d097_pipecat-voice-pipeline-telegram",
             "slug": "SPEC_d097_pipecat-voice-pipeline-telegram",
             "branch": "build/SPEC_d097_pipecat-voice-pipeline-telegram",
