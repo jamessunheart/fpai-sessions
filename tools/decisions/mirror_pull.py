@@ -105,10 +105,35 @@ def render(d: dict) -> str:
     )
 
 
+# State docs to mirror from repo into vault (read from laptop repo clone, no SSH needed)
+LAPTOP_REPO = HOME / "FPAI_Cockpit"
+STATE_DOCS = [
+    ("core/STATE/SYSTEM_ARCHITECTURE.md", "00_MEMORY/SYSTEM ARCHITECTURE.md"),
+    ("core/STATE/NOW.md",                 "00_MEMORY/NOW — Current Priorities.md"),
+    ("core/STATE/AI_GOALS.md",            "00_MEMORY/AI GOALS.md"),
+]
+
+
+def mirror_state_docs(vault: Path, repo: Path) -> list[str]:
+    """Copy key state docs from the local repo clone into the vault. No SSH."""
+    copied = []
+    for src_rel, dest_rel in STATE_DOCS:
+        src = repo / src_rel
+        if not src.exists():
+            continue
+        dest = vault / dest_rel
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_text(src.read_text())
+        copied.append(dest.name)
+    return copied
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--print", action="store_true", dest="print_only",
                     help="Print to stdout, do not write the vault file")
+    ap.add_argument("--repo", type=Path, default=LAPTOP_REPO,
+                    help="Path to local FPAI_Cockpit repo clone")
     args = ap.parse_args()
 
     data = fetch()
@@ -121,6 +146,14 @@ def main():
     DIGEST_FILE.parent.mkdir(parents=True, exist_ok=True)
     DIGEST_FILE.write_text(md)
     print(f"wrote {DIGEST_FILE.name}  ·  {data.get('total_chunks', 0):,} chunks")
+
+    # Also mirror key state docs from local repo clone
+    copied = mirror_state_docs(VAULT, args.repo)
+    if copied:
+        print(f"mirrored: {', '.join(copied)}")
+    else:
+        print(f"(state docs not found — expected repo at {args.repo})")
+
     return 0
 
 
