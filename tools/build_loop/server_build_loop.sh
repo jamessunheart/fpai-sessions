@@ -152,6 +152,15 @@ Register in core/BUILD/REGISTRY.json. Tests required. Do NOT push or merge.
   fi
 
   if [ "$MERGED" = 1 ]; then
+    # Post-merge activation: run activate.sh if the build shipped one
+    # Convention: any spec that installs systemd units or needs wiring ships core/BUILD/activate/${SPECID}.sh
+    ACTIVATE_SCRIPT="$REPO/core/BUILD/activate/${SPECID}.sh"
+    if [ -f "$ACTIVATE_SCRIPT" ]; then
+      echo "running activate script for $SPECID"
+      bash "$ACTIVATE_SCRIPT" 2>&1 | head -20 || echo "activate script exited non-zero — check $ACTIVATE_SCRIPT"
+      python3 "$REPO/tools/build_loop/ops_log.py" merge activated "$SPECID (activate.sh ran)" "\$0" "$BR" "" 2>/dev/null || true
+    fi
+
     if [ "$RC" = 0 ]; then
       # APPROVE + merged — brief TG confirmation (informational, not a decision ask)
       tg "$V · AUTO-MERGED ✅ [$DID] $SPECID

@@ -21,6 +21,14 @@ CODEX BUILD CONTRACT — read before writing any code.
 5. NEVER: push to main · open PRs to main · force-push · touch secrets ·
    auto-deploy. Ember handles all pushes, PR creation, and merges.
 
+7. ACTIVATION SCRIPTS: if your build installs systemd units, modifies a live
+   service, or requires any post-merge wiring step, ship an activation script at:
+     core/BUILD/activate/SPEC_d{NNN}_{slug}.sh
+   The build loop runs this automatically after merge. The script must be
+   idempotent (safe to run twice), use `systemctl daemon-reload && systemctl
+   enable --now <unit>` for timers, and patch any live service files if needed.
+   Without activate.sh, the code lands but never starts — ship both or ship neither.
+
 6. CROSS-PACKAGE IMPORTS: when importing from FPAI_Cockpit code into
    SERVICES/sunheart-brain/ code, NEVER use sys.path.insert() or sys.path.append().
    This causes curator package shadowing and breaks the live bot. Always use:
