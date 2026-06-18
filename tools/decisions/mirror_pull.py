@@ -22,6 +22,7 @@ Usage:
 """
 
 import argparse
+import os
 import json
 import subprocess
 import sys
@@ -32,10 +33,45 @@ SERVER = "root@162.0.208.88"
 ENV_FILE = "/etc/sh-brain/curator.env"          # sourced ON the server, never read here
 VENV_PY = "/opt/sh-brain-src/.venv/bin/python"
 
-# Try iCloud Drive path first (avoids TCC wall on ~/Documents), fall back to Documents
+# Prefer the local vault path. Older runs preferred the iCloud Obsidian path when
+# it existed, but unattended macOS processes can see that path and still hit TCC
+# PermissionError on mkdir/write. Keep iCloud as a fallback for machines where it
+# is the only vault, but never let an inaccessible iCloud path kill fpull.
 _VAULT_ICLOUD = HOME / "Library" / "Mobile Documents" / "iCloud~md~obsidian" / "Documents" / "Full Potential OS"
 _VAULT_DOCS   = HOME / "Documents" / "FPOS" / "Full Potential OS"
-VAULT = _VAULT_ICLOUD if _VAULT_ICLOUD.exists() else _VAULT_DOCS
+_EXPLICIT_VAULT = os.environ.get("FPAI_VAULT")
+
+
+def _dedupe_paths(paths: list[Path]) -> list[Path]:
+    out = []
+    seen = set()
+    for path in paths:
+        key = str(path.expanduser())
+        if key not in seen:
+            seen.add(key)
+            out.append(path.expanduser())
+    return out
+
+
+def vault_candidates() -> list[Path]:
+    if _EXPLICIT_VAULT:
+        return [Path(_EXPLICIT_VAULT).expanduser()]
+    defaults = [_VAULT_DOCS, _VAULT_ICLOUD]
+    existing = [path for path in defaults if path.exists()]
+    if existing:
+        return _dedupe_paths(existing + [_VAULT_DOCS])
+    return _dedupe_paths(defaults)
+
+
+def choose_vault(candidates: list[Path] | None = None) -> Path:
+    candidates = candidates or vault_candidates()
+    for vault in candidates:
+        if vault.exists():
+            return vault
+    return candidates[0]
+
+
+VAULT = choose_vault()
 DIGEST_FILE = VAULT / "00_MEMORY" / "BRAIN DIGEST.md"
 
 # Read-only query, run by the brain's own venv on the server. No writes.
@@ -108,6 +144,27 @@ def render(d: dict) -> str:
     )
 
 
+def write_vault_text(rel_path: str, text: str, candidates: list[Path] | None = None) -> Path:
+    """Write a vault-relative file, falling back across default vault candidates.
+
+    This specifically handles macOS/iCloud TCC behavior: the iCloud directory can
+    exist but deny writes from an unattended process. Explicit FPAI_VAULT remains
+    explicit: with only one candidate, its PermissionError is surfaced.
+    """
+    errors = []
+    for vault in candidates or vault_candidates():
+        dest = vault / rel_path
+        try:
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            dest.write_text(text)
+            return dest
+        except PermissionError as exc:
+            errors.append(f"{dest}: {exc}")
+            continue
+    detail = "; ".join(errors) or rel_path
+    raise PermissionError(f"could not write vault mirror after trying candidates: {detail}")
+
+
 # State docs to mirror from repo into vault (read from laptop repo clone, no SSH needed)
 LAPTOP_REPO = HOME / "FPAI_Cockpit"
 STATE_DOCS = [
@@ -146,12 +203,13 @@ def main():
         print(md)
         return 0
 
-    DIGEST_FILE.parent.mkdir(parents=True, exist_ok=True)
-    DIGEST_FILE.write_text(md)
-    print(f"wrote {DIGEST_FILE.name}  ·  {data.get('total_chunks', 0):,} chunks")
+    candidates = vault_candidates()
+    digest_file = write_vault_text("00_MEMORY/BRAIN DIGEST.md", md, candidates)
+    vault = digest_file.parents[1]
+    print(f"wrote {digest_file.name}  ·  {data.get('total_chunks', 0):,} chunks")
 
     # Also mirror key state docs from local repo clone
-    copied = mirror_state_docs(VAULT, args.repo)
+    copied = mirror_state_docs(vault, args.repo)
     if copied:
         print(f"mirrored: {', '.join(copied)}")
     else:

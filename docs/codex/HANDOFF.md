@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-18 · SPEC_17c8dce5-ef8f-47a8-90af-49ecb08b5209_fix-vault-mirror-fpull-permissio · branch `build/SPEC_17c8dce5-ef8f-47a8-90af-49ecb08b5209_fix-vault-mirror-fpull-permissio`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `tools/decisions/mirror_pull.py`; `tools/decisions/test_mirror_pull.py`; `core/BUILD/specs/SPEC_17c8dce5-ef8f-47a8-90af-49ecb08b5209_fix-vault-mirror-fpull-permissio.md`; `core/BUILD/results/SPEC_17c8dce5-ef8f-47a8-90af-49ecb08b5209_fix-vault-mirror-fpull-permissio.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Hardened `tools/decisions/mirror_pull.py` so `fpull` no longer dies when the macOS iCloud Obsidian path exists but raises `PermissionError` under TCC. The mirror now honors explicit `FPAI_VAULT`, prefers the local Documents vault when present, can still use an existing iCloud-only vault, and falls back to the local Documents vault on write denial. State-doc mirroring follows the vault that accepted the digest.
+- **Tests:** `python3 -B -m unittest tools.decisions.test_mirror_pull`; `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/decisions/mirror_pull.py tools/decisions/test_mirror_pull.py`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `git diff --check`
+- **Risks:** Live `fpull`/SSH digest pull and real macOS vault write were not run in this sandbox. Explicit `FPAI_VAULT` remains strict and will still fail if pointed at a denied path.
+- **Rollback:** revert `tools/decisions/mirror_pull.py`, remove `tools/decisions/test_mirror_pull.py`, remove the result/spec artifacts, and restore the registry row.
+- **Intent solved:** vault mirroring no longer fails just because iCloud exists but macOS denies unattended writes.
+- **Downstream intent unlocked:** Ember can run `fpull` against the local vault mirror path without James manually clearing TCC prompts each time.
+- **Questions for Ember/James:** after merge on the Mac, run the real `fpull` once and confirm `BRAIN DIGEST.md` plus mirrored state docs land in `~/Documents/FPOS/Full Potential OS`.
+
 ### 2026-06-18 · SPEC_d117_post-merge-liveness-probe-auto-d · branch `build/SPEC_d117_post-merge-liveness-probe-auto-d`
 
 - **Status:** done in working tree / awaiting merge review

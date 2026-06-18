@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-18T21:58:30Z",
+    "updated_at": "2026-06-18T22:05:14Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_17c8dce5-ef8f-47a8-90af-49ecb08b5209_fix-vault-mirror-fpull-permissio",
+            "slug": "SPEC_17c8dce5-ef8f-47a8-90af-49ecb08b5209_fix-vault-mirror-fpull-permissio",
+            "branch": "build/SPEC_17c8dce5-ef8f-47a8-90af-49ecb08b5209_fix-vault-mirror-fpull-permissio",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_17c8dce5-ef8f-47a8-90af-49ecb08b5209_fix-vault-mirror-fpull-permissio.md",
+            "tests_passed": true,
+            "notes": "Complete in working tree: hardened tools/decisions/mirror_pull.py vault resolution and writes so fpull no longer dies when the macOS iCloud Obsidian path exists but raises PermissionError. The script now honors explicit FPAI_VAULT, prefers existing local Documents vault when available, can try existing iCloud-only vaults, and falls back to local Documents on TCC write denial. Added focused tests for fallback, all-candidates-denied, and candidate ordering. No live SSH/fpull or vault write was run in this sandbox."
+        },
         {
             "id": "SPEC_d117_post-merge-liveness-probe-auto-d",
             "slug": "SPEC_d117_post-merge-liveness-probe-auto-d",
