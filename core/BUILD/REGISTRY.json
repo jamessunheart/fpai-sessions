@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
         {
+            "id": "SPEC_d097_pipecat-voice-pipeline-telegram",
+            "slug": "SPEC_d097_pipecat-voice-pipeline-telegram",
+            "branch": "build/SPEC_d097_pipecat-voice-pipeline-telegram",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d097_pipecat-voice-pipeline-telegram.md",
+            "tests_passed": true,
+            "notes": "d097 complete in working tree: added local-first Telegram voice pipeline adapter for sunheart-brain tgbot using Pipecat readiness, faster-whisper STT, Kokoro TTS, ffmpeg OGG Opus output, /voice dependency status, legacy OpenAI fallback unless SH_TGBOT_VOICE_LOCAL_STRICT=1, focused tests, and idempotent activation script to install curator requirements and restart sh-brain-tgbot. Sandbox did not install deps, download models, send Telegram voice, deploy, push, merge, access secrets, outreach, or move money."
+        },
+        {
             "id": "SPEC_d096_forge-frontier-scan-cadence-secu",
             "slug": "SPEC_d096_forge-frontier-scan-cadence-secu",
             "branch": "build/SPEC_d096_forge-frontier-scan-cadence-secu",

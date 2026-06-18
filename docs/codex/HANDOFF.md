@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-18 · SPEC_d097_pipecat-voice-pipeline-telegram · branch `build/SPEC_d097_pipecat-voice-pipeline-telegram`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `SERVICES/sunheart-brain/curator/voice_pipeline.py`; `SERVICES/sunheart-brain/curator/tgbot.py`; `SERVICES/sunheart-brain/curator/test_voice_pipeline.py`; `SERVICES/sunheart-brain/curator/requirements.txt`; `core/BUILD/activate/SPEC_d097_pipecat-voice-pipeline-telegram.sh`; `core/BUILD/specs/SPEC_d097_pipecat-voice-pipeline-telegram.md`; `core/BUILD/results/SPEC_d097_pipecat-voice-pipeline-telegram.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a local-first Telegram voice adapter for `@sunheartbrain_bot`. Voice notes now download once, then try local faster-whisper STT before the existing OpenAI Whisper fallback. Voice replies now try local Kokoro TTS, transcode to Telegram OGG Opus through `ffmpeg`, then fall back to the existing OpenAI TTS path unless `SH_TGBOT_VOICE_LOCAL_STRICT=1` is set. `/voice` now reports Pipecat/faster-whisper/Kokoro/ffmpeg readiness. Added an idempotent activation script to install curator requirements into the existing bot venv and restart `sh-brain-tgbot.service` when present.
+- **Tests:** `timeout 20s python3 -B -m unittest discover -s SERVICES/sunheart-brain/curator -p 'test_voice_pipeline.py'` (3 OK); `python3 -B SERVICES/sunheart-brain/curator/tests/test_voice_tts_strip.py` (OK); `python3 -B -m unittest discover -s SERVICES/sunheart-brain/curator -p 'test_bot_mode_gate.py'` (5 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile ...`; `bash -n core/BUILD/activate/SPEC_d097_pipecat-voice-pipeline-telegram.sh`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `git diff --check`
+- **Risks:** This proves repo wiring and fallback behavior only. The sandbox did not install Pipecat/faster-whisper/Kokoro, download model weights, send a live Telegram voice note, deploy, push, merge, access secrets, outreach, or move money. Kokoro API/package compatibility still needs live-host validation through `/voice` and one real voice note. Strict local mode is opt-in; without it, the bot falls back to the previous OpenAI voice path if local dependencies are not ready.
+- **Rollback:** revert the listed files. If activation has run, restart `sh-brain-tgbot.service` after rollback. Runtime mitigation without reverting: `SH_TGBOT_VOICE_PROVIDER=openai` for legacy voice, `EMBER_TGBOT_VOICE_DISABLE=1` or `/voice off` for text-only replies, or `SH_TGBOT_VOICE_LOCAL_STRICT=1` to fail closed when local voice dependencies are missing.
+- **Intent solved:** Telegram voice now has a local-first Pipecat/faster-whisper/Kokoro pipeline boundary instead of being hardwired to OpenAI STT/TTS.
+- **Downstream intent unlocked:** Ember can activate on server 162, run `/voice` for readiness, and perform the proof target: James sends one voice note to `@sunheartbrain_bot` and receives a text plus voice answer within 5 seconds using local models.
+- **Questions for Ember/James:** after merge, run the activation script on 162, confirm `/voice` reports local readiness, then run one live Telegram voice-note proof. If local model latency exceeds 5 seconds on CPU, decide whether to preload a smaller faster-whisper model or keep OpenAI fallback until local performance is tuned.
+
 ### 2026-06-18 · SPEC_d096_forge-frontier-scan-cadence-secu · branch `build/SPEC_d096_forge-frontier-scan-cadence-secu`
 
 - **Status:** done in working tree / awaiting merge review
