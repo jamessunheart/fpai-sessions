@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-18 · SPEC_d108_qwen3-30b-a3b-moe-benchmark-30b · branch `build/SPEC_d108_qwen3-30b-a3b-moe-benchmark-30b`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `tools/open_model_benchmark/qwen_moe_benchmark.py`; `tools/open_model_benchmark/test_qwen_moe_benchmark.py`; `core/BUILD/signals/qwen3_30b_a3b_benchmark.json`; `core/STATE/QWEN3_30B_A3B_BENCHMARK.md`; `core/benchmarks/README.md`; `core/BUILD/specs/SPEC_d108_qwen3-30b-a3b-moe-benchmark-30b.md`; `core/BUILD/results/SPEC_d108_qwen3-30b-a3b-moe-benchmark-30b.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added an offline-first Qwen3-30B-A3B MoE benchmark harness against `llama3.1:8b`. The harness generates an 8-task repo-local task pack, records candidate/baseline compute profiles, scores supplied JSONL responses for quality/evidence/latency, computes quality per active parameter, and declares the claim passed only when Qwen quality is >= llama quality while active params remain <= 3.5B. Live Ollama execution is bounded and opt-in only via `--run-ollama`; default output is task-pack mode.
+- **Tests:** `python3 -B -m unittest tools.open_model_benchmark.test_qwen_moe_benchmark tools.open_model_benchmark.test_benchmark` (9 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile ...`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `python3 -m json.tool core/BUILD/signals/qwen3_30b_a3b_benchmark.json`; `python3 -B -m tools.open_model_benchmark.qwen_moe_benchmark --max-sources 8 --output core/BUILD/signals/qwen3_30b_a3b_benchmark.json --state core/STATE/QWEN3_30B_A3B_BENCHMARK.md`; `git diff --check`
+- **Risks:** This branch proves the benchmark harness and task pack, not live Qwen quality. No live Ollama run, model download, server SSH, routing change, deploy, push, merge, outreach, secret access, or money movement occurred. The default candidate tag is `qwen3:30b-a3b`; adjust or feed JSONL responses if server 162 uses a different installed tag.
+- **Rollback:** revert the listed d108 files and remove the d108 registry row. No live service/model/routing rollback is required because nothing was activated.
+- **Intent solved:** Qwen3-30B-A3B now has a concrete benchmark harness against the local `llama3.1:8b` baseline instead of an unmeasured model claim.
+- **Downstream intent unlocked:** Ember can run one approved live Ollama pass on server 162 and use quality/latency/active-compute evidence to decide whether Qwen3-30B-A3B should enter local replacement experiments.
+- **Questions for Ember/James:** after merge on 162, run `python3 -B -m tools.open_model_benchmark.qwen_moe_benchmark --run-ollama --max-tasks 8 --output core/BUILD/signals/qwen3_30b_a3b_benchmark.json --state core/STATE/QWEN3_30B_A3B_BENCHMARK.md` only if both Ollama tags are already installed or explicitly approved; otherwise collect JSONL responses and score them with `--responses`.
+
 ### 2026-06-18 · SPEC_d107_gepa-library-wire-install-real-m · branch `build/SPEC_d107_gepa-library-wire-install-real-m`
 
 - **Status:** done in working tree / awaiting merge review

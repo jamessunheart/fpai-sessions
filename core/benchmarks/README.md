@@ -38,3 +38,21 @@ The reviewed systemd artifact enables `BENCHMARKS_PROPOSE_LIVE=1` and `BENCHMARK
 ## Prompt Efficiency
 
 `tools/prompt_efficiency/gepa_loop.py` tests prompt variants against synthetic fixture cases in `prompt_efficiency_cases.json`. For template-shaped prompts, it prefers the real MIT `gepa` package through `tools/prompt_efficiency/gepa_library.py`; if the package is unavailable or `GEPA_OPTIMIZE_DISABLE=1`, it falls back to deterministic candidates and records that status in the report. A variant is written to `prompt_efficiency_adoptions.json` only when quality is greater than or equal to baseline and average token count is lower. High-impact prompts such as council lenses are written to `pending_adoptions` until James/Ember approves active use. Current reports land in `core/BUILD/signals/prompt_efficiency.*` and `core/STATE/PROMPT_EFFICIENCY.md`.
+
+## Qwen3-30B-A3B MoE Benchmark
+
+`tools/open_model_benchmark/qwen_moe_benchmark.py` creates the d108 advisory benchmark for `qwen3:30b-a3b` versus `llama3.1:8b`. The default run is offline: it writes a repo-local task pack and state report without downloading models, SSHing to server 162, changing routing, or spending money.
+
+Run task-pack mode:
+
+```bash
+python3 -B -m tools.open_model_benchmark.qwen_moe_benchmark
+```
+
+Run live only from an approved Ollama host that already has both tags installed:
+
+```bash
+python3 -B -m tools.open_model_benchmark.qwen_moe_benchmark --run-ollama --max-tasks 8
+```
+
+The claim passes only when Qwen3-30B-A3B quality is greater than or equal to `llama3.1:8b` while the candidate active compute profile remains at or below 3.5B active parameters. The output remains advisory-only and lands in `core/BUILD/signals/qwen3_30b_a3b_benchmark.json` plus `core/STATE/QWEN3_30B_A3B_BENCHMARK.md`.
