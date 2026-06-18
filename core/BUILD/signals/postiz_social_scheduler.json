@@ -1,0 +1,39 @@
+{
+  "id": "SPEC_d099_postiz-social-scheduler-mcp-wire",
+  "status": "repo_wired_live_activation_pending",
+  "postiz_docs_checked": "2026-06-18",
+  "compose_source": "https://github.com/gitroomhq/postiz-docker-compose",
+  "self_hosted_backend_url": "https://postiz.fullpotential.ai",
+  "mcp_endpoint_template": "https://postiz.fullpotential.ai/mcp/${POSTIZ_API_KEY}",
+  "mcp_tools_expected": [
+    "integrationList",
+    "groupList",
+    "integrationSchema",
+    "triggerTool",
+    "schedulePostTool",
+    "generateImageTool",
+    "generateVideoOptions",
+    "videoFunctionTool",
+    "generateVideoTool"
+  ],
+  "first_platforms": [
+    {
+      "platform": "mastodon",
+      "status": "first_live_proof_target",
+      "gate": "create/connect account on Postiz, then run one MCP schedulePostTool proof"
+    },
+    {
+      "platform": "instagram",
+      "status": "blocked_on_meta_token_refresh",
+      "gate": "James one-time Meta token refresh"
+    },
+    {
+      "platform": "x",
+      "status": "blocked_on_signup_and_captcha_flow",
+      "gate": "Twilio/CAPTCHA/autonomous signup path"
+    }
+  ],
+  "public_send_gate": "No live schedule/publish from Codex sandbox; run after merge with James/Ember approval.",
+  "proof_next": "On server 162, run activation with POSTIZ_ACTIVATE=1, create/connect Mastodon, install the MCP fragment into Ember's MCP config with a real API key, then call integrationList and schedulePostTool for one proof post."
+}
+

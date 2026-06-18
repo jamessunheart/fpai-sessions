@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
         {
+            "id": "SPEC_d099_postiz-social-scheduler-mcp-wire",
+            "slug": "SPEC_d099_postiz-social-scheduler-mcp-wire",
+            "branch": "build/SPEC_d099_postiz-social-scheduler-mcp-wire",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d099_postiz-social-scheduler-mcp-wire.md",
+            "tests_passed": true,
+            "notes": "d099 complete in working tree: added repo-side Postiz self-host/MCP wiring artifacts, a non-secret MCP config fragment, dry-run schedulePostTool payload generator, guarded activation path for official postiz-docker-compose, signal/result docs, and focused tests. No live Docker deploy, MCP token write, platform account creation, public send/schedule, push, merge, secrets, or money movement."
+        },
+        {
             "id": "SPEC_d098_cognee-graph-memory-layer",
             "slug": "SPEC_d098_cognee-graph-memory-layer",
             "branch": "build/SPEC_d098_cognee-graph-memory-layer",
