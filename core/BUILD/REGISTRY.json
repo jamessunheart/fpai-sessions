@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
         {
+            "id": "SPEC_d101_consciousness-loop-close-observe",
+            "slug": "SPEC_d101_consciousness-loop-close-observe",
+            "branch": "build/SPEC_d101_consciousness-loop-close-observe",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d101_consciousness-loop-close-observe.md",
+            "tests_passed": true,
+            "notes": "d101 complete in working tree: added private consciousness-observer log parser/context/digest helpers, non-blocking observer wrapper, council Awareness-lens prompt/context wiring, MODEL_DNA directive append hook, brain digest consciousness section, and activation script to patch hidden auto-settle hooks on live host. Focused unittest, py_compile, shell syntax, helper CLI smoke, activation idempotence smoke, registry JSON validation, and diff hygiene passed. No live observer run, hook patch, public publish, deploy, push, merge, outreach, secrets, or money movement."
+        },
+        {
             "id": "SPEC_d100_fpos-frontier-node-public-contri",
             "slug": "SPEC_d100_fpos-frontier-node-public-contri",
             "branch": "build/SPEC_d100_fpos-frontier-node-public-contri",

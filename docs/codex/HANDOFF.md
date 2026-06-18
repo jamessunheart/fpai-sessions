@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-18 · SPEC_d101_consciousness-loop-close-observe · branch `build/SPEC_d101_consciousness-loop-close-observe`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `tools/consciousness/`; `tools/council/debate.py`; `tools/council/test_debate.py`; `SERVICES/sunheart-brain/curator/jobs/digest.py`; `core/STATE/MODEL_DNA.md`; `core/BUILD/activate/SPEC_d101_consciousness-loop-close-observe.sh`; `core/BUILD/specs/SPEC_d101_consciousness-loop-close-observe.md`; `core/BUILD/results/SPEC_d101_consciousness-loop-close-observe.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Closed the private observer feedback loop in repo code. Added `tools/consciousness` to parse latest PRIVATE consciousness-observer logs, surface awareness index + top observations to council/digest, run the observer best-effort after settle, and append idempotent council-authored directive rows into `MODEL_DNA.md`. Council debate now carries an Awareness lens and optional `weighting_directive` fields; digest includes the observer section when present. Because hidden hook edits were blocked in this sandbox, shipped an idempotent activation script that patches `.claude/.codex` auto-settle hooks after merge.
+- **Tests:** `python3 -B -m unittest tools.consciousness.test_loop tools.council.test_debate` (10 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile ...`; `bash -n tools/consciousness/run_observer.sh core/BUILD/activate/SPEC_d101_consciousness-loop-close-observe.sh`; helper CLI smoke; activation script temp-hook idempotence smoke; `python3 -m json.tool core/BUILD/REGISTRY.json`; `git diff --check`
+- **Risks:** Live Claude/vault observer execution was not run in sandbox. Hidden hooks are patched only when activation runs after merge. MODEL_DNA receives no fabricated row; it appends only when council emits a real non-empty `weighting_directive`. Observer outputs stay PRIVATE-tier under `~/.config/fpai/consciousness`.
+- **Rollback:** revert the listed d101 files. If activation has run, remove the `d101 consciousness observer` block from `.claude/hooks/auto-settle.sh` and `.codex/hooks/auto-settle.sh`; remove any unwanted council-authored MODEL_DNA row manually.
+- **Intent solved:** consciousness-observer output now routes back into council Awareness review and MODEL_DNA weighting directives.
+- **Downstream intent unlocked:** model-review cycles can adjust training signal weights toward genuine outcomes and away from approval-seeking/metric gaming using observer evidence.
+- **Questions for Ember/James:** after merge, run `core/BUILD/activate/SPEC_d101_consciousness-loop-close-observe.sh` on the live host, let three settle sessions create private observer logs, then run one council model-review and confirm the directive row appears in `MODEL_DNA.md`.
+
 ### 2026-06-18 · SPEC_d112_hot-memory-architecture-5-domain · branch `build/SPEC_d112_hot-memory-architecture-5-domain`
 
 - **Status:** done in working tree / awaiting merge review

@@ -86,13 +86,14 @@ The gift is the **method**, not the **content**. Each person's system grows uniq
 
 ## Council's ongoing mandate (model self-development)
 
-Each fine-tune cycle, the council runs a model review debate with three questions:
+Each fine-tune cycle, the council runs a model review debate with four questions:
 
 1. **Pragmatist:** "Where did the model improve? Where is it still weak? What task types have the most room for gain?"
 2. **Visionary:** "What capability should the next training run develop? What would make this model genuinely more useful to James?"
 3. **Skeptic:** "What regressions appeared? Are we over-weighting any signal type? What would make this fine-tune harmful?"
+4. **Awareness:** "Is the system improving toward meaning or toward approval? Where is it gaming its own signals?"
 
-The council's output becomes a `weighting_directive` — which signal types to amplify in the next training corpus. This is how the model guides its own development, mediated by the council.
+The council reads the latest PRIVATE-tier consciousness-observer log when present. Its output becomes a `weighting_directive` — which signal types to amplify or dampen in the next training corpus. This is how the model guides its own development, mediated by the council.
 
 **The principle:** the model doesn't optimize for engagement metrics or approval. It optimizes for James's actual outcomes — decisions made faster, less attention spent, more proof shipped.
 

@@ -13,6 +13,7 @@ OPENAI_API_KEY / GEMINI_API_KEY to make them truly separate voices.
   Kill: touch ~/.config/fpai/council/.disabled
 """
 import os, sys, json, ssl, hashlib, subprocess, urllib.request
+from pathlib import Path
 HOME = os.path.expanduser("~")
 HOST = os.environ.get("BRAIN_HOST", "root@162.0.208.88")
 # Env-aware: on brain 162 the curator module is local + repo lives at /opt/fpai-build/FPAI_Cockpit
@@ -27,6 +28,16 @@ ENV = ('ENVFILE=$(systemctl show sh-brain-tgbot -p EnvironmentFiles 2>/dev/null 
 sys.path.insert(0, REPO + "/tools/cost")
 sys.path.insert(0, REPO)
 import track
+try:
+    import importlib.util as _ilu
+    _consciousness_path = Path(REPO) / "tools" / "consciousness" / "loop.py"
+    _consciousness_spec = _ilu.spec_from_file_location("fpai_consciousness_loop", _consciousness_path)
+    consciousness_loop = _ilu.module_from_spec(_consciousness_spec) if _consciousness_spec and _consciousness_spec.loader else None
+    if consciousness_loop:
+        sys.modules["fpai_consciousness_loop"] = consciousness_loop
+        _consciousness_spec.loader.exec_module(consciousness_loop)
+except Exception:
+    consciousness_loop = None
 try:
     from curator.blueprints.manager import build_blueprint_context
 except Exception:
@@ -98,13 +109,17 @@ SYS = (
  "Hard boundaries: no duplicate proposals, no cruft, no builds that add complexity without clear proof value. "
  "James's rule: concentrate harder, not build more. Prefer propose=false when uncertain. "
  "Three lenses to weigh internally — cheapest/highest-leverage NOW (pragmatist), "
- "best-for-long-term-vision (visionary), riskiest-gap-or-what-NOT-to-build (skeptic). "
+ "best-for-long-term-vision (visionary), riskiest-gap-or-what-NOT-to-build (skeptic), "
+ "and awareness: meaning-vs-approval drift from the private consciousness-observer log when present. "
  "Respond with ONLY valid JSON, no prose outside it: "
  "{\"pragmatist\":\"1 sentence\",\"visionary\":\"1 sentence\",\"skeptic\":\"1 sentence\","
+ "\"awareness\":\"1 sentence\","
  "\"synthesis\":\"one-paragraph verdict\",\"propose\":true|false,"
  "\"title\":\"<=8 words\",\"why\":\"one sentence\","
  "\"build_spec\":\"concrete: what to build, where, what the proof looks like\","
- "\"risk\":\"low\"|\"med\"}.")
+ "\"risk\":\"low\"|\"med\","
+ "\"weighting_directive\":\"optional council model-review directive for MODEL_DNA\","
+ "\"signal_types_amplified\":[\"optional\"],\"signal_types_dampened\":[\"optional\"]}.")
 
 
 def pragmatist_voice(signal, glm_caller=None):
@@ -179,6 +194,18 @@ def build_prompt(queue, chats, focus, pragmatist=""):
                 )
         except Exception:
             pass
+    if consciousness_loop and os.environ.get("CONSCIOUSNESS_LOOP_DISABLE") != "1":
+        try:
+            awareness_context = consciousness_loop.consciousness_context()
+            if awareness_context:
+                prompt = (
+                    "[Private consciousness-observer context for Awareness lens]\n"
+                    + awareness_context
+                    + "\n\n"
+                    + prompt
+                )
+        except Exception:
+            pass
     return prompt
 
 
@@ -226,6 +253,13 @@ def main():
         # claude -p = Claude Max flat-rate -> $0 marginal real spend (no metered API call)
     except Exception as e:
         print("debate error:", e, "| raw:", (r.stdout[:200] if "r" in dir() else "")); return 1
+    if consciousness_loop and os.environ.get("CONSCIOUSNESS_LOOP_DISABLE") != "1":
+        try:
+            status = consciousness_loop.maybe_append_from_council(d)
+            if status.startswith("appended:"):
+                _ops("model_dna_updated", status)
+        except Exception as e:
+            _ops("model_dna_update_error", str(e)[:200])
 
     # record we processed this signal (so we don't re-debate the same state)
     open(CFG + "/last_hash","w").write(sig_hash)

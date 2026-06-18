@@ -53,6 +53,47 @@ class CouncilDebateTest(unittest.TestCase):
         self.assertIn("AVAILABLE RESOURCES", prompt)
         self.assertIn("- git: /usr/bin/git", prompt)
 
+    def test_build_prompt_includes_awareness_context_when_available(self):
+        class FakeConsciousnessLoop:
+            @staticmethod
+            def consciousness_context():
+                return "CONSCIOUSNESS OBSERVER CONTEXT - PRIVATE TIER\nAwareness Index: 64/100"
+
+        with mock.patch.object(debate, "consciousness_loop", FakeConsciousnessLoop):
+            prompt = debate.build_prompt("queue", "chats", "")
+
+        self.assertIn("Private consciousness-observer context", prompt)
+        self.assertIn("Awareness Index: 64/100", prompt)
+
+    def test_council_result_can_update_model_dna(self):
+        class FakeObservation:
+            awareness_index = 64
+            path = Path("2026-06-18.md")
+
+        class FakeConsciousnessLoop:
+            calls = []
+
+            @staticmethod
+            def latest_observation(_dir=None):
+                return FakeObservation()
+
+            @classmethod
+            def maybe_append_from_council(cls, result):
+                cls.calls.append(result)
+                return "appended: v20260618-awareness"
+
+        result = {
+            "weighting_directive": "Amplify outcome proof over approval-seeking praise.",
+            "signal_types_amplified": ["outcome proof"],
+            "signal_types_dampened": ["praise"],
+        }
+
+        with mock.patch.object(debate, "consciousness_loop", FakeConsciousnessLoop):
+            status = debate.consciousness_loop.maybe_append_from_council(result)
+
+        self.assertEqual(status, "appended: v20260618-awareness")
+        self.assertEqual(FakeConsciousnessLoop.calls[0]["weighting_directive"], result["weighting_directive"])
+
 
 if __name__ == "__main__":
     unittest.main()

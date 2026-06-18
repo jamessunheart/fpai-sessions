@@ -7,6 +7,7 @@ from __future__ import annotations
 import logging
 import os
 import json
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -53,6 +54,23 @@ def latest_probe_rate_line() -> str:
     if not latest:
         return "Rate next cycle: n/a (no probe_rate row)"
     return f"Rate next cycle: {latest.get('count', 'n/a')} ({latest.get('reason', 'unknown')})"
+
+
+def consciousness_observer_lines() -> list[str]:
+    repo = Path(os.environ.get("FPAI_CODEX_REPO", "/opt/fpai-build/FPAI_Cockpit"))
+    helper_path = repo / "tools" / "consciousness" / "loop.py"
+    try:
+        import importlib.util as _ilu
+        _spec = _ilu.spec_from_file_location("fpai_consciousness_loop", helper_path)
+        _mod = _ilu.module_from_spec(_spec) if _spec and _spec.loader else None
+        if not _mod:
+            return []
+        sys.modules["fpai_consciousness_loop"] = _mod
+        _spec.loader.exec_module(_mod)
+        section = _mod.digest_section()
+    except Exception:
+        return []
+    return [line for line in str(section or "").splitlines() if line.strip()]
 
 
 async def run(run_id: str) -> dict[str, Any]:
@@ -141,6 +159,9 @@ async def run(run_id: str) -> dict[str, Any]:
     scanner_flags = horizon_signal_lines()
     if scanner_flags:
         report["last_24h"]["horizon_scanner_flags"] = scanner_flags
+    consciousness_lines = consciousness_observer_lines()
+    if consciousness_lines:
+        report["last_24h"]["consciousness_observer"] = consciousness_lines
 
     summary = (
         f"+{sum(by_sens.values())} chunks · "
@@ -150,6 +171,8 @@ async def run(run_id: str) -> dict[str, Any]:
     proposal_text = f"Daily digest · {summary}"
     if scanner_flags:
         proposal_text += "\n\n⚡ Scanner flagged:\n" + "\n".join(f"- {line}" for line in scanner_flags)
+    if consciousness_lines:
+        proposal_text += "\n\n" + "\n".join(consciousness_lines)
     if probe_report.get("available"):
         quality = "n/a" if probe_report.get("avg_quality") is None else f"{probe_report['avg_quality']:.1f}"
         proposal_text += (
