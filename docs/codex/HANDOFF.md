@@ -82,6 +82,20 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-18 · SPEC_d089_payment-triggered-agent-spawn-c · branch `build/SPEC_d089_payment-triggered-agent-spawn-c`
+
+- **Status:** done in working tree / commit blocked by read-only shared Git metadata / independent AI review blocked in sandbox / awaiting merge review
+- **Files changed:** `SERVICES/zend-payments/app/main.py`; `SERVICES/zend-payments/app/payment_activation.py`; `SERVICES/zend-payments/app/test_payment_activation.py`; `SERVICES/sunheart-brain/curator/users.py`; `SERVICES/sunheart-brain/curator/test_users.py`; `core/BUILD/specs/SPEC_d089_payment-triggered-agent-spawn-c.md`; `core/BUILD/results/SPEC_d089_payment-triggered-agent-spawn-c.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Wired `checkout.session.completed` in `zend-payments` to activate the paid user before settlement: extract `user_id` from Stripe session metadata/client reference, mark `brain_index.users.paid = TRUE`, call `curator.users.init_namespace(user_id)`, then send exactly `Your agent is ready.` to the user's Telegram chat via the existing Hermes gateway. Added `curator.users` as the d042-compatible namespace helper with dynamic existing-schema adaptation and fail-closed behavior if the live tables are missing required columns.
+- **Tests:** `python3 -B -m unittest app.test_payment_activation` (3 tests OK, run from `SERVICES/zend-payments`); `python3 -B -m unittest curator.test_users` (1 test OK, run from `SERVICES/sunheart-brain`); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile SERVICES/zend-payments/app/payment_activation.py SERVICES/zend-payments/app/main.py SERVICES/zend-payments/app/test_payment_activation.py SERVICES/sunheart-brain/curator/users.py SERVICES/sunheart-brain/curator/test_users.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d089-registry.json`; `git diff --check`; explicit `git diff --check --no-index` over new files.
+- **Independent review:** attempted `claude -p --effort high` against `/tmp/d089-full.patch`, including untracked files. It produced no output after roughly two minutes and could not be interrupted through the closed stdin session; no independent review verdict is available in this sandbox.
+- **Commit:** attempted `git add ... && git commit -m "feat(payments): spawn agent on checkout completion"`; blocked by read-only shared Git metadata at `/opt/fpai-build/FPAI_Cockpit/.git/worktrees/SPEC_d089_payment-triggered-agent-spawn-c/index.lock`. Changes remain in the working tree.
+- **Risks:** No live Stripe webhook, brain-index write, Telegram send, deploy, push, merge, or secret read occurred. Live proof requires checkout metadata to include `user_id` plus either `telegram_chat_id` or a compatible Telegram chat id column on `brain_index.users`. If the live `user_agents` schema differs from the supported dynamic columns, the webhook fails closed before settlement so Stripe can retry after correction.
+- **Rollback:** revert the d089 files listed above. Runtime rollback for a completed activation: set the affected `brain_index.users.paid = FALSE` and archive that user's `brain_index.user_agents` namespace row.
+- **Intent solved:** one completed Stripe checkout now has a repo-wired path to one paid, namespaced user agent and the first Telegram readiness message.
+- **Downstream intent unlocked:** run the live cell-division proof with a test checkout carrying `{user_id, telegram_chat_id}`, then verify `users.paid`, the namespace row, and the Telegram message.
+- **Questions for Ember/James:** rerun independent AI review from a live/writable host before merge if required; run the first live Stripe test checkout only from the live host with test-mode Stripe and a known Telegram chat id.
+
 ### 2026-06-17 · SPEC_d088_glm-5-2-sovereign-inference-runp · branch `build/SPEC_d088_glm-5-2-sovereign-inference-runp`
 
 - **Status:** done in working tree / independent AI review blocked in sandbox / awaiting merge review
