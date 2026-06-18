@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-18 · SPEC_d114_revision-agent-flagged-build-aut · branch `build/SPEC_d114_revision-agent-flagged-build-aut`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `tools/build_loop/server_build_loop.sh`; `tools/build_loop/test_revision_agent.py`; `core/BUILD/specs/SPEC_d114_revision-agent-flagged-build-aut.md`; `core/BUILD/results/SPEC_d114_revision-agent-flagged-build-aut.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a bounded post-review revision agent to the server build loop. Flagged non-protected builds now get up to two same-worktree Codex repair passes using the generated review Findings section plus the original spec, with each attempt logged to `ops_ledger`; revisions are committed on the same branch and `ai_review.py` is rerun. If a revision upgrades to RC=0, the build proceeds as AI-approved. RC=2 protected-path blocks remain hard stops. Still flagged after two attempts falls back to the existing silent flagged auto-merge path. Runtime kill switch: `REVISION_AGENT_DISABLE=1`.
+- **Tests:** `bash -n tools/build_loop/server_build_loop.sh`; `python3 -B -m unittest tools.build_loop.test_revision_agent` (5 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/test_revision_agent.py`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `git diff --check`
+- **Risks:** The sandbox did not run a live server build-loop cycle, spawn a real Codex revision subprocess, or call Claude review. Test coverage is a static shell control-flow contract because live execution depends on server-only paths, systemd env, the decisions DB, and local Codex/Claude credentials. Vague reviewer feedback may still produce no useful revision, in which case the loop logs no-change/still-flagged and falls back after two attempts.
+- **Rollback:** revert the listed files. Runtime-only rollback is `REVISION_AGENT_DISABLE=1`.
+- **Intent solved:** flagged reversible builds now get an automated, tightly-scoped repair attempt before silent merge fallback.
+- **Downstream intent unlocked:** the autonomous build loop can turn specific reviewer flags into approved fixes without manual tightening, while preserving protected-path hard stops and the existing fallback path.
+- **Questions for Ember/James:** after merge on server 162, watch one intentionally flagged harmless fixture/build and confirm the ledger shows `revision attempted` then either `revision approved` or `revision fallback-auto-merge`.
+
 ### 2026-06-18 · SPEC_d113_auto-seed-orphaned-spec-files-bu · branch `build/SPEC_d113_auto-seed-orphaned-spec-files-bu`
 
 - **Status:** done in working tree / awaiting merge review

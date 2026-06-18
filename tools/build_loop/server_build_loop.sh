@@ -50,6 +50,65 @@ CONSECUTIVE_REVERTS=0
 tg()  { cd "$BRAIN" && "$PY" -c "import asyncio,sys;from curator.telegram import send;asyncio.run(send(sys.argv[1]))" "$1" 2>/dev/null || true; }
 dec() { cd "$BRAIN" && "$PY" -m curator.decisions "$@" 2>/dev/null; }
 
+review_file_for_branch() {
+  local branch="$1"
+  printf '%s/core/BUILD/reviews/%s.md' "$REPO" "${branch//\//-}"
+}
+
+review_findings() {
+  local review_file="$1"
+  if [ -f "$review_file" ]; then
+    awk '
+      /^## Findings[[:space:]]*$/ { in_findings=1; next }
+      in_findings && /^## / { exit }
+      in_findings && /^\*Reviewer:/ { exit }
+      in_findings { print }
+    ' "$review_file" | sed -n '1,120p'
+  fi
+}
+
+run_revision_agent_attempt() {
+  local attempt="$1"
+  local review_file="$2"
+  local feedback prompt status
+
+  feedback="$(review_findings "$review_file")"
+  if [ -z "$(printf '%s' "$feedback" | tr -d '[:space:]')" ]; then
+    feedback="${REVIEW:-}"
+  fi
+
+  prompt="$(cat <<EOF
+You are the revision agent for an already-built server build-loop branch.
+
+Fix ONLY the specific issues flagged by the independent reviewer. Keep the same branch and worktree. Do not broaden scope, refactor unrelated code, add unrelated features, deploy, push, merge, touch secrets, send outreach, or move money.
+
+Original spec:
+$SPEC
+
+Reviewer feedback:
+$feedback
+
+Revision constraints:
+- Make the smallest code/test/doc changes needed to address the reviewer findings.
+- Preserve the original spec intent.
+- Run focused verification if feasible and mention it in any touched handoff/result note.
+- Leave unrelated files and formatting alone.
+EOF
+)"
+
+  codex exec --cd "$WT" --full-auto - <<<"$prompt" > "/opt/fpai-build/logs/$SPECID.revision-$attempt.codex.log" 2>&1
+  status=$?
+  python3 "$REPO/tools/build_loop/ops_log.py" revision attempted "$SPECID attempt=$attempt codex_rc=$status" "\$0" "$BR" "" 2>/dev/null || true
+
+  if [ -n "$(git -C "$WT" status --porcelain)" ]; then
+    git -C "$WT" add -A
+    git -C "$WT" -c user.email=ember@fpai -c user.name=Ember commit -q -m "build($SPECID): revision agent pass $attempt"
+    python3 "$REPO/tools/build_loop/ops_log.py" revision committed "$SPECID attempt=$attempt" "\$0" "$BR" "" 2>/dev/null || true
+  else
+    python3 "$REPO/tools/build_loop/ops_log.py" revision no-changes "$SPECID attempt=$attempt" "\$0" "$BR" "Ember: inspect unchanged flagged build" 2>/dev/null || true
+  fi
+}
+
 "$PY" "$REPO/tools/build_loop/seed_orphaned_specs.py" --repo "$REPO" || true
 
 PENDING=$(dec pending-builds | grep -E '^\{' || true)
@@ -105,6 +164,34 @@ Register in core/BUILD/REGISTRY.json. Tests required. Do NOT push or merge.
 
   # review ($0 claude -p, PROTECTED_PATHS aware)
   REVIEW=$(cd "$REPO" && "$PY" tools/merge/ai_review.py "$BR" 2>&1); RC=$?
+
+  # Revision agent: flagged review gets up to 2 tightly-scoped same-branch repair passes
+  # before falling back to the existing silent flagged auto-merge path. Protected-path
+  # blocks (RC=2) stay hard stops.
+  if [ "$RC" != 0 ] && [ "$RC" != 2 ]; then
+    if [ "${REVISION_AGENT_DISABLE:-0}" = "1" ]; then
+      python3 "$REPO/tools/build_loop/ops_log.py" revision skipped "$SPECID disabled by REVISION_AGENT_DISABLE=1" "\$0" "$BR" "" 2>/dev/null || true
+    else
+      REVISION_ATTEMPT=0
+      while [ "$REVISION_ATTEMPT" -lt 2 ] && [ "$RC" != 0 ] && [ "$RC" != 2 ]; do
+        REVISION_ATTEMPT=$((REVISION_ATTEMPT+1))
+        REVIEW_FILE="$(review_file_for_branch "$BR")"
+        run_revision_agent_attempt "$REVISION_ATTEMPT" "$REVIEW_FILE"
+        REVIEW=$(cd "$REPO" && "$PY" tools/merge/ai_review.py "$BR" 2>&1); RC=$?
+        if [ "$RC" = 0 ]; then
+          python3 "$REPO/tools/build_loop/ops_log.py" revision approved "$SPECID attempt=$REVISION_ATTEMPT" "\$0" "$BR" "" 2>/dev/null || true
+        elif [ "$RC" = 2 ]; then
+          python3 "$REPO/tools/build_loop/ops_log.py" revision blocked "$SPECID attempt=$REVISION_ATTEMPT protected-path review" "\$0" "$BR" "James: protected-zone escalation $DID" 2>/dev/null || true
+        else
+          python3 "$REPO/tools/build_loop/ops_log.py" revision still-flagged "$SPECID attempt=$REVISION_ATTEMPT" "\$0" "$BR" "" 2>/dev/null || true
+        fi
+      done
+      if [ "$RC" != 0 ] && [ "$RC" != 2 ] && [ "$REVISION_ATTEMPT" -ge 2 ]; then
+        python3 "$REPO/tools/build_loop/ops_log.py" revision fallback-auto-merge "$SPECID still flagged after 2 attempts" "\$0" "$BR" "" 2>/dev/null || true
+      fi
+    fi
+  fi
+
   if   [ "$RC" = 0 ]; then ST=built;    V="✅ Built + AI-APPROVED"
   elif [ "$RC" = 2 ]; then ST=rejected; V="🔴 BLOCKED — touches the protected audit layer"
   else                     ST=changes;  V="⚠️ Built, but AI flagged changes"; fi

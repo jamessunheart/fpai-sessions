@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-18T21:23:29Z",
+    "updated_at": "2026-06-18T21:28:27Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d114_revision-agent-flagged-build-aut",
+            "slug": "SPEC_d114_revision-agent-flagged-build-aut",
+            "branch": "build/SPEC_d114_revision-agent-flagged-build-aut",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d114_revision-agent-flagged-build-aut.md",
+            "tests_passed": true,
+            "notes": "d114 complete in working tree: added a bounded post-review revision agent for flagged server build-loop branches. Flagged non-protected reviews now get up to two same-worktree Codex repair passes using the generated review findings and original spec, each attempt is ops-ledger logged, revisions are committed on the same branch, ai_review.py is rerun, approved revisions merge as APPROVE, protected RC=2 remains blocked, REVISION_AGENT_DISABLE=1 skips the revision loop, and still-flagged builds fall back to the existing silent flagged auto-merge path after two attempts. Focused static contract tests, shell syntax, py_compile, registry JSON validation, and diff hygiene passed. No live build-loop run, Codex revision subprocess, Claude review, push, merge, deploy, outreach, secrets, or money movement."
+        },
         {
             "id": "SPEC_d113_auto-seed-orphaned-spec-files-bu",
             "slug": "SPEC_d113_auto-seed-orphaned-spec-files-bu",
