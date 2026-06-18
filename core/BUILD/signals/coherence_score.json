@@ -1,0 +1,127 @@
+{
+  "components": {
+    "drift_penalty": 0.875,
+    "freshness": 1.0,
+    "registry_hygiene": 1.0,
+    "source_coverage": 1.0,
+    "voice_signal_coverage": 1.0
+  },
+  "generated_at": "2026-06-18T19:33:24Z",
+  "recommendations": [
+    "Review drift flags before the next autonomous run: core/STATE/HOT_STATE.md (stale_surface)"
+  ],
+  "registry_gaps": [],
+  "schema": "coherence-weekly-score.v1",
+  "score": 98.1,
+  "sources": [
+    {
+      "age_days": 0.0,
+      "drift_flags": [],
+      "exists": true,
+      "path": "docs/codex/AI_PROTOCOLS.md",
+      "signals": [
+        "source",
+        "routing",
+        "proof",
+        "memory",
+        "safety",
+        "next_intent"
+      ]
+    },
+    {
+      "age_days": 0.0,
+      "drift_flags": [],
+      "exists": true,
+      "path": "docs/codex/INTENT_BUILDSTREAM.md",
+      "signals": [
+        "source",
+        "routing",
+        "proof",
+        "memory",
+        "safety",
+        "next_intent"
+      ]
+    },
+    {
+      "age_days": 0.0,
+      "drift_flags": [],
+      "exists": true,
+      "path": "docs/codex/HANDOFF.md",
+      "signals": [
+        "source",
+        "routing",
+        "proof",
+        "memory",
+        "safety",
+        "next_intent"
+      ]
+    },
+    {
+      "age_days": 0.0,
+      "drift_flags": [],
+      "exists": true,
+      "path": "docs/codex/ATTENTION_FLOW.md",
+      "signals": [
+        "source",
+        "routing",
+        "proof",
+        "memory",
+        "safety",
+        "next_intent"
+      ]
+    },
+    {
+      "age_days": 0.0,
+      "drift_flags": [],
+      "exists": true,
+      "path": "core/STATE/NORTH_STAR.md",
+      "signals": [
+        "source",
+        "routing",
+        "proof",
+        "memory",
+        "safety"
+      ]
+    },
+    {
+      "age_days": 0.0,
+      "drift_flags": [],
+      "exists": true,
+      "path": "core/STATE/SELF_PORTRAIT.md",
+      "signals": [
+        "source",
+        "routing",
+        "proof",
+        "memory",
+        "safety"
+      ]
+    },
+    {
+      "age_days": 0.0,
+      "drift_flags": [
+        "stale_surface"
+      ],
+      "exists": true,
+      "path": "core/STATE/HOT_STATE.md",
+      "signals": [
+        "source",
+        "routing",
+        "proof",
+        "memory",
+        "next_intent"
+      ]
+    },
+    {
+      "age_days": 0.0,
+      "drift_flags": [],
+      "exists": true,
+      "path": "core/STATE/MODEL_DNA.md",
+      "signals": [
+        "source",
+        "routing",
+        "proof"
+      ]
+    }
+  ],
+  "status": "PASS"
+}

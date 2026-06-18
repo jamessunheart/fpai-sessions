@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-18 · SPEC_d103_coherence-optimizer-weekly-score · branch `build/SPEC_d103_coherence-optimizer-weekly-score`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `tools/coherence/`; `core/STATE/COHERENCE_SCORE.md`; `core/BUILD/signals/coherence_score.json`; `core/BUILD/signals/coherence_score.md`; `core/BUILD/cron/fpai-coherence-weekly-score.service`; `core/BUILD/cron/fpai-coherence-weekly-score.timer`; `core/BUILD/specs/SPEC_d103_coherence-optimizer-weekly-score.md`; `core/BUILD/results/SPEC_d103_coherence-optimizer-weekly-score.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a deterministic weekly coherence optimizer score that asks whether the repo-facing system speaks with one voice across AI_PROTOCOLS, INTENT_BUILDSTREAM, HANDOFF, ATTENTION_FLOW, NORTH_STAR, SELF_PORTRAIT, HOT_STATE, MODEL_DNA, and build registry hygiene. Generated the first report at `core/STATE/COHERENCE_SCORE.md` plus JSON/Markdown signal mirrors. Current score is `98.1/100 PASS`; only repair recommendation is to review `core/STATE/HOT_STATE.md`, which still carries a stale directive from earlier build-state. Added reviewed weekly timer artifacts but did not install them.
+- **Tests:** `python3 -B -m unittest tools.coherence.test_weekly_score` (3 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/coherence/weekly_score.py tools/coherence/test_weekly_score.py`; `bash -n core/BUILD/cron/fpai-coherence-weekly-score.service core/BUILD/cron/fpai-coherence-weekly-score.timer`; `python3 -m tools.coherence.weekly_score --json`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `git diff --check`
+- **Risks:** Score is repo-surface evidence only; it does not read live vault, private DB, Telegram context, secrets, or production services. Drift detection is pattern-based and names candidate repair surfaces rather than editing them. Timer files are reviewed artifacts only until installed after merge.
+- **Rollback:** revert the d103 files listed above. If installed later, disable/remove `fpai-coherence-weekly-score.timer` and `fpai-coherence-weekly-score.service`.
+- **Intent solved:** the system now has a weekly, explainable answer to whether doctrine, state, build, and handoff surfaces speak with one voice.
+- **Downstream intent unlocked:** Ember/build-loop can use `COHERENCE_SCORE.md` as a weekly repair queue input before autonomous runs, so stale surfaces become explicit repair recommendations instead of hidden context drift.
+- **Questions for Ember/James:** after merge, optionally install/enable the reviewed timer and refresh HOT_STATE so the next weekly score can confirm the stale directive is gone.
+
 ### 2026-06-18 · SPEC_d101_consciousness-loop-close-observe · branch `build/SPEC_d101_consciousness-loop-close-observe`
 
 - **Status:** done in working tree / awaiting merge review

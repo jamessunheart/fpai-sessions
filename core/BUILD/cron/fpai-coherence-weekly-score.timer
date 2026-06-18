@@ -1,0 +1,12 @@
+[Unit]
+Description=Run FPAI weekly coherence score
+
+[Timer]
+OnCalendar=Mon *-*-* 06:10:00 UTC
+Persistent=true
+RandomizedDelaySec=20m
+Unit=fpai-coherence-weekly-score.service
+
+[Install]
+WantedBy=timers.target
+

@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-18T19:30:00Z",
+    "updated_at": "2026-06-18T19:34:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d103_coherence-optimizer-weekly-score",
+            "slug": "SPEC_d103_coherence-optimizer-weekly-score",
+            "branch": "build/SPEC_d103_coherence-optimizer-weekly-score",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d103_coherence-optimizer-weekly-score.md",
+            "tests_passed": true,
+            "notes": "d103 complete in working tree: added deterministic weekly coherence optimizer scoring across canonical doctrine/state/build surfaces and registry hygiene, generated COHERENCE_SCORE plus JSON/Markdown signal artifacts, and added reviewed weekly systemd timer files. Current repo score is 98.1 PASS with one repair recommendation: refresh HOT_STATE stale directive. Focused unittest, py_compile, timer syntax, scorer smoke, registry JSON validation, and diff hygiene passed. No live vault/DB read, timer install, deploy, push, merge, outreach, secrets, or money movement."
+        },
         {
             "id": "SPEC_d102_self-portrait-know-thyself-unifi",
             "slug": "SPEC_d102_self-portrait-know-thyself-unifi",

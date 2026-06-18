@@ -1,0 +1,11 @@
+[Unit]
+Description=FPAI weekly coherence score
+Documentation=file:/opt/fpai-build/FPAI_Cockpit/core/STATE/COHERENCE_SCORE.md
+
+[Service]
+Type=oneshot
+Environment=FPAI_SURFACE=auto-loop
+Environment=FPAI_REPO_ROOT=/opt/fpai-build/FPAI_Cockpit
+WorkingDirectory=/opt/fpai-build/FPAI_Cockpit
+ExecStart=/usr/bin/env python3 /opt/fpai-build/FPAI_Cockpit/tools/coherence/weekly_score.py
+
