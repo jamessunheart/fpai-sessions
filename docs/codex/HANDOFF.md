@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-18 · SPEC_d099_postiz-social-scheduler-mcp-wire · branch `build/SPEC_d099_postiz-social-scheduler-mcp-wire`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `tools/postiz/__init__.py`; `tools/postiz/wire.py`; `tools/postiz/test_wire.py`; `core/BUILD/activate/SPEC_d099_postiz-social-scheduler-mcp-wire.sh`; `core/BUILD/mcp/postiz.mcp.json`; `core/BUILD/signals/postiz_social_scheduler.json`; `core/BUILD/signals/postiz_social_scheduler.md`; `core/BUILD/specs/SPEC_d099_postiz-social-scheduler-mcp-wire.md`; `core/BUILD/results/SPEC_d099_postiz-social-scheduler-mcp-wire.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added repo-side wiring for self-hosted Postiz as the social scheduler MCP surface. The build includes a guarded activation script that can clone/update the official `gitroomhq/postiz-docker-compose` repo on server 162, a non-secret MCP config fragment for `https://postiz.fullpotential.ai/mcp/${POSTIZ_API_KEY}`, a deterministic dry-run `schedulePostTool` payload helper, and state/result artifacts that name Mastodon as the first live proof target while Instagram waits on Meta token refresh and X waits on signup/CAPTCHA/Twilio flow.
+- **Tests:** `python3 -B -m unittest tools.postiz.test_wire` (6 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/postiz/wire.py tools/postiz/test_wire.py`; `bash -n core/BUILD/activate/SPEC_d099_postiz-social-scheduler-mcp-wire.sh`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `python3 -m json.tool core/BUILD/mcp/postiz.mcp.json`; `python3 -m json.tool core/BUILD/signals/postiz_social_scheduler.json`; CLI smoke for `schedule-payload` and `mcp-config`; `git diff --check`
+- **Risks:** This proves repo wiring and Postiz MCP payload shape only. The sandbox did not deploy Docker, start Postiz, create/connect social accounts, generate/write API keys, alter live Ember MCP config, schedule/publish a real post, push, merge, access secrets, outreach, or move money. Activation is gated by `POSTIZ_ACTIVATE=1`; Docker start is separately gated by `POSTIZ_START=1` and `POSTIZ_ENV_READY=1`.
+- **Rollback:** revert the listed files. If activation later ran, stop the compose stack from `$POSTIZ_ROOT` with `docker compose down`, remove the Postiz MCP fragment from Ember's MCP config, and revoke the Postiz API key.
+- **Intent solved:** Postiz now has a reviewed repo path to become Ember's MCP-backed social scheduler instead of hand-built social automation.
+- **Downstream intent unlocked:** Ember can run the live 162 proof: activate Postiz, connect/create Mastodon, install the real API-key MCP fragment outside git, call `integrationList`, then call `schedulePostTool` for one proof post.
+- **Questions for Ember/James:** after merge, decide the public URL/env values for Postiz on 162 and explicitly approve the one Mastodon proof post before live `schedulePostTool` execution; Instagram and X remain blocked on their named account/token gates.
+
 ### 2026-06-18 · SPEC_d098_cognee-graph-memory-layer · branch `build/SPEC_d098_cognee-graph-memory-layer`
 
 - **Status:** done in working tree / awaiting merge review

@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "postiz": {
+      "notes": "Self-hosted Postiz MCP. Replace ${POSTIZ_API_KEY} after creating the key in Postiz Settings > Developers > Public API. Do not commit real keys.",
+      "transport": "http",
+      "url": "https://postiz.fullpotential.ai/mcp/${POSTIZ_API_KEY}"
+    }
+  }
+}
+
