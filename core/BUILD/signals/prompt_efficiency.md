@@ -1,10 +1,10 @@
 # Prompt Efficiency
 
-Generated: 2026-06-18T20:03:50Z
+Generated: 2026-06-18T20:18:07Z
 
 | Prompt | Engine | Winner | Adopted | Pending | Quality | Avg tokens | Compression |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| benchmark_improvement_spec | deterministic | compressed_guarded | true | false | 1.0 / baseline 1.0 | 91.5 / baseline 108.5 | 15.7% |
+| benchmark_improvement_spec | deterministic | compressed_guarded | true | false | 1.0 / baseline 1.0 | 115.5 / baseline 143.5 | 19.5% |
 | council_pragmatist_lens | deterministic_fallback | compressed_guarded | false | true | 0.85 / baseline 0.85 | 17.0 / baseline 23.0 | 26.1% |
 
 ## Guard

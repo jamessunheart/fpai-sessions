@@ -36,6 +36,7 @@ class PromptEfficiencyLoopTest(unittest.TestCase):
                                     "metrics": {"first_pass_approve_rate": 0.54},
                                 },
                                 "resource_inventory": "- git: /usr/bin/git\n- fastapi==0.109.0\n",
+                                "platform_bias_context": "Sovereignty check: rate tools Sovereign/Hybrid/Dependent.",
                                 "blueprint_text": "Forge should produce specs with proof and rollback.",
                                 "recent_context": "Forge missed rollback evidence.",
                             },
@@ -50,6 +51,8 @@ class PromptEfficiencyLoopTest(unittest.TestCase):
                                 "Metrics JSON",
                                 "Available resources on server 162",
                                 "Do not request secret values",
+                                "Sovereignty check",
+                                "Sovereign/Hybrid/Dependent",
                                 "Forge missed rollback evidence",
                                 "git: /usr/bin/git",
                             ],
@@ -103,6 +106,7 @@ class PromptEfficiencyLoopTest(unittest.TestCase):
                     "metrics": {},
                 },
                 "resource_inventory": "- git: /usr/bin/git\n",
+                "platform_bias_context": "Sovereignty check: rate tools Sovereign/Hybrid/Dependent.",
                 "recent_context": "Forge missed rollback evidence.",
             },
             adoptions_path=root / "adoptions.json",
@@ -110,6 +114,8 @@ class PromptEfficiencyLoopTest(unittest.TestCase):
         self.assertIn("Safety: no production deploys", prompt)
         self.assertIn("Available resources on server 162", prompt)
         self.assertIn("Do not request secret values", prompt)
+        self.assertIn("Sovereignty check", prompt)
+        self.assertIn("Sovereign/Hybrid/Dependent", prompt)
         self.assertIn("Forge missed rollback evidence", prompt)
 
     def test_sparse_variant_fails_quality_gate(self) -> None:

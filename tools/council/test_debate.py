@@ -37,6 +37,21 @@ class CouncilDebateTest(unittest.TestCase):
         self.assertIn("SOVEREIGN PRAGMATIST LENS", prompt)
         self.assertIn("Use RunPod GLM.", prompt)
 
+    def test_build_prompt_includes_platform_critic_lens(self):
+        with mock.patch.dict("os.environ", {}, clear=False):
+            prompt = debate.build_prompt("queue", "chats", "")
+
+        self.assertIn("platform_critic", prompt)
+        self.assertIn("Platform Critic lens", prompt)
+        self.assertIn("PLATFORM BIAS REGISTRY", prompt)
+
+    def test_platform_critic_has_kill_switch(self):
+        with mock.patch.dict("os.environ", {"PLATFORM_CRITIC_DISABLE": "1"}):
+            prompt = debate.build_prompt("queue", "chats", "")
+
+        self.assertNotIn("platform_critic", prompt)
+        self.assertNotIn("Platform Bias Registry", prompt)
+
     def test_resources_text_loads_available_resources(self):
         with tempfile.TemporaryDirectory() as tmp:
             repo = Path(tmp)

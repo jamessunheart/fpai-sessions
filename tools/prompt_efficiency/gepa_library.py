@@ -256,18 +256,21 @@ def optimize_template(
     if module is None:
         return {"status": "unavailable", "reason": "gepa package is not installed"}
     active_proposer = proposer or claude_cli_proposer
-    result = module.optimize(
-        seed_candidate={COMPONENT: spec.seed_template},
-        trainset=cases,
-        valset=cases,
-        adapter=PromptTemplateAdapter(),
-        custom_candidate_proposer=active_proposer,
-        max_metric_calls=spec.max_metric_calls,
-        run_dir=str(run_dir) if run_dir else None,
-        display_progress_bar=False,
-        acceptance_criterion="improvement_or_equal",
-        raise_on_exception=True,
-    )
+    try:
+        result = module.optimize(
+            seed_candidate={COMPONENT: spec.seed_template},
+            trainset=cases,
+            valset=cases,
+            adapter=PromptTemplateAdapter(),
+            custom_candidate_proposer=active_proposer,
+            max_metric_calls=spec.max_metric_calls,
+            run_dir=str(run_dir) if run_dir else None,
+            display_progress_bar=False,
+            acceptance_criterion="improvement_or_equal",
+            raise_on_exception=True,
+        )
+    except TypeError as exc:
+        return {"status": "unavailable", "reason": f"gepa optimize signature mismatch: {exc}"}
     best_candidate = dict(result.best_candidate)
     best_template = str(best_candidate.get(COMPONENT) or spec.seed_template)
     adapter = PromptTemplateAdapter()

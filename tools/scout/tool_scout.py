@@ -21,6 +21,8 @@ import urllib.request
 from pathlib import Path
 from typing import Any, Callable, Iterable
 
+from tools.platform_bias.registry import rate_tool
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_REPORT = REPO_ROOT / "core" / "BUILD" / "signals" / "tool_scout_report.md"
 DEFAULT_PROPOSALS = REPO_ROOT / "core" / "BUILD" / "signals" / "tool_scout_proposals.jsonl"
@@ -365,18 +367,22 @@ def rank(candidates: Iterable[ToolCandidate], focus: str) -> list[ToolCandidate]
 
 def proposal_for(candidate: ToolCandidate, *, focus: str) -> dict[str, object]:
     proposed_use = candidate.proposed_use.rstrip(".")
+    rating = rate_tool(candidate.name, candidate.url, candidate.tags)
     return {
         "source": "tool_scout",
         "title": f"Scout adoption candidate: {candidate.name}",
         "spec": (
             f"Review {candidate.name} ({candidate.url}) as a review-gated adoption candidate. "
             f"Proposed use: {proposed_use}. Replacement target: {candidate.replaces or 'none declared'}. "
+            f"Sovereignty rating: {rating.rating} ({rating.reason}). {rating.alternative_prompt} "
             "Do not install, spend, deploy, or wire credentials in the scout pass; produce a narrow adoption spec first."
         ),
         "route": "codex",
         "verdict": verdict_for(candidate, focus),
         "score": ranked_score(candidate, focus),
         "url": candidate.url,
+        "sovereignty_rating": rating.rating,
+        "sovereignty_reason": rating.reason,
         "safe_auto": False,
         "needs_review": True,
     }
@@ -393,22 +399,25 @@ def render_report(candidates: list[ToolCandidate], *, focus: str, generated_at: 
         "",
         "## Top Candidates",
         "",
-        "| Score | Verdict | Candidate | Source | Replaces |",
-        "|---:|---|---|---|---|",
+        "| Score | Verdict | Candidate | Source | Sovereignty | Replaces |",
+        "|---:|---|---|---|---|---|",
     ]
     for candidate in candidates:
+        rating = rate_tool(candidate.name, candidate.url, candidate.tags)
         lines.append(
             f"| {ranked_score(candidate, focus)} | {verdict_for(candidate, focus)} | [{candidate.name}]({candidate.url}) | "
-            f"{candidate.source_kind} | {candidate.replaces or '-'} |"
+            f"{candidate.source_kind} | {rating.rating} | {candidate.replaces or '-'} |"
         )
     lines.extend(["", "## Notes", ""])
     for candidate in candidates:
         evidence = "; ".join(candidate.evidence) if candidate.evidence else "review source manually before adoption"
+        rating = rate_tool(candidate.name, candidate.url, candidate.tags)
         lines.extend(
             [
                 f"### {candidate.name}",
                 f"- **Summary:** {candidate.summary}",
                 f"- **Proposed use:** {candidate.proposed_use}",
+                f"- **Sovereignty:** {rating.rating} — {rating.reason}. {rating.alternative_prompt}",
                 f"- **Score inputs:** leverage {candidate.leverage}, maturity {candidate.maturity}, cost {candidate.integration_cost}, risk {candidate.risk}",
                 f"- **Evidence:** {evidence}",
                 "",

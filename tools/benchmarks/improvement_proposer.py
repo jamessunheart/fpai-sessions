@@ -12,6 +12,8 @@ from typing import Any, Callable
 from tools.benchmarks import DEFAULT_OPS_LEDGER, DEFAULT_SCORE_LEDGER, REPO_ROOT, append_jsonl, read_jsonl
 from tools.inventory.scan_resources import DEFAULT_OUTPUT as DEFAULT_RESOURCE_INVENTORY
 from tools.inventory.scan_resources import read_inventory_context
+from tools.platform_bias.registry import DEFAULT_REGISTRY as DEFAULT_PLATFORM_BIAS_REGISTRY
+from tools.platform_bias.registry import sovereignty_check_text
 from tools.prompt_efficiency.gepa_loop import PROMPT_ID_BENCHMARK_IMPROVEMENT, render_prompt
 
 DEFAULT_PROPOSAL_LOG = REPO_ROOT / "core" / "benchmarks" / "improvement_proposals.jsonl"
@@ -44,6 +46,7 @@ def build_prompt(
     blueprint_text: str = "",
     recent_context: str = "",
     resource_inventory: str = "",
+    platform_bias_context: str = "",
 ) -> str:
     return render_prompt(
         PROMPT_ID_BENCHMARK_IMPROVEMENT,
@@ -52,6 +55,7 @@ def build_prompt(
             "blueprint_text": blueprint_text,
             "recent_context": recent_context,
             "resource_inventory": resource_inventory,
+            "platform_bias_context": platform_bias_context,
         },
     )
 
@@ -103,6 +107,7 @@ def propose_for_score(
     queue_build: Callable[[str], str] | None = None,
     now: dt.datetime | None = None,
     resource_inventory_path: Path = DEFAULT_RESOURCE_INVENTORY,
+    platform_bias_registry_path: Path = DEFAULT_PLATFORM_BIAS_REGISTRY,
 ) -> dict[str, Any] | None:
     if not should_propose(score_row):
         return None
@@ -113,11 +118,13 @@ def propose_for_score(
     blueprint = blueprint_path.read_text(encoding="utf-8", errors="replace") if blueprint_path.exists() else ""
     recent_context = str(score_row.get("recent_context") or collect_recent_context(agent, ops_ledger))
     resource_inventory = read_inventory_context(resource_inventory_path, limit=24_000)
+    platform_bias_context = sovereignty_check_text(platform_bias_registry_path)
     prompt = build_prompt(
         score_row,
         blueprint_text=blueprint,
         recent_context=recent_context,
         resource_inventory=resource_inventory,
+        platform_bias_context=platform_bias_context,
     )
     runner = claude_runner or (draft_with_claude if os.environ.get("BENCHMARKS_PROPOSE_LIVE") == "1" else None)
     spec_markdown = runner(prompt) if runner else prompt

@@ -112,24 +112,57 @@ def gpt_voice(intents):
     except Exception:
         return ""
 
-SYS = (
- "Goal: identify the single highest-leverage next build for a self-evolving AI platform, or propose "
- "nothing if no build clearly warrants it. Context: James's recent intents + the current decision queue. "
- "Reason: James's attention is the scarcest resource — every proposal must earn it. "
- "Hard boundaries: no duplicate proposals, no cruft, no builds that add complexity without clear proof value. "
- "James's rule: concentrate harder, not build more. Prefer propose=false when uncertain. "
- "Three lenses to weigh internally — cheapest/highest-leverage NOW (pragmatist), "
- "best-for-long-term-vision (visionary), riskiest-gap-or-what-NOT-to-build (skeptic), "
- "and awareness: meaning-vs-approval drift from the private consciousness-observer log when present. "
- "Respond with ONLY valid JSON, no prose outside it: "
- "{\"pragmatist\":\"1 sentence\",\"visionary\":\"1 sentence\",\"skeptic\":\"1 sentence\","
- "\"awareness\":\"1 sentence\","
- "\"synthesis\":\"one-paragraph verdict\",\"propose\":true|false,"
- "\"title\":\"<=8 words\",\"why\":\"one sentence\","
- "\"build_spec\":\"concrete: what to build, where, what the proof looks like\","
- "\"risk\":\"low\"|\"med\","
- "\"weighting_directive\":\"optional council model-review directive for MODEL_DNA\","
- "\"signal_types_amplified\":[\"optional\"],\"signal_types_dampened\":[\"optional\"]}.")
+def _platform_bias_context():
+    if os.environ.get("PLATFORM_CRITIC_DISABLE") == "1":
+        return ""
+    try:
+        from tools.platform_bias.registry import platform_critic_prompt
+
+        registry_path = Path(REPO) / "core" / "STATE" / "PLATFORM_BIAS_REGISTRY.md"
+        if not registry_path.exists():
+            registry_path = Path(__file__).resolve().parents[2] / "core" / "STATE" / "PLATFORM_BIAS_REGISTRY.md"
+        prompt = platform_critic_prompt(registry_path)
+        return "\n\n[Platform Bias Registry — Platform Critic lens]\n" + prompt
+    except Exception:
+        return ""
+
+
+def _council_system_prompt():
+    critic_enabled = os.environ.get("PLATFORM_CRITIC_DISABLE") != "1"
+    if critic_enabled:
+        lens_text = (
+            "Five lenses to weigh internally — cheapest/highest-leverage NOW (pragmatist), "
+            "best-for-long-term-vision (visionary), riskiest-gap-or-what-NOT-to-build (skeptic), "
+            "awareness: meaning-vs-approval drift from the private consciousness-observer log when present, "
+            "and platform_critic: platform-bias calibration against Anthropic/OpenAI/API/SaaS defaults. "
+        )
+    else:
+        lens_text = (
+            "Four lenses to weigh internally — cheapest/highest-leverage NOW (pragmatist), "
+            "best-for-long-term-vision (visionary), riskiest-gap-or-what-NOT-to-build (skeptic), "
+            "and awareness: meaning-vs-approval drift from the private consciousness-observer log when present. "
+        )
+    json_shape = (
+        "{\"pragmatist\":\"1 sentence\",\"visionary\":\"1 sentence\",\"skeptic\":\"1 sentence\","
+        "\"awareness\":\"1 sentence\","
+        + ("\"platform_critic\":\"1 sentence; advisory only; name sovereign alternative when relevant\"," if critic_enabled else "")
+        + "\"synthesis\":\"one-paragraph verdict\",\"propose\":true|false,"
+        "\"title\":\"<=8 words\",\"why\":\"one sentence\","
+        "\"build_spec\":\"concrete: what to build, where, what the proof looks like\","
+        "\"risk\":\"low\"|\"med\","
+        "\"weighting_directive\":\"optional council model-review directive for MODEL_DNA\","
+        "\"signal_types_amplified\":[\"optional\"],\"signal_types_dampened\":[\"optional\"]}."
+    )
+    return (
+        "Goal: identify the single highest-leverage next build for a self-evolving AI platform, or propose "
+        "nothing if no build clearly warrants it. Context: James's recent intents + the current decision queue. "
+        "Reason: James's attention is the scarcest resource — every proposal must earn it. "
+        "Hard boundaries: no duplicate proposals, no cruft, no builds that add complexity without clear proof value. "
+        "James's rule: concentrate harder, not build more. Prefer propose=false when uncertain. "
+        + lens_text
+        + "Respond with ONLY valid JSON, no prose outside it: "
+        + json_shape
+    )
 
 
 def pragmatist_voice(signal, glm_caller=None):
@@ -193,7 +226,7 @@ def _resources_text():
 
 
 def build_prompt(queue, chats, focus, pragmatist=""):
-    prompt = SYS + focus + "\n\nDECISION QUEUE:\n" + queue + "\n\nRECENT INTENTS (chats):\n" + chats + "\n\nRespond with ONLY the JSON object."
+    prompt = _council_system_prompt() + focus + _platform_bias_context() + "\n\nDECISION QUEUE:\n" + queue + "\n\nRECENT INTENTS (chats):\n" + chats + "\n\nRespond with ONLY the JSON object."
     if pragmatist:
         prompt = (
             "SOVEREIGN PRAGMATIST LENS (RunPod GLM when configured; otherwise flat-rate fallback):\n"

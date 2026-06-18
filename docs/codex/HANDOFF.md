@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-18 · SPEC_d109_platform-bias-registry-5th-counc · branch `build/SPEC_d109_platform-bias-registry-5th-counc`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `core/STATE/PLATFORM_BIAS_REGISTRY.md`; `core/STATE/SELF_PORTRAIT.md`; `core/STATE/PROMPT_EFFICIENCY.md`; `core/BUILD/signals/prompt_efficiency.json`; `core/BUILD/signals/prompt_efficiency.md`; `core/BUILD/signals/tool_scout_report.md`; `core/BUILD/signals/tool_scout_proposals.jsonl`; `core/benchmarks/prompt_efficiency_cases.json`; `core/benchmarks/prompt_efficiency_adoptions.json`; `tools/platform_bias/`; `tools/council/debate.py`; `tools/council/test_debate.py`; `tools/self_portrait/synthesize.py`; `tools/self_portrait/test_synthesize.py`; `tools/benchmarks/improvement_proposer.py`; `tools/benchmarks/test_benchmarks.py`; `tools/prompt_efficiency/gepa_loop.py`; `tools/prompt_efficiency/gepa_library.py`; `tools/prompt_efficiency/test_gepa_loop.py`; `tools/scout/tool_scout.py`; `tools/scout/test_tool_scout.py`; `tools/scout/scout.py`; `tools/scout/SCOUT_REPORT.md`; `core/BUILD/specs/SPEC_d109_platform-bias-registry-5th-counc.md`; `core/BUILD/results/SPEC_d109_platform-bias-registry-5th-counc.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a living platform-bias registry with known Anthropic/OpenAI/cloud-era distortions, evidence checks, a Sovereign/Hybrid/Dependent rubric, and Platform Critic update rules. Wired council debate to request an advisory `platform_critic` JSON lens unless `PLATFORM_CRITIC_DISABLE=1` is set. Self-portrait synthesis now includes platform biases, Forge improvement prompts preserve a sovereignty check through the prompt-efficiency quality gate, and Tool Scout/World Scout reports surface sovereignty ratings plus alternatives.
+- **Tests:** `python3 -m py_compile ...`; `python3 -B -m unittest tools.platform_bias.test_registry tools.council.test_debate tools.self_portrait.test_synthesize tools.prompt_efficiency.test_gepa_loop tools.benchmarks.test_benchmarks tools.scout.test_tool_scout` (32 OK); registry/prompt JSON validation; self-portrait regeneration; prompt-efficiency run; Tool Scout and World Scout report generation; `git diff --check`.
+- **Risks:** Live proof that Platform Critic appears in 3 consecutive council logs still requires post-merge council cycles; this branch proves prompt/schema wiring and generated scout artifacts only. Platform Critic is advisory and cannot veto decisions. The installed sandbox `gepa` has an incompatible `optimize()` signature, now handled as fallback instead of a crash. No live council run, external scan, deploy, push, merge, secret access, outreach, or money movement occurred.
+- **Rollback:** revert the listed d109 files and remove the d109 registry/result/handoff entries. Runtime council bypass is `PLATFORM_CRITIC_DISABLE=1`.
+- **Intent solved:** platform-shaped tool/model recommendations are now visible and testable instead of implicit.
+- **Downstream intent unlocked:** future council/Forge recommendations can choose commercial tools consciously by comparing them with local/open/self-hosted alternatives under a consistent sovereign-rating rubric.
+- **Questions for Ember/James:** after merge, let three normal council cycles run and verify each debate log includes `platform_critic`; watch for at least one recommendation changed or sovereign alternative chosen because the lens surfaced it.
+
 ### 2026-06-18 · SPEC_d108_qwen3-30b-a3b-moe-benchmark-30b · branch `build/SPEC_d108_qwen3-30b-a3b-moe-benchmark-30b`
 
 - **Status:** done in working tree / awaiting merge review

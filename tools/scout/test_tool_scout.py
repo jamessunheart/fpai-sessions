@@ -67,9 +67,13 @@ class ToolScoutTest(unittest.TestCase):
         self.assertEqual(summary["proposals"], 1)
         report = (root / "report.md").read_text(encoding="utf-8")
         self.assertIn("Tool Scout Report", report)
+        self.assertIn("Sovereignty", report)
+        self.assertIn("Sovereign", report)
         rows = [json.loads(line) for line in (root / "proposals.jsonl").read_text().splitlines()]
         self.assertEqual(rows[0]["source"], "tool_scout")
         self.assertEqual(rows[0]["verdict"], "adopt-spec")
+        self.assertIn("sovereignty_rating", rows[0])
+        self.assertIn("Sovereignty rating:", rows[0]["spec"])
         ledger = json.loads((root / "ops.jsonl").read_text().splitlines()[-1])
         self.assertEqual(ledger["loop"], "tool_scout")
 

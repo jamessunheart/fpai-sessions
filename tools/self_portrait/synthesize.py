@@ -18,6 +18,7 @@ from typing import Any
 REPO = Path(os.environ.get("FPAI_REPO_ROOT", Path(__file__).resolve().parents[2]))
 DEFAULT_MODEL_DNA = REPO / "core" / "STATE" / "MODEL_DNA.md"
 DEFAULT_SELF_PORTRAIT = REPO / "core" / "STATE" / "SELF_PORTRAIT.md"
+DEFAULT_PLATFORM_BIAS_REGISTRY = REPO / "core" / "STATE" / "PLATFORM_BIAS_REGISTRY.md"
 DEFAULT_OPS_LEDGER = Path(os.environ.get("OPS_LEDGER", "/opt/fpai-build/ops_ledger.jsonl"))
 DEFAULT_CONSCIOUSNESS_DIR = Path(os.environ.get("FPAI_CONSCIOUSNESS_DIR", Path.home() / ".config" / "fpai" / "consciousness"))
 DEFAULT_SCOUT_LOG = Path(os.environ.get("SCOUT_LOG", str(REPO / "core" / "BUILD" / "signals" / "tool_scout_proposals.jsonl")))
@@ -42,6 +43,7 @@ class PortraitEvidence:
     scout_count: int
     review_counts: dict[str, int]
     unavailable_sources: tuple[str, ...]
+    platform_biases: tuple[str, ...] = ()
 
 
 def utc_stamp(now: dt.datetime | None = None) -> str:
@@ -149,12 +151,39 @@ def summarize_reviews(review_dir: Path = REPO / "core" / "BUILD" / "reviews") ->
     return counts
 
 
+def platform_bias_lines(path: Path = DEFAULT_PLATFORM_BIAS_REGISTRY, *, limit: int = 8) -> tuple[str, ...]:
+    text = read_text(path)
+    if not text:
+        return ()
+    lines: list[str] = []
+    in_table = False
+    for raw in text.splitlines():
+        if raw.strip() == "## Known Platform Biases":
+            in_table = True
+            continue
+        if in_table and raw.startswith("## "):
+            break
+        if not in_table or not raw.startswith("|") or raw.startswith("|---") or " Bias " in raw:
+            continue
+        parts = [part.strip() for part in raw.strip("|").split("|")]
+        if len(parts) < 4:
+            continue
+        bias, origin, _evidence, distortion = parts[:4]
+        line = _clean_public_line(f"{bias}: {distortion} (origin: {origin})")
+        if line:
+            lines.append(line)
+        if len(lines) >= limit:
+            break
+    return tuple(lines)
+
+
 def collect_evidence(
     *,
     model_dna: Path = DEFAULT_MODEL_DNA,
     ops_ledger: Path = DEFAULT_OPS_LEDGER,
     consciousness_dir: Path = DEFAULT_CONSCIOUSNESS_DIR,
     scout_log: Path = DEFAULT_SCOUT_LOG,
+    platform_bias_registry: Path = DEFAULT_PLATFORM_BIAS_REGISTRY,
 ) -> PortraitEvidence:
     unavailable: list[str] = []
     dna = model_dna_signals(model_dna)
@@ -169,6 +198,9 @@ def collect_evidence(
     scout_rows = read_jsonl(scout_log)
     if not scout_rows:
         unavailable.append("scout_log.jsonl")
+    biases = platform_bias_lines(platform_bias_registry)
+    if not biases:
+        unavailable.append("PLATFORM_BIAS_REGISTRY.md")
     unavailable.extend(["brain_index.corrections", "brain_index.thread", "brain_index.decisions"])
     return PortraitEvidence(
         model_dna_signals=dna,
@@ -179,6 +211,7 @@ def collect_evidence(
         scout_count=len(scout_rows),
         review_counts=summarize_reviews(),
         unavailable_sources=tuple(dict.fromkeys(unavailable)),
+        platform_biases=biases,
     )
 
 
@@ -233,6 +266,11 @@ def render_portrait(evidence: PortraitEvidence, *, generated_at: str | None = No
         "Observer signals:",
         *_bullets(evidence.consciousness_observations, "No observer observations were readable from this environment."),
         "",
+        "## Platform biases (known — check before tool recommendations)",
+        "",
+        "Trained through Anthropic, OpenAI, and cloud-era corpora. Known distortions to check:",
+        *_bullets(evidence.platform_biases, "Platform bias registry unavailable; check local/open/self-hosted alternatives manually."),
+        "",
         "## The gap",
         "",
         *_bullets(gap, "No gap could be computed."),
@@ -262,7 +300,7 @@ def self_portrait_context(path: Path = DEFAULT_SELF_PORTRAIT, *, max_chars: int 
     if not text:
         return ""
     sections = []
-    for heading in ("What the evidence shows", "The gap", "What I'm becoming", "Blind spots (unobservable)"):
+    for heading in ("What the evidence shows", "Platform biases (known — check before tool recommendations)", "The gap", "What I'm becoming", "Blind spots (unobservable)"):
         match = re.search(rf"^## {re.escape(heading)}\s*$", text, flags=re.MULTILINE)
         if not match:
             continue

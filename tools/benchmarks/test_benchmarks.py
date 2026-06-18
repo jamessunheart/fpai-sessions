@@ -91,6 +91,15 @@ class PerAgentBenchmarksTest(unittest.TestCase):
             "# Available Resources\n\n## CLIs\n\n- git: /usr/bin/git\n\n## Python-libs\n\n- fastapi==0.109.0\n",
             encoding="utf-8",
         )
+        platform_bias = root / "PLATFORM_BIAS_REGISTRY.md"
+        platform_bias.write_text(
+            "# Platform Bias Registry\n\n"
+            "## Sovereign Rating Rubric\n\n"
+            "| Rating | Meaning | Default handling |\n"
+            "|---|---|---|\n"
+            "| Sovereign | local-first | prefer |\n",
+            encoding="utf-8",
+        )
         queued = mock.Mock(return_value="d999")
         drafted = mock.Mock(return_value="# Improve Forge\n")
         result = propose_for_score(
@@ -108,12 +117,15 @@ class PerAgentBenchmarksTest(unittest.TestCase):
             queue_build=queued,
             now=NOW,
             resource_inventory_path=inventory,
+            platform_bias_registry_path=platform_bias,
         )
         self.assertEqual(result["spec_queued"], "d999")
         drafted.assert_called_once()
         prompt = drafted.call_args.args[0]
         self.assertIn("Forge missed rollback evidence", prompt)
         self.assertIn("Available resources on server 162", prompt)
+        self.assertIn("Sovereignty check", prompt)
+        self.assertIn("Sovereign/Hybrid/Dependent", prompt)
         self.assertIn("git: /usr/bin/git", prompt)
         self.assertIn("fastapi==0.109.0", prompt)
         queued.assert_called_once_with("# Improve Forge\n")

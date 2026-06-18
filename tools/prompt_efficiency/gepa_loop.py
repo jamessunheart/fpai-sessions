@@ -49,6 +49,7 @@ def render_benchmark_improvement_baseline(inputs: dict[str, Any]) -> str:
     value = score_row.get("primary_metric")
     reason = score_row.get("trigger_reason") or "metric trigger fired"
     resource_inventory = str(inputs.get("resource_inventory") or "")
+    platform_bias_context = str(inputs.get("platform_bias_context") or "")
     blueprint_text = str(inputs.get("blueprint_text") or "")
     recent_context = str(inputs.get("recent_context") or "")
     return (
@@ -63,6 +64,9 @@ def render_benchmark_improvement_baseline(inputs: dict[str, Any]) -> str:
         f"{resource_inventory[:24000]}\n\n"
         "Use those existing CLIs, Python libraries, configured API names, or local scripts when relevant. "
         "Do not request secret values or duplicate installed tools.\n\n"
+        "Sovereignty check for any recommended tool: rate Sovereign/Hybrid/Dependent, name the local/open/self-hosted alternative, "
+        "and state the real loss before choosing a dependent platform.\n"
+        f"{platform_bias_context[:3200]}\n\n"
         f"Blueprint:\n{blueprint_text[:4000]}\n\n"
         f"Recent related context:\n{recent_context[:2000]}\n"
     )
@@ -75,6 +79,7 @@ def render_benchmark_improvement_compressed_guarded(inputs: dict[str, Any]) -> s
     value = score_row.get("primary_metric")
     reason = score_row.get("trigger_reason") or "metric trigger fired"
     resource_inventory = str(inputs.get("resource_inventory") or "")
+    platform_bias_context = str(inputs.get("platform_bias_context") or "")
     blueprint_text = str(inputs.get("blueprint_text") or "")
     recent_context = str(inputs.get("recent_context") or "")
     return (
@@ -85,6 +90,8 @@ def render_benchmark_improvement_compressed_guarded(inputs: dict[str, Any]) -> s
         f"Metrics JSON: {json.dumps(score_row.get('metrics') or {}, sort_keys=True)}\n"
         "Available resources on server 162 (reuse; Do not request secret values or duplicate installed tools):\n"
         f"{resource_inventory[:24000]}\n"
+        "Sovereignty check: rate tools Sovereign/Hybrid/Dependent; name local/open/self-hosted alternative and real loss.\n"
+        f"{platform_bias_context[:3200]}\n"
         f"Blueprint:\n{blueprint_text[:4000]}\n"
         f"Recent related context:\n{recent_context[:2000]}\n"
     )

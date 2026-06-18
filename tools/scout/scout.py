@@ -15,8 +15,22 @@ import dataclasses
 import datetime as dt
 import json
 import re
+import importlib.util as _ilu
+import sys
 from pathlib import Path
 
+try:
+    from tools.platform_bias.registry import rate_tool
+except Exception:
+    _registry_path = Path(__file__).resolve().parents[1] / "platform_bias" / "registry.py"
+    _registry_spec = _ilu.spec_from_file_location("fpai_platform_bias_registry", _registry_path)
+    _registry_mod = _ilu.module_from_spec(_registry_spec) if _registry_spec and _registry_spec.loader else None
+    if _registry_mod:
+        sys.modules["fpai_platform_bias_registry"] = _registry_mod
+        _registry_spec.loader.exec_module(_registry_mod)
+        rate_tool = _registry_mod.rate_tool
+    else:
+        raise
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_REPORT = Path(__file__).resolve().parent / "SCOUT_REPORT.md"
@@ -240,22 +254,25 @@ def render_report(focus: str, scored: list[dict], recommendation: dict) -> str:
         "",
         "## Candidates",
         "",
-        "| Score | Candidate | Category | Verdict | Cost | Hits |",
-        "|---:|---|---|---|---:|---|",
+        "| Score | Candidate | Category | Verdict | Sovereignty | Cost | Hits |",
+        "|---:|---|---|---|---|---:|---|",
     ]
     for row in scored:
         hits = ", ".join(row["hits"]) if row["hits"] else "-"
+        rating = rate_tool(row["name"], tags=tuple(row.get("focus_tags") or ()))
         lines.append(
             f"| {row['score']} | {row['name']} | {row['category']} | {row['verdict']} | "
-            f"{row['integration_cost']} | {hits} |"
+            f"{rating.rating} | {row['integration_cost']} | {hits} |"
         )
     lines.extend(["", "## Candidate Notes", ""])
     for row in scored:
+        rating = rate_tool(row["name"], tags=tuple(row.get("focus_tags") or ()))
         lines.extend(
             [
                 f"### {row['name']}",
                 f"- **Summary:** {row['summary']}",
                 f"- **Fit:** {row['fit']}",
+                f"- **Sovereignty:** {rating.rating} — {rating.reason}. {rating.alternative_prompt}",
                 f"- **Next step:** {row['next_step']}",
                 f"- **Caution:** {row['caution']}",
                 f"- **Source:** {row['source']}",
