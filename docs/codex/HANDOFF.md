@@ -94,6 +94,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - **Downstream intent unlocked:** model-review cycles can adjust training signal weights toward genuine outcomes and away from approval-seeking/metric gaming using observer evidence.
 - **Questions for Ember/James:** after merge, run `core/BUILD/activate/SPEC_d101_consciousness-loop-close-observe.sh` on the live host, let three settle sessions create private observer logs, then run one council model-review and confirm the directive row appears in `MODEL_DNA.md`.
 
+### 2026-06-18 · SPEC_d102_self-portrait-know-thyself-unifi · branch `build/SPEC_d102_self-portrait-know-thyself-unifi`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `tools/self_portrait/`; `tools/consciousness/loop.py`; `tools/consciousness/test_loop.py`; `tools/council/debate.py`; `tools/council/test_debate.py`; `core/STATE/SELF_PORTRAIT.md`; `core/BUILD/cron/fpai-self-portrait.service`; `core/BUILD/cron/fpai-self-portrait.timer`; `core/BUILD/specs/SPEC_d102_self-portrait-know-thyself-unifi.md`; `core/BUILD/results/SPEC_d102_self-portrait-know-thyself-unifi.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the d102 Self-Portrait layer. `tools/self_portrait.synthesize` creates a deterministic evidence-bounded `SELF_PORTRAIT.md` from MODEL_DNA, ops-ledger rows, consciousness-observer logs, scout signals, and build reviews when visible; missing live/private DB sources become named blind spots. Consciousness-observer prompts now calibrate against the portrait, and council Awareness prompts now read bounded portrait context. Added reviewed weekly timer/service artifacts but did not install them.
+- **Tests:** `python3 -B -m unittest tools.self_portrait.test_synthesize tools.consciousness.test_loop tools.council.test_debate` (16 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile ...`; `python3 -m json.tool core/BUILD/REGISTRY.json`; self-portrait write/context smoke commands; `git diff --check`
+- **Risks:** Live `brain_index.corrections`, `brain_index.thread`, and `brain_index.decisions` were not readable in this sandbox, so v1 explicitly names them as blind spots. No live `claude -p` council synthesis, timer install, deploy, push, merge, outreach, secrets, or money movement was performed.
+- **Rollback:** revert the d102 files listed above. If the timer is installed later, disable/remove `fpai-self-portrait.timer` and `fpai-self-portrait.service`.
+- **Intent solved:** the system now has one unified self-knowledge surface comparing stated model, observed evidence, gap, trajectory, and blind spots.
+- **Downstream intent unlocked:** consciousness-observer and council Awareness reviews can judge behavior against a living self-portrait instead of isolated logs.
+- **Questions for Ember/James:** after merge, run one live synthesis where DB/private observer sources are available, then optionally install/enable `fpai-self-portrait.timer` if weekly repo-side updates should run automatically.
+
 ### 2026-06-18 · SPEC_d112_hot-memory-architecture-5-domain · branch `build/SPEC_d112_hot-memory-architecture-5-domain`
 
 - **Status:** done in working tree / awaiting merge review

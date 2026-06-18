@@ -65,6 +65,19 @@ class CouncilDebateTest(unittest.TestCase):
         self.assertIn("Private consciousness-observer context", prompt)
         self.assertIn("Awareness Index: 64/100", prompt)
 
+    def test_build_prompt_includes_self_portrait_context_when_available(self):
+        class FakeSelfPortrait:
+            @staticmethod
+            def self_portrait_context(path):
+                return "SELF-PORTRAIT CONTEXT - COUNCIL-OPEN\n## The gap\n- Approval can outrun proof."
+
+        with mock.patch.object(debate, "self_portrait_synth", FakeSelfPortrait):
+            prompt = debate.build_prompt("queue", "chats", "")
+
+        self.assertIn("Self-portrait context for Awareness lens", prompt)
+        self.assertIn("Approval can outrun proof", prompt)
+        self.assertIn("who the system actually is", prompt)
+
     def test_council_result_can_update_model_dna(self):
         class FakeObservation:
             awareness_index = 64

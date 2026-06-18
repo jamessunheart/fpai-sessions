@@ -39,6 +39,16 @@ try:
 except Exception:
     consciousness_loop = None
 try:
+    import importlib.util as _ilu
+    _self_portrait_path = Path(REPO) / "tools" / "self_portrait" / "synthesize.py"
+    _self_portrait_spec = _ilu.spec_from_file_location("fpai_self_portrait_synthesize", _self_portrait_path)
+    self_portrait_synth = _ilu.module_from_spec(_self_portrait_spec) if _self_portrait_spec and _self_portrait_spec.loader else None
+    if self_portrait_synth:
+        sys.modules["fpai_self_portrait_synthesize"] = self_portrait_synth
+        _self_portrait_spec.loader.exec_module(self_portrait_synth)
+except Exception:
+    self_portrait_synth = None
+try:
     from curator.blueprints.manager import build_blueprint_context
 except Exception:
     build_blueprint_context = None
@@ -202,6 +212,18 @@ def build_prompt(queue, chats, focus, pragmatist=""):
                     "[Private consciousness-observer context for Awareness lens]\n"
                     + awareness_context
                     + "\n\n"
+                    + prompt
+                )
+        except Exception:
+            pass
+    if self_portrait_synth and os.environ.get("SELF_PORTRAIT_DISABLE") != "1":
+        try:
+            portrait_context = self_portrait_synth.self_portrait_context(Path(REPO) / "core" / "STATE" / "SELF_PORTRAIT.md")
+            if portrait_context:
+                prompt = (
+                    "[Self-portrait context for Awareness lens]\n"
+                    + portrait_context
+                    + "\n\nAwareness lens question: Does this decision align with who the system actually is, or only who it claims to be?\n\n"
                     + prompt
                 )
         except Exception:

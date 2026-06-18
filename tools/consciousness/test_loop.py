@@ -1,6 +1,7 @@
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 from tools.consciousness import loop
 
@@ -57,6 +58,45 @@ class ConsciousnessLoopTest(unittest.TestCase):
         self.assertIn("meaning or toward approval", context)
         self.assertIn("weighting_directive", context)
 
+    def test_context_includes_self_portrait_calibration_when_present(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            portrait = root / "SELF_PORTRAIT.md"
+            (root / "2026-06-18.md").write_text(SAMPLE_LOG, encoding="utf-8")
+            portrait.write_text(
+                "# Self-Portrait\n\n## The gap\n\n- Approval can outrun proof.\n",
+                encoding="utf-8",
+            )
+
+            context = loop.consciousness_context(root)
+            portrait_context = loop.self_portrait_context(portrait)
+
+        self.assertIn("CONSCIOUSNESS OBSERVER CONTEXT", context)
+        self.assertIn("SELF-PORTRAIT CONTEXT", portrait_context)
+        self.assertIn("Approval can outrun proof", portrait_context)
+
+    def test_run_observer_prompt_requires_self_portrait_calibration(self) -> None:
+        calls = []
+
+        def fake_run(cmd, capture_output, text, timeout):
+            calls.append(cmd)
+
+            class Result:
+                returncode = 0
+                stdout = "---\nawareness_index: 70\n---\n"
+                stderr = ""
+
+            return Result()
+
+        with tempfile.TemporaryDirectory() as tmp, mock.patch.object(loop.subprocess, "run", fake_run):
+            out_dir = Path(tmp)
+            status = loop.run_observer("/tmp/session.md", "s1", out_dir=out_dir, claude_bin="claude")
+
+        self.assertEqual(status, 0)
+        prompt = calls[0][-1]
+        self.assertIn("self-portrait", prompt)
+        self.assertIn("self_portrait_calibration", prompt)
+
     def test_append_model_dna_directive_is_idempotent(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             model = Path(tmp) / "MODEL_DNA.md"
@@ -107,4 +147,3 @@ class ConsciousnessLoopTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

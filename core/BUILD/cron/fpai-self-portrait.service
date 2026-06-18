@@ -1,0 +1,10 @@
+[Unit]
+Description=FPAI weekly self-portrait synthesis
+Documentation=file:/opt/fpai-build/FPAI_Cockpit/core/STATE/SELF_PORTRAIT.md
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/fpai-build/FPAI_Cockpit
+Environment=FPAI_REPO_ROOT=/opt/fpai-build/FPAI_Cockpit
+ExecStart=/usr/bin/python3 -m tools.self_portrait.synthesize --output /opt/fpai-build/FPAI_Cockpit/core/STATE/SELF_PORTRAIT.md
+

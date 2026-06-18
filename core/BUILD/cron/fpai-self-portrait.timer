@@ -1,0 +1,12 @@
+[Unit]
+Description=Run FPAI self-portrait synthesis weekly
+
+[Timer]
+OnCalendar=Sun *-*-* 05:20:00
+Persistent=true
+RandomizedDelaySec=20m
+Unit=fpai-self-portrait.service
+
+[Install]
+WantedBy=timers.target
+

@@ -22,8 +22,14 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 DEFAULT_CONSCIOUSNESS_DIR = Path(os.environ.get("FPAI_CONSCIOUSNESS_DIR", Path.home() / ".config" / "fpai" / "consciousness"))
 DEFAULT_MODEL_DNA = REPO / "core" / "STATE" / "MODEL_DNA.md"
+DEFAULT_SELF_PORTRAIT = REPO / "core" / "STATE" / "SELF_PORTRAIT.md"
 MAX_CONTEXT_CHARS = 4500
 MAX_DIGEST_OBSERVATIONS = 3
+
+try:
+    from tools.self_portrait import synthesize as self_portrait_synth
+except Exception:
+    self_portrait_synth = None
 
 
 @dataclass(frozen=True)
@@ -124,7 +130,8 @@ def extract_top_observations(text: str, limit: int = MAX_DIGEST_OBSERVATIONS) ->
 def consciousness_context(consciousness_dir: Path = DEFAULT_CONSCIOUSNESS_DIR) -> str:
     obs = latest_observation(consciousness_dir)
     if not obs:
-        return ""
+        portrait = self_portrait_context()
+        return portrait[:MAX_CONTEXT_CHARS] if portrait else ""
     idx = "unknown" if obs.awareness_index is None else f"{obs.awareness_index}/100"
     lines = [
         "CONSCIOUSNESS OBSERVER CONTEXT - PRIVATE TIER",
@@ -133,6 +140,9 @@ def consciousness_context(consciousness_dir: Path = DEFAULT_CONSCIOUSNESS_DIR) -
         f"Awareness Index: {idx}",
         "Awareness lens question: Is the system improving toward meaning or toward approval? Where is it gaming its own signals?",
     ]
+    portrait = self_portrait_context()
+    if portrait:
+        lines.extend(["", portrait])
     if obs.top_observations:
         lines.append("Top observations:")
         lines.extend(f"- {item}" for item in obs.top_observations)
@@ -140,6 +150,15 @@ def consciousness_context(consciousness_dir: Path = DEFAULT_CONSCIOUSNESS_DIR) -
         "Council output requirement: include weighting_directive, signal_types_amplified, and signal_types_dampened when this log changes the model-review judgment."
     )
     return "\n".join(lines)[:MAX_CONTEXT_CHARS]
+
+
+def self_portrait_context(path: Path = DEFAULT_SELF_PORTRAIT) -> str:
+    if not self_portrait_synth or os.environ.get("SELF_PORTRAIT_DISABLE") == "1":
+        return ""
+    try:
+        return self_portrait_synth.self_portrait_context(path, max_chars=1800)
+    except Exception:
+        return ""
 
 
 def digest_section(consciousness_dir: Path = DEFAULT_CONSCIOUSNESS_DIR) -> str:
@@ -230,7 +249,9 @@ def run_observer(session_path: str, session_id: str, *, out_dir: Path = DEFAULT_
     prompt = (
         "Run the consciousness-observer on this settled session. "
         f"Session id: {session_id}. Session file: {session_path}. "
+        f"Before scoring, read the COUNCIL-OPEN self-portrait at {DEFAULT_SELF_PORTRAIT} when present and calibrate behavior against it. "
         "Write a PRIVATE-tier markdown log with awareness_index and top observations. "
+        "Include a short self_portrait_calibration note on whether behavior matched the portrait or exposed a gap. "
         "Return only the log markdown."
     )
     try:
