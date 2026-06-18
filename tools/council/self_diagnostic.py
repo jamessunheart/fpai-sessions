@@ -293,17 +293,13 @@ def sleep(seconds: float) -> None:
 
 
 def send_telegram(text: str) -> Any:
-    try:
-        from curator import telegram
-    except ImportError:
-        import sys
-
-        curator_root = Path(os.environ.get("CURATOR_ROOT", "/opt/sh-brain-src"))
-        if str(curator_root) not in sys.path:
-            sys.path.insert(0, str(curator_root))
-        from curator import telegram
-
-    return telegram.send(text)
+    import importlib.util, asyncio
+    spec = importlib.util.spec_from_file_location(
+        "curator_telegram", "/opt/sh-brain-src/curator/telegram.py"
+    )
+    tg = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(tg)
+    return asyncio.run(tg.send(text))
 
 
 def poll_messages(
