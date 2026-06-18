@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
         {
+            "id": "SPEC_d092_resource-inventory-agent",
+            "slug": "SPEC_d092_resource-inventory-agent",
+            "branch": "build/SPEC_d092_resource-inventory-agent",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d092_resource-inventory-agent.md",
+            "tests_passed": true,
+            "notes": "d092 complete in working tree: extended the d091 resource inventory into Forge-facing proposal prompts. Added a bounded AVAILABLE_RESOURCES reader; self-audit evidence now includes available_resources; benchmark improvement prompts include server 162 resources so Forge repair specs can reuse installed CLIs/libs/APIs/scripts. Tests, py_compile, registry JSON validation, and diff hygiene passed. Initial independent review found registry status still building/tests false; fixed. No live timer install, external API call, secret read, push, or merge."
+        },
+        {
             "id": "SPEC_d091_resource-inventory-system-knows",
             "slug": "SPEC_d091_resource-inventory-system-knows",
             "branch": "build/SPEC_d091_resource-inventory-system-knows",

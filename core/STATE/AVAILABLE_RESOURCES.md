@@ -1,6 +1,6 @@
 # Available Resources
 
-_Generated: 2026-06-18T14:21:01Z_
+_Generated: 2026-06-18T14:29:22Z_
 
 Names and paths only. Environment variable values are never written; secret-shaped variables are omitted.
 

@@ -82,6 +82,20 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-18 · SPEC_d092_resource-inventory-agent · branch `build/SPEC_d092_resource-inventory-agent`
+
+- **Status:** done in working tree / independently AI-reviewed / commit blocked by read-only git metadata / awaiting merge review
+- **Files changed:** `tools/inventory/scan_resources.py`; `tools/inventory/test_scan_resources.py`; `core/STATE/AVAILABLE_RESOURCES.md`; `tools/build_loop/self_audit.py`; `tools/build_loop/test_self_audit.py`; `tools/benchmarks/improvement_proposer.py`; `tools/benchmarks/test_benchmarks.py`; `core/BUILD/specs/SPEC_d092_resource-inventory-agent.md`; `core/BUILD/results/SPEC_d092_resource-inventory-agent.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Extended the d091 inventory scanner into a reusable prompt context for Forge-facing proposal paths. `tools/inventory/scan_resources.py` now has a bounded reader for `core/STATE/AVAILABLE_RESOURCES.md`; `tools/build_loop/self_audit.py` includes `available_resources` in local evidence and tells proposal generation to prefer installed CLIs/libs/APIs/scripts without requesting secret values; `tools/benchmarks/improvement_proposer.py` includes the same inventory in per-agent improvement prompts, including Forge repair specs.
+- **Tests:** `python3 -m tools.inventory.scan_resources`; `python3 -B -m unittest tools.inventory.test_scan_resources tools.build_loop.test_self_audit tools.benchmarks.test_benchmarks tools.council.test_debate` (21 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/inventory/__init__.py tools/inventory/scan_resources.py tools/inventory/test_scan_resources.py tools/build_loop/self_audit.py tools/build_loop/test_self_audit.py tools/benchmarks/improvement_proposer.py tools/benchmarks/test_benchmarks.py tools/council/debate.py tools/council/test_debate.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d092-registry.json`; `git diff --check`
+- **Independent review:** initial sub-agent blocker-only review returned `REQUEST_CHANGES` for one P2 closeout blocker: registry still said `building` / `tests_passed: false`. Fixed registry to `done` / `true`, reran JSON validation and diff hygiene, and `tools/merge/merge_gate.sh build/SPEC_d092_resource-inventory-agent` passed. Final blocker-only re-review returned `APPROVE`; no remaining P1/P2 findings. Residual risks: inventory freshness depends on the scanner/timer cadence, and downstream model proposals still rely on prompt compliance.
+- **Commit:** attempted local `git add`; blocked by read-only shared git metadata because git could not create `/opt/fpai-build/FPAI_Cockpit/.git/worktrees/SPEC_d092_resource-inventory-agent/index.lock`.
+- **Risks:** No live timer install, production deploy, external API call, secret read, push, merge, outreach send, or money movement was performed. Inventory records names/paths only; env values are never written and secret-shaped env var names remain filtered.
+- **Rollback:** revert the d092 files listed above. No live service rollback is needed because no timer or deploy was installed.
+- **Intent solved:** council and Forge-facing proposal generators now see server 162's available APIs, libraries, CLIs, and local scripts before recommending builds.
+- **Downstream intent unlocked:** future proposal cycles can reuse existing resources and avoid blind duplicate integrations before specs are dispatched.
+- **Questions for Ember/James:** after merge, install/enable the reviewed weekly inventory timer from d091 and run one council/self-audit or benchmark-improvement cycle to confirm the surfaced proposal references at least one resource from `core/STATE/AVAILABLE_RESOURCES.md`.
+
 ### 2026-06-18 · SPEC_d091_resource-inventory-system-knows · branch `build/SPEC_d091_resource-inventory-system-knows`
 
 - **Status:** done in working tree / independent AI review blocked in sandbox / awaiting merge review

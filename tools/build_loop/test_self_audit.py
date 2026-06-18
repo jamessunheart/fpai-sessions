@@ -30,6 +30,7 @@ FIXTURE_CONTEXT = {
     },
     "architecture_gaps": {"partial_or_gap_lines": ["PARTIAL: build loop has no idle improvement source"]},
     "services": {"available": True, "services": [{"name": "fpai-build-loop", "state": "active"}]},
+    "available_resources": "# Available Resources\n\n## CLIs\n\n- git: /usr/bin/git\n",
 }
 
 
@@ -38,6 +39,8 @@ class SelfAuditTests(unittest.TestCase):
         def runner(prompt: str) -> str:
             self.assertIn("silent failures", prompt)
             self.assertIn("Local system evidence JSON", prompt)
+            self.assertIn("available_resources", prompt)
+            self.assertIn("git: /usr/bin/git", prompt)
             return json.dumps(
                 [
                     {

@@ -19,6 +19,7 @@ import pkg_resources
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_OUTPUT = REPO_ROOT / "core" / "STATE" / "AVAILABLE_RESOURCES.md"
 DEFAULT_SCRIPT_ROOT = Path("/opt/fpai")
+DEFAULT_CONTEXT_LIMIT = 24_000
 CLI_NAMES = (
     "twilio",
     "stripe",
@@ -188,6 +189,19 @@ def write_inventory(
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(content, encoding="utf-8")
     return content
+
+
+def read_inventory_context(path: Path = DEFAULT_OUTPUT, *, limit: int = DEFAULT_CONTEXT_LIMIT) -> str:
+    """Return bounded inventory text for proposal prompts."""
+    try:
+        text = path.read_text(encoding="utf-8", errors="replace").strip()
+    except OSError:
+        return ""
+    if not text:
+        return ""
+    if len(text) <= limit:
+        return text
+    return text[:limit].rstrip() + f"\n\n... truncated to {limit} chars"
 
 
 def parse_args() -> argparse.Namespace:

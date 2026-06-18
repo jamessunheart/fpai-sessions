@@ -10,6 +10,8 @@ from pathlib import Path
 from typing import Any, Callable
 
 from tools.benchmarks import DEFAULT_OPS_LEDGER, DEFAULT_SCORE_LEDGER, REPO_ROOT, append_jsonl, read_jsonl
+from tools.inventory.scan_resources import DEFAULT_OUTPUT as DEFAULT_RESOURCE_INVENTORY
+from tools.inventory.scan_resources import read_inventory_context
 
 DEFAULT_PROPOSAL_LOG = REPO_ROOT / "core" / "benchmarks" / "improvement_proposals.jsonl"
 MAX_SPECS_PER_AGENT_WEEK = 2
@@ -35,7 +37,13 @@ def within_rate_limit(agent: str, proposal_log: Path, *, now: dt.datetime | None
     return len(recent) < MAX_SPECS_PER_AGENT_WEEK
 
 
-def build_prompt(score_row: dict[str, Any], *, blueprint_text: str = "", recent_context: str = "") -> str:
+def build_prompt(
+    score_row: dict[str, Any],
+    *,
+    blueprint_text: str = "",
+    recent_context: str = "",
+    resource_inventory: str = "",
+) -> str:
     agent = score_row.get("agent")
     metric = score_row.get("trigger_metric")
     value = score_row.get("primary_metric")
@@ -48,6 +56,10 @@ def build_prompt(score_row: dict[str, Any], *, blueprint_text: str = "", recent_
         f"Current value: {value}\n"
         f"Reason: {reason}\n"
         f"Metrics JSON: {json.dumps(score_row.get('metrics') or {}, sort_keys=True)}\n\n"
+        "Available resources on server 162:\n"
+        f"{resource_inventory[:24000]}\n\n"
+        "Use those existing CLIs, Python libraries, configured API names, or local scripts when relevant. "
+        "Do not request secret values or duplicate installed tools.\n\n"
         f"Blueprint:\n{blueprint_text[:4000]}\n\n"
         f"Recent related context:\n{recent_context[:2000]}\n"
     )
@@ -99,6 +111,7 @@ def propose_for_score(
     claude_runner: Callable[[str], str] | None = None,
     queue_build: Callable[[str], str] | None = None,
     now: dt.datetime | None = None,
+    resource_inventory_path: Path = DEFAULT_RESOURCE_INVENTORY,
 ) -> dict[str, Any] | None:
     if not should_propose(score_row):
         return None
@@ -108,7 +121,13 @@ def propose_for_score(
     blueprint_path = blueprint_dir / f"{agent}.md"
     blueprint = blueprint_path.read_text(encoding="utf-8", errors="replace") if blueprint_path.exists() else ""
     recent_context = str(score_row.get("recent_context") or collect_recent_context(agent, ops_ledger))
-    prompt = build_prompt(score_row, blueprint_text=blueprint, recent_context=recent_context)
+    resource_inventory = read_inventory_context(resource_inventory_path, limit=24_000)
+    prompt = build_prompt(
+        score_row,
+        blueprint_text=blueprint,
+        recent_context=recent_context,
+        resource_inventory=resource_inventory,
+    )
     runner = claude_runner or (draft_with_claude if os.environ.get("BENCHMARKS_PROPOSE_LIVE") == "1" else None)
     spec_markdown = runner(prompt) if runner else prompt
     queued = (queue_build or queue_with_curator)(spec_markdown)

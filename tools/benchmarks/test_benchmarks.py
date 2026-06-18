@@ -86,6 +86,11 @@ class PerAgentBenchmarksTest(unittest.TestCase):
             json.dumps({"ts": "2026-06-16T00:00:00Z", "event": "correction", "agent": "forge", "detail": "Forge missed rollback evidence."}) + "\n",
             encoding="utf-8",
         )
+        inventory = root / "AVAILABLE_RESOURCES.md"
+        inventory.write_text(
+            "# Available Resources\n\n## CLIs\n\n- git: /usr/bin/git\n\n## Python-libs\n\n- fastapi==0.109.0\n",
+            encoding="utf-8",
+        )
         queued = mock.Mock(return_value="d999")
         drafted = mock.Mock(return_value="# Improve Forge\n")
         result = propose_for_score(
@@ -102,10 +107,15 @@ class PerAgentBenchmarksTest(unittest.TestCase):
             claude_runner=drafted,
             queue_build=queued,
             now=NOW,
+            resource_inventory_path=inventory,
         )
         self.assertEqual(result["spec_queued"], "d999")
         drafted.assert_called_once()
-        self.assertIn("Forge missed rollback evidence", drafted.call_args.args[0])
+        prompt = drafted.call_args.args[0]
+        self.assertIn("Forge missed rollback evidence", prompt)
+        self.assertIn("Available resources on server 162", prompt)
+        self.assertIn("git: /usr/bin/git", prompt)
+        self.assertIn("fastapi==0.109.0", prompt)
         queued.assert_called_once_with("# Improve Forge\n")
 
     def test_loop_triggers_on_14_day_flatline_with_sparse_data(self) -> None:
