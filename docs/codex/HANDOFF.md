@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-18 · SPEC_d111_awareness-reliability-metric-con · branch `build/SPEC_d111_awareness-reliability-metric-con`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `tools/awareness/reliability_probe.py`; `tools/awareness/test_reliability_probe.py`; `tools/continuity/append_session_hook.sh`; `core/BUILD/cron/fpai-awareness-reliability.service`; `core/BUILD/cron/fpai-awareness-reliability.timer`; `core/BUILD/specs/SPEC_d111_awareness-reliability-metric-con.md`; `core/BUILD/results/SPEC_d111_awareness-reliability-metric-con.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a continuous awareness reliability probe that reuses `verify_awareness.py`, records every probe to the ops ledger, writes JSON/Markdown metric reports, computes rolling reliability, and alerts Telegram when reliability falls below 95%. Added reviewed systemd artifacts for a two-hour cadence and wired the existing session insight hook to run the probe after successful write paths without blocking settle.
+- **Tests:** `python3 -B -m unittest tools.awareness.test_reliability_probe tools.continuity.test_write_session_insights` (7 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/awareness/reliability_probe.py tools/awareness/test_reliability_probe.py tools/awareness/verify_awareness.py tools/continuity/write_session_insights.py tools/continuity/test_write_session_insights.py`; `bash -n tools/continuity/append_session_hook.sh`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d111-registry.json`; `git diff --check`
+- **Risks:** Live DB access was not available in this sandbox, so the real `--probe-latest` path was not executed against production `brain_index.session_insights`. The timer was not installed/enabled. Telegram alerting depends on the existing notifier credentials and only writes cooldown after `notify: sent`.
+- **Rollback:** revert the listed d111 files. If installed later, disable/remove `fpai-awareness-reliability.timer` and `fpai-awareness-reliability.service`.
+- **Intent solved:** awareness visibility now has a measured reliability probe instead of a one-off manual verifier.
+- **Downstream intent unlocked:** the live loop can alert James quickly when all-surface session awareness falls below the 95% reliability floor.
+- **Questions for Ember/James:** after merge and d110 live schema/hook setup, install/enable `fpai-awareness-reliability.timer`, then run one manual `python3 tools/awareness/reliability_probe.py --send-alert --source manual --threshold 0.95 --json` on the live host to confirm DB visibility and Telegram alert behavior.
+
 ### 2026-06-18 · SPEC_d110_session-write-through-every-clau · branch `build/SPEC_d110_session-write-through-every-clau`
 
 - **Status:** done in working tree / awaiting merge review

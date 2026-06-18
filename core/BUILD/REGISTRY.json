@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
         {
+            "id": "SPEC_d111_awareness-reliability-metric-con",
+            "slug": "SPEC_d111_awareness-reliability-metric-con",
+            "branch": "build/SPEC_d111_awareness-reliability-metric-con",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d111_awareness-reliability-metric-con.md",
+            "tests_passed": true,
+            "notes": "d111 complete in working tree: added awareness reliability probe using verify_awareness, rolling ops-ledger metric, JSON/Markdown reports, Telegram alert below 95%, reviewed 2h systemd timer artifacts, and after-write hook probe wiring. Focused unittest, py_compile, shell syntax, registry JSON validation, and diff hygiene passed. No live DB probe, timer install, push, merge, deploy, outreach, secrets, or money movement."
+        },
+        {
             "id": "SPEC_d110_session-write-through-every-clau",
             "slug": "SPEC_d110_session-write-through-every-clau",
             "branch": "build/SPEC_d110_session-write-through-every-clau",

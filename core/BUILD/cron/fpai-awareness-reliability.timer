@@ -1,0 +1,10 @@
+[Unit]
+Description=Run FPAI Awareness Reliability Probe every 2 hours
+
+[Timer]
+OnCalendar=*-*-* 00/2:05:00 UTC
+Persistent=true
+Unit=fpai-awareness-reliability.service
+
+[Install]
+WantedBy=timers.target

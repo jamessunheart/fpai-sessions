@@ -18,5 +18,11 @@ if [[ -n "${INSIGHTS_FILE}" ]]; then
   args+=(--insights-file "${INSIGHTS_FILE}")
 fi
 
-"${PYTHON_BIN}" "${args[@]}" || echo "[session-write-through] write failed (non-blocking)" >&2
+"${PYTHON_BIN}" "${args[@]}" || { echo "[session-write-through] write failed (non-blocking)" >&2; exit 0; }
+
+"${PYTHON_BIN}" "${REPO_ROOT}/tools/awareness/reliability_probe.py" \
+  --send-alert \
+  --source after-write \
+  --threshold 0.95 \
+  || echo "[session-write-through] awareness reliability probe failed (non-blocking)" >&2
 exit 0
