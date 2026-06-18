@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-18 · SPEC_d116_retroactive-liveness-audit-scan · branch `build/SPEC_d116_retroactive-liveness-audit-scan`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `tools/liveness/__init__.py`; `tools/liveness/retroactive_audit.py`; `tools/liveness/test_retroactive_audit.py`; `liveness_audit.md`; `core/BUILD/specs/SPEC_d116_retroactive-liveness-audit-scan.md`; `core/BUILD/results/SPEC_d116_retroactive-liveness-audit-scan.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a conservative retroactive liveness audit helper for merged d001-d092 decisions. It discovers merged decisions from result/activation artifacts and ops-ledger evidence, infers expected artifacts from activation scripts/specs/results, writes the required three-column `liveness_audit.md`, appends an ops-ledger row, optionally notifies Telegram, and seeds `dNNN-activate` follow-up decisions for concrete `dead` rows. Missing credentials, unavailable systemd bus, unavailable DB driver/connection, and disabled external endpoint probing classify as `unknown`, not `dead`.
+- **Tests:** `python3 -B -m unittest tools.liveness.test_retroactive_audit` (8 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/liveness/retroactive_audit.py tools/liveness/test_retroactive_audit.py`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `python3 -B -m tools.liveness.retroactive_audit --output liveness_audit.md --ops-ledger /tmp/d116_liveness_ops.jsonl --no-seed --no-notify`; final `git diff --check`
+- **Risks:** Live DB seeding and Telegram notification were not run in this sandbox. Server 162 should run the script once without `--no-seed --no-notify` to queue real activation decisions and notify TG. Artifact inference is heuristic, so seeded dead follow-ups should remain tightly activation-scoped.
+- **Rollback:** revert the listed files and remove `liveness_audit.md`. If the live script later seeds unwanted `dNNN-activate` rows, close or remove those decision rows.
+- **Intent solved:** old merged d001-d092 builds now have a deterministic liveness audit path.
+- **Downstream intent unlocked:** server 162 can queue focused activation repairs only for concrete merged-but-dead builds, closing the pre-d115 liveness gap.
+- **Questions for Ember/James:** after merge on server 162, run `python3 -B -m tools.liveness.retroactive_audit` once from the repo root with live env loaded, confirm `ops_ledger` records `retroactive_audit`, Telegram receives the summary, and every concrete `dead` row has a `dNNN-activate` decision.
+
 ### 2026-06-18 · SPEC_d115_seed-d115-post-merge-liveness-pr · branch `build/SPEC_d115_seed-d115-post-merge-liveness-pr`
 
 - **Status:** done in working tree / awaiting merge review
