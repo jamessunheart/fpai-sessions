@@ -23,7 +23,22 @@ if [ "$SUBSTANTIVE" -eq 0 ]; then
 fi
 [ "$SUBSTANTIVE" -eq 0 ] && exit 0
 
-cat <<'EOF'
+# Inject HOT_STATE if fresh (<2h) — the unified live picture across all sessions
+HOT_STATE_FILE="${HOME}/.config/fpai/hot_memory/HOT_STATE.md"
+HOT_STATE_BLOCK=""
+if [ -f "$HOT_STATE_FILE" ]; then
+  AGE=$(( $(date +%s) - $(stat -c %Y "$HOT_STATE_FILE" 2>/dev/null || stat -f %m "$HOT_STATE_FILE" 2>/dev/null || echo 0) ))
+  if [ "$AGE" -lt 7200 ]; then
+    HOT_STATE_CONTENT=$(head -60 "$HOT_STATE_FILE" 2>/dev/null)
+    HOT_STATE_BLOCK="
+<system-reminder>
+LIVE SYSTEM STATE (HOT_STATE — synthesized from 5 scanners, auto-refreshes every 30min. This is the unified picture across ALL Claude Code sessions and the Telegram bot. Trust this over reconstructed context.):
+${HOT_STATE_CONTENT}
+</system-reminder>"
+  fi
+fi
+
+cat <<EOF
 
 <system-reminder>
 PRE-FLIGHT for substantive turn — run these gates BEFORE composing the body:
@@ -35,6 +50,6 @@ PRE-FLIGHT for substantive turn — run these gates BEFORE composing the body:
   4. Compose the body — with the alignment footer + NARRATOR · section.
 This reminder is harness-injected (preflight-inject.sh). It does not require acknowledgment;
 its job is to surface the checklist while context is fresh.
-</system-reminder>
+</system-reminder>${HOT_STATE_BLOCK}
 EOF
 exit 0
