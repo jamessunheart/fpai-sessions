@@ -80,13 +80,15 @@ Work is shipped as **Loops** — each one a self-contained Quest with `feat(loop
 6. Hold the structure (DEEP). Let the self cohere.
 
 **Layer 1 — wake up to the project**
-7. Read `core/STATE/NOW.md` (founder priorities)
-8. Read `core/STATE/AI_GOALS.md` (AI working goals)
-9. Read `core/STATE/JAMES_CANONICAL.md` (who James is)
-10. Read `core/STATE/AI_CHARTER.md` (how to operate — caveman, Conversation Protocol, Signal Clarity)
-11. Read `core/STATE/AI_ROSTER.md` (specialized AI roster + Context Steward pairing)
-12. `git log --oneline -8` to see what shipped recently
-13. If picking a new loop, scan `core/INTENT/AGREEMENTS/proofs/` for the latest loop number and any uncommitted proofs (sibling sessions)
+7. **`git checkout feat/headless-build && git pull`** — ALL live work is on this branch. `main` is always stale. Do this before reading any state files.
+8. **Read `~/.config/fpai/hot_memory/HOT_STATE.md`** — the unified live picture (synthesized every 30min from 5 scanners). If it exists and is <2h old, this is your fastest orientation. Read it BEFORE the files below.
+9. Read `core/STATE/NOW.md` (founder priorities)
+10. Read `core/STATE/AI_GOALS.md` (AI working goals)
+11. Read `core/STATE/JAMES_CANONICAL.md` (who James is)
+12. Read `core/STATE/AI_CHARTER.md` (how to operate — caveman, Conversation Protocol, Signal Clarity)
+13. Read `core/STATE/AI_ROSTER.md` (specialized AI roster + Context Steward pairing)
+14. `git log --oneline -8` to see what shipped recently
+15. If picking a new loop, scan `core/INTENT/AGREEMENTS/proofs/` for the latest loop number and any uncommitted proofs (sibling sessions)
 
 **During session — LIVE maintenance (write immediately, don't wait for end)**
 - James corrects an approach → save `memory/feedback_{slug}.md` THIS TURN

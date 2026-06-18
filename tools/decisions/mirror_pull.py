@@ -32,7 +32,10 @@ SERVER = "root@162.0.208.88"
 ENV_FILE = "/etc/sh-brain/curator.env"          # sourced ON the server, never read here
 VENV_PY = "/opt/sh-brain-src/.venv/bin/python"
 
-VAULT = HOME / "Documents" / "FPOS" / "Full Potential OS"
+# Try iCloud Drive path first (avoids TCC wall on ~/Documents), fall back to Documents
+_VAULT_ICLOUD = HOME / "Library" / "Mobile Documents" / "iCloud~md~obsidian" / "Documents" / "Full Potential OS"
+_VAULT_DOCS   = HOME / "Documents" / "FPOS" / "Full Potential OS"
+VAULT = _VAULT_ICLOUD if _VAULT_ICLOUD.exists() else _VAULT_DOCS
 DIGEST_FILE = VAULT / "00_MEMORY" / "BRAIN DIGEST.md"
 
 # Read-only query, run by the brain's own venv on the server. No writes.
