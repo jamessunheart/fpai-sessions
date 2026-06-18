@@ -1,0 +1,9 @@
+[Unit]
+Description=FPAI Resource Inventory
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/fpai-build/FPAI_Cockpit
+Environment=FPAI_SURFACE=auto-loop
+ExecStart=/usr/bin/python3 -m tools.inventory.scan_resources
+

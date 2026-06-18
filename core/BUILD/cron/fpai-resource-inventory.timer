@@ -1,0 +1,11 @@
+[Unit]
+Description=Refresh FPAI resource inventory weekly
+
+[Timer]
+OnCalendar=Sun *-*-* 06:20:00 UTC
+Persistent=true
+Unit=fpai-resource-inventory.service
+
+[Install]
+WantedBy=timers.target
+
