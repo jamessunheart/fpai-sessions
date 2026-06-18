@@ -62,7 +62,16 @@ class ResourceInventoryTest(unittest.TestCase):
         self.assertEqual(clis["git"], "/usr/bin/git")
         self.assertIsNone(clis["curl"])
 
+    def test_read_inventory_context_is_bounded(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "AVAILABLE_RESOURCES.md"
+            path.write_text("# Available Resources\n" + ("x" * 80), encoding="utf-8")
+
+            text = scan_resources.read_inventory_context(path, limit=40)
+
+        self.assertIn("# Available Resources", text)
+        self.assertIn("truncated to 40 chars", text)
+
 
 if __name__ == "__main__":
     unittest.main()
-

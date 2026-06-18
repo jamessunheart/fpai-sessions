@@ -20,6 +20,9 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Callable, Iterable
 
+from tools.inventory.scan_resources import DEFAULT_OUTPUT as DEFAULT_RESOURCE_INVENTORY
+from tools.inventory.scan_resources import read_inventory_context
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_OPS_LEDGER = Path(os.environ.get("OPS_LEDGER", "/opt/fpai-build/ops_ledger.jsonl"))
 DEFAULT_LAST_AUDIT = Path(os.environ.get("SELF_AUDIT_LAST_FILE", "/opt/fpai-build/.last_audit_date"))
@@ -275,6 +278,7 @@ def build_audit_context(
         "brain_index": collect_brain_index_summary(),
         "architecture_gaps": collect_architecture_gaps(gaps_file),
         "services": collect_service_status(),
+        "available_resources": read_inventory_context(DEFAULT_RESOURCE_INVENTORY, limit=24_000),
     }
 
 
@@ -288,6 +292,9 @@ def build_prompt(context: dict[str, Any]) -> str:
         "- capability gaps: PARTIAL or gap lines in architecture/build reports\n"
         "- high-correction topics: what James keeps correcting\n"
         "- unhealthy services: degraded local systemctl status\n\n"
+        "When proposing a build, first check available_resources in the evidence. "
+        "Prefer already-installed CLIs, Python libraries, configured API names, and local scripts "
+        "over adding duplicate dependencies. Do not infer or request secret values.\n\n"
         "Never propose money movement, treasury action, identity/KYC work, public outreach sends, "
         "secret/credential handling, production deploys, deletions, archival, or irreversible operations.\n"
         "Prefer low/med risk repo-local builds with tests and rollback.\n\n"
