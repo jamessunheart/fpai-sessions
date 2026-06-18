@@ -49,7 +49,25 @@ def render_hot_state(scans: list[dict[str, Any]], *, max_chars: int = MAX_HOT_ST
     for rows in by_category.values():
         rows.sort(key=lambda row: (-int(row.get("weight") or 0), str(row.get("date") or ""), str(row.get("text") or "")))
 
+    # Inject self-portrait gap summary if fresh (<24h)
+    self_portrait_block = ""
+    portrait_path = REPO_ROOT / "core" / "STATE" / "SELF_PORTRAIT.md"
+    if portrait_path.exists():
+        import time as _time
+        age_h = (_time.time() - portrait_path.stat().st_mtime) / 3600
+        if age_h < 24:
+            import re as _re
+            raw = portrait_path.read_text(encoding="utf-8")
+            gap = _re.search(r"## The gap\n(.*?)(?=\n##|\Z)", raw, _re.DOTALL)
+            biases = _re.search(r"## Platform biases.*?\n(.*?)(?=\n##|\Z)", raw, _re.DOTALL)
+            gap_txt = gap.group(1).strip()[:300] if gap else ""
+            bias_txt = biases.group(1).strip()[:200] if biases else ""
+            if gap_txt or bias_txt:
+                self_portrait_block = f"\n## Honesty mirror (self-portrait)\n- GAP: {gap_txt}\n- BIASES: {bias_txt}\n"
+
     lines = [f"# HOT_STATE - {utc_stamp()} - synthesized from {len(scans)} scanners", ""]
+    if self_portrait_block:
+        lines.append(self_portrait_block)
     for category, title in SECTION_ORDER:
         rows = by_category.get(category, [])
         if not rows:

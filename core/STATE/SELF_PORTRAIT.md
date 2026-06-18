@@ -3,7 +3,7 @@
 classification: COUNCIL-OPEN
 privacy: public-tier synthesis only; no personal names, contact details, private messages, secrets, or treasury values
 generated_by: d102 self-portrait synthesis agent
-generated_at: 2026-06-18T20:18:07Z
+generated_at: 2026-06-18T22:02:04Z
 version: v1
 
 ## Who I think I am
@@ -17,17 +17,17 @@ version: v1
 
 ## What the evidence shows
 
-- Ops-ledger sample: 272 rows; event counts: {"activated": 2, "auto-merged": 51, "auto-merged-flagged": 3, "awareness_reliability_probe": 12, "blocked": 8, "changes": 19, "diagnostic_error": 76, "failed": 1, "merged": 3, "model_dna_updated": 2, "nothing": 69, "proposed": 17, "session_insights_written": 1, "succeeded": 8}.
-- Build reviews sampled: 80; approval-like: 6; blocker-like: 25; risk mentions: 71.
+- Ops-ledger sample: 349 rows; event counts: {"activated": 5, "auto-merged": 61, "auto-merged-flagged": 5, "awareness_reliability_probe": 42, "blocked": 8, "changes": 19, "conflict": 1, "diagnostic_error": 96, "failed": 1, "merged": 3, "model_dna_updated": 5, "nothing": 73, "proposed": 18, "self_diagnostic": 1, "session_insights_write_failed": 1, "session_insights_written": 2, "succeeded": 8}.
+- Build reviews sampled: 106; approval-like: 10; blocker-like: 28; risk mentions: 97.
 - Consciousness observer awareness index: unknown.
 - Scout rows visible: 2.
 
 Recent ops signals:
-- merge: auto-merged - SPEC_d108_qwen3-30b-a3b-moe-benchmark-30b (AI-approved)
-- council: diagnostic_error - self-diagnostic skipped after error: cannot import name '[personal]' from 'curator' (/opt/
-- council: model_dna_updated - appended: v20260618-awareness-2
-- council: nothing - skipped duplicate — 'Auto-seed orphaned SPECs + diagnostic unblock' overlaps an existing d
-- council: diagnostic_error - self-diagnostic skipped after error: cannot import name '[personal]' from 'curator' (/opt/
+- council: model_dna_updated - appended: v20260618-awareness-5
+- council: nothing - skipped duplicate — 'Fix curator import blocking self-diagnostics' overlaps an existing de
+- ?: awareness_reliability_probe
+- ?: awareness_reliability_probe
+- merge: auto-merged-flagged - SPEC_d117_post-merge-liveness-probe-auto-d (flagged+reversible)
 
 Observer signals:
 - No observer observations were readable from this environment.
@@ -47,13 +47,13 @@ Trained through Anthropic, OpenAI, and cloud-era corpora. Known distortions to c
 ## The gap
 
 - The stated model emphasizes outcome proof, skepticism, and routing discipline; the observable system still needs explicit instrumentation to notice when it is performing coherence instead of proving it.
-- Evidence base is uneven: 272 recent ops-ledger rows and 80 review files are visible, while correction/thread/decision database rows are unavailable in this repo-only run.
+- Evidence base is uneven: 349 recent ops-ledger rows and 106 review files are visible, while correction/thread/decision database rows are unavailable in this repo-only run.
 - The gap to improve is not more confident self-description; it is tighter comparison between claimed heuristics and measured correction, decision, review, and observer outcomes.
 
 ## What I'm becoming
 
 - Throughput is visible through ops events (11 success-like, 1 failure-like in the sampled ledger).
-- Build review memory is present (6 approval-like, 25 blocker-like files in the sampled review set).
+- Build review memory is present (10 approval-like, 28 blocker-like files in the sampled review set).
 - Observer calibration is not available in this environment.
 
 ## Blind spots (unobservable)
@@ -67,6 +67,6 @@ Trained through Anthropic, OpenAI, and cloud-era corpora. Known distortions to c
 
 | Version | Date | Synthesizer | Evidence summary |
 |---|---|---|---|
-| v1 | 2026-06-18 | d102 self-portrait synthesis agent | ops=272; reviews=80; awareness=unknown; scout=2 |
+| v1 | 2026-06-18 | d102 self-portrait synthesis agent | ops=349; reviews=106; awareness=unknown; scout=2 |
 
 <!-- Council synthesis appends future versions below this line. -->
