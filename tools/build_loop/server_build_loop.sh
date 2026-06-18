@@ -50,6 +50,8 @@ CONSECUTIVE_REVERTS=0
 tg()  { cd "$BRAIN" && "$PY" -c "import asyncio,sys;from curator.telegram import send;asyncio.run(send(sys.argv[1]))" "$1" 2>/dev/null || true; }
 dec() { cd "$BRAIN" && "$PY" -m curator.decisions "$@" 2>/dev/null; }
 
+"$PY" "$REPO/tools/build_loop/seed_orphaned_specs.py" --repo "$REPO" || true
+
 PENDING=$(dec pending-builds | grep -E '^\{' || true)
 [ -z "$PENDING" ] && { echo "no decisions awaiting a build"; exit 0; }
 [ "$DRY" = "--dry-run" ] && { echo "PENDING BUILDS:"; printf '%s\n' "$PENDING"; exit 0; }
