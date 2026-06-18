@@ -1,1 +1,1 @@
-"""Liveness audit helpers."""
+"""Liveness probe and audit helpers."""

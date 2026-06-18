@@ -52,13 +52,18 @@ def _db_correction_counts(db_url: str):
 
 def _liveness_failures(ops_ledger: Path):
     rows = read_jsonl_tail(ops_ledger, limit=200)
-    failures = [row for row in rows if str(row.get("event") or "") == "liveness:fail"]
+    failures = [row for row in rows if str(row.get("event") or "") in {"liveness:fail", "liveness:partial"}]
     facts = []
     for row in failures[-5:]:
         detail = str(row.get("detail") or "post-merge liveness failed")
+        status = str(row.get("liveness_status") or row.get("event") or "not-live")
+        spec_id = str(row.get("spec_id") or "")
         ts = str(row.get("ts") or file_date(ops_ledger))
         source = str(row.get("artifact") or ops_ledger)
-        facts.append(fact(f"Post-merge liveness failure: {detail}", source, ts, weight=9, category="signal"))
+        prefix = f"Merged-but-not-live ({status})"
+        if spec_id:
+            prefix += f": {spec_id}"
+        facts.append(fact(f"{prefix}: {detail}", source, ts, weight=9, category="signal"))
     return facts
 
 

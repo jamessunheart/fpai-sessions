@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-18T21:45:15Z",
+    "updated_at": "2026-06-18T21:58:30Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d117_post-merge-liveness-probe-auto-d",
+            "slug": "SPEC_d117_post-merge-liveness-probe-auto-d",
+            "branch": "build/SPEC_d117_post-merge-liveness-probe-auto-d",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d117_post-merge-liveness-probe-auto-d.md",
+            "tests_passed": true,
+            "notes": "d117 complete in working tree: added typed read-only liveness declarations and probe runner for systemd/table/file/endpoint/port plus legacy command fallback; server build loop runs the probe after activate.sh, logs live/partial/dead/planned to ops_ledger, and queues activation follow-ups when not live. HOT_STATE, morning digest, and live-system status now surface merged-but-not-live and honest running/partial/dead/planned maps. Focused unittests, shell syntax, py_compile, registry JSON validation, CLI probe smoke, and diff hygiene passed. No live systemd/Postgres/endpoint probe, deploy, push, merge, outreach, secrets, or money movement."
+        },
         {
             "id": "SPEC_d116_retroactive-liveness-audit-scan",
             "slug": "SPEC_d116_retroactive-liveness-audit-scan",

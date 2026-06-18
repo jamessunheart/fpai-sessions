@@ -133,28 +133,34 @@ PY
 }
 
 run_liveness_probe() {
-  local check="$1"
-  local log_file status
-  if [ -z "$(printf '%s' "$check" | tr -d '[:space:]')" ]; then
-    return 0
-  fi
+  local declaration="$1"
+  local legacy_check="$2"
+  local log_file status probe_status spec_file
   if [ "${LIVENESS_PROBE_DISABLE:-0}" = "1" ]; then
     python3 "$REPO/tools/build_loop/ops_log.py" liveness "liveness:skipped" "$SPECID disabled by LIVENESS_PROBE_DISABLE=1" "\$0" "$BR" "" 2>/dev/null || true
     return 0
   fi
   mkdir -p /opt/fpai-build/logs
   log_file="/opt/fpai-build/logs/$SPECID.liveness.log"
+  spec_file="$REPO/core/BUILD/specs/$SPECID.md"
   (
     cd "$REPO" || exit 1
     export DID SPECID BR REPO WT BASE
-    timeout "${LIVENESS_PROBE_TIMEOUT:-120}" bash -lc "$check"
+    python3 -B -m tools.liveness.probe \
+      --repo-root "$REPO" \
+      --spec-file "$spec_file" \
+      --declaration "$declaration" \
+      --legacy-command "$legacy_check" \
+      --spec-id "$SPECID" \
+      --decision-id "$DID" \
+      --branch "$BR"
   ) >"$log_file" 2>&1
   status=$?
+  probe_status=$(tail -1 "$log_file" | "$PY" -c 'import json,sys; raw=sys.stdin.read().strip(); print((json.loads(raw).get("status") if raw else "") if raw else "")' 2>/dev/null || true)
   if [ "$status" = 0 ]; then
-    python3 "$REPO/tools/build_loop/ops_log.py" liveness "liveness:pass" "$SPECID live" "\$0" "$BR" "" 2>/dev/null || true
     return 0
   fi
-  python3 "$REPO/tools/build_loop/ops_log.py" liveness "liveness:fail" "$SPECID rc=$status log=$log_file" "\$0" "$BR" "Auto-queued follow-up repair spec for $DID" 2>/dev/null || true
+  python3 "$REPO/tools/build_loop/ops_log.py" liveness "liveness:fail" "$SPECID status=${probe_status:-unknown} rc=$status log=$log_file" "\$0" "$BR" "Auto-queued follow-up repair spec for $DID" 2>/dev/null || true
   queue_liveness_followup "$log_file"
   return 0
 }
@@ -172,6 +178,7 @@ while IFS= read -r line; do
 
   DID=$(printf '%s' "$line"  | "$PY" -c 'import sys,json;print(json.load(sys.stdin)["id"])')
   SLUG=$(printf '%s' "$line" | "$PY" -c 'import sys,json,re;print(re.sub(r"[^a-z0-9]+","-",json.load(sys.stdin)["question"].lower())[:32].strip("-"))')
+  LIVENESS_DECLARATION=$(printf '%s' "$line" | "$PY" -c 'import sys,json;print(json.load(sys.stdin).get("liveness") or "")')
   LIVENESS_CHECK=$(printf '%s' "$line" | "$PY" -c 'import sys,json;print(json.load(sys.stdin).get("liveness_check") or "")')
   SPECID="SPEC_${DID}_${SLUG}"; BR="build/$SPECID"; WT="$WT_BASE/$SPECID"
   echo "── building $SPECID (decision $DID) ──"
@@ -300,7 +307,7 @@ Register in core/BUILD/REGISTRY.json. Tests required. Do NOT push or merge.
       bash "$ACTIVATE_SCRIPT" 2>&1 | head -20 || echo "activate script exited non-zero — check $ACTIVATE_SCRIPT"
       python3 "$REPO/tools/build_loop/ops_log.py" merge activated "$SPECID (activate.sh ran)" "\$0" "$BR" "" 2>/dev/null || true
     fi
-    run_liveness_probe "$LIVENESS_CHECK"
+    run_liveness_probe "$LIVENESS_DECLARATION" "$LIVENESS_CHECK"
 
     if [ "$RC" = 0 ]; then
       # APPROVE + merged — brief TG confirmation (informational, not a decision ask)

@@ -14,6 +14,7 @@ from typing import Any
 
 from ..appflowy import AppFlowy
 from ..db import connect
+from ..liveness_status import liveness_honest_map_lines
 from ..proposals import Proposal, ProposalWriter
 
 log = logging.getLogger("curator.digest")
@@ -188,6 +189,9 @@ async def run(run_id: str) -> dict[str, Any]:
     bandwidth_lines = bandwidth_ledger_lines()
     if bandwidth_lines:
         report["last_24h"]["bandwidth_ledger"] = bandwidth_lines
+    liveness_lines = liveness_honest_map_lines()
+    if liveness_lines:
+        report["last_24h"]["liveness_map"] = liveness_lines
 
     summary = (
         f"+{sum(by_sens.values())} chunks · "
@@ -201,6 +205,8 @@ async def run(run_id: str) -> dict[str, Any]:
         proposal_text += "\n\n" + "\n".join(consciousness_lines)
     if bandwidth_lines:
         proposal_text += "\n\nBandwidth Ledger\n" + "\n".join(bandwidth_lines)
+    if liveness_lines:
+        proposal_text += "\n\nLive / Partial / Planned\n" + "\n".join(liveness_lines)
     if probe_report.get("available"):
         quality = "n/a" if probe_report.get("avg_quality") is None else f"{probe_report['avg_quality']:.1f}"
         proposal_text += (

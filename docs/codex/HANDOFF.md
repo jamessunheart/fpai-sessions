@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-18 · SPEC_d117_post-merge-liveness-probe-auto-d · branch `build/SPEC_d117_post-merge-liveness-probe-auto-d`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `tools/liveness/probe.py`; `tools/liveness/test_probe.py`; `tools/liveness/__init__.py`; `tools/build_loop/server_build_loop.sh`; `tools/build_loop/test_liveness_probe.py`; `SERVICES/sunheart-brain/curator/decisions.py`; `SERVICES/sunheart-brain/index/schema.sql`; `SERVICES/sunheart-brain/curator/liveness_status.py`; `SERVICES/sunheart-brain/curator/jobs/digest.py`; `SERVICES/sunheart-brain/curator/jobs/test_digest_liveness.py`; `SERVICES/sunheart-brain/curator/live_system_status.py`; `SERVICES/sunheart-brain/curator/test_live_system_status.py`; `tools/hot_memory/scanners/signal_scanner.py`; `tools/hot_memory/test_signal_scanner.py`; `core/BUILD/specs/SPEC_d117_post-merge-liveness-probe-auto-d.md`; `core/BUILD/results/SPEC_d117_post-merge-liveness-probe-auto-d.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added typed read-only post-merge liveness declarations for systemd/table/file/endpoint/port checks plus legacy `liveness_check` fallback. The server build loop now carries `liveness` from decisions, runs `tools.liveness.probe` after `activate.sh`, logs `live` / `partial` / `dead` / `planned` rows to `ops_ledger`, and auto-queues the existing activation follow-up when a probe is not live. HOT_STATE now surfaces merged-but-not-live partial/dead items, and the morning digest/live-system status show an honest running/partial/dead/planned map instead of treating merged as live.
+- **Tests:** `python3 -B -m unittest tools.liveness.test_probe tools.build_loop.test_liveness_probe tools.hot_memory.test_signal_scanner`; `python3 -B -m unittest discover -s SERVICES/sunheart-brain/curator/jobs -p 'test_digest_liveness.py'`; `python3 -B -m unittest discover -s SERVICES/sunheart-brain/curator -p 'test_live_system_status.py'`; `bash -n tools/build_loop/server_build_loop.sh`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile ...`; typed probe CLI smoke against the d117 spec file; final `git diff --check`.
+- **Risks:** Live systemd, live Postgres table probes, live endpoint checks, and a real server build-loop cycle were not run in this sandbox. External endpoint probes default to `unknown` unless `LIVENESS_ALLOW_EXTERNAL_ENDPOINTS=1`; prefer local health endpoints when possible. Legacy shell liveness remains for d115 compatibility but future specs should use typed declarations.
+- **Rollback:** revert the listed files. Runtime-only rollback is `LIVENESS_PROBE_DISABLE=1`; the digest/HOT_STATE/status additions are read-only summaries from the ops ledger.
+- **Intent solved:** post-merge state is measured and logged as running/partial/dead/planned instead of inferred from merge success.
+- **Downstream intent unlocked:** the autonomous loop can detect merged-but-not-live builds at the source and queue the activation repair spec for the next cycle.
+- **Questions for Ember/James:** after merge on server 162, seed one harmless test decision with a typed `liveness:` block for an existing file and confirm `ops_ledger` records `liveness:pass`; then seed a missing file or closed local port and confirm HOT_STATE/digest show merged-but-not-live and the activation follow-up is queued.
+
 ### 2026-06-18 · SPEC_d116_retroactive-liveness-audit-scan · branch `build/SPEC_d116_retroactive-liveness-audit-scan`
 
 - **Status:** done in working tree / awaiting merge review

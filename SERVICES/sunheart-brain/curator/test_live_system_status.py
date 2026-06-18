@@ -56,6 +56,15 @@ class LiveSystemStatusTest(unittest.TestCase):
                 [
                     json.dumps({"loop": "build", "event": "ran", "detail": "tick"}),
                     json.dumps({"loop": "merge", "event": "failed", "detail": "conflict"}),
+                    json.dumps(
+                        {
+                            "loop": "liveness",
+                            "event": "liveness:partial",
+                            "liveness_status": "partial",
+                            "spec_id": "SPEC_partial",
+                            "detail": "SPEC_partial partial",
+                        }
+                    ),
                 ]
             ),
             encoding="utf-8",
@@ -72,6 +81,9 @@ class LiveSystemStatusTest(unittest.TestCase):
         self.assertIn("host=162", lines)
         self.assertIn("recent_failures=1", lines)
         self.assertIn("conflict", lines)
+        self.assertIn("Liveness: running=0", lines)
+        self.assertIn("partial=1", lines)
+        self.assertIn("SPEC_partial", lines)
 
     def test_review_fallback_when_registry_has_no_merge(self) -> None:
         root = self.make_repo()

@@ -172,6 +172,8 @@ CREATE INDEX IF NOT EXISTS session_insights_active_idx
 -- server build loop runs it and logs liveness:pass/fail to ops_ledger.
 ALTER TABLE IF EXISTS decisions
     ADD COLUMN IF NOT EXISTS liveness_check TEXT;
+ALTER TABLE IF EXISTS decisions
+    ADD COLUMN IF NOT EXISTS liveness TEXT;
 
 -- Relevance-triggered attention surfacing.
 -- Rows are append-only proof that a current query caused pgvector memory to

@@ -35,9 +35,10 @@ def ensure_liveness_column() -> bool:
         with connect() as conn:
             with conn.cursor() as cur:
                 cur.execute("ALTER TABLE IF EXISTS brain_index.decisions ADD COLUMN IF NOT EXISTS liveness_check TEXT")
+                cur.execute("ALTER TABLE IF EXISTS brain_index.decisions ADD COLUMN IF NOT EXISTS liveness TEXT")
         return True
     except Exception as exc:
-        print(f"warning: liveness_check column not ensured: {exc}", file=sys.stderr)
+        print(f"warning: liveness columns not ensured: {exc}", file=sys.stderr)
         return False
 
 
@@ -54,7 +55,10 @@ def pending_merges() -> int:
 
 
 def pending_builds() -> int:
-    liveness_expr = "liveness_check" if ensure_liveness_column() else "NULL::text AS liveness_check"
+    if ensure_liveness_column():
+        liveness_expr = "liveness, liveness_check"
+    else:
+        liveness_expr = "NULL::text AS liveness, NULL::text AS liveness_check"
     return emit_rows(
         f"""
         SELECT id::text AS id, question, answer, build_spec, proof_expected, {liveness_expr}
@@ -121,6 +125,11 @@ def seed() -> int:
     question = str(item.get("question") or item.get("title") or "").strip()
     build_spec = str(item.get("build_spec") or item.get("spec") or "").strip()
     proof_expected = str(item.get("proof_expected") or "").strip()
+    liveness = item.get("liveness")
+    if isinstance(liveness, (dict, list)):
+        liveness_text = json.dumps(liveness, sort_keys=True)
+    else:
+        liveness_text = str(liveness or "").strip()
     if not question:
         raise SystemExit("seed requires question/title")
     with connect() as conn:
@@ -129,11 +138,11 @@ def seed() -> int:
             cur.execute(
                 """
                 INSERT INTO brain_index.decisions
-                    (question, status, needs_build, build_spec, proof_expected)
-                VALUES (%s, 'answered', true, %s, %s)
+                    (question, status, needs_build, build_spec, proof_expected, liveness)
+                VALUES (%s, 'answered', true, %s, %s, %s)
                 RETURNING id::text
                 """,
-                (question, build_spec, proof_expected),
+                (question, build_spec, proof_expected, liveness_text),
             )
             row = cur.fetchone()
     print(json.dumps({"id": row[0] if row else None}))
