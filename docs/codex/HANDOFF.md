@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-18 · SPEC_d113_auto-seed-orphaned-spec-files-bu · branch `build/SPEC_d113_auto-seed-orphaned-spec-files-bu`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `tools/build_loop/seed_orphaned_specs.py`; `tools/build_loop/test_seed_orphaned_specs.py`; `tools/build_loop/server_build_loop.sh`; `core/BUILD/specs/SPEC_d113_auto-seed-orphaned-spec-files-bu.md`; `core/BUILD/results/SPEC_d113_auto-seed-orphaned-spec-files-bu.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a non-fatal server build-loop preflight that scans `core/BUILD/specs/SPEC_dNNN*.md`, skips specs with result files or existing `brain_index.decisions.id = dNNN` rows, and seeds missing rows as answered `needs_build=true` decisions with the original `dNNN` id and full spec body. This makes orphaned spec files visible to the existing `pending-builds` loop instead of leaving them stranded on disk. Runtime kill switch: `ORPHAN_SPEC_SEED_DISABLE=1`.
+- **Tests:** `python3 -B -m unittest tools.build_loop.test_seed_orphaned_specs` (4 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/seed_orphaned_specs.py tools/build_loop/test_seed_orphaned_specs.py`; `bash -n tools/build_loop/server_build_loop.sh`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `ORPHAN_SPEC_SEED_DISABLE=1 python3 -B tools/build_loop/seed_orphaned_specs.py --repo .`; `git diff --check`
+- **Risks:** Live DB seeding was not run in the sandbox. The helper assumes the live `brain_index.decisions.id` column accepts explicit `dNNN` values and has an id conflict target, matching the server loop contract. If schema drift breaks that assumption, the helper logs a warning and the server loop continues without halting.
+- **Rollback:** revert the listed files. Runtime-only rollback is `ORPHAN_SPEC_SEED_DISABLE=1`.
+- **Intent solved:** orphaned `SPEC_dNNN` files no longer sit invisible to the decision-driven server build loop.
+- **Downstream intent unlocked:** the autonomous build loop can recover from dropped/missing decision rows by rehydrating them from repo specs before reading pending builds.
+- **Questions for Ember/James:** after merge on server 162, watch one build-loop run with a harmless orphan fixture or inspect logs for `seeded orphan specs: ...`; if live schema rejects explicit ids, capture that warning and adjust the insert to match the deployed decisions schema.
+
 ### 2026-06-18 · SPEC_d099_postiz-social-scheduler-mcp-wire · branch `build/SPEC_d099_postiz-social-scheduler-mcp-wire`
 
 - **Status:** done in working tree / awaiting merge review

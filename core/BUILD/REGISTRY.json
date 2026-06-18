@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-18T23:59:00Z",
+    "updated_at": "2026-06-18T21:23:29Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d113_auto-seed-orphaned-spec-files-bu",
+            "slug": "SPEC_d113_auto-seed-orphaned-spec-files-bu",
+            "branch": "build/SPEC_d113_auto-seed-orphaned-spec-files-bu",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d113_auto-seed-orphaned-spec-files-bu.md",
+            "tests_passed": true,
+            "notes": "d113 complete in working tree: added a non-fatal server build-loop preflight that scans core/BUILD/specs/SPEC_dNNN*.md, skips specs with result files or existing brain_index.decisions.id rows, and seeds missing answered needs_build=true decisions with the original dNNN id and full spec body. Focused unit tests, py_compile, server loop shell syntax, registry JSON validation, disabled-mode CLI smoke, and diff hygiene passed. No live DB seed, deploy, push, merge, secret access, outreach, or money movement."
+        },
         {
             "id": "SPEC_d099_postiz-social-scheduler-mcp-wire",
             "slug": "SPEC_d099_postiz-social-scheduler-mcp-wire",
