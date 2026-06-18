@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-18T23:40:00Z",
+    "updated_at": "2026-06-18T23:59:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d093_continuous-learning-controller-c",
+            "slug": "SPEC_d093_continuous-learning-controller-c",
+            "branch": "build/SPEC_d093_continuous-learning-controller-c",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d093_continuous-learning-controller-c.md",
+            "tests_passed": true,
+            "notes": "d093 complete in working tree: added unified learning signal ingestion with brain_index schema and JSONL fallback, deterministic council weighting directives, stricter fine-tune planning gates over d086, weighted signal corpus construction, canonical MODEL_DNA, and a gated cell-split exporter with personal-marker leak scan. Focused learning tests, directive generation, blocked fine-tune smoke, and test-only cell-split leak scan passed. No live DB migration, RunPod training, Ollama create/swap, template distribution, deploy, push, merge, outreach, secrets, or money movement."
+        },
         {
             "id": "SPEC_d109_platform-bias-registry-5th-counc",
             "slug": "SPEC_d109_platform-bias-registry-5th-counc",

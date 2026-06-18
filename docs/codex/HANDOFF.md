@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-18 · SPEC_d093_continuous-learning-controller-c · branch `build/SPEC_d093_continuous-learning-controller-c`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `tools/learning/controller.py`; `tools/learning/council_guidance.py`; `tools/learning/cell_split.py`; `tools/learning/schema.sql`; `tools/learning/finetune_runner.py`; `tools/learning/test_controller.py`; `tools/learning/test_council_guidance.py`; `tools/learning/test_cell_split.py`; `tools/learning/test_finetune_runner.py`; `core/STATE/MODEL_DNA.md`; `core/benchmarks/learning_controller.md`; `core/BUILD/signals/weighting_directive.json`; `core/BUILD/specs/SPEC_d093_continuous-learning-controller-c.md`; `core/BUILD/results/SPEC_d093_continuous-learning-controller-c.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the d093 continuous-learning controller layer: unified signal ingestion for correction/approval/reversal/merge-outcome/engagement/council-verdict rows, brain_index schema additions, deterministic council weighting directive generation, fine-tune planning gates over d086, weighted signal corpus construction, canonical transferable `MODEL_DNA`, and a gated cell-split exporter that deletes the template if personal markers are detected.
+- **Tests:** `python3 -B -m unittest tools.learning.test_controller tools.learning.test_council_guidance tools.learning.test_cell_split tools.learning.test_dataset_builder tools.learning.test_finetune_runner` (20 OK); `python3 -B -m tools.learning.council_guidance --output core/BUILD/signals/weighting_directive.json`; `python3 -B -m tools.learning.finetune_runner --notice /tmp/d093_ready_notice.json` (blocked by gates as expected); `python3 -B -m tools.learning.cell_split d093-smoke --output-root /tmp/d093-cell-split-final --approve-for-test` (leaks `[]`).
+- **Risks:** Live proof still requires applying the DB schema, capturing 100+ real learning signals, and running readiness on the live host. The fine-tune runner does not train, submit RunPod, create Ollama models, or swap `OLLAMA_ACTIVE_MODEL`; it only emits the gated activation plan. Cell split export remains blocked unless `CELL_SPLIT_APPROVED=1` is set for a specific template.
+- **Rollback:** revert the listed d093 files and remove the registry/result/handoff entries. Keep `LEARNING_ENABLED`, `FINETUNE_APPROVED`, and `CELL_SPLIT_APPROVED` unset to block all live activation paths; delete `/opt/fpai-build/learning_datasets/*` or `/tmp/d093-cell-split-final` artifacts if created during later live/manual checks.
+- **Intent solved:** continuous learning now has a concrete, gated controller surface connecting signal capture, council weighting, fine-tune readiness, model DNA, and clean cell split checks.
+- **Downstream intent unlocked:** after merge and migration, Ember can run a no-training readiness pass on 100 real signals and present James with a precise first fine-tune/cell-split approval surface instead of inventing the control layer at activation time.
+- **Questions for Ember/James:** after merge, apply `tools/learning/schema.sql` on the live `brain_index` DB, capture/verify 100 learning signals, and do not set `FINETUNE_APPROVED=1` or `CELL_SPLIT_APPROVED=1` until James explicitly approves that exact run/export.
+
 ### 2026-06-18 · SPEC_d109_platform-bias-registry-5th-counc · branch `build/SPEC_d109_platform-bias-registry-5th-counc`
 
 - **Status:** done in working tree / awaiting merge review
