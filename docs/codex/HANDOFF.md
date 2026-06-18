@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-18 · SPEC_d104_attention-engine-relevance-trigg · branch `build/SPEC_d104_attention-engine-relevance-trigg`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `SERVICES/sunheart-brain/curator/attention.py`; `SERVICES/sunheart-brain/curator/test_attention.py`; `SERVICES/sunheart-brain/curator/tgbot.py`; `SERVICES/sunheart-brain/curator/test_tgbot_correction_wiring.py`; `SERVICES/sunheart-brain/index/schema.sql`; `core/BUILD/specs/SPEC_d104_attention-engine-relevance-trigg.md`; `core/BUILD/results/SPEC_d104_attention-engine-relevance-trigg.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added relevance-triggered attention surfacing on top of the existing pgvector brain search path. Telegram search now preserves `note_row_id`/`chunk_idx` provenance, filters current pgvector hits through a bounded attention helper, injects only high-scoring public/personal candidates into synthesis as advisory context, and best-effort logs append-only `brain_index.attention_surface_events` proof rows. No scheduled checker, timer, sender, approval path, or proactive message was added.
+- **Tests:** `python3 -B -m unittest discover -s SERVICES/sunheart-brain/curator -p 'test_attention.py'` (4 OK); `python3 -B -m unittest discover -s SERVICES/sunheart-brain/curator -p 'test_tgbot_correction_wiring.py'` (4 OK); `python3 -B -m unittest discover -s SERVICES/sunheart-brain/curator -p 'test_bot_mode_gate.py'` (5 OK); `env HOT_MEMORY_STATE_PATH=/tmp/nonexistent-d104-hot-state.md SELF_DIAGNOSTIC_CONTEXT_FILE=/tmp/nonexistent-d104-diagnostic.json python3 -B -m unittest discover -s SERVICES/sunheart-brain/curator -p 'test_build_context.py'` (9 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile ...`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `git diff --check`. Ambient note: unisolated `test_build_context.py` fails on this host because live diagnostic/HOT_STATE context overrides fixture repo context.
+- **Risks:** Live DB migration was not applied in sandbox; the new audit table appears when brain-index applies `schema.sql`. Candidate ranking is thresholded pgvector evidence, so it is advisory context, not truth, approval, or obligation. Poorly tagged chunks still surface by cosine score but have less explainable ranking.
+- **Rollback:** revert the listed d104 files. Runtime rollback is `SH_ATTENTION_SURFACING_DISABLE=1`; logging-only rollback is `SH_ATTENTION_LOG_DISABLE=1`. If applied live and a full rollback is needed, drop `brain_index.attention_surface_events` after exporting wanted proof rows.
+- **Intent solved:** conversations can surface relevant memory when the current query makes it relevant, replacing scheduled reminder/check passes with query-time pgvector evidence.
+- **Downstream intent unlocked:** the attention engine can later route richer event-triggered surfaces from audited relevance rows without adding proactive sends or James-facing scheduled noise.
+- **Questions for Ember/James:** after merge, let brain-index apply `schema.sql`, then ask one real Telegram query expected to match a known note above threshold and confirm an `attention_surface_events` row appears.
+
 ### 2026-06-18 · SPEC_d103_coherence-optimizer-weekly-score · branch `build/SPEC_d103_coherence-optimizer-weekly-score`
 
 - **Status:** done in working tree / awaiting merge review

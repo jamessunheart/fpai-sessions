@@ -617,7 +617,7 @@ async def _search_brain(question: str, k: int = SEARCH_TOP_K) -> list[dict]:
     from .db import connect
     sensitivities = list(SEARCH_SENSITIVITIES)
     sql = """
-        SELECT content, source, sensitivity, tags, created_at,
+        SELECT note_row_id, chunk_idx, content, source, sensitivity, tags, created_at,
                1 - (embedding <=> %s::vector) AS score
           FROM brain_index.note_chunks
          WHERE sensitivity = ANY(%s)
@@ -629,6 +629,8 @@ async def _search_brain(question: str, k: int = SEARCH_TOP_K) -> list[dict]:
             await cur.execute(sql, (embedding, sensitivities, embedding, k))
             return [
                 {
+                    "note_row_id": note_row_id,
+                    "chunk_idx": chunk_idx,
                     "content": (c or "")[:1200],
                     "source": s,
                     "sensitivity": sens,
@@ -636,7 +638,7 @@ async def _search_brain(question: str, k: int = SEARCH_TOP_K) -> list[dict]:
                     "added": ct.strftime("%b %-d") if ct else "",
                     "score": float(score),
                 }
-                for c, s, sens, tags, ct, score in await cur.fetchall()
+                for note_row_id, chunk_idx, c, s, sens, tags, ct, score in await cur.fetchall()
             ]
 
 
@@ -654,6 +656,18 @@ async def _synthesize_answer(question: str, hits: list[dict], *, conversation_id
             f"score={h['score']:.2f} tags={','.join(h['tags'][:4])}\n"
             f"{h['content']}\n\n"
         )
+    try:
+        from .attention import attention_context_from_hits
+
+        attention_context = await attention_context_from_hits(
+            question,
+            hits,
+            conversation_id=conversation_id,
+        )
+        if attention_context:
+            user += attention_context + "\n\n"
+    except Exception as e:
+        log.warning("attention surfacing skipped: %s", e)
     user += (
         "Answer in 1-3 short sentences, plain text, like a quick text message.\n"
         "No lists, no source citations, no headers, unless James explicitly asks for detail.\n"

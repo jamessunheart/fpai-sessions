@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-18T19:34:00Z",
+    "updated_at": "2026-06-18T20:15:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d104_attention-engine-relevance-trigg",
+            "slug": "SPEC_d104_attention-engine-relevance-trigg",
+            "branch": "build/SPEC_d104_attention-engine-relevance-trigg",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d104_attention-engine-relevance-trigg.md",
+            "tests_passed": true,
+            "notes": "d104 complete in working tree: added relevance-triggered attention surfacing on top of existing pgvector brain search, preserving note_row_id/chunk_idx provenance, injecting only high-scoring public/personal candidates as advisory context, and adding append-only brain_index.attention_surface_events proof rows. Focused attention/tgbot/public-mode/build-context tests, py_compile, registry JSON validation, and diff hygiene passed. Unisolated build_context tests are affected by live HOT_STATE/diagnostic ambient context, so the fixture suite was rerun with those paths redirected. No live schema application, scheduled checker, timer, proactive send, deploy, push, merge, outreach, secrets, or money movement."
+        },
         {
             "id": "SPEC_d103_coherence-optimizer-weekly-score",
             "slug": "SPEC_d103_coherence-optimizer-weekly-score",

@@ -167,6 +167,28 @@ CREATE INDEX IF NOT EXISTS session_insights_active_idx
     ON session_insights (weight DESC, ts DESC)
     WHERE expires_at IS NULL;
 
+-- Relevance-triggered attention surfacing.
+-- Rows are append-only proof that a current query caused pgvector memory to
+-- surface. This replaces reminder-style scheduled checks with query-time
+-- relevance evidence; no row here sends a message or creates an approval.
+CREATE TABLE IF NOT EXISTS attention_surface_events (
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    surfaced_at     TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    conversation_id TEXT,
+    query           TEXT NOT NULL,
+    threshold       FLOAT NOT NULL DEFAULT 0.72,
+    surfaced_count  INTEGER NOT NULL DEFAULT 0,
+    candidates      JSONB NOT NULL DEFAULT '[]'::jsonb,
+    CHECK (threshold >= 0 AND threshold <= 1),
+    CHECK (surfaced_count >= 0)
+);
+
+CREATE INDEX IF NOT EXISTS attention_surface_events_at_idx
+    ON attention_surface_events (surfaced_at DESC);
+CREATE INDEX IF NOT EXISTS attention_surface_events_conversation_idx
+    ON attention_surface_events (conversation_id, surfaced_at DESC)
+    WHERE conversation_id IS NOT NULL;
+
 -- Becoming Engine v1 SEE model.
 -- Advisory per-person journey state for One Chat. This lets the bot see a
 -- person's current becoming stage and next nurture action without sending

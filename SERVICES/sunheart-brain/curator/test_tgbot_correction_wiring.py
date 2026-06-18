@@ -24,6 +24,14 @@ class TelegramCorrectionWiringTest(unittest.TestCase):
 
         self.assertLess(capture_idx, log_idx)
 
+    def test_attention_surfacing_receives_pgvector_hits(self) -> None:
+        self.assertIn("attention_context_from_hits(", self.source)
+        self.assertIn('"note_row_id": note_row_id', self.source)
+        search_idx = self.source.index("ORDER BY embedding <=> %s::vector")
+        attention_idx = self.source.index("attention_context_from_hits(")
+
+        self.assertLess(search_idx, attention_idx)
+
 
 if __name__ == "__main__":
     unittest.main()
