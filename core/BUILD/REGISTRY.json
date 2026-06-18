@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-18T21:36:21Z",
+    "updated_at": "2026-06-18T21:45:15Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d116_retroactive-liveness-audit-scan",
+            "slug": "SPEC_d116_retroactive-liveness-audit-scan",
+            "branch": "build/SPEC_d116_retroactive-liveness-audit-scan",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d116_retroactive-liveness-audit-scan.md",
+            "tests_passed": true,
+            "notes": "d116 complete in working tree: added tools/liveness/retroactive_audit.py plus tests and generated liveness_audit.md. The helper discovers merged d001-d092 decisions from result/activation artifacts and ops-ledger evidence, infers expected artifacts, writes a three-column report, appends an ops-ledger row, optionally notifies Telegram, and seeds dNNN-activate follow-up decisions for concrete dead rows. Sandbox audit ran with no live DB seed/TG send and reported live=16 dead=6 unknown=21. Focused unittest, py_compile, registry JSON validation, and CLI smoke passed. No live DB write, Telegram send, deploy, push, merge, secret access, outreach, or money movement."
+        },
         {
             "id": "SPEC_d115_seed-d115-post-merge-liveness-pr",
             "slug": "SPEC_d115_seed-d115-post-merge-liveness-pr",
