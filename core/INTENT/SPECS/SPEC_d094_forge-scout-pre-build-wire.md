@@ -12,10 +12,16 @@ The Forge exists and has WebSearch + WebFetch but is manual-only. The build loop
 
 ## What the Forge checks for each spec
 
+**Internal (fast, every build):**
 1. **Resource inventory** (`core/STATE/RESOURCE_INVENTORY.md`) — do we already have this tool/library/credential?
 2. **Existing codebase** — does something similar exist in `/opt/fpai/` or `/opt/sh-brain-src/`?
-3. **Web search** — what's the best practice / canonical library for this task? (2-3 targeted searches)
-4. **PyPI / npm** — is there a maintained library that does 80% of this spec in 10 lines?
+
+**External (web search, every build):**
+3. **PyPI / GitHub** — maintained library that does 80% of this spec in 10 lines?
+4. **Frontier scan** — anything on HuggingFace / ProductHunt / HackerNews recently that's directly relevant?
+5. **Quantum leap check** — does an external project collapse this entire spec into one adoption?
+
+The external scan is what catches things like GEPA replacing our entire GPU fine-tune pipeline with $0 prompt evolution — found by scanning GitHub before codex built anything.
 
 ## Deliverables
 
