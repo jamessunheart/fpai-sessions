@@ -35,6 +35,7 @@ class BuildContext:
     open_intents: list[str]
     system_status: list[str] | None = None
     corrections: list[str] | None = None
+    recent_insights: list[str] | None = None
 
     def is_empty(self) -> bool:
         return not (
@@ -43,6 +44,7 @@ class BuildContext:
             or self.open_intents
             or self.system_status
             or self.corrections
+            or self.recent_insights
         )
 
 
@@ -162,6 +164,7 @@ async def load_build_context(
     else:
         context = _load_repo_context(repo_root, max_items=max_items)
     context = _with_live_system_status(context, repo_root=repo_root, max_items=max_items)
+    context = await _with_recent_session_insights(context, max_items=max_items)
     return await _with_recent_corrections(
         context,
         conversation_id=conversation_id,
@@ -177,6 +180,9 @@ def render_build_context(context: BuildContext, *, max_chars: int = DEFAULT_MAX_
     if context.corrections:
         lines.append("Corrections:")
         lines.extend(context.corrections)
+    if context.recent_insights:
+        lines.append("Recent decisions (all surfaces):")
+        lines.extend(f"- {item}" for item in context.recent_insights)
     if context.system_status:
         lines.append("Live system status:")
         lines.extend(f"- {item}" for item in context.system_status)
@@ -193,6 +199,71 @@ def render_build_context(context: BuildContext, *, max_chars: int = DEFAULT_MAX_
     if len(rendered) <= max_chars:
         return rendered
     return rendered[: max(0, max_chars - 20)].rsplit("\n", 1)[0] + "\n- ... bounded"
+
+
+async def _with_recent_session_insights(context: BuildContext, *, max_items: int) -> BuildContext:
+    if os.environ.get("SH_SESSION_INSIGHTS_DISABLE", "").strip() == "1":
+        return context
+    try:
+        try:
+            from .db import connect
+        except ImportError:
+            try:
+                from db import connect
+            except ImportError:
+                module_path = Path(__file__).with_name("db.py")
+                spec = importlib.util.spec_from_file_location("build_context_db", module_path)
+                module = importlib.util.module_from_spec(spec) if spec and spec.loader else None
+                if module is None or spec is None or spec.loader is None:
+                    return context
+                sys.modules["build_context_db"] = module
+                spec.loader.exec_module(module)
+                connect = module.connect
+    except ImportError:
+        return context
+
+    try:
+        async with connect() as conn:
+            async with conn.cursor() as cur:
+                await cur.execute(
+                    """
+                    SELECT insight_type, title, body, specs_affected, weight, surface, ts::text
+                      FROM brain_index.session_insights
+                     WHERE ts > NOW() - INTERVAL '7 days'
+                       AND (expires_at IS NULL OR expires_at > NOW())
+                     ORDER BY weight DESC, ts DESC
+                     LIMIT %s
+                    """,
+                    (max(1, max_items),),
+                )
+                rows = await cur.fetchall()
+    except Exception:
+        return context
+
+    rendered = [_format_session_insight_row(row) for row in rows]
+    rendered = [item for item in rendered if item]
+    if not rendered:
+        return context
+    source = context.source
+    if "session_insights" not in source:
+        source = f"{source}+session_insights"
+    return replace(context, source=source, recent_insights=rendered)
+
+
+def _format_session_insight_row(row: Any) -> str:
+    try:
+        insight_type, title, body, specs, weight, surface, _ts = row
+    except Exception:
+        return ""
+    spec_text = ""
+    if specs:
+        if isinstance(specs, (list, tuple)):
+            spec_text = f" · specs={', '.join(str(item) for item in specs[:4])}"
+        else:
+            spec_text = f" · specs={_clean(str(specs))}"
+    body_text = _clean(str(body or ""))
+    suffix = f" — {body_text}" if body_text else ""
+    return f"w{weight} {surface}/{insight_type}: {_clean(str(title or 'insight'))}{spec_text}{suffix}"
 
 
 async def _render_becoming_context(

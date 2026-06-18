@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-18 · SPEC_d110_session-write-through-every-clau · branch `build/SPEC_d110_session-write-through-every-clau`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `SERVICES/sunheart-brain/index/schema.sql`; `SERVICES/sunheart-brain/curator/build_context.py`; `SERVICES/sunheart-brain/curator/test_build_context.py`; `tools/continuity/write_session_insights.py`; `tools/continuity/append_session_hook.sh`; `tools/continuity/test_write_session_insights.py`; `tools/awareness/verify_awareness.py`; `core/BUILD/specs/SPEC_d110_session-write-through-every-clau.md`; `core/BUILD/results/SPEC_d110_session-write-through-every-clau.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added `brain_index.session_insights` as the unified all-surface decision layer. Added a bounded JSON/JSONL writer for Claude Code settle summaries, a non-blocking hook wrapper, and an awareness verifier that checks the latest session insight renders through the same bot context path. The bot build context now injects recent session insights under "Recent decisions (all surfaces)" ordered by weight/recency and fails soft if DB access/table availability is missing.
+- **Tests:** `python3 -B -m unittest tools.continuity.test_write_session_insights` (3 tests OK); `python3 -B -m unittest discover -s SERVICES/sunheart-brain/curator -p 'test_build_context.py'` (7 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/continuity/write_session_insights.py tools/continuity/test_write_session_insights.py tools/awareness/verify_awareness.py SERVICES/sunheart-brain/curator/build_context.py SERVICES/sunheart-brain/curator/test_build_context.py`; `bash -n tools/continuity/append_session_hook.sh`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d110-registry.json`; `git diff --check`; `python3 tools/continuity/write_session_insights.py --json`
+- **Risks:** Live DB migration and hook installation were not performed in this sandbox. `verify_awareness.py --probe-latest` requires live DB access and at least one `session_insights` row. No live DB write, push, merge, deploy, outreach, secret access, or money movement was performed.
+- **Rollback:** revert the listed d110 files. If live schema is later applied, disable the hook first, then drop `brain_index.session_insights` only after confirming no runtime reader depends on it.
+- **Intent solved:** Claude Code and other non-Telegram sessions have a tested repo path to write significant decisions into `brain_index.session_insights`.
+- **Downstream intent unlocked:** bot awareness can read one unified recent-decision layer instead of only Telegram-visible memory.
+- **Questions for Ember/James:** after merge, apply the schema on the live brain DB, install `tools/continuity/append_session_hook.sh` into the Claude Code settle hook with `SESSION_INSIGHTS_FILE` generation, then write one real high-weight insight and run `python3 tools/awareness/verify_awareness.py --probe-latest`.
+
 ### 2026-06-18 · SPEC_d092_resource-inventory-agent · branch `build/SPEC_d092_resource-inventory-agent`
 
 - **Status:** done in working tree / independently AI-reviewed / commit blocked by read-only git metadata / awaiting merge review

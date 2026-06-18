@@ -5,6 +5,7 @@ import importlib.util
 import json
 import sys
 import tempfile
+import types
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -109,6 +110,51 @@ class BuildContextTest(unittest.TestCase):
 
         self.assertIn("Corrections:", suffix)
         self.assertIn("You forgot, I said my birthday is June 4.", suffix)
+
+    def test_recent_session_insights_are_injected(self) -> None:
+        class FakeCursor:
+            async def __aenter__(self):
+                return self
+
+            async def __aexit__(self, *_exc):
+                return False
+
+            async def execute(self, _sql, _params=None):
+                return None
+
+            async def fetchall(self):
+                return [
+                    (
+                        "architecture",
+                        "d110 writes every Claude Code session decision",
+                        "Bot reads session_insights with high-weight decisions first.",
+                        ["d110"],
+                        9,
+                        "claude_code",
+                        "2026-06-18T00:00:00Z",
+                    )
+                ]
+
+        class FakeConnection:
+            async def __aenter__(self):
+                return self
+
+            async def __aexit__(self, *_exc):
+                return False
+
+            def cursor(self):
+                return FakeCursor()
+
+        def fake_connect():
+            return FakeConnection()
+
+        fake_db = types.SimpleNamespace(connect=fake_connect)
+        with patch.dict("sys.modules", {"db": fake_db}):
+            suffix = asyncio.run(build_context.build_context_system_suffix(repo_root=self.make_repo(), max_chars=1800))
+
+        self.assertIn("Recent decisions (all surfaces):", suffix)
+        self.assertIn("d110 writes every Claude Code session decision", suffix)
+        self.assertIn("session_insights", suffix)
 
     def test_becoming_context_is_injected_for_conversation(self) -> None:
         async def fake_render_becoming_context(person_id, *, max_chars=900):

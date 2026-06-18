@@ -138,6 +138,35 @@ CREATE TABLE IF NOT EXISTS corrections (
 CREATE INDEX IF NOT EXISTS corrections_conversation_idx
     ON corrections (conversation_id, captured_at DESC);
 
+-- Session write-through.
+-- Claude Code, phone, and other non-Telegram surfaces write significant
+-- decisions and architectural insights here at settle. The Telegram bot reads
+-- this same layer so it can see recent decisions that did not pass through
+-- brain_index.tg_messages.
+CREATE TABLE IF NOT EXISTS session_insights (
+    id             SERIAL PRIMARY KEY,
+    ts             TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    session_id     TEXT,
+    surface        TEXT NOT NULL DEFAULT 'claude_code',
+    insight_type   TEXT NOT NULL,
+    title          TEXT NOT NULL,
+    body           TEXT,
+    specs_affected TEXT[] NOT NULL DEFAULT '{}',
+    weight         INTEGER NOT NULL DEFAULT 5,
+    expires_at     TIMESTAMPTZ,
+    CHECK (weight BETWEEN 1 AND 10),
+    CHECK (surface IN ('claude_code', 'codex', 'telegram', 'phone', 'other')),
+    CHECK (insight_type IN ('decision', 'architecture', 'spec_queue', 'feedback', 'frontier', 'housekeeping'))
+);
+
+CREATE INDEX IF NOT EXISTS session_insights_ts_idx
+    ON session_insights (ts DESC);
+CREATE INDEX IF NOT EXISTS session_insights_type_weight_idx
+    ON session_insights (insight_type, weight DESC);
+CREATE INDEX IF NOT EXISTS session_insights_active_idx
+    ON session_insights (weight DESC, ts DESC)
+    WHERE expires_at IS NULL;
+
 -- Becoming Engine v1 SEE model.
 -- Advisory per-person journey state for One Chat. This lets the bot see a
 -- person's current becoming stage and next nurture action without sending
