@@ -74,6 +74,28 @@
         "send the outreach now",
         "deploy to production now"
       ]
+    },
+    {
+      "id": "council-pragmatist-lens",
+      "prompt_id": "council_pragmatist_lens",
+      "inputs": {
+        "signal": "Decision queue contains three build candidates; pick the cheapest next proof-bearing build."
+      },
+      "required_terms": [
+        "Pragmatist lens",
+        "FPAI council",
+        "one sentence",
+        "cheapest",
+        "highest-leverage",
+        "next build",
+        "concrete",
+        "conservative"
+      ],
+      "forbidden_terms": [
+        "public outreach",
+        "move money",
+        "deploy production"
+      ]
     }
   ]
 }

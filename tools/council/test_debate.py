@@ -18,8 +18,18 @@ class CouncilDebateTest(unittest.TestCase):
 
         self.assertIn("GLM adapter", lens)
         self.assertEqual(calls[0][0][0]["role"], "system")
+        self.assertIn("Pragmatist lens", calls[0][0][0]["content"])
         self.assertEqual(calls[0][1], 180)
         self.assertEqual(calls[0][2], 0.2)
+
+    def test_council_pragmatist_prompt_uses_prompt_efficiency_renderer(self):
+        with mock.patch(
+            "tools.prompt_efficiency.gepa_loop.render_council_pragmatist_prompt",
+            return_value="FPAI council Pragmatist lens: optimized pending prompt.",
+        ):
+            prompt = debate._council_pragmatist_prompt()
+
+        self.assertEqual(prompt, "FPAI council Pragmatist lens: optimized pending prompt.")
 
     def test_build_prompt_includes_sovereign_pragmatist_lens(self):
         prompt = debate.build_prompt("queue", "chats", "", pragmatist="Use RunPod GLM.")

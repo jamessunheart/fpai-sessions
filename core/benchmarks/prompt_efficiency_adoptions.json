@@ -1,7 +1,7 @@
 {
   "adoptions": {
     "benchmark_improvement_spec": {
-      "adopted_at": "2026-06-18T19:53:47Z",
+      "adopted_at": "2026-06-18T20:03:50Z",
       "baseline_avg_tokens": 108.5,
       "baseline_quality": 1.0,
       "variant_id": "compressed_guarded",
@@ -10,5 +10,5 @@
     }
   },
   "schema": "prompt-efficiency-adoptions.v1",
-  "updated_at": "2026-06-18T19:53:47Z"
+  "updated_at": "2026-06-18T20:03:50Z"
 }

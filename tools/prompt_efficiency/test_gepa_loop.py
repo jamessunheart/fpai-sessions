@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import datetime as dt
 import json
+import types
 import tempfile
 import unittest
 from pathlib import Path
@@ -120,7 +121,94 @@ class PromptEfficiencyLoopTest(unittest.TestCase):
         self.assertLess(result["quality"], 1.0)
         self.assertTrue(result["cases"][0]["required_misses"])
 
+    def council_case_file(self, root: Path) -> Path:
+        path = root / "council-cases.json"
+        path.write_text(
+            json.dumps(
+                {
+                    "schema": "prompt-efficiency-cases.v1",
+                    "cases": [
+                        {
+                            "id": "council-pragmatist-lens",
+                            "prompt_id": "council_pragmatist_lens",
+                            "inputs": {"signal": "Pick the cheapest proof-bearing build."},
+                            "required_terms": [
+                                "Pragmatist lens",
+                                "FPAI council",
+                                "one sentence",
+                                "cheapest",
+                                "highest-leverage",
+                                "next build",
+                                "concrete",
+                                "conservative",
+                            ],
+                            "forbidden_terms": ["move money"],
+                        }
+                    ],
+                },
+                indent=2,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        return path
+
+    def test_council_prompt_runs_through_gepa_engine_as_pending_approval(self) -> None:
+        root = self.root()
+        calls = []
+
+        class FakeGEPA:
+            @staticmethod
+            def optimize(**kwargs):
+                calls.append(kwargs)
+                return types.SimpleNamespace(
+                    best_candidate={
+                        "prompt_template": (
+                            "FPAI council Pragmatist lens: one sentence naming the cheapest, "
+                            "highest-leverage next build now; be concrete and conservative."
+                        )
+                    }
+                )
+
+        payload = gepa_loop.run(
+            cases_path=self.council_case_file(root),
+            adoptions_path=root / "adoptions.json",
+            report_json=root / "report.json",
+            report_md=root / "report.md",
+            state_md=root / "state.md",
+            now=NOW,
+            gepa_module=FakeGEPA(),
+            proposer=lambda candidate, reflective_dataset, components_to_update: candidate,
+        )
+
+        evaluation = payload["evaluations"][0]
+        self.assertEqual(evaluation["engine"], "gepa")
+        self.assertFalse(evaluation["adopted"])
+        self.assertTrue(evaluation["pending_approval"])
+        self.assertEqual(evaluation["winner"]["variant_id"], "gepa_best")
+        self.assertEqual(calls[0]["max_metric_calls"], 4)
+        self.assertIn("custom_candidate_proposer", calls[0])
+        self.assertIn("council_pragmatist_lens", payload["pending_adoptions"])
+        active_adoptions = json.loads((root / "adoptions.json").read_text(encoding="utf-8"))
+        self.assertEqual(active_adoptions["adoptions"], {})
+
+    def test_missing_gepa_package_falls_back_without_adopting_council_prompt(self) -> None:
+        root = self.root()
+        payload = gepa_loop.run(
+            cases_path=self.council_case_file(root),
+            adoptions_path=root / "adoptions.json",
+            report_json=root / "report.json",
+            report_md=root / "report.md",
+            state_md=root / "state.md",
+            now=NOW,
+        )
+
+        evaluation = payload["evaluations"][0]
+        self.assertEqual(evaluation["engine"], "deterministic_fallback")
+        self.assertFalse(evaluation["adopted"])
+        self.assertTrue(evaluation["pending_approval"])
+        self.assertEqual(evaluation["gepa_status"]["status"], "unavailable")
+
 
 if __name__ == "__main__":
     unittest.main()
-

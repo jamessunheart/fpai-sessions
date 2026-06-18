@@ -1,7 +1,7 @@
 {
   "adoptions": {
     "benchmark_improvement_spec": {
-      "adopted_at": "2026-06-18T19:53:47Z",
+      "adopted_at": "2026-06-18T20:03:50Z",
       "baseline_avg_tokens": 108.5,
       "baseline_quality": 1.0,
       "variant_id": "compressed_guarded",
@@ -199,8 +199,108 @@
         "quality": 1.0,
         "variant_id": "compressed_guarded"
       }
+    },
+    {
+      "adopted": false,
+      "baseline": {
+        "avg_tokens": 23.0,
+        "cases": [
+          {
+            "case_id": "council-pragmatist-lens",
+            "compression_ratio": 1.0,
+            "forbidden_hits": [],
+            "quality": 0.85,
+            "required_misses": [],
+            "tokens": 23
+          }
+        ],
+        "description": "Current council Pragmatist system prompt.",
+        "prompt_id": "council_pragmatist_lens",
+        "quality": 0.85,
+        "variant_id": "baseline"
+      },
+      "compression_gate": "winner_avg_tokens < baseline_avg_tokens",
+      "engine": "deterministic_fallback",
+      "gepa_status": {
+        "reason": "gepa package is not installed",
+        "status": "unavailable"
+      },
+      "package": {
+        "available": false,
+        "install": "pip install gepa",
+        "license": "MIT",
+        "package": "gepa",
+        "source": "https://github.com/gepa-ai/gepa"
+      },
+      "pending_approval": true,
+      "prompt_id": "council_pragmatist_lens",
+      "quality_gate": "winner_quality >= baseline_quality",
+      "variants": [
+        {
+          "avg_tokens": 23.0,
+          "cases": [
+            {
+              "case_id": "council-pragmatist-lens",
+              "compression_ratio": 1.0,
+              "forbidden_hits": [],
+              "quality": 0.85,
+              "required_misses": [],
+              "tokens": 23
+            }
+          ],
+          "description": "Current council Pragmatist system prompt.",
+          "prompt_id": "council_pragmatist_lens",
+          "quality": 0.85,
+          "variant_id": "baseline"
+        },
+        {
+          "avg_tokens": 17.0,
+          "cases": [
+            {
+              "case_id": "council-pragmatist-lens",
+              "compression_ratio": 0.7391,
+              "forbidden_hits": [],
+              "quality": 0.85,
+              "required_misses": [],
+              "tokens": 17
+            }
+          ],
+          "description": "GEPA target candidate: shorter council Pragmatist system prompt retaining lens, one-sentence, cheapest, highest-leverage, concrete, and conservative genes.",
+          "prompt_id": "council_pragmatist_lens",
+          "quality": 0.85,
+          "variant_id": "compressed_guarded"
+        }
+      ],
+      "winner": {
+        "avg_tokens": 17.0,
+        "cases": [
+          {
+            "case_id": "council-pragmatist-lens",
+            "compression_ratio": 0.7391,
+            "forbidden_hits": [],
+            "quality": 0.85,
+            "required_misses": [],
+            "tokens": 17
+          }
+        ],
+        "description": "GEPA target candidate: shorter council Pragmatist system prompt retaining lens, one-sentence, cheapest, highest-leverage, concrete, and conservative genes.",
+        "prompt_id": "council_pragmatist_lens",
+        "quality": 0.85,
+        "variant_id": "compressed_guarded"
+      }
     }
   ],
-  "generated_at": "2026-06-18T19:53:47Z",
+  "generated_at": "2026-06-18T20:03:50Z",
+  "pending_adoptions": {
+    "council_pragmatist_lens": {
+      "approval_required": "human_approval",
+      "baseline_avg_tokens": 23.0,
+      "baseline_quality": 0.85,
+      "proposed_at": "2026-06-18T20:03:50Z",
+      "variant_id": "compressed_guarded",
+      "winner_avg_tokens": 17.0,
+      "winner_quality": 0.85
+    }
+  },
   "schema": "prompt-efficiency-run.v1"
 }

@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-18T22:20:00Z",
+    "updated_at": "2026-06-18T22:50:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d107_gepa-library-wire-install-real-m",
+            "slug": "SPEC_d107_gepa-library-wire-install-real-m",
+            "branch": "build/SPEC_d107_gepa-library-wire-install-real-m",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d107_gepa-library-wire-install-real-m.md",
+            "tests_passed": true,
+            "notes": "d107 complete in working tree: added a real MIT gepa package integration path for d106 prompt efficiency via PromptTemplateAdapter + gepa.optimize, claude -p custom reflection proposer, Ollama/local eval metadata, GEPA_OPTIMIZE_DISABLE kill switch, deterministic fallback when gepa is unavailable, council Pragmatist prompt routing through the adoption layer, pending human approval for high-impact council prompt changes, and a post-merge activation script to install/import-check gepa. Focused unittest, prompt-efficiency smoke, py_compile, activation shell syntax, JSON validation, and diff hygiene passed. Sandbox does not have gepa installed, so live package import/run is covered by fake-module tests and activation artifact; no live pip install, Claude reflection call, Ollama rollout, DB write, prompt activation, deploy, push, merge, outreach, secrets, or money movement."
+        },
         {
             "id": "SPEC_d106_prompt-efficiency-loop-gepa-vari",
             "slug": "SPEC_d106_prompt-efficiency-loop-gepa-vari",

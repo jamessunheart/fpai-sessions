@@ -148,10 +148,7 @@ def pragmatist_voice(signal, glm_caller=None):
     messages = [
         {
             "role": "system",
-            "content": (
-                "You are the Pragmatist lens for the FPAI council. In one sentence, "
-                "name the cheapest, highest-leverage next build now. Be concrete and conservative."
-            ),
+            "content": _council_pragmatist_prompt(),
         },
         {"role": "user", "content": signal[:5000]},
     ]
@@ -159,6 +156,18 @@ def pragmatist_voice(signal, glm_caller=None):
         return glm_caller(messages, max_tokens=180, temperature=0.2).strip()[:600]
     except Exception:
         return ""
+
+
+def _council_pragmatist_prompt():
+    try:
+        from tools.prompt_efficiency.gepa_loop import render_council_pragmatist_prompt
+
+        return render_council_pragmatist_prompt()
+    except Exception:
+        return (
+            "You are the Pragmatist lens for the FPAI council. In one sentence, "
+            "name the cheapest, highest-leverage next build now. Be concrete and conservative."
+        )
 
 
 def _focus_text():

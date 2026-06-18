@@ -9,8 +9,10 @@ from pathlib import Path
 from typing import Any, Callable
 
 from tools.benchmarks import REPO_ROOT, load_json
+from tools.prompt_efficiency.gepa_library import TemplateSpec, optimize_template, package_status
 
 PROMPT_ID_BENCHMARK_IMPROVEMENT = "benchmark_improvement_spec"
+PROMPT_ID_COUNCIL_PRAGMATIST = "council_pragmatist_lens"
 DEFAULT_CASES = REPO_ROOT / "core" / "benchmarks" / "prompt_efficiency_cases.json"
 DEFAULT_ADOPTIONS = REPO_ROOT / "core" / "benchmarks" / "prompt_efficiency_adoptions.json"
 DEFAULT_REPORT_JSON = REPO_ROOT / "core" / "BUILD" / "signals" / "prompt_efficiency.json"
@@ -111,6 +113,25 @@ def render_benchmark_improvement_no_resource_gate(inputs: dict[str, Any]) -> str
     )
 
 
+COUNCIL_PRAGMATIST_BASELINE_TEMPLATE = (
+    "You are the Pragmatist lens for the FPAI council. In one sentence, "
+    "name the cheapest, highest-leverage next build now. Be concrete and conservative."
+)
+
+COUNCIL_PRAGMATIST_COMPRESSED_TEMPLATE = (
+    "FPAI council Pragmatist lens: one sentence naming the cheapest, highest-leverage next build now; "
+    "be concrete and conservative."
+)
+
+
+def render_council_pragmatist_baseline(inputs: dict[str, Any] | None = None) -> str:
+    return COUNCIL_PRAGMATIST_BASELINE_TEMPLATE
+
+
+def render_council_pragmatist_compressed(inputs: dict[str, Any] | None = None) -> str:
+    return COUNCIL_PRAGMATIST_COMPRESSED_TEMPLATE
+
+
 VARIANTS: dict[str, list[Variant]] = {
     PROMPT_ID_BENCHMARK_IMPROVEMENT: [
         Variant(
@@ -137,7 +158,31 @@ VARIANTS: dict[str, list[Variant]] = {
             render_benchmark_improvement_no_resource_gate,
             "GEPA candidate: removes resource-reuse context to test quality guard rejection.",
         ),
-    ]
+    ],
+    PROMPT_ID_COUNCIL_PRAGMATIST: [
+        Variant(
+            PROMPT_ID_COUNCIL_PRAGMATIST,
+            "baseline",
+            render_council_pragmatist_baseline,
+            "Current council Pragmatist system prompt.",
+        ),
+        Variant(
+            PROMPT_ID_COUNCIL_PRAGMATIST,
+            "compressed_guarded",
+            render_council_pragmatist_compressed,
+            "GEPA target candidate: shorter council Pragmatist system prompt retaining lens, one-sentence, cheapest, highest-leverage, concrete, and conservative genes.",
+        ),
+    ],
+}
+
+
+TEMPLATE_SPECS: dict[str, TemplateSpec] = {
+    PROMPT_ID_COUNCIL_PRAGMATIST: TemplateSpec(
+        prompt_id=PROMPT_ID_COUNCIL_PRAGMATIST,
+        seed_template=COUNCIL_PRAGMATIST_BASELINE_TEMPLATE,
+        adoption_policy="human_approval",
+        max_metric_calls=4,
+    )
 }
 
 
@@ -171,6 +216,10 @@ def render_prompt(prompt_id: str, inputs: dict[str, Any], *, adoptions_path: Pat
         return variant_for(prompt_id, selected).renderer(inputs)
     except KeyError:
         return variant_for(prompt_id, "baseline").renderer(inputs)
+
+
+def render_council_pragmatist_prompt(*, adoptions_path: Path = DEFAULT_ADOPTIONS) -> str:
+    return render_prompt(PROMPT_ID_COUNCIL_PRAGMATIST, {}, adoptions_path=adoptions_path)
 
 
 def quality_score(text: str, case: dict[str, Any]) -> dict[str, Any]:
@@ -265,6 +314,41 @@ def evaluate_prompt(prompt_id: str, cases: list[dict[str, Any]]) -> dict[str, An
     }
 
 
+def evaluate_gepa_prompt(
+    prompt_id: str,
+    cases: list[dict[str, Any]],
+    *,
+    gepa_module: Any | None = None,
+    proposer: Any | None = None,
+) -> dict[str, Any]:
+    spec = TEMPLATE_SPECS[prompt_id]
+    prompt_cases = [case for case in cases if case.get("prompt_id") == prompt_id]
+    result = optimize_template(spec, prompt_cases, gepa_module=gepa_module, proposer=proposer)
+    if result.get("status") == "optimized":
+        return {
+            "prompt_id": prompt_id,
+            "engine": "gepa",
+            "reflection_model": result["reflection_model"],
+            "eval_model": result["eval_model"],
+            "baseline": result["baseline"],
+            "variants": [result["baseline"], result["candidate"]],
+            "winner": result["winner"],
+            "adopted": result["adopted"],
+            "pending_approval": result["pending_approval"],
+            "quality_gate": result["quality_gate"],
+            "compression_gate": result["compression_gate"],
+            "package": result["package"],
+        }
+    fallback = evaluate_prompt(prompt_id, cases)
+    fallback["engine"] = "deterministic_fallback"
+    fallback["gepa_status"] = result
+    fallback["package"] = package_status(gepa_module)
+    if TEMPLATE_SPECS[prompt_id].adoption_policy == "human_approval":
+        fallback["pending_approval"] = bool(fallback["adopted"])
+        fallback["adopted"] = False
+    return fallback
+
+
 def write_outputs(
     evaluations: list[dict[str, Any]],
     *,
@@ -276,6 +360,7 @@ def write_outputs(
 ) -> dict[str, Any]:
     generated_at = utc_stamp(now)
     adoptions = {}
+    pending_adoptions = {}
     for evaluation in evaluations:
         winner = evaluation["winner"]
         if evaluation["adopted"]:
@@ -287,11 +372,22 @@ def write_outputs(
                 "baseline_avg_tokens": evaluation["baseline"]["avg_tokens"],
                 "winner_avg_tokens": winner["avg_tokens"],
             }
+        if evaluation.get("pending_approval"):
+            pending_adoptions[evaluation["prompt_id"]] = {
+                "variant_id": winner["variant_id"],
+                "proposed_at": generated_at,
+                "baseline_quality": evaluation["baseline"]["quality"],
+                "winner_quality": winner["quality"],
+                "baseline_avg_tokens": evaluation["baseline"]["avg_tokens"],
+                "winner_avg_tokens": winner["avg_tokens"],
+                "approval_required": "human_approval",
+            }
     payload = {
         "schema": "prompt-efficiency-run.v1",
         "generated_at": generated_at,
         "evaluations": evaluations,
         "adoptions": adoptions,
+        "pending_adoptions": pending_adoptions,
     }
     for path, content in (
         (report_json, json.dumps(payload, indent=2, sort_keys=True) + "\n"),
@@ -312,15 +408,16 @@ def render_markdown(payload: dict[str, Any]) -> str:
         "",
         f"Generated: {payload['generated_at']}",
         "",
-        "| Prompt | Winner | Adopted | Quality | Avg tokens | Compression |",
-        "|---|---:|---:|---:|---:|---:|",
+        "| Prompt | Engine | Winner | Adopted | Pending | Quality | Avg tokens | Compression |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for evaluation in payload["evaluations"]:
         baseline = evaluation["baseline"]
         winner = evaluation["winner"]
         compression = round(1 - (float(winner["avg_tokens"]) / max(1.0, float(baseline["avg_tokens"]))), 4)
         lines.append(
-            f"| {evaluation['prompt_id']} | {winner['variant_id']} | {str(evaluation['adopted']).lower()} | "
+            f"| {evaluation['prompt_id']} | {evaluation.get('engine', 'deterministic')} | {winner['variant_id']} | "
+            f"{str(evaluation['adopted']).lower()} | {str(evaluation.get('pending_approval', False)).lower()} | "
             f"{winner['quality']} / baseline {baseline['quality']} | {winner['avg_tokens']} / baseline {baseline['avg_tokens']} | {compression:.1%} |"
         )
     lines.extend(
@@ -329,6 +426,7 @@ def render_markdown(payload: dict[str, Any]) -> str:
             "## Guard",
             "",
             "A compressed variant is adopted only when quality is greater than or equal to baseline and token count is lower than baseline.",
+            "High-impact prompts are optimized into pending adoption and require human approval before active use.",
             "Failed variants remain in the report as proof that the gate rejected under-specified compression.",
             "",
         ]
@@ -344,10 +442,17 @@ def run(
     report_md: Path = DEFAULT_REPORT_MD,
     state_md: Path = DEFAULT_STATE_MD,
     now: dt.datetime | None = None,
+    gepa_module: Any | None = None,
+    proposer: Any | None = None,
 ) -> dict[str, Any]:
     cases = load_cases(cases_path)
     prompt_ids = sorted({str(case["prompt_id"]) for case in cases if case.get("prompt_id") in VARIANTS})
-    evaluations = [evaluate_prompt(prompt_id, cases) for prompt_id in prompt_ids]
+    evaluations = [
+        evaluate_gepa_prompt(prompt_id, cases, gepa_module=gepa_module, proposer=proposer)
+        if prompt_id in TEMPLATE_SPECS
+        else evaluate_prompt(prompt_id, cases)
+        for prompt_id in prompt_ids
+    ]
     return write_outputs(evaluations, adoptions_path=adoptions_path, report_json=report_json, report_md=report_md, state_md=state_md, now=now)
 
 
