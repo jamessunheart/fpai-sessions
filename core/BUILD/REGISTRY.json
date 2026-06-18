@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
         {
+            "id": "SPEC_d112_hot-memory-architecture-5-domain",
+            "slug": "SPEC_d112_hot-memory-architecture-5-domain",
+            "branch": "build/SPEC_d112_hot-memory-architecture-5-domain",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d112_hot-memory-architecture-5-domain.md",
+            "tests_passed": true,
+            "notes": "d112 complete in working tree: added five hot-memory domain scanners, run_all wrapper, bounded HOT_STATE synthesis with repo mirror, reviewed systemd timer artifacts, and bot build-context HOT_STATE primary/freshness path with stale/disabled fallback. Generated core/STATE/HOT_STATE.md from scanner outputs; focused unittest, py_compile, timer syntax, scanner/synthesis smoke, registry JSON validation, and diff hygiene passed. No live timer install, DB migration, Ollama call, deploy, push, merge, outreach, secrets, or money movement."
+        },
+        {
             "id": "SPEC_d111_awareness-reliability-metric-con",
             "slug": "SPEC_d111_awareness-reliability-metric-con",
             "branch": "build/SPEC_d111_awareness-reliability-metric-con",

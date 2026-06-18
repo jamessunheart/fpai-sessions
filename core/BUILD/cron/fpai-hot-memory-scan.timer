@@ -1,0 +1,12 @@
+[Unit]
+Description=Run FPAI hot-memory scanners every 30 minutes
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=30min
+AccuracySec=2min
+Unit=fpai-hot-memory-scan.service
+
+[Install]
+WantedBy=timers.target
+

@@ -1,0 +1,9 @@
+[Unit]
+Description=FPAI hot-memory HOT_STATE synthesis
+After=fpai-hot-memory-scan.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/fpai-build/FPAI_Cockpit
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/env python3 -m tools.hot_memory.synthesize

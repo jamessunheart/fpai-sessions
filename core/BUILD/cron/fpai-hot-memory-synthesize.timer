@@ -1,0 +1,12 @@
+[Unit]
+Description=Run FPAI HOT_STATE synthesis after scanner cadence
+
+[Timer]
+OnBootSec=7min
+OnUnitActiveSec=35min
+AccuracySec=2min
+Unit=fpai-hot-memory-synthesize.service
+
+[Install]
+WantedBy=timers.target
+

@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-18 · SPEC_d112_hot-memory-architecture-5-domain · branch `build/SPEC_d112_hot-memory-architecture-5-domain`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `tools/hot_memory/`; `SERVICES/sunheart-brain/curator/build_context.py`; `SERVICES/sunheart-brain/curator/test_build_context.py`; `core/STATE/HOT_STATE.md`; `core/BUILD/cron/fpai-hot-memory-scan.service`; `core/BUILD/cron/fpai-hot-memory-scan.timer`; `core/BUILD/cron/fpai-hot-memory-synthesize.service`; `core/BUILD/cron/fpai-hot-memory-synthesize.timer`; `core/BUILD/specs/SPEC_d112_hot-memory-architecture-5-domain.md`; `core/BUILD/results/SPEC_d112_hot-memory-architecture-5-domain.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added five hot-memory domain scanners, a scanner runner, deterministic bounded synthesis to `HOT_STATE.md`, and reviewed systemd timer artifacts for 30-minute scans plus 35-minute synthesis. The bot context path now reads fresh `HOT_STATE.md` first and falls back to existing patchwork context when missing, stale, or `HOT_MEMORY_DISABLE=1`. Generated repo proof `core/STATE/HOT_STATE.md` includes the system email, active d112 spec, last built d111 spec, bot identity, current directives, and ops measurements.
+- **Tests:** `python3 -B -m unittest tools.hot_memory.test_hot_memory` (3 tests OK); `python3 -B -m unittest discover -s SERVICES/sunheart-brain/curator -p 'test_build_context.py'` (9 tests OK); `python3 -m py_compile ...`; `bash -n core/BUILD/cron/fpai-hot-memory-scan.service core/BUILD/cron/fpai-hot-memory-scan.timer core/BUILD/cron/fpai-hot-memory-synthesize.service core/BUILD/cron/fpai-hot-memory-synthesize.timer`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d112-registry.json`; scanner/synthesis smoke commands to `/tmp/d112-hot-memory`; `git diff --check`
+- **Commit:** attempted local `git add`; blocked because Git could not create `/opt/fpai-build/FPAI_Cockpit/.git/worktrees/SPEC_d112_hot-memory-architecture-5-domain/index.lock` on the read-only shared Git metadata.
+- **Risks:** Live DB reads were not exercised in this sandbox, so decision/signal scanners were verified through repo mirrors and fail-soft paths. Timers were not installed/enabled. Synthesis is deterministic local compression for testability; no live Ollama call was made. The patched bot reader is `build_context_system_suffix()`, which `tgbot.py` imports; this branch has no literal `_build_context()` function.
+- **Rollback:** revert the listed d112 files. If installed later, disable/remove the two `fpai-hot-memory-*` timers/services and remove `~/.config/fpai/hot_memory/HOT_STATE.md` plus scanner JSONs.
+- **Intent solved:** bot current-memory context now has one fresh, cited HOT_STATE surface instead of assembling six stale-prone sources at query time.
+- **Downstream intent unlocked:** d111 awareness reliability can measure bot answers against HOT_STATE as the current ground-truth surface.
+- **Questions for Ember/James:** after merge, install/enable the reviewed timers on the live host, run one manual `python3 -m tools.hot_memory.run_all && python3 -m tools.hot_memory.synthesize`, then point the bot at `~/.config/fpai/hot_memory/HOT_STATE.md` and confirm the d111 probe uses HOT_STATE as its comparison surface.
+
 ### 2026-06-18 · SPEC_d111_awareness-reliability-metric-con · branch `build/SPEC_d111_awareness-reliability-metric-con`
 
 - **Status:** done in working tree / awaiting merge review

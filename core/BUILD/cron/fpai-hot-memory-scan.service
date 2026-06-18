@@ -1,0 +1,8 @@
+[Unit]
+Description=FPAI hot-memory domain scanners
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/fpai-build/FPAI_Cockpit
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/env python3 -m tools.hot_memory.run_all

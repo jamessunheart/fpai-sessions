@@ -25,6 +25,10 @@ DEFAULT_DIAGNOSTIC_CONTEXT_FILE = Path(
     os.environ.get("SELF_DIAGNOSTIC_CONTEXT_FILE", "/opt/fpai-build/.self_diagnostic_context.json")
 )
 SUPABASE_TIMEOUT_SECONDS = float(os.environ.get("SH_BUILD_CONTEXT_TIMEOUT_SECONDS", "2.0"))
+DEFAULT_HOT_STATE_FILE = Path(
+    os.environ.get("HOT_MEMORY_STATE_PATH", "~/.config/fpai/hot_memory/HOT_STATE.md")
+).expanduser()
+HOT_STATE_MAX_AGE_SECONDS = int(os.environ.get("HOT_MEMORY_MAX_AGE_SECONDS", str(30 * 60)))
 
 
 @dataclass(frozen=True)
@@ -58,12 +62,18 @@ async def build_context_system_suffix(
     """Return a system-prompt suffix. Empty string means no injection."""
     if os.environ.get("SH_BUILD_CONTEXT_DISABLE", "").strip() == "1":
         return ""
+    diagnostic = render_active_diagnostic_context(max_chars=max_chars)
+    hot_state = render_hot_state_context(max_chars=max_chars)
+    if hot_state:
+        suffix = hot_state
+        if diagnostic:
+            suffix = diagnostic + "\n\n" + suffix
+        return "\n\n" + suffix
     context = await load_build_context(
         repo_root=Path(repo_root),
         max_items=max_items,
         conversation_id=conversation_id,
     )
-    diagnostic = render_active_diagnostic_context(max_chars=max_chars)
     becoming = await _render_becoming_context(conversation_id=conversation_id, max_chars=max_chars)
     parts: list[str] = []
     if not context.is_empty():
@@ -74,6 +84,45 @@ async def build_context_system_suffix(
     if diagnostic:
         suffix = diagnostic + ("\n\n" + suffix if suffix else "")
     return "\n\n" + suffix if suffix else ""
+
+
+def render_hot_state_context(
+    *,
+    path: Path | str | None = None,
+    max_chars: int = DEFAULT_MAX_CHARS,
+) -> str:
+    """Return fresh HOT_STATE as the primary build context, or empty fallback."""
+    if os.environ.get("HOT_MEMORY_DISABLE", "").strip() == "1":
+        return ""
+    state_path = Path(path) if path is not None else Path(os.environ.get("HOT_MEMORY_STATE_PATH", str(DEFAULT_HOT_STATE_FILE))).expanduser()
+    hot_state = load_fresh_hot_state(state_path, max_age_seconds=HOT_STATE_MAX_AGE_SECONDS)
+    if not hot_state:
+        return ""
+    lines = [
+        "--- HOT STATE (primary current-memory context, bounded) ---",
+        "Source: HOT_STATE.md",
+        "Use this as the current cited state. If a fact is not here, say it is not in hot state instead of guessing.",
+        hot_state.strip(),
+    ]
+    rendered = "\n".join(lines)
+    if len(rendered) <= max_chars:
+        return rendered
+    return rendered[: max(0, max_chars - 20)].rsplit("\n", 1)[0] + "\n- ... bounded"
+
+
+def load_fresh_hot_state(path: Path, *, max_age_seconds: int = HOT_STATE_MAX_AGE_SECONDS) -> str:
+    try:
+        stat = path.stat()
+    except OSError:
+        return ""
+    age = datetime.now(timezone.utc).timestamp() - stat.st_mtime
+    if age < 0 or age > max_age_seconds:
+        return ""
+    try:
+        text = path.read_text(encoding="utf-8", errors="ignore").strip()
+    except OSError:
+        return ""
+    return text if text else ""
 
 
 def diagnostic_system_prefix(path: Path | str = DEFAULT_DIAGNOSTIC_CONTEXT_FILE) -> str:

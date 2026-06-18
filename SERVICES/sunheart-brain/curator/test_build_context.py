@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import os
 import importlib.util
 import json
 import sys
@@ -71,6 +72,36 @@ class BuildContextTest(unittest.TestCase):
             suffix = asyncio.run(build_context.build_context_system_suffix(repo_root=self.make_repo()))
 
         self.assertEqual(suffix, "")
+
+    def test_fresh_hot_state_replaces_patchwork_context(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            hot_state = Path(tmp) / "HOT_STATE.md"
+            hot_state.write_text(
+                "# HOT_STATE\n\n## Active directives\n- James 100% truthful directive [source: fixture - 2026-06-18]\n",
+                encoding="utf-8",
+            )
+            with patch.dict("os.environ", {"HOT_MEMORY_STATE_PATH": str(hot_state)}):
+                suffix = asyncio.run(build_context.build_context_system_suffix(repo_root=self.make_repo(), max_chars=1200))
+
+        self.assertIn("HOT STATE", suffix)
+        self.assertIn("James 100% truthful directive", suffix)
+        self.assertNotIn("CURRENT BUILD CONTEXT", suffix)
+        self.assertNotIn("SPEC_d011", suffix)
+
+    def test_stale_or_disabled_hot_state_falls_back_to_patchwork_context(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            hot_state = Path(tmp) / "HOT_STATE.md"
+            hot_state.write_text("# HOT_STATE\n\n- stale fact\n", encoding="utf-8")
+            old = 1_700_000_000
+            os.utime(hot_state, (old, old))
+            with patch.dict("os.environ", {"HOT_MEMORY_STATE_PATH": str(hot_state)}):
+                stale_suffix = asyncio.run(build_context.build_context_system_suffix(repo_root=self.make_repo(), max_chars=1200))
+            with patch.dict("os.environ", {"HOT_MEMORY_STATE_PATH": str(hot_state), "HOT_MEMORY_DISABLE": "1"}):
+                disabled_suffix = asyncio.run(build_context.build_context_system_suffix(repo_root=self.make_repo(), max_chars=1200))
+
+        self.assertIn("CURRENT BUILD CONTEXT", stale_suffix)
+        self.assertIn("SPEC_d011", stale_suffix)
+        self.assertIn("CURRENT BUILD CONTEXT", disabled_suffix)
 
     def test_render_respects_character_bound(self) -> None:
         context = build_context.BuildContext(
