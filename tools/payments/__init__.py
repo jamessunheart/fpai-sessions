@@ -1,0 +1,2 @@
+"""Payment-triggered automation helpers."""
+

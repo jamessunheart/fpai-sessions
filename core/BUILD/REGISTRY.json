@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-17T18:00:00Z",
+    "updated_at": "2026-06-18T07:35:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d090_payment-triggered-agent-spawn",
+            "slug": "SPEC_d090_payment-triggered-agent-spawn",
+            "branch": "build/SPEC_d090_payment-triggered-agent-spawn",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d090_payment-triggered-agent-spawn.md",
+            "tests_passed": true,
+            "notes": "d090 complete in working tree: added guarded payment-event-to-agent-namespace spawn scaffold with HMAC webhook verification, explicit PAYMENT_AGENT_SPAWN_ENABLED gate, paid-event validation, idempotent namespace/user_agent creation, SQL artifact, and focused tests. Independent AI review via claude -p failed with API ConnectionRefused; rerun from a live/writable host before merge if required. Commit was attempted but blocked by read-only Git worktree metadata/index.lock. No live payment API calls, Stripe product creation, money movement, SQL apply, deploy, secret read, push, or merge."
+        },
         {
             "id": "SPEC_d088_glm-5-2-sovereign-inference-runp",
             "slug": "SPEC_d088_glm-5-2-sovereign-inference-runp",

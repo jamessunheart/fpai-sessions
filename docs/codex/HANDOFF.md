@@ -82,6 +82,20 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-18 · SPEC_d090_payment-triggered-agent-spawn · branch `build/SPEC_d090_payment-triggered-agent-spawn`
+
+- **Status:** done in working tree / commit blocked by read-only Git metadata / independent AI review blocked in sandbox / awaiting merge review
+- **Files changed:** `tools/payments/__init__.py`; `tools/payments/agent_spawn.py`; `tools/payments/schema.sql`; `tools/payments/test_agent_spawn.py`; `core/BUILD/specs/SPEC_d090_payment-triggered-agent-spawn.md`; `core/BUILD/results/SPEC_d090_payment-triggered-agent-spawn.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a guarded payment-event-to-agent-namespace spawn scaffold. `tools/payments/agent_spawn.py` consumes already-delivered billing webhook payloads, requires `PAYMENT_AGENT_SPAWN_ENABLED=1`, verifies `X-FPAI-Payment-Signature` with `PAYMENT_AGENT_SPAWN_SECRET` for HTTP handling, accepts only paid Stripe-shaped events, rejects unpaid/unsupported/missing-identity events, and idempotently creates one `brain_index.user_agents` namespace plus one `brain_index.payment_agent_spawns` record per payment event. `tools/payments/schema.sql` documents the live DB tables for activation.
+- **Tests:** `python3 -B -m unittest tools.payments.test_agent_spawn` (5 tests OK); `python3 -B -m unittest tools.payments.test_agent_spawn tools.probe.test_inbound` (9 tests OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/payments/__init__.py tools/payments/agent_spawn.py tools/payments/test_agent_spawn.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d090-registry.json`; `git diff --check`
+- **Independent review:** generated `/tmp/d090-full.patch` including untracked files and attempted `/root/.local/bin/claude -p --effort high "$(cat /tmp/d090-review-prompt.txt)"`; review failed with `API Error: Unable to connect to API (ConnectionRefused)`. No independent AI approval is available in this sandbox.
+- **Commit:** attempted `git add ... && git commit -m "Add payment-triggered agent namespace spawn"`; blocked by read-only Git metadata: `Unable to create .../index.lock`. Changes remain in the working tree for Ember/writable host to stage.
+- **Risks:** No live payment API call, Stripe product creation, money movement, SQL apply, deploy, secret read, push, or merge occurred. Live activation still needs the billing provider/webhook layer to pass the raw event body and matching signature. Namespace isolation is represented by deterministic IDs and DB uniqueness; broader per-user runtime isolation/grants should be validated before multi-user autonomy depends on it.
+- **Rollback:** revert the d090 files listed above and remove this registry/result/handoff entry. If later applied live, drop/archive `brain_index.payment_agent_spawns` and any `brain_index.user_agents` rows whose `source_event_id` came from reverted payment events.
+- **Intent solved:** paid billing events can deterministically and idempotently become agent namespace records behind explicit live gates.
+- **Downstream intent unlocked:** the live billing webhook can be connected in a tiny activation spec to prove paid-user cell division without James manually creating agent namespaces.
+- **Questions for Ember/James:** rerun independent AI review from a live/writable host before merge if required; then apply `tools/payments/schema.sql`, mount `/payments/agent-spawn` behind the existing billing webhook, and fire one signed fixture event before allowing any real payment event through.
+
 ### 2026-06-17 · SPEC_d088_glm-5-2-sovereign-inference-runp · branch `build/SPEC_d088_glm-5-2-sovereign-inference-runp`
 
 - **Status:** done in working tree / independent AI review blocked in sandbox / awaiting merge review
