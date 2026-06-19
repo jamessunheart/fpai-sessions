@@ -177,6 +177,75 @@ class BuildContextTest(unittest.TestCase):
         self.assertIn("Corrections:", suffix)
         self.assertIn("You forgot, I said my birthday is June 4.", suffix)
 
+    def test_context_routing_can_skip_corrections_and_becoming(self) -> None:
+        pair = corrections.CorrectionPair(
+            conversation_id="123",
+            bot_turn_id="bot-1",
+            original_response="old response",
+            james_correction="new correction",
+        )
+
+        async def fake_recent_corrections(*, conversation_id=None, limit=10):
+            return [pair]
+
+        async def fake_render_becoming_context(person_id, *, max_chars=900):
+            return "--- BECOMING STATE (advisory, per-person) ---\nStage: activate"
+
+        becoming = types.SimpleNamespace(render_becoming_context=fake_render_becoming_context)
+        with patch.object(corrections, "recent_corrections", fake_recent_corrections), patch.dict(
+            "sys.modules", {"corrections": corrections, "becoming": becoming}
+        ):
+            suffix = asyncio.run(
+                build_context.build_context_system_suffix(
+                    repo_root=self.make_repo(),
+                    conversation_id="123",
+                    max_chars=1800,
+                    include_system_state=True,
+                    include_buildstream=True,
+                    include_corrections=False,
+                    include_becoming=False,
+                )
+            )
+
+        self.assertIn("CURRENT BUILD CONTEXT", suffix)
+        self.assertIn("Live system status:", suffix)
+        self.assertIn("SPEC_d011", suffix)
+        self.assertNotIn("Corrections:", suffix)
+        self.assertNotIn("new correction", suffix)
+        self.assertNotIn("BECOMING STATE", suffix)
+
+    def test_treasury_routing_keeps_status_and_corrections_only(self) -> None:
+        pair = corrections.CorrectionPair(
+            conversation_id="123",
+            bot_turn_id="bot-1",
+            original_response="old response",
+            james_correction="treasury correction",
+        )
+
+        async def fake_recent_corrections(*, conversation_id=None, limit=10):
+            return [pair]
+
+        with patch.object(corrections, "recent_corrections", fake_recent_corrections), patch.dict(
+            "sys.modules", {"corrections": corrections}
+        ):
+            suffix = asyncio.run(
+                build_context.build_context_system_suffix(
+                    repo_root=self.make_repo(),
+                    conversation_id="123",
+                    max_chars=1800,
+                    include_system_state=True,
+                    include_buildstream=False,
+                    include_corrections=True,
+                    include_becoming=False,
+                )
+            )
+
+        self.assertIn("Live system status:", suffix)
+        self.assertIn("Corrections:", suffix)
+        self.assertIn("treasury correction", suffix)
+        self.assertNotIn("SPEC_d011", suffix)
+        self.assertNotIn("rung4-hubs", suffix)
+
     def test_recent_session_insights_are_injected(self) -> None:
         class FakeCursor:
             async def __aenter__(self):
@@ -226,8 +295,6 @@ class BuildContextTest(unittest.TestCase):
         async def fake_render_becoming_context(person_id, *, max_chars=900):
             self.assertEqual(person_id, "123")
             return "--- BECOMING STATE (advisory, per-person) ---\nStage: activate"
-
-        import types
 
         module = types.SimpleNamespace(render_becoming_context=fake_render_becoming_context)
         with patch.dict("sys.modules", {"becoming": module}):

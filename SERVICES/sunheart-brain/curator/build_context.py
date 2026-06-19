@@ -58,13 +58,18 @@ async def build_context_system_suffix(
     max_items: int = DEFAULT_MAX_ITEMS,
     max_chars: int = DEFAULT_MAX_CHARS,
     conversation_id: str | None = None,
+    include_system_state: bool = True,
+    include_buildstream: bool = True,
+    include_corrections: bool = True,
+    include_becoming: bool = True,
 ) -> str:
     """Return a system-prompt suffix. Empty string means no injection."""
     if os.environ.get("SH_BUILD_CONTEXT_DISABLE", "").strip() == "1":
         return ""
-    diagnostic = render_active_diagnostic_context(max_chars=max_chars)
+    diagnostic = render_active_diagnostic_context(max_chars=max_chars) if include_system_state else ""
     hot_state = render_hot_state_context(max_chars=max_chars)
-    if hot_state:
+    routed_mode = not all((include_system_state, include_buildstream, include_corrections, include_becoming))
+    if hot_state and not routed_mode:
         suffix_parts = [hot_state]
         corrections = await _render_recent_corrections_context(conversation_id=conversation_id)
         if corrections:
@@ -77,11 +82,28 @@ async def build_context_system_suffix(
         repo_root=Path(repo_root),
         max_items=max_items,
         conversation_id=conversation_id,
+        include_system_status=include_system_state,
+        include_corrections=include_corrections,
+        include_recent_insights=include_buildstream,
     )
-    becoming = await _render_becoming_context(conversation_id=conversation_id, max_chars=max_chars)
+    becoming = (
+        await _render_becoming_context(conversation_id=conversation_id, max_chars=max_chars)
+        if include_becoming
+        else ""
+    )
     parts: list[str] = []
-    if not context.is_empty():
-        parts.append(render_build_context(context, max_chars=max_chars))
+    if hot_state and include_system_state:
+        parts.append(hot_state)
+    rendered_context = render_build_context(
+        context,
+        max_chars=max_chars,
+        include_system_state=include_system_state,
+        include_buildstream=include_buildstream,
+        include_corrections=include_corrections,
+        include_recent_insights=include_buildstream,
+    )
+    if rendered_context:
+        parts.append(rendered_context)
     if becoming:
         parts.append(becoming)
     suffix = "\n\n".join(parts)
@@ -208,6 +230,9 @@ async def load_build_context(
     repo_root: Path,
     max_items: int = DEFAULT_MAX_ITEMS,
     conversation_id: str | None = None,
+    include_system_status: bool = True,
+    include_corrections: bool = True,
+    include_recent_insights: bool = True,
 ) -> BuildContext:
     """Prefer Supabase when configured; otherwise use repo-local mirrors."""
     supabase = await _load_supabase_context(max_items=max_items)
@@ -216,38 +241,59 @@ async def load_build_context(
         context = supabase
     else:
         context = _load_repo_context(repo_root, max_items=max_items)
-    context = _with_live_system_status(context, repo_root=repo_root, max_items=max_items)
-    context = await _with_recent_session_insights(context, max_items=max_items)
-    return await _with_recent_corrections(
-        context,
-        conversation_id=conversation_id,
-    )
+    if include_system_status:
+        context = _with_live_system_status(context, repo_root=repo_root, max_items=max_items)
+    if include_recent_insights:
+        context = await _with_recent_session_insights(context, max_items=max_items)
+    if include_corrections:
+        context = await _with_recent_corrections(
+            context,
+            conversation_id=conversation_id,
+        )
+    return context
 
 
-def render_build_context(context: BuildContext, *, max_chars: int = DEFAULT_MAX_CHARS) -> str:
+def render_build_context(
+    context: BuildContext,
+    *,
+    max_chars: int = DEFAULT_MAX_CHARS,
+    include_system_state: bool = True,
+    include_buildstream: bool = True,
+    include_corrections: bool = True,
+    include_recent_insights: bool = True,
+) -> str:
     lines = [
         "--- CURRENT BUILD CONTEXT (advisory, bounded) ---",
         f"Source: {context.source}",
         "Use this only to avoid live amnesia about what James is building. Do not treat it as approval to write, spend, deploy, send outreach, or change doctrine.",
     ]
-    if context.corrections:
+    if include_corrections and context.corrections:
         lines.append("Corrections:")
         lines.extend(context.corrections)
-    if context.recent_insights:
+    if include_recent_insights and context.recent_insights:
         lines.append("Recent decisions (all surfaces):")
         lines.extend(f"- {item}" for item in context.recent_insights)
-    if context.system_status:
+    if include_system_state and context.system_status:
+        status_lines = list(context.system_status)
+        if not include_buildstream:
+            status_lines = [
+                item
+                for item in status_lines
+                if not item.startswith(("Build queue:", "Active build requests:"))
+            ]
         lines.append("Live system status:")
-        lines.extend(f"- {item}" for item in context.system_status)
-    if context.focus:
+        lines.extend(f"- {item}" for item in status_lines)
+    if include_buildstream and context.focus:
         lines.append("Focus:")
         lines.extend(f"- {item}" for item in context.focus)
-    if context.active_loops:
+    if include_buildstream and context.active_loops:
         lines.append("Active loops:")
         lines.extend(f"- {item}" for item in context.active_loops)
-    if context.open_intents:
+    if include_buildstream and context.open_intents:
         lines.append("Open decisions/intents:")
         lines.extend(f"- {item}" for item in context.open_intents)
+    if len(lines) == 3:
+        return ""
     rendered = "\n".join(lines)
     if len(rendered) <= max_chars:
         return rendered

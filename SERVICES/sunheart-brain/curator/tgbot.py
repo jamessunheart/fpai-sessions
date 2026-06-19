@@ -106,8 +106,45 @@ def _load_public_context_pack():
     return pack
 
 
+def _load_context_router():
+    """Load repo-local synthesis router without mutating sys.path."""
+    router_path = Path(__file__).resolve().parents[3] / "tools" / "synthesis" / "context_router.py"
+    spec = _ilu.spec_from_file_location("fpai_synthesis_context_router", router_path)
+    router = _ilu.module_from_spec(spec) if spec and spec.loader else None
+    if router is None or spec is None or spec.loader is None:
+        raise RuntimeError("context router could not be loaded")
+    sys.modules[spec.name] = router
+    spec.loader.exec_module(router)
+    return router
+
+
 def _env_truthy(name: str) -> bool:
     return os.environ.get(name, "").strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _context_routing_enabled() -> bool:
+    return _env_truthy("CURATOR_CONTEXT_ROUTING")
+
+
+def _classify_context_route(question: str) -> str:
+    if not _context_routing_enabled():
+        return "general"
+    try:
+        return str(_load_context_router().classify_question(question))
+    except Exception as e:
+        log.warning("context routing classification skipped: %s", e)
+        return "general"
+
+
+def _context_blocks_for_route(route: str) -> dict[str, bool]:
+    if not _context_routing_enabled():
+        route = "general"
+    try:
+        enabled = set(_load_context_router().context_blocks_for_route(route))
+    except Exception as e:
+        log.warning("context route block map skipped: %s", e)
+        enabled = {"system_state", "buildstream", "corrections", "becoming", "brain_search"}
+    return {name: name in enabled for name in ("system_state", "buildstream", "corrections", "becoming", "brain_search")}
 
 
 def _is_private_james_chat(msg: dict) -> bool:
@@ -643,9 +680,16 @@ async def _search_brain(question: str, k: int = SEARCH_TOP_K) -> list[dict]:
             ]
 
 
-async def _synthesize_answer(question: str, hits: list[dict], *, conversation_id: str | None = None) -> str:
+async def _synthesize_answer(
+    question: str,
+    hits: list[dict],
+    *,
+    conversation_id: str | None = None,
+    context_route: str = "general",
+) -> str:
     """Hand the chunks to Claude/GPT and get a natural answer."""
-    if not hits:
+    blocks = _context_blocks_for_route(context_route)
+    if not hits and blocks["brain_search"]:
         return ("I couldn't find anything in your brain about that. "
                 "Either it hasn't been ingested yet, or it lives in the 🔴 Private "
                 "tier (which I never serve over chat).")
@@ -680,7 +724,13 @@ async def _synthesize_answer(question: str, hits: list[dict], *, conversation_id
         system_prompt = (
             diagnostic_system_prefix()
             + CHAT_SYSTEM_PROMPT
-            + await build_context_system_suffix(conversation_id=conversation_id)
+            + await build_context_system_suffix(
+                conversation_id=conversation_id,
+                include_system_state=blocks["system_state"],
+                include_buildstream=blocks["buildstream"],
+                include_corrections=blocks["corrections"],
+                include_becoming=blocks["becoming"],
+            )
         )
     except Exception as e:
         log.warning("build-context injection skipped: %s", e)
@@ -4285,8 +4335,17 @@ async def _handle_message(msg: dict) -> None:
     await _log_tg_message(str(chat_id), "user", text, update_id=update_id)
 
     log.info("chat: %s", text[:120])
-    hits = await _search_brain(text)
-    answer_body = _format_answer_for_telegram(await _synthesize_answer(text, hits, conversation_id=str(chat_id)))
+    context_route = _classify_context_route(text)
+    blocks = _context_blocks_for_route(context_route)
+    hits = await _search_brain(text) if blocks["brain_search"] else []
+    answer_body = _format_answer_for_telegram(
+        await _synthesize_answer(
+            text,
+            hits,
+            conversation_id=str(chat_id),
+            context_route=context_route,
+        )
+    )
     answer = answer_body
     # Citation footer DISABLED per James 2026-06-12 (wants plain short replies, no sources).
     if False:

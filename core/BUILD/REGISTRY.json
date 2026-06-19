@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-19T18:30:00Z",
+    "updated_at": "2026-06-19T22:11:44Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d124_spec-d124-chat-context-routing-s",
+            "slug": "SPEC_d124_spec-d124-chat-context-routing-s",
+            "branch": "build/SPEC_d124_spec-d124-chat-context-routing-s",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d124_spec-d124-chat-context-routing-s.md",
+            "tests_passed": true,
+            "notes": "d124 complete in working tree: added deterministic tools/synthesis/context_router.py and gated Telegram synthesis routing behind CURATOR_CONTEXT_ROUTING=1. Ops/status turns inject system-state + buildstream and skip corrections/becoming/brain search; treasury turns inject system-state + corrections and skip buildstream/becoming/brain search; memory/general preserve all blocks plus brain search. Focused 22-test suite proves three sample messages reduce context blocks from baseline 5 to 2 for ops and treasury while memory stays at 5. py_compile, registry JSON validation, and diff hygiene passed. No live Telegram chat, bot restart, deploy, push, merge, outreach, secrets, external API call with effect, or money movement. Independent AI review was attempted with local Claude but timed out after 60s with no output, so reviewer pass remains a pre-merge gate."
+        },
         {
             "id": "SPEC_d123_d014-correction-capture-close-d0",
             "slug": "SPEC_d123_d014-correction-capture-close-d0",

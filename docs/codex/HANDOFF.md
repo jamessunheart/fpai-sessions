@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-19 · SPEC_d124_spec-d124-chat-context-routing-s · branch `build/SPEC_d124_spec-d124-chat-context-routing-s`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `tools/synthesis/__init__.py`; `tools/synthesis/context_router.py`; `tools/synthesis/test_context_router.py`; `SERVICES/sunheart-brain/curator/tgbot.py`; `SERVICES/sunheart-brain/curator/build_context.py`; `SERVICES/sunheart-brain/curator/test_build_context.py`; `SERVICES/sunheart-brain/curator/test_tgbot_correction_wiring.py`; `core/BUILD/specs/SPEC_d124_spec-d124-chat-context-routing-s.md`; `core/BUILD/results/SPEC_d124_spec-d124-chat-context-routing-s.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added deterministic chat context routing behind `CURATOR_CONTEXT_ROUTING=1`. Ops/status questions now use system-state + buildstream and skip corrections, becoming, and brain search. Treasury questions use system-state + corrections and skip buildstream, becoming, and brain search. Memory/general questions preserve the current all-blocks + brain-search behavior. The env gate is off by default.
+- **Tests:** `env HOT_MEMORY_STATE_PATH=/tmp/d124-no-hot-state.md SELF_DIAGNOSTIC_CONTEXT_FILE=/tmp/d124-no-diagnostic.json python3 -B -m unittest tools.synthesis.test_context_router SERVICES.sunheart-brain.curator.test_build_context SERVICES.sunheart-brain.curator.test_tgbot_correction_wiring` (22 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile ...`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `git diff --check`
+- **Proof:** three sample messages measured context blocks vs baseline 5: ops/status -> 2 blocks; treasury -> 2 blocks; memory -> 5 blocks.
+- **Risks:** No live Telegram chat, production bot restart, deploy, push, merge, outreach, secrets, external API call with effect, or money movement was run in this sandbox. Independent AI review was attempted with local `claude -p`, but it timed out after 60 seconds with no output, so this branch still needs a successful reviewer pass before claiming independent-AI-reviewed.
+- **Rollback:** revert the listed files. Runtime mitigation without reverting is to leave `CURATOR_CONTEXT_ROUTING` unset or set it to `0`.
+- **Intent solved:** chat synthesis can skip irrelevant heavy context injection for ops/status and treasury turns instead of carrying all blocks on every question.
+- **Downstream intent unlocked:** Ember can enable `CURATOR_CONTEXT_ROUTING=1` for one live reversible bot proof and compare shorter prompt context against answer quality before making routing default.
+- **Questions for Ember/James:** after merge on server 162, run one live Telegram proof for an ops/status question, one treasury question, and one memory question; confirm prompt routing is shorter and answers remain acceptable.
+
 ### 2026-06-19 · SPEC_d123_d014-correction-capture-close-d0 · branch `build/SPEC_d123_d014-correction-capture-close-d0`
 
 - **Status:** done in working tree / awaiting merge review
