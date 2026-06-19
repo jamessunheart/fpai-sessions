@@ -65,7 +65,11 @@ async def build_context_system_suffix(
     diagnostic = render_active_diagnostic_context(max_chars=max_chars)
     hot_state = render_hot_state_context(max_chars=max_chars)
     if hot_state:
-        suffix = hot_state
+        suffix_parts = [hot_state]
+        corrections = await _render_recent_corrections_context(conversation_id=conversation_id)
+        if corrections:
+            suffix_parts.append(corrections)
+        suffix = "\n\n".join(suffix_parts)
         if diagnostic:
             suffix = diagnostic + "\n\n" + suffix
         return "\n\n" + suffix
@@ -350,6 +354,19 @@ async def _with_recent_corrections(
     if not block:
         return context
     return replace(context, corrections=block.splitlines())
+
+
+async def _render_recent_corrections_context(*, conversation_id: str | None) -> str:
+    try:
+        from .corrections import recent_corrections, render_corrections_block
+    except ImportError:
+        try:
+            from corrections import recent_corrections, render_corrections_block
+        except ImportError:
+            return ""
+
+    pairs = await recent_corrections(conversation_id=conversation_id, limit=10)
+    return render_corrections_block(pairs)
 
 
 def _with_live_system_status(

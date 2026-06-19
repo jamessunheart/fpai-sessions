@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-19T18:00:00Z",
+    "updated_at": "2026-06-19T18:30:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d123_d014-correction-capture-close-d0",
+            "slug": "SPEC_d123_d014-correction-capture-close-d0",
+            "branch": "build/SPEC_d123_d014-correction-capture-close-d0",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d123_d014-correction-capture-close-d0.md",
+            "tests_passed": true,
+            "notes": "d123/d014 complete in working tree: fixed build_context_system_suffix so recent James correction pairs are appended even when fresh HOT_STATE is the primary bot context. Existing corrections table/capture/read/TG wiring from d014 remains intact; added regression coverage for HOT_STATE plus correction memory. Focused correction/build-context tests, py_compile, registry JSON validation, and diff hygiene passed. No live Telegram/Supabase/Postgres write, live Supabase log audit, bot restart, deploy, push, merge, outreach, secrets, or money movement. Fresh independent AI review was attempted but local Claude failed with API ConnectionRefused, so review remains a pre-merge gate."
+        },
         {
             "id": "SPEC_d122_d011-intent-injector-correction",
             "slug": "SPEC_d122_d011-intent-injector-correction",

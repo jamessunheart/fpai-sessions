@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-19 · SPEC_d123_d014-correction-capture-close-d0 · branch `build/SPEC_d123_d014-correction-capture-close-d0`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `SERVICES/sunheart-brain/curator/build_context.py`; `SERVICES/sunheart-brain/curator/test_build_context.py`; `core/BUILD/specs/SPEC_d123_d014-correction-capture-close-d0.md`; `core/BUILD/results/SPEC_d123_d014-correction-capture-close-d0.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Closed the remaining correction-memory gap in the Telegram prompt path. Existing d014 code already provided the `corrections` table, correction-signal detection, Supabase/Postgres write path, recent correction read path, and Telegram capture wiring. This branch fixes `build_context_system_suffix()` so recent James correction pairs are appended even when fresh `HOT_STATE` is the primary context and would previously return early.
+- **Tests:** `env HOT_MEMORY_STATE_PATH=/tmp/d123-no-hot-state.md SELF_DIAGNOSTIC_CONTEXT_FILE=/tmp/d123-no-diagnostic.json python3 -B -m unittest tools.learn.test_capture_corrections SERVICES.sunheart-brain.curator.test_build_context SERVICES.sunheart-brain.curator.test_corrections` (18 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile ...`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `git diff --check`
+- **Risks:** No live Telegram correction cycle, live Supabase/Postgres write, live Supabase log audit, production bot restart, deploy, push, merge, outreach, secrets, or money movement was run in this sandbox. Fresh independent AI review was attempted with local Claude and failed with `API Error: Unable to connect to API (ConnectionRefused)`, so this d123 delta still needs a successful reviewer pass before claiming independent-AI-reviewed. The correction tests emit one warning from an optional blueprint updater trying to write to the read-only parent checkout; the correction path remains non-blocking and passed.
+- **Rollback:** revert the listed files. Runtime mitigation without reverting remains `SH_BUILD_CONTEXT_DISABLE=1`.
+- **Intent solved:** correction memory is no longer suppressed by fresh HOT_STATE; the bot sees James's recent correction pairs on the active owner prompt path.
+- **Downstream intent unlocked:** Ember can run the live proof cycle: send one harmless Telegram correction, confirm a row lands in `brain_index.corrections` or Supabase REST, and confirm the next bot turn recalls the corrected topic while HOT_STATE is fresh.
+- **Questions for Ember/James:** after merge on server 162, run the live Supabase-log/TG proof because this sandbox cannot access production bot logs or credentials.
+
 ### 2026-06-19 · SPEC_d122_d011-intent-injector-correction · branch `build/SPEC_d122_d011-intent-injector-correction`
 
 - **Status:** done in working tree / awaiting merge review

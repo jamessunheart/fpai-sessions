@@ -88,6 +88,41 @@ class BuildContextTest(unittest.TestCase):
         self.assertNotIn("CURRENT BUILD CONTEXT", suffix)
         self.assertNotIn("SPEC_d011", suffix)
 
+    def test_fresh_hot_state_still_injects_recent_corrections(self) -> None:
+        pair = corrections.CorrectionPair(
+            conversation_id="123",
+            bot_turn_id="bot-1",
+            original_response="You never told me that d010 matters.",
+            james_correction="You forgot, d010 is the preference loop.",
+        )
+
+        async def fake_recent_corrections(*, conversation_id=None, limit=10):
+            self.assertEqual(conversation_id, "123")
+            self.assertEqual(limit, 10)
+            return [pair]
+
+        with tempfile.TemporaryDirectory() as tmp:
+            hot_state = Path(tmp) / "HOT_STATE.md"
+            hot_state.write_text(
+                "# HOT_STATE\n\n## Active directives\n- James 100% truthful directive [source: fixture - 2026-06-18]\n",
+                encoding="utf-8",
+            )
+            with patch.object(corrections, "recent_corrections", fake_recent_corrections), patch.dict(
+                "sys.modules", {"corrections": corrections}
+            ), patch.dict("os.environ", {"HOT_MEMORY_STATE_PATH": str(hot_state)}):
+                suffix = asyncio.run(
+                    build_context.build_context_system_suffix(
+                        repo_root=self.make_repo(),
+                        conversation_id="123",
+                        max_chars=1600,
+                    )
+                )
+
+        self.assertIn("HOT STATE", suffix)
+        self.assertIn("Recent corrections James made to this bot", suffix)
+        self.assertIn("d010 is the preference loop", suffix)
+        self.assertNotIn("CURRENT BUILD CONTEXT", suffix)
+
     def test_stale_or_disabled_hot_state_falls_back_to_patchwork_context(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             hot_state = Path(tmp) / "HOT_STATE.md"
