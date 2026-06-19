@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-19 · SPEC_d122_d011-intent-injector-correction · branch `build/SPEC_d122_d011-intent-injector-correction`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `core/BUILD/specs/SPEC_d122_d011-intent-injector-correction.md`; `core/BUILD/results/SPEC_d122_d011-intent-injector-correction.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Verified d122 as an idempotent retry/fix of d011. The original implementation already exists: `tools/learn/capture_corrections.py` appends d010-shaped James correction preference pairs; `SERVICES/sunheart-brain/curator/build_context.py` injects bounded advisory build context into owner chat prompts; `SERVICES/sunheart-brain/curator/corrections.py` captures and re-injects recent corrections; and `tgbot.py` wires both paths defensively. No implementation files were edited to avoid duplicating live-bot logic.
+- **Tests:** `env HOT_MEMORY_STATE_PATH=/tmp/d122-no-hot-state.md SELF_DIAGNOSTIC_CONTEXT_FILE=/tmp/d122-no-diagnostic.json python3 -B -m unittest tools.learn.test_capture_corrections SERVICES.sunheart-brain.curator.test_build_context SERVICES.sunheart-brain.curator.test_corrections` (17 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile ...`; capture CLI smoke to `/tmp/d122-preference-pairs.jsonl`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `git diff --check`
+- **Risks:** No live Telegram chat, live Supabase/Postgres write, production bot restart, deploy, push, merge, outreach, secrets, or money movement was run in this sandbox. A fresh d122 independent AI review was attempted with local Claude but failed with `API Error: Unable to connect to API (ConnectionRefused)`; the unchanged implementation remains covered by the existing d011 review artifact, but d122 still needs a reviewer pass before claiming fresh independent review. The correction test emitted one warning from an optional blueprint updater trying to write to the read-only parent checkout; the correction path remained non-blocking and passed.
+- **Rollback:** remove the d122 spec file, result file, registry entry, and this handoff entry. No runtime rollback is needed because implementation behavior was unchanged.
+- **Intent solved:** d122 no longer leaves the d011 retry ambiguous; the already-built intent injector and correction capture pipeline is registered, reverified, and ready for merge review.
+- **Downstream intent unlocked:** the build loop can close this duplicate/retry and continue to the next concrete liveness or learning repair instead of re-queuing the already-built d011 pipeline.
+- **Questions for Ember/James:** after merge on server 162, optionally send one harmless Telegram correction and confirm the bot both captures the pair and includes recent correction memory on the next prompt.
+
 ### 2026-06-18 · SPEC_4ed5e6f8-d5d4-4908-ac26-55e51348cd25_fix-decision-agent-debate-py-bot · branch `build/SPEC_4ed5e6f8-d5d4-4908-ac26-55e51348cd25_fix-decision-agent-debate-py-bot`
 
 - **Status:** done in working tree / awaiting merge review

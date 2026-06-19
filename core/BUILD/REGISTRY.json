@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-19T11:35:00Z",
+    "updated_at": "2026-06-19T18:00:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d122_d011-intent-injector-correction",
+            "slug": "SPEC_d122_d011-intent-injector-correction",
+            "branch": "build/SPEC_d122_d011-intent-injector-correction",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d122_d011-intent-injector-correction.md",
+            "tests_passed": true,
+            "notes": "d122 verified as an idempotent retry/fix of d011: tools/learn/capture_corrections.py already appends d010-shaped James correction preference pairs, the sunheart-brain build_context path already injects bounded advisory current state into owner chat prompts, corrections.py captures and re-injects recent James corrections, and tgbot.py wires both paths defensively. Added the generated d122 spec and result artifact only; no implementation files were edited. Focused unittest, py_compile, capture CLI smoke, registry JSON validation, and diff hygiene passed. No live Telegram/Supabase/Postgres write, bot restart, deploy, push, merge, outreach, secrets, or money movement."
+        },
         {
             "id": "SPEC_d121_self-evolution-l1-preference-dat",
             "slug": "SPEC_d121_self-evolution-l1-preference-dat",
