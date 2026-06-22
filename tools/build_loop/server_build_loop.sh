@@ -25,6 +25,7 @@ DISABLED=/opt/fpai-build/.disabled
 DRY="${1:-}"
 
 [ -f "$DISABLED" ] && { echo "server build loop DISABLED (flag present)"; exit 0; }
+[ "$DRY" = "--dry-run" ] && { echo "DRY RUN — no changes will be made"; }
 
 # env: bot env (DB + telegram creds) + claude OAuth token (for the $0 review)
 ENVFILE=$(systemctl show sh-brain-tgbot -p EnvironmentFiles 2>/dev/null | sed -E 's/EnvironmentFiles=//; s/ .*//')
@@ -192,6 +193,7 @@ with psycopg.connect(url) as conn:
 
 while IFS= read -r bline; do
   [ -z "$bline" ] && continue
+  [ "$DRY" = "--dry-run" ] && { echo "  (dry-run) would merge: $bline"; continue; }
   [ "$BACKLOG_MERGED" -ge "$MERGE_BACKLOG_MAX" ] && { echo "backlog merge cap reached ($BACKLOG_MERGED/$MERGE_BACKLOG_MAX) — next run continues"; break; }
   BDID=$(printf '%s' "$bline"  | "$PY" -c 'import sys,json;print(json.load(sys.stdin)["id"])')
   BBR=$(printf '%s' "$bline"  | "$PY" -c 'import sys,json;print(json.load(sys.stdin)["branch"])')
