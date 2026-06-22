@@ -15,11 +15,14 @@ CREATE TABLE IF NOT EXISTS note_chunks (
     embedding_model TEXT NOT NULL,
     source          TEXT,
     source_id       TEXT,
+    source_path     TEXT,
+    commit_sha      TEXT,
     tags            TEXT[] DEFAULT '{}',
     sensitivity     TEXT NOT NULL DEFAULT 'public',  -- public | personal | private
     pii_flags       TEXT[] DEFAULT '{}',
     concept_id      UUID,                        -- FK to concepts.id (deferred, see below)
     created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     UNIQUE (note_row_id, chunk_idx)
 );
 
@@ -31,6 +34,15 @@ DO $$ BEGIN
     BEGIN
         ALTER TABLE note_chunks ADD COLUMN pii_flags TEXT[] DEFAULT '{}';
     EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN
+        ALTER TABLE note_chunks ADD COLUMN source_path TEXT;
+    EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN
+        ALTER TABLE note_chunks ADD COLUMN commit_sha TEXT;
+    EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN
+        ALTER TABLE note_chunks ADD COLUMN updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+    EXCEPTION WHEN duplicate_column THEN NULL; END;
 END $$;
 
 CREATE INDEX IF NOT EXISTS note_chunks_sensitivity_idx ON note_chunks (sensitivity);
@@ -40,6 +52,8 @@ CREATE INDEX IF NOT EXISTS note_chunks_embedding_idx
     WITH (m = 16, ef_construction = 64);
 
 CREATE INDEX IF NOT EXISTS note_chunks_source_id_idx ON note_chunks (source, source_id);
+CREATE INDEX IF NOT EXISTS note_chunks_source_path_idx ON note_chunks (source_path);
+CREATE INDEX IF NOT EXISTS note_chunks_commit_sha_idx  ON note_chunks (commit_sha);
 CREATE INDEX IF NOT EXISTS note_chunks_concept_idx   ON note_chunks (concept_id);
 CREATE INDEX IF NOT EXISTS note_chunks_tags_idx      ON note_chunks USING GIN (tags);
 

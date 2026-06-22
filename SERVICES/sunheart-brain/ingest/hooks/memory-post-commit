@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Install target on server 162:
+#   /opt/fpai-build/memory/.git/hooks/post-commit
+#
+# The hook runs from the memory repo worktree. Keep all configuration in env so
+# the hook file never contains secrets:
+#   SH_INGEST_TOKEN=...
+#   SH_BRAIN_BASE=https://brain.sunheart.com
+#   SH_MEMORY_GIT_BRIDGE=/opt/sh-brain-src/ingest/memory_git_bridge.py
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+BRIDGE="${SH_MEMORY_GIT_BRIDGE:-/opt/sh-brain-src/ingest/memory_git_bridge.py}"
+
+if [[ ! -x "$BRIDGE" ]]; then
+  if [[ -f "$BRIDGE" ]]; then
+    exec python3 "$BRIDGE" --repo "$REPO_ROOT" --commit HEAD
+  fi
+  echo "memory post-commit: bridge script not found at $BRIDGE" >&2
+  exit 0
+fi
+
+exec "$BRIDGE" --repo "$REPO_ROOT" --commit HEAD

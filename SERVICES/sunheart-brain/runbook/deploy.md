@@ -150,6 +150,31 @@ export SH_DATA_DIR=~/SunheartBrainData
 ./brain_ingest.py run --source cursor
 ```
 
+## Phase 8.5 — Memory git post-commit bridge
+
+On server 162, install the hook into the git-backed memory SSOT repo:
+
+```bash
+install -m 755 /opt/sh-brain-src/ingest/hooks/memory-post-commit \
+  /opt/fpai-build/memory/.git/hooks/post-commit
+
+export SH_BRAIN_BASE=https://brain.sunheart.com
+export SH_INGEST_TOKEN=sh_...   # existing ingest token with ingest scope
+export SH_MEMORY_GIT_BRIDGE=/opt/sh-brain-src/ingest/memory_git_bridge.py
+```
+
+The hook reads the just-created commit's changed files, keeps only non-secret
+`.md` paths, applies the existing ingest privacy classifier, and posts each note
+to `/index/ingest/memory_git_note`. The index service embeds through the same
+manual-ingest `embed()` function and upserts `brain_index.note_chunks` with
+`source_path='memory-git/<relative-path>'`, `commit_sha`, and `updated_at`.
+
+Rollback for bridge-ingested notes:
+
+```sql
+DELETE FROM brain_index.note_chunks WHERE source_path LIKE 'memory-git/%';
+```
+
 ### Where to put AI export files
 
 ```

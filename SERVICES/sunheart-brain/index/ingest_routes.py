@@ -19,11 +19,12 @@ import hashlib
 import logging
 import os
 from dataclasses import dataclass, field
+from datetime import datetime
 from typing import Any
 
 import httpx
 from fastapi import APIRouter, Depends, HTTPException, Request
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 log = logging.getLogger("brain-index.ingest")
 
@@ -234,6 +235,23 @@ class EnsureConvResp(BaseModel):
     created: bool
 
 
+class MemoryGitNoteReq(BaseModel):
+    source_path: str = Field(..., description="Canonical memory-git/<relative-path> source path")
+    content: str
+    commit_sha: str
+    updated_at: datetime | None = None
+    tags: list[str] = []
+    prefer: str = "local"
+    sensitivity: str = "🟡 Personal"
+
+
+class MemoryGitNoteResp(BaseModel):
+    source_path: str
+    chunks: int
+    rows_written: int
+    model: str
+
+
 def _sensitivity_to_db(label: str) -> str:
     """Map the AppFlowy emoji label to the lowercase code used in note_chunks.sensitivity."""
     if "Personal" in label: return "personal"
@@ -250,6 +268,16 @@ async def _auth(request: Request):
         raise HTTPException(401, "missing bearer token")
     creds = HTTPAuthorizationCredentials(scheme="Bearer", credentials=auth_header.split(" ", 1)[1])
     return await authenticate(creds)
+
+
+def _clean_memory_source_path(source_path: str) -> str:
+    value = (source_path or "").strip().replace("\\", "/")
+    if not value.startswith("memory-git/"):
+        raise HTTPException(400, "source_path must start with memory-git/")
+    parts = value.split("/")
+    if any(part in ("", ".", "..") for part in parts):
+        raise HTTPException(400, "source_path must not contain empty, dot, or dot-dot path parts")
+    return value
 
 
 @router.post("/add_note", response_model=AddNoteResp, include_in_schema=False)
@@ -325,7 +353,8 @@ async def add_note(req: AddNoteReq, request: Request):
                     ON CONFLICT (note_row_id, chunk_idx) DO UPDATE SET
                         content=EXCLUDED.content, content_sha1=EXCLUDED.content_sha1,
                         embedding=EXCLUDED.embedding, embedding_model=EXCLUDED.embedding_model,
-                        tags=EXCLUDED.tags, sensitivity=EXCLUDED.sensitivity, pii_flags=EXCLUDED.pii_flags
+                        tags=EXCLUDED.tags, sensitivity=EXCLUDED.sensitivity, pii_flags=EXCLUDED.pii_flags,
+                        updated_at=NOW()
                     """,
                     (existing, req.content, sha, vecs[0], model,
                      req.source, req.source_id, req.tags, sens_db, req.pii_flags),
@@ -339,6 +368,112 @@ async def add_note(req: AddNoteReq, request: Request):
                 result_count=1 if created else 0,
                 notes=f"sensitivity={sens_db} embedded={embedded}")
     return AddNoteResp(note_row_id=existing or "", created=created, embedded=embedded)
+
+
+@router.post("/memory_git_note", response_model=MemoryGitNoteResp, include_in_schema=False)
+async def memory_git_note(req: MemoryGitNoteReq, request: Request):
+    """Embed and upsert one committed markdown file from the git-backed memory SSOT.
+
+    This is intentionally narrower than /add_note: the post-commit hook already
+    has the file path and commit SHA, so we write directly to note_chunks while
+    reusing the same embedding function used by manual ingestion.
+    """
+    from app import require_scope, audit, embed as do_embed, _chunk
+
+    agent = await _auth(request)
+    require_scope(agent, "ingest")
+
+    source_path = _clean_memory_source_path(req.source_path)
+    sens_db = _sensitivity_to_db(req.sensitivity)
+    if sens_db == "private":
+        await audit(
+            request,
+            agent,
+            "/ingest/memory_git_note",
+            query_prefix=source_path,
+            result_count=0,
+            blocked=True,
+            notes="private tier refused at memory-git ingest",
+        )
+        raise HTTPException(400, "Private-tier notes must not be sent to the brain")
+
+    prefer = "local" if sens_db == "personal" else req.prefer
+    tags = sorted(set([*req.tags, "memory-git"]))
+    chunks = _chunk(req.content)
+    vectors, model = await do_embed(request.app.state.http, chunks, prefer)
+    rows_written = 0
+    note_row_id = source_path
+    source_id = source_path
+    updated_at = req.updated_at
+
+    async with request.app.state.conn.cursor() as cur:
+        for idx, (text, vec) in enumerate(zip(chunks, vectors)):
+            sha = hashlib.sha1(text.encode()).hexdigest()
+            await cur.execute(
+                "SELECT content_sha1, commit_sha FROM brain_index.note_chunks "
+                "WHERE note_row_id=%s AND chunk_idx=%s",
+                (note_row_id, idx),
+            )
+            existing = await cur.fetchone()
+            if existing and existing[0] == sha and existing[1] == req.commit_sha:
+                continue
+            await cur.execute(
+                """
+                INSERT INTO brain_index.note_chunks
+                    (note_row_id, chunk_idx, content, content_sha1, embedding, embedding_model,
+                     source, source_id, source_path, commit_sha, tags, sensitivity, pii_flags, updated_at)
+                VALUES
+                    (%s, %s, %s, %s, %s::vector, %s, 'memory-git', %s, %s, %s, %s, %s, '{}', COALESCE(%s, NOW()))
+                ON CONFLICT (note_row_id, chunk_idx) DO UPDATE SET
+                    content         = EXCLUDED.content,
+                    content_sha1    = EXCLUDED.content_sha1,
+                    embedding       = EXCLUDED.embedding,
+                    embedding_model = EXCLUDED.embedding_model,
+                    source          = EXCLUDED.source,
+                    source_id       = EXCLUDED.source_id,
+                    source_path     = EXCLUDED.source_path,
+                    commit_sha      = EXCLUDED.commit_sha,
+                    tags            = EXCLUDED.tags,
+                    sensitivity     = EXCLUDED.sensitivity,
+                    pii_flags       = EXCLUDED.pii_flags,
+                    updated_at      = EXCLUDED.updated_at
+                """,
+                (
+                    note_row_id,
+                    idx,
+                    text,
+                    sha,
+                    vec,
+                    model,
+                    source_id,
+                    source_path,
+                    req.commit_sha,
+                    tags,
+                    sens_db,
+                    updated_at,
+                ),
+            )
+            rows_written += 1
+
+        await cur.execute(
+            "DELETE FROM brain_index.note_chunks WHERE note_row_id=%s AND chunk_idx >= %s",
+            (note_row_id, len(chunks)),
+        )
+
+    await audit(
+        request,
+        agent,
+        "/ingest/memory_git_note",
+        query_prefix=source_path,
+        result_count=rows_written,
+        notes=f"commit_sha={req.commit_sha[:12]} chunks={len(chunks)} sensitivity={sens_db}",
+    )
+    return MemoryGitNoteResp(
+        source_path=source_path,
+        chunks=len(chunks),
+        rows_written=rows_written,
+        model=model,
+    )
 
 
 # Process-local cache: external_id → row_id. Avoids re-scanning the
