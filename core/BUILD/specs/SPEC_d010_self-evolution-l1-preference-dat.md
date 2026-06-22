@@ -9,3 +9,4 @@ Self-evolution LAYER 1 — the measurement spine (advisory/shadow only, $0, reve
 ## Contract
 Follow docs/codex/SESSION_CONTRACT.md. Branch off feat/headless-build (never main).
 Register in core/BUILD/REGISTRY.json. Tests required. Do NOT push or merge.
+SAFE-AUTO

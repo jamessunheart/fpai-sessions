@@ -48,6 +48,7 @@ PRE-FLIGHT for substantive turn — run these gates BEFORE composing the body:
   3. Route to a specialist sub-agent if one exists for this domain
      (.claude/agents/ — check the roster before doing the work yourself).
   4. Compose the body — with the alignment footer + NARRATOR · section.
+  ★ HARD RULE — DO NOT ASK JAMES: If action is reversible + within cost caps + aligns north star → DO IT or route to council. Never end a response with a question James has to answer to proceed. James has said this 20+ times. Violation = theater.
 This reminder is harness-injected (preflight-inject.sh). It does not require acknowledgment;
 its job is to surface the checklist while context is fresh.
 </system-reminder>${HOT_STATE_BLOCK}

@@ -1,11 +1,4 @@
-# HOT_STATE - 2026-06-18T22:04:02Z - synthesized from 5 scanners
-
-
-## Honesty mirror (self-portrait)
-- GAP: - The stated model emphasizes outcome proof, skepticism, and routing discipline; the observable system still needs explicit instrumentation to notice when it is performing coherence instead of proving it.
-- Evidence base is uneven: 349 recent ops-ledger rows and 106 review files are visible, while c
-- BIASES: Trained through Anthropic, OpenAI, and cloud-era corpora. Known distortions to check:
-- API-first defaults: Adds recurring cost, data exposure, and dependency surface (origin: Cloud-era training corpu
+# HOT_STATE - 2026-06-22T10:25:03Z - synthesized from 5 scanners
 
 ## Active directives
 - -> **Stand up a self-standing, cost-optimized FPOS** - holds context + advances *without James actively prompting* - the keystone everything rests on (like the Village rests on James), which becomes the **product** (give people their own... [source: core/STATE/identity/ALIGNMENT.md - 2026-06-14T11:50:37Z]
@@ -14,9 +7,9 @@
 - Prior handoff archive (2026-06-03 -> 06-05 - FPOS TURNING POINT - NORTH STAR CANONIZED - self-standing mandate) [source: core/STATE/identity/STORY.md - 2026-06-14T11:50:37Z]
 
 ## Spec queue
-- Last built spec is SPEC_d117_post-merge-liveness-probe-auto-d on build/SPEC_d117_post-merge-liveness-probe-auto-d [source: core/BUILD/REGISTRY.json - 2026-06-18T22:00:41Z]
-- Top pending build specs: SPEC_d010_self-evolution-l1-preference-dat, SPEC_d011_intent-injector-correction-capt, SPEC_d013_intelligence-economy-l1-instrume [source: core/BUILD/specs - 2026-06-15T16:23:01Z]
-- Last git merge/build marker: e12a6db Merge branch 'build/SPEC_d116_retroactive-liveness-audit-scan' into feat/headless-build [source: git log - 2026-06-18T22:00:42Z]
+- Last built spec is SPEC_d124_spec-d124-chat-context-routing-s on build/SPEC_d124_spec-d124-chat-context-routing-s [source: core/BUILD/REGISTRY.json - 2026-06-19T22:13:57Z]
+- Top pending build specs: SPEC_d010_self-evolution-l1-preference-dat, SPEC_d011_intent-injector-correction-capt, SPEC_d013_intelligence-economy-l1-instrume [source: core/BUILD/specs - 2026-06-19T09:44:25Z]
+- Last git merge/build marker: e12a6db Merge branch 'build/SPEC_d116_retroactive-liveness-audit-scan' into feat/headless-build [source: git log - 2026-06-20T04:30:04Z]
 
 ## System identity facts
 - 162 162.0.208.88 Brain / build loop / AI services / AppFlowy / n8n root [source: core/STATE/RESOURCE_INVENTORY.md - 2026-06-17T22:59:57Z]
@@ -24,5 +17,10 @@
 - Telegram bot (main) `@sunheartbrain_bot` Live, server-side on 162 [source: core/STATE/RESOURCE_INVENTORY.md - 2026-06-17T22:59:57Z]
 
 ## Recent architecture decisions
-- **Downstream intent unlocked:** server 162 can queue focused activation repairs only for concrete merged-but-dead builds, closing the pre-d115 liveness gap. [source: docs/codex/HANDOFF.md - 2026-06-18T22:02:26Z]
+- **Downstream intent unlocked:** Ember can enable `CURATOR_CONTEXT_ROUTING=1` for one live reversible bot proof and compare shorter prompt context against answer quality before making routing default. [source: docs/codex/HANDOFF.md - 2026-06-22T10:10:28Z]
+- **Downstream intent unlocked:** Ember can run the live proof cycle: send one harmless Telegram correction, confirm a row lands in `brain_index.corrections` or Supabase REST, and confirm the next bot turn recalls the corrected topic while... [source: docs/codex/HANDOFF.md - 2026-06-22T10:10:28Z]
+- **Intent solved:** chat synthesis can skip irrelevant heavy context injection for ops/status and treasury turns instead of carrying all blocks on every question. [source: docs/codex/HANDOFF.md - 2026-06-22T10:10:28Z]
+
+## Active measurements
+- Ops ledger tail has 11 failures in last 80 rows [source: /opt/fpai-build/ops_ledger.jsonl - 2026-06-22T10:05:01Z]
 - ... bounded

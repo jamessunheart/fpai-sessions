@@ -167,6 +167,67 @@ run_liveness_probe() {
 
 "$PY" "$REPO/tools/build_loop/seed_orphaned_specs.py" --repo "$REPO" || true
 
+# ── BACKLOG MERGE PASS ─────────────────────────────────────────────────────────
+# Specs built before the auto-merge directive (2026-06-18) sit at build_status=
+# 'changes' or 'built' with valid branches — never merged. Drain them 3/run so
+# they don't flood one timer cycle. Same auto-merge policy as new builds.
+MERGE_BACKLOG_MAX="${MERGE_BACKLOG_MAX:-3}"
+BACKLOG_MERGED=0
+BACKLOG_JSON=$(cd "$BRAIN" && "$PY" -c "
+import psycopg, os, json
+url = os.environ.get('BRAIN_INDEX_DB_URL','')
+if not url: exit()
+with psycopg.connect(url) as conn:
+    rows = conn.execute(\"\"\"
+        SELECT id, build_branch FROM brain_index.decisions
+        WHERE status='answered'
+          AND build_status IN ('changes','built')
+          AND build_branch IS NOT NULL AND build_branch <> ''
+          AND build_status <> 'merged'
+        ORDER BY id
+    \"\"\").fetchall()
+    for r in rows:
+        print(json.dumps({'id': r[0], 'branch': r[1]}))
+" 2>/dev/null || true)
+
+while IFS= read -r bline; do
+  [ -z "$bline" ] && continue
+  [ "$BACKLOG_MERGED" -ge "$MERGE_BACKLOG_MAX" ] && { echo "backlog merge cap reached ($BACKLOG_MERGED/$MERGE_BACKLOG_MAX) — next run continues"; break; }
+  BDID=$(printf '%s' "$bline"  | "$PY" -c 'import sys,json;print(json.load(sys.stdin)["id"])')
+  BBR=$(printf '%s' "$bline"  | "$PY" -c 'import sys,json;print(json.load(sys.stdin)["branch"])')
+  # Skip if branch doesn't exist in repo
+  git -C "$REPO" rev-parse --verify "$BBR" >/dev/null 2>&1 || { echo "backlog: branch $BBR gone, skipping $BDID"; continue; }
+  echo "── backlog merge $BDID ($BBR) ──"
+  git -C "$REPO" config user.email ember@fpai >/dev/null 2>&1; git -C "$REPO" config user.name Ember >/dev/null 2>&1
+  git -C "$REPO" checkout "$BASE" >/dev/null 2>&1
+  PRE_SHA=$(git -C "$REPO" rev-parse HEAD)
+  BMERGED=0
+  if git -C "$REPO" merge --no-edit "$BBR" >/dev/null 2>&1; then BMERGED=1
+  else
+    BU=$(git -C "$REPO" diff --name-only --diff-filter=U)
+    if [ -n "$BU" ] && ! echo "$BU" | grep -qvE '^(core/BUILD/REGISTRY\.json|docs/codex/HANDOFF\.md|.*/__init__\.py)$'; then
+      for f in $BU; do git -C "$REPO" checkout --ours "$f" >/dev/null 2>&1; done
+      git -C "$REPO" add -A && git -C "$REPO" commit --no-edit >/dev/null 2>&1 && BMERGED=1
+    else
+      git -C "$REPO" merge --abort >/dev/null 2>&1
+      echo "backlog: $BDID has real conflict — skip"
+    fi
+  fi
+  if [ "$BMERGED" = 1 ]; then
+    if ! "$PY" -c "import sys; sys.path.insert(0,'$BRAIN'); import curator, curator.decisions" >/dev/null 2>&1; then
+      git -C "$REPO" reset --hard "$PRE_SHA" >/dev/null 2>&1
+      tg "🔴 BACKLOG REVERT [$BDID] — import check failed. Branch $BBR held." 2>/dev/null || true
+      echo "backlog: $BDID import check failed, reverted"
+    else
+      dec mark-merged "$BDID" >/dev/null 2>&1 || true
+      BACKLOG_MERGED=$((BACKLOG_MERGED+1))
+      python3 "$REPO/tools/build_loop/ops_log.py" merge backlog-merged "$BDID ($BBR)" "\$0" "$BBR" "" 2>/dev/null || true
+      echo "backlog: merged $BDID"
+    fi
+  fi
+done <<< "$BACKLOG_JSON"
+[ "$BACKLOG_MERGED" -gt 0 ] && echo "backlog pass: merged $BACKLOG_MERGED specs"
+
 PENDING=$(dec pending-builds | grep -E '^\{' || true)
 [ -z "$PENDING" ] && { echo "no decisions awaiting a build"; exit 0; }
 [ "$DRY" = "--dry-run" ] && { echo "PENDING BUILDS:"; printf '%s\n' "$PENDING"; exit 0; }
