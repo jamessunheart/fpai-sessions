@@ -1,0 +1,10 @@
+[Unit]
+Description=Run FPAI brain_index backup daily
+
+[Timer]
+OnCalendar=*-*-* 03:00:00 UTC
+Unit=fpai-brain-backup.service
+Persistent=true
+
+[Install]
+WantedBy=timers.target

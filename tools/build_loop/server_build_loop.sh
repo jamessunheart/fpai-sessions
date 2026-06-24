@@ -28,8 +28,12 @@ DRY="${1:-}"
 [ "$DRY" = "--dry-run" ] && { echo "DRY RUN — no changes will be made"; }
 
 # env: bot env (DB + telegram creds) + claude OAuth token (for the $0 review)
+# Explicit export ensures subshells (Python) inherit these even when source fails mid-file
 ENVFILE=$(systemctl show sh-brain-tgbot -p EnvironmentFiles 2>/dev/null | sed -E 's/EnvironmentFiles=//; s/ .*//')
 set -a; . "$ENVFILE" 2>/dev/null; . /root/.config/fpai/claude.env 2>/dev/null; set +a
+# Belt-and-suspenders: explicitly export DB URL so psycopg subshells see it
+# (curator.env has a multi-word value that breaks mid-file source in some bash versions)
+[ -z "${BRAIN_INDEX_DB_URL:-}" ] && export BRAIN_INDEX_DB_URL=$(grep "^BRAIN_INDEX_DB_URL=" /etc/sh-brain/curator.env | cut -d= -f2-)
 export PATH="/root/.local/bin:$PATH"
 mkdir -p "$WT_BASE"
 

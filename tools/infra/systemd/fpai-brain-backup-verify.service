@@ -1,0 +1,15 @@
+[Unit]
+Description=Verify FPAI brain_index backup archive
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/sh-brain/curator.env
+WorkingDirectory=/opt/fpai-build/FPAI_Cockpit
+ExecStart=/opt/fpai-build/FPAI_Cockpit/tools/infra/verify_backup.sh
+StandardOutput=journal
+StandardError=journal
+TimeoutStartSec=10min
+Nice=10
+IOSchedulingClass=idle
