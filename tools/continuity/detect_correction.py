@@ -157,8 +157,7 @@ def capture_prompt_if_correction(
     if not detect_correction_signal(james_prompt).matched:
         return None
     original_response = latest_claude_assistant_turn(conn)
-    if not original_response.strip():
-        return None
+    # Write even without a paired Ember turn — unpaired corrections are still signal
     capture = CorrectionCapture(
         conversation_id=conversation_id or "unknown",
         original_response=original_response,
