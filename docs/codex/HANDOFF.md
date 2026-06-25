@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-25 · SPEC_d051_horizon-scanner-agent · branch `build/SPEC_d051_horizon-scanner-agent`
+
+- **Status:** done in working tree / awaiting fresh closeout review + merge review
+- **Files changed:** `tools/horizon/__init__.py`; `tools/horizon/scanner.py`; `tools/horizon/horizon_config.json`; `tools/horizon/test_scanner.py`; `core/BUILD/cron/fpai-horizon-scanner.service`; `core/BUILD/cron/fpai-horizon-scanner.timer`; `core/BUILD/activate/SPEC_d051_horizon-scanner-agent.sh`; `SERVICES/sunheart-brain/curator/jobs/digest.py`; `core/BUILD/specs/SPEC_d051_horizon-scanner-agent.md`; `core/BUILD/results/SPEC_d051_horizon-scanner-agent.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the Horizon Scanner Agent. It reads recent `brain_index` life/buildstream/interaction streams when a DSN is available, reads ops-ledger and registry state, detects threshold signals, cross-correlates low energy with build load, composes one max-three-sentence Telegram surface through Claude or deterministic fallback, appends an ops-ledger `horizon_scan` row on every non-disabled scan, and sends Telegram only when `signal=yes`. Morning digest now adds `⚡ Scanner flagged:` for last-24h signal rows. This closeout pass added the missing registry row, aligned the timer with the spec's `06/6` cadence, and added the required post-merge activation script.
+- **Tests:** `python3 -B -m unittest tools.horizon.test_scanner`; `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/horizon/scanner.py tools/horizon/test_scanner.py SERVICES/sunheart-brain/curator/jobs/digest.py`; `python3 -m json.tool tools/horizon/horizon_config.json`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `bash -n core/BUILD/activate/SPEC_d051_horizon-scanner-agent.sh`; disabled/no-send scanner smoke; `git diff --check`
+- **Independent review:** earlier d051 implementation review approved the scanner. Fresh review of the closeout delta was attempted with local Claude CLI, but this sandbox returned `API Error: Unable to connect to API (ConnectionRefused)`. Rerun independent review on the live/writable host before merge if the merge gate requires current review coverage.
+- **Risks:** Live `brain_index` schema, live `claude -p`, real Telegram send, and timer activation were not exercised in this sandbox. Live signal quality still depends on d045 life-event fields being populated consistently. The systemd and activation files are repo artifacts only until Ember installs them.
+- **Rollback:** revert the listed files. If installed later, disable/remove `fpai-horizon-scanner.timer` and `fpai-horizon-scanner.service`, then run `systemctl daemon-reload`. Runtime pause is `HORIZON_DISABLE=1` or `/opt/fpai-build/.horizon_disabled`.
+- **Intent solved:** d045 life data and build/interaction signals can surface predictive pattern warnings before James has to notice them manually.
+- **Downstream intent unlocked:** Life Data Intake can become an early-warning layer instead of another inbox, while Horizon stays silent unless thresholds cross.
+- **Questions for Ember/James:** after merge on server 162, run one disabled proof and one `--no-send --no-claude` smoke with live `OPS_LEDGER`, then enable the timer only after confirming the ledger row shape and digest section.
+
 ### 2026-06-19 · SPEC_d124_spec-d124-chat-context-routing-s · branch `build/SPEC_d124_spec-d124-chat-context-routing-s`
 
 - **Status:** done in working tree / awaiting merge review

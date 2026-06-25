@@ -2,7 +2,7 @@
 Description=Run FPAI Horizon Scanner every 6 hours
 
 [Timer]
-OnCalendar=*-*-* 00/6:00:00 UTC
+OnCalendar=*-*-* 06/6:00:00 UTC
 Persistent=true
 Unit=fpai-horizon-scanner.service
 

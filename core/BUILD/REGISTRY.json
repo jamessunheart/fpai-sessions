@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-19T22:11:44Z",
+    "updated_at": "2026-06-25T00:00:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d051_horizon-scanner-agent",
+            "slug": "SPEC_d051_horizon-scanner-agent",
+            "branch": "build/SPEC_d051_horizon-scanner-agent",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d051_horizon-scanner-agent.md",
+            "tests_passed": true,
+            "notes": "d051 complete in working tree: added Horizon Scanner with threshold detection across life events, decisions/buildstream, ops ledger, interactions, and probe sessions; cross-signal energy/build-load surfacing; max-three-sentence Claude/fallback Telegram composition; ops-ledger horizon_scan rows on every non-disabled run; digest surfacing of last-24h signal=yes rows; review-only systemd timer/service plus activation script. Focused tests, py_compile, config/registry JSON validation, activation shell syntax, disabled/no-send smoke, and diff hygiene passed. No live brain_index scan, Claude CLI call, Telegram send, timer install, deploy, push, merge, outreach, secrets, or money movement."
+        },
         {
             "id": "SPEC_d124_spec-d124-chat-context-routing-s",
             "slug": "SPEC_d124_spec-d124-chat-context-routing-s",
