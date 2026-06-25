@@ -207,6 +207,8 @@ def trigger_from_files(
         merged_since_last=merged,
         now=current,
         cooldown_hours=_read_bot_cooldown(),
+        idle_hours=_read_bot_idle(),
+        merge_threshold=_read_bot_merge_threshold(),
     )
 
 
@@ -433,51 +435,92 @@ def stringify_time(value: Any) -> str:
 
 
 _BOT_COOLDOWN_FILE = Path("/opt/fpai-build/.diagnostic_bot_cooldown_hours")
+_BOT_IDLE_FILE = Path("/opt/fpai-build/.diagnostic_bot_idle_hours")
+_BOT_MERGE_FILE = Path("/opt/fpai-build/.diagnostic_bot_merge_threshold")
 _MIN_COOLDOWN = 1.0
 _MAX_COOLDOWN = 24.0
 
 
+def _parse_hours(text: str, pattern_hints: list[str]) -> float | None:
+    import re
+    for hint in pattern_hints:
+        m = re.search(hint + r"\D{0,10}(\d+(?:\.\d+)?)\s*h", text.lower())
+        if m:
+            return float(m.group(1))
+    m = re.search(r"every\s+(\d+(?:\.\d+)?)\s*h", text.lower())
+    if m:
+        return float(m.group(1))
+    m = re.search(r"(\d+(?:\.\d+)?)\s*hour", text.lower())
+    if m:
+        return float(m.group(1))
+    return None
+
+
 def _apply_bot_frequency_suggestion(bot_lines: list[str]) -> None:
-    """Parse bot's frequency suggestion and persist it as the next cooldown."""
+    """Parse bot's self-tuning suggestions and persist them."""
     import re
     text = " ".join(bot_lines).lower()
-    match = re.search(r"every\s+(\d+(?:\.\d+)?)\s*h", text)
-    if not match:
-        match = re.search(r"(\d+(?:\.\d+)?)\s*hour", text)
-    if not match:
-        return
-    hours = float(match.group(1))
-    hours = max(_MIN_COOLDOWN, min(_MAX_COOLDOWN, hours))
-    _BOT_COOLDOWN_FILE.write_text(f"{hours}\n")
+
+    # cooldown: how often to chat
+    h = _parse_hours(text, ["chat", "diagnostic", "every", "frequency"])
+    if h is not None:
+        _BOT_COOLDOWN_FILE.write_text(f"{max(_MIN_COOLDOWN, min(_MAX_COOLDOWN, h))}\n")
+
+    # idle: how long queue should be empty before triggering
+    m = re.search(r"idle.{0,20}(\d+(?:\.\d+)?)\s*h", text)
+    if m:
+        idle = float(m.group(1))
+        _BOT_IDLE_FILE.write_text(f"{max(0.5, min(12.0, idle))}\n")
+
+    # merge threshold: how many merges before triggering
+    m = re.search(r"(\d+)\s*(?:merge|build|spec)", text)
+    if m:
+        threshold = int(m.group(1))
+        _BOT_MERGE_FILE.write_text(f"{max(3, min(50, threshold))}\n")
 
 
 def _read_bot_cooldown() -> float:
-    """Return bot-negotiated cooldown hours, or default 6.0."""
     try:
         return float(_BOT_COOLDOWN_FILE.read_text().strip())
     except Exception:
         return 6.0
 
 
+def _read_bot_idle() -> float:
+    try:
+        return float(_BOT_IDLE_FILE.read_text().strip())
+    except Exception:
+        return 4.0
+
+
+def _read_bot_merge_threshold() -> int:
+    try:
+        return int(_BOT_MERGE_FILE.read_text().strip())
+    except Exception:
+        return 15
+
+
 def ask_bot_for_its_own_questions(send_func: Any, read_messages_func: Any, audit_id: str) -> list[str]:
-    """Ask the Telegram bot what it thinks should be asked — two-way learning."""
+    """Ask the Telegram bot to set its own diagnostic schedule and questions."""
     try:
         since = utc_now()
         send_func(
-            f"[diagnostic {audit_id}] Two questions:\n"
-            "1. What questions should I ask you to find your biggest gaps? (1-3 short questions)\n"
-            "2. How often should these diagnostic chats happen to help you improve fastest? "
-            "Reply with your suggested frequency (e.g. every 2h, every 4h) and why."
+            f"[diagnostic {audit_id}] Self-tune check — answer honestly:\n"
+            "1. What questions should I ask you next time to find your biggest gaps?\n"
+            "2. How often should these chats happen? (e.g. 'every 2h')\n"
+            "3. After how many builds should a chat trigger? (e.g. '10 merges')\n"
+            "4. How long should the queue be empty before triggering? (e.g. 'idle 2h')\n"
+            "Reply plainly — I will parse your numbers directly."
         )
         import time as _time
-        _time.sleep(15)
+        _time.sleep(20)
         messages = read_messages_func(since)
         bot_msgs = bot_turns(messages)
         if not bot_msgs:
             return []
         text = str(bot_msgs[-1].get("text") or "")
         lines = [l.strip() for l in text.splitlines() if len(l.strip()) > 10]
-        return lines[:5]
+        return lines[:6]
     except Exception:
         return []
 
