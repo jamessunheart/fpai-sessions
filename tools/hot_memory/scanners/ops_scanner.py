@@ -35,7 +35,19 @@ def collect(repo_root: Path = REPO_ROOT, ops_ledger: Path = DEFAULT_OPS_LEDGER):
         detail = " ".join(str(part) for part in (last.get("event"), last.get("loop"), last.get("detail"), last.get("reason")) if part)
         if detail:
             facts.append(fact(f"Latest ops ledger event: {detail}", str(ops_ledger), file_date(ops_ledger), weight=6, category="ops"))
-    return compact_facts(facts, limit=10)
+        # Surface latest awareness reliability score — key metric, was invisible in HOT_STATE
+        probe_rows = [r for r in reversed(rows) if r.get("event") == "awareness_reliability_probe"]
+        if probe_rows:
+            p = probe_rows[0]
+            pct = round(p.get("reliability", 0) * 100, 1)
+            successes = p.get("successes", "?")
+            total = p.get("total", "?")
+            ts = (p.get("ts") or "")[:16]
+            facts.append(fact(
+                f"Awareness reliability score: {pct}% ({successes}/{total} probes passing) as of {ts}",
+                str(ops_ledger), file_date(ops_ledger), weight=9, category="ops",
+            ))
+    return compact_facts(facts, limit=12)
 
 
 def _resource_inventory_facts(repo_root: Path):
