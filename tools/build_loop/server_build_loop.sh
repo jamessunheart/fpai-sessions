@@ -52,8 +52,8 @@ CDATE="$TODAY"; CNUM=0
 [ "$CDATE" != "$TODAY" ] && { CDATE="$TODAY"; CNUM=0; }
 CONSECUTIVE_REVERTS=0
 
-tg()  { cd "$BRAIN" && "$PY" -c "import asyncio,sys;from curator.telegram import send;asyncio.run(send(sys.argv[1]))" "$1" 2>/dev/null || true; }
-dec() { cd "$BRAIN" && "$PY" -m curator.decisions "$@" 2>/dev/null; }
+tg()  { ( cd "$BRAIN" && "$PY" -c "import asyncio,sys;from curator.telegram import send;asyncio.run(send(sys.argv[1]))" "$1" 2>/dev/null ) || true; }
+dec() { ( cd "$BRAIN" && "$PY" -m curator.decisions "$@" 2>/dev/null ); }
 
 review_file_for_branch() {
   local branch="$1"
@@ -178,22 +178,28 @@ run_liveness_probe() {
 # they don't flood one timer cycle. Same auto-merge policy as new builds.
 MERGE_BACKLOG_MAX="${MERGE_BACKLOG_MAX:-3}"
 BACKLOG_MERGED=0
-BACKLOG_JSON=$(cd "$BRAIN" && "$PY" -c "
+# Also drain worktrees: branches checked out in linked worktrees that are ready to merge
+WORKTREE_BRANCHES=$(git -C "$REPO" worktree list --porcelain 2>/dev/null | grep "branch refs/heads/build/" | sed 's|branch refs/heads/||')
+BACKLOG_JSON=$("$PY" -c "
 import psycopg, os, json
 url = os.environ.get('BRAIN_INDEX_DB_URL','')
 if not url: exit()
 with psycopg.connect(url) as conn:
-    rows = conn.execute(\"\"\"
+    rows = conn.execute('''
         SELECT id, build_branch FROM brain_index.decisions
-        WHERE status='answered'
-          AND build_status IN ('changes','built')
-          AND build_branch IS NOT NULL AND build_branch <> ''
-          AND build_status <> 'merged'
+        WHERE status=%s AND build_status = ANY(%s)
+        AND build_branch IS NOT NULL AND build_branch != %s
         ORDER BY id
-    \"\"\").fetchall()
+    ''', ('answered', ['changes','built'], '')).fetchall()
     for r in rows:
         print(json.dumps({'id': r[0], 'branch': r[1]}))
 " 2>/dev/null || true)
+# Add worktree branches not already in DB backlog
+for WBR in $WORKTREE_BRANCHES; do
+  echo "$BACKLOG_JSON" | grep -q "\"$WBR\"" || \
+    BACKLOG_JSON="${BACKLOG_JSON}
+$(printf '{"id":"%s","branch":"%s"}' "$(basename "$WBR" | grep -oE 'd[0-9]+'|head -1)" "$WBR")"
+done
 
 while IFS= read -r bline; do
   [ -z "$bline" ] && continue
