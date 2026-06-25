@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
         {
+            "id": "SPEC_d125_build-claude-code-corrections-ca",
+            "slug": "SPEC_d125_build-claude-code-corrections-ca",
+            "branch": "build/SPEC_d125_build-claude-code-corrections-ca",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d125_build-claude-code-corrections-ca.md",
+            "tests_passed": true,
+            "notes": "d125 complete in working tree: added a non-blocking Claude Code UserPromptSubmit hook that reads CLAUDE_USER_PROMPT or hook JSON stdin, detects d125 correction phrases plus existing Telegram correction shapes, reads the latest claude_code assistant/Ember turn from brain_index.thread, and appends to brain_index.corrections with bot_turn_id NULL. Wired the hook into .claude/settings.json. Focused unit tests, py_compile, hook shell syntax, settings/registry JSON validation, hook non-blocking smokes, and diff hygiene passed. No live Postgres write, deploy, push, merge, outreach, secrets, or money movement."
+        },
+        {
             "id": "SPEC_d051_horizon-scanner-agent",
             "slug": "SPEC_d051_horizon-scanner-agent",
             "branch": "build/SPEC_d051_horizon-scanner-agent",

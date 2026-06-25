@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-25 · SPEC_d125_build-claude-code-corrections-ca · branch `build/SPEC_d125_build-claude-code-corrections-ca`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `.claude/settings.json`; `tools/continuity/detect_correction.py`; `tools/continuity/detect_correction_hook.sh`; `tools/continuity/test_detect_correction.py`; `core/BUILD/specs/SPEC_d125_build-claude-code-corrections-ca.md`; `core/BUILD/results/SPEC_d125_build-claude-code-corrections-ca.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a Claude Code `UserPromptSubmit` correction capture hook. It reads James's current prompt from `$CLAUDE_USER_PROMPT` or Claude hook JSON stdin, detects d125 correction phrases plus the existing Telegram correction shapes, reads the latest `brain_index.thread` Claude Code assistant/Ember turn, and appends a correction pair to `brain_index.corrections` with `bot_turn_id=NULL`. The hook is silent/non-blocking and returns `0` on failures.
+- **Tests:** `python3 -B -m unittest tools.continuity.test_detect_correction` (5 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/continuity/detect_correction.py tools/continuity/test_detect_correction.py`; `bash -n tools/continuity/detect_correction_hook.sh`; `python3 -m json.tool .claude/settings.json`; `python3 -m json.tool core/BUILD/REGISTRY.json`; hook smoke for non-correction prompt (rc 0); hook smoke for correction-shaped prompt without live DB (rc 0); `git diff --check`
+- **Risks:** Live Postgres write was not exercised in this sandbox. The live proof still needs James/Ember to send one harmless Claude Code correction after merge and confirm `SELECT COUNT(*) FROM brain_index.corrections` increases. The hook accepts both `assistant` and current `ember` thread roles because repo artifacts disagree on that role name.
+- **Rollback:** remove `$CLAUDE_PROJECT_DIR/tools/continuity/detect_correction_hook.sh` from `.claude/settings.json`, then revert the d125 files. Runtime side effects are append-only correction rows; no service/timer is installed.
+- **Intent solved:** Claude Code corrections can feed `brain_index.corrections` instead of leaving James's primary surface invisible to the correction-learning loop.
+- **Downstream intent unlocked:** L2 learning/dataset export can learn from Claude Code corrections once the live Claude Code thread append gate is installed and one real proof row lands.
+- **Questions for Ember/James:** after merge on server 162/laptop, send one harmless Claude Code correction and verify `SELECT * FROM brain_index.corrections ORDER BY captured_at DESC LIMIT 5` shows the Claude Code row with `bot_turn_id` null.
+
 ### 2026-06-25 · SPEC_d063_north-star-mission-doc-sovereig · branch `build/SPEC_d063_north-star-mission-doc-sovereig`
 
 - **Status:** done in working tree / awaiting merge review
