@@ -293,7 +293,9 @@ app = FastAPI(
 )
 
 from ingest_routes import router as ingest_router
+from hermes_routes import router as hermes_router
 app.include_router(ingest_router)
+app.include_router(hermes_router)
 
 
 class EmbedRequest(BaseModel):

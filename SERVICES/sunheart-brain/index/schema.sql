@@ -136,6 +136,23 @@ CREATE TABLE IF NOT EXISTS tg_messages (
 CREATE INDEX IF NOT EXISTS tg_messages_chat_idx       ON tg_messages (chat_id, at DESC);
 CREATE INDEX IF NOT EXISTS tg_messages_unprocessed_idx ON tg_messages (chat_id, at) WHERE processed_at IS NULL AND NOT private_flag;
 
+-- Channel identity map.
+-- One universal user_id can connect to many platform-specific identities.
+CREATE TABLE IF NOT EXISTS user_channels (
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id             TEXT NOT NULL,
+    channel             TEXT NOT NULL,
+    channel_user_id     TEXT NOT NULL,
+    beacon_id           TEXT,
+    first_seen          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    last_seen           TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    permissions         JSONB NOT NULL DEFAULT '{"memory": true, "marketing": false, "human_followup": false}'::jsonb,
+    UNIQUE (channel, channel_user_id)
+);
+
+CREATE INDEX IF NOT EXISTS user_channels_user_idx ON user_channels (user_id);
+CREATE INDEX IF NOT EXISTS user_channels_last_seen_idx ON user_channels (last_seen DESC);
+
 -- Correction memory loop.
 -- Each row captures James correcting the previous bot turn. The Telegram bot
 -- injects the most recent correction pairs into future prompts so failures
