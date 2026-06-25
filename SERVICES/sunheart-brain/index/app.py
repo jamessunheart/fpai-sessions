@@ -64,6 +64,10 @@ TOKENS_FILE = Path(os.environ.get("BRAIN_INDEX_TOKENS_FILE", "/etc/sh-brain/inde
 NOMIC_DIM = 768
 OPENAI_DIM = 1536
 
+SUNHEART_ROOT = Path(__file__).resolve().parent.parent
+if str(SUNHEART_ROOT) not in sys.path:
+    sys.path.insert(0, str(SUNHEART_ROOT))
+
 
 # ---------------------------------------------------------------------------
 # DB lifecycle
@@ -359,6 +363,24 @@ async def healthz() -> dict:
         "ollama_model": OLLAMA_MODEL,
         "openai_enabled": bool(OPENAI_KEY),
     }
+
+
+@app.post("/stripe/webhook", include_in_schema=False)
+async def stripe_webhook(request: Request) -> dict:
+    """Stripe webhook receiver.
+
+    This route intentionally does not use brain-index bearer auth: Stripe's
+    signed payload is the gate, and the handler verifies it before any DB write.
+    """
+    from curator.billing.stripe_handler import WebhookVerificationError, handle_webhook
+
+    payload = await request.body()
+    sig = request.headers.get("stripe-signature", "")
+    try:
+        handle_webhook(payload, sig)
+    except WebhookVerificationError as exc:
+        raise HTTPException(400, "invalid Stripe webhook signature") from exc
+    return {"ok": True}
 
 
 @app.post("/embed", response_model=EmbedResponse, include_in_schema=False)
