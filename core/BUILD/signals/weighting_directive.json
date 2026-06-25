@@ -1,0 +1,16 @@
+{
+  "issued_at": "2026-06-18T20:26:26Z",
+  "pragmatist_input": "Trust signals that changed outcomes; prioritize weak task classes over applause.",
+  "rationale": "corrections and reversals remain high-weight because they expose concrete model error; approval is useful but discounted unless paired with downstream proof",
+  "skeptic_input": "Watch regressions and over-weighted approvals; reversals and corrections carry higher truth density.",
+  "status": "directive_ready",
+  "visionary_input": "Develop the model toward clearer routing, fewer James-decision leaks, and better engagement.",
+  "weighting": {
+    "approval": 0.8,
+    "correction": 1.5,
+    "council_verdict": 1.0,
+    "engagement": 1.3,
+    "merge_outcome": 1.2,
+    "reversal": 1.8
+  }
+}

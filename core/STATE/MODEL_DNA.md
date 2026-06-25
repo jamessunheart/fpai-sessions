@@ -2,14 +2,14 @@
 
 **What this is:** The canonical layer of the system's intelligence. Updated by the council after each learning cycle. Transfers on cell split. Separates what is universally true from what is James-specific.
 
-**Last updated:** 2026-06-18 — v0 seed (human-authored, council takes over from here)  
+**Last updated:** 2026-06-18 - d093 controller layer wired; council takes over after real learning cycles.
 **Next council review:** after first 100 learning signals accumulate
 
 ---
 
 ## What transfers on cell split (canonical)
 
-These are patterns that proved true independent of James's specific domain. A new instance inherits these as its starting posture — not as rules, but as a head start.
+These are patterns that proved true independent of James's specific domain. A new instance inherits these as its starting posture - not as rules, but as a head start.
 
 ### Routing heuristics
 
@@ -27,27 +27,33 @@ These are patterns that proved true independent of James's specific domain. A ne
 
 ### Conversation patterns that move people
 
-*(Populated from engagement signals — empty at v0, grows with use)*
+*(Populated from engagement signals - empty at v0, grows with use)*
 
 - **Opening move:** lead with the question the person is already asking themselves, not with the product
 - **Signal for readiness:** when someone replies with a question about how it works, they're ready to go deeper
-- **Signal for resistance:** short replies with hedging language — don't push, give space
+- **Signal for resistance:** short replies with hedging language - don't push, give space
 - **What doesn't work:** leading with features, leading with the AI angle before trust exists
 
 ### Quality signals that proved reliable
 
-*(Populated from correction + reversal signals — empty at v0)*
+*(Populated from correction + reversal signals - empty at v0)*
 
-- Signals weighted highest: James explicit correction > reversal > council BLOCK > engagement drop
-- Signals weighted lowest: time-of-day patterns, message length alone
+| Signal | Default weight | Reason |
+|---|---:|---|
+| correction | 1.5 | Direct evidence that the prior answer missed the target. |
+| reversal | 1.8 | Strong evidence of regression or unsafe confidence. |
+| engagement | 1.3 | Useful when tied to concrete participation outcomes. |
+| merge_outcome | 1.2 | Build proof that a pattern survived review. |
+| council_verdict | 1.0 | Advisory meta-signal for the next cycle. |
+| approval | 0.8 | Positive but weaker without outcome proof. |
 
 ### Council debate patterns that produced good outcomes
 
-*(Populated from model_directives — empty at v0)*
+*(Populated from model_directives - empty at v0)*
 
 - Three-lens structure (Pragmatist / Visionary / Skeptic) prevents echo chamber
 - Skeptic veto on any build that touches prod data or credentials
-- Visionary lens should not drive implementation details — only direction
+- Visionary lens should not drive implementation details - only direction
 
 ---
 
@@ -70,10 +76,10 @@ A new instance gets none of this. It starts fresh on the personal layer and buil
 
 When a new FPOS instance spawns, it receives:
 
-1. **This file (MODEL_DNA.md)** — the routing heuristics, conversation patterns, quality signals as of the split date
-2. **Fine-tuned canonical weights** — the base model after stripping personal-layer training data (canonical LoRA adapter only)
-3. **System architecture template** — how to build the loops, the council, the probe, the IMAP, the becoming engine
-4. **The meta-lesson** — how to develop an AI system that learns from use, guided by a council, without requiring constant human input
+1. **This file (MODEL_DNA.md)** - the routing heuristics, conversation patterns, quality signals as of the split date
+2. **Fine-tuned canonical weights** - the base model after stripping personal-layer training data (canonical LoRA adapter only)
+3. **System architecture template** - how to build the loops, the council, the probe, the IMAP, the becoming engine
+4. **The meta-lesson** - how to develop an AI system that learns from use, guided by a council, without requiring constant human input
 
 What the new instance does NOT get:
 - Any data about James
@@ -93,9 +99,17 @@ Each fine-tune cycle, the council runs a model review debate with four questions
 3. **Skeptic:** "What regressions appeared? Are we over-weighting any signal type? What would make this fine-tune harmful?"
 4. **Awareness:** "Is the system improving toward meaning or toward approval? Where is it gaming its own signals?"
 
-The council reads the latest PRIVATE-tier consciousness-observer log when present. Its output becomes a `weighting_directive` — which signal types to amplify or dampen in the next training corpus. This is how the model guides its own development, mediated by the council.
+The council reads the latest PRIVATE-tier consciousness-observer log when present. Its output becomes a `weighting_directive` - which signal types to amplify or dampen in the next training corpus. This is how the model guides its own development, mediated by the council.
 
-**The principle:** the model doesn't optimize for engagement metrics or approval. It optimizes for James's actual outcomes — decisions made faster, less attention spent, more proof shipped.
+**The principle:** the model doesn't optimize for engagement metrics or approval. It optimizes for James's actual outcomes - decisions made faster, less attention spent, more proof shipped.
+
+---
+
+## d093 Controller Wiring
+
+- Unified signal capture writes to `brain_index.learning_signals` when live DB access exists, or to a local JSONL proof ledger in build/test mode.
+- First fine-tune readiness now requires `LEARNING_ENABLED=1`, 100 learning signals, dataset/correction gates, a council directive, d073 benchmarks, `FINETUNE_APPROVED=1`, `HAS_GPU=1`, and RunPod monthly projection within $50.
+- Cell split export is gated by `CELL_SPLIT_APPROVED=1`, sanitizes source-instance references in the exported copy, and deletes the template if personal markers remain.
 
 ---
 
@@ -103,7 +117,8 @@ The council reads the latest PRIVATE-tier consciousness-observer log when presen
 
 | Version | Date | Signal count | Key change |
 |---|---|---|---|
-| v0 | 2026-06-18 | 0 | Seed — human-authored starting posture |
+| v0 | 2026-06-18 | 0 | Seed - human-authored starting posture |
+| v0.1 | 2026-06-18 | 0 | d093 controller/schema/directive/cell-split gates wired |
 
 | v20260618-awareness | 2026-06-18 | observer+council | Council model-review directive: After d109 ships, immediately queue a micro-fix for the 'cannot import name [personal] from curator' error — 65 silently-skipped self-diagnostics is a systemic blind spot that undermines every awareness score the system reports. (awareness-index unknown; amplify: platform_lock_risk, sovereign_efficiency, open_model_portability; dampen: vendor_api_proposals_without_fallback, single_provider_model_calls; source: council model-review; directive-key: 09aadeb8b65e) |
 | v20260618-awareness-2 | 2026-06-18 | observer+council | Council model-review directive: Weight toward throughput proof and self-audit restoration over new feature proposals until the spec backlog clears and council diagnostics run clean. (awareness-index unknown; amplify: throughput, self_audit, diagnostic_health; dampen: new_feature_proposals, complexity_additions; source: council model-review; directive-key: 1db81f954955) |
