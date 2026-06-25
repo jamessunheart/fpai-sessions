@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-25 · SPEC_d126_d126-public-chat-bot-isolated-fr · branch `build/SPEC_d126_d126-public-chat-bot-isolated-fr`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `tools/public_bot/__init__.py`; `tools/public_bot/bot.py`; `tools/public_bot/test_bot.py`; `SERVICES/sunheart-brain/index/schema.sql`; `core/BUILD/cron/fpai-public-bot.service`; `core/BUILD/activate/SPEC_d126_d126-public-chat-bot-isolated-fr.sh`; `core/BUILD/specs/SPEC_d126_d126-public-chat-bot-isolated-fr.md`; `core/BUILD/results/SPEC_d126_d126-public-chat-bot-isolated-fr.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added an isolated public Telegram long-poller for `@sunheartai_bot`. It greets new chats from canonical `core/STATE/OUTREACH_VOICE.md`, replies via `claude -p` with only the Sunheart outreach persona as system prompt, caps replies to 220 whitespace tokens, refuses private/internal probes, and logs only to new `brain_index.public_conversations`. It does not import curator modules or query private brain tables. `PUBLIC_BOT_DISABLE=1` stops all sends. Rate limiting is file-backed and reuses existing probe governor constants without calling the private DB-read governor path. Added reviewed `fpai-public-bot.service`; activation installs the unit but starts it only when `PUBLIC_BOT_ACTIVATE=1`.
+- **Tests:** `python3 -B -m unittest tools.public_bot.test_bot` (8 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/public_bot/bot.py tools/public_bot/test_bot.py`; `bash -n core/BUILD/activate/SPEC_d126_d126-public-chat-bot-isolated-fr.sh`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `git diff --check`
+- **Risks:** Live Telegram polling/sending, live `claude -p`, and live Postgres writes were not exercised in this sandbox. The token cap is whitespace-token based, not tokenizer-exact. Unit activation is intentionally gated so merge alone does not start public sends.
+- **Rollback:** set `PUBLIC_BOT_DISABLE=1` immediately. If activated, run `systemctl disable --now fpai-public-bot.service`, remove `/etc/systemd/system/fpai-public-bot.service`, and `systemctl daemon-reload`. Drop `brain_index.public_conversations` only if public chat logs should be removed.
+- **Intent solved:** strangers now have a repo-reviewed public chat entrypoint that is separate from James's private `@sunheartbrain_bot`.
+- **Downstream intent unlocked:** James can explicitly flip `@sunheartai_bot` live, then discovery/probe flows can route first conversations there without exposing private memory.
+- **Questions for Ember/James:** after merge on server 162, set/verify public bot token env, apply the schema, start with `PUBLIC_BOT_ACTIVATE=1`, send one harmless test DM, confirm no private/internal content appears, and verify `SELECT chat_id, role, text, ts FROM brain_index.public_conversations ORDER BY ts DESC LIMIT 5`.
+
 ### 2026-06-25 · SPEC_d125_build-claude-code-corrections-ca · branch `build/SPEC_d125_build-claude-code-corrections-ca`
 
 - **Status:** done in working tree / awaiting merge review

@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
         {
+            "id": "SPEC_d126_d126-public-chat-bot-isolated-fr",
+            "slug": "SPEC_d126_d126-public-chat-bot-isolated-fr",
+            "branch": "build/SPEC_d126_d126-public-chat-bot-isolated-fr",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d126_d126-public-chat-bot-isolated-fr.md",
+            "tests_passed": true,
+            "notes": "d126 complete in working tree: added isolated tools/public_bot Telegram long-poller for @sunheartai_bot with no curator imports or private brain table reads, canonical OUTREACH_VOICE greeting, claude -p persona-only replies capped to 220 whitespace tokens, PUBLIC_BOT_DISABLE no-send kill switch, file-backed per-chat/global rate limiting using existing probe governor constants without private DB reads, and additive brain_index.public_conversations schema. Systemd artifact plus activation script are included; activation installs the unit but starts it only with PUBLIC_BOT_ACTIVATE=1 so James still flips it live. Focused unittest, py_compile, activation shell syntax, registry JSON validation, and diff hygiene passed. No live Telegram send, live claude call, live DB write, deploy, push, merge, secrets, outreach, or money movement."
+        },
+        {
             "id": "SPEC_d125_build-claude-code-corrections-ca",
             "slug": "SPEC_d125_build-claude-code-corrections-ca",
             "branch": "build/SPEC_d125_build-claude-code-corrections-ca",
