@@ -16,5 +16,18 @@ if [[ -z "$PYTHON_BIN" ]]; then
 fi
 PYTHON_BIN="${PYTHON_BIN:-python3}"
 
-"$PYTHON_BIN" "$PROJECT_DIR/tools/continuity/detect_correction.py" >/dev/null 2>&1 || true
+# If DB env file is local, run directly. Otherwise relay via SSH to server 162.
+if [[ -f /etc/sh-brain/curator.env ]]; then
+  "$PYTHON_BIN" "$PROJECT_DIR/tools/continuity/detect_correction.py" >/dev/null 2>&1 || true
+else
+  # Laptop/remote surface: pipe stdin + env vars to server 162 where the DB lives
+  PROMPT="${CLAUDE_USER_PROMPT:-}"
+  SESSION="${CLAUDE_SESSION_ID:-unknown}"
+  if [[ -n "$PROMPT" ]]; then
+    ssh -o BatchMode=yes -o ConnectTimeout=3 root@162.0.208.88 \
+      "CLAUDE_USER_PROMPT=$(printf '%q' "$PROMPT") CLAUDE_SESSION_ID=$(printf '%q' "$SESSION") \
+       /opt/sh-brain-src/.venv/bin/python3 /opt/fpai-build/FPAI_Cockpit/tools/continuity/detect_correction.py" \
+      >/dev/null 2>&1 || true
+  fi
+fi
 exit 0
