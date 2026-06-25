@@ -21,3 +21,12 @@ python3 -B -m tools.agent_benchmark_intelligence.engine \
 ```
 
 The ledger path is `core/BUILD/signals/agent_scoring_ledger.jsonl`. Rows are one agent per run, schema `agent-scoring-ledger.v1`, and remain advisory until James/Ember approves a placement change.
+
+## North Star Mission Target
+
+The concrete d057 benchmark target lives at `docs/codex/NORTH_STAR_MISSION.json`.
+It defines the sovereign benchmark as whole-chain proof: signal -> routing ->
+bounded spec -> repo build -> tests -> independent AI review -> merge-gate
+readiness -> returned learning. d057 can score agents and models against that
+mission target alongside the `core/STATE/NORTH_STAR.md` efficiency targets, but
+the scoring remains advisory and cannot auto-change routing authority.
