@@ -636,17 +636,31 @@ def run_claude_prompt(prompt: str, timeout: int = 120) -> str:
 
 
 def queue_build(spec: dict[str, Any]) -> bool:
-    if not shutil.which("dec"):
+    """Queue a spec directly into brain_index.decisions (needs_build=true, answered)."""
+    import asyncio, uuid
+    dsn = os.environ.get("BRAIN_INDEX_DB_URL") or os.environ.get("DATABASE_URL") or os.environ.get("DB_URL")
+    if not dsn:
         return False
-    result = subprocess.run(
-        ["dec", "queue-build", spec["title"], spec["spec"]],
-        check=False,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-        text=True,
-        timeout=30,
-    )
-    return result.returncode == 0
+    try:
+        import psycopg  # type: ignore
+        with psycopg.connect(dsn, connect_timeout=3) as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    INSERT INTO brain_index.decisions
+                        (id, question, answer, status, needs_build, spec_written, build_spec, created_at)
+                    VALUES (%s, %s, %s, 'answered', true, true, %s, now())
+                    """,
+                    (
+                        str(uuid.uuid4()),
+                        spec.get("title", "diagnostic spec"),
+                        "build it — queued by self-diagnostic",
+                        json.dumps(spec),
+                    ),
+                )
+        return True
+    except Exception:
+        return False
 
 
 def log_ops(
