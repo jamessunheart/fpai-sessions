@@ -1,24 +1,70 @@
 #!/usr/bin/env bash
 # Append current session insights to brain_index.session_insights.
-# Non-blocking: failures are logged by the Python writer and never halt settle.
+# Auto-generates a minimal insight set from git + alignment if SESSION_INSIGHTS_FILE unset.
+# Non-blocking: failures never halt settle.
 set -u
 
 REPO_ROOT="${FPAI_REPO_ROOT:-/opt/fpai-build/FPAI_Cockpit}"
-PYTHON_BIN="${FPAI_PYTHON:-python3}"
+# Prefer the brain venv (has psycopg); fall back to system python3
+PYTHON_BIN="${FPAI_PYTHON:-}"
+if [[ -z "$PYTHON_BIN" ]]; then
+  for _candidate in /opt/sh-brain-src/.venv/bin/python3 /opt/sh-brain-src/.venv/bin/python python3; do
+    if command -v "$_candidate" &>/dev/null && "$_candidate" -c "import psycopg" &>/dev/null 2>&1; then
+      PYTHON_BIN="$_candidate"; break
+    fi
+  done
+  PYTHON_BIN="${PYTHON_BIN:-python3}"
+fi
 INSIGHTS_FILE="${SESSION_INSIGHTS_FILE:-}"
 SESSION_ID="${CLAUDE_SESSION_ID:-unknown}"
+
+# Ensure DB URL is available (curator.env has a syntax error mid-file that may cut source short)
+if [[ -z "${BRAIN_INDEX_DB_URL:-}" ]]; then
+  export BRAIN_INDEX_DB_URL
+  BRAIN_INDEX_DB_URL=$(grep "^BRAIN_INDEX_DB_URL=" /etc/sh-brain/curator.env 2>/dev/null | cut -d= -f2-)
+fi
+
+# Auto-generate minimal insight if no explicit file was provided
+if [[ -z "${INSIGHTS_FILE}" ]]; then
+  _TMP=$(mktemp /tmp/session_insights_XXXXXX.json)
+
+  # Recent commits this session (last 5)
+  _COMMITS=$(git -C "$REPO_ROOT" log --oneline -5 2>/dev/null | head -5 || echo "")
+  # Current top-3 from alignment block
+  _ALIGNMENT=""
+  _ALIGN_FILE="${REPO_ROOT}/identity/ALIGNMENT.md"
+  if [[ -f "$_ALIGN_FILE" ]]; then
+    _ALIGNMENT=$(grep -A6 "^TOP 3\|^## TOP" "$_ALIGN_FILE" 2>/dev/null | head -8 || echo "")
+  fi
+  _BODY="Commits: ${_COMMITS} | Alignment: ${_ALIGNMENT}"
+  _BODY="${_BODY:0:1000}"
+
+  # Write a single housekeeping insight so the hook is never a no-op
+  "${PYTHON_BIN}" -c "
+import json, sys
+data = [{
+    'insight_type': 'housekeeping',
+    'title': 'Auto-snapshot: session end',
+    'body': sys.argv[1],
+    'weight': 3
+}]
+print(json.dumps(data))
+" "$_BODY" > "$_TMP" 2>/dev/null || true
+
+  INSIGHTS_FILE="$_TMP"
+fi
 
 args=(
   "${REPO_ROOT}/tools/continuity/write_session_insights.py"
   --session-id "${SESSION_ID}"
   --source "${SESSION_SURFACE:-claude_code}"
+  --insights-file "${INSIGHTS_FILE}"
 )
 
-if [[ -n "${INSIGHTS_FILE}" ]]; then
-  args+=(--insights-file "${INSIGHTS_FILE}")
-fi
+"${PYTHON_BIN}" "${args[@]}" || { echo "[session-write-through] write failed (non-blocking)" >&2; }
 
-"${PYTHON_BIN}" "${args[@]}" || { echo "[session-write-through] write failed (non-blocking)" >&2; exit 0; }
+# Cleanup temp file if we created it
+[[ "${SESSION_INSIGHTS_FILE:-}" == "" && -f "${_TMP:-}" ]] && rm -f "$_TMP" 2>/dev/null || true
 
 "${PYTHON_BIN}" "${REPO_ROOT}/tools/awareness/reliability_probe.py" \
   --send-alert \
