@@ -5,8 +5,8 @@ Every autonomous loop writes ONE row here per action so the digest + bot report 
 reality (not journal-grep / self-talk). Append-only JSONL. Makes silent failure VISIBLE and
 gives the recursion a gradient. $0.
 
-  append:  ops_log.py <loop> <event> [detail] [cost] [artifact] [next_action]
-           events: ran · skipped · attempted · succeeded · failed · proposed · merged · reversed
+  append:  ops_log.py <loop> <event> [detail] [cost] [artifact] [next_action] [key=value...]
+           events: ran · skipped · attempted · succeeded · failed · proposed · merged · reversed · loop_run
            SURFACE: set env FPAI_SURFACE to tag which rung handled it (the descent-ladder instrument).
            values: terminal · phone-ssh · phone-claude · tg-trigger · system-proposed · auto-merge
                    (default 'auto-loop' = the autonomous server loop wrote it)
@@ -48,10 +48,36 @@ def append(argv):
         "next": argv[5] if len(argv) > 5 else "",
         "surface": os.environ.get("FPAI_SURFACE", "auto-loop"),
     }
+    row.update(_extra_fields(argv[6:]))
     os.makedirs(os.path.dirname(LEDGER), exist_ok=True)
     with open(LEDGER, "a") as f:
         f.write(json.dumps(row) + "\n")
     print("logged:", row["loop"], row["event"], "·", row["surface"])
+
+
+def _extra_fields(items):
+    out = {}
+    for item in items:
+        if "=" not in item:
+            continue
+        key, value = item.split("=", 1)
+        key = key.strip()
+        if not key:
+            continue
+        out[key] = _coerce(value)
+    return out
+
+
+def _coerce(value):
+    text = value.strip()
+    if text.lower() == "true":
+        return True
+    if text.lower() == "false":
+        return False
+    try:
+        return int(text)
+    except ValueError:
+        return text
 
 
 def _rows(hours=None):
