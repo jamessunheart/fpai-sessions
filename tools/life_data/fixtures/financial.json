@@ -1,0 +1,42 @@
+{
+  "accounts": [
+    {
+      "provider": "sample-bank",
+      "account_id": "checking-123456789",
+      "name": "Operating Checking",
+      "type": "cash",
+      "balance_usd": 842.11,
+      "available_usd": 812.11,
+      "currency": "USD",
+      "updated_at": "2026-06-16T08:00:00Z"
+    },
+    {
+      "provider": "sample-card",
+      "account_id": "card-987654321",
+      "name": "Credit Card",
+      "type": "liability",
+      "balance_usd": -1284.5,
+      "available_usd": null,
+      "currency": "USD",
+      "updated_at": "2026-06-16T08:00:00Z"
+    }
+  ],
+  "transactions": [
+    {
+      "id": "txn-001",
+      "account_id": "checking-123456789",
+      "posted_at": "2026-06-15T18:11:00Z",
+      "description": "Zen Village supply run",
+      "amount_usd": -126.44,
+      "category": "operations"
+    },
+    {
+      "id": "txn-002",
+      "account_id": "checking-123456789",
+      "posted_at": "2026-06-14T13:05:00Z",
+      "description": "Client payment",
+      "amount_usd": 2500.0,
+      "category": "revenue"
+    }
+  ]
+}

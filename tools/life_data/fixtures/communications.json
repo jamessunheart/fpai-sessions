@@ -1,0 +1,20 @@
+[
+  {
+    "id": "msg-001",
+    "channel": "email",
+    "from": "client@example.com",
+    "to": "james@example.com",
+    "subject": "Can we confirm today's session?",
+    "body": "Can you confirm the Zoom link and whether I should prepare numbers?",
+    "received_at": "2026-06-16T09:12:00Z"
+  },
+  {
+    "id": "msg-002",
+    "channel": "telegram",
+    "from": "+15555550123",
+    "to": "james",
+    "subject": "",
+    "body": "FYI the supply delivery landed at Zen Village.",
+    "received_at": "2026-06-16T10:30:00Z"
+  }
+]

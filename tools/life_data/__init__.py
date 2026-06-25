@@ -1,0 +1,2 @@
+"""Life data intake helpers."""
+

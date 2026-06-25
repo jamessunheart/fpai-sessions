@@ -1,0 +1,22 @@
+{
+  "events": [
+    {
+      "id": "cal-001",
+      "title": "Bottleneck Session",
+      "start": "2026-06-16T17:00:00Z",
+      "end": "2026-06-16T18:00:00Z",
+      "location": "Zoom",
+      "attendees": ["james@example.com", "client@example.com"],
+      "description": "Review the first diagnostic call."
+    },
+    {
+      "id": "cal-002",
+      "title": "Airport transfer",
+      "start": "2026-06-17T06:30:00Z",
+      "end": "2026-06-17T07:15:00Z",
+      "location": "San Jose",
+      "attendees": ["james@example.com"],
+      "description": "Travel buffer required."
+    }
+  ]
+}
