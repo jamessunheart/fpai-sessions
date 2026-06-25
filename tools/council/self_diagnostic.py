@@ -500,26 +500,39 @@ def _read_bot_merge_threshold() -> int:
         return 15
 
 
-def ask_bot_for_its_own_questions(send_func: Any, read_messages_func: Any, audit_id: str) -> list[str]:
-    """Ask the Telegram bot to set its own diagnostic schedule and questions."""
+def _ask_bot_directly(question: str) -> str:
+    """Call the bot's brain search + synthesis directly — no Telegram round-trip needed."""
+    import asyncio, sys
+    curator_root = "/opt/sh-brain-src"
     try:
-        since = utc_now()
-        send_func(
-            f"[diagnostic {audit_id}] Self-tune check — answer honestly:\n"
-            "1. What questions should I ask you next time to find your biggest gaps?\n"
-            "2. How often should these chats happen? (e.g. 'every 2h')\n"
-            "3. After how many builds should a chat trigger? (e.g. '10 merges')\n"
-            "4. How long should the queue be empty before triggering? (e.g. 'idle 2h')\n"
-            "Reply plainly — I will parse your numbers directly."
-        )
-        import time as _time
-        _time.sleep(20)
-        messages = read_messages_func(since)
-        bot_msgs = bot_turns(messages)
-        if not bot_msgs:
-            return []
-        text = str(bot_msgs[-1].get("text") or "")
-        lines = [l.strip() for l in text.splitlines() if len(l.strip()) > 10]
+        if curator_root not in sys.path:
+            sys.path.insert(0, curator_root)
+        from curator import tgbot  # type: ignore
+
+        async def _run() -> str:
+            hits = await tgbot._search_brain(question, k=5)
+            return await tgbot._synthesize_answer(question, hits)
+
+        return asyncio.run(_run())
+    except Exception as exc:
+        return f"(direct-call failed: {exc})"
+
+
+def ask_bot_for_its_own_questions(send_func: Any, read_messages_func: Any, audit_id: str) -> list[str]:
+    """Ask the bot directly (no Telegram round-trip) to self-tune its diagnostic schedule."""
+    question = (
+        "Self-tune check — answer honestly:\n"
+        "1. What questions should I ask you next time to find your biggest gaps?\n"
+        "2. How often should diagnostic chats happen? (e.g. 'every 2h')\n"
+        "3. After how many builds should a chat trigger? (e.g. '10 merges')\n"
+        "4. How long should the queue be empty before triggering? (e.g. 'idle 2h')\n"
+        "Reply plainly with numbers I can parse."
+    )
+    try:
+        answer = _ask_bot_directly(question)
+        # Also send the Q+A to Telegram so James can see it
+        send_func(f"[diagnostic {audit_id}] Bot self-tune Q:\n{question}\n\nBot answer:\n{answer}")
+        lines = [l.strip() for l in answer.splitlines() if len(l.strip()) > 10]
         return lines[:6]
     except Exception:
         return []
