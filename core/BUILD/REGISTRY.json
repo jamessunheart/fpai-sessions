@@ -697,6 +697,17 @@
       "notes": "d042 user profile seed built: idempotent user_profiles migration, profile seed/update/context/strength helpers, profile-authorized non-operator Telegram context path with James-brain search blocked, private non-owner logs, focused tests. d036 onboarding flow.py was not present in this checkout, so the exact step-5 call-site remains an integration follow-up."
     },
     {
+      "id": "SPEC_d044_capability-execution-v0-1-live-e",
+      "slug": "SPEC_d044_capability-execution-v0-1-live-e",
+      "branch": "build/SPEC_d044_capability-execution-v0-1-live-e",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d044_capability-execution-v0-1-live-e.md",
+      "tests_passed": true,
+      "notes": "d044 capability execution v0.1 complete: executor, web/email/calendar providers, idempotent capability_log migration with consent/calendar gate tables, consent/confirmation/timeout audit paths, reversible calendar undo, Telegram intent hooks, and focused tests. Independent re-review found no blockers."
+    },
+    {
       "id": "SPEC_d038_content-bank-v0-1-truth-asset-sc",
       "slug": "SPEC_d038_content-bank-v0-1-truth-asset-sc",
       "branch": "build/SPEC_d038_content-bank-v0-1-truth-asset-sc",
