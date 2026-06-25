@@ -260,26 +260,34 @@ def run_diagnostic_dialogue(
     seen_james: set[str] = set()
 
     for idx, question in enumerate(active_questions):
-        question_at = utc_now() if now is None else audit_start + timedelta(seconds=idx)
-        send(sender, question)
-        messages = poll_messages(
-            reader,
-            since=question_at,
-            timeout_seconds=response_timeout_seconds,
-            poll_interval_seconds=poll_interval_seconds,
-            sleep_func=sleeper,
-        )
-        new_james = unique_messages(james_turns(messages), seen_james)
-        james_messages.extend(new_james)
-        bot = first_unseen_bot_message(messages, seen_bot)
-        if bot:
-            answers.append({"question": question, "answer": str(bot.get("text") or ""), "at": stringify_time(bot.get("at"))})
-        if new_james and not any("continue" in str(m.get("text", "")).lower() for m in new_james):
-            break
+        # Ask the bot directly — no Telegram wait needed
+        bot_answer = _ask_bot_directly(question)
+        if bot_answer and not bot_answer.startswith("(direct-call failed"):
+            answers.append({"question": question, "answer": bot_answer, "at": stringify_time(utc_now())})
+            # Post Q+A to Telegram so James can see the exchange
+            send(sender, f"Q: {question}\n\nBot: {bot_answer[:400]}")
+        else:
+            # Fallback: send via Telegram and poll for reply
+            question_at = utc_now() if now is None else audit_start + timedelta(seconds=idx)
+            send(sender, question)
+            messages = poll_messages(
+                reader,
+                since=question_at,
+                timeout_seconds=response_timeout_seconds,
+                poll_interval_seconds=poll_interval_seconds,
+                sleep_func=sleeper,
+            )
+            new_james = unique_messages(james_turns(messages), seen_james)
+            james_messages.extend(new_james)
+            bot = first_unseen_bot_message(messages, seen_bot)
+            if bot:
+                answers.append({"question": question, "answer": str(bot.get("text") or ""), "at": stringify_time(bot.get("at"))})
+            if new_james and not any("continue" in str(m.get("text", "")).lower() for m in new_james):
+                break
         if idx < len(active_questions) - 1:
             sleeper(question_pause_seconds)
 
-    # Final read catches late answers or James redirects inside the full window.
+    # Final read catches late James redirects.
     final_messages = reader(audit_start)
     james_messages.extend(unique_messages(james_turns(final_messages), seen_james))
     for bot in bot_turns(final_messages):
