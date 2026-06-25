@@ -834,6 +834,7 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
             "  /log       — recent AI activity timeline\n"
             "  /pending — list pending queue items with approve buttons\n"
             "  /digest  — today's brain stats\n"
+            "  override dNNN: &lt;answer&gt; — reverse an auto-decided decision\n"
             "  /cohere  — run coherence council now (~30-60s)\n"
             "  /council — alias of /cohere\n"
             "  /capture — compress recent chat into a note now\n"
@@ -4325,6 +4326,16 @@ async def _handle_message(msg: dict) -> None:
         return
 
     # Plain text path — capture corrections, log inbound, answer, log outbound.
+    try:
+        from .decisions import handle_override_command
+
+        override_reply = await handle_override_command(text, conversation_id=str(chat_id))
+        if override_reply is not None:
+            await tg.send(override_reply)
+            return
+    except Exception as e:
+        log.warning("decision override skipped: %s", e)
+
     try:
         from .corrections import capture_if_correction
 
