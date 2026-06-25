@@ -690,9 +690,9 @@ def read_recent_corrections(*, limit: int = 20) -> list[dict[str, Any]]:
             with conn.cursor() as cur:
                 cur.execute(
                     """
-                    SELECT left(james_correction::text, 400), left(COALESCE(original_response::text, ''), 400), created_at
-                      FROM brain_index.corrections
-                     ORDER BY created_at DESC
+                    SELECT left(james_correction::text, 400), left(COALESCE(original_response::text, ''), 400), captured_at
+                      FROM corrections
+                     ORDER BY captured_at DESC
                      LIMIT %s
                     """,
                     (limit,),
@@ -715,7 +715,7 @@ def read_recent_thread(*, limit: int = 30) -> list[dict[str, Any]]:
                 cur.execute(
                     """
                     SELECT role::text, left(text::text, 300), at
-                      FROM brain_index.thread
+                      FROM thread
                      WHERE surface = 'claude_code'
                      ORDER BY at DESC
                      LIMIT %s
