@@ -40,6 +40,7 @@ from .models import (
 )
 from .connectors.stripe_connector import stripe_connector
 from .connectors.solana_connector import solana_connector
+from .payment_activation import activate_paid_checkout_session
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -535,6 +536,15 @@ async def stripe_webhook(request: Request, db: AsyncSession = Depends(get_db)):
         record = result.scalar_one_or_none()
 
         if record and record.status == IntentStatus.PENDING.value:
+            activation = await activate_paid_checkout_session(data)
+            if activation.skipped_reason:
+                logger.warning(
+                    "Stripe checkout activation incomplete for session %s: %s",
+                    session_id,
+                    activation.skipped_reason,
+                )
+                raise HTTPException(500, "Payment activation incomplete")
+
             # Auto-confirm
             record.status = IntentStatus.SETTLED.value
             record.settled_at = _utc_now()
@@ -635,7 +645,5 @@ async def get_qr_code(code: str):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=settings.SERVICE_PORT)
-
-
 
 
