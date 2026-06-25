@@ -103,7 +103,7 @@ def should_trigger_diagnostic(
     queue_empty_age_hours: float | None,
     merged_since_last: int,
     now: datetime | None = None,
-    cooldown_hours: float = 24.0,
+    cooldown_hours: float = 6.0,
     idle_hours: float = 4.0,
     merge_threshold: int = 15,
 ) -> TriggerDecision:
