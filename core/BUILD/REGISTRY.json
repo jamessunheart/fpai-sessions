@@ -708,6 +708,17 @@
       "notes": "d044 capability execution v0.1 complete: executor, web/email/calendar providers, idempotent capability_log migration with consent/calendar gate tables, consent/confirmation/timeout audit paths, reversible calendar undo, Telegram intent hooks, and focused tests. Independent re-review found no blockers."
     },
     {
+      "id": "SPEC_d046_tool-mastery-system-deep-learn-e",
+      "slug": "SPEC_d046_tool-mastery-system-deep-learn-e",
+      "branch": "build/SPEC_d046_tool-mastery-system-deep-learn-e",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d046_tool-mastery-system-deep-learn-e.md",
+      "tests_passed": true,
+      "notes": "d046 tool mastery system complete: seeded tool mastery cards for current tools, compact loader/injection, learn/refresh CLI, ai_review/debate wiring, model-update refresh hook, and focused tests."
+    },
+    {
       "id": "SPEC_d038_content-bank-v0-1-truth-asset-sc",
       "slug": "SPEC_d038_content-bank-v0-1-truth-asset-sc",
       "branch": "build/SPEC_d038_content-bank-v0-1-truth-asset-sc",
