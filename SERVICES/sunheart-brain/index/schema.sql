@@ -136,6 +136,22 @@ CREATE TABLE IF NOT EXISTS tg_messages (
 CREATE INDEX IF NOT EXISTS tg_messages_chat_idx       ON tg_messages (chat_id, at DESC);
 CREATE INDEX IF NOT EXISTS tg_messages_unprocessed_idx ON tg_messages (chat_id, at) WHERE processed_at IS NULL AND NOT private_flag;
 
+-- Public Sunheart AI conversations.
+-- This is the only brain_index table the isolated public @sunheartai_bot may
+-- read or write. It is intentionally separate from private tg_messages,
+-- thread/session memory, notes, HOT_STATE, and curator brain context.
+CREATE TABLE IF NOT EXISTS public_conversations (
+    id              BIGSERIAL PRIMARY KEY,
+    chat_id         TEXT NOT NULL,
+    role            TEXT NOT NULL,
+    text            TEXT NOT NULL,
+    ts              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CHECK (role IN ('user', 'assistant'))
+);
+
+CREATE INDEX IF NOT EXISTS public_conversations_chat_ts_idx
+    ON public_conversations (chat_id, ts DESC);
+
 -- Channel identity map.
 -- One universal user_id can connect to many platform-specific identities.
 CREATE TABLE IF NOT EXISTS user_channels (
