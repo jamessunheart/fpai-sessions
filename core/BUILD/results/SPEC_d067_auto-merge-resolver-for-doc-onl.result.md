@@ -1,0 +1,21 @@
+# SPEC_d067_auto-merge-resolver-for-doc-onl Result
+
+- Status: done
+- Branch: `build/SPEC_d067_auto-merge-resolver-for-doc-onl`
+- Files changed:
+  - `tools/forge/auto_merge.sh`
+  - `tools/forge/test_auto_merge.sh`
+  - `tools/build_loop/build_orchestrator.sh`
+  - `core/BUILD/specs/SPEC_d067_auto-merge-resolver-for-doc-onl.md`
+  - `core/BUILD/REGISTRY.json`
+  - `core/BUILD/results/SPEC_d067_auto-merge-resolver-for-doc-onl.result.md`
+  - `docs/codex/HANDOFF.md`
+- Summary: Added a conservative auto-merge resolver for doc-only approved branches. The resolver requires the build registry to mark the branch `status=done`, `ai_approved=true` or `ai_review.verdict=APPROVE`, and `risk=low`; diffs are checked from `origin/main...branch`; any `.py`, `.sh`, `.sql`, or `.env` path holds the merge and notifies James. Clean eligible branches run `git merge --no-edit`, mark the registry row merged, and append an ops-ledger event. The build orchestrator now writes independent-review metadata back to the registry and delegates its opt-in post-review auto-merge path to this resolver.
+- Tests:
+  - `bash tools/forge/test_auto_merge.sh`
+  - `bash -n tools/forge/auto_merge.sh tools/forge/test_auto_merge.sh tools/build_loop/build_orchestrator.sh`
+  - `python3 -m json.tool core/BUILD/REGISTRY.json`
+- Risks: This enables future automated local merges when the build loop opts in. It is deliberately limited to doc-only low-risk registry-approved branches; code-like files, non-low review risk, missing registry approval, dirty target checkout, conflicts, or missing refs all hold for James/Ember. This Codex run did not push or merge.
+- Rollback: Revert `tools/forge/auto_merge.sh`, `tools/forge/test_auto_merge.sh`, this result file, the d067 registry/spec/handoff entries, and the `tools/build_loop/build_orchestrator.sh` wiring. Immediate runtime rollback is to leave `BUILD_AUTO_MERGE=0` or unset it.
+- Intent solved: doc-only AI-approved builds can pass through a narrow resolver instead of requiring James to type the shell merge command.
+- Downstream intent unlocked: the build loop can prove d063-style doc-only branches landing with an ops-ledger auto-merge event while code/conflict cases still route to James.
