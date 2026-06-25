@@ -139,7 +139,7 @@ def should_trigger_diagnostic(
     last = parse_stamp(last_diagnostic_text)
     age_hours = None if last is None else (current - last).total_seconds() / 3600.0
     if age_hours is not None and age_hours < cooldown_hours:
-        return TriggerDecision(False, None, "48h cooldown active", age_hours, queue_empty_age_hours, merged_since_last)
+        return TriggerDecision(False, None, "cooldown active", age_hours, queue_empty_age_hours, merged_since_last)
 
     idle_due = queue_empty and queue_empty_age_hours is not None and queue_empty_age_hours >= idle_hours
     merge_due = merged_since_last >= merge_threshold
@@ -728,7 +728,21 @@ def read_recent_thread(*, limit: int = 30) -> list[dict[str, Any]]:
     return [{"role": row[0], "text": row[1], "at": stringify_time(row[2])} for row in rows]
 
 
+def _load_claude_token() -> None:
+    """Load CLAUDE_CODE_OAUTH_TOKEN from /root/.config/fpai/claude.env if not set."""
+    if os.environ.get("CLAUDE_CODE_OAUTH_TOKEN"):
+        return
+    env_file = Path("/root/.config/fpai/claude.env")
+    if not env_file.exists():
+        return
+    for line in env_file.read_text().splitlines():
+        if line.startswith("CLAUDE_CODE_OAUTH_TOKEN="):
+            os.environ["CLAUDE_CODE_OAUTH_TOKEN"] = line.split("=", 1)[1].strip()
+            break
+
+
 def main(argv: list[str] | None = None) -> int:
+    _load_claude_token()
     parser = argparse.ArgumentParser(description="Run the council self-diagnostic dialogue.")
     parser.add_argument("--trigger-name", action="store_true", help="print trigger name if a diagnostic is due")
     parser.add_argument("--queue-empty", choices=("0", "1"), default="0")
