@@ -240,6 +240,31 @@ while IFS= read -r bline; do
 done <<< "$BACKLOG_JSON"
 [ "$BACKLOG_MERGED" -gt 0 ] && echo "backlog pass: merged $BACKLOG_MERGED specs"
 
+# ── HEALTH PULSE ──────────────────────────────────────────────────────────────
+# Emit a structured summary every run so silent failures are visible.
+# "no decisions awaiting a build" with 0 merges + non-empty backlog = stall.
+_BACKLOG_TOTAL=$(echo "$BACKLOG_JSON" | grep -c '{' || echo 0)
+_WT_COUNT=$(git -C "$REPO" worktree list 2>/dev/null | grep -c "worktrees/" || echo 0)
+_PENDING_COUNT=$(dec pending-builds 2>/dev/null | grep -c '{' || echo 0)
+echo "loop-health: backlog_total=$_BACKLOG_TOTAL backlog_merged=$BACKLOG_MERGED worktrees=$_WT_COUNT pending_new=$_PENDING_COUNT"
+python3 "$REPO/tools/build_loop/ops_log.py" health "loop-pulse" \
+  "backlog_total=$_BACKLOG_TOTAL merged=$BACKLOG_MERGED worktrees=$_WT_COUNT pending_new=$_PENDING_COUNT" \
+  "\$0" "" "" 2>/dev/null || true
+
+# Alert if loop is running but producing nothing (silent stall detection)
+_STALL_FILE=/opt/fpai-build/.loop_zero_merge_streak
+if [ "$BACKLOG_MERGED" -eq 0 ] && [ "$_PENDING_COUNT" -eq 0 ] && [ "$_BACKLOG_TOTAL" -gt 0 ]; then
+  _STREAK=$(cat "$_STALL_FILE" 2>/dev/null || echo 0)
+  _STREAK=$((_STREAK + 1))
+  echo "$_STREAK" > "$_STALL_FILE"
+  if [ "$_STREAK" -ge 3 ]; then
+    tg "⚠️ BUILD LOOP STALL — $_STREAK consecutive runs with backlog=$_BACKLOG_TOTAL but 0 merges. Investigate." || true
+    echo "stall alert: $_STREAK consecutive zero-merge runs with non-empty backlog"
+  fi
+else
+  rm -f "$_STALL_FILE" 2>/dev/null || true
+fi
+
 PENDING=$(dec pending-builds | grep -E '^\{' || true)
 [ -z "$PENDING" ] && { echo "no decisions awaiting a build"; exit 0; }
 [ "$DRY" = "--dry-run" ] && { echo "PENDING BUILDS:"; printf '%s\n' "$PENDING"; exit 0; }
