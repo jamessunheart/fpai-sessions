@@ -19,6 +19,7 @@
 - `docs/blueprints/learning_loop.md`
 - `docs/blueprints/steward.md`
 - `tools/build_loop/run_codex.sh`
+- `tools/build_loop/server_build_loop.sh`
 - `tools/build_loop/build_orchestrator.sh`
 - `tools/council/debate.py`
 - `SERVICES/sunheart-brain/curator/corrections.py`
@@ -33,7 +34,7 @@ Added the living Module Blueprint system. Existing seed blueprints for Forge, Co
 
 Added `curator.blueprints` with `get`, `list`, `seed`, `update`, `update-after-build`, `correction`, `sharpen`, and `detect` CLI paths. The manager supports best-effort Claude regeneration after builds, correction appends to Known gaps, quality-standard proposals, module detection from paths/text, and `BLUEPRINTS_DISABLE=1`.
 
-Wired blueprint context into `run_codex.sh` before headless Codex receives a spec, into `tools/council/debate.py` before Claude debate prompts, into `build_orchestrator.sh` after an auto-merge, and into correction capture using both James's correction and the previous bot turn for module detection.
+Wired blueprint context into `run_codex.sh` before headless Codex receives a spec, into `tools/council/debate.py` before Claude debate prompts, into `server_build_loop.sh` after successful backlog and normal auto-merges, and into correction capture using both James's correction and the previous bot turn for module detection.
 
 ## Tests
 
@@ -43,7 +44,7 @@ Wired blueprint context into `run_codex.sh` before headless Codex receives a spe
 - `python3 -m curator.blueprints list`
 - `python3 -m curator.blueprints get beacon`
 - `python3 curator/blueprints/manager.py detect 'tools/beacon variant generator campaign'`
-- `bash -n tools/build_loop/run_codex.sh tools/build_loop/build_orchestrator.sh`
+- `bash -n tools/build_loop/run_codex.sh tools/build_loop/build_orchestrator.sh tools/build_loop/server_build_loop.sh`
 - `python3 -m json.tool core/BUILD/REGISTRY.json`
 - `git diff --check -- curator docs/blueprints tools/build_loop tools/council/debate.py SERVICES/sunheart-brain/curator/corrections.py SERVICES/sunheart-brain/curator/test_corrections.py core/BUILD/REGISTRY.json core/BUILD/specs/SPEC_d050_module-blueprint-system-living-c.md`
 
@@ -55,6 +56,8 @@ Completed by subagent. Findings:
 2. Correction blueprint routing only inspected correction text and ignored previous bot context. Fixed by detecting the module from previous bot text plus correction text, with regression test.
 
 No remaining blocker was reported after fixes. Residual risk: live post-merge blueprint regeneration was not exercised against real `claude -p`, git commit behavior, or server-162 build-loop state in this sandbox.
+
+Follow-up 2026-06-25: added the missing `server_build_loop.sh` post-merge hook and registry row. A local `claude -p --effort high` review attempt for this follow-up delta timed out after 90 seconds with no output, so this small delta still needs a successful independent reviewer pass before claiming the full review gate.
 
 ## Risks
 
