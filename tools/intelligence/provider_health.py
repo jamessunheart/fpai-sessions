@@ -49,7 +49,7 @@ def check_provider_health() -> dict[str, Any]:
     claude_bin = shutil.which("claude") or str(Path.home() / ".local" / "bin" / "claude")
     codex_bin = shutil.which("codex") or str(Path.home() / ".local" / "bin" / "codex")
 
-    claude, claude_reason = _probe([claude_bin, "-p", "--max-tokens", "1"], stdin="ping", timeout=20)
+    claude, claude_reason = _probe([claude_bin, "-p"], stdin="ping", timeout=20)
     codex, codex_reason = _probe([codex_bin, "--version"], timeout=10)
     ollama, ollama_reason = _probe(["curl", "-sS", "--max-time", "5", "http://localhost:11434/api/tags"], timeout=8)
     result: dict[str, Any] = {
