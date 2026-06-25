@@ -26,6 +26,7 @@
 # Full spec: .claude/hooks/specs/sessionend-auto-settle.md
 
 set -u
+: "${HOME:=/root}"  # systemd/cron have no HOME — default so set -u does not crash
 
 # ── Kill switch (master) ─────────────────────────────────────────────
 if [ "${EMBER_AUTOSETTLE_DISABLE:-0}" = "1" ]; then
