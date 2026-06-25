@@ -178,6 +178,15 @@ class BlueprintManagerTests(unittest.TestCase):
         self.assertIn("Existing module blueprint (build against this standard)", content)
         self.assertIn("curator/blueprints/manager.py", content)
 
+    def test_server_build_loop_updates_blueprint_after_merge(self) -> None:
+        script = manager.REPO_ROOT / "tools" / "build_loop" / "server_build_loop.sh"
+        content = script.read_text(encoding="utf-8")
+        self.assertIn("update_blueprint_after_merge", content)
+        self.assertIn('update-after-build "$did" "$branch"', content)
+        self.assertIn('update_blueprint_after_merge "$DID" "$BR"', content)
+        self.assertIn('update_blueprint_after_merge "$BDID" "$BBR"', content)
+        self.assertIn("BLUEPRINTS_DISABLE", content)
+
     def test_council_prompt_includes_relevant_blueprint_wiring(self) -> None:
         script = manager.REPO_ROOT / "tools" / "council" / "debate.py"
         content = script.read_text(encoding="utf-8")

@@ -664,6 +664,17 @@
       "notes": "d052 public Cora Nation story-feed target built: d026 now has an optional curated text-only public summary target with privacy filter, raw decision/spec id stripping, credential/correction rejection, treasury figure and wallet redaction, public kill switch, CLI flags, ledger row, and focused tests. No live Telegram channel creation or public posting in sandbox."
     },
     {
+      "id": "SPEC_d050_module-blueprint-system-living-c",
+      "slug": "SPEC_d050_module-blueprint-system-living-c",
+      "branch": "build/SPEC_d050_module-blueprint-system-living-c",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d050_module-blueprint-system-living-c.md",
+      "tests_passed": true,
+      "notes": "d050 complete: added living module blueprints, curator.blueprints manager/CLI, seeded required blueprint docs, Codex spec blueprint context, council blueprint prompt context, correction-to-known-gap updates, and server build-loop post-merge blueprint updates. Focused blueprint/correction/council tests, py_compile, shell syntax, CLI smokes, registry JSON validation, and diff hygiene passed. No live Claude regeneration, Telegram approval send, deploy, push, merge, outreach, secrets, or money movement."
+    },
+    {
       "id": "SPEC_d049_system-smoke-tests-prove-pipelin",
       "slug": "SPEC_d049_system-smoke-tests-prove-pipelin",
       "branch": "build/SPEC_d049_system-smoke-tests-prove-pipelin",

@@ -170,6 +170,13 @@ run_liveness_probe() {
   return 0
 }
 
+update_blueprint_after_merge() {
+  local did="$1"
+  local branch="$2"
+  [ "${BLUEPRINTS_DISABLE:-0}" = "1" ] && return 0
+  python3 "$REPO/curator/blueprints/manager.py" update-after-build "$did" "$branch" >/dev/null 2>&1 || true
+}
+
 "$PY" "$REPO/tools/build_loop/seed_orphaned_specs.py" --repo "$REPO" || true
 
 # ── BACKLOG MERGE PASS ─────────────────────────────────────────────────────────
@@ -232,6 +239,7 @@ while IFS= read -r bline; do
       echo "backlog: $BDID import check failed, reverted"
     else
       dec mark-merged "$BDID" >/dev/null 2>&1 || true
+      update_blueprint_after_merge "$BDID" "$BBR"
       BACKLOG_MERGED=$((BACKLOG_MERGED+1))
       python3 "$REPO/tools/build_loop/ops_log.py" merge backlog-merged "$BDID ($BBR)" "\$0" "$BBR" "" 2>/dev/null || true
       echo "backlog: merged $BDID"
@@ -391,6 +399,7 @@ Register in core/BUILD/REGISTRY.json. Tests required. Do NOT push or merge.
         fi
       else
         dec mark-merged "$DID" >/dev/null 2>&1 || true
+        update_blueprint_after_merge "$DID" "$BR"
         CONSECUTIVE_REVERTS=0  # clean merge resets the revert streak
       fi
     fi
