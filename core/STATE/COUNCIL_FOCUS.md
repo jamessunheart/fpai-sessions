@@ -21,5 +21,12 @@ Weight every council proposal + build toward REDUCING extraction-dependence. The
 - Subscription-first ($0 marginal via claude -p / codex), NEVER metered APIs for loops.
 - Each build closes one extraction surface OR proves a $0 path. Measure cost-per-useful-PROOF, not per-token.
 
+## North Star weight directive
+
+Primary weight directive: `core/STATE/NORTH_STAR.md` defines what counts as winning.
+Council JSON should cite `NORTH_STAR.md` when weighing sovereign benchmark relevance, d057 proof output, or any build that claims capital, hardware, latency, or extraction-efficiency improvement.
+
+The unified memory directive remains active alongside the North Star: preserve the shared memory/proof loop so benchmark results, corrections, and council learning return upward as routing intelligence instead of becoming isolated reports.
+
 ## Deliverable
 Propose ONE concrete build that measurably reduces a named extraction surface (with its before/after $ or dependence delta). Smallest safe slice first. The end state: the system advances + serves James without billed sessions — and eventually on owned compute + open models.

@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-25 · SPEC_d063_north-star-mission-doc-sovereig · branch `build/SPEC_d063_north-star-mission-doc-sovereig`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed this closeout:** `core/STATE/COUNCIL_FOCUS.md`; `docs/codex/HANDOFF.md`
+- **Summary:** Re-verified the existing d063 North Star implementation and repaired drift in `COUNCIL_FOCUS.md`: it now again cites `core/STATE/NORTH_STAR.md` as the primary weight directive, requires council JSON to cite `NORTH_STAR.md` for sovereign benchmark relevance, and keeps the unified memory directive active alongside it. Existing d057 wiring still emits the `north_star` report block with target IDs and criteria.
+- **Tests:** `python3 -B -m unittest tools.agent_benchmark_intelligence.test_north_star tools.agent_benchmark_intelligence.test_engine` (11 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/agent_benchmark_intelligence/engine.py tools/agent_benchmark_intelligence/test_north_star.py`; `python3 -m json.tool core/BUILD/REGISTRY.json`; `python3 -B -m tools.agent_benchmark_intelligence.engine --output /tmp/d063-agent-benchmark.json --json`; `git diff --check`
+- **Risks:** This closeout is doc/state repair only. The earlier independent AI review approved the d063 branch, but this sandbox did not rerun a fresh review over the uncommitted closeout delta. No deploy, push, merge, external API call with effect, secrets, outreach, or money movement occurred.
+- **Rollback:** revert the closeout edits in `core/STATE/COUNCIL_FOCUS.md` and this handoff entry. Full d063 rollback remains reverting `core/STATE/NORTH_STAR.md`, the d057 `north_star` mapping/tests/docs, d063 registry/spec/result artifacts, and related handoff notes.
+- **Intent solved:** council focus again points at the machine-readable North Star benchmark target instead of silently dropping the primary weight directive.
+- **Downstream intent unlocked:** next council debate JSON can cite `NORTH_STAR.md`; d057 benchmark output can continue mapping measured runs to the defined sovereign efficiency targets.
+- **Questions for Ember/James:** run merge-gate review from a writable host so the final AI review includes this 2026-06-25 closeout delta.
+
 ### 2026-06-25 · SPEC_d051_horizon-scanner-agent · branch `build/SPEC_d051_horizon-scanner-agent`
 
 - **Status:** done in working tree / awaiting fresh closeout review + merge review
