@@ -14,6 +14,7 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 from collections import Counter
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
@@ -24,6 +25,8 @@ from tools.inventory.scan_resources import DEFAULT_OUTPUT as DEFAULT_RESOURCE_IN
 from tools.inventory.scan_resources import read_inventory_context
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO_ROOT))
+from tools.intelligence.model_router import call_model
 DEFAULT_OPS_LEDGER = Path(os.environ.get("OPS_LEDGER", "/opt/fpai-build/ops_ledger.jsonl"))
 DEFAULT_LAST_AUDIT = Path(os.environ.get("SELF_AUDIT_LAST_FILE", "/opt/fpai-build/.last_audit_date"))
 DEFAULT_MERGED_COUNTER = Path(os.environ.get("SELF_AUDIT_MERGED_COUNTER", "/opt/fpai-build/.merged_since_audit"))
@@ -307,20 +310,7 @@ def build_prompt(context: dict[str, Any]) -> str:
 
 
 def run_claude_prompt(prompt: str, timeout: int = 90) -> str:
-    claude = shutil.which("claude")
-    if not claude:
-        raise RuntimeError("claude CLI not found")
-    result = subprocess.run(
-        [claude, "-p", prompt],
-        check=False,
-        text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        timeout=timeout,
-    )
-    if result.returncode != 0:
-        raise RuntimeError(result.stderr.strip() or f"claude exited {result.returncode}")
-    return result.stdout
+    return call_model(prompt, task_type="audit")["response"]
 
 
 def run_self_audit(
