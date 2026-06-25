@@ -36,6 +36,32 @@ QUESTIONS = [
     "Q2: What have you been corrected on most? Where do you keep getting it wrong?",
     "Q3: What capability do you most wish you had right now that you do not have?",
 ]
+
+
+def generate_questions_from_failures(corrections: list[dict], max_q: int = 3) -> list[str]:
+    """Generate diagnostic questions from recent corrections instead of hardcoded ones."""
+    if not corrections:
+        return QUESTIONS
+    correction_texts = [c.get("correction", "") for c in corrections[:10] if c.get("correction")]
+    if not correction_texts:
+        return QUESTIONS
+    topics = "\n".join(f"- {t[:120]}" for t in correction_texts)
+    prompt = (
+        f"You are improving an AI self-diagnostic. These are recent corrections James made to the bot:\n{topics}\n\n"
+        "Write exactly 3 short diagnostic questions the bot should answer to surface what it's still getting wrong. "
+        "Each question starts with Q1:, Q2:, Q3:. Be specific to the failure patterns above. "
+        "Return only the 3 questions, one per line."
+    )
+    try:
+        import subprocess, shutil
+        claude = shutil.which("claude") or str(Path.home() / ".local" / "bin" / "claude")
+        r = subprocess.run([claude, "-p", prompt], capture_output=True, text=True, timeout=60, stdin=subprocess.DEVNULL)
+        lines = [l.strip() for l in r.stdout.strip().splitlines() if l.strip().startswith("Q")]
+        if len(lines) >= 2:
+            return lines[:max_q]
+    except Exception:
+        pass
+    return QUESTIONS
 MAX_SPECS = 3
 TITLE_LIMIT = 100
 
@@ -218,6 +244,11 @@ def run_diagnostic_dialogue(
     sleeper = sleep_func or sleep
 
     write_diagnostic_context(context_file=context_file, audit_id=audit_id, expires_at=audit_start + timedelta(minutes=8))
+
+    # Generate questions from recent corrections — bot shapes its own diagnostic
+    ctx = json.loads(DEFAULT_CONTEXT_FILE.read_text(encoding="utf-8")) if DEFAULT_CONTEXT_FILE.exists() else {}
+    active_questions = generate_questions_from_failures(ctx.get("recent_corrections", []))
+
     send(sender, f"System self-diagnostic [{audit_id}]. I am going to ask the bot 3 questions to find gaps.")
 
     answers: list[dict[str, Any]] = []
@@ -225,7 +256,7 @@ def run_diagnostic_dialogue(
     seen_bot: set[str] = set()
     seen_james: set[str] = set()
 
-    for idx, question in enumerate(QUESTIONS):
+    for idx, question in enumerate(active_questions):
         question_at = utc_now() if now is None else audit_start + timedelta(seconds=idx)
         send(sender, question)
         messages = poll_messages(
@@ -242,20 +273,20 @@ def run_diagnostic_dialogue(
             answers.append({"question": question, "answer": str(bot.get("text") or ""), "at": stringify_time(bot.get("at"))})
         if new_james and not any("continue" in str(m.get("text", "")).lower() for m in new_james):
             break
-        if idx < len(QUESTIONS) - 1:
+        if idx < len(active_questions) - 1:
             sleeper(question_pause_seconds)
 
     # Final read catches late answers or James redirects inside the full window.
     final_messages = reader(audit_start)
     james_messages.extend(unique_messages(james_turns(final_messages), seen_james))
     for bot in bot_turns(final_messages):
-        if len(answers) >= len(QUESTIONS):
+        if len(answers) >= len(active_questions):
             break
         key = message_key(bot)
         if key in seen_bot:
             continue
         seen_bot.add(key)
-        answers.append({"question": QUESTIONS[min(len(answers), len(QUESTIONS) - 1)], "answer": str(bot.get("text") or ""), "at": stringify_time(bot.get("at"))})
+        answers.append({"question": active_questions[min(len(answers), len(active_questions) - 1)], "answer": str(bot.get("text") or ""), "at": stringify_time(bot.get("at"))})
 
     prompt = build_synthesis_prompt(audit_id=audit_id, answers=answers[:3], james_messages=james_messages)
     try:
