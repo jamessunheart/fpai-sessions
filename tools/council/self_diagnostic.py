@@ -625,11 +625,33 @@ def validate_specs(items: list[Any]) -> list[dict[str, Any]]:
 
 
 def run_claude_prompt(prompt: str, timeout: int = 120) -> str:
+    """Run synthesis prompt. Tries claude -p directly first (token from env), falls back to model_router."""
+    claude_bin = shutil.which("claude") or str(Path.home() / ".local" / "bin" / "claude")
+    token = os.environ.get("CLAUDE_CODE_OAUTH_TOKEN", "")
+    if not token:
+        token_file = Path("/root/.config/fpai/claude.env")
+        if token_file.exists():
+            for line in token_file.read_text().splitlines():
+                if line.startswith("CLAUDE_CODE_OAUTH_TOKEN="):
+                    token = line.split("=", 1)[1].strip()
+                    break
+    env = {**os.environ}
+    if token:
+        env["CLAUDE_CODE_OAUTH_TOKEN"] = token
+    try:
+        result = subprocess.run(
+            [claude_bin, "-p", prompt],
+            capture_output=True, text=True, timeout=timeout,
+            stdin=subprocess.DEVNULL, env=env,
+        )
+        if result.returncode == 0 and result.stdout.strip():
+            return result.stdout.strip()
+    except Exception:
+        pass
+    # Fallback: model_router (ollama)
     try:
         from tools.intelligence.model_router import call_model
     except Exception:
-        import sys
-
         sys.path.insert(0, str(REPO_ROOT))
         from tools.intelligence.model_router import call_model
     return call_model(prompt, task_type="council")["response"]
