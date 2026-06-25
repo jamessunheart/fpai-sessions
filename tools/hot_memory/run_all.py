@@ -21,7 +21,7 @@ def run_all(
 ) -> dict[str, object]:
     results: dict[str, object] = {"ok": True, "scanners": {}}
     runners: list[tuple[str, Callable[[], list[object]]]] = [
-        ("spec", lambda: spec_scanner.collect(repo_root)),
+        ("spec", lambda: spec_scanner.collect(repo_root, db_url)),
         ("identity", lambda: identity_scanner.collect(repo_root)),
         ("ops", lambda: ops_scanner.collect(repo_root, ops_ledger)),
         ("decision", lambda: decision_scanner.collect(repo_root, db_url)),
