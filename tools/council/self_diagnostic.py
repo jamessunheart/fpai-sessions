@@ -714,9 +714,8 @@ def read_recent_thread(*, limit: int = 30) -> list[dict[str, Any]]:
             with conn.cursor() as cur:
                 cur.execute(
                     """
-                    SELECT role::text, left(text::text, 300), at
+                    SELECT surface::text, role::text, left(text::text, 300), at
                       FROM thread
-                     WHERE surface = 'claude_code'
                      ORDER BY at DESC
                      LIMIT %s
                     """,
@@ -725,7 +724,7 @@ def read_recent_thread(*, limit: int = 30) -> list[dict[str, Any]]:
                 rows = cur.fetchall()
     except Exception:
         return []
-    return [{"role": row[0], "text": row[1], "at": stringify_time(row[2])} for row in rows]
+    return [{"surface": row[0], "role": row[1], "text": row[2], "at": stringify_time(row[3])} for row in rows]
 
 
 def _load_claude_token() -> None:
