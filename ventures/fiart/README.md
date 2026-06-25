@@ -7,6 +7,7 @@ Money-inspired art that teaches monetary literacy and bridges into real-world ca
 ## Files (read in this order)
 1. **`CODEX_v0.2.md`** — ★★ the consolidated source-of-truth (James 2026-06-25): definition, doctrine, taxonomy, Truth Panel spec, vouch system, messaging rules, build priorities, builder prompt. Start here.
 2. **`LEGAL_DOCTRINE.md`** — ★ "The People v. Fi-art" mock-trial compliance doctrine: 12 counts → operative fixes, the 6-layer separation defense, per-note label law, gap-map vs live site.
+2b. **`LEGAL_STRUCTURE.md`** — ★ entity stack: Church/Trust/LLC/PMA/Partners, what each cave holds, donation≠purchase, no-inurement, "the Truth Panel governs rights, not the entity label."
 3. **`SITE_SPEC.md`** — canonical build doc (28 sections): site structure, pages, roles, flows, data model, contracts, admin, MVP, acceptance criteria.
 4. **`SPEC.md`** — concept north-star: value loop, note types, creator tiers, Truth Panel, reserve/vouch stack, mantras.
 5. **`CREDITS_AND_MUTUAL_CREDIT.md`** — maps the FPAI mutual-credit substrate (CORA, Trust Index, Sunheart Reserve, live credits gateway) into Fi-art's credit/vouch/reserve layer.
