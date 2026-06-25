@@ -103,7 +103,7 @@ def should_trigger_diagnostic(
     queue_empty_age_hours: float | None,
     merged_since_last: int,
     now: datetime | None = None,
-    cooldown_hours: float = 48.0,
+    cooldown_hours: float = 24.0,
     idle_hours: float = 4.0,
     merge_threshold: int = 15,
 ) -> TriggerDecision:
@@ -538,6 +538,8 @@ def build_diagnostic_context(*, audit_id: str, expires_at: datetime) -> dict[str
         "last_50_tg_messages": read_recent_tg_messages(limit=50),
         "not_now_decisions": read_not_now_decisions(limit=15),
         "rejected_builds": read_rejected_builds(limit=15),
+        "recent_corrections": read_recent_corrections(limit=20),
+        "recent_thread": read_recent_thread(limit=30),
     }
 
 
@@ -610,6 +612,55 @@ def read_rejected_builds(*, limit: int = 15) -> list[dict[str, Any]]:
         if len(rejected) >= limit:
             break
     return rejected
+
+
+def read_recent_corrections(*, limit: int = 20) -> list[dict[str, Any]]:
+    """Pull recent James corrections — primary signal for self-improvement specs."""
+    dsn = os.environ.get("BRAIN_INDEX_DB_URL") or os.environ.get("DATABASE_URL") or os.environ.get("DB_URL")
+    if not dsn:
+        return []
+    try:
+        import psycopg  # type: ignore
+        with psycopg.connect(dsn, connect_timeout=3) as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    SELECT left(james_correction::text, 400), left(COALESCE(original_response::text, ''), 400), created_at
+                      FROM brain_index.corrections
+                     ORDER BY created_at DESC
+                     LIMIT %s
+                    """,
+                    (limit,),
+                )
+                rows = cur.fetchall()
+    except Exception:
+        return []
+    return [{"correction": row[0], "original": row[1], "at": stringify_time(row[2])} for row in rows]
+
+
+def read_recent_thread(*, limit: int = 30) -> list[dict[str, Any]]:
+    """Pull recent Claude Code conversation turns for gap analysis."""
+    dsn = os.environ.get("BRAIN_INDEX_DB_URL") or os.environ.get("DATABASE_URL") or os.environ.get("DB_URL")
+    if not dsn:
+        return []
+    try:
+        import psycopg  # type: ignore
+        with psycopg.connect(dsn, connect_timeout=3) as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    SELECT role::text, left(text::text, 300), at
+                      FROM brain_index.thread
+                     WHERE surface = 'claude_code'
+                     ORDER BY at DESC
+                     LIMIT %s
+                    """,
+                    (limit,),
+                )
+                rows = cur.fetchall()
+    except Exception:
+        return []
+    return [{"role": row[0], "text": row[1], "at": stringify_time(row[2])} for row in rows]
 
 
 def main(argv: list[str] | None = None) -> int:
