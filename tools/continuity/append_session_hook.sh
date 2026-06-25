@@ -71,4 +71,9 @@ args=(
   --source after-write \
   --threshold 0.95 \
   || echo "[session-write-through] awareness reliability probe failed (non-blocking)" >&2
+
+# Sync live identity files to repo mirror (keeps HOT_STATE scanner current)
+# Copy only — no auto-commit; identity changes land in regular session commits
+bash "${REPO_ROOT}/tools/sync_identity_to_repo.sh" 2>/dev/null || true
+
 exit 0

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import re
 from pathlib import Path
 
@@ -17,11 +18,39 @@ KEY_FILES = (
     "core/STATE/identity/STORY.md",
 )
 
+# Live memory paths (prefer newer file when both exist)
+_LIVE_MEMORY_CANDIDATES = [
+    Path.home() / ".claude/projects/-opt-fpai-build-FPAI_Cockpit/memory/identity",
+    Path.home() / ".claude/projects/-opt-fpai-build-FPAI-Cockpit/memory/identity",
+    Path.home() / ".claude/projects/-Users-jamessunheart-FPAI-Cockpit/memory/identity",
+]
+
+
+def _live_identity_dir() -> Path | None:
+    for p in _LIVE_MEMORY_CANDIDATES:
+        if p.is_dir():
+            return p
+    return None
+
+
+def _best_path(repo_root: Path, rel: str) -> Path:
+    """Return the newest copy of an identity file between live memory and repo mirror."""
+    repo_path = repo_root / rel
+    live_dir = _live_identity_dir()
+    if live_dir and "identity/" in rel:
+        filename = Path(rel).name
+        live_path = live_dir / filename
+        if live_path.exists():
+            repo_mtime = repo_path.stat().st_mtime if repo_path.exists() else 0
+            if live_path.stat().st_mtime > repo_mtime:
+                return live_path
+    return repo_path
+
 
 def collect(repo_root: Path = REPO_ROOT):
     facts = []
     for rel in KEY_FILES:
-        path = repo_root / rel
+        path = _best_path(repo_root, rel)
         if not path.exists():
             continue
         text = path.read_text(encoding="utf-8", errors="ignore")

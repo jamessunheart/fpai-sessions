@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 from typing import Callable
 
@@ -49,7 +50,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--repo-root", type=Path, default=REPO_ROOT)
     parser.add_argument("--hot-dir", type=Path, default=DEFAULT_HOT_DIR)
     parser.add_argument("--ops-ledger", type=Path, default=DEFAULT_OPS_LEDGER)
-    parser.add_argument("--db-url", default="")
+    parser.add_argument("--db-url", default=os.environ.get("BRAIN_INDEX_DB_URL", os.environ.get("DATABASE_URL", "")))
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args(argv)
     result = run_all(repo_root=args.repo_root, hot_dir=args.hot_dir, ops_ledger=args.ops_ledger, db_url=args.db_url)

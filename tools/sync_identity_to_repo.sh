@@ -8,13 +8,22 @@
 
 set -e
 
-PRIMARY="$HOME/.claude/projects/-Users-jamessunheart-FPAI-Cockpit/memory/identity"
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 MIRROR="$REPO_ROOT/core/STATE/identity"
 
-if [ ! -d "$PRIMARY" ]; then
-  echo "❌ Primary identity dir not found: $PRIMARY" >&2
-  echo "   This is the runtime source of truth Claude Code reads each session."
+# Find the primary identity dir — try repo-local path first, then laptop path
+for _candidate in \
+    "$HOME/.claude/projects/-opt-fpai-build-FPAI_Cockpit/memory/identity" \
+    "$HOME/.claude/projects/-opt-fpai-build-FPAI-Cockpit/memory/identity" \
+    "$HOME/.claude/projects/-Users-jamessunheart-FPAI-Cockpit/memory/identity"; do
+  if [ -d "$_candidate" ]; then
+    PRIMARY="$_candidate"
+    break
+  fi
+done
+
+if [ -z "${PRIMARY:-}" ] || [ ! -d "$PRIMARY" ]; then
+  echo "❌ Primary identity dir not found (tried laptop + 162 paths)" >&2
   exit 1
 fi
 

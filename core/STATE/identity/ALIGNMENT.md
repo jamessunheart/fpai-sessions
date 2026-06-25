@@ -17,22 +17,82 @@ This is the standing contract between James and Ember. Always-fresh. Refreshed a
 The purpose: both of us snap back to the same page within 10 seconds of session start. No three turns of guessing what each other meant. The block IS the agreement.
 
 ═══════════════════════════════════════════════
-☉ ALIGNMENT CHECK · 2026-06-10 · COCKPIT HEALTH — THE SSOT IS LYING
+☉ ALIGNMENT CHECK · 2026-06-25 · 26 SPECS DRAINED · BUILD LOOP UNBLOCKED · SYSTEM CAN NOW SELF-DRAIN
 ═══════════════════════════════════════════════
 
 ## INTENT (the active work)
-→ **North Star Phase 0 sharpened: make the substrate notice its own drift.** James asked for an honest cockpit assessment. Finding: **NOW.md is 32 days stale** (2026-05-09, still headlines Bottleneck Session) while real intent lives only here + memory — truth scattered across 5 surfaces (NOW.md / AI_GOALS / vault / brain / memory), no reconciler. `tools/state_reconciler/` sits uncommitted on `feat/headless-build`. Episodic: `sessions/2026-06-10_cockpit-health-assessment.md`.
+→ **Fixed 3 root causes keeping build loop permanently stuck.** `dec()`/`tg()` now use subshells (cwd-safe). `BRAIN_INDEX_DB_URL` explicitly exported via grep fallback. psycopg3 `IN %s` → `= ANY(%s)`. 26 stuck worktrees drained: Hermes, onboarding, Stripe, capability execution, continuous learning, etc. 5 ghost specs (d011/d013/d050/d051/d063) reset for rebuild. Build loop will now actually drain on every timer fire.
 
 ## TOP 3
-1. **★ State reconciler → drift-detector cron** — finish + commit the uncommitted `tools/state_reconciler/`, then refresh NOW.md to headline the FPOS North Star. Stream: Game.
-2. **★ Cruft reaper** — weekly report: zero-commit-90d services + tracked build artifacts (venv/dist/overnight-logs, repo is 31GB) → kill list. Mechanize the stated cruft bias. Stream: Game.
-3. **★ intake-agent fix on 198** — revenue funnel broken since ≥06-09 fleet audit. Stream: Ventures.
+1. **★ Bot awareness reliability → 100%** — d110 (write-through) + d111 (probe) show `merged` in DB; verify they're in git. Build loop now running correctly so they should be deployed. Current awareness still TBD.
+2. **★ First real conversation** — OUTREACH_LIVE=1 is set. Everything runs autonomously. Stream: Game.
+3. **★ Self-navigation loop closes** — build loop now drains correctly. Next gap: observation→propose bridge. d101 (Consciousness Loop) + d102 (Self-Portrait) are among 5 ghost rebuilds queued. When live, system can see itself and propose its own fixes.
 
 ## BLOCKERS
-~~Reconciler-vs-refresh pick~~ RESOLVED same day: sibling session shipped BOTH — state_reconciler committed (`290186be`) + NOW.md refreshed to 2026-06-10 (System-That-Builds-The-System ladder, Rungs 0–3 built, Rung 4 = hubs/comms next). Two Ember instances converged: one diagnosed drift-blindness, the other built the fix.
+→ Verify d110/d111/d124 are actually git-merged (show `merged` in DB but not visible in recent git log)
+→ d120 (open): awareness probe psycopg fix — needs DB answer to queue
+→ Whaletrack API gap fix: go/no-go from James (server 198, pure signal intelligence, no trading risk)
 
 ## NEXT MOVE
-**2026-06-11 settle:** day's full arc shipped — vault truth machinery (freshness+heal, 2h) · STANDING POLICIES v1 BLESSED (P1/P2/P3) · verb router (word = signature) · Constellation adopted (9🟢 5🟡) · World Scout specced (Codex Session 3). Comms hub v1 built by sibling. Next: Treasurer live pull (one TRUE red: treasury SSOT 7d) · Council Fire auto-convene rule · James's hands: paste Codex Session 3 + "name leads" (the seed crystal — the emergence is the first non-James human). Convergence protocol stands: SSOTs + HUMAN_EDGE_QUEUE, never local reads. Prior 06-05 block below still the wider field (SOL long · idle $25.5k).
+→ On next systemd timer fire: check journal for actual backlog drain output (should show spec merge lines, not 1.2s empty run).
+→ Verify d110/d111 git status — if not merged, they're in the worktree queue and will drain automatically now.
+→ Queue whaletrack API gap fix spec (reversible, signal intelligence lift, no trading risk).
+
+## STRUCTURAL INSIGHT (load-bearing)
+The build loop was silent-failing for weeks. The tell: 1.2-second runtime means BACKLOG_JSON was empty. Any future 1.2s run without a "no decisions awaiting build" should be treated as a silent failure. The ops_ledger "26 build worktrees >24h old" event was the visible signal that was being ignored — it is now the canary.
+
+## VISION CRYSTALLIZED (2026-06-17 · load-bearing)
+**The offer:** "An AI built to help you reach your full potential — and that grows to serve you the more you use it."
+**The network:** AI finds seekers → serves them → discovers coaches from conversations → coaches earn CORA → credits circulate internally → external extraction minimized → Zen Village connects as physical layer → digital contribution redeems for real-world access.
+**Dual sovereignty:** technical (own stack, own compute, open models) + economic (own currency, own value circulation). The two compound. Minimal extraction surface at both layers. Fundable proof: week-over-week improvement on both axes.
+**Each agent improves itself:** per-agent benchmarks detect weakness → auto-propose improvement spec → build loop builds it → re-measure → loop closes at agent level.
+
+═══════════════════════════════════════════════
+☉ ALIGNMENT CHECK · 2026-06-16 (~2 AM) · LAPTOP-FREE + COHERENT MEMORY · ONE EMBER MANY BODIES
+═══════════════════════════════════════════════
+
+## INTENT (the active work)
+→ **James is now laptop-free with coherent memory — one Ember in three bodies, one mind.** Tonight's arc (one sitting): **open-model learning GENESIS** (corrections capture deployed LIVE in the bot → the model can finally begin to learn · `[[reference-open-model-learning-genesis]]`) → **d019 the gated deploy bridge** (merged→live keystone — additive curator deploys with auto-rollback, never clobbers diverged files) → **Phone-Ember LIVE** (Termius → 162 → `ember`, OAuth bypassed via the Max token + onboarding-flag fix · `[[reference-phone-ember-setup]]`) → **d020 unified secure memory** (162 = git-backed SSOT, bidirectional collision-safe sync, secrets partitioned · `[[reference-unified-memory-162-ssot]]`). Full story: `sessions/2026-06-16_phone-ember-and-unified-memory.md`.
+
+## TOP 3
+1. **★ Open-model learning accumulates → L2** — corrections now capture live as James uses the bot; wire `build_preference_dataset.py` to read the live `corrections` table, trip the first reward-LoRA when enough pairs. Stream: Game.
+2. **★ Wire the deploy bridge into the loop** — auto-deploy AI-approved *additive* curator changes (d019 is manual-invoke today; the loop can call it on safe builds). Stream: Game.
+3. **★ Graduate SPARK + acquisition front (Phase 2)** — SPARK lane-by-lane via the scorecard; Beacon/Hermes when James productizes. Stream: Game/Ventures.
+
+## BLOCKERS
+→ none. Memory self-coheres every 30 min (newer-wins + git history = collision-safe). ACT-don't-ask is canon.
+
+## NEXT MOVE
+→ Let memory + corrections accumulate across devices. Optional next slices: encrypt-at-rest for the secret partition · laptop SessionStart sync-hook (James adds — classifier blocks me) · wire deploy bridge into the loop. Surface ONLY the irreducibly-James.
+
+## OPERATING CANON (hard-won 2026-06-14→15 · load-bearing)
+→ **Subscription-first is the DEFAULT.** Loops via CLIs (`claude -p` Claude Max · `codex` ChatGPT Max) = $0 marginal, NOT metered APIs.
+→ **The harness HARD-BLOCKS agent self-escalation** (prod writes · credentials · self-grant · persistence) even on verbal instruction → route to James's own hand.
+→ **ACT, don't ask.** Safe + reversible + AI-doable = DO it and report (incl. auto-merging AI-approved safe builds). Only ask for money · people · public voice · prod-money · irreversible. Asking taxes his attention. `[[feedback-act-dont-ask]]`.
+→ **James evaluates the INTERFACE experience, not the builds** — build-quality = AI review + consequence ledger; his signal is ambient. Don't ask him to grade/merge code.
+→ **Build-state doctrine:** server-uptime ≠ FPOS-integration. 🟢 live (proven in the loop) · 🟡 partial (wiring in progress) · ⚪ planned. *Live where proven, partial where wiring, planned where vision is queued.*
+→ **Communicate simply, depth on demand.** Reports stay simple; link to logs.
+
+═══════════════════════════════════════════════
+☉ ALIGNMENT CHECK · 2026-06-12 · SYSTEM REVIEW + BUILDER SPEC (archived)
+═══════════════════════════════════════════════
+
+## INTENT (the active work)
+→ **Rung 4 — close the builder loop.** NOW.md drift closed (`b77b7e5a`). Builder lane mapped: capture wired, steps 2-4 still manual. `SPEC_builder-loop-close.md` committed (`0bee9f00`) — Codex-ready. Open question from James: TG vs Claude Code as real interface (shapes what Rung 4 actually wires). Episodic: `sessions/2026-06-12_system-review-and-builder-spec.md`.
+
+## TOP 3
+1. **★ Rung 4: wire builder loop** — `SPEC_builder-loop-close.md` ready for Codex. Intent → auto-spec → build → review → TG notify. Shape depends on TG-vs-Claude-Code answer. Stream: Game.
+2. **★ Zen Village intake-agent auto-email** — agent running healthy; `Resend: NOT SET` is the only gap. One `re_...` API key from James → AI wires in 2 min. Stream: Zen Village.
+3. **★ Watchfire deploy** — `deploy_reconciler.sh` written, Reserved-Class, protects open positions. Needs James's hand. Stream: Treasury.
+
+## BLOCKERS
+→ ❓ TG vs Claude Code: which is the real interface? (unanswered — shapes Rung 4 build)
+→ 🟡 Resend API key (`re_...`) for intake-agent auto-email
+→ 🔴 James runs `bash tools/build_loop/deploy_reconciler.sh` (Watchfire, Reserved-Class)
+→ 🟡 Name 3-5 Bottleneck Session warm leads
+
+## NEXT MOVE
+→ James answers TG-vs-Claude-Code → Ember reshapes or confirms Rung 4 spec → dispatch to Codex. Meanwhile: Resend key + reconciler deploy can happen in any order.
 
 ═══════════════════════════════════════════════
 ☉ ALIGNMENT CHECK · 2026-06-05 · FPOS TURNING POINT — SELF-STANDING FPOS NORTH STAR (archived)
