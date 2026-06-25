@@ -686,6 +686,17 @@
       "notes": "d047 intent protocol extractor built: scans 7d tg_messages plus memory/episodic files, calls Claude for explicit James-stated rules, writes new memory/protocols Markdown files with protocol frontmatter, skips existing slugs, can commit to the memory repo, and includes a daily cron review artifact."
     },
     {
+      "id": "SPEC_d042_user-profile-seed-rich-per-user",
+      "slug": "SPEC_d042_user-profile-seed-rich-per-user",
+      "branch": "build/SPEC_d042_user-profile-seed-rich-per-user",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d042_user-profile-seed-rich-per-user.md",
+      "tests_passed": true,
+      "notes": "d042 user profile seed built: idempotent user_profiles migration, profile seed/update/context/strength helpers, profile-authorized non-operator Telegram context path with James-brain search blocked, private non-owner logs, focused tests. d036 onboarding flow.py was not present in this checkout, so the exact step-5 call-site remains an integration follow-up."
+    },
+    {
       "id": "SPEC_d038_content-bank-v0-1-truth-asset-sc",
       "slug": "SPEC_d038_content-bank-v0-1-truth-asset-sc",
       "branch": "build/SPEC_d038_content-bank-v0-1-truth-asset-sc",
