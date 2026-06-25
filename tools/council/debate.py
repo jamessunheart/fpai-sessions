@@ -304,11 +304,19 @@ def build_prompt(queue, chats, focus, pragmatist=""):
 def run_claude_json(prompt, runner=None):
     claude = _resolve_cli("claude", CLAUDE)
     run = runner or subprocess.run
-    r = run([claude, "-p", "--effort", "xhigh", prompt], stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=300)
-    if r.returncode != 0:
-        raise _completed_process_error("claude", r)
-    txt = r.stdout.strip()
-    return _json_object_from_text(txt), r
+    for attempt in range(3):
+        retry_note = "\n\nIMPORTANT: Respond with ONLY a valid JSON object. No markdown, no explanation." if attempt > 0 else ""
+        r = run([claude, "-p", "--effort", "xhigh", prompt + retry_note], stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=300)
+        if r.returncode != 0:
+            raise _completed_process_error("claude", r)
+        txt = r.stdout.strip()
+        try:
+            return _json_object_from_text(txt), r
+        except ValueError:
+            if attempt == 2:
+                _ops("debate_parse_fail", f"raw: {txt[:200]}")
+                raise
+    raise ValueError("run_claude_json: exhausted retries")
 
 
 def main():

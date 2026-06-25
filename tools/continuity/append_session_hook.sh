@@ -61,7 +61,24 @@ args=(
   --insights-file "${INSIGHTS_FILE}"
 )
 
-"${PYTHON_BIN}" "${args[@]}" || { echo "[session-write-through] write failed (non-blocking)" >&2; }
+# On laptop (no local DB), relay the write to server 162 via SSH
+if [[ -z "${BRAIN_INDEX_DB_URL:-}" ]] || ! "${PYTHON_BIN}" -c "
+import os, psycopg
+try: psycopg.connect(os.environ.get('BRAIN_INDEX_DB_URL',''), connect_timeout=2).close()
+except: raise SystemExit(1)
+" 2>/dev/null; then
+  # DB unreachable locally — relay insight JSON to 162
+  if [[ -f "${INSIGHTS_FILE}" ]]; then
+    _PAYLOAD=$(cat "${INSIGHTS_FILE}" 2>/dev/null || echo "[]")
+    ssh -o BatchMode=yes -o ConnectTimeout=3 root@162.0.208.88 \
+      "CLAUDE_SESSION_ID=$(printf '%q' "${SESSION_ID}") SESSION_SURFACE=$(printf '%q' "${SESSION_SURFACE:-claude_code}") \
+       /opt/sh-brain-src/.venv/bin/python3 /opt/fpai-build/FPAI_Cockpit/tools/continuity/write_session_insights.py \
+       --session-id '${SESSION_ID}' --source '${SESSION_SURFACE:-claude_code}'" \
+      <<< "${_PAYLOAD}" >/dev/null 2>&1 || true
+  fi
+else
+  "${PYTHON_BIN}" "${args[@]}" || { echo "[session-write-through] write failed (non-blocking)" >&2; }
+fi
 
 # Cleanup temp file if we created it
 [[ "${SESSION_INSIGHTS_FILE:-}" == "" && -f "${_TMP:-}" ]] && rm -f "$_TMP" 2>/dev/null || true
