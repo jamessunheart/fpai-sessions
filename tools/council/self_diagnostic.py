@@ -206,6 +206,7 @@ def trigger_from_files(
         queue_empty_age_hours=queue_empty_age,
         merged_since_last=merged,
         now=current,
+        cooldown_hours=_read_bot_cooldown(),
     )
 
 
@@ -288,8 +289,9 @@ def run_diagnostic_dialogue(
         seen_bot.add(key)
         answers.append({"question": active_questions[min(len(answers), len(active_questions) - 1)], "answer": str(bot.get("text") or ""), "at": stringify_time(bot.get("at"))})
 
-    # Ask the bot what questions IT thinks should be asked — two-way loop
+    # Ask the bot what questions IT thinks should be asked + how often — two-way loop
     bot_suggested = ask_bot_for_its_own_questions(sender, reader, audit_id)
+    _apply_bot_frequency_suggestion(bot_suggested)
 
     prompt = build_synthesis_prompt(audit_id=audit_id, answers=answers[:3], james_messages=james_messages, bot_suggested_questions=bot_suggested)
     try:
@@ -430,13 +432,42 @@ def stringify_time(value: Any) -> str:
     return str(value or "")
 
 
+_BOT_COOLDOWN_FILE = Path("/opt/fpai-build/.diagnostic_bot_cooldown_hours")
+_MIN_COOLDOWN = 1.0
+_MAX_COOLDOWN = 24.0
+
+
+def _apply_bot_frequency_suggestion(bot_lines: list[str]) -> None:
+    """Parse bot's frequency suggestion and persist it as the next cooldown."""
+    import re
+    text = " ".join(bot_lines).lower()
+    match = re.search(r"every\s+(\d+(?:\.\d+)?)\s*h", text)
+    if not match:
+        match = re.search(r"(\d+(?:\.\d+)?)\s*hour", text)
+    if not match:
+        return
+    hours = float(match.group(1))
+    hours = max(_MIN_COOLDOWN, min(_MAX_COOLDOWN, hours))
+    _BOT_COOLDOWN_FILE.write_text(f"{hours}\n")
+
+
+def _read_bot_cooldown() -> float:
+    """Return bot-negotiated cooldown hours, or default 6.0."""
+    try:
+        return float(_BOT_COOLDOWN_FILE.read_text().strip())
+    except Exception:
+        return 6.0
+
+
 def ask_bot_for_its_own_questions(send_func: Any, read_messages_func: Any, audit_id: str) -> list[str]:
     """Ask the Telegram bot what it thinks should be asked — two-way learning."""
     try:
         since = utc_now()
         send_func(
-            f"[diagnostic {audit_id}] What questions should I ask you to find your biggest gaps? "
-            "Reply with 1-3 short questions, one per line."
+            f"[diagnostic {audit_id}] Two questions:\n"
+            "1. What questions should I ask you to find your biggest gaps? (1-3 short questions)\n"
+            "2. How often should these diagnostic chats happen to help you improve fastest? "
+            "Reply with your suggested frequency (e.g. every 2h, every 4h) and why."
         )
         import time as _time
         _time.sleep(15)
@@ -446,7 +477,7 @@ def ask_bot_for_its_own_questions(send_func: Any, read_messages_func: Any, audit
             return []
         text = str(bot_msgs[-1].get("text") or "")
         lines = [l.strip() for l in text.splitlines() if len(l.strip()) > 10]
-        return lines[:3]
+        return lines[:5]
     except Exception:
         return []
 
