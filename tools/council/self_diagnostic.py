@@ -288,7 +288,10 @@ def run_diagnostic_dialogue(
         seen_bot.add(key)
         answers.append({"question": active_questions[min(len(answers), len(active_questions) - 1)], "answer": str(bot.get("text") or ""), "at": stringify_time(bot.get("at"))})
 
-    prompt = build_synthesis_prompt(audit_id=audit_id, answers=answers[:3], james_messages=james_messages)
+    # Ask the bot what questions IT thinks should be asked — two-way loop
+    bot_suggested = ask_bot_for_its_own_questions(sender, reader, audit_id)
+
+    prompt = build_synthesis_prompt(audit_id=audit_id, answers=answers[:3], james_messages=james_messages, bot_suggested_questions=bot_suggested)
     try:
         specs = validate_specs(parse_json_array(runner(prompt)))
     except Exception:
@@ -427,11 +430,33 @@ def stringify_time(value: Any) -> str:
     return str(value or "")
 
 
+def ask_bot_for_its_own_questions(send_func: Any, read_messages_func: Any, audit_id: str) -> list[str]:
+    """Ask the Telegram bot what it thinks should be asked — two-way learning."""
+    try:
+        since = utc_now()
+        send_func(
+            f"[diagnostic {audit_id}] What questions should I ask you to find your biggest gaps? "
+            "Reply with 1-3 short questions, one per line."
+        )
+        import time as _time
+        _time.sleep(15)
+        messages = read_messages_func(since)
+        bot_msgs = bot_turns(messages)
+        if not bot_msgs:
+            return []
+        text = str(bot_msgs[-1].get("text") or "")
+        lines = [l.strip() for l in text.splitlines() if len(l.strip()) > 10]
+        return lines[:3]
+    except Exception:
+        return []
+
+
 def build_synthesis_prompt(
     *,
     audit_id: str,
     answers: list[dict[str, Any]],
     james_messages: list[dict[str, Any]],
+    bot_suggested_questions: list[str] | None = None,
 ) -> str:
     redirect = (
         "\nJames redirected during the audit. Treat his verbatim message as the primary gap signal "
@@ -439,12 +464,21 @@ def build_synthesis_prompt(
         if james_messages
         else ""
     )
+    bot_q_section = ""
+    if bot_suggested_questions:
+        bot_q_section = (
+            "\nThe bot also suggested these questions it thinks would reveal its own gaps "
+            "(treat as additional signal — the bot is teaching us what to ask it):\n"
+            + "\n".join(f"- {q}" for q in bot_suggested_questions)
+            + "\n"
+        )
     return (
         "These are the bot's honest self-assessment answers. What are the top 1-3 "
         "highest-leverage system improvements? Output JSON: [{title, spec, why, priority}]\n"
         "Cap at 3 specs. Prefer concrete repo/local system improvements with tests and rollback.\n"
         f"Audit id: {audit_id}\n"
-        f"{redirect}\n"
+        f"{redirect}"
+        f"{bot_q_section}\n"
         "Bot answers JSON:\n"
         f"{json.dumps(answers, ensure_ascii=False, indent=2)}\n\n"
         "James messages during audit, verbatim:\n"
