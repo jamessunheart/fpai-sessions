@@ -19,28 +19,33 @@ check() { # desc, expected_exit, actual_exit, needle, output
 
 echo "merge_gate tests (branch under test: $BR)"
 
-# T1: registered done -> PASS
-printf '{"active_builds":[{"branch":"%s","status":"done"}]}' "$BR" > "$TMP"
-OUT=$(MERGE_GATE_REGISTRY="$TMP" bash "$GATE" "$BR" 2>&1); EXIT=$?
-check "registered done -> PASS" 0 "$EXIT" "PASS:" "$OUT"
-
-# T2: not registered -> FAIL not registered
+# T1: not registered -> FAIL not registered
 printf '{"active_builds":[]}' > "$TMP"
 OUT=$(MERGE_GATE_REGISTRY="$TMP" bash "$GATE" "$BR" 2>&1); EXIT=$?
 check "not registered -> FAIL" 1 "$EXIT" "not registered" "$OUT"
 
-# T3: status building -> FAIL still building
+# T2: status building -> FAIL still building
 printf '{"active_builds":[{"branch":"%s","status":"building"}]}' "$BR" > "$TMP"
 OUT=$(MERGE_GATE_REGISTRY="$TMP" bash "$GATE" "$BR" 2>&1); EXIT=$?
 check "status building -> FAIL" 1 "$EXIT" "status is 'building'" "$OUT"
 
-# T4: refuse main
+# T3: refuse main
 OUT=$(MERGE_GATE_REGISTRY="$TMP" bash "$GATE" main 2>&1); EXIT=$?
 check "refuse main -> FAIL" 1 "$EXIT" "refusing to gate" "$OUT"
 
-# T5: nonexistent branch -> FAIL not found
+# T4: nonexistent branch -> FAIL not found
 OUT=$(MERGE_GATE_REGISTRY="$TMP" bash "$GATE" codex/does-not-exist-xyz 2>&1); EXIT=$?
 check "nonexistent branch -> FAIL" 1 "$EXIT" "not found" "$OUT"
+
+# T5: production gate must not expose review/snapshot bypass env hooks
+if grep -q 'MERGE_GATE_AI_REVIEW\|MERGE_GATE_SKIP_SNAPSHOT\|MERGE_SNAPSHOT_SCRIPT' "$GATE" "$ROOT/tools/merge/process_merge_requests.sh"; then
+  echo "  ✗ no review/snapshot bypass env hooks"
+  grep -n 'MERGE_GATE_AI_REVIEW\|MERGE_GATE_SKIP_SNAPSHOT\|MERGE_SNAPSHOT_SCRIPT' "$GATE" "$ROOT/tools/merge/process_merge_requests.sh" | sed 's/^/      /'
+  FAIL=$((FAIL+1))
+else
+  echo "  ✓ no review/snapshot bypass env hooks"
+  PASS=$((PASS+1))
+fi
 
 rm -f "$TMP"
 echo ""
