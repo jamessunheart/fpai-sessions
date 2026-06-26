@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
         {
+            "id": "SPEC_d011_intent-injector-correction-capt",
+            "slug": "SPEC_d011_intent-injector-correction-capt",
+            "branch": "build/SPEC_d011_intent-injector-correction-capt",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d011_intent-injector-correction-capt.md",
+            "tests_passed": true,
+            "notes": "d011 verified as an idempotent replay: tools/learn/capture_corrections.py appends d010-shaped correction pairs, build_context injects bounded advisory current build context into owner chat, corrections.py captures/re-injects James correction memory, and tgbot.py wires both paths defensively. Focused 22-test suite, py_compile, capture CLI smoke, registry JSON validation, and diff hygiene passed. Existing independent AI review for build/SPEC_d011_intent-injector-correction-capt is APPROVE risk=med. No live Telegram/Supabase/Postgres write, bot restart, deploy, push, merge, outreach, secrets, or money movement."
+        },
+        {
             "id": "SPEC_bd1e3266-aab7-4e11-bc87-1de679e783d6_standard-audit-rotation-awarenes",
             "slug": "SPEC_bd1e3266-aab7-4e11-bc87-1de679e783d6_standard-audit-rotation-awarenes",
             "branch": "build/SPEC_bd1e3266-aab7-4e11-bc87-1de679e783d6_standard-audit-rotation-awarenes",

@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-26 · SPEC_d011_intent-injector-correction-capt · branch `build/SPEC_d011_intent-injector-correction-capt`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `core/BUILD/specs/SPEC_d011_intent-injector-correction-capt.md`; `core/BUILD/results/SPEC_d011_intent-injector-correction-capt.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Verified d011 as an idempotent replay of the already-present intent injector and correction capture pipeline. `tools/learn/capture_corrections.py` appends d010-shaped correction preference pairs; `build_context.py` injects bounded advisory current build context into owner-chat prompts; `corrections.py` captures/re-injects James correction memory; `tgbot.py` wires both paths defensively. No implementation files were edited because the reviewed logic already exists.
+- **Tests:** `env HOT_MEMORY_STATE_PATH=/tmp/d011-no-hot-state.md SELF_DIAGNOSTIC_CONTEXT_FILE=/tmp/d011-no-diagnostic.json python3 -B -m unittest tools.learn.test_capture_corrections SERVICES.sunheart-brain.curator.test_build_context SERVICES.sunheart-brain.curator.test_corrections` (22 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/learn/capture_corrections.py tools/learn/test_capture_corrections.py SERVICES/sunheart-brain/curator/build_context.py SERVICES/sunheart-brain/curator/test_build_context.py SERVICES/sunheart-brain/curator/corrections.py SERVICES/sunheart-brain/curator/test_corrections.py`; capture CLI smoke to `/tmp/d011-preference-pairs.jsonl`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d011-registry.json`; `git diff --check`
+- **Review:** existing independent review at `core/BUILD/reviews/build-SPEC_d011_intent-injector-correction-capt.md` is `APPROVE` / risk `med`; this replay did not alter implementation files after that review.
+- **Risks:** Live Telegram chat, Supabase/Postgres write, and production bot restart were not run in this sandbox. Focused correction tests emit a non-fatal blueprint write warning because the parent checkout is read-only; correction capture is wrapped and continues as designed.
+- **Rollback:** revert the listed files. Runtime mitigation without reverting remains `SH_BUILD_CONTEXT_DISABLE=1`.
+- **Intent solved:** the bot has current build-context injection plus an explicit path for James corrections to become d010 preference pairs.
+- **Downstream intent unlocked:** d010/d022 preference learning can consume real correction pairs while owner chat stops losing current buildstream context.
+- **Questions for Ember/James:** after merge on server 162, run one harmless live Telegram correction and confirm a `brain_index.corrections` row appears, then confirm the next owner-chat synthesis includes current build context and recent correction memory.
+
 ### 2026-06-26 · SPEC_bd1e3266-aab7-4e11-bc87-1de679e783d6_standard-audit-rotation-awarenes · branch `build/SPEC_bd1e3266-aab7-4e11-bc87-1de679e783d6_standard-audit-rotation-awarenes`
 
 - **Status:** done in working tree / awaiting merge review
