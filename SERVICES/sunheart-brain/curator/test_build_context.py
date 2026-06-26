@@ -4,6 +4,7 @@ import asyncio
 import os
 import importlib.util
 import json
+import shutil
 import sys
 import tempfile
 import types
@@ -27,6 +28,11 @@ CORRECTIONS_SPEC.loader.exec_module(corrections)
 
 
 class BuildContextTest(unittest.TestCase):
+    def setUp(self) -> None:
+        patcher = patch.dict("os.environ", {"HOT_MEMORY_STATE_PATH": "/tmp/fpai-test-missing-HOT_STATE.md"})
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
     def make_repo(self) -> Path:
         root = Path(tempfile.mkdtemp(prefix="fpai-build-context-"))
         (root / "core" / "BUILD").mkdir(parents=True)
@@ -57,6 +63,13 @@ class BuildContextTest(unittest.TestCase):
         )
         return root
 
+    def add_session_persistence_module(self, root: Path) -> Path:
+        continuity = root / "tools" / "continuity"
+        continuity.mkdir(parents=True)
+        source = Path(__file__).resolve().parents[3] / "tools" / "continuity" / "session_persistence.py"
+        shutil.copyfile(source, continuity / "session_persistence.py")
+        return continuity / "session_persistence.py"
+
     def test_repo_context_renders_bounded_prompt_suffix(self) -> None:
         suffix = asyncio.run(build_context.build_context_system_suffix(repo_root=self.make_repo(), max_chars=900))
 
@@ -66,6 +79,68 @@ class BuildContextTest(unittest.TestCase):
         self.assertIn("Live system status:", suffix)
         self.assertIn("Build queue:", suffix)
         self.assertIn("advisory", suffix)
+
+    def test_persisted_session_progress_is_injected(self) -> None:
+        root = self.make_repo()
+        self.add_session_persistence_module(root)
+        with tempfile.TemporaryDirectory() as tmp:
+            state_dir = Path(tmp)
+            (state_dir / "latest.json").write_text(
+                json.dumps(
+                    {
+                        "schema": "fpai-session-snapshot.v1",
+                        "session_id": "session-123",
+                        "surface": "codex",
+                        "saved_at": "2026-06-26T00:00:00+00:00",
+                        "repo_root": str(root),
+                        "branch": "build/SPEC_d011",
+                        "head": "abc123",
+                        "changed_files": ["tools/continuity/session_persistence.py"],
+                        "active_builds": [
+                            {
+                                "id": "SPEC_d011",
+                                "status": "building",
+                                "branch": "build/SPEC_d011",
+                                "tests_passed": False,
+                            }
+                        ],
+                        "recent_results": ["SPEC_d010.result.md"],
+                        "progress_note": "Session persistence captured running spec status.",
+                    }
+                ),
+                encoding="utf-8",
+            )
+            with patch.dict("os.environ", {"FPAI_SESSION_STATE_DIR": str(state_dir)}):
+                suffix = asyncio.run(build_context.build_context_system_suffix(repo_root=root, max_chars=1600))
+
+        self.assertIn("Persisted session progress", suffix)
+        self.assertIn("session-123", suffix)
+        self.assertIn("Session persistence captured running spec status", suffix)
+
+    def test_persisted_session_progress_can_be_disabled(self) -> None:
+        root = self.make_repo()
+        self.add_session_persistence_module(root)
+        with tempfile.TemporaryDirectory() as tmp:
+            state_dir = Path(tmp)
+            (state_dir / "latest.json").write_text(
+                json.dumps(
+                    {
+                        "schema": "fpai-session-snapshot.v1",
+                        "session_id": "session-disabled",
+                        "surface": "codex",
+                        "saved_at": "2026-06-26T00:00:00+00:00",
+                        "active_builds": [],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            with patch.dict(
+                "os.environ",
+                {"FPAI_SESSION_STATE_DIR": str(state_dir), "SH_SESSION_PERSISTENCE_DISABLE": "1"},
+            ):
+                suffix = asyncio.run(build_context.build_context_system_suffix(repo_root=root, max_chars=1600))
+
+        self.assertNotIn("session-disabled", suffix)
 
     def test_disable_env_returns_empty_suffix(self) -> None:
         with patch.dict("os.environ", {"SH_BUILD_CONTEXT_DISABLE": "1"}):

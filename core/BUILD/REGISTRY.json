@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-25T00:00:00Z",
+    "updated_at": "2026-06-26T00:00:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_36a73161-fb6c-42c8-98b7-f5d479dfa08e_session-persistence",
+            "slug": "SPEC_36a73161-fb6c-42c8-98b7-f5d479dfa08e_session-persistence",
+            "branch": "build/SPEC_36a73161-fb6c-42c8-98b7-f5d479dfa08e_session-persistence",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_36a73161-fb6c-42c8-98b7-f5d479dfa08e_session-persistence.md",
+            "tests_passed": true,
+            "notes": "Complete in working tree: added tools/continuity/session_persistence.py for bounded JSON session snapshots of branch/head, changed files, active build progress, recent result artifacts, and progress notes. Wired sunheart-brain build_context to inject the latest persisted session progress fail-soft with SH_SESSION_PERSISTENCE_DISABLE=1 kill switch. Focused continuity/build-context tests, py_compile, registry JSON validation, CLI save/show smoke, and diff hygiene passed. No live DB write, deploy, push, merge, outreach, secrets, or money movement."
+        },
         {
             "id": "SPEC_d126_d126-public-chat-bot-isolated-fr",
             "slug": "SPEC_d126_d126-public-chat-bot-isolated-fr",

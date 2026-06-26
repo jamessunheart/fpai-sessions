@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-26 · SPEC_36a73161-fb6c-42c8-98b7-f5d479dfa08e_session-persistence · branch `build/SPEC_36a73161-fb6c-42c8-98b7-f5d479dfa08e_session-persistence`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `tools/continuity/session_persistence.py`; `tools/continuity/test_session_persistence.py`; `SERVICES/sunheart-brain/curator/build_context.py`; `SERVICES/sunheart-brain/curator/test_build_context.py`; `core/BUILD/specs/SPEC_36a73161-fb6c-42c8-98b7-f5d479dfa08e_session-persistence.md`; `core/BUILD/results/SPEC_36a73161-fb6c-42c8-98b7-f5d479dfa08e_session-persistence.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added bounded JSON session persistence via `tools/continuity/session_persistence.py`. It snapshots session id, surface, saved time, branch/head, changed files, active build progress from the registry, recent result artifacts, and a progress note into `latest.json` plus a per-session file under `FPAI_SESSION_STATE_DIR` or `/opt/fpai-build/session_state`. `build_context.py` now loads the latest snapshot fail-soft and injects persisted session progress into owner-chat context; `SH_SESSION_PERSISTENCE_DISABLE=1` disables that injection.
+- **Tests:** `python3 -B -m unittest tools.continuity.test_session_persistence tools.continuity.test_write_session_insights`; `python3 -B -m unittest discover -s SERVICES/sunheart-brain/curator -p 'test_build_context.py'`; `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/continuity/session_persistence.py tools/continuity/test_session_persistence.py SERVICES/sunheart-brain/curator/build_context.py SERVICES/sunheart-brain/curator/test_build_context.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/session-persistence-registry.json`; CLI save/show smoke with `/tmp/fpai-session-persistence-smoke`; `git diff --check`
+- **Risks:** Live default state directory `/opt/fpai-build/session_state` was not created in this sandbox. Snapshot freshness depends on a closeout/hook caller invoking `session_persistence.py save`. This is operational context/progress only; it does not replace `brain_index.thread` or `session_insights`.
+- **Rollback:** revert the listed files. Runtime mitigation without reverting: set `SH_SESSION_PERSISTENCE_DISABLE=1` and stop calling `tools/continuity/session_persistence.py save`.
+- **Intent solved:** fresh sessions can load current branch/spec/build progress and changed-file context without James re-briefing.
+- **Downstream intent unlocked:** bot/status surfaces can answer what was running and where progress stood across session boundaries.
+- **Questions for Ember/James:** after merge on server 162, wire `python3 tools/continuity/session_persistence.py save --progress-note "$summary"` into the existing closeout/settle path so `/opt/fpai-build/session_state/latest.json` stays fresh.
+
 ### 2026-06-25 · SPEC_d126_d126-public-chat-bot-isolated-fr · branch `build/SPEC_d126_d126-public-chat-bot-isolated-fr`
 
 - **Status:** done in working tree / awaiting merge review
