@@ -12,6 +12,7 @@
   <nav>
     <a href="marketplace.html">Explore</a>
     <a href="create.html">Create</a>
+    <a href="provider.html">Providers</a>
     <a href="learn.html">Learn</a>
     <a href="trust.html">Trust</a>
     <a class="cta" href="create.html">Create Fi-art</a>
@@ -38,7 +39,8 @@
 
   const cfg = FiArt.TYPES[n.type] || FiArt.TYPES.open;
   const price = n.price!=null ? `${FiArt.esc(n.price)} <span class="muted" style="font-size:.6em">${FiArt.esc(n.currency||'Fiart Marketplace Credit')}</span>` : 'Not for sale';
-  const redeemBtn = n.redeemable===true ? `<button class="btn gold" onclick="alert('Phase 1 preview — redemption opens in the Capacity phase. This note records the promise; the listed provider honors it.')">Redeem</button>` : '';
+  const redeemBtn = (n.type==='capacity') ? `<button class="btn gold" id="redeemBtn">Redeem</button>`
+    : (n.redeemable===true ? `<button class="btn gold" onclick="alert('Redemption for this note type opens in a later phase. This note records the promise; the listed party honors it.')">Redeem</button>` : '');
   const mirrorPreview = n.type==='mirror' ? `<div class="notice">Mirror Notes are a <b>Phase 5</b> preview. Cash exits gate by jurisdiction, identity, limits, and approved liquidity partners. Shown to teach how reserve backing works.</div>` : '';
 
   el.innerHTML = `
@@ -74,6 +76,17 @@
       </div>
     </div>
   </div>`;
+
+  const rb = document.getElementById('redeemBtn');
+  if(rb) rb.onclick = async ()=>{
+    const date = prompt('Pick a date/time to redeem "'+n.redeemable_for+'" from '+n.creator+':', '2026-08-10');
+    if(date===null) return;
+    rb.disabled=true; rb.textContent='Requesting…';
+    const res = await FiArt.collectNote ? await fetch('/api/redeem',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({note_id:n.id, requester:(FiArt.covenantSigned()||{}).handle||'collector', requested_date:date})}).then(r=>r.json()) : {ok:false};
+    const msg = document.getElementById('collectMsg');
+    if(res.ok){ rb.textContent='Redemption requested ✓'; msg.textContent='Sent to '+n.creator+'. They confirm the booking; you’ll see it scheduled, then fulfilled. (Truth Panel: not cash — redeemable for the listed service.)'; }
+    else { rb.disabled=false; rb.textContent='Redeem'; msg.textContent='Could not request — try again.'; }
+  };
 
   const cb = document.getElementById('collectBtn');
   if(cb) cb.onclick = async ()=>{
