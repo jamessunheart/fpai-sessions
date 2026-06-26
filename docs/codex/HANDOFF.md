@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-26 · SPEC_bd1e3266-aab7-4e11-bc87-1de679e783d6_standard-audit-rotation-awarenes · branch `build/SPEC_bd1e3266-aab7-4e11-bc87-1de679e783d6_standard-audit-rotation-awarenes`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `tools/build_loop/self_audit.py`; `tools/build_loop/test_self_audit.py`; `core/BUILD/specs/SPEC_bd1e3266-aab7-4e11-bc87-1de679e783d6_standard-audit-rotation-awarenes.md`; `core/BUILD/results/SPEC_bd1e3266-aab7-4e11-bc87-1de679e783d6_standard-audit-rotation-awarenes.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the d128 standard self-audit probes. `build_audit_context()` now includes latest `awareness_probe` score/source from `awareness_reliability_probe` ops-ledger rows, top-level `recent_user_messages` for the last 3 James/user turns from `brain_index.thread` + `brain_index.tg_messages`, and repo-local `queue_state` from specs/results plus the build registry. The audit prompt now explicitly requires checking those three probes before proposing improvement specs.
+- **Tests:** `python3 -B -m unittest tools.build_loop.test_self_audit` (9 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/self_audit.py tools/build_loop/test_self_audit.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d128-registry.json`; collector smoke for live awareness/queue evidence; `git diff --check`
+- **Risks:** Live DB read for recent user messages was not exercised in this sandbox; it fails soft with an explicit unavailable shape when DSN/psycopg/live DB is missing. Queue state is repo-local and does not invoke live `dec pending-builds`.
+- **Rollback:** revert the listed files. Runtime impact is limited to read-only self-audit evidence and prompt text.
+- **Intent solved:** every audit run now asks the three highest-drift operational questions instead of leaving awareness score, recent user messages, and queued work implicit.
+- **Downstream intent unlocked:** future self-audit proposals can route awareness-drift and queue-state blind spots from explicit standard evidence.
+- **Questions for Ember/James:** after merge on server 162, let one normal self-audit run and confirm its evidence JSON contains `awareness_probe`, `recent_user_messages`, and `queue_state`.
+
 ### 2026-06-26 · SPEC_36a73161-fb6c-42c8-98b7-f5d479dfa08e_session-persistence · branch `build/SPEC_36a73161-fb6c-42c8-98b7-f5d479dfa08e_session-persistence`
 
 - **Status:** done in working tree / awaiting merge review

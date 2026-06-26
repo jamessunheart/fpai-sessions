@@ -32,6 +32,9 @@ DEFAULT_LAST_AUDIT = Path(os.environ.get("SELF_AUDIT_LAST_FILE", "/opt/fpai-buil
 DEFAULT_MERGED_COUNTER = Path(os.environ.get("SELF_AUDIT_MERGED_COUNTER", "/opt/fpai-build/.merged_since_audit"))
 DEFAULT_REVIEWS_DIR = REPO_ROOT / "core" / "BUILD" / "reviews"
 DEFAULT_GAPS_FILE = REPO_ROOT / "core" / "BUILD" / "ARCHITECTURE_GAPS.md"
+DEFAULT_REGISTRY = REPO_ROOT / "core" / "BUILD" / "REGISTRY.json"
+DEFAULT_SPECS_DIR = REPO_ROOT / "core" / "BUILD" / "specs"
+DEFAULT_RESULTS_DIR = REPO_ROOT / "core" / "BUILD" / "results"
 KEY_SERVICES = [
     "fpai-build-loop",
     "fpai-morning-digest",
@@ -147,6 +150,28 @@ def collect_ops_summary(path: Path = DEFAULT_OPS_LEDGER, *, now: datetime | None
     }
 
 
+def collect_awareness_probe(path: Path = DEFAULT_OPS_LEDGER) -> dict[str, Any]:
+    rows = [row for row in read_jsonl(path) if row.get("event") == "awareness_reliability_probe"]
+    if not rows:
+        return {"available": False, "source": str(path), "reason": "no awareness_reliability_probe rows found"}
+    row = rows[-1]
+    reliability = row.get("reliability")
+    score = round(float(reliability) * 100, 1) if isinstance(reliability, (int, float)) else None
+    return {
+        "available": True,
+        "source": str(path),
+        "timestamp": row.get("ts") or row.get("timestamp"),
+        "score_percent": score,
+        "ok": bool(row.get("ok")),
+        "successes": row.get("successes"),
+        "total": row.get("total"),
+        "threshold": row.get("threshold"),
+        "reason": compact(str(row.get("reason") or ""))[:240],
+        "latest_title": compact(str(row.get("latest_title") or ""))[:240],
+        "probe_source": compact(str(row.get("source") or ""))[:120],
+    }
+
+
 def collect_review_patterns(reviews_dir: Path = DEFAULT_REVIEWS_DIR) -> dict[str, Any]:
     if not reviews_dir.exists():
         return {"path": str(reviews_dir), "files": 0, "request_changes": 0, "patterns": []}
@@ -196,9 +221,25 @@ def collect_brain_index_summary() -> dict[str, Any]:
                 "available": True,
                 "decisions": query_decision_summary(conn),
                 "corrections": query_correction_summary(conn),
+                "recent_user_messages": query_recent_user_messages(conn),
             }
     except Exception as exc:  # pragma: no cover - depends on live host DB
         return {"available": False, "reason": f"read failed: {exc}"}
+
+
+def collect_recent_user_messages() -> dict[str, Any]:
+    dsn = os.environ.get("BRAIN_INDEX_DB_URL") or os.environ.get("DATABASE_URL") or os.environ.get("DB_URL")
+    if not dsn:
+        return {"available": False, "source": "brain_index", "reason": "missing local DB DSN", "messages": []}
+    try:
+        import psycopg  # type: ignore
+    except ImportError:
+        return {"available": False, "source": "brain_index", "reason": "psycopg unavailable", "messages": []}
+    try:
+        with psycopg.connect(dsn, connect_timeout=3) as conn:
+            return query_recent_user_messages(conn)
+    except Exception as exc:  # pragma: no cover - depends on live host DB
+        return {"available": False, "source": "brain_index", "reason": f"read failed: {exc}", "messages": []}
 
 
 def query_decision_summary(conn: Any) -> dict[str, Any]:
@@ -244,6 +285,90 @@ def query_correction_summary(conn: Any) -> dict[str, Any]:
         return {"error": str(exc)}
 
 
+def query_recent_user_messages(conn: Any, *, limit: int = 3) -> dict[str, Any]:
+    sql = """
+        SELECT at::text, surface::text, role::text, text::text FROM (
+            SELECT at, surface, role, text
+              FROM brain_index.thread
+             WHERE lower(COALESCE(role::text, '')) IN ('james', 'user', 'owner')
+            UNION ALL
+            SELECT at, 'telegram' AS surface, role, text
+              FROM brain_index.tg_messages
+             WHERE lower(COALESCE(role::text, '')) IN ('user', 'james', 'owner')
+        ) recent_user_turns
+         WHERE COALESCE(text, '') <> ''
+         ORDER BY at DESC
+         LIMIT %s
+    """
+    try:
+        with conn.cursor() as cur:
+            cur.execute(sql, (limit,))
+            rows = cur.fetchall()
+        messages = [
+            {
+                "at": str(at),
+                "surface": compact(str(surface or "unknown"))[:40],
+                "role": compact(str(role or "user"))[:40],
+                "text": compact(str(text or ""))[:600],
+            }
+            for at, surface, role, text in rows
+            if compact(str(text or ""))
+        ]
+        return {"available": True, "source": "brain_index.thread + brain_index.tg_messages", "messages": messages}
+    except Exception as exc:
+        return {"available": False, "source": "brain_index", "error": str(exc)}
+
+
+def collect_queue_state(
+    *,
+    registry_path: Path = DEFAULT_REGISTRY,
+    specs_dir: Path = DEFAULT_SPECS_DIR,
+    results_dir: Path = DEFAULT_RESULTS_DIR,
+) -> dict[str, Any]:
+    pending_specs: list[str] = []
+    if specs_dir.exists():
+        for spec in sorted(specs_dir.glob("*.md")):
+            if not (results_dir / f"{spec.stem}.result.md").exists():
+                pending_specs.append(spec.stem)
+
+    registry: dict[str, Any] = {}
+    try:
+        raw = json.loads(registry_path.read_text(encoding="utf-8"))
+        if isinstance(raw, dict):
+            registry = raw
+    except (OSError, json.JSONDecodeError):
+        registry = {}
+
+    counts: Counter[str] = Counter()
+    active: list[dict[str, Any]] = []
+    rows = registry.get("active_builds") if isinstance(registry, dict) else None
+    for row in rows if isinstance(rows, list) else []:
+        if not isinstance(row, dict):
+            continue
+        status = compact(str(row.get("status") or "unknown"))
+        counts[status] += 1
+        if status in {"building", "queued", "ready", "merge_requested"}:
+            active.append(
+                {
+                    "id": compact(str(row.get("id") or row.get("slug") or "unknown"))[:160],
+                    "branch": compact(str(row.get("branch") or ""))[:160],
+                    "status": status,
+                }
+            )
+
+    return {
+        "source": {
+            "registry": str(registry_path),
+            "specs_dir": str(specs_dir),
+            "results_dir": str(results_dir),
+        },
+        "pending_specs_count": len(pending_specs),
+        "pending_specs": pending_specs[:10],
+        "registry_status_counts": dict(counts.most_common()),
+        "active_requests": active[:10],
+    }
+
+
 def collect_service_status(services: Iterable[str] = KEY_SERVICES) -> dict[str, Any]:
     systemctl = shutil.which("systemctl")
     if not systemctl:
@@ -274,11 +399,20 @@ def build_audit_context(
     gaps_file: Path = DEFAULT_GAPS_FILE,
     now: datetime | None = None,
 ) -> dict[str, Any]:
+    brain_index = collect_brain_index_summary()
+    recent_user_messages = (
+        brain_index.get("recent_user_messages")
+        if isinstance(brain_index, dict) and isinstance(brain_index.get("recent_user_messages"), dict)
+        else collect_recent_user_messages()
+    )
     return {
         "generated_at": (now or utc_now()).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "ops_ledger_7d": collect_ops_summary(ops_ledger, now=now),
+        "awareness_probe": collect_awareness_probe(ops_ledger),
         "review_patterns": collect_review_patterns(reviews_dir),
-        "brain_index": collect_brain_index_summary(),
+        "brain_index": brain_index,
+        "recent_user_messages": recent_user_messages,
+        "queue_state": collect_queue_state(),
         "architecture_gaps": collect_architecture_gaps(gaps_file),
         "services": collect_service_status(),
         "available_resources": read_inventory_context(DEFAULT_RESOURCE_INVENTORY, limit=24_000),
@@ -290,6 +424,7 @@ def build_prompt(context: dict[str, Any]) -> str:
         "You are auditing the FPAI autonomous build loop from local evidence only.\n"
         "Goal: identify systemic gaps that should become the next safe improvement specs.\n\n"
         "Look specifically for:\n"
+        "- the standard audit probes: current awareness_probe score/source, last 3 recent_user_messages, and queue_state\n"
         "- silent failures: loop ran but produced no work or no visible next action\n"
         "- recurring review failures: repeated REQUEST_CHANGES classes\n"
         "- capability gaps: PARTIAL or gap lines in architecture/build reports\n"
