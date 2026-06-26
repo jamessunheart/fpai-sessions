@@ -49,6 +49,8 @@ const FiArt = (() => {
   }
 
   // ---- storage ----
+  // Primary: live API (/api). Fallback: static notes.json + localStorage (offline/demo).
+  const API = '/api';
   async function loadSampleNotes(){
     try{ const r = await fetch('data/notes.json'); return r.ok ? await r.json() : []; }
     catch(e){ return []; }
@@ -61,11 +63,39 @@ const FiArt = (() => {
     localStorage.setItem(LS_NOTES, JSON.stringify(all));
   }
   async function allNotes(){
+    try{
+      const r = await fetch(API+'/notes', {cache:'no-store'});
+      if(r.ok){ const d = await r.json(); if(d.notes) return d.notes; }
+    }catch(e){}
+    // fallback
     const [sample, minted] = [await loadSampleNotes(), loadMinted()];
     return [...minted, ...sample];
   }
   async function getNote(id){
+    try{
+      const r = await fetch(API+'/note?id='+encodeURIComponent(id), {cache:'no-store'});
+      if(r.ok){ const d = await r.json(); if(d.note) return d.note; }
+    }catch(e){}
     return (await allNotes()).find(n => n.id === id) || null;
+  }
+  // mint via API; falls back to localStorage if API unreachable
+  async function mintNote(payload){
+    try{
+      const r = await fetch(API+'/mint', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+      const d = await r.json();
+      if(r.ok) return {ok:true, id:d.id, note:d.note};
+      return {ok:false, error:d.error, hits:d.hits};
+    }catch(e){
+      // offline fallback: persist locally
+      const note = payload._note; saveMinted(note);
+      return {ok:true, id:note.id, note, offline:true};
+    }
+  }
+  async function collectNote(note_id, collector){
+    try{
+      const r = await fetch(API+'/collect', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({note_id, collector})});
+      return r.ok ? await r.json() : {ok:false};
+    }catch(e){ return {ok:false, offline:true}; }
   }
 
   // ---- covenant ----
@@ -168,6 +198,6 @@ const FiArt = (() => {
 
   function qs(k){ return new URLSearchParams(location.search).get(k); }
 
-  return {TYPES, scanClaims, currencyFlags, allNotes, getNote, saveMinted, loadMinted,
+  return {TYPES, scanClaims, currencyFlags, allNotes, getNote, saveMinted, loadMinted, mintNote, collectNote,
     covenantSigned, signCovenant, COVENANT_VERSION, card, truthPanel, badge, noteArt, esc, qs};
 })();

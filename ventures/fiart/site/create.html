@@ -171,10 +171,19 @@
   }
   updateMintState();
 
-  document.getElementById('mintbtn').onclick=()=>{
+  document.getElementById('mintbtn').onclick=async()=>{
+    const btn=document.getElementById('mintbtn'), hint=document.getElementById('minthint');
     const n = noteFromForm();
-    FiArt.saveMinted(n);
-    location.href = 'note.html?id='+encodeURIComponent(n.id);
+    btn.disabled=true; hint.textContent='Minting…';
+    const res = await FiArt.mintNote({
+      title:n.title, denomination:n.denomination, description:n.description,
+      educational_theme:n.educational_theme, creator:n.creator, covenant:true, _note:n
+    });
+    if(res.ok){ location.href = 'note.html?id='+encodeURIComponent(res.id); }
+    else {
+      btn.disabled=false;
+      hint.textContent = res.error + (res.hits?(' ('+res.hits.join(', ')+')'):'');
+    }
   };
 })();
 </script>

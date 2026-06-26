@@ -55,14 +55,15 @@
         <div style="font-family:var(--serif);font-size:2rem;font-weight:700">${price}</div>
         <div class="muted" style="font-size:.9rem;margin-bottom:14px">${FiArt.esc(cfg.label)} · by ${FiArt.esc(n.creator||'—')}</div>
         <div class="btn-row">
-          <button class="btn" onclick="alert('Phase 1 preview — purchasing with Fiart Marketplace Credit opens with the wallet layer. The mint→collect→redeem loop is specced in SITE_SPEC §23.')">Buy</button>
+          <button class="btn" id="collectBtn">Collect</button>
           ${redeemBtn}
           <button class="btn ghost" onclick="alert('Gift / transfer opens with the wallet layer (Phase 2).')">Gift</button>
         </div>
+        <div class="muted" id="collectMsg" style="font-size:.85rem;margin-top:8px"></div>
         ${mirrorPreview}
       </div>
       ${FiArt.truthPanel(n)}
-      <div class="panel">
+      <div class="panel" id="provpanel">
         <h3 style="margin-top:0">Provenance</h3>
         <div class="muted mono" style="font-size:.82rem;line-height:1.9">
           Minted · ${FiArt.esc(n.creator||'—')}<br>
@@ -73,6 +74,15 @@
       </div>
     </div>
   </div>`;
+
+  const cb = document.getElementById('collectBtn');
+  if(cb) cb.onclick = async ()=>{
+    cb.disabled = true; cb.textContent = 'Collecting…';
+    const res = await FiArt.collectNote(n.id, (FiArt.covenantSigned()||{}).handle || 'collector');
+    const msg = document.getElementById('collectMsg');
+    if(res.ok){ cb.textContent='Collected ✓'; msg.textContent = `In your collection — ${res.collectors} collector${res.collectors===1?'':'s'} total. (Phase 1: collection recorded; wallet/payment lands Phase 2.)`; }
+    else { cb.disabled=false; cb.textContent='Collect'; msg.textContent='Could not record — try again.'; }
+  };
 })();
 </script>
 </body>
