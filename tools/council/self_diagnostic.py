@@ -314,6 +314,10 @@ def run_diagnostic_dialogue(
             queued_specs.append(spec)
     titles = ", ".join(item["title"] for item in queued_specs) or "none"
     send(sender, f"Self-diagnostic complete. Queued {len(queued_specs)} improvements: {titles}")
+
+    # Self-audit: bot checks its own pipeline health and queues fixes
+    _self_audit_pipeline(queuer, sender)
+
     log_ops(
         ops_ledger,
         audit_id=audit_id,
@@ -323,6 +327,71 @@ def run_diagnostic_dialogue(
     )
     write_stamp(last_diagnostic_file)
     return queued_specs
+
+
+def _self_audit_pipeline(queuer: Callable, sender: Callable) -> None:
+    """Bot audits its own pipeline health after each diagnostic and queues fixes."""
+    dsn = os.environ.get("BRAIN_INDEX_DB_URL") or os.environ.get("DATABASE_URL") or ""
+    issues: list[str] = []
+    try:
+        import psycopg  # type: ignore
+        with psycopg.connect(dsn, connect_timeout=3) as conn:
+            with conn.cursor() as cur:
+                # Check for stalled specs (spec_written=true + no build_status)
+                cur.execute(
+                    "SELECT COUNT(*) FROM brain_index.decisions "
+                    "WHERE needs_build=true AND spec_written=true "
+                    "AND status='answered' AND (build_status IS NULL OR build_status='none')"
+                )
+                stalled = cur.fetchone()[0]
+                if stalled > 0:
+                    issues.append(f"{stalled} specs stalled (spec_written=true blocks build loop)")
+                    cur.execute(
+                        "UPDATE brain_index.decisions SET spec_written=false "
+                        "WHERE needs_build=true AND spec_written=true "
+                        "AND status='answered' AND (build_status IS NULL OR build_status='none')"
+                    )
+
+                # Check awareness score from ops_ledger
+                ops = Path(os.environ.get("OPS_LEDGER", "/opt/fpai-build/ops_ledger.jsonl"))
+                if ops.exists():
+                    for line in reversed(ops.read_text().splitlines()):
+                        try:
+                            row = json.loads(line)
+                            if row.get("event") == "awareness_reliability_probe":
+                                score = float(row.get("reliability", 1.0))
+                                if score < 0.8:
+                                    issues.append(f"Awareness score {score*100:.0f}% — below 80% threshold")
+                                break
+                        except Exception:
+                            continue
+
+                # Check boilerplate flooding (>10 housekeeping rows in last hour)
+                cur.execute(
+                    "SELECT COUNT(*) FROM brain_index.session_insights "
+                    "WHERE insight_type='housekeeping' AND ts > now() - interval '1h'"
+                )
+                boilerplate = cur.fetchone()[0]
+                if boilerplate > 10:
+                    issues.append(f"{boilerplate} boilerplate session insights in last hour — flooding probe")
+    except Exception:
+        return
+
+    if not issues:
+        return
+
+    report = "Pipeline self-audit found issues:\n" + "\n".join(f"- {i}" for i in issues)
+    send(sender, report)
+
+    # Queue a fix spec for each issue class found
+    for issue in issues[:2]:
+        fix_spec = {
+            "title": f"Auto-fix: {issue[:60]}",
+            "spec": f"pipeline-self-fix-{issue[:20].lower().replace(' ', '-').replace('=', '')}",
+            "why": f"Self-audit detected: {issue}",
+            "priority": "high",
+        }
+        queuer(fix_spec)
 
 
 def send(sender: Callable[[str], Any], text: str) -> None:
