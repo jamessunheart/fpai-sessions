@@ -40,6 +40,7 @@ class BuildContext:
     system_status: list[str] | None = None
     corrections: list[str] | None = None
     recent_insights: list[str] | None = None
+    session_progress: list[str] | None = None
 
     def is_empty(self) -> bool:
         return not (
@@ -49,6 +50,7 @@ class BuildContext:
             or self.system_status
             or self.corrections
             or self.recent_insights
+            or self.session_progress
         )
 
 
@@ -245,6 +247,7 @@ async def load_build_context(
         context = _with_live_system_status(context, repo_root=repo_root, max_items=max_items)
     if include_recent_insights:
         context = await _with_recent_session_insights(context, max_items=max_items)
+        context = _with_persisted_session_progress(context, repo_root=repo_root, max_items=max_items)
     if include_corrections:
         context = await _with_recent_corrections(
             context,
@@ -273,6 +276,9 @@ def render_build_context(
     if include_recent_insights and context.recent_insights:
         lines.append("Recent decisions (all surfaces):")
         lines.extend(f"- {item}" for item in context.recent_insights)
+    if include_recent_insights and context.session_progress:
+        lines.append("Persisted session progress:")
+        lines.extend(f"- {item}" for item in context.session_progress)
     if include_system_state and context.system_status:
         status_lines = list(context.system_status)
         if not include_buildstream:
@@ -447,6 +453,36 @@ def _with_live_system_status(
     if not lines:
         return context
     return replace(context, system_status=lines)
+
+
+def _with_persisted_session_progress(context: BuildContext, *, repo_root: Path, max_items: int) -> BuildContext:
+    if os.environ.get("SH_SESSION_PERSISTENCE_DISABLE", "").strip() == "1":
+        return context
+    try:
+        module_path = Path(repo_root) / "tools" / "continuity" / "session_persistence.py"
+        spec = importlib.util.spec_from_file_location("fpai_session_persistence", module_path)
+        module = importlib.util.module_from_spec(spec) if spec and spec.loader else None
+        if module is None or spec is None or spec.loader is None:
+            return context
+        sys.modules[spec.name] = module
+        spec.loader.exec_module(module)
+        snapshot = module.load_latest()
+        if snapshot is None:
+            return context
+        rendered = module.render_snapshot(snapshot, max_items=max_items, max_chars=900)
+    except Exception:
+        return context
+    rows = [
+        _clean(line.lstrip("- ").strip())
+        for line in rendered.splitlines()
+        if line.strip() and line.strip() != "Persisted session progress:"
+    ]
+    if not rows:
+        return context
+    source = context.source
+    if "session_persistence" not in source:
+        source = f"{source}+session_persistence"
+    return replace(context, source=source, session_progress=rows[: max_items + 4])
 
 
 async def _load_supabase_context(*, max_items: int) -> BuildContext | None:
