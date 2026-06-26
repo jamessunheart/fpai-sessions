@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-26 · SPEC_d37302c6-8b88-48d7-ba6a-cc2855d376dd_correction-retention-smoke-test · branch `build/SPEC_d37302c6-8b88-48d7-ba6a-cc2855d376dd_correction-retention-smoke-test`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `tools/build_loop/correction_retention_smoke.py`; `tools/build_loop/test_correction_retention_smoke.py`; `tools/build_loop/server_build_loop.sh`; `core/BUILD/specs/SPEC_d37302c6-8b88-48d7-ba6a-cc2855d376dd_correction-retention-smoke-test.md`; `core/BUILD/results/SPEC_d37302c6-8b88-48d7-ba6a-cc2855d376dd_correction-retention-smoke-test.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a post-merge correction-retention smoke. On every successful auto-merge, the server build loop now runs a synthetic correction through the live curator correction path, verifies it appears in `brain_index.corrections`, verifies the next `build_context_system_suffix()` includes it, then deletes only the synthetic correction and bot-turn rows. Pass/fail is logged to ops ledger; failure queues a focused repair spec and Telegram alert. Runtime kill switch: `CORRECTION_RETENTION_SMOKE_DISABLE=1`.
+- **Tests:** `python3 -B -m unittest tools.build_loop.test_correction_retention_smoke tools.build_loop.test_liveness_probe`; `bash -n tools/build_loop/server_build_loop.sh`; `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/correction_retention_smoke.py tools/build_loop/test_correction_retention_smoke.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d129-registry-final.json`
+- **Risks:** Live DB writes and a real server build-loop merge were not run in this sandbox. The smoke intentionally does not auto-revert unrelated merged builds on correction-memory failure; it cleans up the synthetic row, logs failure, alerts, and queues repair.
+- **Rollback:** revert the listed files. Runtime-only rollback is `CORRECTION_RETENTION_SMOKE_DISABLE=1`.
+- **Intent solved:** correction retention is now checked after every build merge instead of relying on James to discover amnesia in a later chat.
+- **Downstream intent unlocked:** the autonomous loop can route correction-memory regressions from a concrete smoke log into a repair spec immediately.
+- **Questions for Ember/James:** after merge on server 162, watch the next successful build-loop merge and confirm `ops_ledger` records `correction-retention:pass`. If it records `correction-retention:fail`, use the queued repair spec and log path as the next build input.
+
 ### 2026-06-26 · SPEC_d011_intent-injector-correction-capt · branch `build/SPEC_d011_intent-injector-correction-capt`
 
 - **Status:** done in working tree / awaiting merge review

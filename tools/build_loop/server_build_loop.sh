@@ -137,6 +137,60 @@ print(json.dumps({
 PY
 }
 
+queue_correction_retention_followup() {
+  local log_file="$1"
+  SPECID="$SPECID" DID="$DID" BR="$BR" CORRECTION_RETENTION_LOG_FILE="$log_file" "$PY" - <<'PY' | dec seed >/dev/null 2>&1 || true
+import json
+import os
+
+specid = os.environ.get("SPECID", "")
+did = os.environ.get("DID", "")
+branch = os.environ.get("BR", "")
+log_file = os.environ.get("CORRECTION_RETENTION_LOG_FILE", "")
+print(json.dumps({
+    "question": f"Correction retention smoke failed after auto-merge for {specid}",
+    "build_spec": (
+        f"Investigate and repair correction retention after {specid} "
+        f"(decision {did}, branch {branch}). Start from the smoke log at {log_file}. "
+        "The required proof is: write a synthetic correction, verify it appears in "
+        "brain_index.corrections, verify the next bot prompt includes it, and clean up "
+        "the synthetic row. Keep the fix scoped, reversible, tested, and do not deploy, "
+        "push, merge, touch secrets, send outreach, or move money."
+    ),
+    "proof_expected": f"Correction retention smoke passes after the repair and ops_ledger records correction-retention:pass for {specid}.",
+}))
+PY
+}
+
+run_correction_retention_smoke() {
+  local log_file status
+  if [ "${CORRECTION_RETENTION_SMOKE_DISABLE:-0}" = "1" ]; then
+    python3 "$REPO/tools/build_loop/ops_log.py" correction-retention "correction-retention:skipped" "$SPECID disabled by CORRECTION_RETENTION_SMOKE_DISABLE=1" "\$0" "$BR" "" 2>/dev/null || true
+    return 0
+  fi
+  mkdir -p /opt/fpai-build/logs
+  log_file="/opt/fpai-build/logs/$SPECID.correction-retention.log"
+  (
+    cd "$REPO" || exit 1
+    export DID SPECID BR REPO WT BASE FPAI_REPO_ROOT="$REPO"
+    "$PY" "$REPO/tools/build_loop/correction_retention_smoke.py" \
+      --repo-root "$REPO" \
+      --curator-parent "$BRAIN" \
+      --spec-id "$SPECID" \
+      --decision-id "$DID" \
+      --branch "$BR"
+  ) >"$log_file" 2>&1
+  status=$?
+  if [ "$status" = 0 ]; then
+    python3 "$REPO/tools/build_loop/ops_log.py" correction-retention "correction-retention:pass" "$SPECID log=$log_file" "\$0" "$BR" "" 2>/dev/null || true
+    return 0
+  fi
+  python3 "$REPO/tools/build_loop/ops_log.py" correction-retention "correction-retention:fail" "$SPECID rc=$status log=$log_file" "\$0" "$BR" "Auto-queued correction-retention repair spec for $DID" 2>/dev/null || true
+  queue_correction_retention_followup "$log_file"
+  tg "⚠️ CORRECTION RETENTION SMOKE FAILED [$DID] — synthetic correction did not complete the write/read/prompt path. Repair queued. Log: $log_file" 2>/dev/null || true
+  return 0
+}
+
 run_liveness_probe() {
   local declaration="$1"
   local legacy_check="$2"
@@ -415,6 +469,7 @@ Register in core/BUILD/REGISTRY.json. Tests required. Do NOT push or merge.
       python3 "$REPO/tools/build_loop/ops_log.py" merge activated "$SPECID (activate.sh ran)" "\$0" "$BR" "" 2>/dev/null || true
     fi
     run_liveness_probe "$LIVENESS_DECLARATION" "$LIVENESS_CHECK"
+    run_correction_retention_smoke
 
     if [ "$RC" = 0 ]; then
       # APPROVE + merged — brief TG confirmation (informational, not a decision ask)
