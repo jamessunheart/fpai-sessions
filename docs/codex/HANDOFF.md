@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-26 · SPEC_f15b6f33-3073-4b44-8ef3-f03dd76a24b0_correction-loop-closure-verifica · branch `build/SPEC_f15b6f33-3073-4b44-8ef3-f03dd76a24b0_correction-loop-closure-verifica`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `tools/build_loop/correction_loop_closure_probe.py`; `tools/build_loop/test_correction_loop_closure_probe.py`; `tools/build_loop/server_build_loop.sh`; `core/BUILD/specs/SPEC_f15b6f33-3073-4b44-8ef3-f03dd76a24b0_correction-loop-closure-verifica.md`; `core/BUILD/results/SPEC_f15b6f33-3073-4b44-8ef3-f03dd76a24b0_correction-loop-closure-verifica.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a post-merge correction loop closure probe. It reads recent real `brain_index.corrections` rows, normalizes each `conversation_id + original_response + james_correction` pair into a stable fingerprint, and fails when the same correction pair recurs at least twice. The server build loop now runs it after liveness and the synthetic correction-retention smoke, logs `correction-loop:pass` / `correction-loop:fail` / `correction-loop:unavailable`, sends a Telegram alert on the first recurrence in the cooldown window, and queues a focused repair spec with the fingerprint and log path.
+- **Tests:** `python3 -B -m unittest tools.build_loop.test_correction_loop_closure_probe tools.build_loop.test_correction_retention_smoke tools.build_loop.test_liveness_probe`; `bash -n tools/build_loop/server_build_loop.sh`; `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/correction_loop_closure_probe.py tools/build_loop/test_correction_loop_closure_probe.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/f15-registry-final.json`; `git diff --check`
+- **Risks:** Live `brain_index.corrections`, live Telegram alert send, and a real server build-loop merge were not run in this sandbox. The probe catches identical normalized correction pairs; semantically similar but differently worded repeats may need a later fuzzy classifier if they show up in real data.
+- **Rollback:** revert the listed files. Runtime-only rollback is `CORRECTION_LOOP_CLOSURE_PROBE_DISABLE=1`; duplicate alert/spec creation is bounded by `CORRECTION_LOOP_CLOSURE_COOLDOWN_HOURS` (default 24).
+- **Intent solved:** repeated real correction pairs now produce explicit proof that correction retention/use failed to close the loop.
+- **Downstream intent unlocked:** the autonomous loop can route a focused correction-use repair from a concrete recurrence fingerprint/log instead of James rediscovering the same failure manually.
+- **Questions for Ember/James:** after merge on server 162, let one normal build-loop merge run and confirm `ops_ledger` records `correction-loop:pass`. If it records `correction-loop:fail`, use the queued repair spec and fingerprint as the next build input.
+
 ### 2026-06-26 · SPEC_d37302c6-8b88-48d7-ba6a-cc2855d376dd_correction-retention-smoke-test · branch `build/SPEC_d37302c6-8b88-48d7-ba6a-cc2855d376dd_correction-retention-smoke-test`
 
 - **Status:** done in working tree / awaiting merge review

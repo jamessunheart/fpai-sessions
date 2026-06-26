@@ -162,6 +162,34 @@ print(json.dumps({
 PY
 }
 
+queue_correction_loop_closure_followup() {
+  local log_file="$1"
+  local fingerprint="$2"
+  SPECID="$SPECID" DID="$DID" BR="$BR" CORRECTION_LOOP_LOG_FILE="$log_file" CORRECTION_LOOP_FINGERPRINT="$fingerprint" "$PY" - <<'PY' | dec seed >/dev/null 2>&1 || true
+import json
+import os
+
+specid = os.environ.get("SPECID", "")
+did = os.environ.get("DID", "")
+branch = os.environ.get("BR", "")
+log_file = os.environ.get("CORRECTION_LOOP_LOG_FILE", "")
+fingerprint = os.environ.get("CORRECTION_LOOP_FINGERPRINT", "")
+print(json.dumps({
+    "question": f"Correction loop recurrence detected after auto-merge for {specid}",
+    "build_spec": (
+        f"Investigate and repair repeated correction recurrence after {specid} "
+        f"(decision {did}, branch {branch}). Start from the closure probe log at {log_file}. "
+        f"The repeated correction fingerprint is {fingerprint}. The required proof is: "
+        "find why the same correction pair recurred, repair the retention/injection/use path, "
+        "then verify the correction loop closure probe records correction-loop:pass. Keep the "
+        "fix scoped, reversible, tested, and do not deploy, push, merge, touch secrets, send "
+        "outreach, or move money."
+    ),
+    "proof_expected": f"Correction loop closure probe passes after the repair and ops_ledger records correction-loop:pass for {specid}.",
+}))
+PY
+}
+
 run_correction_retention_smoke() {
   local log_file status
   if [ "${CORRECTION_RETENTION_SMOKE_DISABLE:-0}" = "1" ]; then
@@ -188,6 +216,48 @@ run_correction_retention_smoke() {
   python3 "$REPO/tools/build_loop/ops_log.py" correction-retention "correction-retention:fail" "$SPECID rc=$status log=$log_file" "\$0" "$BR" "Auto-queued correction-retention repair spec for $DID" 2>/dev/null || true
   queue_correction_retention_followup "$log_file"
   tg "⚠️ CORRECTION RETENTION SMOKE FAILED [$DID] — synthetic correction did not complete the write/read/prompt path. Repair queued. Log: $log_file" 2>/dev/null || true
+  return 0
+}
+
+run_correction_loop_closure_probe() {
+  local log_file status probe_status fingerprint count alert_recommended
+  if [ "${CORRECTION_LOOP_CLOSURE_PROBE_DISABLE:-0}" = "1" ]; then
+    python3 "$REPO/tools/build_loop/ops_log.py" correction-loop "correction-loop:skipped" "$SPECID disabled by CORRECTION_LOOP_CLOSURE_PROBE_DISABLE=1" "\$0" "$BR" "" 2>/dev/null || true
+    return 0
+  fi
+  mkdir -p /opt/fpai-build/logs
+  log_file="/opt/fpai-build/logs/$SPECID.correction-loop-closure.log"
+  (
+    cd "$REPO" || exit 1
+    export DID SPECID BR REPO WT BASE FPAI_REPO_ROOT="$REPO"
+    "$PY" "$REPO/tools/build_loop/correction_loop_closure_probe.py" \
+      --curator-parent "$BRAIN" \
+      --ops-ledger "${OPS_LEDGER:-/opt/fpai-build/ops_ledger.jsonl}" \
+      --spec-id "$SPECID" \
+      --decision-id "$DID" \
+      --branch "$BR"
+  ) >"$log_file" 2>&1
+  status=$?
+  probe_status=$(tail -1 "$log_file" | "$PY" -c 'import json,sys; raw=sys.stdin.read().strip(); print((json.loads(raw).get("status") if raw else "") if raw else "")' 2>/dev/null || true)
+  fingerprint=$(tail -1 "$log_file" | "$PY" -c 'import json,sys; raw=sys.stdin.read().strip(); print((json.loads(raw).get("fingerprint") if raw else "") if raw else "")' 2>/dev/null || true)
+  count=$(tail -1 "$log_file" | "$PY" -c 'import json,sys; raw=sys.stdin.read().strip(); print((json.loads(raw).get("count") if raw else "") if raw else "")' 2>/dev/null || true)
+  alert_recommended=$(tail -1 "$log_file" | "$PY" -c 'import json,sys; raw=sys.stdin.read().strip(); print("1" if (json.loads(raw).get("alert_recommended") if raw else False) else "0")' 2>/dev/null || echo 0)
+  if [ "$status" = 0 ]; then
+    python3 "$REPO/tools/build_loop/ops_log.py" correction-loop "correction-loop:pass" "$SPECID checked real correction recurrence log=$log_file" "\$0" "$BR" "" 2>/dev/null || true
+    return 0
+  fi
+  if [ "$probe_status" = "unavailable" ] || [ "$status" = 2 ]; then
+    python3 "$REPO/tools/build_loop/ops_log.py" correction-loop "correction-loop:unavailable" "$SPECID rc=$status log=$log_file" "\$0" "$BR" "" 2>/dev/null || true
+    return 0
+  fi
+  if [ "$alert_recommended" = "1" ]; then
+    python3 "$REPO/tools/build_loop/ops_log.py" correction-loop "correction-loop:fail" "$SPECID repeated correction count=${count:-unknown} fingerprint=${fingerprint:-unknown} log=$log_file" "\$0" "$BR" "Auto-queued correction-loop closure repair spec for $DID" "fingerprint=${fingerprint:-unknown}" "count=${count:-0}" 2>/dev/null || true
+    queue_correction_loop_closure_followup "$log_file" "${fingerprint:-unknown}"
+    tg "⚠️ CORRECTION LOOP RECURRENCE [$DID] — same correction repeated ${count:-multiple} times, so retention did not close the loop. Repair queued. Fingerprint: ${fingerprint:-unknown}. Log: $log_file" 2>/dev/null || true
+  else
+    python3 "$REPO/tools/build_loop/ops_log.py" correction-loop "correction-loop:fail" "$SPECID repeated correction count=${count:-unknown} fingerprint=${fingerprint:-unknown} log=$log_file" "\$0" "$BR" "" "fingerprint=${fingerprint:-unknown}" "count=${count:-0}" 2>/dev/null || true
+    python3 "$REPO/tools/build_loop/ops_log.py" correction-loop "correction-loop:cooldown" "$SPECID duplicate alert suppressed fingerprint=${fingerprint:-unknown} log=$log_file" "\$0" "$BR" "" 2>/dev/null || true
+  fi
   return 0
 }
 
@@ -470,6 +540,7 @@ Register in core/BUILD/REGISTRY.json. Tests required. Do NOT push or merge.
     fi
     run_liveness_probe "$LIVENESS_DECLARATION" "$LIVENESS_CHECK"
     run_correction_retention_smoke
+    run_correction_loop_closure_probe
 
     if [ "$RC" = 0 ]; then
       # APPROVE + merged — brief TG confirmation (informational, not a decision ask)

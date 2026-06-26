@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
         {
+            "id": "SPEC_f15b6f33-3073-4b44-8ef3-f03dd76a24b0_correction-loop-closure-verifica",
+            "slug": "SPEC_f15b6f33-3073-4b44-8ef3-f03dd76a24b0_correction-loop-closure-verifica",
+            "branch": "build/SPEC_f15b6f33-3073-4b44-8ef3-f03dd76a24b0_correction-loop-closure-verifica",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_f15b6f33-3073-4b44-8ef3-f03dd76a24b0_correction-loop-closure-verifica.md",
+            "tests_passed": true,
+            "notes": "d127 complete in working tree: added a post-merge correction loop closure probe that reads recent real brain_index.corrections rows, normalizes conversation_id + original_response + james_correction into a stable fingerprint, fails when the same correction pair recurs at least twice, logs correction-loop:pass/fail/unavailable, sends one cooldown-bounded Telegram alert, and queues a focused repair spec with the recurrence fingerprint/log. Focused unittest, existing retention/liveness contract tests, shell syntax, py_compile, registry JSON validation, and diff hygiene passed. No live brain_index read, Telegram alert send, server build-loop run, deploy, push, merge, outreach, secrets, or money movement."
+        },
+        {
             "id": "SPEC_d37302c6-8b88-48d7-ba6a-cc2855d376dd_correction-retention-smoke-test",
             "slug": "SPEC_d37302c6-8b88-48d7-ba6a-cc2855d376dd_correction-retention-smoke-test",
             "branch": "build/SPEC_d37302c6-8b88-48d7-ba6a-cc2855d376dd_correction-retention-smoke-test",
