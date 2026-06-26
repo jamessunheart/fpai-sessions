@@ -42,6 +42,22 @@
   const redeemBtn = (n.type==='capacity') ? `<button class="btn gold" id="redeemBtn">Redeem</button>`
     : (n.redeemable===true ? `<button class="btn gold" onclick="alert('Redemption for this note type opens in a later phase. This note records the promise; the listed party honors it.')">Redeem</button>` : '');
   const mirrorPreview = n.type==='mirror' ? `<div class="notice">Mirror Notes are a <b>Phase 5</b> preview. Cash exits gate by jurisdiction, identity, limits, and approved liquidity partners. Shown to teach how reserve backing works.</div>` : '';
+  const isAuction = n.type==='art';
+  const auctionBox = isAuction ? `
+    <div class="panel" style="margin-top:0;border:2px solid var(--gold)">
+      <div class="kicker">Live auction</div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin:4px 0">
+        <div><div class="muted" style="font-size:.8rem">Current high bid</div>
+          <div style="font-family:var(--serif);font-size:1.8rem;font-weight:700" id="highBid">${n.high_bid!=null?FiArt.esc(n.high_bid):'—'}</div></div>
+        <div style="text-align:right"><div class="muted" style="font-size:.8rem">Reserve floor</div>
+          <div class="mono">${FiArt.esc(n.reserve||0)}</div></div>
+      </div>
+      <div class="muted" style="font-size:.82rem" id="bidMeta">${n.bid_count||0} bid${(n.bid_count===1)?'':'s'}${n.high_bidder?(' · high: '+FiArt.esc(n.high_bidder)):''}${n.auction_ends?(' · ends '+FiArt.esc(n.auction_ends)):''}</div>
+      <div class="field" style="margin:12px 0 8px"><input type="text" id="bidAmt" placeholder="Your bid (≥ ${FiArt.esc((n.high_bid!=null?n.high_bid:n.reserve)||0)})"></div>
+      <button class="btn gold" id="bidBtn">Place bid</button>
+      <div class="muted" id="bidMsg" style="font-size:.84rem;margin-top:8px"></div>
+      <div class="muted" style="font-size:.78rem;margin-top:8px">Winning bid claims the artwork. Not cash — a claim to the piece. Reserve = creator's floor.</div>
+    </div>` : '';
 
   el.innerHTML = `
   <div class="grid g2" style="align-items:start">
@@ -53,7 +69,7 @@
       <div class="lesson"><div class="teach">This note teaches</div><b>${FiArt.esc(n.educational_theme||'—')}</b></div>
     </div>
     <div>
-      <div class="panel" style="margin-top:0">
+      ${isAuction ? auctionBox : `<div class="panel" style="margin-top:0">
         <div style="font-family:var(--serif);font-size:2rem;font-weight:700">${price}</div>
         <div class="muted" style="font-size:.9rem;margin-bottom:14px">${FiArt.esc(cfg.label)} · by ${FiArt.esc(n.creator||'—')}</div>
         <div class="btn-row">
@@ -63,7 +79,7 @@
         </div>
         <div class="muted" id="collectMsg" style="font-size:.85rem;margin-top:8px"></div>
         ${mirrorPreview}
-      </div>
+      </div>`}
       ${FiArt.truthPanel(n)}
       <div class="panel" id="provpanel">
         <h3 style="margin-top:0">Provenance</h3>
@@ -76,6 +92,22 @@
       </div>
     </div>
   </div>`;
+
+  const bb = document.getElementById('bidBtn');
+  if(bb) bb.onclick = async ()=>{
+    const amt = parseFloat(document.getElementById('bidAmt').value);
+    const msg = document.getElementById('bidMsg');
+    if(!(amt>0)){ msg.textContent='Enter a bid amount.'; return; }
+    bb.disabled=true; msg.textContent='Placing…';
+    const res = await fetch('/api/bid',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({note_id:n.id, bidder:(FiArt.covenantSigned()||{}).handle||'bidder', amount:amt})}).then(r=>r.json());
+    bb.disabled=false;
+    if(res.ok){
+      document.getElementById('highBid').textContent = res.high_bid;
+      document.getElementById('bidMeta').textContent = 'high: '+res.high_bidder;
+      msg.style.color='var(--ok)'; msg.textContent='You are the high bidder ✓';
+    } else { msg.style.color='var(--danger)'; msg.textContent = res.error || 'Bid failed.'; }
+  };
 
   const rb = document.getElementById('redeemBtn');
   if(rb) rb.onclick = async ()=>{

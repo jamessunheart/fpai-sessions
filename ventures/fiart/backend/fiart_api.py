@@ -14,6 +14,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 DB   = os.environ.get("FIART_DB", "/var/lib/fiart/fiart.db")
 PORT = int(os.environ.get("FIART_PORT", "8990"))
 SEED = os.path.join(os.path.dirname(os.path.abspath(__file__)), "notes_seed.json")
+UPLOADS = os.environ.get("FIART_UPLOADS", "/var/lib/fiart/uploads")
 
 BANNED = [
     "legal tender","government-backed","government backed","federal reserve","treasury note",
@@ -50,7 +51,15 @@ def init():
     c.execute("""CREATE TABLE IF NOT EXISTS redemptions(
         id INTEGER PRIMARY KEY AUTOINCREMENT, note_id TEXT, provider_id TEXT, requester TEXT,
         requested_date TEXT, status TEXT, created_at INTEGER, updated_at INTEGER)""")
+    c.execute("""CREATE TABLE IF NOT EXISTS bids(
+        id INTEGER PRIMARY KEY AUTOINCREMENT, note_id TEXT, bidder TEXT, amount REAL, created_at INTEGER)""")
+    # add auction columns to notes if missing
+    have = {r[1] for r in c.execute("PRAGMA table_info(notes)").fetchall()}
+    if "reserve" not in have:      c.execute("ALTER TABLE notes ADD COLUMN reserve REAL")
+    if "auction_ends" not in have: c.execute("ALTER TABLE notes ADD COLUMN auction_ends TEXT")
+    if "media_url" not in have:    c.execute("ALTER TABLE notes ADD COLUMN media_url TEXT")
     c.commit()
+    os.makedirs(UPLOADS, exist_ok=True)
     if c.execute("SELECT COUNT(*) FROM notes").fetchone()[0] == 0 and os.path.exists(SEED):
         for n in json.load(open(SEED)):
             cols = ["id","type","title","denomination","creator","verified","redeemable",
@@ -92,8 +101,16 @@ class H(BaseHTTPRequestHandler):
             if self.path.startswith("/api/note"):
                 from urllib.parse import urlparse, parse_qs
                 nid = parse_qs(urlparse(self.path).query).get("id", [""])[0]
-                c = db(); r = c.execute("SELECT * FROM notes WHERE id=?", (nid,)).fetchone(); c.close()
-                return self._send(200, {"note": row_to_note(r)} if r else {"note": None})
+                c = db(); r = c.execute("SELECT * FROM notes WHERE id=?", (nid,)).fetchone()
+                if not r: c.close(); return self._send(200, {"note": None})
+                note = row_to_note(r)
+                if note.get("type") == "art":
+                    hb = c.execute("SELECT bidder, MAX(amount) a FROM bids WHERE note_id=?", (nid,)).fetchone()
+                    note["high_bid"] = hb["a"] if hb and hb["a"] is not None else None
+                    note["high_bidder"] = hb["bidder"] if hb and hb["a"] is not None else None
+                    note["bid_count"] = c.execute("SELECT COUNT(*) FROM bids WHERE note_id=?", (nid,)).fetchone()[0]
+                c.close()
+                return self._send(200, {"note": note})
             if self.path.startswith("/api/redemptions"):
                 from urllib.parse import urlparse, parse_qs
                 pid = parse_qs(urlparse(self.path).query).get("provider_id", [""])[0]
@@ -122,6 +139,10 @@ class H(BaseHTTPRequestHandler):
                 return self.redeem(data)
             if self.path == "/api/redeem/confirm":
                 return self.redeem_confirm(data)
+            if self.path == "/api/art/mint":
+                return self.art_mint(data)
+            if self.path == "/api/bid":
+                return self.bid(data)
             return self._send(404, {"error": "not found"})
         except Exception as e:
             return self._send(500, {"error": str(e)})
@@ -249,6 +270,81 @@ class H(BaseHTTPRequestHandler):
         c.execute("UPDATE redemptions SET status=?, updated_at=? WHERE id=?", (status, int(time.time()), rid))
         c.commit(); c.close()
         return self._send(200, {"ok": True, "redemption_id": rid, "status": status})
+
+    # ---- Phase 3: Art Notes + auction ----
+    def art_mint(self, d):
+        import base64
+        if not d.get("covenant"):
+            return self._send(403, {"error": "Creator Covenant must be signed before minting."})
+        title = (d.get("title") or "").strip()
+        if not title:
+            return self._send(400, {"error": "Title required."})
+        blob = " ".join(str(d.get(k, "")) for k in ("title","description","educational_theme"))
+        hits = scan_claims(blob)
+        if hits:
+            return self._send(422, {"error": "Money-claim language blocked. An Art Note is a claim to art, not an investment.", "hits": hits})
+        try:
+            reserve = float(d.get("reserve")) if d.get("reserve") not in (None, "", "null") else 0.0
+        except (TypeError, ValueError):
+            return self._send(400, {"error": "Reserve must be a number (your cost floor)."})
+        nid = "ART-" + str(int(time.time() * 1000))[-9:]
+        # optional image: data URL → file
+        media = ""
+        img = d.get("image_data_url") or ""
+        if img.startswith("data:image/"):
+            try:
+                hdr, b64 = img.split(",", 1)
+                ext = {"png":"png","jpeg":"jpg","jpg":"jpg","webp":"webp","gif":"gif"}.get(
+                    hdr.split("/")[1].split(";")[0], "png")
+                raw = base64.b64decode(b64)
+                if len(raw) <= 6_000_000:
+                    fn = nid + "." + ext
+                    with open(os.path.join(UPLOADS, fn), "wb") as f: f.write(raw)
+                    media = "/uploads/" + fn
+            except Exception:
+                media = ""
+        note = dict(
+            id=nid, type="art", title=html.escape(title)[:160],
+            denomination=html.escape((d.get("denomination") or "CLAIM").strip())[:24],
+            creator=html.escape((d.get("creator") or "anonymous").strip())[:60],
+            verified=0, redeemable="maybe",
+            redeemable_for="Physical/digital artwork (claim)", cash_redeemable=0,
+            backed_by="The artwork + creator promise", honored_by=html.escape((d.get("creator") or "creator").strip())[:60],
+            transferable="Yes", expiration="None", risk_label="Physical-art-backed",
+            educational_theme=html.escape((d.get("educational_theme") or
+                              "An art note conveys a claim to the object — not cash").strip())[:160],
+            description=html.escape((d.get("description") or "").strip())[:600],
+            price=reserve, currency="Fiart Marketplace Credit", status="auction",
+            reserve=reserve, auction_ends=html.escape((d.get("auction_ends") or "").strip())[:40],
+            media_url=media)
+        c = db()
+        cols = list(note.keys())
+        c.execute(f"INSERT INTO notes({','.join(cols)},created_at) VALUES({','.join('?'*len(cols))},?)",
+                  [note[k] for k in cols] + [int(time.time())])
+        c.commit(); c.close()
+        return self._send(201, {"ok": True, "id": nid, "note": row_to_note(note)})
+
+    def bid(self, d):
+        nid = d.get("note_id"); who = html.escape((d.get("bidder") or "bidder").strip())[:60]
+        try:
+            amt = float(d.get("amount"))
+        except (TypeError, ValueError):
+            return self._send(400, {"error": "Bid amount must be a number."})
+        c = db(); n = c.execute("SELECT * FROM notes WHERE id=?", (nid,)).fetchone()
+        if not n: c.close(); return self._send(404, {"error": "note not found"})
+        if n["type"] != "art": c.close(); return self._send(400, {"error": "Only Art Notes accept bids."})
+        reserve = n["reserve"] or 0.0
+        hb = c.execute("SELECT MAX(amount) a FROM bids WHERE note_id=?", (nid,)).fetchone()
+        high = hb["a"] if hb and hb["a"] is not None else None
+        floor = high if high is not None else reserve
+        if amt < reserve:
+            c.close(); return self._send(422, {"error": f"Bid below reserve floor ({reserve:g}).", "reserve": reserve})
+        if high is not None and amt <= high:
+            c.close(); return self._send(422, {"error": f"Bid must beat current high ({high:g}).", "high_bid": high})
+        c.execute("INSERT INTO bids(note_id,bidder,amount,created_at) VALUES(?,?,?,?)",
+                  (nid, who, amt, int(time.time())))
+        c.commit(); c.close()
+        return self._send(201, {"ok": True, "note_id": nid, "high_bid": amt, "high_bidder": who})
 
 if __name__ == "__main__":
     init()

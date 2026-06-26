@@ -115,6 +115,10 @@ const FiArt = (() => {
     const cfg = TYPES[n.type] || TYPES.open;
     const g = cfg.grad;
     const denom = n.denomination || cfg.label;
+    if(n.media_url){
+      return `<div class="note-art" style="background:#111;padding:0">
+        <img src="${esc(n.media_url)}" alt="${esc(n.title||'')}" style="width:100%;height:100%;object-fit:cover;display:block"></div>`;
+    }
     return `<div class="note-art" style="background:linear-gradient(135deg,${g[0]},${g[1]})">
       <div class="guilloche"></div><div class="denom">${esc(denom)}</div></div>`;
   }
