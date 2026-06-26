@@ -671,7 +671,7 @@ def queue_build(spec: dict[str, Any]) -> bool:
                     """
                     INSERT INTO brain_index.decisions
                         (id, question, answer, status, needs_build, spec_written, build_spec, created_at)
-                    VALUES (%s, %s, %s, 'answered', true, true, %s, now())
+                    VALUES (%s, %s, %s, 'answered', true, false, %s, now())
                     """,
                     (
                         str(uuid.uuid4()),

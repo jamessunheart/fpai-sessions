@@ -38,7 +38,9 @@ def latest_session_insight(db_url: str = DEFAULT_DB_URL) -> dict[str, Any] | Non
                 SELECT id, session_id, surface, insight_type, title, body,
                        specs_affected, weight, ts::text
                   FROM brain_index.session_insights
-                 WHERE expires_at IS NULL OR expires_at > NOW()
+                 WHERE (expires_at IS NULL OR expires_at > NOW())
+                   AND insight_type != 'housekeeping'
+                   AND title NOT LIKE 'Auto-snapshot%'
                  ORDER BY weight DESC, ts DESC
                  LIMIT 1
                 """
