@@ -145,12 +145,27 @@ CREATE TABLE IF NOT EXISTS public_conversations (
     chat_id         TEXT NOT NULL,
     role            TEXT NOT NULL,
     text            TEXT NOT NULL,
+    tier            TEXT NOT NULL DEFAULT 'PUBLIC',
+    source          TEXT NOT NULL DEFAULT 'public_chat',
+    consented       BOOLEAN NOT NULL DEFAULT true,
+    consented_at    TIMESTAMPTZ,
     ts              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CHECK (role IN ('user', 'assistant'))
 );
 
+ALTER TABLE public_conversations ADD COLUMN IF NOT EXISTS tier TEXT NOT NULL DEFAULT 'PUBLIC';
+ALTER TABLE public_conversations ADD COLUMN IF NOT EXISTS source TEXT NOT NULL DEFAULT 'public_chat';
+ALTER TABLE public_conversations ADD COLUMN IF NOT EXISTS consented BOOLEAN NOT NULL DEFAULT true;
+ALTER TABLE public_conversations ADD COLUMN IF NOT EXISTS consented_at TIMESTAMPTZ;
+
 CREATE INDEX IF NOT EXISTS public_conversations_chat_ts_idx
     ON public_conversations (chat_id, ts DESC);
+
+CREATE TABLE IF NOT EXISTS public_chat_consents (
+    chat_id         TEXT PRIMARY KEY,
+    consented_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    consent_hash    TEXT NOT NULL
+);
 
 -- Channel identity map.
 -- One universal user_id can connect to many platform-specific identities.

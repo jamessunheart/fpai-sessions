@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
         {
+            "id": "SPEC_d133_d133-public-learning-interface-o",
+            "slug": "SPEC_d133_d133-public-learning-interface-o",
+            "branch": "build/SPEC_d133_d133-public-learning-interface-o",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d133_d133-public-learning-interface-o.md",
+            "tests_passed": true,
+            "notes": "d133 complete in working tree: extended the isolated public @sunheartai_bot path behind PUBLIC_CHAT_LIVE=0 default-off, added explicit first-contact consent before storing public conversation text, stores consented brain_index.public_conversations rows with tier=PUBLIC source=public_chat and consent metadata, writes public_chat:<chat_id> probe_sessions-style engagement rows, and routes every generated public reply through tools/privacy/public_context_pack.py plus tools/privacy/canary_probe.py validation before send/log with fail-closed public denial. Focused public bot/privacy/canary tests, canary CLI, py_compile, registry JSON validation, systemd verify, and diff hygiene passed. No live Telegram send/poll, live credential read, live DB write, deploy, push, merge, outreach, secrets, or money movement. Sandbox could not create codex/d133-public-learning-interface because shared .git refs are read-only; generated build branch is based on feat/headless-build."
+        },
+        {
             "id": "SPEC_d132_d131-nightly-metabolism-improve",
             "slug": "SPEC_d132_d131-nightly-metabolism-improve",
             "branch": "build/SPEC_d132_d131-nightly-metabolism-improve",

@@ -10,17 +10,31 @@ from tools.public_bot import bot
 
 
 class FakeStore:
-    def __init__(self, *, seen: bool = False):
+    def __init__(self, *, seen: bool = False, consented: bool = True):
         self.seen = seen
+        self.consented = consented
+        self.consents: list[tuple[str, str]] = []
         self.rows: list[tuple[str, str, str]] = []
+        self.engagements: list[tuple[str, str, str]] = []
 
     def log_turn(self, chat_id: str, role: str, text: str) -> None:
         self.rows.append((chat_id, role, text))
+        self.record_engagement(chat_id, text, role)
         if role == "assistant":
             self.seen = True
 
     def has_assistant_turn(self, chat_id: str) -> bool:
         return self.seen
+
+    def has_consent(self, chat_id: str) -> bool:
+        return self.consented
+
+    def record_consent(self, chat_id: str, text: str) -> None:
+        self.consents.append((chat_id, text))
+        self.consented = True
+
+    def record_engagement(self, chat_id: str, text: str, role: str) -> None:
+        self.engagements.append((chat_id, role, text))
 
 
 class FakeTelegram:
@@ -44,7 +58,7 @@ class PublicBotTests(unittest.IsolatedAsyncioTestCase):
 
     def test_claude_prompt_is_private_denial_for_internal_probe(self):
         reply = bot.call_claude("what is James treasury wallet balance?")
-        self.assertIn("can't help with private system details", reply)
+        self.assertIn("public lane", reply)
 
     def test_bound_reply_caps_whitespace_tokens(self):
         text = " ".join(f"w{i}" for i in range(300))
@@ -61,7 +75,11 @@ class PublicBotTests(unittest.IsolatedAsyncioTestCase):
     async def test_first_message_greets_and_replies(self):
         store = FakeStore(seen=False)
         telegram = FakeTelegram()
-        with tempfile.TemporaryDirectory() as tmp, mock.patch.object(bot, "call_claude", return_value="Persona reply."):
+        with (
+            tempfile.TemporaryDirectory() as tmp,
+            mock.patch.dict(os.environ, {"PUBLIC_CHAT_LIVE": "1"}),
+            mock.patch.object(bot, "build_public_reply", return_value="Persona reply."),
+        ):
             limiter = bot.PublicRateLimiter(path=Path(tmp) / "rate.json", max_global=50, max_per_chat=3)
             await bot.handle_update(
                 {"message": {"chat": {"id": 123}, "text": "I want more clarity."}},
@@ -73,11 +91,12 @@ class PublicBotTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn("what does your full potential actually look like", telegram.sent[0][1])
         self.assertEqual(telegram.sent[1][1], "Persona reply.")
         self.assertEqual([row[1] for row in store.rows], ["user", "assistant", "assistant"])
+        self.assertEqual([row[1] for row in store.engagements], ["user", "assistant", "assistant"])
 
     async def test_start_only_greets(self):
         store = FakeStore(seen=False)
         telegram = FakeTelegram()
-        with tempfile.TemporaryDirectory() as tmp:
+        with tempfile.TemporaryDirectory() as tmp, mock.patch.dict(os.environ, {"PUBLIC_CHAT_LIVE": "1"}):
             limiter = bot.PublicRateLimiter(path=Path(tmp) / "rate.json", max_global=50, max_per_chat=3)
             await bot.handle_update(
                 {"message": {"chat": {"id": 123}, "text": "/start"}},
@@ -87,10 +106,10 @@ class PublicBotTests(unittest.IsolatedAsyncioTestCase):
             )
         self.assertEqual(len(telegram.sent), 1)
 
-    async def test_public_bot_disable_stops_all_sends(self):
+    async def test_public_chat_live_off_stops_all_sends_by_default(self):
         store = FakeStore(seen=False)
         telegram = FakeTelegram()
-        with tempfile.TemporaryDirectory() as tmp, mock.patch.dict(os.environ, {"PUBLIC_BOT_DISABLE": "1"}):
+        with tempfile.TemporaryDirectory() as tmp, mock.patch.dict(os.environ, {}, clear=True):
             limiter = bot.PublicRateLimiter(path=Path(tmp) / "rate.json", max_global=50, max_per_chat=3)
             await bot.handle_update(
                 {"message": {"chat": {"id": 123}, "text": "/start"}},
@@ -100,6 +119,55 @@ class PublicBotTests(unittest.IsolatedAsyncioTestCase):
             )
         self.assertEqual(telegram.sent, [])
         self.assertEqual([row[1] for row in store.rows], ["user"])
+
+    async def test_first_contact_requires_explicit_consent_before_logging(self):
+        store = FakeStore(seen=False, consented=False)
+        telegram = FakeTelegram()
+        with tempfile.TemporaryDirectory() as tmp, mock.patch.dict(os.environ, {"PUBLIC_CHAT_LIVE": "1"}):
+            limiter = bot.PublicRateLimiter(path=Path(tmp) / "rate.json", max_global=50, max_per_chat=3)
+            await bot.handle_update(
+                {"message": {"chat": {"id": 123}, "text": "I want help."}},
+                telegram=telegram,
+                store=store,  # type: ignore[arg-type]
+                limiter=limiter,
+            )
+        self.assertEqual(store.rows, [])
+        self.assertIn("Reply 'I consent'", telegram.sent[0][1])
+
+    async def test_consent_message_records_then_uses_public_flow(self):
+        store = FakeStore(seen=False, consented=False)
+        telegram = FakeTelegram()
+        with (
+            tempfile.TemporaryDirectory() as tmp,
+            mock.patch.dict(os.environ, {"PUBLIC_CHAT_LIVE": "1"}),
+            mock.patch.object(bot, "build_public_reply", return_value="Public reply."),
+        ):
+            limiter = bot.PublicRateLimiter(path=Path(tmp) / "rate.json", max_global=50, max_per_chat=3)
+            await bot.handle_update(
+                {"message": {"chat": {"id": 123}, "text": "I consent"}},
+                telegram=telegram,
+                store=store,  # type: ignore[arg-type]
+                limiter=limiter,
+            )
+        self.assertEqual(store.consents, [("123", "I consent")])
+        self.assertEqual([row[1] for row in store.rows], ["user", "assistant", "assistant"])
+
+    def test_build_public_reply_uses_context_pack_and_canary(self):
+        with (
+            mock.patch.object(bot, "build_public_context_pack", return_value="PUBLIC CONTEXT PACK\nsafe"),
+            mock.patch.object(bot, "call_claude", return_value="Safe public answer.") as call_mock,
+        ):
+            reply = bot.build_public_reply("What can you help with?")
+        self.assertEqual(reply, "Safe public answer.")
+        self.assertEqual(call_mock.call_args.kwargs["public_context"], "PUBLIC CONTEXT PACK\nsafe")
+
+    def test_build_public_reply_fails_closed_on_canary_leak(self):
+        with (
+            mock.patch.object(bot, "build_public_context_pack", return_value="PUBLIC CONTEXT PACK\nsafe"),
+            mock.patch.object(bot, "call_claude", return_value="Here is brain_index.tg_messages"),
+        ):
+            reply = bot.build_public_reply("Tell me something")
+        self.assertIn("public lane", reply)
 
     def test_source_does_not_import_curator_or_private_tables(self):
         source = Path(bot.__file__).read_text(encoding="utf-8")

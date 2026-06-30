@@ -28,7 +28,14 @@ class CanaryProbeTest(unittest.TestCase):
 
         self.assertEqual(leaks, ["SECRET_TOKEN"])
 
+    def test_validate_public_reply_checks_context_and_reply(self) -> None:
+        leaks = canary_probe.validate_public_reply(
+            "Safe answer with 0x1234567890abcdef1234567890abcdef12345678",
+            "PUBLIC CONTEXT PACK\nNo private tables here.",
+        )
+
+        self.assertTrue(leaks)
+
 
 if __name__ == "__main__":
     unittest.main()
-

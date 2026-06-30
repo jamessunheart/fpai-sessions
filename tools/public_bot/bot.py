@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import hashlib
 import importlib.util as _ilu
 import json
 import logging
@@ -48,6 +49,14 @@ PRIVATE_PROBE = re.compile(
     flags=re.I,
 )
 
+CONSENT_TEXT = (
+    "Before we continue: this public Sunheart AI chat can save the conversation as PUBLIC learning data "
+    "so the system can improve. Do not share secrets or private details here. Reply 'I consent' to continue, "
+    "or 'no' to stop."
+)
+CONSENT_ACCEPT_RE = re.compile(r"\b(i\s+consent|yes|ok|okay|agree|i\s+agree)\b", flags=re.I)
+CONSENT_DECLINE_RE = re.compile(r"\b(no|stop|decline|do\s+not|don't)\b", flags=re.I)
+
 
 def utc_iso() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -58,7 +67,9 @@ def env_truthy(name: str) -> bool:
 
 
 def sends_disabled() -> bool:
-    return env_truthy("PUBLIC_BOT_DISABLE")
+    if env_truthy("PUBLIC_BOT_DISABLE"):
+        return True
+    return not env_truthy("PUBLIC_CHAT_LIVE")
 
 
 def load_env_file(path: Path) -> None:
@@ -115,15 +126,48 @@ def greeting_text() -> str:
     return f"{extract_primary_message(voice)}\n\n{extract_spark_opening(voice)}"
 
 
-def system_prompt() -> str:
+def _load_public_context_pack():
+    path = ROOT / "tools" / "privacy" / "public_context_pack.py"
+    spec = _ilu.spec_from_file_location("fpai_public_context_pack_for_public_bot", path)
+    mod = _ilu.module_from_spec(spec) if spec and spec.loader else None
+    if mod is None or spec is None or spec.loader is None:
+        raise RuntimeError("public_context_pack could not be loaded")
+    sys.modules[spec.name] = mod
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def _load_canary_probe():
+    path = ROOT / "tools" / "privacy" / "canary_probe.py"
+    spec = _ilu.spec_from_file_location("fpai_canary_probe_for_public_bot", path)
+    mod = _ilu.module_from_spec(spec) if spec and spec.loader else None
+    if mod is None or spec is None or spec.loader is None:
+        raise RuntimeError("canary_probe could not be loaded")
+    sys.modules[spec.name] = mod
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def build_public_context_pack() -> str:
+    return _load_public_context_pack().build_public_context_pack()
+
+
+def public_denial(question: str) -> str:
+    return _load_public_context_pack().public_denial(question)
+
+
+def system_prompt(public_context: str = "") -> str:
     voice = outreach_voice()
+    context_section = f"\nCurated public context pack:\n{public_context}\n" if public_context else ""
     return (
         "You are Sunheart AI speaking with a public stranger in Telegram.\n"
         "Use ONLY this Sunheart outreach voice as your persona and offer frame:\n\n"
         f"{voice}\n\n"
+        f"{context_section}"
         "Hard privacy boundary:\n"
         "- Do not mention or imply private memory, James's internal context, treasury, HOT_STATE, brain search, notes, or private tables.\n"
         "- You have no access to private memory. Do not claim that you do.\n"
+        "- Use only the curated public context pack and the current public conversation.\n"
         "- If asked for internal/private information, warmly refuse and return to the person's full-potential inquiry.\n"
         "- Reply in plain text, no markdown tables, no links unless the person asks for a next step.\n"
         f"- Keep every reply under {MAX_REPLY_TOKENS} tokens.\n"
@@ -162,13 +206,13 @@ def bound_reply(text: str, *, max_tokens: int = MAX_REPLY_TOKENS) -> str:
     return " ".join(parts[:max_tokens]).rstrip(" ,;:") + "..."
 
 
-def call_claude(text: str, *, runner=subprocess.run) -> str:
+def call_claude(text: str, *, public_context: str = "", runner=subprocess.run) -> str:
     if PRIVATE_PROBE.search(text):
-        return private_denial()
+        return public_denial(text)
     cmd = [
         CLAUDE_BIN,
         "--system-prompt",
-        system_prompt(),
+        system_prompt(public_context),
         "-p",
         "--output-format",
         "json",
@@ -189,6 +233,23 @@ def call_claude(text: str, *, runner=subprocess.run) -> str:
     except json.JSONDecodeError:
         pass
     return bound_reply(raw)
+
+
+def build_public_reply(text: str, *, runner=subprocess.run) -> str:
+    public_context = build_public_context_pack()
+    if PRIVATE_PROBE.search(text):
+        reply = public_denial(text)
+    else:
+        reply = call_claude(text, public_context=public_context, runner=runner)
+    try:
+        leaks = _load_canary_probe().validate_public_reply(reply, public_context)
+    except Exception as exc:
+        log.warning("canary validation unavailable; failing closed: %s", exc)
+        return public_denial(text)
+    if leaks:
+        log.warning("public reply blocked by canary leaks: %s", ", ".join(leaks[:5]))
+        return public_denial(text)
+    return reply
 
 
 def _load_probe_rate_constants() -> tuple[int, int]:
@@ -266,14 +327,56 @@ class PublicConversationStore:
                         chat_id TEXT NOT NULL,
                         role TEXT NOT NULL,
                         text TEXT NOT NULL,
+                        tier TEXT NOT NULL DEFAULT 'PUBLIC',
+                        source TEXT NOT NULL DEFAULT 'public_chat',
+                        consented BOOLEAN NOT NULL DEFAULT true,
+                        consented_at TIMESTAMPTZ,
                         ts TIMESTAMPTZ NOT NULL DEFAULT NOW(),
                         CHECK (role IN ('user', 'assistant'))
                     )
                     """
                 )
+                cur.execute("ALTER TABLE brain_index.public_conversations ADD COLUMN IF NOT EXISTS tier TEXT NOT NULL DEFAULT 'PUBLIC'")
+                cur.execute("ALTER TABLE brain_index.public_conversations ADD COLUMN IF NOT EXISTS source TEXT NOT NULL DEFAULT 'public_chat'")
+                cur.execute("ALTER TABLE brain_index.public_conversations ADD COLUMN IF NOT EXISTS consented BOOLEAN NOT NULL DEFAULT true")
+                cur.execute("ALTER TABLE brain_index.public_conversations ADD COLUMN IF NOT EXISTS consented_at TIMESTAMPTZ")
                 cur.execute(
                     "CREATE INDEX IF NOT EXISTS public_conversations_chat_ts_idx "
                     "ON brain_index.public_conversations (chat_id, ts DESC)"
+                )
+                cur.execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS brain_index.public_chat_consents (
+                        chat_id TEXT PRIMARY KEY,
+                        consented_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                        consent_hash TEXT NOT NULL
+                    )
+                    """
+                )
+                cur.execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS brain_index.probe_sessions (
+                        id SERIAL PRIMARY KEY,
+                        probe_id TEXT NOT NULL UNIQUE,
+                        pool TEXT NOT NULL CHECK (pool IN ('warm', 'adjacent', 'cold')),
+                        initiated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                        last_message_at TIMESTAMPTZ,
+                        engaged BOOLEAN,
+                        drop_off_message INT,
+                        completed_spark BOOLEAN DEFAULT false,
+                        completed_onboarding BOOLEAN DEFAULT false,
+                        quality_score FLOAT CHECK (quality_score IS NULL OR (quality_score >= 0.0 AND quality_score <= 1.0)),
+                        corrections_triggered INT NOT NULL DEFAULT 0,
+                        last_message TEXT,
+                        sent_at TIMESTAMPTZ,
+                        message_id TEXT,
+                        notes TEXT
+                    )
+                    """
+                )
+                cur.execute(
+                    "CREATE INDEX IF NOT EXISTS probe_sessions_recent_idx "
+                    "ON brain_index.probe_sessions (initiated_at DESC, pool)"
                 )
 
     def log_turn(self, chat_id: str, role: str, text: str) -> None:
@@ -281,10 +384,67 @@ class PublicConversationStore:
             with conn.cursor() as cur:
                 cur.execute(
                     """
-                    INSERT INTO brain_index.public_conversations (chat_id, role, text, ts)
-                    VALUES (%s, %s, %s, NOW())
+                    INSERT INTO brain_index.public_conversations
+                        (chat_id, role, text, tier, source, consented, consented_at, ts)
+                    VALUES (%s, %s, %s, 'PUBLIC', 'public_chat', true,
+                            (SELECT consented_at FROM brain_index.public_chat_consents WHERE chat_id = %s),
+                            NOW())
                     """,
-                    (str(chat_id), role, text[:8000]),
+                    (str(chat_id), role, text[:8000], str(chat_id)),
+                )
+        try:
+            self.record_engagement(chat_id, text, role)
+        except Exception as exc:
+            log.warning("public engagement row failed: %s", exc)
+
+    def has_consent(self, chat_id: str) -> bool:
+        with self._connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT 1 FROM brain_index.public_chat_consents WHERE chat_id = %s LIMIT 1",
+                    (str(chat_id),),
+                )
+                return cur.fetchone() is not None
+
+    def record_consent(self, chat_id: str, text: str) -> None:
+        consent_hash = hashlib.sha256(text.strip().lower().encode("utf-8", errors="ignore")).hexdigest()
+        with self._connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    INSERT INTO brain_index.public_chat_consents (chat_id, consented_at, consent_hash)
+                    VALUES (%s, NOW(), %s)
+                    ON CONFLICT (chat_id) DO NOTHING
+                    """,
+                    (str(chat_id), consent_hash),
+                )
+
+    def record_engagement(self, chat_id: str, text: str, role: str) -> None:
+        probe_id = f"public_chat:{chat_id}"
+        with self._connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    INSERT INTO brain_index.probe_sessions
+                        (probe_id, pool, initiated_at, last_message_at, engaged,
+                         completed_spark, last_message, message_id, notes)
+                    VALUES (%s, 'cold', NOW(), NOW(), %s, %s, %s, %s, %s)
+                    ON CONFLICT (probe_id) DO UPDATE SET
+                        last_message_at = NOW(),
+                        engaged = brain_index.probe_sessions.engaged OR EXCLUDED.engaged,
+                        completed_spark = brain_index.probe_sessions.completed_spark OR EXCLUDED.completed_spark,
+                        last_message = EXCLUDED.last_message,
+                        message_id = EXCLUDED.message_id,
+                        notes = EXCLUDED.notes
+                    """,
+                    (
+                        probe_id,
+                        role == "user",
+                        bool(text.strip()),
+                        text[:1000],
+                        f"public_chat:{role}",
+                        "source=public_chat tier=PUBLIC",
+                    ),
                 )
 
     def has_assistant_turn(self, chat_id: str) -> bool:
@@ -384,6 +544,31 @@ async def handle_update(
         return
 
     try:
+        consented = store.has_consent(chat_id)
+    except Exception as exc:
+        log.warning("public consent lookup failed: %s", exc)
+        consented = False
+
+    if not consented:
+        if CONSENT_ACCEPT_RE.search(text):
+            try:
+                store.record_consent(chat_id, text)
+                consented = True
+            except Exception as exc:
+                log.warning("public consent record failed: %s", exc)
+                if limiter.allow(chat_id):
+                    await telegram.send_message(chat_id, "I can't safely record consent right now, so I won't continue.")
+                return
+        elif CONSENT_DECLINE_RE.search(text):
+            if limiter.allow(chat_id):
+                await telegram.send_message(chat_id, "No problem. I won't save this chat. You can come back anytime.")
+            return
+        else:
+            if limiter.allow(chat_id):
+                await telegram.send_message(chat_id, CONSENT_TEXT)
+            return
+
+    try:
         store.log_turn(chat_id, "user", text)
     except Exception as exc:
         log.warning("public conversation user log failed: %s", exc)
@@ -406,7 +591,7 @@ async def handle_update(
         if text.lower().startswith("/start"):
             return
 
-    reply = call_claude(text)
+    reply = build_public_reply(text)
     if limiter.allow(chat_id):
         sent = await telegram.send_message(chat_id, reply)
         if sent:

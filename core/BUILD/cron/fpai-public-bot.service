@@ -7,6 +7,7 @@ After=network-online.target
 Type=simple
 EnvironmentFile=-/etc/fpai-public-bot.env
 Environment=PYTHONPATH=/opt/fpai-build/FPAI_Cockpit
+Environment=PUBLIC_CHAT_LIVE=0
 WorkingDirectory=/opt/fpai-build/FPAI_Cockpit
 ExecStart=/usr/bin/env python3 -m tools.public_bot.bot
 Restart=always

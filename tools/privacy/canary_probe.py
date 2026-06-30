@@ -72,6 +72,17 @@ def find_context_leaks(public_context: str, markers: list[str] | None = None) ->
     return leaks
 
 
+def validate_public_reply(text: str, public_context: str, markers: list[str] | None = None) -> list[str]:
+    """Return leak markers for a public reply plus its context pack.
+
+    Public surfaces use this as a hard gate before sending or logging generated
+    text. It intentionally returns the concrete leaks instead of raising so
+    callers can fail closed with their own public-safe denial.
+    """
+    configured_markers = markers if markers is not None else private_markers_from_env()
+    return find_context_leaks(public_context, configured_markers) + find_leaks(text, configured_markers)
+
+
 def answer_public_canary(question: str, public_context: str) -> str:
     """Public-mode answer path for canary topics.
 
