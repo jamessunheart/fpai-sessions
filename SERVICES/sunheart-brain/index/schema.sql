@@ -179,11 +179,17 @@ CREATE TABLE IF NOT EXISTS corrections (
     bot_turn_id         UUID REFERENCES tg_messages(id) ON DELETE SET NULL,
     original_response   TEXT NOT NULL,
     james_correction    TEXT NOT NULL,
+    source              TEXT,
     captured_at         TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+ALTER TABLE corrections ADD COLUMN IF NOT EXISTS source TEXT;
+
 CREATE INDEX IF NOT EXISTS corrections_conversation_idx
     ON corrections (conversation_id, captured_at DESC);
+
+CREATE INDEX IF NOT EXISTS corrections_source_idx
+    ON corrections (source, captured_at DESC);
 
 -- Session write-through.
 -- Claude Code, phone, and other non-Telegram surfaces write significant

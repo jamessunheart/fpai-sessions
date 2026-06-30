@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
         {
+            "id": "SPEC_f57b8fb5-4b47-4a3d-aa59-9a1d4ea89a46_daily-value-check-did-the-system",
+            "slug": "SPEC_f57b8fb5-4b47-4a3d-aa59-9a1d4ea89a46_daily-value-check-did-the-system",
+            "branch": "build/SPEC_f57b8fb5-4b47-4a3d-aa59-9a1d4ea89a46_daily-value-check-did-the-system",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_f57b8fb5-4b47-4a3d-aa59-9a1d4ea89a46_daily-value-check-did-the-system.md",
+            "tests_passed": true,
+            "notes": "Complete in working tree: added daily value check prompt/capture. A reviewed systemd timer runs at 20:00 Europe/Athens, sends James the fixed Telegram question, records awaiting state in /var/lib/sh-brain/daily_value_check.json, and the private owner Telegram handler consumes the next ordinary one-line reply into brain_index.corrections with source=daily_value_check before normal chat synthesis. Added nullable corrections.source schema support, focused tests, py_compile, activation shell syntax, registry JSON validation, systemd verify, and diff hygiene. Runtime rollback flag: /opt/fpai-build/.daily_value_check_disabled. No live Telegram send, live timer install, live DB write, deploy, push, merge, secrets, outreach, service stop/delete, or money movement."
+        },
+        {
             "id": "SPEC_a6be0251-46e7-4d91-8443-7dea705b6293_autonomous-daily-value-delivery",
             "slug": "SPEC_a6be0251-46e7-4d91-8443-7dea705b6293_autonomous-daily-value-delivery",
             "branch": "build/SPEC_a6be0251-46e7-4d91-8443-7dea705b6293_autonomous-daily-value-delivery",

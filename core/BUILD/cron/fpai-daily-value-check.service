@@ -1,0 +1,9 @@
+[Unit]
+Description=FPAI daily value check prompt
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/fpai-build/FPAI_Cockpit/SERVICES/sunheart-brain
+Environment=PYTHONPATH=/opt/fpai-build/FPAI_Cockpit/SERVICES/sunheart-brain
+EnvironmentFile=-/etc/sh-brain/curator.env
+ExecStart=/usr/bin/env python3 -m curator.daily_value_check --require-athens-hour 20

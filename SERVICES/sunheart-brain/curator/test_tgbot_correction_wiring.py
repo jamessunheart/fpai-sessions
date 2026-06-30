@@ -40,6 +40,13 @@ class TelegramCorrectionWiringTest(unittest.TestCase):
         self.assertIn("context_route = _classify_context_route(text)", self.source)
         self.assertIn('hits = await _search_brain(text) if blocks["brain_search"] else []', self.source)
 
+    def test_daily_value_check_reply_capture_is_before_plain_chat_answer(self) -> None:
+        capture_idx = self.source.index("capture_reply_if_pending(conversation_id=str(chat_id), james_message=text)")
+        answer_idx = self.source.index("answer_body = _format_answer_for_telegram(")
+
+        self.assertLess(capture_idx, answer_idx)
+        self.assertIn('await tg.send("Logged. Thank you.")', self.source)
+
 
 if __name__ == "__main__":
     unittest.main()

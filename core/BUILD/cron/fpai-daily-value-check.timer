@@ -1,0 +1,10 @@
+[Unit]
+Description=Run FPAI daily value check at 20:00 Athens
+
+[Timer]
+OnCalendar=*-*-* 20:00:00 Europe/Athens
+Persistent=true
+Unit=fpai-daily-value-check.service
+
+[Install]
+WantedBy=timers.target

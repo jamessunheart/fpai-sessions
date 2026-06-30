@@ -4350,6 +4350,18 @@ async def _handle_message(msg: dict) -> None:
         await tg.send(tg._esc(beacon_reply))
         return
 
+    # Daily value check reply: consume the next ordinary private owner message
+    # after the 20:00 Athens prompt so it lands as learning feedback.
+    try:
+        from .daily_value_check import capture_reply_if_pending
+
+        value_check = await capture_reply_if_pending(conversation_id=str(chat_id), james_message=text)
+        if value_check.captured:
+            await tg.send("Logged. Thank you.")
+            return
+    except Exception as e:
+        log.warning("daily value check capture skipped: %s", e)
+
     # Plain text path — capture corrections, log inbound, answer, log outbound.
     try:
         from .decisions import handle_override_command
