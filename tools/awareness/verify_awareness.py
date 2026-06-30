@@ -39,6 +39,7 @@ def latest_session_insight(db_url: str = DEFAULT_DB_URL) -> dict[str, Any] | Non
                        specs_affected, weight, ts::text
                   FROM brain_index.session_insights
                  WHERE (expires_at IS NULL OR expires_at > NOW())
+                   AND ts > NOW() - INTERVAL '7 days'
                    AND insight_type != 'housekeeping'
                    AND title NOT LIKE 'Auto-snapshot%'
                  ORDER BY weight DESC, ts DESC
