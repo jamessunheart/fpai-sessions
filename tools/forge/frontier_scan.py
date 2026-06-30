@@ -156,14 +156,17 @@ def parse_findings(raw: str) -> list[Finding]:
     return findings
 
 
-def run_scan(kind: str, runner: Runner | None = None, current: dt.datetime | None = None) -> list[Finding]:
+def run_scan(kind: str, runner: Runner | None = None, current: dt.datetime | None = None, attempts: int = 2) -> list[Finding]:
     now = current or dt.datetime.now(dt.timezone.utc)
     timeout_seconds = DAILY_TIMEOUT_SECONDS if kind == "daily" else WEEKLY_TIMEOUT_SECONDS
-    raw = (runner or command_runner())(build_prompt(kind, now), timeout_seconds)
-    findings = parse_findings(raw)
-    if not findings:
-        raise ValueError("frontier scan returned no parseable findings")
-    return findings
+    run = runner or command_runner()
+    prompt = build_prompt(kind, now)
+    # Retry transient empties (claude -p occasionally returns prose / nothing).
+    for _ in range(max(1, attempts)):
+        findings = parse_findings(run(prompt, timeout_seconds))
+        if findings:
+            return findings
+    raise ValueError("frontier scan returned no parseable findings")
 
 
 def append_daily_log(
@@ -255,6 +258,20 @@ def notify_if_needed(findings: Iterable[Finding], mode: str, notifier: Callable[
 
     result = notifier(gate.sanitized.strip())
     return {"notified": "notify: sent" in result, "result": result}
+
+
+def send_alarm(message: str) -> dict[str, Any]:
+    """Proof-back: a scan that produces nothing must surface, not die silently."""
+    gate = sanitize_markdown(message)
+    if gate.blocked:
+        return {"sent": False, "reason": "security_gate_blocked", "warnings": list(gate.warnings)}
+    script = Path(__file__).resolve().parents[2] / "tools" / "build_loop" / "notify_telegram.sh"
+    try:
+        completed = subprocess.run([str(script), gate.sanitized.strip()], text=True, capture_output=True, timeout=20, check=False)
+        out = (completed.stdout or completed.stderr or "").strip()
+    except Exception as exc:  # noqa: BLE001 - alarm must never raise
+        return {"sent": False, "reason": f"notifier_error:{exc}"}
+    return {"sent": "notify: sent" in out, "result": out}
 
 
 def previous_weekly_reports(root: Path, output_path: Path) -> list[Path]:

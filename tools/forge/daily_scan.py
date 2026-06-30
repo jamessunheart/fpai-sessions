@@ -7,7 +7,7 @@ import datetime as dt
 import json
 from pathlib import Path
 
-from tools.forge.frontier_scan import append_daily_log, notify_if_needed, run_scan, scan_enabled
+from tools.forge.frontier_scan import append_daily_log, notify_if_needed, run_scan, scan_enabled, send_alarm
 
 
 def run_daily_scan(
@@ -20,7 +20,11 @@ def run_daily_scan(
     if not scan_enabled(force):
         return {"status": "skipped", "reason": "FORGE_SCAN_ENABLED is not 1"}
     now = current or dt.datetime.now(dt.timezone.utc)
-    findings = run_scan("daily", current=now)
+    try:
+        findings = run_scan("daily", current=now)
+    except Exception as exc:  # any scan failure must alarm, not crash silently
+        alarm = send_alarm(f"\u26a0 Forge DAILY frontier scan: no parseable findings after retries ({exc}). Scan ran but produced nothing \u2014 check claude -p / parser.")
+        return {"status": "empty", "findings": 0, "alarm": alarm, "json_output": json_output}
     log_result = append_daily_log(findings, root / "core" / "STATE" / "FRONTIER_LOG.md", current=now)
     notify_result = notify_if_needed(findings, "daily")
     return {
@@ -44,7 +48,7 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(result, indent=2, sort_keys=True))
     else:
         print(f"daily frontier scan: {result['status']}")
-    return 0 if result["status"] in {"ok", "skipped"} else 1
+    return 0 if result["status"] in {"ok", "skipped", "empty"} else 1
 
 
 if __name__ == "__main__":
