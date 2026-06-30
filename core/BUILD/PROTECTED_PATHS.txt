@@ -12,3 +12,11 @@ docs/codex/SESSION_CONTRACT.md
 core/STATE/policies/
 core/STATE/COUNCIL_FIRE.yaml
 core/STATE/INSTRUMENT_RACK.yaml
+# The identity / governance layer (James + GPT 2026-06-30) — "improve itself WITHOUT losing itself".
+# The autonomous self-improvement loop must NEVER rewrite its own constitution, doctrine, or identity.
+# Changing the 8 laws is a constitutional amendment — HUMAN-DIRECTED ONLY, never an auto-build.
+core/STATE/CONSTITUTION.md
+core/STATE/OPERATING_PRINCIPLE.md
+core/STATE/LEARNING_METRICS.md
+core/STATE/NORTH_STAR.md
+core/STATE/identity/
