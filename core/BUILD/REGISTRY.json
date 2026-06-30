@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
         {
+            "id": "SPEC_a6be0251-46e7-4d91-8443-7dea705b6293_autonomous-daily-value-delivery",
+            "slug": "SPEC_a6be0251-46e7-4d91-8443-7dea705b6293_autonomous-daily-value-delivery",
+            "branch": "build/SPEC_a6be0251-46e7-4d91-8443-7dea705b6293_autonomous-daily-value-delivery",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_a6be0251-46e7-4d91-8443-7dea705b6293_autonomous-daily-value-delivery.md",
+            "tests_passed": true,
+            "notes": "Complete in working tree: added autonomous daily value delivery. The timer fires at 06:00/07:00 UTC and the runner acts only at Athens hour 9, reads core/STATE/NOW.md, selects the first safe AI-advanceable priority, writes core/BUILD/daily_value/YYYY-MM-DD.md, commits only that artifact, appends ops-ledger telemetry, and sends a Telegram summary through the existing notifier. Rollback flag: /opt/fpai-build/.autonomous_daily_disabled. Focused unittest, py_compile, activation shell syntax, systemd verify, registry JSON validation, smoke run, and diff hygiene passed. No live timer install, real Telegram send, deploy, push, merge, secrets, outreach, service stop/delete, or money movement."
+        },
+        {
             "id": "SPEC_d128_canonical-build-state-status-hel",
             "slug": "SPEC_d128_canonical-build-state-status-hel",
             "branch": "build/SPEC_d128_canonical-build-state-status-hel",

@@ -1,0 +1,10 @@
+[Unit]
+Description=FPAI Autonomous Daily Value Delivery
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=-/etc/sh-brain/curator.env
+WorkingDirectory=/opt/fpai-build/FPAI_Cockpit
+ExecStart=/usr/bin/env python3 /opt/fpai-build/FPAI_Cockpit/tools/build_loop/autonomous_daily_value.py --require-athens-hour 9

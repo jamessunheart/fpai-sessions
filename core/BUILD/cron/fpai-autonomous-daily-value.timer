@@ -1,0 +1,10 @@
+[Unit]
+Description=Run FPAI Autonomous Daily Value Delivery at 9am Athens
+
+[Timer]
+OnCalendar=*-*-* 06,07:00:00 UTC
+Persistent=true
+Unit=fpai-autonomous-daily-value.service
+
+[Install]
+WantedBy=timers.target

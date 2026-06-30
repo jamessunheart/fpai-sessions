@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-30 · SPEC_a6be0251-46e7-4d91-8443-7dea705b6293_autonomous-daily-value-delivery · branch `build/SPEC_a6be0251-46e7-4d91-8443-7dea705b6293_autonomous-daily-value-delivery`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `tools/build_loop/autonomous_daily_value.py`; `tools/build_loop/test_autonomous_daily_value.py`; `core/BUILD/cron/fpai-autonomous-daily-value.service`; `core/BUILD/cron/fpai-autonomous-daily-value.timer`; `core/BUILD/activate/SPEC_a6be0251-46e7-4d91-8443-7dea705b6293_autonomous-daily-value-delivery.sh`; `core/BUILD/specs/SPEC_a6be0251-46e7-4d91-8443-7dea705b6293_autonomous-daily-value-delivery.md`; `core/BUILD/results/SPEC_a6be0251-46e7-4d91-8443-7dea705b6293_autonomous-daily-value-delivery.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added autonomous daily value delivery for dead days. The timer fires at 06:00/07:00 UTC and the runner acts only when Athens local time is 09:00, reads `core/STATE/NOW.md`, selects the first safe AI-advanceable priority, writes `core/BUILD/daily_value/YYYY-MM-DD.md`, commits only that artifact, appends ops-ledger telemetry, and sends James a Telegram summary via the existing notifier. Runtime rollback is `touch /opt/fpai-build/.autonomous_daily_disabled`.
+- **Tests:** `python3 -B -m unittest tools.build_loop.test_autonomous_daily_value` (7 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/autonomous_daily_value.py tools/build_loop/test_autonomous_daily_value.py`; `bash -n core/BUILD/activate/SPEC_a6be0251-46e7-4d91-8443-7dea705b6293_autonomous-daily-value-delivery.sh`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/a6be-registry.json`; `systemd-analyze verify core/BUILD/cron/fpai-autonomous-daily-value.service core/BUILD/cron/fpai-autonomous-daily-value.timer` (exited 0; sandbox emitted unrelated host/system-bus warnings); no-commit/no-notify smoke against real `NOW.md`; `git diff --check`
+- **Risks:** Live timer install, live repo commit from server, and real Telegram send were not run in this sandbox. The runner intentionally produces bounded repo-side analysis/draft artifacts and refuses reserved-class work rather than making live outreach, treasury, people, deploy, secret, or service-control changes.
+- **Rollback:** create `/opt/fpai-build/.autonomous_daily_disabled` to pause future runs. Full code rollback is reverting the listed files; if activated, also disable/remove `fpai-autonomous-daily-value.timer` and `.service`, then `systemctl daemon-reload`.
+- **Intent solved:** dead days now have a safe autonomous daily value path that advances one NOW priority without James choosing the item.
+- **Downstream intent unlocked:** the autonomous loop can create one daily proof artifact from current priorities, so the next spec/build/review starts from evidence instead of stale attention.
+- **Questions for Ember/James:** after merge on server 162, run the activation script, then confirm `systemctl list-timers fpai-autonomous-daily-value.timer` shows the next 06:00/07:00 UTC check and that the first 09:00 Athens run creates `core/BUILD/daily_value/<date>.md`, commits it, logs `autonomous_daily_value`, and sends Telegram.
+
 ### 2026-06-30 · SPEC_d128_canonical-build-state-status-hel · branch `build/SPEC_d128_canonical-build-state-status-hel`
 
 - **Status:** done in working tree / awaiting merge review
