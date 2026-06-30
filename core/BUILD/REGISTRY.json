@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-26T00:00:00Z",
+    "updated_at": "2026-06-30T00:00:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d128_canonical-build-state-status-hel",
+            "slug": "SPEC_d128_canonical-build-state-status-hel",
+            "branch": "build/SPEC_d128_canonical-build-state-status-hel",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d128_canonical-build-state-status-hel.md",
+            "tests_passed": true,
+            "notes": "d128 complete in working tree: added tools.build_loop.build_state as the canonical queued/built helper, rewired queue_status.sh to render from it, aligned curator.decisions pending-builds with the same canary/built-status predicate, and added a health_check pending/stale-success monitor that reads through the same decision CLI. Focused unit/shell/static tests, py_compile, registry JSON validation, and diff hygiene passed. No live brain_index query, deploy, push, merge, outreach, secrets, or money movement."
+        },
         {
             "id": "SPEC_f15b6f33-3073-4b44-8ef3-f03dd76a24b0_correction-loop-closure-verifica",
             "slug": "SPEC_f15b6f33-3073-4b44-8ef3-f03dd76a24b0_correction-loop-closure-verifica",

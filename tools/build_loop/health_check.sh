@@ -7,7 +7,7 @@
 # Kill: touch /opt/fpai-build/.health_disabled
 set -uo pipefail
 [ -f /opt/fpai-build/.health_disabled ] && exit 0
-OL=/opt/fpai-build/FPAI_Cockpit/tools/build_loop/ops_log.py
+OL="${OPS_LOG_SCRIPT:-/opt/fpai-build/FPAI_Cockpit/tools/build_loop/ops_log.py}"
 fail(){ python3 "$OL" health failed "$1" '$0' '' "$2" 2>/dev/null || true; echo "FAIL: $1"; }
 
 # 1. claude review token present + non-empty (the review engine's auth)
@@ -86,6 +86,60 @@ case "$smoke_status" in
   STALE\|*) fail "smoke tests not running: ${smoke_status#STALE|}" "Ember: systemctl restart fpai-smoke-test.timer" ;;
   FAIL\|*) fail "smoke test failure: ${smoke_status#FAIL|}" "Ember: run tools/test/smoke_test.py --json and inspect failed check" ;;
 esac
+
+# 4c. pending-build rate monitor: same source as the build loop, with stale-success detection.
+pending_build_output="$(
+  FPAI_REPO_ROOT="${FPAI_REPO_ROOT:-/opt/fpai-build/FPAI_Cockpit}" \
+    python3 "${FPAI_REPO_ROOT:-/opt/fpai-build/FPAI_Cockpit}/SERVICES/sunheart-brain/curator/decisions.py" pending-builds 2>/dev/null || \
+  (cd /opt/sh-brain-src 2>/dev/null && ./.venv/bin/python -m curator.decisions pending-builds 2>/dev/null) || true
+)"
+pending_build_count="$(python3 - "$pending_build_output" <<'PY'
+import sys
+print(sum(1 for line in sys.argv[1].splitlines() if line.startswith("{")))
+PY
+)"
+if [ "${pending_build_count:-0}" -gt 0 ]; then
+  stale_build_status="$(python3 - "$pending_build_count" <<'PY' 2>/dev/null || true
+import datetime as dt
+import json
+import os
+import pathlib
+import sys
+
+pending = int(sys.argv[1])
+threshold_h = float(os.environ.get("BUILD_LOOP_STALE_SUCCESS_HOURS", "6"))
+ledger = pathlib.Path(os.environ.get("OPS_LEDGER", "/opt/fpai-build/ops_ledger.jsonl"))
+successes = []
+if ledger.exists():
+    for line in ledger.read_text(encoding="utf-8", errors="replace").splitlines():
+        try:
+            row = json.loads(line)
+        except Exception:
+            continue
+        if row.get("loop") == "build_loop" and row.get("event") == "loop_run" and int(row.get("built") or 0) > 0:
+            successes.append(row)
+        elif row.get("loop") == "merge" and str(row.get("event") or "").startswith("auto-merged"):
+            successes.append(row)
+if not successes:
+    print(f"STALE|build loop has {pending} decisions pending but no successful build in ledger")
+    raise SystemExit
+last = successes[-1]
+try:
+    ts = dt.datetime.strptime(str(last.get("ts") or ""), "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=dt.timezone.utc)
+except Exception:
+    print(f"STALE|build loop has {pending} decisions pending but last successful build timestamp is unreadable")
+    raise SystemExit
+age_h = (dt.datetime.now(dt.timezone.utc) - ts).total_seconds() / 3600.0
+if age_h > threshold_h:
+    print(f"STALE|build loop has {pending} decisions pending but no successful build in {age_h:.1f}h")
+else:
+    print("OK|")
+PY
+)"
+  case "$stale_build_status" in
+    STALE\|*) fail "${stale_build_status#STALE|}" "Ember: inspect fpai-build-loop.service and pending-builds canonical status" ;;
+  esac
+fi
 
 # 5. stuck/accumulating build worktrees (>24h old = likely unmerged/stuck)
 stuck=$(find /opt/fpai-build/worktrees -maxdepth 1 -mindepth 1 -type d -mtime +1 2>/dev/null | wc -l | tr -d ' ')

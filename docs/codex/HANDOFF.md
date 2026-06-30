@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-30 · SPEC_d128_canonical-build-state-status-hel · branch `build/SPEC_d128_canonical-build-state-status-hel`
+
+- **Status:** done in working tree / awaiting merge review
+- **Files changed:** `tools/build_loop/build_state.py`; `tools/build_loop/test_build_state.py`; `tools/build_loop/queue_status.sh`; `tools/build_loop/test_queue_status.sh`; `tools/build_loop/health_check.sh`; `SERVICES/sunheart-brain/curator/decisions.py`; `core/BUILD/specs/SPEC_d128_canonical-build-state-status-hel.md`; `core/BUILD/results/SPEC_d128_canonical-build-state-status-hel.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a canonical build-state helper for queued/built status. Repo-local queue status now renders from `tools.build_loop.build_state`; `curator.decisions pending-builds` exposes and uses the same canary/built-status predicate; and `health_check.sh` reads pending work through the same CLI before reporting stale successful-build evidence. This removes the separate interpretations that could show the same build as both queued and built across turns.
+- **Tests:** `python3 -B -m unittest tools.build_loop.test_liveness_probe tools.build_loop.test_build_state tools.build_loop.test_self_knowing_loop` (12 OK); `bash tools/build_loop/test_queue_status.sh` (5 passed); `bash -n tools/build_loop/queue_status.sh tools/build_loop/health_check.sh tools/build_loop/server_build_loop.sh`; `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/build_state.py tools/build_loop/test_build_state.py SERVICES/sunheart-brain/curator/decisions.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d128-status-registry.json`; `git diff --check`
+- **Risks:** Live `brain_index.decisions` was not queried in this sandbox. Repo-local built state intentionally remains result-file based to preserve the existing build-loop contract. Local commit and independent branch review were blocked because this sandbox can edit the worktree but cannot write `.git/worktrees/.../index.lock`.
+- **Rollback:** revert the listed files. No live services, deploys, pushes, merges, secrets, outreach, or money movement were touched.
+- **Intent solved:** build-loop status reporting now reads queued/built state from one canonical predicate/helper.
+- **Downstream intent unlocked:** loop-health and queue surfaces can stop contradicting each other about pending versus already-built work.
+- **Questions for Ember/James:** on a writable host, commit this worktree and run `tools/merge/ai_review.py build/SPEC_d128_canonical-build-state-status-hel`; after merge on server 162, run `tools/build_loop/queue_status.sh` and one `tools/build_loop/health_check.sh` pass with live env to confirm `pending-builds` and queue-status counts match the same build-state truth.
+
 ### 2026-06-26 · SPEC_f15b6f33-3073-4b44-8ef3-f03dd76a24b0_correction-loop-closure-verifica · branch `build/SPEC_f15b6f33-3073-4b44-8ef3-f03dd76a24b0_correction-loop-closure-verifica`
 
 - **Status:** done in working tree / awaiting merge review

@@ -27,7 +27,7 @@ else
   echo "$OUTPUT"
 fi
 
-for header in "Pending specs" "Registry" "Recent results"; do
+for header in "Build state:" "Queued specs" "Built results" "Registry building"; do
   if echo "$OUTPUT" | grep -Fq "$header"; then
     pass
   else

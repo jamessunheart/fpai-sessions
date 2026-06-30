@@ -4,12 +4,51 @@ from __future__ import annotations
 import json
 import os
 import sys
+import importlib.util as _ilu
+from pathlib import Path
 from typing import Any
 
 DB_URL = os.environ.get(
     "BRAIN_INDEX_DB_URL",
     "postgres://brain_index:changeme@127.0.0.1:25432/appflowy",
 )
+CANARY_ID = "d000"
+CANARY_QUESTION = "Build-loop canary: should never appear in pending builds"
+
+
+def _load_build_state_module() -> Any:
+    repo = Path(os.environ.get("FPAI_REPO_ROOT", ""))
+    candidates = []
+    if repo:
+        candidates.append(repo / "tools" / "build_loop" / "build_state.py")
+    candidates.extend(
+        [
+            Path("/opt/fpai-build/FPAI_Cockpit/tools/build_loop/build_state.py"),
+            Path(__file__).resolve().parents[3] / "tools" / "build_loop" / "build_state.py",
+        ]
+    )
+    for path in candidates:
+        if not path.exists():
+            continue
+        spec = _ilu.spec_from_file_location("fpai_build_state", path)
+        if spec is None or spec.loader is None:
+            continue
+        mod = _ilu.module_from_spec(spec)
+        sys.modules[spec.name] = mod
+        spec.loader.exec_module(mod)
+        return mod
+    raise RuntimeError("tools/build_loop/build_state.py not found")
+
+
+_build_state = _load_build_state_module()
+PENDING_BUILDS_WHERE_SQL = _build_state.PENDING_DECISION_WHERE_SQL
+PENDING_BUILDS_SQL = f"""
+        SELECT id::text AS id, question, answer, build_spec, proof_expected, liveness, liveness_check
+          FROM brain_index.decisions
+{PENDING_BUILDS_WHERE_SQL}
+         ORDER BY id
+"""
+pending_builds_from_rows = _build_state.pending_builds_from_rows
 
 
 def connect() -> Any:
@@ -24,8 +63,21 @@ def emit_rows(sql: str, params: tuple[Any, ...] = ()) -> int:
     with connect() as conn:
         with conn.cursor() as cur:
             cur.execute(sql, params)
-            columns = [desc.name for desc in cur.description]
             for row in cur.fetchall():
+                description = getattr(cur, "description", None)
+                if description:
+                    columns = [getattr(desc, "name", desc[0]) for desc in description]
+                else:
+                    fallback = [
+                        "id",
+                        "question",
+                        "answer",
+                        "build_spec",
+                        "proof_expected",
+                        "liveness",
+                        "liveness_check",
+                    ]
+                    columns = fallback[: len(row)]
                 print(json.dumps(dict(zip(columns, row)), default=str))
     return 0
 
@@ -60,15 +112,19 @@ def pending_builds() -> int:
     else:
         liveness_expr = "NULL::text AS liveness, NULL::text AS liveness_check"
     return emit_rows(
-        f"""
+        PENDING_BUILDS_SQL.replace("liveness, liveness_check", liveness_expr, 1)
+        if liveness_expr != "liveness, liveness_check"
+        else PENDING_BUILDS_SQL
+    )
+
+
+def _legacy_pending_builds_sql(liveness_expr: str) -> str:
+    return f"""
         SELECT id::text AS id, question, answer, build_spec, proof_expected, {liveness_expr}
           FROM brain_index.decisions
-         WHERE status = 'answered'
-           AND COALESCE(needs_build, false) = true
-           AND COALESCE(spec_written, false) = false
+{PENDING_BUILDS_WHERE_SQL}
          ORDER BY id
-        """
-    )
+    """
 
 
 def mark_merged(decision_id: str, outcome: str) -> int:
