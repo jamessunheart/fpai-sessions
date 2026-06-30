@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
         {
+            "id": "SPEC_d131_d130-witness-to-question-engine",
+            "slug": "SPEC_d131_d130-witness-to-question-engine",
+            "branch": "build/SPEC_d131_d130-witness-to-question-engine",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d131_d130-witness-to-question-engine.md",
+            "tests_passed": true,
+            "notes": "d131/d130 complete in working tree: added tools/curiosity/ask.py with bounded evidence witnessing from feature_outcome ops-ledger rows, recent review disagreements, local diffs/protected-path signals, and optional transcript/true-narrator/conversion ledgers. It generates at most one evidence-cited weakest-assumption question, defaults to dry-run, routes actionable questions through curator.decisions seed with independent-review/protected-path/veto gates encoded, surfaces James-gated questions through the existing human-edge queue, and appends curiosity question/outcome rows for reinforcement from later feature_outcome verdicts. Focused Curiosity, feature_outcome, and human-edge queue tests, py_compile, registry JSON validation, CLI smoke, ASCII source check, and diff hygiene passed. No live DB seed, live transcript/narrator/conversion read, deploy, push, merge, outreach, secrets, or money movement."
+        },
+        {
             "id": "SPEC_d129_d129-outcome-signal-the-academy",
             "slug": "SPEC_d129_d129-outcome-signal-the-academy",
             "branch": "build/SPEC_d129_d129-outcome-signal-the-academy",
