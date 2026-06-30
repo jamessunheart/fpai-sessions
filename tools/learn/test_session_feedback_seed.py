@@ -160,6 +160,34 @@ class SessionFeedbackSeedTest(unittest.TestCase):
         self.assertEqual(second, 0)
         self.assertEqual(len(output.read_text(encoding="utf-8").splitlines()), len(rows))
 
+    def test_collects_feature_outcome_runtime_quality_rows(self) -> None:
+        root = self.root()
+        ledger = root / "ops_ledger.jsonl"
+        ledger.write_text(
+            json.dumps(
+                {
+                    "event": "feature_outcome",
+                    "spec_id": "SPEC_runtime",
+                    "metric_name": "activation_quality",
+                    "baseline": "merged_before_activation",
+                    "observed": "post_activation_checks_failed",
+                    "delta": "runtime regression detected",
+                    "verdict": "regressed",
+                    "evidence": ["liveness:fail: dead"],
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+        rows = seed.collect_session_feedback(root, ops_ledger=ledger, captured_at="2026-06-16T00:00:00Z")
+        outcome = next(row for row in rows if row["signal_type"] == "feature_outcome")
+
+        self.assertEqual(outcome["session_id"], "SPEC_runtime")
+        self.assertEqual(outcome["outcome"], "regressed")
+        self.assertEqual(outcome["score"], -1.0)
+        self.assertIn("runtime regression", outcome["preference"]["chosen"])
+
 
 if __name__ == "__main__":
     unittest.main()

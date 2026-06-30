@@ -30,8 +30,11 @@ class LivenessProbeShellContractTest(unittest.TestCase):
     def test_probe_runs_after_activation_and_before_merge_notification(self):
         activation = self.text.index('python3 "$REPO/tools/build_loop/ops_log.py" merge activated')
         probe = self.text.index('run_liveness_probe "$LIVENESS_DECLARATION" "$LIVENESS_CHECK"')
+        outcome = self.text.index('tools/build_loop/feature_outcome.py')
         approved_notice = self.text.index('tg "$V · AUTO-MERGED')
         self.assertLess(activation, probe)
+        self.assertLess(probe, outcome)
+        self.assertLess(outcome, approved_notice)
         self.assertLess(probe, approved_notice)
 
     def test_probe_has_kill_switch_timeout_and_ops_events(self):
@@ -50,6 +53,14 @@ class LivenessProbeShellContractTest(unittest.TestCase):
     def test_probe_runs_with_typed_declaration_and_legacy_fallback(self):
         self.assertIn('run_liveness_probe "$LIVENESS_DECLARATION" "$LIVENESS_CHECK"', self.text)
         self.assertIn('--spec-file "$spec_file"', self.text)
+
+    def test_feature_outcome_logged_after_activated_specs(self):
+        self.assertIn("ACTIVATED=0", self.text)
+        self.assertIn("ACTIVATED=1", self.text)
+        self.assertIn('if [ "$ACTIVATED" = 1 ]; then', self.text)
+        self.assertIn('tools/build_loop/feature_outcome.py', self.text)
+        self.assertIn('--spec-id "$SPECID"', self.text)
+        self.assertIn("--activated", self.text)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,11 @@
+# SPEC_d129_d129-outcome-signal-the-academy Result
+
+- Status: done in working tree / awaiting independent AI review + merge
+- Branch: `build/SPEC_d129_d129-outcome-signal-the-academy`
+- Base: `feat/headless-build`
+- Summary: Added `feature_outcome` runtime-quality rows for activated builds, wired those rows into session feedback and dataset export, and added `tools/academy/distill.py` to generate traced Academy guidance from proofs, corrections, feature outcomes, and the consequence report.
+- Tests: `python3 -B -m unittest tools.build_loop.test_feature_outcome tools.learn.test_session_feedback_seed tools.learning.test_dataset_builder tools.academy.test_distill tools.build_loop.test_liveness_probe`; `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/feature_outcome.py tools/build_loop/test_feature_outcome.py tools/learn/session_feedback_seed.py tools/learn/test_session_feedback_seed.py tools/learning/dataset_builder.py tools/learning/test_dataset_builder.py tools/academy/__init__.py tools/academy/distill.py tools/academy/test_distill.py`; `bash -n tools/build_loop/server_build_loop.sh`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d129-registry.json`; `python3 -B -m tools.academy.distill --output core/STATE/ACADEMY.md`; `git diff --check`; `LC_ALL=C grep -n '[^ -~]' core/STATE/ACADEMY.md || true`
+- Risks: The live server build-loop path, live activation scripts, live ops-ledger append at `/opt/fpai-build/ops_ledger.jsonl`, and live `brain_index.corrections` reader were not exercised in this sandbox. `feature_outcome` currently logs only when an activation script exists and runs.
+- Rollback: Revert the listed d129 files. Runtime mitigation without reverting is to omit the build-loop call to `tools/build_loop/feature_outcome.py`; it is append-only and does not deploy, push, merge, send, or spend.
+- Intent solved: post-activation runtime outcome evidence now enters the learning loop and Academy surface instead of staying outside the feedback-to-learning path.
+- Downstream intent unlocked: future builds can reuse only evidence-traced principles and can identify regressed runtime patterns before turning them into doctrine or training examples.

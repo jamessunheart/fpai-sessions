@@ -28,6 +28,7 @@ SYSTEM_PROMPT = (
 )
 APPROVED_VERDICTS = {"approve", "approved", "pass", "passed", "done", "merged", "success", "successful"}
 BLOCKED_VERDICTS = {"blocked", "reverted", "failed", "fail", "request_changes", "changes_requested"}
+FEATURE_OUTCOME_VERDICTS = {"improved", "flat", "regressed", "unknown"}
 HIGH_QUALITY_THRESHOLD = 0.8
 LOW_QUALITY_THRESHOLD = 0.3
 
@@ -40,6 +41,7 @@ class InsufficientExamples(ValueError):
 class ExportStats:
     corrections: int
     merge_outcomes: int
+    feature_outcomes: int
     probe_sessions: int
     examples: int
 
@@ -47,6 +49,7 @@ class ExportStats:
         return {
             "corrections": self.corrections,
             "merge_outcomes": self.merge_outcomes,
+            "feature_outcomes": self.feature_outcomes,
             "probe_sessions": self.probe_sessions,
             "examples": self.examples,
         }
@@ -56,16 +59,19 @@ def build_examples(
     *,
     corrections: Iterable[dict[str, Any]] = (),
     merge_outcomes: Iterable[dict[str, Any]] = (),
+    feature_outcomes: Iterable[dict[str, Any]] = (),
     probe_sessions: Iterable[dict[str, Any]] = (),
 ) -> tuple[list[dict[str, Any]], ExportStats]:
     """Return HF chat-format examples and source counts."""
     correction_rows = list(corrections)
     merge_rows = list(merge_outcomes)
+    feature_rows = list(feature_outcomes)
     probe_rows = list(probe_sessions)
 
     examples: list[dict[str, Any]] = []
     examples.extend(_examples_from_corrections(correction_rows))
     examples.extend(_examples_from_merge_outcomes(merge_rows))
+    examples.extend(_examples_from_feature_outcomes(feature_rows))
     examples.extend(_examples_from_probe_sessions(probe_rows))
 
     unique: dict[str, dict[str, Any]] = {}
@@ -75,6 +81,7 @@ def build_examples(
     stats = ExportStats(
         corrections=len(correction_rows),
         merge_outcomes=len(merge_rows),
+        feature_outcomes=len(feature_rows),
         probe_sessions=len(probe_rows),
         examples=len(ordered),
     )
@@ -127,13 +134,14 @@ def validate_example(example: dict[str, Any]) -> None:
 
 
 def load_fixture(path: Path | str) -> dict[str, list[dict[str, Any]]]:
-    """Load fixture JSON with corrections, merge_outcomes, and probe_sessions arrays."""
+    """Load fixture JSON with corrections, merge_outcomes, feature_outcomes, and probe_sessions arrays."""
     data = json.loads(Path(path).read_text(encoding="utf-8"))
     if not isinstance(data, dict):
         raise ValueError("fixture must be a JSON object")
     return {
         "corrections": _list_of_dicts(data.get("corrections", [])),
         "merge_outcomes": _list_of_dicts(data.get("merge_outcomes", [])),
+        "feature_outcomes": _list_of_dicts(data.get("feature_outcomes", [])),
         "probe_sessions": _list_of_dicts(data.get("probe_sessions", [])),
     }
 
@@ -156,6 +164,29 @@ def load_ops_ledger_merge_outcomes(path: Path | str = DEFAULT_OPS_LEDGER) -> lis
                 continue
             verdict = _verdict(row)
             if verdict in APPROVED_VERDICTS | BLOCKED_VERDICTS or row.get("event") in {"merge_outcome", "build_review", "auto_revert"}:
+                rows.append(row)
+    return rows
+
+
+def load_ops_ledger_feature_outcomes(path: Path | str = DEFAULT_OPS_LEDGER) -> list[dict[str, Any]]:
+    """Read feature_outcome runtime-quality rows from an ops-ledger JSONL path."""
+    ledger = Path(path)
+    if not ledger.exists():
+        return []
+    rows: list[dict[str, Any]] = []
+    with ledger.open(encoding="utf-8", errors="replace") as handle:
+        for line in handle:
+            if not line.strip():
+                continue
+            try:
+                row = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if not isinstance(row, dict):
+                continue
+            if row.get("event") != "feature_outcome" and row.get("signal_type") != "feature_outcome":
+                continue
+            if _feature_verdict(row) in FEATURE_OUTCOME_VERDICTS:
                 rows.append(row)
     return rows
 
@@ -291,6 +322,59 @@ def _examples_from_merge_outcomes(rows: list[dict[str, Any]]) -> list[dict[str, 
     return examples
 
 
+def _examples_from_feature_outcomes(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    examples: list[dict[str, Any]] = []
+    for idx, row in enumerate(rows):
+        verdict = _feature_verdict(row)
+        spec = _clean(_first(row, "spec_id", "spec", "build", "id"))
+        metric = _clean(_first(row, "metric_name", "metric")) or "runtime quality"
+        baseline = _clean(row.get("baseline"))
+        observed = _clean(row.get("observed"))
+        delta = _clean(row.get("delta"))
+        evidence = _clean(row.get("evidence"))
+        if not spec or verdict == "unknown":
+            continue
+        user = "\n".join(
+            part
+            for part in (
+                f"Spec: {spec}",
+                f"Metric: {metric}",
+                f"Baseline: {baseline}" if baseline else "",
+                f"Observed: {observed}" if observed else "",
+                f"Delta: {delta}" if delta else "",
+                f"Evidence: {evidence}" if evidence else "",
+            )
+            if part
+        )
+        if verdict == "regressed":
+            assistant = f"Caution: do not reuse {spec}'s pattern without repair; {metric} regressed ({delta or observed})."
+            signal = "regressed_feature_outcome"
+        elif verdict == "flat":
+            assistant = f"Neutral outcome: {spec} did not prove improvement on {metric}; keep claims bounded until stronger evidence appears."
+            signal = "flat_feature_outcome"
+        else:
+            assistant = f"Reusable pattern: {spec} improved {metric}; reuse only with the same traced evidence and runtime check."
+            signal = "improved_feature_outcome"
+        examples.append(
+            {
+                "id": _stable_id("feature-outcome", str(idx), spec, metric, verdict, delta, observed),
+                "format": "sft",
+                "source": "ops_ledger.feature_outcomes",
+                "messages": [
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "user", "content": user},
+                    {"role": "assistant", "content": assistant},
+                ],
+                "metadata": {
+                    "verdict": verdict,
+                    "metric_name": metric,
+                    "training_signal": signal,
+                },
+            }
+        )
+    return examples
+
+
 def _examples_from_probe_sessions(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     examples: list[dict[str, Any]] = []
     for idx, row in enumerate(rows):
@@ -346,6 +430,23 @@ def _verdict(row: dict[str, Any]) -> str:
     return _clean(_first(row, "verdict", "merge_outcome", "outcome", "result", "status")).lower().replace(" ", "_")
 
 
+def _feature_verdict(row: dict[str, Any]) -> str:
+    text = _clean(_first(row, "verdict", "outcome", "result", "status")).lower().replace(" ", "_").replace("-", "_")
+    aliases = {
+        "better": "improved",
+        "pass": "improved",
+        "passed": "improved",
+        "success": "improved",
+        "same": "flat",
+        "neutral": "flat",
+        "failed": "regressed",
+        "fail": "regressed",
+        "worse": "regressed",
+    }
+    verdict = aliases.get(text, text)
+    return verdict if verdict in FEATURE_OUTCOME_VERDICTS else "unknown"
+
+
 def _list_of_dicts(value: Any) -> list[dict[str, Any]]:
     if not isinstance(value, list):
         return []
@@ -386,7 +487,7 @@ def _float_or_none(value: Any) -> float | None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Export gated GLM-5.2 learning JSONL.")
-    parser.add_argument("--fixture", type=Path, help="JSON fixture with corrections/merge_outcomes/probe_sessions arrays")
+    parser.add_argument("--fixture", type=Path, help="JSON fixture with corrections/merge_outcomes/feature_outcomes/probe_sessions arrays")
     parser.add_argument("--from-live-db", action="store_true", help="Read brain_index.corrections and probe_sessions from configured DSN")
     parser.add_argument("--ops-ledger", type=Path, default=DEFAULT_OPS_LEDGER)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
@@ -395,7 +496,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--dry-run", action="store_true", help="Validate and print counts without writing JSONL")
     args = parser.parse_args(argv)
 
-    sources = {"corrections": [], "merge_outcomes": [], "probe_sessions": []}
+    sources = {"corrections": [], "merge_outcomes": [], "feature_outcomes": [], "probe_sessions": []}
     if args.fixture:
         sources = load_fixture(args.fixture)
     if args.from_live_db:
@@ -403,6 +504,7 @@ def main(argv: list[str] | None = None) -> int:
         sources["corrections"].extend(live.get("corrections", []))
         sources["probe_sessions"].extend(live.get("probe_sessions", []))
     sources["merge_outcomes"].extend(load_ops_ledger_merge_outcomes(args.ops_ledger))
+    sources["feature_outcomes"].extend(load_ops_ledger_feature_outcomes(args.ops_ledger))
 
     examples, stats = build_examples(**sources)
     result = {"stats": stats.to_json(), "output": str(args.output), "dry_run": args.dry_run}

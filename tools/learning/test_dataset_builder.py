@@ -104,6 +104,44 @@ class DatasetBuilderTest(unittest.TestCase):
         self.assertEqual(examples[0]["format"], "sft")
         builder.validate_example(examples[0])
 
+    def test_feature_outcomes_export_runtime_quality_examples(self) -> None:
+        examples, stats = builder.build_examples(
+            feature_outcomes=[
+                {
+                    "event": "feature_outcome",
+                    "spec_id": "SPEC_runtime",
+                    "metric_name": "activation_quality",
+                    "baseline": "merged_before_activation",
+                    "observed": "activated",
+                    "delta": "activation completed",
+                    "verdict": "improved",
+                    "evidence": ["liveness:pass"],
+                }
+            ]
+        )
+
+        self.assertEqual(stats.feature_outcomes, 1)
+        self.assertEqual(len(examples), 1)
+        self.assertEqual(examples[0]["source"], "ops_ledger.feature_outcomes")
+        self.assertEqual(examples[0]["metadata"]["training_signal"], "improved_feature_outcome")
+        builder.validate_example(examples[0])
+
+    def test_loads_feature_outcomes_from_ops_ledger_only(self) -> None:
+        root = Path(tempfile.mkdtemp(prefix="fpai-feature-outcome-loader-"))
+        ledger = root / "ops.jsonl"
+        ledger.write_text(
+            json.dumps({"event": "feature_outcome", "spec_id": "SPEC_one", "verdict": "flat"})
+            + "\n"
+            + json.dumps({"event": "merge_outcome", "spec": "SPEC_two", "verdict": "approve"})
+            + "\n",
+            encoding="utf-8",
+        )
+
+        rows = builder.load_ops_ledger_feature_outcomes(ledger)
+
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["spec_id"], "SPEC_one")
+
 
 if __name__ == "__main__":
     unittest.main()

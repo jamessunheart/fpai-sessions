@@ -530,17 +530,26 @@ Register in core/BUILD/REGISTRY.json. Tests required. Do NOT push or merge.
   fi
 
   if [ "$MERGED" = 1 ]; then
+    ACTIVATED=0
     # Post-merge activation: run activate.sh if the build shipped one
     # Convention: any spec that installs systemd units or needs wiring ships core/BUILD/activate/${SPECID}.sh
     ACTIVATE_SCRIPT="$REPO/core/BUILD/activate/${SPECID}.sh"
     if [ -f "$ACTIVATE_SCRIPT" ]; then
       echo "running activate script for $SPECID"
       bash "$ACTIVATE_SCRIPT" 2>&1 | head -20 || echo "activate script exited non-zero — check $ACTIVATE_SCRIPT"
+      ACTIVATED=1
       python3 "$REPO/tools/build_loop/ops_log.py" merge activated "$SPECID (activate.sh ran)" "\$0" "$BR" "" 2>/dev/null || true
     fi
     run_liveness_probe "$LIVENESS_DECLARATION" "$LIVENESS_CHECK"
     run_correction_retention_smoke
     run_correction_loop_closure_probe
+    if [ "$ACTIVATED" = 1 ]; then
+      "$PY" "$REPO/tools/build_loop/feature_outcome.py" \
+        --ops-ledger "${OPS_LEDGER:-/opt/fpai-build/ops_ledger.jsonl}" \
+        --spec-id "$SPECID" \
+        --branch "$BR" \
+        --activated >/dev/null 2>&1 || true
+    fi
 
     if [ "$RC" = 0 ]; then
       # APPROVE + merged — brief TG confirmation (informational, not a decision ask)

@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
         {
+            "id": "SPEC_d129_d129-outcome-signal-the-academy",
+            "slug": "SPEC_d129_d129-outcome-signal-the-academy",
+            "branch": "build/SPEC_d129_d129-outcome-signal-the-academy",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d129_d129-outcome-signal-the-academy.md",
+            "tests_passed": true,
+            "notes": "d129 complete in working tree: added tools/build_loop/feature_outcome.py and wired server_build_loop.sh to append one feature_outcome row after activated merges and post-activation probes. session_feedback_seed.py and dataset_builder.py now read ops-ledger feature_outcome rows as runtime-quality learning signals. Added tools/academy/distill.py plus generated core/STATE/ACADEMY.md from proofs, feature outcomes, consequence evidence, and optional brain_index.corrections with every principle/playbook traced to evidence. Focused unittest, py_compile, server loop shell syntax, registry JSON validation, academy generation, ASCII check, and diff hygiene passed. No live activation, live ops-ledger append, live DB read, deploy, push, merge, outreach, secrets, or money movement."
+        },
+        {
             "id": "SPEC_f57b8fb5-4b47-4a3d-aa59-9a1d4ea89a46_daily-value-check-did-the-system",
             "slug": "SPEC_f57b8fb5-4b47-4a3d-aa59-9a1d4ea89a46_daily-value-check-did-the-system",
             "branch": "build/SPEC_f57b8fb5-4b47-4a3d-aa59-9a1d4ea89a46_daily-value-check-did-the-system",
