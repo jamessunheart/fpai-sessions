@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
         {
+            "id": "SPEC_d132_d131-nightly-metabolism-improve",
+            "slug": "SPEC_d132_d131-nightly-metabolism-improve",
+            "branch": "build/SPEC_d132_d131-nightly-metabolism-improve",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d132_d131-nightly-metabolism-improve.md",
+            "tests_passed": true,
+            "notes": "d132/d131 complete in working tree: added tools/metabolism/nightly.py to read conversion_latest.json, select the weakest measurable conversion by normalized health, generate exactly one operating-principle improvement prompt, and in --execute mode append one nightly_metabolism ops-ledger row plus one experiment-lane forge work-order. Default dry-run writes only the result surface. Staged tools/launchagents/com.fpai.nightly-metabolism.plist for James to load; no launchctl/load activation was run. Focused metabolism tests, py_compile, plist parse, registry JSON validation, CLI dry-run smoke, ASCII check, and diff hygiene passed. No live conversion file read, live ledger append, live forge queue write, deploy, push, merge, outreach, secrets, or money movement."
+        },
+        {
             "id": "SPEC_d131_d130-witness-to-question-engine",
             "slug": "SPEC_d131_d130-witness-to-question-engine",
             "branch": "build/SPEC_d131_d130-witness-to-question-engine",

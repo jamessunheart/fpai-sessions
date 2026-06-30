@@ -1,0 +1,8 @@
+# SPEC_d132_d131-nightly-metabolism-improve Result
+
+- Status: done in working tree
+- Summary: Added a nightly metabolism heartbeat. `tools/metabolism/nightly.py` reads `~/.config/fpai/metrics/conversion_latest.json`, chooses the weakest measurable conversion by normalized health, builds one operating-principle improvement prompt, and in `--execute` mode appends one `nightly_metabolism` ops-ledger row plus one experiment-lane forge work-order. Default mode is dry-run. `tools/launchagents/com.fpai.nightly-metabolism.plist` is staged for James to load after review.
+- Tests: `python3 -B -m unittest tools.metabolism.test_nightly`; `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/metabolism/__init__.py tools/metabolism/nightly.py tools/metabolism/test_nightly.py`; `python3 -m plistlib tools/launchagents/com.fpai.nightly-metabolism.plist`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d132-registry.json`; CLI dry-run smoke with temp conversion/ledger/forge paths; ASCII check; `git diff --check`.
+- Independent review: attempted with local `claude -p`; timed out after 90 seconds with no output, so reviewer approval remains a pre-merge gate.
+- Guardrails: experiment lane only; no autonomous production deploy; no launchctl/load activation; no push; no merge; no outreach; no secrets; no money movement.
+- Rollback: revert `tools/metabolism/`, `tools/launchagents/com.fpai.nightly-metabolism.plist`, this result file, the d132 spec artifact, registry entry, and handoff entry. If James later loads the plist, unload it with `launchctl unload ~/Library/LaunchAgents/com.fpai.nightly-metabolism.plist` and remove the copied plist.

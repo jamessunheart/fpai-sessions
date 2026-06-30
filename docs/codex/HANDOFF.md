@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-30 · SPEC_d132_d131-nightly-metabolism-improve · branch `build/SPEC_d132_d131-nightly-metabolism-improve`
+
+- **Status:** done in working tree / awaiting independent AI review + merge
+- **Files changed:** `tools/metabolism/__init__.py`; `tools/metabolism/nightly.py`; `tools/metabolism/test_nightly.py`; `tools/launchagents/com.fpai.nightly-metabolism.plist`; `core/BUILD/specs/SPEC_d132_d131-nightly-metabolism-improve.md`; `core/BUILD/results/SPEC_d132_d131-nightly-metabolism-improve.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the nightly metabolism heartbeat. It reads `~/.config/fpai/metrics/conversion_latest.json`, flattens common conversion/metric shapes, picks the weakest measurable conversion by normalized health against target/direction, and generates one operating-principle improvement prompt. Default mode is dry-run. With `--execute`, it appends one `nightly_metabolism` ops-ledger row and creates exactly one experiment-lane forge work-order with James/council merge gate language and hard production-deploy prohibitions. A LaunchAgent plist is staged in-repo for James to load after review; no persistence was installed.
+- **Tests:** `python3 -B -m unittest tools.metabolism.test_nightly` (5 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/metabolism/__init__.py tools/metabolism/nightly.py tools/metabolism/test_nightly.py`; `python3 -m plistlib tools/launchagents/com.fpai.nightly-metabolism.plist`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d132-registry.json`; CLI dry-run smoke with temporary conversion/ledger/forge paths confirmed result writing and no ledger/forge side effects; `LC_ALL=C rg -n "[^\\x00-\\x7F]" tools/metabolism tools/launchagents/com.fpai.nightly-metabolism.plist core/BUILD/specs/SPEC_d132_d131-nightly-metabolism-improve.md core/BUILD/results/SPEC_d132_d131-nightly-metabolism-improve.result.md || true`; `git diff --check`
+- **Independent review:** attempted local `claude -p` reviewer pass; it timed out after 90 seconds with no output. This branch still needs independent AI review before merge.
+- **Risks:** The live `~/.config/fpai/metrics/conversion_latest.json`, live `/opt/fpai-build/ops_ledger.jsonl`, and live forge queue were not touched in this sandbox. The optional optimizer subprocess is skipped unless an explicit `--optimizer-command` is provided; the safe default is forge work-order + ledger only. The staged LaunchAgent runs at 03:20 local when James copies/loads it, but this branch does not install it.
+- **Rollback:** revert the listed files. Runtime mitigation without reverting is to stop invoking `python3 -B -m tools.metabolism.nightly --execute`; if the plist is later loaded, unload it with `launchctl unload ~/Library/LaunchAgents/com.fpai.nightly-metabolism.plist` and remove the copied plist.
+- **Intent solved:** the system can metabolize one real conversion weakness nightly into one measured experiment instead of generating broad self-improvement churn.
+- **Downstream intent unlocked:** James/council can review a single forge work-order tied to conversion health and later compare the change against real `feature_outcome`/ledger deltas before merge.
+- **Questions for Ember/James:** run independent AI review before merge. After merge on server 162/Mac, dry-run against the real `conversion_latest.json`, inspect `core/BUILD/metabolism/latest.md`, then James can explicitly load the plist if the output is useful.
+
 ### 2026-06-30 · SPEC_d131_d130-witness-to-question-engine · branch `build/SPEC_d131_d130-witness-to-question-engine`
 
 - **Status:** done in working tree / awaiting independent AI review + merge
