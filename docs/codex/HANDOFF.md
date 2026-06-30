@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-06-30 · SPEC_d136_surface-constitution-in-chat · branch `build/SPEC_d136_surface-constitution-in-chat`
+
+- **Status:** done in working tree / awaiting independent AI review + merge
+- **Files changed:** `tools/constitution/__init__.py`; `tools/constitution/surface.py`; `tools/constitution/test_surface.py`; `SERVICES/sunheart-brain/curator/tgbot.py`; `SERVICES/sunheart-brain/curator/test_tgbot_constitution.py`; `core/BUILD/activate/SPEC_d136_surface-constitution-in-chat.sh`; `core/BUILD/specs/SPEC_d136_surface-constitution-in-chat.md`; `core/BUILD/results/SPEC_d136_surface-constitution-in-chat.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a repo-local constitution surfacer that resolves the current constitution source from the server repo, renders Telegram-safe HTML chunks, and sends only with explicit `--send`. Default source is `core/INTENT/AGREEMENTS/CONSTITUTION_v1.md`, falling back to `core/knowledge/CONSTITUTION.md`, with `FPAI_CONSTITUTION_PATH`/`--source` available for future governance-source changes. Wired `/constitution` into the private owner Telegram bot and added an idempotent activation script that sends the constitution once after merge on server 162.
+- **Tests:** `python3 -B -m unittest tools.constitution.test_surface` (5 OK); `python3 -B -m unittest discover -s SERVICES/sunheart-brain/curator -t SERVICES/sunheart-brain -p 'test_tgbot_constitution.py'` (2 OK); `python3 -B -m unittest discover -s SERVICES/sunheart-brain/curator -t SERVICES/sunheart-brain -p 'test_tgbot_correction_wiring.py'` (6 OK); `python3 -B -m tools.constitution.surface --repo-root . >/tmp/d136-constitution-dryrun.txt` rendered `CONSTITUTION_v1.md` as two Telegram messages; `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile ...`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d136-registry.json`; `bash -n core/BUILD/activate/SPEC_d136_surface-constitution-in-chat.sh`; ASCII source check; `git diff --check`
+- **Independent review:** attempted local `claude -p` over the d136 diff; it failed with `API Error: Unable to connect to API (ConnectionRefused)`. Independent AI review remains a pre-merge gate.
+- **Risks:** No live Telegram send was performed in this sandbox. After merge, activation sends the constitution to James's owner chat once if server 162 has Telegram credentials; reruns are guarded by `/var/lib/fpai-build/d136_constitution_sent`. The default source is the published Mirror Constitution; future governance-source changes can set `FPAI_CONSTITUTION_PATH`.
+- **Rollback:** revert the listed files. If activation has already run, no service/timer remains; keep the state marker to avoid resends, or remove `/var/lib/fpai-build/d136_constitution_sent` only if a future resend is desired.
+- **Intent solved:** James can read the live repo constitution directly in Telegram without leaving chat.
+- **Downstream intent unlocked:** governance/constitution references can now be surfaced through the owner chat path, reducing context-switching for future governance review.
+- **Questions for Ember/James:** run independent AI review before merge. After merge on server 162, confirm the activation delivered two owner-chat messages from `core/INTENT/AGREEMENTS/CONSTITUTION_v1.md`; if a different governance source should be canonical, set `FPAI_CONSTITUTION_PATH` and rerun with `--force`.
+
 ### 2026-06-30 · SPEC_d133_d133-public-learning-interface-o · branch `build/SPEC_d133_d133-public-learning-interface-o`
 
 - **Status:** done in working tree / awaiting independent AI review + merge

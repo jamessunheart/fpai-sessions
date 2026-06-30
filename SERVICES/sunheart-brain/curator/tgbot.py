@@ -118,6 +118,18 @@ def _load_context_router():
     return router
 
 
+def _load_constitution_surface():
+    """Load repo-local constitution surfacer without mutating sys.path."""
+    surface_path = Path(__file__).resolve().parents[3] / "tools" / "constitution" / "surface.py"
+    spec = _ilu.spec_from_file_location("fpai_constitution_surface", surface_path)
+    surface = _ilu.module_from_spec(spec) if spec and spec.loader else None
+    if surface is None or spec is None or spec.loader is None:
+        raise RuntimeError("constitution surface helper could not be loaded")
+    sys.modules[spec.name] = surface
+    spec.loader.exec_module(surface)
+    return surface
+
+
 def _env_truthy(name: str) -> bool:
     return os.environ.get(name, "").strip().lower() in {"1", "true", "yes", "on"}
 
@@ -829,6 +841,7 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
             "  /roi       — yesterday's brain ROI ledger (cost vs engagement)\n"
             "  /opportunities — run today's proactive scan now (silent if nothing)\n"
             "  /capabilities [category] — what this system can do (and when it shipped)\n"
+            "  /constitution — read the live repo constitution in chat\n"
             "  /voice [on|off]  — toggle voice replies (default ON · voice-in always replies in voice)\n"
             "  /more      — same as /signals more (expanded view: liquidity, costs, etc.)\n"
             "  /log       — recent AI activity timeline\n"
@@ -993,6 +1006,15 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
         return None
     if cmd == "capabilities":
         return await _cmd_capabilities(rest.strip())
+    if cmd == "constitution":
+        try:
+            surface = _load_constitution_surface()
+            messages = surface.surface_to_telegram(send=False)
+        except Exception as e:
+            return f"⚠️ constitution surface failed: {tg._esc(str(e))}"
+        for message in messages:
+            await tg.send(message)
+        return None
     if cmd == "voice":
         return _cmd_voice(rest.strip().lower())
     if cmd == "scene":

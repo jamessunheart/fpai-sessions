@@ -2,9 +2,20 @@
   "schema": "build-registry.v1",
     "updated_at": "2026-06-30T00:00:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
-    "active_builds": [
-        {
-            "id": "SPEC_d133_d133-public-learning-interface-o",
+  "active_builds": [
+    {
+      "id": "SPEC_d136_surface-constitution-in-chat",
+      "slug": "SPEC_d136_surface-constitution-in-chat",
+      "branch": "build/SPEC_d136_surface-constitution-in-chat",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d136_surface-constitution-in-chat.md",
+      "tests_passed": true,
+      "notes": "d136 complete in working tree: added tools/constitution/surface.py to resolve the live repo constitution source, render Telegram-safe chunks, and send only when explicitly invoked with --send. Wired /constitution into the private owner Telegram bot and added an idempotent activation script that sends the constitution once after merge on server 162 using a state marker. Focused utility/bot tests, correction-wiring regression, dry-run render, py_compile, activation shell syntax, registry JSON validation, ASCII source check, and diff hygiene passed. No live Telegram send, push, merge, deploy, secrets, outreach, or money movement. Independent AI review was attempted with local claude -p but failed with API ConnectionRefused, so review remains a pre-merge gate."
+    },
+    {
+      "id": "SPEC_d133_d133-public-learning-interface-o",
             "slug": "SPEC_d133_d133-public-learning-interface-o",
             "branch": "build/SPEC_d133_d133-public-learning-interface-o",
             "base_branch": "feat/headless-build",
