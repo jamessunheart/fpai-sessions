@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-07-01 · SPEC_d137_auto-merge-safe-builds · branch `build/SPEC_d137_auto-merge-safe-builds`
+
+- **Status:** done in working tree / awaiting independent AI review + merge
+- **Files changed:** `tools/build_loop/server_build_loop.sh`; `tools/build_loop/test_auto_merge_governance.py`; `tools/build_loop/test_revision_agent.py`; `core/BUILD/specs/SPEC_d137_auto-merge-safe-builds.md`; `core/BUILD/results/SPEC_d137_auto-merge-safe-builds.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Tightened build-loop auto-merge governance to match d137: only independent-review `APPROVE` builds enter the auto-merge path. Protected-path blocks still surface as hard stops, still-flagged review results after bounded revision attempts are now logged as `held-for-review` and surfaced for manual review, and approved builds that hit real merge conflicts still surface as conflicts. Removed the prior silent `auto-merged-flagged` / `fallback-auto-merge` path from the live loop.
+- **Tests:** `python3 -B -m unittest tools.build_loop.test_auto_merge_governance tools.build_loop.test_revision_agent tools.build_loop.test_liveness_probe` (14 OK); `bash -n tools/build_loop/server_build_loop.sh`; `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/test_auto_merge_governance.py tools/build_loop/test_revision_agent.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d137-registry.json`; `git diff --check`; explicit `git diff --no-index --check /dev/null <new-file>` checks for the three new d137 files
+- **Review / commit:** local commit failed because the shared git worktree index is read-only (`.git/worktrees/SPEC_d137_auto-merge-safe-builds/index.lock`). Best-effort local `claude -p --effort high` review over the generated working-tree diff timed out after 120 seconds with no output. Independent AI review remains a pre-merge gate.
+- **Risks:** Still-flagged non-protected builds now wait for manual review instead of landing silently, so the loop may pause on ambiguous review output more often. This is intentional for d137's stricter low-risk boundary. No live server build-loop run, push, merge, deploy, outreach, secrets, or money movement was performed.
+- **Rollback:** revert the listed files. Runtime effect returns to the previous behavior where still-flagged non-protected builds could auto-merge after revision attempts.
+- **Intent solved:** low-risk reversible builds keep shipping automatically only when the independent reviewer approves them.
+- **Downstream intent unlocked:** James's manual merge surface can focus on real risk, irreversibility, protected-path changes, and true merge conflicts instead of trivial approved branches.
+- **Questions for Ember/James:** on a writable host, commit this worktree and run independent AI review before merge. After merge on server 162, let one approved low-risk build and one intentionally flagged review path exercise the loop to confirm `merge auto-merged` still lands approved work while flagged work logs/surfaces as `review-held`.
+
 ### 2026-06-30 · SPEC_d136_surface-constitution-in-chat · branch `build/SPEC_d136_surface-constitution-in-chat`
 
 - **Status:** done in working tree / awaiting independent AI review + merge

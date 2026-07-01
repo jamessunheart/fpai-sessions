@@ -475,7 +475,7 @@ Register in core/BUILD/REGISTRY.json. Tests required. Do NOT push or merge.
         fi
       done
       if [ "$RC" != 0 ] && [ "$RC" != 2 ] && [ "$REVISION_ATTEMPT" -ge 2 ]; then
-        python3 "$REPO/tools/build_loop/ops_log.py" revision fallback-auto-merge "$SPECID still flagged after 2 attempts" "\$0" "$BR" "" 2>/dev/null || true
+        python3 "$REPO/tools/build_loop/ops_log.py" revision held-for-review "$SPECID still flagged after 2 attempts" "\$0" "$BR" "Ember/James: review flagged $DID" 2>/dev/null || true
       fi
     fi
   fi
@@ -488,13 +488,13 @@ Register in core/BUILD/REGISTRY.json. Tests required. Do NOT push or merge.
   dec mark-built "$DID" >/dev/null 2>&1 || true
   CNUM=$((CNUM+1)); echo "$TODAY $CNUM" > "$STAMP"
 
-  # AUTO-MERGE on APPROVE or FLAGGED (James directive 2026-06-18: reversible = merge it, don't ask).
-  # BLOCKED (RC=2, protected paths) still surfaces — that's a hard stop, not a judgment call.
+  # AUTO-MERGE only independent-review APPROVE builds.
+  # BLOCKED (RC=2, protected paths) surfaces as a hard stop.
+  # FLAGGED / REQUEST_CHANGES surfaces for manual review after revision attempts.
   # Real merge conflicts still surface — need human judgment on the conflict itself.
-  # Flagged-but-merged: logged to ops_ledger only (morning digest), no TG decision ask.
   # Backup = the build/<id> branch + git history. Reversible: `reverse $DID` / git revert. NEVER main.
   MERGED=0
-  if [ "$RC" != 2 ]; then
+  if [ "$RC" = 0 ]; then
     git -C "$REPO" config user.email ember@fpai >/dev/null 2>&1; git -C "$REPO" config user.name Ember >/dev/null 2>&1
     git -C "$REPO" checkout "$BASE" >/dev/null 2>&1
     PRE_SHA=$(git -C "$REPO" rev-parse HEAD)  # revert point — reset here if health check fails
@@ -556,16 +556,15 @@ Register in core/BUILD/REGISTRY.json. Tests required. Do NOT push or merge.
       tg "$V · AUTO-MERGED ✅ [$DID] $SPECID
 Landed in feat/headless-build (reversible: <code>reverse $DID</code>)."
       python3 "$REPO/tools/build_loop/ops_log.py" merge auto-merged "$SPECID (AI-approved)" "\$0" "$BR" "" 2>/dev/null || true
-    else
-      # FLAGGED + merged — ops_ledger only, no TG. Shows in morning digest.
-      python3 "$REPO/tools/build_loop/ops_log.py" merge auto-merged-flagged "$SPECID (flagged+reversible)" "\$0" "$BR" "" 2>/dev/null || true
     fi
     echo "auto-merged $SPECID"
   else
     if [ "$RC" = 2 ]; then
       _tail="🔴 BLOCKED — touches the protected layer. Reply <code>reverse $DID</code> to drop."; _ev=blocked; _nx="James: protected-zone escalation $DID"
-    else
+    elif [ "$RC" = 0 ]; then
       _tail="⚠️ Real merge conflict — reply <code>merge $DID</code> after a look."; _ev=conflict; _nx="James: merge conflict $DID"
+    else
+      _tail="⚠️ AI review still flagged this build after revision attempts — manual review required before merge."; _ev=review-held; _nx="Ember/James: review flagged $DID"
     fi
     tg "$_tail · [$DID] $SPECID (never main)"
     python3 "$REPO/tools/build_loop/ops_log.py" build "$_ev" "$SPECID ($ST)" "\$0" "$BR" "$_nx" 2>/dev/null || true
