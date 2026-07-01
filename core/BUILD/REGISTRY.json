@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-06-30T00:00:00Z",
+    "updated_at": "2026-07-01T00:00:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+    {
+      "id": "SPEC_d137_auto-merge-safe-builds",
+      "slug": "SPEC_d137_auto-merge-safe-builds",
+      "branch": "build/SPEC_d137_auto-merge-safe-builds",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d137_auto-merge-safe-builds.md",
+      "tests_passed": true,
+      "notes": "d137 complete in working tree: changed server_build_loop.sh so only independent-review APPROVE builds enter the auto-merge path. Protected-path review blocks still surface as hard stops; still-flagged review results after bounded revision attempts are now logged as held-for-review and surfaced for manual review instead of silently auto-merging as auto-merged-flagged. Approved builds with real merge conflicts still surface as conflicts. Focused static governance/revision/liveness tests, py_compile, shell syntax, registry JSON validation, and diff hygiene passed. Local commit was blocked by read-only shared git index; local claude review timed out, so independent AI review remains pending. No live server build-loop run, push, merge, deploy, outreach, secrets, or money movement."
+    },
     {
       "id": "SPEC_d136_surface-constitution-in-chat",
       "slug": "SPEC_d136_surface-constitution-in-chat",

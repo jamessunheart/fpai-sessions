@@ -42,7 +42,7 @@ class RevisionAgentShellContractTest(unittest.TestCase):
         self.assertIn("revision approved", self.text)
         self.assertIn("revision still-flagged", self.text)
 
-    def test_revision_attempts_are_ops_logged(self):
+    def test_revision_attempts_are_ops_logged_and_flagged_builds_are_held(self):
         for event in (
             "revision attempted",
             "revision committed",
@@ -51,9 +51,10 @@ class RevisionAgentShellContractTest(unittest.TestCase):
             "revision approved",
             "revision still-flagged",
             "revision blocked",
-            "revision fallback-auto-merge",
+            "revision held-for-review",
         ):
             self.assertIn(event, self.text)
+        self.assertNotIn("revision fallback-auto-merge", self.text)
 
 
 if __name__ == "__main__":
