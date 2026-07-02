@@ -1,10 +1,21 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-01T00:00:00Z",
+    "updated_at": "2026-07-02T00:00:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
-    {
-      "id": "SPEC_d137_auto-merge-safe-builds",
+        {
+            "id": "SPEC_d138_d138-curator-fork-reconciliation",
+            "slug": "SPEC_d138_d138-curator-fork-reconciliation",
+            "branch": "build/SPEC_d138_d138-curator-fork-reconciliation",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d138_d138-curator-fork-reconciliation.md",
+            "tests_passed": true,
+            "notes": "d138 complete in working tree: reconciled the three smallest curator fork files by preserving repo-only corrections blueprint updates and liveness summaries, adding live Telegram send_typing/send_and_get_id helpers while keeping repo per-chat send support, and tightening live_system_status fallback to report registry merged builds before review/result mirrors. Ported live-only conversation_memory.py into the repo with focused tests. Focused curator tests, existing Telegram correction wiring regression, py_compile, registry JSON validation, and diff hygiene passed. No live path writes, deploy bridge run, push, merge, outreach, secrets, or money movement."
+        },
+        {
+            "id": "SPEC_d137_auto-merge-safe-builds",
       "slug": "SPEC_d137_auto-merge-safe-builds",
       "branch": "build/SPEC_d137_auto-merge-safe-builds",
       "base_branch": "feat/headless-build",

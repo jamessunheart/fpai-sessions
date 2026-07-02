@@ -130,6 +130,51 @@ async def send_audio(audio_bytes: bytes, *, caption: str | None = None,
         return False
 
 
+async def send_typing(chat_id: int | str | None = None) -> None:
+    """Send a typing chat action while synthesis runs."""
+    if not BOT_TOKEN:
+        return
+    target_chat_id = str(chat_id) if chat_id is not None else CHAT_ID
+    if not target_chat_id:
+        return
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendChatAction"
+    try:
+        async with httpx.AsyncClient(timeout=5) as client:
+            await client.post(url, json={"chat_id": target_chat_id, "action": "typing"})
+    except Exception:
+        pass
+
+
+async def send_and_get_id(
+    text: str,
+    *,
+    chat_id: int | str | None = None,
+    parse_mode: str = "HTML",
+) -> int | None:
+    """Send a message and return Telegram's message_id for later edits."""
+    target_chat_id = str(chat_id) if chat_id is not None else CHAT_ID
+    if not (BOT_TOKEN and target_chat_id):
+        return None
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+    try:
+        async with httpx.AsyncClient(timeout=15) as client:
+            r = await client.post(
+                url,
+                json={
+                    "chat_id": target_chat_id,
+                    "text": text,
+                    "parse_mode": parse_mode,
+                    "disable_web_page_preview": True,
+                },
+            )
+            if r.status_code == 200:
+                return r.json().get("result", {}).get("message_id")
+            log.warning("telegram send_and_get_id %s: %s", r.status_code, r.text[:200])
+    except Exception as e:
+        log.warning("telegram send_and_get_id error: %s", e)
+    return None
+
+
 async def edit_message(chat_id: int | str, message_id: int, text: str, *, parse_mode: str = "HTML") -> bool:
     """Edit an existing message (used after a button is tapped to reflect new state)."""
     if not BOT_TOKEN:

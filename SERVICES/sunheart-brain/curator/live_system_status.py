@@ -90,6 +90,9 @@ def _last_merge_state(repo_root: Path) -> list[str]:
     except Exception:
         pass
 
+    registry_merge = _last_registry_merge(_read_registry(repo_root))
+    if registry_merge:
+        return [registry_merge]
     review = _newest_file(repo_root / "core" / "BUILD" / "reviews", "*.md")
     result_file = _newest_file(repo_root / "core" / "BUILD" / "results", "*.md")
     if review:
@@ -197,6 +200,17 @@ def _registry_rows(registry: dict[str, Any]) -> list[dict[str, Any]]:
     if not isinstance(rows, list):
         return []
     return [row for row in rows if isinstance(row, dict)]
+
+
+def _last_registry_merge(registry: dict[str, Any]) -> str:
+    merged = [row for row in _registry_rows(registry) if str(row.get("status") or "") == "merged"]
+    if not merged:
+        return ""
+    row = merged[-1]
+    ident = str(row.get("slug") or row.get("id") or "unknown")
+    branch = str(row.get("branch") or "").strip()
+    suffix = f" · {branch}" if branch else ""
+    return f"Last merge outcome: merged · {ident}{suffix}"
 
 
 def _newest_file(directory: Path, pattern: str) -> Path | None:

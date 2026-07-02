@@ -39,7 +39,10 @@ class CorrectionsTest(unittest.TestCase):
         async def fake_write(pair):
             writes.append(pair)
 
-        with patch.object(corrections, "write_correction", fake_write):
+        with (
+            patch.object(corrections, "write_correction", fake_write),
+            patch.dict("os.environ", {"BLUEPRINTS_DISABLE": "1"}),
+        ):
             pair = asyncio.run(
                 corrections.capture_if_correction(
                     conversation_id="chat-1",
@@ -53,6 +56,36 @@ class CorrectionsTest(unittest.TestCase):
         self.assertEqual(writes[0].conversation_id, "chat-1")
         self.assertEqual(writes[0].bot_turn_id, "turn-1")
         self.assertIn("preference dataset", writes[0].james_correction)
+
+    def test_capture_keeps_blueprint_gap_update(self) -> None:
+        bot_turn = corrections.BotTurn(id="turn-1", text="The module is treasury.")
+        blueprint_updates = []
+
+        async def fake_write(pair):
+            return None
+
+        def fake_detect(text: str) -> str:
+            self.assertIn("treasury", text)
+            return "treasury"
+
+        def fake_update(module: str, correction: str) -> None:
+            blueprint_updates.append((module, correction))
+
+        with (
+            patch.object(corrections, "write_correction", fake_write),
+            patch.object(corrections, "detect_module_from_text", fake_detect),
+            patch.object(corrections, "update_blueprint_after_correction", fake_update),
+        ):
+            pair = asyncio.run(
+                corrections.capture_if_correction(
+                    conversation_id="chat-1",
+                    james_message="Actually, treasury memory should stay visible.",
+                    bot_turn=bot_turn,
+                )
+            )
+
+        self.assertIsNotNone(pair)
+        self.assertEqual(blueprint_updates, [("treasury", "Actually, treasury memory should stay visible.")])
 
     def test_render_corrections_block_is_bounded(self) -> None:
         pair = corrections.CorrectionPair(

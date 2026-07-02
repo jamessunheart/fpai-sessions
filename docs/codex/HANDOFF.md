@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-07-02 · SPEC_d138_d138-curator-fork-reconciliation · branch `build/SPEC_d138_d138-curator-fork-reconciliation`
+
+- **Status:** done in working tree / awaiting independent review + merge
+- **Files changed:** `SERVICES/sunheart-brain/curator/telegram.py`; `SERVICES/sunheart-brain/curator/live_system_status.py`; `SERVICES/sunheart-brain/curator/conversation_memory.py`; `SERVICES/sunheart-brain/curator/test_telegram.py`; `SERVICES/sunheart-brain/curator/test_conversation_memory.py`; `SERVICES/sunheart-brain/curator/test_corrections.py`; `core/BUILD/specs/SPEC_d138_d138-curator-fork-reconciliation.md`; `core/BUILD/results/SPEC_d138_d138-curator-fork-reconciliation.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Reconciled the three smallest curator fork files into repo-canonical strict supersets. `corrections.py` keeps the repo-only blueprint correction hook with regression coverage. `live_system_status.py` keeps the repo-only liveness summary and now reports registry `merged` builds before review/result fallbacks when git merge logs are unavailable. `telegram.py` keeps repo per-chat send support and adds live's `send_typing()` plus `send_and_get_id()` helpers. Ported live-only `conversation_memory.py` into the repo as an inert helper for compressing chat turns into retrievable `tg-memory` note chunks.
+- **Tests:** `python3 -B -m unittest discover -s SERVICES/sunheart-brain/curator -p 'test_corrections.py'` (6 OK); `python3 -B -m unittest discover -s SERVICES/sunheart-brain/curator -p 'test_live_system_status.py'` (3 OK); `python3 -B -m unittest discover -s SERVICES/sunheart-brain/curator -p 'test_telegram.py'` (3 OK); `python3 -B -m unittest discover -s SERVICES/sunheart-brain/curator -p 'test_conversation_memory.py'` (2 OK); `python3 -B -m unittest discover -s SERVICES/sunheart-brain/curator -t SERVICES/sunheart-brain -p 'test_tgbot_correction_wiring.py'` (6 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile ...`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d138-registry.json`; `git diff --check`
+- **Risks:** Larger diverged files remain for follow-up specs: `tgbot.py`, `decisions.py`, `llm.py`, and `build_context.py`. `conversation_memory.py` is ported but not newly wired into the bot path by this spec. No live `/opt/sh-brain-src` files were edited and the deploy bridge was not run.
+- **Rollback:** revert the listed files. Runtime impact before deployment is repo-only; after deployment, reverting removes the Telegram streaming helpers, registry-merge fallback, and conversation memory helper.
+- **Intent solved:** smallest curator fork deltas now have tested repo-canonical strict-superset implementations.
+- **Downstream intent unlocked:** larger curator reconciliation specs can proceed from a cleaner baseline while repo remains canonical and live hand-patches stay out of band.
+- **Questions for Ember/James:** after merge on server 162, deploy through the curator bridge only if independent review passes; then verify these four files match repo on live and no hand-patch remains for this slice.
+
 ### 2026-07-02 · SPEC_d134_d134-constitution-check-governan · branch `build/SPEC_d134_d134-constitution-check-governan`
 
 - **Status:** done in working tree / independent AI reviewed / awaiting merge
