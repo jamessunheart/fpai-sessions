@@ -319,6 +319,31 @@ def run_claude_json(prompt, runner=None):
     raise ValueError("run_claude_json: exhausted retries")
 
 
+TRANSCRIPTS_DIR = os.environ.get("COUNCIL_TRANSCRIPTS_DIR", "/opt/fpai-build/council_transcripts")
+
+
+def persist_transcript(prompt, raw_stdout, verdict, sig_hash):
+    """Append the full debate record — lens reasoning was evaporating (only the
+    synthesis survived into `why`). Answers James's 'where are the AI-to-AI
+    logs?' Append-only JSONL, one file per month. Never raises."""
+    try:
+        from datetime import datetime, timezone
+        os.makedirs(TRANSCRIPTS_DIR, exist_ok=True)
+        now = datetime.now(timezone.utc)
+        path = os.path.join(TRANSCRIPTS_DIR, now.strftime("%Y-%m") + ".jsonl")
+        row = {
+            "ts": now.isoformat(),
+            "signal_hash": sig_hash,
+            "verdict": verdict,          # full parsed JSON: all lens sentences + synthesis
+            "raw_response": raw_stdout[:20000],
+            "prompt": prompt[:20000],
+        }
+        with open(path, "a") as f:
+            f.write(json.dumps(row) + "\n")
+    except Exception as e:
+        _ops("transcript_persist_error", str(e)[:200])
+
+
 def main():
     if os.path.exists(CFG + "/.disabled") or os.path.exists(HOME + "/.config/fpai/decisions/.recommend_disabled"):
         print("disabled"); return 0
@@ -357,6 +382,7 @@ def main():
     except Exception as e:
         _ops("debate_error", str(e)[:200])
         print("debate error:", e, "| raw:", (r.stdout[:200] if "r" in dir() else "")); return 1
+    persist_transcript(prompt, r.stdout, d, sig_hash)
     if consciousness_loop and os.environ.get("CONSCIOUSNESS_LOOP_DISABLE") != "1":
         try:
             status = consciousness_loop.maybe_append_from_council(d)
