@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-07-02 · SPEC_d140_d140-post-merge-reality-check-n · branch `build/SPEC_d140_d140-post-merge-reality-check-n`
+
+- **Status:** done in working tree / awaiting independent review + merge
+- **Files changed:** `SERVICES/sunheart-brain/curator/decisions.py`; `tools/build_loop/post_merge_reality_check.py`; `tools/build_loop/test_post_merge_reality_check.py`; `tools/build_loop/server_build_loop.sh`; `core/BUILD/specs/SPEC_d140_d140-post-merge-reality-check-n.md`; `core/BUILD/results/SPEC_d140_d140-post-merge-reality-check-n.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the delayed post-merge reality checker. It scans decisions still marked `build_status='merged'` after the default 3-day grace window and requires ops-ledger proof that the artifact is live (`liveness:pass` / `liveness_status=live`) and the stated metric moved (`feature_outcome` with `verdict=improved`). Missing proof marks the source decision `merged_dead`, records reality audit columns, queues one focused `*-reality-fix` repair spec, logs a `post-merge-reality` summary row, and sends a Telegram one-liner when run with `--send-alert`. The existing server build loop runs it once per UTC day during the health pulse; `curator.decisions mark-merged` now stamps `merged_at` and accepts the existing one-argument success call shape.
+- **Tests:** `python3 -B -m unittest tools.build_loop.test_post_merge_reality_check tools.build_loop.test_liveness_probe tools.build_loop.test_feature_outcome tools.liveness.test_probe` (20 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/post_merge_reality_check.py tools/build_loop/test_post_merge_reality_check.py SERVICES/sunheart-brain/curator/decisions.py`; `bash -n tools/build_loop/server_build_loop.sh`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d140-registry.json`; `git diff --check`
+- **Risks:** The metric proof is intentionally strict; older merged builds without `feature_outcome verdict=improved` may be marked `merged_dead` on the first live run if they are outside the grace window. Existing merged rows without `merged_at` fall back to available timestamp columns such as `updated_at` or `created_at`. Live DB mutation, live Telegram send, and a real server timer run were not exercised in this sandbox.
+- **Rollback:** revert the listed files. Runtime mitigation without code rollback is `POST_MERGE_REALITY_CHECK_DISABLE=1` for the server build-loop environment.
+- **Intent solved:** merged decisions must prove live artifact reality and metric movement after the grace window instead of remaining trusted by status alone.
+- **Downstream intent unlocked:** d131-style dead-on-arrival merges get caught and routed into repair specs automatically within the daily build-loop reality check.
+- **Questions for Ember/James:** after merge on server 162, let the next build-loop health pulse run and confirm `/opt/fpai-build/logs/post-merge-reality.<date>.log` plus `ops_ledger` show `post-merge-reality`; inspect any first-run `merged_dead` rows before prioritizing the queued repairs.
+
 ### 2026-07-02 · SPEC_d138_d138-curator-fork-reconciliation · branch `build/SPEC_d138_d138-curator-fork-reconciliation`
 
 - **Status:** done in working tree / awaiting independent review + merge

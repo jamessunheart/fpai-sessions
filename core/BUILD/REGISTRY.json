@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
         {
+            "id": "SPEC_d140_d140-post-merge-reality-check-n",
+            "slug": "SPEC_d140_d140-post-merge-reality-check-n",
+            "branch": "build/SPEC_d140_d140-post-merge-reality-check-n",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d140_d140-post-merge-reality-check-n.md",
+            "tests_passed": true,
+            "notes": "d140 complete in working tree: added tools/build_loop/post_merge_reality_check.py to scan merged decisions after a default 3-day grace window and require both liveness:pass/liveness_status=live and feature_outcome verdict=improved evidence from ops_ledger. Missing proof marks the source decision build_status=merged_dead, records reality audit columns, queues one focused *-reality-fix repair spec, logs post-merge-reality, and optionally sends a Telegram one-liner. server_build_loop.sh now runs the checker once per UTC day during the health pulse with POST_MERGE_REALITY_CHECK_DISABLE=1 kill switch. curator.decisions mark-merged now stamps merged_at and accepts the existing one-arg success call shape. Focused unit/static tests, py_compile, shell syntax, registry JSON validation, and diff hygiene passed. No live DB mutation, live Telegram send, deploy, push, merge, outreach, secrets, service stop/delete, or money movement."
+        },
+        {
             "id": "SPEC_d138_d138-curator-fork-reconciliation",
             "slug": "SPEC_d138_d138-curator-fork-reconciliation",
             "branch": "build/SPEC_d138_d138-curator-fork-reconciliation",
