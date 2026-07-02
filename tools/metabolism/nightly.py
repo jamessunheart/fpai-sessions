@@ -264,6 +264,69 @@ def run_optimizer_command(command: list[str], prompt: str, timeout: int = 120) -
     }
 
 
+def queue_build_decision(weakest, prompt: str, *, db_url: str | None = None, dedup_days: int = 4) -> dict[str, Any]:
+    """Bridge the metabolism to the build loop: queue the work-order as a
+    brain_index decision so the existing codex->review->auto-merge pipeline
+    actually SHIPS the improvement. Without this the metabolism only writes a
+    prompt nobody reads (the merged-but-dead gap in d131 itself, 2026-07-02).
+
+    Dedup guard: skip if an unmerged metabolism decision for the same weakest
+    conversion already exists in the last `dedup_days` — so nightly runs on a
+    stuck metric don't spam duplicate builds. Reversible: a queued decision can
+    be reversed, and the build ships in the experiment lane (go-live gated).
+    """
+    db_url = db_url or os.environ.get("BRAIN_INDEX_DB_URL", "")
+    if not db_url:
+        return {"status": "skipped", "reason": "no BRAIN_INDEX_DB_URL"}
+    try:
+        import psycopg
+    except Exception as exc:  # pragma: no cover - env without psycopg
+        return {"status": "skipped", "reason": f"psycopg unavailable: {exc}"}
+
+    tag = f"[metabolism:{weakest.name}]"
+    question = (
+        f"{tag} Improve weakest conversion '{weakest.name}' "
+        f"(health {weakest.health:.2f}, value {weakest.value}, target {weakest.target}). "
+        "Forge exactly one reversible experiment-lane improvement per the work-order. "
+        "Ship behind an OFF flag; production go-live stays gated."
+    )
+    try:
+        with psycopg.connect(db_url, connect_timeout=5) as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    SELECT count(*) FROM brain_index.decisions
+                     WHERE question LIKE %s
+                       AND created_at > NOW() - make_interval(days => %s)
+                       AND coalesce(build_status,'') NOT IN ('merged','rejected')
+                    """,
+                    (f"%{tag}%", dedup_days),
+                )
+                if (cur.fetchone() or [0])[0] > 0:
+                    return {"status": "skipped", "reason": "open metabolism decision exists (dedup)"}
+                for _ in range(3):
+                    try:
+                        cur.execute(r"SELECT id FROM brain_index.decisions WHERE id ~ '^d[0-9]+$'")
+                        nums = [int(row[0][1:]) for row in cur.fetchall()]
+                        did = "d" + str((max(nums) + 1) if nums else 1).zfill(3)
+                        cur.execute(
+                            """
+                            INSERT INTO brain_index.decisions
+                                (id, question, answer, status, needs_build, spec_written, build_spec, build_status, created_at)
+                            VALUES (%s, %s, %s, 'answered', true, false, %s, 'none', now())
+                            """,
+                            (did, question, "queued by nightly metabolism (experiment lane)", prompt[:8000]),
+                        )
+                        conn.commit()
+                        return {"status": "queued", "decision_id": did}
+                    except psycopg.errors.UniqueViolation:
+                        conn.rollback()
+                        continue
+        return {"status": "error", "reason": "id assignment exhausted retries"}
+    except Exception as exc:
+        return {"status": "error", "reason": str(exc)[:200]}
+
+
 def build_cycle(args: argparse.Namespace) -> dict[str, Any]:
     if not args.conversion_latest.exists():
         return {"ok": False, "status": "missing_conversion_latest", "path": str(args.conversion_latest)}
@@ -297,6 +360,8 @@ def build_cycle(args: argparse.Namespace) -> dict[str, Any]:
         order = forge_work_order(args.forge_dir, weakest, prompt)
         optimizer = run_optimizer_command(args.optimizer_command, prompt, timeout=args.optimizer_timeout)
         row.update({"status": "experiment_queued", "forge_work_order": order["path"], "optimizer": optimizer})
+        if not getattr(args, "no_queue_decision", False):
+            row["build_decision"] = queue_build_decision(weakest, prompt)
         append_ledger(args.ops_ledger, row)
     return {"ok": True, "row": row, "prompt": prompt}
 
@@ -342,6 +407,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--execute", action="store_true", help="Queue one experiment and append the ops-ledger row.")
     parser.add_argument("--optimizer-command", nargs="+", default=[])
     parser.add_argument("--optimizer-timeout", type=int, default=120)
+    parser.add_argument("--no-queue-decision", action="store_true",
+                        help="Skip queuing the work-order into brain_index.decisions (the build-loop bridge).")
     return parser
 
 
