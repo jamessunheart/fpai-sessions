@@ -9,7 +9,7 @@ the AI brain holds. Manual command. No background job. No Telegram. No secrets.
         │  ssh · source env on server · run read-only SELECTs via brain venv
         │  (DB creds stay on the server — only the numbers come back)
         ▼
-  vault  00_MEMORY/BRAIN DIGEST.md   (latest snapshot, overwritten each run)
+  vault  02_CONTEXT/Memory/BRAIN DIGEST.md   (latest snapshot, overwritten each run)
 
 Why this shape:
   - Read-only: copies the digest job's SELECTs, NOT its write step.
@@ -72,7 +72,7 @@ def choose_vault(candidates: list[Path] | None = None) -> Path:
 
 
 VAULT = choose_vault()
-DIGEST_FILE = VAULT / "00_MEMORY" / "BRAIN DIGEST.md"
+DIGEST_FILE = VAULT / "02_CONTEXT/Memory" / "BRAIN DIGEST.md"
 
 # Read-only query, run by the brain's own venv on the server. No writes.
 REMOTE_PY = r"""
@@ -168,9 +168,9 @@ def write_vault_text(rel_path: str, text: str, candidates: list[Path] | None = N
 # State docs to mirror from repo into vault (read from laptop repo clone, no SSH needed)
 LAPTOP_REPO = HOME / "FPAI_Cockpit"
 STATE_DOCS = [
-    ("core/STATE/SYSTEM_ARCHITECTURE.md", "00_MEMORY/SYSTEM ARCHITECTURE.md"),
-    ("core/STATE/NOW.md",                 "00_MEMORY/NOW — Current Priorities.md"),
-    ("core/STATE/AI_GOALS.md",            "00_MEMORY/AI GOALS.md"),
+    ("core/STATE/SYSTEM_ARCHITECTURE.md", "02_CONTEXT/Memory/SYSTEM ARCHITECTURE.md"),
+    ("core/STATE/NOW.md",                 "02_CONTEXT/Memory/NOW — Current Priorities.md"),
+    ("core/STATE/AI_GOALS.md",            "02_CONTEXT/Memory/AI GOALS.md"),
 ]
 
 
@@ -204,7 +204,7 @@ def main():
         return 0
 
     candidates = vault_candidates()
-    digest_file = write_vault_text("00_MEMORY/BRAIN DIGEST.md", md, candidates)
+    digest_file = write_vault_text("02_CONTEXT/Memory/BRAIN DIGEST.md", md, candidates)
     vault = digest_file.parents[1]
     print(f"wrote {digest_file.name}  ·  {data.get('total_chunks', 0):,} chunks")
 

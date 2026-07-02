@@ -18,7 +18,7 @@ DEFAULT_VAULT = (
     Path.home()
     / "Documents" / "FPOS" / "Full Potential OS"
 )
-DEFAULT_DECISIONS = DEFAULT_VAULT / "00_MEMORY" / "DECISIONS.md"
+DEFAULT_DECISIONS = DEFAULT_VAULT / "02_CONTEXT/Memory" / "DECISIONS.md"
 
 
 def clean_inline(text: str) -> str:

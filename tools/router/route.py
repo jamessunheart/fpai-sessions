@@ -91,7 +91,7 @@ def read_text(path: Path) -> str:
 
 def intent_sources(repo: Path, vault: Path) -> list[Path]:
     return [
-        vault / "00_MEMORY" / "INTENT BUILDSTREAM.md",
+        vault / "02_CONTEXT/Memory" / "INTENT BUILDSTREAM.md",
         repo / "docs" / "codex" / "INTENT_BUILDSTREAM.md",
     ]
 

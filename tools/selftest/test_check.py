@@ -13,7 +13,7 @@ class SelftestCheckTestCase(unittest.TestCase):
         repo = root / "repo"
         vault = root / "vault"
         (repo / "docs" / "codex" / "specs").mkdir(parents=True)
-        (vault / "00_MEMORY").mkdir(parents=True)
+        (vault / "02_CONTEXT/Memory").mkdir(parents=True)
         return repo, vault
 
     def test_home_next_parser(self) -> None:
@@ -32,7 +32,7 @@ class SelftestCheckTestCase(unittest.TestCase):
 
     def test_latest_proof_requires_buildstream_fields(self) -> None:
         _, vault = self.make_roots()
-        (vault / "00_MEMORY" / "PROOF LOG.md").write_text(
+        (vault / "02_CONTEXT/Memory" / "PROOF LOG.md").write_text(
             "# PROOF LOG\n\n---\n\n"
             "- 2026-06-06 18:07 MDT · [Game] · Intent solved: test · Unlocks next: self-standing one-day test · Proof: ok · Next move: go autonomous\n",
             encoding="utf-8",
@@ -48,7 +48,7 @@ class SelftestCheckTestCase(unittest.TestCase):
             "# HOME\n\n## ▶️ NEXT MOVE\n\n**Go autonomous — run the self-standing one-day test?**\n",
             encoding="utf-8",
         )
-        (vault / "00_MEMORY" / "INTENT BUILDSTREAM.md").write_text(
+        (vault / "02_CONTEXT/Memory" / "INTENT BUILDSTREAM.md").write_text(
             "# Intent Buildstream\n"
             "<!-- INTENTS:START -->\n"
             "- id:rung3 | value:5 | unlocks:test | status:done | Rung 3 Auto-routing\n"

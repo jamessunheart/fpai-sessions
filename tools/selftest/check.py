@@ -79,8 +79,8 @@ def check_router_gate() -> Check:
     repo = root / "repo"
     vault = root / "vault"
     (repo / "docs" / "codex" / "specs").mkdir(parents=True)
-    (vault / "00_MEMORY").mkdir(parents=True)
-    (vault / "00_MEMORY" / "INTENT BUILDSTREAM.md").write_text(
+    (vault / "02_CONTEXT/Memory").mkdir(parents=True)
+    (vault / "02_CONTEXT/Memory" / "INTENT BUILDSTREAM.md").write_text(
         "# Intent Buildstream\n"
         f"{route.INTENTS_START}\n"
         "- id:money | value:5 | unlocks:test | status:ready | Treasury transfer - move money publicly\n"
@@ -100,7 +100,7 @@ def check_router_gate() -> Check:
 
 
 def latest_proof_row(vault: Path) -> str:
-    proof = vault / "00_MEMORY" / "PROOF LOG.md"
+    proof = vault / "02_CONTEXT/Memory" / "PROOF LOG.md"
     for line in read(proof).splitlines():
         if line.startswith("- "):
             return line
@@ -108,7 +108,7 @@ def latest_proof_row(vault: Path) -> str:
 
 
 def check_proof(vault: Path) -> Check:
-    proof = vault / "00_MEMORY" / "PROOF LOG.md"
+    proof = vault / "02_CONTEXT/Memory" / "PROOF LOG.md"
     if not proof.exists():
         return Check("proof log", FAIL, f"missing {proof}", "The return loop has no proof source.")
     row = latest_proof_row(vault)

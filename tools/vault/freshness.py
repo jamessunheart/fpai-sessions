@@ -4,7 +4,7 @@
 Successor to the manual FRESHNESS CHECK of 2026-05-30, which caught real drift
 once and then went stale itself — the lesson this tool encodes is that only
 scheduled machinery stays honest. Read-only over the vault except for the one
-report file it owns (00_MEMORY/FRESHNESS CHECK.md).
+report file it owns (02_CONTEXT/Memory/FRESHNESS CHECK.md).
 
 Two distinct staleness signals, per the original note's catch:
 - file age (mtime) — did the machinery run?
@@ -22,7 +22,7 @@ VAULT = Path(os.environ.get(
     "FPAI_VAULT",
     Path.home() / "Documents/FPOS/Full Potential OS",
 ))
-REPORT_REL = Path("00_MEMORY/FRESHNESS CHECK.md")
+REPORT_REL = Path("02_CONTEXT/Memory/FRESHNESS CHECK.md")
 
 AUTO_MARKERS = re.compile(r"auto-generated|self-refreshing|auto-refreshed|do not edit by hand", re.I)
 AUTO_HEADER_LINES = 12  # the claim must be about THIS file (header zone), not doctrine discussing the pattern
@@ -32,7 +32,7 @@ CLAIM_RE = re.compile(
     re.I,
 )
 # dated-by-design surfaces age on purpose; auditing them is noise
-SKIP_DIRS = {"07_DAILY", "08_JOURNAL", "06_SHOW FRAMES"}
+SKIP_DIRS = {"01_CAPTURE/Daily", "01_CAPTURE/Journal", "03_THINKING/Show Frames"}
 DATED_NAME = re.compile(r"\d{4}-\d{2}-\d{2}")
 
 # days before a tier counts as stale
@@ -41,12 +41,12 @@ THRESHOLDS = {"auto": 1, "memory": 7, "other": 21}
 # who owns the regeneration of each auto surface (vault-relative name → machinery)
 MACHINERY = {
     "HOME.md": "tools/decisions/daily_sync.py (autoloop · 2h)",
-    "00_MEMORY/NEXT MOVE DETAIL.md": "tools/decisions/daily_sync.py (autoloop · 2h)",
-    "00_MEMORY/INDEX OF INDEXES.md": "tools/index/refresh.py (via daily_sync since 2026-06-10)",
-    "00_MEMORY/DECISIONS.md": "tools/queue/build.py via daily_sync",
-    "00_MEMORY/FRESHNESS CHECK.md": "tools/vault/freshness.py (via daily_sync since 2026-06-10)",
-    "00_MEMORY/NEWS FOR YOU.md": "tools/scout/scout_run.py (via daily_sync · 1/day cursor)",
-    "00_MEMORY/AI GROWTH FEED.md": "tools/scout/scout_run.py (via daily_sync · 1/day cursor)",
+    "02_CONTEXT/Memory/NEXT MOVE DETAIL.md": "tools/decisions/daily_sync.py (autoloop · 2h)",
+    "02_CONTEXT/Memory/INDEX OF INDEXES.md": "tools/index/refresh.py (via daily_sync since 2026-06-10)",
+    "02_CONTEXT/Memory/DECISIONS.md": "tools/queue/build.py via daily_sync",
+    "02_CONTEXT/Memory/FRESHNESS CHECK.md": "tools/vault/freshness.py (via daily_sync since 2026-06-10)",
+    "02_CONTEXT/Memory/NEWS FOR YOU.md": "tools/scout/scout_run.py (via daily_sync · 1/day cursor)",
+    "02_CONTEXT/Memory/AI GROWTH FEED.md": "tools/scout/scout_run.py (via daily_sync · 1/day cursor)",
     "INTELLIGENCE HUB.md": "fpull component scripts (composite — freshness = its embedded sources)",
 }
 
@@ -54,7 +54,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 # --heal allowlist: 🔴 finding → generator scripts safe to re-run (idempotent, vault-writing only).
 # NEVER daily_sync.py here — freshness runs inside it; that would recurse.
 HEAL_COMMANDS = {
-    "00_MEMORY/INDEX OF INDEXES.md": ["tools/index/refresh.py"],
+    "02_CONTEXT/Memory/INDEX OF INDEXES.md": ["tools/index/refresh.py"],
     "INTELLIGENCE HUB.md": [
         "tools/decisions/mirror_pull.py",
         "tools/decisions/concept_surfacer.py",
@@ -68,7 +68,7 @@ def file_tier(rel: Path, text: str) -> str:
     header = "\n".join(text.splitlines()[:AUTO_HEADER_LINES])
     if AUTO_MARKERS.search(header):
         return "auto"
-    if rel.parts and rel.parts[0] == "00_MEMORY":
+    if rel.parts and rel.parts[0] == "02_CONTEXT/Memory":
         return "memory"
     return "other"
 

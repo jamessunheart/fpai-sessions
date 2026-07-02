@@ -2,7 +2,7 @@
 """
 hub_charts · v1 · 2026-05-31
 Render the vault's shape as Mermaid charts so James can see the 'huge brain' at a glance.
-Reads concept folders + INTENT RADAR (read-only), writes 00_MEMORY/HUB CHARTS.md.
+Reads concept folders + INTENT RADAR (read-only), writes 02_CONTEXT/Memory/HUB CHARTS.md.
 Native Mermaid (no images). Runs with `fpull`. Invents nothing.
 """
 import re, glob, os
@@ -10,10 +10,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 VAULT = Path.home() / "Documents" / "FPOS" / "Full Potential OS"
-CONCEPTS = VAULT / "05_CONCEPTS"
-RADAR = VAULT / "00_MEMORY" / "INTENT RADAR.md"
-MAPS = VAULT / "04_VISUALS" / "Mindmaps"
-OUT = VAULT / "00_MEMORY" / "HUB CHARTS.md"
+CONCEPTS = VAULT / "03_THINKING/Concepts"
+RADAR = VAULT / "02_CONTEXT/Memory" / "INTENT RADAR.md"
+MAPS = VAULT / "03_THINKING/Visuals" / "Mindmaps"
+OUT = VAULT / "02_CONTEXT/Memory" / "HUB CHARTS.md"
 
 STREAMS = ["_Foundations", "Treasury", "Ventures", "Game", "Legal", "Zen Village", "Play", "Relationship"]
 

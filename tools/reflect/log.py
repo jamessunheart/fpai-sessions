@@ -2,8 +2,8 @@
 """Reflections — log the system's thinking about itself, and surface it.
 
 A running wall (newest-on-top) of reflections on self / system / process / doctrine.
-Appends to vault `00_MEMORY/REFLECTIONS LOG.md`, then regenerates the live
-"Latest reflections" + "By category" blocks inside `00_MEMORY/SYSTEM SELF-MODEL.md`
+Appends to vault `02_CONTEXT/Memory/REFLECTIONS LOG.md`, then regenerates the live
+"Latest reflections" + "By category" blocks inside `02_CONTEXT/Memory/SYSTEM SELF-MODEL.md`
 so they're never buried.
 
 Usage:
@@ -25,8 +25,8 @@ VAULT = Path(
         HOME / "Documents" / "FPOS" / "Full Potential OS",
     )
 )
-LOG = VAULT / "00_MEMORY" / "REFLECTIONS LOG.md"
-SELFMODEL = VAULT / "00_MEMORY" / "SYSTEM SELF-MODEL.md"
+LOG = VAULT / "02_CONTEXT/Memory" / "REFLECTIONS LOG.md"
+SELFMODEL = VAULT / "02_CONTEXT/Memory" / "SYSTEM SELF-MODEL.md"
 
 R_START = "<!-- REFLECT:START -->"
 R_END = "<!-- REFLECT:END -->"

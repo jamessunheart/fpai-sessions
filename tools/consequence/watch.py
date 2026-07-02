@@ -32,7 +32,7 @@ DEFAULT_VAULT_PROOF = Path(
         Path.home()
         / "Documents" / "FPOS" / "Full Potential OS",
     )
-) / "00_MEMORY" / "PROOF LOG.md"
+) / "02_CONTEXT/Memory" / "PROOF LOG.md"
 
 VERDICTS = {"realized", "not-yet", "no"}
 STOPWORDS = {

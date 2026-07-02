@@ -6,10 +6,10 @@ Read the treasury breakdown from the vault's TREASURY TODAY.md and render it as 
 Mermaid pie chart (Obsidian renders Mermaid natively — no image files, no plugins,
 stays in version control). The INTELLIGENCE HUB embeds the chart section.
 
-  vault 00_MEMORY/TREASURY TODAY.md  (## Net spendable table — read-only)
+  vault 02_CONTEXT/Memory/TREASURY TODAY.md  (## Net spendable table — read-only)
         │  parse Banks / Crypto / Bullion $ values
         ▼
-  vault 00_MEMORY/TREASURY CHART.md   (Mermaid pie + bars, regenerated each run)
+  vault 02_CONTEXT/Memory/TREASURY CHART.md   (Mermaid pie + bars, regenerated each run)
 
 SAFETY: reads one already-safe vault note (no addresses/keys), writes one vault
 note. No network, no secrets. Manual; runs with `fpull`. Never invents numbers —
@@ -20,8 +20,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 VAULT = Path.home() / "Documents" / "FPOS" / "Full Potential OS"
-SRC = VAULT / "00_MEMORY" / "TREASURY TODAY.md"
-OUT = VAULT / "00_MEMORY" / "TREASURY CHART.md"
+SRC = VAULT / "02_CONTEXT/Memory" / "TREASURY TODAY.md"
+OUT = VAULT / "02_CONTEXT/Memory" / "TREASURY CHART.md"
 
 def parse_k(s):
     m = re.search(r"\$?([\d,]+(?:\.\d+)?)\s*k", s, re.I)

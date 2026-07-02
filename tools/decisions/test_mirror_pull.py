@@ -26,12 +26,12 @@ class MirrorPullVaultPathTests(unittest.TestCase):
 
             with mock.patch.object(Path, "mkdir", mkdir_with_tcc_denial):
                 written = mirror_pull.write_vault_text(
-                    "00_MEMORY/BRAIN DIGEST.md",
+                    "02_CONTEXT/Memory/BRAIN DIGEST.md",
                     "digest",
                     [blocked, fallback],
                 )
 
-            self.assertEqual(written, fallback / "00_MEMORY" / "BRAIN DIGEST.md")
+            self.assertEqual(written, fallback / "02_CONTEXT/Memory" / "BRAIN DIGEST.md")
             self.assertEqual(written.read_text(), "digest")
 
     def test_write_vault_text_raises_when_all_candidates_are_permission_denied(self):
@@ -41,7 +41,7 @@ class MirrorPullVaultPathTests(unittest.TestCase):
             with mock.patch.object(Path, "mkdir", side_effect=PermissionError("Operation not permitted")):
                 with self.assertRaises(PermissionError) as ctx:
                     mirror_pull.write_vault_text(
-                        "00_MEMORY/BRAIN DIGEST.md",
+                        "02_CONTEXT/Memory/BRAIN DIGEST.md",
                         "digest",
                         [blocked],
                     )

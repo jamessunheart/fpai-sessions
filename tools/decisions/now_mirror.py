@@ -9,7 +9,7 @@ system believes is true — without exposing sensitive material.
   FPAI_Cockpit/core/STATE/NOW.md   (read-only source)
         │  read · redact (IPs, $ figures, private names) · trim bulk
         ▼
-  vault  00_MEMORY/NOW MIRROR.md
+  vault  02_CONTEXT/Memory/NOW MIRROR.md
 
 Redaction is CONSERVATIVE by design (over-redact rather than leak):
   - IPv4 addresses        → [REDACTED IP · SOURCE ONLY]
@@ -36,7 +36,7 @@ SOURCE = HOME / "FPAI_Cockpit" / "core" / "STATE" / "NOW.md"
 SOURCE_REL = "FPAI_Cockpit/core/STATE/NOW.md"
 
 VAULT = HOME / "Documents" / "FPOS" / "Full Potential OS"
-MIRROR_FILE = VAULT / "00_MEMORY" / "NOW MIRROR.md"
+MIRROR_FILE = VAULT / "02_CONTEXT/Memory" / "NOW MIRROR.md"
 
 # Private people-names that appear in the source (invite cohort + hire candidate).
 # Redacted so private personal details never land in the vault.

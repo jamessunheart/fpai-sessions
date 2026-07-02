@@ -36,7 +36,7 @@ VAULT = Path(
         / "Full Potential OS",
     )
 )
-VAULT_PROOF = VAULT / "00_MEMORY" / "PROOF LOG.md"
+VAULT_PROOF = VAULT / "02_CONTEXT/Memory" / "PROOF LOG.md"
 LOCAL_PROOF = HOME / ".claude" / "memory-global" / "PROOF_LOG.md"
 
 # Honest non-unlock labels — valid when a build genuinely opens nothing adjacent.

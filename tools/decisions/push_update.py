@@ -22,8 +22,8 @@ except Exception:
     human_edge_queue = None
 
 VAULT = Path.home() / "Documents" / "FPOS" / "Full Potential OS"
-DECIDE = VAULT / "00_MEMORY" / "DECISIONS.md"  # single source of only-you decisions
-PROOF = VAULT / "00_MEMORY" / "PROOF LOG.md"
+DECIDE = VAULT / "02_CONTEXT/Memory" / "DECISIONS.md"  # single source of only-you decisions
+PROOF = VAULT / "02_CONTEXT/Memory" / "PROOF LOG.md"
 STATE = Path.home() / ".config" / "fpai" / "push" / "last.txt"
 HUMAN_EDGE_QUEUE_JSON = Path.home() / "FPAI_Cockpit" / "core" / "STATE" / "HUMAN_EDGE_QUEUE.json"
 HUMAN_EDGE_QUEUE_JSON = Path(os.environ.get("FPAI_HUMAN_EDGE_QUEUE_JSON", HUMAN_EDGE_QUEUE_JSON))

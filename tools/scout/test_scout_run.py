@@ -44,17 +44,17 @@ class ScoutRunTest(unittest.TestCase):
 
     def seed_vault(self, root: Path) -> Path:
         vault = root / "vault"
-        (vault / "00_MEMORY").mkdir(parents=True)
-        (vault / "00_MEMORY" / "NEWS FOR YOU.md").write_text("status: stalled\nold news\n", encoding="utf-8")
-        (vault / "00_MEMORY" / "AI GROWTH FEED.md").write_text("status: stalled\nold growth\n", encoding="utf-8")
-        (vault / "00_MEMORY" / "COST LEDGER.md").write_text("# COST LEDGER\n", encoding="utf-8")
-        (vault / "00_MEMORY" / "PROOF LOG.md").write_text("# PROOF LOG\n", encoding="utf-8")
+        (vault / "02_CONTEXT/Memory").mkdir(parents=True)
+        (vault / "02_CONTEXT/Memory" / "NEWS FOR YOU.md").write_text("status: stalled\nold news\n", encoding="utf-8")
+        (vault / "02_CONTEXT/Memory" / "AI GROWTH FEED.md").write_text("status: stalled\nold growth\n", encoding="utf-8")
+        (vault / "02_CONTEXT/Memory" / "COST LEDGER.md").write_text("# COST LEDGER\n", encoding="utf-8")
+        (vault / "02_CONTEXT/Memory" / "PROOF LOG.md").write_text("# PROOF LOG\n", encoding="utf-8")
         return vault
 
     def test_success_preserves_existing_frontmatter_keys(self) -> None:
         root = self.root()
         vault = self.seed_vault(root)
-        (vault / "00_MEMORY" / "NEWS FOR YOU.md").write_text(
+        (vault / "02_CONTEXT/Memory" / "NEWS FOR YOU.md").write_text(
             "---\nowner: ember\nstatus: stalled\n---\n# NEWS FOR YOU\n",
             encoding="utf-8",
         )
@@ -68,7 +68,7 @@ class ScoutRunTest(unittest.TestCase):
             today="2026-06-11",
         )
 
-        news = (vault / "00_MEMORY" / "NEWS FOR YOU.md").read_text(encoding="utf-8")
+        news = (vault / "02_CONTEXT/Memory" / "NEWS FOR YOU.md").read_text(encoding="utf-8")
         self.assertIn("owner: ember", news.split("---", 2)[1])
         self.assertIn("status: live (scout pipe - last run 2026-06-11)", news)
 
@@ -86,13 +86,13 @@ class ScoutRunTest(unittest.TestCase):
         )
 
         self.assertEqual(result.status, "live")
-        news = (vault / "00_MEMORY" / "NEWS FOR YOU.md").read_text(encoding="utf-8")
-        growth = (vault / "00_MEMORY" / "AI GROWTH FEED.md").read_text(encoding="utf-8")
+        news = (vault / "02_CONTEXT/Memory" / "NEWS FOR YOU.md").read_text(encoding="utf-8")
+        growth = (vault / "02_CONTEXT/Memory" / "AI GROWTH FEED.md").read_text(encoding="utf-8")
         self.assertIn("status: live (scout pipe - last run 2026-06-11)", news)
         self.assertEqual(news.count("https://example.com/news-"), 3)
         self.assertIn("Tool 0", growth)
-        self.assertIn("World Scout run - $0.42", (vault / "00_MEMORY" / "COST LEDGER.md").read_text())
-        self.assertIn("World Scout outward feeds refreshed", (vault / "00_MEMORY" / "PROOF LOG.md").read_text())
+        self.assertIn("World Scout run - $0.42", (vault / "02_CONTEXT/Memory" / "COST LEDGER.md").read_text())
+        self.assertIn("World Scout outward feeds refreshed", (vault / "02_CONTEXT/Memory" / "PROOF LOG.md").read_text())
         self.assertFalse((vault / "COST LEDGER.md").exists())  # no root duplicate surface
         self.assertFalse((vault / "PROOF LOG.md").exists())
         self.assertEqual((config / "last_run.txt").read_text(encoding="utf-8").strip(), "2026-06-11")
@@ -100,7 +100,7 @@ class ScoutRunTest(unittest.TestCase):
     def test_dry_run_writes_nothing(self) -> None:
         root = self.root()
         vault = self.seed_vault(root)
-        before = (vault / "00_MEMORY" / "NEWS FOR YOU.md").read_text(encoding="utf-8")
+        before = (vault / "02_CONTEXT/Memory" / "NEWS FOR YOU.md").read_text(encoding="utf-8")
 
         result = scout_run.run_if_due(
             vault=vault,
@@ -113,15 +113,15 @@ class ScoutRunTest(unittest.TestCase):
         )
 
         self.assertEqual(result.status, "dry-run")
-        self.assertEqual((vault / "00_MEMORY" / "NEWS FOR YOU.md").read_text(encoding="utf-8"), before)
+        self.assertEqual((vault / "02_CONTEXT/Memory" / "NEWS FOR YOU.md").read_text(encoding="utf-8"), before)
         self.assertFalse((root / "config" / "last_run.txt").exists())
 
     def test_failure_leaves_notes_stalled_and_untouched(self) -> None:
         root = self.root()
         vault = self.seed_vault(root)
         fixture = self.fixture(root, news_count=2)
-        before_news = (vault / "00_MEMORY" / "NEWS FOR YOU.md").read_text(encoding="utf-8")
-        before_growth = (vault / "00_MEMORY" / "AI GROWTH FEED.md").read_text(encoding="utf-8")
+        before_news = (vault / "02_CONTEXT/Memory" / "NEWS FOR YOU.md").read_text(encoding="utf-8")
+        before_growth = (vault / "02_CONTEXT/Memory" / "AI GROWTH FEED.md").read_text(encoding="utf-8")
 
         with self.assertRaises(scout_run.ScoutRunError):
             scout_run.run_if_due(
@@ -133,8 +133,8 @@ class ScoutRunTest(unittest.TestCase):
                 today="2026-06-11",
             )
 
-        self.assertEqual((vault / "00_MEMORY" / "NEWS FOR YOU.md").read_text(encoding="utf-8"), before_news)
-        self.assertEqual((vault / "00_MEMORY" / "AI GROWTH FEED.md").read_text(encoding="utf-8"), before_growth)
+        self.assertEqual((vault / "02_CONTEXT/Memory" / "NEWS FOR YOU.md").read_text(encoding="utf-8"), before_news)
+        self.assertEqual((vault / "02_CONTEXT/Memory" / "AI GROWTH FEED.md").read_text(encoding="utf-8"), before_growth)
 
     def test_once_per_day_and_kill_switch(self) -> None:
         root = self.root()

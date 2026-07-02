@@ -14,7 +14,7 @@ $0 — uses the `claude` CLI (Max subscription), no metered API.
 import os, re, sys, subprocess, datetime, collections
 
 VAULT = os.path.expanduser("~/Documents/FPOS/Full Potential OS")
-REPORT_DIR = os.path.join(VAULT, "00_MEMORY")
+REPORT_DIR = os.path.join(VAULT, "02_CONTEXT/Memory")
 LINK_RE = re.compile(r"\[\[([^\]|#]+)")
 
 def md_files():
