@@ -429,17 +429,17 @@ def james_next_move(now):
         tell = "Codex."
         send_detail = f"Use `{spec}` and `docs/codex/HANDOFF.md`."
     else:
-        # Board clear, nothing queued. CONSTITUTION Law 6: escalate only decisions that
-        # genuinely need human direction — do NOT fabricate a "feed the build loop" ask.
+        # Board clear, nothing queued. The standing work is VALUE CAPTURE (the July thesis):
+        # cash is the weakest conversion. The next move is the daily cash question, not a build ask.
         return {
-            "title": "Nothing needs you right now — the board is clear.",
+            "title": "What conversation can produce cash in the next 24–72 hours?",
             "look": "this section",
-            "tell": "no one — this is a presence beat.",
-            "send_detail": "Board is clear. Set direction when you're ready (money · people · public voice · the real work). The system self-navigates within your bounds.",
-            "yes": "here's what I want to point at: ...",
-            "reason": "Per the Constitution: James sets direction; the system routes/builds within it. No routed build is pending, so there is nothing to bless.",
-            "downstream": "AI holds context and keeps the engine running. Nothing is waiting on you.",
-            "say": ["here's the real work: ...", "checkpoint", "settle"],
+            "tell": "yourself, then me — name the one path.",
+            "send_detail": "The work is Value Capture (see [[mindmap-61 · Value Capture — Turn Value Into Cash Flow]]). Fastest paths: AI Cost Reduction Audit · warm ONEBPO relationships — cash in 24–72h. Pick ONE, don't split.",
+            "yes": "the path is: ...",
+            "reason": "Cash is the weakest conversion (Constitution: fix the bottleneck first). 30-day metric = Treasury Growth Rate.",
+            "downstream": "Once you name the path, I build the offer + find 5 warm targets.",
+            "say": ["the path is: ...", "board's clear — presence today", "settle"],
             "late": late,
         }
     title = "Your move: give one upstream signal"
