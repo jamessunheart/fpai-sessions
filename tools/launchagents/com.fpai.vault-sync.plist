@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.fpai.vault-sync</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/bin/python3</string>
+    <string>/Users/jamessunheart/FPAI_Cockpit/tools/decisions/mirror_pull.py</string>
+    <string>--repo</string>
+    <string>/Users/jamessunheart/FPAI_Cockpit</string>
+  </array>
+
+  <!-- Every 30 minutes — matches HOT_STATE refresh cadence on server 162 -->
+  <key>StartInterval</key><integer>1800</integer>
+
+  <!-- Run once immediately on load so vault is fresh right away -->
+  <key>RunAtLoad</key><true/>
+
+  <key>StandardOutPath</key><string>/Users/jamessunheart/.config/fpai/vault_sync/vault-sync.stdout.log</string>
+  <key>StandardErrorPath</key><string>/Users/jamessunheart/.config/fpai/vault_sync/vault-sync.stderr.log</string>
+
+  <!-- SSH needs HOME to find ~/.ssh keys. PATH needs /usr/bin for ssh. -->
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>HOME</key><string>/Users/jamessunheart</string>
+    <key>PATH</key><string>/usr/bin:/bin:/usr/sbin:/usr/local/bin</string>
+  </dict>
+</dict>
+</plist>
