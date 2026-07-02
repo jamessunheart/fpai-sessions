@@ -4,24 +4,35 @@
 <dict>
   <key>Label</key><string>com.fpai.vault-sync</string>
 
+  <!--
+    Two-way sync every 30 minutes:
+      1. mirror_pull.py  — server 162 → Obsidian vault (BRAIN STATE, HOT STATE, BRAIN DIGEST)
+      2. vault_ingest.py — Obsidian vault → server 162 brain_index (James's human notes)
+
+    After this runs James sees what Ember sees. Ember sees what James wrote.
+  -->
   <key>ProgramArguments</key>
   <array>
-    <string>/usr/bin/python3</string>
-    <string>/Users/jamessunheart/FPAI_Cockpit/tools/decisions/mirror_pull.py</string>
-    <string>--repo</string>
-    <string>/Users/jamessunheart/FPAI_Cockpit</string>
+    <string>/bin/sh</string>
+    <string>-c</string>
+    <string>
+      /usr/bin/python3 /Users/jamessunheart/FPAI_Cockpit/tools/decisions/mirror_pull.py \
+        --repo /Users/jamessunheart/FPAI_Cockpit \
+        >> /Users/jamessunheart/.config/fpai/vault_sync/vault-sync.stdout.log 2>> /Users/jamessunheart/.config/fpai/vault_sync/vault-sync.stderr.log ;
+      /usr/bin/python3 /Users/jamessunheart/FPAI_Cockpit/tools/decisions/vault_ingest.py \
+        >> /Users/jamessunheart/.config/fpai/vault_sync/vault-sync.stdout.log 2>> /Users/jamessunheart/.config/fpai/vault_sync/vault-sync.stderr.log
+    </string>
   </array>
 
   <!-- Every 30 minutes — matches HOT_STATE refresh cadence on server 162 -->
   <key>StartInterval</key><integer>1800</integer>
 
-  <!-- Run once immediately on load so vault is fresh right away -->
+  <!-- Sync immediately on load -->
   <key>RunAtLoad</key><true/>
 
-  <key>StandardOutPath</key><string>/Users/jamessunheart/.config/fpai/vault_sync/vault-sync.stdout.log</string>
-  <key>StandardErrorPath</key><string>/Users/jamessunheart/.config/fpai/vault_sync/vault-sync.stderr.log</string>
+  <key>StandardOutPath</key><string>/Users/jamessunheart/.config/fpai/vault_sync/launchd.stdout.log</string>
+  <key>StandardErrorPath</key><string>/Users/jamessunheart/.config/fpai/vault_sync/launchd.stderr.log</string>
 
-  <!-- SSH needs HOME to find ~/.ssh keys. PATH needs /usr/bin for ssh. -->
   <key>EnvironmentVariables</key>
   <dict>
     <key>HOME</key><string>/Users/jamessunheart</string>
