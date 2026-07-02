@@ -9,9 +9,9 @@ the AI brain holds. Manual command. No background job. No Telegram. No secrets.
         │  ssh · source env on server · run read-only SELECTs via brain venv
         │  (DB creds stay on the server — only the numbers come back)
         ▼
-  vault  00_MEMORY/BRAIN DIGEST.md   (semantic RAG brain)
-  vault  00_MEMORY/BRAIN STATE.md    (operational: decisions · corrections · insights · thread)
-  vault  00_MEMORY/HOT STATE.md      (HOT_STATE — live synthesized picture from 5 scanners)
+  vault  02_CONTEXT/Memory/BRAIN DIGEST.md   (semantic RAG brain)
+  vault  02_CONTEXT/Memory/BRAIN STATE.md    (operational: decisions · corrections · insights · thread)
+  vault  02_CONTEXT/Memory/HOT STATE.md      (HOT_STATE — live synthesized picture from 5 scanners)
 
 Why this shape:
   - Read-only: copies the digest job's SELECTs, NOT its write step.
@@ -22,6 +22,7 @@ Usage:
   python3 mirror_pull.py          # pull latest digest into the vault
   python3 mirror_pull.py --print  # print to stdout, do not write the file
 """
+from __future__ import annotations
 
 import argparse
 import os
@@ -74,7 +75,7 @@ def choose_vault(candidates: list[Path] | None = None) -> Path:
 
 
 VAULT = choose_vault()
-DIGEST_FILE = VAULT / "00_MEMORY" / "BRAIN DIGEST.md"
+DIGEST_FILE = VAULT / "02_CONTEXT/Memory" / "BRAIN DIGEST.md"
 
 # Read-only query, run by the brain's own venv on the server. No writes.
 REMOTE_PY = r"""
@@ -100,12 +101,12 @@ async def main():
         await cur.execute("SELECT id, left(question,70) FROM brain_index.decisions WHERE status='open' ORDER BY created_at DESC LIMIT 3"); out['awaiting_james']=[{'id':r[0],'q':r[1]} for r in await cur.fetchall()]
         # Corrections (James's taste signals)
         await cur.execute("SELECT COUNT(*)::int FROM brain_index.corrections"); out['correction_count']=(await cur.fetchone())[0]
-        await cur.execute("SELECT left(original,60), left(correction,60) FROM brain_index.corrections ORDER BY created_at DESC LIMIT 3"); out['recent_corrections']=[{'orig':r[0],'fixed':r[1]} for r in await cur.fetchall()]
+        await cur.execute("SELECT left(original_response,60), left(james_correction,60) FROM brain_index.corrections ORDER BY captured_at DESC LIMIT 3"); out['recent_corrections']=[{'orig':r[0],'fixed':r[1]} for r in await cur.fetchall()]
         # Session insights (7-day active window)
         await cur.execute("SELECT insight_type, title, left(body,100), weight FROM brain_index.session_insights WHERE ts > NOW() - INTERVAL '7 days' AND insight_type != 'housekeeping' AND title NOT LIKE 'Auto-snapshot%%' ORDER BY weight DESC, ts DESC LIMIT 6"); out['active_insights']=[{'type':r[0],'title':r[1],'body':r[2],'w':r[3]} for r in await cur.fetchall()]
         # Thread (conversation continuity)
         await cur.execute("SELECT COUNT(*)::int FROM brain_index.thread"); out['thread_count']=(await cur.fetchone())[0]
-        await cur.execute("SELECT surface, left(content,80) FROM brain_index.thread ORDER BY ts DESC LIMIT 3"); out['thread_recent']=[{'src':r[0],'msg':r[1]} for r in await cur.fetchall()]
+        await cur.execute("SELECT surface, left(text,80) FROM brain_index.thread ORDER BY at DESC LIMIT 3"); out['thread_recent']=[{'src':r[0],'msg':r[1]} for r in await cur.fetchall()]
     await conn.close()
     # HOT_STATE (the live unified picture)
     hot_path = Path(os.environ.get('FPAI_HOT_STATE', '/root/.config/fpai/hot_memory/HOT_STATE.md'))
@@ -239,9 +240,9 @@ def write_vault_text(rel_path: str, text: str, candidates: list[Path] | None = N
 # State docs to mirror from repo into vault (read from laptop repo clone, no SSH needed)
 LAPTOP_REPO = HOME / "FPAI_Cockpit"
 STATE_DOCS = [
-    ("core/STATE/SYSTEM_ARCHITECTURE.md", "00_MEMORY/SYSTEM ARCHITECTURE.md"),
-    ("core/STATE/NOW.md",                 "00_MEMORY/NOW — Current Priorities.md"),
-    ("core/STATE/AI_GOALS.md",            "00_MEMORY/AI GOALS.md"),
+    ("core/STATE/SYSTEM_ARCHITECTURE.md", "02_CONTEXT/Memory/SYSTEM ARCHITECTURE.md"),
+    ("core/STATE/NOW.md",                 "02_CONTEXT/Memory/NOW — Current Priorities.md"),
+    ("core/STATE/AI_GOALS.md",            "02_CONTEXT/Memory/AI GOALS.md"),
 ]
 
 
@@ -282,16 +283,16 @@ def main():
         return 0
 
     candidates = vault_candidates()
-    digest_file = write_vault_text("00_MEMORY/BRAIN DIGEST.md", md, candidates)
+    digest_file = write_vault_text("02_CONTEXT/Memory/BRAIN DIGEST.md", md, candidates)
     vault = digest_file.parents[1]
     print(f"wrote {digest_file.name}  ·  {data.get('total_chunks', 0):,} chunks")
 
-    state_file = write_vault_text("00_MEMORY/BRAIN STATE.md", md_state, candidates)
+    state_file = write_vault_text("02_CONTEXT/Memory/BRAIN STATE.md", md_state, candidates)
     print(f"wrote {state_file.name}  ·  {data.get('merged_specs', 0)} specs merged")
 
     hot = data.get("hot_state", "")
     if hot:
-        hot_file = write_vault_text("00_MEMORY/HOT STATE.md", hot, candidates)
+        hot_file = write_vault_text("02_CONTEXT/Memory/HOT STATE.md", hot, candidates)
         print(f"wrote {hot_file.name}")
 
     # Also mirror key state docs from local repo clone
