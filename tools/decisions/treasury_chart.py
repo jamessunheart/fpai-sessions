@@ -35,8 +35,8 @@ def main():
         print("no TREASURY TODAY.md"); return
     txt = SRC.read_text(errors="ignore")
     buckets = {}
-    for label in ("Banks", "Crypto", "Bullion"):
-        m = re.search(rf"\|\s*{label}\s*\|([^|]+)\|", txt)
+    for label, pattern in (("Cash", r"(?:Banks|Cash(?: / fiat)?)"), ("Crypto", "Crypto"), ("Bullion", "Bullion")):
+        m = re.search(rf"\|\s*{pattern}\s*\|([^|]+)\|", txt)
         if m:
             v = parse_k(m.group(1))
             if v is not None:
