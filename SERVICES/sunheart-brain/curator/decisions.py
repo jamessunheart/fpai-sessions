@@ -88,6 +88,10 @@ def ensure_liveness_column() -> bool:
             with conn.cursor() as cur:
                 cur.execute("ALTER TABLE IF EXISTS brain_index.decisions ADD COLUMN IF NOT EXISTS liveness_check TEXT")
                 cur.execute("ALTER TABLE IF EXISTS brain_index.decisions ADD COLUMN IF NOT EXISTS liveness TEXT")
+                cur.execute("ALTER TABLE IF EXISTS brain_index.decisions ADD COLUMN IF NOT EXISTS merged_at TIMESTAMPTZ")
+                cur.execute("ALTER TABLE IF EXISTS brain_index.decisions ADD COLUMN IF NOT EXISTS reality_checked_at TIMESTAMPTZ")
+                cur.execute("ALTER TABLE IF EXISTS brain_index.decisions ADD COLUMN IF NOT EXISTS reality_status TEXT")
+                cur.execute("ALTER TABLE IF EXISTS brain_index.decisions ADD COLUMN IF NOT EXISTS reality_detail TEXT")
         return True
     except Exception as exc:
         print(f"warning: liveness columns not ensured: {exc}", file=sys.stderr)
@@ -128,6 +132,7 @@ def _legacy_pending_builds_sql(liveness_expr: str) -> str:
 
 
 def mark_merged(decision_id: str, outcome: str) -> int:
+    ensure_liveness_column()
     status = "merged" if outcome == "ok" else "merge_failed"
     with connect() as conn:
         with conn.cursor() as cur:
@@ -135,10 +140,11 @@ def mark_merged(decision_id: str, outcome: str) -> int:
                 """
                 UPDATE brain_index.decisions
                    SET build_status = %s,
-                       needs_build = false
+                       needs_build = false,
+                       merged_at = CASE WHEN %s = 'merged' THEN COALESCE(merged_at, NOW()) ELSE merged_at END
                  WHERE id::text = %s
                 """,
-                (status, str(decision_id)),
+                (status, status, str(decision_id)),
             )
     return 0
 
@@ -281,8 +287,8 @@ def main(argv: list[str] | None = None) -> int:
         return pending_builds()
     if cmd == "ensure-liveness-column":
         return 0 if ensure_liveness_column() else 1
-    if cmd == "mark-merged" and len(args) >= 3:
-        return mark_merged(args[1], args[2])
+    if cmd == "mark-merged" and len(args) >= 2:
+        return mark_merged(args[1], args[2] if len(args) >= 3 else "ok")
     if cmd == "mark-built" and len(args) >= 2:
         return mark_built(args[1])
     if cmd == "set-build-result" and len(args) >= 4:

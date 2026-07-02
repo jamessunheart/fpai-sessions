@@ -294,6 +294,35 @@ run_liveness_probe() {
   return 0
 }
 
+run_post_merge_reality_check_daily() {
+  local stamp_file today last_day log_file status
+  [ "${POST_MERGE_REALITY_CHECK_DISABLE:-0}" = "1" ] && return 0
+  stamp_file="${POST_MERGE_REALITY_CHECK_STAMP:-/opt/fpai-build/.post_merge_reality_check_day}"
+  today="$(date -u +%Y-%m-%d)"
+  last_day="$(cat "$stamp_file" 2>/dev/null || true)"
+  [ "$last_day" = "$today" ] && return 0
+  mkdir -p /opt/fpai-build/logs
+  log_file="/opt/fpai-build/logs/post-merge-reality.$today.log"
+  (
+    cd "$REPO" || exit 1
+    export FPAI_REPO_ROOT="$REPO"
+    "$PY" "$REPO/tools/build_loop/post_merge_reality_check.py" \
+      --repo-root "$REPO" \
+      --ops-ledger "${OPS_LEDGER:-/opt/fpai-build/ops_ledger.jsonl}" \
+      --grace-days "${POST_MERGE_REALITY_GRACE_DAYS:-3}" \
+      --send-alert
+  ) >"$log_file" 2>&1
+  status=$?
+  if [ "$status" = 0 ]; then
+    echo "$today" > "$stamp_file"
+    python3 "$REPO/tools/build_loop/ops_log.py" post-merge-reality "daily:pass" "log=$log_file" "\$0" "" "" 2>/dev/null || true
+  else
+    python3 "$REPO/tools/build_loop/ops_log.py" post-merge-reality "daily:fail" "rc=$status log=$log_file" "\$0" "" "Ember: inspect post-merge reality checker" 2>/dev/null || true
+    tg "⚠️ POST-MERGE REALITY CHECK FAILED — checker error. Log: $log_file" 2>/dev/null || true
+  fi
+  return 0
+}
+
 update_blueprint_after_merge() {
   local did="$1"
   local branch="$2"
@@ -382,6 +411,7 @@ echo "loop-health: backlog_total=$_BACKLOG_TOTAL backlog_merged=$BACKLOG_MERGED 
 python3 "$REPO/tools/build_loop/ops_log.py" health "loop-pulse" \
   "backlog_total=$_BACKLOG_TOTAL merged=$BACKLOG_MERGED worktrees=$_WT_COUNT pending_new=$_PENDING_COUNT" \
   "\$0" "" "" 2>/dev/null || true
+run_post_merge_reality_check_daily
 
 # Alert if loop is running but producing nothing (silent stall detection)
 _STALL_FILE=/opt/fpai-build/.loop_zero_merge_streak
