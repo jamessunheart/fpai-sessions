@@ -101,12 +101,12 @@ async def main():
         await cur.execute("SELECT id, left(question,70) FROM brain_index.decisions WHERE status='open' ORDER BY created_at DESC LIMIT 3"); out['awaiting_james']=[{'id':r[0],'q':r[1]} for r in await cur.fetchall()]
         # Corrections (James's taste signals)
         await cur.execute("SELECT COUNT(*)::int FROM brain_index.corrections"); out['correction_count']=(await cur.fetchone())[0]
-        await cur.execute("SELECT left(original_response,60), left(james_correction,60) FROM brain_index.corrections ORDER BY created_at DESC LIMIT 3"); out['recent_corrections']=[{'orig':r[0],'fixed':r[1]} for r in await cur.fetchall()]
+        await cur.execute("SELECT left(original_response,60), left(james_correction,60) FROM brain_index.corrections ORDER BY captured_at DESC LIMIT 3"); out['recent_corrections']=[{'orig':r[0],'fixed':r[1]} for r in await cur.fetchall()]
         # Session insights (7-day active window)
         await cur.execute("SELECT insight_type, title, left(body,100), weight FROM brain_index.session_insights WHERE ts > NOW() - INTERVAL '7 days' AND insight_type != 'housekeeping' AND title NOT LIKE 'Auto-snapshot%%' ORDER BY weight DESC, ts DESC LIMIT 6"); out['active_insights']=[{'type':r[0],'title':r[1],'body':r[2],'w':r[3]} for r in await cur.fetchall()]
         # Thread (conversation continuity)
         await cur.execute("SELECT COUNT(*)::int FROM brain_index.thread"); out['thread_count']=(await cur.fetchone())[0]
-        await cur.execute("SELECT surface, left(content,80) FROM brain_index.thread ORDER BY ts DESC LIMIT 3"); out['thread_recent']=[{'src':r[0],'msg':r[1]} for r in await cur.fetchall()]
+        await cur.execute("SELECT surface, left(text,80) FROM brain_index.thread ORDER BY at DESC LIMIT 3"); out['thread_recent']=[{'src':r[0],'msg':r[1]} for r in await cur.fetchall()]
     await conn.close()
     # HOT_STATE (the live unified picture)
     hot_path = Path(os.environ.get('FPAI_HOT_STATE', '/root/.config/fpai/hot_memory/HOT_STATE.md'))
