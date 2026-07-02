@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-07-02 · SPEC_d134_d134-constitution-check-governan · branch `build/SPEC_d134_d134-constitution-check-governan`
+
+- **Status:** done in working tree / independent AI reviewed / awaiting merge
+- **Files changed:** `CLAUDE.md`; `SERVICES/sunheart-brain/curator/decision_agent.py`; `tools/governance/__init__.py`; `tools/governance/constitution_check.py`; `tools/governance/test_constitution_check.py`; `tools/build_loop/build_orchestrator.sh`; `tools/build_loop/run_codex.sh`; `tools/decisions/test_decision_agent.py`; `core/BUILD/specs/SPEC_d134_d134-constitution-check-governan.md`; `core/BUILD/results/SPEC_d134_d134-constitution-check-governan.result.md`; `core/BUILD/reviews/build-SPEC_d134_d134-constitution-check-governan.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the Constitution-first boot surface and governance pre-check. `CLAUDE.md` now names `core/STATE/CONSTITUTION.md` as the first canonical read and uses the hierarchy `Constitution -> Doctrine -> Current State -> Protocols -> Goals -> detect contradictions -> reason`. `tools/governance/constitution_check.py` scores protocol violations, human-dependency direction, and learning-engine impact, appending JSONL ledger rows by default. The decision agent now runs the check before model execution, and the build orchestrator runs it before Codex execution and before integration. `run_codex.sh --spec-id` lets the orchestrator pass only constitution-approved specs.
+- **Tests:** `python3 -B -m unittest tools.governance.test_constitution_check tools.decisions.test_decision_agent` (11 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/governance/constitution_check.py tools/governance/test_constitution_check.py tools/decisions/test_decision_agent.py SERVICES/sunheart-brain/curator/decision_agent.py`; `bash -n tools/build_loop/build_orchestrator.sh tools/build_loop/run_codex.sh`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d134-registry.json`; `git diff --check`; CLI smoke confirmed untagged manual-merge rejection exits 2; `tools/build_loop/run_codex.sh --dry-run --target /tmp --spec-id SPEC_d134_d134-constitution-check-governan`
+- **Independent review:** multi-agent review initially found three blockers: filtered specs did not constrain `run_codex.sh`, boot order omitted Doctrine, and untagged manual-merge could pass. Fixed all three; re-review returned `No blockers.` Review artifact: `core/BUILD/reviews/build-SPEC_d134_d134-constitution-check-governan.md`.
+- **Risks:** The checker is deterministic/regex-based and should be updated when Constitution/protocol language changes. The governance ledger is append-only by code path, not filesystem-tamper-proof. Live build-loop execution was not run in this sandbox.
+- **Rollback:** revert the listed files. Runtime mitigation without full rollback: set `FPAI_GOVERNANCE_LEDGER` to redirect ledger writes during isolated runs; set `DECISION_AGENT_DISABLE=1` to disable the decision-agent auto path as before.
+- **Intent solved:** autonomous proposals/build-decisions now pass a Constitution-aligned governance gate before execution.
+- **Downstream intent unlocked:** architecturally inconsistent proposals are caught before they reach James or the autonomous build path, reducing false James-steps and future governance drift.
+- **Questions for Ember/James:** after merge on server 162, let one SAFE-AUTO approved spec and one intentionally rejected manual-dependency spec exercise the build loop; confirm `core/BUILD/governance/constitution_ledger.jsonl` records both checks and only the approved spec reaches Codex/integration.
+
 ### 2026-07-01 · SPEC_d137_auto-merge-safe-builds · branch `build/SPEC_d137_auto-merge-safe-builds`
 
 - **Status:** done in working tree / awaiting independent AI review + merge

@@ -1109,6 +1109,17 @@
       "status": "merged",
       "spec": "/Users/jamessunheart/FPAI_Cockpit/core/BUILD/specs/SPEC_proof-river.md",
       "tests_passed": null
+    },
+    {
+      "id": "SPEC_d134_d134-constitution-check-governan",
+      "slug": "SPEC_d134_d134-constitution-check-governan",
+      "branch": "build/SPEC_d134_d134-constitution-check-governan",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d134_d134-constitution-check-governan.md",
+      "tests_passed": true,
+      "notes": "Governance Constitution Check built, wired into decision agent and build orchestrator, reviewed by independent AI, and focused tests passed."
     }
   ]
 }

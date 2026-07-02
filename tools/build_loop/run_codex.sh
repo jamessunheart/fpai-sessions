@@ -3,7 +3,7 @@
 # capturing each build's output into core/BUILD/results. No copy-paste; no API billing.
 #
 # Usage:
-#   tools/build_loop/run_codex.sh [--target /path/to/repo] [--dry-run]
+#   tools/build_loop/run_codex.sh [--target /path/to/repo] [--dry-run] [--spec-id SPEC_id ...]
 #
 # Auth: uses the logged-in `codex` CLI (~/.codex/auth.json, auth_mode=chatgpt → Max plan).
 # A spec is "pending" if specs/<id>.md has no matching results/<id>.result.md.
@@ -15,14 +15,25 @@ SPECS="$REPO_ROOT/core/BUILD/specs"
 RESULTS="$REPO_ROOT/core/BUILD/results"
 TARGET="$REPO_ROOT"   # repo Codex builds in; override with --target
 DRY=0
+FILTER_IDS=()
 
 while [ $# -gt 0 ]; do
   case "$1" in
     --target) TARGET="$2"; shift 2 ;;
     --dry-run) DRY=1; shift ;;
+    --spec-id) FILTER_IDS+=("$2"); shift 2 ;;
     *) echo "unknown arg: $1"; exit 2 ;;
   esac
 done
+
+spec_id_allowed() {
+  [ "${#FILTER_IDS[@]}" -eq 0 ] && return 0
+  local wanted
+  for wanted in "${FILTER_IDS[@]}"; do
+    [ "$wanted" = "$1" ] && return 0
+  done
+  return 1
+}
 
 if ! command -v codex >/dev/null 2>&1; then
   echo "ERROR: codex CLI not on PATH. Install: npm i -g @openai/codex"
@@ -39,6 +50,7 @@ shopt -s nullglob
 pending=0
 for spec in "$SPECS"/*.md; do
   id="$(basename "$spec" .md)"
+  spec_id_allowed "$id" || continue
   out="$RESULTS/$id.result.md"
   [ -f "$out" ] && continue
   pending=$((pending+1))

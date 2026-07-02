@@ -9,9 +9,11 @@ threshold and the decision is reversible outside reserved risk classes.
 from __future__ import annotations
 
 import json
+import importlib.util as _ilu
 import os
 import re
 import subprocess
+from pathlib import Path
 from typing import Any, Callable
 
 THRESHOLD = 0.85
@@ -26,6 +28,18 @@ JAMES_PROFILE_STUB = {
 
 Runner = Callable[[str], str]
 
+try:
+    from tools.governance.constitution_check import check_proposal
+except ImportError:  # pragma: no cover - live service can run from SERVICES cwd.
+    _repo_root = Path(__file__).resolve().parents[3]
+    _gov_path = _repo_root / "tools" / "governance" / "constitution_check.py"
+    _spec = _ilu.spec_from_file_location("fpai_governance_constitution_check", _gov_path)
+    if _spec is None or _spec.loader is None:
+        raise
+    _gov_mod = _ilu.module_from_spec(_spec)
+    _spec.loader.exec_module(_gov_mod)
+    check_proposal = _gov_mod.check_proposal
+
 
 def score_decision(decision: dict[str, Any]) -> dict[str, Any]:
     """Return {answer, confidence, why, reversible, auto_proceed}.
@@ -37,6 +51,17 @@ def score_decision(decision: dict[str, Any]) -> dict[str, Any]:
     risk_class = normalize_risk(decision.get("risk_class") or decision.get("risk") or "")
     if os.environ.get("DECISION_AGENT_DISABLE") == "1":
         return _result("", 0.0, "Decision Agent disabled by DECISION_AGENT_DISABLE=1.", reversible, risk_class)
+    governance = check_proposal(
+        {
+            **_jsonable(decision),
+            "kind": "decision-agent",
+            "risk_class": risk_class,
+            "reversible": reversible,
+        }
+    )
+    if not governance["accepted"]:
+        why = "Constitution Check rejected decision before execution: " + "; ".join(governance["reasons"])
+        return _result("", 0.0, why, reversible, risk_class)
 
     runner = _run_claude_prompt
     try:
