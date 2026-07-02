@@ -38,6 +38,14 @@ AUTO_MERGE_COMPARE="${BUILD_AUTO_MERGE_COMPARE:-origin/main}"
 
 echo "═══ build orchestrator ═══ (auto_merge=$AUTO_MERGE, base=$BASE)"
 
+constitution_check_spec() {
+  id="$1"; spec="$2"
+  python3 "$ROOT/tools/governance/constitution_check.py" \
+    --kind "build-decision" \
+    --id "$id" \
+    --proposal-file "$spec"
+}
+
 build_queue_empty() {
   shopt -s nullglob
   for spec in "$SPECS"/*.md; do
@@ -199,6 +207,18 @@ for spec in "$SPECS"/*.md; do
     PENDING+=("$id")
   fi
 done
+if [ "${#PENDING[@]}" -gt 0 ]; then
+  APPROVED_PENDING=()
+  for id in "${PENDING[@]}"; do
+    if constitution_check_spec "$id" "$SPECS/$id.md" >"/tmp/constitution_check_$id.out" 2>&1; then
+      APPROVED_PENDING+=("$id")
+    else
+      echo "⛔ CONSTITUTION REJECTED (not auto-built): $id"
+      sed 's/^/    /' "/tmp/constitution_check_$id.out" 2>/dev/null || true
+    fi
+  done
+  PENDING=("${APPROVED_PENDING[@]}")
+fi
 echo "pending auto-buildable specs: ${#PENDING[@]} (${PENDING[*]:-none})"
 
 # Surface any NEEDS-JAMES specs that are waiting (never auto-built).
@@ -216,7 +236,11 @@ if [ "${#PENDING[@]}" -gt 0 ]; then
     bash "$ROOT/tools/build_loop/forge_scout.sh" "$SPECS/$id.md" || true
   done
   echo "── building via Codex ──"
-  bash "$ROOT/tools/build_loop/run_codex.sh"
+  RUN_CODEX_ARGS=()
+  for id in "${PENDING[@]}"; do
+    RUN_CODEX_ARGS+=(--spec-id "$id")
+  done
+  bash "$ROOT/tools/build_loop/run_codex.sh" "${RUN_CODEX_ARGS[@]}"
 fi
 
 # 3. INTEGRATE: for each SAFE-AUTO spec that has a build result, commit the
@@ -229,7 +253,14 @@ shopt -s nullglob
 for spec in "$SPECS"/*.md; do
   iid="$(basename "$spec" .md)"
   [ -f "$RESULTS/$iid.result.md" ] || continue
-  grep -q "SAFE-AUTO" "$spec" && ! grep -q "NEEDS-JAMES" "$spec" && INTEGRATE+=("$iid")
+  if grep -q "SAFE-AUTO" "$spec" && ! grep -q "NEEDS-JAMES" "$spec"; then
+    if constitution_check_spec "$iid" "$spec" >"/tmp/constitution_check_integrate_$iid.out" 2>&1; then
+      INTEGRATE+=("$iid")
+    else
+      echo "⛔ CONSTITUTION REJECTED (not integrated): $iid"
+      sed 's/^/    /' "/tmp/constitution_check_integrate_$iid.out" 2>/dev/null || true
+    fi
+  fi
 done
 if [ "${#INTEGRATE[@]}" -eq 0 ]; then
   echo "═══ done: nothing to integrate ═══"

@@ -2,12 +2,20 @@ from __future__ import annotations
 
 import unittest
 from unittest.mock import patch
+import tempfile
 
 from tools.decisions import decision_agent
 from curator import decision_agent as impl
 
 
 class DecisionAgentTest(unittest.TestCase):
+    def setUp(self) -> None:
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        self._env = patch.dict("os.environ", {"FPAI_GOVERNANCE_LEDGER": f"{self._tmp.name}/governance.jsonl"})
+        self._env.start()
+        self.addCleanup(self._env.stop)
+
     def test_score_decision_returns_valid_schema(self) -> None:
         decision = {"id": "d028", "question": "Run safe build?", "risk_class": "build", "rollback": "revert branch"}
 
@@ -52,6 +60,21 @@ class DecisionAgentTest(unittest.TestCase):
 
         self.assertTrue(score["reversible"])
         self.assertFalse(score["auto_proceed"])
+
+    def test_constitution_rejection_blocks_before_model_call(self) -> None:
+        decision = {
+            "id": "d134-manual",
+            "risk_class": "build",
+            "rollback": "revert",
+            "question": "Wait for James to manually merge an autonomous safe build?",
+        }
+
+        with patch.object(impl, "_run_claude_prompt") as run_prompt:
+            score = decision_agent.score_decision(decision)
+
+        run_prompt.assert_not_called()
+        self.assertFalse(score["auto_proceed"])
+        self.assertIn("Constitution Check rejected", score["why"])
 
     def test_never_auto_classes_include_identity_prod_irreversible_and_canary(self) -> None:
         for risk_class in ("identity", "prod-irreversible", "canary"):
