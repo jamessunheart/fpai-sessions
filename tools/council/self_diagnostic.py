@@ -726,9 +726,16 @@ def run_claude_prompt(prompt: str, timeout: int = 120) -> str:
     return call_model(prompt, task_type="council")["response"]
 
 
+def _next_decision_id(cur: Any) -> str:
+    """Next free dNNN — matches curator.decisions._next_id so every queue
+    surface shares one readable ID scheme (`merge dNNN` ergonomics)."""
+    cur.execute(r"SELECT id FROM brain_index.decisions WHERE id ~ '^d[0-9]+$'")
+    nums = [int(row[0][1:]) for row in cur.fetchall()]
+    return "d" + str((max(nums) + 1) if nums else 1).zfill(3)
+
+
 def queue_build(spec: dict[str, Any]) -> bool:
     """Queue a spec directly into brain_index.decisions (needs_build=true, answered)."""
-    import asyncio, uuid
     dsn = os.environ.get("BRAIN_INDEX_DB_URL") or os.environ.get("DATABASE_URL") or os.environ.get("DB_URL")
     if not dsn:
         return False
@@ -736,20 +743,27 @@ def queue_build(spec: dict[str, Any]) -> bool:
         import psycopg  # type: ignore
         with psycopg.connect(dsn, connect_timeout=3) as conn:
             with conn.cursor() as cur:
-                cur.execute(
-                    """
-                    INSERT INTO brain_index.decisions
-                        (id, question, answer, status, needs_build, spec_written, build_spec, created_at)
-                    VALUES (%s, %s, %s, 'answered', true, false, %s, now())
-                    """,
-                    (
-                        str(uuid.uuid4()),
-                        spec.get("title", "diagnostic spec"),
-                        "build it — queued by self-diagnostic",
-                        json.dumps(spec),
-                    ),
-                )
-        return True
+                # Retry on the rare same-instant collision between two queuers.
+                for _ in range(3):
+                    try:
+                        cur.execute(
+                            """
+                            INSERT INTO brain_index.decisions
+                                (id, question, answer, status, needs_build, spec_written, build_spec, created_at)
+                            VALUES (%s, %s, %s, 'answered', true, false, %s, now())
+                            """,
+                            (
+                                _next_decision_id(cur),
+                                spec.get("title", "diagnostic spec"),
+                                "build it — queued by self-diagnostic",
+                                json.dumps(spec),
+                            ),
+                        )
+                        return True
+                    except psycopg.errors.UniqueViolation:
+                        conn.rollback()
+                        continue
+        return False
     except Exception:
         return False
 
