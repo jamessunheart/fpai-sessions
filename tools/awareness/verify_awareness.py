@@ -17,7 +17,11 @@ DEFAULT_DB_URL = os.environ.get(
     os.environ.get("DATABASE_URL", "postgres://brain_index:changeme@127.0.0.1:25432/appflowy"),
 )
 REPO_ROOT = Path(os.environ.get("FPAI_REPO_ROOT", Path(__file__).resolve().parents[2]))
-BUILD_CONTEXT_PATH = REPO_ROOT / "SERVICES" / "sunheart-brain" / "curator" / "build_context.py"
+# Probe the LIVE bot's code path, not the repo copy — the metric must measure
+# what actually runs. Falls back to the repo copy on machines without the live dir.
+_LIVE_BUILD_CONTEXT = Path("/opt/sh-brain-src/curator/build_context.py")
+_REPO_BUILD_CONTEXT = REPO_ROOT / "SERVICES" / "sunheart-brain" / "curator" / "build_context.py"
+BUILD_CONTEXT_PATH = _LIVE_BUILD_CONTEXT if _LIVE_BUILD_CONTEXT.exists() else _REPO_BUILD_CONTEXT
 
 
 @dataclass(frozen=True)

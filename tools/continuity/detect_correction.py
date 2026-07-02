@@ -18,11 +18,12 @@ from typing import Any, Protocol
 MAX_FIELD_CHARS = 8000
 DEFAULT_ENV_FILES = ("/etc/sh-brain/curator.env",)
 
+# Bare words ("no", "actually", "fix") fire on relayed/quoted content and
+# flooded the table with false positives — require correction PHRASES.
 _EXPLICIT_CORRECTION = re.compile(
-    r"\b(no|wrong|that's not right|incorrect|not what i meant)\b",
+    r"\b(that's not right|that's wrong|incorrect|not what i meant|not what i asked)\b",
     re.IGNORECASE,
 )
-_IMPLICIT_CORRECTION = re.compile(r"\b(fix|change|instead|actually)\b", re.IGNORECASE)
 _CURATOR_EXPLICIT = re.compile(
     r"\b(you forgot|you said|you told me|you missed|you keep forgetting|"
     r"that's not|that is not|i already told you|i said)\b",
@@ -74,8 +75,6 @@ def detect_correction_signal(text: str) -> CorrectionSignal:
     match = _NEGATION_START.search(cleaned)
     if match and len(match.group(2).strip()) >= 8:
         return CorrectionSignal(True, "negation_prefix")
-    if _IMPLICIT_CORRECTION.search(cleaned):
-        return CorrectionSignal(True, "implicit")
     return CorrectionSignal(False)
 
 
@@ -157,7 +156,11 @@ def capture_prompt_if_correction(
     if not detect_correction_signal(james_prompt).matched:
         return None
     original_response = latest_claude_assistant_turn(conn)
-    # Write even without a paired Ember turn — unpaired corrections are still signal
+    # A correction needs something to correct — unpaired writes polluted the
+    # table with 200+ empty-original rows (2026-07-02 audit) and poisoned the
+    # L2 dataset. No bot turn, no capture.
+    if not original_response.strip():
+        return None
     capture = CorrectionCapture(
         conversation_id=conversation_id or "unknown",
         original_response=original_response,

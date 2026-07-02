@@ -46,9 +46,6 @@ class DetectCorrectionHookTest(unittest.TestCase):
             "That's not right.",
             "Incorrect.",
             "Not what I meant.",
-            "Fix the hook wiring.",
-            "Change that to Claude Code.",
-            "Use this instead.",
             "Actually, d125 is the active build.",
         ]
 
@@ -57,9 +54,20 @@ class DetectCorrectionHookTest(unittest.TestCase):
                 self.assertTrue(detect_correction.detect_correction_signal(text).matched)
 
     def test_ignores_normal_prompt(self) -> None:
-        signal = detect_correction.detect_correction_signal("What is the next build?")
-
-        self.assertFalse(signal.matched)
+        # Commands and relayed/quoted content are NOT corrections — bare-word
+        # triggers ("fix", "change", "instead", bare "no") flooded the table
+        # with 200+ false positives (2026-07-02 audit).
+        non_corrections = [
+            "What is the next build?",
+            "Fix the hook wiring.",
+            "Change that to Claude Code.",
+            "Use this instead.",
+            "The bot said: Fair enough — no push, no follow-up.",
+            "Compose one Telegram message for James from this signal.",
+        ]
+        for text in non_corrections:
+            with self.subTest(text=text):
+                self.assertFalse(detect_correction.detect_correction_signal(text).matched)
 
     def test_prompt_prefers_env_and_falls_back_to_json_stdin(self) -> None:
         self.assertEqual(
