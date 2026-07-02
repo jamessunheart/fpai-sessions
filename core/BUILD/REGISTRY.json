@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-02T18:47:30Z",
+    "updated_at": "2026-07-02T18:54:30Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+        {
+            "id": "SPEC_bd1e3266-aab7-4e11-bc87-1de679e783d6-reality-fix_repair-merged-dead-build-bd1e326",
+            "slug": "SPEC_bd1e3266-aab7-4e11-bc87-1de679e783d6-reality-fix_repair-merged-dead-build-bd1e326",
+            "branch": "build/SPEC_bd1e3266-aab7-4e11-bc87-1de679e783d6-reality-fix_repair-merged-dead-build-bd1e326",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_bd1e3266-aab7-4e11-bc87-1de679e783d6-reality-fix_repair-merged-dead-build-bd1e326.md",
+            "tests_passed": true,
+            "notes": "Repair complete in working tree: added tools/build_loop/self_audit_reality_repair.py plus an activation script that proves the original standard self-audit probe rotation with temporary evidence for awareness_probe, recent_user_messages, and queue_state, then appends canonical ops-ledger proof rows for SPEC_bd1e3266-aab7-4e11-bc87-1de679e783d6_standard-audit-rotation-awarenes: liveness:pass and feature_outcome verdict=improved. Focused repair/reality-check/feature-outcome/liveness/self-audit tests, py_compile, activation shell syntax, registry JSON validation, /tmp ledger smoke, and diff hygiene passed. No live ops-ledger append in sandbox, deploy, push, merge, outreach, secrets, service stop/delete, or money movement."
+        },
         {
             "id": "SPEC_4ed5e6f8-d5d4-4908-ac26-55e51348cd25-reality-fix_repair-merged-dead-build-4ed5e6f",
             "slug": "SPEC_4ed5e6f8-d5d4-4908-ac26-55e51348cd25-reality-fix_repair-merged-dead-build-4ed5e6f",
