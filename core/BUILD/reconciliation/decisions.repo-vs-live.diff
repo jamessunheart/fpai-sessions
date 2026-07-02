@@ -1,0 +1,812 @@
+--- /opt/fpai-build/FPAI_Cockpit/SERVICES/sunheart-brain/curator/decisions.py	2026-06-30 08:57:50.757951100 +0000
++++ /opt/sh-brain-src/curator/decisions.py	2026-06-16 11:08:13.088356782 +0000
+@@ -1,306 +1,516 @@
+-"""Small brain_index decision CLI used by build/merge bridge scripts."""
+-from __future__ import annotations
++"""decisions — the one-chat decision queue, server-side, with Decision Cards + Proof Return.
+ 
+-import json
+-import os
+-import sys
+-import importlib.util as _ilu
+-from pathlib import Path
+-from typing import Any
+-
+-DB_URL = os.environ.get(
+-    "BRAIN_INDEX_DB_URL",
+-    "postgres://brain_index:changeme@127.0.0.1:25432/appflowy",
+-)
+-CANARY_ID = "d000"
+-CANARY_QUESTION = "Build-loop canary: should never appear in pending builds"
+-
+-
+-def _load_build_state_module() -> Any:
+-    repo = Path(os.environ.get("FPAI_REPO_ROOT", ""))
+-    candidates = []
+-    if repo:
+-        candidates.append(repo / "tools" / "build_loop" / "build_state.py")
+-    candidates.extend(
+-        [
+-            Path("/opt/fpai-build/FPAI_Cockpit/tools/build_loop/build_state.py"),
+-            Path(__file__).resolve().parents[3] / "tools" / "build_loop" / "build_state.py",
+-        ]
+-    )
+-    for path in candidates:
+-        if not path.exists():
+-            continue
+-        spec = _ilu.spec_from_file_location("fpai_build_state", path)
+-        if spec is None or spec.loader is None:
+-            continue
+-        mod = _ilu.module_from_spec(spec)
+-        sys.modules[spec.name] = mod
+-        spec.loader.exec_module(mod)
+-        return mod
+-    raise RuntimeError("tools/build_loop/build_state.py not found")
+-
+-
+-_build_state = _load_build_state_module()
+-PENDING_BUILDS_WHERE_SQL = _build_state.PENDING_DECISION_WHERE_SQL
+-PENDING_BUILDS_SQL = f"""
+-        SELECT id::text AS id, question, answer, build_spec, proof_expected, liveness, liveness_check
+-          FROM brain_index.decisions
+-{PENDING_BUILDS_WHERE_SQL}
+-         ORDER BY id
++The bot that ASKS a decision is the bot that RECORDS the answer. Each decision is
++a CARD (why surfaced · recommendation · risk · attention cost · proof expected ·
++rollback), surfaced ONE AT A TIME to James's Telegram and logged into the bot's own
++memory. Answering writes a RECEIPT — Decision → Action → Proof → Memory. No receipt,
++no learning. James answers in his one chat:  d001: his answer
+ """
+-pending_builds_from_rows = _build_state.pending_builds_from_rows
++from __future__ import annotations
++import os, sys, asyncio, json, re, subprocess
++from . import telegram as tg
++from .db import connect
++
++
++def _kick_build_loop() -> None:
++    """Fire the build loop immediately — don't wait for the 10-min timer."""
++    try:
++        subprocess.Popen(
++            ["systemctl", "start", "fpai-build-loop.service"],
++            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
++        )
++    except Exception:
++        pass
++
++OWNER = os.environ.get("TELEGRAM_CHAT_ID", "")
++
++_CARD_FIELDS = ["why_surfaced", "recommendation", "risk_class",
++                "attention_cost", "deadline", "proof_expected", "rollback"]
++
++
++async def ensure_table() -> None:
++    async with connect() as conn:
++        async with conn.cursor() as cur:
++            await cur.execute("""
++                CREATE TABLE IF NOT EXISTS brain_index.decisions (
++                    id text PRIMARY KEY, question text NOT NULL, options text DEFAULT '',
++                    status text DEFAULT 'open', answer text,
++                    created_at timestamptz DEFAULT now(),
++                    surfaced_at timestamptz, answered_at timestamptz)""")
++            for col in _CARD_FIELDS:
++                await cur.execute(
++                    f"ALTER TABLE brain_index.decisions ADD COLUMN IF NOT EXISTS {col} text DEFAULT ''")
++            for bc, typ in (("needs_build","boolean DEFAULT false"),
++                            ("build_spec","text DEFAULT ''"),
++                            ("spec_written","boolean DEFAULT false"),
++                            ("build_branch","text DEFAULT ''"),
++                            ("build_status","text DEFAULT 'none'")):
++                await cur.execute(
++                    f"ALTER TABLE brain_index.decisions ADD COLUMN IF NOT EXISTS {bc} {typ}")
++            await cur.execute("""
++                CREATE TABLE IF NOT EXISTS brain_index.receipts (
++                    id serial PRIMARY KEY, kind text, ref_id text,
++                    what text, changed text, worked text, evidence text, lesson text,
++                    created_at timestamptz DEFAULT now())""")
++
++
++async def _next_id() -> str:
++    async with connect() as conn:
++        async with conn.cursor() as cur:
++            await cur.execute("SELECT id FROM brain_index.decisions")
++            nums = []
++            for (i,) in await cur.fetchall():
++                try: nums.append(int(str(i).lstrip("d")))
++                except Exception: pass
++            return "d" + str((max(nums) + 1) if nums else 1).zfill(3)
++
++
++async def add(question: str, options: str = "", card: dict | None = None) -> str:
++    await ensure_table()
++    did = await _next_id()
++    card = card or {}
++    cols = ["id", "question", "options"] + [c for c in _CARD_FIELDS if card.get(c)]
++    vals = [did, question, options] + [card[c] for c in _CARD_FIELDS if card.get(c)]
++    ph = ",".join(["%s"] * len(cols))
++    async with connect() as conn:
++        async with conn.cursor() as cur:
++            await cur.execute(
++                f"INSERT INTO brain_index.decisions ({','.join(cols)}) VALUES ({ph})", vals)
++    return did
++
++
++async def set_card(did: str, card: dict) -> bool:
++    sets = [c for c in _CARD_FIELDS if c in card]
++    if not sets: return False
++    assigns = ",".join(f"{c}=%s" for c in sets)
++    async with connect() as conn:
++        async with conn.cursor() as cur:
++            await cur.execute(
++                f"UPDATE brain_index.decisions SET {assigns} WHERE id=%s",
++                [card[c] for c in sets] + [did])
++    return True
+ 
+ 
+-def connect() -> Any:
++async def _log(chat_id: str, role: str, text: str) -> None:
++    if not text or not chat_id: return
+     try:
+-        import psycopg
+-    except ImportError as exc:
+-        raise SystemExit(f"psycopg unavailable: {exc}") from exc
+-    return psycopg.connect(DB_URL, autocommit=True)
+-
+-
+-def emit_rows(sql: str, params: tuple[Any, ...] = ()) -> int:
+-    with connect() as conn:
+-        with conn.cursor() as cur:
+-            cur.execute(sql, params)
+-            for row in cur.fetchall():
+-                description = getattr(cur, "description", None)
+-                if description:
+-                    columns = [getattr(desc, "name", desc[0]) for desc in description]
+-                else:
+-                    fallback = [
+-                        "id",
+-                        "question",
+-                        "answer",
+-                        "build_spec",
+-                        "proof_expected",
+-                        "liveness",
+-                        "liveness_check",
+-                    ]
+-                    columns = fallback[: len(row)]
+-                print(json.dumps(dict(zip(columns, row)), default=str))
+-    return 0
++        async with connect() as conn:
++            async with conn.cursor() as cur:
++                await cur.execute(
++                    "INSERT INTO brain_index.tg_messages (chat_id, role, text) VALUES (%s,%s,%s)",
++                    (str(chat_id), role, text[:8000]))
++    except Exception: pass
+ 
+ 
+-def ensure_liveness_column() -> bool:
++async def write_receipt(kind: str, ref_id: str, what: str,
++                        evidence: str = "", lesson: str = "") -> None:
+     try:
+-        with connect() as conn:
+-            with conn.cursor() as cur:
+-                cur.execute("ALTER TABLE IF EXISTS brain_index.decisions ADD COLUMN IF NOT EXISTS liveness_check TEXT")
+-                cur.execute("ALTER TABLE IF EXISTS brain_index.decisions ADD COLUMN IF NOT EXISTS liveness TEXT")
+-        return True
+-    except Exception as exc:
+-        print(f"warning: liveness columns not ensured: {exc}", file=sys.stderr)
+-        return False
+-
+-
+-def pending_merges() -> int:
+-    return emit_rows(
+-        """
+-        SELECT id::text AS id, build_branch
+-          FROM brain_index.decisions
+-         WHERE COALESCE(build_branch, '') <> ''
+-           AND COALESCE(build_status, '') = 'merge_requested'
+-         ORDER BY id
+-        """
+-    )
+-
+-
+-def pending_builds() -> int:
+-    if ensure_liveness_column():
+-        liveness_expr = "liveness, liveness_check"
++        async with connect() as conn:
++            async with conn.cursor() as cur:
++                await cur.execute(
++                    "INSERT INTO brain_index.receipts (kind, ref_id, what, evidence, lesson) "
++                    "VALUES (%s,%s,%s,%s,%s)", (kind, ref_id, what[:4000], evidence, lesson))
++    except Exception: pass
++
++
++def _format(row: dict, n_left: int) -> str:
++    """Render a full Decision Card — only the fields that are present."""
++    e = tg._esc
++    L = [f"🟡 <b>Decision needed</b> [{row['id']}]", e(row["question"])]
++    if row.get("why_surfaced"):   L.append(f"\n<b>Why surfaced:</b> {e(row['why_surfaced'])}")
++    if row.get("recommendation"): L.append(f"<b>Recommendation:</b> {e(row['recommendation'])}")
++    if row.get("options"):        L.append(f"<b>Options:</b> {e(' / '.join(row['options'].split('|')))}")
++    meta = []
++    if row.get("risk_class"):     meta.append(f"Risk: {e(row['risk_class'])}")
++    if row.get("attention_cost"): meta.append(f"Attention: {e(row['attention_cost'])}")
++    if row.get("deadline"):       meta.append(f"Deadline: {e(row['deadline'])}")
++    if meta: L.append("<i>" + " · ".join(meta) + "</i>")
++    if row.get("proof_expected"): L.append(f"<b>Proof expected:</b> {e(row['proof_expected'])}")
++    if row.get("rollback"):       L.append(f"<b>Rollback:</b> {e(row['rollback'])}")
++    L.append(f"\n<b>Reply:</b> <code>{row['id']}: your answer</code>")
++    if n_left > 0: L.append(f"<i>({n_left} more queued after this)</i>")
++    return "\n".join(L)
++
++
++_SEL = ("id, question, options, why_surfaced, recommendation, risk_class, "
++        "attention_cost, deadline, proof_expected, rollback")
++_KEYS = ["id", "question", "options", "why_surfaced", "recommendation", "risk_class",
++         "attention_cost", "deadline", "proof_expected", "rollback"]
++
++
++async def _pick_next_open():
++    async with connect() as conn:
++        async with conn.cursor() as cur:
++            await cur.execute(
++                f"SELECT {_SEL} FROM brain_index.decisions WHERE status='open' ORDER BY id LIMIT 1")
++            r = await cur.fetchone()
++            await cur.execute("SELECT count(*) FROM brain_index.decisions WHERE status='open'")
++            (open_count,) = await cur.fetchone()
++    return (dict(zip(_KEYS, r)) if r else None), open_count
++
++
++async def _mark_awaiting(did: str) -> None:
++    async with connect() as conn:
++        async with conn.cursor() as cur:
++            await cur.execute(
++                "UPDATE brain_index.decisions SET status='awaiting', surfaced_at=now() WHERE id=%s", (did,))
++
++
++async def _any_awaiting() -> bool:
++    async with connect() as conn:
++        async with conn.cursor() as cur:
++            await cur.execute("SELECT 1 FROM brain_index.decisions WHERE status='awaiting' LIMIT 1")
++            return bool(await cur.fetchone())
++
++
++async def surface_next(chat_id: str = "") -> str:
++    chat_id = chat_id or OWNER
++    if await _any_awaiting(): return "already awaiting — one at a time"
++    row, open_count = await _pick_next_open()
++    if not row: return "no open decisions"
++    msg = _format(row, open_count - 1)
++    await tg.send(msg)
++    await _log(chat_id, "bot", msg)
++    await _mark_awaiting(row["id"])
++    return f"surfaced {row['id']}"
++
++
++async def record(did: str, answer: str):
++    async with connect() as conn:
++        async with conn.cursor() as cur:
++            await cur.execute(
++                "SELECT question, proof_expected, build_spec FROM brain_index.decisions WHERE id=%s", (did,))
++            r = await cur.fetchone()
++            if not r: return None
++            await cur.execute(
++                "UPDATE brain_index.decisions SET status='answered', answer=%s, answered_at=now() WHERE id=%s",
++                (answer, did))
++            # Arm a recommended build ONLY on James's approval. "not now" never builds.
++            if (r[2] or "").strip() and _AFFIRM.search(answer or "") and not _NEGATE.search(answer or ""):
++                await cur.execute("UPDATE brain_index.decisions SET needs_build=true WHERE id=%s", (did,))
++                _kick_build_loop()
++    # Proof Return — every answered decision leaves a receipt (Decision → Memory).
++    await write_receipt("decision", did, f"Q: {r[0]}\nA: {answer}",
++                        evidence=f"brain_index.decisions[{did}]",
++                        lesson=(r[1] or ""))
++    return {"id": did, "question": r[0], "answer": answer, "proof_expected": r[1] or ""}
++
++
++async def handle_reply(chat_id: str, did: str, answer: str) -> str:
++    rec = await record(did, answer)
++    if not rec:
++        return (f"🤔 I don't have a decision <code>{tg._esc(did)}</code> on file. "
++                f"Reply format is <code>d001: your answer</code>.")
++    parts = [f"✓ <b>Recorded</b> [{did}] — <i>{tg._esc(rec['question'][:100])}</i>\n   → {tg._esc(answer)}"]
++    parts.append(f"🧾 <i>Receipt logged"
++                 + (f" · proof expected: {tg._esc(rec['proof_expected'][:80])}" if rec['proof_expected'] else "")
++                 + "</i>")
++    if not await _any_awaiting():
++        row, open_count = await _pick_next_open()
++        if row:
++            parts.append("\n" + _format(row, open_count - 1))
++            await _mark_awaiting(row["id"])
++        else:
++            parts.append("\n✅ <i>Decision queue clear — nothing else waiting on you.</i>")
++    return "\n".join(parts)
++
++
++async def list_all() -> str:
++    await ensure_table()
++    async with connect() as conn:
++        async with conn.cursor() as cur:
++            await cur.execute("SELECT id, status, question, answer FROM brain_index.decisions ORDER BY id")
++            rows = await cur.fetchall()
++    if not rows: return "(no decisions)"
++    return "\n".join(f"  {i} · {st:9} · {q[:60]}" + (f"  -> {a}" if a else "") for i, st, q, a in rows)
++
++
++async def receipts(n: int = 10) -> str:
++    await ensure_table()
++    async with connect() as conn:
++        async with conn.cursor() as cur:
++            await cur.execute(
++                "SELECT created_at, kind, ref_id, left(what,80) FROM brain_index.receipts "
++                "ORDER BY created_at DESC LIMIT %s", (n,))
++            rows = await cur.fetchall()
++    if not rows: return "(no receipts yet)"
++    return "\n".join(f"  [{t:%m-%d %H:%M}] {k}/{rid}: {w}" for t, k, rid, w in rows)
++
++
++
++async def chat_context():
++    """Return (authoritative_queue_text, awaiting_dict_or_None) for the chat path.
++    Injected so the bot KNOWS its live queue (no confabulation) and can bind a
++    natural-language answer to the one decision that's awaiting."""
++    await ensure_table()
++    async with connect() as conn:
++        async with conn.cursor() as cur:
++            await cur.execute(
++                f"SELECT {_SEL}, status FROM brain_index.decisions "
++                "WHERE status IN ('open','awaiting') ORDER BY id")
++            rows = await cur.fetchall()
++    if not rows:
++        return "", None
++    keys = _KEYS + ["status"]
++    items = [dict(zip(keys, r)) for r in rows]
++    awaiting = next((d for d in items if d["status"] == "awaiting"), None)
++    lines = ["LIVE DECISION QUEUE — authoritative current state (NOT old notes; trust this over any memory):"]
++    for d in items:
++        opts = (" · options: " + " / ".join(d["options"].split("|"))) if d["options"] else ""
++        star = "  <-- AWAITING JAMES'S ANSWER" if d["status"] == "awaiting" else ""
++        lines.append(f"  [{d['id']}] ({d['status']}) {d['question']}{opts}{star}")
++    return "\n".join(lines), awaiting
++
++
++
++async def pending_builds():
++    """Answered decisions tagged needs_build that have no spec yet — JSONL to stdout."""
++    await ensure_table()
++    async with connect() as conn:
++        async with conn.cursor() as cur:
++            await cur.execute(
++                "SELECT id, question, answer, build_spec, proof_expected "
++                "FROM brain_index.decisions "
++                "WHERE status='answered' AND needs_build=true AND COALESCE(spec_written,false)=false "
++                "ORDER BY id")
++            return [dict(zip(["id","question","answer","build_spec","proof_expected"], r))
++                    for r in await cur.fetchall()]
++
++
++async def mark_spec_written(did: str) -> None:
++    async with connect() as conn:
++        async with conn.cursor() as cur:
++            await cur.execute(
++                "UPDATE brain_index.decisions SET spec_written=true WHERE id=%s", (did,))
++
++
++async def set_build(did: str, spec: str) -> None:
++    async with connect() as conn:
++        async with conn.cursor() as cur:
++            await cur.execute(
++                "UPDATE brain_index.decisions SET needs_build=true, build_spec=%s WHERE id=%s",
++                (spec, did))
++
++
++
++async def reverse(did, reason=""):
++    """James veto/reverse on a decision. Marks it reversed, logs a reversal receipt,
++    and returns its rollback instructions (from the card) so the effect can be undone.
++    Does NOT auto-undo — surfacing the rollback path is safer than acting blind."""
++    async with connect() as conn:
++        async with conn.cursor() as cur:
++            await cur.execute("SELECT question, status, rollback FROM brain_index.decisions WHERE id=%s", (did,))
++            r = await cur.fetchone()
++            if not r:
++                return None
++            await cur.execute(
++                "UPDATE brain_index.decisions SET status='reversed', "
++                "answer = COALESCE(answer,'') || %s WHERE id=%s",
++                (f"  [REVERSED: {reason or 'no reason given'}]", did))
++    await write_receipt("reversal", did, f"REVERSED: {r[0]}\nReason: {reason or 'none'}",
++                        evidence=f"rollback: {r[2] or 'n/a'}")
++    return {"id": did, "question": r[0], "prev_status": r[1], "rollback": r[2] or ""}
++
++
++async def handle_reverse(chat_id, did, reason=""):
++    rec = await reverse(did, reason)
++    if not rec:
++        return f"🤔 No decision <code>{tg._esc(did)}</code> to reverse."
++    msg = [f"↩️ <b>Reversed</b> [{did}] — <i>{tg._esc(rec['question'][:90])}</i>"]
++    if reason:
++        msg.append(f"   reason: {tg._esc(reason)}")
++    if rec["rollback"]:
++        msg.append(f"<b>To undo the effect:</b> {tg._esc(rec['rollback'])}")
++    msg.append("🧾 <i>Reversal receipt logged.</i>")
++    return "\n".join(msg)
++
++
++
++async def queue_build(title, spec):
++    """REAL build trigger from chat — creates an answered+needs_build decision so the
++    Codex bridge daemon actually builds it (laptop-side), AI-reviews it, and surfaces
++    it for James's merge. Returns the decision id so the bot can confirm TRUTHFULLY."""
++    did = await add(title[:200], "", {"proof_expected": "independent-AI-reviewed branch, ready for your merge",
++                                      "risk_class": "build"})
++    await set_build(did, spec)
++    async with connect() as conn:
++        async with conn.cursor() as cur:
++            await cur.execute(
++                "UPDATE brain_index.decisions SET status='answered', answer='requested in chat' WHERE id=%s", (did,))
++    await write_receipt("build-queued", did, f"BUILD QUEUED: {title}\nspec: {spec[:600]}")
++    _kick_build_loop()
++    return did
++
++
++_BUILD_JUNK = {"", "...", "title", "description", "short title", "what to build",
++               "title :: description", "short title :: what to build",
++               "a real short title", "the concrete thing to build"}
++
++async def handle_build(chat_id, spec):
++    spec = (spec or "").strip()
++    if "::" in spec:
++        title, details = spec.split("::", 1); title = title.strip(); details = details.strip()
+     else:
+-        liveness_expr = "NULL::text AS liveness, NULL::text AS liveness_check"
+-    return emit_rows(
+-        PENDING_BUILDS_SQL.replace("liveness, liveness_check", liveness_expr, 1)
+-        if liveness_expr != "liveness, liveness_check"
+-        else PENDING_BUILDS_SQL
+-    )
+-
+-
+-def _legacy_pending_builds_sql(liveness_expr: str) -> str:
+-    return f"""
+-        SELECT id::text AS id, question, answer, build_spec, proof_expected, {liveness_expr}
+-          FROM brain_index.decisions
+-{PENDING_BUILDS_WHERE_SQL}
+-         ORDER BY id
+-    """
+-
+-
+-def mark_merged(decision_id: str, outcome: str) -> int:
+-    status = "merged" if outcome == "ok" else "merge_failed"
+-    with connect() as conn:
+-        with conn.cursor() as cur:
+-            cur.execute(
+-                """
+-                UPDATE brain_index.decisions
+-                   SET build_status = %s,
+-                       needs_build = false
+-                 WHERE id::text = %s
+-                """,
+-                (status, str(decision_id)),
+-            )
+-    return 0
+-
+-
+-def mark_built(decision_id: str) -> int:
+-    with connect() as conn:
+-        with conn.cursor() as cur:
+-            cur.execute(
+-                """
+-                UPDATE brain_index.decisions
+-                   SET build_status = 'built',
+-                       spec_written = true
+-                 WHERE id::text = %s
+-                """,
+-                (str(decision_id),),
+-            )
+-    return 0
+-
+-
+-def set_build_result(decision_id: str, branch: str, status: str) -> int:
+-    with connect() as conn:
+-        with conn.cursor() as cur:
+-            cur.execute(
+-                """
+-                UPDATE brain_index.decisions
+-                   SET build_branch = %s,
+-                       build_status = %s
+-                 WHERE id::text = %s
+-                """,
+-                (branch, status, str(decision_id)),
+-            )
+-    return 0
+-
+-
+-def seed() -> int:
+-    payload = sys.stdin.read().strip()
+-    if not payload:
+-        return 0
+-    item = json.loads(payload)
+-    question = str(item.get("question") or item.get("title") or "").strip()
+-    build_spec = str(item.get("build_spec") or item.get("spec") or "").strip()
+-    proof_expected = str(item.get("proof_expected") or "").strip()
+-    liveness = item.get("liveness")
+-    if isinstance(liveness, (dict, list)):
+-        liveness_text = json.dumps(liveness, sort_keys=True)
++        title = spec[:60]; details = spec
++    # Reject placeholder/template/junk tokens the model sometimes echoes (return "" = silently ignore).
++    norm = spec.lower().strip(" .:")
++    if (norm in _BUILD_JUNK or (details or "").lower().strip(" .:") in _BUILD_JUNK
++            or len((details or "").strip(" .")) < 10):
++        return ""
++    if not details:
++        return ""
++    did = await queue_build(title, details)
++    return (f"🔨 <b>Queued build</b> [{did}] — {tg._esc(title[:90])}\n"
++            f"<i>Building on server 162 (laptop-free), gets an independent AI review, then I surface it "
++            f"for your merge. I'll message you when it's reviewed. Not merged automatically.</i>")
++
++
++
++# ── merge-from-phone: build lifecycle (none→built→merge_requested→merged) ──
++async def set_build_result(did, branch, status):
++    """Bridge records the built branch + review outcome ('built' if AI-approved, 'rejected' otherwise)."""
++    async with connect() as conn:
++        async with conn.cursor() as cur:
++            await cur.execute(
++                "UPDATE brain_index.decisions SET build_branch=%s, build_status=%s WHERE id=%s",
++                (branch, status, did))
++
++
++async def request_merge(did):
++    """James asks to merge from his phone. Only a 'built' (AI-approved) build can be requested."""
++    async with connect() as conn:
++        async with conn.cursor() as cur:
++            await cur.execute("SELECT build_branch, build_status FROM brain_index.decisions WHERE id=%s", (did,))
++            r = await cur.fetchone()
++            if not r:
++                return ("missing", None)
++            branch, status = r
++            if not branch:
++                return ("no_build", None)
++            if status == "merged":
++                return ("already", branch)
++            if status not in ("built",):
++                return (status or "not_ready", branch)
++            await cur.execute("UPDATE brain_index.decisions SET build_status='merge_requested' WHERE id=%s", (did,))
++            return ("ok", branch)
++
++
++async def pending_merges():
++    """Daemon reads builds James approved for merge."""
++    await ensure_table()
++    async with connect() as conn:
++        async with conn.cursor() as cur:
++            await cur.execute(
++                "SELECT id, build_branch, question FROM brain_index.decisions "
++                "WHERE build_status='merge_requested' AND build_branch <> '' ORDER BY id")
++            return [dict(zip(["id","build_branch","question"], r)) for r in await cur.fetchall()]
++
++
++async def mark_merged(did, ok=True):
++    async with connect() as conn:
++        async with conn.cursor() as cur:
++            await cur.execute("UPDATE brain_index.decisions SET build_status=%s WHERE id=%s",
++                              ("merged" if ok else "merge_failed", did))
++    await write_receipt("merge" if ok else "merge-failed", did,
++                        f"{'MERGED' if ok else 'MERGE FAILED'} from phone-approval")
++
++
++async def handle_merge(chat_id, did):
++    status, branch = await request_merge(did)
++    if status == "ok":
++        return (f"🔀 <b>Merge approved</b> [{did}] — <code>{tg._esc(branch)}</code>\n"
++                f"<i>Running the gate (tests + independent AI review + protected-zone), then merging to "
++                f"feat/headless-build. I'll confirm. (main still needs the terminal + Ember's audit.)</i>")
++    return {
++        "missing":   f"🤔 No decision <code>{tg._esc(did)}</code> on file.",
++        "no_build":  f"🤔 [{did}] has no built branch to merge yet.",
++        "already":   f"✓ [{did}] is already merged.",
++    }.get(status, f"⚠️ [{did}] isn't ready to merge (status: {tg._esc(str(status))}). It must be built + AI-approved first.")
++
++
++
++_AFFIRM = re.compile(r"\b(yes|yeah|yep|build|do it|go|approve|approved|sure|ok|okay|proceed|ship|let'?s)\b", re.I)
++_NEGATE = re.compile(r"\b(no|not now|skip|hold|don'?t|stop|later|nope|cancel|nah)\b", re.I)
++
++
++async def recommend(title, why, build_spec, risk="low"):
++    """Proactive recommendation -> a decision carrying a build_spec but NOT armed.
++    needs_build stays false until James approves (record() arms it on an affirmative answer)."""
++    q = f"\U0001f4a1 {title} — {why} Build it?"
++    did = await add(q[:300], "build it|not now|tweak",
++                    {"why_surfaced": why[:300], "recommendation": "build it",
++                     "risk_class": risk, "proof_expected": "AI-reviewed branch, ready for your merge"})
++    async with connect() as conn:
++        async with conn.cursor() as cur:
++            await cur.execute("UPDATE brain_index.decisions SET build_spec=%s WHERE id=%s", (build_spec, did))
++    return did
++
++
++def _cli():
++    cmd = sys.argv[1] if len(sys.argv) > 1 else "list"
++    if cmd == "ensure": asyncio.run(ensure_table()); print("schema ready (cards + receipts)")
++    elif cmd == "add": print(asyncio.run(add(sys.argv[2], sys.argv[3] if len(sys.argv) > 3 else "")))
++    elif cmd == "surface": print(asyncio.run(surface_next(sys.argv[2] if len(sys.argv) > 2 else "")))
++    elif cmd == "list": print(asyncio.run(list_all()))
++    elif cmd == "receipts": print(asyncio.run(receipts()))
++    elif cmd == "setcard":
++        did = sys.argv[2]; card = json.load(sys.stdin)
++        print("set" if asyncio.run(set_card(did, card)) else "no fields")
++    elif cmd == "render":
++        async def _r():
++            async with connect() as conn:
++                async with conn.cursor() as cur:
++                    await cur.execute(f"SELECT {_SEL} FROM brain_index.decisions WHERE id=%s", (sys.argv[2],))
++                    r = await cur.fetchone()
++            return _format(dict(zip(_KEYS, r)), 0) if r else "not found"
++        print(asyncio.run(_r()))
++    elif cmd == "pending-merges":
++        import json as _j
++        for d in asyncio.run(pending_merges()): print(_j.dumps(d))
++    elif cmd == "set-build-result":
++        asyncio.run(set_build_result(sys.argv[2], sys.argv[3], sys.argv[4])); print("set", sys.argv[2])
++    elif cmd == "mark-merged":
++        asyncio.run(mark_merged(sys.argv[2], sys.argv[3] != "fail" if len(sys.argv) > 3 else True)); print("marked", sys.argv[2])
++    elif cmd == "recent-chats":
++        _n = int(sys.argv[2]) if len(sys.argv) > 2 else 24
++        async def _rc():
++            async with connect() as conn:
++                async with conn.cursor() as cur:
++                    await cur.execute("SELECT role, left(text,280) FROM brain_index.tg_messages "
++                                      "WHERE chat_id=%s ORDER BY at DESC LIMIT %s", (OWNER, _n))
++                    rows = await cur.fetchall()
++            for role, t in reversed(rows): print(f"{role}: {t}")
++        asyncio.run(_rc())
++    elif cmd == "recommend":
++        _d = json.load(sys.stdin)
++        async def _rec():
++            did = await recommend(_d["title"], _d["why"], _d["build_spec"], _d.get("risk", "low"))
++            print("recommended", did)
++            print(await surface_next())
++        asyncio.run(_rec())
++    elif cmd == "reverse":
++        print(asyncio.run(reverse(sys.argv[2], sys.argv[3] if len(sys.argv) > 3 else "")))
++    elif cmd == "pending-builds":
++        import json as _j
++        for d in asyncio.run(pending_builds()): print(_j.dumps(d))
++    elif cmd == "mark-built":
++        asyncio.run(mark_spec_written(sys.argv[2])); print("marked", sys.argv[2])
++    elif cmd == "set-build":
++        asyncio.run(set_build(sys.argv[2], sys.stdin.read())); print("build set", sys.argv[2])
++    elif cmd == "seed":
++        async def _seed():
++            await ensure_table(); n = 0
++            for line in sys.stdin:
++                line = line.strip()
++                if not line: continue
++                d = json.loads(line)
++                await add(d["question"], d.get("options", ""), d.get("card"))
++                n += 1
++            return n
++        print(f"seeded {asyncio.run(_seed())}")
+     else:
+-        liveness_text = str(liveness or "").strip()
+-    if not question:
+-        raise SystemExit("seed requires question/title")
+-    with connect() as conn:
+-        with conn.cursor() as cur:
+-            ensure_liveness_column()
+-            cur.execute(
+-                """
+-                INSERT INTO brain_index.decisions
+-                    (question, status, needs_build, build_spec, proof_expected, liveness)
+-                VALUES (%s, 'answered', true, %s, %s, %s)
+-                RETURNING id::text
+-                """,
+-                (question, build_spec, proof_expected, liveness_text),
+-            )
+-            row = cur.fetchone()
+-    print(json.dumps({"id": row[0] if row else None}))
+-    return 0
+-
+-
+-def recommend() -> int:
+-    payload = sys.stdin.read().strip()
+-    if not payload:
+-        return 0
+-    item = json.loads(payload)
+-    title = str(item.get("title") or "Council recommendation").strip()
+-    why = str(item.get("why") or "").strip()
+-    build_spec = str(item.get("build_spec") or "").strip()
+-    question = f"{title}\n\n{why}".strip()
+-    with connect() as conn:
+-        with conn.cursor() as cur:
+-            ensure_liveness_column()
+-            cur.execute(
+-                """
+-                INSERT INTO brain_index.decisions
+-                    (question, status, needs_build, build_spec, proof_expected)
+-                VALUES (%s, 'awaiting', true, %s, %s)
+-                RETURNING id::text
+-                """,
+-                (question, build_spec, build_spec),
+-            )
+-            row = cur.fetchone()
+-    print(json.dumps({"id": row[0] if row else None, "title": title}))
+-    return 0
+-
+-
+-def surface() -> int:
+-    return 0
+-
+-
+-def list_decisions() -> int:
+-    with connect() as conn:
+-        with conn.cursor() as cur:
+-            cur.execute(
+-                """
+-                SELECT id::text, status, left(question, 160)
+-                  FROM brain_index.decisions
+-                 ORDER BY id DESC
+-                 LIMIT 20
+-                """
+-            )
+-            for decision_id, status, question in cur.fetchall():
+-                print(f"{decision_id} {status}: {question}")
+-    return 0
+-
+-
+-def recent_chats(limit: int) -> int:
+-    with connect() as conn:
+-        with conn.cursor() as cur:
+-            cur.execute(
+-                """
+-                SELECT role, left(text, 500)
+-                  FROM brain_index.tg_messages
+-                 ORDER BY at DESC
+-                 LIMIT %s
+-                """,
+-                (max(1, min(limit, 200)),),
+-            )
+-            rows = cur.fetchall()
+-    for role, text in reversed(rows):
+-        print(f"{role}: {text}")
+-    return 0
+-
+-
+-def main(argv: list[str] | None = None) -> int:
+-    args = list(argv if argv is not None else sys.argv[1:])
+-    if not args:
+-        print("usage: curator.decisions pending-merges|pending-builds|mark-merged|mark-built|set-build-result|ensure-liveness-column|seed|surface|list|recent-chats|recommend", file=sys.stderr)
+-        return 2
+-    cmd = args[0]
+-    if cmd == "pending-merges":
+-        return pending_merges()
+-    if cmd == "pending-builds":
+-        return pending_builds()
+-    if cmd == "ensure-liveness-column":
+-        return 0 if ensure_liveness_column() else 1
+-    if cmd == "mark-merged" and len(args) >= 3:
+-        return mark_merged(args[1], args[2])
+-    if cmd == "mark-built" and len(args) >= 2:
+-        return mark_built(args[1])
+-    if cmd == "set-build-result" and len(args) >= 4:
+-        return set_build_result(args[1], args[2], args[3])
+-    if cmd == "seed":
+-        return seed()
+-    if cmd == "surface":
+-        return surface()
+-    if cmd == "list":
+-        return list_decisions()
+-    if cmd == "recent-chats":
+-        limit = int(args[1]) if len(args) >= 2 and args[1].isdigit() else 30
+-        return recent_chats(limit)
+-    if cmd == "recommend":
+-        return recommend()
+-    print(f"unknown or incomplete command: {cmd}", file=sys.stderr)
+-    return 2
++        print("usage: ensure|add|surface|list|receipts|setcard <id> (<json)|render <id>|seed (<jsonl)")
+ 
+ 
+ if __name__ == "__main__":
+-    raise SystemExit(main())
++    _cli()

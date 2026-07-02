@@ -1,0 +1,245 @@
+--- /opt/fpai-build/FPAI_Cockpit/SERVICES/sunheart-brain/curator/llm.py	2026-06-14 11:50:37.000000000 +0000
++++ /opt/sh-brain-src/curator/llm.py	2026-06-19 22:02:01.390855701 +0000
+@@ -25,7 +25,10 @@
+ 
+ 
+ ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY")
+-ANTHROPIC_MODEL = os.environ.get("CURATOR_ANTHROPIC_MODEL", "claude-sonnet-4-20250514")
++ANTHROPIC_MODEL = os.environ.get("CURATOR_ANTHROPIC_MODEL", "claude-sonnet-4-6")
++# Resilience: if the configured model is retired (404), fall through this chain so the bot
++# degrades gracefully instead of STOPPING (the 2026-06-15 deprecation incident).
++ANTHROPIC_FALLBACKS = [m for m in dict.fromkeys([ANTHROPIC_MODEL, "claude-sonnet-4-6", "claude-sonnet-4-5", "claude-3-5-haiku-latest"]) if m]
+ ANTHROPIC_URL = "https://api.anthropic.com/v1/messages"
+ 
+ OPENAI_KEY = os.environ.get("OPENAI_API_KEY")
+@@ -70,8 +73,11 @@
+     max_tokens: int = 1024,
+     temperature: float = 0.2,
+     force_json: bool = True,
++    ollama_model: str | None = None,
+ ) -> LLMResult:
+-    """Single-shot completion. Returns LLMResult(text, model, …)."""
++    """Single-shot completion. Returns LLMResult(text, model, …).
++    ollama_model: override the model for this call (ollama provider only).
++    """
+     prompt_hash = hashlib.sha1((system + "\n" + user).encode()).hexdigest()
+     if force_json:
+         user = user + "\n\nReturn ONLY a single JSON object. No prose."
+@@ -85,11 +91,44 @@
+         else:
+             chosen = "ollama"
+ 
++    if chosen == "claude-cli":
++        return await _claude_cli(system, user, max_tokens, temperature, prompt_hash)
+     if chosen == "openai" and OPENAI_KEY:
+         return await _openai(system, user, max_tokens, temperature, prompt_hash)
+     if chosen == "anthropic" and ANTHROPIC_KEY:
+         return await _anthropic(system, user, max_tokens, temperature, prompt_hash)
+-    return await _ollama(system, user, max_tokens, temperature, prompt_hash)
++    return await _ollama(system, user, max_tokens, temperature, prompt_hash, model=ollama_model)
++
++
++async def _claude_cli(system: str, user: str, max_tokens: int, temperature: float, prompt_hash: str) -> LLMResult:
++    """Run claude -p via subprocess — uses Claude Max subscription ($0 marginal).
++    Falls back to ollama if claude CLI not found or exits nonzero."""
++    import asyncio as _asyncio
++    import shutil as _shutil
++    prompt = f"{system}\n\n{user}"
++    cli = _shutil.which("claude") or "claude"
++    try:
++        proc = await _asyncio.create_subprocess_exec(
++            cli, "-p", prompt,
++            stdout=_asyncio.subprocess.PIPE,
++            stderr=_asyncio.subprocess.PIPE,
++        )
++        try:
++            stdout, stderr = await _asyncio.wait_for(proc.communicate(), timeout=90)
++        except _asyncio.TimeoutError:
++            proc.kill()
++            raise RuntimeError("claude -p timed out after 90s")
++        if proc.returncode != 0:
++            err = stderr.decode(errors="replace")[:200]
++            raise RuntimeError(f"claude -p exit {proc.returncode}: {err}")
++        text = stdout.decode(errors="replace").strip()
++        return LLMResult(text=text, model="claude-cli", prompt_sha1=prompt_hash, tokens_in=0, tokens_out=0)
++    except FileNotFoundError:
++        log.warning("claude CLI not found, falling back to ollama")
++        return await _ollama(system, user, max_tokens, temperature, prompt_hash)
++    except Exception as exc:
++        log.warning("claude-cli failed (%s), falling back to ollama", exc)
++        return await _ollama(system, user, max_tokens, temperature, prompt_hash)
+ 
+ 
+ async def _openai(system: str, user: str, max_tokens: int, temperature: float, prompt_hash: str) -> LLMResult:
+@@ -125,41 +164,50 @@
+ 
+ 
+ async def _anthropic(system: str, user: str, max_tokens: int, temperature: float, prompt_hash: str) -> LLMResult:
++    # Try the configured model, then fall through the chain on 404 (retired/invalid model) so a
++    # single deprecation never STOPS the bot — it degrades to the next available model.
++    last_exc = None
+     async with httpx.AsyncClient(timeout=120) as client:
+-        r = await client.post(
+-            ANTHROPIC_URL,
+-            headers={
+-                "x-api-key": ANTHROPIC_KEY,
+-                "anthropic-version": "2023-06-01",
+-                "content-type": "application/json",
+-            },
+-            json={
+-                "model": ANTHROPIC_MODEL,
+-                "max_tokens": max_tokens,
+-                "temperature": temperature,
+-                "system": system,
+-                "messages": [{"role": "user", "content": user}],
+-            },
+-        )
+-        r.raise_for_status()
+-        data = r.json()
+-    text = "".join(block.get("text", "") for block in data.get("content", []) if block.get("type") == "text")
+-    usage = data.get("usage") or {}
+-    return LLMResult(
+-        text=text,
+-        model=ANTHROPIC_MODEL,
+-        prompt_sha1=prompt_hash,
+-        tokens_in=usage.get("input_tokens", 0),
+-        tokens_out=usage.get("output_tokens", 0),
+-    )
+-
+-
+-async def _ollama(system: str, user: str, max_tokens: int, temperature: float, prompt_hash: str) -> LLMResult:
+-    async with httpx.AsyncClient(timeout=180) as client:
++        for _model in ANTHROPIC_FALLBACKS:
++            r = await client.post(
++                ANTHROPIC_URL,
++                headers={
++                    "x-api-key": ANTHROPIC_KEY,
++                    "anthropic-version": "2023-06-01",
++                    "content-type": "application/json",
++                },
++                json={
++                    "model": _model,
++                    "max_tokens": max_tokens,
++                    "temperature": temperature,
++                    "system": system,
++                    "messages": [{"role": "user", "content": user}],
++                },
++            )
++            if r.status_code in (404, 400):  # model retired/invalid -> try the next in the chain
++                last_exc = httpx.HTTPStatusError(f"{r.status_code} for model {_model}", request=r.request, response=r)
++                continue
++            r.raise_for_status()
++            data = r.json()
++            text = "".join(block.get("text", "") for block in data.get("content", []) if block.get("type") == "text")
++            usage = data.get("usage") or {}
++            return LLMResult(
++                text=text,
++                model=_model,
++                prompt_sha1=prompt_hash,
++                tokens_in=usage.get("input_tokens", 0),
++                tokens_out=usage.get("output_tokens", 0),
++            )
++    raise last_exc or RuntimeError("all anthropic fallback models failed")
++
++
++async def _ollama(system: str, user: str, max_tokens: int, temperature: float, prompt_hash: str, model: str | None = None) -> LLMResult:
++    _model = model or OLLAMA_MODEL
++    async with httpx.AsyncClient(timeout=240) as client:
+         r = await client.post(
+             f"{OLLAMA_BASE}/api/chat",
+             json={
+-                "model": OLLAMA_MODEL,
++                "model": _model,
+                 "stream": False,
+                 "options": {"temperature": temperature, "num_predict": max_tokens},
+                 "messages": [
+@@ -173,8 +221,88 @@
+     text = (data.get("message") or {}).get("content", "")
+     return LLMResult(
+         text=text,
+-        model=f"ollama:{OLLAMA_MODEL}",
++        model=f"ollama:{_model}",
+         prompt_sha1=prompt_hash,
+         tokens_in=data.get("prompt_eval_count", 0),
+         tokens_out=data.get("eval_count", 0),
+     )
++
++
++async def _ollama_stream(system: str, user: str, max_tokens: int, temperature: float, model: str | None = None):
++    """Async generator yielding text chunks from ollama streaming API."""
++    import asyncio as _asyncio
++    _model = model or OLLAMA_MODEL
++    async with httpx.AsyncClient(timeout=240) as client:
++        async with client.stream(
++            "POST",
++            f"{OLLAMA_BASE}/api/chat",
++            json={
++                "model": _model,
++                "stream": True,
++                "options": {"temperature": temperature, "num_predict": max_tokens},
++                "messages": [
++                    {"role": "system", "content": system},
++                    {"role": "user", "content": user},
++                ],
++            },
++        ) as resp:
++            resp.raise_for_status()
++            async for line in resp.aiter_lines():
++                if not line.strip():
++                    continue
++                try:
++                    chunk = json.loads(line)
++                except json.JSONDecodeError:
++                    continue
++                token = (chunk.get("message") or {}).get("content", "")
++                if token:
++                    yield token
++                if chunk.get("done"):
++                    break
++
++
++async def synthesis_complete(
++    system: str,
++    user: str,
++    *,
++    max_tokens: int = 380,
++    temperature: float = 0.5,
++    on_token=None,
++) -> LLMResult:
++    """Chat synthesis: claude-cli first (Sonnet quality, $0 via Max subscription),
++    streaming ollama-3b fallback (fast first token, $0 local).
++    If on_token callback is provided, streams chunks to it via the ollama fallback path.
++    """
++    prompt_hash = hashlib.sha1((system + "\n" + user).encode()).hexdigest()
++    fallback_model = os.environ.get("CURATOR_SYNTHESIS_MODEL", "llama3.2:3b")
++
++    # Primary: claude -p (Sonnet 4.6 quality, $0 flat-rate Max subscription)
++    try:
++        result = await _claude_cli(system, user, max_tokens, temperature, prompt_hash)
++        if result.text.strip():
++            return result
++    except Exception as _ce:
++        log.debug("claude-cli synthesis failed (%s), using ollama fallback", _ce)
++
++    # Fallback: streaming ollama for fast first-token UX
++    if on_token is not None:
++        tokens = []
++        try:
++            async for chunk in _ollama_stream(system, user, max_tokens, temperature, model=fallback_model):
++                tokens.append(chunk)
++                try:
++                    await on_token(chunk)
++                except Exception:
++                    pass
++            text = "".join(tokens)
++            return LLMResult(text=text, model=f"ollama:{fallback_model}",
++                             prompt_sha1=prompt_hash, tokens_in=0, tokens_out=len(tokens))
++        except Exception as _se:
++            log.warning("ollama streaming failed (%s), falling back to blocking", _se)
++            # If streaming breaks mid-way and we already have partial text, return it
++            if tokens:
++                text = "".join(tokens)
++                return LLMResult(text=text, model=f"ollama:{fallback_model}",
++                                 prompt_sha1=prompt_hash, tokens_in=0, tokens_out=len(tokens))
++
++    return await _ollama(system, user, max_tokens, temperature, prompt_hash, model=fallback_model)

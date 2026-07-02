@@ -1,0 +1,468 @@
+--- /opt/fpai-build/FPAI_Cockpit/SERVICES/sunheart-brain/curator/build_context.py	2026-07-02 13:31:40.758892309 +0000
++++ /opt/sh-brain-src/curator/build_context.py	2026-07-02 13:36:31.579257431 +0000
+@@ -12,7 +12,6 @@
+ import re
+ import sys
+ from dataclasses import dataclass, replace
+-from datetime import datetime, timezone
+ from pathlib import Path
+ from typing import Any
+ 
+@@ -21,14 +20,7 @@
+ REPO_ROOT = Path(os.environ.get("FPAI_REPO_ROOT", Path(__file__).resolve().parents[3]))
+ DEFAULT_MAX_ITEMS = int(os.environ.get("SH_BUILD_CONTEXT_MAX_ITEMS", "6"))
+ DEFAULT_MAX_CHARS = int(os.environ.get("SH_BUILD_CONTEXT_MAX_CHARS", "1800"))
+-DEFAULT_DIAGNOSTIC_CONTEXT_FILE = Path(
+-    os.environ.get("SELF_DIAGNOSTIC_CONTEXT_FILE", "/opt/fpai-build/.self_diagnostic_context.json")
+-)
+ SUPABASE_TIMEOUT_SECONDS = float(os.environ.get("SH_BUILD_CONTEXT_TIMEOUT_SECONDS", "2.0"))
+-DEFAULT_HOT_STATE_FILE = Path(
+-    os.environ.get("HOT_MEMORY_STATE_PATH", "~/.config/fpai/hot_memory/HOT_STATE.md")
+-).expanduser()
+-HOT_STATE_MAX_AGE_SECONDS = int(os.environ.get("HOT_MEMORY_MAX_AGE_SECONDS", str(30 * 60)))
+ 
+ 
+ @dataclass(frozen=True)
+@@ -40,7 +32,6 @@
+     system_status: list[str] | None = None
+     corrections: list[str] | None = None
+     recent_insights: list[str] | None = None
+-    session_progress: list[str] | None = None
+ 
+     def is_empty(self) -> bool:
+         return not (
+@@ -49,8 +40,6 @@
+             or self.open_intents
+             or self.system_status
+             or self.corrections
+-            or self.recent_insights
+-            or self.session_progress
+         )
+ 
+ 
+@@ -60,171 +49,18 @@
+     max_items: int = DEFAULT_MAX_ITEMS,
+     max_chars: int = DEFAULT_MAX_CHARS,
+     conversation_id: str | None = None,
+-    include_system_state: bool = True,
+-    include_buildstream: bool = True,
+-    include_corrections: bool = True,
+-    include_becoming: bool = True,
+ ) -> str:
+     """Return a system-prompt suffix. Empty string means no injection."""
+     if os.environ.get("SH_BUILD_CONTEXT_DISABLE", "").strip() == "1":
+         return ""
+-    diagnostic = render_active_diagnostic_context(max_chars=max_chars) if include_system_state else ""
+-    hot_state = render_hot_state_context(max_chars=max_chars)
+-    routed_mode = not all((include_system_state, include_buildstream, include_corrections, include_becoming))
+-    if hot_state and not routed_mode:
+-        suffix_parts = [hot_state]
+-        corrections = await _render_recent_corrections_context(conversation_id=conversation_id)
+-        if corrections:
+-            suffix_parts.append(corrections)
+-        suffix = "\n\n".join(suffix_parts)
+-        if diagnostic:
+-            suffix = diagnostic + "\n\n" + suffix
+-        return "\n\n" + suffix
+     context = await load_build_context(
+         repo_root=Path(repo_root),
+         max_items=max_items,
+         conversation_id=conversation_id,
+-        include_system_status=include_system_state,
+-        include_corrections=include_corrections,
+-        include_recent_insights=include_buildstream,
+     )
+-    becoming = (
+-        await _render_becoming_context(conversation_id=conversation_id, max_chars=max_chars)
+-        if include_becoming
+-        else ""
+-    )
+-    parts: list[str] = []
+-    if hot_state and include_system_state:
+-        parts.append(hot_state)
+-    rendered_context = render_build_context(
+-        context,
+-        max_chars=max_chars,
+-        include_system_state=include_system_state,
+-        include_buildstream=include_buildstream,
+-        include_corrections=include_corrections,
+-        include_recent_insights=include_buildstream,
+-    )
+-    if rendered_context:
+-        parts.append(rendered_context)
+-    if becoming:
+-        parts.append(becoming)
+-    suffix = "\n\n".join(parts)
+-    if diagnostic:
+-        suffix = diagnostic + ("\n\n" + suffix if suffix else "")
+-    return "\n\n" + suffix if suffix else ""
+-
+-
+-def render_hot_state_context(
+-    *,
+-    path: Path | str | None = None,
+-    max_chars: int = DEFAULT_MAX_CHARS,
+-) -> str:
+-    """Return fresh HOT_STATE as the primary build context, or empty fallback."""
+-    if os.environ.get("HOT_MEMORY_DISABLE", "").strip() == "1":
+-        return ""
+-    state_path = Path(path) if path is not None else Path(os.environ.get("HOT_MEMORY_STATE_PATH", str(DEFAULT_HOT_STATE_FILE))).expanduser()
+-    hot_state = load_fresh_hot_state(state_path, max_age_seconds=HOT_STATE_MAX_AGE_SECONDS)
+-    if not hot_state:
+-        return ""
+-    lines = [
+-        "--- HOT STATE (primary current-memory context, bounded) ---",
+-        "Source: HOT_STATE.md",
+-        "Use this as the current cited state. If a fact is not here, say it is not in hot state instead of guessing.",
+-        hot_state.strip(),
+-    ]
+-    rendered = "\n".join(lines)
+-    if len(rendered) <= max_chars:
+-        return rendered
+-    return rendered[: max(0, max_chars - 20)].rsplit("\n", 1)[0] + "\n- ... bounded"
+-
+-
+-def load_fresh_hot_state(path: Path, *, max_age_seconds: int = HOT_STATE_MAX_AGE_SECONDS) -> str:
+-    try:
+-        stat = path.stat()
+-    except OSError:
+-        return ""
+-    age = datetime.now(timezone.utc).timestamp() - stat.st_mtime
+-    if age < 0 or age > max_age_seconds:
+-        return ""
+-    try:
+-        text = path.read_text(encoding="utf-8", errors="ignore").strip()
+-    except OSError:
+-        return ""
+-    return text if text else ""
+-
+-
+-def diagnostic_system_prefix(path: Path | str = DEFAULT_DIAGNOSTIC_CONTEXT_FILE) -> str:
+-    """Return the short-lived diagnostic interview instruction, if active."""
+-    context = load_active_diagnostic_context(Path(path))
+-    if not context:
++    if context.is_empty():
+         return ""
+-    prefix = str(context.get("prompt_prefix") or "").strip()
+-    return prefix + "\n\n" if prefix else ""
+-
+-
+-def render_active_diagnostic_context(
+-    *,
+-    path: Path | str = DEFAULT_DIAGNOSTIC_CONTEXT_FILE,
+-    max_chars: int = DEFAULT_MAX_CHARS,
+-) -> str:
+-    context = load_active_diagnostic_context(Path(path))
+-    if not context:
+-        return ""
+-    lines = [
+-        "--- ACTIVE COUNCIL SELF-DIAGNOSTIC CONTEXT ---",
+-        f"Audit: {context.get('audit_id', '')}",
+-        "Use this context to answer the council's diagnostic questions honestly from your recent operating experience.",
+-    ]
+-    recent = context.get("last_50_tg_messages") or []
+-    if recent:
+-        lines.append("Recent Telegram turns:")
+-        for item in recent[:12]:
+-            if isinstance(item, dict):
+-                lines.append(f"- {item.get('role', '?')}: {_clip_markdown(str(item.get('text') or ''))}")
+-    not_now = context.get("not_now_decisions") or []
+-    if not_now:
+-        lines.append("Decisions James answered not now:")
+-        for item in not_now[:8]:
+-            if isinstance(item, dict):
+-                lines.append(f"- {item.get('id', '')}: {_clip_markdown(str(item.get('question') or ''))}")
+-    rejected = context.get("rejected_builds") or []
+-    if rejected:
+-        lines.append("Rejected builds:")
+-        for item in rejected[:8]:
+-            if isinstance(item, dict):
+-                lines.append(f"- {item.get('id', '')}: {_clip_markdown(str(item.get('notes') or item.get('branch') or ''))}")
+-    rendered = "\n".join(lines)
+-    if len(rendered) <= max_chars:
+-        return rendered
+-    return rendered[: max(0, max_chars - 20)].rsplit("\n", 1)[0] + "\n- ... bounded"
+-
+-
+-def load_active_diagnostic_context(path: Path = DEFAULT_DIAGNOSTIC_CONTEXT_FILE) -> dict[str, Any] | None:
+-    try:
+-        data = json.loads(path.read_text(encoding="utf-8"))
+-    except Exception:
+-        return None
+-    if not isinstance(data, dict):
+-        return None
+-    expires_at = _parse_time(str(data.get("expires_at") or ""))
+-    if expires_at and expires_at < datetime.now(timezone.utc):
+-        return None
+-    return data
+-
+-
+-def _parse_time(value: str) -> datetime | None:
+-    raw = value.strip()
+-    if not raw:
+-        return None
+-    if raw.endswith("Z"):
+-        raw = raw[:-1] + "+00:00"
+-    try:
+-        parsed = datetime.fromisoformat(raw)
+-    except ValueError:
+-        return None
+-    if parsed.tzinfo is None:
+-        parsed = parsed.replace(tzinfo=timezone.utc)
+-    return parsed.astimezone(timezone.utc)
++    return "\n\n" + render_build_context(context, max_chars=max_chars)
+ 
+ 
+ async def load_build_context(
+@@ -232,9 +68,6 @@
+     repo_root: Path,
+     max_items: int = DEFAULT_MAX_ITEMS,
+     conversation_id: str | None = None,
+-    include_system_status: bool = True,
+-    include_corrections: bool = True,
+-    include_recent_insights: bool = True,
+ ) -> BuildContext:
+     """Prefer Supabase when configured; otherwise use repo-local mirrors."""
+     supabase = await _load_supabase_context(max_items=max_items)
+@@ -243,63 +76,38 @@
+         context = supabase
+     else:
+         context = _load_repo_context(repo_root, max_items=max_items)
+-    if include_system_status:
+-        context = _with_live_system_status(context, repo_root=repo_root, max_items=max_items)
+-    if include_recent_insights:
+-        context = await _with_recent_session_insights(context, max_items=max_items)
+-        context = _with_persisted_session_progress(context, repo_root=repo_root, max_items=max_items)
+-    if include_corrections:
+-        context = await _with_recent_corrections(
+-            context,
+-            conversation_id=conversation_id,
+-        )
+-    return context
++    context = _with_live_system_status(context, repo_root=repo_root, max_items=max_items)
++    context = await _with_recent_session_insights(context, max_items=max_items)
++    return await _with_recent_corrections(
++        context,
++        conversation_id=conversation_id,
++    )
+ 
+ 
+-def render_build_context(
+-    context: BuildContext,
+-    *,
+-    max_chars: int = DEFAULT_MAX_CHARS,
+-    include_system_state: bool = True,
+-    include_buildstream: bool = True,
+-    include_corrections: bool = True,
+-    include_recent_insights: bool = True,
+-) -> str:
++def render_build_context(context: BuildContext, *, max_chars: int = DEFAULT_MAX_CHARS) -> str:
+     lines = [
+         "--- CURRENT BUILD CONTEXT (advisory, bounded) ---",
+         f"Source: {context.source}",
+         "Use this only to avoid live amnesia about what James is building. Do not treat it as approval to write, spend, deploy, send outreach, or change doctrine.",
+     ]
+-    if include_corrections and context.corrections:
+-        lines.append("Corrections:")
+-        lines.extend(context.corrections)
+-    if include_recent_insights and context.recent_insights:
+-        lines.append("Recent decisions (all surfaces):")
+-        lines.extend(f"- {item}" for item in context.recent_insights)
+-    if include_recent_insights and context.session_progress:
+-        lines.append("Persisted session progress:")
+-        lines.extend(f"- {item}" for item in context.session_progress)
+-    if include_system_state and context.system_status:
+-        status_lines = list(context.system_status)
+-        if not include_buildstream:
+-            status_lines = [
+-                item
+-                for item in status_lines
+-                if not item.startswith(("Build queue:", "Active build requests:"))
+-            ]
++    if context.system_status:
+         lines.append("Live system status:")
+-        lines.extend(f"- {item}" for item in status_lines)
+-    if include_buildstream and context.focus:
++        lines.extend(f"- {item}" for item in context.system_status)
++    if context.focus:
+         lines.append("Focus:")
+         lines.extend(f"- {item}" for item in context.focus)
+-    if include_buildstream and context.active_loops:
++    if context.active_loops:
+         lines.append("Active loops:")
+         lines.extend(f"- {item}" for item in context.active_loops)
+-    if include_buildstream and context.open_intents:
++    if context.open_intents:
+         lines.append("Open decisions/intents:")
+         lines.extend(f"- {item}" for item in context.open_intents)
+-    if len(lines) == 3:
+-        return ""
++    if context.recent_insights:
++        lines.append("Recent decisions (all surfaces):")
++        lines.extend(f"- {item}" for item in context.recent_insights)
++    if context.corrections:
++        lines.append("Corrections:")
++        lines.extend(context.corrections)
+     rendered = "\n".join(lines)
+     if len(rendered) <= max_chars:
+         return rendered
+@@ -309,26 +117,12 @@
+ async def _with_recent_session_insights(context: BuildContext, *, max_items: int) -> BuildContext:
+     if os.environ.get("SH_SESSION_INSIGHTS_DISABLE", "").strip() == "1":
+         return context
+-    try:
+-        try:
+-            from .db import connect
+-        except ImportError:
+-            try:
+-                from db import connect
+-            except ImportError:
+-                module_path = Path(__file__).with_name("db.py")
+-                spec = importlib.util.spec_from_file_location("build_context_db", module_path)
+-                module = importlib.util.module_from_spec(spec) if spec and spec.loader else None
+-                if module is None or spec is None or spec.loader is None:
+-                    return context
+-                sys.modules["build_context_db"] = module
+-                spec.loader.exec_module(module)
+-                connect = module.connect
+-    except ImportError:
++    db_url = os.environ.get("BRAIN_INDEX_DB_URL", "")
++    if not db_url:
+         return context
+-
+     try:
+-        async with connect() as conn:
++        import psycopg
++        async with await psycopg.AsyncConnection.connect(db_url, autocommit=True) as conn:
+             async with conn.cursor() as cur:
+                 await cur.execute(
+                     """
+@@ -337,7 +131,7 @@
+                      WHERE ts > NOW() - INTERVAL '7 days'
+                        AND (expires_at IS NULL OR expires_at > NOW())
+                        AND insight_type != 'housekeeping'
+-                       AND title NOT LIKE 'Auto-snapshot%'
++                       AND title NOT LIKE 'Auto-snapshot%%'
+                      ORDER BY weight DESC, ts DESC
+                      LIMIT %s
+                     """,
+@@ -346,9 +140,19 @@
+                 rows = await cur.fetchall()
+     except Exception:
+         return context
+-
+-    rendered = [_format_session_insight_row(row) for row in rows]
+-    rendered = [item for item in rendered if item]
++    rendered = []
++    for row in rows:
++        try:
++            insight_type, title, body, specs, weight, surface, _ts = row
++            w = f"w{weight}" if weight else ""
++            src = str(surface or "")
++            label = f"{src}/{insight_type}" if src else str(insight_type or "")
++            snippet = str(body or "")[:120].replace("\n", " ")
++            specs_str = f" · specs={','.join(specs[:2])}" if specs else ""
++            rendered.append(f"{w} {label}: {title} — {snippet}{specs_str}".strip())
++        except Exception:
++            continue
++    rendered = [r for r in rendered if r]
+     if not rendered:
+         return context
+     source = context.source
+@@ -357,39 +161,6 @@
+     return replace(context, source=source, recent_insights=rendered)
+ 
+ 
+-def _format_session_insight_row(row: Any) -> str:
+-    try:
+-        insight_type, title, body, specs, weight, surface, _ts = row
+-    except Exception:
+-        return ""
+-    spec_text = ""
+-    if specs:
+-        if isinstance(specs, (list, tuple)):
+-            spec_text = f" · specs={', '.join(str(item) for item in specs[:4])}"
+-        else:
+-            spec_text = f" · specs={_clean(str(specs))}"
+-    body_text = _clean(str(body or ""))
+-    suffix = f" — {body_text}" if body_text else ""
+-    return f"w{weight} {surface}/{insight_type}: {_clean(str(title or 'insight'))}{spec_text}{suffix}"
+-
+-
+-async def _render_becoming_context(
+-    *,
+-    conversation_id: str | None,
+-    max_chars: int = DEFAULT_MAX_CHARS,
+-) -> str:
+-    if not conversation_id or os.environ.get("SH_BECOMING_CONTEXT_DISABLE", "").strip() == "1":
+-        return ""
+-    try:
+-        try:
+-            from .becoming import render_becoming_context
+-        except ImportError:
+-            from becoming import render_becoming_context
+-        return await render_becoming_context(str(conversation_id), max_chars=min(900, max_chars))
+-    except Exception:
+-        return ""
+-
+-
+ async def _with_recent_corrections(
+     context: BuildContext,
+     *,
+@@ -410,19 +181,6 @@
+     return replace(context, corrections=block.splitlines())
+ 
+ 
+-async def _render_recent_corrections_context(*, conversation_id: str | None) -> str:
+-    try:
+-        from .corrections import recent_corrections, render_corrections_block
+-    except ImportError:
+-        try:
+-            from corrections import recent_corrections, render_corrections_block
+-        except ImportError:
+-            return ""
+-
+-    pairs = await recent_corrections(conversation_id=conversation_id, limit=10)
+-    return render_corrections_block(pairs)
+-
+-
+ def _with_live_system_status(
+     context: BuildContext,
+     *,
+@@ -457,36 +215,6 @@
+     return replace(context, system_status=lines)
+ 
+ 
+-def _with_persisted_session_progress(context: BuildContext, *, repo_root: Path, max_items: int) -> BuildContext:
+-    if os.environ.get("SH_SESSION_PERSISTENCE_DISABLE", "").strip() == "1":
+-        return context
+-    try:
+-        module_path = Path(repo_root) / "tools" / "continuity" / "session_persistence.py"
+-        spec = importlib.util.spec_from_file_location("fpai_session_persistence", module_path)
+-        module = importlib.util.module_from_spec(spec) if spec and spec.loader else None
+-        if module is None or spec is None or spec.loader is None:
+-            return context
+-        sys.modules[spec.name] = module
+-        spec.loader.exec_module(module)
+-        snapshot = module.load_latest()
+-        if snapshot is None:
+-            return context
+-        rendered = module.render_snapshot(snapshot, max_items=max_items, max_chars=900)
+-    except Exception:
+-        return context
+-    rows = [
+-        _clean(line.lstrip("- ").strip())
+-        for line in rendered.splitlines()
+-        if line.strip() and line.strip() != "Persisted session progress:"
+-    ]
+-    if not rows:
+-        return context
+-    source = context.source
+-    if "session_persistence" not in source:
+-        source = f"{source}+session_persistence"
+-    return replace(context, source=source, session_progress=rows[: max_items + 4])
+-
+-
+ async def _load_supabase_context(*, max_items: int) -> BuildContext | None:
+     url = os.environ.get("FPAI_SUPABASE_URL", "").rstrip("/")
+     key = os.environ.get("FPAI_SUPABASE_KEY", "") or os.environ.get("SUPABASE_ANON_KEY", "")
