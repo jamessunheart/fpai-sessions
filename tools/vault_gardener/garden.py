@@ -20,7 +20,7 @@ LINK_RE = re.compile(r"\[\[([^\]|#]+)")
 def md_files():
     out = []
     for root, dirs, files in os.walk(VAULT):
-        dirs[:] = [d for d in dirs if d not in (".obsidian", ".git", "_archive")]
+        dirs[:] = [d for d in dirs if d not in (".obsidian", ".git", "_archive", "_ember_memory")]
         for f in files:
             if f.endswith(".md"):
                 out.append(os.path.join(root, f))
