@@ -301,15 +301,25 @@ def fetch_merged_decisions(conn: Any, *, now: dt.datetime, grace_days: int) -> l
 
 
 def mark_merged_dead(conn: Any, verdict: RealityVerdict) -> bool:
+    """Annotate the LIVENESS axis only — never touch build_status.
+
+    2026-07-02: the original version overwrote build_status='merged_dead'
+    (destroying the merge/git fact that HOT_STATE, the bot, and the
+    merge-conversion metric read) AND auto-queued a repair spec per dead
+    verdict. Because the proof heuristic requires liveness:/feature_outcome
+    ledger events that are almost never emitted, EVERY merged spec verdicts
+    'dead' — so a single run corrupted 113 build_status rows and spam-queued
+    113 repair builds. build_status is the build/merge axis (a git fact);
+    liveness is a separate axis and lives in reality_status only. Repair
+    auto-queue is removed: acting on a 100%-false-positive signal is the
+    output-volume antipattern — surface via reality_status for review instead.
+    """
     decision = verdict.decision
-    repair_id = f"{decision.decision_id}-reality-fix"
     with conn.cursor() as cur:
         cur.execute(
             """
             UPDATE brain_index.decisions
-               SET build_status = 'merged_dead',
-                   needs_build = false,
-                   reality_checked_at = NOW(),
+               SET reality_checked_at = NOW(),
                    reality_status = 'merged_dead',
                    reality_detail = %s
              WHERE id::text = %s
@@ -317,26 +327,7 @@ def mark_merged_dead(conn: Any, verdict: RealityVerdict) -> bool:
             """,
             (verdict.reason, decision.decision_id),
         )
-        changed = getattr(cur, "rowcount", 0) == 1
-        if not changed:
-            return False
-        cur.execute(
-            """
-            INSERT INTO brain_index.decisions
-                (id, question, status, answer, needs_build, build_spec, proof_expected, spec_written, build_status)
-            VALUES
-                (%s, %s, 'answered', %s, true, %s, %s, false, 'queued')
-            ON CONFLICT (id) DO NOTHING
-            """,
-            (
-                repair_id,
-                f"Repair merged-dead build {decision.decision_id}",
-                f"auto-queued by d140 post-merge reality check at {utc_now_text()}",
-                build_repair_spec(verdict),
-                f"{decision.spec_id} has liveness:pass and feature_outcome verdict=improved after repair.",
-            ),
-        )
-    return True
+        return getattr(cur, "rowcount", 0) == 1
 
 
 def notify_telegram(repo_root: Path, marked: Iterable[str]) -> bool:
@@ -369,8 +360,26 @@ def run_check(
         for decision in decisions:
             verdict = evaluate_decision(decision, ledger_rows, now=current, grace_days=grace_days)
             verdicts.append(verdict)
-            if verdict.dead and not dry_run and mark_merged_dead(conn, verdict):
-                marked.append(decision.decision_id)
+        # Circuit breaker: if nearly everything past grace verdicts 'dead', the
+        # PROOF CHANNEL is unwired (specs don't emit liveness:/feature_outcome
+        # events yet), not the system. A miscalibrated checker must not annotate
+        # or alert — that's how one run flooded 126 rows on 2026-07-02.
+        eligible = [v for v in verdicts if v.status in ("real", "merged_dead")]
+        dead = [v for v in eligible if v.dead]
+        dead_rate = (len(dead) / len(eligible)) if eligible else 0.0
+        if dead_rate >= float(os.environ.get("POST_MERGE_REALITY_MAX_DEAD_RATE", "0.5")):
+            append_ops_ledger(ops_ledger, verdicts, [])
+            return {
+                "checked": len(verdicts),
+                "marked": [],
+                "notified": False,
+                "circuit_breaker": f"dead_rate={dead_rate:.2f} >= threshold — proof channel likely unwired; skipped marking/alert",
+                "verdicts": [],
+            }
+        if not dry_run:
+            for verdict in dead:
+                if mark_merged_dead(conn, verdict):
+                    marked.append(verdict.decision.decision_id)
     append_ops_ledger(ops_ledger, verdicts, marked)
     notified = notify_telegram(repo_root, marked) if notify and marked and not dry_run else False
     return {

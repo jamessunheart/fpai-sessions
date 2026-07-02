@@ -104,7 +104,10 @@ class PostMergeRealityCheckTest(unittest.TestCase):
         self.assertEqual(verdict.status, "pending")
         self.assertIn("grace", verdict.reason)
 
-    def test_mark_merged_dead_updates_source_and_queues_one_repair_spec(self) -> None:
+    def test_mark_merged_dead_annotates_reality_status_only(self) -> None:
+        # 2026-07-02: mark_merged_dead must ONLY write the reality_status
+        # (liveness) annotation — never touch build_status, and never
+        # auto-queue a repair spec. See mark_merged_dead docstring.
         decision = self.decision()
         verdict = check.RealityVerdict(
             decision=decision,
@@ -119,9 +122,15 @@ class PostMergeRealityCheckTest(unittest.TestCase):
 
         self.assertTrue(changed)
         self.assertEqual(conn.updated[0][1], "d131")
-        self.assertEqual(conn.inserted[0][0], "d131-reality-fix")
-        self.assertIn("Repair merged-dead build d131", conn.inserted[0][1])
-        self.assertIn("liveness:pass", conn.inserted[0][4])
+        # No repair spec queued (was the 100%-FP spam bomb).
+        self.assertEqual(conn.inserted, [])
+        # build_status must NOT be WRITTEN (build/merge axis untouched). It may
+        # appear in the WHERE read-guard, but never in the SET clause.
+        update_sql = conn.executed[0][0]
+        set_clause = update_sql.split(" where ", 1)[0]
+        self.assertNotIn("build_status", set_clause)
+        self.assertNotIn("needs_build", set_clause)
+        self.assertIn("reality_status", set_clause)
 
     def test_ops_ledger_summary_records_marked_rows(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
