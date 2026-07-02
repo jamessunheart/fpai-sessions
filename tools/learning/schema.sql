@@ -11,6 +11,15 @@ CREATE TABLE IF NOT EXISTS brain_index.learning_signals (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS brain_index.review_signals (
+    id SERIAL PRIMARY KEY,
+    spec_id TEXT NOT NULL,
+    verdict TEXT NOT NULL,
+    reasons TEXT NOT NULL,
+    code_ref TEXT NOT NULL UNIQUE,
+    captured_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 CREATE TABLE IF NOT EXISTS brain_index.model_directives (
     id SERIAL PRIMARY KEY,
     issued_at TIMESTAMPTZ DEFAULT NOW(),

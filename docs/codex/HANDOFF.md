@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-07-02 · SPEC_d141_d141-harvest-build-review-verdic · branch `build/SPEC_d141_d141-harvest-build-review-verdic`
+
+- **Status:** done in working tree / awaiting independent review + merge
+- **Files changed:** `tools/learn/sync_corrections_to_dataset.py`; `tools/learn/test_sync_corrections_to_dataset.py`; `tools/learning/schema.sql`; `core/BUILD/specs/SPEC_d141_d141-harvest-build-review-verdic.md`; `core/BUILD/results/SPEC_d141_d141-harvest-build-review-verdic.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Extended the correction sync bridge so repo-local `core/BUILD/reviews/*.md` become learning data. The parser extracts `spec_id`, normalized `verdict`, bounded `reasons`, and stable digest-backed `code_ref`; live sync creates/appends to `brain_index.review_signals` with `ON CONFLICT (code_ref) DO NOTHING`; the same signals append review-derived preference pairs alongside existing correction pairs. Positive labels come from approve/pass/council-ready reviews; negative labels come from request-changes/blocked/reversal-shaped reviews. Review files remain read-only.
+- **Tests:** `python3 -B -m unittest tools.learn.test_sync_corrections_to_dataset tools.learn.test_capture_corrections tools.learn.test_learn` (11 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/learn/sync_corrections_to_dataset.py tools/learn/test_sync_corrections_to_dataset.py`; `python3 -B tools/learn/sync_corrections_to_dataset.py --dry-run --skip-corrections` (`review_signals_read=112`, `review_pairs_added=112`); `/tmp` append smoke wrote 112 review-derived rows; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d141-registry.json`; `git diff --check`
+- **Risks:** Live DB insertion was not exercised because psycopg is unavailable in this sandbox. The markdown parser is deterministic and may skip unusual future review formats until patterns are expanded. Review-derived pairs are preference evidence, not merge authority.
+- **Rollback:** revert the listed files. Runtime mitigation without code rollback is `tools/learn/sync_corrections_to_dataset.py --skip-reviews`.
+- **Intent solved:** build-review verdicts, council verdicts, blocked protected-layer reviews, and reversal-shaped review evidence now become structured learning signals instead of inert markdown.
+- **Downstream intent unlocked:** the L2 preference ladder can use 100+ review-labeled examples instead of starving on the small live correction count.
+- **Questions for Ember/James:** after merge on server 162, run the sync under the bot venv with live `BRAIN_INDEX_DB_URL` and confirm `brain_index.review_signals` contains 100+ rows before any L2 training/export uses the new source.
+
 ### 2026-07-02 · SPEC_d140_d140-post-merge-reality-check-n · branch `build/SPEC_d140_d140-post-merge-reality-check-n`
 
 - **Status:** done in working tree / awaiting independent review + merge

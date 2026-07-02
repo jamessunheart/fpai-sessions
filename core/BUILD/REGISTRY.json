@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
         {
+            "id": "SPEC_d141_d141-harvest-build-review-verdic",
+            "slug": "SPEC_d141_d141-harvest-build-review-verdic",
+            "branch": "build/SPEC_d141_d141-harvest-build-review-verdic",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d141_d141-harvest-build-review-verdic.md",
+            "tests_passed": true,
+            "notes": "d141 complete in working tree: extended tools/learn/sync_corrections_to_dataset.py to harvest repo-local core/BUILD/reviews/*.md into ReviewSignal rows, append-only insert them into brain_index.review_signals when a DSN/psycopg is available, and append review-derived preference pairs alongside existing correction pairs. Added brain_index.review_signals schema and focused parser/sync tests. Dry-run against the real review corpus found 112 labeled review signals; /tmp append smoke wrote 112 review-derived dataset rows. Focused unittest, py_compile, registry JSON validation, and diff hygiene passed. No live DB write in sandbox because psycopg is unavailable; no review files were modified; no push, merge, deploy, secrets, outreach, service control, or money movement."
+        },
+        {
             "id": "SPEC_d140_d140-post-merge-reality-check-n",
             "slug": "SPEC_d140_d140-post-merge-reality-check-n",
             "branch": "build/SPEC_d140_d140-post-merge-reality-check-n",
