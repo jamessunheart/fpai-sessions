@@ -16,12 +16,7 @@ from tools.queue import build
 
 DEFAULT_VAULT = (
     Path.home()
-    / "Library"
-    / "Mobile Documents"
-    / "iCloud~md~obsidian"
-    / "Documents"
-    / "FPOS"
-    / "Full Potential OS"
+    / "Documents" / "FPOS" / "Full Potential OS"
 )
 DEFAULT_DECISIONS = DEFAULT_VAULT / "00_MEMORY" / "DECISIONS.md"
 

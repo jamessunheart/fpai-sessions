@@ -30,12 +30,7 @@ DEFAULT_VAULT = Path(
     os.environ.get(
         "FPAI_VAULT",
         HOME
-        / "Library"
-        / "Mobile Documents"
-        / "iCloud~md~obsidian"
-        / "Documents"
-        / "FPOS"
-        / "Full Potential OS",
+        / "Documents" / "FPOS" / "Full Potential OS",
     )
 )
 

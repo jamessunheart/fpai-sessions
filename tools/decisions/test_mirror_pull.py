@@ -53,7 +53,7 @@ class MirrorPullVaultPathTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             local = root / "Documents" / "FPOS" / "Full Potential OS"
-            icloud = root / "Library" / "Mobile Documents" / "iCloud~md~obsidian" / "Documents" / "Full Potential OS"
+            icloud = root / "Documents" / "FPOS" / "Full Potential OS"
             local.mkdir(parents=True)
             icloud.mkdir(parents=True)
 

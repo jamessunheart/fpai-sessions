@@ -20,7 +20,7 @@ from pathlib import Path
 from typing import Any
 
 HOME = Path.home()
-DEFAULT_VAULT = HOME / "Library/Mobile Documents/iCloud~md~obsidian/Documents/FPOS/Full Potential OS"
+DEFAULT_VAULT = HOME / "Documents/FPOS/Full Potential OS"
 DEFAULT_CONFIG = HOME / ".config" / "fpai" / "scout"
 DEFAULT_PROMPT = DEFAULT_CONFIG / "prompt.md"
 DEFAULT_CURSOR = DEFAULT_CONFIG / "last_run.txt"

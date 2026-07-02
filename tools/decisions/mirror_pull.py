@@ -37,7 +37,7 @@ VENV_PY = "/opt/sh-brain-src/.venv/bin/python"
 # it existed, but unattended macOS processes can see that path and still hit TCC
 # PermissionError on mkdir/write. Keep iCloud as a fallback for machines where it
 # is the only vault, but never let an inaccessible iCloud path kill fpull.
-_VAULT_ICLOUD = HOME / "Library" / "Mobile Documents" / "iCloud~md~obsidian" / "Documents" / "Full Potential OS"
+_VAULT_ICLOUD = HOME / "Documents" / "FPOS" / "Full Potential OS"
 _VAULT_DOCS   = HOME / "Documents" / "FPOS" / "Full Potential OS"
 _EXPLICIT_VAULT = os.environ.get("FPAI_VAULT")
 

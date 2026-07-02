@@ -30,12 +30,7 @@ DEFAULT_VAULT_PROOF = Path(
     os.environ.get(
         "FPAI_VAULT",
         Path.home()
-        / "Library"
-        / "Mobile Documents"
-        / "iCloud~md~obsidian"
-        / "Documents"
-        / "FPOS"
-        / "Full Potential OS",
+        / "Documents" / "FPOS" / "Full Potential OS",
     )
 ) / "00_MEMORY" / "PROOF LOG.md"
 

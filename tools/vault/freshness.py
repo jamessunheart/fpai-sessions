@@ -20,7 +20,7 @@ from pathlib import Path
 
 VAULT = Path(os.environ.get(
     "FPAI_VAULT",
-    Path.home() / "Library/Mobile Documents/iCloud~md~obsidian/Documents/FPOS/Full Potential OS",
+    Path.home() / "Documents/FPOS/Full Potential OS",
 ))
 REPORT_REL = Path("00_MEMORY/FRESHNESS CHECK.md")
 

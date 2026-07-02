@@ -22,8 +22,7 @@ HOME = Path.home()
 VAULT = Path(
     os.environ.get(
         "FPAI_VAULT",
-        HOME / "Library" / "Mobile Documents" / "iCloud~md~obsidian"
-        / "Documents" / "FPOS" / "Full Potential OS",
+        HOME / "Documents" / "FPOS" / "Full Potential OS",
     )
 )
 LOG = VAULT / "00_MEMORY" / "REFLECTIONS LOG.md"
