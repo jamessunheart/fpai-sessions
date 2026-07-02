@@ -1,8 +1,8 @@
 # CURRENT_STATE — Living SSOT
 
-**Last Updated:** 2026-06-18 (frontier node clarity — contribution loop + natural monetization)
-**Updated By:** Ember (FPAI_Cockpit · session current)
-**System Status:** 🟢 OPERATIONAL — 100 specs shipped · laptop-free build loop live · frontier scan active · FPOS becoming a node on the AI frontier (not just a consumer of it).
+**Last Updated:** 2026-07-02 (governance landed live — Constitution on feat/headless-build · auto-merge on · fleet re-surveyed)
+**Updated By:** Ember (FPAI_Cockpit · session 23537d81)
+**System Status:** 🟢 OPERATIONAL — 137+ specs shipped · build loop drains + AUTO-MERGES (d137) · Constitutional Learning Engine live (8 laws, CONSTITUTION.md on the governed branch, identity layer in PROTECTED_PATHS) · awareness ~41% and climbing · OUTREACH_LIVE=1.
 
 > **🎯 North Star:** Dual sovereignty — technical (own compute, own models, own stack) + economic (own currency, own value circulation, minimal extraction). The system finds people, serves their full potential, builds a self-sustaining economy around that service, and improves itself from every interaction.
 >
