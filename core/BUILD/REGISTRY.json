@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-02T00:00:00Z",
+    "updated_at": "2026-07-02T18:35:38Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+        {
+            "id": "SPEC_36a73161-fb6c-42c8-98b7-f5d479dfa08e-reality-fix_repair-merged-dead-build-36a7316",
+            "slug": "SPEC_36a73161-fb6c-42c8-98b7-f5d479dfa08e-reality-fix_repair-merged-dead-build-36a7316",
+            "branch": "build/SPEC_36a73161-fb6c-42c8-98b7-f5d479dfa08e-reality-fix_repair-merged-dead-build-36a7316",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_36a73161-fb6c-42c8-98b7-f5d479dfa08e-reality-fix_repair-merged-dead-build-36a7316.md",
+            "tests_passed": true,
+            "notes": "Repair complete in working tree: added tools/build_loop/session_persistence_reality_repair.py plus an activation script that runs a real session persistence save/show smoke against a temporary state dir, verifies the shipped build_context integration file exists, then appends canonical ops-ledger proof rows for the original SPEC_36a73161-fb6c-42c8-98b7-f5d479dfa08e_session-persistence: liveness:pass and feature_outcome verdict=improved. Focused reality-check/unit tests, py_compile, activation shell syntax, registry JSON validation, /tmp ledger smoke, and diff hygiene passed. No live ops-ledger append in sandbox, deploy, push, merge, outreach, secrets, service stop/delete, or money movement."
+        },
         {
             "id": "SPEC_d141_d141-harvest-build-review-verdic",
             "slug": "SPEC_d141_d141-harvest-build-review-verdic",
