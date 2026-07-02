@@ -136,7 +136,7 @@ def top_ready_intent(repo: Path, vault: Path) -> route.Intent | None:
 
 
 def check_home_buildstream(repo: Path, vault: Path) -> Check:
-    home = vault / "HOME.md"
+    home = vault / "00_SYSTEM/HOME.md"
     home_next = parse_home_next(read(home))
     try:
         top = top_ready_intent(repo, vault)

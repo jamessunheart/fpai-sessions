@@ -29,7 +29,7 @@ VAULT = Path(os.environ.get(
 ))
 LOC = Path(os.environ.get("FPAI_LOCATION_FILE", Path.home() / ".config" / "fpai" / "location.json"))
 PROOF = VAULT / "02_CONTEXT/Memory" / "PROOF LOG.md"
-HOME = VAULT / "HOME.md"
+HOME = VAULT / "00_SYSTEM/HOME.md"
 PLATE = VAULT / "THE PLATE.md"
 SURF = VAULT / "02_CONTEXT/Memory" / "SURFACED CONCEPTS.md"
 DECIDE = VAULT / "02_CONTEXT/Memory" / "DECISIONS.md"

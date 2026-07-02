@@ -40,7 +40,7 @@ THRESHOLDS = {"auto": 1, "memory": 7, "other": 21}
 
 # who owns the regeneration of each auto surface (vault-relative name → machinery)
 MACHINERY = {
-    "HOME.md": "tools/decisions/daily_sync.py (autoloop · 2h)",
+    "00_SYSTEM/HOME.md": "tools/decisions/daily_sync.py (autoloop · 2h)",
     "02_CONTEXT/Memory/NEXT MOVE DETAIL.md": "tools/decisions/daily_sync.py (autoloop · 2h)",
     "02_CONTEXT/Memory/INDEX OF INDEXES.md": "tools/index/refresh.py (via daily_sync since 2026-06-10)",
     "02_CONTEXT/Memory/DECISIONS.md": "tools/queue/build.py via daily_sync",

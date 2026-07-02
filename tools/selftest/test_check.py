@@ -44,7 +44,7 @@ class SelftestCheckTestCase(unittest.TestCase):
 
     def test_home_buildstream_agreement(self) -> None:
         repo, vault = self.make_roots()
-        (vault / "HOME.md").write_text(
+        (vault / "00_SYSTEM/HOME.md").write_text(
             "# HOME\n\n## ▶️ NEXT MOVE\n\n**Go autonomous — run the self-standing one-day test?**\n",
             encoding="utf-8",
         )
