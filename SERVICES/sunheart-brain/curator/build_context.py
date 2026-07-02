@@ -336,6 +336,8 @@ async def _with_recent_session_insights(context: BuildContext, *, max_items: int
                       FROM brain_index.session_insights
                      WHERE ts > NOW() - INTERVAL '7 days'
                        AND (expires_at IS NULL OR expires_at > NOW())
+                       AND insight_type != 'housekeeping'
+                       AND title NOT LIKE 'Auto-snapshot%'
                      ORDER BY weight DESC, ts DESC
                      LIMIT %s
                     """,

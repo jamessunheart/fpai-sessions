@@ -77,20 +77,26 @@ def _queue_state(repo_root: Path) -> list[str]:
 
 
 def _last_merge_state(repo_root: Path) -> list[str]:
-    registry = _read_registry(repo_root)
-    for row in _registry_rows(registry):
-        if row.get("status") == "merged":
-            ident = str(row.get("slug") or row.get("id") or "unknown")
-            branch = str(row.get("branch") or "unknown-branch")
-            return [f"Last merge outcome: merged · {ident} · {branch}"]
+    # Read from git log — authoritative, always current
+    import subprocess
+    try:
+        result = subprocess.run(
+            ["git", "-C", str(repo_root), "log", "--oneline", "-3", "--merges"],
+            capture_output=True, text=True, timeout=5,
+        )
+        if result.returncode == 0 and result.stdout.strip():
+            lines = result.stdout.strip().splitlines()
+            return [f"Last merge: {line.strip()}" for line in lines[:2]]
+    except Exception:
+        pass
 
     review = _newest_file(repo_root / "core" / "BUILD" / "reviews", "*.md")
-    result = _newest_file(repo_root / "core" / "BUILD" / "results", "*.md")
+    result_file = _newest_file(repo_root / "core" / "BUILD" / "results", "*.md")
     if review:
         verdict = _extract_review_verdict(review)
         return [f"Last merge outcome: review={verdict} · {review.name}"]
-    if result:
-        return [f"Last merge outcome: build result awaiting review · {result.name}"]
+    if result_file:
+        return [f"Last merge outcome: build result awaiting review · {result_file.name}"]
     return ["Last merge outcome: none found in repo mirrors"]
 
 
