@@ -94,19 +94,33 @@ def _save_stamp() -> None:
     STAMP_FILE.write_text(str(datetime.now(timezone.utc).timestamp()))
 
 
+# Memory-note directories to scan, in preference order. James reorganized the
+# vault 2026-07-02 (00_MEMORY -> 02_CONTEXT/Memory); scan the new home first and
+# keep the old one as a fallback so ingest survives the reorg. Override with
+# FPAI_VAULT_NOTE_DIRS (comma-separated, vault-relative).
+_DEFAULT_NOTE_DIRS = ("02_CONTEXT/Memory", "00_MEMORY")
+
+
+def _note_dirs() -> tuple[str, ...]:
+    raw = os.environ.get("FPAI_VAULT_NOTE_DIRS", "").strip()
+    if raw:
+        return tuple(d.strip() for d in raw.split(",") if d.strip())
+    return _DEFAULT_NOTE_DIRS
+
+
 def _human_notes(vault: Path, since_ts: float) -> list[Path]:
-    """Return 00_MEMORY/*.md files modified after since_ts, excluding auto-generated."""
-    mem_dir = vault / "00_MEMORY"
-    if not mem_dir.exists():
-        return []
+    """Return human-authored *.md notes modified after since_ts across the memory
+    dirs, excluding auto-generated mirror files. Reorg-safe (see _note_dirs)."""
     results = []
-    for p in mem_dir.glob("*.md"):
-        if p.name in AUTO_GENERATED:
+    for rel in _note_dirs():
+        mem_dir = vault / rel
+        if not mem_dir.exists():
             continue
-        if p.name.startswith("_"):
-            continue
-        if p.stat().st_mtime > since_ts:
-            results.append(p)
+        for p in mem_dir.glob("*.md"):
+            if p.name in AUTO_GENERATED or p.name.startswith("_"):
+                continue
+            if p.stat().st_mtime > since_ts:
+                results.append(p)
     return sorted(results, key=lambda p: p.stat().st_mtime)
 
 
