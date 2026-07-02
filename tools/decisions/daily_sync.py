@@ -429,10 +429,19 @@ def james_next_move(now):
         tell = "Codex."
         send_detail = f"Use `{spec}` and `docs/codex/HANDOFF.md`."
     else:
-        yes = "yes — proceed with the next routed build"
-        downstream = "AI carries the routed downstream work."
-        tell = "Claude Code / Ember."
-        send_detail = "Use [[NEXT MOVE DETAIL]] for context."
+        # Board clear, nothing queued. CONSTITUTION Law 6: escalate only decisions that
+        # genuinely need human direction — do NOT fabricate a "feed the build loop" ask.
+        return {
+            "title": "Nothing needs you right now — the board is clear.",
+            "look": "this section",
+            "tell": "no one — this is a presence beat.",
+            "send_detail": "Board is clear. Set direction when you're ready (money · people · public voice · the real work). The system self-navigates within your bounds.",
+            "yes": "here's what I want to point at: ...",
+            "reason": "Per the Constitution: James sets direction; the system routes/builds within it. No routed build is pending, so there is nothing to bless.",
+            "downstream": "AI holds context and keeps the engine running. Nothing is waiting on you.",
+            "say": ["here's the real work: ...", "checkpoint", "settle"],
+            "late": late,
+        }
     title = "Your move: give one upstream signal"
     if late:
         title = "Your move: one upstream signal, then close clean"
