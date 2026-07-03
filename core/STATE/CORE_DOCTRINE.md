@@ -53,6 +53,13 @@ cost at the cost of value — all forbidden.)
 - Everything else reversible + within-cap + aligned → **substrate/council acts, not James.**
   Enforced live by `.claude/hooks/check-substrate-default.sh` (P9).
 
+## Available protocols (named orchestrations — and invent your own)
+The system has named ways of working — autonomous loops (Council Fire, RCA Reflex,
+Self-Audit), enforcement gates (Substrate-Default, Metric Coherence, Constitution
+Check), and multi-agent swarms (Academy Distill, Self-Improvement Swarm). Full catalog +
+**how to coin and name your own protocol** that enhances the system's intent:
+`core/STATE/ACADEMY/PROTOCOLS.md`. Coin boldly, name well, register always.
+
 ## Full sources (read when a decision needs depth)
 - `core/STATE/CONSTITUTION.md` · `core/STATE/ALLOCATION_INTELLIGENCE.md` (keystone)
 - `core/STATE/FOUNDATION.md` (Three Rs) · `core/STATE/AI_PRINCIPLES.md`
