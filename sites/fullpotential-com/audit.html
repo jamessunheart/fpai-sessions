@@ -34,6 +34,8 @@
     .ok{display:none;background:#EAF4EC;border:1px solid var(--green);color:var(--green);border-radius:12px;padding:16px;margin-top:14px;font-weight:600}
     .fine{color:var(--muted);font-size:.82rem;text-align:center;padding-bottom:44px;max-width:44em;margin:0 auto}
   </style>
+<!-- Meta Pixel -->
+<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','110851475615838');fbq('track','PageView');</script>
 </head>
 <body>
 <div class="wrap">
@@ -109,6 +111,7 @@ document.getElementById('auditForm').addEventListener('submit', async function(e
     bottleneck: '[' + (document.getElementById('a-company').value.trim()||'no company given') + '] ' + document.getElementById('a-goal').value.trim()
   };
   try{ await fetch('/api/champion/lead/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); }catch(err){}
+  try{fbq('track','Lead');}catch(e){}
   document.getElementById('okMsg').style.display='block';
   e.target.querySelector('button').disabled = true;
 });
