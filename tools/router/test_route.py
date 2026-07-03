@@ -14,11 +14,11 @@ class RouterTestCase(unittest.TestCase):
         repo = root / "repo"
         vault = root / "vault"
         (repo / "docs" / "codex" / "specs").mkdir(parents=True)
-        (vault / "00_MEMORY").mkdir(parents=True)
+        (vault / "02_CONTEXT/Memory").mkdir(parents=True)
         return repo, vault
 
     def write_intents(self, vault: Path, body: str) -> None:
-        (vault / "00_MEMORY" / "INTENT BUILDSTREAM.md").write_text(
+        (vault / "02_CONTEXT/Memory" / "INTENT BUILDSTREAM.md").write_text(
             f"# Intent Buildstream\n{route.INTENTS_START}\n{body}\n{route.INTENTS_END}\n",
             encoding="utf-8",
         )

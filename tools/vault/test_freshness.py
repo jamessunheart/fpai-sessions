@@ -33,14 +33,14 @@ class FreshnessAuditTestCase(unittest.TestCase):
 
     def test_claimed_date_beats_mtime_for_hand_files(self) -> None:
         # fresh file, old claimed content — the original 05-30 catch
-        _touch(self.vault / "00_MEMORY" / "STATE.md", "Snapshot: 2026-05-01 · streams", 0, self.now)
+        _touch(self.vault / "02_CONTEXT/Memory" / "STATE.md", "Snapshot: 2026-05-01 · streams", 0, self.now)
         result = freshness.audit(self.vault, self.now)
         (finding,) = result["findings"]["memory"]
         self.assertEqual(finding["claim_age"], 40)
         self.assertEqual(finding["age"], 40)
 
     def test_dated_by_design_skipped(self) -> None:
-        _touch(self.vault / "07_DAILY" / "old.md", "x", 90, self.now)
+        _touch(self.vault / "01_CAPTURE/Daily" / "old.md", "x", 90, self.now)
         _touch(self.vault / "2026-05-31.md", "x", 90, self.now)
         result = freshness.audit(self.vault, self.now)
         self.assertEqual(result["scanned"], 0)
@@ -49,7 +49,7 @@ class FreshnessAuditTestCase(unittest.TestCase):
     def test_doctrine_mentioning_auto_is_not_auto(self) -> None:
         # "self-refreshing" discussed deep in a doc ≠ a claim about THIS file
         body = "\n" * 20 + "Rung 2: Self-refreshing surfaces regenerate after each ship."
-        _touch(self.vault / "00_MEMORY" / "PROTOCOLS.md", "# Doctrine" + body, 3, self.now)
+        _touch(self.vault / "02_CONTEXT/Memory" / "PROTOCOLS.md", "# Doctrine" + body, 3, self.now)
         result = freshness.audit(self.vault, self.now)
         self.assertEqual(result["findings"]["auto"], [])
 
@@ -71,7 +71,7 @@ class FreshnessAuditTestCase(unittest.TestCase):
         self.assertEqual(result["findings"]["auto"], [])
 
     def test_heal_runs_only_allowlisted_scripts(self) -> None:
-        _touch(self.vault / "00_MEMORY" / "INDEX OF INDEXES.md", "*(auto-generated)*", 5, self.now)
+        _touch(self.vault / "02_CONTEXT/Memory" / "INDEX OF INDEXES.md", "*(auto-generated)*", 5, self.now)
         _touch(self.vault / "ROGUE.md", "*(auto-generated)*", 5, self.now)
         ran = []
         result = freshness.write_report(self.vault, self.now, self_heal=True,
@@ -82,14 +82,14 @@ class FreshnessAuditTestCase(unittest.TestCase):
         self.assertIn("Self-heal ran this pass", report)
 
     def test_world_scout_notes_have_declared_machinery(self) -> None:
-        self.assertIn("tools/scout/scout_run.py", freshness.MACHINERY["00_MEMORY/NEWS FOR YOU.md"])
-        self.assertIn("tools/scout/scout_run.py", freshness.MACHINERY["00_MEMORY/AI GROWTH FEED.md"])
+        self.assertIn("tools/scout/scout_run.py", freshness.MACHINERY["02_CONTEXT/Memory/NEWS FOR YOU.md"])
+        self.assertIn("tools/scout/scout_run.py", freshness.MACHINERY["02_CONTEXT/Memory/AI GROWTH FEED.md"])
 
     def test_report_written_and_excludes_itself(self) -> None:
-        _touch(self.vault / "00_MEMORY" / "OLD.md", "old note", 30, self.now)
+        _touch(self.vault / "02_CONTEXT/Memory" / "OLD.md", "old note", 30, self.now)
         result = freshness.write_report(self.vault, self.now)
         report = (self.vault / freshness.REPORT_REL).read_text(encoding="utf-8")
-        self.assertIn("`00_MEMORY/OLD.md` — **30d**", report)
+        self.assertIn("`02_CONTEXT/Memory/OLD.md` — **30d**", report)
         self.assertEqual(result["scanned"], 1)
         # second run: the report file itself is not audited
         result2 = freshness.audit(self.vault, self.now)

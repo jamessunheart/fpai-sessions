@@ -10,7 +10,7 @@ assembles them under one readable map.
   FPAI_Cockpit/core/STATE/NOW.md        (founder top-3 goals + project ranking)
         │  extract SAFE sections only · redact (reuse now_mirror guard + key/balance net)
         ▼
-  vault  00_MEMORY/GOALS MIRROR.md
+  vault  02_CONTEXT/Memory/GOALS MIRROR.md
 
 SAFETY:
   - Deliberately SKIPS AI_GOALS.md's "AI-TO-AI HANDOFF NOTES" block — that's where
@@ -37,7 +37,7 @@ AI_GOALS = HOME / "FPAI_Cockpit" / "core" / "STATE" / "AI_GOALS.md"
 NOW = HOME / "FPAI_Cockpit" / "core" / "STATE" / "NOW.md"
 
 VAULT = HOME / "Documents" / "FPOS" / "Full Potential OS"
-OUT = VAULT / "00_MEMORY" / "GOALS MIRROR.md"
+OUT = VAULT / "02_CONTEXT/Memory" / "GOALS MIRROR.md"
 
 # Defense-in-depth: catch credential/balance shapes the base guard doesn't.
 KEY_RE = re.compile(r"\bfps_[A-Za-z0-9]+|\b[0-9a-f]{8,}\.\.\.|\b[0-9a-f]{24,}\b")

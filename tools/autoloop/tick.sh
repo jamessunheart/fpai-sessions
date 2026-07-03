@@ -10,7 +10,7 @@ set -u
 CFG="$HOME/.config/fpai/autoloop"; mkdir -p "$CFG"
 LOG="$CFG/runs.log"
 REPO="$HOME/FPAI_Cockpit"
-export FPAI_VAULT="$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/FPOS/Full Potential OS"
+export FPAI_VAULT="$HOME/Documents/FPOS/Full Potential OS"
 PY="$(command -v python3 || echo /usr/bin/python3)"
 
 [ -f "$CFG/.disabled" ] && { echo "$(date) disabled" >>"$LOG"; exit 0; }

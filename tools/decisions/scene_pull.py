@@ -8,7 +8,7 @@ so James can SEE what the AI captured. One direction: server → vault.
   brain server  /opt/sh-brain-src/scenes.jsonl   (written by curator tgbot /scene)
         │  ssh read
         ▼
-  vault  00_MEMORY/SCENES.md                      (readable in Obsidian)
+  vault  02_CONTEXT/Memory/SCENES.md                      (readable in Obsidian)
 
 Idempotent: tracks the last-pulled timestamp; only new scenes are appended.
 
@@ -29,7 +29,7 @@ REMOTE_FILE = "/opt/sh-brain-src/scenes.jsonl"
 STATE_FILE = HOME / ".config" / "fpai" / "tg_inbox" / "scene_pull_last_ts.txt"
 
 VAULT = HOME / "Documents" / "FPOS" / "Full Potential OS"
-SCENES_FILE = VAULT / "00_MEMORY" / "SCENES.md"
+SCENES_FILE = VAULT / "02_CONTEXT/Memory" / "SCENES.md"
 
 HEADER = (
     "# SCENES\n\n"

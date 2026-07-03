@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trust Center — Fi-art</title>
+<link rel="stylesheet" href="css/fiart.css">
+<style>
+  .metric{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 22px;box-shadow:var(--shadow)}
+  .metric .v{font-family:var(--serif);font-size:2.1rem;font-weight:700;line-height:1}
+  .metric .l{font-size:.82rem;color:var(--ink-soft);margin-top:4px}
+  .bar{height:8px;border-radius:999px;background:var(--paper-2);overflow:hidden;margin:10px 0 6px}
+  .bar > i{display:block;height:100%;border-radius:999px}
+  .band{display:inline-block;font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;
+    padding:3px 9px;border-radius:999px;font-weight:700}
+  .band.ok{background:var(--ok-bg);color:var(--ok)} .band.warn{background:var(--warn-bg);color:var(--warn)}
+  .band.crisis{background:var(--danger-bg);color:var(--danger)}
+</style>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="index.html"><span class="mark"></span>Fi-art</a>
+  <nav>
+    <a href="marketplace.html">Explore</a>
+    <a href="create.html">Create</a>
+    <a href="provider.html">Providers</a>
+    <a href="learn.html">Learn</a>
+    <a href="trust.html" class="active">Trust</a>
+    <a class="cta" href="create.html">Create Fi-art</a>
+  </nav>
+</div></header>
+
+<section style="padding-top:30px"><div class="wrap">
+  <div class="kicker">The glass floor under the marketplace</div>
+  <h1 style="margin-bottom:.1em">Trust Center</h1>
+  <p class="muted narrow">Every redeemable promise is measured in the open. These are the same guardrails that keep a credit economy honest instead of pyramid-shaped: is there enough backing, can providers actually perform, and is value backed by real sales rather than hype.</p>
+
+  <div class="notice">⚠ Phase-1 preview — figures below are illustrative. They go live once the credits gateway and provider redemptions feed real data. The <i>structure</i> is what matters: nothing redeemable ships without these gauges.</div>
+
+  <div class="grid g4" style="margin-top:18px" id="metrics"></div>
+
+  <h2>The four guardrails</h2>
+  <div class="grid g2">
+    <div class="card"><h3>Backing Coverage (BCI)</h3><p class="muted">Reserve value ÷ redeemable notes outstanding. Above 120% is normal; below 80% freezes new reserve-backed issuance. Answers: <b>is the money really there?</b></p></div>
+    <div class="card"><h3>Real-Sales Backing (CRBR)</h3><p class="muted">Share of credits backed by actual art/capacity sales vs promotional issuance. Must stay above 50%. Answers: <b>is this value, or hype?</b></p></div>
+    <div class="card"><h3>Capacity Fulfillment (PCR)</h3><p class="muted">Monthly redemption capacity ÷ notes issued. Below 0.7 caps new capacity minting. Answers: <b>can providers actually perform?</b></p></div>
+    <div class="card"><h3>System Health (Trust Index)</h3><p class="muted">Composite of reserve solvency, participation, and fulfillment. Sets how generous the system can safely be — generous, balanced, conservative, or frozen.</p></div>
+  </div>
+
+  <h2>Reserve discipline</h2>
+  <p class="muted narrow">Reserve-backed Fi-art follows a fixed split: <b>70% deep reserve</b> (never sold) · <b>25% yield-producing</b> · <b>5% operational buffer</b>. Only yield funds operations; principal is sacred. The system never promises more than <span class="mono">(resources − reserved − committed) × safety × sustainability</span> can honor — the math that prevents a run on redemptions.</p>
+
+  <h2>Vouches — trust vs backing</h2>
+  <p class="muted narrow">A social vouch ("I trust this person") is never shown as redemption backing. Only <b>funded</b> and verified <b>reserve</b> vouches count as real coverage. Creators and providers also carry a public <b>Relational Credit</b> score — fulfillment, communication, honoring terms — that expands or contracts what they can offer. <a href="learn.html#mutual">Learn how mutual credit works →</a></p>
+
+  <h2>Sacred / commercial separation</h2>
+  <p class="muted narrow">Fi-art is one mission held by distinct stewards, each in its own lane:</p>
+  <div class="grid g3">
+    <div class="card"><h3>Church → meaning</h3><p class="muted">Stewards the mission, ethics, and value-literacy education. Not a bank, exchange, or redemption counter.</p></div>
+    <div class="card"><h3>Trust → mission</h3><p class="muted">Holds the Codex, IP, standards, and art archives. Licenses the brand to the marketplace.</p></div>
+    <div class="card"><h3>PMA → covenant</h3><p class="muted">The member association — salons, creator circles, closed-loop access and benefits.</p></div>
+    <div class="card"><h3>LLC → marketplace</h3><p class="muted">Operates the site, software, provider contracts, and listings. Where commerce lives.</p></div>
+    <div class="card"><h3>Partners → money rails</h3><p class="muted">Regulated partners handle fiat redemption, custody, and KYC — the only place cash exits live.</p></div>
+    <div class="card" style="background:linear-gradient(135deg,#fff,#f3eee2)"><h3>Truth Panel → the truth</h3><p class="muted"><b>No entity label changes the rights of a note. The Truth Panel governs.</b></p></div>
+  </div>
+
+  <div class="btn-row" style="margin:24px 0 50px">
+    <a class="btn ghost" href="learn.html#credits">What is a Fiart Marketplace Credit?</a>
+    <a class="btn" href="marketplace.html">Explore notes</a>
+  </div>
+</div></section>
+
+<div class="legal-strip"><b>NOT LEGAL TENDER. READ THE TRUTH PANEL.</b><br>Transparency is the product. Failure is marked, not hidden.</div>
+
+<footer class="foot"><div class="wrap">
+  <div><span class="brand" style="font-size:1.1rem"><span class="mark"></span>Fi-art</span></div>
+  <div><a href="learn.html">Learn</a> · <a href="marketplace.html">Explore</a></div>
+</div></footer>
+
+<script src="js/fiart.js"></script>
+<script>
+// Phase-1 illustrative metrics. Replace with live gateway feed when wallet layer lands.
+const M = [
+  {v:'138%', l:'Backing Coverage (BCI)', pct:69, color:'var(--ok)', band:['ok','Normal']},
+  {v:'71%',  l:'Real-Sales Backing (CRBR)', pct:71, color:'var(--ok)', band:['ok','Healthy']},
+  {v:'0.82', l:'Capacity Fulfillment (PCR)', pct:82, color:'var(--ok)', band:['ok','Above floor']},
+  {v:'0.64', l:'System Health (Trust Index)', pct:64, color:'var(--warn)', band:['warn','Balanced']}
+];
+document.getElementById('metrics').innerHTML = M.map(m=>`
+  <div class="metric">
+    <div class="v">${m.v}</div>
+    <div class="bar"><i style="width:${m.pct}%;background:${m.color}"></i></div>
+    <span class="band ${m.band[0]}">${m.band[1]}</span>
+    <div class="l">${m.l}</div>
+  </div>`).join('');
+</script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Explore — Fi-art Marketplace</title>
+<link rel="stylesheet" href="css/fiart.css">
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="index.html"><span class="mark"></span>Fi-art</a>
+  <nav>
+    <a href="marketplace.html" class="active">Explore</a>
+    <a href="create.html">Create</a>
+    <a href="provider.html">Providers</a>
+    <a href="learn.html">Learn</a>
+    <a href="trust.html">Trust</a>
+    <a class="cta" href="create.html">Create Fi-art</a>
+  </nav>
+</div></header>
+
+<section style="padding-top:34px"><div class="wrap">
+  <div class="kicker">Explore the museum</div>
+  <h1 style="margin-bottom:.1em">Marketplace</h1>
+  <p class="muted">Every note carries a Truth Panel. Read what backs it before you collect.</p>
+  <div class="notice"><b>Do not assume a note is redeemable.</b> Rights vary by note — read the Truth Panel before buying. Some notes are art-only.</div>
+
+  <div class="pill-row" id="tabs" style="margin:18px 0 4px">
+    <span class="chip active" data-type="all">All Notes</span>
+    <span class="chip" data-type="open">Open Fi-art</span>
+    <span class="chip" data-type="capacity">Capacity</span>
+    <span class="chip" data-type="art">Art Notes</span>
+    <span class="chip" data-type="access">Access</span>
+    <span class="chip" data-type="mirror">Mirror</span>
+  </div>
+  <div class="filters">
+    <select id="redeem"><option value="">Redeemable: any</option><option value="yes">Redeemable</option><option value="no">Art-only</option></select>
+    <select id="verified"><option value="">Any creator</option><option value="1">Verified only</option></select>
+    <input type="text" id="search" placeholder="Search title or creator…">
+    <span class="muted" id="count" style="margin-left:auto;font-size:.88rem"></span>
+  </div>
+
+  <div class="grid g4" id="grid" style="margin-top:14px"></div>
+  <p class="muted center" id="empty" style="display:none;padding:40px">No notes match these filters.</p>
+</div></section>
+
+<div class="legal-strip"><b>NOT LEGAL TENDER. RIGHTS VARY BY NOTE. READ THE TRUTH PANEL.</b><br>Some Fi-art is art-only. Some is redeemable for capacity, access, physical art, or fiat through listed terms.</div>
+
+<footer class="foot"><div class="wrap">
+  <div><span class="brand" style="font-size:1.1rem"><span class="mark"></span>Fi-art</span></div>
+  <div><a href="learn.html">Learn</a> · <a href="create.html">Create</a> · <a href="learn.html#guidelines">Creator Covenant</a></div>
+</div></footer>
+
+<script src="js/fiart.js"></script>
+<script>
+(async function(){
+  const notes = await FiArt.allNotes();
+  let state = {type:'all', redeem:'', verified:'', q:''};
+  const grid = document.getElementById('grid'), empty = document.getElementById('empty'), count = document.getElementById('count');
+
+  function apply(){
+    let list = notes.filter(n=>{
+      if(state.type!=='all' && n.type!==state.type) return false;
+      if(state.redeem==='yes' && !(n.redeemable===true)) return false;
+      if(state.redeem==='no' && n.redeemable!==false) return false;
+      if(state.verified==='1' && !n.verified) return false;
+      if(state.q){ const s=(n.title+' '+(n.creator||'')).toLowerCase(); if(!s.includes(state.q)) return false; }
+      return true;
+    });
+    grid.innerHTML = list.map(FiArt.card).join('');
+    empty.style.display = list.length ? 'none':'block';
+    count.textContent = `${list.length} note${list.length===1?'':'s'}`;
+  }
+  document.querySelectorAll('#tabs .chip').forEach(c=>c.onclick=()=>{
+    document.querySelectorAll('#tabs .chip').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active'); state.type=c.dataset.type; apply();
+  });
+  document.getElementById('redeem').onchange=e=>{state.redeem=e.target.value;apply();};
+  document.getElementById('verified').onchange=e=>{state.verified=e.target.value;apply();};
+  document.getElementById('search').oninput=e=>{state.q=e.target.value.toLowerCase().trim();apply();};
+  // deep-link ?type=
+  const t = FiArt.qs('type'); if(t){ state.type=t; document.querySelectorAll('#tabs .chip').forEach(x=>x.classList.toggle('active',x.dataset.type===t)); }
+  apply();
+})();
+</script>
+</body>
+</html>

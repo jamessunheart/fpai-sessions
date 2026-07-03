@@ -11,7 +11,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 VAULT = Path.home() / "Documents" / "FPOS" / "Full Potential OS"
-OUT = VAULT / "00_MEMORY" / "PRIVACY AUDIT.md"
+OUT = VAULT / "02_CONTEXT/Memory" / "PRIVACY AUDIT.md"
 
 # name/path hints that imply PRIVATE
 PRIV_HINTS = ("treasury", "sensitive", "resources_sensitive", "server map", "now mirror",

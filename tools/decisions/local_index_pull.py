@@ -9,8 +9,8 @@ the computer, from inside Obsidian.
   approved local roots (FPAI_Cockpit, fullpotential-ai, SunheartBrainData, vault)
         │  read-only walk · prune noise · flag (never read) sensitive files
         ▼
-  vault  00_MEMORY/SOURCE MAP.md     (what was scanned / excluded · the registry)
-         00_MEMORY/LOCAL INDEX.md    (the actual folder/file index)
+  vault  02_CONTEXT/Memory/SOURCE MAP.md     (what was scanned / excluded · the registry)
+         02_CONTEXT/Memory/LOCAL INDEX.md    (the actual folder/file index)
 
 Guarantees:
   - READ-ONLY: never writes, moves, or deletes anything in the scanned roots.
@@ -42,8 +42,8 @@ ROOTS = [
 # Broad areas intentionally NOT scanned (require explicit ask to add).
 EXCLUDED_BROAD = ["Desktop", "Documents", "Downloads", "Google Drive", "iCloud Drive (other)"]
 
-SOURCE_MAP_FILE = VAULT / "00_MEMORY" / "SOURCE MAP.md"
-LOCAL_INDEX_FILE = VAULT / "00_MEMORY" / "LOCAL INDEX.md"
+SOURCE_MAP_FILE = VAULT / "02_CONTEXT/Memory" / "SOURCE MAP.md"
+LOCAL_INDEX_FILE = VAULT / "02_CONTEXT/Memory" / "LOCAL INDEX.md"
 
 # Directories pruned from the walk (noise / vendored / heavy).
 PRUNE_DIRS = {

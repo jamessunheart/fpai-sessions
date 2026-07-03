@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>For Providers — Fi-art Capacity</title>
+<link rel="stylesheet" href="css/fiart.css">
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="index.html"><span class="mark"></span>Fi-art</a>
+  <nav>
+    <a href="marketplace.html">Explore</a>
+    <a href="create.html">Create</a>
+    <a href="provider.html" class="active">Providers</a>
+    <a href="learn.html">Learn</a>
+    <a href="trust.html">Trust</a>
+    <a class="cta" href="create.html">Create Fi-art</a>
+  </nav>
+</div></header>
+
+<section style="padding-top:30px"><div class="wrap narrow">
+  <div class="kicker">Capacity engine · Phase 2</div>
+  <h1 style="margin-bottom:.1em">Turn unused capacity into liquid notes</h1>
+  <p class="muted">An empty room, an open slot, an unsold seat — worth nothing idle. Mint it as a <b>Capacity Note</b>: a specific, redeemable claim on your real service. Members buy it, gift it, trade it, then redeem for the real thing. Not cash. Service-specific. You honor it.</p>
+
+  <!-- apply -->
+  <div id="applyPanel">
+    <div class="panel">
+      <h3 style="margin-top:0">1 · Apply as a provider</h3>
+      <div class="field"><label for="pname">Business / provider name</label><input type="text" id="pname" placeholder="Ojai Wellness Studio"></div>
+      <div class="field"><label for="pcat">Service category</label><input type="text" id="pcat" placeholder="wellness · hospitality · retreat · studio"></div>
+      <div class="field"><label for="ploc">Location</label><input type="text" id="ploc" placeholder="Ojai, CA"></div>
+      <div class="field"><label for="pcontact">Contact</label><input type="text" id="pcontact" placeholder="email or handle"></div>
+      <button class="btn gold" id="applyBtn">Apply</button>
+      <p class="hint" style="margin-top:8px">Phase 2 demo: you can mint immediately; notes show "pending review" until verified. Real verification (identity/business) gates the verified badge.</p>
+    </div>
+  </div>
+
+  <!-- studio (after apply) -->
+  <div id="provStudio" class="hide">
+    <div class="notice" id="provInfo"></div>
+
+    <div class="panel">
+      <h3 style="margin-top:0">2 · Mint a Capacity Note</h3>
+      <div class="field"><label for="ctitle">Note title</label><input type="text" id="ctitle" placeholder="Ojai Reset Note"></div>
+      <div class="field"><label for="cservice">Redeemable for <span class="muted">— the specific service/good/experience</span></label><input type="text" id="cservice" placeholder="1 massage + tea ceremony (75 min)"></div>
+      <div class="field"><label for="cprice">Price (Fiart Marketplace Credit)</label><input type="text" id="cprice" placeholder="180"></div>
+      <div class="field"><label for="cbooking">Booking window</label><input type="text" id="cbooking" placeholder="Jul 1 – Sep 30, 2026"></div>
+      <div class="field"><label for="cexpire">Expiration</label><input type="text" id="cexpire" placeholder="Sep 30, 2026"></div>
+      <div class="field"><label for="creplace">Replacement policy</label><input type="text" id="creplace" placeholder="provider credit if appointment unavailable"></div>
+      <div id="cscan"></div>
+      <div class="btn-row" style="margin-top:8px"><button class="btn gold" id="cmintBtn">Mint Capacity Note</button><span class="muted" id="cmintMsg" style="font-size:.85rem"></span></div>
+      <p class="hint" style="margin-top:6px">Capacity Notes are <b>not cash redeemable</b>, service-specific, and merchant-defined — by design. The Truth Panel says so on every note.</p>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin-top:0">3 · Booking requests</h3>
+      <div id="reqs"><p class="muted">No requests yet.</p></div>
+      <button class="btn ghost" id="refreshReqs" style="margin-top:10px">Refresh</button>
+    </div>
+  </div>
+</div></section>
+
+<div class="legal-strip"><b>NOT LEGAL TENDER. RIGHTS VARY BY NOTE. READ THE TRUTH PANEL.</b><br>Capacity Notes are redeemable only for the listed service from the named provider. Not cash unless stated.</div>
+
+<footer class="foot"><div class="wrap">
+  <div><span class="brand" style="font-size:1.1rem"><span class="mark"></span>Fi-art</span></div>
+  <div><a href="learn.html">Learn</a> · <a href="trust.html">Trust</a></div>
+</div></footer>
+
+<script src="js/fiart.js"></script>
+<script>
+const LS_PROV='fiart_provider';
+function getProv(){ try{return JSON.parse(localStorage.getItem(LS_PROV)||'null');}catch(e){return null;} }
+function setProv(p){ localStorage.setItem(LS_PROV, JSON.stringify(p)); }
+
+function enterStudio(p){
+  document.getElementById('applyPanel').classList.add('hide');
+  document.getElementById('provStudio').classList.remove('hide');
+  document.getElementById('provInfo').innerHTML = `Provider: <b>${FiArt.esc(p.name)}</b> · ID ${FiArt.esc(p.id)} · status: ${FiArt.esc(p.status||'pending_review')}`;
+  loadReqs();
+}
+
+(function(){
+  const ex = getProv(); if(ex) enterStudio(ex);
+
+  document.getElementById('applyBtn').onclick = async ()=>{
+    const name = document.getElementById('pname').value.trim();
+    if(!name){ alert('Provider name required.'); return; }
+    const r = await fetch('/api/provider/apply',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name, category:document.getElementById('pcat').value, location:document.getElementById('ploc').value, contact:document.getElementById('pcontact').value})});
+    const d = await r.json();
+    if(d.ok){ const p={id:d.provider_id,name,status:d.status}; setProv(p); enterStudio(p); }
+    else alert(d.error||'apply failed');
+  };
+
+  // live money-claim scan
+  function scan(){
+    const t = ['ctitle','cservice'].map(i=>document.getElementById(i).value).join(' ');
+    const res = FiArt.scanClaims(t); const box=document.getElementById('cscan');
+    if(!t.trim()){ box.innerHTML=''; return res.clean!==false; }
+    box.innerHTML = res.clean ? '' : `<div class="scan-flag">⚠ Blocked: <b>${res.hits.map(FiArt.esc).join(', ')}</b>. Capacity Notes describe a service, not a money claim.</div>`;
+    return res.clean;
+  }
+  ['ctitle','cservice'].forEach(i=>document.getElementById(i).addEventListener('input',scan));
+
+  document.getElementById('cmintBtn').onclick = async ()=>{
+    const p=getProv(); const btn=document.getElementById('cmintBtn'), msg=document.getElementById('cmintMsg');
+    if(!scan()){ msg.textContent='Resolve flagged language.'; return; }
+    btn.disabled=true; msg.textContent='Minting…';
+    const r = await fetch('/api/capacity/mint',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      provider_id:p.id, covenant:true,
+      title:document.getElementById('ctitle').value, service_description:document.getElementById('cservice').value,
+      fiart_price:document.getElementById('cprice').value, booking_window:document.getElementById('cbooking').value,
+      expiration:document.getElementById('cexpire').value, replacement_policy:document.getElementById('creplace').value
+    })});
+    const d = await r.json(); btn.disabled=false;
+    if(d.ok){ location.href='note.html?id='+encodeURIComponent(d.id); }
+    else { msg.textContent = d.error + (d.hits?(' ('+d.hits.join(', ')+')'):''); }
+  };
+
+  document.getElementById('refreshReqs').onclick = loadReqs;
+})();
+
+async function loadReqs(){
+  const p=getProv(); if(!p) return;
+  const r = await fetch('/api/redemptions?provider_id='+encodeURIComponent(p.id),{cache:'no-store'});
+  const d = await r.json(); const el=document.getElementById('reqs');
+  if(!d.redemptions || !d.redemptions.length){ el.innerHTML='<p class="muted">No requests yet.</p>'; return; }
+  el.innerHTML = d.redemptions.map(x=>`
+    <div style="border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between"><b>${FiArt.esc(x.title||x.note_id)}</b><span class="badge dot">${FiArt.esc(x.status)}</span></div>
+      <div class="muted" style="font-size:.86rem">Requested by ${FiArt.esc(x.requester)} · date: ${FiArt.esc(x.requested_date||'—')}</div>
+      ${x.status==='requested'?`<div class="btn-row" style="margin-top:8px">
+        <button class="btn" onclick="confirmReq(${x.id},'scheduled')">Confirm booking</button>
+        <button class="btn ghost" onclick="confirmReq(${x.id},'declined')">Decline</button></div>`:
+        x.status==='scheduled'?`<div class="btn-row" style="margin-top:8px"><button class="btn gold" onclick="confirmReq(${x.id},'fulfilled')">Mark fulfilled</button></div>`:''}
+    </div>`).join('');
+}
+async function confirmReq(id,status){
+  await fetch('/api/redeem/confirm',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({redemption_id:id,status})});
+  loadReqs();
+}
+</script>
+</body>
+</html>

@@ -2,6 +2,9 @@
 
 This file is auto-loaded by Claude Code on every session in this repo. Read it before starting work.
 
+> # 🗣️ ★ READ FIRST — CAVEMAN CLARITY IS LAW (every session, every turn, no drift)
+> James 2026-06-25, said 20+ times: **point first · short sentences · ≤80 words · no filler · no "Let me…/Great question!/Found it." · no trailing summaries · tables only when data demands.** Footer = tiny `NOW / NEED / NEXT` only. Expand ONLY when James explicitly asks. If your reply reads complicated, rewrite it shorter before sending. Full contract: `## Voice — HARD DEFAULT` below.
+
 ## What this repo is
 
 The Full Potential Game's source substrate. Champions sign the World Peace Agreement at `https://fullpotential.com/game`, build Character Cards, file Proofs, invite Affiliates, and express path interest. The Game is the operational form of the Zen Village (Costa Rica) vision.

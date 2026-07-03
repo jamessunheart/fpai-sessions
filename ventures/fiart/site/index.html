@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fi-art — Money is already art. Fi-art makes it usable.</title>
+<meta name="description" content="Create, collect, and redeem money-inspired art backed by real-world capacity, physical artwork, community trust, or verified reserves. A living museum of value where the exhibits can be used.">
+<link rel="stylesheet" href="css/fiart.css">
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="index.html"><span class="mark"></span>Fi-art</a>
+  <nav>
+    <a href="marketplace.html">Explore</a>
+    <a href="create.html">Create</a>
+    <a href="provider.html">Providers</a>
+    <a href="learn.html">Learn</a>
+    <a href="trust.html">Trust</a>
+    <a class="cta" href="create.html">Create Fi-art</a>
+  </nav>
+</div></header>
+
+<section class="hero"><div class="wrap center">
+  <div class="eyebrow">A living museum of value</div>
+  <h1>Money is already art.<br>Fi-art makes it readable.</h1>
+  <p class="sub">A marketplace for money-inspired notes. Some are art-only. Some unlock capacity, access, or physical artwork. Some may offer restricted fiat redemption. Every note has a Truth Panel showing exactly what it is, what backs it, and what can fail.</p>
+  <div class="btn-row" style="justify-content:center">
+    <a class="btn" href="marketplace.html">Explore Notes</a>
+    <a class="btn gold" href="create.html">Create Fi-art</a>
+    <a class="btn ghost" href="learn.html">Learn How It Works</a>
+  </div>
+  <div class="flowline">
+    <span><b>Fiat</b></span><span class="arr">→</span>
+    <span><b>Mirror Note</b></span><span class="arr">→</span>
+    <span><b>Capacity Note</b></span><span class="arr">→</span>
+    <span>Real-world experience</span><span class="arr">↘</span>
+    <span><b>Art Note</b> · cash exit</span>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="kicker">How Fi-art works</div>
+  <h2>Three moves, one truth on every note</h2>
+  <div class="grid g3">
+    <div class="card"><div class="num">1</div><h3>Create or collect</h3><p class="muted">Anyone mints art-only Fi-art. Verified creators attach real-world utility. Every piece teaches one money idea.</p></div>
+    <div class="card"><div class="num">2</div><h3>Use the note</h3><p class="muted">Notes carry art, access, or capacity — a massage, a retreat seat, a dinner, a framed piece. Idle capacity becomes liquid.</p></div>
+    <div class="card"><div class="num">3</div><h3>Redeem, trade, gift, exit</h3><p class="muted">Redeem for the real thing, trade it, gift it, or — when verified — exit to fiat through a liquidity steward.</p></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="kicker">The note family</div>
+  <h2>Five note types. Always labeled.</h2>
+  <div class="grid g3" id="typecards"></div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="kicker">The heart of the system</div>
+  <h2>Every note tells you what backs it</h2>
+  <p class="muted narrow">A financial nutrition label for art. It trains you to ask: <b>What backs this? Who owes performance? What can fail?</b> Monetary literacy through use — not lectures.</p>
+  <div style="margin-top:18px" id="sampletruth"></div>
+</div></section>
+
+<section id="capacity"><div class="wrap">
+  <div class="kicker">The capacity marketplace</div>
+  <h2>Turn unused capacity into circulating value</h2>
+  <p class="muted narrow">An empty hotel room, an open appointment, an unsold retreat seat — worth nothing idle. Minted as a Capacity Note, it becomes a tradable, redeemable asset.</p>
+  <div class="pill-row" style="margin-top:12px">
+    <span class="tag">Hotel rooms</span><span class="tag">Retreat seats</span><span class="tag">Massages</span>
+    <span class="tag">Dinners</span><span class="tag">Studio sessions</span><span class="tag">Art commissions</span><span class="tag">Event tickets</span>
+  </div>
+  <div class="grid g3" id="capacitycards" style="margin-top:18px"></div>
+  <div class="btn-row" style="margin-top:18px"><a class="btn ghost" href="provider.html">List your capacity →</a></div>
+</div></section>
+
+<section id="trust"><div class="wrap">
+  <div class="kicker">The invitation</div>
+  <div class="card" style="background:linear-gradient(135deg,#fff,#f3eee2)">
+    <h2 style="margin-top:.2em">Create art. Attach truth. Let value move.</h2>
+    <p class="muted">The platform gives the rails and the labels. The creator owns the art and the claims. The system makes the truth visible.</p>
+    <div class="btn-row">
+      <a class="btn" href="create.html">Start Creating</a>
+      <a class="btn ghost" href="learn.html#guidelines">Read Creator Guidelines</a>
+    </div>
+  </div>
+</div></section>
+
+<div class="legal-strip"><b>NOT LEGAL TENDER. RIGHTS VARY BY NOTE. READ THE TRUTH PANEL.</b><br>Some Fi-art is art-only. Some is redeemable for capacity, access, physical art, or fiat through listed terms. Money itself is symbolic art — redemption determines financial reality.</div>
+
+<footer class="foot"><div class="wrap">
+  <div><span class="brand" style="font-size:1.1rem"><span class="mark"></span>Fi-art</span><br><span class="muted">Art that teaches money and unlocks real-world value.</span></div>
+  <div><a href="learn.html">Learn</a> · <a href="marketplace.html">Explore</a> · <a href="create.html">Create</a> · <a href="learn.html#guidelines">Creator Covenant</a> · <a href="#">DMCA</a></div>
+</div></footer>
+
+<script src="js/fiart.js"></script>
+<script>
+(async function(){
+  // note-type cards
+  const T = FiArt.TYPES;
+  const ex = {open:'Satire, oversized notes, money-as-myth, visual essays',
+    capacity:'Hotel nights, retreats, massages, dinners, sessions',
+    art:'Auctions, collectibles, framed currency pieces, prints',
+    access:'Memberships, salons, gated experiences, credentials',
+    mirror:'Entry & exit liquidity — fiat-linked (Phase 5)'};
+  document.getElementById('typecards').innerHTML = Object.entries(T).map(([k,c])=>`
+    <div class="card"><div class="pill-row"><span class="badge ${c.badge} dot">${c.label}</span></div>
+      <div class="row" style="display:flex;justify-content:space-between;margin:8px 0;font-size:.9rem">
+        <span class="muted">Redeemable</span><b>${c.redeemable===false?'No':c.redeemable==='maybe'?'Maybe':'Yes'}</b></div>
+      <div class="row" style="display:flex;justify-content:space-between;font-size:.9rem">
+        <span class="muted">Risk label</span><b>${c.risk}</b></div>
+      <p class="muted" style="margin-top:10px;font-size:.9rem">${ex[k]}</p></div>`).join('');
+
+  // sample truth panel + capacity cards
+  const notes = await FiArt.allNotes();
+  const sample = notes.find(n=>n.id==='CAP-1042') || notes[0];
+  document.getElementById('sampletruth').innerHTML = FiArt.truthPanel(sample);
+  const caps = notes.filter(n=>n.type==='capacity').slice(0,3);
+  document.getElementById('capacitycards').innerHTML = caps.map(FiArt.card).join('');
+})();
+</script>
+</body>
+</html>

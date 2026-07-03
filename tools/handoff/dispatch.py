@@ -23,7 +23,7 @@ from pathlib import Path
 HOME = Path.home()
 VAULT = Path(os.environ.get(
     "FPAI_VAULT",
-    HOME / "Library" / "Mobile Documents" / "iCloud~md~obsidian" / "Documents" / "FPOS" / "Full Potential OS",
+    HOME / "Documents" / "FPOS" / "Full Potential OS",
 ))
 REPO = Path(os.environ.get("FPAI_REPO", HOME / "FPAI_Cockpit"))
 SPECS = REPO / "docs" / "codex" / "specs"
@@ -39,7 +39,7 @@ def read(p: Path) -> str:
 
 def ready_intents(route: str) -> list[dict]:
     """Top weighted READY intents for a route, from the Intent Buildstream INTENTS block."""
-    txt = read(VAULT / "00_MEMORY" / "INTENT BUILDSTREAM.md") or read(REPO / "docs" / "codex" / "INTENT_BUILDSTREAM.md")
+    txt = read(VAULT / "02_CONTEXT/Memory" / "INTENT BUILDSTREAM.md") or read(REPO / "docs" / "codex" / "INTENT_BUILDSTREAM.md")
     m = re.search(r"<!-- INTENTS:START -->(.*?)<!-- INTENTS:END -->", txt, re.S)
     if not m:
         return []
@@ -128,7 +128,7 @@ def main(argv: list[str] | None = None) -> int:
     if not selected:
         print("Nothing dispatchable right now (no specced, non-colliding ready intents).")
         if args.refresh:   # keep the queue honest even when empty (nothing left to build)
-            (VAULT / "00_MEMORY" / "CODEX QUEUE.md").write_text(
+            (VAULT / "02_CONTEXT/Memory" / "CODEX QUEUE.md").write_text(
                 "# CODEX QUEUE\n\n*Auto-refreshed by `tools/handoff/dispatch.py --refresh`.*\n\n"
                 "✅ **Nothing queued** — no ready `route:codex` spec to build right now. "
                 "Drop an intent (Ember specs it → it appears here).\n", encoding="utf-8")
@@ -175,7 +175,7 @@ def main(argv: list[str] | None = None) -> int:
         print()
         q += [f"## ▶️ Session {i} — {it['desc'][:70]}", "", settings, "", "```", block, "```", ""]
     if not args.dry_run:
-        queue = VAULT / "00_MEMORY" / "CODEX QUEUE.md"
+        queue = VAULT / "02_CONTEXT/Memory" / "CODEX QUEUE.md"
         try:
             queue.write_text("\n".join(q), encoding="utf-8")
             print(f"\n📋 written → {queue}  (open [[CODEX QUEUE]] in Obsidian to copy each block)")

@@ -32,7 +32,7 @@ STATE_FILE = HOME / ".config" / "fpai" / "tg_inbox" / "scene_last_update_id.txt"
 
 # The vault — visible memory for James, humans, and AI.
 VAULT = HOME / "Documents" / "FPOS" / "Full Potential OS"
-SCENES_FILE = VAULT / "00_MEMORY" / "SCENES.md"
+SCENES_FILE = VAULT / "02_CONTEXT/Memory" / "SCENES.md"
 
 TG_API = "https://api.telegram.org"
 

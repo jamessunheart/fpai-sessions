@@ -28,16 +28,16 @@ VAULT = Path(os.environ.get(
     Path.home() / "Documents" / "FPOS" / "Full Potential OS",
 ))
 LOC = Path(os.environ.get("FPAI_LOCATION_FILE", Path.home() / ".config" / "fpai" / "location.json"))
-PROOF = VAULT / "00_MEMORY" / "PROOF LOG.md"
-HOME = VAULT / "HOME.md"
+PROOF = VAULT / "02_CONTEXT/Memory" / "PROOF LOG.md"
+HOME = VAULT / "00_SYSTEM/HOME.md"
 PLATE = VAULT / "THE PLATE.md"
-SURF = VAULT / "00_MEMORY" / "SURFACED CONCEPTS.md"
-DECIDE = VAULT / "00_MEMORY" / "DECISIONS.md"
-READY = VAULT / "00_MEMORY" / "SYSTEM READINESS.md"
-SCHED = VAULT / "00_MEMORY" / "SCHEDULE.md"
-GOALS_MIRROR = VAULT / "00_MEMORY" / "GOALS MIRROR.md"
-NORTH_STAR = VAULT / "00_MEMORY" / "FPOS NORTH STAR.md"
-SPECLOG = VAULT / "02_SPECS" / "SPEC LOG.md"
+SURF = VAULT / "02_CONTEXT/Memory" / "SURFACED CONCEPTS.md"
+DECIDE = VAULT / "02_CONTEXT/Memory" / "DECISIONS.md"
+READY = VAULT / "02_CONTEXT/Memory" / "SYSTEM READINESS.md"
+SCHED = VAULT / "02_CONTEXT/Memory" / "SCHEDULE.md"
+GOALS_MIRROR = VAULT / "02_CONTEXT/Memory" / "GOALS MIRROR.md"
+NORTH_STAR = VAULT / "02_CONTEXT/Memory" / "FPOS NORTH STAR.md"
+SPECLOG = VAULT / "04_DECISION/Specs" / "SPEC LOG.md"
 CODEX_REPO = os.environ.get("FPAI_CODEX_REPO", "/Users/jamessunheart/FPAI_Cockpit")   # the directory James points Codex at
 CODEX_SPECS = Path(CODEX_REPO) / "docs" / "codex" / "specs"
 CODEX_HANDOFF = Path(CODEX_REPO) / "docs" / "codex" / "HANDOFF.md"
@@ -45,13 +45,13 @@ HUMAN_EDGE_QUEUE_JSON = Path(os.environ.get(
     "FPAI_HUMAN_EDGE_QUEUE_JSON",
     Path(CODEX_REPO) / "core" / "STATE" / "HUMAN_EDGE_QUEUE.json",
 ))
-SERVICE_REGISTRY_VAULT = VAULT / "00_MEMORY" / "SERVICE REGISTRY.md"
-SERVICE_REGISTRY_SORTED_VAULT = VAULT / "00_MEMORY" / "SERVICE REGISTRY — SORTED.md"
-NEXT_MOVE_DETAIL = VAULT / "00_MEMORY" / "NEXT MOVE DETAIL.md"
+SERVICE_REGISTRY_VAULT = VAULT / "02_CONTEXT/Memory" / "SERVICE REGISTRY.md"
+SERVICE_REGISTRY_SORTED_VAULT = VAULT / "02_CONTEXT/Memory" / "SERVICE REGISTRY — SORTED.md"
+NEXT_MOVE_DETAIL = VAULT / "02_CONTEXT/Memory" / "NEXT MOVE DETAIL.md"
 SOL_LIVE = Path.home() / ".config" / "fpai" / "sol_live" / "latest.json"
-DAILY = VAULT / "07_DAILY"
-SEEDS_NOTE = VAULT / "05_CONCEPTS" / "SIX SEEDS.md"
-EMBERJ = VAULT / "08_JOURNAL" / "EMBER JOURNAL.md"
+DAILY = VAULT / "01_CAPTURE/Daily"
+SEEDS_NOTE = VAULT / "03_THINKING/Concepts" / "SIX SEEDS.md"
+EMBERJ = VAULT / "01_CAPTURE/Journal" / "EMBER JOURNAL.md"
 BRICKS_NOTE = VAULT / "BRICKS Architecture.md"
 INSIGHT_DIR = Path(os.environ.get("FPAI_INSIGHT_DIR", Path.home() / ".config" / "fpai" / "insights"))
 # %%…%% = Obsidian comments → invisible in Reading + Live Preview (no plumbing on screen).
@@ -429,10 +429,19 @@ def james_next_move(now):
         tell = "Codex."
         send_detail = f"Use `{spec}` and `docs/codex/HANDOFF.md`."
     else:
-        yes = "yes — proceed with the next routed build"
-        downstream = "AI carries the routed downstream work."
-        tell = "Claude Code / Ember."
-        send_detail = "Use [[NEXT MOVE DETAIL]] for context."
+        # Board clear, nothing queued. The standing work is VALUE CAPTURE (the July thesis):
+        # cash is the weakest conversion. The next move is the daily cash question, not a build ask.
+        return {
+            "title": "What conversation can produce cash in the next 24–72 hours?",
+            "look": "this section",
+            "tell": "yourself, then me — name the one path.",
+            "send_detail": "The work is Value Capture (see [[mindmap-61 · Value Capture — Turn Value Into Cash Flow]]). Fastest paths: AI Cost Reduction Audit · warm ONEBPO relationships — cash in 24–72h. Pick ONE, don't split.",
+            "yes": "the path is: ...",
+            "reason": "Cash is the weakest conversion (Constitution: fix the bottleneck first). 30-day metric = Treasury Growth Rate.",
+            "downstream": "Once you name the path, I build the offer + find 5 warm targets.",
+            "say": ["the path is: ...", "board's clear — presence today", "settle"],
+            "late": late,
+        }
     title = "Your move: give one upstream signal"
     if late:
         title = "Your move: one upstream signal, then close clean"
@@ -477,7 +486,7 @@ def live_priorities_top3(allopen, now):
 def weighted_priorities_line(n=3):
     """Carry the weighted Buildstream into the day — top-n READY intents by value×leverage×readiness,
        as a compact one-liner (full table lives in SYSTEM SELF-MODEL)."""
-    txt = read(VAULT / "00_MEMORY" / "INTENT BUILDSTREAM.md")
+    txt = read(VAULT / "02_CONTEXT/Memory" / "INTENT BUILDSTREAM.md")
     m = re.search(r"<!-- INTENTS:START -->(.*?)<!-- INTENTS:END -->", txt, re.S)
     if not m:
         return None
@@ -1071,11 +1080,11 @@ def main():
         L.append(f"> **Where:** open Codex → point it at repo `{CODEX_REPO}`  ·  first time? full steps → [[CODEX SETUP]]")
         L.append("> **Ready specs** (easiest first):")
         for name, est, gate, link in cx:
-            spec_path = link if "/" in link or link.endswith(".md") else f"02_SPECS/{link}.md"
+            spec_path = link if "/" in link or link.endswith(".md") else f"04_DECISION/Specs/{link}.md"
             L.append(f"> - {est} **{name}** → `{spec_path}`  ({gate})")
         L.append("> **Paste-in kickoff** (swap in the spec path above):")
         L.append("> ```")
-        L.append("> Read AGENTS.md, then the vault notes CODEX BRIDGE + CODEX PARALLEL BUILD PROTOCOL, then 02_SPECS/<SPEC>.md.")
+        L.append("> Read AGENTS.md, then the vault notes CODEX BRIDGE + CODEX PARALLEL BUILD PROTOCOL, then 04_DECISION/Specs/<SPEC>.md.")
         L.append("> Work ONLY on the branch named in that spec; touch only files-allowed, never files-forbidden.")
         L.append("> Build to the Definition of Done, run the tests, then report: files changed · summary · tests · risks · rollback.")
         L.append("> ```")

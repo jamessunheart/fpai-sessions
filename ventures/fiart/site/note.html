@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Note — Fi-art</title>
+<link rel="stylesheet" href="css/fiart.css">
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="index.html"><span class="mark"></span>Fi-art</a>
+  <nav>
+    <a href="marketplace.html">Explore</a>
+    <a href="create.html">Create</a>
+    <a href="provider.html">Providers</a>
+    <a href="learn.html">Learn</a>
+    <a href="trust.html">Trust</a>
+    <a class="cta" href="create.html">Create Fi-art</a>
+  </nav>
+</div></header>
+
+<section style="padding-top:26px"><div class="wrap">
+  <a href="marketplace.html" class="muted" style="font-size:.9rem">← Back to marketplace</a>
+  <div id="note" style="margin-top:14px"></div>
+</div></section>
+
+<footer class="foot"><div class="wrap">
+  <div><span class="brand" style="font-size:1.1rem"><span class="mark"></span>Fi-art</span></div>
+  <div><a href="learn.html#truthpanel">How to read a Truth Panel</a></div>
+</div></footer>
+
+<script src="js/fiart.js"></script>
+<script>
+(async function(){
+  const id = FiArt.qs('id');
+  const n = await FiArt.getNote(id);
+  const el = document.getElementById('note');
+  if(!n){ el.innerHTML = `<div class="panel center"><h2>Note not found</h2><p class="muted">This note ID isn't in the gallery.</p><a class="btn" href="marketplace.html">Browse notes</a></div>`; return; }
+
+  const cfg = FiArt.TYPES[n.type] || FiArt.TYPES.open;
+  const price = n.price!=null ? `${FiArt.esc(n.price)} <span class="muted" style="font-size:.6em">${FiArt.esc(n.currency||'Fiart Marketplace Credit')}</span>` : 'Not for sale';
+  const redeemBtn = (n.type==='capacity') ? `<button class="btn gold" id="redeemBtn">Redeem</button>`
+    : (n.redeemable===true ? `<button class="btn gold" onclick="alert('Redemption for this note type opens in a later phase. This note records the promise; the listed party honors it.')">Redeem</button>` : '');
+  const mirrorPreview = n.type==='mirror' ? `<div class="notice">Mirror Notes are a <b>Phase 5</b> preview. Cash exits gate by jurisdiction, identity, limits, and approved liquidity partners. Shown to teach how reserve backing works.</div>` : '';
+  const isAuction = n.type==='art';
+  const auctionBox = isAuction ? `
+    <div class="panel" style="margin-top:0;border:2px solid var(--gold)">
+      <div class="kicker">Live auction</div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin:4px 0">
+        <div><div class="muted" style="font-size:.8rem">Current high bid</div>
+          <div style="font-family:var(--serif);font-size:1.8rem;font-weight:700" id="highBid">${n.high_bid!=null?FiArt.esc(n.high_bid):'—'}</div></div>
+        <div style="text-align:right"><div class="muted" style="font-size:.8rem">Reserve floor</div>
+          <div class="mono">${FiArt.esc(n.reserve||0)}</div></div>
+      </div>
+      <div class="muted" style="font-size:.82rem" id="bidMeta">${n.bid_count||0} bid${(n.bid_count===1)?'':'s'}${n.high_bidder?(' · high: '+FiArt.esc(n.high_bidder)):''}${n.auction_ends?(' · ends '+FiArt.esc(n.auction_ends)):''}</div>
+      <div class="field" style="margin:12px 0 8px"><input type="text" id="bidAmt" placeholder="Your bid (≥ ${FiArt.esc((n.high_bid!=null?n.high_bid:n.reserve)||0)})"></div>
+      <button class="btn gold" id="bidBtn">Place bid</button>
+      <div class="muted" id="bidMsg" style="font-size:.84rem;margin-top:8px"></div>
+      <div class="muted" style="font-size:.78rem;margin-top:8px">Winning bid claims the artwork. Not cash — a claim to the piece. Reserve = creator's floor.</div>
+    </div>` : '';
+
+  el.innerHTML = `
+  <div class="grid g2" style="align-items:start">
+    <div>
+      <div style="border-radius:14px;overflow:hidden;box-shadow:var(--shadow)">${FiArt.noteArt(Object.assign({},n))}</div>
+      <h3 style="margin-bottom:.2em">${FiArt.esc(n.title)}</h3>
+      <div class="pill-row">${FiArt.badge(n)} ${n.verified?'<span class="badge verified">Verified creator</span>':''}</div>
+      <p class="muted">${FiArt.esc(n.description||'')}</p>
+      <div class="lesson"><div class="teach">This note teaches</div><b>${FiArt.esc(n.educational_theme||'—')}</b></div>
+    </div>
+    <div>
+      ${isAuction ? auctionBox : `<div class="panel" style="margin-top:0">
+        <div style="font-family:var(--serif);font-size:2rem;font-weight:700">${price}</div>
+        <div class="muted" style="font-size:.9rem;margin-bottom:14px">${FiArt.esc(cfg.label)} · by ${FiArt.esc(n.creator||'—')}</div>
+        <div class="btn-row">
+          <button class="btn" id="collectBtn">Collect</button>
+          ${redeemBtn}
+          <button class="btn ghost" onclick="alert('Gift / transfer opens with the wallet layer (Phase 2).')">Gift</button>
+        </div>
+        <div class="muted" id="collectMsg" style="font-size:.85rem;margin-top:8px"></div>
+        ${mirrorPreview}
+      </div>`}
+      ${FiArt.truthPanel(n)}
+      <div class="panel" id="provpanel">
+        <h3 style="margin-top:0">Provenance</h3>
+        <div class="muted mono" style="font-size:.82rem;line-height:1.9">
+          Minted · ${FiArt.esc(n.creator||'—')}<br>
+          Status · ${FiArt.esc(n.status||'live')}<br>
+          Transfers · 0 · Redemptions · 0<br>
+          ${n.id.startsWith('OPEN-')&&!/0001|0002/.test(n.id)?'Source · created in this browser (demo mint)':'Source · gallery sample'}
+        </div>
+      </div>
+    </div>
+  </div>`;
+
+  const bb = document.getElementById('bidBtn');
+  if(bb) bb.onclick = async ()=>{
+    const amt = parseFloat(document.getElementById('bidAmt').value);
+    const msg = document.getElementById('bidMsg');
+    if(!(amt>0)){ msg.textContent='Enter a bid amount.'; return; }
+    bb.disabled=true; msg.textContent='Placing…';
+    const res = await fetch('/api/bid',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({note_id:n.id, bidder:(FiArt.covenantSigned()||{}).handle||'bidder', amount:amt})}).then(r=>r.json());
+    bb.disabled=false;
+    if(res.ok){
+      document.getElementById('highBid').textContent = res.high_bid;
+      document.getElementById('bidMeta').textContent = 'high: '+res.high_bidder;
+      msg.style.color='var(--ok)'; msg.textContent='You are the high bidder ✓';
+    } else { msg.style.color='var(--danger)'; msg.textContent = res.error || 'Bid failed.'; }
+  };
+
+  const rb = document.getElementById('redeemBtn');
+  if(rb) rb.onclick = async ()=>{
+    const date = prompt('Pick a date/time to redeem "'+n.redeemable_for+'" from '+n.creator+':', '2026-08-10');
+    if(date===null) return;
+    rb.disabled=true; rb.textContent='Requesting…';
+    const res = await FiArt.collectNote ? await fetch('/api/redeem',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({note_id:n.id, requester:(FiArt.covenantSigned()||{}).handle||'collector', requested_date:date})}).then(r=>r.json()) : {ok:false};
+    const msg = document.getElementById('collectMsg');
+    if(res.ok){ rb.textContent='Redemption requested ✓'; msg.textContent='Sent to '+n.creator+'. They confirm the booking; you’ll see it scheduled, then fulfilled. (Truth Panel: not cash — redeemable for the listed service.)'; }
+    else { rb.disabled=false; rb.textContent='Redeem'; msg.textContent='Could not request — try again.'; }
+  };
+
+  const cb = document.getElementById('collectBtn');
+  if(cb) cb.onclick = async ()=>{
+    cb.disabled = true; cb.textContent = 'Collecting…';
+    const res = await FiArt.collectNote(n.id, (FiArt.covenantSigned()||{}).handle || 'collector');
+    const msg = document.getElementById('collectMsg');
+    if(res.ok){ cb.textContent='Collected ✓'; msg.textContent = `In your collection — ${res.collectors} collector${res.collectors===1?'':'s'} total. (Phase 1: collection recorded; wallet/payment lands Phase 2.)`; }
+    else { cb.disabled=false; cb.textContent='Collect'; msg.textContent='Could not record — try again.'; }
+  };
+})();
+</script>
+</body>
+</html>

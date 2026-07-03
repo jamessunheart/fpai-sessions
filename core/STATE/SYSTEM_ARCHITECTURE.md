@@ -164,6 +164,9 @@ The system uses its own loop to improve its own loop — including the One Chat 
 measurement + tooling compound; the cross-lab council is the design method; James stays at vision.
 
 ## 11. Specialized Agents + Per-Agent Self-Improvement (built 2026-06-17)
+
+> **SCOUT / OUTWARD LEARNING (live, but invisible — flagged 2026-06-30).** The system does NOT only learn inward (corrections → model). It scans the *world* so it doesn't reinvent the wheel — `tools/forge/frontier_scan.py`, **daily + weekly** systemd timers on 162. Weekly proven (Jun 29: `FRONTIER_WEEKLY_2026-06-29.md`, adopt:4, quantum_leaps:11). **Three gaps make it feel absent:** (1) not on any architecture diagram → reads as missing; (2) daily scan can break silently (`no parseable findings`, Jun 30) with no alarm; (3) findings write a file but don't surface back to James as proof. This is the `[[feedback-standing-capability-proof-back]]` pattern — *built ≠ on-map ≠ verified-running ≠ surfaced-as-proof.* Closing all four is the fix for "why James repeats himself."
+
 Beyond the 9 core functions, a workforce of specialized agents now feeds the loop:
 **Horizon Scanner** (watches the frontier) · **Blueprint Weakness Auditor** (finds the system's own gaps,
 on a timer) · **Tool Scout** (finds external tools) · **Probe Agent** (proactive, self-regulating outreach —

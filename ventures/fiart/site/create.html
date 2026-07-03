@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Create — Mint Open Fi-art</title>
+<link rel="stylesheet" href="css/fiart.css">
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="index.html"><span class="mark"></span>Fi-art</a>
+  <nav>
+    <a href="marketplace.html">Explore</a>
+    <a href="create.html" class="active">Create</a>
+    <a href="provider.html">Providers</a>
+    <a href="learn.html">Learn</a>
+    <a href="trust.html">Trust</a>
+    <a class="cta" href="create.html">Create Fi-art</a>
+  </nav>
+</div></header>
+
+<section style="padding-top:30px"><div class="wrap narrow">
+  <div class="kicker">Creator Studio · Phase 1</div>
+  <h1 style="margin-bottom:.1em">Mint Open Fi-art</h1>
+  <p class="muted">Open Fi-art is art-only — symbolic, educational, collectible. <b>Not redeemable.</b> No reserve claim. The broad creative playground.</p>
+  <div class="pill-row" style="margin:6px 0 4px">
+    <a class="chip" href="art.html">🖼️ Mint an Art Note + auction →</a>
+    <a class="chip" href="provider.html">🏨 Mint a Capacity Note →</a>
+  </div>
+
+  <!-- STEP 0: covenant gate -->
+  <div id="gate">
+    <div class="covenant" style="margin-top:18px">
+      <h3>The Creator Covenant <span class="tag" style="color:#231d10;background:var(--gold-light)">v0.1</span></h3>
+      <ul>
+        <li>I created this work or have rights to use it.</li>
+        <li>I am responsible for my art, claims, imagery, and redemption promises.</li>
+        <li>I will not create counterfeit-like currency or imply government endorsement.</li>
+        <li>I will not promise cash redemption, yield, profit, or reserve backing unless verified.</li>
+        <li>If this note represents capacity, I will honor the listed service or replacement terms.</li>
+        <li>If my work violates the rules, it can be removed, frozen, delisted, or marked impaired.</li>
+      </ul>
+      <div class="field">
+        <label for="handle">Your creator handle</label>
+        <input type="text" id="handle" placeholder="e.g. studio-sunheart">
+      </div>
+      <label class="check"><input type="checkbox" id="agree"> <span>I have read and accept the Creator Covenant.</span></label>
+      <button class="btn gold" id="signbtn" disabled>Sign &amp; enter the studio</button>
+    </div>
+  </div>
+
+  <!-- STEP 1: mint form (hidden until signed) -->
+  <div id="studio" class="hide">
+    <div class="notice" id="signedas"></div>
+
+    <div class="panel">
+      <h3 style="margin-top:0">1 · The artwork</h3>
+      <div class="field"><label for="title">Title</label><input type="text" id="title" placeholder="One Million Breath Note"></div>
+      <div class="field"><label for="denom">Denomination / face text <span class="muted">(shown on the note face)</span></label><input type="text" id="denom" placeholder="1,000,000"></div>
+      <div class="field"><label for="desc">Description</label><textarea id="desc" placeholder="What is this piece? What does it explore?"></textarea></div>
+      <div class="field"><label for="theme">Educational theme <span class="muted">— one money idea this teaches</span></label><input type="text" id="theme" placeholder="Attention as currency"></div>
+      <div id="scanbox"></div>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin-top:0">2 · Compliance wizard</h3>
+      <p class="muted" style="font-size:.9rem">Currency imagery follows U.S. BEP rules. Answer honestly — the system labels and gates accordingly.</p>
+      <label class="check"><input type="checkbox" id="c_currency"> <span>This artwork includes real currency imagery.</span></label>
+      <div id="currencyqs" class="hide" style="padding-left:24px;border-left:2px solid var(--line)">
+        <label class="check"><input type="checkbox" id="c_resemble"> <span>It closely resembles a real bill.</span></label>
+        <label class="check"><input type="checkbox" id="c_oneside"> <span>The reproduction is one-sided.</span></label>
+        <label class="check"><input type="checkbox" id="c_size"> <span>It is intentionally under ¾ or over 1½× the real bill's size.</span></label>
+      </div>
+      <div id="currencyflags"></div>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin-top:0">3 · Truth Panel preview</h3>
+      <p class="muted" style="font-size:.9rem">Open Fi-art is locked to art-only. This is exactly what collectors will see.</p>
+      <div id="preview" style="margin-top:12px"></div>
+    </div>
+
+    <div class="btn-row" style="margin:18px 0 50px">
+      <button class="btn gold" id="mintbtn">Mint Open Fi-art</button>
+      <span class="muted" id="minthint" style="font-size:.88rem">Fill a title to mint.</span>
+    </div>
+  </div>
+</div></section>
+
+<footer class="foot"><div class="wrap">
+  <div><span class="brand" style="font-size:1.1rem"><span class="mark"></span>Fi-art</span></div>
+  <div><a href="learn.html#guidelines">Creator Guidelines</a> · <a href="learn.html">Learn</a></div>
+</div></footer>
+
+<script src="js/fiart.js"></script>
+<script>
+(function(){
+  // ---- covenant gate ----
+  const agree=document.getElementById('agree'), signbtn=document.getElementById('signbtn'),
+        handle=document.getElementById('handle'), gate=document.getElementById('gate'),
+        studio=document.getElementById('studio');
+
+  function enterStudio(rec){
+    gate.classList.add('hide'); studio.classList.remove('hide');
+    document.getElementById('signedas').innerHTML =
+      `Signed as <b>${FiArt.esc(rec.handle)}</b> · Covenant ${rec.version} · ${new Date(rec.signed_at).toLocaleDateString()}`;
+    renderPreview();
+  }
+  const existing = FiArt.covenantSigned();
+  if(existing) enterStudio(existing);
+  agree.onchange = ()=> signbtn.disabled = !agree.checked;
+  signbtn.onclick = ()=>{ enterStudio(FiArt.signCovenant(handle.value.trim())); };
+
+  // ---- live note object ----
+  function noteFromForm(){
+    return {
+      id: 'OPEN-'+Date.now().toString().slice(-6),
+      type:'open',
+      title: document.getElementById('title').value.trim() || 'Untitled',
+      denomination: document.getElementById('denom').value.trim() || 'ART',
+      creator: (FiArt.covenantSigned()||{}).handle || 'anonymous',
+      verified:false,
+      redeemable:false, redeemable_for:'Nothing — art only', cash_redeemable:false,
+      backed_by:'Meaning, beauty & culture', honored_by:'No one',
+      transferable:'Yes', expiration:'None', risk_label:'Art-only',
+      educational_theme: document.getElementById('theme').value.trim() || '—',
+      description: document.getElementById('desc').value.trim(),
+      price:null, currency:'Fiart Marketplace Credit'
+    };
+  }
+
+  function renderPreview(){ document.getElementById('preview').innerHTML = FiArt.truthPanel(noteFromForm()); }
+
+  // ---- money-claim scanner (live) ----
+  function runScan(){
+    const text = ['title','denom','desc','theme'].map(id=>document.getElementById(id).value).join(' ');
+    const res = FiArt.scanClaims(text);
+    const box = document.getElementById('scanbox');
+    if(text.trim()==='' ){ box.innerHTML=''; return res; }
+    box.innerHTML = res.clean
+      ? `<div class="scan-ok">✓ Language clear — no misleading money-claims detected.</div>`
+      : `<div class="scan-flag">⚠ Blocked phrases for an art-only note: <b>${res.hits.map(FiArt.esc).join(', ')}</b>. Open Fi-art may not imply cash value, yield, or government backing. Rephrase to mint.</div>`;
+    return res;
+  }
+
+  // ---- currency wizard ----
+  const cCur=document.getElementById('c_currency');
+  cCur.onchange=()=>{ document.getElementById('currencyqs').classList.toggle('hide',!cCur.checked); runCurrency(); };
+  ['c_resemble','c_oneside','c_size'].forEach(id=>document.getElementById(id).addEventListener('change',runCurrency));
+  function runCurrency(){
+    const flags = FiArt.currencyFlags({
+      includesCurrency:cCur.checked,
+      resemblesBill:document.getElementById('c_resemble').checked,
+      oneSided:document.getElementById('c_oneside').checked,
+      oversizedOrUnder:document.getElementById('c_size').checked
+    });
+    document.getElementById('currencyflags').innerHTML = flags.length
+      ? `<div class="scan-flag">⚠ ${flags.map(FiArt.esc).join('<br>')}</div>` : '';
+    return flags;
+  }
+
+  // ---- live updates ----
+  ['title','denom','desc','theme'].forEach(id=>document.getElementById(id).addEventListener('input',()=>{runScan();renderPreview();updateMintState();}));
+
+  function updateMintState(){
+    const titleOk = document.getElementById('title').value.trim().length>0;
+    const scanOk = runScan().clean!==false;
+    const curOk = runCurrency().length===0;
+    const ok = titleOk && scanOk && curOk;
+    const btn=document.getElementById('mintbtn'), hint=document.getElementById('minthint');
+    btn.disabled=!ok;
+    hint.textContent = !titleOk ? 'Add a title to mint.'
+      : !scanOk ? 'Resolve the flagged money-claim language.'
+      : !curOk ? 'Resolve the currency-imagery flags.'
+      : 'Ready to mint — art-only, fully labeled.';
+  }
+  updateMintState();
+
+  document.getElementById('mintbtn').onclick=async()=>{
+    const btn=document.getElementById('mintbtn'), hint=document.getElementById('minthint');
+    const n = noteFromForm();
+    btn.disabled=true; hint.textContent='Minting…';
+    const res = await FiArt.mintNote({
+      title:n.title, denomination:n.denomination, description:n.description,
+      educational_theme:n.educational_theme, creator:n.creator, covenant:true, _note:n
+    });
+    if(res.ok){ location.href = 'note.html?id='+encodeURIComponent(res.id); }
+    else {
+      btn.disabled=false;
+      hint.textContent = res.error + (res.hits?(' ('+res.hits.join(', ')+')'):'');
+    }
+  };
+})();
+</script>
+</body>
+</html>

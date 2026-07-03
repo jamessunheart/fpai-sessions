@@ -32,17 +32,16 @@ HOME = Path.home()
 VAULT = Path(
     os.environ.get(
         "FPAI_VAULT",
-        HOME / "Library" / "Mobile Documents" / "iCloud~md~obsidian"
-        / "Documents" / "FPOS" / "Full Potential OS",
+        HOME / "Documents" / "FPOS" / "Full Potential OS",
     )
 )
 REPO = Path(os.environ.get("FPAI_REPO", HOME / "FPAI_Cockpit"))
 LOC = Path(os.environ.get("FPAI_LOCATION_FILE", HOME / ".config" / "fpai" / "location.json"))
 
-VAULT_INDEX = VAULT / "00_MEMORY" / "INDEX OF INDEXES.md"
+VAULT_INDEX = VAULT / "02_CONTEXT/Memory" / "INDEX OF INDEXES.md"
 REPO_INDEX = REPO / "docs" / "codex" / "INDEX_OF_INDEXES.md"
-PROOF = VAULT / "00_MEMORY" / "PROOF LOG.md"
-SELFMODEL = VAULT / "00_MEMORY" / "SYSTEM SELF-MODEL.md"
+PROOF = VAULT / "02_CONTEXT/Memory" / "PROOF LOG.md"
+SELFMODEL = VAULT / "02_CONTEXT/Memory" / "SYSTEM SELF-MODEL.md"
 
 
 def parse_spine() -> list[str]:
@@ -134,7 +133,7 @@ def vault_note_stems() -> set[str]:
 
 
 # Operational dirs where an orphan is actionable (mindmaps/sessions are imported, noise as orphans).
-OPERATIONAL = ("00_MEMORY/", "02_SPECS/", "01_OFFERS/", "05_CONCEPTS/", "06_SHOW FRAMES/")
+OPERATIONAL = ("02_CONTEXT/Memory/", "04_DECISION/Specs/", "04_DECISION/Offers/", "03_THINKING/Concepts/", "03_THINKING/Show Frames/")
 
 
 def build_link_graph() -> tuple[dict[str, set[str]], dict[str, set[str]], dict[str, Path]]:
@@ -243,16 +242,16 @@ def latest_updates() -> str:
 # Category display order + icon. Anything else falls through to alphabetical.
 CATEGORY_ORDER = [
     ("🏠 Root", "🏠 Root"),
-    ("00_MEMORY", "🧠 Memory · 00_MEMORY"),
-    ("02_SPECS", "📐 Specs · 02_SPECS"),
-    ("01_OFFERS", "💵 Offers · 01_OFFERS"),
-    ("04_VISUALS", "🖼️ Visuals · 04_VISUALS"),
+    ("02_CONTEXT/Memory", "🧠 Memory · 02_CONTEXT/Memory"),
+    ("04_DECISION/Specs", "📐 Specs · 04_DECISION/Specs"),
+    ("04_DECISION/Offers", "💵 Offers · 04_DECISION/Offers"),
+    ("03_THINKING/Visuals", "🖼️ Visuals · 03_THINKING/Visuals"),
     ("Mindmaps", "🗺️ Mindmaps"),
-    ("05_CONCEPTS", "💡 Concepts · 05_CONCEPTS"),
-    ("06_SHOW FRAMES", "🎬 Show Frames · 06_SHOW FRAMES"),
-    ("03_TICKETS", "🎟️ Tickets · 03_TICKETS"),
-    ("07_DAILY", "🌤️ Daily · 07_DAILY"),
-    ("08_JOURNAL", "📓 Journal · 08_JOURNAL"),
+    ("03_THINKING/Concepts", "💡 Concepts · 03_THINKING/Concepts"),
+    ("03_THINKING/Show Frames", "🎬 Show Frames · 03_THINKING/Show Frames"),
+    ("05_EXECUTION/Tickets", "🎟️ Tickets · 05_EXECUTION/Tickets"),
+    ("01_CAPTURE/Daily", "🌤️ Daily · 01_CAPTURE/Daily"),
+    ("01_CAPTURE/Journal", "📓 Journal · 01_CAPTURE/Journal"),
 ]
 ACTIVE_WINDOW_S = 24 * 3600  # "actively working" = touched in the last 24h
 SKIP_PARTS = ("_ember_memory", "_archive", "node_modules", ".trash", ".obsidian")
@@ -265,7 +264,7 @@ def categorize(path: Path) -> str | None:
         return None
     if len(parts) == 1:
         return "🏠 Root"
-    if parts[0] == "04_VISUALS" and len(parts) > 1 and parts[1] == "Mindmaps":
+    if parts[0] == "03_THINKING/Visuals" and len(parts) > 1 and parts[1] == "Mindmaps":
         return "Mindmaps"
     return parts[0]
 

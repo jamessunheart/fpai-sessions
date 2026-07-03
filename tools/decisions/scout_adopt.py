@@ -4,7 +4,7 @@ scout_adopt · v2 · 2026-05-31  ·  graded recursive self-improvement loop
 Reads AI GROWTH FEED proposals. Each carries a **Score** line + verdict tier (see ADOPTION RUBRIC):
   🔵 AUTO  → route automatically (reversible build queued; no tap needed)
   🟡 TAP   → route only if James tapped `[x] adopt`
-Routing = spec stub in 02_SPECS + intent in INTENT RADAR + mark queued in feed + PROOF.
+Routing = spec stub in 04_DECISION/Specs + intent in INTENT RADAR + mark queued in feed + PROOF.
 Deterministic, file-only, no build executed (queue only). When James's tap disagrees with
 the rubric, append a CALIBRATION row to ADOPTION RUBRIC. Runs with `fpull`.
 """
@@ -12,11 +12,11 @@ import re, datetime
 from pathlib import Path
 
 VAULT = Path.home() / "Documents" / "FPOS" / "Full Potential OS"
-FEED = VAULT / "00_MEMORY" / "AI GROWTH FEED.md"
-RADAR = VAULT / "00_MEMORY" / "INTENT RADAR.md"
-SPECS = VAULT / "02_SPECS"
-PROOF = VAULT / "00_MEMORY" / "PROOF LOG.md"
-RUBRIC = VAULT / "00_MEMORY" / "ADOPTION RUBRIC.md"
+FEED = VAULT / "02_CONTEXT/Memory" / "AI GROWTH FEED.md"
+RADAR = VAULT / "02_CONTEXT/Memory" / "INTENT RADAR.md"
+SPECS = VAULT / "04_DECISION/Specs"
+PROOF = VAULT / "02_CONTEXT/Memory" / "PROOF LOG.md"
+RUBRIC = VAULT / "02_CONTEXT/Memory" / "ADOPTION RUBRIC.md"
 
 def slug(s): return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")[:40]
 

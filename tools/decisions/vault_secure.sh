@@ -15,7 +15,7 @@ set -euo pipefail
 
 SVC="fpos-vault-sensitive"
 ACCT="ember"
-VAULT="$HOME/Documents/FPOS/Full Potential OS/00_MEMORY"
+VAULT="$HOME/Documents/FPOS/Full Potential OS/02_CONTEXT/Memory"
 BLOB="$VAULT/RESOURCES_SENSITIVE.md.gpg"
 MEM="$HOME/.claude/projects/-Users-jamessunheart-FPAI-Cockpit/memory"
 TRZ="$HOME/.config/fpai/treasury"
