@@ -19,5 +19,8 @@ Umami v2 on 198 (analytics/funnels, API+SQL readable) · listmonk + n8n-on-162 s
 **G6 — Real audit surface** /assessment upgraded lead-form → product: intake → 48h AI-generated Allocation Score (6 dims) + top-3 (kit: vault 07_COMPOUNDING/Savings Map Kit) → weak dims replace G3 proxy routing → anonymized patterns feed content topic queue + Knowledge Graph. Quarterly re-audit hook. PROOF: one real audit end-to-end.
 **G7 — SEO/AI-search** llms.txt, schema.org, programmatic /learn pages from audit-pattern data ("across N companies…" requires N real audits — no invented benchmarks). Last: needs G6 data.
 
+## Build-vs-buy race (log real build-times)
+Scored ledger: vault `04_DECISION/Marketing Engine — Build vs Buy Allocation Ledger.md`. Each phase = a 🟢 BUILD row. On completion, append actual build-time (branch-open → merge) to the ledger + growth ledger. If actual > 2× the estimate, flag the row for buy re-evaluation (the Allocator re-scores). Pre-approved commodity buys (don't build): Cal.com/Calendly (booking), Midjourney (rich imagery), Brevo (deliverability, already relaying). Everything else BUILD sovereign — AI-dev collapsed the cost to ~$0.
+
 ## Guardrails (all phases)
 Brand voice: generation prompts load canon + BRAND_VOICE linter; auto-publish only /learn + social; homepage/offer pages James-gated. Claims: only ledger-verified numbers. Spend: caps in code, only James raises. James-gates (irreducible): Meta billing, cap raises, first activation per public channel, real-client audit outputs. Two-Deliverables: every campaign = leads + pattern-canon contribution.
