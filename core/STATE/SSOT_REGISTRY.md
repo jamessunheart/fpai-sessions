@@ -28,6 +28,8 @@
 | **Costs** | `~/.config/fpai/cost/` + vault `[[COST LEDGER]]` | memory `project_costs.md` | ≤30 days |
 | **Legal / entity state** | `core/STATE/LEGAL_STATE_ASSESSMENT_<date>.md` | vault 508c1a/White Rock concept pages | on event |
 | **Fundraising architecture** | `core/STATE/PATRON_ENGINE.md` + `CORA_NATION_FRONT_DOOR.md` | — | 🔴 Counsel gates before publish |
+| **Bot awareness reliability (metric)** | `core/BUILD/signals/awareness_reliability.json` (measured every probe) | NOW.md · HOT_STATE · ALIGNMENT.md prose (🔴 hand-typed → drifts; cite JSON, don't type) | guarded by `tools/governance/metric_coherence.py` (runs in daily self-audit) |
+| **Running bot code** | live `/opt/sh-brain-src/curator/tgbot.py` (server 162, `sh-brain-tgbot`) | `SERVICES/sunheart-brain/curator/tgbot.py` (🔴 KNOWN-FORKED both ways — see `core/BUILD/reconciliation/D138_tgbot_repo_vs_live.md`) | repo ≠ running until D138 per-slice merge |
 
 ## Conflict resolution (extends INDEX_OF_INDEXES drift rules)
 
@@ -37,7 +39,10 @@
 4. Between vault and repo: vault is canonical for James-facing doctrine/knowledge; repo for operational state and anything phone/cloud Codex needs.
 5. A fact older than its freshness contract is a QUESTION, not a fact — verify before asserting (probe-before-assume).
 
-## Known drift to fix (as of 2026-06-12)
+## Known drift to fix (as of 2026-07-03)
+
+- ☐ **D138: repo tgbot ≠ running bot** (bidirectional fork — 16 built-not-deployed fns, 12 live-not-committed fns) → per-slice reconcile via `deploy_curator_slice.sh`; map at `core/BUILD/reconciliation/D138_tgbot_repo_vs_live.md`
+- ✅ metric drift (awareness 100%/88%/41.3% across files) → `metric_coherence.py` guard now catches it, wired into daily self-audit
 
 - ☐ `docs/codex/INDEX_OF_INDEXES.md` §1 still points at the dead iCloud vault path → update to `~/Documents/FPOS/Full Potential OS` (file dirty from sibling session — integration session applies)
 - ☐ `core/STATE/AI_GOALS.md` stale since 2026-05-08 → refresh or formally mark vault BUILDSTREAM as successor
