@@ -16,7 +16,7 @@ SSH_KEY="$HOME/.ssh/fpai_deploy_ed25519"
 SERVER="root@198.54.123.234"
 REMOTE_PATH="/opt/fpai/core/applications/website-ai/frontend/fullpotential-com"
 
-PAGES=(index.html audit.html ai-builders.html discover.html store.html creators.html experiences.html local.html codex.html)
+PAGES=(index.html remember.html audit.html ai-builders.html discover.html store.html creators.html experiences.html local.html codex.html)
 
 if [ ! -f "$SSH_KEY" ]; then
   echo "❌ SSH key not found: $SSH_KEY" >&2
