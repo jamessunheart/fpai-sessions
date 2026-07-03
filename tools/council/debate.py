@@ -413,6 +413,22 @@ def main():
     gpt = gpt_voice(signal)
     why = (d.get("why","") + "  ⚖️ Council: " + (d.get("synthesis","")[:180])
            + (("  🤖 GPT(2nd lab): " + gpt) if gpt else ""))
+    # Constitution Check — Law 5 enforcement at the autonomous-proposal gate.
+    # The Constitution claims every autonomous action is scored against the 8 laws;
+    # until 2026-07-03 the checker existed but was wired to nothing. Fail-open on
+    # checker errors (a broken gate must not silence the council), fail-CLOSED on
+    # a rejected verdict.
+    try:
+        from tools.governance.constitution_check import check_proposal
+        _cc = check_proposal({"title": d.get("title", ""), "kind": "council_proposal",
+                              "why": d.get("why", ""), "build_spec": d.get("build_spec", "")})
+        if not _cc.get("accepted", True):
+            _ops("constitution_rejected", f"{d.get('title','')[:80]} :: " + "; ".join(_cc.get("reasons", []))[:150])
+            print("constitution check REJECTED the proposal:", "; ".join(_cc.get("reasons", [])))
+            return 0
+    except Exception as e:
+        _ops("constitution_check_error", str(e)[:150])
+
     payload = json.dumps({"title":d["title"],"why":why,"build_spec":d["build_spec"],"risk":d.get("risk","low")})
     out = run_curator("./.venv/bin/python -m curator.decisions recommend", inp=payload)
     _ops("proposed", d.get("title",""), "James: approve or veto the proposal")

@@ -9,9 +9,23 @@ tags: [foundation, doctrine, architecture, three-rs, system]
 
 *Building a Self-Improving Intelligence Company. The company-architecture doctrine. Visual: [[mindmap-92 · FPOS FPAI — The Intelligence Operating System]].*
 
-> **Where this sits (reconciliation · 2026-07-03):** This is the **DOCTRINE layer** — it lives directly under the [[CONSTITUTION]] (8 laws, enforced in code by d134), beside [[OPERATING_PRINCIPLE]] and [[LEARNING_METRICS]]. It does not compete with the Constitution; it maps into it:
+> **Where this sits (reconciliation · 2026-07-03):** This is the **DOCTRINE layer** — it lives directly under the [[CONSTITUTION]] (8 laws, enforced in code by `tools/governance/constitution_check.py`, wired into the council + metabolism proposal gates), beside [[OPERATING_PRINCIPLE]] and [[LEARNING_METRICS]]. It does not compete with the Constitution; it maps into it:
 > **Routing** → Laws 5+6 (Preserve Alignment · Protect Human Leverage) · **Reasoning** → Law 2 (Reality Is Sovereign) · **Recursion** → Laws 3+8 (Learn Before You Repeat · Build the Engine) · **Two Deliverables Rule** → the Engraving ("every decision leaves the system more capable, verified by reality") · **IUM north star** → Future Capability (the one thing maximized).
 > When the Constitution and this document disagree, the Constitution wins; this document evolves.
+
+> **One north star, two views (reconciles with LEARNING_METRICS · 2026-07-03):** Future Capability is the thing maximized. **IUM measures the stock** (how much intelligence is under management right now); **LR — Learning Rate — measures the flow** (how fast the stock grows). LEARNING_METRICS' "capability is a stock; learning is the flow" is the same law seen from the metrics side: LR is the derivative of IUM. Optimize the flow; the stock follows. No contradiction — one target, two gauges.
+
+## The Three Rs in the live system (doctrine → running code · 2026-07-03)
+
+Doctrine that maps to nothing running is fiction (Law 2). Where each R actually lives today:
+
+| R | Live subsystems (server 162) |
+|---|------------------------------|
+| **Routing** | Decision queue (`brain_index.decisions` → build loop, 10-min tick) · council debate (picks THE ONE build) · decision agent authority (reversible→act, uncertain→council, reserved→James) · HOT_STATE (routes attention) |
+| **Reasoning** | Council multi-lens debate (Pragmatist/Visionary/Skeptic/Awareness/Platform-Critic, `claude -p` $0) · independent build review (`ai_review.py`) · Constitution Check at both proposal gates · semantic brain retrieval (`note_chunks`, 768-dim) |
+| **Recursion** | Autonomous RCA reflex (`fpai-rca.timer`, 2h — error→root→BUG_LOG) · AI_PRINCIPLES (roots graduate to laws, loaded every session) · nightly metabolism (weakest conversion→one experiment, 03:10) · corrections→L2 dataset · brain versioning (`brain-vX.Y.Z` tags) · Academy vault mirror |
+
+**The Recursive Loop, instantiated:** decisions route builds → reviewed reasoning merges them → RCA + metabolism + bug-log capture the learning → principles improve the next routing. Same loop as the doctrine's; these are its organs.
 
 ---
 

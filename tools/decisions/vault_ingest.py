@@ -124,7 +124,10 @@ def _human_notes(vault: Path, since_ts: float) -> list[Path]:
     return sorted(results, key=lambda p: p.stat().st_mtime)
 
 
-def _read_note(path: Path, max_chars: int = 3000) -> str:
+def _read_note(path: Path, max_chars: int = 12000) -> str:
+    # 12000 (was 3000): the 3000 cap truncated James's FOUNDATION doctrine at
+    # ingest — doctrine-length notes must arrive whole. session_insights.body
+    # is text; the bot's context injector bounds its own render size.
     try:
         text = path.read_text(encoding="utf-8", errors="ignore").strip()
     except OSError:

@@ -28,6 +28,8 @@ REPO = Path(os.environ.get("FPAI_REPO_ROOT", Path(__file__).resolve().parents[2]
 DOCS = [
     (REPO / "core" / "STATE" / "AI_PRINCIPLES.md", "principle"),
     (REPO / "core" / "STATE" / "BUG_LOG.md", "bug_root"),
+    (REPO / "core" / "STATE" / "FOUNDATION.md", "doctrine"),
+    (REPO / "core" / "STATE" / "CONSTITUTION.md", "law"),
 ]
 OLLAMA_BASE = os.environ.get("OLLAMA_BASE", "http://127.0.0.1:11434")
 EMBED_MODEL = os.environ.get("SH_EMBED_MODEL", "nomic-embed-text")

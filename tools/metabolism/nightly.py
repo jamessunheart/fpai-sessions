@@ -290,6 +290,18 @@ def queue_build_decision(weakest, prompt: str, *, db_url: str | None = None, ded
         "Forge exactly one reversible experiment-lane improvement per the work-order. "
         "Ship behind an OFF flag; production go-live stays gated."
     )
+    # Constitution Check at the second autonomous-proposal gate (Law 5).
+    # Fail-open on checker error, fail-closed on a rejected verdict.
+    try:
+        import sys as _sys
+        if str(REPO_ROOT) not in _sys.path:
+            _sys.path.insert(0, str(REPO_ROOT))
+        from tools.governance.constitution_check import check_proposal
+        _cc = check_proposal({"title": question[:120], "kind": "metabolism_experiment", "build_spec": prompt[:2000]})
+        if not _cc.get("accepted", True):
+            return {"status": "constitution_rejected", "reasons": _cc.get("reasons", [])}
+    except ImportError:
+        pass
     try:
         with psycopg.connect(db_url, connect_timeout=5) as conn:
             with conn.cursor() as cur:

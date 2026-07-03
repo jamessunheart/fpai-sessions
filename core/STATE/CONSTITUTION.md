@@ -31,7 +31,9 @@ cost at the cost of value — all forbidden.)
 
 ```
 CONSTITUTION (this · stable)
-   ↓ DOCTRINE      — OPERATING_PRINCIPLE.md · LEARNING_METRICS.md · AI_CHARTER.md (how to think · evolves)
+   ↓ DOCTRINE      — FOUNDATION.md (company architecture · Three Rs) · OPERATING_PRINCIPLE.md ·
+                     LEARNING_METRICS.md · AI_PRINCIPLES.md (laws learned from root-caused failures) ·
+                     AI_CHARTER.md (how to think · evolves)
    ↓ PROTOCOLS     — reversible auto-exec · independent review · PROTECTED_PATHS · auto-merge · Trust-tiers
    ↓ CURRENT STATE — HOT_STATE · NOW.md
    ↓ GOALS         — AI_GOALS.md
@@ -39,4 +41,6 @@ CONSTITUTION (this · stable)
 ```
 
 Enforcement (the Constitution Check that scores every autonomous action against these laws) is doctrine,
-not constitution — built by spec `d134` (`tools/governance/constitution_check.py`).
+not constitution — `tools/governance/constitution_check.py`, wired into both autonomous-proposal gates
+(council debate + nightly metabolism) since 2026-07-03; verdicts append to
+`core/BUILD/governance/constitution_ledger.jsonl`.
