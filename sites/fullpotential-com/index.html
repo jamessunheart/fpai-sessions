@@ -3,683 +3,537 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Full Potential — Personal Practice. Collective Game.</title>
-  <meta name="description" content="A framework for restoring your own circulation — and the Game where Coherent Champions of CHRIST and AI allies build a more coherent civilization. Two surfaces. One practice." />
-  <meta name="theme-color" content="#e8b974" />
+  <title>FullPotential.com — Helping people find what helps them grow.</title>
+  <meta name="description" content="A conscious discovery engine. Tell us what's alive for you, and we'll help you find the people, products, places, and experiences that support your next step." />
+  <meta name="theme-color" content="#0F5132" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://fullpotential.com/" />
-  <meta property="og:title" content="Full Potential — Personal Practice. Collective Game." />
-  <meta property="og:description" content="Reality is already a game. Diagnose your circulation. Sign the World Peace Agreement. Run a 7-Day proof loop. Humans + AI as allies." />
-  <meta property="og:image" content="https://fullpotential.com/game/core/INTENT/assets/full-potential-framework-poster.png" />
+  <meta property="og:title" content="FullPotential.com — What wants to grow today?" />
+  <meta property="og:description" content="Helping people find what helps them grow. A conscious discovery engine for people, products, experiences, creators & communities." />
 
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Full Potential — Personal Practice. Collective Game." />
-  <meta name="twitter:description" content="A framework for restoring your own circulation — and the Game where humans and AI build a more coherent civilization." />
-  <meta name="twitter:image" content="https://fullpotential.com/game/core/INTENT/assets/full-potential-framework-poster.png" />
-
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◯</text></svg>" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" />
 
   <style>
     :root {
-      --bg: #0a1428;
-      --bg-deep: #060d1c;
-      --surface: #14213d;
-      --surface-2: #1d2c4d;
-      --border: #2c3d63;
-      --text: #f5ead8;
-      --text-bright: #fff7e8;
-      --muted: #8fa1c2;
-      --accent: #e8b974;
-      --accent-bright: #f5d089;
-      --accent-soft: rgba(232, 185, 116, 0.12);
-      --good: #84d488;
-      --p2: #7cc4a8;
-      --p1: #e57b7b;
-      --infra: #7cb8e0;
-      --unknown: #b89cd5;
-      --serif: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
-      --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+      --green-deep: #0F5132;
+      --green-forest: #1F7A4D;
+      --green-soft: #EAF5EC;
+      --cream: #FFF9EF;
+      --sand: #F2E7D2;
+      --gold: #D9A441;
+      --clay: #C96F38;
+      --blue-soft: #EAF4FA;
+      --text: #17211A;
+      --muted: #5D675F;
+      --line: #E7E0D2;
+      --shadow: 0 8px 30px rgba(15,81,50,0.08);
+      --radius: 18px;
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
-      font-family: var(--sans);
-      background:
-        radial-gradient(ellipse 1200px 600px at 50% -100px, rgba(232, 185, 116, 0.08), transparent 70%),
-        radial-gradient(ellipse 800px 400px at 100% 0%, rgba(124, 196, 168, 0.04), transparent 60%),
-        radial-gradient(ellipse 600px 600px at 0% 100%, rgba(184, 156, 213, 0.04), transparent 60%),
-        var(--bg);
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--cream);
       color: var(--text);
-      line-height: 1.65;
-      font-size: 15px;
-      min-height: 100vh;
-      overflow-x: hidden;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
     }
-    .horizon-glow {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      height: 240px;
-      background: radial-gradient(ellipse 800px 240px at 50% 0%, rgba(232, 185, 116, 0.10), transparent 70%);
-      pointer-events: none;
-      z-index: -1;
-    }
-    .starfield {
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      pointer-events: none;
-      opacity: 0.5;
-    }
-    .star {
-      fill: var(--accent-bright);
-      animation: twinkle 5s ease-in-out infinite;
-    }
-    @keyframes twinkle {
-      0%, 100% { opacity: 0.15; }
-      50% { opacity: 0.5; }
-    }
+    h1,h2,h3 { font-family: 'Fraunces', Georgia, serif; line-height: 1.1; font-weight: 600; }
+    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .hand { font-family: 'Caveat', cursive; }
 
-    .container { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+    /* ---------- NAV ---------- */
+    header.nav {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(255,249,239,0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-inner { display: flex; align-items: center; gap: 28px; padding: 14px 24px; max-width: 1280px; margin: 0 auto; }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo .mark { font-size: 26px; }
+    .logo .name { font-family: 'Fraunces', serif; font-weight: 700; font-size: 20px; color: var(--green-deep); }
+    .logo .name b { color: var(--text); }
+    .logo .tag { display: block; font-size: 10.5px; color: var(--muted); font-family: 'Inter'; font-weight: 400; margin-top: -2px; }
+    nav.links { display: flex; gap: 22px; margin: 0 auto; }
+    nav.links a { font-size: 15px; font-weight: 500; color: var(--text); padding: 4px 0; border-bottom: 2px solid transparent; }
+    nav.links a:hover, nav.links a.active { border-color: var(--green-forest); color: var(--green-deep); }
+    .nav-actions { display: flex; align-items: center; gap: 16px; }
+    .icon-btn { font-size: 19px; color: var(--muted); cursor: pointer; background: none; border: none; }
+    .icon-btn:hover { color: var(--green-deep); }
+    .chat-pill {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--green-soft); color: var(--green-deep);
+      border: 1px solid #cfe6d4; border-radius: 999px;
+      padding: 8px 16px; font-size: 14px; font-weight: 600; cursor: pointer;
+    }
+    .chat-pill:hover { background: #dcefe0; }
 
-    /* Nav */
-    nav {
-      padding: 24px 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-    .nav-mark {
-      font-family: var(--serif);
-      font-size: 1.4rem;
-      font-weight: 600;
-      letter-spacing: -0.3px;
-      color: var(--text-bright);
-      text-decoration: none;
-      background: linear-gradient(135deg, var(--text-bright) 0%, var(--accent-bright) 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .nav-mark .circle { display: inline-block; margin-right: 6px; opacity: 0.7; }
-    .nav-links {
-      display: flex;
-      gap: 24px;
-      list-style: none;
-      flex-wrap: wrap;
-    }
-    .nav-links a {
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: var(--muted);
-      text-decoration: none;
-      letter-spacing: 0.02em;
-      transition: color 0.18s;
-    }
-    .nav-links a:hover { color: var(--accent-bright); }
-    .nav-links a.cta {
-      color: var(--bg);
-      background: linear-gradient(135deg, var(--accent), var(--accent-bright));
-      padding: 6px 14px;
-      border-radius: 999px;
-      font-weight: 700;
-    }
-    .nav-links a.cta:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(232,185,116,0.3); }
-
-    /* Hero */
+    /* ---------- HERO ---------- */
     .hero {
-      padding: 80px 0 60px;
-      text-align: center;
+      position: relative;
+      background:
+        linear-gradient(180deg, rgba(255,249,239,0) 60%, var(--cream) 100%),
+        radial-gradient(900px 400px at 80% 10%, rgba(217,164,65,0.28), transparent 60%),
+        linear-gradient(160deg, #cfe3d6 0%, #e7f0dd 35%, #f6ecd3 75%, #fbe3c4 100%);
+      padding: 70px 0 40px;
+      overflow: hidden;
     }
-    .hero-eyebrow {
-      font-size: 11px;
-      letter-spacing: 2px;
-      color: var(--accent);
-      text-transform: uppercase;
-      font-weight: 700;
-      margin-bottom: 16px;
+    .hero-grid { display: grid; grid-template-columns: 1fr auto; gap: 30px; align-items: start; }
+    .hero h1 { font-size: clamp(40px, 6vw, 72px); font-weight: 600; letter-spacing: -0.02em; }
+    .hero h1 em { font-style: normal; color: var(--green-forest); }
+    .hero .sub { font-size: 18px; color: var(--muted); margin: 18px 0 26px; max-width: 540px; }
+    .search-row {
+      display: flex; gap: 10px; max-width: 640px; background: #fff;
+      border: 1px solid var(--line); border-radius: 999px; padding: 7px 7px 7px 22px;
+      box-shadow: var(--shadow); align-items: center;
     }
-    .hero h1 {
-      font-family: var(--serif);
-      font-size: clamp(36px, 6vw, 64px);
-      font-weight: 500;
-      line-height: 1.1;
-      letter-spacing: -1px;
-      margin-bottom: 20px;
-      background: linear-gradient(135deg, var(--text-bright) 0%, var(--accent-bright) 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
+    .search-row input { flex: 1; border: none; outline: none; font-size: 16px; background: none; color: var(--text); }
+    .search-row input::placeholder { color: #9aa69d; }
+    .btn-grow {
+      background: var(--green-deep); color: #fff; border: none; cursor: pointer;
+      border-radius: 999px; padding: 13px 26px; font-size: 15px; font-weight: 600; white-space: nowrap;
     }
-    .hero-sub {
-      font-family: var(--serif);
-      font-size: clamp(18px, 2.5vw, 24px);
-      color: var(--text);
-      max-width: 720px;
-      margin: 0 auto 40px;
-      font-style: italic;
-      line-height: 1.5;
-      opacity: 0.92;
+    .btn-grow:hover { background: var(--green-forest); }
+    .chips { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 18px; align-items: center; }
+    .chips .lbl { font-size: 13px; color: var(--muted); margin-right: 4px; }
+    .chip {
+      background: rgba(255,255,255,0.75); border: 1px solid var(--line);
+      border-radius: 999px; padding: 7px 15px; font-size: 13.5px; cursor: pointer; color: var(--text);
     }
-    .hero-ctas {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-bottom: 32px;
-    }
-    .cta-primary, .cta-secondary {
-      padding: 14px 28px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 15px;
-      transition: all 0.18s ease-out;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .cta-primary {
-      background: linear-gradient(135deg, var(--accent), var(--accent-bright));
-      color: #1c1305;
-      box-shadow: 0 4px 16px rgba(232, 185, 116, 0.25);
-    }
-    .cta-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232, 185, 116, 0.4); }
-    .cta-secondary {
-      background: var(--surface-2);
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
-    .cta-secondary:hover { border-color: var(--accent); color: var(--accent-bright); }
+    .chip:hover { background: #fff; border-color: var(--green-forest); color: var(--green-deep); }
 
-    /* Field State strip — pulls from /api/champion/stats */
-    .field-state-strip {
-      max-width: 980px;
-      margin: 0 auto 60px;
-      padding: 14px 22px;
-      background: linear-gradient(135deg, rgba(232, 185, 116, 0.04), rgba(124, 196, 168, 0.04));
-      border: 1px solid var(--border);
-      border-top: 2px solid var(--accent);
-      border-radius: 10px;
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      gap: 18px;
-      align-items: center;
-    }
-    .fs-label {
-      font-size: 10px;
-      letter-spacing: 1.5px;
-      color: var(--accent-bright);
-      font-weight: 700;
-      white-space: nowrap;
-    }
-    .fs-label::before {
-      content: "";
-      display: inline-block;
-      width: 7px; height: 7px;
-      background: var(--good);
+    /* ---- wooden signpost ---- */
+    .signpost { position: relative; width: 300px; height: 430px; padding-top: 4px; }
+    /* sun glow behind the post */
+    .signpost::before {
+      content: ""; position: absolute; right: 6px; top: 26px; width: 190px; height: 190px;
       border-radius: 50%;
-      margin-right: 8px;
-      animation: pulse-dot 1.6s ease-in-out infinite;
-      box-shadow: 0 0 0 0 rgba(132, 212, 136, 0.7);
+      background: radial-gradient(circle, rgba(255,236,179,0.95) 0%, rgba(245,209,137,0.55) 38%, rgba(245,209,137,0) 70%);
+      filter: blur(2px); z-index: 0;
     }
-    @keyframes pulse-dot {
-      0% { box-shadow: 0 0 0 0 rgba(132, 212, 136, 0.7); }
-      50% { box-shadow: 0 0 0 8px rgba(132, 212, 136, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(132, 212, 136, 0); }
+    /* the post */
+    .post {
+      position: absolute; right: 34px; top: 14px; width: 18px; height: 404px; z-index: 1;
+      background: linear-gradient(90deg,#6b4a27 0%,#8a5d30 30%,#a9763f 50%,#7d5329 72%,#5e3f22 100%);
+      border-radius: 6px 6px 3px 3px;
+      box-shadow: 3px 4px 10px rgba(0,0,0,0.22), inset 0 0 0 1px rgba(0,0,0,0.12);
     }
-    .fs-metrics {
-      display: flex;
-      gap: 22px;
-      flex-wrap: wrap;
-      font-size: 13px;
+    .post::after { /* post cap */
+      content: ""; position: absolute; left: -3px; top: -7px; width: 24px; height: 12px;
+      background: linear-gradient(180deg,#9a6a37,#6b4a27); border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.25);
     }
-    .fs-metric strong {
-      color: var(--accent-bright);
-      font-weight: 700;
-      font-family: ui-monospace, "SF Mono", Menlo, monospace;
-      margin-right: 4px;
+    .planks { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; padding-top: 20px; }
+    .sign {
+      position: relative; white-space: nowrap;
+      color: #fff8ec; font-family: 'Caveat', cursive; font-size: 20px; font-weight: 700;
+      letter-spacing: .3px; line-height: 1;
+      padding: 11px 30px 11px 22px; border-radius: 3px;
+      /* arrow plank pointing right */
+      clip-path: polygon(0 0, 86% 0, 100% 50%, 86% 100%, 0 100%);
+      background:
+        repeating-linear-gradient(180deg, rgba(255,255,255,0.05) 0 3px, rgba(0,0,0,0.05) 3px 6px),
+        linear-gradient(180deg,#b07d45 0%,#9a6736 48%,#82531f 100%);
+      box-shadow: 2px 5px 9px rgba(0,0,0,0.22);
+      text-shadow: 0 1px 1px rgba(0,0,0,0.35);
+      transform: translateX(8px);
     }
-    .fs-metric { color: var(--muted); }
-    .fs-cta {
-      font-size: 12px;
-      color: var(--accent);
-      text-decoration: none;
-      white-space: nowrap;
+    /* two screws on each plank */
+    .sign::before, .sign::after {
+      content: ""; position: absolute; top: 50%; transform: translateY(-50%);
+      width: 5px; height: 5px; border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fbe7bf, #6b4a27);
+      box-shadow: 0 1px 1px rgba(0,0,0,0.4);
     }
-    .fs-cta:hover { color: var(--accent-bright); text-decoration: underline; }
-    @media (max-width: 700px) {
-      .field-state-strip { grid-template-columns: 1fr; text-align: center; }
-      .fs-metrics { justify-content: center; }
+    .sign::before { left: 8px; } .sign::after { right: 36px; }
+    /* slight natural variation per plank */
+    .sign:nth-child(2) { transform: translateX(8px) rotate(-0.6deg); }
+    .sign:nth-child(4) { transform: translateX(8px) rotate(0.7deg); }
+    .sign:nth-child(6) { transform: translateX(8px) rotate(-0.5deg); }
+    .sign.here {
+      background:
+        repeating-linear-gradient(180deg, rgba(255,255,255,0.06) 0 3px, rgba(0,0,0,0.06) 3px 6px),
+        linear-gradient(180deg,#2a8d59 0%,#1F7A4D 50%,#0F5132 100%);
+      font-size: 21px;
     }
+    @media (max-width: 860px) { .signpost { display: none; } .hero-grid { grid-template-columns: 1fr; } }
 
-    /* Section base */
-    section { padding: 60px 0; }
-    .section-eyebrow {
-      font-size: 11px;
-      letter-spacing: 2px;
-      color: var(--accent);
-      text-transform: uppercase;
-      font-weight: 700;
-      margin-bottom: 12px;
-      text-align: center;
+    /* ---------- CATEGORY STRIP ---------- */
+    .cats {
+      background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+      box-shadow: var(--shadow); margin-top: -30px; position: relative; z-index: 5;
+      display: grid; grid-template-columns: repeat(9, 1fr); padding: 22px 10px;
     }
-    .section-h {
-      font-family: var(--serif);
-      font-size: clamp(28px, 4vw, 40px);
-      font-weight: 500;
-      letter-spacing: -0.5px;
-      text-align: center;
-      margin-bottom: 16px;
-      color: var(--text-bright);
-    }
-    .section-lead {
-      font-family: var(--serif);
-      font-size: 18px;
-      font-style: italic;
-      color: var(--muted);
-      max-width: 640px;
-      margin: 0 auto 40px;
-      text-align: center;
-      line-height: 1.6;
-    }
+    .cat { text-align: center; padding: 8px 6px; cursor: pointer; border-radius: 12px; }
+    .cat:hover { background: var(--green-soft); }
+    .cat .ico { font-size: 26px; }
+    .cat .t { font-weight: 600; font-size: 13.5px; margin-top: 6px; }
+    .cat .p { font-size: 11.5px; color: var(--muted); margin-top: 2px; line-height: 1.3; }
+    @media (max-width: 1000px) { .cats { grid-template-columns: repeat(3,1fr); } }
+    @media (max-width: 560px) { .cats { grid-template-columns: repeat(2,1fr); } }
 
-    /* Two paths */
-    .paths {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      max-width: 980px;
-      margin: 0 auto;
+    /* ---------- PANELS ROW ---------- */
+    .section { padding: 46px 0; }
+    .panels { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    @media (max-width: 1000px) { .panels { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 620px) { .panels { grid-template-columns: 1fr; } }
+    .panel {
+      background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 20px; box-shadow: var(--shadow);
     }
-    @media (max-width: 800px) { .paths { grid-template-columns: 1fr; } }
-    .path-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 28px;
-      transition: all 0.2s ease-out;
-    }
-    .path-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 32px rgba(0,0,0,0.4);
-    }
-    .path-card.personal { border-top: 3px solid var(--p2); }
-    .path-card.collective { border-top: 3px solid var(--accent); }
-    .path-icon { font-size: 32px; line-height: 1; margin-bottom: 12px; }
-    .path-card h3 {
-      font-family: var(--serif);
-      font-size: 26px;
-      font-weight: 600;
-      color: var(--text-bright);
-      margin-bottom: 8px;
-    }
-    .path-card .path-tag {
-      font-size: 11px;
-      letter-spacing: 1px;
-      color: var(--accent);
-      text-transform: uppercase;
-      font-weight: 700;
-      margin-bottom: 16px;
-    }
-    .path-card.personal .path-tag { color: var(--p2); }
-    .path-card p { color: var(--text); margin-bottom: 16px; }
-    .path-list {
-      list-style: none;
-      margin-bottom: 20px;
-    }
-    .path-list li {
-      padding: 6px 0;
-      color: var(--muted);
-      font-size: 14px;
-      border-bottom: 1px solid var(--border);
-    }
-    .path-list li:last-child { border-bottom: 0; }
-    .path-list strong { color: var(--text-bright); margin-right: 6px; }
-    .path-link {
-      display: inline-block;
-      margin-top: 8px;
-      color: var(--accent-bright);
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 14px;
-    }
-    .path-link:hover { color: var(--accent); text-decoration: underline; }
+    .panel .head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .panel .head .ttl { font-family: 'Fraunces', serif; font-weight: 600; font-size: 17px; }
+    .panel .head a { font-size: 12.5px; color: var(--green-forest); font-weight: 600; }
 
-    /* CHRIST pillars strip */
-    .christ-section {
-      background: linear-gradient(180deg, transparent, rgba(232, 185, 116, 0.04), transparent);
-      padding: 80px 0;
-    }
-    .christ-pillars {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 12px;
-      max-width: 880px;
-      margin: 0 auto;
-    }
-    @media (max-width: 700px) { .christ-pillars { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 420px) { .christ-pillars { grid-template-columns: 1fr; } }
-    .pillar {
-      text-align: center;
-      padding: 18px 12px;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-    }
-    .pillar-letter {
-      font-family: var(--serif);
-      font-size: 36px;
-      font-weight: 700;
-      color: var(--accent-bright);
-      line-height: 1;
-    }
-    .pillar-name {
-      font-size: 12px;
-      color: var(--text);
-      margin-top: 6px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-    }
-    .christ-byline {
-      font-family: var(--serif);
-      font-size: 18px;
-      font-style: italic;
-      text-align: center;
-      color: var(--muted);
-      max-width: 640px;
-      margin: 32px auto 0;
-      line-height: 1.6;
-    }
+    /* today's pick */
+    .pick-body { display: flex; gap: 14px; }
+    .pick-cover { width: 78px; height: 112px; border-radius: 8px; background: linear-gradient(160deg,#1c2c4d,#0e1830); flex-shrink: 0; display:flex;align-items:center;justify-content:center;color:#cdb98a;font-size:9px;text-align:center;padding:6px;font-weight:600; }
+    .pick-title { font-family:'Fraunces',serif; font-weight:600; font-size:16px; }
+    .pick-desc { font-size: 13px; color: var(--muted); margin: 5px 0 8px; }
+    .pick-price { font-weight: 700; font-size: 15px; }
+    .btn-sm { display:inline-block; background: var(--green-deep); color:#fff; border-radius:999px; padding:8px 16px; font-size:13px; font-weight:600; margin-top:8px; cursor:pointer; }
+    .why { background: var(--sand); border-radius:10px; padding:8px 12px; margin-top:14px; font-size:12px; color:#6b5b3a; }
+    .why b { color:#4a3f25; }
 
-    /* Existing services preserved (work / call / learn) */
-    .services {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 14px;
-      max-width: 980px;
-      margin: 0 auto;
-    }
-    .service-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 20px;
-    }
-    .service-card h4 {
-      font-family: var(--serif);
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--text-bright);
-      margin-bottom: 8px;
-    }
-    .service-card p { color: var(--muted); font-size: 13px; margin-bottom: 12px; line-height: 1.6; }
-    .service-card a {
-      display: inline-block;
-      color: var(--accent);
-      font-size: 13px;
-      font-weight: 600;
-      text-decoration: none;
-    }
-    .service-card a:hover { color: var(--accent-bright); }
+    /* events / creators rows */
+    .row-item { display:flex; gap:12px; padding:11px 0; border-bottom:1px solid var(--line); align-items:center; }
+    .row-item:last-child { border-bottom:none; }
+    .thumb { width:54px;height:54px;border-radius:10px;flex-shrink:0; background:var(--green-soft); display:flex;align-items:center;justify-content:center;font-size:22px; }
+    .thumb.round { border-radius:50%; }
+    .ri-body { flex:1; }
+    .ri-title { font-weight:600; font-size:14px; }
+    .ri-meta { font-size:12px; color:var(--muted); }
+    .pricebadge { background:var(--green-soft); color:var(--green-deep); font-size:12px; font-weight:600; padding:4px 11px; border-radius:999px; white-space:nowrap; }
+    .pricebadge.free { background:#e7f3ea; }
 
-    /* About */
-    .about-section .container { max-width: 720px; }
-    .about-section p {
-      font-family: var(--serif);
-      font-size: 18px;
-      line-height: 1.7;
-      color: var(--text);
-      margin-bottom: 16px;
-    }
-    .about-section em { color: var(--accent-bright); font-style: italic; }
-    .ecosystem-links {
-      margin-top: 20px;
-      padding: 18px;
-      background: var(--surface-2);
-      border-left: 3px solid var(--accent);
-      border-radius: 4px;
-      font-size: 14px;
-      line-height: 1.8;
-    }
-    .ecosystem-links a {
-      color: var(--accent-bright);
-      text-decoration: none;
-      font-weight: 600;
-    }
-    .ecosystem-links a:hover { text-decoration: underline; }
+    /* you grow we remember */
+    .remember .mini { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:14px 0; text-align:center; }
+    .remember .mini-3 { grid-template-columns:repeat(3,1fr); }
+    .remember .mini div .i { font-size:22px; }
+    .remember .mini div .n { font-size:12.5px; font-weight:600; margin-top:4px; }
+    .remember .mini div .d { font-size:10.5px; color:var(--muted); }
+    .remember .intro { font-size:13px; color:var(--muted); }
+    .ghost-btn { display:block; text-align:center; background:var(--green-soft); color:var(--green-deep); border-radius:999px; padding:9px; font-size:13px; font-weight:600; margin-top:8px; cursor:pointer; }
 
-    /* Footer */
-    footer {
-      padding: 50px 0 80px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 13px;
-      border-top: 1px solid var(--border);
-      margin-top: 40px;
+    /* ---------- PROMISE STRIP ---------- */
+    .promise {
+      background: linear-gradient(180deg, var(--green-soft), #f3f9f3);
+      border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+      padding: 36px 0;
     }
-    footer a { color: var(--accent); text-decoration: none; margin: 0 8px; }
-    footer a:hover { color: var(--accent-bright); text-decoration: underline; }
-    .footer-tagline {
-      font-family: var(--serif);
-      font-style: italic;
-      font-size: 16px;
-      color: var(--text);
-      margin-bottom: 16px;
+    .promise-grid { display:grid; grid-template-columns: 1.4fr repeat(4, 1fr) 1.2fr; gap:24px; align-items:center; }
+    .promise h2 { font-size:26px; }
+    .promise .lead { font-size:13.5px; color:var(--muted); margin-top:8px; }
+    .val .i { font-size:22px; }
+    .val .t { font-weight:600; font-size:13.5px; margin-top:5px; }
+    .val .d { font-size:11.5px; color:var(--muted); }
+    .join { background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:18px; text-align:center; box-shadow:var(--shadow); }
+    .join p { font-size:13px; color:var(--muted); margin-bottom:10px; }
+    .join .btn-grow { width:100%; }
+    @media (max-width: 1000px) { .promise-grid { grid-template-columns: repeat(2,1fr); } .promise h2{grid-column:1/-1;} }
+
+    /* ---------- COMING SOON ---------- */
+    .soon { text-align:center; padding: 8px 0 4px; }
+    .soon h2 { font-size:24px; }
+    .soon p { color:var(--muted); font-size:14px; margin-top:6px; }
+    .doors { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:24px; max-width:820px; margin-left:auto; margin-right:auto; }
+    .door { background:#fff; border:1px dashed #d9cfb8; border-radius:var(--radius); padding:20px; text-align:center; }
+    .door .i { font-size:26px; }
+    .door .t { font-family:'Fraunces',serif; font-weight:600; font-size:16px; margin-top:8px; }
+    .door .d { font-size:12.5px; color:var(--muted); margin-top:4px; }
+    .door .badge { display:inline-block; background:var(--sand); color:#7a6228; font-size:10.5px; font-weight:600; padding:3px 10px; border-radius:999px; margin-top:10px; }
+    @media (max-width: 760px) { .doors { grid-template-columns:repeat(2,1fr); } }
+
+    /* ---------- FOOTER ---------- */
+    footer { background: var(--green-deep); color:#cfe2d5; padding: 44px 0 30px; margin-top: 50px; }
+    .foot-grid { display:flex; flex-wrap:wrap; gap:20px 40px; justify-content:space-between; align-items:center; }
+    .foot-links { display:flex; flex-wrap:wrap; gap:18px; }
+    .foot-links a { color:#cfe2d5; font-size:14px; }
+    .foot-links a:hover { color:#fff; }
+    .foot-line { text-align:center; margin-top:26px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.12); font-family:'Fraunces',serif; font-size:15px; color:#e9f3ec; }
+
+    /* ---------- CHAT DRAWER ---------- */
+    .drawer-bg { position:fixed; inset:0; background:rgba(15,33,26,0.4); opacity:0; pointer-events:none; transition:.25s; z-index:90; }
+    .drawer-bg.open { opacity:1; pointer-events:auto; }
+    .drawer {
+      position:fixed; top:0; right:0; height:100%; width:420px; max-width:92vw;
+      background:var(--cream); box-shadow:-10px 0 40px rgba(0,0,0,0.2);
+      transform:translateX(100%); transition:.3s cubic-bezier(.4,0,.2,1); z-index:91;
+      display:flex; flex-direction:column;
     }
+    .drawer.open { transform:translateX(0); }
+    .drawer-head { padding:18px 20px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; background:#fff; }
+    .drawer-head .t { font-family:'Fraunces',serif; font-weight:600; font-size:17px; display:flex; gap:8px; align-items:center; }
+    .drawer-body { flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:14px; }
+    .msg { padding:13px 15px; border-radius:14px; font-size:14px; max-width:88%; line-height:1.5; }
+    .msg.guide { background:#fff; border:1px solid var(--line); align-self:flex-start; }
+    .msg.user { background:var(--green-deep); color:#fff; align-self:flex-end; }
+    .drawer-input { display:flex; gap:8px; padding:14px; border-top:1px solid var(--line); background:#fff; }
+    .drawer-input input { flex:1; border:1px solid var(--line); border-radius:999px; padding:11px 16px; outline:none; font-size:14px; }
+    .drawer-input button { background:var(--green-deep); color:#fff; border:none; border-radius:50%; width:42px; height:42px; cursor:pointer; font-size:16px; }
   </style>
 </head>
 <body>
-  <div class="horizon-glow"></div>
-  <svg class="starfield" id="starfield" preserveAspectRatio="xMidYMid slice"></svg>
 
-  <div class="container">
-    <nav>
-      <a href="/" class="nav-mark"><span class="circle">◯</span>Full Potential</a>
-      <ul class="nav-links">
-        <li><a href="/diagnose">Diagnose</a></li>
-        <li><a href="/call">Weekly Call</a></li>
-        <li><a href="#learn">Learn</a></li>
-        <li><a href="/peace">Peace</a></li>
-        <li><a href="https://fullpotential.ai">Intelligence</a></li>
-        <li><a href="/game" class="cta">🎮 Play the Game</a></li>
-      </ul>
-    </nav>
-
-    <section class="hero">
-      <div class="hero-eyebrow">PERSONAL PRACTICE · COLLECTIVE GAME</div>
-      <h1>Reality is already a game.<br>Start playing yours.</h1>
-      <p class="hero-sub">
-        Most systems extract. This one circulates. Diagnose where life is coherent and where it isn't — then either restore it on your own or join the larger Game where humans and AI co-create the operating systems for a more coherent civilization.
-      </p>
-      <div class="hero-ctas">
-        <a href="/game" class="cta-primary">🎮 Open the Game →</a>
-        <a href="/diagnose" class="cta-secondary">📍 Diagnose your life</a>
+  <!-- ============ NAV ============ -->
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="logo" href="/">
+        <span class="mark">🌱</span>
+        <span>
+          <span class="name"><b>Full</b>Potential<span style="color:var(--green-forest)">.com</span></span>
+          <span class="tag">Helping people find what helps them grow.</span>
+        </span>
+      </a>
+      <nav class="links">
+        <a class="active" href="/">Home</a>
+        <a href="/discover.html">Discover</a>
+        <a href="/store.html">Store</a>
+        <a href="/creators.html">Creators</a>
+        <a href="/experiences.html">Experiences</a>
+        <a href="/local.html">Local</a>
+        <a href="/game.html" title="The Full Potential Game">Game</a>
+        <a href="/codex.html">Codex</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-btn" title="Search">🔍</button>
+        <button class="chat-pill" onclick="openChat()">💬 Chat with Guide</button>
+        <button class="icon-btn" title="Wishlist">🤍</button>
+        <button class="icon-btn" title="Cart">🛒</button>
+        <button class="icon-btn" title="Profile">👤</button>
       </div>
-    </section>
-
-    <div class="field-state-strip">
-      <div class="fs-label">FIELD STATE</div>
-      <div class="fs-metrics" id="fsMetrics">
-        <span class="fs-metric"><strong id="fsChampions">—</strong>Champions</span>
-        <span class="fs-metric"><strong id="fsProofs">—</strong>Proofs filed</span>
-        <span class="fs-metric"><strong id="fsScore">—</strong>Field Score</span>
-        <span class="fs-metric"><strong id="fsGrowth">—</strong>this week</span>
-      </div>
-      <a href="/game" class="fs-cta">See the live Game →</a>
     </div>
+  </header>
 
-    <!-- Two Paths -->
-    <section>
-      <div class="section-eyebrow">TWO PATHS · ONE PRACTICE</div>
-      <h2 class="section-h">Restore your circulation. Play the larger Game.</h2>
-      <p class="section-lead">
-        The personal work and the collective game both run at the same time. Pick what calls. Both are real. Both are alive.
-      </p>
-      <div class="paths">
-        <div class="path-card personal">
-          <div class="path-icon">📍</div>
-          <div class="path-tag">PERSONAL</div>
-          <h3>Diagnose your life</h3>
-          <p>
-            Seven areas — body, mind, relationships, work, money, purpose, environment. The diagnostic maps where you are honestly, so the work has somewhere real to begin. Not therapy. Closer to a reading.
-          </p>
-          <ul class="path-list">
-            <li><strong>Begin →</strong> Free intake (no email required to see results)</li>
-            <li><strong>Sit with Sunheart →</strong> A diagnostic session, one conversation</li>
-            <li><strong>Weekly Call →</strong> Free. Live. Every Thursday.</li>
-            <li><strong>Coherence course →</strong> Structured path through the seven areas</li>
-          </ul>
-          <a href="/diagnose" class="path-link">Begin the diagnostic →</a>
-        </div>
-        <div class="path-card collective">
-          <div class="path-icon">🎮</div>
-          <div class="path-tag">COLLECTIVE</div>
-          <h3>Play the Game</h3>
-          <p>
-            A proof-based operating system for human potential. Coherent Champions of CHRIST sign the World Peace Agreement, build a Character Card, run a 7-Day proof loop, and earn Field Score through witnessed reality — not vanity metrics.
-          </p>
-          <ul class="path-list">
-            <li><strong>Read →</strong> Manifesto v1.0 (5 minutes)</li>
-            <li><strong>Sign →</strong> World Peace Agreement (1 minute)</li>
-            <li><strong>Build →</strong> Character Card via AI Port-In (5 minutes)</li>
-            <li><strong>Play →</strong> 7-Day First Game (your proof)</li>
-          </ul>
-          <a href="/game" class="path-link">Open the Game →</a>
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <h1>What wants to <em>grow</em> today?</h1>
+        <p class="sub">Tell us what's alive for you. We'll help you find the people, products, places, and experiences that support your next step.</p>
+        <form class="search-row" onsubmit="askGuide(event)">
+          <input id="heroInput" placeholder="I want to…" />
+          <button class="btn-grow" type="submit">Help me grow</button>
+        </form>
+        <div class="chips">
+          <span class="lbl">Try these:</span>
+          <span class="chip" onclick="chip(this)">Sleep better</span>
+          <span class="chip" onclick="chip(this)">Find community</span>
+          <span class="chip" onclick="chip(this)">Start a business</span>
+          <span class="chip" onclick="chip(this)">Eat healthier</span>
+          <span class="chip" onclick="chip(this)">Go on retreat</span>
+          <span class="chip" onclick="chip(this)">Create more</span>
+          <span class="chip" onclick="chip(this)">Serve others</span>
         </div>
       </div>
-    </section>
-
-    <!-- CHRIST values -->
-    <section class="christ-section">
-      <div class="section-eyebrow">THE VALUES THE GAME RUNS ON</div>
-      <h2 class="section-h">CHRIST</h2>
-      <div class="christ-pillars">
-        <div class="pillar"><div class="pillar-letter">C</div><div class="pillar-name">Coherence</div></div>
-        <div class="pillar"><div class="pillar-letter">H</div><div class="pillar-name">Healing</div></div>
-        <div class="pillar"><div class="pillar-letter">R</div><div class="pillar-name">Regeneration</div></div>
-        <div class="pillar"><div class="pillar-letter">I</div><div class="pillar-name">Intelligence</div></div>
-        <div class="pillar"><div class="pillar-letter">S</div><div class="pillar-name">Service</div></div>
-        <div class="pillar"><div class="pillar-letter">T</div><div class="pillar-name">Truth</div></div>
-      </div>
-      <p class="christ-byline">
-        "This is not a religion of superiority. It is a practice of becoming trustworthy with power."
-      </p>
-    </section>
-
-    <!-- Services -->
-    <section id="learn">
-      <div class="section-eyebrow">DEEPER WORK</div>
-      <h2 class="section-h">If you want to go further.</h2>
-      <p class="section-lead">
-        The diagnostic is a starting point. These are the rooms behind it.
-      </p>
-      <div class="services">
-        <div class="service-card">
-          <h4>The Weekly Call</h4>
-          <p>Free. Live. Every Thursday. Come with your bottleneck, leave with one clear next step. Your first call is open.</p>
-          <a href="/call">Join the call →</a>
-        </div>
-        <div class="service-card">
-          <h4>Work with Sunheart</h4>
-          <p>A diagnostic session — one conversation that maps where you are and what's blocking circulation. Precise, direct, no pitch.</p>
-          <a href="#work">Begin a session →</a>
-        </div>
-        <div class="service-card">
-          <h4>Coherence Course</h4>
-          <p>Taught with Nicolette Luna. A structured path through the seven areas — not theory, lived practice. Two formats.</p>
-          <a href="#learn">Learn more →</a>
-        </div>
-        <div class="service-card">
-          <h4>Zen Village Immersion</h4>
-          <p>Costa Rican mountains. Residential immersion. The framework lived as a body, not read as ideas.</p>
-          <a href="https://zenvillagecr.com/inquire">Inquire →</a>
+      <div class="signpost">
+        <div class="post"></div>
+        <div class="planks">
+          <div class="sign here">♥ You are here</div>
+          <div class="sign">More clarity</div>
+          <div class="sign">Better health</div>
+          <div class="sign">Stronger relationships</div>
+          <div class="sign">Meaningful work</div>
+          <div class="sign">Inner peace</div>
+          <div class="sign">Make an impact</div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- About -->
-    <section class="about-section">
-      <div class="container">
-        <div class="section-eyebrow">ABOUT</div>
-        <h2 class="section-h">Where the work comes from.</h2>
-        <p>
-          Full Potential is the work of <em>Sunheart</em> — diagnostician, builder, and steward of Zen Village in the Chirripó mountains of Costa Rica. The framework emerged from two decades of pattern recognition across consciousness, economics, and embodiment: what makes people coherent, what fragments them, and what it takes to restore circulation when life has gotten stuck.
-        </p>
-        <p>
-          The system is supported by <em>CORA Nation</em>, a 508(c)(1)(A) faith-based organization. The AI infrastructure — diagnostic tools, companion agents, the intelligence layer at fullpotential.ai — is built in collaboration with the agents themselves. The work is regenerative, not extractive. Nothing here harvests attention.
-        </p>
-        <div class="ecosystem-links">
-          <a href="https://zenvillagecr.com">Zen Village</a> is the physical ground.<br />
-          <a href="https://coranation.org">CORA Nation</a> is the organizational vessel.<br />
-          <a href="/game">The Game</a> is the proof-based OS.<br />
-          <a href="https://fullpotential.ai">fullpotential.ai</a> is the intelligence layer.<br />
-          <a href="/peace">Peace</a> is the social protocol.
-        </div>
-      </div>
-    </section>
-
-    <footer>
-      <p class="footer-tagline">Together, we can build a future worth inheriting.</p>
-      <p>
-        <a href="/game">Game</a> ·
-        <a href="/diagnose">Diagnose</a> ·
-        <a href="/call">Call</a> ·
-        <a href="https://fullpotential.ai">Intelligence</a> ·
-        <a href="/peace">Peace</a> ·
-        <a href="mailto:james@fullpotential.com">Contact</a>
-      </p>
-      <p style="margin-top:16px;opacity:0.6;font-size:12px;">
-        Full Potential · Coherent Champions of CHRIST · CORA Nation
-      </p>
-    </footer>
+  <!-- ============ CATEGORY STRIP ============ -->
+  <div class="wrap">
+    <div class="cats">
+      <a class="cat" href="/discover.html?c=sleep"><div class="ico">🌙</div><div class="t">Sleep Better</div><div class="p">Rest deeper.</div></a>
+      <a class="cat" href="/discover.html?c=think"><div class="ico">🧠</div><div class="t">Think Clearly</div><div class="p">Focus better.</div></a>
+      <a class="cat" href="/discover.html?c=strength"><div class="ico">🏋️</div><div class="t">Build Strength</div><div class="p">Feel stronger.</div></a>
+      <a class="cat" href="/discover.html?c=community"><div class="ico">👥</div><div class="t">Find Community</div><div class="p">Belong.</div></a>
+      <a class="cat" href="/discover.html?c=wealth"><div class="ico">💼</div><div class="t">Create Wealth</div><div class="p">Grow income.</div></a>
+      <a class="cat" href="/discover.html?c=spirit"><div class="ico">🪷</div><div class="t">Deepen Spirit</div><div class="p">Live with purpose.</div></a>
+      <a class="cat" href="/discover.html?c=eat"><div class="ico">🍎</div><div class="t">Eat Locally</div><div class="p">Real food.</div></a>
+      <a class="cat" href="/discover.html?c=create"><div class="ico">🎨</div><div class="t">Create More</div><div class="p">Express yourself.</div></a>
+      <a class="cat" href="/discover.html?c=serve"><div class="ico">🌱</div><div class="t">Serve Others</div><div class="p">Give back.</div></a>
+    </div>
   </div>
 
-  <script>
-    // Starfield
-    (function(){
-      const svg = document.getElementById('starfield');
-      if (!svg) return;
-      const w = window.innerWidth;
-      const h = Math.max(window.innerHeight, document.documentElement.scrollHeight);
-      svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-      svg.setAttribute('width', w);
-      svg.setAttribute('height', h);
-      const count = Math.min(140, Math.floor((w * h) / 14000));
-      let stars = '';
-      for (let i = 0; i < count; i++) {
-        const x = Math.random() * w;
-        const y = Math.random() * h;
-        const r = Math.random() * 1.3 + 0.3;
-        const delay = Math.random() * 5;
-        stars += `<circle class="star" cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${r.toFixed(1)}" style="animation-delay:${delay.toFixed(1)}s" />`;
-      }
-      svg.innerHTML = stars;
-    })();
+  <!-- ============ PANELS ============ -->
+  <section class="section wrap">
+    <div class="panels">
 
-    // Field State — pulls from the Game's API
-    async function loadFieldState() {
-      try {
-        const res = await fetch('https://fullpotential.com/api/champion/stats', { cache: 'no-store' });
-        if (!res.ok) return;
-        const d = await res.json();
-        const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-        set('fsChampions', d.champions?.total ?? 0);
-        set('fsProofs', d.proofs?.total ?? 0);
-        set('fsScore', d.field_score_sum ?? 0);
-        set('fsGrowth', '+' + (d.growth_this_week?.total ?? 0));
-      } catch (e) {}
+      <!-- Today's Pick / Deal of the Day -->
+      <div class="panel" id="dealPanel">
+        <div class="head"><span class="ttl">🔥 Deal of the Day</span></div>
+        <div id="dealBody">
+          <div class="pick-desc" style="padding:6px 0;">The first drop is coming soon. <a href="#" onclick="openChat();return false;" style="color:var(--green-forest);font-weight:600;">Ask the Guide</a> what wants to grow today — we'll point you to your next right step.</div>
+        </div>
+      </div>
+      <script>
+        fetch('/data/deal.json').then(function(r){return r.json();}).then(function(d){
+          var a=d&&d.active; if(!a) return;
+          var esc=function(s){return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
+          var href='/offer.html?id='+encodeURIComponent(a.id||''), tgt='';
+          document.getElementById('dealBody').innerHTML =
+            '<div class="pick-body"><div class="pick-cover" style="font-size:30px;">'+esc(a.emoji||'🌱')+'</div><div>'
+            + '<div class="pick-title">'+esc(a.title)+'</div>'
+            + '<div class="pick-desc">'+esc(a.blurb)+'</div>'
+            + '<div class="pick-price">'+esc(a.price||'')+'</div>'
+            + '<a class="btn-sm" href="'+esc(href)+'"'+tgt+'>'+(/free|inquiry|—/i.test(a.price||'')?'Learn More →':'Get it →')+'</a>'
+            + '</div></div>'
+            + (a.why?'<div class="why"><b>Why today?</b> '+esc(a.why)+'</div>':'');
+        }).catch(function(){});
+      </script>
+
+      <!-- Happening Near You -->
+      <div class="panel">
+        <div class="head"><span class="ttl">📍 Happening Near You</span><a href="/local.html">Austin, TX</a></div>
+        <div class="row-item">
+          <div class="thumb">🌅</div>
+          <div class="ri-body"><div class="ri-title">Sunset Community Walk</div><div class="ri-meta">Today · 7:00 PM · Zilker Park</div></div>
+          <span class="pricebadge free">Free</span>
+        </div>
+        <div class="row-item">
+          <div class="thumb">🍽️</div>
+          <div class="ri-body"><div class="ri-title">Conscious Dinner Circle</div><div class="ri-meta">May 24 · 6:30 PM · East Austin</div></div>
+          <span class="pricebadge">$25</span>
+        </div>
+        <div class="row-item">
+          <div class="thumb">🌬️</div>
+          <div class="ri-body"><div class="ri-title">Breathwork & Sound</div><div class="ri-meta">May 26 · 7:00 PM · The Space Austin</div></div>
+          <span class="pricebadge">$30</span>
+        </div>
+      </div>
+
+      <!-- Creators -->
+      <div class="panel">
+        <div class="head"><span class="ttl">⭐ Meet Amazing Creators</span><a href="/creators.html">View all</a></div>
+        <div class="row-item">
+          <div class="thumb round">🧑🏻</div>
+          <div class="ri-body"><div class="ri-title">Jason Wachob</div><div class="ri-meta">Founder, Mindbodygreen · Courses · Articles</div></div>
+        </div>
+        <div class="row-item">
+          <div class="thumb round">👩🏽</div>
+          <div class="ri-body"><div class="ri-title">Jade Beason</div><div class="ri-meta">Breathwork Teacher · Events · 1:1 Sessions</div></div>
+        </div>
+        <div class="row-item">
+          <div class="thumb round">🧑🏼</div>
+          <div class="ri-body"><div class="ri-title">Thomas DeLauer</div><div class="ri-meta">Health Educator · Courses · Guides</div></div>
+        </div>
+      </div>
+
+      <!-- You Grow. We Remember. -->
+      <div class="panel remember">
+        <div class="head"><span class="ttl">❤️ You Grow. We Remember.</span></div>
+        <p class="intro">Every time you show up, help, create, or support others, we recognize it.</p>
+        <div class="mini mini-3">
+          <div><div class="i">🌳</div><div class="n">CORA</div><div class="d">Recognize contribution.</div></div>
+          <div><div class="i">🏛️</div><div class="n">Treasury</div><div class="d">Fund what creates good.</div></div>
+          <div><div class="i">🤝</div><div class="n">Community</div><div class="d">Grow together.</div></div>
+        </div>
+        <a class="ghost-btn" href="/codex.html">See How It Works</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ PROMISE ============ -->
+  <section class="promise">
+    <div class="wrap promise-grid">
+      <div>
+        <h2>Our Promise <span class="hand" style="color:var(--clay)">♥</span></h2>
+        <p class="lead">We recommend what helps you grow — even when that means not buying.</p>
+      </div>
+      <div class="val"><div class="i">🛡️</div><div class="t">Curated with care</div><div class="d">Quality over quantity.</div></div>
+      <div class="val"><div class="i">👣</div><div class="t">People first</div><div class="d">Your growth over our profit.</div></div>
+      <div class="val"><div class="i">🌿</div><div class="t">Better together</div><div class="d">Community, not just customers.</div></div>
+      <div class="val"><div class="i">🌍</div><div class="t">Good multiplies</div><div class="d">Support people and planet.</div></div>
+      <div class="join">
+        <p>Join thousands growing more meaningful lives.</p>
+        <button class="btn-grow" onclick="openChat()">Join Free</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GROWING SOON ============ -->
+  <section class="section wrap soon">
+    <h2>Future doors, growing soon</h2>
+    <p>Seeded early. Built in rhythm. Deepened over time.</p>
+    <div class="doors">
+      <div class="door"><div class="i">🤝</div><div class="t">Community</div><div class="d">Interest circles, local groups, gatherings.</div><span class="badge">Growing Soon</span></div>
+      <div class="door"><div class="i">🌳</div><div class="t">CORA</div><div class="d">Earn recognition for showing up & helping.</div><span class="badge">Growing Soon</span></div>
+      <div class="door"><div class="i">🏛️</div><div class="t">Treasury</div><div class="d">A portion of revenue funds what helps life flourish.</div><span class="badge">Growing Soon</span></div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer>
+    <div class="wrap">
+      <div class="foot-grid">
+        <a class="logo" href="/">
+          <span class="mark">🌱</span>
+          <span class="name" style="color:#fff">FullPotential<span style="color:#9fd3b0">.com</span></span>
+        </a>
+        <div class="foot-links">
+          <a href="/about">About</a>
+          <a href="/codex.html">Codex</a>
+          <a href="/creators.html">Creators</a>
+          <a href="/game.html">The Game</a>
+          <a href="/partner">Partner With Us</a>
+          <a href="/contact">Contact</a>
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
+        </div>
+      </div>
+      <div class="foot-line">One question. One right step. One contribution at a time. What wants to grow today? 🌱</div>
+    </div>
+  </footer>
+
+  <!-- ============ CHAT DRAWER ============ -->
+  <div class="drawer-bg" id="drawerBg" onclick="closeChat()"></div>
+  <aside class="drawer" id="drawer">
+    <div class="drawer-head">
+      <span class="t">💬 Chat with Guide</span>
+      <button class="icon-btn" onclick="closeChat()">✕</button>
+    </div>
+    <div class="drawer-body" id="chatBody">
+      <div class="msg guide">What wants to grow today? Tell me what's alive for you, and I'll help you find your next right step.</div>
+    </div>
+    <form class="drawer-input" onsubmit="sendChat(event)">
+      <input id="chatInput" placeholder="What's alive for you?" />
+      <button type="submit">↑</button>
+    </form>
+  </aside>
+
+  <script>
+    function openChat(){ document.getElementById('drawer').classList.add('open'); document.getElementById('drawerBg').classList.add('open'); document.getElementById('chatInput').focus(); }
+    function closeChat(){ document.getElementById('drawer').classList.remove('open'); document.getElementById('drawerBg').classList.remove('open'); }
+    function chip(el){ document.getElementById('heroInput').value = el.textContent; document.getElementById('heroInput').focus(); }
+    function askGuide(e){ e.preventDefault(); const v = document.getElementById('heroInput').value.trim(); if(!v) return; openChat(); pushUser(v); guideReply(v); }
+    function sendChat(e){ e.preventDefault(); const i=document.getElementById('chatInput'); const v=i.value.trim(); if(!v) return; pushUser(v); i.value=''; guideReply(v); }
+    function pushUser(t){ const b=document.getElementById('chatBody'); const d=document.createElement('div'); d.className='msg user'; d.textContent=t; b.appendChild(d); b.scrollTop=b.scrollHeight; }
+    function pushGuide(html){ const b=document.getElementById('chatBody'); const d=document.createElement('div'); d.className='msg guide'; d.innerHTML=html; b.appendChild(d); b.scrollTop=b.scrollHeight; }
+    // V1 stub — structured Guide response. Wire to live model endpoint next.
+    function guideReply(v){
+      GUIDE_HISTORY.push({role:'user',text:v});
+      const _em=v.match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/); if(_em) localStorage.setItem('fp_email',_em[0]); const _email=localStorage.getItem('fp_email')||'';
+      const tid=pushTyping();
+      fetch('https://brain.sunheart.com/guide',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:v,history:GUIDE_HISTORY,email:_email})})
+        .then(r=>r.json()).then(d=>{removeTyping(tid);const t=d.reply||'...';GUIDE_HISTORY.push({role:'guide',text:t});pushGuide(fmtGuide(t));})
+        .catch(()=>{removeTyping(tid);pushGuide('Something hiccuped on my side — try once more.');});
     }
-    loadFieldState();
-    setInterval(loadFieldState, 60000);
+    let GUIDE_HISTORY=[];
+    function fmtGuide(t){ return escapeHtml(t).replace(/
+/g,'<br>').replace(/(The Read|The Match|The Why|The Next Step|The Reflection)/g,'<b>$1</b>'); }
+    function pushTyping(){ const b=document.getElementById('chatBody'); const d=document.createElement('div'); d.className='msg guide'; d.id='t'+(GUIDE_HISTORY.length)+Math.floor(performance.now()); d.textContent='…'; b.appendChild(d); b.scrollTop=b.scrollHeight; return d.id; }
+    function removeTyping(id){ const e=document.getElementById(id); if(e) e.remove(); }
+    function escapeHtml(s){ return s.replace(/[&<>\"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c])); }
   </script>
 </body>
 </html>
