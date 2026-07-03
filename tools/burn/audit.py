@@ -25,6 +25,9 @@ REGISTRY = [
      "expected": "$0 until billing settled; then ≤$10/day (hard cap)", "output": "growth ledger impressions/leads", "owner": "growth engine"},
     {"name": "Brevo SMTP relay", "kind": "subscription", "expected": "free tier", "output": "mail deliverability", "owner": "mail stack"},
     {"name": "servers 162/198/209", "kind": "fixed-infra", "expected": "fixed monthly", "output": "everything", "owner": "James"},
+    {"name": "assessment-scorer (product core)", "kind": "api-key", "key_hint": "ANTHROPIC",
+     "expected": "$0 via model_router subscription; metered only on real-client audits (~$0.10-0.50/audit vs $2,500 Blueprint)",
+     "output": "Allocation Score deliverable per lead", "owner": "growth engine"},
     # DISABLED 2026-07-03: brain-curator fleet (key shbrainincurator-42826, revoked by James)
 ]
 KNOWN_UNITS = {e.get("unit") for e in REGISTRY if e.get("unit")}
