@@ -38,7 +38,7 @@ REGISTRY = [
     {"name": "162 HOT_STATE synth (30-min)", "where": "162", "cadence": 30, "grace": 4,
      "evidence": "file:/root/.config/fpai/hot_memory/HOT_STATE.md"},
     {"name": "162 awareness probe (2h)", "where": "162", "cadence": 120, "grace": 4,
-     "evidence": "journal:fpai-awareness-probe.service"},
+     "evidence": "journal:fpai-awareness-reliability.service"},
     {"name": "162 nightly metabolism", "where": "162", "cadence": 1440, "grace": 2,
      "evidence": "journal:fpai-metabolism.service"},
 ]
