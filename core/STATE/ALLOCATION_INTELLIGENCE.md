@@ -9,21 +9,9 @@ tags: [foundation, doctrine, allocation-intelligence, keystone, three-rs]
 
 > **The one sentence:** FPOS is an **Allocation Intelligence Operating System** that continuously improves how every scarce resource is *routed, reasoned about, and recursively invested* to maximize **future capability**.
 
-> **Where this sits (the hierarchy · authoritative · sharpened 2026-07-03 by the Claude+GPT+James convergence):** This is the **CORE CAPABILITY** — the engine and the moat, what the system optimizes internally. Crucially, **it is NOT the offering**: a CEO doesn't buy "Allocation Intelligence," they buy a solution to a pressing problem (cut costs · deploy AI · improve ops). Every such solution is *powered by* Allocation Intelligence. The clean separation:
->
-> | Layer | What it is |
-> |-------|-----------|
-> | **MISSION** (north star) | Increase **Future Capability** (measured LR=flow · IUM=stock, [[LEARNING_METRICS]]) |
-> | **CORE CAPABILITY** (engine + moat · internal) | **Allocation Intelligence** (this doc) — route every scarce resource to its highest-value use |
-> | **OPERATING SYSTEM** (the engine) | **FPOS/FPAI** |
-> | **CORE OFFERING** (what the customer buys) | **Intelligence Solutions** — the transformation, powered behind the scenes by Allocation Intelligence |
-> | **MECHANISM** | Routing · Reasoning · Recursion ([[FOUNDATION]]) |
->
-> **First product:** *Capital Allocation Intelligence* (start with capital — it's measurable: cash · P&L · payroll · SaaS · treasury · AI spend → better investment/spend/hire/deploy decisions). Its first concrete wedge = the AI Cost Reduction Audit ([[AI_COST_REDUCTION_AUDIT]]). Phase 2 = the same engine on time · attention · people · knowledge · ops. Then Enterprise Allocation Intelligence — one living allocation system.
->
-> **Positioning (the sale):** you don't sell *optimization* ("incremental") — you sell **Better Decisions**, because allocation is the highest-leverage decision an organization makes. *Nuance:* the concrete savings number is the measurable **proof/wedge** for the first touch; "better allocation decisions" is the **executive frame** for the retainer + expansion. Lead with $, elevate to decisions.
->
-> When this and the Constitution disagree, the Constitution wins; this evolves.
+> **Where this sits (the hierarchy · authoritative):** This is the **CORE CAPABILITY** layer — the operational objective the whole system optimizes. It derives from the [[CONSTITUTION]] engraving ("every decision leaves the system more capable, verified by reality") and sits directly under it:
+> `PURPOSE` (increase Future Capability) → **`CORE CAPABILITY` (Allocation Intelligence · this)** → `MECHANISM` (Routing · Reasoning · Recursion — see [[FOUNDATION]]) → `ENGINE` (FPOS/FPAI) → `APPLICATIONS` (Financial → Operational → Enterprise → Civilizational Intelligence).
+> Measured by [[LEARNING_METRICS]]: **LR = the flow, IUM = the stock** — both gauge the Future Capability that good allocation produces. When this and the Constitution disagree, the Constitution wins; this evolves.
 
 ---
 
@@ -87,3 +75,6 @@ Doctrine that maps to nothing running is fiction (Law 2). Allocation Intelligenc
 **The gaps (the honest next allocations):** the system today allocates mostly *build-attention* (which spec to build). The other scarce resources named above — capital/time/people/relationships — are not yet routed through the same engine. Financial Intelligence (the first product) is where Allocation Intelligence extends from code to capital. That is the direction, not yet the state.
 
 *Keystone adopted 2026-07-03. Every prior idea now has a natural place: nothing is bolted on; everything derives from one first principle — allocate every scarce resource toward maximum future capability.*
+
+---
+**Refinement (2026-07-03):** [[Cycle Time Is The Interest Rate]] — allocation converts capital/time into the Three Rs; **cycle-time is the compounding multiplier**, and shrinking it is a first-class allocation target (the rate of compounding itself compounds).
