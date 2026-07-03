@@ -38,33 +38,33 @@ def remote(cmd):
 
 
 def send(subject, body, reply_to=None):
-    cfg = json.loads(ACCOUNTS.read_text())
-    relays = cfg.get("smtp_relays", [])
-    from_addr = cfg.get("email_alert_from") or "canary@fullpotential.com"
-    msg = EmailMessage()
-    msg["Subject"] = subject
-    msg["From"] = f"FP AI Builders <{from_addr}>"
-    msg["To"] = TO
-    if reply_to:
-        msg["Reply-To"] = reply_to
-    msg["Date"] = formatdate(localtime=True)
-    msg["Message-ID"] = make_msgid(domain=from_addr.split("@")[-1])
-    msg.set_content(body)
-    last = ""
-    for r in relays:
-        try:
-            if r.get("tls") == "smtps":
-                s = smtplib.SMTP_SSL(r["host"], int(r["port"]), timeout=15, context=_SSL)
-            else:
-                s = smtplib.SMTP(r["host"], int(r["port"]), timeout=15)
-                s.starttls(context=_SSL)
-            s.login(r["username"], r["password"])
-            s.send_message(msg)
-            s.quit()
-            return True, r["host"]
-        except Exception as e:
-            last = f"{r['host']}: {e}"
-    return False, last
+    """Deliver via 162 -> direct to MX (port 25). Proven 2026-07-03: authenticated
+    relay sends got swallowed (209 hosts a phantom fullpotential.com domain; Brevo
+    drops self-sends). Direct-to-MX from 162 lands in the real inbox."""
+    doc = json.dumps({"subject": subject, "body": body, "reply_to": reply_to or ""})
+    script = """
+import smtplib, sys, json
+from email.message import EmailMessage
+from email.utils import formatdate, make_msgid
+d = json.loads(sys.stdin.read())
+m = EmailMessage()
+m["Subject"] = d["subject"]
+m["From"] = "FP AI Builders <noreply@sunheart.com>"
+m["To"] = "james@fullpotential.com"
+if d.get("reply_to"):
+    m["Reply-To"] = d["reply_to"]
+m["Date"] = formatdate(localtime=True)
+m["Message-ID"] = make_msgid(domain="sunheart.com")
+m.set_content(d["body"])
+s = smtplib.SMTP("mail.fullpotential.com", 25, timeout=20)
+s.send_message(m); s.quit(); print("sent")
+"""
+    r = subprocess.run(
+        ["ssh", "-o", "ConnectTimeout=12", "root@162.0.208.88",
+         "T=$(mktemp); cat > $T; python3 $T <<< '" + doc.replace("'", "'\\''") + "'"],
+        input=script, capture_output=True, text=True, timeout=45)
+    ok = "sent" in r.stdout
+    return ok, (r.stderr.strip()[:150] or "162→MX")
 
 
 def main():
