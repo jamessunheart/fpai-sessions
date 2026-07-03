@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Free Allocation Intelligence Audit — Full Potential</title>
+  <title>Free Full Potential Assessment — Powered by Allocation Intelligence</title>
   <meta name="description" content="Your Allocation Score + your 3 highest-value opportunities, 48 hours after a 15-minute intake. Free. No pitch — the score is yours either way.">
   <style>
     :root{--cream:#FFF9EF;--sand:#F2E7D2;--gold:#D9A441;--text:#17211A;--muted:#5D675F;--green:#3E7C4F;--deep:#1B3A5C;--blue:#2563EB;--card:#FFF;--line:#E8DCC4}
@@ -49,7 +49,7 @@
       <span class="pill">💰 Capital</span><span class="pill">⏱️ Time</span><span class="pill">🎯 Attention</span>
       <span class="pill">👥 People</span><span class="pill">🤖 AI</span><span class="pill">📚 Knowledge</span>
     </div>
-    <a class="cta" href="#start">Get Your Free Audit →</a>
+    <a class="cta" href="#start">Start the Free Assessment →</a>
   </div>
 
   <div class="how">
@@ -70,7 +70,7 @@
       <input id="a-company" placeholder="Company name (or just describe it)">
       <label for="a-goal">What are you trying to build this year?</label>
       <textarea id="a-goal" rows="3" placeholder="One honest paragraph. This anchors the whole audit."></textarea>
-      <button class="cta" type="submit">Request My Free Audit →</button>
+      <button class="cta" type="submit">Start My Free Assessment →</button>
       <div class="ok" id="okMsg">✅ Received. Watch your inbox for the 15-minute intake — your Score arrives within 48 hours of completing it.</div>
     </form>
   </div>
@@ -80,9 +80,13 @@
 
 <script>
 // A/B split: exec-frame vs savings-frame · sticky per visitor · variant travels with the lead
-const V = localStorage.getItem('audit_v') || (Math.random() < 0.5 ? 'exec' : 'savings');
+const V = localStorage.getItem('audit_v') || ['promise','exec','savings'][Math.floor(Math.random()*3)];
 localStorage.setItem('audit_v', V);
 const COPY = {
+  promise: {
+    h: 'Discover your organization\'s <span class="hl">full potential</span>.',
+    s: 'Every organization has untapped capability. The free Full Potential Assessment — powered by Allocation Intelligence — shows you where it is: your Allocation Score and your three highest-value opportunities, in 48 hours.'
+  },
   exec: {
     h: 'How well does your business <span class="hl">allocate</span> its scarce resources?',
     s: 'Capital, time, attention, people, AI. Get your free Allocation Intelligence Audit — your Allocation Score and your three highest-value opportunities, in 48 hours.'
