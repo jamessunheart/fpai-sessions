@@ -7,11 +7,21 @@ tags: [foundation, doctrine, architecture, three-rs, system]
 
 # FOUNDATION — FPOS / FPAI Architecture v1.0
 
+> ## ★ The FPOS Operating Doctrine (one sentence)
+> **The purpose of FPOS is to continuously increase future capability by improving how intelligence is routed, how decisions are made, and how learning compounds across people, AI, and organizations.**
+> *Purpose: future capability · Method: the Three Rs · Scope: people, AI, organizations · Outcome: better Builders, smarter Brain, more valuable Businesses.*
+
 *Building a Self-Improving Intelligence Company. The company-architecture doctrine. Visual: [[mindmap-92 · FPOS FPAI — The Intelligence Operating System]].*
 
 > **Where this sits (reconciliation · 2026-07-03):** This is the **DOCTRINE layer** — it lives directly under the [[CONSTITUTION]] (8 laws, enforced in code by d134), beside [[OPERATING_PRINCIPLE]] and [[LEARNING_METRICS]]. It does not compete with the Constitution; it maps into it:
 > **Routing** → Laws 5+6 (Preserve Alignment · Protect Human Leverage) · **Reasoning** → Law 2 (Reality Is Sovereign) · **Recursion** → Laws 3+8 (Learn Before You Repeat · Build the Engine) · **Two Deliverables Rule** → the Engraving ("every decision leaves the system more capable, verified by reality") · **IUM north star** → Future Capability (the one thing maximized).
 > When the Constitution and this document disagree, the Constitution wins; this document evolves.
+>
+> **The full stack (only ONE layer is immutable):**
+> `VISION` (why humanity builds this — NORTH_STAR) → **`CONSTITUTION`** (immutable laws · behavior) → `FOUNDATION` (this · operating doctrine · understanding) → `ARCHITECTURE` ([[SYSTEM MAP]] · how it's built) → `PLAYBOOKS` (protocols · `_policies/` · how it's operated) → `PROJECTS` ([[Projects]] · what we build today) → `PROOF` ([[PROOF LOG]] · what we learned) → *feeds back into FOUNDATION* ↺
+>
+> **"Revenue is an output" as the organizational filter — every initiative evaluated in this order:**
+> does it increase *Builder* capability? → *Brain* capability? → *Business* capability? → **Future Capability?** → revenue follows.
 
 ---
 
