@@ -19,6 +19,11 @@ OUT = VAULT / "02_CONTEXT/Memory" / "HEARTBEATS.md"
 
 # name · where · cadence_min · grace(×cadence) · evidence
 REGISTRY = [
+    # public funnel surfaces (URL liveness)
+    {"name": "assessment page (funnel front door)", "where": "url", "cadence": 1440, "grace": 2,
+     "evidence": "https://fullpotential.com/assessment"},
+    {"name": "remember page (movement door)", "where": "url", "cadence": 1440, "grace": 2,
+     "evidence": "https://fullpotential.com/remember"},
     # laptop loops
     {"name": "vault-sync (BRAIN/HOT STATE → vault)", "where": "laptop", "cadence": 30, "grace": 4,
      "evidence": str(HOME / ".config/fpai/vault_sync/vault-sync.stdout.log")},
@@ -70,6 +75,14 @@ def remote_ages():
     except Exception:
         return {}
 
+def check_url(target):
+    try:
+        r = subprocess.run(["curl", "-sL", "-o", "/dev/null", "-w", "%{http_code}", "--max-time", "15", target],
+                           capture_output=True, text=True, timeout=20)
+        return r.stdout.strip() == "200"
+    except Exception:
+        return False
+
 def main():
     now = datetime.datetime.now()
     r_ages = remote_ages()
@@ -79,6 +92,8 @@ def main():
         if e["where"] == "laptop":
             p = Path(e["evidence"])
             age_min = (now.timestamp() - p.stat().st_mtime) / 60 if p.exists() else None
+        elif e["where"] == "url":
+            age_min = 0 if check_url(e["evidence"]) else None
         else:
             s = r_ages.get(e["name"])
             age_min = (s / 60) if s and s > 0 and s < 10**9 else None

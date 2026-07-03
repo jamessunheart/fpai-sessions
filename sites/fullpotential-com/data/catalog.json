@@ -1,0 +1,218 @@
+{
+  "affiliate_tag": "",
+  "offerings": [],
+  "creators": [
+    {
+      "name": "Wim Hof",
+      "role": "Breathwork & Cold Teacher",
+      "helps": "Build resilience and energy through breath and cold exposure",
+      "offerings": "Events · Courses · App",
+      "location": "Online",
+      "emoji": "🧊"
+    },
+    {
+      "name": "Tara Brach",
+      "role": "Meditation Teacher & Psychologist",
+      "helps": "Meet yourself with compassion through mindfulness",
+      "offerings": "Talks · Courses · Podcast",
+      "location": "Online",
+      "emoji": "🪷"
+    },
+    {
+      "name": "Yung Pueblo",
+      "role": "Writer & Meditator",
+      "helps": "Heal and grow through self-awareness and stillness",
+      "offerings": "Books · Events · Courses",
+      "location": "Online",
+      "emoji": "🌱"
+    },
+    {
+      "name": "Dr. Andrew Huberman",
+      "role": "Neuroscientist",
+      "helps": "Use science-based tools for sleep, focus, and health",
+      "offerings": "Podcast · Courses",
+      "location": "Stanford · Online",
+      "emoji": "🔬"
+    },
+    {
+      "name": "Joe Dispenza",
+      "role": "Teacher & Author",
+      "helps": "Rewire mind and body through meditation",
+      "offerings": "Events · Courses · Retreats",
+      "location": "Online · Worldwide",
+      "emoji": "⚡"
+    },
+    {
+      "name": "Brené Brown",
+      "role": "Researcher & Storyteller",
+      "helps": "Lead and connect through courage and vulnerability",
+      "offerings": "Books · Talks · Courses",
+      "location": "Houston · Online",
+      "emoji": "💛"
+    },
+    {
+      "name": "Rich Roll",
+      "role": "Wellness Advocate & Podcaster",
+      "helps": "Transform health, habits, and purpose",
+      "offerings": "Podcast · Books · Events",
+      "location": "Los Angeles · Online",
+      "emoji": "🏃"
+    },
+    {
+      "name": "Cal Newport",
+      "role": "Author & Professor",
+      "helps": "Do focused, meaningful work in a distracted world",
+      "offerings": "Books · Podcast · Courses",
+      "location": "Online",
+      "emoji": "📚"
+    }
+  ],
+  "experiences": [
+    {
+      "title": "Zen Village Immersion · Costa Rica",
+      "type": "Retreat",
+      "date": "Aug 9–16",
+      "location": "Costa Rica",
+      "price": "$1,800",
+      "host": "Full Potential",
+      "purpose": "Live the conscious-community vision in the jungle for a week",
+      "emoji": "🌴"
+    },
+    {
+      "title": "Vipassana 10-Day Course",
+      "type": "Retreat",
+      "date": "Jul 12–23",
+      "location": "Worldwide centers",
+      "price": "Free (donation)",
+      "host": "Dhamma Centers",
+      "purpose": "Ten silent days to learn meditation as it was originally taught",
+      "emoji": "🤫"
+    },
+    {
+      "title": "Wim Hof Method Travel",
+      "type": "Adventure",
+      "date": "Sep 4–8",
+      "location": "Polish Mountains",
+      "price": "$1,400",
+      "host": "Wim Hof Method",
+      "purpose": "Breath, cold, and mindset pushed to the edge in the snow",
+      "emoji": "🏔️"
+    },
+    {
+      "title": "Lightning in a Bottle",
+      "type": "Festival",
+      "date": "May 22–26",
+      "location": "Buena Vista Lake, CA",
+      "price": "$385",
+      "host": "Do LaB",
+      "purpose": "Music, art, and wellness woven into one transformational gathering",
+      "emoji": "⚡"
+    },
+    {
+      "title": "Esalen Weekend Workshop",
+      "type": "Workshop",
+      "date": "Aug 1–3",
+      "location": "Big Sur, CA",
+      "price": "$595",
+      "host": "Esalen Institute",
+      "purpose": "Cliffside hot springs and depth work for body and soul",
+      "emoji": "♨️"
+    },
+    {
+      "title": "Breathwork & Sound Bath",
+      "type": "Gathering",
+      "date": "Jul 19",
+      "location": "Online",
+      "price": "$33",
+      "host": "Local Facilitators",
+      "purpose": "An evening to breathe, release, and reset together",
+      "emoji": "🔔"
+    },
+    {
+      "title": "Conscious Leadership Circle",
+      "type": "Workshop",
+      "date": "Jul 26–27",
+      "location": "Online",
+      "price": "$250",
+      "host": "Conscious Leadership Group",
+      "purpose": "Practice leading from curiosity instead of control",
+      "emoji": "🧭"
+    },
+    {
+      "title": "New Moon Community Gathering",
+      "type": "Gathering",
+      "date": "Each new moon",
+      "location": "Local · Online",
+      "price": "Free",
+      "host": "Full Potential",
+      "purpose": "Set intentions with others walking the same path",
+      "emoji": "🌑"
+    }
+  ],
+  "local": [
+    {
+      "section": "Local Food",
+      "title": "Boggy Creek Farm Stand",
+      "when": "Wed & Sat mornings",
+      "where": "East Austin",
+      "price": "$",
+      "emoji": "🥬"
+    },
+    {
+      "section": "Free Events",
+      "title": "Free Yoga at Auditorium Shores",
+      "when": "Sunday 10am",
+      "where": "Lady Bird Lake",
+      "price": "Free",
+      "emoji": "🧘"
+    },
+    {
+      "section": "Gatherings",
+      "title": "Austin Sober Social Meetup",
+      "when": "First Friday",
+      "where": "Central Austin",
+      "price": "Free",
+      "emoji": "🤝"
+    },
+    {
+      "section": "Farmers Markets",
+      "title": "SFC Farmers' Market Downtown",
+      "when": "Saturday 9am–1pm",
+      "where": "Republic Square",
+      "price": "$",
+      "emoji": "🍅"
+    },
+    {
+      "section": "Healthy Restaurants",
+      "title": "Bouldin Creek Cafe",
+      "when": "Daily",
+      "where": "South 1st Street",
+      "price": "$$",
+      "emoji": "🥗"
+    },
+    {
+      "section": "Creators Near You",
+      "title": "Black Swan Yoga Teachers",
+      "when": "Class times vary",
+      "where": "Multiple Austin studios",
+      "price": "$ (donation)",
+      "emoji": "🪷"
+    },
+    {
+      "section": "Volunteer Opportunities",
+      "title": "Central Texas Food Bank Shift",
+      "when": "Weekday mornings",
+      "where": "Southeast Austin",
+      "price": "Free",
+      "emoji": "🥫"
+    },
+    {
+      "section": "Retreats Nearby",
+      "title": "Hill Country Wellness Retreat",
+      "when": "Aug 15–17",
+      "where": "Wimberley, TX",
+      "price": "$420",
+      "emoji": "⛰️"
+    }
+  ]
+}

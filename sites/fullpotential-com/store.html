@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Store — FullPotential.com</title>
+  <meta name="description" content="A curated store of good things that help people grow. We guide. We don't just sell." />
+  <meta name="theme-color" content="#0F5132" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" />
+  <style>
+    :root {
+      --green-deep: #0F5132;
+      --green-forest: #1F7A4D;
+      --green-soft: #EAF5EC;
+      --cream: #FFF9EF;
+      --sand: #F2E7D2;
+      --gold: #D9A441;
+      --clay: #C96F38;
+      --blue-soft: #EAF4FA;
+      --text: #17211A;
+      --muted: #5D675F;
+      --line: #E7E0D2;
+      --shadow: 0 8px 30px rgba(15,81,50,0.08);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--cream); color: var(--text); line-height: 1.55; -webkit-font-smoothing: antialiased; }
+    h1,h2,h3 { font-family: 'Fraunces', Georgia, serif; line-height: 1.1; font-weight: 600; }
+    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .hand { font-family: 'Caveat', cursive; }
+
+    /* ---------- NAV ---------- */
+    header.nav { position: sticky; top: 0; z-index: 50; background: rgba(255,249,239,0.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+    .nav-inner { display: flex; align-items: center; gap: 28px; padding: 14px 24px; max-width: 1280px; margin: 0 auto; }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo .mark { font-size: 26px; }
+    .logo .name { font-family: 'Fraunces', serif; font-weight: 700; font-size: 20px; color: var(--green-deep); }
+    .logo .name b { color: var(--text); }
+    .logo .tag { display: block; font-size: 10.5px; color: var(--muted); font-family: 'Inter'; font-weight: 400; margin-top: -2px; }
+    nav.links { display: flex; gap: 22px; margin: 0 auto; }
+    nav.links a { font-size: 15px; font-weight: 500; color: var(--text); padding: 4px 0; border-bottom: 2px solid transparent; }
+    nav.links a:hover, nav.links a.active { border-color: var(--green-forest); color: var(--green-deep); }
+    .nav-actions { display: flex; align-items: center; gap: 16px; }
+    .icon-btn { font-size: 19px; color: var(--muted); cursor: pointer; background: none; border: none; }
+    .icon-btn:hover { color: var(--green-deep); }
+    .chat-pill { display: inline-flex; align-items: center; gap: 7px; background: var(--green-soft); color: var(--green-deep); border: 1px solid #cfe6d4; border-radius: 999px; padding: 8px 16px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .chat-pill:hover { background: #dcefe0; }
+
+    /* ---------- PAGE HEADER ---------- */
+    .page-head { background: linear-gradient(160deg, #cfe3d6 0%, #e7f0dd 45%, #f6ecd3 100%); padding: 48px 0 36px; border-bottom: 1px solid var(--line); text-align: center; }
+    .page-head h1 { font-size: clamp(34px, 5vw, 52px); letter-spacing: -0.02em; }
+    .page-head h1 em { font-style: normal; color: var(--green-forest); }
+    .page-head .tagline { font-family: 'Caveat', cursive; font-size: 26px; color: var(--clay); margin-top: 8px; }
+    .page-head .sub { font-size: 16px; color: var(--muted); margin: 10px auto 0; max-width: 580px; }
+
+    /* ---------- CATEGORY CHIPS ---------- */
+    .chip-strip { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; padding: 28px 0 8px; }
+    .scat { background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 10px 18px; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: var(--shadow); display: inline-flex; align-items: center; gap: 7px; }
+    .scat:hover, .scat.on { background: var(--green-deep); color: #fff; border-color: var(--green-deep); }
+
+    /* ---------- CARD GRID ---------- */
+    .section { padding: 30px 0 20px; }
+    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+    @media (max-width: 1100px) { .grid { grid-template-columns: repeat(3,1fr); } }
+    @media (max-width: 820px) { .grid { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 520px) { .grid { grid-template-columns: 1fr; } }
+    .card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column; transition: transform .15s, box-shadow .15s; }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 14px 38px rgba(15,81,50,0.13); }
+    .card-img { height: 130px; display: flex; align-items: center; justify-content: center; font-size: 52px; background: linear-gradient(160deg, var(--green-soft), #f6ecd3); }
+    .card-body { padding: 16px 16px 18px; display: flex; flex-direction: column; flex: 1; gap: 7px; }
+    .card-tag { font-size: 11px; font-weight: 600; color: var(--green-forest); text-transform: uppercase; letter-spacing: .04em; }
+    .card-title { font-family: 'Fraunces', serif; font-weight: 600; font-size: 17px; }
+    .card-benefit { font-size: 13px; color: var(--muted); flex: 1; }
+    .card-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
+    .price { font-weight: 700; font-size: 15px; }
+    .price.free { color: var(--green-forest); }
+    .trust { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; color: #6b5b3a; background: var(--sand); border-radius: 999px; padding: 3px 9px; }
+    .trust.high { color: var(--green-deep); background: var(--green-soft); }
+    .card-cta { display: block; text-align: center; background: var(--green-deep); color: #fff; border-radius: 999px; padding: 9px; font-size: 13px; font-weight: 600; margin-top: 4px; cursor: pointer; }
+    .card-cta:hover { background: var(--green-forest); }
+
+    /* ---------- PROMISE BANNER ---------- */
+    .promise { background: linear-gradient(180deg, var(--green-soft), #f3f9f3); border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding: 34px 0; text-align: center; margin-top: 24px; }
+    .promise h2 { font-size: 26px; }
+    .promise p { font-size: 14px; color: var(--muted); margin-top: 8px; max-width: 540px; margin-left: auto; margin-right: auto; }
+
+    /* ---------- FOOTER ---------- */
+    footer { background: var(--green-deep); color:#cfe2d5; padding: 44px 0 30px; margin-top: 50px; }
+    .foot-grid { display:flex; flex-wrap:wrap; gap:20px 40px; justify-content:space-between; align-items:center; }
+    .foot-links { display:flex; flex-wrap:wrap; gap:18px; }
+    .foot-links a { color:#cfe2d5; font-size:14px; }
+    .foot-links a:hover { color:#fff; }
+    .foot-line { text-align:center; margin-top:26px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.12); font-family:'Fraunces',serif; font-size:15px; color:#e9f3ec; }
+
+    /* ---------- CHAT DRAWER ---------- */
+    .drawer-bg { position:fixed; inset:0; background:rgba(15,33,26,0.4); opacity:0; pointer-events:none; transition:.25s; z-index:90; }
+    .drawer-bg.open { opacity:1; pointer-events:auto; }
+    .drawer { position:fixed; top:0; right:0; height:100%; width:420px; max-width:92vw; background:var(--cream); box-shadow:-10px 0 40px rgba(0,0,0,0.2); transform:translateX(100%); transition:.3s cubic-bezier(.4,0,.2,1); z-index:91; display:flex; flex-direction:column; }
+    .drawer.open { transform:translateX(0); }
+    .drawer-head { padding:18px 20px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; background:#fff; }
+    .drawer-head .t { font-family:'Fraunces',serif; font-weight:600; font-size:17px; display:flex; gap:8px; align-items:center; }
+    .drawer-body { flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:14px; }
+    .msg { padding:13px 15px; border-radius:14px; font-size:14px; max-width:88%; line-height:1.5; }
+    .msg.guide { background:#fff; border:1px solid var(--line); align-self:flex-start; }
+    .msg.user { background:var(--green-deep); color:#fff; align-self:flex-end; }
+    .drawer-input { display:flex; gap:8px; padding:14px; border-top:1px solid var(--line); background:#fff; }
+    .drawer-input input { flex:1; border:1px solid var(--line); border-radius:999px; padding:11px 16px; outline:none; font-size:14px; }
+    .drawer-input button { background:var(--green-deep); color:#fff; border:none; border-radius:50%; width:42px; height:42px; cursor:pointer; font-size:16px; }
+  </style>
+</head>
+<body>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="logo" href="/">
+        <span class="mark">🌱</span>
+        <span>
+          <span class="name"><b>Full</b>Potential<span style="color:var(--green-forest)">.com</span></span>
+          <span class="tag">Helping people find what helps them grow.</span>
+        </span>
+      </a>
+      <nav class="links">
+        <a href="/">Home</a>
+        <a href="/discover.html">Discover</a>
+        <a class="active" href="/store.html">Store</a>
+        <a href="/creators.html">Creators</a>
+        <a href="/experiences.html">Experiences</a>
+        <a href="/local.html">Local</a>
+        <a href="/game.html" title="The Full Potential Game">Game</a>
+        <a href="/codex.html">Codex</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-btn" title="Search">🔍</button>
+        <button class="chat-pill" onclick="openChat()">💬 Chat with Guide</button>
+        <button class="icon-btn" title="Wishlist">🤍</button>
+        <button class="icon-btn" title="Cart">🛒</button>
+        <button class="icon-btn" title="Profile">👤</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ PAGE HEADER ============ -->
+  <section class="page-head">
+    <div class="wrap">
+      <h1>The <em>Store</em></h1>
+      <p class="tagline">We guide. We don't just sell.</p>
+      <p class="sub">A small, curated shelf of good things that help people grow. Not endless — chosen with care.</p>
+    </div>
+  </section>
+
+  <!-- ============ CATEGORY CHIPS ============ -->
+  <div class="wrap">
+    <div class="chip-strip">
+      <span class="scat on" data-cat="all">✨ All</span>
+      <span class="scat" data-cat="sleep">🌙 Sleep Better</span>
+      <span class="scat" data-cat="think">🧠 Think Clearly</span>
+      <span class="scat" data-cat="strength">🏋️ Build Strength</span>
+      <span class="scat" data-cat="eat">🍎 Eat Locally</span>
+      <span class="scat" data-cat="wealth">💼 Create Wealth</span>
+      <span class="scat" data-cat="spirit">🪷 Deepen Spirit</span>
+      <span class="scat" data-cat="create">🎨 Create More</span>
+      <span class="scat" data-cat="community">🤝 Community</span>
+      <span class="scat" data-cat="serve">🌱 Serve Others</span>
+    </div>
+  </div>
+
+  <!-- ============ PRODUCTS ============ -->
+  <section class="section wrap">
+    <div class="grid" id="grid">Loading…</div>
+  </section>
+
+  <!-- ============ PROMISE ============ -->
+  <section class="promise">
+    <div class="wrap">
+      <h2>Our Promise <span class="hand" style="color:var(--clay)">♥</span></h2>
+      <p>We recommend what helps you grow — even when that means not buying. Quality over quantity. Your growth over our profit.</p>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer>
+    <div class="wrap">
+      <div class="foot-grid">
+        <a class="logo" href="/">
+          <span class="mark">🌱</span>
+          <span class="name" style="color:#fff">FullPotential<span style="color:#9fd3b0">.com</span></span>
+        </a>
+        <div class="foot-links">
+          <a href="/about">About</a>
+          <a href="/codex.html">Codex</a>
+          <a href="/creators.html">Creators</a>
+          <a href="/game.html">The Game</a>
+          <a href="/partner">Partner With Us</a>
+          <a href="/contact">Contact</a>
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
+        </div>
+      </div>
+      <div class="foot-line">One question. One right step. One contribution at a time. What wants to grow today? 🌱</div>
+    </div>
+  </footer>
+
+  <!-- ============ CHAT DRAWER ============ -->
+  <div class="drawer-bg" id="drawerBg" onclick="closeChat()"></div>
+  <aside class="drawer" id="drawer">
+    <div class="drawer-head">
+      <span class="t">💬 Chat with Guide</span>
+      <button class="icon-btn" onclick="closeChat()">✕</button>
+    </div>
+    <div class="drawer-body" id="chatBody">
+      <div class="msg guide">What wants to grow today? Tell me what's alive for you, and I'll help you find your next right step.</div>
+    </div>
+    <form class="drawer-input" onsubmit="sendChat(event)">
+      <input id="chatInput" placeholder="What's alive for you?" />
+      <button type="submit">↑</button>
+    </form>
+  </aside>
+
+  <!-- ============ STORE CATALOG RENDER ============ -->
+  <script>
+    (function(){
+      var CAT_LABEL = { sleep:'Sleep Better', think:'Think Clearly', strength:'Build Strength', eat:'Eat Locally', wealth:'Create Wealth', spirit:'Deepen Spirit', create:'Create More', community:'Community', serve:'Serve Others' };
+      var grid = document.getElementById('grid');
+      var offerings = [];
+      var activeCat = 'all';
+      var AFF_TAG = '';
+      function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; }); }
+      function render(){
+        var list = activeCat === 'all' ? offerings : offerings.filter(function(o){ return o.category === activeCat; });
+        if(!list.length){ grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:48px 16px;"><div style="font-size:34px;">🌱</div><h3 style="font-family:Fraunces,serif;color:var(--text);margin:10px 0 6px;">The shelf is growing.</h3><p>We add offerings one at a time — each one chosen because it truly helps you grow.<br>Our first drop arrives soon as a <b>Deal of the Day</b>. Until then, <a href="#" onclick="openChat();return false;" style="color:var(--green-forest);font-weight:600;">chat with the Guide</a> and we\'ll point you to your next right step.</p></div>'; return; }
+        grid.innerHTML = list.map(function(o){
+          function buyUrl(o){ var u=o.url||'#'; if(o.amazon && AFF_TAG){ u += (u.indexOf('?')>-1?'&':'?')+'tag='+encodeURIComponent(AFF_TAG); } return u; }
+          var label = CAT_LABEL[o.category] || (o.category || '');
+          var free = (o.price && /free/i.test(o.price)) ? ' free' : '';
+          return '<div class="card">'
+            + '<div class="card-img">' + esc(o.emoji) + '</div>'
+            + '<div class="card-body">'
+            + '<span class="card-tag">' + esc(label) + '</span>'
+            + '<div class="card-title">' + esc(o.title) + '</div>'
+            + '<div class="card-benefit">' + esc(o.blurb) + '</div>'
+            + '<div class="card-foot"><span class="price' + free + '">' + esc(o.price) + '</span>'
+            + '<span class="trust high">✓ curated</span></div>'
+            + '<a class="card-cta" href="' + esc(buyUrl(o)) + '" target="_blank" rel="noopener nofollow">' + (/free|inquiry|—/i.test(o.price||'') ? 'Learn More →' : 'View / Buy →') + '</a>'
+            + '</div></div>';
+        }).join('');
+      }
+      document.querySelectorAll('.scat').forEach(function(chip){
+        chip.addEventListener('click', function(){
+          document.querySelectorAll('.scat').forEach(function(c){ c.classList.remove('on'); });
+          chip.classList.add('on');
+          activeCat = chip.getAttribute('data-cat') || 'all';
+          render();
+        });
+      });
+      fetch('/data/catalog.json')
+        .then(function(r){ return r.json(); })
+        .then(function(d){ offerings = (d && d.offerings) || []; AFF_TAG = (d && d.affiliate_tag) || ''; render(); })
+        .catch(function(){ grid.textContent = 'Loading…'; });
+    })();
+  </script>
+
+  <script>
+    function openChat(){ document.getElementById('drawer').classList.add('open'); document.getElementById('drawerBg').classList.add('open'); document.getElementById('chatInput').focus(); }
+    function closeChat(){ document.getElementById('drawer').classList.remove('open'); document.getElementById('drawerBg').classList.remove('open'); }
+    function sendChat(e){ e.preventDefault(); const i=document.getElementById('chatInput'); const v=i.value.trim(); if(!v) return; pushUser(v); i.value=''; guideReply(v); }
+    function pushUser(t){ const b=document.getElementById('chatBody'); const d=document.createElement('div'); d.className='msg user'; d.textContent=t; b.appendChild(d); b.scrollTop=b.scrollHeight; }
+    function pushGuide(html){ const b=document.getElementById('chatBody'); const d=document.createElement('div'); d.className='msg guide'; d.innerHTML=html; b.appendChild(d); b.scrollTop=b.scrollHeight; }
+    function guideReply(v){
+      GUIDE_HISTORY.push({role:'user',text:v});
+      const _em=v.match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/); if(_em) localStorage.setItem('fp_email',_em[0]); const _email=localStorage.getItem('fp_email')||'';
+      const tid=pushTyping();
+      fetch('https://brain.sunheart.com/guide',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:v,history:GUIDE_HISTORY,email:_email})})
+        .then(r=>r.json()).then(d=>{removeTyping(tid);const t=d.reply||'...';GUIDE_HISTORY.push({role:'guide',text:t});pushGuide(fmtGuide(t));})
+        .catch(()=>{removeTyping(tid);pushGuide('Something hiccuped on my side — try once more.');});
+    }
+    let GUIDE_HISTORY=[];
+    function fmtGuide(t){ return escapeHtml(t).replace(/
+/g,'<br>').replace(/(The Read|The Match|The Why|The Next Step|The Reflection)/g,'<b>$1</b>'); }
+    function pushTyping(){ const b=document.getElementById('chatBody'); const d=document.createElement('div'); d.className='msg guide'; d.id='t'+(GUIDE_HISTORY.length)+Math.floor(performance.now()); d.textContent='…'; b.appendChild(d); b.scrollTop=b.scrollHeight; return d.id; }
+    function removeTyping(id){ const e=document.getElementById(id); if(e) e.remove(); }
+    function escapeHtml(s){ return s.replace(/[&<>\"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c])); }
+  </script>
+</body>
+</html>

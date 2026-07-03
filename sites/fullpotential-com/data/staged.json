@@ -1,0 +1,81 @@
+{
+  "offers": [
+    {
+      "id": "dream-big-mask",
+      "title": "Dream Big Sleep Mask",
+      "type": "product",
+      "category": "sleep",
+      "price": "$—",
+      "blurb": "A weighted, contoured sleep mask for deeper rest and vivid dreaming.",
+      "why": "James's own — made to help you actually drop into sleep, not just block light.",
+      "creator": "Dream Big",
+      "emoji": "😴",
+      "url": "",
+      "affiliate": false,
+      "ready": false,
+      "needs": [
+        "final price",
+        "buy/checkout link",
+        "product photo"
+      ],
+      "helps_grow": "Deep, uninterrupted sleep — and the calm nervous system that good rest builds.",
+      "for_who": [
+        "Light sleepers and anyone who wakes at 3am",
+        "People whose minds race at night",
+        "Travelers, shift workers, and nap-takers",
+        "Meditators who want total darkness for practice"
+      ],
+      "not_for": [
+        "Anyone hoping a mask alone fixes deeper sleep issues — pair it with a real wind-down",
+        "Side sleepers who dislike any pressure near the eyes"
+      ],
+      "why_selected": "It's James's own — made because most masks leak light, slide off, or press your eyes. This one is contoured and weighted to actually stay, block fully, and feel calming.",
+      "how_to_use": [
+        "Dim screens 30 min before bed",
+        "Slip it on, adjust the strap once",
+        "Three slow breaths — let the dark do the rest"
+      ],
+      "reasons_not_to_buy": [
+        "If your room is already pitch black and you sleep fine — you don't need this",
+        "If your sleep problem is stress or caffeine, fix that first (the Guide can help)"
+      ]
+    },
+    {
+      "id": "zen-village-retreat",
+      "title": "Zen Village Retreat · Costa Rica",
+      "type": "experience",
+      "category": "community",
+      "price": "From $—",
+      "blurb": "A real-world gathering at Camp Zen — nervous-system repair, conscious community, jungle presence.",
+      "why": "The physical home of everything Full Potential points toward.",
+      "creator": "Zen Village",
+      "emoji": "🌴",
+      "url": "https://zenvillagecr.com",
+      "affiliate": false,
+      "ready": false,
+      "needs": [
+        "retreat dates",
+        "price/tiers",
+        "booking link"
+      ],
+      "helps_grow": "Nervous-system repair, real community, and presence — the things a screen can't give you.",
+      "for_who": [
+        "Anyone running on empty who needs a true reset",
+        "People craving conscious community, not a vacation",
+        "Builders and founders who need to slow down to speed up"
+      ],
+      "not_for": [
+        "Anyone looking for a party or a luxury resort — this is a practice container"
+      ],
+      "why_selected": "It's the physical home of everything Full Potential points toward — the place the philosophy becomes a body in a hammock in the jungle.",
+      "how_to_use": [
+        "Pick dates that let you fully unplug",
+        "Come with one question you're sitting with",
+        "Leave space after — integration is part of it"
+      ],
+      "reasons_not_to_buy": [
+        "If you can't take a real break right now, wait until you can be all-in"
+      ]
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # NOW — Living SSOT
 
-**Last Updated:** 2026-07-03 (canon aligned to FOUNDATION doctrine · Value Capture era)
+**Last Updated:** 2026-07-03 evening (Growth Engine era — offer converged · brand stack complete · demand engine on the loop)
 **Updated By:** Ember (session 23537d81)
 **System Status:** 🟢 OPERATIONAL — 127+ specs merged · build loop auto-merges (Constitution-checked, d134) · awareness 100% · first unattended improvement cycle ran 2026-07-03 · all readable-mirror feeds live.
 
@@ -14,19 +14,20 @@
 
 ## 🎯 CURRENT PRIORITY (The ONE Thing)
 
-### VALUE CAPTURE — turn built capability into cash flow
-**Why (Law 4):** improve the weakest conversion first. Learning ✓ capability ✓ infrastructure ✓ — conversion-to-cash is the honest zero.
-**Daily question:** *what conversation can produce cash in the next 24–72 hours?*
-**30-day metric:** Treasury Growth Rate.
-**Fastest paths (from James's own map, mindmap-61):** ① AI Cost Reduction Audit (OneBPO expertise, 24–72h) · ② warm ONEBPO relationships (24–72h) · ③ private immersion/retreat day (3–7d).
-**Live doorway:** https://fullpotential.com/ai-builders — applications → saved on 198 + emailed to James (Reply-To = applicant).
-**Waiting on:** James names the path → Ember drafts the offer + 5 warm targets.
+### VALUE CAPTURE via THE GROWTH ENGINE — the business builds its own demand (James directive 2026-07-03)
+**The offer (BBB v1.4, converged with GPT):** front door = **Free Full Potential Assessment** (Allocation Score + top-3, 48h) → Blueprint $2.5k → **Savings Split** (25% of verified savings, floor $5k/cap $50k) → Partnership $2–5k/mo + quarterly re-audit. The audit routes each lead to its highest-value offer. Doc: vault `04_DECISION/Offers/BBB — The Intelligence Solutions Offer v1.md`.
+**Demand strategy (LOCKED):** NO manual outreach until the funnel is proven — system-generated ads + content with A/B data first (`feedback_ads_content_first_no_manual_sends`). Batch-1 outreach drafted + HELD.
+**Live surfaces:** /assessment (3-way frame test: promise/exec/savings, Meta pixel + Lead events) · /remember (movement door ✨) · /learn article #1 · /ai-builders.
+**Building itself:** `SPEC_growth-stack-master.md` on the loop (G1 ledger → G2 content engine + Postiz → G3 nurture → G4 ads $10/day gated → G5 kill/breed allocator → G6 real audit product → G7 SEO).
+**Brand stack (2026-07-03):** ✨ Remember the Spark (movement) → Full Potential (promise/origin) → Allocation Intelligence (category) → FPOS/.ai (platform).
+**James-gates open:** Meta billing on act_71883338 "FP Ventures" · disable zombie key shbrainincurator-42826 (doing) · first-activation per public channel.
+**30-day metric:** Treasury Growth Rate · engine metric: Growth CCD + CPL half-life.
 
 ## 🌊 STATE ACROSS STREAMS (2026-07-03)
 
 - **Game (FPOS):** engine self-runs (build · review · merge · learn). Paused for players — not building for empty seats. Bot awareness 100%.
 - **Zen Village:** James physically at Zen Palace. Camp Zen offer ladder mapped (mindmaps 53–56) — execution paused by choice.
-- **Ventures:** AI Builders funnel live (Division 1 of FOUNDATION). Camp Zen = near-term revenue path when unpaused.
+- **Ventures:** Full funnel live — Assessment + Spark door + learn + AI Builders. Growth stack (G1-G7) queued to build itself. API zombie purged (~$0.20/day curator fleet, 2 months of empty briefs).
 - **Treasury:** ~$122k liquid · ~$64.5k idle · **HOLDING** by directive. MACU ($56k @ 0%) is the lever when the optimize window opens. SSOT: `~/.config/fpai/treasury/CURRENT_RESOURCES_2026-06-28.md`.
 - **Legal:** BUTR paused.
 - **Relationship:** sacred · steady.
