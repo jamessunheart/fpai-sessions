@@ -21,7 +21,7 @@ from typing import Iterable
 HOME = Path.home()
 VAULT = Path(os.environ.get(
     "FPAI_VAULT",
-    HOME / "Library" / "Mobile Documents" / "iCloud~md~obsidian" / "Documents" / "FPOS" / "Full Potential OS",
+    HOME / "Documents" / "FPOS" / "Full Potential OS",
 ))
 CONFIG = Path(os.environ.get("FPAI_CONFIG", HOME / ".config" / "fpai"))
 
@@ -29,12 +29,13 @@ TREASURY_DIR = CONFIG / "treasury"
 COST_LEDGER = CONFIG / "cost" / "ledger.jsonl"
 SOL_LIVE = CONFIG / "sol_live" / "latest.json"
 
-CURRENT_RESOURCES = TREASURY_DIR / "CURRENT_RESOURCES_2026-06-03.md"
+_snapshots = sorted(TREASURY_DIR.glob("CURRENT_RESOURCES_*.md"))
+CURRENT_RESOURCES = _snapshots[-1] if _snapshots else TREASURY_DIR / "CURRENT_RESOURCES_2026-06-03.md"
 TREASURY_CACHE = TREASURY_DIR / "CURRENT.md"
 
-ZEN_ACCOUNTING = VAULT / "00_MEMORY" / "ZEN VILLAGE ACCOUNTING.md"
-TREASURY_TODAY = VAULT / "00_MEMORY" / "TREASURY TODAY.md"
-OUTPUT = VAULT / "00_MEMORY" / "FINANCIAL HUB.md"
+ZEN_ACCOUNTING = VAULT / "02_CONTEXT/Memory" / "ZEN VILLAGE ACCOUNTING.md"
+TREASURY_TODAY = VAULT / "02_CONTEXT/Memory" / "TREASURY TODAY.md"
+OUTPUT = VAULT / "02_CONTEXT/Memory" / "FINANCIAL HUB.md"
 
 
 @dataclass

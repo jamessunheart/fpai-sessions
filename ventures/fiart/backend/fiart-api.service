@@ -1,0 +1,15 @@
+[Unit]
+Description=Fi-art API — Phase 1 backend (mint/notes/collect)
+After=network.target
+
+[Service]
+Type=simple
+Environment=FIART_DB=/var/lib/fiart/fiart.db
+Environment=FIART_PORT=8990
+ExecStart=/usr/bin/python3 /opt/fiart/fiart_api.py
+Restart=always
+RestartSec=3
+User=root
+
+[Install]
+WantedBy=multi-user.target

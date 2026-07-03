@@ -4,15 +4,15 @@ concept_surfacer · v1 · 2026-05-31
 
 Proactively surface the concepts most relevant to James RIGHT NOW.
 Reads the live state notes (already-safe vault mirrors), scores every concept
-in 05_CONCEPTS against that signal, and writes the top few — with a reason —
+in 03_THINKING/Concepts against that signal, and writes the top few — with a reason —
 into the vault so the INTELLIGENCE HUB can surface them.
 
-  vault 00_MEMORY/{INTENT RADAR, NEXT ACTION, NOW MIRROR, TREASURY TODAY,
+  vault 02_CONTEXT/Memory/{INTENT RADAR, NEXT ACTION, NOW MIRROR, TREASURY TODAY,
                    GOALS MIRROR, COMMS INBOX, SCENES}.md   (read-only signal)
-  vault 05_CONCEPTS/**/*.md                                 (the 261 concepts)
+  vault 03_THINKING/Concepts/**/*.md                                 (the 261 concepts)
         │  term-frequency relevance scoring + verbatim title/alias match
         ▼
-  vault 00_MEMORY/SURFACED CONCEPTS.md   (top N + why-surfaced)
+  vault 02_CONTEXT/Memory/SURFACED CONCEPTS.md   (top N + why-surfaced)
 
 SAFETY: reads already-redacted vault notes only; writes one vault note. No
 secrets, no network, no background job. Manual command, like the other pulls.
@@ -29,8 +29,8 @@ from pathlib import Path
 
 HOME = Path.home()
 VAULT = HOME / "Documents" / "FPOS" / "Full Potential OS"
-MEM = VAULT / "00_MEMORY"
-CONCEPTS = VAULT / "05_CONCEPTS"
+MEM = VAULT / "02_CONTEXT/Memory"
+CONCEPTS = VAULT / "03_THINKING/Concepts"
 OUT = MEM / "SURFACED CONCEPTS.md"
 
 # state notes → weight (higher = stronger pull on what's surfaced)
@@ -83,7 +83,7 @@ def main():
             sig[term] += c * w
 
     # latest daily workspace note = strong signal for what James is working on now
-    daily_dir = VAULT / "07_DAILY"
+    daily_dir = VAULT / "01_CAPTURE/Daily"
     if daily_dir.is_dir():
         dailies = sorted(p for p in daily_dir.glob("*.md") if not p.name.startswith("_"))
         if dailies:

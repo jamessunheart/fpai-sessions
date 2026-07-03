@@ -19,7 +19,7 @@ import os, sys, subprocess, argparse, datetime
 from pathlib import Path
 
 VAULT = Path.home() / "Documents" / "FPOS" / "Full Potential OS"
-ASK = VAULT / "ASK EMBER.md"
+ASK = VAULT / "00_SYSTEM/ASK EMBER.md"
 
 def transcribe(audio):
     # 1) OpenAI Whisper API if key present

@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mint an Art Note — Fi-art</title>
+<link rel="stylesheet" href="css/fiart.css">
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="index.html"><span class="mark"></span>Fi-art</a>
+  <nav>
+    <a href="marketplace.html">Explore</a>
+    <a href="create.html">Create</a>
+    <a href="provider.html">Providers</a>
+    <a href="learn.html">Learn</a>
+    <a href="trust.html">Trust</a>
+    <a class="cta" href="create.html">Create Fi-art</a>
+  </nav>
+</div></header>
+
+<section style="padding-top:30px"><div class="wrap narrow">
+  <div class="kicker">Creator Studio · Art Note + auction</div>
+  <h1 style="margin-bottom:.1em">Mint an Art Note</h1>
+  <p class="muted">Upload your artwork, set a <b>reserve floor</b> (your cost — the minimum it can sell for), and open it for auction. An Art Note conveys a <b>claim to the artwork</b> — not cash redemption. Bills used in a piece must be framed/encased, never destroyed (§333).</p>
+
+  <!-- covenant gate -->
+  <div id="gate">
+    <div class="covenant" style="margin-top:18px">
+      <h3>The Creator Covenant <span class="tag" style="color:#231d10;background:var(--gold-light)">v0.1</span></h3>
+      <ul>
+        <li>I created this work or have rights to use it.</li>
+        <li>I am responsible for my artwork, claims, imagery, and promises.</li>
+        <li>I will not create counterfeit-like currency or imply government endorsement.</li>
+        <li>I will not promise profit, yield, appreciation, or cash redemption.</li>
+        <li>I will not destroy bills; real currency is framed/encased only.</li>
+        <li>My note may be delisted, frozen, or removed if claims are false.</li>
+      </ul>
+      <div class="field"><label for="handle">Your creator handle</label><input type="text" id="handle" placeholder="e.g. james"></div>
+      <label class="check"><input type="checkbox" id="agree"> <span>I have read and accept the Creator Covenant.</span></label>
+      <button class="btn gold" id="signbtn" disabled>Sign &amp; enter the studio</button>
+    </div>
+  </div>
+
+  <div id="studio" class="hide">
+    <div class="notice" id="signedas"></div>
+
+    <div class="panel">
+      <h3 style="margin-top:0">1 · The artwork</h3>
+      <div class="field"><label for="img">Upload image</label><input type="file" id="img" accept="image/*">
+        <div class="hint">JPG/PNG/WebP, up to ~6MB. This is what bidders see.</div></div>
+      <div id="preview" style="margin:10px 0"></div>
+      <div class="field"><label for="title">Title</label><input type="text" id="title" placeholder="Ten Hundreds — Framed"></div>
+      <div class="field"><label for="desc">Description</label><textarea id="desc" placeholder="What is the piece? Materials, meaning, dimensions."></textarea></div>
+      <div class="field"><label for="theme">Educational theme</label><input type="text" id="theme" placeholder="An art note is a claim to the object — not cash"></div>
+      <div id="scanbox"></div>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin-top:0">2 · Currency imagery check</h3>
+      <p class="muted" style="font-size:.9rem">If your piece uses real-bill imagery, BEP rules apply.</p>
+      <label class="check"><input type="checkbox" id="c_currency"> <span>This artwork includes real currency imagery.</span></label>
+      <div id="currencyqs" class="hide" style="padding-left:24px;border-left:2px solid var(--line)">
+        <label class="check"><input type="checkbox" id="c_resemble"> <span>It closely resembles a real bill.</span></label>
+        <label class="check"><input type="checkbox" id="c_oneside"> <span>The reproduction is one-sided.</span></label>
+        <label class="check"><input type="checkbox" id="c_size"> <span>It is under ¾ or over 1½× the real bill's size.</span></label>
+      </div>
+      <div id="currencyflags"></div>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin-top:0">3 · Auction</h3>
+      <div class="field"><label for="reserve">Reserve floor (Fiart Marketplace Credit) <span class="muted">— your cost; minimum sale price</span></label><input type="text" id="reserve" placeholder="1000"></div>
+      <div class="field"><label for="ends">Auction ends</label><input type="text" id="ends" placeholder="Aug 1, 2026"></div>
+    </div>
+
+    <div class="btn-row" style="margin:18px 0 50px">
+      <button class="btn gold" id="mintbtn">Mint Art Note &amp; open auction</button>
+      <span class="muted" id="minthint" style="font-size:.88rem">Add a title + reserve to mint.</span>
+    </div>
+  </div>
+</div></section>
+
+<div class="legal-strip"><b>NOT LEGAL TENDER. RIGHTS VARY BY NOTE. READ THE TRUTH PANEL.</b><br>An Art Note represents a claim to the artwork. Cash value is not guaranteed.</div>
+
+<footer class="foot"><div class="wrap">
+  <div><span class="brand" style="font-size:1.1rem"><span class="mark"></span>Fi-art</span></div>
+  <div><a href="learn.html#guidelines">Creator Guidelines</a></div>
+</div></footer>
+
+<script src="js/fiart.js"></script>
+<script>
+(function(){
+  const agree=document.getElementById('agree'), signbtn=document.getElementById('signbtn'),
+        handle=document.getElementById('handle'), gate=document.getElementById('gate'), studio=document.getElementById('studio');
+  function enter(rec){ gate.classList.add('hide'); studio.classList.remove('hide');
+    document.getElementById('signedas').innerHTML = `Signed as <b>${FiArt.esc(rec.handle)}</b> · Covenant ${rec.version}`; }
+  const ex = FiArt.covenantSigned(); if(ex) enter(ex);
+  agree.onchange=()=>signbtn.disabled=!agree.checked;
+  signbtn.onclick=()=>enter(FiArt.signCovenant(handle.value.trim()));
+
+  let imgData = '';
+  document.getElementById('img').onchange = e=>{
+    const f = e.target.files[0]; if(!f) return;
+    const r = new FileReader();
+    r.onload = ()=>{ imgData = r.result; document.getElementById('preview').innerHTML =
+      `<img src="${imgData}" style="max-width:100%;border-radius:12px;box-shadow:var(--shadow)">`; update(); };
+    r.readAsDataURL(f);
+  };
+
+  function scan(){
+    const t=['title','desc','theme'].map(i=>document.getElementById(i).value).join(' ');
+    const res=FiArt.scanClaims(t), box=document.getElementById('scanbox');
+    box.innerHTML = (!t.trim()||res.clean)?'':`<div class="scan-flag">⚠ Blocked: <b>${res.hits.map(FiArt.esc).join(', ')}</b>. An Art Note is a claim to art, never an investment.</div>`;
+    return res.clean;
+  }
+  const cCur=document.getElementById('c_currency');
+  cCur.onchange=()=>{document.getElementById('currencyqs').classList.toggle('hide',!cCur.checked);curr();};
+  ['c_resemble','c_oneside','c_size'].forEach(i=>document.getElementById(i).addEventListener('change',curr));
+  function curr(){
+    const f=FiArt.currencyFlags({includesCurrency:cCur.checked,resemblesBill:document.getElementById('c_resemble').checked,
+      oneSided:document.getElementById('c_oneside').checked,oversizedOrUnder:document.getElementById('c_size').checked});
+    document.getElementById('currencyflags').innerHTML = f.length?`<div class="scan-flag">⚠ ${f.map(FiArt.esc).join('<br>')}</div>`:'';
+    return f.length===0;
+  }
+  ['title','desc','theme','reserve'].forEach(i=>document.getElementById(i).addEventListener('input',update));
+  function update(){
+    const titleOk=document.getElementById('title').value.trim()&&document.getElementById('reserve').value.trim();
+    const ok=titleOk&&scan()&&curr();
+    document.getElementById('mintbtn').disabled=!ok;
+    document.getElementById('minthint').textContent = !titleOk?'Add a title + reserve to mint.':!scan()?'Resolve flagged language.':!curr()?'Resolve currency-imagery flags.':'Ready to open auction.';
+  }
+  update();
+
+  document.getElementById('mintbtn').onclick=async()=>{
+    const btn=document.getElementById('mintbtn'); btn.disabled=true; document.getElementById('minthint').textContent='Minting…';
+    const r=await fetch('/api/art/mint',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      covenant:true, creator:(FiArt.covenantSigned()||{}).handle||'anonymous',
+      title:document.getElementById('title').value, description:document.getElementById('desc').value,
+      educational_theme:document.getElementById('theme').value, reserve:document.getElementById('reserve').value,
+      auction_ends:document.getElementById('ends').value, image_data_url:imgData })});
+    const d=await r.json();
+    if(d.ok){ location.href='note.html?id='+encodeURIComponent(d.id); }
+    else { btn.disabled=false; document.getElementById('minthint').textContent=d.error+(d.hits?(' ('+d.hits.join(', ')+')'):''); }
+  };
+})();
+</script>
+</body>
+</html>

@@ -12,7 +12,7 @@
 set -euo pipefail
 
 SRC="$HOME/.claude/projects/-Users-jamessunheart-FPAI-Cockpit/memory/"
-DEST="$HOME/Documents/FPOS/Full Potential OS/00_MEMORY/_ember_memory/"
+DEST="$HOME/Documents/FPOS/Full Potential OS/02_CONTEXT/Memory/_ember_memory/"
 LOG="$HOME/.config/fpai/vault_sync/sync.log"
 
 mkdir -p "$DEST" 2>>"$LOG" || { echo "$(date) ERROR: cannot create dest (iCloud access?)" >>"$LOG"; exit 1; }
@@ -37,10 +37,10 @@ else
   exit 1
 fi
 
-# NOTE on the home PROOF LOG (00_MEMORY/PROOF LOG.md):
+# NOTE on the home PROOF LOG (06_RESULTS/PROOF LOG.md):
 # This launchd agent CANNOT write that specific file — once a file is owned by the
 # claude/Terminal process, a bare launchd process is denied modifying it ("access data
 # from other apps"). But CLAUDE CAN write it directly. So the home proof log is
 # maintained by Ember (claude) at proof-write time via:
-#   cp ~/.claude/.../memory/PROOF_LOG.md "<vault>/00_MEMORY/PROOF LOG.md"
+#   cp ~/.claude/.../memory/PROOF_LOG.md "<vault>/06_RESULTS/PROOF LOG.md"
 # The agent still mirrors a redundant copy to _ember_memory/PROOF_LOG.md above.

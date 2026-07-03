@@ -6,7 +6,7 @@ via the Buildstream-Law fields:
   - ⬆️ Upgrades   = recent "Intent solved" (what shipped)
   - 🔮 Buildstream = recent "Next move" / "Unlocks next" (the live forward intents)
 
-Injects into 00_MEMORY/SYSTEM SELF-MODEL.md between the BUILDSTREAM / UPGRADES markers.
+Injects into 02_CONTEXT/Memory/SYSTEM SELF-MODEL.md between the BUILDSTREAM / UPGRADES markers.
 Leaves the curated spine + reflections blocks untouched.
 
 Usage:  python3 tools/selfmodel/refresh.py [--dry-run]
@@ -23,13 +23,12 @@ HOME = Path.home()
 VAULT = Path(
     os.environ.get(
         "FPAI_VAULT",
-        HOME / "Library" / "Mobile Documents" / "iCloud~md~obsidian"
-        / "Documents" / "FPOS" / "Full Potential OS",
+        HOME / "Documents" / "FPOS" / "Full Potential OS",
     )
 )
-PROOF = VAULT / "00_MEMORY" / "PROOF LOG.md"
-SELFMODEL = VAULT / "00_MEMORY" / "SYSTEM SELF-MODEL.md"
-INTENTBUILD = VAULT / "00_MEMORY" / "INTENT BUILDSTREAM.md"
+PROOF = VAULT / "02_CONTEXT/Memory" / "PROOF LOG.md"
+SELFMODEL = VAULT / "02_CONTEXT/Memory" / "SYSTEM SELF-MODEL.md"
+INTENTBUILD = VAULT / "02_CONTEXT/Memory" / "INTENT BUILDSTREAM.md"
 
 READINESS = {"ready": 1.0, "blocked": 0.3, "done": 0.0}
 STATUS_ICON = {"ready": "🟢", "blocked": "⛔", "done": "✅"}
