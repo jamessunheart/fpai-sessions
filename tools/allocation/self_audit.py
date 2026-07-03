@@ -53,6 +53,47 @@ BLUEPRINT = [
 ]
 
 
+def churn_signal(db_url: str) -> dict | None:
+    """The 'churn bites' sensor — turns the vague promise into a measured trigger.
+
+    James asked: is there a trigger for when wake-churn/polling latency actually
+    bites, so the event-driven rebuild (#2) builds itself? This is it.
+
+    The reliable, available signal is BACKLOG PERSISTENCE: decisions that sit
+    answered + needs_build + unbuilt past 2× the build poll interval (10min → 20min).
+    A few of those = polling can't drain fast enough → event-driven firing pays off.
+    Threshold ≥3 so a single stalled/orphaned spec (a stall is RCA's job, not a
+    polling problem) does not false-trigger.
+
+    Returns an event-driven BLUEPRINT item (which then flows through the same
+    classify → queue pipe as every other finding) or None if the signal is quiet.
+    """
+    try:
+        import psycopg
+    except Exception:
+        return None
+    try:
+        with psycopg.connect(db_url, connect_timeout=5) as conn, conn.cursor() as cur:
+            cur.execute(
+                "SELECT count(*), coalesce(max(extract(epoch from (now()-created_at))/60)::int,0) "
+                "FROM brain_index.decisions "
+                "WHERE needs_build=true AND coalesce(build_status,'none')='none' "
+                "AND status='answered' AND created_at < now() - interval '20 min'")
+            n, age = cur.fetchone() or (0, 0)
+    except Exception:
+        return None
+    if (n or 0) < 3:
+        return None
+    return {
+        "id": "infra-loops-event-driven", "dim": "infra",
+        "action": f"Loop churn bites: {n} decisions unbuilt >20min (oldest {age}min) — "
+                  "polling can't drain. Fire build loop on decision-queued event, not clock.",
+        "build_spec": "Make the build loop event-driven: fire on a decision reaching "
+                      "answered+needs_build (DB NOTIFY / queue trigger) instead of a fixed "
+                      "10-min poll. Keep the timer as a fallback heartbeat. Reversible.",
+    }
+
+
 def classify(item: dict) -> dict:
     """AUTONOMOUS vs RESERVED — decided by the Constitution Check, not by deference."""
     try:
@@ -96,7 +137,14 @@ def queue_decision(item: dict, db_url: str) -> str | None:
 
 def run(execute: bool) -> dict:
     autonomous, reserved = [], []
-    for item in BLUEPRINT:
+    blueprint = list(BLUEPRINT)
+    # Dynamic finding: the churn sensor appends the event-driven build only when it bites.
+    db = os.environ.get("BRAIN_INDEX_DB_URL", "")
+    if db:
+        sig = churn_signal(db)
+        if sig:
+            blueprint.append(sig)
+    for item in blueprint:
         c = classify(item)
         (autonomous if c["lane"] == "autonomous" else reserved).append({**item, **c})
     result = {"autonomous": autonomous, "reserved": reserved}
