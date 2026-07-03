@@ -35,3 +35,12 @@ Autonomous work picks the highest-level unmet need first. Never skip up the ladd
 Do NOT fabricate the starved metrics. VPI/VCR/RR stay **instrumented-but-unpopulated** until real users + revenue exist — and that emptiness is itself the signal pointing at the weakest conversion. A metric we can't truthfully populate is reported as `unknown`, never estimated to look good. Reality cannot be faked; neither do we.
 
 Related: [[project-learning-flywheel-academy]] · `NORTH_STAR.md` · `AI_GOALS.md` · `feedback_honesty_first_virtue.md`.
+
+
+## How the metrics reconcile (2026-07-03)
+
+**Future Capability** is the constitutional maximand (the Engraving). It is measured as:
+- **IUM — Intelligence Under Management** (FOUNDATION north star · the STOCK): total deployed intelligence across Builders, AI, knowledge, automations, clients, solutions.
+- **LR — Rate of Improvement** (CLE north metric · the FLOW): how fast the stock grows per cycle.
+- **Treasury Growth Rate** (the CURRENT 30-day focus): the weakest conversion right now is value→cash (Law 4); cash funds the engine.
+One maximand, three instruments: stock · flow · current-bottleneck. Awareness% (100%, achieved 2026-07-03) is retired to a sub-probe.
