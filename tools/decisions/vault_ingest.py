@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """vault_ingest — Obsidian → brain_index.session_insights
 
-Scans vault 00_MEMORY/ for notes James wrote or edited between sessions,
+Scans vault 02_CONTEXT/Memory/ (with 00_MEMORY fallback) for notes James wrote or edited between sessions,
 pushes them as session_insights so the next session (and bot) sees them
 without James having to repeat himself.
 
@@ -12,7 +12,7 @@ Runs as the second step of the vault-sync LaunchAgent, after mirror_pull.py.
 Also runs standalone: python3 vault_ingest.py
 
 Flow:
-  Obsidian vault 00_MEMORY/*.md  (human-authored, modified since last run)
+  Obsidian vault 02_CONTEXT/Memory/*.md  (human-authored, modified since last run)
         │  SSH  · remote python · INSERT only (never reads private data)
         ▼
   brain_index.session_insights  (type='james_note', weight=7)
