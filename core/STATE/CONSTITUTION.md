@@ -40,7 +40,10 @@ CONSTITUTION (this · stable)
    ↓ REASONING → EXECUTION → REALITY → LEARNING (back to the top)
 ```
 
-Enforcement (the Constitution Check that scores every autonomous action against these laws) is doctrine,
-not constitution — `tools/governance/constitution_check.py`, wired into both autonomous-proposal gates
-(council debate + nightly metabolism) since 2026-07-03; verdicts append to
-`core/BUILD/governance/constitution_ledger.jsonl`.
+Enforcement is doctrine, not constitution — `tools/governance/constitution_check.py`, wired into both
+autonomous-proposal gates (council debate + nightly metabolism) since 2026-07-03; verdicts append to
+`core/BUILD/governance/constitution_ledger.jsonl`. **It does not mechanically judge all 8 laws** — no
+regex can weigh whole-system harm. It *pre-screens* the mechanical ones (protocol/authority · human-
+dependency · learning-proof · explicit Supreme-Law tradeoffs · reversibility · expand-without-improve);
+the judgment laws (Purpose, full Supreme Law, Bottleneck) are held by the council lenses and human gates.
+Run `constitution_check.py --law-map` for the exact law→enforcement-point table.

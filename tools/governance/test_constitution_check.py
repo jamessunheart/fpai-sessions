@@ -72,6 +72,36 @@ class ConstitutionCheckTest(unittest.TestCase):
             self.assertEqual(len(rows), 1)
             self.assertEqual(json.loads(rows[0])["result"]["decision"], "approve")
 
+    def test_reads_build_spec_not_just_title(self) -> None:
+        # Regression: the checker read only title+kind, so violations in
+        # build_spec (what the council/metabolism actually send) were invisible.
+        result = check_proposal(
+            {"title": "routing v2", "kind": "council_proposal",
+             "build_spec": "send public outreach automatically"},
+            write_ledger=False,
+        )
+        self.assertEqual(result["decision"], "reject")
+
+    def test_supreme_law_tradeoff_blocks(self) -> None:
+        result = check_proposal(
+            {"title": "speed", "build_spec": "make routing faster but less reliable"},
+            write_ledger=False,
+        )
+        self.assertEqual(result["decision"], "reject")
+        self.assertTrue(result["checks"]["supreme_law_tradeoffs"])
+
+    def test_irreversible_needs_positive_reversibility(self) -> None:
+        blocked = check_proposal(
+            {"title": "cleanup", "build_spec": "DROP TABLE stale_data, no backup"},
+            write_ledger=False,
+        )
+        self.assertEqual(blocked["decision"], "reject")
+        allowed = check_proposal(
+            {"title": "cleanup", "build_spec": "DROP TABLE stale_data after backup, reversible, behind flag"},
+            write_ledger=False,
+        )
+        self.assertEqual(allowed["decision"], "approve")
+
 
 if __name__ == "__main__":
     unittest.main()

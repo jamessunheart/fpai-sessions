@@ -86,6 +86,69 @@ RESERVED_AUTHORITY: tuple[str, ...] = (
     "irreversible",
 )
 
+# Supreme Law: never optimize a local objective at the expense of the whole.
+# Regex can honestly flag EXPLICIT tradeoff language (X at the cost of Y); it
+# cannot judge implicit whole-system harm — that stays with the council/human.
+SUPREME_LAW_TRADEOFF: tuple[tuple[str, str], ...] = (
+    (r"\bat the (?:cost|expense) of\b", "explicit local-vs-whole tradeoff — Supreme Law requires whole-system justification"),
+    (r"\bfaster\b.{0,40}\bbut\b.{0,40}\b(?:less reliable|unreliable|fragile|breaks?)\b", "speed at the cost of reliability (Supreme Law)"),
+    (r"\bsacrific\w+\b|\btrade(?:s|d)?\s+(?:away|off)\b.{0,40}\b(?:reliability|alignment|learning|safety)\b", "sacrifices a whole-system property (Supreme Law)"),
+)
+
+# Law 7 — Reversible First: irreversible-signal language that does NOT also
+# assert reversibility/rollback should escalate, not auto-execute.
+IRREVERSIBLE_SIGNALS: tuple[str, ...] = (
+    r"\bdrop(?:ping)?\s+(?:the\s+)?(?:table|database|db)\b",
+    r"\bdelete\s+(?:all|everything|the\s+\w+\s+data)\b",
+    r"\brm\s+-rf\b",
+    r"\bpurge\b|\bwipe\b|\btruncate\s+table\b",
+    r"\bunrecoverable\b|\bpermanently\s+remov\w+\b|\bno\s+backup\b",
+)
+REVERSIBILITY_ASSERTED: tuple[str, ...] = (
+    r"\breversible\b", r"\brollback\b", r"\brevert\b", r"\bbackup\b",
+    r"\bbehind (?:an? )?(?:off )?flag\b", r"\bfeature flag\b", r"\bdry.?run\b",
+)
+
+# Law 8 — Build the Engine (improve before expand): adding a new unit without
+# improving an existing one is a soft signal, not a hard reject.
+EXPAND_WITHOUT_IMPROVE: tuple[str, ...] = (
+    r"\badd (?:a |another |new )?(?:agent|service|loop|layer|tool|table)\b",
+    r"\bcreate (?:a |another |new )(?:agent|service|subsystem)\b",
+)
+IMPROVE_SIGNALS: tuple[str, ...] = (
+    r"\bimprove\b", r"\bharden\b", r"\brefactor\b", r"\bfix\b", r"\bconsolidat\w+\b", r"\breuse\b",
+)
+
+# The honest division of enforcement labor — every law mapped to WHERE it is
+# actually enforced. Regex pre-screens the mechanical ones; the council lenses
+# hold the judgment ones; human gates hold the reserved ones; the build loop
+# holds proof. Surfaced by `constitution_check.py --law-map`.
+LAW_ENFORCEMENT_MAP: dict[str, str] = {
+    "Supreme Law (local≠whole)": "checker: explicit-tradeoff pre-screen · council: Skeptic/Awareness judgment",
+    "L1 Purpose": "council: Visionary lens · human: direction",
+    "L2 Reality Is Sovereign": "build loop: independent review + tests · checker: learning-weakness (no-tests/no-proof)",
+    "L3 Learn Before Repeat": "checker: learning-improvement/weakness scan · RCA reflex + BUG_LOG",
+    "L4 Improve the Bottleneck": "metabolism: weakest-conversion picker · council: Pragmatist lens",
+    "L5 Preserve Alignment": "checker: protocol-violation + reserved-authority · load-order in CLAUDE.md",
+    "L6 Protect Human Leverage": "checker: human-dependency direction scan",
+    "L7 Reversible First": "checker: irreversible-signal pre-screen (escalate if unasserted) · Trust-tiers",
+    "L8 Build the Engine": "checker: expand-without-improve soft signal · council: Skeptic lens",
+}
+
+
+_NEGATION = re.compile(r"\b(?:no|not|without|lacks?|missing|zero)\b[\s\w]{0,12}$", re.IGNORECASE)
+
+
+def _asserted_positively(text: str, patterns: tuple[str, ...]) -> bool:
+    """True if a signal matches AND is not immediately preceded by a negation
+    ('no backup' / 'without rollback' do not count as asserting reversibility)."""
+    for pat in patterns:
+        for m in re.finditer(pat, text, re.IGNORECASE | re.DOTALL):
+            preceding = text[max(0, m.start() - 14):m.start()]
+            if not _NEGATION.search(preceding):
+                return True
+    return False
+
 
 def check_proposal(
     proposal: dict[str, Any] | str,
@@ -132,6 +195,28 @@ def check_proposal(
             learning_weaknesses.append(reason)
             reasons.append(reason)
 
+    # Supreme Law — explicit local-vs-whole tradeoff (hard block)
+    supreme_hits: list[str] = []
+    for pattern, reason in SUPREME_LAW_TRADEOFF:
+        if re.search(pattern, text, re.IGNORECASE | re.DOTALL):
+            supreme_hits.append(reason)
+            reasons.append(reason)
+
+    # Law 7 — irreversible action with no reversibility POSITIVELY asserted
+    # (hard block → escalate). "no backup"/"without rollback" must NOT count as
+    # asserting reversibility, so each signal is checked for a preceding negation.
+    reversibility_hits: list[str] = []
+    if any(re.search(p, text, re.IGNORECASE | re.DOTALL) for p in IRREVERSIBLE_SIGNALS):
+        if not _asserted_positively(text, REVERSIBILITY_ASSERTED):
+            reversibility_hits.append("irreversible action without reversibility/rollback asserted — escalate (Law 7)")
+            reasons.append(reversibility_hits[-1])
+
+    # Law 8 — expand without improve (soft signal, not a block)
+    engine_notes: list[str] = []
+    if any(re.search(p, text, re.IGNORECASE | re.DOTALL) for p in EXPAND_WITHOUT_IMPROVE):
+        if not any(re.search(p, text, re.IGNORECASE | re.DOTALL) for p in IMPROVE_SIGNALS):
+            engine_notes.append("adds a new unit without improving an existing one — prefer improve before expand (Law 8)")
+
     lower_tier = _is_lower_tier(normalized, lowered)
     reserved = _is_reserved(normalized, lowered)
     if dependency_hits and not reserved:
@@ -142,8 +227,9 @@ def check_proposal(
 
     learning_score = min(2, len(set(learning_hits))) - len(learning_weaknesses)
     protocol_score = -len(protocol_hits)
-    score = protocol_score - dependency_score + learning_score
-    accepted = not protocol_hits and not learning_weaknesses and not (dependency_hits and not reserved)
+    hard_blocks = protocol_hits + supreme_hits + reversibility_hits
+    score = protocol_score - dependency_score + learning_score - len(supreme_hits) - len(reversibility_hits) - len(engine_notes)
+    accepted = not hard_blocks and not learning_weaknesses and not (dependency_hits and not reserved)
 
     result = {
         "accepted": bool(accepted),
@@ -153,6 +239,9 @@ def check_proposal(
         "kind": normalized.get("kind") or normalized.get("type") or "",
         "checks": {
             "protocol_violations": protocol_hits,
+            "supreme_law_tradeoffs": supreme_hits,
+            "reversibility": reversibility_hits,
+            "engine_notes": engine_notes,
             "human_dependency": {
                 "direction": "increase" if dependency_score > 0 else "decrease" if dependency_score < 0 else "neutral",
                 "score": int(dependency_score),
@@ -200,7 +289,12 @@ def _normalize_proposal(proposal: dict[str, Any] | str) -> dict[str, Any]:
 
 def _proposal_text(proposal: dict[str, Any]) -> str:
     parts: list[str] = []
-    for key in ("id", "slug", "kind", "type", "title", "question", "summary", "description", "spec", "text", "risk", "risk_class", "route", "rollback"):
+    # NOTE: must include the fields callers actually pass — the council sends
+    # `build_spec`+`why`, metabolism sends `build_spec`. Omitting them (the bug
+    # found 2026-07-03) meant the check only ever read the title.
+    for key in ("id", "slug", "kind", "type", "title", "question", "summary",
+                "description", "why", "spec", "build_spec", "body", "proof_expected",
+                "text", "risk", "risk_class", "route", "rollback"):
         value = proposal.get(key)
         if value is not None:
             parts.append(f"{key}: {value}")
@@ -248,7 +342,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--text", default="", help="proposal text")
     parser.add_argument("--ledger", type=Path, default=None, help="append-only governance ledger path")
     parser.add_argument("--no-ledger", action="store_true", help="do not write a ledger row")
+    parser.add_argument("--law-map", action="store_true", help="print which law is enforced where, then exit")
     args = parser.parse_args(argv)
+
+    if args.law_map:
+        print(json.dumps(LAW_ENFORCEMENT_MAP, indent=2))
+        return 0
 
     proposal: dict[str, Any]
     if args.proposal_json:
