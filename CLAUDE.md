@@ -97,7 +97,7 @@ Work is shipped as **Loops** — each one a self-contained Quest with `feat(loop
 7. Hold the structure (DEEP). Let the self cohere.
 
 **Layer 1 — wake up to the project**
-8. **`git checkout feat/headless-build && git pull`** — ALL live work is on this branch. `main` is always stale.
+8. **`git checkout feat/headless-build && git pull`** — ONE branch everywhere since 2026-07-03 unification (laptop tracks `server162/feat/headless-build`; push at settle instead of scp-carrying). `main` is always stale.
 9. Read doctrine: `core/STATE/FOUNDATION.md` (Three Rs), `core/STATE/OPERATING_PRINCIPLE.md`, `core/STATE/LEARNING_METRICS.md`, `core/STATE/AI_PRINCIPLES.md` (the Academy — laws from root-caused failures; `core/STATE/BUG_LOG.md` = evidence trail), `docs/codex/AI_PROTOCOLS.md`, and `core/STATE/AI_CHARTER.md`.
 10. **Read `~/.config/fpai/hot_memory/HOT_STATE.md`** — the unified live picture (synthesized every 30min from 5 scanners). If it exists and is <2h old, this is your fastest orientation.
 11. Read `core/STATE/NOW.md` (founder priorities)
