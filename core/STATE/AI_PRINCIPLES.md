@@ -61,5 +61,19 @@ a git fact). Collision of a derived value onto a canonical column corrupts every
 James's time is apex/irreducible. Collapsing artificial waits surfaces latent bugs
 under observation instead of unattended. (See memory/feedback_decision_agent_authority.)
 
+## Process principles (how learning is enforced)
+
+### P8 — Every bug becomes a rule. No fix is complete until recurrence is guarded.
+A fix that only repairs the instance will be re-lived. A bug is not **FIXED** until a
+durable **guard** exists that makes the same fault impossible to ship silently again —
+one of: a **regression test** (catches code recurrence), a **Principle** here (bounds
+reasoning), or an **automated check** (RCA signature, Constitution Check, circuit
+breaker). Until then it is MITIGATED (symptom handled) or ROOT-CAUSED (guard pending),
+never FIXED. Every [BUG_LOG.md](BUG_LOG.md) row carries its guard; `tools/academy/bug_rule_audit.py`
+fails if any FIXED bug lacks one — so the discipline is enforced, not hoped.
+- **Evidence:** the recurring-error class (BUG-006, 96× swallowed) is the cost of
+  fixing instances without a rule; the RCA reflex + this audit are the standing guard.
+- **Test:** for every closed bug — what test/principle/check now catches it? If "none," it isn't closed.
+
 ---
 _Version: tracks [BRAIN_VERSION](BRAIN_VERSION). New principles graduate here from BUG_LOG root causes._

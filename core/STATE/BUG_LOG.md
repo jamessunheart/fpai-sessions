@@ -5,34 +5,43 @@ it was fixed, the **brain version** it was fixed in, and the git ref to **revert
 to. Append-only. Newest first.
 
 **The flow:** error (ops_ledger) → root cause (`tools/rca/autonomous_rca.py`) →
-fix (git commit) → **BUG_LOG entry** → version bump + git tag → if the root is
-structural/recurring, it graduates to a Principle in [AI_PRINCIPLES.md](AI_PRINCIPLES.md).
+fix (git commit) → **BUG_LOG entry** → **Guard** (the rule that prevents recurrence) →
+version bump + git tag → if the root is structural, it graduates to a Principle in
+[AI_PRINCIPLES.md](AI_PRINCIPLES.md).
+
+**P8 — every bug becomes a rule.** A bug is not FIXED until a durable **Guard**
+exists: a regression **test**, a **Principle**, or an automated **check** (RCA
+signature / Constitution Check / circuit breaker). `tools/academy/bug_rule_audit.py`
+fails CI if any FIXED bug has no guard — the discipline is enforced, not hoped.
 
 **Revert:** `git checkout brain-v<X.Y.Z>` returns the brain to any tagged version.
 Versioning: MAJOR = architecture change · MINOR = new capability · PATCH = bug fix.
 
-**Status vocab:** FIXED (root fixed + verified) · MITIGATED (symptom handled, root
-open) · ROOT-CAUSED (root known, class-fix queued) · OPEN.
+**Status vocab:** FIXED (root fixed + verified + **guarded**) · MITIGATED (symptom
+handled, guard pending) · ROOT-CAUSED (root known, class-fix + guard queued) · OPEN.
 
 ---
 
 ## Brain v1.0.0 — 2026-07-03 · structured versioning begins
 _Anchor. Prior state = ~6 months, 125 merged specs, no version tags. This is the first tagged brain version and the first structured bug batch._
 
-| ID | Symptom | Root cause | Root (P#) | Fix | Status | Commit |
-|----|---------|-----------|-----------|-----|--------|--------|
-| BUG-001 | Awareness probe scored 0% for 79 consecutive probes | Probe imported the **repo** copy of build_context, not the live bot (`/opt/sh-brain-src`); the repo copy's DB import fails silently | [P2](AI_PRINCIPLES.md) | Probe targets the live path, repo as fallback | FIXED (100% now) | `fix(measurement)` |
-| BUG-002 | 207 of 212 corrections were garbage (empty original) | Capture fired on bare words (no/actually/fix) with no verified prior bot turn — signal recorded without its referent | [P1](AI_PRINCIPLES.md) | Require correction phrases + a real bot turn; purged 207 (backed up) | FIXED | `fix(measurement)` |
-| BUG-003 | Reality-check marked all 113 merged specs "dead" + spam-queued 113 repairs | Demanded proof from a channel specs never emit; overwrote `build_status` (build axis) with a liveness verdict | [P2](AI_PRINCIPLES.md) [P6](AI_PRINCIPLES.md) | Write `reality_status` only + circuit breaker (skip if >50% flagged); data restored | FIXED | `fix(reality-check)` |
-| BUG-004 | Nightly metabolism ran but shipped nothing | Wrote a work-order prompt then stopped — `optimizer: "no command configured"`; merged-but-dead | [P1](AI_PRINCIPLES.md) | Bridge work-order → brain_index decision → build loop | FIXED (d143 built) | `feat(metabolism)` |
-| BUG-005 | d143/d144 sat unbuilt ~12h looking like a "strategic wait" | `spec_written=true` set before the codex build; a failed build orphans the decision (queue skips spec_written=true) | [P1](AI_PRINCIPLES.md) | Data unblock (reset flag); durable query/ordering fix queued | MITIGATED | `data` |
-| BUG-006 | `diagnostic_error` fired **96×** (swallowed each time) | `curator` name collision — repo-root stub + live package both importable as top-level `curator`; import resolves to the wrong one | [P2](AI_PRINCIPLES.md) [P3](AI_PRINCIPLES.md) | RCA identified; class-fix (rename stub + fail-loud guard) queued | ROOT-CAUSED | — |
-| BUG-007 | 26 build worktrees stuck >24h (failed `failed` alert 26×) | Work-items created assuming they reach a terminal state; no reaper for builds that fail review | [P1](AI_PRINCIPLES.md) | RCA identified; class-fix (terminal-state lifecycle + reaper) queued | ROOT-CAUSED | — |
-| BUG-008 | `debate_error: response did not contain a JSON object` (13×) | LLM text treated as guaranteed-parseable; no shared tolerant extractor at any LLM→JSON boundary | [P2](AI_PRINCIPLES.md) | RCA identified; class-fix (shared `robust_json()` helper) queued | ROOT-CAUSED | — |
+| ID | Symptom | Root cause | Root (P#) | Fix | **Guard (the rule)** | Status |
+|----|---------|-----------|-----------|-----|----------------------|--------|
+| BUG-001 | Awareness probe scored 0% for 79 probes | Probe imported the **repo** build_context, not the live bot; repo copy's DB import fails silently | [P2](AI_PRINCIPLES.md) | Probe targets live path, repo fallback | check: probe live-path + 100% probe metric watched by `fpai-awareness-reliability.timer` | FIXED |
+| BUG-002 | 207/212 corrections garbage (empty original) | Fired on bare words with no verified prior bot turn — signal without referent | [P1](AI_PRINCIPLES.md) | Require phrase + real bot turn; purged 207 | **test:** `test_detect_correction.py` (5) | FIXED |
+| BUG-003 | Reality-check marked all 113 merged specs "dead" + queued 113 repairs | Demanded proof from an unwired channel; overwrote `build_status` with a liveness verdict | [P2](AI_PRINCIPLES.md) [P6](AI_PRINCIPLES.md) | `reality_status` only + circuit breaker | **test+check:** `test_post_merge_reality_check.py` (dead-rate breaker) + P6 | FIXED |
+| BUG-004 | Nightly metabolism ran but shipped nothing | Wrote a prompt then stopped — merged-but-dead | [P1](AI_PRINCIPLES.md) | Bridge work-order → decision → build loop | **test:** `test_nightly.py` (queue_build_decision) | FIXED |
+| BUG-005 | d143/d144 unbuilt ~12h ("strategic wait") | `spec_written=true` set before build; failed build orphans the decision | [P1](AI_PRINCIPLES.md) | Data unblock (reset flag) | ⏳ PENDING — durable query fix (`pending_builds` include build_status='none') not shipped | MITIGATED |
+| BUG-006 | `diagnostic_error` 96× (swallowed) | `curator` name collision — repo stub + live pkg share the namespace | [P2](AI_PRINCIPLES.md) [P3](AI_PRINCIPLES.md) | RCA identified | ⏳ PENDING class-fix (rename + fail-loud import guard); RCA signature catches recurrence | ROOT-CAUSED |
+| BUG-007 | 26 worktrees stuck >24h | Work-items created assuming terminal state; no reaper | [P1](AI_PRINCIPLES.md) | RCA identified | ⏳ PENDING class-fix (terminal-state reaper); RCA signature catches recurrence | ROOT-CAUSED |
+| BUG-008 | `debate_error: no JSON object` 13× | LLM text treated as guaranteed-parseable; no tolerant extractor | [P2](AI_PRINCIPLES.md) | RCA identified | ⏳ PENDING class-fix (shared `robust_json()`); RCA signature catches recurrence | ROOT-CAUSED |
+| BUG-009 | Constitution Check read only proposal **title**, ignoring `build_spec` — gated on title alone | `_proposal_text` field list omitted the fields callers pass (`build_spec`/`why`) | [P2](AI_PRINCIPLES.md) | Added the caller fields to the scan | **test:** `test_reads_build_spec_not_just_title` | FIXED |
+| BUG-010 | Doctrine claimed the checker "scores all 8 laws"; it screened ~3 | Overclaim — claim outran the wiring (claimed≠wired, applied to my own work) | [P4](AI_PRINCIPLES.md) [P2](AI_PRINCIPLES.md) | 6/8 laws screened + `--law-map` + claim corrected | **tests:** `test_supreme_law_tradeoff_blocks`, `test_irreversible_needs_positive_reversibility` + `--law-map` | FIXED |
 
-**Class-fixes this batch surfaced (become the next builds):** eliminate the `curator`
-name collision · terminal-state reaper for every pipeline work-item · one shared
-`robust_json()` at every LLM→JSON boundary. Each kills a whole class, not one instance.
+**Class-fixes still owing a guard (BUG-005/006/007/008 → the next builds):** durable
+`pending_builds` query · eliminate `curator` name collision + fail-loud import guard ·
+terminal-state reaper for every pipeline work-item · one shared `robust_json()` at
+every LLM→JSON boundary. Each closes its bug AND becomes a standing rule.
 
 ---
 
