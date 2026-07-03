@@ -77,3 +77,10 @@ fails if any FIXED bug lacks one — so the discipline is enforced, not hoped.
 
 ---
 _Version: tracks [BRAIN_VERSION](BRAIN_VERSION). New principles graduate here from BUG_LOG root causes._
+
+## Law: NO UNMETERED BURN (2026-07-03 · from the zombie-curator + metaclaw incidents)
+
+**Every recurring resource consumer must have a BURN_REGISTRY row: owner · expected cost · the output its spend feeds. Burn with empty output = kill by default. A new API key or paid service without a registry row is a constitution-grade violation — the system optimizing allocation cannot be blind to its own consumption.**
+
+Root cause (twice): spend without a ledger row. April: metaclaw runaway cost, disabled by hand. July: brain-curator timer fleet burned $13.41 for 2 months processing EMPTY queues (input feed died May 7; nobody noticed because spend had no output-check). Both found by James's invoice, not by the system — the exact opposite of Allocation Intelligence.
+Enforcement: `tools/burn/audit.py` weekly (fleet scan: active units holding paid keys vs registry · journal attribution of metered calls · burn-without-output check) → vault BURN AUDIT.md, reds surface on HEARTBEATS. Evidence: BUG_LOG 2026-07-03.
