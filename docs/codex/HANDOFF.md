@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-07-03 · SPEC_d146_self-audit-infra-cruft-services · branch `build/SPEC_d146_self-audit-infra-cruft-services`
+
+- **Status:** done in working tree / awaiting review + merge
+- **Files changed:** `tools/infra/stop_cruft_services_198.py`; `tools/infra/test_stop_cruft_services_198.py`; `core/BUILD/activate/SPEC_d146_self-audit-infra-cruft-services.sh`; `core/BUILD/specs/SPEC_d146_self-audit-infra-cruft-services.md`; `core/BUILD/results/SPEC_d146_self-audit-infra-cruft-services.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a reversible d146 activation for host `198.54.123.234`. The helper refuses to act unless `core/STATE/FLEET_SNAPSHOT.md` names the cocoon/whaletrack-magnet cruft finding, the local IP list includes `198.54.123.234`, activation is running with `--execute`, and `FPAI_D146_CRUFT_STOP=1` is set. When enabled, it runs `systemctl disable --now fpai-cocoon.service whaletrack-magnet.service`, captures service active/enabled state plus `MemAvailable` before/after, computes `ram_reclaimed_kib`, and appends proof/rollback metadata to `ops_ledger`.
+- **Tests:** `python3 -B -m unittest tools.infra.test_stop_cruft_services_198` (4 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/infra/stop_cruft_services_198.py tools/infra/test_stop_cruft_services_198.py`; `bash -n core/BUILD/activate/SPEC_d146_self-audit-infra-cruft-services.sh`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d146-registry.json`; off-target CLI smoke with `python3 -B -m tools.infra.stop_cruft_services_198 --repo-root . --ops-ledger /tmp/d146-ops-ledger.jsonl --settle-seconds 0`; ASCII check for new files; `git diff --check`
+- **Risks:** This sandbox is not `198.54.123.234`, so no live service was stopped and no real RAM was reclaimed here. Post-merge activation without `FPAI_D146_CRUFT_STOP=1` records `flag_disabled` and takes no action; set the flag only on 198 when ready to produce the `succeeded` proof row. Stopping `whaletrack-magnet` affects the signal engine, not `whaletrack-live`; still confirm no current dependency expects the signal API before enabling the flag.
+- **Rollback:** On `198.54.123.234`, run `systemctl enable --now fpai-cocoon.service whaletrack-magnet.service`, then verify `systemctl is-active` and `systemctl is-enabled` for both services. Reverting this branch removes the helper, activation script, result artifact, and registry/handoff entries.
+- **Intent solved:** d146's infra self-audit finding now has a reversible, proof-logged path to stop the named cruft services on 198 and measure RAM reclaimed.
+- **Downstream intent unlocked:** after target-host activation logs `succeeded`, the allocation audit can score the cruft-service cleanup from actual service state and memory evidence instead of a stale watch item.
+- **Questions for Ember/James:** after merge, run the activation on host `198.54.123.234` with `FPAI_D146_CRUFT_STOP=1` only when ready to stop both services; check `/opt/fpai-build/ops_ledger.jsonl` for `loop=infra-stop-cruft-services`, `event=succeeded`, and a nonnegative `ram_reclaimed_kib`.
+
 ### 2026-07-03 · SPEC_d145_self-audit-infra-retire-postfix · branch `build/SPEC_d145_self-audit-infra-retire-postfix`
 
 - **Status:** done in working tree / awaiting review + merge

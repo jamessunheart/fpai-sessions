@@ -2,10 +2,21 @@
   "schema": "build-registry.v1",
   "updated_at": "2026-07-03T00:00:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
-  "active_builds": [
-    {
-      "id": "SPEC_d145_self-audit-infra-retire-postfix",
-      "slug": "SPEC_d145_self-audit-infra-retire-postfix",
+    "active_builds": [
+        {
+            "id": "SPEC_d146_self-audit-infra-cruft-services",
+            "slug": "SPEC_d146_self-audit-infra-cruft-services",
+            "branch": "build/SPEC_d146_self-audit-infra-cruft-services",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d146_self-audit-infra-cruft-services.md",
+            "tests_passed": true,
+            "notes": "d146 complete in working tree: added tools/infra/stop_cruft_services_198.py plus an activation script for host 198.54.123.234. The helper requires FLEET_SNAPSHOT evidence naming cocoon and whaletrack-magnet, target-host IP match, --execute, and FPAI_D146_CRUFT_STOP=1 before running systemctl disable --now fpai-cocoon.service whaletrack-magnet.service. It records service active/enabled states and MemAvailable before/after, including ram_reclaimed_kib, to ops_ledger; with the flag unset it logs flag_disabled and takes no service action. Focused tests, py_compile, activation shell syntax, registry JSON validation, off-target CLI smoke, ASCII check, and diff hygiene passed. No live service was stopped in this sandbox."
+        },
+        {
+            "id": "SPEC_d145_self-audit-infra-retire-postfix",
+            "slug": "SPEC_d145_self-audit-infra-retire-postfix",
       "branch": "build/SPEC_d145_self-audit-infra-retire-postfix",
       "base_branch": "feat/headless-build",
       "session": "codex",
