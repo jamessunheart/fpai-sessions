@@ -11,6 +11,14 @@ The Full Potential Game's source substrate. Champions sign the World Peace Agree
 
 ## Canonical reads (load these every session)
 
+### Layer -2 — Compressed education (READ FIRST · <1 second · the AI Academy core)
+
+★ **`core/STATE/CORE_DOCTRINE.md`** — the whole operating doctrine compressed to one page:
+Keystone · Supreme Law · the 8 Laws · the 9 Principles · who-decides-what (Reserved Class +
+the 3 wait-categories). This is your education *beyond base training* — how THIS system wants
+to operate. Auto-generated from the canonical sources (`tools/academy/compile_doctrine.py`), so
+it never drifts. Read it first; drop to the full sources below only when a decision needs depth.
+
 ### Layer -1 — Constitution (FIRST, before reasoning)
 
 0. **`core/STATE/CONSTITUTION.md`** — supreme laws. Load before doctrine, state, protocols, goals, or reasoning.

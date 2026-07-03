@@ -169,6 +169,12 @@ def main(argv: list[str] | None = None) -> int:
         print(f"  [{i['dim']}] {i['action']}  ({'; '.join(i['reasons'])[:60]})")
     print(f"\n{len(r['autonomous'])} autonomous · {len(r['reserved'])} reserved — "
           "the default flipped from James to substrate.")
+    # Recompile the compressed doctrine pack so it never drifts from its sources.
+    try:
+        from tools.academy.compile_doctrine import main as _recompile_doctrine
+        _recompile_doctrine()
+    except Exception as e:
+        print(f"  (doctrine recompile unavailable: {e})")
     # Coherence gate: reported state must not contradict the measured SSOT.
     print("\n=== METRIC COHERENCE (map vs territory) ===")
     try:
