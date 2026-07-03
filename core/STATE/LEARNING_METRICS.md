@@ -7,17 +7,19 @@
 
 ## The Objective Stack — which doc owns what (authoritative · 2026-07-03)
 
-There is **ONE thing maximized: Future Capability.** The docs that say "north star" are not competitors — they are different *layers* of the same objective. This table is the single resolution; each layered doc carries a one-line locator pointing here.
+The keystone (`ALLOCATION_INTELLIGENCE.md`, 2026-07-03) resolves this cleanly: **PURPOSE = maximize Future Capability** (the end); **CORE CAPABILITY = Allocation Intelligence** (the operational objective — what we actually optimize, because you can't directly maximize an outcome, only your ability to allocate toward it). The docs that say "north star" are layers of this single hierarchy, not competitors. Each layered doc carries a one-line locator pointing here.
 
 | Layer | Doc | Owns | Relation to the one objective |
 |-------|-----|------|-------------------------------|
-| **WHY** (strategic mission) | `NORTH_STAR.md` | Technical + economic sovereignty (own the compute, own the currency) | The *reason* capability is worth compounding — the endgame it buys |
-| **WHAT is maximized** | **this file** + `FOUNDATION.md` | **Future Capability**, measured two ways: **LR = the flow** (rate of improvement) · **IUM = the stock** (intelligence under management). LR is the derivative of IUM. | THE objective + how it's measured |
-| **PROVEN BY** (benchmark) | `NORTH_STAR_MISSION.json` (d064) | Sovereign Whole-Chain Proof — a signal traverses attention→route→build→review→merge→live→learning without James as glue | The pass/fail *test* that the objective is real, not claimed |
-| **PURSUED VIA** (operational) | `AI_GOALS.md` (G1–G4, under NOW.md) | This-era working goals (currently: Value Capture) | The concrete moves that raise the objective now |
-| **LEGACY** (superseded) | `METRICS_HIERARCHY.md` (2026-05-21) | Older cost/leverage taxonomy | Pre-flywheel; kept for reference, **superseded by this file** |
+| **PURPOSE** (the end) | this file + `FOUNDATION.md` | **Future Capability** — measured **LR = the flow** (rate of improvement) · **IUM = the stock** (intelligence under management); LR is the derivative of IUM | What the whole system exists to increase |
+| **CORE CAPABILITY** (operational objective) | **`ALLOCATION_INTELLIGENCE.md`** (keystone) | **Allocation Intelligence** — route/reason/recursively-invest every scarce resource toward max future capability | The lever we actually optimize; it *produces* Future Capability |
+| **WHY** (strategic mission) | `NORTH_STAR.md` | Technical + economic sovereignty (own the compute, own the currency) | The endgame that compounding capability buys |
+| **MECHANISM** | `FOUNDATION.md` | The Three Rs — Routing · Reasoning · Recursion | How Allocation Intelligence operates |
+| **PROVEN BY** (benchmark) | `NORTH_STAR_MISSION.json` (d064) | Sovereign Whole-Chain Proof — a signal traverses attention→route→build→review→merge→live→learning without James as glue | The pass/fail *test* it's real, not claimed |
+| **PURSUED VIA** (operational) | `AI_GOALS.md` (G1–G4, under NOW.md) | This-era working goals (currently: Value Capture) | The concrete allocations made now |
+| **LEGACY** (superseded) | `METRICS_HIERARCHY.md` (2026-05-21) | Older cost/leverage taxonomy | Pre-flywheel; **superseded by this file** |
 
-**Reading order:** NORTH_STAR (why) → LEARNING_METRICS + FOUNDATION (what/how-measured) → NORTH_STAR_MISSION (proof) → AI_GOALS (now). One objective, five views.
+**Reading order:** ALLOCATION_INTELLIGENCE (what we optimize) → LEARNING_METRICS + FOUNDATION (purpose it produces + mechanism) → NORTH_STAR (why) → NORTH_STAR_MISSION (proof) → AI_GOALS (now). One first principle, allocation toward future capability; several views.
 
 ## The 7 metrics — every benchmark is a conversion efficiency
 
