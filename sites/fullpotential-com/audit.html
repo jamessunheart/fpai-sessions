@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Allocation Intelligence Audit — Full Potential</title>
+  <meta name="description" content="Your Allocation Score + your 3 highest-value opportunities, 48 hours after a 15-minute intake. Free. No pitch — the score is yours either way.">
+  <style>
+    :root{--cream:#FFF9EF;--sand:#F2E7D2;--gold:#D9A441;--text:#17211A;--muted:#5D675F;--green:#3E7C4F;--deep:#1B3A5C;--blue:#2563EB;--card:#FFF;--line:#E8DCC4}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--cream);color:var(--text);line-height:1.6}
+    .wrap{max-width:880px;margin:0 auto;padding:0 20px}
+    nav{display:flex;justify-content:space-between;align-items:center;padding:18px 0}
+    nav .logo{font-weight:800;color:var(--deep);text-decoration:none}
+    nav a.back{color:var(--muted);text-decoration:none;font-size:.92rem}
+    .hero{padding:40px 0 10px;text-align:center}
+    .hero h1{font-size:clamp(2rem,5.5vw,3rem);line-height:1.12;color:var(--deep);max-width:18em;margin:0 auto}
+    .hero h1 .hl{color:var(--blue)}
+    .hero p.sub{color:var(--muted);font-size:1.1rem;max-width:38em;margin:16px auto 0}
+    .pillrow{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:22px 0 8px}
+    .pill{background:var(--sand);border-radius:999px;padding:8px 16px;font-size:.88rem;font-weight:600;color:var(--deep)}
+    .cta{display:inline-block;background:var(--blue);color:#fff;font-weight:700;padding:15px 34px;border-radius:999px;text-decoration:none;font-size:1.08rem;box-shadow:0 6px 18px rgba(37,99,235,.28)}
+    .how{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;padding:34px 0}
+    .step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 16px;text-align:center}
+    .step .n{width:34px;height:34px;border-radius:50%;background:var(--green);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 8px}
+    .step:nth-child(2) .n{background:var(--blue)} .step:nth-child(3) .n{background:var(--gold)}
+    .step h4{color:var(--deep);font-size:.95rem;margin-bottom:4px}
+    .step p{font-size:.86rem;color:var(--muted)}
+    .quote{font-family:Georgia,serif;font-style:italic;font-weight:700;color:var(--blue);text-align:center;font-size:1.15rem;padding:6px 0 26px}
+    .formbox{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:32px;max-width:560px;margin:0 auto 30px}
+    form label{display:block;font-size:.86rem;font-weight:700;color:var(--deep);margin:12px 0 4px}
+    form input,form textarea{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:var(--cream);font-size:.95rem;font-family:inherit}
+    form button{margin-top:18px;width:100%;border:none;cursor:pointer}
+    .ok{display:none;background:#EAF4EC;border:1px solid var(--green);color:var(--green);border-radius:12px;padding:16px;margin-top:14px;font-weight:600}
+    .fine{color:var(--muted);font-size:.82rem;text-align:center;padding-bottom:44px;max-width:44em;margin:0 auto}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <a class="logo" href="/">FP · FULL POTENTIAL</a>
+    <a class="back" href="/">← fullpotential.com</a>
+  </nav>
+
+  <div class="hero">
+    <h1 id="headline"><!-- variant injected --></h1>
+    <p class="sub" id="subline"></p>
+    <div class="pillrow">
+      <span class="pill">💰 Capital</span><span class="pill">⏱️ Time</span><span class="pill">🎯 Attention</span>
+      <span class="pill">👥 People</span><span class="pill">🤖 AI</span><span class="pill">📚 Knowledge</span>
+    </div>
+    <a class="cta" href="#start">Get Your Free Audit →</a>
+  </div>
+
+  <div class="how">
+    <div class="step"><div class="n">1</div><h4>15-minute intake</h4><p>Tell us what you're building and share basic numbers (P&L or statements, SaaS list, team shape).</p></div>
+    <div class="step"><div class="n">2</div><h4>The engine analyzes</h4><p>Our Allocation Intelligence engine maps every scarce resource against its highest-value use.</p></div>
+    <div class="step"><div class="n">3</div><h4>48 hours later</h4><p>Your <b>Allocation Score</b> (0–100) + your <b>3 highest-value opportunities</b>. Yours to keep, either way.</p></div>
+  </div>
+
+  <p class="quote">"The organizations that win aren't the ones with the most resources — they're the ones that allocate them best."</p>
+
+  <div class="formbox" id="start">
+    <form id="auditForm">
+      <label for="a-name">Name</label>
+      <input id="a-name" required placeholder="Your name">
+      <label for="a-email">Email</label>
+      <input id="a-email" type="email" required placeholder="you@company.com">
+      <label for="a-company">Company / project</label>
+      <input id="a-company" placeholder="Company name (or just describe it)">
+      <label for="a-goal">What are you trying to build this year?</label>
+      <textarea id="a-goal" rows="3" placeholder="One honest paragraph. This anchors the whole audit."></textarea>
+      <button class="cta" type="submit">Request My Free Audit →</button>
+      <div class="ok" id="okMsg">✅ Received. Watch your inbox for the 15-minute intake — your Score arrives within 48 hours of completing it.</div>
+    </form>
+  </div>
+
+  <p class="fine">The audit is an exchange: you share context, we return analysis, benchmarks, and clarity. With your permission, anonymized allocation patterns improve the engine for every business that follows — and your future re-audits benefit from everyone else's. No spam, no obligation. Powered by FPOS — the Allocation Intelligence Operating System.</p>
+</div>
+
+<script>
+// A/B split: exec-frame vs savings-frame · sticky per visitor · variant travels with the lead
+const V = localStorage.getItem('audit_v') || (Math.random() < 0.5 ? 'exec' : 'savings');
+localStorage.setItem('audit_v', V);
+const COPY = {
+  exec: {
+    h: 'How well does your business <span class="hl">allocate</span> its scarce resources?',
+    s: 'Capital, time, attention, people, AI. Get your free Allocation Intelligence Audit — your Allocation Score and your three highest-value opportunities, in 48 hours.'
+  },
+  savings: {
+    h: 'Find the money <span class="hl">leaking</span> out of your business — free.',
+    s: 'SaaS sprawl, manual work that should be automated, AI spend that isn’t earning. Free audit: your Allocation Score + the three biggest opportunities, in 48 hours. No pitch — the findings are yours either way.'
+  }
+};
+document.getElementById('headline').innerHTML = COPY[V].h;
+document.getElementById('subline').textContent = COPY[V].s;
+
+document.getElementById('auditForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const payload = {
+    name: document.getElementById('a-name').value.trim(),
+    email: document.getElementById('a-email').value.trim(),
+    interest: 'allocation-audit',
+    source: 'fullpotential.com/audit·' + V,
+    bottleneck: '[' + (document.getElementById('a-company').value.trim()||'no company given') + '] ' + document.getElementById('a-goal').value.trim()
+  };
+  try{ await fetch('/api/champion/lead/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); }catch(err){}
+  document.getElementById('okMsg').style.display='block';
+  e.target.querySelector('button').disabled = true;
+});
+</script>
+</body>
+</html>
