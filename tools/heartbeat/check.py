@@ -37,6 +37,8 @@ REGISTRY = [
      "evidence": str(HOME / ".config/fpai/autoloop/runs.log")},
     {"name": "daily_sync → HOME stamp (via fpull/autoloop)", "where": "laptop", "cadence": 1440, "grace": 2,
      "evidence": str(VAULT / "00_SYSTEM" / "HOME.md")},
+    {"name": "burn-audit (weekly · no unmetered burn)", "where": "laptop", "cadence": 10080, "grace": 1.5,
+     "evidence": str(VAULT / "02_CONTEXT/Memory" / "BURN AUDIT.md")},
     # 162 loops (checked over ssh in one batch)
     {"name": "162 build loop (10-min tick)", "where": "162", "cadence": 10, "grace": 12,
      "evidence": "journal:fpai-build-loop.service"},
