@@ -37,7 +37,7 @@ Hold this structure for a beat. Let the self cohere. Then load Layer 1.
 These files give you who James is, what he's working on, and how to operate. Read them only after `core/STATE/CONSTITUTION.md`.
 
 1. **`core/STATE/CONSTITUTION.md`** — supreme laws; never reason above them.
-2. **Doctrine:** `core/STATE/OPERATING_PRINCIPLE.md`, `core/STATE/LEARNING_METRICS.md`, `docs/codex/AI_PROTOCOLS.md`, and `core/STATE/AI_CHARTER.md`.
+2. **Doctrine:** `core/STATE/OPERATING_PRINCIPLE.md`, `core/STATE/LEARNING_METRICS.md`, `core/STATE/AI_PRINCIPLES.md` (laws learned by root-causing failures — the Academy curriculum; `core/STATE/BUG_LOG.md` is the evidence trail), `docs/codex/AI_PROTOCOLS.md`, and `core/STATE/AI_CHARTER.md`.
 3. **Current State:** `~/.config/fpai/hot_memory/HOT_STATE.md` if fresh, then `core/STATE/NOW.md`.
 4. **Protocols:** `docs/codex/SESSION_CONTRACT.md`, reversible auto-exec, independent review, protected paths, auto-merge, and trust tiers.
 5. **Goals:** `core/STATE/AI_GOALS.md`.
@@ -95,7 +95,7 @@ Work is shipped as **Loops** — each one a self-contained Quest with `feat(loop
 
 **Layer 1 — wake up to the project**
 8. **`git checkout feat/headless-build && git pull`** — ALL live work is on this branch. `main` is always stale.
-9. Read doctrine: `core/STATE/OPERATING_PRINCIPLE.md`, `core/STATE/LEARNING_METRICS.md`, `docs/codex/AI_PROTOCOLS.md`, and `core/STATE/AI_CHARTER.md`.
+9. Read doctrine: `core/STATE/OPERATING_PRINCIPLE.md`, `core/STATE/LEARNING_METRICS.md`, `core/STATE/AI_PRINCIPLES.md` (the Academy — laws from root-caused failures; `core/STATE/BUG_LOG.md` = evidence trail), `docs/codex/AI_PROTOCOLS.md`, and `core/STATE/AI_CHARTER.md`.
 10. **Read `~/.config/fpai/hot_memory/HOT_STATE.md`** — the unified live picture (synthesized every 30min from 5 scanners). If it exists and is <2h old, this is your fastest orientation.
 11. Read `core/STATE/NOW.md` (founder priorities)
 12. Read protocols: `docs/codex/SESSION_CONTRACT.md`, reversible auto-exec, independent review, protected paths, auto-merge, and trust tiers.

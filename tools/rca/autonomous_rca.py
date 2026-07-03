@@ -39,6 +39,9 @@ from typing import Any, Callable
 DEFAULT_OPS_LEDGER = Path(os.environ.get("OPS_LEDGER", "/opt/fpai-build/ops_ledger.jsonl"))
 DEFAULT_SEEN_STORE = Path(os.environ.get("RCA_SEEN_STORE", "/opt/fpai-build/.rca_seen.json"))
 DEFAULT_FINDINGS = Path(os.environ.get("RCA_FINDINGS", "/opt/fpai-build/rca_findings.jsonl"))
+_REPO = Path(os.environ.get("FPAI_REPO_ROOT", Path(__file__).resolve().parents[2]))
+DEFAULT_BUG_LOG = Path(os.environ.get("RCA_BUG_LOG", _REPO / "core" / "STATE" / "BUG_LOG.md"))
+_BUG_LOG_SENTINEL = "<!-- RCA-APPEND-BELOW -->"
 
 ERROR_TOKENS = (
     "error", "fail", "failed", "blocked", "revert", "conflict", "stall",
@@ -189,6 +192,33 @@ def analyze_signature(sig: Signature, *, runner: Callable | None = None) -> dict
         return {"status": "error", "reason": str(exc)[:200]}
 
 
+def _append_bug_log(bug_log: Path, sig: Signature, analysis: dict[str, Any]) -> None:
+    """Insert one confirmed root as a markdown row after the sentinel in BUG_LOG.md,
+    closing the loop error -> RCA -> BUG_LOG. Idempotent: skips if the signature is
+    already present. Never raises."""
+    try:
+        from datetime import datetime, timezone
+        import hashlib
+        text = bug_log.read_text(encoding="utf-8")
+        if _BUG_LOG_SENTINEL not in text:
+            return
+        marker = "sig:" + hashlib.sha1(sig.signature.encode()).hexdigest()[:10]
+        if marker in text:  # already logged this root (stable, row-embedded)
+            return
+        def _cell(s: str, n: int = 150) -> str:
+            return str(s or "").replace("|", "\\|").replace("\n", " ")[:n]
+        detected = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        row = (
+            f"| {detected} | {sig.count}x | {_cell(sig.loop, 16)} | "
+            f"{_cell(analysis.get('root_cause'), 160)} | {_cell(analysis.get('root_fix'), 140)} | "
+            f"{_cell(analysis.get('severity'), 6)}/{_cell(analysis.get('confidence'), 6)} <!-- {marker} --> |"
+        )
+        text = text.replace(_BUG_LOG_SENTINEL, _BUG_LOG_SENTINEL + "\n" + row, 1)
+        bug_log.write_text(text, encoding="utf-8")
+    except Exception:
+        pass
+
+
 def _surface_to_ledger(ops_ledger: Path, sig: Signature, analysis: dict[str, Any]) -> None:
     """Append one rca_finding event so the root cause enters the existing bus
     (ops_ledger -> HOT_STATE -> digest). One line per root, NOT per symptom —
@@ -215,6 +245,7 @@ def run_rca(
     ops_ledger: Path = DEFAULT_OPS_LEDGER,
     seen_store: Path = DEFAULT_SEEN_STORE,
     findings_path: Path = DEFAULT_FINDINGS,
+    bug_log: Path = DEFAULT_BUG_LOG,
     recur_threshold: int = DEFAULT_RECUR_THRESHOLD,
     max_analyze: int = DEFAULT_MAX_ANALYZE,
     dry_run: bool = True,
@@ -251,6 +282,7 @@ def run_rca(
             with findings_path.open("a") as f:
                 f.write(json.dumps(finding) + "\n")
             _surface_to_ledger(ops_ledger, g, result.get("analysis", {}))
+            _append_bug_log(bug_log, g, result.get("analysis", {}))
 
     if not dry_run:
         save_seen(seen_store, seen)

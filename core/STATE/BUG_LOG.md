@@ -33,3 +33,15 @@ _Anchor. Prior state = ~6 months, 125 merged specs, no version tags. This is the
 **Class-fixes this batch surfaced (become the next builds):** eliminate the `curator`
 name collision · terminal-state reaper for every pipeline work-item · one shared
 `robust_json()` at every LLM→JSON boundary. Each kills a whole class, not one instance.
+
+---
+
+## Autonomous findings (appended by `tools/rca/autonomous_rca.py`)
+_Root causes the RCA reflex confirmed on its own, newest first. One row per root (not per symptom). These graduate to [AI_PRINCIPLES.md](AI_PRINCIPLES.md) when structural._
+
+| Detected | Seen | Loop | Root cause | Class-fix | Sev/Conf |
+|----------|------|------|-----------|-----------|----------|
+<!-- RCA-APPEND-BELOW -->
+| 2026-07-03 | 26x | health | The build-worktree lifecycle has no owned garbage-collection / terminal-disposition path. Every created worktree is assumed to reach one of two happy endings (a | Give every build worktree a guaranteed terminal disposition instead of an open-ended 'wait for James'. Add a reaper in the health/build loop | med/med <!-- sig:e23fa2e502 --> |
+| 2026-07-03 | 96x | council | Top-level import-name collision: two distinct `curator` packages (repo-local cockpit helpers vs deployed brain service) occupy the same import namespace. The in | Eliminate the namespace collision — rename the repo-local package (e.g. `curator/` → `cockpit_curator/` or nest it under an existing repo na | high/high <!-- sig:14a098ff33 --> |
+
