@@ -27,7 +27,7 @@ The purpose: both of us snap back to the same page within 10 seconds of session 
 
 ## TOP 3
 1. **★ Flywheel feedback layer** — daily value check (d130) + autonomous delivery (d131) + hours-saved metric (d132). Dead days end when d131 is live. Stream: Game/Sovereignty.
-2. **★ Bot awareness → 100%** — 88% historical, this probe FAIL. Probe now targets correct 7-day window. Session_insights now wired to live bot for first time. Stream: Game/Infrastructure.
+2. **★ Bot awareness → 100%** — REACHED: SSOT `awareness_reliability.json` = 100% (100/100, 2026-07-03). Cite the JSON, never hand-type this number. Stream: Game/Infrastructure.
 3. **★ First real conversation** — blocked on "system not providing enough value to James yet." Fix: flywheel specs above. Stream: Game.
 
 ## BLOCKERS
