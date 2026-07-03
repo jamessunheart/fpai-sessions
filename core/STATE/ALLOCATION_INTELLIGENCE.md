@@ -27,6 +27,12 @@ tags: [foundation, doctrine, allocation-intelligence, keystone, three-rs]
 
 ---
 
+## The clean separation (v1.2 · GPT convergence 2026-07-03)
+
+**Allocation Intelligence is the CAPABILITY and the MOAT — never sold as-is.** What customers buy is **Intelligence Solutions** (the transformation); what they experience is **Better Decisions** — because allocation is the highest-leverage decision in any organization. A CEO doesn't wake up wanting "Allocation Intelligence"; they wake up asking *where should I invest, who should I hire, which AI should I deploy, where are we wasting money?* — all allocation problems. First product: **Capital Allocation Intelligence** (capital first, because it's measurable) → then time, attention, people, knowledge → Enterprise Allocation Intelligence.
+
+**The 30-second pitch:** *"Every organization has scarce resources — capital, time, people, knowledge, AI. The winners aren't the ones with the most resources; they're the ones who allocate them best. FPOS is the world's first Allocation Intelligence Operating System. We start by improving your capital allocation decisions, then expand into every other scarce resource — a continuously improving organization."*
+
 ## The discovery
 
 Every organization — knowingly or not — asks one question: **"Where should the next scarce resource go?"** Capital · Time · Attention · People · Knowledge · AI Compute · Relationships · Trust · Reputation · Energy. FPOS exists to answer that question better than any individual or traditional organization can. That capability has a name: **Allocation Intelligence.**
