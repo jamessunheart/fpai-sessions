@@ -243,6 +243,14 @@ STATE_DOCS = [
     ("core/STATE/SYSTEM_ARCHITECTURE.md", "02_CONTEXT/Memory/SYSTEM ARCHITECTURE.md"),
     ("core/STATE/NOW.md",                 "02_CONTEXT/Memory/NOW — Current Priorities.md"),
     ("core/STATE/AI_GOALS.md",            "02_CONTEXT/Memory/AI GOALS.md"),
+    # The Academy — the AI's learning foundation, grouped + ordered so James sees
+    # in Obsidian what the AI learns from its own faults. 2026-07-03.
+    ("core/STATE/CONSTITUTION.md",        "02_CONTEXT/Academy/00 — CONSTITUTION.md"),
+    ("core/STATE/OPERATING_PRINCIPLE.md", "02_CONTEXT/Academy/01 — OPERATING PRINCIPLE.md"),
+    ("core/STATE/AI_PRINCIPLES.md",       "02_CONTEXT/Academy/02 — AI PRINCIPLES (laws learned).md"),
+    ("core/STATE/BUG_LOG.md",             "02_CONTEXT/Academy/03 — BUG LOG (evidence trail).md"),
+    ("core/STATE/LEARNING_METRICS.md",    "02_CONTEXT/Academy/04 — LEARNING METRICS.md"),
+    ("core/STATE/BRAIN_VERSION",          "02_CONTEXT/Academy/BRAIN VERSION.md"),
 ]
 
 
