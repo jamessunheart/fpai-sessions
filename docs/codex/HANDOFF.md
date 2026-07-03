@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-07-03 · SPEC_d147_self-audit-infra-209-disk-impro · branch `build/SPEC_d147_self-audit-infra-209-disk-impro`
+
+- **Status:** done in working tree / awaiting review + merge
+- **Files changed:** `tools/infra/report_disk_growth_209.py`; `tools/infra/test_report_disk_growth_209.py`; `core/BUILD/activate/SPEC_d147_self-audit-infra-209-disk-impro.sh`; `core/BUILD/specs/SPEC_d147_self-audit-infra-209-disk-impro.md`; `core/BUILD/results/SPEC_d147_self-audit-infra-209-disk-impro.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a read-only disk growth reporter for host `209.74.93.72`. Off-target activation records `skipped` and does not run `df`/`du`. On 209, it verifies the `FLEET_SNAPSHOT` disk-trend evidence, captures filesystem usage plus bounded `du -x --max-depth=2` samples for `/home`, `/backup`, `/var`, `/usr/local/cpanel`, and `/opt`, computes growth against the prior JSON snapshot when available, writes JSON/Markdown reports, appends one ops-ledger row, and emits only quarantine-first reversible cleanup proposals.
+- **Tests:** `python3 -B -m unittest tools.infra.test_report_disk_growth_209` (4 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/infra/report_disk_growth_209.py tools/infra/test_report_disk_growth_209.py`; `bash -n core/BUILD/activate/SPEC_d147_self-audit-infra-209-disk-impro.sh`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d147-registry.json`; off-target CLI smoke with `FPAI_D147_HOST_IPS=10.0.0.5 python3 -B -m tools.infra.report_disk_growth_209 --repo-root . --ops-ledger /tmp/d147-ops-ledger.jsonl --record`; ASCII check for new/touched d147 files; `git diff --check`
+- **Risks:** This sandbox is not `209.74.93.72`, so no live directory sizes were collected here. The first target-host run may treat all paths as new if `/opt/fpai-build/state/d147_disk_209_snapshot.json` does not exist yet; the second run will show true deltas. Permission-denied `du` paths are preserved as warnings rather than hard-failing the full report.
+- **Rollback:** Revert this branch. Runtime cleanup is limited to removing generated read-only artifacts on 209: `/opt/fpai-build/state/d147_disk_209_snapshot.json`, `/opt/fpai-build/reports/d147_disk_209_report.json`, and `/opt/fpai-build/reports/d147_disk_209_report.md`.
+- **Intent solved:** d147 now has a safe read-only path to identify the directories driving 209's disk growth before the host approaches 90%.
+- **Downstream intent unlocked:** after the target-host report is collected, the next self-audit can convert specific high-growth paths into narrow cleanup activations with rollback evidence instead of guessing from aggregate disk percentage.
+- **Questions for Ember/James:** after merge, run/confirm activation on host `209.74.93.72` and review `/opt/fpai-build/reports/d147_disk_209_report.md`; do not approve deletion until a follow-up cleanup spec names exact paths and rollback/quarantine steps.
+
 ### 2026-07-03 · SPEC_d146_self-audit-infra-cruft-services · branch `build/SPEC_d146_self-audit-infra-cruft-services`
 
 - **Status:** done in working tree / awaiting review + merge
