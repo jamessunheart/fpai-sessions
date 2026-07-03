@@ -294,6 +294,47 @@ run_liveness_probe() {
   return 0
 }
 
+emit_live_artifact_proof() {
+  local specid="$1"
+  local did="$2"
+  local branch="$3"
+  local pre_sha="$4"
+  local head_sha="$5"
+  local question="${6:-}"
+  local answer="${7:-}"
+  local proof_expected="${8:-}"
+  local log_file status spec_file
+  if [ "${LIVE_ARTIFACT_PROOF_DISABLE:-0}" = "1" ]; then
+    python3 "$REPO/tools/build_loop/ops_log.py" liveness "live-artifact-proof:skipped" "$specid disabled by LIVE_ARTIFACT_PROOF_DISABLE=1" "\$0" "$branch" "" 2>/dev/null || true
+    return 0
+  fi
+  mkdir -p /opt/fpai-build/logs
+  log_file="/opt/fpai-build/logs/$specid.live-artifact-proof.log"
+  spec_file="$REPO/core/BUILD/specs/$specid.md"
+  (
+    cd "$REPO" || exit 1
+    "$PY" -B -m tools.build_loop.live_artifact_proof \
+      --repo-root "$REPO" \
+      --ops-ledger "${OPS_LEDGER:-/opt/fpai-build/ops_ledger.jsonl}" \
+      --spec-id "$specid" \
+      --decision-id "$did" \
+      --branch "$branch" \
+      --base-ref "$pre_sha" \
+      --head-ref "$head_sha" \
+      --spec-file "$spec_file" \
+      --question "$question" \
+      --answer "$answer" \
+      --proof-expected "$proof_expected"
+  ) >"$log_file" 2>&1
+  status=$?
+  if [ "$status" = 0 ]; then
+    python3 "$REPO/tools/build_loop/ops_log.py" liveness "live-artifact-proof:checked" "$specid log=$log_file" "\$0" "$branch" "" 2>/dev/null || true
+  else
+    python3 "$REPO/tools/build_loop/ops_log.py" liveness "live-artifact-proof:fail" "$specid rc=$status log=$log_file" "\$0" "$branch" "Ember: inspect live-artifact proof emission" 2>/dev/null || true
+  fi
+  return 0
+}
+
 run_post_merge_reality_check_daily() {
   local stamp_file today last_day log_file status
   [ "${POST_MERGE_REALITY_CHECK_DISABLE:-0}" = "1" ] && return 0
@@ -393,6 +434,9 @@ while IFS= read -r bline; do
     else
       dec mark-merged "$BDID" >/dev/null 2>&1 || true
       update_blueprint_after_merge "$BDID" "$BBR"
+      BHEAD_SHA=$(git -C "$REPO" rev-parse HEAD)
+      BSPECID="$(basename "$BBR")"
+      emit_live_artifact_proof "$BSPECID" "$BDID" "$BBR" "$PRE_SHA" "$BHEAD_SHA"
       BACKLOG_MERGED=$((BACKLOG_MERGED+1))
       python3 "$REPO/tools/build_loop/ops_log.py" merge backlog-merged "$BDID ($BBR)" "\$0" "$BBR" "" 2>/dev/null || true
       echo "backlog: merged $BDID"
@@ -438,6 +482,9 @@ while IFS= read -r line; do
 
   DID=$(printf '%s' "$line"  | "$PY" -c 'import sys,json;print(json.load(sys.stdin)["id"])')
   SLUG=$(printf '%s' "$line" | "$PY" -c 'import sys,json,re;print(re.sub(r"[^a-z0-9]+","-",json.load(sys.stdin)["question"].lower())[:32].strip("-"))')
+  QUESTION_TEXT=$(printf '%s' "$line" | "$PY" -c 'import sys,json;print(json.load(sys.stdin).get("question") or "")')
+  ANSWER_TEXT=$(printf '%s' "$line" | "$PY" -c 'import sys,json;print(json.load(sys.stdin).get("answer") or "")')
+  PROOF_EXPECTED_TEXT=$(printf '%s' "$line" | "$PY" -c 'import sys,json;print(json.load(sys.stdin).get("proof_expected") or "")')
   LIVENESS_DECLARATION=$(printf '%s' "$line" | "$PY" -c 'import sys,json;print(json.load(sys.stdin).get("liveness") or "")')
   LIVENESS_CHECK=$(printf '%s' "$line" | "$PY" -c 'import sys,json;print(json.load(sys.stdin).get("liveness_check") or "")')
   SPECID="SPEC_${DID}_${SLUG}"; BR="build/$SPECID"; WT="$WT_BASE/$SPECID"
@@ -554,6 +601,8 @@ Register in core/BUILD/REGISTRY.json. Tests required. Do NOT push or merge.
       else
         dec mark-merged "$DID" >/dev/null 2>&1 || true
         update_blueprint_after_merge "$DID" "$BR"
+        HEAD_SHA=$(git -C "$REPO" rev-parse HEAD)
+        emit_live_artifact_proof "$SPECID" "$DID" "$BR" "$PRE_SHA" "$HEAD_SHA" "$QUESTION_TEXT" "$ANSWER_TEXT" "$PROOF_EXPECTED_TEXT"
         CONSECUTIVE_REVERTS=0  # clean merge resets the revert streak
       fi
     fi

@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-07-03 · SPEC_d144_d144-wire-liveness-proof-emissio · branch `build/SPEC_d144_d144-wire-liveness-proof-emissio`
+
+- **Status:** done in working tree / awaiting independent review + merge
+- **Files changed:** `tools/build_loop/live_artifact_proof.py`; `tools/build_loop/server_build_loop.sh`; `tools/build_loop/test_live_artifact_proof.py`; `tools/build_loop/test_liveness_probe.py`; `tools/build_loop/test_post_merge_reality_check.py`; `core/BUILD/specs/SPEC_d144_d144-wire-liveness-proof-emissio.md`; `core/BUILD/results/SPEC_d144_d144-wire-liveness-proof-emissio.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Wired automatic post-merge proof emission into the server build loop. Both backlog merges and new approved auto-merges now compute the merge range, detect live artifact paths from the merged diff, and append `liveness:pass` rows to ops_ledger with `spec_id`, `decision_id`, `branch`, artifact path, and artifact type. Specs whose question/answer/proof/spec text declares metric movement also append `feature_outcome` with `verdict=improved`.
+- **Tests:** `python3 -B -m unittest tools.build_loop.test_live_artifact_proof tools.build_loop.test_liveness_probe tools.build_loop.test_post_merge_reality_check tools.build_loop.test_feature_outcome` (21 OK); `bash -n tools/build_loop/server_build_loop.sh`; `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/live_artifact_proof.py tools/build_loop/test_live_artifact_proof.py tools/build_loop/test_liveness_probe.py tools/build_loop/test_post_merge_reality_check.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d144-registry.json`; `git diff --check`
+- **Proof:** the emitter test verifies a live deployed-file diff writes `liveness:pass` with `artifact=tools/build_loop/server_build_loop.sh` plus `feature_outcome verdict=improved` when proof text declares metric movement. The d140 dry-run regression test verifies a sample with proofed rows drops dead_rate below `0.5` and no circuit breaker result is returned.
+- **Risks:** artifact detection is conservative and path-based; future live artifact locations should be added to `LIVE_PATH_PATTERNS`. Metric-moving detection is text-based, so unusual wording may still need explicit proof rows.
+- **Rollback:** revert the listed files. Runtime mitigation without rollback: set `LIVE_ARTIFACT_PROOF_DISABLE=1`; existing liveness probes, correction smokes, and merge behavior remain in place.
+- **Intent solved:** d144 gives d140 a merge-time proof channel for specs that ship live artifacts.
+- **Downstream intent unlocked:** post-merge reality checks can discriminate proofed live builds from genuinely dead merged builds instead of treating an unwired proof channel as 100% dead.
+- **Questions for Ember/James:** after merge on server 162, let one approved live-artifact build pass through the loop and confirm `/opt/fpai-build/ops_ledger.jsonl` receives `liveness:pass` with an artifact path before the next d140 daily check.
+
 ### 2026-07-03 · SPEC_d143_metabolism-active-days-share-im · branch `build/SPEC_d143_metabolism-active-days-share-im`
 
 - **Status:** done in working tree / awaiting independent review + merge

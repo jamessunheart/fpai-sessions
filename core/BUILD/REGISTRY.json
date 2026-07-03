@@ -1,10 +1,21 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-02T19:05:30Z",
+  "updated_at": "2026-07-03T00:00:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
-    "active_builds": [
-        {
-            "id": "SPEC_d011-reality-fix_repair-merged-dead-build-d011",
+  "active_builds": [
+    {
+      "id": "SPEC_d144_d144-wire-liveness-proof-emissio",
+      "slug": "SPEC_d144_d144-wire-liveness-proof-emissio",
+      "branch": "build/SPEC_d144_d144-wire-liveness-proof-emissio",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d144_d144-wire-liveness-proof-emissio.md",
+      "tests_passed": true,
+      "notes": "d144 complete in working tree: added tools/build_loop/live_artifact_proof.py and wired server_build_loop.sh post-merge paths to emit liveness:pass rows from live artifacts detected in merged diffs, including artifact path/type, spec_id, decision_id, and branch. Metric-moving specs detected from question/answer/proof/spec text also emit feature_outcome verdict=improved. Covered backlog merges and new approved auto-merges. Focused unit/static/reality-check tests, py_compile, shell syntax, registry JSON validation, and diff hygiene passed. No live ops-ledger append, server loop execution, push, merge, deploy, outreach, secrets, service control, or money movement was performed."
+    },
+    {
+      "id": "SPEC_d011-reality-fix_repair-merged-dead-build-d011",
             "slug": "SPEC_d011-reality-fix_repair-merged-dead-build-d011",
             "branch": "build/SPEC_d011-reality-fix_repair-merged-dead-build-d011",
             "base_branch": "feat/headless-build",

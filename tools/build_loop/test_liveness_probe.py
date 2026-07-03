@@ -62,6 +62,24 @@ class LivenessProbeShellContractTest(unittest.TestCase):
         self.assertIn('--spec-id "$SPECID"', self.text)
         self.assertIn("--activated", self.text)
 
+    def test_live_artifact_proof_emits_from_merge_diff_before_notifications(self):
+        self.assertIn("emit_live_artifact_proof()", self.text)
+        self.assertIn("tools.build_loop.live_artifact_proof", self.text)
+        self.assertIn("--base-ref \"$pre_sha\"", self.text)
+        self.assertIn("--head-ref \"$head_sha\"", self.text)
+        self.assertIn("LIVE_ARTIFACT_PROOF_DISABLE", self.text)
+        self.assertIn("QUESTION_TEXT=$(printf", self.text)
+        self.assertIn("PROOF_EXPECTED_TEXT=$(printf", self.text)
+
+        new_merge = self.text.index('emit_live_artifact_proof "$SPECID" "$DID" "$BR"')
+        probe = self.text.index('run_liveness_probe "$LIVENESS_DECLARATION" "$LIVENESS_CHECK"')
+        approved_notice = self.text.index('tg "$V · AUTO-MERGED')
+        self.assertLess(new_merge, probe)
+        self.assertLess(new_merge, approved_notice)
+
+    def test_backlog_merge_also_emits_live_artifact_proof(self):
+        self.assertIn('emit_live_artifact_proof "$BSPECID" "$BDID" "$BBR"', self.text)
+
 
 if __name__ == "__main__":
     unittest.main()
