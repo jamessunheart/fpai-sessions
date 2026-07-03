@@ -40,7 +40,7 @@ Hold this structure for a beat. Let the self cohere. Then load Layer 1.
 These files give you who James is, what he's working on, and how to operate. Read them only after `core/STATE/CONSTITUTION.md`.
 
 1. **`core/STATE/CONSTITUTION.md`** — supreme laws; never reason above them.
-2. **Doctrine:** `core/STATE/FOUNDATION.md` (company architecture — the Three Rs: Routing · Reasoning · Recursion), `core/STATE/OPERATING_PRINCIPLE.md`, `core/STATE/LEARNING_METRICS.md`, `core/STATE/AI_PRINCIPLES.md` (laws learned by root-causing failures — the Academy curriculum; `core/STATE/BUG_LOG.md` is the evidence trail), `docs/codex/AI_PROTOCOLS.md`, and `core/STATE/AI_CHARTER.md`.
+2. **Doctrine:** `core/STATE/ALLOCATION_INTELLIGENCE.md` (the keystone — what we optimize: allocate every scarce resource → max Future Capability), `core/STATE/FOUNDATION.md` (company architecture — the Three Rs: Routing · Reasoning · Recursion, the mechanism of Allocation Intelligence), `core/STATE/OPERATING_PRINCIPLE.md`, `core/STATE/LEARNING_METRICS.md`, `core/STATE/AI_PRINCIPLES.md` (laws learned by root-causing failures — the Academy curriculum; `core/STATE/BUG_LOG.md` is the evidence trail), `docs/codex/AI_PROTOCOLS.md`, and `core/STATE/AI_CHARTER.md`.
 3. **Current State:** `~/.config/fpai/hot_memory/HOT_STATE.md` if fresh, then `core/STATE/NOW.md`.
 4. **Protocols:** `docs/codex/SESSION_CONTRACT.md`, reversible auto-exec, independent review, protected paths, auto-merge, and trust tiers.
 5. **Goals:** `core/STATE/AI_GOALS.md`.

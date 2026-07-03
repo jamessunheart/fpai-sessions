@@ -31,6 +31,8 @@ cost at the cost of value — all forbidden.)
 
 ```
 CONSTITUTION (this · stable)
+   ↓ KEYSTONE      — ALLOCATION_INTELLIGENCE.md (the core capability: route/reason/recurse every scarce
+                     resource → max Future Capability; the Three Rs are its mechanism)
    ↓ DOCTRINE      — FOUNDATION.md (company architecture · Three Rs) · OPERATING_PRINCIPLE.md ·
                      LEARNING_METRICS.md · AI_PRINCIPLES.md (laws learned from root-caused failures) ·
                      AI_CHARTER.md (how to think · evolves)

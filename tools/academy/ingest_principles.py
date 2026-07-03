@@ -30,6 +30,7 @@ DOCS = [
     (REPO / "core" / "STATE" / "BUG_LOG.md", "bug_root"),
     (REPO / "core" / "STATE" / "FOUNDATION.md", "doctrine"),
     (REPO / "core" / "STATE" / "CONSTITUTION.md", "law"),
+    (REPO / "core" / "STATE" / "ALLOCATION_INTELLIGENCE.md", "keystone"),
     (REPO / "core" / "STATE" / "LEARNING_METRICS.md", "metric"),
 ]
 OLLAMA_BASE = os.environ.get("OLLAMA_BASE", "http://127.0.0.1:11434")
