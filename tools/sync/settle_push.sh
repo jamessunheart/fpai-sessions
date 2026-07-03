@@ -22,7 +22,10 @@ if echo "$OUT" | grep -qE "rejected|failed"; then
   OUT=$(try_push)
 fi
 if echo "$OUT" | grep -qE "rejected|failed"; then
-  echo "❌ settle_push failed: $OUT"; exit 1
+  # 162 session actively working → don't race its checkout. Deliver to the mailbox branch;
+  # 162 (loop or session) merges laptop-inbox when quiet.
+  git push -f server162 "$B":refs/heads/laptop-inbox 2>&1 | tail -1
+  ssh -o ConnectTimeout=12 "$R" "cd $RP && git merge --ff-only laptop-inbox 2>/dev/null || git merge laptop-inbox --no-edit 2>/dev/null || echo '162 busy — laptop-inbox parked, merge when quiet'"
 fi
 LOCAL=$(git rev-parse HEAD); REMOTE=$(ssh -o ConnectTimeout=12 "$R" "git -C $RP rev-parse HEAD")
 [ "$LOCAL" = "$REMOTE" ] && echo "✅ one branch, one head: ${LOCAL:0:10}" || echo "🟡 heads differ: local ${LOCAL:0:10} vs 162 ${REMOTE:0:10}"
