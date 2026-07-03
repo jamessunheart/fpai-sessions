@@ -1208,6 +1208,17 @@
       "spec": "core/BUILD/specs/SPEC_d134_d134-constitution-check-governan.md",
       "tests_passed": true,
       "notes": "Governance Constitution Check built, wired into decision agent and build orchestrator, reviewed by independent AI, and focused tests passed."
+    },
+    {
+      "id": "SPEC_d143_metabolism-active-days-share-im",
+      "slug": "SPEC_d143_metabolism-active-days-share-im",
+      "branch": "build/SPEC_d143_metabolism-active-days-share-im",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d143_metabolism-active-days-share-im.md",
+      "tests_passed": true,
+      "notes": "d143 complete in working tree: forged exactly one OFF-by-default experiment-lane work order to improve active_days_share with a 14-day daily closeout packet experiment, acceptance criteria, rollback, and a real feature_outcome measurement plan. Focused work-order guardrail test, py_compile, registry JSON validation, and diff hygiene passed. No production deploy, push, merge, secrets, outreach, service control, or money movement."
     }
   ]
 }

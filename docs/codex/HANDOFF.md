@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-07-03 · SPEC_d143_metabolism-active-days-share-im · branch `build/SPEC_d143_metabolism-active-days-share-im`
+
+- **Status:** done in working tree / awaiting independent review + merge
+- **Files changed:** `core/BUILD/improvement_proposals/SPEC_d143_active_days_share_closeout.md`; `tools/build_loop/test_d143_work_order.py`; `core/BUILD/specs/SPEC_d143_metabolism-active-days-share-im.md`; `core/BUILD/results/SPEC_d143_metabolism-active-days-share-im.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Forged exactly one reversible experiment-lane improvement for the weakest conversion `active_days_share`: a 14-day daily closeout packet experiment behind `FPAI_ACTIVE_DAYS_CLOSEOUT_EXPERIMENT=0`. The work order preserves the d143 baseline (`9/14`, `0.642857`), blocks production activation, defines acceptance criteria, and measures reality after 14 days with `tools/metrics/conversion_snapshot.py` plus a `feature_outcome` row only after auditing that commits represented real buildstream/proof work.
+- **Tests:** `python3 -B -m unittest tools.build_loop.test_d143_work_order`; `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/test_d143_work_order.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d143-registry.json`; `git diff --check`
+- **Risks:** This is an artifact/work-order build, so the metric will not move until James/council explicitly enables or implements the experiment. The main risk is metric gaming; the work order counters that by invalidating empty/padding commits and requiring a meaningful-commit audit before any improved verdict.
+- **Rollback:** revert the listed files. Runtime mitigation is simply to keep `FPAI_ACTIVE_DAYS_CLOSEOUT_EXPERIMENT` unset or `0`; no timer, service, deploy, push, merge, outreach, secrets access, service control, or money movement was performed.
+- **Intent solved:** d143's nightly metabolism prompt became one concrete reviewable work order with acceptance criteria and a real measurement plan.
+- **Downstream intent unlocked:** after review, the experiment can run for 14 days and produce a measured `feature_outcome` verdict against the d143 active-days baseline.
+- **Questions for Ember/James:** if accepted, decide whether the first 14-day run should be manual closeout packets or a later OFF-flag helper build; keep production go-live gated.
+
 ### 2026-07-02 · SPEC_d011-reality-fix_repair-merged-dead-build-d011 · branch `build/SPEC_d011-reality-fix_repair-merged-dead-build-d011`
 
 - **Status:** done in working tree / awaiting independent review + merge
