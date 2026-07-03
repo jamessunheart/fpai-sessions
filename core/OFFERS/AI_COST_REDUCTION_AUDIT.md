@@ -89,3 +89,12 @@ become reusable intelligence (Two Deliverables Rule).
 Approve / edit / redirect. If approved: (1) pick price A or B, (2) name the 5 targets
 (or point Ember at the CRM), (3) Ember drafts the 5 personalized messages for your
 send. **Nothing sends without your word.**
+
+## Ready-to-send message (paste a name, hit send)
+> Hey [NAME] — quick one. I've been building AI cost-optimization tooling and I keep
+> seeing businesses overpay on AI tools, software, and offshore labor by 15–30% without
+> realizing it. I'll run your numbers and show you exactly where — free, no obligation.
+> If it's useful, we talk; if not, you keep the savings map. Worth a 20-min look at your
+> stack? — James
+
+*(Compliance-check via the compliance-scanner agent before first send. Nothing goes out without James.)*
