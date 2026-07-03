@@ -1,5 +1,7 @@
 # SPEC — Growth Stack Master Plan (the business builds its own demand)
 
+**★ Canonical architecture: vault `02_CONTEXT/Knowledge/The Marketing Engine — Architecture.md`** — reconciles the Universal Marketing Playbook (5 human roles → 5 AI engines: Allocator/Content/Campaign/Discovery/Measurement) with the G1-G7 phases below. Build to THAT role-mapping. Two hard constraints from the playbook fit-check: (1) INBOUND ONLY — no cold-outreach engines (Apollo/Instantly rejected); Discovery = SEO+ads+content pull. (2) NO scarcity/urgency tactics — the Intelligence Exchange give-first replaces them. Sovereign stack replaces GHL (own pages + n8n + listmonk + Postiz + Umami + ad-portal).
+
 James directive 2026-07-03: "build the full front end stack that can help the engine fuel content / interest / leads into the funnel… and scale itself with the right tools." Designed by 3-agent synthesis (inventory + tool-scout + architect). This is the MASTER spec; each phase below is one loop-buildable unit — build in order, each shippable + measurable. Supersedes/absorbs: SPEC_content-ads-engine (→G2/G4/G5), relates to SPEC_allocation-ledger-ccd (scorer reused), revives d037 Beacon (as G1/G5 pattern) + d038 Content Bank (as canon source).
 
 ## Architecture (one line)
