@@ -255,7 +255,17 @@ STATE_DOCS = [
 
 
 def mirror_state_docs(vault: Path, repo: Path) -> list[str]:
-    """Copy key state docs from the local repo clone into the vault. No SSH."""
+    """Copy key state docs from the local repo clone into the vault. No SSH.
+
+    SAFETY: writes ONLY the fixed STATE_DOCS destination paths (never deletes,
+    never touches other files). Each mirrored file gets a provenance header so
+    it's visually obvious in Obsidian this is an auto-mirror (overwritten on
+    fpull) vs. James's own notes (which fpull never touches — different paths).
+    """
+    header = (
+        "> ⟳ AUTO-MIRROR — regenerated from `{src}` on every fpull. "
+        "**Do not hand-edit; edits are overwritten.** Your own notes live at other paths and are never touched.\n\n"
+    )
     copied = []
     for src_rel, dest_rel in STATE_DOCS:
         src = repo / src_rel
@@ -263,7 +273,7 @@ def mirror_state_docs(vault: Path, repo: Path) -> list[str]:
             continue
         dest = vault / dest_rel
         dest.parent.mkdir(parents=True, exist_ok=True)
-        dest.write_text(src.read_text())
+        dest.write_text(header.format(src=src_rel) + src.read_text())
         copied.append(dest.name)
     return copied
 
