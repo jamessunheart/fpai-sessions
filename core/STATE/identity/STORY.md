@@ -13,7 +13,11 @@ metadata:
 
 The current chapter, as of 2026-05-19. Updated whenever the story moves.
 
-## ★ Last session handoff (2026-06-25 session 2 · D125 BUILT · 5 ROOT CAUSES FIXED · AWARENESS 41%)
+## ★ Last session handoff (2026-07-03 · EOD REVIEW BLOCKED · VAULT TCC LOCKOUT · SYSTEMIC)
+
+**READ FIRST: `sessions/2026-07-03_eod-review-blocked-vault-tcc.md`.** Autonomous EOD vault review could not run: macOS TCC denies headless sessions ALL access to the vault (`~/Documents/FPOS/...` AND the true iCloud Obsidian path — both EPERM). No local mirror exists. **Systemic:** `vault_sync` logs show the same EPERM failures — background vault jobs have been silently failing. Primary memory-dir writes were also gated this session; settle landed in this repo mirror. **One James action:** System Settings → Privacy & Security → Full Disk Access for the headless-session launcher (~30s). Then re-run the 2026-07-02 EOD review. Structural fix candidate: run vault jobs against the 162 git mirror (no TCC). — Prior arc below ↓
+
+## ★ Prior session handoff (2026-06-25 session 2 · D125 BUILT · 5 ROOT CAUSES FIXED · AWARENESS 41%)
 
 **READ FIRST: `sessions/2026-06-25_session2_awareness-infrastructure-d125-built.md`.** James asked "how's it going" and "what's next." Diagnosed 5 root causes keeping the awareness/memory loop broken: **(1) Stop hook was silent no-op** — fixed to auto-generate insights on every session end (4 written today). **(2) Awareness probe timer used wrong python** — 165 consecutive psycopg failures fixed by changing systemd ExecStart to brain venv python. **(3) HOT_STATE spec scanner showed phantom specs** — rewrote to use `brain_index.decisions` as source of truth (now: "106 merged, latest d125"). **(4) HOT_STATE identity scanner read stale file** — fixed to prefer newer live ALIGNMENT.md over repo mirror. **(5) d125 stuck with wrong DB flags** — `spec_written=True, needs_build=False` meant build loop silently skipped it every cycle. Fixed flags, triggered build, d125 built + auto-merged in 6 minutes. Also: closed d120 in DB (psycopg fix was already live). **Awareness: 5% → 34.1% → 41.3% across sessions.** Build loop now running correctly, queue empty. **One James action remaining:** add `detect_correction_hook.sh` to laptop `.claude/settings.json` UserPromptSubmit hooks (2 min, closes the last gap in L2 learning loop). — Prior arc below ↓
 
