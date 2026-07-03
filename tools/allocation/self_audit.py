@@ -169,6 +169,18 @@ def main(argv: list[str] | None = None) -> int:
         print(f"  [{i['dim']}] {i['action']}  ({'; '.join(i['reasons'])[:60]})")
     print(f"\n{len(r['autonomous'])} autonomous · {len(r['reserved'])} reserved — "
           "the default flipped from James to substrate.")
+    # Coherence gate: reported state must not contradict the measured SSOT.
+    print("\n=== METRIC COHERENCE (map vs territory) ===")
+    try:
+        from tools.governance.metric_coherence import check as coherence_check
+        drift = coherence_check()
+        if not drift:
+            print("  OK — canonical prose matches measured SSOT.")
+        else:
+            for d in drift:
+                print(f"  DRIFT · {d}")
+    except Exception as e:
+        print(f"  (coherence check unavailable: {e})")
     return 0
 
 

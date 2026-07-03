@@ -40,12 +40,26 @@ SIGNALS = [
     },
 ]
 
-# A number carrying its own date-stamp or archive marker is HISTORY, not drift —
-# it was true when written. The guard checks only undated, live assertions.
-_HISTORICAL = re.compile(
-    r"\d{4}-\d{2}-\d{2}|archived|historical|\bwas\b"          # timestamped history
-    r"|~|climbs?|within|projected|forecast|target|goal|\bby\b",  # approximate / forecast
-    re.I)
+# A number is HISTORY/FORECAST (not drift) only when the LINE is explicitly marked
+# as such — a date-stamp or an "archived/historical" label. We do NOT excuse a live
+# measurement just because a forecast word appears elsewhere in the sentence
+# (e.g. "score 41.3% ... climbing" is a stale CURRENT claim, not a forecast).
+_HISTORICAL = re.compile(r"\d{4}-\d{2}-\d{2}|archived|historical", re.I)
+# Approximate/target values (~95%, → 100%) are not asserted measurements — but only
+# when the tilde/arrow is ADJACENT to the number, not merely present in the line.
+_APPROX_ADJACENT = re.compile(r"[~→]\s*$")
+
+
+def current_section(text: str) -> str:
+    """Files like ALIGNMENT.md stack dated snapshots newest-first; only the top one
+    is the live claim. Everything from the first 'archived' marker down is history.
+    Scan only the current section so old checkpoints aren't mistaken for drift."""
+    out = []
+    for line in text.splitlines():
+        if "archived" in line.lower():
+            break
+        out.append(line)
+    return "\n".join(out)
 
 
 def check() -> list[str]:
@@ -62,11 +76,14 @@ def check() -> list[str]:
         for fpath in sig["files"]:
             if not fpath.exists():
                 continue
-            for line in fpath.read_text().splitlines():
+            for line in current_section(fpath.read_text()).splitlines():
                 if _HISTORICAL.search(line):
-                    continue  # timestamped history is allowed to differ
+                    continue  # explicitly dated/archived history is allowed to differ
                 m = sig["pat"].search(line)
                 if not m:
+                    continue
+                # approximate/target only if ~ or → sits immediately before the number
+                if _APPROX_ADJACENT.search(line[:m.start(1)]):
                     continue
                 stated = float(m.group(1))
                 if abs(stated - truth) > sig["tol"]:
