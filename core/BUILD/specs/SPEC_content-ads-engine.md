@@ -1,0 +1,17 @@
+# SPEC — Content & Ads Engine (the business markets itself)
+
+James directive 2026-07-03: no manual outreach until the funnel is proven by SYSTEM-generated demand. "Ads and content created by our allocation intelligence… it gets good at A/B split testing ads it can generate."
+
+## Build (phased, each phase shippable)
+
+**Phase 1 — Content engine:** `tools/growth/content_engine.py` — generates one article per run from the canon (FOUNDATION.md, ALLOCATION_INTELLIGENCE.md, keystone maps) against the 6-title editorial list in the vault's Brand Architecture note (Why Most Companies Misallocate Capital · Hidden Cost of Fragmented Attention · Knowledge Bottleneck · Executive Allocation vs Productivity · Capability Flywheel · Allocation Intelligence Explained). Output: static HTML in `sites/fullpotential-com/learn/` (site style, CTA → /assessment), deployed via deploy_site.sh lane. Uses `claude -p` ($0). Nightly or per-run.
+
+**Phase 2 — Ad creative engine:** `tools/growth/ad_engine.py` — generates ad variants (headline × primary text × frame[promise/exec/savings]) from the same canon; writes them to an ADS LEDGER (variant id, frame, status, impressions, clicks, leads). Meta API via the existing ad-portal credentials on 198 (`/opt/fpai/services/ad-portal/.env` — token verified alive 2026-07-03; account act_71883338 "FP Ventures"; **billing unsettled = James unlock before spend**). Campaign objective: impressions/traffic → fullpotential.com/assessment with utm=variant. HARD CAPS: $10/day total, pause-all kill switch file, no spend until account_status=1.
+
+**Phase 3 — A/B learning loop:** nightly job reads pixel/lead data (Lead events installed 2026-07-03) + leads audit.jsonl (source field carries page-variant) → scores variants (CCD frame: leads per impression per dollar) → kills losers, generates children of winners. Log every generation→outcome pair (Law 3).
+
+## Contract
+Branch off feat/headless-build · tests for ledger + scorer · NO live spend in tests (Meta sandbox/mocks) · independent AI review · spend enablement gated on account_status==1 check at runtime.
+
+## Done / Proof
+2 articles live under /learn with CTA · ads ledger with ≥6 generated variants scored offline · runtime spend-gate proven by test.

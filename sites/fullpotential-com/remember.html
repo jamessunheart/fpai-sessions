@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>remember</title>
+  <meta name="description" content="✨">
+  <style>
+    :root{--midnight:#0E1B2E;--cream:#FFF6E8;--gold:#D9A441}
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{height:100%}
+    body{background:var(--midnight);color:var(--cream);font-family:Georgia,'Times New Roman',serif;
+         display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+    .stage{max-width:34em;padding:0 24px}
+    .spark{font-size:2.2rem;color:var(--gold);display:block;
+           text-shadow:0 0 18px rgba(217,164,65,.45);animation:breathe 6s ease-in-out infinite}
+    @keyframes breathe{0%,100%{opacity:.75;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
+    .line{opacity:0;transition:opacity 2.4s ease}
+    .line.show{opacity:1}
+    #w1{font-size:1.5rem;letter-spacing:.14em;margin-top:34px;font-style:italic}
+    #w2{font-size:1.15rem;letter-spacing:.08em;margin-top:26px;color:var(--gold)}
+    #w3{margin-top:52px;font-size:.85rem;letter-spacing:.06em}
+    #w3 a{color:var(--cream);opacity:.55;text-decoration:none;border-bottom:1px solid rgba(255,246,232,.25);padding-bottom:2px;transition:opacity .6s}
+    #w3 a:hover{opacity:.95}
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <span class="spark">✨</span>
+    <div class="line" id="w1">remember</div>
+    <div class="line" id="w2">Remember the Spark.</div>
+    <div class="line" id="w3"><a href="/">Full Potential</a></div>
+  </div>
+  <script>
+    setTimeout(()=>document.getElementById('w1').classList.add('show'), 1800);
+    setTimeout(()=>document.getElementById('w2').classList.add('show'), 6500);
+    setTimeout(()=>document.getElementById('w3').classList.add('show'), 12000);
+  </script>
+</body>
+</html>
