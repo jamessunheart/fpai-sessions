@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-07-03 · SPEC_d145_self-audit-infra-retire-postfix · branch `build/SPEC_d145_self-audit-infra-retire-postfix`
+
+- **Status:** done in working tree / awaiting review + merge
+- **Files changed:** `tools/infra/retire_postfix_198.py`; `tools/infra/test_retire_postfix_198.py`; `core/BUILD/activate/SPEC_d145_self-audit-infra-retire-postfix.sh`; `docs/infrastructure/postfix_198_retirement.md`; `core/BUILD/specs/SPEC_d145_self-audit-infra-retire-postfix.md`; `core/BUILD/results/SPEC_d145_self-audit-infra-retire-postfix.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a reversible Postfix retirement activation for host `198.54.123.234`. The helper confirms Brevo outbound coverage from `core/STATE/RESOURCE_INVENTORY.md`, only runs `systemctl disable --now postfix` when the local host IP list includes `198.54.123.234`, and appends an ops-ledger row with `spec_id`, `decision_id`, service before/after state, Brevo evidence, and rollback command. If activation runs somewhere else, it records `skipped` and takes no service action.
+- **Tests:** `python3 -B -m unittest tools.infra.test_retire_postfix_198` (3 OK); `bash -n core/BUILD/activate/SPEC_d145_self-audit-infra-retire-postfix.sh`; `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/infra/retire_postfix_198.py tools/infra/test_retire_postfix_198.py`; `python3 -B -m tools.infra.retire_postfix_198 --repo-root . --ops-ledger /tmp/d145-ops-ledger.jsonl`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d145-registry.json`; `git diff --check`
+- **Risks:** The sandbox is not `198.54.123.234`, so no live service was stopped here. If the post-merge runner is not 198, activation will log `skipped`; run the activation on 198 to produce the `succeeded` proof row. Repo evidence confirms Brevo outbound in the canonical resource inventory, but some legacy/service code still references local SMTP/Postfix.
+- **Rollback:** On `198.54.123.234`, run `systemctl enable --now postfix`, then verify `systemctl is-active postfix` and `systemctl is-enabled postfix`. Reverting this branch removes the helper, activation script, runbook, result, and registry/handoff entries.
+- **Intent solved:** d145's infra self-audit finding now has a reversible, proof-logged path to retire Postfix on 198.
+- **Downstream intent unlocked:** after target-host activation logs `succeeded`, the allocation audit can mark direct SMTP on 198 retired while retaining one-command rollback.
+- **Questions for Ember/James:** after merge, confirm the activation runs on host `198.54.123.234` rather than only the build host; check `/opt/fpai-build/ops_ledger.jsonl` for `infra-retire-postfix` with `event=succeeded`.
+
 ### 2026-07-03 · SPEC_d144_d144-wire-liveness-proof-emissio · branch `build/SPEC_d144_d144-wire-liveness-proof-emissio`
 
 - **Status:** done in working tree / awaiting independent review + merge

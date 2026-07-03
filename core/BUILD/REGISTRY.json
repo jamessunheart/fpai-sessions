@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
     {
+      "id": "SPEC_d145_self-audit-infra-retire-postfix",
+      "slug": "SPEC_d145_self-audit-infra-retire-postfix",
+      "branch": "build/SPEC_d145_self-audit-infra-retire-postfix",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d145_self-audit-infra-retire-postfix.md",
+      "tests_passed": true,
+      "notes": "d145 complete in working tree: added tools/infra/retire_postfix_198.py plus a post-merge activation script and rollback runbook. The helper confirms Brevo outbound evidence from core/STATE/RESOURCE_INVENTORY.md, only runs systemctl disable --now postfix when the local host IP list includes 198.54.123.234, and appends an ops-ledger row with spec_id, decision_id, service state, Brevo evidence, and rollback command. Focused unit tests, py_compile, activation shell syntax, registry JSON validation, CLI dry-run, and diff hygiene passed. No live service was stopped in this sandbox because it is not host 198.54.123.234; non-target activation logs skipped."
+    },
+    {
       "id": "SPEC_d144_d144-wire-liveness-proof-emissio",
       "slug": "SPEC_d144_d144-wire-liveness-proof-emissio",
       "branch": "build/SPEC_d144_d144-wire-liveness-proof-emissio",
