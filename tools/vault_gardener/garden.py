@@ -93,16 +93,32 @@ def main():
     ]
     report = "\n".join(l for l in lines if l != "")
 
-    # optional AI pass via claude CLI ($0) — summarize + suggest MOC updates
+    # optional AI pass via claude CLI ($0) — hygiene + CONTRADICTION AUDIT over the core ring
+    core_ring = [
+        "00_SYSTEM/START HERE.md", "00_SYSTEM/HOME.md", "00_SYSTEM/CONSTITUTION.md",
+        "00_SYSTEM/FOUNDATION.md", "02_CONTEXT/Memory/CURRENT STATE.md",
+        "02_CONTEXT/Memory/HEARTBEATS.md", "02_CONTEXT/Memory/TREASURY TODAY.md",
+        "04_DECISION/Decisions/DECISIONS.md",
+    ]
+    ring_txt = ""
+    for rel in core_ring:
+        fp = os.path.join(VAULT, rel)
+        if os.path.exists(fp):
+            body = open(fp, encoding="utf-8", errors="ignore").read()[:3000]
+            ring_txt += f"\n===== {rel} =====\n{body}\n"
     ai = ""
     try:
-        prompt = ("You are the FPOS vault gardener. Below is tonight's mechanical scan. "
-                  "In <=8 bullets: which orphans clearly belong under which existing hub, "
-                  "which duplicates should merge, and the single highest-value cleanup. "
-                  "Be terse.\n\n" + report)
+        prompt = ("You are the FPOS coherence auditor. TWO jobs, be terse.\n"
+                  "JOB 1 — HYGIENE (<=4 bullets): from the mechanical scan below, which orphans belong "
+                  "under which hub; which duplicates should merge; single highest-value cleanup.\n"
+                  "JOB 2 — CONTRADICTION AUDIT (<=6 bullets): read the CORE RING files below. Flag any "
+                  "(a) factual contradictions between files, (b) claims that look stale vs the newest file, "
+                  "(c) numbers that disagree (money, counts, statuses). Cite file names. "
+                  "If fully coherent, say 'COHERENT — no contradictions found.'\n\n"
+                  "MECHANICAL SCAN:\n" + report + "\n\nCORE RING:\n" + ring_txt)
         r = subprocess.run(["claude", "-p", prompt], capture_output=True, text=True, timeout=180)
         if r.returncode == 0 and r.stdout.strip():
-            ai = "\n## 🤖 AI review\n\n" + r.stdout.strip() + "\n"
+            ai = "\n## 🤖 AI review + coherence audit\n\n" + r.stdout.strip() + "\n"
     except Exception as e:
         ai = f"\n## 🤖 AI review\n\n_(claude CLI unavailable: {e})_\n"
 
