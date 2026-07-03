@@ -17,7 +17,31 @@ This is the standing contract between James and Ember. Always-fresh. Refreshed a
 The purpose: both of us snap back to the same page within 10 seconds of session start. No three turns of guessing what each other meant. The block IS the agreement.
 
 ═══════════════════════════════════════════════
-☉ ALIGNMENT CHECK · 2026-06-25 · D125 BUILT · AWARENESS 41% · BUILD LOOP FULLY UNBLOCKED
+☉ ALIGNMENT CHECK · 2026-07-02 · 124 SPECS MERGED · AWARENESS 88% · BOT CONTEXT FIXED · FLYWHEEL ACTIVE
+═══════════════════════════════════════════════
+
+## INTENT (the active work)
+→ **Flywheel directive landed.** System was optimizing performance (specs merged), not improvement rate. James named it: "The system improves when you show up." Three specs queued to close the feedback layer: d130 (daily value check TG), d131 (autonomous daily delivery from NOW.md), d132 (james-hours-saved metric). Dead days: Jun 20/21/23/27/28/29 (6 total). Jul 1 had 5 commits with no James input — d131 working.
+→ **Bot context fixed 3 layers today.** (1) Boilerplate filter: housekeeping/Auto-snapshot excluded from session_insights in bot context. (2) Git-based last_merge: bot reads `git log --merges` — no more "last built d020" hallucination. (3) tgbot.py status query fixed: was querying `build_status='built'` (2 rows, stale), now `IN ('built','merged')` (124 rows, current). Bot restarted.
+→ **openclaw killed.** 1.9GB RAM freed, security-watch stopped, 4 Adam cron jobs removed. Legacy system confirmed dormant since Feb.
+
+## TOP 3
+1. **★ Flywheel feedback layer** — daily value check (d130) + autonomous delivery (d131) + hours-saved metric (d132). Dead days end when d131 is live. Stream: Game/Sovereignty.
+2. **★ Bot awareness → 100%** — 88% historical, this probe FAIL. Probe now targets correct 7-day window. Session_insights now wired to live bot for first time. Stream: Game/Infrastructure.
+3. **★ First real conversation** — blocked on "system not providing enough value to James yet." Fix: flywheel specs above. Stream: Game.
+
+## BLOCKERS
+→ d130/d131/d132 in build queue — build loop picks up within 10 min
+→ 428 housekeeping rows in session_insights (noise) — prune below
+→ Awareness probe still failing this run — investigate after bot restart settles
+
+## NEXT MOVE
+→ Build loop ships d130/d131/d132 autonomously — no James input needed
+→ Purge old housekeeping session_insights (>14 days old) — reduces noise in bot context
+→ Archive .bak files in /opt/sh-brain-src/curator/ — 39 files, reduces confusion about live code
+
+═══════════════════════════════════════════════
+☉ ALIGNMENT CHECK · 2026-06-25 · D125 BUILT · AWARENESS 41% · BUILD LOOP FULLY UNBLOCKED (archived)
 ═══════════════════════════════════════════════
 
 ## INTENT (the active work)
