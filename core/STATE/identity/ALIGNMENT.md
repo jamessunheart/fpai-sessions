@@ -27,7 +27,7 @@ The purpose: both of us snap back to the same page within 10 seconds of session 
 
 ## TOP 3
 1. **★ Flywheel feedback layer** — daily value check (d130) + autonomous delivery (d131) + hours-saved metric (d132). Dead days end when d131 is live. Stream: Game/Sovereignty.
-2. **★ Bot awareness → 100%** — REACHED: SSOT `awareness_reliability.json` = 100% (100/100, 2026-07-03T18:44Z). Held above 0.95 threshold. Stream: Game/Infrastructure.
+2. **★ Bot awareness → 100%** — 88% historical, this probe FAIL. Probe now targets correct 7-day window. Session_insights now wired to live bot for first time. Stream: Game/Infrastructure.
 3. **★ First real conversation** — blocked on "system not providing enough value to James yet." Fix: flywheel specs above. Stream: Game.
 
 ## BLOCKERS
@@ -48,7 +48,7 @@ The purpose: both of us snap back to the same page within 10 seconds of session 
 → **5 infrastructure root causes fixed in one session.** Stop hook now writes insights on every session end. Awareness probe timer fixed (165 consecutive psycopg failures → now passing, venv python). HOT_STATE spec scanner rewritten to use DB as source of truth (no phantom specs). HOT_STATE identity scanner reads live ALIGNMENT.md. d125 built + merged (106 total) — Claude Code corrections capture now live. Awareness: 41.3% (was 5% a week ago). d120 closed in DB.
 
 ## TOP 3
-1. **★ Bot awareness reliability → 100%** — REACHED: SSOT `awareness_reliability.json` = 100% (100/100, 2026-07-03T18:44Z). Stream: Game/Infrastructure.
+1. **★ Bot awareness reliability → 100%** — score 41.3% (19/46 probes), climbing ~2-3%/session automatically. Infrastructure now fixed (write-through, probe timer, HOT_STATE accuracy). Stream: Game/Infrastructure.
 2. **★ First real conversation** — OUTREACH_LIVE=1 set, runs autonomously. Stream: Game.
 3. **★ Self-navigation loop** — build loop drains correctly, queue empty. Next gap: observation→propose bridge (d101/d102). Stream: Game/Sovereignty.
 
@@ -59,7 +59,7 @@ The purpose: both of us snap back to the same page within 10 seconds of session 
 ## NEXT MOVE
 → James: add `detect_correction_hook.sh` to laptop settings.json (2 min, closes corrections capture)
 → Council surfaces next spec when queue empty — self-navigating
-→ Awareness holding at 100% (SSOT); probe watches for regression below 0.95
+→ Awareness climbs to ~95% within ~2 weeks naturally via probe cadence
 
 ## LOAD-BEARING LESSON (this session)
 **Build loop silence = wrong python path or env var not set.** The 1.3-second "no decisions awaiting" was a silent failure — curator couldn't connect to DB. Fix: always test `pending-builds` manually when the loop seems stuck before assuming queue is truly empty. `[[verify-build-loop-db-connection]]`

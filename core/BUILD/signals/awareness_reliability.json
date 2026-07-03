@@ -1,15 +1,15 @@
 {
-  "generated_at": "2026-06-24T23:42:18Z",
+  "generated_at": "2026-07-03T21:53:30Z",
   "metric": {
     "alert_sent": false,
-    "current_ok": false,
-    "latest_title": "",
-    "ok": false,
-    "reason": "latest lookup failed: No module named 'psycopg'",
-    "reliability": 0.0,
-    "successes": 0,
+    "current_ok": true,
+    "latest_title": "Learning Flywheel: optimize improvement rate not performance",
+    "ok": true,
+    "reason": "ok",
+    "reliability": 1.0,
+    "successes": 100,
     "threshold": 0.95,
-    "total": 16
+    "total": 100
   },
   "schema": "awareness-reliability.v1"
 }
