@@ -1,0 +1,14 @@
+# SPEC — Wire the Allocation Score engine to the $0 auth path
+
+`tools/growth/score_assessment.py` is built and its deliverable renders correctly (compute/route/render proven with mock 2026-07-03). The ONE remaining piece: its `run_claude()` shells `claude -p` directly, which isn't authed outside the build-loop env.
+
+## Build
+Replace `run_claude()`'s direct `subprocess.run(["claude","-p",...])` with a call through the existing `tools/**/model_router` (the same path the build-loop review step uses — Claude Max subscription, $0 marginal, already authed on 162). Keep the lenient-JSON extraction. Preserve the fallback: if model_router is unavailable, try `claude -p` with the loop's env token.
+
+Then wire the trigger: when `tools/leads/mail_leads.py` sees a new lead whose `interest == "allocation-audit"`, call `score_assessment.py --lead <path> --out <deliverable>` and attach/append the Allocation Score to the email James receives (so he can forward it, or one-tap approve sending it to the applicant).
+
+## Contract
+$0 via subscription (model_router) — NOT the metered key — until a REAL paying client's confidential data flows (then a scoped key + the burn-registry row already present). Registered in burn registry as "assessment-scorer". Test: `--demo` produces a valid Allocation Score deliverable end to end. Independent review before merge.
+
+## Done / Proof
+One real lead → Allocation Score deliverable generated + surfaced to James, $0 spend logged.
