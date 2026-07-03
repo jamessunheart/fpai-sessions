@@ -1,5 +1,7 @@
 # AI_GOALS — what the AI system is working toward
 
+> **Objective-stack role: PURSUED VIA (operational).** The concrete moves that raise Future Capability now. Objective + measure: [LEARNING_METRICS.md](LEARNING_METRICS.md#the-objective-stack--which-doc-owns-what-authoritative--2026-07-03).
+
 **Purpose:** second-tier SSOT under `NOW.md`. NOW = founder lens; this = the AI working lens.
 **Last Updated:** 2026-07-03 (G0–G4 outreach-era goals retired → archive; FOUNDATION era begins)
 **Founder priority (mirrored from NOW.md):** VALUE CAPTURE — turn built capability into cash. Revenue is an output; capability is the objective.

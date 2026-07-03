@@ -107,5 +107,6 @@
     "The chain links cover source, routing, spec, build, tests, independent review, merge gate, and returned learning.",
     "The d057 target is explicit enough to guide future agent/model scoring.",
     "The funding narrative is anchored to proof capacity and bounded away from treasury or public-offer authority."
-  ]
+  ],
+  "objective_stack_role": "PROVEN BY (benchmark) — the pass/fail test that Future Capability is real. Authoritative stack: core/STATE/LEARNING_METRICS.md#the-objective-stack"
 }

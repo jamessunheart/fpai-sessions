@@ -1,5 +1,7 @@
 # North Star
 
+> **Objective-stack role: WHY (strategic mission).** The endgame — sovereignty — that makes compounding Future Capability worth it. See the authoritative stack in [LEARNING_METRICS.md](LEARNING_METRICS.md#the-objective-stack--which-doc-owns-what-authoritative--2026-07-03).
+
 **Last updated:** 2026-06-17 — GLM-5.2 added as T3 reference model + June 12 proof point. James session.
 
 ## Real-world proof (June 12, 2026)
