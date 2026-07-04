@@ -579,12 +579,17 @@ def _read_bot_merge_threshold() -> int:
 
 def _ask_bot_directly(question: str) -> str:
     """Call the bot's brain search + synthesis directly — no Telegram round-trip needed."""
-    import asyncio, sys
-    curator_root = "/opt/sh-brain-src"
+    import asyncio
+    import importlib.util
+
     try:
-        if curator_root not in sys.path:
-            sys.path.insert(0, curator_root)
-        from curator import tgbot  # type: ignore
+        spec = importlib.util.spec_from_file_location(
+            "sh_brain_tgbot", "/opt/sh-brain-src/curator/tgbot.py"
+        )
+        tgbot = importlib.util.module_from_spec(spec) if spec and spec.loader else None
+        if not tgbot:
+            raise RuntimeError("could not load sh_brain_tgbot")
+        spec.loader.exec_module(tgbot)
 
         async def _run() -> str:
             hits = await tgbot._search_brain(question, k=5)

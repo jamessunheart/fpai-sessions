@@ -27,30 +27,34 @@ DAILY_CAP = float(os.environ.get("COUNCIL_DAILY_USD", "3.0"))
 ENV = ('ENVFILE=$(systemctl show sh-brain-tgbot -p EnvironmentFiles 2>/dev/null | '
        'sed -E "s/EnvironmentFiles=//; s/ .*//"); cd /opt/sh-brain-src && set -a; . "$ENVFILE" 2>/dev/null; set +a;')
 sys.path.insert(0, REPO + "/tools/cost")
-sys.path.insert(0, REPO)
 import track
-try:
+from tools.lib.machine_claude import robust_json
+
+
+def _load_module_from_path(module_name, path):
     import importlib.util as _ilu
+    _spec = _ilu.spec_from_file_location(module_name, path)
+    _mod = _ilu.module_from_spec(_spec) if _spec and _spec.loader else None
+    if _mod:
+        sys.modules[module_name] = _mod
+        _spec.loader.exec_module(_mod)
+    return _mod
+
+
+try:
     _consciousness_path = Path(REPO) / "tools" / "consciousness" / "loop.py"
-    _consciousness_spec = _ilu.spec_from_file_location("fpai_consciousness_loop", _consciousness_path)
-    consciousness_loop = _ilu.module_from_spec(_consciousness_spec) if _consciousness_spec and _consciousness_spec.loader else None
-    if consciousness_loop:
-        sys.modules["fpai_consciousness_loop"] = consciousness_loop
-        _consciousness_spec.loader.exec_module(consciousness_loop)
+    consciousness_loop = _load_module_from_path("fpai_consciousness_loop", _consciousness_path)
 except Exception:
     consciousness_loop = None
 try:
-    import importlib.util as _ilu
     _self_portrait_path = Path(REPO) / "tools" / "self_portrait" / "synthesize.py"
-    _self_portrait_spec = _ilu.spec_from_file_location("fpai_self_portrait_synthesize", _self_portrait_path)
-    self_portrait_synth = _ilu.module_from_spec(_self_portrait_spec) if _self_portrait_spec and _self_portrait_spec.loader else None
-    if self_portrait_synth:
-        sys.modules["fpai_self_portrait_synthesize"] = self_portrait_synth
-        _self_portrait_spec.loader.exec_module(self_portrait_synth)
+    self_portrait_synth = _load_module_from_path("fpai_self_portrait_synthesize", _self_portrait_path)
 except Exception:
     self_portrait_synth = None
 try:
-    from curator.blueprints.manager import build_blueprint_context
+    _blueprints_path = Path(REPO) / "curator" / "blueprints" / "manager.py"
+    _blueprints = _load_module_from_path("fpai_curator_blueprints", _blueprints_path)
+    build_blueprint_context = _blueprints.build_blueprint_context if _blueprints else None
 except Exception:
     build_blueprint_context = None
 try:
@@ -96,14 +100,6 @@ def _ops(event, detail, nxt=""):
 
 def _resolve_cli(name, configured_path):
     return shutil.which(name) or configured_path
-
-
-def _json_object_from_text(text):
-    start = text.find("{")
-    end = text.rfind("}")
-    if start < 0 or end < start:
-        raise ValueError("response did not contain a JSON object")
-    return json.loads(text[start : end + 1])
 
 
 def _completed_process_error(label, result):
@@ -324,10 +320,9 @@ def run_claude_json(prompt, runner=None):
             raise _completed_process_error("claude", r)
         txt = r.stdout.strip()
         try:
-            return _json_object_from_text(txt), r
+            return robust_json(txt, logger=_ops), r
         except ValueError:
             if attempt == 2:
-                _ops("debate_parse_fail", f"raw: {txt[:200]}")
                 raise
     raise ValueError("run_claude_json: exhausted retries")
 

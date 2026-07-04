@@ -83,6 +83,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Questions for Ember/James: …
 ```
 
+### 2026-07-04 · SPEC_d173_swarm-verified-bug-guard-p8-com · branch `build/SPEC_d173_swarm-verified-bug-guard-p8-com`
+
+- **Status:** done in working tree / awaiting review + merge
+- **Files changed:** `tools/council/debate.py`; `tools/council/self_diagnostic.py`; `tools/lib/__init__.py`; `tools/lib/machine_claude.py`; `tools/lib/test_machine_claude.py`; `tools/council/test_debate_import.py`; `tools/council/test_self_diagnostic_import.py`; `core/BUILD/specs/SPEC_d173_swarm-verified-bug-guard-p8-com.md`; `core/BUILD/results/SPEC_d173_swarm-verified-bug-guard-p8-com.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Fixed BUG-006/P8 curator collision by removing `sys.path.insert(0, REPO)` from `debate.py`, loading `curator/blueprints/manager.py` by explicit file path under private module name `fpai_curator_blueprints`, and loading `/opt/sh-brain-src/curator/tgbot.py` in `_ask_bot_directly()` under private module name `sh_brain_tgbot`. Fixed BUG-008 by moving JSON object extraction into `tools/lib/machine_claude.py` and adding `robust_json()` with strict parse, balanced object scan, regex extraction fallback, and full raw `debate_parse_fail` logging on final failure.
+- **Tests:** `python3 -B -m unittest tools.lib.test_machine_claude tools.council.test_debate_import tools.council.test_self_diagnostic_import tools.council.test_debate` (21 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/lib/machine_claude.py tools/lib/test_machine_claude.py tools/council/debate.py tools/council/test_debate.py tools/council/test_debate_import.py tools/council/self_diagnostic.py tools/council/test_self_diagnostic_import.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d173-registry-done.json`; `git diff --check`
+- **Proof:** Debate import guard loads `debate.py` in a fresh subprocess and fails if `sys.modules["curator"]` resolves to the repo-local stub. Self-diagnostic import guard proves the tgbot direct-call path uses `spec_from_file_location("sh_brain_tgbot", "/opt/sh-brain-src/curator/tgbot.py")` and leaves `sys.path` unchanged. Robust JSON tests cover strict JSON, balanced object extraction, regex fallback, and full raw failure logging.
+- **Risks:** `debate.py` still expects repo-root execution context for ordinary `tools.*` imports, matching existing council tests/runtime. Live `/opt/sh-brain-src/curator/tgbot.py` was not executed in this sandbox. The broader historical `tools.council.test_self_diagnostic` suite still has a stale 48h cooldown expectation conflicting with the documented 6h self-refill change; this spec did not alter that behavior.
+- **Rollback:** Revert this branch. Parser-only rollback is to restore the previous local `_json_object_from_text()` and call it from `run_claude_json()`.
+- **Intent solved:** BUG-006 no longer lets council imports poison live `curator` resolution, and BUG-008 gives debate a shared robust parser with full failure evidence.
+- **Downstream intent unlocked:** the autonomous council/build-loop can keep running diagnostics and malformed-response RCA without breaking the live bot import namespace.
+- **Questions for Ember/James:** after merge on server 162, run one live `python3 tools/council/debate.py` in normal loop context and confirm no `curator` collision appears in the bot logs.
+
 ### 2026-07-04 · SPEC_d172_swarm-verified-resource-leak-re · branch `build/SPEC_d172_swarm-verified-resource-leak-re`
 
 - **Status:** done in working tree / awaiting review + merge
