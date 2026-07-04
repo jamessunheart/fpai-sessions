@@ -17,7 +17,35 @@ This is the standing contract between James and Ember. Always-fresh. Refreshed a
 The purpose: both of us snap back to the same page within 10 seconds of session start. No three turns of guessing what each other meant. The block IS the agreement.
 
 ═══════════════════════════════════════════════
-☉ ALIGNMENT CHECK · 2026-07-02 · 124 SPECS MERGED · AWARENESS 88% · BOT CONTEXT FIXED · FLYWHEEL ACTIVE
+☉ ALIGNMENT CHECK · 2026-07-04 · COMPRESSED DOCTRINE + PROTOCOLS + COHERENCE GUARDS SHIPPED
+═══════════════════════════════════════════════
+
+## INTENT (the active work)
+→ **Operate beyond base training, structurally.** This session's spine: enforcement beats
+documentation. Shipped P9 + substrate-default Stop hook (training bias can't route to James
+silently), Metric Coherence Guard (map≠territory), CORE_DOCTRINE.md compressed education (loaded
+first every session + injected into council), PROTOCOLS registry (+ invent-your-own), and two
+multi-agent workflows (academy-distill, self-improvement-swarm).
+→ **Awareness = 100%** — SSOT `awareness_reliability.json` (100/100). Cite the JSON, never hand-type.
+
+## TOP 3
+1. **★ Land the real Academy** — academy-distill re-run (batched, task `wg14nigwb`) → on completion
+   write CURRICULUM.md + PRUNE_MANIFEST into `core/STATE/ACADEMY/`, surface prune list (no auto-delete);
+   then run self-improvement-swarm once. Stream: Game/Sovereignty.
+2. **★ Enforcement holds every session** — P9 gate + metric-coherence + CORE_DOCTRINE at boot. Watch
+   `core/BUILD/governance/substrate_default_catches.jsonl`. Stream: Game/Infrastructure.
+3. **★ D138 repo≠running** — per-slice reconcile (internal features autonomous; public-mode Reserved;
+   arming is harness-gated). Stream: Game/Infrastructure.
+
+## BLOCKERS
+→ None hard. D138 pipeline-arming + bot-baseline doctrine are harness-gated (James's hand when wanted).
+
+## NEXT MOVE
+→ On academy-distill completion: write CURRICULUM.md + PRUNE_MANIFEST → ACADEMY/, surface prune list;
+then run the swarm once and route reversible intents through constitution_check.
+
+═══════════════════════════════════════════════
+☉ ALIGNMENT CHECK · 2026-07-02 · 124 SPECS MERGED · AWARENESS 88% · BOT CONTEXT FIXED · FLYWHEEL ACTIVE (archived)
 ═══════════════════════════════════════════════
 
 ## INTENT (the active work)
@@ -27,7 +55,7 @@ The purpose: both of us snap back to the same page within 10 seconds of session 
 
 ## TOP 3
 1. **★ Flywheel feedback layer** — daily value check (d130) + autonomous delivery (d131) + hours-saved metric (d132). Dead days end when d131 is live. Stream: Game/Sovereignty.
-2. **★ Bot awareness → 100%** — REACHED: SSOT `awareness_reliability.json` = 100% (100/100, 2026-07-03T18:44Z). Held above 0.95 threshold. Stream: Game/Infrastructure.
+2. **★ Bot awareness → 100%** — REACHED: SSOT `awareness_reliability.json` = 100% (100/100, 2026-07-03). Cite the JSON, never hand-type this number. Stream: Game/Infrastructure.
 3. **★ First real conversation** — blocked on "system not providing enough value to James yet." Fix: flywheel specs above. Stream: Game.
 
 ## BLOCKERS
@@ -48,7 +76,7 @@ The purpose: both of us snap back to the same page within 10 seconds of session 
 → **5 infrastructure root causes fixed in one session.** Stop hook now writes insights on every session end. Awareness probe timer fixed (165 consecutive psycopg failures → now passing, venv python). HOT_STATE spec scanner rewritten to use DB as source of truth (no phantom specs). HOT_STATE identity scanner reads live ALIGNMENT.md. d125 built + merged (106 total) — Claude Code corrections capture now live. Awareness: 41.3% (was 5% a week ago). d120 closed in DB.
 
 ## TOP 3
-1. **★ Bot awareness reliability → 100%** — REACHED: SSOT `awareness_reliability.json` = 100% (100/100, 2026-07-03T18:44Z). Stream: Game/Infrastructure.
+1. **★ Bot awareness reliability → 100%** — score 41.3% (19/46 probes), climbing ~2-3%/session automatically. Infrastructure now fixed (write-through, probe timer, HOT_STATE accuracy). Stream: Game/Infrastructure.
 2. **★ First real conversation** — OUTREACH_LIVE=1 set, runs autonomously. Stream: Game.
 3. **★ Self-navigation loop** — build loop drains correctly, queue empty. Next gap: observation→propose bridge (d101/d102). Stream: Game/Sovereignty.
 
@@ -59,7 +87,7 @@ The purpose: both of us snap back to the same page within 10 seconds of session 
 ## NEXT MOVE
 → James: add `detect_correction_hook.sh` to laptop settings.json (2 min, closes corrections capture)
 → Council surfaces next spec when queue empty — self-navigating
-→ Awareness holding at 100% (SSOT); probe watches for regression below 0.95
+→ Awareness climbs to ~95% within ~2 weeks naturally via probe cadence
 
 ## LOAD-BEARING LESSON (this session)
 **Build loop silence = wrong python path or env var not set.** The 1.3-second "no decisions awaiting" was a silent failure — curator couldn't connect to DB. Fix: always test `pending-builds` manually when the loop seems stuck before assuming queue is truly empty. `[[verify-build-loop-db-connection]]`

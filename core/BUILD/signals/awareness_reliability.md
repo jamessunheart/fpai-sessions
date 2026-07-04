@@ -1,9 +1,9 @@
 # Awareness Reliability
 
-- Status: FAIL
-- Reliability: 0.0% (0/16)
+- Status: PASS
+- Reliability: 100.0% (100/100)
 - Threshold: 95.0%
-- Current probe ok: False
-- Latest title: -
-- Reason: latest lookup failed: No module named 'psycopg'
-- Generated: 2026-06-24T23:42:18Z
+- Current probe ok: True
+- Latest title: Learning Flywheel: optimize improvement rate not performance
+- Reason: ok
+- Generated: 2026-07-03T21:53:30Z

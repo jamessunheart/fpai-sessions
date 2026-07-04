@@ -59,9 +59,23 @@ def collect(repo_root: Path = REPO_ROOT):
     return compact_facts(facts, limit=12)
 
 
+def _current_section(text: str) -> str:
+    """Identity files (ALIGNMENT.md, STORY.md) stack dated snapshots newest-first;
+    everything below the first 'archived' marker is history. Without this cut the
+    scanner surfaced archived numbers (awareness 41.3%) into HOT_STATE as ACTIVE
+    directives — the most-trusted surface amplifying the stalest data (2026-07-03).
+    Same rule as tools/governance/metric_coherence.current_section."""
+    out = []
+    for line in text.splitlines():
+        if "archived" in line.lower():
+            break
+        out.append(line)
+    return "\n".join(out)
+
+
 def _candidate_lines(text: str) -> list[str]:
     lines = []
-    for raw in text.splitlines():
+    for raw in _current_section(text).splitlines():
         line = re.sub(r"^[#>\-\s*`|]+", "", raw).strip()
         if not line or len(line) < 20:
             continue

@@ -2,10 +2,11 @@
 
 **Verdict:** APPROVE · **Risk:** low
 
-**Summary:** Adds NORTH_STAR.md mission doc, wires it into COUNCIL_FOCUS.md and d057 benchmark report output with tests; documentation/state-only, no prod/money/secrets/identity/memory touched, branches off feat/headless-build not main — safe.
+**Summary:** Doc/state-only edit: restores COUNCIL_FOCUS.md North Star weight directive citing the existing NORTH_STAR.md and adds an honest HANDOFF closeout — no code, money, prod, identity, memory, secrets, or guardrails touched.
 
 ## Findings
-- Minor (non-blocking): load_north_star_targets relies on _line_containing returning the first physical line containing each target ID — sovereign_run criteria pass only because the markdown table row keeps all three sub-criteria on one line; reformatting the table (e.g. wrapping the cell) would silently break the test and degrade the report. Consider a more robust parse or a structured source.
-- Scope is within spec: engine.py change adds an optional keyword-only north_star param to build_report with a None default, so existing callers are unaffected; no guardrail bypass, no routing authority change, no deploy/spend.
+- NORTH_STAR.md referenced by the directive exists on disk (8187 bytes); no dangling reference.
+- HANDOFF entry transparently notes no fresh AI review was rerun over the uncommitted closeout delta and requests merge-gate review from a writable host — disclosure, not a guardrail bypass.
+- Changes are within d063 scope (North Star mission doc / sovereign benchmark target); no scope creep into code or wiring.
 
 *Reviewer: claude-opus-4-8 (independent of the Codex builder).*
