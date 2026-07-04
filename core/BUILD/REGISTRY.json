@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-04T17:18:00Z",
+    "updated_at": "2026-07-04T17:48:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d162_spec-content-ads-engine-the-busi",
+            "slug": "SPEC_d162_spec-content-ads-engine-the-busi",
+            "branch": "build/SPEC_d162_spec-content-ads-engine-the-busi",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d162_spec-content-ads-engine-the-busi.md",
+            "tests_passed": true,
+            "notes": "d162 complete in working tree: added tools/growth/content_engine.py to generate one static /learn article per run from local canon with optional claude -p and deterministic fallback, producing two proof articles with /assessment CTAs. Added tools/growth/ad_engine.py for six offline ad variants across promise/exec/savings frames, JSONL ADS ledger generation, outcome application, CCD-style scoring, winner/loser statuses, and a runtime spend gate requiring account_status=1, <=$10/day, no pause-all kill switch, and explicit James unlock. Added focused content/ad tests plus a scored proof ledger fixture. Focused unittest, py_compile, registry JSON validation, article/ledger smoke, and diff hygiene passed. No live Meta call, token read, spend, push, merge, deploy, service control, outreach, secrets, or money movement."
+        },
         {
             "id": "SPEC_d161_spec-provider-side-burn-reconcil",
             "slug": "SPEC_d161_spec-provider-side-burn-reconcil",
