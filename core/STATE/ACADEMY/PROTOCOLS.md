@@ -28,6 +28,7 @@ operating repertoire compounds — not just its code, but its *ways of working*.
 | **Metric Coherence Guard** | Reported prose must match the measured SSOT (kills map≠territory drift) | `tools/governance/metric_coherence.py` |
 | **Structural Coherence Guard** | Created truth must propagate — every principle reaches the boot pack, no dangling tool/hook pointers | `tools/governance/coherence_invariants.py` |
 | **Constitution Check** | Screens proposals against the 8 Laws before they queue | `tools/governance/constitution_check.py` |
+| **Guard Adjudicator** | On hitting a block, debate REAL-gate vs my-timidity → reframe+TEST, or solidify+route legitimately (safety-biased; never evades an enforced gate) | `tools/governance/guard_adjudicator.py` |
 | **Collision Guard** | Stops parallel sessions bundling each other's uncommitted edits | `.claude/hooks/check-collision.sh` |
 
 ### 🐝 Orchestration workflows (multi-agent swarms; on-demand + schedulable)
