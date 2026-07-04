@@ -58,3 +58,13 @@ Substantial features that were built (likely by the build loop) and **never depl
 (could break production or resurrect dead code). Per guardrails/small-blast-radius, the
 visible+captured+documented state is the safe increment; the per-slice deploy is the careful
 follow-up.
+
+## 2026-07-04 — concrete cost of the fork (awareness self-heal escalation)
+The self-healer proved the fork's live cost: awareness slid 100→89% (latest session_insight
+truncated from the bot's ~1800-char context as insights grew to 444). The build loop queued
++ merged a render-fix (d180, 82 lines to `SERVICES/sunheart-brain/curator/build_context.py`)
+— but the awareness probe reads the LIVE `/opt/sh-brain-src/curator/build_context.py`, which
+is a DIFFERENT forked file. So the fix merged, passed review, "done" — and awareness stayed
+89%. **d138 repo≠running is not cosmetic: it silently voids every build-loop fix to the
+curator.** The awareness fix (and any future curator fix) needs the per-slice deploy to live,
+not just a merge. This is the highest-value item the autonomous run surfaced.
