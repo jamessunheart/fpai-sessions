@@ -16,6 +16,8 @@ Storage:
 """
 from __future__ import annotations
 
+import asyncio
+import importlib.util as _ilu
 import json
 import os
 import re
@@ -78,6 +80,8 @@ app.add_middleware(
 _rate_log: dict[str, list[float]] = {}
 RATE_WINDOW = 3600
 RATE_LIMIT = 3
+_first_read_rate_log: dict[str, list[float]] = {}
+FIRST_READ_RATE_LIMIT = 12
 
 
 def _check_rate(ip: str) -> bool:
@@ -90,6 +94,31 @@ def _check_rate(ip: str) -> bool:
     history.append(now)
     _rate_log[ip] = history
     return True
+
+
+def _check_first_read_rate(ip: str) -> bool:
+    now = time.time()
+    history = _first_read_rate_log.get(ip, [])
+    history = [t for t in history if now - t < RATE_WINDOW]
+    if len(history) >= FIRST_READ_RATE_LIMIT:
+        _first_read_rate_log[ip] = history
+        return False
+    history.append(now)
+    _first_read_rate_log[ip] = history
+    return True
+
+
+def _load_score_assessment_module():
+    repo_root = Path(os.environ.get("FPAI_REPO_ROOT", "/opt/fpai-build/FPAI_Cockpit"))
+    module_path = repo_root / "tools/growth/score_assessment.py"
+    if not module_path.exists():
+        module_path = Path(__file__).resolve().parents[2] / "tools/growth/score_assessment.py"
+    spec = _ilu.spec_from_file_location("fpai_score_assessment", module_path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"cannot load score_assessment from {module_path}")
+    mod = _ilu.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
 
 
 class SignRequest(BaseModel):
@@ -1185,6 +1214,51 @@ class LeadSubmit(BaseModel):
         if re.search(r"[<>]", v):
             raise ValueError("contains forbidden characters")
         return v.strip()
+
+
+class LeadFirstRead(BaseModel):
+    website: str = Field(..., min_length=4, max_length=300)
+
+    @validator("website")
+    def _safe_url_text(cls, v):
+        if re.search(r"[<>]", v):
+            raise ValueError("contains forbidden characters")
+        return v.strip()
+
+
+@app.post("/lead/first-read")
+async def lead_first_read(req: LeadFirstRead, request: Request) -> dict:
+    """Return a bounded public-site first read for the Assessment form."""
+    ip = request.client.host if request.client else "unknown"
+    if not _check_first_read_rate(ip):
+        raise HTTPException(status_code=429, detail="Too many first-read requests. Try again later.")
+
+    try:
+        score_mod = _load_score_assessment_module()
+        site = await asyncio.to_thread(
+            score_mod.fetch_public_site,
+            req.website,
+            timeout=float(os.environ.get("ASSESSMENT_FIRST_READ_TIMEOUT", "6")),
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    except Exception:
+        raise HTTPException(status_code=502, detail="Could not read the public site right now.")
+
+    pages_read = [
+        page.get("url", "")
+        for page in site.get("pages", [])
+        if page.get("text")
+    ]
+    return {
+        "ok": True,
+        "url": site.get("url", ""),
+        "domain": site.get("domain", ""),
+        "cached": site.get("cached", False),
+        "pages_read": pages_read,
+        "summary": site.get("summary", {}),
+        "intake_context": site.get("intake_context", ""),
+    }
 
 
 @app.post("/lead/submit")

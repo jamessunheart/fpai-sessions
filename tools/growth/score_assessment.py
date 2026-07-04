@@ -15,9 +15,16 @@ Rubric source: vault 07_COMPOUNDING/Savings Map Kit v1 (§5 Allocation Score).
 Routing table: vault 04_DECISION/Offers/BBB v1.4.
 Usage:
   score_assessment.py --lead <path>       # score one intake → deliverable md
+  score_assessment.py --url <site>        # fetch public site → pre-filled intake → score
+  score_assessment.py --url <site> --first-read  # fetch/summarize only, JSON
   score_assessment.py --demo              # score a synthetic lead (proof it works)
 """
-import argparse, json, subprocess, sys, os
+import argparse, hashlib, html, json, os, re, subprocess, sys, time
+import urllib.error
+import urllib.parse
+import urllib.request
+import urllib.robotparser
+from html.parser import HTMLParser
 from pathlib import Path
 
 DIMENSIONS = ["capital", "time", "attention", "people", "ai", "knowledge"]
@@ -88,6 +95,337 @@ INTAKE:
 Return ONLY JSON matching this schema (no prose):
 {schema}
 """
+
+SITE_SUMMARY_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "business_type": {"type": "string"},
+        "apparent_tools_stack": {"type": "array", "items": {"type": "string"}},
+        "team_signals": {"type": "string"},
+        "pricing_model": {"type": "string"},
+        "ops_hints": {"type": "array", "items": {"type": "string"}},
+        "first_read": {"type": "string"},
+        "confidence": {"type": "string"},
+    },
+    "required": [
+        "business_type", "apparent_tools_stack", "team_signals",
+        "pricing_model", "ops_hints", "first_read", "confidence",
+    ],
+    "additionalProperties": False,
+}
+
+SITE_SUMMARY_PROMPT = """You are preparing the first read for a Full Potential Assessment.
+Use only the public website text below. Be concrete, conservative, and helpful.
+
+Return JSON matching this schema:
+{schema}
+
+PUBLIC SITE TEXT:
+{site_text}
+"""
+
+USER_AGENT = "FPAI-AssessmentBot/1.0 (+https://fullpotential.com/assessment; read-only)"
+SITE_PATHS = ("/", "/about", "/pricing", "/services")
+CACHE_TTL_SECONDS = 24 * 60 * 60
+MAX_PAGE_CHARS = 20000
+
+
+class _TextExtractor(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self._skip = 0
+        self.parts = []
+        self.title_parts = []
+        self._in_title = False
+
+    def handle_starttag(self, tag, attrs):
+        if tag in {"script", "style", "noscript", "svg"}:
+            self._skip += 1
+        if tag == "title":
+            self._in_title = True
+
+    def handle_endtag(self, tag):
+        if tag in {"script", "style", "noscript", "svg"} and self._skip:
+            self._skip -= 1
+        if tag == "title":
+            self._in_title = False
+
+    def handle_data(self, data):
+        text = " ".join(html.unescape(data).split())
+        if not text:
+            return
+        if self._in_title:
+            self.title_parts.append(text)
+        if not self._skip:
+            self.parts.append(text)
+
+    @property
+    def text(self) -> str:
+        return " ".join(self.parts)
+
+    @property
+    def title(self) -> str:
+        return " ".join(self.title_parts)[:160]
+
+
+def normalize_url(raw: str) -> str:
+    raw = (raw or "").strip()
+    if not raw:
+        raise ValueError("empty URL")
+    if "://" not in raw:
+        raw = "https://" + raw
+    parsed = urllib.parse.urlparse(raw)
+    if parsed.scheme not in {"http", "https"}:
+        raise ValueError("only public http(s) URLs are supported")
+    if not parsed.netloc:
+        raise ValueError("URL must include a domain")
+    if parsed.username or parsed.password:
+        raise ValueError("login URLs are not supported")
+    host = parsed.netloc.lower()
+    return urllib.parse.urlunparse((parsed.scheme, host, parsed.path or "/", "", "", ""))
+
+
+def _origin(url: str) -> str:
+    parsed = urllib.parse.urlparse(url)
+    return f"{parsed.scheme}://{parsed.netloc}"
+
+
+def _domain(url: str) -> str:
+    return urllib.parse.urlparse(url).netloc.lower()
+
+
+def default_cache_dir() -> Path:
+    return Path(os.environ.get("FPAI_ASSESSMENT_SITE_CACHE", "~/.cache/fpai/assessment-sites")).expanduser()
+
+
+def cache_path_for_url(url: str, cache_dir: Path | None = None) -> Path:
+    cache_dir = cache_dir or default_cache_dir()
+    domain = _domain(url)
+    digest = hashlib.sha256(domain.encode("utf-8")).hexdigest()[:12]
+    safe = re.sub(r"[^a-z0-9.-]+", "-", domain)
+    return cache_dir / f"{safe}-{digest}.json"
+
+
+def _urlopen_text(url: str, timeout: float = 8) -> tuple[int, dict, str]:
+    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+        status = getattr(resp, "status", 200)
+        headers = {k.lower(): v for k, v in resp.headers.items()}
+        raw = resp.read(512000)
+    charset = "utf-8"
+    ctype = headers.get("content-type", "")
+    match = re.search(r"charset=([^;\s]+)", ctype)
+    if match:
+        charset = match.group(1)
+    return status, headers, raw.decode(charset, errors="replace")
+
+
+def _robots_allows(target_url: str, fetcher=_urlopen_text, timeout: float = 8) -> bool:
+    robots_url = urllib.parse.urljoin(_origin(target_url) + "/", "robots.txt")
+    parser = urllib.robotparser.RobotFileParser()
+    parser.set_url(robots_url)
+    try:
+        status, _headers, body = fetcher(robots_url, timeout)
+    except Exception:
+        return True
+    if status >= 400:
+        return True
+    parser.parse(body.splitlines())
+    return parser.can_fetch(USER_AGENT, target_url)
+
+
+def _extract_page(url: str, status: int, headers: dict, body: str) -> dict | None:
+    ctype = headers.get("content-type", "")
+    if status in {401, 403} or status >= 500:
+        return None
+    if ctype and "html" not in ctype.lower():
+        return None
+    parser = _TextExtractor()
+    parser.feed(body[:MAX_PAGE_CHARS])
+    text = parser.text[:MAX_PAGE_CHARS]
+    if len(text) < 120:
+        return None
+    return {"url": url, "status": status, "title": parser.title, "text": text}
+
+
+def _load_cached_site(url: str, cache_dir: Path | None = None, ttl_seconds: int = CACHE_TTL_SECONDS) -> dict | None:
+    path = cache_path_for_url(url, cache_dir)
+    try:
+        data = json.loads(path.read_text())
+    except (FileNotFoundError, json.JSONDecodeError):
+        return None
+    if time.time() - float(data.get("cached_at", 0)) > ttl_seconds:
+        return None
+    data["cached"] = True
+    return data
+
+
+def _write_cached_site(url: str, data: dict, cache_dir: Path | None = None) -> None:
+    path = cache_path_for_url(url, cache_dir)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, indent=2, sort_keys=True))
+
+
+def fetch_public_site(url: str, *, cache_dir: Path | None = None, timeout: float = 8,
+                      fetcher=_urlopen_text, use_cache: bool = True,
+                      summary_runner=None) -> dict:
+    """Read public website pages only: home, about, pricing, services.
+
+    Network reads are bounded, robots-aware, and cache by domain. Login-walled,
+    non-HTML, disallowed, and failing pages are skipped instead of retried.
+    """
+    url = normalize_url(url)
+    if use_cache:
+        cached = _load_cached_site(url, cache_dir)
+        if cached:
+            return cached
+
+    origin = _origin(url)
+    pages = []
+    seen = set()
+    for path in SITE_PATHS:
+        target = urllib.parse.urljoin(origin + "/", path.lstrip("/"))
+        if target in seen:
+            continue
+        seen.add(target)
+        if not _robots_allows(target, fetcher=fetcher, timeout=timeout):
+            pages.append({"url": target, "status": "robots_disallowed", "title": "", "text": ""})
+            continue
+        try:
+            status, headers, body = fetcher(target, timeout)
+        except (urllib.error.URLError, TimeoutError, OSError) as exc:
+            pages.append({"url": target, "status": "fetch_error", "error": str(exc)[:160], "title": "", "text": ""})
+            continue
+        page = _extract_page(target, int(status), headers, body)
+        if page:
+            pages.append(page)
+
+    data = {
+        "url": url,
+        "domain": _domain(url),
+        "fetched_at": int(time.time()),
+        "cached_at": time.time(),
+        "cached": False,
+        "pages": pages,
+    }
+    data["summary"] = summarize_site(data, model_runner=summary_runner)
+    data["intake_context"] = site_intake_context(data)
+    if use_cache and any(page.get("text") for page in pages):
+        _write_cached_site(url, data, cache_dir)
+    return data
+
+
+def _contains_any(text: str, words: tuple[str, ...]) -> bool:
+    return any(word in text for word in words)
+
+
+def summarize_site(site: dict, model_runner=None) -> dict:
+    pages = [page for page in site.get("pages", []) if page.get("text")]
+    combined = "\n\n".join(f"URL: {p['url']}\nTITLE: {p.get('title','')}\n{p['text'][:6000]}" for p in pages)
+    if model_runner is None and "run_claude" in globals():
+        model_runner = run_claude
+    if model_runner and combined:
+        prompt = SITE_SUMMARY_PROMPT.format(site_text=combined[:18000], schema=json.dumps(SITE_SUMMARY_SCHEMA))
+        try:
+            data = model_runner(prompt)
+            return {
+                "business_type": str(data.get("business_type", "unknown"))[:160],
+                "apparent_tools_stack": [str(x)[:80] for x in data.get("apparent_tools_stack", [])[:12]],
+                "team_signals": str(data.get("team_signals", "not clear"))[:240],
+                "pricing_model": str(data.get("pricing_model", "not clear"))[:180],
+                "ops_hints": [str(x)[:140] for x in data.get("ops_hints", [])[:8]],
+                "first_read": str(data.get("first_read", ""))[:500],
+                "confidence": str(data.get("confidence", "medium"))[:40],
+            }
+        except Exception:
+            pass
+    return heuristic_site_summary(site)
+
+
+def heuristic_site_summary(site: dict) -> dict:
+    pages = [page for page in site.get("pages", []) if page.get("text")]
+    text = " ".join(page.get("text", "") for page in pages)
+    low = text.lower()
+    stack_markers = {
+        "Shopify": ("shopify", "cart", "checkout"),
+        "WordPress": ("wp-content", "wordpress"),
+        "Webflow": ("webflow",),
+        "Squarespace": ("squarespace",),
+        "Calendly": ("calendly", "schedule a call"),
+        "HubSpot": ("hubspot",),
+        "Stripe": ("stripe",),
+        "Klaviyo": ("klaviyo",),
+        "Mailchimp": ("mailchimp",),
+        "Meta Pixel": ("facebook pixel", "fbq("),
+        "Google Analytics": ("google analytics", "gtag("),
+        "Intercom": ("intercom",),
+        "Zapier": ("zapier",),
+    }
+    tools = [name for name, markers in stack_markers.items() if _contains_any(low, markers)]
+    if _contains_any(low, ("agency", "marketing", "brand", "creative studio")):
+        business_type = "agency or services firm"
+    elif _contains_any(low, ("software", "platform", "saas", "app", "api")):
+        business_type = "software or platform business"
+    elif _contains_any(low, ("clinic", "wellness", "therapy", "medical", "care")):
+        business_type = "wellness or care practice"
+    elif _contains_any(low, ("restaurant", "menu", "reservation", "catering")):
+        business_type = "hospitality business"
+    elif _contains_any(low, ("shop", "cart", "shipping", "collection")):
+        business_type = "commerce business"
+    else:
+        business_type = "business type not fully clear from public pages"
+
+    if _contains_any(low, ("pricing", "plans", "per month", "/mo", "subscription", "membership")):
+        pricing = "published package/subscription pricing signals"
+    elif "$" in low or _contains_any(low, ("book a call", "request a quote", "proposal")):
+        pricing = "quote or consultation-led pricing signals"
+    else:
+        pricing = "pricing not visible on fetched public pages"
+
+    team = "team page or people language found" if _contains_any(low, ("our team", "founder", "co-founder", "staff", "leadership")) else "team size not visible"
+    ops_hints = []
+    if _contains_any(low, ("book", "schedule", "appointment", "reservation")):
+        ops_hints.append("conversion depends on booking/scheduling flow")
+    if _contains_any(low, ("contact us", "request a quote", "discovery call", "consultation")):
+        ops_hints.append("lead capture likely runs through forms or calls")
+    if _contains_any(low, ("case study", "testimonials", "reviews", "results")):
+        ops_hints.append("proof assets are present and can be reused in sales follow-up")
+    if _contains_any(low, ("faq", "support", "help center")):
+        ops_hints.append("repeat questions may be automatable")
+    if not ops_hints:
+        ops_hints.append("public pages are thin; intake should confirm delivery workflow and current tool stack")
+    first_read = (
+        f"We can already see a likely {business_type}. "
+        f"{pricing.capitalize()}. {team.capitalize()}. "
+        f"Main allocation clue: {ops_hints[0]}."
+    )
+    return {
+        "business_type": business_type,
+        "apparent_tools_stack": tools,
+        "team_signals": team,
+        "pricing_model": pricing,
+        "ops_hints": ops_hints,
+        "first_read": first_read,
+        "confidence": "medium" if pages else "low",
+    }
+
+
+def site_intake_context(site: dict) -> str:
+    summary = site.get("summary", {})
+    pages = [page for page in site.get("pages", []) if page.get("text")]
+    page_titles = "; ".join(filter(None, (page.get("title") for page in pages))) or "no titles captured"
+    return "\n".join([
+        f"Website: {site.get('url', '')}",
+        f"Domain: {site.get('domain', '')}",
+        f"Public pages read: {', '.join(page.get('url', '') for page in pages) or 'none'}",
+        f"Page titles: {page_titles}",
+        f"Business type: {summary.get('business_type', 'unknown')}",
+        f"Apparent tools/stack: {', '.join(summary.get('apparent_tools_stack', [])) or 'not visible'}",
+        f"Team signals: {summary.get('team_signals', 'not clear')}",
+        f"Pricing model: {summary.get('pricing_model', 'not clear')}",
+        f"Ops hints: {'; '.join(summary.get('ops_hints', [])) or 'not clear'}",
+        f"First read: {summary.get('first_read', '')}",
+    ])
 
 
 def run_claude(prompt: str) -> dict:
@@ -180,6 +518,8 @@ def score_one(intake_text: str, name: str = "", company: str = "") -> str:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--lead")
+    ap.add_argument("--url", help="public website URL to pre-fill the intake context")
+    ap.add_argument("--first-read", action="store_true", help="print URL first-read JSON instead of scoring")
     ap.add_argument("--demo", action="store_true")
     ap.add_argument("--out")
     a = ap.parse_args()
@@ -191,10 +531,30 @@ def main():
                   "Wants to grow to a second location this year.")
         print(score_one(intake, "Demo Owner", "Cøntrast ATX (demo)")); return
 
-    if not a.lead:
-        print("need --lead <path> or --demo", file=sys.stderr); sys.exit(2)
-    text = Path(a.lead).read_text()
-    name, company, intake = parse_intake(text)
+    site = None
+    if a.url:
+        site = fetch_public_site(a.url)
+        if a.first_read:
+            print(json.dumps({
+                "url": site["url"],
+                "domain": site["domain"],
+                "cached": site.get("cached", False),
+                "summary": site.get("summary", {}),
+                "intake_context": site.get("intake_context", ""),
+            }, indent=2))
+            return
+
+    if not a.lead and not site:
+        print("need --lead <path>, --url <site>, or --demo", file=sys.stderr); sys.exit(2)
+    if a.lead:
+        text = Path(a.lead).read_text()
+        name, company, intake = parse_intake(text)
+    else:
+        name = ""
+        company = (site.get("domain") if site else "")
+        intake = ""
+    if site:
+        intake = (intake + "\n\n" if intake else "") + "PUBLIC WEBSITE PRE-FILL:\n" + site["intake_context"]
     result = score_one(intake, name, company)
     if a.out:
         Path(a.out).write_text(result); print(f"→ {a.out}")

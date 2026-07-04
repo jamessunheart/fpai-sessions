@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-07-04 · SPEC_d160_spec-url-first-assessment-intake · branch `build/SPEC_d160_spec-url-first-assessment-intake`
+
+- **Status:** done in working tree / awaiting independent review + merge
+- **Files changed:** `tools/growth/score_assessment.py`; `tools/growth/test_score_assessment.py`; `SERVICES/champion-sign/main.py`; `sites/fullpotential-com/audit.html`; `core/BUILD/specs/SPEC_d160_spec-url-first-assessment-intake.md`; `core/BUILD/results/SPEC_d160_spec-url-first-assessment-intake.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added URL-first Assessment intake. The scorer now supports `--url` and `--first-read`, normalizes public URLs, respects robots.txt, reads only home/about/pricing/services pages with bounded timeouts, skips login-walled/non-HTML pages, caches by domain, summarizes business type/tools/team/pricing/ops hints, and feeds that context into the Allocation Score prompt. Added a same-origin champion service `/lead/first-read` endpoint via explicit file-path import, and updated the assessment page with the optional website field, live first-read panel, server call, local fallback, and existing lead-submit compatibility.
+- **Tests:** `python3 -B -m unittest tools.growth.test_score_assessment` (3 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/growth/score_assessment.py tools/growth/test_score_assessment.py SERVICES/champion-sign/main.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d160-registry.json`; champion service smoke import with temp data dirs confirming `/lead/first-read` and `/lead/submit`; `git diff --check`
+- **Risks:** A live real-business URL was not fetched from the public internet in this sandbox; network behavior is covered by fake-fetch tests plus a harmless unreachable-domain CLI smoke. The page needs the champion service deploy/restart path after merge before the server first-read call is live; until then it falls back locally and preserves URL context in the submitted lead.
+- **Rollback:** Revert this branch to remove the scorer URL helpers/tests, `/lead/first-read` route, assessment page field/panel, result artifact, registry entry, and handoff note.
+- **Intent solved:** d160 turns the Assessment from blank typing-first intake into URL-first intake with public-site prefill.
+- **Downstream intent unlocked:** real Assessment leads can get a faster first read and the scorer can generate Allocation Scores from confirmed/corrected website-derived context.
+- **Questions for Ember/James:** after merge/deploy, restart or reload the champion service route and verify `/api/champion/lead/first-read` responds from the public site before judging the live UX proof.
+
 ### 2026-07-04 · SPEC_d158_spec-36a73161-fb6c-42c8-98b7-f5d · branch `build/SPEC_d158_spec-36a73161-fb6c-42c8-98b7-f5d`
 
 - **Status:** done in working tree / awaiting independent review + merge
