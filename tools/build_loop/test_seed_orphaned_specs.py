@@ -165,6 +165,41 @@ class SeedOrphanedSpecsTest(unittest.TestCase):
             self.assertEqual(params[1], "Test Canary")
             self.assertIn("named spec file `SPEC_test-canary.md`", params[2])
 
+    def test_named_test_stall_audit_seeds_answered_d157_row(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            specs = root / "specs"
+            results = root / "results"
+            specs.mkdir()
+            results.mkdir()
+            original_name = "SPEC_2e8b3441-1ea4-4c7d-a6cd-47f799aa2696_test-stall-audit.md"
+            original = specs / original_name
+            original.write_text(
+                "# SPEC_2e8b3441-1ea4-4c7d-a6cd-47f799aa2696_auto - test stall audit\n\n"
+                "## Build\n"
+                "(no explicit build instruction - implement what the answer + proof_expected require)\n",
+                encoding="utf-8",
+            )
+            conn = FakeConn(existing={"d156"})
+            old_connect = seed.connect
+            seed.connect = lambda: conn
+            try:
+                seeded = seed.seed_orphaned_specs(specs, results)
+            finally:
+                seed.connect = old_connect
+
+            target_name = "SPEC_d157_2e8b3441-1ea4-4c7d-a6cd-47f799aa2696-test-stall-audit.md"
+            params = conn.inserted[0]
+
+            self.assertEqual(seeded, ["d157"])
+            self.assertFalse(original.exists())
+            self.assertTrue((specs / target_name).exists())
+            self.assertEqual(params[0], "d157")
+            self.assertEqual(params[1], "SPEC_2e8b3441-1ea4-4c7d-a6cd-47f799aa2696_auto - test stall audit")
+            self.assertIn(f"named spec file `{original_name}`", params[2])
+            self.assertIn("answered needs_build row `d157`", params[4])
+            self.assertIn(f"named spec `{target_name}`", params[4])
+
     def test_named_spec_dry_run_does_not_rename_or_insert(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

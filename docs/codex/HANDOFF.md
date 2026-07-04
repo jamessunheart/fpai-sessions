@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-07-04 · SPEC_d157_spec-2e8b3441-1ea4-4c7d-a6cd-47f · branch `build/SPEC_d157_spec-2e8b3441-1ea4-4c7d-a6cd-47f`
+
+- **Status:** done in working tree / awaiting independent review + merge
+- **Files changed:** `tools/build_loop/test_seed_orphaned_specs.py`; `core/BUILD/specs/SPEC_d157_spec-2e8b3441-1ea4-4c7d-a6cd-47f.md`; `core/BUILD/results/SPEC_d157_spec-2e8b3441-1ea4-4c7d-a6cd-47f.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a focused regression audit for the test-stall named-spec seeding path. The new test recreates `SPEC_2e8b3441-1ea4-4c7d-a6cd-47f799aa2696_test-stall-audit.md`, starts the fake decision namespace at `d156`, and verifies the seeder allocates `d157`, inserts the expected answered `needs_build` row payload, records the original named filename, and renames to `SPEC_d157_2e8b3441-1ea4-4c7d-a6cd-47f799aa2696-test-stall-audit.md`.
+- **Tests:** `python3 -B -m unittest tools.build_loop.test_seed_orphaned_specs` (9 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/seed_orphaned_specs.py tools/build_loop/test_seed_orphaned_specs.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d157-registry.json`
+- **Risks:** Live `brain_index` DB mutation and live repo rename were not run in this sandbox; this is deterministic fake-DB proof of the exact row shape and filename mapping.
+- **Rollback:** Revert this branch to remove the regression test, generated d157 spec artifact, result artifact, registry entry, and handoff note.
+- **Intent solved:** the d157 test-stall audit has executable proof that the named spec becomes an answered `needs_build` d157 decision row.
+- **Downstream intent unlocked:** named-spec queue stalls of this class are caught by the seeder test suite before merge.
+- **Questions for Ember/James:** none.
+
 ### 2026-07-04 · SPEC_d155_spec-d155-build-lifecycle-alerts · branch `build/SPEC_d155_spec-d155-build-lifecycle-alerts`
 
 - **Status:** done in working tree / awaiting independent review + merge

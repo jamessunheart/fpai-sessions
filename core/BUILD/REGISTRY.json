@@ -1,10 +1,21 @@
 {
   "schema": "build-registry.v1",
-  "updated_at": "2026-07-04T14:27:47Z",
+    "updated_at": "2026-07-04T14:57:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
-  "active_builds": [
-    {
-      "id": "SPEC_d155_spec-d155-build-lifecycle-alerts",
+    "active_builds": [
+        {
+            "id": "SPEC_d157_spec-2e8b3441-1ea4-4c7d-a6cd-47f",
+            "slug": "SPEC_d157_spec-2e8b3441-1ea4-4c7d-a6cd-47f",
+            "branch": "build/SPEC_d157_spec-2e8b3441-1ea4-4c7d-a6cd-47f",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d157_spec-2e8b3441-1ea4-4c7d-a6cd-47f.md",
+            "tests_passed": true,
+            "notes": "d157 complete in working tree: added a focused fake-DB regression audit proving the named-spec seeder converts SPEC_2e8b3441-1ea4-4c7d-a6cd-47f799aa2696_test-stall-audit.md into answered needs_build decision row d157 and renames it to SPEC_d157_2e8b3441-1ea4-4c7d-a6cd-47f799aa2696-test-stall-audit.md. Focused unittest, py_compile, registry JSON validation, and diff hygiene passed. No live DB mutation, live repo rename, push, merge, deploy, outreach, secrets, service control, or money movement."
+        },
+        {
+            "id": "SPEC_d155_spec-d155-build-lifecycle-alerts",
       "slug": "SPEC_d155_spec-d155-build-lifecycle-alerts",
       "branch": "build/SPEC_d155_spec-d155-build-lifecycle-alerts",
       "base_branch": "feat/headless-build",
