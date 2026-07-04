@@ -175,18 +175,23 @@ def main(argv: list[str] | None = None) -> int:
         _recompile_doctrine()
     except Exception as e:
         print(f"  (doctrine recompile unavailable: {e})")
-    # Coherence gate: reported state must not contradict the measured SSOT.
+    # Coherence gates: created truth must (1) match the measured SSOT and (2) propagate.
     print("\n=== METRIC COHERENCE (map vs territory) ===")
     try:
         from tools.governance.metric_coherence import check as coherence_check
         drift = coherence_check()
-        if not drift:
-            print("  OK — canonical prose matches measured SSOT.")
-        else:
-            for d in drift:
-                print(f"  DRIFT · {d}")
+        print("  OK — canonical prose matches measured SSOT." if not drift
+              else "\n".join(f"  DRIFT · {d}" for d in drift))
     except Exception as e:
-        print(f"  (coherence check unavailable: {e})")
+        print(f"  (metric coherence unavailable: {e})")
+    print("\n=== STRUCTURAL COHERENCE (does created truth propagate?) ===")
+    try:
+        from tools.governance.coherence_invariants import check as invariants_check
+        drift = invariants_check()
+        print("  OK — doctrine complete, no dangling pointers." if not drift
+              else "\n".join(f"  DRIFT · {d}" for d in drift))
+    except Exception as e:
+        print(f"  (coherence invariants unavailable: {e})")
     return 0
 
 
