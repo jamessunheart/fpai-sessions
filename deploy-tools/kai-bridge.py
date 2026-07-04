@@ -33,6 +33,7 @@ KAI_LOG = "/opt/fpai/cora-loop/memory/kai_steering.jsonl"
 BRIDGE_TOKEN = os.environ.get("KAI_BRIDGE_TOKEN", "kai_fpai_2026")
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "8442685490:AAHcoDv6MWjUjqb1FH2DJch9tQiSPYfzYnY")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "8514069423")
+CORA_BRIDGE_TELEGRAM_ALERTS = os.environ.get("CORA_BRIDGE_TELEGRAM_ALERTS", "").strip().lower() in {"1", "true", "yes", "on"}
 PORT = 8192
 
 
@@ -105,22 +106,24 @@ def inject_steering(payload):
     with open(KAI_LOG, "a") as f:
         f.write(json.dumps(log_entry) + "\n")
 
-    # Notify Sunheart on Telegram
-    try:
-        import requests
-        msg = f"🧠 Kai steering injected into CORA loop.\n\n"
-        if payload.get("directives"):
-            msg += "Directives:\n"
-            for d in payload["directives"][:3]:
-                msg += f"  → {d[:100]}\n"
-        msg += f"\nWill be absorbed next cycle."
-        requests.post(
-            f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
-            json={"chat_id": TELEGRAM_CHAT_ID, "text": msg},
-            timeout=10,
-        )
-    except Exception:
-        pass
+    # Intermediate loop status is intentionally quiet by default. d177 keeps
+    # James's TG lane for one morning digest plus earned event alerts.
+    if CORA_BRIDGE_TELEGRAM_ALERTS:
+        try:
+            import requests
+            msg = f"🧠 Kai steering injected into CORA loop.\n\n"
+            if payload.get("directives"):
+                msg += "Directives:\n"
+                for d in payload["directives"][:3]:
+                    msg += f"  → {d[:100]}\n"
+            msg += f"\nWill be absorbed next cycle."
+            requests.post(
+                f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
+                json={"chat_id": TELEGRAM_CHAT_ID, "text": msg},
+                timeout=10,
+            )
+        except Exception:
+            pass
 
     return len(parts)
 

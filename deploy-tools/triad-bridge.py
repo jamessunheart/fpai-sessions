@@ -45,6 +45,7 @@ MEMORY_FILE = "/opt/fpai/cora-loop/memory/memory.json"
 BRIDGE_TOKEN = os.environ.get("TRIAD_BRIDGE_TOKEN", "triad_fpai_2026")
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "8442685490:AAHcoDv6MWjUjqb1FH2DJch9tQiSPYfzYnY")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "8514069423")
+CORA_BRIDGE_TELEGRAM_ALERTS = os.environ.get("CORA_BRIDGE_TELEGRAM_ALERTS", "").strip().lower() in {"1", "true", "yes", "on"}
 PORT = 8193
 
 VALID_AGENTS = {"cael", "terra"}
@@ -131,6 +132,8 @@ def log_entry(agent_name, payload):
 
 
 def notify_telegram(agent_name, payload):
+    if not CORA_BRIDGE_TELEGRAM_ALERTS:
+        return
     try:
         label = "Cael (GPT)" if agent_name == "cael" else "Terra (Gemini)"
         icon = "\U0001f30a" if agent_name == "cael" else "\U0001f30d"
