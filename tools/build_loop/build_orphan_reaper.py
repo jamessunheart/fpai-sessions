@@ -95,8 +95,7 @@ def reap_orphaned_decisions(
                     """
                     UPDATE brain_index.decisions
                        SET spec_written = false,
-                           build_attempts = COALESCE(build_attempts, 0) + 1,
-                           updated_at = NOW()
+                           build_attempts = COALESCE(build_attempts, 0) + 1
                      WHERE id::text = %s
                     """,
                     (str(decision_id),),
@@ -106,8 +105,7 @@ def reap_orphaned_decisions(
                 cur.execute(
                     """
                     UPDATE brain_index.decisions
-                       SET build_status = 'blocked',
-                           updated_at = NOW()
+                       SET build_status = 'blocked'
                      WHERE id::text = %s
                     """,
                     (str(decision_id),),
