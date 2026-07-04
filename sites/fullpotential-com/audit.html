@@ -30,6 +30,11 @@
     .formbox{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:32px;max-width:560px;margin:0 auto 30px}
     form label{display:block;font-size:.86rem;font-weight:700;color:var(--deep);margin:12px 0 4px}
     form input,form textarea{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:var(--cream);font-size:.95rem;font-family:inherit}
+    .hint{color:var(--muted);font-size:.78rem;margin-top:5px}
+    .firstread{display:none;margin-top:12px;border:1px solid #BFD3F8;background:#F7FAFF;border-radius:14px;padding:14px;color:var(--deep)}
+    .firstread h3{font-size:.96rem;margin-bottom:6px}
+    .firstread p{font-size:.88rem;color:var(--muted);margin-top:5px}
+    .firstread ul{margin:8px 0 0 18px;color:var(--text);font-size:.86rem}
     form button{margin-top:18px;width:100%;border:none;cursor:pointer}
     .ok{display:none;background:#EAF4EC;border:1px solid var(--green);color:var(--green);border-radius:12px;padding:16px;margin-top:14px;font-weight:600}
     .fine{color:var(--muted);font-size:.82rem;text-align:center;padding-bottom:44px;max-width:44em;margin:0 auto}
@@ -70,6 +75,14 @@
       <input id="a-email" type="email" required placeholder="you@company.com">
       <label for="a-company">Company / project</label>
       <input id="a-company" placeholder="Company name (or just describe it)">
+      <label for="a-website">Your website <span style="color:var(--muted);font-weight:600">(optional but magic)</span></label>
+      <input id="a-website" type="url" inputmode="url" placeholder="https://yourcompany.com">
+      <div class="hint">Share a public site and we start with what is already visible: business type, pricing signals, tool clues, team shape, and operational hints.</div>
+      <div class="firstread" id="firstRead" aria-live="polite">
+        <h3>Our first read</h3>
+        <p id="firstReadLine"></p>
+        <ul id="firstReadList"></ul>
+      </div>
       <label for="a-goal">What are you trying to build this year?</label>
       <textarea id="a-goal" rows="3" placeholder="One honest paragraph. This anchors the whole audit."></textarea>
       <button class="cta" type="submit">Start My Free Assessment →</button>
@@ -101,14 +114,113 @@ const COPY = {
 document.getElementById('headline').innerHTML = COPY[V].h;
 document.getElementById('subline').textContent = COPY[V].s;
 
+function cleanWebsite(raw){
+  const value = (raw || '').trim();
+  if(!value) return '';
+  try{
+    const url = new URL(value.includes('://') ? value : 'https://' + value);
+    if(url.protocol !== 'http:' && url.protocol !== 'https:') return '';
+    return url.href;
+  }catch(e){ return ''; }
+}
+
+function localFirstReadFromWebsite(raw){
+  const href = cleanWebsite(raw);
+  if(!href) return null;
+  const url = new URL(href);
+  const host = url.hostname.replace(/^www\./,'');
+  const company = document.getElementById('a-company').value.trim() || host.split('.')[0].replace(/[-_]/g,' ');
+  const bits = host.split('.').join(' ').toLowerCase();
+  let type = 'public business footprint';
+  if(bits.includes('studio') || bits.includes('agency')) type = 'services or creative business';
+  if(bits.includes('shop') || bits.includes('store')) type = 'commerce business';
+  if(bits.includes('clinic') || bits.includes('care') || bits.includes('wellness')) type = 'care or wellness business';
+  if(bits.includes('app') || bits.includes('software') || bits.includes('saas')) type = 'software or platform business';
+  return {
+    href,
+    line: `We can start from ${company}'s ${type} and verify the public signals before asking you to type the whole story.`,
+    bullets: [
+      'We will check home, about, pricing, and services pages only.',
+      'We will pre-fill likely business type, pricing model, tools, team signals, and ops hints.',
+      'You can correct the read before the final Allocation Score.'
+    ]
+  };
+}
+
+function showFirstRead(read){
+  const box = document.getElementById('firstRead');
+  if(!read){ box.style.display='none'; return; }
+  document.getElementById('firstReadLine').textContent = read.line;
+  const list = document.getElementById('firstReadList');
+  list.innerHTML = '';
+  read.bullets.forEach(function(b){
+    const li = document.createElement('li');
+    li.textContent = b;
+    list.appendChild(li);
+  });
+  box.dataset.firstRead = JSON.stringify(read);
+  box.style.display='block';
+}
+
+function renderLocalFirstRead(){
+  showFirstRead(localFirstReadFromWebsite(document.getElementById('a-website').value));
+}
+
+async function requestFirstRead(){
+  const website = cleanWebsite(document.getElementById('a-website').value);
+  if(!website){ showFirstRead(null); return null; }
+  const fallback = localFirstReadFromWebsite(website);
+  showFirstRead({...fallback, bullets: ['Reading public pages now: home, about, pricing, services.'].concat(fallback.bullets)});
+  try{
+    const res = await fetch('/api/champion/lead/first-read', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({website})
+    });
+    if(!res.ok) throw new Error('first read unavailable');
+    const data = await res.json();
+    const summary = data.summary || {};
+    const bullets = [
+      'Business type: ' + (summary.business_type || 'not clear yet'),
+      'Pricing model: ' + (summary.pricing_model || 'not visible yet'),
+      'Tools/stack: ' + ((summary.apparent_tools_stack || []).join(', ') || 'not visible yet'),
+      'Ops hints: ' + ((summary.ops_hints || []).join('; ') || 'need your correction')
+    ];
+    const read = {
+      href: data.url || website,
+      line: summary.first_read || fallback.line,
+      bullets,
+      intake_context: data.intake_context || '',
+      source: 'server-public-site-read'
+    };
+    showFirstRead(read);
+    return read;
+  }catch(err){
+    showFirstRead({...fallback, source:'local-url-hint'});
+    return fallback;
+  }
+}
+
+document.getElementById('a-website').addEventListener('blur', requestFirstRead);
+document.getElementById('a-website').addEventListener('input', function(){
+  if(cleanWebsite(this.value)) renderLocalFirstRead();
+  else document.getElementById('firstRead').style.display='none';
+});
+document.getElementById('a-company').addEventListener('input', renderLocalFirstRead);
+
 document.getElementById('auditForm').addEventListener('submit', async function(e){
   e.preventDefault();
+  const website = cleanWebsite(document.getElementById('a-website').value);
+  let existingRead = {};
+  try{ existingRead = JSON.parse(document.getElementById('firstRead').dataset.firstRead || '{}'); }catch(err){}
+  if(website && existingRead.source !== 'server-public-site-read') await requestFirstRead();
+  const firstRead = document.getElementById('firstRead').dataset.firstRead || '';
   const payload = {
     name: document.getElementById('a-name').value.trim(),
     email: document.getElementById('a-email').value.trim(),
     interest: 'allocation-audit',
     source: 'fullpotential.com/audit·' + V,
-    bottleneck: '[' + (document.getElementById('a-company').value.trim()||'no company given') + '] ' + document.getElementById('a-goal').value.trim()
+    bottleneck: '[' + (document.getElementById('a-company').value.trim()||'no company given') + '] ' + document.getElementById('a-goal').value.trim() + (website ? '\nWebsite: ' + website : '') + (firstRead ? '\nFirst read: ' + firstRead : '')
   };
   try{ await fetch('/api/champion/lead/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); }catch(err){}
   try{fbq('track','Lead');}catch(e){}
