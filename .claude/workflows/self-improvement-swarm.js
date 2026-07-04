@@ -95,9 +95,20 @@ const INTENT_SCHEMA = {
   },
 }
 
+// Batched fan-out — fire at most `size` heavy agents per wave to avoid the
+// API-529 burst-overload (learned when an 11-agent burst killed 10/11 on run 1).
+async function inBatches(items, size, make) {
+  const out = []
+  for (let i = 0; i < items.length; i += size) {
+    const wave = await parallel(items.slice(i, i + size).map(make))
+    out.push(...wave)
+  }
+  return out
+}
+
 // ---------- Phase 1: PROBE (red-team swarm) ----------
 phase('Probe')
-const probes = (await parallel(FACETS.map(f => () =>
+const probes = (await inBatches(FACETS, 3, f => () =>
   agent(
     `You are a red-team Sonnet probing a self-evolving AI system for WEAK POINTS. Be skeptical and specific — poke where it actually hurts.\n\n${SPINE}\n\n${READCAP}\n\n` +
     `YOUR FACET: ${f.lens}\nWhere to look: ${f.where}\n\n` +
@@ -105,14 +116,14 @@ const probes = (await parallel(FACETS.map(f => () =>
     `things that are broken, drifting, unproven, theatrical, or leaving capability on the table. Ground every question in something you actually observed. No hypotheticals.`,
     { label: `probe:${f.key}`, phase: 'Probe', model: 'sonnet', schema: PROBE_SCHEMA }
   )
-))).filter(Boolean)
+)).filter(Boolean)
 
 const questions = probes.flatMap(p => (p.questions || []).map(q => ({ ...q, facet: p.facet })))
 log(`Probe swarm surfaced ${questions.length} weak-point questions across ${probes.length} facets`)
 
 // ---------- Phase 2: DIAGNOSE (answer swarm — adversarial confirm/refute) ----------
 phase('Diagnose')
-const diagnoses = (await parallel(questions.map(item => () =>
+const diagnoses = (await inBatches(questions, 4, item => () =>
   agent(
     `You are a diagnostician Sonnet. A red-team probe raised this weakness question about a self-evolving AI system. ` +
     `Your job is ADVERSARIAL VERIFICATION: confirm it is a REAL weakness only if you verify it against ground truth — otherwise mark is_real=false. Do not accept the premise on faith.\n\n${SPINE}\n\n${READCAP}\n\n` +
@@ -120,7 +131,7 @@ const diagnoses = (await parallel(questions.map(item => () =>
     `MISSION: investigate the real code/state (read the file, run the command, check the table). Decide is_real. If real, give root cause, a concrete buildable fix, whether it's reversible (Law 7), and effort. Cite the ground-truth evidence you checked.`,
     { label: `diagnose:${item.facet}`, phase: 'Diagnose', model: 'sonnet', schema: DIAGNOSE_SCHEMA }
   )
-))).filter(Boolean)
+)).filter(Boolean)
 
 const confirmed = diagnoses.filter(d => d && d.is_real)
 log(`Diagnosed ${diagnoses.length} → ${confirmed.length} confirmed real weaknesses`)
