@@ -47,6 +47,27 @@ chasing the loudest part; and waste almost none of their own time on what the su
 Capstone artifact: a **routing map** of their own work (what moved to substrate, what stays
 Reserved) + 5–6 reversible-by-design builds shipped.
 
+## Do we need human AI builders? (who this is for)
+
+Yes — but narrowly, and **not to build this core system** (it increasingly self-builds at $0,
+laptop-free). Hiring humans for what the substrate already does violates the Sunheart Rule and
+Law 8 ("don't add — improve the engine"). The genuine need is a band **above the substrate's
+ceiling and below James's apex:**
+
+1. **Distribution / delivery (the biggest need).** The substrate builds; it doesn't sell, onboard,
+   or hold a client relationship. Each org we augment needs a human orchestrator who routes *that
+   org's* work to AI, holds its intent, and proves value. This is the product, not the code.
+2. **Frontier + physical-world + trust.** Novel architecture judgment, high-stakes verification
+   (catching what AI misses when it matters), physical-world execution (accounts, signatures,
+   deploys), relationships/partnerships. The substrate structurally can't do these.
+3. **Domain extension — router-stewards, not doers.** Humans who run a stream James can't
+   personally hold, the way he holds vision while substrate executes.
+
+**They orchestrate; they don't do.** A human builder who out-codes the AI is miscast — the scarce
+skill is allocation judgment + taste + trust, not keystrokes. **The test before adding any builder:**
+*is this work genuinely above the substrate's ceiling AND below James's apex?* If the substrate can
+do it, route it down — don't hire. Human builders are leverage/distribution, not labor.
+
 ## Why this matters beyond training
 This is also a business asset: it's the onboarding for builders who extend this system, the wedge
 behind the AI-augmentation offer (OUTBOUNDERS / apprentice-studio / the ai-builders funnel), and
