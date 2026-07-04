@@ -1,0 +1,15 @@
+# SPEC d174 — TG bot: loud model-fallback + context/update quality (Ember-grade, not infantile)
+
+**Context:** root cause of "bot is infantile / no context" found + fixed 2026-07-04 — `claude -p` was unauthed on 162, so every reply silently fell back to `llama3.2:3b`. Token drop-in added (`sh-brain-tgbot.service.d/claude-auth.conf`); bot now runs on Sonnet. This spec hardens it. Code lives in `/opt/sh-brain-src/curator/tgbot.py` (service `sh-brain-tgbot`), NOT the FPAI_Cockpit repo — deploy there, test live.
+
+## Build
+1. **Loud fallback (the real bug — P1/P3).** In `_synthesize_answer`: when the claude path fails and it degrades to ollama, (a) log a WARN with the reason, (b) fire a one-line TG alert to James's ops channel ("⚠️ TG bot fell back to llama3.2:3b — claude -p: <reason>"), (c) increment a health counter surfaced in `fpos-health`. A degrade must never be silent. Add a startup self-test: on service start, run one `claude -p` ping; if it fails, alert immediately (don't wait for a user message).
+2. **Truthful system prompt.** The prompt claims "replies run on Claude Sonnet 4" — make that dynamic: report the model actually used per reply (Sonnet | llama-fallback), so the bot never lies about its own brain.
+3. **Context quality pass (now that the model can actually use it):** the plumbing is fine (HOT_STATE 2800c + last-8 decisions + unbuilt specs + 14-turn history + ≤6 RAG hits). With Sonnet driving, RAISE the caps that were throttled for the weak model: HOT_STATE→full, RAG hits 6→10, hit chars 600→1200, history 14→20. Measure prompt tokens stay < model limit.
+4. **"Random updates" audit.** Enumerate every cron/service that PUSHES unsolicited TG messages (zv-morning-digest, tg-digest, brain→TG streaming, pulse). For each: is it relevant + wanted + de-duped? Consolidate into ONE daily digest + event-triggered alerts (build done, lead in, degrade) — kill scattered random pushes. James's bar: every push must earn its interruption.
+
+## Contract
+$0 (Max subscription for claude path) · reversible (drop-in + code revert) · test live (message the bot, confirm Sonnet-quality reply + a forced-fallback alert fires) · independent review before merge.
+
+## Done / Proof
+Message the bot a context question → Sonnet-grade answer citing real system state · kill claude auth briefly → a LOUD alert fires (not silent degrade) · `fpos-health` shows model-health counter · unsolicited-push inventory documented + consolidated.
