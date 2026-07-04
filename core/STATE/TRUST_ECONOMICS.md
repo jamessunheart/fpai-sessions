@@ -7,6 +7,40 @@ tags: [foundation, doctrine, trust, flywheel, keystone]
 
 # TRUST ECONOMICS — the fuel beneath the flywheel
 
+## The compression (one screen · James 2026-07-04)
+
+**The Intelligence Law:** *Intelligence is the ability to allocate resources toward greater
+future capability. Everything else is evidence.*
+
+**The flywheel:** `Intelligent Allocation → Demonstrated Value → Proof → Trust → Resource
+Flow → Greater Future Capability → (More Intelligent Allocation) ↺`
+
+- **Intelligence is allocation**, not knowledge. Every decision allocates time · money ·
+  attention · energy · people · data · capital · AI · trust.
+- **Proof:** an allocation is *potential* capability until results validate it; then it is
+  *proven* intelligence. Reality is the validator.
+- **Trust** is confidence that future capability exists — earned through repeated proof.
+- **Capital is stored trust waiting to be allocated.** Money · time · people · attention ·
+  authority are all capital. Every investment is fundamentally a trust decision.
+- **Core economic law:** capital flows toward what is most trusted to create future value.
+  The system that earns the most trust attracts the most resources.
+- **The real asset:** the system is not compounding money, software, or tasks — it is
+  compounding **trust in future capability.** Everything else follows.
+
+**The center-shift:** resources were the destination; they are now the *consequence.* The
+lever is not resources, nor even value directly — it is **proven allocation.** So the
+system's north-star *operating* metric = its **proof-rate of intelligent allocations**
+(the mission — Future Capability — is unchanged; trust is its transmission).
+
+**Two honest hardenings:** (a) *earned* trust only — capital detached from proof (extracted,
+manipulated) is the con the guards exist to prevent; we compound proof-backed trust. (b) the
+proof bar is **counterfactual** — beat the alternative-not-taken, not merely produce value.
+
+**One sentence:** *Intelligence allocates. Achievement proves. Trust compounds. Capital flows.
+Future capability expands.*
+
+---
+
 > **The one sentence:** Every achievement earns trust; every increase in trust unlocks
 > disproportionately larger opportunities (capital · data · authority · autonomy); larger
 > opportunities build greater capability — which produces the next achievement. **Trust is
