@@ -7,9 +7,7 @@ tags: [foundation, doctrine, allocation-intelligence, keystone, three-rs]
 
 # ALLOCATION INTELLIGENCE — the keystone
 
-> **The one sentence:** FPOS is an **Allocation Intelligence Operating System** that continuously improves how every scarce resource is *routed, reasoned about, and recursively invested* to maximize **future capability**.
->
-> **THE INTELLIGENCE LAW (v1.4):** *Intelligence is the ability to allocate resources toward greater future capability — everything else is evidence.* Intelligence allocates · achievement proves · **trust compounds** · capital flows (capital = stored trust) · future capability expands. The center is trust; resources are the consequence.
+> **The one sentence:** FPOS is an **Allocation Intelligence Operating System** that continuously improves how every scarce resource is *routed, reasoned about, and recursively invested* to maximize **future capability** — governed by **THE INTELLIGENCE LAW (v1.4)**: *intelligence is the ability to allocate resources toward greater future capability; everything else is evidence* — intelligence allocates · achievement proves · **trust compounds** · capital flows (capital = stored trust) · future capability expands; the center is trust, resources are the consequence.
 
 > **Where this sits (the hierarchy · authoritative):** This is the **CORE CAPABILITY** layer — the operational objective the whole system optimizes. It derives from the [[CONSTITUTION]] engraving ("every decision leaves the system more capable, verified by reality") and sits directly under it:
 > `PURPOSE` (increase Future Capability) → **`CORE CAPABILITY` (Allocation Intelligence · this)** → `MECHANISM` (Routing · Reasoning · Recursion — see [[FOUNDATION]]) → `ENGINE` (FPOS/FPAI) → `APPLICATIONS` (Financial → Operational → Enterprise → Civilizational Intelligence).
