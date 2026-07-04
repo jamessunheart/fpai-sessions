@@ -1,6 +1,22 @@
-# Outreach Voice
+# Outreach Voice — RETIRED
 
-Canonical outreach voice and offer framing, James-approved 2026-06-17.
+Retired by `SPEC_d170` on 2026-07-04.
+
+This file is preserved only as historical context for the pre-BBB manual outreach frame. It is no longer a live persona source for public bots, probe first contact, Hermes email, discovery, or any outbound system.
+
+Current route:
+
+- Demand is system-generated: ads + content -> `/assessment`.
+- First public next step is the Free Full Potential Assessment.
+- Assessment returns the Allocation Score and three highest-value opportunities within 48 hours.
+- Paid next step is Blueprint ($2,500), then Savings Split (25% of verified savings) or Partnership ($2-5k/mo).
+- No manual/proactive outreach until the assessment funnel is proven with data.
+
+The historical copy below must not be used for new sends.
+
+---
+
+## Historical frame retired
 
 ## Primary Message
 

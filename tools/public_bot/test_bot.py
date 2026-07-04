@@ -49,9 +49,11 @@ class FakeTelegram:
 
 
 class PublicBotTests(unittest.IsolatedAsyncioTestCase):
-    def test_system_prompt_uses_outreach_voice_without_private_context(self):
+    def test_system_prompt_routes_assessment_first_without_private_context(self):
         prompt = bot.system_prompt()
-        self.assertIn("what does your full potential actually look like", prompt)
+        self.assertIn("free assessment", prompt.lower())
+        self.assertIn("Allocation Score", prompt)
+        self.assertIn("before any Game, WPA, Character Card", prompt)
         self.assertIn("Hard privacy boundary", prompt)
         self.assertNotIn("HOT_STATE.md", prompt)
         self.assertNotIn("brain_index", bot.user_prompt("hello"))
@@ -86,9 +88,10 @@ class PublicBotTests(unittest.IsolatedAsyncioTestCase):
                 telegram=telegram,
                 store=store,  # type: ignore[arg-type]
                 limiter=limiter,
-            )
+        )
         self.assertEqual(len(telegram.sent), 2)
-        self.assertIn("what does your full potential actually look like", telegram.sent[0][1])
+        self.assertIn("free Full Potential Assessment", telegram.sent[0][1])
+        self.assertIn("Allocation Score", telegram.sent[0][1])
         self.assertEqual(telegram.sent[1][1], "Persona reply.")
         self.assertEqual([row[1] for row in store.rows], ["user", "assistant", "assistant"])
         self.assertEqual([row[1] for row in store.engagements], ["user", "assistant", "assistant"])

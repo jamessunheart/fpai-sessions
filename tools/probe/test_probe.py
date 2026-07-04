@@ -282,7 +282,7 @@ class ProbeTests(unittest.TestCase):
             self.assertTrue(result.disabled)
             self.assertEqual(result.sent, 0)
 
-    def test_email_probe_defaults_to_dry_run_without_session_or_cooldown(self):
+    def test_probe_default_sender_is_retired_without_session_or_cooldown(self):
         conn = FakeConn(pool=[{"id": 1, "pool": "warm", "handle": "champ@example.com", "platform": "email", "last_probed_at": None}])
         result = agent.run_probe_cycle(
             conn=conn,
@@ -291,7 +291,9 @@ class ProbeTests(unittest.TestCase):
             ops_ledger=Path(tempfile.mkdtemp()) / "ops.jsonl",
             now=NOW,
         )
-        self.assertEqual(result.attempted, 1)
+        self.assertTrue(result.disabled)
+        self.assertEqual(result.reason, agent.RETIRED_REASON)
+        self.assertEqual(result.attempted, 0)
         self.assertEqual(result.sent, 0)
         self.assertEqual(conn.sessions, [])
         self.assertIsNone(conn.pool[0]["last_probed_at"])

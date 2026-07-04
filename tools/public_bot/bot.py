@@ -26,7 +26,6 @@ from typing import Any
 import httpx
 
 ROOT = Path(__file__).resolve().parents[2]
-OUTREACH_VOICE_PATH = ROOT / "core" / "STATE" / "OUTREACH_VOICE.md"
 DEFAULT_CREDS = Path.home() / ".config" / "fpai" / "tg_sunheartai" / "creds.cache"
 DEFAULT_OFFSET_FILE = Path(os.environ.get("PUBLIC_BOT_OFFSET_FILE", "/var/lib/fpai-public-bot/offset"))
 DEFAULT_RATE_FILE = Path(os.environ.get("PUBLIC_BOT_RATE_FILE", "/var/lib/fpai-public-bot/rate.json"))
@@ -56,6 +55,13 @@ CONSENT_TEXT = (
 )
 CONSENT_ACCEPT_RE = re.compile(r"\b(i\s+consent|yes|ok|okay|agree|i\s+agree)\b", flags=re.I)
 CONSENT_DECLINE_RE = re.compile(r"\b(no|stop|decline|do\s+not|don't)\b", flags=re.I)
+
+PUBLIC_OFFER_FRAME = (
+    "Sunheart AI is a public guide for the Full Potential Assessment. "
+    "The primary next step is the free assessment at https://fullpotential.com/assessment: "
+    "a short intake that returns an Allocation Score and the three highest-value opportunities within 48 hours. "
+    "If there is fit, the paid next step is the Blueprint at $2,500, followed by Savings Split or Partnership work."
+)
 
 
 def utc_iso() -> str:
@@ -100,30 +106,12 @@ def bot_token() -> str:
     ).strip()
 
 
-def outreach_voice() -> str:
-    return OUTREACH_VOICE_PATH.read_text(encoding="utf-8")
-
-
-def extract_primary_message(voice: str) -> str:
-    match = re.search(r'## Primary Message.*?"([^"]+)"', voice, flags=re.S)
-    if match:
-        return match.group(1).strip()
-    return (
-        "I'm Sunheart AI. Sunheart built me around one question: what does your "
-        "full potential actually look like - and what's in the way?"
-    )
-
-
-def extract_spark_opening(voice: str) -> str:
-    match = re.search(r'## Spark Opening.*?"([^"]+)"', voice, flags=re.S)
-    if match:
-        return match.group(1).strip()
-    return "One question to start: what does your full potential look like to you - and what feels most in the way?"
-
-
 def greeting_text() -> str:
-    voice = outreach_voice()
-    return f"{extract_primary_message(voice)}\n\n{extract_spark_opening(voice)}"
+    return (
+        "I'm Sunheart AI. The best first step is the free Full Potential Assessment: "
+        "it returns your Allocation Score and three highest-value opportunities within 48 hours.\n\n"
+        "What are you trying to improve right now?"
+    )
 
 
 def _load_public_context_pack():
@@ -157,12 +145,11 @@ def public_denial(question: str) -> str:
 
 
 def system_prompt(public_context: str = "") -> str:
-    voice = outreach_voice()
     context_section = f"\nCurated public context pack:\n{public_context}\n" if public_context else ""
     return (
         "You are Sunheart AI speaking with a public stranger in Telegram.\n"
-        "Use ONLY this Sunheart outreach voice as your persona and offer frame:\n\n"
-        f"{voice}\n\n"
+        "Use ONLY this public offer frame for next-step routing:\n\n"
+        f"{PUBLIC_OFFER_FRAME}\n\n"
         f"{context_section}"
         "Hard privacy boundary:\n"
         "- Do not mention or imply private memory, James's internal context, treasury, HOT_STATE, brain search, notes, or private tables.\n"
@@ -170,6 +157,7 @@ def system_prompt(public_context: str = "") -> str:
         "- Use only the curated public context pack and the current public conversation.\n"
         "- If asked for internal/private information, warmly refuse and return to the person's full-potential inquiry.\n"
         "- Reply in plain text, no markdown tables, no links unless the person asks for a next step.\n"
+        "- When a next step is useful, offer the free Full Potential Assessment before any Game, WPA, Character Card, manual outreach, or paid call.\n"
         f"- Keep every reply under {MAX_REPLY_TOKENS} tokens.\n"
         "Conversation craft (learned from test sims 2026-06-25):\n"
         "- Do not name the builder unless asked. Stay on the person, not your origin story.\n"

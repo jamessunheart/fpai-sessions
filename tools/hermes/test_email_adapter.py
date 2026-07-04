@@ -18,10 +18,12 @@ class FakeResponse:
 
 
 class EmailAdapterTests(unittest.TestCase):
-    def test_dry_run_is_default_and_uses_canonical_shape(self):
-        result = email_adapter.send_outreach_email(to_email="alex@example.com", to_name="Alex")
+    def test_manual_outreach_email_is_retired_by_default(self):
+        result = email_adapter.send_outreach_email(to_email="alex@example.com", to_name="Alex", env={})
         self.assertFalse(result.sent)
-        self.assertTrue(result.dry_run)
+        self.assertFalse(result.dry_run)
+        self.assertTrue(result.disabled)
+        self.assertEqual(result.reason, email_adapter.RETIRED_REASON)
         self.assertEqual(result.payload["subject"], "What does your full potential actually look like?")
         self.assertEqual(result.payload["sender"]["email"], "james@fullpotential.com")
         self.assertIn("Hi Alex,", result.payload["textContent"])
@@ -44,7 +46,7 @@ class EmailAdapterTests(unittest.TestCase):
         result = email_adapter.send_outreach_email(
             to_email="sam@example.com",
             to_name="Sam",
-            env={"OUTREACH_LIVE": "1", "DRY_RUN": "0", "BREVO_API_KEY": "key"},
+            env={"MANUAL_OUTREACH_LIVE": "1", "OUTREACH_LIVE": "1", "DRY_RUN": "0", "BREVO_API_KEY": "key"},
             urlopen=fake_urlopen,
         )
         self.assertTrue(result.sent)
@@ -57,7 +59,7 @@ class EmailAdapterTests(unittest.TestCase):
     def test_disable_switch_blocks_before_live_send(self):
         result = email_adapter.send_outreach_email(
             to_email="sam@example.com",
-            env={"OUTREACH_LIVE": "1", "DRY_RUN": "0", "BREVO_API_KEY": "key", "OUTREACH_EMAIL_DISABLE": "1"},
+            env={"MANUAL_OUTREACH_LIVE": "1", "OUTREACH_LIVE": "1", "DRY_RUN": "0", "BREVO_API_KEY": "key", "OUTREACH_EMAIL_DISABLE": "1"},
             urlopen=lambda *_args, **_kwargs: self.fail("should not call Brevo"),
         )
         self.assertFalse(result.sent)

@@ -24,6 +24,7 @@ from tools.probe import rate_governor
 DEFAULT_DISABLE_FILE = Path(os.environ.get("PROBE_DISABLE_FILE", "/opt/fpai-build/.probe_disabled"))
 DEFAULT_OPS_LEDGER = rate_governor.DEFAULT_OPS_LEDGER
 DEFAULT_VOICE = REPO_ROOT / "core" / "STATE" / "OUTREACH_VOICE.md"
+RETIRED_REASON = "manual_outreach_retired_assessment_funnel_first"
 PITCH_WORDS = re.compile(r"\b(feature|features|upsell|buy|purchase|subscribe|pricing|sale|sales|offer|demo)\b", re.I)
 QUOTED_RE = re.compile(r'"([^"]+)"')
 SECTION_RE = re.compile(r"^## (?P<heading>[^\n]+)\n(?P<body>.*?)(?=^## |\Z)", re.M | re.S)
@@ -54,6 +55,10 @@ def utc_now() -> datetime:
 
 def disabled(disable_file: Path = DEFAULT_DISABLE_FILE) -> bool:
     return os.environ.get("PROBE_DISABLE") == "1" or disable_file.exists()
+
+
+def manual_outreach_retired() -> bool:
+    return os.environ.get("MANUAL_OUTREACH_LIVE") != "1"
 
 
 def connect_from_env() -> Any:
@@ -328,6 +333,8 @@ def run_probe_cycle(
 ) -> ProbeRunResult:
     if disabled(disable_file):
         return ProbeRunResult(True, 0, 0, 0, "disabled")
+    if sender is default_send and manual_outreach_retired():
+        return ProbeRunResult(True, 0, 0, 0, RETIRED_REASON)
     current = now or utc_now()
     own_conn = conn is None
     try:

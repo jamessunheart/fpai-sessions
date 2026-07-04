@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Dry-run-first Brevo transactional email adapter for FP Game outreach."""
+"""Retired Brevo transactional email adapter for pre-BBB manual outreach."""
 from __future__ import annotations
 
 import json
@@ -13,6 +13,7 @@ from typing import Any
 
 BREVO_TRANSACTIONAL_URL = "https://api.brevo.com/v3/smtp/email"
 CANONICAL_SUBJECT = "What does your full potential actually look like?"
+RETIRED_REASON = "manual_outreach_retired_assessment_funnel_first"
 REPO_ROOT = Path(__file__).resolve().parents[2]
 OUTREACH_VOICE_PATH = REPO_ROOT / "core" / "STATE" / "OUTREACH_VOICE.md"
 FALLBACK_CANONICAL_MESSAGE = (
@@ -85,6 +86,8 @@ def canonical_email_body(*, name: str, link: str, path: Path = OUTREACH_VOICE_PA
 
 def disabled_by_env(env: dict[str, str] | None = None) -> bool:
     values = env if env is not None else os.environ
+    if values.get("MANUAL_OUTREACH_LIVE") != "1":
+        return True
     return values.get("PROBE_DISABLE") == "1" or values.get("OUTREACH_EMAIL_DISABLE") == "1"
 
 
@@ -138,7 +141,7 @@ def send_outreach_email(
     values = env if env is not None else os.environ
     payload = build_payload(to_email=to_email, to_name=to_name, env=values)
     if disabled_by_env(values):
-        return EmailSendResult(False, False, True, None, None, "disabled", payload)
+        return EmailSendResult(False, False, True, None, None, RETIRED_REASON, payload)
     if not is_live_enabled(values):
         return EmailSendResult(False, True, False, None, None, "dry_run", payload)
     api_key = values.get("BREVO_API_KEY", "").strip()

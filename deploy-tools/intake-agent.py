@@ -14,7 +14,7 @@ Channels monitored:
 Pipeline:
   1. New lead detected → immediate acknowledgment email
   2. Basic qualification (has email, expressed interest, not spam)
-  3. Book discovery call on calendar
+  3. Book Blueprint call on calendar when the Assessment indicates fit
   4. Write brief to bus for CORA and Sunheart
 
 Usage:
@@ -151,12 +151,14 @@ def send_acknowledgment(lead):
     <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 30px;">
         <h2 style="color: #1a1a2e;">Thank you, {name}.</h2>
         <p>I received your message and I'm glad you reached out.</p>
-        <p>I'd love to learn more about where you are right now and how I can help. 
-        The best next step is a discovery call — a relaxed conversation where we explore 
-        what's alive for you and whether a Full Potential Session is the right fit.</p>
-        <p><strong>I'll follow up shortly with available times, or feel free to reply 
-        to this email with your preferred schedule.</strong></p>
-        <p>Looking forward to connecting.</p>
+        <p>The best next step is the Free Full Potential Assessment. We use it to produce
+        your Allocation Score and your three highest-value opportunities within 48 hours.</p>
+        <p>If the assessment shows a strong fit, the paid next step is the Blueprint:
+        a focused $2,500 working session where we turn the score into a concrete
+        allocation plan.</p>
+        <p><strong>I'll follow up shortly with the assessment path. If you already have
+        context to add, reply here and it will be included in the read.</strong></p>
+        <p>Looking forward to seeing what the score reveals.</p>
         <p style="margin-top: 30px;">
             With warmth,<br>
             <strong>James "Sunheart" Stinson</strong><br>
@@ -172,7 +174,7 @@ def send_acknowledgment(lead):
             json={
                 "from": "James <james@fullpotential.ai>",
                 "to": [email],
-                "subject": f"Thank you, {name} — let's connect",
+                "subject": f"Thank you, {name} — your Full Potential Assessment is next",
                 "html": body_html,
             },
             timeout=15,
@@ -189,14 +191,14 @@ def send_acknowledgment(lead):
 
 
 def book_discovery_call(lead):
-    """Book a discovery call on Cal.com for the lead."""
+    """Book the paid Blueprint step on Cal.com for the lead when enabled."""
     if not CAL_API_KEY:
-        log.info("CAL_API_KEY not set, skipping auto-booking (will be manual)")
+        log.info("CAL_API_KEY not set, skipping Blueprint booking (will be manual)")
         return None
 
     import requests
 
-    # Get first event type (should be the discovery call)
+    # Get first event type (should be the Blueprint call)
     try:
         resp = requests.get(
             f"https://api.cal.com/v1/event-types?apiKey={CAL_API_KEY}",
@@ -204,7 +206,7 @@ def book_discovery_call(lead):
         )
         types = resp.json().get("event_types", resp.json().get("data", []))
         if not types:
-            log.warning("No Cal.com event types configured")
+            log.warning("No Cal.com Blueprint event types configured")
             return None
         event_type_id = types[0]["id"]
     except Exception as e:
@@ -248,7 +250,10 @@ def book_discovery_call(lead):
                 "responses": {
                     "name": name,
                     "email": email,
-                    "notes": f"Auto-booked by Intake Agent. Source: {lead.get('source', 'unknown')}",
+                "notes": (
+                    "Blueprint booking after Free Full Potential Assessment. "
+                    f"Source: {lead.get('source', 'unknown')}"
+                ),
                 },
                 "timeZone": "Pacific/Honolulu",
                 "language": "en",
@@ -258,7 +263,7 @@ def book_discovery_call(lead):
         booking = resp.json()
         booking_id = booking.get("id", booking.get("uid"))
         if booking_id:
-            log.info(f"Discovery call booked for {email} at {first_slot} (ID: {booking_id})")
+            log.info(f"Blueprint call booked for {email} at {first_slot} (ID: {booking_id})")
             return {"booking_id": str(booking_id), "time": first_slot}
         else:
             log.warning(f"Booking response: {json.dumps(booking)[:200]}")
@@ -316,11 +321,11 @@ def notify_telegram(lead, qualification, booking):
     msg += f"*Source:* {source}\n"
 
     if booking:
-        msg += f"\n📅 *Discovery call auto-booked:* {booking.get('time', 'TBD')}\n"
+        msg += f"\n📅 *Blueprint call auto-booked:* {booking.get('time', 'TBD')}\n"
     else:
-        msg += f"\n⚠️ Calendar not configured — manual booking needed\n"
+        msg += f"\n⚠️ Calendar not configured — send assessment path manually\n"
 
-    msg += f"\n_Acknowledged automatically via email._"
+    msg += f"\n_Acknowledged automatically with Assessment → Blueprint framing._"
 
     try:
         req.post(
@@ -412,15 +417,15 @@ def cmd_run():
             "api": "intake-agent.py",
             "permission": "autonomous",
             "status": "active",
-            "documentation": "Qualifies inbound leads, sends acknowledgment, books discovery calls, writes briefs to bus.",
+            "documentation": "Qualifies inbound leads, sends Assessment-first acknowledgment, books Blueprint calls, writes briefs to bus.",
         }, timeout=5)
         req.post(f"{BUS_URL}/bus/capabilities", json={
             "agent": "intake_agent",
-            "capability": "auto_booking",
+            "capability": "blueprint_booking",
             "api": "calendar.sh / Cal.com API",
             "permission": "autonomous",
             "status": "active" if CAL_API_KEY else "pending_setup",
-            "documentation": "Books discovery calls on Sunheart's calendar via Cal.com API.",
+            "documentation": "Books paid Blueprint calls on Sunheart's calendar via Cal.com API when the Assessment indicates fit.",
         }, timeout=5)
     except Exception:
         pass

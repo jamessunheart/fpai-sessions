@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FullPotential.com — Helping people find what helps them grow.</title>
-  <meta name="description" content="A conscious discovery engine. Tell us what's alive for you, and we'll help you find the people, products, places, and experiences that support your next step." />
+  <title>FullPotential.com — Free Full Potential Assessment</title>
+  <meta name="description" content="Start the free Full Potential Assessment. Receive your Allocation Score and your three highest-value opportunities within 48 hours." />
   <meta name="theme-color" content="#0F5132" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://fullpotential.com/" />
-  <meta property="og:title" content="FullPotential.com — What wants to grow today?" />
-  <meta property="og:description" content="Helping people find what helps them grow. A conscious discovery engine for people, products, experiences, creators & communities." />
+  <meta property="og:title" content="FullPotential.com — Free Full Potential Assessment" />
+  <meta property="og:description" content="Get your Allocation Score and your three highest-value opportunities in 48 hours. Free." />
 
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>" />
 
@@ -298,9 +298,9 @@
         <a href="/discover.html">Discover</a>
         <a href="/store.html">Store</a>
         <a href="/creators.html">Creators</a>
+        <a href="/assessment">Assessment</a>
         <a href="/experiences.html">Experiences</a>
         <a href="/local.html">Local</a>
-        <a href="/game.html" title="The Full Potential Game">Game</a>
         <a href="/codex.html">Codex</a>
       </nav>
       <div class="nav-actions">
@@ -317,33 +317,32 @@
   <section class="hero">
     <div class="wrap hero-grid">
       <div>
-        <h1>What wants to <em>grow</em> today?</h1>
-        <p class="sub">Tell us what's alive for you. We'll help you find the people, products, places, and experiences that support your next step.</p>
-        <form class="search-row" onsubmit="askGuide(event)">
-          <input id="heroInput" placeholder="I want to…" />
-          <button class="btn-grow" type="submit">Help me grow</button>
-        </form>
+        <h1>Start with your <em>Allocation Score</em>.</h1>
+        <p class="sub">The Free Full Potential Assessment shows where your capital, time, attention, people, and AI are misallocated. Within 48 hours, you receive your Allocation Score and your three highest-value opportunities.</p>
+        <div class="search-row">
+          <span style="flex:1;font-size:15px;color:var(--muted);">Free assessment · 15-minute intake · 48-hour readout</span>
+          <a class="btn-grow" href="/assessment">Start the Free Assessment →</a>
+        </div>
         <div class="chips">
-          <span class="lbl">Try these:</span>
-          <span class="chip" onclick="chip(this)">Sleep better</span>
-          <span class="chip" onclick="chip(this)">Find community</span>
-          <span class="chip" onclick="chip(this)">Start a business</span>
-          <span class="chip" onclick="chip(this)">Eat healthier</span>
-          <span class="chip" onclick="chip(this)">Go on retreat</span>
-          <span class="chip" onclick="chip(this)">Create more</span>
-          <span class="chip" onclick="chip(this)">Serve others</span>
+          <span class="lbl">Your score covers:</span>
+          <span class="chip">Capital</span>
+          <span class="chip">Time</span>
+          <span class="chip">Attention</span>
+          <span class="chip">People</span>
+          <span class="chip">AI leverage</span>
+          <span class="chip">Systems drag</span>
         </div>
       </div>
       <div class="signpost">
         <div class="post"></div>
         <div class="planks">
-          <div class="sign here">♥ You are here</div>
-          <div class="sign">More clarity</div>
-          <div class="sign">Better health</div>
-          <div class="sign">Stronger relationships</div>
-          <div class="sign">Meaningful work</div>
-          <div class="sign">Inner peace</div>
-          <div class="sign">Make an impact</div>
+          <div class="sign here">Free Assessment</div>
+          <div class="sign">Allocation Score</div>
+          <div class="sign">Top 3 Opportunities</div>
+          <div class="sign">Blueprint</div>
+          <div class="sign">Savings Split</div>
+          <div class="sign">Partnership</div>
+          <div class="sign">Proof</div>
         </div>
       </div>
     </div>
@@ -484,14 +483,14 @@
           <a href="/about">About</a>
           <a href="/codex.html">Codex</a>
           <a href="/creators.html">Creators</a>
-          <a href="/game.html">The Game</a>
+          <a href="/assessment">Assessment</a>
           <a href="/partner">Partner With Us</a>
           <a href="/contact">Contact</a>
           <a href="/privacy">Privacy</a>
           <a href="/terms">Terms</a>
         </div>
       </div>
-      <div class="foot-line">One question. One right step. One contribution at a time. What wants to grow today? 🌱</div>
+      <div class="foot-line">Start with the Allocation Score. Then fund the highest-value next move.</div>
     </div>
   </footer>
 
@@ -503,7 +502,7 @@
       <button class="icon-btn" onclick="closeChat()">✕</button>
     </div>
     <div class="drawer-body" id="chatBody">
-      <div class="msg guide">What wants to grow today? Tell me what's alive for you, and I'll help you find your next right step.</div>
+      <div class="msg guide">The best first step is the free Full Potential Assessment. Share what you are trying to improve, and I will route you toward the Allocation Score intake.</div>
     </div>
     <form class="drawer-input" onsubmit="sendChat(event)">
       <input id="chatInput" placeholder="What's alive for you?" />

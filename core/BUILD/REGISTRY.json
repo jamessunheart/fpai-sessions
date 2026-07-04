@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-04T19:22:00Z",
+    "updated_at": "2026-07-04T16:11:23Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d170_spec-d170-align-live-outbound-su",
+            "slug": "SPEC_d170_spec-d170-align-live-outbound-su",
+            "branch": "build/SPEC_d170_spec-d170-align-live-outbound-su",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d170_spec-d170-align-live-outbound-su.md",
+            "tests_passed": true,
+            "notes": "d170 complete in working tree: homepage root now leads above-fold with Free Full Potential Assessment -> Allocation Score and removes the top-nav Game item; public bot persona no longer reads OUTREACH_VOICE.md and routes next steps to /assessment first; intake-agent repo copy and activation path use Assessment -> Blueprint framing; probe/Hermes manual first-contact paths are retired by default behind MANUAL_OUTREACH_LIVE; OUTREACH_VOICE and Bottleneck outreach templates are marked archived/retired. Added post-merge activation script to install the homepage, patch fp-guide.service SYSTEM prompt, install intake-agent.py, back up live files, compile, and restart only named services. Focused tests, py_compile, activation shell syntax, registry JSON validation, and diff hygiene passed. No live deploy, service restart, public send, secret read, push, merge, or money movement was performed in sandbox."
+        },
         {
             "id": "SPEC_d168_spec-wire-the-allocation-score-e",
             "slug": "SPEC_d168_spec-wire-the-allocation-score-e",

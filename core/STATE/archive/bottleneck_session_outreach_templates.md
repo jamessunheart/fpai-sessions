@@ -1,4 +1,8 @@
-# Bottleneck Session — Outreach Templates v1
+# Bottleneck Session — Outreach Templates v1 — RETIRED
+
+Archived by `SPEC_d170` on 2026-07-04.
+
+This was a pre-BBB manual outreach planning doc. It is retained only for historical context. The current live funnel is system-generated demand via ads/content -> `/assessment` -> Free Full Potential Assessment -> Allocation Score within 48 hours -> Blueprint ($2,500) -> Savings Split / Partnership. Do not use these templates for new sends.
 
 **5 variants for Day 3-7 of the 14-day launch.** Match template to relationship-tier. All under 80 words. WhatsApp/Telegram-optimized.
 
