@@ -28,7 +28,16 @@ class TelegramConstitutionCommandTest(unittest.IsolatedAsyncioTestCase):
         self.assertIn("constitution surface failed", reply or "")
         self.assertIn("missing", reply or "")
 
+    async def test_builds_command_returns_queue_snapshot(self) -> None:
+        helper = mock.Mock()
+        helper.render_queue_snapshot.return_value = "<b>Builds</b>\npending: <b>1</b>"
+
+        with mock.patch.object(tgbot, "_load_build_alerts", return_value=helper):
+            reply = await tgbot._handle_command("/builds", 123)
+
+        self.assertEqual(reply, "<b>Builds</b>\npending: <b>1</b>")
+        helper.render_queue_snapshot.assert_called_once()
+
 
 if __name__ == "__main__":
     unittest.main()
-

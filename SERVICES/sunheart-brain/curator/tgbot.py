@@ -130,6 +130,18 @@ def _load_constitution_surface():
     return surface
 
 
+def _load_build_alerts():
+    """Load repo-local build alert helpers without mutating sys.path."""
+    alerts_path = Path(__file__).resolve().parents[3] / "tools" / "build_loop" / "build_alerts.py"
+    spec = _ilu.spec_from_file_location("fpai_build_alerts", alerts_path)
+    alerts = _ilu.module_from_spec(spec) if spec and spec.loader else None
+    if alerts is None or spec is None or spec.loader is None:
+        raise RuntimeError("build alerts helper could not be loaded")
+    sys.modules[spec.name] = alerts
+    spec.loader.exec_module(alerts)
+    return alerts
+
+
 def _env_truthy(name: str) -> bool:
     return os.environ.get(name, "").strip().lower() in {"1", "true", "yes", "on"}
 
@@ -842,6 +854,7 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
             "  /opportunities — run today's proactive scan now (silent if nothing)\n"
             "  /capabilities [category] — what this system can do (and when it shipped)\n"
             "  /constitution — read the live repo constitution in chat\n"
+            "  /builds   — build queue, in-flight stage, and today's completed count\n"
             "  /voice [on|off]  — toggle voice replies (default ON · voice-in always replies in voice)\n"
             "  /more      — same as /signals more (expanded view: liquidity, costs, etc.)\n"
             "  /log       — recent AI activity timeline\n"
@@ -1015,6 +1028,13 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
         for message in messages:
             await tg.send(message)
         return None
+    if cmd == "builds":
+        try:
+            alerts = _load_build_alerts()
+            repo_root = Path(__file__).resolve().parents[3]
+            return alerts.render_queue_snapshot(repo_root)
+        except Exception as e:
+            return f"⚠️ builds snapshot failed: {tg._esc(str(e))}"
     if cmd == "voice":
         return _cmd_voice(rest.strip().lower())
     if cmd == "scene":

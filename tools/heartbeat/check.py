@@ -42,6 +42,8 @@ REGISTRY = [
     # 162 loops (checked over ssh in one batch)
     {"name": "162 build loop (10-min tick)", "where": "162", "cadence": 10, "grace": 12,
      "evidence": "journal:fpai-build-loop.service"},
+    {"name": "162 build lifecycle alerts (10-min tick)", "where": "162", "cadence": 10, "grace": 12,
+     "evidence": "file:/root/.config/fpai/build_alert_state.json"},
     {"name": "162 HOT_STATE synth (30-min)", "where": "162", "cadence": 30, "grace": 4,
      "evidence": "file:/root/.config/fpai/hot_memory/HOT_STATE.md"},
     {"name": "162 campaign watch (2x/day)", "where": "162", "cadence": 720, "grace": 2,

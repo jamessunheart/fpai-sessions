@@ -55,6 +55,28 @@ CONSECUTIVE_REVERTS=0
 tg()  { ( cd "$BRAIN" && "$PY" -c "import asyncio,sys;from curator.telegram import send;asyncio.run(send(sys.argv[1]))" "$1" 2>/dev/null ) || true; }
 dec() { ( cd "$BRAIN" && "$PY" -m curator.decisions "$@" 2>/dev/null ); }
 
+build_alert_event() {
+  [ "${BUILD_ALERTS:-1}" = "0" ] && return 0
+  local event="$1"
+  local reason="${2:-}"
+  local msg
+  msg=$("$PY" -B "$REPO/tools/build_loop/build_alerts.py" event \
+    --event "$event" \
+    --decision-id "${DID:-unknown}" \
+    --spec-id "${SPECID:-unknown}" \
+    --title "${QUESTION_TEXT:-${SPECID:-build}}" \
+    --reason "$reason" 2>/dev/null || true)
+  [ -n "$msg" ] && tg "$msg"
+}
+
+build_alert_flush() {
+  [ "${BUILD_ALERTS:-1}" = "0" ] && return 0
+  local msg
+  "$PY" -B "$REPO/tools/build_loop/build_alerts.py" heartbeat >/dev/null 2>&1 || true
+  msg=$("$PY" -B "$REPO/tools/build_loop/build_alerts.py" flush 2>/dev/null || true)
+  [ -n "$msg" ] && tg "$msg"
+}
+
 review_file_for_branch() {
   local branch="$1"
   printf '%s/core/BUILD/reviews/%s.md' "$REPO" "${branch//\//-}"
@@ -287,6 +309,7 @@ run_liveness_probe() {
   status=$?
   probe_status=$(tail -1 "$log_file" | "$PY" -c 'import json,sys; raw=sys.stdin.read().strip(); print((json.loads(raw).get("status") if raw else "") if raw else "")' 2>/dev/null || true)
   if [ "$status" = 0 ]; then
+    build_alert_event verified
     return 0
   fi
   python3 "$REPO/tools/build_loop/ops_log.py" liveness "liveness:fail" "$SPECID status=${probe_status:-unknown} rc=$status log=$log_file" "\$0" "$BR" "Auto-queued follow-up repair spec for $DID" 2>/dev/null || true
@@ -343,6 +366,7 @@ update_blueprint_after_merge() {
 }
 
 "$PY" "$REPO/tools/build_loop/seed_orphaned_specs.py" --repo "$REPO" || true
+build_alert_flush
 
 # ── BACKLOG MERGE PASS ─────────────────────────────────────────────────────────
 # Specs built before the auto-merge directive (2026-06-18) sit at build_status=
@@ -459,6 +483,7 @@ while IFS= read -r line; do
   LIVENESS_CHECK=$(printf '%s' "$line" | "$PY" -c 'import sys,json;print(json.load(sys.stdin).get("liveness_check") or "")')
   SPECID="SPEC_${DID}_${SLUG}"; BR="build/$SPECID"; WT="$WT_BASE/$SPECID"
   echo "── building $SPECID (decision $DID) ──"
+  build_alert_event start
 
   SPEC=$(printf '%s' "$line" | "$PY" -c '
 import sys,json
@@ -492,12 +517,14 @@ Register in core/BUILD/REGISTRY.json. Tests required. Do NOT push or merge.
     git -C "$WT" -c user.email=ember@fpai -c user.name=Ember commit -q -m "build($SPECID): server build loop"
   fi
   if ! git -C "$REPO" rev-parse --verify "$BR" >/dev/null 2>&1; then
+    build_alert_event failed "no committable branch"
     tg "⚠️ Build $SPECID produced no committable branch — held for manual review."
     python3 "$REPO/tools/build_loop/ops_log.py" build failed "$SPECID — codex produced no branch" "\$0" "" "Ember: manual review" 2>/dev/null || true
     continue
   fi
 
   # review ($0 claude -p, PROTECTED_PATHS aware)
+  build_alert_event review
   REVIEW=$(cd "$REPO" && "$PY" tools/merge/ai_review.py "$BR" 2>&1); RC=$?
 
   # Revision agent: flagged review gets up to 2 tightly-scoped same-branch repair passes
@@ -561,6 +588,7 @@ Register in core/BUILD/REGISTRY.json. Tests required. Do NOT push or merge.
         git -C "$REPO" reset --hard "$PRE_SHA" >/dev/null 2>&1
         MERGED=0
         CONSECUTIVE_REVERTS=$((CONSECUTIVE_REVERTS+1))
+        build_alert_event failed "post-merge import check failed; reverted"
         tg "🔴 AUTO-REVERTED [$DID] — post-merge import check failed. Rolled back to pre-merge state. Branch $BR held for inspection. Reply <code>reverse $DID</code> to drop."
         python3 "$REPO/tools/build_loop/ops_log.py" merge auto-reverted "$SPECID" "\$0" "$BR" "Ember: inspect $DID — import check failed post-merge" 2>/dev/null || true
         if [ "$CONSECUTIVE_REVERTS" -ge "$CONSECUTIVE_REVERTS_MAX" ]; then
@@ -573,6 +601,7 @@ Register in core/BUILD/REGISTRY.json. Tests required. Do NOT push or merge.
         update_blueprint_after_merge "$DID" "$BR"
         HEAD_SHA=$(git -C "$REPO" rev-parse HEAD)
         emit_live_artifact_proof "$SPECID" "$DID" "$BR" "$PRE_SHA" "$HEAD_SHA" "$QUESTION_TEXT" "$ANSWER_TEXT" "$PROOF_EXPECTED_TEXT"
+        build_alert_event merged
         CONSECUTIVE_REVERTS=0  # clean merge resets the revert streak
       fi
     fi
@@ -601,9 +630,6 @@ Register in core/BUILD/REGISTRY.json. Tests required. Do NOT push or merge.
     fi
 
     if [ "$RC" = 0 ]; then
-      # APPROVE + merged — brief TG confirmation (informational, not a decision ask)
-      tg "$V · AUTO-MERGED ✅ [$DID] $SPECID
-Landed in feat/headless-build (reversible: <code>reverse $DID</code>)."
       python3 "$REPO/tools/build_loop/ops_log.py" merge auto-merged "$SPECID (AI-approved)" "\$0" "$BR" "" 2>/dev/null || true
     fi
     echo "auto-merged $SPECID"
@@ -615,6 +641,7 @@ Landed in feat/headless-build (reversible: <code>reverse $DID</code>)."
     else
       _tail="⚠️ AI review still flagged this build after revision attempts — manual review required before merge."; _ev=review-held; _nx="Ember/James: review flagged $DID"
     fi
+    build_alert_event failed "$_ev"
     tg "$_tail · [$DID] $SPECID (never main)"
     python3 "$REPO/tools/build_loop/ops_log.py" build "$_ev" "$SPECID ($ST)" "\$0" "$BR" "$_nx" 2>/dev/null || true
     echo "surfaced $SPECID ($ST · awaiting)"

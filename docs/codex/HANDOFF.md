@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-07-04 · SPEC_d155_spec-d155-build-lifecycle-alerts · branch `build/SPEC_d155_spec-d155-build-lifecycle-alerts`
+
+- **Status:** done in working tree / awaiting independent review + merge
+- **Files changed:** `tools/build_loop/build_alerts.py`; `tools/build_loop/test_build_alerts.py`; `tools/build_loop/server_build_loop.sh`; `SERVICES/sunheart-brain/curator/tgbot.py`; `SERVICES/sunheart-brain/curator/test_tgbot_constitution.py`; `tools/heartbeat/check.py`; `core/BUILD/specs/SPEC_d155_spec-d155-build-lifecycle-alerts.md`; `core/BUILD/results/SPEC_d155_spec-d155-build-lifecycle-alerts.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added build lifecycle alerts for the server build loop: START with learned ETA, REVIEW, MERGED with actual duration and one-line title, FAILED with reason, and VERIFIED-LIVE on liveness-probe pass. The helper persists durations to `~/.config/fpai/build_stats.json`, computes median/p90 ETAs from the last 20 entries, batches bursts and CR quiet-hours alerts, honors `BUILD_ALERTS=0`, and touches a heartbeat state file each loop tick. Added `/builds` to the private Telegram bot for pending queue, in-flight stage, completed-today count, and ETA.
+- **Tests:** `python3 -B -m unittest tools.build_loop.test_build_alerts tools.build_loop.test_build_state SERVICES.sunheart-brain.curator.test_tgbot_constitution` (13 OK); `bash -n tools/build_loop/server_build_loop.sh tools/build_loop/build_orchestrator.sh tools/build_loop/queue_status.sh tools/build_loop/notify_telegram.sh`; `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/build_alerts.py tools/build_loop/test_build_alerts.py tools/build_loop/build_state.py tools/heartbeat/check.py SERVICES/sunheart-brain/curator/tgbot.py SERVICES/sunheart-brain/curator/test_tgbot_constitution.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d155-registry.json`; CLI smoke for START, MERGED, and `/builds` snapshot; `git diff --check`
+- **Risks:** Live Telegram delivery and a real START→MERGED→VERIFIED chain were not run in this sandbox. VERIFIED-LIVE is tied to the existing post-merge liveness probe pass, while the separate d150 post-merge reality timer remains its own daily check. Duration stats need real live builds before the ≥5-entry proof is satisfied.
+- **Rollback:** `BUILD_ALERTS=0` disables alert sending/state updates immediately; reverting this branch removes helper, loop calls, `/builds`, and the heartbeat registry row.
+- **Intent solved:** James no longer has to ask whether the builder started or finished; the loop pushes stage proof to the one chat.
+- **Downstream intent unlocked:** build-loop autonomy becomes easier to trust from phone/TG because status, ETA, and queue state are visible without terminal polling.
+- **Questions for Ember/James:** after merge on server 162, let one real build run and confirm the TG chain; after five real completed/failed builds, confirm `/root/.config/fpai/build_stats.json` has at least five entries and `/builds` reports the learned ETA.
+
 ### 2026-07-04 · SPEC_d154_spec-d154-campaign-watch-ads-aut · branch `build/SPEC_d154_spec-d154-campaign-watch-ads-aut`
 
 - **Status:** done in working tree / awaiting independent review + merge
