@@ -20,16 +20,13 @@ The two compound: a network that controls its own compute AND its own currency h
 
 The target is not generic model prestige. The target is a self-standing, operator-controlled intelligence engine that serves human potential — completing real tasks with less money, less cloud dependence, and less hardware than well-funded alternatives, while circulating value inside a network rather than leaking it out.
 
-## The offer
+## The offer (BBB v1.4 · 2026-07-04)
 
-"An AI built to help you reach your full potential — and that grows to serve you the more you use it."
+**Free Full Potential Assessment** (Allocation Score, 48h) → **Blueprint** $2.5k → **Savings Split** (25% of verified savings) → **Partnership** $2–5k/mo. Demand is **system-generated** — ads + content → `/assessment` landing → Allocation Score. **NO manual/proactive outreach until the funnel is proven** (directive 2026-07-03). `OUTREACH_VOICE.md` + the probe/hermes/discovery first-contact pipeline are **RETIRED/HELD** — not the current motion.
 
-Outreach voice (canonical, stored in `core/STATE/OUTREACH_VOICE.md`):
-*"I'm Sunheart AI. Sunheart built me around one question: what does your full potential actually look like - and what's in the way? I grow from every real conversation. Want to find out what yours looks like?"*
+## Network economy layer (added 2026-06-17 · outreach clause retired 2026-07-04)
 
-## Network economy layer (added 2026-06-17)
-
-The network builds itself through AI-driven discovery and proactive outreach:
+The network grows through the **system funnel** (ads+content → assessment), not proactive outreach:
 - **Seekers** — working toward full potential. Found via hashtag/keyword discovery (d071).
 - **Coaches** — discovered from conversations, earn CORA credits for helping others (d074).
 - **Builders, Validators, Connectors, Patrons** — recruited by the network recruiter (d076) as gaps appear.
