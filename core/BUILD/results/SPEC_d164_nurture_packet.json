@@ -1,0 +1,303 @@
+{
+  "ledger_rows": [
+    {
+      "asset_id": "email-5ef7fb935e",
+      "created_at": "2026-07-04T15:37:28Z",
+      "generation": 0,
+      "genome": {
+        "audience": "assessment_lead",
+        "channel": "email",
+        "format": "nurture_email",
+        "frame": "blueprint",
+        "hook": "Your time bottleneck is the first useful signal"
+      },
+      "lead_id": "d164-proof-lead",
+      "outcomes": {
+        "audits": 0,
+        "clicks": 0,
+        "deals": 0,
+        "impressions": 0,
+        "leads": 0,
+        "value_usd": 0
+      },
+      "parent_id": "assessment-savings",
+      "schema": "fpai.growth.asset.v1",
+      "status": "alive",
+      "type": "email"
+    },
+    {
+      "asset_id": "email-717e34ac46",
+      "created_at": "2026-07-04T15:37:28Z",
+      "generation": 0,
+      "genome": {
+        "audience": "assessment_lead",
+        "channel": "email",
+        "format": "nurture_email",
+        "frame": "blueprint",
+        "hook": "The Monday move before any purchase"
+      },
+      "lead_id": "d164-proof-lead",
+      "outcomes": {
+        "audits": 0,
+        "clicks": 0,
+        "deals": 0,
+        "impressions": 0,
+        "leads": 0,
+        "value_usd": 0
+      },
+      "parent_id": "assessment-savings",
+      "schema": "fpai.growth.asset.v1",
+      "status": "alive",
+      "type": "email"
+    },
+    {
+      "asset_id": "email-dcd9a2bd36",
+      "created_at": "2026-07-04T15:37:28Z",
+      "generation": 0,
+      "genome": {
+        "audience": "assessment_lead",
+        "channel": "email",
+        "format": "nurture_email",
+        "frame": "blueprint",
+        "hook": "What better allocation would change this month"
+      },
+      "lead_id": "d164-proof-lead",
+      "outcomes": {
+        "audits": 0,
+        "clicks": 0,
+        "deals": 0,
+        "impressions": 0,
+        "leads": 0,
+        "value_usd": 0
+      },
+      "parent_id": "assessment-savings",
+      "schema": "fpai.growth.asset.v1",
+      "status": "alive",
+      "type": "email"
+    },
+    {
+      "asset_id": "email-a5d028cc9b",
+      "created_at": "2026-07-04T15:37:28Z",
+      "generation": 0,
+      "genome": {
+        "audience": "assessment_lead",
+        "channel": "email",
+        "format": "nurture_email",
+        "frame": "blueprint",
+        "hook": "How Blueprint automation build would work if it is the right fit"
+      },
+      "lead_id": "d164-proof-lead",
+      "outcomes": {
+        "audits": 0,
+        "clicks": 0,
+        "deals": 0,
+        "impressions": 0,
+        "leads": 0,
+        "value_usd": 0
+      },
+      "parent_id": "assessment-savings",
+      "schema": "fpai.growth.asset.v1",
+      "status": "alive",
+      "type": "email"
+    },
+    {
+      "asset_id": "email-851c753301",
+      "created_at": "2026-07-04T15:37:28Z",
+      "generation": 0,
+      "genome": {
+        "audience": "assessment_lead",
+        "channel": "email",
+        "format": "nurture_email",
+        "frame": "blueprint",
+        "hook": "Keep the assessment useful either way"
+      },
+      "lead_id": "d164-proof-lead",
+      "outcomes": {
+        "audits": 0,
+        "clicks": 0,
+        "deals": 0,
+        "impressions": 0,
+        "leads": 0,
+        "value_usd": 0
+      },
+      "parent_id": "assessment-savings",
+      "schema": "fpai.growth.asset.v1",
+      "status": "alive",
+      "type": "email"
+    }
+  ],
+  "n8n": {
+    "lead": {
+      "company": "Proof Operations Studio",
+      "email": "owner@example.com",
+      "lead_id": "d164-proof-lead",
+      "listmonk_list": "fpai-blueprint-nurture",
+      "name": "Proof Owner",
+      "offer": "Blueprint automation build",
+      "route": "blueprint",
+      "routed_at": "2026-07-04T15:37:28Z",
+      "scores": {
+        "ai": 71,
+        "attention": 56,
+        "capital": 68,
+        "knowledge": 52,
+        "people": 63,
+        "time": 42
+      },
+      "source_asset_id": "assessment-savings",
+      "utm_campaign": "assessment-savings",
+      "weakest_dimension": "time"
+    },
+    "mode": "dry_run_payload",
+    "steps": [
+      {
+        "asset_id": "email-5ef7fb935e",
+        "kind": "listmonk_campaign",
+        "listmonk": {
+          "campaign": {
+            "body": "Your assessment routed to Blueprint automation build because time scored lowest. Start by naming the one recurring decision or handoff that keeps pulling resources away from higher-value work.",
+            "name": "email-5ef7fb935e",
+            "send_after_days": 0,
+            "subject": "Your time bottleneck is the first useful signal"
+          },
+          "list": "fpai-blueprint-nurture",
+          "subscriber": {
+            "attribs": {
+              "company": "Proof Operations Studio",
+              "lead_id": "d164-proof-lead",
+              "route": "blueprint",
+              "source_asset_id": "assessment-savings",
+              "weakest_dimension": "time"
+            },
+            "email": "owner@example.com",
+            "name": "Proof Owner"
+          }
+        },
+        "send_after_days": 0
+      },
+      {
+        "asset_id": "email-717e34ac46",
+        "kind": "listmonk_campaign",
+        "listmonk": {
+          "campaign": {
+            "body": "Before buying anything, pick one repeated task and write down who owns it, how often it happens, and what proof would show it improved. That is enough to make the next allocation clearer.",
+            "name": "email-717e34ac46",
+            "send_after_days": 2,
+            "subject": "The Monday move before any purchase"
+          },
+          "list": "fpai-blueprint-nurture",
+          "subscriber": {
+            "attribs": {
+              "company": "Proof Operations Studio",
+              "lead_id": "d164-proof-lead",
+              "route": "blueprint",
+              "source_asset_id": "assessment-savings",
+              "weakest_dimension": "time"
+            },
+            "email": "owner@example.com",
+            "name": "Proof Owner"
+          }
+        },
+        "send_after_days": 2
+      },
+      {
+        "asset_id": "email-dcd9a2bd36",
+        "kind": "listmonk_campaign",
+        "listmonk": {
+          "campaign": {
+            "body": "The goal is not more tools. The goal is a resource loop where capital, time, attention, people, AI, and knowledge move toward future capability and prove what changed.",
+            "name": "email-dcd9a2bd36",
+            "send_after_days": 5,
+            "subject": "What better allocation would change this month"
+          },
+          "list": "fpai-blueprint-nurture",
+          "subscriber": {
+            "attribs": {
+              "company": "Proof Operations Studio",
+              "lead_id": "d164-proof-lead",
+              "route": "blueprint",
+              "source_asset_id": "assessment-savings",
+              "weakest_dimension": "time"
+            },
+            "email": "owner@example.com",
+            "name": "Proof Owner"
+          }
+        },
+        "send_after_days": 5
+      },
+      {
+        "asset_id": "email-a5d028cc9b",
+        "kind": "listmonk_campaign",
+        "listmonk": {
+          "campaign": {
+            "body": "If we work together, Blueprint automation build starts from your assessment data and turns the top opportunity into a scoped implementation. No scarcity, no pressure, just the next useful proof.",
+            "name": "email-a5d028cc9b",
+            "send_after_days": 9,
+            "subject": "How Blueprint automation build would work if it is the right fit"
+          },
+          "list": "fpai-blueprint-nurture",
+          "subscriber": {
+            "attribs": {
+              "company": "Proof Operations Studio",
+              "lead_id": "d164-proof-lead",
+              "route": "blueprint",
+              "source_asset_id": "assessment-savings",
+              "weakest_dimension": "time"
+            },
+            "email": "owner@example.com",
+            "name": "Proof Owner"
+          }
+        },
+        "send_after_days": 9
+      },
+      {
+        "asset_id": "email-851c753301",
+        "kind": "listmonk_campaign",
+        "listmonk": {
+          "campaign": {
+            "body": "Whether or not you continue, keep the score as a map. Re-audit after one real change and compare the weak dimension against today.",
+            "name": "email-851c753301",
+            "send_after_days": 14,
+            "subject": "Keep the assessment useful either way"
+          },
+          "list": "fpai-blueprint-nurture",
+          "subscriber": {
+            "attribs": {
+              "company": "Proof Operations Studio",
+              "lead_id": "d164-proof-lead",
+              "route": "blueprint",
+              "source_asset_id": "assessment-savings",
+              "weakest_dimension": "time"
+            },
+            "email": "owner@example.com",
+            "name": "Proof Owner"
+          }
+        },
+        "send_after_days": 14
+      }
+    ],
+    "workflow": "fpai-assessment-nurture-v1"
+  },
+  "route": {
+    "company": "Proof Operations Studio",
+    "email": "owner@example.com",
+    "lead_id": "d164-proof-lead",
+    "listmonk_list": "fpai-blueprint-nurture",
+    "name": "Proof Owner",
+    "offer": "Blueprint automation build",
+    "route": "blueprint",
+    "routed_at": "2026-07-04T15:37:28Z",
+    "scores": {
+      "ai": 71,
+      "attention": 56,
+      "capital": 68,
+      "knowledge": 52,
+      "people": 63,
+      "time": 42
+    },
+    "source_asset_id": "assessment-savings",
+    "utm_campaign": "assessment-savings",
+    "weakest_dimension": "time"
+  },
+  "schema": "fpai.growth.nurture_packet.v1"
+}
