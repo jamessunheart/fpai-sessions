@@ -38,28 +38,49 @@ SCHEMA = {
     "properties": {
         "scores": {"type": "object", "properties": {d: {"type": "integer"} for d in DIMENSIONS},
                    "required": DIMENSIONS, "additionalProperties": False},
+        "archetype": {"type": "string"},          # memorable 2-4 word allocation signature
+        "archetype_line": {"type": "string"},     # one warm sentence explaining it
+        "surprise": {"type": "string"},           # the counter-intuitive insight (the "oh wow")
         "opportunities": {"type": "array", "items": {"type": "object", "properties": {
             "title": {"type": "string"}, "dimension": {"type": "string"},
             "why": {"type": "string"}, "est_annual_value": {"type": "string"}},
             "required": ["title", "dimension", "why", "est_annual_value"], "additionalProperties": False}},
+        "monday_move": {"type": "string"},        # one free thing they can do Monday, no purchase
+        "share_line": {"type": "string"},         # a punchy one-liner they'd actually share
     },
-    "required": ["scores", "opportunities"], "additionalProperties": False,
+    "required": ["scores", "archetype", "archetype_line", "surprise", "opportunities", "monday_move", "share_line"],
+    "additionalProperties": False,
 }
 
 PROMPT = """You are the Allocation Intelligence engine behind fullpotential.com/assessment.
+Your job is to make this the best 15 minutes a business owner spends this month — sharp,
+warm, genuinely useful, and a little delightful. They should leave feeling SEEN and armed,
+whether or not they ever buy.
 
-Given a business's intake, score how well it allocates each scarce resource (0-100,
-where 100 = every unit already flows to its highest-value use, 0 = severe misallocation).
-Be honest and specific — a real leak scores LOW (that's the value we find). Base scores
-on the intake; where the intake is thin, infer conservatively from the business type and
-note the assumption in the opportunity's `why`.
+Given the intake, score how well the business allocates each scarce resource (0-100, where
+100 = every unit already flows to its highest-value use, 0 = severe misallocation). Be
+honest and specific — a real leak scores LOW (that's the value we find). Where the intake
+is thin, infer conservatively from the business type and note the assumption.
 
 Dimensions: capital, time, attention, people, ai, knowledge.
 
-Then give the THREE highest-value opportunities — each tied to a weak dimension, with a
-one-line why and an estimated annual $ value (a range is fine; say "needs data" if truly
-unknowable from the intake). Prefer concrete finds (SaaS overlap, manual work AI should do,
-under-priced capacity, AI spend not earning).
+Then produce a GREAT deliverable:
+- `archetype`: a memorable 2-4 word "allocation signature" naming their pattern (e.g.
+  "Time-Trapped Operator", "Cash-Rich, Attention-Poor", "The Untapped Engine"). Sticky,
+  a little fun, true — something they'd repeat to a friend.
+- `archetype_line`: one warm sentence explaining the archetype in plain language.
+- `surprise`: the one counter-intuitive insight — "most owners think their bottleneck is X;
+  yours is actually Y." The "oh, huh" moment. Only if genuinely true from the intake.
+- three `opportunities` — each tied to a weak dimension, one-line why, estimated annual $
+  value (range ok; "needs data" if truly unknowable). Prefer concrete finds (SaaS overlap,
+  manual work AI should do, under-priced capacity, AI spend not earning).
+- `monday_move`: ONE thing they can do FOR FREE Monday morning, from this assessment alone,
+  that delivers real value with no purchase. Generosity first.
+- `share_line`: a punchy first-person one-liner they'd actually text a friend (e.g.
+  "Just found $18k/yr leaking out of my business in 15 min — free at fullpotential.com/assessment").
+
+Tone: an unusually sharp advisor who genuinely wants them to win. Concrete over generic.
+Warm, not corporate. No hype, no scarcity, no pressure — the value is the pull.
 
 INTAKE:
 {intake}
@@ -90,36 +111,48 @@ def compute(scores: dict) -> tuple[int, str]:
     return total, weakest
 
 
-def render(name: str, company: str, scores: dict, total: int, weakest: str, opps: list) -> str:
+def render(name: str, company: str, scores: dict, total: int, weakest: str,
+           opps: list, extras: dict = None) -> str:
+    extras = extras or {}
     bars = "\n".join(
         f"| {d.capitalize():10} | {scores[d]:3} | {'█' * (scores[d] // 5)}{'░' * (20 - scores[d] // 5)} |"
         for d in DIMENSIONS)
     opp_md = "\n".join(
         f"{i+1}. **{o['title']}** _(weak: {o['dimension']})_ — {o['why']} · **{o['est_annual_value']}**"
         for i, o in enumerate(opps[:3]))
+    archetype = extras.get("archetype", "")
+    arch_block = (f"\n## Your allocation signature: **{archetype}**\n\n"
+                  f"_{extras.get('archetype_line', '')}_\n") if archetype else ""
+    surprise = extras.get("surprise", "")
+    surprise_block = f"\n> 💡 **The thing most owners miss:** {surprise}\n" if surprise else ""
+    monday = extras.get("monday_move", "")
+    monday_block = (f"\n## Your free Monday move\n\n**{monday}**\n\n"
+                    f"_No purchase, no catch — do this Monday and you've already gotten value from these 15 minutes._\n") if monday else ""
+    share = extras.get("share_line", "")
+    share_block = f"\n---\n\n*Found this useful? \"{share}\"*\n" if share else ""
     return f"""# Your Full Potential Assessment — {company or name}
-
+{arch_block}
 ## Allocation Score: **{total}/100**
 
 | Resource   | Score | |
 |------------|-----|--------------------|
 {bars}
 
-*The Allocation Score measures how much of each scarce resource already flows to its
-highest-value use. Your weakest dimension — **{weakest}** — is where the most capability
-is currently trapped.*
-
+*This measures how much of each scarce resource already flows to its highest-value use.
+Your weakest dimension — **{weakest}** — is where the most capability is currently trapped.*
+{surprise_block}
 ## Your 3 highest-value opportunities
 
 {opp_md}
-
-## Recommended next step
+{monday_block}
+## If you want the top one fixed
 
 Your weakest dimension routes to: **{ROUTE[weakest]}**
 
 _This assessment is yours to keep either way. If you'd like us to implement the top
-opportunities, that's the next conversation — you pay out of the value we find._
-
+opportunities, that's the next conversation — and you pay out of the value we find, not
+out of pocket. If we find nothing, you pay nothing._
+{share_block}
 ---
 *Powered by FPOS — the Allocation Intelligence Operating System · fullpotential.com*
 """
@@ -140,7 +173,8 @@ def score_one(intake_text: str, name: str = "", company: str = "") -> str:
     data = run_claude(prompt)
     scores = {d: int(data["scores"].get(d, 50)) for d in DIMENSIONS}
     total, weakest = compute(scores)
-    return render(name, company, scores, total, weakest, data.get("opportunities", []))
+    extras = {k: data.get(k, "") for k in ("archetype", "archetype_line", "surprise", "monday_move", "share_line")}
+    return render(name, company, scores, total, weakest, data.get("opportunities", []), extras)
 
 
 def main():
