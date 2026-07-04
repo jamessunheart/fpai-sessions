@@ -1,0 +1,12 @@
+# SPEC_d179_bug-005-wire-build-orphan-reape Result
+
+- Status: done in working tree / awaiting review + merge
+- Branch: `build/SPEC_d179_bug-005-wire-build-orphan-reape`
+- Files changed: `tools/build_loop/server_build_loop.sh`; `tools/build_loop/build_orphan_reaper.py`; `tools/build_loop/test_build_orphan_reaper.py`; `core/BUILD/specs/SPEC_d179_bug-005-wire-build-orphan-reape.md`; `core/BUILD/results/SPEC_d179_bug-005-wire-build-orphan-reape.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- Summary: Wired the build-orphan reaper into the server build loop with the explicit `--older-minutes 30` threshold before pending-build selection. Tightened the reaper age predicate to use `COALESCE(updated_at, created_at, NOW())`, so recently touched rows are not reset early and stale rows are eligible after the expected age window. Updated the focused test to prove the loop invokes `build_orphan_reaper.py --older-minutes 30` before `dec pending-builds`.
+- Tests: `python3 -B -m unittest tools.build_loop.test_build_orphan_reaper` (5 OK); `python3 -B -m unittest tools.build_loop.test_build_orphan_reaper tools.build_loop.test_parallel_build_loop tools.build_loop.test_build_state` (13 OK); `bash -n tools/build_loop/server_build_loop.sh`; `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/build_orphan_reaper.py tools/build_loop/test_build_orphan_reaper.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d179-registry.json`
+- Proof: Static/unit proof confirms the next loop tick runs the reaper before selecting pending builds, with `BRAIN_INDEX_DB_URL` inherited from the already-sourced env and the requested 30-minute orphan threshold.
+- Risks: Live proof against server-162 Postgres was not run in this sandbox. The loop intentionally suppresses reaper stderr and continues if the DB or psycopg is unavailable, preserving existing loop behavior.
+- Rollback: Remove the `build_orphan_reaper.py --older-minutes 30` invocation from `tools/build_loop/server_build_loop.sh` and revert the age predicate/test changes.
+- Intent solved: build-orphan cleanup is no longer human-only; the loop automatically resets or blocks stale `spec_written=true + build_status=none + no branch` decisions.
+- Downstream intent unlocked: server build queue can recover from orphaned pre-branch specs on the next timer tick instead of silently stalling decisions past 40 minutes.

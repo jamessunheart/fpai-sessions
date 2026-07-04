@@ -83,6 +83,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Questions for Ember/James: …
 ```
 
+### 2026-07-04 · SPEC_d179_bug-005-wire-build-orphan-reape · branch `build/SPEC_d179_bug-005-wire-build-orphan-reape`
+
+- **Status:** done in working tree / awaiting review + merge
+- **Files changed:** `tools/build_loop/server_build_loop.sh`; `tools/build_loop/build_orphan_reaper.py`; `tools/build_loop/test_build_orphan_reaper.py`; `core/BUILD/specs/SPEC_d179_bug-005-wire-build-orphan-reape.md`; `core/BUILD/results/SPEC_d179_bug-005-wire-build-orphan-reape.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Wired the build-orphan reaper into the server build loop with the explicit `--older-minutes 30` threshold before pending-build selection. Tightened orphan age matching to `COALESCE(updated_at, created_at, NOW())`, so recently touched rows are not reset early while stale no-branch decisions are eligible on the next loop tick. Added focused proof that `server_build_loop.sh` invokes `build_orphan_reaper.py --older-minutes 30` before `dec pending-builds`.
+- **Tests:** `python3 -B -m unittest tools.build_loop.test_build_orphan_reaper` (5 OK); `python3 -B -m unittest tools.build_loop.test_build_orphan_reaper tools.build_loop.test_parallel_build_loop tools.build_loop.test_build_state` (13 OK); `bash -n tools/build_loop/server_build_loop.sh`; `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/build_orphan_reaper.py tools/build_loop/test_build_orphan_reaper.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d179-registry.json`
+- **Proof:** Unit/static proof confirms each loop run reaches the reaper before pending-build selection with the 30-minute threshold and inherited `BRAIN_INDEX_DB_URL` env.
+- **Risks:** Live server-162 DB proof was not run in this sandbox. The loop keeps the existing fail-open posture for the reaper (`2>/dev/null || true`) so DB or psycopg failure will not halt the build loop.
+- **Rollback:** Remove the reaper invocation line from `tools/build_loop/server_build_loop.sh` and revert the age predicate/test changes.
+- **Intent solved:** orphaned `spec_written=true + build_status=none + no branch` decisions now get automatically reset or blocked by the loop instead of requiring a human reaper run.
+- **Downstream intent unlocked:** the autonomous build queue can recover stalled pre-branch decisions on the next timer tick, preventing silent >40-minute queue dead spots.
+- **Questions for Ember/James:** after merge on server 162, observe one timer tick with a deliberately orphaned test row or existing stale row and confirm it resets below retry limit or marks blocked at retry limit.
+
 ### 2026-07-04 · SPEC_d149_spec-life-lens-assessment-wire-t · branch `build/SPEC_d149_spec-life-lens-assessment-wire-t`
 
 - **Status:** done in working tree / awaiting independent review + merge + live web/email proof

@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-04T17:32:00Z",
+    "updated_at": "2026-07-04T18:05:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d179_bug-005-wire-build-orphan-reape",
+            "slug": "SPEC_d179_bug-005-wire-build-orphan-reape",
+            "branch": "build/SPEC_d179_bug-005-wire-build-orphan-reape",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d179_bug-005-wire-build-orphan-reape.md",
+            "tests_passed": true,
+            "notes": "d179 complete in working tree: server_build_loop now invokes build_orphan_reaper.py --older-minutes 30 before pending-build selection, and the reaper ages orphaned decisions by COALESCE(updated_at, created_at, NOW()) before resetting or blocking. Focused reaper tests, broader build-loop regression, shell syntax, py_compile, and registry JSON validation passed. Live server-162 DB proof awaits post-merge timer observation."
+        },
         {
             "id": "SPEC_d149_spec-life-lens-assessment-wire-t",
             "slug": "SPEC_d149_spec-life-lens-assessment-wire-t",

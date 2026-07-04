@@ -129,7 +129,7 @@ class BuildOrphanReaperTest(unittest.TestCase):
     def test_server_loop_runs_reaper_before_pending_builds(self) -> None:
         text = (ROOT / "tools" / "build_loop" / "server_build_loop.sh").read_text(encoding="utf-8")
 
-        self.assertIn("build_orphan_reaper.py", text)
+        self.assertIn("build_orphan_reaper.py\" --older-minutes 30", text)
         self.assertLess(text.index("build_orphan_reaper.py"), text.index("PENDING=$(dec pending-builds"))
 
 
