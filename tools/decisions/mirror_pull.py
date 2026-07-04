@@ -253,6 +253,9 @@ STATE_DOCS = [
     ("core/STATE/BUG_LOG.md",             "02_CONTEXT/Academy/04 — BUG LOG (evidence trail).md"),
     ("core/STATE/LEARNING_METRICS.md",    "02_CONTEXT/Academy/05 — LEARNING METRICS.md"),
     ("core/STATE/BRAIN_VERSION",          "02_CONTEXT/Academy/BRAIN VERSION.md"),
+    ("core/STATE/ACADEMY/CURRICULUM.md",  "02_CONTEXT/Academy/CURRICULUM — 176 lessons.md"),
+    ("core/STATE/ACADEMY/PROTOCOLS.md",   "02_CONTEXT/Academy/PROTOCOLS.md"),
+    ("core/STATE/ACADEMY/PRUNE_MANIFEST.md","02_CONTEXT/Academy/PRUNE_MANIFEST.md"),
 ]
 
 
