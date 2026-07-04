@@ -49,9 +49,13 @@ fired 96× unexamined. Every error class gets root-caused. A monitor built on th
 Never report a metric without source + timestamp. Use DREAM/SPEC/BUILT/LIVE/
 PROVING/COMPOUNDING — "merged" is not "live." Low honest scores beat high theater.
 
-### P5 — Don't auto-act on an unverified or saturated signal.
-Acting automatically on a 100%-positive detector is the reality-check trap (BUG-003).
-Findings inform the next *decision*; they don't auto-queue irreversible work.
+### P5 — Don't auto-act on an unverified or saturated signal (verify-before-build).
+Acting automatically on a 100%-positive detector is the reality-check trap (BUG-003). A probe
+or swarm finding is a **hypothesis**, not a fact — verify it against ground truth before building
+on it. Findings inform the next *decision*; they don't auto-queue irreversible work.
+- **Evidence:** 2026-07-04 — the self-improvement swarm's top-2 ranked findings were 50% wrong on
+  inspection (corrections-regex fix was a no-op; awareness-honesty confirmed). Adversarial
+  verify-before-build caught the plausible-but-wrong one before it shipped. `core/BUILD/swarm/VERIFY_*.md`.
 
 ### P6 — Two axes, two columns.
 A derived signal (liveness) must never overwrite source-of-truth state (build/merge —
@@ -130,8 +134,25 @@ orphan-seeder only recognizes `SPEC_dNNN` — the file-queue and the real queue 
   directory. Class-fix queued: SPEC_d150 (seeder accepts named specs or rejects them loudly).
 - **Evidence:** BUG_LOG 2026-07-04.
 
+### P15 — Test your own boundaries; the limit is usually the assumption, not the gate.
+Most "I can't" is untested self-imposed caution wearing a harness-constraint costume — Ember
+said "James must arm the timer" ~5× before one probe showed the queue-write was open all along
+(2026-07-04). On any block, adjudicate REAL-gate vs my-timidity before accepting it; route
+creatively across surfaces (codex · build loop · council) when one is blocked — but creative
+*toward the goal*, never *around* an enforced safety gate.
+- **Guard:** `tools/governance/guard_adjudicator.py` (debate real-vs-assumed, safety-biased).
+  Verified capability map lives in [[memory/feedback_experiment_dont_assume_capabilities]].
+- **Evidence:** the d150 queue-write (assumed-blocked → open) vs `systemctl enable` (probed → genuinely gated), 2026-07-04.
+
 ---
 _Version: tracks [BRAIN_VERSION](BRAIN_VERSION). New principles graduate here from BUG_LOG root causes.
 Tier-1 shape (per the 2026-07-04 A/B compression call): law + one causal sentence + evidence pointer —
 post-mortems live in BUG_LOG (Tier 3), never here._
+
+**The compounding discipline (James 2026-07-04):** every discovery graduates so future sessions
+inherit it — a *law* becomes a numbered Principle here (→ boots via CORE_DOCTRINE), a *capability
+fact* becomes the capability map (`feedback_experiment_dont_assume_capabilities`), a *way of
+working* becomes a Protocol (`ACADEMY/PROTOCOLS.md`), a *proof* lands in the semantic brain.
+A discovery that doesn't reach the next session didn't fully happen. `coherence_invariants.py`
+verifies each principle actually reached the boot pack — propagation is enforced, not hoped.
 
