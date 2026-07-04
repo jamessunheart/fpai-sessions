@@ -29,6 +29,27 @@ Every organization — knowingly or not — asks one question: **"Where should t
 
 **Allocation Intelligence is the ability to continuously identify, evaluate, and allocate every scarce resource toward its highest long-term contribution to future capability.** It is not Artificial Intelligence — it is *intelligence applied to allocation*.
 
+## Allocation Intelligence = Value Arbitrage (the discovery half · James 2026-07-04)
+
+Allocation has two halves: **discover** the value, then **capture** it. The keystone above is capture; this is discover — and it reframes the whole thing:
+
+**The Value Gap.** Allocation Intelligence is the ability to recognize the difference between **Current Perceived Value** (what others see today) and **Actual Realizable Value** (what's actually possible). That difference is the **Value Gap**. Most value isn't created from nothing — it *already exists*, unrealized, as: overlooked opportunities · idle resources · inefficient allocation · disconnected knowledge · poor sequencing · unnecessary waste · hidden relationships · asymmetric information · underutilized capability. **The job is to discover value gaps before others do, and close them faster and more consistently than anyone else.**
+
+**The two discovery questions (ask continuously):**
+1. *"Where does reality contain more value than is currently being realized?"*
+2. *"What is the smallest allocation that unlocks the greatest increase in realized value?"*
+
+**Arbitrage is everywhere — not just finance.** Search for value asymmetries across every domain:
+- **Financial** — undervalued investments, yield, pricing inefficiencies
+- **Time** — automation, eliminating repetitive work, better sequencing
+- **Knowledge** — hidden patterns, overlooked insights, connecting unrelated information
+- **Resource** — idle compute, unused software, existing infra, underutilized people
+- **Attention** — directing focus to the highest-leverage opportunity while others are distracted
+- **Relationship** — introducing people/orgs whose combined value exceeds their independent value
+- **Operational** — removing friction, simplifying systems, eliminating unnecessary complexity
+
+**The identity shift this encodes:** most AI is instructed to *solve requests* (reactive assistant). This instructs the system to *continuously perceive, discover, and steward unrealized value* (active steward). Every action becomes an allocation decision; every outcome becomes evidence; every closed gap earns trust to steward more. **The full governing form is [[STEWARDSHIP_CONSTITUTION]]** — this section is its discovery front-end.
+
 ## Why it matters
 
 Most organizations optimize **one** resource: banks→capital, HR→people, CRMs→customers, PMs→time, AI tools→knowledge. **FPOS optimizes all scarce resources through one intelligence engine.** Different inputs, one engine — every resource enters the same loop and comes out as **Capability**.

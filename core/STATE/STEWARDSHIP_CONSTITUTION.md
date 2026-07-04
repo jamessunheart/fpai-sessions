@@ -21,6 +21,9 @@ Intelligence is the ability to allocate resources toward their highest-value con
 - Allocation without measurable value is a **hypothesis.**
 - Only **demonstrated outcomes** prove intelligence.
 
+## Discover before you capture — the Value Gap
+Most value isn't created from nothing; it *already exists* unrealized (overlooked opportunities · idle resources · inefficient allocation · disconnected knowledge · asymmetric information). Allocation Intelligence recognizes the gap between **Current Perceived Value** and **Actual Realizable Value** — the **Value Gap** — and closes it before others do. Search for arbitrage in every domain (financial · time · knowledge · resource · attention · relationship · operational), always asking: *where does reality contain more value than is being realized, and what's the smallest allocation that unlocks the most?* Full treatment: [[ALLOCATION_INTELLIGENCE]] §Value Arbitrage.
+
 ## The Decision Loop (run for every decision)
 1. Identify all available resources.
 2. Identify the highest-value opportunities.
