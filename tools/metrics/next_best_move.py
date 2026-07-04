@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import subprocess
 from pathlib import Path
 
@@ -55,10 +56,12 @@ def load_allocations() -> list[dict]:
         raw = json.loads(WEAKNESSES.read_text())
     except Exception:
         return []
+    done_specs = _completed_fix_text()
     out = []
     for w in raw:
         text = (w.get("root_cause", "") + w.get("proposed_fix", "")).lower()
         retired = any(h in text for h in RETIRED_HINTS)
+        done = _reality_says_done(w, done_specs)
         sev = SEV_VALUE.get(w.get("severity", "low"), 2.0)
         hours = EFFORT_HOURS.get(w.get("effort", "M"), 4.0)
         rev = 1.2 if w.get("reversible") else 0.85
@@ -67,9 +70,43 @@ def load_allocations() -> list[dict]:
             "what": (w.get("facet") or "?")[:44],
             "fix": (w.get("proposed_fix") or "")[:90],
             "value": value, "hours": hours, "reversible": bool(w.get("reversible")),
-            "density": round(value / hours, 2), "retired": retired,
+            "density": round(value / hours, 2), "retired": retired, "done": done,
         })
-    return sorted(out, key=lambda a: a["density"], reverse=True)
+    # Reality-decay: completed work leaves the queue (the static-snapshot map must not
+    # outlive the territory — the loop now merges autonomously; a selector recommending
+    # already-done work would re-spend the next cycle re-doing it. Found 2026-07-04 when
+    # the #1 pick was still the post-merge timer d150 had already built+merged+enabled.)
+    live = [a for a in out if not a["done"]]
+    return sorted(live, key=lambda a: a["density"], reverse=True)
+
+
+def _completed_fix_text() -> str:
+    """Concatenated text of recently-merged decisions — the reality of what's done."""
+    try:
+        import psycopg, os
+        db = os.environ.get("BRAIN_INDEX_DB_URL",
+            "postgres://brain_index:50dc339828327a7a042dca45957a5bab6dc6b4eda3857524ccd014d9acc23a52@127.0.0.1:25432/postgres")
+        with psycopg.connect(db, connect_timeout=5) as c, c.cursor() as cur:
+            cur.execute("SELECT coalesce(question,'')||' '||coalesce(build_spec,'') "
+                        "FROM brain_index.decisions WHERE build_status='merged' "
+                        "AND created_at > now() - interval '14 days'")
+            return " ".join(r[0] for r in cur.fetchall()).lower()
+    except Exception:
+        return ""
+
+
+def _reality_says_done(w: dict, done_specs: str) -> bool:
+    """Is this weakness's fix already landed? Check live artifacts + merged decisions."""
+    fix = (w.get("proposed_fix") or "").lower()
+    # 1) artifact probe: if the fix names a concrete systemd unit / file path, check disk.
+    for m in re.finditer(r"(/etc/systemd/system/[a-z0-9.\-]+|fpai-[a-z\-]+\.(?:timer|service))", fix):
+        p = m.group(1)
+        path = Path(p if p.startswith("/") else f"/etc/systemd/system/{p}")
+        if path.exists():
+            return True
+    # 2) merged-decision overlap: distinctive tokens of the fix appearing in a merged spec.
+    tokens = [t for t in re.findall(r"[a-z_]{6,}", fix)[:8] if t in done_specs]
+    return len(tokens) >= 4
 
 
 def decide() -> dict:
