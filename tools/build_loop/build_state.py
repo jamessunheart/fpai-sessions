@@ -19,6 +19,7 @@ DEFAULT_RESULTS_DIR = REPO_ROOT / "core" / "BUILD" / "results"
 DEFAULT_REGISTRY = REPO_ROOT / "core" / "BUILD" / "REGISTRY.json"
 
 BUILT_DECISION_STATUSES = {
+    "building",
     "built",
     "changes",
     "merge_requested",
@@ -34,6 +35,7 @@ PENDING_DECISION_WHERE_SQL = """
            AND COALESCE(is_canary, false) = false
            AND lower(COALESCE(build_status, '')) NOT IN (
                'built',
+               'building',
                'changes',
                'merge_requested',
                'merged',

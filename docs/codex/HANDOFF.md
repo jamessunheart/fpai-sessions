@@ -83,6 +83,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Questions for Ember/James: …
 ```
 
+### 2026-07-04 · SPEC_d176_throughput-parallelize-the-buil · branch `build/SPEC_d176_throughput-parallelize-the-buil`
+
+- **Status:** done in working tree / awaiting review + merge
+- **Files changed:** `tools/build_loop/server_build_loop.sh`; `tools/build_loop/build_state.py`; `tools/build_loop/test_parallel_build_loop.py`; `core/BUILD/specs/SPEC_d176_throughput-parallelize-the-buil.md`; `core/BUILD/results/SPEC_d176_throughput-parallelize-the-buil.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Parallelized the server build loop pending-build stage. The loop now defaults to `BUILD_CONCURRENCY=3`, claims each decision atomically by setting `build_status='building'` before worker spawn, excludes `building` rows from pending selection, runs claimed builds in isolated worktrees as background workers, caps worker launch with `wait -n`, and wraps the primary `codex exec` with `BUILD_TIMEOUT=90m`. Approved new-build merges and backlog merges now run under `flock -x` on `MERGE_LOCKFILE`, while build/review work remains concurrent.
+- **Tests:** `python3 -B -m unittest tools.build_loop.test_parallel_build_loop tools.build_loop.test_build_state tools.build_loop.test_auto_merge_governance tools.build_loop.test_build_orphan_reaper` (16 OK); `bash -n tools/build_loop/server_build_loop.sh tools/build_loop/run_codex.sh tools/build_loop/build_orchestrator.sh`; `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/build_state.py tools/build_loop/test_parallel_build_loop.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d176-registry-building.json`; `git diff --check`
+- **Proof:** Static regression covers default cap 3, serial fallback via `BUILD_CONCURRENCY=1`, atomic claim before worker spawn, pending exclusion for `building`, timeout handling, and `flock` around both new-build and backlog merge paths.
+- **Risks:** Live proof of `>=2` simultaneous `codex` processes was not run in this sandbox because it requires real server-162 DB rows and Codex workers. The first post-merge server run should confirm two distinct `codex exec --cd /opt/fpai-build/worktrees/SPEC_*` processes overlap and that merges remain conflict-free under the lock.
+- **Rollback:** Set `BUILD_CONCURRENCY=1` for immediate serial behavior; revert this branch to restore the original serial pending-build loop.
+- **Intent solved:** the build loop can process up to three answered build specs concurrently instead of waiting for one Codex build/review/merge cycle to finish before starting the next.
+- **Downstream intent unlocked:** the autonomous build host can drain the backlog faster while preserving serialized merges into `feat/headless-build`.
+- **Questions for Ember/James:** after merge on server 162, run one live queue cycle with at least two pending builds and confirm overlapping Codex processes plus serialized merge log entries.
+
 ### 2026-07-04 · SPEC_d174_spec-d174-tg-bot-loud-model-fall · branch `build/SPEC_d174_spec-d174-tg-bot-loud-model-fall`
 
 - **Status:** done in repo mirror / awaiting review + merge + live activation

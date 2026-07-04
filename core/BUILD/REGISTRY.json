@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-04T18:30:00Z",
+    "updated_at": "2026-07-04T18:32:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d176_throughput-parallelize-the-buil",
+            "slug": "SPEC_d176_throughput-parallelize-the-buil",
+            "branch": "build/SPEC_d176_throughput-parallelize-the-buil",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d176_throughput-parallelize-the-buil.md",
+            "tests_passed": true,
+            "notes": "d176 complete in working tree: server_build_loop now defaults BUILD_CONCURRENCY=3, atomically claims decisions by setting build_status=building before worker spawn, excludes building rows from pending-builds, runs claimed builds in isolated worktrees as background workers throttled with wait -n, wraps primary codex exec in BUILD_TIMEOUT=90m, and serializes approved new-build plus backlog merges with flock on MERGE_LOCKFILE. BUILD_CONCURRENCY=1 restores serial launch behavior. Focused static/unit tests, shell syntax, py_compile, registry JSON validation, and diff hygiene passed. Live proof of >=2 overlapping codex processes awaits first server-162 queue cycle after merge."
+        },
         {
             "id": "SPEC_d174_spec-d174-tg-bot-loud-model-fall",
             "slug": "SPEC_d174_spec-d174-tg-bot-loud-model-fall",

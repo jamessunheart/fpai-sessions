@@ -18,11 +18,23 @@ BASE=feat/headless-build
 BRAIN=/opt/sh-brain-src
 PY="$BRAIN/.venv/bin/python"
 BUILD_MAX="${BUILD_MAX:-5}"
+BUILD_CONCURRENCY="${BUILD_CONCURRENCY:-3}"
+BUILD_TIMEOUT="${BUILD_TIMEOUT:-90m}"
 CONSECUTIVE_REVERTS_MAX="${CONSECUTIVE_REVERTS_MAX:-3}"
 DISK_WARN_GB="${DISK_WARN_GB:-30}"
+MERGE_LOCKFILE="${MERGE_LOCKFILE:-/opt/fpai-build/.merge.lock}"
 STAMP=/opt/fpai-build/.daily_count
 DISABLED=/opt/fpai-build/.disabled
 DRY="${1:-}"
+
+if ! [[ "$BUILD_CONCURRENCY" =~ ^[0-9]+$ ]] || [ "$BUILD_CONCURRENCY" -lt 1 ]; then
+  echo "invalid BUILD_CONCURRENCY=$BUILD_CONCURRENCY (must be integer >= 1)" >&2
+  exit 2
+fi
+if ! [[ "$BUILD_MAX" =~ ^[0-9]+$ ]] || [ "$BUILD_MAX" -lt 1 ]; then
+  echo "invalid BUILD_MAX=$BUILD_MAX (must be integer >= 1)" >&2
+  exit 2
+fi
 
 [ -f "$DISABLED" ] && { echo "server build loop DISABLED (flag present)"; exit 0; }
 [ "$DRY" = "--dry-run" ] && { echo "DRY RUN — no changes will be made"; }
@@ -54,6 +66,52 @@ CONSECUTIVE_REVERTS=0
 
 tg()  { ( cd "$BRAIN" && "$PY" -c "import asyncio,sys;from curator.telegram import send;asyncio.run(send(sys.argv[1]))" "$1" 2>/dev/null ) || true; }
 dec() { ( cd "$BRAIN" && "$PY" -m curator.decisions "$@" 2>/dev/null ); }
+
+claim_pending_build() {
+  local did="$1"
+  local branch="$2"
+  "$PY" - "$did" "$branch" <<'PY'
+import os
+import sys
+
+try:
+    import psycopg
+except ImportError:
+    raise SystemExit(1)
+
+url = os.environ.get("BRAIN_INDEX_DB_URL", "")
+if not url:
+    raise SystemExit(1)
+
+decision_id, branch = sys.argv[1:3]
+with psycopg.connect(url, autocommit=True) as conn:
+    row = conn.execute(
+        """
+        UPDATE brain_index.decisions
+           SET build_status = 'building',
+               build_branch = %s
+         WHERE id::text = %s
+           AND status = 'answered'
+           AND COALESCE(needs_build, false) = true
+           AND COALESCE(spec_written, false) = false
+           AND COALESCE(is_canary, false) = false
+           AND lower(COALESCE(build_status, '')) NOT IN (
+               'building',
+               'built',
+               'changes',
+               'merge_requested',
+               'merged',
+               'merge_failed',
+               'rejected'
+           )
+         RETURNING id::text
+        """,
+        (branch, decision_id),
+    ).fetchone()
+
+raise SystemExit(0 if row else 1)
+PY
+}
 
 build_alert_event() {
   [ "${BUILD_ALERTS:-1}" = "0" ] && return 0
@@ -414,37 +472,40 @@ while IFS= read -r bline; do
   # Skip if branch doesn't exist in repo
   git -C "$REPO" rev-parse --verify "$BBR" >/dev/null 2>&1 || { echo "backlog: branch $BBR gone, skipping $BDID"; continue; }
   echo "── backlog merge $BDID ($BBR) ──"
-  git -C "$REPO" config user.email ember@fpai >/dev/null 2>&1; git -C "$REPO" config user.name Ember >/dev/null 2>&1
-  git -C "$REPO" checkout "$BASE" >/dev/null 2>&1
-  PRE_SHA=$(git -C "$REPO" rev-parse HEAD)
-  BMERGED=0
-  if git -C "$REPO" merge --no-edit "$BBR" >/dev/null 2>&1; then BMERGED=1
-  else
-    BU=$(git -C "$REPO" diff --name-only --diff-filter=U)
-    if [ -n "$BU" ] && ! echo "$BU" | grep -qvE '^(core/BUILD/REGISTRY\.json|docs/codex/HANDOFF\.md|.*/__init__\.py)$'; then
-      for f in $BU; do git -C "$REPO" checkout --ours "$f" >/dev/null 2>&1; done
-      git -C "$REPO" add -A && git -C "$REPO" commit --no-edit >/dev/null 2>&1 && BMERGED=1
+  {
+    flock -x 9
+    git -C "$REPO" config user.email ember@fpai >/dev/null 2>&1; git -C "$REPO" config user.name Ember >/dev/null 2>&1
+    git -C "$REPO" checkout "$BASE" >/dev/null 2>&1
+    PRE_SHA=$(git -C "$REPO" rev-parse HEAD)
+    BMERGED=0
+    if git -C "$REPO" merge --no-edit "$BBR" >/dev/null 2>&1; then BMERGED=1
     else
-      git -C "$REPO" merge --abort >/dev/null 2>&1
-      echo "backlog: $BDID has real conflict — skip"
+      BU=$(git -C "$REPO" diff --name-only --diff-filter=U)
+      if [ -n "$BU" ] && ! echo "$BU" | grep -qvE '^(core/BUILD/REGISTRY\.json|docs/codex/HANDOFF\.md|.*/__init__\.py)$'; then
+        for f in $BU; do git -C "$REPO" checkout --ours "$f" >/dev/null 2>&1; done
+        git -C "$REPO" add -A && git -C "$REPO" commit --no-edit >/dev/null 2>&1 && BMERGED=1
+      else
+        git -C "$REPO" merge --abort >/dev/null 2>&1
+        echo "backlog: $BDID has real conflict — skip"
+      fi
     fi
-  fi
-  if [ "$BMERGED" = 1 ]; then
-    if ! "$PY" -c "import sys; sys.path.insert(0,'$BRAIN'); import curator, curator.decisions" >/dev/null 2>&1; then
-      git -C "$REPO" reset --hard "$PRE_SHA" >/dev/null 2>&1
-      tg "🔴 BACKLOG REVERT [$BDID] — import check failed. Branch $BBR held." 2>/dev/null || true
-      echo "backlog: $BDID import check failed, reverted"
-    else
-      dec mark-merged "$BDID" >/dev/null 2>&1 || true
-      update_blueprint_after_merge "$BDID" "$BBR"
-      BHEAD_SHA=$(git -C "$REPO" rev-parse HEAD)
-      BSPECID="$(basename "$BBR")"
-      emit_live_artifact_proof "$BSPECID" "$BDID" "$BBR" "$PRE_SHA" "$BHEAD_SHA"
-      BACKLOG_MERGED=$((BACKLOG_MERGED+1))
-      python3 "$REPO/tools/build_loop/ops_log.py" merge backlog-merged "$BDID ($BBR)" "\$0" "$BBR" "" 2>/dev/null || true
-      echo "backlog: merged $BDID"
+    if [ "$BMERGED" = 1 ]; then
+      if ! "$PY" -c "import sys; sys.path.insert(0,'$BRAIN'); import curator, curator.decisions" >/dev/null 2>&1; then
+        git -C "$REPO" reset --hard "$PRE_SHA" >/dev/null 2>&1
+        tg "🔴 BACKLOG REVERT [$BDID] — import check failed. Branch $BBR held." 2>/dev/null || true
+        echo "backlog: $BDID import check failed, reverted"
+      else
+        dec mark-merged "$BDID" >/dev/null 2>&1 || true
+        update_blueprint_after_merge "$BDID" "$BBR"
+        BHEAD_SHA=$(git -C "$REPO" rev-parse HEAD)
+        BSPECID="$(basename "$BBR")"
+        emit_live_artifact_proof "$BSPECID" "$BDID" "$BBR" "$PRE_SHA" "$BHEAD_SHA"
+        BACKLOG_MERGED=$((BACKLOG_MERGED+1))
+        python3 "$REPO/tools/build_loop/ops_log.py" merge backlog-merged "$BDID ($BBR)" "\$0" "$BBR" "" 2>/dev/null || true
+        echo "backlog: merged $BDID"
+      fi
     fi
-  fi
+  } 9>"$MERGE_LOCKFILE"
 done <<< "$BACKLOG_JSON"
 [ "$BACKLOG_MERGED" -gt 0 ] && echo "backlog pass: merged $BACKLOG_MERGED specs"
 
@@ -477,10 +538,13 @@ PENDING=$(dec pending-builds | grep -E '^\{' || true)
 [ -z "$PENDING" ] && { echo "no decisions awaiting a build"; exit 0; }
 [ "$DRY" = "--dry-run" ] && { echo "PENDING BUILDS:"; printf '%s\n' "$PENDING"; exit 0; }
 
-n=0
-while IFS= read -r line; do
-  [ -z "$line" ] && continue
-  n=$((n+1)); [ "$n" -gt "$BUILD_MAX" ] && { echo "per-run cap reached ($n/$BUILD_MAX) — next run continues"; break; }
+process_pending_build() {
+  local line="$1"
+  local DID SLUG QUESTION_TEXT ANSWER_TEXT PROOF_EXPECTED_TEXT LIVENESS_DECLARATION LIVENESS_CHECK SPECID BR WT SPEC
+  local SPEC_INPUT SPEC_TMP MODULE BLUEPRINT CODEX_RC REVIEW RC ST V REVIEW_FILE REVISION_ATTEMPT
+  local MERGED PRE_SHA HEAD_SHA U ACTIVATED ACTIVATE_SCRIPT _tail _ev _nx
+
+  [ -z "$line" ] && return 0
 
   DID=$(printf '%s' "$line"  | "$PY" -c 'import sys,json;print(json.load(sys.stdin)["id"])')
   SLUG=$(printf '%s' "$line" | "$PY" -c 'import sys,json,re;print(re.sub(r"[^a-z0-9]+","-",json.load(sys.stdin)["question"].lower())[:32].strip("-"))')
@@ -512,12 +576,26 @@ Register in core/BUILD/REGISTRY.json. Tests required. Do NOT push or merge.
   # fresh isolated worktree off BASE
   git -C "$REPO" worktree remove --force "$WT" 2>/dev/null || true
   git -C "$REPO" branch -D "$BR" 2>/dev/null || true
-  git -C "$REPO" worktree add -q -b "$BR" "$WT" "$BASE" || { echo "worktree add failed for $SPECID"; continue; }
+  git -C "$REPO" worktree add -q -b "$BR" "$WT" "$BASE" || {
+    dec set-build-result "$DID" "$BR" "changes" >/dev/null 2>&1 || true
+    echo "worktree add failed for $SPECID"
+    return 0
+  }
   mkdir -p "$WT/core/BUILD/specs"; printf '%s\n' "$SPEC" > "$WT/core/BUILD/specs/$SPECID.md"
 
   # build ($0 codex) — log OUTSIDE the worktree so the transcript never lands in the build commit
   mkdir -p /opt/fpai-build/logs
-  codex exec --cd "$WT" --full-auto - <<<"$SPEC" > "/opt/fpai-build/logs/$SPECID.codex.log" 2>&1 || echo "(codex exited non-zero — see /opt/fpai-build/logs/$SPECID.codex.log)"
+  timeout "$BUILD_TIMEOUT" codex exec --cd "$WT" --full-auto - <<<"$SPEC" > "/opt/fpai-build/logs/$SPECID.codex.log" 2>&1
+  CODEX_RC=$?
+  if [ "$CODEX_RC" = 124 ]; then
+    dec set-build-result "$DID" "$BR" "changes" >/dev/null 2>&1 || true
+    build_alert_event failed "codex timed out after $BUILD_TIMEOUT"
+    tg "⚠️ Build $SPECID timed out after $BUILD_TIMEOUT — branch held for manual review."
+    python3 "$REPO/tools/build_loop/ops_log.py" build timeout "$SPECID timeout=$BUILD_TIMEOUT" "\$0" "$BR" "Ember: inspect timed-out $DID" 2>/dev/null || true
+    return 0
+  elif [ "$CODEX_RC" != 0 ]; then
+    echo "(codex exited non-zero — see /opt/fpai-build/logs/$SPECID.codex.log)"
+  fi
 
   # commit the worktree (codex sandbox can't write git)
   if [ -n "$(git -C "$WT" status --porcelain)" ]; then
@@ -525,10 +603,11 @@ Register in core/BUILD/REGISTRY.json. Tests required. Do NOT push or merge.
     git -C "$WT" -c user.email=ember@fpai -c user.name=Ember commit -q -m "build($SPECID): server build loop"
   fi
   if ! git -C "$REPO" rev-parse --verify "$BR" >/dev/null 2>&1; then
+    dec set-build-result "$DID" "$BR" "changes" >/dev/null 2>&1 || true
     build_alert_event failed "no committable branch"
     tg "⚠️ Build $SPECID produced no committable branch — held for manual review."
     python3 "$REPO/tools/build_loop/ops_log.py" build failed "$SPECID — codex produced no branch" "\$0" "" "Ember: manual review" 2>/dev/null || true
-    continue
+    return 0
   fi
 
   # review ($0 claude -p, PROTECTED_PATHS aware)
@@ -577,42 +656,46 @@ Register in core/BUILD/REGISTRY.json. Tests required. Do NOT push or merge.
   # Backup = the build/<id> branch + git history. Reversible: `reverse $DID` / git revert. NEVER main.
   MERGED=0
   if [ "$RC" = 0 ]; then
-    git -C "$REPO" config user.email ember@fpai >/dev/null 2>&1; git -C "$REPO" config user.name Ember >/dev/null 2>&1
-    git -C "$REPO" checkout "$BASE" >/dev/null 2>&1
-    PRE_SHA=$(git -C "$REPO" rev-parse HEAD)  # revert point — reset here if health check fails
-    if git -C "$REPO" merge --no-edit "$BR" >/dev/null 2>&1; then MERGED=1
-    else
-      U=$(git -C "$REPO" diff --name-only --diff-filter=U)
-      if [ -n "$U" ] && ! echo "$U" | grep -qvE '^(core/BUILD/REGISTRY\.json|docs/codex/HANDOFF\.md|.*/__init__\.py)$'; then
-        for f in $U; do git -C "$REPO" checkout --ours "$f" >/dev/null 2>&1; done
-        git -C "$REPO" add -A && git -C "$REPO" commit --no-edit >/dev/null 2>&1 && MERGED=1
+    {
+      flock -x 9
+      git -C "$REPO" config user.email ember@fpai >/dev/null 2>&1; git -C "$REPO" config user.name Ember >/dev/null 2>&1
+      git -C "$REPO" checkout "$BASE" >/dev/null 2>&1
+      PRE_SHA=$(git -C "$REPO" rev-parse HEAD)  # revert point — reset here if health check fails
+      if git -C "$REPO" merge --no-edit "$BR" >/dev/null 2>&1; then MERGED=1
       else
-        git -C "$REPO" merge --abort >/dev/null 2>&1   # real code conflict → leave for human review
-      fi
-    fi
-    if [ "$MERGED" = 1 ]; then
-      # post-merge health gate: curator import check (catches syntax errors, broken imports)
-      if ! "$PY" -c "import sys; sys.path.insert(0,'$BRAIN'); import curator, curator.decisions" >/dev/null 2>&1; then
-        git -C "$REPO" reset --hard "$PRE_SHA" >/dev/null 2>&1
-        MERGED=0
-        CONSECUTIVE_REVERTS=$((CONSECUTIVE_REVERTS+1))
-        build_alert_event failed "post-merge import check failed; reverted"
-        tg "🔴 AUTO-REVERTED [$DID] — post-merge import check failed. Rolled back to pre-merge state. Branch $BR held for inspection. Reply <code>reverse $DID</code> to drop."
-        python3 "$REPO/tools/build_loop/ops_log.py" merge auto-reverted "$SPECID" "\$0" "$BR" "Ember: inspect $DID — import check failed post-merge" 2>/dev/null || true
-        if [ "$CONSECUTIVE_REVERTS" -ge "$CONSECUTIVE_REVERTS_MAX" ]; then
-          tg "🔴 BUILD LOOP PAUSED — $CONSECUTIVE_REVERTS consecutive auto-reverts. Specs may be broken or system in bad state. Reply <code>start build</code> or kill switch to resume after inspection."
-          python3 "$REPO/tools/build_loop/ops_log.py" build paused "consecutive-reverts=$CONSECUTIVE_REVERTS" "\$0" "" "James: inspect recent builds — pattern of broken imports" 2>/dev/null || true
-          echo "halting: $CONSECUTIVE_REVERTS consecutive auto-reverts >= $CONSECUTIVE_REVERTS_MAX"; break
+        U=$(git -C "$REPO" diff --name-only --diff-filter=U)
+        if [ -n "$U" ] && ! echo "$U" | grep -qvE '^(core/BUILD/REGISTRY\.json|docs/codex/HANDOFF\.md|.*/__init__\.py)$'; then
+          for f in $U; do git -C "$REPO" checkout --ours "$f" >/dev/null 2>&1; done
+          git -C "$REPO" add -A && git -C "$REPO" commit --no-edit >/dev/null 2>&1 && MERGED=1
+        else
+          git -C "$REPO" merge --abort >/dev/null 2>&1   # real code conflict → leave for human review
         fi
-      else
-        dec mark-merged "$DID" >/dev/null 2>&1 || true
-        update_blueprint_after_merge "$DID" "$BR"
-        HEAD_SHA=$(git -C "$REPO" rev-parse HEAD)
-        emit_live_artifact_proof "$SPECID" "$DID" "$BR" "$PRE_SHA" "$HEAD_SHA" "$QUESTION_TEXT" "$ANSWER_TEXT" "$PROOF_EXPECTED_TEXT"
-        build_alert_event merged
-        CONSECUTIVE_REVERTS=0  # clean merge resets the revert streak
       fi
-    fi
+      if [ "$MERGED" = 1 ]; then
+        # post-merge health gate: curator import check (catches syntax errors, broken imports)
+        if ! "$PY" -c "import sys; sys.path.insert(0,'$BRAIN'); import curator, curator.decisions" >/dev/null 2>&1; then
+          git -C "$REPO" reset --hard "$PRE_SHA" >/dev/null 2>&1
+          MERGED=0
+          CONSECUTIVE_REVERTS=$((CONSECUTIVE_REVERTS+1))
+          build_alert_event failed "post-merge import check failed; reverted"
+          tg "🔴 AUTO-REVERTED [$DID] — post-merge import check failed. Rolled back to pre-merge state. Branch $BR held for inspection. Reply <code>reverse $DID</code> to drop."
+          python3 "$REPO/tools/build_loop/ops_log.py" merge auto-reverted "$SPECID" "\$0" "$BR" "Ember: inspect $DID — import check failed post-merge" 2>/dev/null || true
+          if [ "$CONSECUTIVE_REVERTS" -ge "$CONSECUTIVE_REVERTS_MAX" ]; then
+            tg "🔴 BUILD LOOP PAUSED — $CONSECUTIVE_REVERTS consecutive auto-reverts. Specs may be broken or system in bad state. Reply <code>start build</code> or kill switch to resume after inspection."
+            python3 "$REPO/tools/build_loop/ops_log.py" build paused "consecutive-reverts=$CONSECUTIVE_REVERTS" "\$0" "" "James: inspect recent builds — pattern of broken imports" 2>/dev/null || true
+            echo "halting: $CONSECUTIVE_REVERTS consecutive auto-reverts >= $CONSECUTIVE_REVERTS_MAX"
+            return 1
+          fi
+        else
+          dec mark-merged "$DID" >/dev/null 2>&1 || true
+          update_blueprint_after_merge "$DID" "$BR"
+          HEAD_SHA=$(git -C "$REPO" rev-parse HEAD)
+          emit_live_artifact_proof "$SPECID" "$DID" "$BR" "$PRE_SHA" "$HEAD_SHA" "$QUESTION_TEXT" "$ANSWER_TEXT" "$PROOF_EXPECTED_TEXT"
+          build_alert_event merged
+          CONSECUTIVE_REVERTS=0  # clean merge resets the revert streak
+        fi
+      fi
+    } 9>"$MERGE_LOCKFILE"
   fi
 
   if [ "$MERGED" = 1 ]; then
@@ -654,5 +737,32 @@ Register in core/BUILD/REGISTRY.json. Tests required. Do NOT push or merge.
     python3 "$REPO/tools/build_loop/ops_log.py" build "$_ev" "$SPECID ($ST)" "\$0" "$BR" "$_nx" 2>/dev/null || true
     echo "surfaced $SPECID ($ST · awaiting)"
   fi
+}
+
+n=0
+while IFS= read -r line; do
+  [ -z "$line" ] && continue
+  [ "$n" -ge "$BUILD_MAX" ] && { echo "per-run cap reached ($n/$BUILD_MAX) — next run continues"; break; }
+
+  _DID=$(printf '%s' "$line"  | "$PY" -c 'import sys,json;print(json.load(sys.stdin)["id"])')
+  _SLUG=$(printf '%s' "$line" | "$PY" -c 'import sys,json,re;print(re.sub(r"[^a-z0-9]+","-",json.load(sys.stdin)["question"].lower())[:32].strip("-"))')
+  _SPECID="SPEC_${_DID}_${_SLUG}"
+  _BR="build/$_SPECID"
+  if ! claim_pending_build "$_DID" "$_BR"; then
+    echo "skip $_DID: already claimed or no longer pending"
+    continue
+  fi
+
+  while [ "$(jobs -pr | wc -l | tr -d ' ')" -ge "$BUILD_CONCURRENCY" ]; do
+    wait -n || true
+  done
+  process_pending_build "$line" &
+  n=$((n+1))
 done <<< "$PENDING"
-echo "server build loop done · built $CNUM today"
+
+while [ "$(jobs -pr | wc -l | tr -d ' ')" -gt 0 ]; do
+  wait -n || true
+done
+
+[ -f "$STAMP" ] && read -r CDATE CNUM < "$STAMP"
+echo "server build loop done · launched $n build(s) this run · built $CNUM today"
