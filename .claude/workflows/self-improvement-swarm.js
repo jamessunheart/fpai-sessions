@@ -137,28 +137,38 @@ const confirmed = diagnoses.filter(d => d && d.is_real)
 log(`Diagnosed ${diagnoses.length} → ${confirmed.length} confirmed real weaknesses`)
 
 // ---------- Phase 3: RANK (weighted intent stream — the build queue) ----------
+// Feed a TRIMMED view to the ranker — the full confirmed set (verbose root_cause +
+// evidence) once overwhelmed the single ranker agent and it returned 0 intents, silently
+// dropping 34 real findings (run wru864hcw). Trim + always return `confirmed` as the
+// durable fallback so the gold can never be lost at the packaging stage again.
 phase('Rank')
+const trimmed = confirmed.map(d => ({
+  facet: d.facet, severity: d.severity, reversible: d.reversible, effort: d.effort,
+  weakness: (d.root_cause || '').slice(0, 220), fix: (d.proposed_fix || '').slice(0, 220),
+}))
 const stream = await agent(
   `You are the lead prioritizer building a weighted INTENT STREAM (a build queue) for a self-evolving AI system's Codex builder.\n\n${SPINE}\n\n` +
-  `Here are the CONFIRMED weaknesses with proposed fixes (JSON):\n${JSON.stringify(confirmed, null, 1)}\n\n` +
+  `Here are the ${trimmed.length} CONFIRMED weaknesses (trimmed) as JSON:\n${JSON.stringify(trimmed, null, 1)}\n\n` +
   `MISSION:\n` +
   `1. Turn each into a build-ready intent with a Codex-ready build_spec (what to build, where, what proof looks like).\n` +
   `2. Score priority 0-100 = impact x leverage x alignment-to-spine / (cost x risk). BOTTLENECK-first (Law 4): the weakest limiting conversion outranks the loudest.\n` +
   `3. DEDUP + MERGE overlapping intents into one. Drop anything low-value or already-solved.\n` +
   `4. Mark reversible (Law 7) and flag the single biggest bottleneck.\n` +
-  `Return intents sorted priority DESC — highest and most important first.`,
+  `You MUST return at least one intent per distinct confirmed weakness that survives dedup. Sorted priority DESC.`,
   { label: 'rank:intent-stream', phase: 'Rank' }
 )
 
+const intents = (stream && stream.intents && stream.intents.length) ? stream.intents : []
 return {
-  intent_stream: stream.intents || [],
+  intent_stream: intents,
+  confirmed,  // durable fallback — never lose the findings even if rank returns empty
   stats: {
     facets: probes.length,
     questions: questions.length,
     diagnosed: diagnoses.length,
     confirmed: confirmed.length,
-    intents: (stream.intents || []).length,
-    reversible_intents: (stream.intents || []).filter(i => i.reversible).length,
+    intents: intents.length,
+    reversible_intents: intents.filter(i => i.reversible).length,
   },
   // Queuing to the build DB is intentionally NOT done here — that arms the build/deploy
   // pipeline (harness-gated). The caller routes reversible intents through
