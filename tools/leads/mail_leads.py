@@ -8,7 +8,7 @@ deploy key) and sends via the proven SMTP relays from email_health/accounts.json
 To: james@fullpotential.com · Reply-To: the applicant (hit reply to answer them).
 State: ~/.config/fpai/leads_mailer/seen.txt · Runs via launchd every 10 min.
 """
-import json, os, re, smtplib, ssl, subprocess
+import json, os, re, smtplib, ssl, subprocess, sys, tempfile
 from email.message import EmailMessage
 from email.utils import formatdate, make_msgid
 from pathlib import Path
@@ -21,6 +21,9 @@ STATE_DIR = HOME / ".config" / "fpai" / "leads_mailer"
 SEEN = STATE_DIR / "seen.txt"
 ACCOUNTS = HOME / ".config" / "fpai" / "email_health" / "accounts.json"
 TO = "james@fullpotential.com"
+REPO = Path(__file__).resolve().parents[2]
+SCORE_ASSESSMENT = REPO / "tools" / "growth" / "score_assessment.py"
+DELIVERABLE_DIR = STATE_DIR / "allocation_scores"
 
 _SSL = ssl.create_default_context()
 _SSL.check_hostname = False
@@ -67,6 +70,58 @@ s.send_message(m); s.quit(); print("sent")
     return ok, (r.stderr.strip()[:150] or "162→MX")
 
 
+def allocation_deliverable_path(lead_base: str) -> Path:
+    safe = re.sub(r"[^A-Za-z0-9_.-]+", "-", lead_base).strip("-") or "lead"
+    return DELIVERABLE_DIR / f"{safe}.allocation-score.md"
+
+
+def generate_allocation_score(lead_base: str, lead_body: str, *, runner=subprocess.run) -> tuple[Path, str]:
+    DELIVERABLE_DIR.mkdir(parents=True, exist_ok=True)
+    out = allocation_deliverable_path(lead_base)
+    with tempfile.NamedTemporaryFile("w", encoding="utf-8", suffix=".md", delete=False) as handle:
+        handle.write(lead_body)
+        lead_path = Path(handle.name)
+    try:
+        result = runner(
+            [sys.executable, str(SCORE_ASSESSMENT), "--lead", str(lead_path), "--out", str(out)],
+            capture_output=True,
+            text=True,
+            timeout=240,
+        )
+    finally:
+        try:
+            lead_path.unlink()
+        except OSError:
+            pass
+    if result.returncode != 0:
+        detail = (result.stderr or result.stdout or "score_assessment.py failed").strip()[:500]
+        raise RuntimeError(detail)
+    return out, out.read_text(encoding="utf-8")
+
+
+def notification_body(lead_base: str, lead_body: str, interest: str,
+                      *, score_runner=generate_allocation_score) -> str:
+    parts = [lead_body.strip()]
+    if interest == "allocation-audit":
+        try:
+            out, deliverable = score_runner(lead_base, lead_body)
+            parts.extend([
+                "",
+                "—",
+                f"Allocation Score generated: {out}",
+                "",
+                deliverable.strip(),
+            ])
+        except Exception as exc:
+            parts.extend([
+                "",
+                "—",
+                f"Allocation Score generation failed: {str(exc)[:500]}",
+            ])
+    parts.extend(["", "—", "Reply to this email to answer the applicant directly."])
+    return "\n".join(parts)
+
+
 def main():
     STATE_DIR.mkdir(parents=True, exist_ok=True)
     seen = set(SEEN.read_text().split()) if SEEN.exists() else set()
@@ -85,7 +140,8 @@ def main():
         m_int = re.search(r"^interest:\s*(.+)$", body, re.M)
         interest = (m_int.group(1).strip() if m_int else "lead")
         subject = f"🛠️ New application — {name} ({interest})"
-        ok, via = send(subject, body + "\n\n—\nReply to this email to answer the applicant directly.", reply_to=applicant)
+        email_body = notification_body(base, body, interest)
+        ok, via = send(subject, email_body, reply_to=applicant)
         if ok:
             seen.add(base); sent += 1
         else:

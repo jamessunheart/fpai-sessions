@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-04T18:45:00Z",
+    "updated_at": "2026-07-04T19:22:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d168_spec-wire-the-allocation-score-e",
+            "slug": "SPEC_d168_spec-wire-the-allocation-score-e",
+            "branch": "build/SPEC_d168_spec-wire-the-allocation-score-e",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d168_spec-wire-the-allocation-score-e.md",
+            "tests_passed": true,
+            "notes": "d168 complete in working tree: score_assessment.run_claude now calls tools.intelligence.model_router.call_model with a dedicated assessment-scorer route first, preserving lenient JSON extraction and a direct claude -p fallback that loads the loop Claude env when present. The assessment-scorer route allows only claude and ollama, so it cannot fall through to metered API providers before real-client scoped-key approval. mail_leads.py now generates an Allocation Score deliverable for new leads with interest=allocation-audit by invoking score_assessment.py --lead <temp> --out <deliverable> and appends the markdown to James's notification. Focused unittest, py_compile, registry JSON validation, fake-claude --demo smoke, and diff hygiene passed. No live lead mail send, live Claude auth call, push, merge, deploy, outreach to applicants, secrets, service control, or money movement."
+        },
         {
             "id": "SPEC_d167_spec-proof-river",
             "slug": "SPEC_d167_spec-proof-river",
