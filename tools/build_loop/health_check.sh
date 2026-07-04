@@ -43,6 +43,33 @@ PY
   fi
 fi
 
+# 3c. TG bot model fallback health counter (written by sh-brain-tgbot)
+model_health="$(python3 - <<'PY' 2>/dev/null || true
+import json, os, pathlib
+p = pathlib.Path(os.environ.get("SH_TGBOT_MODEL_HEALTH_PATH", "/var/lib/sh-brain/model_health.json"))
+if not p.exists():
+    print("MISSING|no TG bot model health file yet")
+    raise SystemExit
+try:
+    data = json.loads(p.read_text(encoding="utf-8"))
+except Exception as exc:
+    print(f"BAD|could not parse TG bot model health: {exc}")
+    raise SystemExit
+counters = data.get("counters") or {}
+fallbacks = int(counters.get("fallback") or 0)
+startup = int(counters.get("startup_failure") or 0)
+status = data.get("status") or "unknown"
+reason = str(data.get("last_reason") or "")[:180]
+print(f"{status}|fallbacks={fallbacks} startup_failures={startup} reason={reason}")
+PY
+)"
+case "$model_health" in
+  degraded\|*) fail "TG bot model degraded: $model_health" "Ember: verify claude -p auth for sh-brain-tgbot and inspect /var/lib/sh-brain/model_health.json" ;;
+  BAD\|*) fail "$model_health" "Ember: repair /var/lib/sh-brain/model_health.json" ;;
+  MISSING\|*) echo "WARN: $model_health" ;;
+  *) echo "TG bot model health: $model_health" ;;
+esac
+
 # 4. the loops' timers active
 for tm in fpai-build-loop fpai-council fpai-morning-digest; do
   [ "$(systemctl is-active "$tm".timer 2>/dev/null)" = active ] || fail "$tm.timer not active" "Ember: systemctl restart $tm.timer"

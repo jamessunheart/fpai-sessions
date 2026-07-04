@@ -53,8 +53,11 @@ class ClaudeCliProviderTest(unittest.IsolatedAsyncioTestCase):
                 mock.patch.object(llm, "_ollama", new=mock.AsyncMock(return_value=fallback)) as ollama:
             result = await llm._claude_cli("system", "user", 333, 0.7, "hash")
 
-        self.assertIs(result, fallback)
+        self.assertEqual(result.text, fallback.text)
+        self.assertEqual(result.model, fallback.model)
         ollama.assert_awaited_once_with("system", "user", 333, 0.7, "hash")
+        self.assertEqual(result.fallback_from, "claude-cli")
+        self.assertIn("not found", result.fallback_reason)
 
     async def test_claude_cli_nonzero_exit_falls_back_to_ollama(self) -> None:
         proc = _FakeClaudeProcess(returncode=1, stderr=b"not logged in")
@@ -65,8 +68,21 @@ class ClaudeCliProviderTest(unittest.IsolatedAsyncioTestCase):
                 mock.patch.object(llm, "_ollama", new=mock.AsyncMock(return_value=fallback)) as ollama:
             result = await llm._claude_cli("system", "user", 444, 0.4, "hash")
 
-        self.assertIs(result, fallback)
+        self.assertEqual(result.text, fallback.text)
+        self.assertEqual(result.model, fallback.model)
         ollama.assert_awaited_once_with("system", "user", 444, 0.4, "hash")
+        self.assertEqual(result.fallback_from, "claude-cli")
+        self.assertIn("not logged in", result.fallback_reason)
+
+    async def test_claude_cli_self_test_reports_nonzero_reason(self) -> None:
+        proc = _FakeClaudeProcess(returncode=1, stderr=b"not logged in")
+
+        with mock.patch.object(llm.shutil, "which", return_value="/usr/bin/claude"), \
+                mock.patch.object(llm.asyncio, "create_subprocess_exec", new=mock.AsyncMock(return_value=proc)):
+            ok, reason = await llm.claude_cli_self_test()
+
+        self.assertFalse(ok)
+        self.assertIn("not logged in", reason)
 
 
 if __name__ == "__main__":

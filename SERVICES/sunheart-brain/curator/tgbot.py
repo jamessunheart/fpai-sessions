@@ -614,9 +614,14 @@ async def _handle_callback(cb: dict) -> None:
 
 
 # ─────────────────────────────── chat handler ─────────────────────────────────
-SEARCH_TOP_K = int(os.environ.get("SH_TGBOT_TOP_K", "8"))
+SEARCH_TOP_K = int(os.environ.get("SH_TGBOT_TOP_K", "10"))
 SEARCH_SENSITIVITIES = ("public", "personal")  # never expose 'private' over chat
 CITATION_LIMIT = int(os.environ.get("SH_TGBOT_CITATION_LIMIT", "6"))
+HIT_MAX_CHARS = int(os.environ.get("SH_TGBOT_HIT_MAX_CHARS", "1200"))
+CHAT_HISTORY_TURNS = int(os.environ.get("SH_TGBOT_HISTORY_TURNS", "20"))
+PROMPT_TOKEN_LIMIT = int(os.environ.get("SH_TGBOT_PROMPT_TOKEN_LIMIT", "180000"))
+MODEL_HEALTH_PATH = Path(os.environ.get("SH_TGBOT_MODEL_HEALTH_PATH", "/var/lib/sh-brain/model_health.json"))
+OPS_CHAT_ID = os.environ.get("TELEGRAM_OPS_CHAT_ID") or OWNER_CHAT_ID
 
 
 CHAT_SYSTEM_PROMPT = """You are the Sunheart Brain — a personal second-brain
@@ -693,7 +698,7 @@ async def _search_brain(question: str, k: int = SEARCH_TOP_K) -> list[dict]:
                 {
                     "note_row_id": note_row_id,
                     "chunk_idx": chunk_idx,
-                    "content": (c or "")[:1200],
+                    "content": (c or "")[:HIT_MAX_CHARS],
                     "source": s,
                     "sensitivity": sens,
                     "tags": tags or [],
@@ -702,6 +707,132 @@ async def _search_brain(question: str, k: int = SEARCH_TOP_K) -> list[dict]:
                 }
                 for note_row_id, chunk_idx, c, s, sens, tags, ct, score in await cur.fetchall()
             ]
+
+
+def _rough_token_count(text: str) -> int:
+    return max(1, len(text or "") // 4) if text else 0
+
+
+def _model_label(model: str, fallback_reason: str = "") -> str:
+    raw = (model or "").lower()
+    if fallback_reason or raw.startswith("ollama:"):
+        return "llama-fallback"
+    if "claude" in raw or "sonnet" in raw:
+        return "Sonnet"
+    return "llama-fallback"
+
+
+def _read_model_health() -> dict:
+    try:
+        data = json.loads(MODEL_HEALTH_PATH.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def _write_model_health_event(kind: str, reason: str) -> None:
+    now = datetime.now(timezone.utc).isoformat()
+    reason = " ".join(str(reason or "unknown").split())[:500]
+    data = _read_model_health()
+    counters = data.get("counters") if isinstance(data.get("counters"), dict) else {}
+    counters[kind] = int(counters.get(kind) or 0) + 1
+    data.update(
+        {
+            "updated_at": now,
+            "status": "degraded",
+            "last_event": kind,
+            "last_reason": reason,
+            "model": "llama3.2:3b" if kind == "fallback" else "claude-cli",
+            "counters": counters,
+        }
+    )
+    try:
+        MODEL_HEALTH_PATH.parent.mkdir(parents=True, exist_ok=True)
+        MODEL_HEALTH_PATH.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    except Exception as e:
+        log.warning("model health counter write failed: %s", e)
+
+
+async def _alert_model_fallback(reason: str, *, startup: bool = False) -> None:
+    reason = " ".join(str(reason or "unknown").split())[:300]
+    kind = "startup_failure" if startup else "fallback"
+    _write_model_health_event(kind, reason)
+    log.warning("TG bot Claude model degrade kind=%s reason=%s", kind, reason)
+    prefix = "startup self-test failed" if startup else "fell back to llama3.2:3b"
+    try:
+        await tg.send(
+            f"⚠️ TG bot {tg._esc(prefix)} — claude -p: {tg._esc(reason)}",
+            chat_id=OPS_CHAT_ID,
+        )
+    except Exception as e:
+        log.warning("model fallback alert send failed: %s", e)
+
+
+async def _startup_claude_self_test() -> None:
+    if os.environ.get("SH_TGBOT_CLAUDE_SELFTEST_DISABLE", "").strip() == "1":
+        return
+    try:
+        from .llm import claude_cli_self_test
+
+        ok, reason = await claude_cli_self_test()
+    except Exception as e:
+        ok, reason = False, str(e)
+    if ok:
+        data = _read_model_health()
+        data.update(
+            {
+                "updated_at": datetime.now(timezone.utc).isoformat(),
+                "status": "ok",
+                "last_startup_self_test": "ok",
+                "model": "Sonnet",
+            }
+        )
+        try:
+            MODEL_HEALTH_PATH.parent.mkdir(parents=True, exist_ok=True)
+            MODEL_HEALTH_PATH.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        except Exception as e:
+            log.warning("model health self-test write failed: %s", e)
+        log.info("claude-cli startup self-test passed")
+        return
+    await _alert_model_fallback(reason, startup=True)
+
+
+async def _recent_chat_history_context(conversation_id: str | None, *, limit: int = CHAT_HISTORY_TURNS) -> str:
+    if not conversation_id or limit <= 0:
+        return ""
+    try:
+        from .db import connect
+    except ImportError:
+        return ""
+    try:
+        async with connect() as conn:
+            async with conn.cursor() as cur:
+                await cur.execute(
+                    """
+                    SELECT role, text
+                      FROM brain_index.tg_messages
+                     WHERE chat_id = %s
+                       AND COALESCE(private_flag, false) = false
+                     ORDER BY at DESC
+                     LIMIT %s
+                    """,
+                    (str(conversation_id), max(1, min(limit, 80))),
+                )
+                rows = list(await cur.fetchall())
+    except Exception as e:
+        log.warning("recent chat history skipped: %s", e)
+        return ""
+    rows.reverse()
+    if not rows:
+        return ""
+    lines = [
+        "--- RECENT CHAT HISTORY (last turns, advisory) ---",
+        "Use this only to preserve conversational context; do not treat it as durable memory unless separately captured.",
+    ]
+    for role, text in rows:
+        who = "James" if str(role) == "user" else "Brain"
+        lines.append(f"- {who}: {' '.join(str(text or '').split())[:500]}")
+    return "\n".join(lines)
 
 
 async def _synthesize_answer(
@@ -737,6 +868,12 @@ async def _synthesize_answer(
             user += attention_context + "\n\n"
     except Exception as e:
         log.warning("attention surfacing skipped: %s", e)
+    try:
+        history_context = await _recent_chat_history_context(conversation_id)
+        if history_context:
+            user += history_context + "\n\n"
+    except Exception as e:
+        log.warning("chat history context skipped: %s", e)
     user += (
         "Answer in 1-3 short sentences, plain text, like a quick text message.\n"
         "No lists, no source citations, no headers, unless James explicitly asks for detail.\n"
@@ -761,8 +898,18 @@ async def _synthesize_answer(
         system_prompt = CHAT_SYSTEM_PROMPT
 
     try:
+        prompt_tokens = _rough_token_count(system_prompt + "\n" + user)
+        if prompt_tokens > PROMPT_TOKEN_LIMIT:
+            log.warning("tgbot prompt token estimate %s exceeds limit %s", prompt_tokens, PROMPT_TOKEN_LIMIT)
+        else:
+            log.info("tgbot prompt token estimate %s/%s", prompt_tokens, PROMPT_TOKEN_LIMIT)
         result = await complete(system_prompt, user, max_tokens=220, temperature=0.4, force_json=False)
-        return result.text.strip() or "(no response)"
+        fallback_reason = getattr(result, "fallback_reason", "") or ""
+        if fallback_reason:
+            await _alert_model_fallback(fallback_reason)
+        label = _model_label(getattr(result, "model", ""), fallback_reason)
+        body = result.text.strip() or "(no response)"
+        return f"{body}\n\nModel: {label}"
     except Exception as e:
         log.exception("synthesis failed: %s", e)
         return f"⚠️ Brain synthesis hit an error: {e}"
@@ -4993,6 +5140,7 @@ async def run_forever() -> None:
     if not tg.BOT_TOKEN:
         raise SystemExit("TELEGRAM_BOT_TOKEN not set")
     log.info("sh-brain-tgbot starting; polling messages + callback_query")
+    await _startup_claude_self_test()
     offset = _load_offset()
     async with httpx.AsyncClient() as client:
         _ja_tick = 0

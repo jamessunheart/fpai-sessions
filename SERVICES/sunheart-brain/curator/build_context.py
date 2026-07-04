@@ -21,6 +21,7 @@ import httpx
 REPO_ROOT = Path(os.environ.get("FPAI_REPO_ROOT", Path(__file__).resolve().parents[3]))
 DEFAULT_MAX_ITEMS = int(os.environ.get("SH_BUILD_CONTEXT_MAX_ITEMS", "6"))
 DEFAULT_MAX_CHARS = int(os.environ.get("SH_BUILD_CONTEXT_MAX_CHARS", "1800"))
+DEFAULT_HOT_STATE_MAX_CHARS = int(os.environ.get("SH_HOT_STATE_MAX_CHARS", "0"))
 DEFAULT_DIAGNOSTIC_CONTEXT_FILE = Path(
     os.environ.get("SELF_DIAGNOSTIC_CONTEXT_FILE", "/opt/fpai-build/.self_diagnostic_context.json")
 )
@@ -69,7 +70,7 @@ async def build_context_system_suffix(
     if os.environ.get("SH_BUILD_CONTEXT_DISABLE", "").strip() == "1":
         return ""
     diagnostic = render_active_diagnostic_context(max_chars=max_chars) if include_system_state else ""
-    hot_state = render_hot_state_context(max_chars=max_chars)
+    hot_state = render_hot_state_context(max_chars=DEFAULT_HOT_STATE_MAX_CHARS)
     routed_mode = not all((include_system_state, include_buildstream, include_corrections, include_becoming))
     if hot_state and not routed_mode:
         suffix_parts = [hot_state]
@@ -117,7 +118,7 @@ async def build_context_system_suffix(
 def render_hot_state_context(
     *,
     path: Path | str | None = None,
-    max_chars: int = DEFAULT_MAX_CHARS,
+    max_chars: int = DEFAULT_HOT_STATE_MAX_CHARS,
 ) -> str:
     """Return fresh HOT_STATE as the primary build context, or empty fallback."""
     if os.environ.get("HOT_MEMORY_DISABLE", "").strip() == "1":
@@ -133,7 +134,7 @@ def render_hot_state_context(
         hot_state.strip(),
     ]
     rendered = "\n".join(lines)
-    if len(rendered) <= max_chars:
+    if max_chars <= 0 or len(rendered) <= max_chars:
         return rendered
     return rendered[: max(0, max_chars - 20)].rsplit("\n", 1)[0] + "\n- ... bounded"
 

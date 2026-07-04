@@ -37,7 +37,7 @@ OPENAI_MODEL = os.environ.get("CURATOR_OPENAI_MODEL", "gpt-4o-mini")
 OPENAI_URL = "https://api.openai.com/v1/chat/completions"
 
 OLLAMA_BASE = os.environ.get("OLLAMA_BASE", "http://127.0.0.1:11434")
-OLLAMA_MODEL = os.environ.get("CURATOR_OLLAMA_MODEL", "llama3.1:8b")
+OLLAMA_MODEL = os.environ.get("CURATOR_OLLAMA_MODEL", "llama3.2:3b")
 
 PROVIDER = (os.environ.get("CURATOR_LLM_PROVIDER") or "").lower().strip()
 CLAUDE_CLI_BIN = os.environ.get("CURATOR_CLAUDE_CLI_BIN", "claude")
@@ -51,6 +51,8 @@ class LLMResult:
     prompt_sha1: str
     tokens_in: int
     tokens_out: int
+    fallback_from: str = ""
+    fallback_reason: str = ""
 
     def parse_json(self) -> Any:
         """Extract the first JSON object in the response.
@@ -103,8 +105,9 @@ async def complete(
 async def _claude_cli(system: str, user: str, max_tokens: int, temperature: float, prompt_hash: str) -> LLMResult:
     """Run Claude through the local subscription CLI; fall back to Ollama on failure."""
     if not shutil.which(CLAUDE_CLI_BIN):
-        log.warning("claude-cli provider selected but %r executable was not found; falling back to ollama", CLAUDE_CLI_BIN)
-        return await _ollama(system, user, max_tokens, temperature, prompt_hash)
+        reason = f"{CLAUDE_CLI_BIN!r} executable was not found"
+        log.warning("claude-cli provider selected but %s; falling back to ollama", reason)
+        return await _ollama_fallback(system, user, max_tokens, temperature, prompt_hash, reason=reason)
 
     prompt = f"{system}\n\n{user}"
     try:
@@ -117,19 +120,22 @@ async def _claude_cli(system: str, user: str, max_tokens: int, temperature: floa
         )
         stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=CLAUDE_CLI_TIMEOUT)
     except FileNotFoundError:
-        log.warning("claude-cli provider selected but %r executable was not found; falling back to ollama", CLAUDE_CLI_BIN)
-        return await _ollama(system, user, max_tokens, temperature, prompt_hash)
+        reason = f"{CLAUDE_CLI_BIN!r} executable was not found"
+        log.warning("claude-cli provider selected but %s; falling back to ollama", reason)
+        return await _ollama_fallback(system, user, max_tokens, temperature, prompt_hash, reason=reason)
     except asyncio.TimeoutError:
         with contextlib.suppress(ProcessLookupError):
             proc.kill()
         await proc.wait()
-        log.warning("claude-cli provider timed out after %.1fs; falling back to ollama", CLAUDE_CLI_TIMEOUT)
-        return await _ollama(system, user, max_tokens, temperature, prompt_hash)
+        reason = f"timed out after {CLAUDE_CLI_TIMEOUT:.1f}s"
+        log.warning("claude-cli provider %s; falling back to ollama", reason)
+        return await _ollama_fallback(system, user, max_tokens, temperature, prompt_hash, reason=reason)
 
     if proc.returncode != 0:
         err = stderr.decode(errors="replace").strip()
-        log.warning("claude-cli provider exited %s; falling back to ollama: %s", proc.returncode, err[:300])
-        return await _ollama(system, user, max_tokens, temperature, prompt_hash)
+        reason = f"exited {proc.returncode}: {err[:300]}"
+        log.warning("claude-cli provider %s; falling back to ollama", reason)
+        return await _ollama_fallback(system, user, max_tokens, temperature, prompt_hash, reason=reason)
 
     text = stdout.decode(errors="replace").strip()
     return LLMResult(
@@ -139,6 +145,56 @@ async def _claude_cli(system: str, user: str, max_tokens: int, temperature: floa
         tokens_in=_rough_tokens(prompt),
         tokens_out=_rough_tokens(text),
     )
+
+
+async def _ollama_fallback(
+    system: str,
+    user: str,
+    max_tokens: int,
+    temperature: float,
+    prompt_hash: str,
+    *,
+    reason: str,
+) -> LLMResult:
+    result = await _ollama(system, user, max_tokens, temperature, prompt_hash)
+    return LLMResult(
+        text=result.text,
+        model=result.model,
+        prompt_sha1=result.prompt_sha1,
+        tokens_in=result.tokens_in,
+        tokens_out=result.tokens_out,
+        fallback_from="claude-cli",
+        fallback_reason=reason,
+    )
+
+
+async def claude_cli_self_test() -> tuple[bool, str]:
+    """Return whether `claude -p` can answer a minimal startup ping."""
+    if not shutil.which(CLAUDE_CLI_BIN):
+        return False, f"{CLAUDE_CLI_BIN!r} executable was not found"
+    try:
+        proc = await asyncio.create_subprocess_exec(
+            CLAUDE_CLI_BIN,
+            "-p",
+            "Reply with exactly: ok",
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+        stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=min(CLAUDE_CLI_TIMEOUT, 20.0))
+    except FileNotFoundError:
+        return False, f"{CLAUDE_CLI_BIN!r} executable was not found"
+    except asyncio.TimeoutError:
+        with contextlib.suppress(Exception):
+            proc.kill()
+            await proc.wait()
+        return False, "startup ping timed out"
+    if proc.returncode != 0:
+        err = stderr.decode(errors="replace").strip()
+        return False, f"exited {proc.returncode}: {err[:300]}"
+    text = stdout.decode(errors="replace").strip().lower()
+    if "ok" not in text:
+        return False, f"unexpected ping response: {text[:120]}"
+    return True, "ok"
 
 
 def _rough_tokens(text: str) -> int:

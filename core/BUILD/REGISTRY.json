@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
         {
+            "id": "SPEC_d174_spec-d174-tg-bot-loud-model-fall",
+            "slug": "SPEC_d174_spec-d174-tg-bot-loud-model-fall",
+            "branch": "build/SPEC_d174_spec-d174-tg-bot-loud-model-fall",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d174_spec-d174-tg-bot-loud-model-fall.md",
+            "tests_passed": true,
+            "notes": "d174 complete in repo mirror: llm.py now carries fallback_from/fallback_reason when claude -p degrades to Ollama, defaulting fallback to llama3.2:3b. tgbot.py logs WARN, sends the ops alert, writes /var/lib/sh-brain/model_health.json counters, runs a startup claude -p self-test, appends Model: Sonnet / Model: llama-fallback to private synthesized replies, injects 20 recent chat turns, defaults RAG hits to 10, and logs rough prompt-token estimates. build_context.py makes HOT_STATE full by default via SH_HOT_STATE_MAX_CHARS=0. health_check.sh surfaces/fails degraded bot model health. Added activation script to install reviewed curator files to /opt/sh-brain-src and restart sh-brain-tgbot after merge. Focused unit tests, py_compile, shell syntax, registry JSON validation, and diff hygiene passed. Live deploy/TG proof not run in sandbox; random push sources inventoried but live timer/LaunchAgent disable requires host confirmation."
+        },
+        {
             "id": "SPEC_d173_swarm-verified-bug-guard-p8-com",
             "slug": "SPEC_d173_swarm-verified-bug-guard-p8-com",
             "branch": "build/SPEC_d173_swarm-verified-bug-guard-p8-com",
