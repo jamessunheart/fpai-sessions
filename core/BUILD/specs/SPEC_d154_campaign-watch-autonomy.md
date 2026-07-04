@@ -1,4 +1,4 @@
-# SPEC d151 — Campaign Watch: ads autonomy without credential exposure
+# SPEC d154 — Campaign Watch: ads autonomy without credential exposure
 
 **Intent (James 2026-07-04):** operate the live Meta campaign ("FP Assessment — Savings v1", campaign 52555196349772, act_71883338) autonomously. Harness correctly blocks sessions from reading raw credential stores — so the token stays server-side and sessions consume REPORTS.
 
