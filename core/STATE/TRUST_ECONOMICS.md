@@ -7,6 +7,8 @@ tags: [foundation, doctrine, trust, flywheel, keystone]
 
 # TRUST ECONOMICS — the fuel beneath the flywheel
 
+> **Cross-reference (parallel-session weld · 2026-07-04):** this is the full unpacking; the governing compressed form lives in **[[ALLOCATION_INTELLIGENCE]]** (keystone, §Intelligence Law v1.4 — boots every session via CORE_DOCTRINE). Same doctrine, one hierarchy: keystone governs, this expands. Edit them together.
+
 ## The compression (one screen · James 2026-07-04)
 
 **The Intelligence Law:** *Intelligence is the ability to allocate resources toward greater

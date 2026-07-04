@@ -94,6 +94,8 @@ Doctrine that maps to nothing running is fiction (Law 2). Allocation Intelligenc
 
 ---
 
+> **Cross-reference (parallel-session weld · 2026-07-04):** the same James doctrine was ingested twice in parallel — compressed here (v1.3/v1.4 below) and fully unpacked in **[[TRUST_ECONOMICS]]** (`core/STATE/TRUST_ECONOMICS.md`: master equation · trust asymmetry law · how the system is built around it · what it means for the AI). This keystone governs; TRUST_ECONOMICS is the expansion. Edit them together.
+
 ## Refinement v1.3 (2026-07-04): Achievement proves allocation — the full equation
 
 **Intelligence is not the allocator's property — intelligence IS the allocation.** Every decision is an allocation of some scarce resource (attention · time · money · energy · people · information · capital · compute). Intelligence doesn't float abstractly; it lives in one measurable place: **the quality of allocation.**
