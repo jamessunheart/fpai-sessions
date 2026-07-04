@@ -1,0 +1,10 @@
+[Unit]
+Description=Run FPAI post-merge reality check daily at 03:30 UTC
+
+[Timer]
+OnCalendar=*-*-* 03:30:00 UTC
+Persistent=true
+Unit=fpai-post-merge-reality.service
+
+[Install]
+WantedBy=timers.target

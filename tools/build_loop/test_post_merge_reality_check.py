@@ -156,6 +156,7 @@ class PostMergeRealityCheckTest(unittest.TestCase):
 
             row = json.loads(path.read_text(encoding="utf-8"))
         self.assertEqual(row["event"], "post-merge-reality")
+        self.assertEqual(row["loop"], "post_merge_reality")
         self.assertEqual(row["merged_dead"], 1)
         self.assertEqual(row["marked"], ["d131"])
 
@@ -218,16 +219,35 @@ class PostMergeRealityCheckTest(unittest.TestCase):
 
 
 class PostMergeRealityShellContractTest(unittest.TestCase):
-    def test_server_build_loop_runs_checker_once_per_day_from_health_pulse(self) -> None:
+    def test_dedicated_systemd_timer_runs_checker_daily_at_0330_utc(self) -> None:
+        service = (check.REPO_ROOT / "core/BUILD/cron/fpai-post-merge-reality.service").read_text(encoding="utf-8")
+        timer = (check.REPO_ROOT / "core/BUILD/cron/fpai-post-merge-reality.timer").read_text(encoding="utf-8")
+
+        self.assertIn("post_merge_reality_check.py", service)
+        self.assertIn("FPAI_SURFACE=systemd:fpai-post-merge-reality", service)
+        self.assertIn("POST_MERGE_REALITY_CHECK_DISABLE", service)
+        self.assertIn("--ops-ledger", service)
+        self.assertIn("--send-alert", service)
+        self.assertIn("OnCalendar=*-*-* 03:30:00 UTC", timer)
+        self.assertIn("Persistent=true", timer)
+        self.assertIn("Unit=fpai-post-merge-reality.service", timer)
+
+    def test_activation_installs_and_enables_dedicated_timer(self) -> None:
+        activate = (check.REPO_ROOT / "core/BUILD/activate/SPEC_d150_swarm-verified-wire-post-merge.sh").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("fpai-post-merge-reality.service", activate)
+        self.assertIn("fpai-post-merge-reality.timer", activate)
+        self.assertIn("systemctl daemon-reload", activate)
+        self.assertIn("systemctl enable --now fpai-post-merge-reality.timer", activate)
+        self.assertIn("systemctl disable --now fpai-post-merge-reality.timer", activate)
+
+    def test_server_build_loop_no_longer_owns_post_merge_reality_cadence(self) -> None:
         text = (check.REPO_ROOT / "tools/build_loop/server_build_loop.sh").read_text(encoding="utf-8")
 
-        health = text.index('ops_log.py" health "loop-pulse"')
-        checker = text.index("run_post_merge_reality_check_daily", health)
-
-        self.assertIn("POST_MERGE_REALITY_CHECK_DISABLE", text)
-        self.assertIn("post_merge_reality_check.py", text)
-        self.assertIn(".post_merge_reality_check_day", text)
-        self.assertLess(health, checker)
+        self.assertNotIn("run_post_merge_reality_check_daily", text)
+        self.assertNotIn(".post_merge_reality_check_day", text)
 
     def test_decision_cli_stamps_merged_at_for_existing_mark_merged_call_shape(self) -> None:
         decisions = (check.REPO_ROOT / "SERVICES/sunheart-brain/curator/decisions.py").read_text(encoding="utf-8")
