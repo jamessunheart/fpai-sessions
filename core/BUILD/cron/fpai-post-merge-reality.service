@@ -1,0 +1,13 @@
+[Unit]
+Description=FPAI post-merge reality check
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/fpai-build/FPAI_Cockpit
+Environment=FPAI_SURFACE=systemd:fpai-post-merge-reality
+Environment=OPS_LEDGER=/opt/fpai-build/ops_ledger.jsonl
+EnvironmentFile=-/etc/sh-brain/curator.env
+ExecCondition=/bin/bash -lc '[ "${POST_MERGE_REALITY_CHECK_DISABLE:-0}" != "1" ] && [ ! -f /opt/fpai-build/.post_merge_reality_disabled ]'
+ExecStart=/bin/bash -lc 'PY=/opt/sh-brain-src/.venv/bin/python; if [ ! -x "$PY" ]; then PY=/usr/bin/python3; fi; exec "$PY" /opt/fpai-build/FPAI_Cockpit/tools/build_loop/post_merge_reality_check.py --repo-root /opt/fpai-build/FPAI_Cockpit --ops-ledger "${OPS_LEDGER:-/opt/fpai-build/ops_ledger.jsonl}" --grace-days "${POST_MERGE_REALITY_GRACE_DAYS:-3}" --send-alert'

@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-07-04 · SPEC_d150_swarm-verified-wire-post-merge · branch `build/SPEC_d150_swarm-verified-wire-post-merge`
+
+- **Status:** done in working tree / awaiting review + merge
+- **Files changed:** `core/BUILD/cron/fpai-post-merge-reality.service`; `core/BUILD/cron/fpai-post-merge-reality.timer`; `core/BUILD/activate/SPEC_d150_swarm-verified-wire-post-merge.sh`; `tools/build_loop/server_build_loop.sh`; `tools/build_loop/test_post_merge_reality_check.py`; `core/BUILD/specs/SPEC_d150_swarm-verified-wire-post-merge.md`; `core/BUILD/results/SPEC_d150_swarm-verified-wire-post-merge.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a dedicated daily systemd timer for `post_merge_reality_check.py`. The reviewed units install after merge to `/etc/systemd/system/fpai-post-merge-reality.{service,timer}`, run daily at 03:30 UTC with `Persistent=true`, load `/etc/sh-brain/curator.env`, prefer the brain venv, and append the checker's `post_merge_reality` ops-ledger rows with `merged_dead` counts. Removed the hidden once-per-day call from the broader build-loop health pulse so this cadence has one owner.
+- **Tests:** `python3 -B -m unittest tools.build_loop.test_post_merge_reality_check tools.build_loop.test_liveness_probe tools.build_loop.test_feature_outcome tools.liveness.test_probe` (25 OK); `bash -n tools/build_loop/server_build_loop.sh core/BUILD/activate/SPEC_d150_swarm-verified-wire-post-merge.sh`; `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/post_merge_reality_check.py tools/build_loop/test_post_merge_reality_check.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d150-registry.json`; `systemd-analyze verify core/BUILD/cron/fpai-post-merge-reality.service core/BUILD/cron/fpai-post-merge-reality.timer` (exit 0, sandbox printed host DBus/snapd warnings); `git diff --check`
+- **Risks:** This sandbox did not install or start the live timer. First live run depends on the server having DB/env access, the brain venv or `/usr/bin/python3`, and append access to `/opt/fpai-build/ops_ledger.jsonl`.
+- **Rollback:** `systemctl disable --now fpai-post-merge-reality.timer`; optional soft kill is `POST_MERGE_REALITY_CHECK_DISABLE=1` or `/opt/fpai-build/.post_merge_reality_disabled`; code rollback is reverting this branch.
+- **Intent solved:** d150 gives the merged != live gate a real daily timer and removes the hidden build-loop cadence.
+- **Downstream intent unlocked:** daily `post_merge_reality` ledger rows can now be monitored for `merged_dead` count trends and routed into scoped repair specs.
+- **Questions for Ember/James:** after merge on server 162, confirm the activation script ran and `systemctl list-timers fpai-post-merge-reality.timer --no-pager` shows the 03:30 UTC timer; after the first fire, check `/opt/fpai-build/ops_ledger.jsonl` for `loop=post_merge_reality` and a current `merged_dead` count.
+
 ### 2026-07-03 · SPEC_d147_self-audit-infra-209-disk-impro · branch `build/SPEC_d147_self-audit-infra-209-disk-impro`
 
 - **Status:** done in working tree / awaiting review + merge
