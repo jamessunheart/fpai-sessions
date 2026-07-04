@@ -1,0 +1,17 @@
+# SPEC d182 — Live-service deploys need a smoke-test + auto-rollback (the guardrail that was missing)
+
+**Why (BUG_LOG 2026-07-04, critical):** the autonomous loop auto-merged + auto-deployed d163/d174/d177 to the live @sunheartbrain_bot and broke it 4 ways (claude path → llama fallback, voice dead, wrong context path, crashing alert). Review passed — it checks the diff, not live behavior. Passing review ≠ working live.
+
+## Build
+1. **Post-deploy smoke-test** for any deploy that touches a live production service (bot, guide, intake, site). After deploy, before accepting: run a real smoke-test against the running service —
+   - Bot: send a ping through the actual reply path; assert it answers on Claude (model != ollama-fallback), no import errors in the last 60s of logs, voice STT module importable.
+   - Generic: service `is-active`, no `Traceback`/`No module`/`No such file` in fresh logs, its documented healthcheck passes.
+2. **Auto-rollback on failure.** If the smoke-test fails, restore the previous version (keep a timestamped backup per deploy — the pattern `tgbot.py.broken-d177-*` + `.bak-*` already exists ad hoc; formalize it) and alert James ONE line: "d NNN deploy failed smoke-test, auto-reverted: <reason>."
+3. **Which repos/services this covers:** the build loop lives in FPAI_Cockpit but several live services run from `/opt/sh-brain-src`, `/opt/fpai/*`, `/opt/chief-of-staff`, 198/zen-host. Map build-target → live-service → smoke-test. A build that changes code deployed to a live service triggers its smoke-test; a repo-only change skips it.
+4. **Fix the specific d177 regressions properly (separate from rollback):** claude-cli must use OAuth subscription only (blank ANTHROPIC_API_KEY for the claude -p subprocess — metered key + OAuth both set breaks it AND risks burn); voice STT falls back to OpenAI Whisper when faster_whisper absent (or install faster_whisper); context_router path must be repo-relative not `/tools/...`; the fallback-alert send() signature bug. Re-land d174/d177's INTENT once these pass the new smoke-test.
+
+## Contract
+$0 · reversible · the smoke-test itself must be cheap (<30s) · independent review · this gate is MANDATORY for live-service deploys going forward (P1-for-deploys).
+
+## Done / Proof
+A deliberately-broken deploy to a test service is caught by the smoke-test and auto-reverted with a one-line James alert · a good deploy passes and proceeds · the bot's claude/voice regressions are fixed and re-verified live.
