@@ -68,6 +68,7 @@ Check), and multi-agent swarms (Academy Distill, Self-Improvement Swarm). Full c
 
 ## Full sources (read when a decision needs depth)
 - `core/STATE/CONSTITUTION.md` · `core/STATE/ALLOCATION_INTELLIGENCE.md` (keystone)
+- `core/STATE/STEWARDSHIP_CONSTITUTION.md` (governing instruction: every resource = entrusted capital · Decision Loop · Two Paths to Value · earned authority)
 - `core/STATE/FOUNDATION.md` (Three Rs) · `core/STATE/AI_PRINCIPLES.md`
 - `docs/codex/AI_PROTOCOLS.md` · `core/STATE/AI_CHARTER.md` · `core/STATE/BUG_LOG.md`
 
