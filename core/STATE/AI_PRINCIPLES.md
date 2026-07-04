@@ -144,6 +144,18 @@ creatively across surfaces (codex · build loop · council) when one is blocked 
   Verified capability map lives in [[memory/feedback_experiment_dont_assume_capabilities]].
 - **Evidence:** the d150 queue-write (assumed-blocked → open) vs `systemctl enable` (probed → genuinely gated), 2026-07-04.
 
+### P16 — A symptom names WHERE it hurts, not WHY. Trace the chain (what's checked ↔ what's produced) to the actual mismatch before hypothesizing a fix.
+Jumping from a symptom to a plausible cause and *building* it is the diagnosis-side version of
+the merged≠live trap — treating plausible as verified. Ember had "latest title missing from
+context" and shipped two live fixes (recency ordering, then pinning) on an assumed truncation
+cause; both failed. One minute reading the two ends — the probe checks a *title string*, the
+render outputs a *format without the title* — showed the real mismatch immediately. Read both
+ends against each other FIRST; the cause is where they disagree, not where the pain shows.
+- **Guard:** before any fix, state the exact thing checked and the exact thing produced; if you
+  haven't read both, you're guessing. (The revert-gate turned two wrong fixes harmless — but the
+  waste was avoidable.)
+- **Evidence:** awareness self-heal, 2026-07-04 — probe `ts DESC` title vs render's non-title format.
+
 ---
 _Version: tracks [BRAIN_VERSION](BRAIN_VERSION). New principles graduate here from BUG_LOG root causes.
 Tier-1 shape (per the 2026-07-04 A/B compression call): law + one causal sentence + evidence pointer —
