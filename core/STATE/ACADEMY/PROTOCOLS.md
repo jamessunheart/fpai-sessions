@@ -58,8 +58,10 @@ The system compounds when sessions add not just fixes but new *ways of working*.
 3. **Define its shape:** trigger (event / cadence / on-demand) · steps or agents · output ·
    the ONE proof it produces. Prefer the cheapest-sufficient carrier (Intelligence Economy).
 4. **Bake in the guardrails** (non-negotiable): reversible-first · small blast radius ·
-   read-cap on any swarm · **output-only if it would arm a pipeline** (queuing to the build DB
-   is harness-gated — route through Constitution Check, don't self-arm) · a kill-switch.
+   read-cap on any swarm · **batch heavy fan-outs into waves of 3-4** (a big parallel burst
+   hits API-529 overload — an 11-agent burst once killed 10/11 mid-run; use an `inBatches`
+   helper) · **output-only if it would arm a pipeline** (queuing to the build DB is
+   harness-gated — route through Constitution Check, don't self-arm) · a kill-switch.
 5. **Build it** as a `Workflow` script in `.claude/workflows/`, a tool + timer, or a hook.
 6. **Register it here** — add a row so future sessions discover it. An unregistered protocol
    is invisible; registration is the compounding step.
