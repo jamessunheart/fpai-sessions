@@ -1,0 +1,76 @@
+{
+  "name": "Full Potential Assessment — Life lens (7 Areas)",
+  "version": "1.0",
+  "doctrine": "core/STATE/ACADEMY/ACADEMY_PATTERN.md — ONE front door, life lens. Allocation Score 0-100 = mean of 7 area means × 10. Lowest area = default practice target.",
+  "scale": {"min": 0, "max": 10},
+  "areas": [
+    {
+      "key": "physical",
+      "label": "Physical",
+      "scored": [
+        "How well is your body supporting what you want to do today? (energy, sleep, movement)",
+        "How consistent has your sleep / movement / nutrition been this week?"
+      ],
+      "context": "What's one physical signal your body is sending you right now?"
+    },
+    {
+      "key": "mental",
+      "label": "Mental",
+      "scored": [
+        "How clear is your thinking right now — decisions feel easy vs. foggy?",
+        "How much unresolved mental clutter (open loops, unmade decisions) are you carrying? (0 = drowning in it, 10 = clear)"
+      ],
+      "context": "What's the one thought loop that's taken up the most bandwidth this week?"
+    },
+    {
+      "key": "spiritual",
+      "label": "Spiritual",
+      "scored": [
+        "How connected do you feel to a purpose/AIM bigger than today's to-do list?",
+        "How often this week did you feel meaning/alignment vs. just going through the motions?"
+      ],
+      "context": "Name your current highest AIM in one sentence."
+    },
+    {
+      "key": "social",
+      "label": "Social",
+      "scored": [
+        "How supported do you feel by the people around you right now?",
+        "How many real (non-transactional) conversations did you have this week? (0 = none, 10 = daily)"
+      ],
+      "context": "Who is one person you could build something with right now?"
+    },
+    {
+      "key": "emotional",
+      "label": "Emotional",
+      "scored": [
+        "How regulated do your emotions feel day to day (vs. reactive/overwhelmed)?",
+        "How honest have you been with yourself about how you actually feel this week?"
+      ],
+      "context": "What emotion have you been avoiding looking at?"
+    },
+    {
+      "key": "financial",
+      "label": "Financial",
+      "scored": [
+        "How much control do you feel over your money (vs. money controlling you)?",
+        "How aligned is your spending with what you say you value?"
+      ],
+      "context": "Name one thing you value above money."
+    },
+    {
+      "key": "environmental",
+      "label": "Environmental",
+      "scored": [
+        "How much does your physical environment (home, workspace, nature access) support your full potential?",
+        "How sustainable / aligned do you feel your footprint is?"
+      ],
+      "context": "What's one thing in your environment you'd change first?"
+    }
+  ],
+  "rescore_loop": {
+    "formal": "Day 0 and Day 14 only — full 21-question instrument. Day0→Day14 delta = the official reportable metric.",
+    "daily": "Days 1-13: Ember classifies each 30-sec voice note to one area, applies bounded ±1 nudge (floor 0, ceiling 10, max one nudge/area/day). Directional coaching signal only — never the graded number.",
+    "surface": "Conversational only. Never a chart."
+  }
+}
