@@ -307,7 +307,7 @@ def main():
 
     candidates = vault_candidates()
     digest_file = write_vault_text("02_CONTEXT/Memory/BRAIN DIGEST.md", md, candidates)
-    vault = digest_file.parents[1]
+    vault = digest_file.parents[2]  # FIX: parents[1] was vault/02_CONTEXT -> doubled-path bug
     print(f"wrote {digest_file.name}  ·  {data.get('total_chunks', 0):,} chunks")
 
     state_file = write_vault_text("02_CONTEXT/Memory/BRAIN STATE.md", md_state, candidates)
