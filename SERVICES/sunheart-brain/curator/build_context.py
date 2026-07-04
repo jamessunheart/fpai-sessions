@@ -393,7 +393,7 @@ async def _with_recent_session_insights(context: BuildContext, *, max_items: int
                     SELECT insight_type, title, body, specs_affected, weight, surface, ts::text
                       FROM brain_index.session_insights
                     {where_clause}
-                     ORDER BY weight DESC, ts DESC
+                     ORDER BY ts DESC, weight DESC
                      LIMIT %s
                     """,
                     (max(1, max_items),),
