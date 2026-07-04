@@ -30,6 +30,8 @@ operating repertoire compounds — not just its code, but its *ways of working*.
 | **Constitution Check** | Screens proposals against the 8 Laws before they queue | `tools/governance/constitution_check.py` |
 | **Guard Adjudicator** | On hitting a block, debate REAL-gate vs my-timidity → reframe+TEST, or solidify+route legitimately (safety-biased; never evades an enforced gate) | `tools/governance/guard_adjudicator.py` |
 | **Collision Guard** | Stops parallel sessions bundling each other's uncommitted edits | `.claude/hooks/check-collision.sh` |
+| **Laptop-Inbox Push** | Race-proof laptop→162 delivery: push to `laptop-inbox` branch, ff-merge on 162 (feeds re-dirty the live checkout faster than direct push wins); P13 governs any dirty-file handling | recipe in `memory/feedback_push_to_server162_not_origin.md` |
+| **Queue-Visibility Check (P14)** | Queued ≠ visible: after queueing a build, verify a `decisions` row exists (`needs_build=true`) — a directory is not the queue | `tools/build_loop/seed_orphaned_specs.py` (class-fix: SPEC_d150) |
 
 ### 🐝 Orchestration workflows (multi-agent swarms; on-demand + schedulable)
 | Protocol | What it does | Invoke |
