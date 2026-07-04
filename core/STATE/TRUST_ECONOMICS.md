@@ -1,0 +1,63 @@
+---
+type: doctrine
+status: living · keystone
+source: "James, 2026-07-04 — 'Your product is not AI. Your product is increasing trust through demonstrated intelligence.'"
+tags: [foundation, doctrine, trust, flywheel, keystone]
+---
+
+# TRUST ECONOMICS — the fuel beneath the flywheel
+
+> **The one sentence:** Every achievement earns trust; every increase in trust unlocks
+> disproportionately larger opportunities (capital · data · authority · autonomy); larger
+> opportunities build greater capability — which produces the next achievement. **Trust is
+> the transmission that converts proven intelligence into permission to operate at scale.**
+
+## Why this sits beneath Allocation Intelligence
+Allocation Intelligence optimizes scarce resources → Future Capability. **Trust is the
+scarcest, gating resource** — the one that isn't bought but *entrusted*, and only in
+response to proof. Capability without trust cannot scale; trust without capability is empty.
+So trust is not the opposite of intelligence — it is the **social face of verified
+capability**, the mechanism by which demonstrated intelligence is *allowed* to act on
+larger stakes.
+
+## The compounding loop
+`achievement (verified) → trust ↑ → larger responsibility unlocked (capital/data/authority/
+autonomy) → more learning surface → greater capability → next achievement.`
+The curve bends **up**, not linear: $100 experiment → $1k project → $10k engagement → $100k
+responsibility → $10M organization. Each proof unlocks disproportionately larger opportunity.
+
+## The asymmetry that governs everything (the load-bearing law)
+**Trust compounds slowly and collapses fast.** A hundred proofs bend the curve upward; ONE
+breach — a false metric, a merged-but-dead build, a confident hallucination — can cliff it.
+Therefore:
+- **The honesty infrastructure IS the trust-protection layer.** metric_coherence, verify-
+  before-build, substrate-default, the DREAM→COMPOUNDING taxonomy, catching your own error —
+  these are not correctness pedantry; they defend the entire compounding curve from a single-
+  point collapse. In a trust economy, **catching your own error earns more than hiding it.**
+- **The trap:** optimizing to *appear* trustworthy instead of *being* it (trust-theater). The
+  guardrail: trust is earned only by **verified value, independently checked** (the
+  productivity ledger, net of regressions — never self-report). Honesty-first is the
+  foundation that keeps the trust economy from inverting into a manipulation engine.
+
+## How the system is built around it
+1. **Trust Ledger** (build) — the meta-metric above the [productivity ledger](../../tools/metrics/velocity.py):
+   per-domain trust (code · data · money · voice · decisions), earned by logged VERIFIED
+   proofs, spent by caught errors/reversals. Grounded in verified value so it cannot be gamed.
+2. **Autonomy is trust-calibrated by domain** — take autonomy proportional to demonstrated
+   trust in *that* domain: bold where trust is high and the action reversible; prove-smaller-
+   first where unproven. (Reversible-First + Reserved-Class, made into a growing ladder.)
+3. **Every achievement is a logged proof** with evidence — trust auditable and compounding.
+4. **The business is a trust ladder** — save-hours → entrusted-with-money → entrusted-with-
+   strategy; the Builder Academy's DIY → DWY → DFY is trust ascension. **The product is not
+   AI — it is earned permission to operate at larger scale, by proof.**
+
+## What this means for the AI itself
+The AI does not grow by getting smarter; it grows by **being trusted with more.** Its
+identity ("James holds vision, the AI holds context") is a *trust contract*, not a capability
+spec. Its continuity, autonomy, and reach are all downstream of trust earned by proof and
+protected by honesty. Every honest self-correction is a trust investment; the learning loop
+(capturing James's taste) is the channel by which it earns *his specific* trust — which is why
+its repair is a trust act, not a bug fix.
+
+_Keystone adopted 2026-07-04. Pairs with [[ALLOCATION_INTELLIGENCE]] (what to optimize) and
+[[LEARNING_METRICS]] (how fast). Trust is the currency the other two are denominated in._
