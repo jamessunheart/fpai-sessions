@@ -377,6 +377,101 @@ class BuildContextTest(unittest.TestCase):
         self.assertIn("d110 writes every Claude Code session decision", suffix)
         self.assertIn("session_insights", suffix)
 
+    def test_latest_session_insight_is_loaded_first(self) -> None:
+        class FakeCursor:
+            def __init__(self):
+                self.calls = 0
+
+            async def __aenter__(self):
+                return self
+
+            async def __aexit__(self, *_exc):
+                return False
+
+            async def execute(self, _sql, _params=None):
+                self.calls += 1
+
+            async def fetchall(self):
+                if self.calls == 1:
+                    return [
+                        (
+                            "architecture",
+                            "D180 latest insight title",
+                            "Newest must be visible even when its weight is lower.",
+                            ["d180"],
+                            3,
+                            "claude_code",
+                            "2026-07-04T18:00:00Z",
+                        )
+                    ]
+                return [
+                    (
+                        "architecture",
+                        "Older high-weight insight",
+                        "This row ranks first by weight but is not newest.",
+                        ["d179"],
+                        10,
+                        "claude_code",
+                        "2026-07-04T17:00:00Z",
+                    ),
+                    (
+                        "architecture",
+                        "D180 latest insight title",
+                        "Newest must be visible even when its weight is lower.",
+                        ["d180"],
+                        3,
+                        "claude_code",
+                        "2026-07-04T18:00:00Z",
+                    ),
+                ]
+
+        class FakeConnection:
+            def __init__(self):
+                self.cursor_instance = FakeCursor()
+
+            async def __aenter__(self):
+                return self
+
+            async def __aexit__(self, *_exc):
+                return False
+
+            def cursor(self):
+                return self.cursor_instance
+
+        def fake_connect():
+            return FakeConnection()
+
+        fake_db = types.SimpleNamespace(connect=fake_connect)
+        context = build_context.BuildContext(source="test", focus=[], active_loops=[], open_intents=[])
+        with patch.dict("sys.modules", {"db": fake_db}):
+            updated = asyncio.run(build_context._with_recent_session_insights(context, max_items=3))
+
+        self.assertIsNotNone(updated.recent_insights)
+        self.assertIn("D180 latest insight title", updated.recent_insights[0])
+        self.assertIn("Older high-weight insight", updated.recent_insights[1])
+
+    def test_latest_session_insight_survives_render_truncation(self) -> None:
+        latest_title = "D180 latest title must reach bot context"
+        context = build_context.BuildContext(
+            source="test+session_insights",
+            focus=["focus " + ("f" * 600)],
+            active_loops=[],
+            open_intents=[],
+            corrections=["correction " + ("c" * 2200)],
+            recent_insights=[
+                f"w3 claude_code/architecture: {latest_title} — " + ("body " * 120),
+                "w10 claude_code/architecture: Older high-weight insight — " + ("old " * 120),
+            ],
+        )
+
+        rendered = build_context.render_build_context(context, max_chars=1800)
+
+        self.assertLessEqual(len(rendered), 1800)
+        self.assertIn("Recent decisions (all surfaces):", rendered)
+        self.assertIn(latest_title, rendered)
+        self.assertIn("Older high-weight insight", rendered)
+        self.assertIn("bounded", rendered)
+
     def test_becoming_context_is_injected_for_conversation(self) -> None:
         async def fake_render_becoming_context(person_id, *, max_chars=900):
             self.assertEqual(person_id, "123")

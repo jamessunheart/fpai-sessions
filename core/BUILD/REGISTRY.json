@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-04T18:05:00Z",
+    "updated_at": "2026-07-04T18:40:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d180_self-heal-awareness-render-late",
+            "slug": "SPEC_d180_self-heal-awareness-render-late",
+            "branch": "build/SPEC_d180_self-heal-awareness-render-late",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d180_self-heal-awareness-render-late.md",
+            "tests_passed": true,
+            "notes": "d180 complete in working tree: build_context now fetches the newest active brain_index.session_insights row by timestamp and prepends it before the weight-ranked insight set, then pins the first recent-insight lines during bounded rendering so both the newest title and existing top-ranked awareness probe row survive max_chars=1800 truncation. Focused context regressions, awareness reliability unit tests, py_compile, registry JSON validation, and diff hygiene passed. Live DB verify_awareness proof awaits post-merge production timer."
+        },
         {
             "id": "SPEC_d179_bug-005-wire-build-orphan-reape",
             "slug": "SPEC_d179_bug-005-wire-build-orphan-reape",

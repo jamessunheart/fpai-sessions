@@ -304,7 +304,48 @@ def render_build_context(
     rendered = "\n".join(lines)
     if len(rendered) <= max_chars:
         return rendered
+    pinned_recent_insights = (
+        [f"- {item}" for item in context.recent_insights[:2]]
+        if include_recent_insights and context.recent_insights
+        else []
+    )
+    if pinned_recent_insights:
+        return _render_with_pinned_recent_insights(lines, pinned_recent_insights, max_chars=max_chars)
     return rendered[: max(0, max_chars - 20)].rsplit("\n", 1)[0] + "\n- ... bounded"
+
+
+def _render_with_pinned_recent_insights(lines: list[str], pinned_recent_insights: list[str], *, max_chars: int) -> str:
+    """Bound context while preserving the newest/probe-critical insight lines."""
+    if max_chars <= 0:
+        return ""
+    bounded_marker = "- ... bounded"
+    base = list(lines[:3])
+    output = [*base, "Recent decisions (all surfaces):"]
+    for pinned_line in pinned_recent_insights:
+        candidate = "\n".join([*output, pinned_line, bounded_marker])
+        if len(candidate) <= max_chars:
+            output.append(pinned_line)
+            continue
+        room = max_chars - len("\n".join([*output, "", bounded_marker]))
+        clipped = pinned_line[: max(0, room)].rstrip()
+        if clipped:
+            output.append(clipped)
+        break
+    skipped_pinned: set[str] = set()
+    for line in lines[3:]:
+        if line == "Recent decisions (all surfaces):":
+            continue
+        if line in pinned_recent_insights and line not in skipped_pinned:
+            skipped_pinned.add(line)
+            continue
+        candidate = "\n".join([*output, line, bounded_marker])
+        if len(candidate) > max_chars:
+            break
+        output.append(line)
+    rendered = "\n".join([*output, bounded_marker])
+    if len(rendered) <= max_chars:
+        return rendered
+    return rendered[:max_chars]
 
 
 async def _with_recent_session_insights(context: BuildContext, *, max_items: int) -> BuildContext:
@@ -331,23 +372,37 @@ async def _with_recent_session_insights(context: BuildContext, *, max_items: int
     try:
         async with connect() as conn:
             async with conn.cursor() as cur:
-                await cur.execute(
-                    """
-                    SELECT insight_type, title, body, specs_affected, weight, surface, ts::text
-                      FROM brain_index.session_insights
+                where_clause = """
                      WHERE ts > NOW() - INTERVAL '7 days'
                        AND (expires_at IS NULL OR expires_at > NOW())
                        AND insight_type != 'housekeeping'
                        AND title NOT LIKE 'Auto-snapshot%'
+                """
+                await cur.execute(
+                    f"""
+                    SELECT insight_type, title, body, specs_affected, weight, surface, ts::text
+                      FROM brain_index.session_insights
+                    {where_clause}
+                     ORDER BY ts DESC
+                     LIMIT 1
+                    """
+                )
+                latest_rows = await cur.fetchall()
+                await cur.execute(
+                    f"""
+                    SELECT insight_type, title, body, specs_affected, weight, surface, ts::text
+                      FROM brain_index.session_insights
+                    {where_clause}
                      ORDER BY weight DESC, ts DESC
                      LIMIT %s
                     """,
                     (max(1, max_items),),
                 )
-                rows = await cur.fetchall()
+                ranked_rows = await cur.fetchall()
     except Exception:
         return context
 
+    rows = _dedupe_session_insight_rows([*latest_rows, *ranked_rows])[: max(1, max_items)]
     rendered = [_format_session_insight_row(row) for row in rows]
     rendered = [item for item in rendered if item]
     if not rendered:
@@ -356,6 +411,23 @@ async def _with_recent_session_insights(context: BuildContext, *, max_items: int
     if "session_insights" not in source:
         source = f"{source}+session_insights"
     return replace(context, source=source, recent_insights=rendered)
+
+
+def _dedupe_session_insight_rows(rows: list[Any]) -> list[Any]:
+    deduped: list[Any] = []
+    seen: set[tuple[str, str, str]] = set()
+    for row in rows:
+        try:
+            _insight_type, title, _body, _specs, _weight, surface, ts = row
+        except Exception:
+            deduped.append(row)
+            continue
+        key = (str(surface or ""), str(title or ""), str(ts or ""))
+        if key in seen:
+            continue
+        seen.add(key)
+        deduped.append(row)
+    return deduped
 
 
 def _format_session_insight_row(row: Any) -> str:
