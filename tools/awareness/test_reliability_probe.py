@@ -5,8 +5,10 @@ import importlib.util
 import json
 import sys
 import tempfile
+import types
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 VERIFY_PATH = Path(__file__).with_name("verify_awareness.py")
 VERIFY_SPEC = importlib.util.spec_from_file_location("verify_awareness", VERIFY_PATH)
@@ -26,6 +28,51 @@ NOW = dt.datetime(2026, 6, 18, 12, 0, tzinfo=dt.timezone.utc)
 
 
 class AwarenessReliabilityProbeTest(unittest.TestCase):
+    def test_latest_session_insight_lookup_orders_by_timestamp(self) -> None:
+        executed: list[str] = []
+
+        class FakeCursor:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *_exc):
+                return False
+
+            def execute(self, sql):
+                executed.append(sql)
+
+            def fetchone(self):
+                return (
+                    444,
+                    "session-latest",
+                    "claude_code",
+                    "architecture",
+                    "D181 newest timestamp insight",
+                    "Newest row must be the probe target even at low weight.",
+                    ["d181"],
+                    1,
+                    "2026-07-04T19:00:00Z",
+                )
+
+        class FakeConnection:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *_exc):
+                return False
+
+            def cursor(self):
+                return FakeCursor()
+
+        fake_psycopg = types.SimpleNamespace(connect=lambda *_args, **_kwargs: FakeConnection())
+
+        with patch.dict("sys.modules", {"psycopg": fake_psycopg}):
+            latest = verify_awareness.latest_session_insight("postgres://example")
+
+        self.assertEqual(latest["title"], "D181 newest timestamp insight")
+        self.assertIn("ORDER BY ts DESC", executed[0])
+        self.assertNotIn("ORDER BY weight DESC", executed[0])
+
     def test_records_success_metric_without_alert(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

@@ -83,6 +83,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Questions for Ember/James: …
 ```
 
+### 2026-07-04 · SPEC_d181_self-heal-awareness-render-late · branch `build/SPEC_d181_self-heal-awareness-render-late`
+
+- **Status:** done in working tree / awaiting review + merge
+- **Files changed:** `SERVICES/sunheart-brain/curator/test_build_context.py`; `tools/awareness/verify_awareness.py`; `tools/awareness/test_reliability_probe.py`; `core/BUILD/specs/SPEC_d181_self-heal-awareness-render-late.md`; `core/BUILD/results/SPEC_d181_self-heal-awareness-render-late.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Kept the awareness probe strict and aligned it to the actual d181 contract: `latest_session_insight()` now probes the newest active `brain_index.session_insights` row by `ts DESC`, not the highest-weight row. The branch already contains the d180 build-context root fix that loads newest-first and pins the first recent-insight lines during bounded rendering; d181 adds proof for the reported 444-insight backlog shape.
+- **Tests:** `env HOT_MEMORY_STATE_PATH=/tmp/d181-no-hot-state.md SELF_DIAGNOSTIC_CONTEXT_FILE=/tmp/d181-no-diagnostic.json python3 -B -m unittest SERVICES.sunheart-brain.curator.test_build_context` (18 OK); `python3 -B -m unittest tools.awareness.test_reliability_probe tools.continuity.test_write_session_insights` (8 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile SERVICES/sunheart-brain/curator/build_context.py SERVICES/sunheart-brain/curator/test_build_context.py tools/awareness/verify_awareness.py tools/awareness/test_reliability_probe.py tools/awareness/reliability_probe.py tools/continuity/write_session_insights.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d181-registry.json`; `git diff --check`
+- **Proof:** Regression coverage now simulates one low-weight newest insight plus 443 older high-weight insights and proves the newest title remains in an 1800-character render. Probe coverage proves the live awareness target is selected by timestamp.
+- **Risks:** Live DB `verify_awareness --probe-latest` was not run in this sandbox. First production timer after merge should confirm the actual live `/opt/sh-brain-src/curator/build_context.py` path passes.
+- **Rollback:** Revert this branch. Runtime kill switches remain `SH_SESSION_INSIGHTS_DISABLE=1` for only the insight block, or `SH_BUILD_CONTEXT_DISABLE=1` for the whole advisory context suffix.
+- **Intent solved:** actual newest session insight reaches bot context under the strict awareness probe.
+- **Downstream intent unlocked:** awareness reliability can recover without lowering the probe threshold or weakening the metric.
+- **Questions for Ember/James:** after merge/activation on server 162, run or observe the next awareness reliability timer and confirm `latest title in context` passes against the live DB.
+
 ### 2026-07-04 · SPEC_d180_self-heal-awareness-render-late · branch `build/SPEC_d180_self-heal-awareness-render-late`
 
 - **Status:** done in working tree / awaiting review + merge
