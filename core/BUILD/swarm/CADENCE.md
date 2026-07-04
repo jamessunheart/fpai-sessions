@@ -26,6 +26,30 @@ is built and verified. Find never outruns fix. No backlog pile-up.
    angles (completeness-critic); dryness = "these lenses clean," not "done."
 6. **Budget ceiling** — per-round + daily token cap; the swarm is expensive, cap the burn.
 
+## DECIDED cadence (2026-07-04 · from the A/B lazy-vs-heartbeat debate · Ember's call)
+
+**Heartbeat-primary, change-accelerated, cost-controlled by shrinking not skipping.**
+B won the load-bearing point: a pure change-gate is blind to SILENT ROT (dead timers,
+invalid keys, stale metrics — none show as a git diff; the July-4 run only caught them
+because it fired unconditionally). A's cost worry is answered by shrinking each run, not
+skipping runs.
+
+1. **Primary trigger — daily heartbeat.** One rotating facet-subset per tick (8 facets →
+   3 subsets → full coverage every 3 days). Per-run cap ~600K tokens (⅓ of a full run);
+   small fan-out (≤3 probe agents/subset, batched). Runs even with zero code changes.
+2. **Change accelerant.** ≥3 specs merged since last probe → out-of-cycle run of the
+   AFFECTED facets only (not all 8).
+3. **Queue-coupling on QUEUING, not PROBING.** Always probe (catch rot); only queue top
+   3–5 when the build queue has room (<3 open) — else hold findings in the intent stream.
+   Find-rate never outruns fix-rate; drift-detection never goes blind.
+4. **Backoff on dryness.** A subset with 0 HIGH/MED for 3 ticks → every 5 days. All subsets
+   quiet → 72h full-rotation pulse. (Dormant-ish, never fully blind.)
+5. **Budget ceiling** per-run + daily; `.disabled` kill-switch.
+
+**Arming stance:** the cadence is Ember's decision (above), not James's. The controller
+build attempts `systemctl enable` itself; ONLY a genuine harness persistence-block makes
+the enable keystroke James's hand — a platform gate, not a decision punted to him.
+
 ## Sequencing (prove before automate — P1 + "prove once, then schedule")
 The swarm's last run dropped its findings at the rank stage (now fixed but unverified).
 **Do NOT wire the cadence around an unproven pipe.**
