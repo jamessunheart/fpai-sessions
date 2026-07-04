@@ -472,6 +472,85 @@ class BuildContextTest(unittest.TestCase):
         self.assertIn("Older high-weight insight", rendered)
         self.assertIn("bounded", rendered)
 
+    def test_latest_session_insight_survives_large_high_weight_backlog(self) -> None:
+        latest_title = "D181 newest low-weight insight must reach bot context"
+
+        class FakeCursor:
+            def __init__(self):
+                self.calls = 0
+
+            async def __aenter__(self):
+                return self
+
+            async def __aexit__(self, *_exc):
+                return False
+
+            async def execute(self, _sql, _params=None):
+                self.calls += 1
+
+            async def fetchall(self):
+                if self.calls == 1:
+                    return [
+                        (
+                            "architecture",
+                            latest_title,
+                            "Newest row should be probe-critical even when weight is low.",
+                            ["d181"],
+                            1,
+                            "claude_code",
+                            "2026-07-04T19:00:00Z",
+                        )
+                    ]
+                return [
+                    (
+                        "architecture",
+                        f"Older high-weight insight {index:03d}",
+                        "Older ranked row from a large active backlog.",
+                        [f"d{index}"],
+                        10,
+                        "claude_code",
+                        f"2026-07-04T18:{index % 60:02d}:00Z",
+                    )
+                    for index in range(443)
+                ]
+
+        class FakeConnection:
+            def __init__(self):
+                self.cursor_instance = FakeCursor()
+
+            async def __aenter__(self):
+                return self
+
+            async def __aexit__(self, *_exc):
+                return False
+
+            def cursor(self):
+                return self.cursor_instance
+
+        def fake_connect():
+            return FakeConnection()
+
+        fake_db = types.SimpleNamespace(connect=fake_connect)
+        context = build_context.BuildContext(
+            source="test",
+            focus=["focus " + ("f" * 600)],
+            active_loops=[],
+            open_intents=[],
+            corrections=["correction " + ("c" * 2200)],
+        )
+
+        with patch.dict("sys.modules", {"db": fake_db}):
+            updated = asyncio.run(build_context._with_recent_session_insights(context, max_items=8))
+
+        rendered = build_context.render_build_context(updated, max_chars=1800)
+
+        self.assertLessEqual(len(rendered), 1800)
+        self.assertIsNotNone(updated.recent_insights)
+        self.assertIn(latest_title, updated.recent_insights[0])
+        self.assertIn(latest_title, rendered)
+        self.assertIn("Older high-weight insight 000", rendered)
+        self.assertIn("bounded", rendered)
+
     def test_becoming_context_is_injected_for_conversation(self) -> None:
         async def fake_render_becoming_context(person_id, *, max_chars=900):
             self.assertEqual(person_id, "123")

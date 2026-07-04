@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-04T18:40:00Z",
+    "updated_at": "2026-07-04T19:20:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d181_self-heal-awareness-render-late",
+            "slug": "SPEC_d181_self-heal-awareness-render-late",
+            "branch": "build/SPEC_d181_self-heal-awareness-render-late",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d181_self-heal-awareness-render-late.md",
+            "tests_passed": true,
+            "notes": "d181 complete in working tree: verify_awareness now defines the probe target as the true newest active session_insights row by ts DESC, matching the awareness-render contract. Added focused regression proof that a low-weight newest insight still loads first and survives the 1800-char render with a 444-row high-weight backlog. Focused curator/awareness/continuity tests, py_compile, registry JSON validation, and diff hygiene passed. Live DB verify_awareness proof awaits post-merge production timer."
+        },
         {
             "id": "SPEC_d180_self-heal-awareness-render-late",
             "slug": "SPEC_d180_self-heal-awareness-render-late",
