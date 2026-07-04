@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-07-04 · SPEC_d163_spec-replace-bot-llm-with-claude · branch `build/SPEC_d163_spec-replace-bot-llm-with-claude`
+
+- **Status:** done in working tree / awaiting review + merge
+- **Files changed:** `SERVICES/sunheart-brain/curator/llm.py`; `SERVICES/sunheart-brain/curator/test_llm.py`; `core/BUILD/activate/SPEC_d163_spec-replace-bot-llm-with-claude.sh`; `core/BUILD/specs/SPEC_d163_spec-replace-bot-llm-with-claude.md`; `core/BUILD/results/SPEC_d163_spec-replace-bot-llm-with-claude.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added explicit `CURATOR_LLM_PROVIDER=claude-cli` support to curator `llm.py`. The provider calls `claude -p` asynchronously with a 60s default timeout, returns `LLMResult` audit fields, and falls back to the existing Ollama path if the CLI is missing, times out, or exits nonzero. Added `CURATOR_CLAUDE_CLI_BIN` and `CURATOR_CLAUDE_CLI_TIMEOUT` knobs. Added an activation script that backs up live `llm.py` and `/etc/sh-brain/curator.env`, installs the reviewed repo `llm.py`, sets `CURATOR_LLM_PROVIDER=claude-cli`, compiles, and restarts `sh-brain-tgbot.service` after merge.
+- **Tests:** `python3 -B -m unittest curator.test_llm` (3 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile SERVICES/sunheart-brain/curator/llm.py SERVICES/sunheart-brain/curator/test_llm.py`; `bash -n core/BUILD/activate/SPEC_d163_spec-replace-bot-llm-with-claude.sh`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d163-registry.json`; `git diff --check`
+- **Risks:** This sandbox did not edit `/opt/sh-brain-src`, change `/etc/sh-brain/curator.env`, restart the live bot, or observe the required 30 minutes of post-activation journal output. If systemd cannot find or authenticate `claude`, replies intentionally fall back to Ollama; set `CURATOR_CLAUDE_CLI_BIN` if the CLI path is nonstandard. Live `llm.py` is a known diverged curator follow-up surface, so review should confirm the repo file is the intended live source for this slice before activation.
+- **Rollback:** Immediate runtime rollback is `CURATOR_LLM_PROVIDER=ollama` in `/etc/sh-brain/curator.env` plus `systemctl restart sh-brain-tgbot.service`. Full activation rollback copies `llm.py` and `curator.env` from the backup directory printed by the activation script, then restarts the service. Code rollback is reverting this branch.
+- **Intent solved:** d163 routes the Telegram bot's primary Claude-quality replies through the Claude subscription CLI instead of metered Anthropic API.
+- **Downstream intent unlocked:** the live bot can run Claude-quality conversation at $0 marginal token spend while preserving Ollama as a no-network fallback when CLI auth/path fails.
+- **Questions for Ember/James:** after merge/activation on server 162, verify `journalctl -u sh-brain-tgbot --since '30 minutes ago' --no-pager | grep -F 'api.anthropic.com'` returns no rows and confirm bot replies report/use `claude-cli` rather than Ollama fallback.
+
 ### 2026-07-04 · SPEC_d162_spec-content-ads-engine-the-busi · branch `build/SPEC_d162_spec-content-ads-engine-the-busi`
 
 - **Status:** done in working tree / awaiting independent review + merge
