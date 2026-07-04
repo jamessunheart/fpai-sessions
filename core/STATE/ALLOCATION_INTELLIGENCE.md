@@ -52,6 +52,19 @@ FPOS does **not** optimize for revenue, profit, cost reduction, AI adoption, or 
 
 That question governs hiring, engineering, marketing, capital deployment, product, partnerships — and personal decisions. (It is the operational form of the Constitution's Supreme Law: *never optimize a local objective at the expense of the whole* — allocation is always judged against whole-system future capability.)
 
+## The Law of Intelligent Allocation — never *unnecessary* idleness (operational · 2026-07-04)
+
+**Every available resource should be allocated toward its highest-value contribution; unused
+capability is unrealized intelligence.** Every idle resource — a Claude/GPT subscription, a
+running server, a paid GPU, available human expertise, existing code, the swarm's own findings
+— is stored potential producing **zero proof**. **Operating law: never accept UNNECESSARY
+idleness.** The word is load-bearing: idleness is a violation only when a positive-EV,
+reversible, on-cap allocation is left unactivated. Sometimes the highest-value allocation is to
+*wait* (hold capital for a better opportunity, don't thrash a working loop, let a human rest).
+The enemy is **neglect, not stillness**; manic activity is idleness in a costume. Judge by
+expected value, validated by proof. (The overnight 0-autonomous-value was a real violation —
+high-EV reversible allocations sat unactivated: neglect, not rest.)
+
 ## The recursive flywheel
 
 `Scarce Resources → Allocation Intelligence → Greater Capability → Better Solutions → Revenue → More Scarce Resources → Smarter Allocation → repeat forever.` **Recursive abundance:** the better an organization allocates, the more capable it becomes; the more capable, the greater its value; the greater its value, the more resources for the next cycle. Every cycle should make the next stronger.
