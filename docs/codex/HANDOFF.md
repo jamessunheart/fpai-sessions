@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-07-04 · SPEC_d154_spec-d154-campaign-watch-ads-aut · branch `build/SPEC_d154_spec-d154-campaign-watch-ads-aut`
+
+- **Status:** done in working tree / awaiting independent review + merge
+- **Files changed:** `tools/ads/campaign_watch.py`; `tools/ads/test_campaign_watch.py`; `tools/ads/__init__.py`; `core/BUILD/cron/fpai-campaign-watch.service`; `core/BUILD/cron/fpai-campaign-watch.timer`; `core/BUILD/cron/fpai-campaign-actions.service`; `core/BUILD/activate/SPEC_d154_spec-d154-campaign-watch-ads-aut.sh`; `tools/burn/audit.py`; `tools/heartbeat/check.py`; `core/BUILD/specs/SPEC_d154_spec-d154-campaign-watch-ads-aut.md`; `core/BUILD/results/SPEC_d154_spec-d154-campaign-watch-ads-aut.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added server-side Meta Campaign Watch for campaign `52555196349772` / `act_71883338` without copying `META_ACCESS_TOKEN`. The watcher reads the token only from existing live env files, writes `~/.config/fpai/ads/status.json`, mirrors the report into hot-memory state, appends allocation-ledger JSONL rows, and sends Telegram alerts for review approval, first spend, CPL > $15, daily spend > $12, and billing/account errors. Added a localhost-only bearer-gated actions endpoint for `pause_campaign`, `resume_campaign`, and `set_daily_budget`; the bearer follows the existing AI-token file/env convention, and daily budgets above $20 are rejected before any Meta call. Added systemd timer/service units, activation script, heartbeat evidence row, and burn-registry rows.
+- **Tests:** `python3 -B -m unittest tools.ads.test_campaign_watch` (7 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/ads/campaign_watch.py tools/ads/test_campaign_watch.py tools/burn/audit.py tools/heartbeat/check.py`; `bash -n core/BUILD/activate/SPEC_d154_spec-d154-campaign-watch-ads-aut.sh`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d154-registry.json`; `systemd-analyze verify core/BUILD/cron/fpai-campaign-watch.service core/BUILD/cron/fpai-campaign-watch.timer core/BUILD/cron/fpai-campaign-actions.service` (exit 0; sandbox printed host DBus/snapd warnings)
+- **Risks:** Live Graph API calls, real status freshness, Telegram delivery, and pause/resume round-trip were not run in this sandbox because the Meta token stays on server 162. The action service refuses to start if no live AI bearer token file/env is present. Meta review-status fields may vary by response shape; raw campaign/adset/ad payloads are preserved in `status.json` for inspection.
+- **Rollback:** `systemctl disable --now fpai-campaign-watch.timer fpai-campaign-actions.service`; soft-disable with `/opt/fpai-build/.campaign_watch_disabled` and/or `/opt/fpai-build/.campaign_actions_disabled`; code rollback is reverting this branch.
+- **Intent solved:** campaign state and guarded campaign actions are available to sessions through reports/actions without exposing the Meta token.
+- **Downstream intent unlocked:** campaign spend/review/CPL stewardship can enter HOT_STATE/allocation feedback and stay autonomously actionable inside the $20/day cap.
+- **Questions for Ember/James:** after merge on server 162, confirm `META_ACCESS_TOKEN` and the AI bearer token are present in existing env/token locations, then run one watcher pass, observe one TG state-change alert, and perform the required pause/resume round-trip returning the campaign to its prior state.
+
 ### 2026-07-04 · SPEC_d153_spec-d153-class-fix-named-specs · branch `build/SPEC_d153_spec-d153-class-fix-named-specs`
 
 - **Status:** done in working tree / awaiting independent review + merge

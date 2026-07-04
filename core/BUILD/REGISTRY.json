@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
     {
+      "id": "SPEC_d154_spec-d154-campaign-watch-ads-aut",
+      "slug": "SPEC_d154_spec-d154-campaign-watch-ads-aut",
+      "branch": "build/SPEC_d154_spec-d154-campaign-watch-ads-aut",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d154_spec-d154-campaign-watch-ads-aut.md",
+      "tests_passed": true,
+      "notes": "d154 complete in working tree: added tools/ads/campaign_watch.py with Graph API status collection for campaign 52555196349772 / act_71883338, writing ~/.config/fpai/ads/status.json, hot-memory mirror, allocation-ledger JSONL rows, and Telegram alerts for review approval, first spend, CPL > $15, daily spend > $12, and billing/account errors. Added localhost-only bearer-gated actions endpoint for pause_campaign, resume_campaign, and set_daily_budget with a hard reject above $20/day, using existing live env/token files only. Added systemd timer/service units, activation script, heartbeat row, and burn-registry rows. Focused unit tests, py_compile, activation syntax, registry JSON validation, and systemd-analyze verify passed. No live Graph call, Telegram send, action call, token read, push, merge, deploy, outreach, service stop/delete, or money movement was performed."
+    },
+    {
       "id": "SPEC_d150_swarm-verified-wire-post-merge",
       "slug": "SPEC_d150_swarm-verified-wire-post-merge",
       "branch": "build/SPEC_d150_swarm-verified-wire-post-merge",

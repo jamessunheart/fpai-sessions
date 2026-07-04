@@ -1,0 +1,25 @@
+[Unit]
+Description=FPAI guarded Meta campaign actions endpoint
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/fpai-build/FPAI_Cockpit
+Environment=FPAI_SURFACE=systemd:fpai-campaign-actions
+Environment=FPAI_REPO=/opt/fpai-build/FPAI_Cockpit
+Environment=META_CAMPAIGN_ID=52555196349772
+Environment=META_AD_ACCOUNT_ID=act_71883338
+Environment=FPAI_ADS_ACTION_HOST=127.0.0.1
+Environment=FPAI_ADS_ACTION_PORT=8765
+Environment=FPAI_ADS_ACTION_TOKEN_FILE=/root/.config/fpai/ai.token
+EnvironmentFile=-/etc/sh-brain/curator.env
+EnvironmentFile=-/opt/fpai/services/ad-portal/.env
+EnvironmentFile=-/opt/fpai/sparket-engine/.env
+ExecCondition=/bin/bash -lc '[ "${CAMPAIGN_ACTIONS_DISABLE:-0}" != "1" ] && [ ! -f /opt/fpai-build/.campaign_actions_disabled ]'
+ExecStart=/bin/bash -lc 'PY=/opt/sh-brain-src/.venv/bin/python; if [ ! -x "$PY" ]; then PY=/usr/bin/python3; fi; exec "$PY" /opt/fpai-build/FPAI_Cockpit/tools/ads/campaign_watch.py --serve-actions --host "${FPAI_ADS_ACTION_HOST:-127.0.0.1}" --port "${FPAI_ADS_ACTION_PORT:-8765}"'
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

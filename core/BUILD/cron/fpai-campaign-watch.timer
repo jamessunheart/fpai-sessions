@@ -1,0 +1,11 @@
+[Unit]
+Description=Run FPAI Meta campaign watch twice daily
+
+[Timer]
+OnCalendar=*-*-* 06,18:20:00 UTC
+Persistent=true
+Unit=fpai-campaign-watch.service
+
+[Install]
+WantedBy=timers.target
+
