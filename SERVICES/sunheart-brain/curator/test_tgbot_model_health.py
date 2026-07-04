@@ -64,6 +64,7 @@ class TGBotModelHealthTest(unittest.IsolatedAsyncioTestCase):
         sent = send.await_args.args[0]
         self.assertIn("TG bot fell back to llama3.2:3b", sent)
         self.assertIn("not logged in", sent)
+        self.assertIn("chat_id", send.await_args.kwargs)
 
     async def test_startup_self_test_alerts_on_failure(self) -> None:
         with mock.patch.object(llm, "claude_cli_self_test", new=mock.AsyncMock(return_value=(False, "not logged in"))), \

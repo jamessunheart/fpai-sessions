@@ -31,6 +31,7 @@ log = logging.getLogger("curator.voice_pipeline")
 class VoiceDependencyStatus:
     pipecat: bool
     faster_whisper: bool
+    openai_whisper: bool
     kokoro: bool
     ffmpeg: bool
     soundfile: bool
@@ -38,7 +39,7 @@ class VoiceDependencyStatus:
 
     @property
     def stt_ready(self) -> bool:
-        return self.faster_whisper
+        return self.faster_whisper or self.openai_whisper
 
     @property
     def tts_ready(self) -> bool:
@@ -52,8 +53,8 @@ class VoiceDependencyStatus:
         missing: list[str] = []
         if not self.pipecat:
             missing.append("pipecat")
-        if not self.faster_whisper:
-            missing.append("faster-whisper")
+        if not self.stt_ready:
+            missing.append("faster-whisper-or-openai-whisper")
         if not self.kokoro:
             missing.append("kokoro")
         if not self.ffmpeg:
@@ -73,6 +74,7 @@ def dependency_status(
     return VoiceDependencyStatus(
         pipecat=bool(finder("pipecat")),
         faster_whisper=bool(finder("faster_whisper")),
+        openai_whisper=bool(os.environ.get("OPENAI_API_KEY")),
         kokoro=bool(finder("kokoro")),
         ffmpeg=_ffmpeg_available(ffmpeg),
         soundfile=bool(finder("soundfile")),

@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-04T19:20:00Z",
+    "updated_at": "2026-07-04T22:26:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d182_spec-d182-live-service-deploys-n",
+            "slug": "SPEC_d182_spec-d182-live-service-deploys-n",
+            "branch": "build/SPEC_d182_spec-d182-live-service-deploys-n",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d182_spec-d182-live-service-deploys-n.md",
+            "tests_passed": true,
+            "notes": "d182 complete in working tree: activation scripts now run through live_service_guard.py, which maps build targets to live services, snapshots mapped live files, runs the activation, smoke-tests the running service, restores backups and sends the required one-line James alert on failure, and causes the server loop to reset the accepted merge back to PRE_SHA. Bot regressions fixed in the repo mirror: claude -p child env drops ANTHROPIC_API_KEY while preserving OAuth, voice STT readiness accepts OpenAI Whisper fallback when faster_whisper is absent, tgbot helper loaders resolve through FPAI_REPO_ROOT/live default instead of /tools, and fallback alert send() stays keyword-safe. Focused guard/build-loop/bot tests, py_compile, bash syntax, registry JSON validation, and diff hygiene passed. Live Telegram smoke/revert proof awaits guarded post-merge activation on server 162."
+        },
         {
             "id": "SPEC_d181_self-heal-awareness-render-late",
             "slug": "SPEC_d181_self-heal-awareness-render-late",

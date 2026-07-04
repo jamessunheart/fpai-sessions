@@ -96,7 +96,7 @@ def _load_pairing_guard():
 
 def _load_public_context_pack():
     """Load public context helpers without mutating sys.path."""
-    pack_path = Path(__file__).resolve().parents[3] / "tools" / "privacy" / "public_context_pack.py"
+    pack_path = _repo_root() / "tools" / "privacy" / "public_context_pack.py"
     spec = _ilu.spec_from_file_location("fpai_public_context_pack", pack_path)
     pack = _ilu.module_from_spec(spec) if spec and spec.loader else None
     if pack is None or spec is None or spec.loader is None:
@@ -108,7 +108,7 @@ def _load_public_context_pack():
 
 def _load_context_router():
     """Load repo-local synthesis router without mutating sys.path."""
-    router_path = Path(__file__).resolve().parents[3] / "tools" / "synthesis" / "context_router.py"
+    router_path = _repo_root() / "tools" / "synthesis" / "context_router.py"
     spec = _ilu.spec_from_file_location("fpai_synthesis_context_router", router_path)
     router = _ilu.module_from_spec(spec) if spec and spec.loader else None
     if router is None or spec is None or spec.loader is None:
@@ -120,7 +120,7 @@ def _load_context_router():
 
 def _load_constitution_surface():
     """Load repo-local constitution surfacer without mutating sys.path."""
-    surface_path = Path(__file__).resolve().parents[3] / "tools" / "constitution" / "surface.py"
+    surface_path = _repo_root() / "tools" / "constitution" / "surface.py"
     spec = _ilu.spec_from_file_location("fpai_constitution_surface", surface_path)
     surface = _ilu.module_from_spec(spec) if spec and spec.loader else None
     if surface is None or spec is None or spec.loader is None:
@@ -132,7 +132,7 @@ def _load_constitution_surface():
 
 def _load_build_alerts():
     """Load repo-local build alert helpers without mutating sys.path."""
-    alerts_path = Path(__file__).resolve().parents[3] / "tools" / "build_loop" / "build_alerts.py"
+    alerts_path = _repo_root() / "tools" / "build_loop" / "build_alerts.py"
     spec = _ilu.spec_from_file_location("fpai_build_alerts", alerts_path)
     alerts = _ilu.module_from_spec(spec) if spec and spec.loader else None
     if alerts is None or spec is None or spec.loader is None:
@@ -140,6 +140,27 @@ def _load_build_alerts():
     sys.modules[spec.name] = alerts
     spec.loader.exec_module(alerts)
     return alerts
+
+
+def _repo_root() -> Path:
+    """Resolve the FPAI_Cockpit repo root from either repo mirror or live bot path."""
+    for env_name in ("FPAI_REPO_ROOT", "FPAI_COCKPIT_REPO"):
+        value = os.environ.get(env_name)
+        if value:
+            path = Path(value).expanduser()
+            if (path / "tools").is_dir():
+                return path
+    here = Path(__file__).resolve()
+    try:
+        candidate = here.parents[3]
+        if (candidate / "tools").is_dir():
+            return candidate
+    except IndexError:
+        pass
+    live_default = Path("/opt/fpai-build/FPAI_Cockpit")
+    if (live_default / "tools").is_dir():
+        return live_default
+    return here.parents[3]
 
 
 def _env_truthy(name: str) -> bool:

@@ -31,7 +31,7 @@ class LivenessProbeShellContractTest(unittest.TestCase):
         activation = self.text.index('python3 "$REPO/tools/build_loop/ops_log.py" merge activated')
         probe = self.text.index('run_liveness_probe "$LIVENESS_DECLARATION" "$LIVENESS_CHECK"')
         outcome = self.text.index('tools/build_loop/feature_outcome.py')
-        approved_notice = self.text.index('tg "$V · AUTO-MERGED')
+        approved_notice = self.text.index('python3 "$REPO/tools/build_loop/ops_log.py" merge auto-merged')
         self.assertLess(activation, probe)
         self.assertLess(probe, outcome)
         self.assertLess(outcome, approved_notice)
@@ -73,7 +73,7 @@ class LivenessProbeShellContractTest(unittest.TestCase):
 
         new_merge = self.text.index('emit_live_artifact_proof "$SPECID" "$DID" "$BR"')
         probe = self.text.index('run_liveness_probe "$LIVENESS_DECLARATION" "$LIVENESS_CHECK"')
-        approved_notice = self.text.index('tg "$V · AUTO-MERGED')
+        approved_notice = self.text.index('python3 "$REPO/tools/build_loop/ops_log.py" merge auto-merged')
         self.assertLess(new_merge, probe)
         self.assertLess(new_merge, approved_notice)
 

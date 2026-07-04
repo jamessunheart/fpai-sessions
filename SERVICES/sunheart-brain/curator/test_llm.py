@@ -34,7 +34,8 @@ class ClaudeCliProviderTest(unittest.IsolatedAsyncioTestCase):
         llm.PROVIDER = "claude-cli"
         proc = _FakeClaudeProcess(stdout=b'{"ok": true}\n')
 
-        with mock.patch.object(llm.shutil, "which", return_value="/usr/bin/claude"), \
+        with mock.patch.dict(llm.os.environ, {"ANTHROPIC_API_KEY": "metered-key", "CLAUDE_CODE_OAUTH_TOKEN": "oauth"}, clear=False), \
+                mock.patch.object(llm.shutil, "which", return_value="/usr/bin/claude"), \
                 mock.patch.object(llm.asyncio, "create_subprocess_exec", new=mock.AsyncMock(return_value=proc)) as run:
             result = await llm.complete("system prompt", "user prompt", max_tokens=777)
 
@@ -45,6 +46,9 @@ class ClaudeCliProviderTest(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(args[:2], ("claude", "-p"))
         self.assertIn("system prompt\n\nuser prompt", args[2])
         self.assertIn("Return ONLY a single JSON object", args[2])
+        env = run.await_args.kwargs["env"]
+        self.assertNotIn("ANTHROPIC_API_KEY", env)
+        self.assertEqual("oauth", env["CLAUDE_CODE_OAUTH_TOKEN"])
 
     async def test_claude_cli_missing_falls_back_to_ollama(self) -> None:
         fallback = llm.LLMResult("local", "ollama:test", "hash", 1, 2)

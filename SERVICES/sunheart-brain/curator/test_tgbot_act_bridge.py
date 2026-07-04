@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import tempfile
 import unittest
+from pathlib import Path
+from unittest import mock
 
 from . import tgbot
 
@@ -36,6 +39,13 @@ class TelegramActBridgeTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(payload["status"], "captured")
         self.assertFalse(payload["needs_build"])
         self.assertEqual(payload["build_spec"], "")
+
+    def test_repo_root_uses_env_in_live_sh_brain_checkout_shape(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "FPAI_Cockpit"
+            (repo / "tools" / "synthesis").mkdir(parents=True)
+            with mock.patch.dict(tgbot.os.environ, {"FPAI_REPO_ROOT": str(repo)}, clear=False):
+                self.assertEqual(repo, tgbot._repo_root())
 
     async def test_whatcanyoudo_command_is_honest_about_boundaries(self) -> None:
         reply = await tgbot._handle_command("/whatcanyoudo", 123)

@@ -700,14 +700,39 @@ Register in core/BUILD/REGISTRY.json. Tests required. Do NOT push or merge.
 
   if [ "$MERGED" = 1 ]; then
     ACTIVATED=0
+    ACTIVATE_FAILED=0
     # Post-merge activation: run activate.sh if the build shipped one
     # Convention: any spec that installs systemd units or needs wiring ships core/BUILD/activate/${SPECID}.sh
     ACTIVATE_SCRIPT="$REPO/core/BUILD/activate/${SPECID}.sh"
     if [ -f "$ACTIVATE_SCRIPT" ]; then
-      echo "running activate script for $SPECID"
-      bash "$ACTIVATE_SCRIPT" 2>&1 | head -20 || echo "activate script exited non-zero — check $ACTIVATE_SCRIPT"
-      ACTIVATED=1
-      python3 "$REPO/tools/build_loop/ops_log.py" merge activated "$SPECID (activate.sh ran)" "\$0" "$BR" "" 2>/dev/null || true
+      echo "running guarded activate script for $SPECID"
+      mkdir -p /opt/fpai-build/logs
+      ACTIVATE_LOG="/opt/fpai-build/logs/$SPECID.guarded-activate.log"
+      if "$PY" -B "$REPO/tools/build_loop/live_service_guard.py" \
+          --repo-root "$REPO" \
+          --spec-id "$SPECID" \
+          --decision-id "$DID" \
+          --branch "$BR" \
+          --activate-script "$ACTIVATE_SCRIPT" \
+          --base-ref "$PRE_SHA" \
+          --head-ref "$HEAD_SHA" \
+          --ops-ledger "${OPS_LEDGER:-/opt/fpai-build/ops_ledger.jsonl}" >"$ACTIVATE_LOG" 2>&1; then
+        tail -20 "$ACTIVATE_LOG" || true
+        ACTIVATED=1
+        python3 "$REPO/tools/build_loop/ops_log.py" merge activated "$SPECID (guarded activate + smoke passed)" "\$0" "$BR" "" 2>/dev/null || true
+      else
+        tail -40 "$ACTIVATE_LOG" || true
+        ACTIVATE_FAILED=1
+        MERGED=0
+        git -C "$REPO" reset --hard "$PRE_SHA" >/dev/null 2>&1
+        dec set-build-result "$DID" "$BR" "changes" >/dev/null 2>&1 || true
+        build_alert_event failed "post-deploy smoke failed; auto-reverted"
+        python3 "$REPO/tools/build_loop/ops_log.py" merge auto-reverted "$SPECID post-deploy smoke failed" "\$0" "$BR" "Ember: inspect $DID — guarded activation smoke failed" 2>/dev/null || true
+      fi
+    fi
+    if [ "$ACTIVATE_FAILED" = 1 ]; then
+      echo "post-deploy smoke failed for $SPECID; live service restored and repo merge reverted"
+      return 0
     fi
     run_liveness_probe "$LIVENESS_DECLARATION" "$LIVENESS_CHECK"
     run_correction_retention_smoke

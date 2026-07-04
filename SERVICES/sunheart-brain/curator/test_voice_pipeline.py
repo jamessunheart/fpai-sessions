@@ -26,11 +26,26 @@ class VoicePipelineTest(unittest.TestCase):
         self.assertTrue(ready.local_ready)
         self.assertEqual(ready.missing(), [])
 
-        missing = voice_pipeline.dependency_status(finder=lambda _name: None, ffmpeg_path="/bin/false")
+        with patch.dict(os.environ, {}, clear=True):
+            missing = voice_pipeline.dependency_status(finder=lambda _name: None, ffmpeg_path="/bin/false")
         self.assertFalse(missing.local_ready)
         self.assertIn("pipecat", missing.missing())
-        self.assertIn("faster-whisper", missing.missing())
+        self.assertIn("faster-whisper-or-openai-whisper", missing.missing())
         self.assertIn("kokoro", missing.missing())
+
+    def test_openai_whisper_key_is_stt_fallback_when_faster_whisper_absent(self) -> None:
+        present = {"pipecat", "kokoro", "soundfile", "numpy"}
+
+        def finder(name: str) -> object | None:
+            return object() if name in present else None
+
+        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}, clear=True):
+            status = voice_pipeline.dependency_status(finder=finder, ffmpeg_path="/bin/true")
+
+        self.assertFalse(status.faster_whisper)
+        self.assertTrue(status.openai_whisper)
+        self.assertTrue(status.stt_ready)
+        self.assertNotIn("faster-whisper-or-openai-whisper", status.missing())
 
     def test_provider_env_controls_local_and_strict_modes(self) -> None:
         with patch.dict(os.environ, {}, clear=True):

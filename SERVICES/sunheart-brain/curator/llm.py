@@ -117,6 +117,7 @@ async def _claude_cli(system: str, user: str, max_tokens: int, temperature: floa
             prompt,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
+            env=_claude_cli_env(),
         )
         stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=CLAUDE_CLI_TIMEOUT)
     except FileNotFoundError:
@@ -179,6 +180,7 @@ async def claude_cli_self_test() -> tuple[bool, str]:
             "Reply with exactly: ok",
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
+            env=_claude_cli_env(),
         )
         stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=min(CLAUDE_CLI_TIMEOUT, 20.0))
     except FileNotFoundError:
@@ -201,6 +203,13 @@ def _rough_tokens(text: str) -> int:
     if not text:
         return 0
     return max(1, len(text) // 4)
+
+
+def _claude_cli_env() -> dict[str, str]:
+    """Use the Claude subscription/OAuth carrier, never a metered Anthropic key."""
+    env = os.environ.copy()
+    env.pop("ANTHROPIC_API_KEY", None)
+    return env
 
 
 async def _openai(system: str, user: str, max_tokens: int, temperature: float, prompt_hash: str) -> LLMResult:
