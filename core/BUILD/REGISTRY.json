@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-04T17:48:00Z",
+    "updated_at": "2026-07-04T17:49:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d163_spec-replace-bot-llm-with-claude",
+            "slug": "SPEC_d163_spec-replace-bot-llm-with-claude",
+            "branch": "build/SPEC_d163_spec-replace-bot-llm-with-claude",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d163_spec-replace-bot-llm-with-claude.md",
+            "tests_passed": true,
+            "notes": "d163 complete in working tree: added explicit CURATOR_LLM_PROVIDER=claude-cli support to curator llm.py. It calls claude -p asynchronously with a 60s default timeout, returns LLMResult audit fields, and falls back to existing Ollama if the CLI is missing, times out, or exits nonzero. Added CURATOR_CLAUDE_CLI_BIN and CURATOR_CLAUDE_CLI_TIMEOUT knobs plus focused tests. Shipped activation script to back up live llm.py and /etc/sh-brain/curator.env, install reviewed llm.py, set CURATOR_LLM_PROVIDER=claude-cli, compile, and restart sh-brain-tgbot.service after merge. Focused unittest, py_compile, activation shell syntax, registry JSON validation, and diff hygiene passed. No live /opt/sh-brain-src edit, /etc edit, bot restart, push, merge, deploy, outreach, secrets, or money movement was performed in sandbox."
+        },
         {
             "id": "SPEC_d162_spec-content-ads-engine-the-busi",
             "slug": "SPEC_d162_spec-content-ads-engine-the-busi",

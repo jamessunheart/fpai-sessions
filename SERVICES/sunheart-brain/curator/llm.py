@@ -1,21 +1,25 @@
 """curator/llm.py — thin LLM client for the curator.
 
 Provider preference (configurable via CURATOR_LLM_PROVIDER):
-    1. ``openai``    — OPENAI_API_KEY  (default if set)
-    2. ``anthropic`` — ANTHROPIC_API_KEY
-    3. ``ollama``    — local fallback
+    1. ``claude-cli`` — local Claude CLI subscription carrier
+    2. ``openai``     — OPENAI_API_KEY  (default if set)
+    3. ``anthropic``  — ANTHROPIC_API_KEY
+    4. ``ollama``     — local fallback
 
-Set ``CURATOR_LLM_PROVIDER=anthropic`` to force Claude when both keys exist.
+Set ``CURATOR_LLM_PROVIDER=claude-cli`` to force Claude CLI with Ollama fallback.
 
 All calls return a dict with `text` plus bookkeeping fields so we can record
 the exact model + prompt hash on every proposal (auditability).
 """
 from __future__ import annotations
 
+import asyncio
+import contextlib
 import hashlib
 import json
 import logging
 import os
+import shutil
 from dataclasses import dataclass
 from typing import Any
 
@@ -36,6 +40,8 @@ OLLAMA_BASE = os.environ.get("OLLAMA_BASE", "http://127.0.0.1:11434")
 OLLAMA_MODEL = os.environ.get("CURATOR_OLLAMA_MODEL", "llama3.1:8b")
 
 PROVIDER = (os.environ.get("CURATOR_LLM_PROVIDER") or "").lower().strip()
+CLAUDE_CLI_BIN = os.environ.get("CURATOR_CLAUDE_CLI_BIN", "claude")
+CLAUDE_CLI_TIMEOUT = float(os.environ.get("CURATOR_CLAUDE_CLI_TIMEOUT") or "60")
 
 
 @dataclass
@@ -85,11 +91,60 @@ async def complete(
         else:
             chosen = "ollama"
 
+    if chosen == "claude-cli":
+        return await _claude_cli(system, user, max_tokens, temperature, prompt_hash)
     if chosen == "openai" and OPENAI_KEY:
         return await _openai(system, user, max_tokens, temperature, prompt_hash)
     if chosen == "anthropic" and ANTHROPIC_KEY:
         return await _anthropic(system, user, max_tokens, temperature, prompt_hash)
     return await _ollama(system, user, max_tokens, temperature, prompt_hash)
+
+
+async def _claude_cli(system: str, user: str, max_tokens: int, temperature: float, prompt_hash: str) -> LLMResult:
+    """Run Claude through the local subscription CLI; fall back to Ollama on failure."""
+    if not shutil.which(CLAUDE_CLI_BIN):
+        log.warning("claude-cli provider selected but %r executable was not found; falling back to ollama", CLAUDE_CLI_BIN)
+        return await _ollama(system, user, max_tokens, temperature, prompt_hash)
+
+    prompt = f"{system}\n\n{user}"
+    try:
+        proc = await asyncio.create_subprocess_exec(
+            CLAUDE_CLI_BIN,
+            "-p",
+            prompt,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+        stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=CLAUDE_CLI_TIMEOUT)
+    except FileNotFoundError:
+        log.warning("claude-cli provider selected but %r executable was not found; falling back to ollama", CLAUDE_CLI_BIN)
+        return await _ollama(system, user, max_tokens, temperature, prompt_hash)
+    except asyncio.TimeoutError:
+        with contextlib.suppress(ProcessLookupError):
+            proc.kill()
+        await proc.wait()
+        log.warning("claude-cli provider timed out after %.1fs; falling back to ollama", CLAUDE_CLI_TIMEOUT)
+        return await _ollama(system, user, max_tokens, temperature, prompt_hash)
+
+    if proc.returncode != 0:
+        err = stderr.decode(errors="replace").strip()
+        log.warning("claude-cli provider exited %s; falling back to ollama: %s", proc.returncode, err[:300])
+        return await _ollama(system, user, max_tokens, temperature, prompt_hash)
+
+    text = stdout.decode(errors="replace").strip()
+    return LLMResult(
+        text=text,
+        model=f"claude-cli:{CLAUDE_CLI_BIN} -p",
+        prompt_sha1=prompt_hash,
+        tokens_in=_rough_tokens(prompt),
+        tokens_out=_rough_tokens(text),
+    )
+
+
+def _rough_tokens(text: str) -> int:
+    if not text:
+        return 0
+    return max(1, len(text) // 4)
 
 
 async def _openai(system: str, user: str, max_tokens: int, temperature: float, prompt_hash: str) -> LLMResult:
