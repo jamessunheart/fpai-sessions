@@ -78,3 +78,24 @@ Doctrine that maps to nothing running is fiction (Law 2). Allocation Intelligenc
 
 ---
 **Refinement (2026-07-03):** [[Cycle Time Is The Interest Rate]] — allocation converts capital/time into the Three Rs; **cycle-time is the compounding multiplier**, and shrinking it is a first-class allocation target (the rate of compounding itself compounds).
+
+---
+
+## Refinement v1.3 (2026-07-04): Achievement proves allocation — the full equation
+
+**Intelligence is not the allocator's property — intelligence IS the allocation.** Every decision is an allocation of some scarce resource (attention · time · money · energy · people · information · capital · compute). Intelligence doesn't float abstractly; it lives in one measurable place: **the quality of allocation.**
+
+**An allocation is a hypothesis until reality answers.** "AI recommends investing $100k" demonstrates nothing — it's potential capability. The allocation produces a 10× return → NOW intelligence is proven. The test is comparative: *did this allocation create more value than the alternatives would have?* Reality is the only validator.
+
+**The full equation (merges the keystone with the [[Trust Flywheel]]):**
+
+`RESOURCES → ALLOCATION → ACHIEVEMENT → PROOF → TRUST → MORE RESOURCES → (compounds)`
+
+This inserts the missing conversion steps into the flywheel above: capability doesn't convert to resources directly — it converts **through proof and trust**. Proof of intelligent allocation builds trust; trust attracts the next round of resources (money, autonomy, attention, access); more resources enable bigger allocations. Trust-tier growth (T4→T7) is this equation running on the AI; the Academy's proof-gates are it running on humans; revenue is it running on the business.
+
+**Foundational sentences:**
+- *Demonstrated intelligence is proven allocation.*
+- *Achievement proves allocation.*
+- *FPOS is a continuous allocator of resources; reality is the feedback mechanism that reveals whether those allocations were intelligent.*
+
+**Instrumentation:** this is why the Allocation Ledger (SPEC_allocation-ledger-ccd) matters — every allocation logged, its outcome scored, is simultaneously the intelligence-proof record AND the trust ledger. One instrument, both meters.
