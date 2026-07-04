@@ -48,6 +48,8 @@ REGISTRY = [
      "evidence": "file:/root/.config/fpai/hot_memory/HOT_STATE.md"},
     {"name": "162 campaign watch (2x/day)", "where": "162", "cadence": 720, "grace": 2,
      "evidence": "file:/root/.config/fpai/ads/status.json"},
+    {"name": "162 provider burn reconciliation (weekly)", "where": "162", "cadence": 10080, "grace": 1.5,
+     "evidence": "file:/root/.config/fpai/burn_audit/reports"},
     {"name": "162 awareness probe (2h)", "where": "162", "cadence": 120, "grace": 4,
      "evidence": "journal:fpai-awareness-reliability.service"},
     {"name": "162 nightly metabolism", "where": "162", "cadence": 1440, "grace": 2,

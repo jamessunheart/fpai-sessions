@@ -1,0 +1,10 @@
+[Unit]
+Description=Run FPAI provider-side burn reconciliation weekly
+
+[Timer]
+OnCalendar=Mon *-*-* 07:10:00 UTC
+Persistent=true
+Unit=fpai-burn-reconcile.service
+
+[Install]
+WantedBy=timers.target
