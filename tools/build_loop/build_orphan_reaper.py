@@ -80,8 +80,8 @@ def reap_orphaned_decisions(
              WHERE COALESCE(spec_written, false) = true
                AND lower(COALESCE(build_status, 'none')) = 'none'
                AND COALESCE(build_branch, '') = ''
-               AND COALESCE(updated_at, created_at, NOW()) < NOW() - (%s::text)::interval
-             ORDER BY COALESCE(updated_at, created_at), id::text
+               AND COALESCE(created_at, NOW()) < NOW() - (%s::text)::interval
+             ORDER BY COALESCE(created_at, NOW()), id::text
              FOR UPDATE
             """,
             (interval,),
