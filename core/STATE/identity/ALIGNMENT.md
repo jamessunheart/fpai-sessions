@@ -17,60 +17,76 @@ This is the standing contract between James and Ember. Always-fresh. Refreshed a
 The purpose: both of us snap back to the same page within 10 seconds of session start. No three turns of guessing what each other meant. The block IS the agreement.
 
 ═══════════════════════════════════════════════
-☉ ALIGNMENT CHECK · 2026-07-04 · COMPRESSED DOCTRINE + PROTOCOLS + COHERENCE GUARDS SHIPPED
+☉ ALIGNMENT CHECK · 2026-07-04 · ACADEMIES UNIFIED · FP ACADEMY = THE MEMBRANE · VALUE CAPTURE = THE WORK
+═══════════════════════════════════════════════
+
+## INTENT (2026-07-04)
+The Growth Engine era: the business builds its own demand. Offer converged (BBB v1.4 · Free Assessment → Blueprint → Savings Split → Partnership). NO manual outreach until funnel proven. **New doctrine layer (07-03→04): THE ACADEMY = one pattern, three subjects** (`ACADEMY_PATTERN.md` on 162) — AI Academy (compress) · Builder Academy (Build track) · **Full Potential Academy (Life track) = Allocation Intelligence run on a human's attention**: plug-in membrane, assessment = curriculum engine, just-in-time allocator not content library. **ONE Assessment front door, two lenses (business/life).** Master spec G1-G7 still on the 162 loop.
+
+## TOP 3
+1. **Build the 7-Areas → Allocation Score instrument** (Life-track spine + allocator's baseline — greenlit; reuse existing Assessment funnel)
+2. Loop ships G1 (growth ledger) + G2 (content engine + Postiz) — tend, verify, register heartbeats
+3. First real audit delivery when a lead completes intake · plus 2-week FP sprint cohort-1 ready to open on James's call
+
+## BLOCKERS
+James-gates only: Meta billing act_71883338 · zombie key disable (in motion) · Postiz first-activation approval when G2 lands.
+
+## NEXT MOVE
+Verify loop picked up SPEC_growth-stack-master → then tend G1 build.
+## TOP 3
+1. **★ The cash conversation** — James names the path (AI Cost Audit / warm ONEBPO / retreat day) → Ember drafts offer + 5 warm targets. Daily Q on HOME. Metric: Treasury Growth Rate. Stream: Ventures/Treasury.
+2. **★ Keep the feeds green** — vault-sync (30min) · proof_pull (fpull) · gardener (nightly) · daily_sync. The mirror must never go dark again. Stream: Game/Infra.
+3. **★ New maps → VISUAL GUIDE** — each new mindmap slots into its lifecycle station; the brain explains itself visually. Stream: Game.
+
+## BLOCKERS
+→ none technical. The one human move (cash path) is James's by design.
+
+## NEXT MOVE
+→ On James's word: 5-names list + offer draft. Meanwhile system self-runs; 17 iCloud maps re-export when Photos finishes downloading.
+
+═══════════════════════════════════════════════
+☉ ALIGNMENT CHECK · 2026-07-02 · CONSTITUTION LANDED ON LIVE BRANCH · FLEET RE-SURVEYED · SSOT DRIFT CLOSED (archived)
 ═══════════════════════════════════════════════
 
 ## INTENT (the active work)
-→ **Operate beyond base training, structurally.** This session's spine: enforcement beats
-documentation. Shipped P9 + substrate-default Stop hook (training bias can't route to James
-silently), Metric Coherence Guard (map≠territory), CORE_DOCTRINE.md compressed education (loaded
-first every session + injected into council), PROTOCOLS registry (+ invent-your-own), and two
-multi-agent workflows (academy-distill, self-improvement-swarm).
-→ **Awareness = 100%** — SSOT `awareness_reliability.json` (100/100). Cite the JSON, never hand-type.
+→ **Full-system scan + single-pass improvement (James's directive).** Landed the Constitution on the governed branch: cherry-picked `476f9b25` → 162 feat/headless-build as `0c0497e` (CONSTITUTION.md / OPERATING_PRINCIPLE.md / LEARNING_METRICS.md / protected identity paths now LIVE where the loop runs — TOP-2 from 06-30 DONE). Fleet re-surveyed (was 19d stale): 198 RAM eased, certbot fine, 209 disk 70% creeping. fail2ban root cause FOUND (duplicate `[sshd]` in jail.local line 13) — fix is a James one-liner (classifier blocks AI on security config, correctly). NOW.md drift closed (06-18→07-02). Build loop verified healthy: drains, auto-merges (d137), d133/d136 built.
 
 ## TOP 3
-1. **★ Land the real Academy** — academy-distill re-run (batched, task `wg14nigwb`) → on completion
-   write CURRICULUM.md + PRUNE_MANIFEST into `core/STATE/ACADEMY/`, surface prune list (no auto-delete);
-   then run self-improvement-swarm once. Stream: Game/Sovereignty.
-2. **★ Enforcement holds every session** — P9 gate + metric-coherence + CORE_DOCTRINE at boot. Watch
-   `core/BUILD/governance/substrate_default_catches.jsonl`. Stream: Game/Infrastructure.
-3. **★ D138 repo≠running** — per-slice reconcile (internal features autonomous; public-mode Reserved;
-   arming is harness-gated). Stream: Game/Infrastructure.
+1. **★ CLE enforces itself — d134 LIVE (2026-07-02).** Found d134 (Constitution Check) never built — orphaned because a laptop spec-gen set shared `spec_written=true` with no build landing. Re-armed → built → AI review APPROVE (3 findings fixed in-review) → James-authorized merge `e75fe73` on feat/headless-build. `constitution_check.py` (276 lines, 11 tests pass) now runs on every build decision. Constitution is a governor, not a doc. Stream: Game/Infra.
+2. **★ Patch the spec-orphaning bug** — laptop-side spec-gen must NOT mark shared `brain_index.decisions.spec_written=true` unless a build commit actually lands. Next spec will strand exactly like d134 did. Queue a spec. Stream: Game/Infra.
+3. **★ Rate-of-Improvement becomes north metric** — d132 conversion ledger; awareness ~41% demotes to sub-probe. Stream: Game.
 
 ## BLOCKERS
-→ None hard. D138 pipeline-arming + bot-baseline doctrine are harness-gated (James's hand when wanted).
+→ 🔴 postfix on 198 dead 9 weeks — repair-or-retire decision still open (fail2ban on 162: FIXED 2026-07-02, active).
 
 ## NEXT MOVE
-→ On academy-distill completion: write CURRICULUM.md + PRUNE_MANIFEST → ACADEMY/, surface prune list;
-then run the swarm once and route reversible intents through constitution_check.
+→ Queue the orphaning-bug fix spec (highest-leverage — prevents silent spec stranding across all future builds).
+→ Verify constitution_check runs on the NEXT real build decision (proof it's wired, not just present).
 
 ═══════════════════════════════════════════════
-☉ ALIGNMENT CHECK · 2026-07-02 · 124 SPECS MERGED · AWARENESS 88% · BOT CONTEXT FIXED · FLYWHEEL ACTIVE (archived)
+☉ ALIGNMENT CHECK · 2026-06-30 · THE SYSTEM GOT A CONSTITUTION · CLE LIVE · AUTO-MERGE ON (archived)
 ═══════════════════════════════════════════════
 
 ## INTENT (the active work)
-→ **Flywheel directive landed.** System was optimizing performance (specs merged), not improvement rate. James named it: "The system improves when you show up." Three specs queued to close the feedback layer: d130 (daily value check TG), d131 (autonomous daily delivery from NOW.md), d132 (james-hours-saved metric). Dead days: Jun 20/21/23/27/28/29 (6 total). Jul 1 had 5 commits with no James input — d131 working.
-→ **Bot context fixed 3 layers today.** (1) Boilerplate filter: housekeeping/Auto-snapshot excluded from session_insights in bot context. (2) Git-based last_merge: bot reads `git log --merges` — no more "last built d020" hallucination. (3) tgbot.py status query fixed: was querying `build_status='built'` (2 rows, stale), now `IN ('built','merged')` (124 rows, current). Bot restarted.
-→ **openclaw killed.** 1.9GB RAM freed, security-watch stopped, 4 Adam cron jobs removed. Legacy system confirmed dormant since Feb.
+→ **The substrate now has a governing constitution.** Across one long arc (James fed 4 diagrams → Learning Flywheel → CLE), we built the governance layer the system was missing. Root insight (James + GPT): the drift bug was epistemological — Ember reasoned BEFORE the architecture, defaulting to generic AI patterns ("laptop awake," "merge from phone") instead of the system's own protocols. Fix = Constitutional Reasoning. Shipped: `CONSTITUTION.md` (8 laws + ultimate law), `OPERATING_PRINCIPLE.md` (the daily question), `LEARNING_METRICS.md` (7 conversions, LR=north), identity layer added to `PROTECTED_PATHS` (can't self-rewrite), `BUILD_AUTO_MERGE=1` LIVE on 162 (manual merge gate GONE). Governance committed (scoped) on test/merge-base. Full episodic: `sessions/2026-06-30_constitutional-learning-engine.md`.
 
 ## TOP 3
-1. **★ Flywheel feedback layer** — daily value check (d130) + autonomous delivery (d131) + hours-saved metric (d132). Dead days end when d131 is live. Stream: Game/Sovereignty.
-2. **★ Bot awareness → 100%** — REACHED: SSOT `awareness_reliability.json` = 100% (100/100, 2026-07-03). Cite the JSON, never hand-type this number. Stream: Game/Infrastructure.
-3. **★ First real conversation** — blocked on "system not providing enough value to James yet." Fix: flywheel specs above. Stream: Game.
+1. **★ Let the CLE enforce itself** — d129 (outcome+Academy), d130 (witness→question), d132 (conversion ledger), d131 (metabolism), d133 (public interface), d134 (Constitution Check) building on 162. Documented→live is the gap; let them land. Stream: Game/Infra.
+2. **★ Land governance on feat/headless-build** — the commit is on test/merge-base; must reach the governed branch via normal merge (not risky live worktree surgery). Stream: Game.
+3. **★ Rate-of-Improvement supersedes awareness%** — once d132 lands, LR becomes the north metric. Awareness ~41% demotes to a sub-probe. Stream: Game.
 
 ## BLOCKERS
-→ d130/d131/d132 in build queue — build loop picks up within 10 min
-→ 428 housekeeping rows in session_insights (noise) — prune below
-→ Awareness probe still failing this run — investigate after bot restart settles
+→ none blocking. Auto-merge live; builds self-merge from next cycle. Public interface (d133) go-live stays James-gated.
 
 ## NEXT MOVE
-→ Build loop ships d130/d131/d132 autonomously — no James input needed
-→ Purge old housekeeping session_insights (>14 days old) — reduces noise in bot context
-→ Archive .bak files in /opt/sh-brain-src/curator/ — 39 files, reduces confusion about live code
+→ Confirm d129 self-merges next cycle (it started pre-flip, so first batch surfaces; next cycle auto-merges).
+→ Propagate the governance commit to feat/headless-build.
+→ Let d134 wire the Constitution Check so future drift is caught in code, not by James.
 
-═══════════════════════════════════════════════
-☉ ALIGNMENT CHECK · 2026-06-25 · D125 BUILT · AWARENESS 41% · BUILD LOOP FULLY UNBLOCKED (archived)
-═══════════════════════════════════════════════
+## LOAD-BEARING LESSON (this session)
+**Reason INSIDE the architecture, not before it.** Ember drifted 3× to generic-AI defaults; James caught each. The constitution exists now so the catch is structural. Boot order is law: Constitution → Doctrine → State → Protocols → Goals → detect contradictions → THEN reason. `[[feedback-constitutional-reasoning]]`. One sentence: *hold your principles constant, improve everything else.*
+
+
 
 ## INTENT (the active work)
 → **5 infrastructure root causes fixed in one session.** Stop hook now writes insights on every session end. Awareness probe timer fixed (165 consecutive psycopg failures → now passing, venv python). HOT_STATE spec scanner rewritten to use DB as source of truth (no phantom specs). HOT_STATE identity scanner reads live ALIGNMENT.md. d125 built + merged (106 total) — Claude Code corrections capture now live. Awareness: 41.3% (was 5% a week ago). d120 closed in DB.
