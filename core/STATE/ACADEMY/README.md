@@ -36,3 +36,5 @@ sentence → evidence pointer.*
 - **`CURRICULUM.md`** — Tier 2 domain curriculum (distilled by the `academy-distill` swarm; regenerate anytime).
 - **`PRUNE_MANIFEST.md`** — noise flagged for reversible archival (review before acting; never auto-deleted).
 - **`../ACADEMY.md`** — auto-distilled proofs/outcomes (the proof record).
+- **`BUILDER_ACADEMY.md`** — the human counterpart (client-facing product: DIY/DWY/DFY; mindset-through-mechanics).
+- **`modules/`** — Builder Academy apprenticeship units (build → prove at the gate → debrief); `01_zero_dollar_loop.md` is the template.

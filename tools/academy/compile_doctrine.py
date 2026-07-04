@@ -80,7 +80,7 @@ def compile_pack() -> str:
     p.append("")
     p.append(laws)
     p.append("")
-    p.append("## The 9 Principles (laws learned from root-caused failures — AI_PRINCIPLES.md)")
+    p.append(f"## The {len(principles)} Principles (laws learned from root-caused failures — AI_PRINCIPLES.md)")
     p.append("")
     for pr in principles:
         p.append("- " + pr.replace("### ", "").strip())

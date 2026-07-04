@@ -100,6 +100,6 @@ behind the AI-augmentation offer (OUTBOUNDERS / apprentice-studio / the ai-build
 potentially a sellable curriculum. But the design above is what we'd *genuinely* want to pass on
 regardless of the commercial layer — because it's what actually made this system work.
 
-_Sibling of the AI Academy. Same 9 principles ([[AI_PRINCIPLES]]), mirror-image delivery. Status:
+_Sibling of the AI Academy. Same principles ([[AI_PRINCIPLES]] — count grows as laws graduate), mirror-image delivery. Status:
 design (2026-07-04) + **Module 1 built** (`modules/01_zero_dollar_loop.md` — the copyable pattern
 for all modules: build → prove at the gate → debrief). Next: Modules 2–6 in the same shape._
