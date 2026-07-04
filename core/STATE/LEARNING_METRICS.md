@@ -60,3 +60,20 @@ Related: [[project-learning-flywheel-academy]] · `NORTH_STAR.md` · `AI_GOALS.m
 - **LR — Rate of Improvement** (CLE north metric · the FLOW): how fast the stock grows per cycle.
 - **Treasury Growth Rate** (the CURRENT 30-day focus): the weakest conversion right now is value→cash (Law 4); cash funds the engine.
 One maximand, three instruments: stock · flow · current-bottleneck. Awareness% (100%, achieved 2026-07-03) is retired to a sub-probe.
+
+## The capability ladder — Insight → Principle → Behavior → Capability (GPT insight, James relay 2026-07-04)
+
+Recording ideas ≠ building capability. Capability only grows through four stages:
+
+`Insight → Principle → Behavior → Capability`
+
+- **Insight** — a better theory (still knowledge).
+- **Principle** — the theory written as a governing lens (still knowledge; boot-loadable).
+- **Behavior** — the system *self-asks* the principle's questions on every cycle, unprompted.
+- **Capability** — every loop makes the next loop better. This is the only stage that is genuine future capability.
+
+**A principle raises capability ONLY when it becomes a behavior the loop executes automatically** — a lens actually applied to every decision, not merely readable. Doctrine in the boot spine is Principle, not yet Behavior. The gap between them is the real work.
+
+**★ THE CAPABILITY TEST (the honest gauge):** *"If James disappeared for 24 hours, would the system make better allocation decisions tomorrow because of what it learned today?"* Yes → future capability increased. No → ideas were merely documented. Run this test on every doctrine/principle addition; if it fails the test, the principle isn't done until a behavior carries it.
+
+The behaviors that convert TODAY's stewardship/value-arbitrage doctrine into capability (the loop must self-ask each cycle): What resources are currently idle? · Where is the largest unrealized value gap? · Which opportunity has the highest expected return on allocation? · What proof could I generate today? · Has this category earned greater autonomy? · Is there a better allocation than the one currently in use? — spec d178.
