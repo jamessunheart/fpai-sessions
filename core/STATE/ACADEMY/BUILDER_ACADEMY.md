@@ -73,6 +73,27 @@ resolving into a business model: **don't add humans — optimize the humans who 
 not something a client already holds? If a client holds it → sell to them, don't hire. If the
 substrate can do it → route it down. Human builders are leverage/distribution/**clients**, not labor.
 
+## It's a product — one system, two delivery lanes (James, 2026-07-04)
+
+Because it's client-facing, the Academy becomes a **product**, and the client self-selects how
+hands-on they want to be — served by the *same* underlying system:
+
+- **DIY — the Academy teaches them.** Wants to build it themselves → sell curriculum + system
+  access. The Academy *is* the product.
+- **DWY — done-with-you (hybrid).** Build alongside their team + transfer capability (coach + build).
+- **DFY — the system builds/runs it.** Doesn't want hands-on → the substrate does their allocation.
+
+**Structural edge — both lanes are high-margin because neither has a human-labor cost center.**
+DIY = teach once, they self-serve. DFY = the *substrate* does the doing, not paid humans (unlike a
+traditional agency). This beats both ends of the market: bootcamps only teach (no doing); agencies
+only do (expensive labor). We do both, cheaply.
+
+**Academy = product AND funnel; the lanes don't cannibalize.** Teaching reveals the depth of the
+client's allocation problem — most graduates conclude "I'd rather have it done," so the education
+*sells* the done-for-you, and a graduate is the best-qualified DFY buyer. The genuine
+build-it-themselves segment is monetized directly instead of lost. **Value ladder:** Academy (learn)
+→ Done-With-You → Done-For-You, clients ascending as trust + understanding grow.
+
 ## Why this matters beyond training
 This is also a business asset: it's the onboarding for builders who extend this system, the wedge
 behind the AI-augmentation offer (OUTBOUNDERS / apprentice-studio / the ai-builders funnel), and
