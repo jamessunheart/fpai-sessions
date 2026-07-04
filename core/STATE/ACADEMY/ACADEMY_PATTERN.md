@@ -40,6 +40,15 @@ Both are the human pattern; they differ by **what you're allocating toward**:
 
 **They ladder.** A person meets the system through the Life track (run my own life better), and some discover they want the Build track (now build/optimize my work with AI) — or vice versa. Same substrate underneath, same Ember, same Allocation Score discipline; the "curriculum" each draws from is just different inventory. One membrane, two doors.
 
+### ONE front door — the Assessment routes (coherence fix, 2026-07-04)
+
+There is **one Full Potential Assessment**, not two. The existing BBB funnel assessment (business Allocation Score → Blueprint → Savings Split) and the 7-Areas life audit (personal Allocation Score → sprint → Proof) are the **same instrument pointed at two subjects**. The front door asks one routing question — *"are we auditing your business or your life?"* — then runs the matching lens:
+
+- **Business lens** → company Allocation Score → BBB ladder (Blueprint $2.5k → Savings Split → Partnership) → **Build track**.
+- **Life lens** → 7-Areas Allocation Score → free 2-week sprint → WPA · Character Card · Proof → **Life track** → CORA Nation.
+
+Never build a second standalone "assessment" product; extend the one front door with a new lens. Both lenses feed the same demand-sensing loop (aggregate results = the ranked module build queue for BOTH tracks).
+
 ## Naming discipline (so they stop colliding)
 
 - **"The Academy"** (unqualified) = this pattern. Point here.
