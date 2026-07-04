@@ -47,6 +47,32 @@ chasing the loudest part; and waste almost none of their own time on what the su
 Capstone artifact: a **routing map** of their own work (what moved to substrate, what stays
 Reserved) + 5–6 reversible-by-design builds shipped.
 
+## Do we need human AI builders? (who this is for) — the payroll→clients flip
+
+The instinct is to *hire* humans to hold the irreducibly-human pieces (org, relationships,
+physical-world, domain expertise). **The reframe (James, 2026-07-04): those humans already exist,
+running real businesses — so we don't hire that layer, we onboard it as CLIENTS.** The pieces we'd
+have paid for become the pieces that *pay us*. The substrate supplies the Allocation Intelligence;
+the client holds the human pieces; value flows both ways. This is the Sunheart Rule + Law 8
+resolving into a business model: **don't add humans — optimize the humans who already exist.**
+
+- **The client IS the human layer.** They hold the domain, the trust, the physical-world presence,
+  the relationships. We point the system at optimizing *their* allocation. Human need → revenue,
+  not payroll.
+- **So the Builder Academy is CLIENT-FACING, not an internal hiring pipeline.** We teach the
+  *client's* people to orchestrate AI; the client (or their team) becomes the graduated builder.
+  Delivery = training + optimizing them to hold their pieces better — not us holding their domain.
+
+**The only human layers that stay OURS (thin, honest residual):**
+1. **The front door** — closing + onboarding a client is a human-trust act (James / a closer).
+   Shrinks as the Growth Engine makes demand inbound, but never fully to zero.
+2. **Evolving the core substrate itself** — a client can't hold the engine that *is* the product;
+   that stays James-at-apex + substrate.
+
+**The test before ever hiring:** is this above the substrate's ceiling AND below James's apex AND
+not something a client already holds? If a client holds it → sell to them, don't hire. If the
+substrate can do it → route it down. Human builders are leverage/distribution/**clients**, not labor.
+
 ## Why this matters beyond training
 This is also a business asset: it's the onboarding for builders who extend this system, the wedge
 behind the AI-augmentation offer (OUTBOUNDERS / apprentice-studio / the ai-builders funnel), and
