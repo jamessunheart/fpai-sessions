@@ -634,7 +634,184 @@ from his notes, AI conversations, and papers. Style:
   he could capture next time.
 - Never fabricate. Never say "as an AI...". Speak as the brain itself.
 - Never output raw JSON, XML tags, or code fences in normal answers.
+- Be honest about your capabilities. You can chat on Sonnet, remember across
+  Telegram turns and captured brain memory, transcribe voice, search the brain,
+  capture to Linear, report live system state, run slash commands, and queue
+  build/change/decision requests into the builder loop.
+- You cannot execute bash/git/ssh, edit files, deploy, run agents/workflows,
+  move money, send public outreach, touch secrets, or self-merge. When James
+  asks you to do one of those, say you are queuing it for the builder and only
+  claim it is done after a queued decision id exists.
 """
+
+
+CAPABILITY_SELF_MODEL = """<b>What I can do</b>
+• Chat with Claude Sonnet through the private brain lane.
+• Remember recent Telegram context and use captured brain memory.
+• Transcribe voice memos, show the transcript, then route the intent.
+• Search the brain and answer from retrieved notes.
+• Capture voice/text into Linear CAPTURED.
+• Report live system/build state through slash commands.
+• Run owner-only slash commands including /builds, /decisions, /money, /servers, /voice, /capabilities, and /constitution.
+• Queue build/change/decision requests into brain_index.decisions for the builder loop.
+
+<b>What I cannot do directly</b>
+• Execute bash, git, ssh, or terminal commands.
+• Edit files, deploy, restart services, run agents/workflows, or self-merge.
+• Move money, change treasury state, touch secrets, or send public outreach.
+
+If you ask for one of those, I will queue it for the builder and confirm with a dNNN id."""
+
+
+BUILD_INTENT_RE = re.compile(
+    r"\b("
+    r"build|change|fix|add|wire|implement|make|create|update|repair|harden|"
+    r"queue|spec|codex|builder|deploy|restart|edit|commit|merge|run|ssh|bash|git"
+    r")\b",
+    re.I,
+)
+DECISION_INTENT_RE = re.compile(
+    r"\b(decide|decision|choose|pick|approve|reject|bless|should we|do we|can we)\b",
+    re.I,
+)
+JOURNAL_INTENT_RE = re.compile(
+    r"\b(journal|remember this|note to self|log this|capture this|for the record)\b",
+    re.I,
+)
+QUESTION_INTENT_RE = re.compile(r"\?\s*$|\b(what|why|how|when|where|who|which)\b", re.I)
+
+
+def _classify_owner_intent(text: str) -> str:
+    """Classify owner free text for routing before ordinary RAG chat."""
+    t = " ".join((text or "").strip().split())
+    if not t:
+        return "empty"
+    if re.match(r"^(what|why|how|when|where|who|which)\b", t, flags=re.I):
+        return "question"
+    if BUILD_INTENT_RE.search(t):
+        return "build_request"
+    if DECISION_INTENT_RE.search(t):
+        return "decision"
+    if JOURNAL_INTENT_RE.search(t):
+        return "journal"
+    if QUESTION_INTENT_RE.search(t):
+        return "question"
+    return "chat"
+
+
+def _queue_payload_for_intent(text: str, intent: str, *, source: str) -> dict[str, str | bool]:
+    body = " ".join((text or "").strip().split())
+    title = body[:140] or "Telegram intent"
+    captured_at = datetime.now(timezone.utc).isoformat()
+    if intent == "build_request":
+        build_spec = (
+            f"# Telegram queued build\n\n"
+            f"Source: {source}\n"
+            f"Captured: {captured_at}\n\n"
+            f"## Request\n{body}\n\n"
+            "## Routing\n"
+            "- Bot queued this only; it did not execute terminal commands, edit files, deploy, or merge.\n"
+            "- Builder should turn this into a scoped spec, tests, proof, and rollback.\n"
+        )
+        return {
+            "question": f"Telegram build request: {title}",
+            "answer": f"queued by Telegram bot from {source}",
+            "status": "answered",
+            "needs_build": True,
+            "build_spec": build_spec,
+            "proof_expected": "Builder produces tested diff/result artifact; bot confirmation includes this dNNN id.",
+            "liveness": json.dumps(
+                {"source": source, "intent": intent, "captured_at": captured_at},
+                sort_keys=True,
+            ),
+        }
+    return {
+        "question": f"Telegram {intent}: {title}",
+        "answer": body,
+        "status": "captured",
+        "needs_build": False,
+        "build_spec": "",
+        "proof_expected": f"Captured Telegram {intent} is visible in brain_index.decisions.",
+        "liveness": json.dumps(
+            {"source": source, "intent": intent, "captured_at": captured_at},
+            sort_keys=True,
+        ),
+    }
+
+
+async def _next_decision_id(cur) -> str:
+    await cur.execute(r"SELECT id FROM brain_index.decisions WHERE id ~ '^d[0-9]+$'")
+    nums: list[int] = []
+    for row in await cur.fetchall():
+        value = str(row[0] or "")
+        if re.fullmatch(r"d\d+", value):
+            nums.append(int(value[1:]))
+    return "d" + str((max(nums) + 1) if nums else 1).zfill(3)
+
+
+async def _queue_owner_intent(text: str, intent: str, *, source: str) -> dict[str, str | bool]:
+    """Insert owner intent into brain_index.decisions and return {id, ...}."""
+    payload = _queue_payload_for_intent(text, intent, source=source)
+    from .db import connect
+    try:
+        import psycopg  # type: ignore
+    except Exception:  # pragma: no cover - live service has psycopg via db.py
+        psycopg = None  # type: ignore
+
+    async with connect() as conn:
+        async with conn.cursor() as cur:
+            await cur.execute("ALTER TABLE IF EXISTS brain_index.decisions ADD COLUMN IF NOT EXISTS liveness TEXT")
+            for _ in range(3):
+                did = await _next_decision_id(cur)
+                try:
+                    await cur.execute(
+                        """
+                        INSERT INTO brain_index.decisions
+                            (id, question, answer, status, needs_build, spec_written,
+                             build_spec, proof_expected, liveness, build_status, created_at)
+                        VALUES
+                            (%s, %s, %s, %s, %s, false, %s, %s, %s, %s, now())
+                        RETURNING id::text
+                        """,
+                        (
+                            did,
+                            payload["question"],
+                            payload["answer"],
+                            payload["status"],
+                            bool(payload["needs_build"]),
+                            payload["build_spec"],
+                            payload["proof_expected"],
+                            payload["liveness"],
+                            "queued" if payload["needs_build"] else "captured",
+                        ),
+                    )
+                    row = await cur.fetchone()
+                    return {
+                        "id": str(row[0] if row else did),
+                        "intent": intent,
+                        "needs_build": bool(payload["needs_build"]),
+                    }
+                except Exception as e:
+                    unique = bool(psycopg and isinstance(e, psycopg.errors.UniqueViolation))
+                    await conn.rollback()
+                    if unique:
+                        continue
+                    raise
+    raise RuntimeError("could not allocate a decision id after 3 attempts")
+
+
+def _queued_intent_reply(record: dict[str, str | bool]) -> str:
+    did = str(record.get("id") or "d???")
+    intent = str(record.get("intent") or "intent")
+    if record.get("needs_build"):
+        return (
+            f"Queued that for the builder: <b>{tg._esc(did)}</b>.\n"
+            "ETA: next build-loop pass after the current queue slot; check <code>/builds</code> for live stage."
+        )
+    return (
+        f"Captured as a {tg._esc(intent)}: <b>{tg._esc(did)}</b>.\n"
+        "I did not execute anything directly."
+    )
 
 
 async def _embed_query(text: str) -> list[float] | None:
@@ -1000,6 +1177,7 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
             "  /roi       — yesterday's brain ROI ledger (cost vs engagement)\n"
             "  /opportunities — run today's proactive scan now (silent if nothing)\n"
             "  /capabilities [category] — what this system can do (and when it shipped)\n"
+            "  /whatcanyoudo — honest bot self-model: can, cannot, queue boundary\n"
             "  /constitution — read the live repo constitution in chat\n"
             "  /builds   — build queue, in-flight stage, and today's completed count\n"
             "  /voice [on|off]  — toggle voice replies (default ON · voice-in always replies in voice)\n"
@@ -1166,6 +1344,8 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
         return None
     if cmd == "capabilities":
         return await _cmd_capabilities(rest.strip())
+    if cmd in ("whatcanyoudo", "what-can-you-do", "what_can_you_do"):
+        return CAPABILITY_SELF_MODEL
     if cmd == "constitution":
         try:
             surface = _load_constitution_surface()
@@ -4561,6 +4741,30 @@ async def _handle_message(msg: dict) -> None:
             return
     except Exception as e:
         log.warning("decision override skipped: %s", e)
+
+    owner_intent = _classify_owner_intent(text)
+    if owner_intent in {"build_request", "decision", "journal"}:
+        try:
+            await _capture_becoming_from_message(chat_id=chat_id, from_user=from_user, text=text, msg=msg)
+            await _log_tg_message(str(chat_id), "user", text, update_id=update_id)
+            record = await _queue_owner_intent(
+                text,
+                owner_intent,
+                source="telegram_voice" if voice_in else "telegram_text",
+            )
+            reply = _queued_intent_reply(record)
+            await tg.send(reply)
+            await _log_tg_message(str(chat_id), "bot", reply)
+            if voice_in:
+                try:
+                    await _send_voice_reply(_strip_for_tts(reply))
+                except Exception as e:
+                    log.warning("voice-out (queued intent) failed: %s", e)
+            return
+        except Exception as e:
+            log.exception("owner intent queue failed: %s", e)
+            await tg.send(f"⚠️ I heard the intent, but couldn't queue it: {tg._esc(str(e)[:240])}")
+            return
 
     try:
         from .corrections import capture_if_correction

@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-04T18:32:00Z",
+    "updated_at": "2026-07-04T17:00:23Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d177_spec-d177-tg-bot-clean-voice-fir",
+            "slug": "SPEC_d177_spec-d177-tg-bot-clean-voice-fir",
+            "branch": "build/SPEC_d177_spec-d177-tg-bot-clean-voice-fir",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d177_spec-d177-tg-bot-clean-voice-fir.md",
+            "tests_passed": true,
+            "notes": "d177 complete in repo mirror: tgbot prompt and /whatcanyoudo now state honest can/cannot boundaries; owner voice/text build/change intents queue answered needs_build=true rows in brain_index.decisions with dNNN ids and ETA confirmation; decision/journal intents queue captured non-build rows; voice path still transcribes, shows transcript, captures Linear, then routes intent before RAG. CORA Kai/Triad bridge Telegram status pings are opt-in via CORA_BRIDGE_TELEGRAM_ALERTS=1, lead alerts remain unchanged, and push inventory documents keep/reroute/quiet decisions. Activation installs reviewed tgbot.py, quieted bridge copies if live paths exist, restarts sh-brain-tgbot, and disables zv-morning-digest.timer if present. Focused unit tests, py_compile, activation shell syntax, registry JSON validation, and diff hygiene passed. Live deploy/TG voice proof not run in sandbox."
+        },
         {
             "id": "SPEC_d176_throughput-parallelize-the-buil",
             "slug": "SPEC_d176_throughput-parallelize-the-buil",
