@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-07-04 · SPEC_d168_spec-wire-the-allocation-score-e · branch `build/SPEC_d168_spec-wire-the-allocation-score-e`
+
+- **Status:** done in working tree / awaiting independent review + merge
+- **Files changed:** `tools/growth/score_assessment.py`; `tools/growth/test_score_assessment.py`; `tools/intelligence/routing.yaml`; `tools/intelligence/test_model_router.py`; `tools/leads/mail_leads.py`; `tools/leads/test_mail_leads.py`; `core/BUILD/specs/SPEC_d168_spec-wire-the-allocation-score-e.md`; `core/BUILD/results/SPEC_d168_spec-wire-the-allocation-score-e.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Wired Allocation Score model calls through `tools.intelligence.model_router.call_model(prompt, "assessment-scorer")` before direct CLI fallback. Added an `assessment-scorer` route limited to `claude` and `ollama`, so the scorer cannot fall through to metered API providers before real-client scoped-key approval. Preserved lenient JSON extraction and a direct `claude -p` fallback that loads the loop Claude env file if present. Updated `mail_leads.py` so new leads with `interest == "allocation-audit"` generate `score_assessment.py --lead <temp> --out <deliverable>` and append the markdown Allocation Score to James's notification email.
+- **Tests:** `python3 -B -m unittest tools.growth.test_score_assessment tools.leads.test_mail_leads tools.intelligence.test_model_router` (15 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/growth/score_assessment.py tools/growth/test_score_assessment.py tools/leads/mail_leads.py tools/leads/test_mail_leads.py tools/intelligence/model_router.py tools/intelligence/test_model_router.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d168-registry.json`; fake-CLI `python3 tools/growth/score_assessment.py --demo` produced `/tmp/d168-demo.md` with `Allocation Score: **60/100**`; `git diff --check`
+- **Proof:** The demo smoke exercised the model_router Claude path via a temporary local `claude` shim and rendered a valid Allocation Score deliverable. Unit coverage proves router-first parsing, direct CLI fallback, no metered API providers on the scorer route, allocation-audit notification append, non-allocation lead no-op, and scorer CLI invocation.
+- **Risks:** This sandbox did not run a live authenticated Claude call or send a live email to James. Independent review remains a pre-merge gate. The first live allocation-audit lead should confirm server 162 router auth and email body rendering.
+- **Rollback:** Revert this branch. Optional runtime cleanup is removing generated local deliverables under `~/.config/fpai/leads_mailer/allocation_scores/`. No live services, deploys, secrets, money movement, or applicant outreach were changed.
+- **Intent solved:** d168 moves the Allocation Score engine onto the $0 subscription router path and surfaces generated deliverables to James for allocation-audit leads.
+- **Downstream intent unlocked:** the first real allocation-audit lead can now produce a forwardable Allocation Score without James manually running the scorer or exposing the path to metered API spend.
+- **Questions for Ember/James:** after merge on server 162, let one real `allocation-audit` lead through and confirm James's notification contains the appended markdown deliverable; rerun independent review from the live authed environment before merge if this sandbox review path remains unavailable.
+
 ### 2026-07-04 · SPEC_d164_spec-growth-stack-master-plan-th · branch `build/SPEC_d164_spec-growth-stack-master-plan-th`
 
 - **Status:** done in working tree / awaiting review + merge

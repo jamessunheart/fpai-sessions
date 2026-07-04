@@ -94,6 +94,11 @@ class ModelRouterTests(unittest.TestCase):
             self.assertEqual(model_router.route_for("review"), ["ollama", "openai-api"])
             self.assertEqual(model_router.route_for("review", tier_floor=2), ["openai-api"])
 
+    def test_assessment_scorer_route_stays_off_metered_apis(self) -> None:
+        providers = model_router.load_routing().get("assessment-scorer", [])
+        self.assertEqual(providers, ["claude", "ollama"])
+        self.assertFalse(any(provider.endswith("-api") for provider in providers))
+
     def test_provider_health_returns_mocked_bools(self) -> None:
         outputs = iter([
             mock.Mock(returncode=0, stdout="ok"),

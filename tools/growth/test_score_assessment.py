@@ -1,11 +1,31 @@
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 from tools.growth import score_assessment as score
 
 
 class UrlFirstAssessmentTests(unittest.TestCase):
+    def test_run_claude_uses_model_router_and_lenient_json(self):
+        with mock.patch(
+            "tools.intelligence.model_router.call_model",
+            return_value={"response": '```json\n{"scores":{"capital":50}}\n```', "provider": "claude"},
+        ) as call_model, mock.patch.object(score, "_run_claude_cli") as cli:
+            self.assertEqual(score.run_claude("prompt"), {"scores": {"capital": 50}})
+
+        call_model.assert_called_once_with("prompt", "assessment-scorer")
+        cli.assert_not_called()
+
+    def test_run_claude_falls_back_to_direct_cli_when_router_unavailable(self):
+        with mock.patch(
+            "tools.intelligence.model_router.call_model",
+            side_effect=RuntimeError("router unavailable"),
+        ), mock.patch.object(score, "_run_claude_cli", return_value='prose {"ok": true} trailing') as cli:
+            self.assertEqual(score.run_claude("prompt"), {"ok": True})
+
+        cli.assert_called_once_with("prompt")
+
     def test_normalize_url_rejects_non_public_or_login_urls(self):
         self.assertEqual(score.normalize_url("example.com"), "https://example.com/")
         with self.assertRaises(ValueError):

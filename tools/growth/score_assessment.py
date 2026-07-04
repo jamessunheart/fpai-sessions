@@ -19,7 +19,7 @@ Usage:
   score_assessment.py --url <site> --first-read  # fetch/summarize only, JSON
   score_assessment.py --demo              # score a synthetic lead (proof it works)
 """
-import argparse, hashlib, html, json, os, re, subprocess, sys, time
+import argparse, hashlib, html, json, os, re, shlex, subprocess, sys, time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -428,10 +428,8 @@ def site_intake_context(site: dict) -> str:
     ])
 
 
-def run_claude(prompt: str) -> dict:
-    """$0 via the Max subscription CLI. Falls back through model flags if needed."""
-    r = subprocess.run(["claude", "-p", prompt], capture_output=True, text=True, timeout=180)
-    out = r.stdout.strip()
+def _json_from_model_output(output: str) -> dict:
+    out = output.strip()
     # lenient JSON extraction (model may fence or add prose despite instructions)
     if "```" in out:
         out = out.split("```", 2)[1]
@@ -439,8 +437,58 @@ def run_claude(prompt: str) -> dict:
             out = out[4:]
     start, end = out.find("{"), out.rfind("}")
     if start == -1 or end == -1:
-        raise ValueError(f"no JSON in model output: {r.stdout[:300]}")
+        raise ValueError(f"no JSON in model output: {output[:300]}")
     return json.loads(out[start:end + 1])
+
+
+def _load_claude_cli_env() -> dict:
+    env = dict(os.environ)
+    for raw_path in (
+        os.environ.get("FPAI_CLAUDE_ENV", ""),
+        "~/.config/fpai/claude.env",
+        "/root/.config/fpai/claude.env",
+    ):
+        if not raw_path:
+            continue
+        path = Path(raw_path).expanduser()
+        if not path.exists():
+            continue
+        for raw in path.read_text(encoding="utf-8").splitlines():
+            line = raw.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            if line.startswith("export "):
+                line = line[7:].strip()
+            key, value = line.split("=", 1)
+            env[key.strip()] = shlex.split(value.strip())[0] if value.strip() else ""
+    return env
+
+
+def _run_claude_cli(prompt: str) -> str:
+    r = subprocess.run(
+        ["claude", "-p", prompt],
+        capture_output=True,
+        text=True,
+        timeout=180,
+        env=_load_claude_cli_env(),
+    )
+    if r.returncode != 0:
+        raise RuntimeError(f"claude -p failed: {(r.stderr or r.stdout).strip()[:300]}")
+    return r.stdout
+
+
+def run_claude(prompt: str) -> dict:
+    """$0 via model_router subscription path, with direct Claude CLI fallback."""
+    try:
+        from tools.intelligence.model_router import call_model
+
+        routed = call_model(prompt, "assessment-scorer")
+        return _json_from_model_output(str(routed.get("response", "")))
+    except Exception as router_exc:
+        try:
+            return _json_from_model_output(_run_claude_cli(prompt))
+        except Exception as cli_exc:
+            raise RuntimeError(f"model_router failed ({router_exc}); claude CLI fallback failed ({cli_exc})") from cli_exc
 
 
 def compute(scores: dict) -> tuple[int, str]:

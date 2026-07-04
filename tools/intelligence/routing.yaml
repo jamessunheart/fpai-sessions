@@ -11,6 +11,9 @@ review:
   - openai-api
   - anthropic-api
   - gemini-api
+assessment-scorer:
+  - claude
+  - ollama
 council:
   - claude
   - ollama
