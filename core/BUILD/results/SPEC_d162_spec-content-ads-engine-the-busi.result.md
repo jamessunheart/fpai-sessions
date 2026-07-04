@@ -1,0 +1,33 @@
+# SPEC_d162_spec-content-ads-engine-the-busi — result
+
+- Status: done in working tree / awaiting independent review + merge
+- Branch: `build/SPEC_d162_spec-content-ads-engine-the-busi`
+- Files changed:
+  - `tools/growth/content_engine.py`
+  - `tools/growth/test_content_engine.py`
+  - `tools/growth/ad_engine.py`
+  - `tools/growth/test_ad_engine.py`
+  - `sites/fullpotential-com/learn/why-most-companies-misallocate-capital.html`
+  - `sites/fullpotential-com/learn/hidden-cost-of-fragmented-attention.html`
+  - `core/BUILD/results/SPEC_d162_ads_ledger.jsonl`
+  - `core/BUILD/results/SPEC_d162_ads_outcomes.fixture.jsonl`
+  - `core/BUILD/specs/SPEC_d162_spec-content-ads-engine-the-busi.md`
+  - `core/BUILD/results/SPEC_d162_spec-content-ads-engine-the-busi.result.md`
+  - `core/BUILD/REGISTRY.json`
+  - `docs/codex/HANDOFF.md`
+- Summary: Added the repo-local Content & Ads Engine. The content engine generates one static Full Potential `/learn` article per run from local canon with optional `claude -p` and deterministic fallback, preserving the existing article style and CTA to `/assessment`. The ad engine generates six offline variants across promise/exec/savings frames, writes a JSONL ADS ledger, applies offline outcomes, scores variants as leads per impression per dollar, marks champions/losers, and exposes a runtime spend gate requiring `account_status == 1`, daily budget `<= $10`, no pause-all kill switch, and explicit James unlock.
+- Proof:
+  - Two generated article pages exist under `/learn` with `/assessment` CTAs.
+  - `core/BUILD/results/SPEC_d162_ads_ledger.jsonl` contains 6 generated variants, all scored offline, with 3 champions and 3 killed losers from fixture outcomes.
+  - Runtime spend gate blocks even with `account_status=1` until `--james-unlock` is explicitly supplied.
+- Tests:
+  - `python3 -B -m unittest tools.growth.test_content_engine tools.growth.test_ad_engine`
+  - `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/growth/content_engine.py tools/growth/ad_engine.py tools/growth/test_content_engine.py tools/growth/test_ad_engine.py`
+  - `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d162-registry.json`
+  - article/ledger smoke: 2 article CTAs, 6 scored ledger rows, 3 champions, 3 killed
+  - `git diff --check`
+- Independent review: attempted local `claude -p` review; it produced no output after ~90s and was terminated. Independent review remains a pre-merge gate.
+- Risks: No live `claude -p` generation, Meta API call, ad account read, deploy, or spend was run in this sandbox. The content fallback is deterministic and safe, but live editorial quality should be reviewed before broad deployment. Spend remains locked by default until James explicitly unlocks billing/spend and live account status is confirmed at runtime.
+- Rollback: Revert this branch to remove the content/ad engines, tests, generated article pages, sample ledger/outcomes, result artifact, registry entry, and handoff note. No live services, timers, ads, or deploy state were modified.
+- Intent solved: d162 gives Full Potential a repo-local content/ad generation spine that can create demand assets without manual outreach or live spend.
+- Downstream intent unlocked: after review and deploy, the assessment funnel can receive system-generated content/creative traffic, and future A/B loops can breed variants from measured lead outcomes while spend remains gated.
