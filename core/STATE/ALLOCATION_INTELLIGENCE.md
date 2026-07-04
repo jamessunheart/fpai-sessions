@@ -99,3 +99,17 @@ This inserts the missing conversion steps into the flywheel above: capability do
 - *FPOS is a continuous allocator of resources; reality is the feedback mechanism that reveals whether those allocations were intelligent.*
 
 **Instrumentation:** this is why the Allocation Ledger (SPEC_allocation-ledger-ccd) matters — every allocation logged, its outcome scored, is simultaneously the intelligence-proof record AND the trust ledger. One instrument, both meters.
+
+---
+
+## v1.4 (2026-07-04): The Intelligence Law — the day's compression
+
+> **THE INTELLIGENCE LAW: Intelligence is the ability to allocate resources toward greater future capability. Everything else is evidence.**
+
+**The full flywheel:** `Resources → Allocation → Achievement → Proof of Intelligence → Trust → More Resources → Greater Future Capability ↺`
+
+**Capital, redefined:** capital is **stored trust waiting to be allocated.** Money, time, people, attention, data, authority — all capital, all trust in stored form. Every investment is fundamentally a trust decision. **The core economic law: capital flows toward what is most trusted to create future value.** The system that earns the most trust attracts the most resources.
+
+**★ The center shifted (the day's deepest move):** the model's center was *resources*; it is now **trust**. Resources are not the destination — they are the **consequence**. What the system compounds is not money, software, or tasks: it compounds **trust in future capability.** Everything else follows. This law describes AI systems, businesses, markets, leaders, and civilizations with the same physics.
+
+**One sentence:** *Intelligence allocates. Achievement proves. Trust compounds. Capital flows. Future capability expands.*
