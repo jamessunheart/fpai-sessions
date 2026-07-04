@@ -1,0 +1,23 @@
+# SPEC_d171_bug-005-build-orphan-reaper-res Result
+
+- Status: done in working tree / awaiting review + merge
+- Branch: build/SPEC_d171_bug-005-build-orphan-reaper-res
+- Files changed:
+  - `tools/build_loop/build_orphan_reaper.py`
+  - `tools/build_loop/test_build_orphan_reaper.py`
+  - `tools/build_loop/server_build_loop.sh`
+  - `core/BUILD/specs/SPEC_d171_bug-005-build-orphan-reaper-res.md`
+  - `core/BUILD/results/SPEC_d171_bug-005-build-orphan-reaper-res.result.md`
+  - `core/BUILD/REGISTRY.json`
+  - `docs/codex/HANDOFF.md`
+- Summary: Added a build-orphan reaper that runs once per server build-loop tick after orphan-spec seeding and before pending-build selection. It ensures `brain_index.decisions.build_attempts` exists with default `0`, finds decisions stuck with `spec_written=true`, `build_status=none`, no `build_branch`, and `updated_at/created_at` older than 30 minutes, then resets `spec_written=false` while incrementing attempts below the retry cap. Rows already at the retry cap are marked `build_status='blocked'` and immediately surfaced by Telegram/ops-log output instead of silently disappearing from the queue.
+- Tests:
+  - `python3 -B -m unittest tools.build_loop.test_build_orphan_reaper tools.build_loop.test_build_state` (8 OK)
+  - `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/build_orphan_reaper.py tools/build_loop/test_build_orphan_reaper.py`
+  - `bash -n tools/build_loop/server_build_loop.sh`
+  - `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d171-registry.json`
+- Proof: Fake-DB regression coverage proves d149/d152-shaped orphan rows at attempts `0` and `1` reset to `spec_written=false` and increment attempts, while rows at attempts `2` move to `build_status='blocked'`. Static coverage proves `server_build_loop.sh` runs the reaper before `pending-builds`, so reset rows can be picked up in the same loop tick.
+- Risks: This sandbox did not connect to the live `brain_index` database, mutate d149/d152, run the live server loop, or send Telegram. First live tick will add/migrate `build_attempts` and may reset/block any qualifying rows older than 30 minutes.
+- Rollback: Revert this branch. Runtime rollback for a mistakenly reset row is setting `spec_written=true` and decrementing `build_attempts`; runtime rollback for a mistakenly blocked row is setting `build_status='none'` and `spec_written=false` if it should be rebuilt.
+- Intent solved: BUG-005/P14 no longer lets spec-written/no-branch decisions remain silently invisible to `pending-builds`.
+- Downstream intent unlocked: Build-loop autonomy can recover from pre-branch Codex failures with bounded retries and explicit James-visible blocking.

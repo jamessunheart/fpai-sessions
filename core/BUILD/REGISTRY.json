@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-04T16:11:23Z",
+    "updated_at": "2026-07-04T17:22:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d171_bug-005-build-orphan-reaper-res",
+            "slug": "SPEC_d171_bug-005-build-orphan-reaper-res",
+            "branch": "build/SPEC_d171_bug-005-build-orphan-reaper-res",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d171_bug-005-build-orphan-reaper-res.md",
+            "tests_passed": true,
+            "notes": "d171 complete in working tree: added tools/build_loop/build_orphan_reaper.py and wired server_build_loop.sh to run it after orphan-spec seeding and before pending-builds. The reaper ensures brain_index.decisions.build_attempts exists with default 0, resets stale spec_written=true/build_status=none/no-branch rows older than 30 minutes back to spec_written=false while incrementing attempts below retry_limit=2, and marks retry-capped rows build_status=blocked with ops-log/Telegram surfacing. Focused fake-DB tests prove d149/d152-shaped rows reset at attempts 0/1 and block at attempts 2; static test proves the loop invokes the reaper before pending-builds. Unit tests, py_compile, server-loop shell syntax, and registry JSON validation passed. No live DB mutation, live loop run, Telegram send, push, merge, deploy, secrets, outreach, service control, or money movement."
+        },
         {
             "id": "SPEC_d170_spec-d170-align-live-outbound-su",
             "slug": "SPEC_d170_spec-d170-align-live-outbound-su",

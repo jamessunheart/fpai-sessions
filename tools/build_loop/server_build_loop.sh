@@ -366,6 +366,14 @@ update_blueprint_after_merge() {
 }
 
 "$PY" "$REPO/tools/build_loop/seed_orphaned_specs.py" --repo "$REPO" || true
+REAPER_OUT=$("$PY" "$REPO/tools/build_loop/build_orphan_reaper.py" 2>/dev/null || true)
+if [ -n "$REAPER_OUT" ]; then
+  echo "$REAPER_OUT"
+  python3 "$REPO/tools/build_loop/ops_log.py" build orphan-reaper "$REAPER_OUT" "\$0" "" "" 2>/dev/null || true
+  case "$REAPER_OUT" in
+    *blocked=*) tg "⚠️ $REAPER_OUT" ;;
+  esac
+fi
 build_alert_flush
 
 # ── BACKLOG MERGE PASS ─────────────────────────────────────────────────────────
