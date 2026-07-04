@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-04T18:25:00Z",
+    "updated_at": "2026-07-04T18:45:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d167_spec-proof-river",
+            "slug": "SPEC_d167_spec-proof-river",
+            "branch": "build/SPEC_d167_spec-proof-river",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d167_spec-proof-river.md",
+            "tests_passed": true,
+            "notes": "d167 complete in working tree: verified the standalone Proof River reconciler logs merged registry entries from core/BUILD/REGISTRY.json to core/BUILD/PROOF_LOG.md, supports PROOF_REGISTRY/REGISTRY and PROOF_LOG overrides for temp tests, creates the proof log if absent, skips missing jq or registry with a notice, and is idempotent by build id. Focused shell test, shell syntax check, default sync smoke, and registry JSON validation passed. No prod server, SERVICES, secret, push, merge, deploy, outreach, or money movement was touched."
+        },
         {
             "id": "SPEC_d164_spec-growth-stack-master-plan-th",
             "slug": "SPEC_d164_spec-growth-stack-master-plan-th",
