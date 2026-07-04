@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-04T17:49:00Z",
+    "updated_at": "2026-07-04T18:25:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d164_spec-growth-stack-master-plan-th",
+            "slug": "SPEC_d164_spec-growth-stack-master-plan-th",
+            "branch": "build/SPEC_d164_spec-growth-stack-master-plan-th",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d164_spec-growth-stack-master-plan-th.md",
+            "tests_passed": true,
+            "notes": "d164 complete in working tree: added tools/growth/nurture_router.py to route inbound assessment leads by dimension score/proxy text into BBB v1.4 buckets, emit 5-email listmonk/n8n dry-run payloads, preserve utm_campaign attribution, and write each email as a growth-ledger asset. Added tools/growth/growth_allocator.py to score JSONL growth assets by Growth CCD, kill assets below channel floors, breed champion children with exactly one mutated gene, cap tomorrow's ad allocation at $10, emit a plan, and distill proven champions into core/STATE/WINNING_PATTERNS.md. Focused growth unittest, py_compile, registry JSON validation, and proof fixture cycle passed. No live send, Postiz schedule, Meta API call, spend, deploy, service control, secret read, push, merge, outreach, or money movement."
+        },
         {
             "id": "SPEC_d163_spec-replace-bot-llm-with-claude",
             "slug": "SPEC_d163_spec-replace-bot-llm-with-claude",

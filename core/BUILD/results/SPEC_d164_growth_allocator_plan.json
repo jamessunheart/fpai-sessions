@@ -1,0 +1,147 @@
+{
+  "allocation_plan": {
+    "ad_budget_usd": 10.0,
+    "allocate_to_asset_id": "d164-email-time-winner",
+    "allocate_to_type": "email",
+    "children": [
+      "d164-email-time-winner-g1-7977d1d1",
+      "d164-ad-savings-winner-g1-ed4fbe59"
+    ],
+    "content_run": true,
+    "generated_at": "2026-07-04T15:37:28Z",
+    "reason": "highest measured Growth CCD 100.0 among champions"
+  },
+  "bred_children": [
+    {
+      "asset_id": "d164-email-time-winner-g1-7977d1d1",
+      "created_at": "2026-07-04T15:37:28Z",
+      "generation": 1,
+      "genome": {
+        "audience": "assessment_lead",
+        "channel": "email",
+        "format": "email",
+        "frame": "blueprint",
+        "hook": "clearer bottleneck"
+      },
+      "mutated_gene": "hook",
+      "outcomes": {
+        "audits": 0,
+        "clicks": 0,
+        "deals": 0,
+        "impressions": 0,
+        "leads": 0,
+        "value_usd": 0
+      },
+      "parent_id": "d164-email-time-winner",
+      "schema": "fpai.growth.asset.v1",
+      "status": "alive",
+      "type": "email"
+    },
+    {
+      "asset_id": "d164-ad-savings-winner-g1-ed4fbe59",
+      "created_at": "2026-07-04T15:37:28Z",
+      "generation": 1,
+      "genome": {
+        "audience": "owner_operator",
+        "channel": "meta",
+        "format": "ad",
+        "frame": "promise",
+        "hook": "find hidden resource leaks"
+      },
+      "mutated_gene": "frame",
+      "outcomes": {
+        "audits": 0,
+        "clicks": 0,
+        "deals": 0,
+        "impressions": 0,
+        "leads": 0,
+        "value_usd": 0
+      },
+      "parent_id": "d164-ad-savings-winner",
+      "schema": "fpai.growth.asset.v1",
+      "status": "alive",
+      "type": "ad"
+    }
+  ],
+  "champions": [
+    "d164-ad-savings-winner",
+    "d164-email-time-winner"
+  ],
+  "killed": [
+    "d164-ad-exec-loser",
+    "d164-article-allocation"
+  ],
+  "ledger_path": "core/BUILD/results/SPEC_d164_growth_assets.fixture.jsonl",
+  "ok": true,
+  "schema": "fpai.growth.allocator_result.v1",
+  "scored": [
+    {
+      "asset_id": "d164-ad-savings-winner",
+      "audits": 1,
+      "click_rate": 0.06,
+      "clicks": 96,
+      "deals": 0,
+      "decision": "champion",
+      "growth_ccd": 0.6,
+      "impressions": 1600,
+      "lead_rate": 0.0025,
+      "leads": 4,
+      "reason": "",
+      "spend_usd": 10.0,
+      "status": "alive",
+      "type": "ad",
+      "value_usd": 0.0
+    },
+    {
+      "asset_id": "d164-ad-exec-loser",
+      "audits": 0,
+      "click_rate": 0.0056,
+      "clicks": 7,
+      "deals": 0,
+      "decision": "killed",
+      "growth_ccd": 0.0,
+      "impressions": 1250,
+      "lead_rate": 0.0,
+      "leads": 0,
+      "reason": "ads need at least one lead per 1000 impressions",
+      "spend_usd": 9.5,
+      "status": "alive",
+      "type": "ad",
+      "value_usd": 0.0
+    },
+    {
+      "asset_id": "d164-article-allocation",
+      "audits": 0,
+      "click_rate": 0.07381,
+      "clicks": 31,
+      "deals": 0,
+      "decision": "killed",
+      "growth_ccd": 0.0,
+      "impressions": 420,
+      "lead_rate": 0.0,
+      "leads": 0,
+      "reason": "articles need at least one assessment start in 30d",
+      "spend_usd": 0.0,
+      "status": "alive",
+      "type": "article",
+      "value_usd": 0.0
+    },
+    {
+      "asset_id": "d164-email-time-winner",
+      "audits": 0,
+      "click_rate": 0.080769,
+      "clicks": 21,
+      "deals": 0,
+      "decision": "champion",
+      "growth_ccd": 100.0,
+      "impressions": 260,
+      "lead_rate": 0.003846,
+      "leads": 1,
+      "reason": "",
+      "spend_usd": 0.0,
+      "status": "alive",
+      "type": "email",
+      "value_usd": 0.0
+    }
+  ]
+}

@@ -82,6 +82,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-07-04 · SPEC_d164_spec-growth-stack-master-plan-th · branch `build/SPEC_d164_spec-growth-stack-master-plan-th`
+
+- **Status:** done in working tree / awaiting review + merge
+- **Files changed:** `tools/growth/nurture_router.py`; `tools/growth/test_nurture_router.py`; `tools/growth/growth_allocator.py`; `tools/growth/test_growth_allocator.py`; `core/STATE/WINNING_PATTERNS.md`; `core/BUILD/specs/SPEC_d164_spec-growth-stack-master-plan-th.md`; `core/BUILD/results/SPEC_d164_lead.fixture.json`; `core/BUILD/results/SPEC_d164_nurture_packet.json`; `core/BUILD/results/SPEC_d164_nurture_ledger.jsonl`; `core/BUILD/results/SPEC_d164_growth_assets.fixture.jsonl`; `core/BUILD/results/SPEC_d164_growth_allocator_plan.json`; `core/BUILD/results/SPEC_d164_spec-growth-stack-master-plan-th.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Implemented the missing Growth Stack G3/G5 bridge. `nurture_router.py` routes assessment leads by dimension score or proxy text into BBB v1.4 buckets, emits matching 5-email listmonk/n8n dry-run payloads, preserves `utm_campaign`, and records each email as a growth-ledger asset. `growth_allocator.py` scores assets by Growth CCD, kills assets below channel floors, breeds champion children with exactly one mutated gene, caps the next ad allocation at `$10`, writes a local allocation plan, and distills ledger-proven champions into `core/STATE/WINNING_PATTERNS.md`.
+- **Tests:** `python3 -B -m unittest tools.growth.test_nurture_router tools.growth.test_growth_allocator tools.growth.test_content_engine tools.growth.test_ad_engine tools.growth.test_score_assessment` (14 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/growth/nurture_router.py tools/growth/growth_allocator.py tools/growth/test_nurture_router.py tools/growth/test_growth_allocator.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d164-registry.json`
+- **Proof:** fixture lead `d164-proof-lead` routed to `blueprint`/`fpai-blueprint-nurture` with five email ledger assets. Fixture allocator cycle killed `d164-ad-exec-loser` and `d164-article-allocation`, championed `d164-ad-savings-winner` and `d164-email-time-winner`, bred two children, and capped tomorrow's ad budget at `$10`.
+- **Risks:** This is repo-local orchestration only. No live n8n/listmonk workflow was configured, no Postiz channel was activated, no Meta API call/spend ran, and no site deploy occurred. The allocator currently reads JSONL rows; wiring to live SQLite/Umami/listmonk/Meta ingestion remains a follow-up.
+- **Rollback:** Revert this branch to remove the new router/allocator modules, tests, proof artifacts, `WINNING_PATTERNS.md`, registry entry, result artifact, and handoff note. No live runtime state was changed.
+- **Intent solved:** d164 now has a concrete nurture routing and kill/breed allocation loop layered onto the already-built G1/G2/G4 growth assets without violating send/spend/deploy gates.
+- **Downstream intent unlocked:** after review/merge, approved activation can wire the dry-run n8n/listmonk payloads to live infrastructure and feed real Umami/listmonk/Meta outcomes into the allocator cycle.
+- **Questions for Ember/James:** first live public-channel/listmonk activation still needs James approval; after merge, decide whether the next phase should wire n8n/listmonk or connect the allocator to live growth-ledger/Umami ingestion first.
+
 ### 2026-07-04 · SPEC_d163_spec-replace-bot-llm-with-claude · branch `build/SPEC_d163_spec-replace-bot-llm-with-claude`
 
 - **Status:** done in working tree / awaiting review + merge

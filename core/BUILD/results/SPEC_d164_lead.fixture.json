@@ -1,0 +1,15 @@
+{
+  "lead_id": "d164-proof-lead",
+  "email": "owner@example.com",
+  "name": "Proof Owner",
+  "company": "Proof Operations Studio",
+  "utm_campaign": "assessment-savings",
+  "scores": {
+    "capital": 68,
+    "time": 42,
+    "attention": 56,
+    "people": 63,
+    "ai": 71,
+    "knowledge": 52
+  }
+}
