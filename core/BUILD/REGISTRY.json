@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-04T17:00:23Z",
+    "updated_at": "2026-07-04T17:32:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d149_spec-life-lens-assessment-wire-t",
+            "slug": "SPEC_d149_spec-life-lens-assessment-wire-t",
+            "branch": "build/SPEC_d149_spec-life-lens-assessment-wire-t",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d149_spec-life-lens-assessment-wire-t.md",
+            "tests_passed": true,
+            "notes": "d149 complete in working tree: /assessment now has an additive Business/Life lens router, life path renders the 7-area instrument, posts to the existing champion lead pipeline, and shows the server-returned Life Allocation Score, practice target, area bars, and named AIM. champion-sign imports tools/growth/life_assessment/score_life.py by explicit file path for server-side scoring and persists score/target/deliverable in lead markdown. mail_leads highlights stored life-assessment score/target in James's notification. Added rescore_loop.py for Day 1-13 bounded conversational nudges and internal Day0 vs Day14 JSON/CSV cohort export. Focused unittest, py_compile, score_life demo, rescore CLI demo CSV, registry/fixture JSON validation, and diff hygiene passed. No live deploy, lead email send, push, merge, outreach, secrets, service control, or money movement."
+        },
         {
             "id": "SPEC_d177_spec-d177-tg-bot-clean-voice-fir",
             "slug": "SPEC_d177_spec-d177-tg-bot-clean-voice-fir",

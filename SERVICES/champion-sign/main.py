@@ -121,6 +121,19 @@ def _load_score_assessment_module():
     return mod
 
 
+def _load_life_score_module():
+    repo_root = Path(os.environ.get("FPAI_REPO_ROOT", "/opt/fpai-build/FPAI_Cockpit"))
+    module_path = repo_root / "tools/growth/life_assessment/score_life.py"
+    if not module_path.exists():
+        module_path = Path(__file__).resolve().parents[2] / "tools/growth/life_assessment/score_life.py"
+    spec = _ilu.spec_from_file_location("fpai_life_score", module_path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"cannot load score_life from {module_path}")
+    mod = _ilu.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
 class SignRequest(BaseModel):
     name: str = Field(..., min_length=2, max_length=100)
     handle: Optional[str] = Field(None, max_length=60)
@@ -1205,9 +1218,12 @@ class LeadSubmit(BaseModel):
     preferred_contact: Optional[str] = Field(None, max_length=60)  # email | phone | whatsapp | telegram | call
     interest: Optional[str] = Field(None, max_length=80)  # session | course | weekly_call | retreat | unsure
     seven_areas: Optional[dict] = None  # {body: 'circulating', mind: 'stuck', ...}
+    lens: Optional[str] = Field(None, max_length=40)  # business | life
+    life_answers: Optional[dict] = None  # {physical: [0-10, 0-10], ...}
+    life_context: Optional[dict] = None  # {physical: "body signal", spiritual: "named AIM", ...}
     company: Optional[str] = Field(None, max_length=120)  # honeypot
 
-    @validator("name", "email", "preferred_contact", "interest")
+    @validator("name", "email", "preferred_contact", "interest", "lens")
     def _no_html(cls, v):
         if v is None:
             return v
@@ -1286,7 +1302,15 @@ async def submit_lead(req: LeadSubmit, request: Request) -> dict:
                 out = alt
                 break
 
-    md = _render_lead_md(req, today)
+    life_result = None
+    life_deliverable = ""
+    if (req.lens or "").lower() == "life" or (req.interest or "") == "life-assessment":
+        try:
+            life_result, life_deliverable = _score_life_lead(req)
+        except Exception as exc:
+            raise HTTPException(status_code=400, detail=f"Life assessment could not be scored: {exc}")
+
+    md = _render_lead_md(req, today, life_result=life_result, life_deliverable=life_deliverable)
     out.write_text(md, encoding="utf-8")
 
     # Audit log
@@ -1336,6 +1360,8 @@ async def submit_lead(req: LeadSubmit, request: Request) -> dict:
     return {
         "ok": True,
         "filename": fname,
+        "life_result": life_result,
+        "life_deliverable": life_deliverable,
         "message": (
             f"Thank you, {req.name.split()[0]}. Your message reached Sunheart directly. "
             f"You'll hear back personally within 48 hours."
@@ -1343,12 +1369,39 @@ async def submit_lead(req: LeadSubmit, request: Request) -> dict:
     }
 
 
-def _render_lead_md(req: LeadSubmit, today: str) -> str:
+def _score_life_lead(req: LeadSubmit) -> tuple[dict, str]:
+    if not isinstance(req.life_answers, dict):
+        raise ValueError("missing life_answers")
+    score_mod = _load_life_score_module()
+    answers = {}
+    for area in score_mod.INSTRUMENT["areas"]:
+        key = area["key"]
+        raw = req.life_answers.get(key)
+        if not isinstance(raw, list) or len(raw) != len(area["scored"]):
+            raise ValueError(f"missing/short answers for area '{key}'")
+        answers[key] = [max(0, min(10, float(v))) for v in raw]
+    context = req.life_context if isinstance(req.life_context, dict) else {}
+    result = score_mod.allocation_score(answers)
+    result["context"] = {str(k): str(v)[:1000] for k, v in context.items() if v is not None}
+    deliverable = score_mod.render(result, result["context"])
+    return result, deliverable
+
+
+def _render_lead_md(req: LeadSubmit, today: str, *, life_result: Optional[dict] = None,
+                    life_deliverable: str = "") -> str:
     seven_block = ""
     if req.seven_areas:
         seven_block = "\n## Seven Areas — self-rated\n\n"
         for k, v in req.seven_areas.items():
             seven_block += f"- **{k}**: {v}\n"
+    life_block = ""
+    if life_result:
+        life_block = "\n## Life lens Allocation Score\n\n"
+        life_block += f"- **Score:** {life_result.get('allocation_score')}/100\n"
+        life_block += f"- **Practice target:** {life_result.get('practice_target')}\n"
+        if life_result.get("context", {}).get("spiritual"):
+            life_block += f"- **Named AIM:** {life_result['context']['spiritual']}\n"
+        life_block += "\n```text\n" + life_deliverable.strip() + "\n```\n"
     return f"""---
 lead_id: {today}_{re.sub(r'[^a-z0-9]+', '-', req.name.lower()).strip('-')}
 date_submitted: {today}
@@ -1358,6 +1411,9 @@ phone: {req.phone or ''}
 timezone: {req.timezone or ''}
 preferred_contact: {req.preferred_contact or ''}
 interest: {req.interest or ''}
+assessment_lens: {req.lens or ''}
+life_allocation_score: {(life_result or {}).get('allocation_score', '')}
+life_practice_target: {(life_result or {}).get('practice_target', '')}
 status: new
 source: diagnose-page
 ---
@@ -1375,6 +1431,7 @@ source: diagnose-page
 
 {req.bottleneck}
 {seven_block}
+{life_block}
 ---
 
 *Captured via the /diagnose page on {today}.*

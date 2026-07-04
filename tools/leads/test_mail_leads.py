@@ -38,6 +38,20 @@ class MailLeadsAllocationScoreTests(unittest.TestCase):
         self.assertNotIn("Allocation Score", body)
         self.assertIn("Reply to this email", body)
 
+    def test_life_assessment_notification_summarizes_stored_score(self):
+        score_runner = mock.Mock()
+        body = mail_leads.notification_body(
+            "lead-life.md",
+            "name: Lia\ninterest: life-assessment\nlife_allocation_score: 59.3\nlife_practice_target: social\n",
+            "life-assessment",
+            score_runner=score_runner,
+        )
+
+        score_runner.assert_not_called()
+        self.assertIn("Life lens deliverable attached.", body)
+        self.assertIn("Allocation Score: 59.3/100", body)
+        self.assertIn("Practice target: social", body)
+
     def test_generate_allocation_score_calls_score_assessment_cli(self):
         with tempfile.TemporaryDirectory() as tmp:
             out_dir = Path(tmp) / "scores"

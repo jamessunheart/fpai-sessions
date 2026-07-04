@@ -1,0 +1,12 @@
+{
+  "physical": [7, 6],
+  "mental": [7, 6],
+  "spiritual": [8, 8],
+  "social": [7, 6],
+  "emotional": [7, 7],
+  "financial": [5, 6],
+  "environmental": [8, 8],
+  "context": {
+    "spiritual": "Build the village that shows paradise is practical."
+  }
+}

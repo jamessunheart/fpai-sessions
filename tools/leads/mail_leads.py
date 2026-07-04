@@ -118,6 +118,18 @@ def notification_body(lead_base: str, lead_body: str, interest: str,
                 "—",
                 f"Allocation Score generation failed: {str(exc)[:500]}",
             ])
+    if interest == "life-assessment":
+        life_score = re.search(r"^life_allocation_score:\s*(.+)$", lead_body, re.M)
+        target = re.search(r"^life_practice_target:\s*(.+)$", lead_body, re.M)
+        parts.extend([
+            "",
+            "—",
+            "Life lens deliverable attached.",
+        ])
+        if life_score:
+            parts.append(f"Allocation Score: {life_score.group(1).strip()}/100")
+        if target:
+            parts.append(f"Practice target: {target.group(1).strip()}")
     parts.extend(["", "—", "Reply to this email to answer the applicant directly."])
     return "\n".join(parts)
 
