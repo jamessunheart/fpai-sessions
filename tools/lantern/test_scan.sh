@@ -16,7 +16,7 @@ fail() {
   printf 'FAIL: %s\n' "$1"
 }
 
-OUTPUT="$("$SCAN" 2>&1)"
+OUTPUT="$(bash "$SCAN" 2>&1)"
 STATUS=$?
 
 if [ "$STATUS" -eq 0 ]; then
@@ -26,14 +26,14 @@ else
 fi
 
 for header in "Stale SSOTs" "Stuck builds" "Stuck specs" "Failed results"; do
-  if printf '%s\n' "$OUTPUT" | grep -Fq "== $header =="; then
+  if printf '%s\n' "$OUTPUT" | grep -F "## $header" >/dev/null; then
     pass
   else
     fail "missing header: $header"
   fi
 done
 
-if printf '%s\n' "$OUTPUT" | grep -Eq '^[0-9]+ anomalies$'; then
+if printf '%s\n' "$OUTPUT" | grep -E '^[0-9]+ anomalies$' >/dev/null; then
   pass
 else
   fail "missing final anomaly count"
@@ -44,3 +44,4 @@ printf 'RESULT: %s passed, %s failed\n' "$PASSED" "$FAILED"
 if [ "$FAILED" -ne 0 ]; then
   exit 1
 fi
+exit 0

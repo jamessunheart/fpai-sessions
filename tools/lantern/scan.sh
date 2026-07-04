@@ -1,239 +1,211 @@
 #!/usr/bin/env bash
 
-# Lantern detector: read-only anomaly report.
+# Read-only anomaly scan for the build loop. This script is intentionally
+# report-only: every path is optional and the final exit status is always 0.
 
 set -u
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 ANOMALIES=0
 NOW_EPOCH="$(date +%s 2>/dev/null || printf '0')"
-ONE_DAY_SECONDS=86400
-SYSTEM_MAP="${HOME}/.claude/projects/-Users-jamessunheart-FPAI-Cockpit/memory/SYSTEM_MAP.md"
+DAY_SECONDS=86400
 
-increment() {
+red() {
+  printf '🔴 %s\n' "$1"
   ANOMALIES=$((ANOMALIES + 1))
 }
 
-section() {
-  printf '\n== %s ==\n' "$1"
+yellow() {
+  printf '🟡 %s\n' "$1"
+  ANOMALIES=$((ANOMALIES + 1))
 }
 
-clear_line() {
+clear_section() {
   printf '✓ clear\n'
+}
+
+header() {
+  printf '\n## %s\n' "$1"
 }
 
 file_age_seconds() {
   local path="$1"
-  local mtime=""
+  local mtime
 
-  mtime="$(stat -f %m "$path" 2>/dev/null || stat -c %Y "$path" 2>/dev/null || true)"
-  if [ -n "$mtime" ] && [ "$NOW_EPOCH" -gt 0 ] 2>/dev/null; then
-    printf '%s\n' $((NOW_EPOCH - mtime))
+  mtime="$(stat -c %Y "$path" 2>/dev/null || stat -f %m "$path" 2>/dev/null || printf '')"
+  if [ -n "$mtime" ] && [ "$NOW_EPOCH" -gt 0 ]; then
+    printf '%s' $((NOW_EPOCH - mtime))
   else
-    printf '0\n'
+    printf ''
   fi
 }
 
 iso_to_epoch() {
-  local stamp="$1"
+  local value="$1"
 
-  if command -v python3 >/dev/null 2>&1; then
-    python3 - "$stamp" <<'PY' 2>/dev/null || true
-from datetime import datetime, timezone
-import sys
+  [ -n "$value" ] || return 1
+  date -d "$value" +%s 2>/dev/null || date -j -f "%Y-%m-%dT%H:%M:%SZ" "$value" +%s 2>/dev/null
+}
 
-raw = sys.argv[1].strip()
-if not raw:
-    raise SystemExit(1)
-if raw.endswith("Z"):
-    raw = raw[:-1] + "+00:00"
-dt = datetime.fromisoformat(raw)
-if dt.tzinfo is None:
-    dt = dt.replace(tzinfo=timezone.utc)
-print(int(dt.timestamp()))
-PY
-  fi
+is_older_than_day() {
+  local epoch="$1"
+
+  [ -n "$epoch" ] || return 1
+  [ "$NOW_EPOCH" -gt 0 ] || return 1
+  [ $((NOW_EPOCH - epoch)) -gt "$DAY_SECONDS" ]
 }
 
 scan_stale_ssots() {
-  section "Stale SSOTs"
+  local map="$HOME/.claude/projects/-Users-jamessunheart-FPAI-Cockpit/memory/SYSTEM_MAP.md"
+  local findings
 
-  if [ ! -f "$SYSTEM_MAP" ]; then
-    clear_line
+  header "Stale SSOTs"
+  if [ ! -f "$map" ]; then
+    clear_section
     return
   fi
 
-  local findings
   findings="$(
     awk '
-      /^## .*STALE SSOTs/ { in_section=1; next }
-      in_section && /^## / { in_section=0 }
+      /^## ⚠ STALE SSOTs/ { in_section=1; next }
+      in_section && /^## / { exit }
       in_section && /^- 🔴/ { print }
-    ' "$SYSTEM_MAP" 2>/dev/null || true
+    ' "$map" 2>/dev/null
   )"
 
-  if [ -z "$findings" ]; then
-    clear_line
-    return
+  if [ -n "$findings" ]; then
+    printf '%s\n' "$findings"
+    ANOMALIES=$((ANOMALIES + $(printf '%s\n' "$findings" | sed '/^[[:space:]]*$/d' | wc -l | tr -d ' ')))
+  else
+    clear_section
   fi
-
-  while IFS= read -r line; do
-    [ -z "$line" ] && continue
-    local clean
-    clean="$(printf '%s\n' "$line" | sed 's/^- 🔴[[:space:]]*//')"
-    printf '🔴 %s\n' "$clean"
-    increment
-  done <<EOF
-$findings
-EOF
 }
 
 scan_stuck_builds() {
-  section "Stuck builds"
-
   local registry="$ROOT/core/BUILD/REGISTRY.json"
+  local found=0
+  local status updated epoch age label line
+
+  header "Stuck builds"
   if [ ! -f "$registry" ]; then
-    clear_line
+    clear_section
     return
   fi
 
   if ! command -v jq >/dev/null 2>&1; then
-    printf '🟡 skipped: jq not found for %s\n' "$registry"
+    printf '✓ clear (jq unavailable; skipped structured registry age scan)\n'
     return
   fi
 
-  local rows
-  rows="$(
+  while IFS=$'\t' read -r label status updated; do
+    [ -n "$label" ] || continue
+    case "$status" in
+      merged|cancelled) continue ;;
+    esac
+
+    if [ -n "$updated" ] && [ "$updated" != "null" ]; then
+      epoch="$(iso_to_epoch "$updated" || true)"
+      if is_older_than_day "$epoch"; then
+        red "$label status=$status updated_at=$updated"
+        found=1
+      fi
+      continue
+    fi
+
+    line="$(jq -r --arg label "$label" '
+      (.active_builds // [])[]
+      | select((.id // .slug // .branch // "") == $label)
+      | .spec // empty
+    ' "$registry" 2>/dev/null | head -n 1)"
+
+    if [ -n "$line" ] && [ -f "$ROOT/$line" ]; then
+      age="$(file_age_seconds "$ROOT/$line")"
+      if [ -n "$age" ] && [ "$age" -gt "$DAY_SECONDS" ]; then
+        red "$label status=$status spec_age_seconds=$age"
+        found=1
+      fi
+    fi
+  done < <(
     jq -r '
-      .updated_at as $registry_updated |
-      (.active_builds // [])[]? |
-      select((.status // "") != "merged" and (.status // "") != "cancelled") |
-      [
-        (.id // .slug // "(unknown-build)"),
-        (.status // "(missing-status)"),
-        (.updated_at // $registry_updated // ""),
-        (.branch // ""),
-        (.spec // "")
-      ] | @tsv
-    ' "$registry" 2>/dev/null || true
-  )"
-
-  if [ -z "$rows" ]; then
-    clear_line
-    return
-  fi
-
-  local found=0
-  while IFS=$'\t' read -r id status updated_at branch spec; do
-    [ -z "${id:-}" ] && continue
-
-    local epoch age label
-    epoch="$(iso_to_epoch "${updated_at:-}")"
-    age=0
-    label="unknown age"
-    if [ -n "$epoch" ] && [ "$NOW_EPOCH" -gt 0 ] 2>/dev/null; then
-      age=$((NOW_EPOCH - epoch))
-      label="$((age / 3600))h old"
-    fi
-
-    if [ "$age" -gt "$ONE_DAY_SECONDS" ] || [ -z "$epoch" ]; then
-      printf '🟡 %s status=%s updated_at=%s (%s)' "$id" "$status" "${updated_at:-unknown}" "$label"
-      [ -n "${branch:-}" ] && printf ' branch=%s' "$branch"
-      [ -n "${spec:-}" ] && printf ' spec=%s' "$spec"
-      printf '\n'
-      increment
-      found=1
-    fi
-  done <<EOF
-$rows
-EOF
+      (.active_builds // [])[]
+      | [(.id // .slug // .branch // "unknown"), (.status // "unknown"), (.updated_at // "")]
+      | @tsv
+    ' "$registry" 2>/dev/null
+  )
 
   if [ "$found" -eq 0 ]; then
-    clear_line
+    clear_section
   fi
 }
 
 scan_stuck_specs() {
-  section "Stuck specs"
-
   local specs_dir="$ROOT/core/BUILD/specs"
   local results_dir="$ROOT/core/BUILD/results"
+  local found=0
+  local spec base id result age
+
+  header "Stuck specs"
   if [ ! -d "$specs_dir" ]; then
-    clear_line
+    clear_section
     return
   fi
 
-  local found=0
-  while IFS= read -r spec_path; do
-    [ -z "$spec_path" ] && continue
+  while IFS= read -r spec; do
+    [ -n "$spec" ] || continue
+    base="$(basename "$spec" .md)"
+    id="$base"
+    result="$results_dir/$id.result.md"
 
-    local base id result_path age label
-    base="$(basename "$spec_path")"
-    id="${base%.md}"
-    result_path="$results_dir/${id}.result.md"
+    [ -f "$result" ] && continue
 
-    if [ -f "$result_path" ]; then
-      continue
-    fi
-
-    age="$(file_age_seconds "$spec_path")"
-    if [ "$age" -gt "$ONE_DAY_SECONDS" ] 2>/dev/null; then
-      label="stuck spec (>1d)"
+    age="$(file_age_seconds "$spec")"
+    if [ -n "$age" ] && [ "$age" -gt "$DAY_SECONDS" ]; then
+      red "$base has no result and spec_age_seconds=$age"
     else
-      label="pending spec"
+      yellow "$base has no result yet"
     fi
-
-    printf '🟡 %s: %s' "$label" "$spec_path"
-    if [ "$age" -gt 0 ] 2>/dev/null; then
-      printf ' (%sh old)' "$((age / 3600))"
-    fi
-    printf '\n'
-    increment
     found=1
-  done < <(find "$specs_dir" -maxdepth 1 -type f -name '*.md' -print 2>/dev/null | sort)
+  done < <(find "$specs_dir" -maxdepth 1 -type f -name '*.md' 2>/dev/null | sort)
 
   if [ "$found" -eq 0 ]; then
-    clear_line
+    clear_section
   fi
 }
 
 scan_failed_results() {
-  section "Failed results"
-
   local results_dir="$ROOT/core/BUILD/results"
+  local found=0
+  local result matches
+
+  header "Failed results"
   if [ ! -d "$results_dir" ]; then
-    clear_line
+    clear_section
     return
   fi
 
-  local matches
-  matches="$(grep -RIlE 'FAIL|codex exited non-zero' "$results_dir"/*.md 2>/dev/null || true)"
+  while IFS= read -r result; do
+    [ -n "$result" ] || continue
+    matches="$(grep -En 'FAIL|codex exited non-zero' "$result" 2>/dev/null || true)"
+    if [ -n "$matches" ]; then
+      red "$(basename "$result")"
+      printf '%s\n' "$matches" | sed 's/^/  /'
+      found=1
+    fi
+  done < <(find "$results_dir" -maxdepth 1 -type f -name '*.md' 2>/dev/null | sort)
 
-  if [ -z "$matches" ]; then
-    clear_line
-    return
+  if [ "$found" -eq 0 ]; then
+    clear_section
   fi
-
-  while IFS= read -r result_path; do
-    [ -z "$result_path" ] && continue
-    printf '🔴 failed result evidence: %s\n' "$result_path"
-    increment
-  done <<EOF
-$matches
-EOF
 }
 
 main() {
-  printf 'Lantern anomaly scan\n'
-  printf 'Root: %s\n' "$ROOT"
-
+  printf '# Lantern anomaly scan\n'
   scan_stale_ssots
   scan_stuck_builds
   scan_stuck_specs
   scan_failed_results
-
   printf '\n%s anomalies\n' "$ANOMALIES"
-  exit 0
 }
 
-main "$@"
+main "$@" || true
+exit 0
