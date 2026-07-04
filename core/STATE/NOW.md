@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-07-03 evening (Growth Engine era — offer converged · brand stack complete · demand engine on the loop)
 **Updated By:** Ember (session 23537d81)
-**System Status:** 🟢 OPERATIONAL — 127+ specs merged · build loop auto-merges (Constitution-checked, d134) · awareness 100% · first unattended improvement cycle ran 2026-07-03 · all readable-mirror feeds live.
+**System Status:** 🟢 OPERATIONAL — 127+ specs merged · build loop auto-merges (Constitution-checked, d134) · awareness: live in `awareness_reliability.json` (95%, 2026-07-04) · first unattended improvement cycle ran 2026-07-03 · all readable-mirror feeds live.
 
 > **⚖️ Load order (law):** [`CONSTITUTION.md`](CONSTITUTION.md) → [`FOUNDATION.md`](FOUNDATION.md) → this file → [`AI_GOALS.md`](AI_GOALS.md). Reasoning happens inside the laws.
 >
@@ -25,7 +25,7 @@
 
 ## 🌊 STATE ACROSS STREAMS (2026-07-03)
 
-- **Game (FPOS):** engine self-runs (build · review · merge · learn). Paused for players — not building for empty seats. Bot awareness 100%.
+- **Game (FPOS):** engine self-runs (build · review · merge · learn). Paused for players — not building for empty seats. Bot awareness: live SSOT (`awareness_reliability.json`).
 - **Zen Village:** James physically at Zen Palace. Camp Zen offer ladder mapped (mindmaps 53–56) — execution paused by choice.
 - **Ventures:** Full funnel live — Assessment + Spark door + learn + AI Builders. Growth stack (G1-G7) queued to build itself. API zombie purged (~$0.20/day curator fleet, 2 months of empty briefs).
 - **Treasury:** ~$122k liquid · ~$64.5k idle · **HOLDING** by directive. MACU ($56k @ 0%) is the lever when the optimize window opens. SSOT: `~/.config/fpai/treasury/CURRENT_RESOURCES_2026-06-28.md`.
