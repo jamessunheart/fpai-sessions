@@ -429,17 +429,18 @@ def james_next_move(now):
         tell = "Codex."
         send_detail = f"Use `{spec}` and `docs/codex/HANDOFF.md`."
     else:
-        # Board clear, nothing queued. The standing work is VALUE CAPTURE (the July thesis):
-        # cash is the weakest conversion. The next move is the daily cash question, not a build ask.
+        # Board clear, nothing queued. The standing work is VALUE CAPTURE via the GROWTH ENGINE:
+        # SYSTEM outreach (ads + content + funnel), NOT manual sends (James directive 2026-07-03,
+        # feedback_ads_content_first_no_manual_sends — manual outreach only into a proven funnel later).
         return {
-            "title": "What conversation can produce cash in the next 24–72 hours?",
+            "title": "Is the demand engine feeding the funnel today?",
             "look": "this section",
-            "tell": "yourself, then me — name the one path.",
-            "send_detail": "The work is Value Capture (see [[mindmap-61 · Value Capture — Turn Value Into Cash Flow]]). Fastest paths: AI Cost Reduction Audit · warm ONEBPO relationships — cash in 24–72h. Pick ONE, don't split.",
-            "yes": "the path is: ...",
-            "reason": "Cash is the weakest conversion (Constitution: fix the bottleneck first). 30-day metric = Treasury Growth Rate.",
-            "downstream": "Once you name the path, I build the offer + find 5 warm targets.",
-            "say": ["the path is: ...", "board's clear — presence today", "settle"],
+            "tell": "the system — it runs outreach; you only unblock gates.",
+            "send_detail": "The work is Value Capture via SYSTEM outreach (see [[mindmap-61 · Value Capture — Turn Value Into Cash Flow]]): ads → /assessment landing → Allocation Score → BBB ladder. The engine does the reaching; no manual sends until the funnel is proven with A/B data.",
+            "yes": "unblock: ... (e.g. Meta billing / review gate)",
+            "reason": "Cash is the weakest conversion; the funnel converts it without spending James-attention on outreach (Constitution: fix the bottleneck; Sunheart Rule: system before humans).",
+            "downstream": "System watches CPL + leads daily (campaign-watch d154); first completed intake → I deliver the audit.",
+            "say": ["unblock: ...", "board's clear — presence today", "settle"],
             "late": late,
         }
     title = "Your move: give one upstream signal"
