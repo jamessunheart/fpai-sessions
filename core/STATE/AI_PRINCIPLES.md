@@ -61,6 +61,20 @@ a git fact). Collision of a derived value onto a canonical column corrupts every
 James's time is apex/irreducible. Collapsing artificial waits surfaces latent bugs
 under observation instead of unattended. (See memory/feedback_decision_agent_authority.)
 
+### P9 — Passive rules don't beat training bias. Enforce at the gate, every session.
+The model's training installs a **default-to-human** bias (hand the decision to James,
+ask permission, "your call"). This bias **overrides passively-loaded instructions**:
+Ember misrouted d138 to James one turn *after* re-reading the substrate-default rule
+(2026-07-03). Proof that CLAUDE.md pins + memory files are necessary but **not
+sufficient** — the trained reflex wins in the moment. The only reliable countermeasure
+is **enforcement at the moment of risk**: a hook/gate that inspects the action and
+blocks the biased default unless it's justified. Codified as `check-substrate-default.sh`
+(Stop hook): any reply routing a decision to James without naming a Reserved class
+(money · public voice · direction, per CONSTITUTION L5) gets one corrective round-trip.
+**General rule:** for any behavior the training biases against, do not rely on a loaded
+instruction — build the gate. Defense in depth: boot pin (CLAUDE.md) → per-turn inject
+(preflight) → **enforcement (Stop hook)** → learning loop (catches logged → RCA).
+
 ## Process principles (how learning is enforced)
 
 ### P8 — Every bug becomes a rule. No fix is complete until recurrence is guarded.
