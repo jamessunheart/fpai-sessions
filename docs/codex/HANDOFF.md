@@ -82,6 +82,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Rollback: …
 - Questions for Ember/James: …
 ```
+### 2026-07-04 · SPEC_d153_spec-d153-class-fix-named-specs · branch `build/SPEC_d153_spec-d153-class-fix-named-specs`
+
+- **Status:** done in working tree / awaiting independent review + merge
+- **Files changed:** `tools/build_loop/seed_orphaned_specs.py`; `tools/build_loop/test_seed_orphaned_specs.py`; `core/STATE/BUG_LOG.md`; `core/BUILD/specs/SPEC_d153_spec-d153-class-fix-named-specs.md`; `core/BUILD/results/SPEC_d153_spec-d153-class-fix-named-specs.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Extended the orphan spec seeder so named `core/BUILD/specs/SPEC_*.md` files no longer rot outside the decision-driven executor. Numbered specs still seed their filename ID; named specs now allocate the next dNNN from `brain_index.decisions`, reserve local numbered IDs to avoid collision, insert an answered `needs_build=true` row, and rename the file to `SPEC_dNNN_<slug>.md` using `git mv` inside the repo. Dry-run reports would-seed IDs without DB writes or renames. Added a BUG_LOG P14 follow-up naming the guard.
+- **Tests:** `python3 -B -m unittest tools.build_loop.test_seed_orphaned_specs` (8 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/seed_orphaned_specs.py tools/build_loop/test_seed_orphaned_specs.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d153-registry.json`; `git diff --check`
+- **Risks:** Live DB mutation and live repo renames were not run in this sandbox. First production seeder cycle may rename multiple existing named specs if they still lack decision rows; that is intended, but stale named specs should be reviewed before merge if council wants archival instead of build.
+- **Rollback:** Revert this branch. Runtime rollback for a seeded named spec is reversible before build: delete the seeded decision row, then `git mv SPEC_dNNN_<slug>.md SPEC_<slug>.md`.
+- **Intent solved:** named specs become visible to the actual `brain_index.decisions` build-loop selector instead of silently sitting in the file queue.
+- **Downstream intent unlocked:** the build loop can accept named spec drops and convert them into visible dNNN decision rows within one seeder cycle, closing the P14 queue-visibility class.
+- **Questions for Ember/James:** before merge, decide whether any existing named specs still in `core/BUILD/specs/` are stale enough to archive manually; otherwise the next live seeder cycle will queue/rename them.
+
 ### 2026-07-04 · SPEC_d150_swarm-verified-wire-post-merge · branch `build/SPEC_d150_swarm-verified-wire-post-merge`
 
 - **Status:** done in working tree / awaiting review + merge

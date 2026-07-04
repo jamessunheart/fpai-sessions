@@ -23,6 +23,17 @@ class FakeCursor:
             requested = set(params[0])
             self._rows = [(item,) for item in sorted(self.conn.existing & requested)]
             return
+        if normalized.startswith("select coalesce(question"):
+            names = [pattern.strip("%") for pattern in params[0]]
+            rows = []
+            for text in self.conn.existing_texts:
+                if any(name in text for name in names):
+                    rows.append(("", text, "", ""))
+            self._rows = rows
+            return
+        if normalized == "select id from brain_index.decisions where id ~ '^d[0-9]+$'":
+            self._rows = [(item,) for item in sorted(self.conn.existing)]
+            return
         if normalized.startswith("insert into brain_index.decisions"):
             decision_id = params[0]
             if decision_id in self.conn.existing:
@@ -42,8 +53,9 @@ class FakeCursor:
 
 
 class FakeConn:
-    def __init__(self, existing=()):
+    def __init__(self, existing=(), existing_texts=()):
         self.existing = set(existing)
+        self.existing_texts = list(existing_texts)
         self.inserted = []
         self.executed = []
 
@@ -127,6 +139,95 @@ class SeedOrphanedSpecsTest(unittest.TestCase):
 
         self.assertEqual(seeded, ["d114"])
         self.assertEqual([params[0] for params in conn.inserted], ["d114"])
+
+    def test_named_spec_gets_db_allocated_id_and_is_renamed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            specs = root / "specs"
+            results = root / "results"
+            specs.mkdir()
+            results.mkdir()
+            original = specs / "SPEC_test-canary.md"
+            original.write_text("# Test Canary\n\n## Build\nSeed me.\n", encoding="utf-8")
+            conn = FakeConn(existing={"d153"})
+            old_connect = seed.connect
+            seed.connect = lambda: conn
+            try:
+                seeded = seed.seed_orphaned_specs(specs, results)
+            finally:
+                seed.connect = old_connect
+            self.assertEqual(seeded, ["d154"])
+            self.assertFalse(original.exists())
+            renamed = specs / "SPEC_d154_test-canary.md"
+            self.assertTrue(renamed.exists())
+            params = conn.inserted[0]
+            self.assertEqual(params[0], "d154")
+            self.assertEqual(params[1], "Test Canary")
+            self.assertIn("named spec file `SPEC_test-canary.md`", params[2])
+
+    def test_named_spec_dry_run_does_not_rename_or_insert(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            specs = root / "specs"
+            results = root / "results"
+            specs.mkdir()
+            results.mkdir()
+            original = specs / "SPEC_test-canary.md"
+            original.write_text("# Test Canary\n", encoding="utf-8")
+            conn = FakeConn(existing={"d153"})
+            old_connect = seed.connect
+            seed.connect = lambda: conn
+            try:
+                seeded = seed.seed_orphaned_specs(specs, results, dry_run=True)
+            finally:
+                seed.connect = old_connect
+            self.assertEqual(seeded, ["d154"])
+            self.assertTrue(original.exists())
+            self.assertEqual(conn.inserted, [])
+
+    def test_named_spec_allocation_skips_local_numbered_specs(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            specs = root / "specs"
+            results = root / "results"
+            specs.mkdir()
+            results.mkdir()
+            (specs / "SPEC_d154_existing-numbered.md").write_text("# Existing Numbered\n", encoding="utf-8")
+            original = specs / "SPEC_test-canary.md"
+            original.write_text("# Test Canary\n", encoding="utf-8")
+            conn = FakeConn(existing={"d153"})
+            old_connect = seed.connect
+            seed.connect = lambda: conn
+            try:
+                seeded = seed.seed_orphaned_specs(specs, results)
+            finally:
+                seed.connect = old_connect
+            self.assertEqual(seeded, ["d154", "d155"])
+            self.assertTrue((specs / "SPEC_d155_test-canary.md").exists())
+            self.assertEqual([params[0] for params in conn.inserted], ["d154", "d155"])
+
+    def test_named_spec_skips_when_db_already_references_original_filename(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            specs = root / "specs"
+            results = root / "results"
+            specs.mkdir()
+            results.mkdir()
+            original = specs / "SPEC_test-canary.md"
+            original.write_text("# Test Canary\n", encoding="utf-8")
+            conn = FakeConn(
+                existing={"d154"},
+                existing_texts=["auto-seeded from named spec file `SPEC_test-canary.md`"],
+            )
+            old_connect = seed.connect
+            seed.connect = lambda: conn
+            try:
+                seeded = seed.seed_orphaned_specs(specs, results)
+            finally:
+                seed.connect = old_connect
+            self.assertEqual(seeded, [])
+            self.assertTrue(original.exists())
+            self.assertEqual(conn.inserted, [])
 
 
 if __name__ == "__main__":
