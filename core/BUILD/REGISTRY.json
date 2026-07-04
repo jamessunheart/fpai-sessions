@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-04T14:57:00Z",
+    "updated_at": "2026-07-04T15:24:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d158_spec-36a73161-fb6c-42c8-98b7-f5d",
+            "slug": "SPEC_d158_spec-36a73161-fb6c-42c8-98b7-f5d",
+            "branch": "build/SPEC_d158_spec-36a73161-fb6c-42c8-98b7-f5d",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d158_spec-36a73161-fb6c-42c8-98b7-f5d.md",
+            "tests_passed": true,
+            "notes": "d158 complete in working tree: preserved the generated d158 spec and added a focused seed_orphaned_specs regression proving the original named session-persistence reality-fix spec seeds answered needs_build row d158, records the original filename, and renames to SPEC_d158_36a73161-fb6c-42c8-98b7-f5d479dfa08e-reality-fix-repair-merged-dead-build-36a7316.md. Existing session_persistence_reality_repair coverage confirms the repair helper appends liveness:pass plus feature_outcome verdict=improved for SPEC_36a73161-fb6c-42c8-98b7-f5d479dfa08e_session-persistence and satisfies the delayed post-merge reality checker. Focused unittest, py_compile, registry JSON validation, and diff hygiene passed. No live DB mutation, live ops-ledger append, push, merge, deploy, outreach, secrets, service control, or money movement."
+        },
         {
             "id": "SPEC_d157_spec-2e8b3441-1ea4-4c7d-a6cd-47f",
             "slug": "SPEC_d157_spec-2e8b3441-1ea4-4c7d-a6cd-47f",

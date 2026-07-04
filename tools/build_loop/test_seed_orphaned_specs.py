@@ -200,6 +200,41 @@ class SeedOrphanedSpecsTest(unittest.TestCase):
             self.assertIn("answered needs_build row `d157`", params[4])
             self.assertIn(f"named spec `{target_name}`", params[4])
 
+    def test_named_reality_fix_seeds_answered_d158_row(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            specs = root / "specs"
+            results = root / "results"
+            specs.mkdir()
+            results.mkdir()
+            original_name = "SPEC_36a73161-fb6c-42c8-98b7-f5d479dfa08e-reality-fix_repair-merged-dead-build-36a7316.md"
+            original = specs / original_name
+            original.write_text(
+                "# SPEC_36a73161-fb6c-42c8-98b7-f5d479dfa08e-reality-fix_auto - Repair merged-dead build 36a73161-fb6c-42c8-98b7-f5d479dfa08\n\n"
+                "## Build\n"
+                "Repair merged-dead build 36a73161-fb6c-42c8-98b7-f5d479dfa08e.\n",
+                encoding="utf-8",
+            )
+            conn = FakeConn(existing={"d157"})
+            old_connect = seed.connect
+            seed.connect = lambda: conn
+            try:
+                seeded = seed.seed_orphaned_specs(specs, results)
+            finally:
+                seed.connect = old_connect
+
+            target_name = "SPEC_d158_36a73161-fb6c-42c8-98b7-f5d479dfa08e-reality-fix-repair-merged-dead-build-36a7316.md"
+            params = conn.inserted[0]
+
+            self.assertEqual(seeded, ["d158"])
+            self.assertFalse(original.exists())
+            self.assertTrue((specs / target_name).exists())
+            self.assertEqual(params[0], "d158")
+            self.assertIn("Repair merged-dead build 36a73161-fb6c-42c8-98b7-f5d479dfa08", params[1])
+            self.assertIn(f"named spec file `{original_name}`", params[2])
+            self.assertIn("answered needs_build row `d158`", params[4])
+            self.assertIn(f"named spec `{target_name}`", params[4])
+
     def test_named_spec_dry_run_does_not_rename_or_insert(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
