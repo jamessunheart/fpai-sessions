@@ -34,7 +34,6 @@ print_registry_section() {
             else (.status == "building" or .status == "done")
             end
           ))
-        | reverse
         | .[:5]
         | .[]
         | "- " + entry_label
@@ -56,7 +55,7 @@ if selector == "merged":
 else:
     entries = [entry for entry in entries if entry.get("status") in {"building", "done"}]
 
-for entry in reversed(entries[-5:]):
+for entry in entries[:5]:
     label = entry.get("slug") or entry.get("id") or "unknown"
     if entry.get("branch"):
         label += " - " + entry["branch"]
