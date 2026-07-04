@@ -15,6 +15,17 @@
       "notes": "d150 complete in working tree: added reviewed systemd units core/BUILD/cron/fpai-post-merge-reality.service and .timer plus post-merge activation to install them as /etc/systemd/system/fpai-post-merge-reality.{service,timer}. Timer runs daily at 03:30 UTC with Persistent=true, loads curator env, prefers brain venv, appends post_merge_reality ops-ledger rows with merged_dead counts, and preserves POST_MERGE_REALITY_CHECK_DISABLE. Removed the hidden once-per-day server_build_loop health-pulse call so the timer owns the cadence. Focused unit tests, py_compile, activation/server-loop shell syntax, registry JSON validation, systemd-analyze verify, and diff hygiene passed. No live timer install/start, push, merge, deploy, outreach, secrets, service stop/delete, or money movement was performed."
     },
     {
+      "id": "SPEC_d153_spec-d153-class-fix-named-specs",
+      "slug": "SPEC_d153_spec-d153-class-fix-named-specs",
+      "branch": "build/SPEC_d153_spec-d153-class-fix-named-specs",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d153_spec-d153-class-fix-named-specs.md",
+      "tests_passed": true,
+      "notes": "d153 complete in working tree: extended seed_orphaned_specs.py so named core/BUILD/specs/SPEC_*.md files allocate the next dNNN from brain_index.decisions, seed an answered needs_build=true row, and rename to SPEC_dNNN_<slug>.md with git mv when inside the repo. Existing numbered specs still seed their filename IDs, and named allocation reserves local numbered IDs to avoid collisions. Dry-run reports would-seed IDs without DB writes or renames. Focused unittest, py_compile, registry JSON validation, and diff hygiene passed. No live DB mutation, live spec rename, push, merge, deploy, outreach, secrets, service control, or money movement."
+    },
+    {
       "id": "SPEC_d147_self-audit-infra-209-disk-impro",
       "slug": "SPEC_d147_self-audit-infra-209-disk-impro",
       "branch": "build/SPEC_d147_self-audit-infra-209-disk-impro",
