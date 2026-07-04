@@ -104,6 +104,14 @@ exists-now with the autonomous-version-to-build quotes days for what takes minut
 - **Guard:** before any timeline/bottleneck claim — call the real API, read the real error.
 - **Evidence:** BUG_LOG 2026-07-03 (full post-mortem lives there, per the Tier-1 rule).
 
+### P12 — Decided ≠ queued. A greenlit build exists only when it's in the executor's queue.
+James greenlit the life-assessment build ("sounds good"); the spec sat in the vault overnight
+and the loop built nothing — the loop reads `core/BUILD/specs/`, not intentions
+("why no progress while I sleep?", 2026-07-04).
+- **Guard:** the same turn a build is greenlit, write the spec INTO the executor's queue
+  (core/BUILD/specs/ or the relevant runner). A vault doc, a plan, or "on your word" is theater.
+- **Evidence:** BUG_LOG 2026-07-04.
+
 ---
 _Version: tracks [BRAIN_VERSION](BRAIN_VERSION). New principles graduate here from BUG_LOG root causes.
 Tier-1 shape (per the 2026-07-04 A/B compression call): law + one causal sentence + evidence pointer —
