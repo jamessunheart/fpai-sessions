@@ -26,6 +26,7 @@ operating repertoire compounds — not just its code, but its *ways of working*.
 |----------|-----------------|-------|
 | **Substrate-Default Gate** | Blocks the trained default-to-James bias unless a Reserved class is named (P9) | `.claude/hooks/check-substrate-default.sh` |
 | **Metric Coherence Guard** | Reported prose must match the measured SSOT (kills map≠territory drift) | `tools/governance/metric_coherence.py` |
+| **Structural Coherence Guard** | Created truth must propagate — every principle reaches the boot pack, no dangling tool/hook pointers | `tools/governance/coherence_invariants.py` |
 | **Constitution Check** | Screens proposals against the 8 Laws before they queue | `tools/governance/constitution_check.py` |
 | **Collision Guard** | Stops parallel sessions bundling each other's uncommitted edits | `.claude/hooks/check-collision.sh` |
 
