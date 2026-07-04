@@ -17,7 +17,35 @@ This is the standing contract between James and Ember. Always-fresh. Refreshed a
 The purpose: both of us snap back to the same page within 10 seconds of session start. No three turns of guessing what each other meant. The block IS the agreement.
 
 ═══════════════════════════════════════════════
-☉ ALIGNMENT CHECK · 2026-07-02 · 124 SPECS MERGED · AWARENESS 88% · BOT CONTEXT FIXED · FLYWHEEL ACTIVE
+☉ ALIGNMENT CHECK · 2026-07-04 · COMPRESSED DOCTRINE + PROTOCOLS + COHERENCE GUARDS SHIPPED
+═══════════════════════════════════════════════
+
+## INTENT (the active work)
+→ **Operate beyond base training, structurally.** This session's spine: enforcement beats
+documentation. Shipped P9 + substrate-default Stop hook (training bias can't route to James
+silently), Metric Coherence Guard (map≠territory), CORE_DOCTRINE.md compressed education (loaded
+first every session + injected into council), PROTOCOLS registry (+ invent-your-own), and two
+multi-agent workflows (academy-distill, self-improvement-swarm).
+→ **Awareness = 100%** — SSOT `awareness_reliability.json` (100/100). Cite the JSON, never hand-type.
+
+## TOP 3
+1. **★ Land the real Academy** — academy-distill re-run (batched, task `wg14nigwb`) → on completion
+   write CURRICULUM.md + PRUNE_MANIFEST into `core/STATE/ACADEMY/`, surface prune list (no auto-delete);
+   then run self-improvement-swarm once. Stream: Game/Sovereignty.
+2. **★ Enforcement holds every session** — P9 gate + metric-coherence + CORE_DOCTRINE at boot. Watch
+   `core/BUILD/governance/substrate_default_catches.jsonl`. Stream: Game/Infrastructure.
+3. **★ D138 repo≠running** — per-slice reconcile (internal features autonomous; public-mode Reserved;
+   arming is harness-gated). Stream: Game/Infrastructure.
+
+## BLOCKERS
+→ None hard. D138 pipeline-arming + bot-baseline doctrine are harness-gated (James's hand when wanted).
+
+## NEXT MOVE
+→ On academy-distill completion: write CURRICULUM.md + PRUNE_MANIFEST → ACADEMY/, surface prune list;
+then run the swarm once and route reversible intents through constitution_check.
+
+═══════════════════════════════════════════════
+☉ ALIGNMENT CHECK · 2026-07-02 · 124 SPECS MERGED · AWARENESS 88% · BOT CONTEXT FIXED · FLYWHEEL ACTIVE (archived)
 ═══════════════════════════════════════════════
 
 ## INTENT (the active work)
