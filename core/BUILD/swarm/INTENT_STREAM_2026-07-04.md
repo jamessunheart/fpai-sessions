@@ -26,3 +26,7 @@ This IS the self-improvement build queue. Route through constitution_check → d
 - "131 merged" headline unverified against live (ties to intent #3).
 
 _All 12 are reversible. The cadence (CADENCE.md) will meter the top 3-5 per round once Gate 2/3 are done._
+
+
+---
+**2026-07-04 VERIFICATION:** Intent #1 (correction regex) RETIRED — ground truth shows the regex is not the bottleneck (see VERIFY_intent1_corrections.md). Real fix: capture taste from direction/approval/choice, not corrections. Re-prioritize the learning-loop intents accordingly.
