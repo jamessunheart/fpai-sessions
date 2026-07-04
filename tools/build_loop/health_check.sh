@@ -143,7 +143,7 @@ fi
 
 # 5. stuck/accumulating build worktrees (>24h old = likely unmerged/stuck)
 stuck=$(find /opt/fpai-build/worktrees -maxdepth 1 -mindepth 1 -type d -mtime +1 2>/dev/null | wc -l | tr -d ' ')
-[ "${stuck:-0}" -gt 4 ] && fail "$stuck build worktrees >24h old (stuck/unmerged)" "Ember: run reap_worktrees.sh --apply"
+[ "${stuck:-0}" -gt 2 ] && fail "$stuck build worktrees >24h old (stuck/unmerged)" "Ember: run reap_worktrees.sh --apply"
 
 # 6. disk
 use=$(df / | tail -1 | awk '{print $5}' | tr -d '%')

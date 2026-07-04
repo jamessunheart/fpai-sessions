@@ -5,14 +5,17 @@ set -u
 APPLY=0
 BASE_BRANCH="${REAP_BASE:-feat/headless-build}"
 WT_ROOT="${REAP_WT_DIR:-$HOME/.fpai-build-worktrees}"
+AGE_LIMIT_DAYS="${REAP_AGE_LIMIT:-3}"
 
 usage() {
   cat <<'EOF'
 Usage: bash tools/build_loop/reap_worktrees.sh [--apply]
 
-Dry-run by default. With --apply, removes only clean, merged build/* worktrees
-under REAP_WT_DIR (default: ~/.fpai-build-worktrees), then deletes their merged
-branches. REAP_BASE overrides the merge base branch (default: feat/headless-build).
+Dry-run by default. With --apply, removes clean, merged build/* worktrees and
+clean, stale unmerged build/* worktrees under REAP_WT_DIR (default:
+~/.fpai-build-worktrees), then deletes their branches. REAP_BASE overrides the
+merge base branch (default: feat/headless-build). REAP_AGE_LIMIT overrides the
+stale unmerged force-reap age in days (default: 3).
 EOF
 }
 
@@ -39,7 +42,7 @@ done
 
 if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   echo "NOTICE: not inside a git worktree; nothing to reap."
-  echo "reaped 0, skipped 0 (dirty/unmerged)"
+  echo "reaped 0, force-reaped 0, skipped 0 (dirty/unmerged)"
   exit 0
 fi
 
@@ -50,11 +53,12 @@ else
 fi
 
 reaped=0
+force_reaped=0
 skipped=0
 
 finish() {
   git worktree prune >/dev/null 2>&1 || true
-  echo "reaped $reaped, skipped $skipped (dirty/unmerged)"
+  echo "reaped $reaped, force-reaped $force_reaped, skipped $skipped (dirty/unmerged)"
   exit 0
 }
 
@@ -120,6 +124,27 @@ process_worktree() {
   fi
 
   if ! is_merged_branch "$branch_name"; then
+    wt_age_days=$(( ($(date +%s) - $(stat --format="%Y" "$wt_path" 2>/dev/null || echo 0)) / 86400 ))
+    if [ "$wt_age_days" -gt "$AGE_LIMIT_DAYS" ]; then
+      if [ "$APPLY" -eq 0 ]; then
+        echo "WOULD FORCE-REAP $wt_path (stale/unmerged, age > ${AGE_LIMIT_DAYS}d)"
+        force_reaped=$((force_reaped + 1))
+        return 0
+      fi
+
+      if git worktree remove --force "$wt_path" >/dev/null 2>&1; then
+        if git branch -D "$branch_name" >/dev/null 2>&1; then
+          echo "FORCE-REAPED $wt_path (stale/unmerged, age > ${AGE_LIMIT_DAYS}d)"
+          force_reaped=$((force_reaped + 1))
+        else
+          echo "FORCE-REMOVED $wt_path; SKIP branch delete $branch_name (delete failed)"
+        fi
+      else
+        echo "SKIP $wt_path (force remove failed)"
+      fi
+      return 0
+    fi
+
     echo "SKIP $wt_path (branch unmerged)"
     skipped=$((skipped + 1))
     return 0

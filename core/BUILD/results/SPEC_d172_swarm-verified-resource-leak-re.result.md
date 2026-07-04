@@ -1,0 +1,24 @@
+# SPEC_d172_swarm-verified-resource-leak-re Result
+
+- Status: done in working tree / awaiting review + merge
+- Branch: build/SPEC_d172_swarm-verified-resource-leak-re
+- Files changed:
+  - `tools/build_loop/reap_worktrees.sh`
+  - `tools/build_loop/test_reap_worktrees.sh`
+  - `tools/build_loop/health_check.sh`
+  - `core/BUILD/specs/SPEC_d172_swarm-verified-resource-leak-re.md`
+  - `core/BUILD/results/SPEC_d172_swarm-verified-resource-leak-re.result.md`
+  - `core/BUILD/REGISTRY.json`
+  - `docs/codex/HANDOFF.md`
+- Summary: Added an age-based force-disposition path for clean unmerged `build/*` worktrees. After the merged-branch check, unmerged worktrees older than `REAP_AGE_LIMIT` days (default `3`) are counted separately as `force_reaped`; dry-run reports `WOULD FORCE-REAP`, and `--apply` runs `git worktree remove --force "$wt_path"` plus `git branch -D "$branch_name"` before logging `FORCE-REAPED ... (stale/unmerged, age > ${AGE_LIMIT_DAYS}d)`. The finish line now reports normal reaps, force reaps, and skips. Lowered the health-check stuck-worktree alert threshold from `>4` to `>2`.
+- Tests:
+  - `bash tools/build_loop/test_reap_worktrees.sh` (11 passed)
+  - `bash -n tools/build_loop/reap_worktrees.sh tools/build_loop/health_check.sh tools/build_loop/test_reap_worktrees.sh`
+  - `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d172-registry-building.json`
+  - `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d172-registry-done.json`
+  - `git diff --check`
+- Proof: The new shell test builds a disposable Git repo and worktree root, proves stale clean unmerged `build/*` worktrees are reported but not removed in dry-run, proves `--apply` removes the stale worktree and deletes its branch, and proves fresh clean unmerged worktrees still skip and increment only the normal skipped counter.
+- Risks: The apply-mode test runs only in a disposable temp repo, not against `/opt/fpai-build/worktrees`. Live use will permanently delete stale `build/*` branches with `git branch -D`; Git object history remains recoverable by commit SHA/reflog while available, but branch names are removed as intended.
+- Rollback: Revert this branch. Runtime rollback for an incorrectly force-reaped build is to recreate the branch from the relevant commit or rerun the spec through the build loop.
+- Intent solved: Stale clean unmerged build worktrees no longer accumulate indefinitely after the merged-branch reaper skips them.
+- Downstream intent unlocked: The server build host can keep disk pressure visible and bounded before old build worktrees create large resource impact.

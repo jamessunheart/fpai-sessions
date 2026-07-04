@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-04T17:22:00Z",
+    "updated_at": "2026-07-04T18:14:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d172_swarm-verified-resource-leak-re",
+            "slug": "SPEC_d172_swarm-verified-resource-leak-re",
+            "branch": "build/SPEC_d172_swarm-verified-resource-leak-re",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d172_swarm-verified-resource-leak-re.md",
+            "tests_passed": true,
+            "notes": "d172 complete in working tree: reap_worktrees.sh now force-disposes clean unmerged build/* worktrees older than REAP_AGE_LIMIT days (default 3) after the merged-branch check, preserving dry-run with WOULD FORCE-REAP output, using git worktree remove --force plus git branch -D under --apply, and surfacing a separate force_reaped count in finish output. health_check.sh now alerts when more than 2 build worktrees are older than 24h instead of more than 4. Added test_reap_worktrees.sh covering dry-run, apply removal/branch deletion, and fresh unmerged skip behavior in a disposable temp repo. Focused shell test, shell syntax checks, registry JSON validation, and diff hygiene passed. No live /opt/fpai-build/worktrees reaping, push, merge, deploy, outreach, secrets, service control, or money movement."
+        },
         {
             "id": "SPEC_d171_bug-005-build-orphan-reaper-res",
             "slug": "SPEC_d171_bug-005-build-orphan-reaper-res",
