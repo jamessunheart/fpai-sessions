@@ -112,6 +112,24 @@ and the loop built nothing — the loop reads `core/BUILD/specs/`, not intention
   (core/BUILD/specs/ or the relevant runner). A vault doc, a plan, or "on your word" is theater.
 - **Evidence:** BUG_LOG 2026-07-04.
 
+### P13 — Never discard a dirty file on a shared checkout without diffing it first.
+On 162 (a live checkout shared by parallel sessions + feeds), I `git checkout --`'d a "dirty"
+file assuming it was my own stash residue — it was a sibling session's uncommitted doctrine
+edit, destroyed mid-work (the sibling had to re-add it, `0b553ba4`, 2026-07-04).
+- **Guard:** before discarding/stashing ANY dirty tracked file on a shared checkout: `git diff <file>`
+  — known auto-regen feeds (HOT_STATE, awareness signals) may be committed-or-stashed freely;
+  anything else is presumed sibling work: commit it as a checkpoint, never discard.
+- **Evidence:** BUG_LOG 2026-07-04.
+
+### P14 — A queue the executor can't see is not a queue.
+Named spec files (`SPEC_foo.md`) sat unbuilt for 3 weeks because the loop is DB-driven and the
+orphan-seeder only recognizes `SPEC_dNNN` — the file-queue and the real queue silently diverged
+(2026-07-04; same root class as d134's orphaning bug).
+- **Guard:** after queueing anything, verify it's visible to the executor's ACTUAL selector
+  (for builds: a `brain_index.decisions` row with `needs_build=true`) — not just present in a
+  directory. Class-fix queued: SPEC_d150 (seeder accepts named specs or rejects them loudly).
+- **Evidence:** BUG_LOG 2026-07-04.
+
 ---
 _Version: tracks [BRAIN_VERSION](BRAIN_VERSION). New principles graduate here from BUG_LOG root causes.
 Tier-1 shape (per the 2026-07-04 A/B compression call): law + one causal sentence + evidence pointer —
