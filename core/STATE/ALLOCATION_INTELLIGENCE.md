@@ -128,3 +128,25 @@ This inserts the missing conversion steps into the flywheel above: capability do
 **★ The center shifted (the day's deepest move):** the model's center was *resources*; it is now **trust**. Resources are not the destination — they are the **consequence**. What the system compounds is not money, software, or tasks: it compounds **trust in future capability.** Everything else follows. This law describes AI systems, businesses, markets, leaders, and civilizations with the same physics.
 
 **One sentence:** *Intelligence allocates. Achievement proves. Trust compounds. Capital flows. Future capability expands.*
+
+---
+
+## v1.5 (2026-07-04): THE STEWARD — how autonomy is earned (the Autonomous Allocation Engine map)
+
+**The center renamed:** not an "engine" — **The Steward.** The goal is not autonomous AI; it is **autonomous stewardship**: *increase the future capability of every resource entrusted to the system's care.* Not "what can I automate?" but **"what has already been entrusted to me, and how do I increase its future capability?"** (The AI Context Steward role was always this — v1.5 extends stewardship from James's context to every entrusted resource.)
+
+**The First Treasury is NOT money — it is already-paid-for capability:** GPT/Claude subscriptions · servers · compute · existing code · data · time · attention · knowledge. **The gate:** *if the system cannot consistently create value from free-to-use existing assets, it has not yet earned the right to manage cash.* Proving stewardship of what exists precedes touching capital — this collapses risk to near zero while proof accumulates.
+
+**The Maturity Ladder (authority is earned, never granted):**
+1. **Advisor** — recommends; James decides (trust: low)
+2. **Assistant** — autonomously allocates already-paid-for resources; downside tiny, upside proof (trust: medium)
+3. **Steward** — allocates small treasury ($20/$100/$500); every allocation measured, every outcome compared (trust: high)
+4. **Treasury Intelligence** — manages capital within boundaries, **by earned authority, not declaration** (trust: very high)
+
+**The Governing Law:** *authority grows at exactly the rate demonstrated allocation intelligence grows — never faster, never slower.* Self-governing: prevents reckless autonomy AND unnecessary bottlenecks. (Honest current position: **Level 2, edging 3** — the build loop autonomously allocates compute/subscriptions/build-attention with proof; the $20/day cap is a Level-3 boundary not yet exercised autonomously.)
+
+**The Daily Question (the measurable probe):** *"What resource did the system autonomously allocate today that created measurable value?"* Something = intelligence demonstrated; nothing = intelligence still potential. (Wire into d130's daily value check — this IS its question.)
+
+**Trust progression (universal — employees, founders, companies, civilizations):** Observe → Measure → Evaluate → Trust → Authority → Impact.
+
+**The core commitment:** zero idleness · maximum value · compounding trust · exponential future. (Boundaries create safety: spending limits, allowed categories, risk guardrails, automatic reporting, human override — boundaries enable trust; trust enables scale.)
