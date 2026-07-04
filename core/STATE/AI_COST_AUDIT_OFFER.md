@@ -17,7 +17,7 @@
 - **Risk reversal:** "if we can't show value clearly worth more than the fee, you don't proceed to implementation."
 - **Natural upsell:** implementation engagement (retainer or % of verified savings).
 
-## Outreach — warm contact (DM / email)
+## Outreach — warm contact (DM / email) — ⛔ HELD (2026-07-04: system outreach only until funnel proven; this template re-enters at the proven-funnel phase, folded into the BBB ladder)
 
 > Subject: cutting your CS cost without losing quality
 >

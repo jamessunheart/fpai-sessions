@@ -1,3 +1,5 @@
+> ⛔ **STALE SNAPSHOT (frozen 2026-05, banner added 2026-07-04):** '$500 HL bootstrap mandate' is ancient — current: ~$140k treasury, HOLDING directive, NOW.md is SSOT. Do not cite numbers from this file.
+
 ---
 last_updated: 2026-05-20 16:30 CR
 clock_verified_via: date command

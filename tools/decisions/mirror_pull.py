@@ -247,6 +247,9 @@ STATE_DOCS = [
     # in Obsidian what the AI learns from its own faults. 2026-07-03.
     ("core/STATE/CONSTITUTION.md",        "02_CONTEXT/Academy/00 — CONSTITUTION.md"),
     ("core/STATE/ALLOCATION_INTELLIGENCE.md","02_CONTEXT/Academy/00b — ALLOCATION INTELLIGENCE (keystone).md"),
+    # 00_SYSTEM copy drifted to v1.1 while the Academy mirror stayed current (messaging sweep
+    # 2026-07-04) — mirror it too so the front-door keystone can never fork again.
+    ("core/STATE/ALLOCATION_INTELLIGENCE.md","00_SYSTEM/ALLOCATION_INTELLIGENCE.md"),
     ("core/STATE/FOUNDATION.md",          "02_CONTEXT/Academy/01 — FOUNDATION (Three Rs).md"),
     ("core/STATE/OPERATING_PRINCIPLE.md", "02_CONTEXT/Academy/02 — OPERATING PRINCIPLE.md"),
     ("core/STATE/AI_PRINCIPLES.md",       "02_CONTEXT/Academy/03 — AI PRINCIPLES (laws learned).md"),

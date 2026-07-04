@@ -1,3 +1,5 @@
+> ⛔ **STALE SNAPSHOT (frozen 2026-05, banner added 2026-07-04):** '$500 HL bootstrap' tiers superseded — see NOW.md + THE STEWARD maturity ladder (ALLOCATION_INTELLIGENCE v1.5). Do not cite numbers from this file.
+
 # 🎮 GAME DASHBOARD — James + Ember
 
 **Last refresh:** 2026-05-19 10:18 AM MDT
