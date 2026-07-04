@@ -77,15 +77,30 @@ def check_awareness(execute: bool) -> dict:
         return {"check": "awareness", "state": "unknown", "err": str(e)[:100]}
     if rel >= AWARENESS_THRESHOLD:
         return {"check": "awareness", "state": "ok", "reliability": rel}
-    # real concern — do NOT game the probe. Ensure the durable render-fix is queued (once).
+    # real concern — do NOT game the probe. Route to a durable fix, but with a COOLDOWN
+    # and ATTEMPT-CAP so a merged-but-unhealed fix can't spam re-queues (a fix that merges
+    # without healing must ESCALATE to a human, never loop — 2026-07-04, my own 2nd run
+    # queued d181 because d180 had merged; that's the loop this guards).
     tag = "[self-heal:awareness-render]"
+    ATTEMPT_CAP, COOLDOWN_H = 2, 3
     already = False
     try:
         with _db() as c, c.cursor() as cur:
+            cur.execute("SELECT count(*) FROM brain_index.decisions WHERE question LIKE %s", (f"%{tag}%",))
+            attempts = cur.fetchone()[0]
             cur.execute("SELECT count(*) FROM brain_index.decisions WHERE question LIKE %s "
-                        "AND coalesce(build_status,'') NOT IN ('merged','rejected')", (f"%{tag}%",))
-            already = (cur.fetchone()[0] > 0)
-            if execute and not already:
+                        "AND created_at > now() - make_interval(hours => %s)", (f"%{tag}%", COOLDOWN_H))
+            recent = cur.fetchone()[0]
+            if attempts >= ATTEMPT_CAP:
+                _ops("awareness_escalate", f"{attempts} fixes tried, still {rel:.2f} — human needed, not looping")
+                return {"check": "awareness", "state": "ESCALATE", "reliability": rel,
+                        "why": f"{attempts} render-fixes merged/queued but awareness still {rel:.0%} — "
+                               "self-heal exhausted, needs a human (likely merged≠live: fix builds but doesn't take effect)"}
+            if recent > 0:
+                return {"check": "awareness", "state": "cooling-down", "reliability": rel,
+                        "why": f"a fix is in flight (<{COOLDOWN_H}h) — waiting to see if it heals before re-attempting"}
+            already = False
+            if execute:
                 cur.execute(r"SELECT id FROM brain_index.decisions WHERE id ~ '^d[0-9]+$'")
                 did = "d" + str(max(int(r[0][1:]) for r in cur.fetchall()) + 1).zfill(3)
                 spec = ("Guarantee the latest session_insight reaches the bot context (awareness root fix). "
