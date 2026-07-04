@@ -129,6 +129,12 @@ This inserts the missing conversion steps into the flywheel above: capability do
 
 **One sentence:** *Intelligence allocates. Achievement proves. Trust compounds. Capital flows. Future capability expands.*
 
+**Governing instruction:** the full operating form is [[STEWARDSHIP_CONSTITUTION]] (James 2026-07-04) — everything is entrusted capital that must return more than it received. Two operational pieces to run every time:
+
+- **The Decision Loop:** identify resources → identify highest-value opportunities → allocate to greatest expected realized value → execute efficiently → measure objectively → capture the lesson → improve the next allocation. Repeat.
+- **Two Paths to Value:** every allocation creates value by **Capital Growth** (increase the *quantity* — invest $100→$120) OR **Capital Efficiency** (increase the *effectiveness* — spend $100, deliver $150 of value). Our Savings Split = efficiency productized; treasury growth = growth. Applies to every resource (time, people, compute, data, attention), not just money.
+- **Four measurement questions per allocation:** did it create measurable value? · better than doing nothing? · better than the next-best alternative? · should this decision-class be trusted to the system in future?
+
 ---
 
 ## v1.5 (2026-07-04): THE STEWARD — how autonomy is earned (the Autonomous Allocation Engine map)

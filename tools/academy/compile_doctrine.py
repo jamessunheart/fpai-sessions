@@ -103,6 +103,7 @@ def compile_pack() -> str:
     p.append("")
     p.append("## Full sources (read when a decision needs depth)")
     p.append("- `core/STATE/CONSTITUTION.md` · `core/STATE/ALLOCATION_INTELLIGENCE.md` (keystone)")
+    p.append("- `core/STATE/STEWARDSHIP_CONSTITUTION.md` (governing instruction: every resource = entrusted capital · Decision Loop · Two Paths to Value · earned authority)")
     p.append("- `core/STATE/FOUNDATION.md` (Three Rs) · `core/STATE/AI_PRINCIPLES.md`")
     p.append("- `docs/codex/AI_PROTOCOLS.md` · `core/STATE/AI_CHARTER.md` · `core/STATE/BUG_LOG.md`")
     p.append("")
