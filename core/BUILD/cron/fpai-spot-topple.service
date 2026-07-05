@@ -1,0 +1,9 @@
+[Unit]
+Description=FPAI Spot & Topple orchestrator cycle
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/fpai-build/FPAI_Cockpit
+Environment=FPAI_REPO_ROOT=/opt/fpai-build/FPAI_Cockpit
+ExecStart=/opt/fpai-build/FPAI_Cockpit/core/BUILD/cron/fpai-spot-topple-run.sh

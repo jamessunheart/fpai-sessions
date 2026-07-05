@@ -189,6 +189,24 @@ def seed_opportunities(now: str | None = None) -> list[dict[str, Any]]:
     stamp = now or utc_now()
     return [
         _seed_row(
+            "assessment-funnel-delivery-proof",
+            "Assessment Funnel Delivery Proof",
+            "The assessment funnel can capture leads, but the real value only exists when a lead gets scored, delivered, alerted, and traced.",
+            "FPAI first; later founders buying the Bottleneck / Allocation Score path.",
+            {"pain": 9, "market": 7, "difficulty": 2, "time_to_revenue": 1, "compounding": 9, "time_to_first_dollar": 1, "path_to_recurring": 8, "constraint": 10, "leverage": 10, "proof_speed": 10, "topple_reversibility": 10},
+            stamp,
+            spot={
+                "current_constraint": "Revenue proof is trapped until the assessment promise is verified by a real end-to-end test lead after d193 activation.",
+                "value_trapped": "Traffic and lead capture become cash-proximate only when the Allocation Score delivery loop proves itself.",
+                "smallest_domino": "Run the d193 funnel-delivery proof: activate through the d182 guard, submit one test Life assessment lead, trace email/TG/page acknowledgement, and log the result.",
+            },
+            topple={
+                "next_action": "Queue a reversible local verifier/spec that runs only after d193 is merged and activation evidence exists; no outreach, spend, secrets, or live release authority.",
+                "gate": "ai_reversible",
+                "proof": "One test Life assessment lead produces recipient email delivery status, founder alert status, page acknowledgement, and capability-ledger learning.",
+            },
+        ),
+        _seed_row(
             "resource-optimization-audit",
             "Resource Optimization Audit",
             "BBB / savings-split offer that finds waste, duplicated tools, and fast AI substitution paths.",
