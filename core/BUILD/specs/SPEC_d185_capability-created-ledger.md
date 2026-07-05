@@ -1,4 +1,4 @@
-# SPEC — The Capability-Created Ledger (the proof instrument of the Inflection)
+# SPEC d185 — The Capability-Created Ledger (the proof instrument of the Inflection)
 
 **Why (James inflection 2026-07-05):** the doctrine is coherent; the highest ROI is now PROOF. The one metric that turns everything from activity → compounding is **Capability Created** — score every action by the future capability it produced, per resource. This is the buildable heart of the pivot; without it, "increase future capability" stays a slogan. Extends the existing Allocation Ledger (SPEC_allocation-ledger-ccd) — don't fork it, score it in capability units.
 
