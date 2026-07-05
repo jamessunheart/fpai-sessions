@@ -20,16 +20,16 @@ The purpose: both of us snap back to the same page within 10 seconds of session 
 ☉ ALIGNMENT CHECK · 2026-07-05 · THE ALLOCATOR ERA · PROVE DON'T THEORIZE · HOMEPAGE LIVE
 ═══════════════════════════════════════════════
 
-## INTENT (2026-07-04 evening)
-The system is now explicitly a **STEWARD** (governing doctrine in boot spine): discover the Value Gap → allocate to close it → return more than received → proof → trust → more authority. **Trust is the center; resources are the consequence** (Intelligence Law v1.4). Authority earned via the maturity ladder — we're **Level 2 edging 3** (loop autonomously allocates build-attention with proof; $20/day cap = the untouched Level-3 boundary). Value Capture via the **system funnel** (ads → /assessment → BBB ladder) remains THE work; NO manual outreach. Academy = one pattern, three subjects (Life track = Allocation Intelligence on a human's attention).
+## INTENT (2026-07-05)
+The brain is now an **INTELLIGENCE CAPITAL ALLOCATOR, not a builder** (governing identity in boot spine): choose WHAT deserves to exist, tip the **smallest domino that starts the largest cascade**, prove it in cash. Doctrine is COMPLETE + coherent (Intelligence Law · Stewardship · Value Arbitrage · Opportunity Intelligence · the 5 Allocation Laws · THE CRYSTAL). **The Inflection is in force: highest ROI is now PROOF, not concepts — stop adding doctrine, move the treasury needle.** THE WORK = first self-generated dollar via the system funnel (ads + homepage → /assessment → BBB ladder → Blueprint $2.5k = fastest-cash rung). Treasury still $0 self-generated.
 
 ## TOP 3
-1. **First real audit delivery** — funnel is LIVE (Meta ad spending $4.88/7-LPV proven; d149 assessment + d160 URL-intake building). First completed intake → deliver the audit = flywheel ignition.
-2. **Bot → Sonnet + capable** — fixed live (was silently llama-3B); d174 (loud fallback) + d177 (voice-first, ACT-bridge: voice memo → queued build) building.
-3. **Sovereign learning signal alive** — d175 revives dead corrections capture (7 rows) before any fine-tune.
+1. **★ First Assessment → Audit → Blueprint** — funnel now LIVE (homepage CTA deployed on fullpotential.com 07-05; ad $10/day → /assessment). Needs traffic VOLUME → first completed assessment → deliver the audit. This is the flywheel ignition + the first Capability-Ledger proof.
+2. **Resolve the funnel** — TWO assessment pages (/assessment 8KB vs /assessment.html 32KB); substrate picks the canonical/converting one and points all traffic at it. Then scale traffic.
+3. **Let the loop build the instruments** — d185 Capability-Created Ledger + d186 Opportunity Portfolio (built); the Council then allocates builds by Allocation Score, proven by realized outcome.
 
 ## BLOCKERS
-James-gates only: 🔴 Mailchimp key rotate + Drive un-share (2 min, standing all day) · cohort-1 greenlight · Meta billing confirmed working.
+James-reserved only (credentials/money): 🔴 rotate Mailchimp key + un-share Drive folder (his account login). Everything else = substrate executes.
 
 ## BLOCKERS
 James-gates only: Meta billing act_71883338 · zombie key disable (in motion) · Postiz first-activation approval when G2 lands.
