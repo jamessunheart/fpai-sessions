@@ -11,8 +11,13 @@ from __future__ import annotations
 import argparse
 import json
 import subprocess
+import sys
 from pathlib import Path
 from typing import Any, Callable
+
+_REPO = Path(__file__).resolve().parents[2]
+if str(_REPO) not in sys.path:
+    sys.path.insert(0, str(_REPO))  # repo root so `tools.*` resolves when run as a script/service
 
 from tools.allocation import opportunity_engine
 
