@@ -38,6 +38,19 @@ class LiveTarget:
 
 TARGETS: tuple[LiveTarget, ...] = (
     LiveTarget(
+        name="sunheart-brain-index",
+        patterns=(
+            "SERVICES/sunheart-brain/index/",
+            "core/BUILD/activate/SPEC_d191_",
+        ),
+        services=("sh-brain-index.service",),
+        backup_paths=(
+            "ingest_routes.py",
+        ),
+        kind="generic",
+        root_env="SH_BRAIN_INDEX_SRC",
+    ),
+    LiveTarget(
         name="sunheart-brain-tgbot",
         patterns=(
             "SERVICES/sunheart-brain/",
@@ -135,6 +148,8 @@ def detect_targets(files: Iterable[str], activate_script: Path | None = None) ->
 def live_root_for(target: LiveTarget) -> Path | None:
     if target.name == "sunheart-brain-tgbot":
         return Path(os.environ.get(target.root_env, "/opt/sh-brain-src"))
+    if target.name == "sunheart-brain-index":
+        return Path(os.environ.get(target.root_env, "/opt/sh-brain/index"))
     if target.root_env:
         return Path(os.environ.get(target.root_env, "/opt/fpai"))
     return None

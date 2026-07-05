@@ -1,0 +1,12 @@
+[Unit]
+Description=Refresh FPAI doctrine embeddings
+
+[Timer]
+OnBootSec=5m
+OnUnitActiveSec=30m
+AccuracySec=2m
+Persistent=true
+Unit=fpai-doctrine-ingest.service
+
+[Install]
+WantedBy=timers.target

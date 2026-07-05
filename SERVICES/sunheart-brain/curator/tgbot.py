@@ -931,7 +931,7 @@ async def _search_brain(question: str, k: int = SEARCH_TOP_K) -> list[dict]:
     from .db import connect
     sensitivities = list(SEARCH_SENSITIVITIES)
     sql = """
-        SELECT note_row_id, chunk_idx, content, source, sensitivity, tags, created_at,
+        SELECT note_row_id, chunk_idx, content, source, source_path, sensitivity, tags, created_at, updated_at,
                1 - (embedding <=> %s::vector) AS score
           FROM brain_index.note_chunks
          WHERE sensitivity = ANY(%s)
@@ -947,12 +947,14 @@ async def _search_brain(question: str, k: int = SEARCH_TOP_K) -> list[dict]:
                     "chunk_idx": chunk_idx,
                     "content": (c or "")[:HIT_MAX_CHARS],
                     "source": s,
+                    "source_path": source_path or "",
                     "sensitivity": sens,
                     "tags": tags or [],
                     "added": ct.strftime("%b %-d") if ct else "",
+                    "updated": updated_at.strftime("%Y-%m-%d") if updated_at else "",
                     "score": float(score),
                 }
-                for note_row_id, chunk_idx, c, s, sens, tags, ct, score in await cur.fetchall()
+                for note_row_id, chunk_idx, c, s, source_path, sens, tags, ct, updated_at, score in await cur.fetchall()
             ]
 
 
@@ -1360,8 +1362,10 @@ async def _synthesize_answer(
     from .llm import complete
     user = "Question:\n" + question + "\n\nRelevant snippets from your brain:\n\n"
     for i, h in enumerate(hits, 1):
+        source_label = h.get("source_path") or h["source"]
+        updated = f" updated={h['updated']}" if h.get("updated") else ""
         user += (
-            f"[{i}] source={h['source']}/{h['sensitivity']} "
+            f"[{i}] source={source_label}/{h['sensitivity']}{updated} "
             f"score={h['score']:.2f} tags={','.join(h['tags'][:4])}\n"
             f"{h['content']}\n\n"
         )
@@ -1386,6 +1390,7 @@ async def _synthesize_answer(
     user += (
         "Answer in 1-3 short sentences, plain text, like a quick text message.\n"
         "No lists, no source citations, no headers, unless James explicitly asks for detail.\n"
+        "When answering about doctrine, laws, principles, the Allocator role, or the Crystal, name the doctrine file and updated date from the retrieved source line.\n"
         "Do not output markdown code fences, XML tags, or raw JSON.\n"
         "Keep it very short."
     )

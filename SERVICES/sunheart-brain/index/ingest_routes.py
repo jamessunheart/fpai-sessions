@@ -236,7 +236,7 @@ class EnsureConvResp(BaseModel):
 
 
 class MemoryGitNoteReq(BaseModel):
-    source_path: str = Field(..., description="Canonical memory-git/<relative-path> source path")
+    source_path: str = Field(..., description="Canonical memory-git/<relative-path> or repo-doctrine/<relative-path> source path")
     content: str
     commit_sha: str
     updated_at: datetime | None = None
@@ -270,10 +270,11 @@ async def _auth(request: Request):
     return await authenticate(creds)
 
 
-def _clean_memory_source_path(source_path: str) -> str:
+def _clean_ingest_source_path(source_path: str) -> str:
     value = (source_path or "").strip().replace("\\", "/")
-    if not value.startswith("memory-git/"):
-        raise HTTPException(400, "source_path must start with memory-git/")
+    allowed_prefixes = ("memory-git/", "repo-doctrine/")
+    if not value.startswith(allowed_prefixes):
+        raise HTTPException(400, "source_path must start with memory-git/ or repo-doctrine/")
     parts = value.split("/")
     if any(part in ("", ".", "..") for part in parts):
         raise HTTPException(400, "source_path must not contain empty, dot, or dot-dot path parts")
@@ -383,7 +384,8 @@ async def memory_git_note(req: MemoryGitNoteReq, request: Request):
     agent = await _auth(request)
     require_scope(agent, "ingest")
 
-    source_path = _clean_memory_source_path(req.source_path)
+    source_path = _clean_ingest_source_path(req.source_path)
+    source_kind = source_path.split("/", 1)[0]
     sens_db = _sensitivity_to_db(req.sensitivity)
     if sens_db == "private":
         await audit(
@@ -423,7 +425,7 @@ async def memory_git_note(req: MemoryGitNoteReq, request: Request):
                     (note_row_id, chunk_idx, content, content_sha1, embedding, embedding_model,
                      source, source_id, source_path, commit_sha, tags, sensitivity, pii_flags, updated_at)
                 VALUES
-                    (%s, %s, %s, %s, %s::vector, %s, 'memory-git', %s, %s, %s, %s, %s, '{}', COALESCE(%s, NOW()))
+                    (%s, %s, %s, %s, %s::vector, %s, %s, %s, %s, %s, %s, %s, '{}', COALESCE(%s, NOW()))
                 ON CONFLICT (note_row_id, chunk_idx) DO UPDATE SET
                     content         = EXCLUDED.content,
                     content_sha1    = EXCLUDED.content_sha1,
@@ -445,6 +447,7 @@ async def memory_git_note(req: MemoryGitNoteReq, request: Request):
                     sha,
                     vec,
                     model,
+                    source_kind,
                     source_id,
                     source_path,
                     req.commit_sha,

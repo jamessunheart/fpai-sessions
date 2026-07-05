@@ -22,6 +22,7 @@ REPO_ROOT = Path(os.environ.get("FPAI_REPO_ROOT", Path(__file__).resolve().paren
 DEFAULT_MAX_ITEMS = int(os.environ.get("SH_BUILD_CONTEXT_MAX_ITEMS", "6"))
 DEFAULT_MAX_CHARS = int(os.environ.get("SH_BUILD_CONTEXT_MAX_CHARS", "1800"))
 DEFAULT_HOT_STATE_MAX_CHARS = int(os.environ.get("SH_HOT_STATE_MAX_CHARS", "3500"))
+DEFAULT_CORE_DOCTRINE_MAX_CHARS = int(os.environ.get("SH_CORE_DOCTRINE_MAX_CHARS", "2400"))
 DEFAULT_DIAGNOSTIC_CONTEXT_FILE = Path(
     os.environ.get("SELF_DIAGNOSTIC_CONTEXT_FILE", "/opt/fpai-build/.self_diagnostic_context.json")
 )
@@ -70,10 +71,14 @@ async def build_context_system_suffix(
     if os.environ.get("SH_BUILD_CONTEXT_DISABLE", "").strip() == "1":
         return ""
     diagnostic = render_active_diagnostic_context(max_chars=max_chars) if include_system_state else ""
+    core_doctrine = render_core_doctrine_context(repo_root=Path(repo_root), max_chars=DEFAULT_CORE_DOCTRINE_MAX_CHARS)
     hot_state = render_hot_state_context(max_chars=DEFAULT_HOT_STATE_MAX_CHARS)
     routed_mode = not all((include_system_state, include_buildstream, include_corrections, include_becoming))
     if hot_state and not routed_mode:
-        suffix_parts = [hot_state]
+        suffix_parts = []
+        if core_doctrine:
+            suffix_parts.append(core_doctrine)
+        suffix_parts.append(hot_state)
         corrections = await _render_recent_corrections_context(conversation_id=conversation_id)
         if corrections:
             suffix_parts.append(corrections)
@@ -95,6 +100,8 @@ async def build_context_system_suffix(
         else ""
     )
     parts: list[str] = []
+    if core_doctrine:
+        parts.append(core_doctrine)
     if hot_state and include_system_state:
         parts.append(hot_state)
     rendered_context = render_build_context(
@@ -132,6 +139,35 @@ def render_hot_state_context(
         "Source: HOT_STATE.md",
         "Use this as the current cited state. If a fact is not here, say it is not in hot state instead of guessing.",
         hot_state.strip(),
+    ]
+    rendered = "\n".join(lines)
+    if max_chars <= 0 or len(rendered) <= max_chars:
+        return rendered
+    return rendered[: max(0, max_chars - 20)].rsplit("\n", 1)[0] + "\n- ... bounded"
+
+
+def render_core_doctrine_context(
+    *,
+    repo_root: Path | str = REPO_ROOT,
+    max_chars: int = DEFAULT_CORE_DOCTRINE_MAX_CHARS,
+) -> str:
+    """Return the CORE_DOCTRINE boot spine as governing system context."""
+    if os.environ.get("SH_CORE_DOCTRINE_DISABLE", "").strip() == "1":
+        return ""
+    path = Path(repo_root) / "core" / "STATE" / "CORE_DOCTRINE.md"
+    try:
+        stat = path.stat()
+        text = path.read_text(encoding="utf-8", errors="ignore").strip()
+    except OSError:
+        return ""
+    if not text:
+        return ""
+    updated = datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc).strftime("%Y-%m-%d")
+    lines = [
+        "--- CORE DOCTRINE BOOT SPINE (governing frame, bounded) ---",
+        f"Source: core/STATE/CORE_DOCTRINE.md · file updated {updated}",
+        "Reason from this frame before retrieval. If doctrine and retrieved snippets conflict, say the source is stale or unresolved instead of guessing.",
+        text,
     ]
     rendered = "\n".join(lines)
     if max_chars <= 0 or len(rendered) <= max_chars:

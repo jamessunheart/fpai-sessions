@@ -186,6 +186,34 @@ class BuildContextTest(unittest.TestCase):
         self.assertNotIn(marker, suffix)
         self.assertIn("- ... bounded", suffix)
 
+    def test_core_doctrine_injects_before_hot_state_with_freshness(self) -> None:
+        root = self.make_repo()
+        doctrine = root / "core" / "STATE" / "CORE_DOCTRINE.md"
+        doctrine.write_text("# CORE_DOCTRINE\n\nAllocator role boot spine.\n", encoding="utf-8")
+        with tempfile.TemporaryDirectory() as tmp:
+            hot_state = Path(tmp) / "HOT_STATE.md"
+            hot_state.write_text("# HOT_STATE\n\nCurrent live state.\n", encoding="utf-8")
+            with patch.dict("os.environ", {"HOT_MEMORY_STATE_PATH": str(hot_state)}):
+                suffix = asyncio.run(build_context.build_context_system_suffix(repo_root=root, max_chars=1600))
+
+        self.assertIn("CORE DOCTRINE BOOT SPINE", suffix)
+        self.assertIn("Source: core/STATE/CORE_DOCTRINE.md · file updated", suffix)
+        self.assertIn("Allocator role boot spine", suffix)
+        self.assertIn("HOT STATE", suffix)
+        self.assertLess(suffix.index("CORE DOCTRINE BOOT SPINE"), suffix.index("HOT STATE"))
+
+    def test_core_doctrine_context_can_be_disabled(self) -> None:
+        root = self.make_repo()
+        (root / "core" / "STATE" / "CORE_DOCTRINE.md").write_text(
+            "# CORE_DOCTRINE\n\nShould not render.\n",
+            encoding="utf-8",
+        )
+
+        with patch.dict("os.environ", {"SH_CORE_DOCTRINE_DISABLE": "1"}):
+            suffix = build_context.render_core_doctrine_context(repo_root=root)
+
+        self.assertEqual("", suffix)
+
     def test_fresh_hot_state_still_injects_recent_corrections(self) -> None:
         pair = corrections.CorrectionPair(
             conversation_id="123",

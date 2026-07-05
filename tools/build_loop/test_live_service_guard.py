@@ -20,6 +20,10 @@ class LiveServiceGuardTest(unittest.TestCase):
         targets = guard.detect_targets(["SERVICES/sunheart-brain/curator/tgbot.py"])
         self.assertEqual(["sunheart-brain-tgbot"], [target.name for target in targets])
 
+    def test_detects_index_target_from_changed_files(self) -> None:
+        targets = guard.detect_targets(["SERVICES/sunheart-brain/index/ingest_routes.py"])
+        self.assertEqual(["sunheart-brain-index", "sunheart-brain-tgbot"], [target.name for target in targets])
+
     def test_backup_and_restore_live_files(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -28,7 +32,7 @@ class LiveServiceGuardTest(unittest.TestCase):
             file_path.parent.mkdir(parents=True)
             file_path.write_text("old bot\n", encoding="utf-8")
             backup_root = root / "backups"
-            target = guard.TARGETS[0]
+            target = next(target for target in guard.TARGETS if target.name == "sunheart-brain-tgbot")
 
             with mock.patch.dict(os.environ, {"SH_BRAIN_SRC": str(live)}):
                 backup = guard.create_backup([target], backup_root, "SPEC_d182_x")
