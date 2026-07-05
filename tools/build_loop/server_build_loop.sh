@@ -23,6 +23,8 @@ BUILD_TIMEOUT="${BUILD_TIMEOUT:-90m}"
 CONSECUTIVE_REVERTS_MAX="${CONSECUTIVE_REVERTS_MAX:-3}"
 DISK_WARN_GB="${DISK_WARN_GB:-30}"
 MERGE_LOCKFILE="${MERGE_LOCKFILE:-/opt/fpai-build/.merge.lock}"
+REWORK_ATTEMPT_LIMIT="${REWORK_ATTEMPT_LIMIT:-2}"
+CHANGES_REWORK_MAX="${CHANGES_REWORK_MAX:-2}"
 STAMP=/opt/fpai-build/.daily_count
 DISABLED=/opt/fpai-build/.disabled
 DRY="${1:-}"
@@ -33,6 +35,14 @@ if ! [[ "$BUILD_CONCURRENCY" =~ ^[0-9]+$ ]] || [ "$BUILD_CONCURRENCY" -lt 1 ]; t
 fi
 if ! [[ "$BUILD_MAX" =~ ^[0-9]+$ ]] || [ "$BUILD_MAX" -lt 1 ]; then
   echo "invalid BUILD_MAX=$BUILD_MAX (must be integer >= 1)" >&2
+  exit 2
+fi
+if ! [[ "$REWORK_ATTEMPT_LIMIT" =~ ^[0-9]+$ ]] || [ "$REWORK_ATTEMPT_LIMIT" -lt 1 ]; then
+  echo "invalid REWORK_ATTEMPT_LIMIT=$REWORK_ATTEMPT_LIMIT (must be integer >= 1)" >&2
+  exit 2
+fi
+if ! [[ "$CHANGES_REWORK_MAX" =~ ^[0-9]+$ ]] || [ "$CHANGES_REWORK_MAX" -lt 1 ]; then
+  echo "invalid CHANGES_REWORK_MAX=$CHANGES_REWORK_MAX (must be integer >= 1)" >&2
   exit 2
 fi
 
@@ -192,6 +202,154 @@ EOF
   else
     python3 "$REPO/tools/build_loop/ops_log.py" revision no-changes "$SPECID attempt=$attempt" "\$0" "$BR" "Ember: inspect unchanged flagged build" 2>/dev/null || true
   fi
+}
+
+ensure_rework_attempts_column() {
+  "$PY" - <<'PY'
+import os
+
+try:
+    import psycopg
+except ImportError:
+    raise SystemExit(0)
+
+url = os.environ.get("BRAIN_INDEX_DB_URL", "")
+if not url:
+    raise SystemExit(0)
+
+with psycopg.connect(url, autocommit=True) as conn:
+    conn.execute(
+        "ALTER TABLE IF EXISTS brain_index.decisions "
+        "ADD COLUMN IF NOT EXISTS rework_attempts INTEGER DEFAULT 0"
+    )
+    conn.execute(
+        "UPDATE brain_index.decisions "
+        "SET rework_attempts = 0 "
+        "WHERE rework_attempts IS NULL"
+    )
+    conn.execute(
+        "ALTER TABLE IF EXISTS brain_index.decisions "
+        "ALTER COLUMN rework_attempts SET DEFAULT 0"
+    )
+PY
+}
+
+block_exhausted_changes_rework() {
+  "$PY" - "$REWORK_ATTEMPT_LIMIT" <<'PY'
+import json
+import os
+import sys
+
+try:
+    import psycopg
+except ImportError:
+    raise SystemExit(0)
+
+url = os.environ.get("BRAIN_INDEX_DB_URL", "")
+if not url:
+    raise SystemExit(0)
+
+limit = int(sys.argv[1])
+with psycopg.connect(url, autocommit=True) as conn:
+    rows = conn.execute(
+        """
+        UPDATE brain_index.decisions
+           SET build_status = 'blocked'
+         WHERE status = 'answered'
+           AND COALESCE(needs_build, false) = true
+           AND lower(COALESCE(build_status, '')) = 'changes'
+           AND COALESCE(rework_attempts, 0) >= %s
+         RETURNING id::text, COALESCE(build_branch, '') AS build_branch
+        """,
+        (limit,),
+    ).fetchall()
+for decision_id, branch in rows:
+    print(json.dumps({"id": decision_id, "branch": branch}))
+PY
+}
+
+changes_rework_candidates() {
+  "$PY" - "$REWORK_ATTEMPT_LIMIT" "$CHANGES_REWORK_MAX" <<'PY'
+import json
+import os
+import sys
+
+try:
+    import psycopg
+except ImportError:
+    raise SystemExit(0)
+
+url = os.environ.get("BRAIN_INDEX_DB_URL", "")
+if not url:
+    raise SystemExit(0)
+
+limit = int(sys.argv[1])
+max_rows = int(sys.argv[2])
+with psycopg.connect(url) as conn:
+    rows = conn.execute(
+        """
+        SELECT id::text,
+               question,
+               COALESCE(answer, '') AS answer,
+               COALESCE(build_spec, '') AS build_spec,
+               COALESCE(proof_expected, '') AS proof_expected,
+               COALESCE(build_branch, '') AS build_branch,
+               COALESCE(rework_attempts, 0) AS rework_attempts
+          FROM brain_index.decisions
+         WHERE status = 'answered'
+           AND COALESCE(needs_build, false) = true
+           AND lower(COALESCE(build_status, '')) = 'changes'
+           AND COALESCE(build_branch, '') <> ''
+           AND COALESCE(rework_attempts, 0) < %s
+         ORDER BY COALESCE(updated_at, answered_at, created_at, NOW()), id::text
+         LIMIT %s
+        """,
+        (limit, max_rows),
+    ).fetchall()
+for row in rows:
+    print(json.dumps(dict(zip(
+        ["id", "question", "answer", "build_spec", "proof_expected", "build_branch", "rework_attempts"],
+        row,
+    ))))
+PY
+}
+
+claim_changes_rework() {
+  local did="$1"
+  "$PY" - "$did" "$REWORK_ATTEMPT_LIMIT" <<'PY'
+import os
+import sys
+
+try:
+    import psycopg
+except ImportError:
+    raise SystemExit(1)
+
+url = os.environ.get("BRAIN_INDEX_DB_URL", "")
+if not url:
+    raise SystemExit(1)
+
+decision_id = sys.argv[1]
+limit = int(sys.argv[2])
+with psycopg.connect(url, autocommit=True) as conn:
+    row = conn.execute(
+        """
+        UPDATE brain_index.decisions
+           SET rework_attempts = COALESCE(rework_attempts, 0) + 1
+         WHERE id::text = %s
+           AND status = 'answered'
+           AND COALESCE(needs_build, false) = true
+           AND lower(COALESCE(build_status, '')) = 'changes'
+           AND COALESCE(build_branch, '') <> ''
+           AND COALESCE(rework_attempts, 0) < %s
+         RETURNING rework_attempts
+        """,
+        (decision_id, limit),
+    ).fetchone()
+if not row:
+    raise SystemExit(1)
+print(int(row[0]))
+PY
 }
 
 queue_liveness_followup() {
@@ -423,6 +581,84 @@ update_blueprint_after_merge() {
   python3 "$REPO/curator/blueprints/manager.py" update-after-build "$did" "$branch" >/dev/null 2>&1 || true
 }
 
+process_changes_rework() {
+  local line="$1"
+  local DID BR QUESTION_TEXT ANSWER_TEXT PROOF_EXPECTED_TEXT BUILD_SPEC_TEXT SPECID WT SPEC
+  local REWORK_ATTEMPT REVIEW_FILE REVIEW RC ST TAIL EVENT NEXT
+
+  [ -z "$line" ] && return 0
+  DID=$(printf '%s' "$line"  | "$PY" -c 'import sys,json;print(json.load(sys.stdin)["id"])')
+  BR=$(printf '%s' "$line"  | "$PY" -c 'import sys,json;print(json.load(sys.stdin)["build_branch"])')
+  QUESTION_TEXT=$(printf '%s' "$line" | "$PY" -c 'import sys,json;print(json.load(sys.stdin).get("question") or "")')
+  ANSWER_TEXT=$(printf '%s' "$line" | "$PY" -c 'import sys,json;print(json.load(sys.stdin).get("answer") or "")')
+  PROOF_EXPECTED_TEXT=$(printf '%s' "$line" | "$PY" -c 'import sys,json;print(json.load(sys.stdin).get("proof_expected") or "")')
+  BUILD_SPEC_TEXT=$(printf '%s' "$line" | "$PY" -c 'import sys,json;print(json.load(sys.stdin).get("build_spec") or "")')
+  SPECID="$(basename "$BR")"
+  [ -z "$SPECID" ] && SPECID="SPEC_${DID}_rework"
+  WT="$WT_BASE/$SPECID"
+
+  REWORK_ATTEMPT=$(claim_changes_rework "$DID") || {
+    echo "skip rework $DID: already claimed, capped, or no longer changes"
+    return 0
+  }
+
+  if ! git -C "$REPO" rev-parse --verify "$BR" >/dev/null 2>&1; then
+    dec set-build-result "$DID" "$BR" "blocked" >/dev/null 2>&1 || true
+    tg "⚠️ REWORK BLOCKED [$DID] — changes row has no branch to re-drive: $BR" 2>/dev/null || true
+    python3 "$REPO/tools/build_loop/ops_log.py" rework blocked "$SPECID missing branch $BR" "\$0" "$BR" "Ember/James: inspect missing rework branch $DID" 2>/dev/null || true
+    return 0
+  fi
+
+  if ! git -C "$WT" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    git -C "$REPO" worktree remove --force "$WT" 2>/dev/null || true
+    git -C "$REPO" worktree add -q "$WT" "$BR" || {
+      dec set-build-result "$DID" "$BR" "changes" >/dev/null 2>&1 || true
+      tg "⚠️ REWORK HELD [$DID] — could not reopen branch worktree $BR" 2>/dev/null || true
+      python3 "$REPO/tools/build_loop/ops_log.py" rework worktree-failed "$SPECID attempt=$REWORK_ATTEMPT" "\$0" "$BR" "Ember: inspect rework worktree $DID" 2>/dev/null || true
+      return 0
+    }
+  fi
+
+  if [ -f "$WT/core/BUILD/specs/$SPECID.md" ]; then
+    SPEC="$(sed -n '1,260p' "$WT/core/BUILD/specs/$SPECID.md")"
+  else
+    SPEC="$(cat <<EOF
+# $DID — $QUESTION_TEXT
+Rework pass for an existing build_status=changes branch.
+## Build
+${BUILD_SPEC_TEXT:-"(implement what the answer + proof_expected require)"}
+## Context
+- Question: $QUESTION_TEXT
+- Answer: $ANSWER_TEXT
+- Proof expected: ${PROOF_EXPECTED_TEXT:-"(see answer)"}
+## Contract
+Follow docs/codex/SESSION_CONTRACT.md. Stay on branch $BR. Tests required. Do NOT push or merge.
+EOF
+)"
+  fi
+
+  echo "── reworking $SPECID (decision $DID · attempt $REWORK_ATTEMPT/$REWORK_ATTEMPT_LIMIT) ──"
+  REVIEW_FILE="$(review_file_for_branch "$BR")"
+  REVIEW=""
+  mkdir -p /opt/fpai-build/logs
+  run_revision_agent_attempt "$REWORK_ATTEMPT" "$REVIEW_FILE"
+  build_alert_event review
+  REVIEW=$(cd "$REPO" && "$PY" tools/merge/ai_review.py "$BR" 2>&1); RC=$?
+
+  if   [ "$RC" = 0 ]; then ST=built;    TAIL="✅ REWORK APPROVED"; EVENT="approved"; NEXT=""
+  elif [ "$RC" = 2 ]; then ST=rejected; TAIL="🔴 REWORK BLOCKED — touches the protected layer"; EVENT="blocked"; NEXT="James: protected-zone escalation $DID"
+  elif [ "$REWORK_ATTEMPT" -ge "$REWORK_ATTEMPT_LIMIT" ]; then
+    ST=blocked; TAIL="🔴 REWORK BLOCKED — reviewer still flags changes after $REWORK_ATTEMPT_LIMIT attempts"; EVENT="blocked"; NEXT="Ember/James: council review $DID"
+  else
+    ST=changes; TAIL="⚠️ REWORK STILL FLAGGED — will retry once more"; EVENT="still-flagged"; NEXT="Build loop: retry changes rework for $DID"
+  fi
+
+  dec set-build-result "$DID" "$BR" "$ST" >/dev/null 2>&1 || true
+  python3 "$REPO/tools/build_loop/ops_log.py" rework "$EVENT" "$SPECID attempt=$REWORK_ATTEMPT status=$ST" "\$0" "$BR" "$NEXT" 2>/dev/null || true
+  tg "$TAIL · [$DID] $SPECID (attempt $REWORK_ATTEMPT/$REWORK_ATTEMPT_LIMIT · never main)" 2>/dev/null || true
+  echo "rework result: $SPECID -> $ST"
+}
+
 "$PY" "$REPO/tools/build_loop/seed_orphaned_specs.py" --repo "$REPO" || true
 REAPER_OUT=$("$PY" "$REPO/tools/build_loop/build_orphan_reaper.py" --older-minutes 30 2>/dev/null || true)
 if [ -n "$REAPER_OUT" ]; then
@@ -434,14 +670,44 @@ if [ -n "$REAPER_OUT" ]; then
 fi
 build_alert_flush
 
+# ── CHANGES REWORK PASS ───────────────────────────────────────────────────────
+# A review verdict of build_status=changes is not terminal. It already has a
+# branch and review notes, so re-drive Codex on that same branch with reviewer
+# feedback, then re-review. After REWORK_ATTEMPT_LIMIT attempts, block and
+# surface instead of looping forever.
+if [ "$DRY" = "--dry-run" ]; then
+  echo "DRY RUN — skipping rework_attempts migration and capped-row blocking"
+else
+  ensure_rework_attempts_column
+  REWORK_BLOCKED_JSON=$(block_exhausted_changes_rework 2>/dev/null || true)
+  if [ -n "$REWORK_BLOCKED_JSON" ]; then
+    while IFS= read -r rline; do
+      [ -z "$rline" ] && continue
+      RDID=$(printf '%s' "$rline" | "$PY" -c 'import sys,json;print(json.load(sys.stdin)["id"])')
+      RBR=$(printf '%s' "$rline" | "$PY" -c 'import sys,json;print(json.load(sys.stdin).get("branch") or "")')
+      tg "🔴 REWORK BLOCKED [$RDID] — changes review hit $REWORK_ATTEMPT_LIMIT attempts. Branch held: $RBR" 2>/dev/null || true
+      python3 "$REPO/tools/build_loop/ops_log.py" rework blocked "$RDID exhausted attempts branch=$RBR" "\$0" "$RBR" "Ember/James: council review $RDID" 2>/dev/null || true
+    done <<< "$REWORK_BLOCKED_JSON"
+  fi
+fi
+
+REWORK_JSON=$(changes_rework_candidates 2>/dev/null || true)
+REWORK_LAUNCHED=0
+while IFS= read -r rline; do
+  [ -z "$rline" ] && continue
+  [ "$REWORK_LAUNCHED" -ge "$CHANGES_REWORK_MAX" ] && { echo "changes rework cap reached ($REWORK_LAUNCHED/$CHANGES_REWORK_MAX) — next run continues"; break; }
+  [ "$DRY" = "--dry-run" ] && { echo "  (dry-run) would rework: $rline"; REWORK_LAUNCHED=$((REWORK_LAUNCHED+1)); continue; }
+  process_changes_rework "$rline"
+  REWORK_LAUNCHED=$((REWORK_LAUNCHED+1))
+done <<< "$REWORK_JSON"
+
 # ── BACKLOG MERGE PASS ─────────────────────────────────────────────────────────
-# Specs built before the auto-merge directive (2026-06-18) sit at build_status=
-# 'changes' or 'built' with valid branches — never merged. Drain them 3/run so
-# they don't flood one timer cycle. Same auto-merge policy as new builds.
+# Specs built before the auto-merge directive (2026-06-18) can sit at
+# build_status='built' with valid branches but never merged. Drain them 3/run so
+# they don't flood one timer cycle. build_status='changes' is handled by the
+# dedicated rework pass above and must not be backlog-merged.
 MERGE_BACKLOG_MAX="${MERGE_BACKLOG_MAX:-3}"
 BACKLOG_MERGED=0
-# Also drain worktrees: branches checked out in linked worktrees that are ready to merge
-WORKTREE_BRANCHES=$(git -C "$REPO" worktree list --porcelain 2>/dev/null | grep "branch refs/heads/build/" | sed 's|branch refs/heads/||')
 BACKLOG_JSON=$("$PY" -c "
 import psycopg, os, json
 url = os.environ.get('BRAIN_INDEX_DB_URL','')
@@ -452,16 +718,10 @@ with psycopg.connect(url) as conn:
         WHERE status=%s AND build_status = ANY(%s)
         AND build_branch IS NOT NULL AND build_branch != %s
         ORDER BY id
-    ''', ('answered', ['changes','built'], '')).fetchall()
+    ''', ('answered', ['built'], '')).fetchall()
     for r in rows:
         print(json.dumps({'id': r[0], 'branch': r[1]}))
 " 2>/dev/null || true)
-# Add worktree branches not already in DB backlog
-for WBR in $WORKTREE_BRANCHES; do
-  echo "$BACKLOG_JSON" | grep -q "\"$WBR\"" || \
-    BACKLOG_JSON="${BACKLOG_JSON}
-$(printf '{"id":"%s","branch":"%s"}' "$(basename "$WBR" | grep -oE 'd[0-9]+'|head -1)" "$WBR")"
-done
 
 while IFS= read -r bline; do
   [ -z "$bline" ] && continue

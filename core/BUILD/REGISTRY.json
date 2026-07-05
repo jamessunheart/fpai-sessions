@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-05T01:05:00Z",
+    "updated_at": "2026-07-05T01:16:08Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d187_build-loop-rework-path-for-chan",
+            "slug": "SPEC_d187_build-loop-rework-path-for-chan",
+            "branch": "build/SPEC_d187_build-loop-rework-path-for-chan",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d187_build-loop-rework-path-for-chan.md",
+            "tests_passed": true,
+            "notes": "d187 complete in working tree: server_build_loop now has a dedicated build_status=changes rework pass before backlog merging. It self-migrates rework_attempts, reopens the existing build branch/worktree, feeds reviewer findings to the revision agent, re-runs independent review, and advances to built/rejected/changes/blocked with a two-attempt cap. Exhausted changes rows are marked blocked and surfaced to Ember/James/council. Backlog merge now only considers DB built rows and no longer adds arbitrary linked build/* worktrees, preventing flagged branches from bypassing rework. Focused build-loop contract tests, shell syntax, py_compile, registry JSON validation, and diff hygiene passed. Live server-162 changes-row proof awaits post-merge timer observation."
+        },
         {
             "id": "SPEC_d186_spec-d186-opportunity-intelligen",
             "slug": "SPEC_d186_spec-d186-opportunity-intelligen",

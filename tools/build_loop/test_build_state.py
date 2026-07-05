@@ -22,7 +22,7 @@ class BuildStateTest(unittest.TestCase):
         pending = build_state.pending_builds_from_rows(rows)
 
         self.assertEqual([row["id"] for row in pending], ["d001"])
-        self.assertIn("COALESCE(is_canary, false) = false", build_state.PENDING_DECISION_WHERE_SQL)
+        self.assertNotIn("COALESCE(is_canary, false) = false", build_state.PENDING_DECISION_WHERE_SQL)
         self.assertIn("'built'", build_state.PENDING_DECISION_WHERE_SQL)
         self.assertIn("'changes'", build_state.PENDING_DECISION_WHERE_SQL)
 

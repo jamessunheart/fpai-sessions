@@ -83,6 +83,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Questions for Ember/James: …
 ```
 
+### 2026-07-05 · SPEC_d187_build-loop-rework-path-for-chan · branch `build/SPEC_d187_build-loop-rework-path-for-chan`
+
+- **Status:** done in working tree / awaiting review + merge
+- **Files changed:** `tools/build_loop/server_build_loop.sh`; `tools/build_loop/test_changes_rework_loop.py`; `tools/build_loop/test_build_state.py`; `core/BUILD/specs/SPEC_d187_build-loop-rework-path-for-chan.md`; `core/BUILD/results/SPEC_d187_build-loop-rework-path-for-chan.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a dedicated `build_status=changes` rework pass before backlog merging. The loop self-migrates `rework_attempts`, selects flagged rows with existing branches, reopens the same branch/worktree, feeds reviewer findings into the existing revision agent, re-runs independent review, and advances to `built`, `rejected`, `changes`, or `blocked`. Attempts cap at 2; exhausted rows are marked `blocked` and surfaced to Ember/James/council. Backlog merge now only considers DB `built` rows and no longer adds arbitrary linked `build/*` worktrees, so `changes` cannot bypass rework into auto-merge.
+- **Tests:** `bash -n tools/build_loop/server_build_loop.sh`; `python3 -B -m unittest tools.build_loop.test_changes_rework_loop tools.build_loop.test_revision_agent tools.build_loop.test_parallel_build_loop tools.build_loop.test_build_state tools.build_loop.test_build_orphan_reaper tools.build_loop.test_auto_merge_governance` (25 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/test_changes_rework_loop.py tools/build_loop/test_build_state.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d187-registry.json`; `git diff --check`
+- **Risks:** Live proof against a real server-162 `changes` row was not run in this sandbox. Rework quality depends on the review artifact being present; missing artifacts fall back to available review command output. A branch worktree reopen failure holds the row as `changes` unless the branch itself is missing, which blocks immediately.
+- **Rollback:** Revert this branch. Runtime mitigation is to lower `CHANGES_REWORK_MAX` or `REWORK_ATTEMPT_LIMIT`; full disable is reverting the changes rework pass.
+- **Intent solved:** `build_status=changes` is no longer a terminal P14 state with no exit.
+- **Downstream intent unlocked:** Flagged autonomous builds can advance to `built`/merge or `blocked` within two rework cycles, giving James/Ember an explicit surface instead of abandoned branches.
+- **Questions for Ember/James:** after merge on server 162, seed or use one known `changes` row with a valid branch and confirm one timer tick increments `rework_attempts`, commits a same-branch revision if needed, and either reclassifies to `built`/merged or blocks by attempt 2.
+
 ### 2026-07-05 · SPEC_d186_spec-d186-opportunity-intelligen · branch `build/SPEC_d186_spec-d186-opportunity-intelligen`
 
 - **Status:** done in working tree / awaiting review + merge
