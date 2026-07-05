@@ -28,11 +28,18 @@ BUILT_DECISION_STATUSES = {
     "rejected",
 }
 
+# NOTE (2026-07-05): the `is_canary` column was never migrated into the live
+# brain_index.decisions table, so referencing it here raised UndefinedColumn and
+# CRASHED every reporting caller (queue_status.sh, build_alerts.py, visual_digest,
+# mirror_pull) against live — which is why honest queue counts kept drifting to
+# loose fallbacks (P18: a broken honest-count tool ships dishonest counts). The
+# clause was a no-op-that-crashes, not a working filter. Canary decisions are
+# excluded at the Python row layer (is_decision_pending_build, via the null-safe
+# row.get("is_canary")) below. Restore the SQL clause only after the column is migrated.
 PENDING_DECISION_WHERE_SQL = """
          WHERE status = 'answered'
            AND COALESCE(needs_build, false) = true
            AND COALESCE(spec_written, false) = false
-           AND COALESCE(is_canary, false) = false
            AND lower(COALESCE(build_status, '')) NOT IN (
                'built',
                'building',
