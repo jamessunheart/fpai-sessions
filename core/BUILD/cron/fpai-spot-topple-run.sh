@@ -23,4 +23,13 @@ if [ ! -x "$PY" ]; then
 fi
 
 cd "$REPO"
-exec "$PY" -B "$REPO/tools/build_loop/spot_topple_orchestrator.py" --queue
+# INTERIM SAFETY (2026-07-05): --queue removed → orchestrator is SURFACE-ONLY (spots + proposes,
+# never auto-builds). It auto-built a net-new product (d205 AI Voice Receptionist) with no human
+# input — exceeding the Constitution's Reserved-direction line. Re-add --queue only after d207
+# scopes auto-topple to reversible IMPROVEMENTS of live things (new products/direction → surface).
+# Re-enable with the flag file once d207 lands:
+if [ -f /opt/fpai-build/.spot_topple_autobuild_enabled ]; then
+  exec "$PY" -B "$REPO/tools/build_loop/spot_topple_orchestrator.py" --queue
+else
+  exec "$PY" -B "$REPO/tools/build_loop/spot_topple_orchestrator.py"
+fi
