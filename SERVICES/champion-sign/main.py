@@ -17,16 +17,20 @@ Storage:
 from __future__ import annotations
 
 import asyncio
+import logging
 import importlib.util as _ilu
 import json
 import os
 import re
+import smtplib
 import time
 from datetime import datetime
+from email.message import EmailMessage
+from email.utils import formatdate, make_msgid
 from pathlib import Path
 from typing import Optional
 
-from fastapi import FastAPI, Header, HTTPException, Request
+from fastapi import BackgroundTasks, FastAPI, Header, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, validator
 
@@ -43,6 +47,12 @@ MIRRORS_DIR.mkdir(parents=True, exist_ok=True)
 TIERS_DIR = Path(os.environ.get("TIERS_DATA_DIR", "/var/lib/full-potential/tiers"))
 TIERS_DIR.mkdir(parents=True, exist_ok=True)
 ADMIN_TOKEN = os.environ.get("ADMIN_TOKEN", "").strip()
+MAIL_HOST = os.environ.get("FP_ASSESSMENT_MAIL_HOST", "mail.fullpotential.com")
+MAIL_PORT = int(os.environ.get("FP_ASSESSMENT_MAIL_PORT", "25"))
+MAIL_FROM = os.environ.get("FP_ASSESSMENT_MAIL_FROM", "Full Potential <score@fullpotential.com>")
+MAIL_REPLY_TO = os.environ.get("FP_ASSESSMENT_REPLY_TO", "james@fullpotential.com")
+MAIL_DISABLE = os.environ.get("FP_ASSESSMENT_MAIL_DISABLE", "0") == "1"
+logger = logging.getLogger("champion-sign")
 
 
 RETREAT_DIR = Path(os.environ.get("RETREAT_DATA_DIR", "/var/lib/full-potential/retreat-interests"))
@@ -1278,7 +1288,7 @@ async def lead_first_read(req: LeadFirstRead, request: Request) -> dict:
 
 
 @app.post("/lead/submit")
-async def submit_lead(req: LeadSubmit, request: Request) -> dict:
+async def submit_lead(req: LeadSubmit, request: Request, background_tasks: BackgroundTasks) -> dict:
     """Capture an inbound lead from the diagnose page (or anywhere).
 
     Stores at /var/lib/full-potential/leads/{date}_{slug}.md, fires
@@ -1326,46 +1336,25 @@ async def submit_lead(req: LeadSubmit, request: Request) -> dict:
             "filename": fname,
         }) + "\n")
 
-    # Founder ping — high-priority, leads should be noticed quickly
-    try:
-        import urllib.request
-        bottleneck_excerpt = (req.bottleneck or "")[:140]
-        if len(req.bottleneck or "") > 140:
-            bottleneck_excerpt += "..."
-        msg_lines = [
-            f"📍 NEW DIAGNOSTIC LEAD — {req.name}",
-            f"Email: {req.email}",
-        ]
-        if req.phone:
-            msg_lines.append(f"Phone: {req.phone}")
-        if req.preferred_contact:
-            msg_lines.append(f"Prefers: {req.preferred_contact}")
-        if req.interest:
-            msg_lines.append(f"Interest: {req.interest}")
-        msg_lines.append(f"\nBottleneck: {bottleneck_excerpt}")
-        urllib.request.urlopen(
-            urllib.request.Request(
-                "http://127.0.0.1:8766/alert",
-                data=json.dumps({
-                    "message": "\n".join(msg_lines),
-                    "source": "diagnose-lead",
-                }).encode(),
-                headers={"Content-Type": "application/json"},
-            ),
-            timeout=2,
-        )
-    except Exception:
-        pass
+    alert_status = _send_founder_lead_alert(req)
+
+    deliverable_status = None
+    if life_result:
+        if MAIL_DISABLE:
+            deliverable_status = "disabled"
+        else:
+            subject, body = _life_assessment_email(req, life_result)
+            deliverable_status = "queued"
+            background_tasks.add_task(_send_assessment_email_safe, req.email, subject, body, fname)
 
     return {
         "ok": True,
         "filename": fname,
         "life_result": life_result,
         "life_deliverable": life_deliverable,
-        "message": (
-            f"Thank you, {req.name.split()[0]}. Your message reached Sunheart directly. "
-            f"You'll hear back personally within 48 hours."
-        ),
+        "founder_alert": alert_status,
+        "deliverable_status": deliverable_status,
+        "message": _lead_ack_message(req, life_result=life_result, deliverable_status=deliverable_status),
     }
 
 
@@ -1385,6 +1374,178 @@ def _score_life_lead(req: LeadSubmit) -> tuple[dict, str]:
     result["context"] = {str(k): str(v)[:1000] for k, v in context.items() if v is not None}
     deliverable = score_mod.render(result, result["context"])
     return result, deliverable
+
+
+def _area_labels() -> dict[str, str]:
+    score_mod = _load_life_score_module()
+    return {area["key"]: area["label"] for area in score_mod.INSTRUMENT["areas"]}
+
+
+def _life_archetype(result: dict) -> str:
+    target = str(result.get("practice_target") or "")
+    highest = str(result.get("highest_area") or "")
+    if target == "financial":
+        return "Resource Rebalancer"
+    if target == "social":
+        return "Connection Rebuilder"
+    if target == "physical":
+        return "Body-First Builder"
+    if target == "mental":
+        return "Clarity Restorer"
+    if target == "emotional":
+        return "Regulation Builder"
+    if target == "spiritual":
+        return "AIM Keeper"
+    if target == "environmental":
+        return "Environment Shaper"
+    return f"{highest.title()}-Led Builder" if highest else "Full Potential Builder"
+
+
+def _life_surprise_insight(result: dict) -> str:
+    labels = _area_labels()
+    areas = result.get("areas") or {}
+    target = str(result.get("practice_target") or "")
+    highest = str(result.get("highest_area") or "")
+    target_label = labels.get(target, target.title() or "your lowest area")
+    highest_label = labels.get(highest, highest.title() or "your strongest area")
+    target_score = areas.get(target, "")
+    highest_score = areas.get(highest, "")
+    if target and highest and target != highest:
+        return (
+            f"Your strongest area is {highest_label} ({highest_score}/10), while the next "
+            f"leverage point is {target_label} ({target_score}/10). The move is not to fix "
+            "everything; it is to route one strong area toward one constrained area."
+        )
+    return "Your score is less important than the pattern: pick one small repeatable move and watch what changes."
+
+
+def _life_monday_move(result: dict) -> str:
+    target = str(result.get("practice_target") or "")
+    moves = {
+        "physical": "Put one 20-minute body block on Monday before the day fills up: walk, stretch, sunlight, or simple food prep.",
+        "mental": "Open Monday by writing the one decision that would make the week lighter, then choose the next visible step.",
+        "spiritual": "Write your current AIM in one sentence on Monday morning and remove one task that does not serve it.",
+        "social": "Send one honest check-in to the person most likely to help you feel supported and clear.",
+        "emotional": "Name the emotion you have been avoiding, then give it ten quiet minutes before reacting or deciding.",
+        "financial": "Review the first three expenses from the weekend and choose one value-aligned money move for the week.",
+        "environmental": "Clear one visible surface or workspace zone before starting Monday's main work block.",
+    }
+    return moves.get(target, "Choose one 20-minute Monday move that makes the rest of the week easier to live.")
+
+
+def _life_assessment_email(req: LeadSubmit, result: dict) -> tuple[str, str]:
+    first = (req.name.split() or ["there"])[0]
+    labels = _area_labels()
+    score = result.get("allocation_score")
+    target = str(result.get("practice_target") or "")
+    target_label = labels.get(target, target.title() or "your next practice area")
+    archetype = _life_archetype(result)
+    insight = _life_surprise_insight(result)
+    monday = _life_monday_move(result)
+    share_line = f"My Full Potential Allocation Score is {score}/100. My next practice target is {target_label}."
+    body = f"""Hi {first},
+
+Here is your Full Potential Allocation Score.
+
+Score: {score}/100
+Allocation archetype: {archetype}
+Practice target: {target_label}
+
+One surprise insight:
+{insight}
+
+Your free Monday move:
+{monday}
+
+Share line:
+{share_line}
+
+If you want help turning this into a paid Blueprint, reply to this email with "Blueprint" and James can help map the next practical step. The score is yours either way.
+
+No income claim, diagnosis, or promised outcome is being made here. This is a reflection tool based on your assessment answers.
+
+Full Potential
+"""
+    return f"Your Full Potential Allocation Score: {score}/100", body
+
+
+def _send_assessment_email(to_email: str, subject: str, body: str, *,
+                           smtp_factory=smtplib.SMTP) -> tuple[bool, str]:
+    if MAIL_DISABLE:
+        return False, "disabled"
+    email = str(to_email or "").strip()
+    if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
+        return False, "invalid_email"
+    msg = EmailMessage()
+    msg["Subject"] = subject
+    msg["From"] = MAIL_FROM
+    msg["To"] = email
+    msg["Reply-To"] = MAIL_REPLY_TO
+    msg["Date"] = formatdate(localtime=True)
+    msg["Message-ID"] = make_msgid(domain="fullpotential.com")
+    msg.set_content(body)
+    with smtp_factory(MAIL_HOST, MAIL_PORT, timeout=20) as smtp:
+        smtp.send_message(msg)
+    return True, "sent"
+
+
+def _send_assessment_email_safe(to_email: str, subject: str, body: str, lead_file: str) -> None:
+    try:
+        ok, detail = _send_assessment_email(to_email, subject, body)
+        if ok:
+            logger.info("assessment deliverable email sent lead=%s to=%s", lead_file, to_email)
+        else:
+            logger.warning("assessment deliverable email not sent lead=%s to=%s reason=%s", lead_file, to_email, detail)
+    except Exception as exc:
+        logger.exception("assessment deliverable email failed lead=%s to=%s error=%s", lead_file, to_email, exc)
+
+
+def _send_founder_lead_alert(req: LeadSubmit, *, urlopen=None) -> dict:
+    import urllib.request
+
+    opener = urlopen or urllib.request.urlopen
+    bottleneck_excerpt = (req.bottleneck or "")[:140]
+    if len(req.bottleneck or "") > 140:
+        bottleneck_excerpt += "..."
+    msg_lines = [
+        f"NEW DIAGNOSTIC LEAD - {req.name}",
+        f"Email: {req.email}",
+    ]
+    if req.phone:
+        msg_lines.append(f"Phone: {req.phone}")
+    if req.preferred_contact:
+        msg_lines.append(f"Prefers: {req.preferred_contact}")
+    if req.interest:
+        msg_lines.append(f"Interest: {req.interest}")
+    msg_lines.append(f"\nBottleneck: {bottleneck_excerpt}")
+    try:
+        response = opener(
+            urllib.request.Request(
+                "http://127.0.0.1:8766/alert",
+                data=json.dumps({
+                    "message": "\n".join(msg_lines),
+                    "source": "diagnose-lead",
+                }).encode(),
+                headers={"Content-Type": "application/json"},
+            ),
+            timeout=2,
+        )
+        status = getattr(response, "status", None) or getattr(response, "code", None) or 200
+        logger.info("founder lead telegram alert sent status=%s email=%s", status, req.email)
+        return {"ok": True, "status": status}
+    except Exception as exc:
+        logger.warning("founder lead telegram alert failed email=%s error=%s", req.email, exc)
+        return {"ok": False, "error": exc.__class__.__name__}
+
+
+def _lead_ack_message(req: LeadSubmit, *, life_result: Optional[dict], deliverable_status: Optional[str]) -> str:
+    first = (req.name.split() or ["there"])[0]
+    if life_result and deliverable_status == "queued":
+        return f"Thank you, {first}. Your Allocation Score is on its way to your inbox."
+    return (
+        f"Thank you, {first}. Your message reached Sunheart directly. "
+        f"You'll hear back personally within 48 hours."
+    )
 
 
 def _render_lead_md(req: LeadSubmit, today: str, *, life_result: Optional[dict] = None,
