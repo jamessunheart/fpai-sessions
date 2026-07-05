@@ -1,10 +1,21 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-05T01:36:04Z",
+  "updated_at": "2026-07-05T11:49:01Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
-    "active_builds": [
-        {
-            "id": "SPEC_d189_awareness-activate-the-d183-beh",
+  "active_builds": [
+    {
+      "id": "SPEC_d191_spec-d191-ingest-the-doctrine-bo",
+      "slug": "SPEC_d191_spec-d191-ingest-the-doctrine-bo",
+      "branch": "build/SPEC_d191_spec-d191-ingest-the-doctrine-bo",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d191_spec-d191-ingest-the-doctrine-bo.md",
+      "tests_passed": true,
+      "notes": "d191 complete in working tree: added repo-doctrine ingestion for the six governing core/STATE doctrine files into brain_index.note_chunks with doctrine tags, source path, commit, file-updated timestamp, and freshness rule metadata; extended the ingest endpoint to accept repo-doctrine source paths; injected bounded CORE_DOCTRINE boot-spine context into the TG bot before HOT_STATE; carried source_path/updated_at into bot synthesis; added a 30-minute doctrine ingest timer plus d191 activation script; and expanded d182 live-service guard to back up/smoke sh-brain-index. Focused doctrine/context/guard/bot/policy tests, py_compile, shell syntax, doctrine dry-run, activation policy, registry JSON validation, and diff hygiene passed. Live DB/bot proof awaits guarded server-162 activation."
+    },
+    {
+      "id": "SPEC_d189_awareness-activate-the-d183-beh",
             "slug": "SPEC_d189_awareness-activate-the-d183-beh",
             "branch": "build/SPEC_d189_awareness-activate-the-d183-beh",
             "base_branch": "feat/headless-build",
