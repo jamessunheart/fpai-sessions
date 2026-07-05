@@ -371,15 +371,19 @@ document.getElementById('auditForm').addEventListener('submit', async function(e
   try{
     const res = await fetch('/api/champion/lead/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     responseData = await res.json();
-  }catch(err){}
+    if(!res.ok) throw new Error(responseData.detail || 'Could not send');
+  }catch(err){
+    alert('Could not send: ' + (err.message || 'Please try again.'));
+    return;
+  }
   try{fbq('track','Lead');}catch(e){}
   const ok = document.getElementById('okMsg');
   if(activeLens === 'life'){
-    ok.innerHTML = renderLifeResult(responseData);
+    ok.innerHTML = escapeHtml(responseData.message || 'Your Allocation Score is on its way to your inbox.') + '<br><br>' + renderLifeResult(responseData);
     const resultBox = ok.querySelector('.life-result');
     if(resultBox) resultBox.textContent = responseData.life_deliverable || '';
   }else{
-    ok.textContent = 'Received. Watch your inbox for the 15-minute intake — your Score arrives within 48 hours of completing it.';
+    ok.textContent = responseData.message || 'Received. Watch your inbox for the 15-minute intake.';
   }
   ok.style.display='block';
   e.target.querySelector('button').disabled = true;

@@ -83,6 +83,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Questions for Ember/James: …
 ```
 
+### 2026-07-05 · SPEC_d193_spec-d193-wire-the-assessment-fu · branch `build/SPEC_d193_spec-d193-wire-the-assessment-fu`
+
+- **Status:** done in working tree / awaiting review + merge + d182-guarded live activation proof
+- **Files changed:** `SERVICES/champion-sign/main.py`; `sites/fullpotential-com/audit.html`; `tools/growth/life_assessment/test_champion_life_lead.py`; `core/BUILD/activate/SPEC_d193_spec-d193-wire-the-assessment-fu.sh`; `core/BUILD/specs/SPEC_d193_spec-d193-wire-the-assessment-fu.md`; `core/BUILD/results/SPEC_d193_spec-d193-wire-the-assessment-fu.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Wired the Life lens assessment funnel to deliver instead of only capture. `champion-sign` now scores life-assessment leads before saving, queues a recipient Allocation Score email via `mail.fullpotential.com:25`, returns `deliverable_status` plus `founder_alert`, and logs Telegram alert success/failure instead of silently swallowing it. The email includes score, allocation archetype, surprise insight, free Monday move, share line, and a soft paid Blueprint reply CTA. `/assessment` now uses the API's real acknowledgement and shows submit failures instead of false success.
+- **Tests:** `python3 -B -m unittest tools.growth.life_assessment.test_champion_life_lead tools.leads.test_mail_leads` (9 OK; existing Pydantic v1 validator deprecation warnings); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile SERVICES/champion-sign/main.py tools/growth/life_assessment/score_life.py tools/growth/life_assessment/test_champion_life_lead.py tools/leads/mail_leads.py tools/leads/test_mail_leads.py`; `bash -n core/BUILD/activate/SPEC_d193_spec-d193-wire-the-assessment-fu.sh`; `python3 tools/build_loop/activation_policy.py --repo-root . --spec-id SPEC_d193_spec-d193-wire-the-assessment-fu --base-ref feat/headless-build --head-ref HEAD` (OK: activation script present); `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d193-registry.json`; compliance lexical scan against the generated email template (CLEAR); `git diff --check`
+- **Risks:** live SMTP delivery, live Telegram receipt, and public `/assessment` submit were not run in this sandbox. This wires the Life lens path named by d193 (`score_life.py`); business allocation-audit still follows the existing intake/48-hour path.
+- **Rollback:** revert this branch. If already activated, restore previous `SERVICES/champion-sign/main.py` and `sites/fullpotential-com/audit.html` from the d182 guard backup, run `systemctl daemon-reload`, and restart `champion-sign.service`. Emergency recipient-delivery kill switch: set `FP_ASSESSMENT_MAIL_DISABLE=1` and restart `champion-sign.service`.
+- **Intent solved:** Life assessment leads no longer depend on James manually producing the promised Allocation Score.
+- **Downstream intent unlocked:** after d182-guarded activation and one live proof lead, assessment traffic can be evaluated on delivery/conversion instead of creating manual follow-up debt.
+- **Questions for Ember/James:** after merge on server 198, run the activation through the d182 guard, submit one Life lens test lead on `/assessment`, and confirm: recipient email arrives within minutes, `founder_alert.ok=true` or a clear failure log appears, James receives the TG alert, and the page acknowledgement says the Allocation Score is on its way.
+
 ### 2026-07-05 · SPEC_d192_telegram-build-request-spot-topp · branch `build/SPEC_d192_telegram-build-request-spot-topp`
 
 - **Status:** done in working tree / awaiting review + merge
