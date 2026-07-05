@@ -54,6 +54,44 @@ if [ "$TURN_COUNT" -lt 5 ]; then
     exit 0
 fi
 
+# ── METRIC COHERENCE GATE (added 2026-07-05) ───────────────────────────────
+# The lesson that motivated this: a detector that only SURFACES drift still
+# ships the drift. metric_coherence.py caught "ALIGNMENT says awareness=100% but
+# SSOT measures 0%" — and the lie shipped to HOT_STATE and to James anyway,
+# because the guard ran only in a self-audit nobody reads at settle time.
+# Enforcing it HERE, at the emission boundary, makes "settle clean while a
+# metric contradicts its SSOT" impossible — the same P9 move (enforce at the
+# gate) applied to STATE, not just substrate-default. Non-chronic by design:
+# it fires only when a hand-typed number diverges from its measured SSOT.
+REPO_DIR="/opt/fpai-build/FPAI_Cockpit"
+COH_PY="/opt/sh-brain-src/.venv/bin/python"
+if [ -x "$COH_PY" ] && [ -f "$REPO_DIR/tools/governance/metric_coherence.py" ]; then
+    DRIFT=$(cd "$REPO_DIR" && "$COH_PY" -c \
+      'from tools.governance.metric_coherence import check; print("\n".join(check()))' 2>/dev/null)
+    if [ -n "$DRIFT" ]; then
+        cat >&2 <<EOF
+🔴 METRIC COHERENCE DRIFT (Stop hook caught it — cannot settle on a lie)
+
+A canonical file states a metric that contradicts its measured SSOT:
+$DRIFT
+
+A number that disagrees with its source is theater — it ships to HOT_STATE and
+to James as truth. Do NOT hand-type metrics that have an SSOT.
+
+Self-correct on your NEXT reply:
+  1. Fix the drifting line — cite the SSOT value, or state the metric is
+     unmeasured/under-replacement (don't invent a number).
+  2. Re-run: $COH_PY -c 'from tools.governance.metric_coherence import check; print(check())'
+  3. THEN continue the settle ritual.
+
+(The lesson: detection ≠ correction — a guard that only surfaces drift still
+ships it. This gate enforces coherence at the moment of emission. P17.)
+EOF
+        exit 2
+    fi
+fi
+# ───────────────────────────────────────────────────────────────────────────
+
 # Check for today's episodic memory file
 TODAY=$(date +%Y-%m-%d)
 SESSIONS_DIR="$HOME/.claude/projects/-opt-fpai-build-FPAI-Cockpit/memory/identity/sessions"

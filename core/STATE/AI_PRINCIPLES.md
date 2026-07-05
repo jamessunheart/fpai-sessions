@@ -172,6 +172,25 @@ what the recipient does is theft of it.
   d177 pusher consolidation). Aligns with [[feedback-attention-is-the-scarcest-atom]] +
   Economics of Compression (AI absorbs noise so the human gets ready signal).
 
+### P18 — Detection ≠ correction. A guard that only surfaces drift still ships the drift — enforce coherence at the moment of emission.
+Building a detector feels like solving the problem; it isn't. `metric_coherence.py` correctly
+caught "ALIGNMENT states awareness=100% but the SSOT measures 0%" — and the 100% shipped to
+HOT_STATE and to James as truth *anyway*, because the guard ran only inside a self-audit nobody
+reads at settle time. A check whose output nothing acts on is theater with a clean conscience.
+The fix is the P9 move applied to STATE: move the guard from an advisory report to an **enforced
+gate at the boundary where the false value would escape** — the settle/Stop hook now blocks a
+session from settling while any canonical metric contradicts its SSOT. General rule: when you find
+a guard that detects a class of error, ask *"what acts on this output?"* — if the answer is "a human
+who might read the log," it will ship. Wire detection to the emission boundary (block, or
+auto-correct), or it doesn't hold.
+- **Guard:** `check-settle-checkpoint.sh` now runs `metric_coherence.check()` and exits 2 on drift
+  (same enforce-at-the-gate pattern as `check-substrate-default.sh`, P9). Non-chronic: fires only
+  when a hand-typed number diverges from its measured SSOT.
+- **Evidence:** 2026-07-05 — awareness 100% (hand-typed, ALIGNMENT) vs 0% (measured, ledger) shipped
+  live to HOT_STATE while the detector that caught it sat unread. The deeper class: **stated state
+  keeps diverging from actual state** (merged≠live · queue-count≠real-work · reported%≠measured%),
+  and nothing forced reconciliation at the point of reporting until the guard moved to the gate.
+
 ---
 _Version: tracks [BRAIN_VERSION](BRAIN_VERSION). New principles graduate here from BUG_LOG root causes.
 Tier-1 shape (per the 2026-07-04 A/B compression call): law + one causal sentence + evidence pointer —
