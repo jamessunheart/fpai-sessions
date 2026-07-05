@@ -296,21 +296,34 @@ def queue_decision(payload: dict[str, Any]) -> QueueResult:
     if not url:
         return QueueResult(False, reason="BRAIN_INDEX_DB_URL not set", payload=payload)
     with psycopg.connect(url, autocommit=True) as conn:
-        row = conn.execute(
-            """
-            INSERT INTO brain_index.decisions
-                (question, status, needs_build, build_spec, proof_expected, liveness)
-            VALUES (%s, 'answered', true, %s, %s, %s)
-            RETURNING id::text
-            """,
-            (
-                payload["question"],
-                payload["build_spec"],
-                payload.get("proof_expected", ""),
-                json.dumps(payload.get("liveness") or {}, sort_keys=True),
-            ),
-        ).fetchone()
-    return QueueResult(True, decision_id=str(row[0] if row else ""), reason="queued", payload=payload)
+        # `id` is NOT NULL with no default — generate the next dNNN like the manual/build-loop
+        # scheme (the crash was NotNullViolation on id). Retry once on a race with a sibling insert.
+        for _ in range(3):
+            nxt = conn.execute(
+                r"SELECT 'd' || lpad((COALESCE(MAX(substring(id from 2)::int), 0) + 1)::text, 3, '0') "
+                r"FROM brain_index.decisions WHERE id ~ '^d[0-9]+$'"
+            ).fetchone()
+            did = str(nxt[0]) if nxt else None
+            try:
+                row = conn.execute(
+                    """
+                    INSERT INTO brain_index.decisions
+                        (id, question, status, needs_build, build_spec, proof_expected, liveness)
+                    VALUES (%s, %s, 'answered', true, %s, %s, %s)
+                    RETURNING id::text
+                    """,
+                    (
+                        did,
+                        payload["question"],
+                        payload["build_spec"],
+                        payload.get("proof_expected", ""),
+                        json.dumps(payload.get("liveness") or {}, sort_keys=True),
+                    ),
+                ).fetchone()
+                return QueueResult(True, decision_id=str(row[0] if row else ""), reason="queued", payload=payload)
+            except psycopg.errors.UniqueViolation:
+                continue  # sibling grabbed this id — recompute + retry
+    return QueueResult(False, reason="id-race: could not allocate a unique decision id", payload=payload)
 
 
 def learning_row(domino: dict[str, Any], gate: dict[str, Any], queue: QueueResult, proof: dict[str, Any]) -> dict[str, Any]:
