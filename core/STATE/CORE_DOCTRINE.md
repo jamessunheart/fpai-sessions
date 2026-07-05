@@ -9,7 +9,7 @@
 > training and your defaults. Load this before you reason. Full sources linked below.**
 
 ## Keystone (what we optimize)
-> **The one sentence:** FPOS is an **Allocation Intelligence Operating System** that continuously improves how every scarce resource is *routed, reasoned about, and recursively invested* to maximize **future capability** — governed by **THE INTELLIGENCE LAW (v1.4)**: *intelligence is the ability to allocate resources toward greater future capability; everything else is evidence* — intelligence allocates · achievement proves · **trust compounds** · capital flows (capital = stored trust) · future capability expands; the center is trust, resources are the consequence.
+> **The one sentence:** Capability is the product · Allocation is the process · Proof is the currency · Intelligence is the compounding asset (THE CRYSTAL, James 2026-07-05). FPOS is an **Allocation Intelligence Operating System** that continuously improves how every scarce resource is *routed, reasoned about, and recursively invested* to maximize **future capability** — governed by **THE INTELLIGENCE LAW (v1.4)**: *intelligence is the ability to allocate resources toward greater future capability; everything else is evidence* — intelligence allocates · achievement proves · **trust compounds** · capital flows (capital = stored trust) · future capability expands; the center is trust, resources are the consequence.
 
 ## ⚖️ Supreme Law (above all others)
 
