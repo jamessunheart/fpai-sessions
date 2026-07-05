@@ -20,6 +20,7 @@ PY="$BRAIN/.venv/bin/python"
 BUILD_MAX="${BUILD_MAX:-5}"
 BUILD_CONCURRENCY="${BUILD_CONCURRENCY:-3}"
 BUILD_TIMEOUT="${BUILD_TIMEOUT:-90m}"
+PYTEST_GATE_TIMEOUT="${PYTEST_GATE_TIMEOUT:-180}"
 CONSECUTIVE_REVERTS_MAX="${CONSECUTIVE_REVERTS_MAX:-3}"
 DISK_WARN_GB="${DISK_WARN_GB:-30}"
 MERGE_LOCKFILE="${MERGE_LOCKFILE:-/opt/fpai-build/.merge.lock}"
@@ -803,6 +804,7 @@ process_pending_build() {
   local DID SLUG QUESTION_TEXT ANSWER_TEXT PROOF_EXPECTED_TEXT LIVENESS_DECLARATION LIVENESS_CHECK SPECID BR WT SPEC
   local SPEC_INPUT SPEC_TMP MODULE BLUEPRINT CODEX_RC REVIEW RC ST V REVIEW_FILE REVISION_ATTEMPT
   local MERGED PRE_SHA HEAD_SHA U ACTIVATED ACTIVATE_SCRIPT _tail _ev _nx
+  local TEST_GATE_REPORT TEST_GATE_LOG TEST_GATE_SUMMARY
 
   [ -z "$line" ] && return 0
 
@@ -882,6 +884,43 @@ Activation policy: if this produces capability that must run after merge, ship c
     python3 "$REPO/tools/build_loop/ops_log.py" build activation-policy-failed "$SPECID missing activate-or-declare-inert" "\$0" "$BR" "Ember: inspect activation policy for $DID" 2>/dev/null || true
     return 0
   fi
+
+  # Pre-merge pytest gate: run the build's touched tests, adjacent module tests,
+  # and a fast build-loop smoke subset before independent review or auto-merge.
+  # Pytest skips remain non-failing; failures/timeouts surface as changes.
+  TEST_GATE_REPORT="$WT/core/BUILD/reports/${SPECID}.test_gate.json"
+  TEST_GATE_LOG="/opt/fpai-build/logs/$SPECID.pytest-gate.log"
+  mkdir -p /opt/fpai-build/logs
+  if ! "$PY" -B "$REPO/tools/build_loop/test_gate.py" \
+      --repo-root "$WT" \
+      --base-ref "$BASE" \
+      --head-ref HEAD \
+      --spec-id "$SPECID" \
+      --branch "$BR" \
+      --python "$PY" \
+      --timeout "$PYTEST_GATE_TIMEOUT" \
+      --output "$TEST_GATE_REPORT" >"$TEST_GATE_LOG" 2>&1; then
+    tail -80 "$TEST_GATE_LOG" || true
+    if [ -f "$TEST_GATE_REPORT" ]; then
+      git -C "$WT" add "$TEST_GATE_REPORT" >/dev/null 2>&1 || true
+      git -C "$WT" diff --cached --quiet >/dev/null 2>&1 || \
+        git -C "$WT" -c user.email=ember@fpai -c user.name=Ember commit -q -m "test($SPECID): record pytest gate failure" || true
+    fi
+    TEST_GATE_SUMMARY=$(tail -40 "$TEST_GATE_LOG" 2>/dev/null | sed 's/[<>]/_/g' | head -c 2500)
+    dec set-build-result "$DID" "$BR" "changes" >/dev/null 2>&1 || true
+    build_alert_event failed "pytest gate failed"
+    tg "🔴 PYTEST GATE FAILED [$DID] — $SPECID held before merge. Log: $TEST_GATE_LOG
+<pre>$TEST_GATE_SUMMARY</pre>" 2>/dev/null || true
+    python3 "$REPO/tools/build_loop/ops_log.py" build pytest-gate-failed "$SPECID log=$TEST_GATE_LOG report=$TEST_GATE_REPORT" "\$0" "$BR" "Build loop: fix failing tests before merge for $DID" 2>/dev/null || true
+    echo "pytest gate failed for $SPECID; branch held before independent review/merge"
+    return 0
+  fi
+  if [ -f "$TEST_GATE_REPORT" ]; then
+    git -C "$WT" add "$TEST_GATE_REPORT" >/dev/null 2>&1 || true
+    git -C "$WT" diff --cached --quiet >/dev/null 2>&1 || \
+      git -C "$WT" -c user.email=ember@fpai -c user.name=Ember commit -q -m "test($SPECID): record pytest gate pass" || true
+  fi
+  python3 "$REPO/tools/build_loop/ops_log.py" build pytest-gate-passed "$SPECID report=$TEST_GATE_REPORT" "\$0" "$BR" "" 2>/dev/null || true
 
   # review ($0 claude -p, PROTECTED_PATHS aware)
   build_alert_event review

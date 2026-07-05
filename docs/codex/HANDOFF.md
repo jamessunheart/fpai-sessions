@@ -83,6 +83,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Questions for Ember/James: …
 ```
 
+### 2026-07-05 · SPEC_d208_build-loop-run-the-tests-wire-p · branch `build/SPEC_d208_build-loop-run-the-tests-wire-p`
+
+- **Status:** done in working tree / awaiting review + merge
+- **Files changed:** `tools/build_loop/server_build_loop.sh`; `tools/build_loop/test_gate.py`; `tools/build_loop/test_test_gate.py`; `tools/build_loop/test_pytest_gate_contract.py`; `tools/build_loop/product_portfolio_review.py`; `tools/build_loop/test_product_portfolio_review.py`; `core/BUILD/specs/SPEC_d208_build-loop-run-the-tests-wire-p.md`; `core/BUILD/results/SPEC_d208_build-loop-run-the-tests-wire-p.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a real pre-merge pytest gate to the server build loop. After Codex builds and activation policy passes, `server_build_loop.sh` now runs a scoped pytest gate before independent review or auto-merge, using the configured venv Python path and `-x` with a timeout. The selector runs touched tests, adjacent tests for changed Python modules, and a fast build-loop smoke subset. Failure/timeout writes a report, marks the decision `changes`, surfaces the failing output, logs `pytest-gate-failed`, and returns before review/merge. Passing reports are committed for proof. d207's `product_portfolio_review.py` now reads the test-gate JSON report so failing tests lower/flag the quality score.
+- **Tests:** `python3 -B -m unittest tools.build_loop.test_test_gate tools.build_loop.test_pytest_gate_contract tools.build_loop.test_product_portfolio_review tools.build_loop.test_activation_policy_contract tools.build_loop.test_auto_merge_governance tools.build_loop.test_changes_rework_loop` (20 OK); `python3 -m py_compile tools/build_loop/test_gate.py tools/build_loop/test_test_gate.py tools/build_loop/test_pytest_gate_contract.py tools/build_loop/product_portfolio_review.py tools/build_loop/test_product_portfolio_review.py`; `bash -n tools/build_loop/server_build_loop.sh`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d208-registry-final.json`; `git diff --check`. Direct `/opt/sh-brain-src/.venv/bin/python -m pytest ...` could not run in this sandbox because that venv lacks `pytest`.
+- **Proof:** Unit proof covers touched/adjacent/smoke test selection, failed pytest report/nonzero status, timeout reporting, and d207 low-quality scoring from a failed test report. Static shell proof verifies the gate runs before independent review, failure sets `build_status=changes`, sends `PYTEST GATE FAILED`, logs `pytest-gate-failed`, and returns before merge.
+- **Risks:** Server 162 must have pytest installed in `/opt/sh-brain-src/.venv`; if it does not, the first gated build will hold and surface the missing runner instead of auto-merging untested code. This is intentional fail-closed behavior, but Ember may need to install/verify pytest on the build host.
+- **Rollback:** Revert this branch. Runtime tuning: adjust `PYTEST_GATE_TIMEOUT`; full disable requires reverting the hook.
+- **Intent solved:** build-loop branches no longer move toward review/auto-merge without running their own scoped tests.
+- **Downstream intent unlocked:** autonomous product quality scoring and merge safety can use real test execution, turning written tests into a live protection gate.
+- **Questions for Ember/James:** after merge on server 162, verify `/opt/sh-brain-src/.venv/bin/python -m pytest --version`; if missing, install pytest in that venv before expecting green auto-builds to pass.
+
 ### 2026-07-05 · SPEC_d207_autonomy-quality-value-gate-for · branch `build/SPEC_d207_autonomy-quality-value-gate-for`
 
 - **Status:** done in working tree / awaiting review + merge

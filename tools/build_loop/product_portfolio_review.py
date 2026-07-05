@@ -43,12 +43,15 @@ def assess_candidate(
     spec_id: str = "",
     branch: str = "",
     result_path: Path | None = None,
+    test_report_path: Path | None = None,
 ) -> dict[str, Any]:
     opportunity = opportunity or {}
     result_path = result_path or find_result_for_candidate(repo_root, spec_id=spec_id, opportunity=opportunity)
+    test_report_path = test_report_path or find_test_report(repo_root, spec_id=spec_id)
     result_text = read_text(result_path) if result_path else ""
+    test_report = read_test_report(test_report_path)
     title = str(opportunity.get("title") or spec_id or (result_path.stem if result_path else "Untitled candidate"))
-    quality = quality_score(result_text=result_text, result_path=result_path)
+    quality = quality_score(result_text=result_text, result_path=result_path, test_report=test_report)
     value = value_score(opportunity=opportunity, result_text=result_text)
     recommendation = recommend(quality["score"], value["score"])
     return {
@@ -58,6 +61,9 @@ def assess_candidate(
         "spec_id": spec_id,
         "branch": branch,
         "result_path": str(result_path) if result_path else "",
+        "test_report_path": str(test_report_path) if test_report_path else "",
+        "test_status": test_report.get("status", "") if test_report else "",
+        "test_counts": test_report.get("counts", {}) if test_report else {},
         "quality_score": quality["score"],
         "quality_take": quality["take"],
         "quality_flags": quality["flags"],
@@ -86,7 +92,7 @@ def assess_portfolio(
     }
 
 
-def quality_score(*, result_text: str, result_path: Path | None) -> dict[str, Any]:
+def quality_score(*, result_text: str, result_path: Path | None, test_report: dict[str, Any] | None = None) -> dict[str, Any]:
     flags: list[str] = []
     score = 20
     lower = result_text.lower()
@@ -116,6 +122,18 @@ def quality_score(*, result_text: str, result_path: Path | None) -> dict[str, An
     if SCAFFOLD_ONLY.search(result_text) and not FUNCTIONAL.search(result_text):
         score -= 20
         flags.append("scaffolding risk")
+    if test_report:
+        status = str(test_report.get("status") or "").lower()
+        counts = test_report.get("counts") or {}
+        if status == "passed":
+            score += 15
+        elif status == "skipped":
+            flags.append("pytest gate skipped; no scoped tests selected")
+        else:
+            score -= 45
+            failed = int(counts.get("failed") or 0)
+            errors = int(counts.get("errors") or 0)
+            flags.append(f"pytest gate {status or 'failed'}: failed={failed} errors={errors}")
     score = clamp(score)
     if score >= 85:
         take = "works on the available proof; quality looks mergeable pending normal review"
@@ -228,6 +246,23 @@ def find_result_for_candidate(repo_root: Path, *, spec_id: str = "", opportunity
     return None
 
 
+def find_test_report(repo_root: Path, *, spec_id: str = "") -> Path | None:
+    if not spec_id:
+        return None
+    path = repo_root / "core" / "BUILD" / "reports" / f"{spec_id}.test_gate.json"
+    return path if path.exists() else None
+
+
+def read_test_report(path: Path | None) -> dict[str, Any]:
+    if not path:
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
 def read_text(path: Path | None) -> str:
     if not path:
         return ""
@@ -265,6 +300,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--spec-id", default="")
     parser.add_argument("--branch", default="")
     parser.add_argument("--result", type=Path)
+    parser.add_argument("--test-report", type=Path)
     parser.add_argument("--output", type=Path, default=DEFAULT_REVIEW_PATH)
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--fail-on-low-quality", action="store_true")
@@ -275,6 +311,7 @@ def main(argv: list[str] | None = None) -> int:
         spec_id=args.spec_id,
         branch=args.branch,
         result_path=args.result,
+        test_report_path=args.test_report,
     )
     if args.json:
         print(json.dumps(assessment, indent=2, sort_keys=True))

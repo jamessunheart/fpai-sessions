@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
         {
+            "id": "SPEC_d208_build-loop-run-the-tests-wire-p",
+            "slug": "SPEC_d208_build-loop-run-the-tests-wire-p",
+            "branch": "build/SPEC_d208_build-loop-run-the-tests-wire-p",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d208_build-loop-run-the-tests-wire-p.md",
+            "tests_passed": true,
+            "notes": "d208 complete in working tree: server_build_loop now runs a scoped pytest gate after activation policy and before independent review/auto-merge, selecting touched tests, adjacent module tests, and fast build-loop smoke tests with -x plus timeout through the configured venv Python. Failures/timeouts write a test_gate JSON report, mark the decision changes, surface the output, log pytest-gate-failed, and return before merge; passing reports are committed. product_portfolio_review now reads the test-gate report so failed tests lower/flag d207 quality. Focused unittest proof, shell contract tests, py_compile, bash syntax, registry JSON validation, and diff hygiene passed. Direct venv pytest could not run in this sandbox because /opt/sh-brain-src/.venv lacks pytest."
+        },
+        {
             "id": "SPEC_d207_autonomy-quality-value-gate-for",
             "slug": "SPEC_d207_autonomy-quality-value-gate-for",
             "branch": "build/SPEC_d207_autonomy-quality-value-gate-for",
