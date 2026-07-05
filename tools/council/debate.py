@@ -27,6 +27,7 @@ DAILY_CAP = float(os.environ.get("COUNCIL_DAILY_USD", "3.0"))
 ENV = ('ENVFILE=$(systemctl show sh-brain-tgbot -p EnvironmentFiles 2>/dev/null | '
        'sed -E "s/EnvironmentFiles=//; s/ .*//"); cd /opt/sh-brain-src && set -a; . "$ENVFILE" 2>/dev/null; set +a;')
 sys.path.insert(0, REPO + "/tools/cost")
+sys.path.insert(0, REPO)  # repo root so `tools.lib...` package imports resolve when run as a script
 import track
 from tools.lib.machine_claude import robust_json
 
