@@ -83,6 +83,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Questions for Ember/James: …
 ```
 
+### 2026-07-05 · SPEC_d192_telegram-build-request-spot-topp · branch `build/SPEC_d192_telegram-build-request-spot-topp`
+
+- **Status:** done in working tree / awaiting review + merge
+- **Files changed:** `tools/allocation/opportunity_engine.py`; `tools/allocation/test_opportunity_engine.py`; `core/BUILD/specs/SPEC_d192_telegram-build-request-spot-topp.md`; `core/BUILD/results/SPEC_d192_telegram-build-request-spot-topp.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Turned the Telegram "Spot & Topple" principle into a read/rank/propose-only Next Domino layer inside the Opportunity Intelligence Engine. Existing Opportunity Score, Allocation Score, and Closest-to-Cash rankings remain; seeded opportunities now also carry Spot fields, Topple fields, gate status, proof expectation, and `next_domino_score`. CLI output, digest line, and council context now surface "Next Domino: Spot -> Topple -> Proof." Gate weighting keeps James-reserved/human/missing-capability work from looking automatically topple-ready.
+- **Tests:** `python3 -B -m unittest tools.allocation.test_opportunity_engine tools.allocation.test_capability_ledger` (11 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/allocation/opportunity_engine.py tools/allocation/test_opportunity_engine.py`; `python3 tools/allocation/opportunity_engine.py --ledger /tmp/d192-opportunities.json`; `python3 tools/build_loop/activation_policy.py --repo-root . --spec-id SPEC_d192_telegram-build-request-spot-topp --base-ref feat/headless-build --head-ref HEAD` (OK: build_kind=library declared); `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d192-registry.json`; `git diff --check`
+- **Risks:** seed weights are first-pass operating weights, not market facts. This does not execute a Topple; it only gives council/router surfaces a safer recommendation signal. James-reserved revenue actions may rank lower than reversible internal builds until explicitly approved.
+- **Rollback:** revert this branch. No live service, deploy, outreach, treasury action, secret, or external API effect was performed.
+- **Intent solved:** the allocation engine can distinguish highest theoretical value from next safe domino and show Spot, Topple, proof, and gate status explicitly.
+- **Downstream intent unlocked:** council/router decisions can ask "can we topple this now, or must we build a capability first?" before proposing the next build.
+- **Questions for Ember/James:** after merge, review whether the initial gate penalties feel right: `james_reserved=35`, `human_edge=12`, `ember_route=5`, `capability_gap=40`. These are intentionally conservative and reversible.
+
 ### 2026-07-05 · SPEC_d190_telegram-build-request-yes-pleas · branch `build/SPEC_d190_telegram-build-request-yes-pleas`
 
 - **Status:** done in working tree / awaiting review + merge + activation
