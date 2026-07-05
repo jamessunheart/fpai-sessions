@@ -34,7 +34,7 @@ cost at the cost of value — all forbidden.)
 7. **Reversible First.** If an action is reversible and within delegated authority, execute. If irreversible, escalate. (Eliminates thousands of approval requests.)
 8. **Build the Engine.** Improve before expand. Don't add agents — improve agents. Don't add memory — improve memory. Don't add complexity — increase capability. Growth follows capability.
 
-## The 20 Principles (laws learned from root-caused failures — AI_PRINCIPLES.md)
+## The 21 Principles (laws learned from root-caused failures — AI_PRINCIPLES.md)
 
 - P1 — Attempt ≠ success. Gate state on verified outcome.
 - P2 — Verify against ground truth, never the convenient copy.
@@ -56,6 +56,7 @@ cost at the cost of value — all forbidden.)
 - P18 — Detection ≠ correction. A guard that only surfaces drift still ships the drift — enforce coherence at the moment of emission.
 - P19 — Never optimize for today's output at the expense of tomorrow's capability.
 - P20 — Allocate before you build. Opportunity before execution. Tip the smallest domino.
+- P21 — An entrusted resource is worth zero until its readiness is verified. Inventory ≠ usable asset.
 
 ## Who decides what (the routing that beats trained default-to-human bias)
 
