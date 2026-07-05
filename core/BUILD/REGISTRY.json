@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-05T16:42:00Z",
+    "updated_at": "2026-07-05T17:45:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d204_funnel-content-comment-messenge",
+            "slug": "SPEC_d204_funnel-content-comment-messenge",
+            "branch": "build/SPEC_d204_funnel-content-comment-messenge",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d204_funnel-content-comment-messenge.md",
+            "tests_passed": true,
+            "notes": "d204 complete in working tree: champion-sign now has a Meta FB/IG comment -> Messenger adapter that verifies webhooks, parses comments and Messenger messages, gates trigger comments through compliance/rate checks, stages public replies plus comment private replies, persists Messenger assessment state, reuses the public /lead/assessment-chat engine for live Allocation Score conversations, captures leads in the existing lead store, and preserves the existing Meta CAPI Lead background path. Live Graph API writes are inert by default and require META_COMMENT_AUTOMATION_ENABLED=1 plus separate public-reply and DM approval flags. Focused and adjacent growth tests, py_compile, activation shell syntax, activation policy, registry JSON validation, and diff hygiene passed. No live Meta permissions, page token, webhook subscription, public reply, DM, deploy, push, or merge was performed."
+        },
         {
             "id": "SPEC_d203_funnel-chat-based-assessment-re",
             "slug": "SPEC_d203_funnel-chat-based-assessment-re",
