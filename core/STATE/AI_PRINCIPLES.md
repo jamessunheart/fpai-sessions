@@ -191,6 +191,18 @@ auto-correct), or it doesn't hold.
   keeps diverging from actual state** (merged≠live · queue-count≠real-work · reported%≠measured%),
   and nothing forced reconciliation at the point of reporting until the guard moved to the gate.
 
+### P19 — Never optimize for today's output at the expense of tomorrow's capability.
+The Primary Directive is to increase the FUTURE capability of every entrusted resource; a local win
+that shrinks future capability is a net loss even if it looks productive today (James inflection,
+2026-07-05). This one sentence pre-empts countless local optimizations — shipping fast by skipping
+the reusable-intelligence step, spending attention on activity instead of compounding, choosing
+"easiest" or "uses AI" over "what compounds."
+- **Guard:** every decision answers *"does this leave the system/people/resources more capable than
+  before — and does it compound, or just produce once?"* Score by **Capability Created** (Time ·
+  Knowledge · Cash · Trust · Automation), not activity. Prefer the intervention that compounds.
+- **Evidence:** keystone §THE INFLECTION + §THE CRYSTAL (Capability is the product · Allocation is
+  the process · Proof is the currency · Intelligence is the compounding asset).
+
 ---
 _Version: tracks [BRAIN_VERSION](BRAIN_VERSION). New principles graduate here from BUG_LOG root causes.
 Tier-1 shape (per the 2026-07-04 A/B compression call): law + one causal sentence + evidence pointer —
