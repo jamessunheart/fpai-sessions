@@ -210,7 +210,47 @@ def activation_events(spec_id: str, rows: list[dict[str, Any]]) -> list[str]:
     return evidence[:5]
 
 
+def changed_files_from_git(repo_root: Path, spec_id: str) -> list[str]:
+    """Ground-truth changed files from the spec's merge/build commit (P2).
+
+    The prose-parsing fallback below reads result.md, which is frequently empty or
+    lists only meta files (spec/result/REGISTRY) — so heavily-used capabilities
+    (becoming, corrections) came back with no code files → no reference probes →
+    falsely classified INERT. Git is the source of truth for what a spec changed.
+    """
+    try:
+        found = subprocess.run(
+            ["git", "-C", str(repo_root), "log", "--all", "--format=%H", "--grep", spec_id, "-n", "1"],
+            capture_output=True, text=True, timeout=15,
+        ).stdout.strip().splitlines()
+    except Exception:
+        return []
+    if not found:
+        return []
+    sha = found[0]
+    try:
+        out = subprocess.run(
+            ["git", "-C", str(repo_root), "show", "--name-only", "--format=", sha],
+            capture_output=True, text=True, timeout=15,
+        ).stdout
+    except Exception:
+        return []
+    files: list[str] = []
+    seen: set[str] = set()
+    for line in out.splitlines():
+        p = line.strip()
+        if not p or "=>" in p or p.startswith("core/BUILD/"):
+            continue
+        if Path(p).suffix in LIVE_SCAN_SUFFIXES and p not in seen:
+            seen.add(p)
+            files.append(p)
+    return files[:80]
+
+
 def changed_files_for_spec(repo_root: Path, spec_id: str) -> list[str]:
+    git_files = changed_files_from_git(repo_root, spec_id)
+    if git_files:
+        return git_files
     result = repo_root / "core" / "BUILD" / "results" / f"{spec_id}.result.md"
     text = ""
     try:
