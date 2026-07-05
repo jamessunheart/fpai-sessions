@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
         {
+            "id": "SPEC_d192_telegram-build-request-spot-topp",
+            "slug": "SPEC_d192_telegram-build-request-spot-topp",
+            "branch": "build/SPEC_d192_telegram-build-request-spot-topp",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d192_telegram-build-request-spot-topp.md",
+            "tests_passed": true,
+            "notes": "d192 complete in working tree: added a read/rank/propose-only Next Domino layer to tools/allocation/opportunity_engine.py. Existing Opportunity Score, Allocation Score, and Closest-to-Cash rankings remain, while seeded rows now expose Spot fields, Topple gate/action/proof/missing capability, next_domino_score, and topple_status. CLI, digest, and council context now surface Spot -> Topple -> Proof; gate weighting keeps James-reserved/human/missing-capability work from looking automatically topple-ready. Focused allocation tests, py_compile, CLI proof, activation policy build_kind=library check, registry JSON validation, and diff hygiene passed."
+        },
+        {
             "id": "SPEC_d190_telegram-build-request-yes-pleas",
             "slug": "SPEC_d190_telegram-build-request-yes-pleas",
             "branch": "build/SPEC_d190_telegram-build-request-yes-pleas",
