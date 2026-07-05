@@ -156,6 +156,22 @@ ends against each other FIRST; the cause is where they disagree, not where the p
   waste was avoidable.)
 - **Evidence:** awareness self-heal, 2026-07-04 — probe `ts DESC` title vs render's non-title format.
 
+### P17 — A signal must earn its interruption. Alert on actionable novelty, never on state.
+Every push to James today was noise: the email canary paged on a transient TLS blip its OWN text
+said to ignore; the awareness probe paged hourly at 90–92% when sub-95% is a build-loop concern,
+not an emergency; a content-pipeline "Director" message fired into his private chat. All three
+alerted on **state** (a value crossed a line) instead of **actionability** (James must do
+something, now, that only he can do). Attention is the scarcest atom; a signal that doesn't change
+what the recipient does is theft of it.
+- **Guard:** before ANY alert/push to a human, it must pass all three — (1) **Actionable by THEM
+  specifically** (not self-healing, not the loop's job); (2) **Novel** (new/changed, not a repeat
+  of known state); (3) **Worth more than the attention it costs.** Fail any → log it, or route to
+  the actor who can act. Default is silence. Test: *"would James do something differently because
+  of this?"* No → don't send. Transients need N-consecutive before they count as real.
+- **Evidence:** BUG_LOG 2026-07-04 (canary transient-blip gate · awareness hourly-page kill ·
+  d177 pusher consolidation). Aligns with [[feedback-attention-is-the-scarcest-atom]] +
+  Economics of Compression (AI absorbs noise so the human gets ready signal).
+
 ---
 _Version: tracks [BRAIN_VERSION](BRAIN_VERSION). New principles graduate here from BUG_LOG root causes.
 Tier-1 shape (per the 2026-07-04 A/B compression call): law + one causal sentence + evidence pointer —
