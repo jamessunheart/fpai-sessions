@@ -24,3 +24,17 @@ Probe confirmed: the system scans INTERNAL gaps only (Council/self-audit) + an A
 4. **Start seeded, not empty:** pre-load the portfolio with the opportunities James already named (Resource Optimization Audit = the live BBB offer · AI Voice Receptionist · Medical Documentation Agent · Finance Allocation Engine) so the ranker has real candidates day one.
 
 **Honest scope:** external scanning ≠ magic. v1 uses free signals + the AI's own judgment; it will be noisy. The value is the RANKING DISCIPLINE (dual-score + cash-proximity) applied consistently, improving as the Capability Ledger (d185) feeds real outcomes back. Don't oversell it as an oracle.
+
+## ADDENDUM 2 (James 2026-07-05, the Allocator promotion) — cycle, rubric, cascade, ledger
+The brain is an **Intelligence Capital Allocator**; d186 IS the allocator's engine. Add:
+
+**The 8-step daily cycle (the operating loop):** Observe (what changed — tech · market · customer requests · competitors · internal capability · new relationships · capital · proof) → Discover (actual opportunities, each: who suffers · why · how expensive · why now · why us) → Score (weighted rubric below) → **Sequence (the critical step — build the DEPENDENCY GRAPH, not a ranked list)** → Allocate (resources flow only to the highest expected return) → Execute (only after allocation) → Learn → Compound.
+
+**The weighted scoring rubric (CURRENT weights — evolve as objectives shift; today = move treasury fast while strengthening the engine):**
+Time-to-Revenue 20% · Expected ROI 20% · Strategic Alignment 15% · Proof Speed 15% · Uses Existing Assets 15% · Recurring Revenue 10% · Compounding Learning 5%. Store the weights as config so they change with the objective, not the code.
+
+**★ SEQUENCE = cascade, not a list.** Don't output "1,2,3,4,5." Build the dependency graph — e.g. Resource Optimization Audit → Cost Reduction Engine → Monthly Intelligence Service → Industry Benchmark DB → AI Operating System → Allocation Platform. The engine picks the **smallest domino that starts the largest cascade** (Law 3), not the biggest opportunity. This is the single most valuable behavior — think in cascades, not isolated projects.
+
+**Full Opportunity Ledger fields (permanent per opportunity):** Problem · Buyer · Pain Level · Market Timing · Average Deal Size · Recurring Revenue · Time to First Dollar · Automation Potential · Strategic Alignment · Compounding Potential · Proof Collected · Current Confidence · Recommended Next Action. The AI stops brainstorming and starts managing an investment portfolio.
+
+**Governs the Council:** the Council's "pick THE ONE build" becomes "pick the smallest-domino from the top of the cascade graph, by current-weighted score." Realized outcomes (d185 Capability Ledger) update confidence + weights. Proof outranks opinion (Law 5) — reality corrects the model.

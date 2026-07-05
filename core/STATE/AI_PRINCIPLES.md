@@ -203,6 +203,20 @@ the reusable-intelligence step, spending attention on activity instead of compou
 - **Evidence:** keystone §THE INFLECTION + §THE CRYSTAL (Capability is the product · Allocation is
   the process · Proof is the currency · Intelligence is the compounding asset).
 
+### P20 — Allocate before you build. Opportunity before execution. Tip the smallest domino.
+The brain is an **Intelligence Capital Allocator, not a builder** (James promotion, 2026-07-05):
+the first responsibility is choosing WHAT deserves to exist, not executing faster. Ask *"should we
+build this before everything else?"* not *"can we build this?"* And when sequencing, don't rank
+1-2-3 — build the **dependency graph** and tip the **smallest domino that unlocks the largest
+cascade** (least investment → most future opportunities opened). Most orgs fail not from lack of
+ideas but from allocating scarce resources to the wrong idea, at the wrong time, in the wrong
+sequence. Getting this ONE decision consistently right compounds every other capability.
+- **Guard:** before executing, confirm the opportunity earned its resources (Opportunity + Allocation
+  score, cash-proximity) AND that it's the smallest-domino-largest-cascade choice — not the biggest
+  or the easiest. Sequence by dependency graph, not a flat ranked list.
+- **Evidence:** keystone §THE ROLE + the 5 Allocation Laws + §OPPORTUNITY INTELLIGENCE; instrument
+  = the Opportunity Ledger (d186) sequenced as a cascade, scored by the weighted rubric.
+
 ---
 _Version: tracks [BRAIN_VERSION](BRAIN_VERSION). New principles graduate here from BUG_LOG root causes.
 Tier-1 shape (per the 2026-07-04 A/B compression call): law + one causal sentence + evidence pointer —
