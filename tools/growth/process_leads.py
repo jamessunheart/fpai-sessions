@@ -12,11 +12,14 @@ Dry-run by default — pass --live to actually send. Skips test/smoke leads.
 Kill switch: touch /opt/fpai-build/.leads_worker_disabled
 """
 import argparse
+import hashlib
 import json
 import os
 import re
 import subprocess
 import sys
+import time
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -32,6 +35,11 @@ SENDER_EMAIL = os.environ.get("ASSESSMENT_SENDER_EMAIL", "james@fullpotential.ai
 SENDER_NAME = os.environ.get("ASSESSMENT_SENDER_NAME", "Full Potential")
 SKIP_EMAILS = {"test@test.test", ""}
 SKIP_NAME_MARKERS = ("__smoke_test__", "smoke_test", "test ember")
+META_PIXEL_ID = os.environ.get("META_PIXEL_ID", "110851475615838")
+META_API_VERSION = os.environ.get("META_API_VERSION", "v20.0")
+META_ENV = Path(os.environ.get("META_ENV_FILE", "/root/.config/fpai/meta.env"))
+BREVO_ENV = Path(os.environ.get("BREVO_ENV_FILE", "/root/.config/fpai/brevo.env"))
+ASSESSMENT_URL = os.environ.get("ASSESSMENT_URL", "https://fullpotential.com/assessment")
 
 
 def _ssh(cmd: str) -> str:
@@ -85,6 +93,74 @@ def send_email(to_email: str, to_name: str, subject: str, md_body: str, api_key:
         return (False, str(e))
 
 
+def read_env_value(path: Path, key: str) -> str:
+    try:
+        lines = path.read_text().splitlines()
+    except OSError:
+        return ""
+    prefix = f"{key}="
+    for line in lines:
+        if line.strip().startswith(prefix):
+            return line.split("=", 1)[1].strip().strip('"').strip("'")
+    return ""
+
+
+def meta_access_token() -> str:
+    return (
+        os.environ.get("META_CONVERSIONS_API_TOKEN")
+        or os.environ.get("META_CAPI_TOKEN")
+        or os.environ.get("META_ACCESS_TOKEN")
+        or read_env_value(META_ENV, "META_CONVERSIONS_API_TOKEN")
+        or read_env_value(META_ENV, "META_CAPI_TOKEN")
+        or read_env_value(META_ENV, "META_ACCESS_TOKEN")
+    )
+
+
+def _sha256_normalized(value: str) -> str:
+    return hashlib.sha256(value.strip().lower().encode("utf-8")).hexdigest()
+
+
+def meta_lead_payload(*, lead_id: str, email: str, event_time: int | None = None) -> dict:
+    return {
+        "data": [
+            {
+                "event_name": "Lead",
+                "event_time": int(event_time or time.time()),
+                "event_id": lead_id,
+                "action_source": "website",
+                "event_source_url": ASSESSMENT_URL,
+                "user_data": {"em": [_sha256_normalized(email)]},
+            }
+        ]
+    }
+
+
+def send_meta_lead_event(*, lead_id: str, email: str, access_token: str, pixel_id: str = META_PIXEL_ID) -> tuple[bool, str]:
+    if not access_token:
+        return (False, "missing Meta access token")
+    if not pixel_id:
+        return (False, "missing Meta pixel id")
+    if not email:
+        return (False, "missing lead email")
+
+    url = f"https://graph.facebook.com/{META_API_VERSION}/{pixel_id}/events?access_token={access_token}"
+    req = urllib.request.Request(
+        url,
+        data=json.dumps(meta_lead_payload(lead_id=lead_id, email=email)).encode(),
+        headers={"content-type": "application/json", "accept": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            body = resp.read().decode("utf-8", errors="replace")
+            return (200 <= resp.status < 300, f"HTTP {resp.status}: {body[:300]}")
+    except urllib.error.HTTPError as e:
+        detail = e.read().decode("utf-8", errors="replace")[:300]
+        return (False, f"HTTP {e.code}: {detail}")
+    except Exception as e:  # noqa: BLE001
+        return (False, str(e))
+
+
 def tg_alert(msg: str, token: str) -> None:
     try:
         req = urllib.request.Request(
@@ -97,11 +173,11 @@ def tg_alert(msg: str, token: str) -> None:
         pass
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--live", action="store_true", help="actually send emails (default: dry-run)")
     ap.add_argument("--limit", type=int, default=5)
-    args = ap.parse_args()
+    args = ap.parse_args(argv)
 
     if KILL.exists():
         print("[leads] kill-switch present — exiting")
@@ -112,11 +188,11 @@ def main() -> int:
     processed = set(STATE.read_text().split()) if STATE.exists() else set()
 
     brevo_key = ""
-    env = Path("/root/.config/fpai/brevo.env")
-    if env.exists():
-        for line in env.read_text().splitlines():
+    if BREVO_ENV.exists():
+        for line in BREVO_ENV.read_text().splitlines():
             if line.startswith("BREVO_API_KEY="):
                 brevo_key = line.split("=", 1)[1].strip().strip('"')
+    meta_token = meta_access_token()
 
     leads = list_remote_leads()
     print(f"[leads] {len(leads)} remote lead(s); {len(processed)} already processed")
@@ -156,10 +232,15 @@ def main() -> int:
 
         ok, detail = send_email(email, name, subject, deliverable, brevo_key)
         if ok:
+            meta_ok, meta_detail = send_meta_lead_event(lead_id=lead_id, email=email, access_token=meta_token)
             processed.add(lead_id)
             done += 1
-            tg_alert(f"✅ New assessment lead scored + delivered: {name} <{email}>. Deliverable emailed.", os.environ.get("TELEGRAM_BOT_TOKEN", ""))
-            print(f"[leads] SENT {lead_id} → {email} ({detail})")
+            meta_status = "Meta CAPI Lead sent" if meta_ok else f"Meta CAPI Lead failed: {meta_detail}"
+            tg_alert(
+                f"✅ New assessment lead scored + delivered: {name} <{email}>. Deliverable emailed. {meta_status}",
+                os.environ.get("TELEGRAM_BOT_TOKEN", ""),
+            )
+            print(f"[leads] SENT {lead_id} → {email} ({detail}); {meta_status}")
         else:
             print(f"[leads] SEND FAILED {lead_id}: {detail}")
 
