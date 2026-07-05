@@ -13,9 +13,23 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Awaitable, Callable
 
+def _db_url_from_env_file() -> str:
+    # The awareness timer service loads no EnvironmentFile, so BRAIN_INDEX_DB_URL was unset →
+    # the probe fell back to `changeme` and every run died on "password authentication failed"
+    # (metric read 0 for an auth reason, not a real one). Read the real URL from curator.env.
+    for ef in ("/etc/sh-brain/curator.env",):
+        try:
+            for line in open(ef, encoding="utf-8"):
+                if line.startswith("BRAIN_INDEX_DB_URL="):
+                    return line.split("=", 1)[1].strip().strip('"').strip("'")
+        except OSError:
+            pass
+    return "postgres://brain_index:changeme@127.0.0.1:25432/appflowy"
+
+
 DEFAULT_DB_URL = os.environ.get(
     "BRAIN_INDEX_DB_URL",
-    os.environ.get("DATABASE_URL", "postgres://brain_index:changeme@127.0.0.1:25432/appflowy"),
+    os.environ.get("DATABASE_URL", _db_url_from_env_file()),
 )
 REPO_ROOT = Path(os.environ.get("FPAI_REPO_ROOT", Path(__file__).resolve().parents[2]))
 # Probe the LIVE bot's code path, not the repo copy — the metric must measure
