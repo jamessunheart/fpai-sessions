@@ -6,6 +6,7 @@ import unittest
 from pathlib import Path
 
 from tools.hot_memory import run_all, synthesize
+from tools.hot_memory.scanners import ops_scanner
 
 
 class HotMemoryTest(unittest.TestCase):
@@ -80,7 +81,8 @@ class HotMemoryTest(unittest.TestCase):
 
         self.assertLessEqual(len(rendered), 1600)
         self.assertIn("HOT_STATE", rendered)
-        self.assertIn("Active spec SPEC_d112_hot-memory-architecture-5-domain", rendered)
+        self.assertIn("Top pending build specs", rendered)
+        self.assertIn("SPEC_d112_hot-memory-architecture-5-domain", rendered)
         self.assertIn("[source:", rendered)
         self.assertEqual(output_text, mirror_text)
 
@@ -115,6 +117,28 @@ class HotMemoryTest(unittest.TestCase):
 
         self.assertNotIn("abc123", rendered)
         self.assertIn("sunheartai@fullpotential.ai", rendered)
+
+    def test_ops_scanner_surfaces_activation_audit_inert_builds(self) -> None:
+        repo = self.make_repo()
+        (repo / "core" / "BUILD" / "REGISTRY.json").write_text(
+            json.dumps(
+                {
+                    "active_builds": [
+                        {
+                            "id": "SPEC_d099_unused",
+                            "slug": "SPEC_d099_unused",
+                            "branch": "build/SPEC_d099_unused",
+                            "status": "merged",
+                        }
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        facts = ops_scanner.collect(repo_root=repo, ops_ledger=repo / "ops.jsonl")
+
+        self.assertTrue(any("Activation audit: 1 unexplained INERT" in item.text for item in facts))
 
 
 if __name__ == "__main__":

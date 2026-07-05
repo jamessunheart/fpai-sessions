@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
         {
+            "id": "SPEC_d188_build-loop-activation-audit-act",
+            "slug": "SPEC_d188_build-loop-activation-audit-act",
+            "branch": "build/SPEC_d188_build-loop-activation-audit-act",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d188_build-loop-activation-audit-act.md",
+            "tests_passed": true,
+            "notes": "d188 complete in working tree: added a read-only activation audit that classifies merged builds as auto-activated, library/reference-backed, or INERT; surfaces unexplained inert rows into self_audit, HOT_STATE ops scanner, and owner-chat live status; and outputs a ledger with 0 unexplained inert rows after explicit legacy inert declarations. Added activate-or-declare-inert policy enforcement before independent review: future builds must ship core/BUILD/activate/${SPECID}.sh or declare build_kind=library/inert. Focused audit/policy/surface tests, build-loop static regressions, shell syntax, py_compile, JSON validation, audit/policy CLI smokes, and diff hygiene passed."
+        },
+        {
             "id": "SPEC_d187_build-loop-rework-path-for-chan",
             "slug": "SPEC_d187_build-loop-rework-path-for-chan",
             "branch": "build/SPEC_d187_build-loop-rework-path-for-chan",

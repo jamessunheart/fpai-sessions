@@ -19,6 +19,20 @@ FIXTURE_CONTEXT = {
         "failures": ["build-loop failed review timeout"],
         "silent_or_no_work_count": 2,
     },
+    "activation_audit": {
+        "available": True,
+        "total": 4,
+        "counts": {"auto-activated": 1, "library": 1, "INERT": 2},
+        "unexplained_inert_count": 1,
+        "inert_capability_builds": [
+            {
+                "spec_id": "SPEC_d099_unused",
+                "classification": "INERT",
+                "explained": False,
+                "explicit_build_kind": "",
+            }
+        ],
+    },
     "awareness_probe": {
         "available": True,
         "source": "/tmp/ops.jsonl",
@@ -65,6 +79,8 @@ class SelfAuditTests(unittest.TestCase):
             self.assertIn("silent failures", prompt)
             self.assertIn("standard audit probes", prompt)
             self.assertIn("awareness_probe", prompt)
+            self.assertIn("activation_audit", prompt)
+            self.assertIn("SPEC_d099_unused", prompt)
             self.assertIn("recent_user_messages", prompt)
             self.assertIn("queue_state", prompt)
             self.assertIn("Local system evidence JSON", prompt)

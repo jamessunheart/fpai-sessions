@@ -1,0 +1,30 @@
+{
+  "schema": "activation-declarations.v1",
+  "_doc": "Explicit build_kind declarations for legacy merged build records that predate the activate-or-declare-inert policy. This file explains inert records; it does not activate them.",
+  "declarations": {
+    "SPEC_build-queue-status": {
+      "build_kind": "inert",
+      "reason": "legacy merged build record predates activation policy; no activation/reference evidence is present in repo artifacts"
+    },
+    "SPEC_cartographer-auto-refresh": {
+      "build_kind": "inert",
+      "reason": "legacy merged build record predates activation policy; no activation/reference evidence is present in repo artifacts"
+    },
+    "SPEC_lantern-detector": {
+      "build_kind": "inert",
+      "reason": "legacy merged build record predates activation policy; no activation/reference evidence is present in repo artifacts"
+    },
+    "SPEC_mirror-digest": {
+      "build_kind": "inert",
+      "reason": "legacy merged build record predates activation policy; no activation/reference evidence is present in repo artifacts"
+    },
+    "SPEC_proof-river": {
+      "build_kind": "inert",
+      "reason": "legacy merged build record predates activation policy; no activation/reference evidence is present in repo artifacts"
+    },
+    "build-20260614-cartographer-auto-refresh": {
+      "build_kind": "inert",
+      "reason": "legacy merged build record predates activation policy; no activation/reference evidence is present in repo artifacts"
+    }
+  }
+}

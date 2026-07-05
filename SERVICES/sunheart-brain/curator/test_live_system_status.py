@@ -85,6 +85,36 @@ class LiveSystemStatusTest(unittest.TestCase):
         self.assertIn("partial=1", lines)
         self.assertIn("SPEC_partial", lines)
 
+    def test_activation_audit_summary_surfaces_unexplained_inert(self) -> None:
+        root = self.make_repo()
+        (root / "core" / "BUILD" / "REGISTRY.json").write_text(
+            json.dumps(
+                {
+                    "active_builds": [
+                        {
+                            "id": "SPEC_d099_unused",
+                            "slug": "SPEC_d099_unused",
+                            "branch": "build/SPEC_d099_unused",
+                            "status": "merged",
+                        }
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+        (root / "core" / "BUILD" / "activate").mkdir(exist_ok=True)
+        (root / "tools" / "build_loop").mkdir(parents=True)
+        source = Path(__file__).resolve().parents[3] / "tools" / "build_loop" / "activation_audit.py"
+        (root / "tools" / "build_loop" / "activation_audit.py").write_text(
+            source.read_text(encoding="utf-8"),
+            encoding="utf-8",
+        )
+
+        line = live_system_status._activation_audit_summary(root, root / "ops.jsonl")
+
+        self.assertIn("unexplained_inert=1", line)
+        self.assertIn("SPEC_d099_unused", line)
+
     def test_review_fallback_when_registry_has_no_merge(self) -> None:
         root = self.make_repo()
         (root / "core" / "BUILD" / "REGISTRY.json").write_text(
