@@ -83,6 +83,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Questions for Ember/James: …
 ```
 
+### 2026-07-05 · SPEC_d201_infra-certbot-pyopenssl-cryptog · branch `build/SPEC_d201_infra-certbot-pyopenssl-cryptog`
+
+- **Status:** done in working tree / awaiting review + approved maintenance pass on server 162
+- **Files changed:** `core/BUILD/activate/SPEC_d201_infra-certbot-pyopenssl-cryptog.sh`; `tools/build_loop/test_d201_certbot_maintenance.py`; `core/BUILD/results/SPEC_d201_infra-certbot-pyopenssl-cryptog.result.md`; `core/BUILD/specs/SPEC_d201_infra-certbot-pyopenssl-cryptog.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added an approval-gated certbot maintenance activation for server 162. It defaults to a no-op hold unless `D201_CERTBOT_MAINTENANCE_APPROVED=1` is set, refuses non-162 hosts unless explicitly test-overridden, requires an explicit strategy (`venv-upgrade`, `system-pip-upgrade`, `snap-refresh`, or `pipx-reinstall`), adds a second explicit gate for system-Python pip changes, snapshots Python package state before pip repairs, and then proves `certbot renew --dry-run`, `certbot.service` start exit 0, and active `certbot.timer`.
+- **Tests:** `bash -n core/BUILD/activate/SPEC_d201_infra-certbot-pyopenssl-cryptog.sh`; `python3 -B -m unittest tools.build_loop.test_d201_certbot_maintenance` (4 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/test_d201_certbot_maintenance.py`; `python3 tools/build_loop/activation_policy.py --repo-root . --spec-id SPEC_d201_infra-certbot-pyopenssl-cryptog --base-ref feat/headless-build --head-ref HEAD`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d201-registry-building.json`; `git diff --check`
+- **Risks:** Live server 162 was not touched from this sandbox: no package changes, no certbot dry-run, and no `systemctl` calls. The actual repair still requires a maintenance window and operator choice of strategy after inspecting the live certbot install type. `system-pip-upgrade` is intentionally double-gated because it can alter system Python packages.
+- **Rollback:** For Python-env strategies, reinstall the timestamped `/opt/fpai-build/backups/d201-certbot/*/pip-freeze.before.txt` into the same Python env. For snap/pipx strategies, restore the prior certbot package/linkage through package manager history, then rerun the proof commands. Runtime hold without rollback: leave `D201_CERTBOT_MAINTENANCE_APPROVED` unset or touch `/opt/fpai-build/.d201_certbot_fix_disabled`.
+- **Intent solved:** the certbot mismatch is converted from an ambiguous latent infra fault into a guarded, test-covered maintenance pass with rollback and exact proof.
+- **Downstream intent unlocked:** server 162 internal cert renewal can be repaired before the September 22, 2026 renewal deadline without risking a blind autonomous system-package mutation.
+- **Questions for Ember/James:** schedule the maintenance pass on server 162, first run with `D201_DRY_RUN=1`, choose the least invasive strategy that matches the live install, then run without dry-run and confirm `certbot renew --dry-run` succeeds plus `certbot.service` exits 0 and `certbot.timer` is active.
+
 ### 2026-07-05 · SPEC_d198_sales-autonomous-follow-up-clos · branch `build/SPEC_d198_sales-autonomous-follow-up-clos`
 
 - **Status:** done in working tree / awaiting review + merge
