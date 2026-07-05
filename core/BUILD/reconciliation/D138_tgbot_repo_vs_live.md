@@ -68,3 +68,15 @@ is a DIFFERENT forked file. So the fix merged, passed review, "done" — and awa
 89%. **d138 repo≠running is not cosmetic: it silently voids every build-loop fix to the
 curator.** The awareness fix (and any future curator fix) needs the per-slice deploy to live,
 not just a merge. This is the highest-value item the autonomous run surfaced.
+
+## 2026-07-05 — first 2 slices DEPLOYED to live (James explicit greenlight)
+The `repo==running` guard (`tools/governance/repo_running_coherence.py`, wired into self_audit)
+classified all 6 forked curator files. Two were pure repo-supersets (live-only=0 → additive,
+no clobber): **corrections.py** (+30, blueprint-correction hook, try/except-gated) and
+**live_system_status.py** (+53, liveness + git-based last-merge). Both deployed repo→live with
+backup (`*.bak-d138-20260705-001004`) + syntax + runtime-import check; `sh-brain-tgbot` restarted
+clean (PID 3155911). Guard re-run: both now IDENTICAL, drift 6→4.
+
+**Remaining (NOT deployed — per-file merge, gated):** build_context.py (live+6/repo+78),
+conversation_memory.py (live+23/repo+46), telegram.py (live+16/repo+34) = TWO-SIDED merges;
+**decisions.py (live+489/repo+285) = LANDMINE — two different engines, never blind-deploy.**
