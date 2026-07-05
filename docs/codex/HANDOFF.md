@@ -83,6 +83,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Questions for Ember/James: …
 ```
 
+### 2026-07-05 · SPEC_d206_autonomy-liveness-aware-discern · branch `build/SPEC_d206_autonomy-liveness-aware-discern`
+
+- **Status:** done in working tree / awaiting review + merge
+- **Files changed:** `tools/allocation/opportunity_axis_scorer.py`; `tools/allocation/test_opportunity_axis_scorer.py`; `core/BUILD/specs/SPEC_d206_autonomy-liveness-aware-discern.md`; `core/BUILD/results/SPEC_d206_autonomy-liveness-aware-discern.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Made the advisory d202 opportunity axis scorer liveness-aware. It now collects row/status/result-file live-state, feeds `live_state` into the Claude prompt, logs liveness inputs and calibration, clamps live deployed traffic paths to `time_to_first_dollar<=2`, raises activation/lead-worker proof speed, and prevents unbuilt opportunities from retaining a closer cash-proximity axis than the best live traffic path in the same `--rescore-all` pass. The deterministic opportunity engine/ranking formula remains unchanged.
+- **Tests:** `python3 -B -m unittest tools.allocation.test_opportunity_axis_scorer` (4 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/allocation/opportunity_axis_scorer.py tools/allocation/test_opportunity_axis_scorer.py`; `python3 -B -m unittest tools.allocation.test_opportunity_axis_scorer tools.allocation.test_opportunity_engine tools.build_loop.test_spot_topple_orchestrator` (15 OK); `python3 tools/build_loop/activation_policy.py --repo-root . --spec-id SPEC_d206_autonomy-liveness-aware-discern --base-ref feat/headless-build --head-ref HEAD` (OK: build_kind=library declared); `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d206-registry-done.json`; `git diff --check`
+- **Proof:** Regression reproduces the bad d202 calibration: Claude rates the live assessment funnel far from cash (`time_to_first_dollar=7`) and the unbuilt resource audit closer (`time_to_first_dollar=1`). The scorer corrects the live funnel to `2`, lifts proof speed from activation evidence, clamps the unbuilt audit to no closer than the live path, logs liveness/calibration, and `ranked()["next_domino"]` keeps the live money path at/above the unbuilt product.
+- **Risks:** Liveness sources are defensive/advisory and ignore missing/malformed local files. The d206 known-state hints are intentionally narrow to `assessment-funnel-delivery-proof` and `resource-optimization-audit`; richer canonical server liveness should replace those hints when available. No live scorer run was performed in sandbox.
+- **Rollback:** Revert this branch. Runtime hold: create `/opt/fpai-build/.opportunity_axis_scorer_disabled` to stop the existing d202 timer. No deploy, service change, outreach, spend, or external API effect was added.
+- **Intent solved:** opportunity discernment no longer scores descriptions while blind to live traffic/activation evidence.
+- **Downstream intent unlocked:** Spot -> Topple can prefer the live revenue path over speculative unbuilt products unless a future liveness-aware rescore proves otherwise.
+- **Questions for Ember/James:** after merge on server 162, observe the next `fpai-opportunity-axis-scorer.timer` run and confirm the JSONL log includes `liveness.live_with_traffic=true` for `assessment-funnel-delivery-proof` plus an unbuilt calibration for `resource-optimization-audit`.
+
 ### 2026-07-05 · SPEC_d205_auto-spot-topple-ai-voice-recept · branch `build/SPEC_d205_auto-spot-topple-ai-voice-recept`
 
 - **Status:** done in working tree / awaiting review + merge
