@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
         {
+            "id": "SPEC_d201_infra-certbot-pyopenssl-cryptog",
+            "slug": "SPEC_d201_infra-certbot-pyopenssl-cryptog",
+            "branch": "build/SPEC_d201_infra-certbot-pyopenssl-cryptog",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d201_infra-certbot-pyopenssl-cryptog.md",
+            "tests_passed": true,
+            "notes": "d201 complete in working tree: added an approval-gated server-162 certbot maintenance script for the pyOpenSSL/cryptography mismatch. The script defaults to a no-op hold unless D201_CERTBOT_MAINTENANCE_APPROVED=1 is set, requires an explicit repair strategy, has a second gate for system-Python pip changes, snapshots Python package state before pip repairs, then proves certbot renew --dry-run, certbot.service start, and certbot.timer active. Focused guardrail tests, shell syntax, py_compile, activation policy, registry JSON validation, and diff hygiene passed. No live package changes, certbot renewals, systemctl calls, pushes, or merges were performed in this sandbox."
+        },
+        {
             "id": "SPEC_d198_sales-autonomous-follow-up-clos",
             "slug": "SPEC_d198_sales-autonomous-follow-up-clos",
             "branch": "build/SPEC_d198_sales-autonomous-follow-up-clos",
