@@ -115,6 +115,34 @@ Proof: regression fixture produces expected allocation payload.
             self.assertEqual(code, 3)
             self.assertTrue(json.loads(out.getvalue())["low_quality"])
 
+    def test_failed_pytest_gate_report_forces_low_quality_flag(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            result = root / "core/BUILD/results/SPEC_bad.result.md"
+            test_report = root / "core/BUILD/reports/SPEC_bad.test_gate.json"
+            result.parent.mkdir(parents=True)
+            test_report.parent.mkdir(parents=True)
+            result.write_text(
+                "Summary: Built endpoint.\nTests: pytest passed; py_compile; smoke passed.\n",
+                encoding="utf-8",
+            )
+            test_report.write_text(
+                json.dumps(
+                    {
+                        "schema": "fpai_build_loop_pytest_gate_v1",
+                        "status": "failed",
+                        "counts": {"passed": 2, "failed": 1, "errors": 0, "skipped": 0},
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            row = review.assess_candidate(repo_root=root, spec_id="SPEC_bad", result_path=result)
+
+            self.assertTrue(row["low_quality"])
+            self.assertEqual(row["test_status"], "failed")
+            self.assertIn("pytest gate failed", "; ".join(row["quality_flags"]))
+
 
 if __name__ == "__main__":
     unittest.main()
