@@ -41,6 +41,15 @@ ROUTE = {
     "knowledge": "Intelligence Partnership — $2-5k/mo, quarterly re-audits",
 }
 
+CTA_COPY_ENV = "ASSESSMENT_CTA_COPY"
+CTA_URL_ENV = "ASSESSMENT_CTA_URL"
+CTA_DRAFT_MARKER = "DRAFT - James approval required"
+CTA_URL_PLACEHOLDER = "ASSESSMENT_CTA_URL"
+DEFAULT_DRAFT_CTA = (
+    "DRAFT: Want a done-for-you Blueprint to capture the opportunities above? "
+    "James will provide the final invitation copy before this emails real leads."
+)
+
 SCHEMA = {
     "type": "object",
     "properties": {
@@ -55,8 +64,12 @@ SCHEMA = {
             "required": ["title", "dimension", "why", "est_annual_value"], "additionalProperties": False}},
         "monday_move": {"type": "string"},        # one free thing they can do Monday, no purchase
         "share_line": {"type": "string"},         # a punchy one-liner they'd actually share
+        "next_step": {"type": "string"},          # DRAFT invitation only; James provides final copy
     },
-    "required": ["scores", "archetype", "archetype_line", "surprise", "opportunities", "monday_move", "share_line"],
+    "required": [
+        "scores", "archetype", "archetype_line", "surprise",
+        "opportunities", "monday_move", "share_line", "next_step",
+    ],
     "additionalProperties": False,
 }
 
@@ -86,6 +99,10 @@ Then produce a GREAT deliverable:
   that delivers real value with no purchase. Generosity first.
 - `share_line`: a punchy first-person one-liner they'd actually text a friend (e.g.
   "Just found $18k/yr leaking out of my business in 15 min — free at fullpotential.com/assessment").
+- `next_step`: DRAFT ONLY — exact James voice and booking/Blueprint URL are reserved for
+  approval. Write one warm, low-pressure invitation that names the Blueprint or a free
+  strategy call as the way to capture the opportunities above. Prefix it with
+  "DRAFT:" and do not invent scarcity, pricing, guarantees, or a URL.
 
 Tone: an unusually sharp advisor who genuinely wants them to win. Concrete over generic.
 Warm, not corporate. No hype, no scarcity, no pressure — the value is the pull.
@@ -498,6 +515,34 @@ def compute(scores: dict) -> tuple[int, str]:
     return total, weakest
 
 
+def cta_config() -> tuple[str, str, bool]:
+    copy = os.environ.get(CTA_COPY_ENV, "").strip()
+    url = os.environ.get(CTA_URL_ENV, "").strip()
+    return copy, url, bool(copy and url)
+
+
+def render_next_step(weakest: str, draft_next_step: str = "") -> str:
+    approved_copy, cta_url, approved = cta_config()
+    if approved:
+        return (
+            "\n## Your next step\n\n"
+            f"{approved_copy}\n\n"
+            f"[Book or view the Blueprint next step]({cta_url})\n"
+        )
+
+    draft_copy = (draft_next_step or DEFAULT_DRAFT_CTA).strip()
+    if not draft_copy.lower().startswith("draft"):
+        draft_copy = f"DRAFT: {draft_copy}"
+    return (
+        f"\n## Next step ({CTA_DRAFT_MARKER})\n\n"
+        f"{draft_copy}\n\n"
+        f"Your weakest dimension routes to: **{ROUTE[weakest]}**\n\n"
+        f"[Booking/Blueprint link placeholder]({CTA_URL_PLACEHOLDER})\n\n"
+        f"_Reserved: James provides final invitation copy and sets `{CTA_URL_ENV}` "
+        f"before this emails real leads._\n"
+    )
+
+
 def render(name: str, company: str, scores: dict, total: int, weakest: str,
            opps: list, extras: dict = None) -> str:
     extras = extras or {}
@@ -517,6 +562,7 @@ def render(name: str, company: str, scores: dict, total: int, weakest: str,
                     f"_No purchase, no catch — do this Monday and you've already gotten value from these 15 minutes._\n") if monday else ""
     share = extras.get("share_line", "")
     share_block = f"\n---\n\n*Found this useful? \"{share}\"*\n" if share else ""
+    next_step_block = render_next_step(weakest, extras.get("next_step", ""))
     return f"""# Your Full Potential Assessment — {company or name}
 {arch_block}
 ## Allocation Score: **{total}/100**
@@ -532,13 +578,7 @@ Your weakest dimension — **{weakest}** — is where the most capability is cur
 
 {opp_md}
 {monday_block}
-## If you want the top one fixed
-
-Your weakest dimension routes to: **{ROUTE[weakest]}**
-
-_This assessment is yours to keep either way. If you'd like us to implement the top
-opportunities, that's the next conversation — and you pay out of the value we find, not
-out of pocket. If we find nothing, you pay nothing._
+{next_step_block}
 {share_block}
 ---
 *Powered by FPOS — the Allocation Intelligence Operating System · fullpotential.com*
@@ -560,7 +600,7 @@ def score_one(intake_text: str, name: str = "", company: str = "") -> str:
     data = run_claude(prompt)
     scores = {d: int(data["scores"].get(d, 50)) for d in DIMENSIONS}
     total, weakest = compute(scores)
-    extras = {k: data.get(k, "") for k in ("archetype", "archetype_line", "surprise", "monday_move", "share_line")}
+    extras = {k: data.get(k, "") for k in ("archetype", "archetype_line", "surprise", "monday_move", "share_line", "next_step")}
     return render(name, company, scores, total, weakest, data.get("opportunities", []), extras)
 
 

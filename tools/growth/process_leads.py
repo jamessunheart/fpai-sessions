@@ -40,6 +40,8 @@ META_API_VERSION = os.environ.get("META_API_VERSION", "v20.0")
 META_ENV = Path(os.environ.get("META_ENV_FILE", "/root/.config/fpai/meta.env"))
 BREVO_ENV = Path(os.environ.get("BREVO_ENV_FILE", "/root/.config/fpai/brevo.env"))
 ASSESSMENT_URL = os.environ.get("ASSESSMENT_URL", "https://fullpotential.com/assessment")
+CTA_DRAFT_MARKER = "DRAFT - James approval required"
+CTA_URL_PLACEHOLDER = "ASSESSMENT_CTA_URL"
 
 
 def _ssh(cmd: str) -> str:
@@ -91,6 +93,18 @@ def send_email(to_email: str, to_name: str, subject: str, md_body: str, api_key:
             return (200 <= resp.status < 300, f"HTTP {resp.status}")
     except Exception as e:  # noqa: BLE001
         return (False, str(e))
+
+
+def deliverable_cta_ready(md_body: str) -> tuple[bool, str]:
+    if CTA_DRAFT_MARKER in md_body:
+        return False, "assessment CTA still marked draft/reserved"
+    if CTA_URL_PLACEHOLDER in md_body:
+        return False, "assessment CTA URL placeholder still present"
+    if "## Your next step" not in md_body:
+        return False, "approved next-step section missing"
+    if not re.search(r"\]\(https?://[^)\s]+", md_body):
+        return False, "approved next-step link missing"
+    return True, "ready"
 
 
 def read_env_value(path: Path, key: str) -> str:
@@ -228,6 +242,11 @@ def main(argv: list[str] | None = None) -> int:
         if not args.live:
             print(f"[DRY-RUN] would email {email} ({len(deliverable)} chars). First lines:")
             print("\n".join(deliverable.splitlines()[:6]))
+            continue
+
+        cta_ready, cta_detail = deliverable_cta_ready(deliverable)
+        if not cta_ready:
+            print(f"[leads] HOLD {lead_id}: {cta_detail}; set approved CTA copy/url before live send")
             continue
 
         ok, detail = send_email(email, name, subject, deliverable, brevo_key)
