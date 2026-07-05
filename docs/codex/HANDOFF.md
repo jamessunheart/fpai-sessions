@@ -83,6 +83,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Questions for Ember/James: …
 ```
 
+### 2026-07-05 · SPEC_d190_telegram-build-request-yes-pleas · branch `build/SPEC_d190_telegram-build-request-yes-pleas`
+
+- **Status:** done in working tree / awaiting review + merge + activation
+- **Files changed:** `SERVICES/sunheart-brain/curator/tgbot.py`; `SERVICES/sunheart-brain/curator/test_tgbot_act_bridge.py`; `core/BUILD/activate/SPEC_d190_telegram-build-request-yes-pleas.sh`; `core/BUILD/specs/SPEC_d190_telegram-build-request-yes-pleas.md`; `core/BUILD/results/SPEC_d190_telegram-build-request-yes-pleas.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added safe hands-free Telegram steering before ACT-bridge classification. Natural owner phrases like “what’s building right now,” “show pending approvals,” “what needs my decision,” “what can you do,” “health check,” and “voice off/on/status” route to the existing `/builds`, `/pending`, `/decisions`, `/whatcanyoudo`, `/health`, and `/voice` handlers. Dangerous action phrases containing build/fix/deploy/restart/run/ssh/bash/git/merge/send/pay/buy/sell/move-money language do not map to commands and continue into the queue/protection path. Added an activation script that installs only reviewed `tgbot.py`, compiles it, reloads systemd, and restarts `sh-brain-tgbot.service`.
+- **Tests:** `python3 -B -m unittest SERVICES.sunheart-brain.curator.test_tgbot_act_bridge SERVICES.sunheart-brain.curator.test_tgbot_constitution SERVICES.sunheart-brain.curator.test_tgbot_model_health` (17 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile SERVICES/sunheart-brain/curator/tgbot.py SERVICES/sunheart-brain/curator/test_tgbot_act_bridge.py`; `bash -n core/BUILD/activate/SPEC_d190_telegram-build-request-yes-pleas.sh`; `python3 tools/build_loop/activation_policy.py --repo-root . --spec-id SPEC_d190_telegram-build-request-yes-pleas --base-ref feat/headless-build --head-ref HEAD` (OK: activation script present); `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d190-registry-done.json`; `git diff --check`
+- **Risks:** deterministic phrase matching is conservative, so unknown steering phrasing falls back to normal chat or queue classification. `/pending` preserves its existing behavior of sending a button surface and returning no text body. Live TG proof and service restart were not run in this sandbox.
+- **Rollback:** revert this branch. If already activated, restore `tgbot.py` from `/opt/sh-brain-src/.d190-backup-*` and run `systemctl restart sh-brain-tgbot.service`.
+- **Intent solved:** James can steer build-loop status and decision surfaces hands-free without memorizing slash commands.
+- **Downstream intent unlocked:** Telegram can serve as a safe same-brain steering surface: voice ask -> build/decision status -> queued next build -> proof, without granting terminal/deploy/money authority.
+- **Questions for Ember/James:** after merge/activation on server 162, send voice memos “what’s building right now,” “show pending approvals,” and “build a hands-free steering proof”; confirm the first two route to existing status/approval surfaces and the last queues a `dNNN` build row instead of executing.
+
 ### 2026-07-05 · SPEC_d189_awareness-activate-the-d183-beh · branch `build/SPEC_d189_awareness-activate-the-d183-beh`
 
 - **Status:** done in working tree / awaiting review + merge + server activation
