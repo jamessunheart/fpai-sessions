@@ -23,11 +23,11 @@ if [ ! -x "$PY" ]; then
 fi
 
 cd "$REPO"
-# INTERIM SAFETY (2026-07-05): --queue removed → orchestrator is SURFACE-ONLY (spots + proposes,
-# never auto-builds). It auto-built a net-new product (d205 AI Voice Receptionist) with no human
-# input — exceeding the Constitution's Reserved-direction line. Re-add --queue only after d207
-# scopes auto-topple to reversible IMPROVEMENTS of live things (new products/direction → surface).
-# Re-enable with the flag file once d207 lands:
+# AUTO-BUILD (2026-07-05, James opted in): the orchestrator may proactively BUILD candidate
+# products/improvements — James likes this ("if it's useful/valuable that could be very interesting").
+# Building candidates is REVERSIBLE + welcome; James curates by VALUE. d207 adds a quality+value gate
+# + a portfolio review digest so weak builds are flagged and he picks winners. Only LAUNCH/fund/public
+# voice stays Reserved — not the building. Flag on = auto-build; remove the flag to fall back to surface-only.
 if [ -f /opt/fpai-build/.spot_topple_autobuild_enabled ]; then
   exec "$PY" -B "$REPO/tools/build_loop/spot_topple_orchestrator.py" --queue
 else
