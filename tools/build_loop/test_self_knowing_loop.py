@@ -192,7 +192,11 @@ esac
         pending = decisions.pending_builds_from_rows(rows)
 
         self.assertEqual([row["id"] for row in pending], ["d123"])
-        self.assertIn("COALESCE(is_canary, false) = false", decisions.PENDING_BUILDS_SQL)
+        # Canary exclusion is guaranteed at the Python layer (pending_builds_from_rows, asserted
+        # above) — NOT in SQL. The is_canary column was never migrated into brain_index.decisions,
+        # so referencing it in the query raised UndefinedColumn and crashed live (2026-07-05).
+        # Guard against reintroducing the crash-causing column reference.
+        self.assertNotIn("is_canary", decisions.PENDING_BUILDS_SQL)
 
     def test_migration_is_idempotent(self) -> None:
         conn = FakeConn()
