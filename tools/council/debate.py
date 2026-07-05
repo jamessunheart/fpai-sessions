@@ -13,6 +13,7 @@ OPENAI_API_KEY / GEMINI_API_KEY to make them truly separate voices.
   Kill: touch ~/.config/fpai/council/.disabled
 """
 import os, sys, json, ssl, hashlib, shutil, subprocess, urllib.request
+from datetime import datetime, timezone
 from pathlib import Path
 HOME = os.path.expanduser("~")
 HOST = os.environ.get("BRAIN_HOST", "root@162.0.208.88")
@@ -24,6 +25,8 @@ CLAUDE = os.environ.get("CLAUDE_BIN", os.path.expanduser("~/.local/bin/claude"))
 CODEX = os.environ.get("CODEX_BIN", os.path.expanduser("~/.local/bin/codex"))
 CFG = HOME + "/.config/fpai/council"; os.makedirs(CFG, exist_ok=True)
 DAILY_CAP = float(os.environ.get("COUNCIL_DAILY_USD", "3.0"))
+AUTO_TOPPLE_DAILY_CAP = int(os.environ.get("COUNCIL_AUTO_TOPPLE_DAILY_CAP", "3"))
+AUTO_TOPPLE_COST_CAP = float(os.environ.get("COUNCIL_AUTO_TOPPLE_DAILY_USD", "20.0"))
 ENV = ('ENVFILE=$(systemctl show sh-brain-tgbot -p EnvironmentFiles 2>/dev/null | '
        'sed -E "s/EnvironmentFiles=//; s/ .*//"); cd /opt/sh-brain-src && set -a; . "$ENVFILE" 2>/dev/null; set +a;')
 sys.path.insert(0, REPO + "/tools/cost")
@@ -97,6 +100,10 @@ def _ops(event, detail, nxt=""):
         subprocess.run(["python3", REPO + "/tools/build_loop/ops_log.py", "council", event, detail, "$0", "", nxt], timeout=15)
     except Exception:
         pass
+
+
+def _ops_ledger_path():
+    return Path(os.environ.get("OPS_LEDGER", "/opt/fpai-build/ops_ledger.jsonl"))
 
 
 def _resolve_cli(name, configured_path):
@@ -373,6 +380,170 @@ def persist_transcript(prompt, raw_stdout, verdict, sig_hash):
         _ops("transcript_persist_error", str(e)[:200])
 
 
+def decision_awaits_james(queue_text):
+    """One-at-a-time guard: an open James decision means council must not add noise.
+
+    The build loop may have many answered needs_build rows; those are substrate
+    work and should not block. Only explicit awaiting/open rows do.
+    """
+    for line in (queue_text or "").splitlines():
+        lowered = line.lower()
+        if " awaiting:" in lowered or " open:" in lowered or lowered.startswith(("awaiting:", "open:")):
+            return True
+    return False
+
+
+def _proposal_text(d):
+    return "\n".join(str(d.get(k) or "") for k in ("title", "why", "build_spec", "risk", "synthesis"))
+
+
+def _reserved_verdict(d):
+    text = _proposal_text(d)
+    try:
+        from tools.reserved.classify import is_reserved
+
+        return is_reserved(text, {"source": "council", "consequential": False})
+    except Exception as exc:
+        return {"reserved": True, "category": "uncertain", "reason": f"reserved classifier unavailable: {exc}"}
+
+
+def _estimated_cost(d):
+    explicit = d.get("estimated_cost_usd") or d.get("cost_usd") or d.get("daily_cost_usd")
+    try:
+        return float(explicit)
+    except (TypeError, ValueError):
+        pass
+    text = _proposal_text(d).lower()
+    if any(term in text for term in ("paid api", "metered api", "new subscription", "buy ", "purchase ", "spend ")):
+        return AUTO_TOPPLE_COST_CAP + 1.0
+    return 0.0
+
+
+def _is_reversible(d):
+    text = _proposal_text(d).lower()
+    risk = str(d.get("risk") or "").lower()
+    positive = any(word in text for word in ("reversible", "rollback", "revert", "dry-run", "dry run", "kill switch", "behind flag"))
+    negative = any(word in text for word in ("irreversible", "no rollback", "without rollback", "permanent", "delete service", "move money"))
+    return (risk == "low" or "reversible" in risk or positive) and not negative
+
+
+def _north_star_aligned(d):
+    text = _proposal_text(d).lower()
+    aligned_terms = (
+        "self-standing",
+        "fpos",
+        "substrate",
+        "build loop",
+        "auto-proof",
+        "proof",
+        "ledger",
+        "spot",
+        "topple",
+        "council",
+        "autonomous",
+        "reduce james",
+        "without james",
+    )
+    drift_terms = ("decorative", "vanity", "cruft", "unrelated", "public announcement", "money movement")
+    return any(term in text for term in aligned_terms) and not any(term in text for term in drift_terms)
+
+
+def auto_topple_count_today(ledger_path=None, *, now=None):
+    path = Path(ledger_path) if ledger_path else _ops_ledger_path()
+    if not path.exists():
+        return 0
+    today = (now or datetime.now(timezone.utc)).date()
+    count = 0
+    for line in path.read_text(encoding="utf-8", errors="replace").splitlines()[-1000:]:
+        try:
+            row = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if row.get("loop") != "council" or row.get("event") != "auto_toppled":
+            continue
+        stamp = str(row.get("ts") or "")
+        try:
+            row_day = datetime.strptime(stamp[:10], "%Y-%m-%d").date()
+        except ValueError:
+            continue
+        if row_day == today:
+            count += 1
+    return count
+
+
+def proactive_topple_gate(d, constitution, *, queue_text="", ledger_path=None, now=None):
+    if not constitution.get("accepted", True):
+        return {"auto_topple": False, "reason": "; ".join(constitution.get("reasons", []))[:300]}
+    reserved = _reserved_verdict(d)
+    if reserved.get("reserved"):
+        return {"auto_topple": False, "reason": f"reserved-class: {reserved.get('reason', 'reserved')}"}
+    if not _is_reversible(d):
+        return {"auto_topple": False, "reason": "not explicitly reversible/low-risk"}
+    cost = _estimated_cost(d)
+    if cost > AUTO_TOPPLE_COST_CAP:
+        return {"auto_topple": False, "reason": f"estimated cost ${cost:g} exceeds ${AUTO_TOPPLE_COST_CAP:g} cap"}
+    if not _north_star_aligned(d):
+        return {"auto_topple": False, "reason": "north-star/substrate alignment not explicit"}
+    if decision_awaits_james(queue_text):
+        return {"auto_topple": False, "reason": "decision already awaits James"}
+    count = auto_topple_count_today(ledger_path, now=now)
+    if count >= AUTO_TOPPLE_DAILY_CAP:
+        return {"auto_topple": False, "reason": f"daily auto-topple cap hit ({count}/{AUTO_TOPPLE_DAILY_CAP})"}
+    return {
+        "auto_topple": True,
+        "reason": "constitution-passed, reversible, within cap, north-star-aligned, not Reserved",
+        "estimated_cost_usd": cost,
+        "auto_topples_today": count,
+        "daily_cap": AUTO_TOPPLE_DAILY_CAP,
+    }
+
+
+def build_seed_payload(d, why, gate):
+    title = str(d.get("title") or "Council proactive topple").strip()
+    proof = str(d.get("proof_expected") or d.get("build_spec") or "Tested diff plus ops-log proof.").strip()
+    build_spec = str(d.get("build_spec") or "").strip()
+    return {
+        "question": f"AUTO Council Spot->Topple: {title}",
+        "build_spec": (
+            f"# AUTO SPEC - Council Spot->Topple: {title}\n\n"
+            "Source: council debate proactive topple.\n\n"
+            "## Why\n"
+            f"{why}\n\n"
+            "## Build\n"
+            f"{build_spec}\n\n"
+            "## Guardrails\n"
+            "- Reversible only; keep rollback explicit.\n"
+            "- No money movement, outreach send, public voice, direction change, secrets, service deletion, or production deploy.\n"
+            f"- Estimated marginal cost: ${gate.get('estimated_cost_usd', 0):g}; daily cap: ${AUTO_TOPPLE_COST_CAP:g}.\n"
+            "- Stop if implementation becomes Reserved Class.\n\n"
+            "## Proof\n"
+            f"{proof}\n"
+        ),
+        "proof_expected": proof,
+        "liveness": {
+            "kind": "council_proactive_topple",
+            "title": title,
+            "gate": gate,
+        },
+    }
+
+
+def surface_proposal(d, why):
+    payload = json.dumps({"title": d["title"], "why": why, "build_spec": d["build_spec"], "risk": d.get("risk", "low")})
+    out = run_curator("./.venv/bin/python -m curator.decisions recommend", inp=payload)
+    _ops("proposed", d.get("title", ""), "James: approve or veto the proposal")
+    print("proposed + surfaced:", out.strip())
+    return 0
+
+
+def seed_proactive_topple(d, why, gate):
+    payload = json.dumps(build_seed_payload(d, why, gate))
+    out = run_curator("./.venv/bin/python -m curator.decisions seed", inp=payload)
+    _ops("auto_toppled", d.get("title", ""), "Build loop: build, review, auto-merge if independently approved")
+    print("auto-toppled + queued:", out.strip())
+    return 0
+
+
 def main():
     if os.path.exists(CFG + "/.disabled") or os.path.exists(HOME + "/.config/fpai/decisions/.recommend_disabled"):
         print("disabled"); return 0
@@ -382,8 +553,13 @@ def main():
     if spent >= DAILY_CAP:
         print(f"council daily cap hit (${spent:.2f}/${DAILY_CAP})"); return 0
 
-    # load queue — no one-at-a-time gate (decision agent auto-answers, build loop auto-merges)
+    # load queue — one-at-a-time gate only for genuine James decisions; answered
+    # needs_build rows are substrate work and do not block council spotting.
     queue = run_curator("./.venv/bin/python -m curator.decisions list")
+    if decision_awaits_james(queue):
+        _ops("skipped", "decision already awaits James; council one-at-a-time gate held")
+        print("decision already awaits James — council one-at-a-time gate held")
+        return 0
 
     if trigger_from_files and run_diagnostic_dialogue and is_decision_queue_empty:
         try:
@@ -421,7 +597,7 @@ def main():
             _ops("model_dna_update_error", str(e)[:200])
 
     # record we processed this signal (so we don't re-debate the same state)
-    open(CFG + "/last_hash","w").write(sig_hash)
+    Path(CFG, "last_hash").write_text(sig_hash, encoding="utf-8")
     total_today, _ = track.today("council")
     print(f"debated via claude -p (Claude Max flat-rate, $0 marginal). real metered today: ${total_today:.4f}")
 
@@ -444,25 +620,30 @@ def main():
            + (("  🤖 GPT(2nd lab): " + gpt) if gpt else ""))
     # Constitution Check — Law 5 enforcement at the autonomous-proposal gate.
     # The Constitution claims every autonomous action is scored against the 8 laws;
-    # until 2026-07-03 the checker existed but was wired to nothing. Fail-open on
-    # checker errors (a broken gate must not silence the council), fail-CLOSED on
-    # a rejected verdict.
+    # until 2026-07-03 the checker existed but was wired to nothing. Checker
+    # errors fall back to surfacing only; proactive topple requires a real pass.
+    _cc = {"accepted": True, "reasons": ["constitution check unavailable"]}
     try:
         from tools.governance.constitution_check import check_proposal
         _cc = check_proposal({"title": d.get("title", ""), "kind": "council_proposal",
                               "why": d.get("why", ""), "build_spec": d.get("build_spec", "")})
         if not _cc.get("accepted", True):
+            reserved = _reserved_verdict(d)
+            if reserved.get("reserved"):
+                _ops("auto_topple_held", f"{d.get('title','')[:80]} :: reserved-class constitution hold", "James: approve or veto if useful")
+                return surface_proposal(d, why)
             _ops("constitution_rejected", f"{d.get('title','')[:80]} :: " + "; ".join(_cc.get("reasons", []))[:150])
             print("constitution check REJECTED the proposal:", "; ".join(_cc.get("reasons", [])))
             return 0
     except Exception as e:
         _ops("constitution_check_error", str(e)[:150])
+        return surface_proposal(d, why)
 
-    payload = json.dumps({"title":d["title"],"why":why,"build_spec":d["build_spec"],"risk":d.get("risk","low")})
-    out = run_curator("./.venv/bin/python -m curator.decisions recommend", inp=payload)
-    _ops("proposed", d.get("title",""), "James: approve or veto the proposal")
-    print("proposed + surfaced:", out.strip())
-    return 0
+    gate = proactive_topple_gate(d, _cc, queue_text=queue)
+    if gate.get("auto_topple"):
+        return seed_proactive_topple(d, why, gate)
+    _ops("auto_topple_held", f"{d.get('title','')[:80]} :: {gate.get('reason','')[:180]}", "James: approve or veto if useful")
+    return surface_proposal(d, why)
 
 
 if __name__ == "__main__":

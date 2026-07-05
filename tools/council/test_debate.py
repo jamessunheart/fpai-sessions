@@ -1,6 +1,8 @@
+import json
 import unittest
 import subprocess
 import tempfile
+from datetime import datetime, timezone
 from pathlib import Path
 from unittest import mock
 
@@ -194,6 +196,219 @@ class CouncilDebateTest(unittest.TestCase):
 
         self.assertEqual(status, "appended: v20260618-awareness")
         self.assertEqual(FakeConsciousnessLoop.calls[0]["weighting_directive"], result["weighting_directive"])
+
+    def test_proactive_gate_allows_reversible_north_star_winner(self):
+        winner = {
+            "title": "Proof ledger hardening",
+            "why": "Make the substrate proof loop more self-standing.",
+            "build_spec": "Add reversible tests and rollback for the FPOS proof ledger.",
+            "risk": "low",
+        }
+        reserved = {"reserved": False, "reason": "delegable"}
+
+        with mock.patch.object(debate, "_reserved_verdict", return_value=reserved):
+            gate = debate.proactive_topple_gate(
+                winner,
+                {"accepted": True, "reasons": ["constitution check passed"]},
+                queue_text="d194 answered: existing substrate build",
+                ledger_path=Path("/tmp/no-such-council-ledger.jsonl"),
+            )
+
+        self.assertTrue(gate["auto_topple"])
+        self.assertEqual(gate["estimated_cost_usd"], 0.0)
+
+    def test_proactive_gate_holds_reserved_winner_for_james_surface(self):
+        winner = {
+            "title": "Treasury signature",
+            "why": "Move money for yield.",
+            "build_spec": "Move money from MACU to yield after signature.",
+            "risk": "low",
+        }
+
+        gate = debate.proactive_topple_gate(
+            winner,
+            {"accepted": True, "reasons": ["constitution check passed"]},
+            queue_text="",
+            ledger_path=Path("/tmp/no-such-council-ledger.jsonl"),
+        )
+
+        self.assertFalse(gate["auto_topple"])
+        self.assertIn("reserved", gate["reason"].lower())
+
+    def test_auto_topple_count_and_cap_use_ops_ledger(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            ledger = Path(tmp) / "ops.jsonl"
+            rows = [
+                {"ts": "2026-07-05T01:00:00Z", "loop": "council", "event": "auto_toppled"},
+                {"ts": "2026-07-05T02:00:00Z", "loop": "council", "event": "auto_toppled"},
+                {"ts": "2026-07-05T03:00:00Z", "loop": "council", "event": "auto_toppled"},
+                {"ts": "2026-07-04T03:00:00Z", "loop": "council", "event": "auto_toppled"},
+            ]
+            ledger.write_text("\n".join(json.dumps(row) for row in rows) + "\n", encoding="utf-8")
+            winner = {
+                "title": "Proof ledger hardening",
+                "why": "Make the substrate proof loop more self-standing.",
+                "build_spec": "Add reversible tests and rollback for the FPOS proof ledger.",
+                "risk": "low",
+            }
+
+            with mock.patch.object(debate, "_reserved_verdict", return_value={"reserved": False}):
+                gate = debate.proactive_topple_gate(
+                    winner,
+                    {"accepted": True, "reasons": ["constitution check passed"]},
+                    ledger_path=ledger,
+                    now=datetime(2026, 7, 5, tzinfo=timezone.utc),
+                )
+
+            self.assertEqual(debate.auto_topple_count_today(ledger, now=datetime(2026, 7, 5, tzinfo=timezone.utc)), 3)
+            self.assertFalse(gate["auto_topple"])
+            self.assertIn("daily auto-topple cap hit", gate["reason"])
+
+    def test_main_auto_queues_reversible_winner_with_seed(self):
+        calls = []
+        ops = []
+
+        def fake_run_curator(cmd, inp=None):
+            calls.append((cmd, inp))
+            if " list" in cmd:
+                return "d194 answered: existing substrate build"
+            if "recent-chats" in cmd:
+                return "james: make the substrate proof loop more self-standing"
+            if " seed" in cmd:
+                return '{"id":"d999"}'
+            if " recommend" in cmd:
+                return '{"id":"should-not-surface"}'
+            return ""
+
+        winner = {
+            "propose": True,
+            "title": "Proof ledger hardening",
+            "why": "Make the substrate proof loop more self-standing.",
+            "synthesis": "Build the reversible proof hardening.",
+            "build_spec": "Add reversible tests and rollback for the FPOS proof ledger.",
+            "risk": "low",
+        }
+        completed = subprocess.CompletedProcess(["claude"], 0, json.dumps(winner), "")
+
+        with tempfile.TemporaryDirectory() as tmp:
+            cfg = Path(tmp)
+            with mock.patch.object(debate, "CFG", str(cfg)), \
+                mock.patch.dict("os.environ", {"FPAI_GOVERNANCE_LEDGER": str(cfg / "constitution.jsonl")}), \
+                mock.patch.object(debate.track, "today", return_value=(0.0, [])), \
+                mock.patch.object(debate, "run_curator", side_effect=fake_run_curator), \
+                mock.patch.object(debate, "pragmatist_voice", return_value=""), \
+                mock.patch.object(debate, "run_claude_json", return_value=(winner, completed)), \
+                mock.patch.object(debate, "persist_transcript"), \
+                mock.patch.object(debate, "gpt_voice", return_value=""), \
+                mock.patch.object(debate, "_reserved_verdict", return_value={"reserved": False}), \
+                mock.patch.object(debate, "auto_topple_count_today", return_value=0), \
+                mock.patch.object(debate, "_ops", lambda event, detail, nxt="": ops.append((event, detail, nxt))):
+                rc = debate.main()
+
+        self.assertEqual(rc, 0)
+        seed_calls = [call for call in calls if " seed" in call[0]]
+        recommend_calls = [call for call in calls if " recommend" in call[0]]
+        self.assertEqual(len(seed_calls), 1)
+        self.assertEqual(recommend_calls, [])
+        payload = json.loads(seed_calls[0][1])
+        self.assertEqual(payload["question"], "AUTO Council Spot->Topple: Proof ledger hardening")
+        self.assertTrue(payload["liveness"]["kind"], "council_proactive_topple")
+        self.assertEqual(ops[-1][0], "auto_toppled")
+
+    def test_main_surfaces_reserved_winner_instead_of_seed(self):
+        calls = []
+
+        def fake_run_curator(cmd, inp=None):
+            calls.append((cmd, inp))
+            if " list" in cmd:
+                return "d194 answered: existing substrate build"
+            if "recent-chats" in cmd:
+                return "james: treasury signal"
+            if " recommend" in cmd:
+                return '{"id":"d998"}'
+            return ""
+
+        winner = {
+            "propose": True,
+            "title": "Treasury signature",
+            "why": "Move money for yield.",
+            "synthesis": "Reserved.",
+            "build_spec": "Move money from MACU to yield after signature.",
+            "risk": "low",
+        }
+        completed = subprocess.CompletedProcess(["claude"], 0, json.dumps(winner), "")
+
+        with tempfile.TemporaryDirectory() as tmp:
+            cfg = Path(tmp)
+            with mock.patch.object(debate, "CFG", str(cfg)), \
+                mock.patch.dict("os.environ", {"FPAI_GOVERNANCE_LEDGER": str(cfg / "constitution.jsonl")}), \
+                mock.patch.object(debate.track, "today", return_value=(0.0, [])), \
+                mock.patch.object(debate, "run_curator", side_effect=fake_run_curator), \
+                mock.patch.object(debate, "pragmatist_voice", return_value=""), \
+                mock.patch.object(debate, "run_claude_json", return_value=(winner, completed)), \
+                mock.patch.object(debate, "persist_transcript"), \
+                mock.patch.object(debate, "gpt_voice", return_value=""), \
+                mock.patch.object(debate, "_ops"):
+                rc = debate.main()
+
+        self.assertEqual(rc, 0)
+        self.assertEqual([call for call in calls if " seed" in call[0]], [])
+        self.assertEqual(len([call for call in calls if " recommend" in call[0]]), 1)
+
+    def test_main_surfaces_when_constitution_check_errors(self):
+        calls = []
+
+        def fake_run_curator(cmd, inp=None):
+            calls.append((cmd, inp))
+            if " list" in cmd:
+                return "d194 answered: existing substrate build"
+            if "recent-chats" in cmd:
+                return "james: make the substrate proof loop more self-standing"
+            if " recommend" in cmd:
+                return '{"id":"d997"}'
+            return ""
+
+        winner = {
+            "propose": True,
+            "title": "Proof ledger hardening",
+            "why": "Make the substrate proof loop more self-standing.",
+            "synthesis": "Build the reversible proof hardening.",
+            "build_spec": "Add reversible tests and rollback for the FPOS proof ledger.",
+            "risk": "low",
+        }
+        completed = subprocess.CompletedProcess(["claude"], 0, json.dumps(winner), "")
+
+        with tempfile.TemporaryDirectory() as tmp:
+            cfg = Path(tmp)
+            with mock.patch.object(debate, "CFG", str(cfg)), \
+                mock.patch.dict("os.environ", {"FPAI_GOVERNANCE_LEDGER": str(cfg / "constitution.jsonl")}), \
+                mock.patch.object(debate.track, "today", return_value=(0.0, [])), \
+                mock.patch.object(debate, "run_curator", side_effect=fake_run_curator), \
+                mock.patch.object(debate, "pragmatist_voice", return_value=""), \
+                mock.patch.object(debate, "run_claude_json", return_value=(winner, completed)), \
+                mock.patch.object(debate, "persist_transcript"), \
+                mock.patch.object(debate, "gpt_voice", return_value=""), \
+                mock.patch("tools.governance.constitution_check.check_proposal", side_effect=RuntimeError("gate down")), \
+                mock.patch.object(debate, "_ops"):
+                rc = debate.main()
+
+        self.assertEqual(rc, 0)
+        self.assertEqual([call for call in calls if " seed" in call[0]], [])
+        self.assertEqual(len([call for call in calls if " recommend" in call[0]]), 1)
+
+    def test_main_skips_when_decision_awaits_james(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            cfg = Path(tmp)
+            with mock.patch.object(debate, "CFG", str(cfg)), \
+                mock.patch.dict("os.environ", {"FPAI_GOVERNANCE_LEDGER": str(cfg / "constitution.jsonl")}), \
+                mock.patch.object(debate.track, "today", return_value=(0.0, [])), \
+                mock.patch.object(debate, "run_curator", return_value="d200 awaiting: Reserved decision"), \
+                mock.patch.object(debate, "run_claude_json") as claude, \
+                mock.patch.object(debate, "_ops"):
+                rc = debate.main()
+
+        self.assertEqual(rc, 0)
+        claude.assert_not_called()
 
 
 if __name__ == "__main__":

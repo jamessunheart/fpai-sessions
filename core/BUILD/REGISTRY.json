@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-05T12:50:00Z",
+    "updated_at": "2026-07-05T13:20:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d195_council-proactive-spot-topple-a",
+            "slug": "SPEC_d195_council-proactive-spot-topple-a",
+            "branch": "build/SPEC_d195_council-proactive-spot-topple-a",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d195_council-proactive-spot-topple-a.md",
+            "tests_passed": true,
+            "notes": "d195 complete in working tree: council Spot -> Topple now queues safe winners directly via curator.decisions seed as answered needs_build=true when Constitution Check passes, the proposal is non-Reserved, explicitly reversible/low-risk, within auto-topple cost cap, north-star/substrate aligned, no James decision is awaiting, and the new 3/day auto-topple cap is open. Reserved and ambiguous winners still surface through recommend; queued winners log council auto_toppled and held winners log auto_topple_held. Focused council tests, adjacent import/reserved/constitution/spot-topple tests, py_compile, registry JSON validation, and diff hygiene passed. Live council run/live DB insert not run in sandbox."
+        },
         {
             "id": "SPEC_d194_spec-d194-the-spot-topple-orches",
             "slug": "SPEC_d194_spec-d194-the-spot-topple-orches",
