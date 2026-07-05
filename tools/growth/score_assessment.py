@@ -596,12 +596,18 @@ def parse_intake(text: str) -> tuple[str, str, str]:
 
 
 def score_one(intake_text: str, name: str = "", company: str = "") -> str:
+    data, scores, total, weakest = score_data(intake_text)
+    extras = {k: data.get(k, "") for k in ("archetype", "archetype_line", "surprise", "monday_move", "share_line", "next_step")}
+    return render(name, company, scores, total, weakest, data.get("opportunities", []), extras)
+
+
+def score_data(intake_text: str) -> tuple[dict, dict, int, str]:
+    """Return the structured Allocation Score result used by email and chat."""
     prompt = PROMPT.format(intake=intake_text, schema=json.dumps(SCHEMA))
     data = run_claude(prompt)
     scores = {d: int(data["scores"].get(d, 50)) for d in DIMENSIONS}
     total, weakest = compute(scores)
-    extras = {k: data.get(k, "") for k in ("archetype", "archetype_line", "surprise", "monday_move", "share_line", "next_step")}
-    return render(name, company, scores, total, weakest, data.get("opportunities", []), extras)
+    return data, scores, total, weakest
 
 
 def main():

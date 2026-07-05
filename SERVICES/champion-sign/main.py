@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import hashlib
 import importlib.util as _ilu
 import json
 import os
@@ -32,6 +33,7 @@ from typing import Optional
 
 from fastapi import BackgroundTasks, FastAPI, Header, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, Field, validator
 
 DATA_DIR = Path(os.environ.get("CHAMPION_DATA_DIR", "/var/lib/full-potential/champions"))
@@ -52,6 +54,12 @@ MAIL_PORT = int(os.environ.get("FP_ASSESSMENT_MAIL_PORT", "25"))
 MAIL_FROM = os.environ.get("FP_ASSESSMENT_MAIL_FROM", "Full Potential <score@fullpotential.com>")
 MAIL_REPLY_TO = os.environ.get("FP_ASSESSMENT_REPLY_TO", "james@fullpotential.com")
 MAIL_DISABLE = os.environ.get("FP_ASSESSMENT_MAIL_DISABLE", "0") == "1"
+META_WEBHOOK_VERIFY_TOKEN = os.environ.get("META_WEBHOOK_VERIFY_TOKEN", "").strip()
+META_PAGE_ACCESS_TOKEN = os.environ.get("META_PAGE_ACCESS_TOKEN", "").strip()
+META_COMMENT_AUTOMATION_ENABLED = os.environ.get("META_COMMENT_AUTOMATION_ENABLED", "0") == "1"
+META_PUBLIC_REPLY_APPROVED = os.environ.get("META_PUBLIC_REPLY_APPROVED", "0") == "1"
+META_DM_REPLY_APPROVED = os.environ.get("META_DM_REPLY_APPROVED", "0") == "1"
+META_COMMENT_RATE_LIMIT = int(os.environ.get("META_COMMENT_RATE_LIMIT", "20"))
 logger = logging.getLogger("champion-sign")
 
 
@@ -92,6 +100,10 @@ RATE_WINDOW = 3600
 RATE_LIMIT = 3
 _first_read_rate_log: dict[str, list[float]] = {}
 FIRST_READ_RATE_LIMIT = 12
+_assessment_chat_rate_log: dict[str, list[float]] = {}
+ASSESSMENT_CHAT_RATE_LIMIT = 30
+_meta_comment_rate_log: dict[str, list[float]] = {}
+_meta_seen_comment_ids: set[str] = set()
 
 
 def _check_rate(ip: str) -> bool:
@@ -118,6 +130,30 @@ def _check_first_read_rate(ip: str) -> bool:
     return True
 
 
+def _check_assessment_chat_rate(ip: str) -> bool:
+    now = time.time()
+    history = _assessment_chat_rate_log.get(ip, [])
+    history = [t for t in history if now - t < RATE_WINDOW]
+    if len(history) >= ASSESSMENT_CHAT_RATE_LIMIT:
+        _assessment_chat_rate_log[ip] = history
+        return False
+    history.append(now)
+    _assessment_chat_rate_log[ip] = history
+    return True
+
+
+def _check_meta_comment_rate(key: str) -> bool:
+    now = time.time()
+    history = _meta_comment_rate_log.get(key, [])
+    history = [t for t in history if now - t < RATE_WINDOW]
+    if len(history) >= META_COMMENT_RATE_LIMIT:
+        _meta_comment_rate_log[key] = history
+        return False
+    history.append(now)
+    _meta_comment_rate_log[key] = history
+    return True
+
+
 def _load_score_assessment_module():
     repo_root = Path(os.environ.get("FPAI_REPO_ROOT", "/opt/fpai-build/FPAI_Cockpit"))
     module_path = repo_root / "tools/growth/score_assessment.py"
@@ -139,6 +175,19 @@ def _load_life_score_module():
     spec = _ilu.spec_from_file_location("fpai_life_score", module_path)
     if spec is None or spec.loader is None:
         raise RuntimeError(f"cannot load score_life from {module_path}")
+    mod = _ilu.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def _load_process_leads_module():
+    repo_root = Path(os.environ.get("FPAI_REPO_ROOT", "/opt/fpai-build/FPAI_Cockpit"))
+    module_path = repo_root / "tools/growth/process_leads.py"
+    if not module_path.exists():
+        module_path = Path(__file__).resolve().parents[2] / "tools/growth/process_leads.py"
+    spec = _ilu.spec_from_file_location("fpai_process_leads", module_path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"cannot load process_leads from {module_path}")
     mod = _ilu.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
@@ -1252,6 +1301,27 @@ class LeadFirstRead(BaseModel):
         return v.strip()
 
 
+class AssessmentChatRequest(BaseModel):
+    session_id: Optional[str] = Field(None, max_length=80)
+    field: Optional[str] = Field(None, max_length=40)
+    message: Optional[str] = Field(None, max_length=1200)
+    state: Optional[dict] = None
+    variant: Optional[str] = Field(None, max_length=40)
+
+    @validator("session_id", "field", "message", "variant")
+    def _chat_no_html(cls, v):
+        if v is None:
+            return v
+        if re.search(r"[<>]", v):
+            raise ValueError("contains forbidden characters")
+        return v.strip()
+
+
+class MetaWebhookPayload(BaseModel):
+    object: Optional[str] = None
+    entry: list[dict] = Field(default_factory=list)
+
+
 @app.post("/lead/first-read")
 async def lead_first_read(req: LeadFirstRead, request: Request) -> dict:
     """Return a bounded public-site first read for the Assessment form."""
@@ -1285,6 +1355,388 @@ async def lead_first_read(req: LeadFirstRead, request: Request) -> dict:
         "summary": site.get("summary", {}),
         "intake_context": site.get("intake_context", ""),
     }
+
+
+CHAT_FIELDS = ("business", "bottleneck", "name", "email", "tools", "team")
+CHAT_QUESTIONS = {
+    "business": "I am James Sunheart + AI. Tell me what you are building in one or two sentences.",
+    "bottleneck": "What feels like the main bottleneck right now: money, time, attention, team, tools, AI, or something else?",
+    "name": "Got it. What name should I put on this assessment?",
+    "email": "And what email should I use for the follow-up copy of the score?",
+    "tools": "What tools are in the stack right now? SaaS, spreadsheets, CRMs, AI tools, anything that runs the work.",
+    "team": "Last one before I score it: what does the team look like, including contractors or mostly-solo work?",
+}
+
+
+@app.post("/lead/assessment-chat")
+def assessment_chat(req: AssessmentChatRequest, request: Request, background_tasks: BackgroundTasks) -> dict:
+    """Public assessment chat: no James-private context, one scorer call at completion."""
+    ip = request.client.host if request.client else "unknown"
+    if not _check_assessment_chat_rate(ip):
+        raise HTTPException(status_code=429, detail="Too many chat messages. Try again later.")
+
+    session_id = _chat_session_id(req.session_id, ip)
+    state = _clean_chat_state(req.state)
+    return _advance_assessment_chat(
+        session_id=session_id,
+        field=req.field,
+        message=req.message,
+        state=state,
+        variant=req.variant,
+        background_tasks=background_tasks,
+    )
+
+
+@app.get("/meta/comment-webhook")
+def meta_comment_webhook_verify(request: Request) -> PlainTextResponse:
+    params = request.query_params
+    mode = params.get("hub.mode", "")
+    token = params.get("hub.verify_token", "")
+    challenge = params.get("hub.challenge", "")
+    if mode == "subscribe" and META_WEBHOOK_VERIFY_TOKEN and token == META_WEBHOOK_VERIFY_TOKEN:
+        return PlainTextResponse(challenge)
+    raise HTTPException(status_code=403, detail="Meta webhook verification failed")
+
+
+@app.post("/meta/comment-webhook")
+def meta_comment_webhook(payload: MetaWebhookPayload, background_tasks: BackgroundTasks) -> dict:
+    """Meta FB/IG webhook adapter for comment -> public reply -> Messenger assessment.
+
+    Graph API writes are disabled unless the explicit Meta automation and
+    per-channel approval flags are set. Disabled mode still returns the planned
+    actions for a semi-manual fast test.
+    """
+    events = _extract_meta_events(payload.dict())
+    results = []
+    for event in events:
+        if event["kind"] == "comment":
+            results.append(_handle_meta_comment(event, background_tasks))
+        elif event["kind"] == "message":
+            results.append(_handle_meta_messenger_message(event, background_tasks))
+    return {
+        "ok": True,
+        "public_mode": True,
+        "private_context_used": False,
+        "automation_enabled": META_COMMENT_AUTOMATION_ENABLED,
+        "events": len(events),
+        "results": results,
+    }
+
+
+def _advance_assessment_chat(*, session_id: str, field: Optional[str], message: Optional[str], state: dict,
+                             variant: Optional[str], background_tasks: BackgroundTasks) -> dict:
+    field = (field or "").strip().lower()
+    if field in CHAT_FIELDS and message is not None:
+        state[field] = message.strip()[:1200]
+    if state.get("email") and not _valid_email(state["email"]):
+        state.pop("email", None)
+        return {
+            "ok": True,
+            "session_id": session_id,
+            "public_mode": True,
+            "private_context_used": False,
+            "lead_captured": False,
+            "filename": "",
+            "state": state,
+            "next_field": "email",
+            "reply": "That does not look like a working email. What email should I use for the follow-up copy of the score?",
+        }
+
+    captured = False
+    filename = state.get("lead_filename", "")
+    if state.get("name") and state.get("email") and not filename:
+        filename = _write_assessment_chat_lead(session_id, state, status="lead_captured", variant=variant)
+        state["lead_filename"] = filename
+        captured = True
+        background_tasks.add_task(_send_meta_lead_event_safe, Path(filename).stem, state["email"])
+
+    missing = [name for name in CHAT_FIELDS if not state.get(name)]
+    if missing:
+        next_field = missing[0]
+        reply = CHAT_QUESTIONS[next_field]
+        if captured:
+            reply = "Perfect. I have the lead captured. " + reply
+        return {
+            "ok": True,
+            "session_id": session_id,
+            "public_mode": True,
+            "private_context_used": False,
+            "lead_captured": captured or bool(filename),
+            "filename": filename,
+            "state": state,
+            "next_field": next_field,
+            "reply": reply,
+        }
+
+    try:
+        result = _score_assessment_chat_state(state)
+    except Exception as exc:
+        logger.exception("assessment chat score failed session=%s error=%s", session_id, exc)
+        raise HTTPException(status_code=502, detail="The score engine could not finish right now. Your lead is captured.")
+
+    filename = _write_assessment_chat_lead(
+        session_id,
+        state,
+        status="chat_scored",
+        variant=variant,
+        score=result,
+    )
+    state["lead_filename"] = filename
+    return {
+        "ok": True,
+        "session_id": session_id,
+        "public_mode": True,
+        "private_context_used": False,
+        "lead_captured": True,
+        "filename": filename,
+        "state": state,
+        "next_field": None,
+        "reply": _assessment_chat_result_reply(result),
+        "score": result,
+    }
+
+
+META_TRIGGER_WORDS = (
+    "score", "assessment", "audit", "bottleneck", "allocation", "ai", "yes",
+    "interested", "me", "send", "dm", "messenger", "full potential",
+)
+META_BLOCKED_WORDS = (
+    "guaranteed", "guarantee", "risk-free", "passive income", "replace your salary",
+    "get rich", "crypto airdrop", "free money",
+)
+
+
+def _extract_meta_events(payload: dict) -> list[dict]:
+    events: list[dict] = []
+    for entry in payload.get("entry") or []:
+        for change in entry.get("changes") or []:
+            value = change.get("value") or {}
+            field = str(change.get("field") or "")
+            item = str(value.get("item") or field)
+            if item in ("comment", "comments") or field in ("feed", "comments", "instagram_comments"):
+                comment_id = str(value.get("comment_id") or value.get("id") or "")
+                message = str(value.get("message") or value.get("text") or "")
+                actor = value.get("from") if isinstance(value.get("from"), dict) else {}
+                events.append({
+                    "kind": "comment",
+                    "surface": "instagram" if payload.get("object") == "instagram" or "instagram" in field else "facebook",
+                    "comment_id": comment_id,
+                    "post_id": str(value.get("post_id") or value.get("media_id") or ""),
+                    "sender_id": str(actor.get("id") or value.get("sender_id") or ""),
+                    "sender_name": str(actor.get("name") or value.get("username") or ""),
+                    "message": message,
+                    "verb": str(value.get("verb") or "add"),
+                })
+        for msg in entry.get("messaging") or []:
+            message = msg.get("message") or {}
+            sender = msg.get("sender") or {}
+            events.append({
+                "kind": "message",
+                "surface": "messenger",
+                "sender_id": str(sender.get("id") or ""),
+                "message": str(message.get("text") or ""),
+                "mid": str(message.get("mid") or ""),
+            })
+    return events
+
+
+def _handle_meta_comment(event: dict, background_tasks: BackgroundTasks) -> dict:
+    allowed, reason = _meta_comment_compliance(event)
+    if not allowed:
+        return {"kind": "comment", "comment_id": event.get("comment_id", ""), "status": "held", "reason": reason}
+
+    public_reply = _meta_public_reply_text(event)
+    dm_prompt = CHAT_QUESTIONS["business"]
+    public_action = _meta_graph_post(
+        path=f"{event['comment_id']}/comments",
+        payload={"message": public_reply},
+        approved=META_PUBLIC_REPLY_APPROVED,
+        action="public_comment_reply",
+    )
+    dm_action = _meta_graph_post(
+        path=f"{event['comment_id']}/private_replies",
+        payload={"message": dm_prompt},
+        approved=META_DM_REPLY_APPROVED,
+        action="comment_private_reply",
+    )
+    _write_meta_funnel_audit({
+        "kind": "comment",
+        "status": "auto_reply_staged" if public_action["status"] == "would_send" else public_action["status"],
+        "comment_id": event.get("comment_id", ""),
+        "post_id": event.get("post_id", ""),
+        "sender_id_hash": _short_hash(event.get("sender_id", "")),
+        "message_preview": event.get("message", "")[:160],
+        "public_action": public_action,
+        "dm_action": dm_action,
+    })
+    return {
+        "kind": "comment",
+        "comment_id": event.get("comment_id", ""),
+        "status": "processed",
+        "public_reply": public_reply,
+        "messenger_prompt": dm_prompt,
+        "public_action": public_action,
+        "dm_action": dm_action,
+    }
+
+
+def _handle_meta_messenger_message(event: dict, background_tasks: BackgroundTasks) -> dict:
+    sender_id = event.get("sender_id", "")
+    if not sender_id:
+        return {"kind": "message", "status": "held", "reason": "missing sender id"}
+    session_id = f"meta-{_short_hash(sender_id)}"
+    session = _load_meta_session(session_id)
+    state = _clean_chat_state(session.get("state"))
+    text = str(event.get("message") or "").strip()[:1200]
+    field = str(session.get("next_field") or "")
+    if not field and text and not any(state.get(name) for name in CHAT_FIELDS):
+        field = "business"
+    result = _advance_assessment_chat(
+        session_id=session_id,
+        field=field,
+        message=text if field else None,
+        state=state,
+        variant="meta-messenger",
+        background_tasks=background_tasks,
+    )
+    _save_meta_session(session_id, result.get("state", {}), result.get("next_field"))
+    reply_action = _meta_graph_post(
+        path="me/messages",
+        payload={"recipient": {"id": sender_id}, "message": {"text": result.get("reply", "")}},
+        approved=META_DM_REPLY_APPROVED,
+        action="messenger_assessment_reply",
+    )
+    _write_meta_funnel_audit({
+        "kind": "messenger",
+        "status": "chat_scored" if result.get("score") else "chat_active",
+        "session_id": session_id,
+        "sender_id_hash": _short_hash(sender_id),
+        "next_field": result.get("next_field"),
+        "lead_captured": result.get("lead_captured"),
+        "filename": result.get("filename", ""),
+        "reply_action": reply_action,
+    })
+    _append_hermes_thread_safe("meta_messenger", "lead", text)
+    _append_hermes_thread_safe("meta_messenger", "james_ai", result.get("reply", ""))
+    return {
+        "kind": "message",
+        "status": "processed",
+        "session_id": session_id,
+        "chat": result,
+        "reply_action": reply_action,
+    }
+
+
+def _meta_comment_compliance(event: dict) -> tuple[bool, str]:
+    if str(event.get("verb") or "add") not in ("add", "edited"):
+        return False, "not a new or edited comment"
+    comment_id = str(event.get("comment_id") or "")
+    if not comment_id:
+        return False, "missing comment id"
+    if comment_id in _meta_seen_comment_ids:
+        return False, "duplicate comment"
+    if not _check_meta_comment_rate(comment_id):
+        return False, "comment rate limited"
+    text = str(event.get("message") or "").strip()
+    if len(text) < 2:
+        return False, "empty comment"
+    low = text.lower()
+    if any(word in low for word in META_BLOCKED_WORDS):
+        return False, "blocked compliance phrase"
+    if not any(word in low for word in META_TRIGGER_WORDS):
+        return False, "no assessment trigger phrase"
+    _meta_seen_comment_ids.add(comment_id)
+    return True, "allowed"
+
+
+def _meta_public_reply_text(event: dict) -> str:
+    first = (event.get("sender_name") or "").strip().split(" ")[0]
+    prefix = f"{first}, " if first else ""
+    return (
+        f"{prefix}I can run a quick public Allocation Score with you here. "
+        "I am opening a Messenger thread so your details stay out of the comments. "
+        "- James Sunheart + AI"
+    )
+
+
+def _meta_graph_post(*, path: str, payload: dict, approved: bool, action: str) -> dict:
+    if not META_COMMENT_AUTOMATION_ENABLED:
+        return {"action": action, "status": "would_send", "reason": "META_COMMENT_AUTOMATION_ENABLED is off", "path": path}
+    if not approved:
+        return {"action": action, "status": "held", "reason": f"{action} approval flag is off", "path": path}
+    if not META_PAGE_ACCESS_TOKEN:
+        return {"action": action, "status": "held", "reason": "missing META_PAGE_ACCESS_TOKEN", "path": path}
+    import urllib.error
+    import urllib.request
+
+    url = f"https://graph.facebook.com/{META_API_VERSION}/{path}?access_token={META_PAGE_ACCESS_TOKEN}"
+    req = urllib.request.Request(
+        url,
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"content-type": "application/json", "accept": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            body = resp.read().decode("utf-8", errors="replace")
+            return {"action": action, "status": "sent", "http_status": resp.status, "body": body[:300], "path": path}
+    except urllib.error.HTTPError as exc:
+        body = exc.read().decode("utf-8", errors="replace")
+        return {"action": action, "status": "failed", "http_status": exc.code, "body": body[:300], "path": path}
+    except Exception as exc:  # noqa: BLE001
+        return {"action": action, "status": "failed", "reason": str(exc)[:300], "path": path}
+
+
+def _meta_session_dir() -> Path:
+    path = LEADS_DIR / ".meta_messenger_sessions"
+    path.mkdir(parents=True, exist_ok=True)
+    return path
+
+
+def _load_meta_session(session_id: str) -> dict:
+    path = _meta_session_dir() / f"{session_id}.json"
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+def _save_meta_session(session_id: str, state: dict, next_field: Optional[str]) -> None:
+    path = _meta_session_dir() / f"{session_id}.json"
+    path.write_text(json.dumps({"state": state, "next_field": next_field, "updated_at": datetime.now().isoformat()}, indent=2), encoding="utf-8")
+
+
+def _write_meta_funnel_audit(row: dict) -> None:
+    audit = LEADS_DIR / "meta_funnel_audit.jsonl"
+    safe = {"ts": datetime.now().isoformat(), **row}
+    with audit.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(safe, sort_keys=True) + "\n")
+
+
+def _short_hash(value: str) -> str:
+    return hashlib.sha256(str(value or "").encode("utf-8")).hexdigest()[:16]
+
+
+def _append_hermes_thread_safe(surface: str, role: str, text: str) -> None:
+    if os.environ.get("HERMES_THREAD_APPEND_ENABLED", "0") != "1" or not text:
+        return
+    try:
+        import subprocess
+
+        repo_root = Path(os.environ.get("FPAI_REPO_ROOT", "/opt/fpai-build/FPAI_Cockpit"))
+        thread_py = repo_root / "tools/continuity/thread.py"
+        if not thread_py.exists():
+            return
+        subprocess.run(
+            ["python3", str(thread_py), "append", surface, role, "-"],
+            input=text[:4000],
+            text=True,
+            capture_output=True,
+            timeout=8,
+            check=False,
+        )
+    except Exception:
+        logger.debug("HERMES thread append failed", exc_info=True)
 
 
 @app.post("/lead/submit")
@@ -1374,6 +1826,171 @@ def _score_life_lead(req: LeadSubmit) -> tuple[dict, str]:
     result["context"] = {str(k): str(v)[:1000] for k, v in context.items() if v is not None}
     deliverable = score_mod.render(result, result["context"])
     return result, deliverable
+
+
+def _chat_session_id(raw: Optional[str], ip: str) -> str:
+    if raw:
+        safe = re.sub(r"[^a-zA-Z0-9_-]+", "", raw)[:60]
+        if safe:
+            return safe
+    seed = f"{ip}:{time.time()}:{os.getpid()}"
+    return hashlib.sha256(seed.encode("utf-8")).hexdigest()[:16]
+
+
+def _clean_chat_state(raw: Optional[dict]) -> dict:
+    state = {}
+    if not isinstance(raw, dict):
+        return state
+    for key in CHAT_FIELDS + ("lead_filename",):
+        value = raw.get(key)
+        if value is None:
+            continue
+        text = str(value).strip()
+        if re.search(r"[<>]", text):
+            continue
+        state[key] = text[:1200]
+    return state
+
+
+def _assessment_chat_intake(state: dict) -> str:
+    return "\n".join([
+        f"Name: {state.get('name', '')}",
+        f"Company / project: {state.get('business', '')}",
+        f"Bottleneck: {state.get('bottleneck', '')}",
+        f"Tools: {state.get('tools', '')}",
+        f"Team: {state.get('team', '')}",
+        "Source: public /assessment chat. Public visitor supplied this context; no James-private context used.",
+    ])
+
+
+def _valid_email(value: str) -> bool:
+    return bool(re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", str(value or "").strip()))
+
+
+def _score_assessment_chat_state(state: dict) -> dict:
+    score_mod = _load_score_assessment_module()
+    data, scores, total, weakest = score_mod.score_data(_assessment_chat_intake(state))
+    opportunities = []
+    for item in data.get("opportunities", [])[:3]:
+        opportunities.append({
+            "title": str(item.get("title", ""))[:160],
+            "dimension": str(item.get("dimension", ""))[:80],
+            "why": str(item.get("why", ""))[:320],
+            "est_annual_value": str(item.get("est_annual_value", ""))[:120],
+        })
+    return {
+        "allocation_score": total,
+        "weakest_dimension": weakest,
+        "scores": scores,
+        "archetype": str(data.get("archetype", ""))[:160],
+        "archetype_line": str(data.get("archetype_line", ""))[:320],
+        "surprise": str(data.get("surprise", ""))[:420],
+        "opportunities": opportunities,
+        "monday_move": str(data.get("monday_move", ""))[:420],
+        "reserved_next_step": str(data.get("next_step", ""))[:420],
+    }
+
+
+def _assessment_chat_result_reply(result: dict) -> str:
+    opp_lines = []
+    for idx, opp in enumerate(result.get("opportunities", [])[:3], 1):
+        opp_lines.append(f"{idx}. {opp.get('title')} - {opp.get('why')} ({opp.get('est_annual_value')})")
+    return "\n".join([
+        f"Your Allocation Score is {result.get('allocation_score')}/100.",
+        f"Allocation signature: {result.get('archetype')}.",
+        f"The biggest trapped capability is in {result.get('weakest_dimension')}.",
+        "Top 3 opportunities:",
+        *opp_lines,
+        f"Free Monday move: {result.get('monday_move')}",
+        "Reserved next step: if you want help turning this into a Blueprint, reply to the follow-up email. James approves final invitation copy before live sends.",
+    ])
+
+
+def _write_assessment_chat_lead(session_id: str, state: dict, *, status: str, variant: Optional[str] = None,
+                                score: Optional[dict] = None) -> str:
+    today = datetime.now().strftime("%Y-%m-%d")
+    safe_session = re.sub(r"[^a-zA-Z0-9_-]+", "", session_id)[:60] or "chat"
+    fname = state.get("lead_filename") or f"{today}_assessment-chat-{safe_session}.md"
+    out = LEADS_DIR / Path(fname).name
+    score = score or {}
+    score_block = ""
+    if score:
+        score_block = "\n## Live chat Allocation Score\n\n"
+        score_block += f"- **Score:** {score.get('allocation_score')}/100\n"
+        score_block += f"- **Weakest dimension:** {score.get('weakest_dimension')}\n"
+        score_block += f"- **Archetype:** {score.get('archetype')}\n\n"
+        score_block += "### Top 3 opportunities\n\n"
+        for idx, opp in enumerate(score.get("opportunities", [])[:3], 1):
+            score_block += (
+                f"{idx}. **{opp.get('title', '')}** ({opp.get('dimension', '')}) - "
+                f"{opp.get('why', '')} · {opp.get('est_annual_value', '')}\n"
+            )
+        if score.get("monday_move"):
+            score_block += f"\n### Free Monday move\n\n{score.get('monday_move')}\n"
+    md = f"""---
+lead_id: {Path(fname).stem}
+date_submitted: {today}
+name: {state.get('name', '')}
+email: {state.get('email', '')}
+interest: allocation-audit-chat
+assessment_lens: business
+allocation_score: {score.get('allocation_score', '')}
+status: {status}
+source: assessment-chat
+variant: {variant or ''}
+chat_session_id: {session_id}
+public_mode: true
+private_context_used: false
+---
+
+# {state.get('name', 'Assessment chat lead')} - Assessment Chat Lead
+
+**Submitted:** {today}
+**Email:** {state.get('email', '')}
+
+## Conversational intake
+
+**Business / project:** {state.get('business', '')}
+
+**Bottleneck:** {state.get('bottleneck', '')}
+
+**Tools:** {state.get('tools', '')}
+
+**Team:** {state.get('team', '')}
+{score_block}
+---
+
+*Captured via the public /assessment chat on {today}.*
+"""
+    out.write_text(md, encoding="utf-8")
+    audit = LEADS_DIR / "audit.jsonl"
+    with audit.open("a", encoding="utf-8") as f:
+        f.write(json.dumps({
+            "ts": datetime.now().isoformat(),
+            "kind": "assessment_chat",
+            "status": status,
+            "name": state.get("name", ""),
+            "email": state.get("email", ""),
+            "filename": out.name,
+            "allocation_score": score.get("allocation_score", ""),
+        }) + "\n")
+    return out.name
+
+
+def _send_meta_lead_event_safe(lead_id: str, email: str) -> None:
+    try:
+        process_mod = _load_process_leads_module()
+        ok, detail = process_mod.send_meta_lead_event(
+            lead_id=lead_id,
+            email=email,
+            access_token=process_mod.meta_access_token(),
+        )
+        if ok:
+            logger.info("assessment chat Meta CAPI Lead sent lead=%s", lead_id)
+        else:
+            logger.warning("assessment chat Meta CAPI Lead not sent lead=%s reason=%s", lead_id, detail)
+    except Exception as exc:
+        logger.warning("assessment chat Meta CAPI Lead failed lead=%s error=%s", lead_id, exc)
 
 
 def _area_labels() -> dict[str, str]:
