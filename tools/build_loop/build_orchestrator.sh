@@ -295,6 +295,18 @@ PY
 
   # gate
   if bash "$ROOT/tools/merge/merge_gate.sh" "$branch" >/tmp/orch_gate_$id.out 2>&1; then
+    if ! python3 "$ROOT/tools/build_loop/product_portfolio_review.py" \
+      --repo-root "$ROOT" \
+      --spec-id "$id" \
+      --branch "$branch" \
+      --result "$RESULTS/$id.result.md" \
+      --output "$ROOT/core/BUILD/reports/${id}.portfolio_review.md" \
+      --fail-on-low-quality >/tmp/orch_quality_$id.out 2>&1; then
+      echo "⚑ QUALITY HOLD: $id (surfaced — not silently merged)"
+      sed 's/^/    /' "/tmp/orch_quality_$id.out" 2>/dev/null || true
+      surfaced=$((surfaced+1)); READY="$READY $id"
+      continue
+    fi
     mark_ai_review_approved "$branch"
     if [ "$AUTO_MERGE" = "1" ]; then
       if AUTO_MERGE_TARGET="$AUTO_MERGE_TARGET" AUTO_MERGE_COMPARE="$AUTO_MERGE_COMPARE" \

@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-05T18:34:00Z",
+    "updated_at": "2026-07-05T18:45:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d207_autonomy-quality-value-gate-for",
+            "slug": "SPEC_d207_autonomy-quality-value-gate-for",
+            "branch": "build/SPEC_d207_autonomy-quality-value-gate-for",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d207_autonomy-quality-value-gate-for.md",
+            "tests_passed": true,
+            "notes": "d207 complete in working tree: added product_portfolio_review.py to score autonomous product candidates for quality proof, value alignment, buyer clarity, and keep/kill/develop recommendation while keeping /opt/fpai-build/.spot_topple_autobuild_enabled behavior intact. Spot/Topple now writes a PORTFOLIO REVIEW digest and live queued runs send it through the existing Telegram notifier; build_orchestrator now quality-holds weak builds before auto-merge instead of silently merging them. Focused/adjacent tests, orchestrator CLI smoke, py_compile, shell syntax, activation policy, registry JSON validation, and diff hygiene passed. No live Telegram send, deploy, push, merge, money movement, outreach, or public voice was performed."
+        },
         {
             "id": "SPEC_d206_autonomy-liveness-aware-discern",
             "slug": "SPEC_d206_autonomy-liveness-aware-discern",
