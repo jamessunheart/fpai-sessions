@@ -197,6 +197,10 @@ def alert_message(metric: ReliabilityMetric, markdown_path: Path) -> str:
 
 
 def send_alert(repo_root: Path, message: str) -> bool:
+    # 2026-07-05 (James): this is INTERNAL system monitoring — raw "reliability 0%/FAIL"
+    # diagnostics do not belong in James's chat (P17). The signal file is still written for
+    # self-heal + the council. Never push to James from here.
+    return False
     notifier = repo_root / "tools" / "build_loop" / "notify_telegram.sh"
     if not notifier.exists():
         return False

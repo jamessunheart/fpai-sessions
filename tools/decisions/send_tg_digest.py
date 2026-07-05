@@ -134,16 +134,16 @@ def _summarize_topic(d: dict) -> str:
     Prefer ember_summary annotation if present; else extract from topic."""
     summary = d.get("ember_summary")
     if summary:
-        return summary.lower().rstrip(".")
+        return summary.rstrip(".")
     topic = (d.get("topic") or "").strip()
     # Try first question/sentence
     for sep in ["? ", ". "]:
         idx = topic.find(sep)
         if 30 < idx < 140:
-            return topic[:idx].strip().lower().rstrip(".")
+            return topic[:idx].strip().rstrip(".")
     if len(topic) > 120:
-        return (topic[:117].rstrip() + "...").lower()
-    return topic.lower()
+        return topic[:117].rstrip() + "..."
+    return topic
 
 
 def format_digest(since_hours: int = 24, all_open: bool = False) -> str:
@@ -171,23 +171,16 @@ def format_digest(since_hours: int = 24, all_open: bool = False) -> str:
     lines: list[str] = []
 
     if not filtered:
-        lines.append(f"hey james — quiet {greet}.")
-        lines.append("")
-        lines.append(
-            "no decisions logged in the window. either we're between work "
-            "or I'm missing what's happening on your side. tell me which."
-        )
-        lines.append("")
-        lines.append("—ember")
-        return "\n".join(lines)
+        # 2026-07-05 (James): a "nothing happened" message is itself noise (P17). Say nothing.
+        return ""
 
     n = len(filtered)
     if n == 1:
-        lines.append(f"hey james — quick scan. one decision sat {window_phrase}.")
+        lines.append(f"Hey James — quick scan. One decision sat {window_phrase}.")
     elif n == 2:
-        lines.append(f"hey james — two decisions {window_phrase}. both reversible, both logged.")
+        lines.append(f"Hey James — two decisions {window_phrase}. Both reversible, both logged.")
     else:
-        lines.append(f"hey james — {n} decisions {window_phrase}. all reversible, all logged.")
+        lines.append(f"Hey James — {n} decisions {window_phrase}. All reversible, all logged.")
     lines.append("")
 
     for i, d in enumerate(filtered):
@@ -380,6 +373,10 @@ def main():
         print(f"  OWNER_TG_ID:        {creds.get('OWNER_TG_ID') or 'MISSING'}")
         return
 
+    if not args.test and not body.strip():
+        # Empty window -> stay silent (P17: no "nothing happened" pings). 2026-07-05 James.
+        print("nothing to report — staying silent")
+        sys.exit(0)
     ok, msg = send_to_telegram(body, creds, test=args.test)
     print(f"{'✓' if ok else '✗'} {msg}")
     sys.exit(0 if ok else 1)
