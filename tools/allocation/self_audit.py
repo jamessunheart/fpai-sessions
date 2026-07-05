@@ -192,6 +192,14 @@ def main(argv: list[str] | None = None) -> int:
               else "\n".join(f"  DRIFT · {d}" for d in drift))
     except Exception as e:
         print(f"  (coherence invariants unavailable: {e})")
+    print("\n=== REPO == RUNNING (d138 curator fork · code map vs territory) ===")
+    try:
+        from tools.governance.repo_running_coherence import check as repo_running_check
+        drift = repo_running_check()
+        print("  OK — live curator matches repo (or not on the live host)." if not drift
+              else "\n".join(f"  DRIFT · {d}" for d in drift))
+    except Exception as e:
+        print(f"  (repo==running unavailable: {e})")
     return 0
 
 
