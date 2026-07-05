@@ -7,4 +7,4 @@ Wants=network-online.target
 Type=oneshot
 Environment=FPAI_SURFACE=auto-loop
 WorkingDirectory=/opt/fpai-build/FPAI_Cockpit
-ExecStart=/usr/bin/env python3 /opt/fpai-build/FPAI_Cockpit/tools/awareness/reliability_probe.py --send-alert --source timer --threshold 0.95
+ExecStart=/opt/fpai-build/FPAI_Cockpit/core/BUILD/cron/fpai-awareness-reliability-run.sh

@@ -130,7 +130,8 @@ class AwarenessReliabilityProbeTest(unittest.TestCase):
         self.assertFalse(result.ok)
         self.assertFalse(result.behavioral_pass)
         self.assertEqual(result.matched_keywords, ())
-        self.assertIn("did not match", result.reason)
+        self.assertIn("behavioral bot answer", result.reason)
+        self.assertIn("expected latest-insight keywords", result.reason)
 
     def test_records_success_metric_without_alert(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -172,6 +173,8 @@ class AwarenessReliabilityProbeTest(unittest.TestCase):
             self.assertFalse(row["context_render_continuity"])
             report = json.loads((root / "metric.json").read_text(encoding="utf-8"))
             self.assertTrue(report["metric"]["behavioral_pass"])
+            self.assertEqual(report["primary_metric"], "behavioral_bot_answer")
+            self.assertEqual(report["secondary_signal"], "context_render_continuity")
 
     def test_alerts_when_behavioral_reliability_below_threshold(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -202,7 +205,7 @@ class AwarenessReliabilityProbeTest(unittest.TestCase):
             async def verifier():
                 return verify_awareness.AwarenessProbe(
                     False,
-                    reason="bot answer did not match latest session insight",
+                    reason="behavioral bot answer missed expected latest-insight keywords",
                     behavioral_pass=False,
                     context_render_continuity=True,
                 )
@@ -274,6 +277,18 @@ class AwarenessReliabilityProbeTest(unittest.TestCase):
             self.assertFalse(metric.ok)
             self.assertFalse(metric.alert_sent)
             self.assertEqual(alerts, [])
+
+    def test_systemd_service_uses_live_venv_runner(self) -> None:
+        repo = Path(__file__).resolve().parents[2]
+        service = repo / "core" / "BUILD" / "cron" / "fpai-awareness-reliability.service"
+        runner = repo / "core" / "BUILD" / "cron" / "fpai-awareness-reliability-run.sh"
+
+        service_text = service.read_text(encoding="utf-8")
+        runner_text = runner.read_text(encoding="utf-8")
+
+        self.assertIn("ExecStart=/opt/fpai-build/FPAI_Cockpit/core/BUILD/cron/fpai-awareness-reliability-run.sh", service_text)
+        self.assertIn('PYTHON_BIN="$LIVE/.venv/bin/python"', runner_text)
+        self.assertIn("reliability_probe.py", runner_text)
 
 
 if __name__ == "__main__":

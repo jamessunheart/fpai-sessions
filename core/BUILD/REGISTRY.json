@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-05T01:16:08Z",
+    "updated_at": "2026-07-05T01:36:04Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d189_awareness-activate-the-d183-beh",
+            "slug": "SPEC_d189_awareness-activate-the-d183-beh",
+            "branch": "build/SPEC_d189_awareness-activate-the-d183-beh",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d189_awareness-activate-the-d183-beh.md",
+            "tests_passed": true,
+            "notes": "d189 complete in working tree: awareness reports now declare primary_metric=behavioral_bot_answer and secondary_signal=context_render_continuity, failed behavioral grading uses an explicit behavioral-keyword reason instead of the retired ambiguous title-proxy wording, the systemd service runs through a live-venv-aware runner, and the activation script installs/enables the timer then runs a strict live smoke that rejects questionless/context-only reports. Focused awareness tests, activation policy tests, py_compile, shell syntax, registry JSON validation, activation policy CLI, and diff hygiene passed. Sandbox live probe reached the venv but could not connect to the live DB, so full bot-answer proof is deferred to server activation."
+        },
         {
             "id": "SPEC_d188_build-loop-activation-audit-act",
             "slug": "SPEC_d188_build-loop-activation-audit-act",

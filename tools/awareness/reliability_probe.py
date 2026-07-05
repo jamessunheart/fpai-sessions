@@ -144,6 +144,8 @@ def write_reports(metric: ReliabilityMetric, *, json_path: Path, markdown_path: 
     payload = {
         "schema": SCHEMA,
         "generated_at": utc_stamp(now),
+        "primary_metric": "behavioral_bot_answer",
+        "secondary_signal": "context_render_continuity",
         "metric": metric.to_json(),
     }
     json_path.parent.mkdir(parents=True, exist_ok=True)

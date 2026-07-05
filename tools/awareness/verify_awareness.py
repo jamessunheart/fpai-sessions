@@ -195,7 +195,7 @@ async def verify_bot_response(
     return AwarenessProbe(
         passed,
         latest_title=str(latest.get("title") or ""),
-        reason="ok" if passed else "bot answer did not match latest session insight",
+        reason="ok" if passed else "behavioral bot answer missed expected latest-insight keywords",
         question=question,
         answer=answer,
         expected_keywords=tuple(expected),
