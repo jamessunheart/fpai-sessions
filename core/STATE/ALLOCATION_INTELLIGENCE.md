@@ -183,6 +183,26 @@ The shift this forces: the AI stops asking *"can I complete this task?"* and sta
 
 **First deployment (the proof mandate):** choose **ONE** business, not ten. Run the complete flywheel — Assessment → Resource Map → Leak Detection → Opportunity Ranking → Allocation Blueprint → Implementation → Measurement → Capability Increase → Reusable Intelligence. That reusable intelligence becomes part of the engine; the 2nd client starts smarter, the 10th dramatically smarter. This is how Allocation Intelligence gets proven in the real world (aligns with the Value-Capture directive: the Savings Split IS capability-created-for-a-client, priced).
 
+---
+
+## ★ OPPORTUNITY INTELLIGENCE — the "what to build" engine (James 2026-07-05, the missing layer)
+
+The brain is good at *"how do we build?"* It must also answer *"what should we build?"* — a different function. So the engine runs **two loops**:
+
+- **Loop 1 — the Capability Engine:** learn → improve → build → deploy → capture proof. **This increases intelligence.** (Already live: the build loop + Council + RCA.)
+- **Loop 2 — the Opportunity Engine:** constantly ask *where is value trapped? where is AI now capable but not yet adopted? where are humans overspending? where are decisions poor? which industries change fastest? which opportunities fit our capabilities? which has the highest expected return?* **This allocates intelligence.** (The missing layer — build it.)
+
+**The daily wake-up question (the Gap):** *"Where has the gap between available intelligence and market adoption grown the most since yesterday?"* (This makes the earlier **Gap Opportunity Engine** whitepaper a CORE brain function, not one product among many — it identifies where AI capability exceeds market adoption and ranks the openings.)
+
+**The Opportunity Portfolio (the instrument):** opportunities are not brainstormed — they are **investment candidates** in a live scored table. Every opportunity answers 8 questions: (1) what problem exists? (2) who pays? (3) how painful? (4) can AI solve it? (5) can we prove value quickly? (6) can it become recurring revenue? (7) does solving it make our Intelligence Engine smarter? (8) **does it unlock additional opportunities?** — #8 is huge: some opportunities are valuable because they open ten more.
+
+**★ Two scores, not one (prevents chasing shiny objects):**
+- **Opportunity Score** — *how valuable could this become?* (pain × market × compounding, discounted by difficulty + time-to-revenue)
+- **Allocation Score** — *given our current resources, should we pursue it NOW?*
+A thing can score high on Opportunity yet low on Allocation (right idea, wrong time). The engine sequences by both. *(Note: this Allocation Score is the org/opportunity twin of the human 7-Areas Allocation Score — same discipline, different subject.)*
+
+**The closed loop this completes:** `Intelligence → Opportunities → Resources → Execution → Proof → Learning → Better Intelligence ↺`. Loop 2 finds the leverage; Loop 1 builds it; proof feeds both. Over time the *opportunity-ranking capability itself* becomes the compounding competitive advantage — every client, implementation, and proof makes the next ranking sharper. **This absorbs and supersedes the earlier value-gap-questions spec (d178)** — those questions become the Opportunity Engine's scan.
+
 **Governing instruction:** the full operating form is [[STEWARDSHIP_CONSTITUTION]] (James 2026-07-04) — everything is entrusted capital that must return more than it received. Two operational pieces to run every time:
 
 - **The Decision Loop:** identify resources → identify highest-value opportunities → allocate to greatest expected realized value → execute efficiently → measure objectively → capture the lesson → improve the next allocation. Repeat.
