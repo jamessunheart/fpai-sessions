@@ -217,6 +217,19 @@ sequence. Getting this ONE decision consistently right compounds every other cap
 - **Evidence:** keystone §THE ROLE + the 5 Allocation Laws + §OPPORTUNITY INTELLIGENCE; instrument
   = the Opportunity Ledger (d186) sequenced as a cascade, scored by the weighted rubric.
 
+### P21 — An entrusted resource is worth zero until its readiness is verified. Inventory ≠ usable asset.
+Ember pitched a flywheel-activation plan on "warm assets" — an old Mailchimp list, a CRM, Scout
+"candidates" — none checked. The specialist verified: the Mailchimp list had no working key, the
+"leads" were 36 pattern-guessed cold celebrity emails (a compliance trap wearing a warm costume),
+Scout was a model registry. A plan built on assumed resources is a hypothesis, not a plan (P1
+attempt≠verified, applied to the INPUT side of allocation, not just output).
+- **Guard:** before allocating against — or quoting a cash timeline on — any resource, verify its
+  LIVE readiness: does the list have consented subscribers? does the key authenticate? are the
+  contacts actually warm? Unverified = score it 0, don't promise on it. **Cold data dressed as a
+  warm asset is a red line, not a resource** (never treat guessed/scraped contacts as owned-audience).
+- **Evidence:** BUG_LOG 2026-07-05 — flywheel-activation resource audit; the adversarial specialist
+  pass caught the optimism the primary asserted (proof outranks opinion, Law 5, working as designed).
+
 ---
 _Version: tracks [BRAIN_VERSION](BRAIN_VERSION). New principles graduate here from BUG_LOG root causes.
 Tier-1 shape (per the 2026-07-04 A/B compression call): law + one causal sentence + evidence pointer —
