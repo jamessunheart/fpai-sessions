@@ -21,7 +21,7 @@ import httpx
 REPO_ROOT = Path(os.environ.get("FPAI_REPO_ROOT", Path(__file__).resolve().parents[3]))
 DEFAULT_MAX_ITEMS = int(os.environ.get("SH_BUILD_CONTEXT_MAX_ITEMS", "6"))
 DEFAULT_MAX_CHARS = int(os.environ.get("SH_BUILD_CONTEXT_MAX_CHARS", "1800"))
-DEFAULT_HOT_STATE_MAX_CHARS = int(os.environ.get("SH_HOT_STATE_MAX_CHARS", "0"))
+DEFAULT_HOT_STATE_MAX_CHARS = int(os.environ.get("SH_HOT_STATE_MAX_CHARS", "3500"))
 DEFAULT_DIAGNOSTIC_CONTEXT_FILE = Path(
     os.environ.get("SELF_DIAGNOSTIC_CONTEXT_FILE", "/opt/fpai-build/.self_diagnostic_context.json")
 )

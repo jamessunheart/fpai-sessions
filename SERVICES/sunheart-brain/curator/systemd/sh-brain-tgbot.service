@@ -7,6 +7,9 @@ Wants=network-online.target
 Type=simple
 WorkingDirectory=/opt/sh-brain-src
 EnvironmentFile=/etc/sh-brain/curator.env
+Environment=CURATOR_LLM_PROVIDER=claude-cli
+Environment=ANTHROPIC_API_KEY=
+Environment=SH_HOT_STATE_MAX_CHARS=3500
 ExecStart=/opt/sh-brain-src/.venv/bin/python -m curator tgbot
 Restart=always
 RestartSec=5

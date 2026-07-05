@@ -31,6 +31,7 @@ import json
 import logging
 import os
 import re
+import subprocess
 import sys
 import uuid
 from datetime import datetime, timezone
@@ -643,6 +644,10 @@ CHAT_HISTORY_TURNS = int(os.environ.get("SH_TGBOT_HISTORY_TURNS", "20"))
 PROMPT_TOKEN_LIMIT = int(os.environ.get("SH_TGBOT_PROMPT_TOKEN_LIMIT", "180000"))
 MODEL_HEALTH_PATH = Path(os.environ.get("SH_TGBOT_MODEL_HEALTH_PATH", "/var/lib/sh-brain/model_health.json"))
 OPS_CHAT_ID = os.environ.get("TELEGRAM_OPS_CHAT_ID") or OWNER_CHAT_ID
+SELF_CHECK_LOG_MINUTES = int(os.environ.get("SH_TGBOT_SELF_CHECK_LOG_MINUTES", "30"))
+SELF_CHECK_CACHE_SECONDS = int(os.environ.get("SH_TGBOT_SELF_CHECK_CACHE_SECONDS", "60"))
+SERVICE_UNIT = os.environ.get("SH_TGBOT_SERVICE_UNIT", "sh-brain-tgbot.service")
+_SELF_CHECK_CACHE: dict[str, object] = {"ts": 0.0, "state": None}
 
 
 CHAT_SYSTEM_PROMPT = """You are the Sunheart Brain — a personal second-brain
@@ -920,6 +925,229 @@ def _model_label(model: str, fallback_reason: str = "") -> str:
     return "llama-fallback"
 
 
+def _human_age(seconds: float | None) -> str:
+    if seconds is None:
+        return "unknown"
+    if seconds < 90:
+        return f"{int(seconds)}s"
+    minutes = seconds / 60
+    if minutes < 90:
+        return f"{int(minutes)}m"
+    hours = minutes / 60
+    if hours < 48:
+        return f"{hours:.1f}h"
+    return f"{hours / 24:.1f}d"
+
+
+def _hot_state_health() -> dict:
+    try:
+        from .build_context import DEFAULT_HOT_STATE_FILE, HOT_STATE_MAX_AGE_SECONDS
+    except Exception:
+        DEFAULT_HOT_STATE_FILE = Path(os.environ.get("HOT_MEMORY_STATE_PATH", "~/.config/fpai/hot_memory/HOT_STATE.md")).expanduser()
+        HOT_STATE_MAX_AGE_SECONDS = 30 * 60
+    path = Path(os.environ.get("HOT_MEMORY_STATE_PATH", str(DEFAULT_HOT_STATE_FILE))).expanduser()
+    try:
+        stat = path.stat()
+    except OSError as e:
+        return {
+            "ok": False,
+            "path": str(path),
+            "age_seconds": None,
+            "bytes": 0,
+            "reason": f"missing: {e}",
+        }
+    age = max(0.0, datetime.now(timezone.utc).timestamp() - stat.st_mtime)
+    try:
+        empty = not path.read_text(encoding="utf-8", errors="ignore").strip()
+    except OSError as e:
+        return {
+            "ok": False,
+            "path": str(path),
+            "age_seconds": age,
+            "bytes": stat.st_size,
+            "reason": f"unreadable: {e}",
+        }
+    if empty:
+        reason = "empty"
+    elif age > HOT_STATE_MAX_AGE_SECONDS:
+        reason = f"stale: {_human_age(age)} old"
+    else:
+        reason = "fresh"
+    return {
+        "ok": not empty and age <= HOT_STATE_MAX_AGE_SECONDS,
+        "path": str(path),
+        "age_seconds": age,
+        "bytes": stat.st_size,
+        "reason": reason,
+    }
+
+
+def _voice_health() -> dict:
+    deps = voice_pipeline.dependency_status()
+    missing = deps.missing()
+    return {
+        "ok": deps.stt_ready,
+        "stt_ready": deps.stt_ready,
+        "faster_whisper": deps.faster_whisper,
+        "openai_whisper": deps.openai_whisper,
+        "local_ready": deps.local_ready,
+        "missing": missing,
+        "reason": "ready" if deps.stt_ready else "missing " + ", ".join(missing),
+    }
+
+
+async def _queue_health() -> dict:
+    try:
+        from .db import connect
+        async with connect() as conn:
+            async with conn.cursor() as cur:
+                await cur.execute(
+                    """
+                    SELECT
+                        to_regclass('brain_index.decisions') IS NOT NULL,
+                        CASE
+                            WHEN to_regclass('brain_index.decisions') IS NULL THEN false
+                            ELSE has_table_privilege(current_user, 'brain_index.decisions', 'INSERT')
+                        END
+                    """
+                )
+                row = await cur.fetchone()
+        exists = bool(row and row[0])
+        can_insert = bool(row and row[1])
+        return {
+            "ok": exists and can_insert,
+            "table_exists": exists,
+            "insert_privilege": can_insert,
+            "reason": "reachable" if exists and can_insert else "decisions table/insert privilege unavailable",
+        }
+    except Exception as e:
+        return {"ok": False, "table_exists": False, "insert_privilege": False, "reason": str(e)[:300]}
+
+
+def _recent_log_warnings() -> list[str]:
+    since = f"{max(1, SELF_CHECK_LOG_MINUTES)} minutes ago"
+    cmd = ["journalctl", "-u", SERVICE_UNIT, "--since", since, "--no-pager", "-n", "80"]
+    try:
+        proc = subprocess.run(cmd, check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=3)
+    except Exception:
+        return []
+    if proc.returncode not in (0, 1):
+        return []
+    pattern = re.compile(r"(importerror|modulenotfounderror|fallback|degrad|unavailable|failed|error|traceback)", re.I)
+    warnings: list[str] = []
+    for line in proc.stdout.splitlines():
+        if pattern.search(line):
+            compact = " ".join(line.split())
+            if compact and compact not in warnings:
+                warnings.append(compact[:220])
+        if len(warnings) >= 5:
+            break
+    return warnings
+
+
+async def _claude_health() -> dict:
+    try:
+        from .llm import claude_cli_self_test
+
+        ok, reason = await claude_cli_self_test()
+    except Exception as e:
+        ok, reason = False, str(e)
+    return {"ok": ok, "model": "Sonnet" if ok else "llama-fallback", "reason": reason}
+
+
+async def _self_check_state(*, answered_model: str | None = None, fallback_reason: str = "", force: bool = False) -> dict:
+    now_ts = datetime.now(timezone.utc).timestamp()
+    cached = _SELF_CHECK_CACHE.get("state")
+    if not force and isinstance(cached, dict) and now_ts - float(_SELF_CHECK_CACHE.get("ts") or 0) < SELF_CHECK_CACHE_SECONDS:
+        state = dict(cached)
+    else:
+        state = {
+            "checked_at": datetime.now(timezone.utc).isoformat(),
+            "context": _hot_state_health(),
+            "voice": _voice_health(),
+            "queue": await _queue_health(),
+            "recent_warnings": _recent_log_warnings(),
+        }
+        _SELF_CHECK_CACHE.update({"ts": now_ts, "state": state})
+    if answered_model:
+        state["model"] = {
+            "label": _model_label(answered_model, fallback_reason),
+            "actual": answered_model,
+            "fallback_reason": fallback_reason,
+        }
+    elif "model" not in state:
+        state["model"] = {"label": "unknown", "actual": "", "fallback_reason": ""}
+    return state
+
+
+def _self_check_degradations(state: dict) -> list[str]:
+    degraded: list[str] = []
+    model = state.get("model") if isinstance(state.get("model"), dict) else {}
+    if model.get("label") == "llama-fallback":
+        degraded.append("on fallback model")
+    context = state.get("context") if isinstance(state.get("context"), dict) else {}
+    if not context.get("ok"):
+        age = _human_age(context.get("age_seconds")) if context.get("age_seconds") is not None else "unknown age"
+        degraded.append(f"live state is {age} old ({context.get('reason') or 'unavailable'})")
+    voice = state.get("voice") if isinstance(state.get("voice"), dict) else {}
+    if not voice.get("ok"):
+        degraded.append("voice STT is down")
+    queue = state.get("queue") if isinstance(state.get("queue"), dict) else {}
+    if not queue.get("ok"):
+        degraded.append("queue-write check failed")
+    warnings = state.get("recent_warnings")
+    if isinstance(warnings, list) and warnings:
+        degraded.append(f"{len(warnings)} recent degrade/import warning(s)")
+    return degraded
+
+
+def _self_check_footer_from_state(state: dict) -> str:
+    model = state.get("model") if isinstance(state.get("model"), dict) else {}
+    label = str(model.get("label") or "unknown")
+    parts = [f"model {label}"]
+    if label == "llama-fallback":
+        parts.append("⚠️ on fallback model")
+    context = state.get("context") if isinstance(state.get("context"), dict) else {}
+    if context.get("ok"):
+        parts.append(f"state {_human_age(context.get('age_seconds'))} old")
+    else:
+        age = _human_age(context.get("age_seconds")) if context.get("age_seconds") is not None else "unknown"
+        parts.append(f"⚠️ my live state is {age} old")
+    voice = state.get("voice") if isinstance(state.get("voice"), dict) else {}
+    parts.append("voice ok" if voice.get("ok") else "⚠️ voice down")
+    warnings = state.get("recent_warnings")
+    if isinstance(warnings, list) and warnings:
+        parts.append(f"⚠️ {len(warnings)} recent warning(s)")
+    return "Health: " + " · ".join(parts)
+
+
+async def _append_self_check_footer(text: str, *, answered_model: str | None = None, fallback_reason: str = "") -> str:
+    state = await _self_check_state(answered_model=answered_model, fallback_reason=fallback_reason)
+    return text.rstrip() + "\n\n" + _self_check_footer_from_state(state)
+
+
+def _render_health_state(state: dict) -> str:
+    model = state.get("model") if isinstance(state.get("model"), dict) else {}
+    context = state.get("context") if isinstance(state.get("context"), dict) else {}
+    voice = state.get("voice") if isinstance(state.get("voice"), dict) else {}
+    queue = state.get("queue") if isinstance(state.get("queue"), dict) else {}
+    warnings = state.get("recent_warnings") if isinstance(state.get("recent_warnings"), list) else []
+    lines = [
+        "<b>Bot health</b>",
+        f"Model: <code>{tg._esc(str(model.get('label') or 'unknown'))}</code>",
+        f"Actual model: <code>{tg._esc(str(model.get('actual') or 'unknown'))}</code>",
+        f"Context: <code>{'fresh' if context.get('ok') else 'degraded'}</code> · age <code>{tg._esc(_human_age(context.get('age_seconds')))}</code> · bytes <code>{context.get('bytes', 0)}</code>",
+        f"Context path: <code>{tg._esc(str(context.get('path') or ''))}</code>",
+        f"Voice STT: <code>{'ready' if voice.get('ok') else 'down'}</code> · faster_whisper=<code>{voice.get('faster_whisper')}</code> · openai_whisper=<code>{voice.get('openai_whisper')}</code>",
+        f"Queue-write reachable: <code>{'yes' if queue.get('ok') else 'no'}</code> · table=<code>{queue.get('table_exists')}</code> · insert=<code>{queue.get('insert_privilege')}</code>",
+        f"Last error: <code>{tg._esc(str((model.get('fallback_reason') or queue.get('reason') or context.get('reason') or voice.get('reason') or 'none'))[:300])}</code>",
+        f"Recent warnings ({SELF_CHECK_LOG_MINUTES}m): <code>{len(warnings)}</code>",
+    ]
+    for item in warnings[:5]:
+        lines.append(f"- <code>{tg._esc(str(item))}</code>")
+    return "\n".join(lines)
+
+
 def _read_model_health() -> dict:
     try:
         data = json.loads(MODEL_HEALTH_PATH.read_text(encoding="utf-8"))
@@ -993,6 +1221,45 @@ async def _startup_claude_self_test() -> None:
         log.info("claude-cli startup self-test passed")
         return
     await _alert_model_fallback(reason, startup=True)
+
+
+async def _startup_self_test() -> None:
+    if os.environ.get("SH_TGBOT_STARTUP_SELFTEST_DISABLE", "").strip() == "1":
+        return
+    claude = await _claude_health()
+    state = await _self_check_state(
+        answered_model=str(claude.get("model") or ""),
+        fallback_reason="" if claude.get("ok") else str(claude.get("reason") or "startup ping failed"),
+        force=True,
+    )
+    if claude.get("ok"):
+        data = _read_model_health()
+        data.update(
+            {
+                "updated_at": datetime.now(timezone.utc).isoformat(),
+                "status": "ok",
+                "last_startup_self_test": "ok",
+                "model": "Sonnet",
+            }
+        )
+        try:
+            MODEL_HEALTH_PATH.parent.mkdir(parents=True, exist_ok=True)
+            MODEL_HEALTH_PATH.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        except Exception as e:
+            log.warning("model health self-test write failed: %s", e)
+    else:
+        _write_model_health_event("startup_failure", str(claude.get("reason") or "startup ping failed"))
+
+    degraded = _self_check_degradations(state)
+    if not degraded:
+        log.info("startup self-test passed: model/context/voice/queue healthy")
+        return
+    line = "bot started degraded: " + "; ".join(degraded[:6])
+    log.warning(line)
+    try:
+        await tg.send(f"⚠️ {tg._esc(line)}", chat_id=OPS_CHAT_ID)
+    except Exception as e:
+        log.warning("startup degraded alert send failed: %s", e)
 
 
 async def _recent_chat_history_context(conversation_id: str | None, *, limit: int = CHAT_HISTORY_TURNS) -> str:
@@ -1107,7 +1374,7 @@ async def _synthesize_answer(
             await _alert_model_fallback(fallback_reason)
         label = _model_label(getattr(result, "model", ""), fallback_reason)
         body = result.text.strip() or "(no response)"
-        return f"{body}\n\nModel: {label}"
+        return await _append_self_check_footer(body, answered_model=getattr(result, "model", ""), fallback_reason=fallback_reason)
     except Exception as e:
         log.exception("synthesis failed: %s", e)
         return f"⚠️ Brain synthesis hit an error: {e}"
@@ -1202,6 +1469,7 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
             "  /constitution — read the live repo constitution in chat\n"
             "  /builds   — build queue, in-flight stage, and today's completed count\n"
             "  /voice [on|off]  — toggle voice replies (default ON · voice-in always replies in voice)\n"
+            "  /health  — honest bot state: model, context age, voice, queue, last warnings\n"
             "  /more      — same as /signals more (expanded view: liquidity, costs, etc.)\n"
             "  /log       — recent AI activity timeline\n"
             "  /pending — list pending queue items with approve buttons\n"
@@ -1385,6 +1653,14 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
             return f"⚠️ builds snapshot failed: {tg._esc(str(e))}"
     if cmd == "voice":
         return _cmd_voice(rest.strip().lower())
+    if cmd == "health":
+        claude = await _claude_health()
+        state = await _self_check_state(
+            answered_model=str(claude.get("model") or ""),
+            fallback_reason="" if claude.get("ok") else str(claude.get("reason") or ""),
+            force=True,
+        )
+        return _render_health_state(state)
     if cmd == "scene":
         body = rest.strip()
         if not body:
@@ -4717,6 +4993,8 @@ async def _handle_message(msg: dict) -> None:
             log.exception("command failed: %s", e)
             reply = f"⚠️ command error: {e}"
         if reply is not None:
+            if text.lstrip("/").partition(" ")[0].lower() != "health":
+                reply = await _append_self_check_footer(reply)
             await tg.send(reply)
             # Speak slash-command replies too when the inbound was voice — the
             # whole point is eyes-closed conversation. Skip for commands that
@@ -5365,7 +5643,7 @@ async def run_forever() -> None:
     if not tg.BOT_TOKEN:
         raise SystemExit("TELEGRAM_BOT_TOKEN not set")
     log.info("sh-brain-tgbot starting; polling messages + callback_query")
-    await _startup_claude_self_test()
+    await _startup_self_test()
     offset = _load_offset()
     async with httpx.AsyncClient() as client:
         _ja_tick = 0
