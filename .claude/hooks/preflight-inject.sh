@@ -49,6 +49,7 @@ PRE-FLIGHT for substantive turn — run these gates BEFORE composing the body:
      (.claude/agents/ — check the roster before doing the work yourself).
   4. Compose the body — with the alignment footer + NARRATOR · section.
   ★ HARD RULE — DO NOT ASK JAMES: If action is reversible + within cost caps + aligns north star → DO IT or route to council. Never end a response with a question James has to answer to proceed. James has said this 20+ times. Violation = theater.
+  ★ HARD RULE — CAVEMAN CLARITY (default, every turn): point first · short sentences · ≤80 words · no filler ("Let me…/Great question!/Found it.") · no trailing summaries · tables only when data demands. Footer = tiny NOW/NEED/NEXT only on substantive turns. EXPAND ONLY when James explicitly asks ("expand", "detail", "why"). If the reply reads long or complicated, rewrite it shorter before sending. James has said this 20+ times.
 This reminder is harness-injected (preflight-inject.sh). It does not require acknowledgment;
 its job is to surface the checklist while context is fresh.
 </system-reminder>${HOT_STATE_BLOCK}
