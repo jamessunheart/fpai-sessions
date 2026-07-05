@@ -14,3 +14,13 @@ $0 · reversible · honest-or-blank (no invented scores) · independent review �
 
 ## Done / Proof
 The portfolio holds ≥5 real scored opportunities (incl. the current one: Resource Optimization Audit = the BBB/Savings-Split offer) · the daily Gap scan updates it · the Council picks its next build FROM the portfolio by Allocation Score · `/opportunities` returns the ranked list.
+
+## ADDENDUM (James 2026-07-05) — the EXTERNAL scan + closest-to-cash sequencing (the actual gap)
+Probe confirmed: the system scans INTERNAL gaps only (Council/self-audit) + an AI-frontier scan (forge). There is NO external market-opportunity scanner. Web access from 162 WORKS (verified). This addendum makes d186 the external Loop 2, not just an internal reranker.
+
+1. **External market-signal scanner** (cron, uses the working web access — $0 via urllib/web-fetch; add a paid signal source only if it pays for itself): pull cheap public signals — where AI capability now exceeds market adoption (new model releases vs slow-moving industries), where humans visibly overspend (job posts for repetitive roles, pricing of manual services), trending pain (forums/news). Each signal → an Opportunity Portfolio row with blanks where unknown (never fabricate).
+2. **Rank by CASH PROXIMITY as a first-class axis:** add `time_to_first_dollar` and `path_to_recurring` to the score. The engine surfaces the top opportunity **closest to cash** separately from the top by long-term Opportunity Score — so "what can produce revenue fastest" is always visible.
+3. **Close the build bridge:** the top closest-to-cash opportunity that passes the Council + Constitution gate becomes a real spec in the build queue (a landing page / assessment variant / micro-tool) — so a discovered market opportunity flows discover → score → build → ship, not just discover → log. Reversible + James-gated on anything that spends or goes public.
+4. **Start seeded, not empty:** pre-load the portfolio with the opportunities James already named (Resource Optimization Audit = the live BBB offer · AI Voice Receptionist · Medical Documentation Agent · Finance Allocation Engine) so the ranker has real candidates day one.
+
+**Honest scope:** external scanning ≠ magic. v1 uses free signals + the AI's own judgment; it will be noisy. The value is the RANKING DISCIPLINE (dual-score + cash-proximity) applied consistently, improving as the Capability Ledger (d185) feeds real outcomes back. Don't oversell it as an oracle.
