@@ -83,6 +83,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Questions for Ember/James: …
 ```
 
+### 2026-07-05 · SPEC_d195_council-proactive-spot-topple-a · branch `build/SPEC_d195_council-proactive-spot-topple-a`
+
+- **Status:** done in working tree / awaiting review + merge
+- **Files changed:** `tools/council/debate.py`; `tools/council/test_debate.py`; `core/BUILD/specs/SPEC_d195_council-proactive-spot-topple-a.md`; `core/BUILD/results/SPEC_d195_council-proactive-spot-topple-a.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Made council Spot -> Topple proactive for safe winners. After debate, a proposal now queues directly through `curator.decisions seed` as an answered `needs_build=true` decision when it passes Constitution Check, is non-Reserved, explicitly reversible/low-risk, within the auto-topple cost cap, north-star/substrate aligned, no James decision is already awaiting, and the new 3/day auto-topple cap is still open. Reserved winners still surface through `recommend`; ambiguous/held winners log `auto_topple_held`; each queued winner logs `council auto_toppled`.
+- **Tests:** `python3 -B -m unittest tools.council.test_debate` (22 OK); `python3 -B -m unittest tools.council.test_debate tools.council.test_debate_import tools.reserved.test_classify tools.governance.test_constitution_check tools.build_loop.test_spot_topple_orchestrator` (46 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/council/debate.py tools/council/test_debate.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d195-registry-done.json`; `git diff --check`
+- **Proof:** Unit proof covers reversible winner -> `seed` without James, Reserved money/signature winner -> `recommend` surface and no seed, 3/day ops-ledger cap blocking the fourth auto-topple, and one-at-a-time skip when a decision already awaits James.
+- **Risks:** Live council run and live DB insert were not executed in sandbox. Deterministic text gates intentionally surface ambiguous proposals rather than auto-topple them. Constitution Check errors now fall back to surfacing only; proactive queueing requires an accepted Constitution Check result.
+- **Rollback:** Revert this branch. Runtime kill switch remains `~/.config/fpai/council/.disabled`; recommendation kill switch remains `~/.config/fpai/decisions/.recommend_disabled`.
+- **Intent solved:** council Spot -> Topple no longer stalls on James approval for safe reversible work.
+- **Downstream intent unlocked:** the build loop can autonomously build/review/auto-merge reversible council-discovered substrate work while James sees only Reserved or ambiguous gates.
+- **Questions for Ember/James:** after merge on server 162, observe one council run with a reversible winner and confirm a `needs_build=true` decision plus `council auto_toppled` ops row; observe or fixture a Reserved winner and confirm it surfaces instead of seeding.
+
 ### 2026-07-05 · SPEC_d194_spec-d194-the-spot-topple-orches · branch `build/SPEC_d194_spec-d194-the-spot-topple-orches`
 
 - **Status:** done in working tree / awaiting review + merge + activation
