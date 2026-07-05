@@ -104,6 +104,7 @@ class ProcessLeadFlowTests(unittest.TestCase):
                 mock.patch.object(process_leads.subprocess, "run", side_effect=fake_run),
                 mock.patch.object(process_leads, "send_email", return_value=(True, "HTTP 201")),
                 mock.patch.object(process_leads, "send_meta_lead_event", return_value=(True, "HTTP 200")) as send_meta,
+                mock.patch.object(process_leads, "stage_sales_followup_for_delivered_lead", return_value=(True, "sales follow-up staged: 4 gate(s)")) as stage_followup,
                 mock.patch.object(process_leads, "tg_alert"),
                 mock.patch.dict(os.environ, {"META_ACCESS_TOKEN": "meta-token"}, clear=True),
             ):
@@ -116,6 +117,7 @@ class ProcessLeadFlowTests(unittest.TestCase):
                 email="real@example.com",
                 access_token="meta-token",
             )
+            stage_followup.assert_called_once()
 
     def test_live_send_holds_draft_cta_without_marking_processed(self):
         lead_text = "---\nemail: real@example.com\nname: Real Person\n---\nbody\n"

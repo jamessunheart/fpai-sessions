@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-05T13:06:44Z",
+    "updated_at": "2026-07-05T14:32:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d198_sales-autonomous-follow-up-clos",
+            "slug": "SPEC_d198_sales-autonomous-follow-up-clos",
+            "branch": "build/SPEC_d198_sales-autonomous-follow-up-clos",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d198_sales-autonomous-follow-up-clos.md",
+            "tests_passed": true,
+            "notes": "d198 complete in working tree: added a guarded per-lead sales follow-up agent that reads the lead plus Allocation Score deliverable, drafts a 4-touch James + AI sequence, reads reply fixtures/inbox output to draft context-aware responses, tracks engagement/stage in local state plus optional brain_index.sales_followups, opens Human Edge approval gates by default, supports SALES_AUTOSEND=1 standing approval with rate limit/kill switch, and escalates close/payment walls to James. process_leads.py now stages the follow-up plan after a successful assessment delivery without blocking the delivered email. Focused growth tests, py_compile, registry JSON validation, and diff hygiene passed. No live sends, payments, deploys, pushes, or merges were performed."
+        },
         {
             "id": "SPEC_d197_funnel-bridge-free-assessment-p",
             "slug": "SPEC_d197_funnel-bridge-free-assessment-p",

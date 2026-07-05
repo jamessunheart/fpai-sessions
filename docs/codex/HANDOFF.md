@@ -83,6 +83,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Questions for Ember/James: …
 ```
 
+### 2026-07-05 · SPEC_d198_sales-autonomous-follow-up-clos · branch `build/SPEC_d198_sales-autonomous-follow-up-clos`
+
+- **Status:** done in working tree / awaiting review + merge
+- **Files changed:** `tools/growth/sales_followup.py`; `tools/growth/test_sales_followup.py`; `tools/growth/process_leads.py`; `core/BUILD/specs/SPEC_d198_sales-autonomous-follow-up-clos.md`; `core/BUILD/results/SPEC_d198_sales-autonomous-follow-up-clos.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the guarded autonomous sales follow-up + close-frontier engine. The new per-lead agent reads the lead plus Allocation Score deliverable, stated bottleneck, weakest dimension, and opportunities; drafts a 4-touch James + AI sequence; consumes reply fixtures/inbox output to draft context-aware responses; tracks engagement/stage locally and optionally in `brain_index.sales_followups`; writes a sales review lane, JSONL touch log, and Human Edge approval gates for sends by default. `SALES_AUTOSEND=1` plus `--live` can send follow-up touches through an injected sender path, but rate limits every lead and still escalates close/payment territory to James. `process_leads.py` now stages the follow-up plan after successful assessment delivery without blocking the delivered assessment email.
+- **Tests:** `python3 -B -m unittest tools.growth.test_sales_followup` (6 OK); `python3 -B -m unittest tools.growth.test_process_leads tools.growth.test_score_assessment tools.growth.test_sales_followup` (19 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/growth/sales_followup.py tools/growth/test_sales_followup.py tools/growth/process_leads.py tools/growth/test_process_leads.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d198-registry-building.json`; `git diff --check`
+- **Risks:** Live inbox read remains delegated to the existing inbox/champion-sign layer; this module consumes caller-provided replies. Live Brevo/autosend proof and live `brain_index` writes were not run in sandbox. Optional SQL tracking only writes when `BRAIN_INDEX_DSN` or `DATABASE_URL` and `psycopg2` are available.
+- **Rollback:** Revert this branch. Runtime mitigation without rollback is to leave `SALES_AUTOSEND` unset or touch `/opt/fpai-build/.sales_followup_disabled`.
+- **Intent solved:** post-assessment leads no longer stop at delivery; they enter a guarded follow-up, reply-drafting, and stage-tracking sales lane.
+- **Downstream intent unlocked:** with James approval or standing approval, the funnel can run through follow-up and close escalation while preserving the public-send and payment/close reserved walls.
+- **Questions for Ember/James:** after merge on the lead-worker host, process one controlled real lead such as Alex Rivera and confirm the sales lane has four drafts, four send gates, the required signature/compliance copy, and a `sales-close-<lead>` gate when a payment/proposal reply is fixture-fed. Only set `SALES_AUTOSEND=1` deliberately when James wants to watch the follow-up frontier run live.
+
 ### 2026-07-05 · SPEC_d197_funnel-bridge-free-assessment-p · branch `build/SPEC_d197_funnel-bridge-free-assessment-p`
 
 - **Status:** done in working tree / awaiting review + merge + James CTA approval

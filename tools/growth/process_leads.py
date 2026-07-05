@@ -175,6 +175,40 @@ def send_meta_lead_event(*, lead_id: str, email: str, access_token: str, pixel_i
         return (False, str(e))
 
 
+def stage_sales_followup_for_delivered_lead(lead_path: Path, deliverable_path: Path) -> tuple[bool, str]:
+    """Draft and gate post-assessment sales follow-up after delivery succeeds."""
+    try:
+        from tools.growth import sales_followup
+
+        plan = sales_followup.plan_for_lead(lead_path, deliverable_path)
+        kwargs = _sales_followup_stage_paths(sales_followup)
+        result = sales_followup.stage_plan(plan, **kwargs)
+        if result.get("status") == "killed":
+            return (False, "sales follow-up kill-switch present")
+        return (True, f"sales follow-up staged: {len(result.get('gates', []))} gate(s)")
+    except Exception as exc:  # noqa: BLE001
+        return (False, f"sales follow-up staging failed: {str(exc)[:240]}")
+
+
+def _path_parent_writable(path: Path) -> bool:
+    parent = path.parent
+    while not parent.exists() and parent != parent.parent:
+        parent = parent.parent
+    return parent.exists() and os.access(parent, os.W_OK)
+
+
+def _sales_followup_stage_paths(sales_followup_module) -> dict:
+    if _path_parent_writable(sales_followup_module.DEFAULT_STATE):
+        return {}
+    fallback = WORK / "sales_followup"
+    return {
+        "state_path": fallback / "state.json",
+        "ledger_path": fallback / "touches.jsonl",
+        "lane_path": fallback / "lane.md",
+        "queue_path": fallback / "human_edge_queue.json",
+    }
+
+
 def tg_alert(msg: str, token: str) -> None:
     try:
         req = urllib.request.Request(
@@ -219,6 +253,8 @@ def main(argv: list[str] | None = None) -> int:
             break
         local = WORK / f"{lead_id}.md"
         content = fetch_lead(rp, local)
+        if not local.exists():
+            local.write_text(content, encoding="utf-8")
         fm = parse_frontmatter(content)
         email = fm.get("email", "").lower()
         name = fm.get("name", "")
@@ -255,14 +291,16 @@ def main(argv: list[str] | None = None) -> int:
         ok, detail = send_email(email, name, subject, deliverable, brevo_key)
         if ok:
             meta_ok, meta_detail = send_meta_lead_event(lead_id=lead_id, email=email, access_token=meta_token)
+            followup_ok, followup_detail = stage_sales_followup_for_delivered_lead(local, out)
             processed.add(lead_id)
             done += 1
             meta_status = "Meta CAPI Lead sent" if meta_ok else f"Meta CAPI Lead failed: {meta_detail}"
+            followup_status = followup_detail if followup_ok else f"Follow-up held: {followup_detail}"
             tg_alert(
-                f"✅ New assessment lead scored + delivered: {name} <{email}>. Deliverable emailed. {meta_status}",
+                f"✅ New assessment lead scored + delivered: {name} <{email}>. Deliverable emailed. {meta_status}. {followup_status}",
                 os.environ.get("TELEGRAM_BOT_TOKEN", ""),
             )
-            print(f"[leads] SENT {lead_id} → {email} ({detail}); {meta_status}")
+            print(f"[leads] SENT {lead_id} → {email} ({detail}); {meta_status}; {followup_status}")
         else:
             print(f"[leads] SEND FAILED {lead_id}: {detail}")
 
