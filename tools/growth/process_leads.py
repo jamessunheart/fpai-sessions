@@ -221,7 +221,10 @@ def main(argv: list[str] | None = None) -> int:
         if r.returncode != 0 or not out.exists():
             print(f"[leads] SCORE FAILED {lead_id}: {r.stderr[-200:]}")
             continue
-        deliverable = out.read_text()
+        deliverable = out.read_text().rstrip() + (
+            "\n\n—\nJames Sunheart + AI\n"
+            "Full Potential · fullpotential.com  ·  Allocation Intelligence · fullpotential.ai"
+        )
         subject = "Your Full Potential Assessment — Allocation Score inside"
 
         print(f"\n===== {lead_id} → {email} =====")
