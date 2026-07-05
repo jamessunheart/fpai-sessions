@@ -1,8 +1,30 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-05T18:02:00Z",
+    "updated_at": "2026-07-05T18:45:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d207_autonomy-quality-value-gate-for",
+            "slug": "SPEC_d207_autonomy-quality-value-gate-for",
+            "branch": "build/SPEC_d207_autonomy-quality-value-gate-for",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d207_autonomy-quality-value-gate-for.md",
+            "tests_passed": true,
+            "notes": "d207 complete in working tree: added product_portfolio_review.py to score autonomous product candidates for quality proof, value alignment, buyer clarity, and keep/kill/develop recommendation while keeping /opt/fpai-build/.spot_topple_autobuild_enabled behavior intact. Spot/Topple now writes a PORTFOLIO REVIEW digest and live queued runs send it through the existing Telegram notifier; build_orchestrator now quality-holds weak builds before auto-merge instead of silently merging them. Focused/adjacent tests, orchestrator CLI smoke, py_compile, shell syntax, activation policy, registry JSON validation, and diff hygiene passed. No live Telegram send, deploy, push, merge, money movement, outreach, or public voice was performed."
+        },
+        {
+            "id": "SPEC_d206_autonomy-liveness-aware-discern",
+            "slug": "SPEC_d206_autonomy-liveness-aware-discern",
+            "branch": "build/SPEC_d206_autonomy-liveness-aware-discern",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d206_autonomy-liveness-aware-discern.md",
+            "tests_passed": true,
+            "notes": "d206 complete in working tree: opportunity_axis_scorer now collects liveness inputs from row/status/result evidence, feeds live_state into the advisory Claude prompt, logs liveness plus calibration, clamps live deployed traffic paths to time_to_first_dollar<=2, raises proof_speed from activation/lead-worker evidence, and prevents unbuilt opportunities from keeping a closer cash-proximity axis than the best live traffic path in the same rescore-all pass. Regression proof covers the live assessment funnel vs unbuilt resource audit failure mode; focused and adjacent allocation/orchestrator tests, py_compile, registry JSON validation, and diff hygiene passed. No live scorer run, deploy, service change, outreach, spend, or external API effect was performed."
+        },
         {
             "id": "SPEC_d205_auto-spot-topple-ai-voice-recept",
             "slug": "SPEC_d205_auto-spot-topple-ai-voice-recept",

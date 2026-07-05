@@ -31,6 +31,7 @@ class SpotToppleOrchestratorTests(unittest.TestCase):
             ops_ledger=root / "ops.jsonl",
             cycle_ledger=root / "spot_topple.jsonl",
             digest_path=root / "digest.txt",
+            portfolio_review_path=root / "portfolio_review.md",
             kill_switch=root / ".spot_topple_disabled",
             hot_state_path=hot,
             treasury_signal_path=Path("core/STATE/TREASURY_TODAY.md"),
@@ -51,6 +52,10 @@ class SpotToppleOrchestratorTests(unittest.TestCase):
             self.assertTrue(result["gate"]["auto_topple_ready"])
             self.assertEqual(result["queue"]["reason"], "dry-run")
             self.assertIn("Assessment Funnel Delivery Proof", (root / "digest.txt").read_text(encoding="utf-8"))
+            portfolio_review = (root / "portfolio_review.md").read_text(encoding="utf-8")
+            self.assertIn("PORTFOLIO REVIEW", portfolio_review)
+            self.assertIn("QUALITY", portfolio_review)
+            self.assertIn("VALUE", portfolio_review)
             rows = [json.loads(line) for line in (root / "spot_topple.jsonl").read_text(encoding="utf-8").splitlines()]
             self.assertEqual(rows[-1]["domino"]["id"], "assessment-funnel-delivery-proof")
             self.assertEqual(rows[-1]["proof"]["activation_audit"]["unexplained_inert_count"], 0)

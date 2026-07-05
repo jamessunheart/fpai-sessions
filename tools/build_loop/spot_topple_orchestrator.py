@@ -24,11 +24,13 @@ if str(REPO_ROOT) not in sys.path:
 
 from tools.allocation import capability_ledger, opportunity_engine
 from tools.build_loop import activation_audit
+from tools.build_loop import product_portfolio_review
 from tools.governance import constitution_check
 
 
 DEFAULT_CYCLE_LEDGER = Path(os.environ.get("FPAI_SPOT_TOPPLE_LEDGER", "/opt/fpai-build/spot_topple_ledger.jsonl"))
 DEFAULT_DIGEST = Path(os.environ.get("FPAI_SPOT_TOPPLE_DIGEST", "/opt/fpai-build/spot_topple_digest.txt"))
+DEFAULT_PORTFOLIO_REVIEW = product_portfolio_review.DEFAULT_REVIEW_PATH
 DEFAULT_KILL_SWITCH = Path(os.environ.get("FPAI_SPOT_TOPPLE_DISABLED", "/opt/fpai-build/.spot_topple_disabled"))
 DEFAULT_HOT_STATE = Path(os.environ.get("HOT_MEMORY_STATE_PATH", "~/.config/fpai/hot_memory/HOT_STATE.md")).expanduser()
 DEFAULT_TREASURY_SIGNAL = Path(os.environ.get("FPAI_TREASURY_SIGNAL", "core/STATE/TREASURY_TODAY.md"))
@@ -49,6 +51,7 @@ class CycleConfig:
     ops_ledger: Path = activation_audit.DEFAULT_OPS_LEDGER
     cycle_ledger: Path = DEFAULT_CYCLE_LEDGER
     digest_path: Path = DEFAULT_DIGEST
+    portfolio_review_path: Path = DEFAULT_PORTFOLIO_REVIEW
     kill_switch: Path = DEFAULT_KILL_SWITCH
     hot_state_path: Path = DEFAULT_HOT_STATE
     treasury_signal_path: Path = DEFAULT_TREASURY_SIGNAL
@@ -56,6 +59,8 @@ class CycleConfig:
     daily_cap_dollars: float = 20.0
     dry_run: bool = True
     queue: bool = False
+    portfolio_review: bool = True
+    portfolio_notify: bool = False
 
 
 @dataclass(frozen=True)
@@ -124,6 +129,7 @@ def run_cycle(config: CycleConfig, *, now: str | None = None, queue_fn: QueueFn 
     })
     digest = digest_line(domino, gate, queue_result, proof)
     write_digest(config.digest_path, digest)
+    review_result = maybe_write_portfolio_review(config, portfolio)
     return {
         "schema": "spot_topple_cycle.v1",
         "ts": stamp,
@@ -135,6 +141,34 @@ def run_cycle(config: CycleConfig, *, now: str | None = None, queue_fn: QueueFn 
         "proof": proof,
         "learning": learning,
         "digest": digest,
+        "portfolio_review": review_result,
+    }
+
+
+def maybe_write_portfolio_review(config: CycleConfig, portfolio: dict[str, Any]) -> dict[str, Any]:
+    if not config.portfolio_review:
+        return {"enabled": False}
+    candidates = portfolio.get("next_domino") or portfolio.get("top_allocation") or portfolio.get("all") or []
+    review = product_portfolio_review.assess_portfolio(
+        repo_root=config.repo_root,
+        opportunities=candidates,
+        limit=5,
+    )
+    write_error = ""
+    try:
+        product_portfolio_review.write_review(config.portfolio_review_path, review)
+    except OSError as exc:
+        write_error = str(exc)
+    notified = False
+    if config.portfolio_notify and not write_error:
+        notified = product_portfolio_review.notify_review(config.repo_root, review)
+    return {
+        "enabled": True,
+        "path": str(config.portfolio_review_path),
+        "count": review["count"],
+        "low_quality_count": review["low_quality_count"],
+        "notified": notified,
+        "write_error": write_error,
     }
 
 
@@ -437,6 +471,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--ops-ledger", type=Path, default=activation_audit.DEFAULT_OPS_LEDGER)
     parser.add_argument("--cycle-ledger", type=Path, default=DEFAULT_CYCLE_LEDGER)
     parser.add_argument("--digest", type=Path, default=DEFAULT_DIGEST)
+    parser.add_argument("--portfolio-review-path", type=Path, default=DEFAULT_PORTFOLIO_REVIEW)
     parser.add_argument("--kill-switch", type=Path, default=DEFAULT_KILL_SWITCH)
     parser.add_argument("--hot-state", type=Path, default=DEFAULT_HOT_STATE)
     parser.add_argument("--treasury-signal", type=Path, default=DEFAULT_TREASURY_SIGNAL)
@@ -444,6 +479,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--daily-cap-dollars", type=float, default=20.0)
     parser.add_argument("--queue", action="store_true", help="Queue the auto-approved domino into brain_index.decisions.")
     parser.add_argument("--dry-run", action="store_true", help="Never queue; still write ledger and digest.")
+    parser.add_argument("--no-portfolio-review", action="store_true", help="Skip the quality+value portfolio digest.")
+    parser.add_argument("--notify-portfolio-review", action="store_true", help="Send the portfolio digest to James via Telegram.")
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args(argv)
 
@@ -455,6 +492,7 @@ def main(argv: list[str] | None = None) -> int:
         ops_ledger=args.ops_ledger,
         cycle_ledger=args.cycle_ledger,
         digest_path=args.digest,
+        portfolio_review_path=args.portfolio_review_path,
         kill_switch=args.kill_switch,
         hot_state_path=args.hot_state,
         treasury_signal_path=args.treasury_signal,
@@ -462,6 +500,8 @@ def main(argv: list[str] | None = None) -> int:
         daily_cap_dollars=args.daily_cap_dollars,
         dry_run=args.dry_run or not args.queue,
         queue=args.queue,
+        portfolio_review=not args.no_portfolio_review,
+        portfolio_notify=args.notify_portfolio_review or bool(args.queue and not args.dry_run),
     )
     result = run_cycle(config)
     if args.json:
