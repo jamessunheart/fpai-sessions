@@ -83,6 +83,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Questions for Ember/James: …
 ```
 
+### 2026-07-05 · SPEC_d205_auto-spot-topple-ai-voice-recept · branch `build/SPEC_d205_auto-spot-topple-ai-voice-recept`
+
+- **Status:** done in working tree / awaiting review + merge
+- **Files changed:** `tools/growth/voice_receptionist.py`; `tools/growth/test_voice_receptionist.py`; `core/BUILD/specs/SPEC_d205_auto-spot-topple-ai-voice-recept.md`; `core/BUILD/results/SPEC_d205_voice_call.fixture.json`; `core/BUILD/results/SPEC_d205_voice_call.expected_payload.json`; `core/BUILD/results/SPEC_d205_capability_created.fixture.jsonl`; `core/BUILD/results/SPEC_d205_auto-spot-topple-ai-voice-recept.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Built the sandbox-only AI Voice Receptionist intake proof for opportunity `ai-voice-receptionist`. A fixture transcript now produces a review-ready appointment payload with caller/contact/business/service/requested-time/fallback/problem fields, quality gate, explicit `live_phone_number_touched=false`, `live_send_performed=false`, `calendar_write_performed=false`, `marginal_cost_usd=0`, and a machine-readable rollback path. The payload status is `requires_human_review`, not booked.
+- **Tests:** `python3 -B -m unittest tools.growth.test_voice_receptionist` (4 OK); `python3 -B -m unittest tools.growth.test_voice_receptionist tools.allocation.test_capability_ledger tools.allocation.test_opportunity_engine` (15 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/growth/voice_receptionist.py tools/growth/test_voice_receptionist.py`; `python3 tools/growth/voice_receptionist.py --fixture core/BUILD/results/SPEC_d205_voice_call.fixture.json --output /tmp/d205-voice-payload.json --capability-ledger /tmp/d205-capability-ledger.jsonl && cmp /tmp/d205-voice-payload.json core/BUILD/results/SPEC_d205_voice_call.expected_payload.json`; `python3 tools/build_loop/activation_policy.py --repo-root . --spec-id SPEC_d205_auto-spot-topple-ai-voice-recept --base-ref feat/headless-build --head-ref HEAD` (OK: build_kind=library declared); registry/result JSON validation; `git diff --check`
+- **Risks:** Transcript-fixture proof only. It does not validate STT, TTS, telephony latency, no-answer behavior, live caller consent, or calendar availability. The extractor is intentionally narrow for the controlled proof and is not ready for arbitrary live callers. The d185-style capability row is a build-result fixture only, not a live capability-ledger append or market/cash proof.
+- **Rollback:** Revert this branch. Runtime rollback is inert: delete generated appointment/capability result artifacts and keep telephony, SMS, calendar, live-number, and deployment adapters disconnected. No service was activated.
+- **Intent solved:** AI Voice Receptionist now has the first bounded proof: one fixture call can become the expected appointment-intake payload with rollback path before touching a live phone number.
+- **Downstream intent unlocked:** James/Ember can bless a separate live-call sandbox activation spec, wired through d182/d188, using this payload contract as the acceptance target.
+- **Questions for Ember/James:** if this shape is accepted, the next spec should be explicitly live-sandbox only: one test number, one known caller, no James voice, no public release, and d182/d188 activation/audit proof before any real business call.
+
 ### 2026-07-05 · SPEC_d204_funnel-content-comment-messenge · branch `build/SPEC_d204_funnel-content-comment-messenge`
 
 - **Status:** done in working tree / awaiting review + merge + guarded Meta fast-test activation

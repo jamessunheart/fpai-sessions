@@ -1,0 +1,49 @@
+{
+  "appointment_request": {
+    "business_name": "Bayview Dental",
+    "fallback_window": "Thursday afternoon",
+    "intake_problem": "We miss calls at lunch and want booked consults instead of voicemail",
+    "requested_start": "2026-07-08T10:00:00-07:00",
+    "service_requested": "AI missed-call receptionist setup",
+    "timezone": "America/Los_Angeles"
+  },
+  "calendar_write_performed": false,
+  "caller": {
+    "email": "maria@example.com",
+    "name": "Maria Lopez",
+    "phone": "+19255550142"
+  },
+  "fixture_id": "d205-bayview-dental-missed-call",
+  "live_phone_number_touched": false,
+  "live_send_performed": false,
+  "marginal_cost_usd": 0,
+  "mode": "sandbox_fixture",
+  "opportunity_id": "ai-voice-receptionist",
+  "quality_gate": {
+    "booking_confirmed": false,
+    "missing_fields": [],
+    "passed": true,
+    "reason": "sandbox proof creates an intake payload only; live availability and booking remain unwired",
+    "required_fields": [
+      "caller_name",
+      "caller_phone",
+      "business_name",
+      "service_requested",
+      "requested_start"
+    ]
+  },
+  "rollback": {
+    "available": true,
+    "fixture_id": "d205-bayview-dental-missed-call",
+    "runtime_hold": "No live runtime exists; do not wire a phone number or calendar without a new approved activation spec.",
+    "scope": "sandbox-only",
+    "steps": [
+      "Delete generated appointment payload artifacts for this fixture.",
+      "Delete generated capability-ledger fixture rows for this spec.",
+      "Revert this branch before merge if the payload contract is wrong.",
+      "Keep telephony, SMS, calendar, and live-number adapters disconnected."
+    ]
+  },
+  "schema": "fpai.voice_receptionist.fixture.v1",
+  "status": "requires_human_review"
+}
