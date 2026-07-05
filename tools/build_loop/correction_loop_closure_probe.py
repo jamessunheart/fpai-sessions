@@ -64,7 +64,15 @@ def load_curator_package(curator_parent: Path) -> ModuleType:
         raise ProbeUnavailable(f"curator package not found at {package_dir}")
     existing = sys.modules.get("curator")
     if existing is not None:
-        return existing
+        existing_file = Path(str(getattr(existing, "__file__", "") or "")).resolve()
+        try:
+            if existing_file.is_relative_to(package_dir.resolve()):
+                return existing
+        except ValueError:
+            pass
+        for name in list(sys.modules):
+            if name == "curator" or name.startswith("curator."):
+                sys.modules.pop(name, None)
     spec = importlib.util.spec_from_file_location(
         "curator",
         init_file,

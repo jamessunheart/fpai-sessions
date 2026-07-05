@@ -83,6 +83,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Questions for Ember/James: …
 ```
 
+### 2026-07-05 · SPEC_d209_build-loop-correction-loop-clos · branch `build/SPEC_d209_build-loop-correction-loop-clos`
+
+- **Status:** done in working tree / awaiting review + merge
+- **Files changed:** `tools/build_loop/correction_loop_closure_probe.py`; `tools/build_loop/test_correction_loop_closure_probe.py`; `core/BUILD/specs/SPEC_d209_build-loop-correction-loop-clos.md`; `core/BUILD/results/SPEC_d209_build-loop-correction-loop-clos.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Diagnosed d209 as a production loader bug exposed by test discovery, not fixture-format drift. The seeded fixture rows were valid. `correction_loop_closure_probe.load_curator_package()` reused any preloaded `sys.modules["curator"]`; when broader discovery had imported the repo-local curator stub, the probe skipped the explicit fixture/live curator parent and returned `ProbeUnavailable` on `curator.db`. The probe now reuses a preloaded curator only if it comes from the requested package directory; otherwise it evicts stale `curator.*` modules and loads the explicit `--curator-parent`.
+- **Tests:** `python3 -B -m unittest tools.build_loop.test_correction_loop_closure_probe` (8 OK); `python3 -B -m unittest discover -s tools/build_loop -p 'test_*.py' -k correction_loop_closure_probe` (8 OK; d209 reproduction path); `python3 -B -m unittest tools.build_loop.test_correction_loop_closure_probe tools.build_loop.test_correction_retention_smoke tools.build_loop.test_pytest_gate_contract` (14 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/correction_loop_closure_probe.py tools/build_loop/test_correction_loop_closure_probe.py`; `bash -n tools/build_loop/server_build_loop.sh`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d209-registry-final.json`; `git diff --check`
+- **Proof:** New regression preloads repo-local `curator`, then runs the closure probe CLI against a real fixture curator package with duplicate correction rows; it returns `rc=1` and JSON `status=fail`, proving recurrence detection works under the contamination that caused d209. Existing server-loop contract proof confirms the live loop runs `correction_loop_closure_probe.py` after retention smoke with `--curator-parent "$BRAIN"` and has pass/fail/unavailable logging paths.
+- **Risks:** Eviction is scoped to the probe process and only when the already-loaded curator does not match the requested parent. No SQL, fingerprinting, cooldown, queueing, Telegram, deploy, secrets, outreach, or money behavior changed.
+- **Rollback:** Revert this branch; the previous import-state blind spot will return.
+- **Intent solved:** correction-loop closure proof no longer confuses repo-local curator import contamination with ledger unavailability.
+- **Downstream intent unlocked:** the build loop can rely on the correction recurrence guard to detect repeated corrections rather than silently losing proof to stale import state.
+- **Questions for Ember/James:** after merge on server 162, observe the next post-merge closure-probe log and confirm its final JSON status is `pass` or `fail`, not `unavailable`.
+
 ### 2026-07-05 · SPEC_d208_build-loop-run-the-tests-wire-p · branch `build/SPEC_d208_build-loop-run-the-tests-wire-p`
 
 - **Status:** done in working tree / awaiting review + merge

@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-05T18:45:00Z",
+    "updated_at": "2026-07-05T19:18:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d209_build-loop-correction-loop-clos",
+            "slug": "SPEC_d209_build-loop-correction-loop-clos",
+            "branch": "build/SPEC_d209_build-loop-correction-loop-clos",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d209_build-loop-correction-loop-clos.md",
+            "tests_passed": true,
+            "notes": "d209 complete in working tree: root was a production loader bug exposed by test discovery, not fixture-format drift. correction_loop_closure_probe reused any preloaded sys.modules['curator'], so a repo-local curator stub imported during broader discovery caused ProbeUnavailable instead of reading the explicit fixture/live curator parent. The probe now reuses curator only when it comes from the requested package dir; otherwise it evicts stale curator.* modules and loads --curator-parent explicitly. Regression preloads repo-local curator and proves CLI returns rc=1/status=fail on a seeded recurrence. Focused tests, d209 discovery reproduction, adjacent retention/pytest contract tests, py_compile, shell syntax, registry JSON validation, and diff hygiene passed."
+        },
         {
             "id": "SPEC_d208_build-loop-run-the-tests-wire-p",
             "slug": "SPEC_d208_build-loop-run-the-tests-wire-p",
