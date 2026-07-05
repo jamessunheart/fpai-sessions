@@ -7,20 +7,20 @@ from tools.allocation import opportunity_engine as engine
 
 
 class OpportunityEngineTest(unittest.TestCase):
-    def test_seeded_portfolio_has_five_scored_opportunities(self) -> None:
+    def test_seeded_portfolio_has_scored_opportunities_and_funnel_domino(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "opportunities.json"
 
             portfolio = engine.ensure_seeded(path, now="2026-07-05T01:00:00Z")
             view = engine.ranked(portfolio)
 
-            self.assertGreaterEqual(view["count"], 5)
+            self.assertGreaterEqual(view["count"], 6)
             self.assertIn("Resource Optimization Audit", [row["title"] for row in view["all"]])
             self.assertTrue(all(row["opportunity_score"] is not None for row in view["all"]))
             self.assertTrue(all(row["allocation_score"] is not None for row in view["all"]))
             self.assertTrue(all(row["next_domino_score"] is not None for row in view["all"]))
-            self.assertEqual(view["top_allocation"][0]["title"], "Resource Optimization Audit")
-            self.assertEqual(view["next_domino"][0]["title"], "Opportunity Intelligence Engine")
+            self.assertEqual(view["top_allocation"][0]["title"], "Assessment Funnel Delivery Proof")
+            self.assertEqual(view["next_domino"][0]["title"], "Assessment Funnel Delivery Proof")
             self.assertEqual(view["next_domino"][0]["topple_status"], "topple-ready")
 
     def test_missing_axes_keep_scores_blank(self) -> None:

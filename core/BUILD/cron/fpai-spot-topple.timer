@@ -1,0 +1,11 @@
+[Unit]
+Description=Run FPAI Spot & Topple orchestrator every 2 hours
+
+[Timer]
+OnBootSec=15min
+OnUnitActiveSec=2h
+Persistent=true
+Unit=fpai-spot-topple.service
+
+[Install]
+WantedBy=timers.target
