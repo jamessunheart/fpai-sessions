@@ -17,16 +17,16 @@ This is the standing contract between James and Ember. Always-fresh. Refreshed a
 The purpose: both of us snap back to the same page within 10 seconds of session start. No three turns of guessing what each other meant. The block IS the agreement.
 
 ═══════════════════════════════════════════════
-☉ ALIGNMENT CHECK · 2026-07-05 · THE ALLOCATOR ERA · PROVE DON'T THEORIZE · HOMEPAGE LIVE
+☉ ALIGNMENT CHECK · 2026-07-05 arc2 · SPOT & TOPPLE · THE FUNNEL LIVES · watch it convert
 ═══════════════════════════════════════════════
 
-## INTENT (2026-07-05)
-The brain is now an **INTELLIGENCE CAPITAL ALLOCATOR, not a builder** (governing identity in boot spine): choose WHAT deserves to exist, tip the **smallest domino that starts the largest cascade**, prove it in cash. Doctrine is COMPLETE + coherent (Intelligence Law · Stewardship · Value Arbitrage · Opportunity Intelligence · the 5 Allocation Laws · THE CRYSTAL). **The Inflection is in force: highest ROI is now PROOF, not concepts — stop adding doctrine, move the treasury needle.** THE WORK = first self-generated dollar via the system funnel (ads + homepage → /assessment → BBB ladder → Blueprint $2.5k = fastest-cash rung). Treasury still $0 self-generated.
+## INTENT (2026-07-05 arc 2)
+**SPOT & TOPPLE is the operating doctrine** (boots): Spot=discernment · Topple=release · Proof=surrender to reality · Memory=lesson · Compounding=consequence. Three Virtues: Stillness→Spot · Courage→Topple · Humility→Learning. **Doctrine is COMPLETE — stop Spotting, keep Toppling.** THE WORK = first self-generated dollar. Machine is now BUILT + aimed: proven ad demand (9.7% CTR, 41 landing-page-views/wk) → the funnel now AUTO-DELIVERS (score_assessment.py wired to leads via the 10-min timer) → Blueprint. Treasury still $0 self-generated — the only proof that matters now.
 
 ## TOP 3
-1. **★ First Assessment → Audit → Blueprint** — funnel now LIVE (homepage CTA deployed on fullpotential.com 07-05; ad $10/day → /assessment). Needs traffic VOLUME → first completed assessment → deliver the audit. This is the flywheel ignition + the first Capability-Ledger proof.
-2. **Resolve the funnel** — TWO assessment pages (/assessment 8KB vs /assessment.html 32KB); substrate picks the canonical/converting one and points all traffic at it. Then scale traffic.
-3. **Let the loop build the instruments** — d185 Capability-Created Ledger + d186 Opportunity Portfolio (built); the Council then allocates builds by Allocation Score, proven by realized outcome.
+1. **★ Does the fixed funnel CONVERT?** — the domino was never billing (active, $877 spent) or traffic (9.7% CTR is excellent) — it was **/assessment conversion** (41 visitors/wk → ~0 leads). Toppled the page (one-line · 30-sec · score-in-minutes) 07-05. **Watch the next days: do fills lift?** That's the metric. If not → next spot = ad creative or offer.
+2. **Confirm deliverability + delivery** — Brevo sends from verified james@fullpotential.ai; confirm the deliverable lands in EXTERNAL inboxes (proof sent to James's Gmail). Funnel auto-delivers via fpai-leads-deliver.timer.
+3. **d194 Spot & Topple Orchestrator** — make the loop proactive: spot→topple→verify-by-real-execution→learn, on cadence, Constitution-gated. The proactive version of what we did by hand today.
 
 ## BLOCKERS
 James-reserved only (credentials/money): 🔴 rotate Mailchimp key + un-share Drive folder (his account login). Everything else = substrate executes.
