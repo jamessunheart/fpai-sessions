@@ -23,6 +23,7 @@ from app.alerts_client import alerts_client
 from app.catalog import build_priority_view
 from app.capability import build_capability_view
 from app.ledger import build_money_view
+from app.opportunities import build_opportunities_view
 
 # Configure logging
 logging.basicConfig(
@@ -316,6 +317,12 @@ async def money_view():
 async def capability_view():
     """Capability-created north-star gauge"""
     return build_capability_view()
+
+
+@app.get("/opportunities", tags=["Views"])
+async def opportunities_view():
+    """Opportunity Portfolio — what to build next"""
+    return build_opportunities_view()
 
 
 # ============================================================================

@@ -38,6 +38,16 @@ class CouncilDebateTest(unittest.TestCase):
         self.assertIn("SOVEREIGN PRAGMATIST LENS", prompt)
         self.assertIn("Use RunPod GLM.", prompt)
 
+    def test_build_prompt_includes_opportunity_portfolio(self):
+        with mock.patch(
+            "tools.allocation.opportunity_engine.council_context",
+            return_value="OPPORTUNITY PORTFOLIO\n- Resource Optimization Audit: allocation=26.5",
+        ):
+            prompt = debate.build_prompt("queue", "chats", "")
+
+        self.assertIn("OPPORTUNITY PORTFOLIO", prompt)
+        self.assertIn("Resource Optimization Audit", prompt)
+
     def test_run_claude_json_parses_wrapped_json(self):
         def runner(args, **kwargs):
             self.assertEqual(args[0], "/usr/bin/claude")

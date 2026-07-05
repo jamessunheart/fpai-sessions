@@ -11,6 +11,7 @@ from app.intelligence.storage import signal_storage
 from app.intelligence.patterns import PatternDetector
 from app.config import settings
 from app.capability import capability_digest_line, build_capability_view
+from app.opportunities import build_opportunities_view, opportunities_digest_line
 
 logger = logging.getLogger(__name__)
 
@@ -108,6 +109,18 @@ class DigestGenerator:
             key_metrics["capability_created_30d"] = capability["thirty_day"]["total_capability_gain"]
         except Exception as e:
             logger.warning(f"Failed to load capability ledger: {e}")
+        try:
+            opportunities = build_opportunities_view()
+            key_metrics["opportunities_line"] = opportunities_digest_line()
+            key_metrics["opportunities_count"] = opportunities["count"]
+            key_metrics["top_allocation_opportunity"] = (
+                opportunities["top_allocation"][0]["title"] if opportunities["top_allocation"] else ""
+            )
+            key_metrics["top_cash_opportunity"] = (
+                opportunities["top_cash_proximity"][0]["title"] if opportunities["top_cash_proximity"] else ""
+            )
+        except Exception as e:
+            logger.warning(f"Failed to load opportunity portfolio: {e}")
 
         # Add revenue metrics
         if revenue_data:
@@ -220,6 +233,13 @@ class DigestGenerator:
             lines.append(f"• 30d: +{digest.key_metrics.get('capability_created_30d', 0)}")
             lines.append("")
 
+        # Opportunities
+        if "opportunities_line" in digest.key_metrics:
+            lines.append("*OPPORTUNITIES*")
+            lines.append(f"• {digest.key_metrics['opportunities_line']}")
+            lines.append(f"• rows: {digest.key_metrics.get('opportunities_count', 0)}")
+            lines.append("")
+
         # System Health (if available)
         if "services_healthy" in digest.key_metrics:
             healthy = digest.key_metrics["services_healthy"]
@@ -242,7 +262,9 @@ class DigestGenerator:
             k: v for k, v in digest.key_metrics.items()
             if k not in ["revenue_24h", "revenue_change_pct", "revenue_30d", "revenue_count",
                         "capability_created_line", "capability_created_today", "capability_created_7d",
-                        "capability_created_30d", "services_healthy", "services_total",
+                        "capability_created_30d", "opportunities_line", "opportunities_count",
+                        "top_allocation_opportunity", "top_cash_opportunity",
+                        "services_healthy", "services_total",
                         "primary_ram_free_gb", "secondary_ram_free_gb"]
         }
         if other_metrics:

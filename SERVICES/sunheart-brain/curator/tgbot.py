@@ -1463,7 +1463,7 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
             "       /money &lt;free text&gt;                       — capture as money note (queued)\n"
             "  /servers   — live server + hosting status (primary / brain / legacy)\n"
             "  /roi       — yesterday's brain ROI ledger (cost vs engagement)\n"
-            "  /opportunities — run today's proactive scan now (silent if nothing)\n"
+            "  /opportunities — ranked Opportunity Portfolio + cheap gap scan\n"
             "  /capability — capability created today + 7d/30d trend\n"
             "  /capabilities [category] — what this system can do (and when it shipped)\n"
             "  /whatcanyoudo — honest bot self-model: can, cannot, queue boundary\n"
@@ -1629,9 +1629,10 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
     if cmd == "roi":
         return await _cmd_roi()
     if cmd == "opportunities":
-        await tg.send("⏳ Running opportunities scan…")
+        reply = _cmd_opportunities()
+        await tg.send("⏳ Updating opportunity gap scan…")
         asyncio.create_task(_run_opportunities_async())
-        return None
+        return reply
     if cmd == "capability":
         return _cmd_capability()
     if cmd == "capabilities":
@@ -1709,6 +1710,25 @@ def _cmd_capability() -> str:
         )
     except Exception as e:
         return f"⚠️ capability ledger unavailable: {tg._esc(str(e))}"
+
+
+def _cmd_opportunities() -> str:
+    try:
+        repo = _repo_root()
+        import importlib.util as _ilu
+
+        helper = repo / "tools" / "allocation" / "opportunity_engine.py"
+        spec = _ilu.spec_from_file_location("fpai_opportunity_engine", helper)
+        engine = _ilu.module_from_spec(spec) if spec and spec.loader else None
+        if not engine:
+            raise RuntimeError(f"unable to load opportunity engine from {helper}")
+        spec.loader.exec_module(engine)
+
+        ledger_path = Path(os.environ.get("FPAI_OPPORTUNITY_LEDGER", Path.home() / ".config/fpai/allocation/opportunities.json"))
+        view = engine.ranked(engine.ensure_seeded(ledger_path))
+        return tg._esc(engine.format_portfolio(view, html_mode=False))
+    except Exception as e:
+        return f"⚠️ opportunity portfolio unavailable: {tg._esc(str(e))}"
 
 
 def _cmd_voice(arg: str) -> str:

@@ -262,8 +262,28 @@ def _resources_text():
     return ""
 
 
+def _opportunity_portfolio_text():
+    try:
+        from tools.allocation.opportunity_engine import council_context
+
+        return "\n\n" + council_context()
+    except Exception:
+        return ""
+
+
 def build_prompt(queue, chats, focus, pragmatist=""):
-    prompt = _load_core_doctrine() + _council_system_prompt() + focus + _platform_bias_context() + "\n\nDECISION QUEUE:\n" + queue + "\n\nRECENT INTENTS (chats):\n" + chats + "\n\nRespond with ONLY the JSON object."
+    prompt = (
+        _load_core_doctrine()
+        + _council_system_prompt()
+        + focus
+        + _opportunity_portfolio_text()
+        + _platform_bias_context()
+        + "\n\nDECISION QUEUE:\n"
+        + queue
+        + "\n\nRECENT INTENTS (chats):\n"
+        + chats
+        + "\n\nRespond with ONLY the JSON object."
+    )
     if pragmatist:
         prompt = (
             "SOVEREIGN PRAGMATIST LENS (RunPod GLM when configured; otherwise flat-rate fallback):\n"

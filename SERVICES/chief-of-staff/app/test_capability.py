@@ -50,6 +50,11 @@ chief_capability = importlib.util.module_from_spec(CAPABILITY_SPEC)
 sys.modules["chief_capability"] = chief_capability
 CAPABILITY_SPEC.loader.exec_module(chief_capability)
 
+OPPORTUNITIES_SPEC = importlib.util.spec_from_file_location("chief_opportunities", APP_DIR / "opportunities.py")
+chief_opportunities = importlib.util.module_from_spec(OPPORTUNITIES_SPEC)
+sys.modules["chief_opportunities"] = chief_opportunities
+OPPORTUNITIES_SPEC.loader.exec_module(chief_opportunities)
+
 
 class ChiefCapabilityTest(unittest.TestCase):
     def test_capability_view_reads_configured_ledger(self) -> None:
@@ -91,6 +96,32 @@ class ChiefCapabilityTest(unittest.TestCase):
         self.assertIn("capability created today: +4", text)
         self.assertIn("7d: +4", text)
         self.assertNotIn("Capability Created Line", text)
+
+    def test_opportunities_view_reads_configured_portfolio(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "opportunities.json"
+
+            with patch.dict(os.environ, {"FPAI_OPPORTUNITY_LEDGER": str(path)}):
+                view = chief_opportunities.build_opportunities_view()
+
+            self.assertGreaterEqual(view["count"], 5)
+            self.assertEqual(view["top_allocation"][0]["title"], "Resource Optimization Audit")
+
+    def test_digest_formats_opportunities_as_headline_metric(self) -> None:
+        digest = DailyDigest(
+            key_metrics={
+                "signals_processed": 2,
+                "opportunities_line": "opportunities: do-now Resource Optimization Audit (26.5); closest-cash Resource Optimization Audit (15).",
+                "opportunities_count": 5,
+            }
+        )
+
+        text = chief_digest.DigestGenerator().format_for_telegram(digest)
+
+        self.assertIn("*OPPORTUNITIES*", text)
+        self.assertIn("do-now Resource Optimization Audit", text)
+        self.assertIn("rows: 5", text)
+        self.assertNotIn("Opportunities Line", text)
 
 
 class _FixedDateTime(dt.datetime):
