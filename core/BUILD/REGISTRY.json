@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-04T22:26:00Z",
+    "updated_at": "2026-07-05T00:18:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d183_metric-replace-awareness-with-a",
+            "slug": "SPEC_d183_metric-replace-awareness-with-a",
+            "branch": "build/SPEC_d183_metric-replace-awareness-with-a",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d183_metric-replace-awareness-with-a.md",
+            "tests_passed": true,
+            "notes": "d183 complete in working tree: verify_awareness.py now has --probe-bot-response, which derives a factual question from the latest active session_insights row, calls the live/repo bot _synthesize_answer path with brain search disabled and a 10s answer timeout, then grades answer correctness by normalized keyword match. The old title-in-render probe remains available as context-render-continuity only. reliability_probe.py now computes awareness from behavioral_pass rows, ignores legacy title-proxy rows for the rolling rate, writes behavioral_pass plus context_render_continuity into awareness_reliability.json/ops rows, and labels reports/alerts accordingly. Focused awareness/continuity tests, py_compile, registry JSON validation, and diff hygiene passed. Live bot/DB probe awaits server activation."
+        },
         {
             "id": "SPEC_d182_spec-d182-live-service-deploys-n",
             "slug": "SPEC_d182_spec-d182-live-service-deploys-n",

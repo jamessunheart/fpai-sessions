@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Continuously measure bot awareness reliability.
+"""Continuously measure behavioral bot awareness reliability.
 
-The probe reuses verify_awareness.py, records every run to the ops ledger, and
-alerts James when the rolling success ratio falls below the configured floor.
+The primary metric is whether the live bot answer path can answer a factual
+question derived from the latest session insight. The older context-render
+check is retained only as a secondary continuity signal.
 """
 from __future__ import annotations
 
@@ -17,7 +18,7 @@ import subprocess
 from pathlib import Path
 from typing import Any, Awaitable, Callable
 
-from verify_awareness import AwarenessProbe, DEFAULT_DB_URL, verify_latest
+from verify_awareness import AwarenessProbe, DEFAULT_DB_URL, verify_bot_response, verify_context_render_continuity
 
 REPO_ROOT = Path(os.environ.get("FPAI_REPO_ROOT", Path(__file__).resolve().parents[2]))
 DEFAULT_OPS_LEDGER = Path(os.environ.get("OPS_LEDGER", "/opt/fpai-build/ops_ledger.jsonl"))
@@ -39,6 +40,11 @@ class ReliabilityMetric:
     current_ok: bool
     reason: str
     latest_title: str = ""
+    behavioral_pass: bool = False
+    context_render_continuity: bool | None = None
+    question: str = ""
+    answer: str = ""
+    matched_keywords: tuple[str, ...] = ()
     alert_sent: bool = False
 
     def to_json(self) -> dict[str, Any]:
@@ -111,12 +117,12 @@ def compute_metric(
     history: list[dict[str, Any]],
     threshold: float,
 ) -> ReliabilityMetric:
-    outcomes = [bool(row.get("ok")) for row in history]
+    outcomes = [bool(row.get("behavioral_pass")) for row in history if "behavioral_pass" in row]
     outcomes.append(bool(current.ok))
     total = len(outcomes)
     successes = sum(1 for ok in outcomes if ok)
     reliability = successes / total if total else 0.0
-    reason = current.reason or ("ok" if current.ok else "awareness probe failed")
+    reason = current.reason or ("ok" if current.ok else "behavioral awareness probe failed")
     return ReliabilityMetric(
         ok=reliability >= threshold and current.ok,
         reliability=reliability,
@@ -126,6 +132,11 @@ def compute_metric(
         current_ok=current.ok,
         reason=reason,
         latest_title=current.latest_title,
+        behavioral_pass=bool(current.behavioral_pass if current.behavioral_pass is not None else current.ok),
+        context_render_continuity=current.context_render_continuity,
+        question=current.question,
+        answer=current.answer,
+        matched_keywords=current.matched_keywords,
     )
 
 
@@ -143,11 +154,16 @@ def write_reports(metric: ReliabilityMetric, *, json_path: Path, markdown_path: 
             [
                 "# Awareness Reliability",
                 "",
+                "Primary metric: behavioral bot-answer correctness. Secondary signal: context-render continuity.",
+                "",
                 f"- Status: {status}",
                 f"- Reliability: {metric.reliability:.1%} ({metric.successes}/{metric.total})",
                 f"- Threshold: {metric.threshold:.1%}",
-                f"- Current probe ok: {metric.current_ok}",
+                f"- Behavioral pass: {metric.behavioral_pass}",
+                f"- Context-render continuity: {metric.context_render_continuity}",
                 f"- Latest title: {metric.latest_title or '-'}",
+                f"- Question: {metric.question or '-'}",
+                f"- Matched keywords: {', '.join(metric.matched_keywords) if metric.matched_keywords else '-'}",
                 f"- Reason: {metric.reason or '-'}",
                 f"- Generated: {utc_stamp(now)}",
                 "",
@@ -168,10 +184,11 @@ def should_alert(metric: ReliabilityMetric, cooldown_file: Path, now: dt.datetim
 
 def alert_message(metric: ReliabilityMetric, markdown_path: Path) -> str:
     return (
-        "<b>Awareness reliability below threshold</b>\n"
+        "<b>Behavioral awareness reliability below threshold</b>\n"
         f"Reliability: {metric.reliability:.1%} ({metric.successes}/{metric.total})\n"
         f"Threshold: {metric.threshold:.1%}\n"
-        f"Current probe: {'PASS' if metric.current_ok else 'FAIL'}\n"
+        f"Behavioral pass: {'PASS' if metric.behavioral_pass else 'FAIL'}\n"
+        f"Context-render continuity: {metric.context_render_continuity}\n"
         f"Reason: {html.escape(metric.reason or '-')}\n"
         f"Report: {html.escape(str(markdown_path))}"
     )
@@ -216,7 +233,14 @@ def run(
 ) -> ReliabilityMetric:
     current_time = now or utc_now()
     history = recent_probe_rows(ops_ledger, now=current_time, window_hours=window_hours, limit=max(0, sample_limit - 1))
-    probe = asyncio.run(verifier() if verifier else verify_latest(db_url=db_url))
+    probe = asyncio.run(
+        verifier()
+        if verifier
+        else verify_bot_response(
+            db_url=db_url,
+            context_probe=lambda: verify_context_render_continuity(db_url=db_url),
+        )
+    )
     metric = compute_metric(current=probe, history=history, threshold=threshold)
     append_ops(
         ops_ledger,
@@ -224,12 +248,17 @@ def run(
             "event": "awareness_reliability_probe",
             "source": source,
             "ok": probe.ok,
+            "behavioral_pass": metric.behavioral_pass,
+            "context_render_continuity": metric.context_render_continuity,
             "reliability": round(metric.reliability, 6),
             "successes": metric.successes,
             "total": metric.total,
             "threshold": metric.threshold,
             "reason": probe.reason,
             "latest_title": probe.latest_title,
+            "question": probe.question,
+            "answer": probe.answer[:1000],
+            "matched_keywords": list(probe.matched_keywords),
         },
         now=current_time,
     )
@@ -278,7 +307,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.json:
         print(json.dumps(metric.to_json(), sort_keys=True))
     else:
-        print(f"awareness reliability: {metric.reliability:.1%} ({metric.successes}/{metric.total})")
+        print(f"behavioral awareness reliability: {metric.reliability:.1%} ({metric.successes}/{metric.total})")
     return 0 if metric.ok else 1
 
 

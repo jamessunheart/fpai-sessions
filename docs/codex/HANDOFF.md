@@ -83,6 +83,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Questions for Ember/James: …
 ```
 
+### 2026-07-05 · SPEC_d183_metric-replace-awareness-with-a · branch `build/SPEC_d183_metric-replace-awareness-with-a`
+
+- **Status:** done in working tree / awaiting review + merge
+- **Files changed:** `tools/awareness/verify_awareness.py`; `tools/awareness/reliability_probe.py`; `tools/awareness/test_reliability_probe.py`; `core/BUILD/specs/SPEC_d183_metric-replace-awareness-with-a.md`; `core/BUILD/results/SPEC_d183_metric-replace-awareness-with-a.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Replaced the primary awareness metric with a behavioral bot-answer probe. `verify_awareness.py --probe-bot-response` derives a factual question from the latest active `brain_index.session_insights` row, calls the bot `_synthesize_answer()` path with brain search disabled and a 10s answer timeout, then grades answer correctness by normalized keyword overlap. The old title-in-render check remains as the separate secondary `context_render_continuity` signal only.
+- **Tests:** `python3 -B -m unittest tools.awareness.test_reliability_probe tools.continuity.test_write_session_insights` (10 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/awareness/verify_awareness.py tools/awareness/reliability_probe.py tools/awareness/test_reliability_probe.py tools/continuity/write_session_insights.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d183-registry.json`; `git diff --check`
+- **Proof:** Unit proof shows the behavioral probe passes when the bot answer includes the latest insight's key terms, fails on generic status, writes `behavioral_pass` to the metric JSON/ops rows, keeps `context_render_continuity` separate, and excludes legacy title-proxy rows from the new rolling awareness rate.
+- **Risks:** Live DB plus live bot probe was not run in this sandbox. First server run should execute `tools/awareness/verify_awareness.py --probe-bot-response --json` and confirm `/opt/sh-brain-src/curator/tgbot.py` answers within 10s. Deterministic keyword grading may fail valid paraphrases that omit the expected terms; the report exposes expected/matched keywords for audit.
+- **Rollback:** Revert this branch. The old context-render probe still exists as `--probe-latest`; reverting `tools/awareness/reliability_probe.py` restores the prior timer behavior.
+- **Intent solved:** awareness now measures whether the bot actually answers a latest-session-insight question correctly, not whether a title string appears verbatim in rendered context.
+- **Downstream intent unlocked:** the reliability timer can report a meaningful bot-awareness rate while separately diagnosing context-render continuity.
+- **Questions for Ember/James:** after merge/activation on server 162, run or observe the next awareness timer and confirm `core/BUILD/signals/awareness_reliability.json` contains `metric.behavioral_pass` plus `metric.context_render_continuity`.
+
 ### 2026-07-04 · SPEC_d182_spec-d182-live-service-deploys-n · branch `build/SPEC_d182_spec-d182-live-service-deploys-n`
 
 - **Status:** done in working tree / awaiting review + merge + guarded live activation proof
