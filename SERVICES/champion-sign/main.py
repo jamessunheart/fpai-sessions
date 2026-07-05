@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import hashlib
 import importlib.util as _ilu
 import json
 import os
@@ -92,6 +93,8 @@ RATE_WINDOW = 3600
 RATE_LIMIT = 3
 _first_read_rate_log: dict[str, list[float]] = {}
 FIRST_READ_RATE_LIMIT = 12
+_assessment_chat_rate_log: dict[str, list[float]] = {}
+ASSESSMENT_CHAT_RATE_LIMIT = 30
 
 
 def _check_rate(ip: str) -> bool:
@@ -118,6 +121,18 @@ def _check_first_read_rate(ip: str) -> bool:
     return True
 
 
+def _check_assessment_chat_rate(ip: str) -> bool:
+    now = time.time()
+    history = _assessment_chat_rate_log.get(ip, [])
+    history = [t for t in history if now - t < RATE_WINDOW]
+    if len(history) >= ASSESSMENT_CHAT_RATE_LIMIT:
+        _assessment_chat_rate_log[ip] = history
+        return False
+    history.append(now)
+    _assessment_chat_rate_log[ip] = history
+    return True
+
+
 def _load_score_assessment_module():
     repo_root = Path(os.environ.get("FPAI_REPO_ROOT", "/opt/fpai-build/FPAI_Cockpit"))
     module_path = repo_root / "tools/growth/score_assessment.py"
@@ -139,6 +154,19 @@ def _load_life_score_module():
     spec = _ilu.spec_from_file_location("fpai_life_score", module_path)
     if spec is None or spec.loader is None:
         raise RuntimeError(f"cannot load score_life from {module_path}")
+    mod = _ilu.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def _load_process_leads_module():
+    repo_root = Path(os.environ.get("FPAI_REPO_ROOT", "/opt/fpai-build/FPAI_Cockpit"))
+    module_path = repo_root / "tools/growth/process_leads.py"
+    if not module_path.exists():
+        module_path = Path(__file__).resolve().parents[2] / "tools/growth/process_leads.py"
+    spec = _ilu.spec_from_file_location("fpai_process_leads", module_path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"cannot load process_leads from {module_path}")
     mod = _ilu.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
@@ -1252,6 +1280,22 @@ class LeadFirstRead(BaseModel):
         return v.strip()
 
 
+class AssessmentChatRequest(BaseModel):
+    session_id: Optional[str] = Field(None, max_length=80)
+    field: Optional[str] = Field(None, max_length=40)
+    message: Optional[str] = Field(None, max_length=1200)
+    state: Optional[dict] = None
+    variant: Optional[str] = Field(None, max_length=40)
+
+    @validator("session_id", "field", "message", "variant")
+    def _chat_no_html(cls, v):
+        if v is None:
+            return v
+        if re.search(r"[<>]", v):
+            raise ValueError("contains forbidden characters")
+        return v.strip()
+
+
 @app.post("/lead/first-read")
 async def lead_first_read(req: LeadFirstRead, request: Request) -> dict:
     """Return a bounded public-site first read for the Assessment form."""
@@ -1284,6 +1328,97 @@ async def lead_first_read(req: LeadFirstRead, request: Request) -> dict:
         "pages_read": pages_read,
         "summary": site.get("summary", {}),
         "intake_context": site.get("intake_context", ""),
+    }
+
+
+CHAT_FIELDS = ("business", "bottleneck", "name", "email", "tools", "team")
+CHAT_QUESTIONS = {
+    "business": "I am James Sunheart + AI. Tell me what you are building in one or two sentences.",
+    "bottleneck": "What feels like the main bottleneck right now: money, time, attention, team, tools, AI, or something else?",
+    "name": "Got it. What name should I put on this assessment?",
+    "email": "And what email should I use for the follow-up copy of the score?",
+    "tools": "What tools are in the stack right now? SaaS, spreadsheets, CRMs, AI tools, anything that runs the work.",
+    "team": "Last one before I score it: what does the team look like, including contractors or mostly-solo work?",
+}
+
+
+@app.post("/lead/assessment-chat")
+def assessment_chat(req: AssessmentChatRequest, request: Request, background_tasks: BackgroundTasks) -> dict:
+    """Public assessment chat: no James-private context, one scorer call at completion."""
+    ip = request.client.host if request.client else "unknown"
+    if not _check_assessment_chat_rate(ip):
+        raise HTTPException(status_code=429, detail="Too many chat messages. Try again later.")
+
+    session_id = _chat_session_id(req.session_id, ip)
+    state = _clean_chat_state(req.state)
+    field = (req.field or "").strip().lower()
+    if field in CHAT_FIELDS and req.message is not None:
+        state[field] = req.message.strip()[:1200]
+    if state.get("email") and not _valid_email(state["email"]):
+        state.pop("email", None)
+        return {
+            "ok": True,
+            "session_id": session_id,
+            "public_mode": True,
+            "private_context_used": False,
+            "lead_captured": False,
+            "filename": "",
+            "state": state,
+            "next_field": "email",
+            "reply": "That does not look like a working email. What email should I use for the follow-up copy of the score?",
+        }
+
+    captured = False
+    filename = state.get("lead_filename", "")
+    if state.get("name") and state.get("email") and not filename:
+        filename = _write_assessment_chat_lead(session_id, state, status="lead_captured", variant=req.variant)
+        state["lead_filename"] = filename
+        captured = True
+        background_tasks.add_task(_send_meta_lead_event_safe, Path(filename).stem, state["email"])
+
+    missing = [name for name in CHAT_FIELDS if not state.get(name)]
+    if missing:
+        next_field = missing[0]
+        reply = CHAT_QUESTIONS[next_field]
+        if captured:
+            reply = "Perfect. I have the lead captured. " + reply
+        return {
+            "ok": True,
+            "session_id": session_id,
+            "public_mode": True,
+            "private_context_used": False,
+            "lead_captured": captured or bool(filename),
+            "filename": filename,
+            "state": state,
+            "next_field": next_field,
+            "reply": reply,
+        }
+
+    try:
+        result = _score_assessment_chat_state(state)
+    except Exception as exc:
+        logger.exception("assessment chat score failed session=%s error=%s", session_id, exc)
+        raise HTTPException(status_code=502, detail="The score engine could not finish right now. Your lead is captured.")
+
+    filename = _write_assessment_chat_lead(
+        session_id,
+        state,
+        status="chat_scored",
+        variant=req.variant,
+        score=result,
+    )
+    state["lead_filename"] = filename
+    return {
+        "ok": True,
+        "session_id": session_id,
+        "public_mode": True,
+        "private_context_used": False,
+        "lead_captured": True,
+        "filename": filename,
+        "state": state,
+        "next_field": None,
+        "reply": _assessment_chat_result_reply(result),
+        "score": result,
     }
 
 
@@ -1374,6 +1509,171 @@ def _score_life_lead(req: LeadSubmit) -> tuple[dict, str]:
     result["context"] = {str(k): str(v)[:1000] for k, v in context.items() if v is not None}
     deliverable = score_mod.render(result, result["context"])
     return result, deliverable
+
+
+def _chat_session_id(raw: Optional[str], ip: str) -> str:
+    if raw:
+        safe = re.sub(r"[^a-zA-Z0-9_-]+", "", raw)[:60]
+        if safe:
+            return safe
+    seed = f"{ip}:{time.time()}:{os.getpid()}"
+    return hashlib.sha256(seed.encode("utf-8")).hexdigest()[:16]
+
+
+def _clean_chat_state(raw: Optional[dict]) -> dict:
+    state = {}
+    if not isinstance(raw, dict):
+        return state
+    for key in CHAT_FIELDS + ("lead_filename",):
+        value = raw.get(key)
+        if value is None:
+            continue
+        text = str(value).strip()
+        if re.search(r"[<>]", text):
+            continue
+        state[key] = text[:1200]
+    return state
+
+
+def _assessment_chat_intake(state: dict) -> str:
+    return "\n".join([
+        f"Name: {state.get('name', '')}",
+        f"Company / project: {state.get('business', '')}",
+        f"Bottleneck: {state.get('bottleneck', '')}",
+        f"Tools: {state.get('tools', '')}",
+        f"Team: {state.get('team', '')}",
+        "Source: public /assessment chat. Public visitor supplied this context; no James-private context used.",
+    ])
+
+
+def _valid_email(value: str) -> bool:
+    return bool(re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", str(value or "").strip()))
+
+
+def _score_assessment_chat_state(state: dict) -> dict:
+    score_mod = _load_score_assessment_module()
+    data, scores, total, weakest = score_mod.score_data(_assessment_chat_intake(state))
+    opportunities = []
+    for item in data.get("opportunities", [])[:3]:
+        opportunities.append({
+            "title": str(item.get("title", ""))[:160],
+            "dimension": str(item.get("dimension", ""))[:80],
+            "why": str(item.get("why", ""))[:320],
+            "est_annual_value": str(item.get("est_annual_value", ""))[:120],
+        })
+    return {
+        "allocation_score": total,
+        "weakest_dimension": weakest,
+        "scores": scores,
+        "archetype": str(data.get("archetype", ""))[:160],
+        "archetype_line": str(data.get("archetype_line", ""))[:320],
+        "surprise": str(data.get("surprise", ""))[:420],
+        "opportunities": opportunities,
+        "monday_move": str(data.get("monday_move", ""))[:420],
+        "reserved_next_step": str(data.get("next_step", ""))[:420],
+    }
+
+
+def _assessment_chat_result_reply(result: dict) -> str:
+    opp_lines = []
+    for idx, opp in enumerate(result.get("opportunities", [])[:3], 1):
+        opp_lines.append(f"{idx}. {opp.get('title')} - {opp.get('why')} ({opp.get('est_annual_value')})")
+    return "\n".join([
+        f"Your Allocation Score is {result.get('allocation_score')}/100.",
+        f"Allocation signature: {result.get('archetype')}.",
+        f"The biggest trapped capability is in {result.get('weakest_dimension')}.",
+        "Top 3 opportunities:",
+        *opp_lines,
+        f"Free Monday move: {result.get('monday_move')}",
+        "Reserved next step: if you want help turning this into a Blueprint, reply to the follow-up email. James approves final invitation copy before live sends.",
+    ])
+
+
+def _write_assessment_chat_lead(session_id: str, state: dict, *, status: str, variant: Optional[str] = None,
+                                score: Optional[dict] = None) -> str:
+    today = datetime.now().strftime("%Y-%m-%d")
+    safe_session = re.sub(r"[^a-zA-Z0-9_-]+", "", session_id)[:60] or "chat"
+    fname = state.get("lead_filename") or f"{today}_assessment-chat-{safe_session}.md"
+    out = LEADS_DIR / Path(fname).name
+    score = score or {}
+    score_block = ""
+    if score:
+        score_block = "\n## Live chat Allocation Score\n\n"
+        score_block += f"- **Score:** {score.get('allocation_score')}/100\n"
+        score_block += f"- **Weakest dimension:** {score.get('weakest_dimension')}\n"
+        score_block += f"- **Archetype:** {score.get('archetype')}\n\n"
+        score_block += "### Top 3 opportunities\n\n"
+        for idx, opp in enumerate(score.get("opportunities", [])[:3], 1):
+            score_block += (
+                f"{idx}. **{opp.get('title', '')}** ({opp.get('dimension', '')}) - "
+                f"{opp.get('why', '')} · {opp.get('est_annual_value', '')}\n"
+            )
+        if score.get("monday_move"):
+            score_block += f"\n### Free Monday move\n\n{score.get('monday_move')}\n"
+    md = f"""---
+lead_id: {Path(fname).stem}
+date_submitted: {today}
+name: {state.get('name', '')}
+email: {state.get('email', '')}
+interest: allocation-audit-chat
+assessment_lens: business
+allocation_score: {score.get('allocation_score', '')}
+status: {status}
+source: assessment-chat
+variant: {variant or ''}
+chat_session_id: {session_id}
+public_mode: true
+private_context_used: false
+---
+
+# {state.get('name', 'Assessment chat lead')} - Assessment Chat Lead
+
+**Submitted:** {today}
+**Email:** {state.get('email', '')}
+
+## Conversational intake
+
+**Business / project:** {state.get('business', '')}
+
+**Bottleneck:** {state.get('bottleneck', '')}
+
+**Tools:** {state.get('tools', '')}
+
+**Team:** {state.get('team', '')}
+{score_block}
+---
+
+*Captured via the public /assessment chat on {today}.*
+"""
+    out.write_text(md, encoding="utf-8")
+    audit = LEADS_DIR / "audit.jsonl"
+    with audit.open("a", encoding="utf-8") as f:
+        f.write(json.dumps({
+            "ts": datetime.now().isoformat(),
+            "kind": "assessment_chat",
+            "status": status,
+            "name": state.get("name", ""),
+            "email": state.get("email", ""),
+            "filename": out.name,
+            "allocation_score": score.get("allocation_score", ""),
+        }) + "\n")
+    return out.name
+
+
+def _send_meta_lead_event_safe(lead_id: str, email: str) -> None:
+    try:
+        process_mod = _load_process_leads_module()
+        ok, detail = process_mod.send_meta_lead_event(
+            lead_id=lead_id,
+            email=email,
+            access_token=process_mod.meta_access_token(),
+        )
+        if ok:
+            logger.info("assessment chat Meta CAPI Lead sent lead=%s", lead_id)
+        else:
+            logger.warning("assessment chat Meta CAPI Lead not sent lead=%s reason=%s", lead_id, detail)
+    except Exception as exc:
+        logger.warning("assessment chat Meta CAPI Lead failed lead=%s error=%s", lead_id, exc)
 
 
 def _area_labels() -> dict[str, str]:

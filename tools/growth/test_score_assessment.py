@@ -155,6 +155,29 @@ class UrlFirstAssessmentTests(unittest.TestCase):
         self.assertNotIn("DRAFT - James approval required", md)
         self.assertNotIn("ASSESSMENT_CTA_URL", md)
 
+    def test_score_data_returns_structured_result_for_chat(self):
+        fake = {
+            "scores": {dim: 50 for dim in score.DIMENSIONS},
+            "archetype": "Time-Trapped Operator",
+            "archetype_line": "The business is useful but handoff-heavy.",
+            "surprise": "The constraint is not demand; it is repeat work.",
+            "opportunities": [
+                {"title": "Automate intake", "dimension": "time", "why": "manual handoffs", "est_annual_value": "$18k/yr"},
+            ],
+            "monday_move": "Write the three repeated handoffs.",
+            "share_line": "I found the bottleneck.",
+            "next_step": "DRAFT: Blueprint invite.",
+        }
+        fake["scores"]["time"] = 20
+
+        with mock.patch.object(score, "run_claude", return_value=fake):
+            data, scores, total, weakest = score.score_data("intake")
+
+        self.assertEqual(data["archetype"], "Time-Trapped Operator")
+        self.assertEqual(scores["time"], 20)
+        self.assertEqual(weakest, "time")
+        self.assertLess(total, 50)
+
 
 if __name__ == "__main__":
     unittest.main()

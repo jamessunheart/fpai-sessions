@@ -178,6 +178,66 @@ class ChampionLifeLeadTests(unittest.TestCase):
         self.assertEqual(response["life_result"]["allocation_score"], 59.3)
         self.assertEqual(len(tasks.tasks), 1)
 
+    def test_assessment_chat_captures_lead_then_returns_live_score_public_mode(self):
+        score = {
+            "allocation_score": 62,
+            "weakest_dimension": "time",
+            "scores": {"capital": 70, "time": 30, "attention": 55, "people": 60, "ai": 50, "knowledge": 65},
+            "archetype": "Time-Trapped Operator",
+            "archetype_line": "Useful business, too many manual handoffs.",
+            "surprise": "The constraint is repeat work, not demand.",
+            "opportunities": [
+                {"title": "Automate intake", "dimension": "time", "why": "manual copy/paste", "est_annual_value": "$18k/yr"},
+                {"title": "Consolidate tools", "dimension": "capital", "why": "overlap", "est_annual_value": "$6k/yr"},
+                {"title": "AI follow-up", "dimension": "ai", "why": "unused leverage", "est_annual_value": "$12k/yr"},
+            ],
+            "monday_move": "List the three repeated handoffs.",
+            "reserved_next_step": "DRAFT: Blueprint invite.",
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            mod = load_champion_module(tmp)
+            request = SimpleNamespace(client=SimpleNamespace(host="203.0.113.9"))
+            tasks = BackgroundTasks()
+            state = {}
+            session_id = ""
+
+            def turn(field, message):
+                nonlocal state, session_id, tasks
+                req = SimpleNamespace(session_id=session_id, field=field, message=message, state=state, variant="chat-test")
+                response = mod.assessment_chat(req, request, tasks)
+                state = response["state"]
+                session_id = response["session_id"]
+                return response
+
+            first = turn(None, None)
+            self.assertEqual(first["next_field"], "business")
+            turn("business", "Acme helps operators automate client intake.")
+            turn("bottleneck", "Too much founder time is stuck in handoffs.")
+            turn("name", "Taylor")
+            invalid = turn("email", "not-an-email")
+            self.assertFalse(invalid["lead_captured"])
+            self.assertEqual(invalid["next_field"], "email")
+            self.assertEqual(len(tasks.tasks), 0)
+            captured = turn("email", "taylor@example.test")
+            self.assertTrue(captured["lead_captured"])
+            self.assertIn("Perfect. I have the lead captured.", captured["reply"])
+            self.assertEqual(len(tasks.tasks), 1)
+
+            turn("tools", "HubSpot, Zapier, Airtable, ChatGPT Team.")
+            with mock.patch.object(mod, "_score_assessment_chat_state", return_value=score):
+                final = turn("team", "Founder plus two contractors.")
+
+            lead_path = Path(tmp) / "leads" / final["filename"]
+            lead_md = lead_path.read_text(encoding="utf-8")
+
+        self.assertTrue(final["public_mode"])
+        self.assertFalse(final["private_context_used"])
+        self.assertEqual(final["score"]["allocation_score"], 62)
+        self.assertIn("Your Allocation Score is 62/100", final["reply"])
+        self.assertIn("allocation_score: 62", lead_md)
+        self.assertIn("public_mode: true", lead_md)
+        self.assertIn("private_context_used: false", lead_md)
+
 
 if __name__ == "__main__":
     unittest.main()
