@@ -138,9 +138,10 @@ class CorrectionLoopClosureProbeTest(unittest.TestCase):
 
         retention = text.index("run_correction_retention_smoke")
         closure = text.index("run_correction_loop_closure_probe", retention)
-        approved_notice = text.index('tg "$V · AUTO-MERGED')
+        # Auto-merge is SILENT now (James directive 2026-06-18: no TG ask; only BLOCKED surfaces),
+        # so the old `tg "$V · AUTO-MERGED'` notification was intentionally removed. The real
+        # guarantee — closure probe runs AFTER the retention smoke — is what we assert.
         self.assertLess(retention, closure)
-        self.assertLess(closure, approved_notice)
         self.assertIn("CORRECTION_LOOP_CLOSURE_PROBE_DISABLE", text)
         self.assertIn("correction_loop_closure_probe.py", text)
         self.assertIn('"correction-loop:pass"', text)

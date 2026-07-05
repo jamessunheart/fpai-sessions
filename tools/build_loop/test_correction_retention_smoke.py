@@ -60,9 +60,10 @@ class CorrectionRetentionSmokeTest(unittest.TestCase):
 
         liveness = text.index('run_liveness_probe "$LIVENESS_DECLARATION" "$LIVENESS_CHECK"')
         correction_smoke = text.index("run_correction_retention_smoke", liveness)
-        approved_notice = text.index('tg "$V · AUTO-MERGED')
+        # Auto-merge is SILENT now (James directive 2026-06-18: no TG ask), so the old
+        # `tg "$V · AUTO-MERGED'` notification was intentionally removed. The real guarantee —
+        # the correction smoke runs AFTER the liveness probe — is what we assert.
         self.assertLess(liveness, correction_smoke)
-        self.assertLess(correction_smoke, approved_notice)
         self.assertIn("CORRECTION_RETENTION_SMOKE_DISABLE", text)
         self.assertIn("correction_retention_smoke.py", text)
         self.assertIn('"correction-retention:pass"', text)
