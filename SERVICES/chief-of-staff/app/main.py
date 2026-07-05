@@ -21,6 +21,7 @@ from app.intelligence import SignalCategorizer, signal_storage, PatternDetector
 from app.digest import DigestGenerator
 from app.alerts_client import alerts_client
 from app.catalog import build_priority_view
+from app.capability import build_capability_view
 from app.ledger import build_money_view
 
 # Configure logging
@@ -309,6 +310,12 @@ async def priority_view():
 async def money_view():
     """Cross-system Money view — costs, revenue, biggest leak"""
     return build_money_view()
+
+
+@app.get("/capability", tags=["Views"])
+async def capability_view():
+    """Capability-created north-star gauge"""
+    return build_capability_view()
 
 
 # ============================================================================

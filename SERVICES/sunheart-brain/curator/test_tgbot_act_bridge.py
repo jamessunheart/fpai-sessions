@@ -6,6 +6,7 @@ from pathlib import Path
 from unittest import mock
 
 from . import tgbot
+from tools.allocation import capability_ledger
 
 
 class TelegramActBridgeTests(unittest.IsolatedAsyncioTestCase):
@@ -55,6 +56,32 @@ class TelegramActBridgeTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn("What I cannot do directly", reply or "")
         self.assertIn("Execute bash", reply or "")
         self.assertIn("Move money", reply or "")
+
+    async def test_capability_command_reports_ledger_totals(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "ledger.jsonl"
+            capability_ledger.append_row(
+                path,
+                capability_ledger.capability_row(
+                    source_type="build",
+                    source_id="SPEC_d185",
+                    title="Capability ledger",
+                    scores={"knowledge_gained": 1, "trust": 1, "automation": 2},
+                    reusable_intelligence="tools/allocation/capability_ledger.py#RUBRIC",
+                    ts="2026-07-05T00:10:00Z",
+                ),
+            )
+            with mock.patch.dict(
+                tgbot.os.environ,
+                {"FPAI_REPO_ROOT": str(Path(__file__).resolve().parents[3]), "FPAI_CAPABILITY_LEDGER": str(path)},
+                clear=False,
+            ):
+                reply = await tgbot._handle_command("/capability", 123)
+
+        self.assertIn("Capability Created", reply or "")
+        self.assertIn("capability created today: +4", reply or "")
+        self.assertIn("7d: <b>+4</b>", reply or "")
+        self.assertIn("30d: <b>+4</b>", reply or "")
 
 
 if __name__ == "__main__":

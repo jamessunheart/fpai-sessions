@@ -1464,6 +1464,7 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
             "  /servers   — live server + hosting status (primary / brain / legacy)\n"
             "  /roi       — yesterday's brain ROI ledger (cost vs engagement)\n"
             "  /opportunities — run today's proactive scan now (silent if nothing)\n"
+            "  /capability — capability created today + 7d/30d trend\n"
             "  /capabilities [category] — what this system can do (and when it shipped)\n"
             "  /whatcanyoudo — honest bot self-model: can, cannot, queue boundary\n"
             "  /constitution — read the live repo constitution in chat\n"
@@ -1631,6 +1632,8 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
         await tg.send("⏳ Running opportunities scan…")
         asyncio.create_task(_run_opportunities_async())
         return None
+    if cmd == "capability":
+        return _cmd_capability()
     if cmd == "capabilities":
         return await _cmd_capabilities(rest.strip())
     if cmd in ("whatcanyoudo", "what-can-you-do", "what_can_you_do"):
@@ -1678,6 +1681,34 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
         preview = body if len(body) <= 60 else body[:57] + "..."
         return f"🎬 Scene captured → {tg._esc(preview)}"
     return f"Unknown command: /{tg._esc(cmd)}. Try /help."
+
+
+def _cmd_capability() -> str:
+    try:
+        repo = _repo_root()
+        if str(repo) not in sys.path:
+            sys.path.insert(0, str(repo))
+        from tools.allocation.capability_ledger import capability_view, format_points, format_summary
+
+        ledger_path = Path(os.environ.get("FPAI_CAPABILITY_LEDGER", Path.home() / ".config/fpai/allocation/ledger.jsonl"))
+        view = capability_view(ledger_path)
+        today = view["today"]
+        thirty = view["thirty_day"]
+        recent = [d for d in view["trend_30d"] if d.get("total_capability_gain", 0)][-7:]
+        trend = ", ".join(
+            f"{d['date'][-5:]} +{format_points(d['total_capability_gain'])}"
+            for d in recent
+        ) or "no scored rows in the last 30 days"
+        return (
+            "<b>Capability Created</b>\n"
+            f"{tg._esc(format_summary(today))}\n"
+            f"7d: <b>+{tg._esc(format_points(view['week']['total_capability_gain']))}</b>\n"
+            f"30d: <b>+{tg._esc(format_points(thirty['total_capability_gain']))}</b>\n"
+            f"trend: {tg._esc(trend)}\n"
+            f"rows today: {today.get('row_count', 0)}"
+        )
+    except Exception as e:
+        return f"⚠️ capability ledger unavailable: {tg._esc(str(e))}"
 
 
 def _cmd_voice(arg: str) -> str:

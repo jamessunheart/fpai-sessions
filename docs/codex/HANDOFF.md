@@ -83,6 +83,19 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Questions for Ember/James: …
 ```
 
+### 2026-07-05 · SPEC_d185_capability-created-ledger · branch `build/SPEC_d185_spec-the-capability-created-ledg`
+
+- **Status:** done in working tree / awaiting review + merge
+- **Files changed:** `tools/allocation/capability_ledger.py`; `tools/allocation/test_capability_ledger.py`; `SERVICES/chief-of-staff/app/capability.py`; `SERVICES/chief-of-staff/app/main.py`; `SERVICES/chief-of-staff/app/digest.py`; `SERVICES/chief-of-staff/app/test_capability.py`; `SERVICES/sunheart-brain/curator/tgbot.py`; `SERVICES/sunheart-brain/curator/test_tgbot_act_bridge.py`; `core/BUILD/results/SPEC_d185_capability_created.fixture.jsonl`; `core/BUILD/results/SPEC_d185_capability-created-ledger.result.md`; `core/BUILD/specs/SPEC_d185_spec-the-capability-created-ledg.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the Capability-Created ledger as an extension of the allocation ledger convention. Rows score realized capability across `time_saved`, `knowledge_gained`, `cash_flow`, `trust`, and `automation`, default missing/unmeasured axes to zero, record expected-vs-realized delta for estimator training, and require a reusable-intelligence pointer when total gain is positive. Chief of Staff now exposes `/capability`, the private Telegram bot now supports `/capability`, and the daily digest adds a capability-created headline line with today/7d/30d totals.
+- **Proof row:** `core/BUILD/results/SPEC_d185_capability_created.fixture.jsonl` records d185 at +4 total capability: time+0, knowledge+1, cash+0, trust+1, automation+2. No unmeasured time or cash gain is claimed.
+- **Tests:** `python3 -B -m unittest tools.allocation.test_capability_ledger` (5 OK); `PYTHONPATH=SERVICES/chief-of-staff:. python3 -B -m unittest app.test_capability` (2 OK); `python3 -B -m unittest SERVICES.sunheart-brain.curator.test_tgbot_act_bridge` (6 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/allocation/capability_ledger.py tools/allocation/test_capability_ledger.py SERVICES/chief-of-staff/app/capability.py SERVICES/chief-of-staff/app/digest.py SERVICES/chief-of-staff/app/main.py SERVICES/chief-of-staff/app/test_capability.py SERVICES/sunheart-brain/curator/tgbot.py SERVICES/sunheart-brain/curator/test_tgbot_act_bridge.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d185-registry.json`; `git diff --check`; `python3 tools/allocation/capability_ledger.py --ledger core/BUILD/results/SPEC_d185_capability_created.fixture.jsonl`
+- **Risks:** Live Chief of Staff and live Telegram bot were not started in this sandbox. `/capability` reads `FPAI_CAPABILITY_LEDGER` or `~/.config/fpai/allocation/ledger.jsonl`; live output remains honestly zero until real rows are appended there. The sandbox lacks `pydantic_settings`, so service tests stubbed config/intelligence dependencies instead of starting the full app.
+- **Rollback:** Revert this branch. Runtime mitigation without code rollback is to leave `FPAI_CAPABILITY_LEDGER` unset or point it at an empty ledger.
+- **Intent solved:** capability created is now a measured, reusable-intelligence-linked proof unit instead of a slogan or vanity count.
+- **Downstream intent unlocked:** nightly 7-Q/value-gap planning can compare expected vs realized capability gain, and daily surfaces can lead with 30-day capability trend rather than awareness/prompt/token counts.
+- **Questions for Ember/James:** after merge on server 162, point `FPAI_CAPABILITY_LEDGER` at the live allocation ledger path and append the first post-merge real build row through `tools/allocation/capability_ledger.py --append` only when the per-axis scores are defensible.
+
 ### 2026-07-05 · SPEC_d184_spec-d184-bot-self-honesty-it-mu · branch `build/SPEC_d184_spec-d184-bot-self-honesty-it-mu`
 
 - **Status:** done in working tree / awaiting review + guarded activation
