@@ -314,7 +314,14 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(metric.to_json(), sort_keys=True))
     else:
         print(f"behavioral awareness reliability: {metric.reliability:.1%} ({metric.successes}/{metric.total})")
-    return 0 if metric.ok else 1
+    # Two axes, not one (P6): a low-but-MEASURED value is a successful probe run — the alert +
+    # ledger convey "below threshold"; the service must NOT report exit-failure for it (that spammed
+    # a fake 'service failed' + hid real breakage). Exit nonzero ONLY on a genuine probe/infra failure
+    # (couldn't connect/measure), so systemd 'failed' means the probe is broken, not that awareness is low.
+    reason = (metric.reason or "").lower()
+    infra_failure = any(s in reason for s in (
+        "connection", "auth", "could not", "lookup failed", "unavailable", "timeout", "traceback"))
+    return 1 if infra_failure else 0
 
 
 if __name__ == "__main__":
