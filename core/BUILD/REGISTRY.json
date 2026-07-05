@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-05T17:45:00Z",
+    "updated_at": "2026-07-05T18:02:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d205_auto-spot-topple-ai-voice-recept",
+            "slug": "SPEC_d205_auto-spot-topple-ai-voice-recept",
+            "branch": "build/SPEC_d205_auto-spot-topple-ai-voice-recept",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d205_auto-spot-topple-ai-voice-recept.md",
+            "tests_passed": true,
+            "notes": "d205 complete in working tree: added a sandbox-only AI Voice Receptionist intake proof that reads a fixture transcript and emits a review-ready appointment payload with caller/contact/business/service/time/fallback/problem fields, explicit no-live-phone/no-send/no-calendar/no-metered-cost flags, quality gate, and machine-readable rollback path. Added expected payload and d185-style build-result capability ledger fixture only; no live ledger append, live phone number, calendar, SMS, outreach, deployment, secret, or metered API path was used. Focused and adjacent allocation tests, direct CLI smoke, py_compile, activation policy build_kind=library, JSON validation, and diff hygiene passed."
+        },
         {
             "id": "SPEC_d204_funnel-content-comment-messenge",
             "slug": "SPEC_d204_funnel-content-comment-messenge",

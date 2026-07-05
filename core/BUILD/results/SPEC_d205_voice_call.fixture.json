@@ -1,0 +1,38 @@
+{
+  "fixture_date": "2026-07-05",
+  "fixture_id": "d205-bayview-dental-missed-call",
+  "transcript": [
+    {
+      "speaker": "assistant",
+      "text": "Thanks for calling. I can help capture the appointment request for review. What is your name?"
+    },
+    {
+      "speaker": "caller",
+      "text": "My name is Maria Lopez. My phone is 925-555-0142 and email is maria@example.com."
+    },
+    {
+      "speaker": "assistant",
+      "text": "What business and service should this be for?"
+    },
+    {
+      "speaker": "caller",
+      "text": "The business is Bayview Dental. I need AI missed-call receptionist setup for a small clinic."
+    },
+    {
+      "speaker": "assistant",
+      "text": "What time would you prefer?"
+    },
+    {
+      "speaker": "caller",
+      "text": "Wednesday July 8 at 10 AM Pacific works. If not, Thursday afternoon is fine."
+    },
+    {
+      "speaker": "assistant",
+      "text": "What problem should the appointment note include?"
+    },
+    {
+      "speaker": "caller",
+      "text": "We miss calls at lunch and want booked consults instead of voicemail."
+    }
+  ]
+}
