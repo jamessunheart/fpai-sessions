@@ -33,6 +33,10 @@ log = logging.getLogger("curator.opportunities")
 
 
 LEDGER_PATH = Path(os.environ.get("SH_OPPORTUNITIES_LEDGER", "/var/lib/sh-brain/opportunities.jsonl"))
+PORTFOLIO_LEDGER_PATH = Path(os.environ.get("FPAI_OPPORTUNITY_LEDGER", Path.home() / ".config/fpai/allocation/opportunities.json"))
+PORTFOLIO_SCAN_LEDGER_PATH = Path(
+    os.environ.get("FPAI_OPPORTUNITY_SCAN_LEDGER", Path.home() / ".config/fpai/allocation/opportunity_scans.jsonl")
+)
 ROI_LEDGER_PATH = Path(os.environ.get("SH_ROI_LEDGER", "/var/lib/sh-brain/roi.jsonl"))
 STATE_DIR = os.environ.get("FPAI_STATE_DIR", "/var/lib/sh-brain/state")
 NOW_PATH = Path(STATE_DIR) / "NOW.md"
@@ -112,12 +116,48 @@ async def run(run_id: str) -> dict[str, Any]:
     LEDGER_PATH.parent.mkdir(parents=True, exist_ok=True)
     with LEDGER_PATH.open("a", encoding="utf-8") as f:
         f.write(json.dumps(row, ensure_ascii=False) + "\n")
+    portfolio_scan = _update_opportunity_portfolio(row)
+    if portfolio_scan:
+        row["portfolio_scan"] = portfolio_scan
 
     log.info(
         "opportunities run=%s silent=%s sent=%s error=%s",
         run_id, silent, sent, error,
     )
     return row
+
+
+def _update_opportunity_portfolio(row: dict[str, Any]) -> dict[str, Any] | None:
+    repo = Path(os.environ.get("FPAI_CODEX_REPO", "/opt/fpai-build/FPAI_Cockpit"))
+    helper_path = repo / "tools" / "allocation" / "opportunity_engine.py"
+    try:
+        import importlib.util as _ilu
+
+        _spec = _ilu.spec_from_file_location("fpai_opportunity_engine", helper_path)
+        _mod = _ilu.module_from_spec(_spec) if _spec and _spec.loader else None
+        if not _mod:
+            return None
+        _spec.loader.exec_module(_mod)
+        result = _mod.run_gap_scan(
+            PORTFOLIO_LEDGER_PATH,
+            scan_ledger=PORTFOLIO_SCAN_LEDGER_PATH,
+            web_urls=[],
+            now=row.get("ts_utc"),
+        )
+        if row.get("text"):
+            portfolio = _mod.load_portfolio(PORTFOLIO_LEDGER_PATH)
+            changed = _mod._apply_signals(
+                portfolio,
+                [{"source": "curator_opportunities_job", "text": str(row.get("text") or "")}],
+                row.get("ts_utc") or _mod.utc_now(),
+            )
+            if changed:
+                _mod.save_portfolio(portfolio, PORTFOLIO_LEDGER_PATH)
+                result["opportunities_updated"] = int(result.get("opportunities_updated") or 0) + changed
+        return result
+    except Exception as exc:
+        log.warning("opportunity portfolio update failed: %s", exc)
+        return None
 
 
 async def _gather_signals() -> dict[str, Any]:

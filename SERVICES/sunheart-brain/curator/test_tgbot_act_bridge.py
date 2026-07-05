@@ -7,6 +7,7 @@ from unittest import mock
 
 from . import tgbot
 from tools.allocation import capability_ledger
+from tools.allocation import opportunity_engine
 
 
 class TelegramActBridgeTests(unittest.IsolatedAsyncioTestCase):
@@ -82,6 +83,26 @@ class TelegramActBridgeTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn("capability created today: +4", reply or "")
         self.assertIn("7d: <b>+4</b>", reply or "")
         self.assertIn("30d: <b>+4</b>", reply or "")
+
+    async def test_opportunities_command_returns_ranked_portfolio(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "opportunities.json"
+            opportunity_engine.ensure_seeded(path, now="2026-07-05T01:00:00Z")
+            with (
+                mock.patch.dict(
+                    tgbot.os.environ,
+                    {"FPAI_REPO_ROOT": str(Path(__file__).resolve().parents[3]), "FPAI_OPPORTUNITY_LEDGER": str(path)},
+                    clear=False,
+                ),
+                mock.patch.object(tgbot.tg, "send", mock.AsyncMock()),
+                mock.patch.object(tgbot.asyncio, "create_task", side_effect=lambda coro: coro.close()),
+            ):
+                reply = await tgbot._handle_command("/opportunities", 123)
+
+        self.assertIn("Opportunity Portfolio", reply or "")
+        self.assertIn("Top by Opportunity Score", reply or "")
+        self.assertIn("Do-now by Allocation Score", reply or "")
+        self.assertIn("Resource Optimization Audit", reply or "")
 
 
 if __name__ == "__main__":

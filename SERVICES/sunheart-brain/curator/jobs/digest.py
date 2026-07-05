@@ -97,6 +97,23 @@ def bandwidth_ledger_lines() -> list[str]:
     return useful[:4]
 
 
+def opportunity_digest_line() -> str:
+    repo = Path(os.environ.get("FPAI_CODEX_REPO", "/opt/fpai-build/FPAI_Cockpit"))
+    helper_path = repo / "tools" / "allocation" / "opportunity_engine.py"
+    try:
+        import importlib.util as _ilu
+
+        _spec = _ilu.spec_from_file_location("fpai_opportunity_engine", helper_path)
+        _mod = _ilu.module_from_spec(_spec) if _spec and _spec.loader else None
+        if not _mod:
+            return ""
+        _spec.loader.exec_module(_mod)
+        ledger = Path(os.environ.get("FPAI_OPPORTUNITY_LEDGER", Path.home() / ".config/fpai/allocation/opportunities.json"))
+        return _mod.digest_line(ledger)
+    except Exception:
+        return ""
+
+
 async def run(run_id: str) -> dict[str, Any]:
     async with connect() as conn:
         async with conn.cursor() as cur:
@@ -189,6 +206,9 @@ async def run(run_id: str) -> dict[str, Any]:
     bandwidth_lines = bandwidth_ledger_lines()
     if bandwidth_lines:
         report["last_24h"]["bandwidth_ledger"] = bandwidth_lines
+    opp_line = opportunity_digest_line()
+    if opp_line:
+        report["last_24h"]["opportunities"] = opp_line
     liveness_lines = liveness_honest_map_lines()
     if liveness_lines:
         report["last_24h"]["liveness_map"] = liveness_lines
@@ -205,6 +225,8 @@ async def run(run_id: str) -> dict[str, Any]:
         proposal_text += "\n\n" + "\n".join(consciousness_lines)
     if bandwidth_lines:
         proposal_text += "\n\nBandwidth Ledger\n" + "\n".join(bandwidth_lines)
+    if opp_line:
+        proposal_text += "\n\nOpportunity Portfolio\n" + opp_line
     if liveness_lines:
         proposal_text += "\n\nLive / Partial / Planned\n" + "\n".join(liveness_lines)
     if probe_report.get("available"):

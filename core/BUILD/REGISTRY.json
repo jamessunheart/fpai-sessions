@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-05T00:47:00Z",
+    "updated_at": "2026-07-05T01:05:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d186_spec-d186-opportunity-intelligen",
+            "slug": "SPEC_d186_spec-d186-opportunity-intelligen",
+            "branch": "build/SPEC_d186_spec-d186-opportunity-intelligen",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d186_spec-d186-opportunity-intelligen.md",
+            "tests_passed": true,
+            "notes": "d186 complete in working tree: added tools/allocation/opportunity_engine.py for a seeded Opportunity Portfolio with 8-question fields, numeric axes, Opportunity Score, Allocation Score, closest-to-cash ranking, cheap gap scan updates, and honest blank scores when axes are missing. Chief of Staff exposes /opportunities and digest line; Telegram /opportunities returns ranked portfolio and triggers existing scan; curator opportunity/digest jobs update and surface the portfolio; council prompt now reads top Allocation Score rows before proposing builds. Focused engine/service/bot/council tests, py_compile, CLI smoke, registry JSON validation, and diff hygiene passed. Live web scan, live bot start, and live Chief of Staff start were not run in sandbox."
+        },
         {
             "id": "SPEC_d185_capability-created-ledger",
             "slug": "SPEC_d185_capability-created-ledger",
