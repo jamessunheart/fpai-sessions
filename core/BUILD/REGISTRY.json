@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-05T13:20:00Z",
+    "updated_at": "2026-07-05T13:00:23Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d196_funnel-fix-meta-lead-attributio",
+            "slug": "SPEC_d196_funnel-fix-meta-lead-attributio",
+            "branch": "build/SPEC_d196_funnel-fix-meta-lead-attributio",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d196_funnel-fix-meta-lead-attributio.md",
+            "tests_passed": true,
+            "notes": "d196 complete in working tree: kept the verified browser pixel untouched and added a server-side Meta Conversions API Lead event after process_leads.py successfully delivers a real assessment lead. The event posts to pixel 110851475615838 with event_id=<lead filename stem>, action_source=website, event_source_url=https://fullpotential.com/assessment, and SHA-256 normalized email matching; token loads from META_CONVERSIONS_API_TOKEN/META_CAPI_TOKEN/META_ACCESS_TOKEN or /root/.config/fpai/meta.env. fpai-leads-deliver.service now loads meta.env and activation installs the updated unit without triggering a send. Focused process_leads tests, adjacent assessment/lead tests, py_compile, activation shell syntax, activation policy, registry JSON validation, and diff hygiene passed. Live Meta CAPI proof/deploy was not run in sandbox."
+        },
         {
             "id": "SPEC_d195_council-proactive-spot-topple-a",
             "slug": "SPEC_d195_council-proactive-spot-topple-a",

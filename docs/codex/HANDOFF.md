@@ -83,6 +83,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Questions for Ember/James: …
 ```
 
+### 2026-07-05 · SPEC_d196_funnel-fix-meta-lead-attributio · branch `build/SPEC_d196_funnel-fix-meta-lead-attributio`
+
+- **Status:** done in working tree / awaiting review + merge + live activation proof
+- **Files changed:** `tools/growth/process_leads.py`; `tools/growth/test_process_leads.py`; `core/BUILD/fpai-leads-deliver.service`; `core/BUILD/activate/SPEC_d196_funnel-fix-meta-lead-attributio.sh`; `core/BUILD/specs/SPEC_d196_funnel-fix-meta-lead-attributio.md`; `core/BUILD/results/SPEC_d196_funnel-fix-meta-lead-attributio.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Kept the verified `/assessment` browser pixel untouched. Added a server-side Meta Conversions API `Lead` event after `tools/growth/process_leads.py` successfully scores and delivers a real lead. The event posts to pixel `110851475615838` with `event_id=<lead filename stem>`, `action_source=website`, `event_source_url=https://fullpotential.com/assessment`, and SHA-256 normalized email matching. The worker reads a token from `META_CONVERSIONS_API_TOKEN`, `META_CAPI_TOKEN`, `META_ACCESS_TOKEN`, or `/root/.config/fpai/meta.env`; missing token is logged without resending the delivered Allocation Score email. `fpai-leads-deliver.service` now loads `meta.env`, and the activation script installs the updated unit without triggering a send.
+- **Tests:** `python3 -B -m unittest tools.growth.test_process_leads` (5 OK); `python3 -B -m unittest tools.growth.test_process_leads tools.growth.test_score_assessment tools.leads.test_mail_leads tools.growth.life_assessment.test_champion_life_lead` (19 OK; existing Pydantic v1 validator deprecation warnings); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/growth/process_leads.py tools/growth/test_process_leads.py`; `bash -n core/BUILD/activate/SPEC_d196_funnel-fix-meta-lead-attributio.sh`; `python3 tools/build_loop/activation_policy.py --repo-root . --spec-id SPEC_d196_funnel-fix-meta-lead-attributio --base-ref feat/headless-build --head-ref HEAD` (OK); `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d196-registry-building.json`; `git diff --check`
+- **Risks:** Live Meta CAPI proof, production deploy, live lead processing, and ads status observation were not run in this sandbox. If `/root/.config/fpai/meta.env` is missing or lacks a supported token key, emails still deliver but attribution logs `missing Meta access token`. Browser/server dedup can only use the server event id for now because the verified browser page does not know the saved lead filename.
+- **Rollback:** Revert this branch. If already activated, reinstall the prior `fpai-leads-deliver.service`, run `systemctl daemon-reload`, and touch `/opt/fpai-build/.leads_worker_disabled` to stop the worker while reviewing attribution logs.
+- **Intent solved:** delivered assessment leads now emit a server-side Meta Lead event instead of relying only on browser pixel delivery.
+- **Downstream intent unlocked:** Meta can count real delivered leads and optimize the assessment ad toward leads after live activation/proof.
+- **Questions for Ember/James:** after merge on server 198/lead-worker host, run the d196 activation, process one controlled non-test or real lead, then confirm Meta Events Manager shows a server Lead event and ads status `leads_total` increments within the reporting window.
+
 ### 2026-07-05 · SPEC_d195_council-proactive-spot-topple-a · branch `build/SPEC_d195_council-proactive-spot-topple-a`
 
 - **Status:** done in working tree / awaiting review + merge

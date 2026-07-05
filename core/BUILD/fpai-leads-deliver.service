@@ -7,6 +7,7 @@ Type=oneshot
 WorkingDirectory=/opt/fpai-build/FPAI_Cockpit
 EnvironmentFile=-/root/.config/fpai/claude.env
 EnvironmentFile=-/root/.config/fpai/brevo.env
+EnvironmentFile=-/root/.config/fpai/meta.env
 EnvironmentFile=-/root/.config/fpai/telegram.env
 ExecStart=/usr/bin/python3 tools/growth/process_leads.py --live
 TimeoutStartSec=600
