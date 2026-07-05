@@ -31,6 +31,15 @@ class TelegramActBridgeTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn("Bot queued this only", str(payload["build_spec"]))
         self.assertIn("telegram_voice", str(payload["liveness"]))
 
+    def test_hands_free_steering_maps_safe_spoken_phrases_only(self) -> None:
+        self.assertEqual(tgbot._hands_free_steering_command("what's building right now"), "/builds")
+        self.assertEqual(tgbot._hands_free_steering_command("show pending approvals"), "/pending")
+        self.assertEqual(tgbot._hands_free_steering_command("what needs my decision"), "/decisions")
+        self.assertEqual(tgbot._hands_free_steering_command("what can you do"), "/whatcanyoudo")
+        self.assertEqual(tgbot._hands_free_steering_command("voice off"), "/voice off")
+        self.assertIsNone(tgbot._hands_free_steering_command("build a hands-free steering bridge"))
+        self.assertIsNone(tgbot._hands_free_steering_command("run git pull on the server"))
+
     def test_decision_payload_is_captured_not_buildable(self) -> None:
         payload = tgbot._queue_payload_for_intent(
             "should we move the digest later?",
@@ -48,6 +57,27 @@ class TelegramActBridgeTests(unittest.IsolatedAsyncioTestCase):
             (repo / "tools" / "synthesis").mkdir(parents=True)
             with mock.patch.dict(tgbot.os.environ, {"FPAI_REPO_ROOT": str(repo)}, clear=False):
                 self.assertEqual(repo, tgbot._repo_root())
+
+    async def test_owner_text_can_steer_build_status_without_queueing_build(self) -> None:
+        msg = {
+            "message_id": 42,
+            "text": "what's building right now",
+            "chat": {"id": 123, "type": "private"},
+            "from": {"id": 123},
+        }
+
+        with (
+            mock.patch.object(tgbot, "OWNER_CHAT_ID", "123"),
+            mock.patch.object(tgbot, "_handle_command", new=mock.AsyncMock(return_value="<b>Builds</b>")) as handle_command,
+            mock.patch.object(tgbot, "_append_self_check_footer", new=mock.AsyncMock(return_value="<b>Builds</b>\nfooter")),
+            mock.patch.object(tgbot, "_queue_owner_intent", new=mock.AsyncMock()) as queue_intent,
+            mock.patch.object(tgbot.tg, "send", new=mock.AsyncMock()) as send,
+        ):
+            await tgbot._handle_message(msg)
+
+        handle_command.assert_awaited_once_with("/builds", 123)
+        queue_intent.assert_not_awaited()
+        send.assert_awaited_once_with("<b>Builds</b>\nfooter")
 
     async def test_whatcanyoudo_command_is_honest_about_boundaries(self) -> None:
         reply = await tgbot._handle_command("/whatcanyoudo", 123)

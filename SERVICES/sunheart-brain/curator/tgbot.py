@@ -707,6 +707,50 @@ JOURNAL_INTENT_RE = re.compile(
 QUESTION_INTENT_RE = re.compile(r"\?\s*$|\b(what|why|how|when|where|who|which)\b", re.I)
 
 
+def _hands_free_steering_command(text: str) -> str | None:
+    """Map spoken owner steering phrases to existing safe slash commands.
+
+    This is intentionally read-only/toggle-only. Action verbs that would alter
+    code, services, git, money, or public sends must continue into the ACT
+    bridge and become queued builder rows, not direct execution.
+    """
+    t = " ".join((text or "").strip().lower().split())
+    if not t:
+        return None
+    dangerous = re.search(
+        r"\b(build|fix|add|wire|implement|make|create|update|repair|harden|"
+        r"deploy|restart|edit|commit|merge|run|ssh|bash|git|send|pay|buy|sell|"
+        r"transfer|move money)\b",
+        t,
+    )
+    if dangerous:
+        return None
+    if re.search(r"\b(what can you do|what are you able to do|capabilities|capability list)\b", t):
+        return "/whatcanyoudo"
+    if re.search(r"\b(health check|bot health|are you healthy|system health)\b", t):
+        return "/health"
+    if re.search(r"\b(voice status|is voice on|voice settings)\b", t):
+        return "/voice"
+    if re.search(r"\b(turn|switch|set)\s+voice\s+on\b|\bvoice on\b", t):
+        return "/voice on"
+    if re.search(r"\b(turn|switch|set)\s+voice\s+off\b|\bvoice off\b", t):
+        return "/voice off"
+    if re.search(
+        r"\b("
+        r"what'?s building|what is building|build status|build queue|"
+        r"what'?s in the build queue|what built overnight|what shipped overnight|"
+        r"where are builds|builds status"
+        r")\b",
+        t,
+    ):
+        return "/builds"
+    if re.search(r"\b(pending approvals|approval queue|show pending|curator queue)\b", t):
+        return "/pending"
+    if re.search(r"\b(pending decisions|decision queue|what needs my decision|what do i need to decide)\b", t):
+        return "/decisions"
+    return None
+
+
 def _classify_owner_intent(text: str) -> str:
     """Classify owner free text for routing before ordinary RAG chat."""
     t = " ".join((text or "").strip().split())
@@ -5055,6 +5099,24 @@ async def _handle_message(msg: dict) -> None:
                     await _send_voice_reply(reply)
                 except Exception as e:
                     log.warning("voice-out (cmd) failed: %s", e)
+        return
+
+    steering_command = _hands_free_steering_command(text)
+    if steering_command:
+        try:
+            reply = await _handle_command(steering_command, chat_id)
+        except Exception as e:
+            log.exception("hands-free steering failed: %s", e)
+            reply = f"⚠️ steering error: {e}"
+        if reply is not None:
+            if steering_command.lstrip("/").partition(" ")[0].lower() != "health":
+                reply = await _append_self_check_footer(reply)
+            await tg.send(reply)
+            if voice_in:
+                try:
+                    await _send_voice_reply(reply)
+                except Exception as e:
+                    log.warning("voice-out (steering) failed: %s", e)
         return
 
     # Beacon campaign approval: bCAMPAIGN:A / :B / :C / :all.
