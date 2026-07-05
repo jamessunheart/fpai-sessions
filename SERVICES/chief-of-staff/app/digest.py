@@ -10,6 +10,7 @@ from app.models import Signal, DailyDigest, DigestItem, SignalCategory
 from app.intelligence.storage import signal_storage
 from app.intelligence.patterns import PatternDetector
 from app.config import settings
+from app.capability import capability_digest_line, build_capability_view
 
 logger = logging.getLogger(__name__)
 
@@ -99,6 +100,14 @@ class DigestGenerator:
             "urgent_alerts": len(urgent),
             "auto_handled": len(auto_handled),
         }
+        try:
+            capability = build_capability_view()
+            key_metrics["capability_created_line"] = capability_digest_line()
+            key_metrics["capability_created_today"] = capability["today"]["total_capability_gain"]
+            key_metrics["capability_created_7d"] = capability["week"]["total_capability_gain"]
+            key_metrics["capability_created_30d"] = capability["thirty_day"]["total_capability_gain"]
+        except Exception as e:
+            logger.warning(f"Failed to load capability ledger: {e}")
 
         # Add revenue metrics
         if revenue_data:
@@ -203,6 +212,14 @@ class DigestGenerator:
             lines.append(f"• Trailing 30d: ${revenue_30d:,.2f}")
             lines.append("")
 
+        # Capability created
+        if "capability_created_line" in digest.key_metrics:
+            lines.append("*CAPABILITY CREATED*")
+            lines.append(f"• {digest.key_metrics['capability_created_line']}")
+            lines.append(f"• 7d: +{digest.key_metrics.get('capability_created_7d', 0)}")
+            lines.append(f"• 30d: +{digest.key_metrics.get('capability_created_30d', 0)}")
+            lines.append("")
+
         # System Health (if available)
         if "services_healthy" in digest.key_metrics:
             healthy = digest.key_metrics["services_healthy"]
@@ -224,7 +241,9 @@ class DigestGenerator:
         other_metrics = {
             k: v for k, v in digest.key_metrics.items()
             if k not in ["revenue_24h", "revenue_change_pct", "revenue_30d", "revenue_count",
-                        "services_healthy", "services_total", "primary_ram_free_gb", "secondary_ram_free_gb"]
+                        "capability_created_line", "capability_created_today", "capability_created_7d",
+                        "capability_created_30d", "services_healthy", "services_total",
+                        "primary_ram_free_gb", "secondary_ram_free_gb"]
         }
         if other_metrics:
             lines.append("📊 *OTHER METRICS*")

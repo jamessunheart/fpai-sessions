@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-05T00:18:00Z",
+    "updated_at": "2026-07-05T00:47:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d185_capability-created-ledger",
+            "slug": "SPEC_d185_capability-created-ledger",
+            "branch": "build/SPEC_d185_spec-the-capability-created-ledg",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d185_capability-created-ledger.md",
+            "tests_passed": true,
+            "notes": "d185 complete in working tree: added tools/allocation/capability_ledger.py for honest-zero per-axis capability scoring, realized-vs-expected deltas, required reusable-intelligence pointers on positive rows, today/7d/30d summaries, and 30-day trend output. Chief of Staff now exposes /capability, Telegram bot now handles /capability, and the daily digest adds a capability-created headline line. Proof fixture records d185 as +4 total capability with no unmeasured time/cash claims. Focused ledger/service/bot tests, py_compile, registry JSON validation, proof CLI smoke, and diff hygiene passed. Live Chief of Staff/bot start and live allocation ledger append were not run in sandbox."
+        },
         {
             "id": "SPEC_d184_spec-d184-bot-self-honesty-it-mu",
             "slug": "SPEC_d184_spec-d184-bot-self-honesty-it-mu",
