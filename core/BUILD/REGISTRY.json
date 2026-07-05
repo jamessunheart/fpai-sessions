@@ -4,6 +4,17 @@
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
         {
+            "id": "SPEC_d184_spec-d184-bot-self-honesty-it-mu",
+            "slug": "SPEC_d184_spec-d184-bot-self-honesty-it-mu",
+            "branch": "build/SPEC_d184_spec-d184-bot-self-honesty-it-mu",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d184_spec-d184-bot-self-honesty-it-mu.md",
+            "tests_passed": true,
+            "notes": "d184 complete in working tree: TG bot now builds one read-only self-check state for reply footers, /health, and startup self-test. Footers disclose actual answer model, fallback model state, HOT_STATE freshness/empty state, voice STT availability, and recent degrade/import warnings. /health returns full model/context/voice/queue-write/log state. Startup runs Claude ping, HOT_STATE read, voice STT check, queue reachability check, and log scan, then sends one 'bot started degraded: ...' line if anything is red. Baked fragility fixes are permanent: claude-cli env drops ANTHROPIC_API_KEY, service/env activation forces CURATOR_LLM_PROVIDER=claude-cli with blank ANTHROPIC_API_KEY, voice accepts OpenAI Whisper fallback, and SH_HOT_STATE_MAX_CHARS defaults to 3500. Focused curator tests, d182 guard tests, py_compile, activation shell syntax, registry JSON validation, and diff hygiene passed. Live forced-degrade/startup alert proof awaits guarded server-162 activation."
+        },
+        {
             "id": "SPEC_d183_metric-replace-awareness-with-a",
             "slug": "SPEC_d183_metric-replace-awareness-with-a",
             "branch": "build/SPEC_d183_metric-replace-awareness-with-a",

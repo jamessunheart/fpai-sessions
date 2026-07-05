@@ -163,7 +163,7 @@ class BuildContextTest(unittest.TestCase):
         self.assertNotIn("CURRENT BUILD CONTEXT", suffix)
         self.assertNotIn("SPEC_d011", suffix)
 
-    def test_hot_state_is_unbounded_by_default(self) -> None:
+    def test_hot_state_defaults_to_about_3500_chars(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             hot_state = Path(tmp) / "HOT_STATE.md"
             marker = "FULL-HOT-STATE-MARKER"
@@ -173,6 +173,18 @@ class BuildContextTest(unittest.TestCase):
 
         self.assertIn(marker, suffix)
         self.assertNotIn("- ... bounded", suffix)
+
+    def test_hot_state_default_bounds_long_input(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            hot_state = Path(tmp) / "HOT_STATE.md"
+            marker = "TOO-DEEP-MARKER"
+            hot_state.write_text("# HOT_STATE\n\n" + ("x\n" * 5000) + marker, encoding="utf-8")
+
+            suffix = build_context.render_hot_state_context(path=hot_state)
+
+        self.assertLessEqual(len(suffix), 3500)
+        self.assertNotIn(marker, suffix)
+        self.assertIn("- ... bounded", suffix)
 
     def test_fresh_hot_state_still_injects_recent_corrections(self) -> None:
         pair = corrections.CorrectionPair(
