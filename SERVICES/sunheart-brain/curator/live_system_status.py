@@ -8,6 +8,8 @@ from __future__ import annotations
 import json
 import os
 import socket
+import importlib.util
+import sys
 from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
@@ -127,7 +129,30 @@ def _server_health(repo_root: Path, *, ops_ledger: Path, max_items: int) -> list
     liveness = _liveness_summary(ops_ledger)
     if liveness:
         health.append(liveness)
+    activation = _activation_audit_summary(repo_root, ops_ledger)
+    if activation:
+        health.append(activation)
     return health
+
+
+def _activation_audit_summary(repo_root: Path, ops_ledger: Path) -> str:
+    try:
+        module_path = repo_root / "tools" / "build_loop" / "activation_audit.py"
+        spec = importlib.util.spec_from_file_location("fpai_activation_audit", module_path)
+        if not spec or not spec.loader:
+            return ""
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = module
+        spec.loader.exec_module(module)
+        payload = module.audit(repo_root, ops_ledger=ops_ledger)
+    except Exception:
+        return ""
+    total = int(payload.get("total") or 0)
+    unexplained = payload.get("unexplained_inert") or []
+    if not total:
+        return ""
+    preview = f" · inert={', '.join(str(item) for item in unexplained[:3])}" if unexplained else ""
+    return f"Activation audit: merged={total} · unexplained_inert={len(unexplained)}{preview}"
 
 
 def _ops_summary(path: Path, *, max_items: int) -> str:

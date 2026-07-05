@@ -9,6 +9,7 @@ from pathlib import Path
 from shutil import disk_usage
 
 from tools.hot_memory.common import DEFAULT_HOT_DIR, DEFAULT_OPS_LEDGER, REPO_ROOT, compact_facts, fact, file_date, read_jsonl_tail, write_scan
+from tools.build_loop import activation_audit
 
 
 def collect(repo_root: Path = REPO_ROOT, ops_ledger: Path = DEFAULT_OPS_LEDGER):
@@ -47,7 +48,37 @@ def collect(repo_root: Path = REPO_ROOT, ops_ledger: Path = DEFAULT_OPS_LEDGER):
                 f"Awareness reliability score: {pct}% ({successes}/{total} probes passing) as of {ts}",
                 str(ops_ledger), file_date(ops_ledger), weight=9, category="ops",
             ))
+    activation = _activation_audit_fact(repo_root, ops_ledger)
+    if activation:
+        facts.append(activation)
     return compact_facts(facts, limit=12)
+
+
+def _activation_audit_fact(repo_root: Path, ops_ledger: Path):
+    try:
+        payload = activation_audit.audit(repo_root, ops_ledger=ops_ledger)
+    except Exception:
+        return None
+    unexplained = payload.get("unexplained_inert") or []
+    counts = payload.get("counts") or {}
+    if unexplained:
+        preview = ", ".join(str(item) for item in unexplained[:4])
+        return fact(
+            f"Activation audit: {len(unexplained)} unexplained INERT merged builds ({preview})",
+            "tools/build_loop/activation_audit.py",
+            file_date(repo_root / "tools" / "build_loop" / "activation_audit.py"),
+            weight=9,
+            category="ops",
+        )
+    if payload.get("total"):
+        return fact(
+            f"Activation audit: 0 unexplained INERT merged builds; counts={dict(counts)}",
+            "tools/build_loop/activation_audit.py",
+            file_date(repo_root / "tools" / "build_loop" / "activation_audit.py"),
+            weight=6,
+            category="ops",
+        )
+    return None
 
 
 def _resource_inventory_facts(repo_root: Path):

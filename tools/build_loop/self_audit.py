@@ -27,6 +27,7 @@ from tools.inventory.scan_resources import read_inventory_context
 REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO_ROOT))
 from tools.intelligence.model_router import call_model
+from tools.build_loop import activation_audit
 DEFAULT_OPS_LEDGER = Path(os.environ.get("OPS_LEDGER", "/opt/fpai-build/ops_ledger.jsonl"))
 DEFAULT_LAST_AUDIT = Path(os.environ.get("SELF_AUDIT_LAST_FILE", "/opt/fpai-build/.last_audit_date"))
 DEFAULT_MERGED_COUNTER = Path(os.environ.get("SELF_AUDIT_MERGED_COUNTER", "/opt/fpai-build/.merged_since_audit"))
@@ -408,6 +409,7 @@ def build_audit_context(
     return {
         "generated_at": (now or utc_now()).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "ops_ledger_7d": collect_ops_summary(ops_ledger, now=now),
+        "activation_audit": collect_activation_audit(ops_ledger=ops_ledger),
         "awareness_probe": collect_awareness_probe(ops_ledger),
         "review_patterns": collect_review_patterns(reviews_dir),
         "brain_index": brain_index,
@@ -419,12 +421,37 @@ def build_audit_context(
     }
 
 
+def collect_activation_audit(*, ops_ledger: Path = DEFAULT_OPS_LEDGER) -> dict[str, Any]:
+    try:
+        payload = activation_audit.audit(REPO_ROOT, ops_ledger=ops_ledger)
+    except Exception as exc:
+        return {"available": False, "reason": str(exc)}
+    inert_rows = [
+        {
+            "spec_id": row.get("spec_id"),
+            "classification": row.get("classification"),
+            "explained": row.get("explained"),
+            "explicit_build_kind": row.get("explicit_build_kind"),
+        }
+        for row in payload.get("rows", [])
+        if row.get("classification") == "INERT"
+    ]
+    return {
+        "available": True,
+        "total": payload.get("total", 0),
+        "counts": payload.get("counts", {}),
+        "unexplained_inert_count": payload.get("unexplained_inert_count", 0),
+        "inert_capability_builds": inert_rows[:12],
+    }
+
+
 def build_prompt(context: dict[str, Any]) -> str:
     return (
         "You are auditing the FPAI autonomous build loop from local evidence only.\n"
         "Goal: identify systemic gaps that should become the next safe improvement specs.\n\n"
         "Look specifically for:\n"
         "- the standard audit probes: current awareness_probe score/source, last 3 recent_user_messages, and queue_state\n"
+        "- activation_audit: merged builds that are INERT or unexplained-inert\n"
         "- silent failures: loop ran but produced no work or no visible next action\n"
         "- recurring review failures: repeated REQUEST_CHANGES classes\n"
         "- capability gaps: PARTIAL or gap lines in architecture/build reports\n"
