@@ -133,6 +133,25 @@ class CorrectionLoopClosureProbeTest(unittest.TestCase):
         self.assertEqual(1, rc)
         self.assertIn('"status": "fail"', out.getvalue())
 
+    def test_cli_ignores_preloaded_repo_curator_when_parent_is_explicit(self) -> None:
+        import curator  # noqa: F401
+
+        root = self.make_curator(
+            [
+                ("1", "chat", "a", "old answer", "correct answer", "2026-06-26T00:00:00Z"),
+                ("2", "chat", "b", "old answer", "correct answer", "2026-06-26T00:05:00Z"),
+            ]
+        )
+        with tempfile.TemporaryDirectory(prefix="fpai-loop-probe-") as tmp:
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                rc = probe.main(["--curator-parent", str(root), "--ops-ledger", str(Path(tmp) / "ops.jsonl")])
+
+        self.assertEqual(1, rc)
+        payload = json.loads(out.getvalue())
+        self.assertEqual("fail", payload["status"])
+        self.assertEqual(str(root / "curator" / "__init__.py"), sys.modules["curator"].__file__)
+
     def test_server_loop_runs_closure_probe_after_retention_smoke(self) -> None:
         text = SERVER_LOOP.read_text(encoding="utf-8")
 
