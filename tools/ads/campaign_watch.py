@@ -88,7 +88,7 @@ class MetaClient:
             data = encoded.encode("utf-8")
         req = urllib.request.Request(url, data=data, method=method.upper())
         try:
-            with self._opener(req, 30) as resp:
+            with self._opener(req, timeout=30) as resp:
                 return json.loads(resp.read().decode("utf-8"))
         except urllib.error.HTTPError as exc:
             body = exc.read().decode("utf-8", errors="replace")
@@ -198,11 +198,11 @@ def collect_status(client: MetaClient) -> dict[str, Any]:
     cfg = client.config
     campaign = client.get(
         cfg.campaign_id,
-        {"fields": "id,name,status,configured_status,effective_status,ad_review_feedback,review_feedback"},
+        {"fields": "id,name,status,configured_status,effective_status"},
     )
     adsets = client.get(
         f"{cfg.campaign_id}/adsets",
-        {"fields": "id,name,status,configured_status,effective_status,daily_budget,ad_review_feedback"},
+        {"fields": "id,name,status,configured_status,effective_status,daily_budget"},
     ).get("data") or []
     ads = client.get(
         f"{cfg.campaign_id}/ads",
