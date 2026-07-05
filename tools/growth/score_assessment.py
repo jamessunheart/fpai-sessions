@@ -19,6 +19,7 @@ Usage:
   score_assessment.py --url <site> --first-read  # fetch/summarize only, JSON
   score_assessment.py --demo              # score a synthetic lead (proof it works)
 """
+from __future__ import annotations  # lazy annotations — `Path | None` etc. must not eval at def-time (crashed real leads' scores, 2026-07-05)
 import argparse, hashlib, html, json, os, re, shlex, subprocess, sys, time
 import urllib.error
 import urllib.parse
