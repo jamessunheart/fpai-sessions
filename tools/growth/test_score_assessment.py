@@ -115,6 +115,46 @@ class UrlFirstAssessmentTests(unittest.TestCase):
         self.assertGreater(calls["count"], 0)
         self.assertEqual(calls["count"], calls_after_first)
 
+    def test_render_includes_draft_next_step_with_url_placeholder_by_default(self):
+        md = score.render(
+            "Taylor",
+            "Acme",
+            {dim: 60 for dim in score.DIMENSIONS},
+            60,
+            "time",
+            [{"title": "Automate intake", "dimension": "time", "why": "manual handoffs", "est_annual_value": "$18k/yr"}],
+            {"next_step": "DRAFT: Want help turning this into a Blueprint?"},
+        )
+
+        self.assertIn("## Next step (DRAFT - James approval required)", md)
+        self.assertIn("DRAFT: Want help turning this into a Blueprint?", md)
+        self.assertIn("[Booking/Blueprint link placeholder](ASSESSMENT_CTA_URL)", md)
+        self.assertIn("James provides final invitation copy", md)
+
+    def test_render_uses_approved_cta_copy_and_url_when_configured(self):
+        with mock.patch.dict(
+            "os.environ",
+            {
+                "ASSESSMENT_CTA_COPY": "Approved James invitation copy.",
+                "ASSESSMENT_CTA_URL": "https://fullpotential.com/blueprint",
+            },
+        ):
+            md = score.render(
+                "Taylor",
+                "Acme",
+                {dim: 60 for dim in score.DIMENSIONS},
+                60,
+                "time",
+                [{"title": "Automate intake", "dimension": "time", "why": "manual handoffs", "est_annual_value": "$18k/yr"}],
+                {"next_step": "DRAFT: Placeholder copy."},
+            )
+
+        self.assertIn("## Your next step", md)
+        self.assertIn("Approved James invitation copy.", md)
+        self.assertIn("[Book or view the Blueprint next step](https://fullpotential.com/blueprint)", md)
+        self.assertNotIn("DRAFT - James approval required", md)
+        self.assertNotIn("ASSESSMENT_CTA_URL", md)
+
 
 if __name__ == "__main__":
     unittest.main()

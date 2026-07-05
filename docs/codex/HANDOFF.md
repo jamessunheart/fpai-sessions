@@ -83,6 +83,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Questions for Ember/James: …
 ```
 
+### 2026-07-05 · SPEC_d197_funnel-bridge-free-assessment-p · branch `build/SPEC_d197_funnel-bridge-free-assessment-p`
+
+- **Status:** done in working tree / awaiting review + merge + James CTA approval
+- **Files changed:** `tools/growth/score_assessment.py`; `tools/growth/process_leads.py`; `tools/growth/test_score_assessment.py`; `tools/growth/test_process_leads.py`; `core/BUILD/specs/SPEC_d197_funnel-bridge-free-assessment-p.md`; `core/BUILD/results/SPEC_d197_funnel-bridge-free-assessment-p.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the guarded free-assessment -> Blueprint bridge. `score_assessment.py` now requires a `next_step` schema field and renders a next-step section. By default it is clearly marked `DRAFT - James approval required` with an `ASSESSMENT_CTA_URL` placeholder; when James provides approved copy and URL through `ASSESSMENT_CTA_COPY` and `ASSESSMENT_CTA_URL`, the deliverable renders a working `## Your next step` link. `process_leads.py` now holds live sends if the deliverable still has draft/reserved markers, the URL placeholder, no approved next-step section, or no real HTTP(S) markdown link.
+- **Tests:** `python3 -B -m unittest tools.growth.test_score_assessment` (7 OK); `python3 -B -m unittest tools.growth.test_process_leads` (6 OK); `python3 -B -m unittest tools.growth.test_process_leads tools.growth.test_score_assessment tools.leads.test_mail_leads tools.growth.life_assessment.test_champion_life_lead` (22 OK; existing Pydantic v1 validator deprecation warnings); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/growth/score_assessment.py tools/growth/process_leads.py tools/growth/test_score_assessment.py tools/growth/test_process_leads.py`; `python3 -m json.tool core/BUILD/REGISTRY.json >/tmp/d197-registry-building.json`; `git diff --check`
+- **Risks:** James still needs to approve final invitation copy and provide the booking/Blueprint URL. Until both env vars are configured, live assessment delivery intentionally holds instead of sending draft marketing copy. Live worker/send proof was not run in sandbox. The fuller G3 nurture sequence remains a separate follow-on.
+- **Rollback:** Revert this branch. Runtime mitigation without code rollback is to leave `ASSESSMENT_CTA_COPY` or `ASSESSMENT_CTA_URL` unset so draft CTA sends are held.
+- **Intent solved:** free assessment deliverables now have a guarded next-step bridge toward paid Blueprint/free strategy call capture.
+- **Downstream intent unlocked:** once James approves copy/URL, a real assessment lead has a working path to book/buy from the first email.
+- **Questions for Ember/James:** provide approved `ASSESSMENT_CTA_COPY` and `ASSESSMENT_CTA_URL`, then run one controlled lead delivery and confirm the email ends with the approved invitation + working link. Separately, route the G3 nurture sequence as a follow-on spec if desired.
+
 ### 2026-07-05 · SPEC_d196_funnel-fix-meta-lead-attributio · branch `build/SPEC_d196_funnel-fix-meta-lead-attributio`
 
 - **Status:** done in working tree / awaiting review + merge + live activation proof

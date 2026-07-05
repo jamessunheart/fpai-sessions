@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-05T13:00:23Z",
+    "updated_at": "2026-07-05T13:06:44Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d197_funnel-bridge-free-assessment-p",
+            "slug": "SPEC_d197_funnel-bridge-free-assessment-p",
+            "branch": "build/SPEC_d197_funnel-bridge-free-assessment-p",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d197_funnel-bridge-free-assessment-p.md",
+            "tests_passed": true,
+            "notes": "d197 complete in working tree: score_assessment.py now requires a next_step schema field and renders a reserved-copy assessment CTA bridge. By default the deliverable shows a clearly marked DRAFT invitation and ASSESSMENT_CTA_URL placeholder; when James provides approved copy and URL through ASSESSMENT_CTA_COPY and ASSESSMENT_CTA_URL it renders a working Blueprint/booking link. process_leads.py now holds live sends if the deliverable still has draft/reserved markers, the URL placeholder, no approved next-step section, or no real HTTP(S) markdown link, so real leads are not emailed autonomous marketing copy. Focused and adjacent assessment tests, py_compile, registry JSON validation, and diff hygiene passed. Fuller G3 nurture sequence remains a follow-on."
+        },
         {
             "id": "SPEC_d196_funnel-fix-meta-lead-attributio",
             "slug": "SPEC_d196_funnel-fix-meta-lead-attributio",

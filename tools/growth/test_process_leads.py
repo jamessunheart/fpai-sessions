@@ -77,10 +77,16 @@ class MetaLeadEventTests(unittest.TestCase):
 class ProcessLeadFlowTests(unittest.TestCase):
     def test_successful_email_triggers_meta_capi_before_marking_processed(self):
         lead_text = "---\nemail: real@example.com\nname: Real Person\n---\nbody\n"
+        approved_deliverable = (
+            "# Your Full Potential Assessment\n\n"
+            "## Your next step\n\n"
+            "Approved James invitation copy.\n\n"
+            "[Book or view the Blueprint next step](https://fullpotential.com/blueprint)\n"
+        )
 
         def fake_run(cmd, **kwargs):
             out_path = Path(cmd[cmd.index("--out") + 1])
-            out_path.write_text("deliverable", encoding="utf-8")
+            out_path.write_text(approved_deliverable, encoding="utf-8")
             return mock.Mock(returncode=0, stderr="", stdout="")
 
         with tempfile.TemporaryDirectory() as tmp:
@@ -110,3 +116,42 @@ class ProcessLeadFlowTests(unittest.TestCase):
                 email="real@example.com",
                 access_token="meta-token",
             )
+
+    def test_live_send_holds_draft_cta_without_marking_processed(self):
+        lead_text = "---\nemail: real@example.com\nname: Real Person\n---\nbody\n"
+        draft_deliverable = (
+            "# Your Full Potential Assessment\n\n"
+            "## Next step (DRAFT - James approval required)\n\n"
+            "DRAFT: Want help capturing this?\n\n"
+            "[Booking/Blueprint link placeholder](ASSESSMENT_CTA_URL)\n"
+        )
+
+        def fake_run(cmd, **kwargs):
+            out_path = Path(cmd[cmd.index("--out") + 1])
+            out_path.write_text(draft_deliverable, encoding="utf-8")
+            return mock.Mock(returncode=0, stderr="", stdout="")
+
+        with tempfile.TemporaryDirectory() as tmp:
+            state = Path(tmp) / "processed.txt"
+            work = Path(tmp) / "work"
+            brevo_env = Path(tmp) / "brevo.env"
+            brevo_env.write_text("BREVO_API_KEY=brevo\n", encoding="utf-8")
+            with (
+                mock.patch.object(process_leads, "STATE", state),
+                mock.patch.object(process_leads, "WORK", work),
+                mock.patch.object(process_leads, "KILL", Path(tmp) / "disabled"),
+                mock.patch.object(process_leads, "BREVO_ENV", brevo_env),
+                mock.patch.object(process_leads, "list_remote_leads", return_value=["/remote/lead-1.md"]),
+                mock.patch.object(process_leads, "fetch_lead", return_value=lead_text),
+                mock.patch.object(process_leads.subprocess, "run", side_effect=fake_run),
+                mock.patch.object(process_leads, "send_email") as send_email,
+                mock.patch.object(process_leads, "send_meta_lead_event") as send_meta,
+                mock.patch.object(process_leads, "tg_alert"),
+                mock.patch.dict(os.environ, {"META_ACCESS_TOKEN": "meta-token"}, clear=True),
+            ):
+                code = process_leads.main(["--live"])
+
+            self.assertEqual(code, 0)
+            self.assertEqual(state.read_text(encoding="utf-8"), "")
+            send_email.assert_not_called()
+            send_meta.assert_not_called()
