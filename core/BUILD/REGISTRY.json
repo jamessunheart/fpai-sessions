@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-05T19:18:00Z",
+    "updated_at": "2026-07-06T16:45:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d210_auto-spot-topple-assessment-funn",
+            "slug": "SPEC_d210_auto-spot-topple-assessment-funn",
+            "branch": "build/SPEC_d210_auto-spot-topple-assessment-funn",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d210_auto-spot-topple-assessment-funn.md",
+            "tests_passed": true,
+            "notes": "d210 complete in working tree: added a local assessment_delivery_proof verifier that consumes real post-d193 activation proof, requires recipient email status, founder alert status, browser/page acknowledgement, and learning before passing, and appends a d185-style capability row only with --append-capability after proof is complete. It performs no live submit, email send, Telegram call, deploy, secret access, push, merge, or money movement. Focused verifier tests, adjacent capability/audit tests, py_compile, activation policy build_kind=library, JSON validation, and diff hygiene passed."
+        },
         {
             "id": "SPEC_d209_build-loop-correction-loop-clos",
             "slug": "SPEC_d209_build-loop-correction-loop-clos",

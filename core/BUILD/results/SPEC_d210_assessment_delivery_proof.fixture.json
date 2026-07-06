@@ -1,0 +1,29 @@
+{
+  "real_execution": true,
+  "lens": "life",
+  "lead_email": "proof@fullpotential.com",
+  "response": {
+    "ok": true,
+    "filename": "2026-07-06-proof.md",
+    "deliverable_status": "queued",
+    "founder_alert": {
+      "ok": true,
+      "status": 200
+    },
+    "message": "Thank you, Proof. Your Allocation Score is on its way to your inbox."
+  },
+  "recipient_email": {
+    "status": "sent",
+    "source": "journalctl",
+    "detail": "assessment deliverable email sent lead=2026-07-06-proof.md"
+  },
+  "founder_alert": {
+    "status": "sent",
+    "detail": "Telegram founder alert returned 200"
+  },
+  "page_acknowledgement": {
+    "status": "shown",
+    "message": "Your Allocation Score is on its way to your inbox."
+  },
+  "learning": "The Life assessment promise can complete end-to-end after d193 activation."
+}

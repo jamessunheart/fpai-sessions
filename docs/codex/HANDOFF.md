@@ -83,6 +83,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Questions for Ember/James: …
 ```
 
+### 2026-07-06 · SPEC_d210_auto-spot-topple-assessment-funn · branch `build/SPEC_d210_auto-spot-topple-assessment-funn`
+
+- **Status:** done in working tree / awaiting review + merge
+- **Files changed:** `tools/build_loop/assessment_delivery_proof.py`; `tools/build_loop/test_assessment_delivery_proof.py`; `core/BUILD/specs/SPEC_d210_auto-spot-topple-assessment-funn.md`; `core/BUILD/results/SPEC_d210_assessment_delivery_proof.fixture.json`; `core/BUILD/results/SPEC_d210_auto-spot-topple-assessment-funn.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the d210 local verifier for `assessment-funnel-delivery-proof`. It consumes a real proof packet after d193 activation evidence exists, validates recipient email delivery status, founder alert status, browser/page acknowledgement, and non-empty learning, then writes a local JSONL proof row. It appends a d185 capability-created row only when `--append-capability` is explicitly used and the proof fully passes. The verifier itself does not submit leads, send emails, call Telegram, deploy, touch secrets, push, merge, or spend money.
+- **Tests:** `python3 -B -m unittest tools.build_loop.test_assessment_delivery_proof tools.allocation.test_capability_ledger tools.build_loop.test_activation_audit` (13 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/assessment_delivery_proof.py tools/build_loop/test_assessment_delivery_proof.py`; `python3 tools/build_loop/activation_policy.py --repo-root . --spec-id SPEC_d210_auto-spot-topple-assessment-funn --base-ref feat/headless-build --head-ref HEAD` (OK: `build_kind=library`); registry and fixture JSON validation; `git diff --check`
+- **Risks:** The verifier cannot create live proof by itself; Ember/server ops still need a guarded d193 activation and one controlled real Life assessment lead. It depends on honest evidence from API/page/logs and intentionally holds on sandbox-only packets.
+- **Rollback:** Revert this branch. Runtime cleanup is inert: delete any d210 proof JSONL rows and any d210 capability-created rows if a real proof run appended them.
+- **Intent solved:** the assessment funnel delivery proof now has a deterministic acceptance gate instead of counting the domino toppled from a vague lead-capture claim.
+- **Downstream intent unlocked:** after d193 activation, Spot/Topple can record capability learning only when recipient email, founder alert, page acknowledgement, and learning are all real and defensible.
+- **Questions for Ember/James:** after d193 is merged and activated through the d182 guard, run one controlled Life assessment lead, save the proof packet from the page/API/logs, then run `python3 tools/build_loop/assessment_delivery_proof.py --proof-file <packet.json> --append-capability --json` on server 162.
+
 ### 2026-07-05 · SPEC_d209_build-loop-correction-loop-clos · branch `build/SPEC_d209_build-loop-correction-loop-clos`
 
 - **Status:** done in working tree / awaiting review + merge
