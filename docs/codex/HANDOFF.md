@@ -83,6 +83,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Questions for Ember/James: …
 ```
 
+### 2026-07-07 · SPEC_d211_auto-spot-topple-assessment-funn · branch `build/SPEC_d211_auto-spot-topple-assessment-funn`
+
+- **Status:** done in working tree / awaiting review + merge
+- **Files changed:** `tools/build_loop/assessment_delivery_proof_queue.py`; `tools/build_loop/test_assessment_delivery_proof_queue.py`; `tools/build_loop/assessment_delivery_proof.py`; `tools/build_loop/test_assessment_delivery_proof.py`; `core/BUILD/specs/SPEC_d211_auto-spot-topple-assessment-funn.md`; `core/BUILD/results/SPEC_d211_auto-spot-topple-assessment-funn.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a reversible local queue/readiness layer for `assessment-funnel-delivery-proof`. It reads the build registry and ops ledger, holds until d193 is merged and guarded activation evidence exists, then writes a local queue packet pointing operators to the existing d210 `assessment_delivery_proof.py` verifier and its required proof fields. The queue and verifier now both recognize the canonical and legacy d193 spec ids. The queue does not submit leads, send email, call Telegram, deploy, touch secrets, append capability rows, push, merge, or spend money.
+- **Tests:** `python3 -B -m unittest tools.build_loop.test_assessment_delivery_proof_queue tools.build_loop.test_assessment_delivery_proof tools.build_loop.test_activation_audit` (12 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/assessment_delivery_proof_queue.py tools/build_loop/test_assessment_delivery_proof_queue.py tools/build_loop/assessment_delivery_proof.py tools/build_loop/test_assessment_delivery_proof.py`; `python3 tools/build_loop/activation_policy.py --repo-root . --spec-id SPEC_d211_auto-spot-topple-assessment-funn --base-ref feat/headless-build --head-ref HEAD` (OK: `build_kind=library`); registry JSON validation; `git diff --check`
+- **Risks:** The queue depends on honest registry/ops-ledger merge and activation evidence. It cannot create live proof; Ember/server ops still need to run one controlled Life assessment lead after d193 activation and feed the resulting evidence packet to the verifier.
+- **Rollback:** Revert this branch. Runtime cleanup is inert: delete any local `assessment_delivery_proof_queue.json` file produced by the queue.
+- **Intent solved:** the assessment delivery proof cannot be treated as ready before d193 is merged and activation evidence exists.
+- **Downstream intent unlocked:** after d193 activation, server ops can run the d210 verifier against one controlled Life assessment proof and append d185 capability learning only when recipient email, founder alert, page acknowledgement, and learning are all real and defensible.
+- **Questions for Ember/James:** after d193 is merged and activated through the d182 guard, run `python3 tools/build_loop/assessment_delivery_proof_queue.py --repo-root /opt/fpai-build/FPAI_Cockpit --ops-ledger /opt/fpai-build/ops_ledger.jsonl --json`; if it returns `ready`, run the emitted verifier command with the real proof packet.
+
 ### 2026-07-06 · SPEC_d210_auto-spot-topple-assessment-funn · branch `build/SPEC_d210_auto-spot-topple-assessment-funn`
 
 - **Status:** done in working tree / awaiting review + merge

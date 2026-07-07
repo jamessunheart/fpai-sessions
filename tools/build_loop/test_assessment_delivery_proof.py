@@ -50,6 +50,19 @@ class AssessmentDeliveryProofTests(unittest.TestCase):
             encoding="utf-8",
         )
 
+    def write_alternate_activation_evidence(self, path: Path) -> None:
+        path.write_text(
+            json.dumps(
+                {
+                    "event": "activated",
+                    "artifact": "SPEC_d193_wire-assessment-funnel-auto-deliver",
+                    "detail": "d193 guarded activate smoke passed: alternate spec id",
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
     def test_holds_without_d193_activation_evidence(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -120,6 +133,25 @@ class AssessmentDeliveryProofTests(unittest.TestCase):
             self.assertEqual(len(rows), 1)
             self.assertEqual(rows[0]["source_id"], proof.SPEC_ID)
             self.assertEqual(rows[0]["total_capability_gain"], 3.0)
+
+    def test_pass_accepts_legacy_d193_activation_spec_id(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            ops = root / "ops.jsonl"
+            self.write_alternate_activation_evidence(ops)
+
+            row = proof.build_result_row(
+                repo_root=root,
+                ops_ledger=ops,
+                proof_packet=proof_packet(),
+                proof_path=root / "proof.json",
+                append_capability=False,
+                capability_path=root / "capability.jsonl",
+                now="2026-07-06T16:30:00Z",
+            )
+
+            self.assertEqual(row["status"], "pass")
+            self.assertTrue(row["activation"]["ok"])
 
     def test_cli_writes_hold_log_for_sandbox_only_packet(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
