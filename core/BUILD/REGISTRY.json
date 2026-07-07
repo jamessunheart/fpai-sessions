@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-06T16:45:00Z",
+    "updated_at": "2026-07-07T16:35:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d211_auto-spot-topple-assessment-funn",
+            "slug": "SPEC_d211_auto-spot-topple-assessment-funn",
+            "branch": "build/SPEC_d211_auto-spot-topple-assessment-funn",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d211_auto-spot-topple-assessment-funn.md",
+            "tests_passed": true,
+            "notes": "d211 complete in working tree: added a reversible local assessment_delivery_proof_queue readiness layer that reads registry plus ops-ledger evidence and only marks assessment-funnel-delivery-proof ready after d193 is merged and guarded activation evidence exists. The queue emits the existing d210 verifier command and required proof fields; queue and verifier both recognize canonical and legacy d193 spec ids. It performs no live submit, email send, Telegram call, deploy, secret access, capability append, push, merge, or money movement. Focused queue tests, adjacent verifier/audit tests, py_compile, activation policy build_kind=library, registry JSON validation, and diff hygiene passed."
+        },
         {
             "id": "SPEC_d210_auto-spot-topple-assessment-funn",
             "slug": "SPEC_d210_auto-spot-topple-assessment-funn",

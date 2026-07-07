@@ -21,6 +21,7 @@ from tools.build_loop import activation_audit
 
 SPEC_ID = "SPEC_d210_auto-spot-topple-assessment-funn"
 D193_SPEC_ID = "SPEC_d193_spec-d193-wire-the-assessment-fu"
+D193_SPEC_IDS = (D193_SPEC_ID, "SPEC_d193_wire-assessment-funnel-auto-deliver")
 DEFAULT_PROOF_LOG = Path("/opt/fpai-build/assessment_delivery_proof.jsonl")
 REQUIRED_RESPONSE_ACK = "Allocation Score is on its way to your inbox"
 
@@ -42,14 +43,16 @@ def load_json(path: Path) -> dict[str, Any]:
 
 
 def d193_activation_evidence(repo_root: Path, ops_ledger: Path) -> dict[str, Any]:
-    records = [activation_audit.BuildRecord(spec_id=D193_SPEC_ID, branch=f"build/{D193_SPEC_ID}")]
+    records = [activation_audit.BuildRecord(spec_id=spec_id, branch=f"build/{spec_id}") for spec_id in D193_SPEC_IDS]
     audit = activation_audit.audit(repo_root, ops_ledger=ops_ledger, records=records)
-    row = (audit.get("rows") or [{}])[0]
-    evidence = list(row.get("activation_evidence") or [])
+    matched_rows = [
+        row for row in audit.get("rows", []) if isinstance(row, dict) and list(row.get("activation_evidence") or [])
+    ]
+    evidence = [item for row in matched_rows for item in list(row.get("activation_evidence") or [])]
     return {
         "ok": bool(evidence),
-        "classification": row.get("classification", ""),
-        "evidence": evidence,
+        "classification": ", ".join(str(row.get("classification", "")) for row in matched_rows),
+        "evidence": evidence[:5],
         "unexplained_inert_count": audit.get("unexplained_inert_count", 0),
     }
 
