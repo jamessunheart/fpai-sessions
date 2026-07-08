@@ -83,6 +83,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Questions for Ember/James: …
 ```
 
+### 2026-07-08 · SPEC_d212_auto-spot-topple-assessment-funn · branch `build/SPEC_d212_auto-spot-topple-assessment-funn`
+
+- **Status:** done in working tree / awaiting review + merge
+- **Files changed:** `tools/build_loop/assessment_delivery_proof_runbook.py`; `tools/build_loop/test_assessment_delivery_proof_runbook.py`; `tools/build_loop/test_assessment_delivery_proof_queue.py`; `tools/build_loop/test_assessment_delivery_proof.py`; `core/BUILD/specs/SPEC_d212_auto-spot-topple-assessment-funn.md`; `core/BUILD/results/SPEC_d212_auto-spot-topple-assessment-funn.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a reversible local runbook/spec generator for `assessment-funnel-delivery-proof`. It composes the d211 readiness queue and d210 verifier, then emits a local JSON runbook and optional Markdown operator spec with the verifier command, proof packet template, operator steps, missing preconditions, and explicit "do not count toppled until" checks. It does not submit a lead, send email, call Telegram, deploy, read secrets, append capability learning, push, merge, or spend money.
+- **Tests:** `python3 -B -m unittest tools.build_loop.test_assessment_delivery_proof_runbook tools.build_loop.test_assessment_delivery_proof_queue tools.build_loop.test_assessment_delivery_proof tools.build_loop.test_activation_audit` (15 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/assessment_delivery_proof_runbook.py tools/build_loop/test_assessment_delivery_proof_runbook.py tools/build_loop/assessment_delivery_proof_queue.py tools/build_loop/test_assessment_delivery_proof_queue.py tools/build_loop/assessment_delivery_proof.py tools/build_loop/test_assessment_delivery_proof.py`; registry JSON validation; `git diff --check`
+- **Risks:** This cannot create live proof by itself. Ember/server ops still need to run one controlled Life assessment lead after d193 is merged and activated, collect the evidence packet, and let the verifier append d185 capability learning only on pass.
+- **Rollback:** Revert this branch. Runtime cleanup is inert: delete any local `assessment_delivery_proof_runbook.json` or Markdown runbook file produced by the generator.
+- **Intent solved:** the delivery-proof path now has an explicit local operator runbook/spec tied to the readiness queue and verifier, so queueing cannot be mistaken for topple proof.
+- **Downstream intent unlocked:** after d193 activation, server ops can run one controlled Life assessment lead and use one local command path to log recipient delivery, founder alert, page acknowledgement, and d185 capability learning only when real proof exists.
+- **Questions for Ember/James:** after d193 is merged and activated through the d182 guard, run `python3 tools/build_loop/assessment_delivery_proof_runbook.py --repo-root /opt/fpai-build/FPAI_Cockpit --ops-ledger /opt/fpai-build/ops_ledger.jsonl --markdown-file /opt/fpai-build/assessment_delivery_proof_runbook.md --json`; if it returns `ready`, follow the emitted verifier command with the real proof packet.
+
 ### 2026-07-07 · SPEC_d211_auto-spot-topple-assessment-funn · branch `build/SPEC_d211_auto-spot-topple-assessment-funn`
 
 - **Status:** done in working tree / awaiting review + merge

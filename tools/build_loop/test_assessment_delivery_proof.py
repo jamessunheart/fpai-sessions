@@ -4,6 +4,8 @@ from __future__ import annotations
 import json
 import tempfile
 import unittest
+from contextlib import redirect_stdout
+from io import StringIO
 from pathlib import Path
 
 from tools.allocation import capability_ledger
@@ -164,15 +166,16 @@ class AssessmentDeliveryProofTests(unittest.TestCase):
             proof_file.write_text(json.dumps(packet), encoding="utf-8")
             proof_log = root / "proof-log.jsonl"
 
-            rc = proof.main([
-                "--repo-root", str(root),
-                "--ops-ledger", str(ops),
-                "--proof-file", str(proof_file),
-                "--proof-log", str(proof_log),
-                "--capability-ledger", str(root / "capability.jsonl"),
-                "--append-capability",
-                "--json",
-            ])
+            with redirect_stdout(StringIO()):
+                rc = proof.main([
+                    "--repo-root", str(root),
+                    "--ops-ledger", str(ops),
+                    "--proof-file", str(proof_file),
+                    "--proof-log", str(proof_log),
+                    "--capability-ledger", str(root / "capability.jsonl"),
+                    "--append-capability",
+                    "--json",
+                ])
 
             self.assertEqual(rc, 1)
             logged = json.loads(proof_log.read_text(encoding="utf-8").splitlines()[-1])

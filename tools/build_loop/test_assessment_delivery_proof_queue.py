@@ -4,6 +4,8 @@ from __future__ import annotations
 import json
 import tempfile
 import unittest
+from contextlib import redirect_stdout
+from io import StringIO
 from pathlib import Path
 
 from tools.build_loop import assessment_delivery_proof_queue as queue
@@ -103,21 +105,22 @@ class AssessmentDeliveryProofQueueTests(unittest.TestCase):
             out = root / "queue.json"
             self.write_ops(ops, merged=True, activated=True)
 
-            rc = queue.main(
-                [
-                    "--repo-root",
-                    str(root),
-                    "--ops-ledger",
-                    str(ops),
-                    "--queue-file",
-                    str(out),
-                    "--proof-log",
-                    str(root / "proof.jsonl"),
-                    "--capability-ledger",
-                    str(root / "capability.jsonl"),
-                    "--json",
-                ]
-            )
+            with redirect_stdout(StringIO()):
+                rc = queue.main(
+                    [
+                        "--repo-root",
+                        str(root),
+                        "--ops-ledger",
+                        str(ops),
+                        "--queue-file",
+                        str(out),
+                        "--proof-log",
+                        str(root / "proof.jsonl"),
+                        "--capability-ledger",
+                        str(root / "capability.jsonl"),
+                        "--json",
+                    ]
+                )
 
             self.assertEqual(rc, 0)
             saved = json.loads(out.read_text(encoding="utf-8"))
