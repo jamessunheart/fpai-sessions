@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-08T16:35:00Z",
+    "updated_at": "2026-07-09T16:06:30Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d213_auto-spot-topple-assessment-funn",
+            "slug": "SPEC_d213_auto-spot-topple-assessment-funn",
+            "branch": "build/SPEC_d213_auto-spot-topple-assessment-funn",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d213_auto-spot-topple-assessment-funn.md",
+            "tests_passed": true,
+            "notes": "d213 complete in working tree: added a reversible local assessment_delivery_proof_manifest generator that composes the d211 queue, d212 runbook, and d210 verifier into one JSON/Markdown delivery-proof artifact with d213 provenance, d194 source context, next-domino score, activation-audit evidence, queue/runbook/verifier commands, and explicit count-toppled-only-after gates. It remains on hold until d193 merge plus guarded activation evidence exist, and performs no live lead submission, email send, founder alert, deploy, secret access, capability append, push, merge, or money movement. Focused manifest and adjacent verifier/queue/runbook/audit tests, py_compile, registry JSON validation, and diff hygiene passed."
+        },
         {
             "id": "SPEC_d212_auto-spot-topple-assessment-funn",
             "slug": "SPEC_d212_auto-spot-topple-assessment-funn",
