@@ -249,6 +249,31 @@ When a lesson generalizes, promote it into the runbook steps above (not just thi
 
 ---
 
+## The playbook IS Version 1 of the Router (James, 2026-07-10)
+
+> **Every manual step in this migration is future product functionality. The playbook is the Router's product roadmap.**
+
+Don't just document the process — read each manual step as a capability the Router will eventually own. Platform knowledge compounds when the doing becomes the building. Each row below is a Router feature, seeded by the manual step we run first.
+
+| Manual step (playbook v1) | → Automated capability (Router) | Product form |
+|---------------------------|----------------------------------|--------------|
+| Read/inventory the zone by hand | DNS discovery + diff engine | API: `GET /domain/{d}/zone` |
+| Add MX/SPF/DKIM/DMARC records manually | DNS provisioning (registrar/cPanel API) | **Domain onboarding wizard** |
+| Confirm records via `dig` | Automated DNS verification poller | Verification service |
+| 6-point validate gate (manual sends) | Automated inbound/outbound/alias test harness | **Validation gate as a service** |
+| mail-tester score check | Continuous deliverability scoring | Health check job |
+| Watch DMARC `rua` reports | Continuous SPF/DKIM/DMARC monitoring + parsing | **Deliverability dashboard (live)** |
+| 48h manual soak | Automated soak window + anomaly alerting | Observation gate w/ alerts |
+| Restore zone / remove records to roll back | Snapshot + **one-click rollback** | Rollback button |
+| Repeat per domain, log lessons | Fleet-wide domain health board | **Health dashboard (live)** |
+| Tighten DMARC none→quarantine→reject | Policy-progression automation | Reputation autopilot |
+
+**The compounding rule:** for 10k orgs, none of this can be manual. So each domain we migrate by hand is a spec-in-disguise — the manual run *is* the requirements-gathering for its automated replacement. When a step stabilizes across 2–3 domains, it graduates to a build spec (`SPEC_*`) and becomes a Router capability. The migration doesn't just move email; it **writes the platform's backlog by being run.**
+
+Related doctrine: the Sunheart Rule (route every action to the lowest tier — here, human step → AI capability) · Three Rs (this is Recursion: the system improving how it does the work) · `feedback_standing_capability_proof_back.md` (each automated step must prove back, not silently exist).
+
+---
+
 ## Open items for James
 
 None blocking. Reversible build. On approval I execute domain-by-domain, fullpotential.com last, DMARC starting at `p=none`. Docs committed 2026-07-10.
