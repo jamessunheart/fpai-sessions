@@ -23,7 +23,18 @@ _Precise capability status. Claims scoped to exactly what has executable evidenc
 | Shadow Room lifecycle | ✅ **proven (shadow)** | `room_lifecycle.reduce_room()` — 8 states, Event-driven transitions w/ actor+source IDs, idempotent, proof-gated completion, invalid/skipped rejected+audited, replay-identical (14 scenarios) |
 | Proof-gated closure + inert learning candidates | ✅ **proven (shadow)** | completion requires valid proof; closure filters learning candidates by durable whitelist; `written_to_brain: false`, pending 3 gates |
 | **COMPLETE SHADOW SPINE** | ✅ **proven** | Reality→Event→Conversation→Intent→disposition→Room→coordination→proof→learning-candidate, all shadow, deterministic, replay-identical |
-| Intent → Room (LIVE creation) | ⬜ **not built (by design)** | shadow spine complete; ONE human-approved real Room is the next step, not more architecture |
+| **First REAL Intent Room (live authority)** | ✅ **proven** | `room-d315e6011119` Mailsac security close-out: proposed→awaiting_approval→active→completion_proposed→completed→closed; James's explicit `approve` = first live authority transition; proof-gated; replay-deterministic |
+
+## Mailsac security close-out (first real Room outcome, 2026-07-10)
+
+Completion condition — all met, verified:
+- ✅ Mailsac key revoked (James deleted key/account)
+- ✅ old credential returns unauthorized — **verified objectively**: the enlisted test inbox that returned `[]`/200 earlier this session now returns **401**, and `/api/me` no longer returns the account id (200→401 on a previously-working authed endpoint; not an ambiguous bare 401)
+- ✅ local credential removed — `MAILSAC_KEY` absent from `~/.config/fpai/credentials/mailsac.env`
+- ✅ no secret in logs/evidence — `git grep` clean; redacted trace carries no key
+- ✅ close-out recorded here
+
+**Scoped claim (honest):** first live authority transition — proven · first real Intent Room lifecycle — proven · human–system coordination with external proof — proven · **broader real-world transformation / value — NOT yet proven.** Next Room should arise from a genuine non-system objective, not another architecture test.
 
 **Note (over-the-wire, 2026-07-10):** send path could not be automated (port 25 blocked · Mailsac free tier can't send · prod/personal mail disallowed) — James sent one synthetic email; the observe/persist/project path is fully machine-run. Mailsac = disposable test adapter, not a production channel. Test messages deleted (HTTP 204, inbox empty). Mailsac key passed through chat → flagged for rotation.
 
