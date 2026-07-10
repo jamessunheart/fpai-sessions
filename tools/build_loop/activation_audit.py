@@ -137,7 +137,40 @@ def discover_merged_builds(
         if specs:
             add(specs[0], branch=str(row.get("artifact") or row.get("branch") or ""), source="ops_ledger")
 
+    # Git is the ground-truth source of merged builds. The registry/proof-log/ops-ledger
+    # sources above miss the ~190 server-loop `build(SPEC_*)` commits entirely, so the
+    # audit historically saw ~6 of 194 builds and reported "0 INERT" from that blind sample.
+    for spec_id, branch in discover_from_git(repo_root):
+        add(spec_id, branch=branch, source="git")
+
     return [found[key] for key in sorted(found)]
+
+
+def discover_from_git(repo_root: Path) -> list[tuple[str, str]]:
+    """Every SPEC_ id that appears in a merged `build(SPEC_*)` commit subject.
+
+    Ground truth for what the build loop actually landed. One row per spec id
+    (first-seen commit's short sha used as the branch marker for traceability).
+    """
+    try:
+        out = subprocess.run(
+            ["git", "-C", str(repo_root), "log", "--all", "--format=%h %s", "--grep", "build(SPEC_"],
+            capture_output=True, text=True, timeout=30,
+        ).stdout
+    except Exception:
+        return []
+    seen: dict[str, str] = {}
+    for line in out.splitlines():
+        parts = line.split(" ", 1)
+        if len(parts) != 2:
+            continue
+        sha, subject = parts
+        if not subject.startswith("build(SPEC_"):
+            continue
+        specs = SPEC_RE.findall(subject)
+        if specs and specs[0] not in seen:
+            seen[specs[0]] = f"commit/{sha}"
+    return list(seen.items())
 
 
 def audit(
