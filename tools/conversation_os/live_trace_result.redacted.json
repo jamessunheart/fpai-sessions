@@ -1,0 +1,22 @@
+{
+  "event_id": "3b05a80d-686d-465e-b409-128a7c3dc173",
+  "schema_version": "1.0",
+  "source": "mailsac",
+  "type": "email.received",
+  "occurred_at": "2026-07-10T18:26:24.105Z",
+  "ingested_at": "2026-07-10T18:26:37Z",
+  "trace_id": "trace-beae3f0bf54d",
+  "dedup_key_prefix": "c0008e61d5b1\u2026",
+  "tenant_id": "test",
+  "payload_redacted": {
+    "original_recipient": "<redacted>@mailsac.com",
+    "sender_identity": "fullpotential.ai",
+    "from": "<redacted>",
+    "message_id": "<redacted-native-id>",
+    "subject": "<redacted-synthetic>",
+    "thread_id": null
+  },
+  "over_the_wire": true,
+  "provider": "mailsac (disposable test adapter)",
+  "dedup_on_repoll_emitted": 0
+}

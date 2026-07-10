@@ -9,10 +9,13 @@ _Precise capability status. Claims scoped to exactly what has executable evidenc
 | Crash recovery | ✅ **proven** | adapter raise mid-poll → inbox intact → deferred msg emitted next poll |
 | Production isolation | ✅ **proven** | delivery (Maildir write) independent of observer; disable flag halts observation |
 | First Email → Event evidence | ✅ **accepted** | commit `32a4f1a0` |
-| **Remote IMAP/provider → Event (over the wire)** | ⬜ **not yet proven** | needs a real external sender → real isolated inbox → authenticated remote observer |
-| Event → Conversation projection | ⬜ **not yet proven** | shadow-only, next after over-the-wire |
-| Conversation → Intent proposal | ⬜ **not yet proven** | shadow-only |
-| Intent → Room | ⬜ **not yet proven** | explicitly NOT built (no Rooms, no replies, no Brain promotion yet) |
+| **Remote provider → Event (over the wire)** | ✅ **proven live** | real external email (james@fullpotential.ai) → Mailsac public inbox → authenticated API observer → 1 canonical Event; dedup on re-poll = 0; UA+certifi fixes · trace `trace-beae3f0bf54d` |
+| Event → Conversation projection | ✅ **proven (shadow)** | `shadow_projections.project()` on the live Event → conversation `conv-…`, rebuildable-from-stream, no Room |
+| Conversation → Intent proposal | ✅ **proven (shadow)** | heuristic intent proposal, `action_taken: null`, side_effects NONE |
+| Identity candidate (from Event) | ✅ **proven (shadow)** | candidate id, `resolved: false` — needs resolution gate |
+| Intent → Room | ⬜ **not built (by design)** | no Rooms, replies, Brain sync, or promotion — awaits explicit go + two-gate promotion |
+
+**Note (over-the-wire, 2026-07-10):** send path could not be automated (port 25 blocked · Mailsac free tier can't send · prod/personal mail disallowed) — James sent one synthetic email; the observe/persist/project path is fully machine-run. Mailsac = disposable test adapter, not a production channel. Test messages deleted (HTTP 204, inbox empty). Mailsac key passed through chat → flagged for rotation.
 
 **Naming discipline (James, 2026-07-10):**
 - **Greenfield onboarding proof** — a fresh neutral domain, one control plane, no legacy. Proves ownership → DNS → mailbox → observe → Event.
