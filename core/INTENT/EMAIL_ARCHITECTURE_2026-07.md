@@ -291,6 +291,8 @@ Manual → Playbook → Specification → Automation → Platform → Intelligen
 
 This is the growth engine for the whole **Conversation OS**, not just email: every operation performed today is tomorrow's product feature. The discipline is to never let a manual process stay merely *done* — always ask which rung it's on and push it up one. Email migration is simply the first process to walk the full ladder end-to-end.
 
+**★ Promoted to canonical doctrine:** this loop + event-sourcing generalized into a system-wide design principle — `docs/codex/EVENT_SOURCED_PROCESS_PRINCIPLE.md` — applying equally to WhatsApp, Telegram, meetings, recruiting, treasury, CRM, support, Camp Zen, and growth. Email is its reference implementation.
+
 ---
 
 ## Open items for James
