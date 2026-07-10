@@ -24,7 +24,19 @@ _Parent architecture: `../EMAIL_ARCHITECTURE_2026-07.md`_
 
 **Why:** a domain can host a website, subdomains, or third-party verification records that a blind email edit would wipe. Confirm what exists before adding anything.
 
-**External check (Ember ran, 2026-07-10T17:31Z):** via public resolver 8.8.8.8, jamesrickstinson.com publishes **nothing** — no SOA/NS/A/AAAA/MX/TXT/CAA, no `www`. Domain resolves to nothing publicly (no live website, no mail).
+**⛔ CORRECTION (2026-07-10T17:49Z — the domain is NOT empty).** External `dig` showed empty, but that was a lie caused by a **delegation mismatch**. Authoritative WHM dump (`whmapi1 dumpzone` on 209.74.93.72, read-only) shows a **fully live cPanel zone**:
+- Website `A → 209.74.93.72` · `www` CNAME · `ftp`/`webmail`/`cpanel`/`whm`/`cpcalendars`/`cpcontacts`/`webdisk` subdomains
+- **Live cPanel mail:** `MX → mail.jamesrickstinson.com` (pref 10) + self (pref 20); `mail.` A record
+- **Existing DKIM:** `default._domainkey` (2048-bit)
+- **Existing SPF:** `v=spf1 +a +mx +ip4:209.74.93.72 +include:_spf.google.com +ip4:162.0.234.58 +ip4:198.54.113.86 +ip4:198.54.123.106 ~all`
+- Let's Encrypt `_acme-challenge` + `_cpanel-dcv-test-record` + SRV (`_autodiscover`, `_carddavs`)
+- SOA `mname: ns1.outbounders.com` · NS = `ns1/ns2.outbounders.com`
+
+**🔴 Delegation bug:** registrar (Namecheap) delegates to `ns1/ns2.fullpotential.com` → 198.54.123.234, where **named is OFF (port 53 refused)**. The real zone is served by `ns1/ns2.outbounders.com` on 209.74.93.72. That mismatch = why public resolution returns nothing. Fixing delegation is a separate decision; do NOT touch it as part of proof-1.
+
+**Consequence:** migration here is **NOT additive-only** — it would replace a working MX/SPF/DKIM. Risk is higher than a dormant domain. **Proof-1 is therefore DECOUPLED from this migration** (see below) — the first Event uses a shadow adapter on an already-live inbox, no DNS change.
+
+**Stale external note (kept for the record):** via 8.8.8.8 the domain appeared to publish nothing — false, per the correction above.
 
 **⚠️ Caveat — external check is not authoritative here.** The authoritative NS `ns1/ns2.fullpotential.com` (= 198.54.123.234) does not answer direct queries from Ember's sandbox (port 53 firewalled). If the cPanel zone holds records the NS isn't publishing publicly, external `dig` can't see them. **The cPanel zone file is the source of truth.**
 
