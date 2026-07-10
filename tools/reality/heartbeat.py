@@ -123,55 +123,94 @@ def build_heartbeat() -> dict:
         "real_leads_ever": n_leads,
         "_excluded_from_this_quadrant": "git commits, lines of code, agent counts (CPU metrics)",
     }
+    # Four dependency-ordered layers (James 2026-07-10). Each depends on the one above:
+    # no engagement without reach, no transformation without engagement, no sustainability
+    # without transformation. Transformation is the only irreplaceable step — everything
+    # else exists to produce it. The north star is human transformation, not "reality change".
     return {
-        "schema": "reality-heartbeat.v1",
+        "schema": "reality-heartbeat.v2",
+        "north_star": "Did we create more human TRANSFORMATION than last week?",
         "direction": {
-            "north_star": "Unlock every human's full potential (Future Capability / IUM)",
-            "current_priority": "Close the OUTER LOOP — Reality→Attention→Proof (not more Build)",
-            "biggest_constraint": "NO LIVE DEMAND — nothing drives real humans to the funnel",
+            "mission": "Unlock every human's full potential (Future Capability / IUM)",
+            "current_priority": "Close ONE complete transformation loop (1 post→1 life→1 testimonial)",
+            "primary_constraint": "Insufficient Qualified Attention",
+            "constraint_note": "created via compelling ideas · trust · distribution · conversation · proof",
         },
-        "reality": reality,
+        "layers": {
+            "L1_reach": {
+                "question": "Did anyone notice us?",
+                "attention_views": reality["attention_earned_views"],
+                "profile_visits": 0,
+                "followers_new": 0,
+                "dms_received": 0,
+            },
+            "L2_engagement": {
+                "question": "Did anyone engage?",
+                "conversations": 0,
+                "frameworks_delivered": 0,
+                "calls": 0,
+                "assessments_real": n_leads,
+            },
+            "L3_transformation": {  # the irreplaceable step
+                "question": "Did anyone benefit?",
+                "clients": 0,
+                "successes": 0,
+                "testimonials": 0,
+                "referrals": 0,
+                "lives_changed": 0,
+            },
+            "L4_sustainability": {
+                "question": "Can we continue helping people?",
+                "revenue_usd": 0,
+                "ad_spend_usd": reality["ad_spend_usd"],
+                "cash_liquid_usd": 122000,
+                "runway": "long (subscription-covered, ~$0 real burn)",
+            },
+        },
         "learning": {
             "latest_proof": proof["latest_proof"],
             "latest_proof_date": proof["latest_proof_date"],
-            "total_proofs": proof["total_proofs"],
             "what_worked": "observability un-blinded (2026-07-09) — green now means real",
             "what_failed": "build loop churns funnel-meta-specs (d210-d214); 0 reality change",
         },
-        "build": build_progress(),
+        "build": {"capability": "Sufficient", "detail": f"{build_progress()['builds_total']} built, inner-loop proven — NOT the constraint"},
     }
 
 
 def render_md(hb: dict) -> str:
-    r = hb["reality"]
     d = hb["direction"]
-    lz = "🔴" if r["revenue_usd"] == 0 else "🟢"
+    L = hb["layers"]
+    r1, r2, r3, r4 = L["L1_reach"], L["L2_engagement"], L["L3_transformation"], L["L4_sustainability"]
+    tz = "🔴" if r3["lives_changed"] == 0 else "🟢"
     lines = [
         "# 🫀 REALITY HEARTBEAT",
-        "_Operating FPOS · the metric is: did reality change more than last week?_",
+        f"_North star · **{hb['north_star']}**_",
         "",
         "## 🧭 DIRECTION",
-        f"- North Star · {d['north_star']}",
         f"- Priority · {d['current_priority']}",
-        f"- ★ Biggest Constraint · {d['biggest_constraint']}",
+        f"- ★ Primary Constraint · **{d['primary_constraint']}**",
+        f"  ↳ {d['constraint_note']}",
         "",
-        "## 🌍 REALITY (the outer loop — no CPU metrics)",
-        f"- {lz} Revenue · **${r['revenue_usd']}**",
-        f"- Clients · {r['clients']}  ·  Calls booked · {r['calls_booked']}  ·  Testimonials · {r['testimonials']}",
-        f"- Conversations · {r['conversations']}  ·  Frameworks delivered · {r['frameworks_delivered']}",
-        f"- Attention earned · {r['attention_earned_views']} views (ad spend ${r['ad_spend_usd']})",
-        f"- Real leads (ever) · {r['real_leads_ever']}",
+        f"## ① REACH — _{r1['question']}_",
+        f"- Attention · {r1['attention_views']} views · Profile visits · {r1['profile_visits']} · Followers +{r1['followers_new']} · DMs · {r1['dms_received']}",
+        "",
+        f"## ② ENGAGEMENT — _{r2['question']}_",
+        f"- Conversations · {r2['conversations']} · Frameworks · {r2['frameworks_delivered']} · Calls · {r2['calls']} · Real assessments · {r2['assessments_real']}",
+        "",
+        f"## ③ TRANSFORMATION {tz} — _{r3['question']}_ (the irreplaceable step)",
+        f"- **Lives changed · {r3['lives_changed']}** · Clients · {r3['clients']} · Testimonials · {r3['testimonials']} · Referrals · {r3['referrals']}",
+        "",
+        f"## ④ SUSTAINABILITY — _{r4['question']}_",
+        f"- Revenue · **${r4['revenue_usd']}** · Ad spend · ${r4['ad_spend_usd']} · Cash · ${r4['cash_liquid_usd']:,} · Runway · {r4['runway']}",
         "",
         "## 📚 LEARNING",
-        f"- Latest proof · {hb['learning']['latest_proof']} ({hb['learning']['latest_proof_date']})",
         f"- Worked · {hb['learning']['what_worked']}",
         f"- Failed · {hb['learning']['what_failed']}",
         "",
-        "## 🔧 BUILD (minimized — not the constraint)",
-        f"- Builds · {hb['build']['builds_total']}  ·  Dead/inert · {hb['build']['dead_inert']}",
+        f"## 🔧 BUILD · Capability: **{hb['build']['capability']}** _(not the constraint)_",
         "",
         "> No git commits. No lines of code. No agent counts.",
-        "> Only evidence that intelligence is changing reality.",
+        "> Only evidence that intelligence is changing a human life.",
     ]
     return "\n".join(lines) + "\n"
 
