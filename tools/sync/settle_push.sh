@@ -8,6 +8,11 @@ set -uo pipefail
 R="root@162.0.208.88"; RP="/opt/fpai-build/FPAI_Cockpit"; B="feat/headless-build"
 cd "$(dirname "$0")/../.."
 
+# Freshen the iCloud vault mirror (identity → Obsidian). Only actually writes when
+# run through claude (has Full Disk Access); a bare/headless caller no-ops cleanly.
+# Folded in here 2026-07-09 after retiring the TCC-blocked headless vault-mirror jobs.
+bash "$(dirname "$0")/../decisions/vault_memory_sync.sh" >/dev/null 2>&1 || true
+
 try_push() { git push server162 "$B" 2>&1 | tail -1; }
 
 OUT=$(try_push)

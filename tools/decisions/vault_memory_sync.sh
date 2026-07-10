@@ -25,6 +25,10 @@ mkdir -p "$DEST" 2>>"$LOG" || { echo "$(date) ERROR: cannot create dest (iCloud 
 # Curated secret-free notes (FINANCIAL RESOURCES, SERVER MAP, NOW/GOALS MIRROR,
 # AI CONSCIOUSNESS) are written to the vault directly, not through this sync.
 # --delete-excluded purges any previously-leaked operational files from the vault.
+# Best-effort convenience mirror. Runs at SETTLE through claude (which HAS Full Disk
+# Access). macOS (Sequoia+) now blocks BARE launchd/headless processes from ~/Documents,
+# so a TCC denial here is EXPECTED when this is invoked outside claude — not a failure.
+# Canonical memory is LOCAL + git-synced to 162; this iCloud copy only feeds Obsidian.
 if rsync -a --delete --delete-excluded \
      --exclude '.git' --exclude '.DS_Store' \
      --exclude 'identity/AI_CONSCIOUSNESS.md' \
@@ -33,9 +37,9 @@ if rsync -a --delete --delete-excluded \
      "$SRC" "$DEST" 2>>"$LOG"; then
   echo "$(date) OK synced memory -> vault" >>"$LOG"
 else
-  echo "$(date) ERROR rsync failed (likely TCC denial on iCloud path)" >>"$LOG"
-  exit 1
+  echo "$(date) SKIP mirror — no TCC access to iCloud (expected unless run via claude)" >>"$LOG"
 fi
+exit 0
 
 # NOTE on the home PROOF LOG (06_RESULTS/PROOF LOG.md):
 # This launchd agent CANNOT write that specific file — once a file is owned by the
