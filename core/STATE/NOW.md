@@ -14,7 +14,17 @@
 
 ## 🎯 CURRENT PRIORITY (The ONE Thing)
 
-### VALUE CAPTURE via THE GROWTH ENGINE — the business builds its own demand (James directive 2026-07-03)
+### 🔬 DISCOVERY PHASE — prove James can consistently create transformative conversations (James directive 2026-07-10)
+**We are no longer in Build. We are in Discovery.** Different discipline: let reality teach the system. Architecture, instrumentation, and capability are SUFFICIENT — that is no longer the frontier.
+**The real experiment (not "can the funnel work?"):** *Can James consistently create conversations that transform people?* Everything downstream (funnels, automation, AI scale, referrals) depends on that yes. If no, no infrastructure matters.
+**The weekly ritual — ONE Transformation Experiment**, success criterion: `1 human → 1 conversation → 1 genuine insight → 1 observable positive change → 1 captured story`. Deliberately EXCLUDES assessment / funnel / automation / CRM / payment / onboarding — those are implementation details. Prove core value creation first.
+**The product is TRANSFORMATION.** The assessment is an invitation · the framework is a language · the conversation is a vehicle. Everything else only raises or lowers the probability of transformation.
+**The irreducible asset:** James's authentic presence (voice · lived experience · recognizing potential · creating trust · helping someone feel seen). The channel (post/DM/podcast/coffee/keynote) is interchangeable.
+**The 3-question operating rhythm:** (1) Where did the flow stop? [evidence] (2) Single highest-leverage constraint? [one] (3) One experiment this week to increase flow? Instruments: Reality Heartbeat (`tools/reality/heartbeat.py`) + Transformation Flywheel screen. Doctrine: [[reference-fpos-world-map]].
+
+---
+
+### ⬇ DOWNSTREAM (infrastructure — real, but NOT the current frontier): VALUE CAPTURE via THE GROWTH ENGINE (James directive 2026-07-03)
 **The offer (BBB v1.4, converged with GPT):** front door = **Free Full Potential Assessment** (Allocation Score + top-3, 48h) → Blueprint $2.5k → **Savings Split** (25% of verified savings, floor $5k/cap $50k) → Partnership $2–5k/mo + quarterly re-audit. The audit routes each lead to its highest-value offer. Doc: vault `04_DECISION/Offers/BBB — The Intelligence Solutions Offer v1.md`.
 **Demand strategy (LOCKED):** NO manual outreach until the funnel is proven — system-generated ads + content with A/B data first (`feedback_ads_content_first_no_manual_sends`). Batch-1 outreach drafted + HELD.
 **Live surfaces:** /assessment (3-way frame test: promise/exec/savings, Meta pixel + Lead events) · /remember (movement door ✨) · /learn article #1 · /ai-builders.
