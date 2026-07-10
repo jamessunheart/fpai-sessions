@@ -68,11 +68,23 @@ def try_send(inbox: str) -> bool:
         return False
 
 
-def main() -> int:
+def _load_key() -> str:
     key = os.environ.get("MAILSAC_KEY", "").strip()
+    if key:
+        return key
+    cred = Path.home() / ".config" / "fpai" / "credentials" / "mailsac.env"
+    if cred.exists():
+        for line in cred.read_text().splitlines():
+            if line.startswith("MAILSAC_KEY="):
+                return line.split("=", 1)[1].strip()
+    return ""
+
+
+def main() -> int:
+    key = _load_key()
     if not key:
-        print("MAILSAC_KEY not set. Put it in ~/.config/fpai/credentials/mailsac.env "
-              "(MAILSAC_KEY=...), source it, and re-run. Key is never committed/logged.",
+        print("MAILSAC_KEY not found. Run capture_mailsac_key.py first "
+              "(writes ~/.config/fpai/credentials/mailsac.env). Key never committed/logged.",
               file=sys.stderr)
         return 2
 
