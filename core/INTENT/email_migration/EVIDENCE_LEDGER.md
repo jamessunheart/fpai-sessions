@@ -13,7 +13,11 @@ _Precise capability status. Claims scoped to exactly what has executable evidenc
 | Event → Conversation projection | ✅ **proven (shadow)** | `shadow_projections.project()` on the live Event → conversation `conv-…`, rebuildable-from-stream, no Room |
 | Conversation → Intent proposal | ✅ **proven (shadow)** | heuristic intent proposal, `action_taken: null`, side_effects NONE |
 | Identity candidate (from Event) | ✅ **proven (shadow)** | candidate id, `resolved: false` — needs resolution gate |
-| Intent → Room | ⬜ **not built (by design)** | no Rooms, replies, Brain sync, or promotion — awaits explicit go + two-gate promotion |
+| Multi-Event Conversation merging | ✅ **proven (shadow)** | `conversation_state.reduce()` — related Events merge, unrelated stay separate (same sender), duplicates add no state |
+| Evolving Shared State | ✅ **proven (shadow)** | observed_facts vs interpretations vs decisions/commitments/unresolved_questions/intent; intent evolves append-only with source Event IDs |
+| Out-of-order + replay determinism | ✅ **proven** | 5 shuffled reductions → identical `state_hash` (deterministic dedup representative) |
+| Two-gate promotion boundary | ✅ **proven (INERT contract)** | `promotion_boundary.evaluate()` — durability + verification + approval gates independent; PRIVATE alone never promotes; NOT wired to Brain |
+| Intent → Room | ⬜ **not built (by design)** | awaits Conversation+Shared-State (now proven) → explicit go; no Rooms, replies, Brain sync, or live promotion yet |
 
 **Note (over-the-wire, 2026-07-10):** send path could not be automated (port 25 blocked · Mailsac free tier can't send · prod/personal mail disallowed) — James sent one synthetic email; the observe/persist/project path is fully machine-run. Mailsac = disposable test adapter, not a production channel. Test messages deleted (HTTP 204, inbox empty). Mailsac key passed through chat → flagged for rotation.
 
