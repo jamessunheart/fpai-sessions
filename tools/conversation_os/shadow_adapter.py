@@ -75,6 +75,38 @@ def normalize_email(msg: dict[str, Any], *, source: str = "imap",
     )
 
 
+def normalize_telegram(rec: dict[str, Any], *, tenant_id: str | None = None) -> Event:
+    """Telegram message record -> the SAME canonical Event (source='telegram').
+
+    Provider-neutral output: no Telegram field names escape into the Event model.
+    """
+    message_id = str(rec.get("message_id") or uuid.uuid4())
+    chat_id = str(rec.get("chat_id") or "")
+    text = rec.get("text") or rec.get("transcript") or ""
+    return Event(
+        event_id=str(uuid.uuid4()),
+        schema_version=SCHEMA_VERSION,
+        source="telegram",
+        type="message.received",
+        occurred_at=str(rec.get("received_at") or _utc()),
+        ingested_at=_utc(),
+        trace_id=f"trace-{uuid.uuid4().hex[:12]}",
+        dedup_key=_dedup_key("telegram", f"{chat_id}:{message_id}"),
+        tenant_id=tenant_id,
+        payload={
+            "original_recipient": "sunheartbrain_bot",
+            "sender_identity": "telegram",
+            "from": chat_id,                 # channel address (chat_id), not a human
+            "thread_id": None,
+            "message_id": message_id,
+            "subject": text,                 # content drives intent heuristics
+            "text": text,
+            "labels": ["inbound", "telegram"],
+            "project": None, "intent": None, "person": None,
+        },
+    )
+
+
 def _already_ingested(store: Path, dedup_key: str) -> bool:
     if not store.exists():
         return False
