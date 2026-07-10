@@ -104,7 +104,10 @@ class MailsacProvider:
         self.api_key = api_key or os.environ.get("MAILSAC_KEY", "")
 
     def _get(self, path: str) -> Any:
-        req = urllib.request.Request(self.BASE + path, headers={"Mailsac-Key": self.api_key})
+        # UA header required — Mailsac 403s requests without a client UA.
+        req = urllib.request.Request(
+            self.BASE + path,
+            headers={"Mailsac-Key": self.api_key, "User-Agent": "convos-observer/1.0"})
         try:
             with urllib.request.urlopen(req, timeout=15) as r:
                 return json.loads(r.read())

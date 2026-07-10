@@ -28,6 +28,15 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import shadow_adapter as sa
 import provider_observer as po
 
+# macOS python cert fix — use certifi bundle so HTTPS to the provider verifies.
+try:
+    import ssl as _ssl
+    import certifi as _certifi
+    _ssl._create_default_https_context = lambda *a, **k: _ssl.create_default_context(
+        cafile=_certifi.where())
+except Exception:  # noqa: BLE001
+    pass
+
 DURABLE = Path(__file__).resolve().parent / "live_trace_result.redacted.json"
 
 
