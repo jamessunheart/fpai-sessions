@@ -31,6 +31,9 @@ class DeterministicEvidence:
     verified_channel_linkage: bool = False     # previously verified channel link
     other_high_trust_proof: str | None = None  # named alternative proof
     verified_channels: frozenset[str] = field(default_factory=frozenset)
+    # Cross-channel: two verified channels are NOT the same human unless LINKED.
+    explicit_channel_linkage: bool = False     # authenticated connect / explicit confirm /
+    #                                            deterministic account map / prior approved link
 
 
 def assess(channel_address: str | None, observation_count: int,
@@ -63,7 +66,11 @@ def assess(channel_address: str | None, observation_count: int,
         "entity_link_proposed": bool(model_proposes_link or observation_count >= _STABLE_MIN),
         "entity_resolved": resolved,                       # deterministic evidence ONLY
         "resolving_evidence": resolving_evidence,
-        "cross_channel_link_verified": len(ev.verified_channels) >= 2,
+        # Cross-channel requires ≥2 verified channels AND explicit linkage between
+        # them. Two verified channels existing is NOT proof of the same human;
+        # model similarity may only PROPOSE the link.
+        "cross_channel_link_proposed": len(ev.verified_channels) >= 2,
+        "cross_channel_link_verified": len(ev.verified_channels) >= 2 and ev.explicit_channel_linkage,
         "verified_channels": sorted(ev.verified_channels),
         "note": ("repetition proves a stable CHANNEL ADDRESS, not a human identity; "
                  "entity_resolved requires deterministic evidence"),

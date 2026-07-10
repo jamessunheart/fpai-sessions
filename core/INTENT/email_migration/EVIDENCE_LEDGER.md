@@ -19,7 +19,11 @@ _Precise capability status. Claims scoped to exactly what has executable evidenc
 | Two-gate promotion boundary | ✅ **proven (INERT contract)** | `promotion_boundary.evaluate()` — durability + verification + approval gates independent; PRIVATE alone never promotes; NOT wired to Brain |
 | Layered identity (repetition ≠ human) | ✅ **proven (shadow)** | `identity_layers.assess()` — 6 layers; repetition advances channel stability only; `entity_resolved` requires deterministic evidence (verified-contact / auth-ownership / explicit-confirmation / verified-linkage) |
 | Intent Disposition Gate | ✅ **proven (shadow)** | `intent_disposition.dispose()` — 8 scenarios deterministic; model recommends, kernel validates+overrides+records rule/evidence; only a full-evidence multi-step objective proposes a Room |
-| Intent → Room (LIVE creation) | ⬜ **not built (by design)** | disposition can *propose* a Room; live creation awaits explicit go; still no Rooms, replies, Brain sync, or live promotion |
+| Cross-channel identity (linkage) | ✅ **proven (shadow)** | 2 verified channels alone = `cross_channel_link_proposed` only; `verified` requires explicit linkage evidence |
+| Shadow Room lifecycle | ✅ **proven (shadow)** | `room_lifecycle.reduce_room()` — 8 states, Event-driven transitions w/ actor+source IDs, idempotent, proof-gated completion, invalid/skipped rejected+audited, replay-identical (14 scenarios) |
+| Proof-gated closure + inert learning candidates | ✅ **proven (shadow)** | completion requires valid proof; closure filters learning candidates by durable whitelist; `written_to_brain: false`, pending 3 gates |
+| **COMPLETE SHADOW SPINE** | ✅ **proven** | Reality→Event→Conversation→Intent→disposition→Room→coordination→proof→learning-candidate, all shadow, deterministic, replay-identical |
+| Intent → Room (LIVE creation) | ⬜ **not built (by design)** | shadow spine complete; ONE human-approved real Room is the next step, not more architecture |
 
 **Note (over-the-wire, 2026-07-10):** send path could not be automated (port 25 blocked · Mailsac free tier can't send · prod/personal mail disallowed) — James sent one synthetic email; the observe/persist/project path is fully machine-run. Mailsac = disposable test adapter, not a production channel. Test messages deleted (HTTP 204, inbox empty). Mailsac key passed through chat → flagged for rotation.
 

@@ -76,11 +76,12 @@ def run_identity():
                    evidence=il.DeterministicEvidence(explicit_human_confirmation=True))
     assert ev["entity_resolved"] is True
     assert "explicit_human_confirmation" in ev["resolving_evidence"]
-    # cross-channel needs >=2 verified channels
+    # cross-channel: 2 verified channels alone only PROPOSES; needs explicit linkage
     cc = il.assess("alice@ex.invalid", 1,
                    evidence=il.DeterministicEvidence(
                        verified_contact_match=True,
-                       verified_channels=frozenset({"email", "telegram"})))
+                       verified_channels=frozenset({"email", "telegram"}),
+                       explicit_channel_linkage=True))
     assert cc["cross_channel_link_verified"] is True
     return rep, ev, cc
 
