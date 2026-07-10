@@ -112,6 +112,7 @@ def _apply(room: dict[str, Any], e: dict[str, Any]) -> None:
         if etype == "propose_room":
             room["objective"] = p.get("objective")
             room["owner_candidates"] = p.get("owner_candidates", [])
+            room["participants"] = p.get("participants", [])
             room["completion_condition"] = p.get("completion_condition")
         elif etype == "blocker_raised":
             room["blockers"].append({"blocker": p.get("blocker"), "source_event_id": eid})
