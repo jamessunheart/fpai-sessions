@@ -22,10 +22,8 @@ import hashlib
 import json
 from typing import Any
 
-from shadow_projections import identity_candidate, intent_proposal
-
-# Identity resolves out of "candidate" only with sufficient evidence.
-_RESOLVE_MIN_EVENTS = 3
+from shadow_projections import intent_proposal
+import identity_layers
 
 
 def _thread_key(event: dict[str, Any]) -> str:
@@ -40,7 +38,7 @@ def _empty_state(conv_id: str, thread_key: str) -> dict[str, Any]:
         "thread_key": thread_key,
         "observed_facts": [],          # immutable, one per Event
         "interpretations": {           # model-derived, revisable, source-linked
-            "identity_candidate": None,
+            "identity": None,          # LAYERED — repetition never resolves a human
             "intent_history": [],      # append-only; never silently rewritten
         },
         "decisions": [],
@@ -83,12 +81,11 @@ def reduce(events: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
         })
         st["source_event_ids"].append(e["event_id"])
 
-        # identity candidate — refresh; resolve only with enough evidence
-        ident = identity_candidate(e)
-        ident["evidence_count"] = len(st["source_event_ids"])
-        ident["resolved"] = ident["evidence_count"] >= _RESOLVE_MIN_EVENTS and bool(
-            ident["signals"].get("email_domain"))
-        st["interpretations"]["identity_candidate"] = ident
+        # LAYERED identity — repetition advances channel stability ONLY, never
+        # human/entity resolution. No deterministic evidence here -> stays unresolved.
+        channel_addr = (p.get("from") or "").strip()
+        st["interpretations"]["identity"] = identity_layers.assess(
+            channel_addr, observation_count=len(st["source_event_ids"]))
 
         # intent proposal — append to history only when it changes (history never rewritten)
         prop = intent_proposal(e)

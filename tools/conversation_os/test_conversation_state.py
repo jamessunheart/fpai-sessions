@@ -58,9 +58,14 @@ def run_conversations():
     assert hist == ["test_signal", "scheduling", "sales_inquiry"], hist
     assert convs[t1]["current_intent_proposal"]["proposed_intent"] == "sales_inquiry"
     assert all("source_event_id" in h for h in convs[t1]["interpretations"]["intent_history"])
-    # identity resolves only with >=3 events + domain
-    assert convs[t1]["interpretations"]["identity_candidate"]["resolved"] is True
-    assert convs[t9]["interpretations"]["identity_candidate"]["resolved"] is False
+    # LAYERED identity: repetition proves CHANNEL stability, NEVER human resolution
+    id1 = convs[t1]["interpretations"]["identity"]
+    id9 = convs[t9]["interpretations"]["identity"]
+    assert id1["channel_identity_stable"] is True, "3 obs -> stable channel"
+    assert id1["entity_resolved"] is False, "repetition must NOT resolve a human"
+    assert id1["entity_link_proposed"] is True, "may propose a link (unverified)"
+    assert id9["channel_identity_stable"] is False, "1 obs -> not stable"
+    assert id9["entity_resolved"] is False
     # unresolved question retained with source id
     assert convs[t1]["unresolved_questions"][0]["source_event_id"] == "e2"
 

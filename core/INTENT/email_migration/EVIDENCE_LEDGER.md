@@ -17,7 +17,9 @@ _Precise capability status. Claims scoped to exactly what has executable evidenc
 | Evolving Shared State | ✅ **proven (shadow)** | observed_facts vs interpretations vs decisions/commitments/unresolved_questions/intent; intent evolves append-only with source Event IDs |
 | Out-of-order + replay determinism | ✅ **proven** | 5 shuffled reductions → identical `state_hash` (deterministic dedup representative) |
 | Two-gate promotion boundary | ✅ **proven (INERT contract)** | `promotion_boundary.evaluate()` — durability + verification + approval gates independent; PRIVATE alone never promotes; NOT wired to Brain |
-| Intent → Room | ⬜ **not built (by design)** | awaits Conversation+Shared-State (now proven) → explicit go; no Rooms, replies, Brain sync, or live promotion yet |
+| Layered identity (repetition ≠ human) | ✅ **proven (shadow)** | `identity_layers.assess()` — 6 layers; repetition advances channel stability only; `entity_resolved` requires deterministic evidence (verified-contact / auth-ownership / explicit-confirmation / verified-linkage) |
+| Intent Disposition Gate | ✅ **proven (shadow)** | `intent_disposition.dispose()` — 8 scenarios deterministic; model recommends, kernel validates+overrides+records rule/evidence; only a full-evidence multi-step objective proposes a Room |
+| Intent → Room (LIVE creation) | ⬜ **not built (by design)** | disposition can *propose* a Room; live creation awaits explicit go; still no Rooms, replies, Brain sync, or live promotion |
 
 **Note (over-the-wire, 2026-07-10):** send path could not be automated (port 25 blocked · Mailsac free tier can't send · prod/personal mail disallowed) — James sent one synthetic email; the observe/persist/project path is fully machine-run. Mailsac = disposable test adapter, not a production channel. Test messages deleted (HTTP 204, inbox empty). Mailsac key passed through chat → flagged for rotation.
 
