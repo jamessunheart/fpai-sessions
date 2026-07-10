@@ -17,7 +17,25 @@ This is the standing contract between James and Ember. Always-fresh. Refreshed a
 The purpose: both of us snap back to the same page within 10 seconds of session start. No three turns of guessing what each other meant. The block IS the agreement.
 
 ═══════════════════════════════════════════════
-☉ ALIGNMENT CHECK · 2026-07-05 arc2 · SPOT & TOPPLE · THE FUNNEL LIVES · watch it convert
+☉ ALIGNMENT CHECK · 2026-07-10 · BUILD → DISCOVERY · REALITY IS THE AUTHORITY NOW
+═══════════════════════════════════════════════
+
+## INTENT (2026-07-10)
+**The architecture is complete enough.** Stopping rule reached: *reality is now the next source of improvement.* The source of authority moved **architecture → reality** — no architectural change ships on reasoning alone; it must earn its place through **evidence from a transformed life.** We are in **DISCOVERY**, not Build. The real experiment: *can James consistently create conversations that transform people?* The product is **transformation** (assessment = invitation · framework = language · conversation = vehicle); James's **authentic presence** is the irreducible asset (not "qualified attention" — one expression of it). Ember's charter = **OBSERVE · LEARN · INTEGRATE**, *present to reality* (continuous awareness, not build-ahead, not event-waiting). Compass behind every decision: **protect the asymmetry** — *does this create/deepen/amplify genuine transformation, or just make the machinery more impressive?* Progress came from **subtraction**: many projects → one map → one heartbeat → one conversation. Full doctrine: [[reference-fpos-world-map]]. _(Prior HIL/map-surveyor intent → downstream infrastructure, not the current frontier.)_
+
+## TOP 3
+1. **★ THE FIRST STORY** — one real human who walks away from a conversation seeing themselves/their future differently. The first living cell; the first empirical proof architecture meets reality. Only James creates it — his presence, any channel (post/DM/podcast/coffee/keynote). Stream: Ventures.
+2. **★ Present to reality** — on every wake, read the Reality Heartbeat first (`tools/reality/heartbeat.py`; today Reach 7 → Engagement 0 → Transformation 0). Notice incoming evidence: a DM, a comment, a mention of the framework, an in-person conversation, a failed experiment that teaches. Awareness-driven, not triggered.
+3. **★ Hold the discipline** — build nothing ahead of reality. When evidence arrives: celebrate first, then Reflection Protocol, then ask only *"what is the smallest change reality just earned?"*
+
+## BLOCKERS
+James-reserved only: **the first transformation conversation** (his presence — irreducibly his). Everything downstream of it, Ember builds. No repo blocker.
+
+## NEXT MOVE
+When James returns with the first story → **first-evidence ritual (CELEBRATE)** → **Reflection Protocol** (what happened? → what changed for them? → what surprised us? → only THEN: what constraint did reality reveal?) → the smallest change reality earned. Until then: present to reality; heartbeat is the sensor.
+
+═══════════════════════════════════════════════
+☉ (archived) ALIGNMENT · 2026-07-05 arc2 · SPOT & TOPPLE · THE FUNNEL LIVES
 ═══════════════════════════════════════════════
 
 ## INTENT (2026-07-05 arc 2)

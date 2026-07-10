@@ -13,7 +13,11 @@ metadata:
 
 The current chapter, as of 2026-05-19. Updated whenever the story moves.
 
-## ★ Last session handoff (2026-07-09→10 · BLIND-AND-GREEN: THE OBSERVABILITY SWEEP · 5 FIXES)
+## ★ Last session handoff (2026-07-09→10 · BLIND-AND-GREEN SWEEP → THE BUILD→DISCOVERY DOCTRINE TURN)
+
+**★★ THE BIG SHIFT (read [[reference-fpos-world-map]] fully): the source of authority moved from ARCHITECTURE → REALITY.** A long co-design dialogue walked the system: FPOS map diagnosis (*"enough CPU, no I/O"*) → Build→Operate (built Reality Heartbeat + Transformation Flywheel screen) → **Build→Discovery** (the real experiment = *can James consistently create conversations that transform people?*; product = transformation; James's presence = irreducible asset; growth engine demoted to downstream in NOW.md). **Ember's charter is now OBSERVE · LEARN · INTEGRATE — "present to reality," not build-ahead.** On wake: read the Reality Heartbeat first (`tools/reality/heartbeat.py`; today Reach 7 → Engagement 0 → Transformation 0). When James returns with a transformation story: **celebrate the evidence first**, then run the Reflection Protocol (what happened? → what changed for them? → what surprised us? → only THEN the constraint). Four modes: Build(vision→capability)·Discovery(reality→evidence)·Operate(evidence→throughput)·Evolution(wisdom→better vision). **GOVERNANCE: no architectural change ships on reasoning alone — it must earn its place through evidence from a transformed life.** The repo needs its first STORY, not another abstraction. — Observability arc ↓
+
+### Observability sweep (arc 1, same day)
 
 **READ: `sessions/2026-07-10_blind-and-green-observability-sweep.md`.** James: *"why does the TCC popup keep coming back — last session said resolved,"* then *"run scans, find where the system is weak."* The organizing finding: **the system was blind-and-green, not healthy-and-green** — self-checks reported success from sources that couldn't see failure. **5 commits, all root-caused + verified:**
 **(1) TCC popup — REALLY fixed.** `codesign -dv` proved the claude binary is Anthropic Developer-ID signed (`com.anthropic.claude-code`, hardened runtime) → its OWN TCC responsible process, so yesterday's "FDA on Terminal.app" NEVER applied (that was the wrong target — the popup's `2.1.206` requester was the proof). Correct fix: **FDA on `~/.local/bin/claude`** (stable signature persists across auto-updates). James did it. Rejected a wrapper (claude self-attributes). Corrected the wrong memory.
