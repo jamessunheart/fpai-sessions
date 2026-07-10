@@ -144,6 +144,21 @@ The Event store — not Gmail — is the SSOT. Email (and Telegram, SMS, forms l
 
 ---
 
+## 5b. Knowledge promotion — TWO independent gates (James, 2026-07-10)
+
+Getting an Event into the stream is *not* the same as promoting it to permanent Brain knowledge. Promotion passes **two orthogonal gates** — never conflate them:
+
+1. **Durability / truth gate** — *should this become permanent knowledge?* Is it accurate, verified, durable, non-transient? (A fact can be PUBLIC yet unverified.)
+2. **Privacy / audience gate** — *who may access it?* PRIVATE · COUNCIL · PUBLIC. (A fact can be rock-solid yet PRIVATE.)
+
+Promotion path: `room state → memory candidate → durability/truth review → privacy classification → approval policy → knowledge.promoted → Brain projection`.
+
+`knowledge.promoted` Event records: source event/room · promoted knowledge · privacy tier · promotion reason · confidence/verification state · approving actor or policy · timestamp · supersedes/retracts link.
+
+**Proof-1 boundary:** the shadow adapter does **not** promote. It emits at most a memory-*candidate* (no-op). Live Brain sync stays disabled until both gates exist in code.
+
+---
+
 ## 6. Conversation OS — Email as Event
 
 ```

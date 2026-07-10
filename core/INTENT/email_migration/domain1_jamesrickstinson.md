@@ -1,6 +1,9 @@
 # Domain 1 Migration Runbook — jamesrickstinson.com
 
-_2026-07-10 · lowest-risk first domain · proves the runbook before higher-risk domains_
+> ## ⛔ NON-EXECUTABLE (2026-07-10) — DO NOT RUN
+> Two disproven assumptions: (1) the domain is **not dormant** — it has a live cPanel zone (website, mail, DKIM, SPF, subdomains). (2) **cPanel is not its authoritative DNS control plane** — the registrar delegates to ns1/2.fullpotential.com (dead), and public resolution is broken. Editing the cPanel zone would NOT change public DNS. jamesrickstinson.com is **removed from migration candidacy**; its mail/DNS is preserved untouched. See `DNS_CONTROL_PLANE_DIAGNOSIS.md`. This file is retained as a cautionary record of why inventory-first matters.
+
+_2026-07-10 · originally drafted as lowest-risk first domain · superseded by the control-plane diagnosis_
 _Parent architecture: `../EMAIL_ARCHITECTURE_2026-07.md`_
 
 ## Facts (verified live 2026-07-10T17:28Z)
