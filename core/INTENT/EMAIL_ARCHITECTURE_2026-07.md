@@ -272,6 +272,25 @@ Don't just document the process — read each manual step as a capability the Ro
 
 Related doctrine: the Sunheart Rule (route every action to the lowest tier — here, human step → AI capability) · Three Rs (this is Recursion: the system improving how it does the work) · `feedback_standing_capability_proof_back.md` (each automated step must prove back, not silently exist).
 
+### The evolution loop (James, 2026-07-10 · generalizes past email)
+
+> **Every manual process becomes a product specification. Every repeated manual process becomes an automation. Every successful automation becomes a platform capability.**
+
+```
+Manual → Playbook → Specification → Automation → Platform → Intelligence
+   ▲                                                              │
+   └──────────────── each capability enables new manual frontiers ┘
+```
+
+- **Manual** — do it by hand once (this migration).
+- **Playbook** — write down the repeatable steps (this doc).
+- **Specification** — a step that repeats becomes a `SPEC_*`.
+- **Automation** — the spec is built; the step runs itself.
+- **Platform** — the automation generalizes across domains/tenants/orgs.
+- **Intelligence** — the platform's accumulated runs teach the system to do it better than any manual operator could.
+
+This is the growth engine for the whole **Conversation OS**, not just email: every operation performed today is tomorrow's product feature. The discipline is to never let a manual process stay merely *done* — always ask which rung it's on and push it up one. Email migration is simply the first process to walk the full ladder end-to-end.
+
 ---
 
 ## Open items for James
