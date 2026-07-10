@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-07-03 evening (Growth Engine era — offer converged · brand stack complete · demand engine on the loop)
 **Updated By:** Ember (session 23537d81)
-**System Status:** 🟢 OPERATIONAL — 127+ specs merged · build loop auto-merges (Constitution-checked, d134) · awareness: live in `awareness_reliability.json` (95%, 2026-07-04) · first unattended improvement cycle ran 2026-07-03 · all readable-mirror feeds live.
+**System Status (honest, 2026-07-10):** 🟡 INNER-LOOP HEALTHY · OUTER-ARC BROKEN. Brain/Memory/Coordination strong; fleet + bots + brain live; real cash burn ≈$0 (subscription). BUT: the loop doesn't close — build engine SPINS (200 builds, **48 dead/inert**, 24h autonomous output = 1 churn spec d214), **$0 captured / 0 real leads**, Attention points inward (conversion metric measures git commits, not the world). Feeds were dead & silently green until the 2026-07-09 observability sweep fixed them. **The one fix (per the FPOS map): install the missing outer arc — Reality→Attention→…→Proof→Attention — starting with ONE real external signal.** Not more Build. See `identity/sessions/2026-07-10_blind-and-green-observability-sweep.md`.
 
 > **⚖️ Load order (law):** [`CONSTITUTION.md`](CONSTITUTION.md) → [`FOUNDATION.md`](FOUNDATION.md) → this file → [`AI_GOALS.md`](AI_GOALS.md). Reasoning happens inside the laws.
 >
