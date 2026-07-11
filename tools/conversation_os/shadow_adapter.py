@@ -47,6 +47,28 @@ class Event:
     payload: dict[str, Any] = field(default_factory=dict)
 
 
+def _recipient_identity(msg: dict[str, Any]) -> dict[str, Any]:
+    """Resolve the ORIGINAL recipient identity, forwarding-safe.
+
+    When mail is auto-forwarded (personal Gmail -> system inbox), the raw `To:`
+    header still names the personal address while `Delivered-To:` names the
+    forwarding box. We preserve the person they actually emailed as the identity,
+    and record the arrival box separately so the chain stays auditable and the
+    later reply-from step knows which identity to speak as.
+    """
+    to = msg.get("to")
+    delivered = msg.get("delivered_to")
+    original = to or delivered                       # who they emailed
+    arrived_via = delivered if (delivered and delivered != to) else None
+    return {
+        "original_recipient": original,              # e.g. james.rick.stinson@gmail.com
+        "arrived_via": arrived_via,                  # e.g. james@fullpotential.ai (forwarding box)
+        "was_forwarded": bool(arrived_via),
+        "reply_as_identity": original,               # full address to reply-from later (outbound OFF now)
+        "sender_identity": (original or "").split("@")[-1] or None,  # domain, back-compat
+    }
+
+
 def normalize_email(msg: dict[str, Any], *, source: str = "imap",
                     tenant_id: str | None = None) -> Event:
     """Pure function: raw email dict -> canonical Event. No I/O."""
@@ -61,9 +83,7 @@ def normalize_email(msg: dict[str, Any], *, source: str = "imap",
         trace_id=f"trace-{uuid.uuid4().hex[:12]}",
         dedup_key=_dedup_key(source, message_id),
         tenant_id=tenant_id,
-        payload={
-            "original_recipient": msg.get("to") or msg.get("delivered_to"),
-            "sender_identity": (msg.get("to") or "").split("@")[-1] or None,
+        payload=_recipient_identity(msg) | {
             "from": msg.get("from"),
             "thread_id": msg.get("thread_id"),
             "message_id": message_id,
