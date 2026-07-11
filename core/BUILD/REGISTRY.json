@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-  "updated_at": "2026-07-10T16:06:51Z",
+  "updated_at": "2026-07-11T16:07:27Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+    {
+      "id": "SPEC_d215_auto-spot-topple-assessment-funn",
+      "slug": "SPEC_d215_auto-spot-topple-assessment-funn",
+      "branch": "build/SPEC_d215_auto-spot-topple-assessment-funn",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d215_auto-spot-topple-assessment-funn.md",
+      "tests_passed": true,
+      "notes": "d215 complete in working tree: added a reversible local assessment_delivery_proof_spec generator that composes the d214 docket and d210-d213 verifier chain into one local JSON/Markdown proof spec with d215 provenance, d194 source timestamp, next-domino score 101.4, activation gate, execution authority, real-proof requirements, and explicit count-toppled-only-after checks. It remains on hold until d193 merge plus d182/d188 guarded activation evidence exist, and performs no live lead submission, email send, founder alert, deploy, secret access, capability append, push, merge, or money movement. Focused proof-spec and adjacent verifier/docket/manifest/runbook/queue/audit tests, py_compile, activation policy, registry JSON validation, and diff hygiene passed."
+    },
     {
       "id": "SPEC_d214_auto-spot-topple-assessment-funn",
       "slug": "SPEC_d214_auto-spot-topple-assessment-funn",
