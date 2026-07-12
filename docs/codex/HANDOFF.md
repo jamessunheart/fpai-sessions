@@ -83,6 +83,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Questions for Ember/James: …
 ```
 
+### 2026-07-12 · SPEC_d216_auto-spot-topple-assessment-funn · branch `build/SPEC_d216_auto-spot-topple-assessment-funn`
+
+- **Status:** done in working tree / awaiting review + merge
+- **Files changed:** `tools/build_loop/assessment_delivery_proof_delivery.py`; `tools/build_loop/test_assessment_delivery_proof_delivery.py`; `core/BUILD/specs/SPEC_d216_auto-spot-topple-assessment-funn.md`; `core/BUILD/results/SPEC_d216_auto-spot-topple-assessment-funn.result.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added a reversible local d216 assessment delivery proof wrapper for `assessment-funnel-delivery-proof`. It composes the d215 proof spec and downstream d214 docket, d213 manifest, d212 runbook, d211 queue, and d210 verifier into one local JSON/Markdown delivery-proof artifact with d216 provenance, d194 source timestamp, next-domino score `84.4`, activation gate, operator steps, real-proof requirements, verifier command, and explicit count-toppled-only-after checks. It does not submit a lead, send email, call Telegram, deploy, read secrets, append capability learning, push, merge, or spend money.
+- **Tests:** `python3 -B -m unittest tools.build_loop.test_assessment_delivery_proof_delivery` (3 OK); `python3 -B -m unittest tools.build_loop.test_assessment_delivery_proof_delivery tools.build_loop.test_assessment_delivery_proof_spec tools.build_loop.test_assessment_delivery_proof_docket tools.build_loop.test_assessment_delivery_proof_manifest tools.build_loop.test_assessment_delivery_proof_runbook tools.build_loop.test_assessment_delivery_proof_queue tools.build_loop.test_assessment_delivery_proof tools.build_loop.test_activation_audit` (27 OK); `env PYTHONPYCACHEPREFIX=/tmp/fpai-pycache python3 -m py_compile tools/build_loop/assessment_delivery_proof_delivery.py tools/build_loop/test_assessment_delivery_proof_delivery.py`; activation policy; registry JSON validation; `git diff --check`
+- **Risks:** This cannot create live proof by itself. Ember/server ops still need to run one controlled Life assessment lead after d193 is merged and activated, collect the evidence packet, and let the verifier append d185 capability learning only on pass.
+- **Rollback:** Revert this branch. Runtime cleanup is inert: delete any local `assessment_delivery_proof_delivery.json` or Markdown delivery-proof file produced by the generator.
+- **Intent solved:** the current d216 server-build-loop context now has a final delivery-proof wrapper without letting queueing, planning, or artifact generation count as topple proof.
+- **Downstream intent unlocked:** after d193 activation, server ops can run one controlled Life assessment lead and use one local delivery-proof artifact plus verifier path to log recipient delivery, founder alert, page acknowledgement, and d185 capability learning only when real proof exists.
+- **Questions for Ember/James:** after d193 is merged and activated through the d182/d188 guard, run `python3 tools/build_loop/assessment_delivery_proof_delivery.py --repo-root /opt/fpai-build/FPAI_Cockpit --ops-ledger /opt/fpai-build/ops_ledger.jsonl --delivery-file /opt/fpai-build/assessment_delivery_proof_delivery.json --markdown-file /opt/fpai-build/assessment_delivery_proof_delivery.md --json`; if it returns `ready`, follow the emitted verifier command with the real proof packet.
+
 ### 2026-07-11 · SPEC_d215_auto-spot-topple-assessment-funn · branch `build/SPEC_d215_auto-spot-topple-assessment-funn`
 
 - **Status:** done in working tree / awaiting review + merge
