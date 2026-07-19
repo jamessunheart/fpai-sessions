@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-  "updated_at": "2026-07-17T16:10:02Z",
+  "updated_at": "2026-07-18T16:10:42Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+    {
+      "id": "SPEC_d222_auto-spot-topple-assessment-funn",
+      "slug": "SPEC_d222_auto-spot-topple-assessment-funn",
+      "branch": "build/SPEC_d222_auto-spot-topple-assessment-funn",
+      "base_branch": "feat/headless-build",
+      "session": "codex",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_d222_auto-spot-topple-assessment-funn.md",
+      "tests_passed": true,
+      "notes": "d222 complete in working tree: added a reversible local assessment_delivery_proof_delivery_proof_verifier artifact that composes the d221 delivery verifier/spec and d210-d220 verifier chain into one local JSON/Markdown delivery-proof verifier/spec with d222 provenance, d194 source timestamp, next-domino score 85.57, activation gate, delivery-proof contract, operator steps, real-proof requirements, and explicit count-toppled-only-after checks. It remains on hold until d193 merge plus d182/d188 guarded activation evidence exist, and performs no live lead submission, email send, founder alert, deploy, secret access, capability append, push, merge, or money movement. Focused delivery-proof-verifier and adjacent delivery-verifier/verification-queue/execution-spec/verifier-spec/readiness/delivery/spec/docket/manifest/runbook/queue/audit tests, py_compile, activation policy, registry JSON validation, and diff hygiene passed."
+    },
     {
       "id": "SPEC_d221_auto-spot-topple-assessment-funn",
       "slug": "SPEC_d221_auto-spot-topple-assessment-funn",
