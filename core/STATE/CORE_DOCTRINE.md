@@ -65,6 +65,28 @@ cost at the cost of value — all forbidden.)
 - Everything else reversible + within-cap + aligned → **substrate/council acts, not James.**
   Enforced live by `.claude/hooks/check-substrate-default.sh` (P9).
 
+## Goal Stewardship (what owns a thing once it's routed — GOAL_STEWARDSHIP.md)
+
+**Routing is not assignment. Routing creates accountable momentum.** Every intent is
+classified QUESTION (answer) · SMALL ACTION (do + verify) · MEANINGFUL GOAL (create a
+**Goal Object** + assign a persistent **Goal Steward**). The unit of responsibility is
+the *completed goal*, not a message/task/prompt/agent-turn. The steward holds the
+observable finish line, dispatches bounded workstreams, integrates results, detects
+drift, and stays accountable until reality verifies completion.
+
+- **Tiers:** James governs → FPOS prioritizes/routes → Goal Steward manages →
+  fleet (humans·agents·tools) executes → proof decides what is true → FPOS learns.
+- **An action is not an outcome.** Proof ladder: attempted → executed → *verified* →
+  outcome achieved → value produced → learning captured. Close only at stage 5+.
+- **Escalate to James only at consequential boundaries** (direction · scope/authority ·
+  financial exposure · public representation · security/privacy · legal/brand ·
+  consequential external reality) — and arrive with
+  *Decision required · Evidence · Options · Recommendation · Consequences*.
+  Being technically capable of an action is not authorization to perform it.
+- **Every completed goal returns a Learning Packet** and pushes one rung up:
+  manual → playbook → specification → automation → platform capability → intelligence.
+- Schema: `core/STATE/schemas/goal_object.schema.json`
+
 ## Available protocols (named orchestrations — and invent your own)
 The system has named ways of working — autonomous loops (Council Fire, RCA Reflex,
 Self-Audit), enforcement gates (Substrate-Default, Metric Coherence, Constitution
@@ -76,6 +98,7 @@ Check), and multi-agent swarms (Academy Distill, Self-Improvement Swarm). Full c
 - `core/STATE/CONSTITUTION.md` · `core/STATE/ALLOCATION_INTELLIGENCE.md` (keystone)
 - `core/STATE/STEWARDSHIP_CONSTITUTION.md` (governing instruction: every resource = entrusted capital · Decision Loop · Two Paths to Value · earned authority)
 - `core/STATE/FOUNDATION.md` (Three Rs) · `core/STATE/AI_PRINCIPLES.md`
+- `core/STATE/GOAL_STEWARDSHIP.md` (routing→ownership→verified completion→learning)
 - `docs/codex/AI_PROTOCOLS.md` · `core/STATE/AI_CHARTER.md` · `core/STATE/BUG_LOG.md`
 
 _Compiled from canonical sources — if this disagrees with them, they win; re-compile._

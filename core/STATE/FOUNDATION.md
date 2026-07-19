@@ -43,6 +43,8 @@ Traditional companies optimize labor. **FPOS optimizes intelligence.** Instead o
 
 **The Recursive Loop:** Routing → Better Reasoning → Better Results → Knowledge Capture → System Improvement → Better Routing. *The center is not AI. The center is INTELLIGENCE.*
 
+> ★ **Routing creates ownership, not assignment (2026-07-19).** Routing terminates in a **Goal Object** owned by a persistent **Goal Steward** that holds the finish line until reality verifies completion. The unit of responsibility is the completed goal — not a message, task, prompt, or agent turn. Doctrine: [[GOAL_STEWARDSHIP]] · schema: `core/STATE/schemas/goal_object.schema.json`.
+
 ## The Three Operating Divisions
 
 1. **Builders** — increase human capability. Recruit · onboard · mentor · certify · match · perform · community. Output: highly capable AI Builders. *(Live doorway: fullpotential.com/ai-builders.)*

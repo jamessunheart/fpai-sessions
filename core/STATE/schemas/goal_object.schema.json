@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fullpotential.com/schemas/goal_object.schema.json",
+  "title": "FPOS Goal Object",
+  "description": "The universal handshake between the Router and any execution harness. Created when an intent is classified MEANINGFUL GOAL. Doctrine: core/STATE/GOAL_STEWARDSHIP.md",
+  "type": "object",
+  "required": [
+    "id",
+    "objective",
+    "finish_line",
+    "priority",
+    "steward",
+    "authority",
+    "budget",
+    "status",
+    "next_action"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^goal-[0-9]{8}-[a-z0-9]{6}$",
+      "description": "goal-YYYYMMDD-xxxxxx"
+    },
+    "objective": { "type": "string", "description": "Desired outcome, one sentence." },
+    "why_it_matters": { "type": "string", "description": "Link to stream / north star." },
+    "stream": {
+      "type": "string",
+      "enum": ["play", "game", "zen_village", "ventures", "treasury", "legal", "relationship"],
+      "description": "One of the 7 canonical streams (JAMES_COHERENCE_MAP.md)."
+    },
+    "finish_line": {
+      "type": "string",
+      "description": "OBSERVABLE condition. What reality shows when this is done. Must be checkable without asking a human's opinion."
+    },
+    "priority": { "type": "string", "enum": ["urgent", "high", "normal", "low"] },
+    "steward": {
+      "type": "string",
+      "description": "Accountable owner. Sunheart Rule tier prefix: AI: | AI(Name): | HUMAN(Name): | HIRE: | YOU:"
+    },
+    "authority": {
+      "type": "object",
+      "description": "The autonomy envelope. Proceed autonomously only when all of safe+reversible+in_scope+in_budget+operational hold.",
+      "required": ["reversible", "escalation_triggers"],
+      "properties": {
+        "reversible": { "type": "boolean" },
+        "operational_not_strategic": { "type": "boolean" },
+        "escalation_triggers": {
+          "type": "array",
+          "description": "Which consequential boundaries return this to James.",
+          "items": {
+            "type": "string",
+            "enum": [
+              "objective_or_direction",
+              "scope_or_authority",
+              "financial_exposure",
+              "public_representation",
+              "security_or_privacy",
+              "legal_or_brand",
+              "external_reality"
+            ]
+          }
+        }
+      }
+    },
+    "budget": {
+      "type": "object",
+      "properties": {
+        "usd_cap": { "type": "number" },
+        "james_minutes_cap": { "type": "number", "description": "James-time is the apex scarce resource." },
+        "wallclock_deadline": { "type": "string", "format": "date-time" }
+      }
+    },
+    "plan": { "type": "array", "items": { "type": "string" } },
+    "workstreams": {
+      "type": "array",
+      "description": "Bounded units dispatched to specialists. Each carries all five fields or the specialist invents scope.",
+      "items": {
+        "type": "object",
+        "required": ["question", "deliverable", "evidence_standard", "stopping_condition"],
+        "properties": {
+          "question": { "type": "string", "description": "The bounded question." },
+          "context": { "type": "string" },
+          "deliverable": { "type": "string", "description": "Concrete artifact expected back." },
+          "permitted_tools": { "type": "array", "items": { "type": "string" } },
+          "permitted_paths": { "type": "array", "items": { "type": "string" } },
+          "evidence_standard": { "type": "string" },
+          "stopping_condition": { "type": "string" },
+          "assignee": { "type": "string" },
+          "status": { "type": "string", "enum": ["pending", "running", "returned", "integrated", "failed"] }
+        }
+      }
+    },
+    "dependencies": { "type": "array", "items": { "type": "string" } },
+    "evidence_ledger": {
+      "type": "array",
+      "description": "Every claim, its receipt. A claim without a receipt is not evidence.",
+      "items": {
+        "type": "object",
+        "required": ["claim", "receipt", "kind"],
+        "properties": {
+          "claim": { "type": "string" },
+          "receipt": { "type": "string", "description": "URL, path, commit sha, log excerpt, screenshot path, tx hash." },
+          "kind": {
+            "type": "string",
+            "enum": ["test", "receipt", "log", "metric", "screenshot", "external_state_check", "independent_review"]
+          },
+          "at": { "type": "string", "format": "date-time" }
+        }
+      }
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["decision", "by", "at"],
+        "properties": {
+          "decision": { "type": "string" },
+          "by": { "type": "string" },
+          "at": { "type": "string", "format": "date-time" },
+          "rationale": { "type": "string" }
+        }
+      }
+    },
+    "blockers": { "type": "array", "items": { "type": "string" } },
+    "next_action": {
+      "type": "string",
+      "description": "Always exactly one. Always concrete. If this is empty the goal is drifting."
+    },
+    "status": {
+      "type": "string",
+      "description": "The six-stage proof ladder. A goal closes only at value_produced or later.",
+      "enum": [
+        "attempted",
+        "executed",
+        "verified",
+        "outcome_achieved",
+        "value_produced",
+        "learning_captured",
+        "abandoned"
+      ]
+    },
+    "completion_proof": {
+      "type": "string",
+      "description": "The external-reality artifact showing the finish line reads true."
+    },
+    "learning_packet": {
+      "type": "object",
+      "description": "Required before status=learning_captured. This is how a completed goal upgrades the OS.",
+      "properties": {
+        "what_worked": { "type": "string" },
+        "what_failed": { "type": "string" },
+        "what_changed": { "type": "string" },
+        "becomes_memory": { "type": "string" },
+        "becomes_skill": { "type": "string" },
+        "could_be_automated": { "type": "string" },
+        "route_differently_next_time": { "type": "string" },
+        "no_longer_needs_james": { "type": "string" },
+        "evolution_ladder_step": {
+          "type": "string",
+          "enum": ["manual", "playbook", "specification", "automation", "platform_capability", "intelligence"]
+        }
+      }
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  }
+}
