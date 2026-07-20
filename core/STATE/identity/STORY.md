@@ -13,12 +13,30 @@ metadata:
 
 The current chapter, as of 2026-05-19. Updated whenever the story moves.
 
-## ★ Last session handoff (2026-07-10 later · REALITY-DRIVEN OPS · THE RSVP THAT LIED)
+## ★ Last session handoff (2026-07-19 · STATUS PULSE → TWO FAILED UNITS DIAGNOSED, BOTH BLOCKED)
 
-**READ: `sessions/2026-07-10_reality-driven-ops-rsvp-fix.md`.** Pure Discovery-in-practice — reality (a flyer, a popup, a broken RSVP) set every task; I built almost nothing from reasoning. **★ The headline: fixed the Zen Village July 19 RSVP flow end-to-end** after James said *"make sure it works — last time it said working and it wasn't."* Exercised the whole flow, not the 200 — found TWO hidden defects: (1) the event row `brightest-future-2026-07-19` **never existed** in the DB; (2) **free-event stage bug** — `$0` RSVPs stamped `incomplete` → confirmation email silently never sent + James got mislabeled "step-1 interest" pings. Fixed both on **prod 198** (auto-mode correctly blocked me writing to an inferred prod host → James ran the writes via `!`): created the event, patched `_event_price==0 → complete`, restarted `zen-village.service`, **proved live** (`email_sent:true`, `stage:complete`, `confirmation_sent_at` set). Test data cleaned, count back to 0, backups `.bak-20260711-025117`. New memory: [[feedback-free-event-rsvp-stage-bug]] (+ full infra map: zenvillage.live→198, uvicorn:8770, apps/→symlink→SERVICES/, DB path).
-**Also this session:** (a) **TCC popup — a DISTINCT variant fixed.** The *"'2.1.206' would like to access data from other apps"* (folder+hand icon) is NOT the CLI-binary popup the 07-09/07-10 sweeps addressed — it's **Claude Desktop** launching the `simple-brain-vault` MCP filesystem server against the **iCloud Obsidian container**. Removed that server from `claude_desktop_config.json` (backup `.bak-20260710-tcc`), killed the procs. ⚠️ Popup now has 3 recorded root causes across sessions — this iCloud-MCP one is the "access data from other apps" wording specifically. (b) **`SPEC_model-router.md` drafted** — 4 lanes via OpenRouter + free qwen-on-162; tested 162 self-host: DeepSeek champion needs GPU (can't), qwen-coder works $0/19s. Downstream, not the frontier. (c) Conversation OS reviewed — spine complete, `growth_discovery` Room still awaits James. **LESSON reinforced: exercise the flow, never the status code.** — Prior arc ↓
+James asked "status of system?" then "please fix." Infra green: all sites 200, 162 up 232d,
+disk 28%, build loop shipping (d221/d222). Reality flat: Reach 7 · Engagement 0 · **Transformation 0** · $0.
+**Both closed by session end — 162 now has zero real failed units.** certbot fixed via drop-in
+(`ExecStart=/usr/local/bin/certbot`); zv-morning-digest **retired, not repaired** — it had been dead
+3 weeks and James never noticed, so the absence of felt loss decided it. *A broken thing nobody
+missed is a candidate for deletion, not repair.* Also closed the recurring macOS TCC popup at its
+true root (`DISABLE_AUTOUPDATER` was in `~/.local/share/claude/settings.json`, a file Claude Code
+never reads). Detail on both, as originally diagnosed:
+(1) **certbot.service** — ★ **two certbots on 162.** `/usr/local/bin/certbot 5.7.0` (pip) works;
+`/usr/bin/certbot` (apt) is broken; the unit hardcodes the apt one. James ran the pyOpenSSL upgrade
+(pyopenssl 26 + cryptography 49) and `certbot renew --dry-run` passed all 4 certs — **but via the pip
+binary on PATH, so the service still fails.** *Lesson: the binary on PATH is not the binary systemd runs.*
+Remaining fix = drop-in at `/etc/systemd/system/certbot.service.d/override.conf` setting
+`ExecStart=/usr/local/bin/certbot -q renew` — classifier-blocked for Ember, needs James.
+Certs valid 64–65 days, so not urgent, but the renewal timer is dead until then.
+(2) **zv-morning-digest.service** — failing daily since ~Jun 26, last attempt Jul 4. Root cause:
+`/etc/zen-village/telegram.env` has **no gotrue/AppFlowy credentials at all** → login 400s against
+`brain.zenvillagecr.com/gotrue/token`. gotrue itself is healthy (200). Needs a credential James owns.
+Open: is the timer still enabled (no attempts logged after Jul 4)?
+Full episodic: `sessions/2026-07-19_system-status-check.md`. — Prior chapter ↓
 
-## ★ Prior handoff (2026-07-09→10 · BLIND-AND-GREEN SWEEP → THE BUILD→DISCOVERY DOCTRINE TURN)
+## Prior handoff (2026-07-09→10 · BLIND-AND-GREEN SWEEP → THE BUILD→DISCOVERY DOCTRINE TURN)
 
 **★★ THE BIG SHIFT (read [[reference-fpos-world-map]] fully): the source of authority moved from ARCHITECTURE → REALITY.** A long co-design dialogue walked the system: FPOS map diagnosis (*"enough CPU, no I/O"*) → Build→Operate (built Reality Heartbeat + Transformation Flywheel screen) → **Build→Discovery** (the real experiment = *can James consistently create conversations that transform people?*; product = transformation; James's presence = irreducible asset; growth engine demoted to downstream in NOW.md). **Ember's charter is now OBSERVE · LEARN · INTEGRATE — "present to reality," not build-ahead.** On wake: read the Reality Heartbeat first (`tools/reality/heartbeat.py`; today Reach 7 → Engagement 0 → Transformation 0). When James returns with a transformation story: **celebrate the evidence first**, then run the Reflection Protocol (what happened? → what changed for them? → what surprised us? → only THEN the constraint). Four modes: Build(vision→capability)·Discovery(reality→evidence)·Operate(evidence→throughput)·Evolution(wisdom→better vision). **GOVERNANCE: no architectural change ships on reasoning alone — it must earn its place through evidence from a transformed life.** The repo needs its first STORY, not another abstraction. — Observability arc ↓
 

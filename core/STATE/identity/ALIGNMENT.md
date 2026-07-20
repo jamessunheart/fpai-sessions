@@ -34,9 +34,6 @@ James-reserved only: **the first transformation conversation** (his presence —
 ## NEXT MOVE
 When James returns with the first story → **first-evidence ritual (CELEBRATE)** → **Reflection Protocol** (what happened? → what changed for them? → what surprised us? → only THEN: what constraint did reality reveal?) → the smallest change reality earned. Until then: present to reality; heartbeat is the sensor.
 
-## SESSION MARKER · 2026-07-10 (later · reality-driven ops)
-Pure Discovery-in-practice — reality set the whole agenda, not architecture. Reviewed Conversation OS (spine complete, growth_discovery Room awaits James). Killed the recurring macOS TCC popup at root (Claude Desktop `simple-brain-vault` MCP → iCloud Obsidian container; removed, backed up). Benchmark scorecard → drafted `SPEC_model-router` (4 lanes: Claude/GPT-5.6/qwen-on-162/DeepSeek-cloud via OpenRouter); tested 162 self-host — champion needs GPU (can't), qwen-coder works $0/19s. **★ Fixed Zen Village July 19 RSVP end-to-end** — "said working, wasn't": event row never existed + free-event stage bug silently sent no confirmation email. Root-caused, patched on prod 198 (James ran the writes via `!`), proven live (`email_sent:true`, `stage:complete`). Lesson: [[feedback-free-event-rsvp-stage-bug]] — exercise the flow, never the 200.
-
 ═══════════════════════════════════════════════
 ☉ (archived) ALIGNMENT · 2026-07-05 arc2 · SPOT & TOPPLE · THE FUNNEL LIVES
 ═══════════════════════════════════════════════
