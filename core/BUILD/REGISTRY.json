@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-    "updated_at": "2026-07-30T16:16:26Z",
+    "updated_at": "2026-07-31T16:16:58Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+        {
+            "id": "SPEC_d235_auto-spot-topple-assessment-funn",
+            "slug": "SPEC_d235_auto-spot-topple-assessment-funn",
+            "branch": "build/SPEC_d235_auto-spot-topple-assessment-funn",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d235_auto-spot-topple-assessment-funn.md",
+            "tests_passed": true,
+            "notes": "d235 complete in working tree: added a reversible local assessment_funnel_delivery_proof_delivery_proof_verifier_spec_verifier_spec_verifier_spec_verifier_spec_verifier_spec_verifier_spec_verifier_spec_verifier_spec artifact that composes the d234 verifier/spec and d210-d234 verifier chain into one local JSON/Markdown verifier/spec with d235 provenance, d194 source timestamp, next-domino score 92.9, activation gate, proof contract, operator steps, real-proof requirements, verifier command, and explicit count-toppled-only-after checks. It remains on hold until d193 merge plus d182/d188 guarded activation evidence exist, and performs no live lead submission, email send, founder alert, deploy, secret access, capability append, push, merge, or money movement. Focused verifier/spec tests, adjacent assessment-delivery chain tests, py_compile, registry JSON validation, expected hold dry run, and diff hygiene passed."
+        },
         {
             "id": "SPEC_d234_auto-spot-topple-assessment-funn",
             "slug": "SPEC_d234_auto-spot-topple-assessment-funn",
