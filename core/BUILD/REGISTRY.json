@@ -1,8 +1,19 @@
 {
     "schema": "build-registry.v1",
-    "updated_at": "2026-08-05T16:19:32Z",
+    "updated_at": "2026-08-06T16:20:01Z",
     "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
     "active_builds": [
+        {
+            "id": "SPEC_d241_auto-spot-topple-assessment-funn",
+            "slug": "SPEC_d241_auto-spot-topple-assessment-funn",
+            "branch": "build/SPEC_d241_auto-spot-topple-assessment-funn",
+            "base_branch": "feat/headless-build",
+            "session": "codex",
+            "status": "done",
+            "spec": "core/BUILD/specs/SPEC_d241_auto-spot-topple-assessment-funn.md",
+            "tests_passed": true,
+            "notes": "d241 complete in working tree: added a reversible local assessment_funnel_delivery_proof_delivery_proof_verifier_spec_verifier_spec_verifier_spec_verifier_spec_verifier_spec_verifier_spec_verifier_spec_verifier_spec_verifier_spec_verifier_spec_verifier_spec_verifier_spec_verifier_spec_verifier_spec artifact that composes the d240 verifier/spec and d210-d240 verifier chain into one local JSON/Markdown verifier/spec with d241 provenance, d194 source timestamp, next-domino score 121.07, activation gate, proof contract, operator steps, real-proof requirements, verifier command, and explicit count-toppled-only-after checks. It remains on hold until d193 merge plus d182/d188 guarded activation evidence exist, and performs no live lead submission, email send, founder alert, deploy, secret access, capability append, push, merge, or money movement. Focused verifier/spec tests, adjacent assessment-delivery chain tests, py_compile with short cfile targets, registry JSON validation, expected hold dry run, activation policy, and diff hygiene passed."
+        },
         {
             "id": "SPEC_d240_auto-spot-topple-assessment-funn",
             "slug": "SPEC_d240_auto-spot-topple-assessment-funn",
