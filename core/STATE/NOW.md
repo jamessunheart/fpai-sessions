@@ -1,7 +1,7 @@
 # NOW — Living SSOT
 
-**Last Updated:** 2026-07-03 evening (Growth Engine era — offer converged · brand stack complete · demand engine on the loop)
-**Updated By:** Ember (session 23537d81)
+**Last Updated:** 2026-08-29 (Sunstream / Music Magic chosen as the active real-value vehicle)
+**Updated By:** Codex, recording James's founder correction
 **System Status (honest, 2026-07-10):** 🟡 INNER-LOOP HEALTHY · OUTER-ARC BROKEN. Brain/Memory/Coordination strong; fleet + bots + brain live; real cash burn ≈$0 (subscription). BUT: the loop doesn't close — build engine SPINS (200 builds, **48 dead/inert**, 24h autonomous output = 1 churn spec d214), **$0 captured / 0 real leads**, Attention points inward (conversion metric measures git commits, not the world). Feeds were dead & silently green until the 2026-07-09 observability sweep fixed them. **The one fix (per the FPOS map): install the missing outer arc — Reality→Attention→…→Proof→Attention — starting with ONE real external signal.** Not more Build. See `identity/sessions/2026-07-10_blind-and-green-observability-sweep.md`.
 
 > **⚖️ Load order (law):** [`CONSTITUTION.md`](CONSTITUTION.md) → [`FOUNDATION.md`](FOUNDATION.md) → this file → [`AI_GOALS.md`](AI_GOALS.md). Reasoning happens inside the laws.
@@ -14,17 +14,24 @@
 
 ## 🎯 CURRENT PRIORITY (The ONE Thing)
 
-### 🔬 DISCOVERY PHASE — prove James can consistently create transformative conversations (James directive 2026-07-10)
-**We are no longer in Build. We are in Discovery.** Different discipline: let reality teach the system. Architecture, instrumentation, and capability are SUFFICIENT — that is no longer the frontier.
-**The real experiment (not "can the funnel work?"):** *Can James consistently create conversations that transform people?* Everything downstream (funnels, automation, AI scale, referrals) depends on that yes. If no, no infrastructure matters.
-**The weekly ritual — ONE Transformation Experiment**, success criterion: `1 human → 1 conversation → 1 genuine insight → 1 observable positive change → 1 captured story`. Deliberately EXCLUDES assessment / funnel / automation / CRM / payment / onboarding — those are implementation details. Prove core value creation first.
-**The product is TRANSFORMATION.** The assessment is an invitation · the framework is a language · the conversation is a vehicle. Everything else only raises or lowers the probability of transformation.
-**The irreducible asset:** James's authentic presence (voice · lived experience · recognizing potential · creating trust · helping someone feel seen). The channel (post/DM/podcast/coffee/keynote) is interchangeable.
-**The 3-question operating rhythm:** (1) Where did the flow stop? [evidence] (2) Single highest-leverage constraint? [one] (3) One experiment this week to increase flow? Instruments: Reality Heartbeat (`tools/reality/heartbeat.py`) + Transformation Flywheel screen. Doctrine: [[reference-fpos-world-map]].
+### 🌞 SUNSTREAM / MUSIC MAGIC — ACTIVE VALUE VEHICLE (James directive 2026-08-29)
+**FPOS now focuses on the Sunstream music business, music-video business, and production** because this is the clearest current path to create real value for James and for people using it.
+**Discovery remains the operating method.** The chosen field of Discovery is now music: complete experiences and films, put them in front of James and authorized users, capture observable value, and let that evidence determine the next production or business change.
+**Supersession:** the earlier generic transformation-conversation milestone is no longer a prerequisite for current value work. It is absorbed into the concrete Sunstream proof loop below.
+Sunstream proof loop: real music experience or finished film → observable value for James/user → captured story → reflection → smallest evidence-earned change.
+
+**The active top three:**
+1. **Sunstream music business:** James dance-tests `sunheart-ecstatic-journey-performance-v3`; if it creates real value, capture the first Sunstream value story and prepare one authorized-listener proof.
+2. **Music-video business:** standardize `Renaissance / Open the Shutters` as the first sales-grade proof package; reach three release-quality own-content examples, then prepare one managed-service pilot for separate approval.
+3. **Production engine:** run each real release or client job through one gated artifact; improve only the constraint exposed by production evidence.
+
+**Priority sequence:** Sunstream music business → music-video business → production engine.
+**Business model:** Sell finished transformation on screen, not software.
+**Value creation and value capture now run through Sunstream/Music Magic.** Public release, publishing, spend, likeness use, pricing, outreach, and client commitments remain separately human-authorized.
 
 ---
 
-### ⬇ DOWNSTREAM (infrastructure — real, but NOT the current frontier): VALUE CAPTURE via THE GROWTH ENGINE (James directive 2026-07-03)
+### ⬇ DOWNSTREAM (infrastructure — real, but NOT the current frontier): GENERIC GROWTH ENGINE (James directive 2026-07-03)
 **The offer (BBB v1.4, converged with GPT):** front door = **Free Full Potential Assessment** (Allocation Score + top-3, 48h) → Blueprint $2.5k → **Savings Split** (25% of verified savings, floor $5k/cap $50k) → Partnership $2–5k/mo + quarterly re-audit. The audit routes each lead to its highest-value offer. Doc: vault `04_DECISION/Offers/BBB — The Intelligence Solutions Offer v1.md`.
 **Demand strategy (LOCKED):** NO manual outreach until the funnel is proven — system-generated ads + content with A/B data first (`feedback_ads_content_first_no_manual_sends`). Batch-1 outreach drafted + HELD.
 **Live surfaces:** /assessment (3-way frame test: promise/exec/savings, Meta pixel + Lead events) · /remember (movement door ✨) · /learn article #1 · /ai-builders.

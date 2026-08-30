@@ -52,6 +52,8 @@ class TwinEyesCardTest(unittest.TestCase):
         self.assertEqual(by_id["sunstream_function"]["agreement"], "clear")
         self.assertEqual(by_id["sundance_function"]["agreement"], "clear")
         self.assertEqual(by_id["creative_organs_authority"]["agreement"], "clear")
+        self.assertEqual(by_id["sunstream_priority_sequence"]["agreement"], "clear")
+        self.assertEqual(by_id["sunstream_business_model"]["agreement"], "clear")
         self.assertTrue(all(item["evidence"] == "verified" for topic in card["topics"] for item in topic["observations"]))
 
     def test_creative_organs_snapshot_is_bounded_and_non_actuating(self) -> None:

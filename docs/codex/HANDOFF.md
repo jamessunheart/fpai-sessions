@@ -83,6 +83,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Questions for Ember/James: …
 ```
 
+### 2026-08-29 · SPEC_sunstream-active-focus · branch codex/sunstream-active-focus
+
+- **Status:** done in working tree / awaiting review + merge
+- **Files changed:** core/STATE/NOW.md; core/STATE/AI_GOALS.md; tools/twin_eyes/live_manifest.json; tools/twin_eyes/expected_labels.json; tools/twin_eyes/test_card.py; regenerated Twin Eyes demo outputs; core/BUILD/specs/SPEC_sunstream-active-focus.md; core/BUILD/REGISTRY.json; docs/codex/HANDOFF.md. Local append-only audit: ~/.config/fpai/decisions/log.jsonl.
+- **Summary:** Recorded James's founder correction that FPOS now focuses on Sunstream / Music Magic as the chosen real-value vehicle. Discovery remains the method. Active sequence: prove felt value through the ready V3 dance test and one authorized listener; build three release-quality own-content music-video proofs beginning with Renaissance / Open the Shutters; then offer one separately approved managed-service pilot. Production improves only behind evidence.
+- **Tests:** `python3 -B -m unittest tools.twin_eyes.test_card` (9 OK); 40/40 observations evidence-verified across 18 topics; 17 CLEAR / 1 preserved CONFLICT / 0 UNKNOWN; historical recall 2/2 with zero false CLEAR; deterministic JSON/HTML byte comparison; JSON validation; py_compile; exactly one decision-log row; diff hygiene.
+- **Risks:** goal documents select a vehicle and sequence but do not prove demand, quality, felt value, release readiness, or willingness to pay. Existing Music Magic lifecycle records contain drift and remain authoritative within their exact artifacts.
+- **Rollback:** revert this branch and append a reversal event for sunstream-active-value-vehicle-2026-08-29. No production or public state exists in this change.
+- **Intent solved:** FPOS attention now points at a concrete music and cinematic value loop rather than waiting on a generic conversation milestone.
+- **Downstream intent unlocked:** James can run the V3 private dance test; AI can capture evidence and prepare the next exact gated packet. Public release, spending, pricing, outreach, and client commitments remain separately approved.
+- **Questions for Ember/James:** no additional decision required to adopt the focus. The next irreducible action is James's private V3 dance test.
+
 ### 2026-08-29 · SPEC_twin-eyes-creative-organs · branch codex/twin-eyes-creative-organs
 
 - **Status:** done in working tree / awaiting review + merge

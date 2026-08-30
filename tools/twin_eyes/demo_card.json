@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-08-30T03:36:41Z",
+  "as_of": "2026-08-30T04:00:49Z",
   "card": {
     "actuation": false,
     "authority": "lens_only",
@@ -15,18 +15,18 @@
   },
   "summary": {
     "agreement": {
-      "clear": 15,
+      "clear": 17,
       "conflict": 1,
       "unknown": 0
     },
     "evidence": {
       "claimed": 0,
       "none": 0,
-      "verified": 16
+      "verified": 18
     },
     "freshness": {
-      "fresh": 8,
-      "stale": 8
+      "fresh": 12,
+      "stale": 6
     }
   },
   "topics": [
@@ -37,18 +37,18 @@
       "id": "operating_phase",
       "observations": [
         {
-          "age_hours": 1209.02,
+          "age_hours": 0.0,
           "evidence": "verified",
-          "evidence_text": "We are no longer in Build. We are in Discovery.",
-          "freshness": "stale",
+          "evidence_text": "Discovery remains the operating method.",
+          "freshness": "fresh",
           "id": "phase-now",
           "source": "core/STATE/NOW.md",
-          "source_sha256": "d5ea62f0128114c9ff8b471c1877b15dbdafbd65c86714efe5b34e3cd90a6ddd",
-          "source_updated_at": "2026-07-10T18:35:18Z",
+          "source_sha256": "8f96276dd4a6dbb5abc9e8f047500220e07ca2ae82b7b9cd0b67f1c0e1eed764",
+          "source_updated_at": "2026-08-30T04:00:49Z",
           "value": "discovery"
         },
         {
-          "age_hours": 1209.02,
+          "age_hours": 1209.43,
           "evidence": "verified",
           "evidence_text": "We are in **DISCOVERY**, not Build.",
           "freshness": "stale",
@@ -59,14 +59,14 @@
           "value": "discovery"
         },
         {
-          "age_hours": 0.49,
+          "age_hours": 0.0,
           "evidence": "verified",
-          "evidence_text": "### G1 — DISCOVERY (active now)",
+          "evidence_text": "Discovery remains the operating method.",
           "freshness": "fresh",
           "id": "phase-ai-goals",
           "source": "core/STATE/AI_GOALS.md",
-          "source_sha256": "cadbaf6baae6e34506ff7c8940a3530f9d5119f8a554c1663ef6f04dae8a9726",
-          "source_updated_at": "2026-08-30T03:07:03Z",
+          "source_sha256": "6dd5b51bd8eeba58a2f974fb4fa17a9077ef4399472ab30d4bddd7ee8fa43b19",
+          "source_updated_at": "2026-08-30T04:00:49Z",
           "value": "discovery"
         }
       ],
@@ -75,33 +75,33 @@
     {
       "agreement": "clear",
       "evidence": "verified",
-      "freshness": "stale",
+      "freshness": "fresh",
       "id": "value_capture_position",
       "observations": [
         {
-          "age_hours": 1209.02,
+          "age_hours": 0.0,
           "evidence": "verified",
-          "evidence_text": "DOWNSTREAM (infrastructure — real, but NOT the current frontier): VALUE CAPTURE",
-          "freshness": "stale",
+          "evidence_text": "Value creation and value capture now run through Sunstream/Music Magic.",
+          "freshness": "fresh",
           "id": "value-now",
           "source": "core/STATE/NOW.md",
-          "source_sha256": "d5ea62f0128114c9ff8b471c1877b15dbdafbd65c86714efe5b34e3cd90a6ddd",
-          "source_updated_at": "2026-07-10T18:35:18Z",
-          "value": "downstream"
+          "source_sha256": "8f96276dd4a6dbb5abc9e8f047500220e07ca2ae82b7b9cd0b67f1c0e1eed764",
+          "source_updated_at": "2026-08-30T04:00:49Z",
+          "value": "sunstream_music_magic"
         },
         {
-          "age_hours": 0.49,
+          "age_hours": 0.0,
           "evidence": "verified",
-          "evidence_text": "### G2 — VALUE CAPTURE (downstream; waiting on the first captured story)",
+          "evidence_text": "Value creation and value capture now run through Sunstream/Music Magic.",
           "freshness": "fresh",
           "id": "value-ai-goals",
           "source": "core/STATE/AI_GOALS.md",
-          "source_sha256": "cadbaf6baae6e34506ff7c8940a3530f9d5119f8a554c1663ef6f04dae8a9726",
-          "source_updated_at": "2026-08-30T03:07:03Z",
-          "value": "downstream"
+          "source_sha256": "6dd5b51bd8eeba58a2f974fb4fa17a9077ef4399472ab30d4bddd7ee8fa43b19",
+          "source_updated_at": "2026-08-30T04:00:49Z",
+          "value": "sunstream_music_magic"
         }
       ],
-      "title": "Value Capture position in the sequence"
+      "title": "Active value creation and capture vehicle"
     },
     {
       "agreement": "clear",
@@ -110,18 +110,18 @@
       "id": "activation_milestone",
       "observations": [
         {
-          "age_hours": 1209.02,
+          "age_hours": 0.0,
           "evidence": "verified",
-          "evidence_text": "1 captured story",
-          "freshness": "stale",
+          "evidence_text": "first Sunstream value story",
+          "freshness": "fresh",
           "id": "milestone-now",
           "source": "core/STATE/NOW.md",
-          "source_sha256": "d5ea62f0128114c9ff8b471c1877b15dbdafbd65c86714efe5b34e3cd90a6ddd",
-          "source_updated_at": "2026-07-10T18:35:18Z",
+          "source_sha256": "8f96276dd4a6dbb5abc9e8f047500220e07ca2ae82b7b9cd0b67f1c0e1eed764",
+          "source_updated_at": "2026-08-30T04:00:49Z",
           "value": "first_captured_story"
         },
         {
-          "age_hours": 1209.02,
+          "age_hours": 1209.43,
           "evidence": "verified",
           "evidence_text": "When James returns with the first story",
           "freshness": "stale",
@@ -132,14 +132,14 @@
           "value": "first_captured_story"
         },
         {
-          "age_hours": 0.49,
+          "age_hours": 0.0,
           "evidence": "verified",
-          "evidence_text": "Value Capture activates after the first captured transformation story",
+          "evidence_text": "first captured Sunstream value story",
           "freshness": "fresh",
           "id": "milestone-ai-goals",
           "source": "core/STATE/AI_GOALS.md",
-          "source_sha256": "cadbaf6baae6e34506ff7c8940a3530f9d5119f8a554c1663ef6f04dae8a9726",
-          "source_updated_at": "2026-08-30T03:07:03Z",
+          "source_sha256": "6dd5b51bd8eeba58a2f974fb4fa17a9077ef4399472ab30d4bddd7ee8fa43b19",
+          "source_updated_at": "2026-08-30T04:00:49Z",
           "value": "first_captured_story"
         }
       ],
@@ -148,33 +148,33 @@
     {
       "agreement": "clear",
       "evidence": "verified",
-      "freshness": "stale",
+      "freshness": "fresh",
       "id": "transformation_success_contract",
       "observations": [
         {
-          "age_hours": 1209.02,
+          "age_hours": 0.0,
           "evidence": "verified",
-          "evidence_text": "1 human → 1 conversation → 1 genuine insight → 1 observable positive change → 1 captured story",
-          "freshness": "stale",
+          "evidence_text": "Sunstream proof loop: real music experience or finished film → observable value for James/user → captured story → reflection → smallest evidence-earned change.",
+          "freshness": "fresh",
           "id": "contract-now",
           "source": "core/STATE/NOW.md",
-          "source_sha256": "d5ea62f0128114c9ff8b471c1877b15dbdafbd65c86714efe5b34e3cd90a6ddd",
-          "source_updated_at": "2026-07-10T18:35:18Z",
-          "value": "human_conversation_insight_change_story"
+          "source_sha256": "8f96276dd4a6dbb5abc9e8f047500220e07ca2ae82b7b9cd0b67f1c0e1eed764",
+          "source_updated_at": "2026-08-30T04:00:49Z",
+          "value": "music_or_film_value_story_reflection_change"
         },
         {
-          "age_hours": 0.49,
+          "age_hours": 0.0,
           "evidence": "verified",
-          "evidence_text": "1 human → 1 conversation → 1 genuine insight → 1 observable positive change → 1 captured story",
+          "evidence_text": "Sunstream proof loop: real music experience or finished film → observable value for James/user → captured story → reflection → smallest evidence-earned change.",
           "freshness": "fresh",
           "id": "contract-ai-goals",
           "source": "core/STATE/AI_GOALS.md",
-          "source_sha256": "cadbaf6baae6e34506ff7c8940a3530f9d5119f8a554c1663ef6f04dae8a9726",
-          "source_updated_at": "2026-08-30T03:07:03Z",
-          "value": "human_conversation_insight_change_story"
+          "source_sha256": "6dd5b51bd8eeba58a2f974fb4fa17a9077ef4399472ab30d4bddd7ee8fa43b19",
+          "source_updated_at": "2026-08-30T04:00:49Z",
+          "value": "music_or_film_value_story_reflection_change"
         }
       ],
-      "title": "Transformation Experiment success contract"
+      "title": "Sunstream value-proof loop"
     },
     {
       "agreement": "clear",
@@ -183,7 +183,7 @@
       "id": "first_story_owner",
       "observations": [
         {
-          "age_hours": 1209.02,
+          "age_hours": 1209.43,
           "evidence": "verified",
           "evidence_text": "Only James creates it — his presence",
           "freshness": "stale",
@@ -194,13 +194,13 @@
           "value": "james"
         },
         {
-          "age_hours": 0.49,
+          "age_hours": 0.9,
           "evidence": "verified",
           "evidence_text": "The first story is irreducibly James",
           "freshness": "fresh",
           "id": "owner-ai-goals",
           "source": "core/STATE/AI_GOALS.md",
-          "source_sha256": "cadbaf6baae6e34506ff7c8940a3530f9d5119f8a554c1663ef6f04dae8a9726",
+          "source_sha256": "6dd5b51bd8eeba58a2f974fb4fa17a9077ef4399472ab30d4bddd7ee8fa43b19",
           "source_updated_at": "2026-08-30T03:07:03Z",
           "value": "james"
         }
@@ -214,7 +214,7 @@
       "id": "ai_discovery_role",
       "observations": [
         {
-          "age_hours": 1209.02,
+          "age_hours": 1209.43,
           "evidence": "verified",
           "evidence_text": "Ember's charter = **OBSERVE · LEARN · INTEGRATE**",
           "freshness": "stale",
@@ -225,13 +225,13 @@
           "value": "prepare_capture_reflect_route"
         },
         {
-          "age_hours": 0.49,
+          "age_hours": 0.9,
           "evidence": "verified",
           "evidence_text": "AI prepares context, captures evidence, runs the Reflection Protocol, and carries downstream work",
           "freshness": "fresh",
           "id": "role-ai-goals",
           "source": "core/STATE/AI_GOALS.md",
-          "source_sha256": "cadbaf6baae6e34506ff7c8940a3530f9d5119f8a554c1663ef6f04dae8a9726",
+          "source_sha256": "6dd5b51bd8eeba58a2f974fb4fa17a9077ef4399472ab30d4bddd7ee8fa43b19",
           "source_updated_at": "2026-08-30T03:07:03Z",
           "value": "prepare_capture_reflect_route"
         }
@@ -245,24 +245,24 @@
       "id": "state_authority_order",
       "observations": [
         {
-          "age_hours": 1209.02,
+          "age_hours": 1209.43,
           "evidence": "verified",
           "evidence_text": "this file → [`AI_GOALS.md`](AI_GOALS.md)",
           "freshness": "stale",
           "id": "authority-now",
           "source": "core/STATE/NOW.md",
-          "source_sha256": "d5ea62f0128114c9ff8b471c1877b15dbdafbd65c86714efe5b34e3cd90a6ddd",
+          "source_sha256": "8f96276dd4a6dbb5abc9e8f047500220e07ca2ae82b7b9cd0b67f1c0e1eed764",
           "source_updated_at": "2026-07-10T18:35:18Z",
           "value": "now_over_ai_goals"
         },
         {
-          "age_hours": 0.49,
+          "age_hours": 0.9,
           "evidence": "verified",
           "evidence_text": "second-tier SSOT under `NOW.md`",
           "freshness": "fresh",
           "id": "authority-ai-goals",
           "source": "core/STATE/AI_GOALS.md",
-          "source_sha256": "cadbaf6baae6e34506ff7c8940a3530f9d5119f8a554c1663ef6f04dae8a9726",
+          "source_sha256": "6dd5b51bd8eeba58a2f974fb4fa17a9077ef4399472ab30d4bddd7ee8fa43b19",
           "source_updated_at": "2026-08-30T03:07:03Z",
           "value": "now_over_ai_goals"
         }
@@ -276,24 +276,24 @@
       "id": "growth_activation_scope",
       "observations": [
         {
-          "age_hours": 0.49,
+          "age_hours": 0.9,
           "evidence": "verified",
           "evidence_text": "smallest evidence-earned Value Capture experiment",
           "freshness": "fresh",
           "id": "scope-sequence",
           "source": "core/STATE/AI_GOALS.md",
-          "source_sha256": "cadbaf6baae6e34506ff7c8940a3530f9d5119f8a554c1663ef6f04dae8a9726",
+          "source_sha256": "6dd5b51bd8eeba58a2f974fb4fa17a9077ef4399472ab30d4bddd7ee8fa43b19",
           "source_updated_at": "2026-08-30T03:07:03Z",
           "value": "smallest_experiment_only"
         },
         {
-          "age_hours": 0.49,
+          "age_hours": 0.9,
           "evidence": "verified",
           "evidence_text": "it does not automatically activate the whole Growth Engine",
           "freshness": "fresh",
           "id": "scope-guard",
           "source": "core/STATE/AI_GOALS.md",
-          "source_sha256": "cadbaf6baae6e34506ff7c8940a3530f9d5119f8a554c1663ef6f04dae8a9726",
+          "source_sha256": "6dd5b51bd8eeba58a2f974fb4fa17a9077ef4399472ab30d4bddd7ee8fa43b19",
           "source_updated_at": "2026-08-30T03:07:03Z",
           "value": "smallest_experiment_only"
         }
@@ -307,18 +307,18 @@
       "id": "inert_merged_build_count",
       "observations": [
         {
-          "age_hours": 1209.02,
+          "age_hours": 1209.43,
           "evidence": "verified",
           "evidence_text": "48 dead/inert",
           "freshness": "stale",
           "id": "inert-now",
           "source": "core/STATE/NOW.md",
-          "source_sha256": "d5ea62f0128114c9ff8b471c1877b15dbdafbd65c86714efe5b34e3cd90a6ddd",
+          "source_sha256": "8f96276dd4a6dbb5abc9e8f047500220e07ca2ae82b7b9cd0b67f1c0e1eed764",
           "source_updated_at": "2026-07-10T18:35:18Z",
           "value": 48
         },
         {
-          "age_hours": 4.53,
+          "age_hours": 4.93,
           "evidence": "verified",
           "evidence_text": "69 unexplained INERT merged builds",
           "freshness": "fresh",
@@ -338,18 +338,18 @@
       "id": "twin_eyes_authority",
       "observations": [
         {
-          "age_hours": 0.49,
+          "age_hours": 0.9,
           "evidence": "verified",
           "evidence_text": "\"authority\": \"lens_only\"",
           "freshness": "fresh",
           "id": "lens-live-manifest",
           "source": "tools/twin_eyes/live_manifest.json",
-          "source_sha256": "d24d44e6b00f8261c06de236a2bf139a57a8086b3d8d4fceac2f666f07422b8e",
+          "source_sha256": "218c46894ecaca6ed9d8a12a75987b241c4364a11abebe59862dae212eae8d6b",
           "source_updated_at": "2026-08-30T03:07:03Z",
           "value": "lens_only"
         },
         {
-          "age_hours": 0.49,
+          "age_hours": 0.9,
           "evidence": "verified",
           "evidence_text": "lens-only",
           "freshness": "fresh",
@@ -360,7 +360,7 @@
           "value": "lens_only"
         },
         {
-          "age_hours": 4.53,
+          "age_hours": 4.93,
           "evidence": "verified",
           "evidence_text": "authority=lens_only",
           "freshness": "fresh",
@@ -380,18 +380,18 @@
       "id": "twin_eyes_actuation",
       "observations": [
         {
-          "age_hours": 0.49,
+          "age_hours": 0.9,
           "evidence": "verified",
           "evidence_text": "\"actuation\": false",
           "freshness": "fresh",
           "id": "actuation-live-manifest",
           "source": "tools/twin_eyes/live_manifest.json",
-          "source_sha256": "d24d44e6b00f8261c06de236a2bf139a57a8086b3d8d4fceac2f666f07422b8e",
+          "source_sha256": "218c46894ecaca6ed9d8a12a75987b241c4364a11abebe59862dae212eae8d6b",
           "source_updated_at": "2026-08-30T03:07:03Z",
           "value": false
         },
         {
-          "age_hours": 0.49,
+          "age_hours": 0.9,
           "evidence": "verified",
           "evidence_text": "no actuation",
           "freshness": "fresh",
@@ -402,7 +402,7 @@
           "value": false
         },
         {
-          "age_hours": 4.53,
+          "age_hours": 4.93,
           "evidence": "verified",
           "evidence_text": "\"actuation\": False",
           "freshness": "fresh",
@@ -422,7 +422,7 @@
       "id": "twin_eyes_semantic_detection",
       "observations": [
         {
-          "age_hours": 0.49,
+          "age_hours": 0.9,
           "evidence": "verified",
           "evidence_text": "semantic inference",
           "freshness": "fresh",
@@ -433,7 +433,7 @@
           "value": false
         },
         {
-          "age_hours": 4.53,
+          "age_hours": 4.93,
           "evidence": "verified",
           "evidence_text": "\"semantic_detection\": False",
           "freshness": "fresh",
@@ -453,24 +453,24 @@
       "id": "music_magic_process",
       "observations": [
         {
-          "age_hours": 0.0,
+          "age_hours": 0.4,
           "evidence": "verified",
           "evidence_text": "Music Magic process: artifact-gated production pipeline.",
           "freshness": "fresh",
           "id": "music-magic-map",
           "source": "docs/codex/CREATIVE_ORGANS.md",
-          "source_sha256": "0dd3a54150c73fc69bb683647983cb6120545fdc072c04431d621c9cdca7d6a8",
+          "source_sha256": "2a8d4d7dfd8256c5529c50eed191791f15df5815b12a06b0df748b05e2898b1a",
           "source_updated_at": "2026-08-30T03:36:41Z",
           "value": "artifact_gated_production_pipeline"
         },
         {
-          "age_hours": 0.0,
+          "age_hours": 0.4,
           "evidence": "verified",
           "evidence_text": "Music Magic process: artifact-gated production pipeline.",
           "freshness": "fresh",
           "id": "music-magic-snapshot",
           "source": "tools/twin_eyes/creative_organs_snapshot.json",
-          "source_sha256": "15d9fa4bfdd920107793d53a71f71b1503ef059f541c9da7d39a02f414dbc4db",
+          "source_sha256": "fdcc4b662554367f0031c38088d76c2bbd156b54dd4dc1e08bd867a770a9e882",
           "source_updated_at": "2026-08-30T03:36:41Z",
           "value": "artifact_gated_production_pipeline"
         }
@@ -484,24 +484,24 @@
       "id": "sunstream_function",
       "observations": [
         {
-          "age_hours": 0.0,
+          "age_hours": 0.4,
           "evidence": "verified",
           "evidence_text": "Sunstream function: founder review surface.",
           "freshness": "fresh",
           "id": "sunstream-map",
           "source": "docs/codex/CREATIVE_ORGANS.md",
-          "source_sha256": "0dd3a54150c73fc69bb683647983cb6120545fdc072c04431d621c9cdca7d6a8",
+          "source_sha256": "2a8d4d7dfd8256c5529c50eed191791f15df5815b12a06b0df748b05e2898b1a",
           "source_updated_at": "2026-08-30T03:36:41Z",
           "value": "founder_review_surface"
         },
         {
-          "age_hours": 0.0,
+          "age_hours": 0.4,
           "evidence": "verified",
           "evidence_text": "Sunstream function: founder review surface.",
           "freshness": "fresh",
           "id": "sunstream-snapshot",
           "source": "tools/twin_eyes/creative_organs_snapshot.json",
-          "source_sha256": "15d9fa4bfdd920107793d53a71f71b1503ef059f541c9da7d39a02f414dbc4db",
+          "source_sha256": "fdcc4b662554367f0031c38088d76c2bbd156b54dd4dc1e08bd867a770a9e882",
           "source_updated_at": "2026-08-30T03:36:41Z",
           "value": "founder_review_surface"
         }
@@ -515,24 +515,24 @@
       "id": "sundance_function",
       "observations": [
         {
-          "age_hours": 0.0,
+          "age_hours": 0.4,
           "evidence": "verified",
           "evidence_text": "Sundance function: private dance-production workspace.",
           "freshness": "fresh",
           "id": "sundance-map",
           "source": "docs/codex/CREATIVE_ORGANS.md",
-          "source_sha256": "0dd3a54150c73fc69bb683647983cb6120545fdc072c04431d621c9cdca7d6a8",
+          "source_sha256": "2a8d4d7dfd8256c5529c50eed191791f15df5815b12a06b0df748b05e2898b1a",
           "source_updated_at": "2026-08-30T03:36:41Z",
           "value": "private_dance_production_workspace"
         },
         {
-          "age_hours": 0.0,
+          "age_hours": 0.4,
           "evidence": "verified",
           "evidence_text": "Sundance function: private dance-production workspace.",
           "freshness": "fresh",
           "id": "sundance-snapshot",
           "source": "tools/twin_eyes/creative_organs_snapshot.json",
-          "source_sha256": "15d9fa4bfdd920107793d53a71f71b1503ef059f541c9da7d39a02f414dbc4db",
+          "source_sha256": "fdcc4b662554367f0031c38088d76c2bbd156b54dd4dc1e08bd867a770a9e882",
           "source_updated_at": "2026-08-30T03:36:41Z",
           "value": "private_dance_production_workspace"
         }
@@ -546,29 +546,91 @@
       "id": "creative_organs_authority",
       "observations": [
         {
-          "age_hours": 0.0,
+          "age_hours": 0.4,
           "evidence": "verified",
           "evidence_text": "Creative-organs authority: read-only awareness; human gates remain authoritative.",
           "freshness": "fresh",
           "id": "creative-authority-map",
           "source": "docs/codex/CREATIVE_ORGANS.md",
-          "source_sha256": "0dd3a54150c73fc69bb683647983cb6120545fdc072c04431d621c9cdca7d6a8",
+          "source_sha256": "2a8d4d7dfd8256c5529c50eed191791f15df5815b12a06b0df748b05e2898b1a",
           "source_updated_at": "2026-08-30T03:36:41Z",
           "value": "read_only_awareness_human_gated"
         },
         {
-          "age_hours": 0.0,
+          "age_hours": 0.4,
           "evidence": "verified",
           "evidence_text": "Creative-organs authority: read-only awareness; human gates remain authoritative.",
           "freshness": "fresh",
           "id": "creative-authority-snapshot",
           "source": "tools/twin_eyes/creative_organs_snapshot.json",
-          "source_sha256": "15d9fa4bfdd920107793d53a71f71b1503ef059f541c9da7d39a02f414dbc4db",
+          "source_sha256": "fdcc4b662554367f0031c38088d76c2bbd156b54dd4dc1e08bd867a770a9e882",
           "source_updated_at": "2026-08-30T03:36:41Z",
           "value": "read_only_awareness_human_gated"
         }
       ],
       "title": "Creative organs authority boundary"
+    },
+    {
+      "agreement": "clear",
+      "evidence": "verified",
+      "freshness": "fresh",
+      "id": "sunstream_priority_sequence",
+      "observations": [
+        {
+          "age_hours": 0.0,
+          "evidence": "verified",
+          "evidence_text": "Sunstream music business → music-video business → production engine.",
+          "freshness": "fresh",
+          "id": "sunstream-sequence-now",
+          "source": "core/STATE/NOW.md",
+          "source_sha256": "8f96276dd4a6dbb5abc9e8f047500220e07ca2ae82b7b9cd0b67f1c0e1eed764",
+          "source_updated_at": "2026-08-30T04:00:49Z",
+          "value": "music_to_video_to_engine"
+        },
+        {
+          "age_hours": 0.0,
+          "evidence": "verified",
+          "evidence_text": "Sunstream music business → music-video business → production engine.",
+          "freshness": "fresh",
+          "id": "sunstream-sequence-ai-goals",
+          "source": "core/STATE/AI_GOALS.md",
+          "source_sha256": "6dd5b51bd8eeba58a2f974fb4fa17a9077ef4399472ab30d4bddd7ee8fa43b19",
+          "source_updated_at": "2026-08-30T04:00:49Z",
+          "value": "music_to_video_to_engine"
+        }
+      ],
+      "title": "Sunstream active priority sequence"
+    },
+    {
+      "agreement": "clear",
+      "evidence": "verified",
+      "freshness": "fresh",
+      "id": "sunstream_business_model",
+      "observations": [
+        {
+          "age_hours": 0.0,
+          "evidence": "verified",
+          "evidence_text": "Sell finished transformation on screen, not software.",
+          "freshness": "fresh",
+          "id": "sunstream-model-now",
+          "source": "core/STATE/NOW.md",
+          "source_sha256": "8f96276dd4a6dbb5abc9e8f047500220e07ca2ae82b7b9cd0b67f1c0e1eed764",
+          "source_updated_at": "2026-08-30T04:00:49Z",
+          "value": "finished_transformation_not_software"
+        },
+        {
+          "age_hours": 0.0,
+          "evidence": "verified",
+          "evidence_text": "Sell finished transformation on screen, not software.",
+          "freshness": "fresh",
+          "id": "sunstream-model-ai-goals",
+          "source": "core/STATE/AI_GOALS.md",
+          "source_sha256": "6dd5b51bd8eeba58a2f974fb4fa17a9077ef4399472ab30d4bddd7ee8fa43b19",
+          "source_updated_at": "2026-08-30T04:00:49Z",
+          "value": "finished_transformation_not_software"
+        }
+      ],
+      "title": "Sunstream music-video business model"
     }
   ]
 }

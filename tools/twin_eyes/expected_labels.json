@@ -5,9 +5,9 @@
     {"manifest": "known_broken_manifest.json", "topic_id": "operating_phase", "expected_agreement": "conflict", "split": "calibration", "rationale": "Historical Discovery and Value Capture values differ."},
     {"manifest": "known_broken_manifest.json", "topic_id": "inert_merged_build_count", "expected_agreement": "conflict", "split": "held_out", "rationale": "Historical exact counts differ."},
     {"manifest": "live_manifest.json", "topic_id": "operating_phase", "expected_agreement": "clear", "split": "held_out", "rationale": "NOW, ALIGNMENT, and reconciled AI_GOALS all say Discovery."},
-    {"manifest": "live_manifest.json", "topic_id": "value_capture_position", "expected_agreement": "clear", "split": "calibration", "rationale": "Both operative sources place Value Capture downstream."},
+    {"manifest": "live_manifest.json", "topic_id": "value_capture_position", "expected_agreement": "clear", "split": "calibration", "rationale": "Both operative sources name Sunstream / Music Magic as the active value vehicle."},
     {"manifest": "live_manifest.json", "topic_id": "activation_milestone", "expected_agreement": "clear", "split": "held_out", "rationale": "All sources identify the first captured story."},
-    {"manifest": "live_manifest.json", "topic_id": "transformation_success_contract", "expected_agreement": "clear", "split": "calibration", "rationale": "The success sequence is identical."},
+    {"manifest": "live_manifest.json", "topic_id": "transformation_success_contract", "expected_agreement": "clear", "split": "calibration", "rationale": "NOW and AI_GOALS state the same Sunstream value-proof loop."},
     {"manifest": "live_manifest.json", "topic_id": "first_story_owner", "expected_agreement": "clear", "split": "held_out", "rationale": "Both sources identify James as irreducible owner."},
     {"manifest": "live_manifest.json", "topic_id": "ai_discovery_role", "expected_agreement": "clear", "split": "calibration", "rationale": "AI prepares, observes, captures, reflects, and routes."},
     {"manifest": "live_manifest.json", "topic_id": "state_authority_order", "expected_agreement": "clear", "split": "held_out", "rationale": "Both sources place NOW above AI_GOALS."},
@@ -19,6 +19,8 @@
     {"manifest": "live_manifest.json", "topic_id": "music_magic_process", "expected_agreement": "clear", "split": "held_out", "rationale": "Human and machine awareness maps agree that Music Magic is the artifact-gated production pipeline."},
     {"manifest": "live_manifest.json", "topic_id": "sunstream_function", "expected_agreement": "clear", "split": "calibration", "rationale": "Human and machine awareness maps agree that Sunstream is the founder review surface."},
     {"manifest": "live_manifest.json", "topic_id": "sundance_function", "expected_agreement": "clear", "split": "held_out", "rationale": "Human and machine awareness maps agree that Sundance is the private dance-production workspace."},
-    {"manifest": "live_manifest.json", "topic_id": "creative_organs_authority", "expected_agreement": "clear", "split": "calibration", "rationale": "Both maps preserve read-only awareness and human authority."}
+    {"manifest": "live_manifest.json", "topic_id": "creative_organs_authority", "expected_agreement": "clear", "split": "calibration", "rationale": "Both maps preserve read-only awareness and human authority."},
+    {"manifest": "live_manifest.json", "topic_id": "sunstream_priority_sequence", "expected_agreement": "clear", "split": "held_out", "rationale": "NOW and AI_GOALS agree on music business, music-video business, then evidence-driven production."},
+    {"manifest": "live_manifest.json", "topic_id": "sunstream_business_model", "expected_agreement": "clear", "split": "calibration", "rationale": "NOW and AI_GOALS agree to sell finished transformation rather than software first."}
   ]
 }

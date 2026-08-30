@@ -2231,6 +2231,17 @@
       "spec": "core/BUILD/specs/SPEC_twin-eyes-creative-organs.md",
       "tests_passed": true,
       "notes": "Registered Music Magic, Sunstream, and Sundance as distinct read-only creative organs with source fingerprints and human-authority boundaries. Twin Eyes observes their process roles without reading media, changing production state, spending, publishing, deploying, or actuating."
+    },
+    {
+      "id": "SPEC_sunstream-active-focus",
+      "slug": "sunstream-active-focus",
+      "branch": "codex/sunstream-active-focus",
+      "base_branch": "codex/twin-eyes-creative-organs",
+      "session": "codex desktop 2026-08-29",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_sunstream-active-focus.md",
+      "tests_passed": true,
+      "notes": "Recorded James's founder correction: Sunstream / Music Magic is the active value vehicle. Discovery remains the method. Priorities are music experience proof, managed music-video proof, then production-engine improvements earned by real work. No spend, production execution, public release, publishing, outreach, pricing, client commitment, deployment, or actuation."
     }
   ]
 }
