@@ -83,6 +83,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Questions for Ember/James: …
 ```
 
+### 2026-08-29 · SPEC_twin-eyes-sequencing · branch `codex/twin-eyes-sequencing`
+
+- **Status:** done in working tree / awaiting review + merge
+- **Files changed:** `core/STATE/AI_GOALS.md`; `core/BUILD/specs/SPEC_twin-eyes-sequencing.md`; `core/BUILD/REGISTRY.json`; `tools/twin_eyes/live_manifest.json`; `tools/twin_eyes/known_broken_manifest.json`; `tools/twin_eyes/expected_labels.json`; `tools/twin_eyes/fixtures/*`; `tools/twin_eyes/test_card.py`; `tools/twin_eyes/demo_card.json`; `tools/twin_eyes/demo_card.html`; `docs/codex/HANDOFF.md`. Local audit append: `~/.config/fpai/decisions/log.jsonl`.
+- **Summary:** Recorded James's blessed sequence: Discovery now; Value Capture after the first captured transformation story. Reconciled the stale AI working goal, with an explicit guard that the milestone opens reflection plus only the smallest evidence-earned experiment. Split Twin Eyes into immutable historical regression fixtures and a 28-observation live corpus across 12 material topics. The live operating-phase conflict is now CLEAR; the unresolved 48 vs 69 inert-build count remains CONFLICT.
+- **Tests:** `python3 -B -m unittest tools.twin_eyes.test_card` (8 OK); known-broken recall 2/2 and zero false CLEAR; 14 calibration/held-out labels match; live observations 28/28 evidence-verified; deterministic JSON/HTML byte comparison; py_compile; JSON validation; diff hygiene.
+- **Risks:** normalized values remain curated exact-value labels, not semantic understanding. Topic freshness is stale when any observation is stale. The decision audit is local and append-only; repo review covers its operative AI_GOALS mirror.
+- **Rollback:** revert this branch and append a reversal event with `tools/decisions/reverse.sh discovery-before-value-capture-2026-08-29 '<reason>'`; no production process exists.
+- **Intent solved:** Discovery and Value Capture now form one explicit, auditable sequence instead of conflicting objectives.
+- **Downstream intent unlocked:** capture the first transformation story, run the Reflection Protocol, then propose the smallest evidence-earned Value Capture experiment.
+- **Questions for Ember/James:** no decision required. Semantic detection, gating, actuation, outreach, spend, and deployment remain unapproved.
+
 ### 2026-08-29 · SPEC_twin-eyes-readonly · branch `codex/twin-eyes-readonly`
 
 - **Status:** done in working tree / awaiting review + merge

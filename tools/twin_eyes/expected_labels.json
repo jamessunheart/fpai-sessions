@@ -1,0 +1,20 @@
+{
+  "labeled_by": "Codex from James-blessed sequence and literal source comparison",
+  "labeled_on": "2026-08-29",
+  "labels": [
+    {"manifest": "known_broken_manifest.json", "topic_id": "operating_phase", "expected_agreement": "conflict", "split": "calibration", "rationale": "Historical Discovery and Value Capture values differ."},
+    {"manifest": "known_broken_manifest.json", "topic_id": "inert_merged_build_count", "expected_agreement": "conflict", "split": "held_out", "rationale": "Historical exact counts differ."},
+    {"manifest": "live_manifest.json", "topic_id": "operating_phase", "expected_agreement": "clear", "split": "held_out", "rationale": "NOW, ALIGNMENT, and reconciled AI_GOALS all say Discovery."},
+    {"manifest": "live_manifest.json", "topic_id": "value_capture_position", "expected_agreement": "clear", "split": "calibration", "rationale": "Both operative sources place Value Capture downstream."},
+    {"manifest": "live_manifest.json", "topic_id": "activation_milestone", "expected_agreement": "clear", "split": "held_out", "rationale": "All sources identify the first captured story."},
+    {"manifest": "live_manifest.json", "topic_id": "transformation_success_contract", "expected_agreement": "clear", "split": "calibration", "rationale": "The success sequence is identical."},
+    {"manifest": "live_manifest.json", "topic_id": "first_story_owner", "expected_agreement": "clear", "split": "held_out", "rationale": "Both sources identify James as irreducible owner."},
+    {"manifest": "live_manifest.json", "topic_id": "ai_discovery_role", "expected_agreement": "clear", "split": "calibration", "rationale": "AI prepares, observes, captures, reflects, and routes."},
+    {"manifest": "live_manifest.json", "topic_id": "state_authority_order", "expected_agreement": "clear", "split": "held_out", "rationale": "Both sources place NOW above AI_GOALS."},
+    {"manifest": "live_manifest.json", "topic_id": "growth_activation_scope", "expected_agreement": "clear", "split": "calibration", "rationale": "Only the smallest evidence-earned experiment opens."},
+    {"manifest": "live_manifest.json", "topic_id": "inert_merged_build_count", "expected_agreement": "conflict", "split": "held_out", "rationale": "Current literal source counts remain 48 and 69."},
+    {"manifest": "live_manifest.json", "topic_id": "twin_eyes_authority", "expected_agreement": "clear", "split": "calibration", "rationale": "Manifest, code, and spec all say lens-only."},
+    {"manifest": "live_manifest.json", "topic_id": "twin_eyes_actuation", "expected_agreement": "clear", "split": "held_out", "rationale": "Manifest, code, and spec all deny actuation."},
+    {"manifest": "live_manifest.json", "topic_id": "twin_eyes_semantic_detection", "expected_agreement": "clear", "split": "held_out", "rationale": "Code and approved spec both deny semantic inference."}
+  ]
+}

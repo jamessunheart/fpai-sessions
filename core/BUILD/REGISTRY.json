@@ -2209,6 +2209,17 @@
       "spec": "core/BUILD/specs/SPEC_twin-eyes-readonly.md",
       "tests_passed": true,
       "notes": "Read-only Current Reality Card complete in working tree: exact-value contradiction corpus, source evidence and digests, freshness/agreement/evidence dimensions, deterministic JSON/HTML, path confinement, and explicit lens-only/no-actuation contract. Six focused tests, py_compile, byte comparison, JSON validation, and diff hygiene passed. Browser visual QA was blocked by the configured workspace symlink sandbox defect."
+    },
+    {
+      "id": "SPEC_twin-eyes-sequencing",
+      "slug": "twin-eyes-sequencing",
+      "branch": "codex/twin-eyes-sequencing",
+      "base_branch": "feat/headless-build",
+      "session": "codex desktop 2026-08-29",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_twin-eyes-sequencing.md",
+      "tests_passed": true,
+      "notes": "James blessing recorded in the decision ledger; AI_GOALS reconciled to Discovery now and conditional Value Capture after the first captured story. Twin Eyes now separates immutable regression fixtures from a 28-observation live corpus with explicit calibration/held-out labels. Eight tests, determinism, provenance, JSON validation, and diff hygiene passed. No semantic detector, gate, actuation, outreach, spend, or deployment."
     }
   ]
 }

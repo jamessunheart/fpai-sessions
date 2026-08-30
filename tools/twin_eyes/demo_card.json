@@ -1,11 +1,11 @@
 {
-  "as_of": "2026-08-29T23:04:43Z",
+  "as_of": "2026-08-30T03:07:03Z",
   "card": {
     "actuation": false,
     "authority": "lens_only",
-    "id": "twin-eyes-current-reality-v1",
+    "id": "twin-eyes-current-reality-v2",
     "name": "Twin Eyes",
-    "purpose": "Show where current-state sources agree, conflict, or lack evidence."
+    "purpose": "Show where material FPOS claims agree, conflict, or lack evidence."
   },
   "contract": {
     "actuation": false,
@@ -15,62 +15,290 @@
   },
   "summary": {
     "agreement": {
-      "clear": 0,
-      "conflict": 2,
+      "clear": 11,
+      "conflict": 1,
       "unknown": 0
     },
     "evidence": {
       "claimed": 0,
       "none": 0,
-      "verified": 2
+      "verified": 12
     },
     "freshness": {
-      "fresh": 0,
-      "stale": 2
+      "fresh": 4,
+      "stale": 8
     }
   },
   "topics": [
     {
-      "agreement": "conflict",
+      "agreement": "clear",
       "evidence": "verified",
       "freshness": "stale",
       "id": "operating_phase",
       "observations": [
         {
-          "age_hours": 1204.49,
+          "age_hours": 1208.53,
           "evidence": "verified",
           "evidence_text": "We are no longer in Build. We are in Discovery.",
           "freshness": "stale",
-          "id": "now-discovery",
+          "id": "phase-now",
           "source": "core/STATE/NOW.md",
           "source_sha256": "d5ea62f0128114c9ff8b471c1877b15dbdafbd65c86714efe5b34e3cd90a6ddd",
           "source_updated_at": "2026-07-10T18:35:18Z",
           "value": "discovery"
         },
         {
-          "age_hours": 1204.49,
+          "age_hours": 1208.53,
           "evidence": "verified",
           "evidence_text": "We are in **DISCOVERY**, not Build.",
           "freshness": "stale",
-          "id": "alignment-discovery",
+          "id": "phase-alignment",
           "source": "core/STATE/identity/ALIGNMENT.md",
           "source_sha256": "e28ac3199f2f24000a4576e6f4c2449af06bb8ba9c1ef94914e5c45735e9539f",
           "source_updated_at": "2026-07-10T18:35:18Z",
           "value": "discovery"
         },
         {
-          "age_hours": 1365.48,
+          "age_hours": 0.0,
           "evidence": "verified",
-          "evidence_text": "Founder priority (mirrored from NOW.md):** VALUE CAPTURE",
-          "freshness": "stale",
-          "id": "goals-value-capture",
+          "evidence_text": "### G1 — DISCOVERY (active now)",
+          "freshness": "fresh",
+          "id": "phase-ai-goals",
           "source": "core/STATE/AI_GOALS.md",
-          "source_sha256": "8ba59cb5f7107cedd07ef21bd2082205e41e90937bf0f197699473cf3f3634a9",
-          "source_updated_at": "2026-07-04T01:36:12Z",
-          "value": "value_capture"
+          "source_sha256": "cadbaf6baae6e34506ff7c8940a3530f9d5119f8a554c1663ef6f04dae8a9726",
+          "source_updated_at": "2026-08-30T03:07:03Z",
+          "value": "discovery"
         }
       ],
       "title": "Current operating phase"
+    },
+    {
+      "agreement": "clear",
+      "evidence": "verified",
+      "freshness": "stale",
+      "id": "value_capture_position",
+      "observations": [
+        {
+          "age_hours": 1208.53,
+          "evidence": "verified",
+          "evidence_text": "DOWNSTREAM (infrastructure — real, but NOT the current frontier): VALUE CAPTURE",
+          "freshness": "stale",
+          "id": "value-now",
+          "source": "core/STATE/NOW.md",
+          "source_sha256": "d5ea62f0128114c9ff8b471c1877b15dbdafbd65c86714efe5b34e3cd90a6ddd",
+          "source_updated_at": "2026-07-10T18:35:18Z",
+          "value": "downstream"
+        },
+        {
+          "age_hours": 0.0,
+          "evidence": "verified",
+          "evidence_text": "### G2 — VALUE CAPTURE (downstream; waiting on the first captured story)",
+          "freshness": "fresh",
+          "id": "value-ai-goals",
+          "source": "core/STATE/AI_GOALS.md",
+          "source_sha256": "cadbaf6baae6e34506ff7c8940a3530f9d5119f8a554c1663ef6f04dae8a9726",
+          "source_updated_at": "2026-08-30T03:07:03Z",
+          "value": "downstream"
+        }
+      ],
+      "title": "Value Capture position in the sequence"
+    },
+    {
+      "agreement": "clear",
+      "evidence": "verified",
+      "freshness": "stale",
+      "id": "activation_milestone",
+      "observations": [
+        {
+          "age_hours": 1208.53,
+          "evidence": "verified",
+          "evidence_text": "1 captured story",
+          "freshness": "stale",
+          "id": "milestone-now",
+          "source": "core/STATE/NOW.md",
+          "source_sha256": "d5ea62f0128114c9ff8b471c1877b15dbdafbd65c86714efe5b34e3cd90a6ddd",
+          "source_updated_at": "2026-07-10T18:35:18Z",
+          "value": "first_captured_story"
+        },
+        {
+          "age_hours": 1208.53,
+          "evidence": "verified",
+          "evidence_text": "When James returns with the first story",
+          "freshness": "stale",
+          "id": "milestone-alignment",
+          "source": "core/STATE/identity/ALIGNMENT.md",
+          "source_sha256": "e28ac3199f2f24000a4576e6f4c2449af06bb8ba9c1ef94914e5c45735e9539f",
+          "source_updated_at": "2026-07-10T18:35:18Z",
+          "value": "first_captured_story"
+        },
+        {
+          "age_hours": 0.0,
+          "evidence": "verified",
+          "evidence_text": "Value Capture activates after the first captured transformation story",
+          "freshness": "fresh",
+          "id": "milestone-ai-goals",
+          "source": "core/STATE/AI_GOALS.md",
+          "source_sha256": "cadbaf6baae6e34506ff7c8940a3530f9d5119f8a554c1663ef6f04dae8a9726",
+          "source_updated_at": "2026-08-30T03:07:03Z",
+          "value": "first_captured_story"
+        }
+      ],
+      "title": "Evidence milestone before Value Capture"
+    },
+    {
+      "agreement": "clear",
+      "evidence": "verified",
+      "freshness": "stale",
+      "id": "transformation_success_contract",
+      "observations": [
+        {
+          "age_hours": 1208.53,
+          "evidence": "verified",
+          "evidence_text": "1 human → 1 conversation → 1 genuine insight → 1 observable positive change → 1 captured story",
+          "freshness": "stale",
+          "id": "contract-now",
+          "source": "core/STATE/NOW.md",
+          "source_sha256": "d5ea62f0128114c9ff8b471c1877b15dbdafbd65c86714efe5b34e3cd90a6ddd",
+          "source_updated_at": "2026-07-10T18:35:18Z",
+          "value": "human_conversation_insight_change_story"
+        },
+        {
+          "age_hours": 0.0,
+          "evidence": "verified",
+          "evidence_text": "1 human → 1 conversation → 1 genuine insight → 1 observable positive change → 1 captured story",
+          "freshness": "fresh",
+          "id": "contract-ai-goals",
+          "source": "core/STATE/AI_GOALS.md",
+          "source_sha256": "cadbaf6baae6e34506ff7c8940a3530f9d5119f8a554c1663ef6f04dae8a9726",
+          "source_updated_at": "2026-08-30T03:07:03Z",
+          "value": "human_conversation_insight_change_story"
+        }
+      ],
+      "title": "Transformation Experiment success contract"
+    },
+    {
+      "agreement": "clear",
+      "evidence": "verified",
+      "freshness": "stale",
+      "id": "first_story_owner",
+      "observations": [
+        {
+          "age_hours": 1208.53,
+          "evidence": "verified",
+          "evidence_text": "Only James creates it — his presence",
+          "freshness": "stale",
+          "id": "owner-alignment",
+          "source": "core/STATE/identity/ALIGNMENT.md",
+          "source_sha256": "e28ac3199f2f24000a4576e6f4c2449af06bb8ba9c1ef94914e5c45735e9539f",
+          "source_updated_at": "2026-07-10T18:35:18Z",
+          "value": "james"
+        },
+        {
+          "age_hours": 0.0,
+          "evidence": "verified",
+          "evidence_text": "The first story is irreducibly James",
+          "freshness": "fresh",
+          "id": "owner-ai-goals",
+          "source": "core/STATE/AI_GOALS.md",
+          "source_sha256": "cadbaf6baae6e34506ff7c8940a3530f9d5119f8a554c1663ef6f04dae8a9726",
+          "source_updated_at": "2026-08-30T03:07:03Z",
+          "value": "james"
+        }
+      ],
+      "title": "Irreducible owner of the first story"
+    },
+    {
+      "agreement": "clear",
+      "evidence": "verified",
+      "freshness": "stale",
+      "id": "ai_discovery_role",
+      "observations": [
+        {
+          "age_hours": 1208.53,
+          "evidence": "verified",
+          "evidence_text": "Ember's charter = **OBSERVE · LEARN · INTEGRATE**",
+          "freshness": "stale",
+          "id": "role-alignment",
+          "source": "core/STATE/identity/ALIGNMENT.md",
+          "source_sha256": "e28ac3199f2f24000a4576e6f4c2449af06bb8ba9c1ef94914e5c45735e9539f",
+          "source_updated_at": "2026-07-10T18:35:18Z",
+          "value": "prepare_capture_reflect_route"
+        },
+        {
+          "age_hours": 0.0,
+          "evidence": "verified",
+          "evidence_text": "AI prepares context, captures evidence, runs the Reflection Protocol, and carries downstream work",
+          "freshness": "fresh",
+          "id": "role-ai-goals",
+          "source": "core/STATE/AI_GOALS.md",
+          "source_sha256": "cadbaf6baae6e34506ff7c8940a3530f9d5119f8a554c1663ef6f04dae8a9726",
+          "source_updated_at": "2026-08-30T03:07:03Z",
+          "value": "prepare_capture_reflect_route"
+        }
+      ],
+      "title": "AI role during Discovery"
+    },
+    {
+      "agreement": "clear",
+      "evidence": "verified",
+      "freshness": "stale",
+      "id": "state_authority_order",
+      "observations": [
+        {
+          "age_hours": 1208.53,
+          "evidence": "verified",
+          "evidence_text": "this file → [`AI_GOALS.md`](AI_GOALS.md)",
+          "freshness": "stale",
+          "id": "authority-now",
+          "source": "core/STATE/NOW.md",
+          "source_sha256": "d5ea62f0128114c9ff8b471c1877b15dbdafbd65c86714efe5b34e3cd90a6ddd",
+          "source_updated_at": "2026-07-10T18:35:18Z",
+          "value": "now_over_ai_goals"
+        },
+        {
+          "age_hours": 0.0,
+          "evidence": "verified",
+          "evidence_text": "second-tier SSOT under `NOW.md`",
+          "freshness": "fresh",
+          "id": "authority-ai-goals",
+          "source": "core/STATE/AI_GOALS.md",
+          "source_sha256": "cadbaf6baae6e34506ff7c8940a3530f9d5119f8a554c1663ef6f04dae8a9726",
+          "source_updated_at": "2026-08-30T03:07:03Z",
+          "value": "now_over_ai_goals"
+        }
+      ],
+      "title": "NOW and AI_GOALS authority order"
+    },
+    {
+      "agreement": "clear",
+      "evidence": "verified",
+      "freshness": "fresh",
+      "id": "growth_activation_scope",
+      "observations": [
+        {
+          "age_hours": 0.0,
+          "evidence": "verified",
+          "evidence_text": "smallest evidence-earned Value Capture experiment",
+          "freshness": "fresh",
+          "id": "scope-sequence",
+          "source": "core/STATE/AI_GOALS.md",
+          "source_sha256": "cadbaf6baae6e34506ff7c8940a3530f9d5119f8a554c1663ef6f04dae8a9726",
+          "source_updated_at": "2026-08-30T03:07:03Z",
+          "value": "smallest_experiment_only"
+        },
+        {
+          "age_hours": 0.0,
+          "evidence": "verified",
+          "evidence_text": "it does not automatically activate the whole Growth Engine",
+          "freshness": "fresh",
+          "id": "scope-guard",
+          "source": "core/STATE/AI_GOALS.md",
+          "source_sha256": "cadbaf6baae6e34506ff7c8940a3530f9d5119f8a554c1663ef6f04dae8a9726",
+          "source_updated_at": "2026-08-30T03:07:03Z",
+          "value": "smallest_experiment_only"
+        }
+      ],
+      "title": "Scope unlocked by the first story"
     },
     {
       "agreement": "conflict",
@@ -79,29 +307,144 @@
       "id": "inert_merged_build_count",
       "observations": [
         {
-          "age_hours": 1204.49,
+          "age_hours": 1208.53,
           "evidence": "verified",
           "evidence_text": "48 dead/inert",
           "freshness": "stale",
-          "id": "now-inert-count",
+          "id": "inert-now",
           "source": "core/STATE/NOW.md",
           "source_sha256": "d5ea62f0128114c9ff8b471c1877b15dbdafbd65c86714efe5b34e3cd90a6ddd",
           "source_updated_at": "2026-07-10T18:35:18Z",
           "value": 48
         },
         {
-          "age_hours": 0.0,
+          "age_hours": 4.04,
           "evidence": "verified",
           "evidence_text": "69 unexplained INERT merged builds",
           "freshness": "fresh",
-          "id": "hot-state-inert-count",
+          "id": "inert-hot-state",
           "source": "core/STATE/HOT_STATE.md",
-          "source_sha256": "54b2d496faa0d7d858c0a5a87f07d1e8b0c7e767ef59301f140feabe5aadf055",
+          "source_sha256": "f146ff4cb2c8bbcf109bb2729a5a060032e7788b8a0811e54987b0c23eb95391",
           "source_updated_at": "2026-08-29T23:04:43Z",
           "value": 69
         }
       ],
       "title": "Unexplained inert merged builds"
+    },
+    {
+      "agreement": "clear",
+      "evidence": "verified",
+      "freshness": "fresh",
+      "id": "twin_eyes_authority",
+      "observations": [
+        {
+          "age_hours": 0.0,
+          "evidence": "verified",
+          "evidence_text": "\"authority\": \"lens_only\"",
+          "freshness": "fresh",
+          "id": "lens-live-manifest",
+          "source": "tools/twin_eyes/live_manifest.json",
+          "source_sha256": "50aac041d5e91dbe3b25a2a4ff9e7fe4ed1da40959628e8a317ed5783e0427d8",
+          "source_updated_at": "2026-08-30T03:07:03Z",
+          "value": "lens_only"
+        },
+        {
+          "age_hours": 0.0,
+          "evidence": "verified",
+          "evidence_text": "lens-only",
+          "freshness": "fresh",
+          "id": "lens-approved-spec",
+          "source": "core/BUILD/specs/SPEC_twin-eyes-sequencing.md",
+          "source_sha256": "a73d11e47d7c0a50e9cce85c3a042246264ad9cb478bcc1fde6d62a48b5ef430",
+          "source_updated_at": "2026-08-30T03:07:03Z",
+          "value": "lens_only"
+        },
+        {
+          "age_hours": 4.04,
+          "evidence": "verified",
+          "evidence_text": "authority=lens_only",
+          "freshness": "fresh",
+          "id": "lens-code",
+          "source": "tools/twin_eyes/card.py",
+          "source_sha256": "91c669eb7e4912201a238ffc40ce8a85f6379147d55208def7de089ed1ab9f43",
+          "source_updated_at": "2026-08-29T23:04:43Z",
+          "value": "lens_only"
+        }
+      ],
+      "title": "Twin Eyes authority"
+    },
+    {
+      "agreement": "clear",
+      "evidence": "verified",
+      "freshness": "fresh",
+      "id": "twin_eyes_actuation",
+      "observations": [
+        {
+          "age_hours": 0.0,
+          "evidence": "verified",
+          "evidence_text": "\"actuation\": false",
+          "freshness": "fresh",
+          "id": "actuation-live-manifest",
+          "source": "tools/twin_eyes/live_manifest.json",
+          "source_sha256": "50aac041d5e91dbe3b25a2a4ff9e7fe4ed1da40959628e8a317ed5783e0427d8",
+          "source_updated_at": "2026-08-30T03:07:03Z",
+          "value": false
+        },
+        {
+          "age_hours": 0.0,
+          "evidence": "verified",
+          "evidence_text": "no actuation",
+          "freshness": "fresh",
+          "id": "actuation-approved-spec",
+          "source": "core/BUILD/specs/SPEC_twin-eyes-sequencing.md",
+          "source_sha256": "a73d11e47d7c0a50e9cce85c3a042246264ad9cb478bcc1fde6d62a48b5ef430",
+          "source_updated_at": "2026-08-30T03:07:03Z",
+          "value": false
+        },
+        {
+          "age_hours": 4.04,
+          "evidence": "verified",
+          "evidence_text": "\"actuation\": False",
+          "freshness": "fresh",
+          "id": "actuation-code",
+          "source": "tools/twin_eyes/card.py",
+          "source_sha256": "91c669eb7e4912201a238ffc40ce8a85f6379147d55208def7de089ed1ab9f43",
+          "source_updated_at": "2026-08-29T23:04:43Z",
+          "value": false
+        }
+      ],
+      "title": "Twin Eyes actuation capability"
+    },
+    {
+      "agreement": "clear",
+      "evidence": "verified",
+      "freshness": "fresh",
+      "id": "twin_eyes_semantic_detection",
+      "observations": [
+        {
+          "age_hours": 0.0,
+          "evidence": "verified",
+          "evidence_text": "semantic inference",
+          "freshness": "fresh",
+          "id": "semantic-approved-spec",
+          "source": "core/BUILD/specs/SPEC_twin-eyes-sequencing.md",
+          "source_sha256": "a73d11e47d7c0a50e9cce85c3a042246264ad9cb478bcc1fde6d62a48b5ef430",
+          "source_updated_at": "2026-08-30T03:07:03Z",
+          "value": false
+        },
+        {
+          "age_hours": 4.04,
+          "evidence": "verified",
+          "evidence_text": "\"semantic_detection\": False",
+          "freshness": "fresh",
+          "id": "semantic-code",
+          "source": "tools/twin_eyes/card.py",
+          "source_sha256": "91c669eb7e4912201a238ffc40ce8a85f6379147d55208def7de089ed1ab9f43",
+          "source_updated_at": "2026-08-29T23:04:43Z",
+          "value": false
+        }
+      ],
+      "title": "Twin Eyes semantic detection capability"
     }
   ]
 }

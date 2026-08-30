@@ -1,0 +1,59 @@
+{
+  "card": {
+    "actuation": false,
+    "authority": "lens_only",
+    "id": "twin-eyes-known-broken-v1",
+    "name": "Twin Eyes Regression Corpus",
+    "purpose": "Frozen historical contradictions for false-CLEAR testing."
+  },
+  "fresh_hours": 168,
+  "topics": [
+    {
+      "id": "operating_phase",
+      "title": "Historical operating phase contradiction",
+      "observations": [
+        {
+          "id": "historical-now-discovery",
+          "value": "discovery",
+          "source": "tools/twin_eyes/fixtures/historical_now.md",
+          "source_updated_at": "2026-07-10T18:35:18Z",
+          "evidence_text": "We are no longer in Build. We are in Discovery."
+        },
+        {
+          "id": "historical-alignment-discovery",
+          "value": "discovery",
+          "source": "tools/twin_eyes/fixtures/historical_alignment.md",
+          "source_updated_at": "2026-07-10T18:35:18Z",
+          "evidence_text": "We are in DISCOVERY, not Build."
+        },
+        {
+          "id": "historical-goals-value-capture",
+          "value": "value_capture",
+          "source": "tools/twin_eyes/fixtures/historical_ai_goals.md",
+          "source_updated_at": "2026-07-04T01:36:12Z",
+          "evidence_text": "Founder priority: VALUE CAPTURE."
+        }
+      ]
+    },
+    {
+      "id": "inert_merged_build_count",
+      "title": "Historical inert-build count contradiction",
+      "observations": [
+        {
+          "id": "historical-now-inert-count",
+          "value": 48,
+          "source": "tools/twin_eyes/fixtures/historical_now.md",
+          "source_updated_at": "2026-07-10T18:35:18Z",
+          "evidence_text": "48 dead/inert merged builds"
+        },
+        {
+          "id": "historical-hot-state-inert-count",
+          "value": 69,
+          "source": "tools/twin_eyes/fixtures/historical_hot_state.md",
+          "source_updated_at": "2026-08-29T23:04:43Z",
+          "evidence_text": "69 unexplained INERT merged builds"
+        }
+      ]
+    }
+  ]
+}

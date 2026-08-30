@@ -1,0 +1,112 @@
+{
+  "card": {
+    "actuation": false,
+    "authority": "lens_only",
+    "id": "twin-eyes-current-reality-v2",
+    "name": "Twin Eyes",
+    "purpose": "Show where material FPOS claims agree, conflict, or lack evidence."
+  },
+  "fresh_hours": 168,
+  "topics": [
+    {
+      "id": "operating_phase",
+      "title": "Current operating phase",
+      "observations": [
+        {"id": "phase-now", "value": "discovery", "source": "core/STATE/NOW.md", "source_updated_at": "2026-07-10T18:35:18Z", "evidence_text": "We are no longer in Build. We are in Discovery."},
+        {"id": "phase-alignment", "value": "discovery", "source": "core/STATE/identity/ALIGNMENT.md", "source_updated_at": "2026-07-10T18:35:18Z", "evidence_text": "We are in **DISCOVERY**, not Build."},
+        {"id": "phase-ai-goals", "value": "discovery", "source": "core/STATE/AI_GOALS.md", "source_updated_at": "2026-08-30T03:07:03Z", "evidence_text": "### G1 — DISCOVERY (active now)"}
+      ]
+    },
+    {
+      "id": "value_capture_position",
+      "title": "Value Capture position in the sequence",
+      "observations": [
+        {"id": "value-now", "value": "downstream", "source": "core/STATE/NOW.md", "source_updated_at": "2026-07-10T18:35:18Z", "evidence_text": "DOWNSTREAM (infrastructure — real, but NOT the current frontier): VALUE CAPTURE"},
+        {"id": "value-ai-goals", "value": "downstream", "source": "core/STATE/AI_GOALS.md", "source_updated_at": "2026-08-30T03:07:03Z", "evidence_text": "### G2 — VALUE CAPTURE (downstream; waiting on the first captured story)"}
+      ]
+    },
+    {
+      "id": "activation_milestone",
+      "title": "Evidence milestone before Value Capture",
+      "observations": [
+        {"id": "milestone-now", "value": "first_captured_story", "source": "core/STATE/NOW.md", "source_updated_at": "2026-07-10T18:35:18Z", "evidence_text": "1 captured story"},
+        {"id": "milestone-alignment", "value": "first_captured_story", "source": "core/STATE/identity/ALIGNMENT.md", "source_updated_at": "2026-07-10T18:35:18Z", "evidence_text": "When James returns with the first story"},
+        {"id": "milestone-ai-goals", "value": "first_captured_story", "source": "core/STATE/AI_GOALS.md", "source_updated_at": "2026-08-30T03:07:03Z", "evidence_text": "Value Capture activates after the first captured transformation story"}
+      ]
+    },
+    {
+      "id": "transformation_success_contract",
+      "title": "Transformation Experiment success contract",
+      "observations": [
+        {"id": "contract-now", "value": "human_conversation_insight_change_story", "source": "core/STATE/NOW.md", "source_updated_at": "2026-07-10T18:35:18Z", "evidence_text": "1 human → 1 conversation → 1 genuine insight → 1 observable positive change → 1 captured story"},
+        {"id": "contract-ai-goals", "value": "human_conversation_insight_change_story", "source": "core/STATE/AI_GOALS.md", "source_updated_at": "2026-08-30T03:07:03Z", "evidence_text": "1 human → 1 conversation → 1 genuine insight → 1 observable positive change → 1 captured story"}
+      ]
+    },
+    {
+      "id": "first_story_owner",
+      "title": "Irreducible owner of the first story",
+      "observations": [
+        {"id": "owner-alignment", "value": "james", "source": "core/STATE/identity/ALIGNMENT.md", "source_updated_at": "2026-07-10T18:35:18Z", "evidence_text": "Only James creates it — his presence"},
+        {"id": "owner-ai-goals", "value": "james", "source": "core/STATE/AI_GOALS.md", "source_updated_at": "2026-08-30T03:07:03Z", "evidence_text": "The first story is irreducibly James"}
+      ]
+    },
+    {
+      "id": "ai_discovery_role",
+      "title": "AI role during Discovery",
+      "observations": [
+        {"id": "role-alignment", "value": "prepare_capture_reflect_route", "source": "core/STATE/identity/ALIGNMENT.md", "source_updated_at": "2026-07-10T18:35:18Z", "evidence_text": "Ember's charter = **OBSERVE · LEARN · INTEGRATE**"},
+        {"id": "role-ai-goals", "value": "prepare_capture_reflect_route", "source": "core/STATE/AI_GOALS.md", "source_updated_at": "2026-08-30T03:07:03Z", "evidence_text": "AI prepares context, captures evidence, runs the Reflection Protocol, and carries downstream work"}
+      ]
+    },
+    {
+      "id": "state_authority_order",
+      "title": "NOW and AI_GOALS authority order",
+      "observations": [
+        {"id": "authority-now", "value": "now_over_ai_goals", "source": "core/STATE/NOW.md", "source_updated_at": "2026-07-10T18:35:18Z", "evidence_text": "this file → [`AI_GOALS.md`](AI_GOALS.md)"},
+        {"id": "authority-ai-goals", "value": "now_over_ai_goals", "source": "core/STATE/AI_GOALS.md", "source_updated_at": "2026-08-30T03:07:03Z", "evidence_text": "second-tier SSOT under `NOW.md`"}
+      ]
+    },
+    {
+      "id": "growth_activation_scope",
+      "title": "Scope unlocked by the first story",
+      "observations": [
+        {"id": "scope-sequence", "value": "smallest_experiment_only", "source": "core/STATE/AI_GOALS.md", "source_updated_at": "2026-08-30T03:07:03Z", "evidence_text": "smallest evidence-earned Value Capture experiment"},
+        {"id": "scope-guard", "value": "smallest_experiment_only", "source": "core/STATE/AI_GOALS.md", "source_updated_at": "2026-08-30T03:07:03Z", "evidence_text": "it does not automatically activate the whole Growth Engine"}
+      ]
+    },
+    {
+      "id": "inert_merged_build_count",
+      "title": "Unexplained inert merged builds",
+      "observations": [
+        {"id": "inert-now", "value": 48, "source": "core/STATE/NOW.md", "source_updated_at": "2026-07-10T18:35:18Z", "evidence_text": "48 dead/inert"},
+        {"id": "inert-hot-state", "value": 69, "source": "core/STATE/HOT_STATE.md", "source_updated_at": "2026-08-29T23:04:43Z", "evidence_text": "69 unexplained INERT merged builds"}
+      ]
+    },
+    {
+      "id": "twin_eyes_authority",
+      "title": "Twin Eyes authority",
+      "observations": [
+        {"id": "lens-live-manifest", "value": "lens_only", "source": "tools/twin_eyes/live_manifest.json", "source_updated_at": "2026-08-30T03:07:03Z", "evidence_text": "\"authority\": \"lens_only\""},
+        {"id": "lens-approved-spec", "value": "lens_only", "source": "core/BUILD/specs/SPEC_twin-eyes-sequencing.md", "source_updated_at": "2026-08-30T03:07:03Z", "evidence_text": "lens-only"},
+        {"id": "lens-code", "value": "lens_only", "source": "tools/twin_eyes/card.py", "source_updated_at": "2026-08-29T23:04:43Z", "evidence_text": "authority=lens_only"}
+      ]
+    },
+    {
+      "id": "twin_eyes_actuation",
+      "title": "Twin Eyes actuation capability",
+      "observations": [
+        {"id": "actuation-live-manifest", "value": false, "source": "tools/twin_eyes/live_manifest.json", "source_updated_at": "2026-08-30T03:07:03Z", "evidence_text": "\"actuation\": false"},
+        {"id": "actuation-approved-spec", "value": false, "source": "core/BUILD/specs/SPEC_twin-eyes-sequencing.md", "source_updated_at": "2026-08-30T03:07:03Z", "evidence_text": "no actuation"},
+        {"id": "actuation-code", "value": false, "source": "tools/twin_eyes/card.py", "source_updated_at": "2026-08-29T23:04:43Z", "evidence_text": "\"actuation\": False"}
+      ]
+    },
+    {
+      "id": "twin_eyes_semantic_detection",
+      "title": "Twin Eyes semantic detection capability",
+      "observations": [
+        {"id": "semantic-approved-spec", "value": false, "source": "core/BUILD/specs/SPEC_twin-eyes-sequencing.md", "source_updated_at": "2026-08-30T03:07:03Z", "evidence_text": "semantic inference"},
+        {"id": "semantic-code", "value": false, "source": "tools/twin_eyes/card.py", "source_updated_at": "2026-08-29T23:04:43Z", "evidence_text": "\"semantic_detection\": False"}
+      ]
+    }
+  ]
+}
