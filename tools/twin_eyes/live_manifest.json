@@ -107,6 +107,38 @@
         {"id": "semantic-approved-spec", "value": false, "source": "core/BUILD/specs/SPEC_twin-eyes-sequencing.md", "source_updated_at": "2026-08-30T03:07:03Z", "evidence_text": "semantic inference"},
         {"id": "semantic-code", "value": false, "source": "tools/twin_eyes/card.py", "source_updated_at": "2026-08-29T23:04:43Z", "evidence_text": "\"semantic_detection\": False"}
       ]
+    },
+    {
+      "id": "music_magic_process",
+      "title": "Music Magic process role",
+      "observations": [
+        {"id": "music-magic-map", "value": "artifact_gated_production_pipeline", "source": "docs/codex/CREATIVE_ORGANS.md", "source_updated_at": "2026-08-30T03:36:41Z", "evidence_text": "Music Magic process: artifact-gated production pipeline."},
+        {"id": "music-magic-snapshot", "value": "artifact_gated_production_pipeline", "source": "tools/twin_eyes/creative_organs_snapshot.json", "source_updated_at": "2026-08-30T03:36:41Z", "evidence_text": "Music Magic process: artifact-gated production pipeline."}
+      ]
+    },
+    {
+      "id": "sunstream_function",
+      "title": "Sunstream function",
+      "observations": [
+        {"id": "sunstream-map", "value": "founder_review_surface", "source": "docs/codex/CREATIVE_ORGANS.md", "source_updated_at": "2026-08-30T03:36:41Z", "evidence_text": "Sunstream function: founder review surface."},
+        {"id": "sunstream-snapshot", "value": "founder_review_surface", "source": "tools/twin_eyes/creative_organs_snapshot.json", "source_updated_at": "2026-08-30T03:36:41Z", "evidence_text": "Sunstream function: founder review surface."}
+      ]
+    },
+    {
+      "id": "sundance_function",
+      "title": "Sundance function",
+      "observations": [
+        {"id": "sundance-map", "value": "private_dance_production_workspace", "source": "docs/codex/CREATIVE_ORGANS.md", "source_updated_at": "2026-08-30T03:36:41Z", "evidence_text": "Sundance function: private dance-production workspace."},
+        {"id": "sundance-snapshot", "value": "private_dance_production_workspace", "source": "tools/twin_eyes/creative_organs_snapshot.json", "source_updated_at": "2026-08-30T03:36:41Z", "evidence_text": "Sundance function: private dance-production workspace."}
+      ]
+    },
+    {
+      "id": "creative_organs_authority",
+      "title": "Creative organs authority boundary",
+      "observations": [
+        {"id": "creative-authority-map", "value": "read_only_awareness_human_gated", "source": "docs/codex/CREATIVE_ORGANS.md", "source_updated_at": "2026-08-30T03:36:41Z", "evidence_text": "Creative-organs authority: read-only awareness; human gates remain authoritative."},
+        {"id": "creative-authority-snapshot", "value": "read_only_awareness_human_gated", "source": "tools/twin_eyes/creative_organs_snapshot.json", "source_updated_at": "2026-08-30T03:36:41Z", "evidence_text": "Creative-organs authority: read-only awareness; human gates remain authoritative."}
+      ]
     }
   ]
 }

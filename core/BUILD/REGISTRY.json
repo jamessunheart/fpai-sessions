@@ -2220,6 +2220,17 @@
       "spec": "core/BUILD/specs/SPEC_twin-eyes-sequencing.md",
       "tests_passed": true,
       "notes": "James blessing recorded in the decision ledger; AI_GOALS reconciled to Discovery now and conditional Value Capture after the first captured story. Twin Eyes now separates immutable regression fixtures from a 28-observation live corpus with explicit calibration/held-out labels. Eight tests, determinism, provenance, JSON validation, and diff hygiene passed. No semantic detector, gate, actuation, outreach, spend, or deployment."
+    },
+    {
+      "id": "SPEC_twin-eyes-creative-organs",
+      "slug": "twin-eyes-creative-organs",
+      "branch": "codex/twin-eyes-creative-organs",
+      "base_branch": "codex/twin-eyes-sequencing",
+      "session": "codex desktop 2026-08-29",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_twin-eyes-creative-organs.md",
+      "tests_passed": true,
+      "notes": "Registered Music Magic, Sunstream, and Sundance as distinct read-only creative organs with source fingerprints and human-authority boundaries. Twin Eyes observes their process roles without reading media, changing production state, spending, publishing, deploying, or actuating."
     }
   ]
 }

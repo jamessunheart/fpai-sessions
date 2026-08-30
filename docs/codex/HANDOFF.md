@@ -83,6 +83,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Questions for Ember/James: …
 ```
 
+### 2026-08-29 · SPEC_twin-eyes-creative-organs · branch codex/twin-eyes-creative-organs
+
+- **Status:** done in working tree / awaiting review + merge
+- **Files changed:** docs/codex/CREATIVE_ORGANS.md; tools/twin_eyes/creative_organs_snapshot.json; tools/twin_eyes/live_manifest.json; tools/twin_eyes/expected_labels.json; tools/twin_eyes/test_card.py; regenerated Twin Eyes demo outputs; core/BUILD/specs/SPEC_twin-eyes-creative-organs.md; core/BUILD/REGISTRY.json; docs/codex/HANDOFF.md.
+- **Summary:** Registered Music Magic, Sunstream, and Sundance as distinct FPOS creative organs. Music Magic is the artifact-gated production pipeline; Sunstream is the founder review surface; Sundance is the private dance-production workspace. Added a bounded source-fingerprinted snapshot and exposed all four process/authority topics through Twin Eyes.
+- **Tests:** `python3 -B -m unittest tools.twin_eyes.test_card` (9 OK); 36/36 observations evidence-verified across 16 topics; four new creative-organ topics CLEAR; all five canonical source fingerprints match; deterministic JSON/HTML byte comparison; JSON validation; py_compile; diff hygiene.
+- **Risks:** the awareness snapshot is a curated mirror, not the Music Magic SSOT. Source fingerprint changes require review and do not authorize automatic copying or action.
+- **Rollback:** revert this branch. Music Magic productions, ledgers, media, interfaces, hosting, and services are untouched.
+- **Intent solved:** FPOS can locate and distinguish the Sunheart creative production, review, and dance-review processes instead of treating them as invisible side systems.
+- **Downstream intent unlocked:** later Twin Eyes cards can add exact production-health topics from approved sanitized ledgers without collapsing completion, QA, release, hosting, or publication into one state.
+- **Questions for Ember/James:** none. Creative approval, listening/dance confirmation, likeness, spend, animation, release, and publication remain human-gated.
+
 ### 2026-08-29 · SPEC_twin-eyes-sequencing · branch `codex/twin-eyes-sequencing`
 
 - **Status:** done in working tree / awaiting review + merge

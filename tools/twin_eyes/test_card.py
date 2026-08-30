@@ -48,7 +48,23 @@ class TwinEyesCardTest(unittest.TestCase):
         self.assertEqual(by_id["operating_phase"]["agreement"], "clear")
         self.assertEqual(by_id["value_capture_position"]["agreement"], "clear")
         self.assertEqual(by_id["inert_merged_build_count"]["agreement"], "conflict")
+        self.assertEqual(by_id["music_magic_process"]["agreement"], "clear")
+        self.assertEqual(by_id["sunstream_function"]["agreement"], "clear")
+        self.assertEqual(by_id["sundance_function"]["agreement"], "clear")
+        self.assertEqual(by_id["creative_organs_authority"]["agreement"], "clear")
         self.assertTrue(all(item["evidence"] == "verified" for topic in card["topics"] for item in topic["observations"]))
+
+    def test_creative_organs_snapshot_is_bounded_and_non_actuating(self) -> None:
+        snapshot = json.loads(
+            Path(__file__).with_name("creative_organs_snapshot.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(snapshot["authority"], "read_only_awareness")
+        self.assertFalse(snapshot["actuation"])
+        self.assertEqual(set(snapshot["organs"]), {"music_magic", "sunstream", "sundance"})
+        self.assertTrue(all(item["sha256"] for item in snapshot["canonical_sources"]))
+        serialized = json.dumps(snapshot).lower()
+        for forbidden in ("password_value", "token_value", "private_key", "provider_id"):
+            self.assertNotIn(forbidden, serialized)
 
     def test_hand_labels_match_calibration_and_held_out_topics(self) -> None:
         labels = json.loads(

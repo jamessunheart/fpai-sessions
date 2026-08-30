@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "snapshot_at": "2026-08-30T03:36:41Z",
+  "authority": "read_only_awareness",
+  "actuation": false,
+  "evidence": [
+    "Music Magic process: artifact-gated production pipeline.",
+    "Sunstream function: founder review surface.",
+    "Sundance function: private dance-production workspace.",
+    "Creative-organs authority: read-only awareness; human gates remain authoritative."
+  ],
+  "organs": {
+    "music_magic": {
+      "role": "artifact_gated_production_pipeline",
+      "canonical_root": "/Users/jamessunheart/MusicMagic",
+      "flow": ["intake", "score", "storyboard", "stills_proof", "sunstream_selection", "animation", "qa", "release"]
+    },
+    "sunstream": {
+      "role": "founder_review_surface",
+      "canonical_review_generator": "system/humanifier_process/tools/mm_sunstream.py",
+      "human_gates_preserved": true
+    },
+    "sundance": {
+      "role": "private_dance_production_workspace",
+      "canonical_interface_root": "interfaces/sundance_v1",
+      "human_gates_preserved": true
+    }
+  },
+  "canonical_sources": [
+    {"path": "/Users/jamessunheart/MusicMagic/README.md", "observed_modified_at": "2026-08-26T00:59:31Z", "sha256": "935d86f8eeb206e7c4725b3b02d48f2a436d11757a75c66651dffe94add130ad"},
+    {"path": "/Users/jamessunheart/MusicMagic/SUNSTREAM_START_HERE.md", "observed_modified_at": "2026-08-25T17:32:28Z", "sha256": "5640e1c56a94661ab5cf69408bb50e0e9f520be516461daebee4907dddaef159"},
+    {"path": "/Users/jamessunheart/MusicMagic/interfaces/sundance_v1/README.md", "observed_modified_at": "2026-08-26T09:43:01Z", "sha256": "fbb092b7f6586a0a661c4f625721af7fa04b9a15f57bf14f2438206a9c4035d4"},
+    {"path": "/Users/jamessunheart/MusicMagic/PRODUCTION_REGISTRY.json", "observed_modified_at": "2026-08-29T21:16:28Z", "sha256": "18282cd851e84f85d5ab0ecd18c0c6bd99c5a3f41ba88ad79b80384d741618b4"},
+    {"path": "/Users/jamessunheart/MusicMagic/interfaces/sundance_v1/catalog.json", "observed_modified_at": "2026-08-29T21:10:02Z", "sha256": "dc7c5cd6a7c2bea07c9f504c802c7885c79ea659221b38c66591b69ae78a249a"}
+  ],
+  "refresh_policy": "Review and refresh this bounded snapshot after a material Music Magic, Sunstream, or Sundance process change; never infer authority from a source change."
+}

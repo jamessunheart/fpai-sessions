@@ -15,6 +15,10 @@
     {"manifest": "live_manifest.json", "topic_id": "inert_merged_build_count", "expected_agreement": "conflict", "split": "held_out", "rationale": "Current literal source counts remain 48 and 69."},
     {"manifest": "live_manifest.json", "topic_id": "twin_eyes_authority", "expected_agreement": "clear", "split": "calibration", "rationale": "Manifest, code, and spec all say lens-only."},
     {"manifest": "live_manifest.json", "topic_id": "twin_eyes_actuation", "expected_agreement": "clear", "split": "held_out", "rationale": "Manifest, code, and spec all deny actuation."},
-    {"manifest": "live_manifest.json", "topic_id": "twin_eyes_semantic_detection", "expected_agreement": "clear", "split": "held_out", "rationale": "Code and approved spec both deny semantic inference."}
+    {"manifest": "live_manifest.json", "topic_id": "twin_eyes_semantic_detection", "expected_agreement": "clear", "split": "held_out", "rationale": "Code and approved spec both deny semantic inference."},
+    {"manifest": "live_manifest.json", "topic_id": "music_magic_process", "expected_agreement": "clear", "split": "held_out", "rationale": "Human and machine awareness maps agree that Music Magic is the artifact-gated production pipeline."},
+    {"manifest": "live_manifest.json", "topic_id": "sunstream_function", "expected_agreement": "clear", "split": "calibration", "rationale": "Human and machine awareness maps agree that Sunstream is the founder review surface."},
+    {"manifest": "live_manifest.json", "topic_id": "sundance_function", "expected_agreement": "clear", "split": "held_out", "rationale": "Human and machine awareness maps agree that Sundance is the private dance-production workspace."},
+    {"manifest": "live_manifest.json", "topic_id": "creative_organs_authority", "expected_agreement": "clear", "split": "calibration", "rationale": "Both maps preserve read-only awareness and human authority."}
   ]
 }
