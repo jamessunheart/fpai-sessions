@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Twin Eyes · Current Reality Card</title>
+<style>
+:root{--ink:#e9ecf2;--muted:#8d95a5;--line:#2a3040;--panel:#151924;--bg:#090b10;--clear:#55d68b;--conflict:#ffbd4a;--unknown:#aab2c0}
+*{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 20% 0,#20283b 0,transparent 33%),var(--bg);color:var(--ink);font:15px/1.45 Inter,ui-sans-serif,system-ui,sans-serif;min-height:100vh}
+main{width:min(1060px,calc(100% - 32px));margin:32px auto} .eyebrow{letter-spacing:.16em;text-transform:uppercase;color:#8fa7d8;font-size:11px}
+h1{font:600 clamp(34px,6vw,68px)/.95 Georgia,serif;margin:10px 0} .lede{max-width:650px;color:var(--muted);font-size:17px}
+.contract{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0} .contract b,.signals b{border:1px solid var(--line);border-radius:999px;padding:6px 10px;font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+.deck{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(260px,.7fr);gap:18px} .face{background:linear-gradient(155deg,#191e2b,#10131b);border:1px solid #31394c;border-radius:22px;padding:22px;box-shadow:0 24px 80px #0008}
+.face h2{font:500 24px Georgia,serif;margin:0} .topic{border-top:1px solid var(--line);padding:18px 0} .topic header{display:flex;justify-content:space-between;gap:16px;align-items:start}
+.topic p{margin:0 0 3px;font-weight:650} code,small{color:var(--muted);font-size:11px} .signals{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end} .signals .conflict{color:var(--conflict);border-color:#755b2e} .signals .clear{color:var(--clear)} .signals .unknown{color:var(--unknown)}
+ul{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px} li{display:grid;grid-template-columns:110px 1fr;gap:4px 12px;background:#0c0f16;border-radius:10px;padding:10px 12px} li strong{grid-row:1/3;color:#dbe5ff} li span{font-size:13px} li small{overflow-wrap:anywhere}
+.back dl{display:grid;grid-template-columns:1fr auto;gap:10px;margin:20px 0} dt{color:var(--muted)} dd{margin:0;font-weight:700} .warning{border-left:3px solid var(--conflict);padding:10px 12px;background:#ffbd4a0d;color:#e9d6b6}
+footer{color:var(--muted);font-size:12px;margin-top:20px} @media(max-width:760px){.deck{grid-template-columns:1fr}.topic header{display:block}.signals{justify-content:flex-start;margin-top:8px}li{grid-template-columns:1fr}li strong{grid-row:auto}}
+</style></head><body><main>
+<p class="eyebrow">Current Reality Envelope · read-only experiment</p><h1>Twin Eyes</h1><p class="lede">Show where current-state sources agree, conflict, or lack evidence.</p>
+<div class="contract"><b>Lens only</b><b>No authority</b><b>No actuation</b><b>No semantic inference</b></div>
+<section class="deck"><div class="face front"><h2>What the sources say</h2><article class="topic" data-agreement="conflict"><header><div><p>Current operating phase</p><code>operating_phase</code></div><div class="signals"><b class="conflict">conflict</b><b>stale</b><b>verified</b></div></header><ul><li><strong>discovery</strong><span>We are no longer in Build. We are in Discovery.</span><small>core/STATE/NOW.md · stale · verified</small></li><li><strong>discovery</strong><span>We are in **DISCOVERY**, not Build.</span><small>core/STATE/identity/ALIGNMENT.md · stale · verified</small></li><li><strong>value_capture</strong><span>Founder priority (mirrored from NOW.md):** VALUE CAPTURE</span><small>core/STATE/AI_GOALS.md · stale · verified</small></li></ul></article><article class="topic" data-agreement="conflict"><header><div><p>Unexplained inert merged builds</p><code>inert_merged_build_count</code></div><div class="signals"><b class="conflict">conflict</b><b>stale</b><b>verified</b></div></header><ul><li><strong>48</strong><span>48 dead/inert</span><small>core/STATE/NOW.md · stale · verified</small></li><li><strong>69</strong><span>69 unexplained INERT merged builds</span><small>core/STATE/HOT_STATE.md · fresh · verified</small></li></ul></article></div>
+<aside class="face back"><p class="eyebrow">Card back · stats</p><h2>Known corpus</h2><dl>
+<dt>Topics</dt><dd>2</dd><dt>Conflicts</dt><dd>2</dd><dt>Clear</dt><dd>0</dd><dt>Unknown</dt><dd>0</dd></dl>
+<p class="warning">This card cannot decide, block, route, write, send, deploy, or speak for a source. Open the cited source before acting.</p><footer>As of 2026-08-29T23:04:43Z · deterministic exact-value comparison</footer></aside></section>
+<script type="application/json" id="twin-eyes-data">{
+  "as_of": "2026-08-29T23:04:43Z",
+  "card": {
+    "actuation": false,
+    "authority": "lens_only",
+    "id": "twin-eyes-current-reality-v1",
+    "name": "Twin Eyes",
+    "purpose": "Show where current-state sources agree, conflict, or lack evidence."
+  },
+  "contract": {
+    "actuation": false,
+    "authority": "lens_only",
+    "comparison": "exact_normalized_values_only",
+    "semantic_detection": false
+  },
+  "summary": {
+    "agreement": {
+      "clear": 0,
+      "conflict": 2,
+      "unknown": 0
+    },
+    "evidence": {
+      "claimed": 0,
+      "none": 0,
+      "verified": 2
+    },
+    "freshness": {
+      "fresh": 0,
+      "stale": 2
+    }
+  },
+  "topics": [
+    {
+      "agreement": "conflict",
+      "evidence": "verified",
+      "freshness": "stale",
+      "id": "operating_phase",
+      "observations": [
+        {
+          "age_hours": 1204.49,
+          "evidence": "verified",
+          "evidence_text": "We are no longer in Build. We are in Discovery.",
+          "freshness": "stale",
+          "id": "now-discovery",
+          "source": "core/STATE/NOW.md",
+          "source_sha256": "d5ea62f0128114c9ff8b471c1877b15dbdafbd65c86714efe5b34e3cd90a6ddd",
+          "source_updated_at": "2026-07-10T18:35:18Z",
+          "value": "discovery"
+        },
+        {
+          "age_hours": 1204.49,
+          "evidence": "verified",
+          "evidence_text": "We are in **DISCOVERY**, not Build.",
+          "freshness": "stale",
+          "id": "alignment-discovery",
+          "source": "core/STATE/identity/ALIGNMENT.md",
+          "source_sha256": "e28ac3199f2f24000a4576e6f4c2449af06bb8ba9c1ef94914e5c45735e9539f",
+          "source_updated_at": "2026-07-10T18:35:18Z",
+          "value": "discovery"
+        },
+        {
+          "age_hours": 1365.48,
+          "evidence": "verified",
+          "evidence_text": "Founder priority (mirrored from NOW.md):** VALUE CAPTURE",
+          "freshness": "stale",
+          "id": "goals-value-capture",
+          "source": "core/STATE/AI_GOALS.md",
+          "source_sha256": "8ba59cb5f7107cedd07ef21bd2082205e41e90937bf0f197699473cf3f3634a9",
+          "source_updated_at": "2026-07-04T01:36:12Z",
+          "value": "value_capture"
+        }
+      ],
+      "title": "Current operating phase"
+    },
+    {
+      "agreement": "conflict",
+      "evidence": "verified",
+      "freshness": "stale",
+      "id": "inert_merged_build_count",
+      "observations": [
+        {
+          "age_hours": 1204.49,
+          "evidence": "verified",
+          "evidence_text": "48 dead/inert",
+          "freshness": "stale",
+          "id": "now-inert-count",
+          "source": "core/STATE/NOW.md",
+          "source_sha256": "d5ea62f0128114c9ff8b471c1877b15dbdafbd65c86714efe5b34e3cd90a6ddd",
+          "source_updated_at": "2026-07-10T18:35:18Z",
+          "value": 48
+        },
+        {
+          "age_hours": 0.0,
+          "evidence": "verified",
+          "evidence_text": "69 unexplained INERT merged builds",
+          "freshness": "fresh",
+          "id": "hot-state-inert-count",
+          "source": "core/STATE/HOT_STATE.md",
+          "source_sha256": "54b2d496faa0d7d858c0a5a87f07d1e8b0c7e767ef59301f140feabe5aadf055",
+          "source_updated_at": "2026-08-29T23:04:43Z",
+          "value": 69
+        }
+      ],
+      "title": "Unexplained inert merged builds"
+    }
+  ]
+}</script>
+</main></body></html>

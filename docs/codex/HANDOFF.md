@@ -83,6 +83,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Questions for Ember/James: …
 ```
 
+### 2026-08-29 · SPEC_twin-eyes-readonly · branch `codex/twin-eyes-readonly`
+
+- **Status:** done in working tree / awaiting review + merge
+- **Files changed:** `tools/twin_eyes/__init__.py`; `tools/twin_eyes/card.py`; `tools/twin_eyes/test_card.py`; `tools/twin_eyes/demo_manifest.json`; `tools/twin_eyes/demo_card.json`; `tools/twin_eyes/demo_card.html`; `core/BUILD/specs/SPEC_twin-eyes-readonly.md`; `core/BUILD/REGISTRY.json`; `docs/codex/HANDOFF.md`
+- **Summary:** Added the first read-only Twin Eyes Current Reality Card. It verifies exact evidence literals in repo-confined sources, compares curator-normalized values, preserves source timestamps and SHA-256 provenance, reports orthogonal freshness/agreement/evidence states, and renders deterministic local JSON plus a baseball-card-style HTML view. The seed corpus exposes both known conflicts: Discovery vs Value Capture and 48 vs 69 inert merged builds. It has no semantic inference, chat, gate, route, send, deploy, network, or actuation path.
+- **Tests:** `python3 -B -m unittest tools.twin_eyes.test_card` (6 OK); `py_compile`; manifest and registry JSON validation; two-run byte comparison for JSON + HTML; `git diff --check`; known-conflict recall 2/2 with zero false CLEAR.
+- **Risks:** normalized values and the 168-hour freshness threshold are experiment policy, not doctrine. The card must remain a lens, never a meta-SSOT. In-app browser visual QA was blocked by the configured `FPAI_Cockpit` symlink sandbox defect; deterministic HTML generation and structural no-action checks passed.
+- **Rollback:** delete `tools/twin_eyes/`, the Twin Eyes spec, and its registry/handoff entries. No runtime service or production state exists.
+- **Intent solved:** contradictory current-state claims are visible with provenance without letting a model silently reconcile them.
+- **Downstream intent unlocked:** expand the hand-labelled corpus and measure held-out precision/recall before considering semantic detection; actuation remains explicitly unapproved.
+- **Questions for Ember/James:** review the local card at `tools/twin_eyes/demo_card.html`; decide separately whether Discovery and Value Capture are a true contradiction or an intentional sequence. Do not enable autonomy gating from this result.
+
 ### 2026-08-10 · SPEC_d245_auto-spot-topple-assessment-funn · branch `build/SPEC_d245_auto-spot-topple-assessment-funn`
 
 - **Status:** done in working tree / awaiting review + merge
