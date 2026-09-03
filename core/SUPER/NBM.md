@@ -29,7 +29,7 @@ Rule: the move that lets reality grade the system soonest goes first.
 
 ## Track B — Agents as Subscription (Build·Operate·Transfer; Drive doc of the same name)
 Gate: nothing on this track sells before BUILD-001 is CLOSED (B1).
-BUILD: B1 prove the trio on #001 → B2 Subscription Card → B3 three packs from what exists (finance dept / find-a-provider / hold-my-Build) → B4 James prices the loop (proposed $150/mo per outcome + one-month build fee)
+BUILD: B1 prove the trio on #001 → B2 Subscription Card (DRAFTED 2026-09-03: SUBSCRIPTION_CARD_B2.md, proof slot empty until #001 closes) → B3 three packs from what exists (finance dept / find-a-provider / hold-my-Build) → B4 James prices the loop (proposed $150/mo per outcome + one-month build fee)
 OPERATE: O1 one persistent Super Agent per customer → O2 the unedited ledger is the deliverable → O3 rights not roles → O4 pause billing before they ask
 TRANSFER: T1 transfer is the promise on day one (non-dependence test) → T2 $40/mo oversight-only or nothing → T3 first VABS line
 Falsifier: three paying customers, zero transfers = consultancy in a costume; refund and return to Track A.
