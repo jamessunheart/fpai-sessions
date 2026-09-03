@@ -15,3 +15,9 @@ unset ANTHROPIC_API_KEY ANTHROPIC_AUTH_TOKEN  # stale env keys override claude.a
 
 # Ensure the beat is visible even if the model failed to log
 grep -q "$STAMP" "$LOG" 2>/dev/null || printf '\n## %s — beat ran, agent left no entry (check heartbeat_stdout.log)\n' "$STAMP" >> "$LOG"
+
+# EXPRESS: the Super Agent speaks each beat to James's Telegram (quiet hours respected)
+BEAT=$(awk '/^## /{e=""} {e=e $0 "\n"} END{print e}' "$LOG" | head -c 900)
+"$REPO/infra/scripts/stream_to_tg.sh" --category=alignment --severity=low \
+  --classification=PRIVATE --body="🫀 SUPER Agent beat $STAMP
+$BEAT" 2>/dev/null || true
