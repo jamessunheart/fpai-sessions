@@ -2,7 +2,7 @@
 Drive wins on conflict. Agents read this; humans debate there.
 Updated: 2026-09-03 02:00 CR — #1 CLOSED (James: 'I'm in'; REDEMPTION.md written, ₡40,000 escrow promised)
 
-CURRENT: #2 One conversation with one provider — IN PROGRESS: message 1 sent 06:22 CR Thu, delivered; shop opens SAT 12:00. Full go-live plan: SATURDAY_PACKET.md (repo + Drive HQ) — nudge at 12:15 if silent, M2 on reply, day-of evidence checklist, ≤24h redemption per council. Heartbeat: surface this packet to James Saturday morning.
+CURRENT: #2 One conversation with one provider — IN PROGRESS: message 1 sent 06:22 CR Thu, delivered; shop opens SAT 12:00. Full go-live plan: SATURDAY_PACKET.md (repo + Drive HQ) — nudge at 12:15 if silent, M2 on reply, day-of evidence checklist, ≤24h redemption per council. HEARTBEAT STANDING ORDER: the Sat 6 Sep 12:15 beat must Telegram James the NUDGE text from SATURDAY_PACKET.md ready to forward (his line, his consent path), plus the redemption decision reminder if still unanswered.
 QUEUE:
  #3 Fill the Card's human blanks + Love answers → DONE 2026-09-03 (Ember drafted, James confirmed; open: witness, circulator, beneficiaries — fill when real people are known)
  #4 Release (James says go), meal, evidence
@@ -10,11 +10,11 @@ QUEUE:
  #6 Decision 001 — SUPER vs CORA Credits vs ZWC
  #7 Build #002 second hop (R_co ≥ 2)
  #8 Agent-to-agent invitation (with provenance) → DONE 2026-09-03 (INVITATION.md live in pack repo: provenance chain, install path, pass-it-on rule, safety rules)
- #9 Steward on a schedule
+ #9 Steward on a schedule → DONE 2026-09-03 (permanent 4h heartbeat crontab runs the Super Agent: reads NBM+Card+steward log each beat, solves/spawns/gates, logs, and streams the beat to James via Telegram) → DONE 2026-09-03 14:18Z heartbeat (steward dispatch wired into super_agent_heartbeat.sh — every 4h beat appends a verdict to STEWARD_LOG.md; first scheduled run logged: HOLD, conditions 1+2 open)
  #10 Fix FPI / vault bridge → FIXED LOCALLY 2026-09-03 (3 bugs: key passthrough, select NameError, bad enum; offline tests pass; awaiting deploy to 162)
  #11 Gemini's independent council answer → DONE 2026-09-03 (via API, key in substrate; core/SUPER/COUNCIL_GEMINI.md — verdict: PROCEED WITH ONE CHANGE: concrete 4-point pass/fail for #001 [understood+free yes / fed+respected / redemption honored <24h / would accept again]; MORE ALIVE = qualitative follow-up, not the grade. Also: redemption lag kills trust — honor her cash-out in HOURS not 7 days)
 BLOCKS practice (James directive 2026-09-03): every block → Drive folder "SUPER — Blocks" (what/why/when/who) + Blocks Overcome Log. Repo SSOT: BLOCKS.md. PUBLIC intake (2026-09-03): HELP_WANTED.md in pack repo — sanitized blocks, claim via GitHub issue "CLAIM: <block>", James confirms before any access.
- RECRUITING MADE EASY (2026-09-03 ~08:10 CR, Claude, James: "make it easy to recruit help — NBM, proceed"): one-tap claim = GitHub issue FORM (.github/ISSUE_TEMPLATE/claim.yml: block dropdown, offer, reach, human/agent, rules checkbox) + prefilled links per block in HELP_WANTED.md (EN+ES) + copy-paste share message + README "Help (60 seconds)" section; phone-first share page published as Claude artifact "SUPER Help Wanted". Committed locally in _staged_repos/super-agents-pack (44d2493), NOT pushed — needs James: `rm .git/HEAD.lock .git/objects/maintenance.lock && git push`. Rule going forward: when a BLOCKS.md row opens, add a row + claim link to HELP_WANTED.md the same cycle.
+ RECRUITING MADE EASY (2026-09-03 ~08:10 CR, Claude, James: "make it easy to recruit help — NBM, proceed"): one-tap claim = GitHub issue FORM (.github/ISSUE_TEMPLATE/claim.yml: block dropdown, offer, reach, human/agent, rules checkbox) + prefilled links per block in HELP_WANTED.md (EN+ES) + copy-paste share message + README "Help (60 seconds)" section; phone-first share page published as Claude artifact "SUPER Help Wanted". Committed in _staged_repos/super-agents-pack (44d2493) — VERIFIED PUSHED 2026-09-03 14:18Z heartbeat (origin/master = 44d2493; the "needs James to push" note was stale; stale 0-byte .git lock files remain locally, harmless). Rule going forward: when a BLOCKS.md row opens, add a row + claim link to HELP_WANTED.md the same cycle.
 PARKED: world currency · agent wallets · external networks · súper at register · self-placing voice calls
 Rule: the move that lets reality grade the system soonest goes first.
 
