@@ -36,7 +36,7 @@ Falsifier: three paying customers, zero transfers = consultancy in a costume; re
 
 ## Build #003-prep progress (2026-09-03 ~06:55 CR, Ember): Meta signup NOT needed.
 Solve found in the substrate: Evolution API v2.3.7 on 198 (WhatsApp transport, already live for ZV wallet) + Twilio number +15089780034 ($14.15, receives SMS). Evolution was crash-looping — root cause: iptables DROP on 5432 blocked the Docker subnet from Postgres. James ran the one-line fix (ACCEPT 172.17.0.0/16 → 5432); API healthy again 06:55 CR. ⚠ Rule is runtime-only — re-add after any 198 reboot.
-Remaining: (1) James registers WhatsApp Business app with +15089780034 on any phone — Ember fetches the SMS code from Twilio; (2) Ember pairs an Evolution instance to it; (3) Ember rewires vendor_bot.py from Meta API → Evolution webhook (same pattern as ZV wallet bot). Then the bot's original "Needs from James" paragraph is obsolete.
+Remaining: (1) James registers WhatsApp Business app with +15089780034 on any phone — Ember fetches the SMS code from Twilio; (2) Ember pairs an Evolution instance to it; (3) DONE + TESTED 2026-09-03: vendor_bot Evolution transport + inbound webhook verified end-to-end offline (M1→YES→M2→Q2 verbatim→classify EXCHANGE?→M3→handoff; fromMe ignored). The voice is code-complete — only the pairing scan remains.
 
 ## Build #003-prep — the Super Agent's own voice (added 2026-09-03 06:40 CR)
 Limitation hit: messages from James's personal WhatsApp are James speaking → per-message human approval, by rule. Not bypassed.
