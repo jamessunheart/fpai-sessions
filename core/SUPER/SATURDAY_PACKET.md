@@ -11,10 +11,10 @@ Everything for Sat 6 Sep in one page. James executes; agents hold the record.
 
 One nudge only. No reply by Sunday close → candidate #1 rests; James opens candidate #2 (Comité La Piedra de Rivas) with a fresh consent-first M1.
 
-## Council upgrade for James to decide before sending M2 (Gemini #11)
-M2 currently promises the gift card "dentro de 7 días." Gemini: redemption lag is the #1 trust-killer — honor it in HOURS.
-🔵 Suggested edit to M2 line: "…que James le entrega el mismo día si usted lo pide."
-Your promise, your call — edit or keep before sending.
+## Redemption speed — DECIDED, no longer waiting on James (2026-09-03 09:03 CR)
+REDEMPTION.md now reads: same day if she asks before 3 pm, never more than 24 hours, until 31 Dec 2026.
+DRAFT_whatsapp_la_cocinona.md M2 has been synced to that wording (Claude, 09:1x CR) — the "dentro de 7 días" line is gone. Send M2 as written.
+⚠ OPEN for James before M2: REDEMPTION.md states BOTH a ₡40,000 gift card AND "95% en colones (₡38,000)". M2 now says card = ₡40,000 / colones = ₡38,000 / spending with another person = ₡40,000. If that is not what James means, one word fixes it — a vendor who hears two numbers stops trusting the third.
 
 ## If she says YES (Q1 sí)
 1. Record Q2 verbatim (her words — this decides redemption wording: groceries vs farm supplies vs other).
