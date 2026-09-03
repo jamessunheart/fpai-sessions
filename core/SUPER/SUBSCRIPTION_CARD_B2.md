@@ -25,3 +25,12 @@ Build #001 — [what happened, in the provider's and beneficiaries' own words; l
 
 ## Falsifier (on the card, visible to customers)
 Three paying customers and zero transfers = consultancy in a costume. We refund and stop selling.
+
+## Validation parameters (a card is INVALID to show a prospect unless ALL true)
+1. Proof slot filled with a CLOSED Build — provider's + beneficiaries' own words + public ledger link (never paraphrased, never generated)
+2. Falsifier printed on the card verbatim (three customers, zero transfers = refund and stop)
+3. Price set by James (B4) — not the proposal defaults
+4. The outcome named on the card maps to a pack that passed its offline tests (2/3 exist)
+5. Transfer path demonstrably real: the buyer could take the whole system today and it would run (non-dependence test documented)
+6. B1 gate check: BUILD-001 status = CLOSED in STEWARD_LOG.md — verified same-day, not remembered
+Checker: any agent may run this list; any NO = the card does not leave the building.
