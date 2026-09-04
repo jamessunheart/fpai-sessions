@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Blueprints — FullPotential</title>
+<meta name="description" content="The working blueprints of the Full Potential system, with the version history that produced them." />
+<meta name="theme-color" content="#0F5132" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" />
+<link rel="stylesheet" href="_style.css" />
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="/" style="display:flex;align-items:center;gap:8px;color:var(--text)"><span class="mark">🌱</span><strong>FullPotential</strong></a>
+    <a href="/">Home</a>
+    <a href="/game">Game</a>
+    <a href="/blueprints" style="color:var(--green-deep);font-weight:600">Blueprints</a>
+    <a href="https://fullpotential.ai/constitution">Constitution</a>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="hero">
+    <h1>Blueprints</h1>
+    <p>How the system is actually built, published while it is still being built. Each blueprint states what exists, what is only specified, and the one condition that would prove it works. Version history below is generated from the commit log, not written by hand.</p>
+  </div>
+
+  <section>
+    <h2 class="sec">Current blueprints</h2>
+    <p class="sub">Status is literal. <strong>Live</strong> means running today. <strong>Spec</strong> means designed and not built.</p>
+
+    <div class="card">
+      <h2>001 · CORA Credits ↔ SUPER</h2>
+      <p>Two currencies existed in one system: CORA Credits, earned live through verified contribution to the intelligence feed, and SUPER, escrow-backed and redeemable but with no users. This blueprint resolves them into one loop — Credits are the earned unit, SUPER is the exit unit.</p>
+      <p>The argument comes from the Constitution itself. It grants a <em>right to exit</em>, and a right to exit cannot be honored by a currency that converts to nothing. SUPER is the implementation of that right.</p>
+      <div class="meta">
+        <span class="tag live">Earn side: live</span>
+        <span class="tag spec">Exit bridge: spec</span>
+        <span class="tag">Approved 2026-09-04</span>
+      </div>
+      <p style="margin-top:16px"><a href="/blueprints/001-credits-super/" style="color:var(--green-forest);font-weight:600">Read blueprint 001 →</a></p>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="sec">Version history</h2>
+    <p class="sub">Generated from the commit log for this directory. Last regenerated: <!--STAMP:START-->2026-09-04 21:33 UTC<!--STAMP:END--></p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Commit</th><th>Date</th><th>Change</th></tr></thead>
+        <tbody><!--HISTORY:START--><tr><td colspan="3">No commits recorded yet for this directory.</td></tr><!--HISTORY:END--></tbody>
+      </table>
+    </div>
+    <div class="note">This table is derived, never hand-maintained. A changelog written by hand drifts from what actually shipped, and a drifted log is worse than no log — it reads as truth while being wrong. The commit log cannot flatter the work.</div>
+  </section>
+
+  <footer>
+    Published while unfinished, on purpose. If something here is wrong, it is wrong in public.
+  </footer>
+
+</div>
+</body>
+</html>

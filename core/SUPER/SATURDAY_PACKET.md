@@ -14,7 +14,7 @@ One nudge only. No reply by Sunday close → candidate #1 rests; James opens can
 ## Redemption speed — DECIDED, no longer waiting on James (2026-09-03 09:03 CR)
 REDEMPTION.md now reads: same day if she asks before 3 pm, never more than 24 hours, until 31 Dec 2026.
 DRAFT_whatsapp_la_cocinona.md M2 has been synced to that wording (Claude, 09:1x CR) — the "dentro de 7 días" line is gone. Send M2 as written.
-⚠ OPEN for James before M2: REDEMPTION.md states BOTH a ₡40,000 gift card AND "95% en colones (₡38,000)". M2 now says card = ₡40,000 / colones = ₡38,000 / spending with another person = ₡40,000. If that is not what James means, one word fixes it — a vendor who hears two numbers stops trusting the third.
+✅ CLOSED 2026-09-04 08:52 CR — James: "Drop the 40,000 card idea. I don't get its importance." The card and the ₡38,000 figure are withdrawn. The promise is now ONE number: 100 SUPER = ₡40,000, in colones (efectivo o SINPE) same day, or spent with another person at full value. Nothing she was already offered got worse, so no correction message is owed. If she asks for the gift card by name, honor it.
 
 ## If she says YES (Q1 sí)
 1. Record Q2 verbatim (her words — this decides redemption wording: groceries vs farm supplies vs other).
