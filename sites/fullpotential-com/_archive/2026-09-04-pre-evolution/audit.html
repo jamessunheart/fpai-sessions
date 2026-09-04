@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Full Potential Assessment — Powered by Allocation Intelligence</title>
+  <meta name="description" content="Chat with James Sunheart + AI and get your Allocation Score + your 3 highest-value opportunities live. Free. No pitch — the score is yours either way.">
+  <style>
+    :root{--cream:#FFF9EF;--sand:#F2E7D2;--gold:#D9A441;--text:#17211A;--muted:#5D675F;--green:#3E7C4F;--deep:#1B3A5C;--blue:#2563EB;--card:#FFF;--line:#E8DCC4}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--cream);color:var(--text);line-height:1.6}
+    .wrap{max-width:880px;margin:0 auto;padding:0 20px}
+    nav{display:flex;justify-content:space-between;align-items:center;padding:18px 0}
+    nav .logo{font-weight:800;color:var(--deep);text-decoration:none}
+    nav a.back{color:var(--muted);text-decoration:none;font-size:.92rem}
+    .hero{padding:40px 0 10px;text-align:center}
+    .hero h1{font-size:clamp(2rem,5.5vw,3rem);line-height:1.12;color:var(--deep);max-width:18em;margin:0 auto}
+    .hero h1 .hl{color:var(--blue)}
+    .hero p.sub{color:var(--muted);font-size:1.1rem;max-width:38em;margin:16px auto 0}
+    .pillrow{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:22px 0 8px}
+    .pill{background:var(--sand);border-radius:999px;padding:8px 16px;font-size:.88rem;font-weight:600;color:var(--deep)}
+    .cta{display:inline-block;background:var(--blue);color:#fff;font-weight:700;padding:15px 34px;border-radius:999px;text-decoration:none;font-size:1.08rem;box-shadow:0 6px 18px rgba(37,99,235,.28)}
+    .how{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;padding:34px 0}
+    .step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 16px;text-align:center}
+    .step .n{width:34px;height:34px;border-radius:50%;background:var(--green);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 8px}
+    .step:nth-child(2) .n{background:var(--blue)} .step:nth-child(3) .n{background:var(--gold)}
+    .step h4{color:var(--deep);font-size:.95rem;margin-bottom:4px}
+    .step p{font-size:.86rem;color:var(--muted)}
+    .quote{font-family:Georgia,serif;font-style:italic;font-weight:700;color:var(--blue);text-align:center;font-size:1.15rem;padding:6px 0 26px}
+    .chatbox,.formbox{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;max-width:640px;margin:0 auto 30px}
+    .chatlog{height:430px;overflow:auto;border:1px solid var(--line);border-radius:14px;background:#FFFCF6;padding:16px;display:flex;flex-direction:column;gap:12px}
+    .msg{max-width:86%;padding:12px 14px;border-radius:14px;font-size:.95rem;white-space:pre-wrap}
+    .bot{align-self:flex-start;background:#EEF6FF;color:var(--deep);border-bottom-left-radius:4px}
+    .user{align-self:flex-end;background:var(--deep);color:#fff;border-bottom-right-radius:4px}
+    .chatrow{display:grid;grid-template-columns:1fr auto;gap:10px;margin-top:12px}
+    .chatrow input{width:100%;padding:13px;border:1px solid var(--line);border-radius:12px;background:var(--cream);font-size:1rem}
+    .chatrow button{border:none;border-radius:12px;background:var(--blue);color:#fff;font-weight:800;padding:0 18px;cursor:pointer}
+    .scorecard{border:1px solid #BFD3F8;background:#F7FAFF;border-radius:14px;padding:14px;margin-top:12px;color:var(--deep)}
+    .scorecard h3{font-size:1rem;margin-bottom:8px}
+    .scorecard ol{padding-left:20px}
+    .fallback{max-width:640px;margin:0 auto 30px}
+    .fallback summary{cursor:pointer;color:var(--muted);font-weight:700;text-align:center}
+    .formbox{margin-top:14px}
+    form label{display:block;font-size:.86rem;font-weight:700;color:var(--deep);margin:12px 0 4px}
+    form input,form textarea{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:var(--cream);font-size:.95rem;font-family:inherit}
+    .lenschooser{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+    .lenschooser button{margin:0;border:1px solid var(--line);background:var(--cream);color:var(--deep);border-radius:10px;padding:12px;font-weight:800;cursor:pointer}
+    .lenschooser button.active{background:var(--deep);border-color:var(--deep);color:#fff}
+    .hint{color:var(--muted);font-size:.78rem;margin-top:5px}
+    .firstread{display:none;margin-top:12px;border:1px solid #BFD3F8;background:#F7FAFF;border-radius:14px;padding:14px;color:var(--deep)}
+    .firstread h3{font-size:.96rem;margin-bottom:6px}
+    .firstread p{font-size:.88rem;color:var(--muted);margin-top:5px}
+    .firstread ul{margin:8px 0 0 18px;color:var(--text);font-size:.86rem}
+    .lifeonly{display:none}
+    .lifearea{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+    .lifearea h3{font-size:1rem;color:var(--deep);margin-bottom:8px}
+    .range-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;margin:10px 0}
+    .range-row label{margin:0;font-weight:650;color:var(--text)}
+    .range-row input{grid-column:1 / -1;padding:0}
+    .range-val{font-weight:800;color:var(--blue);min-width:2ch;text-align:right}
+    .life-result{margin-top:12px;white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.82rem;line-height:1.45}
+    form button{margin-top:18px;width:100%;border:none;cursor:pointer}
+    .ok{display:none;background:#EAF4EC;border:1px solid var(--green);color:var(--green);border-radius:12px;padding:16px;margin-top:14px;font-weight:600}
+    .fine{color:var(--muted);font-size:.82rem;text-align:center;padding-bottom:44px;max-width:44em;margin:0 auto}
+  </style>
+<!-- Meta Pixel -->
+<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','110851475615838');fbq('track','PageView');</script>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <a class="logo" href="/">FP · FULL POTENTIAL</a>
+    <a class="back" href="/">← fullpotential.com</a>
+  </nav>
+
+  <div class="hero">
+    <h1 id="headline"><!-- variant injected --></h1>
+    <p class="sub" id="subline"></p>
+    <div class="pillrow">
+      <span class="pill">💰 Capital</span><span class="pill">⏱️ Time</span><span class="pill">🎯 Attention</span>
+      <span class="pill">👥 People</span><span class="pill">🤖 AI</span><span class="pill">📚 Knowledge</span>
+    </div>
+    <a class="cta" href="#start">Start the Chat Assessment →</a>
+  </div>
+
+  <div class="how">
+    <div class="step"><div class="n">1</div><h4>Quick conversation</h4><p>Answer one low-pressure question at a time: business, bottleneck, tools, and team.</p></div>
+    <div class="step"><div class="n">2</div><h4>The engine analyzes</h4><p>Allocation Intelligence maps capital, time, attention, people, AI, and knowledge against highest-value use.</p></div>
+    <div class="step"><div class="n">3</div><h4>Score in the chat</h4><p>Your <b>Allocation Score</b> (0-100) + your <b>3 highest-value opportunities</b>. Yours to keep, either way.</p></div>
+  </div>
+
+  <p class="quote">"The organizations that win aren't the ones with the most resources — they're the ones that allocate them best."</p>
+
+  <div class="chatbox" id="start">
+    <div class="chatlog" id="chatLog" aria-live="polite"></div>
+    <form class="chatrow" id="chatForm">
+      <input id="chatInput" autocomplete="off" placeholder="Type here...">
+      <button type="submit">Send</button>
+    </form>
+    <div class="scorecard" id="scoreCard" style="display:none"></div>
+    <div class="hint">Public assessment mode only. No James-private context is used in this chat.</div>
+  </div>
+
+  <details class="fallback">
+    <summary>Prefer the original form?</summary>
+  <div class="formbox">
+    <form id="auditForm">
+      <div class="lenschooser" aria-label="Assessment lens">
+        <button type="button" id="lensBusiness" class="active" data-lens="business">Business</button>
+        <button type="button" id="lensLife" data-lens="life">Life</button>
+      </div>
+      <label for="a-name">Name</label>
+      <input id="a-name" required placeholder="Your name">
+      <label for="a-email">Email</label>
+      <input id="a-email" type="email" required placeholder="you@company.com">
+      <div class="businessonly">
+        <label for="a-company">Company / project</label>
+        <input id="a-company" placeholder="Company name (or just describe it)">
+        <label for="a-website">Your website <span style="color:var(--muted);font-weight:600">(optional but magic)</span></label>
+        <input id="a-website" type="url" inputmode="url" placeholder="https://yourcompany.com">
+        <div class="hint">Share a public site and we start with what is already visible: business type, pricing signals, tool clues, team shape, and operational hints.</div>
+      </div>
+      <div class="firstread businessonly" id="firstRead" aria-live="polite">
+        <h3>Our first read</h3>
+        <p id="firstReadLine"></p>
+        <ul id="firstReadList"></ul>
+      </div>
+      <div class="lifeonly" id="lifeQuestions"></div>
+      <label for="a-goal">What are you trying to build this year?</label>
+      <textarea id="a-goal" rows="3" placeholder="One honest paragraph. This anchors the whole audit."></textarea>
+      <button class="cta" type="submit">Start My Free Assessment →</button>
+      <div class="ok" id="okMsg">✅ Received. Watch your inbox for the 15-minute intake — your Score arrives within 48 hours of completing it.</div>
+    </form>
+  </div>
+  </details>
+
+  <p class="fine">The audit is an exchange: you share context, we return analysis, benchmarks, and clarity. With your permission, anonymized allocation patterns improve the engine for every business that follows — and your future re-audits benefit from everyone else's. No spam, no obligation. Powered by FPOS — the Allocation Intelligence Operating System.</p>
+</div>
+
+<script>
+// A/B split: exec-frame vs savings-frame · sticky per visitor · variant travels with the lead
+const V = localStorage.getItem('audit_v') || ['promise','exec','savings'][Math.floor(Math.random()*3)];
+localStorage.setItem('audit_v', V);
+const COPY = {
+  promise: {
+    h: 'Discover your organization\'s <span class="hl">full potential</span>.',
+    s: 'Every organization has untapped capability. Chat with James Sunheart + AI and get your Allocation Score and three highest-value opportunities live.'
+  },
+  exec: {
+    h: 'How well does your business <span class="hl">allocate</span> its scarce resources?',
+    s: 'Capital, time, attention, people, AI. Get your free Allocation Intelligence assessment in a short conversation.'
+  },
+  savings: {
+    h: 'Find the money <span class="hl">leaking</span> out of your business — free.',
+    s: 'SaaS sprawl, manual work that should be automated, AI spend that is not earning. Free chat assessment: your Allocation Score + the three biggest opportunities. No pitch — the findings are yours either way.'
+  }
+};
+document.getElementById('headline').innerHTML = COPY[V].h;
+document.getElementById('subline').textContent = COPY[V].s;
+
+const LIFE_AREAS = [
+  {key:'physical',label:'Physical',scored:[
+    'How well is your body supporting what you want to do today? (energy, sleep, movement)',
+    'How consistent has your sleep / movement / nutrition been this week?'
+  ],context:"What's one physical signal your body is sending you right now?"},
+  {key:'mental',label:'Mental',scored:[
+    'How clear is your thinking right now — decisions feel easy vs. foggy?',
+    'How much unresolved mental clutter are you carrying? (0 = drowning in it, 10 = clear)'
+  ],context:"What's the one thought loop that's taken up the most bandwidth this week?"},
+  {key:'spiritual',label:'Spiritual',scored:[
+    "How connected do you feel to a purpose/AIM bigger than today's to-do list?",
+    'How often this week did you feel meaning/alignment vs. just going through the motions?'
+  ],context:'Name your current highest AIM in one sentence.'},
+  {key:'social',label:'Social',scored:[
+    'How supported do you feel by the people around you right now?',
+    'How many real, non-transactional conversations did you have this week? (0 = none, 10 = daily)'
+  ],context:'Who is one person you could build something with right now?'},
+  {key:'emotional',label:'Emotional',scored:[
+    'How regulated do your emotions feel day to day?',
+    'How honest have you been with yourself about how you actually feel this week?'
+  ],context:'What emotion have you been avoiding looking at?'},
+  {key:'financial',label:'Financial',scored:[
+    'How much control do you feel over your money?',
+    'How aligned is your spending with what you say you value?'
+  ],context:'Name one thing you value above money.'},
+  {key:'environmental',label:'Environmental',scored:[
+    'How much does your physical environment support your full potential?',
+    'How sustainable / aligned do you feel your footprint is?'
+  ],context:"What's one thing in your environment you'd change first?"}
+];
+let activeLens = 'business';
+
+function renderLifeQuestions(){
+  const root = document.getElementById('lifeQuestions');
+  root.innerHTML = '';
+  LIFE_AREAS.forEach(function(area){
+    const section = document.createElement('section');
+    section.className = 'lifearea';
+    const h = document.createElement('h3');
+    h.textContent = area.label;
+    section.appendChild(h);
+    area.scored.forEach(function(q, idx){
+      const row = document.createElement('div');
+      row.className = 'range-row';
+      const label = document.createElement('label');
+      label.setAttribute('for', 'life-' + area.key + '-' + idx);
+      label.textContent = q;
+      const val = document.createElement('span');
+      val.className = 'range-val';
+      val.textContent = '5';
+      const input = document.createElement('input');
+      input.type = 'range';
+      input.min = '0';
+      input.max = '10';
+      input.step = '1';
+      input.value = '5';
+      input.id = 'life-' + area.key + '-' + idx;
+      input.dataset.area = area.key;
+      input.dataset.idx = String(idx);
+      input.addEventListener('input', function(){ val.textContent = input.value; });
+      row.appendChild(label);
+      row.appendChild(val);
+      row.appendChild(input);
+      section.appendChild(row);
+    });
+    const label = document.createElement('label');
+    label.setAttribute('for', 'life-' + area.key + '-context');
+    label.textContent = area.context;
+    const textarea = document.createElement('textarea');
+    textarea.id = 'life-' + area.key + '-context';
+    textarea.rows = 2;
+    textarea.dataset.areaContext = area.key;
+    section.appendChild(label);
+    section.appendChild(textarea);
+    root.appendChild(section);
+  });
+}
+
+function setLens(lens){
+  activeLens = lens;
+  document.getElementById('lensBusiness').classList.toggle('active', lens === 'business');
+  document.getElementById('lensLife').classList.toggle('active', lens === 'life');
+  document.querySelectorAll('.businessonly').forEach(function(el){ el.style.display = lens === 'business' ? '' : 'none'; });
+  document.querySelectorAll('.lifeonly').forEach(function(el){ el.style.display = lens === 'life' ? 'block' : 'none'; });
+  const goal = document.querySelector('label[for="a-goal"]');
+  goal.textContent = lens === 'life' ? 'What is the AIM you want your life to serve right now?' : 'What are you trying to build this year?';
+  document.getElementById('a-goal').placeholder = lens === 'life' ? 'One honest paragraph. This anchors the Life lens.' : 'One honest paragraph. This anchors the whole audit.';
+}
+
+function collectLifePayload(){
+  const answers = {};
+  const context = {};
+  LIFE_AREAS.forEach(function(area){
+    answers[area.key] = area.scored.map(function(_q, idx){
+      return Number(document.getElementById('life-' + area.key + '-' + idx).value || 0);
+    });
+    context[area.key] = document.getElementById('life-' + area.key + '-context').value.trim();
+  });
+  return {answers, context};
+}
+
+function escapeHtml(value){
+  return String(value || '').replace(/[&<>"']/g, function(ch){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
+  });
+}
+
+function renderLifeResult(data){
+  const result = data.life_result || {};
+  if(!result.allocation_score) return 'Received. Your Life lens score will be attached to the lead.';
+  return '<b>Allocation Score: ' + escapeHtml(result.allocation_score) + '/100</b><br>' +
+    'Practice target: <b>' + escapeHtml(result.practice_target || '') + '</b>' +
+    (result.context && result.context.spiritual ? '<br>Named AIM: ' + escapeHtml(result.context.spiritual) : '') +
+    '<div class="life-result"></div>';
+}
+
+renderLifeQuestions();
+document.getElementById('lensBusiness').addEventListener('click', function(){ setLens('business'); });
+document.getElementById('lensLife').addEventListener('click', function(){ setLens('life'); });
+setLens('business');
+
+let chatState = {};
+let chatSessionId = localStorage.getItem('assessment_chat_session') || '';
+let currentChatField = '';
+let chatScored = false;
+let pixelLeadSent = false;
+const chatLog = document.getElementById('chatLog');
+const chatInput = document.getElementById('chatInput');
+
+function addChatMessage(role, text){
+  const div = document.createElement('div');
+  div.className = 'msg ' + (role === 'user' ? 'user' : 'bot');
+  div.textContent = text;
+  chatLog.appendChild(div);
+  chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+function renderScoreCard(score){
+  if(!score) return;
+  const card = document.getElementById('scoreCard');
+  const opps = (score.opportunities || []).map(function(o){
+    return '<li><b>' + escapeHtml(o.title || '') + '</b><br>' + escapeHtml(o.why || '') + ' <b>' + escapeHtml(o.est_annual_value || '') + '</b></li>';
+  }).join('');
+  card.innerHTML = '<h3>Allocation Score: ' + escapeHtml(score.allocation_score) + '/100</h3>' +
+    '<p><b>' + escapeHtml(score.archetype || '') + '</b> — ' + escapeHtml(score.archetype_line || '') + '</p>' +
+    '<p>Weakest dimension: <b>' + escapeHtml(score.weakest_dimension || '') + '</b></p>' +
+    '<ol>' + opps + '</ol>' +
+    '<p><b>Free Monday move:</b> ' + escapeHtml(score.monday_move || '') + '</p>';
+  card.style.display = 'block';
+}
+
+async function sendChat(field, message){
+  const res = await fetch('/api/champion/lead/assessment-chat', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      session_id: chatSessionId,
+      field,
+      message,
+      state: chatState,
+      variant: 'chat-' + V
+    })
+  });
+  const data = await res.json();
+  if(!res.ok) throw new Error(data.detail || 'Chat unavailable');
+  chatSessionId = data.session_id || chatSessionId;
+  if(chatSessionId) localStorage.setItem('assessment_chat_session', chatSessionId);
+  chatState = data.state || chatState;
+  currentChatField = data.next_field || '';
+  if(data.lead_captured && !pixelLeadSent){
+    try{fbq('track','Lead');}catch(e){}
+    pixelLeadSent = true;
+  }
+  addChatMessage('bot', data.reply || '');
+  if(data.score && !chatScored){
+    chatScored = true;
+    renderScoreCard(data.score);
+    chatInput.disabled = true;
+    document.querySelector('#chatForm button').disabled = true;
+  }
+}
+
+document.getElementById('chatForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  if(chatScored) return;
+  const msg = chatInput.value.trim();
+  if(!msg) return;
+  const field = currentChatField;
+  addChatMessage('user', msg);
+  chatInput.value = '';
+  chatInput.disabled = true;
+  try{
+    await sendChat(field, msg);
+  }catch(err){
+    addChatMessage('bot', 'I could not send that. Please try again or use the fallback form below.');
+  }finally{
+    if(!chatScored) chatInput.disabled = false;
+    if(!chatScored) chatInput.focus();
+  }
+});
+
+sendChat(null, null).catch(function(){
+  addChatMessage('bot', 'I am James Sunheart + AI. If chat is unavailable, use the original form below and we will still capture the assessment.');
+});
+
+function cleanWebsite(raw){
+  const value = (raw || '').trim();
+  if(!value) return '';
+  try{
+    const url = new URL(value.includes('://') ? value : 'https://' + value);
+    if(url.protocol !== 'http:' && url.protocol !== 'https:') return '';
+    return url.href;
+  }catch(e){ return ''; }
+}
+
+function localFirstReadFromWebsite(raw){
+  const href = cleanWebsite(raw);
+  if(!href) return null;
+  const url = new URL(href);
+  const host = url.hostname.replace(/^www\./,'');
+  const company = document.getElementById('a-company').value.trim() || host.split('.')[0].replace(/[-_]/g,' ');
+  const bits = host.split('.').join(' ').toLowerCase();
+  let type = 'public business footprint';
+  if(bits.includes('studio') || bits.includes('agency')) type = 'services or creative business';
+  if(bits.includes('shop') || bits.includes('store')) type = 'commerce business';
+  if(bits.includes('clinic') || bits.includes('care') || bits.includes('wellness')) type = 'care or wellness business';
+  if(bits.includes('app') || bits.includes('software') || bits.includes('saas')) type = 'software or platform business';
+  return {
+    href,
+    line: `We can start from ${company}'s ${type} and verify the public signals before asking you to type the whole story.`,
+    bullets: [
+      'We will check home, about, pricing, and services pages only.',
+      'We will pre-fill likely business type, pricing model, tools, team signals, and ops hints.',
+      'You can correct the read before the final Allocation Score.'
+    ]
+  };
+}
+
+function showFirstRead(read){
+  const box = document.getElementById('firstRead');
+  if(!read){ box.style.display='none'; return; }
+  document.getElementById('firstReadLine').textContent = read.line;
+  const list = document.getElementById('firstReadList');
+  list.innerHTML = '';
+  read.bullets.forEach(function(b){
+    const li = document.createElement('li');
+    li.textContent = b;
+    list.appendChild(li);
+  });
+  box.dataset.firstRead = JSON.stringify(read);
+  box.style.display='block';
+}
+
+function renderLocalFirstRead(){
+  showFirstRead(localFirstReadFromWebsite(document.getElementById('a-website').value));
+}
+
+async function requestFirstRead(){
+  const website = cleanWebsite(document.getElementById('a-website').value);
+  if(!website){ showFirstRead(null); return null; }
+  const fallback = localFirstReadFromWebsite(website);
+  showFirstRead({...fallback, bullets: ['Reading public pages now: home, about, pricing, services.'].concat(fallback.bullets)});
+  try{
+    const res = await fetch('/api/champion/lead/first-read', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({website})
+    });
+    if(!res.ok) throw new Error('first read unavailable');
+    const data = await res.json();
+    const summary = data.summary || {};
+    const bullets = [
+      'Business type: ' + (summary.business_type || 'not clear yet'),
+      'Pricing model: ' + (summary.pricing_model || 'not visible yet'),
+      'Tools/stack: ' + ((summary.apparent_tools_stack || []).join(', ') || 'not visible yet'),
+      'Ops hints: ' + ((summary.ops_hints || []).join('; ') || 'need your correction')
+    ];
+    const read = {
+      href: data.url || website,
+      line: summary.first_read || fallback.line,
+      bullets,
+      intake_context: data.intake_context || '',
+      source: 'server-public-site-read'
+    };
+    showFirstRead(read);
+    return read;
+  }catch(err){
+    showFirstRead({...fallback, source:'local-url-hint'});
+    return fallback;
+  }
+}
+
+document.getElementById('a-website').addEventListener('blur', requestFirstRead);
+document.getElementById('a-website').addEventListener('input', function(){
+  if(cleanWebsite(this.value)) renderLocalFirstRead();
+  else document.getElementById('firstRead').style.display='none';
+});
+document.getElementById('a-company').addEventListener('input', renderLocalFirstRead);
+
+document.getElementById('auditForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const website = cleanWebsite(document.getElementById('a-website').value);
+  let existingRead = {};
+  try{ existingRead = JSON.parse(document.getElementById('firstRead').dataset.firstRead || '{}'); }catch(err){}
+  if(activeLens === 'business' && website && existingRead.source !== 'server-public-site-read') await requestFirstRead();
+  const firstRead = document.getElementById('firstRead').dataset.firstRead || '';
+  const life = collectLifePayload();
+  const payload = {
+    name: document.getElementById('a-name').value.trim(),
+    email: document.getElementById('a-email').value.trim(),
+    lens: activeLens,
+    interest: activeLens === 'life' ? 'life-assessment' : 'allocation-audit',
+    source: 'fullpotential.com/audit·' + V,
+    bottleneck: activeLens === 'life'
+      ? '[Life lens] ' + document.getElementById('a-goal').value.trim()
+      : '[' + (document.getElementById('a-company').value.trim()||'no company given') + '] ' + document.getElementById('a-goal').value.trim() + (website ? '\nWebsite: ' + website : '') + (firstRead ? '\nFirst read: ' + firstRead : ''),
+    life_answers: activeLens === 'life' ? life.answers : null,
+    life_context: activeLens === 'life' ? life.context : null
+  };
+  let responseData = {};
+  try{
+    const res = await fetch('/api/champion/lead/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    responseData = await res.json();
+    if(!res.ok) throw new Error(responseData.detail || 'Could not send');
+  }catch(err){
+    alert('Could not send: ' + (err.message || 'Please try again.'));
+    return;
+  }
+  try{fbq('track','Lead');}catch(e){}
+  const ok = document.getElementById('okMsg');
+  if(activeLens === 'life'){
+    ok.innerHTML = escapeHtml(responseData.message || 'Your Allocation Score is on its way to your inbox.') + '<br><br>' + renderLifeResult(responseData);
+    const resultBox = ok.querySelector('.life-result');
+    if(resultBox) resultBox.textContent = responseData.life_deliverable || '';
+  }else{
+    ok.textContent = responseData.message || 'Received. Watch your inbox for the 15-minute intake.';
+  }
+  ok.style.display='block';
+  e.target.querySelector('button').disabled = true;
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Discover — FullPotential.com</title>
+  <meta name="description" content="Discover the people, products, places, and experiences that support your next step. Filter by goal, category, type, price, and trust." />
+  <meta name="theme-color" content="#0F5132" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" />
+  <style>
+    :root {
+      --green-deep: #0F5132;
+      --green-forest: #1F7A4D;
+      --green-soft: #EAF5EC;
+      --cream: #FFF9EF;
+      --sand: #F2E7D2;
+      --gold: #D9A441;
+      --clay: #C96F38;
+      --blue-soft: #EAF4FA;
+      --text: #17211A;
+      --muted: #5D675F;
+      --line: #E7E0D2;
+      --shadow: 0 8px 30px rgba(15,81,50,0.08);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--cream); color: var(--text); line-height: 1.55; -webkit-font-smoothing: antialiased; }
+    h1,h2,h3 { font-family: 'Fraunces', Georgia, serif; line-height: 1.1; font-weight: 600; }
+    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .hand { font-family: 'Caveat', cursive; }
+
+    /* ---------- NAV ---------- */
+    header.nav { position: sticky; top: 0; z-index: 50; background: rgba(255,249,239,0.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+    .nav-inner { display: flex; align-items: center; gap: 28px; padding: 14px 24px; max-width: 1280px; margin: 0 auto; }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo .mark { font-size: 26px; }
+    .logo .name { font-family: 'Fraunces', serif; font-weight: 700; font-size: 20px; color: var(--green-deep); }
+    .logo .name b { color: var(--text); }
+    .logo .tag { display: block; font-size: 10.5px; color: var(--muted); font-family: 'Inter'; font-weight: 400; margin-top: -2px; }
+    nav.links { display: flex; gap: 22px; margin: 0 auto; }
+    nav.links a { font-size: 15px; font-weight: 500; color: var(--text); padding: 4px 0; border-bottom: 2px solid transparent; }
+    nav.links a:hover, nav.links a.active { border-color: var(--green-forest); color: var(--green-deep); }
+    .nav-actions { display: flex; align-items: center; gap: 16px; }
+    .icon-btn { font-size: 19px; color: var(--muted); cursor: pointer; background: none; border: none; }
+    .icon-btn:hover { color: var(--green-deep); }
+    .chat-pill { display: inline-flex; align-items: center; gap: 7px; background: var(--green-soft); color: var(--green-deep); border: 1px solid #cfe6d4; border-radius: 999px; padding: 8px 16px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .chat-pill:hover { background: #dcefe0; }
+
+    /* ---------- PAGE HEADER ---------- */
+    .page-head { background: linear-gradient(160deg, #cfe3d6 0%, #e7f0dd 45%, #f6ecd3 100%); padding: 48px 0 36px; border-bottom: 1px solid var(--line); }
+    .page-head h1 { font-size: clamp(34px, 5vw, 52px); letter-spacing: -0.02em; }
+    .page-head h1 em { font-style: normal; color: var(--green-forest); }
+    .page-head .sub { font-size: 17px; color: var(--muted); margin-top: 12px; max-width: 620px; }
+    .page-search { display: flex; gap: 10px; max-width: 600px; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 7px 7px 7px 22px; box-shadow: var(--shadow); align-items: center; margin-top: 22px; }
+    .page-search input { flex: 1; border: none; outline: none; font-size: 16px; background: none; color: var(--text); }
+    .page-search input::placeholder { color: #9aa69d; }
+    .btn-grow { background: var(--green-deep); color: #fff; border: none; cursor: pointer; border-radius: 999px; padding: 13px 26px; font-size: 15px; font-weight: 600; white-space: nowrap; }
+    .btn-grow:hover { background: var(--green-forest); }
+
+    /* ---------- DISCOVER LAYOUT ---------- */
+    .discover { display: grid; grid-template-columns: 256px 1fr; gap: 30px; padding: 40px 0 20px; align-items: start; }
+    .filters { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px 20px; position: sticky; top: 84px; }
+    .filters h3 { font-size: 18px; margin-bottom: 4px; }
+    .filters .promise-note { font-size: 12px; color: var(--muted); margin-bottom: 16px; }
+    .fgroup { border-top: 1px solid var(--line); padding: 14px 0; }
+    .fgroup:first-of-type { border-top: none; }
+    .fgroup .fttl { font-weight: 600; font-size: 13.5px; margin-bottom: 9px; display: flex; justify-content: space-between; align-items: center; }
+    .fopt { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); padding: 4px 0; cursor: pointer; }
+    .fopt input { accent-color: var(--green-forest); }
+    .fchips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .fchip { background: var(--green-soft); color: var(--green-deep); border: 1px solid #cfe6d4; border-radius: 999px; padding: 5px 12px; font-size: 12px; cursor: pointer; }
+    .fchip:hover, .fchip.on { background: var(--green-deep); color: #fff; border-color: var(--green-deep); }
+    .frange { width: 100%; accent-color: var(--green-forest); margin-top: 6px; }
+    .fselect { width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; font-size: 13px; color: var(--text); background: #fff; outline: none; }
+    .clearf { display: block; text-align: center; background: var(--sand); color: #6b5b3a; border-radius: 999px; padding: 9px; font-size: 13px; font-weight: 600; margin-top: 14px; cursor: pointer; }
+
+    /* ---------- CARD GRID ---------- */
+    .results h2 { font-size: 24px; margin-bottom: 4px; }
+    .results .ssub { font-size: 13.5px; color: var(--muted); margin-bottom: 18px; }
+    .rsec { margin-bottom: 42px; }
+    .sec-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 16px; }
+    .sec-head a { font-size: 13px; color: var(--green-forest); font-weight: 600; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    @media (max-width: 1100px) { .grid { grid-template-columns: repeat(2,1fr); } }
+    .card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column; transition: transform .15s, box-shadow .15s; }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 14px 38px rgba(15,81,50,0.13); }
+    .card-img { height: 130px; display: flex; align-items: center; justify-content: center; font-size: 52px; background: linear-gradient(160deg, var(--green-soft), #f6ecd3); }
+    .card-body { padding: 16px 16px 18px; display: flex; flex-direction: column; flex: 1; gap: 7px; }
+    .card-tag { font-size: 11px; font-weight: 600; color: var(--green-forest); text-transform: uppercase; letter-spacing: .04em; }
+    .card-title { font-family: 'Fraunces', serif; font-weight: 600; font-size: 17px; }
+    .card-benefit { font-size: 13px; color: var(--muted); flex: 1; }
+    .card-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
+    .price { font-weight: 700; font-size: 15px; }
+    .price.free { color: var(--green-forest); }
+    .trust { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; color: #6b5b3a; background: var(--sand); border-radius: 999px; padding: 3px 9px; }
+    .trust.high { color: var(--green-deep); background: var(--green-soft); }
+    .card-cta { display: block; text-align: center; background: var(--green-deep); color: #fff; border-radius: 999px; padding: 9px; font-size: 13px; font-weight: 600; margin-top: 4px; cursor: pointer; }
+    .card-cta:hover { background: var(--green-forest); }
+    @media (max-width: 920px) { .discover { grid-template-columns: 1fr; } .filters { position: static; } }
+    @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+
+    /* ---------- FOOTER ---------- */
+    footer { background: var(--green-deep); color:#cfe2d5; padding: 44px 0 30px; margin-top: 50px; }
+    .foot-grid { display:flex; flex-wrap:wrap; gap:20px 40px; justify-content:space-between; align-items:center; }
+    .foot-links { display:flex; flex-wrap:wrap; gap:18px; }
+    .foot-links a { color:#cfe2d5; font-size:14px; }
+    .foot-links a:hover { color:#fff; }
+    .foot-line { text-align:center; margin-top:26px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.12); font-family:'Fraunces',serif; font-size:15px; color:#e9f3ec; }
+
+    /* ---------- CHAT DRAWER ---------- */
+    .drawer-bg { position:fixed; inset:0; background:rgba(15,33,26,0.4); opacity:0; pointer-events:none; transition:.25s; z-index:90; }
+    .drawer-bg.open { opacity:1; pointer-events:auto; }
+    .drawer { position:fixed; top:0; right:0; height:100%; width:420px; max-width:92vw; background:var(--cream); box-shadow:-10px 0 40px rgba(0,0,0,0.2); transform:translateX(100%); transition:.3s cubic-bezier(.4,0,.2,1); z-index:91; display:flex; flex-direction:column; }
+    .drawer.open { transform:translateX(0); }
+    .drawer-head { padding:18px 20px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; background:#fff; }
+    .drawer-head .t { font-family:'Fraunces',serif; font-weight:600; font-size:17px; display:flex; gap:8px; align-items:center; }
+    .drawer-body { flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:14px; }
+    .msg { padding:13px 15px; border-radius:14px; font-size:14px; max-width:88%; line-height:1.5; }
+    .msg.guide { background:#fff; border:1px solid var(--line); align-self:flex-start; }
+    .msg.user { background:var(--green-deep); color:#fff; align-self:flex-end; }
+    .drawer-input { display:flex; gap:8px; padding:14px; border-top:1px solid var(--line); background:#fff; }
+    .drawer-input input { flex:1; border:1px solid var(--line); border-radius:999px; padding:11px 16px; outline:none; font-size:14px; }
+    .drawer-input button { background:var(--green-deep); color:#fff; border:none; border-radius:50%; width:42px; height:42px; cursor:pointer; font-size:16px; }
+  </style>
+</head>
+<body>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="logo" href="/">
+        <span class="mark">🌱</span>
+        <span>
+          <span class="name"><b>Full</b>Potential<span style="color:var(--green-forest)">.com</span></span>
+          <span class="tag">Helping people find what helps them grow.</span>
+        </span>
+      </a>
+      <nav class="links">
+        <a href="/">Home</a>
+        <a class="active" href="/discover.html">Discover</a>
+        <a href="/store.html">Store</a>
+        <a href="/creators.html">Creators</a>
+        <a href="/experiences.html">Experiences</a>
+        <a href="/local.html">Local</a>
+        <a href="/game.html" title="The Full Potential Game">Game</a>
+        <a href="/codex.html">Codex</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-btn" title="Search">🔍</button>
+        <button class="chat-pill" onclick="openChat()">💬 Chat with Guide</button>
+        <button class="icon-btn" title="Wishlist">🤍</button>
+        <button class="icon-btn" title="Cart">🛒</button>
+        <button class="icon-btn" title="Profile">👤</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ PAGE HEADER ============ -->
+  <section class="page-head">
+    <div class="wrap">
+      <h1>What wants to <em>grow</em> today?</h1>
+      <p class="sub">Browse the marketplace of growth — products, books, courses, creators, and experiences. We recommend what helps you grow, even when that means not buying.</p>
+      <form class="page-search" onsubmit="askGuide(event)">
+        <input id="heroInput" placeholder="I want to…" />
+        <button class="btn-grow" type="submit">Help me grow</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============ DISCOVER ============ -->
+  <div class="wrap discover">
+
+    <!-- FILTERS -->
+    <aside class="filters">
+      <h3>Filter</h3>
+      <p class="promise-note">We surface what fits your next step — not the highest bidder.</p>
+
+      <div class="fgroup">
+        <div class="fttl">Goal</div>
+        <div class="fchips">
+          <span class="fchip on">Sleep better</span>
+          <span class="fchip">Think clearly</span>
+          <span class="fchip">Build strength</span>
+          <span class="fchip">Find community</span>
+          <span class="fchip">Create wealth</span>
+          <span class="fchip">Deepen spirit</span>
+        </div>
+      </div>
+
+      <div class="fgroup">
+        <div class="fttl">Category</div>
+        <label class="fopt"><input type="checkbox" /> Health &amp; Body</label>
+        <label class="fopt"><input type="checkbox" /> Mind &amp; Focus</label>
+        <label class="fopt"><input type="checkbox" /> Spirit &amp; Meaning</label>
+        <label class="fopt"><input type="checkbox" /> Work &amp; Wealth</label>
+        <label class="fopt"><input type="checkbox" /> Food &amp; Home</label>
+      </div>
+
+      <div class="fgroup">
+        <div class="fttl">Type</div>
+        <label class="fopt"><input type="checkbox" /> Product</label>
+        <label class="fopt"><input type="checkbox" /> Book</label>
+        <label class="fopt"><input type="checkbox" /> Course</label>
+        <label class="fopt"><input type="checkbox" /> Creator</label>
+        <label class="fopt"><input type="checkbox" /> Experience</label>
+        <label class="fopt"><input type="checkbox" /> Event</label>
+      </div>
+
+      <div class="fgroup">
+        <div class="fttl">Price</div>
+        <input class="frange" type="range" min="0" max="500" value="200" />
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:4px;"><span>Free</span><span>$500+</span></div>
+        <label class="fopt" style="margin-top:6px;"><input type="checkbox" /> Show free things only</label>
+      </div>
+
+      <div class="fgroup">
+        <div class="fttl">Online / Local</div>
+        <label class="fopt"><input type="radio" name="ol" checked /> Both</label>
+        <label class="fopt"><input type="radio" name="ol" /> Online</label>
+        <label class="fopt"><input type="radio" name="ol" /> Local only</label>
+      </div>
+
+      <div class="fgroup">
+        <div class="fttl">Location</div>
+        <select class="fselect"><option>Austin, TX</option><option>Online · Anywhere</option><option>Costa Rica</option><option>Change location…</option></select>
+      </div>
+
+      <div class="fgroup">
+        <div class="fttl">Creator</div>
+        <select class="fselect"><option>Any creator</option><option>Verified creators</option><option>Local creators</option><option>Following</option></select>
+      </div>
+
+      <div class="fgroup">
+        <div class="fttl">Trust level</div>
+        <label class="fopt"><input type="checkbox" checked /> ✅ Verified</label>
+        <label class="fopt"><input type="checkbox" /> ❤️ Community-loved</label>
+        <label class="fopt"><input type="checkbox" /> 🌿 Aligned with the Codex</label>
+      </div>
+
+      <span class="clearf">Clear filters</span>
+    </aside>
+
+    <!-- RESULTS -->
+    <main class="results">
+
+      <div class="rsec">
+        <div class="sec-head"><h2>Recommended For You</h2><a href="#">Refine</a></div>
+        <p class="ssub">Based on what you told us is alive for you right now.</p>
+        <div class="grid">
+          <div class="card"><div class="card-img">🌙</div><div class="card-body"><span class="card-tag">Course · Health</span><div class="card-title">The Sleep Reset</div><div class="card-benefit">A 7-night gentle protocol to fall asleep faster and wake rested.</div><div class="card-foot"><span class="price">$39</span><span class="trust high">✅ Verified</span></div><a class="card-cta" href="#">View Details</a></div></div>
+          <div class="card"><div class="card-img">📖</div><div class="card-body"><span class="card-tag">Book · Mind</span><div class="card-title">The Boy, the Mole, the Fox and the Horse</div><div class="card-benefit">A beautiful reminder of what really matters. Slow down. Be kind.</div><div class="card-foot"><span class="price">$16.99</span><span class="trust high">✅ Verified</span></div><a class="card-cta" href="#">View Details</a></div></div>
+          <div class="card"><div class="card-img">🧘🏽</div><div class="card-body"><span class="card-tag">Creator · Spirit</span><div class="card-title">Jade Beason — Breathwork</div><div class="card-benefit">Live sessions and 1:1 guidance to calm the nervous system.</div><div class="card-foot"><span class="price">From $30</span><span class="trust">❤️ Loved</span></div><a class="card-cta" href="#">View Profile</a></div></div>
+        </div>
+      </div>
+
+      <div class="rsec">
+        <div class="sec-head"><h2>Popular Growth Paths</h2><a href="#">See all</a></div>
+        <p class="ssub">Where many people found their next right step.</p>
+        <div class="grid">
+          <div class="card"><div class="card-img">🏋️</div><div class="card-body"><span class="card-tag">Course · Body</span><div class="card-title">Strength from Zero</div><div class="card-benefit">Build real strength in 20 minutes a day. No gym required.</div><div class="card-foot"><span class="price">$59</span><span class="trust high">✅ Verified</span></div><a class="card-cta" href="#">View Details</a></div></div>
+          <div class="card"><div class="card-img">💼</div><div class="card-body"><span class="card-tag">Course · Wealth</span><div class="card-title">Your First Honest Business</div><div class="card-benefit">Start something real that helps people and pays you.</div><div class="card-foot"><span class="price">$89</span><span class="trust high">✅ Verified</span></div><a class="card-cta" href="#">View Details</a></div></div>
+          <div class="card"><div class="card-img">🪷</div><div class="card-body"><span class="card-tag">Experience · Spirit</span><div class="card-title">Zen Village Immersion</div><div class="card-benefit">A week of presence and community in Costa Rica.</div><div class="card-foot"><span class="price">$1,200</span><span class="trust">🌿 Codex</span></div><a class="card-cta" href="/experiences.html">View Details</a></div></div>
+        </div>
+      </div>
+
+      <div class="rsec">
+        <div class="sec-head"><h2>New &amp; Meaningful</h2><a href="#">See all</a></div>
+        <p class="ssub">Fresh things worth your attention.</p>
+        <div class="grid">
+          <div class="card"><div class="card-img">🍵</div><div class="card-body"><span class="card-tag">Product · Body</span><div class="card-title">Slow Morning Tea Ritual</div><div class="card-benefit">A small daily ceremony to begin the day with intention.</div><div class="card-foot"><span class="price">$24</span><span class="trust">❤️ Loved</span></div><a class="card-cta" href="#">View Details</a></div></div>
+          <div class="card"><div class="card-img">🎨</div><div class="card-body"><span class="card-tag">Course · Create</span><div class="card-title">Make Something This Week</div><div class="card-benefit">A nudge and a path to finally start creating again.</div><div class="card-foot"><span class="price">$29</span><span class="trust high">✅ Verified</span></div><a class="card-cta" href="#">View Details</a></div></div>
+          <div class="card"><div class="card-img">🌬️</div><div class="card-body"><span class="card-tag">Event · Local</span><div class="card-title">Breathwork &amp; Sound</div><div class="card-benefit">May 26 · 7:00 PM · The Space Austin. Release and reset.</div><div class="card-foot"><span class="price">$30</span><span class="trust">❤️ Loved</span></div><a class="card-cta" href="/local.html">View Details</a></div></div>
+        </div>
+      </div>
+
+      <div class="rsec">
+        <div class="sec-head"><h2>Local Picks</h2><a href="/local.html">Austin, TX</a></div>
+        <p class="ssub">Good things happening near you.</p>
+        <div class="grid">
+          <div class="card"><div class="card-img">🍽️</div><div class="card-body"><span class="card-tag">Event · Local</span><div class="card-title">Conscious Dinner Circle</div><div class="card-benefit">May 24 · 6:30 PM · East Austin. Real food, real people.</div><div class="card-foot"><span class="price">$25</span><span class="trust">❤️ Loved</span></div><a class="card-cta" href="/local.html">View Details</a></div></div>
+          <div class="card"><div class="card-img">🥬</div><div class="card-body"><span class="card-tag">Local · Food</span><div class="card-title">Mueller Farmers Market</div><div class="card-benefit">Sundays · 10–2. Fresh, local, seasonal produce.</div><div class="card-foot"><span class="price free">Free</span><span class="trust">🌿 Codex</span></div><a class="card-cta" href="/local.html">View Details</a></div></div>
+        </div>
+      </div>
+
+      <div class="rsec">
+        <div class="sec-head"><h2>Free Things</h2><a href="#">See all</a></div>
+        <p class="ssub">Because growth shouldn't always cost money.</p>
+        <div class="grid">
+          <div class="card"><div class="card-img">🌅</div><div class="card-body"><span class="card-tag">Event · Local</span><div class="card-title">Sunset Community Walk</div><div class="card-benefit">Today · 7:00 PM · Zilker Park. Move, breathe, belong.</div><div class="card-foot"><span class="price free">Free</span><span class="trust">❤️ Loved</span></div><a class="card-cta" href="/local.html">Join</a></div></div>
+          <div class="card"><div class="card-img">🎧</div><div class="card-body"><span class="card-tag">Course · Mind</span><div class="card-title">10-Minute Focus Reset</div><div class="card-benefit">A free guided practice to clear your head and begin again.</div><div class="card-foot"><span class="price free">Free</span><span class="trust high">✅ Verified</span></div><a class="card-cta" href="#">Start Free</a></div></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ============ FOOTER ============ -->
+  <footer>
+    <div class="wrap">
+      <div class="foot-grid">
+        <a class="logo" href="/">
+          <span class="mark">🌱</span>
+          <span class="name" style="color:#fff">FullPotential<span style="color:#9fd3b0">.com</span></span>
+        </a>
+        <div class="foot-links">
+          <a href="/about">About</a>
+          <a href="/codex.html">Codex</a>
+          <a href="/creators.html">Creators</a>
+          <a href="/game.html">The Game</a>
+          <a href="/partner">Partner With Us</a>
+          <a href="/contact">Contact</a>
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
+        </div>
+      </div>
+      <div class="foot-line">One question. One right step. One contribution at a time. What wants to grow today? 🌱</div>
+    </div>
+  </footer>
+
+  <!-- ============ CHAT DRAWER ============ -->
+  <div class="drawer-bg" id="drawerBg" onclick="closeChat()"></div>
+  <aside class="drawer" id="drawer">
+    <div class="drawer-head">
+      <span class="t">💬 Chat with Guide</span>
+      <button class="icon-btn" onclick="closeChat()">✕</button>
+    </div>
+    <div class="drawer-body" id="chatBody">
+      <div class="msg guide">What wants to grow today? Tell me what's alive for you, and I'll help you find your next right step.</div>
+    </div>
+    <form class="drawer-input" onsubmit="sendChat(event)">
+      <input id="chatInput" placeholder="What's alive for you?" />
+      <button type="submit">↑</button>
+    </form>
+  </aside>
+
+  <script>
+    function openChat(){ document.getElementById('drawer').classList.add('open'); document.getElementById('drawerBg').classList.add('open'); document.getElementById('chatInput').focus(); }
+    function closeChat(){ document.getElementById('drawer').classList.remove('open'); document.getElementById('drawerBg').classList.remove('open'); }
+    function askGuide(e){ e.preventDefault(); const el=document.getElementById('heroInput'); const v = el? el.value.trim():''; if(!v) return; openChat(); pushUser(v); guideReply(v); }
+    function sendChat(e){ e.preventDefault(); const i=document.getElementById('chatInput'); const v=i.value.trim(); if(!v) return; pushUser(v); i.value=''; guideReply(v); }
+    function pushUser(t){ const b=document.getElementById('chatBody'); const d=document.createElement('div'); d.className='msg user'; d.textContent=t; b.appendChild(d); b.scrollTop=b.scrollHeight; }
+    function pushGuide(html){ const b=document.getElementById('chatBody'); const d=document.createElement('div'); d.className='msg guide'; d.innerHTML=html; b.appendChild(d); b.scrollTop=b.scrollHeight; }
+    function guideReply(v){
+      GUIDE_HISTORY.push({role:'user',text:v});
+      const _em=v.match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/); if(_em) localStorage.setItem('fp_email',_em[0]); const _email=localStorage.getItem('fp_email')||'';
+      const tid=pushTyping();
+      fetch('https://brain.sunheart.com/guide',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:v,history:GUIDE_HISTORY,email:_email})})
+        .then(r=>r.json()).then(d=>{removeTyping(tid);const t=d.reply||'...';GUIDE_HISTORY.push({role:'guide',text:t});pushGuide(fmtGuide(t));})
+        .catch(()=>{removeTyping(tid);pushGuide('Something hiccuped on my side — try once more.');});
+    }
+    let GUIDE_HISTORY=[];
+    function fmtGuide(t){ return escapeHtml(t).replace(/
+/g,'<br>').replace(/(The Read|The Match|The Why|The Next Step|The Reflection)/g,'<b>$1</b>'); }
+    function pushTyping(){ const b=document.getElementById('chatBody'); const d=document.createElement('div'); d.className='msg guide'; d.id='t'+(GUIDE_HISTORY.length)+Math.floor(performance.now()); d.textContent='…'; b.appendChild(d); b.scrollTop=b.scrollHeight; return d.id; }
+    function removeTyping(id){ const e=document.getElementById(id); if(e) e.remove(); }
+    function escapeHtml(s){ return s.replace(/[&<>\"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c])); }
+  </script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html><html lang=en><head><meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1"><title>FP Partnerships CRM</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>" />
+<style>
+:root{--green:#0F5132;--forest:#1F7A4D;--soft:#EAF5EC;--cream:#FFF9EF;--line:#E7E0D2;--muted:#5D675F;--gold:#D9A441;}
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,Inter,system-ui,sans-serif;}
+body{background:var(--cream);color:#17211A;padding:18px;}
+h1{font-size:22px;color:var(--green);} .sub{color:var(--muted);font-size:13px;margin:2px 0 14px;}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px;}
+.bar input{padding:9px 12px;border:1px solid var(--line);border-radius:8px;font-size:13px;}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font-size:12px;cursor:pointer;}
+.chip.on{background:var(--green);color:#fff;border-color:var(--green);}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 4px 14px rgba(15,81,50,.05);}
+.row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;}
+.name{font-weight:700;font-size:15px;} .meta{font-size:12px;color:var(--muted);margin-top:2px;}
+.why{font-size:12.5px;color:#445;margin-top:6px;} .pill{font-size:11px;padding:3px 9px;border-radius:999px;background:var(--soft);color:var(--green);font-weight:600;}
+.tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px;}
+select,.tools input{padding:7px 9px;border:1px solid var(--line);border-radius:8px;font-size:12px;}
+button{background:var(--green);color:#fff;border:none;border-radius:8px;padding:8px 13px;font-size:12px;font-weight:600;cursor:pointer;}
+button.ghost{background:var(--soft);color:var(--green);}
+.draft{display:none;margin-top:10px;background:var(--soft);border-radius:10px;padding:10px;font-size:12.5px;white-space:pre-wrap;}
+.log{font-size:11.5px;color:var(--muted);margin-top:8px;}
+.st-replied{border-left:4px solid var(--gold);} .st-partner{border-left:4px solid var(--forest);}
+#gate{max-width:380px;margin:60px auto;text-align:center;}
+.brand{font-weight:700;color:var(--green);}
+</style></head><body>
+<div id=gate>
+  <h1>🌱 FP Partnerships CRM</h1><p class=sub>Enter admin token to open the pipeline.</p>
+  <input id=tok placeholder="admin token" style="width:100%;margin-bottom:10px"><br>
+  <button onclick="saveTok()">Open CRM</button>
+</div>
+<div id=app style=display:none>
+  <h1>🌱 Partnerships CRM</h1>
+  <p class=sub>Prioritized outreach pipeline. Work a row: copy the draft, reach out, log it, move status. <a href=# onclick="logout()">log out</a></p>
+  <div class=bar>
+    <input id=q placeholder="search name / category" oninput=render()>
+    <span class=chip data-s=all onclick="setF(this)">All</span>
+    <span class=chip data-s=new onclick="setF(this)">New</span>
+    <span class=chip data-s=queued onclick="setF(this)">Queued</span>
+    <span class=chip data-s=contacted onclick="setF(this)">Contacted</span>
+    <span class=chip data-s=replied onclick="setF(this)">Replied</span>
+    <span class=chip data-s=onboarding onclick="setF(this)">Onboarding</span>
+    <span class=chip data-s=partner onclick="setF(this)">Partner</span>
+  </div>
+  <div id=list></div>
+</div>
+<script>
+const API="https://brain.sunheart.com/guide";
+const STATUSES=["new","queued","contacted","replied","onboarding","partner","passed"];
+let DATA=[],FILTER="all";
+function tok(){return localStorage.getItem("fp_admin_tok")||"";}
+function saveTok(){localStorage.setItem("fp_admin_tok",document.getElementById("tok").value.trim());boot();}
+function logout(){localStorage.removeItem("fp_admin_tok");location.reload();}
+function esc(s){return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));}
+function setF(el){FILTER=el.dataset.s;document.querySelectorAll(".chip").forEach(c=>c.classList.remove("on"));el.classList.add("on");render();}
+async function boot(){
+  const r=await fetch(API+"/admin?q=crm&token="+encodeURIComponent(tok()));
+  if(r.status===401){alert("bad token");logout();return;}
+  const j=await r.json();DATA=j.contacts||[];
+  document.getElementById("gate").style.display="none";document.getElementById("app").style.display="block";
+  document.querySelector('.chip[data-s=all]').classList.add("on");render();
+}
+function render(){
+  const ql=(document.getElementById("q").value||"").toLowerCase();
+  const list=document.getElementById("list");list.innerHTML="";
+  DATA.filter(c=>(FILTER==="all"||c.status===FILTER)&&((c.name+c.category+c.type).toLowerCase().includes(ql))).forEach(c=>{
+    const d=document.createElement("div");d.className="card st-"+c.status;
+    const opts=STATUSES.map(s=>`<option ${s===c.status?"selected":""}>${s}</option>`).join("");
+    const last=c.interactions&&c.interactions.length?("last: "+esc(c.interactions[0][0])+" "+esc(c.interactions[0][1])):"no touches yet";
+    d.innerHTML=`<div class=row><div><div class=name>${esc(c.name)}</div>
+      <div class=meta>${esc(c.type)} · ${esc(c.category)} · ${esc(c.location)} · <b>${esc(c.channel)}</b>: ${esc(c.contact)} ${c.url?`· <a href="${esc(c.url)}" target=_blank>link</a>`:""}</div>
+      <div class=why>${esc(c.why)}</div></div><span class=pill>${esc(c.status)}</span></div>
+      <div class=tools>
+        <button class=ghost onclick="toggleDraft(${c.id})">✉ draft</button>
+        <button class=ghost onclick="copyDraft(${c.id})">copy</button>
+        <select onchange="upd(${c.id},'status',this.value)">${opts}</select>
+        <input placeholder=owner value="${esc(c.owner)}" onchange="upd(${c.id},'owner',this.value)" style=width:90px>
+        <input id="note${c.id}" placeholder="log a touch (call/email/note)" style=flex:1;min-width:160px>
+        <button onclick="logTouch(${c.id})">log</button>
+      </div>
+      <div class=draft id="draft${c.id}">${esc(c.draft)}</div>
+      <div class=log>${last}</div>`;
+    list.appendChild(d);
+  });
+}
+function findC(id){return DATA.find(x=>x.id===id);}
+function toggleDraft(id){const e=document.getElementById("draft"+id);e.style.display=e.style.display==="block"?"none":"block";}
+function copyDraft(id){navigator.clipboard.writeText(findC(id).draft||"");}
+async function post(body){return fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(Object.assign({admin_token:tok()},body))});}
+async function upd(id,field,val){const o={action:"crm_update",id};o[field]=val;await post(o);const c=findC(id);if(c)c[field]=val;render();}
+async function logTouch(id){const i=document.getElementById("note"+id);if(!i.value.trim())return;await post({action:"crm_log",id,kind:"touch",note:i.value.trim()});i.value="";boot();}
+if(tok())boot();
+</script></body></html>

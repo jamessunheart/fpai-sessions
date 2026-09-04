@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Full Potential — Realize your full potential. Help humanity do the same.</title>
+  <meta name="description" content="Full Potential is a living system for human potential. Sign the agreement, get your Character Card, and begin — one proof at a time." />
+  <meta name="theme-color" content="#FBF8F1" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://fullpotential.com/" />
+  <meta property="og:title" content="Full Potential — Realize your full potential. Help humanity do the same." />
+  <meta property="og:description" content="A living system for human potential. Enter, clarify your mission, act, prove, grow, contribute." />
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='42' fill='%23D9A441'/></svg>" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" />
+
+  <style>
+    :root {
+      --ink: #FBF8F1;          /* warm paper background */
+      --ink-2: #F3EEE2;        /* raised surface */
+      --ink-3: #ECE5D6;        /* borders / cards */
+      --paper: #1B211B;        /* deep ink text */
+      --paper-dim: #6E7269;    /* muted text */
+      --gold: #A8781F;         /* single accent — deep gold */
+      --gold-dim: rgba(168,120,31,0.4);
+      --line: rgba(27,33,27,0.12);
+      --max: 1120px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--ink);
+      color: var(--paper);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      font-size: 16px;
+    }
+    h1, h2, h3 { font-family: 'Fraunces', Georgia, serif; font-weight: 400; line-height: 1.12; letter-spacing: -0.015em; }
+    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 0 28px; }
+    .kicker {
+      font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--gold); font-weight: 600;
+    }
+    ::selection { background: var(--gold); color: #fff; }
+
+    /* ---------- NAV ---------- */
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(251,248,241,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav { display: flex; align-items: center; justify-content: space-between; padding: 20px 28px; max-width: var(--max); margin: 0 auto; }
+    .wordmark { font-family: 'Fraunces', serif; font-size: 19px; letter-spacing: 0.01em; }
+    .wordmark .dot { color: var(--gold); }
+    nav.links { display: flex; gap: 34px; align-items: center; }
+    nav.links a { font-size: 14px; color: var(--paper-dim); transition: color .2s; }
+    nav.links a:hover { color: var(--paper); }
+    .btn {
+      display: inline-block; background: var(--gold); color: #fff;
+      font-weight: 600; font-size: 14px; letter-spacing: 0.02em;
+      padding: 11px 26px; border-radius: 3px; transition: opacity .2s;
+    }
+    .btn:hover { opacity: 0.88; }
+    .btn.ghost { background: none; color: var(--paper); border: 1px solid var(--line); }
+    .btn.ghost:hover { border-color: var(--gold-dim); color: var(--gold); opacity: 1; }
+    @media (max-width: 780px) { nav.links a:not(.keep) { display: none; } }
+
+    /* ---------- HERO ---------- */
+    .hero { padding: 120px 0 90px; position: relative; overflow: hidden; }
+    .hero::before {
+      content: ""; position: absolute; top: -300px; right: -200px; width: 720px; height: 720px;
+      border-radius: 50%; pointer-events: none;
+      background: radial-gradient(circle, rgba(217,164,65,0.10) 0%, transparent 65%);
+    }
+    .hero h1 {
+      font-size: clamp(44px, 7vw, 88px);
+      max-width: 900px;
+    }
+    .hero h1 em { font-style: italic; color: var(--gold); }
+    .hero .sub {
+      margin: 32px 0 44px; max-width: 560px;
+      font-size: 18px; color: var(--paper-dim);
+    }
+    .hero .cta-row { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+    .hero .cta-note { font-size: 13px; color: var(--paper-dim); }
+    .hero .cta-note a { color: var(--paper); border-bottom: 1px solid var(--gold-dim); }
+
+    /* ---------- LIVE STATE STRIP ---------- */
+    .live { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--ink-2); }
+    .live-inner {
+      display: flex; align-items: center; gap: 48px; flex-wrap: wrap;
+      padding: 26px 28px; max-width: var(--max); margin: 0 auto;
+    }
+    .pulse {
+      width: 8px; height: 8px; border-radius: 50%; background: var(--gold); flex-shrink: 0;
+      animation: pulse 2.6s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(217,164,65,0.5); } 50% { box-shadow: 0 0 0 9px rgba(217,164,65,0); } }
+    .live .label { font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--paper-dim); }
+    .stat { display: flex; align-items: baseline; gap: 10px; }
+    .stat .n { font-family: 'Fraunces', serif; font-size: 26px; color: var(--paper); }
+    .stat .d { font-size: 13px; color: var(--paper-dim); }
+    .live .latest { font-size: 13px; color: var(--paper-dim); margin-left: auto; }
+    .live .latest b { color: var(--paper); font-weight: 500; }
+    @media (max-width: 780px) { .live-inner { gap: 22px; } .live .latest { margin-left: 0; } }
+
+    /* ---------- SECTIONS ---------- */
+    section.block { padding: 110px 0; }
+    .block .head { max-width: 640px; margin-bottom: 70px; }
+    .block h2 { font-size: clamp(30px, 4vw, 44px); margin-top: 16px; }
+    .block .head p { margin-top: 18px; color: var(--paper-dim); font-size: 16.5px; }
+
+    /* path — the six movements */
+    .path { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+    .step { background: var(--ink); padding: 36px 30px 40px; transition: background .25s; }
+    .step:hover { background: var(--ink-2); }
+    .step .no { font-family: 'Fraunces', serif; font-size: 15px; color: var(--gold); }
+    .step h3 { font-size: 21px; margin: 14px 0 10px; font-weight: 500; }
+    .step p { font-size: 14px; color: var(--paper-dim); }
+    @media (max-width: 900px) { .path { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 580px) { .path { grid-template-columns: 1fr; } }
+
+    /* engine section */
+    .engine { background: var(--ink-2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .engine-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    @media (max-width: 860px) { .engine-grid { grid-template-columns: 1fr; gap: 40px; } }
+    .engine h2 { font-size: clamp(30px, 4vw, 44px); margin-top: 16px; }
+    .engine .lead { margin-top: 20px; color: var(--paper-dim); }
+    .engine .lead b { color: var(--paper); font-weight: 500; }
+    .engine .cta-row { margin-top: 36px; display: flex; gap: 16px; align-items: center; }
+    .card-frame {
+      border: 1px solid var(--line); background: var(--ink); padding: 34px;
+      position: relative;
+    }
+    .card-frame::before {
+      content: ""; position: absolute; top: 14px; left: 14px; right: -14px; bottom: -14px;
+      border: 1px solid var(--gold-dim); z-index: -1;
+    }
+    .card-frame .row { display: flex; justify-content: space-between; padding: 13px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+    .card-frame .row:last-child { border-bottom: none; }
+    .card-frame .row .k { color: var(--paper-dim); }
+    .card-frame .row .v { color: var(--paper); font-weight: 500; }
+    .card-frame .title { font-family: 'Fraunces', serif; font-size: 18px; margin-bottom: 18px; }
+    .card-frame .title span { color: var(--gold); }
+
+    /* doors */
+    .doors { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    @media (max-width: 860px) { .doors { grid-template-columns: 1fr; } }
+    .door {
+      border: 1px solid var(--line); padding: 40px 34px 44px; background: var(--ink);
+      transition: border-color .25s, transform .25s; display: block;
+    }
+    .door:hover { border-color: var(--gold-dim); transform: translateY(-3px); }
+    .door .k { font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); font-weight: 600; }
+    .door h3 { font-size: 24px; margin: 16px 0 12px; font-weight: 500; }
+    .door p { font-size: 14.5px; color: var(--paper-dim); }
+    .door .go { display: inline-block; margin-top: 26px; font-size: 13.5px; color: var(--paper); border-bottom: 1px solid var(--gold-dim); padding-bottom: 2px; }
+
+    /* north star */
+    .northstar { text-align: center; padding: 150px 0; position: relative; overflow: hidden; }
+    .northstar::before {
+      content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+      width: 900px; height: 900px; border-radius: 50%; pointer-events: none;
+      background: radial-gradient(circle, rgba(217,164,65,0.08) 0%, transparent 60%);
+    }
+    .northstar h2 { font-size: clamp(34px, 5vw, 60px); max-width: 760px; margin: 20px auto 0; }
+    .northstar p { max-width: 520px; margin: 26px auto 0; color: var(--paper-dim); }
+    .northstar .btn { margin-top: 44px; }
+
+    /* ---------- FOOTER ---------- */
+    footer { border-top: 1px solid var(--line); padding: 54px 0 44px; }
+    .foot { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
+    .foot .links { display: flex; gap: 28px; flex-wrap: wrap; }
+    .foot .links a { font-size: 13.5px; color: var(--paper-dim); }
+    .foot .links a:hover { color: var(--paper); }
+    .foot .fine { width: 100%; margin-top: 34px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 13px; color: var(--paper-dim); font-family: 'Fraunces', serif; }
+  </style>
+</head>
+<body>
+
+  <!-- ============ NAV ============ -->
+  <header>
+    <div class="nav">
+      <a class="wordmark" href="/">Full Potential<span class="dot">.</span></a>
+      <nav class="links">
+        <a href="#path">The Path</a>
+        <a href="#engine">The Game</a>
+        <a href="/assessment">Assessment</a>
+        <a href="#doors">Experiences</a>
+        <a class="btn keep" href="/game">Enter</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="wrap">
+      <p class="kicker">A living system for human potential</p>
+      <h1 style="margin-top:22px;">Realize your full potential —<br /><em>and help humanity do the same.</em></h1>
+      <p class="sub">Full Potential is a movement of people clarifying their mission, acting on it, and proving it — together, with intelligence at their side. Entry is one act, not an application.</p>
+      <div class="cta-row">
+        <a class="btn" href="/game">Sign the Agreement → begin</a>
+        <span class="cta-note">Takes two minutes. You'll receive your <a href="/game">Character Card</a>.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LIVE STATE ============ -->
+  <div class="live">
+    <div class="live-inner" id="liveStrip">
+      <span class="pulse" aria-hidden="true"></span>
+      <span class="label">System live</span>
+      <span class="stat" id="statChampions" style="display:none;"><span class="n"></span><span class="d">champions signed</span></span>
+      <span class="stat" id="statProofs" style="display:none;"><span class="n"></span><span class="d">proofs filed</span></span>
+      <span class="latest" id="liveLatest">Founding era — the first champions are signing now. Your name lands early.</span>
+    </div>
+  </div>
+  <script>
+    // Wire to real state when /game/state.json ships. Never fake numbers.
+    fetch('/game/state.json').then(function(r){ if(!r.ok) throw 0; return r.json(); }).then(function(s){
+      if (s && typeof s.champions === 'number') {
+        var c = document.getElementById('statChampions');
+        c.querySelector('.n').textContent = s.champions; c.style.display = 'flex';
+      }
+      if (s && typeof s.proofs === 'number') {
+        var p = document.getElementById('statProofs');
+        p.querySelector('.n').textContent = s.proofs; p.style.display = 'flex';
+      }
+      if (s && s.latest) {
+        document.getElementById('liveLatest').innerHTML = 'Latest: <b></b>';
+        document.querySelector('#liveLatest b').textContent = s.latest;
+      }
+    }).catch(function(){ /* founding-era copy stays */ });
+  </script>
+
+  <!-- ============ THE PATH ============ -->
+  <section class="block" id="path">
+    <div class="wrap">
+      <div class="head">
+        <p class="kicker">The Path</p>
+        <h2>Six movements. One direction.</h2>
+        <p>Joining Full Potential means walking a path — not consuming content. Every member moves through the same six movements, at their own pace, with proof at every step.</p>
+      </div>
+      <div class="path">
+        <div class="step"><div class="no">01</div><h3>Enter</h3><p>Sign the agreement. Receive your Character Card — who you are, what you carry, where you're headed.</p></div>
+        <div class="step"><div class="no">02</div><h3>Clarify</h3><p>Name your mission. The assessment and your AI guide help you find your highest-leverage next move.</p></div>
+        <div class="step"><div class="no">03</div><h3>Act</h3><p>Take the move. Small, real, this week — not someday. The system holds the context so you can hold the action.</p></div>
+        <div class="step"><div class="no">04</div><h3>Prove</h3><p>File the proof. What you did, what changed. Proof is the currency here — not promises, not likes.</p></div>
+        <div class="step"><div class="no">05</div><h3>Grow</h3><p>Your Card levels with your proofs. Capability compounds — yours, and the system's ability to help you.</p></div>
+        <div class="step"><div class="no">06</div><h3>Contribute</h3><p>Turn your growth outward. Invite others, steward missions, help the whole field rise.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE ENGINE ============ -->
+  <section class="block engine" id="engine">
+    <div class="wrap engine-grid">
+      <div>
+        <p class="kicker">The Engine</p>
+        <h2>The movement is the identity. The Game is how you play it.</h2>
+        <p class="lead">Most movements give you a feeling and no next move. Full Potential runs on <b>the Game</b> — a structured practice where every member has a Card, a mission, and a next move. It answers the question movements never answer: <b>what do I do on day two?</b></p>
+        <div class="cta-row">
+          <a class="btn" href="/game">See the Game</a>
+          <a class="btn ghost" href="/assessment">Take the free Assessment</a>
+        </div>
+      </div>
+      <div class="card-frame">
+        <div class="title">Character Card <span>· No. 001</span></div>
+        <div class="row"><span class="k">Champion</span><span class="v">Your name here</span></div>
+        <div class="row"><span class="k">Mission</span><span class="v">Named by you, held by the system</span></div>
+        <div class="row"><span class="k">Next move</span><span class="v">Always exactly one</span></div>
+        <div class="row"><span class="k">Proofs filed</span><span class="v">Grows as you do</span></div>
+        <div class="row"><span class="k">Agreement</span><span class="v">World Peace · signed</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DOORS ============ -->
+  <section class="block" id="doors">
+    <div class="wrap">
+      <div class="head">
+        <p class="kicker">After you enter</p>
+        <h2>Three ways to go deeper.</h2>
+      </div>
+      <div class="doors">
+        <a class="door" href="/assessment">
+          <span class="k">Clarify</span>
+          <h3>Find Your Mission</h3>
+          <p>The free Full Potential Assessment — your Allocation Score and your three highest-value opportunities, within 48 hours.</p>
+          <span class="go">Start the assessment</span>
+        </a>
+        <a class="door" href="/retreat">
+          <span class="k">Experience</span>
+          <h3>Live It in Person</h3>
+          <p>Zen Village, Costa Rica — retreats and immersions where the practice becomes physical. Reset, build, thrive.</p>
+          <span class="go">See the retreat</span>
+        </a>
+        <a class="door" href="/ai-builders.html">
+          <span class="k">Build</span>
+          <h3>Build With Intelligence</h3>
+          <p>AI systems, executive intelligence, and tools that hold your context — so your attention goes where only you can go.</p>
+          <span class="go">Explore the tools</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ NORTH STAR ============ -->
+  <section class="northstar">
+    <div class="wrap">
+      <p class="kicker">The North Star</p>
+      <h2>Human potential × AI potential × aligned systems — flourishing at scale.</h2>
+      <p>Every card, every proof, every mission points to the same horizon: paradise on Earth, built one realized human at a time.</p>
+      <a class="btn" href="/game">Begin — sign the Agreement</a>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer>
+    <div class="wrap foot">
+      <a class="wordmark" href="/">Full Potential<span class="dot">.</span></a>
+      <div class="links">
+        <a href="/game">The Game</a>
+        <a href="/assessment">Assessment</a>
+        <a href="/retreat">Retreat</a>
+        <a href="/codex.html">Codex</a>
+        <a href="/partner">Partner</a>
+        <a href="/contact">Contact</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+      </div>
+      <div class="fine">Sunheart tells the story. Full Potential builds the system. Zen Village lets people live it.</div>
+    </div>
+  </footer>
+
+</body>
+</html>
