@@ -46,3 +46,6 @@ dist/
 # Per-session collision-prevention state (see .claude/hooks/README.md)
 .claude/sessions/
 .claude/worktrees/
+
+# Local Codex agent-bridge envelopes, task state, and receipts
+/.fpai/agent-bridge/

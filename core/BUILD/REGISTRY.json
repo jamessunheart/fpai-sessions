@@ -1,8 +1,41 @@
 {
   "schema": "build-registry.v1",
-  "updated_at": "2026-08-10T16:27:50Z",
+  "updated_at": "2026-09-04T14:20:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+    {
+      "id": "SPEC_nbm-plant-finance-north-proof-loop-v1",
+      "slug": "nbm-plant-finance-north-proof-loop-v1",
+      "branch": "codex/sunstream-active-focus",
+      "base_branch": "codex/twin-eyes-creative-organs",
+      "session": "codex desktop 2026-09-03",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_nbm-plant-finance-north-proof-loop-v1.md",
+      "tests_passed": true,
+      "notes": "Current director continuation integrated without changing the verified Finance/North implementation: Candidate A is hash-locked under James's delegated `Director proceed to finished` instruction, not represented as James personally listening or choosing; all canonical base stills/endpoints are path- and SHA-256-reconciled; the 45.8-second v3 renders remain technically valid but independently rejected illustrated animatics, not masters; Seed Share 30 remains pathway-only. Strict stills validation remains BLOCK 22 and animation BLOCK 233 because human-approved recurring references, complete A/B scores, winners, and C1-C3 passes are not inferred. North exposes exactly one Reserved-Class gate: approve or revise the displayed fictional base-image reference pack. Provider preparation is not ready. No upload, provider job, credit use, purchase, money movement, publication, Telegram send, phone call, deploy, service restart, commit, push, or merge."
+    },
+    {
+      "id": "SPEC_codex-agent-bridge-nbm-v1",
+      "slug": "codex-agent-bridge-nbm-v1",
+      "branch": "codex/sunstream-active-focus",
+      "base_branch": "codex/twin-eyes-creative-organs",
+      "session": "codex desktop 2026-09-03",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_codex-agent-bridge-nbm-v1.md",
+      "tests_passed": true,
+      "notes": "Local queue-only NBM is complete: strict versioned JSON invocation, canonical refresh/evidence binding, conflict-safe dedupe, active-owner/stale/gate/uncertain-receipt suppression, deterministic six-factor ranking, policy-derived Green/Yellow/Red handling, one Red decision with independent continuation, private atomic records, stable task/receipt idempotency, and explicit no_useful_move. Verification: 57 Agent Bridge tests, 31 Hermes/probe regressions, 3 payment compatibility tests, example/registry JSON validation, compile and diff hygiene. No live trigger daemon, worker launch, network, install, secret access, external effect, activation, commit, push, or deploy."
+    },
+    {
+      "id": "SPEC_codex-agent-bridge-local-v1",
+      "slug": "codex-agent-bridge-local-v1",
+      "branch": "codex/sunstream-active-focus",
+      "base_branch": "codex/twin-eyes-creative-organs",
+      "session": "codex desktop 2026-09-03",
+      "status": "done",
+      "spec": "core/BUILD/specs/SPEC_codex-agent-bridge-local-v1.md",
+      "tests_passed": true,
+      "notes": "Local-only bridge complete in the dirty working tree: Codex is the sole control plane and only default-enabled worker; versioned durable envelopes, policy validation, idempotent dispatch, status, cancellation, bounded receipts, private gitignored state, server-resolved identity, and fail-closed Prime/Hermes capabilities are covered. Restored the committed d034 Hermes class API while preserving the d054 probe send helper; default Hermes runtime and web route remain inert. Verification: 29 bridge tests, 31 Hermes/probe tests, 3 payment activation compatibility tests, CLI capability/denial/unavailable/spoof smokes, compile checks, JSON validation, static shell/network scan, state-ignore proof, and diff hygiene. No install, live worker, network, provider, service, deploy, commit, push, secret access, external effect, budget, or destination."
+    },
     {
       "id": "SPEC_d244_auto-spot-topple-assessment-funn",
       "slug": "SPEC_d244_auto-spot-topple-assessment-funn",

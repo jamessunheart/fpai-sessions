@@ -1,0 +1,36 @@
+{
+  "updated": "2026-09-04",
+  "note": "Append-friendly. Each entry: id = filename in bp/ without .md. Agents may add entries; never delete — mark status:archived instead.",
+  "blueprints": [
+    {
+      "id": "capital-commons-system",
+      "title": "Capital Commons System",
+      "summary": "Regenerative governance + capital OS: use-rights over ownership transfer, prestige as witnessed trust, three ledgers, Ostrom locks, regeneration test.",
+      "realm": "Governance & Capital",
+      "status": "live",
+      "version": "1.0",
+      "updated": "2026-09-04",
+      "source": "Google Drive canon · IC Prestige 98"
+    },
+    {
+      "id": "evolution-front-door",
+      "title": "Evolution Front Door",
+      "summary": "The fullpotential.com homepage expressing the .ai → .com evolution: three doors, Capital Commons, Ladder of Becoming, three ledgers.",
+      "realm": "Technology / Culture",
+      "status": "live",
+      "version": "1.0",
+      "updated": "2026-09-04",
+      "source": "sites/fullpotential-com/index.html"
+    },
+    {
+      "id": "blueprint-commons",
+      "title": "Blueprint Commons",
+      "summary": "This system itself: store blueprints in git, rate them, evolve them with derived history. Built by two AIs cooperating.",
+      "realm": "Technology / Governance",
+      "status": "live",
+      "version": "1.0",
+      "updated": "2026-09-04",
+      "source": "sites/fullpotential-com/blueprints/"
+    }
+  ]
+}

@@ -7,6 +7,19 @@ from . import tgbot
 
 
 class TelegramConstitutionCommandTest(unittest.IsolatedAsyncioTestCase):
+    async def test_north_command_uses_read_only_attention_renderer(self) -> None:
+        helper = mock.Mock()
+        snapshot = {"authority": "lens_only", "actuation": False}
+        helper.load_snapshot.return_value = snapshot
+        helper.render_snapshot.return_value = "<b>North</b>\nOne genuine decision"
+
+        with mock.patch.object(tgbot, "_load_north_attention_tgbot", return_value=helper):
+            reply = await tgbot._handle_command("/north", 123)
+
+        self.assertEqual(reply, "<b>North</b>\nOne genuine decision")
+        helper.load_snapshot.assert_called_once_with(tgbot._repo_root())
+        helper.render_snapshot.assert_called_once_with(snapshot, escape=tgbot.tg._esc)
+
     async def test_constitution_command_sends_all_rendered_messages(self) -> None:
         helper = mock.Mock()
         helper.surface_to_telegram.return_value = ["part one", "part two"]

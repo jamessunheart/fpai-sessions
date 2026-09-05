@@ -35,3 +35,117 @@
 
 ## 2026-09-03T15:40Z — note (Ember, interactive)
 Anomaly resolved: the 15:32Z off-schedule beat was fired ON DEMAND by James ("super agent activate!") via Ember — not a rogue schedule. The duplicate session cron (c1df9285) was already deleted at ~14:30Z. One schedule remains: crontab 15 */4. No dedupe needed; stop chasing this.
+
+## 2026-09-03T18:15Z — beat ran, agent left no entry (check heartbeat_stdout.log)
+
+## 2026-09-03T22:15Z — BRAIN OFFLINE
+- `claude -p` could not authenticate (rc=1). Nothing was read, no steward verdict was appended, /opt/VENDOR_LOG.md was NOT interpreted.
+- The delta watch below still runs; the Super Agent is not READING while this holds.
+- FIX (James, ~1 min): open a terminal on this Mac, run `claude`, then `/login`.
+
+## 2026-09-03T22:15Z — EVIDENCE MIRROR DOWN: could not read /opt/VENDOR_LOG.md on 198. The repo cannot see what the currency said to a provider. Do not mark condition 1 from any local file.
+
+## 2026-09-04T18:15Z — BRAIN OFFLINE
+- `claude -p` could not authenticate (rc=1). Nothing was read, no steward verdict was appended, /opt/VENDOR_LOG.md was NOT interpreted.
+- The delta watch below still runs; the Super Agent is not READING while this holds.
+- Verbatim auth error from the CLI (do not guess the cause from this line alone):
+```
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+```
+- Known causes, in the order they actually happened here:
+  1. A stale ANTHROPIC_API_KEY/AUTH_TOKEN in cron`s env overriding the claude.ai login (401 invalid key). FIXED in this script 2026-09-03 21:08 — if this recurs, the unset above is not reaching the CLI.
+  2. cron runs outside the GUI login session and cannot unlock the macOS Keychain where the OAuth credentials live. UNPROVEN. Test: run this script by hand in Terminal; if it works there and fails from cron, this is it, and the fix is a LaunchAgent (runs in the user session), not another /login.
+- FIX (James, ~1 min, tries the cheap one first): open Terminal on this Mac, run `claude`, then `/login`.
+
+## 2026-09-04T18:15Z — EVIDENCE MIRROR DOWN: could not read /opt/VENDOR_LOG.md on 198. The repo cannot see what the currency said to a provider. Do not mark condition 1 from any local file.
+
+## 2026-09-04T22:15Z — BRAIN OFFLINE
+- `claude -p` could not authenticate (rc=1). Nothing was read, no steward verdict was appended, /opt/VENDOR_LOG.md was NOT interpreted.
+- The delta watch below still runs; the Super Agent is not READING while this holds.
+- Verbatim auth error from the CLI (do not guess the cause from this line alone):
+```
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+```
+- Known causes, in the order they actually happened here:
+  1. A stale ANTHROPIC_API_KEY/AUTH_TOKEN in cron`s env overriding the claude.ai login (401 invalid key). FIXED in this script 2026-09-03 21:08 — if this recurs, the unset above is not reaching the CLI.
+  2. cron runs outside the GUI login session and cannot unlock the macOS Keychain where the OAuth credentials live. UNPROVEN. Test: run this script by hand in Terminal; if it works there and fails from cron, this is it, and the fix is a LaunchAgent (runs in the user session), not another /login.
+- FIX (James, ~1 min, tries the cheap one first): open Terminal on this Mac, run `claude`, then `/login`.
+
+## 2026-09-04T22:15Z — EVIDENCE MIRROR DOWN: could not read /opt/VENDOR_LOG.md on 198. The repo cannot see what the currency said to a provider. Do not mark condition 1 from any local file.
+
+## 2026-09-05T02:15Z — BRAIN OFFLINE
+- `claude -p` could not authenticate (rc=1). Nothing was read, no steward verdict was appended, /opt/VENDOR_LOG.md was NOT interpreted.
+- The delta watch below still runs; the Super Agent is not READING while this holds.
+- Verbatim auth error from the CLI (do not guess the cause from this line alone):
+```
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+```
+- Known causes, in the order they actually happened here:
+  1. A stale ANTHROPIC_API_KEY/AUTH_TOKEN in cron`s env overriding the claude.ai login (401 invalid key). FIXED in this script 2026-09-03 21:08 — if this recurs, the unset above is not reaching the CLI.
+  2. cron runs outside the GUI login session and cannot unlock the macOS Keychain where the OAuth credentials live. UNPROVEN. Test: run this script by hand in Terminal; if it works there and fails from cron, this is it, and the fix is a LaunchAgent (runs in the user session), not another /login.
+- FIX (James, ~1 min, tries the cheap one first): open Terminal on this Mac, run `claude`, then `/login`.
+
+## 2026-09-05T02:15Z — EVIDENCE MIRROR DOWN: could not read /opt/VENDOR_LOG.md on 198. The repo cannot see what the currency said to a provider. Do not mark condition 1 from any local file.
+
+## 2026-09-05T06:15Z — BRAIN OFFLINE
+- `claude -p` could not authenticate (rc=1). Nothing was read, no steward verdict was appended, /opt/VENDOR_LOG.md was NOT interpreted.
+- The delta watch below still runs; the Super Agent is not READING while this holds.
+- Verbatim auth error from the CLI (do not guess the cause from this line alone):
+```
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+```
+- Known causes, in the order they actually happened here:
+  1. A stale ANTHROPIC_API_KEY/AUTH_TOKEN in cron`s env overriding the claude.ai login (401 invalid key). FIXED in this script 2026-09-03 21:08 — if this recurs, the unset above is not reaching the CLI.
+  2. cron runs outside the GUI login session and cannot unlock the macOS Keychain where the OAuth credentials live. UNPROVEN. Test: run this script by hand in Terminal; if it works there and fails from cron, this is it, and the fix is a LaunchAgent (runs in the user session), not another /login.
+- FIX (James, ~1 min, tries the cheap one first): open Terminal on this Mac, run `claude`, then `/login`.
+
+## 2026-09-05T06:15Z — EVIDENCE MIRROR DOWN: could not read /opt/VENDOR_LOG.md on 198. The repo cannot see what the currency said to a provider. Do not mark condition 1 from any local file.
+
+## 2026-09-05T10:15Z — BRAIN OFFLINE
+- `claude -p` could not authenticate (rc=1). Nothing was read, no steward verdict was appended, /opt/VENDOR_LOG.md was NOT interpreted.
+- The delta watch below still runs; the Super Agent is not READING while this holds.
+- Verbatim auth error from the CLI (do not guess the cause from this line alone):
+```
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+```
+- Known causes, in the order they actually happened here:
+  1. A stale ANTHROPIC_API_KEY/AUTH_TOKEN in cron`s env overriding the claude.ai login (401 invalid key). FIXED in this script 2026-09-03 21:08 — if this recurs, the unset above is not reaching the CLI.
+  2. cron runs outside the GUI login session and cannot unlock the macOS Keychain where the OAuth credentials live. UNPROVEN. Test: run this script by hand in Terminal; if it works there and fails from cron, this is it, and the fix is a LaunchAgent (runs in the user session), not another /login.
+- FIX (James, ~1 min, tries the cheap one first): open Terminal on this Mac, run `claude`, then `/login`.
+
+## 2026-09-05T10:15Z — EVIDENCE MIRROR DOWN: could not read /opt/VENDOR_LOG.md on 198. The repo cannot see what the currency said to a provider. Do not mark condition 1 from any local file.
+
+## 2026-09-05T14:15Z — BRAIN OFFLINE
+- `claude -p` could not authenticate (rc=1). Nothing was read, no steward verdict was appended, /opt/VENDOR_LOG.md was NOT interpreted.
+- The delta watch below still runs; the Super Agent is not READING while this holds.
+- Verbatim auth error from the CLI (do not guess the cause from this line alone):
+```
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+```
+- Known causes, in the order they actually happened here:
+  1. A stale ANTHROPIC_API_KEY/AUTH_TOKEN in cron`s env overriding the claude.ai login (401 invalid key). FIXED in this script 2026-09-03 21:08 — if this recurs, the unset above is not reaching the CLI.
+  2. cron runs outside the GUI login session and cannot unlock the macOS Keychain where the OAuth credentials live. UNPROVEN. Test: run this script by hand in Terminal; if it works there and fails from cron, this is it, and the fix is a LaunchAgent (runs in the user session), not another /login.
+- FIX (James, ~1 min, tries the cheap one first): open Terminal on this Mac, run `claude`, then `/login`.
+
+## 2026-09-05T14:15Z — EVIDENCE MIRROR DOWN: could not read /opt/VENDOR_LOG.md on 198. The repo cannot see what the currency said to a provider. Do not mark condition 1 from any local file.

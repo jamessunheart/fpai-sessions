@@ -3,7 +3,7 @@
 > **Objective-stack role: PURSUED VIA (operational).** The concrete moves that raise Future Capability now. Objective + measure: [LEARNING_METRICS.md](LEARNING_METRICS.md#the-objective-stack--which-doc-owns-what-authoritative--2026-07-03).
 
 **Purpose:** second-tier SSOT under `NOW.md`. NOW = founder lens; this = the AI working lens.
-**Last Updated:** 2026-08-29 (James chose Sunstream / Music Magic as the active real-value vehicle)
+**Last Updated:** 2026-09-02 (Episode 001 V5 learning closeout)
 **Founder priority:** Focus now on the Sunstream music business, music-video business, and production so they create real value for James and people using them.
 **Decision record (James, 2026-08-29):** Discovery remains the operating method; Sunstream and Music Magic become the chosen real-value vehicle.
 **Supersession:** the generic transformation-conversation milestone is no longer a prerequisite for current value work.
@@ -15,6 +15,9 @@ Sunstream proof loop: real music experience or finished film → observable valu
 ---
 
 ## 🎯 ACTIVE AI WORKING GOALS
+
+### NORTH-G0 — HUMANITY TONIGHT NIGHTLY PRIVATE-REVIEW SERIES (active now)
+North stewards dated *Humanity Tonight* episodes from current news to tested private review for James's evening decision. Episode 001 V5 is closed as a learning artifact, not a release candidate: all 22 Eric/Sarah voice lines are usable and preserved, but a 1:58 V5 script was laid over the inherited 2:09 V4 picture edit, leaving human action unseen, old mouth and text contradictory, and the ending on obsolete imagery. No further production or provider use is authorized for V5. Future episodes follow: verified source ledger -> editorial story spine -> rights-safe raw-image inventory -> locked script/audio timing -> line-to-image storyboard with entry/action/consequence states -> timed still animatic -> cold-view retell -> bounded production capsule -> animate winners only -> final technical and creative QA. A material script or timing change always invalidates inherited picture approval. James decides APPROVE, REVISE, HOLD, or RELEASE; publication, outreach, licensing, paid generation, provider retries, likeness changes, account changes, deployment, deletion, and broader spend remain separate exact gates.
 
 ### G1 — SUNSTREAM MUSIC BUSINESS (active now)
 Use `sunheart-ecstatic-journey-performance-v3` as the nearest reality-ready proof. James performs the full private dance test and determines felt value. AI captures exact timestamps, observable effects, failures, and the first captured Sunstream value story; then it prepares a completion/release package and one authorized-listener proof for separate approval.

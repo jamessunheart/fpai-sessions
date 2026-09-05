@@ -13,7 +13,58 @@ metadata:
 
 The current chapter, as of 2026-05-19. Updated whenever the story moves.
 
-## ★ Last session handoff (2026-07-19 · STATUS PULSE → TWO FAILED UNITS DIAGNOSED, BOTH BLOCKED)
+## ★ Last session handoff (2026-09-04 · CAPITAL COMMONS — Drive canon read)
+
+James asked me to pull how the Capital Commons works from his Drive. Access confirmed; read the CURRENT CANON doc (IC Prestige 98, written Sep 4). Core: shared pool of use-rights (13 capital types) · ownership stays private, use is coordinated · Prestige = witnessed trust per Realm gates stewardship · Ladder of Becoming (Voice→Succession) · mutual credit circulates · Ostrom locks guard capture. Drive folder: `01 — Governance, Prestige & Capital Commons` (also CORA Governance OS, IC Register, Deed of Trust Standard). Open: mirror canon into repo state if it becomes operational. Detail: sessions/2026-09-04_capital-commons-drive-recall.md.
+
+## ★ Prior handoff (2026-09-03 · SUPER AGENT — Drive lookup)
+
+James asked what "the super agent" is. Searched Drive: found the fresh SUPER doc cluster (all Sep 3 2026 — Full System & Strategy v2, NBM Ledger, Track B, Build #001 Feed 10 People, Agent Marketing: Seven Steps Ahead). Answered: **Super Agent** = each person's personal AI holding goals/constraints, buying on verified evidence (Step 7, the Inversion); distinct from the repo's three local SUPER agents (super-build / super-steward / super-vendor-agent). No code changed. Open: read Track B doc if James asks. Detail: sessions/2026-09-03_super-agent-drive-lookup.md.
+
+## ★ Prior handoff (2026-08-26 · MUSIC MAGIC — full film shipped + self-auditing pipeline)
+
+Longest Music Magic session yet. James caught a monarch where the locked tiger swallowtail belonged (S025) — that drift exposed the missing asset layer. By end: a finished **2:57 animated music video** ("The Caterpillar Knows," Suri the artist) AND the pipeline that makes consistent films. Shipped: **Core Asset Layer** (`mm_assets.py` + templates + validator gates), the **proven consistency recipe** (Soul face + anchor job_id + injected lighting bible = likeness+scale+species locked; trained Suri Soul 7b614971), batched 26 stills → 26 clips (seedance first/last-frame) → assembled + song → 16:9 + 9:16 cuts, **`mm motion-audit`** (self-audit clips for scale/teleport/bleed) + **`mm learn`** (cross-production LEARNING_LEDGER), notify fixes (call→Telegram, AUTOPILOT flag killed false calls), download page + Drive mirror sync. OPEN: durable host **sunstream.fullpotential.ai on 162** built + origin-verified — waiting on ONE Cloudflare A record `sunstream`→162.0.208.88 (proxied); then repoint notify + retire the Mac tunnel + wire pick-API on 162. Optional: re-roll ~4 scale/teleport scenes, native 9:16, 4K (383 Higgsfield credits left). Detail: sessions/2026-08-26_music-magic-full-film-and-pipeline.md.
+
+## ★ Prior handoff (2026-08-23 · MAIL ROUTING TRACE — all roads lead to james@fullpotential.com)
+
+James asked where jamesrick/globalsky/outbounders mail goes. Traced: all but outbounders funnel → james@fullpotential.com. Then found the real bug — the 2026-08-10 mydestination fix had REGRESSED (main.cf re-modified same evening); 13 days of forwarded mail stranded in zen-host local maildir instead of relaying to Google Workspace. Fixed (James ran the one-liners; classifier blocks me): fullpotential.com removed from mydestination, 34 stranded messages re-sent, verified via Brevo, 0 bounces. Open thread: what rewrote main.cf on 08-10 22:24? If it regresses again, hunt the writer. Detail: sessions/2026-08-23_mail-routing-trace.md.
+
+## ★ Prior handoff (2026-08-19 · EMAIL SPOT-CHECK — james@fullpotential.com verified working)
+
+James asked if james@fullpotential.com works. Yes: canary all_healthy same morning (12:13 UTC), live test sent via mail.fullpotential.com SMTP 587 → his Gmail, SENT OK. Known quirk persists: laptop POP3 vantage throttled (SSLEOFError) but verify-via-162 confirms ok. Open: James confirms delivery (spam possible via Brevo). Detail: sessions/2026-08-19_email-test-verified.md.
+
+## ★ Prior handoff (2026-08-09 · TRADING SYSTEM AUDIT — whole-picture reckoning, agents in flight)
+
+James asked for an honest map of the trading effort: what works, what doesn't, path to trading-for-self vs trading-for-others (service). Discovery: ≥4 generations scattered — `SERVICES/treasury-arena/`, `SERVICES/trader/` + `level10_trader_fixed.py`, `SERVICES/aria-command/` (+ ARIA_TRADING_INTEGRATION_PLAN, docs/legal/trading/), archived magnetic-trading trio in `_archive/projects/`. Dispatched 4 Explore agents: code audits ×2, archive post-mortem, live-state reality check (real capital / running processes / NOW.md intent). Synthesis owed. Detail: [[episodic-2026-08-09-trading-system-audit]] (sessions/2026-08-09_trading-system-audit.md).
+
+## ★ Last session handoff (2026-08-07 · NOAM PAYROLL AUDIT — funded + approved, disbursement unverifiable from DB)
+
+James: Outbounders client Noam says his workers didn't get their latest payments. Audited `obapp_outbounders`. Client = **Noam Simckes / GNS Services LLC (user_id 40856)**, 16 agents / 10 active. Latest 5 weeks (Jun29–Aug2) payroll = **$8,913.43** across 10 workers; Noam **deposited $9,486** by card — he funded it. BUT: `agent_payment` has NO reliable "sent to worker" flag (`date_released` empty back to 2017, `unpaid_amount` vestigial). DB proves platform was paid + payroll approved; does NOT prove release to workers. Complaint plausible = release step may be stuck. Proof lives in `paypal_payment_info`/`coinbase_payment_info`/`paypal_logs`, not agent_payment. Open: James to pick — pull processor logs vs. flag ops. Full detail: [[episodic-2026-08-07-noam-payroll-audit]].
+
+## ★ Last session handoff (2026-07-29 · MAIL TLS EXPIRY FIRE — fixed + made self-healing)
+
+James forwarded a "cert expired on mail.fullpotential.com + outbounders not receiving" diagnosis.
+Verified from 162 (not laptop — the canary vantage trap). Real root cause: certbot auto-renewed
+`mail.fullpotential.com` on disk (valid → Sep 28) but **dovecot/postfix were never reloaded** →
+served the expired copy all cycle. Fix: reloaded both (all ports 25/587/993/995 flipped valid) +
+installed `/etc/letsencrypt/renewal-hooks/deploy/reload-mail.sh` so it self-heals every renewal
+(the hooks/deploy dir was empty — the structural gap). Postfix "failed" was cosmetic (master was
+serving 25 fine). **Outbounders = false alarm**: cPanel box 209.74.93.72 healthy, mail arriving +
+Gmail POP3 fetched 3 new msgs at 00:12 UTC. Memory: [[reference-mail-cert-renew-reload-hook]].
+Open: confirm the background `certbot --dry-run` (hook wiring) ran clean.
+
+## ★ Last session handoff (2026-07-23 · COINGLASS API CONFIRM — key blocked on prod 198)
+
+James: *"find / confirm the coinglass api?"* Short recon turn. Confirmed CoinGlass is wired
+system-wide — `coinglass.sh` (Adam's tool on 198), treasury funding-rate feed, WhaleTrack magnet
+engine. Endpoint in code is the **deprecated v2** (`open-api.coinglass.com/public/v2/funding`);
+current API is **v4** (`open-api-v4.coinglass.com`). Cost $40/mo per UNIT_ECONOMICS; free-tier key
+per capability-db. **Live key unread** — sits on prod 198, SSH-read classifier-blocked (by design).
+Handed James the `!` SSH one-liner to surface it: `ssh root@198.54.123.234 'grep -rih coinglass
+/opt/*/.env /root/.env* | head'`. Next: test key against v4, flag whether v2 endpoint needs migrating.
+Full episodic: `sessions/2026-07-23_coinglass-api-confirm.md`. — Prior chapter ↓
+
+## Prior handoff (2026-07-19 · STATUS PULSE → TWO FAILED UNITS DIAGNOSED, BOTH BLOCKED)
 
 James asked "status of system?" then "please fix." Infra green: all sites 200, 162 up 232d,
 disk 28%, build loop shipping (d221/d222). Reality flat: Reach 7 · Engagement 0 · **Transformation 0** · $0.

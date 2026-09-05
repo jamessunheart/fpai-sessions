@@ -143,6 +143,18 @@ def _load_build_alerts():
     return alerts
 
 
+def _load_north_attention_tgbot():
+    """Load the repo-local, read-only North Attention renderer."""
+    module_path = Path(__file__).with_name("north_attention_tgbot.py")
+    spec = _ilu.spec_from_file_location("fpai_north_attention_tgbot", module_path)
+    module = _ilu.module_from_spec(spec) if spec and spec.loader else None
+    if module is None or spec is None or spec.loader is None:
+        raise RuntimeError("North Attention renderer could not be loaded")
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
 def _repo_root() -> Path:
     """Resolve the FPAI_Cockpit repo root from either repo mirror or live bot path."""
     for env_name in ("FPAI_REPO_ROOT", "FPAI_COCKPIT_REPO"):
@@ -746,7 +758,9 @@ def _hands_free_steering_command(text: str) -> str | None:
         return "/builds"
     if re.search(r"\b(pending approvals|approval queue|show pending|curator queue)\b", t):
         return "/pending"
-    if re.search(r"\b(pending decisions|decision queue|what needs my decision|what do i need to decide)\b", t):
+    if re.search(r"\b(what needs my decision|what do i need to decide)\b", t):
+        return "/north"
+    if re.search(r"\b(pending decisions|decision queue)\b", t):
         return "/decisions"
     return None
 
@@ -1484,6 +1498,7 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
             "Conversations are auto-captured + compressed into your brain hourly.\n\n"
             "<b>Commands</b>\n"
             "  /now       — current priority + status from NOW.md (cross-terminal coordination)\n"
+            "  /north     — read-only Attention view: running, one genuine decision, review next\n"
             "  /vision    — unifying vision: 30-day goal + ONE Thing + AI alignment\n"
             "  /goals [james|ai|team] — goals broken down by audience (founder · AI · team)\n"
             "  /projects  — projects ranked most→least important (from NOW.md)\n"
@@ -1659,6 +1674,13 @@ async def _handle_command(text: str, chat_id: int) -> str | None:
         return await _cmd_game()
     if cmd == "now":
         return await _cmd_now()
+    if cmd == "north":
+        try:
+            north = _load_north_attention_tgbot()
+            snapshot = north.load_snapshot(_repo_root())
+            return north.render_snapshot(snapshot, escape=tg._esc)
+        except Exception as e:
+            return f"⚠️ North snapshot unavailable: {tg._esc(str(e)[:180])}"
     if cmd == "goals":
         return await _cmd_goals(rest)
     if cmd == "vision":

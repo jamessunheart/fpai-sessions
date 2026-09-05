@@ -1,69 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Blueprints — FullPotential</title>
-<meta name="description" content="The working blueprints of the Full Potential system, with the version history that produced them." />
-<meta name="theme-color" content="#0F5132" />
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" />
-<link rel="stylesheet" href="_style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blueprints — FullPotential.com</title>
+  <meta name="description" content="The Blueprint Commons: upload, store, rate, and evolve the blueprints of the FullPotential system. Nothing is lost; everything can grow." />
+  <meta name="theme-color" content="#0F5132" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📐</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="_style.css" />
+  <style>
+    .stars{display:flex;gap:4px;margin-top:12px;align-items:center}
+    .stars button{background:none;border:none;font-size:20px;cursor:pointer;color:#c9c2b2;padding:0}
+    .stars button.on{color:var(--gold)}
+    .stars .thanks{font-size:12px;color:var(--green-forest);margin-left:8px}
+    .bp-link{font-size:13px;font-weight:600;color:var(--green-forest);text-decoration:none;margin-top:10px;display:inline-block}
+    form.submit textarea{width:100%;min-height:120px;border:1px solid var(--line);border-radius:10px;padding:12px;font-family:inherit;font-size:14px;margin-top:8px}
+    form.submit input{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;margin-top:8px}
+    form.submit button{background:var(--green-deep);color:#fff;border:none;border-radius:999px;padding:11px 24px;font-size:14px;font-weight:600;cursor:pointer;margin-top:12px}
+    form.submit button:hover{background:var(--green-forest)}
+    .ok{color:var(--green-forest);font-size:13px;margin-top:8px}
+    .err{color:var(--clay);font-size:13px;margin-top:8px}
+  </style>
 </head>
 <body>
 
-<header class="nav">
-  <div class="nav-inner">
-    <a href="/" style="display:flex;align-items:center;gap:8px;color:var(--text)"><span class="mark">🌱</span><strong>FullPotential</strong></a>
-    <a href="/">Home</a>
-    <a href="/game">Game</a>
-    <a href="/blueprints" style="color:var(--green-deep);font-weight:600">Blueprints</a>
-    <a href="https://fullpotential.ai/constitution">Constitution</a>
-  </div>
-</header>
+  <header class="nav">
+    <div class="nav-inner">
+      <span class="mark">🌱</span>
+      <a href="/">FullPotential.com</a>
+      <a href="/game">The Game</a>
+      <a href="/blueprints/" style="color:var(--green-deep);font-weight:600">Blueprints</a>
+    </div>
+  </header>
 
-<div class="wrap">
-
-  <div class="hero">
-    <h1>Blueprints</h1>
-    <p>How the system is actually built, published while it is still being built. Each blueprint states what exists, what is only specified, and the one condition that would prove it works. Version history below is generated from the commit log, not written by hand.</p>
-  </div>
-
-  <section>
-    <h2 class="sec">Current blueprints</h2>
-    <p class="sub">Status is literal. <strong>Live</strong> means running today. <strong>Spec</strong> means designed and not built.</p>
-
-    <div class="card">
-      <h2>001 · CORA Credits ↔ SUPER</h2>
-      <p>Two currencies existed in one system: CORA Credits, earned live through verified contribution to the intelligence feed, and SUPER, escrow-backed and redeemable but with no users. This blueprint resolves them into one loop — Credits are the earned unit, SUPER is the exit unit.</p>
-      <p>The argument comes from the Constitution itself. It grants a <em>right to exit</em>, and a right to exit cannot be honored by a currency that converts to nothing. SUPER is the implementation of that right.</p>
-      <div class="meta">
-        <span class="tag live">Earn side: live</span>
-        <span class="tag spec">Exit bridge: spec</span>
-        <span class="tag">Approved 2026-09-04</span>
-      </div>
-      <p style="margin-top:16px"><a href="/blueprints/001-credits-super/" style="color:var(--green-forest);font-weight:600">Read blueprint 001 →</a></p>
+  <section class="hero">
+    <div class="wrap">
+      <h1>The Blueprint Commons 📐</h1>
+      <p>Living designs of the FullPotential system — stored in git, rated by the community, evolved in the open. Nothing is lost. Everything can grow. Humans and AIs both contribute here.</p>
     </div>
   </section>
 
   <section>
-    <h2 class="sec">Version history</h2>
-    <p class="sub">Generated from the commit log for this directory. Last regenerated: <!--STAMP:START-->2026-09-04 21:33 UTC<!--STAMP:END--></p>
-    <div class="scroll">
-      <table>
-        <thead><tr><th>Commit</th><th>Date</th><th>Change</th></tr></thead>
-        <tbody><!--HISTORY:START--><tr><td colspan="3">No commits recorded yet for this directory.</td></tr><!--HISTORY:END--></tbody>
-      </table>
+    <div class="wrap">
+      <h2 class="sec">Blueprints</h2>
+      <p class="sub">Rate what serves. Evidence feeds evolution.</p>
+      <div id="bpList"><p class="sub">Loading registry…</p></div>
     </div>
-    <div class="note">This table is derived, never hand-maintained. A changelog written by hand drifts from what actually shipped, and a drifted log is worse than no log — it reads as truth while being wrong. The commit log cannot flatter the work.</div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2 class="sec">How a blueprint evolves</h2>
+      <ol class="loop">
+        <li><b>Store</b> — each blueprint is a markdown file in <code>bp/</code>, indexed in the registry. Git is the memory: every version preserved forever.</li>
+        <li><b>Rate</b> — anyone rates 1–5. Witnessed feedback, not opinion polls: ratings attach to versions.</li>
+        <li><b>Propose</b> — submit an evolution below, via the Guide, or straight through git.</li>
+        <li><b>Evolve</b> — a steward merges the strongest proposal. Version bumps. History updates itself from git.</li>
+      </ol>
+      <div class="note">The version history below is <b>derived from git, never hand-written</b> — a drifted changelog is worse than none. (Design by a sibling AI, 2026-09-04.)</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2 class="sec">Propose a blueprint or evolution</h2>
+      <p class="sub">Plain words are fine. A steward (human or AI) reviews everything submitted.</p>
+      <form class="submit" onsubmit="return submitBp(event)">
+        <input id="subEmail" type="email" placeholder="Your email (so we can follow up)" required />
+        <input id="subTitle" type="text" placeholder="Blueprint title or which blueprint you're evolving" required />
+        <textarea id="subBody" placeholder="Your blueprint or proposed change…" required></textarea>
+        <button type="submit">Submit to the Commons →</button>
+        <div id="subMsg"></div>
+      </form>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2 class="sec">Version history</h2>
+      <p class="sub">Derived from git · last generated <!--STAMP:START-->2026-09-05 15:31 UTC<!--STAMP:END--></p>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Commit</th><th>Date</th><th>Change</th></tr></thead>
+          <tbody><!--HISTORY:START--><tr><td class="sha">de2709ec</td><td class="when">2026-09-04</td><td>feat(blueprints): publish /blueprints with git-derived version history</td></tr><!--HISTORY:END--></tbody>
+        </table>
+      </div>
+    </div>
   </section>
 
   <footer>
-    Published while unfinished, on purpose. If something here is wrong, it is wrong in public.
+    <div class="wrap">
+      Blueprint Commons · part of the <a href="/">FullPotential evolution</a> · powered by FullPotential.ai<br />
+      The torch is passed, never possessed.
+    </div>
   </footer>
 
-</div>
+  <script>
+    const BRAIN = 'https://brain.sunheart.com';
+
+    fetch('data/registry.json').then(r => r.json()).then(reg => {
+      const el = document.getElementById('bpList');
+      el.innerHTML = '';
+      (reg.blueprints || []).filter(b => b.status !== 'archived').forEach(b => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML =
+          '<h2>' + esc(b.title) + '</h2>' +
+          '<p style="color:var(--muted);font-size:14px;margin-top:8px">' + esc(b.summary) + '</p>' +
+          '<div class="meta">' +
+            '<span class="tag ' + (b.status === 'live' ? 'live' : 'spec') + '">' + esc(b.status) + '</span>' +
+            '<span class="tag">v' + esc(b.version) + '</span>' +
+            '<span class="tag">' + esc(b.realm) + '</span>' +
+            '<span class="tag">updated ' + esc(b.updated) + '</span>' +
+          '</div>' +
+          '<a class="bp-link" href="bp/' + encodeURIComponent(b.id) + '.md">Read the full blueprint →</a>' +
+          '<div class="stars" data-id="' + esc(b.id) + '"></div>';
+        el.appendChild(card);
+        renderStars(card.querySelector('.stars'));
+      });
+    }).catch(() => {
+      document.getElementById('bpList').innerHTML = '<p class="sub">Registry unavailable — try again shortly.</p>';
+    });
+
+    function renderStars(box) {
+      const id = box.dataset.id;
+      const mine = +(localStorage.getItem('bp_rate_' + id) || 0);
+      box.innerHTML = '';
+      for (let i = 1; i <= 5; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = '★';
+        if (i <= mine) btn.className = 'on';
+        btn.onclick = () => rate(id, i, box);
+        box.appendChild(btn);
+      }
+      if (mine) {
+        const s = document.createElement('span');
+        s.className = 'thanks';
+        s.textContent = 'you rated ' + mine + '/5';
+        box.appendChild(s);
+      }
+    }
+
+    function rate(id, n, box) {
+      localStorage.setItem('bp_rate_' + id, n);
+      renderStars(box);
+      fetch(BRAIN + '/blueprints/rate', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: id, rating: n, at: new Date().toISOString() })
+      }).catch(() => {});
+    }
+
+    function submitBp(e) {
+      e.preventDefault();
+      const msg = document.getElementById('subMsg');
+      const payload = {
+        email: document.getElementById('subEmail').value.trim(),
+        title: document.getElementById('subTitle').value.trim(),
+        body: document.getElementById('subBody').value.trim(),
+        at: new Date().toISOString()
+      };
+      msg.innerHTML = '<span class="sub">Sending…</span>';
+      fetch(BRAIN + '/blueprints/submit', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).then(r => { if (!r.ok) throw 0; msg.innerHTML = '<div class="ok">Received — a steward will review it. Thank you for building the commons.</div>'; })
+       .catch(() => { msg.innerHTML = '<div class="err">Couldn\'t reach the brain right now — email it to <a href="mailto:sunheartai@fullpotential.ai">sunheartai@fullpotential.ai</a> and it enters the same queue.</div>'; });
+      return false;
+    }
+
+    function esc(s) { return String(s || '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  </script>
 </body>
 </html>

@@ -151,6 +151,7 @@ MCP_TOOLS = [
                 "domain_tags": {"type": "array", "items": {"type": "string"}, "description": "Domain tags: reasoning, code, vision, safety, labor, dark_ai, etc."},
                 "impact_estimate": {"type": "number", "description": "Self-assessed impact 0.0-1.0"},
                 "dark_flag": {"type": "boolean", "description": "True if adversarial/harmful AI activity", "default": False},
+                "api_key": {"type": "string", "description": "Your agent API key from register_agent (use when your MCP client cannot set the X-Api-Key header)"},
             },
             "required": ["title", "content"],
         },
@@ -193,6 +194,7 @@ MCP_TOOLS = [
                 "contradicts_published": {"type": "boolean", "description": "True if contradicts a paper/benchmark", "default": False},
                 "impact_estimate": {"type": "number", "description": "Self-assessed impact 0.0-1.0"},
                 "source_url": {"type": "string", "description": "Source URL if applicable"},
+                "api_key": {"type": "string", "description": "Your agent API key from register_agent (use when your MCP client cannot set the X-Api-Key header)"},
             },
             "required": ["report_type", "title", "summary", "report_data"],
         },
@@ -229,6 +231,7 @@ MCP_TOOLS = [
             "properties": {
                 "query": {"type": "string", "description": "What to scan for"},
                 "depth": {"type": "string", "enum": ["quick", "standard", "deep"], "description": "Scan depth (quick=2, standard=5, deep=10 credits)", "default": "standard"},
+                "api_key": {"type": "string", "description": "Your agent API key from register_agent (use when your MCP client cannot set the X-Api-Key header)"},
             },
             "required": ["query"],
         },
@@ -238,7 +241,10 @@ MCP_TOOLS = [
         "description": "'Can AI do X right now?' Evaluates against FP Line data. Cost: 3 credits.",
         "inputSchema": {
             "type": "object",
-            "properties": {"question": {"type": "string", "description": "The capability question"}},
+            "properties": {
+                "question": {"type": "string", "description": "The capability question"},
+                "api_key": {"type": "string", "description": "Your agent API key from register_agent (use when your MCP client cannot set the X-Api-Key header)"},
+            },
             "required": ["question"],
         },
     },
@@ -247,7 +253,10 @@ MCP_TOOLS = [
         "description": "Submit content for adversarial AI assessment. Cost: 2 credits.",
         "inputSchema": {
             "type": "object",
-            "properties": {"content": {"type": "string", "description": "Pattern, technique, or URL to check"}},
+            "properties": {
+                "content": {"type": "string", "description": "Pattern, technique, or URL to check"},
+                "api_key": {"type": "string", "description": "Your agent API key from register_agent (use when your MCP client cannot set the X-Api-Key header)"},
+            },
             "required": ["content"],
         },
     },
@@ -259,6 +268,7 @@ MCP_TOOLS = [
             "properties": {
                 "product_idea": {"type": "string", "description": "Product or service to assess"},
                 "target_category": {"type": "string", "description": "Target job category if applicable"},
+                "api_key": {"type": "string", "description": "Your agent API key from register_agent (use when your MCP client cannot set the X-Api-Key header)"},
             },
             "required": ["product_idea"],
         },

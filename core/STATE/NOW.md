@@ -1,7 +1,7 @@
 # NOW — Living SSOT
 
-**Last Updated:** 2026-08-29 (Sunstream / Music Magic chosen as the active real-value vehicle)
-**Updated By:** Codex, recording James's founder correction
+**Last Updated:** 2026-09-02 (Episode 001 V5 learning closeout)
+**Updated By:** Codex, preserving production evidence and corrected workflow
 **System Status (honest, 2026-07-10):** 🟡 INNER-LOOP HEALTHY · OUTER-ARC BROKEN. Brain/Memory/Coordination strong; fleet + bots + brain live; real cash burn ≈$0 (subscription). BUT: the loop doesn't close — build engine SPINS (200 builds, **48 dead/inert**, 24h autonomous output = 1 churn spec d214), **$0 captured / 0 real leads**, Attention points inward (conversion metric measures git commits, not the world). Feeds were dead & silently green until the 2026-07-09 observability sweep fixed them. **The one fix (per the FPOS map): install the missing outer arc — Reality→Attention→…→Proof→Attention — starting with ONE real external signal.** Not more Build. See `identity/sessions/2026-07-10_blind-and-green-observability-sweep.md`.
 
 > **⚖️ Load order (law):** [`CONSTITUTION.md`](CONSTITUTION.md) → [`FOUNDATION.md`](FOUNDATION.md) → this file → [`AI_GOALS.md`](AI_GOALS.md). Reasoning happens inside the laws.
@@ -19,6 +19,9 @@
 **Discovery remains the operating method.** The chosen field of Discovery is now music: complete experiences and films, put them in front of James and authorized users, capture observable value, and let that evidence determine the next production or business change.
 **Supersession:** the earlier generic transformation-conversation milestone is no longer a prerequisite for current value work. It is absorbed into the concrete Sunstream proof loop below.
 Sunstream proof loop: real music experience or finished film → observable value for James/user → captured story → reflection → smallest evidence-earned change.
+
+### NORTH CURRENT GOAL — NIGHTLY HUMANITY TONIGHT PRIVATE REVIEW (James directive 2026-08-31)
+North's primary production objective remains dated *Humanity Tonight* episodes stewarded to tested private review. Episode 001 V5 is closed as a preserved learning artifact and must not receive more generation or assembly. The next episode begins from current news and follows the corrected sequence: verified sources, story spine, rights-safe raw images, locked script/audio, line-to-image storyboard, timed still animatic, cold-view retell, bounded production capsule, animation of approved winners only, then technical and creative QA. Material script or timing changes invalidate inherited picture approval. Capture APPROVE, REVISE, HOLD, or RELEASE only from James's exact decision. External uploads, licensing, paid generation, provider retries, likeness use, and publication remain exact-scope confirmations.
 
 **The active top three:**
 1. **Sunstream music business:** James dance-tests `sunheart-ecstatic-journey-performance-v3`; if it creates real value, capture the first Sunstream value story and prepare one authorized-listener proof.

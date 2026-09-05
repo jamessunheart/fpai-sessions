@@ -163,8 +163,8 @@ def centered(text, y, font, fill):
     draw.text(((CARD_W - w) // 2, y), text, font=font, fill=fill)
 
 centered("Scan to join", qr_y + qr_size + 40, load_font(58, italic=True), INK)
-centered("WORLD PEACE WEEKEND", qr_y + qr_size + 130, load_font(46, bold=True), INK)
-centered("May 2 + 3  ·  Zen Village", qr_y + qr_size + 200, load_font(36), TEAL)
+centered("OUR BRIGHTEST FUTURE", qr_y + qr_size + 130, load_font(46, bold=True), INK)
+centered("Sunday July 19  ·  Zen Village", qr_y + qr_size + 200, load_font(36), TEAL)
 
 # Footer URL
 centered("zenvillage.live/peace", CARD_H - 90, load_font(34, italic=True), LILAC)

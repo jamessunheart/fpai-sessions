@@ -178,6 +178,13 @@ case "$CATEGORY" in
   *)              EMOJI="•" ;;
 esac
 
+# Reflective observations remain available in Telegram but should not compete
+# with actionable alerts for James's attention.
+TG_DISABLE_NOTIFICATION=false
+case "$CATEGORY" in
+  narrator|meta-narrator) TG_DISABLE_NOTIFICATION=true ;;
+esac
+
 # ===== Quiet hours check (CR time) =======================================
 CR_HOUR=$(TZ="$TZ_NAME" date +%H | sed 's/^0//')
 in_quiet_hours=0
@@ -262,6 +269,7 @@ RESP=$(curl -sf -X POST "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
   --max-time 15 \
   -d "chat_id=${TG_CHAT}" \
   --data-urlencode "text=${MSG}" \
+  -d "disable_notification=${TG_DISABLE_NOTIFICATION}" \
   -d "disable_web_page_preview=true" 2>>"$LOG_FILE") || {
   log "ERROR: TG send failed · category=$CATEGORY · resp=$(echo "$RESP" | head -c 200)"
   exit 3

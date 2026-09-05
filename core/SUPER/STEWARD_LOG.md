@@ -98,3 +98,36 @@ Conditions:
 Loop: 0 / 11 (Intent, NBM, and Build have evidence; Provider conversation has advanced to M2 but no card checkbox is marked — Wallet/Provider/Meal/Beneficiary/Evidence/Surplus/Pass It On/Reflection have no evidence)
 Open question for the director: none new — webhook on 198 is live and set to auto-capture her Q1–Q3 verbatim when she replies; nothing for the director to decide until then.
 NBM: Wait for her reply to M2; when it lands, record her Q2 verbatim, check it against FAVOR-NOT-EXCHANGE, then name beneficiaries/witness/circulator.
+
+[SUPER-STEWARD · BUILD-001 · 2026-09-03]
+STATUS: HOLD
+Conditions:
+  1 Provider:   ✗ — no provider named
+  2 Q path:     ✗ — missing: beneficiaries witness
+  3 Place/test: ✓ — Rivas, Pérez Zeledón — Can SUPER carry the loop on its own weight?
+  4 Max loss:   ✓ — 100 SUPER / 10 h, stop: James Sunheart
+Loop: 0 / 11
+Open question for the director: none
+NBM: One conversation with one candidate provider; record their Q2 answer verbatim
+
+[SUPER-STEWARD · BUILD-001 · 2026-09-03]
+STATUS: HOLD
+Conditions:
+  1 Provider:   ✗ — no provider named
+  2 Q path:     ✗ — missing: beneficiaries witness
+  3 Place/test: ✓ — Rivas, Pérez Zeledón — Can SUPER carry the loop on its own weight?
+  4 Max loss:   ✓ — 100 SUPER / 10 h, stop: James Sunheart
+Loop: 0 / 11
+Open question for the director: none
+NBM: One conversation with one candidate provider; record their Q2 answer verbatim
+
+[SUPER-STEWARD · BUILD-001 · 2026-09-03]
+STATUS: HOLD
+Conditions:
+  1 Provider:   ✗ — no provider named
+  2 Q path:     ✗ — missing: beneficiaries witness
+  3 Place/test: ✓ — Rivas, Pérez Zeledón — Can SUPER carry the loop on its own weight?
+  4 Max loss:   ✓ — 100 SUPER / 10 h, stop: James Sunheart
+Loop: 0 / 11
+Open question for the director: none
+NBM: One conversation with one candidate provider; record their Q2 answer verbatim

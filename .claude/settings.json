@@ -90,6 +90,12 @@
           {
             "type": "command",
             "command": "$CLAUDE_PROJECT_DIR/tools/continuity/append_session_hook.sh"
+          },
+          {
+            "type": "command",
+            "command": "sh /Users/jamessunheart/MusicMagic/system/humanifier_process/tools/mm_stop_notify.sh",
+            "async": true,
+            "timeout": 45
           }
         ]
       }

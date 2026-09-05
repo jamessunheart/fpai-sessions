@@ -22,11 +22,15 @@ if [[ "${1:-}" == "--with-nginx" ]]; then WITH_NGINX="true"; fi
 cd "$(dirname "$0")"
 
 echo "→ rsync site files"
-rsync -avz --delete -e "ssh $SSH_OPTS" peace/ "root@${SERVER_IP}:${DEPLOY_PATH}/peace/"
-rsync -avz --delete -e "ssh $SSH_OPTS" manage/ "root@${SERVER_IP}:${DEPLOY_PATH}/manage/"
-rsync -avz --delete -e "ssh $SSH_OPTS" buy/ "root@${SERVER_IP}:${DEPLOY_PATH}/buy/"
+# NOTE: peace/ has server-only subdirs (thanks/, menu/) that are NOT in this
+# repo. Do NOT use --delete on peace/ or you will nuke them. (Learned the hard
+# way 2026-07-10.) Only sync files that exist locally; skip absent dirs so a
+# stale checkout doesn't abort the whole deploy under `set -e`.
+rsync -avz -e "ssh $SSH_OPTS" peace/ "root@${SERVER_IP}:${DEPLOY_PATH}/peace/"
+[[ -d manage ]] && rsync -avz -e "ssh $SSH_OPTS" manage/ "root@${SERVER_IP}:${DEPLOY_PATH}/manage/" || echo "  (skip manage/ — not in this checkout)"
+[[ -d buy ]]    && rsync -avz -e "ssh $SSH_OPTS" buy/    "root@${SERVER_IP}:${DEPLOY_PATH}/buy/"    || echo "  (skip buy/ — not in this checkout)"
 # 5 Day Reset Retreat landing + invite-only affiliate signup (live 2026-05-17)
-rsync -avz --delete -e "ssh $SSH_OPTS" reset/ "root@${SERVER_IP}:${DEPLOY_PATH}/reset/"
+[[ -d reset ]]  && rsync -avz -e "ssh $SSH_OPTS" reset/  "root@${SERVER_IP}:${DEPLOY_PATH}/reset/"  || echo "  (skip reset/ — not in this checkout)"
 
 if [[ "$WITH_NGINX" == "true" ]]; then
   echo "⚠  --with-nginx: pushing nginx vhost (will overwrite SSL config)"
@@ -46,15 +50,16 @@ ssh $SSH_OPTS "root@${SERVER_IP}" '
   systemctl reload nginx
 '
 
-echo "→ smoke test on live HTTPS"
-curl -sf -o /dev/null -w "  https://zenvillage.live/peace/ → HTTP %{http_code}\n" https://zenvillage.live/peace/
-curl -sf -o /dev/null -w "  https://zenvillage.live/peace/reign-dance-movement.png → HTTP %{http_code}\n" https://zenvillage.live/peace/reign-dance-movement.png
-curl -sf -o /dev/null -w "  https://zenvillage.live/peace/thanks/ → HTTP %{http_code}\n" https://zenvillage.live/peace/thanks/
-curl -sf -o /dev/null -w "  https://zenvillage.live/peace/menu/ → HTTP %{http_code}\n" https://zenvillage.live/peace/menu/
-curl -sf -o /dev/null -w "  https://zenvillage.live/manage/ → HTTP %{http_code}\n" https://zenvillage.live/manage/
-curl -sf -o /dev/null -w "  https://zenvillage.live/buy/ → HTTP %{http_code}\n" https://zenvillage.live/buy/
-curl -sf -o /dev/null -w "  https://zenvillage.live/reset/ → HTTP %{http_code}\n" https://zenvillage.live/reset/
-curl -sf -o /dev/null -w "  https://zenvillage.live/reset/affiliate-signup → HTTP %{http_code}\n" https://zenvillage.live/reset/affiliate-signup
+echo "→ smoke test on live HTTPS (informational — non-fatal)"
+smoke() { curl -s -o /dev/null -w "  $1 → HTTP %{http_code}\n" "$1" || true; }
+smoke https://zenvillage.live/peace/
+smoke https://zenvillage.live/peace/reign-dance-movement.png
+smoke https://zenvillage.live/peace/thanks/
+smoke https://zenvillage.live/peace/menu/
+smoke https://zenvillage.live/manage/
+smoke https://zenvillage.live/buy/
+smoke https://zenvillage.live/reset/
+smoke https://zenvillage.live/reset/affiliate-signup
 
 echo
 echo "✓ Public:  https://zenvillage.live/peace"

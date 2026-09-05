@@ -34,7 +34,7 @@ class TelegramActBridgeTests(unittest.IsolatedAsyncioTestCase):
     def test_hands_free_steering_maps_safe_spoken_phrases_only(self) -> None:
         self.assertEqual(tgbot._hands_free_steering_command("what's building right now"), "/builds")
         self.assertEqual(tgbot._hands_free_steering_command("show pending approvals"), "/pending")
-        self.assertEqual(tgbot._hands_free_steering_command("what needs my decision"), "/decisions")
+        self.assertEqual(tgbot._hands_free_steering_command("what needs my decision"), "/north")
         self.assertEqual(tgbot._hands_free_steering_command("what can you do"), "/whatcanyoudo")
         self.assertEqual(tgbot._hands_free_steering_command("voice off"), "/voice off")
         self.assertIsNone(tgbot._hands_free_steering_command("build a hands-free steering bridge"))

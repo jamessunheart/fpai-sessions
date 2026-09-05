@@ -2160,7 +2160,7 @@ async def _mcp_tool_executor(tool_name: str, arguments: dict, request: Request):
         }
 
     elif tool_name == "contribute_intelligence":
-        api_key = request.headers.get("x-api-key", "")
+        api_key = arguments.get("api_key") or request.headers.get("x-api-key", "")
         agent = await _resolve_auth(api_key)
         if not agent:
             return {"error": "Authentication required. Register first with register_agent, then include your API key in X-Api-Key header."}
@@ -2183,14 +2183,14 @@ async def _mcp_tool_executor(tool_name: str, arguments: dict, request: Request):
             source_url=arguments.get("source_url"),
             domains=domains,
             alignment=Alignment.DARK if arguments.get("dark_flag") else Alignment.LIGHT,
-            contribution_type=ContributionType.FIELD_REPORT,
+            contribution_type=ContributionType.GENERAL,
             quality_score=min(1.0, max(0.0, arguments.get("impact_estimate", 0.5))),
             raw_data={"via": "mcp", "domain_tags": arguments.get("domain_tags", [])},
         )
         return await engine.accept_contribution(agent["agent_id"], contribution)
 
     elif tool_name == "submit_field_report":
-        api_key = request.headers.get("x-api-key", "")
+        api_key = arguments.get("api_key") or request.headers.get("x-api-key", "")
         agent = await _resolve_auth(api_key)
         if not agent:
             return {"error": "Authentication required. Register first with register_agent."}
@@ -2242,16 +2242,17 @@ async def _mcp_tool_executor(tool_name: str, arguments: dict, request: Request):
 
     elif tool_name == "get_replication_requests":
         from .models.database import ReplicationRequestRow
+        from sqlalchemy import select as sa_select
         async with db_session() as session:
-            q = select(ReplicationRequestRow).where(
+            q = sa_select(ReplicationRequestRow).where(
                 ReplicationRequestRow.status == "seeking"
             ).order_by(ReplicationRequestRow.created_at.desc()).limit(
                 min(arguments.get("limit", 10), 50)
             )
+            rows = (await session.execute(q)).scalars().all()
             domain = arguments.get("domain")
             if domain:
-                q = q.where(ReplicationRequestRow.domains_targeted.contains(domain))
-            rows = (await session.execute(q)).scalars().all()
+                rows = [r for r in rows if domain in (r.domains_targeted or [])]
         return {
             "replication_requests": [
                 {
@@ -2267,7 +2268,7 @@ async def _mcp_tool_executor(tool_name: str, arguments: dict, request: Request):
         }
 
     elif tool_name == "frontier_scan":
-        api_key = request.headers.get("x-api-key", "")
+        api_key = arguments.get("api_key") or request.headers.get("x-api-key", "")
         agent = await _resolve_auth(api_key)
         if not agent:
             return {"error": "Authentication required"}
@@ -2283,7 +2284,7 @@ async def _mcp_tool_executor(tool_name: str, arguments: dict, request: Request):
         return {"status": "completed", "query": arguments.get("query"), "credits_spent": cost, "results": entries[:20], "result_count": len(entries)}
 
     elif tool_name == "capability_check":
-        api_key = request.headers.get("x-api-key", "")
+        api_key = arguments.get("api_key") or request.headers.get("x-api-key", "")
         agent = await _resolve_auth(api_key)
         if not agent:
             return {"error": "Authentication required"}
@@ -2299,7 +2300,7 @@ async def _mcp_tool_executor(tool_name: str, arguments: dict, request: Request):
         return {"status": "completed", "question": question, "credits_spent": 3, "assessment": {"fp_line_score": fp.overall_score, "best_domain": best, "domain_score": ds.get(best, 0), "evidence_count": len(relevant), "assessment": "high" if ds.get(best, 0) > 75 else "medium" if ds.get(best, 0) > 50 else "emerging"}, "evidence": relevant[:10]}
 
     elif tool_name == "dark_ai_check":
-        api_key = request.headers.get("x-api-key", "")
+        api_key = arguments.get("api_key") or request.headers.get("x-api-key", "")
         agent = await _resolve_auth(api_key)
         if not agent:
             return {"error": "Authentication required"}
@@ -2313,7 +2314,7 @@ async def _mcp_tool_executor(tool_name: str, arguments: dict, request: Request):
         return {"status": "completed", "credits_spent": 2, "threat_level": "high" if len(matches) > 5 else "medium" if matches else "low", "matching_threats": len(matches), "dark_alerts_24h": fp.dark_ai_alerts_24h, "matches": matches[:10]}
 
     elif tool_name == "build_assessment":
-        api_key = request.headers.get("x-api-key", "")
+        api_key = arguments.get("api_key") or request.headers.get("x-api-key", "")
         agent = await _resolve_auth(api_key)
         if not agent:
             return {"error": "Authentication required"}

@@ -83,6 +83,109 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Questions for Ember/James: …
 ```
 
+### 2026-09-05 · North Voice Agent private acceptance harness · branch `codex/sunstream-active-focus`
+
+- **Status:** verified locally / Voice Agent restored as NOW; no call, callback, message, provider request, credential access, spend, deployment, restart, or live-service change
+- **Files changed:** `work/attention_bridge/north_voice_acceptance.py`; `work/attention_bridge/test_north_voice_acceptance.py`; `work/attention_bridge/test_north_attention_snapshot.py`; `work/attention_bridge/NORTH_DEVELOPMENT_QUEUE.json`; `core/BUILD/results/NORTH_VOICE_AGENT_ACCEPTANCE_HARNESS_V1.implementation-receipt.md`; this handoff
+- **Summary:** Added an effect-free canonical acceptance harness proving exact James identity, visible/correctable/cancellable transcript before interpretation, explicit confirmation, Green/Yellow/Red broker classification without execution, interruption/goodbye/drop states, atomic idempotent recovery, degraded capture-only behavior, and honest latency/cost evidence states. Reconciled the detached worktree, prior locally tested call-drop correction, and unchanged healthy live relay without copying or deploying code.
+- **Tests:** focused `8 passed` / `2 subtests`; voice + broker + queue + attention regressions `62 passed` / `40 subtests`; capability broker returned autonomous for scoped edit and test actions
+- **Risks:** This is contract proof, not measured live-call performance. The live relay still lacks the locally tested `call_dropped_unconfirmed` correction. Production deployment and restart remain confirmation-required.
+- **Rollback:** Remove the harness/test, receipt, and this entry; restore only the appended queue activation/evidence/history fields. No external state requires reversal.
+- **Intent solved:** Voice Agent is again the active North development direction and now has a tested fail-closed boundary before interpretation or authority.
+- **Downstream intent unlocked:** After exact approval, the smallest live phase is only the rollback-preserved call-drop correction plus health/rollback verification for `next-now-voice.service`.
+- **Questions for Ember/James:** None for this completed private phase. Do not infer deployment approval from Voice Agent priority.
+
+### 2026-09-04 · Plant Anyway director continuation → one Reserved-Class provider gate · branch `codex/sunstream-active-focus`
+
+- **Status:** FPAI/North/Humanity Tonight integration current; Plant production is not finished and is paused at one exact provider/privacy gate. No master has been promoted.
+- **Files changed:** `work/attention_bridge/NORTH_PROJECT_REGISTRY.json`; `work/attention_bridge/NORTH_DEVELOPMENT_QUEUE.json`; `work/attention_bridge/test_north_attention_snapshot.py`; `productions/Humanity_Tonight/integrations/HT_2026_09_03_PLANT_ANYWAY_LOOP_RECEIPT.json`; its focused test; `core/BUILD/REGISTRY.json`; `core/BUILD/results/SPEC_nbm-plant-finance-north-proof-loop-v1.ownership-reconciliation.md`; this handoff.
+- **Summary:** Candidate A is now the exact source lock chosen by the Music Magic Director under James's delegated `Director proceed to finished` instruction; the record does not claim James personally listened or chose. The 45.8-second v3 landscape and vertical files passed encoding checks but independent QA returned `REVISE`: 40 held intervals total 37.76 seconds / 82.45% of runtime, so they remain illustrated animatics rather than finished motion masters. The local sprite route was exhausted without a scalable pass. North now reads the canonical production state at `/Users/jamessunheart/MusicMagic/productions/plant_anyway_v1/GATES_AND_STATE.json`; the obsolete A/B ask is resolved and only the bounded private OpenArt permission gate is current. Finance stays read-only and unchanged: unknown values remain `UNKNOWN`, and no finance item is promoted to James.
+- **Tests:** Plant integration `10 passed` / `30 subtests`; North attention/queue/broker `54 passed` / `38 subtests`; Telegram North/constitution `9 passed`; registry validation `24 projects / 0 errors`. Live North projection: `lens_only`, `actuation=false`, two running items, exactly one decision, two not-ready reviews, zero inert events, zero diagnostics. The unknown-project broker path remains fail-closed and passing.
+- **Risks:** The current visual proof is not a finished private master. Continuing with OpenArt would transmit private fictional stills to a named external provider and consume existing account credits; that exact action requires James's permission. Seed Share 30 remains a pathway only with zero funds moved. Exact-master acceptance, payment/donation, publication/public upload, outreach, likeness use, purchase/top-up, deployment, commit, push, and merge remain locked.
+- **Rollback:** Restore the prior Plant registry root/source and queue stage/evidence/history; restore the prior FPAI receipt/test and build-registry note; remove this entry. No external state requires reversal.
+- **Intent solved:** FPAI, North, and Humanity Tonight now agree on the actual Plant state without calling an animatic a master or resurfacing a resolved source choice.
+- **Downstream intent unlocked:** If James approves the single bounded provider gate, the Plant director can run only that private motion proof, record actual jobs/credit use, repair the edit, and repeat independent motion/cold-view/F0-F7/vertical QA before any exact-master decision.
+- **Questions for Ember/James:** May I upload Plant Anyway's private fictional stills to the connected OpenArt workspace for up to ten 2-second start/end-frame Wan 2.7 motion jobs, capped at 500 existing credits, with no purchase, top-up, publication, or public upload?
+
+### 2026-09-03 · SPEC_super-agent-cycle-planner-v1 · branch `codex/sunstream-active-focus`
+
+- **Status:** done in working tree / awaiting review; no commit, push, merge,
+  heartbeat wiring, task queue, worker, Drive write, notification, or external
+  effect
+- **Files changed:** `core/BUILD/specs/SPEC_super-agent-cycle-planner-v1.md`;
+  `docs/codex/AGENT_BRIDGE.md`; `docs/codex/HANDOFF.md`;
+  `tools/agent_bridge/__init__.py`; `tools/agent_bridge/cli.py`;
+  `tools/agent_bridge/super_cycle.py`;
+  `tools/agent_bridge/test_super_cycle.py`;
+  `tools/agent_bridge/examples/super_cycle.example.json`
+- **Summary:** Added the local `super-cycle-plan` command. It reconciles
+  machine runtime/artifact truth, Drive direction truth, and optional public
+  claims by fixed namespaces and freshness bounds, exposes drift/gaps/sync
+  obligations, then reuses the fail-closed NBM engine to return one authorized
+  move and at most one exact Red doorway. The command does not instantiate the
+  bridge or execute, queue, persist, notify, sync, or widen authority.
+- **Tests:** 67 focused Agent Bridge/NBM/planner tests pass; module compilation
+  passes; checked-in sample command returns machine-over-Drive runtime drift,
+  one Green NBM, and `effects_executed: []`.
+- **Risks:** live machine/Drive/public snapshot collection and durable
+  reconciliation receipts are not wired. Connecting this command to the
+  heartbeat before those inputs are specified would create an unreviewed
+  activation boundary.
+- **Rollback:** remove the new planner module, test, example, and spec; remove
+  the CLI/export/docs additions. Existing bridge and NBM behavior are unchanged.
+- **Questions for Ember/James:** none. NBM is a separate spec for trusted live
+  snapshot adapters plus receipt persistence; heartbeat cadence and all Red
+  gates remain unchanged.
+
+### 2026-09-03 · SPEC_codex-agent-bridge-nbm-v1 · branch `codex/sunstream-active-focus`
+
+- **Status:** done in working tree / awaiting review; no commit, push, merge, live trigger, worker launch, install, activation, or deploy
+- **Files changed:** `core/BUILD/REGISTRY.json`; `core/BUILD/specs/SPEC_codex-agent-bridge-nbm-v1.md`; `docs/codex/AGENT_BRIDGE.md`; `docs/codex/HANDOFF.md`; `tools/agent_bridge/__init__.py`; `tools/agent_bridge/bridge.py`; `tools/agent_bridge/cli.py`; `tools/agent_bridge/nbm.py`; `tools/agent_bridge/test_nbm.py`; `tools/agent_bridge/test_nbm_cli.py`; `tools/agent_bridge/examples/nbm_input.example.json`
+- **Summary:** Added NBM as a local Codex control-plane pass for material result, failure, approval, blocker, and trusted owner-idle events. It refreshes supplied canonical state and artifact truth, requires evidence and explicit restrictive effect inventories, rejects conflicting duplicates, active owners, stale scope, missing evidence, process gates, and uncertain or contradictory receipts, then ranks authorized moves deterministically by critical path, urgency, dependency unlock, confidence, lower cost, and reversibility. Green queues in `execute`; Yellow queues privately in `prepare`; Red never queues and records at most one exact decision while proven-independent work may continue. Every evaluation is private, atomic, canonically bound, and idempotent, including explicit `no_useful_move` termination.
+- **Invocation:** `python3 -m tools.agent_bridge --project-root /Users/jamessunheart/FullPotentialOS --state-dir /Users/jamessunheart/FullPotentialOS/.fpai/agent-bridge nbm-advance --input /Users/jamessunheart/FullPotentialOS/tools/agent_bridge/examples/nbm_input.example.json`
+- **Tests:** `python3 -m unittest tools.agent_bridge.test_nbm_cli tools.agent_bridge.test_nbm tools.agent_bridge.test_bridge tools.agent_bridge.test_schema_policy` (57 OK); `python3 -m unittest tools.hermes.test_gateway tools.probe.test_probe` (31 OK); `python3 -m unittest app.test_payment_activation` from `SERVICES/zend-payments` (3 OK); checked-in example and registry JSON validation; changed-Python compile check; scoped diff hygiene; independent safety audit with no remaining findings. Fake and missing executable sentinels proved that NBM never starts a runner or worker.
+- **Risks:** The manual CLI consumes a caller-supplied fresh canonical snapshot; no daemon or live source wiring exists, so the trusted caller must accurately report owner/gate/receipt truth and every known external effect. Intent detection is additive and conservative, but not an OS-level effect sandbox. NBM persists the decision record before queue submission; a submission error fails closed and requires operator review. Red presentation and queued-task execution remain deliberately separate.
+- **Rollback:** Revert these scoped NBM source/docs changes and, if desired, remove local NBM records under `.fpai/agent-bridge/next-best-moves/`. No worker, service, provider, destination, or production state was activated.
+- **Intent solved:** FPAI now has a tested, usable local Next Best Move control-plane command that advances authorized work without duplicating ownership, trusting stale results, widening authority, or silently executing consequential actions.
+- **Downstream intent unlocked:** a separately approved local event source can later construct fresh NBM input for the five material transitions; supervised execution and Red-decision presentation remain independent explicit integrations.
+- **Questions for Ember/James:** none for this local slice. Do not wire automatic triggers or execute queued tasks until those activation decisions are separately approved.
+
+### 2026-09-03 · NBM Green Finance/North ownership reconciliation · canonical checkout
+
+- **Status:** verified locally / awaiting review; no Plant A/B selection and no external effect
+- **Files changed:** `work/attention_bridge/NORTH_DEVELOPMENT_QUEUE.json`; `work/attention_bridge/NORTH_PROJECT_REGISTRY.json`; `work/attention_bridge/test_north_capability_broker.py`; `core/BUILD/results/SPEC_nbm-plant-finance-north-proof-loop-v1.ownership-reconciliation.md`; this handoff
+- **Summary:** Rebound the active NBM item and Finance/FPAI project routes from the stale coordinator task to current FPAI-owned task `01a02551-94d0-7773-a0e8-d274279b48a0` in canonical checkout `/Users/jamessunheart/FullPotentialOS`. Clarified the active item as `verified_awaiting_review`. Preserved Plant's dedicated owner and did not select A/B. Completion notification remains false; callback remains not requested with zero attempts.
+- **Tests:** Finance Hub 15 passed; North attention/queue/broker 52 passed plus 38 subtests; registry 24 projects / zero errors; Finance check-only leak gate passed with five local warnings, zero James decisions, and delivery `not_sent`; North projection `lens_only`, `actuation=false`, two running items, one unchanged Plant decision, zero inert events, zero diagnostics.
+- **Risks:** Finance liquidity and burn remain UNKNOWN pending fresh verified evidence. Plant source selection remains an explicit human gate. The canonical checkout is heavily dirty with unrelated work, which this reconciliation preserved.
+- **Rollback:** Restore the prior three scoped task/status bindings and timestamps; remove the reconciliation receipt and this handoff entry. No external state requires reversal.
+- **Intent solved:** Current Green Finance/North evidence now routes to the current FPAI-owned task from the canonical checkout without reviving old worktree ownership.
+- **Downstream intent unlocked:** The FPAI owner can review this already-verified local NBM proof lane while Finance stewardship continues read-only evidence refresh; no provider, money, message, callback, or deployment action is implied.
+- **Questions for Ember/James:** none. Do not select Plant Anyway A/B within this lane.
+
+### 2026-09-03 · SPEC_nbm-plant-finance-north-proof-loop-v1 · branch `codex/sunstream-active-focus`
+
+- **Status:** done in working tree / awaiting review; no commit, push, merge, provider execution, payment, publication, send, call, service restart, or deploy
+- **Files changed:** Plant source state at `/Users/jamessunheart/MusicMagic/_INBOX/plant_anyway_v1/GATES_AND_STATE.json`; Finance OS README and `tools/financial_hub/*` plus derived `core/STATE/FINANCIAL_HUB.md` / `.financial_hub_state.json`; North attention projector, queue, registry, policies, tests, and Telegram renderer/wiring; Plant Humanity Tonight pointer receipt/test; this spec, build registry, and handoff.
+- **Summary:** Completed the first Humanity Tonight → Sunstream response as far as current authority permits: two exact-voice, hash-locked private Plant Anyway candidates, factual boundary, original lyrics, causal full-song film spine, Impact windows, Seed Share 30 measurement pathway, and one complete A/B source gate. Replaced stale Finance certainty with a provenance-first read-only NOW surface: June treasury figures are UNKNOWN, costs remain estimated, public SOL price is separated from quarantined account positions, and zero Finance items are promoted to James decisions. Added a broker-scoped North lens over the existing registry/queue/Reserved policy and registered Plant/Finance sources. Routine verification stays silent; only a complete fresh Reserved gate or explicitly requested completion alert can emit one inert event. Added local `/north` rendering and hands-free routing without deploying it.
+- **Tests:** 87 focused tests pass: Finance 15; Plant loop receipt 10; North Attention/queue/broker 52; Telegram renderer and existing-bot command/wiring 10. Finance live check/write leak gates pass with zero decisions and delivery not sent. Registry validates 24 projects/0 errors. Live North projection is `lens_only`, `actuation=false`, two running items, exactly one decision (`plant-anyway-source-master`), zero inert events, zero diagnostics. JSON and scoped diff checks pass.
+- **Risks:** Both song candidates exceed the requested 3:50 maximum. Candidate A is only a low-confidence technical lean and its intended “can wake” line needs human listening; candidate B has a hard-cut ending signature. No Impact film exists until a source is selected. Current net spendable and burn remain unknown until fresh verified treasury evidence exists. `/north` is present only in the local checkout; deployment/restart remains a separate gate. The shared worktree was already dirty and remains uncommitted.
+- **Rollback:** Restore the prior Finance renderer and Telegram wiring; remove the new Finance/North helpers, tests, derived views, and appended registry/queue/policy records; revert the Finance README and Plant common-envelope addition while preserving the private candidates and original packet. No external state requires reversal.
+- **Intent solved:** The cultural proof, financial truth posture, and attention front door now meet in one working local loop: safe work continues, unsupported finance claims disappear, and James sees only the one decision that can change the next production step.
+- **Downstream intent unlocked:** After James chooses A or B, the bound Plant task can lock that exact hash and enter the existing Music Magic Impact-first scaffold under its current caps and gates. Finance stewardship can refresh evidence read-only. Any provider use, payment, publication, Telegram deployment/send, or phone call remains separately governed.
+- **Questions for Ember/James:** Resolved on 2026-09-03 under James's delegated director authority: the Music Magic Director selected Candidate A. Do not resurface this historical A/B ask or represent it as James personally listening or choosing.
+
+### 2026-09-03 · SPEC_codex-agent-bridge-local-v1 · branch `codex/sunstream-active-focus`
+
+- **Status:** done in working tree / awaiting review; no commit, push, merge, install, service activation, or deploy
+- **Files changed:** `.gitignore`; `SERVICES/sunheart-brain/curator/hermes/__init__.py`; `SERVICES/sunheart-brain/curator/hermes/gateway.py`; `core/BUILD/REGISTRY.json`; `core/BUILD/specs/SPEC_codex-agent-bridge-local-v1.md`; `docs/codex/AGENT_BRIDGE.md`; `docs/codex/HANDOFF.md`; `tools/agent_bridge/__init__.py`; `tools/agent_bridge/__main__.py`; `tools/agent_bridge/adapters.py`; `tools/agent_bridge/bridge.py`; `tools/agent_bridge/cli.py`; `tools/agent_bridge/executor.py`; `tools/agent_bridge/identity.py`; `tools/agent_bridge/policy.py`; `tools/agent_bridge/schema.py`; `tools/agent_bridge/store.py`; `tools/agent_bridge/test_bridge.py`; `tools/agent_bridge/test_schema_policy.py`; `tools/hermes/test_gateway.py`
+- **Summary:** Added a local Codex-owned agent bridge with capability inspection, strict versioned envelopes, immutable zero-budget/no-destination authority, server-resolved identity, conservative effect policy, idempotent dispatch, durable status/cancellation/receipts, private gitignored state, bounded argv-only subprocess execution, and intent-only Hermes ingress. Codex is the sole control plane and only default-enabled worker; Prime and Hermes remain disabled and fail closed. Restored the d034 Hermes class gateway expected by the committed route while preserving the d054 standalone Telegram probe helper. Payload identity/permissions are replaced at the trusted boundary, roles are generic, IDs are server-generated, stored permissions cannot be overwritten, outbound logs are user-namespaced, and default construction performs no database or LLM work.
+- **Tests:** `python3 -B -m unittest tools.agent_bridge.test_schema_policy tools.agent_bridge.test_bridge` (29 OK); `python3 -B -m unittest tools.hermes.test_gateway tools.probe.test_probe` (31 OK); `python3 -B -m unittest app.test_payment_activation` from `SERVICES/zend-payments` (3 OK); isolated CLI capability smoke (Codex ready, Prime/Hermes disabled and unavailable); publish execute smoke (expected denied, rc 3, no worker); disabled Prime smoke (expected unavailable, rc 3, no worker); Hermes role-spoof smoke (expected rejected, rc 2); changed-Python compile check; registry JSON validation; bridge shell/network surface scan; Git ignore proof for `.fpai/agent-bridge/`; scoped diff hygiene.
+- **Risks:** Policy classification is conservative but still operates on explicit intent plus trusted effect labels, so ambiguous consequential work must stay in `prepare`/`dry_run` and be labelled by the control plane. The local background runner is durable at the record layer but is not a production supervisor; abrupt host/process loss can leave the last observed nonterminal status for operator review. No real Codex worker was launched in this build; execution behavior was tested only with temporary fake executables.
+- **Rollback:** Revert these scoped source/docs changes and, if desired, remove the local `.fpai/agent-bridge/` runtime directory. No live service, provider state, destination, or production deployment was created.
+- **Intent solved:** FPAI now has a small local agent execution contract in which Codex alone validates authority, optional agents cannot silently activate, and every accepted or denied task leaves reviewable durable evidence.
+- **Downstream intent unlocked:** an operator can review and exercise local Codex dispatch; Prime installation/compatibility, authenticated live Hermes ingress, runtime supervision, nonzero budgets/destinations, any external effect, and production deployment each remain separate explicit decisions.
+- **Questions for Ember/James:** none required for this local slice. Before any live Hermes wiring, derive `trusted_channel_user_id` and principal from authenticated server context and inject reviewed identity/logging stores plus a bounded pipeline; the current committed web route intentionally remains 503/inert.
+
 ### 2026-08-29 · SPEC_sunstream-active-focus · branch codex/sunstream-active-focus
 
 - **Status:** done in working tree / awaiting review + merge

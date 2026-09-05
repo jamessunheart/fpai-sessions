@@ -586,12 +586,13 @@ def _download_telegram_file(file_id: str, target_dir: Path, preferred_name: str)
 
 # ─── send helpers ─────────────────────────────────────────────────────────
 def send(chat_id, text: str, *, parse_mode: str = "HTML",
-         thread_id=None, reply_markup=None) -> dict:
+         thread_id=None, reply_markup=None, silent: bool = False) -> dict:
     payload = {
         "chat_id": chat_id,
         "text": text[:4000],
         "parse_mode": parse_mode,
         "disable_web_page_preview": True,
+        "disable_notification": silent,
     }
     if thread_id:
         payload["message_thread_id"] = int(thread_id)
@@ -600,13 +601,13 @@ def send(chat_id, text: str, *, parse_mode: str = "HTML",
     return tg("sendMessage", **payload)
 
 
-def send_to_pulse(text: str, topic: str = "general") -> dict:
+def send_to_pulse(text: str, topic: str = "general", *, silent: bool = False) -> dict:
     cfg = pulse_config()
     pulse_chat_id = cfg.get("chat_id")
     if not pulse_chat_id:
         return {"ok": False, "error": "no pulse chat configured"}
     thread = (cfg.get("topics", {}) or {}).get((topic or "general").lower()) or None
-    return send(pulse_chat_id, text, thread_id=thread)
+    return send(pulse_chat_id, text, thread_id=thread, silent=silent)
 
 
 # ─── identity ─────────────────────────────────────────────────────────────
@@ -2035,6 +2036,40 @@ def _inquiries_summary(days: int) -> str:
     return f"{len(recent)} total · {bits or '(none)'}"
 
 
+def _summary_count(summary: str) -> int:
+    """Read the leading count from a compact digest summary."""
+    match = re.match(r"\s*(\d+)", summary or "")
+    return int(match.group(1)) if match else 0
+
+
+def _digest_has_signal(
+    digest: dict,
+    bookings: str = "",
+    inquiries: str = "",
+    slipping_leads: str = "",
+) -> bool:
+    """Return true when a scheduled digest contains something actionable."""
+    return any(
+        (
+            int(digest.get("active_count") or 0),
+            float(digest.get("total_hours_today") or 0),
+            int(digest.get("blocker_count") or 0),
+            digest.get("active_workers"),
+            digest.get("blockers_lines"),
+            _summary_count(bookings),
+            _summary_count(inquiries),
+            slipping_leads.strip(),
+        )
+    )
+
+
+def _send_empty_digests() -> bool:
+    """Allow the old always-send behavior as an explicit opt-in."""
+    return os.environ.get("ZV_SEND_EMPTY_DIGESTS", "0").strip().lower() in {
+        "1", "true", "yes", "on",
+    }
+
+
 def _money_summary(days: int) -> str:
     commissions = list(load_json(COMMISSIONS_FILE, {}).values())
     pending = sum(float(c.get("commission_amount") or 0) for c in commissions if c.get("status") == "pending")
@@ -2227,6 +2262,7 @@ def post_am_digest() -> None:
     digest = http_get("/api/team/digest")
     bookings = _bookings_summary(7)
     inq = _inquiries_summary(7)
+    slipping_leads = _slipping_leads_block()
     msg = (
         f"<b>☀ {LABEL} — {date.today().strftime('%a %b %d')}</b>\n"
         f"Active workers: {digest.get('active_count',0)} · "
@@ -2238,12 +2274,15 @@ def post_am_digest() -> None:
     msg += f"\n\n<b>Bookings (7d):</b> {bookings}\n<b>Inquiries (7d):</b> {inq}"
     if digest.get("blockers_lines"):
         msg += "\n\n<b>Blockers</b>\n" + "\n".join("• " + b for b in digest["blockers_lines"])
-    msg += _slipping_leads_block()
+    msg += slipping_leads
 
-    if pulse_config().get("chat_id"):
-        send_to_pulse(msg, topic="general")
-    for aid in ADMIN_IDS:
-        send(aid, msg)
+    if _send_empty_digests() or _digest_has_signal(digest, bookings, inq, slipping_leads):
+        if pulse_config().get("chat_id"):
+            send_to_pulse(msg, topic="general", silent=True)
+        for aid in ADMIN_IDS:
+            send(aid, msg, silent=True)
+    else:
+        log.info("AM digest suppressed: no workers, blockers, bookings, inquiries, or slipping leads")
 
     # Quiet pings
     quiet = (http_get("/api/team/quiet", days=2) or {}).get("quiet", [])
@@ -2263,10 +2302,13 @@ def post_pm_digest() -> None:
     if digest.get("blockers_lines"):
         msg += "\n\n<b>Open blockers</b>\n" + "\n".join("• " + b for b in digest["blockers_lines"])
     msg += "\n\n<i>What got done? Reply /done [text] in your DM.</i>"
-    if pulse_config().get("chat_id"):
-        send_to_pulse(msg, topic="general")
-    for aid in ADMIN_IDS:
-        send(aid, msg)
+    if _send_empty_digests() or _digest_has_signal(digest):
+        if pulse_config().get("chat_id"):
+            send_to_pulse(msg, topic="general", silent=True)
+        for aid in ADMIN_IDS:
+            send(aid, msg, silent=True)
+    else:
+        log.info("PM digest suppressed: no workers or blockers")
 
 
 # ─── update dispatch ──────────────────────────────────────────────────────

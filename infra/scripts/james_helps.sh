@@ -7,6 +7,9 @@
 set -uo pipefail
 R=/Users/jamessunheart/FullPotentialOS
 
+echo "── 0/3 Push one-tap recruiting commit (D4) ──"
+(cd "$R/_staged_repos/super-agents-pack" && rm -f .git/HEAD.lock .git/objects/maintenance.lock && git push origin master) || echo "  (push failed — run: gh auth login, then re-run)"
+
 echo "── 1/3 FPI deploy ──"
 bash "$R/infra/scripts/deploy_fpi_fix.sh" || echo "  (FPI deploy failed — logged, continue)"
 

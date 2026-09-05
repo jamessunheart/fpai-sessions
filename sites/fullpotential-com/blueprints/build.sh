@@ -13,7 +13,7 @@ while IFS='|' read -r sha when subj; do
   [ -z "$sha" ] && continue
   esc=$(printf '%s' "$subj" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g')
   ROWS="${ROWS}<tr><td class=\"sha\">${sha}</td><td class=\"when\">${when}</td><td>${esc}</td></tr>"
-done < <(git log --date=short --pretty=format:'%h|%ad|%s' -- . 2>/dev/null | head -60)
+done < <(git log --date=short --pretty=tformat:'%h|%ad|%s' -- . 2>/dev/null | head -60)
 
 if [ -z "$ROWS" ]; then
   ROWS='<tr><td colspan="3">No commits recorded yet for this directory.</td></tr>'
