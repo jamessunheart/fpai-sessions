@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-04",
+  "updated": "2026-09-05",
   "note": "Append-friendly. Each entry: id = filename in bp/ without .md. Agents may add entries; never delete — mark status:archived instead.",
   "blueprints": [
     {
@@ -31,6 +31,16 @@
       "version": "1.0",
       "updated": "2026-09-04",
       "source": "sites/fullpotential-com/blueprints/"
+    },
+    {
+      "id": "credits-super-wiring",
+      "title": "001 · CORA Credits ↔ SUPER",
+      "summary": "Credits are the earned unit, SUPER the exit unit. Resolves two currencies into one loop, argued from the Constitution's own right to exit. Earn side live; exit bridge specified.",
+      "realm": "Governance & Capital",
+      "status": "spec",
+      "version": "1.0",
+      "updated": "2026-09-04",
+      "source": "Approved by James 2026-09-04 · core/SUPER/WIRING_001_credits_to_super.md"
     }
   ]
 }
