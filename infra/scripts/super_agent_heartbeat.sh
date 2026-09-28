@@ -6,6 +6,19 @@ set -uo pipefail
 
 REPO="$HOME/FullPotentialOS"
 LOG="$REPO/core/SUPER/agent/HEARTBEAT_LOG.md"
+MISSED_BEAT_ALERT_PAUSE_FILE="$HOME/.config/fpai/super_agent/missed_beat_alerts.disabled"
+MISSED_BEAT_DETECTION_LOG="$HOME/.cache/super_agent/missed_beat_detections.log"
+BEATS_MISSED=""
+
+if [ "${1:-}" = "--missed-beat-alert-status" ]; then
+  if [ -f "$MISSED_BEAT_ALERT_PAUSE_FILE" ]; then
+    printf 'missed_beat_alerts=paused\npause_file=%s\n' "$MISSED_BEAT_ALERT_PAUSE_FILE"
+  else
+    printf 'missed_beat_alerts=active\npause_file=%s\n' "$MISSED_BEAT_ALERT_PAUSE_FILE"
+  fi
+  exit 0
+fi
+
 STAMP=$(date -u +"%Y-%m-%dT%H:%MZ")
 
 cd "$REPO" || exit 1
@@ -82,8 +95,15 @@ if [ -f "$BEAT_STATE" ]; then
   # schedule is every 4h; anything over 5h means beats were skipped (sleep, shutdown, cron removed)
   if [ "$GAP" -gt 300 ]; then
     MISSED=$(( GAP / 240 ))
-    printf '\n## %s — BEATS MISSED\n- %s minutes since the previous beat (~%s beats skipped). This machine was asleep, off, or the schedule did not fire.\n- Everything the standing orders do on a beat did NOT happen during that window: the vendor log was not mirrored, the delta watch was blind, no steward verdict was appended.\n- Treat any conclusion drawn from file mtimes inside that window as unobserved, not as quiet.\n' "$STAMP" "$GAP" "$MISSED" >> "$LOG"
-    BEATS_MISSED="$MISSED"
+    if [ -f "$MISSED_BEAT_ALERT_PAUSE_FILE" ]; then
+      # James-authorized scoped pause: keep detecting and preserve local evidence, but do not
+      # append the missed-beat entry that becomes the Telegram payload or raise its severity.
+      printf '%s gap_minutes=%s estimated_beats_skipped=%s alert=suppressed pause_file=%s\n' \
+        "$STAMP" "$GAP" "$MISSED" "$MISSED_BEAT_ALERT_PAUSE_FILE" >> "$MISSED_BEAT_DETECTION_LOG"
+    else
+      printf '\n## %s — BEATS MISSED\n- %s minutes since the previous beat (~%s beats skipped). This machine was asleep, off, or the schedule did not fire.\n- Everything the standing orders do on a beat did NOT happen during that window: the vendor log was not mirrored, the delta watch was blind, no steward verdict was appended.\n- Treat any conclusion drawn from file mtimes inside that window as unobserved, not as quiet.\n' "$STAMP" "$GAP" "$MISSED" >> "$LOG"
+      BEATS_MISSED="$MISSED"
+    fi
   fi
 fi
 echo "$NOW_EPOCH" > "$BEAT_STATE"
