@@ -45,16 +45,39 @@ EVO_APIKEY = os.environ.get("EVO_APIKEY")
 EVO_INSTANCE = os.environ.get("EVO_INSTANCE", "super-vendor")
 
 def redemption_line():
+    """The promise, verbatim, from REDEMPTION.md — read structurally, never by wording.
+
+    History (do not undo): this function used to grep for `^La tesorería cambia`,
+    the exact first words of the 2026-09-03 gift-card promise. On 2026-09-04 James
+    said "drop the 40,000 card idea"; the promise was correctly rewritten and that
+    sentence ceased to exist. From that day the guard raised
+    "REDEMPTION.md is not filled" about a file that was filled, signed and true —
+    so the bot could not start any vendor conversation, and the reason it gave was
+    false. The promise is now whatever James has written between the instruction
+    header and the `Backing:` line. Re-anchoring on any particular sentence
+    re-creates the same break the next time he edits his own promise.
+    """
+    if not REDEMPTION.exists():
+        raise SystemExit("BLOCKED — REDEMPTION.md does not exist. The bot will not speak.")
     t = REDEMPTION.read_text(encoding="utf-8")
-    m = re.search(r"^La tesorería cambia.*$", t, re.M)
-    if not m or "Written by: ______" in t:
-        raise SystemExit("BLOCKED — REDEMPTION.md is not filled. The bot will not speak.")
-    return m.group(0)
+    if re.search(r"^Written by:\s*_+", t, re.M):
+        raise SystemExit("BLOCKED — REDEMPTION.md is not signed (the 'Written by:' line is still blank). The bot will not speak.")
+    body = t.split("## Change log")[0]
+    m = re.search(r"it must be true today\.\s*\n(.*?)\n\s*(?:Backing:|Written by:)", body, re.S)
+    promise = "\n".join(l.rstrip() for l in (m.group(1) if m else "").splitlines() if l.strip())
+    if not promise:
+        raise SystemExit("BLOCKED — REDEMPTION.md carries no promise between its header and 'Backing:'. The bot will not speak.")
+    # Any date or list marker satisfies "contains a digit", so require MONEY:
+    # a colon figure (₡40,000) or a number followed by colones/CRC. A guard that
+    # cannot fail is not a guard.
+    if not re.search(r"(₡\s*[\d.,]*\d)|([\d.,]*\d\s*(colones|CRC))", promise, re.I):
+        raise SystemExit("BLOCKED — the promise in REDEMPTION.md names no money amount (no ₡ figure, no colones). The bot will not speak.")
+    return promise
 
 MSG = {
  "m1": "Buenas. Soy Ember, el asistente de inteligencia artificial de James, un vecino de la zona de Chirripó. Cualquier acuerdo lo confirma él personalmente. ¿Le puedo hacer una consulta corta sobre una comida para diez personas?",
  "m2": ("James quiere darle una buena comida (un casado completo) a diez personas, y quiere pagar la comida con algo nuevo que se llama SUPER, en vez de colones. Serían 100 SUPER por los diez platos.\n\n"
-        "SUPER es completamente nuevo — esta sería la primera vez que se usa para comida de verdad. Hoy, lo que se puede hacer con 100 SUPER es esto: {redemption} (o puede gastar los SUPER con otra persona que los acepte).\n\n"
+        "SUPER es completamente nuevo — esta sería la primera vez que se usa para comida de verdad. Hoy, esta es la promesa, tal como está escrita:\n\n{redemption}\n\n"
         "Le pregunto con honestidad, y un \"no\" es una respuesta perfectamente buena:\n1. ¿Aceptaría 100 SUPER por la comida para diez personas?\n2. Si sí — ¿qué haría usted con los SUPER?\n3. Si sale bien, ¿aceptaría SUPER otra vez?"),
  "m3": "Muchas gracias por responder. Todavía no hay nada reservado: James la va a contactar para confirmar la fecha y los detalles. Si en cualquier momento siente que esto le cuesta más de lo que le da, dígalo y paramos.",
  "unknown": "Buena pregunta — se lo consulto a James y le escribo.",
