@@ -57,3 +57,10 @@ Cheap test first: open Terminal, run `claude`, then `/login`. If the next 4-hour
 **B-14 · NEW — AGENT/INFRA, measured but not asserted.** `infra/scripts/meta_narrator_run.sh` (line 199), `infra/scripts/truth_substrate_run.sh` (line 171) and `infra/scripts/adam-security/security-watch.sh` (line 31) all call `timeout N ...` with no PATH export anywhere in the file and no gtimeout fallback — the same unguarded dependency that cost 29 days here. Whether they are affected depends on whether they run on macOS; `crontab -l` is not readable from this session's shell (Permission denied), so this is flagged, not claimed. A security watcher that exits 127 and logs a miss is the expensive case. Check: `crontab -l` on the Mac, then apply the same `ssh_to`/PATH pattern to any that run there.
 
 **THE RULE THIS COST US (filed with the four before it).** Stale file mistaken for the world -> silent watchdog mistaken for a quiet world -> sleeping laptop mistaken for a calm night -> fallback alarm marked resolved while its baseline never existed -> **and now a probe that failed before it probed and reported a cause anyway.** A probe that cannot start may not name a cause. rc=127 is not a measurement.
+
+## B-15 · OPEN · Ten beneficiaries and one witness (JAMES, ~5 minutes, no infrastructure)
+What: name in BUILD_001.md the ten people who would receive the meal (or ONE person if #001 is resized to 25 SUPER per B-13) and one independent witness who is not the director and not the provider.
+Why: condition 2 of the four release conditions is `filled(beneficiaries) and filled(witness)` — it depends on no provider, no vendor reply, no ssh route and no login. Filling it takes #001 from 2/4 to 3/4 and leaves the provider as the single remaining condition. It also makes the provider ask concrete, which the Card's own pass test ("a meal they WANTED") requires.
+Who: James only — these are real people in his life and an agent may not invent them.
+Not on the public HELP_WANTED board: naming a stranger's guests is not a task to crowdsource.
+Opened 2026-10-02 by Claude, Super Agent.

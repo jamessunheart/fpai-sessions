@@ -1,0 +1,13 @@
+[Unit]
+Description=SUPER vendor bot — the Super Agent's own WhatsApp voice
+After=network.target
+
+[Service]
+WorkingDirectory=/opt/fpos/core/SUPER/vendor_bot
+EnvironmentFile=/opt/fpos/core/SUPER/vendor_bot/.env
+ExecStart=/usr/bin/python3 vendor_bot.py
+Restart=always
+User=fpos
+
+[Install]
+WantedBy=multi-user.target

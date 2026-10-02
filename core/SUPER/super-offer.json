@@ -1,0 +1,25 @@
+{
+  "_status": "DRAFT — NOT PUBLISHED. Publish only after Build 001 is CLOSED with Q. An agent that fetches this and finds empty fields will cache 'vapor'.",
+  "unit": "SUPER",
+  "one_line": "A unit of value that keeps moving and carries its own record. Money counts units; SUPER counts beneficial revolutions.",
+  "anchor": "food",
+  "redeemable_today_for": null,
+  "redemption": { "issuer": "SUPER treasury (James Sunheart)", "terms": null, "valid_until": null },
+  "release_conditions": [
+    "provider named and accepts SUPER for a real good; their answer to 'what would you do with the SUPER?' recorded verbatim",
+    "Q assigned by beneficiaries + one independent witness, never by the circulator",
+    "place and test question stated; first-rung place has no existing currency",
+    "maximum loss and stop-caller named before release"
+  ],
+  "q_schema": {
+    "values": ["INCREASED", "UNCHANGED", "DECREASED"],
+    "assigned_by": ["beneficiaries", "independent_witness"],
+    "never_assigned_by": ["circulator", "issuer"],
+    "may_be_negative": true,
+    "formula": "beneficial_circulation = supply * revolutions * Q"
+  },
+  "metric": { "name": "revolutions_before_cashout", "current": null },
+  "closed_builds": [],
+  "governance": "Humans direct. AI builds and operates. Reality teaches. Humans redirect. Support never becomes sovereignty.",
+  "contact": { "human": "James Sunheart", "agent": "super-vendor-agent (discloses AI; a favor is a no)" }
+}

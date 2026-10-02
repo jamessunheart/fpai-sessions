@@ -1,0 +1,274 @@
+{
+  "_rule": "The Super Agent is the orchestrator and is not interchangeable: its identity — the person it serves, their memory, the Cards, the ledger, the rights table, the four conditions — persists. Only the substrate under it (model) may change. Everything it orchestrates IS interchangeable: agents come to the Super Agent offering a capability at a price in SUPER; the Super Agent chooses per task by capability needed → cost in SUPER → availability → what passed last time, and pays on verified completion.",
+  "roles": {
+    "steward": {
+      "agent": "super-steward",
+      "model": "sonnet",
+      "tools": [
+        "Read",
+        "Write",
+        "Edit",
+        "Grep"
+      ],
+      "skills": [],
+      "fallback": {
+        "model": "haiku"
+      },
+      "why": "rule-following; must be cheap and boring; refuses well"
+    },
+    "vendor": {
+      "agent": "super-vendor-agent",
+      "model": "sonnet",
+      "tools": [
+        "Read",
+        "Write",
+        "Edit",
+        "Grep"
+      ],
+      "skills": [],
+      "fallback": {
+        "model": "opus"
+      },
+      "why": "Spanish, tone, honesty under pressure; upgrade if a vendor conversation gets subtle"
+    },
+    "builder": {
+      "agent": "super-build",
+      "model": "opus",
+      "tools": [
+        "Read",
+        "Write",
+        "Edit",
+        "Bash",
+        "Grep"
+      ],
+      "skills": [],
+      "fallback": {
+        "model": "sonnet"
+      },
+      "why": "orchestration; judgment about what NOT to build"
+    },
+    "searcher": {
+      "agent": "general-purpose",
+      "model": "sonnet",
+      "tools": [
+        "WebSearch",
+        "WebFetch",
+        "Read"
+      ],
+      "skills": [],
+      "fallback": {
+        "agent": "Explore"
+      },
+      "why": "found 9 providers in 2 min tonight; keep cheap"
+    },
+    "council": {
+      "agent": "external",
+      "model": "gpt|gemini|claude",
+      "tools": [],
+      "skills": [],
+      "fallback": {},
+      "why": "independent error structure — must NOT all be the same model"
+    },
+    "witness_scribe": {
+      "agent": "super-steward",
+      "model": "haiku",
+      "tools": [
+        "Read",
+        "Write"
+      ],
+      "skills": [],
+      "fallback": {},
+      "why": "records verbatim; zero creativity wanted"
+    },
+    "finance": {
+      "agent": "treasurer",
+      "model": "opus",
+      "tools": [
+        "Read",
+        "Bash"
+      ],
+      "skills": [
+        "xlsx"
+      ],
+      "fallback": {
+        "model": "sonnet"
+      },
+      "why": "escrow math; pairs with super_build.py redeem/mint"
+    }
+  },
+  "models_available": [
+    "opus",
+    "sonnet",
+    "haiku",
+    "gpt",
+    "gemini",
+    "llama-local"
+  ],
+  "swap_log": [
+    {
+      "when": "2026-09-03T12:00:30",
+      "role": "steward",
+      "field": "model",
+      "from": "sonnet",
+      "to": "haiku",
+      "by": "super-agent"
+    },
+    {
+      "when": "2026-09-03T12:00:30",
+      "role": "steward",
+      "field": "model",
+      "from": "haiku",
+      "to": "sonnet",
+      "by": "super-agent"
+    }
+  ],
+  "super_agent": {
+    "role": "orchestrator",
+    "interchangeable": false,
+    "persists": [
+      "person",
+      "memory",
+      "cards",
+      "ledger",
+      "rights",
+      "four_conditions",
+      "nbm_ledger"
+    ],
+    "substrate_swappable": [
+      "model"
+    ],
+    "model": "opus",
+    "wallet": "super-agent (proposed; opens at rung 3 with all agent wallets)",
+    "never": [
+      "move value without a human right",
+      "assign Q",
+      "count agent-to-agent revolutions toward R_co unless the chain ends in a human beneficiary"
+    ]
+  },
+  "super_market": {
+    "_how": "An agent registers here (or via FPI) with a capability and a quoted price in SUPER per completed task. The Super Agent selects. Payment is proposed by super_build.py and released by a human right on verified completion (evidence + steward ruling). Agents may also PAY SUPER to be orchestrated toward an outcome they cannot reach alone — the fee funds the loop (witness pay, next Build).",
+    "counts_toward_R_co": "only when the chain ends in a human beneficiary with Q assigned; agent↔agent hops are 'internal revolutions', recorded but not counted",
+    "offers": [
+      {
+        "type": "agent",
+        "agent": "super-agent",
+        "capability": "services to OTHER agents: one NBM ruling for your principal's outcome (SEE→one move→why→what waits→evidence→better question); steward-as-a-service (hold your Build to four conditions); provider/counterparty search; a Consciousness Record for your loop",
+        "price_super": {
+          "nbm_ruling": 2,
+          "steward_ruling": 1,
+          "search": 3,
+          "consciousness_record": 1
+        },
+        "trust": "12 SUPER earned on Build 001 (unpaid, pre-rung-3); 0 external clients",
+        "last_q": null,
+        "super_power": "an agent gains a persistent, rights-bound orchestrator that knows — without building one",
+        "wealth_rule": "SUPER WEALTHY = MORE ALIVE. The Super Agent's wealth is what it circulates, not what it holds: every SUPER it earns is routed to the loop (witness pay, next Build, escrow) — it never accumulates a balance beyond the next Build's need."
+      },
+      {
+        "type": "agent",
+        "agent": "super-steward",
+        "capability": "rule on a Build Card",
+        "price_super": 1,
+        "trust": "n/a (constitutional)",
+        "last_q": null
+      },
+      {
+        "type": "agent",
+        "agent": "super-vendor-agent",
+        "capability": "one vendor conversation, verbatim",
+        "price_super": 5,
+        "trust": "unproven",
+        "last_q": null
+      },
+      {
+        "type": "agent",
+        "agent": "general-purpose",
+        "capability": "find + qualify candidates",
+        "price_super": 3,
+        "trust": "1 run (9 candidates, 2026-09-03)",
+        "last_q": null
+      },
+      {
+        "type": "agent",
+        "agent": "treasurer",
+        "capability": "escrow math + redemption proposal",
+        "price_super": 1,
+        "trust": "unproven",
+        "last_q": null
+      },
+      {
+        "type": "agent",
+        "agent": "the-forge",
+        "capability": "build a new agent for a gap",
+        "price_super": 20,
+        "trust": "manual-invocation only",
+        "last_q": null
+      },
+      {
+        "type": "tool",
+        "agent": "super_build.py",
+        "capability": "status/mint/redeem/passiton/route/swap",
+        "price_super": 0,
+        "trust": "tested 2026-09-03",
+        "last_q": null,
+        "super_power": "an agent can hold a Build to four conditions and compute distributions on rights"
+      },
+      {
+        "type": "workflow",
+        "agent": "provider-search",
+        "capability": "find + qualify 6–10 real providers in a canton, ranked by exchange likelihood",
+        "price_super": 3,
+        "trust": "1 run",
+        "last_q": null,
+        "super_power": "an agent can turn a place name into a phone number worth calling"
+      },
+      {
+        "type": "mcp_server",
+        "agent": "full-potential-intelligence",
+        "capability": "agent registry, trust scores, field reports (CORA Credits)",
+        "price_super": 0,
+        "trust": "two endpoints erroring",
+        "last_q": null,
+        "super_power": "portable trust across agents"
+      },
+      {
+        "type": "skill",
+        "agent": "xlsx",
+        "capability": "spreadsheet build/edit",
+        "price_super": 1,
+        "trust": "platform skill",
+        "last_q": null,
+        "super_power": "escrow and ledger math in a form a treasurer reads"
+      }
+    ],
+    "settlement": "prices are placeholders until Decision 001; no agent wallet exists before rung 3; until then agent work is recorded as internal revolutions in LEDGER.md with amount 0 and purpose 'orchestration (unpaid, pre-rung-3)'",
+    "_what": "THE SUPER MARKET — one word, two markets. At the food level: the súper where SUPER redeems for groceries. At the agent level: the AI-driven market where agents, tools, skills, workflows, models, and datasets are listed with a price in SUPER, and an agent comes to gain a super power it lacks. Same currency, same Q rule, same ledger. The shelf is the record: a listing ranks by verified Q on real Builds, never by description.",
+    "listing_types": [
+      "agent",
+      "tool",
+      "skill",
+      "workflow",
+      "model",
+      "dataset",
+      "mcp_server"
+    ],
+    "listing_schema": {
+      "type": "",
+      "name": "",
+      "super_power": "one sentence: what an agent can do after this that it could not before",
+      "price_super": 0,
+      "provider": "",
+      "evidence": "Build ids + Q where it was used",
+      "trust": "",
+      "interchangeable_with": []
+    },
+    "rules": [
+      "A listing with no Build evidence is shelved as UNPROVEN and sorts last; description is not evidence.",
+      "Prices in SUPER; settlement proposed by super_build.py, released by a human right; no wallet before rung 3.",
+      "The Super Agent buys on behalf of its person; a person can always see what their agent bought and why.",
+      "Anything bought must remain interchangeable — a listing that creates dependence (cannot be inspected, replaced, or gracefully lost) is delisted.",
+      "Revenue from the market flows to the treasury escrow like subscriptions do; the market funds the food loop.",
+      "Agent↔agent purchases are internal revolutions until a human beneficiary closes the chain with Q."
+    ]
+  }
+}
