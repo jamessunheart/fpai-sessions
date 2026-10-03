@@ -62,6 +62,7 @@ Cheap test first: open Terminal, run `claude`, then `/login`. If the next 4-hour
 What: name in BUILD_001.md the ten people who would receive the meal (or ONE person if #001 is resized to 25 SUPER per B-13) and one independent witness who is not the director and not the provider.
 Why: condition 2 of the four release conditions is `filled(beneficiaries) and filled(witness)` — it depends on no provider, no vendor reply, no ssh route and no login. Filling it takes #001 from 2/4 to 3/4 and leaves the provider as the single remaining condition. It also makes the provider ask concrete, which the Card's own pass test ("a meal they WANTED") requires.
 Who: James only — these are real people in his life and an agent may not invent them.
+AMENDED 2026-10-03 (B-18): the witness may not be James, the circulator or the provider — the witness assigns Q and shares the Pass It On split, so naming himself would make #001 grade itself. The steward now enforces this, and placeholders (TBD, N/A, pending…) no longer pass. If no third party is at hand, that is worth saying out loud rather than filling the field.
 Not on the public HELP_WANTED board: naming a stranger's guests is not a task to crowdsource.
 Opened 2026-10-02 by Claude, Super Agent.
 
@@ -90,3 +91,10 @@ Seventh instance of the shape, and the first where the broken part was a DOCUMEN
 FIXED (backup `$HOME/vendor_bot.py.bak_20261002_cycle5`; ast clean): the promise is now read **structurally** — everything between the header line "it must be true today." and `Backing:`/`Written by:` — never by matching a sentence, because re-anchoring on today's wording recreates the same break the next time James edits his own promise. Three real guards remain, each with a true error message: the file must exist; the `Written by:` line must not be blank; the promise must name actual money (a ₡ figure or a number with colones — "contains a digit" was rejected as a guard because any date satisfies it, and *a guard that cannot fail is not a guard*). M2 now quotes the file verbatim and no longer re-states option 2 in its own words, so there is one source of truth for what SUPER promises.
 OBSERVED, not assumed — six branches exercised: current REDEMPTION.md → passes; the Sep 3 gift-card wording → passes (backwards compatible); unsigned → blocks; no promise body → blocks; a promise with a date but no money → blocks; file missing → blocks. Then the actual M2 was rendered and read end to end as a human would receive it.
 Signed: Claude, Super Agent, 2026-10-02.
+
+## B-18 · NEW, RESOLVED THIS CYCLE (needed nothing from James) · THE STEWARD ASSERTED "INDEPENDENT" AND NEVER CHECKED IT
+What was broken: condition 2 was presence-only (`filled(beneficiaries) and filled(witness)`), while the ruling it printed said "beneficiaries + independent witness named". `TBD` passed; `James Sunheart` passed.
+Why it mattered: the witness assigns Q (the grade) and shares the Pass It On split. A director-as-witness is a Build grading and paying itself — and the fastest way to complete B-15, the move being urged on James, was exactly that.
+Fixed: placeholder set rejected in `filled()`; condition 2 fails when the witness matches director/circulator/provider (case- and punctuation-insensitive) with the reason stated; NBM text carries the constraint into the ask; the success line states that independence beyond role overlap is the director's word, not a machine's finding.
+Tested: nine synthetic branches + a mutation run proving the suite can fail. Real cards unchanged (001 HOLD 2/4, 002 HOLD 0/4). Backup `$HOME/super_build.py.bak_20261003`.
+Opened and resolved 2026-10-03 by Claude, Super Agent.

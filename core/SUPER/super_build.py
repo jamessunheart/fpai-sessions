@@ -30,7 +30,22 @@ def parse_card(path):
     closed = bool(q) and "## Close" in text and text.split("## Close",1)[1].strip().count("\n") >= 9
     return card, loop_done, q.group(1) if q else None, closed
 
-def filled(v): return bool(v) and v not in ("—", "-", "unknown", "?")
+# A blank is a blank — and so is a word that only looks like an answer. The steward
+# grades presence, so a placeholder in a field is the cheapest way to flip a condition
+# green without changing anything in the world. (Claude, 2026-10-03)
+PLACEHOLDERS = {"—", "-", "--", "---", "unknown", "?", "??", "...", "tbd", "t.b.d",
+                "n/a", "na", "none", "nil", "pending", "todo", "to do", "to be decided",
+                "to be named", "someone", "somebody", "x", "xx", "xxx", "placeholder"}
+
+def filled(v):
+    if not v: return False
+    s = str(v).strip().strip(".").lower()
+    return bool(s) and s not in PLACEHOLDERS
+
+def _samename(a, b):
+    """Loose name equality: punctuation and case don't make a person independent."""
+    n = lambda s: re.sub(r"[^a-z0-9]+", " ", str(s or "").lower()).strip()
+    return bool(n(a)) and n(a) == n(b)
 
 def redemption_ok():
     if not REDEMPTION.exists(): return False
@@ -48,9 +63,26 @@ def ruling(card, loop_done, q, closed):
     else:
         conds.append(("Provider", False, "no provider named"))
     # 2 Q path
-    ok2 = filled(c("beneficiaries")) and filled(c("witness"))
-    conds.append(("Q path", ok2, "beneficiaries + independent witness named" if ok2 else
-                  f"missing: {'beneficiaries ' if not filled(c('beneficiaries')) else ''}{'witness' if not filled(c('witness')) else ''}".strip()))
+    # The witness is not a spectator: the Card assigns Q and the Pass It On split to
+    # "beneficiaries + witness". So a witness who is also the director, the circulator or
+    # the provider means the Build grades itself. The steward printed the word
+    # "independent" for 29 days while testing only that the field was non-empty — an
+    # asserted property that was never checked. Role overlap IS machine-checkable, so it
+    # is now checked; anything beyond it (a friend, a household member) is the director's
+    # to vouch for, and the ruling says so instead of claiming more. (Claude, 2026-10-03)
+    ok_ben, ok_wit = filled(c("beneficiaries")), filled(c("witness"))
+    clash = [r for r in ("director", "circulator", "provider")
+             if ok_wit and _samename(c(r), c("witness"))]
+    ok2 = ok_ben and ok_wit and not clash
+    if ok2:
+        why2 = (f"beneficiaries + witness named ({c('witness')} is not the director, "
+                "circulator or provider; independence beyond role is the director's word)")
+    elif clash:
+        why2 = (f"witness {c('witness')} is also the {'/'.join(clash)} — the Build would grade "
+                "itself; name someone who is none of the three")
+    else:
+        why2 = f"missing: {'beneficiaries ' if not ok_ben else ''}{'witness' if not ok_wit else ''}".strip()
+    conds.append(("Q path", ok2, why2))
     # 3 place + test
     ok3 = filled(c("place")) and filled(c("test_question")) and c("place_has_existing_currency","").lower()=="no"
     conds.append(("Place/test", ok3, f"{c('place')} — {c('test_question')}" if ok3 else
@@ -77,8 +109,9 @@ def ruling(card, loop_done, q, closed):
     elif status == "HOLD" and loop_done >= 8:
         nbm = "Fill the Close section and Q"
     elif director_only and provider_open:
-        nbm = ("TWO open moves, director-only first — (a) name the beneficiaries and an independent "
-               "witness (needs no provider, no vendor reply, no infrastructure; closes condition 2 "
+        nbm = ("TWO open moves, director-only first — (a) name the beneficiaries and a witness who "
+               "is NOT the director, circulator or provider (they assign Q, so this one cannot be "
+               "James; needs no provider, no vendor reply, no infrastructure; closes condition 2 "
                "the minute it is written, and makes the provider ask concrete: a meal these people "
                "actually want); then (b) one conversation with one candidate provider; "
                "record their Q2 answer verbatim")

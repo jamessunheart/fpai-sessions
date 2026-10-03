@@ -274,3 +274,47 @@ Conditions:
 Loop: 0 / 11
 Open question for the director: none
 NBM: TWO open moves, director-only first — (a) name the beneficiaries and an independent witness (needs no provider, no vendor reply, no infrastructure; closes condition 2 the minute it is written, and makes the provider ask concrete: a meal these people actually want); then (b) one conversation with one candidate provider; record their Q2 answer verbatim
+
+[SUPER-STEWARD · BUILD-001 · 2026-10-02]
+STATUS: HOLD
+Conditions:
+  1 Provider:   ✗ — no provider named
+  2 Q path:     ✗ — missing: beneficiaries witness
+  3 Place/test: ✓ — Rivas, Pérez Zeledón — Can SUPER carry the loop on its own weight?
+  4 Max loss:   ✓ — 100 SUPER / 10 h, stop: James Sunheart
+Loop: 0 / 11
+Open question for the director: none
+NBM: TWO open moves, director-only first — (a) name the beneficiaries and an independent witness (needs no provider, no vendor reply, no infrastructure; closes condition 2 the minute it is written, and makes the provider ask concrete: a meal these people actually want); then (b) one conversation with one candidate provider; record their Q2 answer verbatim
+
+[SUPER-STEWARD · BUILD-001 · 2026-10-03]
+STATUS: HOLD
+Conditions:
+  1 Provider:   ✗ — no provider named
+  2 Q path:     ✗ — missing: beneficiaries witness
+  3 Place/test: ✓ — Rivas, Pérez Zeledón — Can SUPER carry the loop on its own weight?
+  4 Max loss:   ✓ — 100 SUPER / 10 h, stop: James Sunheart
+Loop: 0 / 11
+Open question for the director: none
+NBM: TWO open moves, director-only first — (a) name the beneficiaries and an independent witness (needs no provider, no vendor reply, no infrastructure; closes condition 2 the minute it is written, and makes the provider ask concrete: a meal these people actually want); then (b) one conversation with one candidate provider; record their Q2 answer verbatim
+
+[SUPER-STEWARD · BUILD-001 · 2026-10-03]
+STATUS: HOLD
+Conditions:
+  1 Provider:   ✗ — no provider named
+  2 Q path:     ✗ — missing: beneficiaries witness
+  3 Place/test: ✓ — Rivas, Pérez Zeledón — Can SUPER carry the loop on its own weight?
+  4 Max loss:   ✓ — 100 SUPER / 10 h, stop: James Sunheart
+Loop: 0 / 11
+Open question for the director: none
+NBM: TWO open moves, director-only first — (a) name the beneficiaries and a witness who is NOT the director, circulator or provider (they assign Q, so this one cannot be James; needs no provider, no vendor reply, no infrastructure; closes condition 2 the minute it is written, and makes the provider ask concrete: a meal these people actually want); then (b) one conversation with one candidate provider; record their Q2 answer verbatim
+
+[SUPER-STEWARD · BUILD-002 · 2026-10-03]
+STATUS: HOLD
+Conditions:
+  1 Provider:   ✗ — no provider named
+  2 Q path:     ✗ — missing: beneficiaries witness
+  3 Place/test: ✗ — place not named
+  4 Max loss:   ✗ — max loss and/or stop-caller not set
+Loop: 0 / 11
+Open question for the director: none
+NBM: TWO open moves, director-only first — (a) name the beneficiaries and a witness who is NOT the director, circulator or provider (they assign Q, so this one cannot be James; needs no provider, no vendor reply, no infrastructure; closes condition 2 the minute it is written, and makes the provider ask concrete: a meal these people actually want); then (b) one conversation with one candidate provider; record their Q2 answer verbatim
