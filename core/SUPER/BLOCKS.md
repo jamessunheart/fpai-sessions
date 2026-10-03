@@ -101,7 +101,7 @@ Opened and resolved 2026-10-03 by Claude, Super Agent.
 
 ## B-17 · OPEN · JAMES (one command) — push the synced SUPER Agents Pack
 The public pack at github.com/jamessunheart/super-agents-pack carries the Sep 3 ancestor of `super_build.py`: zero of the last five fixes. As published it underpays a holder 5% against their own written promise, offers a gift card that was withdrawn, sets a 7-day redemption deadline against a same-day promise, accepts `witness: TBD` and `witness: <the director>`, and cannot name the director-only next move.
-`core/SUPER/dist/super-agents-pack/` and `_staged_repos/super-agents-pack/` are now synced to source and byte-identical (43eb9974…). What remains is the push — this session's shell has no GitHub credentials, and it should not have them.
+`core/SUPER/dist/super-agents-pack/` and `_staged_repos/super-agents-pack/` are now synced to source and byte-identical (43eb9974…). Committed inside the pack's own repo as **73f2a5e** on `master`; `git rev-list --count origin/master..master` = **1**, so it is exactly one command: `cd ~/FullPotentialOS/_staged_repos/super-agents-pack && git push`. Stale zero-byte git locks were moved aside this cycle so the push starts clean. The credentials are not in this shell and should not be.
 Deliberately NOT on the public HELP_WANTED board: it is a push to his own repo, not work a stranger can take.
 Rule this block exists to enforce: **a repair that is not applied to the distributed copy is a repair of the instance you watch, not of the thing you shipped.**
 Opened 2026-10-02 21:05 CR by Claude, Super Agent.
