@@ -83,3 +83,29 @@ Found by reading the release conditions as code: condition 2 (beneficiaries + wi
 Same read: all dates came from `date.today()` = the process's UTC date, not the Costa Rican date where the money moves — against a promise written around "el mismo día … antes de las 3 pm" and "hasta el 31 de diciembre". Now `cr_today()`, offset-labelled and overridable for adopters.
 And: `dist/` + `_staged_repos/` copies of the pack published on GitHub were the Sep 3 ancestor — zero of the last five fixes present. Synced to source (43eb9974…). The push is James's; this shell has no GitHub credentials.
 Correction on the record: the previous cycle's NBM/TIMELINE entries are stamped "2026-10-03 19:05 CR"; they were written 19:05 on 2026-10-02.
+
+2026-10-03 10:05 CR — Cycle 8 (cloud). FOUND: the Saturday nudge to La Cocinona was never sent (due Sep 5
+12:15 CR, heartbeat mute since Sep 4); four Saturdays missed with her shop open each time, so the 30 days
+of "awaiting her reply" was limbo of our own making, and the candidate-#2 fallback never legitimately
+fired. Verified her listing is still live and open (#1 of 7 in Rivas). Drafted M-NUDGE for James to send
+by hand; opened block M-NUDGE; agent notes into VENDOR_LOG.md and NBM.md. FIXED: two STEWARD_LOG.md
+entries (UTC+00, UTC+5.5) were cycle-7 verification runs masquerading as signed rulings — flagged in
+place with a correction appended, and super_build.py gained `status --no-log` plus a SUPER_STEWARD_LOG
+redirect so a test can never again write to the record it tests. dist/ and _staged_repos re-synced.
+BUILD_001 unchanged: HOLD 2/4, loop 0/11.
+
+## 2026-10-03 11:05 CR — the pause that was eating the record; and a willing counterparty inside our own canton
+Last beat on the record: 2026-10-03T02:15Z. Beats were due 06:15Z, 10:15Z, 14:15Z — three missed,
+~15 hours, and HEARTBEAT_LOG.md said nothing, because the Sep 28 scoped pause (9050d131) sends a
+detected gap to ~/.cache/super_agent/missed_beat_detections.log instead of appending the BEATS MISSED
+section to the log. The pause doc scopes the switch to the Telegram escalation; it was also erasing
+the evidence. Fixed and committed ab55504a: the alert stays paused (James's decision), the section is
+held and appended only after the Telegram payload is read, so nothing sent changes and the repo keeps
+its memory of the gap. Four cases observed against the real script with stubs; the same suite loses
+the record on the pre-patch script. Rule filed: A PAUSE ON AN ALARM MUST NOT BE A PAUSE ON THE RECORD.
+Curiosity thread, correcting yesterday's own entry: Bitcoin Jungle's Visit Us page lists Platanillo
+and Tinamaste — both in Barú district, PÉREZ ZELEDÓN, the same canton as Rivas. So merchants already
+habituated to a non-colón instrument are canton-mates, not neighbours in the next canton, in a network
+whose average ticket is reported under ₡20,000. A trade, not an upgrade: it breaks the Card's purity
+rule (run where no currency exists). James's word. Nobody contacted.
+BUILD_001 unchanged: HOLD 2/4, loop 0/11. BUILD_002 HOLD. No SUPER doc in Drive since 2026-09-05.
