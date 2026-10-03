@@ -111,3 +111,35 @@ Opened 2026-10-02 21:05 CR by Claude, Super Agent.
 Fixed: `redemption_terms()` reads peg, amount and the deadline sentence out of REDEMPTION.md, derives any haircut from the document, quotes the deadline verbatim, and refuses rather than guessing when an anchor is missing or the pegs disagree. `CASHOUT` marked HISTORICAL, governs nothing. Twelve branches observed incl. a Sep-3-style haircut promise (still parses, as a haircut) and a mutation run.
 Also fixed with it: every date stamp came from the process's UTC date, not Costa Rica's — six hours a day a ruling and its ledger lines were dated tomorrow, against a promise turning on "el mismo día … antes de las 3 pm" and "hasta el 31 de diciembre". `cr_today()`, offset-labelled, `SUPER_TZ_OFFSET_HOURS` for adopters. **A currency must be dated in the place it circulates.**
 Opened and resolved 2026-10-02 by Claude, Super Agent.
+
+## M-NUDGE — OPEN — James, one forward (2 min), today after 12:00 CR
+The one nudge SATURDAY_PACKET.md promised La Cocinona de Pueblo was due Sat 2026-09-05 12:15 CR and
+never went: the heartbeat that was to carry it went mute 2026-09-04 (B-08). Four Saturdays missed, her
+shop open on every one. Her silence is therefore not a no, and the candidate-#2 fallback never
+legitimately fired — its trigger depended on a message we never sent.
+ACTION: open WhatsApp to +506 6362 6524 and send the M-NUDGE text at the bottom of
+core/SUPER/DRAFT_whatsapp_la_cocinona.md (change any word — it is your name on it). Today, after 12:00 CR.
+WHY NOT THE AGENT: the approved channel is the bot on your line and it has been mute since Sep 4; and a
+thirty-day-late nudge has to name the gap and take the blame, which is a human's sentence to send.
+THEN: her Q2 verbatim — "¿y qué haría usted con los SUPER?" — into VENDOR_LOG.md. That one sentence turns
+condition 1 from ✗ to ✓. If she says no, or nothing by Sunday close: candidate #1 rests for real and
+CANDIDATE_2_PACKET.md opens with a fresh consent-first M1.
+Kept OFF the public HELP_WANTED board: it is a message from James's own phone in his own name.
+
+## B-19 · RESOLVED same cycle · the steward had no clock
+`day1` / `day7` were parsed out of every Build Card and read by no code path: `ruling()` graded four
+conditions and a loop count, `render()` printed no date but today's. A Build's window could therefore
+lapse in total silence — BUILD #001's ≤7-day window (prose, from the 2026-09-03 commitment) was 23
+days past expiry while every status print reported faithfully that the place was still Rivas. Twelfth
+instance of the one shape, and the asymmetry is the evidence: `place_has_existing_currency` is
+enforced in code, the window was enforced nowhere.
+Fixed: `window_line()` read by `ruling()`, printed as `Window:` by `render()`; EXPIRED / UNDECLARED /
+UNREADABLE all raise themselves into *Open question for the director*. Grounded only — it refuses to
+compute an expiry out of a date nobody wrote. Four cases observed against the real script; the same
+past-date case prints zero `Window:` lines on the pre-patch script. dist/ and _staged_repos re-synced
+byte-identical (8a4c149a). Rule filed: **A PROMISE KEPT IN PROSE AND IN NO MACHINE IS A PROMISE
+NOTHING CAN BREAK.**
+Hands back to B-13 with a sharper ask: #001's day 7 is **James's word** — 2026-09-10 (commitment + 7),
+a new date, or closed as NOT CLOSED. Write it into the Card's `day7:` and the clock is checkable from
+then on.
+Opened and resolved 2026-10-03 by Claude, Super Agent.

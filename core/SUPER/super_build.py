@@ -11,7 +11,12 @@ Never moves funds. Never invents a field. A blank is a blank.
 import re, sys, os, datetime, pathlib
 
 HERE = pathlib.Path(__file__).parent
-LOG = HERE / "STEWARD_LOG.md"
+# STEWARD_LOG is the append-only record of rulings. It is overridable ONLY so that a
+# verification run can be pointed somewhere else: on 2026-10-02 two test runs of the
+# then-new timezone override appended real-looking rulings (UTC+00 and UTC+5.5) into
+# this file, where a reader cannot tell a test from a ruling. A test must not write to
+# the record it is testing.
+LOG = pathlib.Path(os.environ["SUPER_STEWARD_LOG"]) if os.environ.get("SUPER_STEWARD_LOG") else HERE / "STEWARD_LOG.md"
 REDEMPTION = HERE / "REDEMPTION.md"
 
 # Costa Rica is UTC-6 all year (no DST). The Build happens in Rivas, Pérez Zeledón, so
@@ -20,10 +25,11 @@ REDEMPTION = HERE / "REDEMPTION.md"
 # Default -6: Costa Rica, where this currency's first Build happens. An adopter of the
 # pack elsewhere sets SUPER_TZ_OFFSET_HOURS to their own offset — a currency should be
 # dated in the place it circulates, not in the place its process happens to run.
+_OFF_ENV = os.environ.get("SUPER_TZ_OFFSET_HOURS")
 try:
-    _OFF = float(os.environ.get("SUPER_TZ_OFFSET_HOURS", "-6"))
+    _OFF = float(_OFF_ENV) if _OFF_ENV is not None else -6.0
 except ValueError:
-    _OFF = -6.0
+    _OFF = -6.0; _OFF_ENV = None   # garbage ignored: the stamp is Costa Rica again, and says so
 CR = datetime.timezone(datetime.timedelta(hours=_OFF))
 def cr_today():
     return datetime.datetime.now(CR).date()
@@ -65,6 +71,41 @@ def redemption_ok():
     if not REDEMPTION.exists(): return False
     t = REDEMPTION.read_text(encoding="utf-8")
     return "Written by: ______" not in t and re.search(r"(exchanged for|redeem|agreed to accept).*[A-Za-z0-9₡]", t) is not None
+
+def window_line(card):
+    """What the Card promised about TIME, read by the grader at last.
+
+    day1/day7 have been in every Build Card since the first template and were read by
+    NOTHING: ruling() graded four conditions and a loop count, and render() printed no
+    date but today's. So the grader was timeless — a Build's window could lapse and
+    every status print would still say only HOLD, forever. BUILD #001's prose window
+    (<=7 days, counted from James's 2026-09-03 commitment, i.e. day7 = 2026-09-10)
+    lapsed and no machine said a word for 23 days; B-13 asks James to close it or name
+    a new day 7, and until now the system could not even tell him which day 7 it meant.
+    (Claude, Super Agent — finding 12, 2026-10-03)
+
+    Rule applied: report what is grounded and refuse to compute an expiry out of a date
+    nobody wrote. A blank window is named as unmeasurable, never as "in time".
+    """
+    def _d(s):
+        try: return datetime.date.fromisoformat(str(s).strip())
+        except Exception: return None
+    d1, d7 = card.get("day1", ""), card.get("day7", "")
+    a, b = (_d(d1) if filled(d1) else None), (_d(d7) if filled(d7) else None)
+    today = cr_today()
+    if b:
+        n = (today - b).days
+        if n > 0:
+            return ("EXPIRED", f"EXPIRED — day7 was {b.isoformat()}, today is {today.isoformat()} "
+                    f"({n} day{'s' if n != 1 else ''} over). Neither closed nor extended: write a new "
+                    f"day7 here, or close the Build as NOT CLOSED and say so.")
+        return ("OPEN", f"day1 {a.isoformat() if a else '—'} -> day7 {b.isoformat()} "
+                f"({-n} day{'s' if -n != 1 else ''} left)")
+    if filled(d7):
+        return ("UNREADABLE", f"day7 is {d7!r}, which is not a date (YYYY-MM-DD) — unmeasurable")
+    return ("UNDECLARED", "UNDECLARED — day1/day7 blank, so no machine here can say whether this "
+            "Build's window has lapsed. Write both as YYYY-MM-DD and the clock becomes checkable; "
+            "until then the window is prose only.")
 
 def ruling(card, loop_done, q, closed):
     c = card.get
@@ -108,8 +149,11 @@ def ruling(card, loop_done, q, closed):
     status = "CLOSED" if closed else ("READY" if all(ok for _,ok,_ in conds) else "HOLD")
     # open question
     openq = "none"
+    wstate, wline = window_line(card)
     if c("mixed_payment_ok","no").lower()!="no": openq = "Decision 001 — Build touches two currencies"
     elif not redemption_ok(): openq = "REDEMPTION.md is blank — a vendor will ask what SUPER buys; vendor agent is gated until it's filled"
+    elif wstate == "EXPIRED": openq = "Window expired — close Build as NOT CLOSED, or write a new day7 (B-13)"
+    elif wstate in ("UNDECLARED", "UNREADABLE") and not closed: openq = "day1/day7 unset — the Card's window is prose; no machine can grade its time"
     # NBM ordering rule (ledger): "the move that lets reality grade the system soonest goes first."
     # Condition 2 (beneficiaries + witness) depends ONLY on the director — it is gradeable the
     # minute it is filled, and the Card's own pass test is "a meal they WANTED", so the
@@ -133,24 +177,28 @@ def ruling(card, loop_done, q, closed):
         nbm = "One conversation with one candidate provider; record their Q2 answer verbatim"
     else:
         nbm = "Name the missing people/fields above"
-    return status, conds, loop_done, openq, nbm
+    return status, conds, loop_done, openq, nbm, wline
 
-def render(build_id, status, conds, loop_done, openq, nbm):
+def render(build_id, status, conds, loop_done, openq, nbm, window="(not computed)"):
     today = cr_today().isoformat()
     tzlabel = f"UTC{_OFF:+03.0f}" if _OFF == int(_OFF) else f"UTC{_OFF:+}"
+    if _OFF_ENV is not None: tzlabel += " ·offset from SUPER_TZ_OFFSET_HOURS"
     lines = [f"[SUPER-STEWARD · BUILD-{build_id} · {today} {tzlabel}]", f"STATUS: {status}", "Conditions:"]
     for i,(name,ok,why) in enumerate(conds,1):
         lines.append(f"  {i} {name+':':<11} {'✓' if ok else '✗'} — {why}")
-    lines += [f"Loop: {loop_done} / 11", f"Open question for the director: {openq}", f"NBM: {nbm}"]
+    lines += [f"Loop: {loop_done} / 11", f"Window: {window}",
+              f"Open question for the director: {openq}", f"NBM: {nbm}"]
     return "\n".join(lines)
 
-def cmd_status(path):
+def cmd_status(path, write_log=True):
     path = pathlib.Path(path)
     if not path.exists() and not path.is_absolute(): path = HERE / path.name   # run from anywhere
     if not path.exists(): sys.exit(f"no such card: {path}")
     card, loop_done, q, closed = parse_card(path)
     out = render(card.get("id","?"), *ruling(card, loop_done, q, closed))
     print(out)
+    if not write_log:
+        print(f"(--no-log: not appended to {LOG.name})"); return
     with LOG.open("a", encoding="utf-8") as f: f.write("\n" + out + "\n")
 
 def cmd_new(num, title):
@@ -170,8 +218,10 @@ def cmd_ladder():
 
 if __name__ == "__main__":
     a = sys.argv[1:]
+    _nolog = "--no-log" in a
+    a = [x for x in a if x != "--no-log"]
     if not a or a[0] not in ("status","new","ladder","mint","redeem","passiton","route","swap","conform"): sys.exit(__doc__)
-    if a[0]=="status": cmd_status(a[1] if len(a)>1 else HERE/"BUILD_001.md")
+    if a[0]=="status": cmd_status(a[1] if len(a)>1 else HERE/"BUILD_001.md", write_log=not _nolog)
     elif a[0]=="new": cmd_new(a[1], " ".join(a[2:]) or "untitled")
     elif a[0]=="ladder": cmd_ladder()
 

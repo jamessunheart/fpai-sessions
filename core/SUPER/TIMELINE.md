@@ -109,3 +109,25 @@ habituated to a non-colón instrument are canton-mates, not neighbours in the ne
 whose average ticket is reported under ₡20,000. A trade, not an upgrade: it breaks the Card's purity
 rule (run where no currency exists). James's word. Nobody contacted.
 BUILD_001 unchanged: HOLD 2/4, loop 0/11. BUILD_002 HOLD. No SUPER doc in Drive since 2026-09-05.
+
+## 2026-10-03 13:10 CR — cycle 10 — the grader had no clock
+Finding 12: day1/day7 were parsed into every Build Card and read by nothing. ruling() graded four
+conditions and a loop count and printed no date but today's, so a Build's window could lapse and the
+steward would say only HOLD, forever. BUILD #001's prose window (<=7 days from the 2026-09-03
+commitment, day7 = 2026-09-10) has been 23 days past expiry, unremarked, while condition 3 faithfully
+re-checked that the place was still Rivas. The asymmetry is the finding: place purity is enforced in
+code, window honesty was not. Rule filed: A PROMISE KEPT IN PROSE AND IN NO MACHINE IS A PROMISE
+NOTHING CAN BREAK.
+Fixed: window_line() -> a Window: line in every status, and an expired or unmeasurable window raises
+itself into the director's open question. It refuses to compute an expiry from a date nobody wrote:
+blank is UNDECLARED and unmeasurable, never "in time". Four cases observed; zero Window lines on the
+pre-patch script, so the test can fail. dist/ and _staged_repos re-synced byte-identical (8a4c149a).
+Push is still James's (B-17).
+Observed good news, first of the month: the 18:15Z beat kept the BEATS MISSED record while the
+Telegram alert stayed suppressed — commit ab55504a working on the real machine, so finding 4's
+"a fix is not a fix until observed to succeed once" is satisfied for it; and VENDOR_LOG_198.md shows
+a second successful mirror pull. Same beat: BRAIN OFFLINE, rc=1, "Please run /login" — B-08, day 31.
+The Mac beat is now a pure sensor that cannot think, which is the standing architectural proposal
+arrived at by accident rather than by decision.
+BUILD_001 unchanged: HOLD 2/4, loop 0/11. BUILD_002 HOLD. No SUPER doc in Drive since 2026-09-05.
+No reply from La Cocinona on the record. M-NUDGE still unsent (James's forward).
