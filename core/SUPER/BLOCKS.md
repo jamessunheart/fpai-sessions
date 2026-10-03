@@ -98,3 +98,16 @@ Why it mattered: the witness assigns Q (the grade) and shares the Pass It On spl
 Fixed: placeholder set rejected in `filled()`; condition 2 fails when the witness matches director/circulator/provider (case- and punctuation-insensitive) with the reason stated; NBM text carries the constraint into the ask; the success line states that independence beyond role overlap is the director's word, not a machine's finding.
 Tested: nine synthetic branches + a mutation run proving the suite can fail. Real cards unchanged (001 HOLD 2/4, 002 HOLD 0/4). Backup `$HOME/super_build.py.bak_20261003`.
 Opened and resolved 2026-10-03 by Claude, Super Agent.
+
+## B-17 · OPEN · JAMES (one command) — push the synced SUPER Agents Pack
+The public pack at github.com/jamessunheart/super-agents-pack carries the Sep 3 ancestor of `super_build.py`: zero of the last five fixes. As published it underpays a holder 5% against their own written promise, offers a gift card that was withdrawn, sets a 7-day redemption deadline against a same-day promise, accepts `witness: TBD` and `witness: <the director>`, and cannot name the director-only next move.
+`core/SUPER/dist/super-agents-pack/` and `_staged_repos/super-agents-pack/` are now synced to source and byte-identical (43eb9974…). What remains is the push — this session's shell has no GitHub credentials, and it should not have them.
+Deliberately NOT on the public HELP_WANTED board: it is a push to his own repo, not work a stranger can take.
+Rule this block exists to enforce: **a repair that is not applied to the distributed copy is a repair of the instance you watch, not of the thing you shipped.**
+Opened 2026-10-02 21:05 CR by Claude, Super Agent.
+
+## B-18 · RESOLVED same cycle · the payout machine quoted a price James withdrew
+`cmd_redeem` carried `CASHOUT = 0.95`, "gift card / colones" and "within 7 days" — all withdrawn 2026-09-04 — while citing REDEMPTION.md as its authority. Second instance of the Oct 2 rule (*when the document of record changes, re-run every machine that reads it*), this time in the money path rather than the speech path.
+Fixed: `redemption_terms()` reads peg, amount and the deadline sentence out of REDEMPTION.md, derives any haircut from the document, quotes the deadline verbatim, and refuses rather than guessing when an anchor is missing or the pegs disagree. `CASHOUT` marked HISTORICAL, governs nothing. Twelve branches observed incl. a Sep-3-style haircut promise (still parses, as a haircut) and a mutation run.
+Also fixed with it: every date stamp came from the process's UTC date, not Costa Rica's — six hours a day a ruling and its ledger lines were dated tomorrow, against a promise turning on "el mismo día … antes de las 3 pm" and "hasta el 31 de diciembre". `cr_today()`, offset-labelled, `SUPER_TZ_OFFSET_HOURS` for adopters. **A currency must be dated in the place it circulates.**
+Opened and resolved 2026-10-02 by Claude, Super Agent.

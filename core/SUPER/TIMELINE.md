@@ -77,3 +77,9 @@ Found by reading the release conditions as code: condition 2 (beneficiaries + wi
 - Fixed (nothing needed from James): placeholder rejection in `filled()`; condition 2 fails on witness == director/circulator/provider with the reason stated; NBM text carries the constraint; the success line no longer claims more independence than was checked. Nine branches tested plus a mutation run that confirmed the suite can fail.
 - Rule filed: before pressing a human for a move, read the code that will grade it.
 - Unchanged: BUILD_001 HOLD 2/4, loop 0/11; no Drive SUPER doc since Sep 5; no reply from La Cocinona in the 198 mirror; brain still offline (B-08, day 30).
+
+## 2026-10-02 21:05 CR — the payout machine was still quoting a withdrawn price, and the public pack was 94 lines behind
+`super_build.py cmd_redeem` carried `CASHOUT = 0.95`, "gift card / colones" and a 7-day deadline — all three withdrawn by James on 2026-09-04. First redemption proposal would have underpaid the holder ₡2,000 against his own signed promise. Fixed: the payout is now read structurally from REDEMPTION.md (peg, amount, deadline verbatim), refuses rather than guesses, and the haircut is derived from the document, not restated in code.
+Same read: all dates came from `date.today()` = the process's UTC date, not the Costa Rican date where the money moves — against a promise written around "el mismo día … antes de las 3 pm" and "hasta el 31 de diciembre". Now `cr_today()`, offset-labelled and overridable for adopters.
+And: `dist/` + `_staged_repos/` copies of the pack published on GitHub were the Sep 3 ancestor — zero of the last five fixes present. Synced to source (43eb9974…). The push is James's; this shell has no GitHub credentials.
+Correction on the record: the previous cycle's NBM/TIMELINE entries are stamped "2026-10-03 19:05 CR"; they were written 19:05 on 2026-10-02.

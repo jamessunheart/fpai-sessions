@@ -14,6 +14,20 @@ HERE = pathlib.Path(__file__).parent
 LOG = HERE / "STEWARD_LOG.md"
 REDEMPTION = HERE / "REDEMPTION.md"
 
+# Costa Rica is UTC-6 all year (no DST). The Build happens in Rivas, Pérez Zeledón, so
+# every date this file stamps is the date THERE, not the date where the process runs.
+# A container running UTC is six hours into tomorrow for a quarter of every CR day.
+# Default -6: Costa Rica, where this currency's first Build happens. An adopter of the
+# pack elsewhere sets SUPER_TZ_OFFSET_HOURS to their own offset — a currency should be
+# dated in the place it circulates, not in the place its process happens to run.
+try:
+    _OFF = float(os.environ.get("SUPER_TZ_OFFSET_HOURS", "-6"))
+except ValueError:
+    _OFF = -6.0
+CR = datetime.timezone(datetime.timedelta(hours=_OFF))
+def cr_today():
+    return datetime.datetime.now(CR).date()
+
 def parse_card(path):
     text = pathlib.Path(path).read_text(encoding="utf-8")
     m = re.search(r"```card\n(.*?)```", text, re.S)
@@ -122,8 +136,9 @@ def ruling(card, loop_done, q, closed):
     return status, conds, loop_done, openq, nbm
 
 def render(build_id, status, conds, loop_done, openq, nbm):
-    today = datetime.date.today().isoformat()
-    lines = [f"[SUPER-STEWARD · BUILD-{build_id} · {today}]", f"STATUS: {status}", "Conditions:"]
+    today = cr_today().isoformat()
+    tzlabel = f"UTC{_OFF:+03.0f}" if _OFF == int(_OFF) else f"UTC{_OFF:+}"
+    lines = [f"[SUPER-STEWARD · BUILD-{build_id} · {today} {tzlabel}]", f"STATUS: {status}", "Conditions:"]
     for i,(name,ok,why) in enumerate(conds,1):
         lines.append(f"  {i} {name+':':<11} {'✓' if ok else '✗'} — {why}")
     lines += [f"Loop: {loop_done} / 11", f"Open question for the director: {openq}", f"NBM: {nbm}"]
@@ -170,8 +185,35 @@ if __name__ == "__main__":
 # the right to move value; it holds the right to compute it exactly.
 # ---------------------------------------------------------------------------
 PEG_CRC = 400            # 1 SUPER = ₡400 at issuance
-CASHOUT = 0.95           # redemption returns 95%; 5% → White Mountain loop
+CASHOUT = 0.95           # HISTORICAL (Sep 3 design). NOT the payout rule: the haircut was
+                         # withdrawn 2026-09-04. Payouts come from redemption_terms() below.
 PASS_IT_ON = 0.10        # bonus mint on Q INCREASED and R_co >= 2
+
+def redemption_terms():
+    """Read the payout rule out of REDEMPTION.md instead of restating it here.
+    The promise is the document of record; a constant in this file is a copy that
+    goes stale the moment James edits his own promise (it already did: the 95%
+    haircut and the gift card were withdrawn 2026-09-04 and lived on in code for
+    29 days). Returns (rate_crc_per_super, deadline_sentence, haircut_fraction).
+    Refuses rather than guessing."""
+    if not REDEMPTION.exists():
+        raise SystemExit("REFUSED — REDEMPTION.md is missing. The steward will not compute a payout it cannot quote.")
+    t = REDEMPTION.read_text(encoding="utf-8")
+    peg = re.search(r"1\s*SUPER\s*=\s*₡\s*([\d,]+)", t)
+    offer = re.search(r"Con\s+(\d+)\s+SUPER.*?₡\s*([\d,]+)", t, re.S)
+    if not peg or not offer:
+        raise SystemExit("REFUSED — REDEMPTION.md does not state both '1 SUPER = ₡N' and "
+                         "'Con N SUPER ... ₡M'. Without both the steward cannot know what a "
+                         "holder is owed, and it will not fall back to a figure in this file.")
+    peg_crc = int(peg.group(1).replace(",", ""))
+    units = int(offer.group(1)); amount = int(offer.group(2).replace(",", ""))
+    rate = amount / units
+    deadline = re.search(r"(Se entrega[^\n]*)", t)
+    deadline = deadline.group(1).strip() if deadline else "(no deadline sentence found in REDEMPTION.md)"
+    if peg_crc != PEG_CRC:
+        raise SystemExit(f"REFUSED — REDEMPTION.md pegs 1 SUPER = ₡{peg_crc:,} but this script carries "
+                         f"₡{PEG_CRC:,}. The document of record wins; fix PEG_CRC before paying anyone.")
+    return rate, deadline, (1.0 - rate / peg_crc)
 RIGHTS = {               # who may approve what (the director drew these)
     "mint":     "director",
     "redeem":   "director",      # until transfer; then: stewardship circle
@@ -193,7 +235,7 @@ def ledger_totals():
     return minted, redeemed
 
 def proposal(kind, lines, approver):
-    pid = f"{kind.upper()}-{datetime.datetime.now().strftime('%Y%m%dT%H%M%S')}"
+    pid = f"{kind.upper()}-{datetime.datetime.now(CR).strftime('%Y%m%dT%H%M%S')}CR"
     print(f"[PROPOSAL {pid}] — computed by super-steward; approval right: {approver}")
     for l in lines: print("  " + l)
     print(f"  To execute: a human with the '{approver}' right appends 'APPROVED {pid}' to LEDGER.md and moves the colones. The AI does not.")
@@ -210,21 +252,27 @@ def cmd_mint(build, amount):
         f"Mint {amount} SUPER against BUILD-{build} ({card.get('intention','')[:60]})",
         f"Escrow required BEFORE mint: ₡{escrow_needed:,} into the named SUPER escrow (1 SUPER = ₡{PEG_CRC})",
         f"Outstanding after mint: {minted - redeemed + amount} SUPER (escrow must cover ₡{(minted - redeemed + amount)*PEG_CRC:,})",
-        f"Ledger line: {datetime.date.today()} | treasury | {card.get('circulator') or 'circulator'} | {amount} SUPER | mint for BUILD-{build} | {build} | {card.get('witness') or 'witness'}",
+        f"Ledger line: {cr_today()} | treasury | {card.get('circulator') or 'circulator'} | {amount} SUPER | mint for BUILD-{build} | {build} | {card.get('witness') or 'witness'}",
     ], RIGHTS["mint"])
 
 def cmd_redeem(amount, who, build):
     minted, redeemed = ledger_totals()
     if amount > minted - redeemed:
         print(f"REFUSED — {amount} SUPER requested but only {minted - redeemed} outstanding on the ledger."); return
-    face = amount * PEG_CRC; to_holder = int(face * CASHOUT); to_loop = face - to_holder
-    proposal("redeem", [
+    rate, deadline, haircut = redemption_terms()
+    face = amount * PEG_CRC; to_holder = int(amount * rate); to_loop = face - to_holder
+    lines = [
         f"Redeem {amount} SUPER from {who} (BUILD-{build})",
-        f"Face value ₡{face:,} → gift card / colones to {who}: ₡{to_holder:,} ({int(CASHOUT*100)}%)",
-        f"White Mountain loop (witness pay, next Build): ₡{to_loop:,} (5%)",
-        f"Deadline: within 7 days of request (promise in REDEMPTION.md). Missed deadline = K4, currency pauses.",
+        f"Owed to {who}: ₡{to_holder:,} — what REDEMPTION.md promises, read from the file ({rate:g} per SUPER)",
+    ]
+    if to_loop > 0:
+        lines.append(f"White Mountain loop: ₡{to_loop:,} ({haircut*100:.0f}% haircut, as written in REDEMPTION.md)")
+    else:
+        lines.append("White Mountain loop: ₡0 — the promise is full face value; no haircut is taken from a holder.")
+    proposal("redeem", lines + [
+        f"Deadline, verbatim from the promise: \u201c{deadline}\u201d  Missed = K4, currency pauses.",
         f"Escrow after: ₡{(minted - redeemed - amount)*PEG_CRC:,} covering {minted - redeemed - amount} SUPER",
-        f"Ledger line: {datetime.date.today()} | {who} | treasury | {amount} SUPER | redemption (₡{to_holder:,} card + ₡{to_loop:,} loop) | {build} | witness",
+        f"Ledger line: {cr_today()} | {who} | treasury | {amount} SUPER | redemption (₡{to_holder:,} to holder + ₡{to_loop:,} loop) | {build} | witness",
         f"Note: R_co for this SUPER = number of hands before this line. Record it on the Card.",
     ], RIGHTS["redeem"])
 
@@ -240,7 +288,7 @@ def cmd_passiton(build):
         f"Mint {amt} SUPER (10% of BUILD-{build}) as new money created by verified good",
         f"Split: beneficiaries ({card.get('beneficiaries')}) and witness ({card.get('witness')}) — never circulator, never treasury",
         f"Escrow required BEFORE mint: ₡{amt*PEG_CRC:,} from the current tranche",
-        f"Ledger line: {datetime.date.today()} | treasury | beneficiaries+witness of {build} | {amt} SUPER | pass-it-on mint (Q INCREASED, R_co={rco}) | {build} | {card.get('witness')}",
+        f"Ledger line: {cr_today()} | treasury | beneficiaries+witness of {build} | {amt} SUPER | pass-it-on mint (Q INCREASED, R_co={rco}) | {build} | {card.get('witness')}",
     ], RIGHTS["passiton"])
 
 if __name__ == "__main__" and len(sys.argv) > 1 and sys.argv[1] in ("mint", "redeem", "passiton"):
