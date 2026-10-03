@@ -9,6 +9,7 @@ LOG="$REPO/core/SUPER/agent/HEARTBEAT_LOG.md"
 MISSED_BEAT_ALERT_PAUSE_FILE="$HOME/.config/fpai/super_agent/missed_beat_alerts.disabled"
 MISSED_BEAT_DETECTION_LOG="$HOME/.cache/super_agent/missed_beat_detections.log"
 BEATS_MISSED=""
+MISSED_RECORD=""
 
 if [ "${1:-}" = "--missed-beat-alert-status" ]; then
   if [ -f "$MISSED_BEAT_ALERT_PAUSE_FILE" ]; then
@@ -188,10 +189,17 @@ if [ -f "$BEAT_STATE" ]; then
   if [ "$GAP" -gt 300 ]; then
     MISSED=$(( GAP / 240 ))
     if [ -f "$MISSED_BEAT_ALERT_PAUSE_FILE" ]; then
-      # James-authorized scoped pause: keep detecting and preserve local evidence, but do not
-      # append the missed-beat entry that becomes the Telegram payload or raise its severity.
+      # James-authorized scoped pause: the ALERT is paused, the RECORD is not.
+      # 2026-10-03: ~15h / 3 beats went missing and the ONLY trace was a line in ~/.cache, which
+      # no agent and no human reads -- so HEARTBEAT_LOG.md, the repo's only memory of the gap,
+      # said nothing and the next reader would have taken that window for a quiet one. The pause
+      # doc scopes this switch to the Telegram escalation; it had also been silencing the record.
+      # So: keep the local detection line, and HOLD the same BEATS MISSED section to append to
+      # $LOG *after* the Telegram payload has been read, so nothing that is SENT changes.
+      # Rule: a pause on an alarm must not be a pause on the record.
       printf '%s gap_minutes=%s estimated_beats_skipped=%s alert=suppressed pause_file=%s\n' \
         "$STAMP" "$GAP" "$MISSED" "$MISSED_BEAT_ALERT_PAUSE_FILE" >> "$MISSED_BEAT_DETECTION_LOG"
+      MISSED_RECORD=$(printf '\n## %s - BEATS MISSED (alert suppressed by scoped pause; record kept)\n- %s minutes since the previous beat (~%s beats skipped). This machine was asleep, off, or the schedule did not fire.\n- Everything the standing orders do on a beat did NOT happen during that window: the vendor log was not mirrored, the delta watch was blind, no steward verdict was appended.\n- Treat any conclusion drawn from file mtimes inside that window as unobserved, not as quiet.\n- Telegram escalation withheld per %s. This section is evidence, not an alert.\n' "$STAMP" "$GAP" "$MISSED" "$MISSED_BEAT_ALERT_PAUSE_FILE")
     else
       printf '\n## %s — BEATS MISSED\n- %s minutes since the previous beat (~%s beats skipped). This machine was asleep, off, or the schedule did not fire.\n- Everything the standing orders do on a beat did NOT happen during that window: the vendor log was not mirrored, the delta watch was blind, no steward verdict was appended.\n- Treat any conclusion drawn from file mtimes inside that window as unobserved, not as quiet.\n' "$STAMP" "$GAP" "$MISSED" >> "$LOG"
       BEATS_MISSED="$MISSED"
@@ -205,6 +213,10 @@ grep -q "$STAMP" "$LOG" 2>/dev/null || printf '\n## %s — beat ran, agent left 
 
 # EXPRESS: the Super Agent speaks each beat to James's Telegram (quiet hours respected)
 BEAT=$(awk '/^## /{e=""} {e=e $0 "\n"} END{print e}' "$LOG" | head -c 900)
+
+# The record of a suppressed gap lands only now, after the payload above was read: the scoped
+# pause governs what is SENT, never what is remembered.
+if [ -n "$MISSED_RECORD" ]; then printf '%s\n' "$MISSED_RECORD" >> "$LOG"; fi
 SEV=low; PREFIX="🫀 SUPER Agent beat"
 if [ "$BRAIN_OK" = "no" ] || [ "$MIRROR_OK" = "no" ]; then SEV=high; PREFIX="⛔ SUPER Agent DEGRADED — beat"; fi
 if [ -n "$BEATS_MISSED" ]; then SEV=high; PREFIX="⏰ SUPER Agent — ${BEATS_MISSED} BEAT(S) MISSED — beat"; fi
