@@ -131,7 +131,10 @@ def ruling(card, loop_done, q, closed):
     ok2 = ok_ben and ok_wit and not clash
     if ok2:
         why2 = (f"beneficiaries + witness named ({c('witness')} is not the director, "
-                "circulator or provider; independence beyond role is the director's word)")
+                "circulator or provider; independence beyond role is the director's word). "
+                "Presence is all this machine checks: the Card's own pass test is a meal they "
+                "WANTED and felt respected, so whether these people were actually asked is the "
+                "director's word too, not something observed here")
     elif clash:
         why2 = (f"witness {c('witness')} is also the {'/'.join(clash)} — the Build would grade "
                 "itself; name someone who is none of the three")
@@ -167,11 +170,21 @@ def ruling(card, loop_done, q, closed):
     elif status == "HOLD" and loop_done >= 8:
         nbm = "Fill the Close section and Q"
     elif director_only and provider_open:
+        # The old text advertised this move as costless ("needs no provider, no
+        # infrastructure; closes condition 2 the minute it is written") because the only
+        # thing the machine checks is that the field is non-empty. But the Card's pass test
+        # is "a meal they WANTED and felt respected", and its own Love section says the
+        # beneficiaries "haven't chosen the meal yet" — so each name is a conversation, not a
+        # keystroke. Reporting a hard ask as a five-minute one, cycle after cycle, is how a
+        # system turns its own stall into an accusation against the human. The witness may be
+        # one of the beneficiaries; the Card assigns Q to them jointly. (Claude, 2026-10-03)
         nbm = ("TWO open moves, director-only first — (a) name the beneficiaries and a witness who "
-               "is NOT the director, circulator or provider (they assign Q, so this one cannot be "
-               "James; needs no provider, no vendor reply, no infrastructure; closes condition 2 "
-               "the minute it is written, and makes the provider ask concrete: a meal these people "
-               "actually want); then (b) one conversation with one candidate provider; "
+               "is NOT the director, circulator or provider (the witness MAY be one of the "
+               "beneficiaries — the Card assigns Q to them jointly — so no eleventh person is "
+               "needed; but this is not a form fill: the Card's pass test is a meal they WANTED "
+               "and felt respected, so each name costs a conversation, and how many names is set "
+               "by the Build's own size — resize the Build and this ask resizes with it, B-13); "
+               "then (b) one conversation with one candidate provider; "
                "record their Q2 answer verbatim")
     elif provider_open:
         nbm = "One conversation with one candidate provider; record their Q2 answer verbatim"
