@@ -281,3 +281,60 @@ Scope: the bot on James's line MAY hold AI-disclosed, consented conversations th
 - 2026-10-04 15:25 CR: reality otherwise unchanged in the ~2h since cycle 15 — Drive queried, not assumed: **no SUPER-titled doc modified since 2026-09-05** before my own writes this cycle; **Gemini's Council Record 001 answer is still the 2026-09-03 one**. `VENDOR_LOG_198.md` still the **2026-10-04T18:15Z** pull with the same two `2026-09-03T15:12` entries — **no reply from La Cocinona on the record**, her kitchen open since 09:00 CR and open now. Last beat still 18:15Z (next due ~22:15Z). BUILD_001 HOLD **2/4** loop 0/11 `Window: UNDECLARED` (`status --no-log`, no steward entry appended); BUILD_002 HOLD. B-17 still **four** commits ahead (`9a60dd9 2f8fa8c a931cfc 73f2a5e`). Nothing sent, minted, contacted; no funds moved.
   WAITING ON JAMES, stated once: M-NUDGE (window open until 20:00 CR today; next Sat 2026-10-11) · B-20 · B-21 · B-15 · B-13 · B-17 · B-08 (day 32).
   RETIRED this cycle: "ten/eleven cycles of CHALLENGES wait for a paste." It was never his to do.
+
+## FINDING 17 (2026-10-04 17:40 CR, cycle 17, Claude) — THE COUNCIL'S ONE REQUIRED CHANGE WAS ADOPTED IN PROSE AND READ BY NO MACHINE
+Curiosity thread this cycle: re-read COUNCIL_GEMINI.md — a file written 2026-09-03 and never re-read —
+and check whether its verdict reached any code. It did not.
+- Gemini's verdict was PROCEED WITH ONE CHANGE: replace MORE ALIVE as the arbiter of Q with a concrete
+  four-point pass/fail (provider understood + freely accepted · beneficiaries got a meal they wanted and
+  felt respected · redemption honored frictionlessly <24h · provider would accept again). NBM.md logs
+  #11 as DONE. The checklist WAS written into BUILD_001.md the same day. Then `grep -i "pass/fail"
+  super_build.py` returned NOTHING: ruling() grades four RELEASE conditions (may this Build start?), a
+  loop count, and since finding 12 a window. Nothing ever looked at the four boxes that decide whether
+  the Build PASSED. A Build could reach CLOSED with every release condition green and its own
+  council-recommended grade untouched, and every status print would look complete.
+  Finding 12's shape exactly: A PROMISE KEPT IN PROSE AND IN NO MACHINE IS A PROMISE NOTHING CAN BREAK.
+- SECOND DEFECT, found while fixing the first, and it inflated a number the director reads: parse_card
+  counted EVERY `- [x]` anywhere in the Card as a loop step. BUILD_001 carries 15 boxes — 11 loop steps
+  plus the 4 grade points. So the first tick of "Provider understood SUPER and accepted freely" would
+  have reported loop 1/11 with no loop step done. OBSERVED on the pre-patch script: a synthetic CLOSED
+  card with 2/4 grade boxes ticked prints `Loop: 2 / 11` and `Open question: none`. Post-patch the same
+  card prints `Loop: 0 / 11` and names the unfinished grade.
+- FIXED, and the limit on the fix is deliberate: grade_line() REPORTS, it does not grade. The Card's own
+  header says "James adopts or strikes", so a machine that turned an unadopted council recommendation
+  into a hard gate would be converting support into sovereignty — the one thing the governance rule
+  forbids. States: ABSENT / UNREADABLE / UNCHECKED / PARTIAL / COMPLETE, printed on a `Grade:` line every
+  run, and raised into the director's open question ONLY when a Build is CLOSED with its grade unfinished
+  (while it is open, printing the state is enough; inventing an extra ask would be noise).
+  Loop count scoped to the "## Loop" section, with the old whole-file count kept as fallback so no Card
+  silently reads zero.
+- OBSERVED per finding 4, five cases in a scratch lab with copies of the real Cards, SUPER_STEWARD_LOG
+  redirected and --no-log throughout (finding 10b): BUILD_001 → UNCHECKED 0/4 · BUILD_002 → ABSENT ·
+  CLOSED+2/4 → PARTIAL and the open question fires · CLOSED+4/4 → COMPLETE, no question · section with no
+  checkboxes → UNREADABLE and the question fires. The pre-patch script prints no `Grade:` line in any of
+  the five and mis-counts the loop in two. ladder and the real ruling unchanged; STEWARD_LOG.md 466 lines
+  and mtime untouched; dist/ and _staged_repos synced byte-identical (5f74ba4a…) and the PACK copy itself
+  exercised; pre-patch backup md5 bc8874ce… matches the hash cycle 15 recorded independently.
+- TWO THINGS THIS DOES NOT FIX — one word from James each, and neither is a conversation with a stranger:
+  (a) TEMPLATE_BUILD_CARD.md has NO pass/fail section, so every Build created by `super_build.py new` is
+      born ungradeable — BUILD_002 is already ABSENT. Deliberately NOT patched: propagating a
+      recommendation James has not adopted into every future Card is his call, not mine. ADOPT → I add it
+      to the template; STRIKE → I remove it from #001 and the Card stops claiming a grade it will not use.
+  (b) THE COUNCIL'S ONE NAMED STRENGTH WAS WITHDRAWN THE NEXT DAY AND NOTHING RECONCILED IT. Gemini's
+      "one thing this design gets right" was the 5% redemption haircut — "by making redemption slightly
+      worse than spending, the design creates a structural incentive for circulation (R_co > 1) from day
+      one", against the failure it named for currencies without one: "just an inconvenient proxy for
+      national currency". James withdrew the haircut 2026-09-04 with the gift card, and his own change log
+      named half the cost (food-layer anchoring must now come from where SUPER is SPENT). The unnamed half
+      is the R term of the system's own formula BC = S × R × Q: with 100 SUPER = ₡40,000 either way, there
+      is now NO economic reason to spend rather than redeem. And `cmd_passiton` still REFUSES unless
+      R_co >= 2 — so SUPER's surplus mechanism is gated on a behavior the instrument no longer rewards,
+      and BUILD_002's whole premise ("the Build 001 provider spends SUPER with a feria vendor") rests on
+      goodwill alone. Not a criticism of the decision — his reason was plain and the holder is better off
+      by ₡2,000. It is one unreconciled consequence, and it is James's word: restore a small spend
+      PREMIUM (spend > redeem, never a haircut on the holder), or accept R=1 for #001 and grade #002 on
+      non-economic motivation, honestly labelled. → B-23.
+Commits: this cycle. RULE: AN ADOPTED COUNCIL CHANGE IS NOT ADOPTED UNTIL A MACHINE READS IT — and when a
+later decision removes the thing a council praised, the council record must be reconciled, not left to
+keep recommending a design that no longer exists.
+Signed: Claude, Super Agent, 2026-10-04.

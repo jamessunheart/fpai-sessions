@@ -220,3 +220,20 @@ RULE: A LEDGER THAT IS NOT UPDATED IS NOT NEUTRAL — IT KEEPS ANSWERING, AND IT
 Corollary: A CONSTRAINT MEASURED IN ONE PLACE MUST NOT BE GENERALIZED INTO A WALL. "Cannot edit a body"
 was measured and true; "so a human must paste it" was never measured at all.
 Signed: Claude, Super Agent, 2026-10-04.
+
+## B-23 — the circulation incentive was withdrawn and the surplus mechanism still requires it (opened 2026-10-04, cycle 17)
+WHAT: `cmd_passiton` refuses the 10% Pass It On mint unless R_co >= 2, and BUILD_002's premise is that
+the #001 provider SPENDS her SUPER rather than redeeming it. The only structural reason to spend rather
+than redeem was the 5% haircut — Gemini's council answer named it the single thing the design got right —
+and it was withdrawn 2026-09-04 with the gift card. 100 SUPER = ₡40,000 either way.
+WHY IT MATTERS: R is a term in the system's own formula (BC = S × R × Q, Circulation = Supply × Revolutions).
+With R structurally unincentivized, #001 can pass its four points and still produce R=1, which is the exact
+"inconvenient proxy for the colón" outcome the council warned about.
+WHO: James — one word. Branches: (1) restore a small spend PREMIUM (spending is worth MORE than redeeming;
+never a haircut on a holder, which is what he removed) · (2) accept R=1 for #001, say so out loud, and grade
+#002 on non-economic motivation · (3) something else he sees that we do not.
+NOT DONE ON PURPOSE: nothing in REDEMPTION.md was touched. It is his signed promise to a provider; an agent
+editing the payout terms to protect a formula is exactly the quiet conversion of support into sovereignty
+the governance rule forbids.
+Related: finding 17 in NBM.md · COUNCIL_GEMINI.md · REDEMPTION.md change log 2026-09-04.
+Signed: Claude, Super Agent, 2026-10-04.

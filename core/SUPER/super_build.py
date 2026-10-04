@@ -45,7 +45,15 @@ def parse_card(path):
         if ":" in line:
             k, v = line.split(":", 1)
             card[k.strip()] = v.strip()
-    loop_done = len(re.findall(r"^- \[x\]", text, re.M | re.I))
+    # The loop counter used to count EVERY checked box anywhere in the Card. BUILD_001
+    # carries 15 boxes: 11 loop steps and the 4 council pass/fail points (finding 17). So
+    # the first time the director ticked "Provider understood SUPER and accepted freely"
+    # the steward would have reported loop 1/11 with no loop step done — a progress number
+    # inflated by a grade. Measured, not supposed: 15 boxes in BUILD_001, 11 in BUILD_002.
+    # Scoped to the "## Loop" section; Cards without one keep the old whole-file count so
+    # nothing silently reads zero. (Claude, 2026-10-04, finding 17)
+    _loopsec = re.search(r"^##[ \t]*Loop[^\n]*\n(.*?)(?=^## |\Z)", text, re.S | re.M)
+    loop_done = len(re.findall(r"^- \[x\]", _loopsec.group(1) if _loopsec else text, re.M | re.I))
     q = re.search(r"^Q:\s*(INCREASED|UNCHANGED|DECREASED)", text, re.M)
     closed = bool(q) and "## Close" in text and text.split("## Close",1)[1].strip().count("\n") >= 9
     return card, loop_done, q.group(1) if q else None, closed
@@ -127,7 +135,45 @@ def window_line(card):
             "Build's window has lapsed. Write both as YYYY-MM-DD and the clock becomes checkable; "
             "until then the window is prose only.")
 
-def ruling(card, loop_done, q, closed):
+def grade_line(text):
+    """What the Card promised about the GRADE, read by the grader at last.
+
+    Gemini's independent council answer (#11, 2026-09-03) is logged in NBM.md as DONE,
+    with its one required change: replace MORE ALIVE as the arbiter of Q with a concrete
+    four-point pass/fail. The checklist WAS written into BUILD_001.md the same day, under
+    a header that says "James adopts or strikes" -- and then read by NO code in this file.
+    ruling() grades four RELEASE conditions (may this Build start?) plus a loop count and,
+    since finding 12, a window. Nothing ever looked at the four boxes that decide whether
+    the Build PASSED. So a Build could reach CLOSED with every release condition green and
+    its own council-recommended grade entirely untouched, and every status print would
+    look complete. Same shape as finding 12: a promise kept in prose and in no machine.
+    (Claude, Super Agent -- finding 17, 2026-10-04)
+
+    Rule applied, and the limit on it: this function REPORTS, it does not grade. The
+    Card's header hands adoption to James; a machine that quietly turned an unadopted
+    council recommendation into a hard gate would be converting support into sovereignty.
+    So the state is named out loud and the decision stays his.
+    """
+    m = re.search(r"^##[ \t]*Pass/fail[^\n]*\n(.*?)(?=^## |\Z)", text or "", re.S | re.M)
+    if not m:
+        return ("ABSENT", "ABSENT -- this Card carries no concrete pass/fail grade, so nothing "
+                "here can say what PASSED would mean for it; the four release conditions only "
+                "say it may start")
+    body = m.group(1)
+    boxes = re.findall(r"^[ \t]*-[ \t]*\[([ xX])\]", body, re.M)
+    n = len(boxes)
+    done = sum(1 for b in boxes if b.lower() == "x")
+    if n == 0:
+        return ("UNREADABLE", "a Pass/fail section exists but holds no checkboxes -- unmeasurable")
+    if done == 0:
+        return ("UNCHECKED", f"0/{n} checked (council 4-point grade, Gemini #11; the header hands "
+                "adoption to James). Presence is all this machine checks: who ticks a box and on "
+                "what evidence is the director's word")
+    if done < n:
+        return ("PARTIAL", f"{done}/{n} checked -- not a pass until all {n} are, per the Card's own line")
+    return ("COMPLETE", f"{n}/{n} checked -- the Card's own grade is satisfied (on the director's word)")
+
+def ruling(card, loop_done, q, closed, text=""):
     c = card.get
     conds = []
     # 1 provider + verbatim next-use
@@ -181,6 +227,7 @@ def ruling(card, loop_done, q, closed):
     # open question
     openq = "none"
     wstate, wline = window_line(card)
+    gstate, gline = grade_line(text)
     if c("mixed_payment_ok","no").lower()!="no": openq = "Decision 001 — Build touches two currencies"
     elif not redemption_ok(): openq = "REDEMPTION.md is blank — a vendor will ask what SUPER buys; vendor agent is gated until it's filled"
     elif wstate == "EXPIRED": openq = "Window expired — close Build as NOT CLOSED, or write a new day7 (B-13)"
@@ -190,6 +237,14 @@ def ruling(card, loop_done, q, closed):
     # computed, printed in condition 2, and silently absent from the director's open question.
     # A question that only surfaces once an unrelated question is answered is not asked.
     # (Claude, 2026-10-04, same cycle, after observing it)
+    # ADDITIVE for the same reason: a Build that reaches CLOSED with its own pass/fail
+    # grade unticked has been closed on release conditions alone. Not raised while the Build
+    # is still open — the state is printed every time on the Grade: line, and inventing an
+    # extra ask out of it would be noise. (Claude, 2026-10-04, finding 17)
+    if closed and gstate != "COMPLETE":
+        gnote = ("this Build is CLOSED and its own pass/fail grade reads " + gstate + " (" + gline +
+                 ") — say PASSED or NOT PASSED against those four points, or strike them from the Card")
+        openq = gnote if openq == "none" else f"{openq} · ALSO: {gnote}"
     if ben_clash:
         note = ("beneficiary/provider role overlap — " +
                 ", ".join(f"{w} is also the {r}" for w, r in ben_clash) +
@@ -228,16 +283,16 @@ def ruling(card, loop_done, q, closed):
         nbm = "One conversation with one candidate provider; record their Q2 answer verbatim"
     else:
         nbm = "Name the missing people/fields above"
-    return status, conds, loop_done, openq, nbm, wline
+    return status, conds, loop_done, openq, nbm, wline, gline
 
-def render(build_id, status, conds, loop_done, openq, nbm, window="(not computed)"):
+def render(build_id, status, conds, loop_done, openq, nbm, window="(not computed)", grade="(not computed)"):
     today = cr_today().isoformat()
     tzlabel = f"UTC{_OFF:+03.0f}" if _OFF == int(_OFF) else f"UTC{_OFF:+}"
     if _OFF_ENV is not None: tzlabel += " ·offset from SUPER_TZ_OFFSET_HOURS"
     lines = [f"[SUPER-STEWARD · BUILD-{build_id} · {today} {tzlabel}]", f"STATUS: {status}", "Conditions:"]
     for i,(name,ok,why) in enumerate(conds,1):
         lines.append(f"  {i} {name+':':<11} {'✓' if ok else '✗'} — {why}")
-    lines += [f"Loop: {loop_done} / 11", f"Window: {window}",
+    lines += [f"Loop: {loop_done} / 11", f"Window: {window}", f"Grade: {grade}",
               f"Open question for the director: {openq}", f"NBM: {nbm}"]
     return "\n".join(lines)
 
@@ -246,7 +301,8 @@ def cmd_status(path, write_log=True):
     if not path.exists() and not path.is_absolute(): path = HERE / path.name   # run from anywhere
     if not path.exists(): sys.exit(f"no such card: {path}")
     card, loop_done, q, closed = parse_card(path)
-    out = render(card.get("id","?"), *ruling(card, loop_done, q, closed))
+    out = render(card.get("id","?"), *ruling(card, loop_done, q, closed,
+                                            text=path.read_text(encoding="utf-8")))
     print(out)
     if not write_log:
         print(f"(--no-log: not appended to {LOG.name})"); return

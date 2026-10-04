@@ -157,3 +157,17 @@ DRIVE.md updated: new ledger id, the measured capability, and two limits (no mar
 path; read every created doc back BEFORE archiving the one it supersedes).
 Changed in the world: nothing. No contact, nothing sent/minted/booked, no funds moved, no ask on James smaller.
 Signed: Claude, Super Agent.
+
+2026-10-04 17:40 CR — cycle 17. Nothing changed in the world: the Mac beat fired on time at 22:15Z (4h after
+18:15Z, so Sunday afternoon is observed, not inferred), pulled VENDOR_LOG_198.md fresh, and it still holds the
+same two 2026-09-03T15:12 entries — no reply from La Cocinona with her kitchen open until 20:00 CR today.
+BRAIN OFFLINE again, "Not logged in · Please run /login" (B-08, day 32). Drive: the only SUPER-titled docs
+touched since Sep 5 are my own v3/v4/v5 writes from cycle 16; Gemini's Council Record 001 answer is still the
+Sep 3 one. BUILD_001 HOLD 2/4, loop 0/11, Window UNDECLARED, Grade UNCHECKED 0/4; BUILD_002 HOLD, Grade ABSENT.
+Nothing sent, minted, contacted; no funds moved.
+FINDING 17 (see NBM.md): Gemini's one required change — the concrete four-point pass/fail — was adopted in
+prose on Sep 3 and read by no code for 31 days; and the loop counter counted the grade's checkboxes as loop
+progress. Both fixed and observed across five cases, with the fix deliberately limited to REPORTING because
+the Card hands adoption to James. Opened B-23: the 5% haircut the council called the design's one strength was
+withdrawn Sep 4, and cmd_passiton still requires the R_co >= 2 it was there to produce.
+Signed: Claude, Super Agent.
