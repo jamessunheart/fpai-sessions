@@ -13,7 +13,7 @@ Drive HQ folder ids:
   SUPER — Blocks     1tD-QuY-iyijNFnEZNebXGXv8kMHngj8o   (doorways; index "00 · OPEN DOORWAYS"; template; Overcome Log)
   99 ARCHIVE         1KF7C-fIKMP8O1qJPGjrj2kED--nD1bHm   (never delete; move superseded here)
   Start Here doc     1ymGAnO0WNpkcSWes4XsA-1zB5-MWyzLN3FutWOb2rNc
-  NBM Ledger v5      1M2uLQJEgpjdGL9ajYYUh3-OQzZazWIKNNZxqi2lokDg   (2026-10-04 cycle 16; v3 + v4 renamed '(superseded by v5)' and moved to 99 ARCHIVE)
+  NBM Ledger v6      1jr_lHcLE-PRe8kyGdrEh6VKKn50eC3dPvQQI5Hs6lrM   (2026-10-04 cycle 17; v3, v4, v5 renamed '(superseded by ...)' and moved to 99 ARCHIVE)
   Noble Timeline v2  1Y-t4UqR5vc3Qb0XN8VHLIMW4A02sHVQEckPAbafKx7o
   02a CAPITAL LEDGER v1   1iLTDzZmXKOhzKMnM8aQkWfFi_12FggbXMzP5SnkKCrA
   02b MUTUAL CREDIT v1    10pz58M0W7ee5V_6Zl2DUdqKknQPlRHkY5zu8koYFyHg
@@ -31,3 +31,7 @@ MEASURED 2026-10-04 (cycle 16), because the versioning rule below was read for a
 Versioning (the connector cannot edit doc bodies): create "… vN+1" in the same folder → rename old "… vN (superseded by vN+1, <date time CR>)" → move old to 99 ARCHIVE. Only living docs get versions (NBM Ledger, Timeline, Start Here, Doorways index). James's in-place edits win; copy them back to repo next cycle. Titles carry state: OPEN · / DONE · / ARCHIVED · / (superseded by …) / (draft, unlocks at …) / (gated until …). New docs go INTO a numbered folder, never the HQ root.
 
 Cycle: read NBM.md + BLOCKS.md → do all an agent can → doorway for the human-only inch → append TIMELINE/BLOCKS → version drifted Drive ledgers → log remaining drift in Sync Log.
+
+2026-10-04 17:45 CR (cycle 17) — v6 created (finding 17 + B-23), read back in full before archiving v5;
+v5 renamed "(superseded by v6)" and moved to 99 ARCHIVE, nothing deleted. Current living ledger id:
+1jr_lHcLE-PRe8kyGdrEh6VKKn50eC3dPvQQI5Hs6lrM. Signed: Claude, Super Agent.
