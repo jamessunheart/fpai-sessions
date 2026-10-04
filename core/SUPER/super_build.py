@@ -67,6 +67,26 @@ def _samename(a, b):
     n = lambda s: re.sub(r"[^a-z0-9]+", " ", str(s or "").lower()).strip()
     return bool(n(a)) and n(a) == n(b)
 
+# Finding 8 made the WITNESS's role overlap machine-checkable, because the witness assigns Q.
+# But the Card assigns Q and the Pass It On split to "beneficiaries + witness" JOINTLY, and the
+# beneficiaries side was never checked against anything — not even for presence beyond non-empty
+# (finding 13). So a Build whose beneficiaries are the provider's own people would be graded, in
+# part, by the provider: the same defect finding 8 closed, left open one field to the left. It is
+# not made a hard fail here: "beneficiaries" is free text, a household member legitimately among
+# ten community guests is not fatal, and a fragile split must not veto a real Card. The machine
+# names what it can see and hands the judgement to the director, as the witness line already does.
+# (Claude, 2026-10-04)
+def _benefic_role_clash(card):
+    raw = str(card.get("beneficiaries") or "")
+    toks = [x.strip() for x in re.split(r"[,;\n]| y | & | and ", raw) if x.strip()]
+    out = []
+    for tok in toks:
+        if not filled(tok): continue
+        for role in ("director", "circulator", "provider"):
+            if _samename(card.get(role), tok):
+                out.append((tok, role))
+    return out
+
 def redemption_ok():
     if not REDEMPTION.exists(): return False
     t = REDEMPTION.read_text(encoding="utf-8")
@@ -128,6 +148,7 @@ def ruling(card, loop_done, q, closed):
     ok_ben, ok_wit = filled(c("beneficiaries")), filled(c("witness"))
     clash = [r for r in ("director", "circulator", "provider")
              if ok_wit and _samename(c(r), c("witness"))]
+    ben_clash = _benefic_role_clash(card)
     ok2 = ok_ben and ok_wit and not clash
     if ok2:
         why2 = (f"beneficiaries + witness named ({c('witness')} is not the director, "
@@ -140,6 +161,13 @@ def ruling(card, loop_done, q, closed):
                 "itself; name someone who is none of the three")
     else:
         why2 = f"missing: {'beneficiaries ' if not ok_ben else ''}{'witness' if not ok_wit else ''}".strip()
+    if ben_clash:
+        why2 += ("; ROLE OVERLAP ON THE BENEFICIARY SIDE — " +
+                 ", ".join(f"{who} is also the {role}" for who, role in ben_clash) +
+                 ": the Card assigns Q to beneficiaries + witness jointly, so this Build would be "
+                 "graded in part by its own " + "/".join(sorted({r for _, r in ben_clash})) +
+                 ". Not failed here (free text, and a household member among ten guests is not "
+                 "fatal) — the director's word, named out loud instead of passing silently")
     conds.append(("Q path", ok2, why2))
     # 3 place + test
     ok3 = filled(c("place")) and filled(c("test_question")) and c("place_has_existing_currency","").lower()=="no"
@@ -157,6 +185,16 @@ def ruling(card, loop_done, q, closed):
     elif not redemption_ok(): openq = "REDEMPTION.md is blank — a vendor will ask what SUPER buys; vendor agent is gated until it's filled"
     elif wstate == "EXPIRED": openq = "Window expired — close Build as NOT CLOSED, or write a new day7 (B-13)"
     elif wstate in ("UNDECLARED", "UNREADABLE") and not closed: openq = "day1/day7 unset — the Card's window is prose; no machine can grade its time"
+    # ADDITIVE, not another elif: the first version of this put the overlap in the elif chain
+    # below the window question, so on BUILD_001 — whose day1/day7 are blank — the overlap was
+    # computed, printed in condition 2, and silently absent from the director's open question.
+    # A question that only surfaces once an unrelated question is answered is not asked.
+    # (Claude, 2026-10-04, same cycle, after observing it)
+    if ben_clash:
+        note = ("beneficiary/provider role overlap — " +
+                ", ".join(f"{w} is also the {r}" for w, r in ben_clash) +
+                "; confirm these people may still assign Q, or name others")
+        openq = note if openq == "none" else f"{openq} · ALSO: {note}"
     # NBM ordering rule (ledger): "the move that lets reality grade the system soonest goes first."
     # Condition 2 (beneficiaries + witness) depends ONLY on the director — it is gradeable the
     # minute it is filled, and the Card's own pass test is "a meal they WANTED", so the
