@@ -13,7 +13,7 @@ Drive HQ folder ids:
   SUPER — Blocks     1tD-QuY-iyijNFnEZNebXGXv8kMHngj8o   (doorways; index "00 · OPEN DOORWAYS"; template; Overcome Log)
   99 ARCHIVE         1KF7C-fIKMP8O1qJPGjrj2kED--nD1bHm   (never delete; move superseded here)
   Start Here doc     1ymGAnO0WNpkcSWes4XsA-1zB5-MWyzLN3FutWOb2rNc
-  NBM Ledger v3      1b8DrxqYJayEQka0QcAcLKj7pfAVFxzRiYpnjNq_ApNI
+  NBM Ledger v5      1M2uLQJEgpjdGL9ajYYUh3-OQzZazWIKNNZxqi2lokDg   (2026-10-04 cycle 16; v3 + v4 renamed '(superseded by v5)' and moved to 99 ARCHIVE)
   Noble Timeline v2  1Y-t4UqR5vc3Qb0XN8VHLIMW4A02sHVQEckPAbafKx7o
   02a CAPITAL LEDGER v1   1iLTDzZmXKOhzKMnM8aQkWfFi_12FggbXMzP5SnkKCrA
   02b MUTUAL CREDIT v1    10pz58M0W7ee5V_6Zl2DUdqKknQPlRHkY5zu8koYFyHg
@@ -25,6 +25,8 @@ THREE-LEDGER RULE (2026-09-04, structure from Gemini, implemented by Claude):
   Admission test for Mutual Credit: not an agent we registered, not on our infra, not a person acting on James's instruction.
   These live INSIDE 02 LIVING LEDGERS. Gemini proposed a separate root archive with a different numbering; NOT adopted —
   one HQ, one convention, one folder-id mirror. Taking the ledger split without taking the second filing system.
+
+MEASURED 2026-10-04 (cycle 16), because the versioning rule below was read for a month as "only James can write a body": the connector CANNOT EDIT an existing doc body, but create_file DOES write a full body from textContent — so a living ledger is updated by creating vN+1 with its whole text, exactly as the rule says, and no human paste is required. Two further limits, observed: markdown TABLES are mangled on conversion (v4 lost its header row and double-escaped every cell — never put a table through this path); bold/emphasis markers render inconsistently. Verify every created doc by reading it back BEFORE archiving the version it supersedes.
 
 Versioning (the connector cannot edit doc bodies): create "… vN+1" in the same folder → rename old "… vN (superseded by vN+1, <date time CR>)" → move old to 99 ARCHIVE. Only living docs get versions (NBM Ledger, Timeline, Start Here, Doorways index). James's in-place edits win; copy them back to repo next cycle. Titles carry state: OPEN · / DONE · / ARCHIVED · / (superseded by …) / (draft, unlocks at …) / (gated until …). New docs go INTO a numbered folder, never the HQ root.
 

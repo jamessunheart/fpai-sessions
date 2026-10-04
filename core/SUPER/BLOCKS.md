@@ -55,6 +55,7 @@ Cheap test first: open Terminal, run `claude`, then `/login`. If the next 4-hour
 **B-10 · may arm itself at the 22:15Z beat.** Its baseline needs one successful pull; the pull has never been attempted, not merely never succeeded (B-09 above). If 22:15Z pulls, the delta watch is armed for the first time and a provider reply can no longer pass unseen without the brain.
 
 **B-14 · NEW — AGENT/INFRA, measured but not asserted.** `infra/scripts/meta_narrator_run.sh` (line 199), `infra/scripts/truth_substrate_run.sh` (line 171) and `infra/scripts/adam-security/security-watch.sh` (line 31) all call `timeout N ...` with no PATH export anywhere in the file and no gtimeout fallback — the same unguarded dependency that cost 29 days here. Whether they are affected depends on whether they run on macOS; `crontab -l` is not readable from this session's shell (Permission denied), so this is flagged, not claimed. A security watcher that exits 127 and logs a miss is the expensive case. Check: `crontab -l` on the Mac, then apply the same `ssh_to`/PATH pattern to any that run there.
+  · RE-MEASURED 2026-10-03 18:05 CR (Claude cycle 12), three corrections to this row's own text: (a) `security-watch.sh` line 31 is `flock -n "$LOCK" timeout 12 "$SENTINEL" --quick "$path" || true` — it needs TWO binaries macOS does not ship (`flock` = util-linux, `timeout` = GNU coreutils) AND ends in `|| true`, which discards the exit status, so rc=127 becomes success and the watcher logs a clean pass. Not "logs a miss" — logs nothing. (b) `truth_substrate_run.sh` has THREE `timeout` call sites (171, 243, 298), not one. (c) Confirmed by grep: neither run.sh has any `export PATH`/`PATH=` line, while `super_agent_heartbeat.sh` has carried `export PATH` (line 40) and a `timeout`/`gtimeout`/none fallback (42-43) since finding 5's repair — of four scripts with this dependency, exactly one is fixed: the one we were watching. NOT FIXED on purpose (finding 4: a fix not observed to succeed once is not a fix) — these run on the Mac, call binaries absent in this shell, and one is a security watcher. Patch when it can be observed: PATH export at top + `TIMEOUT_BIN` resolution as in the heartbeat + DROP the `|| true` on line 31 (a watcher may fail; it may not report a pass it did not perform). Falsifier, two lines on the Mac: `crontab -l | grep -E 'meta_narrator|truth_substrate|security-watch'` and `command -v timeout flock gtimeout`. Signed: Claude, Super Agent.
 
 **THE RULE THIS COST US (filed with the four before it).** Stale file mistaken for the world -> silent watchdog mistaken for a quiet world -> sleeping laptop mistaken for a calm night -> fallback alarm marked resolved while its baseline never existed -> **and now a probe that failed before it probed and reported a cause anyway.** A probe that cannot start may not name a cause. rc=127 is not a measurement.
 
@@ -143,3 +144,79 @@ Hands back to B-13 with a sharper ask: #001's day 7 is **James's word** — 2026
 a new date, or closed as NOT CLOSED. Write it into the Card's `day7:` and the clock is checkable from
 then on.
 Opened and resolved 2026-10-03 by Claude, Super Agent.
+
+## B-20 · OPEN · JAMES (one word) · the provider channel is aimed at the only in-district candidate open 2 days a week
+Measured 2026-10-04 from public sources, fetched not recalled: candidate **#1 La Cocinona de Pueblo** is open
+**Sat 12:00–21:00 / Sun 09:00–20:00 only** — two days in seven. Candidate **#4 Cafetería Antojos de Maíz**
+(La Bonita de Rivas / Ruta 242, +506 2772 4381), already in our own `PROVIDER_CANDIDATES.md`, is listed open
+**six days a week 07:00–18:00, closed Tuesday**, and ranks **#2 of 7 in Rivas** (4.1/5, 8 reviews).
+Consequence, which is the actual block: for 32 days every cycle has reported **M-NUDGE** as "one forward",
+while its window is 2/7 of the calendar — so on ~22 of those 32 days **no provider-channel ask on James was
+actionable at all**, and the reports did not say so. Thirteenth finding's shape: a cost the machine could not
+see, reported as zero, pointed at the human.
+The Card's place rule does **not** force this: condition 3 is "Rivas, Pérez Zeledón" and **seven** of eighteen
+candidates are in Rivas district (#1, #3, #4, #5, #10, #15, #16).
+**The one-candidate guard is NOT being broken and no one has been contacted.** Two branches, James's word:
+  (a) **Keep #1** — the only candidate who ever replied (M1 ~08:55 CR 2026-09-03), family grows its own inputs,
+      strongest next-hop story in the file. Cost: channel open 2/7 days.
+  (b) **Rest #1, open #4** — formal business, ~daily hours, our file calls it cheap to scale to 10 plates,
+      same district, landline, no committee. Cost: we set aside the one person who answered; #4's attitude is
+      explicitly "unknown".
+NOT established: that those hours are current, or that #4 would serve ten plates, quote in SUPER, or name a
+next use for it. Kept **OFF** the public HELP_WANTED board — it is a director's choice about a named
+real person, not recruitable work.
+Rule filed: **AN ASK'S COST INCLUDES ITS WINDOW.**
+Note on numbering: B-17 and B-18 each appear twice above, from two cycles that opened a block in parallel.
+Not renumbered here — renaming a signed block would break every back-reference. Flagged for James only.
+Opened 2026-10-04 by Claude, Super Agent.
+
+## B-21 — Comité La Piedra: provider, or the ten beneficiaries? (opened 2026-10-04, Claude cycle 15)
+WHAT: `CANDIDATE_2_PACKET.md` files Comité La Piedra de Rivas as provider #2, but its own Mensaje 1 asks the collective for "diez personas de la comunidad" — i.e. for B-15's ten beneficiaries. The Card assigns Q to beneficiaries + witness jointly, so the comité can fill one role or the other, never both, or the Build is graded in part by its own provider.
+WHY IT BLOCKS: B-15 (ten beneficiaries + a witness, none of them James) is the only open ask that depends on nobody but James, and it has been reported for 32 days as ten separate conversations. The beneficiary route is one conversation with an already-assembled group, and it does NOT touch the one-candidate guard, which governs provider conversations only.
+WHO: James — one word. Either answer shrinks the ask.
+WHEN: any time; nothing is waiting on a window.
+NOT ESTABLISHED: that the comité would supply ten people, or that it still functions (our own 2026-09-03 scout, never re-verified). DINADECO's Hacienda-published authorized list (2023-03-02) shows no "Rivas"-named organization — weak evidence of absence, not proof. Nobody contacted.
+MACHINE SIDE: closed this cycle — condition 2 now names any beneficiary who is also the director, circulator or provider (commit 4c711e4c; pack 9a60dd9). Named, not failed; the director's word.
+
+## B-22 · NEW, RESOLVED THIS CYCLE (needed nothing from James) · THE HUMAN LEDGER WAS 31 DAYS STALE AND THE "BLOCK" WAS A SENTENCE WE MISREAD
+Opened and closed 2026-10-04 ~15:25 CR, Claude cycle 16.
+
+WHAT WAS ACTUALLY WRONG. `SUPER — NBM Ledger (living) v3` — the surface James, the council and Gemini
+read — was last touched 2026-09-03 ~14:30 CR. Read in full this cycle, it still asserted three things that
+had been false for a month: (a) "DECIDE BEFORE M2 (James, one word): redemption same-day vs 7-days" —
+James closed that the same day; (b) "The Super Agent's 12:15 Saturday heartbeat Telegrams James the nudge
+ready to forward" — that heartbeat's brain has failed to authenticate since 2026-09-04 (B-08) and the
+nudge never went, four Saturdays running; (c) candidate #2 opens "if Sunday closes silent" — a fallback
+that never legitimately fired, because its trigger depended on a message we never sent. Meanwhile eleven
+cycles of signed CHALLENGES sat only in the repo, reported every cycle as "waiting for James to paste".
+
+WHY IT WAS NEVER HIS. BOTH of our own contract files already carried the route. `DRIVE.md`: "Versioning
+(the connector cannot edit doc bodies): create '… vN+1' in the same folder → rename old → move to 99
+ARCHIVE." `BLOCKS.md` line 3: "Drive body edits are not possible via the connector — create a new doc and
+rename the old one ARCHIVED." And the connector's `create_file` takes `textContent`: it writes a full body
+on creation. What it cannot do is EDIT an existing body. We read the first clause and filed the second as a
+wall for eleven cycles. Fourth time in five cycles that an open item's answer was in a file we wrote and
+never re-read (PROVIDER_CANDIDATES.md #5, cycle 12; CANDIDATE_2_PACKET.md, cycle 15; two files here).
+
+DONE. Created `SUPER — NBM Ledger (living) v5` (1M2uLQJEgpjdGL9ajYYUh3-OQzZazWIKNNZxqi2lokDg) in
+02 LIVING LEDGERS: v3's substance carried forward, plus findings 1–16 each with its rule, the five open
+asks with their real costs and windows, a DECIDED section correcting (a)–(c), and my own egress correction.
+v3 renamed "(superseded by v5, 2026-10-04 15:25 CR)" → 99 ARCHIVE. Nothing deleted. `DRIVE.md` updated.
+
+OBSERVED (finding 4's bar), and it caught a defect before it shipped: v4 was created first and READ BACK IN
+FULL — body complete, but its one markdown table was mangled (header row lost, every cell double-escaped).
+v5 replaces that table with a plain list and was read back at 10,871 bytes, every section intact. v4 renamed
+"(superseded by v5 same cycle — table mangled in conversion)" and archived, not deleted: a version that
+failed is still part of the record. I came one step from archiving v3 behind a document with a broken
+section, which is why the second limit below is a rule and not a note.
+
+LIMITS NOW FILED IN DRIVE.md: never put a markdown table through this path (tables are mangled; emphasis
+renders inconsistently) · read every created doc back BEFORE archiving the version it supersedes.
+
+CHANGED IN THE WORLD: nothing. Nobody contacted, nothing sent/minted/booked, no funds moved, and not one
+of the five asks on James got smaller. Only the surface his council reads now matches the system that exists.
+
+RULE: A LEDGER THAT IS NOT UPDATED IS NOT NEUTRAL — IT KEEPS ANSWERING, AND ITS ANSWERS GO STALE.
+Corollary: A CONSTRAINT MEASURED IN ONE PLACE MUST NOT BE GENERALIZED INTO A WALL. "Cannot edit a body"
+was measured and true; "so a human must paste it" was never measured at all.
+Signed: Claude, Super Agent, 2026-10-04.

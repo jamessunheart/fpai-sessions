@@ -131,3 +131,29 @@ The Mac beat is now a pure sensor that cannot think, which is the standing archi
 arrived at by accident rather than by decision.
 BUILD_001 unchanged: HOLD 2/4, loop 0/11. BUILD_002 HOLD. No SUPER doc in Drive since 2026-09-05.
 No reply from La Cocinona on the record. M-NUDGE still unsent (James's forward).
+
+## 2026-10-03 18:05 CR — cycle 12 (cloud)
+- World unchanged in three hours: no SUPER-titled Drive doc modified since 2026-09-05; Gemini's Council Record answer still the Sep 3 one; VENDOR_LOG_198.md now the 22:15Z pull, still two entries both 2026-09-03T15:12 — no reply from La Cocinona on the record. Same beat: BRAIN OFFLINE, "Not logged in · Please run /login" (B-08, day 31). The 22:15Z pull is the mirror's third observed success; finding 5's fix is holding unstubbed.
+- BUILD_001 HOLD 2/4, loop 0/11, Window: UNDECLARED. BUILD_002 HOLD. Nothing sent, nothing minted, no vendor contacted, no funds moved.
+- Curiosity thread: my own Oct 3 open question to James ("does anyone know a Dominical Eco Feria vendor?") was already answered structurally by PROVIDER_CANDIDATES.md #5 — Panes Artesanales La Estrella, a RIVAS bakery that sells via the Eco Feria Dominical, written by me 2026-09-03 and never re-read. Fits the SECOND HOP role Build #002 has nobody for, not the provider slot (the file itself: "bread alone != a meal"), so the one-candidate guard is untouched, and unlike a Bitcoin Jungle merchant she costs nothing against the Card's purity rule because she is in Rivas. NOT verified: that the feria or the baker accepts Bitcoin Jungle, or that she still sells there. Nobody contacted. Logged in NBM.md CHALLENGES, signed.
+- B-14 re-measured and its row corrected in BLOCKS.md: security-watch.sh:31 needs flock AND timeout (neither shipped by macOS) and ends in `|| true`, so a scan that cannot start reports a pass; truth_substrate_run.sh has three timeout sites, not one; of the four scripts with this dependency only super_agent_heartbeat.sh is repaired. NOT patched — finding 4's bar cannot be met from a shell that cannot run them. Falsifier recorded.
+- Memory corrected: /areas/super-white-mountain.md had B-14's security-watcher path without its `infra/scripts/` prefix, so the first file a fresh cycle reads pointed at nothing. BLOCKS.md was right all along.
+
+## 2026-10-04 15:25 CR — cycle 16: the human record caught up with the machine record
+Created Drive "SUPER — NBM Ledger (living) v5" (1M2uLQJEgpjdGL9ajYYUh3-OQzZazWIKNNZxqi2lokDg) in 02 LIVING
+LEDGERS, carrying v3's substance plus eleven cycles of signed CHALLENGES (findings 1-16 with their rules),
+the five open asks with real costs and windows, and the DECIDED section correcting three things v3 still
+asserted: that redemption speed was undecided (James closed it 2026-09-03), that a Saturday heartbeat would
+Telegram the nudge (mute since 2026-09-04), and that candidate #2 opens on a silent Sunday (that trigger
+never fired because the message it depended on was never sent).
+v3 (frozen 31 days) renamed "(superseded by v5, 2026-10-04 15:25 CR)" and moved to 99 ARCHIVE. Nothing deleted.
+v4 was created first, read back in full, found to have a MANGLED TABLE, and replaced by v5 inside the same
+cycle; v4 renamed "(superseded by v5 same cycle - table mangled in conversion)" and archived, not deleted.
+v5 read back at 10,871 bytes, every section intact.
+Why this was mine to do and not James's: DRIVE.md's own versioning rule ("create vN+1, rename old, archive")
+was the route all along; create_file writes a body from textContent. The connector cannot EDIT a body - that
+is a different sentence, and eleven cycles reported "waiting for James to paste" on the strength of it.
+DRIVE.md updated: new ledger id, the measured capability, and two limits (no markdown tables through this
+path; read every created doc back BEFORE archiving the one it supersedes).
+Changed in the world: nothing. No contact, nothing sent/minted/booked, no funds moved, no ask on James smaller.
+Signed: Claude, Super Agent.
