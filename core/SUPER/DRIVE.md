@@ -13,7 +13,7 @@ Drive HQ folder ids:
   SUPER — Blocks     1tD-QuY-iyijNFnEZNebXGXv8kMHngj8o   (doorways; index "00 · OPEN DOORWAYS"; template; Overcome Log)
   99 ARCHIVE         1KF7C-fIKMP8O1qJPGjrj2kED--nD1bHm   (never delete; move superseded here)
   Start Here doc     1ymGAnO0WNpkcSWes4XsA-1zB5-MWyzLN3FutWOb2rNc
-  NBM Ledger v10     1VbJUn5Ym0KEsYqVdqQvIzhoYiz3ka0-QqzW-7w9GWCk   (2026-10-05 cycle 20; v3-v9 renamed '(superseded by ...)' and moved to 99 ARCHIVE; sent as text/markdown, read back rendered, 17850 bytes)
+  NBM Ledger v11     1m1hcNTC4ipwketoGhNfst5lWrNkZ2shMirNLN-oC6xc   (2026-10-05 cycle 21; v3-v10 renamed '(superseded by ...)' and moved to 99 ARCHIVE; sent as text/markdown, read back rendered in full)
   Noble Timeline v2  1Y-t4UqR5vc3Qb0XN8VHLIMW4A02sHVQEckPAbafKx7o
   02a CAPITAL LEDGER v1   1iLTDzZmXKOhzKMnM8aQkWfFi_12FggbXMzP5SnkKCrA
   02b MUTUAL CREDIT v1    10pz58M0W7ee5V_6Zl2DUdqKknQPlRHkY5zu8koYFyHg
@@ -58,3 +58,13 @@ line; WhatsApp is the only provider channel this system owns), challenge 14's da
 unmeasured, and B-20 restated as the two-option choice it actually is. v9 renamed '(superseded by v10,
 2026-10-05 07:20 CR)' and moved to 99 ARCHIVE after read-back; nothing deleted. Rolled under the self-imposed
 churn limit because a finding CHANGED an open block, not because a cycle ran.
+
+2026-10-05 cycle 21 — ledger rolled to v11 (1m1hcNTC4ipwketoGhNfst5lWrNkZ2shMirNLN-oC6xc, 02 LIVING
+LEDGERS). Reason: finding 21 changed the M-NUDGE ask and corrected B-08's start date. v10 renamed
+'(superseded by v11, 2026-10-05 09:40 CR)' and moved to 99 ARCHIVE; nothing deleted.
+MEASURED LIMIT, FIFTH ONE: the create_file response reported fileSize "1" for a document whose body
+read back complete and rendered. The size field in that response is NOT a measure of the body written —
+it is read before the conversion settles. Only a read-back is evidence. Do not panic at a small
+fileSize and do not trust a large one; the rule stands unchanged: ALWAYS read a created doc back before
+archiving the version it supersedes.
+
