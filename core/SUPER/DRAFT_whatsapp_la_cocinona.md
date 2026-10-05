@@ -58,8 +58,10 @@ TEXT (send verbatim, or change any word — it is your name on it):
 > (Este mensaje lo redactó mi asistente de inteligencia artificial; cualquier acuerdo lo confirmo yo
 > personalmente. — James, vecino de la zona de Chirripó)
 
-After she answers, the only thing to capture is her Q2 verbatim — "¿y qué haría usted con los SUPER?" —
-into VENDOR_LOG.md. That one sentence is what turns condition 1 from ✗ to ✓.
+IF SHE ANSWERS, SEND M-NUDGE-2 BELOW — do not improvise and do not re-send M2. M-NUDGE above promises
+her "dos líneas, sin compromiso", and M-NUDGE-2 is those two lines: it carries the whole offer and it
+asks Q2 in her own turn. Then capture her Q2 answer verbatim — "¿y qué haría usted con los SUPER?" —
+into VENDOR_LOG.md, no paraphrase. That one sentence is what turns condition 1 from ✗ to ✓.
 
 ### AMENDMENT 2026-10-05 15:30Z (09:30 CR) — finding 21, Claude, Super Agent
 This draft was written 2026-10-03 10:05 CR to repair finding 10: a nudge whose timer was armed by our
@@ -81,3 +83,45 @@ to "hace dos meses" — a late apology that understates the lateness is not an a
 RULE: A DEADLINE THAT COUNTS DOWN WHETHER OR NOT WE ACTED IS A CLOCK ON OUR OWN DIARY, NOT ON THE OTHER
 PERSON. Corollary: a repair is not a repair until the artifact carrying it has been read against the
 rule that prompted it.
+
+## M-NUDGE-2 — the two lines M-NUDGE promises (drafted 2026-10-05 13:20 CR, NOT sent)
+WHO SENDS IT: James, same WhatsApp thread, only AFTER she answers M-NUDGE with anything other than no.
+WHY IT EXISTS: M-NUDGE ends "dígame y le cuento en dos líneas, sin compromiso" and then told whoever
+read it to capture her Q2 answer — while no message in this system asked Q2 in two lines. The only
+artifact that asks Q2 was M2: ~150 words, the full offer, marked DO NOT RE-SEND in the form she already
+received, and never linked from the M-NUDGE section. So her "sí" would have landed on an agent with
+nothing to say, in the one moment her attention is actually spent. This is that message. (Finding 23.)
+NOT M2: M2 is the cold-open offer for a first contact. She has had it. This is the promised short version.
+WHAT IT DOES NOT ASK: Q3 ("¿aceptaría SUPER otra vez?") — that is a post-meal question and belongs to the
+loop box, not here. Q1 is answered by whether she says yes to this.
+EVERY FIGURE IN IT IS REDEMPTION.md's, checked 2026-10-05: 100 SUPER = ₡40,000 · colones same day if
+asked before 3pm, never more than 24h · or spent with another person at the full ₡40,000 · valid to
+2026-12-31. If REDEMPTION.md changes, this text is wrong until it is re-synced.
+
+TEXT (send verbatim, or change any word — it is your name on it):
+
+> Es así: James le pagaría la comida de los diez con 100 SUPER en vez de colones. 100 SUPER = ₡40,000, y
+> usted elige — colones el mismo día si lo pide antes de las 3 de la tarde (nunca más de 24 horas), o
+> gastarlos con otra persona que los acepte, por los ₡40,000 completos. Vale hasta el 31 de diciembre de 2026.
+> Un "no" está perfecto y le agradezco igual. Y si le sirve, dígame una sola cosa: ¿qué haría usted con los SUPER?
+
+### AMENDMENT 2026-10-05 19:20Z (13:20 CR) — finding 23, Claude, Super Agent
+Measured, not supposed: grep of every .md in core/SUPER found no second message behind M-NUDGE's
+"dos líneas" promise, and no M-NUDGE-2 of any name. For two cycles this draft was reported — by me, in
+memory and in the ledger — as "send-ready, no bracket left". It was send-ready as a FIRST message and
+not as an exchange: the single act condition 1 depends on, asking "¿y qué haría usted con los SUPER?",
+had no text anywhere, and the approved bot channel that could have asked it has been mute since
+2026-09-03 22:15Z (B-08). Nothing reached her and nothing was lost — the message was never sent — but
+had it been, the gap would have opened in the live moment of her attention, which is the most expensive
+place in this whole system for a gap to open.
+Same class as findings 10 and 21, moved one beat later: an artifact read as complete against a rule it
+never satisfied. 10 and 21 were about our clock. This one is about her reply.
+FIXED INSIDE REMIT, no new ask on James: M-NUDGE-2 written above, the capture instruction now points at
+it, and the figures are synced to REDEMPTION.md as of today. The ask is still one forward plus, if she
+answers, one more — he now has words for both instead of one.
+RULE: AN ASK IS NOT READY UNTIL THE REPLY IT INVITES HAS A MESSAGE WAITING FOR IT.
+Corollary to finding 21's corollary: "send-ready" must name which message is ready, or it is a claim
+about a conversation made on the evidence of one line of it.
+STATE, unchanged by this amendment: candidate #1 La Cocinona de Pueblo is LIVE and NOT rested; candidate
+#2 is CLOSED; nobody has been contacted; no funds moved; REDEMPTION.md untouched; the one-candidate guard
+holds. Next open window: Sat 2026-10-11 12:00-21:00 CR.

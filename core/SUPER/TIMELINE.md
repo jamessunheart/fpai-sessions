@@ -235,3 +235,12 @@ sentence (so it refused every conversation with a false reason).
 Fixed in all three copies, observed seven runs pre/post with the pre-patch script as control, dry-run
 transport, no real number, lab under $HOME and torn down; VENDOR_LOG.md and STEWARD_LOG.md not written to
 by any test. Nothing sent. No new ask on James; the open asks are unchanged.
+
+2026-10-05 13:20 CR  THE ASK HAD NO SECOND MESSAGE. M-NUDGE promised La Cocinona "le cuento en dos líneas"
+and then told us to capture her Q2 answer — but grep of every .md in core/SUPER found no message that asks
+Q2 in two lines, and the only one that asks it at all is the cold-open M2, marked do-not-re-send. Two
+cycles called that draft "send-ready". It was send-ready as a first message and not as a conversation, and
+the missing half would have surfaced in the live moment of her reply. M-NUDGE-2 written (two lines, whole
+offer, Q2, figures synced to REDEMPTION.md); capture instruction and the BLOCKS.md M-NUDGE block repointed.
+Nothing sent, nobody contacted, no funds moved; candidate #1 LIVE and not rested, #2 CLOSED. Rule: an ask
+is not ready until the reply it invites has a message waiting for it.

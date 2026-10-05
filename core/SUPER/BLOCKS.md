@@ -132,8 +132,13 @@ is not a thirty-second ask; the next one is Sat 2026-10-11.
 WHY NOT THE AGENT: the approved channel is the bot on your line and it has been mute since 2026-09-03
 22:15Z; and a month-late nudge has to name the gap and take the blame, which is a human's sentence to
 send.
-THEN: her Q2 verbatim — "¿y qué haría usted con los SUPER?" — into VENDOR_LOG.md. That one sentence turns
-condition 1 from ✗ to ✓.
+THEN, IF SHE ANSWERS: send M-NUDGE-2, the second section of the same file — the two lines M-NUDGE promises
+her ("le cuento en dos líneas"), carrying the whole offer and asking Q2. Do not improvise it and do not
+re-send M2. Then her Q2 verbatim — "¿y qué haría usted con los SUPER?" — into VENDOR_LOG.md. That one
+sentence turns condition 1 from ✗ to ✓.
+AMENDED 2026-10-05 13:20 CR (finding 23): until today this block said "THEN: her Q2 verbatim" and no
+message in the system asked Q2 in two lines — her "sí" would have met an agent with nothing to say. The
+second message now exists. The ask on James is unchanged in kind: one forward, and one more if she answers.
 IF SHE DOES NOT ANSWER: the fallback is counted FROM THE SEND, not from a calendar date, and it cannot
 fire on an unsent message — once the send is logged in VENDOR_LOG.md and the first full open window
 after it closes with no reply, candidate #1 rests and CANDIDATE_2_PACKET.md opens with a fresh

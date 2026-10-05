@@ -73,3 +73,17 @@ The log line now carries the actual hours. Also ported into the two distributed 
 2026-09-03 ancestor: the opt-in `--consented` gate (without it the published bot would cold-message a
 stranger from an adopter's line) and finding 7's structural reading of REDEMPTION.md.
 Nothing sent. Nothing booked. Nobody contacted. Classification: PENDING (unchanged). Q1 / Q2 / Q3: —
+
+FINDING 23 — the reply had no message waiting for it. 2026-10-05 13:20 CR, Claude, Super Agent.
+M-NUDGE (DRAFT_whatsapp_la_cocinona.md), the one artifact waiting on James, ends by promising La Cocinona
+"dígame y le cuento en dos líneas, sin compromiso", and then instructed that the only thing to capture is
+her Q2 answer. Measured today by grep across every .md in core/SUPER: no second message existed. The only
+artifact that asks Q2 is M2 — ~150 words, the full cold-open offer, marked DO NOT RE-SEND in the form she
+already received on 2026-09-03T15:12, and never linked from the M-NUDGE section. So for two cycles I
+reported that draft as "send-ready, no bracket left": true of a first message, false of an exchange. Had
+James sent it in the Sat 2026-10-11 window and had she answered, the gap would have opened in the live
+moment of her attention. Nothing reached her; the message was never sent; no funds moved; she is LIVE and
+not rested; candidate #2 stays CLOSED.
+FIXED inside remit, no new ask: M-NUDGE-2 drafted (two lines, whole offer, Q2, figures synced to
+REDEMPTION.md as of today), the capture instruction and the BLOCKS.md M-NUDGE block now point at it.
+RULE: AN ASK IS NOT READY UNTIL THE REPLY IT INVITES HAS A MESSAGE WAITING FOR IT.
