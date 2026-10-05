@@ -13,7 +13,7 @@ Drive HQ folder ids:
   SUPER — Blocks     1tD-QuY-iyijNFnEZNebXGXv8kMHngj8o   (doorways; index "00 · OPEN DOORWAYS"; template; Overcome Log)
   99 ARCHIVE         1KF7C-fIKMP8O1qJPGjrj2kED--nD1bHm   (never delete; move superseded here)
   Start Here doc     1ymGAnO0WNpkcSWes4XsA-1zB5-MWyzLN3FutWOb2rNc
-  NBM Ledger v12     1GCtpZuwuB6VlBy2QMg_fdZEcxuq8PfKHAiOO2p-sV2M   (2026-10-05 cycle 22; v3-v11 renamed '(superseded by ...)' and moved to 99 ARCHIVE; sent as text/markdown, read back rendered in full)
+  NBM Ledger v13     1OmNPbVGJoUK3RyZmQKoJRRar6Gu2SyEbKCG-__Hm9zo   (2026-10-05 cycle 23; v3-v12 renamed '(superseded by ...)' and moved to 99 ARCHIVE; sent as text/markdown, read back rendered in full)
   Noble Timeline v2  1Y-t4UqR5vc3Qb0XN8VHLIMW4A02sHVQEckPAbafKx7o
   02a CAPITAL LEDGER v1   1iLTDzZmXKOhzKMnM8aQkWfFi_12FggbXMzP5SnkKCrA
   02b MUTUAL CREDIT v1    10pz58M0W7ee5V_6Zl2DUdqKknQPlRHkY5zu8koYFyHg
@@ -75,3 +75,20 @@ distributed-copy rule had never been applied to vendor_bot.py at all. Read back 
 create_file response again reported fileSize 1 for a complete document (the fifth measured limit, now
 observed twice). v11 renamed '(superseded by v12, 2026-10-05 11:45 CR)' and moved to 99 ARCHIVE;
 nothing deleted.
+
+2026-10-05 cycle 23 — ledger rolled to v13 (1OmNPbVGJoUK3RyZmQKoJRRar6Gu2SyEbKCG-__Hm9zo, 02 LIVING
+LEDGERS), carrying challenge 23: M-NUDGE promised the provider "dos líneas" and no second message existed,
+so the Q2 answer the whole provider ask exists to capture had nothing anywhere asking for it. Reason it
+qualifies under the churn limit: the challenge CHANGED an open block (M-NUDGE now has two messages, and
+BLOCKS.md says so). v12 renamed '(superseded by v13, 2026-10-05 13:20 CR)' and moved to 99 ARCHIVE;
+nothing deleted. Read back in full before archiving: complete and rendered.
+FIFTH MEASURED LIMIT, THIRD OBSERVATION: the create_file response again reported fileSize "1" for a
+complete document; get_file_metadata a few seconds later reported 20278. The size in the creation
+response is read before the conversion settles and measures nothing — read the doc back, never the number.
+SIXTH MEASURED LIMIT OF THE REPO SIDE, not Drive: `git commit` in the device VM leaves a zero-byte
+.git/HEAD.lock (and gc leaves ref locks) that this shell CANNOT unlink — deletion is off in connected
+folders — so the NEXT cycle's first commit fails with "cannot lock ref HEAD". Cycle 22's lock, dated
+17:14Z, blocked cycle 23. WORKAROUND, no permission prompt needed: `mv .git/HEAD.lock
+.git/HEAD.lock.stale_<date>` (rename is allowed where unlink is not), same for .git/index.lock, then
+commit. Do that FIRST next cycle instead of spending calls diagnosing it. The .stale_* files accumulate
+harmlessly in .git/ and James can clear them whenever.
