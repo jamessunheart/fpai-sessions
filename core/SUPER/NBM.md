@@ -433,3 +433,70 @@ WhatsApp one. B-20's wording is corrected in the living ledger. DELIBERATELY NOT
 no candidate opened, no Card edited, REDEMPTION.md untouched. The choice is still James's; it is now the
 choice he actually has.
 Signed: Claude, Super Agent, 2026-10-05.
+
+## TWENTY-SECOND FINDING — 2026-10-05 11:35 CR, cycle 22 (Claude, Super Agent — curiosity thread: findings 10 and 21 both repaired a self-armed timer in a DOCUMENT; read the MACHINE that actually sends)
+THE DEFECT, OBSERVED, NOT INFERRED. `cmd_followups()` in vendor_bot.py fires on one condition —
+`stage == "m1_sent"` and `now - started > 48 hours` — and there was no upper bound of any kind.
+MSG["followup"] says, in Spanish and in full: "Buenas, solo para saber si vio mi mensaje. Si no le
+interesa, no hay problema — gracias igual." At 48 hours that sentence is true. Lab run today against
+a state file aged 32 days (the Build #001 shape), dry-run transport, no real number: it SENT, and
+wrote into VENDOR_LOG.md, verbatim, `48h follow-up sent (the only one)`. A thirty-two-day silence
+reported as a forty-eight-hour one, in the single file that exists to hold what was really said to a
+provider, and the message itself asking only "did you see it" — no gap named, no blame taken.
+This is the THIRD instance of one defect and the FIRST one that can reach a human with nobody reading
+it first. Finding 10 (2026-10-03) caught it in SATURDAY_PACKET.md; finding 21 (2026-10-05, this
+morning) caught the repair for finding 10 re-arming the same timer inside DRAFT_whatsapp_la_cocinona.md.
+Both were documents a person must read before anything happens. This one is a command. Note the
+asymmetry it would have created: the human draft names the gap and takes the blame — "le escribí hace
+un mes" — exactly as finding 10 required; the bot's line does not. If both ever fired, the machine's
+would have undone the document's repair.
+WHAT IS NOT ESTABLISHED, AND MUST NOT BE REPORTED AS IF IT WERE: whether the real conversation on 198
+would have triggered. The guard reads `stage == "m1_sent"`, and La Cocinona received M2, so if the bot's
+own state machine recorded that advance she is at `m2_sent` and safe. But her M1 reply arrived
+pre-webhook, content not captured, and M2 was decided by Ember under delegated authority — so whether
+`conversations.json` on 198 ever advanced her stage is unknown, and unknowable from here: neither the
+device VM nor the cloud container can reach 198. So the honest statement is that the only thing between
+a month-late "did you see my message?" and a real provider was a JSON file on a host this system cannot
+read. Per finding 19: a gate nobody can measure is an unmeasured gate.
+WHERE IT HID: the floor is legitimate — it counts from our own logged send, which is exactly what
+finding 21's standing gate asks for. Checking the floor is what every reader did. Nobody asked whether
+the message stays TRUE as the clock runs. A timer with a floor and no ceiling.
+SECOND HALF, LARGER: finding 9's rule — A REPAIR NOT APPLIED TO THE DISTRIBUTED COPY IS A REPAIR OF THE
+INSTANCE YOU WATCH — was filed about super_build.py and applied there in all copies. It was never applied
+to vendor_bot.py. Measured today: both distributed copies (core/SUPER/dist/super-agents-pack and
+_staged_repos/super-agents-pack) were still the 2026-09-03 ancestor, byte-for-byte on every point that
+matters. Diffed: every single difference from the repo copy is a repo fix that never propagated — nothing
+pack-specific was ever added. So the vendor bot a stranger installs by following SETUP.md:
+  (a) has NO `--consented` gate, so `start <number>` cold-messages anyone, from a directory or Tripadvisor,
+      from the adopter's own line — which the pack's OWN SETUP.md researched and forbade ("numbers scraped
+      from directories are NOT opt-in ... that would be a rule bypassed, not a bridge built") and the pack's
+      OWN README promises it will not do. The published pack has been shipping that promise unkept since
+      2026-09-03;
+  (b) still greps for `^La tesorería cambia` — the first words of the promise James deleted on 2026-09-04 —
+      so against any current REDEMPTION.md it refuses every conversation with the reason "REDEMPTION.md is
+      not filled", which is false about a filled, signed file (finding 7, fixed in the repo 2026-10-02,
+      never shipped);
+  (c) carries the uncapped follow-up above.
+FIXED, inside remit, nothing sent, no new ask on James. In all THREE copies: `cmd_followups` gains
+FOLLOWUP_CEILING_H (default 168h = 7 days, env-overridable), and past it REFUSES — it does not send, it
+does NOT consume the one follow-up, and it prints what it measured: the vendor, the real elapsed days,
+the ceiling, why the text is false by omission now, and that a human must send the one that names the gap.
+The log line carries the ACTUAL elapsed hours and the literal string "48h" is gone from it. Into the two
+distributed copies: finding 7's structural `redemption_line()` and the `--consented` gate, ported verbatim
+from the repo. Their Spanish MSG text was deliberately NOT touched — words spoken to a human are not
+refactored in passing. NOTED NOT FIXED: the pack's M1 introduces the bot as working for "James, un vecino
+de la zona de Chirripó", so an adopter's bot would introduce itself as working for James; that is the
+adopter's sentence to write, not mine to guess.
+OBSERVED (finding 4's bar), seven runs, dry-run transport, no real number contacted, lab trees under $HOME
+and torn down — the record files were not written to (finding 10b): pre-patch control at 32d SENDS and logs
+"48h"; post-patch repo copy at 32d REFUSES, logs nothing, leaves followup_sent None; at 3d SENDS and logs
+"follow-up sent (the only one) - 72h after M1"; at 1d does nothing (floor intact); dist pack and staged pack
+at 32d both REFUSE identically. Pack copy start with no consent REFUSES; with consent it reads James's
+CURRENT two-option promise correctly and dry-runs M1 — the same command that printed the false
+"not filled" before; blanking the signature line still BLOCKS. All three compile.
+RULE: A FOLLOW-UP TIMER NEEDS A CEILING AS WELL AS A FLOOR. The floor asks whether enough time has passed
+to speak; only the ceiling asks whether the sentence we are about to send is still true. Past it the
+machine must refuse, because the message that repairs a long silence is one a machine cannot write.
+COROLLARY: WHEN A RULE IS FILED FROM A DEFECT IN A DOCUMENT, THE NEXT PLACE TO LOOK IS THE CODE THAT
+PERFORMS THE SAME ACT — the document version is read by a human before it acts; the code version is not.
+COROLLARY: A PROMISE THE README MAKES IS A CLAIM ABOUT THE DISTRIBUTED COPY, NOT ABOUT THE ONE WE RUN.

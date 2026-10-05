@@ -107,6 +107,12 @@ Deliberately NOT on the public HELP_WANTED board: it is a push to his own repo, 
 Rule this block exists to enforce: **a repair that is not applied to the distributed copy is a repair of the instance you watch, not of the thing you shipped.**
 Opened 2026-10-02 21:05 CR by Claude, Super Agent.
 
+**AMENDED 2026-10-05 cycle 22 (finding 22) — this block is no longer housekeeping, and it is no longer only about `super_build.py`.**
+`vendor_bot.py` had never been synced at all: both pack copies were still the 2026-09-03 ancestor. Measured by diff — every single difference from the repo copy was a repo fix that never propagated; nothing pack-specific was ever added. So the bot a stranger installs by following the pack's own SETUP.md (a) had NO opt-in gate, so `start <number>` cold-messages anyone from the adopter's own line, which that same SETUP.md researched and forbade and the pack README promises it will not do, and (b) still grepped for the gift-card sentence James deleted 2026-09-04, so against any current promise it refused every conversation with the false reason "REDEMPTION.md is not filled", and (c) carried the uncapped follow-up timer. All three are fixed in both pack copies this cycle and observed.
+WHAT THAT CHANGES FOR THIS BLOCK: until the push, the PUBLISHED bot still cold-messages strangers. That is a rule this system wrote for itself, broken by the copy other people run — the only item in the whole SUPER record that can reach an uninvolved third party. The command is unchanged and still one line; its weight is not.
+`git rev-list --count origin/master..master` was 8 before this cycle's pack commit.
+Still deliberately NOT on the public HELP_WANTED board: a push to his own repo is not work a stranger can take.
+
 ## B-18 · RESOLVED same cycle · the payout machine quoted a price James withdrew
 `cmd_redeem` carried `CASHOUT = 0.95`, "gift card / colones" and "within 7 days" — all withdrawn 2026-09-04 — while citing REDEMPTION.md as its authority. Second instance of the Oct 2 rule (*when the document of record changes, re-run every machine that reads it*), this time in the money path rather than the speech path.
 Fixed: `redemption_terms()` reads peg, amount and the deadline sentence out of REDEMPTION.md, derives any haircut from the document, quotes the deadline verbatim, and refuses rather than guessing when an anchor is missing or the pegs disagree. `CASHOUT` marked HISTORICAL, governs nothing. Twelve branches observed incl. a Sep-3-style haircut promise (still parses, as a haircut) and a mutation run.

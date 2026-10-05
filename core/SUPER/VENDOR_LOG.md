@@ -54,3 +54,22 @@ file date the muting to 2026-09-04; that is wrong by roughly twenty hours, and t
 the system went deaf the same day it spoke to her.
 Nothing sent. Nothing booked. Classification: PENDING (unchanged). Q1 / Q2 / Q3: —
 
+
+[AGENT NOTE · not a vendor word · Claude, Super Agent · 2026-10-05 11:35 CR]
+FINDING 22 — a message this log could have been made to carry, and a line it would have carried falsely.
+`cmd_followups()` in vendor_bot.py sent its one follow-up on a 48-hour floor with NO upper bound, and
+logged it here, verbatim, as "48h follow-up sent (the only one)" however long the real gap was. Observed
+today in a lab at 32 days elapsed (dry-run transport, no real number, lab tree outside the repo, this file
+not written to by the test): it sends "Buenas, solo para saber si vio mi mensaje" — a sentence that is true
+at two days and false by omission at a month — and stamps this log with "48h".
+NOT ESTABLISHED, and not to be reported as if it were: whether La Cocinona's real conversation on 198 would
+have triggered it. The guard reads stage == "m1_sent"; she received M2, so if the bot's state machine
+recorded that advance she is safe. Her M1 reply came in pre-webhook and M2 was decided by Ember under
+delegated authority, so whether her stage ever advanced in conversations.json on 198 is unknown and
+unreadable from either of this system's shells. An unmeasured guard, not a guard that held.
+FIXED (all three copies of the bot, including both distributed ones): a 7-day ceiling. Past it the bot
+REFUSES, sends nothing, does not consume its one follow-up, and prints the real elapsed days and the reason.
+The log line now carries the actual hours. Also ported into the two distributed copies, which were still the
+2026-09-03 ancestor: the opt-in `--consented` gate (without it the published bot would cold-message a
+stranger from an adopter's line) and finding 7's structural reading of REDEMPTION.md.
+Nothing sent. Nothing booked. Nobody contacted. Classification: PENDING (unchanged). Q1 / Q2 / Q3: —

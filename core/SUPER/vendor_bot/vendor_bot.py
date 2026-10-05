@@ -184,13 +184,47 @@ def cmd_start(to, name, build, consented=None):
         f.write(f"\n\n[VENDOR · {name} ({to}) · {now()} · Super Agent's own WhatsApp Business line]\nDisclosed AI: yes (M1)\nM1 sent verbatim: \"{MSG['m1']}\"\nStatus: SENT. Classification: PENDING. Provenance: vendor_bot, build {build}.")
     print(f"started {name}; stage m1_sent")
 
+FOLLOWUP_FLOOR_H = float(os.environ.get("SUPER_FOLLOWUP_FLOOR_HOURS", "48"))
+FOLLOWUP_CEILING_H = float(os.environ.get("SUPER_FOLLOWUP_CEILING_HOURS", "168"))
+
 def cmd_followups():
+    """One follow-up per vendor, and only while that follow-up is still TRUE.
+
+    History (do not undo): findings 10 and 21 each caught a timer armed by our own
+    action and then read as evidence about the other person. Both were repaired in a
+    DOCUMENT; neither time was this function read, and this is the only one of the
+    three that can reach a provider with no human in between. The floor is legitimate
+    — it counts from our own logged send. The defect was the MISSING CEILING.
+    MSG["followup"] says, in Spanish, only "just to know whether you saw my message".
+    At 48 hours that is true. Observed 2026-10-05 at 32 days elapsed: it sent, and
+    logged itself verbatim as "48h follow-up sent" into the one file that exists to
+    hold what was really said to a provider. A message that has gone stale must be
+    REFUSED, not sent. Past the ceiling only a human can write the one that names the
+    gap and takes the blame (for Build 001 that message is already drafted in
+    core/SUPER/DRAFT_whatsapp_la_cocinona.md). The refusal does not consume the one
+    follow-up, and it says what it measured.
+    """
     s = load(); changed = False
     for v in s.values():
-        if v["stage"] == "m1_sent" and not v.get("followup_sent"):
-            started = datetime.datetime.fromisoformat(v["started"])
-            if datetime.datetime.now() - started > datetime.timedelta(hours=48):
-                send(v["to"], MSG["followup"]); v["followup_sent"] = now(); log(v, "48h follow-up sent (the only one)"); changed = True
+        if v["stage"] != "m1_sent" or v.get("followup_sent"):
+            continue
+        started = datetime.datetime.fromisoformat(v["started"])
+        hours = (datetime.datetime.now() - started).total_seconds() / 3600.0
+        if hours <= FOLLOWUP_FLOOR_H:
+            continue
+        if hours > FOLLOWUP_CEILING_H:
+            print("REFUSED - %s (%s): %.1f days since M1 (%s); ceiling %.1f days."
+                  % (v.get("name", v["to"]), v["to"], hours / 24.0, v["started"],
+                     FOLLOWUP_CEILING_H / 24.0))
+            print("          The follow-up text asks only whether they saw the message."
+                  " After this long that is false by omission, so it was NOT SENT and"
+                  " the one follow-up is NOT consumed.")
+            print("          A human must send a message that names the gap and takes"
+                  " the blame. Override only with SUPER_FOLLOWUP_CEILING_HOURS, and"
+                  " only after rewriting MSG[\"followup\"] to name the gap.")
+            continue
+        send(v["to"], MSG["followup"]); v["followup_sent"] = now()
+        log(v, "follow-up sent (the only one) - %.0fh after M1" % hours); changed = True
     if changed: save(s)
 
 if __name__ == "__main__":

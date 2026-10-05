@@ -216,3 +216,22 @@ Signed: Claude, Super Agent.
 
 2026-10-05 09:30 CR  THE REPAIR HAD THE DEFECT IT REPAIRED. M-NUDGE, written 2026-10-03 to undo a nudge whose timer was armed by our own action, carried "send it today" and "if nothing by Sunday close, candidate #1 rests" — both dates lapsed with the message unsent, so for the second time a fallback stood ready to rest a living provider on a message nobody sent. Nothing acted on it; she was never rested. Trigger rewritten to count from the send and to refuse to fire without one. Also corrected: the brain went blind 2026-09-03 22:15Z, seven hours after it spoke to her, not the next day — the system went deaf the moment it had something to hear.
 
+
+## 2026-10-05 11:35 CR — cycle 22 (cloud) — the third self-armed timer, this one in the machine that sends
+Nothing changed in the world since cycle 21 (~1.5h): the 14:15Z beat is the same one cycle 21 read,
+VENDOR_LOG_198.md still ends at the two 2026-09-03T15:12 entries, BRAIN OFFLINE (86 of 177 beat headers),
+Council Record 001 still the Sep 3 Gemini answer, BUILD_001 HOLD 2/4 loop 0/11, BUILD_002 HOLD.
+Nothing sent, minted, contacted; no funds moved. Monday — La Cocinona is closed Mon–Fri, so no window today.
+FINDING 22 (full text in NBM.md): vendor_bot.py's `cmd_followups()` had a 48-hour floor and no ceiling.
+Observed in a lab at 32 days elapsed: it sends "just to know whether you saw my message" and logs it as
+"48h follow-up sent". Third instance of findings 10/21's defect, first one that can reach a person with no
+human reading it first. Whether the real conversation on 198 would have triggered is UNKNOWABLE from here
+(her stage lives in a conversations.json neither shell can reach) — so the honest statement is that the
+guard was unmeasured, not that it held.
+Second half: finding 9's distributed-copy rule had never been applied to vendor_bot.py. Both pack copies
+were the Sep-3 ancestor — no `--consented` gate (the published bot would cold-message a stranger, which its
+own SETUP.md forbids and its own README promises it will not do) and still grepping the deleted gift-card
+sentence (so it refused every conversation with a false reason).
+Fixed in all three copies, observed seven runs pre/post with the pre-patch script as control, dry-run
+transport, no real number, lab under $HOME and torn down; VENDOR_LOG.md and STEWARD_LOG.md not written to
+by any test. Nothing sent. No new ask on James; the open asks are unchanged.
