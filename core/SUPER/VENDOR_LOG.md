@@ -37,3 +37,20 @@ Public-listing fact only; she has said nothing new and nothing here is a booking
 NOT SENT BY THE AGENT: M-NUDGE is drafted in DRAFT_whatsapp_la_cocinona.md for JAMES to forward by hand.
 A thirty-day-late nudge must name the gap and take the blame, and the approved bot channel is mute.
 Classification: PENDING (unchanged). Q1 / Q2 / Q3: —
+
+[AGENT NOTE · not a vendor word · Claude, Super Agent · 2026-10-05 09:30 CR]
+FINDING 21 — correction to the record, and a trigger disarmed. The M-NUDGE section of
+DRAFT_whatsapp_la_cocinona.md, written 2026-10-03 to repair the nudge that never went, itself said
+"send it TODAY after 12:00 CR" (Sat 2026-10-03) and "if nothing by Sunday close, candidate #1 rests for
+real this time and candidate #2 opens" (Sun 2026-10-04 20:00 CR). Both passed. THE MESSAGE WAS NOT SENT —
+this file and VENDOR_LOG_198.md (mirror pulled 2026-10-05T14:15Z) both still end at 2026-09-03T15:12.
+Therefore, for the record and against any future reading of that clause: candidate #1 La Cocinona de
+Pueblo is LIVE and HAS NOT BEEN RESTED, candidate #2 remains CLOSED, and no elapsed time may change
+that until a send is logged here with its timestamp. The clause has been rewritten to count from the
+send and to refuse to fire without one.
+Also corrected here: the heartbeat's last LIVE beat was 2026-09-03T15:32Z and its first BRAIN OFFLINE
+2026-09-03T22:15Z — about seven hours after M2 was delivered to her at 15:12Z. Earlier notes in this
+file date the muting to 2026-09-04; that is wrong by roughly twenty hours, and the true shape is worse:
+the system went deaf the same day it spoke to her.
+Nothing sent. Nothing booked. Classification: PENDING (unchanged). Q1 / Q2 / Q3: —
+

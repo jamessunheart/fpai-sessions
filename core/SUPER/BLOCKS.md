@@ -113,18 +113,30 @@ Fixed: `redemption_terms()` reads peg, amount and the deadline sentence out of R
 Also fixed with it: every date stamp came from the process's UTC date, not Costa Rica's — six hours a day a ruling and its ledger lines were dated tomorrow, against a promise turning on "el mismo día … antes de las 3 pm" and "hasta el 31 de diciembre". `cr_today()`, offset-labelled, `SUPER_TZ_OFFSET_HOURS` for adopters. **A currency must be dated in the place it circulates.**
 Opened and resolved 2026-10-02 by Claude, Super Agent.
 
-## M-NUDGE — OPEN — James, one forward (2 min), today after 12:00 CR
+## M-NUDGE — OPEN — James, one forward (2 min), inside her open hours (next: Sat 2026-10-11 12:00-21:00 CR)
 The one nudge SATURDAY_PACKET.md promised La Cocinona de Pueblo was due Sat 2026-09-05 12:15 CR and
-never went: the heartbeat that was to carry it went mute 2026-09-04 (B-08). Four Saturdays missed, her
-shop open on every one. Her silence is therefore not a no, and the candidate-#2 fallback never
-legitimately fired — its trigger depended on a message we never sent.
+never went: the heartbeat that was to carry it went mute 2026-09-03 22:15Z (B-08 — corrected date, see
+the amendment below). Five Saturdays missed now, her shop open on every one. Her silence is therefore
+not a no, and the candidate-#2 fallback never legitimately fired — its trigger depended on a message we
+never sent.
 ACTION: open WhatsApp to +506 6362 6524 and send the M-NUDGE text at the bottom of
-core/SUPER/DRAFT_whatsapp_la_cocinona.md (change any word — it is your name on it). Today, after 12:00 CR.
-WHY NOT THE AGENT: the approved channel is the bot on your line and it has been mute since Sep 4; and a
-thirty-day-late nudge has to name the gap and take the blame, which is a human's sentence to send.
+core/SUPER/DRAFT_whatsapp_la_cocinona.md (change any word — it is your name on it). Inside her open
+hours: Sat 12:00-21:00 or Sun 09:00-20:00 CR. That window is 2/7 of the calendar (finding 14), so this
+is not a thirty-second ask; the next one is Sat 2026-10-11.
+WHY NOT THE AGENT: the approved channel is the bot on your line and it has been mute since 2026-09-03
+22:15Z; and a month-late nudge has to name the gap and take the blame, which is a human's sentence to
+send.
 THEN: her Q2 verbatim — "¿y qué haría usted con los SUPER?" — into VENDOR_LOG.md. That one sentence turns
-condition 1 from ✗ to ✓. If she says no, or nothing by Sunday close: candidate #1 rests for real and
-CANDIDATE_2_PACKET.md opens with a fresh consent-first M1.
+condition 1 from ✗ to ✓.
+IF SHE DOES NOT ANSWER: the fallback is counted FROM THE SEND, not from a calendar date, and it cannot
+fire on an unsent message — once the send is logged in VENDOR_LOG.md and the first full open window
+after it closes with no reply, candidate #1 rests and CANDIDATE_2_PACKET.md opens with a fresh
+consent-first M1. Until then candidate #1 is LIVE and candidate #2 stays CLOSED.
+AMENDED 2026-10-05 (finding 21): the heading and the ACTION line said "today after 12:00 CR" (written
+Sat 2026-10-03) and the fallback said "nothing by Sunday close" (Sun 2026-10-04). Both lapsed with the
+message unsent — the same self-armed timer finding 10 was filed to kill, re-armed in the artifact
+written to fix it, one hour apart. Nothing acted on it; candidate #1 was not rested and nobody was
+contacted. Dates removed, trigger tied to the send.
 Kept OFF the public HELP_WANTED board: it is a message from James's own phone in his own name.
 
 ## B-19 · RESOLVED same cycle · the steward had no clock

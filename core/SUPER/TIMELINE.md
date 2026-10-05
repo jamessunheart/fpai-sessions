@@ -213,3 +213,6 @@ Fixed inside remit: PROVIDER_CANDIDATES.md gained a CHANNEL AUDIT (fixed line vs
 Nobody rested, nobody opened, no Card edited, REDEMPTION.md untouched.
 RULE: AN ALTERNATIVE IS NOT CHEAPER UNTIL ITS CHANNEL IS CHECKED.
 Signed: Claude, Super Agent.
+
+2026-10-05 09:30 CR  THE REPAIR HAD THE DEFECT IT REPAIRED. M-NUDGE, written 2026-10-03 to undo a nudge whose timer was armed by our own action, carried "send it today" and "if nothing by Sunday close, candidate #1 rests" — both dates lapsed with the message unsent, so for the second time a fallback stood ready to rest a living provider on a message nobody sent. Nothing acted on it; she was never rested. Trigger rewritten to count from the send and to refuse to fire without one. Also corrected: the brain went blind 2026-09-03 22:15Z, seven hours after it spoke to her, not the next day — the system went deaf the moment it had something to hear.
+

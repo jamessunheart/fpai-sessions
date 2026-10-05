@@ -36,12 +36,18 @@ went mute 2026-09-04 (B-08) and it never went — not that Saturday nor the thre
 open every one of them. Her listing is still live (Tripadvisor, read 2026-10-03: open, #1 of 7 in Rivas,
 Sat 12:00–21:00 / Sun 09:00–20:00). So this is not the packet's nudge; it is a month-late one, and it has
 to say so and take the blame, or it is mean.
-WHO SENDS IT: James, by hand, from his own WhatsApp — today after 12:00 CR, when her kitchen opens.
-NOT the agent: the approved channel runs through a bot that has been mute since Sep 4, and the packet's
-one-nudge budget was for a message this is no longer.
-If she says no, or says nothing by Sunday close: candidate #1 rests for real this time, and candidate #2
-(Comité Turismo Rural La Piedra de Rivas, WhatsApp 8317-8140) opens with a fresh consent-first M1 —
-CANDIDATE_2_PACKET.md. One candidate live at a time.
+WHO SENDS IT: James, by hand, from his own WhatsApp, inside her open hours — Sat 12:00-21:00 or
+Sun 09:00-20:00 CR. There is no "today" in this instruction on purpose (see the 2026-10-05 amendment
+below): the next window is the next Saturday or Sunday after he reads this, whenever that is.
+NOT the agent: the approved channel runs through a bot that has been mute since 2026-09-03 22:15Z, and
+the packet's one-nudge budget was for a message this is no longer.
+IF SHE DOES NOT ANSWER — the trigger is counted FROM THE SEND, never from a calendar date, and it
+cannot fire on a message that was not sent. Condition, in full: once this message is on the record in
+VENDOR_LOG.md with its send timestamp, and the first full open window AFTER that send has closed
+(the Sat or Sun following the send, 21:00 / 20:00 CR) with no reply, THEN candidate #1 rests and
+candidate #2 (Comité Turismo Rural La Piedra de Rivas, WhatsApp 8317-8140) opens with a fresh
+consent-first M1 — CANDIDATE_2_PACKET.md. Until the send is logged, candidate #1 is LIVE, candidate #2
+stays CLOSED, and no amount of elapsed time changes that. One candidate live at a time.
 
 TEXT (send verbatim, or change any word — it is your name on it):
 
@@ -54,3 +60,24 @@ TEXT (send verbatim, or change any word — it is your name on it):
 
 After she answers, the only thing to capture is her Q2 verbatim — "¿y qué haría usted con los SUPER?" —
 into VENDOR_LOG.md. That one sentence is what turns condition 1 from ✗ to ✓.
+
+### AMENDMENT 2026-10-05 15:30Z (09:30 CR) — finding 21, Claude, Super Agent
+This draft was written 2026-10-03 10:05 CR to repair finding 10: a nudge whose timer was armed by our
+own action and then read as patience. In the same hour, this section re-armed the identical structure —
+it said "send it TODAY after 12:00 CR" (Sat 2026-10-03) and "if nothing by Sunday close, candidate #1
+rests and #2 opens" (Sun 2026-10-04 20:00 CR). Both moments have passed. The message was NOT sent:
+VENDOR_LOG.md and VENDOR_LOG_198.md (mirror pulled 2026-10-05T14:15Z) both still end at the two
+2026-09-03T15:12 entries. So for the SECOND time a fallback stood ready to rest a provider and open a
+stranger on the strength of a message nobody sent. Nothing acted on it and no harm reached her — but
+nothing prevented it either, and the first instance cost thirty days.
+Fixed above, inside remit: the trigger is now relative to the SEND and refuses to fire without a logged
+send; the "today" is replaced by the standing window rule.
+STATE, unchanged by this amendment: candidate #1 La Cocinona de Pueblo is LIVE and NOT rested;
+candidate #2 is CLOSED; nobody has been contacted; REDEMPTION.md untouched; the one-candidate guard
+holds. Next open window: Sat 2026-10-11 12:00-21:00 CR.
+AGING, named not fixed: the text says "le escribi hace un mes". On 2026-10-11 the real gap is 38 days,
+which "hace un mes" still covers honestly. If this goes out after about 2026-11-03, change that phrase
+to "hace dos meses" — a late apology that understates the lateness is not an apology.
+RULE: A DEADLINE THAT COUNTS DOWN WHETHER OR NOT WE ACTED IS A CLOCK ON OUR OWN DIARY, NOT ON THE OTHER
+PERSON. Corollary: a repair is not a repair until the artifact carrying it has been read against the
+rule that prompted it.
