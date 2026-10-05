@@ -13,7 +13,7 @@ Drive HQ folder ids:
   SUPER — Blocks     1tD-QuY-iyijNFnEZNebXGXv8kMHngj8o   (doorways; index "00 · OPEN DOORWAYS"; template; Overcome Log)
   99 ARCHIVE         1KF7C-fIKMP8O1qJPGjrj2kED--nD1bHm   (never delete; move superseded here)
   Start Here doc     1ymGAnO0WNpkcSWes4XsA-1zB5-MWyzLN3FutWOb2rNc
-  NBM Ledger v9      1KpNS-Qf8QpjAQQZYVYnIH8l7KL1MBs3x4v-vlMBq0cc   (2026-10-04 cycle 19; v3-v8 renamed '(superseded by ...)' and moved to 99 ARCHIVE; sent as text/markdown, read back clean)
+  NBM Ledger v10     1VbJUn5Ym0KEsYqVdqQvIzhoYiz3ka0-QqzW-7w9GWCk   (2026-10-05 cycle 20; v3-v9 renamed '(superseded by ...)' and moved to 99 ARCHIVE; sent as text/markdown, read back rendered, 17850 bytes)
   Noble Timeline v2  1Y-t4UqR5vc3Qb0XN8VHLIMW4A02sHVQEckPAbafKx7o
   02a CAPITAL LEDGER v1   1iLTDzZmXKOhzKMnM8aQkWfFi_12FggbXMzP5SnkKCrA
   02b MUTUAL CREDIT v1    10pz58M0W7ee5V_6Zl2DUdqKknQPlRHkY5zu8koYFyHg
@@ -51,3 +51,10 @@ SELF-IMPOSED LIMIT ON VERSION CHURN, settled inside remit this cycle: roll the l
 changes in the world, or when a challenge opens, closes or changes a block — not once per cycle for its own
 sake. Nine versions in two days is its own way of making a record hard to read, and finding 16's rule is
 about a ledger that stopped being TRUE, not about one that stopped being new. Signed: Claude, Super Agent.
+
+2026-10-05 cycle 20 — ledger rolled to v10 (1VbJUn5Ym0KEsYqVdqQvIzhoYiz3ka0-QqzW-7w9GWCk, 02 LIVING LEDGERS),
+carrying challenge 20: B-20's branch (b) is not executable (candidate #4's only published phone is a fixed
+line; WhatsApp is the only provider channel this system owns), challenge 14's daily-span figure corrected to
+unmeasured, and B-20 restated as the two-option choice it actually is. v9 renamed '(superseded by v10,
+2026-10-05 07:20 CR)' and moved to 99 ARCHIVE after read-back; nothing deleted. Rolled under the self-imposed
+churn limit because a finding CHANGED an open block, not because a cycle ran.
