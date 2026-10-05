@@ -790,6 +790,23 @@ async def booking_page():
     return RedirectResponse("/")
 
 
+@app.get("/reset/breathing-reset", response_class=HTMLResponse)
+async def breathing_reset_page():
+    p = FRONTEND_DIR / "breathing-reset.html"
+    if p.exists():
+        return FileResponse(p, media_type="text/html")
+    return HTMLResponse("Breathing Reset page unavailable", status_code=404)
+
+
+@app.get("/reset/breathing-reset-thank-you.html", response_class=HTMLResponse)
+@app.get("/reset/breathing-reset-thank-you", response_class=HTMLResponse)
+async def breathing_reset_thank_you_page():
+    p = FRONTEND_DIR / "breathing-reset-thank-you.html"
+    if p.exists():
+        return FileResponse(p, media_type="text/html")
+    return HTMLResponse("Thank-you page unavailable", status_code=404)
+
+
 @app.get("/partners", response_class=HTMLResponse)
 async def partners_page():
     p = FRONTEND_DIR / "partners.html"
@@ -1444,4 +1461,3 @@ async def share_alias():
 @app.get("/affiliate", response_class=HTMLResponse)
 async def affiliate_alias():
     return await partner_signup_page()
-

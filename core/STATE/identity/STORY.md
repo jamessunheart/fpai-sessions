@@ -13,7 +13,11 @@ metadata:
 
 The current chapter, as of 2026-05-19. Updated whenever the story moves.
 
-## ★ Last session handoff (2026-09-04 · CAPITAL COMMONS — Drive canon read)
+## ★ Last session handoff (2026-09-07 · SSL RENEWAL s3012.outbounders.com — mid-flight)
+
+Reymar asked to renew the expired SSL for s3012.outbounders.com (Namecheap cert 31807139). CSR verified (CN + key match). Drove Chrome to cart: 1yr $11.00 vs 5yr $29.95; balance $10.39 so card needed. WAITING: James picks term, then Confirm Order → James approves payment → activate with CSR → DCV → send Reymar cert + CA bundle (NOT the key). Note: s3034/s303/coranation/store.fullpotential certs also expired — batch candidate. Detail: sessions/2026-09-07_ssl-renewal-s3012.md.
+
+## ★ Prior handoff (2026-09-04 · CAPITAL COMMONS — Drive canon read)
 
 James asked me to pull how the Capital Commons works from his Drive. Access confirmed; read the CURRENT CANON doc (IC Prestige 98, written Sep 4). Core: shared pool of use-rights (13 capital types) · ownership stays private, use is coordinated · Prestige = witnessed trust per Realm gates stewardship · Ladder of Becoming (Voice→Succession) · mutual credit circulates · Ostrom locks guard capture. Drive folder: `01 — Governance, Prestige & Capital Commons` (also CORA Governance OS, IC Register, Deed of Trust Standard). Open: mirror canon into repo state if it becomes operational. Detail: sessions/2026-09-04_capital-commons-drive-recall.md.
 

@@ -138,10 +138,12 @@ else
   SERVICES_TO_RESTART=(zen-village zen-village-bot)
 fi
 
-for svc in "${SERVICES_TO_RESTART[@]}"; do
-  log "systemctl restart $svc"
-  ssh "$SSH_HOST" "systemctl restart $svc"
-done
+if [[ ${#SERVICES_TO_RESTART[@]} -gt 0 ]]; then
+  for svc in "${SERVICES_TO_RESTART[@]}"; do
+    log "systemctl restart $svc"
+    ssh "$SSH_HOST" "systemctl restart $svc"
+  done
+fi
 
 # ─── Smoke ──────────────────────────────────────────────────────────────────
 log "Smoke tests…"

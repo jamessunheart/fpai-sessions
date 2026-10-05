@@ -27,3 +27,30 @@ Muchas gracias por responder. Todavía no hay nada reservado: James la va a llam
 
 
 > 2026-09-04 08:52 CR · REDEMPTION CHANGED (James: "Drop the 40,000 card idea"). The gift card and the ₡38,000 colones figure are gone; colones is now the full ₡40,000. The M2 text above is updated for any FUTURE send. The M2 that actually went out 2026-09-03 15:12Z carried the old three options — do NOT re-send, do NOT correct: every option she was offered is now equal or better. See REDEMPTION.md change log.
+
+---
+
+## M-NUDGE — the Saturday nudge, 30 days late (drafted 2026-10-03 10:05 CR, NOT sent)
+Why this exists: SATURDAY_PACKET.md promised her ONE nudge on Sat 2026-09-05 12:15 CR. The heartbeat
+went mute 2026-09-04 (B-08) and it never went — not that Saturday nor the three after it. She has been
+open every one of them. Her listing is still live (Tripadvisor, read 2026-10-03: open, #1 of 7 in Rivas,
+Sat 12:00–21:00 / Sun 09:00–20:00). So this is not the packet's nudge; it is a month-late one, and it has
+to say so and take the blame, or it is mean.
+WHO SENDS IT: James, by hand, from his own WhatsApp — today after 12:00 CR, when her kitchen opens.
+NOT the agent: the approved channel runs through a bot that has been mute since Sep 4, and the packet's
+one-nudge budget was for a message this is no longer.
+If she says no, or says nothing by Sunday close: candidate #1 rests for real this time, and candidate #2
+(Comité Turismo Rural La Piedra de Rivas, WhatsApp 8317-8140) opens with a fresh consent-first M1 —
+CANDIDATE_2_PACKET.md. One candidate live at a time.
+
+TEXT (send verbatim, or change any word — it is your name on it):
+
+> Buenas, doña. Le escribí hace un mes por una comida para diez personas y después me quedé callado.
+> Eso fue falla nuestra, no suya, y le pido disculpas por dejarla esperando.
+> Si ya no le interesa, no hay ningún problema y le agradezco igual.
+> Si todavía le sirve, dígame y le cuento en dos líneas, sin compromiso.
+> (Este mensaje lo redactó mi asistente de inteligencia artificial; cualquier acuerdo lo confirmo yo
+> personalmente. — James, vecino de la zona de Chirripó)
+
+After she answers, the only thing to capture is her Q2 verbatim — "¿y qué haría usted con los SUPER?" —
+into VENDOR_LOG.md. That one sentence is what turns condition 1 from ✗ to ✓.

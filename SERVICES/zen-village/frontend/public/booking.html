@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Your Stay | Zen Village Costa Rica</title>
-    <meta name="description" content="Book your stay at Zen Village Costa Rica. Pay with PayPal, Venmo, Bitcoin, Solana, or USDT. Riverside cabins from $65/night.">
+    <meta name="description" content="Request a stay at Zen Village Costa Rica. See live availability, choose your dates, and receive a confirmed total within 24 hours. No payment needed to inquire.">
         <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -134,6 +134,41 @@
             margin-top: 0.5rem;
             padding-top: 0.5rem;
             font-weight: 600;
+        }
+        .booking-intro {
+            background: linear-gradient(135deg, rgba(240,244,236,0.96), rgba(255,255,255,0.98));
+            border: 1px solid var(--zen-mist);
+            border-radius: 14px;
+            padding: 1rem 1.15rem;
+            margin: 0 0 1.25rem;
+        }
+        .booking-intro strong { color: var(--zen-forest-deep); }
+        .booking-intro p { color: var(--zen-moss); font-size: 0.9rem; margin-top: 0.25rem; }
+        .field-hint { color: var(--zen-moss); font-size: 0.78rem; margin-top: 0.25rem; }
+        .payment-note {
+            background: rgba(196,163,90,0.1);
+            border-left: 3px solid var(--zen-gold);
+            border-radius: 0 8px 8px 0;
+            padding: 0.75rem 0.9rem;
+            color: var(--zen-forest);
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+        .date-first-summary {
+            background: rgba(74,103,65,0.08);
+            border: 1px solid rgba(74,103,65,0.22);
+            border-radius: 10px;
+            padding: 0.7rem 0.85rem;
+            color: var(--zen-forest);
+            font-size: 0.84rem;
+            margin: 0.75rem 0 1rem;
+            display: none;
+        }
+        .date-first-summary.active { display: block; }
+        .date-first-summary.error {
+            background: rgba(220,53,69,0.08);
+            border-color: rgba(220,53,69,0.25);
+            color: #9f2431;
         }
         .availability-msg {
             padding: 0.5rem 0.75rem;
@@ -489,7 +524,7 @@
     <div class="top-bar">
         <a href="/" class="logo">Zen Village</a>
         <nav>
-            <a href="/#accommodations">Accommodations</a>
+            <a href="/#stay">Accommodations</a>
             <a href="/retreats">Retreats</a>
             <a href="/#faq">FAQ</a>
             <a href="https://wa.me/50670945764">WhatsApp</a>
@@ -532,17 +567,21 @@
 
             <!-- Left: Form -->
             <div class="form-card">
-                <h2>Your Details</h2>
-                <p>Fill out the form and we'll get back to you with availability and pricing.</p>
+                <h2>Plan Your Visit</h2>
+                <div class="booking-intro">
+                    <strong>Start with the essentials.</strong>
+                    <p>Tell us what kind of visit you want, your preferred dates, and how many people are coming. We’ll confirm availability and the exact total within 24 hours.</p>
+                </div>
+                <div class="payment-note">🌿 <strong>No payment today.</strong> Choose a payment method only so we know what to prepare after we confirm your stay.</div>
 
                 <form id="book-form">
                     <div class="form-group">
-                        <label>What type of booking?</label>
+                        <label>What are you planning?</label>
                         <select name="inquiry_type" id="bk-type">
-                            <option value="Stay">Individual Stay</option>
-                            <option value="Day Pass">River &amp; Sauna Day Pass</option>
-                            <option value="Full Property Retreat">Full Property Retreat</option>
-                            <option value="Work Exchange">Work Exchange</option>
+                            <option value="Stay">A place to stay — individual visit</option>
+                            <option value="Day Pass">A day in nature — river &amp; sauna pass</option>
+                            <option value="Full Property Retreat">A private retreat — entire property</option>
+                            <option value="Work Exchange">A work-exchange stay</option>
                         </select>
                     </div>
 
@@ -578,15 +617,17 @@
                         <div class="form-group">
                             <label>Check-in Date</label>
                             <input type="date" name="checkin" id="bk-checkin">
+                            <div class="field-hint">Leave blank if your dates are flexible.</div>
                         </div>
                         <div class="form-group">
                             <label>Check-out Date</label>
                             <input type="date" name="checkout" id="bk-checkout">
                         </div>
                     </div>
+                    <div id="date-first-summary" class="date-first-summary" role="status" aria-live="polite"></div>
 
                     <div class="form-group" id="accom-select-group">
-                        <label>Preferred Accommodation</label>
+                        <label>Where would you like to stay?</label>
                         <select name="accommodation" id="bk-accom">
                             <option value="">Loading accommodations...</option>
                         </select>
@@ -595,7 +636,7 @@
                     <!-- Availability Calendar -->
                     <div class="calendar-section" id="calendar-section" style="display:none;">
                         <h3>Check Availability</h3>
-                        <p class="subtitle">Select your dates on the calendar. Booked dates are shown in red.</p>
+                        <p class="subtitle">Choose dates here to see live availability and an estimated total. Booked dates are shown in red.</p>
                         <div id="availability-calendar"></div>
                         <div class="calendar-legend">
                             <span><span class="legend-dot available"></span> Available</span>
@@ -610,7 +651,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Preferred Payment Method</label>
+                        <label>Payment method after confirmation</label>
                         <select name="payment_method" id="bk-payment">
                             <option value="paypal">PayPal</option>
                             <option value="venmo">Venmo</option>
@@ -627,15 +668,15 @@
                         <textarea name="message" placeholder="Special requests, dietary needs, arrival time, questions..."></textarea>
                     </div>
 
-                    <button type="submit" class="submit-btn">Submit Booking Request</button>
-                    <p style="text-align:center; font-size:0.85rem; color:#7d9a6f; margin-top:0.75rem;">We respond within 24 hours. No payment needed until we confirm.</p>
+                    <button type="submit" class="submit-btn">Send My Stay Request</button>
+                    <p style="text-align:center; font-size:0.85rem; color:#7d9a6f; margin-top:0.75rem;">We respond within 24 hours. No payment is needed until we confirm.</p>
                 </form>
             </div>
 
             <!-- Right: Payment Info -->
             <div class="payment-sidebar">
                 <div class="payment-card">
-                    <h3>Payment Methods</h3>
+                    <h3>Choose Payment After Confirmation</h3>
 
                     <div class="pay-method selected" onclick="selectPayMethod(this, 'paypal')">
                         <div class="pay-method-header">
@@ -732,44 +773,18 @@
                 <!-- Quick Pricing -->
                 <div class="payment-card" style="margin-top:1.5rem;">
                     <h3>Quick Pricing</h3>
-                    <div class="accom-grid">
-                        <div class="accom-mini">
-                            <div class="accom-mini-icon">🏡</div>
-                            <div class="accom-mini-name">Riverlight</div>
-                            <div class="accom-mini-price">$120/nt</div>
-                        </div>
-                        <div class="accom-mini">
-                            <div class="accom-mini-icon">🏠</div>
-                            <div class="accom-mini-name">Zen Casa</div>
-                            <div class="accom-mini-price">$180/nt</div>
-                        </div>
-                        <div class="accom-mini">
-                            <div class="accom-mini-icon">🏠</div>
-                            <div class="accom-mini-name">River House</div>
-                            <div class="accom-mini-price">$85/nt</div>
-                        </div>
-                        <div class="accom-mini">
-                            <div class="accom-mini-icon">🌿</div>
-                            <div class="accom-mini-name">Jungle Plat.</div>
-                            <div class="accom-mini-price">$45/nt</div>
-                        </div>
-                        <div class="accom-mini">
-                            <div class="accom-mini-icon">⛺</div>
-                            <div class="accom-mini-name">Glamping</div>
-                            <div class="accom-mini-price">$130/nt</div>
-                        </div>
-                        <div class="accom-mini">
-                            <div class="accom-mini-icon">⛰️</div>
-                            <div class="accom-mini-name">Hilltop</div>
-                            <div class="accom-mini-price">$75/nt</div>
-                        </div>
-                        <div class="accom-mini">
-                            <div class="accom-mini-icon">🏛️</div>
-                            <div class="accom-mini-name">Zen Palace</div>
-                            <div class="accom-mini-price">$100/rm</div>
-                        </div>
+                    <div class="accom-grid" id="quick-pricing-grid">
+                        <div class="accom-mini"><div class="accom-mini-icon">🪷</div><div class="accom-mini-name">Sky Lily Zome</div><div class="accom-mini-price">$130/nt</div></div>
+                        <div class="accom-mini"><div class="accom-mini-icon">☀️</div><div class="accom-mini-name">Astro Sol Zome</div><div class="accom-mini-price">$130/nt</div></div>
+                        <div class="accom-mini"><div class="accom-mini-icon">🌿</div><div class="accom-mini-name">Green Casita</div><div class="accom-mini-price">$95/nt</div></div>
+                        <div class="accom-mini"><div class="accom-mini-icon">⛺</div><div class="accom-mini-name">Glamp Grove</div><div class="accom-mini-price">$45/nt</div></div>
+                        <div class="accom-mini"><div class="accom-mini-icon">🏕️</div><div class="accom-mini-name">Camp Spring</div><div class="accom-mini-price">$20/nt</div></div>
+                        <div class="accom-mini"><div class="accom-mini-icon">🌊</div><div class="accom-mini-name">Riverlight Cabin</div><div class="accom-mini-price">$120/nt</div></div>
+                        <div class="accom-mini"><div class="accom-mini-icon">🏠</div><div class="accom-mini-name">Zen Casa</div><div class="accom-mini-price">$180/nt</div></div>
+                        <div class="accom-mini"><div class="accom-mini-icon">🪺</div><div class="accom-mini-name">El Nido</div><div class="accom-mini-price">$115/nt</div></div>
+                        <div class="accom-mini"><div class="accom-mini-icon">🏔️</div><div class="accom-mini-name">La Vista</div><div class="accom-mini-price">$150/nt</div></div>
                     </div>
-                    <p style="font-size:0.8rem; color:#7d9a6f; margin-top:1rem; text-align:center;">Weekly &amp; monthly discounts available. Full property from $450/night.</p>
+                    <p style="font-size:0.8rem; color:#7d9a6f; margin-top:1rem; text-align:center;">Base nightly rates shown; green-season discounts and weekly/monthly rates may apply. Confirmed total follows the selected dates.</p>
                 </div>
             </div>
         </div>
@@ -943,6 +958,8 @@
   let selectedAccId = '';
   let selStart = null;
   let selEnd = null;
+  let availabilityRequestId = 0;
+  const PUBLIC_ACCOMMODATION_IDS = new Set(['astro-alpha', 'astro-sol', 'green-casita', 'glamp-grove', 'camp-spring', 'riverlight', 'zen-casa', 'the-vista', 'the-nido']);
 
   function getSeason() {
     return SEASON_CFG.highMonths.includes(new Date().getMonth()+1) ? 'high' : 'green';
@@ -973,6 +990,7 @@
       const data = await res.json();
       accommodations = data.accommodations || [];
       populateDropdown();
+      renderQuickPricing();
     } catch (e) {
       console.error('Failed to load accommodations:', e);
       populateFallback();
@@ -1002,6 +1020,7 @@
       });
       sel.appendChild(grp);
     });
+    selectAccommodationFromQuery();
   }
 
   function populateFallback() {
@@ -1016,6 +1035,47 @@
       '<option value="the-nido">La Vista \u2014 $150/night</option>' +
       '<option value="camp-spring">Camp Spring \u2014 $20/night</option>' +
       '<option value="glamp-grove">Glamp Grove \u2014 $45/night</option>';
+    selectAccommodationFromQuery();
+    renderQuickPricing();
+  }
+
+  function renderQuickPricing() {
+    var grid = document.getElementById('quick-pricing-grid');
+    if (!grid || !accommodations.length) return;
+    var items = accommodations.filter(function(a) { return PUBLIC_ACCOMMODATION_IDS.has(a.id); });
+    if (!items.length) return;
+    grid.innerHTML = items.map(function(a) {
+      return '<div class="accom-mini"><div class="accom-mini-icon">' + (a.emoji || '🌿') + '</div><div class="accom-mini-name">' + a.name + '</div><div class="accom-mini-price">$' + Number(a.current_nightly).toLocaleString() + '/nt</div></div>';
+    }).join('');
+  }
+
+  function selectAccommodationFromQuery() {
+    var id = new URLSearchParams(window.location.search).get('accommodation');
+    var sel = document.getElementById('bk-accom');
+    if (!id || !sel) return;
+    var opt = Array.from(sel.options).find(function(option) { return option.value === id; });
+    if (!opt) return;
+    sel.value = id;
+    sel.dispatchEvent(new Event('change'));
+  }
+
+  function selectBookingTypeFromQuery() {
+    var raw = new URLSearchParams(window.location.search).get('type');
+    var sel = document.getElementById('bk-type');
+    if (!raw || !sel) return;
+    var aliases = {
+      'stay': 'Stay',
+      'day-pass': 'Day Pass',
+      'day pass': 'Day Pass',
+      'full-property': 'Full Property Retreat',
+      'full-property-retreat': 'Full Property Retreat',
+      'retreat': 'Full Property Retreat',
+      'work-exchange': 'Work Exchange'
+    };
+    var value = aliases[raw.toLowerCase()] || raw;
+    if (!Array.from(sel.options).some(function(option) { return option.value === value; })) return;
+    sel.value = value;
+    sel.dispatchEvent(new Event('change'));
   }
 
   // Calendar initialization
@@ -1134,6 +1194,50 @@
     preview.classList.add('active');
   }
 
+  async function summarizeAvailabilityForDates() {
+    var checkin = document.getElementById('bk-checkin').value;
+    var checkout = document.getElementById('bk-checkout').value;
+    var summary = document.getElementById('date-first-summary');
+    if (!summary || !checkin || !checkout || !accommodations.length) return;
+    if (checkout <= checkin) {
+      summary.className = 'date-first-summary error active';
+      summary.textContent = 'Choose a check-out date after check-in to see available stays.';
+      return;
+    }
+    var requestId = ++availabilityRequestId;
+    summary.className = 'date-first-summary active';
+    summary.textContent = 'Checking live availability for these dates…';
+    var items = accommodations.filter(function(a) { return PUBLIC_ACCOMMODATION_IDS.has(a.id); });
+    var results = await Promise.all(items.map(function(a) {
+      return fetch(API + '/availability/' + a.id + '?check_in=' + encodeURIComponent(checkin) + '&check_out=' + encodeURIComponent(checkout))
+        .then(function(r) { return r.ok ? r.json() : {available: false}; })
+        .catch(function() { return {available: null}; });
+    }));
+    if (requestId !== availabilityRequestId) return;
+    var known = results.filter(function(r) { return typeof r.available === 'boolean'; });
+    var available = results.filter(function(r) { return r.available === true; }).length;
+    if (!known.length) {
+      summary.className = 'date-first-summary error active';
+      summary.textContent = 'We could not check live availability just now. You can still send a flexible-date request.';
+      return;
+    }
+    summary.className = 'date-first-summary active';
+    summary.textContent = available ? '✓ ' + available + ' stay option' + (available === 1 ? '' : 's') + ' currently available for these dates. Choose one below to see the estimate.' : 'Those dates are currently full for the listed stays. Try different dates or send a flexible-date request.';
+    var select = document.getElementById('bk-accom');
+    if (select) {
+      Array.from(select.options).forEach(function(option) {
+        if (!option.value) return;
+        option.dataset.baseLabel = option.dataset.baseLabel || option.textContent.replace(/ — unavailable$/, '');
+        option.textContent = option.dataset.baseLabel;
+        option.disabled = false;
+        var index = items.findIndex(function(a) { return a.id === option.value; });
+        if (index < 0 || results[index].available === null) return;
+        option.disabled = !results[index].available;
+        if (!results[index].available && option.textContent.indexOf(' — unavailable') === -1) option.textContent += ' — unavailable';
+      });
+    }
+  }
+
   // Wire accommodation change to show calendar
   document.getElementById('bk-accom').addEventListener('change', function() {
     selectedAccId = this.value;
@@ -1154,9 +1258,13 @@
   });
 
   // Update price when dates change manually
-  document.getElementById('bk-checkin').addEventListener('change', updatePricePreview);
+  document.getElementById('bk-checkin').addEventListener('change', function() {
+    updatePricePreview();
+    summarizeAvailabilityForDates();
+  });
   document.getElementById('bk-checkout').addEventListener('change', function() {
     updatePricePreview();
+    summarizeAvailabilityForDates();
     // Check availability when both dates are set
     var checkin = document.getElementById('bk-checkin').value;
     var checkout = this.value;
@@ -1177,6 +1285,7 @@
   // Init on load
   document.addEventListener('DOMContentLoaded', function() {
     addSeasonBanner();
+    selectBookingTypeFromQuery();
     loadAccommodations();
   });
 })();

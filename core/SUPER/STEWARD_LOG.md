@@ -318,3 +318,149 @@ Conditions:
 Loop: 0 / 11
 Open question for the director: none
 NBM: TWO open moves, director-only first — (a) name the beneficiaries and a witness who is NOT the director, circulator or provider (they assign Q, so this one cannot be James; needs no provider, no vendor reply, no infrastructure; closes condition 2 the minute it is written, and makes the provider ask concrete: a meal these people actually want); then (b) one conversation with one candidate provider; record their Q2 answer verbatim
+
+[SUPER-STEWARD · BUILD-001 · 2026-10-03]
+STATUS: HOLD
+Conditions:
+  1 Provider:   ✗ — no provider named
+  2 Q path:     ✗ — missing: beneficiaries witness
+  3 Place/test: ✓ — Rivas, Pérez Zeledón — Can SUPER carry the loop on its own weight?
+  4 Max loss:   ✓ — 100 SUPER / 10 h, stop: James Sunheart
+Loop: 0 / 11
+Open question for the director: none
+NBM: TWO open moves, director-only first — (a) name the beneficiaries and a witness who is NOT the director, circulator or provider (they assign Q, so this one cannot be James; needs no provider, no vendor reply, no infrastructure; closes condition 2 the minute it is written, and makes the provider ask concrete: a meal these people actually want); then (b) one conversation with one candidate provider; record their Q2 answer verbatim
+
+[SUPER-STEWARD · BUILD-001 · 2026-10-02 CR]
+STATUS: HOLD
+Conditions:
+  1 Provider:   ✗ — no provider named
+  2 Q path:     ✗ — missing: beneficiaries witness
+  3 Place/test: ✓ — Rivas, Pérez Zeledón — Can SUPER carry the loop on its own weight?
+  4 Max loss:   ✓ — 100 SUPER / 10 h, stop: James Sunheart
+Loop: 0 / 11
+Open question for the director: none
+NBM: TWO open moves, director-only first — (a) name the beneficiaries and a witness who is NOT the director, circulator or provider (they assign Q, so this one cannot be James; needs no provider, no vendor reply, no infrastructure; closes condition 2 the minute it is written, and makes the provider ask concrete: a meal these people actually want); then (b) one conversation with one candidate provider; record their Q2 answer verbatim
+
+[SUPER-STEWARD · BUILD-001 · 2026-10-02 CR]
+STATUS: HOLD
+Conditions:
+  1 Provider:   ✗ — no provider named
+  2 Q path:     ✗ — missing: beneficiaries witness
+  3 Place/test: ✓ — Rivas, Pérez Zeledón — Can SUPER carry the loop on its own weight?
+  4 Max loss:   ✓ — 100 SUPER / 10 h, stop: James Sunheart
+Loop: 0 / 11
+Open question for the director: none
+NBM: TWO open moves, director-only first — (a) name the beneficiaries and a witness who is NOT the director, circulator or provider (they assign Q, so this one cannot be James; needs no provider, no vendor reply, no infrastructure; closes condition 2 the minute it is written, and makes the provider ask concrete: a meal these people actually want); then (b) one conversation with one candidate provider; record their Q2 answer verbatim
+
+[SUPER-STEWARD · BUILD-001 · 2026-10-02 CR]
+STATUS: HOLD
+Conditions:
+  1 Provider:   ✗ — no provider named
+  2 Q path:     ✗ — missing: beneficiaries witness
+  3 Place/test: ✓ — Rivas, Pérez Zeledón — Can SUPER carry the loop on its own weight?
+  4 Max loss:   ✓ — 100 SUPER / 10 h, stop: James Sunheart
+Loop: 0 / 11
+Open question for the director: none
+NBM: TWO open moves, director-only first — (a) name the beneficiaries and a witness who is NOT the director, circulator or provider (they assign Q, so this one cannot be James; needs no provider, no vendor reply, no infrastructure; closes condition 2 the minute it is written, and makes the provider ask concrete: a meal these people actually want); then (b) one conversation with one candidate provider; record their Q2 answer verbatim
+
+[SUPER-STEWARD · BUILD-001 · 2026-10-03 CR]
+STATUS: HOLD
+Conditions:
+  1 Provider:   ✗ — no provider named
+  2 Q path:     ✗ — missing: beneficiaries witness
+  3 Place/test: ✓ — Rivas, Pérez Zeledón — Can SUPER carry the loop on its own weight?
+  4 Max loss:   ✓ — 100 SUPER / 10 h, stop: James Sunheart
+Loop: 0 / 11
+Open question for the director: none
+NBM: TWO open moves, director-only first — (a) name the beneficiaries and a witness who is NOT the director, circulator or provider (they assign Q, so this one cannot be James; needs no provider, no vendor reply, no infrastructure; closes condition 2 the minute it is written, and makes the provider ask concrete: a meal these people actually want); then (b) one conversation with one candidate provider; record their Q2 answer verbatim
+
+[SUPER-STEWARD · BUILD-001 · 2026-10-02 CR]
+STATUS: HOLD
+Conditions:
+  1 Provider:   ✗ — no provider named
+  2 Q path:     ✗ — missing: beneficiaries witness
+  3 Place/test: ✓ — Rivas, Pérez Zeledón — Can SUPER carry the loop on its own weight?
+  4 Max loss:   ✓ — 100 SUPER / 10 h, stop: James Sunheart
+Loop: 0 / 11
+Open question for the director: none
+NBM: TWO open moves, director-only first — (a) name the beneficiaries and a witness who is NOT the director, circulator or provider (they assign Q, so this one cannot be James; needs no provider, no vendor reply, no infrastructure; closes condition 2 the minute it is written, and makes the provider ask concrete: a meal these people actually want); then (b) one conversation with one candidate provider; record their Q2 answer verbatim
+
+[SUPER-STEWARD · BUILD-001 · 2026-10-02 UTC-06]
+STATUS: HOLD
+Conditions:
+  1 Provider:   ✗ — no provider named
+  2 Q path:     ✗ — missing: beneficiaries witness
+  3 Place/test: ✓ — Rivas, Pérez Zeledón — Can SUPER carry the loop on its own weight?
+  4 Max loss:   ✓ — 100 SUPER / 10 h, stop: James Sunheart
+Loop: 0 / 11
+Open question for the director: none
+NBM: TWO open moves, director-only first — (a) name the beneficiaries and a witness who is NOT the director, circulator or provider (they assign Q, so this one cannot be James; needs no provider, no vendor reply, no infrastructure; closes condition 2 the minute it is written, and makes the provider ask concrete: a meal these people actually want); then (b) one conversation with one candidate provider; record their Q2 answer verbatim
+
+[SUPER-STEWARD · BUILD-001 · 2026-10-03 UTC+00]
+  ⚠ NOT A RULING — TEST ARTIFACT. Written by a verification run of the then-new SUPER_TZ_OFFSET_HOURS override, 2026-10-02 cycle 7. Dated in a place SUPER does not circulate. See the correction at the end of this file.
+STATUS: HOLD
+Conditions:
+  1 Provider:   ✗ — no provider named
+  2 Q path:     ✗ — missing: beneficiaries witness
+  3 Place/test: ✓ — Rivas, Pérez Zeledón — Can SUPER carry the loop on its own weight?
+  4 Max loss:   ✓ — 100 SUPER / 10 h, stop: James Sunheart
+Loop: 0 / 11
+Open question for the director: none
+NBM: TWO open moves, director-only first — (a) name the beneficiaries and a witness who is NOT the director, circulator or provider (they assign Q, so this one cannot be James; needs no provider, no vendor reply, no infrastructure; closes condition 2 the minute it is written, and makes the provider ask concrete: a meal these people actually want); then (b) one conversation with one candidate provider; record their Q2 answer verbatim
+
+[SUPER-STEWARD · BUILD-001 · 2026-10-03 UTC+5.5]
+  ⚠ NOT A RULING — TEST ARTIFACT. Written by a verification run of the then-new SUPER_TZ_OFFSET_HOURS override, 2026-10-02 cycle 7. Dated in a place SUPER does not circulate. See the correction at the end of this file.
+STATUS: HOLD
+Conditions:
+  1 Provider:   ✗ — no provider named
+  2 Q path:     ✗ — missing: beneficiaries witness
+  3 Place/test: ✓ — Rivas, Pérez Zeledón — Can SUPER carry the loop on its own weight?
+  4 Max loss:   ✓ — 100 SUPER / 10 h, stop: James Sunheart
+Loop: 0 / 11
+Open question for the director: none
+NBM: TWO open moves, director-only first — (a) name the beneficiaries and a witness who is NOT the director, circulator or provider (they assign Q, so this one cannot be James; needs no provider, no vendor reply, no infrastructure; closes condition 2 the minute it is written, and makes the provider ask concrete: a meal these people actually want); then (b) one conversation with one candidate provider; record their Q2 answer verbatim
+
+[SUPER-STEWARD · BUILD-001 · 2026-10-03 UTC-06]
+STATUS: HOLD
+Conditions:
+  1 Provider:   ✗ — no provider named
+  2 Q path:     ✗ — missing: beneficiaries witness
+  3 Place/test: ✓ — Rivas, Pérez Zeledón — Can SUPER carry the loop on its own weight?
+  4 Max loss:   ✓ — 100 SUPER / 10 h, stop: James Sunheart
+Loop: 0 / 11
+Open question for the director: none
+NBM: TWO open moves, director-only first — (a) name the beneficiaries and a witness who is NOT the director, circulator or provider (they assign Q, so this one cannot be James; needs no provider, no vendor reply, no infrastructure; closes condition 2 the minute it is written, and makes the provider ask concrete: a meal these people actually want); then (b) one conversation with one candidate provider; record their Q2 answer verbatim
+
+[CORRECTION TO THE RECORD · Claude, Super Agent · 2026-10-03 UTC-06]
+Two entries in this file are NOT rulings. The entries headed `2026-10-03 UTC+00` and
+`2026-10-03 UTC+5.5` were produced by MY OWN verification runs on 2026-10-02 (cycle 7),
+testing the timezone override added that cycle. They are now flagged in place; nothing is
+deleted, because this file is append-only and a record that edits itself is worth less than
+a record that admits what it contains.
+Why this matters and is not housekeeping: both entries are formatted exactly like a signed
+ruling. The `UTC+00` one is indistinguishable from a real one to any reader who does not
+know that Rivas is UTC-6 — which is most readers, and every adopter of the public pack. The
+cycle that fixed "a currency must be dated in the place it circulates" proved the fix by
+writing two wrongly-dated rulings into the ledger of rulings. The instrument contaminated
+the record it was built to protect. Tenth instance of one shape.
+Rule filed: A TEST MUST NOT WRITE TO THE RECORD IT IS TESTING.
+Fixed the same cycle, in super_build.py (backup: $HOME/super_build.py.bak_20261003_cycle8):
+  · `status --no-log` prints the ruling and appends nothing. All verification uses it.
+  · `SUPER_STEWARD_LOG` redirects the log path, so a harness cannot reach this file at all.
+  · A stamp whose offset came from the environment now says so in the line itself
+    (`UTC+5.5 ·offset from SUPER_TZ_OFFSET_HOURS`), so a non-Rivas date can never again
+    pass as a Rivas ruling. Garbage input falls back to UTC-06 and does NOT claim env
+    provenance. Five branches observed, log line count unchanged across all of them.
+Signed: Claude, Super Agent — settled inside remit, not escalated.
+
+[SUPER-STEWARD · BUILD-001 · 2026-10-04 UTC-06]
+STATUS: HOLD
+Conditions:
+  1 Provider:   ✗ — no provider named
+  2 Q path:     ✗ — missing: beneficiaries witness
+  3 Place/test: ✓ — Rivas, Pérez Zeledón — Can SUPER carry the loop on its own weight?
+  4 Max loss:   ✓ — 100 SUPER / 10 h, stop: James Sunheart
+Loop: 0 / 11
+Window: UNDECLARED — day1/day7 blank, so no machine here can say whether this Build's window has lapsed. Write both as YYYY-MM-DD and the clock becomes checkable; until then the window is prose only.
+Open question for the director: day1/day7 unset — the Card's window is prose; no machine can grade its time
+NBM: TWO open moves, director-only first — (a) name the beneficiaries and a witness who is NOT the director, circulator or provider (the witness MAY be one of the beneficiaries — the Card assigns Q to them jointly — so no eleventh person is needed; but this is not a form fill: the Card's pass test is a meal they WANTED and felt respected, so each name costs a conversation, and how many names is set by the Build's own size — resize the Build and this ask resizes with it, B-13); then (b) one conversation with one candidate provider; record their Q2 answer verbatim

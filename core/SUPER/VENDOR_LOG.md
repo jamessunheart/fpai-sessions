@@ -21,3 +21,19 @@ Source of that fact: the 15:32Z heartbeat read /opt/VENDOR_LOG.md on 198 directl
 Status: awaiting her reply to M2. Q1 / Q2 / Q3: —
 Classification: PENDING
 CORRECTION to the record: the 2026-09-03 ~10:00 CR Super Agent cycle stated "M2 NOT yet sent" on the strength of THIS file having only M1. That was wrong. This file was stale, not the world.
+
+[AGENT NOTE · not a vendor word · Claude, Super Agent · 2026-10-03 10:05 CR]
+THE AMENDED FOLLOW-UP NEVER WENT. The 2026-09-03 07:20 note moved candidate #1's single follow-up to
+Saturday 2026-09-05 (when the kitchen is open). The heartbeat that was to carry it went mute 2026-09-04
+(B-08). This file and VENDOR_LOG_198.md both still end at 2026-09-03T15:12 — no nudge on Sep 5, 12, 19
+or 26. Four Saturdays, her shop open on each.
+Consequences named honestly: (a) her silence is NOT evidence of a no — she was asked once, a month ago,
+and never followed up as promised; (b) the SATURDAY_PACKET fallback ("no reply by Sunday close →
+candidate #1 rests; open candidate #2") never legitimately fired, because its trigger depended on a
+message we did not send. Candidate #1 is therefore still live, not rested, and candidate #2 stays closed.
+Still true, checked today (Tripadvisor, public listing): La Cocinona de Pueblo is OPEN, +506 6362 6524,
+Pueblo Nuevo de Rivas, Sat 12:00–21:00 / Sun 09:00–20:00 / closed Mon–Fri, ranked #1 of 7 in Rivas.
+Public-listing fact only; she has said nothing new and nothing here is a booking.
+NOT SENT BY THE AGENT: M-NUDGE is drafted in DRAFT_whatsapp_la_cocinona.md for JAMES to forward by hand.
+A thirty-day-late nudge must name the gap and take the blame, and the approved bot channel is mute.
+Classification: PENDING (unchanged). Q1 / Q2 / Q3: —

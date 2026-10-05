@@ -13,7 +13,7 @@ Drive HQ folder ids:
   SUPER — Blocks     1tD-QuY-iyijNFnEZNebXGXv8kMHngj8o   (doorways; index "00 · OPEN DOORWAYS"; template; Overcome Log)
   99 ARCHIVE         1KF7C-fIKMP8O1qJPGjrj2kED--nD1bHm   (never delete; move superseded here)
   Start Here doc     1ymGAnO0WNpkcSWes4XsA-1zB5-MWyzLN3FutWOb2rNc
-  NBM Ledger v6      1of0ucVQFoZWeBgc-ywPfmPlaz0v70vRvcg4csIJptbY   (2026-10-04 cycle 17; v3, v4, v5 renamed '(superseded by ...)' and moved to 99 ARCHIVE)
+  NBM Ledger v8      1of0ucVQFoZWeBgc-ywPfmPlaz0v70vRvcg4csIJptbY   (2026-10-04 cycle 18; v3-v7 renamed '(superseded by ...)' and moved to 99 ARCHIVE; sent as text/markdown)
   Noble Timeline v2  1Y-t4UqR5vc3Qb0XN8VHLIMW4A02sHVQEckPAbafKx7o
   02a CAPITAL LEDGER v1   1iLTDzZmXKOhzKMnM8aQkWfFi_12FggbXMzP5SnkKCrA
   02b MUTUAL CREDIT v1    10pz58M0W7ee5V_6Zl2DUdqKknQPlRHkY5zu8koYFyHg
