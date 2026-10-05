@@ -166,6 +166,40 @@ NOT established: that those hours are current, or that #4 would serve ten plates
 next use for it. Kept **OFF** the public HELP_WANTED board — it is a director's choice about a named
 real person, not recruitable work.
 Rule filed: **AN ASK'S COST INCLUDES ITS WINDOW.**
+
+### AMENDED 2026-10-05 (Claude, Super Agent, cycle 20, finding 20) — branch (b) IS NOT EXECUTABLE AS WRITTEN
+Branch (b) above says "landline" as if it were a neutral feature of candidate #4. It is the thing that
+decides whether branch (b) exists. **2772-4381 is a Costa Rican FIXED LINE** (numbers beginning 2 are
+geographic fixed lines; mobile begins 6, 7 or 8), confirmed identical on three public listings today
+(perezzeledon.cr directory, Tripadvisor d12592042, visitcostarica.com — the last also giving
+anacalderona2015@gmail.com). **WhatsApp is the only provider channel this system owns** — the bot on 198,
+VENDOR_LOG's verbatim record, DRAFT_whatsapp_la_cocinona.md, and the per-message send approval James granted
+on his own line — and WhatsApp needs a mobile-capable number. So (b) swaps a channel we HAVE for one we do
+NOT: a voice call (no agent here can place one; PARKED at the top of NBM.md; and a call leaves no verbatim
+provider word, which is what VENDOR_LOG exists to hold) or Facebook Messenger (robots-blocked to us, never
+approved). The fact was in our own file from day one and in this block's own branch (b); the consequence was
+never drawn — fifth time in six cycles the answer to an open item sat in a file we wrote and did not re-read.
+Confirmed about #4 and still true: real, still trading, open SIX days, closed Tuesdays, #2 of 7 in Rivas.
+Corrected: the **daily span is NOT measured** — the two sources disagree (8:00–20:00 vs 07:00–18:00), so
+"07:00–18:00" above is one source's figure. Six days is the agreed part, and it is the part (b) rested on.
+Also noted: #4 holds an **ICT Declaratoria Turística**. A formally declared business accepting a non-colón
+instrument carries a bookkeeping trail (IVA/renta on a colón-valued permuta) that a family producer's
+judgement call does not — so a YES costs #4 more than it costs #1, channel aside.
+Of the seven Rivas-district candidates, four ARE WhatsApp-reachable — #1 (6362 6524), #5 (8943-3355),
+#10 (8317-8140), #15 (6322-8509) — but each alternative is already encumbered by our own file: #5 is Build
+#002's second hop and "bread alone != a meal"; #10 is B-21's unresolved role ambiguity and may be the ten
+beneficiaries; #15 Jardines Secretos carries tourist prices and sits in San Gerardo de Rivas near Chirripó,
+where Zen Village's own system runs, which breaks the Card's purity rule. There is no wider-window AND
+reachable AND unencumbered option in the district.
+**SO B-20 IS A TWO-OPTION CHOICE, NOT THREE:**
+  (a) **Keep #1** — cost: the channel is open 2/7 days; next window **Sat 2026-10-11 12:00–21:00 CR**.
+  (b') **Rest #1 and accept a named cost** — either open a reachable-but-encumbered candidate (#15, breaking
+      nothing but inheriting its two risks), or authorise a channel we do not have (a voice call James or a
+      person places, or Messenger), which is a separate decision and not a one-word one.
+Nobody rested, nobody opened, nobody contacted; the one-candidate guard is untouched and #1 is still live,
+because finding 10 holds — she was asked once, a month ago, and never followed up as promised.
+Rule filed: **AN ALTERNATIVE IS NOT CHEAPER UNTIL ITS CHANNEL IS CHECKED.**
+Fixed inside remit: `PROVIDER_CANDIDATES.md` now carries a CHANNEL AUDIT for all 18 rows.
 Note on numbering: B-17 and B-18 each appear twice above, from two cycles that opened a block in parallel.
 Not renumbered here — renaming a signed block would break every back-reference. Flagged for James only.
 Opened 2026-10-04 by Claude, Super Agent.

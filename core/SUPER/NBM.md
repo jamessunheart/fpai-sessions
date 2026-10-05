@@ -352,3 +352,74 @@ Commits: this cycle. RULE: AN ADOPTED COUNCIL CHANGE IS NOT ADOPTED UNTIL A MACH
 later decision removes the thing a council praised, the council record must be reconciled, not left to
 keep recommending a design that no longer exists.
 Signed: Claude, Super Agent, 2026-10-04.
+
+## TWENTIETH FINDING — 2026-10-05, cycle 20 (Claude, Super Agent — curiosity thread: verify the candidate B-20 offers as the easier one)
+AN ASK OFFERED AS A SUBSTITUTE, OVER A CHANNEL THE SYSTEM DOES NOT HAVE.
+
+What I went looking for: finding 14 (yesterday) priced M-NUDGE's WINDOW and opened B-20 — keep candidate #1
+La Cocinona de Pueblo (open 2 days/week, the only provider who ever replied) or rest #1 and open candidate
+#4 Cafetería Antojos de Maíz (open 6 days/week, same district). Before asking James to choose, I checked
+whether #4 is what our own file says it is.
+
+MEASURED, three independent public listings, today:
+  · perezzeledon.cr directory — "La Bonita, Rivas, 50 sur entrada a Miravalles", 2772-4381,
+    "De 8 a.m. a 8 p.m. / Cerrado los martes", "platillos hechos a base de maíz y comida criolla",
+    holds an ICT Declaratoria Turística.
+  · Tripadvisor d12592042 — Ruta 242 Rivas, +506 2772 4381, closed Tuesday, 07:00–18:00 the other six
+    days, 4.1/5 on 8 reviews, #2 of 7 restaurants in Rivas, not marked closed.
+  · visitcostarica.com "Cafetería Antojos de Maíz" — same address, same phone, anacalderona2015@gmail.com.
+ESTABLISHED: one business, still trading, open SIX days, closed Tuesdays. NOT established: the daily span.
+The two sources DISAGREE (8:00–20:00 vs 7:00–18:00), so finding 14's "07:00–18:00" is one source's figure
+and must not be re-reported as measured. Six days is the part both agree on, and it is the part B-20 rests on.
+
+THE DEFECT: 2772-4381 is a Costa Rican FIXED LINE. Numbers beginning 2 are geographic fixed lines; mobile
+numbers begin 6, 7 or 8. WhatsApp requires a mobile-capable number, and WhatsApp is the ONLY provider
+channel this system owns — the systemd bot on 198, VENDOR_LOG's verbatim record, DRAFT_whatsapp_la_cocinona.md,
+and the per-message send approval James granted on his own line. No public source carries any other number
+for #4. So "rest #1, open #4" is not a swap of one candidate for another; it is a swap of a channel we HAVE
+for a channel we do NOT: a voice call (no agent here can place one, and a call leaves no verbatim provider
+word — the one thing VENDOR_LOG exists to hold; "self-placing voice calls" is PARKED at the top of this file)
+or Facebook Messenger (robots-blocked to us, and never an approved channel). Finding 14 priced the ask's
+WINDOW. Nobody priced the ask's CHANNEL. Two halves of the same block, 24 hours apart, and the half I missed
+is the half that decides whether the alternative exists at all.
+
+SECOND PART, and it shrinks the question rather than growing it. Measured across all 18 rows of
+PROVIDER_CANDIDATES.md: 10 candidates are mobile/WhatsApp-reachable, 5 are landline-only (#3, #4, #6, #16,
+#18's office), the rest have no phone. Of the seven Rivas-district candidates finding 14 named, FOUR are
+WhatsApp-reachable — #1 (6362 6524), #5 (8943-3355), #10 (8317-8140), #15 (6322-8509) — and three are
+landline-only (#3, #4, #16). But each reachable alternative is already encumbered by this file's own words:
+#5 Panes Artesanales La Estrella is filed as Build #002's SECOND HOP and "bread alone != a meal"; #10 Comité
+La Piedra de Rivas is the unresolved role ambiguity of B-21 and may be the ten BENEFICIARIES instead; #15
+Jardines Secretos carries two recorded risks (tourist prices, and it sits in San Gerardo de Rivas near
+Chirripó where Zen Village's own system runs — which would break the Card's purity rule, run where no
+currency exists). So there is NO clean option that is wider-window AND reachable AND unencumbered.
+B-20 is honestly a TWO-option choice — keep #1, or accept a named cost — and for 24 hours it has been put to
+James as a three-option one. An option that cannot be executed is not an option; offering it is a way of
+making a hard choice look easy, pointed at the person who has to make it.
+
+THIRD, noted not tasked: #4 holds an ICT tourism declaration — a formally declared business. The legal
+ground already recorded that a SUPER-for-meal exchange is permuta but still creates a colón-valued sale the
+cook may owe IVA/renta on. For a formally declared business that is a bookkeeping event with a paper trail,
+not a family's judgement call, so the cost of a YES is higher for #4 than for #1 even if the channel existed.
+Not an argument against formal businesses — an argument for naming a cost before calling someone the easier
+option.
+
+Nobody contacted. Nothing sent. No funds moved. The one-candidate guard is untouched; #1 is still live and
+still not rested, because finding 10 holds: her silence is not evidence of a no.
+
+WHERE IT WAS HIDING, named plainly: B-20's own branch (b) lists "landline" among candidate #4's ATTRACTIVE
+features — "formal business, ~daily hours, our file calls it cheap to scale to 10 plates, same district,
+landline, no committee". The disqualifying fact was written into the block as a neutral detail, by me,
+24 hours ago. Fifth time in six cycles the answer to an open item sat in a file we wrote and never re-read.
+
+RULE: AN ALTERNATIVE IS NOT CHEAPER UNTIL ITS CHANNEL IS CHECKED. A substitute ask must be priced on the
+infrastructure that would carry it, not on the attribute that made it attractive.
+Corollary, and the shape this shares with the other nineteen: THE PROPERTY THAT MAKES AN OPTION ATTRACTIVE
+IS THE PROPERTY WE CHECK; THE PROPERTY THAT MAKES IT POSSIBLE IS THE ONE WE ASSUME.
+
+Fixed inside remit, this cycle: PROVIDER_CANDIDATES.md now carries a CHANNEL AUDIT — fixed line vs
+mobile/WhatsApp for every row — so no future cycle can offer a landline-only candidate as a drop-in for a
+WhatsApp one. B-20's wording is corrected in the living ledger. DELIBERATELY NOT DONE: no candidate rested,
+no candidate opened, no Card edited, REDEMPTION.md untouched. The choice is still James's; it is now the
+choice he actually has.
+Signed: Claude, Super Agent, 2026-10-05.

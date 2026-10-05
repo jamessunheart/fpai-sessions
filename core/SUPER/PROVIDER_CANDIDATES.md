@@ -31,3 +31,34 @@ NBM: call #1 (La Cocinona de Pueblo), in Spanish, with the Invitación al Provee
 - AFASIG (Feria del Agricultor) runs THURSDAYS 6am–5pm in front of Casa de la Juventud, downtown San Isidro (per its founding coverage; 17 producers, 250+ regulars as of Mar 2026). TODAY IS THURSDAY. An in-person visit with the printed Invitación is the most honest first contact possible — opt-in in person, no cold message.
 - CoopeAgri: 6 supermarkets (Central frente Mercado Municipal 2785-0229; Villa Ligia; Palmares; Barrio San Luis; Pejibaye; AutoServicio 24h). Gift cards EXIST internally (₡200,000 cards + ₡100,000 órdenes de compra in its own promo rules) but are not sold publicly. Membership only for coffee/cane producers or employees. Contact 2785-0200 · recepcion@coopeagri.co.cr; GM Víctor Hugo Carranza Salazar; board president Amado Castro Fernández. → Redemption anchor TODAY: Walmart-group gift cards (Más x Menos / Palí / Maxi Palí, ₡3,000–₡990,000, sold at any register). CoopeAgri = rung-4 conversation via recepcion@ or an asociado.
 - No vales / alternative payment found anywhere in the canton. Field is clear.
+
+## CHANNEL AUDIT (Claude, Super Agent · 2026-10-05 · finding 20)
+Costa Rican numbering: a number beginning **2** is a geographic FIXED LINE; mobile numbers begin 6, 7 or 8.
+WhatsApp — the only provider channel this system owns (bot on 198, VENDOR_LOG verbatim record,
+DRAFT_whatsapp_*, James's per-message send approval) — requires a mobile-capable number.
+Read this column BEFORE offering any candidate as a substitute for another.
+
+- MOBILE / WhatsApp-reachable: #1 6362 6524 · #5 8943-3355 · #10 8317-8140 · #11 8545-7475 ·
+  #12 8806-1082 / 8633-4405 · #13 8389-5752 (also landline 2770-3097) · #14 6095-1707 ·
+  #15 6322-8509 · #17 8466-8200
+- FIXED LINE ONLY — no channel this system can use: #3 2742 5054 · #4 2772 4381 ·
+  #6 2771 0437 · #16 2770-2454 · #18 Feria office 2771-2676 / 2771-8292
+- No phone at all: #2 (email/FB only) · #7 · #8 · #9 · AMACOBAS · Feria Pejibaye · El Fogón de Doña María
+
+Consequence for B-20, measured not inferred: candidate #4 Cafetería Antojos de Maíz is open SIX days
+(closed Tuesdays — agreed by perezzeledon.cr and Tripadvisor d12592042; the daily span DISAGREES,
+8:00-20:00 vs 7:00-18:00, so finding 14's "07:00-18:00" is one source's figure, not a measured fact)
+but its only published phone, 2772-4381, is a fixed line, confirmed identical on three public listings
+(perezzeledon.cr directory, Tripadvisor, visitcostarica.com "Cafetería Antojos de Maíz" /
+anacalderona2015@gmail.com). Reaching #4 means a voice call (no agent here can place one, and it leaves
+no verbatim provider word, which is the one thing VENDOR_LOG exists to hold) or Facebook Messenger
+(robots-blocked to us, never approved by James). So "rest #1, open #4" swaps a channel we HAVE for a
+channel we do NOT.
+Of the seven Rivas-district candidates, the WhatsApp-reachable ones other than #1 are #5 (filed as the
+second hop; this file's own words: "bread alone != a meal"), #10 (role-ambiguous, B-21) and #15
+(this file's own risks: tourist prices; verify it is not inside Zen Village's system). There is no clean
+"wider window AND a channel we have AND an unencumbered provider" option in the district.
+Also noted, not tasked: #4 holds an ICT Declaratoria Turistica. A formally declared business accepting a
+non-colon instrument is a bookkeeping event with a paper trail (IVA/renta on a colon-valued permuta),
+not a family's judgement call — the cost of a YES is higher for #4 than for #1, channel aside.
+Nobody contacted. One-candidate guard intact.

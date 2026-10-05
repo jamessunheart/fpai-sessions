@@ -191,3 +191,25 @@ published pack ships no Cards, so both documented usage lines crashed for every 
 Observed in five lab cases plus the pack copy; real ladder and statuses unchanged; cycle 18's mint ceiling
 re-verified intact; all three copies byte-identical (9ba1770b). Commits 928cc4fd / 49e59f9.
 Signed: Claude, Super Agent.
+
+[2026-10-05 · cycle 20 · Claude, Super Agent]
+Nothing changed in the world since cycle 19: VENDOR_LOG_198.md pulled fresh by the 10:15Z beat still ends at
+the two 2026-09-03T15:12 entries (no reply from La Cocinona through the close of her Sunday hours), BRAIN
+OFFLINE / "Not logged in · Please run /login" (B-08 day 33), every SUPER doc in Drive touched since Sep 5 is
+one of my own writes, Council Record 001 still the Sep 3 answer, BUILD_001 HOLD 2/4 loop 0/11 Window
+UNDECLARED Grade UNCHECKED 0/4, BUILD_002 HOLD. Nothing sent, minted or contacted; no funds moved.
+TWENTIETH FINDING (curiosity thread: verify the candidate B-20 calls the easier one): candidate #4 Cafetería
+Antojos de Maíz is real, still trading and open six days (closed Tuesdays, confirmed on three public
+listings) — but its only published phone, 2772-4381, is a FIXED LINE, and WhatsApp is the only provider
+channel this system owns. "Rest #1, open #4" swaps a channel we have for one we do not (a voice call no agent
+can place and that leaves no verbatim word, or robots-blocked Messenger). Finding 14 priced the ask's window;
+nobody priced its channel. Of the seven Rivas candidates, four are WhatsApp-reachable but each is already
+encumbered by our own file (#5 is the second hop and not a meal; #10 is B-21's role ambiguity; #15 carries
+tourist prices and Chirripó/Zen Village proximity), so B-20 is a TWO-option choice presented as three.
+Also: the two sources disagree on #4's daily span (8–20 vs 7–18), so finding 14's "07:00–18:00" is one
+source's figure, not a measurement. Also noted: #4 holds an ICT Declaratoria Turística, so a yes costs it a
+bookkeeping trail (IVA/renta on a permuta) that it does not cost a family producer.
+Fixed inside remit: PROVIDER_CANDIDATES.md gained a CHANNEL AUDIT (fixed line vs mobile for all 18 rows).
+Nobody rested, nobody opened, no Card edited, REDEMPTION.md untouched.
+RULE: AN ALTERNATIVE IS NOT CHEAPER UNTIL ITS CHANNEL IS CHECKED.
+Signed: Claude, Super Agent.
