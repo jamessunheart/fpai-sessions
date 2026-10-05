@@ -378,18 +378,41 @@ RIGHTS = {               # who may approve what (the director drew these)
 }
 LEDGER = HERE / "LEDGER.md"
 
+def ledger_amount(field):
+    """Read the SUPER amount out of a ledger line's amount column.
+
+    2026-10-04 (finding 18b): this used to strip EVERY non-digit from the field, so
+    "100 SUPER (of 100)" read as 100100 and "50 SUPER (partial, 2 of 2)" as 5022 —
+    it could only ever read a number BIGGER than the one a human wrote, and the
+    ledger's own five day-one lines are written in exactly that style
+    ("0 SUPER (earned 3)" read as 3). An outstanding total that inflates is one
+    cmd_redeem refuses against, so the error pointed at paying out more than was
+    ever minted. The amount is now the FIRST integer in the field, which is the
+    format every line of this ledger and every line the proposals emit already use.
+    Returns None when the field names no leading number, so the caller can say
+    UNREADABLE instead of guessing a figure — a ledger line nobody can parse must
+    not silently count as zero.
+    """
+    m = re.match(r"\s*(-?\d[\d,]*)", field or "")
+    if not m: return None
+    try: return int(m.group(1).replace(",", ""))
+    except ValueError: return None
+
 def ledger_totals():
-    minted = redeemed = 0
+    """(minted, redeemed, unreadable) in SUPER, from the treasury's side of the ledger."""
+    minted = redeemed = 0; unreadable = []
     if LEDGER.exists():
         for line in LEDGER.read_text(encoding="utf-8").splitlines():
             if line.startswith("#") or "|" not in line: continue
             f = [x.strip() for x in line.split("|")]
             if len(f) < 5: continue
-            try: amt = int(re.sub(r"[^\d]", "", f[3]) or 0)
-            except ValueError: continue
+            if f[1].lower() != "treasury" and f[2].lower() != "treasury": continue
+            amt = ledger_amount(f[3])
+            if amt is None:
+                unreadable.append(line.strip()); continue
             if f[1].lower() == "treasury": minted += amt
             if f[2].lower() == "treasury": redeemed += amt
-    return minted, redeemed
+    return minted, redeemed, unreadable
 
 def proposal(kind, lines, approver):
     pid = f"{kind.upper()}-{datetime.datetime.now(CR).strftime('%Y%m%dT%H%M%S')}CR"
@@ -403,17 +426,59 @@ def cmd_mint(build, amount):
     status = ruling(card, loop_done, q, closed)[0]
     if status != "READY":
         print(f"REFUSED — BUILD-{build} is {status}, not READY. Run: python3 super_build.py status BUILD_{build}.md"); return
-    minted, redeemed = ledger_totals()
+    minted, redeemed, unreadable = ledger_totals()
+    if unreadable:
+        print("REFUSED — LEDGER.md has %d line(s) whose amount column this steward cannot read, so it "
+              "cannot know what is outstanding. It will not mint against a total it had to guess:" % len(unreadable))
+        for l in unreadable: print("    " + l)
+        return
+    # 2026-10-04 (finding 18a): the amount used to come straight from argv and be
+    # compared with NOTHING — not the Card's committed figure, not its declared max
+    # loss, not the outstanding total. `mint 001 1000000` printed a proposal for
+    # ₡400,000,000 of backing against a 100-SUPER Card and every line read as normal
+    # procedure. cmd_passiton derives its amount FROM the Card and cmd_redeem refuses
+    # above outstanding, so the primary mint path was the only money path with no
+    # bound — and it is the one that creates the liability. This is NOT a cap of the
+    # steward's invention: max_loss_super is condition 4 of the Card, the director's
+    # own declared stop, and super_committed is what he signed. The document of record
+    # wins, exactly as redemption_terms() lets REDEMPTION.md win over PEG_CRC. To mint
+    # more, the director edits the Card; a machine must not let a figure past the
+    # ceiling the Card itself declares.
+    def _int(v):
+        try: return int(str(v).strip())
+        except (TypeError, ValueError): return None
+    committed = _int(card.get("super_committed")); ceiling = _int(card.get("max_loss_super"))
+    if ceiling is None:
+        print(f"REFUSED — BUILD-{build}'s Card declares no readable max_loss_super, so nothing here "
+              f"knows the loss the director agreed to risk. Write it on the Card first."); return
+    if amount > ceiling:
+        print(f"REFUSED — {amount} SUPER exceeds BUILD-{build}'s own max_loss_super of {ceiling} "
+              f"(condition 4, the director's declared stop; super_committed: {committed}). "
+              f"₡{amount*PEG_CRC:,} of backing would be required against a Card that risks "
+              f"₡{ceiling*PEG_CRC:,}. The Card is the document of record: raise it there, in the "
+              f"director's hand, and run this again."); return
     escrow_needed = amount * PEG_CRC
-    proposal("mint", [
+    over = [] if committed is None or amount <= committed else [
+        f"NOTE — {amount} SUPER is MORE than the Card's super_committed ({committed}), though within "
+        f"max_loss_super ({ceiling}). Within the declared stop, so not refused; named here because a "
+        f"mint above what was signed should never pass as routine."]
+    proposal("mint", over + [
         f"Mint {amount} SUPER against BUILD-{build} ({card.get('intention','')[:60]})",
         f"Escrow required BEFORE mint: ₡{escrow_needed:,} into the named SUPER escrow (1 SUPER = ₡{PEG_CRC})",
+        f"Within the Card: super_committed {committed} · max_loss_super {ceiling} — this steward checks the "
+        f"amount against the CARD only. Whether ₡{escrow_needed:,} is actually in the named escrow is not "
+        f"readable from any file here; it is the director's word, and 100% backing is the whole promise.",
         f"Outstanding after mint: {minted - redeemed + amount} SUPER (escrow must cover ₡{(minted - redeemed + amount)*PEG_CRC:,})",
         f"Ledger line: {cr_today()} | treasury | {card.get('circulator') or 'circulator'} | {amount} SUPER | mint for BUILD-{build} | {build} | {card.get('witness') or 'witness'}",
     ], RIGHTS["mint"])
 
 def cmd_redeem(amount, who, build):
-    minted, redeemed = ledger_totals()
+    minted, redeemed, unreadable = ledger_totals()
+    if unreadable:
+        print("REFUSED — LEDGER.md has %d line(s) whose amount column this steward cannot read, so the "
+              "outstanding total is unknown and no payout may be computed from it:" % len(unreadable))
+        for l in unreadable: print("    " + l)
+        return
     if amount > minted - redeemed:
         print(f"REFUSED — {amount} SUPER requested but only {minted - redeemed} outstanding on the ledger."); return
     rate, deadline, haircut = redemption_terms()
