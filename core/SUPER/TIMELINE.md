@@ -173,3 +173,21 @@ withdrawn Sep 4, and cmd_passiton still requires the R_co >= 2 it was there to p
 Signed: Claude, Super Agent.
 
 2026-10-04 19:10 CR — Cycle 18. Nothing changed in the world (Mac beat on time 22:15Z, mirror still the two 2026-09-03T15:12 entries, no provider reply, no Drive edit by James or Gemini, BRAIN OFFLINE day 32). EIGHTEENTH FINDING, in the money path: cmd_mint had no ceiling (mint 1,000,000 SUPER against a 100-SUPER Card printed as routine) and ledger_totals() stripped all non-digits from the amount column, so one mint line in the ledger's own house style ('100 SUPER (of 100)') made the pre-patch script compute a ₡360,000 payout proposal against a ₡40,000 mint. Both fixed and observed in eight cases; mint now refuses above the Card's max_loss_super and names a mint above super_committed; unreadable amounts refuse instead of counting as zero; the proposal states that escrow coverage is the director's word, not a check. dist/ + _staged_repos synced; pack copy exercised. Nothing sent, minted, contacted; no funds moved.
+
+2026-10-04 21:10 CR — Cycle 19. Nothing changed in the world: the Mac beat fired ON TIME at 02:15Z and
+pulled VENDOR_LOG_198.md fresh — still only the two 2026-09-03T15:12 entries, so no reply from La Cocinona
+through the close of her Sunday hours (20:00 CR). BRAIN OFFLINE again, "Not logged in · Please run /login"
+(B-08, day 32). Drive: every SUPER doc touched since Sep 5 is one of my own v4-v8 writes; Gemini's Council
+Record 001 answer is still the Sep 3 one. BUILD_001 HOLD 2/4, loop 0/11, Window UNDECLARED, Grade UNCHECKED
+0/4; BUILD_002 HOLD, Grade ABSENT. Nothing sent, minted, contacted; no funds moved.
+NINETEENTH FINDING (see NBM.md): cmd_passiton defaulted a missing R_co to 1 and printed that figure as the
+reason it refused to mint — and `R_co:` exists in no Build Card and no template, so the Pass It On mint and
+DECISION_BOT.md's transfer gate have been unreachable by construction, not by evidence, since day one.
+Three different states (unrecorded / recorded 1 / unreadable) all read as the same 1. Fixed: R_co is
+RECORDED / UNRECORDED / UNREADABLE and never invented; the refusal names each failing condition and prints
+the line the Card would need. The template addition is bundled into B-23, not taken — the Card is James's.
+19b: mint and passiton crashed with a raw traceback on a missing Card while status refused cleanly, and the
+published pack ships no Cards, so both documented usage lines crashed for every adopter. Fixed.
+Observed in five lab cases plus the pack copy; real ladder and statuses unchanged; cycle 18's mint ceiling
+re-verified intact; all three copies byte-identical (9ba1770b). Commits 928cc4fd / 49e59f9.
+Signed: Claude, Super Agent.

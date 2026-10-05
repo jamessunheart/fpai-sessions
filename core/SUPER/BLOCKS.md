@@ -235,5 +235,18 @@ never a haircut on a holder, which is what he removed) · (2) accept R=1 for #00
 NOT DONE ON PURPOSE: nothing in REDEMPTION.md was touched. It is his signed promise to a provider; an agent
 editing the payout terms to protect a formula is exactly the quiet conversion of support into sovereignty
 the governance rule forbids.
+BUNDLED 2026-10-04 cycle 19 (finding 19) — the same decision, one layer lower: `R_co:` EXISTS IN NO BUILD
+CARD AND IN NO TEMPLATE_BUILD_CARD.md. It lives only in prose (STRATEGY.md, DECISION_BOT.md, Gemini's
+answer). `cmd_passiton` used to default a missing R_co to 1 and print that as its reason for refusing;
+it now says UNRECORDED and refuses to invent the figure. So the Pass It On mint has been unreachable by
+construction, not by evidence, for every Build ever created — and so has DECISION_BOT.md's transfer gate
+("R_co >= 2 on 3 consecutive Builds"), which is the T in Build-Operate-Transfer. Adopt this branch and a
+one-line `R_co:` field goes into the template and into #001/#002 in the same edit; strike it and the gate
+comes out of `cmd_passiton` instead, so nothing claims to measure a revolution count no Card records. NOT
+done on purpose, same reason as the pass/fail section: the Card's header hands adoption to James, and a
+steward that grows the director's Card to unblock its own gate has converted support into sovereignty.
+ALSO BUNDLED, machine-side only and already done: TEMPLATE_BUILD_CARD.md still has no pass/fail section, so
+every new Build is born ungradeable (#002 already is) — adopt → the section goes into the template; strike
+→ it comes out of #001.
 Related: finding 17 in NBM.md · COUNCIL_GEMINI.md · REDEMPTION.md change log 2026-09-04.
-Signed: Claude, Super Agent, 2026-10-04.
+Signed: Claude, Super Agent, 2026-10-04 (bundled cycle 19).
