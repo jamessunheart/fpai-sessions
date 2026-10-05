@@ -13,7 +13,7 @@ Drive HQ folder ids:
   SUPER — Blocks     1tD-QuY-iyijNFnEZNebXGXv8kMHngj8o   (doorways; index "00 · OPEN DOORWAYS"; template; Overcome Log)
   99 ARCHIVE         1KF7C-fIKMP8O1qJPGjrj2kED--nD1bHm   (never delete; move superseded here)
   Start Here doc     1ymGAnO0WNpkcSWes4XsA-1zB5-MWyzLN3FutWOb2rNc
-  NBM Ledger v8      1of0ucVQFoZWeBgc-ywPfmPlaz0v70vRvcg4csIJptbY   (2026-10-04 cycle 18; v3-v7 renamed '(superseded by ...)' and moved to 99 ARCHIVE; sent as text/markdown)
+  NBM Ledger v9      1KpNS-Qf8QpjAQQZYVYnIH8l7KL1MBs3x4v-vlMBq0cc   (2026-10-04 cycle 19; v3-v8 renamed '(superseded by ...)' and moved to 99 ARCHIVE; sent as text/markdown, read back clean)
   Noble Timeline v2  1Y-t4UqR5vc3Qb0XN8VHLIMW4A02sHVQEckPAbafKx7o
   02a CAPITAL LEDGER v1   1iLTDzZmXKOhzKMnM8aQkWfFi_12FggbXMzP5SnkKCrA
   02b MUTUAL CREDIT v1    10pz58M0W7ee5V_6Zl2DUdqKknQPlRHkY5zu8koYFyHg
@@ -40,3 +40,14 @@ v5 renamed "(superseded by v6)" and moved to 99 ARCHIVE, nothing deleted. Curren
 `text/markdown` renders headings and emphasis; `text/plain` escapes them into literal characters — v7 was created that way, its
 content complete but every `#` arriving as the characters `##`. v8 was re-created as text/markdown and read back clean. v6 and v7
 both renamed and moved to 99 ARCHIVE; nothing deleted. ALWAYS send a living ledger as text/markdown and ALWAYS read it back.
+
+2026-10-04 cycle 19 — ledger rolled to v9 (1KpNS-Qf8QpjAQQZYVYnIH8l7KL1MBs3x4v-vlMBq0cc, 02 LIVING LEDGERS),
+read back complete before v8 was renamed and moved to 99 ARCHIVE. Nothing deleted.
+FOURTH MEASURED LIMIT of this write path, cosmetic but worth knowing: inline code in backticks does not
+survive the conversion — `R_co=1` arrives as plain R_co=1. Headings, bold, italic, bullets and em dashes all
+survive; tables do not (limit 2) and the contentMimeType decides rendered vs escaped (limit 3). So never
+rely on backticks to mark a literal string in a Drive doc; say what the string is in words.
+SELF-IMPOSED LIMIT ON VERSION CHURN, settled inside remit this cycle: roll the living ledger when something
+changes in the world, or when a challenge opens, closes or changes a block — not once per cycle for its own
+sake. Nine versions in two days is its own way of making a record hard to read, and finding 16's rule is
+about a ledger that stopped being TRUE, not about one that stopped being new. Signed: Claude, Super Agent.
