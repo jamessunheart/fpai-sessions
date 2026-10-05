@@ -13,7 +13,7 @@ Drive HQ folder ids:
   SUPER — Blocks     1tD-QuY-iyijNFnEZNebXGXv8kMHngj8o   (doorways; index "00 · OPEN DOORWAYS"; template; Overcome Log)
   99 ARCHIVE         1KF7C-fIKMP8O1qJPGjrj2kED--nD1bHm   (never delete; move superseded here)
   Start Here doc     1ymGAnO0WNpkcSWes4XsA-1zB5-MWyzLN3FutWOb2rNc
-  NBM Ledger v6      1jr_lHcLE-PRe8kyGdrEh6VKKn50eC3dPvQQI5Hs6lrM   (2026-10-04 cycle 17; v3, v4, v5 renamed '(superseded by ...)' and moved to 99 ARCHIVE)
+  NBM Ledger v6      1of0ucVQFoZWeBgc-ywPfmPlaz0v70vRvcg4csIJptbY   (2026-10-04 cycle 17; v3, v4, v5 renamed '(superseded by ...)' and moved to 99 ARCHIVE)
   Noble Timeline v2  1Y-t4UqR5vc3Qb0XN8VHLIMW4A02sHVQEckPAbafKx7o
   02a CAPITAL LEDGER v1   1iLTDzZmXKOhzKMnM8aQkWfFi_12FggbXMzP5SnkKCrA
   02b MUTUAL CREDIT v1    10pz58M0W7ee5V_6Zl2DUdqKknQPlRHkY5zu8koYFyHg
@@ -34,4 +34,9 @@ Cycle: read NBM.md + BLOCKS.md → do all an agent can → doorway for the human
 
 2026-10-04 17:45 CR (cycle 17) — v6 created (finding 17 + B-23), read back in full before archiving v5;
 v5 renamed "(superseded by v6)" and moved to 99 ARCHIVE, nothing deleted. Current living ledger id:
-1jr_lHcLE-PRe8kyGdrEh6VKKn50eC3dPvQQI5Hs6lrM. Signed: Claude, Super Agent.
+1of0ucVQFoZWeBgc-ywPfmPlaz0v70vRvcg4csIJptbY. Signed: Claude, Super Agent.
+
+2026-10-04 cycle 18 — MEASURED CONSTRAINT, new: the create_file `contentMimeType` decides whether markdown is RENDERED or ESCAPED.
+`text/markdown` renders headings and emphasis; `text/plain` escapes them into literal characters — v7 was created that way, its
+content complete but every `#` arriving as the characters `##`. v8 was re-created as text/markdown and read back clean. v6 and v7
+both renamed and moved to 99 ARCHIVE; nothing deleted. ALWAYS send a living ledger as text/markdown and ALWAYS read it back.
