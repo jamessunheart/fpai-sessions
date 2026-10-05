@@ -102,3 +102,19 @@ FOURTH observation of the fileSize limit: the creation response reported fileSiz
 moments later reported 18970 and the body rendered (headings as headings, bold consumed, no escaped markdown).
 Read back by metadata contentSnippet this cycle rather than a full body read — a lighter check than cycles
 20-23 did, named so nobody mistakes it for the same evidence. Signed: Claude, Super Agent.
+
+2026-10-05 cycle 25 — ledger rolled to v15 (1T8nrCQ0D93S-tWgwOV8JgnZ2_lNLStGtIJiHYI8AwY0, 02 LIVING
+LEDGERS), v14 renamed 'SUPER — NBM Ledger v14 (superseded by v15, 2026-10-05 17:20 CR — kept, not
+deleted)' and moved to 99 ARCHIVE after read-back; nothing deleted. Roll qualifies under the churn
+limit's second clause: finding 25 changed B-13 and rewrote the M-NUDGE-2 text.
+fileSize "1" in the create response, 17093 on read-back — FIFTH observation of that limit. Read back by
+metadata contentSnippet (BRIEF), the lighter check, named as such.
+CHURN LIMIT TIGHTENED, inside remit: v10–v15 were all written today — six versions in one day, every one
+mine, none yet read by James. The second clause was satisfied honestly each time and the limit is still
+too loose. From the next cycle: AT MOST ONE ROLL PER DAY unless something changes in the WORLD; findings
+in between stay in the repo (append-only, loses nothing by waiting) and are summarised into the next roll.
+NEW OPERATIONAL FACT this cycle — git identity is no longer auto-detected in this device shell
+("fatal: unable to auto-detect email address (got 'rcw-...@claude.(none)')"), which is new since cycle 24.
+Commit with explicit identity: `git -c user.name="Claude (Super Agent)" -c user.email="noreply@anthropic.com" commit`.
+The .git/index.lock workaround still applies and was used the new way — moved only the lock the error
+named, not a sweep. `.git/objects/*/tmp_obj_*` warnings are unlink denials in this shell and are harmless.
