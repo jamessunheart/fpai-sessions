@@ -422,7 +422,9 @@ def proposal(kind, lines, approver):
     return pid
 
 def cmd_mint(build, amount):
-    card, loop_done, q, closed = parse_card(HERE / f"BUILD_{build}.md")
+    path = card_path_or_refuse(build, "mint")
+    if path is None: return
+    card, loop_done, q, closed = parse_card(path)
     status = ruling(card, loop_done, q, closed)[0]
     if status != "READY":
         print(f"REFUSED — BUILD-{build} is {status}, not READY. Run: python3 super_build.py status BUILD_{build}.md"); return
@@ -495,16 +497,98 @@ def cmd_redeem(amount, who, build):
         f"Deadline, verbatim from the promise: \u201c{deadline}\u201d  Missed = K4, currency pauses.",
         f"Escrow after: ₡{(minted - redeemed - amount)*PEG_CRC:,} covering {minted - redeemed - amount} SUPER",
         f"Ledger line: {cr_today()} | {who} | treasury | {amount} SUPER | redemption (₡{to_holder:,} to holder + ₡{to_loop:,} loop) | {build} | witness",
-        f"Note: R_co for this SUPER = number of hands before this line. Record it on the Card.",
+        f"Note: R_co for this SUPER = number of hands before this line. Record it on the Card as a "
+        f"line reading exactly 'R_co: <n>' — that is the only string cmd_passiton can read, and "
+        f"no Card or template carries the field yet (2026-10-04, finding 19).",
     ], RIGHTS["redeem"])
 
+def card_path_or_refuse(build, cmd):
+    """Return the Card path for a Build id, or refuse readably if it is not there.
+
+    2026-10-04 (finding 19b, in the copy strangers run): cmd_mint and cmd_passiton
+    called parse_card(HERE / f"BUILD_{build}.md") straight, so a missing Card raised a
+    raw FileNotFoundError traceback — while cmd_status, the one command that moves no
+    money, has always printed a clean "no such card". The published pack ships
+    TEMPLATE_BUILD_CARD.md and NO Build Cards, so the two usage lines in this file's own
+    header ("mint 001 100", "passiton 001") crash on first run for every adopter.
+    A money command must refuse, not crash: a traceback tells a stranger the tool is
+    broken, when the truth is that the Build does not exist yet.
+    """
+    path = HERE / f"BUILD_{build}.md"
+    if not path.exists():
+        print(f"REFUSED — {cmd} needs a Build Card and {path.name} is not in {HERE}.")
+        print(f"  Create it first:  python3 super_build.py new {build} <intention>")
+        print( "  (The published pack carries TEMPLATE_BUILD_CARD.md and no Cards on purpose —")
+        print( "  a Card names real people, and those belong to whoever runs the Build.)")
+        return None
+    return path
+
+def card_rco(text):
+    """Read R_co — revolutions before cash-out — out of a Build Card.
+
+    2026-10-04 (finding 19): cmd_passiton used `re.search(r"R_co:\\s*(\\d+)", text)` and
+    then `int(...) if rco else 1`, so a Card with NO R_co line reported "R_co=1" —
+    a number no human ever wrote, printed as the stated reason for refusing a MINT.
+    Three different states (never recorded / recorded as 1 / recorded unreadably)
+    all came out as the same measured 1, and since neither BUILD_001.md,
+    BUILD_002.md nor TEMPLATE_BUILD_CARD.md has an R_co field, the UNRECORDED case
+    is every Build that exists. This is finding 18's rule one function over, in the
+    only money path cycle 18 did not re-audit: THE MACHINE THAT COMPUTES MONEY MUST
+    REFUSE WHAT IT CANNOT READ, AND MAY NEVER READ A BIGGER NUMBER THAN A HUMAN
+    WROTE — and its corollary, that where a machine cannot see a promise at all its
+    proposal must say so. The default failed SAFE (it refused, so it could not
+    over-mint), which is exactly why it survived: a fabricated number that blocks
+    is still a fabricated number, and here it was also the thing making Pass It On
+    and DECISION_BOT.md's transfer gate ("R_co >= 2 on 3 consecutive Builds")
+    unreachable by construction rather than by evidence.
+
+    Returns (value, state) with state RECORDED / UNRECORDED / UNREADABLE.
+    Never invents a value: UNRECORDED and UNREADABLE both return None.
+    """
+    m = re.search(r"^[ \t]*R_co:[ \t]*(.*)$", text, re.M)
+    if not m:
+        return None, "UNRECORDED"
+    raw = m.group(1).split("#", 1)[0].strip()
+    if not raw:
+        return None, "UNRECORDED"
+    n = re.match(r"(\d+)", raw)
+    if not n:
+        return None, "UNREADABLE"
+    return int(n.group(1)), "RECORDED"
+
 def cmd_passiton(build):
-    card, loop_done, q, closed = parse_card(HERE / f"BUILD_{build}.md")
-    text = (HERE / f"BUILD_{build}.md").read_text(encoding="utf-8")
-    rco = re.search(r"R_co:\s*(\d+)", text)
-    rco = int(rco.group(1)) if rco else 1
-    if not closed or q != "INCREASED" or rco < 2:
-        print(f"REFUSED — pass-it-on mint requires CLOSED + Q INCREASED + R_co>=2. Now: closed={closed}, Q={q}, R_co={rco}"); return
+    path = card_path_or_refuse(build, "pass-it-on")
+    if path is None: return
+    card, loop_done, q, closed = parse_card(path)
+    text = path.read_text(encoding="utf-8")
+    rco, rstate = card_rco(text)
+    why = []
+    if not closed:
+        why.append("the Build is not CLOSED")
+    if q != "INCREASED":
+        why.append(f"Q is {q or 'unset'}, and this mint requires INCREASED")
+    if rstate == "UNRECORDED":
+        why.append("R_co is UNRECORDED — this steward will not read a revolution count "
+                   "nobody wrote, so it refuses instead of assuming 1")
+    elif rstate == "UNREADABLE":
+        why.append("R_co is UNREADABLE — the line exists but names no leading number, "
+                   "so this steward refuses rather than guess a figure")
+    elif rco < 2:
+        why.append(f"R_co is {rco} as recorded on the Card, and this mint requires >= 2 "
+                   f"(R_co = 1 means SUPER went one hop and came back to the treasury)")
+    if why:
+        print(f"REFUSED — pass-it-on mint requires CLOSED + Q INCREASED + R_co >= 2. "
+              f"Now: closed={closed}, Q={q or 'unset'}, R_co={rco if rstate == 'RECORDED' else rstate}.")
+        for w in why:
+            print(f"  · {w}")
+        if rstate != "RECORDED":
+            print(f"  To make this checkable, BUILD_{build}.md needs one line reading exactly:  R_co: <n>")
+            print( "  NOT a defect in the Card: no Build Card and no TEMPLATE_BUILD_CARD.md carries that")
+            print( "  field, so this gate has never been reachable for any Build. Adding it to the")
+            print( "  template is the director's word, bundled with B-23 — this steward will not grow")
+            print( "  his Card on its own (governance rule: AI must never quietly convert support into")
+            print(f"  sovereignty). Until then the honest reading is {rstate}, never 1.")
+        return
     amt = int(int(card.get("super_committed", 0)) * PASS_IT_ON)
     proposal("passiton", [
         f"Mint {amt} SUPER (10% of BUILD-{build}) as new money created by verified good",
