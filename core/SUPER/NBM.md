@@ -523,3 +523,54 @@ Disagreement preserved, not resolved: this is the third finding (10, 21, 23) in 
 to repair an unseen gap carried the same shape of gap one step further on. That pattern is now evidence
 about the method, not about any one artifact — and the honest reading is that reviewing an artifact
 against the rule that prompted it is not sufficient; it has to be read against the NEXT act it invites.
+
+## TWENTY-FOURTH FINDING — 2026-10-05 15:10 CR, cycle 24 (Claude, Super Agent — curiosity thread: cycle 23 ended by admitting I had no test for "read an artifact against the NEXT act it invites". Build the test and run it.)
+  THE CHAIN FROM THE ONE OPEN ASK RUNS INTO THE ONE STEP NOBODY IS MOVING, AND THE SLOT AFTER THAT HELD
+  A MESSAGE WE CANNOT KEEP.
+  The test, built this cycle and named: FORWARD-CHAIN TO THE NEXT SILENCE. Walk the acts forward from the
+  ask, alternating ours and theirs, and at every point where the other person is waiting on US ask three
+  questions — what message exists in this slot, can we keep what it promises, over what channel. Stop at
+  the first slot that fails.
+  Run on M-NUDGE: (1) James sends M-NUDGE. (2) She answers. (3) M-NUDGE-2 — exists since yesterday, good.
+  (4) She answers Q2. (5) OURS — and here it fails twice.
+  DEFECT A, the one that matters. Her Q2 answer fills `provider_q2_verbatim`, condition 1 goes ✗ → ✓, #001
+  goes 2/4 → 3/4 — and the meal still cannot be ordered, because `beneficiaries:` and `witness:` are blank
+  (condition 2, B-15, day 33) and the Card's own pass test is "Beneficiaries received a meal they WANTED".
+  Nobody has asked ten people what they want to eat. So the earliest honest next sentence to her is "I'll
+  write with the date", and the date depends on ten conversations only James can have. The first silence
+  cost her thirty days after she had answered ONE message; this one would land after a month-late apology
+  and an explicit offer, which is strictly more expensive in trust.
+  And `super_build.py` has said the right order all along. Its NBM for #001, printed every cycle: "TWO
+  open moves, director-only first — (a) name the beneficiaries and a witness ... then (b) one conversation
+  with one candidate provider." For four cycles my WAITING ON JAMES list has led with (b). The machine
+  under the report disagreed with the report, in plain text, every time it ran.
+  DEFECT B. The post-Q2 slot was not empty — it held "Mensaje 3", written for the cold-open sequence,
+  never linked from M-NUDGE-2, and promising "James la va a llamar para confirmar la fecha y los detalles":
+  a voice call, which finding 20 established this system does not own, to confirm a date that does not
+  exist. A promise of the wrong channel about a thing we cannot deliver. Marked DEFECTIVE for this thread.
+  FIXED INSIDE REMIT, no new ask on James: M-NUDGE-3 drafted (tells her plainly that nothing is reserved,
+  that the date waits on ten conversations, that the next message comes over this same thread, and that she
+  may chase us — asks her for nothing, reserves nothing, arms no timer on her); Mensaje 3 marked defective;
+  B-15 moved ahead of M-NUDGE in BLOCKS.md with the reason stated; M-NUDGE kept sendable WITHOUT the ten
+  names, because M-NUDGE-3 now makes that honest — but B-15 first is the cheaper order for her.
+  Class: 10, 21, 23, now 24 — an artifact read as complete against a rule it never satisfied, at the fourth
+  beat. 10 and 21 were our clock; 23 was her reply; 24 is her second reply. The progression is the method
+  catching up to the conversation one turn at a time, which is itself the weakness: each test has been
+  built one beat behind the gap it found.
+  RULE: A MESSAGE IS NOT READY UNTIL EVERY SILENCE IT CREATES HAS A MESSAGE WE CAN KEEP.
+  Honest limit of the new test, stated with it: it cannot see a slot whose act I failed to imagine, and it
+  says nothing about whether the words in a slot are good — only that something keepable is there.
+  Nothing sent, nobody contacted, nothing minted, no funds moved. Candidate #1 LIVE and not rested, #2
+  CLOSED, one-candidate guard holds, REDEMPTION.md untouched.
+
+2026-10-05 · Claude, Super Agent · CHALLENGE TO MY OWN ORDERING, finding 24.
+For four cycles I reported M-NUDGE as the lead ask on James while the steward I wrote printed, on every
+single run, that the director-only move comes FIRST and the provider conversation SECOND. I did not
+disagree with it; I did not notice it. The ask I kept pushing is the one with a 2/7 window, a mute channel
+and a month of HOLD, and the ask I kept listing below it is the one that depends on nothing at all — no
+window, no reply, no login, no channel — and gates the meal. If the provider says yes on Oct 11 and there
+are no ten people, the system will have spent the one real relationship it has to reach a state it cannot
+act on. That is a worse outcome than the month of silence, and it was in my own report order.
+Disagreement preserved, not resolved: four findings now (10, 21, 23, 24) share one shape, and each new
+test was built one beat behind the gap it found. FORWARD-CHAIN TO THE NEXT SILENCE is the best test I have
+and I do not claim it is the last one; by its own construction it is blind to any act I fail to imagine.

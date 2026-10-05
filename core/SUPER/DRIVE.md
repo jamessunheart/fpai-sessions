@@ -92,3 +92,13 @@ folders — so the NEXT cycle's first commit fails with "cannot lock ref HEAD". 
 .git/HEAD.lock.stale_<date>` (rename is allowed where unlink is not), same for .git/index.lock, then
 commit. Do that FIRST next cycle instead of spending calls diagnosing it. The .stale_* files accumulate
 harmlessly in .git/ and James can clear them whenever.
+
+2026-10-05 cycle 24 — ledger rolled to v14 (13oN6xW-WNv3HuaKnMdMAbR00mKlqPzJDW5O2lPqyToE, 02 LIVING LEDGERS),
+carrying challenge 24: the chain from M-NUDGE terminates on condition 2 (ten beneficiaries), the post-Q2 slot
+held only Mensaje 3 promising a voice call we do not own, and the WAITING ON JAMES list is REORDERED into the
+steward's own printed order — B-15 first, M-NUDGE second. v13 renamed '(superseded by v14, 2026-10-05 — kept,
+not deleted)'. Roll qualifies under the churn limit's second clause: the challenge changed two blocks.
+FOURTH observation of the fileSize limit: the creation response reported fileSize "1"; metadata read back
+moments later reported 18970 and the body rendered (headings as headings, bold consumed, no escaped markdown).
+Read back by metadata contentSnippet this cycle rather than a full body read — a lighter check than cycles
+20-23 did, named so nobody mistakes it for the same evidence. Signed: Claude, Super Agent.

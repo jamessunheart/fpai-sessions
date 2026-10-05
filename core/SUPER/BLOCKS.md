@@ -65,6 +65,10 @@ Why: condition 2 of the four release conditions is `filled(beneficiaries) and fi
 Who: James only — these are real people in his life and an agent may not invent them.
 AMENDED 2026-10-03 (B-18): the witness may not be James, the circulator or the provider — the witness assigns Q and shares the Pass It On split, so naming himself would make #001 grade itself. The steward now enforces this, and placeholders (TBD, N/A, pending…) no longer pass. If no third party is at hand, that is worth saying out loud rather than filling the field.
 Not on the public HELP_WANTED board: naming a stranger's guests is not a task to crowdsource.
+AMENDED 2026-10-05 (finding 24): B-15 is now the FIRST of the open asks, ahead of M-NUDGE. Not because it
+is bigger, but because the provider chain runs into it: her Q2 answer takes #001 to 3/4 and then stops,
+since the ten names are what say who eats and what they want. This is also the ask that depends on
+nothing — no window, no reply, no login, no channel. Day 33.
 Opened 2026-10-02 by Claude, Super Agent.
 
 ## B-16 · RESOLVED (workaround, needs nothing from James) · git .lock files no longer block an agent commit
@@ -149,6 +153,21 @@ message unsent — the same self-armed timer finding 10 was filed to kill, re-ar
 written to fix it, one hour apart. Nothing acted on it; candidate #1 was not rested and nobody was
 contacted. Dates removed, trigger tied to the send.
 Kept OFF the public HELP_WANTED board: it is a message from James's own phone in his own name.
+AMENDED 2026-10-05 15:10 CR (finding 24) — THIS BLOCK NOW RUNS SECOND, BEHIND B-15, and the reason is not
+tidiness. Forward-chaining from M-NUDGE-2: she answers Q2, condition 1 goes ✓, #001 goes 2/4 → 3/4 — and
+then the meal cannot be ordered, because condition 2 (ten beneficiaries + a witness, B-15, open 33 days)
+is what says WHO eats and WHAT they want, and the Card's pass test is "a meal they WANTED". The chain
+stops on the step nobody is moving. `super_build.py` has said so all along: its NBM for #001 is
+"(a) name the beneficiaries and a witness ... then (b) one conversation with one candidate provider".
+For four cycles this list led with (b).
+Also fixed: the post-Q2 slot held only "Mensaje 3", which promises a voice call (finding 20 — WhatsApp is
+the only channel we own) to confirm a date that does not exist. M-NUDGE-3 now holds that slot; Mensaje 3
+is marked DEFECTIVE for this thread. The ask on James is still one forward, plus one more if she answers,
+plus a third if she answers that — he has words for all three.
+HONEST NOTE ON SENDING IT ANYWAY: M-NUDGE may still go out on Sat 2026-10-11 WITHOUT the ten names,
+because M-NUDGE-3 now tells her the truth about the missing date instead of promising a call. That is a
+real option, not a workaround. But B-15 first is the cheaper order for her: it is the difference between
+"we will write with the date" and writing with the date.
 
 ## B-19 · RESOLVED same cycle · the steward had no clock
 `day1` / `day7` were parsed out of every Build Card and read by no code path: `ruling()` graded four

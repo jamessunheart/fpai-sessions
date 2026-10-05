@@ -99,3 +99,14 @@ I would have broken its operation to unblock my own commit. Verified after the f
 HEAD and main resolve, no ref lost. Recorded because a fix whose blast radius I did not measure before
 acting is exactly the class of thing this log exists to catch, and it is mine this time, not the system's.
 RULE FOR NEXT CYCLE: move only the locks that the error message names, one at a time.
+
+[2026-10-05T21:10Z · La Cocinona de Pueblo (50663626524) · agent note, NOT a message to her]
+Finding 24. Walked the chain forward from the unsent M-NUDGE and found two things she would have paid for.
+First: after she answered Q2 there was nothing we could honestly say, because the date depends on ten
+people nobody has asked what they want to eat (condition 2, blank since 2026-09-03). Her second "sí" would
+have met either silence or an invented date. Second: the only text sitting in that slot, Mensaje 3,
+promised "James la va a llamar" — a voice call this system does not have — to confirm that non-existent
+date. M-NUDGE-3 now holds the slot and tells her the truth: nothing is reserved, the date waits on ten
+conversations, the next message comes over this same thread, and she is free to chase us because we
+already left her waiting once. Mensaje 3 is marked DEFECTIVE for this thread. Still nothing sent to her,
+no contact, no funds moved; she remains the live candidate and has not been rested.

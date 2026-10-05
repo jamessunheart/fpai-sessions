@@ -16,7 +16,11 @@ Le pregunto con honestidad, y un "no" es una respuesta perfectamente buena:
 2. Si sí — ¿qué haría usted con los SUPER?
 3. Si sale bien, ¿aceptaría SUPER otra vez?
 
---- Mensaje 3 (after their answers) ---
+--- Mensaje 3 (after their answers) --- DEFECTIVE FOR THIS THREAD, see M-NUDGE-3 below (finding 24)
+<!-- Kept verbatim as the record. It promises "James la va a llamar" — a voice call. Finding 20
+     established WhatsApp is the only provider channel this system owns, so this message promises
+     a channel we cannot keep. Do not send it to La Cocinona. For a NEW candidate it must be
+     re-channelled before use. -->
 Muchas gracias por responder. Todavía no hay nada reservado: James la va a llamar para confirmar la fecha y los detalles. Si en cualquier momento siente que esto le cuesta más de lo que le da, dígalo y paramos.
 
 --- Agent notes ---
@@ -125,3 +129,60 @@ about a conversation made on the evidence of one line of it.
 STATE, unchanged by this amendment: candidate #1 La Cocinona de Pueblo is LIVE and NOT rested; candidate
 #2 is CLOSED; nobody has been contacted; no funds moved; REDEMPTION.md untouched; the one-candidate guard
 holds. Next open window: Sat 2026-10-11 12:00-21:00 CR.
+
+## M-NUDGE-3 — what we say after she answers Q2 (drafted 2026-10-05 15:10 CR, NOT sent)
+WHO SENDS IT: James, same WhatsApp thread, immediately after she answers Q2 in M-NUDGE-2.
+WHY IT EXISTS: finding 24. Walking the chain forward from M-NUDGE-2, the next act is hers (her Q2
+answer) and then OURS — and the only message that existed for that slot was "Mensaje 3", written for a
+cold-open sequence, never linked from M-NUDGE-2, and promising "James la va a llamar": a voice call,
+which finding 20 established this system does not own. Worse, what M3 says it will confirm — la fecha —
+does not exist and cannot be made to exist by anyone but James: `day1`/`day7` are blank and
+`beneficiaries`/`witness` are blank (condition 2, B-15, open 33 days). So her second "sí" would have
+been answered either with a promise of a call that never comes, or with silence — the same silence that
+already cost her thirty days, this time after a month-late apology. That is the most expensive silence
+in this system.
+WHAT IT DOES: tells her the truth — nothing is reserved, the date does not exist yet and why, the next
+message comes over this same thread, and she may chase us. It asks her for NOTHING and reserves NOTHING.
+NO TIMER: it names no date (findings 10, 21). The obligation it creates runs on US, not on her, and
+nothing in this system rests her or opens another candidate on the strength of time we did not spend.
+
+TEXT (send verbatim, or change any word — it is your name on it):
+
+> Gracias, doña. Se lo anoto con sus palabras, tal como me lo dijo.
+> Todavía no hay nada reservado, y no le voy a pedir que aparte comida sin fecha: primero tengo que
+> hablar con las diez personas para saber qué quieren comer. En cuanto lo tenga, le escribo por aquí
+> mismo con la fecha y los diez platos, y ahí usted dice sí o no, sin compromiso.
+> Si pasa el tiempo y no le escribo, escríbame usted y pregúnteme — tiene todo el derecho, ya la dejé
+> esperando una vez.
+> Y si en algún momento esto le cuesta más de lo que le da, dígamelo y paramos.
+> (Mi asistente de inteligencia artificial me ayuda a escribir; los acuerdos los confirmo yo. — James)
+
+### AMENDMENT 2026-10-05 21:10Z (15:10 CR) — finding 24, Claude, Super Agent
+TWO defects, both measured in the files, not supposed:
+(1) THE CHAIN TERMINATES ON THE STEP WE SKIPPED. `super_build.py status BUILD_001.md` states its own NBM
+    as "director-only first — (a) name the beneficiaries and a witness ... then (b) one conversation with
+    one candidate provider". Condition 2 (beneficiaries + witness) is ✗ and has not moved in 33 days;
+    condition 1 (provider + Q2 verbatim) is the one four cycles of work have been aimed at. Even with her
+    Q2 captured, #001 goes 2/4 → 3/4 and NO MEAL CAN BE ORDERED: the Card's own pass test is "a meal they
+    WANTED", and nobody has asked ten people what they want. So the provider path has been polished to the
+    exact point where it must stop and wait on the path nobody is moving — and every cycle's WAITING ON
+    JAMES list has led with M-NUDGE, step (b), while the machine underneath it said (a) first.
+(2) THE POST-Q2 SLOT HELD A MESSAGE WE CANNOT KEEP. Mensaje 3 is the only text for that slot, is not
+    linked from M-NUDGE-2, and promises a voice call (finding 20: WhatsApp is the only channel we own)
+    to confirm a date that does not exist. Marked DEFECTIVE above; M-NUDGE-3 replaces it for this thread.
+Class: findings 10, 21, 23 — an artifact read as complete against a rule it never satisfied — now at the
+FOURTH beat. 10 and 21 were our clock; 23 was her reply; this one is her SECOND reply.
+FIXED INSIDE REMIT, no new ask on James: M-NUDGE-3 written; Mensaje 3 marked defective; the ask order
+corrected so B-15 leads and M-NUDGE follows, with the reason named.
+THE METHOD I SAID I DID NOT HAVE (cycle 23, recorded as an open disagreement with my own audit): I wrote
+that an artifact must be read against the NEXT act it invites and that I did not know what does that.
+This cycle did it, and the method has a name — FORWARD-CHAIN TO THE NEXT SILENCE. Walk the acts forward
+from the ask, alternating ours and theirs, and at every point where the other person is waiting on US
+ask three questions: what message exists in this slot, can we keep what it promises, and over what
+channel. Stop at the first slot that fails. It found both defects above in one pass, and it is the first
+test in this audit that looks past the artifact in hand. It is a test, not a guarantee: it cannot see a
+slot whose act I failed to imagine.
+RULE: A MESSAGE IS NOT READY UNTIL EVERY SILENCE IT CREATES HAS A MESSAGE WE CAN KEEP.
+STATE, unchanged: candidate #1 La Cocinona de Pueblo is LIVE and NOT rested; candidate #2 is CLOSED;
+nobody contacted; no funds moved; REDEMPTION.md untouched; the one-candidate guard holds. Next open
+window: Sat 2026-10-11 12:00-21:00 CR.
