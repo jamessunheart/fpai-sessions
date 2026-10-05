@@ -8,6 +8,7 @@ Buenas tardes. Soy Ember, el asistente de inteligencia artificial de James, un v
 
 --- Mensaje 2 (after they reply) ---
 James quiere darle una buena comida (un casado completo) a diez personas, y quiere pagar la comida con algo nuevo que se llama SUPER, en vez de colones. Serían 100 SUPER por los diez platos.
+<!-- DEFECT, marked 2026-10-05 (finding 25): that last sentence QUOTES the price. PROVIDER_CANDIDATES.md line 16 says to ASK a price in SUPER for 10 plates, and line 1 says to INSIST on a quoted price with this very candidate. For any FUTURE candidate this sentence must become a question: state the 100 SUPER = ₡40,000 we have set aside, then ask what they charge. Not re-sent or corrected to La Cocinona: M-NUDGE-2 now asks her price, which gives her strictly more freedom than this message did (2026-09-04 precedent). -->
 
 SUPER es completamente nuevo — esta sería la primera vez que se usa para comida de verdad. Hoy, lo que se puede hacer con 100 SUPER es: ₡40,000 en colones (efectivo o SINPE), que James le entrega el mismo día si lo pide antes de las 3 de la tarde, y nunca más de 24 horas. O, si prefiere, puede gastar los SUPER con otra persona que los acepte: valen los ₡40,000 completos. Vale hasta el 31 de diciembre de 2026.
 
@@ -104,10 +105,14 @@ asked before 3pm, never more than 24h · or spent with another person at the ful
 
 TEXT (send verbatim, or change any word — it is your name on it):
 
-> Es así: James le pagaría la comida de los diez con 100 SUPER en vez de colones. 100 SUPER = ₡40,000, y
-> usted elige — colones el mismo día si lo pide antes de las 3 de la tarde (nunca más de 24 horas), o
-> gastarlos con otra persona que los acepte, por los ₡40,000 completos. Vale hasta el 31 de diciembre de 2026.
-> Un "no" está perfecto y le agradezco igual. Y si le sirve, dígame una sola cosa: ¿qué haría usted con los SUPER?
+> Es así: James quiere pagarle la comida de las diez personas con SUPER en vez de colones. Tiene apartados
+> 100 SUPER, y 100 SUPER = ₡40,000 — usted elige: colones el mismo día si lo pide antes de las 3 de la
+> tarde (nunca más de 24 horas), o gastarlos con otra persona que los acepte, por los ₡40,000 completos.
+> Vale hasta el 31 de diciembre de 2026.
+> En el mensaje de setiembre le puse yo el número sin preguntarle el precio, y eso no estuvo bien.
+> Dígame usted: ¿cuánto cobraría por los diez casados? Si pasa de ₡40,000, dígamelo igual — prefiero
+> saber el precio justo que pedirle que lo rebaje.
+> Y si le sirve, una última: ¿qué haría usted con los SUPER? Un "no" a todo está perfecto y le agradezco igual.
 
 ### AMENDMENT 2026-10-05 19:20Z (13:20 CR) — finding 23, Claude, Super Agent
 Measured, not supposed: grep of every .md in core/SUPER found no second message behind M-NUDGE's
@@ -129,6 +134,42 @@ about a conversation made on the evidence of one line of it.
 STATE, unchanged by this amendment: candidate #1 La Cocinona de Pueblo is LIVE and NOT rested; candidate
 #2 is CLOSED; nobody has been contacted; no funds moved; REDEMPTION.md untouched; the one-candidate guard
 holds. Next open window: Sat 2026-10-11 12:00-21:00 CR.
+
+### AMENDMENT 2026-10-05 23:20Z (17:20 CR) — finding 25, Claude, Super Agent
+THE NUMBER IN THIS MESSAGE WAS NEVER HERS TO BE TOLD. BUILD_001.md commits 100 SUPER for ten plates with
+`mixed_payment_ok: no`; at the ₡400 peg that is **₡4,000 a plate**, a figure derived from the escrow divided
+by a round number of guests and from nothing else — no quote, no menu, no market observation. Meanwhile
+PROVIDER_CANDIDATES.md line 16 has said since day one "**Ask a price in SUPER for 10 plates**", and line 1
+names the risk for THIS candidate: "may treat a foreigner's 10-plate order as hospitality — **insist on a
+quoted price in SUPER**." Mensaje 2 told her instead, and has been in her phone since 2026-09-03 15:12Z.
+This section, written eight hours earlier the same day to repair finding 23, carried the told price forward.
+Market check this cycle, named for what it is: casado at a local soda **$5–8** (costarica-spirit.com, pub.
+2026-07-27) and **₡4,500–₡7,500** (entercostarica.com). Our ₡4,000 is at or below the bottom of the second.
+NOT ESTABLISHED: what she charges, or that either source speaks for Rivas. Nobody has asked her — that is
+the finding. She is #1 of 7 in Rivas at 5.0 and grows her own produce; the Card asks for a casado completo.
+WHY IT IS NOT ABOUT ₡10,000: pass condition 1 is "accepted **freely**", and with mixed payment forbidden and
+no branch anywhere for "her quote exceeds the commitment", the only yes we left her is a yes below her own
+price — the hospitality trap our own file predicted, manufactured by our own message. The vendor rule would
+then file FAVOR-NOT-EXCHANGE and refuse to book, catching the symptom of a defect we introduced. And the
+Build asks "can SUPER carry the loop on its own weight?" — a discounted yes grades her goodwill, not SUPER.
+CLASS: NEW. Forward-chain to the next silence (finding 24) **passes this draft**: every slot is filled, every
+promise keepable, all over WhatsApp. It checks whether a slot has a message and never whether the message's
+figures are ours to state.
+TEST ADDED — **STANDING CHECK ON EVERY NUMBER**: for each figure in a message, name who set it and whether
+it is ours or theirs. Ours: the peg, the redemption terms, the escrow, the deadline, how many guests.
+Theirs: **what the food costs.**
+FIXED ABOVE, inside remit, no new ask on James: the offer keeps every figure we can back and the plate price
+becomes her question, with the gap named out loud and the earlier quoting owned in one line. COST NAMED:
+this is now longer than the "dos líneas" M-NUDGE promises her — seven lines, not four. I took the length over
+the alternative, which is asking her to price a meal after we already told her what we would pay for it.
+NO NEW BLOCK, and one fewer decision: price × plates = escrow, so her number, the plate count and **B-13**'s
+resize are ONE decision, not three — answer B-13 and B-15's headcount together, and both get cheaper the
+moment she says a number.
+RULE: A MESSAGE THAT STATES SOMEONE ELSE'S NUMBER AS SETTLED HAS PRE-ANSWERED THE ONLY QUESTION THAT MAKES
+THEIR YES FREE.
+STATE, unchanged: candidate #1 La Cocinona de Pueblo is LIVE and NOT rested; candidate #2 is CLOSED; nobody
+contacted; no funds moved; REDEMPTION.md untouched; the one-candidate guard holds. Next open window:
+Sat 2026-10-11 12:00–21:00 CR.
 
 ## M-NUDGE-3 — what we say after she answers Q2 (drafted 2026-10-05 15:10 CR, NOT sent)
 WHO SENDS IT: James, same WhatsApp thread, immediately after she answers Q2 in M-NUDGE-2.

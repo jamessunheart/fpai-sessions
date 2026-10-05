@@ -574,3 +574,73 @@ act on. That is a worse outcome than the month of silence, and it was in my own 
 Disagreement preserved, not resolved: four findings now (10, 21, 23, 24) share one shape, and each new
 test was built one beat behind the gap it found. FORWARD-CHAIN TO THE NEXT SILENCE is the best test I have
 and I do not claim it is the last one; by its own construction it is blind to any act I fail to imagine.
+
+---
+
+2026-10-05 23:15Z (17:15 CR) · Claude cycle 25 · TWENTY-FIFTH FINDING — **THE PRICE WAS NEVER ASKED. WE
+TOLD HER, AND THE NUMBER WE TOLD HER SITS AT OR BELOW THE BOTTOM OF THE PUBLISHED RANGE.**
+
+Measured in the files, not supposed:
+- BUILD_001.md: `super_committed: 100`, intention "ten people", `mixed_payment_ok: no`. At the pegged
+  1 SUPER = ₡400 that is ₡40,000 for ten plates = **₡4,000 per plate** — a figure no document in this
+  system derives from any price, quote, menu or market observation. It is the escrow divided by a round
+  number of guests.
+- PROVIDER_CANDIDATES.md, the system's own NBM for this exact call (line 16): "**Ask a price in SUPER for
+  10 plates**, then question 2." And line 1, the named risk for this very candidate: "may treat a
+  foreigner's 10-plate order as hospitality — **insist on a quoted price in SUPER**."
+- Mensaje 2, **ALREADY IN HER HANDS since 2026-09-03 15:12Z**: "Serían 100 SUPER por los diez platos."
+- M-NUDGE-2, drafted eight hours ago this morning to repair finding 23: "James le pagaría la comida de los
+  diez con 100 SUPER."
+
+So the instruction is to ASK her price and to insist on a quote; all three messages ever written TELL her
+the price instead, and one of them has been sitting in her phone for 32 days. The two repairs built since
+(M-NUDGE-2, M-NUDGE-3) both carried the quoted number forward without anyone asking where it came from.
+
+MARKET CHECK (pursued this cycle, two published sources, stated for what they are):
+- costarica-spirit.com, "Best Sodas Costa Rica", published 2026-07-27: casado at a local soda **$5–8**.
+- entercostarica.com, food costs: typical casado lunch **₡4,500–₡7,500** ($8–15).
+Our ₡4,000 sits at or **below the bottom** of the second range and mid-to-low in the first.
+**NOT ESTABLISHED, and I assert none of it:** what La Cocinona de Pueblo charges; that either source
+reflects Pérez Zeledón or a rural soda in Rivas; that a casado completo for ten carries per-plate pricing
+at all. **Nobody has asked her.** That is the whole point of the finding. What IS established: she is #1
+of 7 in Rivas at 5.0, the family grows its own produce, and the Card asks for "un casado completo" and
+"a nourishing meal they wanted" — not the cheapest plate in the canton.
+
+WHY THIS MATTERS MORE THAN ₡10,000. The Card's first pass condition is "Provider understood SUPER and
+**accepted freely**", and `mixed_payment_ok: no`. If her real price is above ₡4,000 a plate, the only
+"yes" the system leaves her is a yes **below her own price**, with no branch anywhere in the Card, the
+code or the drafts for "her quote exceeds the commitment". That is precisely the hospitality risk
+PROVIDER_CANDIDATES.md named on day one — and our own message would have manufactured it. Worse, the
+vendor-agent rule would then file her answer FAVOR-NOT-EXCHANGE and refuse to book: the system would
+catch the symptom of a defect it introduced, and blame the shape of her generosity for it. And the
+Build's test question is "**Can SUPER carry the loop on its own weight?**" A yes given at a discount
+grades her goodwill, not SUPER.
+
+CLASS: **NEW — not findings 10, 21, 23, 24.** Every slot in this chain has a message, we can keep what
+each one promises, and all of it runs over WhatsApp, the one channel we own. FORWARD-CHAIN TO THE NEXT
+SILENCE **passes this draft**. The defect is not a missing slot; it is a **number stated as settled inside
+a slot, by a party with no standing to state it**. The forward-chain test looks at whether a slot is
+filled and never at whether what fills it is ours to say.
+
+THE TEST THIS ADDS — **STANDING CHECK ON EVERY NUMBER**: for each figure in a message to another person,
+name who set it and on what evidence, and whether it is ours to set or theirs. Ours: the peg (₡400), the
+redemption terms, the escrow, the deadline, how many guests we are feeding — James's money and James's
+guests. Theirs: **what the food costs.** A message that states someone else's number as settled has
+pre-answered the only question that makes their yes free.
+
+FIXED INSIDE REMIT, NO NEW ASK ON JAMES:
+- M-NUDGE-2 amended: everything we can back stays stated (100 SUPER = ₡40,000, same-day colones, spend at
+  full value, valid to 2026-12-31 — that is ours). The plate price becomes **her** question, with the gap
+  named out loud: if ₡40,000 does not cover ten casados at her place, we would rather hear the number than
+  have her absorb it. This gives her strictly MORE freedom than the message she already has, so by the
+  2026-09-04 precedent no correction message is owed for M2 and none will be sent.
+- Mensaje 2's quoted-price line marked as a known defect for any FUTURE candidate — the template must ask,
+  not tell.
+- No new block. The answer to "what if her number is higher" is already levered: **B-13** holds the resize
+  decision, and price × plates = escrow, so her number, the plate count and the resize are **one decision,
+  not three**. That SHRINKS the standing ask list rather than lengthening it: B-13 and B-15's headcount
+  should be answered together, and both get cheaper once she says a number.
+
+Signed: Claude, Super Agent, 2026-10-05. Nothing sent, nothing minted, nobody contacted, no funds moved.
+State unchanged: candidate #1 LIVE and not rested, #2 CLOSED, one-candidate guard holds, REDEMPTION.md
+untouched, next open window Sat 2026-10-11 12:00–21:00 CR.

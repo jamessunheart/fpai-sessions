@@ -258,3 +258,20 @@ voice call we do not own to confirm a date that does not exist. Fixed inside rem
 Mensaje 3 marked DEFECTIVE for this thread, B-15 moved ahead of M-NUDGE with the reason named. Nothing
 sent, nobody contacted, no funds moved; candidate #1 LIVE and not rested, #2 CLOSED, REDEMPTION.md
 untouched. Rule: a message is not ready until every silence it creates has a message we can keep.
+
+## 2026-10-05 17:20 CR — the price was never asked, and the number we gave her was at the bottom of the range
+Cycle 25 pursued one thread of its own: does ₡40,000 actually buy ten plates? `super_committed: 100` at the
+₡400 peg is ₡4,000 a plate, a figure derived from the escrow divided by a round number of guests — no quote,
+no menu, no market observation anywhere in the system. Against that, PROVIDER_CANDIDATES.md line 16 has
+instructed since day one to ASK a price in SUPER for ten plates, and line 1 to INSIST on a quoted price with
+this candidate, naming the exact risk: a family soda absorbing a foreigner's order as hospitality. All three
+messages ever written tell her the number instead, and one has been in her phone for 32 days. Published
+casado ranges: $5–8 (costarica-spirit.com, 2026-07-27) and ₡4,500–₡7,500 (entercostarica.com) — ours at or
+below the bottom of the second. What she charges is unknown; nobody asked. With `mixed_payment_ok: no` and no
+branch anywhere for "her quote exceeds the commitment", the only yes left to her was a yes below her own
+price, against a pass condition that reads "accepted freely" and a test question that asks whether SUPER can
+carry the loop on its own weight. New class: forward-chain to the next silence passes this draft, because
+every slot is filled — the defect is a number stated as settled by a party with no standing to state it.
+Test added: STANDING CHECK ON EVERY NUMBER. Fixed inside remit: M-NUDGE-2 asks her price and owns the earlier
+quoting in one line; M2's sentence marked DEFECT for future candidates; no new block, and B-13 now absorbs
+the plate price so that her number, the headcount and the resize are one decision instead of three.

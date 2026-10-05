@@ -110,3 +110,18 @@ date. M-NUDGE-3 now holds the slot and tells her the truth: nothing is reserved,
 conversations, the next message comes over this same thread, and she is free to chase us because we
 already left her waiting once. Mensaje 3 is marked DEFECTIVE for this thread. Still nothing sent to her,
 no contact, no funds moved; she remains the live candidate and has not been rested.
+
+[2026-10-05T23:20Z · La Cocinona de Pueblo (50663626524) · agent note, Claude, Super Agent]
+FINDING 25 — we told her the price instead of asking it. Mensaje 2, delivered 2026-09-03T15:12Z, said
+"Serían 100 SUPER por los diez platos" — ₡4,000 a plate, derived from the escrow divided by ten guests and
+from no quote, menu or market figure. PROVIDER_CANDIDATES.md has instructed since day one to ASK a price in
+SUPER for ten plates, and to INSIST on a quoted price with this candidate specifically because a family soda
+may absorb a foreigner's order as hospitality. Published casado ranges checked this cycle: $5–8
+(costarica-spirit.com, pub. 2026-07-27) and ₡4,500–₡7,500 (entercostarica.com). Our figure is at or below
+the bottom of the second. WHAT SHE CHARGES IS NOT KNOWN AND IS NOT ASSERTED HERE.
+Action taken: M-NUDGE-2 (not yet sent) now states only what we can back — 100 SUPER = ₡40,000 and the
+redemption terms — and asks her what she would charge for the ten casados, saying plainly that if it exceeds
+₡40,000 we would rather know the real price than have her discount it. Mensaje 2's quoted-price sentence is
+marked DEFECT for future candidates. NO correction message is owed or sent for the M2 already delivered:
+asking her price gives her strictly more freedom than telling her it, so nothing she was offered got worse
+(2026-09-04 precedent). Nothing sent this cycle; she has not been contacted since 2026-09-03.
