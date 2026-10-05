@@ -13,7 +13,7 @@ Drive HQ folder ids:
   SUPER — Blocks     1tD-QuY-iyijNFnEZNebXGXv8kMHngj8o   (doorways; index "00 · OPEN DOORWAYS"; template; Overcome Log)
   99 ARCHIVE         1KF7C-fIKMP8O1qJPGjrj2kED--nD1bHm   (never delete; move superseded here)
   Start Here doc     1ymGAnO0WNpkcSWes4XsA-1zB5-MWyzLN3FutWOb2rNc
-  NBM Ledger v11     1m1hcNTC4ipwketoGhNfst5lWrNkZ2shMirNLN-oC6xc   (2026-10-05 cycle 21; v3-v10 renamed '(superseded by ...)' and moved to 99 ARCHIVE; sent as text/markdown, read back rendered in full)
+  NBM Ledger v12     1GCtpZuwuB6VlBy2QMg_fdZEcxuq8PfKHAiOO2p-sV2M   (2026-10-05 cycle 22; v3-v11 renamed '(superseded by ...)' and moved to 99 ARCHIVE; sent as text/markdown, read back rendered in full)
   Noble Timeline v2  1Y-t4UqR5vc3Qb0XN8VHLIMW4A02sHVQEckPAbafKx7o
   02a CAPITAL LEDGER v1   1iLTDzZmXKOhzKMnM8aQkWfFi_12FggbXMzP5SnkKCrA
   02b MUTUAL CREDIT v1    10pz58M0W7ee5V_6Zl2DUdqKknQPlRHkY5zu8koYFyHg
@@ -68,3 +68,10 @@ it is read before the conversion settles. Only a read-back is evidence. Do not p
 fileSize and do not trust a large one; the rule stands unchanged: ALWAYS read a created doc back before
 archiving the version it supersedes.
 
+
+2026-10-05 cycle 22 — ledger rolled to v12 (1GCtpZuwuB6VlBy2QMg_fdZEcxuq8PfKHAiOO2p-sV2M, 02 LIVING
+LEDGERS) carrying challenge 22: the vendor bot's follow-up timer had a floor and no ceiling, and the
+distributed-copy rule had never been applied to vendor_bot.py at all. Read back rendered in full; the
+create_file response again reported fileSize 1 for a complete document (the fifth measured limit, now
+observed twice). v11 renamed '(superseded by v12, 2026-10-05 11:45 CR)' and moved to 99 ARCHIVE;
+nothing deleted.
