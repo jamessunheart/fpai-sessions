@@ -227,6 +227,42 @@ def grade_line(text):
         return ("PARTIAL", f"{done}/{n} checked -- not a pass until all {n} are, per the Card's own line")
     return ("COMPLETE", f"{n}/{n} checked -- the Card's own grade is satisfied (on the director's word)")
 
+# FINDING 29 (Claude, Super Agent, 2026-10-06) — WHO CAN SATISFY EACH GATE.
+# Finding 28 asked whether a field a rule reads is FILLED. The next question down is who is
+# ABLE to fill it. Measured against ruling() below: of the four release conditions, exactly
+# ONE reads a datum that cannot originate inside this system (provider_q2_verbatim, the
+# provider's own words). The other three are satisfied by presence — text the director or
+# this agent types onto the Card — and the code says so itself in condition 2 ("Presence is
+# all this machine checks"). Conditions 3 and 4 were fully satisfied in the Card's FIRST
+# commit, 5caa0ad0, 2026-09-03, before anyone outside was contacted. So "HOLD 2/4", which
+# this steward has printed and the Super Agent has reported every cycle for 28 cycles, was
+# never a measure of progress: it is the Card's birth score, and it has never been capable
+# of moving without an outside person. Printed as two fractions from now on so the number
+# cannot read as halfway again.
+CONDITION_ORIGIN = {
+    "Provider":   ("WORLD", "provider_q2_verbatim — the provider's own words; nothing inside this system can write it"),
+    "Q path":     ("OURS",  "beneficiaries + witness — presence and role-overlap only; whether these people were asked is the director's word"),
+    "Place/test": ("OURS",  "place, test_question, place_has_existing_currency — all declared by us"),
+    "Max loss":   ("OURS",  "max_loss_super, max_loss_hours, stop_caller — all declared by us"),
+}
+
+def gate_origin_line(conds):
+    """Report the gate as two fractions: what we can satisfy by typing, and what only the
+    world can satisfy. Never one fraction — one fraction hides which half is real."""
+    ours  = [(n, ok) for n, ok, _ in conds if CONDITION_ORIGIN.get(n, ("OURS",))[0] == "OURS"]
+    world = [(n, ok) for n, ok, _ in conds if CONDITION_ORIGIN.get(n, ("OURS",))[0] == "WORLD"]
+    unmapped = [n for n, ok, _ in conds if n not in CONDITION_ORIGIN]
+    o_met, w_met = sum(1 for _, ok in ours if ok), sum(1 for _, ok in world if ok)
+    parts = [f"self-certifiable {o_met}/{len(ours)} met ({', '.join(n for n, _ in ours)})",
+             f"world-sourced {w_met}/{len(world)} met ({', '.join(CONDITION_ORIGIN[n][1].split(' — ')[0] for n, _ in world)})"]
+    tail = ""
+    if w_met == 0 and o_met:
+        tail = (f" — so the headline {sum(1 for _, ok, _ in conds if ok)}/{len(conds)} is not halfway: "
+                "every tick on it is ours, and no datum from outside this system has reached the gate yet")
+    if unmapped:
+        tail += f" — UNMAPPED GATE(S): {', '.join(unmapped)}; name the origin of what each reads (finding 29)"
+    return " · ".join(parts) + tail
+
 def ruling(card, loop_done, q, closed, text=""):
     c = card.get
     conds = []
@@ -353,9 +389,9 @@ def ruling(card, loop_done, q, closed, text=""):
     else:
         iline = ("director=%s | circulator=%s | provider=%s — both overlap tests can fire on all "
                  "three" % (c("director"), c("circulator"), c("provider") or "(unnamed, condition 1)"))
-    return status, conds, loop_done, openq, nbm, wline, gline, iline
+    return status, conds, loop_done, openq, nbm, wline, gline, iline, gate_origin_line(conds)
 
-def render(build_id, status, conds, loop_done, openq, nbm, window="(not computed)", grade="(not computed)", independence="(not computed)"):
+def render(build_id, status, conds, loop_done, openq, nbm, window="(not computed)", grade="(not computed)", independence="(not computed)", gate_origin="(not computed)"):
     today = cr_today().isoformat()
     tzlabel = f"UTC{_OFF:+03.0f}" if _OFF == int(_OFF) else f"UTC{_OFF:+}"
     if _OFF_ENV is not None: tzlabel += " ·offset from SUPER_TZ_OFFSET_HOURS"
@@ -366,6 +402,7 @@ def render(build_id, status, conds, loop_done, openq, nbm, window="(not computed
     lines += [f"Loop: {loop_done} / 11", f"Window: {window}",
               f"Redemption validity ({rstate}): {rline}", f"Grade: {grade}",
               f"Independence fields: {independence}",
+              f"Gate origin: {gate_origin}",
               f"Open question for the director: {openq}", f"NBM: {nbm}"]
     return "\n".join(lines)
 

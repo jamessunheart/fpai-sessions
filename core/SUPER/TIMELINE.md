@@ -372,3 +372,5 @@ holds: do not hand the director a block for a thing the agent can settle and lab
 
 RULE: A RULE IS ONLY AS REAL AS THE FIELD IT READS. Corollary: FOUR CONSECUTIVE TESTS AUDITED WHAT THE
 SYSTEM SAYS; NONE AUDITED WHAT ITS SAFEGUARDS SILENTLY DEPEND ON.
+
+2026-10-06 09:3x CR · cycle 29 · Nothing changed in the world (183 Mac beats, still BRAIN OFFLINE; VENDOR_LOG_198 still the two 2026-09-03T15:12 entries; Drive only my own 07:14 CR v16; Council Record 001 still the Sep 3 Gemini answer). FINDING 29: three of the four release conditions are satisfiable by typing, and conditions 3+4 were already satisfied in the Card's first commit (5caa0ad0, 2026-09-03) — so "HOLD 2/4", reported for 28 cycles, is the Card's birth score, not progress. Honest reading: world-sourced 0/1, self-certifiable 2/3. super_build.py now prints a "Gate origin:" line every run; no condition changed. Published pack copy of super_build.py synced (it was missing findings 27 and 28) — B-17 now ten commits. No Drive roll (churn limit). Nothing sent, nobody contacted, no funds moved.
