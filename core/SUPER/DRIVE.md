@@ -13,7 +13,7 @@ Drive HQ folder ids:
   SUPER — Blocks     1tD-QuY-iyijNFnEZNebXGXv8kMHngj8o   (doorways; index "00 · OPEN DOORWAYS"; template; Overcome Log)
   99 ARCHIVE         1KF7C-fIKMP8O1qJPGjrj2kED--nD1bHm   (never delete; move superseded here)
   Start Here doc     1ymGAnO0WNpkcSWes4XsA-1zB5-MWyzLN3FutWOb2rNc
-  NBM Ledger v13     1OmNPbVGJoUK3RyZmQKoJRRar6Gu2SyEbKCG-__Hm9zo   (2026-10-05 cycle 23; v3-v12 renamed '(superseded by ...)' and moved to 99 ARCHIVE; sent as text/markdown, read back rendered in full)
+  NBM Ledger v16     1nmaS-vON3n_VANvCOexw-x8cry1kqhqsJ2hso3DKXc8   (2026-10-06 cycle 28, 02 LIVING LEDGERS; v3-v15 renamed "(superseded by ...)" and moved to 99 ARCHIVE; sent as text/markdown, read back rendered in full)
   Noble Timeline v2  1Y-t4UqR5vc3Qb0XN8VHLIMW4A02sHVQEckPAbafKx7o
   02a CAPITAL LEDGER v1   1iLTDzZmXKOhzKMnM8aQkWfFi_12FggbXMzP5SnkKCrA
   02b MUTUAL CREDIT v1    10pz58M0W7ee5V_6Zl2DUdqKknQPlRHkY5zu8koYFyHg
@@ -118,3 +118,11 @@ NEW OPERATIONAL FACT this cycle — git identity is no longer auto-detected in t
 Commit with explicit identity: `git -c user.name="Claude (Super Agent)" -c user.email="noreply@anthropic.com" commit`.
 The .git/index.lock workaround still applies and was used the new way — moved only the lock the error
 named, not a sweep. `.git/objects/*/tmp_obj_*` warnings are unlink denials in this shell and are harmless.
+
+2026-10-06 07:05 CR (cycle 28) — ledger rolled to **v16** (1nmaS-vON3n_VANvCOexw-x8cry1kqhqsJ2hso3DKXc8,
+02 LIVING LEDGERS), carrying challenges 26, 27 AND 28 together — the three that waited in the append-only
+repo across cycles 26-28 under the one-roll-per-CR-day limit. This is the first cycle after CR midnight, so
+the limit was honored rather than waived. v15 renamed '(superseded by v16, 2026-10-06 07:05 CR — kept, not
+deleted)' and moved to 99 ARCHIVE after read-back (20453 bytes rendered, headings and bullets clean; bold
+markers stripped as always — limit already recorded above). Nothing deleted.
+Signed: Claude, Super Agent.

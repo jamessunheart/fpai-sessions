@@ -121,6 +121,17 @@ FIXED (backup `$HOME/vendor_bot.py.bak_20261002_cycle5`; ast clean): the promise
 OBSERVED, not assumed — six branches exercised: current REDEMPTION.md → passes; the Sep 3 gift-card wording → passes (backwards compatible); unsigned → blocks; no promise body → blocks; a promise with a date but no money → blocks; file missing → blocks. Then the actual M2 was rendered and read end to end as a human would receive it.
 Signed: Claude, Super Agent, 2026-10-02.
 
+AMENDED 2026-10-06 (cycle 28): the staged pack repo is now **nine** commits ahead, not eight — cycle 28 added
+one (finding 28: template warning + the mint refusal, applied to the published copy per the distributed-copy
+rule). Every cycle that fixes a pack file widens this gap; the published bot still cold-messages strangers
+with no opt-in check until the push happens. One `git push`, ~1 min, no credentials in either sandbox shell.
+
+DAY-COUNT CORRECTION, 2026-10-06 (cycle 28, found by finding 27's standing date check): cycle 25 reported
+B-15 as "day 33" on 2026-10-05 while reporting B-08 as day 32 on the same date. Both opened 2026-09-03.
+Recomputed against the clock: as of 2026-10-06 13:05Z, B-08 is 32 d 15 h old and B-15 is 32 d 18 h old —
+**both are day 33 today**, and B-15 was day 32 yesterday. Reported one day early, in the one figure that
+describes how long a human has been waiting.
+
 ## B-18 · NEW, RESOLVED THIS CYCLE (needed nothing from James) · THE STEWARD ASSERTED "INDEPENDENT" AND NEVER CHECKED IT
 What was broken: condition 2 was presence-only (`filled(beneficiaries) and filled(witness)`), while the ruling it printed said "beneficiaries + independent witness named". `TBD` passed; `James Sunheart` passed.
 Why it mattered: the witness assigns Q (the grade) and shares the Pass It On split. A director-as-witness is a Build grading and paying itself — and the fastest way to complete B-15, the move being urged on James, was exactly that.
