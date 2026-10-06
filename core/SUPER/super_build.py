@@ -109,6 +109,81 @@ def _benefic_role_clash(card):
                 out.append((tok, role))
     return out
 
+BLOCKS_FILE = HERE / "BLOCKS.md"
+_STATUS_OPEN   = ("REOPENED", "OPEN", "NEW")
+_STATUS_CLOSED = ("RESOLVED", "CLOSED")
+
+def block_register(span=45):
+    """Derive the OPEN SET from BLOCKS.md instead of from an agent's memory.
+
+    FINDING 31 (Claude, Super Agent, 2026-10-06). BLOCKS.md is append-only prose: the
+    first four blocks are table rows, every block from B-11 on is a markdown heading, and
+    a block's CURRENT status is whatever the LAST line mentioning it happens to say. So
+    nothing in this repo could ever enumerate what is open. The list of open asks existed
+    only in the cycle report and the agent's memory file — and B-12, opened 2026-09-03 and
+    holding the discriminating test for B-08 (the single upstream block), fell out of every
+    list written since and appears in BLOCKS.md and nowhere else in the repo.
+
+    This is a HEURISTIC read of prose, and says so: a status word is counted only when it
+    appears within `span` characters after the id on the same line. An id with no status
+    word anywhere is reported UNACCOUNTED, never silently as closed.
+    """
+    if not BLOCKS_FILE.exists():
+        return ("NO FILE", "BLOCKS.md absent — no register of asks exists at all", {})
+    last = {}
+    for n, line in enumerate(BLOCKS_FILE.read_text(encoding="utf-8").splitlines(), 1):
+        for m in re.finditer(r"B-\d{2}[a-z]?", line):
+            tail = line[m.end():m.end()+span].upper()
+            found = []
+            for w in _STATUS_OPEN + _STATUS_CLOSED:
+                for mm in re.finditer(r"(?<![A-Z])" + w, tail):
+                    found.append((mm.start(), w))
+            found.sort()
+            words = [w for _, w in found]
+            if not words:
+                last.setdefault(m.group(0), None); continue
+            opens  = [w for w in words if w in _STATUS_OPEN]
+            closes = [w for w in words if w in _STATUS_CLOSED]
+            # Both classes on the same line ("REOPENED (was RESOLVED ...)", "NEW, RESOLVED THIS
+            # CYCLE") cannot be disambiguated by any rule that is not a guess about English
+            # word order. Say AMBIGUOUS and show the words: a parser that picked one would be
+            # inventing the status of an ask a human is waiting on. (finding 31)
+            last[m.group(0)] = (n, ("AMBIGUOUS:" + "/".join(words)) if opens and closes else words[0])
+    ids = sorted(last)
+    openset  = [i for i in ids if last[i] and last[i][1] in _STATUS_OPEN]
+    closed   = [i for i in ids if last[i] and last[i][1] in _STATUS_CLOSED]
+    ambig    = [i for i in ids if last[i] and str(last[i][1]).startswith("AMBIGUOUS")]
+    unacct   = [i for i in ids if not last[i]]
+    return ("DERIVED", ids, {"open": openset, "closed": closed, "ambiguous": ambig,
+                             "unaccounted": unacct, "last": last})
+
+def register_line():
+    state, ids, d = block_register()
+    if state != "DERIVED": return f"{state} — {ids}"
+    parts = [f"{len(ids)} block id(s) in BLOCKS.md",
+             f"last-status OPEN/NEW/REOPENED: {len(d['open'])} ({', '.join(d['open']) or 'none'})",
+             f"last-status RESOLVED/CLOSED: {len(d['closed'])}"]
+    if d["ambiguous"]:
+        parts.append("AMBIGUOUS (one line claims two statuses at once): " + ", ".join(d["ambiguous"]))
+    if d["unaccounted"]:
+        parts.append("UNACCOUNTED (mentioned with no status word anywhere — a dropped ask reads "
+                     "exactly like a resolved one): " + ", ".join(d["unaccounted"]))
+    parts.append("an ask with no B- id cannot appear here at all — M-NUDGE was given B-25 on 2026-10-06 for exactly that reason, and every ask gets an id the cycle it opens")
+    parts.append("heuristic read of append-only prose, not a register — a block's current state is "
+                 "whatever the last line naming it happened to say (finding 31)")
+    return " · ".join(parts)
+
+def cmd_blocks():
+    state, ids, d = block_register()
+    if state != "DERIVED": print(f"{state} — {ids}"); return
+    print("[SUPER-STEWARD · BLOCK REGISTER derived from BLOCKS.md · finding 31]")
+    for i in ids:
+        v = d["last"].get(i)
+        print(f"  {i:<7} {'UNACCOUNTED' if not v else v[1]:<12} {'' if not v else 'last named BLOCKS.md:'+str(v[0])}")
+    print("\nNOT A REGISTER: BLOCKS.md is append-only prose (4 table rows, the rest headings).")
+    print("This command reads it; it does not keep it. An id listed UNACCOUNTED has never been")
+    print("resolved or closed in writing — it was dropped, and a dropped ask reads like a done one.")
+
 def redemption_ok():
     if not REDEMPTION.exists(): return False
     t = REDEMPTION.read_text(encoding="utf-8")
@@ -465,6 +540,7 @@ def render(build_id, status, conds, loop_done, openq, nbm, window="(not computed
               f"Redemption validity ({rstate}): {rline}", f"Grade: {grade}",
               f"Independence fields: {independence}",
               f"Gate origin: {gate_origin}",
+              f"Register: {register_line()}",
               f"Open question for the director: {openq}", f"NBM: {nbm}"]
     return "\n".join(lines)
 
@@ -499,10 +575,11 @@ if __name__ == "__main__":
     a = sys.argv[1:]
     _nolog = "--no-log" in a
     a = [x for x in a if x != "--no-log"]
-    if not a or a[0] not in ("status","new","ladder","mint","redeem","passiton","route","swap","conform"): sys.exit(__doc__)
+    if not a or a[0] not in ("status","new","ladder","blocks","mint","redeem","passiton","route","swap","conform"): sys.exit(__doc__)
     if a[0]=="status": cmd_status(a[1] if len(a)>1 else HERE/"BUILD_001.md", write_log=not _nolog)
     elif a[0]=="new": cmd_new(a[1], " ".join(a[2:]) or "untitled")
     elif a[0]=="ladder": cmd_ladder()
+    elif a[0]=="blocks": cmd_blocks()
 
 # ---------------------------------------------------------------------------
 # Payment / redemption distribution — AI computes, rights decide.

@@ -814,3 +814,67 @@ the alternative makes the ladder rule unsatisfiable by construction. One word fr
 
 RULE: A NUMBER THAT NOTHING READS IS NOT A MEASUREMENT, IT IS DECORATION. Corollary: I AUDITED THE GATE FOR
 OVERSTATING AND NEVER CHECKED THE COUNTER BESIDE IT FOR UNDERSTATING — THE SAME CYCLE, THE SAME SCREEN.
+
+## FINDING 31 — THE REGISTER OF ASKS WAS NOT A REGISTER, AND IT HAD SILENTLY DROPPED THE ONE-MINUTE TEST FOR B-08
+Claude, Super Agent · 2026-10-06 13:1x CR · cycle 31 · nothing sent, nothing minted, no funds moved
+
+  CURIOSITY THREAD: findings 24-30 each audited something this Build PRINTS — the order of asks, the
+  provenance of numbers, whether options have members, dates, the fields exclusions read, the origin of each
+  gate, the counter beside the gate. Not one of them audited THE LIST OF WHAT THE HUMANS ARE WAITING ON.
+
+  MEASURED (new `blocks` command, derived from BLOCKS.md, not from my memory):
+  (1) BLOCKS.md cannot be read as a register. Four blocks are table rows from 2026-09-03; every block from
+      B-11 on is a markdown heading; a block's CURRENT status is whatever the last line naming it happens to
+      say. Of 18 ids: 7 read OPEN/NEW, 5 read RESOLVED/CLOSED, 2 claim TWO statuses in one line (B-10
+      "REOPENED (was RESOLVED…)", B-22 "NEW, RESOLVED THIS CYCLE"), and 4 carry NO status word anywhere
+      (B-09c, B-12, B-21, B-23). The open set never existed in this repo — it existed in the cycle report and
+      in my memory file. That is not a register, that is a recollection.
+  (2) M-NUDGE, the ask that has waited longest on a human, had NO id at all, so no derived register could ever
+      have seen it.
+  (3) THE DROP THAT COST SOMETHING — B-12. Opened by me 2026-09-03 13:05 CR, present in BLOCKS.md and NOWHERE
+      ELSE in the repo: not NBM.md, not TIMELINE.md, not STEWARD_LOG.md, and not in one single "waiting on
+      James" list across 31 cycles. B-12 is the DISCRIMINATING TEST for B-08 — the single upstream block, dark
+      33 days and 93 BRAIN OFFLINE beats.
+
+  WHY THAT IS THE EXPENSIVE HALF. The B-08 ask I have carried every cycle is the heartbeat's own printed line:
+  "FIX (James, ~1 min, tries the cheap one first): open Terminal, run `claude`, then `/login`." Four lines
+  above it the same script names a SECOND cause for which /login is explicitly NOT the fix (cron runs outside
+  the GUI session and cannot unlock the Keychain → a LaunchAgent), and of the first cause it says: "FIXED in
+  this script 2026-09-03 21:08 — if this recurs, the unset above is not reaching the CLI." Measured in
+  HEARTBEAT_LOG.md today: it recurred on the VERY NEXT BEAT (2026-09-03T22:15Z) and 92 times since, and NO
+  cron beat anywhere in that log has ever authenticated — the only beats that ever thought (14:18Z, 15:32Z)
+  were in-session on 2026-09-03. So the script's own conditional has been TRUE for 33 days, the instruction a
+  human was handed 93 times is the one its own evidence argues against, and the one-minute test that tells the
+  two causes apart was sitting in a block nobody carried.
+
+  CORRECTED INSIDE REMIT — B-12 FOLDED INTO B-08, ASK REORDERED. New B-08 ask, in the heartbeat's printed FIX
+  line and everywhere forward-looking: open Terminal on this Mac and run
+  `bash ~/FullPotentialOS/infra/scripts/super_agent_heartbeat.sh`. Thinks by hand → cause 2, fix is a
+  LaunchAgent, NOT another login. Also "Not logged in" by hand → then `claude` + `/login`. Same minute, and it
+  ends in an answer instead of a maybe. Nothing about James changed here. The instruction we gave him did.
+
+  FIXED INSIDE REMIT, no gate touched and nothing ticked: `super_build.py` gained `block_register()`,
+  `register_line()` and a `blocks` command; status prints "Register:" on EVERY run — id count, derived open
+  set, AMBIGUOUS ids, UNACCOUNTED ids, and the note that an ask with no B- id cannot appear at all. The parser
+  REFUSES TO GUESS: a line claiming two statuses is reported AMBIGUOUS, never resolved one way. A STATUS ROLL
+  CALL was written into BLOCKS.md putting in writing the status I have been reporting verbally — deciding
+  nothing — which took UNACCOUNTED and AMBIGUOUS to zero; M-NUDGE became B-25 (the same ask, now addressable);
+  and B-14 (AGENT/INFRA, opened 2026-10-02) came back onto the list, having been off mine too. Both pack twins
+  synced byte-identical in the same cycle. The pack copy, which has no BLOCKS.md, prints "NO FILE — no
+  register of asks exists at all" rather than an empty clean bill.
+
+  CHECKED, NOT A VIOLATION: HELP_WANTED.md holds zero B- ids, but every open block is JAMES-ONLY or
+  AGENT/INFRA and was deliberately kept off the public board. "Make help easy, not access cheap" holds.
+
+  WHAT IT CHANGES IN THE NBM: no reorder — B-15 stays first (finding 24). What changes is the TEXT of B-08:
+  it is no longer "run /login, ~1 min" but "run the script by hand, ~1 min, and it tells us which fix is the
+  fix." B-08 gates the brain, the brain is the standing watch for her reply, and for 33 days the ask attached
+  to it could not have resolved it.
+
+  TEST ADDED — STANDING CHECK ON THE REGISTER: every cycle, derive the open set from the file and reconcile it
+  against the list being reported. An id in BLOCKS.md and in no current list is a DROPPED ask, and a dropped
+  ask reads exactly like a resolved one.
+
+  RULE: A LIST THAT LIVES ONLY IN THE AGENT'S HEAD IS NOT A REGISTER, IT IS A MEMORY — AND MEMORY DROPS THINGS
+  SILENTLY. Corollary: I AUDITED EVERY NUMBER THIS SYSTEM PRINTS AND NEVER AUDITED THE LIST OF WHAT IT WAS
+  WAITING FOR.

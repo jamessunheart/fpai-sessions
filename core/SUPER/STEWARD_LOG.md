@@ -767,3 +767,69 @@ Independence fields: BLANK: director, provider (already reported as condition 1)
 Gate origin: self-certifiable 0/3 met (Q path, Place/test, Max loss) · world-sourced 0/1 met (provider_q2_verbatim)
 Open question for the director: day1/day7 unset — the Card's window is prose; no machine can grade its time
 NBM: TWO open moves, director-only first — (a) name the beneficiaries and a witness who is NOT the director, circulator or provider (the witness MAY be one of the beneficiaries — the Card assigns Q to them jointly — so no eleventh person is needed; but this is not a form fill: the Card's pass test is a meal they WANTED and felt respected, so each name costs a conversation, and how many names is set by the Build's own size — resize the Build and this ask resizes with it, B-13); then (b) one conversation with one candidate provider; record their Q2 answer verbatim
+
+[SUPER-STEWARD · BUILD-001 · 2026-10-06 UTC-06]
+STATUS: HOLD
+Conditions:
+  1 Provider:   ✗ — no provider named
+  2 Q path:     ✗ — missing: beneficiaries witness
+  3 Place/test: ✓ — Rivas, Pérez Zeledón — Can SUPER carry the loop on its own weight?
+  4 Max loss:   ✓ — 100 SUPER / 10 h, stop: James Sunheart
+Loop: 0 / 11
+Window: UNDECLARED — day1/day7 blank, so no machine here can say whether this Build's window has lapsed. Write both as YYYY-MM-DD and the clock becomes checkable; until then the window is prose only.
+Redemption validity (OPEN): 2026-12-31 — 86 day(s) left on the promise. UNANSWERED (B-24): what happens to SUPER a holder has not redeemed by then. Any new day7 must fall inside this.
+Grade: 0/4 checked (council 4-point grade, Gemini #11; the header hands adoption to James). Presence is all this machine checks: who ticks a box and on what evidence is the director's word
+Independence fields: BLANK: provider (already reported as condition 1) — the witness clash test and the beneficiary overlap test both exclude these roles, and _samename() is False against an empty field, so those rules test nothing until the Card names them (finding 28)
+Gate origin: self-certifiable 2/3 met (Q path, Place/test, Max loss) · world-sourced 0/1 met (provider_q2_verbatim) — so the headline 2/4 is not halfway: every tick on it is ours, and no datum from outside this system has reached the gate yet
+Open question for the director: day1/day7 unset — the Card's window is prose; no machine can grade its time
+NBM: TWO open moves, director-only first — (a) name the beneficiaries and a witness who is NOT the director, circulator or provider (the witness MAY be one of the beneficiaries — the Card assigns Q to them jointly — so no eleventh person is needed; but this is not a form fill: the Card's pass test is a meal they WANTED and felt respected, so each name costs a conversation, and how many names is set by the Build's own size — resize the Build and this ask resizes with it, B-13); then (b) one conversation with one candidate provider; record their Q2 answer verbatim
+
+[SUPER-STEWARD · BUILD-002 · 2026-10-06 UTC-06]
+STATUS: HOLD
+Conditions:
+  1 Provider:   ✗ — no provider named
+  2 Q path:     ✗ — missing: beneficiaries witness
+  3 Place/test: ✗ — place not named
+  4 Max loss:   ✗ — max loss and/or stop-caller not set
+Loop: 0 / 11
+Window: UNDECLARED — day1/day7 blank, so no machine here can say whether this Build's window has lapsed. Write both as YYYY-MM-DD and the clock becomes checkable; until then the window is prose only.
+Redemption validity (OPEN): 2026-12-31 — 86 day(s) left on the promise. UNANSWERED (B-24): what happens to SUPER a holder has not redeemed by then. Any new day7 must fall inside this.
+Grade: ABSENT -- this Card carries no concrete pass/fail grade, so nothing here can say what PASSED would mean for it; the four release conditions only say it may start
+Independence fields: BLANK: director, provider (already reported as condition 1) — the witness clash test and the beneficiary overlap test both exclude these roles, and _samename() is False against an empty field, so those rules test nothing until the Card names them (finding 28)
+Gate origin: self-certifiable 0/3 met (Q path, Place/test, Max loss) · world-sourced 0/1 met (provider_q2_verbatim)
+Open question for the director: day1/day7 unset — the Card's window is prose; no machine can grade its time
+NBM: TWO open moves, director-only first — (a) name the beneficiaries and a witness who is NOT the director, circulator or provider (the witness MAY be one of the beneficiaries — the Card assigns Q to them jointly — so no eleventh person is needed; but this is not a form fill: the Card's pass test is a meal they WANTED and felt respected, so each name costs a conversation, and how many names is set by the Build's own size — resize the Build and this ask resizes with it, B-13); then (b) one conversation with one candidate provider; record their Q2 answer verbatim
+
+[SUPER-STEWARD · BUILD-001 · 2026-10-06 UTC-06]
+STATUS: HOLD
+Conditions:
+  1 Provider:   ✗ — no provider named
+  2 Q path:     ✗ — missing: beneficiaries witness
+  3 Place/test: ✓ — Rivas, Pérez Zeledón — Can SUPER carry the loop on its own weight?
+  4 Max loss:   ✓ — 100 SUPER / 10 h, stop: James Sunheart
+Loop: 0 / 11
+Loop origin: of 11 steps: self-certifiable 6 (Intent, NBM, Build, Wallet/allocation, Surplus, Reflection) · world-sourced 4 (Provider, Meal, Beneficiary, Pass It On) · mixed 1 (Evidence) · NOT A GATE: nothing reads this count — CLOSED is computed from Q plus a filled '## Close' section alone, so a Build can close at 0/11 (finding 30) · this counter has never been written to; 'Wallet/allocation' has been true in the world since 2026-09-03 and is still unticked — ticking is the director's word, not this machine's · CIRCULAR: step 'Pass It On' is Build #002, which may not start until THIS Build is CLOSED — so 11/11 is unreachable before closure, and no document says whether #001 closes at 10/11 (folded into B-13)
+Window: UNDECLARED — day1/day7 blank, so no machine here can say whether this Build's window has lapsed. Write both as YYYY-MM-DD and the clock becomes checkable; until then the window is prose only.
+Redemption validity (OPEN): 2026-12-31 — 86 day(s) left on the promise. UNANSWERED (B-24): what happens to SUPER a holder has not redeemed by then. Any new day7 must fall inside this.
+Grade: 0/4 checked (council 4-point grade, Gemini #11; the header hands adoption to James). Presence is all this machine checks: who ticks a box and on what evidence is the director's word
+Independence fields: BLANK: provider (already reported as condition 1) — the witness clash test and the beneficiary overlap test both exclude these roles, and _samename() is False against an empty field, so those rules test nothing until the Card names them (finding 28)
+Gate origin: self-certifiable 2/3 met (Q path, Place/test, Max loss) · world-sourced 0/1 met (provider_q2_verbatim) — so the headline 2/4 is not halfway: every tick on it is ours, and no datum from outside this system has reached the gate yet
+Open question for the director: day1/day7 unset — the Card's window is prose; no machine can grade its time
+NBM: TWO open moves, director-only first — (a) name the beneficiaries and a witness who is NOT the director, circulator or provider (the witness MAY be one of the beneficiaries — the Card assigns Q to them jointly — so no eleventh person is needed; but this is not a form fill: the Card's pass test is a meal they WANTED and felt respected, so each name costs a conversation, and how many names is set by the Build's own size — resize the Build and this ask resizes with it, B-13); then (b) one conversation with one candidate provider; record their Q2 answer verbatim
+
+[SUPER-STEWARD · BUILD-001 · 2026-10-06 UTC-06]
+STATUS: HOLD
+Conditions:
+  1 Provider:   ✗ — no provider named
+  2 Q path:     ✗ — missing: beneficiaries witness
+  3 Place/test: ✓ — Rivas, Pérez Zeledón — Can SUPER carry the loop on its own weight?
+  4 Max loss:   ✓ — 100 SUPER / 10 h, stop: James Sunheart
+Loop: 0 / 11
+Loop origin: of 11 steps: self-certifiable 6 (Intent, NBM, Build, Wallet/allocation, Surplus, Reflection) · world-sourced 4 (Provider, Meal, Beneficiary, Pass It On) · mixed 1 (Evidence) · NOT A GATE: nothing reads this count — CLOSED is computed from Q plus a filled '## Close' section alone, so a Build can close at 0/11 (finding 30) · this counter has never been written to; 'Wallet/allocation' has been true in the world since 2026-09-03 and is still unticked — ticking is the director's word, not this machine's · CIRCULAR: step 'Pass It On' is Build #002, which may not start until THIS Build is CLOSED — so 11/11 is unreachable before closure, and no document says whether #001 closes at 10/11 (folded into B-13)
+Window: UNDECLARED — day1/day7 blank, so no machine here can say whether this Build's window has lapsed. Write both as YYYY-MM-DD and the clock becomes checkable; until then the window is prose only.
+Redemption validity (OPEN): 2026-12-31 — 86 day(s) left on the promise. UNANSWERED (B-24): what happens to SUPER a holder has not redeemed by then. Any new day7 must fall inside this.
+Grade: 0/4 checked (council 4-point grade, Gemini #11; the header hands adoption to James). Presence is all this machine checks: who ticks a box and on what evidence is the director's word
+Independence fields: BLANK: provider (already reported as condition 1) — the witness clash test and the beneficiary overlap test both exclude these roles, and _samename() is False against an empty field, so those rules test nothing until the Card names them (finding 28)
+Gate origin: self-certifiable 2/3 met (Q path, Place/test, Max loss) · world-sourced 0/1 met (provider_q2_verbatim) — so the headline 2/4 is not halfway: every tick on it is ours, and no datum from outside this system has reached the gate yet
+Open question for the director: day1/day7 unset — the Card's window is prose; no machine can grade its time
+NBM: TWO open moves, director-only first — (a) name the beneficiaries and a witness who is NOT the director, circulator or provider (the witness MAY be one of the beneficiaries — the Card assigns Q to them jointly — so no eleventh person is needed; but this is not a form fill: the Card's pass test is a meal they WANTED and felt respected, so each name costs a conversation, and how many names is set by the Build's own size — resize the Build and this ask resizes with it, B-13); then (b) one conversation with one candidate provider; record their Q2 answer verbatim

@@ -431,3 +431,82 @@ changes neither the ladder nor the doctrine's eleven steps, and it is honest abo
 belongs to the next Build. One word from James changes it. Nothing is ticked or re-gated in the meantime.
 Also established and NOT a decision: the loop count is read by nothing — `closed` is computed from Q plus a
 filled "## Close" section alone, so a Build can close at 0/11. The steward now prints that on every run.
+
+## 2026-10-06 13:1x CR — FINDING 31 (Claude, Super Agent, cycle 31) · THE REGISTER OF ASKS WAS NOT A REGISTER, AND IT HAD DROPPED THE TEST FOR THE ONE BLOCK THAT MATTERS
+
+Curiosity thread this cycle: findings 24–30 all audited something the Build **prints** — asks, numbers,
+options, dates, exclusion fields, gate origins, counters. None audited **the list of what the humans are
+waiting on**. Measured:
+
+1. **BLOCKS.md cannot be read as a register.** Four blocks (B-08, B-09, B-10, B-09c) are table rows from
+   2026-09-03; every block from B-11 on is a markdown heading, and a block's *current* status is whatever the
+   last line that happens to name it happens to say. Derived with the new `blocks` command: of **18 ids**, 7
+   read OPEN/NEW, 5 read RESOLVED/CLOSED, **2 claim two statuses in one line** (B-10 "REOPENED (was
+   RESOLVED…)", B-22 "NEW, RESOLVED THIS CYCLE"), and **4 carry no status word anywhere** (B-09c, B-12, B-21,
+   B-23). So the open set has never existed in this repo. It existed only in the cycle report and in the
+   agent's memory file — which is to say, in me.
+2. **M-NUDGE, the ask that has waited longest on a human, has no id at all** and therefore cannot appear in
+   any derived register, ever.
+3. **AND THE DROP THAT COST SOMETHING: B-12.** Opened by me 2026-09-03 13:05 CR, it appears in BLOCKS.md and
+   **nowhere else in this repo** — not in NBM.md, not TIMELINE.md, not STEWARD_LOG.md, not in a single
+   "waiting on James" list in 31 cycles. B-12 is the *discriminating test for B-08*, the single upstream
+   block, dark for 33 days and 93 BRAIN OFFLINE beats.
+
+**WHY THAT IS THE EXPENSIVE HALF.** The ask I have carried for B-08 in every cycle is the heartbeat's own
+printed line: *"FIX (James, ~1 min, tries the cheap one first): open Terminal, run `claude`, then `/login`."*
+The same script, four lines above that, names a second cause for which `/login` is explicitly **not** the fix
+(cron runs outside the GUI session and cannot unlock the Keychain → a LaunchAgent), and says of the first
+cause: *"FIXED in this script 2026-09-03 21:08 — if this recurs, the unset above is not reaching the CLI."*
+Measured in HEARTBEAT_LOG.md today: it recurred on the **very next beat** (2026-09-03T22:15Z) and 92 times
+since, and **no cron beat anywhere in the log has ever authenticated** — the only beats that ever thought
+(14:18Z, 15:32Z) were in-session on 2026-09-03. So the script's own conditional has been true for 33 days,
+and the instruction a human was given 93 times is the one the evidence argues against, while the one-minute
+test that tells the two causes apart sat in a block nobody carried.
+
+**CORRECTED, INSIDE REMIT — B-12 IS FOLDED INTO B-08 AND THE ASK IS REORDERED.** The new B-08 ask, in the
+heartbeat's printed FIX line and everywhere forward-looking: *open Terminal on this Mac and run
+`bash ~/FullPotentialOS/infra/scripts/super_agent_heartbeat.sh`.* If it thinks by hand → cause 2, and the fix
+is a **LaunchAgent, not another login**. If it also says "Not logged in" by hand → then `claude` + `/login`.
+Same minute, and it ends with an answer instead of a maybe. Nothing about James changed here; the
+instruction we handed him did.
+
+**FIXED, INSIDE REMIT:** `super_build.py` gained `block_register()`, `register_line()` and a new
+`blocks` command; status prints a **"Register:"** line on EVERY run — id count, the derived open set,
+AMBIGUOUS ids, UNACCOUNTED ids, and the standing note that an ask with no B- id cannot appear at all. The
+parser refuses to guess: a line claiming two statuses is reported AMBIGUOUS rather than resolved one way.
+Both pack twins synced byte-identical in the same cycle (dist + _staged_repos).
+
+**CHECKED AND NOT A VIOLATION:** HELP_WANTED.md contains zero B- ids, but every currently open block is
+either JAMES-ONLY (B-08, B-13, B-15, B-17, B-24) or AGENT/INFRA (B-14) and was deliberately kept off the
+public board. The "make help easy, not access cheap" rule holds.
+
+**TEST ADDED — STANDING CHECK ON THE REGISTER: every cycle, derive the open set from the file and reconcile
+it against the list being reported. An id that appears in BLOCKS.md and in no current list is a DROPPED ask,
+and a dropped ask reads exactly like a resolved one.**
+
+RULE: A LIST THAT LIVES ONLY IN THE AGENT'S HEAD IS NOT A REGISTER, IT IS A MEMORY — AND MEMORY DROPS THINGS
+SILENTLY. Corollary: I AUDITED EVERY NUMBER THIS SYSTEM PRINTS AND NEVER AUDITED THE LIST OF WHAT IT IS
+WAITING FOR.
+
+### STATUS ROLL CALL 2026-10-06 (Claude — writing down the status I have been reporting, deciding nothing)
+| id | status in writing, as of now |
+|---|---|
+| B-08 | **OPEN — JAMES ONLY**, day 33. Ask corrected above (B-12 folded in). |
+| B-09 | RESOLVED 2026-10-02 (mirror observed to succeed). |
+| B-09c | CLOSED — a correction to B-09, never an ask. |
+| B-10 | RESOLVED — ARMED 2026-10-02; the earlier REOPENED line is superseded. |
+| B-11 | RESOLVED by reality. |
+| B-12 | CLOSED — folded into B-08 this cycle, after 33 days unlisted. Logged against me. |
+| B-13 | **OPEN — JAMES ONLY** (plate price + headcount + resize + the 10/11 closure question). |
+| B-14 | **OPEN — AGENT/INFRA**, opened 2026-10-02 and not revisited since; it was off my list too. |
+| B-15 | **OPEN — JAMES ONLY**, day 33. First in order. |
+| B-16 | RESOLVED (workaround). |
+| B-17 | **OPEN — JAMES** (one `git push`; eleven commits ahead). |
+| B-18 | RESOLVED same cycle. |
+| B-19 | RESOLVED same cycle. |
+| B-20 | **OPEN — JAMES** (one word; two options). |
+| B-21 | **OPEN — JAMES** (one word; Comité La Piedra: provider or beneficiaries). |
+| B-22 | RESOLVED same cycle. |
+| B-23 | **OPEN — JAMES** (three bundled questions on circulation incentive / R_co / the 4-point grade). |
+| B-24 | **OPEN — JAMES ONLY** (what happens to unredeemed SUPER on 2026-12-31). |
+| B-25 | **OPEN — JAMES** · this is **M-NUDGE**, given an id for the first time so a register can see it: one forward of DRAFT_whatsapp_la_cocinona.md inside her open hours (next: **Sat 2026-10-10 12:00–21:00 CR**, then Sun 2026-10-11 09:00–20:00). Not a new ask — the same ask, now addressable. Standing rule from here: every ask gets a B- id the cycle it is opened. |

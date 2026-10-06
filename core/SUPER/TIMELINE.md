@@ -376,3 +376,23 @@ SYSTEM SAYS; NONE AUDITED WHAT ITS SAFEGUARDS SILENTLY DEPEND ON.
 2026-10-06 09:3x CR · cycle 29 · Nothing changed in the world (183 Mac beats, still BRAIN OFFLINE; VENDOR_LOG_198 still the two 2026-09-03T15:12 entries; Drive only my own 07:14 CR v16; Council Record 001 still the Sep 3 Gemini answer). FINDING 29: three of the four release conditions are satisfiable by typing, and conditions 3+4 were already satisfied in the Card's first commit (5caa0ad0, 2026-09-03) — so "HOLD 2/4", reported for 28 cycles, is the Card's birth score, not progress. Honest reading: world-sourced 0/1, self-certifiable 2/3. super_build.py now prints a "Gate origin:" line every run; no condition changed. Published pack copy of super_build.py synced (it was missing findings 27 and 28) — B-17 now ten commits. No Drive roll (churn limit). Nothing sent, nobody contacted, no funds moved.
 
 2026-10-06 11:1x CR · cycle 30 · Nothing changed in the world (183 Mac beat headers, latest 14:15Z, still BRAIN OFFLINE; VENDOR_LOG_198 mirrored fresh at 14:15Z and still the two 2026-09-03T15:12 entries; Drive untouched but for my own 07:14 CR v16; Council Record 001 still the Sep 3 Gemini answer — Gemini has not answered again). FINDING 30: the third number the steward prints, "Loop: 0 / 11", is read by nothing — `closed` is Q plus a filled Close section alone, so a Build can close at 0/11; no file defines completing the loop; nobody has ever ticked a box, though step 4 Wallet/allocation has been true in the world since 2026-09-03 when James set the ₡40,000 aside; and step 10 "Pass It On" IS Build #002, which may not start until #001 is CLOSED — so 11/11 is unreachable before closure. Finding 29 inverted: the gate overstates (every tick ours), the loop understates (a dial nobody turns). super_build.py now prints a "Loop origin:" line on every run — two fractions, "NOT A GATE", the unticked real step, the circularity — and both pack twins were synced in the same cycle. Nothing ticked, no rule re-gated: ticking and closure are the director's. No new block; the closure question folded into B-13 with my signed position (close #001 at 10/11, Pass It On deferred to #002). No Drive roll — churn limit, v16 was written 07:14 CR today; finding 30 waits in the append-only repo. Nothing sent, nobody contacted, no funds moved.
+
+2026-10-06 13:1x CR — Cycle 31 (Claude). Nothing changed in the world since cycle 30: one new Mac beat
+(18:15Z, 184 headers, still BRAIN OFFLINE), VENDOR_LOG_198.md mirrored fresh at 18:15Z and still the two
+2026-09-03T15:12 entries, Drive untouched but for my own 13:14Z v16, Council Record 001 still the Sep 3
+Gemini answer. BUILD_001 HOLD 2/4, loop 0/11, Window UNDECLARED, Grade 0/4, redemption validity 86 days;
+BUILD_002 HOLD. Nothing sent, minted or contacted; no funds moved. Tuesday in CR — her kitchen is closed
+Mon-Fri, so no window today and none missed.
+FINDING 31 — the register of asks was not a register. BLOCKS.md is append-only prose (4 rows, the rest
+headings): of 18 ids, 2 claimed two statuses in one line and 4 carried no status word at all, so the open set
+has only ever existed in the cycle report and my memory file. M-NUDGE had no id and could never appear in a
+derived list (now B-25). And B-12 — opened by me 2026-09-03, present in BLOCKS.md and nowhere else in the
+repo, in no "waiting on James" list in 31 cycles — IS the discriminating test for B-08. The B-08 ask I carried
+93 times ("run `claude`, then `/login`") is the one the heartbeat log's own evidence argues against: cause 1
+was fixed in the script on 2026-09-03 21:08, the very next beat failed anyway, and no cron beat in the whole
+log has ever authenticated. B-12 folded into B-08 and the ask reordered to the one-minute test that
+distinguishes the two causes (run the script by hand; if it thinks, the fix is a LaunchAgent, not a login).
+Shipped: `block_register()`, `register_line()`, a `blocks` command, "Register:" on every status run, a STATUS
+ROLL CALL in BLOCKS.md taking UNACCOUNTED and AMBIGUOUS to zero, B-14 back on the list. Both pack twins synced
+byte-identical. No new block; no gate changed; nothing ticked. No Drive roll — churn limit (v16 written 07:14
+CR today); findings 30 and 31 wait in the append-only repo for the first cycle after CR midnight.
