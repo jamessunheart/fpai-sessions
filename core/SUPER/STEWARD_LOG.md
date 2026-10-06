@@ -542,3 +542,70 @@ Window: UNDECLARED — day1/day7 blank, so no machine here can say whether this 
 Grade: 0/4 checked (council 4-point grade, Gemini #11; the header hands adoption to James). Presence is all this machine checks: who ticks a box and on what evidence is the director's word
 Open question for the director: day1/day7 unset — the Card's window is prose; no machine can grade its time
 NBM: TWO open moves, director-only first — (a) name the beneficiaries and a witness who is NOT the director, circulator or provider (the witness MAY be one of the beneficiaries — the Card assigns Q to them jointly — so no eleventh person is needed; but this is not a form fill: the Card's pass test is a meal they WANTED and felt respected, so each name costs a conversation, and how many names is set by the Build's own size — resize the Build and this ask resizes with it, B-13); then (b) one conversation with one candidate provider; record their Q2 answer verbatim
+
+[SUPER-STEWARD · BUILD-001 · 2026-10-05 UTC-06]
+STATUS: HOLD
+Conditions:
+  1 Provider:   ✗ — no provider named
+  2 Q path:     ✗ — missing: beneficiaries witness
+  3 Place/test: ✓ — Rivas, Pérez Zeledón — Can SUPER carry the loop on its own weight?
+  4 Max loss:   ✓ — 100 SUPER / 10 h, stop: James Sunheart
+Loop: 0 / 11
+Window: UNDECLARED — day1/day7 blank, so no machine here can say whether this Build's window has lapsed. Write both as YYYY-MM-DD and the clock becomes checkable; until then the window is prose only.
+Grade: 0/4 checked (council 4-point grade, Gemini #11; the header hands adoption to James). Presence is all this machine checks: who ticks a box and on what evidence is the director's word
+Open question for the director: day1/day7 unset — the Card's window is prose; no machine can grade its time
+NBM: TWO open moves, director-only first — (a) name the beneficiaries and a witness who is NOT the director, circulator or provider (the witness MAY be one of the beneficiaries — the Card assigns Q to them jointly — so no eleventh person is needed; but this is not a form fill: the Card's pass test is a meal they WANTED and felt respected, so each name costs a conversation, and how many names is set by the Build's own size — resize the Build and this ask resizes with it, B-13); then (b) one conversation with one candidate provider; record their Q2 answer verbatim
+
+[SUPER-STEWARD · BUILD-001 · 2026-10-05 UTC-06]
+STATUS: HOLD
+Conditions:
+  1 Provider:   ✗ — no provider named
+  2 Q path:     ✗ — missing: beneficiaries witness
+  3 Place/test: ✓ — Rivas, Pérez Zeledón — Can SUPER carry the loop on its own weight?
+  4 Max loss:   ✓ — 100 SUPER / 10 h, stop: James Sunheart
+Loop: 0 / 11
+Window: UNDECLARED — day1/day7 blank, so no machine here can say whether this Build's window has lapsed. Write both as YYYY-MM-DD and the clock becomes checkable; until then the window is prose only.
+Grade: 0/4 checked (council 4-point grade, Gemini #11; the header hands adoption to James). Presence is all this machine checks: who ticks a box and on what evidence is the director's word
+Open question for the director: day1/day7 unset — the Card's window is prose; no machine can grade its time
+NBM: TWO open moves, director-only first — (a) name the beneficiaries and a witness who is NOT the director, circulator or provider (the witness MAY be one of the beneficiaries — the Card assigns Q to them jointly — so no eleventh person is needed; but this is not a form fill: the Card's pass test is a meal they WANTED and felt respected, so each name costs a conversation, and how many names is set by the Build's own size — resize the Build and this ask resizes with it, B-13); then (b) one conversation with one candidate provider; record their Q2 answer verbatim
+
+[SUPER-STEWARD · BUILD-001 · 2026-10-05 UTC-06]
+STATUS: HOLD
+Conditions:
+  1 Provider:   ✗ — no provider named
+  2 Q path:     ✗ — missing: beneficiaries witness
+  3 Place/test: ✓ — Rivas, Pérez Zeledón — Can SUPER carry the loop on its own weight?
+  4 Max loss:   ✓ — 100 SUPER / 10 h, stop: James Sunheart
+Loop: 0 / 11
+Window: UNDECLARED — day1/day7 blank, so no machine here can say whether this Build's window has lapsed. Write both as YYYY-MM-DD and the clock becomes checkable; until then the window is prose only.
+Grade: 0/4 checked (council 4-point grade, Gemini #11; the header hands adoption to James). Presence is all this machine checks: who ticks a box and on what evidence is the director's word
+Open question for the director: day1/day7 unset — the Card's window is prose; no machine can grade its time
+NBM: TWO open moves, director-only first — (a) name the beneficiaries and a witness who is NOT the director, circulator or provider (the witness MAY be one of the beneficiaries — the Card assigns Q to them jointly — so no eleventh person is needed; but this is not a form fill: the Card's pass test is a meal they WANTED and felt respected, so each name costs a conversation, and how many names is set by the Build's own size — resize the Build and this ask resizes with it, B-13); then (b) one conversation with one candidate provider; record their Q2 answer verbatim
+
+[SUPER-STEWARD · BUILD-001 · 2026-10-05 UTC-06]
+STATUS: HOLD
+Conditions:
+  1 Provider:   ✗ — no provider named
+  2 Q path:     ✗ — missing: beneficiaries witness
+  3 Place/test: ✓ — Rivas, Pérez Zeledón — Can SUPER carry the loop on its own weight?
+  4 Max loss:   ✓ — 100 SUPER / 10 h, stop: James Sunheart
+Loop: 0 / 11
+Window: UNDECLARED — day1/day7 blank, so no machine here can say whether this Build's window has lapsed. Write both as YYYY-MM-DD and the clock becomes checkable; until then the window is prose only.
+Redemption validity (OPEN): 2026-12-31 — 87 day(s) left on the promise. UNANSWERED (B-24): what happens to SUPER a holder has not redeemed by then. Any new day7 must fall inside this.
+Grade: 0/4 checked (council 4-point grade, Gemini #11; the header hands adoption to James). Presence is all this machine checks: who ticks a box and on what evidence is the director's word
+Open question for the director: day1/day7 unset — the Card's window is prose; no machine can grade its time
+NBM: TWO open moves, director-only first — (a) name the beneficiaries and a witness who is NOT the director, circulator or provider (the witness MAY be one of the beneficiaries — the Card assigns Q to them jointly — so no eleventh person is needed; but this is not a form fill: the Card's pass test is a meal they WANTED and felt respected, so each name costs a conversation, and how many names is set by the Build's own size — resize the Build and this ask resizes with it, B-13); then (b) one conversation with one candidate provider; record their Q2 answer verbatim
+
+[SUPER-STEWARD · BUILD-001 · 2026-10-05 UTC-06]
+STATUS: HOLD
+Conditions:
+  1 Provider:   ✗ — no provider named
+  2 Q path:     ✗ — missing: beneficiaries witness
+  3 Place/test: ✓ — Rivas, Pérez Zeledón — Can SUPER carry the loop on its own weight?
+  4 Max loss:   ✓ — 100 SUPER / 10 h, stop: James Sunheart
+Loop: 0 / 11
+Window: UNDECLARED — day1/day7 blank, so no machine here can say whether this Build's window has lapsed. Write both as YYYY-MM-DD and the clock becomes checkable; until then the window is prose only.
+Redemption validity (OPEN): 2026-12-31 — 87 day(s) left on the promise. UNANSWERED (B-24): what happens to SUPER a holder has not redeemed by then. Any new day7 must fall inside this.
+Grade: 0/4 checked (council 4-point grade, Gemini #11; the header hands adoption to James). Presence is all this machine checks: who ticks a box and on what evidence is the director's word
+Open question for the director: day1/day7 unset — the Card's window is prose; no machine can grade its time
+NBM: TWO open moves, director-only first — (a) name the beneficiaries and a witness who is NOT the director, circulator or provider (the witness MAY be one of the beneficiaries — the Card assigns Q to them jointly — so no eleventh person is needed; but this is not a form fill: the Card's pass test is a meal they WANTED and felt respected, so each name costs a conversation, and how many names is set by the Build's own size — resize the Build and this ask resizes with it, B-13); then (b) one conversation with one candidate provider; record their Q2 answer verbatim

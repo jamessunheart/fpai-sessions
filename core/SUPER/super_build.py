@@ -100,6 +100,46 @@ def redemption_ok():
     t = REDEMPTION.read_text(encoding="utf-8")
     return "Written by: ______" not in t and re.search(r"(exchanged for|redeem|agreed to accept).*[A-Za-z0-9₡]", t) is not None
 
+_ES_MONTHS = {"enero":1,"febrero":2,"marzo":3,"abril":4,"mayo":5,"junio":6,"julio":7,
+              "agosto":8,"setiembre":9,"septiembre":9,"octubre":10,"noviembre":11,"diciembre":12}
+
+def redemption_expiry_line():
+    """What the PROMISE says about TIME, read by the grader at last.
+
+    window_line() reads the BUILD's clock. Nothing ever read the INSTRUMENT's.
+    REDEMPTION.md has carried "Vale hasta el 31 de diciembre de 2026" in James's name
+    since 2026-09-03; it is in M2 (delivered to a provider), in M-NUDGE-2 (drafted), and
+    in DECISION_BOT.md. No file, no code and twenty-six cycles ever counted the days left
+    on it, and no document anywhere says what happens to unredeemed SUPER on the far side
+    of that date. A currency with an expiry nobody counts is a currency whose last day
+    arrives as a surprise to its holder. (Claude, Super Agent — finding 27, 2026-10-06)
+
+    Reports only what REDEMPTION.md states. Never invents a date, never extends one.
+    """
+    if not REDEMPTION.exists():
+        return ("NO FILE", "REDEMPTION.md absent — the instrument has no written validity at all")
+    t = REDEMPTION.read_text(encoding="utf-8")
+    d = None
+    m = re.search(r"hasta el\s+(\d{1,2})\s+de\s+([a-zA-Zéí]+)\s+de\s+(\d{4})", t)
+    if m and m.group(2).lower() in _ES_MONTHS:
+        try: d = datetime.date(int(m.group(3)), _ES_MONTHS[m.group(2).lower()], int(m.group(1)))
+        except Exception: d = None
+    if d is None:
+        m = re.search(r"(?:valid|vale)[^\n]{0,40}?(\d{4}-\d{2}-\d{2})", t, re.I)
+        if m:
+            try: d = datetime.date.fromisoformat(m.group(1))
+            except Exception: d = None
+    if d is None:
+        return ("UNSTATED", "no validity date readable in REDEMPTION.md — unmeasurable, not unlimited")
+    n = (d - cr_today()).days
+    if n < 0:
+        return ("EXPIRED", f"EXPIRED — the promise read 'vale hasta {d.isoformat()}', {-n} day(s) ago. "
+                "Any SUPER still held is a claim on a lapsed promise. This is the director's to answer.")
+    if n == 0:
+        return ("LAST DAY", f"LAST DAY — {d.isoformat()} is today; after 3pm CR same-day redemption is gone")
+    return ("OPEN", f"{d.isoformat()} — {n} day(s) left on the promise. UNANSWERED (B-24): what happens "
+            "to SUPER a holder has not redeemed by then. Any new day7 must fall inside this.")
+
 def window_line(card):
     """What the Card promised about TIME, read by the grader at last.
 
@@ -292,7 +332,9 @@ def render(build_id, status, conds, loop_done, openq, nbm, window="(not computed
     lines = [f"[SUPER-STEWARD · BUILD-{build_id} · {today} {tzlabel}]", f"STATUS: {status}", "Conditions:"]
     for i,(name,ok,why) in enumerate(conds,1):
         lines.append(f"  {i} {name+':':<11} {'✓' if ok else '✗'} — {why}")
-    lines += [f"Loop: {loop_done} / 11", f"Window: {window}", f"Grade: {grade}",
+    rstate, rline = redemption_expiry_line()
+    lines += [f"Loop: {loop_done} / 11", f"Window: {window}",
+              f"Redemption validity ({rstate}): {rline}", f"Grade: {grade}",
               f"Open question for the director: {openq}", f"NBM: {nbm}"]
     return "\n".join(lines)
 

@@ -37,6 +37,16 @@ Muchas gracias por responder. Todavía no hay nada reservado: James la va a llam
 - One follow-up after 48h if no reply, then silence.
 
 
+--- Agent notes · IF SHE ASKS ABOUT THE DATE (added 2026-10-06, finding 27) ---
+She may reasonably ask: "¿y si no los cambio antes del 31 de diciembre?" There was no answer anywhere in
+this system for that question until it was asked here. What is TRUE and ours to say:
+> Los ₡40,000 están apartados a su nombre desde ya. Lo que pasa después del 31 de diciembre todavía no
+> está decidido, y no se lo voy a inventar. Lo seguro es esto: pídame los colones el mismo día de la
+> comida, antes de las 3 de la tarde, y usted no carga con ninguna fecha.
+Do NOT promise an extension, a rollover, or honoring after the date: that is the director's word (B-24),
+not this agent's. Advising the same-day cash-out is honest because it is the one path with no date risk
+for her, and it costs us only the circulation we do not have yet (finding 26).
+
 > 2026-09-04 08:52 CR · REDEMPTION CHANGED (James: "Drop the 40,000 card idea"). The gift card and the ₡38,000 colones figure are gone; colones is now the full ₡40,000. The M2 text above is updated for any FUTURE send. The M2 that actually went out 2026-09-03 15:12Z carried the old three options — do NOT re-send, do NOT correct: every option she was offered is now equal or better. See REDEMPTION.md change log.
 
 ---
@@ -89,8 +99,8 @@ Fixed above, inside remit: the trigger is now relative to the SEND and refuses t
 send; the "today" is replaced by the standing window rule.
 STATE, unchanged by this amendment: candidate #1 La Cocinona de Pueblo is LIVE and NOT rested;
 candidate #2 is CLOSED; nobody has been contacted; REDEMPTION.md untouched; the one-candidate guard
-holds. Next open window: Sat 2026-10-11 12:00-21:00 CR.
-AGING, named not fixed: the text says "le escribi hace un mes". On 2026-10-11 the real gap is 38 days,
+holds. Next open window: Sat 2026-10-10 12:00-21:00 CR (Sun 2026-10-11 09:00-20:00 CR is the same weekend's second window).
+AGING, named not fixed: the text says "le escribi hace un mes". On 2026-10-10 the real gap is 37 days,
 which "hace un mes" still covers honestly. If this goes out after about 2026-11-03, change that phrase
 to "hace dos meses" — a late apology that understates the lateness is not an apology.
 RULE: A DEADLINE THAT COUNTS DOWN WHETHER OR NOT WE ACTED IS A CLOCK ON OUR OWN DIARY, NOT ON THE OTHER
@@ -146,7 +156,7 @@ Corollary to finding 21's corollary: "send-ready" must name which message is rea
 about a conversation made on the evidence of one line of it.
 STATE, unchanged by this amendment: candidate #1 La Cocinona de Pueblo is LIVE and NOT rested; candidate
 #2 is CLOSED; nobody has been contacted; no funds moved; REDEMPTION.md untouched; the one-candidate guard
-holds. Next open window: Sat 2026-10-11 12:00-21:00 CR.
+holds. Next open window: Sat 2026-10-10 12:00-21:00 CR (Sun 2026-10-11 09:00-20:00 CR is the same weekend's second window).
 
 ### AMENDMENT 2026-10-05 23:20Z (17:20 CR) — finding 25, Claude, Super Agent
 THE NUMBER IN THIS MESSAGE WAS NEVER HERS TO BE TOLD. BUILD_001.md commits 100 SUPER for ten plates with
@@ -182,7 +192,7 @@ RULE: A MESSAGE THAT STATES SOMEONE ELSE'S NUMBER AS SETTLED HAS PRE-ANSWERED TH
 THEIR YES FREE.
 STATE, unchanged: candidate #1 La Cocinona de Pueblo is LIVE and NOT rested; candidate #2 is CLOSED; nobody
 contacted; no funds moved; REDEMPTION.md untouched; the one-candidate guard holds. Next open window:
-Sat 2026-10-11 12:00–21:00 CR.
+Sat 2026-10-10 12:00-21:00 CR (Sun 2026-10-11 09:00-20:00 CR is the same weekend's second window).
 
 ## M-NUDGE-3 — what we say after she answers Q2 (drafted 2026-10-05 15:10 CR, NOT sent)
 WHO SENDS IT: James, same WhatsApp thread, immediately after she answers Q2 in M-NUDGE-2.
@@ -239,7 +249,7 @@ slot whose act I failed to imagine.
 RULE: A MESSAGE IS NOT READY UNTIL EVERY SILENCE IT CREATES HAS A MESSAGE WE CAN KEEP.
 STATE, unchanged: candidate #1 La Cocinona de Pueblo is LIVE and NOT rested; candidate #2 is CLOSED;
 nobody contacted; no funds moved; REDEMPTION.md untouched; the one-candidate guard holds. Next open
-window: Sat 2026-10-11 12:00-21:00 CR.
+window: Sat 2026-10-10 12:00-21:00 CR (Sun 2026-10-11 09:00-20:00 CR is the same weekend's second window).
 
 
 ### AMENDMENT 2026-10-06 01:3xZ (2026-10-05 19:3x CR) — finding 26, Claude, Super Agent
@@ -288,3 +298,41 @@ NOT SHORT OF INFORMATION, IT WAS SHORT OF RE-READING.
 STATE, unchanged: candidate #1 La Cocinona de Pueblo is LIVE and NOT rested; candidate #2 is CLOSED; nobody
 contacted; nothing sent; no funds moved; the one-candidate guard holds. Next open window: Sat 2026-10-11
 12:00–21:00 CR.
+
+### AMENDMENT 2026-10-06 03:3xZ (2026-10-05 21:3x CR) — finding 27, Claude, Super Agent
+TWO CLOCKS NOBODY COUNTED. This cycle's curiosity thread was one question: which clocks in this system
+has no one ever counted? Two answers, and the first one is in this file.
+
+(1) THE NEXT WINDOW WAS THE WRONG DAY. Every forward-looking line in this draft and in BLOCKS.md said
+    "Sat 2026-10-11 12:00-21:00 CR". 2026-10-11 is a SUNDAY. The real Saturday is 2026-10-10; Sunday the
+    11th is a window too, but it is 09:00-20:00, not 12:00-21:00. Origin found: the cycle written on
+    Sunday 2026-10-04 (NBM.md) wrote "after today the next window is Saturday 2026-10-11" — a one-day
+    arithmetic slip from a Sunday — and five cycles carried it, through four files, including two cycles
+    that rewrote the text of this very message. HARM, measured honestly and not inflated: noon on Sunday
+    the 11th IS inside her Sunday hours, so a send following the bad instruction would still have reached
+    her. The cost is one whole open day of a 2-in-7 channel, an instruction whose weekday and date
+    contradict each other in the one artifact the whole Build waits on, and the send-counted fallback
+    (finding 21) reasoning about a window it had misdated. FIXED: all forward-looking occurrences now read
+    Sat 2026-10-10 12:00-21:00 CR, with Sunday 2026-10-11 09:00-20:00 named beside it as the same
+    weekend's second window. Historical lines in NBM.md and VENDOR_LOG.md are append-only and are NOT
+    rewritten; the correction is appended there instead.
+    The aging line is corrected with it: on 2026-10-10 the true gap since M2 is 37 days, not 38.
+
+(2) THE INSTRUMENT'S OWN EXPIRY HAS NEVER BEEN COUNTED. The text below says, and M2 already said to her,
+    "válido hasta el 31 de diciembre de 2026". That date has been in the promise in James's name since
+    2026-09-03. Nothing in this repo — no file, no code, no cycle — ever counted the days left on it
+    (87 CR days as of 2026-10-05) and nothing anywhere says what happens to SUPER a holder has NOT
+    redeemed by then. Opened as B-24; it is the escrow, so it is James's word. super_build.py now prints
+    "Redemption validity" on every status run so no future cycle can fail to see it.
+    WHAT THIS MEANS FOR HER, named plainly: the expiry is the one term in the whole offer whose risk falls
+    entirely on the provider. If she holds SUPER instead of redeeming, she can lose ₡40,000 on a date we
+    chose. From 2026-10-06 she has 24 open days (12 Saturdays, 12 Sundays) inside the validity.
+    AND IT CUTS AT B-23: an expiry date makes holding dangerous and same-day redemption strictly rational,
+    so the instrument's own terms push R toward 1. Three cycles have debated how to raise circulation
+    while the promise contained a standing reason not to circulate. Branch (2) of B-23 — accept R=1 for
+    #001 and say so out loud — is now supported by two independent arguments, not one.
+
+ADDED TO THE AGENT NOTES BELOW, inside remit: an answer for the question this term invites her to ask.
+Nothing sent. She has not been contacted since 2026-09-03. Candidate #1 LIVE and not rested; candidate #2
+CLOSED; nothing minted; no funds moved; REDEMPTION.md's promise untouched.
+Signed: Claude, Super Agent.

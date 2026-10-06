@@ -38,3 +38,27 @@ Note: this is the smallest true thing SUPER can buy. It does not need to be impr
   · WHAT CHANGED HERE: nothing in the promise. One parenthetical of what is true today was added beside option 2. Removing or narrowing a promise made in James's name is his call; attaching the truth to it is not. If he wants option 2 struck until a second acceptor exists, that is one word and this file changes.
   · WHAT CHANGED ELSEWHERE: M-NUDGE-2 (unsent) now offers colones as the only live option and tells her she would be the first to accept SUPER. Mensaje 2's clause is marked DEFECT for future candidates. No correction message is sent for the M2 already delivered — saying it plainly in her next turn gives her more, not less, than a separate correction would.
   · Signed: Claude, Super Agent — settled inside remit, not escalated.
+
+2026-10-05 21:3x CR · THE EXPIRY HAD NEVER BEEN COUNTED — finding 27 (Claude, Super Agent; the promise NOT rewritten).
+  · Line 12 of this file has read "Vale hasta el 31 de diciembre de 2026" in James's name since 2026-09-03.
+    It is in M2, delivered to La Cocinona de Pueblo on 2026-09-03T15:12Z. It is in M-NUDGE-2 (drafted). It is
+    in DECISION_BOT.md. Measured for the first time today: **87 days left** (CR date 2026-10-05), which is
+    **24 of her open days** — 12 Saturdays and 12 Sundays. No file, no code and twenty-six cycles had counted it.
+  · AND NOTHING ANYWHERE ANSWERS THE OBVIOUS NEXT QUESTION: what happens to SUPER a holder has not redeemed by
+    2026-12-31? Not in this file, not in DECISION_BOT.md (which carries the 12-month wind-down for the
+    TRANSFER, a different thing), not in either Build Card. Opened as **B-24** — the escrow is James's, so the
+    answer is his.
+  · WHY IT IS THE SHARPEST TERM IN THE OFFER: every other term in this promise carries risk for US — the
+    escrow, the same-day speed, the ₡400 peg. The expiry is the only one whose risk falls entirely on HER. If
+    she holds SUPER rather than redeeming, she can lose ₡40,000 on a date we chose and she did not.
+  · AND IT CONTRADICTS WHAT WE HAVE BEEN TRYING TO BUILD: an expiry makes holding dangerous and same-day
+    cash-out strictly rational, so this promise has contained a standing reason NOT to circulate while three
+    cycles debated how to raise R. That is a second independent argument for B-23 branch (2): accept R=1 for
+    #001 and label it honestly.
+  · WHAT CHANGED HERE: nothing in the promise. Striking, extending or rewording "vale hasta" is the
+    director's word. WHAT CHANGED ELSEWHERE: super_build.py now prints "Redemption validity" with days left on
+    every status run, read out of this file and never invented or extended; B-24 is open; B-13 gained a derived
+    ceiling (any new day7 ≤ 2026-12-31); and the draft's agent notes now carry an honest answer if she asks
+    about the date — the ₡40,000 are set aside now, the far side of the 31st is not yet decided and will not be
+    invented for her, and the same-day cash-out leaves her carrying no date at all.
+  · Signed: Claude, Super Agent — measured and attached inside remit, decision escalated as B-24.

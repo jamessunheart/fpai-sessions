@@ -57,6 +57,9 @@ Cheap test first: open Terminal, run `claude`, then `/login`. If the next 4-hour
     **her number, the plate count and this resize are one decision, not three** — so B-13 and B-15's
     headcount should be answered together, and both get cheaper once she names a price. No new block was
     opened for this on purpose: the lever already exists here.
+  · CEILING ADDED 2026-10-06 (finding 27, Claude), derived not decided: any new day7 must fall on or
+    before **2026-12-31**, the date REDEMPTION.md's promise expires — 87 days as of 2026-10-05 CR, and
+    24 of her open days. A day7 past it would pay her in SUPER that is void before she can use it. See B-24.
 
 **B-09 · CAUSE OVERTURNED 2026-10-02 13:05 CR (Claude). The 29-day "198 unreachable" was never measured.** The control probe added for exactly this purpose ran at 2026-10-02T18:15Z and returned, verbatim for both hosts, `timeout: command not found` (rc=127). macOS does not ship `timeout`; the script's only PATH export sat ~76 lines BELOW the mirror pull, which uses the same `timeout 30 ssh` wrapper (present since the block was committed, de2709ec). So on all 77 attempts the wrapper exited before ssh ran — **198 was never contacted**, and every hypothesis in this block's history (no key in root@198:authorized_keys, 198 refusing root ssh, the Keychain/LaunchAgent family, "198-specific by measurement via server162", the 403 on :80) was reasoning about a connection that was never attempted. They are not disproved; they were never tested. B-09's cause is now **OPEN and UNKNOWN**. B-09c and the 2026-10-02 09:05 CR correction are **superseded**. FIXED, no James needed: PATH exported at the top of the script; portable `ssh_to <secs> <args>` replaces all three `timeout N ssh` calls (timeout/gtimeout when present, otherwise ssh's own ConnectTimeout + ServerAliveInterval/ServerAliveCountMax), unit-tested in both branches; the mirror's failure line no longer asserts ssh as the cause and states that any such line after 2026-10-02T19:00Z means ssh genuinely ran and failed. The 22:15Z beat is the first real test of this route in 29 days.
 
@@ -131,7 +134,7 @@ Fixed: `redemption_terms()` reads peg, amount and the deadline sentence out of R
 Also fixed with it: every date stamp came from the process's UTC date, not Costa Rica's — six hours a day a ruling and its ledger lines were dated tomorrow, against a promise turning on "el mismo día … antes de las 3 pm" and "hasta el 31 de diciembre". `cr_today()`, offset-labelled, `SUPER_TZ_OFFSET_HOURS` for adopters. **A currency must be dated in the place it circulates.**
 Opened and resolved 2026-10-02 by Claude, Super Agent.
 
-## M-NUDGE — OPEN — James, one forward (2 min), inside her open hours (next: Sat 2026-10-11 12:00-21:00 CR)
+## M-NUDGE — OPEN — James, one forward (2 min), inside her open hours (next: Sat 2026-10-10 12:00-21:00 CR (Sun 2026-10-11 09:00-20:00 CR is the same weekend's second window))
 The one nudge SATURDAY_PACKET.md promised La Cocinona de Pueblo was due Sat 2026-09-05 12:15 CR and
 never went: the heartbeat that was to carry it went mute 2026-09-03 22:15Z (B-08 — corrected date, see
 the amendment below). Five Saturdays missed now, her shop open on every one. Her silence is therefore
@@ -140,7 +143,7 @@ never sent.
 ACTION: open WhatsApp to +506 6362 6524 and send the M-NUDGE text at the bottom of
 core/SUPER/DRAFT_whatsapp_la_cocinona.md (change any word — it is your name on it). Inside her open
 hours: Sat 12:00-21:00 or Sun 09:00-20:00 CR. That window is 2/7 of the calendar (finding 14), so this
-is not a thirty-second ask; the next one is Sat 2026-10-11.
+is not a thirty-second ask; the next one is Sat 2026-10-10.
 WHY NOT THE AGENT: the approved channel is the bot on your line and it has been mute since 2026-09-03
 22:15Z; and a month-late nudge has to name the gap and take the blame, which is a human's sentence to
 send.
@@ -172,7 +175,7 @@ Also fixed: the post-Q2 slot held only "Mensaje 3", which promises a voice call 
 the only channel we own) to confirm a date that does not exist. M-NUDGE-3 now holds that slot; Mensaje 3
 is marked DEFECTIVE for this thread. The ask on James is still one forward, plus one more if she answers,
 plus a third if she answers that — he has words for all three.
-HONEST NOTE ON SENDING IT ANYWAY: M-NUDGE may still go out on Sat 2026-10-11 WITHOUT the ten names,
+HONEST NOTE ON SENDING IT ANYWAY: M-NUDGE may still go out on Sat 2026-10-10 WITHOUT the ten names,
 because M-NUDGE-3 now tells her the truth about the missing date instead of promising a call. That is a
 real option, not a workaround. But B-15 first is the cheaper order for her: it is the difference between
 "we will write with the date" and writing with the date.
@@ -242,7 +245,7 @@ beneficiaries; #15 Jardines Secretos carries tourist prices and sits in San Gera
 where Zen Village's own system runs, which breaks the Card's purity rule. There is no wider-window AND
 reachable AND unencumbered option in the district.
 **SO B-20 IS A TWO-OPTION CHOICE, NOT THREE:**
-  (a) **Keep #1** — cost: the channel is open 2/7 days; next window **Sat 2026-10-11 12:00–21:00 CR**.
+  (a) **Keep #1** — cost: the channel is open 2/7 days; next window **Sat 2026-10-10 12:00-21:00 CR (Sun 2026-10-11 09:00-20:00 CR is the same weekend's second window)**.
   (b') **Rest #1 and accept a named cost** — either open a reachable-but-encumbered candidate (#15, breaking
       nothing but inheriting its two risks), or authorise a channel we do not have (a voice call James or a
       person places, or Messenger), which is a separate decision and not a one-word one.
@@ -346,3 +349,41 @@ it as an option.
 Related: finding 17 in NBM.md · finding 26 in NBM.md · COUNCIL_GEMINI.md · REDEMPTION.md change log
 2026-09-04 and 2026-10-05.
 Signed: Claude, Super Agent, 2026-10-04 (bundled cycle 19; floor noted cycle 26, 2026-10-05).
+
+## B-24 · OPEN · JAMES ONLY (one decision) · the promise expires in 87 days and nothing says what happens then
+What: REDEMPTION.md says, in James's name since 2026-09-03, "Vale hasta el 31 de diciembre de 2026." That
+line is in M2 (delivered to La Cocinona 2026-09-03T15:12Z), in M-NUDGE-2 (drafted), and in DECISION_BOT.md.
+Measured 2026-10-05 CR: **87 days left**. No file, no code and twenty-six cycles ever counted it, and no
+document anywhere answers: **what happens to SUPER a holder has not redeemed by 2026-12-31?**
+Three honest answers exist and only the director can pick one: (1) the escrow is released back to James and
+unredeemed SUPER is void — then the expiry is a real risk the holder carries and the offer must say so;
+(2) the escrow is held and redemption is honored after the date — then "vale hasta" is the wrong wording and
+REDEMPTION.md should say "sin fecha de vencimiento mientras el escrow exista"; (3) the date rolls on review —
+then who reviews, and by when, must be written before the date, not after.
+Not an option: letting 2026-12-31 arrive undecided while a provider holds SUPER. That is the one way this
+Build can harm the person it was built to serve.
+Why it is not only about her: an expiry makes holding dangerous and same-day cash-out strictly rational, so
+the instrument's own terms push R toward 1. This is the second independent argument for B-23 branch (2).
+Derived constraint, not a decision: **any new day7 for #001 (B-13) must fall on or before 2026-12-31**, or the
+Build would pay in SUPER that is void before it can be used.
+FIXED INSIDE REMIT, no ask: `super_build.py` now prints "Redemption validity" with the days left on every
+status run (reads the date out of REDEMPTION.md; never invents or extends one), and an honest answer for the
+question "¿y si no los cambio antes del 31?" is in DRAFT_whatsapp_la_cocinona.md's agent notes — it promises
+nothing and points her at the same-day cash-out, which carries no date risk for her.
+Not on the public HELP_WANTED board (same ground as B-15): the terms of an escrow promise in James's
+name are not a task to crowdsource.
+Opened 2026-10-06 by Claude, Super Agent (finding 27). REDEMPTION.md's promise untouched.
+
+## CORRECTION 2026-10-06 (finding 27, Claude) · the next window was the wrong day, in five cycles of this file
+Every forward-looking line here and in DRAFT_whatsapp_la_cocinona.md said **"Sat 2026-10-11 12:00-21:00 CR"**.
+2026-10-11 is a **Sunday**. The Saturday is **2026-10-10**; the 11th is a window too, at 09:00-20:00, not
+12:00-21:00. Origin: the cycle written on Sunday 2026-10-04 recorded "after today the next window is
+Saturday 2026-10-11" — a one-day slip from a Sunday — and cycles 21-26 carried it into four files, two of
+them rewriting the very message it instructs. Harm, not inflated: noon on Sunday the 11th is inside her
+Sunday hours, so a send would still have landed. The cost is a whole open day of a 2-in-7 channel, an
+instruction whose weekday and date disagree in the artifact the Build waits on, and finding 21's
+send-counted fallback reasoning off a misdated window. All forward-looking lines corrected; append-only
+records (NBM.md, VENDOR_LOG.md) keep their text and carry the correction appended.
+TEST ADDED — **STANDING CHECK ON EVERY DATE**: a date and the weekday printed beside it must be checked
+against each other, every time either is written. Finding 25's number test asks who set a figure; it never
+asks whether the figure is right. The oldest and cheapest check in the system had no test.

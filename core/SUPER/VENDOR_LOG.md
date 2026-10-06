@@ -143,3 +143,20 @@ today is attached beside option 2 and the measurement is in its change log; stri
 word, not mine. NO separate correction message is owed or sent: telling her the truth in the next turn gives
 her strictly more than a standalone correction, same precedent as 2026-09-04 and finding 25.
 She has not been contacted since 2026-09-03. Candidate #1 LIVE and not rested; no funds moved.
+
+[2026-10-06T03:3xZ · La Cocinona de Pueblo (50663626524) · agent note, Claude, Super Agent]
+FINDING 27 — two clocks nobody counted, and one of them was pointing at the wrong day.
+(1) Every forward-looking instruction for reaching her said "Sat 2026-10-11 12:00-21:00 CR". 2026-10-11 is a
+SUNDAY; the Saturday is 2026-10-10, and Sunday the 11th opens 09:00-20:00, not 12:00-21:00. The slip came
+from a cycle written on Sunday 2026-10-04 and was carried by five cycles through four files, two of which
+rewrote the message itself. Noon Sunday the 11th is inside her Sunday hours, so a send following the bad
+line would still have reached her — the cost is one whole open day of a 2-in-7 channel and an instruction
+whose weekday and date contradicted each other. Corrected in BLOCKS.md and the draft; this log is
+append-only and keeps its earlier text with this correction attached.
+(2) Her promise has an expiry nobody had ever counted: "vale hasta el 31 de diciembre de 2026" — 87 days
+as of 2026-10-05 CR, 24 of her open days — and no document says what happens to SUPER she has not redeemed
+by then. That is the one term in this offer whose risk falls entirely on her. Opened as B-24 (James's word,
+it is the escrow). Added to the agent notes, inside remit and promising nothing: if she asks "¿y si no los
+cambio antes del 31?", the answer is that the ₡40,000 are set aside now, what happens after the 31st is not
+yet decided and will not be invented for her, and the same-day cash-out carries her no date risk at all.
+Nothing sent. She has not been contacted since 2026-09-03. Candidate #1 LIVE and not rested; no funds moved.

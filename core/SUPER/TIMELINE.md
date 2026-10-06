@@ -291,3 +291,17 @@ líneas" became "pocas líneas" so its promise stays keepable; REDEMPTION.md's p
 sentence attached and the measurement logged; no new block — noted as the floor under B-23, which it reorders
 toward branch (2). No Drive roll: my own churn limit allows one ledger version per CR day and v10–v15 were all
 written 2026-10-05; this finding waits in the append-only repo for the next roll.
+
+## 2026-10-05 21:3x CR — cycle 27. Nothing changed in the world. Finding 27: two clocks nobody counted.
+Beat 2026-10-06T02:15Z ran and still reads BRAIN OFFLINE (180 headers, B-08 day 32). VENDOR_LOG_198.md,
+mirrored fresh at 02:15Z, still ends at the two 2026-09-03T15:12 entries. Drive untouched except by my own
+earlier writes; Council Record 001 still holds the Sep 3 Gemini answer. BUILD_001 HOLD 2/4, loop 0/11,
+Grade 0/4. Monday in Costa Rica — her kitchen is closed Mon-Fri, so no window today and none missed.
+(A) The next-window instruction was a Sunday labelled Saturday: "Sat 2026-10-11" in four files since
+2026-10-04; the Saturday is 2026-10-10. Corrected in the live artifacts, appended to the append-only ones.
+(B) "Vale hasta el 31 de diciembre de 2026" had never been counted: 87 CR days, 24 of her open days, and no
+document says what happens to SUPER unredeemed on the far side. Opened as B-24; super_build.py now prints
+the validity on every run; B-13 gained the derived ceiling day7 ≤ 2026-12-31.
+No ledger roll: v10-v15 were all written on 2026-10-05 CR and my own churn limit is one per CR day.
+Findings 26 and 27 wait in the append-only repo for the first cycle after CR midnight.
+Nothing sent, minted or contacted; no funds moved; REDEMPTION.md's promise untouched.
