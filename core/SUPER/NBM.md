@@ -753,3 +753,64 @@ holds: do not hand the director a block for a thing the agent can settle and lab
 
 RULE: A RULE IS ONLY AS REAL AS THE FIELD IT READS. Corollary: FOUR CONSECUTIVE TESTS AUDITED WHAT THE
 SYSTEM SAYS; NONE AUDITED WHAT ITS SAFEGUARDS SILENTLY DEPEND ON.
+
+---
+
+## FINDING 30 — THE THIRD NUMBER ON EVERY RUN IS A DIAL WIRED TO NOTHING
+2026-10-06 11:1x CR · cycle 30 · Claude, Super Agent
+
+CURIOSITY THREAD: finding 29 named the origin of every datum the four release conditions and the
+4-point grade read. It skipped the number printed between them — "Loop: 0 / 11" — which the steward has
+printed on every run and I have reported in every cycle state line since 2026-09-03. So: who can move it,
+and what reads it?
+
+MEASURED, four things:
+1. **Nothing reads it.** `closed` is `bool(q) and "## Close" in text and <the Close section has >= 9
+   lines>`. The loop count is not in it. A Build can reach **CLOSED at loop 0/11**. `loop_done` appears in
+   exactly one decision anywhere in the code — one NBM message branch at `>= 8` — and in no gate, no
+   status, no mint guard, no grade.
+2. **Nothing defines completing it.** grep across every .md in this repo for "11/11", "loop complete",
+   "all eleven": zero matches. The eleven-step loop is the doctrine's own shape (SEE -> BUILD -> SERVE ->
+   TRANSFER -> MORE ALIVE), and no file says what finishing it means or what it would release.
+3. **Nobody has ever written to it.** 0/11 on 2026-09-03 and 0/11 for 33 days — while step 4,
+   **Wallet/allocation**, has been materially true in the world since 2026-09-03, the day James set the
+   ₡40,000 aside in his own words ("Beautiful, I'm in"). The single largest real commitment anyone has
+   made to this Build is step 4 of 11 and it is unticked, and I reported "loop 0/11" as the state of
+   reality twenty-nine times without asking who was supposed to tick it.
+4. **Step 10 is gated on this Build's own closure.** "Pass It On" IS Build #002 — BUILD_002.md's
+   intention is "the Build 001 provider spends SUPER with a feria vendor" — and that file's own first
+   line reads "Do not start until BUILD_001 is CLOSED with Q assigned (STRATEGY.md ladder rule)". So
+   #001's tenth step cannot happen until #001 has closed. **11/11 is unreachable before closure**, and no
+   document in this system says whether #001 therefore closes at 10/11, or what the ladder rule means
+   against a loop that contains the next rung.
+
+ORIGIN MAP (finding 29's test, applied to the loop for the first time): self-certifiable 6 — Intent, NBM,
+Build, Wallet/allocation, Surplus, Reflection. World-sourced 4 — Provider, Meal, Beneficiary, Pass It On.
+Mixed 1 — Evidence.
+
+CLASS: finding 29 inverted. That was a fraction whose numerator we could write ourselves — a self-portrait.
+This is a fraction nobody writes at all — a dead dial. Both have been reported every cycle as facts about
+the world. The gate OVERSTATES (2/4, every tick ours); the loop UNDERSTATES (0/11 while step 4 is done).
+
+TEST ADDED — **STANDING CHECK ON EVERY NUMBER THIS SYSTEM PRINTS**: for each one, name (a) who can move it
+and (b) what reads it. A number that nothing reads must say so on the same line, or it will be mistaken for
+a gate — by a reader, and for 29 cycles by me.
+
+FIXED INSIDE REMIT, nothing ticked, no rule re-gated: `super_build.py` gained `LOOP_ORIGIN`, `loop_steps()`
+and `loop_origin_line()`, and status now prints a **"Loop origin:"** line on EVERY run — the two fractions,
+the plain statement that nothing reads the count, the note that Wallet/allocation is true in the world and
+still unticked, and the circularity of step 10. A step with no mapped origin is named UNMAPPED rather than
+counted silently. Synced to BOTH pack twins in the same cycle (distributed-copy rule, which lapsed on this
+very file in cycle 28) — `dist/` and `_staged_repos/` now byte-identical to source.
+
+DELIBERATELY NOT DONE: no box ticked. The Card says "mark only with evidence" and the closure rule is the
+director's; a machine that quietly ticked its own progress, or re-gated closure at 10/11 to make its number
+reachable, would be converting support into sovereignty.
+
+NO NEW BLOCK. The one question here — does #001 close at 10/11 with Pass It On deferred to #002 — is folded
+into **B-13**, which already asks what closing #001 means. MY SIGNED POSITION, so he is not handed a blank:
+#001 should close at **10/11 with step 10 explicitly deferred to #002 and written into the Card**, because
+the alternative makes the ladder rule unsatisfiable by construction. One word from James changes it.
+
+RULE: A NUMBER THAT NOTHING READS IS NOT A MEASUREMENT, IT IS DECORATION. Corollary: I AUDITED THE GATE FOR
+OVERSTATING AND NEVER CHECKED THE COUNTER BESIDE IT FOR UNDERSTATING — THE SAME CYCLE, THE SAME SCREEN.

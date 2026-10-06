@@ -263,6 +263,67 @@ def gate_origin_line(conds):
         tail += f" — UNMAPPED GATE(S): {', '.join(unmapped)}; name the origin of what each reads (finding 29)"
     return " · ".join(parts) + tail
 
+# FINDING 30 (Claude, Super Agent, 2026-10-06) — THE THIRD NUMBER ON EVERY RUN IS A DIAL WIRED
+# TO NOTHING. Finding 29 named the origin of every datum the four release conditions and the
+# 4-point grade read. It skipped the one number printed between them: "Loop: n / 11". Measured:
+# (a) `loop_done` is read by NOTHING that decides anything — `closed` is computed from Q plus a
+# filled "## Close" section only, so a Build can reach CLOSED at loop 0/11; its single use is one
+# NBM message branch at >= 8. (b) No file in this repo defines what completing the loop means:
+# grep for "11/11", "loop complete", "all eleven" across every .md returns zero. (c) The counter
+# has never been written to by anyone — 0/11 on 2026-09-03 and 0/11 for 33 days — while step 4,
+# Wallet/allocation, has been materially true in the world since 2026-09-03, when James set the
+# ₡40,000 aside in his own words. (d) Step 10, "Pass It On", IS Build #002 ("the Build 001
+# provider spends SUPER with a feria vendor"), and BUILD_002.md's own first line says "Do not
+# start until BUILD_001 is CLOSED" — so this Card's tenth step is gated on this Card's closure.
+# #001 cannot reach 11/11 before it closes, and nothing anywhere says so.
+# This is finding 29's shape inverted: that was a fraction whose numerator we could write
+# ourselves (a self-portrait); this is a fraction nobody writes at all (a dead dial). Both were
+# reported as reality every cycle. Ticking a box is the director's word ("mark only with
+# evidence") and the closure rule is his too, so NOTHING here ticks, defers or re-gates anything.
+# All this does is refuse to print the number naked again.
+LOOP_ORIGIN = {
+    "Intent":           ("OURS",  "the Card's intention line"),
+    "NBM":              ("OURS",  "the steward prints one every run"),
+    "Build":            ("OURS",  "the Card and the instrument"),
+    "Wallet/allocation":("OURS",  "the escrow — the director's word; true in the world since 2026-09-03 and never ticked"),
+    "Provider":         ("WORLD", "her free acceptance"),
+    "Meal":             ("WORLD", "she cooks it"),
+    "Beneficiary":      ("WORLD", "ten people eat"),
+    "Evidence":         ("MIXED", "our record of their words"),
+    "Surplus":          ("OURS",  "arithmetic on our own ledger"),
+    "Pass It On":       ("WORLD", "a second acceptor — zero members today (finding 26), and it IS Build #002, which may not start until this Build is CLOSED"),
+    "Reflection":       ("OURS",  "written here"),
+}
+
+def loop_steps(text):
+    """Return the loop section's step labels in order, as the Card actually writes them."""
+    sec = re.search(r"^##[ \t]*Loop[^\n]*\n(.*?)(?=^## |\Z)", text, re.S | re.M)
+    if not sec: return []
+    return [m.strip() for m in re.findall(r"^- \[[ xX]\]\s*(.+?)\s*$", sec.group(1), re.M)]
+
+def loop_origin_line(loop_done, text):
+    """Never print the loop count naked. Say who can move it, and say plainly that nothing
+    reads it — a number that decides nothing must not be mistaken for a gate."""
+    steps = loop_steps(text)
+    if not steps:
+        return "no Loop section found in this Card — the 'Loop: n / 11' above is counting nothing"
+    ours  = [s for s in steps if LOOP_ORIGIN.get(s, ("UNMAPPED",))[0] == "OURS"]
+    world = [s for s in steps if LOOP_ORIGIN.get(s, ("UNMAPPED",))[0] == "WORLD"]
+    mixed = [s for s in steps if LOOP_ORIGIN.get(s, ("UNMAPPED",))[0] == "MIXED"]
+    unmapped = [s for s in steps if s not in LOOP_ORIGIN]
+    parts = [f"of {len(steps)} steps: self-certifiable {len(ours)} ({', '.join(ours)})",
+             f"world-sourced {len(world)} ({', '.join(world)})"]
+    if mixed: parts.append(f"mixed {len(mixed)} ({', '.join(mixed)})")
+    tail = (" · NOT A GATE: nothing reads this count — CLOSED is computed from Q plus a filled "
+            "'## Close' section alone, so a Build can close at 0/11 (finding 30)")
+    if loop_done == 0:
+        tail += " · this counter has never been written to; 'Wallet/allocation' has been true in the world since 2026-09-03 and is still unticked — ticking is the director's word, not this machine's"
+    if "Pass It On" in steps:
+        tail += " · CIRCULAR: step 'Pass It On' is Build #002, which may not start until THIS Build is CLOSED — so 11/11 is unreachable before closure, and no document says whether #001 closes at 10/11 (folded into B-13)"
+    if unmapped:
+        tail += f" · UNMAPPED STEP(S): {', '.join(unmapped)} — name the origin of each (finding 29's test)"
+    return " · ".join(parts) + tail
+
 def ruling(card, loop_done, q, closed, text=""):
     c = card.get
     conds = []
@@ -389,9 +450,10 @@ def ruling(card, loop_done, q, closed, text=""):
     else:
         iline = ("director=%s | circulator=%s | provider=%s — both overlap tests can fire on all "
                  "three" % (c("director"), c("circulator"), c("provider") or "(unnamed, condition 1)"))
-    return status, conds, loop_done, openq, nbm, wline, gline, iline, gate_origin_line(conds)
+    return (status, conds, loop_done, openq, nbm, wline, gline, iline,
+            gate_origin_line(conds), loop_origin_line(loop_done, text))
 
-def render(build_id, status, conds, loop_done, openq, nbm, window="(not computed)", grade="(not computed)", independence="(not computed)", gate_origin="(not computed)"):
+def render(build_id, status, conds, loop_done, openq, nbm, window="(not computed)", grade="(not computed)", independence="(not computed)", gate_origin="(not computed)", loop_origin="(not computed)"):
     today = cr_today().isoformat()
     tzlabel = f"UTC{_OFF:+03.0f}" if _OFF == int(_OFF) else f"UTC{_OFF:+}"
     if _OFF_ENV is not None: tzlabel += " ·offset from SUPER_TZ_OFFSET_HOURS"
@@ -399,7 +461,7 @@ def render(build_id, status, conds, loop_done, openq, nbm, window="(not computed
     for i,(name,ok,why) in enumerate(conds,1):
         lines.append(f"  {i} {name+':':<11} {'✓' if ok else '✗'} — {why}")
     rstate, rline = redemption_expiry_line()
-    lines += [f"Loop: {loop_done} / 11", f"Window: {window}",
+    lines += [f"Loop: {loop_done} / 11", f"Loop origin: {loop_origin}", f"Window: {window}",
               f"Redemption validity ({rstate}): {rline}", f"Grade: {grade}",
               f"Independence fields: {independence}",
               f"Gate origin: {gate_origin}",

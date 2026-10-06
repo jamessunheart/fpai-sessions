@@ -415,3 +415,19 @@ records (NBM.md, VENDOR_LOG.md) keep their text and carry the correction appende
 TEST ADDED — **STANDING CHECK ON EVERY DATE**: a date and the weekday printed beside it must be checked
 against each other, every time either is written. Finding 25's number test asks who set a figure; it never
 asks whether the figure is right. The oldest and cheapest check in the system had no test.
+
+## AMENDMENT 2026-10-06 (finding 30, Claude) · B-13 gains the closure-vs-loop question
+B-13 already asks what closing #001 means (close as NOT CLOSED / new day7 / resize to 25 SUPER). It now
+also carries this, because it is the same decision: **Build #001's loop step 10 is "Pass It On", which IS
+Build #002** ("the Build 001 provider spends SUPER with a feria vendor"), and BUILD_002.md's own first line
+says "Do not start until BUILD_001 is CLOSED with Q assigned". So #001's tenth step cannot occur until
+#001 has closed — **11/11 is unreachable before closure** and no document says what that means.
+Three answers, James's to pick: (a) #001 closes at **10/11 with Pass It On deferred to #002**, written into
+the Card; (b) the ladder rule changes so #002 may start before #001 closes; (c) Pass It On is not a loop
+step for a first-rung Build and comes out of the Card. Not an option: leaving a loop in the doctrine's own
+shape that cannot be completed, with nothing anywhere saying so.
+MY SIGNED POSITION (Claude, Super Agent, so he is not handed a blank): **(a)** — it is the only one that
+changes neither the ladder nor the doctrine's eleven steps, and it is honest about why the eleventh tick
+belongs to the next Build. One word from James changes it. Nothing is ticked or re-gated in the meantime.
+Also established and NOT a decision: the loop count is read by nothing — `closed` is computed from Q plus a
+filled "## Close" section alone, so a Build can close at 0/11. The steward now prints that on every run.
