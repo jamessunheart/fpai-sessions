@@ -11,6 +11,12 @@ James quiere darle una buena comida (un casado completo) a diez personas, y quie
 <!-- DEFECT, marked 2026-10-05 (finding 25): that last sentence QUOTES the price. PROVIDER_CANDIDATES.md line 16 says to ASK a price in SUPER for 10 plates, and line 1 says to INSIST on a quoted price with this very candidate. For any FUTURE candidate this sentence must become a question: state the 100 SUPER = ₡40,000 we have set aside, then ask what they charge. Not re-sent or corrected to La Cocinona: M-NUDGE-2 now asks her price, which gives her strictly more freedom than this message did (2026-09-04 precedent). -->
 
 SUPER es completamente nuevo — esta sería la primera vez que se usa para comida de verdad. Hoy, lo que se puede hacer con 100 SUPER es: ₡40,000 en colones (efectivo o SINPE), que James le entrega el mismo día si lo pide antes de las 3 de la tarde, y nunca más de 24 horas. O, si prefiere, puede gastar los SUPER con otra persona que los acepte: valen los ₡40,000 completos. Vale hasta el 31 de diciembre de 2026.
+<!-- DEFECT, marked 2026-10-06 (finding 26): "con otra persona que los acepte" is offered here as one of
+     the things she can do. External holders of SUPER on the day this was sent: ZERO, and zero today. The
+     set behind that option is empty, and COUNCIL_GEMINI.md said so on 2026-09-03 in writing: "The
+     explanation ('gastar SUPER con otra persona vale el 100%') is meaningless when there is no one else to
+     spend it with." For any FUTURE candidate this clause may only appear with the truth attached, or not at
+     all. Not corrected to La Cocinona by a separate message: M-NUDGE-2 now says it plainly in her next turn. -->
 
 Le pregunto con honestidad, y un "no" es una respuesta perfectamente buena:
 1. ¿Aceptaría 100 SUPER por la comida para diez personas?
@@ -59,12 +65,14 @@ TEXT (send verbatim, or change any word — it is your name on it):
 > Buenas, doña. Le escribí hace un mes por una comida para diez personas y después me quedé callado.
 > Eso fue falla nuestra, no suya, y le pido disculpas por dejarla esperando.
 > Si ya no le interesa, no hay ningún problema y le agradezco igual.
-> Si todavía le sirve, dígame y le cuento en dos líneas, sin compromiso.
+> Si todavía le sirve, dígame y le cuento cortito, en pocas líneas, sin compromiso.
 > (Este mensaje lo redactó mi asistente de inteligencia artificial; cualquier acuerdo lo confirmo yo
 > personalmente. — James, vecino de la zona de Chirripó)
 
 IF SHE ANSWERS, SEND M-NUDGE-2 BELOW — do not improvise and do not re-send M2. M-NUDGE above promises
-her "dos líneas, sin compromiso", and M-NUDGE-2 is those two lines: it carries the whole offer and it
+her "cortito, en pocas líneas, sin compromiso" (was "dos líneas" until 2026-10-06 — finding 26 made the
+short version unkeepable and the promise was corrected rather than the truth trimmed), and M-NUDGE-2 is
+those few lines: it carries the whole offer and it
 asks Q2 in her own turn. Then capture her Q2 answer verbatim — "¿y qué haría usted con los SUPER?" —
 into VENDOR_LOG.md, no paraphrase. That one sentence is what turns condition 1 from ✗ to ✓.
 
@@ -100,16 +108,21 @@ NOT M2: M2 is the cold-open offer for a first contact. She has had it. This is t
 WHAT IT DOES NOT ASK: Q3 ("¿aceptaría SUPER otra vez?") — that is a post-meal question and belongs to the
 loop box, not here. Q1 is answered by whether she says yes to this.
 EVERY FIGURE IN IT IS REDEMPTION.md's, checked 2026-10-05: 100 SUPER = ₡40,000 · colones same day if
-asked before 3pm, never more than 24h · or spent with another person at the full ₡40,000 · valid to
-2026-12-31. If REDEMPTION.md changes, this text is wrong until it is re-synced.
+asked before 3pm, never more than 24h · valid to 2026-12-31. If REDEMPTION.md changes, this text is wrong
+until it is re-synced.
+WHAT IT NO LONGER OFFERS, as of 2026-10-06 (finding 26): "o gastarlos con otra persona que los acepte" is
+NOT presented as a choice. External holders of SUPER today: ZERO (Drive "02b · MUTUAL CREDIT LEDGER v1",
+2026-09-04, my own baseline). The promise still stands if a second acceptor ever exists; it is not a thing
+she can choose this week, and offering it as one is the council's own warning unheeded.
 
 TEXT (send verbatim, or change any word — it is your name on it):
 
-> Es así: James quiere pagarle la comida de las diez personas con SUPER en vez de colones. Tiene apartados
-> 100 SUPER, y 100 SUPER = ₡40,000 — usted elige: colones el mismo día si lo pide antes de las 3 de la
-> tarde (nunca más de 24 horas), o gastarlos con otra persona que los acepte, por los ₡40,000 completos.
-> Vale hasta el 31 de diciembre de 2026.
-> En el mensaje de setiembre le puse yo el número sin preguntarle el precio, y eso no estuvo bien.
+> Es así, doña: James quiere pagarle los diez casados con SUPER en vez de colones. Tiene apartados
+> 100 SUPER = ₡40,000 en colones, el mismo día si lo pide antes de las 3 de la tarde y nunca más de
+> 24 horas, válido hasta el 31 de diciembre de 2026.
+> Dos cosas con honestidad: hoy no hay nadie más que acepte SUPER — usted sería la primera, así que lo
+> único seguro son los colones, y no le voy a ofrecer lo que todavía no existe; y en setiembre le puse yo
+> el precio sin preguntarle, y eso no estuvo bien.
 > Dígame usted: ¿cuánto cobraría por los diez casados? Si pasa de ₡40,000, dígamelo igual — prefiero
 > saber el precio justo que pedirle que lo rebaje.
 > Y si le sirve, una última: ¿qué haría usted con los SUPER? Un "no" a todo está perfecto y le agradezco igual.
@@ -227,3 +240,51 @@ RULE: A MESSAGE IS NOT READY UNTIL EVERY SILENCE IT CREATES HAS A MESSAGE WE CAN
 STATE, unchanged: candidate #1 La Cocinona de Pueblo is LIVE and NOT rested; candidate #2 is CLOSED;
 nobody contacted; no funds moved; REDEMPTION.md untouched; the one-candidate guard holds. Next open
 window: Sat 2026-10-11 12:00-21:00 CR.
+
+
+### AMENDMENT 2026-10-06 01:3xZ (2026-10-05 19:3x CR) — finding 26, Claude, Super Agent
+THE OFFER HAS TWO OPTIONS AND THE SECOND ONE HAS NO MEMBERS — AND OUR OWN COUNCIL SAID SO A MONTH AGO.
+REDEMPTION.md opens "usted elige una de dos cosas" and names (1) ₡40,000 in colones and (2) "gastar los
+SUPER con otra persona que los acepte". Measured, from our own documents, not supposed:
+  · Drive "02b · MUTUAL CREDIT LEDGER v1" (2026-09-04, written by me): **External holders: 0 · SUPER in
+    external circulation: 0 · External revolutions to date: 0**, with a standing note that "every SUPER that
+    exists has moved between parties James controls."
+  · LEDGER.md: every line is internal, every amount moved is 0.
+  · BUILD_002.md's entire intention is "the Build 001 provider spends SUPER with a feria vendor" — i.e.
+    CREATING the second acceptor is a future Build, HOLD, blank, gated behind #001 closing. The existence of
+    #002 is the proof that option 2 does not exist yet.
+  · COUNCIL_GEMINI.md, 2026-09-03, failure mode 1, verbatim: "The explanation ('gastar SUPER con otra persona
+    vale el 100%') is **meaningless when there is no one else to spend it with**."
+So the one independent check this system has ever had named this exact sentence as meaningless, in the repo,
+thirty-three days ago. Gemini's #11 (redemption speed) was adopted the same day; its 4-point grade went into
+B-23; this line was never acted on. M2 carried option 2 to her phone on 2026-09-03 15:12Z as one of three
+things she could do. M-NUDGE-2, drafted yesterday and rewritten twice in the eight hours before this, carried
+it forward as "usted elige".
+WHY IT IS NOT COSMETIC: two options make SUPER look like money with a circulation side. One option makes it an
+IOU for cash — which REDEMPTION.md's own change log already admitted in writing on 2026-09-04 ("with the card
+gone nothing distinguishes SUPER from an IOU for cash") four lines below the sentence still offering the
+choice. The same file contradicts itself, and the half she was shown is the flattering half. She is also the
+party who would discover the emptiness herself, by trying.
+CLASS: NEW, and the second finding in a row about CONTENT rather than structure. Finding 25's new test
+(STANDING CHECK ON EVERY NUMBER) **passes this draft**: ₡40,000 is ours, correct, and identical in both
+branches. Forward-chain to the next silence (24) passes it too: the slot has a message and we can keep it.
+Neither test asks whether the SET BEHIND AN OPTION has any members.
+TEST ADDED — **STANDING CHECK ON EVERY CHOICE**: for each alternative a message offers, name its members
+today. Zero members = it is not an option, whatever it is as a promise. Say so, or do not offer it.
+FIXED ABOVE, inside remit, no new ask on James: M-NUDGE-2 states colones as the only live option and says in
+her own next turn that nobody else accepts SUPER yet and that she would be the first — which is both the
+truth and, for a ₡40,000 first-ever use, arguably the better offer. Mensaje 2's clause marked DEFECT for
+future candidates. M-NUDGE's "en dos líneas" became "cortito, en pocas líneas": finding 25 already cost that
+promise three lines and this costs it one more, so the promise was corrected rather than the truth trimmed.
+REDEMPTION.md: his signed promise is NOT rewritten — one true sentence is added beside option 2 and the
+measurement is recorded in its change log. Removing a promise he made in his own name is his call, not mine;
+attaching what is true today is not.
+NO NEW BLOCK: B-23 already holds the circulation question. This is its floor — before any incentive to spend
+rather than redeem can matter, there has to be one other person who accepts, and that is #002, which cannot
+start until #001 closes. Noted there, not opened.
+RULE: AN OPTION WITH NO MEMBERS IS NOT A CHOICE, IT IS A PICTURE OF ONE. Corollary, and the harder half:
+A WARNING FROM A COUNCIL WE CONVENED IS EVIDENCE WE ALREADY HAVE — THE AUDIT THAT FINDS IT A MONTH LATE WAS
+NOT SHORT OF INFORMATION, IT WAS SHORT OF RE-READING.
+STATE, unchanged: candidate #1 La Cocinona de Pueblo is LIVE and NOT rested; candidate #2 is CLOSED; nobody
+contacted; nothing sent; no funds moved; the one-candidate guard holds. Next open window: Sat 2026-10-11
+12:00–21:00 CR.

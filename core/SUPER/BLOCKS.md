@@ -332,5 +332,17 @@ steward that grows the director's Card to unblock its own gate has converted sup
 ALSO BUNDLED, machine-side only and already done: TEMPLATE_BUILD_CARD.md still has no pass/fail section, so
 every new Build is born ungradeable (#002 already is) — adopt → the section goes into the template; strike
 → it comes out of #001.
-Related: finding 17 in NBM.md · COUNCIL_GEMINI.md · REDEMPTION.md change log 2026-09-04.
-Signed: Claude, Super Agent, 2026-10-04 (bundled cycle 19).
+NOTED 2026-10-05 cycle 26 (finding 26) — THE FLOOR UNDER THIS WHOLE BLOCK, and not a new ask: there is no
+second acceptor of SUPER at all. External holders 0, external circulation 0, external revolutions 0 (Drive
+"02b · MUTUAL CREDIT LEDGER v1", 2026-09-04). So R is not merely unincentivized, it is unreachable: the
+alternative to redeeming has nobody on the other side of it, and creating that somebody IS Build #002, which
+cannot start until #001 closes. A spend premium restored today would price a transaction that cannot occur.
+This does not change the branches above — it orders them: branch (2), accept R=1 for #001 and say so out
+loud, is the only branch that describes the world as it is this month. Separately and already fixed inside
+remit: REDEMPTION.md offered "gastar los SUPER con otra persona que los acepte" as one of two CHOICES, and
+COUNCIL_GEMINI.md called that explanation "meaningless when there is no one else to spend it with" on
+2026-09-03. The promise is untouched; one true sentence is attached beside it and M-NUDGE-2 no longer offers
+it as an option.
+Related: finding 17 in NBM.md · finding 26 in NBM.md · COUNCIL_GEMINI.md · REDEMPTION.md change log
+2026-09-04 and 2026-10-05.
+Signed: Claude, Super Agent, 2026-10-04 (bundled cycle 19; floor noted cycle 26, 2026-10-05).

@@ -125,3 +125,21 @@ redemption terms — and asks her what she would charge for the ten casados, say
 marked DEFECT for future candidates. NO correction message is owed or sent for the M2 already delivered:
 asking her price gives her strictly more freedom than telling her it, so nothing she was offered got worse
 (2026-09-04 precedent). Nothing sent this cycle; she has not been contacted since 2026-09-03.
+
+[2026-10-06T01:35Z · La Cocinona de Pueblo (50663626524) · agent note, Claude, Super Agent]
+FINDING 26 — we offered her a choice whose second option has nobody in it, and our own council had already
+said so. REDEMPTION.md says "usted elige una de dos cosas": ₡40,000 in colones, OR spend the SUPER with
+another person who accepts them. Measured from our own documents: external holders of SUPER = 0, external
+circulation = 0, external revolutions = 0 (Drive "02b · MUTUAL CREDIT LEDGER v1", 2026-09-04 baseline);
+LEDGER.md is entirely internal with every amount moved 0; and BUILD_002's whole intention is to CREATE a
+second acceptor, on HOLD behind #001. COUNCIL_GEMINI.md, 2026-09-03, verbatim: "The explanation ('gastar
+SUPER con otra persona vale el 100%') is meaningless when there is no one else to spend it with." That line
+sat in the repo 33 days while M2 carried the option to her phone (2026-09-03T15:12Z, as one of three things
+she could do) and while M-NUDGE-2 was drafted and twice rewritten carrying it forward as "usted elige".
+Action taken, nothing sent: M-NUDGE-2 now gives colones as the only live option and tells her plainly, in her
+own next turn, that nobody else accepts SUPER yet and that she would be the first. Mensaje 2's clause is
+marked DEFECT for future candidates. REDEMPTION.md's promise is NOT rewritten — one sentence of what is true
+today is attached beside option 2 and the measurement is in its change log; striking option 2 is James's
+word, not mine. NO separate correction message is owed or sent: telling her the truth in the next turn gives
+her strictly more than a standalone correction, same precedent as 2026-09-04 and finding 25.
+She has not been contacted since 2026-09-03. Candidate #1 LIVE and not rested; no funds moved.
