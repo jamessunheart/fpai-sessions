@@ -510,3 +510,20 @@ WAITING FOR.
 | B-23 | **OPEN — JAMES** (three bundled questions on circulation incentive / R_co / the 4-point grade). |
 | B-24 | **OPEN — JAMES ONLY** (what happens to unredeemed SUPER on 2026-12-31). |
 | B-25 | **OPEN — JAMES** · this is **M-NUDGE**, given an id for the first time so a register can see it: one forward of DRAFT_whatsapp_la_cocinona.md inside her open hours (next: **Sat 2026-10-10 12:00–21:00 CR**, then Sun 2026-10-11 09:00–20:00). Not a new ask — the same ask, now addressable. Standing rule from here: every ask gets a B- id the cycle it is opened. |
+
+## 2026-10-06 15:30 CR (cycle 32) — B-13 AMENDED, NO NEW BLOCK
+
+B-13 — status OPEN — now carries a FOURTH question, from finding 32: the SCOPE of
+`place_has_existing_currency: no`. The Card's place field, "Rivas, Perez Zeledon", names a district
+and a canton. At district scope the no-existing-currency claim still stands; at canton scope it is
+FALSE — Bitcoin Jungle lists Platanillo and Tinamaste, both in Baru district of Perez Zeledon
+canton, as active communities. Three answers, James's to pick: (a) the claim means DISTRICT scope —
+write that into the Card with the evidence and the date (my signed position, and it is a loosening
+decided by the party the gate constrains, so it is not mine to make); (b) the claim means CANTON
+scope — then condition 3 is false in the world and #001 is sited inside an existing circular
+economy, which has to be said out loud rather than quietly carried; (c) re-site the Build, which
+costs 33 days and the only provider who ever replied. Not an option: enforcing a value whose scope
+no document names.
+
+No new block was opened for this. It is the same decision B-13 already holds — what #001 IS and how
+it is graded — at one more depth.

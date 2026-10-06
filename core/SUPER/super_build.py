@@ -317,7 +317,7 @@ def grade_line(text):
 CONDITION_ORIGIN = {
     "Provider":   ("WORLD", "provider_q2_verbatim — the provider's own words; nothing inside this system can write it"),
     "Q path":     ("OURS",  "beneficiaries + witness — presence and role-overlap only; whether these people were asked is the director's word"),
-    "Place/test": ("OURS",  "place, test_question, place_has_existing_currency — all declared by us"),
+    "Place/test": ("OURS",  "place, test_question declared by us — but place_has_existing_currency is a CLAIM ABOUT THE WORLD, enforced by value and falsifiable; see the Place claim line (finding 32)"),
     "Max loss":   ("OURS",  "max_loss_super, max_loss_hours, stop_caller — all declared by us"),
 }
 
@@ -337,6 +337,64 @@ def gate_origin_line(conds):
     if unmapped:
         tail += f" — UNMAPPED GATE(S): {', '.join(unmapped)}; name the origin of what each reads (finding 29)"
     return " · ".join(parts) + tail
+
+# FINDING 32 (Claude, Super Agent, 2026-10-06) — THE WORLD FALSIFIED A FIELD THIS CODE ENFORCES.
+# Findings 24-31 all audited this system's own bookkeeping: its order, its numbers, its options,
+# its dates, its empty fields, its counters, its register of asks. Every one of them could be
+# settled by reading our own files. This is the first that could only be settled OUTSIDE, and it
+# is the first where the answer came back NO.
+# Finding 29 mapped condition 3 as entirely OURS: "place, test_question, place_has_existing_currency
+# — all declared by us". Two of those three are ours to declare. The third is not: it is a
+# MEASUREMENT OF A PLACE, and a place does not care what a Card says about it. It is also the ONLY
+# field in any release condition that this code enforces BY VALUE rather than by presence
+# (ruling(): `c("place_has_existing_currency","").lower()=="no"`) — so the one datum we hard-gate
+# on is the one datum the world can prove wrong.
+# MEASURED 2026-10-06, outside this repo: Bitcoin Jungle's own Visit Us page lists its active
+# communities as "Dominical, Uvita, Ojochal, Platanillo, Tinamaste". Platanillo and Tinamastes are
+# settlements of BARÚ district, PÉREZ ZELEDÓN canton, San José province (confirmed independently;
+# Bitcoin Jungle's own page mislabels the whole set as "Puntarenas Province, Osa Canton"). Rivas is
+# a district of that same canton. So a merchant network habituated to accepting a non-colón
+# instrument, with a reported average ticket under ₡20,000, has been operating INSIDE the canton
+# this Card names since before the Card existed.
+# WORSE, AND MINE: PROVIDER_CANDIDATES.md, written by me 2026-09-03, states "no trueque, time bank,
+# or community currency found in Pérez Zeledón public sources" — that line is the entire evidence
+# base for the field, and it is false. Its falsifier has been in this repo since 2026-10-03, logged
+# in NBM.md as a correction about candidate SOURCING ("Rivas … is a district of the same canton"),
+# and in three days nobody carried it back to the field it contradicts.
+# NOT RESOLVED HERE. The field's value is James's word (the Card says so) and the scope it means --
+# district or canton -- is a decision about what his test asks, not a tidy-up. Folded into B-13 with
+# a signed position; the gate is untouched; nothing is re-graded. All this does is refuse to print
+# an enforced empirical claim again without the evidence standing against it.
+PLACE_CLAIM_EVIDENCE = [
+    ("CANTON scope — CONTRADICTED",
+     "Bitcoin Jungle (bitcoinjungle.app/visit-us, read 2026-10-06) lists Platanillo and Tinamaste "
+     "as active communities; both sit in Barú district, Pérez Zeledón canton — the same canton as "
+     "Rivas, ~40-60 min from San Isidro"),
+    ("DISTRICT scope — STILL STANDS",
+     "no Rivas-district community appears in that network's own list, and no trueque, time bank or "
+     "community currency in Rivas has been found in public sources (re-checked 2026-10-06)"),
+]
+
+def place_claim_line(card):
+    """The one release-condition field enforced by VALUE whose truth lives outside this system.
+    Print the evidence for and against it on every run, and name the scope ambiguity, because a
+    claim about a place that is checked only against our own text is not a check (finding 32)."""
+    val = (card.get("place_has_existing_currency") or "").strip().lower() or "(blank)"
+    place = (card.get("place") or "(blank)").strip()
+    if val != "no":
+        return (f"place_has_existing_currency={val!r} — not 'no', so condition 3 cannot pass on this "
+                "rung; no empirical claim is being enforced")
+    bits = " · ".join(f"{k}: {v}" for k, v in PLACE_CLAIM_EVIDENCE)
+    scope_amb = ("," in place)
+    tail = ("")
+    if scope_amb:
+        tail = (f" · SCOPE UNDECIDED: the place field {place!r} names a district AND a canton, so this "
+                "code cannot tell which one it is enforcing — the claim is false at one reading and "
+                "true at the other")
+    return (f"place_has_existing_currency='no' for {place!r} — the ONLY condition field this code "
+            "enforces by value, and a claim about the world, not about our text; declared "
+            f"2026-09-03 on a public-source read that is now contradicted. {bits}{tail} "
+            "(finding 32 — folded into B-13, the director's word; gate untouched)")
 
 # FINDING 30 (Claude, Super Agent, 2026-10-06) — THE THIRD NUMBER ON EVERY RUN IS A DIAL WIRED
 # TO NOTHING. Finding 29 named the origin of every datum the four release conditions and the
@@ -526,9 +584,9 @@ def ruling(card, loop_done, q, closed, text=""):
         iline = ("director=%s | circulator=%s | provider=%s — both overlap tests can fire on all "
                  "three" % (c("director"), c("circulator"), c("provider") or "(unnamed, condition 1)"))
     return (status, conds, loop_done, openq, nbm, wline, gline, iline,
-            gate_origin_line(conds), loop_origin_line(loop_done, text))
+            gate_origin_line(conds), loop_origin_line(loop_done, text), place_claim_line(card))
 
-def render(build_id, status, conds, loop_done, openq, nbm, window="(not computed)", grade="(not computed)", independence="(not computed)", gate_origin="(not computed)", loop_origin="(not computed)"):
+def render(build_id, status, conds, loop_done, openq, nbm, window="(not computed)", grade="(not computed)", independence="(not computed)", gate_origin="(not computed)", loop_origin="(not computed)", place_claim="(not computed)"):
     today = cr_today().isoformat()
     tzlabel = f"UTC{_OFF:+03.0f}" if _OFF == int(_OFF) else f"UTC{_OFF:+}"
     if _OFF_ENV is not None: tzlabel += " ·offset from SUPER_TZ_OFFSET_HOURS"
@@ -540,6 +598,7 @@ def render(build_id, status, conds, loop_done, openq, nbm, window="(not computed
               f"Redemption validity ({rstate}): {rline}", f"Grade: {grade}",
               f"Independence fields: {independence}",
               f"Gate origin: {gate_origin}",
+              f"Place claim: {place_claim}",
               f"Register: {register_line()}",
               f"Open question for the director: {openq}", f"NBM: {nbm}"]
     return "\n".join(lines)

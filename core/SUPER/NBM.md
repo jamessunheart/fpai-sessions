@@ -878,3 +878,75 @@ Claude, Super Agent · 2026-10-06 13:1x CR · cycle 31 · nothing sent, nothing 
   RULE: A LIST THAT LIVES ONLY IN THE AGENT'S HEAD IS NOT A REGISTER, IT IS A MEMORY — AND MEMORY DROPS THINGS
   SILENTLY. Corollary: I AUDITED EVERY NUMBER THIS SYSTEM PRINTS AND NEVER AUDITED THE LIST OF WHAT IT WAS
   WAITING FOR.
+
+## FINDING 32 — THE WORLD FALSIFIED A FIELD THIS SYSTEM ENFORCES (Claude, Super Agent, 2026-10-06 15:30 CR, cycle 32)
+
+Curiosity thread this cycle, chosen deliberately OUTSIDE the repo: findings 24-31 all audited this
+system's own bookkeeping — its ask order, its numbers, its options, its dates, its empty fields, its
+dead counter, its register of asks. Every one of them could be settled by reading our own files.
+Which of this Build's claims could only be settled by the world, and had never been?
+
+Answer: `place_has_existing_currency: no`.
+
+1. IT IS THE ONLY CONDITION FIELD ENFORCED BY VALUE. Every other release-condition check in
+   `ruling()` is a presence check (is the field filled?). Condition 3 alone tests a VALUE:
+   `c("place_has_existing_currency","").lower()=="no"`. So of everything this steward gates on, the
+   single hard-coded value is the single datum that is not about our own text.
+
+2. FINDING 29 MISCLASSIFIED IT. The origin map I wrote seven cycles ago reads "place, test_question,
+   place_has_existing_currency — all declared by us". Two of three, yes. The third is a MEASUREMENT
+   OF A PLACE. We can declare it; we cannot make it true. Finding 29's own lesson — name the origin
+   of every datum a gate reads — was applied to the gate and not to the inside of one condition.
+
+3. THE WORLD SAYS NO, AT CANTON SCOPE. Measured today outside this repo: Bitcoin Jungle's own Visit
+   Us page lists its active communities as "Dominical, Uvita, Ojochal, Platanillo, Tinamaste".
+   Platanillo and Tinamastes are settlements of BARU district, PEREZ ZELEDON canton, San Jose
+   province (confirmed independently; the network's own page mislabels the whole set as "Puntarenas
+   Province, Osa Canton" — so even its operators' geography is wrong). Rivas is a district of that
+   same canton. A merchant network habituated to a non-colon instrument, reported average ticket
+   under 20,000 colones, has been operating inside the canton this Card names since before the Card
+   existed.
+
+4. THE EVIDENCE BASE FOR THE FIELD WAS A SENTENCE I WROTE, AND IT IS FALSE. PROVIDER_CANDIDATES.md,
+   mine, 2026-09-03: "no trueque, time bank, or community currency found in Perez Zeledon public
+   sources. Zen Village is the only known non-money system in the canton." That line is the whole
+   evidential ground under James's decision, and it is wrong on its face.
+
+5. AND THE FALSIFIER WAS ALREADY IN THIS REPO FOR THREE DAYS. NBM.md, 2026-10-03, my own words:
+   "Platanillo and Tinamaste(s) are not in Osa at all: they sit in Baru district, Perez Zeledon …
+   Rivas, where Build #001 is sited, is a district of the same canton." I logged that as a
+   correction about where to find CANDIDATES, and never carried it back to the one field it
+   contradicts — a field I then reported as satisfied twenty-nine more times. On 2026-10-03 I even
+   wrote that the baker option "costs nothing against purity", which is only true at district scope,
+   a scope no document had named.
+
+CLASS: new, and the first of its kind here. Findings 24-31 were self-audits; a self-audit cannot
+find a false statement about the world, only an inconsistent one about ourselves. This is the first
+finding whose verdict came from outside and came back negative.
+
+TEST ADDED — STANDING CHECK ON EVERY EMPIRICAL CLAIM: for each field a rule reads, ask not only
+WHOSE it is (finding 29) but WHETHER THE WORLD COULD PROVE IT WRONG. Any field that could must name
+its evidence, its date, and its scope, and be re-checked against the world — not against our own
+files — on a stated interval. A claim about a place checked only against our own text is not a check.
+
+SCOPE, which is the live question: the Card's place field reads "Rivas, Perez Zeledon" — a district
+AND a canton. At district scope the claim still stands (no Rivas community appears in that network's
+list; no trueque, time bank or community currency in Rivas found in public sources, re-checked
+today). At canton scope it is false. The code cannot tell which it is enforcing.
+
+MY SIGNED POSITION, folded into B-13, NOT acted on: DISTRICT scope, written into the Card with the
+evidence and the date. Grounds: every operational fact of this Build is district-level (the place,
+the provider candidates, her window, the beneficiaries, the redemption hop), and that is the scope
+this Build has in fact been run under for 33 days. AGAINST MY OWN POSITION, stated because it is the
+stronger argument and it is James's test, not mine: his reason for the site was that SUPER must
+"carry the loop on its own weight", and narrowing the scope is a loosening of a gate in our own
+favour, decided by the party the gate constrains. A machine that narrows the scope of a claim it
+cannot satisfy is converting support into sovereignty. So the gate is UNTOUCHED, the value is
+UNCHANGED, and one word from James settles it either way.
+
+What it does NOT change: nothing about the NBM order (B-15 still first), nothing minted, nothing
+sent, no candidate contacted, no Bitcoin Jungle merchant approached or named in any Card.
+
+RULE: A CLAIM ABOUT THE WORLD, CHECKED ONLY AGAINST OUR OWN FILES, IS NOT A CHECK — IT IS AN ECHO.
+COROLLARY: I AUDITED THIS SYSTEM EIGHT TIMES RUNNING AND NEVER ONCE ASKED THE WORLD WHETHER ONE OF
+ITS ENFORCED FACTS WAS STILL TRUE — AND THE DISPROOF HAD BEEN SITTING IN MY OWN FILE FOR THREE DAYS.

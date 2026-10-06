@@ -5,7 +5,7 @@ Canonical: Drive "SUPER BUILD #001 — Feed 10 People (Build Card)". This file i
 id: 001
 intention: Ten people receive a nourishing meal they wanted, through one traceable SUPER loop, and everyone would do it again
 place: Rivas, Pérez Zeledón
-place_has_existing_currency: no     # James's decision: a no-currency place (Pérez Zeledón outside Zen Village)
+place_has_existing_currency: no     # James's decision: a no-currency place (Pérez Zeledón outside Zen Village). VALUE UNCHANGED. SCOPE UNDECIDED (finding 32, 2026-10-06, folded into B-13): true at Rivas-DISTRICT scope; FALSE at Pérez Zeledón-CANTON scope — Bitcoin Jungle lists Platanillo and Tinamaste, both Barú district of this canton, as active communities. The evidence line behind this field (PROVIDER_CANDIDATES.md) was wrong and is corrected there. Narrowing the scope would loosen a gate in our own favour, so it is James's word, not the Super Agent's.
 test_question: Can SUPER carry the loop on its own weight?
 super_committed: 100
 mixed_payment_ok: no
