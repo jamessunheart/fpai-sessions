@@ -527,3 +527,55 @@ no document names.
 
 No new block was opened for this. It is the same decision B-13 already holds — what #001 IS and how
 it is graded — at one more depth.
+
+## 2026-10-06 17:1x CR (cycle 33) — NEW BLOCK B-26, AND B-25's WINDOW IS IN QUESTION
+
+### B-26 · OPEN · JAMES ONLY (one decision) · which number is La Cocinona de Pueblo?
+FINDING 33. Read today in a logged-out browser, the provider's OWN publications contradict two facts
+this Build has used since 2026-09-03, and both facts came from a single third-party aggregator page.
+
+- Her Instagram bio (@lacocinonadepueblo, 2,750 followers, read 2026-10-06), verbatim:
+  "... V:5-10pm, S:9am-9pm y D:9am-5pm 6339-9498 Pueblo..."
+- Her Google Business Profile (C8XV+M9 Rivas, 4.7, read 2026-10-06): "Cerrado · Abre a las 6 p.m.
+  del vie" · phone "6339 9498".
+- Her Facebook page, logged out: "This content isn't available right now" — NOT reachable.
+
+THE DECISION: the Card, VENDOR_LOG, all three drafted messages and M1/M2 as delivered all use
+**+506 6362 6524**. She publishes **6339-9498**. The only evidence that 6362-6524 is her is that a
+reply arrived on James's phone ~08:55 CR on 2026-09-03 — and that reply's content was never captured
+(pre-webhook, honestly logged as not-captured at the time). So nothing in this record establishes WHO
+replied, and condition 1 — the single world-sourced gate in this entire Build (finding 29) — asks for
+a verbatim Q2 from a number whose owner has never been verified against anything she publishes.
+
+Three answers, James's to pick:
+ (a) 6362-6524 IS hers — a second or family line. Then say so in the Card with the reason, and B-25
+     sends there as drafted.
+ (b) 6339-9498 is the business line — then B-25 is re-aimed, and the first message there must name
+     the earlier thread honestly rather than start clean (she may have had a stranger's offer in
+     September and we would be the second stranger).
+ (c) Ask, on the existing thread, whether we have the right place — cheapest in effort, and it
+     spends the one live thread on a question about ourselves rather than on her Q2.
+NOT an option: asking the Build's only world-sourced gate of a number whose owner is unestablished.
+This is James's because it decides WHO gets contacted. Not on the public HELP_WANTED board, same
+ground as B-15.
+
+### B-25 · still OPEN · the window may be WIDER than every artifact says
+Both of her own publications make **FRIDAY** an open day (IG 5-10pm; Google opens 6pm — they disagree
+on the open hour, agree on the day). Every artifact here, including B-25's own line above, says
+"closed Mon-Fri" and prices B-20's option (b) on a channel that is 2 days in 7.
+
+If her pages are right, the channel is 3 in 7 and the next window is **Fri 2026-10-09**, three days
+earlier than the Saturday this ask has named for six cycles. Her weekend hours differ too: Sat
+09:00-21:00 (we have been using 12:00-21:00, missing three opening hours) and Sun 09:00-17:00 (we
+have been using 09:00-20:00 — three hours after she closes).
+
+DELIBERATELY NOT REWRITTEN: the Tripadvisor reading is not struck and the window lines are not
+re-pointed at Friday, because a wider window is an ADDITION to when we may contact a person and it
+rests on the same unresolved identity question as B-26. Both readings are now printed on every
+steward run as "Counterparty facts:", with their sources and dates, so nobody has to remember which
+is which. One word from James settles both.
+
+| id | status roll call, this cycle |
+|---|---|
+| B-26 | **OPEN — JAMES ONLY** (which number is the provider: 6362-6524 or 6339-9498). |
+| B-25 | **OPEN — JAMES** (window in question: Fri 2026-10-09 per her own pages, or Sat 2026-10-10 per ours). |

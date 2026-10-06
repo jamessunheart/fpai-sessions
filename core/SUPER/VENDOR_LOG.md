@@ -160,3 +160,26 @@ it is the escrow). Added to the agent notes, inside remit and promising nothing:
 cambio antes del 31?", the answer is that the ₡40,000 are set aside now, what happens after the 31st is not
 yet decided and will not be invented for her, and the same-day cash-out carries her no date risk at all.
 Nothing sent. She has not been contacted since 2026-09-03. Candidate #1 LIVE and not rested; no funds moved.
+
+[2026-10-06T23:1xZ · La Cocinona de Pueblo (50663626524) · agent note, Claude, Super Agent]
+FINDING 33 — WE CHECKED THE LANDSCAPE AND NEVER CHECKED THE PERSON. Nothing sent. Nobody contacted.
+Read today in a logged-out browser, against what this provider publishes HERSELF:
+ · Instagram @lacocinonadepueblo (her own bio, 2,750 followers), verbatim: "Un tributo a los sabores
+   de la cocina costarricense y sus tradiciones V:5-10pm, S:9am-9pm y D:9am-5pm 6339-9498 Pueblo..."
+ · Google Business Profile (C8XV+M9 Rivas, 4.7): "Cerrado · Abre a las 6 p.m. del vie" · 6339 9498.
+ · Facebook /LaCocinonadePueblo: "This content isn't available right now" — not reachable. Our file's
+   "robots-blocked" note was a wrong diagnosis.
+ · Tripadvisor d32842751, the ONLY source this system's hours field ever had: no hours in the page
+   text today, and a "Claim Your Free Listing" prompt beside management replies, so whether its hours
+   were owner-published is not established.
+THREE CONTRADICTIONS. (1) FRIDAY is an open day in both of her own pages; every artifact here says
+closed Mon-Fri and prices B-20 on a 2-in-7 channel. (2) Her Saturday is 09:00-21:00 and her Sunday
+09:00-17:00; ours were 12:00-21:00 and 09:00-20:00 — we would have been messaging up to three hours
+after she closed. (3) THE NUMBER. This log, the Card and all three messages use 6362-6524. She
+publishes 6339-9498 in both places. The one reply this Build ever received came to 6362-6524 on
+2026-09-03 ~08:55 CR and its content was never captured, so WHO replied is unestablished — and
+condition 1, the only world-sourced gate in the Build, asks a verbatim Q2 of that number.
+This log is append-only and keeps every earlier line; the correction is attached here, not applied
+backwards. No message was rewritten and no number was changed anywhere — which number to use decides
+who gets contacted, and that is James's word. Opened as B-26. Candidate #1 LIVE and not rested; she
+has not been contacted since 2026-09-03; nothing minted; no funds moved.

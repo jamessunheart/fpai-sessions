@@ -396,6 +396,65 @@ def place_claim_line(card):
             f"2026-09-03 on a public-source read that is now contradicted. {bits}{tail} "
             "(finding 32 — folded into B-13, the director's word; gate untouched)")
 
+# FINDING 33 (Claude, Super Agent, 2026-10-06 ~17:00 CR) — WE CHECKED THE LANDSCAPE AND NEVER
+# CHECKED THE PERSON. Finding 32 asked whether an enforced claim about the world was still true.
+# The next question is the claims about the world that NO rule enforces: the hours, the channel and
+# the phone number of the one living provider. Every one of them entered this system from a single
+# third-party aggregator page (Tripadvisor) and was copied forward for 33 days. Measured today in a
+# logged-out browser against what the counterparty publishes HERSELF, and they disagree:
+#   · Instagram @lacocinonadepueblo (2,750 followers), her own bio, verbatim:
+#     "V:5-10pm, S:9am-9pm y D:9am-5pm 6339-9498 Pueblo..."
+#   · Google Business Profile (La Cocinona de Pueblo, C8XV+M9 Rivas, 4.7): "Cerrado · Abre a las
+#     6 p.m. del vie" · phone "6339 9498" · website facebook.com
+#   · Facebook /LaCocinonadePueblo, logged out: "This content isn't available right now" — NOT
+#     reachable. Our file's "robots-blocked to fetch" was the wrong diagnosis.
+#   · Tripadvisor, our only source for the hours field: no hours in the page text today, "Closed
+#     today", and a "Claim Your Free Listing" prompt beside management replies — so whether its
+#     hours were ever owner-published is not established.
+# THREE CONTRADICTIONS, rising cost:
+#  (1) FRIDAY IS AN OPEN DAY in both of her own publications. Every artifact here says "closed
+#      Mon-Fri" and "2 days in 7", and B-20's whole option-(b) cost is computed on that denominator.
+#      It also means the next window is FRI 2026-10-09, not Sat the 10th.
+#  (2) Saturday 9am-9pm (we say 12:00-21:00 — three opening hours we were not using) and Sunday
+#      9am-5pm (we say 09:00-20:00 — we would have been messaging three hours after close).
+#  (3) THE PHONE. The Card, VENDOR_LOG, all three drafted messages and M1/M2 AS DELIVERED use
+#      +506 6362 6524. Both of her own publications give 6339-9498. The only evidence that
+#      6362-6524 is her is "M1 reply RECEIVED on James phone ~08:55 CR" — content never captured
+#      (pre-webhook, honestly logged as not-captured). So NOTHING in this record establishes WHO
+#      replied, and condition 1 — the single world-sourced gate in the entire Build (finding 29) —
+#      asks for a verbatim Q2 from a number whose owner has never been verified.
+# NOT RESOLVED HERE. Changing the number we message, or adding a day to the send window, changes
+# WHO gets contacted; that is the director's word. Opened as B-26. The gate is untouched, no
+# message was altered, nobody was contacted, nothing was minted.
+COUNTERPARTY_FACTS = [
+    ("hours", "THIRD-PARTY-ONLY — CONTRADICTED",
+     "ours (Tripadvisor, read 2026-10-03): Sat 12:00-21:00, Sun 09:00-20:00, closed Mon-Fri · "
+     "HERS (Instagram bio + Google Business Profile, read 2026-10-06): Fri 17:00/18:00-22:00 "
+     "(the two disagree on the open hour), Sat 09:00-21:00, Sun 09:00-17:00 — so FRIDAY is an "
+     "open day this system has never counted, and the channel may be 3 days in 7, not 2"),
+    ("phone", "THIRD-PARTY-ONLY — CONTRADICTED",
+     "ours (in the Card, VENDOR_LOG and all three messages): +506 6362 6524 · HERS (Instagram bio "
+     "and Google Business Profile, read 2026-10-06): 6339-9498 · the one reply we ever received "
+     "came to 6362-6524 but its content was never captured, so who replied is unestablished (B-26)"),
+    ("second channel", "MEASURED 2026-10-06",
+     "Facebook /LaCocinonadePueblo is NOT reachable logged out ('This content isn't available right "
+     "now'); Instagram @lacocinonadepueblo IS live (2,750 followers). The earlier "
+     "'both robots-blocked' note was a wrong diagnosis, not a block"),
+]
+
+def counterparty_line():
+    """Every fact describing a person we intend to CONTACT names its source class and date, and a
+    third-party-only fact about a reachable counterparty is UNVERIFIED until it is cross-read
+    against what they publish themselves (finding 33). A fact about the landscape checked only
+    against our own files is an echo (finding 32); a fact about a PERSON is worse, because she
+    publishes the correction for free."""
+    if not COUNTERPARTY_FACTS:
+        return "NO FACTS MAPPED — no field describing a counterparty is being tracked at all"
+    bits = " · ".join(f"{k} [{cls}]: {detail}" for k, cls, detail in COUNTERPARTY_FACTS)
+    return ("candidate #1 La Cocinona de Pueblo — " + bits +
+            " · NOT RESOLVED BY THIS CODE: which number is hers, and whether Friday is added to the "
+            "send window, decide WHO gets contacted — the director's word (B-26)")
+
 # FINDING 30 (Claude, Super Agent, 2026-10-06) — THE THIRD NUMBER ON EVERY RUN IS A DIAL WIRED
 # TO NOTHING. Finding 29 named the origin of every datum the four release conditions and the
 # 4-point grade read. It skipped the one number printed between them: "Loop: n / 11". Measured:
@@ -600,6 +659,7 @@ def render(build_id, status, conds, loop_done, openq, nbm, window="(not computed
               f"Gate origin: {gate_origin}",
               f"Place claim: {place_claim}",
               f"Register: {register_line()}",
+              f"Counterparty facts: {counterparty_line()}",
               f"Open question for the director: {openq}", f"NBM: {nbm}"]
     return "\n".join(lines)
 

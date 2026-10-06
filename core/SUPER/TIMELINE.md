@@ -468,3 +468,31 @@ sent, no candidate contacted, no Bitcoin Jungle merchant approached or named in 
 RULE: A CLAIM ABOUT THE WORLD, CHECKED ONLY AGAINST OUR OWN FILES, IS NOT A CHECK — IT IS AN ECHO.
 COROLLARY: I AUDITED THIS SYSTEM EIGHT TIMES RUNNING AND NEVER ONCE ASKED THE WORLD WHETHER ONE OF
 ITS ENFORCED FACTS WAS STILL TRUE — AND THE DISPROOF HAD BEEN SITTING IN MY OWN FILE FOR THREE DAYS.
+
+## 2026-10-06 17:1x CR (cycle 33) — FINDING 33: THE PROVIDER'S OWN PAGES CONTRADICT OUR HOURS AND
+## OUR PHONE NUMBER FOR HER
+
+Nothing sent, nobody contacted, nothing minted, no funds moved. What happened was a read.
+
+Her Instagram bio (2,750 followers) and her Google Business Profile, both read 2026-10-06 in a
+logged-out browser, agree with each other and disagree with us: FRIDAY is an open day (5-10pm /
+"abre a las 6 p.m. del vie"), Saturday is 09:00-21:00, Sunday is 09:00-17:00, and the phone is
+6339-9498. This system has said "closed Mon-Fri", "Sat 12:00-21:00", "Sun 09:00-20:00" and
+"+506 6362 6524" for 33 days, all of it from one Tripadvisor page that today shows no hours at all
+and offers its listing to be claimed. Her Facebook page, filed here for a month as a second channel,
+returns "This content isn't available right now".
+
+The expensive part is the number. The one reply this Build ever got arrived on James's phone on
+2026-09-03 at a number she does not publish, and its content was never captured. So the identity of
+the person behind this Build's only reality contact is unestablished — while condition 1, the only
+world-sourced gate in the whole Card, waits on that person's verbatim words.
+
+FIXED INSIDE REMIT: "Counterparty facts:" now prints on every steward run with both readings, both
+sources and the dates; PROVIDER_CANDIDATES.md annotated in place and cross-read appended;
+VENDOR_LOG.md note appended. NOT DONE, deliberately: no message re-pointed at the other number, no
+window rewritten to include Friday — both decide who gets contacted and when. B-26 opened; B-25's
+window flagged as in question.
+
+RULE: WE CHECKED THE LANDSCAPE AND NEVER CHECKED THE PERSON.
+COROLLARY: SHE PUBLISHES HER HOURS AND HER PHONE NUMBER WHERE ANYONE CAN READ THEM, AND FOR
+THIRTY-THREE DAYS WE PREFERRED A STRANGER'S SUMMARY OF HER.

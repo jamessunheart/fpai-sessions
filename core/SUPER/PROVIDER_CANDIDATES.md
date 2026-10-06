@@ -1,7 +1,7 @@
 # SUPER BUILD #001 — Provider candidates (Pérez Zeledón)
 Found by the Super Agent 2026-09-03 from public sources. No one has been contacted. Ranked by likelihood of a REAL exchange (they can name a next use for SUPER), not convenience. Contacts exactly as publicly listed.
 
-1. La Cocinona de Pueblo — family soda, Pueblo Nuevo de Rivas. Mother cooks, father grows the organic produce. +506 6362 6524 · IG @lacocinonadepueblo. Why: vertically integrated family already trading within itself; obvious next hop for SUPER (labor, seed, neighbor's product). Risk: may treat a foreigner's 10-plate order as hospitality — insist on a quoted price in SUPER.
+1. La Cocinona de Pueblo — family soda, Pueblo Nuevo de Rivas. Mother cooks, father grows the organic produce. +506 6362 6524 [CONTRADICTED 2026-10-06, finding 33 — her OWN Instagram bio and Google Business Profile both publish 6339-9498; see COUNTERPARTY CROSS-READ below and B-26] · IG @lacocinonadepueblo (LIVE, 2,750 followers). Why: vertically integrated family already trading within itself; obvious next hop for SUPER (labor, seed, neighbor's product). Risk: may treat a foreigner's 10-plate order as hospitality — insist on a quoted price in SUPER.
 2. AFASIG — Feria del Agricultor de San Isidro (association, ~17 producers, weekly). No public phone; go in person. Why: one vendor accepts SUPER and spends it with another vendor at the same feria — the exact test. Risk: approach an individual vendor, not the board.
 3. Truchero Los Cocolisos — family trout farm + restaurant, San Gerardo de Rivas. +506 2742 5054 · FB /trucherolos.cocolisos. Why: real input costs, village of neighbors to spend with. Risk: tourist exposure; close to Chirripó — verify not inside the Zen Village system.
 4. Cafetería Antojos de Maíz — corn-based family cafeteria, La Bonita de Rivas. +506 2772 4381 · anacalderona2015@gmail.com · FB /antojosdemaiz. Why: formal business, cheap to scale to 10 plates. Risk: unknown attitude.
@@ -38,7 +38,7 @@ WhatsApp — the only provider channel this system owns (bot on 198, VENDOR_LOG 
 DRAFT_whatsapp_*, James's per-message send approval) — requires a mobile-capable number.
 Read this column BEFORE offering any candidate as a substitute for another.
 
-- MOBILE / WhatsApp-reachable: #1 6362 6524 · #5 8943-3355 · #10 8317-8140 · #11 8545-7475 ·
+- MOBILE / WhatsApp-reachable: #1 6362 6524 [and/or 6339-9498 — unresolved, finding 33 / B-26] · #5 8943-3355 · #10 8317-8140 · #11 8545-7475 ·
   #12 8806-1082 / 8633-4405 · #13 8389-5752 (also landline 2770-3097) · #14 6095-1707 ·
   #15 6322-8509 · #17 8466-8200
 - FIXED LINE ONLY — no channel this system can use: #3 2742 5054 · #4 2772 4381 ·
@@ -62,3 +62,43 @@ Also noted, not tasked: #4 holds an ICT Declaratoria Turistica. A formally decla
 non-colon instrument is a bookkeeping event with a paper trail (IVA/renta on a colon-valued permuta),
 not a family's judgement call — the cost of a YES is higher for #4 than for #1, channel aside.
 Nobody contacted. One-candidate guard intact.
+
+## COUNTERPARTY CROSS-READ (Claude, Super Agent · 2026-10-06 ~17:00 CR · finding 33)
+This file's facts about candidate #1 — hours, phone, second channel — all came from ONE third-party
+aggregator page and were carried for 33 days. Read today, logged out, against what she publishes HERSELF:
+
+- Instagram @lacocinonadepueblo (her own bio, 2,750 followers, read 2026-10-06), verbatim:
+  "Un tributo a los sabores de la cocina costarricense y sus tradiciones V:5-10pm, S:9am-9pm y
+  D:9am-5pm 6339-9498 Pueblo..." — plus link hub solo.to/lacocinonadepueblo ("50 años de tradición
+  familiar"), which carries no hours and no phone.
+- Google Business Profile (La Cocinona de Pueblo, C8XV+M9 Rivas, 4.7, read 2026-10-06):
+  "Cerrado · Abre a las 6 p.m. del vie" · phone "6339 9498" · website facebook.com.
+- Facebook /LaCocinonadePueblo, logged out, read 2026-10-06: "This content isn't available right now."
+  NOT REACHABLE. The earlier note that Facebook and Instagram were both "robots-blocked" was a wrong
+  diagnosis: Instagram reads fine in a browser, and Facebook is not blocked, it is unavailable.
+- Tripadvisor d32842751 (our only source for the hours field), read 2026-10-06: no hours anywhere in
+  the page text, "Closed today", and a "Claim Your Free Listing" prompt sitting beside management
+  replies — so whether its hours were ever owner-published is NOT established.
+
+THE THREE CONTRADICTIONS:
+1. FRIDAY. Both of her own publications make Friday an open day (IG 5-10pm; Google opens 6pm — they
+   disagree on the open hour, agree on the day). Every artifact here says "closed Mon-Fri" and prices
+   B-20's option (b) on a 2-in-7 channel. If her own pages are right the channel is 3 in 7, and the
+   next window is FRI 2026-10-09, three days earlier than the Saturday B-25 has carried for six cycles.
+2. WEEKEND HOURS. Hers: Sat 09:00-21:00 (ours 12:00-21:00 — three opening hours unused), Sun
+   09:00-17:00 (ours 09:00-20:00 — we would have been messaging up to three hours after close).
+3. THE PHONE, the costly one. 6362-6524 is in the Card, in VENDOR_LOG, in all three drafted messages
+   and in M1/M2 as delivered. She publishes 6339-9498 in both places. Our only evidence for
+   6362-6524 is "M1 reply RECEIVED on James phone ~08:55 CR" — content never captured (pre-webhook,
+   honestly logged). So who replied is UNESTABLISHED, and condition 1 (the Build's only world-sourced
+   gate, finding 29) asks a verbatim Q2 of a number whose owner we never verified.
+
+NOT RESOLVED HERE, and deliberately: which number is hers, and whether Friday joins the send window,
+decide WHO gets contacted. That is the director's word -> B-26. Nothing sent, nobody contacted, no
+message rewritten, no funds moved, no gate touched.
+
+STANDING CHECK ADDED — EVERY FACT ABOUT A COUNTERPARTY: any field describing a person or business we
+intend to contact (hours, channel, phone, address, price) names its source, whether that source is the
+counterparty's OWN publication or a third party, and the date it was read. A third-party-only fact
+about a reachable counterparty is UNVERIFIED and must be cross-read against what they publish before
+it governs a send. Now printed on every steward run as "Counterparty facts:".
