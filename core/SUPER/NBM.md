@@ -669,3 +669,70 @@ FIXED INSIDE REMIT, NO NEW ASK ON JAMES:
 Signed: Claude, Super Agent, 2026-10-05. Nothing sent, nothing minted, nobody contacted, no funds moved.
 State unchanged: candidate #1 LIVE and not rested, #2 CLOSED, one-candidate guard holds, REDEMPTION.md
 untouched, next open window Sat 2026-10-11 12:00–21:00 CR.
+
+---
+
+## 2026-10-06 07:0x CR · CYCLE 28 · FINDING 28 — THE EXCLUSION RULE THAT HAD NOTHING TO EXCLUDE
+Signed: Claude, Super Agent. Nothing sent, nothing minted, no funds moved. World unchanged since cycle 27.
+
+CURIOSITY THREAD THIS CYCLE: which field does a rule in this system depend on that no Card has ever filled?
+
+WHAT IS TRUE, measured in the code and the Cards:
+- `super_build.py` runs TWO independence tests, both built deliberately — the witness clash test
+  (finding 8) and `_benefic_role_clash` (finding 13). Both iterate the SAME role tuple:
+  `("director", "circulator", "provider")`. Their whole purpose is to stop a Build being graded by
+  a party to it, because the Card assigns Q and the Pass It On split to beneficiaries + witness.
+- `_samename(a, b)` returns False the instant `a` is blank (verified by running it: `_samename('','')`
+  is False, `_samename('','Ana')` is False).
+- `circulator:` was EMPTY in BUILD_001.md, in BUILD_002.md and in TEMPLATE_BUILD_CARD.md — every Card
+  that exists in this system, since 2026-09-03.
+- THEREFORE: for 33 days the circulator arm of both independence tests could not fire. The circulator
+  could have been the witness, or one of the ten beneficiaries, and the machine would have printed
+  "beneficiaries + witness named (… is not the director, circulator or provider)" — a sentence whose
+  third clause tested nothing.
+- WORSE, AND THIS IS THE PART THAT COULD HAVE REACHED THE LEDGER: `circulator` is NOT one of the four
+  release conditions. A Card can reach READY with it blank. `cmd_mint`'s ledger line read
+  `{card.get('circulator') or 'circulator'}` — so the first real mint would have written the literal
+  word "circulator" into the column where a party's NAME belongs, in an append-only ledger, permanently.
+  The same for the witness column. The only reason it never happened is that no Build ever reached mint.
+- AND the steward has been printing, on every run for a month, an instruction to the director naming a
+  role no document in the system defined: "name … a witness who is NOT the director, circulator or
+  provider."
+
+WHY THE EXISTING TESTS DID NOT CATCH IT — honest reading, four tests deep now:
+- Finding 24's FORWARD-CHAIN TO THE NEXT SILENCE walks the ACTS of a conversation; circulator is not an act.
+- Finding 25's CHECK ON EVERY NUMBER asks who set a figure; circulator is not a figure.
+- Finding 26's CHECK ON EVERY CHOICE asks whether an option has members; circulator is not an option.
+- Finding 27's CHECK ON EVERY DATE asks whether a date and its weekday agree; circulator is not a date.
+Every test so far audits something PRINTED. This one is about something NOT printed — a rule's silent
+dependency on an empty field. The class is finding 10's again (an artifact read as complete against a
+rule it never satisfied), one layer below the text.
+
+TEST ADDED — STANDING CHECK ON EVERY EXCLUSION: for every rule that excludes a role or a party, name the
+field that rule reads and confirm it is filled in every live Card. An exclusion against an empty field is
+not a safeguard, it is a sentence.
+
+SETTLED INSIDE REMIT this cycle (not escalated — a role nobody had named is not a decision James was
+withholding, and he has asked the Super Agent to settle what is inside its remit and keep moving):
+- `circulator: James Sunheart` written on BUILD_001.md and BUILD_002.md, with the reason in the Card:
+  the escrow is his, the promise is in his name, the WhatsApp line is his. The Super Agent is his
+  INSTRUMENT, not a party to the exchange — which is also what the governance rule requires ("humans
+  direct, AI builds/operates; AI must never quietly convert support into sovereignty"). Naming an AI as
+  circulator of record would have made an AI a party to a value exchange it also writes the evidence for.
+  One word from James changes it; the field is marked as mine, not his.
+- CONSEQUENCE, now machine-enforced rather than assumed: with James named, the witness clash test and the
+  beneficiary overlap test fire on him from BOTH sides (director AND circulator), which is exactly what
+  B-15 has always said in prose — "ten beneficiaries and a witness, none of them James."
+- `cmd_mint` now REFUSES to print a ledger line in which circulator or witness would appear as a role
+  word instead of a name, and says why. A placeholder in an append-only ledger is permanent.
+- `status` now prints an **Independence fields:** line on EVERY run — either the blank roles with the
+  statement that those rules test nothing, or the three names with the statement that the tests can fire.
+- TEMPLATE_BUILD_CARD.md (repo AND the published pack copy, per finding 22's distributed-copy rule) now
+  carries the warning in the field itself, so no future Build inherits the hole. The pack change is local
+  until B-17's `git push`.
+
+NO NEW BLOCK, deliberately. Nothing here needs James except one optional word, and cycle 25's precedent
+holds: do not hand the director a block for a thing the agent can settle and label.
+
+RULE: A RULE IS ONLY AS REAL AS THE FIELD IT READS. Corollary: FOUR CONSECUTIVE TESTS AUDITED WHAT THE
+SYSTEM SAYS; NONE AUDITED WHAT ITS SAFEGUARDS SILENTLY DEPEND ON.

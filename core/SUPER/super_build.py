@@ -84,6 +84,20 @@ def _samename(a, b):
 # ten community guests is not fatal, and a fragile split must not veto a real Card. The machine
 # names what it can see and hands the judgement to the director, as the witness line already does.
 # (Claude, 2026-10-04)
+# FINDING 28 (Claude, 2026-10-06) — AN EXCLUSION RULE IS ONLY AS REAL AS THE FIELD IT NAMES.
+# Two independence tests built by findings 8 and 13 — the witness clash above and
+# _benefic_role_clash below — both iterate ("director", "circulator", "provider"). _samename
+# returns False the moment its first argument is blank, and `circulator:` was EMPTY in every Card
+# that exists (BUILD_001, BUILD_002, the template). So for the whole life of this system the
+# circulator arm of both tests could not fire: a Build could be graded by the very party that
+# circulated it and no machine here would have said a word. The printed NBM told the director the
+# witness must not be "the director, circulator or provider" — naming a role no Card defined.
+# This function makes the hole visible on every status run instead of leaving it silent.
+def role_fields_blank(card):
+    """Role fields that the independence rules exclude but no Card names — the rules that
+    reference them are vacuous until these are filled."""
+    return [r for r in ("director", "circulator", "provider") if not filled(card.get(r))]
+
 def _benefic_role_clash(card):
     raw = str(card.get("beneficiaries") or "")
     toks = [x.strip() for x in re.split(r"[,;\n]| y | & | and ", raw) if x.strip()]
@@ -255,6 +269,10 @@ def ruling(card, loop_done, q, closed, text=""):
                  ". Not failed here (free text, and a household member among ten guests is not "
                  "fatal) — the director's word, named out loud instead of passing silently")
     conds.append(("Q path", ok2, why2))
+    # FINDING 28: name the exclusion fields that are empty, every run. Not a condition and not a
+    # failure — a statement of which independence rules currently test nothing. (Claude, 2026-10-06)
+    _blank_roles = role_fields_blank(card)
+
     # 3 place + test
     ok3 = filled(c("place")) and filled(c("test_question")) and c("place_has_existing_currency","").lower()=="no"
     conds.append(("Place/test", ok3, f"{c('place')} — {c('test_question')}" if ok3 else
@@ -323,9 +341,21 @@ def ruling(card, loop_done, q, closed, text=""):
         nbm = "One conversation with one candidate provider; record their Q2 answer verbatim"
     else:
         nbm = "Name the missing people/fields above"
-    return status, conds, loop_done, openq, nbm, wline, gline
+    # FINDING 28 (Claude, 2026-10-06): report the independence FIELDS every run, not just the
+    # independence RULES. An exclusion against an empty field can never fire.
+    if _blank_roles:
+        _lbl = [(r + " (already reported as condition 1)" if r == "provider" else r)
+                for r in _blank_roles]
+        iline = ("BLANK: " + ", ".join(_lbl) +
+                 " — the witness clash test and the beneficiary overlap test both exclude these "
+                 "roles, and _samename() is False against an empty field, so those rules test "
+                 "nothing until the Card names them (finding 28)")
+    else:
+        iline = ("director=%s | circulator=%s | provider=%s — both overlap tests can fire on all "
+                 "three" % (c("director"), c("circulator"), c("provider") or "(unnamed, condition 1)"))
+    return status, conds, loop_done, openq, nbm, wline, gline, iline
 
-def render(build_id, status, conds, loop_done, openq, nbm, window="(not computed)", grade="(not computed)"):
+def render(build_id, status, conds, loop_done, openq, nbm, window="(not computed)", grade="(not computed)", independence="(not computed)"):
     today = cr_today().isoformat()
     tzlabel = f"UTC{_OFF:+03.0f}" if _OFF == int(_OFF) else f"UTC{_OFF:+}"
     if _OFF_ENV is not None: tzlabel += " ·offset from SUPER_TZ_OFFSET_HOURS"
@@ -335,6 +365,7 @@ def render(build_id, status, conds, loop_done, openq, nbm, window="(not computed
     rstate, rline = redemption_expiry_line()
     lines += [f"Loop: {loop_done} / 11", f"Window: {window}",
               f"Redemption validity ({rstate}): {rline}", f"Grade: {grade}",
+              f"Independence fields: {independence}",
               f"Open question for the director: {openq}", f"NBM: {nbm}"]
     return "\n".join(lines)
 
@@ -501,6 +532,17 @@ def cmd_mint(build, amount):
               f"₡{amount*PEG_CRC:,} of backing would be required against a Card that risks "
               f"₡{ceiling*PEG_CRC:,}. The Card is the document of record: raise it there, in the "
               f"director's hand, and run this again."); return
+    # FINDING 28 (Claude, 2026-10-06): the ledger line below printed `card.get('circulator') or
+    # 'circulator'` — with the field blank, an APPEND-ONLY ledger would have recorded the literal
+    # word "circulator" in the column where a party's name goes, and the same for the witness
+    # column. A party is a person, not a role word. Refused rather than printed.
+    _ph = [r for r in ("circulator", "witness") if not filled(card.get(r))]
+    if _ph:
+        print(f"REFUSED — BUILD-{build}'s Card leaves {' and '.join(_ph)} blank, so this mint's "
+              f"ledger line would record the role word(s) {', '.join(repr(x) for x in _ph)} where a "
+              f"party's name belongs. LEDGER.md is append-only: a placeholder written there is "
+              f"permanent. Name them on the Card and run this again. (finding 28)")
+        return
     escrow_needed = amount * PEG_CRC
     over = [] if committed is None or amount <= committed else [
         f"NOTE — {amount} SUPER is MORE than the Card's super_committed ({committed}), though within "
@@ -513,7 +555,7 @@ def cmd_mint(build, amount):
         f"amount against the CARD only. Whether ₡{escrow_needed:,} is actually in the named escrow is not "
         f"readable from any file here; it is the director's word, and 100% backing is the whole promise.",
         f"Outstanding after mint: {minted - redeemed + amount} SUPER (escrow must cover ₡{(minted - redeemed + amount)*PEG_CRC:,})",
-        f"Ledger line: {cr_today()} | treasury | {card.get('circulator') or 'circulator'} | {amount} SUPER | mint for BUILD-{build} | {build} | {card.get('witness') or 'witness'}",
+        f"Ledger line: {cr_today()} | treasury | {card.get('circulator')} | {amount} SUPER | mint for BUILD-{build} | {build} | {card.get('witness')}",
     ], RIGHTS["mint"])
 
 def cmd_redeem(amount, who, build):

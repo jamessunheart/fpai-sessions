@@ -10,7 +10,7 @@ test_question: Can SUPER carry the loop on its own weight?
 super_committed: 100
 mixed_payment_ok: no
 director: James Sunheart
-circulator:
+circulator: James Sunheart              # settled by Claude 2026-10-06 (finding 28): the escrow, the promise and the WhatsApp line are his; the Super Agent acts as his instrument, not as a party to the exchange. One word from James changes it.
 provider:                         # candidates: PROVIDER_CANDIDATES.md (top: La Cocinona de Pueblo, Rivas)
 provider_q2_verbatim:
 beneficiaries:

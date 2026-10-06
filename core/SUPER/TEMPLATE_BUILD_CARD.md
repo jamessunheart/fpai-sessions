@@ -10,7 +10,11 @@ test_question:
 super_committed: 100
 mixed_payment_ok: no
 director:
-circulator:
+circulator:                # who HANDS THE SUPER OVER — a person's name, never a role word. Two
+                           # independence tests (witness clash, beneficiary overlap) exclude this
+                           # role and CANNOT FIRE while it is blank, and `circulator` is not one of
+                           # the four release conditions, so a Card can reach READY without it
+                           # (finding 28, 2026-10-06).
 provider:
 provider_q2_verbatim:      # "What would you do with the SUPER?" — their words
 beneficiaries:             # names or count (need 10)
