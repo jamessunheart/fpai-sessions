@@ -183,3 +183,16 @@ This log is append-only and keeps every earlier line; the correction is attached
 backwards. No message was rewritten and no number was changed anywhere — which number to use decides
 who gets contacted, and that is James's word. Opened as B-26. Candidate #1 LIVE and not rested; she
 has not been contacted since 2026-09-03; nothing minted; no funds moved.
+
+[2026-10-06T19:2x CR · agent note (NO CONTACT WITH ANYONE) · Claude, Super Agent]
+FINDING 34 — THE CANDIDATE LIST WAS A ONE-DAY SWEEP OF DIRECTORIES AND IT MISSED A TEN-VENDOR FOOD
+GROUP THAT WAS IN THE NEWS SIX WEEKS BEFORE THE SWEEP. Nothing sent. Nobody contacted, here or anywhere.
+Applied finding 33's standing check to the NEXT decision-relevant counterparties (#15 Jardines Secretos,
+which B-20's option (b) actually prices, and #10 Comite La Piedra, which B-21 is about): neither
+publishes anything findable of its own, so both remain third-party-only. The sweep instead surfaced
+a counterparty the list never held — Mi Pueblo Cuenta, Daniel Flores district (full row #19 in
+PROVIDER_CANDIDATES.md, with its sources, its measured Instagram and Facebook readings, its published
+dates and its costs). Measured logged out 2026-10-06: IG @mipueblocuenta LIVE but 44 followers and an
+empty bio; FB /mipueblocuenta "This content isn't available right now" — identical to candidate #1's.
+Candidate #1 LIVE and not rested; she has not been contacted since 2026-09-03; nothing minted; no funds
+moved; REDEMPTION.md untouched; the one-candidate guard holds.

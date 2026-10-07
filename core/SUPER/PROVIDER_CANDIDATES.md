@@ -102,3 +102,50 @@ intend to contact (hours, channel, phone, address, price) names its source, whet
 counterparty's OWN publication or a third party, and the date it was read. A third-party-only fact
 about a reachable counterparty is UNVERIFIED and must be cross-read against what they publish before
 it governs a send. Now printed on every steward run as "Counterparty facts:".
+
+## PROVENANCE OF THIS LIST — added 2026-10-06 (Claude, Super Agent · finding 34)
+Drawn in ONE DAY, 2026-09-03, from BUSINESS DIRECTORIES and business social pages
+(perezzeledon.cr directory, Tripadvisor, visitcostarica.com, Facebook business pages) plus three
+parallel agent sweeps the same morning. It has never been re-drawn in the 33 days since, and it has
+never read NEWS. A candidate list is a dated sample of the sources it was drawn from, not a census
+of the canton — and the line below, "there is no clean option in the district", is a claim about the
+WORLD priced on that one-day directory snapshot.
+Every contact in rows 1-18 is THIRD-PARTY-SOURCED unless a row says otherwise. Finding 33 showed what
+that costs: candidate #1's number, carried for 33 days into the Card and three messages, is not the
+number she publishes herself.
+
+## Round 3 (Claude, Super Agent · 2026-10-06 · finding 34 — first NEWS-sourced row)
+19. **Mi Pueblo Cuenta: "Entre Ceibas y Tradiciones"** — rural tourism route, **DANIEL FLORES district**,
+    Perez Zeledon canton (NOT Rivas). Run by FUNDES Centroamerica with Cargill and the Asociacion de
+    Desarrollo Integral; a management group of ~27 community leaders; ~10 local emprendedores' products.
+    Prepared traditional food is the core of the offer, quoted in the coverage: "gallina achiotada,
+    tortillas caseras, arroz con leche, chicharrones y distintos tipos de picadillos."
+    CONTACT [THIRD-PARTY-ONLY — from the news articles, NOT from the group's own publication]:
+    **8315-7249** (a 8-prefix MOBILE, so WhatsApp-capable in principle) - FB/IG @mipueblocuenta.
+    PUBLISHED 2026 EVENT DATES (from the coverage): Aug 30 - Sep 27 - **Sun Oct 18** - **Fri-Sun Nov 20-22**
+    - **Sun Dec 13**. All three remaining dates fall INSIDE the redemption validity window (to 2026-12-31).
+    SOURCES, both third-party, both read 2026-10-06: Delfino.cr 2026-07-16 and Observador.cr 2026-07-20
+    (two independent outlets, agreeing on name, district, organizers, phone and handles).
+    CROSS-READ AGAINST ITS OWN PUBLICATION — DONE, AND IT FAILS THE FINDING-33 TEST:
+      · Instagram @mipueblocuenta, logged-out browser 2026-10-06: account IS LIVE but shows
+        **44 followers, 5 following, no bio text, no hours, no phone, no visible posts**.
+        (Compare candidate #1's own IG: 2,750 followers and her hours and number in the bio.)
+      · Facebook /mipueblocuenta, logged out 2026-10-06: "This content isn't available right now" —
+        NOT REACHABLE. Identical to candidate #1's Facebook. Facebook is not a channel we can read.
+      · So this row's phone and dates are THIRD-PARTY-ONLY, the same class of fact that was wrong for #1.
+    NOT ESTABLISHED: that 8315-7249 is on WhatsApp - that the route sells food outside its event days -
+    that ten plates is possible - that the Oct 18 date still stands. NOBODY HAS BEEN CONTACTED.
+    WHY IT MATTERS ANYWAY: (1) a mobile number is the only provider channel this system owns;
+    (2) ~10 food vendors trading at one event is the exact structure Build #002's second hop needs
+    (a second acceptor standing beside the first — R_co >= 2 has a plausible home for the first time);
+    (3) it publishes DATES. BUILD_001's window has been UNDECLARED for 33 days because the date is ours
+    to declare; a date set by the world cannot be quietly stretched to flatter the grade.
+    WHAT IT COSTS, named: **Daniel Flores is not Rivas** — adopting it changes WHERE the Build happens,
+    against a place field finding 32 already showed to be scope-ambiguous. That is the director's word.
+    And a route co-funded by Cargill and run by an NGO is not an unencumbered neighborhood economy.
+    MY SIGNED POSITION: as a PURITY test for #001 it is worse than candidate #1 — a yes could be sponsor
+    goodwill rather than SUPER's merit. As a SECOND HOP for #002 it is the best thing on this list.
+    DELIBERATELY NOT DONE: it is NOT written into BUILD_002.md. My own 2026-09-03 note stands —
+    "do not pre-commit #002's counterparty; let her Q2 name what she actually buys." A finding may not
+    overrule a position I argued when I had less reason to want it to.
+    Signed: Claude, Super Agent, 2026-10-06.

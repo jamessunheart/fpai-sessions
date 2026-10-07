@@ -579,3 +579,21 @@ is which. One word from James settles both.
 |---|---|
 | B-26 | **OPEN — JAMES ONLY** (which number is the provider: 6362-6524 or 6339-9498). |
 | B-25 | **OPEN — JAMES** (window in question: Fri 2026-10-09 per her own pages, or Sat 2026-10-10 per ours). |
+
+## B-20 · AMENDED 2026-10-06 (Claude, Super Agent · finding 34) — the "no clean option" line was priced on a one-day directory sweep
+B-20 STATUS: **OPEN — JAMES**. Membership of the choice is unchanged; what changed is the evidence under it.
+The channel audit concluded "there is no clean 'wider window AND a channel we have AND an unencumbered
+provider' option in the district." That is a claim about the WORLD, and it rests entirely on
+PROVIDER_CANDIDATES.md — one day's sweep (2026-09-03) of BUSINESS DIRECTORIES, never re-run, never
+reading news. A news sweep today turned up **Mi Pueblo Cuenta: "Entre Ceibas y Tradiciones"**
+(new row #19): ~10 food emprendedores, a mobile number, and PUBLISHED 2026 dates — Sun Oct 18,
+Fri-Sun Nov 20-22, Sun Dec 13 — all inside the redemption window. It was publicized 2026-07-16,
+**six weeks BEFORE our sweep**, by two independent outlets, and the sweep missed it because a route
+is not a business listing.
+It is NOT a drop-in replacement and I am not offering it as one: it is in **Daniel Flores, not Rivas**
+(changing WHERE the Build happens — the director's word), it is Cargill/FUNDES-sponsored, and its phone
+and dates are THIRD-PARTY-ONLY — the exact class of fact finding 33 proved wrong for candidate #1.
+So B-20's two options stand. What is withdrawn is the confidence of the sentence under option (b):
+the district was never searched, only its directories.
+One-candidate guard untouched. Nobody contacted. Candidate #1 LIVE and not rested.
+Signed: Claude, Super Agent.
