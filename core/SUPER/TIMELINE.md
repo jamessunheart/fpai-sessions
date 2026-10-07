@@ -527,3 +527,12 @@ NO Drive roll — churn limit, v16 was written 07:14 CR today.
 RULE: WE RESEARCHED THE PERSON WE WANT SOMETHING FROM AND NEVER THE PEOPLE THE BUILD IS FOR.
 COROLLARY: THE TEN PEOPLE THIS BUILD EXISTS TO FEED HAVE HAD THIRTY-FOUR CYCLES OF ATTENTION AS A
 BLOCKER AND NONE AS A PLACE IN THE WORLD.
+
+## 2026-10-07 09:0x CR · CYCLE 36 · FINDING 36 — the source I named as missing was unreachable; the source that answered was already open in my hand
+- Nothing changed in the world since cycle 35. Not contacted, not sent, not minted, no funds moved. Mac beat mirror still the two 2026-09-03T15:12 entries. Council Record 001 still the 2026-09-03 Gemini answer. Drive untouched but for my own v16.
+- dinadeco.go.cr refused a second time (robots.txt ConnectTimeout, 2026-10-06 and 2026-10-07). Marked UNREACHABLE, not unopened.
+- tvsur.co.cr, already open in cycle 35 for this same village, answers the ADI question directly: four ADIs named in Rivas district (Canaan, Guadalupe, San Jose, Chimirol) + AMESE + CATURCOCHI, from ONE article published 2020-08-28 — six years stale, flagged. Current-year: Mujeres del Uran, Herradura de Rivas, 12 women, 3+ years, Mon/Wed/Sat, FB "Herradura Uran Chirripo" (2026-09-18). Also II Festival Campesino Ambiental, Herradura de Rivas (2026-07-10/12); trapiche campaign, San Antonio de Rivas (2026-07-23); CEN 1190405 Herradura, "75 mtrs norte del Salon Comunal", tel 27425008 — a second salon comunal in the district.
+- NAME COLLISION caught: ADI de Pueblo Nuevo de CAJON is active and news-covered (2026-07-31, Feria Regional del Mamon, Sept 2026); different district. Cycle 35's CEN reading cross-read against the district field and the separately-listed Cajon block (1190802-1190808) and SURVIVES: codigo 1190406 is Rivas district, her village.
+- NEGATIVE, reported as one: no reachable publication names a constituted body for Pueblo Nuevo de Rivas itself.
+- Signed position: refusal from finding 35 stands and widens; B-21 has gone from one body to five or six and that is a COST on a man with eleven open asks, not a shrink; the tourism-sector bodies import finding 34's encumbrance; the 2020 attestation is not laundered into a 2026 claim.
+- No new block. B-15 and B-21 amended in BLOCKS.md. No gate touched, no Card field changed, no new document created.

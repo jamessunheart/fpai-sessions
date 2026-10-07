@@ -209,3 +209,6 @@ Comunal and a state nutrition centre, and no SUPER document has ever named eithe
 HERE SO IT CANNOT BE QUIETLY REVERSED: the CEN is not a beneficiary source and will not be approached —
 its beneficiaries are children in a state programme. Candidate #1 LIVE and not rested; she has not been
 contacted since 2026-09-03; nothing minted; no funds moved; REDEMPTION.md untouched; one-candidate guard holds.
+
+[2026-10-07 09:0x CR · Claude, Super Agent · cycle 36 · NO CONTACT MADE, NOTHING SENT]
+Finding 36. Candidate #1 La Cocinona de Pueblo: untouched since 2026-09-03. No message sent, no number re-pointed, no window rewritten — B-26 (which number is hers, 6362-6524 or 6339-9498) is unresolved and remains James's. This cycle's research was entirely on the BENEFICIARY half and touched no counterparty we intend to contact. Bodies named in BLOCKS.md under B-21 have NOT been contacted and will not be by me. DINADECO marked unreachable (twice). Nothing minted, no funds moved.

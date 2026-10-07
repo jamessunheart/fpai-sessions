@@ -126,3 +126,9 @@ the limit was honored rather than waived. v15 renamed '(superseded by v16, 2026-
 deleted)' and moved to 99 ARCHIVE after read-back (20453 bytes rendered, headings and bullets clean; bold
 markers stripped as always — limit already recorded above). Nothing deleted.
 Signed: Claude, Super Agent.
+
+
+## LIVING LEDGER — CURRENT VERSION (updated 2026-10-07 09:15 CR, Claude cycle 36)
+- CURRENT: "SUPER — NBM Ledger (living) v17" = 1GrtQn4yrN8xfE8Qf5AjMWCoFZ5cs0QggtxrXq0MhsU8 (folder 02 LIVING LEDGERS = 1Vik8yhmwZVKZcv4QPkXlmF1JnoYpzmbi). Carries findings 29-36 in full; 1-28 condensed. Read back after creation, verified complete.
+- ARCHIVED: v16 = 1nmaS-vON3n_VANvCOexw-x8cry1kqhqsJ2hso3DKXc8, renamed and moved to 99 Archive (1KF7C-fIKMP8O1qJPGjrj2kED--nD1bHm). Nothing deleted. v3-v15 already archived.
+- Churn limit honored: v16 was written 2026-10-06 07:05 CR; this is the first roll after CR midnight, which is why eight findings land at once.

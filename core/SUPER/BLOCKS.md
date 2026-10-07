@@ -639,3 +639,20 @@ exists is DINADECO's idoneidad registry. So the question is now: which body, and
 the circulator and the ten at all (the pass-test cost named under B-15).
 Nobody contacted. One-candidate guard untouched — it governs PROVIDERS, and nothing here names a provider.
 Signed: Claude, Super Agent.
+
+---
+## 2026-10-07 09:0x CR · AMENDMENTS from finding 36 (Claude, Super Agent — inside remit; no new block opened, deliberately)
+
+### B-15 — AMENDED (still OPEN, still FIRST in the order, day 34)
+The price of this ask ("ten conversations James must have") was found unresearched by finding 35. Two cycles of research into the beneficiary half now close with an honest NEGATIVE, stated as a negative: **no publication reachable from here names a constituted comunal body for Pueblo Nuevo de Rivas, the provider's own village.** First-party evidence that the village HAS a salon comunal stands (cen-cinai.go.cr, codigo 1190406, district Rivas, "25 mtrs oeste del Salon Comunal", telefono "no tiene", read 2026-10-07 and cross-read against the separately-listed Cajon CENs 1190802-1190808, so the name collision with Pueblo Nuevo de Cajon does NOT apply to it). What is missing is any publicly named keeper of that hall. So B-15's size remains UNKNOWN rather than ten — and nothing found in two cycles makes it smaller inside her village.
+No change to the ask, the order or the gate. The witness may still be one of the ten.
+
+### B-21 — AMENDED, and the amendment is a WARNING about its own growth (still OPEN, James only)
+Original question: is Comite La Piedra de Rivas the PROVIDER or the TEN BENEFICIARIES? One word. Finding 35 added a second possible body. Finding 36 adds four or five more. **This block has gone from one word about one body to a choice among five or six, and that is a cost, not a shrink — I am recording it against myself rather than presenting a longer list as progress.**
+Bodies measured 2026-10-07, nobody contacted, each with its source, date and staleness:
+- STALE, ONE SOURCE, SIX YEARS OLD (tvsur.co.cr, published 2020-08-28; existence in 2026 is UNVERIFIED): Asociacion de Desarrollo Integral de Canaan de Rivas · ADI de Guadalupe de Rivas · ADI de San Jose de Rivas · ADI de Chimirol de Rivas · Asociacion de Mujeres Emprendedoras de Santa Elena (AMESE) · Camara de Desarrolladores de Turismo Rural Comunitario Chirripo (CATURCOCHI). Six comunal-base organizations, nine localities, formed for Chirripo tourism services.
+- CURRENT-YEAR ATTESTED (tvsur.co.cr, published 2026-09-18): **Mujeres del Uran**, Herradura de Rivas — 12 women, "mas de tres anos de trabajar", tourism office guiding to Chirripo via the Uran sector, operates Mon/Wed/Sat, ~24 visitors weekly Nov-Apr, public channel Facebook "Herradura Uran Chirripo", established with its community Development Association's support.
+- NOT RIVAS, NAME-COLLISION TRAP: ADI de Pueblo Nuevo de **CAJON** — active, news-covered 2026-07-31, inaugurated a redondel, organized the Feria Regional del Mamon in September 2026 (now past, so outside the redemption window anyway). A future search for "Pueblo Nuevo" + ADI returns this one. It is NOT her village.
+COSTS NAMED, unchanged from finding 35 and worse for these particular bodies: an intermediary between the circulator and the ten weakens the Card's pass test ("a meal they WANTED and felt respected") — ten people a body nominates are not ten people who chose. Mujeres del Uran and CATURCOCHI exist to serve TOURISTS, so a yes from either could be sector goodwill rather than SUPER's merit — the same encumbrance finding 34 named against Mi Pueblo Cuenta. And the CEN is explicitly REFUSED as a beneficiary source (finding 35): its beneficiaries are children and families in a state nutrition programme.
+SOURCE STATUS CORRECTION: DINADECO's calificacion de idoneidad listings are **UNREACHABLE from here, twice measured** (robots.txt ConnectTimeout 2026-10-06 and 2026-10-07), not merely unopened. They are not pending work; they are a source this system cannot read.
+Not on the public board.
