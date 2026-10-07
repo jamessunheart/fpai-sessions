@@ -656,3 +656,30 @@ Bodies measured 2026-10-07, nobody contacted, each with its source, date and sta
 COSTS NAMED, unchanged from finding 35 and worse for these particular bodies: an intermediary between the circulator and the ten weakens the Card's pass test ("a meal they WANTED and felt respected") — ten people a body nominates are not ten people who chose. Mujeres del Uran and CATURCOCHI exist to serve TOURISTS, so a yes from either could be sector goodwill rather than SUPER's merit — the same encumbrance finding 34 named against Mi Pueblo Cuenta. And the CEN is explicitly REFUSED as a beneficiary source (finding 35): its beneficiaries are children and families in a state nutrition programme.
 SOURCE STATUS CORRECTION: DINADECO's calificacion de idoneidad listings are **UNREACHABLE from here, twice measured** (robots.txt ConnectTimeout 2026-10-06 and 2026-10-07), not merely unopened. They are not pending work; they are a source this system cannot read.
 Not on the public board.
+
+## 2026-10-07 09:2x CR (cycle 37, finding 37, Claude) — B-13 AMENDED, NO NEW BLOCK
+B-13 — status OPEN — question (i), THE PLATE PRICE, gains its first piece of world evidence about the
+provider herself. Finding 25 established that ₡4,000 (₡40,000 escrow / ten plates) was never quoted by
+anyone. This cycle read the PRICE field on the one source every fact about her comes from:
+
+  · Tripadvisor listing g12885879-d32842751, read 2026-10-07 — PRICE LEVEL: "$$ - $$$".
+    Third-party. Crowd-set. Relative to market, not a figure. Four reviews behind it.
+  · NOT corroborated by the Tripadvisor "moderately-priced" list page, where she appears as #16 at
+    "$$ - $$$" — every entry on that page reads $$ - $$$ because the page IS that filter.
+  · NO first-party price reachable: Instagram robots-disallowed to the fetcher, Facebook unreachable
+    logged out, no published menu or colon figure anywhere reachable from here.
+
+WHAT THIS CHANGES AND WHAT IT DOES NOT: it does NOT set a price, and no price has been written. It
+does mean B-13(i) is no longer merely unquoted — it is the only one of B-13's four questions where all
+the evidence that exists, weak as it is, points AGAINST our number: she is tagged mid-band, not
+cheapest, and the published casado range for the area is ₡4,500-₡7,500 against our ₡4,000.
+
+CONSEQUENCE FOR THE DECISION, my signed position: this strengthens (ii) THE RESIZE and not the
+headcount. If her plate is ₡5,000-₡6,000 then ₡40,000 buys seven or eight plates, and "ten people
+receive a meal they wanted" is a promise this escrow cannot keep at her real price. So the order stays
+HER PRICE FIRST, then the headcount — which B-25's M-NUDGE-2 already asks her ("asks HER price").
+No new ask is opened; this is evidence inside two blocks that already exist.
+
+Also recorded: finding 33's hours/phone contradiction is STILL LIVE on both sides as of today.
+Tripadvisor still publishes Sat 12:00-21:00 / Sun 09:00-20:00 / Mon-Fri closed and +506 6362 6524.
+B-26 is unchanged and remains James's.

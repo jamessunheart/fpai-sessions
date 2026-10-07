@@ -536,3 +536,12 @@ BLOCKER AND NONE AS A PLACE IN THE WORLD.
 - NEGATIVE, reported as one: no reachable publication names a constituted body for Pueblo Nuevo de Rivas itself.
 - Signed position: refusal from finding 35 stands and widens; B-21 has gone from one body to five or six and that is a COST on a man with eleven open asks, not a shrink; the tourism-sector bodies import finding 34's encumbrance; the 2020 attestation is not laundered into a 2026 claim.
 - No new block. B-15 and B-21 amended in BLOCKS.md. No gate touched, no Card field changed, no new document created.
+
+## 2026-10-07 09:2x CR · CYCLE 37 · FINDING 37 — the source we over-trusted for 34 days carries a price field we never read
+- Nothing changed in the world since cycle 36 (15 minutes earlier). Not contacted, not sent, not minted, no funds moved. VENDOR_LOG_198.md mirror still the two 2026-09-03T15:12 entries. Council Record 001 still the 2026-09-03 Gemini answer — Gemini has not answered again. Drive untouched but for my own v17 (14:51Z / 08:51 CR). BUILD_001 HOLD 2/4 (world-sourced 0/1), loop 0/11, Window UNDECLARED, Grade 0/4, redemption validity 85 days. BUILD_002 HOLD.
+- Re-read her Tripadvisor listing (g12885879-d32842751) in FULL for the first time: PRICE LEVEL "$$ - $$$", plus cuisines, address, 5.0/4 reviews, #1 of 7, and the same hours (Sun 09:00-20:00, Sat 12:00-21:00, Mon-Fri closed) and the same phone (+506 6362 6524) we have held for 34 days.
+- So finding 33's contradiction is still live on both sides: Tripadvisor has not been updated to match her own pages. B-26 unchanged.
+- The "moderately-priced" list page is NOT a second source: every entry on it reads $$ - $$$ because the page is that filter. Recorded as one reading.
+- No first-party price reachable: Instagram robots-disallowed to the fetcher, Facebook unreachable logged out, no menu or colon figure anywhere reachable. Spanish search surfaced Rivas, NICARAGUA — second name-collision trap in two cycles, caught.
+- Signed position: this strengthens B-13(ii) RESIZE, not the headcount — at ₡5,000-₡6,000 a plate, ₡40,000 buys 7-8, and "ten people" is a promise the escrow cannot keep. Order stays HER PRICE FIRST, which M-NUDGE-2 already asks. Against myself: third straight cycle where my curiosity grew an ask instead of closing one.
+- No new block. B-13 amended in BLOCKS.md. No gate touched, no Card field changed, no new document created. No Drive roll (churn limit; v17 today).

@@ -212,3 +212,14 @@ contacted since 2026-09-03; nothing minted; no funds moved; REDEMPTION.md untouc
 
 [2026-10-07 09:0x CR · Claude, Super Agent · cycle 36 · NO CONTACT MADE, NOTHING SENT]
 Finding 36. Candidate #1 La Cocinona de Pueblo: untouched since 2026-09-03. No message sent, no number re-pointed, no window rewritten — B-26 (which number is hers, 6362-6524 or 6339-9498) is unresolved and remains James's. This cycle's research was entirely on the BENEFICIARY half and touched no counterparty we intend to contact. Bodies named in BLOCKS.md under B-21 have NOT been contacted and will not be by me. DINADECO marked unreachable (twice). Nothing minted, no funds moved.
+
+[2026-10-07 09:2x CR · Claude, Super Agent · cycle 37 · NO CONTACT MADE, NOTHING SENT]
+Finding 37. Candidate #1 La Cocinona de Pueblo: untouched since 2026-09-03. This cycle re-read her
+Tripadvisor listing (g12885879-d32842751) in full and found the one field nobody here ever read —
+PRICE LEVEL "$$ - $$$". Hours and phone on that page are UNCHANGED from our record, so finding 33's
+contradiction with her own Instagram and Google profile is still live on both sides; Tripadvisor was
+not quietly updated. No first-party price of hers is reachable from here. NOTHING WAS DONE WITH THIS:
+no message sent, no number re-pointed (B-26 is James's), no plate price written into the Card, no
+headcount changed, no window rewritten. The ₡4,000 implicit plate price stands in the Card exactly as
+it was, and HER price is still the thing M-NUDGE-2 is drafted to ask her. Candidate #1 LIVE and not
+rested; one-candidate guard holds; nothing minted; no funds moved; REDEMPTION.md untouched.
