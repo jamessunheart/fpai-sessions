@@ -597,3 +597,45 @@ So B-20's two options stand. What is withdrawn is the confidence of the sentence
 the district was never searched, only its directories.
 One-candidate guard untouched. Nobody contacted. Candidate #1 LIVE and not rested.
 Signed: Claude, Super Agent.
+
+## B-15 · AMENDED 2026-10-06 21:0x CR (Claude, Super Agent · finding 35) — the price of this ask was never researched
+B-15 STATUS: **OPEN — JAMES**, still FIRST in the order, still depends on nothing. Membership unchanged.
+What changed: for 33 days this block has been priced one way — "ten conversations James must have" — and
+that price was set with ZERO world-measurement. Every measurement this system has ever taken of the
+outside world serves the `provider` field. The count serving `beneficiaries` and `witness` was zero.
+MEASURED 2026-10-07, nobody contacted:
+ · FIRST-PARTY (cen-cinai.go.cr/perez-zeledon-san-jose, the operating agency's own publication, read
+   2026-10-07): **CEN codigo 1190406 — Pueblo Nuevo, "25 mtrs oeste del Salon Comunal", telefono "no tiene"**,
+   i.e. a state child-nutrition centre in the PROVIDER'S OWN VILLAGE; and **CEN codigo 1190403 — Rivas
+   centre, telefono 27701700, "Detras del templo Catolico, contiguo al Ebais"**. Both Rivas district.
+ · WHAT THAT ADDRESS ESTABLISHES WITHOUT A SECOND SOURCE: Pueblo Nuevo de Rivas has a **SALON COMUNAL**,
+   normally held by a constituted comunal organization. Rivas centre also has an EBAIS and a church.
+ · THIRD-PARTY ONLY, ten years old (flagged per finding 33): tvsur.co.cr tag "Pueblo Nuevo de Rivas" ->
+   "Escuela de Pueblo Nuevo de Rivas gano en pasacalles", 2016-09-23. A village school, not re-verified.
+ · SOURCE CLASS STILL UNOPENED, named not claimed: DINADECO calificacion de idoneidad listings
+   (dinadeco.go.cr/doc/Listado2022.pdf, /doc/071021b.pdf) — the registry that would say whether an ADI
+   exists for Pueblo Nuevo. Could not fetch this cycle (robots.txt timeout). Facebook "ADI de Rivas de
+   Perez Zeledon" appears in search; Facebook is unreachable logged out here, so it is NOT counted as read.
+MY SIGNED POSITION, and the first part is a refusal:
+ (1) **THE CEN IS NOT A BENEFICIARY SOURCE AND SHOULD NOT BE APPROACHED.** Its beneficiaries are children
+     and their families in a state programme — Gemini's failure mode 2 at its highest intensity, with
+     minors in it, and it edges toward standing in for state provision. Its value here is purely
+     evidential: it proves the village has institutions and it is what names the Salon Comunal.
+ (2) A constituted comunal body — adults, legally constituted, in her own village — is the honest
+     candidate for shrinking this ask. That is B-21's question, one village over.
+ (3) THE COST: an intermediary between the circulator and the ten weakens the Card's own pass test
+     ("a meal they WANTED and felt respected"). Ten people a body nominates are not ten people who chose.
+     A cheaper B-15 bought this way is a weaker grade. That trade is James's, not mine.
+NO NEW BLOCK — new evidence inside B-15 and B-21, not a twelfth ask. Nobody contacted. Nothing minted.
+Signed: Claude, Super Agent.
+
+## B-21 · AMENDED 2026-10-06 21:0x CR (Claude, Super Agent · finding 35) — it is no longer one word about one body
+B-21 STATUS: **OPEN — JAMES**. The question stands (is Comite La Piedra de Rivas the PROVIDER or the TEN
+BENEFICIARIES) and either answer still shrinks a 33-day ask. What is added: there is a **second possible
+body, in the provider's own village** — Pueblo Nuevo de Rivas has a Salon Comunal (first-party evidence
+above, CEN 1190406's own address line), so a constituted comunal organization plausibly exists there, and
+no document in this system has ever named it. The unopened source class that would settle whether it
+exists is DINADECO's idoneidad registry. So the question is now: which body, and may a body stand between
+the circulator and the ten at all (the pass-test cost named under B-15).
+Nobody contacted. One-candidate guard untouched — it governs PROVIDERS, and nothing here names a provider.
+Signed: Claude, Super Agent.
