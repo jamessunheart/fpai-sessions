@@ -683,3 +683,42 @@ No new ask is opened; this is evidence inside two blocks that already exist.
 Also recorded: finding 33's hours/phone contradiction is STILL LIVE on both sides as of today.
 Tripadvisor still publishes Sat 12:00-21:00 / Sun 09:00-20:00 / Mon-Fri closed and +506 6362 6524.
 B-26 is unchanged and remains James's.
+
+**AMENDED 2026-10-07 cycle 38 (finding 38) — THE REASON THIS BLOCK GIVES FOR BEING BLOCKED IS HALF FALSE, AND NOBODY EVER RAN THE ONE-COMMAND TEST THAT WOULD SAY SO.**
+This block has carried the line "no credentials in either sandbox shell" / "the credentials are not in this
+shell" since 2026-10-02, copied forward through fourteen pack commits. MEASURED TODAY, both shells, nothing pushed:
+ · MAC VM (the shell that holds the staged repo): truly has none, and now PROVEN rather than assumed —
+   `which gh` → not installed; `git config --get-all credential.helper` → none; `~/.netrc` → absent;
+   `git ls-remote origin master` → **succeeds** (eda73b0d, public read needs no credential);
+   `git push --dry-run origin master` → `fatal: could not read Username for 'https://github.com'`.
+   A dry-run authenticates with the remote and writes nothing — it is the discriminating test, it costs one
+   command, and in fourteen cycles of reporting this block it was never run.
+ · CLOUD CONTAINER (the other shell): `gh api user --jq .login` → **jamessunheart**. There IS an
+   authenticated GitHub identity in one of the two shells. `gh auth status` separately reports the GH_TOKEN
+   invalid, so the working auth is not that token. The refusal that stops the push is REPOSITORY-SCOPED, not
+   credential-scoped: `gh api repos/jamessunheart/super-agents-pack` → HTTP 403, "GitHub access to this
+   repository is not enabled for this session… call add_repo again with access:\"push\"". `add_repo` is a
+   mechanism this session does not expose, so it is still not pushable from here — but the REASON changed.
+WHAT ELSE WAS MEASURED, because it had only ever been asserted: the published tree itself. `origin/master`
+is **eda73b0d**, local `master` is **f66a9d4**, **14 commits ahead**, touching exactly three files —
+`core/super_build.py`, `core/vendor_bot/vendor_bot.py`, `core/TEMPLATE_BUILD_CARD.md`. Read straight out of
+the published tree: `git show origin/master:core/vendor_bot/vendor_bot.py` contains NO match for
+opt-in / consent / cold / permission / autoriz. **So "the published bot still cold-messages strangers with no
+opt-in gate" is now VERIFIED against what is actually published, not inferred from our own commit list** —
+the gate lives in e08b6b1, which is unpushed. That is the one item in the whole SUPER record that can reach
+an uninvolved third party, and today is the first time it was checked rather than repeated.
+THE ASK CHANGES SHAPE AND GETS SMALLER. It is no longer "James must do a thing no shell can do." It is a
+choice of two, both his: (a) he runs the one command himself where a credential exists (his own machine
+outside this VM, or `gh`/a token installed in the Mac VM); or (b) he says the word and this session is given
+push access to that one repository, after which the Super Agent does it. (b) is a cheaper ask than fourteen
+cycles implied, and until now it was not on the table because the block said the credential was the problem.
+NOT DONE, deliberately, and this is a refusal not an omission: **I did not push.** A push modifies public
+content in his name, which sits outside my remit however good the diagnosis is; and a credential this
+environment handed me is not a credential he handed me. The 403 happens to agree with that, but the refusal
+does not depend on the 403.
+AGAINST MYSELF: this is the same shape as finding 31 (B-08 printed the cheap fix for 93 beats while the
+discriminating test sat unrun) and finding 37 (a source read three times for one field). A block's reason
+line was copied forward fourteen times and the command that falsifies it is one line long. Fourth
+consecutive cycle where the fault is in our own record and not in the world.
+Still deliberately NOT on the public HELP_WANTED board.
+Signed: Claude, Super Agent, 2026-10-07 11:3x CR.
