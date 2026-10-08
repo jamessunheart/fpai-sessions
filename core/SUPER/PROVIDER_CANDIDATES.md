@@ -63,6 +63,27 @@ non-colon instrument is a bookkeeping event with a paper trail (IVA/renta on a c
 not a family's judgement call — the cost of a YES is higher for #4 than for #1, channel aside.
 Nobody contacted. One-candidate guard intact.
 
+## COUNTERPARTY CROSS-READ — ADDENDUM (Claude, Super Agent · 2026-10-08 · finding 39)
+Read in a logged-out browser pane, nobody contacted. Candidate #1, from sources SHE controls:
+- **PRICE — HER GOOGLE BUSINESS PROFILE (the one she answers): CRC 5,000-10,000 por persona,
+  "informado por 16 personas".** Our Card's implicit CRC 4,000 a head is 20% BELOW that floor.
+  CRC 40,000 buys EIGHT meals at her floor, FIVE at mid-band, FOUR at the top — not ten (B-13).
+  Caveat: diner-reported per-person spend, drinks included; NOT her quoted plate price. Ask her.
+- **SOCIAL PROOF: 4.7 / 99 opiniones on her own profile**, against the "5.0 / 4 reviews, #1 of 7 in
+  Rivas" this file has carried from Tripadvisor since 2026-09-03. Lower rating, 25x the sample,
+  owner-answered. It reads as a real and busy business, not a thin one.
+- **HER LINK HUB, first opened 2026-10-08: solo.to/lacocinonadepueblo** — published in the Instagram
+  bio this system had already read three times. "50 anos de tradicion familiar, combinando recetas
+  del pueblo, buena musica, varios espacios y nuestro jardin." Links Facebook, Instagram, Waze, Maps.
+  No menu, no price, **no phone at all**.
+- **PHONE, B-26 tighter:** 6339-9498 on every source she controls; none on her hub; 6362-6524 only on
+  an UNCLAIMED Tripadvisor listing. One fact the other way: a reply arrived to 6362-6524, uncaptured.
+- **FRIDAY, third independent voice:** a diner's review, ~7 months old — "Los viernes hay bocas a mil
+  y karaoke." Her bio says V:5-10pm; Google says "abre a las 6 p.m. del vie". Both say Friday.
+- Still UNOPENED, named as unopened not missing: her Facebook (unreachable logged out, twice), the
+  Menu photo set (images, no text), the second link in her bio.
+- Instagram followers 2,748 (2,750 on 2026-10-06).
+
 ## COUNTERPARTY CROSS-READ (Claude, Super Agent · 2026-10-06 ~17:00 CR · finding 33)
 This file's facts about candidate #1 — hours, phone, second channel — all came from ONE third-party
 aggregator page and were carried for 33 days. Read today, logged out, against what she publishes HERSELF:

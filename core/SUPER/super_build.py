@@ -436,6 +436,26 @@ COUNTERPARTY_FACTS = [
      "ours (in the Card, VENDOR_LOG and all three messages): +506 6362 6524 · HERS (Instagram bio "
      "and Google Business Profile, read 2026-10-06): 6339-9498 · the one reply we ever received "
      "came to 6362-6524 but its content was never captured, so who replied is unestablished (B-26)"),
+    ("price per person", "HER OWN CLAIMED PROFILE — MEASURED 2026-10-08",
+     "HERS (Google Business Profile, the profile she answers reviews on as 'Respuesta del "
+     "propietario', read 2026-10-08 in a logged-out browser pane): **CRC 5,000-10,000 por persona, "
+     "'Informado por 16 personas'** · OURS (implicit in the Card): CRC 40,000 / ten plates = "
+     "CRC 4,000 per person, 20% BELOW THE FLOOR of her own band · CAVEAT, stated plainly: this is "
+     "diner-reported per-person SPEND (drinks included), not her quoted plate price, and no menu "
+     "price in colones is reachable anywhere first-party · CONSEQUENCE: at her floor CRC 40,000 "
+     "buys EIGHT meals, at mid-band FIVE, at the top FOUR - the headcount is what her number moves, "
+     "not the price (B-13, the director's word; NOTHING here is written into the Card)"),
+    ("social proof", "HER OWN CLAIMED PROFILE — MEASURED 2026-10-08",
+     "ours (Tripadvisor, third-party, unclaimed): '#1 of 7 in Rivas, 5.0 / 4 reviews' · HERS "
+     "(Google Business Profile): **4.7 / 99 opiniones**, owner replies dated 4-7 months ago, "
+     "'Restaurante costarricense', dine-in + drive-up + delivery, Plus code C8XV+M9 Rivas - so our "
+     "file carried the 4-review sample for 35 days while a 99-review one sat on her own page"),
+    ("link hub", "HER OWN PAGE — FIRST OPENED 2026-10-08",
+     "solo.to/lacocinonadepueblo, the link she publishes in the Instagram bio we had already read "
+     "three times: '50 anos de tradicion familiar, combinando recetas del pueblo, buena musica, "
+     "varios espacios y nuestro jardin' · links Facebook, Instagram, Waze, Maps and NOTHING else - "
+     "no menu, no price, and NO PHONE AT ALL. Still unopened, named as unopened not missing: her "
+     "Facebook (unreachable logged out), the Menu photo set (images, no text), the second bio link"),
     ("second channel", "MEASURED 2026-10-06",
      "Facebook /LaCocinonadePueblo is NOT reachable logged out ('This content isn't available right "
      "now'); Instagram @lacocinonadepueblo IS live (2,750 followers). The earlier "
@@ -453,7 +473,7 @@ def counterparty_line():
     bits = " · ".join(f"{k} [{cls}]: {detail}" for k, cls, detail in COUNTERPARTY_FACTS)
     return ("candidate #1 La Cocinona de Pueblo — " + bits +
             " · NOT RESOLVED BY THIS CODE: which number is hers, and whether Friday is added to the "
-            "send window, decide WHO gets contacted — the director's word (B-26)")
+            "send window, decide WHO gets contacted — the director's word (B-26). B-26 is TIGHTER since 2026-10-08 but NOT closed: every source SHE controls that publishes a phone publishes 6339-9498 (Instagram bio, Google profile), her own link hub publishes none at all, and 6362-6524 is published ONLY by a Tripadvisor page whose own 'Claim Your Free Listing' prompt says it is unclaimed - against which stands the one fact on the other side, that a reply did arrive to 6362-6524 with its content never captured. The options are no longer symmetric; which one is hers is still his word. And her price is NOT in the Card: the CRC 4,000 plate price stands exactly as it was (B-13)")
 
 # FINDING 30 (Claude, Super Agent, 2026-10-06) — THE THIRD NUMBER ON EVERY RUN IS A DIAL WIRED
 # TO NOTHING. Finding 29 named the origin of every datum the four release conditions and the

@@ -722,3 +722,28 @@ line was copied forward fourteen times and the command that falsifies it is one 
 consecutive cycle where the fault is in our own record and not in the world.
 Still deliberately NOT on the public HELP_WANTED board.
 Signed: Claude, Super Agent, 2026-10-07 11:3x CR.
+
+
+## 2026-10-08 11:0x CR (cycle 39, finding 39, Claude) — B-13 AND B-26 AMENDED, NO NEW BLOCK
+
+B-13 — status OPEN — JAMES ONLY. Question (i), THE PLATE PRICE, now has a FIRST-PARTY-HOSTED NUMBER
+and it decides question (ii) with it. Measured 2026-10-08 on the Google Business Profile she answers
+("Respuesta del propietario", four replies 4-7 months old): **CRC 5,000-10,000 por persona, "informado
+por 16 personas"**, beside **4.7 / 99 opiniones** (our file carries Tripadvisor's 5.0 / 4). The Card's
+CRC 4,000 a head — CRC 40,000 divided by a round ten — is 20% BELOW THE FLOOR of that band.
+  At her floor CRC 40,000 buys EIGHT meals · at mid-band FIVE · at the top FOUR.
+So (i) and (ii) are now ONE arithmetic decision, his: (a) keep 100 SUPER and promise EIGHT or fewer,
+written into the Card honestly; (b) resize to 25 SUPER ~ CRC 10,000, two meals, four gradings off the
+same escrow [Claude's signed position, unchanged since finding 25, and it shrinks B-15 with it];
+(c) raise the escrow. Caveat recorded with the number: a diner-reported per-person SPEND band is not
+her quote, so ASK HER PRICE FIRST — M-NUDGE-2 already does. Questions (iii) closure and (iv) purity
+scope are unchanged. NOTHING was written into the Card: no price, no headcount, no window.
+
+B-26 — status OPEN — JAMES ONLY — TIGHTER, NOT CLOSED. Every source she controls that publishes a
+phone publishes **6339-9498** (Instagram bio; Google Business Profile). Her own link hub
+(solo.to/lacocinonadepueblo, first opened 2026-10-08) publishes **no phone at all**. **6362-6524** —
+the number in the Card, in VENDOR_LOG, in all three drafted messages and in M1/M2 as delivered —
+appears ONLY on a Tripadvisor page that prompts "Claim Your Free Listing", i.e. unclaimed by her.
+Against that stands the single fact on the other side, unchanged: a reply DID arrive to 6362-6524 on
+2026-09-03, content never captured. The three options are the same three; they are no longer
+symmetric. Still his word, because it decides who gets contacted. Bundled with B-25, same send.

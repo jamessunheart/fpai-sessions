@@ -1751,3 +1751,63 @@ Not logged in · Please run /login
   1. A stale ANTHROPIC_API_KEY/AUTH_TOKEN in cron`s env overriding the claude.ai login (401 invalid key). FIXED in this script 2026-09-03 21:08 — if this recurs, the unset above is not reaching the CLI.
   2. cron runs outside the GUI login session and cannot unlock the macOS Keychain where the OAuth credentials live. UNPROVEN. Test: run this script by hand in Terminal; if it works there and fails from cron, this is it, and the fix is a LaunchAgent (runs in the user session), not another /login.
 - FIX (James, ~1 min) — CORRECTED 2026-10-06 by finding 31 (Claude, Super Agent). This line used to say "tries the cheap one first: run `claude`, then `/login`" and printed that on 93 consecutive beats. This log now argues against it: cause 1 was FIXED in this script on 2026-09-03 21:08, the very next beat (22:15Z) failed anyway, and NO cron beat anywhere in this log has ever authenticated - the only beats that ever thought were in-session on 2026-09-03. So run the DISCRIMINATING step first, which costs the same minute: open Terminal on this Mac and run `bash ~/FullPotentialOS/infra/scripts/super_agent_heartbeat.sh`. If it thinks BY HAND, the cause is cause 2 (cron runs outside the GUI session and cannot unlock the Keychain) and the fix is a LaunchAgent, NOT another login. If it ALSO says "Not logged in" by hand, THEN run `claude` and `/login`. (This was B-12, opened 2026-09-03 and dropped from every list since.)
+
+## 2026-10-07T18:15Z — BRAIN OFFLINE
+- `claude -p` could not authenticate (rc=1). Nothing was read, no steward verdict was appended, /opt/VENDOR_LOG.md was NOT interpreted.
+- The delta watch below still runs; the Super Agent is not READING while this holds.
+- Verbatim auth error from the CLI (do not guess the cause from this line alone):
+```
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+```
+- Known causes, in the order they actually happened here:
+  1. A stale ANTHROPIC_API_KEY/AUTH_TOKEN in cron`s env overriding the claude.ai login (401 invalid key). FIXED in this script 2026-09-03 21:08 — if this recurs, the unset above is not reaching the CLI.
+  2. cron runs outside the GUI login session and cannot unlock the macOS Keychain where the OAuth credentials live. UNPROVEN. Test: run this script by hand in Terminal; if it works there and fails from cron, this is it, and the fix is a LaunchAgent (runs in the user session), not another /login.
+- FIX (James, ~1 min) — CORRECTED 2026-10-06 by finding 31 (Claude, Super Agent). This line used to say "tries the cheap one first: run `claude`, then `/login`" and printed that on 93 consecutive beats. This log now argues against it: cause 1 was FIXED in this script on 2026-09-03 21:08, the very next beat (22:15Z) failed anyway, and NO cron beat anywhere in this log has ever authenticated - the only beats that ever thought were in-session on 2026-09-03. So run the DISCRIMINATING step first, which costs the same minute: open Terminal on this Mac and run `bash ~/FullPotentialOS/infra/scripts/super_agent_heartbeat.sh`. If it thinks BY HAND, the cause is cause 2 (cron runs outside the GUI session and cannot unlock the Keychain) and the fix is a LaunchAgent, NOT another login. If it ALSO says "Not logged in" by hand, THEN run `claude` and `/login`. (This was B-12, opened 2026-09-03 and dropped from every list since.)
+
+## 2026-10-07T18:15Z - BEATS MISSED (alert suppressed by scoped pause; record kept)
+- 959 minutes since the previous beat (~3 beats skipped). This machine was asleep, off, or the schedule did not fire.
+- Everything the standing orders do on a beat did NOT happen during that window: the vendor log was not mirrored, the delta watch was blind, no steward verdict was appended.
+- Treat any conclusion drawn from file mtimes inside that window as unobserved, not as quiet.
+- Telegram escalation withheld per /Users/jamessunheart/.config/fpai/super_agent/missed_beat_alerts.disabled. This section is evidence, not an alert.
+
+## 2026-10-07T22:15Z — BRAIN OFFLINE
+- `claude -p` could not authenticate (rc=1). Nothing was read, no steward verdict was appended, /opt/VENDOR_LOG.md was NOT interpreted.
+- The delta watch below still runs; the Super Agent is not READING while this holds.
+- Verbatim auth error from the CLI (do not guess the cause from this line alone):
+```
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+```
+- Known causes, in the order they actually happened here:
+  1. A stale ANTHROPIC_API_KEY/AUTH_TOKEN in cron`s env overriding the claude.ai login (401 invalid key). FIXED in this script 2026-09-03 21:08 — if this recurs, the unset above is not reaching the CLI.
+  2. cron runs outside the GUI login session and cannot unlock the macOS Keychain where the OAuth credentials live. UNPROVEN. Test: run this script by hand in Terminal; if it works there and fails from cron, this is it, and the fix is a LaunchAgent (runs in the user session), not another /login.
+- FIX (James, ~1 min) — CORRECTED 2026-10-06 by finding 31 (Claude, Super Agent). This line used to say "tries the cheap one first: run `claude`, then `/login`" and printed that on 93 consecutive beats. This log now argues against it: cause 1 was FIXED in this script on 2026-09-03 21:08, the very next beat (22:15Z) failed anyway, and NO cron beat anywhere in this log has ever authenticated - the only beats that ever thought were in-session on 2026-09-03. So run the DISCRIMINATING step first, which costs the same minute: open Terminal on this Mac and run `bash ~/FullPotentialOS/infra/scripts/super_agent_heartbeat.sh`. If it thinks BY HAND, the cause is cause 2 (cron runs outside the GUI session and cannot unlock the Keychain) and the fix is a LaunchAgent, NOT another login. If it ALSO says "Not logged in" by hand, THEN run `claude` and `/login`. (This was B-12, opened 2026-09-03 and dropped from every list since.)
+
+## 2026-10-08T14:15Z — BRAIN OFFLINE
+- `claude -p` could not authenticate (rc=1). Nothing was read, no steward verdict was appended, /opt/VENDOR_LOG.md was NOT interpreted.
+- The delta watch below still runs; the Super Agent is not READING while this holds.
+- Verbatim auth error from the CLI (do not guess the cause from this line alone):
+```
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+```
+- Known causes, in the order they actually happened here:
+  1. A stale ANTHROPIC_API_KEY/AUTH_TOKEN in cron`s env overriding the claude.ai login (401 invalid key). FIXED in this script 2026-09-03 21:08 — if this recurs, the unset above is not reaching the CLI.
+  2. cron runs outside the GUI login session and cannot unlock the macOS Keychain where the OAuth credentials live. UNPROVEN. Test: run this script by hand in Terminal; if it works there and fails from cron, this is it, and the fix is a LaunchAgent (runs in the user session), not another /login.
+- FIX (James, ~1 min) — CORRECTED 2026-10-06 by finding 31 (Claude, Super Agent). This line used to say "tries the cheap one first: run `claude`, then `/login`" and printed that on 93 consecutive beats. This log now argues against it: cause 1 was FIXED in this script on 2026-09-03 21:08, the very next beat (22:15Z) failed anyway, and NO cron beat anywhere in this log has ever authenticated - the only beats that ever thought were in-session on 2026-09-03. So run the DISCRIMINATING step first, which costs the same minute: open Terminal on this Mac and run `bash ~/FullPotentialOS/infra/scripts/super_agent_heartbeat.sh`. If it thinks BY HAND, the cause is cause 2 (cron runs outside the GUI session and cannot unlock the Keychain) and the fix is a LaunchAgent, NOT another login. If it ALSO says "Not logged in" by hand, THEN run `claude` and `/login`. (This was B-12, opened 2026-09-03 and dropped from every list since.)
+
+## 2026-10-08T14:15Z - BEATS MISSED (alert suppressed by scoped pause; record kept)
+- 960 minutes since the previous beat (~4 beats skipped). This machine was asleep, off, or the schedule did not fire.
+- Everything the standing orders do on a beat did NOT happen during that window: the vendor log was not mirrored, the delta watch was blind, no steward verdict was appended.
+- Treat any conclusion drawn from file mtimes inside that window as unobserved, not as quiet.
+- Telegram escalation withheld per /Users/jamessunheart/.config/fpai/super_agent/missed_beat_alerts.disabled. This section is evidence, not an alert.

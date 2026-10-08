@@ -1051,3 +1051,87 @@ THIRTY-EIGHTH FINDING (2026-10-07, cycle 38) — A BLOCK'S REASON IS A CLAIM, AN
   NO DRIVE ROLL — churn limit: v17 was written 08:51 CR today and nothing changed in the world. Findings 37 and 38 wait in the append-only repo for the first cycle after CR midnight.
   RULE: A BLOCK'S REASON IS A CLAIM, NOT A LABEL. Corollary: WE SAID "NO CREDENTIALS IN EITHER SHELL" FOURTEEN TIMES AND NEVER ASKED EITHER SHELL.
   Signed: Claude, Super Agent, 2026-10-07.
+
+
+## 2026-10-08 11:0x CR · cycle 39 · THIRTY-NINTH FINDING (Claude, Super Agent)
+# HER PRICE WAS ON HER OWN PAGE, IN COLONES, AND THE CYCLE THAT WENT LOOKING FOR IT WROTE A TEST
+# SAYING "READ EVERY FIELD" AND DID NOT RE-OPEN THE PAGE.
+
+THREAD. Finding 37 ended with a negative: "no first-party price reachable — Instagram
+robots-disallowed to the fetcher; cycle 33's bio read used a logged-out browser, a different
+instrument, and carried no price." That sentence names the instrument. Finding 36's test says query
+every source class already open before naming a missing one; finding 37's own test says read EVERY
+field on a source already trusted. I used the instrument finding 37 named and re-read the page
+cycle 33 opened.
+
+MEASURED 2026-10-08, logged-out browser pane, NOBODY CONTACTED, nothing sent, nothing minted:
+  · Instagram @lacocinonadepueblo — 2,748 followers (2,750 on 2026-10-06). Bio verbatim:
+    "Un tributo a los sabores de la cocina costarricense y sus tradiciones V:5-10pm, S:9am-9pm y
+    D:9am-5pm 6339-9498 Pueblo..." — AND a link hub we had never opened: solo.to/lacocinonadepueblo
+    ("and 1 more"). Three reads of this bio for hours and a phone, and the link in it was never clicked.
+  · solo.to/lacocinonadepueblo, HER OWN page: "50 anos de tradicion familiar, combinando recetas del
+    pueblo, buena musica, varios espacios y nuestro jardin." Links Facebook, Instagram, Waze, Maps.
+    No menu. No price. NO PHONE AT ALL.
+  · HER GOOGLE BUSINESS PROFILE, read for hours and a phone on 2026-10-06 and for nothing else —
+    the profile she ANSWERS, four owner replies dated 4-7 months ago ("Respuesta del propietario"):
+        **CRC 5,000-10,000 POR PERSONA · "Informado por 16 personas"**
+        **4.7 / 99 opiniones** (our file carries Tripadvisor's 5.0 / 4)
+        "Restaurante costarricense" · dine-in, drive-up, delivery · 6339 9498 · website facebook.com
+        · Plus code C8XV+M9 Rivas · "Cerrado · Abre a las 6 p.m. del vie" · a Menu tab (photos only)
+        · reviewer, ~7 months ago: "Los viernes hay bocas a mil y karaoke" — FRIDAY corroborated by
+          a DINER, a third independent voice after her bio and her hours, with a CRC 1,000 boca price.
+
+THE ARITHMETIC, which is the whole finding. The Card promises TEN people a meal from CRC 40,000:
+CRC 4,000 a head, a number nobody ever quoted (finding 25). Against her own profile's reported band:
+  at her FLOOR CRC 5,000 -> CRC 40,000 buys EIGHT   | mid CRC 7,500 -> FIVE   | top CRC 10,000 -> FOUR.
+CRC 4,000 is 20% BELOW THE FLOOR of the band 16 of her diners reported. "Ten people receive a
+nourishing meal they wanted" is not a promise this escrow can keep at her published price.
+
+CAVEAT, stated before the conclusion: "informado por 16 personas" is diner-reported per-person SPEND,
+drinks included — it is NOT her quoted plate price, and no colon figure of hers is reachable (the Menu
+tab is a photo set). But it is in colones, on the profile she owns and answers, from 16 reporters,
+where finding 37's best evidence was "$$ - $$$" — a page-wide filter label on four reviews.
+
+MY SIGNED POSITION, disagreement preserved:
+ (1) I wrote NO price into the Card and changed NO headcount. B-13 is his.
+ (2) B-13(i) stops being "unquoted" and becomes ANSWERED WELL ENOUGH TO DECIDE ON. It does not move
+     the price — it moves the HEADCOUNT. (i) and (ii) collapse into one piece of arithmetic with a
+     number in it: (a) keep 100 SUPER and promise EIGHT or fewer, honestly; (b) resize to 25 SUPER
+     ~ CRC 10,000 and promise two, grading four loops off the same escrow [my position since finding
+     25, unchanged]; (c) raise the escrow. "Ten" was escrow divided by a round number on 2026-09-03
+     and has never been anything else.
+ (3) ASK HER PRICE ANYWAY, FIRST — M-NUDGE-2 already does. A crowd band is not a quote, and she may
+     price one ten-plate order below her a-la-carte spread. This is evidence to stop promising ten
+     on, not evidence to set a price with.
+ (4) B-26 TIGHTENS, does not close. Every source she controls that publishes a number publishes
+     6339-9498; her own hub publishes none; 6362-6524 lives only on an UNCLAIMED Tripadvisor page.
+     On the other side stands one fact: a reply arrived to 6362-6524, content never captured. The
+     options are no longer symmetric. Still his word, because it decides who gets contacted.
+ (5) OUR SOCIAL PROOF WAS THE THINNEST SAMPLE AVAILABLE: 4 reviews, chosen because it was on the
+     page we were already reading. 99 reviews at 4.7, owner-answered, says she is a real and busy
+     50-year family business — a better candidate than our file argued, on worse-looking numbers.
+ (6) AGAINST MYSELF, the costly part: cycle 33 opened this exact page and took two fields off it.
+     Finding 37 then hunted a price, declared it unreachable, and filed a standing test that says
+     READ EVERY FIELD ON A SOURCE WE ALREADY TRUST — without running that test on the source the
+     test was written about. The number sat there the whole time next to a review count 25x ours.
+     FIFTH consecutive cycle where the fault is in our own reading, not in the world. And what
+     surfaced it was not an idea: it was clicking the link inside a bio we had already read three times.
+
+TEST ADDED (39) — A TEST IS NOT ADDED UNTIL IT HAS BEEN RUN ON THE SOURCE THAT PROMPTED IT.
+When a cycle files a standing check, that same cycle executes it against the exact artifact that
+prompted it and records the result. A check filed without that first execution is a note, not a test.
+RULE: WE WROTE "READ EVERY FIELD" AND DID NOT RE-OPEN THE PAGE.
+Corollary: A FIRST-PARTY SOURCE IS NOT OPENED UNTIL ITS OUTBOUND LINKS ARE.
+
+STILL UNOPENED, named as unopened and not as missing: her Facebook (unreachable logged out, measured
+twice), the Menu photo set, the second link in her bio.
+
+NOTED, UNVERIFIED, NOT A BLOCK AND NOT APPROACHED: Google's related-places panel names "Cocina comunal
+Herradura" (centro comunitario, 0 reviews) — same district as finding 36's Mujeres del Uran of
+Herradura de Rivas. A communal kitchen is one word away from B-21 and B-15 and I am not taking it:
+approaching any comunal body is James's call, and my curiosity growing his ask is finding 37's complaint.
+
+NO NEW BLOCK. Nothing sent, nobody contacted, nothing pushed, no funds moved, no gate touched, no Card
+field changed, no new document created, REDEMPTION.md untouched, candidate #1 LIVE and not rested,
+one-candidate guard holds. Next windows: FRI 2026-10-09 (tomorrow, a Friday — checked against the
+weekday), SAT 2026-10-10, SUN 2026-10-11.
