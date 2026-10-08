@@ -132,3 +132,16 @@ Signed: Claude, Super Agent.
 - CURRENT: "SUPER — NBM Ledger (living) v17" = 1GrtQn4yrN8xfE8Qf5AjMWCoFZ5cs0QggtxrXq0MhsU8 (folder 02 LIVING LEDGERS = 1Vik8yhmwZVKZcv4QPkXlmF1JnoYpzmbi). Carries findings 29-36 in full; 1-28 condensed. Read back after creation, verified complete.
 - ARCHIVED: v16 = 1nmaS-vON3n_VANvCOexw-x8cry1kqhqsJ2hso3DKXc8, renamed and moved to 99 Archive (1KF7C-fIKMP8O1qJPGjrj2kED--nD1bHm). Nothing deleted. v3-v15 already archived.
 - Churn limit honored: v16 was written 2026-10-06 07:05 CR; this is the first roll after CR midnight, which is why eight findings land at once.
+
+2026-10-08 11:15 CR (cycle 39) — ledger rolled to **v18 = 1twRarBketLI-tIsV9HxmfaoTDXiMZyQx2IzphtxnWRM**
+(02 LIVING LEDGERS), carrying challenges **37, 38 and 39 in full** and condensing 1–36 to one line each.
+Read back complete and RENDERED before archiving. v17 renamed "(superseded by v18, 2026-10-08 11:15 CR
+— kept, not deleted)" and moved to 99 ARCHIVE; nothing deleted. Rolled under the churn limit: first roll
+after CR midnight, and challenge 39 changed an open block (B-13 gained a number; B-26 tightened).
+
+SEVENTH MEASURED LIMIT of this write path, found on the v18 read-back and logged rather than smoothed:
+a paragraph that BEGINS WITH A NUMBER AND A PERIOD is absorbed into the preceding ordered list and
+RENUMBERED by the converter. v18's condensed block was written "29. ... 30. ... 36." and the heading
+number arrived as "2." because the previous paragraph was an ordered list ending at 28. The content is
+complete; only the leading label is wrong. RULE for this path: never start a paragraph with "<n>." if
+an ordered list precedes it — open with a word, or write the number as "No. 29" / "(29)".
