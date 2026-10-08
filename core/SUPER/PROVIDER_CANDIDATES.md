@@ -179,3 +179,20 @@ FIRST-PARTY-PUBLISHED MENU PRICES, read from the "Menú" photo set on her own Go
 Consequence for the Card (NOT written into it): ₡40,000 buys NINE casados; ten cost ₡42,500. Cycle 39's EIGHT/FIVE/FOUR came from a diner-SPEND band, not a plate price — overstated ~4×.
 Also first read on this page: price histogram 0% / 69% / 25% / 6% across ₡1–5k / 5–10k / 10–15k / 15–20k (16 reports — **nobody reported under ₡5,000**); review distribution 87×5, 5×4, 2×3, 1×2, **4×1**; full weekly table Thu closed, **Fri 18:00–22:00**, Sat 09:00–21:00, Sun 09:00–17:00, Mon–Wed closed; most recent visitor photos 17 days old; website field = facebook.com; Plus code C8XV+M9.
 Her price has still not been asked. A photographed board is not a quote.
+
+## ADDENDUM 2026-10-08 (cycle 41, finding 41) — a reachable registry of comunal bodies, nobody contacted
+Source class opened for the first time: **si.cultura.cr**, Sistema de Informacion Cultural de Costa Rica
+(Ministerio de Cultura y Juventud), carrying the **Inventario Cultural Perez Zeledon 2022** — 276 fichas
+for this canton (tvsur.co.cr). It publishes infrastructure fichas that NAME the administering body of a
+village hall, and organisation fichas with contact details.
+- `/infraestructura/salon-comunal-de-chimirol` — Rivas district. Administra: **Asociacion de desarrollo
+  integral de Chimirol de Rivas**. Telefono de trabajo **8419-4670**. FB `facebook.com/chimirolde.rivas`.
+  Atencion al publico L-V 7am-4pm. Costo de uso "Variado segun evento". Ficha: Ronny Brenes Alfaro.
+  SECOND independent source for this body (finding 36 had only tvsur 2020-08-28). NOT contacted.
+- `/agrupaciones-y-organizaciones/asociacion-de-desarrollo-integral-pueblo-nuevo-de-cajon` — the
+  NAME-COLLISION body. Telefono 8505-8172, locality Cajon, Perez Zeledon. **NOT her village.**
+- NO ficha surfaced for a salon comunal in Pueblo Nuevo de Rivas; the slug probe returned a
+  "Cargando..." shell, which is not a negative result.
+- DINADECO's register is MIRRORED at hacienda.go.cr (see B-21) and fetched where dinadeco.go.cr times
+  out, but its text extraction is lossy and was NOT used as evidence.
+- Municipality path correction for our own files: **perezzeledon.go.cr** (Gestion Cultural department).

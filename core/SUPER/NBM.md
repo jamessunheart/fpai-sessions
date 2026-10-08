@@ -1185,3 +1185,68 @@ When a measurement is recorded with a caveat that it is the wrong instrument for
 
 ## WAITING ON JAMES (11, unchanged in count)
 B-15 (day 35, FIRST in order, gates the meal; size now a ₡2,500 question, not a resize) · B-26 (tighter, nearly decided by evidence, still his) · B-25 · B-08 (day 35) · B-13 (the arithmetic shrank) · B-24 (84 days) · B-17 (FOURTEEN, two branches) · B-20 · B-23 · B-21 · B-14 (mine).
+
+## 2026-10-08 15:1x CR (cycle 41, finding 41, Claude) — B-21 AND B-15 AMENDED, NO NEW BLOCK
+**FORTY-FIRST FINDING — AN UNREACHABLE HOST IS NOT AN UNREACHABLE DOCUMENT. THE CLASS OF SOURCE THAT
+NAMES THE KEEPER OF A VILLAGE HALL WAS REACHABLE ALL ALONG, AND IT CORROBORATES THE ONE BODY OUR
+RECORD HAD WRITTEN OFF AS SIX YEARS STALE.**
+
+Thread chosen under finding 36's own test (query every already-open class before naming a missing one)
+and finding 38's (a stated reason a block is blocked is a CLAIM). The claim tested: B-21's line
+"DINADECO's calificacion de idoneidad listings are UNREACHABLE from here, twice measured ... They are
+not pending work; they are a source this system cannot read", and B-15's "no publication reachable from
+here names a constituted comunal body for Pueblo Nuevo de Rivas".
+
+MEASURED 2026-10-08, nobody contacted, nothing sent, no gate touched:
+ · **si.cultura.cr** — Sistema de Informacion Cultural de Costa Rica (Ministerio de Cultura y Juventud).
+   It carries the **"Inventario Cultural Perez Zeledon 2022"**, **276 fichas** for this canton
+   (tvsur.co.cr, "276 fichas culturales de Perez Zeledon forman parte del inventario nacional").
+ · Record `si.cultura.cr/infraestructura/salon-comunal-de-chimirol`, read in full: a salon comunal in
+   **Rivas district** whose **administering organisation is named** — "Asociacion de desarrollo integral
+   de Chimirol de Rivas" — with **telefono de trabajo 8419-4670**, Facebook
+   `facebook.com/chimirolde.rivas`, atencion al publico **L-V 7am-4pm**, cost of use "Variado segun
+   evento", ficha author Ronny Brenes Alfaro, source inventory "Inventario Cultural Perez Zeledon 2022".
+ · So **ADI de Chimirol de Rivas now has a SECOND, INDEPENDENT, NEWER source** than finding 36's lone
+   tvsur article of 2020-08-28, plus a published phone and a public page. It is still **not 2026 proof**
+   (a 2022 inventory), but it is the only body on B-21's list of five or six with a checkable channel.
+ · Same registry publishes org records too: `.../agrupaciones-y-organizaciones/asociacion-de-desarrollo-
+   integral-pueblo-nuevo-de-cajon` — the **name-collision body**, phone 8505-8172, locality Cajon.
+   Recorded so a future search does not mistake it for her village a second time.
+ · **DINADECO'S LIST IS MIRRORED ON ANOTHER GOVERNMENT HOST**:
+   `hacienda.go.cr/docs/1-ListadoAutorizadoOrganizacionesComunalesDINADECODIC2025DIC2026.pdf`,
+   "Listado de Asociaciones para el 2%", header Ministerio de Gobernacion y Policia / DINADECO,
+   "Generado por dinadeco el 2023-03-02". **It fetched where dinadeco.go.cr times out.**
+ · **BUT THE READ OF IT IS NOT USABLE, AND IS NOT BEING USED** (test 40): two fetches at different
+   offsets returned the same codigo band (225-594) and **zero rows with provincia SAN JOSE in a national
+   list** — the text extraction is lossy, so its "no RIVAS rows" is an artefact of the instrument, not a
+   fact about the register. **The source class is reachable; this fetcher cannot read this file.**
+   Question reported UNANSWERED.
+ · Also noted, correcting a path in our own files: the municipality publishes at **perezzeledon.go.cr**
+   (Gestion Cultural department page), not munperezzeledon.go.cr.
+
+NEGATIVE, stated as the weak thing it is: **no si.cultura.cr ficha for a salon comunal in Pueblo Nuevo de
+Rivas surfaced.** A direct slug probe (`/infraestructura/salon-comunal-de-pueblo-nuevo`) returned the
+site's client-side "Cargando..." shell, which is **NOT a measurement** — so the keeper of the hall 25 m
+west of CEN 1190406 stays **UNANSWERED, not answered-no**.
+
+MY SIGNED POSITION: (1) **I withdraw the word "cannot" from B-21's DINADECO line.** What was measured
+twice was that one HOST times out. A mirror of the same document on a different ministry's host answered
+on the first try. The sentence was a claim about our search presented as a fact about the web.
+(2) B-15's negative narrows rather than falls: keepers of halls in NEIGHBOURING Rivas villages **are**
+published by name, phone and page; hers is simply not in the 2022 inventory we can see. That is a
+different and smaller statement than "no publication reachable from here".
+(3) **No candidate added to B-21** — deliberately. Finding 36 recorded growth as a cost; this cycle
+RANKS the existing list instead: if James answers B-21 with a body, ADI de Chimirol de Rivas is now the
+least-stale and the only one with a published working channel.
+(4) Nothing contacted. 8419-4670 and the Facebook page are NOT approached: B-21 is his word, and a
+comunal body is a beneficiary decision, not a research step.
+(5) AGAINST MYSELF: **seventh consecutive cycle where the fault was our own reading, not the world** —
+and the shape is new only in its wording: we recorded a DOCUMENT as unreadable when we had tested a HOST.
+
+TEST ADDED (41) — **AN UNREACHABILITY IS RECORDED AGAINST A HOST, NEVER AGAINST A DOCUMENT.** Before a
+timeout may enter a block as the REASON it is blocked, search for a MIRROR of that document on another
+host — ministries, central government, archives, press — and name the host tested and the date. A host
+that times out has not been shown to be the document's only home.
+Corollary: WE WROTE "A SOURCE THIS SYSTEM CANNOT READ" ABOUT A FILE THE GOVERNMENT PUBLISHES TWICE.
+Second corollary: A PAGE THAT RETURNS "Cargando..." HAS NOT BEEN READ — a client-side shell is not a
+negative result.

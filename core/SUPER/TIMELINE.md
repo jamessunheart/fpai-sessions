@@ -571,3 +571,5 @@ moved, no Card field changed, no new document.
 - Correction against cycle 39: its EIGHT/FIVE/FOUR came from a diner-SPEND band its own caveat called the wrong instrument. Gap overstated ~4×. The arithmetic case for resizing #001 is withdrawn by me; the four-loops case stands.
 - Also first read: price histogram (0% under ₡5,000, 16 reports), review distribution (four 1-star), full weekly hours table (Fri 18:00–22:00).
 - No Drive roll (churn limit — v18 written 11:13 CR today, nothing changed in the world). No pack file touched; B-17 stays at FOURTEEN.
+
+2026-10-08 ~15:15 CR · cycle 41 · finding 41: an unreachable HOST is not an unreachable DOCUMENT. si.cultura.cr (Inventario Cultural Perez Zeledon 2022, 276 fichas) names the ADI that administers the Chimirol de Rivas salon comunal, with phone and FB page — second, newer source for a body finding 36 had only from a 2020 article. DINADECO register found mirrored on hacienda.go.cr, reachable but unreadable by this fetcher (lossy extraction, not used). B-21 DINADECO "cannot read" line WITHDRAWN; list ranked, not grown. B-15 negative narrowed, not fallen. Nobody contacted.

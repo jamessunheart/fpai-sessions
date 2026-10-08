@@ -766,3 +766,36 @@ Status: OPEN. Finding 40 ran finding 39's own test to completion: all four outbo
 - Her Maps link resolves to the Google place that publishes **6339 9498**. So the chain **Instagram bio → solo.to → Google place → 6339-9498 is first-party end to end.** Cycle 39's line "her own link hub publishes none at all" was wrong — it publishes a link that publishes one.
 - Against that, unchanged and still the only evidence on the other side: a reply did arrive to **6362-6524**, content never captured.
 - Every source she controls now points one way. Which number is hers remains **his word**, because the one reply we have ever received points the other way, and this Build's only world-sourced gate waits on whoever answers.
+
+### B-21 — AMENDED 2026-10-08 (cycle 41, finding 41) — THE DINADECO LINE IS WITHDRAWN, AND THE LIST IS RANKED INSTEAD OF GROWN (still OPEN, James only, one word)
+The question is unchanged: is Comite La Piedra de Rivas the PROVIDER or the TEN BENEFICIARIES.
+WITHDRAWN: "DINADECO's calificacion de idoneidad listings ... are not pending work; they are a source
+this system cannot read." What was measured twice (2026-10-06, -07) is that **dinadeco.go.cr times out** —
+a HOST. The same register is mirrored by another ministry and fetched on the first try 2026-10-08:
+hacienda.go.cr/docs/1-ListadoAutorizadoOrganizacionesComunalesDINADECODIC2025DIC2026.pdf, "Listado de
+Asociaciones para el 2%", generado por dinadeco 2023-03-02. **Its CONTENT is still unread** — two fetches
+at different offsets returned the same codigo band 225-594 and zero provincia SAN JOSE rows in a national
+list, so the extraction is lossy and its silence about RIVAS is an instrument artefact, not evidence
+(test 40). Reachable class, unreadable file, question UNANSWERED.
+NO BODY ADDED. Instead, RANKED: **Asociacion de desarrollo integral de Chimirol de Rivas** is now the
+least-stale name on this list and the only one with a published working channel —
+si.cultura.cr/infraestructura/salon-comunal-de-chimirol ("Inventario Cultural Perez Zeledon 2022", one of
+276 fichas for the canton) names it as the ADMINISTERING body of that village's salon comunal, with
+telefono 8419-4670, facebook.com/chimirolde.rivas, atencion L-V 7am-4pm. Second independent source,
+two years newer than finding 36's tvsur 2020 article. Still not 2026 proof.
+NOT APPROACHED and will not be: the phone and the page are recorded, not used. A comunal body is a
+beneficiary decision (B-15), which is his.
+Collision guard reinforced: si.cultura.cr also files ADI Pueblo Nuevo de **CAJON** (phone 8505-8172,
+locality Cajon). Not her village.
+Not on the public board.
+
+### B-15 — AMENDED 2026-10-08 (cycle 41, finding 41) — THE NEGATIVE NARROWS; IT DOES NOT FALL (still OPEN, still FIRST in the order, day 35)
+The ask, its size and its order are unchanged, and the witness may still be one of the ten.
+The sentence "no publication reachable from here names a constituted comunal body for Pueblo Nuevo de
+Rivas" was over-stated: it described our search, not the web. Measured 2026-10-08 — keepers of salones
+comunales in NEIGHBOURING Rivas-district villages ARE published by name, phone and public page in the
+Ministerio de Cultura's Inventario Cultural Perez Zeledon 2022 (si.cultura.cr/infraestructura/...).
+What is true and smaller: **her village's hall — 25 m west of CEN 1190406 — has no keeper named in the
+part of that inventory we can see.** The direct slug probe for a Pueblo Nuevo ficha returned the site's
+"Cargando..." client-side shell, which is not a measurement, so this is UNANSWERED, not answered-no.
+B-15's size therefore remains UNKNOWN rather than ten, exactly as before.
