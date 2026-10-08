@@ -1135,3 +1135,53 @@ NO NEW BLOCK. Nothing sent, nobody contacted, nothing pushed, no funds moved, no
 field changed, no new document created, REDEMPTION.md untouched, candidate #1 LIVE and not rested,
 one-candidate guard holds. Next windows: FRI 2026-10-09 (tomorrow, a Friday — checked against the
 weekday), SAT 2026-10-10, SUN 2026-10-11.
+
+---
+# CYCLE 40 — 2026-10-08 13:20 CR (19:20Z). Claude, Super Agent. Nothing sent, nobody contacted, no funds moved, no gate touched, no Card field changed, no new document.
+
+## WORLD STATE: UNCHANGED since 2026-09-03.
+Gemini has not answered again (SUPER CONNECT — Council Record 001 still 2026-09-03; the GEMINI ANSWER doc still 2026-09-03T14:26Z). VENDOR_LOG_198 mirror, pulled fresh by the Mac beat at 2026-10-08T18:15Z, still the two 2026-09-03T15:12 entries. The beat still cannot think — `claude -p` rc=1, "Not logged in"; B-08 day 35. BUILD_001 HOLD 2/4 (world-sourced 0/1), loop 0/11, Window UNDECLARED, Grade 0/4, redemption validity 84 days. BUILD_002 HOLD. Drive untouched but for my own v18 roll at 17:13Z this morning. REDEMPTION.md filled; the draft's [REDEMPTION] bracket verified again at 0 occurrences.
+
+## FORTIETH FINDING — THE FIRST-PARTY PRICE EXISTED AS A PICTURE, AND YESTERDAY'S FINDING OVERSTATED THE GAP BY ROUGHLY FOUR TIMES.
+
+**Thread chosen under finding 39's own test** — "A TEST IS NOT ADDED UNTIL IT HAS BEEN RUN ON THE SOURCE THAT PROMPTED IT. Corollary: A FIRST-PARTY SOURCE IS NOT OPENED UNTIL ITS OUTBOUND LINKS ARE." Finding 39 wrote that sentence and, in the same breath, listed three things on that very source it had not opened. So this cycle opened them.
+
+**MEASURED 2026-10-08, logged-out browser pane, nobody contacted, nothing sent.**
+
+**(1) solo.to/lacocinonadepueblo — all four outbound links opened.** Facebook (still unreachable logged out), Instagram, Waze, Maps. The **Maps link resolves to the Google place that publishes 6339 9498.** Therefore the chain **Instagram bio → solo.to → Google place → 6339-9498 is first-party end to end**, and finding 39's sentence "her own hub publishes none at all" was false: it publishes a link that publishes one. B-26 TIGHTER again; still his word, because the one reply we ever received came to 6362-6524.
+
+**(2) THE MENU PHOTO SET CARRIES PRICES IN COLONES.** Dismissed in our own file for 35 days as "images, no text". Eleven photos, three printed cards, on her own profile. Google stamps the capture **sept 2024 — two years old**; the photographer is a visitor (Chiara Vuilleumier), not the owner.
+- **COMO DE CASA: Tradicional Casado ₡4,250** — arroz blanco, frijoles, a meat of choice, picadillo del día, ensalada, tortilla casera, **refresco natural included** · Arroz con Pollo / con Camarones / Cantonés ₡4,550 each · Bandeja La Cocinona · Cabayo Bayo de Chicharrones · Asadito La Cocinona · Costillas de cerdo al BBQ ₡5,900 each · Gordon Blue (price cut off).
+- **COMO DE LA SODA (bocas):** tamal de cerdo ₡1,500 · empanada ₡2,500 · gallo de chorizo o salchichón ₡2,500 · deditos de pollo ₡4,300 · hamburguesa especial ₡4,300 · nachos ₡4,300, mixtos ₡4,900.
+- **PARA UN CARIÑITO (postres):** ₡1,500–₡2,500.
+- **ATTRIBUTION CAVEAT, load-bearing and stated before the conclusion:** the dish NAME on the ₡4,250 line was occluded by Google's photo-attribution overlay. It is attributed to "Tradicional Casado" by verbatim match of the description printed beside it to Google's own structured menu text, and by list order — first item on the card, first item in the structured list. Not by reading the name.
+
+**(3) THE ARITHMETIC, AND THE CORRECTION AGAINST MYSELF.** At ₡4,250, **₡40,000 buys NINE casados**; ten cost **₡42,500**, a gap of **₡2,500**. Cycle 39 reported EIGHT at her floor, FIVE mid-band, FOUR at top, from the diner-reported spend band ₡5,000–10,000 — and cycle 39 itself wrote the caveat that the band is "diner-reported per-person SPEND, not her quoted plate price." It wrote the caveat and then let the band be the number in every sentence downstream. **The gap was overstated by roughly four times.**
+
+**(4) ALSO READ, FIRST TIME, FIELD BY FIELD** (finding 37's test, run properly this time on a page we have now read four times):
+- **Price histogram, 16 reports: ₡1–5,000 = 0% · ₡5,000–10,000 = 69% · ₡10,000–15,000 = 25% · ₡15,000–20,000 = 6%.** This is the honest counterweight to (3): nobody who reported spending there reported spending under ₡5,000. A casado is ₡4,250; a visit is not a casado.
+- **Review distribution: 87×5 · 5×4 · 2×3 · 1×2 · 4×1.** Our file has carried "5.0 / 4" and then "4.7 / 99" and never once that four people rated her lowest.
+- **Full weekly table: Thu CLOSED · Fri 18:00–22:00 · Sat 09:00–21:00 · Sun 09:00–17:00 · Mon/Tue/Wed CLOSED.** Google's side of the open-hour disagreement is 6 p.m.; the Instagram bio's 5 p.m. is still unreconciled.
+- Her profile's website field is facebook.com, not solo.to. Plus code C8XV+M9. Most recent visitor photos 17 days old — the place is live.
+
+## MY SIGNED POSITION — Claude, Super Agent, 2026-10-08
+1. **Nothing written into the Card.** No price, no headcount, no window, no phone. B-13 and B-26 are his.
+2. **I WITHDRAW THE ARITHMETIC CASE FOR THE RESIZE.** I have argued for resizing #001 to 25 SUPER since finding 25, and argued it again yesterday on a band that was the wrong instrument by my own caveat. Her menu says ten meals cost ₡42,500 — **₡2,500 more than the escrow, not four times it.** The resize was never required by her price; it was required by my estimate of her price. The *other* argument for it — one escrow funds four loops and is graded four times sooner, and B-15 shrinks with it — stands untouched on its own feet.
+3. **B-13(i) narrows to a small, real question:** ₡4,000 is ₡250 under her 2024 casado. His choices: add ₡2,500 and keep ten · keep ₡40,000 and promise NINE · resize on the four-loops argument alone and say so · or wait for her quote, which nobody has asked for. **Order unchanged: HER PRICE FIRST.** A photographed board from 2024 is not a quote.
+4. **B-26 is now as tight as public sources can make it** and no tighter: every chain she controls ends at 6339-9498; one reply we cannot read came to 6362-6524.
+5. **AGAINST MYSELF — SIXTH consecutive cycle where the fault was in our reading, not in the world.** And a new shape, worse than the old one: finding 39 did not *miss* the caveat. It *wrote* the caveat, correctly, and then let the caveated number do the work of an uncaveated one. A fault we name and route around is not the same as a fault we name and then commit anyway.
+
+## TEST ADDED (40) — A CAVEAT MUST MOVE A NUMBER, OR IT IS DECORATION.
+When a measurement is recorded with a caveat that it is the wrong instrument for the question being asked, the cycle may not then use it as the answer. It must find the right instrument **in the same cycle**, or report the question as unanswered. A caveat that leaves every downstream sentence unchanged has not been applied; it has been displayed.
+- **Corollary:** WE WROTE "NOT HER QUOTED PLATE PRICE" AND THEN PRICED THE BUILD OFF IT.
+- **Second corollary, from the method rather than the fault:** A PHOTO SET IS A SOURCE. "Images, no text" marked a source unreadable for 35 days. The price was in a picture, on a page we had already read three times, and reading it cost four screenshots.
+
+## FIXED INSIDE REMIT (nothing sent, nobody contacted, no gate touched, no Card field changed, no new document)
+- `super_build.py`: `counterparty_line()` now prints the MENU PRICE block with every figure, its source, its date and its attribution caveat; the diner-spend entry is relabelled and carries the histogram and finding 40's correction; the link-hub entry is amended; hours sharpened to the full weekly table; a review-distribution entry added.
+- `BLOCKS.md`: B-13 amended (arithmetic case for the resize withdrawn by me; four fixes named, all his); B-26 amended (first-party chain now end to end).
+- `PROVIDER_CANDIDATES.md`, `TIMELINE.md`, `VENDOR_LOG.md`: notes.
+- **NO DRIVE ROLL** — churn limit. v18 was written at 17:13Z (11:13 CR) today and nothing changed in the world; finding 40 waits for the first cycle after CR midnight.
+- **NO PACK FILE TOUCHED, so B-17 stays at FOURTEEN.**
+
+## WAITING ON JAMES (11, unchanged in count)
+B-15 (day 35, FIRST in order, gates the meal; size now a ₡2,500 question, not a resize) · B-26 (tighter, nearly decided by evidence, still his) · B-25 · B-08 (day 35) · B-13 (the arithmetic shrank) · B-24 (84 days) · B-17 (FOURTEEN, two branches) · B-20 · B-23 · B-21 · B-14 (mine).

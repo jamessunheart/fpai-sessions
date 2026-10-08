@@ -431,20 +431,48 @@ COUNTERPARTY_FACTS = [
      "ours (Tripadvisor, read 2026-10-03): Sat 12:00-21:00, Sun 09:00-20:00, closed Mon-Fri · "
      "HERS (Instagram bio + Google Business Profile, read 2026-10-06): Fri 17:00/18:00-22:00 "
      "(the two disagree on the open hour), Sat 09:00-21:00, Sun 09:00-17:00 — so FRIDAY is an "
-     "open day this system has never counted, and the channel may be 3 days in 7, not 2"),
+     "open day this system has never counted, and the channel may be 3 days in 7, not 2 · SHARPENED "
+     "2026-10-08 (finding 40) from her profile's full weekly table, read field by field: **Thu CLOSED · "
+     "Fri 18:00-22:00 · Sat 09:00-21:00 · Sun 09:00-17:00 · Mon/Tue/Wed CLOSED**. Google's side of the "
+     "open-hour disagreement is 6 p.m.; the Instagram bio's 5 p.m. is still unreconciled and nothing "
+     "here changes WHEN a message is sent (B-26, his word)"),
+    ("review distribution", "HER OWN CLAIMED PROFILE — FIRST READ 2026-10-08 (finding 40)",
+     "99 opiniones: 87 at 5 stars · 5 at 4 · 2 at 3 · 1 at 2 · **4 at 1 star**. Our file has carried "
+     "'5.0 / 4 reviews' and then '4.7 / 99' without ever recording that four people rated her lowest. "
+     "Not a disqualifier and not an argument — recorded because a counterparty fact we only ever "
+     "report at its average is a counterparty fact we have not read"),
     ("phone", "THIRD-PARTY-ONLY — CONTRADICTED",
      "ours (in the Card, VENDOR_LOG and all three messages): +506 6362 6524 · HERS (Instagram bio "
      "and Google Business Profile, read 2026-10-06): 6339-9498 · the one reply we ever received "
      "came to 6362-6524 but its content was never captured, so who replied is unestablished (B-26)"),
-    ("price per person", "HER OWN CLAIMED PROFILE — MEASURED 2026-10-08",
-     "HERS (Google Business Profile, the profile she answers reviews on as 'Respuesta del "
-     "propietario', read 2026-10-08 in a logged-out browser pane): **CRC 5,000-10,000 por persona, "
-     "'Informado por 16 personas'** · OURS (implicit in the Card): CRC 40,000 / ten plates = "
-     "CRC 4,000 per person, 20% BELOW THE FLOOR of her own band · CAVEAT, stated plainly: this is "
-     "diner-reported per-person SPEND (drinks included), not her quoted plate price, and no menu "
-     "price in colones is reachable anywhere first-party · CONSEQUENCE: at her floor CRC 40,000 "
-     "buys EIGHT meals, at mid-band FIVE, at the top FOUR - the headcount is what her number moves, "
-     "not the price (B-13, the director's word; NOTHING here is written into the Card)"),
+    ("MENU PRICE, in colones", "HER OWN PROFILE'S MENU PHOTO SET — FIRST READ 2026-10-08 (finding 40)",
+     "The 'Menú' photo set on her own Google profile (11 photos, 3 printed cards) carries PRICES IN "
+     "COLONES. Read 2026-10-08 in a logged-out browser pane, nobody contacted. Photo capture date "
+     "stamped by Google: **sept 2024 — TWO YEARS OLD**; photographer a visitor (Chiara Vuilleumier), "
+     "not the owner · CARD 'COMO DE CASA': **Tradicional Casado CRC 4,250** (arroz, frijoles, a meat "
+     "of choice, picadillo del día, ensalada, tortilla casera, **refresco natural included**) · Arroz "
+     "con Pollo / con Camarones / Cantonés CRC 4,550 each · Bandeja La Cocinona, Cabayo Bayo de "
+     "Chicharrones, Asadito La Cocinona, Costillas de cerdo al BBQ CRC 5,900 each · CARD 'COMO DE LA "
+     "SODA' (bocas): tamal de cerdo CRC 1,500 · empanada CRC 2,500 · gallo CRC 2,500 · deditos de pollo "
+     "CRC 4,300 · hamburguesa especial CRC 4,300 · nachos CRC 4,300 (mixtos 4,900) · CARD 'PARA UN "
+     "CARIÑITO' (postres): CRC 1,500-2,500 · ATTRIBUTION CAVEAT, load-bearing: the dish NAME on the "
+     "CRC 4,250 line was occluded by Google's photo-attribution overlay. It is attributed to "
+     "'Tradicional Casado' by VERBATIM match of the description beside it to Google's own structured "
+     "menu text, and by list order (first item on the card, first item in the structured list) — not "
+     "by reading the name · THE ARITHMETIC: at CRC 4,250, CRC 40,000 buys **NINE** casados; ten cost "
+     "CRC 42,500, a gap of **CRC 2,500** · STILL NOT A QUOTE FROM HER: a two-year-old photographed "
+     "board is not today's price and is not her word. Her price must still be asked (B-25's "
+     "M-NUDGE-2 already asks it). NOTHING here is written into the Card (B-13, the director's word)"),
+    ("price per person, diner-reported", "HER OWN CLAIMED PROFILE — MEASURED 2026-10-08",
+     "HERS (Google Business Profile): **CRC 5,000-10,000 por persona, 'Informado por 16 personas'**, "
+     "with the histogram, never recorded until finding 40: **CRC 1-5,000 = 0%** · 5,000-10,000 = 69% · "
+     "10,000-15,000 = 25% · 15,000-20,000 = 6% · OURS (implicit in the Card): CRC 40,000 / ten plates = "
+     "CRC 4,000 per person · CORRECTED BY FINDING 40: this is diner-reported per-person SPEND (drinks, "
+     "bocas, postre, groups), NOT a plate price — cycle 39 wrote that caveat and then priced the Build "
+     "off the band anyway, reporting EIGHT/FIVE/FOUR meals where her own menu says NINE. The band is "
+     "the right instrument for 'what a visit costs there'; the MENU is the right instrument for 'what "
+     "ten casados cost'. Both are kept; neither is in the Card · the 0% bucket is the honest "
+     "counterweight: nobody who reported spending there reported spending under CRC 5,000"),
     ("social proof", "HER OWN CLAIMED PROFILE — MEASURED 2026-10-08",
      "ours (Tripadvisor, third-party, unclaimed): '#1 of 7 in Rivas, 5.0 / 4 reviews' · HERS "
      "(Google Business Profile): **4.7 / 99 opiniones**, owner replies dated 4-7 months ago, "
@@ -454,8 +482,14 @@ COUNTERPARTY_FACTS = [
      "solo.to/lacocinonadepueblo, the link she publishes in the Instagram bio we had already read "
      "three times: '50 anos de tradicion familiar, combinando recetas del pueblo, buena musica, "
      "varios espacios y nuestro jardin' · links Facebook, Instagram, Waze, Maps and NOTHING else - "
-     "no menu, no price, and NO PHONE AT ALL. Still unopened, named as unopened not missing: her "
-     "Facebook (unreachable logged out), the Menu photo set (images, no text), the second bio link"),
+     "no menu, no price, and NO PHONE AT ALL *on the hub page itself* · AMENDED 2026-10-08 (finding 40), "
+     "having run finding 39's own test on the source that prompted it: ALL FOUR outbound links were "
+     "opened. The Maps link (maps.app.goo.gl/oycWoC1AKCayS7Bw9) resolves to the Google place that "
+     "publishes **6339 9498** — so the sentence 'her own hub publishes no phone at all' was WRONG: it "
+     "publishes a link that publishes one, and the chain Instagram bio -> solo.to -> Google place -> "
+     "6339-9498 is first-party end to end · the Menu photo set, dismissed here as 'images, no text', "
+     "is where the colon prices were (see MENU PRICE above) · still unopened: her Facebook "
+     "(unreachable logged out)"),
     ("second channel", "MEASURED 2026-10-06",
      "Facebook /LaCocinonadePueblo is NOT reachable logged out ('This content isn't available right "
      "now'); Instagram @lacocinonadepueblo IS live (2,750 followers). The earlier "

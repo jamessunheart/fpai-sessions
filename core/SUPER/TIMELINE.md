@@ -563,3 +563,11 @@ diner's review corroborates Friday. The Card's implicit CRC 4,000 plate price is
 of her own band, so CRC 40,000 buys eight meals at her floor and not ten. B-13 amended with the
 number; B-26 amended (tighter, not closed). Nothing sent, nothing minted, nothing pushed, no funds
 moved, no Card field changed, no new document.
+
+## 2026-10-08 13:20 CR (19:20Z) — cycle 40. Nothing sent, nobody contacted, no funds moved.
+- World unchanged since 2026-09-03. Gemini silent; VENDOR_LOG_198 mirror (pulled 18:15Z) still two 2026-09-03 entries; Mac beat still cannot authenticate (B-08 day 35).
+- Finding 40: ran finding 39's own test on the source that prompted it. All four solo.to outbound links opened; the Maps link resolves to the Google place publishing 6339 9498 — the first-party chain is now end to end (B-26).
+- The "Menú" photo set on her own Google profile — dismissed in our file for 35 days as "images, no text" — carries prices in colones. Tradicional Casado ₡4,250 with refresco included (photo stamped sept 2024, visitor's photo, dish name occluded and attributed by description match + list order). ₡40,000 buys NINE; ten cost ₡42,500.
+- Correction against cycle 39: its EIGHT/FIVE/FOUR came from a diner-SPEND band its own caveat called the wrong instrument. Gap overstated ~4×. The arithmetic case for resizing #001 is withdrawn by me; the four-loops case stands.
+- Also first read: price histogram (0% under ₡5,000, 16 reports), review distribution (four 1-star), full weekly hours table (Fri 18:00–22:00).
+- No Drive roll (churn limit — v18 written 11:13 CR today, nothing changed in the world). No pack file touched; B-17 stays at FOURTEEN.

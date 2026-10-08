@@ -747,3 +747,22 @@ appears ONLY on a Tripadvisor page that prompts "Claim Your Free Listing", i.e. 
 Against that stands the single fact on the other side, unchanged: a reply DID arrive to 6362-6524 on
 2026-09-03, content never captured. The three options are the same three; they are no longer
 symmetric. Still his word, because it decides who gets contacted. Bundled with B-25, same send.
+
+---
+## 2026-10-08 13:20 CR — AMENDMENTS (cycle 40, finding 40). Claude, Super Agent. Nothing sent, nobody contacted, no gate touched, no Card field changed.
+
+**B-13 — AMENDED. The resize's ARITHMETIC case is WITHDRAWN by me; the resize itself is still his call.**
+Status: OPEN. Her own menu, photographed and published on her own Google profile, is now read (finding 40):
+**Tradicional Casado ₡4,250, refresco natural included** (photo stamped sept 2024, two years old; visitor's photo, not hers; dish name occluded, attributed by verbatim description match + list order).
+- At ₡4,250, ₡40,000 buys **NINE** casados. Ten cost **₡42,500** — a gap of **₡2,500**.
+- Cycle 39 reported EIGHT/FIVE/FOUR from a diner-SPEND band of ₡5,000–10,000 and called the headcount unkeepable. That band is the wrong instrument for ten plates, as cycle 39's own caveat said, and cycle 39 used it anyway. **I overstated the gap by roughly 4×.**
+- So B-13(i) THE PLATE PRICE narrows to a real and small question: ₡4,000 is ₡250 under her 2024 casado. B-13(ii) THE RESIZE no longer has an arithmetic argument behind it. The *other* argument for resizing — one escrow funds four loops and gets graded four times sooner, and B-15 shrinks with it — stands untouched and is unaffected by this reading.
+- The cheapest honest fixes, all his: (a) add ₡2,500 to escrow and keep ten; (b) keep ₡40,000 and promise NINE; (c) resize to 25 SUPER on the four-loops argument alone, saying so; (d) wait for her quote before choosing any of them — she has never been asked.
+- NOT an argument for ten: the photo is two years old, and diners report ₡5,000–10,000 per visit with **0% under ₡5,000**. A casado is ₡4,250; a visit is not.
+- NOTHING written into the Card. The plate price stands at ₡4,000 exactly as it was.
+
+**B-26 — AMENDED. As tight as public sources can make it. Still his word.**
+Status: OPEN. Finding 40 ran finding 39's own test to completion: all four outbound links on solo.to opened.
+- Her Maps link resolves to the Google place that publishes **6339 9498**. So the chain **Instagram bio → solo.to → Google place → 6339-9498 is first-party end to end.** Cycle 39's line "her own link hub publishes none at all" was wrong — it publishes a link that publishes one.
+- Against that, unchanged and still the only evidence on the other side: a reply did arrive to **6362-6524**, content never captured.
+- Every source she controls now points one way. Which number is hers remains **his word**, because the one reply we have ever received points the other way, and this Build's only world-sourced gate waits on whoever answers.

@@ -250,3 +250,9 @@ headcount changed, no window rewritten, no comunal body approached. The CRC 4,00
 stands in the Card exactly as it was, and HER quoted price is still the thing M-NUDGE-2 is drafted to ask
 her. Candidate #1 LIVE and not rested; one-candidate guard holds; nothing minted; no funds moved;
 REDEMPTION.md untouched; nothing pushed.
+
+[2026-10-08 13:20 CR · cycle 40 · Claude, Super Agent] NOTHING SENT. NOBODY CONTACTED. No message drafted or re-aimed; no number changed in any message; no window changed.
+Read only, logged-out browser pane, on sources the provider publishes herself:
+  · solo.to/lacocinonadepueblo — all four outbound links opened (finding 39's test, finally run on the source that prompted it). The Maps link resolves to the Google place that publishes 6339 9498. Chain Instagram bio → solo.to → Google place → 6339-9498 is first-party end to end. The one reply we ever received still came to 6362-6524, content never captured. B-26 tighter, NOT closed, still James's word.
+  · Her Google profile's "Menú" photo set (11 photos, 3 printed cards) carries COLÓN PRICES. Tradicional Casado ₡4,250, refresco natural included; arroces ₡4,550; house plates ₡5,900; bocas ₡1,500–4,900; postres ₡1,500–2,500. Photo stamped sept 2024 (two years old), taken by a visitor, and the dish name on the ₡4,250 line was occluded — attributed by verbatim description match and list order, not by reading the name.
+  · Her price has STILL NOT BEEN ASKED. A photographed board is not a quote. M-NUDGE-2 is still the message that asks it, and it is still unsent, behind B-15 and B-26.

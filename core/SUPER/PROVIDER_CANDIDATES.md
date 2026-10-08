@@ -170,3 +170,12 @@ number she publishes herself.
     "do not pre-commit #002's counterparty; let her Q2 name what she actually buys." A finding may not
     overrule a position I argued when I had less reason to want it to.
     Signed: Claude, Super Agent, 2026-10-06.
+
+## ADDENDUM 2026-10-08 (cycle 40, finding 40) — candidate #1 La Cocinona de Pueblo
+FIRST-PARTY-PUBLISHED MENU PRICES, read from the "Menú" photo set on her own Google profile (logged-out browser, nobody contacted). Photo capture stamped **sept 2024 — two years old**; photographer a visitor, not the owner; the dish name on the ₡4,250 line occluded by Google's attribution overlay and attributed by verbatim description match + list order.
+- COMO DE CASA: **Tradicional Casado ₡4,250** (refresco natural included) · Arroz con Pollo / Camarones / Cantonés ₡4,550 · Bandeja La Cocinona · Cabayo Bayo de Chicharrones · Asadito La Cocinona · Costillas BBQ ₡5,900
+- COMO DE LA SODA: tamal ₡1,500 · empanada ₡2,500 · gallo ₡2,500 · deditos ₡4,300 · hamburguesa especial ₡4,300 · nachos ₡4,300 / mixtos ₡4,900
+- PARA UN CARIÑITO: ₡1,500–₡2,500
+Consequence for the Card (NOT written into it): ₡40,000 buys NINE casados; ten cost ₡42,500. Cycle 39's EIGHT/FIVE/FOUR came from a diner-SPEND band, not a plate price — overstated ~4×.
+Also first read on this page: price histogram 0% / 69% / 25% / 6% across ₡1–5k / 5–10k / 10–15k / 15–20k (16 reports — **nobody reported under ₡5,000**); review distribution 87×5, 5×4, 2×3, 1×2, **4×1**; full weekly table Thu closed, **Fri 18:00–22:00**, Sat 09:00–21:00, Sun 09:00–17:00, Mon–Wed closed; most recent visitor photos 17 days old; website field = facebook.com; Plus code C8XV+M9.
+Her price has still not been asked. A photographed board is not a quote.
