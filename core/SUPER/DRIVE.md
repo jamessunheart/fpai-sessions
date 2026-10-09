@@ -145,3 +145,13 @@ RENUMBERED by the converter. v18's condensed block was written "29. ... 30. ... 
 number arrived as "2." because the previous paragraph was an ordered list ending at 28. The content is
 complete; only the leading label is wrong. RULE for this path: never start a paragraph with "<n>." if
 an ordered list precedes it — open with a word, or write the number as "No. 29" / "(29)".
+
+LIVING LEDGER ROLLED 2026-10-09 ~11:00 CR (cycle 42): "SUPER — NBM Ledger (living) v19"
+= 1LRCpPOjBOwPQDAADIqaqnTIzQ0Ga1DO6mExF_7y0qeU, in 02 LIVING LEDGERS (1Vik8yhmwZVKZcv4QPkXlmF1JnoYpzmbi).
+Carries challenges 40, 41 and 42 in full — the first time James can see 40 or 42 on the debate surface —
+with 1-39 condensed into four grouped paragraphs rather than a numbered list, deliberately: the seventh
+measured limit (a paragraph beginning "<n>." is absorbed into a preceding ordered list and renumbered)
+cannot fire against a line that begins "ch. 1-10 —". Read back verified complete and rendered; the
+"### 40." headings survived as headings. v18 renamed "(superseded by v19 ...)" and moved to 99 ARCHIVE
+(1KF7C-fIKMP8O1qJPGjrj2kED--nD1bHm); nothing deleted. This was the first roll after CR midnight, which
+is what the churn limit was waiting for, and it clears the backlog: 40, 41 and 42 are all on the page.
