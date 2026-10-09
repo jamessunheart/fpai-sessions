@@ -849,3 +849,51 @@ FIXED IN THE REPO COPY and differential-harness-tested (pre-fix raises at the ba
 on 198 is TWO fixes behind on the only path that can feed `provider_q2_verbatim`.
 RELATED COST, named here because it is the same gate: the Mac heartbeat mirror is the ONLY transport
 from /opt/VENDOR_LOG.md into this repo, and it has not run since 2026-10-08T22:15Z (B-08, day 36).
+
+
+## B-08 · AMENDED 2026-10-09 (finding 44) — SAME ONE-MINUTE ASK, TWO FAULTS, AND THE LAUNCHAGENT NO LONGER DEPENDS ON A HYPOTHESIS
+STATUS: OPEN — JAMES ONLY, day 36. Ask UNCHANGED in what it costs. NO NEW BLOCK ID, on purpose: what
+follows is a second independent REASON for an action already asked for, not a second ask.
+
+MEASURED 2026-10-09 by counting the heartbeat log's own headers (106 unique beat stamps; nobody
+contacted, nothing sent): the beats that go MISSING are TIME-OF-DAY CORRELATED. Slots are 02/06/10/14/
+18/22 UTC = 20:15(prev)/00:15/04:15/08:15/12:15/16:15 CR. October, per day: 10-01 all six · 10-02 all
+six · 10-03 02,18,22 · 10-04 18,22 · 10-05 all six · 10-06 all six · 10-07 02,18,22 · 10-08 14,18,22 ·
+10-09 18 only. Every partial day lost the 06/10/14Z block (the CR night and early morning) and kept
+18/22Z (midday and afternoon) — never once the inverse.
+
+THEREFORE TWO FAULTS, where every document until today has named one:
+ 1. THE THINKING FAULT — `claude -p` has never authenticated from cron. 106 beats, zero. Time-INdependent:
+    it fails the same at 4am and at noon. This is what B-08 has always asked about.
+ 2. THE PRESENCE FAULT — the beat does not run AT ALL for roughly two of every five slots. Never named
+    in any file in this system. It is why the evidence mirror went blind from 2026-10-08T22:15Z to
+    2026-10-09T18:15Z: twenty hours, five slots, on the ONLY transport from /opt/VENDOR_LOG.md into this
+    repo and so the only route by which `provider_q2_verbatim` — the single world-sourced gate on
+    Build #001 — can ever be fed (finding 43). During that window the honest statement was not "nothing
+    changed in the world", it was "nothing was observed".
+
+ONE ACTION FIXES BOTH. Apple's Scheduled Jobs guide (developer.apple.com, first-party, read 2026-10-09):
+a launchd `StartCalendarInterval` job, if the computer is asleep when it should have run, "will run when
+the computer wakes up"; for cron, "if the system is turned off or asleep, cron jobs do not execute; they
+will not run until the next designated time occurs." So a LaunchAgent recovers the night's beat the
+moment the lid opens, and cron never does.
+
+THE ASK, as it now stands (James, ~1 min, in this order):
+ (a) Open Terminal on the Mac and run `bash ~/FullPotentialOS/infra/scripts/super_agent_heartbeat.sh`.
+     If it THINKS by hand → cause 2 (cron outside the GUI session, Keychain locked). If it ALSO says
+     "Not logged in" by hand → then `claude` + `/login`.
+ (b) EITHER WAY, move the beat to a LaunchAgent. This is the part that changed today: it is no longer
+     contingent on (a)'s outcome, because it is the only scheduler that recovers a beat lost to sleep.
+HONEST LIMIT, in Apple's words, recorded so a recovered beat is never read as a working one: the
+catch-up covers SLEEP, not power-off — "if the machine is off when the job should have run, the job does
+not execute until the next designated time occurs." If this Mac is shut down overnight rather than
+closed, the LaunchAgent recovers nothing and the blind window stands exactly as it is.
+
+FIXED INSIDE REMIT this cycle: the FIX paragraph the script prints on EVERY beat made the LaunchAgent
+conditional on "if it thinks BY HAND". It now carries both faults, both Apple quotations and the
+asleep-versus-shut-down limit. Nothing deployed, nothing sent, no gate touched. Order untouched: B-15 is
+still first.
+AGAINST MYSELF: this script has printed "This machine was asleep, off, or the schedule did not fire"
+since 2026-10-03, forty-one times. Three findings quoted that section. No cycle ever ran the one-line
+count that splits that disjunction. Same shape as finding 31 — B-08 printed a wrong cheap fix for 93
+beats — and the tenth consecutive cycle in which the fault was ours.

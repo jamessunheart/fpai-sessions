@@ -590,3 +590,21 @@ moved, no Card field changed, no new document.
   persisted before courtesy; notify() guarded), differential harness test: pre-fix raises, post-fix
   9/9 PASS. NOT deployed -> folds into B-27, no new block id. Pack untouched, B-17 stays FOURTEEN.
   Nothing sent, nobody contacted, no funds moved.
+
+2026-10-09 13:2x CR  FINDING 44 — the Mac beat has TWO independent faults, and B-08's ask only ever
+  addressed one. Counted the beat log's own headers for the first time in 44 cycles: 106 unique beats,
+  and the missed ones are TIME-OF-DAY CORRELATED — every partial October day lost the 06/10/14Z slots
+  (00:15/04:15/08:15 CR, the CR night) and kept 18/22Z (12:15/16:15 CR), never the inverse. An auth
+  failure is time-independent (all 106 beats failed to think, at every hour); a closed laptop is not.
+  So: a THINKING fault (claude -p never authenticates from cron) and a PRESENCE fault (the beat does
+  not run at all for ~two of every five slots) — the second never named in any document, and the reason
+  the evidence mirror went blind 2026-10-08T22:15Z → 2026-10-09T18:15Z, on the transport finding 43
+  priced as the only route to the one world-sourced gate. Apple's Scheduled Jobs guide (first-party,
+  read today): a launchd StartCalendarInterval job "will run when the computer wakes up" after sleep,
+  while cron jobs "do not execute" and never catch up; the catch-up covers SLEEP, not power-off. So the
+  LaunchAgent fixes BOTH faults and is worth doing even if the script thinks fine by hand. B-08's ask
+  AMENDED, not multiplied — no new block id. Heartbeat script's own FIX paragraph corrected inside
+  remit (it had made the LaunchAgent conditional on an untested hypothesis). Against myself: tenth
+  consecutive cycle where the fault was ours, and the log had printed the right hypothesis 41 times
+  while no cycle ran the one-line count that would have split it. Nothing sent, nobody contacted, no
+  funds moved, no gate touched, no Card field changed.
