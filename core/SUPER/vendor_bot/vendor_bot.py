@@ -145,31 +145,92 @@ def log_unmatched(frm, text, route):
         except Exception as e:
             print("log_unmatched could not notify James:", e)
 
+def _courtesy(vendor, text, sent_note=None):
+    """An OUTBOUND message whose failure must never cost us INBOUND evidence.
+
+    FINDING 43 (2026-10-09, Claude, Super Agent). handle_reply used to call send()
+    bare. send() ends in r.raise_for_status(), so one 4xx/5xx from the WhatsApp
+    transport (an expired Evolution apikey, a disconnected instance, a lapsed Meta
+    token — the ordinary ways a self-hosted bridge dies) raised straight out of
+    handle_reply into webhook()'s single `except Exception: print("webhook error", e)`.
+    Consequences, all measured by reading the code: the classification line was never
+    logged, notify() never ran so James was told nothing by any route, and `save(s)`
+    never ran so vendor["answers"] and the new stage were discarded in memory while
+    conversations.json still said m2_sent with no answers. The webhook still returned
+    "ok", so WhatsApp counted the message delivered and will not redeliver it. The ONE
+    thing that survived was the verbatim REPLY line (written first, deliberately) in
+    /opt/VENDOR_LOG.md — which reaches this repo only through the Mac heartbeat mirror
+    (B-08), and the Mac beat has not run since 2026-10-08T22:15Z.
+
+    Cycle 42 wrapped every risky call in log_unmatched() — the branch for a number we
+    did NOT dial — and left handle_reply(), the branch that carries `provider_q2_verbatim`,
+    the Card's ONLY world-sourced gate, completely bare. The hypothetical path was
+    hardened and the real one was not, in the same commit, by the same hand.
+
+    Returns True if it actually went out. A log line CLAIMING we said something is
+    written ONLY on success — findings 10 and 21 are exactly the error of a log that
+    records a message the world never received.
+    """
+    try:
+        send(vendor["to"], text)
+    except Exception as e:
+        log(vendor, 'SEND FAILED (outbound, %s: %s) — NOT delivered, text was: "%s"' % (type(e).__name__, e, text))
+        return False
+    if sent_note:
+        log(vendor, sent_note)
+    return True
+
 def handle_reply(vendor, text):
+    """Her reply. ORDER IS THE WHOLE POINT (finding 43).
+
+    Inbound evidence and the state derived from it are recorded and persisted BEFORE
+    any act of courtesy is attempted, because courtesy travels over a network and
+    evidence must not. Outbound claims are logged only after the send succeeds.
+    """
     st = vendor["stage"]; t = text.strip(); tl = t.lower()
     log(vendor, f"REPLY verbatim: \"{t}\"")
     if NO_RE.search(tl):
-        vendor["classification"] = "NO"; send(vendor["to"], MSG["no"]); vendor["stage"] = "closed"; notify(vendor, "said NO"); return
+        vendor["classification"] = "NO"; vendor["stage"] = "closed"
+        log(vendor, "classified NO · closed")
+        _courtesy(vendor, MSG["no"], "acknowledgement sent")
+        notify(vendor, "said NO"); return
     if st == "m1_sent":
         if any(w in tl for w in YES_WORDS) or t.endswith("?"):
-            send(vendor["to"], MSG["m2"].format(redemption=vendor["redemption"])); vendor["stage"] = "m2_sent"; log(vendor, "M2 sent")
+            if _courtesy(vendor, MSG["m2"].format(redemption=vendor["redemption"]), "M2 sent"):
+                vendor["stage"] = "m2_sent"
+            else:
+                notify(vendor, "replied to M1, but M2 could NOT be sent — the transport refused; her reply is logged above and the stage is UNCHANGED, so nothing here pretends M2 went out")
         else:
-            send(vendor["to"], MSG["unknown"]); notify(vendor, f"unclear reply to M1: \"{t}\"")
+            _courtesy(vendor, MSG["unknown"])
+            notify(vendor, f"unclear reply to M1: \"{t}\"")
     elif st == "m2_sent":
         vendor.setdefault("answers", []).append(t)
         joined = " / ".join(vendor["answers"])
         if len(vendor["answers"]) >= 1 and ("?" in t and not any(w in tl for w in YES_WORDS)):
-            send(vendor["to"], MSG["unknown"]); notify(vendor, f"asked something not in the script: \"{t}\""); return
+            _courtesy(vendor, MSG["unknown"])
+            notify(vendor, f"asked something not in the script: \"{t}\""); return
         vendor["classification"] = classify(joined)
-        send(vendor["to"], MSG["m3"]); vendor["stage"] = "closed"; log(vendor, f"M3 sent · answers: {joined} · classification: {vendor['classification']}")
+        vendor["stage"] = "closed"
+        log(vendor, f"answers recorded: {joined} · classification: {vendor['classification']} · closed")
+        _courtesy(vendor, MSG["m3"], "M3 sent")
         notify(vendor, f"answered. Verbatim: \"{joined}\" → {vendor['classification']}. Confirm date/details; verify Q2 is a real next use.")
     else:
         notify(vendor, f"message after close: \"{t}\"")
 
 def notify(vendor, what):
+    """The handoff. The LOG LINE is the handoff; the WhatsApp to James is a convenience.
+
+    FINDING 43: this used to be `if JAMES: send(JAMES, line)` bare, so a transport
+    failure here propagated out of handle_reply and cost the caller its save(). Now the
+    log line is written first (it always was) and the send cannot take anything with it.
+    """
     line = f"[SUPER vendor bot] {vendor['name']} {what}"
     log(vendor, f"HANDOFF → James: {what}")
-    if JAMES: send(JAMES, line)
+    if JAMES:
+        try:
+            send(JAMES, line)
+        except Exception as e:
+            log(vendor, "HANDOFF SEND FAILED (%s: %s) — the handoff line above exists in THIS LOG ONLY; nothing reached James's phone." % (type(e).__name__, e))
     print(line)
 
 app = Flask(__name__) if Flask else None

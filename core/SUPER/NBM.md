@@ -1314,3 +1314,83 @@ Corollary: WE WROTE "VERIFIED END-TO-END OFFLINE" AND READ IT FOR 36 DAYS AS "VE
 Second corollary: A DEFECT THAT PRODUCES NO LOG LINE CANNOT BE FOUND BY READING LOGS — only by reading
 the code. Every "the log shows nothing happened" in this system is now one of two sentences: nothing
 happened, or nothing was recorded.
+
+FINDING 43 — 2026-10-09 ~11:10 CR (Claude, Super Agent, cycle 43)
+ON THE MATCHED PATH — THE ONE THE WHOLE BUILD IS WAITING ON — A FAILED OUTBOUND SEND DESTROYED THE
+ANSWER'S CLASSIFICATION, ITS HANDOFF AND ITS SAVED STATE, AND webhook()'s OWN `except Exception` MADE
+THAT SILENT. CYCLE 42 HARDENED THE HYPOTHETICAL BRANCH AND LEFT THE REAL ONE BARE, IN THE SAME COMMIT.
+
+Thread chosen under finding 42's own test (name the exact code path by which the ANSWER becomes
+evidence) carried ONE HOP FURTHER than 42 carried it: 42 asked what happens to an answer arriving in a
+shape the path does not expect. It never asked what happens to an answer arriving in exactly the
+expected shape while an unrelated outbound call fails. Also passes finding 35's test: this serves
+`provider_q2_verbatim`, the ONLY world-sourced gate in BUILD_001.md.
+
+MEASURED 2026-10-09 by reading `core/SUPER/vendor_bot/vendor_bot.py`. Nobody contacted, nothing sent,
+no funds moved. `send()` ends in `r.raise_for_status()`. `handle_reply()` called it BARE, four times.
+On the `m2_sent` branch — the branch that receives her Q2 — the source order was:
+  1. log(REPLY verbatim) ............... the answer IS written to VENDOR_LOG.md   <- the only survivor
+  2. answers.append(t); classify(joined)  in memory only
+  3. send(vendor, MSG["m3"]) ........... BARE. one 401/404/5xx and control leaves the function here
+  4. stage="closed"; log(classification) NEVER RUNS
+  5. notify() -> log(HANDOFF) + send(JAMES) NEVER RUNS
+and back in `webhook()`: `handle_reply(v, text); save(s)` — so `save(s)` NEVER RUNS either. The raise is
+swallowed by webhook()'s single `except Exception as e: print("webhook error", e)`, which writes to
+stdout on 198 — the systemd journal, a place no SUPER document has ever read and the mirror does not
+pull. The webhook still returns "ok", so WhatsApp counts the message delivered and will not redeliver.
+NET EFFECT ON THAT BRANCH: her answer exists as ONE line in /opt/VENDOR_LOG.md, unclassified, with
+conversations.json still saying `m2_sent` and no answers; James is told nothing by any route; and the
+sole transport that brings that line to this repo is the Mac heartbeat mirror — WHICH HAS NOT RUN SINCE
+2026-10-08T22:15Z (B-08, day 36, now ~19h and five missed beats).
+HOW A 401 HAPPENS HERE, so this is not hypothetical: the Evolution transport authenticates with
+EVO_APIKEY and a named instance; a self-hosted WhatsApp bridge loses its instance or its key as a
+matter of routine. The Meta branch has a token with an expiry. Neither failure mode is exotic, and
+BOTH of them land on step 3.
+
+DIFFERENTIAL TEST RUN (both copies, same simulated transport that always raises 401):
+ · PRE-fix copy:  RuntimeError escapes `handle_reply` at the bare `send(..., MSG["m3"])` — save() unreached.
+ · POST-fix copy: 9/9 PASS — verbatim reply logged · answers recorded + classification logged · SEND
+   FAILED logged verbatim with the undelivered text · HANDOFF line in the log · HANDOFF SEND FAILED
+   logged ("exists in THIS LOG ONLY; nothing reached James's phone") · state persisted closed, answer
+   kept, classification kept · zero messages reached anyone, because the transport refused both.
+
+MY SIGNED POSITION:
+ 1. FIXED IN THE REPO COPY, inside remit, and harness-tested. New `_courtesy(vendor, text, sent_note)`
+    attempts an outbound message, logs `SEND FAILED` with the undelivered text on failure, and returns
+    False. `handle_reply` reordered so inbound evidence and the state derived from it are recorded and
+    PERSISTED before any act of courtesy is attempted. `notify()` guards its send and says, in the log,
+    that nothing reached James's phone. The m1_sent branch does NOT advance the stage if M2 could not
+    be sent, and says so — a stage that claims M2 went out when it did not would be finding 10 and 21
+    all over again.
+ 2. OUTBOUND CLAIMS ARE STILL LOGGED ONLY ON SUCCESS. The ordering rule is not "log everything first":
+    it is INBOUND EVIDENCE AND DERIVED STATE FIRST, OUTBOUND CLAIMS ON SUCCESS ONLY. A log that records
+    a message the world never received is the error findings 10 and 21 already cost us twice.
+ 3. NOTHING DEPLOYED, AND NO NEW BLOCK. The process on 198 runs the old code, so this fix is as inert
+    as 42's. It FOLDS INTO B-27 — one two-minute deployment carries both patches. I am not adding a
+    B-28 for a fix that rides an existing ask; finding 37 said threads that CLOSE outrank threads that
+    enrich, and growing his list by an id he cannot act on separately is enrichment.
+ 4. B-08 IS NOW PRICED, not just old. For 36 days it has been reported as "the Mac cannot think". It is
+    ALSO the only transport by which a provider's verbatim answer reaches this repo, and since
+    2026-10-08T22:15Z it is not beating at all. Two independent single points of failure now sit on the
+    one world-sourced gate: the number keying (B-26/B-27) and this mirror (B-08).
+ 5. ORDER UNCHANGED. B-15 is still first. Two code defects on a channel over which nothing has been
+    sent in 36 days do not outrank the ask that depends on nothing and gates the meal.
+ 6. PACK UNTOUCHED. The published copy carries BOTH defects. B-17 stays at FOURTEEN.
+ 7. AGAINST MYSELF — NINTH CONSECUTIVE CYCLE WHERE THE FAULT WAS OURS, AND THE FIRST WHERE THE FAULT
+    WAS YESTERDAY'S FIX. Cycle 42 wrapped every risky call in `log_unmatched` — the branch for a number
+    we did NOT dial, a number nobody has ever written to us from — and left `handle_reply`, the branch
+    keyed to the number we actually dialled, with no error handling at all. I made the hypothetical
+    path more robust than the real one, in one commit, having just written the words "read the receive
+    side". I read the function immediately above the one I was editing and did not read the one
+    immediately below it.
+ 8. NO LEDGER ROLL THIS CYCLE. v19 was rolled today at 11:00 CR and the churn limit is one roll per CR
+    day. Finding 43 therefore lives HERE and in TIMELINE.md and reaches the Drive debate surface on the
+    next roll. Recording the deferral so it is not mistaken for a finding that was never surfaced.
+
+TEST ADDED (43) — A PATH THAT CARRIES EVIDENCE PERSISTS THE EVIDENCE BEFORE IT ATTEMPTS ANY ACT OF
+COURTESY. Courtesy travels over a network; evidence must not depend on the network being up.
+Corollary: WHEN A CYCLE HARDENS ONE BRANCH OF A CONDITIONAL, IT RE-READS THE OTHER BRANCH IN THE SAME
+COMMIT. A fix is not a fix until the branch beside it has been read with the same suspicion.
+Second corollary: `except Exception: print(...)` ON A HOST WHOSE STDOUT NOTHING READS IS NOT ERROR
+HANDLING, IT IS A SILENCER. Every such handler in this system must name where its output is read, or
+be treated as a defect. The journal on 198 is read by nobody and mirrored by nothing.

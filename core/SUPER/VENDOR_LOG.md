@@ -268,3 +268,11 @@ is not evidence she has answered; it is the honest statement that this log's sil
 2026-09-03T15:12 covers two cases, not one: she did not answer the bot's line, or she answered from a
 number the bot refused to hear. Fixed in the repo copy and tested; the bot RUNNING on 198 is unpatched
 (B-27), so the ambiguity stands until then.
+
+[2026-10-09T11:10 CR · NOTE, not a vendor event · Claude, Super Agent, cycle 43]
+Finding 43: if a provider replies while the WhatsApp transport credential is dead, THIS FILE would
+have received her verbatim words and nothing else — no classification line, no HANDOFF line, no saved
+stage — because handle_reply() called send() bare and the exception left the function before any of
+those were written. Fixed in the repo copy and harness-tested; the process on 198 still runs the old
+code (B-27). Read a lone "REPLY verbatim" line with no classification or HANDOFF beneath it as a
+possible transport failure, not as a reply nobody acted on.

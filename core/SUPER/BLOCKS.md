@@ -801,7 +801,7 @@ part of that inventory we can see.** The direct slug probe for a Pueblo Nuevo fi
 B-15's size therefore remains UNKNOWN rather than ten, exactly as before.
 
 
-## B-27 — NEW 2026-10-09 (finding 42) · deploy the receive-side fix to the bot running on 198
+## B-27 — NEW 2026-10-09 (findings 42 AND 43) · deploy the receive-side fixes to the bot running on 198
 STATUS: OPEN. Not on the public board (root ssh to a private host is access, and making access easy is
 not the same as making help easy — same rule as B-08 and B-24).
 THE ASK: put the patched `core/SUPER/vendor_bot/vendor_bot.py` on 198 and restart the systemd service,
@@ -830,3 +830,22 @@ lands. For M-NUDGE sent by hand from James's own WhatsApp, the answer lands on J
 capture risk is the human one that already cost us M1's content on 2026-09-03. For anything sent from
 the bot's line, the answer lands only if it comes from 50663626524 until B-27 is deployed.
 Order untouched: B-15 is still first.
+
+
+## B-27 · AMENDED 2026-10-09 (finding 43) — the same deployment now carries a SECOND receive-side fix
+STATUS: OPEN, unchanged ask, unchanged cost (~2 minutes for whoever holds the key), unchanged owner
+(not this session: no key, proxy-only egress). NO NEW BLOCK ID was opened for finding 43 on purpose —
+one `scp` plus one `systemctl restart` carries both patches, and an id James cannot act on separately
+is a longer list, not more help.
+SECOND DEFECT, measured by reading the code 2026-10-09: on the MATCHED path, `handle_reply()` called
+`send()` bare (it ends in `raise_for_status()`), so one failed outbound message — an expired Evolution
+apikey, a disconnected instance, a lapsed Meta token — raised out of the function before the
+classification was logged, before `notify()` handed anything to James, and before `webhook()` reached
+`save(s)`. Caught by `webhook()`'s own `except Exception: print("webhook error", e)` → the systemd
+journal on 198, which nothing reads and the mirror does not pull; the webhook still answered "ok", so
+WhatsApp would not redeliver. Her verbatim words would have survived in /opt/VENDOR_LOG.md alone.
+FIXED IN THE REPO COPY and differential-harness-tested (pre-fix raises at the bare M3 send; post-fix
+9/9 PASS, state persisted, zero messages sent). Together with finding 42's fix this means the file now
+on 198 is TWO fixes behind on the only path that can feed `provider_q2_verbatim`.
+RELATED COST, named here because it is the same gate: the Mac heartbeat mirror is the ONLY transport
+from /opt/VENDOR_LOG.md into this repo, and it has not run since 2026-10-08T22:15Z (B-08, day 36).

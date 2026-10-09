@@ -579,3 +579,14 @@ moved, no Card field changed, no new document.
   source she controls publishes 6339-9498 (B-26). Fixed in the repo copy (log_unmatched: verbatim log
   + handoff to James, no reply to the sender), harness-tested. NOT deployed to 198 -> B-27. Pack copy
   deliberately untouched, B-17 stays at FOURTEEN. Nothing sent, nobody contacted, no funds moved.
+
+2026-10-09 11:10 CR  FINDING 43 — on the MATCHED reply path, a failed outbound WhatsApp send (expired
+  transport credential: a 401 from Evolution or a lapsed Meta token) raised out of handle_reply through
+  webhook()'s own `except Exception: print(...)`, so the classification was never logged, James was
+  never told by any route, and save() never ran — conversations.json kept saying m2_sent with no
+  answers. Her verbatim REPLY line survived, in /opt/VENDOR_LOG.md only, reachable solely via the Mac
+  mirror, which has not run since 2026-10-08T22:15Z. Cycle 42 had wrapped every risky call in the
+  UNMATCHED branch and left this one bare. Fixed in the repo copy (_courtesy(); evidence and state
+  persisted before courtesy; notify() guarded), differential harness test: pre-fix raises, post-fix
+  9/9 PASS. NOT deployed -> folds into B-27, no new block id. Pack untouched, B-17 stays FOURTEEN.
+  Nothing sent, nobody contacted, no funds moved.
