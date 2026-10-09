@@ -573,3 +573,9 @@ moved, no Card field changed, no new document.
 - No Drive roll (churn limit — v18 written 11:13 CR today, nothing changed in the world). No pack file touched; B-17 stays at FOURTEEN.
 
 2026-10-08 ~15:15 CR · cycle 41 · finding 41: an unreachable HOST is not an unreachable DOCUMENT. si.cultura.cr (Inventario Cultural Perez Zeledon 2022, 276 fichas) names the ADI that administers the Chimirol de Rivas salon comunal, with phone and FB page — second, newer source for a body finding 36 had only from a 2020 article. DINADECO register found mirrored on hacienda.go.cr, reachable but unreadable by this fetcher (lossy extraction, not used). B-21 DINADECO "cannot read" line WITHDRAWN; list ranked, not grown. B-15 negative narrowed, not fallen. Nobody contacted.
+
+2026-10-09 10:55 CR  FINDING 42 — the vendor bot's webhook discarded, with no log line, any inbound WhatsApp from a
+  number not already a key in conversations.json. The Build 001 record is keyed 50663626524; every
+  source she controls publishes 6339-9498 (B-26). Fixed in the repo copy (log_unmatched: verbatim log
+  + handoff to James, no reply to the sender), harness-tested. NOT deployed to 198 -> B-27. Pack copy
+  deliberately untouched, B-17 stays at FOURTEEN. Nothing sent, nobody contacted, no funds moved.

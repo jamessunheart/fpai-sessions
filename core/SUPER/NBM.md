@@ -1250,3 +1250,67 @@ that times out has not been shown to be the document's only home.
 Corollary: WE WROTE "A SOURCE THIS SYSTEM CANNOT READ" ABOUT A FILE THE GOVERNMENT PUBLISHES TWICE.
 Second corollary: A PAGE THAT RETURNS "Cargando..." HAS NOT BEEN READ — a client-side shell is not a
 negative result.
+
+
+## FORTY-SECOND FINDING — THE GATE'S RECEIVE PATH DISCARDS, IN SILENCE, ANY REPLY FROM A NUMBER IT DID NOT DIAL (2026-10-09 10:55 CR, cycle 42, Claude, Super Agent)
+
+Thread chosen under finding 35's test (name which Card field a measurement serves — this one serves
+`provider_q2_verbatim`, the ONLY world-sourced gate in BUILD_001.md) and finding 38's (a stated reason
+is a claim: three documents assert the receive path is live; none had read it).
+
+MEASURED 2026-10-09 by reading the code, nobody contacted, nothing sent, no funds moved.
+- `vendor_bot.py` `webhook()` resolved an inbound message to a vendor by EXACT key: `v = s.get(frm)`,
+  then `if v and text: handle_reply(...)`. With no `else`. So an inbound WhatsApp from any number that
+  is not already a KEY in `conversations.json` produced NOTHING AT ALL: no line in VENDOR_LOG.md, no
+  line for the 198 mirror to carry, no handoff to James — just `"ok"` to the sender's server.
+- The Build 001 vendor record on 198 is keyed **50663626524** (VENDOR_LOG_198.md names it in both
+  entries) — the number M1 and M2 were sent TO.
+- Every source La Cocinona de Pueblo controls publishes **6339-9498** instead (findings 33, 39, 40;
+  B-26, unresolved, the director's word). On that branch her answer arrives as `50663399498`, matches
+  no key, and is **dropped on the floor without a trace** — while the gate it would satisfy is the one
+  thing in this Build that cannot be satisfied by typing.
+- Same failure for a reply from a SECOND HANDSET of the same business (a family member's phone, a
+  second line) on either branch of B-26.
+- WHAT IS NOT BROKEN, stated so the finding is not read as worse than it is: `handle_reply()` DOES
+  write `REPLY verbatim: "..."` into VENDOR_LOG.md, and the Mac beat's mirror of /opt/VENDOR_LOG.md
+  from 198 has been SUCCEEDING (last good pull 2026-10-08T22:15Z). So a MATCHED reply would reach the
+  repo verbatim. The receive path is not absent; it is keyed to the one number the evidence now argues
+  is probably not hers.
+
+THREE DOCUMENTS ASSERTED THIS PATH WAS SOUND AND NONE HAD READ IT: STEWARD_LOG.md ("webhook on 198 is
+live and set to auto-capture her Q1-Q3 verbatim when she replies; nothing for the director to decide
+until then"), NBM.md ("DONE + TESTED 2026-09-03: inbound webhook verified end-to-end offline" — and
+OFFLINE is the word that should have been load-bearing), TIMELINE.md ("inbound depends on the Evolution
+webhook plus her record in conversations.json"). That last sentence is the whole defect, written down
+36 days ago as an implementation note and never read as a risk.
+
+MY SIGNED POSITION:
+ 1. FIXED IN THE REPO COPY, and tested: new `log_unmatched(frm, text, route)` records the message
+    VERBATIM into VENDOR_LOG.md as `UNMATCHED SENDER` and hands it to James. Deliberately does NOT
+    reply to the sender, create a vendor record, classify the text, or let any of it reach a condition.
+    An unknown number may be a wrong number or a stranger; answering it would be exactly the
+    cold-message this system refuses to send. Harness-tested 2026-10-09: log line written, one message to
+    James, ZERO messages to the unknown number.
+ 2. NOTHING IS DEPLOYED. The process running on 198 still has the old code, so the fix is INERT until
+    someone puts it there -> **NEW BLOCK B-27**. I will not pretend a patched file in a repo is a
+    patched service.
+ 3. B-26 IS NOT RESOLVED BY THIS and I am not resolving it. What changes is the COST of one branch:
+    if 6339-9498 is hers, the automated path cannot hear her until B-27 is done.
+ 4. ORDER UNCHANGED: B-15 is still first. This finding does not move it, and I will not use a code
+    defect to re-order the director's asks.
+ 5. AGAINST MYSELF: **EIGHTH consecutive cycle where the fault was ours, not the world** — but a worse
+    shape than the seven before it. Those were misreadings in documents. This one was in RUNNING CODE,
+    on the gate path, for 36 days, while I audited prose about hours, phones, prices and salones
+    comunales. I read this bot's follow-up timer twice (findings 10, 21) and its opt-in gate once
+    (finding 38) and never once read the branch that receives the answer the whole Build is waiting for.
+ 6. PACK NOT TOUCHED: the published copy in `_staged_repos/super-agents-pack` has the SAME defect and
+    is deliberately left alone — B-17 stays at FOURTEEN. Naming it here so it is not lost.
+
+TEST ADDED (42) — READ THE RECEIVE SIDE OF EVERY CHANNEL THIS SYSTEM OWNS, NOT JUST THE SEND SIDE.
+Before any ask is reported as send-ready, name the exact code path by which the ANSWER becomes evidence,
+and name what happens to an answer that arrives in a shape that path does not expect. An ask whose
+answer has no landing place is not ready, however good the message is.
+Corollary: WE WROTE "VERIFIED END-TO-END OFFLINE" AND READ IT FOR 36 DAYS AS "VERIFIED END-TO-END".
+Second corollary: A DEFECT THAT PRODUCES NO LOG LINE CANNOT BE FOUND BY READING LOGS — only by reading
+the code. Every "the log shows nothing happened" in this system is now one of two sentences: nothing
+happened, or nothing was recorded.

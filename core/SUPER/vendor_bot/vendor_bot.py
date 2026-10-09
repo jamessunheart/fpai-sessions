@@ -111,6 +111,40 @@ def classify(q2):
     if len(q.split()) >= 3: return "EXCHANGE?"   # names something — James verifies it's a real next use
     return "UNCLEAR"
 
+def log_unmatched(frm, text, route):
+    """An inbound message from a number with NO vendor record.
+
+    FINDING 42 (2026-10-09, Claude, Super Agent). Before this function existed, the
+    webhook below did `v = s.get(frm)` and then `if v and text:` — so a message from
+    any number that is not a KEY in conversations.json produced NOTHING: no line in
+    VENDOR_LOG.md, no mirror line for the repo to read, no handoff to James, just
+    "ok" to the sender's server. The vendor record for Build 001 is keyed
+    50663626524, the number M1 and M2 were sent to. Every source La Cocinona de
+    Pueblo controls publishes 6339-9498 instead (B-26, unresolved, the director's
+    word). On that branch her answer arrives as 50663399498, matches no key, and is
+    discarded in silence — while `provider_q2_verbatim` is the ONE world-sourced
+    gate in BUILD_001.md. A reply from a second handset of the same business fails
+    the same way.
+
+    What this does: records the message VERBATIM and hands it to James. What it
+    deliberately does NOT do: reply to the sender, create a vendor record, classify
+    the text, or let any of it reach a condition. An unknown number may be a wrong
+    number or a stranger; answering it would be the cold-message this system refuses
+    to send. Interpretation is a human's, and the Card is the director's.
+    """
+    line = f"INBOUND from {frm} via {route} — NO vendor record for this number. NOT interpreted, NOT classified, NOT replied to. Verbatim: \"{text.strip()}\""
+    try:
+        with LOG.open("a", encoding="utf-8") as f:
+            f.write(f"\n[{now()} · UNMATCHED SENDER ({frm}) · bot] {line}")
+    except Exception as e:
+        print("log_unmatched could not write VENDOR_LOG:", e)
+    print(f"[SUPER vendor bot] {line}")
+    if JAMES:
+        try:
+            send(JAMES, f"[SUPER vendor bot] mensaje de un n\u00famero sin registro ({frm}): \"{text.strip()}\" \u2014 nadie le contest\u00f3. Si es La Cocinona desde otro n\u00famero, esto es la respuesta que el Build esperaba.")
+        except Exception as e:
+            print("log_unmatched could not notify James:", e)
+
 def handle_reply(vendor, text):
     st = vendor["stage"]; t = text.strip(); tl = t.lower()
     log(vendor, f"REPLY verbatim: \"{t}\"")
@@ -161,6 +195,7 @@ def webhook():
                 text = msg.get("conversation") or (msg.get("extendedTextMessage") or {}).get("text", "")
                 s = load(); v = s.get(frm)
                 if v and text: handle_reply(v, text); save(s)
+                elif text and not v: log_unmatched(frm, text, "evolution")
             return "ok"
         for entry in data.get("entry", []):
             for ch in entry.get("changes", []):
@@ -168,6 +203,7 @@ def webhook():
                     frm, text = m.get("from"), (m.get("text") or {}).get("body", "")
                     s = load(); v = s.get(frm)
                     if v and text: handle_reply(v, text); save(s)
+                    elif text and not v: log_unmatched(frm, text, "meta")
     except Exception as e:
         print("webhook error", e)
     return "ok"

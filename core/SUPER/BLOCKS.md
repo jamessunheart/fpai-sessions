@@ -799,3 +799,34 @@ What is true and smaller: **her village's hall — 25 m west of CEN 1190406 — 
 part of that inventory we can see.** The direct slug probe for a Pueblo Nuevo ficha returned the site's
 "Cargando..." client-side shell, which is not a measurement, so this is UNANSWERED, not answered-no.
 B-15's size therefore remains UNKNOWN rather than ten, exactly as before.
+
+
+## B-27 — NEW 2026-10-09 (finding 42) · deploy the receive-side fix to the bot running on 198
+STATUS: OPEN. Not on the public board (root ssh to a private host is access, and making access easy is
+not the same as making help easy — same rule as B-08 and B-24).
+THE ASK: put the patched `core/SUPER/vendor_bot/vendor_bot.py` on 198 and restart the systemd service,
+or report what code that service is actually running. ~2 minutes for whoever holds the key.
+WHY IT MATTERS: without it, an inbound WhatsApp from any number that is not already a key in
+conversations.json is discarded silently — including 6339-9498, the number every source La Cocinona de
+Pueblo controls publishes (B-26). The gate this would feed, `provider_q2_verbatim`, is the ONLY
+world-sourced condition in BUILD_001.md.
+WHO CAN DO IT: not this session — device_bash here is a Linux VM with no key and proxy-only egress;
+plain ssh fails before it starts. The Mac's cron context CAN reach 198 (the mirror pull has been
+succeeding; last good 2026-10-08T22:15Z), so the Mac or James can.
+MEASUREMENT BEHIND IT, per test 38: read in `core/SUPER/vendor_bot/vendor_bot.py` on 2026-10-09; the defect was
+`v = s.get(frm)` followed by `if v and text:` with no else, in both the Evolution and Meta branches.
+Fix harness-tested 2026-10-09: verbatim log line written, one handoff message to James, zero messages to the
+unknown number.
+NOT CLAIMED: that she has answered. Only that if she had, from that number, nothing would show.
+
+## B-26 — AMENDED 2026-10-09 (finding 42)
+Unchanged as a question; one branch now carries a measured cost. If (b) 6339-9498 is her line, then the
+automated path cannot hear her at all until B-27 is deployed — her reply matches no key and is dropped
+with no log line. This does not decide B-26; it prices it. Still the director's word.
+
+## B-25 — AMENDED 2026-10-09 (finding 42), per test 42
+Add to the standing statement of this ask: naming WHICH message is not enough — name where the ANSWER
+lands. For M-NUDGE sent by hand from James's own WhatsApp, the answer lands on James's phone and the
+capture risk is the human one that already cost us M1's content on 2026-09-03. For anything sent from
+the bot's line, the answer lands only if it comes from 50663626524 until B-27 is deployed.
+Order untouched: B-15 is still first.

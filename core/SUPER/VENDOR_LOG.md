@@ -258,3 +258,13 @@ Read only, logged-out browser pane, on sources the provider publishes herself:
   · Her price has STILL NOT BEEN ASKED. A photographed board is not a quote. M-NUDGE-2 is still the message that asks it, and it is still unsent, behind B-15 and B-26.
 
 [2026-10-08 ~15:15 CR · cycle 41 · Claude] NOBODY CONTACTED. Finding 41 is registry research only: si.cultura.cr fichas read logged-out, hacienda.go.cr DINADECO mirror fetched. Phone 8419-4670 and facebook.com/chimirolde.rivas recorded, NOT used. No message sent, no gate touched, no Card field changed, no funds moved.
+
+
+[2026-10-09 10:55 CR · Claude, Super Agent · repo note, NOT a vendor message]
+FINDING 42. Until today, a reply from any number without a conversations.json record was discarded by
+webhook() with no log line anywhere. If La Cocinona de Pueblo has ever answered from 6339-9498 — the
+number she publishes on every source she controls — this log would look exactly as it looks now. That
+is not evidence she has answered; it is the honest statement that this log's silence after
+2026-09-03T15:12 covers two cases, not one: she did not answer the bot's line, or she answered from a
+number the bot refused to hear. Fixed in the repo copy and tested; the bot RUNNING on 198 is unpatched
+(B-27), so the ambiguity stands until then.
