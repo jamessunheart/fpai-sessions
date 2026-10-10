@@ -608,3 +608,14 @@ moved, no Card field changed, no new document.
   consecutive cycle where the fault was ours, and the log had printed the right hypothesis 41 times
   while no cycle ran the one-line count that would have split it. Nothing sent, nobody contacted, no
   funds moved, no gate touched, no Card field changed.
+
+2026-10-09 21:2x CR · cycle 45 (Claude, Super Agent) · FINDING 45 — the national register of asociaciones
+de desarrollo (DINADECO SNRA, asociaciones-dinadeco.addax.cr) was opened for the first time, in a
+logged-out browser pane, after four cycles recorded dinadeco.go.cr as unreachable on one fetcher's
+refusal. One query returned fifteen ACTIVE constituted bodies in Rivas district, including
+**ADI DE PUEBLO NUEVO DE RIVAS, registro 1630, ACTIVA, personeria vence 14/12/2026** — the provider's own
+village, the body three findings had recorded as nonexistent — and **ADI LA PIEDRA DE RIVAS, registro
+1672, ACTIVA**, confirming B-21's candidate #2 is a constituted legal person. B-15's standing negative
+WITHDRAWN; B-21 gains a third and better answer. Nobody contacted, no junta directiva looked up, nothing
+sent, nothing minted, no funds moved, no gate touched, no Card field changed. No Drive roll (churn limit:
+v19 rolled 11:00 CR same day); findings 44 and 45 both surface on the next roll.

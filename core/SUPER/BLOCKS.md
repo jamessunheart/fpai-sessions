@@ -897,3 +897,41 @@ AGAINST MYSELF: this script has printed "This machine was asleep, off, or the sc
 since 2026-10-03, forty-one times. Three findings quoted that section. No cycle ever ran the one-line
 count that splits that disjunction. Same shape as finding 31 — B-08 printed a wrong cheap fix for 93
 beats — and the tenth consecutive cycle in which the fault was ours.
+
+### B-21 — AMENDED 2026-10-09 (cycle 45, finding 45) — THE VILLAGE HAS AN ACTIVE ADI; B-21 GAINS A THIRD AND BETTER ANSWER (still OPEN, James only, one word)
+MEASURED 2026-10-09 in the national register (Sistema Nacional de Registro de Asociaciones, DINADECO,
+asociaciones-dinadeco.addax.cr, one query nombre=RIVAS, read-only, nobody contacted):
+- **1630 · ASOCIACION DE DESARROLLO INTEGRAL DE PUEBLO NUEVO DE RIVAS PEREZ ZELEDON · ACTIVA ·
+  personeria vence 14/12/2026 · periodo 4.** The provider's OWN village. This is the body findings 35, 36
+  and 41 recorded as nonexistent in every reachable source.
+- **1672 · ADI LA PIEDRA DE RIVAS · ACTIVA · vence 29/11/2026** — first independent confirmation that
+  CANDIDATE_2_PACKET.md's "Comite La Piedra de Rivas" is a constituted legal person.
+- Thirteen further ACTIVE bodies in the district (full list with numbers and expiry dates in NBM.md,
+  finding 45). Finding 36's six-year-old tvsur list is current-year confirmed for Canaan (1643),
+  Guadalupe (3091) and San Jose (3170); **Chimirol does not appear** under this query string — an open
+  discrepancy against finding 41's si.cultura.cr entry, not a disproof.
+THE QUESTION, unchanged in shape, better in options — still one word from James:
+  (a) ADI Pueblo Nuevo de Rivas, registro 1630 — her own village, constituted, active, and free of the
+      tourism encumbrance finding 36 priced against Mujeres del Uran and CATURCOCHI. **Claude's signed
+      position.**
+  (b) ADI La Piedra de Rivas, registro 1672 — as CANDIDATE_2_PACKET.md already files it.
+  (c) Ten neighbours, no body at all — still on the list because James's own trade stands: ten people a
+      body nominates are not ten who chose.
+NOT DONE, deliberately: nobody approached, no junta directiva looked up, no names of private individuals
+compiled from a legal register. Finding 35's refusal is reaffirmed. The one-candidate guard is untouched
+by any of the three answers.
+DATE CHECK (finding 27's standing test): 1630's personeria expires 14/12/2026 — SEVENTEEN DAYS BEFORE
+REDEMPTION.md's 2026-12-31 expiry. Recorded; it moves no decision today.
+
+### B-15 — AMENDED 2026-10-09 (cycle 45, finding 45) — THE NEGATIVE IS WITHDRAWN; THE ASK HAS A NAMED DOOR (still OPEN, still FIRST in the order, day 36)
+The standing negative behind this block since finding 35 — "no reachable publication names a constituted
+body for Pueblo Nuevo de Rivas itself" — is **FALSE and was false when written**. Her village has an
+ACTIVE Asociacion de Desarrollo Integral, registro 1630. What is still true and unchanged: B-15 is ten
+CONVERSATIONS about what people want to eat, not a form fill; the Card's pass test is a meal they WANTED
+and felt respected; its size is set by the Build's size (resize the Build, resize the ask — B-13); and
+the witness MAY be one of the ten. What changed is only this: the cheapest path to the ten is no longer
+unknown, it is one constituted body in her own village (B-21(a)).
+Order untouched: B-15 is still FIRST, and still depends on nothing.
+AGAINST OURSELVES: four cycles carried "DINADECO unreachable" forward on ONE fetcher's refusal. The
+register was one browser pane away, with a distrito filter in it, and finding 41 had already written the
+rule that would have caught it. 36 days of this block were reported with no named door that existed.

@@ -276,3 +276,11 @@ stage — because handle_reply() called send() bare and the exception left the f
 those were written. Fixed in the repo copy and harness-tested; the process on 198 still runs the old
 code (B-27). Read a lone "REPLY verbatim" line with no classification or HANDOFF beneath it as a
 possible transport failure, not as a reply nobody acted on.
+
+[2026-10-09T21:2x CR · NOTE, not a vendor event · Claude, Super Agent, cycle 45]
+Finding 45: the beneficiary half of Build #001 now has a named door that is not the provider. The national
+register (DINADECO SNRA) lists ASOCIACION DE DESARROLLO INTEGRAL DE PUEBLO NUEVO DE RIVAS, registro 1630,
+ACTIVA — in the same village as candidate #1. Recorded for provenance only: NOBODY was contacted, no
+officer names were looked up, and no approach to that body or any other may happen without James's word.
+This does not touch the provider thread: candidate #1 is LIVE, not rested, not contacted since
+2026-09-03, and the one-candidate guard holds.
