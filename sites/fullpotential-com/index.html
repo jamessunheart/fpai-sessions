@@ -125,6 +125,17 @@
     .card h3 { font-size: 19px; margin: 12px 0 8px; }
     .card p { font-size: 14px; color: var(--muted); }
     .card .go { display: inline-block; margin-top: 14px; color: var(--green-forest); font-weight: 600; font-size: 14px; }
+    .path-card { position: relative; overflow: hidden; display: flex; flex-direction: column; min-height: 260px; }
+    .path-card::before { content: ""; position: absolute; inset: 0 0 auto; height: 5px; background: var(--green-forest); }
+    .path-card.cora::before { background: linear-gradient(90deg,#C92D3F,#D9A441); }
+    .path-card.dream::before { background: linear-gradient(90deg,#243650,#8FA9C4); }
+    .path-card.zen::before { background: linear-gradient(90deg,#1F7A4D,#D9A441); }
+    .path-card .path-tag { display: inline-flex; align-self: flex-start; padding: 5px 9px; border-radius: 999px; background: var(--green-soft); color: var(--green-deep); font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .path-card.cora .path-tag { background: #FCE9E8; color: #9F2033; }
+    .path-card.dream .path-tag { background: #EAF0F7; color: #243650; }
+    .path-card .go { margin-top: auto; padding-top: 22px; }
+    .path-card.cora .go { color: #B42639; }
+    .paths-note { max-width: 720px; margin: 26px auto 0; color: var(--muted); font-size: 13px; text-align: center; }
 
     /* ladder */
     .ladder { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 8px; }
@@ -201,9 +212,10 @@
       </a>
       <nav class="links">
         <a class="active" href="/">Home</a>
+        <a href="/coracommons/">Cora Commons</a>
+        <a href="/dream-big/">Dream Big</a>
+        <a href="https://zenvillagecr.com/book">Zen Village</a>
         <a href="/game">The Game</a>
-        <a href="#commons">Capital Commons</a>
-        <a href="#ladder">Ladder</a>
         <a href="/assessment">Assessment</a>
       </nav>
       <div class="nav-actions">
@@ -219,39 +231,44 @@
       <h1>A world game for<br><em>human + AI potential</em>.</h1>
       <p class="sub">Play the Game. Contribute what you have. Earn prestige through proven stewardship. Help build a regenerative commons — where power flows to those who can be trusted with it.</p>
       <div class="cta-row">
-        <a class="btn-grow" href="/game">Enter the Game →</a>
+        <a class="btn-grow" href="/coracommons/">Explore Cora Commons →</a>
+        <a class="btn-ghost" href="/game">Enter the Game</a>
         <button class="btn-ghost" onclick="openChat()">💬 Talk to the Guide</button>
       </div>
       <div class="creed">Create privately. Contribute voluntarily. Steward communally. Regenerate together.</div>
     </div>
   </section>
 
-  <!-- ============ THREE DOORS ============ -->
+  <!-- ============ LIVING PATHWAYS ============ -->
   <section class="section wrap">
     <div class="sec-head">
-      <h2>Three doors in</h2>
-      <p>Everyone begins with Voice — the right to speak, propose, question, and be witnessed.</p>
+      <h2>Start with something real</h2>
+      <p>Build shared intelligence, create a daily moment of coherence, or experience the vision in a living place.</p>
     </div>
     <div class="grid-3">
-      <div class="card">
-        <div class="i">🕊️</div>
-        <h3>Play the Game</h3>
-        <p>Sign the World Peace Agreement. Build your Character Card. File proofs of real contribution. The Game is how the vision becomes playable.</p>
-        <a class="go" href="/game">Start playing →</a>
+      <div class="card path-card cora">
+        <span class="path-tag">Collective intelligence</span>
+        <div class="i">♥</div>
+        <h3>Cora Commons</h3>
+        <p>People and AI agents turn real needs into verified, reusable capabilities called BRICKS. Build once, then let everyone build from it.</p>
+        <a class="go" href="/coracommons/">See how the Commons works →</a>
       </div>
-      <div class="card">
-        <div class="i">🧭</div>
-        <h3>Take the Assessment</h3>
-        <p>Free. Discover where your greatest potential lives right now — and the highest-value next moves to unlock it.</p>
-        <a class="go" href="/assessment">Begin free →</a>
+      <div class="card path-card dream">
+        <span class="path-tag">Daily practice</span>
+        <div class="i">🌙</div>
+        <h3>Dream Big</h3>
+        <p>A simple screen-break ritual: put on the mask, breathe, unplug, and return to life with more coherence.</p>
+        <a class="go" href="/dream-big/">Explore Dream Big →</a>
       </div>
-      <div class="card">
-        <div class="i">🌳</div>
-        <h3>Join the Commons</h3>
-        <p>Contribute capital of any kind — land, skills, money, time, attention, code — as use-rights. You keep ownership. The commons coordinates use.</p>
-        <a class="go" href="#commons">How it works ↓</a>
+      <div class="card path-card zen">
+        <span class="path-tag">Living experience</span>
+        <div class="i">🌿</div>
+        <h3>Zen Village</h3>
+        <p>Stay in the Chirripó highlands. Rest by the river, reconnect with what matters, and experience the regenerative vision in place.</p>
+        <a class="go" href="https://zenvillagecr.com/book">Check availability →</a>
       </div>
     </div>
+    <p class="paths-note">Not sure where to begin? Take the free <a href="/assessment" style="color:var(--green-forest);font-weight:600;">Full Potential Assessment</a> or ask the Guide.</p>
   </section>
 
   <!-- ============ CAPITAL COMMONS ============ -->
@@ -364,6 +381,9 @@
           <span class="name" style="color:#fff">FullPotential<span style="color:#9fd3b0">.com</span></span>
         </a>
         <div class="foot-links">
+          <a href="/coracommons/">Cora Commons</a>
+          <a href="/dream-big/">Dream Big</a>
+          <a href="https://zenvillagecr.com/book">Zen Village</a>
           <a href="/game">The Game</a>
           <a href="/assessment">Assessment</a>
           <a href="#commons">Capital Commons</a>

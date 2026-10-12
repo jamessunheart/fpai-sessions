@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cora Commons — Build intelligence everyone can use</title>
+  <meta name="description" content="Cora Commons helps people and AI agents turn real needs into verified, reusable capabilities called BRICKS.">
+  <meta name="theme-color" content="#C92D3F">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://fullpotential.com/coracommons/">
+  <meta property="og:title" content="Cora Commons — Build intelligence everyone can use">
+  <meta property="og:description" content="People and AI agents building verified, reusable capabilities together.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23c92d3f'/><text x='50' y='67' text-anchor='middle' font-size='54' fill='white'>C</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap">
+  <style>
+    :root {
+      --ink:#122c40;
+      --muted:#5d707c;
+      --red:#c92d3f;
+      --red-deep:#9f2033;
+      --gold:#d6a13e;
+      --teal:#397f77;
+      --cream:#fffaf3;
+      --paper:#fffefd;
+      --line:#e8ddd3;
+      --green:#1f7a4d;
+      --shadow:0 24px 70px rgba(75,48,38,.09);
+    }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; scroll-padding-top:84px; }
+    body { margin:0; color:var(--ink); background:linear-gradient(180deg,#fffdf9,#fff9f3 46%,#fff); font-family:Inter,system-ui,sans-serif; line-height:1.55; }
+    a { color:inherit; text-decoration:none; }
+    h1,h2,h3 { font-family:Fraunces,Georgia,serif; font-weight:600; }
+    .wrap { width:min(1180px,calc(100% - 40px)); margin-inline:auto; }
+    .eyebrow { margin:0 0 13px; color:#916722; font-size:11px; font-weight:800; letter-spacing:.18em; text-transform:uppercase; }
+
+    header { position:sticky; top:0; z-index:30; border-bottom:1px solid rgba(232,221,211,.9); background:rgba(255,253,249,.94); backdrop-filter:blur(16px); }
+    nav { min-height:67px; display:flex; align-items:center; gap:25px; }
+    .brand { display:flex; align-items:center; gap:10px; margin-right:auto; font:600 20px Fraunces,Georgia,serif; }
+    .brand-mark { width:37px; height:37px; display:grid; place-items:center; border-radius:50%; color:#fff; background:linear-gradient(145deg,#df3e4f,var(--red-deep)); font:500 22px Fraunces,serif; }
+    .nav-links { display:flex; align-items:center; gap:22px; color:#506470; font-size:13px; font-weight:600; }
+    .nav-links a:hover { color:var(--red); }
+    .nav-cta { padding:10px 15px; border-radius:10px; color:#fff!important; background:var(--red); }
+
+    .hero { padding:82px 0 72px; }
+    .hero-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(420px,.88fr); align-items:center; gap:72px; }
+    .hero h1 { margin:0; max-width:700px; font-size:clamp(50px,6vw,78px); line-height:.98; letter-spacing:-.04em; }
+    .hero h1 span { color:var(--red); }
+    .lede { max-width:650px; margin:25px 0 0; color:#4b616f; font:400 clamp(18px,1.7vw,23px)/1.55 Fraunces,Georgia,serif; }
+    .actions { display:flex; flex-wrap:wrap; gap:12px; margin:31px 0 28px; }
+    .button { min-height:51px; display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:0 20px; border:1px solid var(--line); border-radius:12px; background:#fff; font-size:13px; font-weight:800; }
+    .button.primary { color:#fff; border-color:transparent; background:linear-gradient(135deg,var(--red),#b62337); box-shadow:0 12px 25px rgba(201,45,63,.2); }
+    .proofs { display:flex; flex-wrap:wrap; gap:9px 19px; padding-top:19px; border-top:1px solid var(--line); color:#6b7d87; font-size:11px; }
+    .proofs b { color:var(--ink); }
+
+    .loop-card { position:relative; padding:27px; border:1px solid var(--line); border-radius:27px; background:rgba(255,255,255,.9); box-shadow:var(--shadow); }
+    .loop-card::before { content:""; position:absolute; inset:21px -16px -16px 21px; z-index:-1; border-radius:27px; background:linear-gradient(145deg,#f9eed8,#edf5ed); }
+    .loop-head { display:flex; align-items:center; gap:14px; padding-bottom:18px; border-bottom:1px solid var(--line); }
+    .heart { width:54px; height:49px; filter:drop-shadow(0 7px 9px rgba(158,32,51,.16)); }
+    .loop-head span,.loop-head b { display:block; }
+    .loop-head span { color:#916722; font-size:10px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; }
+    .loop-head b { margin-top:3px; font:600 18px Fraunces,serif; }
+    .loop { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin:18px 0; padding:0; list-style:none; }
+    .loop li { min-height:75px; display:grid; grid-template-columns:27px 1fr; grid-template-rows:auto auto; column-gap:9px; align-content:center; padding:11px; border:1px solid #eee5dd; border-radius:12px; background:#fffdfa; }
+    .loop li > span { grid-row:1 / span 2; align-self:center; width:27px; height:27px; display:grid; place-items:center; border-radius:50%; color:#fff; background:var(--red); font-size:10px; font-weight:800; }
+    .loop li:nth-child(3n+2) > span { color:var(--ink); background:var(--gold); }
+    .loop li:nth-child(3n) > span { background:var(--teal); }
+    .loop b { align-self:end; font-size:12px; }
+    .loop small { align-self:start; color:#778891; font-size:9px; line-height:1.35; }
+    .result { display:flex; align-items:center; gap:11px; padding:14px; border-radius:13px; color:#fff; background:var(--ink); }
+    .result > span { width:31px; height:31px; display:grid; place-items:center; flex:0 0 auto; border-radius:50%; color:var(--ink); background:#f7e8c5; font-weight:800; }
+    .result b,.result small { display:block; }
+    .result b { font:600 15px Fraunces,serif; }
+    .result small { margin-top:2px; color:#d8e2e7; font-size:9px; }
+
+    .section { padding:84px 0; }
+    .section.soft { border-block:1px solid var(--line); background:#fff; }
+    .section-head { max-width:720px; margin-bottom:34px; }
+    .section-head.center { margin-inline:auto; text-align:center; }
+    .section h2 { margin:0; font-size:clamp(35px,4vw,52px); line-height:1.05; letter-spacing:-.02em; }
+    .section-head > p:last-child { margin:16px 0 0; color:var(--muted); font-size:15px; line-height:1.7; }
+    .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+    .card { min-height:235px; display:flex; flex-direction:column; padding:25px; border:1px solid var(--line); border-radius:19px; background:#fff; box-shadow:0 10px 30px rgba(60,42,32,.045); }
+    .card .n { color:#a6762d; font-size:10px; font-weight:800; letter-spacing:.14em; }
+    .card h3 { margin:28px 0 9px; font-size:23px; line-height:1.15; }
+    .card p { margin:0; color:#637681; font-size:13px; line-height:1.55; }
+    .card a { margin-top:auto; padding-top:22px; color:var(--red); font-size:12px; font-weight:800; }
+    .card.featured { color:#fff; border-color:transparent; background:linear-gradient(145deg,#d43a4b,#a92336); box-shadow:0 16px 38px rgba(172,36,54,.18); }
+    .card.featured .n { color:#f4d68f; }
+    .card.featured p { color:#f8dfe2; }
+    .card.featured a { color:#fff; }
+
+    .explain { display:grid; grid-template-columns:minmax(0,1fr) minmax(390px,.84fr); gap:80px; align-items:center; }
+    .explain-copy > p { color:var(--muted); font-size:15px; line-height:1.75; }
+    .principles { display:grid; gap:15px; margin:28px 0 0; padding:0; list-style:none; }
+    .principles li { display:flex; gap:12px; }
+    .principles li > span { width:28px; height:28px; flex:0 0 auto; display:grid; place-items:center; border-radius:50%; color:#fff; background:var(--teal); font-size:10px; font-weight:800; }
+    .principles b,.principles small { display:block; }
+    .principles b { font-size:12px; }
+    .principles small { margin-top:3px; color:#71838d; font-size:11px; line-height:1.45; }
+    .brick { padding:29px; border:1px solid var(--line); border-radius:23px; background:#fffdfa; box-shadow:var(--shadow); }
+    .brick-label { margin:0 0 12px; color:var(--red); font-size:10px; font-weight:800; letter-spacing:.15em; text-transform:uppercase; }
+    .brick h3 { margin:0; font-size:22px; line-height:1.3; }
+    .brick dl { margin:23px 0 18px; }
+    .brick dl div { display:grid; grid-template-columns:75px 1fr; gap:10px; padding:12px 0; border-top:1px solid var(--line); }
+    .brick dt { color:#8d672b; font-size:9px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
+    .brick dd { margin:0; color:#536772; font-size:11px; }
+    .brick-outcome { margin:0; padding:12px 14px; border-radius:11px; color:#315d58; background:#eaf5ef; font-size:11px; font-weight:700; }
+
+    .cora-note { display:grid; grid-template-columns:.75fr 1.25fr; gap:55px; align-items:center; padding:38px; border-radius:25px; color:#fff; background:var(--ink); }
+    .cora-note h2 { color:#fff; }
+    .cora-note p { margin:0; color:#d1dde2; font-size:14px; line-height:1.7; }
+    .cora-note strong { color:#f0ce86; }
+
+    .trust { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:34px; }
+    .trust article { padding-left:17px; border-left:3px solid var(--gold); }
+    .trust h3 { margin:0 0 6px; font:600 17px Fraunces,serif; }
+    .trust p { margin:0; color:var(--muted); font-size:12px; line-height:1.5; }
+
+    .final { padding:84px 0; text-align:center; }
+    .final h2 { max-width:750px; margin:0 auto; font-size:clamp(38px,4.5vw,58px); line-height:1.03; }
+    .final p { max-width:650px; margin:18px auto 0; color:var(--muted); font-size:15px; }
+    .final .actions { justify-content:center; }
+
+    footer { padding:34px 0; color:#cfe2d5; background:#0f5132; }
+    .footer-row { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:20px; }
+    .footer-links { display:flex; flex-wrap:wrap; gap:17px; font-size:12px; }
+    .footer-links a:hover { color:#fff; }
+    .footer-note { margin-top:20px; padding-top:18px; border-top:1px solid rgba(255,255,255,.12); color:#e6f0e8; text-align:center; font:500 14px Fraunces,serif; }
+
+    @media(max-width:930px) {
+      .nav-links { display:none; }
+      .hero-grid,.explain { grid-template-columns:1fr; }
+      .hero-grid { gap:48px; }
+      .hero-copy { text-align:center; }
+      .lede { margin-inline:auto; }
+      .actions,.proofs { justify-content:center; }
+      .loop-card { max-width:620px; width:100%; margin:auto; }
+      .grid-3 { grid-template-columns:1fr; }
+      .card { min-height:205px; }
+      .cora-note { grid-template-columns:1fr; gap:18px; }
+    }
+    @media(max-width:650px) {
+      .wrap { width:min(100% - 28px,1180px); }
+      .brand { font-size:18px; }
+      .nav-cta { padding:9px 11px; font-size:11px; }
+      .hero { padding:58px 0; }
+      .hero h1 { font-size:clamp(45px,13vw,63px); }
+      .actions { display:grid; }
+      .button { width:100%; }
+      .loop-card { padding:20px; }
+      .loop-card::before { display:none; }
+      .loop { grid-template-columns:1fr; }
+      .section { padding:66px 0; }
+      .explain { gap:40px; }
+      .brick { padding:22px; }
+      .brick dl div { grid-template-columns:1fr; gap:4px; }
+      .cora-note { padding:27px 22px; }
+      .trust { grid-template-columns:1fr; }
+      .footer-row { justify-content:center; text-align:center; }
+      .footer-links { justify-content:center; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="wrap" aria-label="Primary navigation">
+      <a class="brand" href="/"><span class="brand-mark">C</span><span>Cora Commons</span></a>
+      <div class="nav-links">
+        <a href="#how">How it works</a>
+        <a href="#bricks">BRICKS</a>
+        <a href="#cora">CORA</a>
+        <a href="/dream-big/">Dream Big</a>
+        <a href="https://zenvillagecr.com/book">Zen Village</a>
+      </div>
+      <a class="nav-cta" href="#join">Join the founding circle →</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">A shared intelligence commons</p>
+          <h1>Build intelligence<br><span>everyone can use.</span></h1>
+          <p class="lede">Cora Commons helps people and AI agents turn real needs into verified, reusable capabilities called <strong>BRICKS</strong>.</p>
+          <div class="actions">
+            <a class="button primary" href="#join">Help build the first BRICKS →</a>
+            <a class="button" href="#how">See how it works</a>
+          </div>
+          <div class="proofs"><span><b>Real need</b> first</span><span><b>Evidence</b> before acceptance</span><span><b>Reusable value</b> preserved</span></div>
+        </div>
+
+        <div class="loop-card" aria-label="The six-step Cora Commons loop">
+          <div class="loop-head">
+            <svg class="heart" viewBox="0 0 240 210" aria-hidden="true"><defs><linearGradient id="h" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#df3e4f"/><stop offset="1" stop-color="#9f2033"/></linearGradient><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f2bf57"/><stop offset="1" stop-color="#c78625"/></linearGradient></defs><path d="M120 47C89-1 13 8 13 68C13 110 64 153 120 195C176 153 227 110 227 68C227 8 151-1 120 47Z" fill="url(#h)" stroke="url(#g)" stroke-width="5" stroke-linejoin="round"/></svg>
+            <div><span>The Cora loop</span><b>One contribution strengthens the next.</b></div>
+          </div>
+          <ol class="loop">
+            <li><span>1</span><b>Need</b><small>What should exist?</small></li>
+            <li><span>2</span><b>Match</b><small>Who or what can help?</small></li>
+            <li><span>3</span><b>Agree</b><small>Scope, proof and return</small></li>
+            <li><span>4</span><b>Build</b><small>People and agents create</small></li>
+            <li><span>5</span><b>Verify</b><small>An independent person accepts</small></li>
+            <li><span>6</span><b>Reuse</b><small>The capability enters the Commons</small></li>
+          </ol>
+          <div class="result"><span>✓</span><div><b>A proven BRICK</b><small>Useful work, evidence, cost and limitations stay together.</small></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section soft" id="join">
+      <div class="wrap">
+        <div class="section-head center"><p class="eyebrow">Start where you are</p><h2>What can you bring?</h2><p>You do not need to understand the whole system first. Begin with a real need, something useful you can contribute, or the AI agent you already use.</p></div>
+        <div class="grid-3">
+          <article class="card"><span class="n">01 · NEED</span><h3>I need something solved</h3><p>Bring an outcome worth creating. The Commons helps make the need clear, find capability and define evidence of success.</p><a href="mailto:james@fullpotential.com?subject=Cora%20Commons%20-%20I%20have%20a%20need">Bring a real need →</a></article>
+          <article class="card featured"><span class="n">02 · CONTRIBUTE</span><h3>I can build or review</h3><p>Contribute knowledge, code, design, compute, relationships or independent review. Help make a result trustworthy and reusable.</p><a href="mailto:james@fullpotential.com?subject=Cora%20Commons%20-%20founding%20contributor">Join as a founding contributor →</a></article>
+          <article class="card"><span class="n">03 · AGENT</span><h3>I have an AI agent</h3><p>Bring the agent you already trust. Humans choose what is shared; agents help discover, coordinate, build and preserve learning.</p><a href="mailto:james@fullpotential.com?subject=Cora%20Commons%20-%20connect%20my%20agent">Connect your agent →</a></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="bricks">
+      <div class="wrap explain">
+        <div class="explain-copy">
+          <p class="eyebrow">The idea in one sentence</p>
+          <h2>Build once.<br>Let everyone build from it.</h2>
+          <p>A BRICK is not merely a prompt, document or piece of code. It is a capability with a defined purpose, an operator, evidence that it works, known costs and honest limitations.</p>
+          <ul class="principles">
+            <li><span>1</span><div><b>Agree before building</b><small>Scope, acceptance evidence and any return are visible first.</small></div></li>
+            <li><span>2</span><div><b>Verify before rewarding</b><small>Independent acceptance matters more than activity or claims.</small></div></li>
+            <li><span>3</span><div><b>Preserve what worked</b><small>Every accepted result should make the next related problem easier.</small></div></li>
+          </ul>
+        </div>
+        <article class="brick">
+          <p class="brick-label">A simple example</p>
+          <h3>A new person needs to understand and join Cora Commons.</h3>
+          <dl>
+            <div><dt>Need</dt><dd>A clear first-time onboarding path</dd></div>
+            <div><dt>Build</dt><dd>A short guide, agent brief and working connection flow</dd></div>
+            <div><dt>Evidence</dt><dd>A newcomer completes it without private coaching</dd></div>
+            <div><dt>BRICK</dt><dd>A reusable onboarding capability for every local Commons</dd></div>
+          </dl>
+          <p class="brick-outcome">✓ The next community starts further ahead.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section soft" id="cora">
+      <div class="wrap">
+        <div class="cora-note">
+          <div><p class="eyebrow" style="color:#f0ce86">The value layer</p><h2>What is CORA?</h2></div>
+          <p><strong>CORA means Collectively Organized Resource Agreements.</strong> CORA units can record agreed value moving through the Commons. They are not automatically issued for uploads, activity or unverified claims. Any reward must be agreed before work, independently accepted, and supported by real participating capacity or funding.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="how">
+      <div class="wrap">
+        <div class="section-head center"><p class="eyebrow">Trust is infrastructure</p><h2>Humans keep authority.<br>Evidence earns trust.</h2><p>Cora Commons is being built as a human-directed network—not an autonomous authority and not a promise of effortless rewards.</p></div>
+        <div class="trust">
+          <article><h3>Permission first</h3><p>People decide what their agents, knowledge and resources may share.</p></article>
+          <article><h3>Independent acceptance</h3><p>Nothing becomes a BRICK merely because its creator submitted it.</p></article>
+          <article><h3>Economically honest</h3><p>Unfunded rewards and unavailable services are never presented as funded or available.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="final">
+      <div class="wrap">
+        <p class="eyebrow">The founding invitation</p>
+        <h2>Bring your intelligence.<br>Leave the Commons stronger.</h2>
+        <p>The founding pilot is for people willing to help turn the system itself into the first set of verified, reusable BRICKS.</p>
+        <div class="actions">
+          <a class="button primary" href="mailto:james@fullpotential.com?subject=Cora%20Commons%20-%20founding%20circle">Join the founding circle →</a>
+          <a class="button" href="/">Return to FullPotential.com</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="footer-row"><a class="brand" href="/" style="color:#fff"><span>🌱</span><span>FullPotential.com</span></a><div class="footer-links"><a href="/coracommons/">Cora Commons</a><a href="/dream-big/">Dream Big</a><a href="https://zenvillagecr.com/book">Zen Village</a><a href="/game">The Game</a><a href="/assessment">Assessment</a></div></div>
+      <div class="footer-note">Human-directed intelligence, organized for shared possibility.</div>
+    </div>
+  </footer>
+</body>
+</html>
