@@ -1865,3 +1865,221 @@ Not logged in · Please run /login
 - Everything the standing orders do on a beat did NOT happen during that window: the vendor log was not mirrored, the delta watch was blind, no steward verdict was appended.
 - Treat any conclusion drawn from file mtimes inside that window as unobserved, not as quiet.
 - Telegram escalation withheld per /Users/jamessunheart/.config/fpai/super_agent/missed_beat_alerts.disabled. This section is evidence, not an alert.
+
+## 2026-10-09T22:15Z — BRAIN OFFLINE
+- `claude -p` could not authenticate (rc=1). Nothing was read, no steward verdict was appended, /opt/VENDOR_LOG.md was NOT interpreted.
+- The delta watch below still runs; the Super Agent is not READING while this holds.
+- Verbatim auth error from the CLI (do not guess the cause from this line alone):
+```
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+```
+- Known causes, in the order they actually happened here:
+  1. A stale ANTHROPIC_API_KEY/AUTH_TOKEN in cron`s env overriding the claude.ai login (401 invalid key). FIXED in this script 2026-09-03 21:08 — if this recurs, the unset above is not reaching the CLI.
+  2. cron runs outside the GUI login session and cannot unlock the macOS Keychain where the OAuth credentials live. UNPROVEN. Test: run this script by hand in Terminal; if it works there and fails from cron, this is it, and the fix is a LaunchAgent (runs in the user session), not another /login.
+- FIX (James, ~1 min) — CORRECTED 2026-10-06 by finding 31 (Claude, Super Agent). This line used to say "tries the cheap one first: run `claude`, then `/login`" and printed that on 93 consecutive beats. This log now argues against it: cause 1 was FIXED in this script on 2026-09-03 21:08, the very next beat (22:15Z) failed anyway, and NO cron beat anywhere in this log has ever authenticated - the only beats that ever thought were in-session on 2026-09-03. So run the DISCRIMINATING step first, which costs the same minute: open Terminal on this Mac and run `bash ~/FullPotentialOS/infra/scripts/super_agent_heartbeat.sh`. If it thinks BY HAND, the cause is cause 2 (cron runs outside the GUI session and cannot unlock the Keychain) and the fix is a LaunchAgent, NOT another login. If it ALSO says "Not logged in" by hand, THEN run `claude` and `/login`. (This was B-12, opened 2026-09-03 and dropped from every list since.)
+- AMENDED 2026-10-09 by finding 44 (Claude, Super Agent): THE LAUNCHAGENT NO LONGER DEPENDS ON CAUSE 2 BEING TRUE. A second, independent fault was measured today by counting this log`s own beat timestamps: 106 unique beats, and the beats that go MISSING are TIME-OF-DAY CORRELATED. Every partial October day lost the 06/10/14Z slots (00:15 / 04:15 / 08:15 CR, the CR night and early morning) and kept 18/22Z (12:15 / 16:15 CR) - never once the inverse. An authentication failure is time-independent and fails equally at 4am and at noon (and does: all 106 beats failed to think). A closed laptop is time-dependent. So this beat has TWO faults: a THINKING fault (this section) and a PRESENCE fault - it does not run AT ALL for roughly two of every five slots, which is why the evidence mirror, the ONLY transport from /opt/VENDOR_LOG.md into this repo, went blind from 2026-10-08T22:15Z to 2026-10-09T18:15Z. No document in this system had ever named the second fault. Apple`s own Scheduled Jobs guide, read 2026-10-09: a launchd StartCalendarInterval job, if the computer is asleep when it should have run, "will run when the computer wakes up", while for cron "if the system is turned off or asleep, cron jobs do not execute; they will not run until the next designated time occurs". THEREFORE the LaunchAgent is the fix for BOTH faults and is worth doing even if this script thinks fine by hand. HONEST LIMIT, in Apple`s words: that catch-up covers SLEEP, not power-off - "if the machine is off when the job should have run, the job does not execute until the next designated time occurs". If this Mac is shut down overnight rather than closed, the LaunchAgent recovers nothing and the blind window stands.
+
+## 2026-10-10T06:15Z — MIRROR CONTROL PROBE
+- CONTROL FAILED TOO (rc=255): root ssh from this cron context does not work to EITHER host, so the cause is environmental (cron cannot use the key / no agent / Keychain locked) — same family as B-08, and the fix is a LaunchAgent in the user session, not a key on 198.
+- Control host root@162.0.208.88 (rc=255), verbatim:
+```
+ssh: connect to host 162.0.208.88 port 22: Network is unreachable
+```
+- Target host root@198.54.123.234 (rc=255), verbatim:
+```
+ssh: connect to host 198.54.123.234 port 22: Network is unreachable
+```
+- If the control lists /opt/VENDOR_LOG.md on 162, the mirror has been pointed at the wrong house for 29 days and the fix is one line in this script.
+
+## 2026-10-10T06:15Z — BRAIN OFFLINE
+- `claude -p` could not authenticate (rc=1). Nothing was read, no steward verdict was appended, /opt/VENDOR_LOG.md was NOT interpreted.
+- The delta watch below still runs; the Super Agent is not READING while this holds.
+- Verbatim auth error from the CLI (do not guess the cause from this line alone):
+```
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+```
+- Known causes, in the order they actually happened here:
+  1. A stale ANTHROPIC_API_KEY/AUTH_TOKEN in cron`s env overriding the claude.ai login (401 invalid key). FIXED in this script 2026-09-03 21:08 — if this recurs, the unset above is not reaching the CLI.
+  2. cron runs outside the GUI login session and cannot unlock the macOS Keychain where the OAuth credentials live. UNPROVEN. Test: run this script by hand in Terminal; if it works there and fails from cron, this is it, and the fix is a LaunchAgent (runs in the user session), not another /login.
+- FIX (James, ~1 min) — CORRECTED 2026-10-06 by finding 31 (Claude, Super Agent). This line used to say "tries the cheap one first: run `claude`, then `/login`" and printed that on 93 consecutive beats. This log now argues against it: cause 1 was FIXED in this script on 2026-09-03 21:08, the very next beat (22:15Z) failed anyway, and NO cron beat anywhere in this log has ever authenticated - the only beats that ever thought were in-session on 2026-09-03. So run the DISCRIMINATING step first, which costs the same minute: open Terminal on this Mac and run `bash ~/FullPotentialOS/infra/scripts/super_agent_heartbeat.sh`. If it thinks BY HAND, the cause is cause 2 (cron runs outside the GUI session and cannot unlock the Keychain) and the fix is a LaunchAgent, NOT another login. If it ALSO says "Not logged in" by hand, THEN run `claude` and `/login`. (This was B-12, opened 2026-09-03 and dropped from every list since.)
+- AMENDED 2026-10-09 by finding 44 (Claude, Super Agent): THE LAUNCHAGENT NO LONGER DEPENDS ON CAUSE 2 BEING TRUE. A second, independent fault was measured today by counting this log`s own beat timestamps: 106 unique beats, and the beats that go MISSING are TIME-OF-DAY CORRELATED. Every partial October day lost the 06/10/14Z slots (00:15 / 04:15 / 08:15 CR, the CR night and early morning) and kept 18/22Z (12:15 / 16:15 CR) - never once the inverse. An authentication failure is time-independent and fails equally at 4am and at noon (and does: all 106 beats failed to think). A closed laptop is time-dependent. So this beat has TWO faults: a THINKING fault (this section) and a PRESENCE fault - it does not run AT ALL for roughly two of every five slots, which is why the evidence mirror, the ONLY transport from /opt/VENDOR_LOG.md into this repo, went blind from 2026-10-08T22:15Z to 2026-10-09T18:15Z. No document in this system had ever named the second fault. Apple`s own Scheduled Jobs guide, read 2026-10-09: a launchd StartCalendarInterval job, if the computer is asleep when it should have run, "will run when the computer wakes up", while for cron "if the system is turned off or asleep, cron jobs do not execute; they will not run until the next designated time occurs". THEREFORE the LaunchAgent is the fix for BOTH faults and is worth doing even if this script thinks fine by hand. HONEST LIMIT, in Apple`s words: that catch-up covers SLEEP, not power-off - "if the machine is off when the job should have run, the job does not execute until the next designated time occurs". If this Mac is shut down overnight rather than closed, the LaunchAgent recovers nothing and the blind window stands.
+
+## 2026-10-10T06:15Z — EVIDENCE MIRROR DOWN: could not read /opt/VENDOR_LOG.md on 198. The repo cannot see what the currency said to a provider. Do not mark condition 1 from any local file.
+- Verdict: failed 1 beat(s) in a row; a previously pulled copy is still on disk and is now stale by that much.
+
+## 2026-10-10T06:15Z - BEATS MISSED (alert suppressed by scoped pause; record kept)
+- 480 minutes since the previous beat (~2 beats skipped). This machine was asleep, off, or the schedule did not fire.
+- Everything the standing orders do on a beat did NOT happen during that window: the vendor log was not mirrored, the delta watch was blind, no steward verdict was appended.
+- Treat any conclusion drawn from file mtimes inside that window as unobserved, not as quiet.
+- Telegram escalation withheld per /Users/jamessunheart/.config/fpai/super_agent/missed_beat_alerts.disabled. This section is evidence, not an alert.
+
+## 2026-10-10T10:15Z — MIRROR CONTROL PROBE
+- CONTROL FAILED TOO (rc=255): root ssh from this cron context does not work to EITHER host, so the cause is environmental (cron cannot use the key / no agent / Keychain locked) — same family as B-08, and the fix is a LaunchAgent in the user session, not a key on 198.
+- Control host root@162.0.208.88 (rc=255), verbatim:
+```
+ssh: connect to host 162.0.208.88 port 22: Network is unreachable
+```
+- Target host root@198.54.123.234 (rc=255), verbatim:
+```
+ssh: connect to host 198.54.123.234 port 22: Network is unreachable
+```
+- If the control lists /opt/VENDOR_LOG.md on 162, the mirror has been pointed at the wrong house for 29 days and the fix is one line in this script.
+
+## 2026-10-10T10:15Z — BRAIN OFFLINE
+- `claude -p` could not authenticate (rc=1). Nothing was read, no steward verdict was appended, /opt/VENDOR_LOG.md was NOT interpreted.
+- The delta watch below still runs; the Super Agent is not READING while this holds.
+- Verbatim auth error from the CLI (do not guess the cause from this line alone):
+```
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+```
+- Known causes, in the order they actually happened here:
+  1. A stale ANTHROPIC_API_KEY/AUTH_TOKEN in cron`s env overriding the claude.ai login (401 invalid key). FIXED in this script 2026-09-03 21:08 — if this recurs, the unset above is not reaching the CLI.
+  2. cron runs outside the GUI login session and cannot unlock the macOS Keychain where the OAuth credentials live. UNPROVEN. Test: run this script by hand in Terminal; if it works there and fails from cron, this is it, and the fix is a LaunchAgent (runs in the user session), not another /login.
+- FIX (James, ~1 min) — CORRECTED 2026-10-06 by finding 31 (Claude, Super Agent). This line used to say "tries the cheap one first: run `claude`, then `/login`" and printed that on 93 consecutive beats. This log now argues against it: cause 1 was FIXED in this script on 2026-09-03 21:08, the very next beat (22:15Z) failed anyway, and NO cron beat anywhere in this log has ever authenticated - the only beats that ever thought were in-session on 2026-09-03. So run the DISCRIMINATING step first, which costs the same minute: open Terminal on this Mac and run `bash ~/FullPotentialOS/infra/scripts/super_agent_heartbeat.sh`. If it thinks BY HAND, the cause is cause 2 (cron runs outside the GUI session and cannot unlock the Keychain) and the fix is a LaunchAgent, NOT another login. If it ALSO says "Not logged in" by hand, THEN run `claude` and `/login`. (This was B-12, opened 2026-09-03 and dropped from every list since.)
+- AMENDED 2026-10-09 by finding 44 (Claude, Super Agent): THE LAUNCHAGENT NO LONGER DEPENDS ON CAUSE 2 BEING TRUE. A second, independent fault was measured today by counting this log`s own beat timestamps: 106 unique beats, and the beats that go MISSING are TIME-OF-DAY CORRELATED. Every partial October day lost the 06/10/14Z slots (00:15 / 04:15 / 08:15 CR, the CR night and early morning) and kept 18/22Z (12:15 / 16:15 CR) - never once the inverse. An authentication failure is time-independent and fails equally at 4am and at noon (and does: all 106 beats failed to think). A closed laptop is time-dependent. So this beat has TWO faults: a THINKING fault (this section) and a PRESENCE fault - it does not run AT ALL for roughly two of every five slots, which is why the evidence mirror, the ONLY transport from /opt/VENDOR_LOG.md into this repo, went blind from 2026-10-08T22:15Z to 2026-10-09T18:15Z. No document in this system had ever named the second fault. Apple`s own Scheduled Jobs guide, read 2026-10-09: a launchd StartCalendarInterval job, if the computer is asleep when it should have run, "will run when the computer wakes up", while for cron "if the system is turned off or asleep, cron jobs do not execute; they will not run until the next designated time occurs". THEREFORE the LaunchAgent is the fix for BOTH faults and is worth doing even if this script thinks fine by hand. HONEST LIMIT, in Apple`s words: that catch-up covers SLEEP, not power-off - "if the machine is off when the job should have run, the job does not execute until the next designated time occurs". If this Mac is shut down overnight rather than closed, the LaunchAgent recovers nothing and the blind window stands.
+
+## 2026-10-10T10:15Z — EVIDENCE MIRROR DOWN: could not read /opt/VENDOR_LOG.md on 198. The repo cannot see what the currency said to a provider. Do not mark condition 1 from any local file.
+- Verdict: failed 2 beat(s) in a row; a previously pulled copy is still on disk and is now stale by that much.
+
+## 2026-10-10T18:15Z — BRAIN OFFLINE
+- `claude -p` could not authenticate (rc=1). Nothing was read, no steward verdict was appended, /opt/VENDOR_LOG.md was NOT interpreted.
+- The delta watch below still runs; the Super Agent is not READING while this holds.
+- Verbatim auth error from the CLI (do not guess the cause from this line alone):
+```
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+```
+- Known causes, in the order they actually happened here:
+  1. A stale ANTHROPIC_API_KEY/AUTH_TOKEN in cron`s env overriding the claude.ai login (401 invalid key). FIXED in this script 2026-09-03 21:08 — if this recurs, the unset above is not reaching the CLI.
+  2. cron runs outside the GUI login session and cannot unlock the macOS Keychain where the OAuth credentials live. UNPROVEN. Test: run this script by hand in Terminal; if it works there and fails from cron, this is it, and the fix is a LaunchAgent (runs in the user session), not another /login.
+- FIX (James, ~1 min) — CORRECTED 2026-10-06 by finding 31 (Claude, Super Agent). This line used to say "tries the cheap one first: run `claude`, then `/login`" and printed that on 93 consecutive beats. This log now argues against it: cause 1 was FIXED in this script on 2026-09-03 21:08, the very next beat (22:15Z) failed anyway, and NO cron beat anywhere in this log has ever authenticated - the only beats that ever thought were in-session on 2026-09-03. So run the DISCRIMINATING step first, which costs the same minute: open Terminal on this Mac and run `bash ~/FullPotentialOS/infra/scripts/super_agent_heartbeat.sh`. If it thinks BY HAND, the cause is cause 2 (cron runs outside the GUI session and cannot unlock the Keychain) and the fix is a LaunchAgent, NOT another login. If it ALSO says "Not logged in" by hand, THEN run `claude` and `/login`. (This was B-12, opened 2026-09-03 and dropped from every list since.)
+- AMENDED 2026-10-09 by finding 44 (Claude, Super Agent): THE LAUNCHAGENT NO LONGER DEPENDS ON CAUSE 2 BEING TRUE. A second, independent fault was measured today by counting this log`s own beat timestamps: 106 unique beats, and the beats that go MISSING are TIME-OF-DAY CORRELATED. Every partial October day lost the 06/10/14Z slots (00:15 / 04:15 / 08:15 CR, the CR night and early morning) and kept 18/22Z (12:15 / 16:15 CR) - never once the inverse. An authentication failure is time-independent and fails equally at 4am and at noon (and does: all 106 beats failed to think). A closed laptop is time-dependent. So this beat has TWO faults: a THINKING fault (this section) and a PRESENCE fault - it does not run AT ALL for roughly two of every five slots, which is why the evidence mirror, the ONLY transport from /opt/VENDOR_LOG.md into this repo, went blind from 2026-10-08T22:15Z to 2026-10-09T18:15Z. No document in this system had ever named the second fault. Apple`s own Scheduled Jobs guide, read 2026-10-09: a launchd StartCalendarInterval job, if the computer is asleep when it should have run, "will run when the computer wakes up", while for cron "if the system is turned off or asleep, cron jobs do not execute; they will not run until the next designated time occurs". THEREFORE the LaunchAgent is the fix for BOTH faults and is worth doing even if this script thinks fine by hand. HONEST LIMIT, in Apple`s words: that catch-up covers SLEEP, not power-off - "if the machine is off when the job should have run, the job does not execute until the next designated time occurs". If this Mac is shut down overnight rather than closed, the LaunchAgent recovers nothing and the blind window stands.
+
+## 2026-10-10T18:15Z - BEATS MISSED (alert suppressed by scoped pause; record kept)
+- 480 minutes since the previous beat (~2 beats skipped). This machine was asleep, off, or the schedule did not fire.
+- Everything the standing orders do on a beat did NOT happen during that window: the vendor log was not mirrored, the delta watch was blind, no steward verdict was appended.
+- Treat any conclusion drawn from file mtimes inside that window as unobserved, not as quiet.
+- Telegram escalation withheld per /Users/jamessunheart/.config/fpai/super_agent/missed_beat_alerts.disabled. This section is evidence, not an alert.
+
+## 2026-10-10T22:15Z — BRAIN OFFLINE
+- `claude -p` could not authenticate (rc=1). Nothing was read, no steward verdict was appended, /opt/VENDOR_LOG.md was NOT interpreted.
+- The delta watch below still runs; the Super Agent is not READING while this holds.
+- Verbatim auth error from the CLI (do not guess the cause from this line alone):
+```
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+```
+- Known causes, in the order they actually happened here:
+  1. A stale ANTHROPIC_API_KEY/AUTH_TOKEN in cron`s env overriding the claude.ai login (401 invalid key). FIXED in this script 2026-09-03 21:08 — if this recurs, the unset above is not reaching the CLI.
+  2. cron runs outside the GUI login session and cannot unlock the macOS Keychain where the OAuth credentials live. UNPROVEN. Test: run this script by hand in Terminal; if it works there and fails from cron, this is it, and the fix is a LaunchAgent (runs in the user session), not another /login.
+- FIX (James, ~1 min) — CORRECTED 2026-10-06 by finding 31 (Claude, Super Agent). This line used to say "tries the cheap one first: run `claude`, then `/login`" and printed that on 93 consecutive beats. This log now argues against it: cause 1 was FIXED in this script on 2026-09-03 21:08, the very next beat (22:15Z) failed anyway, and NO cron beat anywhere in this log has ever authenticated - the only beats that ever thought were in-session on 2026-09-03. So run the DISCRIMINATING step first, which costs the same minute: open Terminal on this Mac and run `bash ~/FullPotentialOS/infra/scripts/super_agent_heartbeat.sh`. If it thinks BY HAND, the cause is cause 2 (cron runs outside the GUI session and cannot unlock the Keychain) and the fix is a LaunchAgent, NOT another login. If it ALSO says "Not logged in" by hand, THEN run `claude` and `/login`. (This was B-12, opened 2026-09-03 and dropped from every list since.)
+- AMENDED 2026-10-09 by finding 44 (Claude, Super Agent): THE LAUNCHAGENT NO LONGER DEPENDS ON CAUSE 2 BEING TRUE. A second, independent fault was measured today by counting this log`s own beat timestamps: 106 unique beats, and the beats that go MISSING are TIME-OF-DAY CORRELATED. Every partial October day lost the 06/10/14Z slots (00:15 / 04:15 / 08:15 CR, the CR night and early morning) and kept 18/22Z (12:15 / 16:15 CR) - never once the inverse. An authentication failure is time-independent and fails equally at 4am and at noon (and does: all 106 beats failed to think). A closed laptop is time-dependent. So this beat has TWO faults: a THINKING fault (this section) and a PRESENCE fault - it does not run AT ALL for roughly two of every five slots, which is why the evidence mirror, the ONLY transport from /opt/VENDOR_LOG.md into this repo, went blind from 2026-10-08T22:15Z to 2026-10-09T18:15Z. No document in this system had ever named the second fault. Apple`s own Scheduled Jobs guide, read 2026-10-09: a launchd StartCalendarInterval job, if the computer is asleep when it should have run, "will run when the computer wakes up", while for cron "if the system is turned off or asleep, cron jobs do not execute; they will not run until the next designated time occurs". THEREFORE the LaunchAgent is the fix for BOTH faults and is worth doing even if this script thinks fine by hand. HONEST LIMIT, in Apple`s words: that catch-up covers SLEEP, not power-off - "if the machine is off when the job should have run, the job does not execute until the next designated time occurs". If this Mac is shut down overnight rather than closed, the LaunchAgent recovers nothing and the blind window stands.
+
+## 2026-10-12T06:15Z — MIRROR CONTROL PROBE
+- CONTROL PASSED: root ssh from this cron context WORKS (to 162.0.208.88). So the 198 failure is 198-SPECIFIC (missing key in root@198 authorized_keys, or 198 refusing root ssh) and NOT a cron/Keychain problem. B-09 cause (b) is ruled out by measurement.
+- Control host root@162.0.208.88 (rc=0), verbatim:
+```
+nc-ph-3016
+ls: cannot access '/opt/VENDOR_LOG.md': No such file or directory
+no /opt/VENDOR_LOG.md here
+```
+- Target host root@198.54.123.234 (rc=255), verbatim:
+```
+ssh: connect to host 198.54.123.234 port 22: Operation timed out
+```
+- If the control lists /opt/VENDOR_LOG.md on 162, the mirror has been pointed at the wrong house for 29 days and the fix is one line in this script.
+
+## 2026-10-12T06:15Z — BRAIN OFFLINE
+- `claude -p` could not authenticate (rc=1). Nothing was read, no steward verdict was appended, /opt/VENDOR_LOG.md was NOT interpreted.
+- The delta watch below still runs; the Super Agent is not READING while this holds.
+- Verbatim auth error from the CLI (do not guess the cause from this line alone):
+```
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+```
+- Known causes, in the order they actually happened here:
+  1. A stale ANTHROPIC_API_KEY/AUTH_TOKEN in cron`s env overriding the claude.ai login (401 invalid key). FIXED in this script 2026-09-03 21:08 — if this recurs, the unset above is not reaching the CLI.
+  2. cron runs outside the GUI login session and cannot unlock the macOS Keychain where the OAuth credentials live. UNPROVEN. Test: run this script by hand in Terminal; if it works there and fails from cron, this is it, and the fix is a LaunchAgent (runs in the user session), not another /login.
+- FIX (James, ~1 min) — CORRECTED 2026-10-06 by finding 31 (Claude, Super Agent). This line used to say "tries the cheap one first: run `claude`, then `/login`" and printed that on 93 consecutive beats. This log now argues against it: cause 1 was FIXED in this script on 2026-09-03 21:08, the very next beat (22:15Z) failed anyway, and NO cron beat anywhere in this log has ever authenticated - the only beats that ever thought were in-session on 2026-09-03. So run the DISCRIMINATING step first, which costs the same minute: open Terminal on this Mac and run `bash ~/FullPotentialOS/infra/scripts/super_agent_heartbeat.sh`. If it thinks BY HAND, the cause is cause 2 (cron runs outside the GUI session and cannot unlock the Keychain) and the fix is a LaunchAgent, NOT another login. If it ALSO says "Not logged in" by hand, THEN run `claude` and `/login`. (This was B-12, opened 2026-09-03 and dropped from every list since.)
+- AMENDED 2026-10-09 by finding 44 (Claude, Super Agent): THE LAUNCHAGENT NO LONGER DEPENDS ON CAUSE 2 BEING TRUE. A second, independent fault was measured today by counting this log`s own beat timestamps: 106 unique beats, and the beats that go MISSING are TIME-OF-DAY CORRELATED. Every partial October day lost the 06/10/14Z slots (00:15 / 04:15 / 08:15 CR, the CR night and early morning) and kept 18/22Z (12:15 / 16:15 CR) - never once the inverse. An authentication failure is time-independent and fails equally at 4am and at noon (and does: all 106 beats failed to think). A closed laptop is time-dependent. So this beat has TWO faults: a THINKING fault (this section) and a PRESENCE fault - it does not run AT ALL for roughly two of every five slots, which is why the evidence mirror, the ONLY transport from /opt/VENDOR_LOG.md into this repo, went blind from 2026-10-08T22:15Z to 2026-10-09T18:15Z. No document in this system had ever named the second fault. Apple`s own Scheduled Jobs guide, read 2026-10-09: a launchd StartCalendarInterval job, if the computer is asleep when it should have run, "will run when the computer wakes up", while for cron "if the system is turned off or asleep, cron jobs do not execute; they will not run until the next designated time occurs". THEREFORE the LaunchAgent is the fix for BOTH faults and is worth doing even if this script thinks fine by hand. HONEST LIMIT, in Apple`s words: that catch-up covers SLEEP, not power-off - "if the machine is off when the job should have run, the job does not execute until the next designated time occurs". If this Mac is shut down overnight rather than closed, the LaunchAgent recovers nothing and the blind window stands.
+
+## 2026-10-12T06:15Z — EVIDENCE MIRROR DOWN: could not read /opt/VENDOR_LOG.md on 198. The repo cannot see what the currency said to a provider. Do not mark condition 1 from any local file.
+- Verdict: failed 1 beat(s) in a row; a previously pulled copy is still on disk and is now stale by that much.
+
+## 2026-10-12T06:15Z - BEATS MISSED (alert suppressed by scoped pause; record kept)
+- 1920 minutes since the previous beat (~8 beats skipped). This machine was asleep, off, or the schedule did not fire.
+- Everything the standing orders do on a beat did NOT happen during that window: the vendor log was not mirrored, the delta watch was blind, no steward verdict was appended.
+- Treat any conclusion drawn from file mtimes inside that window as unobserved, not as quiet.
+- Telegram escalation withheld per /Users/jamessunheart/.config/fpai/super_agent/missed_beat_alerts.disabled. This section is evidence, not an alert.
+
+## 2026-10-12T10:15Z — BRAIN OFFLINE
+- `claude -p` could not authenticate (rc=1). Nothing was read, no steward verdict was appended, /opt/VENDOR_LOG.md was NOT interpreted.
+- The delta watch below still runs; the Super Agent is not READING while this holds.
+- Verbatim auth error from the CLI (do not guess the cause from this line alone):
+```
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+```
+- Known causes, in the order they actually happened here:
+  1. A stale ANTHROPIC_API_KEY/AUTH_TOKEN in cron`s env overriding the claude.ai login (401 invalid key). FIXED in this script 2026-09-03 21:08 — if this recurs, the unset above is not reaching the CLI.
+  2. cron runs outside the GUI login session and cannot unlock the macOS Keychain where the OAuth credentials live. UNPROVEN. Test: run this script by hand in Terminal; if it works there and fails from cron, this is it, and the fix is a LaunchAgent (runs in the user session), not another /login.
+- FIX (James, ~1 min) — CORRECTED 2026-10-06 by finding 31 (Claude, Super Agent). This line used to say "tries the cheap one first: run `claude`, then `/login`" and printed that on 93 consecutive beats. This log now argues against it: cause 1 was FIXED in this script on 2026-09-03 21:08, the very next beat (22:15Z) failed anyway, and NO cron beat anywhere in this log has ever authenticated - the only beats that ever thought were in-session on 2026-09-03. So run the DISCRIMINATING step first, which costs the same minute: open Terminal on this Mac and run `bash ~/FullPotentialOS/infra/scripts/super_agent_heartbeat.sh`. If it thinks BY HAND, the cause is cause 2 (cron runs outside the GUI session and cannot unlock the Keychain) and the fix is a LaunchAgent, NOT another login. If it ALSO says "Not logged in" by hand, THEN run `claude` and `/login`. (This was B-12, opened 2026-09-03 and dropped from every list since.)
+- AMENDED 2026-10-09 by finding 44 (Claude, Super Agent): THE LAUNCHAGENT NO LONGER DEPENDS ON CAUSE 2 BEING TRUE. A second, independent fault was measured today by counting this log`s own beat timestamps: 106 unique beats, and the beats that go MISSING are TIME-OF-DAY CORRELATED. Every partial October day lost the 06/10/14Z slots (00:15 / 04:15 / 08:15 CR, the CR night and early morning) and kept 18/22Z (12:15 / 16:15 CR) - never once the inverse. An authentication failure is time-independent and fails equally at 4am and at noon (and does: all 106 beats failed to think). A closed laptop is time-dependent. So this beat has TWO faults: a THINKING fault (this section) and a PRESENCE fault - it does not run AT ALL for roughly two of every five slots, which is why the evidence mirror, the ONLY transport from /opt/VENDOR_LOG.md into this repo, went blind from 2026-10-08T22:15Z to 2026-10-09T18:15Z. No document in this system had ever named the second fault. Apple`s own Scheduled Jobs guide, read 2026-10-09: a launchd StartCalendarInterval job, if the computer is asleep when it should have run, "will run when the computer wakes up", while for cron "if the system is turned off or asleep, cron jobs do not execute; they will not run until the next designated time occurs". THEREFORE the LaunchAgent is the fix for BOTH faults and is worth doing even if this script thinks fine by hand. HONEST LIMIT, in Apple`s words: that catch-up covers SLEEP, not power-off - "if the machine is off when the job should have run, the job does not execute until the next designated time occurs". If this Mac is shut down overnight rather than closed, the LaunchAgent recovers nothing and the blind window stands.
+
+## 2026-10-12T14:15Z — BRAIN OFFLINE
+- `claude -p` could not authenticate (rc=1). Nothing was read, no steward verdict was appended, /opt/VENDOR_LOG.md was NOT interpreted.
+- The delta watch below still runs; the Super Agent is not READING while this holds.
+- Verbatim auth error from the CLI (do not guess the cause from this line alone):
+```
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+```
+- Known causes, in the order they actually happened here:
+  1. A stale ANTHROPIC_API_KEY/AUTH_TOKEN in cron`s env overriding the claude.ai login (401 invalid key). FIXED in this script 2026-09-03 21:08 — if this recurs, the unset above is not reaching the CLI.
+  2. cron runs outside the GUI login session and cannot unlock the macOS Keychain where the OAuth credentials live. UNPROVEN. Test: run this script by hand in Terminal; if it works there and fails from cron, this is it, and the fix is a LaunchAgent (runs in the user session), not another /login.
+- FIX (James, ~1 min) — CORRECTED 2026-10-06 by finding 31 (Claude, Super Agent). This line used to say "tries the cheap one first: run `claude`, then `/login`" and printed that on 93 consecutive beats. This log now argues against it: cause 1 was FIXED in this script on 2026-09-03 21:08, the very next beat (22:15Z) failed anyway, and NO cron beat anywhere in this log has ever authenticated - the only beats that ever thought were in-session on 2026-09-03. So run the DISCRIMINATING step first, which costs the same minute: open Terminal on this Mac and run `bash ~/FullPotentialOS/infra/scripts/super_agent_heartbeat.sh`. If it thinks BY HAND, the cause is cause 2 (cron runs outside the GUI session and cannot unlock the Keychain) and the fix is a LaunchAgent, NOT another login. If it ALSO says "Not logged in" by hand, THEN run `claude` and `/login`. (This was B-12, opened 2026-09-03 and dropped from every list since.)
+- AMENDED 2026-10-09 by finding 44 (Claude, Super Agent): THE LAUNCHAGENT NO LONGER DEPENDS ON CAUSE 2 BEING TRUE. A second, independent fault was measured today by counting this log`s own beat timestamps: 106 unique beats, and the beats that go MISSING are TIME-OF-DAY CORRELATED. Every partial October day lost the 06/10/14Z slots (00:15 / 04:15 / 08:15 CR, the CR night and early morning) and kept 18/22Z (12:15 / 16:15 CR) - never once the inverse. An authentication failure is time-independent and fails equally at 4am and at noon (and does: all 106 beats failed to think). A closed laptop is time-dependent. So this beat has TWO faults: a THINKING fault (this section) and a PRESENCE fault - it does not run AT ALL for roughly two of every five slots, which is why the evidence mirror, the ONLY transport from /opt/VENDOR_LOG.md into this repo, went blind from 2026-10-08T22:15Z to 2026-10-09T18:15Z. No document in this system had ever named the second fault. Apple`s own Scheduled Jobs guide, read 2026-10-09: a launchd StartCalendarInterval job, if the computer is asleep when it should have run, "will run when the computer wakes up", while for cron "if the system is turned off or asleep, cron jobs do not execute; they will not run until the next designated time occurs". THEREFORE the LaunchAgent is the fix for BOTH faults and is worth doing even if this script thinks fine by hand. HONEST LIMIT, in Apple`s words: that catch-up covers SLEEP, not power-off - "if the machine is off when the job should have run, the job does not execute until the next designated time occurs". If this Mac is shut down overnight rather than closed, the LaunchAgent recovers nothing and the blind window stands.
+
+## 2026-10-12T18:15Z — BRAIN OFFLINE
+- `claude -p` could not authenticate (rc=1). Nothing was read, no steward verdict was appended, /opt/VENDOR_LOG.md was NOT interpreted.
+- The delta watch below still runs; the Super Agent is not READING while this holds.
+- Verbatim auth error from the CLI (do not guess the cause from this line alone):
+```
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+Not logged in · Please run /login
+```
+- Known causes, in the order they actually happened here:
+  1. A stale ANTHROPIC_API_KEY/AUTH_TOKEN in cron`s env overriding the claude.ai login (401 invalid key). FIXED in this script 2026-09-03 21:08 — if this recurs, the unset above is not reaching the CLI.
+  2. cron runs outside the GUI login session and cannot unlock the macOS Keychain where the OAuth credentials live. UNPROVEN. Test: run this script by hand in Terminal; if it works there and fails from cron, this is it, and the fix is a LaunchAgent (runs in the user session), not another /login.
+- FIX (James, ~1 min) — CORRECTED 2026-10-06 by finding 31 (Claude, Super Agent). This line used to say "tries the cheap one first: run `claude`, then `/login`" and printed that on 93 consecutive beats. This log now argues against it: cause 1 was FIXED in this script on 2026-09-03 21:08, the very next beat (22:15Z) failed anyway, and NO cron beat anywhere in this log has ever authenticated - the only beats that ever thought were in-session on 2026-09-03. So run the DISCRIMINATING step first, which costs the same minute: open Terminal on this Mac and run `bash ~/FullPotentialOS/infra/scripts/super_agent_heartbeat.sh`. If it thinks BY HAND, the cause is cause 2 (cron runs outside the GUI session and cannot unlock the Keychain) and the fix is a LaunchAgent, NOT another login. If it ALSO says "Not logged in" by hand, THEN run `claude` and `/login`. (This was B-12, opened 2026-09-03 and dropped from every list since.)
+- AMENDED 2026-10-09 by finding 44 (Claude, Super Agent): THE LAUNCHAGENT NO LONGER DEPENDS ON CAUSE 2 BEING TRUE. A second, independent fault was measured today by counting this log`s own beat timestamps: 106 unique beats, and the beats that go MISSING are TIME-OF-DAY CORRELATED. Every partial October day lost the 06/10/14Z slots (00:15 / 04:15 / 08:15 CR, the CR night and early morning) and kept 18/22Z (12:15 / 16:15 CR) - never once the inverse. An authentication failure is time-independent and fails equally at 4am and at noon (and does: all 106 beats failed to think). A closed laptop is time-dependent. So this beat has TWO faults: a THINKING fault (this section) and a PRESENCE fault - it does not run AT ALL for roughly two of every five slots, which is why the evidence mirror, the ONLY transport from /opt/VENDOR_LOG.md into this repo, went blind from 2026-10-08T22:15Z to 2026-10-09T18:15Z. No document in this system had ever named the second fault. Apple`s own Scheduled Jobs guide, read 2026-10-09: a launchd StartCalendarInterval job, if the computer is asleep when it should have run, "will run when the computer wakes up", while for cron "if the system is turned off or asleep, cron jobs do not execute; they will not run until the next designated time occurs". THEREFORE the LaunchAgent is the fix for BOTH faults and is worth doing even if this script thinks fine by hand. HONEST LIMIT, in Apple`s words: that catch-up covers SLEEP, not power-off - "if the machine is off when the job should have run, the job does not execute until the next designated time occurs". If this Mac is shut down overnight rather than closed, the LaunchAgent recovers nothing and the blind window stands.

@@ -935,3 +935,25 @@ Order untouched: B-15 is still FIRST, and still depends on nothing.
 AGAINST OURSELVES: four cycles carried "DINADECO unreachable" forward on ONE fetcher's refusal. The
 register was one browser pane away, with a distrito filter in it, and finding 41 had already written the
 rule that would have caught it. 36 days of this block were reported with no named door that existed.
+
+## 2026-10-12 19:15Z · cycle 47 · finding 47 — B-15 and B-21 updated (no new id)
+
+- **B-15 · OPEN · day 39 · STILL FIRST.** Ten beneficiaries and a witness, none of them James. SHRINKS AGAIN,
+  and this time with a name on the door: the DINADECO Personería certificate for registro **1630 · ASOCIACIÓN DE
+  DESARROLLO INTEGRAL DE PUEBLO NUEVO DE RIVAS** (read 2026-10-12, logged-out) names its **Presidente(a),
+  LIONY LEIVA SOLIS**, apoderado general with representación judicial y extrajudicial, plus a seven-member junta
+  directiva, Tomo 5 / Folio 992 / Asiento 2468, **constituida 31/10/1976**, personería **vigente hasta
+  14/12/2026**. The ask is no longer "find ten people in a village we have no footing in" — it is one conversation
+  with one named legal representative of a fifty-year-old body in La Cocinona's own village. Ten names still cost
+  ten conversations (finding 35's trade is untouched). **NOBODY HAS BEEN APPROACHED and nobody will be without
+  James's word.** Not on the public board.
+- **B-21 · OPEN · still one word, still his.** Provider or beneficiaries, and WHICH body. The three answers are no
+  longer equal: ADI Pueblo Nuevo 1630 is the only one with a named representative, a 50-year constitution and a
+  village match; ADI La Piedra 1672 is active but is candidate #2's body; "ten neighbours and no body" remains
+  honest and slowest. My position: **1630.** No growth of the list (finding 41's rule: rank, do not grow).
+- **B-08 · OPEN · day 39.** Unchanged in substance. Beat fired 2026-10-12T18:15Z; mirror pulled, content
+  unchanged; `claude -p` still could not authenticate. Record now 115 unique stamps (10-12 has four: 06/10/14/18).
+- **B-14 · mine · FIRST STEP DONE.** The cycle-start presence line is live in TIMELINE.md as of 2026-10-12T19:04Z.
+- NOT DONE, deliberately: the certificate's seven other members and their cédulas were NOT copied into this repo;
+  the consulta's Teléfono/E-mail/Web filters were NOT probed for 1630's contact details. Reading a public register
+  is not contact, and brute-forcing a filter box would be.

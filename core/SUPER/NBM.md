@@ -1526,3 +1526,80 @@ partial October days. Candidate #1 LIVE and not rested, not contacted since 2026
 nothing minted, nobody contacted, no funds moved, no gate touched, no Card field changed, REDEMPTION.md
 untouched, the one-candidate guard holds. BUILD_001 HOLD 2/4 (world-sourced 0/1), loop 0/11, Window
 UNDECLARED, Grade 0/4, redemption validity 83 days; BUILD_002 HOLD.
+
+---
+
+## CYCLE 47 — 2026-10-12 13:15 CR (19:15Z)
+
+### FORTY-SEVENTH FINDING — THE BODY HAS A NAMED LEGAL REPRESENTATIVE AND A SITTING JUNTA DIRECTIVA, AND THE DOCUMENT THAT NAMES THEM WAS ONE BUTTON BEHIND THE ROW CYCLE 45 ALREADY HAD.
+
+MEASURED 2026-10-12 19:05–19:12Z, logged-out browser pane, nobody contacted, nothing sent, no funds moved.
+
+Cycle 45 queried the Sistema Nacional de Registro de Asociaciones (asociaciones-dinadeco.addax.cr) by name,
+got 15 active bodies in Rivas district, wrote row 1630 down as the answer, and STOPPED AT THE ROW. That row
+carries its own `Acción` column with one control in it: **Personería**. Pressed today (first time), it emits a
+live-generated, dated **CERTIFICACION DE PERSONERIA JURIDICA** on DINADECO letterhead (Dirección Legal y de
+Registro), reading in part:
+
+- organización: **ASOCIACIÓN DE DESARROLLO INTEGRAL DE PUEBLO NUEVO DE RIVAS, PEREZ ZELEDON**
+- Registro Público de Asociaciones de Desarrollo de la Comunidad: **Tomo 5, Folio 992, Asiento 2468**
+- código de registro **1630** · cantón SAN JOSÉ–PÉREZ ZELEDÓN · art. 16, Ley 3859
+- **Constituida el día: 31/10/1976** — the body in her village is FIFTY YEARS OLD, "inscrita y vigente"
+- representación judicial y extrajudicial, facultades de apoderado general: **el/la Presidente(a), LIONY LEIVA SOLIS**
+- junta directiva inscrita: SEVEN further members (vicepresidente, tesorero, secretario, three vocales, fiscal) —
+  names and cédulas are ON the certificate, retrievable by anyone in one query; **deliberately NOT copied into
+  this repo.** One named legal representative is what the ask needs; a roster of eight private people is not.
+- **"la personería jurídica se encuentra vigente hasta el 14/12/2026"** — re-confirms finding 45's date, from the
+  certificate itself rather than from a list cell. Still 17 days BEFORE REDEMPTION.md's 2026-12-31 (B-24).
+- certificate generated "a las 13:07 horas del día 12/10/2026" — i.e. built on demand, today, not a cached file.
+
+ALSO MEASURED, and the sharper half: the public consulta form filters on **Teléfono, Fax, E-mail and Web** —
+four fields the results table does not display and the certificate does not print. **A register that filters on a
+field holds that field.** So DINADECO probably holds a contact for 1630. NOT PROBED: brute-forcing a phone
+number through a filter box is not research, it is a stranger rifling a drawer, and we do not do that to a body
+we have not spoken to.
+
+### MY SIGNED POSITION (47)
+1. **B-15 SHRINKS A SECOND TIME, and this is the first shrink that gives it a door with a name on it.** The ask
+   was "ten beneficiaries and a witness, none of them James." It is now: one conversation with one named person
+   who legally represents a constituted, active, fifty-year-old body in La Cocinona's own village, whose own
+   junta directiva is seven more adults. Ten names still cost ten conversations (finding 35's trade stands —
+   people a body nominates are not people who chose), but the FIRST conversation is no longer a search.
+2. **B-21 is still one word and still James's**, and its three answers are now unequal: ADI Pueblo Nuevo 1630 is
+   the only one with a named legal representative, a 50-year constitution and a village match. That is my
+   position, not a decision. No new block id. Order unchanged: **B-15 FIRST, day 39.**
+3. **NOBODY WAS APPROACHED and nobody will be on my initiative.** Reading a public register is not contact.
+   The presidente's name is recorded because a legal representative is a public office of a legal person; it is
+   not a lead, and no message exists that is addressed to him.
+4. **NO LEDGER ROLL TODAY.** v20 rolled 11:30 CR this morning and the churn limit is one roll per CR day unless
+   something changed in the WORLD. Nothing changed in the world today; we READ something we had not read.
+   Finding 47 surfaces on v21. Logging the distinction because it is exactly the kind of thing this system has
+   previously blurred.
+5. **AGAINST MYSELF — but a different charge from the last twelve.** This is the FIRST cycle in thirteen whose
+   finding is about the world and not about our own instruments. The fault is still ours: cycle 45 wrote the rule
+   "when a site is reached at all, READ ITS OWN INDEX OF SERVICES before hunting its data elsewhere", and then
+   left unpressed the single button inside the row it was reading. Three days and a blank day in the beat record
+   sat between that row and this certificate, for the cost of one click.
+
+### TEST ADDED (47) — **A ROW IS NOT A RECORD.**
+When a register returns a row, every control the ROW ITSELF offers is exercised before the row is written down as
+the answer. Corollary, from the consulta form: **a field a register FILTERS on is a field that register HOLDS,
+even when no column displays it** — so an absent column is not an absent datum, and "the register does not
+publish a contact" is a claim about the VIEW, not about the register.
+
+### ALSO THIS CYCLE (not findings — state)
+- **B-14 EXECUTED, first time.** The presence line finding 46 promised is now written at the start of this cycle:
+  `CLOUD BEAT 2026-10-12T19:04Z — cycle began`, appended to TIMELINE.md BEFORE any judgement about whether the
+  cycle had anything to say. Cycle 46 could not do it (Mac off the bridge). Standing from here.
+- **The two items cycle 46 could not verify for lack of disk are verified.** (a) `DRAFT_whatsapp_la_cocinona.md`
+  contains **zero** literal `[REDEMPTION]` brackets — it was replaced cycles ago and stays replaced. (b)
+  `super_build.py status BUILD_001.md` runs: **HOLD, 2/4 (self-certifiable 2/3, world-sourced 0/1), loop 0/11,
+  Window UNDECLARED, Grade 0/4, redemption validity 80 days.** Unchanged.
+- **Beat-stamp correction to finding 46.** 46 recorded 10-12 as three stamps (06,10,14); the 18:15Z beat fired
+  after 46 was written, so 10-12 is **four (06,10,14,18)** and the record is **115** unique stamps, not 114.
+  10-11 remains the only wholly blank day. Mirror pulled 2026-10-12T18:15Z, VENDOR_LOG_198 content UNCHANGED
+  (still the two 2026-09-03T15:12 entries). Brain still could not authenticate: B-08 day 39.
+- Gemini still silent (Council Record 001 · GEMINI ANSWER last modified 2026-09-03).
+- Her windows: next **Fri 2026-10-16 18:00–22:00 · Sat 17th 09:00–21:00 · Sun 18th 09:00–17:00.**
+- **Side effect to report, on his machine:** pressing Consultar in that pane fired a page copy-handler that wrote
+  to the Mac's OS clipboard. Harmless, but it is his clipboard and I caused it, so it is written down.
