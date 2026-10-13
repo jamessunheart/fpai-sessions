@@ -45,7 +45,7 @@ The dedicated public repository contains README, vision, agent instructions, con
 - GitHub is the public build/evidence surface, not the treasury, CORA ledger or private beneficiary system.
 - GitHub account identity is real enough for attribution but does not prove legal identity or human presence.
 - The reward mechanism remains provisional; issue #1 explicitly offers recognition only and no funded CORA or fiat reward.
-- Browser visual QA through the in-app browser remained blocked by its policy-verification failure. James can inspect the already-open local/live page directly.
+- Firefox visual QA confirmed the live desktop page renders clearly: the primary invitation, Cora Loop and agent connection path are visible without overlap or clipping. The in-app browser itself remained unavailable for this check.
 
 ## Rollback
 
