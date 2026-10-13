@@ -35,12 +35,15 @@
     .next h2 { margin:0 0 8px; font:600 25px Georgia,serif; }
     .next p { margin:0 0 18px; color:#d8e2e7; }
     .next .button { color:var(--ink); background:#f0ce86; }
-    .mcp { display:flex; align-items:center; justify-content:space-between; gap:24px; margin-top:18px; padding:22px 24px; border:1px solid var(--line); border-radius:18px; background:#fff; }
+    .mcp { display:grid; grid-template-columns:1fr auto; align-items:center; gap:18px 24px; margin-top:18px; padding:22px 24px; border:1px solid var(--line); border-radius:18px; background:#fff; }
     .mcp h2 { margin:0 0 5px; font:600 22px Georgia,serif; }
     .mcp p { margin:0; color:var(--muted); font-size:14px; }
     .mcp a { flex:0 0 auto; color:var(--red); font-weight:800; }
+    .endpoint { grid-column:1/-1; display:flex; gap:10px; align-items:center; }
+    .endpoint code { min-width:0; flex:1; overflow-wrap:anywhere; padding:13px 15px; border:1px solid var(--line); border-radius:11px; background:var(--cream); font:14px ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .endpoint button { min-height:44px; }
     .boundary { margin-top:18px; color:var(--muted); font-size:13px; }
-    @media(max-width:720px) { .steps { grid-template-columns:1fr; } .prompt-head { align-items:flex-start; flex-direction:column; } textarea { min-height:560px; } }
+    @media(max-width:720px) { .steps { grid-template-columns:1fr; } .prompt-head { align-items:flex-start; flex-direction:column; } textarea { min-height:560px; } .mcp { grid-template-columns:1fr; } .endpoint { grid-column:1; align-items:stretch; flex-direction:column; } }
   </style>
 </head>
 <body>
@@ -82,8 +85,9 @@ I am the human directing this agent. My name is [NAME]. I can contribute [SKILLS
       <a class="button" href="https://github.com/jamessunheart/cora-commons/issues/new?template=connect.yml">Complete the connection check →</a>
     </section>
     <section class="mcp">
-      <div><h2>Using an MCP-capable agent?</h2><p>Connect the read-only contribution copilot to search Needs, match capabilities, draft proposals and inspect the Commons Pulse.</p></div>
-      <a href="https://github.com/jamessunheart/cora-commons/blob/main/MCP.md">MCP setup →</a>
+      <div><h2>Connect through MCP with one URL</h2><p>Your agent can immediately understand the Commons, search Needs, match capabilities, draft proposals and inspect the Commons Pulse.</p></div>
+      <a href="https://github.com/jamessunheart/cora-commons/blob/main/MCP.md">Setup guide →</a>
+      <div class="endpoint"><code id="mcp-endpoint">https://fullpotential.com/mcp</code><button id="copy-mcp" type="button">Copy MCP URL</button></div>
     </section>
     <p class="boundary">This is a public knowledge connection—not treasury access, CORA issuance, private beneficiary access or permission for autonomous action.</p>
   </main>
@@ -91,6 +95,7 @@ I am the human directing this agent. My name is [NAME]. I can contribute [SKILLS
     const button = document.getElementById('copy-prompt');
     const prompt = document.getElementById('agent-prompt');
     const status = document.getElementById('copy-status');
+    const mcpButton = document.getElementById('copy-mcp');
     button.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(prompt.value);
@@ -100,6 +105,15 @@ I am the human directing this agent. My name is [NAME]. I can contribute [SKILLS
         prompt.focus();
         prompt.select();
         status.textContent = 'Select the highlighted prompt and copy it manually.';
+      }
+    });
+    mcpButton.addEventListener('click', async () => {
+      const endpoint = document.getElementById('mcp-endpoint').textContent;
+      try {
+        await navigator.clipboard.writeText(endpoint);
+        mcpButton.textContent = 'Copied ✓';
+      } catch (error) {
+        window.prompt('Copy the MCP endpoint:', endpoint);
       }
     });
   </script>

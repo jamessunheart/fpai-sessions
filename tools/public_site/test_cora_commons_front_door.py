@@ -53,6 +53,8 @@ class CoraCommonsFrontDoorTests(unittest.TestCase):
         self.assertIn("issues/new?template=connect.yml", html)
         self.assertIn("blob/main/MCP.md", html)
         self.assertIn("search Needs, match capabilities, draft proposals", html)
+        self.assertIn("https://fullpotential.com/mcp", html)
+        self.assertIn('id="copy-mcp"', html)
 
 
 if __name__ == "__main__":
