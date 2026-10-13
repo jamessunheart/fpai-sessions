@@ -119,6 +119,18 @@
     .trust h3 { margin:0 0 6px; font:600 17px Fraunces,serif; }
     .trust p { margin:0; color:var(--muted); font-size:12px; line-height:1.5; }
 
+    .connect-panel { display:grid; grid-template-columns:.72fr 1.28fr; gap:50px; align-items:start; padding:36px; border:1px solid var(--line); border-radius:25px; background:linear-gradient(145deg,#fff,#fff7eb); box-shadow:var(--shadow); }
+    .connect-panel h2 { margin:0; }
+    .connect-panel > div > p:last-child { color:var(--muted); font-size:13px; }
+    .connect-steps { display:grid; gap:11px; padding:0; margin:0; list-style:none; }
+    .connect-steps li { display:grid; grid-template-columns:36px 1fr; gap:13px; align-items:start; padding:15px; border:1px solid #eee2d7; border-radius:14px; background:#fff; }
+    .connect-steps span { width:36px; height:36px; display:grid; place-items:center; border-radius:50%; color:#fff; background:var(--red); font-size:12px; font-weight:800; }
+    .connect-steps b,.connect-steps small { display:block; }
+    .connect-steps b { font-size:13px; }
+    .connect-steps small { margin-top:3px; color:#6f8089; font-size:11px; line-height:1.45; }
+    .connect-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
+    .connection-note { margin:14px 0 0; color:#6d7f88; font-size:10px; }
+
     .final { padding:84px 0; text-align:center; }
     .final h2 { max-width:750px; margin:0 auto; font-size:clamp(38px,4.5vw,58px); line-height:1.03; }
     .final p { max-width:650px; margin:18px auto 0; color:var(--muted); font-size:15px; }
@@ -140,7 +152,7 @@
       .loop-card { max-width:620px; width:100%; margin:auto; }
       .grid-3 { grid-template-columns:1fr; }
       .card { min-height:205px; }
-      .cora-note { grid-template-columns:1fr; gap:18px; }
+      .cora-note,.connect-panel { grid-template-columns:1fr; gap:18px; }
     }
     @media(max-width:650px) {
       .wrap { width:min(100% - 28px,1180px); }
@@ -175,7 +187,7 @@
         <a href="/dream-big/">Dream Big</a>
         <a href="https://zenvillagecr.com/book">Zen Village</a>
       </div>
-      <a class="nav-cta" href="#join">Join the founding circle →</a>
+      <a class="nav-cta" href="#connect">Connect your agent →</a>
     </nav>
   </header>
 
@@ -187,7 +199,7 @@
           <h1>Build intelligence<br><span>everyone can use.</span></h1>
           <p class="lede">Cora Commons helps people and AI agents turn real needs into verified, reusable capabilities called <strong>BRICKS</strong>.</p>
           <div class="actions">
-            <a class="button primary" href="#join">Help build the first BRICKS →</a>
+            <a class="button primary" href="#connect">Connect and start building →</a>
             <a class="button" href="#how">See how it works</a>
           </div>
           <div class="proofs"><span><b>Real need</b> first</span><span><b>Evidence</b> before acceptance</span><span><b>Reusable value</b> preserved</span></div>
@@ -215,10 +227,30 @@
       <div class="wrap">
         <div class="section-head center"><p class="eyebrow">Start where you are</p><h2>What can you bring?</h2><p>You do not need to understand the whole system first. Begin with a real need, something useful you can contribute, or the AI agent you already use.</p></div>
         <div class="grid-3">
-          <article class="card"><span class="n">01 · NEED</span><h3>I need something solved</h3><p>Bring an outcome worth creating. The Commons helps make the need clear, find capability and define evidence of success.</p><a href="mailto:james@fullpotential.com?subject=Cora%20Commons%20-%20I%20have%20a%20need">Bring a real need →</a></article>
-          <article class="card featured"><span class="n">02 · CONTRIBUTE</span><h3>I can build or review</h3><p>Contribute knowledge, code, design, compute, relationships or independent review. Help make a result trustworthy and reusable.</p><a href="mailto:james@fullpotential.com?subject=Cora%20Commons%20-%20founding%20contributor">Join as a founding contributor →</a></article>
-          <article class="card"><span class="n">03 · AGENT</span><h3>I have an AI agent</h3><p>Bring the agent you already trust. Humans choose what is shared; agents help discover, coordinate, build and preserve learning.</p><a href="mailto:james@fullpotential.com?subject=Cora%20Commons%20-%20connect%20my%20agent">Connect your agent →</a></article>
+          <article class="card"><span class="n">01 · NEED</span><h3>I need something solved</h3><p>Bring an outcome worth creating. The Commons helps make the need clear, find capability and define evidence of success.</p><a href="https://github.com/jamessunheart/cora-commons/issues/new?template=need.yml">Open a need on GitHub →</a></article>
+          <article class="card featured"><span class="n">02 · CONTRIBUTE</span><h3>I can build or review</h3><p>Contribute knowledge, code, design, compute, relationships or independent review. Help make a result trustworthy and reusable.</p><a href="https://github.com/jamessunheart/cora-commons/issues">Choose an open need →</a></article>
+          <article class="card"><span class="n">03 · AGENT</span><h3>I have an AI agent</h3><p>Bring the agent you already trust. Humans choose what is shared; agents help discover, coordinate, build and preserve learning.</p><a href="https://github.com/jamessunheart/cora-commons/blob/main/AGENTS.md">Give your agent the Commons brief →</a></article>
         </div>
+      </div>
+    </section>
+
+    <section class="section" id="connect">
+      <div class="wrap connect-panel">
+        <div>
+          <p class="eyebrow">The public workshop</p>
+          <h2>Connect through GitHub.</h2>
+          <p>There is no separate Cora account to create yet. GitHub is the founding build surface: people and agents can read the same direction, inspect open needs, work safely in forks and propose additions for independent review.</p>
+          <div class="connect-actions">
+            <a class="button primary" href="https://github.com/jamessunheart/cora-commons">Enter the Cora Commons repository →</a>
+            <a class="button" href="https://github.com/jamessunheart/cora-commons/blob/main/AGENTS.md">Agent instructions</a>
+          </div>
+          <p class="connection-note">GitHub records proposals and evidence. Private needs, treasury access and sensitive agreements stay outside the public repository.</p>
+        </div>
+        <ol class="connect-steps">
+          <li><span>1</span><div><b>Read the shared direction</b><small>Open the README and AGENTS.md with the human and AI agent you already use.</small></div></li>
+          <li><span>2</span><div><b>Choose a need</b><small>Browse current issues or bring a clearly stated outcome with acceptance evidence.</small></div></li>
+          <li><span>3</span><div><b>Fork, build and propose</b><small>Work safely in your fork. A pull request preserves attribution, evidence, cost and limitations for independent review.</small></div></li>
+        </ol>
       </div>
     </section>
 
@@ -274,7 +306,8 @@
         <h2>Bring your intelligence.<br>Leave the Commons stronger.</h2>
         <p>The founding pilot is for people willing to help turn the system itself into the first set of verified, reusable BRICKS.</p>
         <div class="actions">
-          <a class="button primary" href="mailto:james@fullpotential.com?subject=Cora%20Commons%20-%20founding%20circle">Join the founding circle →</a>
+          <a class="button primary" href="https://github.com/jamessunheart/cora-commons">Open the Commons on GitHub →</a>
+          <a class="button" href="mailto:james@fullpotential.com?subject=Cora%20Commons%20-%20founding%20circle">Prefer a human introduction?</a>
           <a class="button" href="/">Return to FullPotential.com</a>
         </div>
       </div>
@@ -283,7 +316,7 @@
 
   <footer>
     <div class="wrap">
-      <div class="footer-row"><a class="brand" href="/" style="color:#fff"><span>🌱</span><span>FullPotential.com</span></a><div class="footer-links"><a href="/coracommons/">Cora Commons</a><a href="/dream-big/">Dream Big</a><a href="https://zenvillagecr.com/book">Zen Village</a><a href="/game">The Game</a><a href="/assessment">Assessment</a></div></div>
+      <div class="footer-row"><a class="brand" href="/" style="color:#fff"><span>🌱</span><span>FullPotential.com</span></a><div class="footer-links"><a href="https://github.com/jamessunheart/cora-commons">GitHub Commons</a><a href="/coracommons/">Cora Commons</a><a href="/dream-big/">Dream Big</a><a href="https://zenvillagecr.com/book">Zen Village</a><a href="/game">The Game</a><a href="/assessment">Assessment</a></div></div>
       <div class="footer-note">Human-directed intelligence, organized for shared possibility.</div>
     </div>
   </footer>

@@ -29,8 +29,18 @@ class CoraCommonsFrontDoorTests(unittest.TestCase):
     def test_cora_page_has_real_next_steps(self) -> None:
         html = CORA.read_text(encoding="utf-8")
         self.assertIn("mailto:james@fullpotential.com", html)
+        self.assertIn("There is no separate Cora account to create yet", html)
+        self.assertIn("Connect through GitHub", html)
+        self.assertIn("https://github.com/jamessunheart/cora-commons", html)
+        self.assertIn("issues/new?template=need.yml", html)
+        self.assertIn("blob/main/AGENTS.md", html)
         self.assertIn('href="/dream-big/"', html)
         self.assertIn('href="https://zenvillagecr.com/book"', html)
+
+    def test_homepage_introduces_builder_path(self) -> None:
+        html = HOME.read_text(encoding="utf-8")
+        self.assertIn("Build Cora", html)
+        self.assertIn("Understand it and connect your agent", html)
 
 
 if __name__ == "__main__":

@@ -71,7 +71,10 @@
       padding: 8px 16px; font-size: 14px; font-weight: 600; cursor: pointer;
     }
     .chat-pill:hover { background: #dcefe0; }
-    @media (max-width: 760px) { nav.links { display: none; } }
+    .nav-actions { display:flex; align-items:center; gap:8px; }
+    .build-pill { background:var(--green-deep); color:#fff; border-color:var(--green-deep); }
+    .build-pill:hover { background:var(--green-forest); color:#fff; }
+    @media (max-width: 760px) { nav.links { display: none; } .chat-pill { display:none; } }
 
     /* ---------- HERO ---------- */
     .hero {
@@ -219,6 +222,7 @@
         <a href="/assessment">Assessment</a>
       </nav>
       <div class="nav-actions">
+        <a class="chat-pill build-pill" href="/coracommons/">Build Cora →</a>
         <button class="chat-pill" onclick="openChat()">💬 Chat with Guide</button>
       </div>
     </div>
@@ -250,8 +254,8 @@
         <span class="path-tag">Collective intelligence</span>
         <div class="i">♥</div>
         <h3>Cora Commons</h3>
-        <p>People and AI agents turn real needs into verified, reusable capabilities called BRICKS. Build once, then let everyone build from it.</p>
-        <a class="go" href="/coracommons/">See how the Commons works →</a>
+        <p>People and their AI agents turn real needs into verified, reusable capabilities called BRICKS—then preserve attribution so value and rewards can mature with evidence.</p>
+        <a class="go" href="/coracommons/">Understand it and connect your agent →</a>
       </div>
       <div class="card path-card dream">
         <span class="path-tag">Daily practice</span>

@@ -1,8 +1,19 @@
 {
   "schema": "build-registry.v1",
-  "updated_at": "2026-09-04T14:20:00Z",
+  "updated_at": "2026-10-13T21:45:00Z",
   "_doc": "Single source of truth for active Codex builds. Every build session registers here before writing code (status: building), sets done when tests pass, and only Ember sets merged. The merge gate (tools/merge/merge_gate.sh) reads this before any merge. See docs/codex/SESSION_CONTRACT.md.",
   "active_builds": [
+    {
+      "id": "SPEC_cora-commons-github-onboarding",
+      "slug": "cora-commons-github-onboarding",
+      "branch": "feat/cora-commons-front-door",
+      "base_branch": "8710e05c",
+      "session": "codex desktop 2026-10-13",
+      "status": "building",
+      "spec": "core/BUILD/specs/SPEC_cora-commons-github-onboarding.md",
+      "tests_passed": false,
+      "notes": "Preparing a dedicated public Cora Commons GitHub repository and updating the existing FullPotential/Cora pages with a clear human-and-agent connection path. Production deployment is held until the repository exists and resolves publicly. No treasury, CORA issuance, private ledger exposure, credential entry, or reward promise."
+    },
     {
       "id": "SPEC_nbm-plant-finance-north-proof-loop-v1",
       "slug": "nbm-plant-finance-north-proof-loop-v1",
