@@ -51,6 +51,8 @@ class CoraCommonsFrontDoorTests(unittest.TestCase):
         self.assertIn("navigator.clipboard.writeText", html)
         self.assertIn("Read these canonical public sources", html)
         self.assertIn("issues/new?template=connect.yml", html)
+        self.assertIn("blob/main/MCP.md", html)
+        self.assertIn("search Needs, match capabilities, draft proposals", html)
 
 
 if __name__ == "__main__":

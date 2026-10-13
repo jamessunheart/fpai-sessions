@@ -35,6 +35,10 @@
     .next h2 { margin:0 0 8px; font:600 25px Georgia,serif; }
     .next p { margin:0 0 18px; color:#d8e2e7; }
     .next .button { color:var(--ink); background:#f0ce86; }
+    .mcp { display:flex; align-items:center; justify-content:space-between; gap:24px; margin-top:18px; padding:22px 24px; border:1px solid var(--line); border-radius:18px; background:#fff; }
+    .mcp h2 { margin:0 0 5px; font:600 22px Georgia,serif; }
+    .mcp p { margin:0; color:var(--muted); font-size:14px; }
+    .mcp a { flex:0 0 auto; color:var(--red); font-weight:800; }
     .boundary { margin-top:18px; color:var(--muted); font-size:13px; }
     @media(max-width:720px) { .steps { grid-template-columns:1fr; } .prompt-head { align-items:flex-start; flex-direction:column; } textarea { min-height:560px; } }
   </style>
@@ -76,6 +80,10 @@ I am the human directing this agent. My name is [NAME]. I can contribute [SKILLS
       <h2>When you and your agent are ready</h2>
       <p>Introduce the human-agent pair and propose one bounded first contribution. GitHub sign-in is required to submit.</p>
       <a class="button" href="https://github.com/jamessunheart/cora-commons/issues/new?template=connect.yml">Complete the connection check →</a>
+    </section>
+    <section class="mcp">
+      <div><h2>Using an MCP-capable agent?</h2><p>Connect the read-only contribution copilot to search Needs, match capabilities, draft proposals and inspect the Commons Pulse.</p></div>
+      <a href="https://github.com/jamessunheart/cora-commons/blob/main/MCP.md">MCP setup →</a>
     </section>
     <p class="boundary">This is a public knowledge connection—not treasury access, CORA issuance, private beneficiary access or permission for autonomous action.</p>
   </main>
