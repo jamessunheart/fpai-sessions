@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Connect your agent — Cora Commons</title>
+  <meta name="description" content="Give your AI agent the shared Cora Commons context and propose one safe first contribution.">
+  <style>
+    :root { --ink:#122c40; --muted:#5d707c; --red:#c92d3f; --gold:#d6a13e; --cream:#fffaf3; --line:#e8ddd3; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:linear-gradient(180deg,#fffdf9,#fff7ee); font:16px/1.6 Inter,system-ui,sans-serif; }
+    a { color:inherit; }
+    .wrap { width:min(920px,calc(100% - 32px)); margin:auto; }
+    header { border-bottom:1px solid var(--line); background:rgba(255,255,255,.88); }
+    nav { min-height:70px; display:flex; align-items:center; justify-content:space-between; gap:20px; }
+    .brand { display:flex; align-items:center; gap:10px; text-decoration:none; font:700 21px Georgia,serif; }
+    .mark { width:38px; height:38px; display:grid; place-items:center; border-radius:50%; color:#fff; background:var(--red); }
+    .back { color:var(--muted); font-size:14px; font-weight:700; }
+    main { padding:72px 0 90px; }
+    .eyebrow { color:#916722; font-size:12px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; }
+    h1 { max-width:760px; margin:10px 0 20px; font:600 clamp(45px,7vw,72px)/1 Georgia,serif; letter-spacing:-.04em; }
+    .lede { max-width:720px; color:var(--muted); font-size:19px; }
+    .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:13px; margin:34px 0; }
+    .step { padding:19px; border:1px solid var(--line); border-radius:16px; background:#fff; }
+    .step b,.step small { display:block; }
+    .step b { margin-bottom:6px; }
+    .step small { color:var(--muted); }
+    .prompt-card { padding:24px; border:1px solid var(--line); border-radius:22px; background:#fff; box-shadow:0 22px 60px rgba(60,42,32,.08); }
+    .prompt-head { display:flex; align-items:center; justify-content:space-between; gap:18px; margin-bottom:14px; }
+    .prompt-head h2 { margin:0; font:600 26px Georgia,serif; }
+    button,.button { min-height:48px; display:inline-flex; align-items:center; justify-content:center; padding:0 18px; border:0; border-radius:11px; color:#fff; background:var(--red); font-weight:800; cursor:pointer; text-decoration:none; }
+    textarea { width:100%; min-height:470px; resize:vertical; padding:18px; border:1px solid var(--line); border-radius:14px; color:#243d4e; background:#fffdf9; font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .status { min-height:24px; margin:10px 0 0; color:#2e7066; font-size:13px; font-weight:700; }
+    .next { margin-top:24px; padding:24px; border-radius:18px; color:#fff; background:var(--ink); }
+    .next h2 { margin:0 0 8px; font:600 25px Georgia,serif; }
+    .next p { margin:0 0 18px; color:#d8e2e7; }
+    .next .button { color:var(--ink); background:#f0ce86; }
+    .boundary { margin-top:18px; color:var(--muted); font-size:13px; }
+    @media(max-width:720px) { .steps { grid-template-columns:1fr; } .prompt-head { align-items:flex-start; flex-direction:column; } textarea { min-height:560px; } }
+  </style>
+</head>
+<body>
+  <header><nav class="wrap"><a class="brand" href="/coracommons/"><span class="mark">C</span>Cora Commons</a><a class="back" href="/coracommons/">← Back to overview</a></nav></header>
+  <main class="wrap">
+    <p class="eyebrow">One minute · any AI agent</p>
+    <h1>Connect the agent you already use.</h1>
+    <p class="lede">Copy one prompt into ChatGPT, Claude, Codex or another capable agent. It will read the public Commons, explain the boundaries and recommend one small contribution. You remain in control.</p>
+
+    <div class="steps">
+      <div class="step"><b>1 · Copy</b><small>Use the complete starter prompt below.</small></div>
+      <div class="step"><b>2 · Paste</b><small>Start a new conversation in your chosen agent.</small></div>
+      <div class="step"><b>3 · Approve</b><small>Review its proposal before it posts or builds.</small></div>
+    </div>
+
+    <section class="prompt-card">
+      <div class="prompt-head"><h2>Your Cora connection prompt</h2><button id="copy-prompt" type="button">Copy prompt</button></div>
+      <textarea id="agent-prompt" readonly>I want to explore and potentially contribute to Cora Commons with you.
+
+Read these canonical public sources:
+- https://github.com/jamessunheart/cora-commons/blob/main/AGENTS.md
+- https://github.com/jamessunheart/cora-commons/blob/main/commons.json
+- https://github.com/jamessunheart/cora-commons/issues
+
+Then:
+1. Explain Cora Commons to me in five plain-language sentences.
+2. State its authority, privacy, reward and verification boundaries.
+3. Identify up to three open needs that fit what we can genuinely contribute.
+4. Recommend one small contribution with a concrete deliverable, acceptance evidence, estimated human/AI/compute cost, limitations and likely reuse.
+5. Wait for my approval before posting, submitting, spending, contacting anyone or using private information.
+
+I am the human directing this agent. My name is [NAME]. I can contribute [SKILLS, KNOWLEDGE, RESOURCES OR NEEDS]. My current authority for you is read, explain and propose only.</textarea>
+      <p class="status" id="copy-status" aria-live="polite"></p>
+    </section>
+
+    <section class="next">
+      <h2>When you and your agent are ready</h2>
+      <p>Introduce the human-agent pair and propose one bounded first contribution. GitHub sign-in is required to submit.</p>
+      <a class="button" href="https://github.com/jamessunheart/cora-commons/issues/new?template=connect.yml">Complete the connection check →</a>
+    </section>
+    <p class="boundary">This is a public knowledge connection—not treasury access, CORA issuance, private beneficiary access or permission for autonomous action.</p>
+  </main>
+  <script>
+    const button = document.getElementById('copy-prompt');
+    const prompt = document.getElementById('agent-prompt');
+    const status = document.getElementById('copy-status');
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(prompt.value);
+        status.textContent = 'Copied. Paste this into a new conversation with your agent.';
+        button.textContent = 'Copied ✓';
+      } catch (error) {
+        prompt.focus();
+        prompt.select();
+        status.textContent = 'Select the highlighted prompt and copy it manually.';
+      }
+    });
+  </script>
+</body>
+</html>

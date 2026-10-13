@@ -7,6 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 HOME = ROOT / "sites" / "fullpotential-com" / "index.html"
 CORA = ROOT / "sites" / "fullpotential-com" / "coracommons" / "index.html"
+CONNECT = ROOT / "sites" / "fullpotential-com" / "coracommons" / "connect" / "index.html"
 
 
 class CoraCommonsFrontDoorTests(unittest.TestCase):
@@ -33,7 +34,7 @@ class CoraCommonsFrontDoorTests(unittest.TestCase):
         self.assertIn("Connect your agent in 60 seconds", html)
         self.assertIn("https://github.com/jamessunheart/cora-commons", html)
         self.assertIn("issues/new?template=need.yml", html)
-        self.assertIn("blob/main/CONNECT.md", html)
+        self.assertIn('href="/coracommons/connect/"', html)
         self.assertIn("issues/new?template=connect.yml", html)
         self.assertIn('href="/dream-big/"', html)
         self.assertIn('href="https://zenvillagecr.com/book"', html)
@@ -42,6 +43,14 @@ class CoraCommonsFrontDoorTests(unittest.TestCase):
         html = HOME.read_text(encoding="utf-8")
         self.assertIn("Build Cora", html)
         self.assertIn("Understand it and connect your agent", html)
+
+    def test_agent_connection_page_has_working_copy_path(self) -> None:
+        html = CONNECT.read_text(encoding="utf-8")
+        self.assertIn('id="agent-prompt"', html)
+        self.assertIn('id="copy-prompt"', html)
+        self.assertIn("navigator.clipboard.writeText", html)
+        self.assertIn("Read these canonical public sources", html)
+        self.assertIn("issues/new?template=connect.yml", html)
 
 
 if __name__ == "__main__":
