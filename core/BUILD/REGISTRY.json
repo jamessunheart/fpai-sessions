@@ -9,10 +9,10 @@
       "branch": "feat/cora-commons-front-door",
       "base_branch": "8710e05c",
       "session": "codex desktop 2026-10-13",
-      "status": "building",
+      "status": "done",
       "spec": "core/BUILD/specs/SPEC_cora-commons-github-onboarding.md",
-      "tests_passed": false,
-      "notes": "Preparing a dedicated public Cora Commons GitHub repository and updating the existing FullPotential/Cora pages with a clear human-and-agent connection path. Production deployment is held until the repository exists and resolves publicly. No treasury, CORA issuance, private ledger exposure, credential entry, or reward promise."
+      "tests_passed": true,
+      "notes": "Public jamessunheart/cora-commons repository created and populated with orientation, AGENTS, governance, reward boundaries, first Need and contribution templates. FullPotential homepage and Cora page deployed after all repository links resolved publicly. Four focused tests, HTML parsing, JSON validation, diff hygiene and live HTTP/link checks passed. Founding issue #1 is open. No treasury, CORA issuance, private ledger exposure, credential handling or funded reward promise."
     },
     {
       "id": "SPEC_nbm-plant-finance-north-proof-loop-v1",

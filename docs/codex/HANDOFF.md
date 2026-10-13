@@ -83,6 +83,18 @@ Build to the Definition of Done, run the tests, then update the 📥 lane in `do
 - Questions for Ember/James: …
 ```
 
+### 2026-10-13 · SPEC_cora-commons-github-onboarding · branch `feat/cora-commons-front-door`
+
+- **Status:** done, public repository created and website deployed
+- **Files changed:** FullPotential homepage and Cora page; focused public-site tests; spec/result; build registry; this handoff. Dedicated repository published at `jamessunheart/cora-commons` from local commit `d458167`.
+- **Summary:** Added a clear GitHub-based three-step entrance for humans and their chosen agents, published the founding orientation/governance/reward-boundary package, and opened issue #1 as the first real no-private-coaching onboarding test. GitHub remains the public build/evidence surface; treasury, private needs and CORA issuance remain separate.
+- **Tests:** 4 focused tests pass; both HTML files parse; registry JSON and diff hygiene pass; GitHub connector read-back confirms public README/AGENTS/Need template; live homepage, Cora page, repo, AGENTS and Need-form URLs returned HTTP 200.
+- **Risks:** GitHub identity is not legal identity or proof of human presence. Rewards remain provisional and unfunded unless separately agreed. Automated in-app visual QA remained blocked by browser policy verification.
+- **Rollback:** Restore the two `20261013-cora-github` production backups on host `198.54.123.234`; repository content remains separately reversible through Git.
+- **Intent solved:** Friends and their agents now have one canonical public place to understand, question, fork and contribute to Cora Commons.
+- **Downstream intent unlocked:** Run issue #1 with one real friend and observe whether onboarding works without founder coaching.
+- **Questions for Ember/James:** none.
+
 ### 2026-09-05 · North Voice Agent private acceptance harness · branch `codex/sunstream-active-focus`
 
 - **Status:** verified locally / Voice Agent restored as NOW; no call, callback, message, provider request, credential access, spend, deployment, restart, or live-service change
