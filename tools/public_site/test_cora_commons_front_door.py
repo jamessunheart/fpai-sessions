@@ -30,10 +30,11 @@ class CoraCommonsFrontDoorTests(unittest.TestCase):
         html = CORA.read_text(encoding="utf-8")
         self.assertIn("mailto:james@fullpotential.com", html)
         self.assertIn("There is no separate Cora account to create yet", html)
-        self.assertIn("Connect through GitHub", html)
+        self.assertIn("Connect your agent in 60 seconds", html)
         self.assertIn("https://github.com/jamessunheart/cora-commons", html)
         self.assertIn("issues/new?template=need.yml", html)
-        self.assertIn("blob/main/AGENTS.md", html)
+        self.assertIn("blob/main/CONNECT.md", html)
+        self.assertIn("issues/new?template=connect.yml", html)
         self.assertIn('href="/dream-big/"', html)
         self.assertIn('href="https://zenvillagecr.com/book"', html)
 
