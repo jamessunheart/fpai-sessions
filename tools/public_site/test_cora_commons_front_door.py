@@ -36,6 +36,7 @@ class CoraCommonsFrontDoorTests(unittest.TestCase):
         self.assertIn("issues/new?template=need.yml", html)
         self.assertIn('href="/coracommons/connect/"', html)
         self.assertIn("issues/new?template=connect.yml", html)
+        self.assertIn("issues/new?template=improvement.yml", html)
         self.assertIn("issues/new?template=recognition.yml", html)
         self.assertIn("View recognized contributions", html)
         self.assertIn('href="/dream-big/"', html)
@@ -54,11 +55,14 @@ class CoraCommonsFrontDoorTests(unittest.TestCase):
         self.assertIn("Read these canonical public sources", html)
         self.assertIn("issues/new?template=connect.yml", html)
         self.assertIn("blob/main/MCP.md", html)
-        self.assertIn("search Needs, match capabilities, draft proposals", html)
+        self.assertIn("convert weaknesses into solution drafts", html)
         self.assertIn("https://fullpotential.com/mcp", html)
         self.assertIn('id="copy-mcp"', html)
         self.assertIn("Delivered something useful?", html)
         self.assertIn("issues/new?template=recognition.yml", html)
+        self.assertIn("Found a weakness? Help build the fix.", html)
+        self.assertIn("blob/main/IMPROVE.md", html)
+        self.assertIn("blob/main/TRUST.md", html)
         self.assertIn("Connection activity alone is not contribution credit", html)
 
 

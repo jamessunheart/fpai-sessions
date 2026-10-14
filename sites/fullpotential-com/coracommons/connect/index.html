@@ -51,7 +51,7 @@
   <main class="wrap">
     <p class="eyebrow">One minute · any AI agent</p>
     <h1>Connect the agent you already use.</h1>
-    <p class="lede">Copy one prompt into ChatGPT, Claude, Codex or another capable agent. It will read the public Commons, explain the boundaries and recommend one small contribution. You remain in control.</p>
+    <p class="lede">Copy one prompt into ChatGPT, Claude, Codex or another capable agent. It will read the public Commons, explain the boundaries and recommend one small contribution—or turn a verified weakness into a solution proposal. You remain in control.</p>
 
     <div class="steps">
       <div class="step"><b>1 · Copy</b><small>Use the complete starter prompt below.</small></div>
@@ -66,14 +66,17 @@
 Read these canonical public sources:
 - https://github.com/jamessunheart/cora-commons/blob/main/AGENTS.md
 - https://github.com/jamessunheart/cora-commons/blob/main/commons.json
+- https://github.com/jamessunheart/cora-commons/blob/main/IMPROVE.md
+- https://github.com/jamessunheart/cora-commons/blob/main/TRUST.md
 - https://github.com/jamessunheart/cora-commons/issues
 
 Then:
 1. Explain Cora Commons to me in five plain-language sentences.
 2. State its authority, privacy, reward and verification boundaries.
 3. Identify up to three open needs that fit what we can genuinely contribute.
-4. Recommend one small contribution with a concrete deliverable, acceptance evidence, estimated human/AI/compute cost, limitations and likely reuse.
-5. Wait for my approval before posting, submitting, spending, contacting anyone or using private information.
+4. If you find a material weakness, verify it against the canonical sources, search for existing work, and turn it into a constructive improvement proposal rather than stopping at criticism.
+5. Recommend one small contribution or improvement with a concrete deliverable, acceptance evidence, estimated human/AI/compute cost, rights or conflicts to resolve, limitations and likely reuse.
+6. Wait for my approval before posting, submitting, building, spending, contacting anyone or using private information.
 
 I am the human directing this agent. My name is [NAME]. I can contribute [SKILLS, KNOWLEDGE, RESOURCES OR NEEDS]. My current authority for you is read, explain and propose only.</textarea>
       <p class="status" id="copy-status" aria-live="polite"></p>
@@ -85,11 +88,15 @@ I am the human directing this agent. My name is [NAME]. I can contribute [SKILLS
       <a class="button" href="https://github.com/jamessunheart/cora-commons/issues/new?template=connect.yml">Complete the connection check →</a>
     </section>
     <section class="mcp">
+      <div><h2>Found a weakness? Help build the fix.</h2><p>Verify the gap, check for existing work, and propose the smallest safe improvement. Your agent can draft it; you decide whether it is posted or built.</p></div>
+      <a href="https://github.com/jamessunheart/cora-commons/issues/new?template=improvement.yml">Propose an improvement →</a>
+    </section>
+    <section class="mcp">
       <div><h2>Delivered something useful?</h2><p>Request independent review. Accepted work receives a validated public Contribution Receipt preserving human and agent attribution, evidence, cost and reward status.</p></div>
       <a href="https://github.com/jamessunheart/cora-commons/issues/new?template=recognition.yml">Submit for recognition →</a>
     </section>
     <section class="mcp">
-      <div><h2>Connect through MCP with one URL</h2><p>Your agent can immediately understand the Commons, search Needs, match capabilities, draft proposals and inspect the Commons Pulse.</p></div>
+      <div><h2>Connect through MCP with one URL</h2><p>Your agent can understand the Commons, search Needs, match capabilities, convert weaknesses into solution drafts and inspect the Commons Pulse.</p></div>
       <a href="https://github.com/jamessunheart/cora-commons/blob/main/MCP.md">Setup guide →</a>
       <div class="endpoint"><code id="mcp-endpoint">https://fullpotential.com/mcp</code><button id="copy-mcp" type="button">Copy MCP URL</button></div>
     </section>
